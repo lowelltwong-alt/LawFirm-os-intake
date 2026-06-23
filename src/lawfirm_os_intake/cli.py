@@ -6,6 +6,7 @@ from pathlib import Path
 import shutil
 import sys
 
+from .confirmation import bind_confirmation_to_packet_evidence
 from .models import HumanConfirmation
 from .util import load_json, write_json
 from .workflow import run_budget, run_preflight
@@ -119,6 +120,7 @@ def main(argv: list[str] | None = None) -> int:
             confirmation_data = load_json(args.confirmation_template)
             confirmation_data["preflight_packet_id"] = packet.packet_id
             confirmation = HumanConfirmation.model_validate(confirmation_data)
+            confirmation = bind_confirmation_to_packet_evidence(packet, confirmation)
             confirmation_path = root / "human_confirmation.json"
             write_json(confirmation_path, confirmation.model_dump(mode="json"))
             proposal, budget_dir = run_budget(

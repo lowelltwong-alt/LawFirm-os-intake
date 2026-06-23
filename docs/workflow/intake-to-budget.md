@@ -75,7 +75,7 @@ The reviewer confirms or corrects matter family, posture, principal party roles,
 
 ### 11. Budget precondition gate
 
-Before budget generation, the system verifies that the human confirmation binds to the exact preflight packet, has `confirmed` status, and contains human-confirmed matter family, representation posture, and principal party roles.
+Before budget generation, the system verifies that the human confirmation binds to the exact preflight packet, has `confirmed` status, contains human-confirmed matter family, representation posture, and principal party roles, and carries source-bound evidence refs for both decision evidence and confirmed party roles.
 
 The run writes `budget_precondition_report.json`. If the gate fails, it records a blocked run event and dry-run Exception Lake candidate, then stops before emitting a conflict seed, budget proposal, matter-opening readiness packet, safety report, or review package.
 

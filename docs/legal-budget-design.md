@@ -10,7 +10,9 @@ Translate a human-confirmed intake into a transparent, reviewable budget proposa
 - human confirmation binds to the exact intake packet;
 - human has confirmed matter family and representation posture;
 - human confirmation status is `confirmed`;
+- human confirmation includes source-bound decision evidence refs;
 - principal party roles are confirmed or unresolved roles are explicit;
+- confirmed principal party roles include source-bound evidence refs;
 - an approved practice template exists;
 - rate/guideline source state is known;
 - conflicts and engagement remain separate blockers.

@@ -17,6 +17,13 @@
           },
           "title": "Aliases",
           "type": "array"
+        },
+        "evidence_refs": {
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
         }
       },
       "required": [

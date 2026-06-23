@@ -137,7 +137,7 @@ Every proposal-level assumption, exclusion, and unknown is mirrored as a `budget
 
 If rates are absent, the system emits an **hours-only** proposal. It never invents rates or totals.
 
-Every budget run emits `budget_precondition_report.json`. If confirmation is missing, mismatched, incomplete, or not `confirmed`, the run writes that failed report, a blocked run-ledger event, and a dry-run Exception Lake candidate, then stops before producing a conflict seed, budget proposal, readiness packet, safety report, or review package.
+Every budget run emits `budget_precondition_report.json`. If confirmation is missing, mismatched, incomplete, evidence-free, or not `confirmed`, the run writes that failed report, a blocked run-ledger event, and a dry-run Exception Lake candidate, then stops before producing a conflict seed, budget proposal, readiness packet, safety report, or review package.
 
 ## Safety gate
 

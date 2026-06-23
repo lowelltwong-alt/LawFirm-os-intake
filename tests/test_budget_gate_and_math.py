@@ -3,6 +3,7 @@ from copy import deepcopy
 import pytest
 
 from lawfirm_os_intake.budget import build_budget_proposal
+from lawfirm_os_intake.confirmation import bind_confirmation_to_packet_evidence
 from lawfirm_os_intake.context import load_profile
 from lawfirm_os_intake.models import HumanConfirmation
 from lawfirm_os_intake.util import load_json
@@ -20,7 +21,9 @@ def test_budget_requires_human_confirmation_and_calculates(tmp_path, repo_root):
         / "examples/synthetic/confirmations/carrier-assignment-medmal.confirmation-template.json"
     )
     raw["preflight_packet_id"] = packet.packet_id
-    confirmation = HumanConfirmation.model_validate(raw)
+    confirmation = bind_confirmation_to_packet_evidence(
+        packet, HumanConfirmation.model_validate(raw)
+    )
     profile = load_profile(repo_root / "context/synthetic-profiles/insurance-defense.yaml")
     budget = build_budget_proposal(packet, confirmation, profile)
     assert budget.pricing_status == "priced"

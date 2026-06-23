@@ -222,6 +222,7 @@ class ConfirmedParty(StrictModel):
     name: str
     confirmed_role: str
     aliases: list[str] = Field(default_factory=list)
+    evidence_refs: list[EvidenceRef] = Field(default_factory=list)
 
 
 class HumanConfirmation(StrictModel):

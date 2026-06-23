@@ -2,6 +2,7 @@ from copy import deepcopy
 
 from lawfirm_os_intake.budget import build_budget_proposal
 from lawfirm_os_intake.context import load_profile
+from lawfirm_os_intake.confirmation import bind_confirmation_to_packet_evidence
 from lawfirm_os_intake.models import HumanConfirmation
 from lawfirm_os_intake.util import load_json
 from lawfirm_os_intake.workflow import run_preflight
@@ -13,7 +14,7 @@ def _confirmation(packet, repo_root):
         / "examples/synthetic/confirmations/carrier-assignment-medmal.confirmation-template.json"
     )
     raw["preflight_packet_id"] = packet.packet_id
-    return HumanConfirmation.model_validate(raw)
+    return bind_confirmation_to_packet_evidence(packet, HumanConfirmation.model_validate(raw))
 
 
 def _support_texts(budget, item_type):
