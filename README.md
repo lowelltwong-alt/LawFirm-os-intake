@@ -155,7 +155,9 @@ Every budget run emits `budget_precondition_report.json`. If confirmation is mis
 
 ## Safety gate
 
-The final budget run emits `safety_gate_report.json`. This deterministic report checks that the output remains synthetic-only, contract-state-bound, human-confirmed, conflict-search-only, not submittable, blocked from engagement and matter opening, not docketed, not billed, and local-file-only. A failed check raises before the final review package is accepted.
+The final budget run emits `safety_gate_report.json`. This deterministic report checks that the output remains synthetic-only, contract-state-bound, human-confirmed, conflict-search-only, not submittable, blocked from engagement and matter opening, not docketed, not billed, and local-file-only.
+
+The same gate also verifies evidence completeness for normalized conflict-search terms, budget lines, budget support items, and proposal-level assumptions, exclusions, and unknowns. A failed check raises before the final review package is accepted.
 
 ## Agent architecture
 

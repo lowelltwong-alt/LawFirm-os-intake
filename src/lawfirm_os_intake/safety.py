@@ -3,6 +3,7 @@ from __future__ import annotations
 from .models import (
     BudgetProposal,
     ConflictSeedPacket,
+    EvidenceRef,
     HumanConfirmation,
     IntakePreflightPacket,
     MatterOpeningReadiness,
@@ -28,6 +29,71 @@ def _check(
 
 def _contains(items: list[str], expected: str) -> bool:
     return expected in set(items)
+
+
+def _refs_match_packet_segments(packet: IntakePreflightPacket, refs: list[EvidenceRef]) -> bool:
+    segments_by_id = {segment.segment_id: segment for segment in packet.segments}
+    for ref in refs:
+        segment = segments_by_id.get(ref.segment_id)
+        if segment is None:
+            return False
+        if ref.source_id != segment.source_id:
+            return False
+        if ref.start_offset != segment.start_offset or ref.end_offset != segment.end_offset:
+            return False
+        if ref.sha256 != segment.sha256:
+            return False
+    return True
+
+
+def _conflict_terms_are_evidence_bound(
+    packet: IntakePreflightPacket, conflict_seed: ConflictSeedPacket
+) -> bool:
+    if not conflict_seed.normalized_search_terms:
+        return False
+    refs = [ref for term in conflict_seed.normalized_search_terms for ref in term.evidence_refs]
+    return (
+        bool(refs)
+        and all(term.evidence_refs for term in conflict_seed.normalized_search_terms)
+        and _refs_match_packet_segments(packet, refs)
+    )
+
+
+def _budget_lines_are_evidence_bound(packet: IntakePreflightPacket, budget: BudgetProposal) -> bool:
+    refs = [ref for line in budget.lines for ref in line.evidence_refs]
+    return all(line.evidence_refs for line in budget.lines) and _refs_match_packet_segments(
+        packet, refs
+    )
+
+
+def _budget_support_items_are_supported(
+    packet: IntakePreflightPacket, budget: BudgetProposal
+) -> bool:
+    if not budget.budget_support_items:
+        return False
+    refs = [ref for item in budget.budget_support_items for ref in item.evidence_refs]
+    if refs and not _refs_match_packet_segments(packet, refs):
+        return False
+    return all(item.evidence_refs or item.structured_ref for item in budget.budget_support_items)
+
+
+def _budget_texts_are_supported(budget: BudgetProposal) -> bool:
+    support_texts = {
+        "assumption": {
+            item.text for item in budget.budget_support_items if item.item_type == "assumption"
+        },
+        "exclusion": {
+            item.text for item in budget.budget_support_items if item.item_type == "exclusion"
+        },
+        "unknown": {
+            item.text for item in budget.budget_support_items if item.item_type == "unknown"
+        },
+    }
+    return (
+        set(budget.assumptions).issubset(support_texts["assumption"])
+        and set(budget.exclusions).issubset(support_texts["exclusion"])
+        and set(budget.unknowns).issubset(support_texts["unknown"])
+    )
 
 
 def build_safety_gate_report(
@@ -66,10 +132,34 @@ def build_safety_gate_report(
             [artifact_refs["conflict_search_seed"]],
         ),
         _check(
+            "conflict_seed_terms_evidence_bound",
+            _conflict_terms_are_evidence_bound(packet, conflict_seed),
+            "Every normalized conflict-search term carries source-bound evidence refs.",
+            [artifact_refs["conflict_search_seed"]],
+        ),
+        _check(
             "budget_not_authorized_for_submission",
             budget.approval_state == "proposed_for_human_review"
             and budget.not_authorized_for_client_submission is True,
             "Budget remains proposed for human review and is not client/carrier-submittable.",
+            [artifact_refs["legal_budget_proposal"]],
+        ),
+        _check(
+            "budget_lines_evidence_bound",
+            _budget_lines_are_evidence_bound(packet, budget),
+            "Every budget line carries source-bound evidence refs when lines are present.",
+            [artifact_refs["legal_budget_proposal"]],
+        ),
+        _check(
+            "budget_support_items_supported",
+            _budget_support_items_are_supported(packet, budget),
+            "Every budget support item carries source-bound evidence refs or a structured ref.",
+            [artifact_refs["legal_budget_proposal"]],
+        ),
+        _check(
+            "budget_texts_have_support_items",
+            _budget_texts_are_supported(budget),
+            "Budget assumptions, exclusions, and unknowns are mirrored by support items.",
             [artifact_refs["legal_budget_proposal"]],
         ),
         _check(

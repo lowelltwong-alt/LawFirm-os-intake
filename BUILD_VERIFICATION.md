@@ -10,7 +10,7 @@ PYTHONPATH=src python scripts/validate_repo.py
 # repository validation passed
 
 PYTHONPATH=src python -m pytest -q
-# 45 passed
+# 49 passed
 
 PYTHONPATH=src ruff check src tests scripts
 # All checks passed
@@ -51,6 +51,8 @@ The budget output also includes `safety_gate_report.json`; a failed safety check
 The smoke demo runs the messy north-star synthetic fixture, not the clean carrier-only fixture.
 
 Conflict-search seed packets now require every normalized search term to carry source-bound evidence refs from the human confirmation. The packet remains a search seed only and preserves `no_conflict_conclusion`.
+
+The safety gate now independently verifies evidence completeness for conflict-search terms, budget lines, budget support items, and proposal-level assumptions, exclusions, and unknowns before accepting the final review package.
 
 ## GitHub seed verification
 

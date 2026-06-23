@@ -99,7 +99,9 @@ The system reports satisfied preconditions and blockers. The starter always rema
 
 ### 16. Safety gate report
 
-The deterministic safety gate verifies that the contract-state report is carried forward and that the final package contains no conflict clearance, engagement decision, docketed deadline, billing or submission state, external write, matter opening, iManage workspace creation, or client/carrier submission authorization. A failed check blocks final package acceptance.
+The deterministic safety gate verifies that the contract-state report is carried forward and that the final package contains no conflict clearance, engagement decision, docketed deadline, billing or submission state, external write, matter opening, iManage workspace creation, or client/carrier submission authorization.
+
+It also verifies that normalized conflict-search terms, budget lines, budget support items, and proposal-level assumptions, exclusions, and unknowns remain evidence-bound or structured-ref-supported. A failed check blocks final package acceptance.
 
 ## Terminal states
 

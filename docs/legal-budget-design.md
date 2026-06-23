@@ -19,6 +19,8 @@ Translate a human-confirmed intake into a transparent, reviewable budget proposa
 
 The starter persists these runtime checks in `budget_precondition_report.json`. If the gate fails, the run records a blocked ledger event and dry-run Exception Lake candidate, then stops before conflict seed, budget proposal, readiness, safety, or review package output.
 
+The later `safety_gate_report.json` verifies that emitted budget lines and support items still carry source-bound evidence refs or structured refs before the final review package is accepted.
+
 ## Form structure
 
 A budget proposal contains:

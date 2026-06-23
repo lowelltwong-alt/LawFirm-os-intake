@@ -70,3 +70,9 @@
 - Added a synthetic holdout fixture with an unread attachment.
 - Source coverage summaries now count `unread_sources` separately from missing and unreadable sources.
 - Unread sources now render in review summaries and emit `source_unread` dry-run `retrieval_miss` candidates.
+
+## Safety-gate evidence-completeness slice - 2026-06-23
+
+- Added deterministic safety-gate checks for evidence-bound conflict-search terms, budget lines, budget support items, and proposal-level budget texts.
+- Added fail-closed coverage for evidence-free conflict seed terms, evidence-free budget lines, unsupported budget support items, and unsupported proposal-level budget text.
+- Kept Rust readiness as a narrow future ingestion adapter boundary; Python remains the reference oracle until profiling and golden parity justify Rust.
