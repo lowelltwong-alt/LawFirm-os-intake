@@ -103,6 +103,8 @@ The quickstart uses `north-star-messy-intake.json`, a synthetic bundle with dupl
 
 Every source-bound evidence reference in the generated packets includes the cited source ID, segment ID, segment offsets, and segment hash. Strict mode rejects refs that drift from the segment table.
 
+The budget-stage `evidence_graph.json` carries the provenance forward into human review outcomes, conflict-search terms, budget lines, and budget support items. Structured refs such as human confirmations, synthetic practice-profile entries, and workflow-policy references are represented separately from observed source evidence.
+
 ## Practice context is configurable, not hidden prompt text
 
 The same message can mean different things to different practices. A carrier assignment is common in an insurance-defense practice but unusual in a plaintiff practice. This repository therefore treats practice context as a versioned profile with explicit precedence and hashes.

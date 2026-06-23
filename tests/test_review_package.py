@@ -34,12 +34,14 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     manifest_path = budget_dir / "review_package_manifest.json"
     review_text = review_path.read_text(encoding="utf-8")
     manifest = ReviewPackageManifest.model_validate(load_json(manifest_path))
+    graph = load_json(budget_dir / "evidence_graph.json")
 
     assert "# Matter Opening Review Package" in review_text
     assert "## What Is Known" in review_text
     assert "## What Still Needs Human Review" in review_text
     assert "## Conflict Search Seed" in review_text
     assert "no_conflict_conclusion" in review_text
+    assert "evidence:" in review_text
     assert "## Budget Proposal" in review_text
     assert "Scenario: baseline" in review_text
     assert "practice-profile://" in review_text
@@ -80,4 +82,27 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     ledger_events = load_jsonl(budget_dir / "run_ledger.jsonl")
     assert any(
         event["step_name"] == "matter_opening_review_package_built" for event in ledger_events
+    )
+
+    node_types = {node["node_type"] for node in graph["nodes"]}
+    relationships = {edge["relationship"] for edge in graph["edges"]}
+    assert {
+        "human_review_outcome",
+        "conflict_seed_packet",
+        "conflict_search_term",
+        "budget_line",
+        "budget_support_item",
+        "structured_ref",
+    }.issubset(node_types)
+    assert {
+        "supports_human_confirmation",
+        "supports_conflict_search_term",
+        "supports_budget_line",
+        "supports_budget_support_item",
+        "supports_budget_proposal",
+    }.issubset(relationships)
+    assert all(
+        edge["evidence_refs"]
+        for edge in graph["edges"]
+        if edge["relationship"] == "supports_conflict_search_term"
     )

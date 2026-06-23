@@ -91,7 +91,17 @@ Node and edge status must distinguish:
 - human confirmed;
 - runtime evidence;
 - proposal;
+- seed-only search inputs;
+- structured evidence;
 - canonical reference.
+
+The budget-stage graph also links:
+
+```text
+source -> conflict search term -> conflict seed
+source/structured ref -> budget support -> budget proposal
+human confirmation -> review outcome
+```
 
 ## Why no graph database yet
 

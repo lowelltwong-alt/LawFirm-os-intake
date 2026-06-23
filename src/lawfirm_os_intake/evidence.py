@@ -2,10 +2,12 @@ from __future__ import annotations
 
 from .models import (
     BudgetProposal,
+    ConflictSeedPacket,
     EvidenceGraph,
     EvidenceGraphEdge,
     EvidenceGraphNode,
     HumanConfirmation,
+    HumanReviewOutcomeRecord,
     IntakePreflightPacket,
 )
 from .util import new_id
@@ -185,6 +187,8 @@ def build_preflight_graph(packet: IntakePreflightPacket) -> EvidenceGraph:
 def extend_graph_with_budget(
     graph: EvidenceGraph,
     confirmation: HumanConfirmation,
+    human_review_outcome: HumanReviewOutcomeRecord,
+    conflict_seed: ConflictSeedPacket,
     budget: BudgetProposal,
 ) -> EvidenceGraph:
     nodes = list(graph.nodes)
@@ -196,6 +200,91 @@ def extend_graph_with_budget(
             status=confirmation.status,
         )
     )
+    for ref in confirmation.decision_evidence_refs:
+        edges.append(
+            EvidenceGraphEdge(
+                edge_id=new_id("edge"),
+                source_node_id=ref.segment_id,
+                relationship="supports_human_confirmation",
+                target_node_id=confirmation.confirmation_id,
+                evidence_refs=[ref],
+                status="human_confirmed",
+            )
+        )
+    nodes.append(
+        EvidenceGraphNode(
+            node_id=human_review_outcome.review_outcome_id,
+            node_type="human_review_outcome",
+            status=human_review_outcome.status,
+            attributes={
+                "confirmation_id": human_review_outcome.confirmation_id,
+                "required_next_gate": human_review_outcome.required_next_gate,
+                "budget_stage_allowed": human_review_outcome.budget_stage_allowed,
+                "mutation_policy": human_review_outcome.mutation_policy,
+            },
+        )
+    )
+    edges.append(
+        EvidenceGraphEdge(
+            edge_id=new_id("edge"),
+            source_node_id=confirmation.confirmation_id,
+            relationship="recorded_as_human_review_outcome",
+            target_node_id=human_review_outcome.review_outcome_id,
+            status="runtime_evidence",
+        )
+    )
+    nodes.append(
+        EvidenceGraphNode(
+            node_id=conflict_seed.conflict_seed_id,
+            node_type="conflict_seed_packet",
+            status=conflict_seed.status,
+            attributes={"conclusion": conflict_seed.conclusion},
+        )
+    )
+    edges.append(
+        EvidenceGraphEdge(
+            edge_id=new_id("edge"),
+            source_node_id=confirmation.confirmation_id,
+            relationship="supports_conflict_seed_generation",
+            target_node_id=conflict_seed.conflict_seed_id,
+            status="human_confirmed",
+        )
+    )
+    for index, term in enumerate(conflict_seed.normalized_search_terms):
+        term_node_id = f"{conflict_seed.conflict_seed_id}:term:{index}"
+        nodes.append(
+            EvidenceGraphNode(
+                node_id=term_node_id,
+                node_type="conflict_search_term",
+                status="seed_only",
+                attributes={
+                    "term": term.term,
+                    "normalized_term": term.normalized_term,
+                    "group": term.group,
+                    "source_role": term.source_role,
+                },
+            )
+        )
+        edges.append(
+            EvidenceGraphEdge(
+                edge_id=new_id("edge"),
+                source_node_id=term_node_id,
+                relationship="included_in_conflict_seed",
+                target_node_id=conflict_seed.conflict_seed_id,
+                status="seed_only",
+            )
+        )
+        for ref in term.evidence_refs:
+            edges.append(
+                EvidenceGraphEdge(
+                    edge_id=new_id("edge"),
+                    source_node_id=ref.segment_id,
+                    relationship="supports_conflict_search_term",
+                    target_node_id=term_node_id,
+                    evidence_refs=[ref],
+                    status="human_confirmed",
+                )
+            )
     nodes.append(
         EvidenceGraphNode(
             node_id=budget.budget_proposal_id, node_type="budget_proposal", status="proposal"
@@ -210,6 +299,94 @@ def extend_graph_with_budget(
             status="human_confirmed",
         )
     )
+    for index, line in enumerate(budget.lines):
+        line_node_id = f"{budget.budget_proposal_id}:line:{index}"
+        nodes.append(
+            EvidenceGraphNode(
+                node_id=line_node_id,
+                node_type="budget_line",
+                status="proposal",
+                attributes={
+                    "phase_id": line.phase_id,
+                    "task_id": line.task_id,
+                    "staffing_role": line.staffing_role,
+                    "estimated_hours": line.estimated_hours,
+                    "rate_source": line.rate_source,
+                    "rate_is_synthetic": line.rate_is_synthetic,
+                },
+            )
+        )
+        edges.append(
+            EvidenceGraphEdge(
+                edge_id=new_id("edge"),
+                source_node_id=line_node_id,
+                relationship="included_in_budget_proposal",
+                target_node_id=budget.budget_proposal_id,
+                status="proposal",
+            )
+        )
+        for ref in line.evidence_refs:
+            edges.append(
+                EvidenceGraphEdge(
+                    edge_id=new_id("edge"),
+                    source_node_id=ref.segment_id,
+                    relationship="supports_budget_line",
+                    target_node_id=line_node_id,
+                    evidence_refs=[ref],
+                )
+            )
+    for index, item in enumerate(budget.budget_support_items):
+        support_node_id = f"{budget.budget_proposal_id}:support:{index}"
+        nodes.append(
+            EvidenceGraphNode(
+                node_id=support_node_id,
+                node_type="budget_support_item",
+                status="proposal_support",
+                attributes={
+                    "item_type": item.item_type,
+                    "text": item.text,
+                    "source_kind": item.source_kind,
+                    "structured_ref": item.structured_ref,
+                },
+            )
+        )
+        edges.append(
+            EvidenceGraphEdge(
+                edge_id=new_id("edge"),
+                source_node_id=support_node_id,
+                relationship="supports_budget_proposal",
+                target_node_id=budget.budget_proposal_id,
+                status="proposal_support",
+            )
+        )
+        for ref in item.evidence_refs:
+            edges.append(
+                EvidenceGraphEdge(
+                    edge_id=new_id("edge"),
+                    source_node_id=ref.segment_id,
+                    relationship="supports_budget_support_item",
+                    target_node_id=support_node_id,
+                    evidence_refs=[ref],
+                )
+            )
+        if item.structured_ref:
+            nodes.append(
+                EvidenceGraphNode(
+                    node_id=item.structured_ref,
+                    node_type="structured_ref",
+                    status="structured_evidence",
+                    attributes={"source_kind": item.source_kind},
+                )
+            )
+            edges.append(
+                EvidenceGraphEdge(
+                    edge_id=new_id("edge"),
+                    source_node_id=item.structured_ref,
+                    relationship="supports_budget_support_item",
+                    target_node_id=support_node_id,
+                    status="structured_evidence",
+                )
+            )
     return EvidenceGraph(
         schema_version=graph.schema_version, graph_id=graph.graph_id, nodes=nodes, edges=edges
     )

@@ -194,6 +194,17 @@ def _confirmed_party_lines(confirmation: HumanConfirmation) -> list[str]:
     ]
 
 
+def _conflict_seed_lines(conflict_seed: ConflictSeedPacket) -> list[str]:
+    lines = []
+    for term in conflict_seed.normalized_search_terms:
+        refs = ", ".join(_ref_text(ref) for ref in term.evidence_refs)
+        lines.append(
+            f"- {term.group} seed: {term.term} "
+            f"(normalized: {term.normalized_term}; evidence: {refs or 'none'})"
+        )
+    return lines
+
+
 def _exception_lines(candidates: list[dict[str, Any]]) -> list[str]:
     lines = []
     for candidate in candidates:
@@ -229,18 +240,7 @@ def render_matter_opening_review_package(
         f"- [{finding.severity}] {finding.code}: {finding.message}"
         for finding in packet.critic_findings
     ]
-    conflict_lines = [
-        *(
-            f"- represented-client seed: {item}"
-            for item in conflict_seed.prospective_represented_clients
-        ),
-        *(f"- instructing-source seed: {item}" for item in conflict_seed.instructing_sources),
-        *(f"- payer seed: {item}" for item in conflict_seed.payers),
-        *(f"- insured seed: {item}" for item in conflict_seed.insureds),
-        *(f"- adverse-party seed: {item}" for item in conflict_seed.adverse_parties),
-        *(f"- opposing-counsel seed: {item}" for item in conflict_seed.opposing_counsel),
-        *(f"- unresolved-role seed: {item}" for item in conflict_seed.unresolved_roles),
-    ]
+    conflict_lines = _conflict_seed_lines(conflict_seed)
     artifact_lines = [f"- {name}: `{path}`" for name, path in sorted(artifact_refs.items())]
 
     total_budget = (

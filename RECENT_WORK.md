@@ -52,3 +52,9 @@
 - Added `HumanReviewOutcomeRecord` and schema export for typed review outcome handling.
 - Budget runs now write `human_review_outcome.<confirmation_id>.json` and append it to `human_confirmation_history.jsonl` before budget preconditions.
 - Added coverage that non-confirmed outcomes block budget output and superseding corrected confirmations append history instead of mutating prior outcomes.
+
+## Budget-stage evidence graph slice - 2026-06-23
+
+- Extended `evidence_graph.json` to include human review outcomes, conflict seed packets, conflict-search terms, budget lines, budget support items, and structured refs.
+- Added graph edges from source segments or structured refs to conflict and budget artifacts so the graph proves the same provenance as the packets.
+- Updated the matter-opening review package to show evidence refs for conflict-search terms.

@@ -40,6 +40,8 @@ Budget runs now write `human_review_outcome.<confirmation_id>.json` and append i
 
 Budget assumptions, exclusions, and unknowns now emit `budget_support_items` with evidence refs or structured refs for human review.
 
+The budget-stage evidence graph now includes human review outcome, conflict seed packet, conflict-search term, budget line, budget support item, and structured-ref nodes with source-backed or structured-ref support edges.
+
 The budget output also includes `safety_gate_report.json`; a failed safety check raises before the final review package is accepted.
 
 The smoke demo runs the messy north-star synthetic fixture, not the clean carrier-only fixture.

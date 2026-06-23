@@ -459,7 +459,13 @@ def run_budget(
     from .models import EvidenceGraph
 
     graph_model = EvidenceGraph.model_validate(graph)
-    extended = extend_graph_with_budget(graph_model, confirmation, budget)
+    extended = extend_graph_with_budget(
+        graph_model,
+        confirmation,
+        human_review_outcome,
+        conflict_seed,
+        budget,
+    )
 
     write_json(run_dir / "human_confirmation.json", confirmation.model_dump(mode="json"))
     write_json(run_dir / "conflict_search_seed_packet.json", conflict_seed.model_dump(mode="json"))
