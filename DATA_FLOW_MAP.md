@@ -73,6 +73,7 @@ synthetic source bundle
 -> independent evidence review
 -> dry-run Exception Lake candidates for retrieval misses, workflow escalations, and authority conflicts
 -> human intake confirmation
+-> human review outcome record and append-only confirmation history
 -> budget precondition gate
 -> conflict-search seed packet, with evidence-bound normalized terms and no conflict conclusion
 -> legal budget proposal, not approved or submitted
@@ -98,6 +99,7 @@ The outer runtime owner is `LawFirm-os-orchestrator`. The local intake CLI is a 
 | Evidence packet | Orchestrator | Orchestrator -> Exception Lake | Principal admission unit for runtime evidence |
 | `ExceptionLakeCandidate` in `exception_lake_candidates.jsonl` | Intake candidate surface | Intake -> Orchestrator -> Exception Lake review path | Dry-run only; maps to broad existing Lake classes and includes no raw payload |
 | `ReviewPackageManifest` and `matter_opening_review_package.md` | Intake candidate surface | Intake -> Human reviewer / Orchestrator review path | One-run review surface linking contract state, knowns, unknowns, evidence refs, conflict seed, budget, exception candidates, blockers, ledgers, and prohibited actions |
+| `HumanReviewOutcomeRecord` and `human_confirmation_history.jsonl` | Intake candidate surface | Intake -> Human reviewer / Orchestrator review path | Records how a human confirmation outcome was handled; non-confirmed outcomes block budget, confirmed outcomes advance only to precondition checks, and superseding corrections append new records instead of mutating prior outcomes |
 | `ConflictSeedPacket` / `ConflictSearchTerm` | Intake candidate surface | Intake -> Human reviewer / Orchestrator review path | Search-seed inputs only; normalized terms are grouped by role and must carry evidence refs from the source-bound human confirmation; conclusion remains `no_conflict_conclusion` |
 | `BudgetSupportItem` | Intake candidate surface | Intake -> Human reviewer / Orchestrator review path | Evidence or structured-ref support for budget assumptions, exclusions, and unknowns |
 | `BudgetPreconditionReport` | Intake candidate surface | Intake -> Human reviewer / Orchestrator review path | Deterministic proof that the budget stage had a matching, confirmed, evidence-bound human confirmation before emitting conflict seed, proposal, readiness, safety, or review package artifacts |

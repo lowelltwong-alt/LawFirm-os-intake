@@ -39,6 +39,7 @@ def build_budget_precondition_report(
     packet: IntakePreflightPacket,
     confirmation: HumanConfirmation,
     input_refs: list[str],
+    human_review_outcome_ref: str | None = None,
 ) -> BudgetPreconditionReport:
     confirmation_ref = f"human-confirmation://{confirmation.confirmation_id}"
     packet_ref = f"intake-preflight-packet://{packet.packet_id}"
@@ -127,6 +128,7 @@ def build_budget_precondition_report(
         checks=checks,
         blocked_state=blocked_state,
         input_refs=input_refs,
+        human_review_outcome_ref=human_review_outcome_ref,
         prohibited_outputs=PROHIBITED_PRECONDITION_FAILURE_OUTPUTS,
         generated_at=now_iso(),
     )

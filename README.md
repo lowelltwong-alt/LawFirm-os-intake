@@ -81,6 +81,8 @@ The demo emits:
 |   `-- run_ledger.jsonl
 `-- budget/
     |-- budget_precondition_report.json
+    |-- human_review_outcome.<confirmation_id>.json
+    |-- human_confirmation_history.jsonl
     |-- conflict_search_seed_packet.json
     |-- legal_budget_proposal.json
     |-- legal_budget_review_form.md
@@ -94,6 +96,8 @@ The demo emits:
 ```
 
 The consolidated `matter_opening_review_package.md` is the human-facing north-star artifact. It points back to the structured packets and tells the reviewer what is known, what remains uncertain, which conflict-search seeds were prepared, what budget scenario was proposed, which exception candidates exist, what the safety gate verified, and why the workflow is still blocked.
+
+Budget runs also write a typed human review outcome record and append it to `human_confirmation_history.jsonl`. Corrections are represented as later records with `supersedes_confirmation_id`; prior review outcomes are not silently mutated.
 
 The quickstart uses `north-star-messy-intake.json`, a synthetic bundle with duplicate source text, a missing complaint attachment, misleading role/context signals, prompt-injection source content, missing intake fields, deadline candidates, and human-confirmed budget generation.
 

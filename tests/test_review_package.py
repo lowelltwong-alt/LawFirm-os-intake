@@ -66,6 +66,12 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert manifest.artifact_refs["budget_precondition_report"] == str(
         budget_dir / "budget_precondition_report.json"
     )
+    assert manifest.artifact_refs["human_confirmation_history"] == str(
+        budget_dir / "human_confirmation_history.jsonl"
+    )
+    assert manifest.artifact_refs["human_review_outcome"].endswith(
+        f"human_review_outcome.{confirmation.confirmation_id}.json"
+    )
     assert "conflict_search_seed" in manifest.artifact_refs
     assert "legal_budget_proposal" in manifest.artifact_refs
     assert "preflight_exception_candidates" in manifest.artifact_refs

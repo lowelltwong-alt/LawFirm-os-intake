@@ -250,6 +250,40 @@ class HumanConfirmation(StrictModel):
     decision_evidence_refs: list[EvidenceRef] = Field(default_factory=list)
 
 
+class HumanReviewOutcomeRecord(StrictModel):
+    schema_version: str = "0.1"
+    review_outcome_id: str
+    run_id: str
+    preflight_packet_id: str
+    confirmation_preflight_packet_id: str
+    confirmation_id: str
+    status: Literal[
+        "confirmed",
+        "needs_more_information",
+        "unknown",
+        "human_only",
+        "declined",
+        "declined_or_referred",
+    ]
+    reviewer_id: str
+    reviewed_at: str
+    supersedes_confirmation_id: str | None = None
+    mutation_policy: Literal["append_or_supersede_only"] = "append_or_supersede_only"
+    matches_preflight_packet: bool
+    budget_stage_allowed: bool
+    required_next_gate: Literal[
+        "budget_precondition_gate",
+        "collect_missing_information",
+        "human_classification_correction",
+        "human_only_handling",
+        "declined_or_referred_handoff",
+    ]
+    decision_evidence_refs: list[EvidenceRef] = Field(default_factory=list)
+    confirmed_party_evidence_refs: list[EvidenceRef] = Field(default_factory=list)
+    confirmed_party_count: int
+    notes: str | None = None
+
+
 class ConflictSeedPacket(StrictModel):
     schema_version: str = "0.1"
     conflict_seed_id: str
@@ -395,6 +429,7 @@ class BudgetPreconditionReport(StrictModel):
     checks: list[BudgetPreconditionCheck]
     blocked_state: str | None = None
     input_refs: list[str]
+    human_review_outcome_ref: str | None = None
     prohibited_outputs: list[str]
     external_writes_performed: Literal[False] = False
     generated_at: str

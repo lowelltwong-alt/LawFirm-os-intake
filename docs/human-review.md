@@ -40,3 +40,5 @@ The reviewer must verify template fit, staffing, hours, rates, guidelines, expen
 ## Decision evidence
 
 A review record should contain reviewer identity, role, timestamp, packet ID, decisions, corrections, evidence reviewed, missing sources, and notes. Confirmed party roles carry source-bound evidence refs, and the confirmation as a whole carries decision evidence refs for the matter/posture decisions reviewed. Corrections are appended or superseding records; do not silently overwrite history.
+
+The starter budget path writes `human_review_outcome.<confirmation_id>.json` and appends the same record to `human_confirmation_history.jsonl` before the budget precondition gate runs. The record preserves reviewer identity, status, supersession ID, evidence refs, required next gate, and whether budget-stage output is allowed. Only a `confirmed` outcome bound to the same preflight packet may be marked budget-stage eligible; every other review outcome remains blocked and inspectable.

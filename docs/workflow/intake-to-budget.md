@@ -73,6 +73,8 @@ Difficult cases may receive a bounded frontier adjudication before human review.
 
 The reviewer confirms or corrects matter family, posture, principal party roles, jurisdiction, and any date characterization.
 
+The budget workflow records the consumed review outcome as `human_review_outcome.<confirmation_id>.json` and appends it to `human_confirmation_history.jsonl`. Outcomes of `unknown`, `needs_more_information`, `human_only`, `declined`, and `declined_or_referred` stop before budget output. Corrected confirmations use `supersedes_confirmation_id` and append a new history row rather than overwriting the prior outcome.
+
 ### 11. Budget precondition gate
 
 Before budget generation, the system verifies that the human confirmation binds to the exact preflight packet, has `confirmed` status, contains human-confirmed matter family, representation posture, and principal party roles, and carries source-bound evidence refs for both decision evidence and confirmed party roles.

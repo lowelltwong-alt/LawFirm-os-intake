@@ -46,3 +46,9 @@
 - Required `ConflictSearchTerm` records to carry source-bound evidence refs from the human confirmation.
 - Added fail-closed validation when conflict seed terms lack evidence, plus north-star and unit coverage.
 - Tightened the Rust-ready ingestion ADR: Python stays the reference implementation, and Rust remains a future deterministic hot-path adapter only after profiling and golden parity.
+
+## Human-review outcome history slice - 2026-06-23
+
+- Added `HumanReviewOutcomeRecord` and schema export for typed review outcome handling.
+- Budget runs now write `human_review_outcome.<confirmation_id>.json` and append it to `human_confirmation_history.jsonl` before budget preconditions.
+- Added coverage that non-confirmed outcomes block budget output and superseding corrected confirmations append history instead of mutating prior outcomes.

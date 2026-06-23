@@ -98,6 +98,7 @@ def main(argv: list[str] | None = None) -> int:
                         run_dir / "matter_opening_review_package.md"
                     ),
                     "review_package_manifest": str(run_dir / "review_package_manifest.json"),
+                    "human_confirmation_history": str(run_dir / "human_confirmation_history.jsonl"),
                     "budget_precondition_report": str(run_dir / "budget_precondition_report.json"),
                     "safety_gate_report": str(run_dir / "safety_gate_report.json"),
                     "run_dir": str(run_dir),
@@ -142,6 +143,9 @@ def main(argv: list[str] | None = None) -> int:
                         budget_dir / "matter_opening_review_package.md"
                     ),
                     "review_package_manifest": str(budget_dir / "review_package_manifest.json"),
+                    "human_confirmation_history": str(
+                        budget_dir / "human_confirmation_history.jsonl"
+                    ),
                     "budget_precondition_report": str(
                         budget_dir / "budget_precondition_report.json"
                     ),

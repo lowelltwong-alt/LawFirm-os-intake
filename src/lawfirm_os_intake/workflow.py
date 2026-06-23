@@ -5,6 +5,7 @@ from typing import Any
 
 from .adapters import resolve_adapter
 from .budget import build_budget_proposal
+from .confirmation import build_human_review_outcome_record
 from .contract_state import build_contract_state_report, enforce_contract_state
 from .context import build_effective_context, load_profile
 from .evidence import build_preflight_graph, extend_graph_with_budget
@@ -365,11 +366,34 @@ def run_budget(
             input_refs=[str(preflight_packet_path), str(confirmation_path)],
         ).model_dump(mode="json"),
     )
+    human_review_outcome = build_human_review_outcome_record(packet, confirmation)
+    human_review_outcome_path = (
+        run_dir / f"human_review_outcome.{confirmation.confirmation_id}.json"
+    )
+    human_confirmation_history_path = run_dir / "human_confirmation_history.jsonl"
+    write_json(human_review_outcome_path, human_review_outcome.model_dump(mode="json"))
+    append_jsonl(
+        human_confirmation_history_path,
+        human_review_outcome.model_dump(mode="json"),
+    )
+    append_jsonl(
+        ledger_path,
+        _event(
+            packet.run_id,
+            1,
+            "human_review_outcome_recorded",
+            "completed",
+            input_refs=[str(confirmation_path)],
+            output_refs=[str(human_review_outcome_path), str(human_confirmation_history_path)],
+            notes=human_review_outcome.required_next_gate,
+        ).model_dump(mode="json"),
+    )
     budget_precondition_report_path = run_dir / "budget_precondition_report.json"
     budget_precondition_report = build_budget_precondition_report(
         packet,
         confirmation,
-        [str(preflight_packet_path), str(confirmation_path)],
+        [str(preflight_packet_path), str(confirmation_path), str(human_review_outcome_path)],
+        str(human_review_outcome_path),
     )
     write_json(
         budget_precondition_report_path,
@@ -379,7 +403,7 @@ def run_budget(
         ledger_path,
         _event(
             packet.run_id,
-            1,
+            2,
             "budget_precondition_gate",
             "completed" if budget_precondition_report.status == "passed" else "blocked",
             output_refs=[str(budget_precondition_report_path)],
@@ -394,7 +418,7 @@ def run_budget(
             ledger_path,
             _event(
                 packet.run_id,
-                2,
+                3,
                 "budget_generation_blocked",
                 "blocked",
                 output_refs=[str(budget_precondition_report_path), str(exception_candidates_path)],
@@ -475,6 +499,8 @@ def run_budget(
         "budget_exception_candidates": str(exception_candidates_path),
         "budget_run_ledger": str(ledger_path),
         "preflight_run_ledger": packet.run_ledger_ref,
+        "human_review_outcome": str(human_review_outcome_path),
+        "human_confirmation_history": str(human_confirmation_history_path),
         "contract_state_report": packet.contract_state_report_ref,
         "budget_precondition_report": str(budget_precondition_report_path),
         "safety_gate_report": str(safety_gate_report_path),
@@ -536,7 +562,7 @@ def run_budget(
         ledger_path,
         _event(
             packet.run_id,
-            2,
+            3,
             "human_confirmation_consumed",
             "completed",
             input_refs=[str(confirmation_path)],
@@ -546,7 +572,7 @@ def run_budget(
         ledger_path,
         _event(
             packet.run_id,
-            3,
+            4,
             "conflict_seed_and_budget_proposal_built",
             "completed",
             output_refs=[
@@ -562,7 +588,7 @@ def run_budget(
         ledger_path,
         _event(
             packet.run_id,
-            4,
+            5,
             "matter_opening_review_package_built",
             "completed",
             output_refs=[str(review_package_path), str(manifest_path)],

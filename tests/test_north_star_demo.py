@@ -34,6 +34,7 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     safety = load_json(budget_dir / "safety_gate_report.json")
     manifest = load_json(budget_dir / "review_package_manifest.json")
     budget_preconditions = load_json(budget_dir / "budget_precondition_report.json")
+    confirmation_history = load_jsonl(budget_dir / "human_confirmation_history.jsonl")
     review_text = (budget_dir / "matter_opening_review_package.md").read_text(encoding="utf-8")
 
     labels = {item["local_event_label"] for item in preflight_exceptions}
@@ -42,6 +43,8 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     assert contract_state["status"] == "passed"
     assert confirmation["decision_evidence_refs"]
     assert all(party["evidence_refs"] for party in confirmation["confirmed_parties"])
+    assert confirmation_history[0]["confirmation_id"] == confirmation["confirmation_id"]
+    assert confirmation_history[0]["budget_stage_allowed"] is True
     assert all(term["evidence_refs"] for term in conflict_seed["normalized_search_terms"])
     assert packet["source_coverage_summary"]["duplicate_sources"] == 1
     assert packet["source_coverage_summary"]["coverage_complete"] is False
@@ -67,6 +70,10 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     assert manifest["artifact_refs"]["budget_precondition_report"].endswith(
         "budget_precondition_report.json"
     )
+    assert manifest["artifact_refs"]["human_confirmation_history"].endswith(
+        "human_confirmation_history.jsonl"
+    )
+    assert manifest["artifact_refs"]["human_review_outcome"].endswith(".json")
     assert manifest["artifact_refs"]["safety_gate_report"].endswith("safety_gate_report.json")
     assert manifest["artifact_refs"]["contract_state_report"].endswith("contract_state_report.json")
     assert manifest["contract_state_report_ref"].endswith("contract_state_report.json")

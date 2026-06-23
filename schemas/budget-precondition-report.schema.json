@@ -93,6 +93,18 @@
       "title": "Input Refs",
       "type": "array"
     },
+    "human_review_outcome_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Human Review Outcome Ref"
+    },
     "prohibited_outputs": {
       "items": {
         "type": "string"

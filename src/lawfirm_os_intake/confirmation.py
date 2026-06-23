@@ -1,6 +1,13 @@
 from __future__ import annotations
 
-from .models import ConfirmedParty, EvidenceRef, HumanConfirmation, IntakePreflightPacket
+from .models import (
+    ConfirmedParty,
+    EvidenceRef,
+    HumanConfirmation,
+    HumanReviewOutcomeRecord,
+    IntakePreflightPacket,
+)
+from .util import new_id
 
 
 def _normal(value: str) -> str:
@@ -67,4 +74,42 @@ def bind_confirmation_to_packet_evidence(
             "confirmed_parties": parties,
             "decision_evidence_refs": _dedup_refs(decision_refs),
         }
+    )
+
+
+def _required_next_gate(status: str) -> str:
+    if status == "confirmed":
+        return "budget_precondition_gate"
+    if status == "needs_more_information":
+        return "collect_missing_information"
+    if status == "unknown":
+        return "human_classification_correction"
+    if status == "human_only":
+        return "human_only_handling"
+    return "declined_or_referred_handoff"
+
+
+def build_human_review_outcome_record(
+    packet: IntakePreflightPacket,
+    confirmation: HumanConfirmation,
+) -> HumanReviewOutcomeRecord:
+    party_refs = [ref for party in confirmation.confirmed_parties for ref in party.evidence_refs]
+    matches_preflight_packet = confirmation.preflight_packet_id == packet.packet_id
+    return HumanReviewOutcomeRecord(
+        review_outcome_id=new_id("reviewoutcome"),
+        run_id=packet.run_id,
+        preflight_packet_id=packet.packet_id,
+        confirmation_preflight_packet_id=confirmation.preflight_packet_id,
+        confirmation_id=confirmation.confirmation_id,
+        status=confirmation.status,
+        reviewer_id=confirmation.reviewer_id,
+        reviewed_at=confirmation.reviewed_at,
+        supersedes_confirmation_id=confirmation.supersedes_confirmation_id,
+        matches_preflight_packet=matches_preflight_packet,
+        budget_stage_allowed=confirmation.status == "confirmed" and matches_preflight_packet,
+        required_next_gate=_required_next_gate(confirmation.status),
+        decision_evidence_refs=confirmation.decision_evidence_refs,
+        confirmed_party_evidence_refs=_dedup_refs(party_refs),
+        confirmed_party_count=len(confirmation.confirmed_parties),
+        notes=confirmation.notes,
     )
