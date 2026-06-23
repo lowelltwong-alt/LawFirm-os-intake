@@ -4,13 +4,13 @@ Verified in the artifact build environment on 2026-06-23:
 
 ```text
 PYTHONPATH=src python scripts/export_schemas.py
-# exported 16 schemas
+# exported 17 schemas
 
 PYTHONPATH=src python scripts/validate_repo.py
 # repository validation passed
 
 PYTHONPATH=src python -m pytest -q
-# 33 passed
+# 34 passed
 
 PYTHONPATH=src ruff check src tests scripts
 # All checks passed
@@ -28,6 +28,8 @@ The preflight output now includes `contract_state_report.json`, which verifies t
 Source-bound evidence references now include segment offsets as well as source ID, segment ID, and hash. Strict evidence validation fails if a ref drifts from the cited segment.
 
 ADR-004 records the Rust-ready ingestion boundary for future high-volume or constrained-compute document processing. Python remains the reference implementation until any Rust adapter proves golden parity.
+
+The budget stage now emits `budget_precondition_report.json`; failed confirmation attempts write this report, a blocked ledger event, and a dry-run Exception Lake candidate before any proposal output is created.
 
 The budget output now includes `matter_opening_review_package.md` and `review_package_manifest.json` as the consolidated review surface for the north-star demo.
 

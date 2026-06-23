@@ -7,11 +7,15 @@ Translate a human-confirmed intake into a transparent, reviewable budget proposa
 ## Preconditions
 
 - intake packet exists;
+- human confirmation binds to the exact intake packet;
 - human has confirmed matter family and representation posture;
+- human confirmation status is `confirmed`;
 - principal party roles are confirmed or unresolved roles are explicit;
 - an approved practice template exists;
 - rate/guideline source state is known;
 - conflicts and engagement remain separate blockers.
+
+The starter persists these runtime checks in `budget_precondition_report.json`. If the gate fails, the run records a blocked ledger event and dry-run Exception Lake candidate, then stops before conflict seed, budget proposal, readiness, safety, or review package output.
 
 ## Form structure
 

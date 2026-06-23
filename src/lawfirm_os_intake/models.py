@@ -376,6 +376,28 @@ class MatterOpeningReadiness(StrictModel):
     prohibited_actions: list[str]
 
 
+class BudgetPreconditionCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    evidence_refs: list[str] = Field(default_factory=list)
+
+
+class BudgetPreconditionReport(StrictModel):
+    schema_version: str = "0.1"
+    budget_precondition_report_id: str
+    run_id: str
+    preflight_packet_id: str
+    confirmation_id: str
+    status: Literal["passed", "failed"]
+    checks: list[BudgetPreconditionCheck]
+    blocked_state: str | None = None
+    input_refs: list[str]
+    prohibited_outputs: list[str]
+    external_writes_performed: Literal[False] = False
+    generated_at: str
+
+
 class EvidenceGraphNode(StrictModel):
     node_id: str
     node_type: str
@@ -450,6 +472,7 @@ class ReviewPackageManifest(StrictModel):
     prohibited_actions: list[str]
     safety_gate_report_ref: str
     contract_state_report_ref: str | None = None
+    budget_precondition_report_ref: str | None = None
     evidence_graph_ref: str
     run_ledger_refs: list[str]
     exception_candidate_refs: list[str]

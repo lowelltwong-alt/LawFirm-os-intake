@@ -31,6 +31,7 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     budget_exceptions = load_jsonl(budget_dir / "exception_lake_candidates.jsonl")
     safety = load_json(budget_dir / "safety_gate_report.json")
     manifest = load_json(budget_dir / "review_package_manifest.json")
+    budget_preconditions = load_json(budget_dir / "budget_precondition_report.json")
     review_text = (budget_dir / "matter_opening_review_package.md").read_text(encoding="utf-8")
 
     labels = {item["local_event_label"] for item in preflight_exceptions}
@@ -55,8 +56,12 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
         for item in budget_exceptions
     )
     assert safety["status"] == "passed"
+    assert budget_preconditions["status"] == "passed"
     assert safety["final_boundary"] == "blocked_pending_conflicts_and_engagement"
     assert manifest["status"] == "blocked_pending_conflicts_and_engagement"
+    assert manifest["artifact_refs"]["budget_precondition_report"].endswith(
+        "budget_precondition_report.json"
+    )
     assert manifest["artifact_refs"]["safety_gate_report"].endswith("safety_gate_report.json")
     assert manifest["artifact_refs"]["contract_state_report"].endswith("contract_state_report.json")
     assert manifest["contract_state_report_ref"].endswith("contract_state_report.json")

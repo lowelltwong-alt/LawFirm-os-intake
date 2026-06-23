@@ -8,7 +8,11 @@ from .budget import build_budget_proposal
 from .contract_state import build_contract_state_report, enforce_contract_state
 from .context import build_effective_context, load_profile
 from .evidence import build_preflight_graph, extend_graph_with_budget
-from .exceptions import build_budget_exception_candidates, build_preflight_exception_candidates
+from .exceptions import (
+    build_budget_exception_candidates,
+    build_budget_precondition_exception_candidates,
+    build_preflight_exception_candidates,
+)
 from .models import (
     ConflictSearchTerm,
     ConflictSeedPacket,
@@ -19,6 +23,7 @@ from .models import (
     RunEvent,
     SourceBundle,
 )
+from .preconditions import build_budget_precondition_report, enforce_budget_preconditions
 from .review import (
     render_budget_review_form,
     render_intake_review_form,
@@ -314,15 +319,59 @@ def run_budget(
 ) -> tuple[Any, Path]:
     packet = IntakePreflightPacket.model_validate(load_json(preflight_packet_path))
     confirmation = HumanConfirmation.model_validate(load_json(confirmation_path))
-    if confirmation.preflight_packet_id != packet.packet_id:
-        raise ValueError("confirmation does not match preflight packet")
-    if confirmation.status != "confirmed":
-        raise ValueError("confirmation status must be confirmed")
-
-    profile = load_profile(profile_path)
     run_dir = Path(out_dir)
     run_dir.mkdir(parents=True, exist_ok=True)
     ledger_path = run_dir / "run_ledger.jsonl"
+    append_jsonl(
+        ledger_path,
+        _event(
+            packet.run_id,
+            0,
+            "budget_run_started",
+            "started",
+            input_refs=[str(preflight_packet_path), str(confirmation_path)],
+        ).model_dump(mode="json"),
+    )
+    budget_precondition_report_path = run_dir / "budget_precondition_report.json"
+    budget_precondition_report = build_budget_precondition_report(
+        packet,
+        confirmation,
+        [str(preflight_packet_path), str(confirmation_path)],
+    )
+    write_json(
+        budget_precondition_report_path,
+        budget_precondition_report.model_dump(mode="json"),
+    )
+    append_jsonl(
+        ledger_path,
+        _event(
+            packet.run_id,
+            1,
+            "budget_precondition_gate",
+            "completed" if budget_precondition_report.status == "passed" else "blocked",
+            output_refs=[str(budget_precondition_report_path)],
+        ).model_dump(mode="json"),
+    )
+    if budget_precondition_report.status == "failed":
+        exception_candidates_path = run_dir / "exception_lake_candidates.jsonl"
+        exception_candidates_path.touch()
+        for candidate in build_budget_precondition_exception_candidates(budget_precondition_report):
+            append_jsonl(exception_candidates_path, candidate.model_dump(mode="json"))
+        append_jsonl(
+            ledger_path,
+            _event(
+                packet.run_id,
+                2,
+                "budget_generation_blocked",
+                "blocked",
+                output_refs=[str(budget_precondition_report_path), str(exception_candidates_path)],
+                notes=budget_precondition_report.blocked_state,
+            ).model_dump(mode="json"),
+        )
+        enforce_budget_preconditions(budget_precondition_report)
+
+    enforce_budget_preconditions(budget_precondition_report)
+    profile = load_profile(profile_path)
 
     conflict_seed = build_conflict_seed(packet, confirmation)
     budget = build_budget_proposal(packet, confirmation, profile)
@@ -394,6 +443,7 @@ def run_budget(
         "budget_run_ledger": str(ledger_path),
         "preflight_run_ledger": packet.run_ledger_ref,
         "contract_state_report": packet.contract_state_report_ref,
+        "budget_precondition_report": str(budget_precondition_report_path),
         "safety_gate_report": str(safety_gate_report_path),
     }
     safety_report = build_safety_gate_report(
@@ -441,6 +491,7 @@ def run_budget(
         prohibited_actions=readiness.prohibited_actions,
         safety_gate_report_ref=str(safety_gate_report_path),
         contract_state_report_ref=packet.contract_state_report_ref,
+        budget_precondition_report_ref=str(budget_precondition_report_path),
         evidence_graph_ref=str(run_dir / "evidence_graph.json"),
         run_ledger_refs=[packet.run_ledger_ref, str(ledger_path)],
         exception_candidate_refs=[
@@ -452,7 +503,7 @@ def run_budget(
         ledger_path,
         _event(
             packet.run_id,
-            6,
+            2,
             "human_confirmation_consumed",
             "completed",
             input_refs=[str(confirmation_path)],
@@ -462,7 +513,7 @@ def run_budget(
         ledger_path,
         _event(
             packet.run_id,
-            7,
+            3,
             "conflict_seed_and_budget_proposal_built",
             "completed",
             output_refs=[
@@ -478,7 +529,7 @@ def run_budget(
         ledger_path,
         _event(
             packet.run_id,
-            8,
+            4,
             "matter_opening_review_package_built",
             "completed",
             output_refs=[str(review_package_path), str(manifest_path)],

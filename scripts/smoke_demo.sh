@@ -18,6 +18,8 @@ grep -q "prompt_injection_source_content" "$preflight_dir/exception_lake_candida
 grep -q "source_missing" "$preflight_dir/exception_lake_candidates.jsonl"
 grep -q "duplicate_source_detected" "$preflight_dir/exception_lake_candidates.jsonl"
 test -s ".lawfirm-os-intake/smoke/budget/exception_lake_candidates.jsonl"
+test -s ".lawfirm-os-intake/smoke/budget/budget_precondition_report.json"
+grep -q '"status": "passed"' ".lawfirm-os-intake/smoke/budget/budget_precondition_report.json"
 test -s ".lawfirm-os-intake/smoke/budget/matter_opening_review_package.md"
 test -s ".lawfirm-os-intake/smoke/budget/review_package_manifest.json"
 test -s ".lawfirm-os-intake/smoke/budget/safety_gate_report.json"

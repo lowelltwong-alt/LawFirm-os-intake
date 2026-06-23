@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from .models import (
+    BudgetPreconditionReport,
     CriticFinding,
     EscalationDecision,
     EvidenceRef,
@@ -166,5 +167,28 @@ def build_budget_exception_candidates(
             ),
             evidence_refs=evidence_refs,
             blocked_state=readiness.status,
+        )
+    ]
+
+
+def build_budget_precondition_exception_candidates(
+    report: BudgetPreconditionReport,
+) -> list[ExceptionLakeCandidate]:
+    if report.status == "passed":
+        return []
+    failed = [check.check_id for check in report.checks if check.status == "failed"]
+    label = report.blocked_state or "budget_precondition_failed"
+    return [
+        ExceptionLakeCandidate(
+            candidate_id=new_id("exc"),
+            run_id=report.run_id,
+            preflight_packet_id=report.preflight_packet_id,
+            local_event_label=label,
+            canonical_lake_class="workflow_escalation",
+            reason=(
+                "Budget generation was blocked before proposal output because preconditions failed: "
+                + ", ".join(failed)
+            ),
+            blocked_state=label,
         )
     ]

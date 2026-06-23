@@ -87,6 +87,18 @@
       "default": null,
       "title": "Contract State Report Ref"
     },
+    "budget_precondition_report_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Budget Precondition Report Ref"
+    },
     "evidence_graph_ref": {
       "title": "Evidence Graph Ref",
       "type": "string"

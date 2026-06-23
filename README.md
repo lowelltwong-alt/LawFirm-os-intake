@@ -23,6 +23,7 @@ messy inbound source
 -> independent evidence review
 -> dry-run Exception Lake candidates for missing source, ambiguity, prompt injection, or blockers
 -> human intake confirmation
+-> budget precondition gate
 -> conflict-search seed packet (no conflict conclusion)
 -> legal budget proposal (not approved or submitted)
 -> matter-opening readiness packet
@@ -79,6 +80,7 @@ The demo emits:
 |   |-- evidence_graph.json
 |   `-- run_ledger.jsonl
 `-- budget/
+    |-- budget_precondition_report.json
     |-- conflict_search_seed_packet.json
     |-- legal_budget_proposal.json
     |-- legal_budget_review_form.md
@@ -134,6 +136,8 @@ The budget output is a proposal only. It may contain phases, tasks, staffing, ho
 Every proposal-level assumption, exclusion, and unknown is mirrored as a `budget_support_items` entry with source evidence refs or structured refs to the human confirmation, synthetic practice profile, or workflow policy.
 
 If rates are absent, the system emits an **hours-only** proposal. It never invents rates or totals.
+
+Every budget run emits `budget_precondition_report.json`. If confirmation is missing, mismatched, incomplete, or not `confirmed`, the run writes that failed report, a blocked run-ledger event, and a dry-run Exception Lake candidate, then stops before producing a conflict seed, budget proposal, readiness packet, safety report, or review package.
 
 ## Safety gate
 

@@ -73,23 +73,29 @@ Difficult cases may receive a bounded frontier adjudication before human review.
 
 The reviewer confirms or corrects matter family, posture, principal party roles, jurisdiction, and any date characterization.
 
-### 11. Conflict-search seed
+### 11. Budget precondition gate
+
+Before budget generation, the system verifies that the human confirmation binds to the exact preflight packet, has `confirmed` status, and contains human-confirmed matter family, representation posture, and principal party roles.
+
+The run writes `budget_precondition_report.json`. If the gate fails, it records a blocked run event and dry-run Exception Lake candidate, then stops before emitting a conflict seed, budget proposal, matter-opening readiness packet, safety report, or review package.
+
+### 12. Conflict-search seed
 
 The system builds normalized search terms grouped by prospective client, instructing source, payer, adverse party, opposing counsel, aliases, and unresolved roles. It makes no conflict conclusion.
 
-### 12. Budget proposal
+### 13. Budget proposal
 
 A confirmed matter type selects an approved practice template. The planner calculates hours, rates if authorized, fees, expenses, and contingency. Assumptions, exclusions, and unknowns remain visible.
 
-### 13. Human budget review
+### 14. Human budget review
 
 Future governed step. The starter does not approve or submit.
 
-### 14. Matter-opening readiness
+### 15. Matter-opening readiness
 
 The system reports satisfied preconditions and blockers. The starter always remains blocked pending conflicts, engagement, and matter-opening authorization.
 
-### 15. Safety gate report
+### 16. Safety gate report
 
 The deterministic safety gate verifies that the contract-state report is carried forward and that the final package contains no conflict clearance, engagement decision, docketed deadline, billing or submission state, external write, matter opening, iManage workspace creation, or client/carrier submission authorization. A failed check blocks final package acceptance.
 
