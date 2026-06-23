@@ -484,6 +484,7 @@ class ExceptionLakeCandidate(StrictModel):
     reason: str
     source_inventory_refs: list[str] = Field(default_factory=list)
     evidence_refs: list[EvidenceRef] = Field(default_factory=list)
+    structured_refs: list[str] = Field(default_factory=list)
     blocked_state: str | None = None
     raw_payload_included: bool = False
     canonical_promotion_required: bool = True

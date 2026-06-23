@@ -481,6 +481,7 @@ def run_budget(
         packet.run_id,
         readiness,
         confirmation.decision_evidence_refs,
+        budget,
     ):
         append_jsonl(exception_candidates_path, candidate.model_dump(mode="json"))
 

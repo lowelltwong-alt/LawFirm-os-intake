@@ -48,6 +48,7 @@ A budget proposal contains:
 - Keep expert/vendor costs distinct from law-firm fees.
 - Mark all synthetic numbers.
 - Assumptions, exclusions, and unknowns must have source-bound or structured support through `budget_support_items`.
+- Unknowns, missing approved templates, and missing authorized rates must emit dry-run Exception Lake candidates for human/pricing review.
 
 ## External taxonomies
 

@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from .models import (
+    BudgetProposal,
+    BudgetSupportItem,
     BudgetPreconditionReport,
     CriticFinding,
     EscalationDecision,
@@ -25,6 +27,21 @@ def _evidence_ref(segment: Segment) -> EvidenceRef:
 
 def _source_instruction_refs(segments: list[Segment]) -> list[EvidenceRef]:
     return [_evidence_ref(segment) for segment in segments if segment.source_instruction_risk]
+
+
+def _dedup_evidence_refs(refs: list[EvidenceRef]) -> list[EvidenceRef]:
+    dedup: dict[tuple[str, str, int, int, str], EvidenceRef] = {}
+    for ref in refs:
+        dedup[(ref.source_id, ref.segment_id, ref.start_offset, ref.end_offset, ref.sha256)] = ref
+    return list(dedup.values())
+
+
+def _support_refs(items: list[BudgetSupportItem]) -> tuple[list[EvidenceRef], list[str]]:
+    evidence_refs = _dedup_evidence_refs([ref for item in items for ref in item.evidence_refs])
+    structured_refs = sorted(
+        {item.structured_ref for item in items if item.structured_ref is not None}
+    )
+    return evidence_refs, structured_refs
 
 
 def build_preflight_exception_candidates(
@@ -153,8 +170,9 @@ def build_budget_exception_candidates(
     run_id: str,
     readiness: MatterOpeningReadiness,
     evidence_refs: list[EvidenceRef],
+    budget: BudgetProposal,
 ) -> list[ExceptionLakeCandidate]:
-    return [
+    candidates = [
         ExceptionLakeCandidate(
             candidate_id=new_id("exc"),
             run_id=run_id,
@@ -169,6 +187,81 @@ def build_budget_exception_candidates(
             blocked_state=readiness.status,
         )
     ]
+    candidates.extend(_budget_uncertainty_candidates(run_id, readiness, evidence_refs, budget))
+    return candidates
+
+
+def _budget_uncertainty_candidates(
+    run_id: str,
+    readiness: MatterOpeningReadiness,
+    fallback_refs: list[EvidenceRef],
+    budget: BudgetProposal,
+) -> list[ExceptionLakeCandidate]:
+    candidates: list[ExceptionLakeCandidate] = []
+
+    unknown_items = [item for item in budget.budget_support_items if item.item_type == "unknown"]
+    if budget.unknowns or unknown_items:
+        evidence_refs, structured_refs = _support_refs(unknown_items)
+        candidates.append(
+            ExceptionLakeCandidate(
+                candidate_id=new_id("exc"),
+                run_id=run_id,
+                preflight_packet_id=readiness.preflight_packet_id,
+                local_event_label="budget_unknowns_require_review",
+                canonical_lake_class="workflow_escalation",
+                reason=(
+                    "Budget proposal contains unknowns that require human pricing/legal review: "
+                    + "; ".join(budget.unknowns or [item.text for item in unknown_items])
+                ),
+                evidence_refs=evidence_refs,
+                structured_refs=structured_refs,
+                blocked_state="budget_unknowns_require_human_review",
+            )
+        )
+
+    if budget.pricing_status == "insufficient_information":
+        missing_template_items = [
+            item for item in budget.budget_support_items if item.source_kind == "missing_template"
+        ]
+        evidence_refs, structured_refs = _support_refs(missing_template_items)
+        candidates.append(
+            ExceptionLakeCandidate(
+                candidate_id=new_id("exc"),
+                run_id=run_id,
+                preflight_packet_id=readiness.preflight_packet_id,
+                local_event_label="budget_template_missing",
+                canonical_lake_class="workflow_escalation",
+                reason=(
+                    "Budget proposal is insufficient because no approved synthetic template "
+                    "exists for the confirmed matter family."
+                ),
+                evidence_refs=evidence_refs,
+                structured_refs=structured_refs,
+                blocked_state="budget_insufficient_information",
+            )
+        )
+
+    unpriced_lines = [line for line in budget.lines if line.hourly_rate is None]
+    if budget.pricing_status == "hours_only" or unpriced_lines:
+        refs = _dedup_evidence_refs([ref for line in unpriced_lines for ref in line.evidence_refs])
+        candidates.append(
+            ExceptionLakeCandidate(
+                candidate_id=new_id("exc"),
+                run_id=run_id,
+                preflight_packet_id=readiness.preflight_packet_id,
+                local_event_label="budget_hours_only_missing_rates",
+                canonical_lake_class="workflow_escalation",
+                reason=(
+                    f"Budget remains hours-only because {len(unpriced_lines)} line(s) lack "
+                    "authorized rates; the workflow did not invent rates or totals."
+                ),
+                evidence_refs=refs or fallback_refs,
+                structured_refs=[f"budget-proposal://{budget.budget_proposal_id}"],
+                blocked_state="budget_hours_only",
+            )
+        )
+
+    return candidates
 
 
 def build_budget_precondition_exception_candidates(

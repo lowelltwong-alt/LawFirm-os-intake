@@ -91,6 +91,13 @@
       "title": "Evidence Refs",
       "type": "array"
     },
+    "structured_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Structured Refs",
+      "type": "array"
+    },
     "blocked_state": {
       "anyOf": [
         {

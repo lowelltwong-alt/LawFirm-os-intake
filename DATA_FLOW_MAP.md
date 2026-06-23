@@ -97,7 +97,7 @@ The outer runtime owner is `LawFirm-os-orchestrator`. The local intake CLI is a 
 | Legal Context Bundle | Legal Knowledge Runtime under substrate contracts | Legal Knowledge -> Orchestrator/Intake | Context is evidence and decision support, not observed fact |
 | Execution passport / run ledger | Orchestrator | Orchestrator <-> Intake | Carries contract pin, decision model, approval state, and gate results |
 | Evidence packet | Orchestrator | Orchestrator -> Exception Lake | Principal admission unit for runtime evidence |
-| `ExceptionLakeCandidate` in `exception_lake_candidates.jsonl` | Intake candidate surface | Intake -> Orchestrator -> Exception Lake review path | Dry-run only; maps to broad existing Lake classes and includes no raw payload |
+| `ExceptionLakeCandidate` in `exception_lake_candidates.jsonl` | Intake candidate surface | Intake -> Orchestrator -> Exception Lake review path | Dry-run only; maps to broad existing Lake classes, includes no raw payload, and may carry source refs, evidence refs, or structured refs |
 | `EvidenceGraph` in `evidence_graph.json` | Intake candidate surface | Intake -> Human reviewer / Orchestrator review path | Links source, segment, candidate, human confirmation, review outcome, conflict-search term, budget line, budget support, structured-ref, and proposal nodes |
 | `ReviewPackageManifest` and `matter_opening_review_package.md` | Intake candidate surface | Intake -> Human reviewer / Orchestrator review path | One-run review surface linking contract state, knowns, unknowns, evidence refs, conflict seed, budget, exception candidates, blockers, ledgers, and prohibited actions |
 | `HumanReviewOutcomeRecord` and `human_confirmation_history.jsonl` | Intake candidate surface | Intake -> Human reviewer / Orchestrator review path | Records how a human confirmation outcome was handled; non-confirmed outcomes block budget, confirmed outcomes advance only to precondition checks, and superseding corrections append new records instead of mutating prior outcomes |
@@ -115,7 +115,7 @@ Intake-specific exception labels are evidence labels unless and until Semantic S
 | Canonical class | Intake examples that can map here | Lake posture |
 |---|---|---|
 | `retrieval_miss` | missing source, unreadable attachment, unresolved source ref, incomplete Legal Context Bundle, missing jurisdiction reference, source coverage gap | Append evidence and validation detail; do not invent missing facts |
-| `workflow_escalation` | human review required, role ambiguity, contradictory candidates, missing information, prompt-injection source content, prohibited transition attempted, budget blocked before confirmation | Append escalation trigger and current blocked state |
+| `workflow_escalation` | human review required, role ambiguity, contradictory candidates, missing information, prompt-injection source content, prohibited transition attempted, budget blocked before confirmation, budget unknowns, missing budget template, hours-only missing rates | Append escalation trigger and current blocked state |
 | `authority_conflict_override` | local candidate conflicts with pinned canon, missing reviewed lock, topology mismatch, route/event ID not registered, prompt/tool authority mismatch, contract SHA drift, profile tries to expand authority | Fail closed and emit only allowed audit/evidence metadata |
 
 Future intake event labels named in this repo, such as `intake_preflight_proposed`, `intake_classification_confirmed`, `party_role_corrected`, `practice_context_missing_or_misleading`, `conflict_seed_prepared`, `budget_proposal_created`, `budget_proposal_corrected`, and `profile_change_candidate`, must either:
@@ -123,7 +123,7 @@ Future intake event labels named in this repo, such as `intake_preflight_propose
 1. map to an existing canonical route/event class through a reviewed adapter, or
 2. be promoted first through Semantic Substrate before Exception Lake runtime accepts them as first-class event classes.
 
-The current local workflow writes `exception_lake_candidates.jsonl` in both preflight and budget run directories. Each row is a dry-run candidate with `raw_payload_included=false`, `canonical_promotion_required=true`, a broad canonical Lake class, and either source-inventory refs or evidence refs. Failed budget precondition attempts also write a dry-run workflow escalation candidate before stopping. The file is not an admission log and is not a SQLite store.
+The current local workflow writes `exception_lake_candidates.jsonl` in both preflight and budget run directories. Each row is a dry-run candidate with `raw_payload_included=false`, `canonical_promotion_required=true`, a broad canonical Lake class, and source-inventory refs, evidence refs, or structured refs. Failed budget precondition attempts also write a dry-run workflow escalation candidate before stopping. The file is not an admission log and is not a SQLite store.
 
 ## SQLite Direction For Exception Lake
 

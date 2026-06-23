@@ -58,3 +58,9 @@
 - Extended `evidence_graph.json` to include human review outcomes, conflict seed packets, conflict-search terms, budget lines, budget support items, and structured refs.
 - Added graph edges from source segments or structured refs to conflict and budget artifacts so the graph proves the same provenance as the packets.
 - Updated the matter-opening review package to show evidence refs for conflict-search terms.
+
+## Budget-uncertainty exception slice - 2026-06-23
+
+- Added `structured_refs` to dry-run `ExceptionLakeCandidate` records.
+- Budget runs now emit workflow-escalation candidates for budget unknowns, missing synthetic templates, and hours-only missing-rate states.
+- Added tests for normal budget unknowns, missing rates, and missing template exception candidates.

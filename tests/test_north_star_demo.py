@@ -39,6 +39,7 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     review_text = (budget_dir / "matter_opening_review_package.md").read_text(encoding="utf-8")
 
     labels = {item["local_event_label"] for item in preflight_exceptions}
+    budget_labels = {item["local_event_label"] for item in budget_exceptions}
     assert packet["source_coverage_summary"]["missing_sources"] == 1
     assert packet["contract_state_report_ref"].endswith("contract_state_report.json")
     assert contract_state["status"] == "passed"
@@ -63,10 +64,8 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
         if item["local_event_label"] == "prompt_injection_source_content"
         for ref in item["evidence_refs"]
     } == {"syn-northstar-injection-001"}
-    assert any(
-        item["local_event_label"] == "matter_opening_blocked_pending_conflicts_and_engagement"
-        for item in budget_exceptions
-    )
+    assert "matter_opening_blocked_pending_conflicts_and_engagement" in budget_labels
+    assert "budget_unknowns_require_review" in budget_labels
     assert safety["status"] == "passed"
     assert budget_preconditions["status"] == "passed"
     assert safety["final_boundary"] == "blocked_pending_conflicts_and_engagement"

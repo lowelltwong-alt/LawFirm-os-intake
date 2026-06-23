@@ -1,6 +1,10 @@
 import json
+from copy import deepcopy
+
+import yaml
 
 from lawfirm_os_intake.confirmation import bind_confirmation_to_packet_evidence
+from lawfirm_os_intake.context import load_profile
 from lawfirm_os_intake.models import HumanConfirmation
 from lawfirm_os_intake.util import load_json
 from lawfirm_os_intake.workflow import run_budget, run_preflight
@@ -95,3 +99,85 @@ def test_budget_blocker_emits_local_exception_candidate(tmp_path, repo_root):
     assert blockers
     assert blockers[0]["canonical_lake_class"] == "workflow_escalation"
     assert blockers[0]["blocked_state"] == "blocked_pending_conflicts_and_engagement"
+
+    unknowns = [
+        candidate
+        for candidate in candidates
+        if candidate["local_event_label"] == "budget_unknowns_require_review"
+    ]
+    assert unknowns
+    assert unknowns[0]["canonical_lake_class"] == "workflow_escalation"
+    assert unknowns[0]["structured_refs"]
+    assert unknowns[0]["raw_payload_included"] is False
+
+
+def test_hours_only_budget_emits_missing_rate_exception_candidate(tmp_path, repo_root):
+    packet, run_dir = run_preflight(
+        repo_root / "examples/synthetic/inbound/carrier-assignment-medmal.json",
+        repo_root / "context/synthetic-profiles/insurance-defense.yaml",
+        tmp_path / "preflight",
+    )
+    confirmation = _confirmation(packet, repo_root)
+    confirmation_path = tmp_path / "human_confirmation.json"
+    confirmation_path.write_text(confirmation.model_dump_json(), encoding="utf-8")
+    profile = load_profile(repo_root / "context/synthetic-profiles/insurance-defense.yaml")
+    no_rate_profile = deepcopy(profile)
+    no_rate_profile["synthetic_hourly_rates"] = {}
+    profile_path = tmp_path / "no-rates-profile.yaml"
+    profile_path.write_text(yaml.safe_dump(no_rate_profile), encoding="utf-8")
+
+    budget, budget_dir = run_budget(
+        run_dir / "intake_preflight_packet.json",
+        confirmation_path,
+        profile_path,
+        tmp_path / "budget",
+    )
+
+    candidates = _jsonl(budget_dir / "exception_lake_candidates.jsonl")
+    rate_gaps = [
+        candidate
+        for candidate in candidates
+        if candidate["local_event_label"] == "budget_hours_only_missing_rates"
+    ]
+
+    assert budget.pricing_status == "hours_only"
+    assert rate_gaps
+    assert rate_gaps[0]["blocked_state"] == "budget_hours_only"
+    assert rate_gaps[0]["evidence_refs"]
+    assert rate_gaps[0]["structured_refs"] == [f"budget-proposal://{budget.budget_proposal_id}"]
+
+
+def test_missing_budget_template_emits_budget_template_exception_candidate(tmp_path, repo_root):
+    packet, run_dir = run_preflight(
+        repo_root / "examples/synthetic/inbound/carrier-assignment-medmal.json",
+        repo_root / "context/synthetic-profiles/insurance-defense.yaml",
+        tmp_path / "preflight",
+    )
+    confirmation = _confirmation(packet, repo_root)
+    confirmation_path = tmp_path / "human_confirmation.json"
+    confirmation_path.write_text(confirmation.model_dump_json(), encoding="utf-8")
+    profile = load_profile(repo_root / "context/synthetic-profiles/insurance-defense.yaml")
+    no_template_profile = deepcopy(profile)
+    no_template_profile["budget_templates"] = {}
+    profile_path = tmp_path / "no-template-profile.yaml"
+    profile_path.write_text(yaml.safe_dump(no_template_profile), encoding="utf-8")
+
+    budget, budget_dir = run_budget(
+        run_dir / "intake_preflight_packet.json",
+        confirmation_path,
+        profile_path,
+        tmp_path / "budget",
+    )
+
+    candidates = _jsonl(budget_dir / "exception_lake_candidates.jsonl")
+    template_gaps = [
+        candidate
+        for candidate in candidates
+        if candidate["local_event_label"] == "budget_template_missing"
+    ]
+
+    assert budget.pricing_status == "insufficient_information"
+    assert template_gaps
+    assert template_gaps[0]["blocked_state"] == "budget_insufficient_information"
+    assert template_gaps[0]["structured_refs"]
+    assert template_gaps[0]["raw_payload_included"] is False

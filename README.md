@@ -149,6 +149,8 @@ Every proposal-level assumption, exclusion, and unknown is mirrored as a `budget
 
 If rates are absent, the system emits an **hours-only** proposal. It never invents rates or totals.
 
+Budget-stage uncertainty is also emitted as dry-run Exception Lake candidates. Unknowns, missing approved templates, and hours-only missing-rate states become reviewable workflow escalations with source evidence refs or structured refs, not silent budget defects.
+
 Every budget run emits `budget_precondition_report.json`. If confirmation is missing, mismatched, incomplete, evidence-free, or not `confirmed`, the run writes that failed report, a blocked run-ledger event, and a dry-run Exception Lake candidate, then stops before producing a conflict seed, budget proposal, readiness packet, safety report, or review package.
 
 ## Safety gate
