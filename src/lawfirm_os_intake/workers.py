@@ -86,17 +86,21 @@ def evidence_for_text(segments: list[Segment], needle: str) -> list[EvidenceRef]
     matches = [s for s in segments if lowered in s.text.lower()]
     if not matches and segments:
         matches = [segments[0]]
-    return [
-        EvidenceRef(source_id=s.source_id, segment_id=s.segment_id, sha256=s.sha256)
-        for s in matches[:3]
-    ]
+    return [_evidence_ref(s) for s in matches[:3]]
 
 
 def _first_refs(segments: list[Segment], count: int = 1) -> list[EvidenceRef]:
-    return [
-        EvidenceRef(source_id=s.source_id, segment_id=s.segment_id, sha256=s.sha256)
-        for s in segments[:count]
-    ]
+    return [_evidence_ref(s) for s in segments[:count]]
+
+
+def _evidence_ref(segment: Segment) -> EvidenceRef:
+    return EvidenceRef(
+        source_id=segment.source_id,
+        segment_id=segment.segment_id,
+        start_offset=segment.start_offset,
+        end_offset=segment.end_offset,
+        sha256=segment.sha256,
+    )
 
 
 def source_inventory(

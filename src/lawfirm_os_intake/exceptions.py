@@ -16,6 +16,8 @@ def _evidence_ref(segment: Segment) -> EvidenceRef:
     return EvidenceRef(
         source_id=segment.source_id,
         segment_id=segment.segment_id,
+        start_offset=segment.start_offset,
+        end_offset=segment.end_offset,
         sha256=segment.sha256,
     )
 

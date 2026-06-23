@@ -15,9 +15,7 @@ from .models import (
 def _candidate_lines(candidates: list, limit: int = 3) -> list[str]:
     lines: list[str] = []
     for candidate in candidates[:limit]:
-        refs = ", ".join(
-            f"{ref.source_id}/{ref.segment_id}" for ref in candidate.observed_evidence_refs[:3]
-        )
+        refs = ", ".join(_ref_text(ref) for ref in candidate.observed_evidence_refs[:3])
         context = ", ".join(candidate.context_signal_refs)
         context_text = f"; context: {context}" if context else ""
         lines.append(
@@ -38,7 +36,7 @@ def render_intake_review_form(packet: IntakePreflightPacket) -> str:
     party_lines = []
     for party in packet.party_candidates:
         roles = ", ".join(f"{role.role} ({role.confidence:.2f})" for role in party.role_candidates)
-        refs = ", ".join(f"{ref.source_id}/{ref.segment_id}" for ref in party.evidence_refs[:3])
+        refs = ", ".join(_ref_text(ref) for ref in party.evidence_refs[:3])
         party_lines.append(f"- {party.name}: {roles}; evidence: {refs}")
 
     missing_lines = [
@@ -178,10 +176,14 @@ def _lines_or_none(lines: list[str]) -> list[str]:
 def _budget_support_lines(budget: BudgetProposal) -> list[str]:
     lines = []
     for item in budget.budget_support_items:
-        refs = ", ".join(f"{ref.source_id}/{ref.segment_id}" for ref in item.evidence_refs)
+        refs = ", ".join(_ref_text(ref) for ref in item.evidence_refs)
         support = refs or item.structured_ref or "missing support"
         lines.append(f"- {item.item_type}: {item.text} ({item.source_kind}; {support})")
     return lines or ["- none"]
+
+
+def _ref_text(ref: Any) -> str:
+    return f"{ref.source_id}/{ref.segment_id}[{ref.start_offset}:{ref.end_offset}]"
 
 
 def _confirmed_party_lines(confirmation: HumanConfirmation) -> list[str]:

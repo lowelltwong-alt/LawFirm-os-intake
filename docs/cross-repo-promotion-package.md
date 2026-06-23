@@ -5,6 +5,7 @@ This is a draft promotion package for stable intake components. It is not a dire
 ## Semantic Substrate Candidates
 
 - Intake source bundle and source inventory contracts.
+- Evidence ref contract with source ID, segment ID, segment offsets, and segment hash.
 - Human confirmation contract, including `confirmed`, `unknown`, `needs_more_information`, `human_only`, and `declined_or_referred` outcomes.
 - Party/role candidate contract with aliases, normalized names, role alternatives, evidence refs, and candidate status.
 - Matter-family, inbound-event, representation-posture, deadline, missing-information, and critic-finding candidate contracts.

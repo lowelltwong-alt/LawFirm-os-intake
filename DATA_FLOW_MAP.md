@@ -90,6 +90,7 @@ The outer runtime owner is `LawFirm-os-orchestrator`. The local intake CLI is a 
 |---|---|---|---|
 | Candidate intake schemas in `schemas/` | Intake candidate surface | Local only | Must not masquerade as promoted Semantic Substrate canon |
 | `ContractStateReport` in `contract_state_report.json` | Intake candidate surface | Intake -> Human reviewer / Orchestrator review path | Verifies local `contracts.lock.json` and `repo_topology.lock.yaml` are reviewed, parseable, SHA-pinned, topology-matched, and non-authoritative before packet generation |
+| `EvidenceRef` | Intake candidate surface; future Substrate candidate | Intake -> Human reviewer / Orchestrator review path | Self-contained source evidence pointer with source ID, segment ID, segment offsets, and segment hash; strict mode validates refs against the segment table |
 | `SourceRef` / `PassageRef` / `ClaimRef` | Legal Knowledge Runtime under substrate contracts | Legal Knowledge -> Intake -> Evidence Packet | Prefer refs, offsets, hashes, and bundle IDs over raw text payloads |
 | Legal Context Bundle | Legal Knowledge Runtime under substrate contracts | Legal Knowledge -> Orchestrator/Intake | Context is evidence and decision support, not observed fact |
 | Execution passport / run ledger | Orchestrator | Orchestrator <-> Intake | Carries contract pin, decision model, approval state, and gate results |

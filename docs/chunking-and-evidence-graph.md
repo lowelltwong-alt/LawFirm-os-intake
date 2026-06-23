@@ -62,6 +62,20 @@ sha256:
 text:
 ```
 
+## Required evidence ref fields
+
+Every source-bound evidence reference must be self-contained enough to verify against the cited segment:
+
+```yaml
+source_id:
+segment_id:
+start_offset:
+end_offset:
+sha256:
+```
+
+The strict preflight validator rejects a ref if its source ID, offsets, or hash do not match the segment ID it cites.
+
 ## Evidence graph
 
 The graph links:
@@ -86,6 +100,7 @@ A JSON graph is inspectable, portable, and sufficient for the first workflow. In
 ## Chunking quality tests
 
 - exact offset/hash preservation;
+- evidence refs match cited segment offsets and hashes;
 - quoted email separation;
 - attachment inventory completeness;
 - non-target text identity after transformations;

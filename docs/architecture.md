@@ -67,6 +67,12 @@ Authoritative run state never lives only in a model context window. The workflow
 
 The starter emits a typed JSON evidence graph. It does not require a graph database or GraphRAG. A graph runtime may be justified later only if evaluation shows that cross-document relationship retrieval is the bottleneck.
 
+## Rust-ready ingestion posture
+
+Python is the reference implementation for the starter. If future document volume or constrained compute makes ingestion expensive, the only Rust-ready boundary is the deterministic source inventory, structural segmentation, hashing, and `EvidenceRef` emission layer.
+
+Rust must not own legal classification, party roles, matter routing, conflict conclusions, budget decisions, connector writes, or authority policy. Before adoption, a Rust adapter must prove golden parity with the Python reference for offsets, hashes, segment structure, prompt-injection flags, duplicate/missing-source states, and schema-compatible JSON.
+
 ## Throughput
 
 The first useful throughput unit is:

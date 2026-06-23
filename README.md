@@ -95,6 +95,8 @@ The consolidated `matter_opening_review_package.md` is the human-facing north-st
 
 The quickstart uses `north-star-messy-intake.json`, a synthetic bundle with duplicate source text, a missing complaint attachment, misleading role/context signals, prompt-injection source content, missing intake fields, deadline candidates, and human-confirmed budget generation.
 
+Every source-bound evidence reference in the generated packets includes the cited source ID, segment ID, segment offsets, and segment hash. Strict mode rejects refs that drift from the segment table.
+
 ## Practice context is configurable, not hidden prompt text
 
 The same message can mean different things to different practices. A carrier assignment is common in an insurance-defense practice but unusual in a plaintiff practice. This repository therefore treats practice context as a versioned profile with explicit precedence and hashes.
@@ -150,6 +152,10 @@ The planned runtime uses bounded specialists, not a swarm:
 7. frontier adjudicator only on governed escalation
 
 A deterministic packet writer assembles outputs. Dynamic agent creation is prohibited. Every handoff is typed. A frontier model cannot replace human confirmation.
+
+## Rust readiness
+
+Python remains the starter reference implementation. If future document volume or constrained compute requires Rust, the only approved hot-path boundary is source inventory, segmentation, hashing, and evidence-ref emission. Any Rust adapter must prove parity with the Python reference for offsets, hashes, segment structure, prompt-injection flags, duplicate/missing-source states, and schema-compatible JSON before it can replace the Python path.
 
 ## Current boundaries
 

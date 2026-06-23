@@ -72,6 +72,8 @@ class SourceInventoryItem(StrictModel):
 class EvidenceRef(StrictModel):
     source_id: str
     segment_id: str
+    start_offset: int
+    end_offset: int
     sha256: str
 
 

@@ -73,14 +73,28 @@ def _event(run_id: str, index: int, step: str, status: str, **kwargs: Any) -> Ru
 
 
 def _validate_refs(packet: IntakePreflightPacket) -> None:
-    segment_ids = {segment.segment_id for segment in packet.segments}
+    segments_by_id = {segment.segment_id: segment for segment in packet.segments}
 
     def ensure_refs(label: str, refs: list) -> None:
         if not refs:
             raise ValueError(f"{label} lacks source-bound evidence references")
         for ref in refs:
-            if ref.segment_id not in segment_ids:
+            segment = segments_by_id.get(ref.segment_id)
+            if segment is None:
                 raise ValueError(f"{label} references unknown segment_id {ref.segment_id}")
+            if ref.source_id != segment.source_id:
+                raise ValueError(
+                    f"{label} evidence ref source_id {ref.source_id} does not match "
+                    f"segment {ref.segment_id}"
+                )
+            if ref.sha256 != segment.sha256:
+                raise ValueError(
+                    f"{label} evidence ref sha256 does not match segment {ref.segment_id}"
+                )
+            if ref.start_offset != segment.start_offset or ref.end_offset != segment.end_offset:
+                raise ValueError(
+                    f"{label} evidence ref offsets do not match segment {ref.segment_id}"
+                )
 
     for party in packet.party_candidates:
         ensure_refs(f"party candidate {party.name}", party.evidence_refs)

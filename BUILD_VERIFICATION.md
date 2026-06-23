@@ -10,7 +10,7 @@ PYTHONPATH=src python scripts/validate_repo.py
 # repository validation passed
 
 PYTHONPATH=src python -m pytest -q
-# 31 passed
+# 33 passed
 
 PYTHONPATH=src ruff check src tests scripts
 # All checks passed
@@ -24,6 +24,10 @@ The monetary result is a synthetic test calculation, not a fee quote or approved
 The current demo also emits local `exception_lake_candidates.jsonl` files in preflight and budget outputs. These are dry-run candidates only; they are not canonical Exception Lake admissions and include no raw legal payload.
 
 The preflight output now includes `contract_state_report.json`, which verifies the reviewed local sibling-repo lock state before source processing. The report is carried forward into the final review manifest and safety gate.
+
+Source-bound evidence references now include segment offsets as well as source ID, segment ID, and hash. Strict evidence validation fails if a ref drifts from the cited segment.
+
+ADR-004 records the Rust-ready ingestion boundary for future high-volume or constrained-compute document processing. Python remains the reference implementation until any Rust adapter proves golden parity.
 
 The budget output now includes `matter_opening_review_package.md` and `review_package_manifest.json` as the consolidated review surface for the north-star demo.
 
