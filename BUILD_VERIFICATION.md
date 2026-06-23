@@ -10,7 +10,7 @@ PYTHONPATH=src python scripts/validate_repo.py
 # repository validation passed
 
 PYTHONPATH=src python -m pytest -q
-# 27 passed
+# 28 passed
 
 PYTHONPATH=src ruff check src tests scripts
 # All checks passed
@@ -30,6 +30,8 @@ The budget output now includes `matter_opening_review_package.md` and `review_pa
 Budget assumptions, exclusions, and unknowns now emit `budget_support_items` with evidence refs or structured refs for human review.
 
 The budget output also includes `safety_gate_report.json`; a failed safety check raises before the final review package is accepted.
+
+The smoke demo runs the messy north-star synthetic fixture, not the clean carrier-only fixture.
 
 ## GitHub seed verification
 

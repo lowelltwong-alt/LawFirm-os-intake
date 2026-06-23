@@ -55,9 +55,9 @@ python scripts/export_schemas.py
 python -m pytest
 
 python -m lawfirm_os_intake demo \
-  --input examples/synthetic/inbound/carrier-assignment-medmal.json \
+  --input examples/synthetic/inbound/north-star-messy-intake.json \
   --practice-profile context/synthetic-profiles/insurance-defense.yaml \
-  --confirmation-template examples/synthetic/confirmations/carrier-assignment-medmal.confirmation-template.json \
+  --confirmation-template examples/synthetic/confirmations/north-star-messy-intake.confirmation-template.json \
   --out-dir .lawfirm-os-intake/demo
 ```
 
@@ -90,6 +90,8 @@ The demo emits:
 ```
 
 The consolidated `matter_opening_review_package.md` is the human-facing north-star artifact. It points back to the structured packets and tells the reviewer what is known, what remains uncertain, which conflict-search seeds were prepared, what budget scenario was proposed, which exception candidates exist, what the safety gate verified, and why the workflow is still blocked.
+
+The quickstart uses `north-star-messy-intake.json`, a synthetic bundle with duplicate source text, a missing complaint attachment, misleading role/context signals, prompt-injection source content, missing intake fields, deadline candidates, and human-confirmed budget generation.
 
 ## Practice context is configurable, not hidden prompt text
 

@@ -24,6 +24,7 @@ Synthetic data tests full legal workflow behavior that public data cannot safely
 - budget template without rates;
 - client/carrier guideline conflicts;
 - matter type not supported by a budget template.
+- north-star messy bundle combining duplicate text, missing attachment, role ambiguity, prompt injection, missing fields, deadline candidates, conflict seed, budget proposal, safety gate, and final blockers.
 
 ## Gold labels
 
@@ -39,6 +40,7 @@ Gold should be reviewed and versioned for:
 - conflict seed terms;
 - budget arithmetic;
 - assumptions and exclusions.
+- north-star review package completeness.
 
 ## Data generation rules
 

@@ -35,3 +35,8 @@
 
 - Added `SafetyGateReport` output for deterministic final checks over synthetic scope, human confirmation, conflict non-conclusion, budget non-submission, matter-opening blockers, docketing prohibition, billing/submission prohibition, and local-only artifacts.
 - The workflow fails closed before final package acceptance if a safety check fails.
+
+## North-star demo fixture - 2026-06-23
+
+- Added `north-star-messy-intake.json` and matching confirmation template as the one-command acceptance fixture.
+- Updated smoke coverage to require missing-source, duplicate-source, prompt-injection, safety-gate, review-package, and blocked-final-boundary outputs in one run.
