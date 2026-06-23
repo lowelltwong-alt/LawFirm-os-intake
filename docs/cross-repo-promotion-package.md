@@ -29,7 +29,7 @@ This is a draft promotion package for stable intake components. It is not a dire
 
 ## Exception Lake Mapping Draft
 
-- `retrieval_miss`: missing source, unreadable attachment, unresolved source ref, incomplete context bundle, source coverage gap.
+- `retrieval_miss`: missing source, unread source, unreadable attachment, unresolved source ref, incomplete context bundle, source coverage gap.
 - `workflow_escalation`: human review required, close candidates, role ambiguity, prompt injection, prohibited transition attempted, budget blocked before confirmation, budget unknowns, missing budget template, hours-only missing rates.
 - `authority_conflict_override`: unregistered route/event label, local candidate conflicts with canon, profile attempts to expand authority, missing reviewed lock, topology mismatch, contract SHA drift.
 - Intake emits these as local `ExceptionLakeCandidate` rows only. The Exception Lake runtime should perform admission validation, append-only storage, record hashing, and correction/supersession handling.

@@ -152,6 +152,7 @@ def source_coverage_summary(inventory: list[SourceInventoryItem]) -> dict[str, A
     return {
         "total_sources": total,
         "read_sources": sum(1 for item in inventory if item.read_state == "read"),
+        "unread_sources": sum(1 for item in inventory if item.read_state == "unread"),
         "missing_sources": sum(1 for item in inventory if item.read_state == "missing"),
         "unreadable_sources": sum(1 for item in inventory if item.read_state == "unreadable"),
         "duplicate_sources": sum(1 for item in inventory if item.availability_state == "duplicate"),

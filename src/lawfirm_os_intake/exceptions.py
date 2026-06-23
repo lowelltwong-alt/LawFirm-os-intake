@@ -60,8 +60,12 @@ def build_preflight_exception_candidates(
 def _source_inventory_candidates(packet: IntakePreflightPacket) -> list[ExceptionLakeCandidate]:
     candidates: list[ExceptionLakeCandidate] = []
     for item in packet.source_inventory:
-        if item.read_state in {"missing", "unreadable"}:
-            label = "source_missing" if item.read_state == "missing" else "source_unreadable"
+        if item.read_state in {"missing", "unread", "unreadable"}:
+            label = {
+                "missing": "source_missing",
+                "unread": "source_unread",
+                "unreadable": "source_unreadable",
+            }[item.read_state]
             candidates.append(
                 ExceptionLakeCandidate(
                     candidate_id=new_id("exc"),
@@ -71,7 +75,7 @@ def _source_inventory_candidates(packet: IntakePreflightPacket) -> list[Exceptio
                     canonical_lake_class="retrieval_miss",
                     reason=(
                         f"Source {item.source_id} is marked {item.read_state}; "
-                        "downstream workers must not invent missing content."
+                        "downstream workers must not invent unavailable or unread content."
                     ),
                     source_inventory_refs=[item.source_id],
                 )

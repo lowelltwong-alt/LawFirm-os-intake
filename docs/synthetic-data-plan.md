@@ -13,7 +13,7 @@ Synthetic data tests full legal workflow behavior that public data cannot safely
 - private help request;
 - random correspondence dump;
 - party list with aliases and unknown roles;
-- missing attachment;
+- missing or unread attachment;
 - duplicated/quoted email chain;
 - ambiguous corporate family;
 - unknown jurisdiction;

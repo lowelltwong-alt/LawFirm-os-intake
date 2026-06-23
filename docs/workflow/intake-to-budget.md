@@ -43,7 +43,7 @@ Validate data origin, scope, and source bundle. The starter stops on non-synthet
 
 ### 3. Inventory
 
-List every source and whether it was read, missing, duplicated, or unreadable. Source coverage is part of the review packet.
+List every source and whether it was read, unread, missing, duplicated, or unreadable. Source coverage is part of the review packet.
 
 ### 4. Segment structurally
 

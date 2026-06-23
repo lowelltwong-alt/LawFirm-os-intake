@@ -10,7 +10,7 @@
 
 ## Build-out slice - 2026-06-23
 
-- Hardened source inventory with hashes, duplicate detection, missing/unreadable states, attachment refs, and coverage summary.
+- Hardened source inventory with hashes, duplicate detection, missing/unread/unreadable states, attachment refs, and coverage summary.
 - Added typed missing-information candidates, strict evidence validation, generated intake review forms, grouped conflict-search terms, and deterministic budget calculation reports.
 - Added synthetic holdout fixtures for duplicate/missing attachments and misleading sender/role ambiguity.
 - Added a safe adapter boundary for deterministic and structured-model dry-run routing.
@@ -18,7 +18,7 @@
 ## Exception-candidate slice - 2026-06-23
 
 - Added local `ExceptionLakeCandidate` schema and `exception_lake_candidates.jsonl` outputs for preflight and budget runs.
-- Mapped missing/unreadable sources to `retrieval_miss` and prompt injection, duplicate sources, critic findings, escalation, and matter-opening blockers to `workflow_escalation`.
+- Mapped missing/unread/unreadable sources to `retrieval_miss` and prompt injection, duplicate sources, critic findings, escalation, and matter-opening blockers to `workflow_escalation`.
 - Kept the handoff dry-run only with no raw payload, no SQLite ownership, and no canonical event-class promotion from this repo.
 
 ## Review-package slice - 2026-06-23
@@ -64,3 +64,9 @@
 - Added `structured_refs` to dry-run `ExceptionLakeCandidate` records.
 - Budget runs now emit workflow-escalation candidates for budget unknowns, missing synthetic templates, and hours-only missing-rate states.
 - Added tests for normal budget unknowns, missing rates, and missing template exception candidates.
+
+## Unread-source coverage slice - 2026-06-23
+
+- Added a synthetic holdout fixture with an unread attachment.
+- Source coverage summaries now count `unread_sources` separately from missing and unreadable sources.
+- Unread sources now render in review summaries and emit `source_unread` dry-run `retrieval_miss` candidates.

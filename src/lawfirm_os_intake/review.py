@@ -64,6 +64,9 @@ def render_intake_review_form(packet: IntakePreflightPacket) -> str:
             *source_lines,
             "",
             f"Coverage complete: `{packet.source_coverage_summary.get('coverage_complete')}`",
+            f"Missing sources: `{packet.source_coverage_summary.get('missing_sources')}`",
+            f"Unread sources: `{packet.source_coverage_summary.get('unread_sources')}`",
+            f"Unreadable sources: `{packet.source_coverage_summary.get('unreadable_sources')}`",
             f"Duplicate sources: `{packet.source_coverage_summary.get('duplicate_sources')}`",
             f"Attachment references: `{packet.source_coverage_summary.get('attachment_reference_count')}`",
             "",
@@ -270,6 +273,7 @@ def render_matter_opening_review_package(
             "",
             f"- Source coverage complete: {source_summary.get('coverage_complete')}",
             f"- Missing sources: {source_summary.get('missing_sources')}",
+            f"- Unread sources: {source_summary.get('unread_sources')}",
             f"- Unreadable sources: {source_summary.get('unreadable_sources')}",
             f"- Duplicate sources: {source_summary.get('duplicate_sources')}",
             *_lines_or_none(

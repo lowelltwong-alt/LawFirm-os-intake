@@ -114,7 +114,7 @@ Intake-specific exception labels are evidence labels unless and until Semantic S
 
 | Canonical class | Intake examples that can map here | Lake posture |
 |---|---|---|
-| `retrieval_miss` | missing source, unreadable attachment, unresolved source ref, incomplete Legal Context Bundle, missing jurisdiction reference, source coverage gap | Append evidence and validation detail; do not invent missing facts |
+| `retrieval_miss` | missing source, unread source, unreadable attachment, unresolved source ref, incomplete Legal Context Bundle, missing jurisdiction reference, source coverage gap | Append evidence and validation detail; do not invent missing facts |
 | `workflow_escalation` | human review required, role ambiguity, contradictory candidates, missing information, prompt-injection source content, prohibited transition attempted, budget blocked before confirmation, budget unknowns, missing budget template, hours-only missing rates | Append escalation trigger and current blocked state |
 | `authority_conflict_override` | local candidate conflicts with pinned canon, missing reviewed lock, topology mismatch, route/event ID not registered, prompt/tool authority mismatch, contract SHA drift, profile tries to expand authority | Fail closed and emit only allowed audit/evidence metadata |
 

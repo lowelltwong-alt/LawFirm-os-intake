@@ -10,7 +10,7 @@ PYTHONPATH=src python scripts/validate_repo.py
 # repository validation passed
 
 PYTHONPATH=src python -m pytest -q
-# 44 passed
+# 45 passed
 
 PYTHONPATH=src ruff check src tests scripts
 # All checks passed
@@ -43,6 +43,8 @@ Budget assumptions, exclusions, and unknowns now emit `budget_support_items` wit
 The budget-stage evidence graph now includes human review outcome, conflict seed packet, conflict-search term, budget line, budget support item, and structured-ref nodes with source-backed or structured-ref support edges.
 
 Budget uncertainty now emits dry-run Exception Lake candidates for proposal unknowns, missing approved synthetic budget templates, and hours-only missing-rate states. These candidates may carry structured refs and still include no raw payload.
+
+Unread sources now count as explicit source coverage gaps, render in review summaries, and emit `source_unread` dry-run `retrieval_miss` candidates.
 
 The budget output also includes `safety_gate_report.json`; a failed safety check raises before the final review package is accepted.
 
