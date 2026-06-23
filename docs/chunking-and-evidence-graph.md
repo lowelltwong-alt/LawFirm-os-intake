@@ -76,6 +76,8 @@ sha256:
 
 The strict preflight validator rejects a ref if its source ID, offsets, or hash do not match the segment ID it cites.
 
+The Python reference ingestion boundary writes `ingestion_result.json` with one segment-level evidence ref per segment. A future Rust ingestion adapter must match this artifact before it can replace the Python path.
+
 ## Evidence graph
 
 The graph links:
@@ -110,6 +112,7 @@ A JSON graph is inspectable, portable, and sufficient for the first workflow. In
 ## Chunking quality tests
 
 - exact offset/hash preservation;
+- `ingestion_result.json` parity for inventory, coverage summary, segments, and segment evidence refs;
 - evidence refs match cited segment offsets and hashes;
 - quoted email separation;
 - attachment inventory completeness;

@@ -77,6 +77,22 @@ class EvidenceRef(StrictModel):
     sha256: str
 
 
+class IngestionResult(StrictModel):
+    schema_version: str = "0.1"
+    ingestion_result_id: str
+    bundle_id: str
+    adapter_kind: Literal["python_reference_ingestion_adapter"] = (
+        "python_reference_ingestion_adapter"
+    )
+    parity_contract: Literal["rust_ready_ingestion_v0_1"] = "rust_ready_ingestion_v0_1"
+    rust_replacement_allowed: Literal[False] = False
+    source_inventory: list[SourceInventoryItem]
+    source_coverage_summary: dict[str, Any] = Field(default_factory=dict)
+    segments: list[Segment]
+    segment_evidence_refs: list[EvidenceRef]
+    generated_at: str
+
+
 class RoleCandidate(StrictModel):
     role: str
     confidence: float = Field(ge=0, le=1)
@@ -199,6 +215,7 @@ class IntakePreflightPacket(StrictModel):
     source_inventory: list[SourceInventoryItem]
     source_coverage_summary: dict[str, Any] = Field(default_factory=dict)
     segments: list[Segment]
+    ingestion_result_ref: str | None = None
     effective_context: EffectiveContext
     inbound_event_candidates: list[ScoredCandidate]
     matter_family_candidates: list[ScoredCandidate]

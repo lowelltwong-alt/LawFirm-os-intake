@@ -14,6 +14,7 @@ from .exceptions import (
     build_budget_precondition_exception_candidates,
     build_preflight_exception_candidates,
 )
+from .ingestion import build_ingestion_result
 from .models import (
     ConflictSearchTerm,
     ConflictSeedPacket,
@@ -32,7 +33,6 @@ from .review import (
     render_matter_opening_review_package,
 )
 from .safety import build_safety_gate_report, enforce_safety_gate
-from .segmenter import segment_bundle
 from .util import append_jsonl, load_json, load_jsonl, new_id, now_iso, write_json
 from .workers import (
     classify_matter,
@@ -40,8 +40,6 @@ from .workers import (
     extract_parties,
     missing_information_candidates,
     review_evidence,
-    source_inventory,
-    source_coverage_summary,
 )
 
 
@@ -173,13 +171,22 @@ def run_preflight(
         ledger_path, _event(run_id, 4, "context_resolution", "completed").model_dump(mode="json")
     )
 
-    segments = segment_bundle(bundle)
+    ingestion_result = build_ingestion_result(bundle)
+    ingestion_result_path = run_dir / "ingestion_result.json"
+    write_json(ingestion_result_path, ingestion_result.model_dump(mode="json"))
+    segments = ingestion_result.segments
+    inventory = ingestion_result.source_inventory
     write_json(run_dir / "segments.json", [s.model_dump(mode="json") for s in segments])
     append_jsonl(
         ledger_path,
-        _event(run_id, 5, "provenance_preserving_segmentation", "completed").model_dump(
-            mode="json"
-        ),
+        _event(
+            run_id,
+            5,
+            "python_reference_ingestion",
+            "completed",
+            output_refs=[str(ingestion_result_path), str(run_dir / "segments.json")],
+            notes="Rust-ready ingestion parity oracle; no Rust runtime selected.",
+        ).model_dump(mode="json"),
     )
 
     parties = extract_parties(bundle, segments)
@@ -191,7 +198,6 @@ def run_preflight(
         ledger_path, _event(run_id, 6, "specialist_workers", "completed").model_dump(mode="json")
     )
 
-    inventory = source_inventory(bundle, segments)
     review_form_path = run_dir / "intake_review_form.md"
     exception_candidates_path = run_dir / "exception_lake_candidates.jsonl"
     packet = IntakePreflightPacket(
@@ -201,8 +207,9 @@ def run_preflight(
         status="human_intake_review_required",
         data_origin=bundle.data_origin,
         source_inventory=inventory,
-        source_coverage_summary=source_coverage_summary(inventory),
+        source_coverage_summary=ingestion_result.source_coverage_summary,
         segments=segments,
+        ingestion_result_ref=str(ingestion_result_path),
         effective_context=context,
         inbound_event_candidates=inbound,
         matter_family_candidates=matter,
@@ -247,6 +254,7 @@ def run_preflight(
                 str(run_dir / "evidence_graph.json"),
                 str(contract_state_report_path),
                 str(exception_candidates_path),
+                str(ingestion_result_path),
             ],
         ).model_dump(mode="json"),
     )

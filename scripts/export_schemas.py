@@ -19,6 +19,7 @@ from lawfirm_os_intake.models import (  # noqa: E402
     ExceptionLakeCandidate,
     HumanConfirmation,
     HumanReviewOutcomeRecord,
+    IngestionResult,
     IntakePreflightPacket,
     PartyCandidate,
     ReviewPackageManifest,
@@ -30,6 +31,7 @@ from lawfirm_os_intake.models import (  # noqa: E402
 
 MODELS = {
     "source-bundle.schema.json": SourceBundle,
+    "ingestion-result.schema.json": IngestionResult,
     "segment.schema.json": Segment,
     "effective-context.schema.json": EffectiveContext,
     "party-candidate.schema.json": PartyCandidate,

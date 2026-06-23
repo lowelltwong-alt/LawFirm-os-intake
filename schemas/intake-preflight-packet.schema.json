@@ -669,6 +669,18 @@
       "title": "Segments",
       "type": "array"
     },
+    "ingestion_result_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Ingestion Result Ref"
+    },
     "effective_context": {
       "$ref": "#/$defs/EffectiveContext"
     },

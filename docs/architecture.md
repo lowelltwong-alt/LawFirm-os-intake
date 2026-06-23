@@ -73,6 +73,8 @@ Python is the reference implementation for the starter. If future document volum
 
 Rust must not own legal classification, party roles, matter routing, conflict conclusions, budget decisions, connector writes, or authority policy. Before adoption, a Rust adapter must prove golden parity with the Python reference for offsets, hashes, segment structure, prompt-injection flags, duplicate/missing-source states, and schema-compatible JSON.
 
+The starter writes `ingestion_result.json` as that Python reference. It contains the source inventory, coverage summary, structural segments, and one segment evidence ref per segment under `rust_ready_ingestion_v0_1`.
+
 Preparing for Rust now means preserving JSON contracts, deterministic fixture outputs, and narrow adapter seams. The starter should not add a Rust crate or dual implementation until profiling shows ingestion is the bottleneck.
 
 ## Throughput

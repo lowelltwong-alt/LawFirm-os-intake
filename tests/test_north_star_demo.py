@@ -25,6 +25,7 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     assert code == 0
     preflight_dir = next((tmp_path / "north-star/preflight").iterdir())
     packet = load_json(preflight_dir / "intake_preflight_packet.json")
+    ingestion_result = load_json(preflight_dir / "ingestion_result.json")
     contract_state = load_json(preflight_dir / "contract_state_report.json")
     preflight_exceptions = load_jsonl(preflight_dir / "exception_lake_candidates.jsonl")
     budget_dir = tmp_path / "north-star/budget"
@@ -41,6 +42,10 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     labels = {item["local_event_label"] for item in preflight_exceptions}
     budget_labels = {item["local_event_label"] for item in budget_exceptions}
     assert packet["source_coverage_summary"]["missing_sources"] == 1
+    assert packet["ingestion_result_ref"].endswith("ingestion_result.json")
+    assert ingestion_result["parity_contract"] == "rust_ready_ingestion_v0_1"
+    assert ingestion_result["rust_replacement_allowed"] is False
+    assert len(ingestion_result["segment_evidence_refs"]) == len(ingestion_result["segments"])
     assert packet["contract_state_report_ref"].endswith("contract_state_report.json")
     assert contract_state["status"] == "passed"
     assert confirmation["decision_evidence_refs"]

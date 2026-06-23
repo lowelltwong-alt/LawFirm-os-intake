@@ -4,9 +4,8 @@
 stateDiagram-v2
     [*] --> raw_received
     raw_received --> data_origin_validated
-    data_origin_validated --> source_inventory_complete
-    source_inventory_complete --> segmentation_complete
-    segmentation_complete --> party_candidates_ready
+    data_origin_validated --> python_reference_ingestion_complete
+    python_reference_ingestion_complete --> party_candidates_ready
     party_candidates_ready --> matter_candidates_ready
     matter_candidates_ready --> deadline_gap_candidates_ready
     deadline_gap_candidates_ready --> evidence_review_complete

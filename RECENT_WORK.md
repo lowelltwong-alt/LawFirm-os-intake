@@ -76,3 +76,9 @@
 - Added deterministic safety-gate checks for evidence-bound conflict-search terms, budget lines, budget support items, and proposal-level budget texts.
 - Added fail-closed coverage for evidence-free conflict seed terms, evidence-free budget lines, unsupported budget support items, and unsupported proposal-level budget text.
 - Kept Rust readiness as a narrow future ingestion adapter boundary; Python remains the reference oracle until profiling and golden parity justify Rust.
+
+## Python-reference ingestion boundary slice - 2026-06-23
+
+- Added `IngestionResult` and `ingestion_result.json` as the Python reference parity oracle for source inventory, coverage summary, structural segments, and segment-level evidence refs.
+- Wired preflight to consume that artifact while preserving existing `source_inventory.json`, `segments.json`, and CLI outputs.
+- Added tests proving parity refs match segment offsets/hashes and fail closed on drift; no Rust runtime or authority expansion was added.

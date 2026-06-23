@@ -9,7 +9,7 @@ Python remains the reference implementation for the starter workflow. The ingest
 The Rust boundary is narrow:
 
 - input: validated synthetic `SourceBundle` JSON;
-- output: `SourceInventoryItem`, `Segment`, and source-bound `EvidenceRef` JSON matching the current candidate schemas;
+- output: `IngestionResult` JSON containing `SourceInventoryItem`, `Segment`, source coverage summary, and source-bound `EvidenceRef` JSON matching the current candidate schemas;
 - no legal classification, matter routing, role assignment, conflict conclusion, budget decision, connector write, or authority change inside the Rust layer.
 
 ## Required Parity Before Rust Adoption
@@ -29,11 +29,14 @@ A Rust implementation must pass golden parity tests against the Python reference
 
 The Python implementation remains the readable reference until the Rust path proves parity on synthetic fixtures and holdouts.
 
+The starter now emits `ingestion_result.json` as the Python parity oracle under `rust_ready_ingestion_v0_1`.
+
 ## Preparation Now
 
 Keep the future Rust seam cheap to adopt by preserving:
 
 - schema-first JSON inputs and outputs;
+- a typed `IngestionResult` artifact that can be compared across implementations;
 - deterministic fixture and holdout coverage for ingestion outputs;
 - exact offset/hash validation in the Python reference;
 - no hidden Python object state in persisted artifacts;

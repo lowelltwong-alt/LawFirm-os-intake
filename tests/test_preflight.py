@@ -13,6 +13,8 @@ def test_preflight_produces_evidence_bound_candidates(tmp_path, repo_root):
     assert packet.party_candidates
     assert all(p.evidence_refs for p in packet.party_candidates)
     assert packet.contract_state_report_ref == str(run_dir / "contract_state_report.json")
+    assert packet.ingestion_result_ref == str(run_dir / "ingestion_result.json")
     assert (run_dir / "contract_state_report.json").exists()
+    assert (run_dir / "ingestion_result.json").exists()
     assert (run_dir / "evidence_graph.json").exists()
     assert (run_dir / "run_ledger.jsonl").exists()
