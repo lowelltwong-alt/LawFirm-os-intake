@@ -81,7 +81,7 @@ The run writes `budget_precondition_report.json`. If the gate fails, it records 
 
 ### 12. Conflict-search seed
 
-The system builds normalized search terms grouped by prospective client, instructing source, payer, adverse party, opposing counsel, aliases, and unresolved roles. It makes no conflict conclusion.
+The system builds normalized search terms grouped by prospective client, instructing source, payer, insured, adverse party, claimant, opposing counsel, aliases, and unresolved roles. Each normalized term must carry source-bound evidence refs from the human confirmation. It makes no conflict conclusion.
 
 ### 13. Budget proposal
 

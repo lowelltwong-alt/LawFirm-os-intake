@@ -16,6 +16,7 @@ from .exceptions import (
 from .models import (
     ConflictSearchTerm,
     ConflictSeedPacket,
+    EvidenceRef,
     HumanConfirmation,
     IntakePreflightPacket,
     MatterOpeningReadiness,
@@ -251,37 +252,67 @@ def run_preflight(
     return packet, run_dir
 
 
-def _party_names(confirmation: HumanConfirmation, role: str) -> list[str]:
-    return [p.name for p in confirmation.confirmed_parties if p.confirmed_role == role]
+def _dedup_evidence_refs(refs: list[EvidenceRef]) -> list[EvidenceRef]:
+    dedup: dict[tuple[str, str, int, int, str], EvidenceRef] = {}
+    for ref in refs:
+        dedup[(ref.source_id, ref.segment_id, ref.start_offset, ref.end_offset, ref.sha256)] = ref
+    return list(dedup.values())
 
 
-def _normalized_term(term: str, group: str, source_role: str | None = None) -> ConflictSearchTerm:
+def _party_term_map(
+    confirmation: HumanConfirmation, roles: set[str]
+) -> dict[str, list[EvidenceRef]]:
+    terms: dict[str, list[EvidenceRef]] = {}
+    for party in confirmation.confirmed_parties:
+        if party.confirmed_role in roles:
+            terms.setdefault(party.name, []).extend(party.evidence_refs)
+    return {term: _dedup_evidence_refs(refs) for term, refs in terms.items()}
+
+
+def _alias_term_map(confirmation: HumanConfirmation) -> dict[str, list[EvidenceRef]]:
+    aliases: dict[str, list[EvidenceRef]] = {}
+    for party in confirmation.confirmed_parties:
+        for alias in party.aliases:
+            aliases.setdefault(alias, []).extend(party.evidence_refs)
+    return {term: _dedup_evidence_refs(refs) for term, refs in aliases.items()}
+
+
+def _normalized_term(
+    term: str,
+    group: str,
+    evidence_refs: list[EvidenceRef],
+    source_role: str | None = None,
+) -> ConflictSearchTerm:
+    if not evidence_refs:
+        raise ValueError(f"conflict search term {term} lacks source-bound evidence refs")
     normalized = " ".join(term.casefold().replace(",", " ").split())
     return ConflictSearchTerm(
         term=term,
         normalized_term=normalized,
         group=group,  # type: ignore[arg-type]
         source_role=source_role,
+        evidence_refs=evidence_refs,
     )
 
 
 def build_conflict_seed(
     packet: IntakePreflightPacket, confirmation: HumanConfirmation
 ) -> ConflictSeedPacket:
-    represented = _party_names(confirmation, "prospective_represented_client") + _party_names(
-        confirmation, "represented_client"
+    represented = _party_term_map(
+        confirmation, {"prospective_represented_client", "represented_client"}
     )
-    instructing = _party_names(confirmation, "instructing_source") + _party_names(
-        confirmation, "insurance_carrier"
-    )
-    payers = _party_names(confirmation, "payer")
-    adverse = _party_names(confirmation, "adverse_party") + _party_names(confirmation, "claimant")
-    insureds = _party_names(confirmation, "insured")
-    opposing = _party_names(confirmation, "opposing_counsel")
-    all_names = {p.name for p in confirmation.confirmed_parties}
-    classified = set(represented + instructing + payers + insureds + adverse + opposing)
-    unresolved = sorted(all_names - classified)
-    aliases = sorted({alias for p in confirmation.confirmed_parties for alias in p.aliases})
+    instructing = _party_term_map(confirmation, {"instructing_source", "insurance_carrier"})
+    payers = _party_term_map(confirmation, {"payer"})
+    adverse = _party_term_map(confirmation, {"adverse_party", "claimant"})
+    insureds = _party_term_map(confirmation, {"insured"})
+    opposing = _party_term_map(confirmation, {"opposing_counsel"})
+    all_names = {
+        party.name: _dedup_evidence_refs(party.evidence_refs)
+        for party in confirmation.confirmed_parties
+    }
+    classified = set().union(represented, instructing, payers, insureds, adverse, opposing)
+    unresolved = {term: refs for term, refs in all_names.items() if term not in classified}
+    aliases = _alias_term_map(confirmation)
     normalized_terms = []
     for group, terms in [
         ("prospective_represented_client", represented),
@@ -293,20 +324,22 @@ def build_conflict_seed(
         ("alias", aliases),
         ("unresolved_role", unresolved),
     ]:
-        normalized_terms.extend(_normalized_term(term, group) for term in sorted(set(terms)))
+        normalized_terms.extend(
+            _normalized_term(term, group, refs) for term, refs in sorted(terms.items())
+        )
     return ConflictSeedPacket(
         conflict_seed_id=new_id("conflictseed"),
         preflight_packet_id=packet.packet_id,
         confirmation_id=confirmation.confirmation_id,
         status="seed_ready_for_conflicts_team",
-        prospective_represented_clients=sorted(set(represented)),
-        instructing_sources=sorted(set(instructing)),
-        payers=sorted(set(payers)),
-        adverse_parties=sorted(set(adverse)),
-        insureds=sorted(set(insureds)),
-        opposing_counsel=sorted(set(opposing)),
-        other_search_terms=aliases,
-        unresolved_roles=unresolved,
+        prospective_represented_clients=sorted(represented),
+        instructing_sources=sorted(instructing),
+        payers=sorted(payers),
+        adverse_parties=sorted(adverse),
+        insureds=sorted(insureds),
+        opposing_counsel=sorted(opposing),
+        other_search_terms=sorted(aliases),
+        unresolved_roles=sorted(unresolved),
         normalized_search_terms=normalized_terms,
     )
 

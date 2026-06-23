@@ -40,3 +40,9 @@
 
 - Added `north-star-messy-intake.json` and matching confirmation template as the one-command acceptance fixture.
 - Updated smoke coverage to require missing-source, duplicate-source, prompt-injection, safety-gate, review-package, and blocked-final-boundary outputs in one run.
+
+## Conflict-seed evidence slice - 2026-06-23
+
+- Required `ConflictSearchTerm` records to carry source-bound evidence refs from the human confirmation.
+- Added fail-closed validation when conflict seed terms lack evidence, plus north-star and unit coverage.
+- Tightened the Rust-ready ingestion ADR: Python stays the reference implementation, and Rust remains a future deterministic hot-path adapter only after profiling and golden parity.

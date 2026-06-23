@@ -10,10 +10,13 @@ PYTHONPATH=src python scripts/validate_repo.py
 # repository validation passed
 
 PYTHONPATH=src python -m pytest -q
-# 35 passed
+# 36 passed
 
 PYTHONPATH=src ruff check src tests scripts
 # All checks passed
+
+PYTHONPATH=src ruff format --check src tests scripts
+# 41 files already formatted
 
 PYTHONPATH=src bash scripts/smoke_demo.sh
 # completed without error
@@ -38,6 +41,8 @@ Budget assumptions, exclusions, and unknowns now emit `budget_support_items` wit
 The budget output also includes `safety_gate_report.json`; a failed safety check raises before the final review package is accepted.
 
 The smoke demo runs the messy north-star synthetic fixture, not the clean carrier-only fixture.
+
+Conflict-search seed packets now require every normalized search term to carry source-bound evidence refs from the human confirmation. The packet remains a search seed only and preserves `no_conflict_conclusion`.
 
 ## GitHub seed verification
 

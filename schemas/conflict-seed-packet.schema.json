@@ -36,14 +36,56 @@
           ],
           "default": null,
           "title": "Source Role"
+        },
+        "evidence_refs": {
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
         }
       },
       "required": [
         "term",
         "normalized_term",
-        "group"
+        "group",
+        "evidence_refs"
       ],
       "title": "ConflictSearchTerm",
+      "type": "object"
+    },
+    "EvidenceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "segment_id": {
+          "title": "Segment Id",
+          "type": "string"
+        },
+        "start_offset": {
+          "title": "Start Offset",
+          "type": "integer"
+        },
+        "end_offset": {
+          "title": "End Offset",
+          "type": "integer"
+        },
+        "sha256": {
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "segment_id",
+        "start_offset",
+        "end_offset",
+        "sha256"
+      ],
+      "title": "EvidenceRef",
       "type": "object"
     }
   },

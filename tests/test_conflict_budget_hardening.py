@@ -29,6 +29,7 @@ def test_conflict_seed_emits_normalized_grouped_terms(tmp_path, repo_root):
         term.normalized_term == term.normalized_term.casefold()
         for term in seed.normalized_search_terms
     )
+    assert all(term.evidence_refs for term in seed.normalized_search_terms)
     assert seed.conclusion == "no_conflict_conclusion"
 
 

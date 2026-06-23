@@ -29,6 +29,7 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     preflight_exceptions = load_jsonl(preflight_dir / "exception_lake_candidates.jsonl")
     budget_dir = tmp_path / "north-star/budget"
     confirmation = load_json(tmp_path / "north-star/human_confirmation.json")
+    conflict_seed = load_json(budget_dir / "conflict_search_seed_packet.json")
     budget_exceptions = load_jsonl(budget_dir / "exception_lake_candidates.jsonl")
     safety = load_json(budget_dir / "safety_gate_report.json")
     manifest = load_json(budget_dir / "review_package_manifest.json")
@@ -41,6 +42,7 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     assert contract_state["status"] == "passed"
     assert confirmation["decision_evidence_refs"]
     assert all(party["evidence_refs"] for party in confirmation["confirmed_parties"])
+    assert all(term["evidence_refs"] for term in conflict_seed["normalized_search_terms"])
     assert packet["source_coverage_summary"]["duplicate_sources"] == 1
     assert packet["source_coverage_summary"]["coverage_complete"] is False
     assert "incident_date" in packet["missing_information"]

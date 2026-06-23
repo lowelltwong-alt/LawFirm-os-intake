@@ -29,6 +29,18 @@ A Rust implementation must pass golden parity tests against the Python reference
 
 The Python implementation remains the readable reference until the Rust path proves parity on synthetic fixtures and holdouts.
 
+## Preparation Now
+
+Keep the future Rust seam cheap to adopt by preserving:
+
+- schema-first JSON inputs and outputs;
+- deterministic fixture and holdout coverage for ingestion outputs;
+- exact offset/hash validation in the Python reference;
+- no hidden Python object state in persisted artifacts;
+- adapter selection behind the existing worker/runtime interface.
+
+Do not add a Rust crate, FFI bridge, or dual implementation until profiling shows source inventory, segmentation, hashing, or evidence-ref emission is the bottleneck.
+
 ## Reason
 
 Large legal intake bundles may make document walking, hashing, boundary detection, and serialization the dominant cost. Rust is a good future fit for those deterministic mechanics because it can reduce memory overhead, improve throughput, and make bounded concurrency easier to reason about.
@@ -37,6 +49,6 @@ The same hot path is also where provenance mistakes are most dangerous. A faster
 
 ## Consequence
 
-Do not add a Rust crate, FFI bridge, or dual implementation until profiling shows the Python path is a bottleneck. When that happens, add Rust behind an explicit adapter and keep the current Python outputs as the approval oracle.
+When profiling justifies Rust, add it behind an explicit adapter and keep the current Python outputs as the approval oracle.
 
 Any Rust worker remains subordinate to Semantic Substrate contracts and Orchestrator execution authority. It is an implementation detail, not a new LawFirm OS authority plane.

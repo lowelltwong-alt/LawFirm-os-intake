@@ -129,6 +129,12 @@ An insurance carrier may be the sender, instructing source, payer, or source of 
 - claimant/adverse party
 - opposing counsel
 
+## Conflict-search seed boundary
+
+The conflict-search output is a seed packet only. It groups represented client, instructing source, payer, insured, adverse party, claimant, opposing counsel, aliases, and unresolved-role terms for a conflicts team or future governed conflicts workflow.
+
+Each normalized search term is evidence-bound through the human confirmation. A term without source-bound evidence refs is rejected instead of being emitted as a search seed. The packet still preserves `no_conflict_conclusion`.
+
 ## Budget boundary
 
 The budget output is a proposal only. It may contain phases, tasks, staffing, hours, authorized synthetic rates, fee calculations, expenses, contingency, assumptions, exclusions, and unknowns. It cannot be submitted until a separate human approval workflow exists.
@@ -160,6 +166,8 @@ A deterministic packet writer assembles outputs. Dynamic agent creation is prohi
 ## Rust readiness
 
 Python remains the starter reference implementation. If future document volume or constrained compute requires Rust, the only approved hot-path boundary is source inventory, segmentation, hashing, and evidence-ref emission. Any Rust adapter must prove parity with the Python reference for offsets, hashes, segment structure, prompt-injection flags, duplicate/missing-source states, and schema-compatible JSON before it can replace the Python path.
+
+Preparation now means keeping that boundary narrow, schema-first, and golden-testable. It does not mean adding a second runtime before profiling proves ingestion is the bottleneck.
 
 ## Current boundaries
 

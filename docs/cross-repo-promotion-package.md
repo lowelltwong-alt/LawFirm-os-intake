@@ -9,6 +9,7 @@ This is a draft promotion package for stable intake components. It is not a dire
 - Human confirmation contract, including `confirmed`, `unknown`, `needs_more_information`, `human_only`, and `declined_or_referred` outcomes, decision evidence refs, and confirmed-party evidence refs.
 - Party/role candidate contract with aliases, normalized names, role alternatives, evidence refs, and candidate status.
 - Matter-family, inbound-event, representation-posture, deadline, missing-information, and critic-finding candidate contracts.
+- Conflict seed and conflict search term contracts that preserve `no_conflict_conclusion` and require evidence refs for every normalized search term.
 - Budget proposal, calculation-report, and budget-support-item contracts.
 - Dry-run exception lake candidate contract with broad Lake class, local event label, source-inventory refs, evidence refs, blocked state, `raw_payload_included=false`, and `canonical_promotion_required=true`.
 - Review package manifest contract tying the human-readable package to preflight, confirmation, conflict seed, budget proposal, readiness, evidence graph, exception candidates, and ledger refs.

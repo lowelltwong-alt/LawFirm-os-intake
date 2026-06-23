@@ -282,6 +282,7 @@ class ConflictSearchTerm(StrictModel):
         "unresolved_role",
     ]
     source_role: str | None = None
+    evidence_refs: list[EvidenceRef]
 
 
 class BudgetLine(StrictModel):
