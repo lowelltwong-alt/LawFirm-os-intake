@@ -741,6 +741,10 @@
       "title": "Run Ledger Ref",
       "type": "string"
     },
+    "contract_state_report_ref": {
+      "title": "Contract State Report Ref",
+      "type": "string"
+    },
     "exception_candidates_ref": {
       "anyOf": [
         {
@@ -785,7 +789,8 @@
     "escalation",
     "prohibited_next_steps",
     "evidence_graph_ref",
-    "run_ledger_ref"
+    "run_ledger_ref",
+    "contract_state_report_ref"
   ],
   "title": "IntakePreflightPacket",
   "type": "object"

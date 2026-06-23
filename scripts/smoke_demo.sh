@@ -11,6 +11,8 @@ python -m lawfirm_os_intake demo \
 
 preflight_dir="$(find .lawfirm-os-intake/smoke/preflight -mindepth 1 -maxdepth 1 -type d | head -n 1)"
 test -n "$preflight_dir"
+test -s "$preflight_dir/contract_state_report.json"
+grep -q '"status": "passed"' "$preflight_dir/contract_state_report.json"
 test -s "$preflight_dir/exception_lake_candidates.jsonl"
 grep -q "prompt_injection_source_content" "$preflight_dir/exception_lake_candidates.jsonl"
 grep -q "source_missing" "$preflight_dir/exception_lake_candidates.jsonl"

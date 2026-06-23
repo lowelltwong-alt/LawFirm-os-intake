@@ -25,6 +25,7 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     assert code == 0
     preflight_dir = next((tmp_path / "north-star/preflight").iterdir())
     packet = load_json(preflight_dir / "intake_preflight_packet.json")
+    contract_state = load_json(preflight_dir / "contract_state_report.json")
     preflight_exceptions = load_jsonl(preflight_dir / "exception_lake_candidates.jsonl")
     budget_dir = tmp_path / "north-star/budget"
     budget_exceptions = load_jsonl(budget_dir / "exception_lake_candidates.jsonl")
@@ -34,6 +35,8 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
 
     labels = {item["local_event_label"] for item in preflight_exceptions}
     assert packet["source_coverage_summary"]["missing_sources"] == 1
+    assert packet["contract_state_report_ref"].endswith("contract_state_report.json")
+    assert contract_state["status"] == "passed"
     assert packet["source_coverage_summary"]["duplicate_sources"] == 1
     assert packet["source_coverage_summary"]["coverage_complete"] is False
     assert "incident_date" in packet["missing_information"]
@@ -55,6 +58,8 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     assert safety["final_boundary"] == "blocked_pending_conflicts_and_engagement"
     assert manifest["status"] == "blocked_pending_conflicts_and_engagement"
     assert manifest["artifact_refs"]["safety_gate_report"].endswith("safety_gate_report.json")
+    assert manifest["artifact_refs"]["contract_state_report"].endswith("contract_state_report.json")
+    assert manifest["contract_state_report_ref"].endswith("contract_state_report.json")
 
     for phrase in [
         "Source coverage complete: False",
@@ -66,6 +71,7 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
         "no_conflict_conclusion",
         "Scenario: baseline",
         "Status: passed",
+        "contract_state_report.json",
         "blocker: conflicts_not_cleared",
         "blocker: engagement_not_authorized",
         "blocker: matter_opening_not_approved",

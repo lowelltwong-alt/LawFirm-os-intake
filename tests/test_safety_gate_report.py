@@ -52,6 +52,7 @@ def test_budget_run_writes_passing_safety_gate_report(tmp_path, repo_root):
     assert all(check.status == "passed" for check in report.checks)
     assert report.external_writes_performed is False
     assert report.final_boundary == "blocked_pending_conflicts_and_engagement"
+    assert "contract_state_report_carried_forward" in {check.check_id for check in report.checks}
     assert manifest.safety_gate_report_ref == str(budget_dir / "safety_gate_report.json")
     assert manifest.artifact_refs["safety_gate_report"] == str(
         budget_dir / "safety_gate_report.json"

@@ -75,6 +75,18 @@
       "title": "Safety Gate Report Ref",
       "type": "string"
     },
+    "contract_state_report_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Contract State Report Ref"
+    },
     "evidence_graph_ref": {
       "title": "Evidence Graph Ref",
       "type": "string"

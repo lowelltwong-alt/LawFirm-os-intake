@@ -10,6 +10,8 @@ sys.path.insert(0, str(ROOT / "src"))
 from lawfirm_os_intake.models import (  # noqa: E402
     BudgetProposal,
     BudgetSupportItem,
+    ContractStateDependency,
+    ContractStateReport,
     ConflictSeedPacket,
     EffectiveContext,
     EvidenceGraph,
@@ -29,6 +31,8 @@ MODELS = {
     "segment.schema.json": Segment,
     "effective-context.schema.json": EffectiveContext,
     "party-candidate.schema.json": PartyCandidate,
+    "contract-state-dependency.schema.json": ContractStateDependency,
+    "contract-state-report.schema.json": ContractStateReport,
     "intake-preflight-packet.schema.json": IntakePreflightPacket,
     "human-confirmation.schema.json": HumanConfirmation,
     "conflict-seed-packet.schema.json": ConflictSeedPacket,

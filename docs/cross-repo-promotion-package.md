@@ -11,6 +11,7 @@ This is a draft promotion package for stable intake components. It is not a dire
 - Budget proposal, calculation-report, and budget-support-item contracts.
 - Dry-run exception lake candidate contract with broad Lake class, local event label, source-inventory refs, evidence refs, blocked state, `raw_payload_included=false`, and `canonical_promotion_required=true`.
 - Review package manifest contract tying the human-readable package to preflight, confirmation, conflict seed, budget proposal, readiness, evidence graph, exception candidates, and ledger refs.
+- Contract state report contract tying each local run to reviewed lock status, sibling repo SHAs, authority planes, topology agreement, and fail-closed check results.
 - Safety gate report contract for deterministic prohibited-transition checks.
 - Intake event labels for later review: `intake_preflight_proposed`, `intake_classification_confirmed`, `intake_classification_corrected`, `party_role_corrected`, `practice_context_missing_or_misleading`, `conflict_seed_prepared`, `budget_proposal_created`, `budget_proposal_corrected`, and `profile_change_candidate`.
 
@@ -18,14 +19,14 @@ This is a draft promotion package for stable intake components. It is not a dire
 
 - Outer workflow owner: `LawFirm-os-orchestrator`.
 - Intake runtime input: source bundle path, practice profile ref, adapter mode, strict-evidence setting.
-- Intake runtime outputs: preflight packet, review form, evidence graph, run ledger, dry-run exception candidates, human confirmation, conflict seed, budget proposal, budget review form, matter-opening readiness, safety gate report, consolidated review package, review package manifest.
-- Required gates: data-origin gate, prompt/tool authority gate, human intake confirmation, budget precondition gate, prohibited-transition gate.
+- Intake runtime outputs: contract state report, preflight packet, review form, evidence graph, run ledger, dry-run exception candidates, human confirmation, conflict seed, budget proposal, budget review form, matter-opening readiness, safety gate report, consolidated review package, review package manifest.
+- Required gates: contract-state gate, data-origin gate, prompt/tool authority gate, human intake confirmation, budget precondition gate, prohibited-transition gate.
 
 ## Exception Lake Mapping Draft
 
 - `retrieval_miss`: missing source, unreadable attachment, unresolved source ref, incomplete context bundle, source coverage gap.
 - `workflow_escalation`: human review required, close candidates, role ambiguity, prompt injection, prohibited transition attempted, budget blocked before confirmation.
-- `authority_conflict_override`: unregistered route/event label, local candidate conflicts with canon, profile attempts to expand authority, contract SHA drift.
+- `authority_conflict_override`: unregistered route/event label, local candidate conflicts with canon, profile attempts to expand authority, missing reviewed lock, topology mismatch, contract SHA drift.
 - Intake emits these as local `ExceptionLakeCandidate` rows only. The Exception Lake runtime should perform admission validation, append-only storage, record hashing, and correction/supersession handling.
 
 ## Skills Registry Draft

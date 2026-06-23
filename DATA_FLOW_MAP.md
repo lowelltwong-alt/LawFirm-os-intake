@@ -8,7 +8,7 @@ Current GitHub posture:
 
 - `lowelltwong-alt/LawFirm-os-intake` exists as a private repo with default branch `main`.
 - The private repo has been seeded and CI is green as of commit `4d3d67b0324c59aba90f9a3100dc082f19f8b84a`.
-- Build-out branch `codex/build-out-intake-vertical` adds the governed intake-to-budget vertical and is CI green as of commit `bfc6866`.
+- Build-out branch `codex/build-out-intake-vertical` adds the governed intake-to-budget vertical, messy north-star fixture, dry-run Exception Lake candidates, review package, safety gate, and local contract-state gate. CI status must be checked against the latest pushed commit before claiming it is green.
 - Semantic Substrate registration branch `codex/register-intake-control-plane` is pushed and CI green; it must still be reviewed/merged before treating intake membership as canonical on Substrate `main`.
 - The five public sibling repos are reachable on `main`; pin adoption must use reviewed immutable SHAs, not local copied-folder assumptions.
 
@@ -63,6 +63,7 @@ flowchart LR
 
 ```text
 synthetic source bundle
+-> reviewed contract-state gate for sibling repo locks
 -> data-origin and authorization gate
 -> source inventory
 -> provenance-preserving segmentation
@@ -88,14 +89,15 @@ The outer runtime owner is `LawFirm-os-orchestrator`. The local intake CLI is a 
 | Object | Owner | Direction | Notes |
 |---|---|---|---|
 | Candidate intake schemas in `schemas/` | Intake candidate surface | Local only | Must not masquerade as promoted Semantic Substrate canon |
+| `ContractStateReport` in `contract_state_report.json` | Intake candidate surface | Intake -> Human reviewer / Orchestrator review path | Verifies local `contracts.lock.json` and `repo_topology.lock.yaml` are reviewed, parseable, SHA-pinned, topology-matched, and non-authoritative before packet generation |
 | `SourceRef` / `PassageRef` / `ClaimRef` | Legal Knowledge Runtime under substrate contracts | Legal Knowledge -> Intake -> Evidence Packet | Prefer refs, offsets, hashes, and bundle IDs over raw text payloads |
 | Legal Context Bundle | Legal Knowledge Runtime under substrate contracts | Legal Knowledge -> Orchestrator/Intake | Context is evidence and decision support, not observed fact |
 | Execution passport / run ledger | Orchestrator | Orchestrator <-> Intake | Carries contract pin, decision model, approval state, and gate results |
 | Evidence packet | Orchestrator | Orchestrator -> Exception Lake | Principal admission unit for runtime evidence |
 | `ExceptionLakeCandidate` in `exception_lake_candidates.jsonl` | Intake candidate surface | Intake -> Orchestrator -> Exception Lake review path | Dry-run only; maps to broad existing Lake classes and includes no raw payload |
-| `ReviewPackageManifest` and `matter_opening_review_package.md` | Intake candidate surface | Intake -> Human reviewer / Orchestrator review path | One-run review surface linking knowns, unknowns, evidence refs, conflict seed, budget, exception candidates, blockers, ledgers, and prohibited actions |
+| `ReviewPackageManifest` and `matter_opening_review_package.md` | Intake candidate surface | Intake -> Human reviewer / Orchestrator review path | One-run review surface linking contract state, knowns, unknowns, evidence refs, conflict seed, budget, exception candidates, blockers, ledgers, and prohibited actions |
 | `BudgetSupportItem` | Intake candidate surface | Intake -> Human reviewer / Orchestrator review path | Evidence or structured-ref support for budget assumptions, exclusions, and unknowns |
-| `SafetyGateReport` | Intake candidate surface | Intake -> Human reviewer / Orchestrator review path | Deterministic proof that prohibited legal, conflict, engagement, docketing, billing, external-write, matter-opening, and submission states are absent |
+| `SafetyGateReport` | Intake candidate surface | Intake -> Human reviewer / Orchestrator review path | Deterministic proof that contract-state binding is carried forward and prohibited legal, conflict, engagement, docketing, billing, external-write, matter-opening, and submission states are absent |
 | Exception/admission/audit records | Exception Lake Runtime | Exception Lake append-only store | Evidence only; no canon mutation or raw legal payload storage |
 | Skill trust record / prompt version | Skills Registry under substrate policy | Skills Registry -> Orchestrator/Intake | Specialist use requires declared context, tool authority, human gate, and revocation path |
 
@@ -107,7 +109,7 @@ Intake-specific exception labels are evidence labels unless and until Semantic S
 |---|---|---|
 | `retrieval_miss` | missing source, unreadable attachment, unresolved source ref, incomplete Legal Context Bundle, missing jurisdiction reference, source coverage gap | Append evidence and validation detail; do not invent missing facts |
 | `workflow_escalation` | human review required, role ambiguity, contradictory candidates, missing information, prompt-injection source content, prohibited transition attempted, budget blocked before confirmation | Append escalation trigger and current blocked state |
-| `authority_conflict_override` | local candidate conflicts with pinned canon, route/event ID not registered, prompt/tool authority mismatch, contract SHA drift, profile tries to expand authority | Fail closed and emit only allowed audit/evidence metadata |
+| `authority_conflict_override` | local candidate conflicts with pinned canon, missing reviewed lock, topology mismatch, route/event ID not registered, prompt/tool authority mismatch, contract SHA drift, profile tries to expand authority | Fail closed and emit only allowed audit/evidence metadata |
 
 Future intake event labels named in this repo, such as `intake_preflight_proposed`, `intake_classification_confirmed`, `party_role_corrected`, `practice_context_missing_or_misleading`, `conflict_seed_prepared`, `budget_proposal_created`, `budget_proposal_corrected`, and `profile_change_candidate`, must either:
 
@@ -160,6 +162,8 @@ These are the remaining data-flow gaps to close before claiming the private inta
 1. Review and merge the pushed Semantic Substrate registration branch before claiming canonical Substrate `main` membership.
 2. Register any intake-specific event labels in Semantic Substrate before treating them as canonical Lake event classes.
 3. Keep the workspace as clean sibling clones or an intentional submodule superproject; do not rely on copied child folders as sync truth.
+
+The local starter now emits and enforces `contract_state_report.json` for each preflight run. That proves the private vertical used the reviewed local lock files; it does not replace the sibling repo governance steps above.
 
 Workspace note: the pushed Semantic Substrate registration branch explicitly excludes `LawFirm-os-talent-intelligence-private` from this kernel registry until that separate private vertical receives its own admission decision.
 

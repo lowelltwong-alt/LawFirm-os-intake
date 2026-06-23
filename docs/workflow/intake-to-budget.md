@@ -31,61 +31,67 @@ Do not compress all intake meaning into one `case_type` field. Rank and confirm 
 
 ## Detailed flow
 
-### 1. Receive and gate
+### 1. Prove contract state
+
+Validate the local reviewed lock files before reading the source bundle. The starter requires `contracts.lock.json` and `repo_topology.lock.yaml` to be present, parseable, marked `reviewed_seed_lock`, and pinned to immutable SHAs for the five governing LawFirm OS repos with matching authority planes.
+
+The run writes `contract_state_report.json` and fails closed if the contract state is missing, stale, or mismatched.
+
+### 2. Receive and gate
 
 Validate data origin, scope, and source bundle. The starter stops on non-synthetic content.
 
-### 2. Inventory
+### 3. Inventory
 
 List every source and whether it was read, missing, duplicated, or unreadable. Source coverage is part of the review packet.
 
-### 3. Segment structurally
+### 4. Segment structurally
 
 Preserve email headers, current body, quoted history, signatures, attachment boundaries, letter paragraphs, headings, tables, pages, and source offsets.
 
-### 4. Extract party and role candidates
+### 5. Extract party and role candidates
 
 Extract names and aliases, but keep role candidates separate. A sender may be a carrier, payer, referral source, or adverse entity. Do not decide the client automatically.
 
-### 5. Rank intake candidates
+### 6. Rank intake candidates
 
 Return top alternatives for inbound event, matter family, and posture. Show source evidence and profile-prior influence separately.
 
-### 6. Identify dates and gaps
+### 7. Identify dates and gaps
 
 Dates, deadlines, and urgency are candidates. The system identifies missing fields but cannot docket or characterize a legally controlling deadline.
 
-### 7. Independent critic
+### 8. Independent critic
 
 The critic checks evidence completeness, contradictions, worker disagreement, source coverage, role ambiguity, and prohibited next steps.
 
-### 8. Escalation gate
+### 9. Escalation gate
 
 Difficult cases may receive a bounded frontier adjudication before human review. The frontier result is still a proposal.
 
-### 9. Human intake confirmation
+### 10. Human intake confirmation
 
 The reviewer confirms or corrects matter family, posture, principal party roles, jurisdiction, and any date characterization.
 
-### 10. Conflict-search seed
+### 11. Conflict-search seed
 
 The system builds normalized search terms grouped by prospective client, instructing source, payer, adverse party, opposing counsel, aliases, and unresolved roles. It makes no conflict conclusion.
 
-### 11. Budget proposal
+### 12. Budget proposal
 
 A confirmed matter type selects an approved practice template. The planner calculates hours, rates if authorized, fees, expenses, and contingency. Assumptions, exclusions, and unknowns remain visible.
 
-### 12. Human budget review
+### 13. Human budget review
 
 Future governed step. The starter does not approve or submit.
 
-### 13. Matter-opening readiness
+### 14. Matter-opening readiness
 
 The system reports satisfied preconditions and blockers. The starter always remains blocked pending conflicts, engagement, and matter-opening authorization.
 
-### 14. Safety gate report
+### 15. Safety gate report
 
-The deterministic safety gate verifies that the final package contains no conflict clearance, engagement decision, docketed deadline, billing or submission state, external write, matter opening, iManage workspace creation, or client/carrier submission authorization. A failed check blocks final package acceptance.
+The deterministic safety gate verifies that the contract-state report is carried forward and that the final package contains no conflict clearance, engagement decision, docketed deadline, billing or submission state, external write, matter opening, iManage workspace creation, or client/carrier submission authorization. A failed check blocks final package acceptance.
 
 ## Terminal states
 

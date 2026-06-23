@@ -13,6 +13,7 @@ It is not a second orchestrator, a conflicts system, an engagement system, or a 
 
 ```text
 messy inbound source
+-> reviewed contract-state gate for sibling repo locks
 -> data-origin and authorization gate
 -> source inventory
 -> provenance-preserving segmentation
@@ -68,6 +69,7 @@ The demo emits:
 |-- human_confirmation.json
 |-- preflight/<run_id>/
 |   |-- raw_input.json
+|   |-- contract_state_report.json
 |   |-- source_inventory.json
 |   |-- segments.json
 |   |-- effective_context.json
@@ -104,6 +106,12 @@ Practice context may alter candidate rankings. It may **not** manufacture observ
 
 Human reviewers must confirm the matter type, representation posture, and principal party roles.
 
+## Contract state gate
+
+Every preflight run emits `contract_state_report.json` before it accepts the source bundle. The report verifies that `contracts.lock.json` and `repo_topology.lock.yaml` are present, parseable, marked `reviewed_seed_lock`, and pin the five governing LawFirm OS repos by immutable SHAs with the expected authority planes.
+
+If that local authority state is missing or stale, the run fails closed before source inventory or classification. The report is carried forward into the budget manifest and final safety gate.
+
 ## The carrier/client rule
 
 An insurance carrier may be the sender, instructing source, payer, or source of guidelines. That does not automatically establish that the carrier is the represented client. The workflow keeps these roles separate:
@@ -127,7 +135,7 @@ If rates are absent, the system emits an **hours-only** proposal. It never inven
 
 ## Safety gate
 
-The final budget run emits `safety_gate_report.json`. This deterministic report checks that the output remains synthetic-only, human-confirmed, conflict-search-only, not submittable, blocked from engagement and matter opening, not docketed, not billed, and local-file-only. A failed check raises before the final review package is accepted.
+The final budget run emits `safety_gate_report.json`. This deterministic report checks that the output remains synthetic-only, contract-state-bound, human-confirmed, conflict-search-only, not submittable, blocked from engagement and matter opening, not docketed, not billed, and local-file-only. A failed check raises before the final review package is accepted.
 
 ## Agent architecture
 

@@ -57,6 +57,8 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert manifest.contains_raw_payload is False
     assert manifest.external_writes_performed is False
     assert manifest.safety_gate_report_ref == str(budget_dir / "safety_gate_report.json")
+    assert manifest.contract_state_report_ref == packet.contract_state_report_ref
+    assert manifest.artifact_refs["contract_state_report"] == packet.contract_state_report_ref
     assert "conflict_search_seed" in manifest.artifact_refs
     assert "legal_budget_proposal" in manifest.artifact_refs
     assert "preflight_exception_candidates" in manifest.artifact_refs

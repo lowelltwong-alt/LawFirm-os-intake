@@ -151,6 +151,42 @@ class EffectiveContext(StrictModel):
     context_precedence: list[str]
 
 
+class ContractStateDependency(StrictModel):
+    repo: str
+    remote: str | None = None
+    branch: str | None = None
+    ref_type: str | None = None
+    sha: str | None = None
+    authority_plane: str | None = None
+    local_folder: str | None = None
+    topology_sha: str | None = None
+    topology_authority_plane: str | None = None
+    topology_matches_lock: bool = False
+    status: Literal["verified", "invalid"]
+
+
+class ContractStateCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    evidence_refs: list[str] = Field(default_factory=list)
+
+
+class ContractStateReport(StrictModel):
+    schema_version: str = "0.1"
+    contract_state_report_id: str
+    run_id: str
+    status: Literal["passed", "failed"]
+    lock_status: str | None = None
+    reviewed_lock_required: bool = True
+    lockfile_ref: str
+    topology_lock_ref: str
+    dependencies: list[ContractStateDependency]
+    checks: list[ContractStateCheck]
+    errors: list[str] = Field(default_factory=list)
+    generated_at: str
+
+
 class IntakePreflightPacket(StrictModel):
     schema_version: str = "0.1"
     packet_id: str
@@ -175,6 +211,7 @@ class IntakePreflightPacket(StrictModel):
     prohibited_next_steps: list[str]
     evidence_graph_ref: str
     run_ledger_ref: str
+    contract_state_report_ref: str
     exception_candidates_ref: str | None = None
     intake_review_form_ref: str | None = None
 
@@ -410,6 +447,7 @@ class ReviewPackageManifest(StrictModel):
     final_blockers: list[str]
     prohibited_actions: list[str]
     safety_gate_report_ref: str
+    contract_state_report_ref: str | None = None
     evidence_graph_ref: str
     run_ledger_refs: list[str]
     exception_candidate_refs: list[str]

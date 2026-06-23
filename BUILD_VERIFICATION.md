@@ -4,26 +4,26 @@ Verified in the artifact build environment on 2026-06-23:
 
 ```text
 PYTHONPATH=src python scripts/export_schemas.py
-# exported 14 schemas
+# exported 16 schemas
 
 PYTHONPATH=src python scripts/validate_repo.py
 # repository validation passed
 
 PYTHONPATH=src python -m pytest -q
-# 28 passed
+# 31 passed
 
 PYTHONPATH=src ruff check src tests scripts
 # All checks passed
 
 PYTHONPATH=src bash scripts/smoke_demo.sh
-# demo_completed
-# total_proposed_budget: 202365.38 (synthetic)
-# final_boundary: blocked_pending_conflicts_and_engagement
+# completed without error
 ```
 
 The monetary result is a synthetic test calculation, not a fee quote or approved budget.
 
 The current demo also emits local `exception_lake_candidates.jsonl` files in preflight and budget outputs. These are dry-run candidates only; they are not canonical Exception Lake admissions and include no raw legal payload.
+
+The preflight output now includes `contract_state_report.json`, which verifies the reviewed local sibling-repo lock state before source processing. The report is carried forward into the final review manifest and safety gate.
 
 The budget output now includes `matter_opening_review_package.md` and `review_package_manifest.json` as the consolidated review surface for the north-star demo.
 

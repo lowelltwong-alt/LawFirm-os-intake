@@ -73,6 +73,7 @@ def main(argv: list[str] | None = None) -> int:
                     "top_matter_candidate": packet.matter_family_candidates[0].label,
                     "human_confirmation_required": packet.human_confirmation_required,
                     "escalation": packet.escalation.model_dump(mode="json"),
+                    "contract_state_report": packet.contract_state_report_ref,
                     "run_dir": str(run_dir),
                 }
             )
@@ -129,6 +130,7 @@ def main(argv: list[str] | None = None) -> int:
                 {
                     "status": "demo_completed",
                     "preflight_packet": str(run_dir / "intake_preflight_packet.json"),
+                    "contract_state_report": packet.contract_state_report_ref,
                     "human_confirmation": str(confirmation_path),
                     "conflict_seed": str(budget_dir / "conflict_search_seed_packet.json"),
                     "legal_budget_proposal": str(budget_dir / "legal_budget_proposal.json"),

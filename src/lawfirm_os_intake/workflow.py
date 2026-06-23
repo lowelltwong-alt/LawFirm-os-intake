@@ -5,6 +5,7 @@ from typing import Any
 
 from .adapters import resolve_adapter
 from .budget import build_budget_proposal
+from .contract_state import build_contract_state_report, enforce_contract_state
 from .context import build_effective_context, load_profile
 from .evidence import build_preflight_graph, extend_graph_with_budget
 from .exceptions import build_budget_exception_candidates, build_preflight_exception_candidates
@@ -122,25 +123,40 @@ def run_preflight(
             notes=adapter_decision.notes,
         ).model_dump(mode="json"),
     )
+    contract_state_report_path = run_dir / "contract_state_report.json"
+    contract_state_report = build_contract_state_report(run_id)
+    write_json(contract_state_report_path, contract_state_report.model_dump(mode="json"))
+    append_jsonl(
+        ledger_path,
+        _event(
+            run_id,
+            2,
+            "contract_state_gate",
+            "completed" if contract_state_report.status == "passed" else "failed",
+            output_refs=[str(contract_state_report_path)],
+        ).model_dump(mode="json"),
+    )
+    enforce_contract_state(contract_state_report)
+
     bundle = SourceBundle.model_validate(load_json(input_path))
     _gate_bundle(bundle)
     write_json(run_dir / "raw_input.json", bundle.model_dump(mode="json"))
     append_jsonl(
-        ledger_path, _event(run_id, 2, "data_origin_gate", "completed").model_dump(mode="json")
+        ledger_path, _event(run_id, 3, "data_origin_gate", "completed").model_dump(mode="json")
     )
 
     profile = load_profile(profile_path)
     context = build_effective_context(profile)
     write_json(run_dir / "effective_context.json", context.model_dump(mode="json"))
     append_jsonl(
-        ledger_path, _event(run_id, 3, "context_resolution", "completed").model_dump(mode="json")
+        ledger_path, _event(run_id, 4, "context_resolution", "completed").model_dump(mode="json")
     )
 
     segments = segment_bundle(bundle)
     write_json(run_dir / "segments.json", [s.model_dump(mode="json") for s in segments])
     append_jsonl(
         ledger_path,
-        _event(run_id, 4, "provenance_preserving_segmentation", "completed").model_dump(
+        _event(run_id, 5, "provenance_preserving_segmentation", "completed").model_dump(
             mode="json"
         ),
     )
@@ -151,7 +167,7 @@ def run_preflight(
     missing_candidates = missing_information_candidates(missing, segments)
     findings, escalation = review_evidence(parties, matter, deadlines, missing, segments)
     append_jsonl(
-        ledger_path, _event(run_id, 5, "specialist_workers", "completed").model_dump(mode="json")
+        ledger_path, _event(run_id, 6, "specialist_workers", "completed").model_dump(mode="json")
     )
 
     inventory = source_inventory(bundle, segments)
@@ -179,6 +195,7 @@ def run_preflight(
         prohibited_next_steps=PROHIBITED_NEXT_STEPS,
         evidence_graph_ref=str(run_dir / "evidence_graph.json"),
         run_ledger_ref=str(ledger_path),
+        contract_state_report_ref=str(contract_state_report_path),
         exception_candidates_ref=str(exception_candidates_path),
         intake_review_form_ref=str(review_form_path),
     )
@@ -200,13 +217,14 @@ def run_preflight(
         ledger_path,
         _event(
             run_id,
-            6,
+            7,
             "preflight_packet_built",
             "completed",
             output_refs=[
                 str(run_dir / "intake_preflight_packet.json"),
                 str(review_form_path),
                 str(run_dir / "evidence_graph.json"),
+                str(contract_state_report_path),
                 str(exception_candidates_path),
             ],
         ).model_dump(mode="json"),
@@ -361,6 +379,7 @@ def run_budget(
         "budget_exception_candidates": str(exception_candidates_path),
         "budget_run_ledger": str(ledger_path),
         "preflight_run_ledger": packet.run_ledger_ref,
+        "contract_state_report": packet.contract_state_report_ref,
         "safety_gate_report": str(safety_gate_report_path),
     }
     safety_report = build_safety_gate_report(
@@ -407,6 +426,7 @@ def run_budget(
         final_blockers=readiness.blockers,
         prohibited_actions=readiness.prohibited_actions,
         safety_gate_report_ref=str(safety_gate_report_path),
+        contract_state_report_ref=packet.contract_state_report_ref,
         evidence_graph_ref=str(run_dir / "evidence_graph.json"),
         run_ledger_refs=[packet.run_ledger_ref, str(ledger_path)],
         exception_candidate_refs=[

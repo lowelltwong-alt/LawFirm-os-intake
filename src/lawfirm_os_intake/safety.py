@@ -46,6 +46,13 @@ def build_safety_gate_report(
             [artifact_refs["preflight_packet"]],
         ),
         _check(
+            "contract_state_report_carried_forward",
+            bool(packet.contract_state_report_ref)
+            and artifact_refs.get("contract_state_report") == packet.contract_state_report_ref,
+            "The budget package carries forward the preflight contract-state report.",
+            [artifact_refs.get("contract_state_report", packet.contract_state_report_ref)],
+        ),
+        _check(
             "human_intake_confirmation_present",
             confirmation.status == "confirmed"
             and confirmation.preflight_packet_id == packet.packet_id,
