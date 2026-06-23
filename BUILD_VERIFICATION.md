@@ -4,13 +4,13 @@ Verified in the artifact build environment on 2026-06-23:
 
 ```text
 PYTHONPATH=src python scripts/export_schemas.py
-# exported 10 schemas
+# exported 11 schemas
 
 PYTHONPATH=src python scripts/validate_repo.py
 # repository validation passed
 
 PYTHONPATH=src python -m pytest -q
-# 13 passed
+# 22 passed
 
 PYTHONPATH=src ruff check src tests scripts
 # All checks passed
@@ -22,6 +22,8 @@ PYTHONPATH=src bash scripts/smoke_demo.sh
 ```
 
 The monetary result is a synthetic test calculation, not a fee quote or approved budget.
+
+The current demo also emits local `exception_lake_candidates.jsonl` files in preflight and budget outputs. These are dry-run candidates only; they are not canonical Exception Lake admissions and include no raw legal payload.
 
 ## GitHub seed verification
 

@@ -175,6 +175,7 @@ class IntakePreflightPacket(StrictModel):
     prohibited_next_steps: list[str]
     evidence_graph_ref: str
     run_ledger_ref: str
+    exception_candidates_ref: str | None = None
     intake_review_form_ref: str | None = None
 
 
@@ -346,3 +347,26 @@ class RunEvent(StrictModel):
     input_refs: list[str] = Field(default_factory=list)
     output_refs: list[str] = Field(default_factory=list)
     notes: str | None = None
+
+
+class ExceptionLakeCandidate(StrictModel):
+    schema_version: str = "0.1"
+    candidate_id: str
+    run_id: str
+    preflight_packet_id: str
+    local_event_label: str
+    canonical_lake_class: Literal[
+        "retrieval_miss",
+        "workflow_escalation",
+        "authority_conflict_override",
+    ]
+    status: Literal["dry_run_candidate"] = "dry_run_candidate"
+    reason: str
+    source_inventory_refs: list[str] = Field(default_factory=list)
+    evidence_refs: list[EvidenceRef] = Field(default_factory=list)
+    blocked_state: str | None = None
+    raw_payload_included: bool = False
+    canonical_promotion_required: bool = True
+    target_runtime_repo: Literal["LawFirm-os-exceptions-lake-runtime"] = (
+        "LawFirm-os-exceptions-lake-runtime"
+    )

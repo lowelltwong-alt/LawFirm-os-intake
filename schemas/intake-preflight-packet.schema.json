@@ -741,6 +741,18 @@
       "title": "Run Ledger Ref",
       "type": "string"
     },
+    "exception_candidates_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Exception Candidates Ref"
+    },
     "intake_review_form_ref": {
       "anyOf": [
         {

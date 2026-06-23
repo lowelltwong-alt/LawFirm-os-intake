@@ -13,18 +13,19 @@ It is not a second orchestrator, a conflicts system, an engagement system, or a 
 
 ```text
 messy inbound source
-→ data-origin and authorization gate
-→ source inventory
-→ provenance-preserving segmentation
-→ party and relationship-role candidates
-→ inbound-event, matter-family, and representation-posture candidates
-→ date/deadline and missing-information candidates
-→ independent evidence review
-→ human intake confirmation
-→ conflict-search seed packet (no conflict conclusion)
-→ legal budget proposal (not approved or submitted)
-→ matter-opening readiness packet
-→ blocked pending conflicts, engagement, and authorized matter opening
+-> data-origin and authorization gate
+-> source inventory
+-> provenance-preserving segmentation
+-> party and relationship-role candidates
+-> inbound-event, matter-family, and representation-posture candidates
+-> date/deadline and missing-information candidates
+-> independent evidence review
+-> dry-run Exception Lake candidates for missing source, ambiguity, prompt injection, or blockers
+-> human intake confirmation
+-> conflict-search seed packet (no conflict conclusion)
+-> legal budget proposal (not approved or submitted)
+-> matter-opening readiness packet
+-> blocked pending conflicts, engagement, and authorized matter opening
 ```
 
 The first usable slice is intentionally narrow: **synthetic input only, local files only, no external writes, and mandatory human confirmation before budget generation**.
@@ -62,23 +63,25 @@ The demo emits:
 
 ```text
 .lawfirm-os-intake/demo/
-├── human_confirmation.json
-├── preflight/<run_id>/
-│   ├── raw_input.json
-│   ├── source_inventory.json
-│   ├── segments.json
-│   ├── effective_context.json
-│   ├── intake_preflight_packet.json
-│   ├── intake_review_form.md
-│   ├── evidence_graph.json
-│   └── run_ledger.jsonl
-└── budget/
-    ├── conflict_search_seed_packet.json
-    ├── legal_budget_proposal.json
-    ├── legal_budget_review_form.md
-    ├── matter_opening_readiness.json
-    ├── evidence_graph.json
-    └── run_ledger.jsonl
+|-- human_confirmation.json
+|-- preflight/<run_id>/
+|   |-- raw_input.json
+|   |-- source_inventory.json
+|   |-- segments.json
+|   |-- effective_context.json
+|   |-- intake_preflight_packet.json
+|   |-- intake_review_form.md
+|   |-- exception_lake_candidates.jsonl
+|   |-- evidence_graph.json
+|   `-- run_ledger.jsonl
+`-- budget/
+    |-- conflict_search_seed_packet.json
+    |-- legal_budget_proposal.json
+    |-- legal_budget_review_form.md
+    |-- matter_opening_readiness.json
+    |-- exception_lake_candidates.jsonl
+    |-- evidence_graph.json
+    `-- run_ledger.jsonl
 ```
 
 ## Practice context is configurable, not hidden prompt text

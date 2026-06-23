@@ -8,6 +8,8 @@ Current GitHub posture:
 
 - `lowelltwong-alt/LawFirm-os-intake` exists as a private repo with default branch `main`.
 - The private repo has been seeded and CI is green as of commit `4d3d67b0324c59aba90f9a3100dc082f19f8b84a`.
+- Build-out branch `codex/build-out-intake-vertical` adds the governed intake-to-budget vertical and is CI green as of commit `bfc6866`.
+- Semantic Substrate registration branch `codex/register-intake-control-plane` is pushed and CI green; it must still be reviewed/merged before treating intake membership as canonical on Substrate `main`.
 - The five public sibling repos are reachable on `main`; pin adoption must use reviewed immutable SHAs, not local copied-folder assumptions.
 
 ## Authority Order
@@ -68,10 +70,12 @@ synthetic source bundle
 -> inbound-event, matter-family, and representation-posture candidates
 -> date/deadline and missing-information candidates
 -> independent evidence review
+-> dry-run Exception Lake candidates for retrieval misses, workflow escalations, and authority conflicts
 -> human intake confirmation
 -> conflict-search seed packet, with no conflict conclusion
 -> legal budget proposal, not approved or submitted
 -> matter-opening readiness packet
+-> budget-blocker dry-run Exception Lake candidate
 -> blocked_pending_conflicts_and_engagement
 ```
 
@@ -86,6 +90,7 @@ The outer runtime owner is `LawFirm-os-orchestrator`. The local intake CLI is a 
 | Legal Context Bundle | Legal Knowledge Runtime under substrate contracts | Legal Knowledge -> Orchestrator/Intake | Context is evidence and decision support, not observed fact |
 | Execution passport / run ledger | Orchestrator | Orchestrator <-> Intake | Carries contract pin, decision model, approval state, and gate results |
 | Evidence packet | Orchestrator | Orchestrator -> Exception Lake | Principal admission unit for runtime evidence |
+| `ExceptionLakeCandidate` in `exception_lake_candidates.jsonl` | Intake candidate surface | Intake -> Orchestrator -> Exception Lake review path | Dry-run only; maps to broad existing Lake classes and includes no raw payload |
 | Exception/admission/audit records | Exception Lake Runtime | Exception Lake append-only store | Evidence only; no canon mutation or raw legal payload storage |
 | Skill trust record / prompt version | Skills Registry under substrate policy | Skills Registry -> Orchestrator/Intake | Specialist use requires declared context, tool authority, human gate, and revocation path |
 
@@ -103,6 +108,8 @@ Future intake event labels named in this repo, such as `intake_preflight_propose
 
 1. map to an existing canonical route/event class through a reviewed adapter, or
 2. be promoted first through Semantic Substrate before Exception Lake runtime accepts them as first-class event classes.
+
+The current local workflow writes `exception_lake_candidates.jsonl` in both preflight and budget run directories. Each row is a dry-run candidate with `raw_payload_included=false`, `canonical_promotion_required=true`, a broad canonical Lake class, and either source-inventory refs or evidence refs. The file is not an admission log and is not a SQLite store.
 
 ## SQLite Direction For Exception Lake
 
@@ -145,11 +152,11 @@ The intake flow never emits:
 
 These are the remaining data-flow gaps to close before claiming the private intake repo is fully tied into the OS:
 
-1. Register `LawFirm-os-intake` in the Semantic Substrate repo registry / skill-agent control plane before claiming workspace validation passes.
+1. Review and merge the pushed Semantic Substrate registration branch before claiming canonical Substrate `main` membership.
 2. Register any intake-specific event labels in Semantic Substrate before treating them as canonical Lake event classes.
 3. Keep the workspace as clean sibling clones or an intentional submodule superproject; do not rely on copied child folders as sync truth.
 
-Workspace note: the current aggregate workspace skill-agent validation also flags `LawFirm-os-talent-intelligence-private` as an unregistered `LawFirm-os-*` repo. That repo is outside the intake vertical, but it must be registered or explicitly excluded before the whole aggregate workspace can pass that validator.
+Workspace note: the pushed Semantic Substrate registration branch explicitly excludes `LawFirm-os-talent-intelligence-private` from this kernel registry until that separate private vertical receives its own admission decision.
 
 ## Validation
 

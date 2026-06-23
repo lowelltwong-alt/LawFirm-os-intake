@@ -7,6 +7,7 @@ from .adapters import resolve_adapter
 from .budget import build_budget_proposal
 from .context import build_effective_context, load_profile
 from .evidence import build_preflight_graph, extend_graph_with_budget
+from .exceptions import build_budget_exception_candidates, build_preflight_exception_candidates
 from .models import (
     ConflictSearchTerm,
     ConflictSeedPacket,
@@ -149,6 +150,7 @@ def run_preflight(
 
     inventory = source_inventory(bundle, segments)
     review_form_path = run_dir / "intake_review_form.md"
+    exception_candidates_path = run_dir / "exception_lake_candidates.jsonl"
     packet = IntakePreflightPacket(
         packet_id=new_id("intake"),
         run_id=run_id,
@@ -171,11 +173,16 @@ def run_preflight(
         prohibited_next_steps=PROHIBITED_NEXT_STEPS,
         evidence_graph_ref=str(run_dir / "evidence_graph.json"),
         run_ledger_ref=str(ledger_path),
+        exception_candidates_ref=str(exception_candidates_path),
         intake_review_form_ref=str(review_form_path),
     )
     if strict_evidence:
         _validate_refs(packet)
     graph = build_preflight_graph(packet)
+    exception_candidates = build_preflight_exception_candidates(packet)
+    exception_candidates_path.touch()
+    for candidate in exception_candidates:
+        append_jsonl(exception_candidates_path, candidate.model_dump(mode="json"))
     write_json(
         run_dir / "source_inventory.json",
         [item.model_dump(mode="json") for item in packet.source_inventory],
@@ -194,6 +201,7 @@ def run_preflight(
                 str(run_dir / "intake_preflight_packet.json"),
                 str(review_form_path),
                 str(run_dir / "evidence_graph.json"),
+                str(exception_candidates_path),
             ],
         ).model_dump(mode="json"),
     )
@@ -317,6 +325,14 @@ def run_budget(
     )
     write_json(run_dir / "matter_opening_readiness.json", readiness.model_dump(mode="json"))
     write_json(run_dir / "evidence_graph.json", extended.model_dump(mode="json"))
+    exception_candidates_path = run_dir / "exception_lake_candidates.jsonl"
+    exception_candidates_path.touch()
+    for candidate in build_budget_exception_candidates(
+        packet.run_id,
+        readiness,
+        confirmation.decision_evidence_refs,
+    ):
+        append_jsonl(exception_candidates_path, candidate.model_dump(mode="json"))
     append_jsonl(
         ledger_path,
         _event(
@@ -338,6 +354,7 @@ def run_budget(
                 str(run_dir / "conflict_search_seed_packet.json"),
                 str(run_dir / "legal_budget_proposal.json"),
                 str(run_dir / "matter_opening_readiness.json"),
+                str(exception_candidates_path),
             ],
         ).model_dump(mode="json"),
     )

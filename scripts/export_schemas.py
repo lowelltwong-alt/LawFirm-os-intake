@@ -12,6 +12,7 @@ from lawfirm_os_intake.models import (  # noqa: E402
     ConflictSeedPacket,
     EffectiveContext,
     EvidenceGraph,
+    ExceptionLakeCandidate,
     HumanConfirmation,
     IntakePreflightPacket,
     PartyCandidate,
@@ -31,6 +32,7 @@ MODELS = {
     "legal-budget-proposal.schema.json": BudgetProposal,
     "evidence-graph.schema.json": EvidenceGraph,
     "run-ledger-event.schema.json": RunEvent,
+    "exception-lake-candidate.schema.json": ExceptionLakeCandidate,
 }
 
 

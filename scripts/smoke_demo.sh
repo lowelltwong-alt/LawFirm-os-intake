@@ -8,3 +8,8 @@ python -m lawfirm_os_intake demo \
   --practice-profile context/synthetic-profiles/insurance-defense.yaml \
   --confirmation-template examples/synthetic/confirmations/carrier-assignment-medmal.confirmation-template.json \
   --out-dir .lawfirm-os-intake/smoke
+
+preflight_dir="$(find .lawfirm-os-intake/smoke/preflight -mindepth 1 -maxdepth 1 -type d | head -n 1)"
+test -n "$preflight_dir"
+test -s "$preflight_dir/exception_lake_candidates.jsonl"
+test -s ".lawfirm-os-intake/smoke/budget/exception_lake_candidates.jsonl"
