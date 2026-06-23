@@ -1,0 +1,51 @@
+{
+  "lock_version": "0.1",
+  "generated_by": "LawFirm-os-intake",
+  "generated_at": "2026-06-23T20:17:57.043924Z",
+  "status": "initial_seed_lock",
+  "status_note": "Pins captured from live public main branches on 2026-06-23 for private intake repo seeding. This is a bootstrap lock, not a completed promotion review.",
+  "repos": [
+    {
+      "repo": "LawFirm-os-semantic-substrate",
+      "remote": "https://github.com/lowelltwong-alt/LawFirm-os-semantic-substrate",
+      "ref_type": "git_sha",
+      "branch": "main",
+      "sha": "8b0129eafcb8558b71d2d54e5f4a4dc6e922caeb",
+      "authority_plane": "control"
+    },
+    {
+      "repo": "LawFirm-os-orchestrator",
+      "remote": "https://github.com/lowelltwong-alt/LawFirm-os-orchestrator",
+      "ref_type": "git_sha",
+      "branch": "main",
+      "sha": "0c2c92ef284082a201412f8d92245586a07c2783",
+      "authority_plane": "execution"
+    },
+    {
+      "repo": "LawFirm-os-exceptions-lake-runtime",
+      "local_folder": "LawFirm-os-exceptions-lake-runtime-main",
+      "remote": "https://github.com/lowelltwong-alt/LawFirm-os-exceptions-lake-runtime",
+      "ref_type": "git_sha",
+      "branch": "main",
+      "sha": "5c862d84fba7c35644969c879c4ec1145c0546e9",
+      "authority_plane": "evidence"
+    },
+    {
+      "repo": "LawFirm-os-legal-knowledge-runtime",
+      "remote": "https://github.com/lowelltwong-alt/LawFirm-os-legal-knowledge-runtime",
+      "ref_type": "git_sha",
+      "branch": "main",
+      "sha": "df995eb1fc9550aa1a9e8fe5d5a0153686ec5ebc",
+      "authority_plane": "legal_knowledge_runtime"
+    },
+    {
+      "repo": "LawFirm-os-skills-registry",
+      "remote": "https://github.com/lowelltwong-alt/LawFirm-os-skills-registry",
+      "ref_type": "git_sha",
+      "branch": "main",
+      "sha": "2c23607cc9094539c6677ac1773bbb0c55381008",
+      "authority_plane": "skills_registry"
+    }
+  ],
+  "non_authority_rule": "LawFirm-os-intake composes and evaluates the intake-to-budget vertical. It does not create canonical meaning, platform runtime authority, Exception Lake persistence contracts, or skill promotion decisions."
+}

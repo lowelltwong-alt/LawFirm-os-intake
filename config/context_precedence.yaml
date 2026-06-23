@@ -1,0 +1,12 @@
+version: "0.1"
+precedence:
+  - observed_source_evidence
+  - human_confirmed_matter_facts
+  - client_or_referral_source_profile
+  - practice_group_profile
+  - firm_defaults
+rules:
+  - Practice context may change rankings but may not create evidence.
+  - Human-confirmed facts supersede model candidates.
+  - The carrier, referral source, payer, and represented client are separate roles.
+  - Unknown is always an allowed classification.

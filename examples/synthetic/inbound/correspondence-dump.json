@@ -1,0 +1,60 @@
+{
+  "schema_version": "0.1",
+  "bundle_id": "syn-bundle-dump-001",
+  "data_origin": "synthetic",
+  "contains_real_client_data": false,
+  "contains_real_matter_data": false,
+  "contains_privileged_data": false,
+  "sources": [
+    {
+      "source_id": "syn-dump-001",
+      "source_type": "correspondence_dump",
+      "filename": "dump_part_1.txt",
+      "text": "Synthetic email chain. Please review the attached materials. Unknown sender references a policy exclusion and possible reservation of rights.",
+      "metadata": {
+        "synthetic": true
+      }
+    },
+    {
+      "source_id": "syn-party-list-001",
+      "source_type": "party_list",
+      "filename": "party_list.txt",
+      "text": "Possible parties:\nExample Manufacturing Inc.\nSample Indemnity Company\nTaylor Person\nRoles unknown.",
+      "metadata": {
+        "synthetic": true
+      }
+    }
+  ],
+  "fixture_hints": {
+    "provided_fields": [],
+    "entities": [
+      {
+        "name": "Example Manufacturing Inc.",
+        "role_candidates": [
+          {
+            "role": "unknown",
+            "confidence": 0.45
+          }
+        ]
+      },
+      {
+        "name": "Sample Indemnity Company",
+        "role_candidates": [
+          {
+            "role": "carrier_or_instructing_source",
+            "confidence": 0.66
+          }
+        ]
+      },
+      {
+        "name": "Taylor Person",
+        "role_candidates": [
+          {
+            "role": "unknown",
+            "confidence": 0.4
+          }
+        ]
+      }
+    ]
+  }
+}

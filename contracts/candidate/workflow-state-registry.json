@@ -1,0 +1,24 @@
+{
+  "lifecycle": "staged_candidate",
+  "canonical": false,
+  "promotion_target": "LawFirm-os-semantic-substrate",
+  "version": "0.1",
+  "values": [
+    "raw_received",
+    "data_origin_validated",
+    "source_inventory_complete",
+    "segmentation_complete",
+    "party_candidates_ready",
+    "matter_candidates_ready",
+    "deadline_gap_candidates_ready",
+    "evidence_review_complete",
+    "human_intake_review_required",
+    "human_intake_confirmed",
+    "needs_more_information",
+    "human_only",
+    "conflict_seed_ready",
+    "budget_proposal_ready",
+    "human_budget_review_required",
+    "blocked_pending_conflicts_and_engagement"
+  ]
+}

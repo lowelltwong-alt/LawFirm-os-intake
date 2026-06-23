@@ -1,0 +1,23 @@
+profile_id: synthetic-plaintiff-personal-injury
+version: "0.1"
+contains_real_firm_data: false
+applied_layers: [synthetic_firm, plaintiff_personal_injury_practice_group]
+active_practices: [plaintiff_personal_injury, medical_negligence_plaintiff]
+default_side: plaintiff
+typical_inbound_sources:
+  private_individual: 0.9
+  referral_counsel: 0.6
+  insurance_carrier: 0.05
+matter_family_priors:
+  plaintiff_personal_injury: 0.8
+  medical_malpractice_defense: 0.0
+  insurance_coverage: 0.05
+  general_liability_defense: 0.05
+  commercial_litigation: 0.05
+required_intake_fields:
+  - prospective_represented_client
+  - adverse_party
+  - incident_date
+  - injury_summary
+  - jurisdiction
+budget_template_ids: []

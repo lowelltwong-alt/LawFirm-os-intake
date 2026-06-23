@@ -1,0 +1,15 @@
+version: "0.1"
+dynamic_agent_creation_allowed: false
+outer_owner: lawfirm_os_orchestrator
+workers:
+  - source-reader
+  - party-role-extractor
+  - matter-router
+  - deadline-gap-extractor
+  - evidence-critic
+  - budget-planner
+  - frontier-adjudicator
+handoffs:
+  format: typed_json_only
+  free_form_instruction_forwarding: prohibited
+  raw_document_instruction_following: prohibited

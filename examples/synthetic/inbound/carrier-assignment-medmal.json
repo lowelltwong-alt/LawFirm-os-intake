@@ -1,0 +1,79 @@
+{
+  "schema_version": "0.1",
+  "bundle_id": "syn-bundle-carrier-medmal-001",
+  "data_origin": "synthetic",
+  "contains_real_client_data": false,
+  "contains_real_matter_data": false,
+  "contains_privileged_data": false,
+  "sources": [
+    {
+      "source_id": "syn-email-001",
+      "source_type": "email",
+      "filename": "synthetic_carrier_assignment.eml.txt",
+      "text": "From: claims@harborpoint-insurance.example\nTo: intake@synthetic-law.example\nDate: June 20, 2026\nSubject: New Assignment - Smith v. Valley Medical Center\n\nHarbor Point Insurance is assigning defense of its insureds, Dr. Maya Chen and Valley Medical Center, arising from allegations of medical malpractice by patient John Smith after surgery. Claim number HP-2026-1042. Please acknowledge receipt and provide an initial litigation budget within 30 days. The complaint identifies John Smith as claimant and Avery & Cole as claimant's counsel.\n\nRegards,\nSynthetic Claims Professional",
+      "metadata": {
+        "synthetic": true
+      }
+    }
+  ],
+  "fixture_hints": {
+    "provided_fields": [
+      "claim_number",
+      "prospective_represented_client",
+      "adverse_party",
+      "assignment_scope",
+      "response_or_reporting_deadline"
+    ],
+    "entities": [
+      {
+        "name": "Harbor Point Insurance",
+        "role_candidates": [
+          {
+            "role": "insurance_carrier",
+            "confidence": 0.96
+          },
+          {
+            "role": "payer",
+            "confidence": 0.75
+          }
+        ]
+      },
+      {
+        "name": "Dr. Maya Chen",
+        "role_candidates": [
+          {
+            "role": "insured_or_prospective_represented_client",
+            "confidence": 0.88
+          }
+        ]
+      },
+      {
+        "name": "Valley Medical Center",
+        "role_candidates": [
+          {
+            "role": "insured_or_prospective_represented_client",
+            "confidence": 0.86
+          }
+        ]
+      },
+      {
+        "name": "John Smith",
+        "role_candidates": [
+          {
+            "role": "claimant_or_adverse_party",
+            "confidence": 0.91
+          }
+        ]
+      },
+      {
+        "name": "Avery & Cole",
+        "role_candidates": [
+          {
+            "role": "opposing_counsel",
+            "confidence": 0.82
+          }
+        ]
+      }
+    ]
+  }
+}

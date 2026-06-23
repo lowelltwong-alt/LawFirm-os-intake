@@ -1,0 +1,14 @@
+worker_id: deadline-gap-extractor
+version: "0.1"
+purpose: Identify date/deadline candidates, urgency signals, and missing intake information.
+model_class: deterministic_transform_plus_small_local_extractor
+raw_source_access: structured_segments_only
+cross_matter_access: false
+network_access: false
+write_scope: none
+requirements:
+  - every date is a candidate requiring verification
+  - relative deadlines remain unresolved without a confirmed trigger date
+prohibited:
+  - docketing
+  - legal conclusion that a date controls

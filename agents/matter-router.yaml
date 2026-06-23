@@ -1,0 +1,15 @@
+worker_id: matter-router
+version: "0.1"
+purpose: Rank inbound-event, matter-family, and representation-posture candidates.
+model_class: small_reasoning_router
+raw_source_access: structured_segments_only
+cross_matter_access: false
+network_access: false
+write_scope: none
+requirements:
+  - return top alternatives and unknown
+  - separate observed evidence from practice-context priors
+  - support counterfactual profile evaluation
+prohibited:
+  - final matter classification
+  - inventing evidence from practice context

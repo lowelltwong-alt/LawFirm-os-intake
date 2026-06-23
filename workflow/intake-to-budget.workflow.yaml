@@ -1,0 +1,44 @@
+workflow_id: lawfirm-os-intake-to-budget
+version: "0.1"
+owner_plane: execution_composition
+outer_runtime_owner: LawFirm-os-orchestrator
+steps:
+  - id: receive_source_bundle
+    executor: deterministic
+    output: source_bundle
+  - id: data_origin_gate
+    executor: deterministic
+    stop_on: [real_client_data, real_matter_data, privileged_data]
+  - id: inventory_and_segment
+    executor: source-reader
+    output: source_inventory_and_segments
+  - id: extract_party_candidates
+    executor: party-role-extractor
+    output: party_candidates
+  - id: rank_matter_candidates
+    executor: matter-router
+    output: inbound_matter_posture_candidates
+  - id: extract_deadline_and_gap_candidates
+    executor: deadline-gap-extractor
+    output: date_candidates_and_missing_information
+  - id: independent_evidence_review
+    executor: evidence-critic
+    output: findings_and_escalation
+  - id: human_intake_confirmation
+    executor: human
+    mandatory: true
+  - id: build_conflict_search_seed
+    executor: deterministic
+    output: conflict_seed_no_conclusion
+  - id: build_budget_proposal
+    executor: budget-planner
+    precondition: human_intake_confirmation_confirmed
+    output: proposed_budget_for_human_review
+  - id: human_budget_review
+    executor: human
+    mandatory: true
+    status: roadmap_only
+  - id: matter_opening_readiness
+    executor: deterministic
+    status: blocked_pending_conflicts_and_engagement
+terminal_state: ready_for_human_follow_up_not_external_action

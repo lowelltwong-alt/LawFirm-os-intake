@@ -1,0 +1,21 @@
+{
+  "readiness_id": "readiness_e4eff0569e2441e0bc0b7faa7d1d9ad2",
+  "preflight_packet_id": "intake_feaed579e5bb4c8485b05f132742e4a8",
+  "confirmation_id": "human-confirmation-synthetic-001",
+  "status": "blocked_pending_conflicts_and_engagement",
+  "satisfied": [
+    "human_intake_classification_confirmed",
+    "conflict_search_seed_prepared",
+    "budget_proposal_prepared"
+  ],
+  "blockers": [
+    "conflicts_not_cleared",
+    "engagement_not_authorized",
+    "matter_opening_not_approved"
+  ],
+  "prohibited_actions": [
+    "do_not_open_imanage",
+    "do_not_create_matter",
+    "do_not_submit_budget"
+  ]
+}

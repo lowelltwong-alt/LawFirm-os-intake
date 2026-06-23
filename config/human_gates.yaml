@@ -1,0 +1,25 @@
+version: "0.1"
+gates:
+  intake_classification_confirmation:
+    mandatory: true
+    confirms:
+      - inbound_event
+      - matter_family
+      - representation_posture
+      - principal_party_roles
+      - jurisdiction_if_known
+  conflicts_review:
+    mandatory: true
+    system_output: conflict_search_seed_only
+    prohibited_output: conflict_clearance
+  budget_review:
+    mandatory: true
+    system_output: proposed_budget_only
+    prohibited_output: approved_or_submitted_budget
+  engagement_and_matter_opening:
+    mandatory: true
+    prohibited_automation:
+      - accept_representation
+      - open_matter
+      - create_imanage_workspace
+      - send_engagement_letter

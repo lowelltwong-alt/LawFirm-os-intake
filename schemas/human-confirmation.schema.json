@@ -1,0 +1,146 @@
+{
+  "$defs": {
+    "ConfirmedParty": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "confirmed_role": {
+          "title": "Confirmed Role",
+          "type": "string"
+        },
+        "aliases": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Aliases",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name",
+        "confirmed_role"
+      ],
+      "title": "ConfirmedParty",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "confirmation_id": {
+      "title": "Confirmation Id",
+      "type": "string"
+    },
+    "preflight_packet_id": {
+      "title": "Preflight Packet Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "confirmed",
+        "needs_more_information",
+        "declined"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "confirmed_inbound_event": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Confirmed Inbound Event"
+    },
+    "confirmed_matter_family": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Confirmed Matter Family"
+    },
+    "confirmed_representation_posture": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Confirmed Representation Posture"
+    },
+    "confirmed_parties": {
+      "items": {
+        "$ref": "#/$defs/ConfirmedParty"
+      },
+      "title": "Confirmed Parties",
+      "type": "array"
+    },
+    "confirmed_jurisdiction": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Confirmed Jurisdiction"
+    },
+    "confirmed_deadlines": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Confirmed Deadlines",
+      "type": "array"
+    },
+    "reviewer_id": {
+      "title": "Reviewer Id",
+      "type": "string"
+    },
+    "reviewed_at": {
+      "title": "Reviewed At",
+      "type": "string"
+    },
+    "notes": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Notes"
+    }
+  },
+  "required": [
+    "confirmation_id",
+    "preflight_packet_id",
+    "status",
+    "reviewer_id",
+    "reviewed_at"
+  ],
+  "title": "HumanConfirmation",
+  "type": "object"
+}

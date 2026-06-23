@@ -1,0 +1,97 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "conflict_seed_id": {
+      "title": "Conflict Seed Id",
+      "type": "string"
+    },
+    "preflight_packet_id": {
+      "title": "Preflight Packet Id",
+      "type": "string"
+    },
+    "confirmation_id": {
+      "title": "Confirmation Id",
+      "type": "string"
+    },
+    "status": {
+      "const": "seed_ready_for_conflicts_team",
+      "title": "Status",
+      "type": "string"
+    },
+    "prospective_represented_clients": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Prospective Represented Clients",
+      "type": "array"
+    },
+    "instructing_sources": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Instructing Sources",
+      "type": "array"
+    },
+    "payers": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Payers",
+      "type": "array"
+    },
+    "adverse_parties": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Adverse Parties",
+      "type": "array"
+    },
+    "opposing_counsel": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Opposing Counsel",
+      "type": "array"
+    },
+    "other_search_terms": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Other Search Terms",
+      "type": "array"
+    },
+    "unresolved_roles": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Unresolved Roles",
+      "type": "array"
+    },
+    "conclusion": {
+      "const": "no_conflict_conclusion",
+      "default": "no_conflict_conclusion",
+      "title": "Conclusion",
+      "type": "string"
+    }
+  },
+  "required": [
+    "conflict_seed_id",
+    "preflight_packet_id",
+    "confirmation_id",
+    "status",
+    "prospective_represented_clients",
+    "instructing_sources",
+    "payers",
+    "adverse_parties",
+    "opposing_counsel",
+    "other_search_terms",
+    "unresolved_roles"
+  ],
+  "title": "ConflictSeedPacket",
+  "type": "object"
+}

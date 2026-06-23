@@ -1,0 +1,76 @@
+{
+  "manifest_id": "lawfirm-os-intake.skill-agent-manifest.v1",
+  "owning_repo": "LawFirm-os-intake",
+  "owning_plane": "vertical_workflow_composition",
+  "purpose": "Prospective-matter intake-to-budget vertical specification, local reference workflow, synthetic fixtures, and evaluation harnesses.",
+  "canonical_front_door": "../LawFirm-os-semantic-substrate/registry/ai-front-door-registry.json",
+  "canonical_skill_agent_control_plane": "../LawFirm-os-semantic-substrate/registry/skill-agent-control-plane-registry.json",
+  "canonical_repo_registry": "../LawFirm-os-semantic-substrate/registry/lawfirm-os-repo-registry.json",
+  "outer_runtime_owner": "LawFirm-os-orchestrator",
+  "authority_plane": "none",
+  "must_not_own": [
+    "canonical schemas",
+    "canonical route IDs",
+    "canonical event classes",
+    "canonical party roles",
+    "canonical matter taxonomies",
+    "general orchestration runtime",
+    "Exception Lake persistence authority",
+    "skill promotion authority",
+    "production legal retrieval"
+  ],
+  "data_scope": {
+    "allowed": [
+      "synthetic_fixture",
+      "metadata_only",
+      "local_candidate_schema",
+      "local_eval_artifact"
+    ],
+    "forbidden": [
+      "real_client_data",
+      "real_matter_data",
+      "privileged_or_confidential_content",
+      "real_negotiated_rates",
+      "production_connector_payloads"
+    ]
+  },
+  "workers": [
+    "agents/source-reader.yaml",
+    "agents/party-role-extractor.yaml",
+    "agents/matter-router.yaml",
+    "agents/deadline-gap-extractor.yaml",
+    "agents/evidence-critic.yaml",
+    "agents/budget-planner.yaml",
+    "agents/frontier-adjudicator.yaml"
+  ],
+  "harnesses": [
+    "harnesses/intake-preflight.local.yaml",
+    "harnesses/budget-proposal.local.yaml",
+    "harnesses/full-demo.local.yaml"
+  ],
+  "artifacts": [
+    {
+      "id": "workflow.intake_to_budget.v0_1",
+      "kind": "workflow_composition_candidate",
+      "path": "workflow/intake-to-budget.workflow.yaml",
+      "authority": "local_candidate"
+    },
+    {
+      "id": "schemas.intake_candidate.v0_1",
+      "kind": "schema_family_candidate",
+      "path": "schemas/",
+      "authority": "local_candidate"
+    },
+    {
+      "id": "prompts.intake_specialists.v0_1",
+      "kind": "prompt_family_candidate",
+      "path": "prompts/registry.yaml",
+      "authority": "staged_candidate"
+    }
+  ],
+  "validation": [
+    "python scripts/validate_repo.py",
+    "python -m pytest",
+    "../LawFirm-os-semantic-substrate/scripts/validate_skill_agent_control_plane.py --workspace .."
+  ]
+}

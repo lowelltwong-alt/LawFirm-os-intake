@@ -1,0 +1,32 @@
+{
+  "lock_version": "0.1",
+  "generated_by": "LawFirm-os-intake",
+  "status": "example_not_pinned",
+  "repos": [
+    {
+      "repo": "LawFirm-os-semantic-substrate",
+      "ref_type": "git_sha",
+      "sha": "REPLACE_WITH_REVIEWED_SHA"
+    },
+    {
+      "repo": "LawFirm-os-orchestrator",
+      "ref_type": "git_sha",
+      "sha": "REPLACE_WITH_REVIEWED_SHA"
+    },
+    {
+      "repo": "LawFirm-os-exceptions-lake-runtime",
+      "ref_type": "git_sha",
+      "sha": "REPLACE_WITH_REVIEWED_SHA"
+    },
+    {
+      "repo": "LawFirm-os-skills-registry",
+      "ref_type": "git_sha",
+      "sha": "REPLACE_WITH_REVIEWED_SHA"
+    },
+    {
+      "repo": "LawFirm-os-legal-knowledge-runtime",
+      "ref_type": "git_sha",
+      "sha": "REPLACE_WITH_REVIEWED_SHA"
+    }
+  ]
+}

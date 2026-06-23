@@ -1,0 +1,21 @@
+version: "0.1"
+output_status: proposed_for_human_review
+rules:
+  - A budget may be generated only after human confirmation of matter family and representation posture.
+  - Monetary totals require an approved profile containing synthetic or authorized rates.
+  - Missing rates produce an hours-only proposal, not invented prices.
+  - External task codes such as UTBMS are reference candidates until adopted by the Semantic Substrate.
+  - Every line must state assumptions and may carry source references.
+  - Budget generation does not imply conflict clearance, engagement, matter opening, or carrier approval.
+required_sections:
+  - matter_summary
+  - assumptions
+  - phases_and_tasks
+  - staffing
+  - hours
+  - rates_or_hours_only_status
+  - expenses
+  - contingency
+  - exclusions
+  - unknowns
+  - human_approval_state

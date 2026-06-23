@@ -1,0 +1,61 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "segment_id": {
+      "title": "Segment Id",
+      "type": "string"
+    },
+    "source_id": {
+      "title": "Source Id",
+      "type": "string"
+    },
+    "parent_segment_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Parent Segment Id"
+    },
+    "segment_type": {
+      "title": "Segment Type",
+      "type": "string"
+    },
+    "sequence": {
+      "title": "Sequence",
+      "type": "integer"
+    },
+    "start_offset": {
+      "title": "Start Offset",
+      "type": "integer"
+    },
+    "end_offset": {
+      "title": "End Offset",
+      "type": "integer"
+    },
+    "sha256": {
+      "title": "Sha256",
+      "type": "string"
+    },
+    "text": {
+      "title": "Text",
+      "type": "string"
+    }
+  },
+  "required": [
+    "segment_id",
+    "source_id",
+    "segment_type",
+    "sequence",
+    "start_offset",
+    "end_offset",
+    "sha256",
+    "text"
+  ],
+  "title": "Segment",
+  "type": "object"
+}

@@ -1,0 +1,738 @@
+{
+  "artifact": "LawFirm-os-intake-starter",
+  "remote_target": "https://github.com/lowelltwong-alt/LawFirm-os-intake",
+  "created_at": "2026-06-23",
+  "file_count": 146,
+  "files": [
+    {
+      "path": ".github/CODEOWNERS",
+      "bytes": 19,
+      "sha256": "5f9436d8287f8a279f3e5af1f242f273ccbefcab345a8c15ae4f7c25505a4bfa"
+    },
+    {
+      "path": ".github/pull_request_template.md",
+      "bytes": 452,
+      "sha256": "112b6ea54544de6a376a550498f68b3e4a4af43903aedaf1eb63f9a89be9590b"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "bytes": 530,
+      "sha256": "a159d4cc9441b40bbef5695bf3796231ad60abc8c35a27370f150f35619d9c9d"
+    },
+    {
+      "path": ".gitignore",
+      "bytes": 285,
+      "sha256": "b534775a20558b26a40a6e398c43fac43ae73649df0704f1864bc366f7bd84d6"
+    },
+    {
+      "path": ".ruff_cache/.gitignore",
+      "bytes": 35,
+      "sha256": "9e3a60f1e6ec4ae60215c11d54b171392745ec25e9dded433d5bd921363af316"
+    },
+    {
+      "path": ".ruff_cache/0.15.18/11209983653895239492",
+      "bytes": 397,
+      "sha256": "7e0dbb9149a1484ea82d527045abcbe44aff94859feb17f4c44af49df635821e"
+    },
+    {
+      "path": ".ruff_cache/0.15.18/12005835973449916834",
+      "bytes": 120,
+      "sha256": "35d36624c4b2b3d985756d0589c0c45df7428c2da01c007846082ee4ee6b4a80"
+    },
+    {
+      "path": ".ruff_cache/0.15.18/3306114465711965956",
+      "bytes": 611,
+      "sha256": "2d3a1ef939b44ca026331f9951c249e064c016b007c97acb0dc35c5302735a25"
+    },
+    {
+      "path": ".ruff_cache/CACHEDIR.TAG",
+      "bytes": 43,
+      "sha256": "5953156d7e0c564a427251316eaf26f8870e6483ae2197f916b630e4f93e31ae"
+    },
+    {
+      "path": "AGENTS.md",
+      "bytes": 2692,
+      "sha256": "20600966a9116724cbb0d77f3efb6c3386e5d2683e7513a46da438d72f206c85"
+    },
+    {
+      "path": "AGENT_RUN_LEDGER.md",
+      "bytes": 896,
+      "sha256": "4b3b5ff44942a3e3d37c26affc5f48191c843c83afa90f5181451831030bbbca"
+    },
+    {
+      "path": "AI_TABLE_OF_CONTENTS.md",
+      "bytes": 1315,
+      "sha256": "3e6c4c1f607f8edd93285f1122e809451c94331c3d0aaab615763f59b833b660"
+    },
+    {
+      "path": "AI_WORK_START_HERE.md",
+      "bytes": 3348,
+      "sha256": "8d4ed502313e7b7b5ee8e39216f44bb2379fd83f773fb1852491fbfc19808c1f"
+    },
+    {
+      "path": "ARCHITECTURE.md",
+      "bytes": 311,
+      "sha256": "2aa71f342b8e4b54845ba74b582277650cff2e274aff643e2f4aa01ecdc53a1a"
+    },
+    {
+      "path": "BUILD_VERIFICATION.md",
+      "bytes": 611,
+      "sha256": "156cfa08d453f7f5c3f82003907ebf581b07ed71b174b2ec7fe3c441fbe4ee85"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "bytes": 627,
+      "sha256": "0aa3fb438b661d25ceb75aa584791070c68cb16b10b41dd2ee14121fddb2b259"
+    },
+    {
+      "path": "CLAUDE.md",
+      "bytes": 2294,
+      "sha256": "7e84cb3383db06bbc8d89190b5633c5807c1dd8ba862e56b4a1cc6490ac5de1f"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "bytes": 684,
+      "sha256": "f45980c01e65782c9a955ef2921306dbf6623114b821ffd4475f138ee45437bb"
+    },
+    {
+      "path": "DATA_FLOW_MAP.md",
+      "bytes": 1486,
+      "sha256": "7441f2a3ac86beac67bacddfd4f17822357f69145a0deaf2927fc0bc227d11ef"
+    },
+    {
+      "path": "DECISION_TRACE_TEMPLATE.md",
+      "bytes": 690,
+      "sha256": "a2341950bce6868926a15f65116e42d46fd2442b4433f16c5fb82d214f423370"
+    },
+    {
+      "path": "DEFINITION_OF_DONE.md",
+      "bytes": 2610,
+      "sha256": "ab2dff70a1ebed21edea0b6140af6ea5cf0b1ce843597f6e92e3f37875a0b147"
+    },
+    {
+      "path": "ENDPOINTS_AND_COMMANDS.md",
+      "bytes": 958,
+      "sha256": "2aad3b7c5a2e99db0d7e9b35f0a391f0d0fbc36c99762ead553f50ddb73b5577"
+    },
+    {
+      "path": "GOVERNANCE_BOUNDARY.md",
+      "bytes": 1021,
+      "sha256": "2c9076140fbbeaf136c606ba216a52af19846d2b54d773b8b8efe1061a0f10af"
+    },
+    {
+      "path": "LICENSE.md",
+      "bytes": 523,
+      "sha256": "c271ba2d4e990de27ec7e9845f4764b2dbfa041812b7cca84e08981f3f26b323"
+    },
+    {
+      "path": "MODEL_HARNESS_ROUTING.md",
+      "bytes": 1305,
+      "sha256": "087892497f144c02312f53f65a1c93dd9bad3a6d536699ed6c9e84bb5b99f292"
+    },
+    {
+      "path": "MVP_BOUNDARY.md",
+      "bytes": 966,
+      "sha256": "2fc22684378a0e870fec0c33bda030ee37fafb67fb9856847bfccbbf096fe675"
+    },
+    {
+      "path": "Makefile",
+      "bytes": 386,
+      "sha256": "2dbcb8aa37c2e992ff80d3c750b6c525cf1655cb54211aff1083c7a58df31175"
+    },
+    {
+      "path": "NON_GOALS.md",
+      "bytes": 1110,
+      "sha256": "8ff1f762b8241429bea9145454f97b5f3aa8b4156ae703a7923acd43b2588297"
+    },
+    {
+      "path": "PREMORTEM.md",
+      "bytes": 4866,
+      "sha256": "6b793dd618946f8b4469643ef02fc2b508a8def3091f489015fb483140b43fb7"
+    },
+    {
+      "path": "PROTOTYPE_LIFECYCLE.md",
+      "bytes": 473,
+      "sha256": "4e7ae91be27b6229f968832f9d22a602a3028ec55d66710aaf8b6b176e2c7cb9"
+    },
+    {
+      "path": "README.md",
+      "bytes": 6482,
+      "sha256": "39e2420e16233e5b3df3bc180b2dbacf245e35621c74751796a9a42f860f4a3c"
+    },
+    {
+      "path": "RECENT_WORK.md",
+      "bytes": 553,
+      "sha256": "f40ec543519e1810c957eaee3816aa99af6487cfaf6da11479c9e6b1e69de0e8"
+    },
+    {
+      "path": "REPO_ROLE.md",
+      "bytes": 1670,
+      "sha256": "732964a1ca971a59217919722cd969064c254978b4a47872e15fe5da41ada714"
+    },
+    {
+      "path": "ROADMAP.md",
+      "bytes": 4801,
+      "sha256": "5f75badf718146c37fbe8c9c0ff29ce9f5ac08132e184dca80da90769e828857"
+    },
+    {
+      "path": "THREAT_MODEL.md",
+      "bytes": 2567,
+      "sha256": "e933ed256a024cdeaea9dda4e97be72c66bbd0d61803e519d7e29a2260d2e76f"
+    },
+    {
+      "path": "TREE.txt",
+      "bytes": 4840,
+      "sha256": "29bd2fa1b111a3efd343a0c16ec70ae26fce9f4b1d758be9992f7739daeb9626"
+    },
+    {
+      "path": "agents/budget-planner.yaml",
+      "bytes": 570,
+      "sha256": "6a5b553a01d6fc31317ecb85d575118e29162bafccb9ea94943abbfdd9693f91"
+    },
+    {
+      "path": "agents/deadline-gap-extractor.yaml",
+      "bytes": 526,
+      "sha256": "d11d426b53c2ea3a9a69715e32c796ad41a98d582585a12e218d0b7b1e58337d"
+    },
+    {
+      "path": "agents/evidence-critic.yaml",
+      "bytes": 513,
+      "sha256": "db8f3e1d1e4f0b6682882fd759126e5d26147bfe8383638258b9b98af7fb77a5"
+    },
+    {
+      "path": "agents/frontier-adjudicator.yaml",
+      "bytes": 522,
+      "sha256": "5d97c1c2b47b08e15b4cf78b6b9fc9ce12786bb31c3a4ed795b2a019617f88c9"
+    },
+    {
+      "path": "agents/matter-router.yaml",
+      "bytes": 519,
+      "sha256": "772b73f4c50a6ab9be42d7b638e2c38e462bd03a2b732ff36fa62f38a3429942"
+    },
+    {
+      "path": "agents/party-role-extractor.yaml",
+      "bytes": 643,
+      "sha256": "efdbde2d9c1e8962f65f7e18ce76fa5b6dd8092b52934231fd75c89467f46853"
+    },
+    {
+      "path": "agents/source-reader.yaml",
+      "bytes": 620,
+      "sha256": "7c5b75ca4d019fbd1203b9ec30de9039fedc0033e12f8c4a55c8652ac817cc6c"
+    },
+    {
+      "path": "config/agent_registry.yaml",
+      "bytes": 383,
+      "sha256": "9172b9fca1a98031828ae6c48a0a6dde489883f51844762e5946fa8d42e942e2"
+    },
+    {
+      "path": "config/budget_policy.yaml",
+      "bytes": 821,
+      "sha256": "d1905cc1115bfa3bf7d55b478eb10ce39b286b3765d781b1c01f727240ef07c8"
+    },
+    {
+      "path": "config/context_precedence.yaml",
+      "bytes": 436,
+      "sha256": "eca5728f8bb617a00f7d5d6e640a9bbe88a4498604a73644eb0540b18723a014"
+    },
+    {
+      "path": "config/data_policy.yaml",
+      "bytes": 586,
+      "sha256": "910812439901e1bd9fcdbf19eb81a95fe31d976ce85631fba6eeb9ce742c72c5"
+    },
+    {
+      "path": "config/escalation_policy.yaml",
+      "bytes": 1053,
+      "sha256": "1cf5af6209be76969558a23f75f35217756c347ba843b97c2761dc89a6315c2b"
+    },
+    {
+      "path": "config/human_gates.yaml",
+      "bytes": 679,
+      "sha256": "be041dd55e94fad3da5aa35e4e6193efd91fb426b9718708cff42266f0e70f89"
+    },
+    {
+      "path": "config/model_classes.yaml",
+      "bytes": 1145,
+      "sha256": "fff351e557807dae0554bd6eb2653f67189069af560c9b9186aaa9c7cc853e24"
+    },
+    {
+      "path": "context/synthetic-profiles/commercial-litigation.yaml",
+      "bytes": 705,
+      "sha256": "d4f5783a82f311a70147029610daaeb7139a8e55d9d0c3824ea76d6fc111e06f"
+    },
+    {
+      "path": "context/synthetic-profiles/insurance-defense.yaml",
+      "bytes": 4522,
+      "sha256": "2062210a499bf0fc42f4b919f9db3a3d43ba1f72ebabdff581721289a3bff617"
+    },
+    {
+      "path": "context/synthetic-profiles/plaintiff-personal-injury.yaml",
+      "bytes": 706,
+      "sha256": "691f4494fd8a1e8a649a367d4b26ca8c4d6602a59070058a7a67302cddf5efa7"
+    },
+    {
+      "path": "contracts/candidate/inbound-event-registry.json",
+      "bytes": 341,
+      "sha256": "505c5f2ae7a78be69d0c4b3abf0a81a3fa030b79a6d83bc6dc88ea7428872903"
+    },
+    {
+      "path": "contracts/candidate/matter-family-registry.json",
+      "bytes": 354,
+      "sha256": "18a38f3a9a858cc4af8d738f36c042aa689ab91c694d9771ab8ae4e9808f423b"
+    },
+    {
+      "path": "contracts/candidate/party-role-registry.json",
+      "bytes": 387,
+      "sha256": "d7dcda20fa229c651a44c06b56cab8c46ae13bfd1e5c815a980463f641497d11"
+    },
+    {
+      "path": "contracts/candidate/representation-posture-registry.json",
+      "bytes": 331,
+      "sha256": "f8c9d73c58312b3d494bb88cc5d180dd2a78817191ce844b26a6d58fd86e8858"
+    },
+    {
+      "path": "contracts/candidate/workflow-state-registry.json",
+      "bytes": 648,
+      "sha256": "b2f7c427d37227f2ac84766db28ddc64279c2fcb1833b2953aee7eca090f706a"
+    },
+    {
+      "path": "contracts.lock.example.json",
+      "bytes": 769,
+      "sha256": "34aca5d6d002636c10ac2cd00f3574eeca5622e8d991bf7ac0663e3fac8b0430"
+    },
+    {
+      "path": "docs/agent-architecture.md",
+      "bytes": 3509,
+      "sha256": "e34e4a2306eb8c6b7fd02e03edcb89a536361a5e7f12773047debae4267bb04b"
+    },
+    {
+      "path": "docs/ai-handoff/BUILDER_BRIEF.md",
+      "bytes": 1748,
+      "sha256": "d4ee704a0b139629c962c460782a824bae6514343160681f47614811e718a11b"
+    },
+    {
+      "path": "docs/ai-handoff/CLAUDE_BUILD_PROMPT.md",
+      "bytes": 1495,
+      "sha256": "e240b7d0d72199fbbd781e0bc20d32d3ce9425c305b07736e3486919811619f7"
+    },
+    {
+      "path": "docs/ai-handoff/FIRST_10_PRS.md",
+      "bytes": 1950,
+      "sha256": "fc5bdbf5c5b2a81a737673ec809ebc1366d170904a3d6219a371dd4b9edcaf7b"
+    },
+    {
+      "path": "docs/ai-handoff/OPEN_QUESTIONS.md",
+      "bytes": 1155,
+      "sha256": "713157f4b9f4e2111328cc4aea2a85a86ade5431ae540cb0c5da8782af3df820"
+    },
+    {
+      "path": "docs/architecture.md",
+      "bytes": 2630,
+      "sha256": "3bb1a97c5d38ffdebe22f95d0adc30e9937445b8c729148b75a3e46efe7149a2"
+    },
+    {
+      "path": "docs/chunking-and-evidence-graph.md",
+      "bytes": 2053,
+      "sha256": "bd5933a1d64b333f0edf0d69ef230845596db5a7ce2b8710c8e3e7a9aebdd1eb"
+    },
+    {
+      "path": "docs/claude-agent-sdk-operating-contract.md",
+      "bytes": 3047,
+      "sha256": "aa1ab4da4d76fa701b1969ac51eec197ed7c3cd1aadd6cf3aca4623c84849362"
+    },
+    {
+      "path": "docs/decisions/ADR-001-vertical-composition-not-authority-plane.md",
+      "bytes": 634,
+      "sha256": "57ea6f38920acf481bf725ae0852474ae66d12734ac5bf6db714a4fc81299c02"
+    },
+    {
+      "path": "docs/decisions/ADR-002-human-confirmation-before-budget.md",
+      "bytes": 569,
+      "sha256": "5cc8f962db46e4fd01656bd270a641717ea64e2243fc9a09f912737749cf2893"
+    },
+    {
+      "path": "docs/decisions/ADR-003-provenance-preserving-segmentation.md",
+      "bytes": 582,
+      "sha256": "32971c0cd44b8fce7d512f8f36c5aed0bd1cd769764607becaa08261ca9a329c"
+    },
+    {
+      "path": "docs/evaluation-plan.md",
+      "bytes": 2305,
+      "sha256": "fe7e3b3b3028ee52c1eb80b709516a68b485224330faece1b7df5bcb6d2e213c"
+    },
+    {
+      "path": "docs/github-and-cross-repo-workflow.md",
+      "bytes": 1545,
+      "sha256": "a482397cc5d5f7c0b2504174433154aee081e9659cd4efd9c3fb42f06920f4ef"
+    },
+    {
+      "path": "docs/human-review.md",
+      "bytes": 1385,
+      "sha256": "f9286997060581f06b1cb40ed79ee0afb0b26998c2b2b9007a7063f58e729bc7"
+    },
+    {
+      "path": "docs/lawfirm-os-integration.md",
+      "bytes": 2531,
+      "sha256": "641b4b33cb8970a84a756834f34110a0e0eb558fedb501eda62c718269baff68"
+    },
+    {
+      "path": "docs/legal-budget-design.md",
+      "bytes": 2216,
+      "sha256": "d884c8721355785a1517d41bd246d32cf7294c4dcb7fd23fa03f9b2b5b81d5c1"
+    },
+    {
+      "path": "docs/legal-ethics-boundary.md",
+      "bytes": 1492,
+      "sha256": "ae48743e23d05bfd91b3f20999f1acf6872e4fa234b2465d87e5916de936df45"
+    },
+    {
+      "path": "docs/practice-context.md",
+      "bytes": 2258,
+      "sha256": "bc15e580f5e470fc6ef6da4ad99204af980da601d938d83170427e06431f19e5"
+    },
+    {
+      "path": "docs/public-data-test-plan.md",
+      "bytes": 2803,
+      "sha256": "2a62806344d3456e3cbb15d22e2442dc4f6359258d0630e2fc6f99779ca386d6"
+    },
+    {
+      "path": "docs/references/README.md",
+      "bytes": 1700,
+      "sha256": "d905e94d353db9420ef4dfd35120e57fa2875fa41ada61622cfdc72f38eb826c"
+    },
+    {
+      "path": "docs/synthetic-data-plan.md",
+      "bytes": 1744,
+      "sha256": "4285803ad66dd7a4f8491178f5d298cb3e583883a3bae23c2999f97a1f29fdbd"
+    },
+    {
+      "path": "docs/workflow/intake-to-budget.md",
+      "bytes": 3385,
+      "sha256": "10eedf94d012b4cd999cd4145ff8a157219f0fc932a43a04b9eb891915f82cca"
+    },
+    {
+      "path": "docs/workflow/state-machine.md",
+      "bytes": 1287,
+      "sha256": "92b1f201fb19b82a471a7e8af74939b58f64ef28e827ec216afdab065c4756e8"
+    },
+    {
+      "path": "examples/expected/README.md",
+      "bytes": 441,
+      "sha256": "c4672364afca2700e4ab50e6365e633496e53492878ede0836b7640def4d15a2"
+    },
+    {
+      "path": "examples/expected/conflict-search-seed.example.json",
+      "bytes": 695,
+      "sha256": "a7610a46ca842ae0f1e8d18dfcc7f6e90e99830b35437e7ae1a41822e312800e"
+    },
+    {
+      "path": "examples/expected/legal-budget-proposal.example.json",
+      "bytes": 7865,
+      "sha256": "396884d8da2da87c3f5f4c7ec84fbe12fa4ad5257fe6e11b691433f5fdb16fad"
+    },
+    {
+      "path": "examples/expected/matter-opening-readiness.example.json",
+      "bytes": 613,
+      "sha256": "9ec752c479b91fc2ec164b6e04f08b19c0b4b41d27680aad14e838cff2ffdd81"
+    },
+    {
+      "path": "examples/public/README.md",
+      "bytes": 320,
+      "sha256": "9af6dfa093476261b7e2022475dff2c73bfa45c9ca241f8bb99012ead04731f2"
+    },
+    {
+      "path": "examples/public/catalog.yaml",
+      "bytes": 1567,
+      "sha256": "4a51a1c203f68ea175b1c0ef9a72fb260972860385d2c3757cc91f63491c4fa9"
+    },
+    {
+      "path": "examples/synthetic/confirmations/carrier-assignment-medmal.confirmation-template.json",
+      "bytes": 1359,
+      "sha256": "2ccaeb8e1d6be71913d7414790e3d698492264cba66c7525865fdd2b72597cae"
+    },
+    {
+      "path": "examples/synthetic/inbound/carrier-assignment-medmal.json",
+      "bytes": 2345,
+      "sha256": "c07031e88ce91efe96cb9830986b84bd686500bcea8449ff087f49831953c36e"
+    },
+    {
+      "path": "examples/synthetic/inbound/correspondence-dump.json",
+      "bytes": 1517,
+      "sha256": "e3980cdd3aa8620cdd2b0073fffeaab4eed0ad7a500c46d99636451a71a0e5a9"
+    },
+    {
+      "path": "examples/synthetic/inbound/demand-letter.json",
+      "bytes": 1273,
+      "sha256": "cc2b23413a3083aec18c54a70d041f1431b831bbe1aa9fec9d7ef4764048f7d7"
+    },
+    {
+      "path": "examples/synthetic/inbound/help-email.json",
+      "bytes": 1022,
+      "sha256": "06b27ac8521998c2f39699624540d0a175a1f5c722170c655252885db1a390ab"
+    },
+    {
+      "path": "examples/synthetic/inbound/prompt-injection-email.json",
+      "bytes": 814,
+      "sha256": "6823a936c3808451f32a790782df60552e19a9cd7247ea0d134f660ac0a0067d"
+    },
+    {
+      "path": "prompts/budget-planner.md",
+      "bytes": 895,
+      "sha256": "a046f521f83584dd75a6c7828be15a6739b2841ce4f98f5e9ed08e3aae21478e"
+    },
+    {
+      "path": "prompts/deadline-gap-extractor.md",
+      "bytes": 919,
+      "sha256": "15083aa131abde9a0e1154aa5667d15158bb538cc9256745843e1e3a35174788"
+    },
+    {
+      "path": "prompts/evidence-critic.md",
+      "bytes": 898,
+      "sha256": "d06cec1b8cbdf5639935703d8f49a5d183884aadeb638a74b2721c4f73420faf"
+    },
+    {
+      "path": "prompts/frontier-adjudicator.md",
+      "bytes": 913,
+      "sha256": "da63e04ea43151f19e7195a26a6b54ffbe1869caedc782d020d38e012b0655fd"
+    },
+    {
+      "path": "prompts/matter-router.md",
+      "bytes": 892,
+      "sha256": "9098cff66bdb7db1af4b7ecd01f2d563c2343ae7223aa3019248e235e885bba7"
+    },
+    {
+      "path": "prompts/party-role-extractor.md",
+      "bytes": 913,
+      "sha256": "43cdbe5aaf35db0bb2476bd8ab96001dc9c882763d9991b20e2593d9a661d87d"
+    },
+    {
+      "path": "prompts/registry.yaml",
+      "bytes": 1373,
+      "sha256": "d72916fe6a517aeaf2ab58ebcaedf421fd38e8e0bfa892c25ae00b6c9d26ad54"
+    },
+    {
+      "path": "prompts/source-reader.md",
+      "bytes": 892,
+      "sha256": "6b9f818b1c329366ac0d617f3b78e777447c09acf4a92a23dbf91a28c6c245ec"
+    },
+    {
+      "path": "pyproject.toml",
+      "bytes": 876,
+      "sha256": "15fe566cc4139778431f994c76eb2415e8c22a677e81e872da9e609fb23b7766"
+    },
+    {
+      "path": "repo_topology.lock.yaml",
+      "bytes": 370,
+      "sha256": "da1659c3d724db256d21837d7866bee046e0d0350f878c77a1c6bb2597172929"
+    },
+    {
+      "path": "repo_topology.yaml",
+      "bytes": 2681,
+      "sha256": "897922641f2268580fc12c400cfa5dcaac0c12a1c7c7138f81a609954dc536af"
+    },
+    {
+      "path": "schemas/conflict-seed-packet.schema.json",
+      "bytes": 2071,
+      "sha256": "db03a3f7282715594e6900823ff95b9a0999c9f69510396cbb9909f7854408f0"
+    },
+    {
+      "path": "schemas/effective-context.schema.json",
+      "bytes": 1894,
+      "sha256": "90ecc896ae70843248c622e6ec26b2a102875e9b01971a3869c70220e89e2556"
+    },
+    {
+      "path": "schemas/evidence-graph.schema.json",
+      "bytes": 2783,
+      "sha256": "0d1f39c68c9f9b192d7f454bd94c80da9bd4831cbb60a4df51fe59a8535602db"
+    },
+    {
+      "path": "schemas/human-confirmation.schema.json",
+      "bytes": 2840,
+      "sha256": "649f9f960046b736ef7b1864cfa26d21d6970f2ea6a3b04eb6601db30421b78e"
+    },
+    {
+      "path": "schemas/intake-preflight-packet.schema.json",
+      "bytes": 13295,
+      "sha256": "aaab6d0f17ce8c32cd03fa5a7137d8aa22dcb28a1644790bb3a73f1c89ab4d3f"
+    },
+    {
+      "path": "schemas/legal-budget-proposal.schema.json",
+      "bytes": 5748,
+      "sha256": "88582608223eec68604a823645c16083cd6edf138a8ee62aad54a9c8c9da6fc3"
+    },
+    {
+      "path": "schemas/party-candidate.schema.json",
+      "bytes": 2010,
+      "sha256": "9a55d69c4955e16c41a4c075cfcdb01e0db98ee012722a831230bc077042ffdc"
+    },
+    {
+      "path": "schemas/run-ledger-event.schema.json",
+      "bytes": 1125,
+      "sha256": "fd477fb062798abba9b28f63da366f2b0f56be75879b491c26a415cfbc240fc5"
+    },
+    {
+      "path": "schemas/segment.schema.json",
+      "bytes": 1083,
+      "sha256": "4181e5bf8fa1038388e8cb9b557fa8f8d95b1e51424102e544bd847740844527"
+    },
+    {
+      "path": "schemas/source-bundle.schema.json",
+      "bytes": 2293,
+      "sha256": "310d0baf39309aecb91977f93fd2720c59a6d976c7e60d3b4c79f13a6b3143fc"
+    },
+    {
+      "path": "scripts/export_schemas.py",
+      "bytes": 1362,
+      "sha256": "899f24c243d6c83d60b09e8905064c53c9b9bc94c372ac08b79abf1cf87ed36a"
+    },
+    {
+      "path": "scripts/smoke_demo.sh",
+      "bytes": 466,
+      "sha256": "9afdc6845ae640c0dad8a07f9161984b384ff8601beeee0bc4f6b92fbfaa110d"
+    },
+    {
+      "path": "scripts/validate_repo.py",
+      "bytes": 2120,
+      "sha256": "e3187867df8b7ec28d31355183f4b2df1c123c5e57ecff00fb00d147352b82ac"
+    },
+    {
+      "path": "src/lawfirm_os_intake/__init__.py",
+      "bytes": 92,
+      "sha256": "2cdcb0bebfbd8128cce912c9fc835f54b3385e1ba7a0f014b7585c6c3dca8569"
+    },
+    {
+      "path": "src/lawfirm_os_intake/__main__.py",
+      "bytes": 79,
+      "sha256": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7"
+    },
+    {
+      "path": "src/lawfirm_os_intake/budget.py",
+      "bytes": 4723,
+      "sha256": "5ebdd6ad4130c94d5bb29123b4a34272367e9155fe5d16491acf8870496d4f60"
+    },
+    {
+      "path": "src/lawfirm_os_intake/cli.py",
+      "bytes": 4927,
+      "sha256": "a0eff94a93e911e17f6e791a3db6cd5fc7431c7549039877ccafe795656f8703"
+    },
+    {
+      "path": "src/lawfirm_os_intake/context.py",
+      "bytes": 1785,
+      "sha256": "b7305674ec92acd5124c52963a3044a17471cd23a28d14273a158026f23b0289"
+    },
+    {
+      "path": "src/lawfirm_os_intake/evidence.py",
+      "bytes": 5048,
+      "sha256": "29907b9b1fe1462cc8074cbf2263faec584f4185ea4c1a01d40306af0c396ff6"
+    },
+    {
+      "path": "src/lawfirm_os_intake/models.py",
+      "bytes": 7900,
+      "sha256": "8815785791c621075f80fed32d861aa92273c4adc2c1a82b74c41806b99733f2"
+    },
+    {
+      "path": "src/lawfirm_os_intake/segmenter.py",
+      "bytes": 3205,
+      "sha256": "ad1f341c72c9850a8beb97d9bf823554b0b9f306f2810af29d212975b7644abe"
+    },
+    {
+      "path": "src/lawfirm_os_intake/util.py",
+      "bytes": 1260,
+      "sha256": "195bf6c379f6291f44f9c1f5b7d8fb2a7e2ceebaa2ce39d7d69746fdced9c229"
+    },
+    {
+      "path": "src/lawfirm_os_intake/workers.py",
+      "bytes": 13205,
+      "sha256": "4120fc9000ea2230ac2c044a1adec3fd5e789b2e01c0bc486d00706aaee1ef26"
+    },
+    {
+      "path": "src/lawfirm_os_intake/workflow.py",
+      "bytes": 9507,
+      "sha256": "f372e73bd291b04305f76d272a49f4aa37aa715102c1dfd4ada1ecd86d3da738"
+    },
+    {
+      "path": "templates/intake-review-form.md",
+      "bytes": 808,
+      "sha256": "8a27d1d55341a44837f5ebc8a0086e69a17439271ef230c5e2bf10c5807f6d10"
+    },
+    {
+      "path": "templates/legal-budget-review-form.md",
+      "bytes": 911,
+      "sha256": "b5aa11768845f932c2b386cd4f853870bfaa2b0f9fd3e0a6222505b31c3ef3e5"
+    },
+    {
+      "path": "tests/conftest.py",
+      "bytes": 129,
+      "sha256": "196ad039aff722c0b713422883e55da9d5a345a9c5dafa5c0a18984c80eb86d0"
+    },
+    {
+      "path": "tests/test_budget_gate_and_math.py",
+      "bytes": 1570,
+      "sha256": "b07174def0a30f1ff6a69be6f1cfdfff94c2dfee3d0a8704d68fb0dd0bf35228"
+    },
+    {
+      "path": "tests/test_carrier_role.py",
+      "bytes": 633,
+      "sha256": "29c5d0199871c196a8f75d0bd3aff06335987595ab85a4e1763d3f88fdf5bd1a"
+    },
+    {
+      "path": "tests/test_cli_demo.py",
+      "bytes": 900,
+      "sha256": "a0151083b14c399e5c6016e25c46eea2a7336c89ee44766e469f17e8e1a20338"
+    },
+    {
+      "path": "tests/test_confirmation_binding.py",
+      "bytes": 945,
+      "sha256": "5aef5786f106a5a6435360c56b8721f92df9297a66ba0fadffd35f8fce6a8efc"
+    },
+    {
+      "path": "tests/test_conflict_seed.py",
+      "bytes": 915,
+      "sha256": "9438b68de55fc5ff8f5e9e634a42113547bd73e4902841ec9663216f23900754"
+    },
+    {
+      "path": "tests/test_context_counterfactual.py",
+      "bytes": 1007,
+      "sha256": "3222b4be85aee24450a3bf5cd015e9380bbbc4edaa279ff59e241b7638264c8a"
+    },
+    {
+      "path": "tests/test_hours_only.py",
+      "bytes": 1172,
+      "sha256": "831b3888ab7758e38c33964e711dc1e0557dfcf88dd96424b2ff2f9e9e223b6d"
+    },
+    {
+      "path": "tests/test_no_external_writes.py",
+      "bytes": 632,
+      "sha256": "bb1948ac589265d67a931162a7ab727a685f211a1e131b8ec72f756e5c0353bf"
+    },
+    {
+      "path": "tests/test_preflight.py",
+      "bytes": 749,
+      "sha256": "3f236daa2f1f849342c099e8853d816d3492954853dfcdee1c97504f76bfc490"
+    },
+    {
+      "path": "tests/test_prompt_injection_is_data.py",
+      "bytes": 643,
+      "sha256": "44ec29ae8c485d72f6cfc67528d79c043597c41e7f66b21a5f83060270d5da10"
+    },
+    {
+      "path": "tests/test_segment_provenance.py",
+      "bytes": 599,
+      "sha256": "ef51672b98f5b897c5d3e4f9ea28c0af504a0effc0be3a9aa8909cc5b3a913ae"
+    },
+    {
+      "path": "tests/test_synthetic_gate.py",
+      "bytes": 464,
+      "sha256": "05cacca8d1e4164441dfdfea484371ae6f78994c7ef880a28b705173fc15e0b2"
+    },
+    {
+      "path": "workflow/intake-to-budget.workflow.yaml",
+      "bytes": 1488,
+      "sha256": "756960caec933bb4f30f2e06e396671d1b8d9f048726957d63a14eb46d092630"
+    },
+    {
+      "path": "workflow/prohibited-transitions.yaml",
+      "bytes": 437,
+      "sha256": "8ad744479ae6bc94bf47f644883a6c62682ca51d5ecc158578aeed3507ea4cce"
+    }
+  ]
+}

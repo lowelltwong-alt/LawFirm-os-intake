@@ -1,0 +1,24 @@
+version: "0.1"
+runtime_mode: synthetic_only
+allowed_data_origins:
+  - synthetic
+prohibited:
+  - real_client_data
+  - real_matter_data
+  - privileged_material
+  - credentials
+  - negotiated_real_rates
+  - real_carrier_guidelines
+public_data_posture:
+  status: planning_only
+  direct_ingestion_allowed: false
+  allowed_now:
+    - source_catalogs
+    - metadata_field mapping plans
+    - derived synthetic fixtures with no real party identity
+  future_gate:
+    - owner approval
+    - legal and privacy review
+    - source-license review
+    - provenance contract
+    - retention decision

@@ -1,0 +1,14 @@
+{
+  "lifecycle": "staged_candidate",
+  "canonical": false,
+  "promotion_target": "LawFirm-os-semantic-substrate",
+  "version": "0.1",
+  "values": [
+    "defense_of_insured",
+    "coverage_advice_to_carrier",
+    "coverage_litigation",
+    "direct_corporate_defense",
+    "claimant_or_plaintiff_representation",
+    "unknown"
+  ]
+}

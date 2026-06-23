@@ -1,0 +1,108 @@
+{
+  "$defs": {
+    "SourceItem": {
+      "additionalProperties": false,
+      "properties": {
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "source_type": {
+          "enum": [
+            "email",
+            "letter",
+            "attachment_text",
+            "correspondence_dump",
+            "party_list",
+            "public_docket_stub"
+          ],
+          "title": "Source Type",
+          "type": "string"
+        },
+        "filename": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filename"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "title": "Metadata",
+          "type": "object"
+        }
+      },
+      "required": [
+        "source_id",
+        "source_type",
+        "text"
+      ],
+      "title": "SourceItem",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "bundle_id": {
+      "title": "Bundle Id",
+      "type": "string"
+    },
+    "data_origin": {
+      "enum": [
+        "synthetic",
+        "public_reference",
+        "production"
+      ],
+      "title": "Data Origin",
+      "type": "string"
+    },
+    "contains_real_client_data": {
+      "default": false,
+      "title": "Contains Real Client Data",
+      "type": "boolean"
+    },
+    "contains_real_matter_data": {
+      "default": false,
+      "title": "Contains Real Matter Data",
+      "type": "boolean"
+    },
+    "contains_privileged_data": {
+      "default": false,
+      "title": "Contains Privileged Data",
+      "type": "boolean"
+    },
+    "sources": {
+      "items": {
+        "$ref": "#/$defs/SourceItem"
+      },
+      "title": "Sources",
+      "type": "array"
+    },
+    "fixture_hints": {
+      "additionalProperties": true,
+      "title": "Fixture Hints",
+      "type": "object"
+    }
+  },
+  "required": [
+    "bundle_id",
+    "data_origin",
+    "sources"
+  ],
+  "title": "SourceBundle",
+  "type": "object"
+}

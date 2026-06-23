@@ -1,0 +1,45 @@
+{
+  "schema_version": "0.1",
+  "bundle_id": "syn-bundle-demand-001",
+  "data_origin": "synthetic",
+  "contains_real_client_data": false,
+  "contains_real_matter_data": false,
+  "contains_privileged_data": false,
+  "sources": [
+    {
+      "source_id": "syn-letter-demand-001",
+      "source_type": "letter",
+      "filename": "synthetic_demand_letter.txt",
+      "text": "SYNTHETIC SETTLEMENT DEMAND\n\nCounsel for Jordan Example submits this settlement demand concerning an alleged premises incident at North Plaza LLC. The demand amount is $250,000. A response is requested within 21 days.\n\nThis document is synthetic and not a real legal communication.",
+      "metadata": {
+        "synthetic": true
+      }
+    }
+  ],
+  "fixture_hints": {
+    "provided_fields": [
+      "adverse_party",
+      "response_or_reporting_deadline"
+    ],
+    "entities": [
+      {
+        "name": "Jordan Example",
+        "role_candidates": [
+          {
+            "role": "claimant_or_adverse_party",
+            "confidence": 0.9
+          }
+        ]
+      },
+      {
+        "name": "North Plaza LLC",
+        "role_candidates": [
+          {
+            "role": "insured_or_prospective_represented_client",
+            "confidence": 0.55
+          }
+        ]
+      }
+    ]
+  }
+}

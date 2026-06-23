@@ -1,0 +1,18 @@
+worker_id: party-role-extractor
+version: "0.1"
+purpose: Extract entity and relationship-role candidates with exact source references.
+model_class: small_local_extractor
+raw_source_access: structured_segments_only
+cross_matter_access: false
+network_access: false
+write_scope: none
+input_schema_ref: schemas/segment.schema.json
+output_schema_ref: schemas/party-candidate.schema.json
+requirements:
+  - aliases remain candidates
+  - carrier payer insured client claimant and adverse party are separate roles
+  - abstain when evidence is insufficient
+prohibited:
+  - deciding who the legal client is
+  - concluding adversity
+  - conflict clearance

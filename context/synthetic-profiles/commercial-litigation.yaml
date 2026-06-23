@@ -1,0 +1,23 @@
+profile_id: synthetic-commercial-litigation
+version: "0.1"
+contains_real_firm_data: false
+applied_layers: [synthetic_firm, commercial_litigation_practice_group]
+active_practices: [commercial_litigation, business_torts, contract_disputes]
+default_side: varies
+typical_inbound_sources:
+  direct_corporate: 0.8
+  referral_counsel: 0.4
+  insurance_carrier: 0.1
+matter_family_priors:
+  commercial_litigation: 0.8
+  insurance_coverage: 0.1
+  medical_malpractice_defense: 0.05
+  general_liability_defense: 0.05
+  plaintiff_personal_injury: 0.0
+required_intake_fields:
+  - prospective_represented_client
+  - adverse_party
+  - contract_or_transaction
+  - damages_or_relief
+  - jurisdiction
+budget_template_ids: []

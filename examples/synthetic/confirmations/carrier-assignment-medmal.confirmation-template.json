@@ -1,0 +1,50 @@
+{
+  "schema_version": "0.1",
+  "confirmation_id": "human-confirmation-synthetic-001",
+  "preflight_packet_id": "REPLACED_BY_DEMO_COMMAND",
+  "status": "confirmed",
+  "confirmed_inbound_event": "carrier_assignment",
+  "confirmed_matter_family": "medical_malpractice_defense",
+  "confirmed_representation_posture": "defense_of_insured",
+  "confirmed_parties": [
+    {
+      "name": "Harbor Point Insurance",
+      "confirmed_role": "insurance_carrier",
+      "aliases": [
+        "Harbor Point"
+      ]
+    },
+    {
+      "name": "Harbor Point Insurance",
+      "confirmed_role": "payer",
+      "aliases": []
+    },
+    {
+      "name": "Dr. Maya Chen",
+      "confirmed_role": "prospective_represented_client",
+      "aliases": []
+    },
+    {
+      "name": "Valley Medical Center",
+      "confirmed_role": "prospective_represented_client",
+      "aliases": [
+        "VMC"
+      ]
+    },
+    {
+      "name": "John Smith",
+      "confirmed_role": "adverse_party",
+      "aliases": []
+    },
+    {
+      "name": "Avery & Cole",
+      "confirmed_role": "opposing_counsel",
+      "aliases": []
+    }
+  ],
+  "confirmed_jurisdiction": "Synthetic State Court",
+  "confirmed_deadlines": [],
+  "reviewer_id": "synthetic-human-reviewer",
+  "reviewed_at": "2026-06-23T12:00:00Z",
+  "notes": "Synthetic demonstration only. No conflict clearance or engagement decision."
+}

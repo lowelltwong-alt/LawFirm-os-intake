@@ -1,0 +1,24 @@
+harness_id: full-demo.local.v0_1
+owner_repo: LawFirm-os-intake
+authority: local_candidate
+mode: synthetic_only_local
+purpose: Run the full synthetic reference flow from source bundle through blocked matter-opening readiness.
+command:
+  - bash
+  - scripts/smoke_demo.sh
+expected_terminal_state: blocked_pending_conflicts_and_engagement
+required_properties:
+  - source_bound_evidence_refs
+  - human_confirmed_matter_family
+  - human_confirmed_representation_posture
+  - human_confirmed_principal_party_roles
+  - conflict_seed_no_conclusion
+  - budget_proposed_for_human_review
+  - not_authorized_for_client_submission
+forbidden:
+  - network_call
+  - external_write
+  - production_connector
+  - real_client_data
+  - real_matter_data
+  - canon_mutation

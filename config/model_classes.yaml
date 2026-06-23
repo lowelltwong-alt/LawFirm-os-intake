@@ -1,0 +1,24 @@
+version: "0.1"
+classes:
+  deterministic_transform:
+    examples: [regex_parser, schema_validator, calculator, packet_writer]
+    preferred_for: [segmentation, hashing, totals, state transitions]
+  small_local_extractor:
+    preferred_for: [party_extraction, date_extraction, source_inventory]
+    requirements: [structured_output, abstention, source_refs, no_network]
+  small_reasoning_router:
+    preferred_for: [matter_candidate_ranking, role_candidates, missing_information]
+    requirements: [top_three, unknown_option, evidence_context_separation]
+  independent_small_critic:
+    preferred_for: [contradiction_detection, evidence_completeness, disagreement]
+    requirements: [cannot_silently_repair, cannot_approve]
+  frontier_adjudicator:
+    preferred_for: [high_risk_ambiguity, novel_source_shape, worker_disagreement]
+    requirements: [read_only, bounded_packet, human_review_afterward]
+  human_legal_reviewer:
+    authority: final_for_confirmations_within_assigned_role
+routing_law:
+  - Risk controls authority.
+  - Hardness controls harness depth.
+  - Leverage controls priority.
+  - Model capability never expands legal authority.

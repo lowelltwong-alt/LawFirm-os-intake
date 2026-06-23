@@ -1,0 +1,239 @@
+{
+  "schema_version": "0.1",
+  "budget_proposal_id": "budget_16a27705b17a45b3b94f9c369ee91ab6",
+  "preflight_packet_id": "intake_feaed579e5bb4c8485b05f132742e4a8",
+  "confirmation_id": "human-confirmation-synthetic-001",
+  "practice_profile_id": "synthetic-insurance-defense",
+  "matter_family": "medical_malpractice_defense",
+  "representation_posture": "defense_of_insured",
+  "pricing_status": "priced",
+  "currency": "USD",
+  "lines": [
+    {
+      "phase_id": "P100",
+      "phase_name": "Intake and Early Case Assessment",
+      "task_id": "P110",
+      "task_name": "Assignment review, party map, and initial exposure assessment",
+      "staffing_role": "senior_associate",
+      "estimated_hours": 12.0,
+      "hourly_rate": 325.0,
+      "estimated_fees": 3900.0,
+      "estimated_expenses": 0.0,
+      "external_code_candidate": "L100",
+      "assumptions": [],
+      "evidence_refs": [
+        {
+          "source_id": "syn-email-001",
+          "segment_id": "seg_9ce37170598c4d8985983c16b76e1bcf",
+          "sha256": "sha256:ba477836fc91c980050c130fc75cf9f682a0840345de60b1ed2f9e4e3ef0a4b3"
+        }
+      ]
+    },
+    {
+      "phase_id": "P100",
+      "phase_name": "Intake and Early Case Assessment",
+      "task_id": "P120",
+      "task_name": "Medical record inventory and chronology plan",
+      "staffing_role": "paralegal",
+      "estimated_hours": 18.0,
+      "hourly_rate": 160.0,
+      "estimated_fees": 2880.0,
+      "estimated_expenses": 250.0,
+      "external_code_candidate": "L110",
+      "assumptions": [],
+      "evidence_refs": [
+        {
+          "source_id": "syn-email-001",
+          "segment_id": "seg_9ce37170598c4d8985983c16b76e1bcf",
+          "sha256": "sha256:ba477836fc91c980050c130fc75cf9f682a0840345de60b1ed2f9e4e3ef0a4b3"
+        }
+      ]
+    },
+    {
+      "phase_id": "P200",
+      "phase_name": "Pleadings and Initial Motions",
+      "task_id": "P210",
+      "task_name": "Answer and preliminary motions",
+      "staffing_role": "associate",
+      "estimated_hours": 22.0,
+      "hourly_rate": 250.0,
+      "estimated_fees": 5500.0,
+      "estimated_expenses": 300.0,
+      "external_code_candidate": "L200",
+      "assumptions": [],
+      "evidence_refs": [
+        {
+          "source_id": "syn-email-001",
+          "segment_id": "seg_9ce37170598c4d8985983c16b76e1bcf",
+          "sha256": "sha256:ba477836fc91c980050c130fc75cf9f682a0840345de60b1ed2f9e4e3ef0a4b3"
+        }
+      ]
+    },
+    {
+      "phase_id": "P300",
+      "phase_name": "Discovery",
+      "task_id": "P310",
+      "task_name": "Written discovery and document production management",
+      "staffing_role": "associate",
+      "estimated_hours": 55.0,
+      "hourly_rate": 250.0,
+      "estimated_fees": 13750.0,
+      "estimated_expenses": 1200.0,
+      "external_code_candidate": "L300",
+      "assumptions": [],
+      "evidence_refs": [
+        {
+          "source_id": "syn-email-001",
+          "segment_id": "seg_9ce37170598c4d8985983c16b76e1bcf",
+          "sha256": "sha256:ba477836fc91c980050c130fc75cf9f682a0840345de60b1ed2f9e4e3ef0a4b3"
+        }
+      ]
+    },
+    {
+      "phase_id": "P300",
+      "phase_name": "Discovery",
+      "task_id": "P320",
+      "task_name": "Depositions and witness preparation",
+      "staffing_role": "senior_associate",
+      "estimated_hours": 65.0,
+      "hourly_rate": 325.0,
+      "estimated_fees": 21125.0,
+      "estimated_expenses": 4500.0,
+      "external_code_candidate": "L330",
+      "assumptions": [],
+      "evidence_refs": [
+        {
+          "source_id": "syn-email-001",
+          "segment_id": "seg_9ce37170598c4d8985983c16b76e1bcf",
+          "sha256": "sha256:ba477836fc91c980050c130fc75cf9f682a0840345de60b1ed2f9e4e3ef0a4b3"
+        }
+      ]
+    },
+    {
+      "phase_id": "P300",
+      "phase_name": "Discovery",
+      "task_id": "P330",
+      "task_name": "Expert discovery coordination",
+      "staffing_role": "partner",
+      "estimated_hours": 32.0,
+      "hourly_rate": 450.0,
+      "estimated_fees": 14400.0,
+      "estimated_expenses": 15000.0,
+      "external_code_candidate": "L340",
+      "assumptions": [],
+      "evidence_refs": [
+        {
+          "source_id": "syn-email-001",
+          "segment_id": "seg_9ce37170598c4d8985983c16b76e1bcf",
+          "sha256": "sha256:ba477836fc91c980050c130fc75cf9f682a0840345de60b1ed2f9e4e3ef0a4b3"
+        }
+      ]
+    },
+    {
+      "phase_id": "P400",
+      "phase_name": "Dispositive Motions and Resolution",
+      "task_id": "P410",
+      "task_name": "Dispositive motion analysis and briefing",
+      "staffing_role": "partner",
+      "estimated_hours": 42.0,
+      "hourly_rate": 450.0,
+      "estimated_fees": 18900.0,
+      "estimated_expenses": 800.0,
+      "external_code_candidate": "L400",
+      "assumptions": [],
+      "evidence_refs": [
+        {
+          "source_id": "syn-email-001",
+          "segment_id": "seg_9ce37170598c4d8985983c16b76e1bcf",
+          "sha256": "sha256:ba477836fc91c980050c130fc75cf9f682a0840345de60b1ed2f9e4e3ef0a4b3"
+        }
+      ]
+    },
+    {
+      "phase_id": "P400",
+      "phase_name": "Dispositive Motions and Resolution",
+      "task_id": "P420",
+      "task_name": "Mediation and settlement preparation",
+      "staffing_role": "senior_associate",
+      "estimated_hours": 28.0,
+      "hourly_rate": 325.0,
+      "estimated_fees": 9100.0,
+      "estimated_expenses": 2500.0,
+      "external_code_candidate": "L160",
+      "assumptions": [],
+      "evidence_refs": [
+        {
+          "source_id": "syn-email-001",
+          "segment_id": "seg_9ce37170598c4d8985983c16b76e1bcf",
+          "sha256": "sha256:ba477836fc91c980050c130fc75cf9f682a0840345de60b1ed2f9e4e3ef0a4b3"
+        }
+      ]
+    },
+    {
+      "phase_id": "P500",
+      "phase_name": "Trial Preparation and Trial",
+      "task_id": "P510",
+      "task_name": "Trial preparation",
+      "staffing_role": "associate",
+      "estimated_hours": 85.0,
+      "hourly_rate": 250.0,
+      "estimated_fees": 21250.0,
+      "estimated_expenses": 8000.0,
+      "external_code_candidate": "L500",
+      "assumptions": [],
+      "evidence_refs": [
+        {
+          "source_id": "syn-email-001",
+          "segment_id": "seg_9ce37170598c4d8985983c16b76e1bcf",
+          "sha256": "sha256:ba477836fc91c980050c130fc75cf9f682a0840345de60b1ed2f9e4e3ef0a4b3"
+        }
+      ]
+    },
+    {
+      "phase_id": "P500",
+      "phase_name": "Trial Preparation and Trial",
+      "task_id": "P520",
+      "task_name": "Trial attendance and lead counsel work",
+      "staffing_role": "partner",
+      "estimated_hours": 80.0,
+      "hourly_rate": 450.0,
+      "estimated_fees": 36000.0,
+      "estimated_expenses": 12000.0,
+      "external_code_candidate": "L510",
+      "assumptions": [],
+      "evidence_refs": [
+        {
+          "source_id": "syn-email-001",
+          "segment_id": "seg_9ce37170598c4d8985983c16b76e1bcf",
+          "sha256": "sha256:ba477836fc91c980050c130fc75cf9f682a0840345de60b1ed2f9e4e3ef0a4b3"
+        }
+      ]
+    }
+  ],
+  "subtotal_fees": 146805.0,
+  "subtotal_expenses": 44550.0,
+  "contingency_percent": 7.5,
+  "contingency_amount": 11010.38,
+  "total_proposed_budget": 202365.38,
+  "assumptions": [
+    "One plaintiff, two represented defendants, and one principal medical event.",
+    "No appeal, retrial, sanctions proceeding, or separate coverage action.",
+    "Rates and hours are synthetic examples only."
+  ],
+  "exclusions": [
+    "expert vendor invoices beyond listed estimates",
+    "appellate work",
+    "separate coverage litigation",
+    "conflict clearance",
+    "engagement authorization",
+    "carrier/client submission",
+    "court filing"
+  ],
+  "unknowns": [
+    "court-specific schedule",
+    "number of depositions",
+    "expert disciplines and fee arrangements"
+  ],
+  "approval_state": "proposed_for_human_review",
+  "not_authorized_for_client_submission": true
+}

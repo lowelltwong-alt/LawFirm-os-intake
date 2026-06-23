@@ -1,0 +1,19 @@
+{
+  "lifecycle": "staged_candidate",
+  "canonical": false,
+  "promotion_target": "LawFirm-os-semantic-substrate",
+  "version": "0.1",
+  "values": [
+    "prospective_represented_client",
+    "represented_client",
+    "insured",
+    "insurance_carrier",
+    "instructing_source",
+    "payer",
+    "claimant",
+    "adverse_party",
+    "opposing_counsel",
+    "witness",
+    "unknown"
+  ]
+}

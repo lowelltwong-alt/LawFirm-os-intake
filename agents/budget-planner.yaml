@@ -1,0 +1,17 @@
+worker_id: budget-planner
+version: "0.1"
+purpose: Convert human-confirmed intake facts and an approved synthetic template into a proposed legal budget.
+model_class: deterministic_transform_plus_small_reasoning_router
+raw_source_access: false
+cross_matter_access: false
+network_access: false
+write_scope: local_proposal_only
+requirements:
+  - human confirmation precondition
+  - no invented rates
+  - assumptions exclusions and unknowns required
+  - calculations deterministic
+prohibited:
+  - submission to carrier or client
+  - approval
+  - engagement or matter opening

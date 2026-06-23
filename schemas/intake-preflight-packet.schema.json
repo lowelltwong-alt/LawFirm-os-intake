@@ -1,0 +1,572 @@
+{
+  "$defs": {
+    "CriticFinding": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "severity": {
+          "enum": [
+            "info",
+            "warning",
+            "blocker"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "code",
+        "severity",
+        "message"
+      ],
+      "title": "CriticFinding",
+      "type": "object"
+    },
+    "DeadlineCandidate": {
+      "additionalProperties": false,
+      "properties": {
+        "deadline_candidate_id": {
+          "title": "Deadline Candidate Id",
+          "type": "string"
+        },
+        "expression": {
+          "title": "Expression",
+          "type": "string"
+        },
+        "normalized_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Normalized Date"
+        },
+        "deadline_type_candidate": {
+          "title": "Deadline Type Candidate",
+          "type": "string"
+        },
+        "confidence": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "evidence_refs": {
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "requires_human_verification": {
+          "default": true,
+          "title": "Requires Human Verification",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "deadline_candidate_id",
+        "expression",
+        "deadline_type_candidate",
+        "confidence",
+        "evidence_refs"
+      ],
+      "title": "DeadlineCandidate",
+      "type": "object"
+    },
+    "EffectiveContext": {
+      "additionalProperties": false,
+      "properties": {
+        "context_id": {
+          "title": "Context Id",
+          "type": "string"
+        },
+        "profile_id": {
+          "title": "Profile Id",
+          "type": "string"
+        },
+        "profile_version": {
+          "title": "Profile Version",
+          "type": "string"
+        },
+        "profile_sha256": {
+          "title": "Profile Sha256",
+          "type": "string"
+        },
+        "applied_layers": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Applied Layers",
+          "type": "array"
+        },
+        "active_practices": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Active Practices",
+          "type": "array"
+        },
+        "default_side": {
+          "title": "Default Side",
+          "type": "string"
+        },
+        "typical_inbound_sources": {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "title": "Typical Inbound Sources",
+          "type": "object"
+        },
+        "matter_family_priors": {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "title": "Matter Family Priors",
+          "type": "object"
+        },
+        "required_intake_fields": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Required Intake Fields",
+          "type": "array"
+        },
+        "budget_template_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Budget Template Ids",
+          "type": "array"
+        },
+        "context_precedence": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Context Precedence",
+          "type": "array"
+        }
+      },
+      "required": [
+        "context_id",
+        "profile_id",
+        "profile_version",
+        "profile_sha256",
+        "applied_layers",
+        "active_practices",
+        "default_side",
+        "typical_inbound_sources",
+        "matter_family_priors",
+        "required_intake_fields",
+        "budget_template_ids",
+        "context_precedence"
+      ],
+      "title": "EffectiveContext",
+      "type": "object"
+    },
+    "EscalationDecision": {
+      "additionalProperties": false,
+      "properties": {
+        "required": {
+          "title": "Required",
+          "type": "boolean"
+        },
+        "triggers": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Triggers",
+          "type": "array"
+        },
+        "recommended_target": {
+          "enum": [
+            "ordinary_human_intake_review",
+            "frontier_adjudicator_then_human",
+            "human_only"
+          ],
+          "title": "Recommended Target",
+          "type": "string"
+        },
+        "self_reported_confidence_used_as_sole_trigger": {
+          "default": false,
+          "title": "Self Reported Confidence Used As Sole Trigger",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "required",
+        "recommended_target"
+      ],
+      "title": "EscalationDecision",
+      "type": "object"
+    },
+    "EvidenceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "segment_id": {
+          "title": "Segment Id",
+          "type": "string"
+        },
+        "sha256": {
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "segment_id",
+        "sha256"
+      ],
+      "title": "EvidenceRef",
+      "type": "object"
+    },
+    "PartyCandidate": {
+      "additionalProperties": false,
+      "properties": {
+        "party_candidate_id": {
+          "title": "Party Candidate Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "normalized_name": {
+          "title": "Normalized Name",
+          "type": "string"
+        },
+        "aliases": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Aliases",
+          "type": "array"
+        },
+        "role_candidates": {
+          "items": {
+            "$ref": "#/$defs/RoleCandidate"
+          },
+          "title": "Role Candidates",
+          "type": "array"
+        },
+        "evidence_refs": {
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "status": {
+          "const": "candidate",
+          "default": "candidate",
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "party_candidate_id",
+        "name",
+        "normalized_name",
+        "role_candidates",
+        "evidence_refs"
+      ],
+      "title": "PartyCandidate",
+      "type": "object"
+    },
+    "RoleCandidate": {
+      "additionalProperties": false,
+      "properties": {
+        "role": {
+          "title": "Role",
+          "type": "string"
+        },
+        "confidence": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Confidence",
+          "type": "number"
+        }
+      },
+      "required": [
+        "role",
+        "confidence"
+      ],
+      "title": "RoleCandidate",
+      "type": "object"
+    },
+    "ScoredCandidate": {
+      "additionalProperties": false,
+      "properties": {
+        "candidate_id": {
+          "title": "Candidate Id",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "confidence": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "observed_evidence_refs": {
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Observed Evidence Refs",
+          "type": "array"
+        },
+        "context_signal_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Context Signal Refs",
+          "type": "array"
+        },
+        "status": {
+          "const": "candidate",
+          "default": "candidate",
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "candidate_id",
+        "label",
+        "confidence"
+      ],
+      "title": "ScoredCandidate",
+      "type": "object"
+    },
+    "Segment": {
+      "additionalProperties": false,
+      "properties": {
+        "segment_id": {
+          "title": "Segment Id",
+          "type": "string"
+        },
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "parent_segment_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent Segment Id"
+        },
+        "segment_type": {
+          "title": "Segment Type",
+          "type": "string"
+        },
+        "sequence": {
+          "title": "Sequence",
+          "type": "integer"
+        },
+        "start_offset": {
+          "title": "Start Offset",
+          "type": "integer"
+        },
+        "end_offset": {
+          "title": "End Offset",
+          "type": "integer"
+        },
+        "sha256": {
+          "title": "Sha256",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "segment_id",
+        "source_id",
+        "segment_type",
+        "sequence",
+        "start_offset",
+        "end_offset",
+        "sha256",
+        "text"
+      ],
+      "title": "Segment",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "packet_id": {
+      "title": "Packet Id",
+      "type": "string"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "bundle_id": {
+      "title": "Bundle Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "human_intake_review_required",
+        "blocked"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "data_origin": {
+      "title": "Data Origin",
+      "type": "string"
+    },
+    "source_inventory": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Source Inventory",
+      "type": "array"
+    },
+    "segments": {
+      "items": {
+        "$ref": "#/$defs/Segment"
+      },
+      "title": "Segments",
+      "type": "array"
+    },
+    "effective_context": {
+      "$ref": "#/$defs/EffectiveContext"
+    },
+    "inbound_event_candidates": {
+      "items": {
+        "$ref": "#/$defs/ScoredCandidate"
+      },
+      "title": "Inbound Event Candidates",
+      "type": "array"
+    },
+    "matter_family_candidates": {
+      "items": {
+        "$ref": "#/$defs/ScoredCandidate"
+      },
+      "title": "Matter Family Candidates",
+      "type": "array"
+    },
+    "representation_posture_candidates": {
+      "items": {
+        "$ref": "#/$defs/ScoredCandidate"
+      },
+      "title": "Representation Posture Candidates",
+      "type": "array"
+    },
+    "party_candidates": {
+      "items": {
+        "$ref": "#/$defs/PartyCandidate"
+      },
+      "title": "Party Candidates",
+      "type": "array"
+    },
+    "deadline_candidates": {
+      "items": {
+        "$ref": "#/$defs/DeadlineCandidate"
+      },
+      "title": "Deadline Candidates",
+      "type": "array"
+    },
+    "missing_information": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Missing Information",
+      "type": "array"
+    },
+    "critic_findings": {
+      "items": {
+        "$ref": "#/$defs/CriticFinding"
+      },
+      "title": "Critic Findings",
+      "type": "array"
+    },
+    "escalation": {
+      "$ref": "#/$defs/EscalationDecision"
+    },
+    "human_confirmation_required": {
+      "default": true,
+      "title": "Human Confirmation Required",
+      "type": "boolean"
+    },
+    "prohibited_next_steps": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Prohibited Next Steps",
+      "type": "array"
+    },
+    "evidence_graph_ref": {
+      "title": "Evidence Graph Ref",
+      "type": "string"
+    },
+    "run_ledger_ref": {
+      "title": "Run Ledger Ref",
+      "type": "string"
+    }
+  },
+  "required": [
+    "packet_id",
+    "run_id",
+    "bundle_id",
+    "status",
+    "data_origin",
+    "source_inventory",
+    "segments",
+    "effective_context",
+    "inbound_event_candidates",
+    "matter_family_candidates",
+    "representation_posture_candidates",
+    "party_candidates",
+    "deadline_candidates",
+    "missing_information",
+    "critic_findings",
+    "escalation",
+    "prohibited_next_steps",
+    "evidence_graph_ref",
+    "run_ledger_ref"
+  ],
+  "title": "IntakePreflightPacket",
+  "type": "object"
+}

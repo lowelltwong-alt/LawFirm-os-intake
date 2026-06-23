@@ -1,0 +1,37 @@
+version: '0.1'
+prompts:
+- prompt_ref: budget-planner
+  version: '0.1'
+  sha256: sha256:a046f521f83584dd75a6c7828be15a6739b2841ce4f98f5e9ed08e3aae21478e
+  lifecycle: staged_candidate
+  approved_for_real_data: false
+- prompt_ref: deadline-gap-extractor
+  version: '0.1'
+  sha256: sha256:15083aa131abde9a0e1154aa5667d15158bb538cc9256745843e1e3a35174788
+  lifecycle: staged_candidate
+  approved_for_real_data: false
+- prompt_ref: evidence-critic
+  version: '0.1'
+  sha256: sha256:d06cec1b8cbdf5639935703d8f49a5d183884aadeb638a74b2721c4f73420faf
+  lifecycle: staged_candidate
+  approved_for_real_data: false
+- prompt_ref: frontier-adjudicator
+  version: '0.1'
+  sha256: sha256:da63e04ea43151f19e7195a26a6b54ffbe1869caedc782d020d38e012b0655fd
+  lifecycle: staged_candidate
+  approved_for_real_data: false
+- prompt_ref: matter-router
+  version: '0.1'
+  sha256: sha256:9098cff66bdb7db1af4b7ecd01f2d563c2343ae7223aa3019248e235e885bba7
+  lifecycle: staged_candidate
+  approved_for_real_data: false
+- prompt_ref: party-role-extractor
+  version: '0.1'
+  sha256: sha256:43cdbe5aaf35db0bb2476bd8ab96001dc9c882763d9991b20e2593d9a661d87d
+  lifecycle: staged_candidate
+  approved_for_real_data: false
+- prompt_ref: source-reader
+  version: '0.1'
+  sha256: sha256:6b9f818b1c329366ac0d617f3b78e777447c09acf4a92a23dbf91a28c6c245ec
+  lifecycle: staged_candidate
+  approved_for_real_data: false

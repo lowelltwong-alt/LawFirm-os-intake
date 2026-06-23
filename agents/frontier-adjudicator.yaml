@@ -1,0 +1,17 @@
+worker_id: frontier-adjudicator
+version: "0.1"
+purpose: Analyze difficult structured ambiguity after deterministic and small-model routes are exhausted.
+model_class: frontier_adjudicator
+raw_source_access: bounded_packet_only
+cross_matter_access: false
+network_access: false
+write_scope: none
+requirements:
+  - independent alternative analysis
+  - identify what remains unresolved
+  - human review always follows
+prohibited:
+  - final human confirmation
+  - conflict conclusion
+  - external action
+  - authority expansion

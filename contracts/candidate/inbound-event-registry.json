@@ -1,0 +1,15 @@
+{
+  "lifecycle": "staged_candidate",
+  "canonical": false,
+  "promotion_target": "LawFirm-os-semantic-substrate",
+  "version": "0.1",
+  "values": [
+    "carrier_assignment",
+    "demand_received",
+    "complaint_or_suit_received",
+    "coverage_inquiry",
+    "prospective_client_help_request",
+    "correspondence_dump",
+    "unknown"
+  ]
+}

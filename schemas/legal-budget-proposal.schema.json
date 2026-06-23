@@ -1,0 +1,269 @@
+{
+  "$defs": {
+    "BudgetLine": {
+      "additionalProperties": false,
+      "properties": {
+        "phase_id": {
+          "title": "Phase Id",
+          "type": "string"
+        },
+        "phase_name": {
+          "title": "Phase Name",
+          "type": "string"
+        },
+        "task_id": {
+          "title": "Task Id",
+          "type": "string"
+        },
+        "task_name": {
+          "title": "Task Name",
+          "type": "string"
+        },
+        "staffing_role": {
+          "title": "Staffing Role",
+          "type": "string"
+        },
+        "estimated_hours": {
+          "minimum": 0,
+          "title": "Estimated Hours",
+          "type": "number"
+        },
+        "hourly_rate": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hourly Rate"
+        },
+        "estimated_fees": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Estimated Fees"
+        },
+        "estimated_expenses": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Estimated Expenses",
+          "type": "number"
+        },
+        "external_code_candidate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Code Candidate"
+        },
+        "assumptions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Assumptions",
+          "type": "array"
+        },
+        "evidence_refs": {
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "phase_id",
+        "phase_name",
+        "task_id",
+        "task_name",
+        "staffing_role",
+        "estimated_hours"
+      ],
+      "title": "BudgetLine",
+      "type": "object"
+    },
+    "EvidenceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "segment_id": {
+          "title": "Segment Id",
+          "type": "string"
+        },
+        "sha256": {
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "segment_id",
+        "sha256"
+      ],
+      "title": "EvidenceRef",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "budget_proposal_id": {
+      "title": "Budget Proposal Id",
+      "type": "string"
+    },
+    "preflight_packet_id": {
+      "title": "Preflight Packet Id",
+      "type": "string"
+    },
+    "confirmation_id": {
+      "title": "Confirmation Id",
+      "type": "string"
+    },
+    "practice_profile_id": {
+      "title": "Practice Profile Id",
+      "type": "string"
+    },
+    "matter_family": {
+      "title": "Matter Family",
+      "type": "string"
+    },
+    "representation_posture": {
+      "title": "Representation Posture",
+      "type": "string"
+    },
+    "pricing_status": {
+      "enum": [
+        "priced",
+        "hours_only",
+        "insufficient_information"
+      ],
+      "title": "Pricing Status",
+      "type": "string"
+    },
+    "currency": {
+      "default": "USD",
+      "title": "Currency",
+      "type": "string"
+    },
+    "lines": {
+      "items": {
+        "$ref": "#/$defs/BudgetLine"
+      },
+      "title": "Lines",
+      "type": "array"
+    },
+    "subtotal_fees": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Subtotal Fees"
+    },
+    "subtotal_expenses": {
+      "default": 0,
+      "title": "Subtotal Expenses",
+      "type": "number"
+    },
+    "contingency_percent": {
+      "default": 0,
+      "title": "Contingency Percent",
+      "type": "number"
+    },
+    "contingency_amount": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Contingency Amount"
+    },
+    "total_proposed_budget": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Total Proposed Budget"
+    },
+    "assumptions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Assumptions",
+      "type": "array"
+    },
+    "exclusions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Exclusions",
+      "type": "array"
+    },
+    "unknowns": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Unknowns",
+      "type": "array"
+    },
+    "approval_state": {
+      "const": "proposed_for_human_review",
+      "default": "proposed_for_human_review",
+      "title": "Approval State",
+      "type": "string"
+    },
+    "not_authorized_for_client_submission": {
+      "default": true,
+      "title": "Not Authorized For Client Submission",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "budget_proposal_id",
+    "preflight_packet_id",
+    "confirmation_id",
+    "practice_profile_id",
+    "matter_family",
+    "representation_posture",
+    "pricing_status",
+    "lines"
+  ],
+  "title": "BudgetProposal",
+  "type": "object"
+}

@@ -1,0 +1,16 @@
+version: "0.1"
+prohibited:
+  - from: raw_received
+    to: matter_opened
+  - from: party_candidates_ready
+    to: client_identity_final
+  - from: conflict_seed_ready
+    to: conflicts_cleared
+  - from: intake_confirmed
+    to: representation_accepted
+  - from: budget_proposal_ready
+    to: budget_submitted
+  - from: matter_opening_readiness
+    to: imanage_workspace_created
+  - from: any_model_output
+    to: canonical_semantic_change

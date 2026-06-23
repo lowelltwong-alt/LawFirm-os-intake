@@ -1,0 +1,26 @@
+version: "0.1"
+principle: self-reported confidence is never the sole escalation trigger
+triggers:
+  - represented_client_carrier_payer_or_insured_relationship_ambiguous
+  - multiple_practice_profiles_plausibly_apply
+  - coverage_and_defense_assignment_signals_coexist
+  - complaint_tender_demand_subpoena_or_deadline_detected
+  - party_alias_or_corporate_relationship_unresolved
+  - conflict_search_seed_incomplete
+  - specialist_workers_disagree
+  - practice_context_and_observed_evidence_conflict
+  - source_coverage_incomplete
+  - unreadable_attachment
+  - prompt_injection_like_content_detected
+  - deterministic_validator_failure
+  - any_external_write_send_acceptance_or_matter_opening_proposed
+routes:
+  ordinary: ordinary_human_intake_review
+  difficult: frontier_adjudicator_then_human
+  prohibited_or_evidence_incomplete: human_only
+frontier_limits:
+  - no writes
+  - no conflict conclusion
+  - no engagement decision
+  - no replacement of human confirmation
+  - receives structured packet and alternatives, not unbounded cross-matter context

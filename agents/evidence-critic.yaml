@@ -1,0 +1,16 @@
+worker_id: evidence-critic
+version: "0.1"
+purpose: Detect contradictions, unsupported fields, weak evidence, incomplete coverage, and unsafe next steps.
+model_class: independent_small_critic
+raw_source_access: false
+cross_matter_access: false
+network_access: false
+write_scope: none
+requirements:
+  - review structured worker outputs independently
+  - identify disagreement and missing evidence
+  - never silently repair another worker output
+prohibited:
+  - approval
+  - final classification
+  - external writes

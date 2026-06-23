@@ -1,0 +1,21 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+dist/
+build/
+.coverage
+htmlcov/
+.lawfirm-os-intake/
+
+# Never commit real firm, client, matter, carrier, rate, guideline, or credential data.
+context/firm-private/
+secrets/
+.env
+.env.*
+*.pem
+*.key

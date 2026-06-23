@@ -1,0 +1,29 @@
+{
+  "schema_version": "0.1",
+  "conflict_seed_id": "conflictseed_abe23cb8f74b4456aeb2b4541f265fc4",
+  "preflight_packet_id": "intake_feaed579e5bb4c8485b05f132742e4a8",
+  "confirmation_id": "human-confirmation-synthetic-001",
+  "status": "seed_ready_for_conflicts_team",
+  "prospective_represented_clients": [
+    "Dr. Maya Chen",
+    "Valley Medical Center"
+  ],
+  "instructing_sources": [
+    "Harbor Point Insurance"
+  ],
+  "payers": [
+    "Harbor Point Insurance"
+  ],
+  "adverse_parties": [
+    "John Smith"
+  ],
+  "opposing_counsel": [
+    "Avery & Cole"
+  ],
+  "other_search_terms": [
+    "Harbor Point",
+    "VMC"
+  ],
+  "unresolved_roles": [],
+  "conclusion": "no_conflict_conclusion"
+}

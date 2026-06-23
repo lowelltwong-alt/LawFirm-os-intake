@@ -1,0 +1,15 @@
+{
+  "lifecycle": "staged_candidate",
+  "canonical": false,
+  "promotion_target": "LawFirm-os-semantic-substrate",
+  "version": "0.1",
+  "values": [
+    "medical_malpractice_defense",
+    "insurance_coverage",
+    "general_liability_defense",
+    "auto_liability_defense",
+    "commercial_litigation",
+    "plaintiff_personal_injury",
+    "unknown"
+  ]
+}

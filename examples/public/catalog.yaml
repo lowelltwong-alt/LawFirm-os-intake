@@ -1,0 +1,58 @@
+version: '0.1'
+status: planning_only
+sources:
+- source_id: courtlistener-recap
+  url: https://www.courtlistener.com/recap/
+  useful_for:
+  - docket_structure
+  - party_and_attorney_fields
+  - filing_metadata
+  - provenance
+  direct_runtime_ingestion: false
+- source_id: fjc-idb
+  url: https://www.fjc.gov/research/idb
+  useful_for:
+  - case_metadata_fields
+  - nature_of_suit
+  - procedural_dates
+  - synthetic_distribution_design
+  direct_runtime_ingestion: false
+- source_id: cmu-enron-email
+  url: https://www.cs.cmu.edu/~enron/
+  useful_for:
+  - email_threading
+  - quoted_text
+  - participants
+  - signatures
+  - duplicates
+  limitations:
+  - not_legal_intake
+  - privacy_review_required
+  - attachments_not_equivalent_to_law_firm_data
+  direct_runtime_ingestion: false
+- source_id: sec-edgar
+  url: https://www.sec.gov/edgar
+  useful_for:
+  - public_document_structure
+  - entity_extraction
+  direct_runtime_ingestion: false
+- source_id: nhtsa-public-crash-data
+  url: https://www.nhtsa.gov/data
+  useful_for:
+  - auto_liability_synthetic_distribution_design
+  - vehicle_date_location_field_mapping
+  limitations:
+  - not_law_firm_intake
+  - no_representation_or_liability_inference
+  direct_runtime_ingestion: false
+- source_id: npdb-public-use-data
+  url: https://www.npdb.hrsa.gov/resources/publicData.jsp
+  useful_for:
+  - aggregate_medical_malpractice_distribution_design
+  - field_mapping
+  limitations:
+  - privacy_and_use_review_required
+  - not_case_intake
+  - no_identity_enrichment
+  - no_merits_or_budget_inference
+  direct_runtime_ingestion: false

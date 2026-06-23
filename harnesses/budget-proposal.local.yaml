@@ -1,0 +1,27 @@
+harness_id: budget-proposal.local.v0_1
+owner_repo: LawFirm-os-intake
+authority: local_candidate
+mode: synthetic_only_local
+purpose: Validate the human-confirmation gate, conflict-search seed generation, budget proposal math, hours-only fallback, and matter-opening readiness blocker.
+command:
+  - python
+  - -m
+  - lawfirm_os_intake
+  - build-budget
+required_inputs:
+  - intake_preflight_packet.json
+  - human_confirmation.json
+  - context/synthetic-profiles/insurance-defense.yaml
+expected_outputs:
+  - conflict_search_seed_packet.json
+  - legal_budget_proposal.json
+  - legal_budget_review_form.md
+  - matter_opening_readiness.json
+  - evidence_graph.json
+  - run_ledger.jsonl
+forbidden:
+  - invented_rates
+  - approved_budget
+  - submitted_budget
+  - engagement_decision
+  - matter_opening

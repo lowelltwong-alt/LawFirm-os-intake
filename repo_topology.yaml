@@ -1,0 +1,67 @@
+version: "0.2"
+this_repo:
+  canonical_machine_name: LawFirm-os-intake
+  role: vertical_workflow_composition_and_evaluation
+  authority_plane: none
+  remote: https://github.com/lowelltwong-alt/LawFirm-os-intake
+  ai_front_doors:
+    - AI_WORK_START_HERE.md
+    - AI_TABLE_OF_CONTENTS.md
+    - AGENTS.md
+    - CLAUDE.md
+    - skill-agent-manifest.json
+siblings:
+  - repo: LawFirm-os-semantic-substrate
+    remote: https://github.com/lowelltwong-alt/LawFirm-os-semantic-substrate
+    plane: control
+    entry_points:
+      - AI_WORK_START_HERE.md
+      - AI_START_HERE.md
+      - AGENTS.md
+      - registry/ai-front-door-registry.json
+      - registry/skill-agent-control-plane-registry.json
+      - governance/CROSS_REPO_MAP.md
+      - manifests/contract_manifest.v1.json
+    consumes: [schemas, registries, governance, manifests, practice_context_contracts]
+  - repo: LawFirm-os-orchestrator
+    remote: https://github.com/lowelltwong-alt/LawFirm-os-orchestrator
+    plane: execution
+    entry_points:
+      - AI_WORK_START_HERE.md
+      - AGENTS.md
+      - docs/seed/00_CODEX_READ_FIRST.md
+      - docs/CANONICAL_ROUTE_MAPPING.md
+      - contracts.lock.json
+    consumes: [runtime_kernel, gates, model_and_tool_routing, run_ledger]
+  - repo: LawFirm-os-exceptions-lake-runtime
+    canonical_machine_name_note: current front door also names exceptions-lake-runtime-main; resolve via substrate before integration
+    remote: https://github.com/lowelltwong-alt/LawFirm-os-exceptions-lake-runtime
+    plane: evidence
+    entry_points:
+      - AI_WORK_START_HERE.md
+      - README.md
+      - docs/RUNTIME_BOUNDARY.md
+      - docs/RUNTIME_HANDOFF.md
+      - docs/NON_SYNTHETIC_DATA_READINESS_CHECKLIST.md
+      - docs/ai-workflow/runtime-route-table.yaml
+    consumes: [append_only_events, audit, corrections, pressure_candidates]
+  - repo: LawFirm-os-skills-registry
+    remote: https://github.com/lowelltwong-alt/LawFirm-os-skills-registry
+    plane: governed_skill_supply_chain
+    entry_points:
+      - AI_WORK_START_HERE.md
+      - AGENTS.md
+      - skill-agent-manifest.json
+      - README.md
+    consumes: [approved_specialist_skills, trust_records, prompt_versions]
+  - repo: LawFirm-os-legal-knowledge-runtime
+    remote: https://github.com/lowelltwong-alt/LawFirm-os-legal-knowledge-runtime
+    plane: bounded_legal_evidence_runtime
+    entry_points:
+      - AI_WORK_START_HERE.md
+      - AGENTS.md
+      - skill-agent-manifest.json
+      - README.md
+    consumes: [legal_context_bundles, public_source_adapters, provenance]
+lock_file: contracts.lock.json
+non_authority_rule: This repo composes and evaluates; it does not create canonical meaning or general runtime authority.

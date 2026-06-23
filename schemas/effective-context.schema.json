@@ -1,0 +1,90 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "context_id": {
+      "title": "Context Id",
+      "type": "string"
+    },
+    "profile_id": {
+      "title": "Profile Id",
+      "type": "string"
+    },
+    "profile_version": {
+      "title": "Profile Version",
+      "type": "string"
+    },
+    "profile_sha256": {
+      "title": "Profile Sha256",
+      "type": "string"
+    },
+    "applied_layers": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Applied Layers",
+      "type": "array"
+    },
+    "active_practices": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Active Practices",
+      "type": "array"
+    },
+    "default_side": {
+      "title": "Default Side",
+      "type": "string"
+    },
+    "typical_inbound_sources": {
+      "additionalProperties": {
+        "type": "number"
+      },
+      "title": "Typical Inbound Sources",
+      "type": "object"
+    },
+    "matter_family_priors": {
+      "additionalProperties": {
+        "type": "number"
+      },
+      "title": "Matter Family Priors",
+      "type": "object"
+    },
+    "required_intake_fields": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Intake Fields",
+      "type": "array"
+    },
+    "budget_template_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Budget Template Ids",
+      "type": "array"
+    },
+    "context_precedence": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Context Precedence",
+      "type": "array"
+    }
+  },
+  "required": [
+    "context_id",
+    "profile_id",
+    "profile_version",
+    "profile_sha256",
+    "applied_layers",
+    "active_practices",
+    "default_side",
+    "typical_inbound_sources",
+    "matter_family_priors",
+    "required_intake_fields",
+    "budget_template_ids",
+    "context_precedence"
+  ],
+  "title": "EffectiveContext",
+  "type": "object"
+}
