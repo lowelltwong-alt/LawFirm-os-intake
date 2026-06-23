@@ -22,3 +22,5 @@ def test_cli_demo_end_to_end(tmp_path, repo_root):
     assert (tmp_path / "demo/budget/legal_budget_proposal.json").exists()
     assert (tmp_path / "demo/budget/conflict_search_seed_packet.json").exists()
     assert (tmp_path / "demo/budget/matter_opening_readiness.json").exists()
+    assert (tmp_path / "demo/budget/matter_opening_review_package.md").exists()
+    assert (tmp_path / "demo/budget/review_package_manifest.json").exists()

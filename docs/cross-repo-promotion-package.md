@@ -10,13 +10,14 @@ This is a draft promotion package for stable intake components. It is not a dire
 - Matter-family, inbound-event, representation-posture, deadline, missing-information, and critic-finding candidate contracts.
 - Budget proposal and calculation-report contracts.
 - Dry-run exception lake candidate contract with broad Lake class, local event label, source-inventory refs, evidence refs, blocked state, `raw_payload_included=false`, and `canonical_promotion_required=true`.
+- Review package manifest contract tying the human-readable package to preflight, confirmation, conflict seed, budget proposal, readiness, evidence graph, exception candidates, and ledger refs.
 - Intake event labels for later review: `intake_preflight_proposed`, `intake_classification_confirmed`, `intake_classification_corrected`, `party_role_corrected`, `practice_context_missing_or_misleading`, `conflict_seed_prepared`, `budget_proposal_created`, `budget_proposal_corrected`, and `profile_change_candidate`.
 
 ## Orchestrator Interface Draft
 
 - Outer workflow owner: `LawFirm-os-orchestrator`.
 - Intake runtime input: source bundle path, practice profile ref, adapter mode, strict-evidence setting.
-- Intake runtime outputs: preflight packet, review form, evidence graph, run ledger, dry-run exception candidates, human confirmation, conflict seed, budget proposal, budget review form, matter-opening readiness.
+- Intake runtime outputs: preflight packet, review form, evidence graph, run ledger, dry-run exception candidates, human confirmation, conflict seed, budget proposal, budget review form, matter-opening readiness, consolidated review package, review package manifest.
 - Required gates: data-origin gate, prompt/tool authority gate, human intake confirmation, budget precondition gate, prohibited-transition gate.
 
 ## Exception Lake Mapping Draft

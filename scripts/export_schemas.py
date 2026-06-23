@@ -16,6 +16,7 @@ from lawfirm_os_intake.models import (  # noqa: E402
     HumanConfirmation,
     IntakePreflightPacket,
     PartyCandidate,
+    ReviewPackageManifest,
     RunEvent,
     Segment,
     SourceBundle,
@@ -33,6 +34,7 @@ MODELS = {
     "evidence-graph.schema.json": EvidenceGraph,
     "run-ledger-event.schema.json": RunEvent,
     "exception-lake-candidate.schema.json": ExceptionLakeCandidate,
+    "review-package-manifest.schema.json": ReviewPackageManifest,
 }
 
 

@@ -20,3 +20,8 @@
 - Added local `ExceptionLakeCandidate` schema and `exception_lake_candidates.jsonl` outputs for preflight and budget runs.
 - Mapped missing/unreadable sources to `retrieval_miss` and prompt injection, duplicate sources, critic findings, escalation, and matter-opening blockers to `workflow_escalation`.
 - Kept the handoff dry-run only with no raw payload, no SQLite ownership, and no canonical event-class promotion from this repo.
+
+## Review-package slice - 2026-06-23
+
+- Added a consolidated `matter_opening_review_package.md` and `review_package_manifest.json` to the budget run output.
+- The package links source coverage, known facts, unresolved review items, conflict-search seeds, budget scenario, exception candidates, blockers, prohibited actions, evidence graph refs, and run ledgers.

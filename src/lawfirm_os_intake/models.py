@@ -370,3 +370,27 @@ class ExceptionLakeCandidate(StrictModel):
     target_runtime_repo: Literal["LawFirm-os-exceptions-lake-runtime"] = (
         "LawFirm-os-exceptions-lake-runtime"
     )
+
+
+class ReviewPackageManifest(StrictModel):
+    schema_version: str = "0.1"
+    review_package_id: str
+    run_id: str
+    preflight_packet_id: str
+    confirmation_id: str
+    conflict_seed_id: str
+    budget_proposal_id: str
+    readiness_id: str
+    status: Literal["blocked_pending_conflicts_and_engagement"]
+    human_readable_review_ref: str
+    artifact_refs: dict[str, str]
+    required_human_gates: list[str]
+    final_blockers: list[str]
+    prohibited_actions: list[str]
+    evidence_graph_ref: str
+    run_ledger_refs: list[str]
+    exception_candidate_refs: list[str]
+    no_conflict_conclusion: Literal[True] = True
+    budget_not_authorized_for_client_submission: Literal[True] = True
+    contains_raw_payload: Literal[False] = False
+    external_writes_performed: Literal[False] = False

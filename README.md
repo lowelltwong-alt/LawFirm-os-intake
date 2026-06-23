@@ -25,6 +25,7 @@ messy inbound source
 -> conflict-search seed packet (no conflict conclusion)
 -> legal budget proposal (not approved or submitted)
 -> matter-opening readiness packet
+-> consolidated matter-opening review package and manifest
 -> blocked pending conflicts, engagement, and authorized matter opening
 ```
 
@@ -80,9 +81,13 @@ The demo emits:
     |-- legal_budget_review_form.md
     |-- matter_opening_readiness.json
     |-- exception_lake_candidates.jsonl
+    |-- matter_opening_review_package.md
+    |-- review_package_manifest.json
     |-- evidence_graph.json
     `-- run_ledger.jsonl
 ```
+
+The consolidated `matter_opening_review_package.md` is the human-facing north-star artifact. It points back to the structured packets and tells the reviewer what is known, what remains uncertain, which conflict-search seeds were prepared, what budget scenario was proposed, which exception candidates exist, and why the workflow is still blocked.
 
 ## Practice context is configurable, not hidden prompt text
 

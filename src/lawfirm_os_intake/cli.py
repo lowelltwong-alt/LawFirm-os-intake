@@ -92,6 +92,10 @@ def main(argv: list[str] | None = None) -> int:
                     "pricing_status": proposal.pricing_status,
                     "total_proposed_budget": proposal.total_proposed_budget,
                     "not_authorized_for_client_submission": proposal.not_authorized_for_client_submission,
+                    "matter_opening_review_package": str(
+                        run_dir / "matter_opening_review_package.md"
+                    ),
+                    "review_package_manifest": str(run_dir / "review_package_manifest.json"),
                     "run_dir": str(run_dir),
                 }
             )
@@ -128,6 +132,10 @@ def main(argv: list[str] | None = None) -> int:
                     "conflict_seed": str(budget_dir / "conflict_search_seed_packet.json"),
                     "legal_budget_proposal": str(budget_dir / "legal_budget_proposal.json"),
                     "matter_opening_readiness": str(budget_dir / "matter_opening_readiness.json"),
+                    "matter_opening_review_package": str(
+                        budget_dir / "matter_opening_review_package.md"
+                    ),
+                    "review_package_manifest": str(budget_dir / "review_package_manifest.json"),
                     "total_proposed_budget": proposal.total_proposed_budget,
                     "final_boundary": "blocked_pending_conflicts_and_engagement",
                 }

@@ -1,6 +1,14 @@
 from __future__ import annotations
 
-from .models import BudgetProposal, IntakePreflightPacket
+from typing import Any
+
+from .models import (
+    BudgetProposal,
+    ConflictSeedPacket,
+    HumanConfirmation,
+    IntakePreflightPacket,
+    MatterOpeningReadiness,
+)
 
 
 def _candidate_lines(candidates: list, limit: int = 3) -> list[str]:
@@ -151,3 +159,133 @@ def render_budget_review_form(budget: BudgetProposal) -> str:
         ]
     )
     return "\n".join(lines)
+
+
+def _lines_or_none(lines: list[str]) -> list[str]:
+    return lines or ["- none"]
+
+
+def _confirmed_party_lines(confirmation: HumanConfirmation) -> list[str]:
+    return [
+        f"- {party.confirmed_role}: {party.name}"
+        + (f" (aliases: {', '.join(party.aliases)})" if party.aliases else "")
+        for party in confirmation.confirmed_parties
+    ]
+
+
+def _exception_lines(candidates: list[dict[str, Any]]) -> list[str]:
+    lines = []
+    for candidate in candidates:
+        lines.append(
+            "- "
+            f"{candidate.get('canonical_lake_class')}: "
+            f"{candidate.get('local_event_label')} - "
+            f"{candidate.get('reason')}"
+        )
+    return lines
+
+
+def render_matter_opening_review_package(
+    packet: IntakePreflightPacket,
+    confirmation: HumanConfirmation,
+    conflict_seed: ConflictSeedPacket,
+    budget: BudgetProposal,
+    readiness: MatterOpeningReadiness,
+    exception_candidates: list[dict[str, Any]],
+    artifact_refs: dict[str, str],
+) -> str:
+    source_summary = packet.source_coverage_summary
+    deadline_lines = [
+        f"- {item.expression}: {item.deadline_type_candidate}; not docketed"
+        for item in packet.deadline_candidates
+    ]
+    finding_lines = [
+        f"- [{finding.severity}] {finding.code}: {finding.message}"
+        for finding in packet.critic_findings
+    ]
+    conflict_lines = [
+        *(
+            f"- represented-client seed: {item}"
+            for item in conflict_seed.prospective_represented_clients
+        ),
+        *(f"- instructing-source seed: {item}" for item in conflict_seed.instructing_sources),
+        *(f"- payer seed: {item}" for item in conflict_seed.payers),
+        *(f"- insured seed: {item}" for item in conflict_seed.insureds),
+        *(f"- adverse-party seed: {item}" for item in conflict_seed.adverse_parties),
+        *(f"- opposing-counsel seed: {item}" for item in conflict_seed.opposing_counsel),
+        *(f"- unresolved-role seed: {item}" for item in conflict_seed.unresolved_roles),
+    ]
+    artifact_lines = [f"- {name}: `{path}`" for name, path in sorted(artifact_refs.items())]
+
+    total_budget = (
+        f"{budget.total_proposed_budget:.2f} {budget.currency}"
+        if budget.total_proposed_budget is not None
+        else "no total; hours-only or insufficient information"
+    )
+
+    return "\n".join(
+        [
+            "# Matter Opening Review Package",
+            "",
+            f"**Run ID:** {packet.run_id}",
+            f"**Preflight packet ID:** {packet.packet_id}",
+            f"**Human confirmation ID:** {confirmation.confirmation_id}",
+            f"**Final boundary:** {readiness.status}",
+            "",
+            "## What Is Known",
+            "",
+            f"- Human-confirmed inbound event: {confirmation.confirmed_inbound_event or 'unknown'}",
+            f"- Human-confirmed matter family: {confirmation.confirmed_matter_family or 'unknown'}",
+            f"- Human-confirmed representation posture: {confirmation.confirmed_representation_posture or 'unknown'}",
+            f"- Human-confirmed jurisdiction: {confirmation.confirmed_jurisdiction or 'unknown'}",
+            *_confirmed_party_lines(confirmation),
+            "",
+            "## What Still Needs Human Review",
+            "",
+            f"- Source coverage complete: {source_summary.get('coverage_complete')}",
+            f"- Missing sources: {source_summary.get('missing_sources')}",
+            f"- Unreadable sources: {source_summary.get('unreadable_sources')}",
+            f"- Duplicate sources: {source_summary.get('duplicate_sources')}",
+            *_lines_or_none(
+                [f"- missing information: {item}" for item in packet.missing_information]
+            ),
+            *_lines_or_none(deadline_lines),
+            *_lines_or_none(finding_lines),
+            *_lines_or_none([f"- budget unknown: {item}" for item in budget.unknowns]),
+            "",
+            "## Conflict Search Seed",
+            "",
+            f"- Conclusion: {conflict_seed.conclusion}",
+            *_lines_or_none(conflict_lines),
+            "",
+            "## Budget Proposal",
+            "",
+            f"- Approval state: {budget.approval_state}",
+            f"- Client/carrier submission authorized: {not budget.not_authorized_for_client_submission}",
+            f"- Scenario: {budget.scenario_name}",
+            f"- Pricing status: {budget.pricing_status}",
+            f"- Total proposed budget: {total_budget}",
+            *_lines_or_none([f"- assumption: {item}" for item in budget.assumptions]),
+            *_lines_or_none([f"- exclusion: {item}" for item in budget.exclusions]),
+            "",
+            "## Exception And Escalation Records",
+            "",
+            f"- Dry-run candidate count: {len(exception_candidates)}",
+            *_lines_or_none(_exception_lines(exception_candidates)),
+            "",
+            "## Matter-Opening Blockers",
+            "",
+            *_lines_or_none([f"- satisfied: {item}" for item in readiness.satisfied]),
+            *_lines_or_none([f"- blocker: {item}" for item in readiness.blockers]),
+            *_lines_or_none(
+                [f"- prohibited action: {item}" for item in readiness.prohibited_actions]
+            ),
+            "",
+            "## Artifact References",
+            "",
+            *artifact_lines,
+            "",
+            "This package does not clear conflicts, accept representation, docket deadlines, open a matter, create an iManage workspace, send communications, submit a budget, or authorize client/carrier delivery.",
+            "",
+        ]
+    )

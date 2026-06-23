@@ -13,3 +13,5 @@ preflight_dir="$(find .lawfirm-os-intake/smoke/preflight -mindepth 1 -maxdepth 1
 test -n "$preflight_dir"
 test -s "$preflight_dir/exception_lake_candidates.jsonl"
 test -s ".lawfirm-os-intake/smoke/budget/exception_lake_candidates.jsonl"
+test -s ".lawfirm-os-intake/smoke/budget/matter_opening_review_package.md"
+test -s ".lawfirm-os-intake/smoke/budget/review_package_manifest.json"

@@ -14,12 +14,17 @@ from .models import (
     HumanConfirmation,
     IntakePreflightPacket,
     MatterOpeningReadiness,
+    ReviewPackageManifest,
     RunEvent,
     SourceBundle,
 )
-from .review import render_budget_review_form, render_intake_review_form
+from .review import (
+    render_budget_review_form,
+    render_intake_review_form,
+    render_matter_opening_review_package,
+)
 from .segmenter import segment_bundle
-from .util import append_jsonl, load_json, new_id, now_iso, write_json
+from .util import append_jsonl, load_json, load_jsonl, new_id, now_iso, write_json
 from .workers import (
     classify_matter,
     extract_deadlines_and_gaps,
@@ -333,6 +338,67 @@ def run_budget(
         confirmation.decision_evidence_refs,
     ):
         append_jsonl(exception_candidates_path, candidate.model_dump(mode="json"))
+
+    preflight_exception_candidates = (
+        load_jsonl(packet.exception_candidates_ref) if packet.exception_candidates_ref else []
+    )
+    budget_exception_candidates = load_jsonl(exception_candidates_path)
+    all_exception_candidates = preflight_exception_candidates + budget_exception_candidates
+    review_package_path = run_dir / "matter_opening_review_package.md"
+    manifest_path = run_dir / "review_package_manifest.json"
+    artifact_refs = {
+        "preflight_packet": str(preflight_packet_path),
+        "human_confirmation": str(run_dir / "human_confirmation.json"),
+        "conflict_search_seed": str(run_dir / "conflict_search_seed_packet.json"),
+        "legal_budget_proposal": str(run_dir / "legal_budget_proposal.json"),
+        "legal_budget_review_form": str(run_dir / "legal_budget_review_form.md"),
+        "matter_opening_readiness": str(run_dir / "matter_opening_readiness.json"),
+        "budget_evidence_graph": str(run_dir / "evidence_graph.json"),
+        "preflight_evidence_graph": packet.evidence_graph_ref,
+        "preflight_exception_candidates": packet.exception_candidates_ref or "",
+        "budget_exception_candidates": str(exception_candidates_path),
+        "budget_run_ledger": str(ledger_path),
+        "preflight_run_ledger": packet.run_ledger_ref,
+    }
+    review_package_path.write_text(
+        render_matter_opening_review_package(
+            packet,
+            confirmation,
+            conflict_seed,
+            budget,
+            readiness,
+            all_exception_candidates,
+            artifact_refs,
+        ),
+        encoding="utf-8",
+    )
+    manifest = ReviewPackageManifest(
+        review_package_id=new_id("reviewpkg"),
+        run_id=packet.run_id,
+        preflight_packet_id=packet.packet_id,
+        confirmation_id=confirmation.confirmation_id,
+        conflict_seed_id=conflict_seed.conflict_seed_id,
+        budget_proposal_id=budget.budget_proposal_id,
+        readiness_id=readiness.readiness_id,
+        status=readiness.status,
+        human_readable_review_ref=str(review_package_path),
+        artifact_refs=artifact_refs,
+        required_human_gates=[
+            "human_intake_confirmation",
+            "human_conflicts_clearance",
+            "human_engagement_authorization",
+            "human_budget_review",
+            "human_matter_opening_authorization",
+        ],
+        final_blockers=readiness.blockers,
+        prohibited_actions=readiness.prohibited_actions,
+        evidence_graph_ref=str(run_dir / "evidence_graph.json"),
+        run_ledger_refs=[packet.run_ledger_ref, str(ledger_path)],
+        exception_candidate_refs=[
+            ref for ref in [packet.exception_candidates_ref, str(exception_candidates_path)] if ref
+        ],
+    )
+    write_json(manifest_path, manifest.model_dump(mode="json"))
     append_jsonl(
         ledger_path,
         _event(
@@ -356,6 +422,16 @@ def run_budget(
                 str(run_dir / "matter_opening_readiness.json"),
                 str(exception_candidates_path),
             ],
+        ).model_dump(mode="json"),
+    )
+    append_jsonl(
+        ledger_path,
+        _event(
+            packet.run_id,
+            8,
+            "matter_opening_review_package_built",
+            "completed",
+            output_refs=[str(review_package_path), str(manifest_path)],
         ).model_dump(mode="json"),
     )
     return budget, run_dir
