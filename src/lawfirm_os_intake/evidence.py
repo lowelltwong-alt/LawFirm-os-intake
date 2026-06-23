@@ -23,12 +23,15 @@ def build_preflight_graph(packet: IntakePreflightPacket) -> EvidenceGraph:
     for source in packet.source_inventory:
         nodes.append(
             EvidenceGraphNode(
-                node_id=source["source_id"],
+                node_id=source.source_id,
                 node_type="source",
                 status="source_evidence",
                 attributes={
-                    "source_type": source["source_type"],
-                    "filename": source.get("filename"),
+                    "source_type": source.source_type,
+                    "filename": source.filename,
+                    "read_state": source.read_state,
+                    "availability_state": source.availability_state,
+                    "source_sha256": source.source_sha256,
                 },
             )
         )
@@ -77,25 +80,42 @@ def build_preflight_graph(packet: IntakePreflightPacket) -> EvidenceGraph:
                 )
             )
 
-    for candidate in packet.matter_family_candidates:
-        nodes.append(
-            EvidenceGraphNode(
-                node_id=candidate.candidate_id,
-                node_type="matter_family_candidate",
-                status="candidate",
-                attributes={"label": candidate.label, "confidence": candidate.confidence},
-            )
-        )
-        for ref in candidate.observed_evidence_refs:
-            edges.append(
-                EvidenceGraphEdge(
-                    edge_id=new_id("edge"),
-                    source_node_id=ref.segment_id,
-                    relationship="supports_matter_candidate",
-                    target_node_id=candidate.candidate_id,
-                    evidence_refs=[ref],
+    for node_type, relationship, candidates in [
+        (
+            "inbound_event_candidate",
+            "supports_inbound_event_candidate",
+            packet.inbound_event_candidates,
+        ),
+        ("matter_family_candidate", "supports_matter_candidate", packet.matter_family_candidates),
+        (
+            "representation_posture_candidate",
+            "supports_representation_posture_candidate",
+            packet.representation_posture_candidates,
+        ),
+    ]:
+        for candidate in candidates:
+            nodes.append(
+                EvidenceGraphNode(
+                    node_id=candidate.candidate_id,
+                    node_type=node_type,
+                    status="candidate",
+                    attributes={
+                        "label": candidate.label,
+                        "confidence": candidate.confidence,
+                        "calibration_label": candidate.calibration_label,
+                    },
                 )
             )
+            for ref in candidate.observed_evidence_refs:
+                edges.append(
+                    EvidenceGraphEdge(
+                        edge_id=new_id("edge"),
+                        source_node_id=ref.segment_id,
+                        relationship=relationship,
+                        target_node_id=candidate.candidate_id,
+                        evidence_refs=[ref],
+                    )
+                )
 
     for deadline in packet.deadline_candidates:
         nodes.append(
@@ -113,6 +133,48 @@ def build_preflight_graph(packet: IntakePreflightPacket) -> EvidenceGraph:
                     source_node_id=ref.segment_id,
                     relationship="supports_deadline_candidate",
                     target_node_id=deadline.deadline_candidate_id,
+                    evidence_refs=[ref],
+                )
+            )
+
+    for missing in packet.missing_information_candidates:
+        node_id = f"missing:{missing.field_name}"
+        nodes.append(
+            EvidenceGraphNode(
+                node_id=node_id,
+                node_type="missing_information_candidate",
+                status="candidate",
+                attributes={"field_name": missing.field_name, "reason": missing.reason},
+            )
+        )
+        for ref in missing.evidence_refs:
+            edges.append(
+                EvidenceGraphEdge(
+                    edge_id=new_id("edge"),
+                    source_node_id=ref.segment_id,
+                    relationship="supports_missing_information_candidate",
+                    target_node_id=node_id,
+                    evidence_refs=[ref],
+                )
+            )
+
+    for finding in packet.critic_findings:
+        node_id = f"critic:{finding.code}"
+        nodes.append(
+            EvidenceGraphNode(
+                node_id=node_id,
+                node_type="critic_finding",
+                status=finding.severity,
+                attributes={"code": finding.code, "message": finding.message},
+            )
+        )
+        for ref in finding.evidence_refs:
+            edges.append(
+                EvidenceGraphEdge(
+                    edge_id=new_id("edge"),
+                    source_node_id=ref.segment_id,
+                    relationship="supports_critic_finding",
+                    target_node_id=node_id,
                     evidence_refs=[ref],
                 )
             )

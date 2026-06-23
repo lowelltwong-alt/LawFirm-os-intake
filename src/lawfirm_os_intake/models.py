@@ -50,6 +50,23 @@ class Segment(StrictModel):
     end_offset: int
     sha256: str
     text: str
+    structural_path: str | None = None
+    message_index: int | None = None
+    attachment_ref: str | None = None
+    source_instruction_risk: bool = False
+
+
+class SourceInventoryItem(StrictModel):
+    source_id: str
+    source_type: str
+    filename: str | None = None
+    read_state: Literal["read", "unread", "missing", "unreadable"] = "read"
+    availability_state: Literal["available", "missing", "duplicate", "unreadable"] = "available"
+    character_count: int
+    source_sha256: str
+    duplicate_of_source_id: str | None = None
+    attachment_refs: list[str] = Field(default_factory=list)
+    metadata_keys: list[str] = Field(default_factory=list)
 
 
 class EvidenceRef(StrictModel):
@@ -79,6 +96,8 @@ class ScoredCandidate(StrictModel):
     confidence: float = Field(ge=0, le=1)
     observed_evidence_refs: list[EvidenceRef] = Field(default_factory=list)
     context_signal_refs: list[str] = Field(default_factory=list)
+    calibration_label: Literal["observed", "context_influenced", "unknown_option"] = "observed"
+    support_summary: str | None = None
     status: Literal["candidate"] = "candidate"
 
 
@@ -97,6 +116,13 @@ class CriticFinding(StrictModel):
     severity: Literal["info", "warning", "blocker"]
     message: str
     evidence_refs: list[EvidenceRef] = Field(default_factory=list)
+
+
+class MissingInformationCandidate(StrictModel):
+    field_name: str
+    reason: str
+    evidence_refs: list[EvidenceRef]
+    status: Literal["candidate"] = "candidate"
 
 
 class EscalationDecision(StrictModel):
@@ -132,7 +158,8 @@ class IntakePreflightPacket(StrictModel):
     bundle_id: str
     status: Literal["human_intake_review_required", "blocked"]
     data_origin: str
-    source_inventory: list[dict[str, Any]]
+    source_inventory: list[SourceInventoryItem]
+    source_coverage_summary: dict[str, Any] = Field(default_factory=dict)
     segments: list[Segment]
     effective_context: EffectiveContext
     inbound_event_candidates: list[ScoredCandidate]
@@ -141,12 +168,14 @@ class IntakePreflightPacket(StrictModel):
     party_candidates: list[PartyCandidate]
     deadline_candidates: list[DeadlineCandidate]
     missing_information: list[str]
+    missing_information_candidates: list[MissingInformationCandidate] = Field(default_factory=list)
     critic_findings: list[CriticFinding]
     escalation: EscalationDecision
     human_confirmation_required: bool = True
     prohibited_next_steps: list[str]
     evidence_graph_ref: str
     run_ledger_ref: str
+    intake_review_form_ref: str | None = None
 
 
 class ConfirmedParty(StrictModel):
@@ -159,7 +188,15 @@ class HumanConfirmation(StrictModel):
     schema_version: str = "0.1"
     confirmation_id: str
     preflight_packet_id: str
-    status: Literal["confirmed", "needs_more_information", "declined"]
+    status: Literal[
+        "confirmed",
+        "needs_more_information",
+        "unknown",
+        "human_only",
+        "declined",
+        "declined_or_referred",
+    ]
+    supersedes_confirmation_id: str | None = None
     confirmed_inbound_event: str | None = None
     confirmed_matter_family: str | None = None
     confirmed_representation_posture: str | None = None
@@ -169,6 +206,7 @@ class HumanConfirmation(StrictModel):
     reviewer_id: str
     reviewed_at: str
     notes: str | None = None
+    decision_evidence_refs: list[EvidenceRef] = Field(default_factory=list)
 
 
 class ConflictSeedPacket(StrictModel):
@@ -181,10 +219,28 @@ class ConflictSeedPacket(StrictModel):
     instructing_sources: list[str]
     payers: list[str]
     adverse_parties: list[str]
+    insureds: list[str] = Field(default_factory=list)
     opposing_counsel: list[str]
     other_search_terms: list[str]
     unresolved_roles: list[str]
+    normalized_search_terms: list["ConflictSearchTerm"] = Field(default_factory=list)
     conclusion: Literal["no_conflict_conclusion"] = "no_conflict_conclusion"
+
+
+class ConflictSearchTerm(StrictModel):
+    term: str
+    normalized_term: str
+    group: Literal[
+        "prospective_represented_client",
+        "instructing_source",
+        "payer",
+        "insured",
+        "adverse_party",
+        "opposing_counsel",
+        "alias",
+        "unresolved_role",
+    ]
+    source_role: str | None = None
 
 
 class BudgetLine(StrictModel):
@@ -194,9 +250,14 @@ class BudgetLine(StrictModel):
     task_name: str
     staffing_role: str
     estimated_hours: float = Field(ge=0)
+    estimated_hours_min: float | None = Field(default=None, ge=0)
+    estimated_hours_max: float | None = Field(default=None, ge=0)
     hourly_rate: float | None = Field(default=None, ge=0)
+    rate_source: Literal["synthetic_profile", "authorized_profile", "absent"] = "absent"
+    rate_is_synthetic: bool = True
     estimated_fees: float | None = Field(default=None, ge=0)
     estimated_expenses: float = Field(default=0, ge=0)
+    calculation_formula: str | None = None
     external_code_candidate: str | None = None
     assumptions: list[str] = Field(default_factory=list)
     evidence_refs: list[EvidenceRef] = Field(default_factory=list)
@@ -218,11 +279,29 @@ class BudgetProposal(StrictModel):
     contingency_percent: float = 0
     contingency_amount: float | None = None
     total_proposed_budget: float | None = None
+    scenario_name: str = "baseline"
+    calculation_report: "BudgetCalculationReport | None" = None
     assumptions: list[str] = Field(default_factory=list)
     exclusions: list[str] = Field(default_factory=list)
     unknowns: list[str] = Field(default_factory=list)
     approval_state: Literal["proposed_for_human_review"] = "proposed_for_human_review"
     not_authorized_for_client_submission: bool = True
+
+
+class BudgetCalculationReport(StrictModel):
+    calculation_report_id: str
+    mode: Literal["priced", "hours_only", "insufficient_information"]
+    line_count: int
+    total_hours: float
+    priced_line_count: int
+    unpriced_line_count: int
+    subtotal_fees: float | None = None
+    subtotal_expenses: float
+    contingency_percent: float
+    contingency_amount: float | None = None
+    total_proposed_budget: float | None = None
+    rate_sources: list[str] = Field(default_factory=list)
+    deterministic: bool = True
 
 
 class MatterOpeningReadiness(StrictModel):

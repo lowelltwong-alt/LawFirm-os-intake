@@ -44,6 +44,47 @@
     "text": {
       "title": "Text",
       "type": "string"
+    },
+    "structural_path": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Structural Path"
+    },
+    "message_index": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Message Index"
+    },
+    "attachment_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Attachment Ref"
+    },
+    "source_instruction_risk": {
+      "default": false,
+      "title": "Source Instruction Risk",
+      "type": "boolean"
     }
   },
   "required": [

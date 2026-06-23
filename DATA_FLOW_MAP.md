@@ -6,8 +6,8 @@ Last reviewed: 2026-06-23.
 
 Current GitHub posture:
 
-- `lowelltwong-alt/LawFirm-os-intake` exists as a private repo with default branch `main`, but it is empty from Git's perspective at this review.
-- The local seed files in this folder are not yet proven to be pushed to that private repo.
+- `lowelltwong-alt/LawFirm-os-intake` exists as a private repo with default branch `main`.
+- The private repo has been seeded and CI is green as of commit `4d3d67b0324c59aba90f9a3100dc082f19f8b84a`.
 - The five public sibling repos are reachable on `main`; pin adoption must use reviewed immutable SHAs, not local copied-folder assumptions.
 
 ## Authority Order
@@ -146,10 +146,8 @@ The intake flow never emits:
 These are the remaining data-flow gaps to close before claiming the private intake repo is fully tied into the OS:
 
 1. Register `LawFirm-os-intake` in the Semantic Substrate repo registry / skill-agent control plane before claiming workspace validation passes.
-2. Promote the initial seed lock to a reviewed lock after the sibling SHAs are explicitly approved.
-3. Push the local seed to the private `lowelltwong-alt/LawFirm-os-intake` repo on a deliberate branch plan.
-4. Register any intake-specific event labels in Semantic Substrate before treating them as canonical Lake event classes.
-5. Keep the workspace as clean sibling clones or an intentional submodule superproject; do not rely on copied child folders as sync truth.
+2. Register any intake-specific event labels in Semantic Substrate before treating them as canonical Lake event classes.
+3. Keep the workspace as clean sibling clones or an intentional submodule superproject; do not rely on copied child folders as sync truth.
 
 Workspace note: the current aggregate workspace skill-agent validation also flags `LawFirm-os-talent-intelligence-private` as an unregistered `LawFirm-os-*` repo. That repo is outside the intake vertical, but it must be registered or explicitly excluded before the whole aggregate workspace can pass that validator.
 

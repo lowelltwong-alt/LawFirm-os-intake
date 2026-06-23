@@ -1,5 +1,107 @@
 {
   "$defs": {
+    "BudgetCalculationReport": {
+      "additionalProperties": false,
+      "properties": {
+        "calculation_report_id": {
+          "title": "Calculation Report Id",
+          "type": "string"
+        },
+        "mode": {
+          "enum": [
+            "priced",
+            "hours_only",
+            "insufficient_information"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "line_count": {
+          "title": "Line Count",
+          "type": "integer"
+        },
+        "total_hours": {
+          "title": "Total Hours",
+          "type": "number"
+        },
+        "priced_line_count": {
+          "title": "Priced Line Count",
+          "type": "integer"
+        },
+        "unpriced_line_count": {
+          "title": "Unpriced Line Count",
+          "type": "integer"
+        },
+        "subtotal_fees": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subtotal Fees"
+        },
+        "subtotal_expenses": {
+          "title": "Subtotal Expenses",
+          "type": "number"
+        },
+        "contingency_percent": {
+          "title": "Contingency Percent",
+          "type": "number"
+        },
+        "contingency_amount": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contingency Amount"
+        },
+        "total_proposed_budget": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Total Proposed Budget"
+        },
+        "rate_sources": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Rate Sources",
+          "type": "array"
+        },
+        "deterministic": {
+          "default": true,
+          "title": "Deterministic",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "calculation_report_id",
+        "mode",
+        "line_count",
+        "total_hours",
+        "priced_line_count",
+        "unpriced_line_count",
+        "subtotal_expenses",
+        "contingency_percent"
+      ],
+      "title": "BudgetCalculationReport",
+      "type": "object"
+    },
     "BudgetLine": {
       "additionalProperties": false,
       "properties": {
@@ -28,6 +130,32 @@
           "title": "Estimated Hours",
           "type": "number"
         },
+        "estimated_hours_min": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Estimated Hours Min"
+        },
+        "estimated_hours_max": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Estimated Hours Max"
+        },
         "hourly_rate": {
           "anyOf": [
             {
@@ -40,6 +168,21 @@
           ],
           "default": null,
           "title": "Hourly Rate"
+        },
+        "rate_source": {
+          "default": "absent",
+          "enum": [
+            "synthetic_profile",
+            "authorized_profile",
+            "absent"
+          ],
+          "title": "Rate Source",
+          "type": "string"
+        },
+        "rate_is_synthetic": {
+          "default": true,
+          "title": "Rate Is Synthetic",
+          "type": "boolean"
         },
         "estimated_fees": {
           "anyOf": [
@@ -59,6 +202,18 @@
           "minimum": 0,
           "title": "Estimated Expenses",
           "type": "number"
+        },
+        "calculation_formula": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Calculation Formula"
         },
         "external_code_candidate": {
           "anyOf": [
@@ -220,6 +375,22 @@
       ],
       "default": null,
       "title": "Total Proposed Budget"
+    },
+    "scenario_name": {
+      "default": "baseline",
+      "title": "Scenario Name",
+      "type": "string"
+    },
+    "calculation_report": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BudgetCalculationReport"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
     },
     "assumptions": {
       "items": {

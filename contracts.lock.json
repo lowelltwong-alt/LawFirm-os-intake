@@ -2,8 +2,8 @@
   "lock_version": "0.1",
   "generated_by": "LawFirm-os-intake",
   "generated_at": "2026-06-23T20:17:57.043924Z",
-  "status": "initial_seed_lock",
-  "status_note": "Pins captured from live public main branches on 2026-06-23 for private intake repo seeding. This is a bootstrap lock, not a completed promotion review.",
+  "status": "reviewed_seed_lock",
+  "status_note": "Pins captured from live public main branches on 2026-06-23 and reviewed for the private intake seed. Future sibling adoption must still refresh this lock intentionally.",
   "repos": [
     {
       "repo": "LawFirm-os-semantic-substrate",

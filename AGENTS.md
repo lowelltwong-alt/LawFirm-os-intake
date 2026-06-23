@@ -1,5 +1,7 @@
 # Agent Instructions
 
+AI front-door pointers: read `AI_WORK_START_HERE.md`, `skill-agent-manifest.json`, and the Semantic Substrate `../LawFirm-os-semantic-substrate/registry/ai-front-door-registry.json` before changing this repo.
+
 ## Repository identity
 
 `LawFirm-os-intake` is a vertical workflow and evaluation repository. It is not the LawFirm OS execution plane or canonical authority layer.

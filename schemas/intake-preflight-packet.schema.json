@@ -242,6 +242,39 @@
       "title": "EvidenceRef",
       "type": "object"
     },
+    "MissingInformationCandidate": {
+      "additionalProperties": false,
+      "properties": {
+        "field_name": {
+          "title": "Field Name",
+          "type": "string"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "status": {
+          "const": "candidate",
+          "default": "candidate",
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "field_name",
+        "reason",
+        "evidence_refs"
+      ],
+      "title": "MissingInformationCandidate",
+      "type": "object"
+    },
     "PartyCandidate": {
       "additionalProperties": false,
       "properties": {
@@ -347,6 +380,28 @@
           "title": "Context Signal Refs",
           "type": "array"
         },
+        "calibration_label": {
+          "default": "observed",
+          "enum": [
+            "observed",
+            "context_influenced",
+            "unknown_option"
+          ],
+          "title": "Calibration Label",
+          "type": "string"
+        },
+        "support_summary": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Support Summary"
+        },
         "status": {
           "const": "candidate",
           "default": "candidate",
@@ -408,6 +463,47 @@
         "text": {
           "title": "Text",
           "type": "string"
+        },
+        "structural_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Structural Path"
+        },
+        "message_index": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Message Index"
+        },
+        "attachment_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attachment Ref"
+        },
+        "source_instruction_risk": {
+          "default": false,
+          "title": "Source Instruction Risk",
+          "type": "boolean"
         }
       },
       "required": [
@@ -421,6 +517,95 @@
         "text"
       ],
       "title": "Segment",
+      "type": "object"
+    },
+    "SourceInventoryItem": {
+      "additionalProperties": false,
+      "properties": {
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "source_type": {
+          "title": "Source Type",
+          "type": "string"
+        },
+        "filename": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filename"
+        },
+        "read_state": {
+          "default": "read",
+          "enum": [
+            "read",
+            "unread",
+            "missing",
+            "unreadable"
+          ],
+          "title": "Read State",
+          "type": "string"
+        },
+        "availability_state": {
+          "default": "available",
+          "enum": [
+            "available",
+            "missing",
+            "duplicate",
+            "unreadable"
+          ],
+          "title": "Availability State",
+          "type": "string"
+        },
+        "character_count": {
+          "title": "Character Count",
+          "type": "integer"
+        },
+        "source_sha256": {
+          "title": "Source Sha256",
+          "type": "string"
+        },
+        "duplicate_of_source_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Duplicate Of Source Id"
+        },
+        "attachment_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Attachment Refs",
+          "type": "array"
+        },
+        "metadata_keys": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Metadata Keys",
+          "type": "array"
+        }
+      },
+      "required": [
+        "source_id",
+        "source_type",
+        "character_count",
+        "source_sha256"
+      ],
+      "title": "SourceInventoryItem",
       "type": "object"
     }
   },
@@ -457,11 +642,15 @@
     },
     "source_inventory": {
       "items": {
-        "additionalProperties": true,
-        "type": "object"
+        "$ref": "#/$defs/SourceInventoryItem"
       },
       "title": "Source Inventory",
       "type": "array"
+    },
+    "source_coverage_summary": {
+      "additionalProperties": true,
+      "title": "Source Coverage Summary",
+      "type": "object"
     },
     "segments": {
       "items": {
@@ -515,6 +704,13 @@
       "title": "Missing Information",
       "type": "array"
     },
+    "missing_information_candidates": {
+      "items": {
+        "$ref": "#/$defs/MissingInformationCandidate"
+      },
+      "title": "Missing Information Candidates",
+      "type": "array"
+    },
     "critic_findings": {
       "items": {
         "$ref": "#/$defs/CriticFinding"
@@ -544,6 +740,18 @@
     "run_ledger_ref": {
       "title": "Run Ledger Ref",
       "type": "string"
+    },
+    "intake_review_form_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Intake Review Form Ref"
     }
   },
   "required": [

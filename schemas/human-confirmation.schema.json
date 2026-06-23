@@ -25,6 +25,30 @@
       ],
       "title": "ConfirmedParty",
       "type": "object"
+    },
+    "EvidenceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "segment_id": {
+          "title": "Segment Id",
+          "type": "string"
+        },
+        "sha256": {
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "segment_id",
+        "sha256"
+      ],
+      "title": "EvidenceRef",
+      "type": "object"
     }
   },
   "additionalProperties": false,
@@ -46,10 +70,25 @@
       "enum": [
         "confirmed",
         "needs_more_information",
-        "declined"
+        "unknown",
+        "human_only",
+        "declined",
+        "declined_or_referred"
       ],
       "title": "Status",
       "type": "string"
+    },
+    "supersedes_confirmation_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Supersedes Confirmation Id"
     },
     "confirmed_inbound_event": {
       "anyOf": [
@@ -132,6 +171,13 @@
       ],
       "default": null,
       "title": "Notes"
+    },
+    "decision_evidence_refs": {
+      "items": {
+        "$ref": "#/$defs/EvidenceRef"
+      },
+      "title": "Decision Evidence Refs",
+      "type": "array"
     }
   },
   "required": [

@@ -1,4 +1,52 @@
 {
+  "$defs": {
+    "ConflictSearchTerm": {
+      "additionalProperties": false,
+      "properties": {
+        "term": {
+          "title": "Term",
+          "type": "string"
+        },
+        "normalized_term": {
+          "title": "Normalized Term",
+          "type": "string"
+        },
+        "group": {
+          "enum": [
+            "prospective_represented_client",
+            "instructing_source",
+            "payer",
+            "insured",
+            "adverse_party",
+            "opposing_counsel",
+            "alias",
+            "unresolved_role"
+          ],
+          "title": "Group",
+          "type": "string"
+        },
+        "source_role": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Role"
+        }
+      },
+      "required": [
+        "term",
+        "normalized_term",
+        "group"
+      ],
+      "title": "ConflictSearchTerm",
+      "type": "object"
+    }
+  },
   "additionalProperties": false,
   "properties": {
     "schema_version": {
@@ -51,6 +99,13 @@
       "title": "Adverse Parties",
       "type": "array"
     },
+    "insureds": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Insureds",
+      "type": "array"
+    },
     "opposing_counsel": {
       "items": {
         "type": "string"
@@ -70,6 +125,13 @@
         "type": "string"
       },
       "title": "Unresolved Roles",
+      "type": "array"
+    },
+    "normalized_search_terms": {
+      "items": {
+        "$ref": "#/$defs/ConflictSearchTerm"
+      },
+      "title": "Normalized Search Terms",
       "type": "array"
     },
     "conclusion": {

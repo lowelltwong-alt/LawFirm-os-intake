@@ -22,6 +22,11 @@ def _parser() -> argparse.ArgumentParser:
     preflight.add_argument("--input", required=True)
     preflight.add_argument("--practice-profile", required=True)
     preflight.add_argument("--out-dir", default=".lawfirm-os-intake/runs")
+    preflight.add_argument("--review-form-out")
+    preflight.add_argument(
+        "--adapter", choices=["deterministic", "structured-model"], default="deterministic"
+    )
+    preflight.add_argument("--strict-evidence", action=argparse.BooleanOptionalAction, default=True)
 
     budget = sub.add_parser(
         "build-budget", help="Build conflict seed and budget proposal after human confirmation."
@@ -36,6 +41,10 @@ def _parser() -> argparse.ArgumentParser:
     demo.add_argument("--practice-profile", required=True)
     demo.add_argument("--confirmation-template", required=True)
     demo.add_argument("--out-dir", default=".lawfirm-os-intake/demo")
+    demo.add_argument(
+        "--adapter", choices=["deterministic", "structured-model"], default="deterministic"
+    )
+    demo.add_argument("--strict-evidence", action=argparse.BooleanOptionalAction, default=True)
     return parser
 
 
@@ -47,7 +56,15 @@ def main(argv: list[str] | None = None) -> int:
     args = _parser().parse_args(argv)
     try:
         if args.command == "preflight":
-            packet, run_dir = run_preflight(args.input, args.practice_profile, args.out_dir)
+            packet, run_dir = run_preflight(
+                args.input,
+                args.practice_profile,
+                args.out_dir,
+                adapter=args.adapter,
+                strict_evidence=args.strict_evidence,
+            )
+            if args.review_form_out and packet.intake_review_form_ref:
+                shutil.copyfile(packet.intake_review_form_ref, args.review_form_out)
             _print(
                 {
                     "status": packet.status,
@@ -85,7 +102,13 @@ def main(argv: list[str] | None = None) -> int:
             if root.exists():
                 shutil.rmtree(root)
             root.mkdir(parents=True)
-            packet, run_dir = run_preflight(args.input, args.practice_profile, root / "preflight")
+            packet, run_dir = run_preflight(
+                args.input,
+                args.practice_profile,
+                root / "preflight",
+                adapter=args.adapter,
+                strict_evidence=args.strict_evidence,
+            )
             confirmation_data = load_json(args.confirmation_template)
             confirmation_data["preflight_packet_id"] = packet.packet_id
             confirmation = HumanConfirmation.model_validate(confirmation_data)
