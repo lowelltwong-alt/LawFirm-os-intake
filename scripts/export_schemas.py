@@ -19,6 +19,7 @@ from lawfirm_os_intake.models import (  # noqa: E402
     PartyCandidate,
     ReviewPackageManifest,
     RunEvent,
+    SafetyGateReport,
     Segment,
     SourceBundle,
 )
@@ -37,6 +38,7 @@ MODELS = {
     "run-ledger-event.schema.json": RunEvent,
     "exception-lake-candidate.schema.json": ExceptionLakeCandidate,
     "review-package-manifest.schema.json": ReviewPackageManifest,
+    "safety-gate-report.schema.json": SafetyGateReport,
 }
 
 

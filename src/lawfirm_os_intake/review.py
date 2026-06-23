@@ -8,6 +8,7 @@ from .models import (
     HumanConfirmation,
     IntakePreflightPacket,
     MatterOpeningReadiness,
+    SafetyGateReport,
 )
 
 
@@ -203,12 +204,17 @@ def _exception_lines(candidates: list[dict[str, Any]]) -> list[str]:
     return lines
 
 
+def _safety_gate_lines(report: SafetyGateReport) -> list[str]:
+    return [f"- {check.status}: {check.check_id} - {check.message}" for check in report.checks]
+
+
 def render_matter_opening_review_package(
     packet: IntakePreflightPacket,
     confirmation: HumanConfirmation,
     conflict_seed: ConflictSeedPacket,
     budget: BudgetProposal,
     readiness: MatterOpeningReadiness,
+    safety_report: SafetyGateReport,
     exception_candidates: list[dict[str, Any]],
     artifact_refs: dict[str, str],
 ) -> str:
@@ -289,6 +295,13 @@ def render_matter_opening_review_package(
             "",
             f"- Dry-run candidate count: {len(exception_candidates)}",
             *_lines_or_none(_exception_lines(exception_candidates)),
+            "",
+            "## Safety Gate",
+            "",
+            f"- Status: {safety_report.status}",
+            f"- Final boundary: {safety_report.final_boundary}",
+            f"- External writes performed: {safety_report.external_writes_performed}",
+            *_safety_gate_lines(safety_report),
             "",
             "## Matter-Opening Blockers",
             "",

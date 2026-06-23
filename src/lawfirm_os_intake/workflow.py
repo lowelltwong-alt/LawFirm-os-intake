@@ -23,6 +23,7 @@ from .review import (
     render_intake_review_form,
     render_matter_opening_review_package,
 )
+from .safety import build_safety_gate_report, enforce_safety_gate
 from .segmenter import segment_bundle
 from .util import append_jsonl, load_json, load_jsonl, new_id, now_iso, write_json
 from .workers import (
@@ -346,6 +347,7 @@ def run_budget(
     all_exception_candidates = preflight_exception_candidates + budget_exception_candidates
     review_package_path = run_dir / "matter_opening_review_package.md"
     manifest_path = run_dir / "review_package_manifest.json"
+    safety_gate_report_path = run_dir / "safety_gate_report.json"
     artifact_refs = {
         "preflight_packet": str(preflight_packet_path),
         "human_confirmation": str(run_dir / "human_confirmation.json"),
@@ -359,7 +361,18 @@ def run_budget(
         "budget_exception_candidates": str(exception_candidates_path),
         "budget_run_ledger": str(ledger_path),
         "preflight_run_ledger": packet.run_ledger_ref,
+        "safety_gate_report": str(safety_gate_report_path),
     }
+    safety_report = build_safety_gate_report(
+        packet,
+        confirmation,
+        conflict_seed,
+        budget,
+        readiness,
+        artifact_refs,
+    )
+    enforce_safety_gate(safety_report)
+    write_json(safety_gate_report_path, safety_report.model_dump(mode="json"))
     review_package_path.write_text(
         render_matter_opening_review_package(
             packet,
@@ -367,6 +380,7 @@ def run_budget(
             conflict_seed,
             budget,
             readiness,
+            safety_report,
             all_exception_candidates,
             artifact_refs,
         ),
@@ -392,6 +406,7 @@ def run_budget(
         ],
         final_blockers=readiness.blockers,
         prohibited_actions=readiness.prohibited_actions,
+        safety_gate_report_ref=str(safety_gate_report_path),
         evidence_graph_ref=str(run_dir / "evidence_graph.json"),
         run_ledger_refs=[packet.run_ledger_ref, str(ledger_path)],
         exception_candidate_refs=[
@@ -421,6 +436,7 @@ def run_budget(
                 str(run_dir / "legal_budget_proposal.json"),
                 str(run_dir / "matter_opening_readiness.json"),
                 str(exception_candidates_path),
+                str(safety_gate_report_path),
             ],
         ).model_dump(mode="json"),
     )

@@ -30,3 +30,8 @@
 
 - Added `BudgetSupportItem` records so proposal-level assumptions, exclusions, and unknowns carry evidence refs or structured refs.
 - The budget review form and consolidated review package now expose those support records for human review.
+
+## Safety-gate slice - 2026-06-23
+
+- Added `SafetyGateReport` output for deterministic final checks over synthetic scope, human confirmation, conflict non-conclusion, budget non-submission, matter-opening blockers, docketing prohibition, billing/submission prohibition, and local-only artifacts.
+- The workflow fails closed before final package acceptance if a safety check fails.

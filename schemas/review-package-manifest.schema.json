@@ -71,6 +71,10 @@
       "title": "Prohibited Actions",
       "type": "array"
     },
+    "safety_gate_report_ref": {
+      "title": "Safety Gate Report Ref",
+      "type": "string"
+    },
     "evidence_graph_ref": {
       "title": "Evidence Graph Ref",
       "type": "string"
@@ -128,6 +132,7 @@
     "required_human_gates",
     "final_blockers",
     "prohibited_actions",
+    "safety_gate_report_ref",
     "evidence_graph_ref",
     "run_ledger_refs",
     "exception_candidate_refs"

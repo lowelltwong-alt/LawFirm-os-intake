@@ -83,6 +83,10 @@ Future governed step. The starter does not approve or submit.
 
 The system reports satisfied preconditions and blockers. The starter always remains blocked pending conflicts, engagement, and matter-opening authorization.
 
+### 14. Safety gate report
+
+The deterministic safety gate verifies that the final package contains no conflict clearance, engagement decision, docketed deadline, billing or submission state, external write, matter opening, iManage workspace creation, or client/carrier submission authorization. A failed check blocks final package acceptance.
+
 ## Terminal states
 
 - `human_intake_review_required`

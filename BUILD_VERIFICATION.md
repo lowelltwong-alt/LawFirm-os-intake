@@ -4,13 +4,13 @@ Verified in the artifact build environment on 2026-06-23:
 
 ```text
 PYTHONPATH=src python scripts/export_schemas.py
-# exported 13 schemas
+# exported 14 schemas
 
 PYTHONPATH=src python scripts/validate_repo.py
 # repository validation passed
 
 PYTHONPATH=src python -m pytest -q
-# 25 passed
+# 27 passed
 
 PYTHONPATH=src ruff check src tests scripts
 # All checks passed
@@ -28,6 +28,8 @@ The current demo also emits local `exception_lake_candidates.jsonl` files in pre
 The budget output now includes `matter_opening_review_package.md` and `review_package_manifest.json` as the consolidated review surface for the north-star demo.
 
 Budget assumptions, exclusions, and unknowns now emit `budget_support_items` with evidence refs or structured refs for human review.
+
+The budget output also includes `safety_gate_report.json`; a failed safety check raises before the final review package is accepted.
 
 ## GitHub seed verification
 

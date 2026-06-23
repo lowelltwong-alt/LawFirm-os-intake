@@ -25,6 +25,7 @@ messy inbound source
 -> conflict-search seed packet (no conflict conclusion)
 -> legal budget proposal (not approved or submitted)
 -> matter-opening readiness packet
+-> deterministic safety gate report
 -> consolidated matter-opening review package and manifest
 -> blocked pending conflicts, engagement, and authorized matter opening
 ```
@@ -81,13 +82,14 @@ The demo emits:
     |-- legal_budget_review_form.md
     |-- matter_opening_readiness.json
     |-- exception_lake_candidates.jsonl
+    |-- safety_gate_report.json
     |-- matter_opening_review_package.md
     |-- review_package_manifest.json
     |-- evidence_graph.json
     `-- run_ledger.jsonl
 ```
 
-The consolidated `matter_opening_review_package.md` is the human-facing north-star artifact. It points back to the structured packets and tells the reviewer what is known, what remains uncertain, which conflict-search seeds were prepared, what budget scenario was proposed, which exception candidates exist, and why the workflow is still blocked.
+The consolidated `matter_opening_review_package.md` is the human-facing north-star artifact. It points back to the structured packets and tells the reviewer what is known, what remains uncertain, which conflict-search seeds were prepared, what budget scenario was proposed, which exception candidates exist, what the safety gate verified, and why the workflow is still blocked.
 
 ## Practice context is configurable, not hidden prompt text
 
@@ -120,6 +122,10 @@ The budget output is a proposal only. It may contain phases, tasks, staffing, ho
 Every proposal-level assumption, exclusion, and unknown is mirrored as a `budget_support_items` entry with source evidence refs or structured refs to the human confirmation, synthetic practice profile, or workflow policy.
 
 If rates are absent, the system emits an **hours-only** proposal. It never invents rates or totals.
+
+## Safety gate
+
+The final budget run emits `safety_gate_report.json`. This deterministic report checks that the output remains synthetic-only, human-confirmed, conflict-search-only, not submittable, blocked from engagement and matter opening, not docketed, not billed, and local-file-only. A failed check raises before the final review package is accepted.
 
 ## Agent architecture
 

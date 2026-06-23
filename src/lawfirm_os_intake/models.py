@@ -409,6 +409,7 @@ class ReviewPackageManifest(StrictModel):
     required_human_gates: list[str]
     final_blockers: list[str]
     prohibited_actions: list[str]
+    safety_gate_report_ref: str
     evidence_graph_ref: str
     run_ledger_refs: list[str]
     exception_candidate_refs: list[str]
@@ -416,3 +417,24 @@ class ReviewPackageManifest(StrictModel):
     budget_not_authorized_for_client_submission: Literal[True] = True
     contains_raw_payload: Literal[False] = False
     external_writes_performed: Literal[False] = False
+
+
+class SafetyGateCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    evidence_refs: list[str] = Field(default_factory=list)
+
+
+class SafetyGateReport(StrictModel):
+    schema_version: str = "0.1"
+    safety_gate_report_id: str
+    run_id: str
+    preflight_packet_id: str
+    confirmation_id: str
+    status: Literal["passed", "failed"]
+    checks: list[SafetyGateCheck]
+    prohibited_actions_verified: list[str]
+    final_boundary: Literal["blocked_pending_conflicts_and_engagement"]
+    external_writes_performed: Literal[False] = False
+    generated_at: str
