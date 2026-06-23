@@ -41,6 +41,8 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert "no_conflict_conclusion" in review_text
     assert "## Budget Proposal" in review_text
     assert "Scenario: baseline" in review_text
+    assert "practice-profile://" in review_text
+    assert "workflow-policy://" in review_text
     assert "## Exception And Escalation Records" in review_text
     assert "## Matter-Opening Blockers" in review_text
     assert "blocked_pending_conflicts_and_engagement" in review_text

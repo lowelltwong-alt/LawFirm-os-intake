@@ -144,6 +144,15 @@ def render_budget_review_form(budget: BudgetProposal) -> str:
     lines.extend(
         [
             "",
+            "## Evidence-Bound Budget Supports",
+            "",
+            *_budget_support_lines(budget),
+        ]
+    )
+
+    lines.extend(
+        [
+            "",
             "## Review Checks",
             "",
             "- [ ] Matter type and posture were human-confirmed.",
@@ -162,6 +171,15 @@ def render_budget_review_form(budget: BudgetProposal) -> str:
 
 
 def _lines_or_none(lines: list[str]) -> list[str]:
+    return lines or ["- none"]
+
+
+def _budget_support_lines(budget: BudgetProposal) -> list[str]:
+    lines = []
+    for item in budget.budget_support_items:
+        refs = ", ".join(f"{ref.source_id}/{ref.segment_id}" for ref in item.evidence_refs)
+        support = refs or item.structured_ref or "missing support"
+        lines.append(f"- {item.item_type}: {item.text} ({item.source_kind}; {support})")
     return lines or ["- none"]
 
 
@@ -265,8 +283,7 @@ def render_matter_opening_review_package(
             f"- Scenario: {budget.scenario_name}",
             f"- Pricing status: {budget.pricing_status}",
             f"- Total proposed budget: {total_budget}",
-            *_lines_or_none([f"- assumption: {item}" for item in budget.assumptions]),
-            *_lines_or_none([f"- exclusion: {item}" for item in budget.exclusions]),
+            *_budget_support_lines(budget),
             "",
             "## Exception And Escalation Records",
             "",

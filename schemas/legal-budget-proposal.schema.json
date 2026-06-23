@@ -253,6 +253,66 @@
       "title": "BudgetLine",
       "type": "object"
     },
+    "BudgetSupportItem": {
+      "additionalProperties": false,
+      "properties": {
+        "item_type": {
+          "enum": [
+            "assumption",
+            "exclusion",
+            "unknown"
+          ],
+          "title": "Item Type",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "source_kind": {
+          "enum": [
+            "observed_evidence",
+            "human_confirmation",
+            "synthetic_practice_profile",
+            "workflow_policy",
+            "missing_template"
+          ],
+          "title": "Source Kind",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "structured_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Structured Ref"
+        },
+        "requires_human_review": {
+          "default": true,
+          "title": "Requires Human Review",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "item_type",
+        "text",
+        "source_kind"
+      ],
+      "title": "BudgetSupportItem",
+      "type": "object"
+    },
     "EvidenceRef": {
       "additionalProperties": false,
       "properties": {
@@ -411,6 +471,13 @@
         "type": "string"
       },
       "title": "Unknowns",
+      "type": "array"
+    },
+    "budget_support_items": {
+      "items": {
+        "$ref": "#/$defs/BudgetSupportItem"
+      },
+      "title": "Budget Support Items",
       "type": "array"
     },
     "approval_state": {

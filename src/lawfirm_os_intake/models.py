@@ -264,6 +264,27 @@ class BudgetLine(StrictModel):
     evidence_refs: list[EvidenceRef] = Field(default_factory=list)
 
 
+class BudgetSupportItem(StrictModel):
+    item_type: Literal["assumption", "exclusion", "unknown"]
+    text: str
+    source_kind: Literal[
+        "observed_evidence",
+        "human_confirmation",
+        "synthetic_practice_profile",
+        "workflow_policy",
+        "missing_template",
+    ]
+    evidence_refs: list[EvidenceRef] = Field(default_factory=list)
+    structured_ref: str | None = None
+    requires_human_review: bool = True
+
+    @model_validator(mode="after")
+    def evidence_or_structured_ref_required(self) -> "BudgetSupportItem":
+        if not self.evidence_refs and not self.structured_ref:
+            raise ValueError("budget support item requires evidence_refs or structured_ref")
+        return self
+
+
 class BudgetProposal(StrictModel):
     schema_version: str = "0.1"
     budget_proposal_id: str
@@ -285,6 +306,7 @@ class BudgetProposal(StrictModel):
     assumptions: list[str] = Field(default_factory=list)
     exclusions: list[str] = Field(default_factory=list)
     unknowns: list[str] = Field(default_factory=list)
+    budget_support_items: list[BudgetSupportItem] = Field(default_factory=list)
     approval_state: Literal["proposed_for_human_review"] = "proposed_for_human_review"
     not_authorized_for_client_submission: bool = True
 

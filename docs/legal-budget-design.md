@@ -29,8 +29,9 @@ A budget proposal contains:
 10. assumptions;
 11. exclusions;
 12. unknowns;
-13. source references;
-14. human approval state.
+13. budget support items with evidence refs or structured refs;
+14. source references;
+15. human approval state.
 
 ## Avoiding false precision
 
@@ -40,6 +41,7 @@ A budget proposal contains:
 - Use ranges or scenario branches when the number of witnesses, experts, depositions, or trial days is unknown.
 - Keep expert/vendor costs distinct from law-firm fees.
 - Mark all synthetic numbers.
+- Assumptions, exclusions, and unknowns must have source-bound or structured support through `budget_support_items`.
 
 ## External taxonomies
 
@@ -51,12 +53,12 @@ Future runtime:
 
 ```text
 intake-confirmed baseline
-→ budget proposal
-→ human approval/revision
-→ actuals and variance evidence
-→ Exception Lake defect/lesson candidates
-→ reviewed template-change proposal
-→ governed promotion
+-> budget proposal
+-> human approval/revision
+-> actuals and variance evidence
+-> Exception Lake defect/lesson candidates
+-> reviewed template-change proposal
+-> governed promotion
 ```
 
 No runtime correction automatically rewrites the template.

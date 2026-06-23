@@ -117,6 +117,8 @@ An insurance carrier may be the sender, instructing source, payer, or source of 
 
 The budget output is a proposal only. It may contain phases, tasks, staffing, hours, authorized synthetic rates, fee calculations, expenses, contingency, assumptions, exclusions, and unknowns. It cannot be submitted until a separate human approval workflow exists.
 
+Every proposal-level assumption, exclusion, and unknown is mirrored as a `budget_support_items` entry with source evidence refs or structured refs to the human confirmation, synthetic practice profile, or workflow policy.
+
 If rates are absent, the system emits an **hours-only** proposal. It never invents rates or totals.
 
 ## Agent architecture

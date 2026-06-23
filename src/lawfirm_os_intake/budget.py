@@ -6,6 +6,8 @@ from .models import (
     BudgetCalculationReport,
     BudgetLine,
     BudgetProposal,
+    BudgetSupportItem,
+    EvidenceRef,
     HumanConfirmation,
     IntakePreflightPacket,
 )
@@ -15,6 +17,85 @@ from .util import new_id
 def _budget_template(profile: dict[str, Any], matter_family: str) -> dict[str, Any] | None:
     templates = profile.get("budget_templates", {})
     return templates.get(matter_family)
+
+
+def _confirmation_ref(confirmation: HumanConfirmation) -> str:
+    return f"human-confirmation://{confirmation.confirmation_id}"
+
+
+def _template_ref(profile: dict[str, Any], matter_family: str, path: str) -> str:
+    return f"practice-profile://{profile['profile_id']}/budget_templates/{matter_family}/{path}"
+
+
+def _policy_ref(path: str) -> str:
+    return f"workflow-policy://budget-boundary/{path}"
+
+
+def _support_item(
+    item_type: str,
+    text: str,
+    source_kind: str,
+    *,
+    evidence_refs: list[EvidenceRef] | None = None,
+    structured_ref: str | None = None,
+) -> BudgetSupportItem:
+    return BudgetSupportItem(
+        item_type=item_type,  # type: ignore[arg-type]
+        text=text,
+        source_kind=source_kind,  # type: ignore[arg-type]
+        evidence_refs=evidence_refs or [],
+        structured_ref=structured_ref,
+    )
+
+
+def _template_support_items(
+    profile: dict[str, Any],
+    matter_family: str,
+    template: dict[str, Any],
+) -> list[BudgetSupportItem]:
+    items: list[BudgetSupportItem] = []
+    for item_type in ("assumptions", "exclusions", "unknowns"):
+        singular = item_type[:-1] if item_type != "unknowns" else "unknown"
+        for index, text in enumerate(template.get(item_type, [])):
+            items.append(
+                _support_item(
+                    singular,
+                    str(text),
+                    "synthetic_practice_profile",
+                    structured_ref=_template_ref(profile, matter_family, f"{item_type}/{index}"),
+                )
+            )
+
+    for phase in template.get("phases", []):
+        phase_id = str(phase["phase_id"])
+        for task in phase.get("tasks", []):
+            task_id = str(task["task_id"])
+            for index, text in enumerate(task.get("assumptions", [])):
+                items.append(
+                    _support_item(
+                        "assumption",
+                        str(text),
+                        "synthetic_practice_profile",
+                        structured_ref=_template_ref(
+                            profile,
+                            matter_family,
+                            f"phases/{phase_id}/tasks/{task_id}/assumptions/{index}",
+                        ),
+                    )
+                )
+    return items
+
+
+def _workflow_exclusion_support_items(exclusions: list[str]) -> list[BudgetSupportItem]:
+    return [
+        _support_item(
+            "exclusion",
+            text,
+            "workflow_policy",
+            structured_ref=_policy_ref(text.replace("/", "-").replace(" ", "-")),
+        )
+        for text in exclusions
+    ]
 
 
 def build_budget_proposal(
@@ -32,6 +113,13 @@ def build_budget_proposal(
 
     template = _budget_template(profile, confirmation.confirmed_matter_family)
     if not template:
+        unknown = "no approved synthetic budget template exists for the confirmed matter family"
+        exclusions = [
+            "client submission",
+            "carrier submission",
+            "matter opening",
+            "conflict clearance",
+        ]
         return BudgetProposal(
             budget_proposal_id=new_id("budget"),
             preflight_packet_id=packet.packet_id,
@@ -51,14 +139,24 @@ def build_budget_proposal(
                 subtotal_expenses=0,
                 contingency_percent=0,
             ),
-            unknowns=[
-                "no approved synthetic budget template exists for the confirmed matter family"
-            ],
-            exclusions=[
-                "client submission",
-                "carrier submission",
-                "matter opening",
-                "conflict clearance",
+            unknowns=[unknown],
+            exclusions=exclusions,
+            budget_support_items=[
+                _support_item(
+                    "unknown",
+                    unknown,
+                    "missing_template",
+                    structured_ref=_template_ref(
+                        profile, confirmation.confirmed_matter_family, "missing"
+                    ),
+                ),
+                _support_item(
+                    "assumption",
+                    "Budget generation was attempted only after human confirmation.",
+                    "human_confirmation",
+                    structured_ref=_confirmation_ref(confirmation),
+                ),
+                *_workflow_exclusion_support_items(exclusions),
             ],
         )
 
@@ -136,6 +234,35 @@ def build_budget_proposal(
         rate_sources=sorted({line.rate_source for line in lines}),
     )
 
+    policy_exclusions = [
+        "conflict clearance",
+        "engagement authorization",
+        "carrier/client submission",
+        "court filing",
+    ]
+    assumptions = list(template.get("assumptions", []))
+    exclusions = list(template.get("exclusions", [])) + policy_exclusions
+    unknowns = list(template.get("unknowns", []))
+    support_items = [
+        _support_item(
+            "assumption",
+            "Budget generation was attempted only after human confirmation.",
+            "human_confirmation",
+            structured_ref=_confirmation_ref(confirmation),
+        ),
+        *_template_support_items(profile, confirmation.confirmed_matter_family, template),
+        *_workflow_exclusion_support_items(policy_exclusions),
+    ]
+    if evidence_refs:
+        support_items.append(
+            _support_item(
+                "assumption",
+                "Matter-family budget template selection is grounded in observed intake evidence.",
+                "observed_evidence",
+                evidence_refs=evidence_refs,
+            )
+        )
+
     return BudgetProposal(
         budget_proposal_id=new_id("budget"),
         preflight_packet_id=packet.packet_id,
@@ -152,13 +279,8 @@ def build_budget_proposal(
         total_proposed_budget=total,
         scenario_name=str(template.get("scenario_name", "baseline")),
         calculation_report=report,
-        assumptions=list(template.get("assumptions", [])),
-        exclusions=list(template.get("exclusions", []))
-        + [
-            "conflict clearance",
-            "engagement authorization",
-            "carrier/client submission",
-            "court filing",
-        ],
-        unknowns=list(template.get("unknowns", [])),
+        assumptions=assumptions,
+        exclusions=exclusions,
+        unknowns=unknowns,
+        budget_support_items=support_items,
     )

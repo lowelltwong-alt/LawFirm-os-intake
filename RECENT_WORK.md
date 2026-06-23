@@ -25,3 +25,8 @@
 
 - Added a consolidated `matter_opening_review_package.md` and `review_package_manifest.json` to the budget run output.
 - The package links source coverage, known facts, unresolved review items, conflict-search seeds, budget scenario, exception candidates, blockers, prohibited actions, evidence graph refs, and run ledgers.
+
+## Budget-support slice - 2026-06-23
+
+- Added `BudgetSupportItem` records so proposal-level assumptions, exclusions, and unknowns carry evidence refs or structured refs.
+- The budget review form and consolidated review package now expose those support records for human review.

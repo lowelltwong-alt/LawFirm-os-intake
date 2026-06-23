@@ -9,6 +9,7 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from lawfirm_os_intake.models import (  # noqa: E402
     BudgetProposal,
+    BudgetSupportItem,
     ConflictSeedPacket,
     EffectiveContext,
     EvidenceGraph,
@@ -31,6 +32,7 @@ MODELS = {
     "human-confirmation.schema.json": HumanConfirmation,
     "conflict-seed-packet.schema.json": ConflictSeedPacket,
     "legal-budget-proposal.schema.json": BudgetProposal,
+    "budget-support-item.schema.json": BudgetSupportItem,
     "evidence-graph.schema.json": EvidenceGraph,
     "run-ledger-event.schema.json": RunEvent,
     "exception-lake-candidate.schema.json": ExceptionLakeCandidate,

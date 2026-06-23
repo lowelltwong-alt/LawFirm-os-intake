@@ -8,7 +8,7 @@ This is a draft promotion package for stable intake components. It is not a dire
 - Human confirmation contract, including `confirmed`, `unknown`, `needs_more_information`, `human_only`, and `declined_or_referred` outcomes.
 - Party/role candidate contract with aliases, normalized names, role alternatives, evidence refs, and candidate status.
 - Matter-family, inbound-event, representation-posture, deadline, missing-information, and critic-finding candidate contracts.
-- Budget proposal and calculation-report contracts.
+- Budget proposal, calculation-report, and budget-support-item contracts.
 - Dry-run exception lake candidate contract with broad Lake class, local event label, source-inventory refs, evidence refs, blocked state, `raw_payload_included=false`, and `canonical_promotion_required=true`.
 - Review package manifest contract tying the human-readable package to preflight, confirmation, conflict seed, budget proposal, readiness, evidence graph, exception candidates, and ledger refs.
 - Intake event labels for later review: `intake_preflight_proposed`, `intake_classification_confirmed`, `intake_classification_corrected`, `party_role_corrected`, `practice_context_missing_or_misleading`, `conflict_seed_prepared`, `budget_proposal_created`, `budget_proposal_corrected`, and `profile_change_candidate`.
