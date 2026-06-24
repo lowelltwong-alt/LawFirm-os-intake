@@ -18,6 +18,7 @@ from .deadline_guard import (
     build_deadline_docketing_guard_report,
     enforce_deadline_docketing_guard_report,
 )
+from .drivers import load_driver_policy, resolve_case_drivers
 from .evidence import build_preflight_graph, extend_graph_with_budget
 from .evidence_completeness import (
     build_evidence_completeness_report,
@@ -677,6 +678,30 @@ def build_conflict_seed(
     )
 
 
+def _find_driver_policy_path(profile_path: Path) -> Path | None:
+    for parent in [profile_path.parent, *profile_path.parents]:
+        candidate = parent / "config" / "budget-driver-policy.yaml"
+        if candidate.is_file():
+            return candidate
+    return None
+
+
+def _resolve_demo_case_drivers(
+    packet: IntakePreflightPacket,
+    confirmation: HumanConfirmation,
+    profile: dict[str, Any],
+    profile_path: str | Path,
+):
+    """Resolve case drivers for the local demo, or None when no policy is discoverable."""
+
+    if not confirmation.confirmed_matter_family:
+        return None
+    policy_path = _find_driver_policy_path(Path(profile_path))
+    if policy_path is None:
+        return None
+    return resolve_case_drivers(packet, confirmation, profile, load_driver_policy(policy_path))
+
+
 def run_budget(
     preflight_packet_path: str | Path,
     confirmation_path: str | Path,
@@ -813,9 +838,10 @@ def run_budget(
 
     enforce_budget_preconditions(budget_precondition_report)
     profile = load_profile(profile_path)
+    case_drivers = _resolve_demo_case_drivers(packet, confirmation, profile, profile_path)
 
     conflict_seed = build_conflict_seed(packet, confirmation)
-    budget = build_budget_proposal(packet, confirmation, profile)
+    budget = build_budget_proposal(packet, confirmation, profile, case_drivers=case_drivers)
     readiness = MatterOpeningReadiness(
         readiness_id=new_id("readiness"),
         preflight_packet_id=packet.packet_id,

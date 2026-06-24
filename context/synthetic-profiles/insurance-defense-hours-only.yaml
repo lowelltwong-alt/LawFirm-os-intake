@@ -28,103 +28,180 @@ required_intake_fields:
   - assignment_scope
   - response_or_reporting_deadline
 budget_template_ids:
-  - synthetic-medmal-defense-v1
+  - synthetic-medmal-defense-utbms-v1
 context_precedence:
   - observed_source_evidence
   - human_confirmed_matter_facts
   - client_or_referral_source_profile
   - practice_group_profile
   - firm_defaults
+# No authorized rates: the budget must emit an hours-only proposal, never invented money.
 synthetic_hourly_rates: {}
+# Same UTBMS template as the priced profile; rates are absent so this exercises the
+# hours-only path on the real code structure.
 budget_templates:
   medical_malpractice_defense:
-    template_id: synthetic-medmal-defense-v1
+    template_id: synthetic-medmal-defense-utbms-v1
+    code_set: UTBMS_LITIGATION
     contingency_percent: 7.5
     assumptions:
-      - One plaintiff, two represented defendants, and one principal medical event.
-      - No appeal, retrial, sanctions proceeding, or separate coverage action.
+      - One principal medical event; party and defendant counts come from confirmed intake.
+      - Phase and task codes follow the UTBMS litigation code set (external_code_candidate).
+      - Deposition, expert, motion, and trial-day counts come from resolved case drivers.
       - Rates and hours are synthetic examples only.
     exclusions:
+      - "(L500) Appeal"
       - expert vendor invoices beyond listed estimates
-      - appellate work
       - separate coverage litigation
     unknowns:
-      - court-specific schedule
-      - number of depositions
-      - expert disciplines and fee arrangements
+      - court-specific scheduling order
+      - final deposition, expert, and trial-day counts pending discovery
     phases:
-      - phase_id: P100
-        phase_name: Intake and Early Case Assessment
+      - phase_id: L100
+        phase_name: Case Assessment, Development and Administration
         tasks:
-          - task_id: P110
-            task_name: Assignment review, party map, and initial exposure assessment
-            staffing_role: senior_associate
-            estimated_hours: 12
+          - task_id: L110
+            task_name: Fact Investigation / Development
+            staffing_role: associate
+            estimated_hours: 16
             estimated_expenses: 0
-            external_code_candidate: L100
-          - task_id: P120
-            task_name: Medical record inventory and chronology plan
+            external_code_candidate: L110
+          - task_id: L120
+            task_name: Analysis / Strategy
+            staffing_role: senior_associate
+            estimated_hours: 14
+            estimated_expenses: 0
+            external_code_candidate: L120
+          - task_id: L130
+            task_name: Experts / Consultants
+            staffing_role: partner
+            estimated_hours: 8
+            estimated_expenses: 0
+            external_code_candidate: L130
+            scaling_driver: num_experts
+            hours_per_unit: 3
+          - task_id: L140
+            task_name: Document / File Management
             staffing_role: paralegal
             estimated_hours: 18
             estimated_expenses: 250
-            external_code_candidate: L110
-      - phase_id: P200
-        phase_name: Pleadings and Initial Motions
-        tasks:
-          - task_id: P210
-            task_name: Answer and preliminary motions
-            staffing_role: associate
+            external_code_candidate: L140
+          - task_id: L150
+            task_name: Budgeting
+            staffing_role: senior_associate
+            estimated_hours: 4
+            estimated_expenses: 0
+            external_code_candidate: L150
+          - task_id: L160
+            task_name: Settlement / Non-Binding ADR
+            staffing_role: senior_associate
             estimated_hours: 22
-            estimated_expenses: 300
-            external_code_candidate: L200
-      - phase_id: P300
-        phase_name: Discovery
-        tasks:
-          - task_id: P310
-            task_name: Written discovery and document production management
-            staffing_role: associate
-            estimated_hours: 55
-            estimated_expenses: 1200
-            external_code_candidate: L300
-          - task_id: P320
-            task_name: Depositions and witness preparation
-            staffing_role: senior_associate
-            estimated_hours: 65
-            estimated_expenses: 4500
-            external_code_candidate: L330
-          - task_id: P330
-            task_name: Expert discovery coordination
-            staffing_role: partner
-            estimated_hours: 32
-            estimated_expenses: 15000
-            external_code_candidate: L340
-      - phase_id: P400
-        phase_name: Dispositive Motions and Resolution
-        tasks:
-          - task_id: P410
-            task_name: Dispositive motion analysis and briefing
-            staffing_role: partner
-            estimated_hours: 42
-            estimated_expenses: 800
-            external_code_candidate: L400
-          - task_id: P420
-            task_name: Mediation and settlement preparation
-            staffing_role: senior_associate
-            estimated_hours: 28
             estimated_expenses: 2500
             external_code_candidate: L160
-      - phase_id: P500
+      - phase_id: L200
+        phase_name: Pre-Trial Pleading and Motions
+        tasks:
+          - task_id: L210
+            task_name: Pleading
+            staffing_role: associate
+            estimated_hours: 16
+            estimated_expenses: 300
+            external_code_candidate: L210
+            scaling_driver: num_represented_defendants
+            hours_per_unit: 8
+          - task_id: L230
+            task_name: Court Mandated Conferences
+            staffing_role: associate
+            estimated_hours: 8
+            estimated_expenses: 0
+            external_code_candidate: L230
+          - task_id: L240
+            task_name: Dispositive Motions
+            staffing_role: partner
+            estimated_hours: 40
+            estimated_expenses: 800
+            external_code_candidate: L240
+            scaling_driver: num_dispositive_motions
+            hours_per_unit: 40
+      - phase_id: L300
+        phase_name: Discovery
+        tasks:
+          - task_id: L310
+            task_name: Written Discovery
+            staffing_role: associate
+            estimated_hours: 44
+            estimated_expenses: 300
+            external_code_candidate: L310
+            scaling_driver: written_discovery_rounds
+            hours_per_unit: 22
+          - task_id: L320
+            task_name: Document Production
+            staffing_role: paralegal
+            estimated_hours: 30
+            estimated_expenses: 1200
+            external_code_candidate: L320
+          - task_id: L330
+            task_name: Depositions
+            staffing_role: senior_associate
+            estimated_hours: 48
+            estimated_expenses: 0
+            external_code_candidate: L330
+            scaling_driver: num_depositions
+            hours_per_unit: 8
+            expense_per_unit: 700
+          - task_id: L340
+            task_name: Expert Discovery
+            staffing_role: partner
+            estimated_hours: 18
+            estimated_expenses: 0
+            external_code_candidate: L340
+            scaling_driver: num_experts
+            hours_per_unit: 6
+            expense_per_unit: 7500
+          - task_id: L350
+            task_name: Discovery Motions
+            staffing_role: associate
+            estimated_hours: 12
+            estimated_expenses: 300
+            external_code_candidate: L350
+      - phase_id: L400
         phase_name: Trial Preparation and Trial
         tasks:
-          - task_id: P510
-            task_name: Trial preparation
+          - task_id: L410
+            task_name: Fact Witnesses
             staffing_role: associate
-            estimated_hours: 85
-            estimated_expenses: 8000
-            external_code_candidate: L500
-          - task_id: P520
-            task_name: Trial attendance and lead counsel work
+            estimated_hours: 24
+            estimated_expenses: 0
+            external_code_candidate: L410
+          - task_id: L420
+            task_name: Expert Witnesses
             staffing_role: partner
-            estimated_hours: 80
-            estimated_expenses: 12000
-            external_code_candidate: L510
+            estimated_hours: 18
+            estimated_expenses: 0
+            external_code_candidate: L420
+            scaling_driver: num_experts
+            hours_per_unit: 8
+          - task_id: L430
+            task_name: Written Motions and Submissions
+            staffing_role: senior_associate
+            estimated_hours: 20
+            estimated_expenses: 0
+            external_code_candidate: L430
+          - task_id: L440
+            task_name: Other Trial Preparation and Support
+            staffing_role: associate
+            estimated_hours: 60
+            estimated_expenses: 0
+            external_code_candidate: L440
+            scaling_driver: trial_days
+            hours_per_unit: 12
+            expense_per_unit: 500
+          - task_id: L450
+            task_name: Trial and Hearing Attendance
+            staffing_role: partner
+            estimated_hours: 40
+            estimated_expenses: 0
+            external_code_candidate: L450
+            scaling_driver: trial_days
+            hours_per_unit: 9
+            expense_per_unit: 800
