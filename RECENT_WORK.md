@@ -1,5 +1,11 @@
 # Recent Work
 
+## Cross-repo promotion package slice - 2026-06-24
+
+- Added `promotion/cross_repo_promotion_package.json` as a machine-readable candidate-only package for sibling repo review.
+- The package covers Semantic Substrate, Orchestrator, Exception Lake, Skills Registry, and Legal Knowledge Runtime proposals without mutating sibling repos.
+- Added tests and schemas proving required proposal coverage, local artifact refs, and no direct promotion or external writes.
+
 ## Exception Lake budget-change and actuals package slice - 2026-06-24
 
 - Budget runs now write `exception_lake_mapping_package.json` for broken workbook formulas, missing code mappings, unknown budget drivers, guideline/cap issues, human budget changes, and actual-cost variance.

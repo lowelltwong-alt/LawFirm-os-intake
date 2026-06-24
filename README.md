@@ -148,6 +148,8 @@ Template-backed budget form rendering can also write `budget_form_mapping_report
 
 Use `lawfirm-os-intake budget-form-audit --template <workbook.xlsx> --out budget_form_template_audit_report.json` to test a workbook before any matter-specific budget exists. See `docs/budget-template-checklist.md` for the known-good template requirements. A failed audit report should be repaired outside this repo and rerun before template-backed rendering.
 
+The repo also carries `promotion/cross_repo_promotion_package.json`, a machine-readable candidate-only package for sibling repo review. It names proposed contracts and interfaces for Semantic Substrate, Orchestrator, Exception Lake, Skills Registry, and Legal Knowledge Runtime while recording no canonical mutation, no sibling repo writes, no external writes, and no direct promotion.
+
 Preflight runs write `deadline_docketing_guard_report.json`. This local proof artifact binds every deadline candidate back to source evidence refs, marks the only next gate as `human_deadline_review`, records `docketing_action_performed=false` and `docketing_action_allowed=false`, and is carried into the final package manifest and completeness check. It does not characterize legal effect or create a docketing action.
 
 Preflight, confirmed budget, and blocked-budget attempts also write `run_ledger_integrity_report.json`. This local report proves required gate events appear in order, event run IDs match, output refs exist, refs stay local, blocked events only appear in blocked paths, and no external writes occurred. It is a vertical proof artifact only; Orchestrator remains the future run-ledger authority.

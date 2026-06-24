@@ -4,7 +4,7 @@ Verified in the artifact build environment on 2026-06-24:
 
 ```text
 python scripts/export_schemas.py
-# exported 48 schemas
+# exported 50 schemas
 
 python scripts/validate_repo.py
 # repository validation passed
@@ -83,6 +83,8 @@ Budget proposals now also embed `BudgetDriverEffect` and `BudgetGuidelineFlag` r
 Budget runs now also write `case_driver_profile.json` and embed `BudgetDriverProfileSummary` in `legal_budget_proposal.json`. The review package and standalone budget form render driver profile summary, scenario comparison, workbook mapping status, and unresolved budget assumptions, and package completeness fails closed if those surfaces or non-observed-fact boundaries drift.
 
 Budget runs now also write `exception_lake_mapping_package.json` and `budget_actual_comparison_report.json`. The mapping package covers broken workbook formulas, missing budget code mappings, unknown budget drivers, guideline/cap issues, human budget changes, and actual-cost variance as dry-run Lake evidence families. The actual comparison report is phase-level and records no billing connector read or write in the starter.
+
+The repo now includes `promotion/cross_repo_promotion_package.json`, a candidate-only sibling review inventory for Semantic Substrate, Orchestrator, Exception Lake, Skills Registry, and Legal Knowledge Runtime. Tests validate required target repo coverage, proposal type coverage, local artifact refs, and no direct promotion or external writes.
 
 The insurance-defense profile now includes a second synthetic matter family, `auto_liability_defense`, with its own UTBMS-coded template and driver defaults. The auto/BI fixture exercises preflight ranking, human confirmation binding, driver resolution, budget generation, scenario set, review package creation, and the same non-submission boundary as the med-mal fixture.
 

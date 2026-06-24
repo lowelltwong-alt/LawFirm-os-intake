@@ -2,6 +2,12 @@
 
 This is a draft promotion package for stable intake components. It is not a direct promotion and does not mutate sibling repo authority.
 
+Machine-readable proposal inventory: `promotion/cross_repo_promotion_package.json`.
+
+The package is candidate-only. It records `no_canonical_mutation=true`,
+`no_sibling_repo_writes=true`, and `no_external_writes_performed=true`. Sibling
+repo owners must review and promote any accepted contracts inside their own repos.
+
 ## Semantic Substrate Candidates
 
 - Intake source bundle, source inventory, and ingestion result contracts.
@@ -17,6 +23,7 @@ This is a draft promotion package for stable intake components. It is not a dire
 - Matter-family, inbound-event, representation-posture, deadline, missing-information, and critic-finding candidate contracts.
 - Conflict seed and conflict search term contracts that preserve `no_conflict_conclusion` and require evidence refs for every normalized search term.
 - Budget proposal, calculation-report, and budget-support-item contracts.
+- Budget scenario set, driver effect, driver profile summary, guideline flag, budget-form mapping, budget actual comparison, and budget exception-mapping contracts.
 - Matter-opening readiness contract for final blockers, structured blocker details, prohibited-action guardrails, required human gates, workflow-policy refs, and prohibited-transition refs.
 - Evidence graph node and edge conventions for source-backed and structured-ref support across preflight, human review, conflict seed, budget artifacts, readiness blockers, and prohibited-action guardrails.
 - Dry-run exception lake candidate contract with broad Lake class, local event label, source-inventory refs, evidence refs, structured refs, blocked state, `raw_payload_included=false`, and `canonical_promotion_required=true`.
@@ -29,21 +36,22 @@ This is a draft promotion package for stable intake components. It is not a dire
 - Contract state report contract tying each local run to reviewed lock status, sibling repo SHAs, authority planes, topology agreement, and fail-closed check results.
 - Budget precondition report contract tying budget generation to a matching, confirmed, evidence-bound human confirmation and recording failed attempts before proposal output.
 - Safety gate report contract for deterministic prohibited-transition and evidence-completeness checks.
-- Intake event labels for later review: `intake_preflight_proposed`, `intake_classification_confirmed`, `intake_classification_corrected`, `party_role_corrected`, `practice_context_missing_or_misleading`, `conflict_seed_prepared`, `budget_proposal_created`, `budget_proposal_corrected`, and `profile_change_candidate`.
+- Intake event labels for later review: `intake_preflight_proposed`, `intake_classification_confirmed`, `intake_classification_corrected`, `party_role_corrected`, `practice_context_missing_or_misleading`, `conflict_seed_prepared`, `budget_proposal_created`, `budget_proposal_corrected`, `budget_human_change_recorded`, `budget_actual_cost_variance_requires_review`, and `profile_change_candidate`.
 
 ## Orchestrator Interface Draft
 
 - Outer workflow owner: `LawFirm-os-orchestrator`.
 - Intake runtime input: source bundle path, practice profile ref, adapter mode, strict-evidence setting.
-- Intake runtime outputs: contract state report, data-scope gate report, model adapter report, optional fixture gold report, preflight packet, review form, deadline docketing guard report, evidence graph, run ledger, run ledger integrity report, dry-run exception candidates, exception readiness report, human confirmation, human review outcome record, confirmation history, human gate status report, budget precondition report, conflict seed, budget proposal, budget review form, budget submission guard report, matter-opening readiness with structured blockers, safety gate report, consolidated review package, review package manifest, review package completeness report.
+- Intake runtime outputs: contract state report, data-scope gate report, model adapter report, optional fixture gold report, preflight packet, review form, deadline docketing guard report, evidence graph, run ledger, run ledger integrity report, dry-run exception candidates, exception readiness report, exception handoff manifest, human confirmation, human review outcome record, confirmation history, human gate status report, budget precondition report, conflict seed, case driver profile, budget proposal, budget review form, budget submission guard report, budget actual comparison report, Exception Lake mapping package, matter-opening readiness with structured blockers, safety gate report, consolidated review package, review package manifest, review package completeness report.
 - Required gates: contract-state gate, model-adapter guard, data-origin gate, prompt/tool authority gate, human intake confirmation, budget precondition gate, prohibited-transition gate.
 
 ## Exception Lake Mapping Draft
 
 - `retrieval_miss`: missing source, unread source, unreadable attachment, unresolved source ref, incomplete context bundle, source coverage gap.
-- `workflow_escalation`: human review required, close candidates, role ambiguity, prompt injection, prohibited transition attempted, budget blocked before confirmation, budget unknowns, missing budget template, hours-only missing rates.
+- `workflow_escalation`: human review required, close candidates, role ambiguity, prompt injection, prohibited transition attempted, budget blocked before confirmation, budget unknowns, unknown budget drivers, guideline/cap review, human budget changes, budget actual variance, missing budget template, hours-only missing rates.
 - `authority_conflict_override`: unregistered route/event label, local candidate conflicts with canon, profile attempts to expand authority, missing reviewed lock, topology mismatch, contract SHA drift.
 - Intake emits these as local `ExceptionLakeCandidate` rows and a local `ExceptionLakeHandoffManifest` only. The handoff manifest is not a SQLite schema or admission log; it records actual labels, broad Lake classes, support modes, target owner, and no SQLite/external write. The Exception Lake runtime should perform admission validation, append-only storage, record hashing, and correction/supersession handling.
+- `ExceptionLakeMappingPackage` is the candidate bridge from local budget labels and actual-variance evidence to broad Lake classes. It is not an admission log.
 
 ## Skills Registry Draft
 

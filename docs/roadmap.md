@@ -69,9 +69,14 @@ Draft mappings for broken template formulas, missing budget code mappings, unkno
 
 ## 7. Cross-Repo Promotion Package
 
-Status: pending.
+Status: implemented for the current synthetic slice.
 
 Prepare candidate contract proposals for Semantic Substrate, Orchestrator, Exception Lake, Skills Registry, and Legal Knowledge Runtime.
+
+- Added `promotion/cross_repo_promotion_package.json` as a machine-readable candidate-only inventory.
+- The package covers Semantic Substrate schema/event proposals, Orchestrator workflow/human-pause/evidence-packet interfaces, Exception Lake evidence mappings, Skills Registry specialist metadata, and Legal Knowledge Runtime context-bundle refs.
+- Each proposal names candidate artifact refs, proposed contract refs, governance actions, blockers, and `direct_promotion_performed=false`.
+- Tests validate target repo coverage, proposal type coverage, local artifact refs, and non-authoritative/no-write flags.
 
 ## 8. Provider Adapter Spike
 

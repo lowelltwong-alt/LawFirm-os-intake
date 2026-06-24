@@ -1444,6 +1444,64 @@ class ContextCounterfactualAuditReport(StrictModel):
     generated_at: str
 
 
+class CrossRepoPromotionProposal(StrictModel):
+    proposal_id: str
+    target_repo: Literal[
+        "LawFirm-os-semantic-substrate",
+        "LawFirm-os-orchestrator",
+        "LawFirm-os-exceptions-lake-runtime",
+        "LawFirm-os-skills-registry",
+        "LawFirm-os-legal-knowledge-runtime",
+    ]
+    authority_plane: Literal[
+        "control",
+        "execution",
+        "evidence",
+        "skills_registry",
+        "legal_knowledge_runtime",
+    ]
+    proposal_type: Literal[
+        "schema_contract",
+        "event_label_mapping",
+        "workflow_interface",
+        "lake_evidence_mapping",
+        "skill_metadata",
+        "context_bundle_interface",
+    ]
+    summary: str
+    candidate_artifact_refs: list[str] = Field(default_factory=list)
+    proposed_contract_refs: list[str] = Field(default_factory=list)
+    required_governance_actions: list[str] = Field(default_factory=list)
+    promotion_blockers: list[str] = Field(default_factory=list)
+    non_authoritative: Literal[True] = True
+    direct_promotion_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+
+
+class CrossRepoPromotionPackage(StrictModel):
+    schema_version: str = "0.1"
+    package_id: str
+    status: Literal["candidate_only"]
+    origin_repo: Literal["LawFirm-os-intake"] = "LawFirm-os-intake"
+    generated_at: str
+    reviewed_lock_status: Literal["reviewed_seed_lock"]
+    target_repos: list[
+        Literal[
+            "LawFirm-os-semantic-substrate",
+            "LawFirm-os-orchestrator",
+            "LawFirm-os-exceptions-lake-runtime",
+            "LawFirm-os-skills-registry",
+            "LawFirm-os-legal-knowledge-runtime",
+        ]
+    ]
+    proposals: list[CrossRepoPromotionProposal]
+    promotion_rule: str
+    no_canonical_mutation: Literal[True] = True
+    no_sibling_repo_writes: Literal[True] = True
+    no_external_writes_performed: Literal[True] = True
+    non_authoritative: Literal[True] = True
+
+
 class SafetyGateCheck(StrictModel):
     check_id: str
     status: Literal["passed", "failed"]
