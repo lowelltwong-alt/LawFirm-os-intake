@@ -723,6 +723,53 @@ class BudgetSupportItem(StrictModel):
         return self
 
 
+class BudgetScenario(StrictModel):
+    scenario_id: str
+    scenario_name: str
+    description: str
+    resolution_phase: str
+    included_phase_ids: list[str]
+    included_external_codes: list[str] = Field(default_factory=list)
+    included_line_count: int = Field(ge=0)
+    total_hours: float = Field(ge=0)
+    subtotal_fees: float | None = None
+    subtotal_expenses: float = Field(ge=0)
+    contingency_percent: float = Field(ge=0)
+    contingency_amount: float | None = None
+    total_proposed_budget: float | None = None
+    total_budget_min: float | None = None
+    total_budget_max: float | None = None
+    pricing_status: Literal["priced", "hours_only", "insufficient_information"]
+    proposed_for_human_review: Literal[True] = True
+    not_authorized_for_client_submission: Literal[True] = True
+    non_authoritative: Literal[True] = True
+
+
+class BudgetScenarioSet(StrictModel):
+    schema_version: str = "0.1"
+    scenario_set_id: str
+    selected_scenario_id: str = "standard"
+    standard_scenario_id: str = "standard"
+    scenarios: list[BudgetScenario]
+    monotonic_total_order: bool
+    total_order_basis: Literal["total_proposed_budget", "total_hours"] = "total_proposed_budget"
+    requires_human_budget_review: Literal[True] = True
+    not_authorized_for_client_submission: Literal[True] = True
+    external_writes_performed: Literal[False] = False
+    non_authoritative: Literal[True] = True
+
+    @model_validator(mode="after")
+    def scenario_ids_are_unique_and_selected(self) -> "BudgetScenarioSet":
+        scenario_ids = [scenario.scenario_id for scenario in self.scenarios]
+        if len(scenario_ids) != len(set(scenario_ids)):
+            raise ValueError("budget scenario ids must be unique")
+        if self.scenarios and self.selected_scenario_id not in scenario_ids:
+            raise ValueError("selected budget scenario must exist in scenario set")
+        if self.scenarios and self.standard_scenario_id not in scenario_ids:
+            raise ValueError("standard budget scenario must exist in scenario set")
+        return self
+
+
 class BudgetProposal(StrictModel):
     schema_version: str = "0.1"
     budget_proposal_id: str
@@ -739,7 +786,8 @@ class BudgetProposal(StrictModel):
     contingency_percent: float = 0
     contingency_amount: float | None = None
     total_proposed_budget: float | None = None
-    scenario_name: str = "baseline"
+    scenario_name: str = "standard"
+    scenario_set: BudgetScenarioSet | None = None
     calculation_report: "BudgetCalculationReport | None" = None
     assumptions: list[str] = Field(default_factory=list)
     exclusions: list[str] = Field(default_factory=list)

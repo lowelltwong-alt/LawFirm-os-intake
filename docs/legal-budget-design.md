@@ -39,7 +39,15 @@ A budget proposal contains:
 12. unknowns;
 13. budget support items with evidence refs or structured refs;
 14. source references;
-15. human approval state.
+15. scenario set with early, standard, and through-trial branches;
+16. human approval state.
+
+The compatibility surface of `BudgetProposal` is the `standard` scenario: its
+`lines`, subtotal fields, calculation report, and `total_proposed_budget` mirror the
+standard branch. The embedded `BudgetScenarioSet` preserves the wider early,
+standard, and through-trial comparison with included phases, included UTBMS code
+candidates, totals, and min/max ranges. Scenario vocabulary remains local candidate
+data until promoted by the owning authority repo.
 
 ## Avoiding false precision
 
@@ -47,6 +55,7 @@ A budget proposal contains:
 - Never fabricate client/carrier guidelines.
 - Never make a relative deadline a fixed date without a confirmed trigger.
 - Use ranges or scenario branches when the number of witnesses, experts, depositions, or trial days is unknown.
+- Keep branch totals monotonic (`early_resolution <= standard <= through_trial`) when priced; hours-only budgets prove the same ordering by hours.
 - Keep expert/vendor costs distinct from law-firm fees.
 - Mark all synthetic numbers.
 - Assumptions, exclusions, and unknowns must have source-bound or structured support through `budget_support_items`.

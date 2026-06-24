@@ -131,6 +131,8 @@ Budget runs also write a typed human review outcome record and append it to `hum
 
 Budget runs also write `budget_submission_guard_report.json`. This local proof artifact records that the budget remains `proposed_for_human_review`, is not authorized for client or carrier submission, has no client submission, no carrier submission, no billing handoff, no external writes, and remains blocked by the pending `human_budget_review` gate.
 
+The budget proposal now embeds a local `BudgetScenarioSet` with `early_resolution`, `standard`, and `through_trial` branches. The compatibility fields on `BudgetProposal` (`lines`, subtotal fields, calculation report, and total) map to the selected `standard` scenario, while the scenario set preserves the wider branch comparison, ranges, included phases, and included UTBMS code candidates for human review. Every branch remains proposed for human review only and is not authorized for client or carrier submission.
+
 Template-backed budget form rendering can also write `budget_form_mapping_report.json`. This local proof artifact records the template hash, header cells, UTBMS row/write-cell mappings, L/E amount totals, and original-budget formula checks before the renderer fills a carrier-style workbook copy. Failed mapping or formula checks block workbook rendering; the sanitized reference workbook remains local and is not committed.
 
 Use `lawfirm-os-intake budget-form-audit --template <workbook.xlsx> --out budget_form_template_audit_report.json` to test a workbook before any matter-specific budget exists. See `docs/budget-template-checklist.md` for the known-good template requirements. A failed audit report should be repaired outside this repo and rerun before template-backed rendering.
@@ -155,7 +157,7 @@ The preflight run also writes `ingestion_result.json`, a Python reference artifa
 
 The budget-stage `evidence_graph.json` carries the provenance forward into human review outcomes, conflict-search terms, budget lines, budget support items, matter-opening blockers, and prohibited-action guardrails. Structured refs such as human confirmations, synthetic practice-profile entries, workflow-policy references, and prohibited-transition policy references are represented separately from observed source evidence.
 
-The standalone `legal_budget_review_form.md` also renders itemized budget lines with hours, ranges, rates, synthetic-rate labels, expenses, assumptions, evidence refs, and a submission boundary. It is an internal review surface only; it does not authorize client or carrier delivery.
+The standalone `legal_budget_review_form.md` also renders itemized standard-scenario budget lines with hours, ranges, rates, synthetic-rate labels, expenses, assumptions, evidence refs, the scenario-set comparison, and a submission boundary. It is an internal review surface only; it does not authorize client or carrier delivery.
 
 ## Practice context is configurable, not hidden prompt text
 

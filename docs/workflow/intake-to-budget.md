@@ -111,6 +111,8 @@ The system builds normalized search terms grouped by prospective client, instruc
 
 A confirmed matter type selects an approved practice template. The planner calculates hours, rates if authorized, fees, expenses, and contingency. Assumptions, exclusions, and unknowns remain visible.
 
+The emitted `BudgetProposal` compatibility fields map to the selected `standard` scenario. Its embedded local `BudgetScenarioSet` also carries `early_resolution` and `through_trial` branches with included phases, included UTBMS code candidates, min/max ranges, and monotonic total or hours ordering. Scenario branches are comparison artifacts only and do not authorize submission.
+
 ### 15. Human budget review
 
 Future governed step. The starter does not approve or submit.

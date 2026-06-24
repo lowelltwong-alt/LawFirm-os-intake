@@ -3,22 +3,22 @@
 Verified in the artifact build environment on 2026-06-24:
 
 ```text
-PYTHONPATH=src python scripts/export_schemas.py
-# exported 37 schemas
+python scripts/export_schemas.py
+# exported 41 schemas
 
-PYTHONPATH=src python scripts/validate_repo.py
+python scripts/validate_repo.py
 # repository validation passed
 
-PYTHONPATH=src python -m pytest -q
-# 123 passed
+python -m pytest -q
+# passed
 
-PYTHONPATH=src ruff check src tests scripts
+python -m ruff check src tests scripts
 # All checks passed
 
-PYTHONPATH=src ruff format --check src tests scripts
-# 75 files already formatted
+python -m ruff format --check src tests scripts
+# 83 files already formatted
 
-PYTHONPATH=src bash scripts/smoke_demo.sh
+bash -lc 'export PATH="/c/Users/lowel/AppData/Local/Programs/Python/Python312:$PATH"; bash scripts/smoke_demo.sh'
 # completed without error and wrote starter, blocked-budget, and context-counterfactual audit reports
 ```
 
@@ -75,6 +75,8 @@ Matter-opening readiness now exports a candidate schema and carries structured b
 Budget runs now emit `human_gate_status_report.json`, proving intake confirmation is complete while conflicts clearance, engagement authorization, budget review, and matter-opening authorization remain pending human gates. The review package renders those gate states, and package completeness fails if a pending gate is omitted or incorrectly marked complete.
 
 Budget runs now also emit `budget_submission_guard_report.json`, proving the budget remains proposed for human review, is not authorized for client or carrier submission, has no client submission, no carrier submission, no billing handoff, no external writes, and remains blocked by `human_budget_review`.
+
+Budget proposals now embed `BudgetScenarioSet` with `early_resolution`, `standard`, and `through_trial` branches. The compatibility proposal fields map to `standard`, while the review forms render the branch comparison, ranges, included phases, included UTBMS code candidates, monotonic ordering, and non-submission boundary.
 
 Human-facing review Markdown now renders evidence refs inline for confirmation evidence, confirmed parties, deadlines, missing-information candidates, critic findings, conflict-search terms, and budget supports.
 

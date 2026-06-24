@@ -81,11 +81,11 @@ matter_family_defaults:
 
 scenarios:
   - scenario_id: early_resolution
-    resolution_phase: P200
+    resolution_phase: L200
     description: Motion to dismiss granted or pre-discovery settlement.
   - scenario_id: standard
-    resolution_phase: P400
+    resolution_phase: L300
     description: Resolves at mediation or on summary judgment after discovery.
   - scenario_id: through_trial
-    resolution_phase: P500
+    resolution_phase: L400
     description: Full discovery, dispositive motions, trial preparation, and trial.

@@ -287,3 +287,9 @@
 - Added `lawfirm-os-intake budget-form-audit` and `budget_form_template_audit_report.json` so a carrier-style UTBMS workbook can be tested before any matter-specific budget exists.
 - Added `docs/budget-template-checklist.md` with known-good template requirements and the local audit command.
 - The audit writes a report and returns nonzero on missing headers, missing/duplicate UTBMS codes, or broken original-budget formulas without mutating the workbook.
+
+## Budget scenario-set slice - 2026-06-24
+
+- Added embedded `BudgetScenarioSet` output with `early_resolution`, `standard`, and `through_trial` branches, ranges, included phases, and included UTBMS code candidates.
+- The legacy `BudgetProposal` totals and lines now map to the selected `standard` scenario for compatibility while preserving through-trial visibility in the scenario set.
+- Updated budget review and matter-opening review packages to render scenario comparison without authorizing client/carrier submission.

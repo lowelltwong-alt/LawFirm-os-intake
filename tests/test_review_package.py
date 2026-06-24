@@ -120,7 +120,8 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert "no_conflict_conclusion" in review_text
     assert "evidence:" in review_text
     assert "## Budget Proposal" in review_text
-    assert "Scenario: baseline" in review_text
+    assert "Scenario: standard" in review_text
+    assert "Scenario Set" in review_text
     assert "Budget submission guard report:" in review_text
     assert "Budget submission guard status: passed" in review_text
     assert "Client submission performed: False" in review_text

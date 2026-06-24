@@ -180,6 +180,10 @@ def render_budget_review_form(budget: BudgetProposal) -> str:
             "## Evidence-Bound Budget Supports",
             "",
             *_budget_support_lines(budget),
+            "",
+            "## Scenario Set",
+            "",
+            *_budget_scenario_lines(budget),
         ]
     )
 
@@ -208,6 +212,28 @@ def render_budget_review_form(budget: BudgetProposal) -> str:
         ]
     )
     return "\n".join(lines)
+
+
+def _budget_scenario_lines(budget: BudgetProposal) -> list[str]:
+    if budget.scenario_set is None:
+        return ["- none"]
+    lines = [
+        f"- Selected scenario: {budget.scenario_set.selected_scenario_id}",
+        f"- Monotonic order: {budget.scenario_set.monotonic_total_order} "
+        f"({budget.scenario_set.total_order_basis})",
+    ]
+    for scenario in budget.scenario_set.scenarios:
+        lines.append(
+            f"- {scenario.scenario_id}: through {scenario.resolution_phase}; "
+            f"hours: {scenario.total_hours}; "
+            f"fees: {_money(scenario.subtotal_fees, budget.currency)}; "
+            f"expenses: {_money(scenario.subtotal_expenses, budget.currency)}; "
+            f"total: {_money(scenario.total_proposed_budget, budget.currency)}; "
+            f"range: {_money(scenario.total_budget_min, budget.currency)}-"
+            f"{_money(scenario.total_budget_max, budget.currency)}; "
+            f"codes: {', '.join(scenario.included_external_codes) or 'none'}"
+        )
+    return lines
 
 
 def _review_outcome_handling_lines() -> list[str]:
@@ -1047,6 +1073,9 @@ def render_matter_opening_review_package(
             "",
             "### Budget Supports",
             *_budget_support_lines(budget),
+            "",
+            "### Scenario Set",
+            *_budget_scenario_lines(budget),
             "",
             "## Exception And Escalation Records",
             "",

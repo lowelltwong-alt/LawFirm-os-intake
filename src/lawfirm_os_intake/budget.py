@@ -7,12 +7,35 @@ from .models import (
     BudgetCalculationReport,
     BudgetLine,
     BudgetProposal,
+    BudgetScenario,
+    BudgetScenarioSet,
     BudgetSupportItem,
     EvidenceRef,
     HumanConfirmation,
     IntakePreflightPacket,
 )
 from .util import new_id
+
+DEFAULT_SCENARIOS = [
+    {
+        "scenario_id": "early_resolution",
+        "scenario_name": "Early Resolution",
+        "resolution_phase": "L200",
+        "description": "Motion to dismiss granted or pre-discovery settlement.",
+    },
+    {
+        "scenario_id": "standard",
+        "scenario_name": "Standard",
+        "resolution_phase": "L300",
+        "description": "Resolves at mediation or on summary judgment after discovery.",
+    },
+    {
+        "scenario_id": "through_trial",
+        "scenario_name": "Through Trial",
+        "resolution_phase": "L400",
+        "description": "Full discovery, dispositive motions, trial preparation, and trial.",
+    },
+]
 
 
 def _budget_template(profile: dict[str, Any], matter_family: str) -> dict[str, Any] | None:
@@ -132,6 +155,213 @@ def _numeric_driver_values(
     return values
 
 
+def _phase_order(template: dict[str, Any]) -> list[str]:
+    return [str(phase["phase_id"]) for phase in template.get("phases", [])]
+
+
+def _scenario_definitions(template: dict[str, Any]) -> list[dict[str, str]]:
+    raw = template.get("scenarios") or DEFAULT_SCENARIOS
+    definitions: list[dict[str, str]] = []
+    for scenario in raw:
+        scenario_id = str(scenario["scenario_id"])
+        definitions.append(
+            {
+                "scenario_id": scenario_id,
+                "scenario_name": str(
+                    scenario.get("scenario_name") or scenario_id.replace("_", " ").title()
+                ),
+                "resolution_phase": str(scenario["resolution_phase"]),
+                "description": str(scenario.get("description", "")),
+            }
+        )
+    return definitions
+
+
+def _included_phase_ids(phase_order: list[str], resolution_phase: str) -> list[str]:
+    if not phase_order:
+        return []
+    if resolution_phase not in phase_order:
+        return phase_order[:]
+    return phase_order[: phase_order.index(resolution_phase) + 1]
+
+
+def _lines_for_phases(lines: list[BudgetLine], included_phase_ids: list[str]) -> list[BudgetLine]:
+    if not included_phase_ids:
+        return lines[:]
+    included = set(included_phase_ids)
+    return [line for line in lines if line.phase_id in included]
+
+
+def _line_external_codes(lines: list[BudgetLine]) -> list[str]:
+    codes: set[str] = set()
+    for line in lines:
+        if line.external_code_candidate:
+            codes.add(line.external_code_candidate)
+        if line.expense_code:
+            codes.add(line.expense_code)
+    return sorted(codes)
+
+
+def _budget_totals(
+    lines: list[BudgetLine],
+    contingency_percent: float,
+) -> tuple[float | None, float, float | None, float | None, float | None, float | None]:
+    all_priced = all(line.hourly_rate is not None for line in lines)
+    subtotal_fees = (
+        round(sum(line.estimated_fees or 0 for line in lines), 2) if all_priced else None
+    )
+    subtotal_expenses = round(sum(line.estimated_expenses for line in lines), 2)
+    contingency_amount = (
+        round((subtotal_fees or 0) * contingency_percent / 100, 2) if all_priced else None
+    )
+    total = (
+        round((subtotal_fees or 0) + subtotal_expenses + (contingency_amount or 0), 2)
+        if all_priced
+        else None
+    )
+    total_min = None
+    total_max = None
+    if all_priced:
+        min_fees = round(
+            sum(
+                (line.estimated_hours_min or line.estimated_hours) * (line.hourly_rate or 0)
+                for line in lines
+            ),
+            2,
+        )
+        max_fees = round(
+            sum(
+                (line.estimated_hours_max or line.estimated_hours) * (line.hourly_rate or 0)
+                for line in lines
+            ),
+            2,
+        )
+        min_contingency = round(min_fees * contingency_percent / 100, 2)
+        max_contingency = round(max_fees * contingency_percent / 100, 2)
+        total_min = round(min_fees + subtotal_expenses + min_contingency, 2)
+        total_max = round(max_fees + subtotal_expenses + max_contingency, 2)
+    return (
+        subtotal_fees,
+        subtotal_expenses,
+        contingency_amount,
+        total,
+        total_min,
+        total_max,
+    )
+
+
+def _pricing_status(lines: list[BudgetLine]) -> str:
+    if not lines:
+        return "insufficient_information"
+    return "priced" if all(line.hourly_rate is not None for line in lines) else "hours_only"
+
+
+def _calculation_report(
+    lines: list[BudgetLine],
+    contingency_percent: float,
+    *,
+    mode: str,
+) -> BudgetCalculationReport:
+    (
+        subtotal_fees,
+        subtotal_expenses,
+        contingency_amount,
+        total,
+        _total_min,
+        _total_max,
+    ) = _budget_totals(lines, contingency_percent)
+    return BudgetCalculationReport(
+        calculation_report_id=new_id("calcreport"),
+        mode=mode,  # type: ignore[arg-type]
+        line_count=len(lines),
+        total_hours=round(sum(line.estimated_hours for line in lines), 2),
+        priced_line_count=sum(1 for line in lines if line.hourly_rate is not None),
+        unpriced_line_count=sum(1 for line in lines if line.hourly_rate is None),
+        subtotal_fees=subtotal_fees,
+        subtotal_expenses=subtotal_expenses,
+        contingency_percent=contingency_percent,
+        contingency_amount=contingency_amount,
+        total_proposed_budget=total,
+        rate_sources=sorted({line.rate_source for line in lines}),
+    )
+
+
+def _build_scenario_set(
+    template: dict[str, Any],
+    lines: list[BudgetLine],
+    contingency_percent: float,
+) -> BudgetScenarioSet:
+    phase_order = _phase_order(template)
+    scenarios: list[BudgetScenario] = []
+    for definition in _scenario_definitions(template):
+        included_phase_ids = _included_phase_ids(phase_order, definition["resolution_phase"])
+        scenario_lines = _lines_for_phases(lines, included_phase_ids)
+        (
+            subtotal_fees,
+            subtotal_expenses,
+            contingency_amount,
+            total,
+            total_min,
+            total_max,
+        ) = _budget_totals(scenario_lines, contingency_percent)
+        scenarios.append(
+            BudgetScenario(
+                scenario_id=definition["scenario_id"],
+                scenario_name=definition["scenario_name"],
+                description=definition["description"],
+                resolution_phase=definition["resolution_phase"],
+                included_phase_ids=included_phase_ids,
+                included_external_codes=_line_external_codes(scenario_lines),
+                included_line_count=len(scenario_lines),
+                total_hours=round(sum(line.estimated_hours for line in scenario_lines), 2),
+                subtotal_fees=subtotal_fees,
+                subtotal_expenses=subtotal_expenses,
+                contingency_percent=contingency_percent,
+                contingency_amount=contingency_amount,
+                total_proposed_budget=total,
+                total_budget_min=total_min,
+                total_budget_max=total_max,
+                pricing_status=_pricing_status(scenario_lines),  # type: ignore[arg-type]
+            )
+        )
+
+    priced_totals = [scenario.total_proposed_budget for scenario in scenarios]
+    if all(total is not None for total in priced_totals):
+        monotonic = all(
+            float(priced_totals[index]) <= float(priced_totals[index + 1])
+            for index in range(len(priced_totals) - 1)
+        )
+        basis = "total_proposed_budget"
+    else:
+        hours = [scenario.total_hours for scenario in scenarios]
+        monotonic = all(hours[index] <= hours[index + 1] for index in range(len(hours) - 1))
+        basis = "total_hours"
+    scenario_ids = {scenario.scenario_id for scenario in scenarios}
+    selected = "standard" if "standard" in scenario_ids else scenarios[-1].scenario_id
+    return BudgetScenarioSet(
+        scenario_set_id=new_id("budgetscenarios"),
+        selected_scenario_id=selected,
+        standard_scenario_id=selected,
+        scenarios=scenarios,
+        monotonic_total_order=monotonic,
+        total_order_basis=basis,  # type: ignore[arg-type]
+    )
+
+
+def _selected_scenario_lines(
+    template: dict[str, Any],
+    lines: list[BudgetLine],
+    scenario_set: BudgetScenarioSet,
+) -> list[BudgetLine]:
+    selected = next(
+        scenario
+        for scenario in scenario_set.scenarios
+        if scenario.scenario_id == scenario_set.selected_scenario_id
+    )
+    included_phase_ids = _included_phase_ids(_phase_order(template), selected.resolution_phase)
+    return _lines_for_phases(lines, included_phase_ids)
+
+
 def build_budget_proposal(
     packet: IntakePreflightPacket,
     confirmation: HumanConfirmation,
@@ -198,7 +428,6 @@ def build_budget_proposal(
     rates = {str(k): float(v) for k, v in profile.get("synthetic_hourly_rates", {}).items()}
     driver_values = _numeric_driver_values(case_drivers)
     lines: list[BudgetLine] = []
-    all_priced = True
     evidence_refs = _confirmed_matter_observed_refs(packet, confirmation)
 
     for phase in template.get("phases", []):
@@ -229,8 +458,6 @@ def build_budget_proposal(
 
             rate = rates.get(role)
             fees = round(hours * rate, 2) if rate is not None else None
-            if rate is None:
-                all_priced = False
             hours_min = float(task.get("estimated_hours_min", max(0.0, hours * 0.8)))
             hours_max = float(task.get("estimated_hours_max", hours * 1.25))
             if rate is not None:
@@ -263,34 +490,24 @@ def build_budget_proposal(
                 )
             )
 
-    subtotal_fees = (
-        round(sum(line.estimated_fees or 0 for line in lines), 2) if all_priced else None
-    )
-    subtotal_expenses = round(sum(line.estimated_expenses for line in lines), 2)
     contingency_percent = float(template.get("contingency_percent", 0.0))
-    contingency_amount = (
-        round((subtotal_fees or 0) * contingency_percent / 100, 2) if all_priced else None
+    scenario_set = _build_scenario_set(template, lines, contingency_percent)
+    selected_lines = _selected_scenario_lines(template, lines, scenario_set)
+    selected_scenario = next(
+        scenario
+        for scenario in scenario_set.scenarios
+        if scenario.scenario_id == scenario_set.selected_scenario_id
     )
-    total = (
-        round((subtotal_fees or 0) + subtotal_expenses + (contingency_amount or 0), 2)
-        if all_priced
-        else None
-    )
-    mode = "priced" if all_priced else "hours_only"
-    report = BudgetCalculationReport(
-        calculation_report_id=new_id("calcreport"),
-        mode=mode,
-        line_count=len(lines),
-        total_hours=round(sum(line.estimated_hours for line in lines), 2),
-        priced_line_count=sum(1 for line in lines if line.hourly_rate is not None),
-        unpriced_line_count=sum(1 for line in lines if line.hourly_rate is None),
-        subtotal_fees=subtotal_fees,
-        subtotal_expenses=subtotal_expenses,
-        contingency_percent=contingency_percent,
-        contingency_amount=contingency_amount,
-        total_proposed_budget=total,
-        rate_sources=sorted({line.rate_source for line in lines}),
-    )
+    (
+        subtotal_fees,
+        subtotal_expenses,
+        contingency_amount,
+        total,
+        _total_min,
+        _total_max,
+    ) = _budget_totals(selected_lines, contingency_percent)
+    mode = _pricing_status(selected_lines)
+    report = _calculation_report(selected_lines, contingency_percent, mode=mode)
 
     policy_exclusions = [
         "conflict clearance",
@@ -329,13 +546,14 @@ def build_budget_proposal(
         matter_family=confirmation.confirmed_matter_family,
         representation_posture=confirmation.confirmed_representation_posture,
         pricing_status=mode,
-        lines=lines,
+        lines=selected_lines,
         subtotal_fees=subtotal_fees,
         subtotal_expenses=subtotal_expenses,
         contingency_percent=contingency_percent,
         contingency_amount=contingency_amount,
         total_proposed_budget=total,
-        scenario_name=str(template.get("scenario_name", "baseline")),
+        scenario_name=selected_scenario.scenario_id,
+        scenario_set=scenario_set,
         calculation_report=report,
         assumptions=assumptions,
         exclusions=exclusions,

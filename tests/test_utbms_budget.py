@@ -38,7 +38,15 @@ def _line(budget, code):
 def test_demo_budget_uses_utbms_codes(tmp_path, repo_root):
     budget = _run(tmp_path, repo_root)
     codes = {line.external_code_candidate for line in budget.lines}
-    assert {"L330", "L340", "L240", "L310", "L450"} <= codes
+    assert {"L330", "L340", "L240", "L310"} <= codes
+    assert "L450" not in codes
+    assert budget.scenario_set is not None
+    trial = next(
+        scenario
+        for scenario in budget.scenario_set.scenarios
+        if scenario.scenario_id == "through_trial"
+    )
+    assert "L450" in trial.included_external_codes
     assert all(line.external_code_candidate.startswith("L") for line in budget.lines)
     assert budget.pricing_status == "priced"
     assert budget.total_proposed_budget is not None

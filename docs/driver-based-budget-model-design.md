@@ -1,6 +1,6 @@
 # Driver-Based Litigation Budget Model — Design
 
-**Status:** Proposed (design only; no code change)
+**Status:** Partially implemented in local candidate slices; stronger drivers, guideline constraints, and second matter family remain proposed.
 **Owner repo:** `LawFirm-os-intake` (vertical composition; owns no platform canon)
 **Authority posture:** all new vocabulary is `candidate`; promotion runs through the owning sibling repo
 
@@ -116,10 +116,9 @@ matter family with no approved template still returns `insufficient_information`
   versioned policy, never hidden in code — mirroring the practice-context discipline.
 - **Practice profiles** carry per-matter-family **default driver values** and base
   templates (extends today's `budget_templates`).
-- **`budget.py`** gains a deterministic driver-resolution + scaling step; the flat
-  path remains as the `profile_default`-only / `scenario=standard` special case for
-  back-compat.
-- New typed artifacts: `CaseDriverProfile`, `BudgetScenario`, `ScenarioSet`
+- **`budget.py`** now has deterministic count-driver scaling and emits the
+  `standard` scenario as the compatibility proposal surface.
+- New typed artifacts: `CaseDriverProfile`, `BudgetScenario`, `BudgetScenarioSet`
   (all `candidate`). UTBMS/LEDES unchanged as `external_code_candidate`.
 
 ## 7. Calibration with public + synthetic data

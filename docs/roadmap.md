@@ -4,7 +4,7 @@ Status is tracked for the current governed build-out branch. Each item remains s
 
 ## 1. Budget Template Truth Layer
 
-Status: in progress, mostly implemented.
+Status: implemented for the current synthetic slice.
 
 - `budget_form_mapping_report.json` proves a matter-specific budget maps into a carrier-style UTBMS workbook before filling a copy.
 - `budget-form-audit` and `budget_form_template_audit_report.json` test a workbook before a matter-specific budget exists.
@@ -13,9 +13,14 @@ Status: in progress, mostly implemented.
 
 ## 2. Budget V1 Scenario Sets
 
-Status: pending.
+Status: implemented for the current synthetic slice.
 
 Emit early, standard, and through-trial budget branches with ranges while preserving the current standard proposal path for compatibility.
+
+- `BudgetScenarioSet` is embedded in `legal_budget_proposal.json` and exported as a local candidate schema.
+- The legacy proposal totals and `budget.lines` map to `standard`.
+- `early_resolution`, `standard`, and `through_trial` branch totals are monotonic; hours-only budgets prove monotonicity by hours.
+- Scenario branch details render in `legal_budget_review_form.md` and `matter_opening_review_package.md`.
 
 ## 3. Stronger Budget Drivers
 
