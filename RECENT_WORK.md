@@ -184,3 +184,9 @@
 - Extended `review_package_completeness_report.json` to verify required sections in the linked intake and budget review forms.
 - The report now fails if the intake form loses source coverage, reviewer decision, outcome handling, or prohibited-next-step sections.
 - The report also fails if the budget form loses calculation, budget line, support, review-check, or submission-boundary sections.
+
+## Linked-review-form evidence and boundary slice - 2026-06-24
+
+- Extended the review-package completeness report to verify linked review forms still expose evidence hashes where source-bound evidence exists and preserve non-authorization boundary text.
+- Added regression coverage for intake-form evidence hash loss, budget-form evidence hash loss, and budget-form submission-boundary loss.
+- Added smoke coverage for the new `linked_review_forms_preserve_evidence_and_boundaries` acceptance check.

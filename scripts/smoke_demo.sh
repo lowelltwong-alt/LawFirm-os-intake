@@ -66,5 +66,6 @@ grep -q "## Run Ledger Summary" ".lawfirm-os-intake/smoke/budget/matter_opening_
 grep -q "budget step 4: conflict_seed_and_budget_proposal_built" ".lawfirm-os-intake/smoke/budget/matter_opening_review_package.md"
 grep -q '"status": "passed"' ".lawfirm-os-intake/smoke/budget/review_package_completeness_report.json"
 grep -q "linked_review_forms_complete" ".lawfirm-os-intake/smoke/budget/review_package_completeness_report.json"
+grep -q "linked_review_forms_preserve_evidence_and_boundaries" ".lawfirm-os-intake/smoke/budget/review_package_completeness_report.json"
 grep -q "review_package_completeness_report.json" ".lawfirm-os-intake/smoke/budget/matter_opening_review_package.md"
 grep -q "blocked_pending_conflicts_and_engagement" ".lawfirm-os-intake/smoke/budget/safety_gate_report.json"

@@ -106,7 +106,7 @@ The same package now renders authority/precondition checks, source inventory, ex
 
 The budget run also writes `review_package_completeness_report.json`. This deterministic report proves the final package includes required local artifact refs, required markdown sections, human gates, blockers, safety-gate proof, dry-run Exception Lake readiness, run ledgers, and non-authorization flags before the package is accepted.
 
-The completeness report also checks that the linked intake and budget review forms preserve their required human-review sections, so those standalone forms cannot silently lose source coverage, outcome handling, budget lines, support items, or submission-boundary content while the consolidated package still passes.
+The completeness report also checks that the linked intake and budget review forms preserve their required human-review sections, evidence-hash visibility where source-bound evidence exists, and non-authorization boundary text, so those standalone forms cannot silently lose source coverage, outcome handling, budget lines, support items, or submission-boundary content while the consolidated package still passes.
 
 Budget runs also write a typed human review outcome record and append it to `human_confirmation_history.jsonl`. Corrections are represented as later records with `supersedes_confirmation_id`; prior review outcomes are not silently mutated.
 

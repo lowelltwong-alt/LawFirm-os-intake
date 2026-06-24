@@ -9,7 +9,7 @@ from .models import (
     ReviewPackageManifest,
     SafetyGateReport,
 )
-from .util import new_id, now_iso
+from .util import load_json, new_id, now_iso
 
 
 REQUIRED_REVIEW_SECTIONS = [
@@ -55,6 +55,32 @@ REQUIRED_LINKED_REVIEW_FORM_SECTIONS = {
         "## Review Checks",
         "## Submission Boundary",
     ],
+}
+
+REQUIRED_LINKED_REVIEW_FORM_CONTENT = {
+    "preflight_intake_review_form": [
+        "This form does not clear conflicts",
+        "docket deadlines",
+        "open a matter",
+    ],
+    "legal_budget_review_form": [
+        "Client/carrier submission authorized: False",
+        "The generated proposal is not authorized for client or carrier submission.",
+    ],
+}
+
+LINKED_REVIEW_FORM_SOURCE_ARTIFACT_KEYS = {
+    "preflight_intake_review_form": "preflight_packet",
+    "legal_budget_review_form": "legal_budget_proposal",
+}
+
+SOURCE_BOUND_EVIDENCE_MARKER = "] sha=sha256:"
+SOURCE_BOUND_EVIDENCE_REF_KEYS = {
+    "evidence_refs",
+    "observed_evidence_refs",
+    "decision_evidence_refs",
+    "confirmed_party_evidence_refs",
+    "segment_evidence_refs",
 }
 
 REQUIRED_ARTIFACT_KEYS = [
@@ -158,6 +184,50 @@ def _read_text(path: Path) -> str:
     return path.read_text(encoding="utf-8")
 
 
+def _read_json(path: Path) -> object | None:
+    if str(path) == "." or not path.exists() or not path.is_file():
+        return None
+    try:
+        return load_json(path)
+    except (OSError, ValueError):
+        return None
+
+
+def _is_source_bound_evidence_ref(value: object) -> bool:
+    if not isinstance(value, dict):
+        return False
+    return bool(
+        value.get("source_id")
+        and value.get("segment_id")
+        and value.get("sha256")
+        and value.get("start_offset") is not None
+        and value.get("end_offset") is not None
+    )
+
+
+def _has_source_bound_evidence_refs(value: object) -> bool:
+    if isinstance(value, dict):
+        for key, nested in value.items():
+            if key in SOURCE_BOUND_EVIDENCE_REF_KEYS and isinstance(nested, list):
+                if any(_is_source_bound_evidence_ref(item) for item in nested):
+                    return True
+            if _has_source_bound_evidence_refs(nested):
+                return True
+    if isinstance(value, list):
+        return any(_has_source_bound_evidence_refs(item) for item in value)
+    return False
+
+
+def _linked_form_expected_content(key: str, artifact_refs: dict[str, str]) -> list[str]:
+    required = list(REQUIRED_LINKED_REVIEW_FORM_CONTENT.get(key, []))
+    source_artifact_key = LINKED_REVIEW_FORM_SOURCE_ARTIFACT_KEYS.get(key)
+    if source_artifact_key:
+        source_artifact = _read_json(Path(artifact_refs.get(source_artifact_key, "")))
+        if _has_source_bound_evidence_refs(source_artifact):
+            required.append(SOURCE_BOUND_EVIDENCE_MARKER)
+    return required
+
+
 def _manifest_ref(manifest: ReviewPackageManifest) -> str:
     return manifest.artifact_refs.get("review_package_manifest", "")
 
@@ -171,12 +241,23 @@ def build_review_package_completeness_report(
 ) -> ReviewPackageCompletenessReport:
     artifact_refs = manifest.artifact_refs
     review_text = _read_text(review_package_path)
+    linked_review_form_texts = {
+        key: _read_text(Path(artifact_refs.get(key, "")))
+        for key in REQUIRED_LINKED_REVIEW_FORM_SECTIONS
+    }
     linked_review_form_missing_sections: dict[str, list[str]] = {}
     for key, required_sections in REQUIRED_LINKED_REVIEW_FORM_SECTIONS.items():
-        form_text = _read_text(Path(artifact_refs.get(key, "")))
+        form_text = linked_review_form_texts[key]
         missing = [section for section in required_sections if section not in form_text]
         if missing:
             linked_review_form_missing_sections[key] = missing
+    linked_review_form_missing_content: dict[str, list[str]] = {}
+    for key in REQUIRED_LINKED_REVIEW_FORM_CONTENT:
+        form_text = linked_review_form_texts.get(key, "")
+        required_phrases = _linked_form_expected_content(key, artifact_refs)
+        missing = [phrase for phrase in required_phrases if phrase not in form_text]
+        if missing:
+            linked_review_form_missing_content[key] = missing
     missing_keys = [key for key in REQUIRED_ARTIFACT_KEYS if not artifact_refs.get(key)]
     paths_missing = [
         key
@@ -256,6 +337,16 @@ def build_review_package_completeness_report(
                 artifact_refs.get("legal_budget_review_form", ""),
             ],
             {"missing_sections_by_form": linked_review_form_missing_sections},
+        ),
+        _check(
+            "linked_review_forms_preserve_evidence_and_boundaries",
+            not linked_review_form_missing_content,
+            "Linked intake and budget review forms preserve evidence hashes and non-authorization boundary text.",
+            [
+                artifact_refs.get("preflight_intake_review_form", ""),
+                artifact_refs.get("legal_budget_review_form", ""),
+            ],
+            {"missing_content_by_form": linked_review_form_missing_content},
         ),
         _check(
             "required_human_gates_present",
