@@ -91,6 +91,11 @@ Add a structured-model adapter only behind existing gates, with no external writ
 
 ## 9. Rust Readiness
 
-Status: pending.
+Status: implemented for the current synthetic slice.
 
 Keep Python as reference runtime while adding benchmark thresholds and parity requirements for future Rust hot paths.
+
+- Added `config/rust-ingestion-transition-policy.json` as the local candidate policy for profiling thresholds, benchmark dimensions, hot-path scope, forbidden Rust scope, parity dimensions, and transition gates.
+- `ingestion_volume_profile.json` and `rust_ingestion_readiness_report.json` now carry `rust_transition_policy_ref` and load their gates from that manifest.
+- Python remains the reference implementation; the policy keeps `rust_replacement_allowed=false`, `no_rust_runtime_added=true`, and `external_writes_performed=false`.
+- A future Rust adapter still requires profiling, golden parity, synthetic fixture and holdout parity, schema compatibility, Orchestrator adapter review, and Substrate review for promoted contract changes.

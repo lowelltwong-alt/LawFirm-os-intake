@@ -1,5 +1,11 @@
 # Recent Work
 
+## Rust transition policy manifest slice - 2026-06-24
+
+- Added `config/rust-ingestion-transition-policy.json` as the local candidate policy for Rust profiling thresholds, benchmark dimensions, hot-path scope, forbidden scope, parity dimensions, and transition gates.
+- `ingestion_volume_profile.json` and `rust_ingestion_readiness_report.json` now carry `rust_transition_policy_ref` and load their Rust-readiness posture from that manifest.
+- Kept Python as the reference runtime with `rust_replacement_allowed=false`, `no_rust_runtime_added=true`, and no external writes.
+
 ## Structured-model comparison gate slice - 2026-06-24
 
 - Strengthened `model_adapter_report.json` so `--adapter structured-model` requires reviewed synthetic gold and records typed-JSON validation, deterministic baseline projection hash, structured dry-run candidate hash, comparison status, and fixture-gold status.

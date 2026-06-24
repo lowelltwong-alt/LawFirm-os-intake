@@ -428,6 +428,7 @@ def _ingestion_volume_profile_lines(artifact_refs: dict[str, str]) -> list[str]:
     transition_gates = ", ".join(payload.get("required_rust_transition_gates") or []) or "none"
     return [
         *lines,
+        f"- Rust transition policy: `{payload.get('rust_transition_policy_ref', 'unknown')}`",
         f"- Ingestion profile decision: {payload.get('decision', 'unknown')}",
         f"- Rust adapter proposal state: {payload.get('rust_adapter_proposal_state', 'unknown')}",
         "- Profiling before Rust required: "

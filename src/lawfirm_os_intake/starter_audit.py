@@ -831,6 +831,7 @@ def build_starter_release_audit_report(
                 and ingestion_result.parity_contract == "rust_ready_ingestion_v0_1"
                 and ingestion_result.rust_replacement_allowed is False
                 and ingestion_volume
+                and ingestion_volume.rust_transition_policy_ref
                 and ingestion_volume.rust_replacement_allowed is False
                 and ingestion_volume.required_performance_profile_dimensions
                 and "peak_memory_mb" in ingestion_volume.required_performance_profile_dimensions
@@ -838,6 +839,8 @@ def build_starter_release_audit_report(
                 and ingestion_volume.required_rust_transition_gates
                 and rust_readiness
                 and rust_readiness.status == "passed"
+                and rust_readiness.rust_transition_policy_ref
+                == ingestion_volume.rust_transition_policy_ref
                 and rust_readiness.rust_replacement_allowed is False
             ),
             "Future Rust ingestion has a parity boundary and profiling signal without replacement authorization.",

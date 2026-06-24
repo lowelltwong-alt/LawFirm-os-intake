@@ -3,46 +3,8 @@ from __future__ import annotations
 from collections import Counter
 
 from .models import IngestionResult, IngestionVolumeProfile
+from .rust_transition_policy import RUST_TRANSITION_POLICY_REF, load_rust_transition_policy
 from .util import new_id, now_iso
-
-
-PROFILE_THRESHOLDS = {
-    "source_count": 10,
-    "total_source_characters": 5000,
-    "max_source_characters": 3000,
-    "segment_count": 60,
-    "max_segment_characters": 2500,
-}
-
-REQUIRED_RUST_TRANSITION_GATES = [
-    "hot_path_performance_profile",
-    "python_reference_golden_parity",
-    "synthetic_fixture_and_holdout_parity",
-    "schema_compatibility_export",
-    "orchestrator_adapter_review",
-    "semantic_substrate_contract_review_if_promoted",
-]
-
-CANDIDATE_RUST_HOT_PATH_SCOPE = [
-    "source_inventory",
-    "source_coverage_summary",
-    "structural_segmentation",
-    "sha256_hashing",
-    "segment_evidence_ref_emission",
-    "schema_compatible_ingestion_result_serialization",
-]
-
-REQUIRED_PERFORMANCE_PROFILE_DIMENSIONS = [
-    "wall_clock_ms_by_ingestion_stage",
-    "peak_memory_mb",
-    "characters_per_second",
-    "sources_per_second",
-    "segment_count_and_segment_size_distribution",
-    "hashing_and_segmentation_cpu_time",
-    "serialized_ingestion_result_bytes",
-    "bounded_concurrency_plan",
-    "python_to_rust_parity_diff_count",
-]
 
 
 def _counts(values: list[str]) -> dict[str, int]:
@@ -57,6 +19,7 @@ def _state_counts(result: IngestionResult) -> dict[str, int]:
 def build_ingestion_volume_profile(
     *, run_id: str, ingestion_result: IngestionResult
 ) -> IngestionVolumeProfile:
+    policy = load_rust_transition_policy()
     source_lengths = [item.character_count for item in ingestion_result.source_inventory]
     segment_lengths = [
         segment.end_offset - segment.start_offset for segment in ingestion_result.segments
@@ -76,7 +39,7 @@ def build_ingestion_volume_profile(
         "segment_count": segment_count,
         "max_segment_characters": max_segment_characters,
     }
-    for key, threshold in PROFILE_THRESHOLDS.items():
+    for key, threshold in policy.profile_thresholds.items():
         if observed_values[key] >= threshold:
             scale_signals.append(f"{key}_at_or_above_profile_threshold")
 
@@ -120,18 +83,19 @@ def build_ingestion_volume_profile(
         segment_type_counts=_counts(
             [segment.segment_type for segment in ingestion_result.segments]
         ),
-        profile_thresholds=PROFILE_THRESHOLDS,
+        rust_transition_policy_ref=RUST_TRANSITION_POLICY_REF,
+        profile_thresholds=policy.profile_thresholds,
         scale_signals=scale_signals,
         compute_pressure_signals=compute_pressure_signals,
-        required_performance_profile_dimensions=REQUIRED_PERFORMANCE_PROFILE_DIMENSIONS,
-        candidate_rust_hot_path_scope=CANDIDATE_RUST_HOT_PATH_SCOPE,
+        required_performance_profile_dimensions=(policy.required_performance_profile_dimensions),
+        candidate_rust_hot_path_scope=policy.candidate_rust_hot_path_scope,
         observed_scale_band="profile_candidate" if requires_profile else "starter_fixture",
         performance_profile_required_before_rust=requires_profile,
         rust_replacement_allowed=False,
         rust_adapter_proposal_state=(
             "profiling_required_before_adapter_proposal" if requires_profile else "not_warranted"
         ),
-        required_rust_transition_gates=REQUIRED_RUST_TRANSITION_GATES,
+        required_rust_transition_gates=policy.required_rust_transition_gates,
         decision="profile_before_rust_adapter" if requires_profile else "keep_python_reference",
         rationale=rationale,
         generated_at=now_iso(),

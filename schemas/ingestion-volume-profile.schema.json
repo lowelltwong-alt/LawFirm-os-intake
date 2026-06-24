@@ -73,6 +73,10 @@
       "title": "Segment Type Counts",
       "type": "object"
     },
+    "rust_transition_policy_ref": {
+      "title": "Rust Transition Policy Ref",
+      "type": "string"
+    },
     "profile_thresholds": {
       "additionalProperties": {
         "type": "integer"
@@ -175,6 +179,7 @@
     "source_type_counts",
     "source_state_counts",
     "segment_type_counts",
+    "rust_transition_policy_ref",
     "profile_thresholds",
     "observed_scale_band",
     "performance_profile_required_before_rust",

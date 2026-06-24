@@ -25,6 +25,8 @@
         "schemas/source-bundle.schema.json",
         "schemas/segment.schema.json",
         "schemas/model-adapter-report.schema.json",
+        "schemas/rust-transition-policy.schema.json",
+        "config/rust-ingestion-transition-policy.json",
         "schemas/evidence-completeness-report.schema.json",
         "schemas/context-boundary-report.schema.json",
         "schemas/review-package-completeness-report.schema.json"

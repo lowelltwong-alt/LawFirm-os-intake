@@ -7,47 +7,8 @@ from .models import (
     RustIngestionReadinessReport,
     SourceBundle,
 )
+from .rust_transition_policy import RUST_TRANSITION_POLICY_REF, load_rust_transition_policy
 from .util import digest_text, new_id, now_iso
-
-
-ELIGIBLE_HOT_PATH_SCOPE = [
-    "source_inventory",
-    "source_coverage_summary",
-    "structural_segmentation",
-    "sha256_hashing",
-    "segment_evidence_ref_emission",
-]
-
-FORBIDDEN_RUST_SCOPE = [
-    "legal_classification",
-    "party_role_assignment",
-    "matter_routing",
-    "conflict_clearance",
-    "budget_decisioning",
-    "human_confirmation",
-    "exception_lake_persistence",
-    "connector_or_external_writes",
-    "canonical_authority_changes",
-]
-
-REQUIRED_PARITY_DIMENSIONS = [
-    "source_ids",
-    "source_hashes",
-    "source_read_and_availability_states",
-    "source_coverage_summary",
-    "segment_ids",
-    "segment_types",
-    "segment_sequence",
-    "structural_paths",
-    "parent_segment_ids",
-    "message_indices",
-    "attachment_refs",
-    "start_and_end_offsets",
-    "segment_sha256_hashes",
-    "prompt_injection_source_flags",
-    "segment_evidence_refs",
-    "schema_compatible_json",
-]
 
 
 def _check(
@@ -225,6 +186,7 @@ def build_rust_ingestion_readiness_report(
     bundle: SourceBundle,
     ingestion_result: IngestionResult,
 ) -> RustIngestionReadinessReport:
+    policy = load_rust_transition_policy()
     checks = [
         _adapter_boundary_check(ingestion_result),
         _inventory_coverage_check(bundle, ingestion_result),
@@ -242,10 +204,11 @@ def build_rust_ingestion_readiness_report(
         status=status,
         current_adapter_kind=ingestion_result.adapter_kind,
         parity_contract=ingestion_result.parity_contract,
+        rust_transition_policy_ref=RUST_TRANSITION_POLICY_REF,
         rust_replacement_allowed=ingestion_result.rust_replacement_allowed,
-        eligible_hot_path_scope=ELIGIBLE_HOT_PATH_SCOPE,
-        forbidden_rust_scope=FORBIDDEN_RUST_SCOPE,
-        required_parity_dimensions=REQUIRED_PARITY_DIMENSIONS,
+        eligible_hot_path_scope=policy.eligible_hot_path_scope,
+        forbidden_rust_scope=policy.forbidden_rust_scope,
+        required_parity_dimensions=policy.required_parity_dimensions,
         checks=checks,
         generated_at=now_iso(),
     )

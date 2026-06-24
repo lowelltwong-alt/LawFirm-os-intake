@@ -12,6 +12,10 @@ from lawfirm_os_intake.rust_readiness import (
     build_rust_ingestion_readiness_report,
     enforce_rust_ingestion_readiness,
 )
+from lawfirm_os_intake.rust_transition_policy import (
+    RUST_TRANSITION_POLICY_REF,
+    load_rust_transition_policy,
+)
 from lawfirm_os_intake.util import load_json, load_jsonl
 from lawfirm_os_intake.workflow import run_preflight
 
@@ -83,6 +87,7 @@ def test_preflight_writes_passing_rust_ingestion_readiness_report(tmp_path, repo
     assert report.status == "passed"
     assert report.current_adapter_kind == "python_reference_ingestion_adapter"
     assert report.parity_contract == "rust_ready_ingestion_v0_1"
+    assert report.rust_transition_policy_ref == RUST_TRANSITION_POLICY_REF
     assert report.rust_replacement_allowed is False
     assert "source_inventory" in report.eligible_hot_path_scope
     assert "legal_classification" in report.forbidden_rust_scope
@@ -105,6 +110,7 @@ def test_preflight_writes_ingestion_volume_profile(tmp_path, repo_root):
     assert packet.ingestion_volume_profile_ref == str(profile_path)
     assert profile.ingestion_result_id == result.ingestion_result_id
     assert profile.bundle_id == result.bundle_id
+    assert profile.rust_transition_policy_ref == RUST_TRANSITION_POLICY_REF
     assert profile.source_count == len(result.source_inventory)
     assert profile.segment_count == len(result.segments)
     assert profile.rust_replacement_allowed is False
@@ -142,6 +148,33 @@ def test_ingestion_volume_profile_requires_profiling_for_high_volume_proxy(repo_
     assert "hot_path_performance_profile" in profile.required_rust_transition_gates
     assert "orchestrator_adapter_review" in profile.required_rust_transition_gates
     assert "legal_classification" not in profile.model_dump(mode="json")
+
+
+def test_rust_transition_policy_manifest_governs_profile_and_readiness(repo_root):
+    policy = load_rust_transition_policy()
+    bundle = SourceBundle.model_validate(
+        load_json(repo_root / "examples/synthetic/inbound/high-volume-ingestion-proxy.json")
+    )
+    result = build_ingestion_result(bundle)
+    profile = build_ingestion_volume_profile(run_id="run_policy", ingestion_result=result)
+    readiness = build_rust_ingestion_readiness_report(
+        run_id="run_policy",
+        bundle=bundle,
+        ingestion_result=result,
+    )
+
+    assert policy.status == "local_candidate"
+    assert policy.rust_replacement_allowed is False
+    assert policy.no_rust_runtime_added is True
+    assert policy.external_writes_performed is False
+    assert profile.rust_transition_policy_ref == RUST_TRANSITION_POLICY_REF
+    assert readiness.rust_transition_policy_ref == RUST_TRANSITION_POLICY_REF
+    assert profile.profile_thresholds == policy.profile_thresholds
+    assert profile.required_rust_transition_gates == policy.required_rust_transition_gates
+    assert profile.candidate_rust_hot_path_scope == policy.candidate_rust_hot_path_scope
+    assert readiness.eligible_hot_path_scope == policy.eligible_hot_path_scope
+    assert readiness.forbidden_rust_scope == policy.forbidden_rust_scope
+    assert readiness.required_parity_dimensions == policy.required_parity_dimensions
 
 
 def test_rust_ingestion_readiness_fails_on_source_hash_drift(repo_root):

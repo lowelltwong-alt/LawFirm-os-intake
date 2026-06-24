@@ -12,7 +12,7 @@ repo owners must review and promote any accepted contracts inside their own repo
 
 - Intake source bundle, source inventory, and ingestion result contracts.
 - Model adapter report contract for deterministic or structured-model dry-run posture, prompt hashes, model/tool budget, tool denylist, typed-output requirement, human gates, critic requirement, deterministic baseline authority, typed-JSON validation, deterministic baseline hash comparison, structured dry-run candidate hash, and reviewed synthetic-gold status.
-- Ingestion volume profile and Rust ingestion readiness report contracts for future high-volume source inventory, segmentation, hashing, evidence-ref parity checks, compute pressure signals, required benchmark dimensions, and transition gates.
+- Rust transition policy, ingestion volume profile, and Rust ingestion readiness report contracts for future high-volume source inventory, segmentation, hashing, evidence-ref parity checks, compute pressure signals, required benchmark dimensions, hot-path scope, forbidden scope, parity dimensions, and transition gates.
 - Evidence ref contract with source ID, segment ID, segment offsets, and segment hash.
 - Human confirmation contract, including `confirmed`, `unknown`, `needs_more_information`, `human_only`, and `declined_or_referred` outcomes, decision evidence refs, and confirmed-party evidence refs.
 - Human review outcome record contract for append-only confirmation history, superseding corrections, non-confirmed blocked states, and required next gates.

@@ -93,6 +93,23 @@ class IngestionResult(StrictModel):
     generated_at: str
 
 
+class RustTransitionPolicy(StrictModel):
+    schema_version: str = "0.1"
+    policy_id: str
+    status: Literal["local_candidate"]
+    authority: str
+    profile_thresholds: dict[str, int]
+    required_rust_transition_gates: list[str]
+    candidate_rust_hot_path_scope: list[str]
+    eligible_hot_path_scope: list[str]
+    forbidden_rust_scope: list[str]
+    required_parity_dimensions: list[str]
+    required_performance_profile_dimensions: list[str]
+    rust_replacement_allowed: Literal[False] = False
+    no_rust_runtime_added: Literal[True] = True
+    external_writes_performed: Literal[False] = False
+
+
 class RustIngestionReadinessCheck(StrictModel):
     check_id: str
     status: Literal["passed", "failed"]
@@ -109,6 +126,7 @@ class RustIngestionReadinessReport(StrictModel):
     status: Literal["passed", "failed"]
     current_adapter_kind: str
     parity_contract: Literal["rust_ready_ingestion_v0_1"]
+    rust_transition_policy_ref: str
     rust_replacement_allowed: Literal[False] = False
     eligible_hot_path_scope: list[str]
     forbidden_rust_scope: list[str]
@@ -132,6 +150,7 @@ class IngestionVolumeProfile(StrictModel):
     source_type_counts: dict[str, int]
     source_state_counts: dict[str, int]
     segment_type_counts: dict[str, int]
+    rust_transition_policy_ref: str
     profile_thresholds: dict[str, int]
     scale_signals: list[str] = Field(default_factory=list)
     compute_pressure_signals: list[str] = Field(default_factory=list)

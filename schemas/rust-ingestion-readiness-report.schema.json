@@ -74,6 +74,10 @@
       "title": "Parity Contract",
       "type": "string"
     },
+    "rust_transition_policy_ref": {
+      "title": "Rust Transition Policy Ref",
+      "type": "string"
+    },
     "rust_replacement_allowed": {
       "const": false,
       "default": false,
@@ -121,6 +125,7 @@
     "status",
     "current_adapter_kind",
     "parity_contract",
+    "rust_transition_policy_ref",
     "eligible_hot_path_scope",
     "forbidden_rust_scope",
     "required_parity_dimensions",

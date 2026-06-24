@@ -42,8 +42,14 @@ Each preflight run writes four Rust-related artifacts:
 - `ingestion_volume_profile.json`: deterministic source and segment scale signals;
 - `rust_ingestion_readiness_report.json`: proof that the run is a valid future parity target.
 
+The local candidate policy lives at `config/rust-ingestion-transition-policy.json`.
+It names profiling thresholds, required benchmark dimensions, candidate Rust
+hot-path scope, forbidden Rust scope, parity dimensions, and transition gates.
+It is not Semantic Substrate canon and does not authorize a Rust runtime.
+
 `ingestion_volume_profile.json` now carries:
 
+- `rust_transition_policy_ref`;
 - `decision`;
 - `performance_profile_required_before_rust`;
 - `compute_pressure_signals`;
