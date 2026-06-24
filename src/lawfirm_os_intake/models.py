@@ -759,6 +759,28 @@ class ReviewPackageCompletenessReport(StrictModel):
     generated_at: str
 
 
+class StarterReleaseAuditCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    requirement_refs: list[str] = Field(default_factory=list)
+    message: str
+    artifact_refs: list[str] = Field(default_factory=list)
+    details: dict[str, Any] = Field(default_factory=dict)
+
+
+class StarterReleaseAuditReport(StrictModel):
+    schema_version: str = "0.1"
+    starter_release_audit_report_id: str
+    status: Literal["passed", "failed"]
+    demo_dir: str
+    preflight_dir: str | None = None
+    budget_dir: str | None = None
+    non_authoritative: Literal[True] = True
+    external_writes_performed: Literal[False] = False
+    checks: list[StarterReleaseAuditCheck]
+    generated_at: str
+
+
 class SafetyGateCheck(StrictModel):
     check_id: str
     status: Literal["passed", "failed"]

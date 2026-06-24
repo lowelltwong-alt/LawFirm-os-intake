@@ -34,6 +34,7 @@ from lawfirm_os_intake.models import (  # noqa: E402
     SafetyGateReport,
     Segment,
     SourceBundle,
+    StarterReleaseAuditReport,
 )
 
 MODELS = {
@@ -62,6 +63,7 @@ MODELS = {
     "exception-lake-readiness-report.schema.json": ExceptionLakeReadinessReport,
     "review-package-manifest.schema.json": ReviewPackageManifest,
     "review-package-completeness-report.schema.json": ReviewPackageCompletenessReport,
+    "starter-release-audit-report.schema.json": StarterReleaseAuditReport,
     "safety-gate-report.schema.json": SafetyGateReport,
 }
 

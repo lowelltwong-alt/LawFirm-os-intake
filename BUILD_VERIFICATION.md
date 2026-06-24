@@ -4,25 +4,27 @@ Verified in the artifact build environment on 2026-06-24:
 
 ```text
 PYTHONPATH=src python scripts/export_schemas.py
-# exported 23 schemas
+# exported 27 schemas
 
 PYTHONPATH=src python scripts/validate_repo.py
 # repository validation passed
 
 PYTHONPATH=src python -m pytest -q
-# 71 passed
+# 78 passed
 
 PYTHONPATH=src ruff check src tests scripts
 # All checks passed
 
 PYTHONPATH=src ruff format --check src tests scripts
-# 49 files already formatted
+# 55 files already formatted
 
 PYTHONPATH=src bash scripts/smoke_demo.sh
-# completed without error
+# completed without error and wrote budget/starter_release_audit_report.json
 ```
 
 The monetary result is a synthetic test calculation, not a fee quote or approved budget.
+
+The smoke demo now also writes `starter_release_audit_report.json` after the north-star demo finishes. That report is a local, non-authoritative starter release audit over generated artifacts; it fails if required outputs, synthetic-only scope, source-bound evidence refs, human gates, carrier/client separation, conflict/budget boundaries, dry-run Exception Lake posture, safety boundary, fixture-gold gates, run ledgers, candidate-registry noncanonical status, or Rust-readiness posture drift.
 
 The current demo also emits local `exception_lake_candidates.jsonl` files in preflight and budget outputs. These are dry-run candidates only; they are not canonical Exception Lake admissions and include no raw legal payload.
 

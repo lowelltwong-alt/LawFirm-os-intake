@@ -85,3 +85,8 @@ grep -q "linked_review_forms_preserve_evidence_and_boundaries" ".lawfirm-os-inta
 grep -q "preflight_ingestion_volume_profile" ".lawfirm-os-intake/smoke/budget/review_package_completeness_report.json"
 grep -q "review_package_completeness_report.json" ".lawfirm-os-intake/smoke/budget/matter_opening_review_package.md"
 grep -q "blocked_pending_conflicts_and_engagement" ".lawfirm-os-intake/smoke/budget/safety_gate_report.json"
+python scripts/audit_starter_release.py --demo-dir .lawfirm-os-intake/smoke
+test -s ".lawfirm-os-intake/smoke/budget/starter_release_audit_report.json"
+grep -q '"status": "passed"' ".lawfirm-os-intake/smoke/budget/starter_release_audit_report.json"
+grep -q "budget_boundary_and_math_hold" ".lawfirm-os-intake/smoke/budget/starter_release_audit_report.json"
+grep -q "exception_lake_candidates_are_dry_run_and_expected" ".lawfirm-os-intake/smoke/budget/starter_release_audit_report.json"

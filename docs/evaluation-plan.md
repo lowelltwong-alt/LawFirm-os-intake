@@ -30,6 +30,8 @@ Grade emitted packets and terminal state rather than requiring an exact internal
 
 The CLI supports `--fixture-gold` for reviewed synthetic gold. It writes `fixture_gold_report.json` and fails closed on drift in expected source coverage, top-three matter recall, role candidates, deadline candidates, missing information, dry-run exception labels, conflict/budget boundaries, safety status, final blockers, or external-write boundaries.
 
+The smoke harness also runs `scripts/audit_starter_release.py` after the north-star demo. It writes `starter_release_audit_report.json`, a local non-authoritative artifact-level audit over the generated demo outputs. The audit checks required artifacts, synthetic-only scope, source-bound refs, human gates, carrier/client separation, conflict-seed boundary, budget boundary, Exception Lake dry-run posture, terminal safety boundary, fixture-gold status, run ledgers, noncanonical candidate registries, and Rust-readiness posture.
+
 ### Counterfactual evals
 
 Same source, different practice context. Evidence must remain unchanged.
@@ -67,6 +69,7 @@ Measure review time, correction count, unknown selection, evidence-navigation bu
 - inspect traces and artifacts, not scores alone;
 - retain reviewer disagreement rather than forcing false gold.
 - keep `fixture_gold_report.json` local and non-authoritative; it is evaluation evidence, not canonical platform truth.
+- keep `starter_release_audit_report.json` local and non-authoritative; it proves starter artifact invariants only and does not replace tests, CI, Semantic Substrate promotion, Orchestrator runtime ownership, or human legal review.
 
 ## Graduation gates
 
