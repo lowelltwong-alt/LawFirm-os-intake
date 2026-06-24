@@ -81,6 +81,7 @@ The demo emits:
 |   |-- intake_review_form.md
 |   |-- exception_lake_candidates.jsonl
 |   |-- exception_lake_readiness_report.json
+|   |-- exception_lake_handoff_manifest.json
 |   |-- evidence_graph.json
 |   `-- run_ledger.jsonl
 `-- budget/
@@ -93,6 +94,7 @@ The demo emits:
     |-- matter_opening_readiness.json
     |-- exception_lake_candidates.jsonl
     |-- exception_lake_readiness_report.json
+    |-- exception_lake_handoff_manifest.json
     |-- safety_gate_report.json
     |-- matter_opening_review_package.md
     |-- review_package_manifest.json
@@ -103,7 +105,7 @@ The demo emits:
 
 The consolidated `matter_opening_review_package.md` is the human-facing north-star artifact. It points back to the structured packets and tells the reviewer what is known, which candidate alternatives were considered, what remains uncertain, which human gates remain, which conflict-search seeds to use, what budget scenario and line items were proposed, which exception candidates exist, what the safety gate verified, and why the workflow is still blocked. Reviewer-facing known facts, candidate alternatives, party-role alternatives, deadlines, missing-information findings, critic findings, conflict terms, budget lines, and budget supports show their evidence refs inline with source IDs, segment IDs, offsets, and hashes instead of requiring a reviewer to hunt through JSON first.
 
-The same package now renders authority/precondition checks, source inventory, exception readiness and candidate support details, evidence-graph summary, and run-ledger summary inline. Reviewers can see contract-state status, human-review outcome, budget precondition checks, each source's read/missing/duplicate state, dry-run Exception Lake posture, hashes, attachment refs, provenance graph counts and key support edges, and the preflight/budget gate trail before opening the JSON artifacts.
+The same package now renders authority/precondition checks, source inventory, exception readiness, dry-run handoff posture, candidate support details, evidence-graph summary, and run-ledger summary inline. Reviewers can see contract-state status, human-review outcome, budget precondition checks, each source's read/missing/duplicate state, dry-run Exception Lake posture, the future Exception Lake runtime owner, the fact that no SQLite or external write occurred in intake, hashes, attachment refs, provenance graph counts and key support edges, and the preflight/budget gate trail before opening the JSON artifacts.
 
 The budget run also writes `review_package_completeness_report.json`. This deterministic report proves the final package includes required local artifact refs, required markdown sections, human gates, blockers, safety-gate proof, dry-run Exception Lake readiness, run ledgers, and non-authorization flags before the package is accepted.
 
@@ -180,7 +182,7 @@ If rates are absent, the system emits an **hours-only** proposal. It never inven
 
 Budget-stage uncertainty is also emitted as dry-run Exception Lake candidates. Unknowns, missing approved templates, and hours-only missing-rate states become reviewable workflow escalations with source evidence refs or structured refs, not silent budget defects.
 
-Every preflight and budget candidate file is checked by `exception_lake_readiness_report.json`. The report proves candidates remain dry-run, exclude raw payloads, require canonical promotion or reviewed mapping, target the Exception Lake runtime repo, and carry valid source-inventory refs, source evidence refs, structured refs, or blocked states. Close party-role alternatives are emitted as `critic_role_candidates_ambiguous` workflow escalations so role uncertainty is reviewable. Untrusted source attempts to clear conflicts, open a matter, create an iManage workspace, docket deadlines, submit a budget, or send external messages are emitted as specific local `prohibited_transition_attempted_*` workflow-escalation candidates with evidence refs and structured refs to `workflow/prohibited-transitions.yaml`.
+Every preflight and budget candidate file is checked by `exception_lake_readiness_report.json`. The report proves candidates remain dry-run, exclude raw payloads, require canonical promotion or reviewed mapping, target the Exception Lake runtime repo, and carry valid source-inventory refs, source evidence refs, structured refs, or blocked states. Each stage also writes `exception_lake_handoff_manifest.json`, a local non-authoritative map of actual labels to broad future Lake classes, support modes, candidate files, and target runtime ownership. It explicitly records `sqlite_write_performed=false`; any SQLite persistence belongs in `LawFirm-os-exceptions-lake-runtime`, not this intake repo. Close party-role alternatives are emitted as `critic_role_candidates_ambiguous` workflow escalations so role uncertainty is reviewable. Untrusted source attempts to clear conflicts, open a matter, create an iManage workspace, docket deadlines, submit a budget, or send external messages are emitted as specific local `prohibited_transition_attempted_*` workflow-escalation candidates with evidence refs and structured refs to `workflow/prohibited-transitions.yaml`.
 
 Every budget run emits `budget_precondition_report.json`. If confirmation is missing, mismatched, incomplete, evidence-free, or not `confirmed`, the run writes that failed report, a blocked run-ledger event, and a dry-run Exception Lake candidate, then stops before producing a conflict seed, budget proposal, readiness packet, safety report, or review package.
 

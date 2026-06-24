@@ -8,6 +8,7 @@ from .models import (
     BlockedBudgetAttemptAuditCheck,
     BlockedBudgetAttemptAuditReport,
     BudgetPreconditionReport,
+    ExceptionLakeHandoffManifest,
     ExceptionLakeReadinessReport,
     HumanConfirmation,
     HumanReviewOutcomeRecord,
@@ -22,6 +23,7 @@ EXPECTED_BLOCKED_STATE = "budget_blocked_before_human_confirmation"
 ALLOWED_BLOCKED_OUTPUTS = {
     "budget_precondition_report.json",
     "exception_lake_candidates.jsonl",
+    "exception_lake_handoff_manifest.json",
     "exception_lake_readiness_report.json",
     "human_confirmation_history.jsonl",
     "run_ledger.jsonl",
@@ -108,11 +110,13 @@ def build_blocked_budget_attempt_audit_report(
     history_path = budget_dir / "human_confirmation_history.jsonl"
     exception_candidates_path = budget_dir / "exception_lake_candidates.jsonl"
     exception_readiness_path = budget_dir / "exception_lake_readiness_report.json"
+    exception_handoff_path = budget_dir / "exception_lake_handoff_manifest.json"
     ledger_path = budget_dir / "run_ledger.jsonl"
 
     report = _model_or_none(BudgetPreconditionReport, precondition_path)
     outcome = _model_or_none(HumanReviewOutcomeRecord, outcome_path) if outcome_path else None
     exception_readiness = _model_or_none(ExceptionLakeReadinessReport, exception_readiness_path)
+    exception_handoff = _model_or_none(ExceptionLakeHandoffManifest, exception_handoff_path)
     history = load_jsonl(history_path)
     exception_candidates = load_jsonl(exception_candidates_path)
     ledger = load_jsonl(ledger_path)
@@ -178,6 +182,7 @@ def build_blocked_budget_attempt_audit_report(
                 str(precondition_path),
                 str(exception_candidates_path),
                 str(exception_readiness_path),
+                str(exception_handoff_path),
                 str(history_path),
                 str(ledger_path),
             ],
@@ -194,9 +199,18 @@ def build_blocked_budget_attempt_audit_report(
                 and exception_readiness
                 and exception_readiness.status == "passed"
                 and exception_readiness.admission_state == "dry_run_not_admitted"
+                and exception_handoff
+                and exception_handoff.status == "dry_run_ready_not_admitted"
+                and exception_handoff.stage == "budget_precondition_blocked"
+                and exception_handoff.sqlite_write_performed is False
+                and exception_handoff.candidate_count == len(exception_candidates)
             ),
             "Blocked precondition becomes a dry-run workflow-escalation candidate, not a Lake admission.",
-            artifact_refs=[str(exception_candidates_path), str(exception_readiness_path)],
+            artifact_refs=[
+                str(exception_candidates_path),
+                str(exception_readiness_path),
+                str(exception_handoff_path),
+            ],
         ),
         _check(
             "ledger_stops_at_blocked_generation",

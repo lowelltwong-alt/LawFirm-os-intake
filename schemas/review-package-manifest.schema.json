@@ -129,6 +129,18 @@
       "default": null,
       "title": "Exception Lake Readiness Report Ref"
     },
+    "exception_lake_handoff_manifest_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Exception Lake Handoff Manifest Ref"
+    },
     "review_package_completeness_report_ref": {
       "anyOf": [
         {

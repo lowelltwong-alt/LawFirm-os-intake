@@ -73,7 +73,7 @@ The critic checks evidence completeness, contradictions, worker disagreement, so
 
 Difficult cases may receive a bounded frontier adjudication before human review. The frontier result is still a proposal.
 
-The workflow writes dry-run Exception Lake candidates for source gaps, close party-role alternatives, ambiguity, instruction-risk content, specific prohibited-transition attempts, critic findings, and escalation triggers. It also writes `exception_lake_readiness_report.json` to prove those candidates remain raw-payload-free, dry-run, promotion-required, and evidence- or state-supported before any future Lake handoff.
+The workflow writes dry-run Exception Lake candidates for source gaps, close party-role alternatives, ambiguity, instruction-risk content, specific prohibited-transition attempts, critic findings, and escalation triggers. It also writes `exception_lake_readiness_report.json` to prove those candidates remain raw-payload-free, dry-run, promotion-required, and evidence- or state-supported before any future Lake handoff. `exception_lake_handoff_manifest.json` then summarizes the actual local labels, broad Lake classes, support modes, candidate files, target runtime owner, and `sqlite_write_performed=false`; it is not an admission log and does not persist to the Lake.
 
 ### 10. Human intake confirmation
 

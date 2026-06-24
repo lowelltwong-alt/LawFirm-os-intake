@@ -406,6 +406,7 @@ class IntakePreflightPacket(StrictModel):
     fixture_gold_report_ref: str | None = None
     exception_candidates_ref: str | None = None
     exception_lake_readiness_report_ref: str | None = None
+    exception_lake_handoff_manifest_ref: str | None = None
     intake_review_form_ref: str | None = None
 
 
@@ -707,6 +708,59 @@ class ExceptionLakeReadinessReport(StrictModel):
     generated_at: str
 
 
+class ExceptionLakeHandoffCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    candidate_ids: list[str] = Field(default_factory=list)
+
+
+class ExceptionLakeHandoffLabelSummary(StrictModel):
+    local_event_label: str
+    canonical_lake_class: Literal[
+        "retrieval_miss",
+        "workflow_escalation",
+        "authority_conflict_override",
+    ]
+    count: int = Field(ge=0)
+    candidate_ids: list[str]
+    support_modes: list[
+        Literal["source_inventory_ref", "source_evidence_ref", "structured_ref", "blocked_state"]
+    ]
+    source_inventory_ref_count: int = Field(ge=0)
+    evidence_ref_count: int = Field(ge=0)
+    structured_ref_count: int = Field(ge=0)
+    blocked_states: list[str] = Field(default_factory=list)
+
+
+class ExceptionLakeHandoffManifest(StrictModel):
+    schema_version: str = "0.1"
+    exception_lake_handoff_manifest_id: str
+    run_id: str
+    preflight_packet_id: str
+    stage: Literal["preflight", "budget_combined", "budget_precondition_blocked"]
+    status: Literal["dry_run_ready_not_admitted", "failed"]
+    admission_state: Literal["dry_run_not_admitted"] = "dry_run_not_admitted"
+    target_runtime_repo: Literal["LawFirm-os-exceptions-lake-runtime"] = (
+        "LawFirm-os-exceptions-lake-runtime"
+    )
+    storage_owner: Literal["LawFirm-os-exceptions-lake-runtime"] = (
+        "LawFirm-os-exceptions-lake-runtime"
+    )
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    non_authoritative: Literal[True] = True
+    mapping_review_required: Literal[True] = True
+    canonical_promotion_required: Literal[True] = True
+    candidate_count: int = Field(ge=0)
+    candidate_file_refs: list[str]
+    readiness_report_ref: str
+    readiness_status: Literal["passed", "failed"]
+    label_summaries: list[ExceptionLakeHandoffLabelSummary]
+    checks: list[ExceptionLakeHandoffCheck]
+    generated_at: str
+
+
 class ReviewPackageManifest(StrictModel):
     schema_version: str = "0.1"
     review_package_id: str
@@ -729,6 +783,7 @@ class ReviewPackageManifest(StrictModel):
     run_ledger_refs: list[str]
     exception_candidate_refs: list[str]
     exception_lake_readiness_report_ref: str | None = None
+    exception_lake_handoff_manifest_ref: str | None = None
     review_package_completeness_report_ref: str | None = None
     no_conflict_conclusion: Literal[True] = True
     budget_not_authorized_for_client_submission: Literal[True] = True

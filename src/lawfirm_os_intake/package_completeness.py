@@ -31,6 +31,7 @@ REQUIRED_REVIEW_SECTIONS = [
     "### Budget Supports",
     "## Exception And Escalation Records",
     "### Exception Lake Readiness",
+    "### Exception Lake Handoff",
     "### Exception Candidate Details",
     "## Safety Gate",
     "## Matter-Opening Blockers",
@@ -102,8 +103,10 @@ REQUIRED_ARTIFACT_KEYS = [
     "preflight_evidence_graph",
     "preflight_exception_candidates",
     "preflight_exception_lake_readiness_report",
+    "preflight_exception_lake_handoff_manifest",
     "budget_exception_candidates",
     "budget_exception_lake_readiness_report",
+    "budget_exception_lake_handoff_manifest",
     "budget_run_ledger",
     "preflight_run_ledger",
     "human_review_outcome",
@@ -248,6 +251,9 @@ def build_review_package_completeness_report(
         key: _read_text(Path(artifact_refs.get(key, "")))
         for key in REQUIRED_LINKED_REVIEW_FORM_SECTIONS
     }
+    exception_handoff_manifest = _read_json(
+        Path(artifact_refs.get("budget_exception_lake_handoff_manifest", ""))
+    )
     linked_review_form_missing_sections: dict[str, list[str]] = {}
     for key, required_sections in REQUIRED_LINKED_REVIEW_FORM_SECTIONS.items():
         form_text = linked_review_form_texts[key]
@@ -406,6 +412,32 @@ def build_review_package_completeness_report(
                 "exception_readiness_status": exception_readiness_report.status,
                 "admission_state": exception_readiness_report.admission_state,
                 "exception_candidate_refs": manifest.exception_candidate_refs,
+            },
+        ),
+        _check(
+            "exception_lake_handoff_manifest_preserved",
+            isinstance(exception_handoff_manifest, dict)
+            and exception_handoff_manifest.get("status") == "dry_run_ready_not_admitted"
+            and exception_handoff_manifest.get("admission_state") == "dry_run_not_admitted"
+            and exception_handoff_manifest.get("target_runtime_repo")
+            == "LawFirm-os-exceptions-lake-runtime"
+            and exception_handoff_manifest.get("sqlite_write_performed") is False
+            and exception_handoff_manifest.get("external_writes_performed") is False
+            and manifest.exception_lake_handoff_manifest_ref
+            == artifact_refs.get("budget_exception_lake_handoff_manifest"),
+            "Final package carries the dry-run Exception Lake handoff manifest without SQLite or external writes.",
+            [artifact_refs.get("budget_exception_lake_handoff_manifest", "")],
+            {
+                "handoff_status": (
+                    exception_handoff_manifest.get("status")
+                    if isinstance(exception_handoff_manifest, dict)
+                    else None
+                ),
+                "sqlite_write_performed": (
+                    exception_handoff_manifest.get("sqlite_write_performed")
+                    if isinstance(exception_handoff_manifest, dict)
+                    else None
+                ),
             },
         ),
         _check(

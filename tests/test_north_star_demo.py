@@ -33,11 +33,13 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     preflight_exception_readiness = load_json(
         preflight_dir / "exception_lake_readiness_report.json"
     )
+    preflight_exception_handoff = load_json(preflight_dir / "exception_lake_handoff_manifest.json")
     budget_dir = tmp_path / "north-star/budget"
     confirmation = load_json(tmp_path / "north-star/human_confirmation.json")
     conflict_seed = load_json(budget_dir / "conflict_search_seed_packet.json")
     budget_exceptions = load_jsonl(budget_dir / "exception_lake_candidates.jsonl")
     budget_exception_readiness = load_json(budget_dir / "exception_lake_readiness_report.json")
+    budget_exception_handoff = load_json(budget_dir / "exception_lake_handoff_manifest.json")
     safety = load_json(budget_dir / "safety_gate_report.json")
     manifest = load_json(budget_dir / "review_package_manifest.json")
     completeness = load_json(budget_dir / "review_package_completeness_report.json")
@@ -83,6 +85,11 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     assert "prohibited_transition_attempted_deadline_docketed" in labels
     assert "prohibited_transition_attempted_matter_opened" in labels
     assert preflight_exception_readiness["status"] == "passed"
+    assert preflight_exception_handoff["status"] == "dry_run_ready_not_admitted"
+    assert preflight_exception_handoff["sqlite_write_performed"] is False
+    assert "prompt_injection_source_content" in {
+        item["local_event_label"] for item in preflight_exception_handoff["label_summaries"]
+    }
     assert {
         ref["source_id"]
         for item in preflight_exceptions
@@ -93,6 +100,16 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     assert "budget_unknowns_require_review" in budget_labels
     assert budget_exception_readiness["status"] == "passed"
     assert budget_exception_readiness["admission_state"] == "dry_run_not_admitted"
+    assert budget_exception_handoff["status"] == "dry_run_ready_not_admitted"
+    assert budget_exception_handoff["stage"] == "budget_combined"
+    assert budget_exception_handoff["candidate_count"] == len(
+        preflight_exceptions + budget_exceptions
+    )
+    assert budget_exception_handoff["sqlite_write_performed"] is False
+    assert budget_exception_handoff["target_runtime_repo"] == "LawFirm-os-exceptions-lake-runtime"
+    assert "matter_opening_blocked_pending_conflicts_and_engagement" in {
+        item["local_event_label"] for item in budget_exception_handoff["label_summaries"]
+    }
     assert safety["status"] == "passed"
     assert budget_preconditions["status"] == "passed"
     assert safety["final_boundary"] == "blocked_pending_conflicts_and_engagement"
@@ -127,9 +144,18 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     assert manifest["artifact_refs"]["budget_exception_lake_readiness_report"].endswith(
         "exception_lake_readiness_report.json"
     )
+    assert manifest["artifact_refs"]["preflight_exception_lake_handoff_manifest"].endswith(
+        "exception_lake_handoff_manifest.json"
+    )
+    assert manifest["artifact_refs"]["budget_exception_lake_handoff_manifest"].endswith(
+        "exception_lake_handoff_manifest.json"
+    )
     assert manifest["artifact_refs"]["contract_state_report"].endswith("contract_state_report.json")
     assert manifest["exception_lake_readiness_report_ref"].endswith(
         "exception_lake_readiness_report.json"
+    )
+    assert manifest["exception_lake_handoff_manifest_ref"].endswith(
+        "exception_lake_handoff_manifest.json"
     )
     assert manifest["contract_state_report_ref"].endswith("contract_state_report.json")
 
@@ -182,6 +208,11 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
         "Readiness status: passed",
         "Admission state: dry_run_not_admitted",
         "Target runtime repo: LawFirm-os-exceptions-lake-runtime",
+        "### Exception Lake Handoff",
+        "Handoff status: dry_run_ready_not_admitted",
+        "SQLite write performed: False",
+        "Label summaries:",
+        "budget_unknowns_require_review: class=workflow_escalation",
         "### Exception Candidate Details",
         "raw_payload_included=False",
         "canonical_promotion_required=True",

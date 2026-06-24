@@ -17,6 +17,7 @@ This is a draft promotion package for stable intake components. It is not a dire
 - Evidence graph node and edge conventions for source-backed and structured-ref support across preflight, human review, conflict seed, and budget artifacts.
 - Dry-run exception lake candidate contract with broad Lake class, local event label, source-inventory refs, evidence refs, structured refs, blocked state, `raw_payload_included=false`, and `canonical_promotion_required=true`.
 - Exception Lake readiness report contract for candidate-file dry-run posture, raw-payload exclusion, promotion requirement, target runtime repo, support pointers, and source/evidence ref integrity.
+- Exception Lake handoff manifest contract for local label-to-class summaries, support modes, candidate file refs, paired readiness report, target runtime owner, mapping review, promotion requirement, `sqlite_write_performed=false`, and `external_writes_performed=false`.
 - Review package manifest contract tying the human-readable package to preflight, confirmation, conflict seed, budget proposal, readiness, evidence graph, exception candidates, and ledger refs.
 - Review package completeness report contract for final artifact refs, review sections, human gates, blockers, safety proof, dry-run Exception Lake readiness, run ledgers, and non-authorization flags.
 - Fixture gold spec and report contracts for local synthetic evaluation gates, reviewed expectations, run artifact refs, pass/fail checks, and non-authoritative eval evidence.
@@ -37,7 +38,7 @@ This is a draft promotion package for stable intake components. It is not a dire
 - `retrieval_miss`: missing source, unread source, unreadable attachment, unresolved source ref, incomplete context bundle, source coverage gap.
 - `workflow_escalation`: human review required, close candidates, role ambiguity, prompt injection, prohibited transition attempted, budget blocked before confirmation, budget unknowns, missing budget template, hours-only missing rates.
 - `authority_conflict_override`: unregistered route/event label, local candidate conflicts with canon, profile attempts to expand authority, missing reviewed lock, topology mismatch, contract SHA drift.
-- Intake emits these as local `ExceptionLakeCandidate` rows only. The Exception Lake runtime should perform admission validation, append-only storage, record hashing, and correction/supersession handling.
+- Intake emits these as local `ExceptionLakeCandidate` rows and a local `ExceptionLakeHandoffManifest` only. The handoff manifest is not a SQLite schema or admission log; it records actual labels, broad Lake classes, support modes, target owner, and no SQLite/external write. The Exception Lake runtime should perform admission validation, append-only storage, record hashing, and correction/supersession handling.
 
 ## Skills Registry Draft
 

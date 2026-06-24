@@ -80,6 +80,7 @@ def main(argv: list[str] | None = None) -> int:
                     "escalation": packet.escalation.model_dump(mode="json"),
                     "contract_state_report": packet.contract_state_report_ref,
                     "fixture_gold_report": packet.fixture_gold_report_ref,
+                    "exception_lake_handoff_manifest": packet.exception_lake_handoff_manifest_ref,
                     "run_dir": str(run_dir),
                 }
             )
@@ -107,6 +108,9 @@ def main(argv: list[str] | None = None) -> int:
                     "human_confirmation_history": str(run_dir / "human_confirmation_history.jsonl"),
                     "budget_precondition_report": str(run_dir / "budget_precondition_report.json"),
                     "safety_gate_report": str(run_dir / "safety_gate_report.json"),
+                    "exception_lake_handoff_manifest": str(
+                        run_dir / "exception_lake_handoff_manifest.json"
+                    ),
                     "fixture_gold_report": (
                         str(run_dir / "fixture_gold_report.json") if args.fixture_gold else None
                     ),
@@ -161,6 +165,9 @@ def main(argv: list[str] | None = None) -> int:
                         budget_dir / "budget_precondition_report.json"
                     ),
                     "safety_gate_report": str(budget_dir / "safety_gate_report.json"),
+                    "exception_lake_handoff_manifest": str(
+                        budget_dir / "exception_lake_handoff_manifest.json"
+                    ),
                     "fixture_gold_report": (
                         str(budget_dir / "fixture_gold_report.json") if args.fixture_gold else None
                     ),

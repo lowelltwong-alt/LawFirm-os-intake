@@ -9,6 +9,7 @@ from .models import (
     BudgetProposal,
     ConflictSeedPacket,
     ContractStateReport,
+    ExceptionLakeHandoffManifest,
     ExceptionLakeReadinessReport,
     FixtureGoldReport,
     HumanConfirmation,
@@ -54,6 +55,7 @@ REQUIRED_PREFLIGHT_ARTIFACTS = {
     "intake_review_form": "intake_review_form.md",
     "preflight_exception_candidates": "exception_lake_candidates.jsonl",
     "preflight_exception_lake_readiness_report": "exception_lake_readiness_report.json",
+    "preflight_exception_lake_handoff_manifest": "exception_lake_handoff_manifest.json",
     "preflight_evidence_graph": "evidence_graph.json",
     "preflight_fixture_gold_report": "fixture_gold_report.json",
     "preflight_run_ledger": "run_ledger.jsonl",
@@ -70,6 +72,7 @@ REQUIRED_BUDGET_ARTIFACTS = {
     "matter_opening_readiness": "matter_opening_readiness.json",
     "budget_exception_candidates": "exception_lake_candidates.jsonl",
     "budget_exception_lake_readiness_report": "exception_lake_readiness_report.json",
+    "budget_exception_lake_handoff_manifest": "exception_lake_handoff_manifest.json",
     "safety_gate_report": "safety_gate_report.json",
     "review_package": "matter_opening_review_package.md",
     "review_package_manifest": "review_package_manifest.json",
@@ -315,6 +318,12 @@ def build_starter_release_audit_report(
     preflight_exception_readiness = _model_or_none(
         ExceptionLakeReadinessReport, paths["preflight_exception_lake_readiness_report"]
     )
+    budget_exception_handoff = _model_or_none(
+        ExceptionLakeHandoffManifest, paths["budget_exception_lake_handoff_manifest"]
+    )
+    preflight_exception_handoff = _model_or_none(
+        ExceptionLakeHandoffManifest, paths["preflight_exception_lake_handoff_manifest"]
+    )
     safety = _model_or_none(SafetyGateReport, paths["safety_gate_report"])
     manifest = _model_or_none(ReviewPackageManifest, paths["review_package_manifest"])
     completeness = _model_or_none(
@@ -540,6 +549,13 @@ def build_starter_release_audit_report(
                 and budget_exception_readiness
                 and budget_exception_readiness.status == "passed"
                 and budget_exception_readiness.admission_state == "dry_run_not_admitted"
+                and preflight_exception_handoff
+                and preflight_exception_handoff.status == "dry_run_ready_not_admitted"
+                and preflight_exception_handoff.sqlite_write_performed is False
+                and budget_exception_handoff
+                and budget_exception_handoff.status == "dry_run_ready_not_admitted"
+                and budget_exception_handoff.sqlite_write_performed is False
+                and budget_exception_handoff.admission_state == "dry_run_not_admitted"
                 and exception_candidates_dry_run
                 and EXPECTED_PREFLIGHT_EXCEPTION_LABELS.issubset(_labels(preflight_exceptions))
                 and EXPECTED_BUDGET_EXCEPTION_LABELS.issubset(_labels(budget_exceptions))
@@ -551,8 +567,10 @@ def build_starter_release_audit_report(
                 [
                     "preflight_exception_candidates",
                     "preflight_exception_lake_readiness_report",
+                    "preflight_exception_lake_handoff_manifest",
                     "budget_exception_candidates",
                     "budget_exception_lake_readiness_report",
+                    "budget_exception_lake_handoff_manifest",
                 ],
             ),
             details={

@@ -9,6 +9,7 @@ from .models import (
     ConflictSeedPacket,
     ContractStateReport,
     EvidenceGraph,
+    ExceptionLakeHandoffManifest,
     ExceptionLakeReadinessReport,
     HumanConfirmation,
     HumanReviewOutcomeRecord,
@@ -483,6 +484,38 @@ def _exception_readiness_lines(report: ExceptionLakeReadinessReport | None) -> l
     return lines
 
 
+def _exception_handoff_lines(report: ExceptionLakeHandoffManifest | None) -> list[str]:
+    if report is None:
+        return ["- Exception Lake handoff manifest: unavailable"]
+    lines = [
+        f"- Handoff status: {report.status}",
+        f"- Stage: {report.stage}",
+        f"- Admission state: {report.admission_state}",
+        f"- Target runtime repo: {report.target_runtime_repo}",
+        f"- Storage owner: {report.storage_owner}",
+        f"- SQLite write performed: {report.sqlite_write_performed}",
+        f"- External writes performed: {report.external_writes_performed}",
+        f"- Mapping review required: {report.mapping_review_required}",
+        f"- Canonical promotion required: {report.canonical_promotion_required}",
+        f"- Candidate count: {report.candidate_count}",
+        "- Label summaries:",
+    ]
+    for summary in report.label_summaries:
+        support_modes = ", ".join(summary.support_modes) or "none"
+        blocked_states = ", ".join(summary.blocked_states) or "none"
+        lines.append(
+            f"- {summary.local_event_label}: class={summary.canonical_lake_class}; "
+            f"count={summary.count}; support={support_modes}; "
+            f"source_refs={summary.source_inventory_ref_count}; "
+            f"evidence_refs={summary.evidence_ref_count}; "
+            f"structured_refs={summary.structured_ref_count}; "
+            f"blocked_states={blocked_states}"
+        )
+    lines.append("- Handoff checks:")
+    lines.extend(f"- {check.status}: {check.check_id} - {check.message}" for check in report.checks)
+    return lines
+
+
 def _exception_candidate_detail_lines(candidates: list[dict[str, Any]]) -> list[str]:
     lines = []
     for candidate in candidates:
@@ -622,6 +655,7 @@ def render_matter_opening_review_package(
     run_ledger_events: dict[str, list[dict[str, Any]]] | None = None,
     evidence_graph: EvidenceGraph | None = None,
     exception_readiness_report: ExceptionLakeReadinessReport | None = None,
+    exception_handoff_manifest: ExceptionLakeHandoffManifest | None = None,
     contract_state_report: ContractStateReport | None = None,
     model_adapter_report: ModelAdapterReport | None = None,
     human_review_outcome: HumanReviewOutcomeRecord | None = None,
@@ -762,6 +796,17 @@ def render_matter_opening_review_package(
             "",
             "### Exception Lake Readiness",
             *_exception_readiness_lines(exception_readiness_report),
+            "",
+            "### Exception Lake Handoff",
+            *(
+                [
+                    "- Exception Lake handoff manifest: "
+                    f"`{artifact_refs['budget_exception_lake_handoff_manifest']}`"
+                ]
+                if "budget_exception_lake_handoff_manifest" in artifact_refs
+                else []
+            ),
+            *_exception_handoff_lines(exception_handoff_manifest),
             "",
             "### Exception Candidate Details",
             *_exception_candidate_detail_lines(exception_candidates),

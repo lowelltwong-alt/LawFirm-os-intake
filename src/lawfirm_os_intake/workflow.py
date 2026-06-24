@@ -9,6 +9,10 @@ from .confirmation import build_human_review_outcome_record
 from .contract_state import build_contract_state_report, enforce_contract_state
 from .context import build_effective_context, load_profile
 from .evidence import build_preflight_graph, extend_graph_with_budget
+from .exception_handoff import (
+    build_exception_lake_handoff_manifest,
+    enforce_exception_lake_handoff_manifest,
+)
 from .exception_readiness import (
     build_exception_lake_readiness_report,
     enforce_exception_lake_readiness,
@@ -250,6 +254,7 @@ def run_preflight(
     review_form_path = run_dir / "intake_review_form.md"
     exception_candidates_path = run_dir / "exception_lake_candidates.jsonl"
     exception_readiness_report_path = run_dir / "exception_lake_readiness_report.json"
+    exception_handoff_manifest_path = run_dir / "exception_lake_handoff_manifest.json"
     fixture_gold_report_path = run_dir / "fixture_gold_report.json" if fixture_gold else None
     packet = IntakePreflightPacket(
         packet_id=new_id("intake"),
@@ -281,6 +286,7 @@ def run_preflight(
         fixture_gold_report_ref=str(fixture_gold_report_path) if fixture_gold_report_path else None,
         exception_candidates_ref=str(exception_candidates_path),
         exception_lake_readiness_report_ref=str(exception_readiness_report_path),
+        exception_lake_handoff_manifest_ref=str(exception_handoff_manifest_path),
         intake_review_form_ref=str(review_form_path),
     )
     if strict_evidence:
@@ -299,6 +305,19 @@ def run_preflight(
     write_json(
         exception_readiness_report_path,
         exception_readiness_report.model_dump(mode="json"),
+    )
+    exception_handoff_manifest = build_exception_lake_handoff_manifest(
+        packet=packet,
+        candidates=exception_candidates,
+        candidate_file_refs=[str(exception_candidates_path)],
+        readiness_report=exception_readiness_report,
+        readiness_report_ref=str(exception_readiness_report_path),
+        stage="preflight",
+    )
+    enforce_exception_lake_handoff_manifest(exception_handoff_manifest)
+    write_json(
+        exception_handoff_manifest_path,
+        exception_handoff_manifest.model_dump(mode="json"),
     )
     write_json(
         run_dir / "source_inventory.json",
@@ -325,6 +344,7 @@ def run_preflight(
                 str(ingestion_volume_profile_path),
                 str(rust_ingestion_readiness_report_path),
                 str(exception_readiness_report_path),
+                str(exception_handoff_manifest_path),
             ],
         ).model_dump(mode="json"),
     )
@@ -339,6 +359,7 @@ def run_preflight(
                 "preflight_packet": str(run_dir / "intake_preflight_packet.json"),
                 "preflight_exception_candidates": str(exception_candidates_path),
                 "preflight_exception_lake_readiness_report": str(exception_readiness_report_path),
+                "preflight_exception_lake_handoff_manifest": str(exception_handoff_manifest_path),
             },
             preflight_exception_candidates=[
                 candidate.model_dump(mode="json") for candidate in exception_candidates
@@ -523,6 +544,7 @@ def run_budget(
     if budget_precondition_report.status == "failed":
         exception_candidates_path = run_dir / "exception_lake_candidates.jsonl"
         exception_readiness_report_path = run_dir / "exception_lake_readiness_report.json"
+        exception_handoff_manifest_path = run_dir / "exception_lake_handoff_manifest.json"
         exception_candidates_path.touch()
         exception_candidates = build_budget_precondition_exception_candidates(
             budget_precondition_report
@@ -539,6 +561,19 @@ def run_budget(
             exception_readiness_report_path,
             exception_readiness_report.model_dump(mode="json"),
         )
+        exception_handoff_manifest = build_exception_lake_handoff_manifest(
+            packet=packet,
+            candidates=exception_candidates,
+            candidate_file_refs=[str(exception_candidates_path)],
+            readiness_report=exception_readiness_report,
+            readiness_report_ref=str(exception_readiness_report_path),
+            stage="budget_precondition_blocked",
+        )
+        enforce_exception_lake_handoff_manifest(exception_handoff_manifest)
+        write_json(
+            exception_handoff_manifest_path,
+            exception_handoff_manifest.model_dump(mode="json"),
+        )
         append_jsonl(
             ledger_path,
             _event(
@@ -550,6 +585,7 @@ def run_budget(
                     str(budget_precondition_report_path),
                     str(exception_candidates_path),
                     str(exception_readiness_report_path),
+                    str(exception_handoff_manifest_path),
                 ],
                 notes=budget_precondition_report.blocked_state,
             ).model_dump(mode="json"),
@@ -623,6 +659,7 @@ def run_budget(
     manifest_path = run_dir / "review_package_manifest.json"
     safety_gate_report_path = run_dir / "safety_gate_report.json"
     exception_readiness_report_path = run_dir / "exception_lake_readiness_report.json"
+    exception_handoff_manifest_path = run_dir / "exception_lake_handoff_manifest.json"
     completeness_report_path = run_dir / "review_package_completeness_report.json"
     fixture_gold_report_path = run_dir / "fixture_gold_report.json" if fixture_gold else None
     preflight_dir = preflight_packet_path.parent
@@ -648,8 +685,12 @@ def run_budget(
         "preflight_exception_lake_readiness_report": (
             packet.exception_lake_readiness_report_ref or ""
         ),
+        "preflight_exception_lake_handoff_manifest": (
+            packet.exception_lake_handoff_manifest_ref or ""
+        ),
         "budget_exception_candidates": str(exception_candidates_path),
         "budget_exception_lake_readiness_report": str(exception_readiness_report_path),
+        "budget_exception_lake_handoff_manifest": str(exception_handoff_manifest_path),
         "budget_run_ledger": str(ledger_path),
         "preflight_run_ledger": packet.run_ledger_ref,
         "human_review_outcome": str(human_review_outcome_path),
@@ -686,6 +727,24 @@ def run_budget(
         exception_readiness_report_path,
         exception_readiness_report.model_dump(mode="json"),
     )
+    exception_handoff_manifest = build_exception_lake_handoff_manifest(
+        packet=packet,
+        candidates=[
+            ExceptionLakeCandidate.model_validate(candidate)
+            for candidate in all_exception_candidates
+        ],
+        candidate_file_refs=[
+            ref for ref in [packet.exception_candidates_ref, str(exception_candidates_path)] if ref
+        ],
+        readiness_report=exception_readiness_report,
+        readiness_report_ref=str(exception_readiness_report_path),
+        stage="budget_combined",
+    )
+    enforce_exception_lake_handoff_manifest(exception_handoff_manifest)
+    write_json(
+        exception_handoff_manifest_path,
+        exception_handoff_manifest.model_dump(mode="json"),
+    )
     contract_state_report = ContractStateReport.model_validate(
         load_json(packet.contract_state_report_ref)
     )
@@ -718,6 +777,7 @@ def run_budget(
                 str(exception_candidates_path),
                 str(safety_gate_report_path),
                 str(exception_readiness_report_path),
+                str(exception_handoff_manifest_path),
             ],
         ).model_dump(mode="json"),
     )
@@ -767,6 +827,7 @@ def run_budget(
             },
             evidence_graph=extended,
             exception_readiness_report=exception_readiness_report,
+            exception_handoff_manifest=exception_handoff_manifest,
             contract_state_report=contract_state_report,
             model_adapter_report=model_adapter_report,
             human_review_outcome=human_review_outcome,
@@ -803,6 +864,7 @@ def run_budget(
             ref for ref in [packet.exception_candidates_ref, str(exception_candidates_path)] if ref
         ],
         exception_lake_readiness_report_ref=str(exception_readiness_report_path),
+        exception_lake_handoff_manifest_ref=str(exception_handoff_manifest_path),
         review_package_completeness_report_ref=str(completeness_report_path),
     )
     write_json(manifest_path, manifest.model_dump(mode="json"))
