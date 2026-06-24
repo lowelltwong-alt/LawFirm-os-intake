@@ -21,6 +21,7 @@ messy inbound source
 -> inbound-event, matter-family, and representation-posture candidates
 -> date/deadline and missing-information candidates
 -> evidence completeness report proving candidate refs, unknown options, and review boundaries
+-> context boundary report proving practice priors are context signals, not observed evidence
 -> deadline docketing guard report proving review-only candidates and no docketing
 -> independent evidence review
 -> dry-run Exception Lake candidates for missing source, ambiguity, prompt injection, or blockers
@@ -84,6 +85,7 @@ The demo emits:
 |   |-- intake_preflight_packet.json
 |   |-- intake_review_form.md
 |   |-- evidence_completeness_report.json
+|   |-- context_boundary_report.json
 |   |-- deadline_docketing_guard_report.json
 |   |-- exception_lake_candidates.jsonl
 |   |-- exception_lake_readiness_report.json
@@ -119,7 +121,9 @@ The same package now renders authority/precondition checks, source inventory, hu
 
 Preflight runs write `evidence_completeness_report.json`. This local proof artifact records that party candidates, role alternatives, inbound-event, matter-family, representation-posture, deadline, missing-information, and critic outputs carry source-bound refs that match packet segments by source ID, segment ID, offsets, and hashes. It also proves explicit unknown options remain available, deadline candidates remain human-review-only, and human confirmation plus prohibited next steps stay present. The final package renders the report and package completeness fails if it is missing, failed, or no longer linked.
 
-The budget run also writes `review_package_completeness_report.json`. This deterministic report proves the final package includes required local artifact refs, required markdown sections, human gates, data-scope gate proof, evidence-completeness proof, deadline docketing guard proof, budget submission guard proof, structured blocker details, safety-gate proof, dry-run Exception Lake readiness, run ledgers, run-ledger integrity reports, and non-authorization flags before the package is accepted.
+Preflight runs also write `context_boundary_report.json`. This local proof artifact records the effective context profile ID, version, and hash; verifies observed source evidence remains first in context precedence; verifies context signal refs are structured practice-profile refs; and proves context-influenced candidates stay `source_anchor_only` unless independently observed. The final package renders the report and package completeness fails if practice context is treated as observed evidence.
+
+The budget run also writes `review_package_completeness_report.json`. This deterministic report proves the final package includes required local artifact refs, required markdown sections, human gates, data-scope gate proof, evidence-completeness proof, context-boundary proof, deadline docketing guard proof, budget submission guard proof, structured blocker details, safety-gate proof, dry-run Exception Lake readiness, run ledgers, run-ledger integrity reports, and non-authorization flags before the package is accepted.
 
 The completeness report also checks that the linked intake and budget review forms preserve their required human-review sections, evidence-hash visibility where source-bound evidence exists, and non-authorization boundary text, so those standalone forms cannot silently lose source coverage, outcome handling, budget lines, support items, or submission-boundary content while the consolidated package still passes.
 

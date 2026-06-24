@@ -102,6 +102,23 @@ def test_starter_release_audit_fails_when_evidence_completeness_report_drifts(tm
         enforce_starter_release_audit(report)
 
 
+def test_starter_release_audit_fails_when_context_boundary_report_drifts(tmp_path, repo_root):
+    demo_dir = _run_north_star_demo(tmp_path, repo_root)
+    preflight_dirs = list((demo_dir / "preflight").iterdir())
+    report_path = preflight_dirs[0] / "context_boundary_report.json"
+    context_report = load_json(report_path)
+    context_report["status"] = "failed"
+    write_json(report_path, context_report)
+
+    report = build_starter_release_audit_report(repo_root=repo_root, demo_dir=demo_dir)
+
+    assert report.status == "failed"
+    failed = {check.check_id for check in report.checks if check.status == "failed"}
+    assert "practice_context_boundary_preserved" in failed
+    with pytest.raises(ValueError, match="practice_context_boundary_preserved"):
+        enforce_starter_release_audit(report)
+
+
 def test_starter_release_audit_fails_when_evidence_graph_loses_budget_lines(tmp_path, repo_root):
     demo_dir = _run_north_star_demo(tmp_path, repo_root)
     graph_path = demo_dir / "budget/evidence_graph.json"

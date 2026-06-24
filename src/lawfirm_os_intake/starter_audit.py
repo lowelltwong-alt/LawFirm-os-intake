@@ -10,6 +10,7 @@ from .models import (
     BudgetSubmissionGuardReport,
     ConflictSeedPacket,
     ContractStateReport,
+    ContextBoundaryReport,
     DataScopeGateReport,
     DeadlineDocketingGuardReport,
     EvidenceCompletenessReport,
@@ -58,6 +59,7 @@ REQUIRED_PREFLIGHT_ARTIFACTS = {
     "data_scope_gate_report": "data_scope_gate_report.json",
     "model_adapter_report": "model_adapter_report.json",
     "evidence_completeness_report": "evidence_completeness_report.json",
+    "context_boundary_report": "context_boundary_report.json",
     "ingestion_result": "ingestion_result.json",
     "ingestion_volume_profile": "ingestion_volume_profile.json",
     "rust_ingestion_readiness_report": "rust_ingestion_readiness_report.json",
@@ -545,6 +547,7 @@ def build_starter_release_audit_report(
     evidence_completeness = _model_or_none(
         EvidenceCompletenessReport, paths["evidence_completeness_report"]
     )
+    context_boundary = _model_or_none(ContextBoundaryReport, paths["context_boundary_report"])
     ingestion_result = _model_or_none(IngestionResult, paths["ingestion_result"])
     ingestion_volume = _model_or_none(IngestionVolumeProfile, paths["ingestion_volume_profile"])
     rust_readiness = _model_or_none(
@@ -774,6 +777,36 @@ def build_starter_release_audit_report(
             requirement_refs=["DoD-6", "DoD-7", "DoD-10", "Exception-aware"],
             artifact_refs=_artifact_refs(paths, ["preflight_packet", "intake_review_form"]),
             details=candidate_surface_details,
+        ),
+        _check(
+            "practice_context_boundary_preserved",
+            bool(
+                context_boundary
+                and context_boundary.status == "passed"
+                and context_boundary.observed_source_evidence_precedence is True
+                and context_boundary.practice_context_is_observed_evidence is False
+                and context_boundary.human_confirmation_required is True
+                and all(check.status == "passed" for check in context_boundary.checks)
+                and packet
+                and packet.context_boundary_report_ref == str(paths["context_boundary_report"])
+            ),
+            "Practice context is reported as transparent prior/context, not observed evidence.",
+            requirement_refs=["DoD-8", "Evidence-first", "Human-review-by-design"],
+            artifact_refs=_artifact_refs(
+                paths,
+                ["preflight_packet", "effective_context", "context_boundary_report"],
+            ),
+            details={
+                "context_boundary_status": context_boundary.status if context_boundary else None,
+                "context_signal_candidate_count": (
+                    context_boundary.context_signal_candidate_count if context_boundary else None
+                ),
+                "practice_context_is_observed_evidence": (
+                    context_boundary.practice_context_is_observed_evidence
+                    if context_boundary
+                    else None
+                ),
+            },
         ),
         _check(
             "evidence_graph_covers_intake_to_budget_deliverables",

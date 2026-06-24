@@ -268,6 +268,39 @@ class EvidenceCompletenessReport(StrictModel):
     generated_at: str
 
 
+class ContextBoundaryCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    candidate_ids: list[str] = Field(default_factory=list)
+    context_signal_refs: list[str] = Field(default_factory=list)
+    details: dict[str, Any] = Field(default_factory=dict)
+
+
+class ContextBoundaryReport(StrictModel):
+    schema_version: str = "0.1"
+    context_boundary_report_id: str
+    run_id: str
+    preflight_packet_id: str
+    status: Literal["passed", "failed"]
+    effective_context_id: str
+    profile_id: str
+    profile_version: str
+    profile_sha256: str
+    observed_source_evidence_precedence: Literal[True] = True
+    practice_context_is_observed_evidence: Literal[False] = False
+    human_confirmation_required: bool
+    checked_candidate_count: int = Field(ge=0)
+    context_signal_candidate_count: int = Field(ge=0)
+    context_only_candidate_count: int = Field(ge=0)
+    observed_with_context_candidate_count: int = Field(ge=0)
+    unknown_option_count: int = Field(ge=0)
+    checks: list[ContextBoundaryCheck]
+    external_writes_performed: Literal[False] = False
+    non_authoritative: Literal[True] = True
+    generated_at: str
+
+
 class EscalationDecision(StrictModel):
     required: bool
     triggers: list[str] = Field(default_factory=list)
@@ -508,6 +541,7 @@ class IntakePreflightPacket(StrictModel):
     run_ledger_integrity_report_ref: str | None = None
     deadline_docketing_guard_report_ref: str | None = None
     evidence_completeness_report_ref: str | None = None
+    context_boundary_report_ref: str | None = None
     intake_review_form_ref: str | None = None
 
 
@@ -1019,6 +1053,7 @@ class ReviewPackageManifest(StrictModel):
     data_scope_gate_report_ref: str | None = None
     budget_precondition_report_ref: str | None = None
     evidence_completeness_report_ref: str | None = None
+    context_boundary_report_ref: str | None = None
     evidence_graph_ref: str
     run_ledger_refs: list[str]
     run_ledger_integrity_report_refs: list[str] = Field(default_factory=list)

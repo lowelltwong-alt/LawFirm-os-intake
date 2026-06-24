@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from .models import (
+    ContextBoundaryReport,
     EvidenceCompletenessReport,
     ExceptionLakeReadinessReport,
     ReviewPackageCompletenessCheck,
@@ -20,6 +21,7 @@ REQUIRED_REVIEW_SECTIONS = [
     "### Data Scope Gate",
     "### Model Adapter Boundary",
     "### Evidence Completeness",
+    "### Context Boundary",
     "### Human Review Outcome",
     "### Budget Preconditions",
     "## Source Inventory",
@@ -99,6 +101,7 @@ REQUIRED_ARTIFACT_KEYS = [
     "preflight_rust_ingestion_readiness_report",
     "preflight_model_adapter_report",
     "preflight_evidence_completeness_report",
+    "preflight_context_boundary_report",
     "preflight_intake_review_form",
     "preflight_deadline_docketing_guard_report",
     "human_confirmation",
@@ -277,6 +280,9 @@ def build_review_package_completeness_report(
     )
     evidence_completeness_report_payload = _read_json(
         Path(artifact_refs.get("preflight_evidence_completeness_report", ""))
+    )
+    context_boundary_report_payload = _read_json(
+        Path(artifact_refs.get("preflight_context_boundary_report", ""))
     )
     preflight_ledger_integrity = _read_json(
         Path(artifact_refs.get("preflight_run_ledger_integrity_report", ""))
@@ -499,6 +505,31 @@ def build_review_package_completeness_report(
         and "evidence_refs_match_segments" in review_text
         and "human_review_boundary_present" in review_text
     )
+    context_boundary_report: ContextBoundaryReport | None = None
+    if isinstance(context_boundary_report_payload, dict):
+        try:
+            context_boundary_report = ContextBoundaryReport.model_validate(
+                context_boundary_report_payload
+            )
+        except ValueError:
+            context_boundary_report = None
+    context_boundary_report_complete = (
+        context_boundary_report is not None
+        and context_boundary_report.status == "passed"
+        and context_boundary_report.observed_source_evidence_precedence is True
+        and context_boundary_report.practice_context_is_observed_evidence is False
+        and context_boundary_report.human_confirmation_required is True
+        and context_boundary_report.external_writes_performed is False
+        and context_boundary_report.non_authoritative is True
+        and all(check.status == "passed" for check in context_boundary_report.checks)
+        and artifact_refs.get("preflight_context_boundary_report")
+        == manifest.context_boundary_report_ref
+        and "Context boundary status: passed" in review_text
+        and "Observed source evidence precedence: True" in review_text
+        and "Practice context is observed evidence: False" in review_text
+        and "context_influence_not_observed_fact" in review_text
+        and "human_confirmation_required_for_context_ranked_candidates" in review_text
+    )
     missing_blockers = sorted(REQUIRED_FINAL_BLOCKERS - set(manifest.final_blockers))
     missing_prohibited = sorted(REQUIRED_PROHIBITED_ACTIONS - set(manifest.prohibited_actions))
     blocker_detail_rows = (
@@ -702,6 +733,28 @@ def build_review_package_completeness_report(
                 "evidence_ref_count": (
                     evidence_completeness_report.evidence_ref_count
                     if evidence_completeness_report
+                    else None
+                ),
+            },
+        ),
+        _check(
+            "context_boundary_report_complete",
+            bool(context_boundary_report_complete),
+            "Context boundary report proves practice context stayed separate from observed evidence.",
+            [
+                artifact_refs.get("preflight_context_boundary_report", ""),
+                str(review_package_path),
+            ],
+            {
+                "status": context_boundary_report.status if context_boundary_report else None,
+                "context_signal_candidate_count": (
+                    context_boundary_report.context_signal_candidate_count
+                    if context_boundary_report
+                    else None
+                ),
+                "practice_context_is_observed_evidence": (
+                    context_boundary_report.practice_context_is_observed_evidence
+                    if context_boundary_report
                     else None
                 ),
             },

@@ -65,6 +65,8 @@ Extract names and aliases, but keep role candidates separate. A sender may be a 
 
 Return top alternatives for inbound event, matter family, and posture. Show source evidence and profile-prior influence separately.
 
+The run writes `context_boundary_report.json` after packet assembly. The report proves observed source evidence remains first in context precedence, context refs are structured practice-profile refs, context-influenced candidates stay source-anchor-only unless independently observed, unknown options remain available, and human confirmation remains required.
+
 ### 7. Identify dates and gaps
 
 Dates, deadlines, and urgency are candidates. The system identifies missing fields but cannot docket or characterize a legally controlling deadline.
@@ -129,7 +131,7 @@ It also verifies that normalized conflict-search terms, budget lines, budget sup
 
 ### 18. Review package completeness report
 
-After the safety gate and review package are written, the workflow emits `review_package_completeness_report.json`. This deterministic report checks that the manifest includes all required local artifacts, those files exist, the markdown package has the expected review sections and boundary text, required human gates, data-scope gate status, human-gate status, evidence-completeness status, deadline docketing guard status, budget submission guard status, final blockers, and structured blocker details are preserved, Exception Lake readiness remains dry-run and passed, run ledgers are linked, and the package still proves no conflict clearance, engagement decision, matter opening, docketing, billing, external write, or budget submission.
+After the safety gate and review package are written, the workflow emits `review_package_completeness_report.json`. This deterministic report checks that the manifest includes all required local artifacts, those files exist, the markdown package has the expected review sections and boundary text, required human gates, data-scope gate status, human-gate status, evidence-completeness status, context-boundary status, deadline docketing guard status, budget submission guard status, final blockers, and structured blocker details are preserved, Exception Lake readiness remains dry-run and passed, run ledgers are linked, and the package still proves no conflict clearance, engagement decision, matter opening, docketing, billing, external write, or budget submission.
 
 A failed completeness check blocks final package acceptance.
 

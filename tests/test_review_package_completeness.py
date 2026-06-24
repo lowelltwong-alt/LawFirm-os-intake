@@ -342,6 +342,33 @@ def test_review_package_completeness_fails_on_evidence_completeness_drift(tmp_pa
         enforce_review_package_completeness(report)
 
 
+def test_review_package_completeness_fails_on_context_boundary_drift(tmp_path, repo_root):
+    budget_dir = _run_budget(tmp_path, repo_root)
+    manifest, safety_report, exception_readiness_report, review_path = _load_inputs(budget_dir)
+    context_path = Path(manifest.artifact_refs["preflight_context_boundary_report"])
+    context_report = load_json(context_path)
+    context_report["practice_context_is_observed_evidence"] = True
+    context_path.write_text(
+        json.dumps(context_report, indent=2) + "\n",
+        encoding="utf-8",
+    )
+
+    report = build_review_package_completeness_report(
+        manifest=manifest,
+        review_package_path=review_path,
+        safety_report=safety_report,
+        exception_readiness_report=exception_readiness_report,
+    )
+
+    assert report.status == "failed"
+    assert any(
+        check.check_id == "context_boundary_report_complete" and check.status == "failed"
+        for check in report.checks
+    )
+    with pytest.raises(ValueError, match="context_boundary_report_complete"):
+        enforce_review_package_completeness(report)
+
+
 def test_review_package_completeness_fails_on_failed_ledger_integrity_report(tmp_path, repo_root):
     budget_dir = _run_budget(tmp_path, repo_root)
     manifest, safety_report, exception_readiness_report, review_path = _load_inputs(budget_dir)

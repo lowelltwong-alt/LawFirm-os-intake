@@ -92,6 +92,8 @@ The final matter-opening review package now includes source-inventory detail and
 
 The final matter-opening review package now includes an evidence-graph summary with node/edge counts, node-type counts, relationship counts, and key provenance edge examples; package completeness requires that section.
 
+Preflight runs now emit `context_boundary_report.json`, proving observed source evidence stays ahead of practice-context priors, context is not observed evidence, context refs remain structured, unknown options remain available, human confirmation remains required, and no external write or authoritative promotion occurred.
+
 The final matter-opening review package now includes authority and precondition subsections for contract-state status, human-review outcome, and budget precondition checks; package completeness requires those sections.
 
 The final matter-opening review package now includes Exception Lake readiness, handoff, and exception candidate detail subsections showing dry-run posture, raw-payload exclusion, promotion requirement, target runtime repo, no SQLite write, and support refs; package completeness requires those sections.

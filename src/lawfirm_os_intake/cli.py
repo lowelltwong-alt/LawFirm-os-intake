@@ -82,6 +82,8 @@ def main(argv: list[str] | None = None) -> int:
                     "data_scope_gate_report": packet.data_scope_gate_report_ref,
                     "fixture_gold_report": packet.fixture_gold_report_ref,
                     "deadline_docketing_guard_report": (packet.deadline_docketing_guard_report_ref),
+                    "evidence_completeness_report": packet.evidence_completeness_report_ref,
+                    "context_boundary_report": packet.context_boundary_report_ref,
                     "exception_lake_handoff_manifest": packet.exception_lake_handoff_manifest_ref,
                     "run_ledger_integrity_report": packet.run_ledger_integrity_report_ref,
                     "run_dir": str(run_dir),

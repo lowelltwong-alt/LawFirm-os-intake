@@ -269,3 +269,9 @@
 - Added `evidence_completeness_report.json` so preflight runs durably prove candidate evidence refs match packet segments instead of relying only on no thrown exception.
 - The report covers party candidates, role alternatives, inbound-event, matter-family, representation-posture, deadline, missing-information, and critic outputs, plus unknown options and human-review boundary flags.
 - The final review package, manifest, package completeness report, starter audit, schema export, tests, and docs now fail closed if the evidence-completeness proof is missing or drifts.
+
+## Context-boundary report slice - 2026-06-24
+
+- Added `context_boundary_report.json` so preflight runs durably prove practice context remains a transparent prior rather than observed evidence.
+- The report checks evidence precedence, structured context refs, context-influenced candidate status, unknown option preservation, human confirmation, non-authoritative posture, and no external writes.
+- The final review package, manifest, package completeness report, starter audit, schema export, tests, and docs now fail closed if the context-boundary proof is missing or drifts.

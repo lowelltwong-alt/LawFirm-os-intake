@@ -12,6 +12,7 @@ from .budget_submission_guard import (
 from .confirmation import build_human_review_outcome_record
 from .contract_state import build_contract_state_report, enforce_contract_state
 from .context import build_effective_context, load_profile
+from .context_boundary import build_context_boundary_report, enforce_context_boundary_report
 from .data_scope import build_data_scope_gate_report, enforce_data_scope_gate_report
 from .deadline_guard import (
     build_deadline_docketing_guard_report,
@@ -44,6 +45,7 @@ from .models import (
     ConflictSearchTerm,
     ConflictSeedPacket,
     ContractStateReport,
+    ContextBoundaryReport,
     DataScopeGateReport,
     DeadlineDocketingGuardReport,
     EvidenceCompletenessReport,
@@ -407,6 +409,7 @@ def run_preflight(
     run_ledger_integrity_report_path = run_dir / "run_ledger_integrity_report.json"
     deadline_docketing_guard_report_path = run_dir / "deadline_docketing_guard_report.json"
     evidence_completeness_report_path = run_dir / "evidence_completeness_report.json"
+    context_boundary_report_path = run_dir / "context_boundary_report.json"
     fixture_gold_report_path = run_dir / "fixture_gold_report.json" if fixture_gold else None
     packet = IntakePreflightPacket(
         packet_id=new_id("intake"),
@@ -443,8 +446,15 @@ def run_preflight(
         run_ledger_integrity_report_ref=str(run_ledger_integrity_report_path),
         deadline_docketing_guard_report_ref=str(deadline_docketing_guard_report_path),
         evidence_completeness_report_ref=str(evidence_completeness_report_path),
+        context_boundary_report_ref=str(context_boundary_report_path),
         intake_review_form_ref=str(review_form_path),
     )
+    context_boundary_report = build_context_boundary_report(packet)
+    write_json(
+        context_boundary_report_path,
+        context_boundary_report.model_dump(mode="json"),
+    )
+    enforce_context_boundary_report(context_boundary_report)
     evidence_completeness_report = build_evidence_completeness_report(
         packet,
         strict_evidence_required=strict_evidence,
@@ -519,6 +529,7 @@ def run_preflight(
                 str(exception_readiness_report_path),
                 str(exception_handoff_manifest_path),
                 str(evidence_completeness_report_path),
+                str(context_boundary_report_path),
             ],
         ).model_dump(mode="json"),
     )
@@ -893,6 +904,7 @@ def run_budget(
             packet.deadline_docketing_guard_report_ref or ""
         ),
         "preflight_evidence_completeness_report": (packet.evidence_completeness_report_ref or ""),
+        "preflight_context_boundary_report": (packet.context_boundary_report_ref or ""),
         "human_confirmation": str(run_dir / "human_confirmation.json"),
         "conflict_search_seed": str(run_dir / "conflict_search_seed_packet.json"),
         "legal_budget_proposal": str(run_dir / "legal_budget_proposal.json"),
@@ -1023,6 +1035,11 @@ def run_budget(
         if packet.evidence_completeness_report_ref
         else None
     )
+    context_boundary_report = (
+        ContextBoundaryReport.model_validate(load_json(packet.context_boundary_report_ref))
+        if packet.context_boundary_report_ref
+        else None
+    )
     budget_submission_guard_report = BudgetSubmissionGuardReport.model_validate(
         load_json(budget_submission_guard_report_path)
     )
@@ -1135,6 +1152,7 @@ def run_budget(
             human_gate_status_report=human_gate_status_report,
             deadline_docketing_guard_report=deadline_docketing_guard_report,
             evidence_completeness_report=evidence_completeness_report,
+            context_boundary_report=context_boundary_report,
             budget_submission_guard_report=budget_submission_guard_report,
             budget_precondition_report=budget_precondition_report,
         ),
@@ -1166,6 +1184,7 @@ def run_budget(
         data_scope_gate_report_ref=packet.data_scope_gate_report_ref,
         budget_precondition_report_ref=str(budget_precondition_report_path),
         evidence_completeness_report_ref=packet.evidence_completeness_report_ref,
+        context_boundary_report_ref=packet.context_boundary_report_ref,
         evidence_graph_ref=str(run_dir / "evidence_graph.json"),
         run_ledger_refs=[packet.run_ledger_ref, str(ledger_path)],
         run_ledger_integrity_report_refs=[

@@ -9,6 +9,7 @@ from .models import (
     BudgetSubmissionGuardReport,
     ConflictSeedPacket,
     ContractStateReport,
+    ContextBoundaryReport,
     DataScopeGateReport,
     DeadlineDocketingGuardReport,
     EvidenceCompletenessReport,
@@ -365,6 +366,33 @@ def _evidence_completeness_lines(report: EvidenceCompletenessReport | None) -> l
     lines.extend(
         f"- {check.status}: {check.check_id} - {check.message}; "
         f"evidence_refs={len(check.evidence_refs)}"
+        for check in report.checks
+    )
+    return lines
+
+
+def _context_boundary_lines(report: ContextBoundaryReport | None) -> list[str]:
+    if report is None:
+        return ["- Context boundary report: unavailable"]
+    lines = [
+        f"- Context boundary status: {report.status}",
+        f"- Context boundary report ID: `{report.context_boundary_report_id}`",
+        f"- Effective context ID: `{report.effective_context_id}`",
+        f"- Practice profile: {report.profile_id} v{report.profile_version}",
+        f"- Practice profile hash: {report.profile_sha256}",
+        f"- Observed source evidence precedence: {report.observed_source_evidence_precedence}",
+        f"- Practice context is observed evidence: {report.practice_context_is_observed_evidence}",
+        f"- Human confirmation required: {report.human_confirmation_required}",
+        f"- Checked scored candidates: {report.checked_candidate_count}",
+        f"- Context signal candidates: {report.context_signal_candidate_count}",
+        f"- Context-only candidate count: {report.context_only_candidate_count}",
+        f"- Observed-with-context candidate count: {report.observed_with_context_candidate_count}",
+        f"- Unknown option count: {report.unknown_option_count}",
+        "- Context boundary checks:",
+    ]
+    lines.extend(
+        f"- {check.status}: {check.check_id} - {check.message}; "
+        f"candidates={len(check.candidate_ids)}; context_refs={len(check.context_signal_refs)}"
         for check in report.checks
     )
     return lines
@@ -884,6 +912,7 @@ def render_matter_opening_review_package(
     human_gate_status_report: HumanGateStatusReport | None = None,
     deadline_docketing_guard_report: DeadlineDocketingGuardReport | None = None,
     evidence_completeness_report: EvidenceCompletenessReport | None = None,
+    context_boundary_report: ContextBoundaryReport | None = None,
     budget_submission_guard_report: BudgetSubmissionGuardReport | None = None,
     budget_precondition_report: BudgetPreconditionReport | None = None,
 ) -> str:
@@ -934,6 +963,9 @@ def render_matter_opening_review_package(
             "",
             "### Evidence Completeness",
             *_evidence_completeness_lines(evidence_completeness_report),
+            "",
+            "### Context Boundary",
+            *_context_boundary_lines(context_boundary_report),
             "",
             "### Human Review Outcome",
             *_human_review_outcome_lines(human_review_outcome),

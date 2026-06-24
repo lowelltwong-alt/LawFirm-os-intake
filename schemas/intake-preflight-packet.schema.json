@@ -916,6 +916,18 @@
       "default": null,
       "title": "Evidence Completeness Report Ref"
     },
+    "context_boundary_report_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Context Boundary Report Ref"
+    },
     "intake_review_form_ref": {
       "anyOf": [
         {
