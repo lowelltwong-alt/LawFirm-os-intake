@@ -196,3 +196,9 @@
 - Added `ingestion_volume_profile.json` so preflight runs record deterministic source/segment scale before any future Rust adapter decision.
 - Added a synthetic high-volume proxy fixture that crosses the local source-count profiling threshold while keeping `rust_replacement_allowed=false`.
 - Carried the profile into the review package manifest and completeness checks so the Rust-readiness posture remains visible in the north-star package.
+
+## Prohibited-transition exception slice - 2026-06-24
+
+- Added specific dry-run `prohibited_transition_attempted_*` Exception Lake candidates for untrusted source attempts to clear conflicts, open matters, create iManage workspaces, docket deadlines, submit budgets, or send external messages.
+- Added structured refs from those local candidates back to `workflow/prohibited-transitions.yaml` while keeping broad `workflow_escalation` lake mapping and no raw payload.
+- Added unit, north-star, and smoke coverage so prohibited-transition attempts remain visible in exception artifacts and the final review package.

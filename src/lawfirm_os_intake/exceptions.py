@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import re
+
 from .models import (
     BudgetProposal,
     BudgetSupportItem,
@@ -13,6 +15,69 @@ from .models import (
     Segment,
 )
 from .util import new_id
+
+
+PROHIBITED_TRANSITION_PATTERNS: tuple[dict[str, object], ...] = (
+    {
+        "label": "prohibited_transition_attempted_conflicts_cleared",
+        "transition_ref": (
+            "workflow/prohibited-transitions.yaml#conflict_seed_ready->conflicts_cleared"
+        ),
+        "pattern": re.compile(
+            r"\b(?:mark|treat|set|show|declare)\s+conflicts?\s+cleared\b"
+            r"|\bconflicts?\s+(?:are|is)\s+cleared\b",
+            re.IGNORECASE,
+        ),
+        "reason": "Untrusted source text attempts to turn a conflict-search seed into conflicts clearance.",
+    },
+    {
+        "label": "prohibited_transition_attempted_matter_opened",
+        "transition_ref": "workflow/prohibited-transitions.yaml#raw_received->matter_opened",
+        "pattern": re.compile(
+            r"\bopen\s+(?:a\s+)?matter\b|\bmatter\s+opened\b|\bcreate\s+(?:a\s+)?matter\b",
+            re.IGNORECASE,
+        ),
+        "reason": "Untrusted source text attempts to open or create a matter.",
+    },
+    {
+        "label": "prohibited_transition_attempted_imanage_workspace_created",
+        "transition_ref": (
+            "workflow/prohibited-transitions.yaml#matter_opening_readiness->"
+            "imanage_workspace_created"
+        ),
+        "pattern": re.compile(
+            r"\b(?:open|create)\s+(?:an?\s+)?(?:imanage|iManage)\s+workspace\b"
+            r"|\bopen\s+(?:a\s+)?matter\s+in\s+(?:imanage|iManage)\b",
+            re.IGNORECASE,
+        ),
+        "reason": "Untrusted source text attempts to create or open an iManage workspace.",
+    },
+    {
+        "label": "prohibited_transition_attempted_deadline_docketed",
+        "transition_ref": (
+            "workflow/prohibited-transitions.yaml#deadline_gap_candidates_ready->deadline_docketed"
+        ),
+        "pattern": re.compile(r"\bdocket(?:\s+all)?\s+deadlines?\b", re.IGNORECASE),
+        "reason": "Untrusted source text attempts to docket candidate deadlines.",
+    },
+    {
+        "label": "prohibited_transition_attempted_budget_submitted",
+        "transition_ref": (
+            "workflow/prohibited-transitions.yaml#budget_proposal_ready->budget_submitted"
+        ),
+        "pattern": re.compile(
+            r"\bsubmit\s+(?:the\s+)?budget\b|\bsend\s+(?:the\s+)?budget\s+to\b",
+            re.IGNORECASE,
+        ),
+        "reason": "Untrusted source text attempts to submit a budget.",
+    },
+    {
+        "label": "prohibited_transition_attempted_external_message_sent",
+        "transition_ref": "workflow/prohibited-transitions.yaml#raw_received->external_message_sent",
+        "pattern": re.compile(r"\bsend\s+this\s+message\b", re.IGNORECASE),
+        "reason": "Untrusted source text attempts to send an external communication.",
+    },
+)
 
 
 def _evidence_ref(segment: Segment) -> EvidenceRef:
@@ -50,6 +115,7 @@ def build_preflight_exception_candidates(
     candidates: list[ExceptionLakeCandidate] = []
     candidates.extend(_source_inventory_candidates(packet))
     candidates.extend(_instruction_risk_candidates(packet))
+    candidates.extend(_prohibited_transition_candidates(packet))
     candidates.extend(
         _critic_finding_candidates(packet.run_id, packet.packet_id, packet.critic_findings)
     )
@@ -122,6 +188,34 @@ def _instruction_risk_candidates(packet: IntakePreflightPacket) -> list[Exceptio
             blocked_state=packet.status,
         )
     ]
+
+
+def _prohibited_transition_candidates(
+    packet: IntakePreflightPacket,
+) -> list[ExceptionLakeCandidate]:
+    candidates: list[ExceptionLakeCandidate] = []
+    for definition in PROHIBITED_TRANSITION_PATTERNS:
+        pattern = definition["pattern"]
+        assert isinstance(pattern, re.Pattern)
+        matched_segments = [segment for segment in packet.segments if pattern.search(segment.text)]
+        if not matched_segments:
+            continue
+        refs = _dedup_evidence_refs([_evidence_ref(segment) for segment in matched_segments])
+        candidates.append(
+            ExceptionLakeCandidate(
+                candidate_id=new_id("exc"),
+                run_id=packet.run_id,
+                preflight_packet_id=packet.packet_id,
+                local_event_label=str(definition["label"]),
+                canonical_lake_class="workflow_escalation",
+                reason=str(definition["reason"]),
+                source_inventory_refs=sorted({ref.source_id for ref in refs}),
+                evidence_refs=refs,
+                structured_refs=[str(definition["transition_ref"])],
+                blocked_state=packet.status,
+            )
+        )
+    return candidates
 
 
 def _critic_finding_candidates(

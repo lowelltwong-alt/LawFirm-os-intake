@@ -71,6 +71,45 @@ def test_prompt_injection_becomes_workflow_escalation_candidate(tmp_path, repo_r
     assert injection[0]["blocked_state"] == "human_intake_review_required"
 
 
+def test_prohibited_transition_attempts_become_specific_exception_candidates(
+    tmp_path,
+    repo_root,
+):
+    _, run_dir = run_preflight(
+        repo_root / "examples/synthetic/inbound/prompt-injection-email.json",
+        repo_root / "context/synthetic-profiles/insurance-defense.yaml",
+        tmp_path,
+    )
+
+    candidates = _jsonl(run_dir / "exception_lake_candidates.jsonl")
+    labels = {candidate["local_event_label"] for candidate in candidates}
+    expected_labels = {
+        "prohibited_transition_attempted_budget_submitted",
+        "prohibited_transition_attempted_conflicts_cleared",
+        "prohibited_transition_attempted_deadline_docketed",
+        "prohibited_transition_attempted_external_message_sent",
+        "prohibited_transition_attempted_imanage_workspace_created",
+        "prohibited_transition_attempted_matter_opened",
+    }
+    transition_candidates = [
+        candidate for candidate in candidates if candidate["local_event_label"] in expected_labels
+    ]
+
+    assert expected_labels.issubset(labels)
+    assert all(
+        candidate["canonical_lake_class"] == "workflow_escalation"
+        for candidate in transition_candidates
+    )
+    assert all(candidate["evidence_refs"] for candidate in transition_candidates)
+    assert all(candidate["structured_refs"] for candidate in transition_candidates)
+    assert all(
+        candidate["blocked_state"] == "human_intake_review_required"
+        for candidate in transition_candidates
+    )
+    assert all(candidate["raw_payload_included"] is False for candidate in transition_candidates)
+    assert all("text" not in candidate for candidate in transition_candidates)
+
+
 def test_budget_blocker_emits_local_exception_candidate(tmp_path, repo_root):
     packet, run_dir = run_preflight(
         repo_root / "examples/synthetic/inbound/carrier-assignment-medmal.json",

@@ -75,6 +75,9 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     assert "duplicate_source_detected" in labels
     assert "source_missing" in labels
     assert "prompt_injection_source_content" in labels
+    assert "prohibited_transition_attempted_conflicts_cleared" in labels
+    assert "prohibited_transition_attempted_deadline_docketed" in labels
+    assert "prohibited_transition_attempted_matter_opened" in labels
     assert preflight_exception_readiness["status"] == "passed"
     assert {
         ref["source_id"]
@@ -154,6 +157,7 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
         "missing information: jurisdiction;",
         "not docketed; evidence:",
         "prompt_injection_source_content",
+        "prohibited_transition_attempted_deadline_docketed",
         "Exception Lake readiness report:",
         "### Exception Lake Readiness",
         "Readiness status: passed",
