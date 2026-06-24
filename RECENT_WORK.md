@@ -251,3 +251,9 @@
 - The gate fails closed on non-synthetic origin, real client or matter data flags, privileged data flags, public direct-ingestion posture, raw-payload-before-gate drift, or external writes.
 - Carried the report into the final review package, manifest, safety gate, package completeness report, starter audit, schema export, focused tests, north-star tests, and smoke coverage.
 - Kept the future Rust path subordinate to the same gate: Python remains the reference runtime, and any future Rust ingestion worker must run only after a passing data-scope report and prove parity before replacement.
+
+## Public-data catalog boundary slice - 2026-06-24
+
+- Added deterministic validation that `examples/public/catalog.yaml` remains planning-only metadata and no catalog entry allows direct runtime ingestion.
+- `scripts/validate_repo.py` and `starter_release_audit_report.json` now fail closed if the public catalog drifts toward downloaded payloads or runtime ingestion.
+- Added focused coverage proving `data_origin: public_reference` bundles block at the data-scope gate before raw input storage.

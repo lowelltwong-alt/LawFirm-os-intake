@@ -4,6 +4,10 @@
 
 Public data is a **planning and source-structure input**, not a live runtime input in this starter. Existing LawFirm OS boundaries prohibit real matter data in the current MVP. Public court records are still real matters.
 
+`examples/public/catalog.yaml` is metadata-only and every entry must keep `direct_runtime_ingestion: false`. `scripts/validate_repo.py` and the starter release audit fail closed if the catalog starts allowing direct runtime ingestion, adds payload fields, or stores non-catalog public files under `examples/public/`.
+
+Runtime source bundles with `data_origin: public_reference` are blocked by the data-scope gate before `raw_input.json`, source inventory, segmentation, review forms, or Exception Lake candidates are written.
+
 ## Recommended sources
 
 ### CourtListener / RECAP

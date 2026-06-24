@@ -1,4 +1,5 @@
 import importlib.util
+import yaml
 
 
 def _load_validate_repo(repo_root):
@@ -25,4 +26,31 @@ def test_front_door_file_ref_validation_detects_missing_paths(tmp_path, repo_roo
 
     assert validate_repo.missing_front_door_file_refs(tmp_path) == [
         "README.md -> docs/missing-boundary.md"
+    ]
+
+
+def test_repo_validation_detects_public_catalog_ingestion_drift(tmp_path, repo_root):
+    validate_repo = _load_validate_repo(repo_root)
+    (tmp_path / "config").mkdir()
+    (tmp_path / "examples/public").mkdir(parents=True)
+    policy = yaml.safe_load((repo_root / "config/data_policy.yaml").read_text(encoding="utf-8"))
+    catalog = yaml.safe_load(
+        (repo_root / "examples/public/catalog.yaml").read_text(encoding="utf-8")
+    )
+    catalog["sources"][0]["direct_runtime_ingestion"] = True
+    (tmp_path / "config/data_policy.yaml").write_text(
+        yaml.safe_dump(policy, sort_keys=False),
+        encoding="utf-8",
+    )
+    (tmp_path / "examples/public/catalog.yaml").write_text(
+        yaml.safe_dump(catalog, sort_keys=False),
+        encoding="utf-8",
+    )
+    (tmp_path / "examples/public/README.md").write_text(
+        "Planning-only public metadata catalog.\n",
+        encoding="utf-8",
+    )
+
+    assert validate_repo.public_data_boundary_failures(tmp_path) == [
+        "catalog_source_allows_direct_runtime_ingestion"
     ]

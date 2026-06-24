@@ -8,6 +8,11 @@ import sys
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.dont_write_bytecode = True
+sys.path.insert(0, str(ROOT / "src"))
+
+from lawfirm_os_intake.public_data import validate_public_data_boundary  # noqa: E402
+
 REQUIRED = [
     "README.md",
     "AI_WORK_START_HERE.md",
@@ -87,6 +92,11 @@ def missing_front_door_file_refs(root: Path = ROOT) -> list[str]:
     return sorted(missing)
 
 
+def public_data_boundary_failures(root: Path = ROOT) -> list[str]:
+    ok, details = validate_public_data_boundary(root)
+    return [] if ok else list(details.get("failures", []))
+
+
 def fail(message: str) -> None:
     raise SystemExit(f"repository validation failed: {message}")
 
@@ -99,6 +109,10 @@ def main() -> int:
     missing_front_door_refs = missing_front_door_file_refs(ROOT)
     if missing_front_door_refs:
         fail("broken front-door file refs: " + ", ".join(missing_front_door_refs))
+
+    public_data_failures = public_data_boundary_failures(ROOT)
+    if public_data_failures:
+        fail("public data boundary failures: " + ", ".join(public_data_failures))
 
     for path in ROOT.rglob("*.json"):
         try:

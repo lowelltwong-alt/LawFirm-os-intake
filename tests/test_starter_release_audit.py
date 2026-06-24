@@ -42,6 +42,7 @@ def test_starter_release_audit_passes_on_north_star_demo(tmp_path, repo_root):
     assert {check.status for check in report.checks} == {"passed"}
     assert {
         "required_demo_artifacts_present",
+        "public_data_catalog_is_metadata_only",
         "evidence_refs_validate_against_segments",
         "conflict_seed_has_no_conclusion_and_evidence",
         "budget_boundary_and_math_hold",

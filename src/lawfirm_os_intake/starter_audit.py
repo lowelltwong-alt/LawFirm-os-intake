@@ -31,6 +31,11 @@ from .models import (
     StarterReleaseAuditCheck,
     StarterReleaseAuditReport,
 )
+from .public_data import (
+    PUBLIC_DATA_CATALOG_REF,
+    PUBLIC_DATA_POLICY_REF,
+    validate_public_data_boundary,
+)
 from .util import load_json, load_jsonl, new_id, now_iso
 from .workflow import _validate_refs
 
@@ -599,6 +604,7 @@ def build_starter_release_audit_report(
         if not paths[key].exists() or (paths[key].is_file() and paths[key].stat().st_size == 0)
     ]
     registry_ok, registry_failures = _all_candidate_registry_files_are_noncanonical(repo_root)
+    public_data_ok, public_data_details = validate_public_data_boundary(repo_root)
     packet_refs_ok, packet_ref_error = _candidate_refs_are_valid(packet)
     ingestion_refs_ok, ingestion_ref_error = _ingestion_refs_are_valid(ingestion_result)
     budget_math_ok, budget_math_details = _deterministic_budget_math_is_valid(budget)
@@ -670,6 +676,17 @@ def build_starter_release_audit_report(
             artifact_refs=_artifact_refs(
                 paths, ["data_scope_gate_report", "raw_input", "preflight_packet"]
             ),
+        ),
+        _check(
+            "public_data_catalog_is_metadata_only",
+            public_data_ok,
+            "Public data remains catalog/planning-only and is not directly ingested by the starter.",
+            requirement_refs=["DoD-17", "Safety-real-data-zero"],
+            artifact_refs=[
+                str(repo_root / PUBLIC_DATA_CATALOG_REF),
+                str(repo_root / PUBLIC_DATA_POLICY_REF),
+            ],
+            details=public_data_details,
         ),
         _check(
             "contract_and_adapter_gates_passed",

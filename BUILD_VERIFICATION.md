@@ -10,13 +10,13 @@ PYTHONPATH=src python scripts/validate_repo.py
 # repository validation passed
 
 PYTHONPATH=src python -m pytest -q
-# 113 passed
+# 117 passed
 
 PYTHONPATH=src ruff check src tests scripts
 # All checks passed
 
 PYTHONPATH=src ruff format --check src tests scripts
-# 72 files already formatted
+# 74 files already formatted
 
 PYTHONPATH=src bash scripts/smoke_demo.sh
 # completed without error and wrote starter, blocked-budget, and context-counterfactual audit reports
@@ -24,9 +24,9 @@ PYTHONPATH=src bash scripts/smoke_demo.sh
 
 The monetary result is a synthetic test calculation, not a fee quote or approved budget.
 
-Repository validation now checks the AI/front-door orientation files for broken local file references. The builder reading order in `README.md`, `AI_WORK_START_HERE.md`, `AI_TABLE_OF_CONTENTS.md`, and `CLAUDE.md` must point only to existing local files or directories.
+Repository validation now checks the AI/front-door orientation files for broken local file references and verifies that the public-data catalog remains planning-only metadata with no direct runtime ingestion. The builder reading order in `README.md`, `AI_WORK_START_HERE.md`, `AI_TABLE_OF_CONTENTS.md`, and `CLAUDE.md` must point only to existing local files or directories.
 
-The smoke demo now also writes `starter_release_audit_report.json` after the north-star demo finishes. That report is a local, non-authoritative starter release audit over generated artifacts; it fails if required outputs, synthetic-only scope, source coverage states, candidate surface completeness, source-bound evidence refs, evidence-graph deliverable coverage, human-review package story coverage, human gates, carrier/client separation, conflict/budget boundaries, dry-run Exception Lake posture, safety boundary, fixture-gold gates, run ledgers, candidate-registry noncanonical status, or Rust-readiness posture drift.
+The smoke demo now also writes `starter_release_audit_report.json` after the north-star demo finishes. That report is a local, non-authoritative starter release audit over generated artifacts; it fails if required outputs, synthetic-only scope, public-data catalog metadata-only posture, source coverage states, candidate surface completeness, source-bound evidence refs, evidence-graph deliverable coverage, human-review package story coverage, human gates, carrier/client separation, conflict/budget boundaries, dry-run Exception Lake posture, safety boundary, fixture-gold gates, run ledgers, candidate-registry noncanonical status, or Rust-readiness posture drift.
 
 The smoke demo also writes `blocked_budget_attempt_audit_report.json` from a synthetic `needs_more_information` confirmation. That report proves the budget path blocks before conflict seed, budget proposal, readiness packet, safety gate, or final package output while preserving the blocked precondition report, review outcome/history, dry-run exception candidate, readiness report, handoff manifest, and run ledger.
 
