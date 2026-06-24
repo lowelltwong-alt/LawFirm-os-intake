@@ -63,6 +63,12 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert "evidence:" in review_text
     assert "## Budget Proposal" in review_text
     assert "Scenario: baseline" in review_text
+    assert "### Calculation Summary" in review_text
+    assert "Deterministic calculation: True" in review_text
+    assert "### Budget Lines" in review_text
+    assert "rate source:" in review_text
+    assert "synthetic rate:" in review_text
+    assert "### Budget Supports" in review_text
     assert "practice-profile://" in review_text
     assert "workflow-policy://" in review_text
     assert "## Exception And Escalation Records" in review_text
@@ -120,6 +126,7 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert completeness.review_package_manifest_ref == str(manifest_path)
     assert "## Candidate Alternatives" in completeness.required_sections
     assert "## Required Human Gates" in completeness.required_sections
+    assert "### Budget Lines" in completeness.required_sections
     assert "review_package_completeness_report" in completeness.required_artifact_keys
     assert {check.status for check in completeness.checks} == {"passed"}
 

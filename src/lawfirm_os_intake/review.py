@@ -192,6 +192,65 @@ def _budget_support_lines(budget: BudgetProposal) -> list[str]:
     return lines or ["- none"]
 
 
+def _money(value: float | None, currency: str) -> str:
+    return f"{value:.2f} {currency}" if value is not None else "not priced"
+
+
+def _hours_text(minimum: float | None, estimate: float, maximum: float | None) -> str:
+    if minimum is not None and maximum is not None:
+        return f"{minimum:.1f}-{maximum:.1f} hrs (estimate {estimate:.1f})"
+    return f"{estimate:.1f} hrs"
+
+
+def _budget_calculation_lines(budget: BudgetProposal) -> list[str]:
+    report = budget.calculation_report
+    if report is None:
+        return ["- No calculation report was produced."]
+    return [
+        f"- Mode: {report.mode}",
+        f"- Line count: {report.line_count}",
+        f"- Total hours: {report.total_hours}",
+        f"- Priced lines: {report.priced_line_count}",
+        f"- Unpriced lines: {report.unpriced_line_count}",
+        f"- Subtotal fees: {_money(report.subtotal_fees, budget.currency)}",
+        f"- Subtotal expenses: {_money(report.subtotal_expenses, budget.currency)}",
+        f"- Contingency percent: {report.contingency_percent}",
+        f"- Contingency amount: {_money(report.contingency_amount, budget.currency)}",
+        f"- Total proposed budget: {_money(report.total_proposed_budget, budget.currency)}",
+        f"- Rate sources: {', '.join(report.rate_sources) or 'none'}",
+        f"- Deterministic calculation: {report.deterministic}",
+    ]
+
+
+def _budget_line_lines(budget: BudgetProposal) -> list[str]:
+    lines = []
+    for line in budget.lines:
+        hours = _hours_text(
+            line.estimated_hours_min,
+            line.estimated_hours,
+            line.estimated_hours_max,
+        )
+        rate = _money(line.hourly_rate, budget.currency) if line.hourly_rate else "absent"
+        fees = _money(line.estimated_fees, budget.currency)
+        expenses = _money(line.estimated_expenses, budget.currency)
+        assumptions = "; ".join(line.assumptions) or "none"
+        formula = f"; formula: {line.calculation_formula}" if line.calculation_formula else ""
+        external_code = (
+            f"; external code candidate: {line.external_code_candidate}"
+            if line.external_code_candidate
+            else ""
+        )
+        lines.append(
+            f"- {line.phase_name} / {line.task_name} / {line.staffing_role}: "
+            f"{hours}; rate: {rate}; rate source: {line.rate_source}; "
+            f"synthetic rate: {line.rate_is_synthetic}; fees: {fees}; "
+            f"expenses: {expenses}; assumptions: {assumptions}; "
+            f"evidence: {_refs_text(line.evidence_refs, limit=3)}"
+            f"{formula}{external_code}"
+        )
+    return lines or ["- none"]
+
+
 def _refs_text(refs: list[Any], limit: int | None = None) -> str:
     selected = refs if limit is None else refs[:limit]
     return ", ".join(_ref_text(ref) for ref in selected) or "none"
@@ -365,6 +424,14 @@ def render_matter_opening_review_package(
             f"- Scenario: {budget.scenario_name}",
             f"- Pricing status: {budget.pricing_status}",
             f"- Total proposed budget: {total_budget}",
+            "",
+            "### Calculation Summary",
+            *_budget_calculation_lines(budget),
+            "",
+            "### Budget Lines",
+            *_budget_line_lines(budget),
+            "",
+            "### Budget Supports",
             *_budget_support_lines(budget),
             "",
             "## Exception And Escalation Records",

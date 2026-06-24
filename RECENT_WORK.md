@@ -124,3 +124,9 @@
 - Added a `Required Human Gates` section to the final matter-opening review package.
 - The section makes conflicts clearance, engagement authorization, budget review, and matter-opening authorization visibly required before any real-world action.
 - The completeness report now requires the section before final package acceptance.
+
+## Final-package budget detail slice - 2026-06-24
+
+- Added calculation summary, budget line, and budget support subsections to the final matter-opening review package.
+- Budget lines now render hours/ranges, rate source, synthetic-rate label, fees, expenses, assumptions, formula, and source evidence refs inline.
+- The completeness report now requires those budget detail subsections before final package acceptance.
