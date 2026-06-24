@@ -1,0 +1,91 @@
+policy_id: synthetic-budget-driver-policy
+version: "0.1"
+status: candidate
+contains_real_firm_data: false
+
+# SYNTHETIC ONLY. Driver taxonomy and per-matter-family defaults for the driver-based
+# budget model (see docs/driver-based-budget-model-design.md).
+#
+# Slice 1 records resolved drivers with provenance; it does NOT apply them to budget
+# math. Defaults below are labeled provenance=profile_default at resolution time: they
+# are assumptions for an unknown case, never observed case facts. Promotion of this
+# taxonomy to canon runs through the Semantic Substrate; until then it is a candidate.
+
+drivers:
+  resolution_path:
+    class: resolution_path
+    unit: scenario
+    description: How far the matter proceeds; selects scenario truncation.
+  num_represented_defendants:
+    class: count
+    unit: parties
+    description: Count of represented/insured defendants; derivable from confirmed parties.
+  num_adverse_parties:
+    class: count
+    unit: parties
+    description: Count of adverse parties/claimants; derivable from confirmed parties.
+  num_depositions:
+    class: count
+    unit: depositions
+    description: Total depositions taken and defended.
+  num_experts:
+    class: count
+    unit: experts
+    description: Retained and opposing experts requiring work.
+  written_discovery_rounds:
+    class: count
+    unit: rounds
+    description: Rounds of interrogatories, requests for production, and admissions.
+  num_dispositive_motions:
+    class: count
+    unit: motions
+    description: Summary-judgment and other dispositive motions briefed.
+  esi_volume_tier:
+    class: count_tier
+    unit: tier
+    description: none | light | moderate | heavy electronic discovery volume.
+  trial_days:
+    class: count
+    unit: days
+    description: Expected days of trial attendance.
+  severity_tier:
+    class: intensity
+    unit: tier
+    description: soft_tissue | significant | catastrophic_or_death exposure.
+  liability_dispute:
+    class: intensity
+    unit: tier
+    description: clear | disputed | hotly_contested liability posture.
+  venue_difficulty:
+    class: intensity
+    unit: tier
+    description: favorable | neutral | plaintiff_friendly venue.
+  coverage_posture:
+    class: coverage
+    unit: tier
+    description: none | reservation_of_rights | coverage_counsel | dj_action.
+
+matter_family_defaults:
+  medical_malpractice_defense:
+    num_depositions: 8
+    num_experts: 4
+    written_discovery_rounds: 2
+    num_dispositive_motions: 1
+    esi_volume_tier: moderate
+    trial_days: 7
+    severity_tier: significant
+    liability_dispute: disputed
+    venue_difficulty: neutral
+    # resolution_path and coverage_posture are intentionally omitted so they resolve
+    # to 'unknown' unless observed or human-confirmed.
+
+scenarios:
+  - scenario_id: early_resolution
+    resolution_phase: P200
+    description: Motion to dismiss granted or pre-discovery settlement.
+  - scenario_id: standard
+    resolution_phase: P400
+    description: Resolves at mediation or on summary judgment after discovery.
+  - scenario_id: through_trial
+    resolution_phase: P500
+    description: Full discovery, dispositive motions, trial preparation, and trial.
