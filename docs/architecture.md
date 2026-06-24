@@ -75,9 +75,9 @@ Python is the reference implementation for the starter. If future document volum
 
 Rust must not own legal classification, party roles, matter routing, conflict conclusions, budget decisions, connector writes, or authority policy. Before adoption, a Rust adapter must prove golden parity with the Python reference for offsets, hashes, segment structure, prompt-injection flags, duplicate/missing-source states, and schema-compatible JSON.
 
-The starter writes `ingestion_result.json` as that Python reference. It contains the source inventory, coverage summary, structural segments, and one segment evidence ref per segment under `rust_ready_ingestion_v0_1`. It also writes `ingestion_volume_profile.json`, which records source/segment scale, local profiling thresholds, `rust_adapter_proposal_state`, and required Rust transition gates. `rust_ingestion_readiness_report.json` proves the artifact is a valid Rust parity target while preserving `rust_replacement_allowed=false`.
+The starter writes `ingestion_result.json` as that Python reference. It contains the source inventory, coverage summary, structural segments, and one segment evidence ref per segment under `rust_ready_ingestion_v0_1`. It also writes `ingestion_volume_profile.json`, which records source/segment scale, local profiling thresholds, compute pressure signals, required performance profile dimensions, candidate Rust hot-path scope, `rust_adapter_proposal_state`, and required Rust transition gates. `rust_ingestion_readiness_report.json` proves the artifact is a valid Rust parity target while preserving `rust_replacement_allowed=false`.
 
-Preparing for Rust now means preserving JSON contracts, deterministic fixture outputs, narrow adapter seams, and reviewer-visible transition gates. The starter should not add a Rust crate or dual implementation until profiling shows ingestion is the bottleneck.
+Preparing for Rust now means preserving JSON contracts, deterministic fixture outputs, narrow adapter seams, benchmark dimensions, and reviewer-visible transition gates. The starter should not add a Rust crate or dual implementation until profiling shows ingestion is the bottleneck.
 
 ## Throughput
 

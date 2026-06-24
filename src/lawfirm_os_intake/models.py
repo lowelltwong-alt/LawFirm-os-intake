@@ -134,6 +134,9 @@ class IngestionVolumeProfile(StrictModel):
     segment_type_counts: dict[str, int]
     profile_thresholds: dict[str, int]
     scale_signals: list[str] = Field(default_factory=list)
+    compute_pressure_signals: list[str] = Field(default_factory=list)
+    required_performance_profile_dimensions: list[str] = Field(default_factory=list)
+    candidate_rust_hot_path_scope: list[str] = Field(default_factory=list)
     observed_scale_band: Literal["starter_fixture", "profile_candidate"]
     performance_profile_required_before_rust: bool
     rust_replacement_allowed: Literal[False] = False
@@ -407,6 +410,7 @@ class IntakePreflightPacket(StrictModel):
     exception_candidates_ref: str | None = None
     exception_lake_readiness_report_ref: str | None = None
     exception_lake_handoff_manifest_ref: str | None = None
+    run_ledger_integrity_report_ref: str | None = None
     intake_review_form_ref: str | None = None
 
 
@@ -661,6 +665,33 @@ class RunEvent(StrictModel):
     notes: str | None = None
 
 
+class RunLedgerIntegrityCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    event_step_names: list[str] = Field(default_factory=list)
+    details: dict[str, Any] = Field(default_factory=dict)
+
+
+class RunLedgerIntegrityReport(StrictModel):
+    schema_version: str = "0.1"
+    run_ledger_integrity_report_id: str
+    run_id: str
+    stage: Literal["preflight", "budget_success", "budget_precondition_blocked"]
+    status: Literal["passed", "failed"]
+    run_ledger_ref: str
+    event_count: int = Field(ge=0)
+    required_steps: list[str]
+    observed_steps: list[str]
+    terminal_step_name: str
+    terminal_status: Literal["started", "completed", "blocked", "failed"]
+    local_artifact_refs_only: bool
+    external_writes_performed: Literal[False] = False
+    non_authoritative: Literal[True] = True
+    checks: list[RunLedgerIntegrityCheck]
+    generated_at: str
+
+
 class ExceptionLakeCandidate(StrictModel):
     schema_version: str = "0.1"
     candidate_id: str
@@ -781,6 +812,7 @@ class ReviewPackageManifest(StrictModel):
     budget_precondition_report_ref: str | None = None
     evidence_graph_ref: str
     run_ledger_refs: list[str]
+    run_ledger_integrity_report_refs: list[str] = Field(default_factory=list)
     exception_candidate_refs: list[str]
     exception_lake_readiness_report_ref: str | None = None
     exception_lake_handoff_manifest_ref: str | None = None

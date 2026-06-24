@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 import pytest
@@ -182,4 +183,31 @@ def test_review_package_completeness_fails_when_linked_forms_lose_evidence_or_bo
     assert check.status == "failed"
     assert artifact_key in check.details["missing_content_by_form"]
     with pytest.raises(ValueError, match="linked_review_forms_preserve_evidence_and_boundaries"):
+        enforce_review_package_completeness(report)
+
+
+def test_review_package_completeness_fails_on_failed_ledger_integrity_report(tmp_path, repo_root):
+    budget_dir = _run_budget(tmp_path, repo_root)
+    manifest, safety_report, exception_readiness_report, review_path = _load_inputs(budget_dir)
+    ledger_report_path = Path(manifest.artifact_refs["budget_run_ledger_integrity_report"])
+    ledger_report = load_json(ledger_report_path)
+    ledger_report["status"] = "failed"
+    ledger_report_path.write_text(
+        json.dumps(ledger_report, indent=2) + "\n",
+        encoding="utf-8",
+    )
+
+    report = build_review_package_completeness_report(
+        manifest=manifest,
+        review_package_path=review_path,
+        safety_report=safety_report,
+        exception_readiness_report=exception_readiness_report,
+    )
+
+    assert report.status == "failed"
+    assert any(
+        check.check_id == "run_ledger_integrity_reports_passed" and check.status == "failed"
+        for check in report.checks
+    )
+    with pytest.raises(ValueError, match="run_ledger_integrity_reports_passed"):
         enforce_review_package_completeness(report)

@@ -34,12 +34,14 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
         preflight_dir / "exception_lake_readiness_report.json"
     )
     preflight_exception_handoff = load_json(preflight_dir / "exception_lake_handoff_manifest.json")
+    preflight_ledger_integrity = load_json(preflight_dir / "run_ledger_integrity_report.json")
     budget_dir = tmp_path / "north-star/budget"
     confirmation = load_json(tmp_path / "north-star/human_confirmation.json")
     conflict_seed = load_json(budget_dir / "conflict_search_seed_packet.json")
     budget_exceptions = load_jsonl(budget_dir / "exception_lake_candidates.jsonl")
     budget_exception_readiness = load_json(budget_dir / "exception_lake_readiness_report.json")
     budget_exception_handoff = load_json(budget_dir / "exception_lake_handoff_manifest.json")
+    budget_ledger_integrity = load_json(budget_dir / "run_ledger_integrity_report.json")
     safety = load_json(budget_dir / "safety_gate_report.json")
     manifest = load_json(budget_dir / "review_package_manifest.json")
     completeness = load_json(budget_dir / "review_package_completeness_report.json")
@@ -52,6 +54,7 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     budget_labels = {item["local_event_label"] for item in budget_exceptions}
     assert packet["source_coverage_summary"]["missing_sources"] == 1
     assert packet["ingestion_result_ref"].endswith("ingestion_result.json")
+    assert packet["run_ledger_integrity_report_ref"].endswith("run_ledger_integrity_report.json")
     assert packet["ingestion_volume_profile_ref"].endswith("ingestion_volume_profile.json")
     assert ingestion_result["parity_contract"] == "rust_ready_ingestion_v0_1"
     assert ingestion_result["rust_replacement_allowed"] is False
@@ -59,6 +62,9 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     assert ingestion_volume["rust_replacement_allowed"] is False
     assert ingestion_volume["decision"] == "keep_python_reference"
     assert ingestion_volume["rust_adapter_proposal_state"] == "not_warranted"
+    assert ingestion_volume["compute_pressure_signals"] == []
+    assert "peak_memory_mb" in ingestion_volume["required_performance_profile_dimensions"]
+    assert "sha256_hashing" in ingestion_volume["candidate_rust_hot_path_scope"]
     assert "python_reference_golden_parity" in ingestion_volume["required_rust_transition_gates"]
     assert len(ingestion_result["segment_evidence_refs"]) == len(ingestion_result["segments"])
     assert packet["contract_state_report_ref"].endswith("contract_state_report.json")
@@ -87,6 +93,8 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     assert preflight_exception_readiness["status"] == "passed"
     assert preflight_exception_handoff["status"] == "dry_run_ready_not_admitted"
     assert preflight_exception_handoff["sqlite_write_performed"] is False
+    assert preflight_ledger_integrity["status"] == "passed"
+    assert preflight_ledger_integrity["stage"] == "preflight"
     assert "prompt_injection_source_content" in {
         item["local_event_label"] for item in preflight_exception_handoff["label_summaries"]
     }
@@ -107,6 +115,9 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     )
     assert budget_exception_handoff["sqlite_write_performed"] is False
     assert budget_exception_handoff["target_runtime_repo"] == "LawFirm-os-exceptions-lake-runtime"
+    assert budget_ledger_integrity["status"] == "passed"
+    assert budget_ledger_integrity["stage"] == "budget_success"
+    assert budget_ledger_integrity["local_artifact_refs_only"] is True
     assert "matter_opening_blocked_pending_conflicts_and_engagement" in {
         item["local_event_label"] for item in budget_exception_handoff["label_summaries"]
     }
@@ -127,6 +138,12 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     )
     assert manifest["artifact_refs"]["preflight_ingestion_volume_profile"].endswith(
         "ingestion_volume_profile.json"
+    )
+    assert manifest["artifact_refs"]["preflight_run_ledger_integrity_report"].endswith(
+        "run_ledger_integrity_report.json"
+    )
+    assert manifest["artifact_refs"]["budget_run_ledger_integrity_report"].endswith(
+        "run_ledger_integrity_report.json"
     )
     assert manifest["artifact_refs"]["preflight_model_adapter_report"].endswith(
         "model_adapter_report.json"
@@ -157,6 +174,11 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     assert manifest["exception_lake_handoff_manifest_ref"].endswith(
         "exception_lake_handoff_manifest.json"
     )
+    assert len(manifest["run_ledger_integrity_report_refs"]) == 2
+    assert all(
+        ref.endswith("run_ledger_integrity_report.json")
+        for ref in manifest["run_ledger_integrity_report_refs"]
+    )
     assert manifest["contract_state_report_ref"].endswith("contract_state_report.json")
 
     for phrase in [
@@ -182,6 +204,9 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
         "Ingestion volume profile:",
         "Ingestion profile decision: keep_python_reference",
         "Rust adapter proposal state: not_warranted",
+        "Compute pressure signals: none",
+        "Required performance profile dimensions:",
+        "Candidate Rust hot path scope:",
         "Required Rust transition gates:",
         "syn-northstar-attachment-missing-001",
         "read_state=missing",
@@ -240,6 +265,9 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
         "supports_party_role_candidate=",
         "edge supports_conflict_search_term:",
         "## Run Ledger Summary",
+        "### Run Ledger Integrity",
+        "preflight: status=passed",
+        "budget_success: status=passed",
         "preflight step 2: contract_state_gate",
         "budget step 4: conflict_seed_and_budget_proposal_built",
         "This package does not clear conflicts",

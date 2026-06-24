@@ -4,19 +4,19 @@ Verified in the artifact build environment on 2026-06-24:
 
 ```text
 PYTHONPATH=src python scripts/export_schemas.py
-# exported 30 schemas
+# exported 31 schemas
 
 PYTHONPATH=src python scripts/validate_repo.py
 # repository validation passed
 
 PYTHONPATH=src python -m pytest -q
-# 85 passed
+# 90 passed
 
 PYTHONPATH=src ruff check src tests scripts
 # All checks passed
 
 PYTHONPATH=src ruff format --check src tests scripts
-# 63 files already formatted
+# 65 files already formatted
 
 PYTHONPATH=src bash scripts/smoke_demo.sh
 # completed without error and wrote starter, blocked-budget, and context-counterfactual audit reports
@@ -44,6 +44,8 @@ Preflight runs now emit `ingestion_result.json` as the Python reference parity o
 
 Preflight runs now emit `ingestion_volume_profile.json`, a deterministic source/segment scale report that can require profiling before any future Rust adapter proposal while keeping `rust_replacement_allowed=false`.
 
+The ingestion volume profile now also records compute pressure signals, required performance profile dimensions, and the candidate Rust hot-path scope so constrained-compute pressure can be reviewed before any Rust adapter proposal.
+
 Preflight runs now also emit `rust_ingestion_readiness_report.json`, proving the Python ingestion artifact is a valid future Rust parity target while keeping `rust_replacement_allowed=false`.
 
 The preflight intake review form now renders detailed source inventory fields and explicit review outcome handling, including the fact that only confirmed outcomes can advance toward the budget precondition gate and that corrections append or supersede rather than silently mutating history.
@@ -52,7 +54,9 @@ The budget stage now emits `budget_precondition_report.json`; failed confirmatio
 
 The budget output now includes `matter_opening_review_package.md` and `review_package_manifest.json` as the consolidated review surface for the north-star demo.
 
-Budget runs now also emit `review_package_completeness_report.json`, proving the final review package has required artifacts, review sections, human gates, blockers, safety proof, dry-run Exception Lake readiness, run ledgers, and non-authorization boundary flags before the package is accepted.
+Budget runs now also emit `review_package_completeness_report.json`, proving the final review package has required artifacts, review sections, human gates, blockers, safety proof, dry-run Exception Lake readiness, run ledgers, run-ledger integrity reports, and non-authorization boundary flags before the package is accepted.
+
+Preflight, confirmed budget, and blocked-budget attempts now emit `run_ledger_integrity_report.json`, proving required gate order, expected terminal state, local refs, existing outputs, and no external writes. Superseding corrected budget attempts preserve prior blocked history while validating the latest budget attempt segment.
 
 The completeness report now also verifies that linked intake and budget review forms preserve their required human-review sections, evidence-hash visibility where source-bound evidence exists, and non-authorization boundary text, including source coverage, outcome handling, budget lines, support items, and submission boundary.
 

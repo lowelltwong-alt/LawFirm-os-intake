@@ -81,6 +81,7 @@ def main(argv: list[str] | None = None) -> int:
                     "contract_state_report": packet.contract_state_report_ref,
                     "fixture_gold_report": packet.fixture_gold_report_ref,
                     "exception_lake_handoff_manifest": packet.exception_lake_handoff_manifest_ref,
+                    "run_ledger_integrity_report": packet.run_ledger_integrity_report_ref,
                     "run_dir": str(run_dir),
                 }
             )
@@ -110,6 +111,9 @@ def main(argv: list[str] | None = None) -> int:
                     "safety_gate_report": str(run_dir / "safety_gate_report.json"),
                     "exception_lake_handoff_manifest": str(
                         run_dir / "exception_lake_handoff_manifest.json"
+                    ),
+                    "run_ledger_integrity_report": str(
+                        run_dir / "run_ledger_integrity_report.json"
                     ),
                     "fixture_gold_report": (
                         str(run_dir / "fixture_gold_report.json") if args.fixture_gold else None
@@ -167,6 +171,9 @@ def main(argv: list[str] | None = None) -> int:
                     "safety_gate_report": str(budget_dir / "safety_gate_report.json"),
                     "exception_lake_handoff_manifest": str(
                         budget_dir / "exception_lake_handoff_manifest.json"
+                    ),
+                    "run_ledger_integrity_report": str(
+                        budget_dir / "run_ledger_integrity_report.json"
                     ),
                     "fixture_gold_report": (
                         str(budget_dir / "fixture_gold_report.json") if args.fixture_gold else None

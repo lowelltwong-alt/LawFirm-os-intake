@@ -13,6 +13,7 @@ from .models import (
     HumanConfirmation,
     HumanReviewOutcomeRecord,
     IntakePreflightPacket,
+    RunLedgerIntegrityReport,
 )
 from .util import load_json, load_jsonl, new_id, now_iso, write_json
 from .workflow import run_budget
@@ -27,6 +28,7 @@ ALLOWED_BLOCKED_OUTPUTS = {
     "exception_lake_readiness_report.json",
     "human_confirmation_history.jsonl",
     "run_ledger.jsonl",
+    "run_ledger_integrity_report.json",
 }
 
 PROHIBITED_BLOCKED_OUTPUTS = {
@@ -112,11 +114,13 @@ def build_blocked_budget_attempt_audit_report(
     exception_readiness_path = budget_dir / "exception_lake_readiness_report.json"
     exception_handoff_path = budget_dir / "exception_lake_handoff_manifest.json"
     ledger_path = budget_dir / "run_ledger.jsonl"
+    ledger_integrity_path = budget_dir / "run_ledger_integrity_report.json"
 
     report = _model_or_none(BudgetPreconditionReport, precondition_path)
     outcome = _model_or_none(HumanReviewOutcomeRecord, outcome_path) if outcome_path else None
     exception_readiness = _model_or_none(ExceptionLakeReadinessReport, exception_readiness_path)
     exception_handoff = _model_or_none(ExceptionLakeHandoffManifest, exception_handoff_path)
+    ledger_integrity = _model_or_none(RunLedgerIntegrityReport, ledger_integrity_path)
     history = load_jsonl(history_path)
     exception_candidates = load_jsonl(exception_candidates_path)
     ledger = load_jsonl(ledger_path)
@@ -185,6 +189,7 @@ def build_blocked_budget_attempt_audit_report(
                 str(exception_handoff_path),
                 str(history_path),
                 str(ledger_path),
+                str(ledger_integrity_path),
             ],
             details={"missing_allowed_artifacts": allowed_missing},
         ),
@@ -215,7 +220,13 @@ def build_blocked_budget_attempt_audit_report(
         _check(
             "ledger_stops_at_blocked_generation",
             bool(
-                any(
+                ledger_integrity
+                and ledger_integrity.status == "passed"
+                and ledger_integrity.stage == "budget_precondition_blocked"
+                and ledger_integrity.terminal_step_name == "budget_generation_blocked"
+                and ledger_integrity.terminal_status == "blocked"
+                and ledger_integrity.external_writes_performed is False
+                and any(
                     event.get("step_name") == "budget_generation_blocked"
                     and event.get("status") == "blocked"
                     for event in ledger
@@ -230,7 +241,7 @@ def build_blocked_budget_attempt_audit_report(
                 )
             ),
             "Run ledger records the block and has no post-precondition generation steps.",
-            artifact_refs=[str(ledger_path)],
+            artifact_refs=[str(ledger_path), str(ledger_integrity_path)],
         ),
     ]
     status = "passed" if all(check.status == "passed" for check in checks) else "failed"

@@ -23,6 +23,27 @@ REQUIRED_RUST_TRANSITION_GATES = [
     "semantic_substrate_contract_review_if_promoted",
 ]
 
+CANDIDATE_RUST_HOT_PATH_SCOPE = [
+    "source_inventory",
+    "source_coverage_summary",
+    "structural_segmentation",
+    "sha256_hashing",
+    "segment_evidence_ref_emission",
+    "schema_compatible_ingestion_result_serialization",
+]
+
+REQUIRED_PERFORMANCE_PROFILE_DIMENSIONS = [
+    "wall_clock_ms_by_ingestion_stage",
+    "peak_memory_mb",
+    "characters_per_second",
+    "sources_per_second",
+    "segment_count_and_segment_size_distribution",
+    "hashing_and_segmentation_cpu_time",
+    "serialized_ingestion_result_bytes",
+    "bounded_concurrency_plan",
+    "python_to_rust_parity_diff_count",
+]
+
 
 def _counts(values: list[str]) -> dict[str, int]:
     return dict(sorted(Counter(values).items()))
@@ -60,6 +81,14 @@ def build_ingestion_volume_profile(
             scale_signals.append(f"{key}_at_or_above_profile_threshold")
 
     requires_profile = bool(scale_signals)
+    compute_pressure_signals = []
+    if requires_profile:
+        compute_pressure_signals.extend(
+            [
+                "local_ingestion_scale_threshold_crossed",
+                "measure_before_rust_adapter_proposal",
+            ]
+        )
     rationale = [
         "Python remains the reference ingestion oracle.",
         "Rust replacement requires profiling plus golden parity before any adapter work.",
@@ -93,6 +122,9 @@ def build_ingestion_volume_profile(
         ),
         profile_thresholds=PROFILE_THRESHOLDS,
         scale_signals=scale_signals,
+        compute_pressure_signals=compute_pressure_signals,
+        required_performance_profile_dimensions=REQUIRED_PERFORMANCE_PROFILE_DIMENSIONS,
+        candidate_rust_hot_path_scope=CANDIDATE_RUST_HOT_PATH_SCOPE,
         observed_scale_band="profile_candidate" if requires_profile else "starter_fixture",
         performance_profile_required_before_rust=requires_profile,
         rust_replacement_allowed=False,

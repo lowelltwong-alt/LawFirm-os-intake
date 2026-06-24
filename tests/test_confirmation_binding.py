@@ -202,6 +202,7 @@ def test_superseding_confirmation_appends_history_before_budget(tmp_path, repo_r
 
     history = load_jsonl(budget_dir / "human_confirmation_history.jsonl")
     manifest = load_json(budget_dir / "review_package_manifest.json")
+    ledger_integrity = load_json(budget_dir / "run_ledger_integrity_report.json")
 
     assert [item["confirmation_id"] for item in history] == [
         first_confirmation.confirmation_id,
@@ -213,6 +214,9 @@ def test_superseding_confirmation_appends_history_before_budget(tmp_path, repo_r
     assert manifest["artifact_refs"]["human_confirmation_history"].endswith(
         "human_confirmation_history.jsonl"
     )
+    assert ledger_integrity["status"] == "passed"
+    assert ledger_integrity["stage"] == "budget_success"
+    assert ledger_integrity["observed_steps"].count("budget_run_started") == 1
     assert (budget_dir / "legal_budget_proposal.json").exists()
 
 

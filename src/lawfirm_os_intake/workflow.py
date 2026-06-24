@@ -50,6 +50,7 @@ from .review import (
     render_intake_review_form,
     render_matter_opening_review_package,
 )
+from .run_ledger import build_run_ledger_integrity_report, enforce_run_ledger_integrity
 from .rust_readiness import (
     build_rust_ingestion_readiness_report,
     enforce_rust_ingestion_readiness,
@@ -72,6 +73,32 @@ PROHIBITED_NEXT_STEPS = [
     "do_not_open_matter_or_imanage_workspace",
     "do_not_docket_deadlines",
     "do_not_submit_budget",
+]
+
+PREFLIGHT_REQUIRED_LEDGER_STEPS = [
+    "run_started",
+    "adapter_selected",
+    "contract_state_gate",
+    "data_origin_gate",
+    "context_resolution",
+    "python_reference_ingestion",
+    "specialist_workers",
+    "preflight_packet_built",
+]
+
+BUDGET_REQUIRED_LEDGER_STEPS = [
+    "budget_run_started",
+    "human_review_outcome_recorded",
+    "budget_precondition_gate",
+    "human_confirmation_consumed",
+    "conflict_seed_and_budget_proposal_built",
+]
+
+BLOCKED_BUDGET_REQUIRED_LEDGER_STEPS = [
+    "budget_run_started",
+    "human_review_outcome_recorded",
+    "budget_precondition_gate",
+    "budget_generation_blocked",
 ]
 
 
@@ -97,6 +124,17 @@ def _event(run_id: str, index: int, step: str, status: str, **kwargs: Any) -> Ru
         timestamp=now_iso(),
         **kwargs,
     )
+
+
+def _ledger_events(ledger_path: Path) -> list[RunEvent]:
+    return [RunEvent.model_validate(event) for event in load_jsonl(ledger_path)]
+
+
+def _latest_ledger_attempt(events: list[RunEvent], start_step: str) -> list[RunEvent]:
+    for index in range(len(events) - 1, -1, -1):
+        if events[index].step_name == start_step:
+            return events[index:]
+    return events
 
 
 def _validate_refs(packet: IntakePreflightPacket) -> None:
@@ -255,6 +293,7 @@ def run_preflight(
     exception_candidates_path = run_dir / "exception_lake_candidates.jsonl"
     exception_readiness_report_path = run_dir / "exception_lake_readiness_report.json"
     exception_handoff_manifest_path = run_dir / "exception_lake_handoff_manifest.json"
+    run_ledger_integrity_report_path = run_dir / "run_ledger_integrity_report.json"
     fixture_gold_report_path = run_dir / "fixture_gold_report.json" if fixture_gold else None
     packet = IntakePreflightPacket(
         packet_id=new_id("intake"),
@@ -287,6 +326,7 @@ def run_preflight(
         exception_candidates_ref=str(exception_candidates_path),
         exception_lake_readiness_report_ref=str(exception_readiness_report_path),
         exception_lake_handoff_manifest_ref=str(exception_handoff_manifest_path),
+        run_ledger_integrity_report_ref=str(run_ledger_integrity_report_path),
         intake_review_form_ref=str(review_form_path),
     )
     if strict_evidence:
@@ -378,6 +418,25 @@ def run_preflight(
             ).model_dump(mode="json"),
         )
         enforce_fixture_gold_report(gold_report)
+    preflight_required_steps = list(PREFLIGHT_REQUIRED_LEDGER_STEPS)
+    preflight_terminal_step = "preflight_packet_built"
+    if fixture_gold:
+        preflight_required_steps.append("fixture_gold_evaluated")
+        preflight_terminal_step = "fixture_gold_evaluated"
+    run_ledger_integrity_report = build_run_ledger_integrity_report(
+        run_id=run_id,
+        stage="preflight",
+        run_ledger_ref=str(ledger_path),
+        events=_ledger_events(ledger_path),
+        required_steps=preflight_required_steps,
+        terminal_step_name=preflight_terminal_step,
+        terminal_status="completed",
+    )
+    enforce_run_ledger_integrity(run_ledger_integrity_report)
+    write_json(
+        run_ledger_integrity_report_path,
+        run_ledger_integrity_report.model_dump(mode="json"),
+    )
     return packet, run_dir
 
 
@@ -545,6 +604,7 @@ def run_budget(
         exception_candidates_path = run_dir / "exception_lake_candidates.jsonl"
         exception_readiness_report_path = run_dir / "exception_lake_readiness_report.json"
         exception_handoff_manifest_path = run_dir / "exception_lake_handoff_manifest.json"
+        run_ledger_integrity_report_path = run_dir / "run_ledger_integrity_report.json"
         exception_candidates_path.touch()
         exception_candidates = build_budget_precondition_exception_candidates(
             budget_precondition_report
@@ -589,6 +649,20 @@ def run_budget(
                 ],
                 notes=budget_precondition_report.blocked_state,
             ).model_dump(mode="json"),
+        )
+        run_ledger_integrity_report = build_run_ledger_integrity_report(
+            run_id=packet.run_id,
+            stage="budget_precondition_blocked",
+            run_ledger_ref=str(ledger_path),
+            events=_latest_ledger_attempt(_ledger_events(ledger_path), "budget_run_started"),
+            required_steps=BLOCKED_BUDGET_REQUIRED_LEDGER_STEPS,
+            terminal_step_name="budget_generation_blocked",
+            terminal_status="blocked",
+        )
+        enforce_run_ledger_integrity(run_ledger_integrity_report)
+        write_json(
+            run_ledger_integrity_report_path,
+            run_ledger_integrity_report.model_dump(mode="json"),
         )
         enforce_budget_preconditions(budget_precondition_report)
 
@@ -660,6 +734,7 @@ def run_budget(
     safety_gate_report_path = run_dir / "safety_gate_report.json"
     exception_readiness_report_path = run_dir / "exception_lake_readiness_report.json"
     exception_handoff_manifest_path = run_dir / "exception_lake_handoff_manifest.json"
+    run_ledger_integrity_report_path = run_dir / "run_ledger_integrity_report.json"
     completeness_report_path = run_dir / "review_package_completeness_report.json"
     fixture_gold_report_path = run_dir / "fixture_gold_report.json" if fixture_gold else None
     preflight_dir = preflight_packet_path.parent
@@ -688,9 +763,11 @@ def run_budget(
         "preflight_exception_lake_handoff_manifest": (
             packet.exception_lake_handoff_manifest_ref or ""
         ),
+        "preflight_run_ledger_integrity_report": (packet.run_ledger_integrity_report_ref or ""),
         "budget_exception_candidates": str(exception_candidates_path),
         "budget_exception_lake_readiness_report": str(exception_readiness_report_path),
         "budget_exception_lake_handoff_manifest": str(exception_handoff_manifest_path),
+        "budget_run_ledger_integrity_report": str(run_ledger_integrity_report_path),
         "budget_run_ledger": str(ledger_path),
         "preflight_run_ledger": packet.run_ledger_ref,
         "human_review_outcome": str(human_review_outcome_path),
@@ -811,6 +888,25 @@ def run_budget(
             ).model_dump(mode="json"),
         )
         enforce_fixture_gold_report(gold_report)
+    budget_required_steps = list(BUDGET_REQUIRED_LEDGER_STEPS)
+    budget_terminal_step = "conflict_seed_and_budget_proposal_built"
+    if fixture_gold:
+        budget_required_steps.append("fixture_gold_evaluated")
+        budget_terminal_step = "fixture_gold_evaluated"
+    run_ledger_integrity_report = build_run_ledger_integrity_report(
+        run_id=packet.run_id,
+        stage="budget_success",
+        run_ledger_ref=str(ledger_path),
+        events=_latest_ledger_attempt(_ledger_events(ledger_path), "budget_run_started"),
+        required_steps=budget_required_steps,
+        terminal_step_name=budget_terminal_step,
+        terminal_status="completed",
+    )
+    enforce_run_ledger_integrity(run_ledger_integrity_report)
+    write_json(
+        run_ledger_integrity_report_path,
+        run_ledger_integrity_report.model_dump(mode="json"),
+    )
     review_package_path.write_text(
         render_matter_opening_review_package(
             packet,
@@ -825,6 +921,12 @@ def run_budget(
                 "preflight": load_jsonl(packet.run_ledger_ref),
                 "budget": load_jsonl(ledger_path),
             },
+            run_ledger_integrity_reports=[
+                load_json(packet.run_ledger_integrity_report_ref)
+                if packet.run_ledger_integrity_report_ref
+                else None,
+                run_ledger_integrity_report.model_dump(mode="json"),
+            ],
             evidence_graph=extended,
             exception_readiness_report=exception_readiness_report,
             exception_handoff_manifest=exception_handoff_manifest,
@@ -860,6 +962,14 @@ def run_budget(
         budget_precondition_report_ref=str(budget_precondition_report_path),
         evidence_graph_ref=str(run_dir / "evidence_graph.json"),
         run_ledger_refs=[packet.run_ledger_ref, str(ledger_path)],
+        run_ledger_integrity_report_refs=[
+            ref
+            for ref in [
+                packet.run_ledger_integrity_report_ref,
+                str(run_ledger_integrity_report_path),
+            ]
+            if ref
+        ],
         exception_candidate_refs=[
             ref for ref in [packet.exception_candidates_ref, str(exception_candidates_path)] if ref
         ],

@@ -43,11 +43,25 @@ Each preflight run writes three Rust-related artifacts:
 
 - `decision`;
 - `performance_profile_required_before_rust`;
+- `compute_pressure_signals`;
+- `required_performance_profile_dimensions`;
+- `candidate_rust_hot_path_scope`;
 - `rust_adapter_proposal_state`;
 - `required_rust_transition_gates`;
 - `rust_replacement_allowed=false`.
 
-The final review package renders the profile decision and transition gates so a reviewer can see when volume pressure exists without opening JSON.
+The final review package renders the profile decision, compute pressure signals, required benchmark dimensions, candidate hot-path scope, and transition gates so a reviewer can see when volume pressure exists without opening JSON.
+
+Required performance profile dimensions are intentionally implementation-neutral:
+
+- wall clock time by ingestion stage;
+- peak memory;
+- characters and sources per second;
+- segment count and segment size distribution;
+- hashing and segmentation CPU time;
+- serialized `IngestionResult` byte size;
+- bounded concurrency plan;
+- Python-to-Rust parity diff count.
 
 ## Transition Gates
 
@@ -71,6 +85,7 @@ A future Rust PR should include:
 - golden parity tests against `ingestion_result.json`;
 - hidden or holdout parity fixtures;
 - schema export and validation;
+- a performance profile covering the required dimensions above;
 - strict evidence-ref checks for source IDs, segment IDs, offsets, and hashes;
 - review-package visibility showing `rust_replacement_allowed=false` until a governed adapter decision changes that outside this repo.
 

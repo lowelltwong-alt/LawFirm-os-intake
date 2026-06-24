@@ -69,6 +69,9 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert "Ingestion volume profile:" in review_text
     assert "Ingestion profile decision: keep_python_reference" in review_text
     assert "Rust adapter proposal state: not_warranted" in review_text
+    assert "Compute pressure signals: none" in review_text
+    assert "Required performance profile dimensions:" in review_text
+    assert "Candidate Rust hot path scope:" in review_text
     assert "Required Rust transition gates:" in review_text
     assert "sha=sha256:" in review_text
     assert "## What Is Known" in review_text
@@ -132,6 +135,9 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert "preflight step 2: contract_state_gate" in review_text
     assert "budget ledger:" in review_text
     assert "budget step 4: conflict_seed_and_budget_proposal_built" in review_text
+    assert "### Run Ledger Integrity" in review_text
+    assert "preflight: status=passed" in review_text
+    assert "budget_success: status=passed" in review_text
     assert "does not clear conflicts" in review_text
     assert "submit a budget" in review_text
 
@@ -152,6 +158,12 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert manifest.artifact_refs["preflight_ingestion_result"].endswith("ingestion_result.json")
     assert manifest.artifact_refs["preflight_ingestion_volume_profile"].endswith(
         "ingestion_volume_profile.json"
+    )
+    assert manifest.artifact_refs["preflight_run_ledger_integrity_report"].endswith(
+        "run_ledger_integrity_report.json"
+    )
+    assert manifest.artifact_refs["budget_run_ledger_integrity_report"].endswith(
+        "run_ledger_integrity_report.json"
     )
     assert manifest.artifact_refs["preflight_rust_ingestion_readiness_report"].endswith(
         "rust_ingestion_readiness_report.json"
@@ -178,6 +190,11 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert manifest.exception_lake_readiness_report_ref == str(
         budget_dir / "exception_lake_readiness_report.json"
     )
+    assert len(manifest.run_ledger_integrity_report_refs) == 2
+    assert all(
+        ref.endswith("run_ledger_integrity_report.json")
+        for ref in manifest.run_ledger_integrity_report_refs
+    )
     assert manifest.artifact_refs["matter_opening_review_package"] == str(review_path)
     assert manifest.artifact_refs["review_package_manifest"] == str(manifest_path)
     assert manifest.artifact_refs["review_package_completeness_report"] == str(completeness_path)
@@ -196,6 +213,7 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert "## Required Human Gates" in completeness.required_sections
     assert "### Budget Lines" in completeness.required_sections
     assert "### Exception Lake Readiness" in completeness.required_sections
+    assert "### Run Ledger Integrity" in completeness.required_sections
     assert "### Exception Candidate Details" in completeness.required_sections
     assert "## Evidence Graph Summary" in completeness.required_sections
     assert "## Run Ledger Summary" in completeness.required_sections

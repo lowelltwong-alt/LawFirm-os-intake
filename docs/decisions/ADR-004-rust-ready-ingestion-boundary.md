@@ -39,7 +39,7 @@ Keep the future Rust seam cheap to adopt by preserving:
 
 - schema-first JSON inputs and outputs;
 - a typed `IngestionResult` artifact that can be compared across implementations;
-- a typed `IngestionVolumeProfile` artifact that records volume pressure, proposal posture, and required transition gates;
+- a typed `IngestionVolumeProfile` artifact that records volume pressure, compute pressure signals, required benchmark dimensions, candidate Rust hot-path scope, proposal posture, and required transition gates;
 - a typed `RustIngestionReadinessReport` artifact that proves a run is suitable as a future Rust parity target;
 - deterministic fixture and holdout coverage for ingestion outputs;
 - exact offset/hash validation in the Python reference;

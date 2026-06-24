@@ -21,6 +21,7 @@ from .models import (
     ModelAdapterReport,
     ReviewPackageCompletenessReport,
     ReviewPackageManifest,
+    RunLedgerIntegrityReport,
     RustIngestionReadinessReport,
     SafetyGateReport,
     StarterReleaseAuditCheck,
@@ -59,6 +60,7 @@ REQUIRED_PREFLIGHT_ARTIFACTS = {
     "preflight_evidence_graph": "evidence_graph.json",
     "preflight_fixture_gold_report": "fixture_gold_report.json",
     "preflight_run_ledger": "run_ledger.jsonl",
+    "preflight_run_ledger_integrity_report": "run_ledger_integrity_report.json",
 }
 
 REQUIRED_BUDGET_ARTIFACTS = {
@@ -80,6 +82,7 @@ REQUIRED_BUDGET_ARTIFACTS = {
     "budget_evidence_graph": "evidence_graph.json",
     "budget_fixture_gold_report": "fixture_gold_report.json",
     "budget_run_ledger": "run_ledger.jsonl",
+    "budget_run_ledger_integrity_report": "run_ledger_integrity_report.json",
 }
 
 EXPECTED_PREFLIGHT_EXCEPTION_LABELS = {
@@ -329,6 +332,12 @@ def build_starter_release_audit_report(
     completeness = _model_or_none(
         ReviewPackageCompletenessReport, paths["review_package_completeness_report"]
     )
+    preflight_ledger_integrity = _model_or_none(
+        RunLedgerIntegrityReport, paths["preflight_run_ledger_integrity_report"]
+    )
+    budget_ledger_integrity = _model_or_none(
+        RunLedgerIntegrityReport, paths["budget_run_ledger_integrity_report"]
+    )
     budget_gold = _model_or_none(FixtureGoldReport, paths["budget_fixture_gold_report"])
     raw_input = _json_or_none(paths["raw_input"]) if "raw_input" in paths else None
 
@@ -448,6 +457,9 @@ def build_starter_release_audit_report(
                 and ingestion_result.rust_replacement_allowed is False
                 and ingestion_volume
                 and ingestion_volume.rust_replacement_allowed is False
+                and ingestion_volume.required_performance_profile_dimensions
+                and "peak_memory_mb" in ingestion_volume.required_performance_profile_dimensions
+                and "sha256_hashing" in ingestion_volume.candidate_rust_hot_path_scope
                 and ingestion_volume.required_rust_transition_gates
                 and rust_readiness
                 and rust_readiness.status == "passed"
@@ -629,10 +641,24 @@ def build_starter_release_audit_report(
                     event.get("step_name") == "matter_opening_review_package_built"
                     for event in budget_ledger
                 )
+                and preflight_ledger_integrity
+                and preflight_ledger_integrity.status == "passed"
+                and preflight_ledger_integrity.stage == "preflight"
+                and budget_ledger_integrity
+                and budget_ledger_integrity.status == "passed"
+                and budget_ledger_integrity.stage == "budget_success"
             ),
-            "Preflight and budget ledgers preserve the required gate trail.",
+            "Preflight and budget ledgers preserve the required gate trail and pass integrity reports.",
             requirement_refs=["DoD-6"],
-            artifact_refs=_artifact_refs(paths, ["preflight_run_ledger", "budget_run_ledger"]),
+            artifact_refs=_artifact_refs(
+                paths,
+                [
+                    "preflight_run_ledger",
+                    "budget_run_ledger",
+                    "preflight_run_ledger_integrity_report",
+                    "budget_run_ledger_integrity_report",
+                ],
+            ),
         ),
     ]
 

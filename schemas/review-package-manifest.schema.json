@@ -110,6 +110,13 @@
       "title": "Run Ledger Refs",
       "type": "array"
     },
+    "run_ledger_integrity_report_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Run Ledger Integrity Report Refs",
+      "type": "array"
+    },
     "exception_candidate_refs": {
       "items": {
         "type": "string"

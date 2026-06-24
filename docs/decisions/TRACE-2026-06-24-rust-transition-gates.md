@@ -10,6 +10,9 @@ The user raised a realistic scale concern: a large amount of document intake may
 
 Extend `IngestionVolumeProfile` with:
 
+- `compute_pressure_signals`;
+- `required_performance_profile_dimensions`;
+- `candidate_rust_hot_path_scope`;
 - `rust_adapter_proposal_state`;
 - `required_rust_transition_gates`.
 
@@ -18,7 +21,7 @@ The profile now distinguishes starter-scale runs from profile-candidate runs:
 - `not_warranted` when local scale thresholds are not crossed;
 - `profiling_required_before_adapter_proposal` when local thresholds are crossed.
 
-The final review package renders the ingestion profile decision, Rust adapter proposal state, scale signals, replacement flag, and transition gates so reviewer-facing artifacts show the Rust posture without requiring a JSON inspection.
+The final review package renders the ingestion profile decision, Rust adapter proposal state, scale signals, compute pressure signals, required benchmark dimensions, candidate hot-path scope, replacement flag, and transition gates so reviewer-facing artifacts show the Rust posture without requiring a JSON inspection.
 
 Add `docs/rust-ingestion-transition-plan.md` to define the approved boundary, forbidden scope, transition gates, future PR acceptance criteria, and rollback posture.
 

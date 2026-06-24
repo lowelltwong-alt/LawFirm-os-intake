@@ -868,6 +868,18 @@
       "default": null,
       "title": "Exception Lake Handoff Manifest Ref"
     },
+    "run_ledger_integrity_report_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Run Ledger Integrity Report Ref"
+    },
     "intake_review_form_ref": {
       "anyOf": [
         {

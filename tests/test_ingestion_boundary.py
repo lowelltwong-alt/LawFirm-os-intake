@@ -112,6 +112,9 @@ def test_preflight_writes_ingestion_volume_profile(tmp_path, repo_root):
     assert profile.rust_adapter_proposal_state == "not_warranted"
     assert profile.observed_scale_band == "starter_fixture"
     assert profile.decision == "keep_python_reference"
+    assert profile.compute_pressure_signals == []
+    assert "peak_memory_mb" in profile.required_performance_profile_dimensions
+    assert "sha256_hashing" in profile.candidate_rust_hot_path_scope
     assert "python_reference_golden_parity" in profile.required_rust_transition_gates
     assert any(str(profile_path) in event.get("output_refs", []) for event in ledger)
 
@@ -130,6 +133,12 @@ def test_ingestion_volume_profile_requires_profiling_for_high_volume_proxy(repo_
     assert profile.observed_scale_band == "profile_candidate"
     assert profile.decision == "profile_before_rust_adapter"
     assert "source_count_at_or_above_profile_threshold" in profile.scale_signals
+    assert "local_ingestion_scale_threshold_crossed" in profile.compute_pressure_signals
+    assert "measure_before_rust_adapter_proposal" in profile.compute_pressure_signals
+    assert "wall_clock_ms_by_ingestion_stage" in profile.required_performance_profile_dimensions
+    assert "schema_compatible_ingestion_result_serialization" in (
+        profile.candidate_rust_hot_path_scope
+    )
     assert "hot_path_performance_profile" in profile.required_rust_transition_gates
     assert "orchestrator_adapter_review" in profile.required_rust_transition_gates
     assert "legal_classification" not in profile.model_dump(mode="json")

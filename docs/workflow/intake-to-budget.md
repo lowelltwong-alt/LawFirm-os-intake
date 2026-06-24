@@ -115,6 +115,12 @@ After the safety gate and review package are written, the workflow emits `review
 
 A failed completeness check blocks final package acceptance.
 
+### 18. Run ledger integrity report
+
+Preflight, confirmed budget, and blocked-budget attempts write `run_ledger_integrity_report.json`. This deterministic report proves local ledger events exist, share one run ID, preserve required gate order, stop at the expected terminal step, link existing local outputs, and record no external writes.
+
+The report is local evaluation evidence only. Orchestrator remains the future owner of execution-plane passports, run-ledger policy, and evidence-packet assembly.
+
 ## Terminal states
 
 - `human_intake_review_required`

@@ -16,6 +16,7 @@ from .models import (
     IntakePreflightPacket,
     MatterOpeningReadiness,
     ModelAdapterReport,
+    RunLedgerIntegrityReport,
     SafetyGateReport,
 )
 from .util import load_json
@@ -248,6 +249,11 @@ def _ingestion_volume_profile_lines(artifact_refs: dict[str, str]) -> list[str]:
         return [*lines, "- Ingestion volume profile details: unavailable"]
 
     scale_signals = ", ".join(payload.get("scale_signals") or []) or "none"
+    compute_pressure = ", ".join(payload.get("compute_pressure_signals") or []) or "none"
+    profile_dimensions = (
+        ", ".join(payload.get("required_performance_profile_dimensions") or []) or "none"
+    )
+    hot_path_scope = ", ".join(payload.get("candidate_rust_hot_path_scope") or []) or "none"
     transition_gates = ", ".join(payload.get("required_rust_transition_gates") or []) or "none"
     return [
         *lines,
@@ -257,6 +263,9 @@ def _ingestion_volume_profile_lines(artifact_refs: dict[str, str]) -> list[str]:
         f"{payload.get('performance_profile_required_before_rust', 'unknown')}",
         f"- Rust replacement allowed: {payload.get('rust_replacement_allowed', 'unknown')}",
         f"- Scale signals: {scale_signals}",
+        f"- Compute pressure signals: {compute_pressure}",
+        f"- Required performance profile dimensions: {profile_dimensions}",
+        f"- Candidate Rust hot path scope: {hot_path_scope}",
         f"- Required Rust transition gates: {transition_gates}",
     ]
 
@@ -575,6 +584,29 @@ def _run_ledger_lines(
     return lines or ["- none"]
 
 
+def _run_ledger_integrity_lines(
+    reports: list[dict[str, Any] | None] | None,
+) -> list[str]:
+    lines = []
+    for payload in reports or []:
+        if payload is None:
+            continue
+        report = RunLedgerIntegrityReport.model_validate(payload)
+        lines.extend(
+            [
+                f"- {report.stage}: status={report.status}; "
+                f"terminal={report.terminal_step_name} ({report.terminal_status}); "
+                f"events={report.event_count}; ledger=`{report.run_ledger_ref}`",
+                f"- {report.stage}: required steps={', '.join(report.required_steps)}",
+                f"- {report.stage}: local artifact refs only={report.local_artifact_refs_only}; "
+                f"external writes performed={report.external_writes_performed}",
+            ]
+        )
+        for check in report.checks:
+            lines.append(f"- {report.stage} check {check.check_id}: {check.status}")
+    return lines or ["- none"]
+
+
 def _sorted_counts(values: list[str]) -> str:
     counts = {value: values.count(value) for value in sorted(set(values))}
     return ", ".join(f"{key}={value}" for key, value in counts.items()) or "none"
@@ -653,6 +685,7 @@ def render_matter_opening_review_package(
     exception_candidates: list[dict[str, Any]],
     artifact_refs: dict[str, str],
     run_ledger_events: dict[str, list[dict[str, Any]]] | None = None,
+    run_ledger_integrity_reports: list[dict[str, Any] | None] | None = None,
     evidence_graph: EvidenceGraph | None = None,
     exception_readiness_report: ExceptionLakeReadinessReport | None = None,
     exception_handoff_manifest: ExceptionLakeHandoffManifest | None = None,
@@ -833,6 +866,9 @@ def render_matter_opening_review_package(
             "## Run Ledger Summary",
             "",
             *_run_ledger_lines(artifact_refs, run_ledger_events or {}),
+            "",
+            "### Run Ledger Integrity",
+            *_run_ledger_integrity_lines(run_ledger_integrity_reports),
             "",
             "## Artifact References",
             "",

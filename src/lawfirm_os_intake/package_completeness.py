@@ -37,6 +37,7 @@ REQUIRED_REVIEW_SECTIONS = [
     "## Matter-Opening Blockers",
     "## Evidence Graph Summary",
     "## Run Ledger Summary",
+    "### Run Ledger Integrity",
     "## Artifact References",
 ]
 
@@ -109,6 +110,8 @@ REQUIRED_ARTIFACT_KEYS = [
     "budget_exception_lake_handoff_manifest",
     "budget_run_ledger",
     "preflight_run_ledger",
+    "preflight_run_ledger_integrity_report",
+    "budget_run_ledger_integrity_report",
     "human_review_outcome",
     "human_confirmation_history",
     "contract_state_report",
@@ -253,6 +256,12 @@ def build_review_package_completeness_report(
     }
     exception_handoff_manifest = _read_json(
         Path(artifact_refs.get("budget_exception_lake_handoff_manifest", ""))
+    )
+    preflight_ledger_integrity = _read_json(
+        Path(artifact_refs.get("preflight_run_ledger_integrity_report", ""))
+    )
+    budget_ledger_integrity = _read_json(
+        Path(artifact_refs.get("budget_run_ledger_integrity_report", ""))
     )
     linked_review_form_missing_sections: dict[str, list[str]] = {}
     for key, required_sections in REQUIRED_LINKED_REVIEW_FORM_SECTIONS.items():
@@ -446,6 +455,39 @@ def build_review_package_completeness_report(
             and all(Path(ref).exists() for ref in manifest.run_ledger_refs),
             "Manifest points to both preflight and budget run ledgers.",
             manifest.run_ledger_refs,
+        ),
+        _check(
+            "run_ledger_integrity_reports_passed",
+            isinstance(preflight_ledger_integrity, dict)
+            and preflight_ledger_integrity.get("status") == "passed"
+            and preflight_ledger_integrity.get("external_writes_performed") is False
+            and preflight_ledger_integrity.get("local_artifact_refs_only") is True
+            and isinstance(budget_ledger_integrity, dict)
+            and budget_ledger_integrity.get("status") == "passed"
+            and budget_ledger_integrity.get("external_writes_performed") is False
+            and budget_ledger_integrity.get("local_artifact_refs_only") is True
+            and set(manifest.run_ledger_integrity_report_refs)
+            == {
+                artifact_refs.get("preflight_run_ledger_integrity_report", ""),
+                artifact_refs.get("budget_run_ledger_integrity_report", ""),
+            },
+            "Preflight and budget run-ledger integrity reports pass and stay local.",
+            [
+                artifact_refs.get("preflight_run_ledger_integrity_report", ""),
+                artifact_refs.get("budget_run_ledger_integrity_report", ""),
+            ],
+            {
+                "preflight_status": (
+                    preflight_ledger_integrity.get("status")
+                    if isinstance(preflight_ledger_integrity, dict)
+                    else None
+                ),
+                "budget_status": (
+                    budget_ledger_integrity.get("status")
+                    if isinstance(budget_ledger_integrity, dict)
+                    else None
+                ),
+            },
         ),
     ]
     status = "passed" if all(check.status == "passed" for check in checks) else "failed"

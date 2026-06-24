@@ -83,6 +83,7 @@ The demo emits:
 |   |-- exception_lake_readiness_report.json
 |   |-- exception_lake_handoff_manifest.json
 |   |-- evidence_graph.json
+|   |-- run_ledger_integrity_report.json
 |   `-- run_ledger.jsonl
 `-- budget/
     |-- budget_precondition_report.json
@@ -100,18 +101,21 @@ The demo emits:
     |-- review_package_manifest.json
     |-- review_package_completeness_report.json
     |-- evidence_graph.json
+    |-- run_ledger_integrity_report.json
     `-- run_ledger.jsonl
 ```
 
 The consolidated `matter_opening_review_package.md` is the human-facing north-star artifact. It points back to the structured packets and tells the reviewer what is known, which candidate alternatives were considered, what remains uncertain, which human gates remain, which conflict-search seeds to use, what budget scenario and line items were proposed, which exception candidates exist, what the safety gate verified, and why the workflow is still blocked. Reviewer-facing known facts, candidate alternatives, party-role alternatives, deadlines, missing-information findings, critic findings, conflict terms, budget lines, and budget supports show their evidence refs inline with source IDs, segment IDs, offsets, and hashes instead of requiring a reviewer to hunt through JSON first.
 
-The same package now renders authority/precondition checks, source inventory, exception readiness, dry-run handoff posture, candidate support details, evidence-graph summary, and run-ledger summary inline. Reviewers can see contract-state status, human-review outcome, budget precondition checks, each source's read/missing/duplicate state, dry-run Exception Lake posture, the future Exception Lake runtime owner, the fact that no SQLite or external write occurred in intake, hashes, attachment refs, provenance graph counts and key support edges, and the preflight/budget gate trail before opening the JSON artifacts.
+The same package now renders authority/precondition checks, source inventory, exception readiness, dry-run handoff posture, candidate support details, evidence-graph summary, run-ledger summary, and run-ledger integrity status inline. Reviewers can see contract-state status, human-review outcome, budget precondition checks, each source's read/missing/duplicate state, dry-run Exception Lake posture, the future Exception Lake runtime owner, the fact that no SQLite or external write occurred in intake, hashes, attachment refs, provenance graph counts and key support edges, and the preflight/budget gate trail before opening the JSON artifacts.
 
-The budget run also writes `review_package_completeness_report.json`. This deterministic report proves the final package includes required local artifact refs, required markdown sections, human gates, blockers, safety-gate proof, dry-run Exception Lake readiness, run ledgers, and non-authorization flags before the package is accepted.
+The budget run also writes `review_package_completeness_report.json`. This deterministic report proves the final package includes required local artifact refs, required markdown sections, human gates, blockers, safety-gate proof, dry-run Exception Lake readiness, run ledgers, run-ledger integrity reports, and non-authorization flags before the package is accepted.
 
 The completeness report also checks that the linked intake and budget review forms preserve their required human-review sections, evidence-hash visibility where source-bound evidence exists, and non-authorization boundary text, so those standalone forms cannot silently lose source coverage, outcome handling, budget lines, support items, or submission-boundary content while the consolidated package still passes.
 
 Budget runs also write a typed human review outcome record and append it to `human_confirmation_history.jsonl`. Corrections are represented as later records with `supersedes_confirmation_id`; prior review outcomes are not silently mutated.
+
+Preflight, confirmed budget, and blocked-budget attempts also write `run_ledger_integrity_report.json`. This local report proves required gate events appear in order, event run IDs match, output refs exist, refs stay local, blocked events only appear in blocked paths, and no external writes occurred. It is a vertical proof artifact only; Orchestrator remains the future run-ledger authority.
 
 The quickstart uses `north-star-messy-intake.json`, a synthetic bundle with duplicate source text, a missing complaint attachment, misleading role/context signals, prompt-injection source content, missing intake fields, deadline candidates, and human-confirmed budget generation.
 
@@ -125,7 +129,7 @@ Every source-bound evidence reference in the generated packets includes the cite
 
 Candidate classifications also carry `source_evidence_status`. When it is `observed_support`, the refs are direct source support for the label. When it is `source_anchor_only`, the refs only bind the candidate back to the packet for review; they are not observed support for the label. `unknown_option` preserves an explicit human-selectable unknown candidate with a source anchor.
 
-The preflight run also writes `ingestion_result.json`, a Python reference artifact for the future high-volume ingestion boundary. It packages source inventory, coverage summary, structural segments, and one segment-level evidence ref per segment under the `rust_ready_ingestion_v0_1` parity contract. Each preflight also writes `ingestion_volume_profile.json`, a deterministic source/segment scale profile that can require profiling before any Rust adapter proposal while still keeping `rust_replacement_allowed=false`. The profile now carries a reviewer-visible `rust_adapter_proposal_state` and `required_rust_transition_gates` so constrained-compute pressure is explicit without authorizing a replacement. `rust_ingestion_readiness_report.json` then proves the current artifact is usable as a future Rust parity target while keeping replacement unauthorized.
+The preflight run also writes `ingestion_result.json`, a Python reference artifact for the future high-volume ingestion boundary. It packages source inventory, coverage summary, structural segments, and one segment-level evidence ref per segment under the `rust_ready_ingestion_v0_1` parity contract. Each preflight also writes `ingestion_volume_profile.json`, a deterministic source/segment scale profile that can require profiling before any Rust adapter proposal while still keeping `rust_replacement_allowed=false`. The profile now carries reviewer-visible compute pressure signals, required performance profile dimensions, candidate Rust hot-path scope, `rust_adapter_proposal_state`, and `required_rust_transition_gates` so constrained-compute pressure is explicit without authorizing a replacement. `rust_ingestion_readiness_report.json` then proves the current artifact is usable as a future Rust parity target while keeping replacement unauthorized.
 
 The budget-stage `evidence_graph.json` carries the provenance forward into human review outcomes, conflict-search terms, budget lines, and budget support items. Structured refs such as human confirmations, synthetic practice-profile entries, and workflow-policy references are represented separately from observed source evidence.
 
@@ -218,7 +222,7 @@ No provider call is made, no raw payload is externalized, and the report is carr
 
 Python remains the starter reference implementation. If future document volume or constrained compute requires Rust, the only approved hot-path boundary is source inventory, segmentation, hashing, and evidence-ref emission. Any Rust adapter must prove parity with the Python reference for offsets, hashes, segment structure, prompt-injection flags, duplicate/missing-source states, and schema-compatible JSON before it can replace the Python path.
 
-Preparation now means keeping that boundary narrow, schema-first, measurable, and golden-testable. The current `ingestion_result.json` is the local parity oracle, `ingestion_volume_profile.json` records whether synthetic source/segment scale requires profiling before any Rust proposal, and `rust_ingestion_readiness_report.json` records the checks a future adapter must satisfy before comparison even begins. A Rust adapter may not replace the Python path unless profiling justifies it, transition gates are reviewed, and it produces schema-compatible inventory, segments, coverage summary, and segment evidence refs that match the Python reference on synthetic fixtures and holdouts. See `docs/rust-ingestion-transition-plan.md` for the gate sequence. It does not mean adding a second runtime before profiling proves ingestion is the bottleneck.
+Preparation now means keeping that boundary narrow, schema-first, measurable, and golden-testable. The current `ingestion_result.json` is the local parity oracle, `ingestion_volume_profile.json` records whether synthetic source/segment scale requires profiling before any Rust proposal, what compute pressure signals are present, which benchmark dimensions must be captured, and which deterministic hot-path functions Rust may cover. `rust_ingestion_readiness_report.json` records the checks a future adapter must satisfy before comparison even begins. A Rust adapter may not replace the Python path unless profiling justifies it, transition gates are reviewed, and it produces schema-compatible inventory, segments, coverage summary, and segment evidence refs that match the Python reference on synthetic fixtures and holdouts. See `docs/rust-ingestion-transition-plan.md` for the gate sequence. It does not mean adding a second runtime before profiling proves ingestion is the bottleneck.
 
 ## Current boundaries
 

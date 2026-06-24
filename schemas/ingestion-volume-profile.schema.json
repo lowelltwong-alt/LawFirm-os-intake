@@ -87,6 +87,27 @@
       "title": "Scale Signals",
       "type": "array"
     },
+    "compute_pressure_signals": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Compute Pressure Signals",
+      "type": "array"
+    },
+    "required_performance_profile_dimensions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Performance Profile Dimensions",
+      "type": "array"
+    },
+    "candidate_rust_hot_path_scope": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Candidate Rust Hot Path Scope",
+      "type": "array"
+    },
     "observed_scale_band": {
       "enum": [
         "starter_fixture",
