@@ -460,6 +460,8 @@ def run_budget(
     *,
     fixture_gold: str | Path | None = None,
 ) -> tuple[Any, Path]:
+    preflight_packet_path = Path(preflight_packet_path)
+    confirmation_path = Path(confirmation_path)
     packet = IntakePreflightPacket.model_validate(load_json(preflight_packet_path))
     confirmation = HumanConfirmation.model_validate(load_json(confirmation_path))
     run_dir = Path(out_dir)

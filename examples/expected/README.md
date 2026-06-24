@@ -12,3 +12,5 @@ Expected boundaries:
 The north-star demo fixture is `examples/synthetic/inbound/north-star-messy-intake.json` with confirmation template `examples/synthetic/confirmations/north-star-messy-intake.confirmation-template.json`. It is the acceptance fixture for one-command review-package generation.
 
 The reviewed synthetic gold gate for that demo is `examples/synthetic/gold/north-star-messy-intake.fixture-gold.json`. Running the CLI with `--fixture-gold` writes `fixture_gold_report.json`; a passing report is local evaluation evidence only and does not create canonical labels or legal conclusions.
+
+The hours-only budget-mode gold gate is `examples/synthetic/gold/carrier-assignment-medmal-hours-only.fixture-gold.json` with profile `context/synthetic-profiles/insurance-defense-hours-only.yaml`. It proves missing rates produce an internal hours-only proposal and `budget_hours_only_missing_rates`, not invented fees.

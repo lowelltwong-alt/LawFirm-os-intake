@@ -1,0 +1,130 @@
+profile_id: synthetic-insurance-defense-hours-only
+version: "0.1"
+contains_real_firm_data: false
+applied_layers: [synthetic_firm, insurance_defense_practice_group, hours_only_budget_eval]
+active_practices:
+  - medical_malpractice_defense
+  - insurance_coverage
+  - general_liability_defense
+default_side: defense
+typical_inbound_sources:
+  insurance_carrier: 0.9
+  tpa: 0.7
+  direct_corporate: 0.4
+  private_individual: 0.1
+matter_family_priors:
+  medical_malpractice_defense: 0.75
+  insurance_coverage: 0.55
+  general_liability_defense: 0.5
+  auto_liability_defense: 0.25
+  commercial_litigation: 0.1
+  plaintiff_personal_injury: 0.0
+required_intake_fields:
+  - claim_number
+  - incident_date
+  - prospective_represented_client
+  - adverse_party
+  - jurisdiction
+  - assignment_scope
+  - response_or_reporting_deadline
+budget_template_ids:
+  - synthetic-medmal-defense-v1
+context_precedence:
+  - observed_source_evidence
+  - human_confirmed_matter_facts
+  - client_or_referral_source_profile
+  - practice_group_profile
+  - firm_defaults
+synthetic_hourly_rates: {}
+budget_templates:
+  medical_malpractice_defense:
+    template_id: synthetic-medmal-defense-v1
+    contingency_percent: 7.5
+    assumptions:
+      - One plaintiff, two represented defendants, and one principal medical event.
+      - No appeal, retrial, sanctions proceeding, or separate coverage action.
+      - Rates and hours are synthetic examples only.
+    exclusions:
+      - expert vendor invoices beyond listed estimates
+      - appellate work
+      - separate coverage litigation
+    unknowns:
+      - court-specific schedule
+      - number of depositions
+      - expert disciplines and fee arrangements
+    phases:
+      - phase_id: P100
+        phase_name: Intake and Early Case Assessment
+        tasks:
+          - task_id: P110
+            task_name: Assignment review, party map, and initial exposure assessment
+            staffing_role: senior_associate
+            estimated_hours: 12
+            estimated_expenses: 0
+            external_code_candidate: L100
+          - task_id: P120
+            task_name: Medical record inventory and chronology plan
+            staffing_role: paralegal
+            estimated_hours: 18
+            estimated_expenses: 250
+            external_code_candidate: L110
+      - phase_id: P200
+        phase_name: Pleadings and Initial Motions
+        tasks:
+          - task_id: P210
+            task_name: Answer and preliminary motions
+            staffing_role: associate
+            estimated_hours: 22
+            estimated_expenses: 300
+            external_code_candidate: L200
+      - phase_id: P300
+        phase_name: Discovery
+        tasks:
+          - task_id: P310
+            task_name: Written discovery and document production management
+            staffing_role: associate
+            estimated_hours: 55
+            estimated_expenses: 1200
+            external_code_candidate: L300
+          - task_id: P320
+            task_name: Depositions and witness preparation
+            staffing_role: senior_associate
+            estimated_hours: 65
+            estimated_expenses: 4500
+            external_code_candidate: L330
+          - task_id: P330
+            task_name: Expert discovery coordination
+            staffing_role: partner
+            estimated_hours: 32
+            estimated_expenses: 15000
+            external_code_candidate: L340
+      - phase_id: P400
+        phase_name: Dispositive Motions and Resolution
+        tasks:
+          - task_id: P410
+            task_name: Dispositive motion analysis and briefing
+            staffing_role: partner
+            estimated_hours: 42
+            estimated_expenses: 800
+            external_code_candidate: L400
+          - task_id: P420
+            task_name: Mediation and settlement preparation
+            staffing_role: senior_associate
+            estimated_hours: 28
+            estimated_expenses: 2500
+            external_code_candidate: L160
+      - phase_id: P500
+        phase_name: Trial Preparation and Trial
+        tasks:
+          - task_id: P510
+            task_name: Trial preparation
+            staffing_role: associate
+            estimated_hours: 85
+            estimated_expenses: 8000
+            external_code_candidate: L500
+          - task_id: P520
+            task_name: Trial attendance and lead counsel work
+            staffing_role: partner
+            estimated_hours: 80
+            estimated_expenses: 12000
+            external_code_candidate: L510

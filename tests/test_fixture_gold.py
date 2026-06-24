@@ -3,6 +3,8 @@ from copy import deepcopy
 import pytest
 
 from lawfirm_os_intake.cli import main
+from lawfirm_os_intake.confirmation import bind_confirmation_to_packet_evidence
+from lawfirm_os_intake.models import HumanConfirmation
 from lawfirm_os_intake.util import load_json, load_jsonl, write_json
 from lawfirm_os_intake.workflow import run_preflight
 
@@ -93,3 +95,62 @@ def test_fixture_gold_fails_closed_after_writing_report(tmp_path, repo_root):
         check["check_id"] == "top_inbound_event" and check["status"] == "failed"
         for check in report["checks"]
     )
+
+
+def test_build_budget_fixture_gold_covers_hours_only_mode(tmp_path, repo_root):
+    packet, run_dir = run_preflight(
+        repo_root / "examples/synthetic/inbound/carrier-assignment-medmal.json",
+        repo_root / "context/synthetic-profiles/insurance-defense.yaml",
+        tmp_path / "preflight",
+        fixture_gold=(
+            repo_root
+            / "examples/synthetic/gold/carrier-assignment-medmal-hours-only.fixture-gold.json"
+        ),
+    )
+    confirmation_data = load_json(
+        repo_root
+        / "examples/synthetic/confirmations/carrier-assignment-medmal.confirmation-template.json"
+    )
+    confirmation_data["preflight_packet_id"] = packet.packet_id
+    confirmation = bind_confirmation_to_packet_evidence(
+        packet, HumanConfirmation.model_validate(confirmation_data)
+    )
+    confirmation_path = tmp_path / "human_confirmation.json"
+    write_json(confirmation_path, confirmation.model_dump(mode="json"))
+
+    code = main(
+        [
+            "build-budget",
+            "--preflight-packet",
+            str(run_dir / "intake_preflight_packet.json"),
+            "--confirmation",
+            str(confirmation_path),
+            "--practice-profile",
+            str(repo_root / "context/synthetic-profiles/insurance-defense-hours-only.yaml"),
+            "--fixture-gold",
+            str(
+                repo_root
+                / "examples/synthetic/gold/carrier-assignment-medmal-hours-only.fixture-gold.json"
+            ),
+            "--out-dir",
+            str(tmp_path / "budget"),
+        ]
+    )
+
+    assert code == 0
+    budget = load_json(tmp_path / "budget/legal_budget_proposal.json")
+    report = load_json(tmp_path / "budget/fixture_gold_report.json")
+    exception_labels = {
+        item["local_event_label"]
+        for item in load_jsonl(tmp_path / "budget/exception_lake_candidates.jsonl")
+    }
+    assert budget["pricing_status"] == "hours_only"
+    assert budget["total_proposed_budget"] is None
+    assert report["status"] == "passed"
+    assert any(
+        check["check_id"] == "budget_pricing_status"
+        and check["actual"] == "hours_only"
+        and check["status"] == "passed"
+        for check in report["checks"]
+    )
+    assert "budget_hours_only_missing_rates" in exception_labels

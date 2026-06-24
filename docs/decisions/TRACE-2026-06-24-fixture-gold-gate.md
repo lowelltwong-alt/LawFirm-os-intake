@@ -10,7 +10,7 @@ The v1.0 goal calls for repeatable quality: fixtures, expected outputs, tests, s
 
 Add local `FixtureGoldSpec` and `FixtureGoldReport` models, export their schemas, and wire `--fixture-gold` into `preflight`, `build-budget`, and `demo`.
 
-When supplied, the workflow writes `fixture_gold_report.json` and fails closed if reviewed synthetic expectations drift. The first reviewed gold file is `examples/synthetic/gold/north-star-messy-intake.fixture-gold.json`.
+When supplied, the workflow writes `fixture_gold_report.json` and fails closed if reviewed synthetic expectations drift. The first reviewed gold file is `examples/synthetic/gold/north-star-messy-intake.fixture-gold.json`. A second reviewed gold file, `examples/synthetic/gold/carrier-assignment-medmal-hours-only.fixture-gold.json`, covers the hours-only budget fallback so missing rates remain visible instead of being silently invented.
 
 The gold report checks:
 
@@ -50,10 +50,10 @@ The main risk is brittle expectations when deterministic scoring changes. That i
 Completed on 2026-06-24:
 
 - `python -m ruff format src tests scripts` - 4 files reformatted, then 52 files left unchanged on rerun
-- `python -m pytest tests/test_fixture_gold.py tests/test_north_star_demo.py tests/test_cli_demo.py tests/test_review_package.py tests/test_review_package_completeness.py -q` - passed
+- `python -m pytest tests/test_fixture_gold.py tests/test_north_star_demo.py tests/test_cli_demo.py tests/test_review_package.py tests/test_review_package_completeness.py -q` - passed, and the hours-only focused path passed in the Rust-transition validation slice
 - `python scripts/export_schemas.py` - exported 26 schemas
 - `python -m pytest -q` - passed
-- `python -m pytest --collect-only -q` - collected 75 tests
+- `python -m pytest --collect-only -q` - collected 76 tests after adding the hours-only fixture-gold acceptance test
 - `python -m ruff check src tests scripts` - passed
 - `python -m ruff format --check src tests scripts` - 52 files already formatted
 - `python scripts/validate_repo.py` - passed after generated test/lint caches were cleaned
