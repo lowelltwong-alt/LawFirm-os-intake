@@ -74,12 +74,32 @@ def test_review_packet_preserves_unknown_and_context_separation(tmp_path, repo_r
         repo_root / "context/synthetic-profiles/insurance-defense.yaml",
         tmp_path,
     )
-    assert any(candidate.label == "unknown" for candidate in packet.matter_family_candidates)
+    unknown = next(
+        candidate for candidate in packet.matter_family_candidates if candidate.label == "unknown"
+    )
+    context_only = next(
+        candidate
+        for candidate in packet.matter_family_candidates
+        if candidate.calibration_label == "context_influenced"
+        and candidate.source_evidence_status == "source_anchor_only"
+    )
+    assert unknown.source_evidence_status == "unknown_option"
+    assert context_only.observed_evidence_refs
+    assert context_only.context_signal_refs
     assert all(candidate.observed_evidence_refs for candidate in packet.matter_family_candidates)
     assert packet.missing_information_candidates
     assert all(item.evidence_refs for item in packet.missing_information_candidates)
     review_text = (run_dir / "intake_review_form.md").read_text(encoding="utf-8")
+    context_line = next(
+        line for line in review_text.splitlines() if line.startswith(f"- {context_only.label} ")
+    )
+    unknown_line = next(line for line in review_text.splitlines() if line.startswith("- unknown "))
     assert "context:" in review_text
+    assert "source anchor:" in context_line
+    assert "no direct observed support" in context_line
+    assert "evidence:" not in context_line
+    assert "source anchor:" in unknown_line
+    assert "explicit unknown option" in unknown_line
     assert "Sample Indemnity Company" in review_text
     assert any(
         f"{item.field_name}: {item.reason}; evidence:" in review_text

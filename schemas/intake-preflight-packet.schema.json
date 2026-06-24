@@ -390,6 +390,16 @@
           "title": "Observed Evidence Refs",
           "type": "array"
         },
+        "source_evidence_status": {
+          "default": "observed_support",
+          "enum": [
+            "observed_support",
+            "source_anchor_only",
+            "unknown_option"
+          ],
+          "title": "Source Evidence Status",
+          "type": "string"
+        },
         "context_signal_refs": {
           "items": {
             "type": "string"

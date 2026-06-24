@@ -163,6 +163,9 @@ class ScoredCandidate(StrictModel):
     label: str
     confidence: float = Field(ge=0, le=1)
     observed_evidence_refs: list[EvidenceRef] = Field(default_factory=list)
+    source_evidence_status: Literal["observed_support", "source_anchor_only", "unknown_option"] = (
+        "observed_support"
+    )
     context_signal_refs: list[str] = Field(default_factory=list)
     calibration_label: Literal["observed", "context_influenced", "unknown_option"] = "observed"
     support_summary: str | None = None

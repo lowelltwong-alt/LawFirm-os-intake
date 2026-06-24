@@ -116,20 +116,32 @@ def build_preflight_graph(packet: IntakePreflightPacket) -> EvidenceGraph:
                     )
                 )
 
-    for node_type, relationship, candidates in [
+    for node_type, support_relationship, anchor_relationship, candidates in [
         (
             "inbound_event_candidate",
             "supports_inbound_event_candidate",
+            "anchors_inbound_event_candidate",
             packet.inbound_event_candidates,
         ),
-        ("matter_family_candidate", "supports_matter_candidate", packet.matter_family_candidates),
+        (
+            "matter_family_candidate",
+            "supports_matter_candidate",
+            "anchors_matter_family_candidate",
+            packet.matter_family_candidates,
+        ),
         (
             "representation_posture_candidate",
             "supports_representation_posture_candidate",
+            "anchors_representation_posture_candidate",
             packet.representation_posture_candidates,
         ),
     ]:
         for candidate in candidates:
+            relationship = (
+                support_relationship
+                if candidate.source_evidence_status == "observed_support"
+                else anchor_relationship
+            )
             nodes.append(
                 EvidenceGraphNode(
                     node_id=candidate.candidate_id,
@@ -139,6 +151,7 @@ def build_preflight_graph(packet: IntakePreflightPacket) -> EvidenceGraph:
                         "label": candidate.label,
                         "confidence": candidate.confidence,
                         "calibration_label": candidate.calibration_label,
+                        "source_evidence_status": candidate.source_evidence_status,
                     },
                 )
             )

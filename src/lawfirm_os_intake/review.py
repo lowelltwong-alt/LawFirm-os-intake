@@ -23,9 +23,16 @@ def _candidate_lines(candidates: list, limit: int = 3) -> list[str]:
         refs = ", ".join(_ref_text(ref) for ref in candidate.observed_evidence_refs[:3])
         context = ", ".join(candidate.context_signal_refs)
         context_text = f"; context: {context}" if context else ""
+        status = candidate.source_evidence_status
+        if status == "observed_support":
+            ref_text = f"evidence: {refs or 'none'}"
+        elif status == "unknown_option":
+            ref_text = f"source anchor: {refs or 'none'}; explicit unknown option"
+        else:
+            ref_text = f"source anchor: {refs or 'none'}; no direct observed support"
         lines.append(
-            f"- {candidate.label} ({candidate.confidence:.2f}; {candidate.calibration_label}) "
-            f"evidence: {refs or 'none'}{context_text}"
+            f"- {candidate.label} ({candidate.confidence:.2f}; "
+            f"{candidate.calibration_label}; {status}) {ref_text}{context_text}"
         )
     return lines or ["- none"]
 

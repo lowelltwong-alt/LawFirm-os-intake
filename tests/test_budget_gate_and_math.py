@@ -27,6 +27,16 @@ def test_budget_requires_human_confirmation_and_calculates(tmp_path, repo_root):
     profile = load_profile(repo_root / "context/synthetic-profiles/insurance-defense.yaml")
     budget = build_budget_proposal(packet, confirmation, profile)
     assert budget.pricing_status == "priced"
+    confirmed_matter_candidate = next(
+        candidate
+        for candidate in packet.matter_family_candidates
+        if candidate.label == confirmation.confirmed_matter_family
+    )
+    assert confirmed_matter_candidate.source_evidence_status == "observed_support"
+    assert all(
+        line.evidence_refs == confirmed_matter_candidate.observed_evidence_refs[:3]
+        for line in budget.lines
+    )
     expected_fees = round(
         sum(line.estimated_hours * line.hourly_rate for line in budget.lines if line.hourly_rate), 2
     )

@@ -65,7 +65,7 @@ Authoritative run state never lives only in a model context window. The workflow
 
 ## Graph posture
 
-The starter emits a typed JSON evidence graph across preflight and budget-stage artifacts. It links source segments to candidates, human confirmations, review outcomes, conflict-search terms, budget lines, budget support items, structured refs, and proposals. It does not require a graph database or GraphRAG. A graph runtime may be justified later only if evaluation shows that cross-document relationship retrieval is the bottleneck.
+The starter emits a typed JSON evidence graph across preflight and budget-stage artifacts. It links source segments to candidates, human confirmations, review outcomes, conflict-search terms, budget lines, budget support items, structured refs, and proposals. Candidate segment edges use `supports_*` only when the candidate has observed source support; context-only alternatives and unknown options use `anchors_*` edges for packet binding. It does not require a graph database or GraphRAG. A graph runtime may be justified later only if evaluation shows that cross-document relationship retrieval is the bottleneck.
 
 ## Rust-ready ingestion posture
 

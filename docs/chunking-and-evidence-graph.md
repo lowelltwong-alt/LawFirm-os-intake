@@ -110,6 +110,8 @@ source -> party role candidate -> party candidate
 
 A JSON graph is inspectable, portable, and sufficient for the first workflow. Introduce a graph database or GraphRAG only when evaluation shows a real bottleneck in relationship traversal, entity resolution, or multi-document retrieval.
 
+Candidate source edges preserve the evidence/context boundary. `supports_*` edges mean the cited segment directly supports the candidate label. `anchors_*` edges mean the cited segment keeps a context-only alternative or explicit unknown option bound to the packet for review, without upgrading it to observed fact.
+
 ## Chunking quality tests
 
 - exact offset/hash preservation;

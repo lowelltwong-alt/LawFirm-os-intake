@@ -117,6 +117,8 @@ The preflight `intake_review_form.md` is the first human pause. It shows detaile
 
 Every source-bound evidence reference in the generated packets includes the cited source ID, segment ID, segment offsets, and segment hash. Strict mode rejects refs that drift from the segment table.
 
+Candidate classifications also carry `source_evidence_status`. When it is `observed_support`, the refs are direct source support for the label. When it is `source_anchor_only`, the refs only bind the candidate back to the packet for review; they are not observed support for the label. `unknown_option` preserves an explicit human-selectable unknown candidate with a source anchor.
+
 The preflight run also writes `ingestion_result.json`, a Python reference artifact for the future high-volume ingestion boundary. It packages source inventory, coverage summary, structural segments, and one segment-level evidence ref per segment under the `rust_ready_ingestion_v0_1` parity contract. Each preflight also writes `ingestion_volume_profile.json`, a deterministic source/segment scale profile that can require profiling before any Rust adapter proposal while still keeping `rust_replacement_allowed=false`. `rust_ingestion_readiness_report.json` then proves the current artifact is usable as a future Rust parity target while keeping replacement unauthorized.
 
 The budget-stage `evidence_graph.json` carries the provenance forward into human review outcomes, conflict-search terms, budget lines, and budget support items. Structured refs such as human confirmations, synthetic practice-profile entries, and workflow-policy references are represented separately from observed source evidence.
@@ -130,7 +132,10 @@ The same message can mean different things to different practices. A carrier ass
 Practice context may alter candidate rankings. It may **not** manufacture observed facts. Every classification preserves two distinct channels:
 
 - `observed_evidence_refs`
+- `source_evidence_status`
 - `context_signal_refs`
+
+The refs field remains nonempty for packet validation and review binding. The status field tells whether those refs are direct observed support, source anchors for a context/prior-only alternative, or anchors for the explicit unknown option.
 
 Human reviewers must confirm the matter type, representation posture, and principal party roles.
 

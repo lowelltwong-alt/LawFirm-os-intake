@@ -31,6 +31,18 @@ def _policy_ref(path: str) -> str:
     return f"workflow-policy://budget-boundary/{path}"
 
 
+def _confirmed_matter_observed_refs(
+    packet: IntakePreflightPacket, confirmation: HumanConfirmation
+) -> list[EvidenceRef]:
+    for candidate in packet.matter_family_candidates:
+        if (
+            candidate.label == confirmation.confirmed_matter_family
+            and candidate.source_evidence_status == "observed_support"
+        ):
+            return candidate.observed_evidence_refs[:3]
+    return []
+
+
 def _support_item(
     item_type: str,
     text: str,
@@ -163,11 +175,7 @@ def build_budget_proposal(
     rates = {str(k): float(v) for k, v in profile.get("synthetic_hourly_rates", {}).items()}
     lines: list[BudgetLine] = []
     all_priced = True
-    evidence_refs = (
-        packet.matter_family_candidates[0].observed_evidence_refs[:3]
-        if packet.matter_family_candidates
-        else []
-    )
+    evidence_refs = _confirmed_matter_observed_refs(packet, confirmation)
 
     for phase in template.get("phases", []):
         for task in phase.get("tasks", []):

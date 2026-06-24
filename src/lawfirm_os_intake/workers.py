@@ -290,11 +290,13 @@ def _score_family(
     fallback_refs = _first_refs(segments)
     observed_refs = list(dedup.values()) or fallback_refs
     calibration = "context_influenced" if prior and not observed else "observed"
+    source_evidence_status = "observed_support" if observed else "source_anchor_only"
     return ScoredCandidate(
         candidate_id=new_id("matter"),
         label=label,
         confidence=round(score, 4),
         observed_evidence_refs=observed_refs,
+        source_evidence_status=source_evidence_status,
         context_signal_refs=context_refs,
         calibration_label=calibration,
         support_summary=", ".join(observed)
@@ -318,12 +320,14 @@ def _score_signal_set(
             refs.extend(evidence_for_text(segments, term))
         dedup = {(r.source_id, r.segment_id): r for r in refs}
         fallback_refs = _first_refs(segments)
+        source_evidence_status = "observed_support" if observed else "source_anchor_only"
         candidates.append(
             ScoredCandidate(
                 candidate_id=new_id(prefix),
                 label=label,
                 confidence=round(score, 4),
                 observed_evidence_refs=list(dedup.values()) or fallback_refs,
+                source_evidence_status=source_evidence_status,
                 support_summary=", ".join(observed)
                 if observed
                 else "No direct lexical signal; retained as alternative.",
@@ -335,6 +339,7 @@ def _score_signal_set(
             label="unknown",
             confidence=0.2,
             observed_evidence_refs=_first_refs(segments),
+            source_evidence_status="unknown_option",
             calibration_label="unknown_option",
             support_summary="Explicit unknown option preserved for human review.",
         )
@@ -358,6 +363,7 @@ def classify_matter(
             label="unknown",
             confidence=0.2,
             observed_evidence_refs=_first_refs(segments),
+            source_evidence_status="unknown_option",
             calibration_label="unknown_option",
             support_summary="Explicit unknown option preserved for human review.",
         )
