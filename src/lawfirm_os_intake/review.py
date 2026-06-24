@@ -210,6 +210,22 @@ def _confirmed_party_lines(confirmation: HumanConfirmation) -> list[str]:
     ]
 
 
+def _party_candidate_lines(packet: IntakePreflightPacket) -> list[str]:
+    lines = []
+    for party in packet.party_candidates:
+        aliases = f" (aliases: {', '.join(party.aliases)})" if party.aliases else ""
+        role_text = "; ".join(
+            f"{role.role} ({role.confidence:.2f}; evidence: "
+            f"{_refs_text(role.evidence_refs, limit=2)})"
+            for role in party.role_candidates
+        )
+        lines.append(
+            f"- {party.name}{aliases}: role candidates: {role_text or 'none'}; "
+            f"party evidence: {_refs_text(party.evidence_refs, limit=3)}"
+        )
+    return lines or ["- none"]
+
+
 def _conflict_seed_lines(conflict_seed: ConflictSeedPacket) -> list[str]:
     lines = []
     for term in conflict_seed.normalized_search_terms:
@@ -289,6 +305,20 @@ def render_matter_opening_review_package(
             f"- Human-confirmed jurisdiction: {confirmation.confirmed_jurisdiction or 'unknown'}",
             f"- Human confirmation decision evidence: {_refs_text(confirmation.decision_evidence_refs, limit=5)}",
             *_confirmed_party_lines(confirmation),
+            "",
+            "## Candidate Alternatives",
+            "",
+            "### Inbound Event Candidates",
+            *_candidate_lines(packet.inbound_event_candidates),
+            "",
+            "### Matter Family Candidates",
+            *_candidate_lines(packet.matter_family_candidates),
+            "",
+            "### Representation Posture Candidates",
+            *_candidate_lines(packet.representation_posture_candidates),
+            "",
+            "### Party And Role Candidates",
+            *_party_candidate_lines(packet),
             "",
             "## What Still Needs Human Review",
             "",

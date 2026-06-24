@@ -15,6 +15,7 @@ from .util import new_id, now_iso
 REQUIRED_REVIEW_SECTIONS = [
     "# Matter Opening Review Package",
     "## What Is Known",
+    "## Candidate Alternatives",
     "## What Still Needs Human Review",
     "## Conflict Search Seed",
     "## Budget Proposal",

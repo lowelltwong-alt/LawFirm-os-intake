@@ -46,6 +46,11 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert "## What Is Known" in review_text
     assert "Human confirmation decision evidence:" in review_text
     assert "; evidence:" in review_text
+    assert "## Candidate Alternatives" in review_text
+    assert "### Matter Family Candidates" in review_text
+    assert "### Party And Role Candidates" in review_text
+    assert "role candidates:" in review_text
+    assert "party evidence:" in review_text
     assert "## What Still Needs Human Review" in review_text
     assert "not docketed; evidence:" in review_text
     assert "missing information:" in review_text
@@ -109,6 +114,7 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert completeness.review_package_id == manifest.review_package_id
     assert completeness.human_readable_review_ref == str(review_path)
     assert completeness.review_package_manifest_ref == str(manifest_path)
+    assert "## Candidate Alternatives" in completeness.required_sections
     assert "review_package_completeness_report" in completeness.required_artifact_keys
     assert {check.status for check in completeness.checks} == {"passed"}
 

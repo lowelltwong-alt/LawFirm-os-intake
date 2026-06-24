@@ -114,6 +114,10 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     for phrase in [
         "Source coverage complete: False",
         "Human confirmation decision evidence:",
+        "## Candidate Alternatives",
+        "### Matter Family Candidates",
+        "### Party And Role Candidates",
+        "role candidates:",
         "Missing sources: 1",
         "Duplicate sources: 1",
         "missing information: incident_date;",

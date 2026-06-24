@@ -112,3 +112,9 @@
 - Updated the intake and matter-opening review Markdown to show evidence refs inline for human-confirmation decision evidence, confirmed parties, deadline candidates, missing-information candidates, and critic findings.
 - Kept the change schema-neutral: underlying evidence contracts stay stable, and the Markdown becomes easier for reviewers to audit.
 - Added tests and smoke coverage so the north-star review package cannot hide key evidence refs behind JSON-only artifacts.
+
+## Final-package candidate alternatives slice - 2026-06-24
+
+- Added a `Candidate Alternatives` section to the final matter-opening review package.
+- The section renders top inbound-event, matter-family, representation-posture, and party-role candidates with source evidence refs and context signals.
+- The completeness report now requires the section before final package acceptance.

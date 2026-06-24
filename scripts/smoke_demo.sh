@@ -35,6 +35,7 @@ test -s ".lawfirm-os-intake/smoke/budget/review_package_completeness_report.json
 test -s ".lawfirm-os-intake/smoke/budget/safety_gate_report.json"
 grep -q "Status: passed" ".lawfirm-os-intake/smoke/budget/matter_opening_review_package.md"
 grep -q "Human confirmation decision evidence:" ".lawfirm-os-intake/smoke/budget/matter_opening_review_package.md"
+grep -q "## Candidate Alternatives" ".lawfirm-os-intake/smoke/budget/matter_opening_review_package.md"
 grep -q '"status": "passed"' ".lawfirm-os-intake/smoke/budget/review_package_completeness_report.json"
 grep -q "review_package_completeness_report.json" ".lawfirm-os-intake/smoke/budget/matter_opening_review_package.md"
 grep -q "blocked_pending_conflicts_and_engagement" ".lawfirm-os-intake/smoke/budget/safety_gate_report.json"
