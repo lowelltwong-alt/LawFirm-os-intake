@@ -781,6 +781,30 @@ class StarterReleaseAuditReport(StrictModel):
     generated_at: str
 
 
+class BlockedBudgetAttemptAuditCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    artifact_refs: list[str] = Field(default_factory=list)
+    details: dict[str, Any] = Field(default_factory=dict)
+
+
+class BlockedBudgetAttemptAuditReport(StrictModel):
+    schema_version: str = "0.1"
+    blocked_budget_attempt_audit_report_id: str
+    status: Literal["passed", "failed"]
+    preflight_packet_ref: str
+    confirmation_ref: str
+    blocked_budget_dir: str
+    expected_blocked_state: Literal["budget_blocked_before_human_confirmation"]
+    exception_raised: bool
+    blocked_error: str | None = None
+    non_authoritative: Literal[True] = True
+    external_writes_performed: Literal[False] = False
+    checks: list[BlockedBudgetAttemptAuditCheck]
+    generated_at: str
+
+
 class SafetyGateCheck(StrictModel):
     check_id: str
     status: Literal["passed", "failed"]

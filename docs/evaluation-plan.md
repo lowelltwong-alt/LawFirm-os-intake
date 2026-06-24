@@ -32,6 +32,8 @@ The CLI supports `--fixture-gold` for reviewed synthetic gold. It writes `fixtur
 
 The smoke harness also runs `scripts/audit_starter_release.py` after the north-star demo. It writes `starter_release_audit_report.json`, a local non-authoritative artifact-level audit over the generated demo outputs. The audit checks required artifacts, synthetic-only scope, source-bound refs, human gates, carrier/client separation, conflict-seed boundary, budget boundary, Exception Lake dry-run posture, terminal safety boundary, fixture-gold status, run ledgers, noncanonical candidate registries, and Rust-readiness posture.
 
+The smoke harness also runs `scripts/audit_blocked_budget_attempt.py`. It writes `blocked_budget_attempt_audit_report.json`, a local non-authoritative fail-closed audit proving a synthetic `needs_more_information` human-review outcome stops before conflict seed, budget proposal, readiness packet, safety gate, or final package output while preserving the blocked precondition report, review outcome/history, dry-run exception candidate, readiness report, and run ledger.
+
 ### Counterfactual evals
 
 Same source, different practice context. Evidence must remain unchanged.
@@ -70,6 +72,7 @@ Measure review time, correction count, unknown selection, evidence-navigation bu
 - retain reviewer disagreement rather than forcing false gold.
 - keep `fixture_gold_report.json` local and non-authoritative; it is evaluation evidence, not canonical platform truth.
 - keep `starter_release_audit_report.json` local and non-authoritative; it proves starter artifact invariants only and does not replace tests, CI, Semantic Substrate promotion, Orchestrator runtime ownership, or human legal review.
+- keep `blocked_budget_attempt_audit_report.json` local and non-authoritative; it proves the synthetic blocked-budget canary only and does not authorize any budget-stage output.
 
 ## Graduation gates
 

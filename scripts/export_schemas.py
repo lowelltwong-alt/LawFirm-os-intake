@@ -8,6 +8,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from lawfirm_os_intake.models import (  # noqa: E402
+    BlockedBudgetAttemptAuditReport,
     BudgetProposal,
     BudgetPreconditionReport,
     BudgetSupportItem,
@@ -39,6 +40,7 @@ from lawfirm_os_intake.models import (  # noqa: E402
 
 MODELS = {
     "source-bundle.schema.json": SourceBundle,
+    "blocked-budget-attempt-audit-report.schema.json": BlockedBudgetAttemptAuditReport,
     "ingestion-result.schema.json": IngestionResult,
     "ingestion-volume-profile.schema.json": IngestionVolumeProfile,
     "rust-ingestion-readiness-report.schema.json": RustIngestionReadinessReport,

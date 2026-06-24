@@ -90,3 +90,14 @@ test -s ".lawfirm-os-intake/smoke/budget/starter_release_audit_report.json"
 grep -q '"status": "passed"' ".lawfirm-os-intake/smoke/budget/starter_release_audit_report.json"
 grep -q "budget_boundary_and_math_hold" ".lawfirm-os-intake/smoke/budget/starter_release_audit_report.json"
 grep -q "exception_lake_candidates_are_dry_run_and_expected" ".lawfirm-os-intake/smoke/budget/starter_release_audit_report.json"
+python scripts/audit_blocked_budget_attempt.py \
+  --preflight-packet "$preflight_dir/intake_preflight_packet.json" \
+  --confirmation-template examples/synthetic/confirmations/north-star-messy-intake.confirmation-template.json \
+  --practice-profile context/synthetic-profiles/insurance-defense.yaml \
+  --out-dir .lawfirm-os-intake/smoke/blocked-budget
+test -s ".lawfirm-os-intake/smoke/blocked-budget/blocked_budget_attempt_audit_report.json"
+grep -q '"status": "passed"' ".lawfirm-os-intake/smoke/blocked-budget/blocked_budget_attempt_audit_report.json"
+grep -q "no_prohibited_budget_outputs_emitted" ".lawfirm-os-intake/smoke/blocked-budget/blocked_budget_attempt_audit_report.json"
+grep -q "budget_blocked_before_human_confirmation" ".lawfirm-os-intake/smoke/blocked-budget/blocked_budget_attempt_audit_report.json"
+test ! -e ".lawfirm-os-intake/smoke/blocked-budget/budget/legal_budget_proposal.json"
+test ! -e ".lawfirm-os-intake/smoke/blocked-budget/budget/conflict_search_seed_packet.json"
