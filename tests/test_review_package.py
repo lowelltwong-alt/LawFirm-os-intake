@@ -43,6 +43,10 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     graph = load_json(budget_dir / "evidence_graph.json")
 
     assert "# Matter Opening Review Package" in review_text
+    assert "## Source Inventory" in review_text
+    assert "read_state=read" in review_text
+    assert "availability=available" in review_text
+    assert "sha=sha256:" in review_text
     assert "## What Is Known" in review_text
     assert "Human confirmation decision evidence:" in review_text
     assert "; evidence:" in review_text
@@ -76,6 +80,11 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert "## Safety Gate" in review_text
     assert "## Matter-Opening Blockers" in review_text
     assert "blocked_pending_conflicts_and_engagement" in review_text
+    assert "## Run Ledger Summary" in review_text
+    assert "preflight ledger:" in review_text
+    assert "preflight step 2: contract_state_gate" in review_text
+    assert "budget ledger:" in review_text
+    assert "budget step 4: conflict_seed_and_budget_proposal_built" in review_text
     assert "does not clear conflicts" in review_text
     assert "submit a budget" in review_text
 
@@ -124,9 +133,11 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert completeness.review_package_id == manifest.review_package_id
     assert completeness.human_readable_review_ref == str(review_path)
     assert completeness.review_package_manifest_ref == str(manifest_path)
+    assert "## Source Inventory" in completeness.required_sections
     assert "## Candidate Alternatives" in completeness.required_sections
     assert "## Required Human Gates" in completeness.required_sections
     assert "### Budget Lines" in completeness.required_sections
+    assert "## Run Ledger Summary" in completeness.required_sections
     assert "review_package_completeness_report" in completeness.required_artifact_keys
     assert {check.status for check in completeness.checks} == {"passed"}
 

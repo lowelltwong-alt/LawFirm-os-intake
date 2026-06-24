@@ -112,7 +112,11 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     assert manifest["contract_state_report_ref"].endswith("contract_state_report.json")
 
     for phrase in [
+        "## Source Inventory",
         "Source coverage complete: False",
+        "syn-northstar-attachment-missing-001",
+        "read_state=missing",
+        "availability=duplicate",
         "Human confirmation decision evidence:",
         "## Candidate Alternatives",
         "### Matter Family Candidates",
@@ -142,6 +146,9 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
         "blocker: conflicts_not_cleared",
         "blocker: engagement_not_authorized",
         "blocker: matter_opening_not_approved",
+        "## Run Ledger Summary",
+        "preflight step 2: contract_state_gate",
+        "budget step 4: conflict_seed_and_budget_proposal_built",
         "This package does not clear conflicts",
     ]:
         assert phrase in review_text

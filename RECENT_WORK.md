@@ -130,3 +130,9 @@
 - Added calculation summary, budget line, and budget support subsections to the final matter-opening review package.
 - Budget lines now render hours/ranges, rate source, synthetic-rate label, fees, expenses, assumptions, formula, and source evidence refs inline.
 - The completeness report now requires those budget detail subsections before final package acceptance.
+
+## Final-package source and ledger visibility slice - 2026-06-24
+
+- Added source-inventory detail to the final matter-opening review package, including read/missing/duplicate states, hashes, attachment refs, and duplicate links.
+- Added a run-ledger summary showing preflight and budget gate steps, statuses, input counts, output counts, and notes.
+- The completeness report now requires source inventory and run-ledger sections before final package acceptance.

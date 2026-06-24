@@ -625,6 +625,33 @@ def run_budget(
         exception_readiness_report_path,
         exception_readiness_report.model_dump(mode="json"),
     )
+    append_jsonl(
+        ledger_path,
+        _event(
+            packet.run_id,
+            3,
+            "human_confirmation_consumed",
+            "completed",
+            input_refs=[str(confirmation_path)],
+        ).model_dump(mode="json"),
+    )
+    append_jsonl(
+        ledger_path,
+        _event(
+            packet.run_id,
+            4,
+            "conflict_seed_and_budget_proposal_built",
+            "completed",
+            output_refs=[
+                str(run_dir / "conflict_search_seed_packet.json"),
+                str(run_dir / "legal_budget_proposal.json"),
+                str(run_dir / "matter_opening_readiness.json"),
+                str(exception_candidates_path),
+                str(safety_gate_report_path),
+                str(exception_readiness_report_path),
+            ],
+        ).model_dump(mode="json"),
+    )
     review_package_path.write_text(
         render_matter_opening_review_package(
             packet,
@@ -635,6 +662,10 @@ def run_budget(
             safety_report,
             all_exception_candidates,
             artifact_refs,
+            {
+                "preflight": load_jsonl(packet.run_ledger_ref),
+                "budget": load_jsonl(ledger_path),
+            },
         ),
         encoding="utf-8",
     )
@@ -678,33 +709,6 @@ def run_budget(
     )
     write_json(completeness_report_path, completeness_report.model_dump(mode="json"))
     enforce_review_package_completeness(completeness_report)
-    append_jsonl(
-        ledger_path,
-        _event(
-            packet.run_id,
-            3,
-            "human_confirmation_consumed",
-            "completed",
-            input_refs=[str(confirmation_path)],
-        ).model_dump(mode="json"),
-    )
-    append_jsonl(
-        ledger_path,
-        _event(
-            packet.run_id,
-            4,
-            "conflict_seed_and_budget_proposal_built",
-            "completed",
-            output_refs=[
-                str(run_dir / "conflict_search_seed_packet.json"),
-                str(run_dir / "legal_budget_proposal.json"),
-                str(run_dir / "matter_opening_readiness.json"),
-                str(exception_candidates_path),
-                str(safety_gate_report_path),
-                str(exception_readiness_report_path),
-            ],
-        ).model_dump(mode="json"),
-    )
     append_jsonl(
         ledger_path,
         _event(

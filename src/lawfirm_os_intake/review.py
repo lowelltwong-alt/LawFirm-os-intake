@@ -183,6 +183,23 @@ def _lines_or_none(lines: list[str]) -> list[str]:
     return lines or ["- none"]
 
 
+def _source_inventory_lines(packet: IntakePreflightPacket) -> list[str]:
+    lines = []
+    for item in packet.source_inventory:
+        filename = item.filename or "none"
+        duplicate_of = item.duplicate_of_source_id or "none"
+        attachments = ", ".join(item.attachment_refs) or "none"
+        metadata_keys = ", ".join(item.metadata_keys) or "none"
+        lines.append(
+            f"- {item.source_id}: {item.source_type}; read_state={item.read_state}; "
+            f"availability={item.availability_state}; chars={item.character_count}; "
+            f"sha={item.source_sha256}; filename={filename}; "
+            f"duplicate_of={duplicate_of}; attachments={attachments}; "
+            f"metadata_keys={metadata_keys}"
+        )
+    return lines or ["- none"]
+
+
 def _budget_support_lines(budget: BudgetProposal) -> list[str]:
     lines = []
     for item in budget.budget_support_items:
@@ -312,6 +329,28 @@ def _safety_gate_lines(report: SafetyGateReport) -> list[str]:
     return [f"- {check.status}: {check.check_id} - {check.message}" for check in report.checks]
 
 
+def _run_ledger_lines(
+    artifact_refs: dict[str, str],
+    run_ledger_events: dict[str, list[dict[str, Any]]],
+) -> list[str]:
+    lines = []
+    ledgers = [
+        ("preflight", artifact_refs.get("preflight_run_ledger", "")),
+        ("budget", artifact_refs.get("budget_run_ledger", "")),
+    ]
+    for label, path in ledgers:
+        events = run_ledger_events.get(label, [])
+        lines.append(f"- {label} ledger: `{path or 'missing'}`; events={len(events)}")
+        for event in events:
+            notes = f"; notes={event['notes']}" if event.get("notes") else ""
+            lines.append(
+                f"- {label} step {event.get('step_index')}: {event.get('step_name')} "
+                f"({event.get('status')}); inputs={len(event.get('input_refs') or [])}; "
+                f"outputs={len(event.get('output_refs') or [])}{notes}"
+            )
+    return lines or ["- none"]
+
+
 def _required_human_gate_lines(
     confirmation: HumanConfirmation,
     conflict_seed: ConflictSeedPacket,
@@ -338,6 +377,7 @@ def render_matter_opening_review_package(
     safety_report: SafetyGateReport,
     exception_candidates: list[dict[str, Any]],
     artifact_refs: dict[str, str],
+    run_ledger_events: dict[str, list[dict[str, Any]]] | None = None,
 ) -> str:
     source_summary = packet.source_coverage_summary
     deadline_lines = [
@@ -372,6 +412,16 @@ def render_matter_opening_review_package(
             f"**Preflight packet ID:** {packet.packet_id}",
             f"**Human confirmation ID:** {confirmation.confirmation_id}",
             f"**Final boundary:** {readiness.status}",
+            "",
+            "## Source Inventory",
+            "",
+            f"- Coverage complete: {source_summary.get('coverage_complete')}",
+            f"- Missing sources: {source_summary.get('missing_sources')}",
+            f"- Unread sources: {source_summary.get('unread_sources')}",
+            f"- Unreadable sources: {source_summary.get('unreadable_sources')}",
+            f"- Duplicate sources: {source_summary.get('duplicate_sources')}",
+            f"- Attachment references: {source_summary.get('attachment_reference_count')}",
+            *_source_inventory_lines(packet),
             "",
             "## What Is Known",
             "",
@@ -461,6 +511,10 @@ def render_matter_opening_review_package(
             *_lines_or_none(
                 [f"- prohibited action: {item}" for item in readiness.prohibited_actions]
             ),
+            "",
+            "## Run Ledger Summary",
+            "",
+            *_run_ledger_lines(artifact_refs, run_ledger_events or {}),
             "",
             "## Artifact References",
             "",

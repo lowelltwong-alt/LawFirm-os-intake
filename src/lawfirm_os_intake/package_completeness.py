@@ -14,6 +14,7 @@ from .util import new_id, now_iso
 
 REQUIRED_REVIEW_SECTIONS = [
     "# Matter Opening Review Package",
+    "## Source Inventory",
     "## What Is Known",
     "## Candidate Alternatives",
     "## What Still Needs Human Review",
@@ -26,6 +27,7 @@ REQUIRED_REVIEW_SECTIONS = [
     "## Exception And Escalation Records",
     "## Safety Gate",
     "## Matter-Opening Blockers",
+    "## Run Ledger Summary",
     "## Artifact References",
 ]
 
