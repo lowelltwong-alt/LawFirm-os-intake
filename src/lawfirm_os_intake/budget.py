@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from .drivers import CaseDriverProfile
 from .models import (
     BudgetCalculationReport,
     BudgetLine,
@@ -110,10 +111,32 @@ def _workflow_exclusion_support_items(exclusions: list[str]) -> list[BudgetSuppo
     ]
 
 
+def _numeric_driver_values(
+    case_drivers: CaseDriverProfile | None,
+) -> dict[str, tuple[float, str]]:
+    """Usable (numeric, known) driver values for hour scaling, keyed by driver id.
+
+    Drivers that are ``unknown`` or non-numeric are excluded so a scaled task falls
+    back to its template hours rather than inventing a number.
+    """
+
+    values: dict[str, tuple[float, str]] = {}
+    if case_drivers is None:
+        return values
+    for driver in case_drivers.drivers:
+        if driver.provenance == "unknown":
+            continue
+        if isinstance(driver.value, bool) or not isinstance(driver.value, (int, float)):
+            continue
+        values[driver.driver_id] = (float(driver.value), driver.provenance)
+    return values
+
+
 def build_budget_proposal(
     packet: IntakePreflightPacket,
     confirmation: HumanConfirmation,
     profile: dict[str, Any],
+    case_drivers: CaseDriverProfile | None = None,
 ) -> BudgetProposal:
     if confirmation.status != "confirmed":
         raise ValueError("human confirmation must be confirmed before budget generation")
@@ -173,6 +196,7 @@ def build_budget_proposal(
         )
 
     rates = {str(k): float(v) for k, v in profile.get("synthetic_hourly_rates", {}).items()}
+    driver_values = _numeric_driver_values(case_drivers)
     lines: list[BudgetLine] = []
     all_priced = True
     evidence_refs = _confirmed_matter_observed_refs(packet, confirmation)
@@ -180,13 +204,42 @@ def build_budget_proposal(
     for phase in template.get("phases", []):
         for task in phase.get("tasks", []):
             role = str(task["staffing_role"])
-            hours = float(task["estimated_hours"])
+            base_hours = float(task["estimated_hours"])
+            base_expenses = float(task.get("estimated_expenses", 0.0))
+            assumptions = list(task.get("assumptions", []))
+
+            scaling_driver = task.get("scaling_driver")
+            scaling_formula: str | None = None
+            if scaling_driver is not None and scaling_driver in driver_values:
+                units, provenance = driver_values[scaling_driver]
+                hours_per_unit = float(task.get("hours_per_unit", 0.0))
+                expense_per_unit = float(task.get("expense_per_unit", 0.0))
+                hours = round(hours_per_unit * units, 2)
+                expenses = round(base_expenses + expense_per_unit * units, 2)
+                scaling_formula = (
+                    f"{hours_per_unit} hours/unit * {units} {scaling_driver} ({provenance})"
+                )
+                assumptions = assumptions + [
+                    f"Hours scaled by driver {scaling_driver}={units} ({provenance}); "
+                    f"template hours {base_hours} used only as fallback."
+                ]
+            else:
+                hours = base_hours
+                expenses = base_expenses
+
             rate = rates.get(role)
             fees = round(hours * rate, 2) if rate is not None else None
             if rate is None:
                 all_priced = False
             hours_min = float(task.get("estimated_hours_min", max(0.0, hours * 0.8)))
             hours_max = float(task.get("estimated_hours_max", hours * 1.25))
+            if rate is not None:
+                rate_formula = f"{hours} hours * {rate} synthetic hourly rate"
+            else:
+                rate_formula = "hours only; no authorized rate present"
+            calculation_formula = (
+                f"{scaling_formula}; {rate_formula}" if scaling_formula else rate_formula
+            )
             lines.append(
                 BudgetLine(
                     phase_id=str(phase["phase_id"]),
@@ -201,14 +254,10 @@ def build_budget_proposal(
                     rate_source="synthetic_profile" if rate is not None else "absent",
                     rate_is_synthetic=True,
                     estimated_fees=fees,
-                    estimated_expenses=float(task.get("estimated_expenses", 0.0)),
-                    calculation_formula=(
-                        f"{hours} hours * {rate} synthetic hourly rate"
-                        if rate is not None
-                        else "hours only; no authorized rate present"
-                    ),
+                    estimated_expenses=expenses,
+                    calculation_formula=calculation_formula,
                     external_code_candidate=task.get("external_code_candidate"),
-                    assumptions=list(task.get("assumptions", [])),
+                    assumptions=assumptions,
                     evidence_refs=evidence_refs,
                 )
             )
