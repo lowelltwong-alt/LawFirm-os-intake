@@ -54,6 +54,8 @@ The final matter-opening review package now includes calculation summary, budget
 
 The final matter-opening review package now includes source-inventory detail and a run-ledger summary, and package completeness requires those auditability sections.
 
+The final matter-opening review package now includes an evidence-graph summary with node/edge counts, node-type counts, relationship counts, and key provenance edge examples; package completeness requires that section.
+
 Budget runs now write `human_review_outcome.<confirmation_id>.json` and append it to `human_confirmation_history.jsonl` before budget preconditions run. Non-confirmed review outcomes remain blocked, and superseding corrections append new history rows instead of mutating prior outcomes.
 
 Budget assumptions, exclusions, and unknowns now emit `budget_support_items` with evidence refs or structured refs for human review.

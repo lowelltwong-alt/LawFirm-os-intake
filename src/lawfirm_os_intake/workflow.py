@@ -662,10 +662,11 @@ def run_budget(
             safety_report,
             all_exception_candidates,
             artifact_refs,
-            {
+            run_ledger_events={
                 "preflight": load_jsonl(packet.run_ledger_ref),
                 "budget": load_jsonl(ledger_path),
             },
+            evidence_graph=extended,
         ),
         encoding="utf-8",
     )

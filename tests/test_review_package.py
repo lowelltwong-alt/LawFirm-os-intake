@@ -80,6 +80,14 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert "## Safety Gate" in review_text
     assert "## Matter-Opening Blockers" in review_text
     assert "blocked_pending_conflicts_and_engagement" in review_text
+    assert "## Evidence Graph Summary" in review_text
+    assert "Graph ID:" in review_text
+    assert "Node types:" in review_text
+    assert "conflict_search_term=" in review_text
+    assert "budget_line=" in review_text
+    assert "Relationships:" in review_text
+    assert "supports_conflict_search_term=" in review_text
+    assert "edge supports_budget_line:" in review_text
     assert "## Run Ledger Summary" in review_text
     assert "preflight ledger:" in review_text
     assert "preflight step 2: contract_state_gate" in review_text
@@ -137,6 +145,7 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert "## Candidate Alternatives" in completeness.required_sections
     assert "## Required Human Gates" in completeness.required_sections
     assert "### Budget Lines" in completeness.required_sections
+    assert "## Evidence Graph Summary" in completeness.required_sections
     assert "## Run Ledger Summary" in completeness.required_sections
     assert "review_package_completeness_report" in completeness.required_artifact_keys
     assert {check.status for check in completeness.checks} == {"passed"}

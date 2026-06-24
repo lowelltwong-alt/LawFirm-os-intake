@@ -136,3 +136,9 @@
 - Added source-inventory detail to the final matter-opening review package, including read/missing/duplicate states, hashes, attachment refs, and duplicate links.
 - Added a run-ledger summary showing preflight and budget gate steps, statuses, input counts, output counts, and notes.
 - The completeness report now requires source inventory and run-ledger sections before final package acceptance.
+
+## Final-package evidence graph summary slice - 2026-06-24
+
+- Added an evidence-graph summary to the final matter-opening review package.
+- The summary renders graph refs, node/edge counts, node-type counts, relationship counts, and key provenance edge examples.
+- The completeness report now requires the evidence-graph summary before final package acceptance.

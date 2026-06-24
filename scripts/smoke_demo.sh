@@ -40,6 +40,8 @@ grep -q "Human confirmation decision evidence:" ".lawfirm-os-intake/smoke/budget
 grep -q "## Candidate Alternatives" ".lawfirm-os-intake/smoke/budget/matter_opening_review_package.md"
 grep -q "## Required Human Gates" ".lawfirm-os-intake/smoke/budget/matter_opening_review_package.md"
 grep -q "### Budget Lines" ".lawfirm-os-intake/smoke/budget/matter_opening_review_package.md"
+grep -q "## Evidence Graph Summary" ".lawfirm-os-intake/smoke/budget/matter_opening_review_package.md"
+grep -q "supports_conflict_search_term=" ".lawfirm-os-intake/smoke/budget/matter_opening_review_package.md"
 grep -q "## Run Ledger Summary" ".lawfirm-os-intake/smoke/budget/matter_opening_review_package.md"
 grep -q "budget step 4: conflict_seed_and_budget_proposal_built" ".lawfirm-os-intake/smoke/budget/matter_opening_review_package.md"
 grep -q '"status": "passed"' ".lawfirm-os-intake/smoke/budget/review_package_completeness_report.json"

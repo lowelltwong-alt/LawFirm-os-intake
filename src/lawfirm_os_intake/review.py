@@ -5,6 +5,7 @@ from typing import Any
 from .models import (
     BudgetProposal,
     ConflictSeedPacket,
+    EvidenceGraph,
     HumanConfirmation,
     IntakePreflightPacket,
     MatterOpeningReadiness,
@@ -351,6 +352,57 @@ def _run_ledger_lines(
     return lines or ["- none"]
 
 
+def _sorted_counts(values: list[str]) -> str:
+    counts = {value: values.count(value) for value in sorted(set(values))}
+    return ", ".join(f"{key}={value}" for key, value in counts.items()) or "none"
+
+
+def _evidence_graph_lines(
+    artifact_refs: dict[str, str],
+    evidence_graph: EvidenceGraph | None,
+) -> list[str]:
+    lines = [
+        f"- Preflight graph: `{artifact_refs.get('preflight_evidence_graph', 'missing')}`",
+        f"- Budget graph: `{artifact_refs.get('budget_evidence_graph', 'missing')}`",
+    ]
+    if evidence_graph is None:
+        return [*lines, "- Graph details unavailable in package renderer."]
+
+    node_types = [node.node_type for node in evidence_graph.nodes]
+    relationships = [edge.relationship for edge in evidence_graph.edges]
+    lines.extend(
+        [
+            f"- Graph ID: {evidence_graph.graph_id}",
+            f"- Nodes: {len(evidence_graph.nodes)}",
+            f"- Edges: {len(evidence_graph.edges)}",
+            f"- Node types: {_sorted_counts(node_types)}",
+            f"- Relationships: {_sorted_counts(relationships)}",
+            "- Key provenance edges:",
+        ]
+    )
+    key_relationships = [
+        "supports_human_confirmation",
+        "supports_party_role_candidate",
+        "supports_conflict_search_term",
+        "supports_budget_line",
+        "supports_budget_support_item",
+        "supports_budget_proposal",
+    ]
+    for relationship in key_relationships:
+        edge = next(
+            (item for item in evidence_graph.edges if item.relationship == relationship),
+            None,
+        )
+        if edge is None:
+            lines.append(f"- edge {relationship}: missing")
+            continue
+        lines.append(
+            f"- edge {relationship}: {edge.source_node_id} -> {edge.target_node_id}; "
+            f"status={edge.status}; evidence_refs={len(edge.evidence_refs)}"
+        )
+    return lines
+
+
 def _required_human_gate_lines(
     confirmation: HumanConfirmation,
     conflict_seed: ConflictSeedPacket,
@@ -378,6 +430,7 @@ def render_matter_opening_review_package(
     exception_candidates: list[dict[str, Any]],
     artifact_refs: dict[str, str],
     run_ledger_events: dict[str, list[dict[str, Any]]] | None = None,
+    evidence_graph: EvidenceGraph | None = None,
 ) -> str:
     source_summary = packet.source_coverage_summary
     deadline_lines = [
@@ -511,6 +564,10 @@ def render_matter_opening_review_package(
             *_lines_or_none(
                 [f"- prohibited action: {item}" for item in readiness.prohibited_actions]
             ),
+            "",
+            "## Evidence Graph Summary",
+            "",
+            *_evidence_graph_lines(artifact_refs, evidence_graph),
             "",
             "## Run Ledger Summary",
             "",

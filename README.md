@@ -102,7 +102,7 @@ The demo emits:
 
 The consolidated `matter_opening_review_package.md` is the human-facing north-star artifact. It points back to the structured packets and tells the reviewer what is known, which candidate alternatives were considered, what remains uncertain, which human gates remain, which conflict-search seeds were prepared, what budget scenario and line items were proposed, which exception candidates exist, what the safety gate verified, and why the workflow is still blocked. Reviewer-facing known facts, candidate alternatives, party-role alternatives, deadlines, missing-information findings, critic findings, conflict terms, budget lines, and budget supports show their evidence refs inline instead of requiring a reviewer to hunt through JSON first.
 
-The same package now renders the source inventory and run-ledger summary inline. Reviewers can see each source's read/missing/duplicate state, hashes, attachment refs, and the preflight/budget gate trail before opening the JSON artifacts.
+The same package now renders the source inventory, evidence-graph summary, and run-ledger summary inline. Reviewers can see each source's read/missing/duplicate state, hashes, attachment refs, provenance graph counts and key support edges, and the preflight/budget gate trail before opening the JSON artifacts.
 
 The budget run also writes `review_package_completeness_report.json`. This deterministic report proves the final package includes required local artifact refs, required markdown sections, human gates, blockers, safety-gate proof, dry-run Exception Lake readiness, run ledgers, and non-authorization flags before the package is accepted.
 

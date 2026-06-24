@@ -27,6 +27,7 @@ REQUIRED_REVIEW_SECTIONS = [
     "## Exception And Escalation Records",
     "## Safety Gate",
     "## Matter-Opening Blockers",
+    "## Evidence Graph Summary",
     "## Run Ledger Summary",
     "## Artifact References",
 ]
