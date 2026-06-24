@@ -445,6 +445,34 @@ def review_evidence(
         )
         triggers.append("worker_disagreement_or_close_candidate_scores")
 
+    ambiguous_role_refs: list[EvidenceRef] = []
+    ambiguous_role_summaries: list[str] = []
+    for party in parties:
+        roles = sorted(party.role_candidates, key=lambda role: role.confidence, reverse=True)
+        if len(roles) < 2:
+            continue
+        if roles[0].confidence - roles[1].confidence > 0.25:
+            continue
+        ambiguous_role_summaries.append(
+            f"{party.name}: {roles[0].role} ({roles[0].confidence:.2f}) "
+            f"vs {roles[1].role} ({roles[1].confidence:.2f})"
+        )
+        ambiguous_role_refs.extend(roles[0].evidence_refs[:2])
+        ambiguous_role_refs.extend(roles[1].evidence_refs[:2])
+    if ambiguous_role_summaries:
+        findings.append(
+            CriticFinding(
+                code="ROLE_CANDIDATES_AMBIGUOUS",
+                severity="warning",
+                message=(
+                    "One or more parties have close role alternatives requiring human "
+                    "confirmation: " + "; ".join(ambiguous_role_summaries)
+                ),
+                evidence_refs=_dedup_refs(ambiguous_role_refs)[:8] or fallback_refs,
+            )
+        )
+        triggers.append("party_role_candidates_ambiguous")
+
     role_names = {role.role for party in parties for role in party.role_candidates}
     carrier_present = any("carrier" in role for role in role_names)
     represented_candidate_present = any(

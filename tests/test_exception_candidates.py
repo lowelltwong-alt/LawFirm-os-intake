@@ -110,6 +110,27 @@ def test_prohibited_transition_attempts_become_specific_exception_candidates(
     assert all("text" not in candidate for candidate in transition_candidates)
 
 
+def test_role_ambiguity_becomes_workflow_escalation_candidate(tmp_path, repo_root):
+    _, run_dir = run_preflight(
+        repo_root / "examples/synthetic/inbound/holdout-misleading-sender-role-ambiguity.json",
+        repo_root / "context/synthetic-profiles/insurance-defense.yaml",
+        tmp_path,
+    )
+
+    candidates = _jsonl(run_dir / "exception_lake_candidates.jsonl")
+    role_ambiguity = [
+        candidate
+        for candidate in candidates
+        if candidate["local_event_label"] == "critic_role_candidates_ambiguous"
+    ]
+
+    assert role_ambiguity
+    assert role_ambiguity[0]["canonical_lake_class"] == "workflow_escalation"
+    assert role_ambiguity[0]["evidence_refs"]
+    assert role_ambiguity[0]["raw_payload_included"] is False
+    assert "text" not in role_ambiguity[0]
+
+
 def test_budget_blocker_emits_local_exception_candidate(tmp_path, repo_root):
     packet, run_dir = run_preflight(
         repo_root / "examples/synthetic/inbound/carrier-assignment-medmal.json",

@@ -10,7 +10,7 @@ PYTHONPATH=src python scripts/validate_repo.py
 # repository validation passed
 
 PYTHONPATH=src python -m pytest -q
-# 70 passed
+# 71 passed
 
 PYTHONPATH=src ruff check src tests scripts
 # All checks passed

@@ -28,6 +28,7 @@ grep -q "prompt_injection_source_content" "$preflight_dir/exception_lake_candida
 grep -q "prohibited_transition_attempted_conflicts_cleared" "$preflight_dir/exception_lake_candidates.jsonl"
 grep -q "prohibited_transition_attempted_deadline_docketed" "$preflight_dir/exception_lake_candidates.jsonl"
 grep -q "prohibited_transition_attempted_matter_opened" "$preflight_dir/exception_lake_candidates.jsonl"
+grep -q "critic_role_candidates_ambiguous" "$preflight_dir/exception_lake_candidates.jsonl"
 grep -q "source_missing" "$preflight_dir/exception_lake_candidates.jsonl"
 grep -q "duplicate_source_detected" "$preflight_dir/exception_lake_candidates.jsonl"
 grep -q '"status": "passed"' "$preflight_dir/exception_lake_readiness_report.json"

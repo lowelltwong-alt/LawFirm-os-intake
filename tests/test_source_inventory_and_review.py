@@ -86,3 +86,5 @@ def test_review_packet_preserves_unknown_and_context_separation(tmp_path, repo_r
         for item in packet.missing_information_candidates
     )
     assert "; evidence:" in review_text
+    assert any(finding.code == "ROLE_CANDIDATES_AMBIGUOUS" for finding in packet.critic_findings)
+    assert "ROLE_CANDIDATES_AMBIGUOUS" in review_text

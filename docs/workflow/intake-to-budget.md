@@ -63,13 +63,13 @@ Dates, deadlines, and urgency are candidates. The system identifies missing fiel
 
 ### 8. Independent critic
 
-The critic checks evidence completeness, contradictions, worker disagreement, source coverage, role ambiguity, and prohibited next steps.
+The critic checks evidence completeness, contradictions, worker disagreement, source coverage, close party-role alternatives, role ambiguity, and prohibited next steps.
 
 ### 9. Escalation gate
 
 Difficult cases may receive a bounded frontier adjudication before human review. The frontier result is still a proposal.
 
-The workflow writes dry-run Exception Lake candidates for source gaps, ambiguity, instruction-risk content, specific prohibited-transition attempts, critic findings, and escalation triggers. It also writes `exception_lake_readiness_report.json` to prove those candidates remain raw-payload-free, dry-run, promotion-required, and evidence- or state-supported before any future Lake handoff.
+The workflow writes dry-run Exception Lake candidates for source gaps, close party-role alternatives, ambiguity, instruction-risk content, specific prohibited-transition attempts, critic findings, and escalation triggers. It also writes `exception_lake_readiness_report.json` to prove those candidates remain raw-payload-free, dry-run, promotion-required, and evidence- or state-supported before any future Lake handoff.
 
 ### 10. Human intake confirmation
 

@@ -202,3 +202,9 @@
 - Added specific dry-run `prohibited_transition_attempted_*` Exception Lake candidates for untrusted source attempts to clear conflicts, open matters, create iManage workspaces, docket deadlines, submit budgets, or send external messages.
 - Added structured refs from those local candidates back to `workflow/prohibited-transitions.yaml` while keeping broad `workflow_escalation` lake mapping and no raw payload.
 - Added unit, north-star, and smoke coverage so prohibited-transition attempts remain visible in exception artifacts and the final review package.
+
+## Role-ambiguity critic slice - 2026-06-24
+
+- Added a deterministic `ROLE_CANDIDATES_AMBIGUOUS` critic finding when party-role alternatives are too close for automatic reliance.
+- The existing dry-run Exception Lake candidate path now emits `critic_role_candidates_ambiguous` workflow escalations with source-bound evidence refs.
+- Added holdout, north-star, and smoke coverage so role uncertainty becomes an explicit review/evaluation record.
