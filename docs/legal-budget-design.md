@@ -49,6 +49,14 @@ standard, and through-trial comparison with included phases, included UTBMS code
 candidates, totals, and min/max ranges. Scenario vocabulary remains local candidate
 data until promoted by the owning authority repo.
 
+`BudgetDriverEffect` records show count scaling, bounded intensity multipliers,
+coverage boundaries, and unknown drivers with driver value, provenance, structured
+policy refs, and the `default_used_as_observed_fact=false` invariant. Profile
+defaults may drive synthetic assumptions, but the review surfaces label them as
+defaults rather than observed facts. `BudgetGuidelineFlag` records show synthetic
+rate, phase, and total cap checks. A guideline flag can require human review, but it
+does not rewrite hours, rates, expenses, or totals.
+
 ## Avoiding false precision
 
 - Never infer a negotiated rate.
@@ -56,6 +64,8 @@ data until promoted by the owning authority repo.
 - Never make a relative deadline a fixed date without a confirmed trigger.
 - Use ranges or scenario branches when the number of witnesses, experts, depositions, or trial days is unknown.
 - Keep branch totals monotonic (`early_resolution <= standard <= through_trial`) when priced; hours-only budgets prove the same ordering by hours.
+- Keep severity, liability, and venue multipliers bounded by cumulative cap policy.
+- Treat coverage posture and guideline/cap issues as review boundaries unless separately approved.
 - Keep expert/vendor costs distinct from law-firm fees.
 - Mark all synthetic numbers.
 - Assumptions, exclusions, and unknowns must have source-bound or structured support through `budget_support_items`.

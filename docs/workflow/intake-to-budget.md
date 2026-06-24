@@ -113,6 +113,8 @@ A confirmed matter type selects an approved practice template. The planner calcu
 
 The emitted `BudgetProposal` compatibility fields map to the selected `standard` scenario. Its embedded local `BudgetScenarioSet` also carries `early_resolution` and `through_trial` branches with included phases, included UTBMS code candidates, min/max ranges, and monotonic total or hours ordering. Scenario branches are comparison artifacts only and do not authorize submission.
 
+The same proposal carries local `BudgetDriverEffect` and `BudgetGuidelineFlag` records. Driver effects show count scaling, bounded severity/liability/venue multipliers, coverage boundaries, and unknown drivers with visible provenance. Guideline flags show synthetic cap checks without changing budget values. Defaults are labeled as defaults and never as observed facts.
+
 ### 15. Human budget review
 
 Future governed step. The starter does not approve or submit.

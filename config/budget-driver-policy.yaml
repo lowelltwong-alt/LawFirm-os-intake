@@ -6,10 +6,10 @@ contains_real_firm_data: false
 # SYNTHETIC ONLY. Driver taxonomy and per-matter-family defaults for the driver-based
 # budget model (see docs/driver-based-budget-model-design.md).
 #
-# Slice 1 records resolved drivers with provenance; it does NOT apply them to budget
-# math. Defaults below are labeled provenance=profile_default at resolution time: they
-# are assumptions for an unknown case, never observed case facts. Promotion of this
-# taxonomy to canon runs through the Semantic Substrate; until then it is a candidate.
+# Resolved drivers carry provenance. Defaults below are labeled
+# provenance=profile_default at resolution time: they are assumptions for an unknown
+# case, never observed case facts. Promotion of this taxonomy to canon runs through
+# the Semantic Substrate; until then it is a candidate.
 
 drivers:
   resolution_path:
@@ -89,3 +89,62 @@ scenarios:
   - scenario_id: through_trial
     resolution_phase: L400
     description: Full discovery, dispositive motions, trial preparation, and trial.
+
+intensity_multiplier_policy:
+  cumulative_multiplier_cap: 1.35
+  effects:
+    severity_tier:
+      soft_tissue:
+        multiplier: 0.95
+        phase_ids: [L300, L400]
+        note: Lower-exposure synthetic severity assumption modestly reduces discovery and trial effort.
+      significant:
+        multiplier: 1.08
+        phase_ids: [L300, L400]
+        note: Significant-exposure synthetic severity assumption increases discovery and trial effort.
+      catastrophic_or_death:
+        multiplier: 1.22
+        phase_ids: [L300, L400]
+        note: Catastrophic/death synthetic severity assumption materially increases discovery and trial effort.
+    liability_dispute:
+      clear:
+        multiplier: 0.9
+        phase_ids: [L200, L300]
+        note: Clear-liability synthetic assumption reduces pleading/discovery fight intensity.
+      disputed:
+        multiplier: 1.05
+        phase_ids: [L200, L300]
+        note: Disputed-liability synthetic assumption modestly increases pleading and discovery work.
+      hotly_contested:
+        multiplier: 1.18
+        phase_ids: [L200, L300, L400]
+        note: Hotly contested synthetic liability assumption increases litigation effort.
+    venue_difficulty:
+      favorable:
+        multiplier: 0.95
+        phase_ids: [L200, L300, L400]
+        note: Favorable synthetic venue assumption modestly reduces effort.
+      neutral:
+        multiplier: 1.0
+        phase_ids: [L200, L300, L400]
+        note: Neutral synthetic venue assumption does not change hours.
+      plaintiff_friendly:
+        multiplier: 1.12
+        phase_ids: [L200, L300, L400]
+        note: Plaintiff-friendly synthetic venue assumption increases litigation effort.
+
+coverage_posture_policy:
+  review_required_values: [reservation_of_rights, coverage_counsel, dj_action]
+  no_math_values: [none]
+  note: Coverage posture is surfaced as a review boundary and never blended into defense-fee math.
+
+synthetic_guideline_constraints:
+  note: Synthetic-only review flags; constraints do not rewrite hours, rates, or totals.
+  role_rate_caps:
+    partner: 425
+    senior_associate: 335
+    associate: 260
+    paralegal: 165
+  phase_budget_caps:
+    L300: 90000
+  total_budget_cap: 150000

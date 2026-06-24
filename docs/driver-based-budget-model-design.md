@@ -148,6 +148,11 @@ matter family with no approved template still returns `insufficient_information`
 
 ## 9. Build slices (each PR-sized, candidate-only, green-testable, with a TRACE)
 
+Current local implementation covers driver capture, count scaling, scenario sets,
+bounded severity/liability/venue intensity multipliers, coverage-boundary surfacing,
+and synthetic guideline cap flags. The remaining roadmap work starts with the second
+matter family, followed by calibration and cross-repo promotion.
+
 1. **Driver capture, not yet applied.** Add `CaseDriverProfile` + `budget-driver-policy.yaml`
    (taxonomy + med-mal defaults/multipliers). Extract drivers from the confirmed packet
    and confirmation with provenance. Record drivers in the proposal but do **not** change

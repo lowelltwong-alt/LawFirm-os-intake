@@ -102,6 +102,254 @@
       "title": "BudgetCalculationReport",
       "type": "object"
     },
+    "BudgetDriverEffect": {
+      "additionalProperties": false,
+      "properties": {
+        "driver_id": {
+          "title": "Driver Id",
+          "type": "string"
+        },
+        "driver_value": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Driver Value"
+        },
+        "provenance": {
+          "title": "Provenance",
+          "type": "string"
+        },
+        "effect_type": {
+          "enum": [
+            "count_scaling",
+            "intensity_multiplier",
+            "coverage_boundary",
+            "unknown_driver"
+          ],
+          "title": "Effect Type",
+          "type": "string"
+        },
+        "applied": {
+          "title": "Applied",
+          "type": "boolean"
+        },
+        "phase_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Phase Ids",
+          "type": "array"
+        },
+        "task_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Task Ids",
+          "type": "array"
+        },
+        "multiplier": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Multiplier"
+        },
+        "capped": {
+          "default": false,
+          "title": "Capped",
+          "type": "boolean"
+        },
+        "source_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Source Refs",
+          "type": "array"
+        },
+        "structured_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Structured Ref"
+        },
+        "note": {
+          "title": "Note",
+          "type": "string"
+        },
+        "default_used_as_observed_fact": {
+          "const": false,
+          "default": false,
+          "title": "Default Used As Observed Fact",
+          "type": "boolean"
+        },
+        "requires_human_review": {
+          "default": true,
+          "title": "Requires Human Review",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "driver_id",
+        "provenance",
+        "effect_type",
+        "applied",
+        "note"
+      ],
+      "title": "BudgetDriverEffect",
+      "type": "object"
+    },
+    "BudgetGuidelineFlag": {
+      "additionalProperties": false,
+      "properties": {
+        "constraint_id": {
+          "title": "Constraint Id",
+          "type": "string"
+        },
+        "constraint_type": {
+          "enum": [
+            "role_rate_cap",
+            "phase_budget_cap",
+            "total_budget_cap",
+            "staffing_rule",
+            "unknown_guidelines"
+          ],
+          "title": "Constraint Type",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "flagged_for_human_review",
+            "not_triggered",
+            "unknown"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "phase_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phase Id"
+        },
+        "role": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Role"
+        },
+        "current_value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Current Value"
+        },
+        "threshold_value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Threshold Value"
+        },
+        "provenance": {
+          "default": "synthetic_policy",
+          "enum": [
+            "synthetic_policy",
+            "unknown"
+          ],
+          "title": "Provenance",
+          "type": "string"
+        },
+        "structured_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Structured Ref"
+        },
+        "note": {
+          "title": "Note",
+          "type": "string"
+        },
+        "rewrites_budget": {
+          "const": false,
+          "default": false,
+          "title": "Rewrites Budget",
+          "type": "boolean"
+        },
+        "requires_human_review": {
+          "const": true,
+          "default": true,
+          "title": "Requires Human Review",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "constraint_id",
+        "constraint_type",
+        "status",
+        "note"
+      ],
+      "title": "BudgetGuidelineFlag",
+      "type": "object"
+    },
     "BudgetLine": {
       "additionalProperties": false,
       "properties": {
@@ -517,6 +765,7 @@
             "observed_evidence",
             "human_confirmation",
             "synthetic_practice_profile",
+            "budget_driver_policy",
             "workflow_policy",
             "missing_template"
           ],
@@ -735,6 +984,20 @@
         "type": "string"
       },
       "title": "Unknowns",
+      "type": "array"
+    },
+    "driver_effects": {
+      "items": {
+        "$ref": "#/$defs/BudgetDriverEffect"
+      },
+      "title": "Driver Effects",
+      "type": "array"
+    },
+    "guideline_flags": {
+      "items": {
+        "$ref": "#/$defs/BudgetGuidelineFlag"
+      },
+      "title": "Guideline Flags",
       "type": "array"
     },
     "budget_support_items": {

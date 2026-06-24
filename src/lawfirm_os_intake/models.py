@@ -709,6 +709,7 @@ class BudgetSupportItem(StrictModel):
         "observed_evidence",
         "human_confirmation",
         "synthetic_practice_profile",
+        "budget_driver_policy",
         "workflow_policy",
         "missing_template",
     ]
@@ -770,6 +771,49 @@ class BudgetScenarioSet(StrictModel):
         return self
 
 
+class BudgetDriverEffect(StrictModel):
+    driver_id: str
+    driver_value: int | float | str | None = None
+    provenance: str
+    effect_type: Literal[
+        "count_scaling",
+        "intensity_multiplier",
+        "coverage_boundary",
+        "unknown_driver",
+    ]
+    applied: bool
+    phase_ids: list[str] = Field(default_factory=list)
+    task_ids: list[str] = Field(default_factory=list)
+    multiplier: float | None = Field(default=None, ge=0)
+    capped: bool = False
+    source_refs: list[str] = Field(default_factory=list)
+    structured_ref: str | None = None
+    note: str
+    default_used_as_observed_fact: Literal[False] = False
+    requires_human_review: bool = True
+
+
+class BudgetGuidelineFlag(StrictModel):
+    constraint_id: str
+    constraint_type: Literal[
+        "role_rate_cap",
+        "phase_budget_cap",
+        "total_budget_cap",
+        "staffing_rule",
+        "unknown_guidelines",
+    ]
+    status: Literal["flagged_for_human_review", "not_triggered", "unknown"]
+    phase_id: str | None = None
+    role: str | None = None
+    current_value: float | str | None = None
+    threshold_value: float | str | None = None
+    provenance: Literal["synthetic_policy", "unknown"] = "synthetic_policy"
+    structured_ref: str | None = None
+    note: str
+    rewrites_budget: Literal[False] = False
+    requires_human_review: Literal[True] = True
+
+
 class BudgetProposal(StrictModel):
     schema_version: str = "0.1"
     budget_proposal_id: str
@@ -792,6 +836,8 @@ class BudgetProposal(StrictModel):
     assumptions: list[str] = Field(default_factory=list)
     exclusions: list[str] = Field(default_factory=list)
     unknowns: list[str] = Field(default_factory=list)
+    driver_effects: list[BudgetDriverEffect] = Field(default_factory=list)
+    guideline_flags: list[BudgetGuidelineFlag] = Field(default_factory=list)
     budget_support_items: list[BudgetSupportItem] = Field(default_factory=list)
     approval_state: Literal["proposed_for_human_review"] = "proposed_for_human_review"
     not_authorized_for_client_submission: bool = True

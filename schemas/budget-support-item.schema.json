@@ -55,6 +55,7 @@
         "observed_evidence",
         "human_confirmation",
         "synthetic_practice_profile",
+        "budget_driver_policy",
         "workflow_policy",
         "missing_template"
       ],

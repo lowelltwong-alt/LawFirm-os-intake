@@ -184,6 +184,14 @@ def render_budget_review_form(budget: BudgetProposal) -> str:
             "## Scenario Set",
             "",
             *_budget_scenario_lines(budget),
+            "",
+            "## Budget Driver Effects",
+            "",
+            *_budget_driver_effect_lines(budget),
+            "",
+            "## Guideline Flags",
+            "",
+            *_budget_guideline_flag_lines(budget),
         ]
     )
 
@@ -234,6 +242,36 @@ def _budget_scenario_lines(budget: BudgetProposal) -> list[str]:
             f"codes: {', '.join(scenario.included_external_codes) or 'none'}"
         )
     return lines
+
+
+def _budget_driver_effect_lines(budget: BudgetProposal) -> list[str]:
+    lines = []
+    for effect in budget.driver_effects:
+        value = "unknown" if effect.driver_value is None else str(effect.driver_value)
+        multiplier = f"; multiplier: {effect.multiplier}" if effect.multiplier is not None else ""
+        capped = "; capped" if effect.capped else ""
+        phases = ", ".join(effect.phase_ids) or "none"
+        tasks = ", ".join(effect.task_ids) or "none"
+        support = effect.structured_ref or ", ".join(effect.source_refs) or "none"
+        lines.append(
+            f"- {effect.driver_id}={value} ({effect.provenance}; {effect.effect_type}); "
+            f"applied: {effect.applied}; phases: {phases}; tasks: {tasks}"
+            f"{multiplier}{capped}; support: {support}; note: {effect.note}"
+        )
+    return lines or ["- none"]
+
+
+def _budget_guideline_flag_lines(budget: BudgetProposal) -> list[str]:
+    lines = []
+    for flag in budget.guideline_flags:
+        location = flag.phase_id or flag.role or "proposal"
+        support = flag.structured_ref or "none"
+        lines.append(
+            f"- {flag.constraint_id} ({flag.constraint_type}; {location}): "
+            f"{flag.status}; current={flag.current_value}; threshold={flag.threshold_value}; "
+            f"rewrites budget: {flag.rewrites_budget}; support: {support}; note: {flag.note}"
+        )
+    return lines or ["- none"]
 
 
 def _review_outcome_handling_lines() -> list[str]:
@@ -1076,6 +1114,12 @@ def render_matter_opening_review_package(
             "",
             "### Scenario Set",
             *_budget_scenario_lines(budget),
+            "",
+            "### Budget Driver Effects",
+            *_budget_driver_effect_lines(budget),
+            "",
+            "### Guideline Flags",
+            *_budget_guideline_flag_lines(budget),
             "",
             "## Exception And Escalation Records",
             "",

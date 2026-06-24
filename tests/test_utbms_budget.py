@@ -54,16 +54,16 @@ def test_demo_budget_uses_utbms_codes(tmp_path, repo_root):
 
 def test_demo_budget_is_driver_scaled(tmp_path, repo_root):
     budget = _run(tmp_path, repo_root)
-    # Policy default num_depositions = 8; L330 scales 8 hours/unit and 700 expense/unit.
+    # Policy default num_depositions = 8; L330 scales by count and then by intensity.
     depo = _line(budget, "L330")
-    assert depo.estimated_hours == 64.0
+    assert depo.estimated_hours == 72.58
     assert depo.estimated_expenses == 5600.0
     assert any("num_depositions" in note for note in depo.assumptions)
-    # Pleading (L210) scales by human-confirmed represented defendants (2) at 8 hours each.
-    assert _line(budget, "L210").estimated_hours == 16.0
-    # Expert discovery (L340) scales by num_experts (4) at 6 hours/unit and 7500/unit.
+    # Pleading (L210) scales by human-confirmed represented defendants and liability.
+    assert _line(budget, "L210").estimated_hours == 16.8
+    # Expert discovery (L340) scales by num_experts and then by intensity.
     expert = _line(budget, "L340")
-    assert expert.estimated_hours == 24.0
+    assert expert.estimated_hours == 27.22
     assert expert.estimated_expenses == 30000.0
 
 

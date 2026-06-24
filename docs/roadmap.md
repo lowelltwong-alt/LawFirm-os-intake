@@ -24,9 +24,15 @@ Emit early, standard, and through-trial budget branches with ranges while preser
 
 ## 3. Stronger Budget Drivers
 
-Status: pending.
+Status: implemented for the current synthetic slice.
 
 Add severity, venue, liability, coverage, and guideline/cap handling without letting defaults masquerade as observed facts.
+
+- Severity, liability, and venue drivers can apply bounded intensity multipliers from local synthetic policy.
+- Cumulative multipliers are capped by policy.
+- Coverage posture remains a review boundary and is not blended into defense-fee math.
+- Synthetic guideline caps produce `BudgetGuidelineFlag` records and unknown/review text; they do not rewrite rates, hours, or totals.
+- `BudgetDriverEffect` records expose driver value, provenance, structured policy ref, applied phases/tasks, and whether a default was used as an observed fact.
 
 ## 4. Second Matter Family
 

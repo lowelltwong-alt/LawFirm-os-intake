@@ -1,8 +1,8 @@
-"""Case-driver capture for the driver-based budget model (slice 1).
+"""Case-driver capture for the driver-based budget model.
 
 This module resolves the litigation cost drivers for a confirmed intake, each with
 explicit provenance, and records them as a candidate ``CaseDriverProfile``. It does
-**not** yet feed budget math; the flat template path in ``budget.py`` is unchanged.
+feed deterministic budget math while preserving visible provenance.
 
 Governance:
 
@@ -61,7 +61,7 @@ class DriverValue(StrictModel):
 
 
 class CaseDriverProfile(StrictModel):
-    """Resolved cost drivers for one confirmed intake. Candidate; not yet applied to math."""
+    """Resolved cost drivers for one confirmed intake. Candidate and provenance-bound."""
 
     schema_version: str = "0.1"
     case_driver_profile_id: str
@@ -74,8 +74,11 @@ class CaseDriverProfile(StrictModel):
     observed_or_confirmed_driver_ids: list[str] = Field(default_factory=list)
     default_driver_ids: list[str] = Field(default_factory=list)
     unknown_driver_ids: list[str] = Field(default_factory=list)
+    intensity_multiplier_policy: dict[str, Any] = Field(default_factory=dict)
+    coverage_posture_policy: dict[str, Any] = Field(default_factory=dict)
+    synthetic_guideline_constraints: dict[str, Any] = Field(default_factory=dict)
     status: Literal["candidate"] = "candidate"
-    not_applied_to_math: bool = True
+    not_applied_to_math: bool = False
 
 
 def load_driver_policy(path: str | Path) -> dict[str, Any]:
@@ -182,4 +185,7 @@ def resolve_case_drivers(
         unknown_driver_ids=[
             driver.driver_id for driver in resolved if driver.provenance == "unknown"
         ],
+        intensity_multiplier_policy=policy.get("intensity_multiplier_policy", {}),
+        coverage_posture_policy=policy.get("coverage_posture_policy", {}),
+        synthetic_guideline_constraints=policy.get("synthetic_guideline_constraints", {}),
     )

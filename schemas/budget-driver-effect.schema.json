@@ -1,0 +1,120 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "driver_id": {
+      "title": "Driver Id",
+      "type": "string"
+    },
+    "driver_value": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Driver Value"
+    },
+    "provenance": {
+      "title": "Provenance",
+      "type": "string"
+    },
+    "effect_type": {
+      "enum": [
+        "count_scaling",
+        "intensity_multiplier",
+        "coverage_boundary",
+        "unknown_driver"
+      ],
+      "title": "Effect Type",
+      "type": "string"
+    },
+    "applied": {
+      "title": "Applied",
+      "type": "boolean"
+    },
+    "phase_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Phase Ids",
+      "type": "array"
+    },
+    "task_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Task Ids",
+      "type": "array"
+    },
+    "multiplier": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Multiplier"
+    },
+    "capped": {
+      "default": false,
+      "title": "Capped",
+      "type": "boolean"
+    },
+    "source_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Source Refs",
+      "type": "array"
+    },
+    "structured_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Structured Ref"
+    },
+    "note": {
+      "title": "Note",
+      "type": "string"
+    },
+    "default_used_as_observed_fact": {
+      "const": false,
+      "default": false,
+      "title": "Default Used As Observed Fact",
+      "type": "boolean"
+    },
+    "requires_human_review": {
+      "default": true,
+      "title": "Requires Human Review",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "driver_id",
+    "provenance",
+    "effect_type",
+    "applied",
+    "note"
+  ],
+  "title": "BudgetDriverEffect",
+  "type": "object"
+}

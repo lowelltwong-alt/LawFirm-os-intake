@@ -293,3 +293,9 @@
 - Added embedded `BudgetScenarioSet` output with `early_resolution`, `standard`, and `through_trial` branches, ranges, included phases, and included UTBMS code candidates.
 - The legacy `BudgetProposal` totals and lines now map to the selected `standard` scenario for compatibility while preserving through-trial visibility in the scenario set.
 - Updated budget review and matter-opening review packages to render scenario comparison without authorizing client/carrier submission.
+
+## Stronger budget-driver slice - 2026-06-24
+
+- Added bounded severity, liability, and venue intensity multipliers from local synthetic driver policy.
+- Added `BudgetDriverEffect` records so count scaling, intensity multipliers, coverage boundaries, and unknown drivers expose value, provenance, policy refs, affected phases/tasks, cap state, and the no-default-as-observed-fact invariant.
+- Added `BudgetGuidelineFlag` records for synthetic role-rate, phase-budget, and total-budget caps; flags require human review when triggered and never rewrite budget values.

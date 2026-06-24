@@ -5,6 +5,8 @@ from typing import Any
 from .drivers import CaseDriverProfile
 from .models import (
     BudgetCalculationReport,
+    BudgetDriverEffect,
+    BudgetGuidelineFlag,
     BudgetLine,
     BudgetProposal,
     BudgetScenario,
@@ -53,6 +55,11 @@ def _template_ref(profile: dict[str, Any], matter_family: str, path: str) -> str
 
 def _policy_ref(path: str) -> str:
     return f"workflow-policy://budget-boundary/{path}"
+
+
+def _driver_policy_ref(case_drivers: CaseDriverProfile | None, path: str) -> str:
+    policy_id = case_drivers.policy_id if case_drivers is not None else "unknown"
+    return f"budget-driver-policy://{policy_id}/{path}"
 
 
 def _confirmed_matter_observed_refs(
@@ -153,6 +160,310 @@ def _numeric_driver_values(
             continue
         values[driver.driver_id] = (float(driver.value), driver.provenance)
     return values
+
+
+def _drivers_by_id(case_drivers: CaseDriverProfile | None) -> dict[str, Any]:
+    if case_drivers is None:
+        return {}
+    return {driver.driver_id: driver for driver in case_drivers.drivers}
+
+
+def _driver_effect_key(effect: BudgetDriverEffect) -> tuple[str, str | None, str, tuple[str, ...]]:
+    return (
+        effect.driver_id,
+        None if effect.driver_value is None else str(effect.driver_value),
+        effect.effect_type,
+        tuple(effect.phase_ids),
+    )
+
+
+def _intensity_adjustment(
+    phase_id: str,
+    task_id: str,
+    case_drivers: CaseDriverProfile | None,
+) -> tuple[float, list[str], list[BudgetDriverEffect]]:
+    if case_drivers is None:
+        return 1.0, [], []
+    policy = case_drivers.intensity_multiplier_policy or {}
+    effects_by_driver = policy.get("effects", {})
+    if not isinstance(effects_by_driver, dict):
+        return 1.0, [], []
+
+    drivers = _drivers_by_id(case_drivers)
+    multiplier = 1.0
+    notes: list[str] = []
+    effects: list[BudgetDriverEffect] = []
+    for driver_id, value_effects in effects_by_driver.items():
+        driver = drivers.get(str(driver_id))
+        if driver is None or driver.value is None:
+            continue
+        if not isinstance(value_effects, dict):
+            continue
+        effect = value_effects.get(str(driver.value))
+        if not isinstance(effect, dict):
+            continue
+        phase_ids = [str(item) for item in effect.get("phase_ids", [])]
+        if phase_ids and phase_id not in phase_ids:
+            continue
+        driver_multiplier = float(effect.get("multiplier", 1.0))
+        multiplier *= driver_multiplier
+        note = (
+            f"Driver {driver.driver_id}={driver.value} ({driver.provenance}) "
+            f"applies {driver_multiplier}x intensity to {phase_id}; "
+            f"{effect.get('note', 'synthetic candidate policy effect')}"
+        )
+        if driver.provenance == "profile_default":
+            note += " This is a synthetic profile default, not observed source evidence."
+        notes.append(note)
+        effects.append(
+            BudgetDriverEffect(
+                driver_id=driver.driver_id,
+                driver_value=driver.value,
+                provenance=driver.provenance,
+                effect_type="intensity_multiplier",
+                applied=True,
+                phase_ids=phase_ids or [phase_id],
+                task_ids=[task_id],
+                multiplier=driver_multiplier,
+                source_refs=driver.source_refs,
+                structured_ref=_driver_policy_ref(
+                    case_drivers,
+                    f"intensity_multiplier_policy/effects/{driver.driver_id}/{driver.value}",
+                ),
+                note=note,
+            )
+        )
+
+    cap = float(policy.get("cumulative_multiplier_cap", multiplier))
+    if multiplier > cap:
+        note = (
+            f"Cumulative driver multiplier {round(multiplier, 4)}x for {phase_id}/{task_id} "
+            f"was capped at {cap}x by synthetic policy; cap is a guardrail, not observed fact."
+        )
+        notes.append(note)
+        effects.append(
+            BudgetDriverEffect(
+                driver_id="cumulative_multiplier_cap",
+                driver_value=cap,
+                provenance="profile_default",
+                effect_type="intensity_multiplier",
+                applied=True,
+                phase_ids=[phase_id],
+                task_ids=[task_id],
+                multiplier=cap,
+                capped=True,
+                structured_ref=_driver_policy_ref(
+                    case_drivers,
+                    "intensity_multiplier_policy/cumulative_multiplier_cap",
+                ),
+                note=note,
+            )
+        )
+        multiplier = cap
+    return round(multiplier, 4), notes, effects
+
+
+def _driver_boundary_effects(
+    case_drivers: CaseDriverProfile | None,
+) -> list[BudgetDriverEffect]:
+    if case_drivers is None:
+        return []
+    drivers = _drivers_by_id(case_drivers)
+    effects: list[BudgetDriverEffect] = []
+    for driver_id in ("resolution_path", "coverage_posture"):
+        driver = drivers.get(driver_id)
+        if driver is None:
+            continue
+        if driver.provenance == "unknown":
+            if driver_id == "coverage_posture":
+                note = (
+                    "Budget driver coverage_posture is unknown; no coverage-specific line, "
+                    "coverage conclusion, or defense-fee adjustment was applied."
+                )
+            else:
+                note = (
+                    "Budget driver resolution_path is unknown; scenario set remains a "
+                    "review comparison rather than an observed or selected path."
+                )
+            effects.append(
+                BudgetDriverEffect(
+                    driver_id=driver.driver_id,
+                    driver_value=None,
+                    provenance=driver.provenance,
+                    effect_type="unknown_driver",
+                    applied=False,
+                    structured_ref=_driver_policy_ref(case_drivers, f"drivers/{driver.driver_id}"),
+                    note=note,
+                )
+            )
+            continue
+        if driver_id == "coverage_posture":
+            review_values = set(
+                str(item)
+                for item in case_drivers.coverage_posture_policy.get(
+                    "review_required_values",
+                    [],
+                )
+            )
+            value = str(driver.value)
+            if value in review_values:
+                note = (
+                    f"Coverage posture {value} ({driver.provenance}) requires human review; "
+                    "coverage work is not blended into the defense-fee budget."
+                )
+                effects.append(
+                    BudgetDriverEffect(
+                        driver_id=driver.driver_id,
+                        driver_value=driver.value,
+                        provenance=driver.provenance,
+                        effect_type="coverage_boundary",
+                        applied=False,
+                        source_refs=driver.source_refs,
+                        structured_ref=_driver_policy_ref(
+                            case_drivers,
+                            f"coverage_posture_policy/review_required_values/{value}",
+                        ),
+                        note=note,
+                    )
+                )
+    return effects
+
+
+def _guideline_flags(
+    lines: list[BudgetLine],
+    total_proposed_budget: float | None,
+    case_drivers: CaseDriverProfile | None,
+) -> list[BudgetGuidelineFlag]:
+    if case_drivers is None:
+        return []
+    policy = case_drivers.synthetic_guideline_constraints or {}
+    if not policy:
+        return [
+            BudgetGuidelineFlag(
+                constraint_id="unknown_guidelines",
+                constraint_type="unknown_guidelines",
+                status="unknown",
+                provenance="unknown",
+                structured_ref=_driver_policy_ref(case_drivers, "synthetic_guideline_constraints"),
+                note=(
+                    "No synthetic guideline constraints were available; real carrier "
+                    "guidelines remain outside this repo."
+                ),
+            )
+        ]
+
+    flags: list[BudgetGuidelineFlag] = []
+    role_caps = policy.get("role_rate_caps", {})
+    if isinstance(role_caps, dict):
+        for role, cap in sorted(role_caps.items()):
+            role_lines = [line for line in lines if line.staffing_role == str(role)]
+            if not role_lines:
+                continue
+            max_rate = max((line.hourly_rate or 0.0) for line in role_lines)
+            cap_value = float(cap)
+            flagged = max_rate > cap_value
+            flags.append(
+                BudgetGuidelineFlag(
+                    constraint_id=f"role_rate_cap:{role}",
+                    constraint_type="role_rate_cap",
+                    status="flagged_for_human_review" if flagged else "not_triggered",
+                    role=str(role),
+                    current_value=max_rate,
+                    threshold_value=cap_value,
+                    structured_ref=_driver_policy_ref(
+                        case_drivers,
+                        f"synthetic_guideline_constraints/role_rate_caps/{role}",
+                    ),
+                    note=(
+                        f"Synthetic role rate cap for {role} "
+                        f"{'is exceeded' if flagged else 'is not exceeded'}; "
+                        "budget rates are not rewritten."
+                    ),
+                )
+            )
+
+    phase_caps = policy.get("phase_budget_caps", {})
+    if isinstance(phase_caps, dict):
+        for phase_id, cap in sorted(phase_caps.items()):
+            phase_lines = [line for line in lines if line.phase_id == str(phase_id)]
+            if not phase_lines:
+                continue
+            phase_total = round(
+                sum((line.estimated_fees or 0.0) + line.estimated_expenses for line in phase_lines),
+                2,
+            )
+            cap_value = float(cap)
+            flagged = phase_total > cap_value
+            flags.append(
+                BudgetGuidelineFlag(
+                    constraint_id=f"phase_budget_cap:{phase_id}",
+                    constraint_type="phase_budget_cap",
+                    status="flagged_for_human_review" if flagged else "not_triggered",
+                    phase_id=str(phase_id),
+                    current_value=phase_total,
+                    threshold_value=cap_value,
+                    structured_ref=_driver_policy_ref(
+                        case_drivers,
+                        f"synthetic_guideline_constraints/phase_budget_caps/{phase_id}",
+                    ),
+                    note=(
+                        f"Synthetic phase cap for {phase_id} "
+                        f"{'is exceeded' if flagged else 'is not exceeded'}; "
+                        "budget lines are not rewritten."
+                    ),
+                )
+            )
+
+    if "total_budget_cap" in policy and total_proposed_budget is not None:
+        cap_value = float(policy["total_budget_cap"])
+        flagged = total_proposed_budget > cap_value
+        flags.append(
+            BudgetGuidelineFlag(
+                constraint_id="total_budget_cap",
+                constraint_type="total_budget_cap",
+                status="flagged_for_human_review" if flagged else "not_triggered",
+                current_value=total_proposed_budget,
+                threshold_value=cap_value,
+                structured_ref=_driver_policy_ref(
+                    case_drivers,
+                    "synthetic_guideline_constraints/total_budget_cap",
+                ),
+                note=(
+                    "Synthetic total budget cap "
+                    f"{'is exceeded' if flagged else 'is not exceeded'}; "
+                    "proposal remains review-only and is not rewritten."
+                ),
+            )
+        )
+    return flags
+
+
+def _budget_driver_support_items(
+    driver_effects: list[BudgetDriverEffect],
+    guideline_flags: list[BudgetGuidelineFlag],
+) -> list[BudgetSupportItem]:
+    items: list[BudgetSupportItem] = []
+    for effect in driver_effects:
+        item_type = "unknown" if effect.effect_type == "unknown_driver" else "assumption"
+        items.append(
+            _support_item(
+                item_type,
+                effect.note,
+                "budget_driver_policy",
+                structured_ref=effect.structured_ref,
+            )
+        )
+    for flag in guideline_flags:
+        if flag.status == "flagged_for_human_review":
+            items.append(
+                _support_item(
+                    "unknown",
+                    flag.note,
+                    "budget_driver_policy",
+                    structured_ref=flag.structured_ref,
+                )
+            )
+    return items
 
 
 def _phase_order(template: dict[str, Any]) -> list[str]:
@@ -427,11 +738,18 @@ def build_budget_proposal(
 
     rates = {str(k): float(v) for k, v in profile.get("synthetic_hourly_rates", {}).items()}
     driver_values = _numeric_driver_values(case_drivers)
+    driver_lookup = _drivers_by_id(case_drivers)
+    driver_effects_by_key: dict[
+        tuple[str, str | None, str, tuple[str, ...]], BudgetDriverEffect
+    ] = {}
     lines: list[BudgetLine] = []
     evidence_refs = _confirmed_matter_observed_refs(packet, confirmation)
 
     for phase in template.get("phases", []):
+        phase_id = str(phase["phase_id"])
+        phase_name = str(phase["phase_name"])
         for task in phase.get("tasks", []):
+            task_id = str(task["task_id"])
             role = str(task["staffing_role"])
             base_hours = float(task["estimated_hours"])
             base_expenses = float(task.get("estimated_expenses", 0.0))
@@ -448,13 +766,49 @@ def build_budget_proposal(
                 scaling_formula = (
                     f"{hours_per_unit} hours/unit * {units} {scaling_driver} ({provenance})"
                 )
+                driver = driver_lookup.get(str(scaling_driver))
                 assumptions = assumptions + [
                     f"Hours scaled by driver {scaling_driver}={units} ({provenance}); "
                     f"template hours {base_hours} used only as fallback."
                 ]
+                if driver is not None:
+                    note = (
+                        f"Count driver {scaling_driver}={units} ({provenance}) scaled "
+                        f"{phase_id}/{task_id}; profile defaults are assumptions, not observed facts."
+                    )
+                    effect = BudgetDriverEffect(
+                        driver_id=str(scaling_driver),
+                        driver_value=driver.value,
+                        provenance=driver.provenance,
+                        effect_type="count_scaling",
+                        applied=True,
+                        phase_ids=[phase_id],
+                        task_ids=[task_id],
+                        source_refs=driver.source_refs,
+                        structured_ref=_driver_policy_ref(
+                            case_drivers,
+                            f"drivers/{scaling_driver}",
+                        ),
+                        note=note,
+                    )
+                    driver_effects_by_key[_driver_effect_key(effect)] = effect
             else:
                 hours = base_hours
                 expenses = base_expenses
+
+            intensity_multiplier, intensity_notes, intensity_effects = _intensity_adjustment(
+                phase_id,
+                task_id,
+                case_drivers,
+            )
+            if intensity_multiplier != 1.0:
+                hours = round(hours * intensity_multiplier, 2)
+                assumptions = assumptions + [
+                    f"Hours adjusted by cumulative intensity multiplier {intensity_multiplier}x."
+                ]
+            assumptions = assumptions + intensity_notes
+            for effect in intensity_effects:
+                driver_effects_by_key[_driver_effect_key(effect)] = effect
 
             rate = rates.get(role)
             fees = round(hours * rate, 2) if rate is not None else None
@@ -469,9 +823,9 @@ def build_budget_proposal(
             )
             lines.append(
                 BudgetLine(
-                    phase_id=str(phase["phase_id"]),
-                    phase_name=str(phase["phase_name"]),
-                    task_id=str(task["task_id"]),
+                    phase_id=phase_id,
+                    phase_name=phase_name,
+                    task_id=task_id,
                     task_name=str(task["task_name"]),
                     staffing_role=role,
                     estimated_hours=hours,
@@ -508,6 +862,25 @@ def build_budget_proposal(
     ) = _budget_totals(selected_lines, contingency_percent)
     mode = _pricing_status(selected_lines)
     report = _calculation_report(selected_lines, contingency_percent, mode=mode)
+    driver_effects = sorted(
+        [
+            *driver_effects_by_key.values(),
+            *_driver_boundary_effects(case_drivers),
+        ],
+        key=lambda effect: (
+            effect.driver_id,
+            "" if effect.driver_value is None else str(effect.driver_value),
+            ",".join(effect.phase_ids),
+            ",".join(effect.task_ids),
+        ),
+    )
+    guideline_flags = _guideline_flags(selected_lines, total, case_drivers)
+    driver_assumptions = [
+        effect.note for effect in driver_effects if effect.effect_type != "unknown_driver"
+    ]
+    driver_unknowns = [
+        effect.note for effect in driver_effects if effect.effect_type == "unknown_driver"
+    ] + [flag.note for flag in guideline_flags if flag.status == "flagged_for_human_review"]
 
     policy_exclusions = [
         "conflict clearance",
@@ -515,9 +888,9 @@ def build_budget_proposal(
         "carrier/client submission",
         "court filing",
     ]
-    assumptions = list(template.get("assumptions", []))
+    assumptions = list(template.get("assumptions", [])) + driver_assumptions
     exclusions = list(template.get("exclusions", [])) + policy_exclusions
-    unknowns = list(template.get("unknowns", []))
+    unknowns = list(template.get("unknowns", [])) + driver_unknowns
     support_items = [
         _support_item(
             "assumption",
@@ -526,6 +899,7 @@ def build_budget_proposal(
             structured_ref=_confirmation_ref(confirmation),
         ),
         *_template_support_items(profile, confirmation.confirmed_matter_family, template),
+        *_budget_driver_support_items(driver_effects, guideline_flags),
         *_workflow_exclusion_support_items(policy_exclusions),
     ]
     if evidence_refs:
@@ -558,5 +932,7 @@ def build_budget_proposal(
         assumptions=assumptions,
         exclusions=exclusions,
         unknowns=unknowns,
+        driver_effects=driver_effects,
+        guideline_flags=guideline_flags,
         budget_support_items=support_items,
     )

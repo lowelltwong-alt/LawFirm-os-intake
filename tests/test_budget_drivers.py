@@ -1,4 +1,4 @@
-"""Slice 1: case-driver capture with provenance, not yet applied to budget math."""
+"""Case-driver capture with provenance for deterministic budget math."""
 
 from lawfirm_os_intake.context import load_profile
 from lawfirm_os_intake.drivers import (
@@ -37,8 +37,10 @@ def test_driver_resolution_has_provenance_spectrum(tmp_path, repo_root):
     assert isinstance(drivers_profile, CaseDriverProfile)
     assert drivers_profile.matter_family == "medical_malpractice_defense"
     assert drivers_profile.status == "candidate"
-    # Slice 1 records drivers but must not yet feed budget math.
-    assert drivers_profile.not_applied_to_math is True
+    assert drivers_profile.not_applied_to_math is False
+    assert drivers_profile.intensity_multiplier_policy
+    assert drivers_profile.coverage_posture_policy
+    assert drivers_profile.synthetic_guideline_constraints
 
     provenances = {driver.driver_id: driver.provenance for driver in drivers_profile.drivers}
     assert "profile_default" in provenances.values()
