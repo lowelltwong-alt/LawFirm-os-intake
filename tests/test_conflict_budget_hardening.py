@@ -53,7 +53,17 @@ def test_budget_has_ranges_calculation_report_and_review_form(tmp_path, repo_roo
     assert all(line.estimated_hours_min is not None for line in budget.lines)
     assert all(line.estimated_hours_max is not None for line in budget.lines)
     assert all(line.rate_is_synthetic for line in budget.lines)
-    assert (budget_dir / "legal_budget_review_form.md").exists()
+    review_text = (budget_dir / "legal_budget_review_form.md").read_text(encoding="utf-8")
+    assert "## Budget Lines" in review_text
+    assert "rate source: synthetic_profile" in review_text
+    assert "synthetic rate: True" in review_text
+    assert "evidence: syn-email-001/" in review_text
+    assert "] sha=sha256:" in review_text
+    assert "## Evidence-Bound Budget Supports" in review_text
+    assert "## Submission Boundary" in review_text
+    assert "Approval state: proposed_for_human_review" in review_text
+    assert "Client/carrier submission authorized: False" in review_text
+    assert "Human budget review remains required" in review_text
 
 
 def test_hours_only_report_preserves_no_rate_invention(tmp_path, repo_root):

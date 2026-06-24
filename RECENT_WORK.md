@@ -172,3 +172,9 @@
 - Expanded `intake_review_form.md` source coverage rows with filenames, duplicate links, attachment refs, metadata keys, character counts, and hashes.
 - Added explicit review outcome handling so reviewers see which outcomes block budget-stage output and that corrections append or supersede prior records.
 - Added tests and smoke coverage for detailed source inventory and outcome handling in the preflight review form.
+
+## Budget-review line detail slice - 2026-06-24
+
+- Added itemized budget lines to `legal_budget_review_form.md`, including hours/ranges, rates, synthetic-rate labels, fees, expenses, assumptions, formulas, and evidence refs.
+- Added a submission-boundary section showing `proposed_for_human_review`, no client/carrier submission authorization, and remaining human review blockers.
+- Added focused and smoke coverage so the standalone budget review form cannot become less auditable than the final matter-opening package.

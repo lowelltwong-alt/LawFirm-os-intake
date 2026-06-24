@@ -56,6 +56,8 @@ The final matter-opening review package now includes a required-human-gates sect
 
 The final matter-opening review package now includes calculation summary, budget line, and budget support subsections, and package completeness requires those budget detail sections.
 
+The standalone legal budget review form now includes itemized budget lines and a submission-boundary section so budget reviewers can inspect hours, rates, synthetic-rate labels, fees, expenses, assumptions, evidence refs, and non-authorization state without opening JSON first.
+
 The final matter-opening review package now includes source-inventory detail and a run-ledger summary, and package completeness requires those auditability sections.
 
 The final matter-opening review package now includes an evidence-graph summary with node/edge counts, node-type counts, relationship counts, and key provenance edge examples; package completeness requires that section.

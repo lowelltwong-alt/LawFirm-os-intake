@@ -118,6 +118,8 @@ The preflight run also writes `ingestion_result.json`, a Python reference artifa
 
 The budget-stage `evidence_graph.json` carries the provenance forward into human review outcomes, conflict-search terms, budget lines, and budget support items. Structured refs such as human confirmations, synthetic practice-profile entries, and workflow-policy references are represented separately from observed source evidence.
 
+The standalone `legal_budget_review_form.md` also renders itemized budget lines with hours, ranges, rates, synthetic-rate labels, expenses, assumptions, evidence refs, and a submission boundary. It is an internal review surface only; it does not authorize client or carrier delivery.
+
 ## Practice context is configurable, not hidden prompt text
 
 The same message can mean different things to different practices. A carrier assignment is common in an insurance-defense practice but unusual in a plaintiff practice. This repository therefore treats practice context as a versioned profile with explicit precedence and hashes.
