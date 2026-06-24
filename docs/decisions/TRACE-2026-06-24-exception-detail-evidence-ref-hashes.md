@@ -38,7 +38,7 @@ The risk is slightly longer exception-detail lines. The change is contained to M
 
 ## Validation
 
-- `python -m ruff format src tests scripts` -> 1 file reformatted, 47 files left unchanged.
+- `python -m ruff format src tests scripts` -> 1 file reformatted, 47 files left unchanged; after the smoke-script follow-up, 48 files left unchanged.
 - `python -m pytest tests/test_review_package.py tests/test_north_star_demo.py tests/test_exception_candidates.py -q` -> passed.
 - `python scripts/export_schemas.py` -> exported 22 schemas.
 - `python -m pytest -q` -> passed.
@@ -46,6 +46,7 @@ The risk is slightly longer exception-detail lines. The change is contained to M
 - `python -m ruff format --check src tests scripts` -> 48 files already formatted.
 - `python scripts/validate_repo.py` -> repository validation passed.
 - `bash -lc 'export PATH="/c/Users/lowel/AppData/Local/Programs/Python/Python312:$PATH"; export PYTHONDONTWRITEBYTECODE=1; export PYTHONPATH=src; bash scripts/smoke_demo.sh'` -> passed.
+- Initial CI run `28068842391` failed in `bash scripts/smoke_demo.sh` with exit 141 because the section-scoped `awk | grep -q` assertion interacted poorly with `pipefail`; the smoke script now captures the exception-detail section before grepping it.
 
 ## Human gates
 
