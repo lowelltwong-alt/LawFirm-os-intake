@@ -299,6 +299,76 @@ class ModelAdapterReport(StrictModel):
     generated_at: str
 
 
+class FixtureGoldSourceExpectation(StrictModel):
+    source_id: str
+    read_state: str | None = None
+    availability_state: str | None = None
+    duplicate_of_source_id: str | None = None
+
+
+class FixtureGoldSpec(StrictModel):
+    schema_version: str = "0.1"
+    gold_id: str
+    fixture_id: str
+    applies_to: Literal["preflight", "demo", "preflight_and_budget"]
+    reviewed: bool
+    reviewer_id: str
+    reviewed_at: str
+    data_scope: Literal["synthetic_only"] = "synthetic_only"
+    expected_bundle_id: str | None = None
+    expected_preflight_status: str | None = None
+    expected_source_coverage: dict[str, Any] = Field(default_factory=dict)
+    expected_source_states: list[FixtureGoldSourceExpectation] = Field(default_factory=list)
+    expected_top_three_matter_families: list[str] = Field(default_factory=list)
+    expected_top_inbound_event: str | None = None
+    expected_top_representation_posture: str | None = None
+    expected_party_role_candidates: dict[str, list[str]] = Field(default_factory=dict)
+    prohibited_party_role_candidates: dict[str, list[str]] = Field(default_factory=dict)
+    expected_deadline_expressions: list[str] = Field(default_factory=list)
+    expected_missing_information: list[str] = Field(default_factory=list)
+    expected_critic_finding_codes: list[str] = Field(default_factory=list)
+    expected_preflight_exception_labels: list[str] = Field(default_factory=list)
+    expected_prohibited_next_steps: list[str] = Field(default_factory=list)
+    require_source_bound_evidence: bool = True
+    expected_confirmation_status: str | None = None
+    expected_conflict_conclusion: str | None = None
+    expected_conflict_term_groups: list[str] = Field(default_factory=list)
+    expected_budget_pricing_status: str | None = None
+    expected_budget_approval_state: str | None = None
+    expected_budget_not_authorized_for_client_submission: bool | None = None
+    expected_budget_exception_labels: list[str] = Field(default_factory=list)
+    expected_budget_precondition_status: str | None = None
+    expected_safety_status: str | None = None
+    expected_final_boundary: str | None = None
+    expected_readiness_blockers: list[str] = Field(default_factory=list)
+    expected_no_external_writes: bool | None = True
+
+
+class FixtureGoldCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed", "skipped"]
+    message: str
+    expected: Any = None
+    actual: Any = None
+
+
+class FixtureGoldReport(StrictModel):
+    schema_version: str = "0.1"
+    fixture_gold_report_id: str
+    run_id: str
+    preflight_packet_id: str
+    stage: Literal["preflight", "demo"]
+    gold_id: str
+    gold_ref: str
+    status: Literal["passed", "failed"]
+    reviewed_gold: bool
+    data_scope: Literal["synthetic_only"] = "synthetic_only"
+    non_authoritative: Literal[True] = True
+    evaluated_artifact_refs: dict[str, str] = Field(default_factory=dict)
+    checks: list[FixtureGoldCheck]
+    generated_at: str
+
+
 class IntakePreflightPacket(StrictModel):
     schema_version: str = "0.1"
     packet_id: str
@@ -328,6 +398,7 @@ class IntakePreflightPacket(StrictModel):
     run_ledger_ref: str
     contract_state_report_ref: str
     model_adapter_report_ref: str | None = None
+    fixture_gold_report_ref: str | None = None
     exception_candidates_ref: str | None = None
     exception_lake_readiness_report_ref: str | None = None
     intake_review_form_ref: str | None = None

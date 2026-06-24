@@ -24,6 +24,7 @@ def _parser() -> argparse.ArgumentParser:
     preflight.add_argument("--practice-profile", required=True)
     preflight.add_argument("--out-dir", default=".lawfirm-os-intake/runs")
     preflight.add_argument("--review-form-out")
+    preflight.add_argument("--fixture-gold")
     preflight.add_argument(
         "--adapter", choices=["deterministic", "structured-model"], default="deterministic"
     )
@@ -36,12 +37,14 @@ def _parser() -> argparse.ArgumentParser:
     budget.add_argument("--confirmation", required=True)
     budget.add_argument("--practice-profile", required=True)
     budget.add_argument("--out-dir", required=True)
+    budget.add_argument("--fixture-gold")
 
     demo = sub.add_parser("demo", help="Run the complete synthetic intake-to-budget demonstration.")
     demo.add_argument("--input", required=True)
     demo.add_argument("--practice-profile", required=True)
     demo.add_argument("--confirmation-template", required=True)
     demo.add_argument("--out-dir", default=".lawfirm-os-intake/demo")
+    demo.add_argument("--fixture-gold")
     demo.add_argument(
         "--adapter", choices=["deterministic", "structured-model"], default="deterministic"
     )
@@ -63,6 +66,7 @@ def main(argv: list[str] | None = None) -> int:
                 args.out_dir,
                 adapter=args.adapter,
                 strict_evidence=args.strict_evidence,
+                fixture_gold=args.fixture_gold,
             )
             if args.review_form_out and packet.intake_review_form_ref:
                 shutil.copyfile(packet.intake_review_form_ref, args.review_form_out)
@@ -75,6 +79,7 @@ def main(argv: list[str] | None = None) -> int:
                     "human_confirmation_required": packet.human_confirmation_required,
                     "escalation": packet.escalation.model_dump(mode="json"),
                     "contract_state_report": packet.contract_state_report_ref,
+                    "fixture_gold_report": packet.fixture_gold_report_ref,
                     "run_dir": str(run_dir),
                 }
             )
@@ -86,6 +91,7 @@ def main(argv: list[str] | None = None) -> int:
                 args.confirmation,
                 args.practice_profile,
                 args.out_dir,
+                fixture_gold=args.fixture_gold,
             )
             _print(
                 {
@@ -101,6 +107,9 @@ def main(argv: list[str] | None = None) -> int:
                     "human_confirmation_history": str(run_dir / "human_confirmation_history.jsonl"),
                     "budget_precondition_report": str(run_dir / "budget_precondition_report.json"),
                     "safety_gate_report": str(run_dir / "safety_gate_report.json"),
+                    "fixture_gold_report": (
+                        str(run_dir / "fixture_gold_report.json") if args.fixture_gold else None
+                    ),
                     "run_dir": str(run_dir),
                 }
             )
@@ -117,6 +126,7 @@ def main(argv: list[str] | None = None) -> int:
                 root / "preflight",
                 adapter=args.adapter,
                 strict_evidence=args.strict_evidence,
+                fixture_gold=args.fixture_gold,
             )
             confirmation_data = load_json(args.confirmation_template)
             confirmation_data["preflight_packet_id"] = packet.packet_id
@@ -129,6 +139,7 @@ def main(argv: list[str] | None = None) -> int:
                 confirmation_path,
                 args.practice_profile,
                 root / "budget",
+                fixture_gold=args.fixture_gold,
             )
             _print(
                 {
@@ -150,6 +161,9 @@ def main(argv: list[str] | None = None) -> int:
                         budget_dir / "budget_precondition_report.json"
                     ),
                     "safety_gate_report": str(budget_dir / "safety_gate_report.json"),
+                    "fixture_gold_report": (
+                        str(budget_dir / "fixture_gold_report.json") if args.fixture_gold else None
+                    ),
                     "total_proposed_budget": proposal.total_proposed_budget,
                     "final_boundary": "blocked_pending_conflicts_and_engagement",
                 }

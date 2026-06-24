@@ -18,6 +18,7 @@ from .exceptions import (
     build_budget_precondition_exception_candidates,
     build_preflight_exception_candidates,
 )
+from .gold import build_fixture_gold_report, enforce_fixture_gold_report
 from .ingestion import build_ingestion_result
 from .ingestion_volume import build_ingestion_volume_profile
 from .models import (
@@ -26,6 +27,7 @@ from .models import (
     ContractStateReport,
     EvidenceRef,
     ExceptionLakeCandidate,
+    FixtureGoldSpec,
     HumanConfirmation,
     IntakePreflightPacket,
     MatterOpeningReadiness,
@@ -142,6 +144,7 @@ def run_preflight(
     *,
     adapter: str = "deterministic",
     strict_evidence: bool = True,
+    fixture_gold: str | Path | None = None,
 ) -> tuple[IntakePreflightPacket, Path]:
     run_id = new_id("run")
     run_dir = Path(out_dir) / run_id
@@ -247,6 +250,7 @@ def run_preflight(
     review_form_path = run_dir / "intake_review_form.md"
     exception_candidates_path = run_dir / "exception_lake_candidates.jsonl"
     exception_readiness_report_path = run_dir / "exception_lake_readiness_report.json"
+    fixture_gold_report_path = run_dir / "fixture_gold_report.json" if fixture_gold else None
     packet = IntakePreflightPacket(
         packet_id=new_id("intake"),
         run_id=run_id,
@@ -274,6 +278,7 @@ def run_preflight(
         run_ledger_ref=str(ledger_path),
         contract_state_report_ref=str(contract_state_report_path),
         model_adapter_report_ref=str(model_adapter_report_path),
+        fixture_gold_report_ref=str(fixture_gold_report_path) if fixture_gold_report_path else None,
         exception_candidates_ref=str(exception_candidates_path),
         exception_lake_readiness_report_ref=str(exception_readiness_report_path),
         intake_review_form_ref=str(review_form_path),
@@ -323,6 +328,35 @@ def run_preflight(
             ],
         ).model_dump(mode="json"),
     )
+    if fixture_gold and fixture_gold_report_path:
+        gold = FixtureGoldSpec.model_validate(load_json(fixture_gold))
+        gold_report = build_fixture_gold_report(
+            gold=gold,
+            gold_ref=str(fixture_gold),
+            packet=packet,
+            stage="preflight",
+            evaluated_artifact_refs={
+                "preflight_packet": str(run_dir / "intake_preflight_packet.json"),
+                "preflight_exception_candidates": str(exception_candidates_path),
+                "preflight_exception_lake_readiness_report": str(exception_readiness_report_path),
+            },
+            preflight_exception_candidates=[
+                candidate.model_dump(mode="json") for candidate in exception_candidates
+            ],
+        )
+        write_json(fixture_gold_report_path, gold_report.model_dump(mode="json"))
+        append_jsonl(
+            ledger_path,
+            _event(
+                run_id,
+                8,
+                "fixture_gold_evaluated",
+                "completed" if gold_report.status == "passed" else "failed",
+                input_refs=[str(fixture_gold)],
+                output_refs=[str(fixture_gold_report_path)],
+            ).model_dump(mode="json"),
+        )
+        enforce_fixture_gold_report(gold_report)
     return packet, run_dir
 
 
@@ -423,6 +457,8 @@ def run_budget(
     confirmation_path: str | Path,
     profile_path: str | Path,
     out_dir: str | Path,
+    *,
+    fixture_gold: str | Path | None = None,
 ) -> tuple[Any, Path]:
     packet = IntakePreflightPacket.model_validate(load_json(preflight_packet_path))
     confirmation = HumanConfirmation.model_validate(load_json(confirmation_path))
@@ -586,6 +622,7 @@ def run_budget(
     safety_gate_report_path = run_dir / "safety_gate_report.json"
     exception_readiness_report_path = run_dir / "exception_lake_readiness_report.json"
     completeness_report_path = run_dir / "review_package_completeness_report.json"
+    fixture_gold_report_path = run_dir / "fixture_gold_report.json" if fixture_gold else None
     preflight_dir = preflight_packet_path.parent
     artifact_refs = {
         "preflight_packet": str(preflight_packet_path),
@@ -622,6 +659,8 @@ def run_budget(
         "review_package_manifest": str(manifest_path),
         "review_package_completeness_report": str(completeness_report_path),
     }
+    if fixture_gold_report_path:
+        artifact_refs["fixture_gold_report"] = str(fixture_gold_report_path)
     safety_report = build_safety_gate_report(
         packet,
         confirmation,
@@ -680,6 +719,36 @@ def run_budget(
             ],
         ).model_dump(mode="json"),
     )
+    if fixture_gold and fixture_gold_report_path:
+        gold = FixtureGoldSpec.model_validate(load_json(fixture_gold))
+        gold_report = build_fixture_gold_report(
+            gold=gold,
+            gold_ref=str(fixture_gold),
+            packet=packet,
+            stage="demo",
+            evaluated_artifact_refs=artifact_refs,
+            preflight_exception_candidates=preflight_exception_candidates,
+            confirmation=confirmation,
+            conflict_seed=conflict_seed,
+            budget=budget,
+            readiness=readiness,
+            budget_exception_candidates=budget_exception_candidates,
+            budget_precondition_report=budget_precondition_report,
+            safety_report=safety_report,
+        )
+        write_json(fixture_gold_report_path, gold_report.model_dump(mode="json"))
+        append_jsonl(
+            ledger_path,
+            _event(
+                packet.run_id,
+                5,
+                "fixture_gold_evaluated",
+                "completed" if gold_report.status == "passed" else "failed",
+                input_refs=[str(fixture_gold)],
+                output_refs=[str(fixture_gold_report_path)],
+            ).model_dump(mode="json"),
+        )
+        enforce_fixture_gold_report(gold_report)
     review_package_path.write_text(
         render_matter_opening_review_package(
             packet,
@@ -747,7 +816,7 @@ def run_budget(
         ledger_path,
         _event(
             packet.run_id,
-            5,
+            6 if fixture_gold_report_path else 5,
             "matter_opening_review_package_built",
             "completed",
             output_refs=[

@@ -1,0 +1,363 @@
+{
+  "$defs": {
+    "FixtureGoldSourceExpectation": {
+      "additionalProperties": false,
+      "properties": {
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "read_state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Read State"
+        },
+        "availability_state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Availability State"
+        },
+        "duplicate_of_source_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Duplicate Of Source Id"
+        }
+      },
+      "required": [
+        "source_id"
+      ],
+      "title": "FixtureGoldSourceExpectation",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "gold_id": {
+      "title": "Gold Id",
+      "type": "string"
+    },
+    "fixture_id": {
+      "title": "Fixture Id",
+      "type": "string"
+    },
+    "applies_to": {
+      "enum": [
+        "preflight",
+        "demo",
+        "preflight_and_budget"
+      ],
+      "title": "Applies To",
+      "type": "string"
+    },
+    "reviewed": {
+      "title": "Reviewed",
+      "type": "boolean"
+    },
+    "reviewer_id": {
+      "title": "Reviewer Id",
+      "type": "string"
+    },
+    "reviewed_at": {
+      "title": "Reviewed At",
+      "type": "string"
+    },
+    "data_scope": {
+      "const": "synthetic_only",
+      "default": "synthetic_only",
+      "title": "Data Scope",
+      "type": "string"
+    },
+    "expected_bundle_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Expected Bundle Id"
+    },
+    "expected_preflight_status": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Expected Preflight Status"
+    },
+    "expected_source_coverage": {
+      "additionalProperties": true,
+      "title": "Expected Source Coverage",
+      "type": "object"
+    },
+    "expected_source_states": {
+      "items": {
+        "$ref": "#/$defs/FixtureGoldSourceExpectation"
+      },
+      "title": "Expected Source States",
+      "type": "array"
+    },
+    "expected_top_three_matter_families": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Expected Top Three Matter Families",
+      "type": "array"
+    },
+    "expected_top_inbound_event": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Expected Top Inbound Event"
+    },
+    "expected_top_representation_posture": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Expected Top Representation Posture"
+    },
+    "expected_party_role_candidates": {
+      "additionalProperties": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "title": "Expected Party Role Candidates",
+      "type": "object"
+    },
+    "prohibited_party_role_candidates": {
+      "additionalProperties": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "title": "Prohibited Party Role Candidates",
+      "type": "object"
+    },
+    "expected_deadline_expressions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Expected Deadline Expressions",
+      "type": "array"
+    },
+    "expected_missing_information": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Expected Missing Information",
+      "type": "array"
+    },
+    "expected_critic_finding_codes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Expected Critic Finding Codes",
+      "type": "array"
+    },
+    "expected_preflight_exception_labels": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Expected Preflight Exception Labels",
+      "type": "array"
+    },
+    "expected_prohibited_next_steps": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Expected Prohibited Next Steps",
+      "type": "array"
+    },
+    "require_source_bound_evidence": {
+      "default": true,
+      "title": "Require Source Bound Evidence",
+      "type": "boolean"
+    },
+    "expected_confirmation_status": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Expected Confirmation Status"
+    },
+    "expected_conflict_conclusion": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Expected Conflict Conclusion"
+    },
+    "expected_conflict_term_groups": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Expected Conflict Term Groups",
+      "type": "array"
+    },
+    "expected_budget_pricing_status": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Expected Budget Pricing Status"
+    },
+    "expected_budget_approval_state": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Expected Budget Approval State"
+    },
+    "expected_budget_not_authorized_for_client_submission": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Expected Budget Not Authorized For Client Submission"
+    },
+    "expected_budget_exception_labels": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Expected Budget Exception Labels",
+      "type": "array"
+    },
+    "expected_budget_precondition_status": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Expected Budget Precondition Status"
+    },
+    "expected_safety_status": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Expected Safety Status"
+    },
+    "expected_final_boundary": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Expected Final Boundary"
+    },
+    "expected_readiness_blockers": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Expected Readiness Blockers",
+      "type": "array"
+    },
+    "expected_no_external_writes": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": true,
+      "title": "Expected No External Writes"
+    }
+  },
+  "required": [
+    "gold_id",
+    "fixture_id",
+    "applies_to",
+    "reviewed",
+    "reviewer_id",
+    "reviewed_at"
+  ],
+  "title": "FixtureGoldSpec",
+  "type": "object"
+}

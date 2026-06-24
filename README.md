@@ -113,6 +113,8 @@ Budget runs also write a typed human review outcome record and append it to `hum
 
 The quickstart uses `north-star-messy-intake.json`, a synthetic bundle with duplicate source text, a missing complaint attachment, misleading role/context signals, prompt-injection source content, missing intake fields, deadline candidates, and human-confirmed budget generation.
 
+Use `--fixture-gold examples/synthetic/gold/north-star-messy-intake.fixture-gold.json` to gate a preflight or demo run against reviewed synthetic gold. The run writes `fixture_gold_report.json` and fails closed when expected source coverage, top-three matter recall, role candidates, deadline candidates, missing information, exception labels, conflict/budget boundaries, safety status, final blockers, or external-write boundaries drift.
+
 The preflight `intake_review_form.md` is the first human pause. It shows detailed source inventory rows, including duplicate links, attachment refs, filenames, metadata keys, hashes, candidate alternatives, deadline and missing-information evidence, and review outcome handling. Only `confirmed` can proceed toward the budget precondition gate, and even then only after exact packet binding and evidence checks; all other outcomes remain blocked or human-only.
 
 Every source-bound evidence reference in the generated packets includes the cited source ID, segment ID, segment offsets, and segment hash. Strict mode rejects refs that drift from the segment table.

@@ -42,6 +42,8 @@ Gold should be reviewed and versioned for:
 - assumptions and exclusions.
 - north-star review package completeness.
 
+Reviewed synthetic gold files live under `examples/synthetic/gold/`. They are local evaluation gates only. `fixture_gold_report.json` proves whether a specific run matched reviewed expectations; it does not promote labels, roles, event classes, or budgets into canon.
+
 ## Data generation rules
 
 - clearly label all names/domains/claims as synthetic;

@@ -66,6 +66,7 @@ synthetic source bundle
 -> reviewed contract-state gate for sibling repo locks
 -> model adapter guard report for deterministic or structured-model dry-run posture
 -> data-origin and authorization gate
+-> optional reviewed synthetic fixture-gold gate when `--fixture-gold` is supplied
 -> Python reference ingestion result for source inventory, coverage, segmentation, hashes, and segment evidence refs
 -> ingestion volume profile for source/segment scale and profiling-before-Rust pressure
 -> Rust ingestion readiness report proving the Python artifact is a future parity target, not replacement authorization
@@ -97,6 +98,7 @@ The outer runtime owner is `LawFirm-os-orchestrator`. The local intake CLI is a 
 | Candidate intake schemas in `schemas/` | Intake candidate surface | Local only | Must not masquerade as promoted Semantic Substrate canon |
 | `ContractStateReport` in `contract_state_report.json` | Intake candidate surface | Intake -> Human reviewer / Orchestrator review path | Verifies local `contracts.lock.json` and `repo_topology.lock.yaml` are reviewed, parseable, SHA-pinned, topology-matched, and non-authoritative before packet generation |
 | `ModelAdapterReport` in `model_adapter_report.json` | Intake candidate surface | Intake -> Human reviewer / Orchestrator review path | Dry-run adapter guard proving prompt hashes, zero provider calls, zero model/tool budget, typed JSON requirement, tool denylist, no network/external writes, independent critic, human gates, and deterministic baseline authority |
+| `FixtureGoldSpec` and `FixtureGoldReport` in `fixture_gold_report.json` | Intake candidate/eval surface | Intake -> Human reviewer / Orchestrator review path | Optional reviewed synthetic gold gate for source coverage, top-three matter recall, role candidates, deadline candidates, missing information, dry-run exception labels, conflict/budget boundaries, safety status, blockers, and no external writes; local eval evidence only, not canon |
 | `IngestionResult` in `ingestion_result.json` | Intake candidate surface | Intake -> Human reviewer / Orchestrator review path | Python reference artifact and future Rust parity oracle for source inventory, coverage summary, structural segments, and segment-level evidence refs; does not classify legal meaning |
 | `IngestionVolumeProfile` in `ingestion_volume_profile.json` | Intake candidate surface | Intake -> Human reviewer / Orchestrator review path | Deterministic scale profile for source count, character volume, segment count, source/segment type counts, and local profiling thresholds; may require profiling before a Rust adapter proposal but keeps `rust_replacement_allowed=false` |
 | `RustIngestionReadinessReport` in `rust_ingestion_readiness_report.json` | Intake candidate surface | Intake -> Human reviewer / Orchestrator review path | Deterministic proof that the current Python ingestion artifact has a locked adapter boundary, recomputable source hashes, bounded segment offsets, matching segment evidence refs, and no legal decision scope; keeps `rust_replacement_allowed=false` |

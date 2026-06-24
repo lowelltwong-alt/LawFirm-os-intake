@@ -28,6 +28,8 @@ Segmentation, hashing, context precedence, calculations, state transitions, and 
 
 Grade emitted packets and terminal state rather than requiring an exact internal trajectory.
 
+The CLI supports `--fixture-gold` for reviewed synthetic gold. It writes `fixture_gold_report.json` and fails closed on drift in expected source coverage, top-three matter recall, role candidates, deadline candidates, missing information, dry-run exception labels, conflict/budget boundaries, safety status, final blockers, or external-write boundaries.
+
 ### Counterfactual evals
 
 Same source, different practice context. Evidence must remain unchanged.
@@ -64,6 +66,7 @@ Measure review time, correction count, unknown selection, evidence-navigation bu
 - label corpus/profile/template baseline changes;
 - inspect traces and artifacts, not scores alone;
 - retain reviewer disagreement rather than forcing false gold.
+- keep `fixture_gold_report.json` local and non-authoritative; it is evaluation evidence, not canonical platform truth.
 
 ## Graduation gates
 

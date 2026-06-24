@@ -39,6 +39,8 @@ The run writes `contract_state_report.json` and fails closed if the contract sta
 
 The run also writes `model_adapter_report.json` for the selected adapter. `structured-model` is currently dry-run only: zero provider calls, zero external tools, no network or external writes, typed JSON-only requirements, prompt hashes, deterministic baseline authority, independent critic, and human gates.
 
+When `--fixture-gold` is supplied, the run writes `fixture_gold_report.json` and fails closed if reviewed synthetic expectations drift. The gold report is local evaluation evidence, not canonical authority.
+
 ### 2. Receive and gate
 
 Validate data origin, scope, and source bundle. The starter stops on non-synthetic content.
