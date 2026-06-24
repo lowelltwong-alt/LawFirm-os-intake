@@ -99,6 +99,18 @@
       "default": null,
       "title": "Contract State Report Ref"
     },
+    "data_scope_gate_report_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Data Scope Gate Report Ref"
+    },
     "budget_precondition_report_ref": {
       "anyOf": [
         {

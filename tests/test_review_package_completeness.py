@@ -243,6 +243,30 @@ def test_review_package_completeness_fails_on_incorrect_human_gate_status(tmp_pa
         enforce_review_package_completeness(report)
 
 
+def test_review_package_completeness_fails_on_data_scope_gate_drift(tmp_path, repo_root):
+    budget_dir = _run_budget(tmp_path, repo_root)
+    manifest, safety_report, exception_readiness_report, review_path = _load_inputs(budget_dir)
+    gate_path = Path(manifest.artifact_refs["data_scope_gate_report"])
+    gate_report = load_json(gate_path)
+    gate_report["raw_payload_written"] = True
+    gate_path.write_text(json.dumps(gate_report, indent=2) + "\n", encoding="utf-8")
+
+    report = build_review_package_completeness_report(
+        manifest=manifest,
+        review_package_path=review_path,
+        safety_report=safety_report,
+        exception_readiness_report=exception_readiness_report,
+    )
+
+    assert report.status == "failed"
+    assert any(
+        check.check_id == "data_scope_gate_report_complete" and check.status == "failed"
+        for check in report.checks
+    )
+    with pytest.raises(ValueError, match="data_scope_gate_report_complete"):
+        enforce_review_package_completeness(report)
+
+
 def test_review_package_completeness_fails_on_deadline_docketing_guard_drift(tmp_path, repo_root):
     budget_dir = _run_budget(tmp_path, repo_root)
     manifest, safety_report, exception_readiness_report, review_path = _load_inputs(budget_dir)

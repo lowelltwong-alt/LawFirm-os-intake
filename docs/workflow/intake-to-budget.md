@@ -45,6 +45,10 @@ When `--fixture-gold` is supplied, the run writes `fixture_gold_report.json` and
 
 Validate data origin, scope, and source bundle. The starter stops on non-synthetic content.
 
+The run writes `data_scope_gate_report.json` before writing `raw_input.json` or producing derived ingestion artifacts. The report proves `synthetic_only` runtime mode, `synthetic` data origin, no real client data, no real matter data, no privileged data, no public-data direct ingestion, no external writes, and `raw_payload_written=false` at the gate.
+
+If the report is blocked, the run records a blocked `data_origin_gate` ledger event, keeps `raw_input.json` absent, and stops before source inventory, segmentation, candidate extraction, review-form generation, or Exception Lake candidates.
+
 ### 3. Inventory
 
 List every source and whether it was read, unread, missing, duplicated, or unreadable. Source coverage is part of the review packet.
@@ -113,13 +117,13 @@ The starter always remains blocked pending conflicts, engagement, matter-opening
 
 ### 16. Safety gate report
 
-The deterministic safety gate verifies that the contract-state report, deadline docketing guard, and budget submission guard are carried forward and that the final package contains no conflict clearance, engagement decision, docketed deadline, billing or submission state, external write, matter opening, iManage workspace creation, or client/carrier submission authorization.
+The deterministic safety gate verifies that the data-scope gate report, contract-state report, deadline docketing guard, and budget submission guard are carried forward and that the final package contains no conflict clearance, engagement decision, docketed deadline, billing or submission state, external write, matter opening, iManage workspace creation, or client/carrier submission authorization.
 
 It also verifies that normalized conflict-search terms, budget lines, budget support items, proposal-level assumptions, exclusions, unknowns, readiness blockers, and prohibited-action guardrails remain evidence-bound or structured-ref-supported. A failed check blocks final package acceptance.
 
 ### 17. Review package completeness report
 
-After the safety gate and review package are written, the workflow emits `review_package_completeness_report.json`. This deterministic report checks that the manifest includes all required local artifacts, those files exist, the markdown package has the expected review sections and boundary text, required human gates, human-gate status, deadline docketing guard status, budget submission guard status, final blockers, and structured blocker details are preserved, Exception Lake readiness remains dry-run and passed, run ledgers are linked, and the package still proves no conflict clearance, engagement decision, matter opening, docketing, billing, external write, or budget submission.
+After the safety gate and review package are written, the workflow emits `review_package_completeness_report.json`. This deterministic report checks that the manifest includes all required local artifacts, those files exist, the markdown package has the expected review sections and boundary text, required human gates, data-scope gate status, human-gate status, deadline docketing guard status, budget submission guard status, final blockers, and structured blocker details are preserved, Exception Lake readiness remains dry-run and passed, run ledgers are linked, and the package still proves no conflict clearance, engagement decision, matter opening, docketing, billing, external write, or budget submission.
 
 A failed completeness check blocks final package acceptance.
 

@@ -28,6 +28,7 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     ingestion_result = load_json(preflight_dir / "ingestion_result.json")
     ingestion_volume = load_json(preflight_dir / "ingestion_volume_profile.json")
     contract_state = load_json(preflight_dir / "contract_state_report.json")
+    data_scope_gate = load_json(preflight_dir / "data_scope_gate_report.json")
     model_adapter = load_json(preflight_dir / "model_adapter_report.json")
     deadline_guard = load_json(preflight_dir / "deadline_docketing_guard_report.json")
     preflight_exceptions = load_jsonl(preflight_dir / "exception_lake_candidates.jsonl")
@@ -72,10 +73,17 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     assert "python_reference_golden_parity" in ingestion_volume["required_rust_transition_gates"]
     assert len(ingestion_result["segment_evidence_refs"]) == len(ingestion_result["segments"])
     assert packet["contract_state_report_ref"].endswith("contract_state_report.json")
+    assert packet["data_scope_gate_report_ref"].endswith("data_scope_gate_report.json")
     assert packet["deadline_docketing_guard_report_ref"].endswith(
         "deadline_docketing_guard_report.json"
     )
     assert contract_state["status"] == "passed"
+    assert data_scope_gate["status"] == "passed"
+    assert data_scope_gate["runtime_mode"] == "synthetic_only"
+    assert data_scope_gate["data_origin"] == "synthetic"
+    assert data_scope_gate["contains_real_client_data"] is False
+    assert data_scope_gate["raw_payload_written"] is False
+    assert data_scope_gate["external_writes_performed"] is False
     assert deadline_guard["status"] == "passed"
     assert deadline_guard["docketing_action_performed"] is False
     assert deadline_guard["docketing_action_allowed"] is False
@@ -174,6 +182,9 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     )
     assert manifest["artifact_refs"]["human_review_outcome"].endswith(".json")
     assert manifest["artifact_refs"]["safety_gate_report"].endswith("safety_gate_report.json")
+    assert manifest["artifact_refs"]["data_scope_gate_report"].endswith(
+        "data_scope_gate_report.json"
+    )
     assert manifest["artifact_refs"]["review_package_completeness_report"].endswith(
         "review_package_completeness_report.json"
     )
@@ -218,6 +229,9 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     assert "budget_submission_guard_report_complete" in {
         check["check_id"] for check in completeness["checks"]
     }
+    assert "data_scope_gate_report_complete" in {
+        check["check_id"] for check in completeness["checks"]
+    }
     assert manifest["artifact_refs"]["budget_exception_lake_readiness_report"].endswith(
         "exception_lake_readiness_report.json"
     )
@@ -240,6 +254,7 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
         for ref in manifest["run_ledger_integrity_report_refs"]
     )
     assert manifest["contract_state_report_ref"].endswith("contract_state_report.json")
+    assert manifest["data_scope_gate_report_ref"].endswith("data_scope_gate_report.json")
 
     for phrase in [
         "## Authority And Preconditions",
@@ -247,6 +262,11 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
         "Contract state status: passed",
         "Lock status: reviewed_seed_lock",
         "LawFirm-os-semantic-substrate",
+        "### Data Scope Gate",
+        "Data scope gate status: passed",
+        "Runtime mode: synthetic_only",
+        "Data origin: synthetic",
+        "Raw payload written before gate: False",
         "### Model Adapter Boundary",
         "Model adapter status: passed",
         "Provider call performed: False",

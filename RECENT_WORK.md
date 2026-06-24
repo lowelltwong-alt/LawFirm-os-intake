@@ -244,3 +244,10 @@
 - Added `docs/claude-for-legal-lessons.md` so the AI/front-door reading order no longer points to a missing local policy file.
 - Updated `AI_TABLE_OF_CONTENTS.md` to point completion readers at `BUILD_VERIFICATION.md` instead of the absent `VALIDATION_REPORT.md`.
 - Hardened `scripts/validate_repo.py` and added tests so README, AI work start, AI table-of-contents, and Claude front-door file refs fail validation if they point to missing local files or directories.
+
+## Data-scope gate report slice - 2026-06-24
+
+- Added `data_scope_gate_report.json` so preflight proves synthetic-only data scope before `raw_input.json` or derived ingestion artifacts are written.
+- The gate fails closed on non-synthetic origin, real client or matter data flags, privileged data flags, public direct-ingestion posture, raw-payload-before-gate drift, or external writes.
+- Carried the report into the final review package, manifest, safety gate, package completeness report, starter audit, schema export, focused tests, north-star tests, and smoke coverage.
+- Kept the future Rust path subordinate to the same gate: Python remains the reference runtime, and any future Rust ingestion worker must run only after a passing data-scope report and prove parity before replacement.

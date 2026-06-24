@@ -17,6 +17,8 @@ Rust may be proposed only for this hot path:
 - segment-level `EvidenceRef` emission;
 - schema-compatible `IngestionResult` JSON serialization.
 
+Rust may run only after the same `DataScopeGateReport` has passed. It must never write raw payload before the data-scope gate, relax synthetic-only checks, or become a separate data-origin authority.
+
 Rust must not own:
 
 - legal classification;
@@ -35,6 +37,7 @@ Rust must not own:
 
 Each preflight run writes three Rust-related artifacts:
 
+- `data_scope_gate_report.json`: the upstream synthetic-only gate that must pass before any ingestion worker runs;
 - `ingestion_result.json`: the Python parity oracle under `rust_ready_ingestion_v0_1`;
 - `ingestion_volume_profile.json`: deterministic source and segment scale signals;
 - `rust_ingestion_readiness_report.json`: proof that the run is a valid future parity target.
@@ -81,6 +84,7 @@ Crossing a local volume threshold means profiling is required before a Rust prop
 A future Rust PR should include:
 
 - a separate adapter behind the existing worker/runtime interface;
+- proof that it only runs after a passing `DataScopeGateReport`;
 - no production connectors and no external writes;
 - golden parity tests against `ingestion_result.json`;
 - hidden or holdout parity fixtures;

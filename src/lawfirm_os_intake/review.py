@@ -9,6 +9,7 @@ from .models import (
     BudgetSubmissionGuardReport,
     ConflictSeedPacket,
     ContractStateReport,
+    DataScopeGateReport,
     DeadlineDocketingGuardReport,
     EvidenceGraph,
     ExceptionLakeHandoffManifest,
@@ -292,6 +293,27 @@ def _contract_state_lines(report: ContractStateReport | None) -> list[str]:
             f"topology_matches_lock={dependency.topology_matches_lock}"
         )
     lines.append("- Contract checks:")
+    lines.extend(f"- {check.status}: {check.check_id} - {check.message}" for check in report.checks)
+    return lines
+
+
+def _data_scope_gate_lines(report: DataScopeGateReport | None) -> list[str]:
+    if report is None:
+        return ["- Data scope gate report: unavailable"]
+    lines = [
+        f"- Data scope gate status: {report.status}",
+        f"- Data scope blocked state: {report.blocked_state or 'none'}",
+        f"- Runtime mode: {report.runtime_mode}",
+        f"- Data origin: {report.data_origin}",
+        f"- Contains real client data: {report.contains_real_client_data}",
+        f"- Contains real matter data: {report.contains_real_matter_data}",
+        f"- Contains privileged data: {report.contains_privileged_data}",
+        f"- Public data direct ingestion allowed: {report.public_data_direct_ingestion_allowed}",
+        f"- Raw payload written before gate: {report.raw_payload_written}",
+        f"- Data scope external writes performed: {report.external_writes_performed}",
+        f"- Data scope policy refs: {', '.join(report.policy_refs)}",
+        "- Data scope checks:",
+    ]
     lines.extend(f"- {check.status}: {check.check_id} - {check.message}" for check in report.checks)
     return lines
 
@@ -827,6 +849,7 @@ def render_matter_opening_review_package(
     exception_readiness_report: ExceptionLakeReadinessReport | None = None,
     exception_handoff_manifest: ExceptionLakeHandoffManifest | None = None,
     contract_state_report: ContractStateReport | None = None,
+    data_scope_gate_report: DataScopeGateReport | None = None,
     model_adapter_report: ModelAdapterReport | None = None,
     human_review_outcome: HumanReviewOutcomeRecord | None = None,
     human_gate_status_report: HumanGateStatusReport | None = None,
@@ -872,6 +895,9 @@ def render_matter_opening_review_package(
             "",
             "### Contract State",
             *_contract_state_lines(contract_state_report),
+            "",
+            "### Data Scope Gate",
+            *_data_scope_gate_lines(data_scope_gate_report),
             "",
             "### Model Adapter Boundary",
             *_model_adapter_lines(model_adapter_report),

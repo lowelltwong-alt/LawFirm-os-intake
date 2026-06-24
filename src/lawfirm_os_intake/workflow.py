@@ -12,6 +12,7 @@ from .budget_submission_guard import (
 from .confirmation import build_human_review_outcome_record
 from .contract_state import build_contract_state_report, enforce_contract_state
 from .context import build_effective_context, load_profile
+from .data_scope import build_data_scope_gate_report, enforce_data_scope_gate_report
 from .deadline_guard import (
     build_deadline_docketing_guard_report,
     enforce_deadline_docketing_guard_report,
@@ -39,6 +40,7 @@ from .models import (
     ConflictSearchTerm,
     ConflictSeedPacket,
     ContractStateReport,
+    DataScopeGateReport,
     DeadlineDocketingGuardReport,
     EvidenceRef,
     ExceptionLakeCandidate,
@@ -116,16 +118,7 @@ BLOCKED_BUDGET_REQUIRED_LEDGER_STEPS = [
 
 
 def _gate_bundle(bundle: SourceBundle) -> None:
-    if bundle.data_origin != "synthetic":
-        raise ValueError(
-            "starter runtime is synthetic-only; public sources are planning/reference only"
-        )
-    if (
-        bundle.contains_real_client_data
-        or bundle.contains_real_matter_data
-        or bundle.contains_privileged_data
-    ):
-        raise ValueError("real client, matter, or privileged data is prohibited")
+    enforce_data_scope_gate_report(build_data_scope_gate_report("data_scope_gate_check", bundle))
 
 
 def _event(run_id: str, index: int, step: str, status: str, **kwargs: Any) -> RunEvent:
@@ -311,6 +304,7 @@ def run_preflight(
         ).model_dump(mode="json"),
     )
     contract_state_report_path = run_dir / "contract_state_report.json"
+    data_scope_gate_report_path = run_dir / "data_scope_gate_report.json"
     contract_state_report = build_contract_state_report(run_id)
     write_json(contract_state_report_path, contract_state_report.model_dump(mode="json"))
     append_jsonl(
@@ -326,11 +320,22 @@ def run_preflight(
     enforce_contract_state(contract_state_report)
 
     bundle = SourceBundle.model_validate(load_json(input_path))
-    _gate_bundle(bundle)
-    write_json(run_dir / "raw_input.json", bundle.model_dump(mode="json"))
+    data_scope_gate_report = build_data_scope_gate_report(run_id, bundle)
+    write_json(data_scope_gate_report_path, data_scope_gate_report.model_dump(mode="json"))
     append_jsonl(
-        ledger_path, _event(run_id, 3, "data_origin_gate", "completed").model_dump(mode="json")
+        ledger_path,
+        _event(
+            run_id,
+            3,
+            "data_origin_gate",
+            "completed" if data_scope_gate_report.status == "passed" else "blocked",
+            input_refs=[str(input_path)],
+            output_refs=[str(data_scope_gate_report_path)],
+            notes=data_scope_gate_report.blocked_state,
+        ).model_dump(mode="json"),
     )
+    enforce_data_scope_gate_report(data_scope_gate_report)
+    write_json(run_dir / "raw_input.json", bundle.model_dump(mode="json"))
 
     profile = load_profile(profile_path)
     context = build_effective_context(profile)
@@ -423,6 +428,7 @@ def run_preflight(
         evidence_graph_ref=str(run_dir / "evidence_graph.json"),
         run_ledger_ref=str(ledger_path),
         contract_state_report_ref=str(contract_state_report_path),
+        data_scope_gate_report_ref=str(data_scope_gate_report_path),
         model_adapter_report_ref=str(model_adapter_report_path),
         fixture_gold_report_ref=str(fixture_gold_report_path) if fixture_gold_report_path else None,
         exception_candidates_ref=str(exception_candidates_path),
@@ -487,6 +493,7 @@ def run_preflight(
                 str(review_form_path),
                 str(run_dir / "evidence_graph.json"),
                 str(contract_state_report_path),
+                str(data_scope_gate_report_path),
                 str(model_adapter_report_path),
                 str(exception_candidates_path),
                 str(ingestion_result_path),
@@ -855,6 +862,7 @@ def run_budget(
     preflight_dir = preflight_packet_path.parent
     artifact_refs = {
         "preflight_packet": str(preflight_packet_path),
+        "data_scope_gate_report": packet.data_scope_gate_report_ref or "",
         "preflight_source_inventory": str(preflight_dir / "source_inventory.json"),
         "preflight_segments": str(preflight_dir / "segments.json"),
         "preflight_ingestion_result": packet.ingestion_result_ref or "",
@@ -972,6 +980,11 @@ def run_budget(
     )
     contract_state_report = ContractStateReport.model_validate(
         load_json(packet.contract_state_report_ref)
+    )
+    data_scope_gate_report = (
+        DataScopeGateReport.model_validate(load_json(packet.data_scope_gate_report_ref))
+        if packet.data_scope_gate_report_ref
+        else None
     )
     model_adapter_report = (
         ModelAdapterReport.model_validate(load_json(packet.model_adapter_report_ref))
@@ -1091,6 +1104,7 @@ def run_budget(
             exception_readiness_report=exception_readiness_report,
             exception_handoff_manifest=exception_handoff_manifest,
             contract_state_report=contract_state_report,
+            data_scope_gate_report=data_scope_gate_report,
             model_adapter_report=model_adapter_report,
             human_review_outcome=human_review_outcome,
             human_gate_status_report=human_gate_status_report,
@@ -1123,6 +1137,7 @@ def run_budget(
         prohibited_actions=readiness.prohibited_actions,
         safety_gate_report_ref=str(safety_gate_report_path),
         contract_state_report_ref=packet.contract_state_report_ref,
+        data_scope_gate_report_ref=packet.data_scope_gate_report_ref,
         budget_precondition_report_ref=str(budget_precondition_report_path),
         evidence_graph_ref=str(run_dir / "evidence_graph.json"),
         run_ledger_refs=[packet.run_ledger_ref, str(ledger_path)],

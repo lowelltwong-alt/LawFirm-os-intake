@@ -268,6 +268,36 @@ class EffectiveContext(StrictModel):
     context_precedence: list[str]
 
 
+class DataScopeGateCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    policy_refs: list[str] = Field(default_factory=list)
+
+
+class DataScopeGateReport(StrictModel):
+    schema_version: str = "0.1"
+    data_scope_gate_report_id: str
+    run_id: str
+    bundle_id: str
+    status: Literal["passed", "blocked"]
+    blocked_state: str | None = None
+    runtime_mode: Literal["synthetic_only"] = "synthetic_only"
+    data_origin: str
+    allowed_data_origins: list[Literal["synthetic"]] = Field(default_factory=lambda: ["synthetic"])
+    contains_real_client_data: bool
+    contains_real_matter_data: bool
+    contains_privileged_data: bool
+    source_count: int = Field(ge=0)
+    raw_payload_written: Literal[False] = False
+    public_data_direct_ingestion_allowed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    non_authoritative: Literal[True] = True
+    policy_refs: list[str]
+    checks: list[DataScopeGateCheck]
+    generated_at: str
+
+
 class ContractStateDependency(StrictModel):
     repo: str
     remote: str | None = None
@@ -443,6 +473,7 @@ class IntakePreflightPacket(StrictModel):
     evidence_graph_ref: str
     run_ledger_ref: str
     contract_state_report_ref: str
+    data_scope_gate_report_ref: str | None = None
     model_adapter_report_ref: str | None = None
     fixture_gold_report_ref: str | None = None
     exception_candidates_ref: str | None = None
@@ -958,6 +989,7 @@ class ReviewPackageManifest(StrictModel):
     prohibited_actions: list[str]
     safety_gate_report_ref: str
     contract_state_report_ref: str | None = None
+    data_scope_gate_report_ref: str | None = None
     budget_precondition_report_ref: str | None = None
     evidence_graph_ref: str
     run_ledger_refs: list[str]

@@ -60,6 +60,7 @@ def test_budget_run_writes_passing_safety_gate_report(tmp_path, repo_root):
     assert precondition_report.status == "passed"
     assert all(check.status == "passed" for check in precondition_report.checks)
     assert "contract_state_report_carried_forward" in {check.check_id for check in report.checks}
+    assert "data_scope_gate_report_carried_forward" in {check.check_id for check in report.checks}
     assert manifest.safety_gate_report_ref == str(budget_dir / "safety_gate_report.json")
     assert manifest.artifact_refs["safety_gate_report"] == str(
         budget_dir / "safety_gate_report.json"

@@ -14,7 +14,7 @@ It is not a second orchestrator, a conflicts system, an engagement system, or a 
 ```text
 messy inbound source
 -> reviewed contract-state gate for sibling repo locks
--> data-origin and authorization gate
+-> data-scope gate report proving synthetic-only authorization before raw payload write
 -> source inventory
 -> provenance-preserving segmentation
 -> party and relationship-role candidates
@@ -71,8 +71,9 @@ The demo emits:
 .lawfirm-os-intake/demo/
 |-- human_confirmation.json
 |-- preflight/<run_id>/
-|   |-- raw_input.json
 |   |-- contract_state_report.json
+|   |-- data_scope_gate_report.json
+|   |-- raw_input.json
 |   |-- ingestion_result.json
 |   |-- ingestion_volume_profile.json
 |   |-- rust_ingestion_readiness_report.json
@@ -114,7 +115,7 @@ The consolidated `matter_opening_review_package.md` is the human-facing north-st
 
 The same package now renders authority/precondition checks, source inventory, human-gate status, exception readiness, dry-run handoff posture, candidate support details, evidence-graph summary, run-ledger summary, and run-ledger integrity status inline. Reviewers can see contract-state status, human-review outcome, budget precondition checks, completed and pending human gates, each source's read/missing/duplicate state, dry-run Exception Lake posture, the future Exception Lake runtime owner, the fact that no SQLite or external write occurred in intake, hashes, attachment refs, provenance graph counts and key support edges, and the preflight/budget gate trail before opening the JSON artifacts.
 
-The budget run also writes `review_package_completeness_report.json`. This deterministic report proves the final package includes required local artifact refs, required markdown sections, human gates, deadline docketing guard proof, budget submission guard proof, structured blocker details, safety-gate proof, dry-run Exception Lake readiness, run ledgers, run-ledger integrity reports, and non-authorization flags before the package is accepted.
+The budget run also writes `review_package_completeness_report.json`. This deterministic report proves the final package includes required local artifact refs, required markdown sections, human gates, data-scope gate proof, deadline docketing guard proof, budget submission guard proof, structured blocker details, safety-gate proof, dry-run Exception Lake readiness, run ledgers, run-ledger integrity reports, and non-authorization flags before the package is accepted.
 
 The completeness report also checks that the linked intake and budget review forms preserve their required human-review sections, evidence-hash visibility where source-bound evidence exists, and non-authorization boundary text, so those standalone forms cannot silently lose source coverage, outcome handling, budget lines, support items, or submission-boundary content while the consolidated package still passes.
 
@@ -164,6 +165,12 @@ Every preflight run emits `contract_state_report.json` before it accepts the sou
 
 If that local authority state is missing or stale, the run fails closed before source inventory or classification. The report is carried forward into the budget manifest and final safety gate.
 
+## Data scope gate
+
+Every preflight run emits `data_scope_gate_report.json` before `raw_input.json` is written. The report proves the starter is in `synthetic_only` runtime mode, the bundle origin is `synthetic`, real client data, real matter data, and privileged data flags are false, public-data direct ingestion is not allowed, no external write occurred, and the raw payload has not been stored before the gate.
+
+If the data scope gate fails, the run writes only the blocked gate report and ledger event, then stops before raw input storage, source inventory, ingestion, segmentation, candidate extraction, or review packet output. The passing report is carried into the final package manifest, safety gate, review package, and completeness report.
+
 ## The carrier/client rule
 
 An insurance carrier may be the sender, instructing source, payer, or source of guidelines. That does not automatically establish that the carrier is the represented client. The workflow keeps these roles separate:
@@ -201,11 +208,11 @@ Every budget run emits `budget_precondition_report.json`. If confirmation is mis
 
 ## Safety gate
 
-The final budget run emits `safety_gate_report.json`. This deterministic report checks that the output remains synthetic-only, contract-state-bound, human-confirmed, conflict-search-only, not submittable, blocked from engagement and matter opening, carries forward the deadline docketing and budget submission guards, is not docketed, not billed, and local-file-only.
+The final budget run emits `safety_gate_report.json`. This deterministic report checks that the output remains synthetic-only, data-scope-gated, contract-state-bound, human-confirmed, conflict-search-only, not submittable, blocked from engagement and matter opening, carries forward the deadline docketing and budget submission guards, is not docketed, not billed, and local-file-only.
 
 The same gate also verifies evidence completeness for normalized conflict-search terms, budget lines, budget support items, proposal-level assumptions, exclusions, unknowns, structured matter-opening blockers, and prohibited-action guardrails. A failed check raises before the final review package is accepted.
 
-After the safety gate passes, `review_package_completeness_report.json` verifies package assembly itself. It fails closed if the manifest omits required artifacts, linked files are missing, review sections disappear, human gates, deadline docketing guard proof, budget submission guard proof, or structured blocker details are absent, or the boundary flags no longer prove no conflict clearance, no budget submission, no raw payload, and no external writes.
+After the safety gate passes, `review_package_completeness_report.json` verifies package assembly itself. It fails closed if the manifest omits required artifacts, linked files are missing, review sections disappear, human gates, data-scope gate proof, deadline docketing guard proof, budget submission guard proof, or structured blocker details are absent, or the boundary flags no longer prove no conflict clearance, no budget submission, no raw payload, and no external writes.
 
 ## Agent architecture
 
@@ -231,7 +238,7 @@ No provider call is made, no raw payload is externalized, and the report is carr
 
 Python remains the starter reference implementation. If future document volume or constrained compute requires Rust, the only approved hot-path boundary is source inventory, segmentation, hashing, and evidence-ref emission. Any Rust adapter must prove parity with the Python reference for offsets, hashes, segment structure, prompt-injection flags, duplicate/missing-source states, and schema-compatible JSON before it can replace the Python path.
 
-Preparation now means keeping that boundary narrow, schema-first, measurable, and golden-testable. The current `ingestion_result.json` is the local parity oracle, `ingestion_volume_profile.json` records whether synthetic source/segment scale requires profiling before any Rust proposal, what compute pressure signals are present, which benchmark dimensions must be captured, and which deterministic hot-path functions Rust may cover. `rust_ingestion_readiness_report.json` records the checks a future adapter must satisfy before comparison even begins. A Rust adapter may not replace the Python path unless profiling justifies it, transition gates are reviewed, and it produces schema-compatible inventory, segments, coverage summary, and segment evidence refs that match the Python reference on synthetic fixtures and holdouts. See `docs/rust-ingestion-transition-plan.md` for the gate sequence. It does not mean adding a second runtime before profiling proves ingestion is the bottleneck.
+Preparation now means keeping that boundary narrow, schema-first, measurable, and golden-testable. The current `data_scope_gate_report.json` proves a source bundle is authorized before any ingestion worker, Python or future Rust, stores raw input or emits derived artifacts. The current `ingestion_result.json` is the local parity oracle, `ingestion_volume_profile.json` records whether synthetic source/segment scale requires profiling before any Rust proposal, what compute pressure signals are present, which benchmark dimensions must be captured, and which deterministic hot-path functions Rust may cover. `rust_ingestion_readiness_report.json` records the checks a future adapter must satisfy before comparison even begins. A Rust adapter may not replace the Python path unless profiling justifies it, transition gates are reviewed, and it produces schema-compatible inventory, segments, coverage summary, and segment evidence refs that match the Python reference on synthetic fixtures and holdouts. See `docs/rust-ingestion-transition-plan.md` for the gate sequence. It does not mean adding a second runtime before profiling proves ingestion is the bottleneck.
 
 ## Current boundaries
 

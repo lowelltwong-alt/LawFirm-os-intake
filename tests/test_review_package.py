@@ -43,6 +43,7 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     manifest = ReviewPackageManifest.model_validate(load_json(manifest_path))
     completeness = ReviewPackageCompletenessReport.model_validate(load_json(completeness_path))
     human_gate_status = load_json(budget_dir / "human_gate_status_report.json")
+    data_scope_gate = load_json(Path(manifest.artifact_refs["data_scope_gate_report"]))
     deadline_guard = load_json(
         Path(manifest.artifact_refs["preflight_deadline_docketing_guard_report"])
     )
@@ -58,6 +59,11 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert "Contract state status: passed" in review_text
     assert "Lock status: reviewed_seed_lock" in review_text
     assert "LawFirm-os-semantic-substrate" in review_text
+    assert "### Data Scope Gate" in review_text
+    assert "Data scope gate status: passed" in review_text
+    assert "Runtime mode: synthetic_only" in review_text
+    assert "Data origin: synthetic" in review_text
+    assert "Raw payload written before gate: False" in review_text
     assert "### Model Adapter Boundary" in review_text
     assert "Model adapter status: passed" in review_text
     assert "Provider call performed: False" in review_text
@@ -226,10 +232,16 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert budget_submission_guard["billing_handoff_performed"] is False
     assert budget_submission_guard["required_human_gate"] == "human_budget_review"
     assert manifest.contract_state_report_ref == packet.contract_state_report_ref
+    assert manifest.data_scope_gate_report_ref == packet.data_scope_gate_report_ref
     assert manifest.budget_precondition_report_ref == str(
         budget_dir / "budget_precondition_report.json"
     )
     assert manifest.artifact_refs["contract_state_report"] == packet.contract_state_report_ref
+    assert manifest.artifact_refs["data_scope_gate_report"] == packet.data_scope_gate_report_ref
+    assert data_scope_gate["status"] == "passed"
+    assert data_scope_gate["data_origin"] == "synthetic"
+    assert data_scope_gate["raw_payload_written"] is False
+    assert data_scope_gate["external_writes_performed"] is False
     assert manifest.artifact_refs["preflight_source_inventory"].endswith("source_inventory.json")
     assert manifest.artifact_refs["preflight_segments"].endswith("segments.json")
     assert manifest.artifact_refs["preflight_ingestion_result"].endswith("ingestion_result.json")
@@ -291,6 +303,7 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert completeness.review_package_manifest_ref == str(manifest_path)
     assert "## Authority And Preconditions" in completeness.required_sections
     assert "### Contract State" in completeness.required_sections
+    assert "### Data Scope Gate" in completeness.required_sections
     assert "### Model Adapter Boundary" in completeness.required_sections
     assert "### Human Review Outcome" in completeness.required_sections
     assert "### Budget Preconditions" in completeness.required_sections
@@ -304,8 +317,10 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert "## Evidence Graph Summary" in completeness.required_sections
     assert "## Run Ledger Summary" in completeness.required_sections
     assert "review_package_completeness_report" in completeness.required_artifact_keys
+    assert "data_scope_gate_report" in completeness.required_artifact_keys
     assert "preflight_deadline_docketing_guard_report" in completeness.required_artifact_keys
     assert "budget_submission_guard_report" in completeness.required_artifact_keys
+    assert "data_scope_gate_report_complete" in {check.check_id for check in completeness.checks}
     assert "deadline_docketing_guard_report_complete" in {
         check.check_id for check in completeness.checks
     }

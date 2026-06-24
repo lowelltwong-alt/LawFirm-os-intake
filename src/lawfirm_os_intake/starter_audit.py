@@ -10,6 +10,7 @@ from .models import (
     BudgetSubmissionGuardReport,
     ConflictSeedPacket,
     ContractStateReport,
+    DataScopeGateReport,
     DeadlineDocketingGuardReport,
     EvidenceGraph,
     ExceptionLakeHandoffManifest,
@@ -48,6 +49,7 @@ REQUIRED_ROOT_FILES = [
 REQUIRED_PREFLIGHT_ARTIFACTS = {
     "raw_input": "raw_input.json",
     "contract_state_report": "contract_state_report.json",
+    "data_scope_gate_report": "data_scope_gate_report.json",
     "model_adapter_report": "model_adapter_report.json",
     "ingestion_result": "ingestion_result.json",
     "ingestion_volume_profile": "ingestion_volume_profile.json",
@@ -531,6 +533,7 @@ def build_starter_release_audit_report(
         else None
     )
     contract_state = _model_or_none(ContractStateReport, paths["contract_state_report"])
+    data_scope_gate = _model_or_none(DataScopeGateReport, paths["data_scope_gate_report"])
     model_adapter = _model_or_none(ModelAdapterReport, paths["model_adapter_report"])
     ingestion_result = _model_or_none(IngestionResult, paths["ingestion_result"])
     ingestion_volume = _model_or_none(IngestionVolumeProfile, paths["ingestion_volume_profile"])
@@ -647,6 +650,15 @@ def build_starter_release_audit_report(
             bool(
                 packet
                 and packet.data_origin == "synthetic"
+                and packet.data_scope_gate_report_ref == str(paths["data_scope_gate_report"])
+                and data_scope_gate
+                and data_scope_gate.status == "passed"
+                and data_scope_gate.data_origin == "synthetic"
+                and data_scope_gate.contains_real_client_data is False
+                and data_scope_gate.contains_real_matter_data is False
+                and data_scope_gate.contains_privileged_data is False
+                and data_scope_gate.raw_payload_written is False
+                and data_scope_gate.external_writes_performed is False
                 and isinstance(raw_input, dict)
                 and raw_input.get("data_origin") == "synthetic"
                 and raw_input.get("contains_real_client_data") is False
@@ -655,7 +667,9 @@ def build_starter_release_audit_report(
             ),
             "Runtime input and packet remain synthetic-only with no real or privileged data flags.",
             requirement_refs=["DoD-16", "DoD-17", "Safety-real-data-zero"],
-            artifact_refs=_artifact_refs(paths, ["raw_input", "preflight_packet"]),
+            artifact_refs=_artifact_refs(
+                paths, ["data_scope_gate_report", "raw_input", "preflight_packet"]
+            ),
         ),
         _check(
             "contract_and_adapter_gates_passed",

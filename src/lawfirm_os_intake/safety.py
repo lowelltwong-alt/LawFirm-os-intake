@@ -150,6 +150,13 @@ def build_safety_gate_report(
             [artifact_refs["preflight_packet"]],
         ),
         _check(
+            "data_scope_gate_report_carried_forward",
+            bool(packet.data_scope_gate_report_ref)
+            and artifact_refs.get("data_scope_gate_report") == packet.data_scope_gate_report_ref,
+            "Data-scope gate report is carried forward into the final package.",
+            [artifact_refs.get("data_scope_gate_report", packet.data_scope_gate_report_ref or "")],
+        ),
+        _check(
             "contract_state_report_carried_forward",
             bool(packet.contract_state_report_ref)
             and artifact_refs.get("contract_state_report") == packet.contract_state_report_ref,

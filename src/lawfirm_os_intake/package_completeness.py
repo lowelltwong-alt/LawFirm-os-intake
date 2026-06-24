@@ -16,6 +16,7 @@ REQUIRED_REVIEW_SECTIONS = [
     "# Matter Opening Review Package",
     "## Authority And Preconditions",
     "### Contract State",
+    "### Data Scope Gate",
     "### Model Adapter Boundary",
     "### Human Review Outcome",
     "### Budget Preconditions",
@@ -88,6 +89,7 @@ SOURCE_BOUND_EVIDENCE_REF_KEYS = {
 
 REQUIRED_ARTIFACT_KEYS = [
     "preflight_packet",
+    "data_scope_gate_report",
     "preflight_source_inventory",
     "preflight_segments",
     "preflight_ingestion_result",
@@ -261,6 +263,7 @@ def build_review_package_completeness_report(
         Path(artifact_refs.get("budget_exception_lake_handoff_manifest", ""))
     )
     preflight_packet = _read_json(Path(artifact_refs.get("preflight_packet", "")))
+    data_scope_gate_report = _read_json(Path(artifact_refs.get("data_scope_gate_report", "")))
     matter_opening_readiness = _read_json(Path(artifact_refs.get("matter_opening_readiness", "")))
     human_gate_status_report = _read_json(Path(artifact_refs.get("human_gate_status_report", "")))
     budget_submission_guard_report = _read_json(
@@ -327,6 +330,25 @@ def build_review_package_completeness_report(
         )
         and all(gate_id in review_text for gate_id in REQUIRED_HUMAN_GATES)
         and "Human gate status report:" in review_text
+    )
+    data_scope_gate_report_complete = (
+        isinstance(data_scope_gate_report, dict)
+        and data_scope_gate_report.get("status") == "passed"
+        and data_scope_gate_report.get("runtime_mode") == "synthetic_only"
+        and data_scope_gate_report.get("data_origin") == "synthetic"
+        and data_scope_gate_report.get("contains_real_client_data") is False
+        and data_scope_gate_report.get("contains_real_matter_data") is False
+        and data_scope_gate_report.get("contains_privileged_data") is False
+        and data_scope_gate_report.get("raw_payload_written") is False
+        and data_scope_gate_report.get("public_data_direct_ingestion_allowed") is False
+        and data_scope_gate_report.get("external_writes_performed") is False
+        and data_scope_gate_report.get("non_authoritative") is True
+        and artifact_refs.get("data_scope_gate_report") == manifest.data_scope_gate_report_ref
+        and "Data scope gate status: passed" in review_text
+        and "Runtime mode: synthetic_only" in review_text
+        and "Data origin: synthetic" in review_text
+        and "Contains real client data: False" in review_text
+        and "Raw payload written before gate: False" in review_text
     )
     budget_submission_guard_checks = (
         budget_submission_guard_report.get("checks")
@@ -577,6 +599,27 @@ def build_review_package_completeness_report(
             {
                 "gate_ids": sorted(human_gate_ids),
                 "gate_statuses": human_gate_statuses,
+            },
+        ),
+        _check(
+            "data_scope_gate_report_complete",
+            bool(data_scope_gate_report_complete),
+            "Data-scope gate report proves synthetic-only scope and no raw payload write before the gate.",
+            [
+                artifact_refs.get("data_scope_gate_report", ""),
+                str(review_package_path),
+            ],
+            {
+                "status": (
+                    data_scope_gate_report.get("status")
+                    if isinstance(data_scope_gate_report, dict)
+                    else None
+                ),
+                "data_origin": (
+                    data_scope_gate_report.get("data_origin")
+                    if isinstance(data_scope_gate_report, dict)
+                    else None
+                ),
             },
         ),
         _check(

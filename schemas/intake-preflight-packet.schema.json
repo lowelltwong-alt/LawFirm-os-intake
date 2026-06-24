@@ -808,6 +808,18 @@
       "title": "Contract State Report Ref",
       "type": "string"
     },
+    "data_scope_gate_report_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Data Scope Gate Report Ref"
+    },
     "model_adapter_report_ref": {
       "anyOf": [
         {
