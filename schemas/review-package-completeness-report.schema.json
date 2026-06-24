@@ -1,0 +1,124 @@
+{
+  "$defs": {
+    "ReviewPackageCompletenessCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "artifact_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Artifact Refs",
+          "type": "array"
+        },
+        "details": {
+          "additionalProperties": true,
+          "title": "Details",
+          "type": "object"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "ReviewPackageCompletenessCheck",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "review_package_completeness_report_id": {
+      "title": "Review Package Completeness Report Id",
+      "type": "string"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "preflight_packet_id": {
+      "title": "Preflight Packet Id",
+      "type": "string"
+    },
+    "review_package_id": {
+      "title": "Review Package Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "passed",
+        "failed"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "human_readable_review_ref": {
+      "title": "Human Readable Review Ref",
+      "type": "string"
+    },
+    "review_package_manifest_ref": {
+      "title": "Review Package Manifest Ref",
+      "type": "string"
+    },
+    "required_sections": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Sections",
+      "type": "array"
+    },
+    "required_artifact_keys": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Artifact Keys",
+      "type": "array"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/ReviewPackageCompletenessCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "review_package_completeness_report_id",
+    "run_id",
+    "preflight_packet_id",
+    "review_package_id",
+    "status",
+    "human_readable_review_ref",
+    "review_package_manifest_ref",
+    "required_sections",
+    "required_artifact_keys",
+    "checks",
+    "generated_at"
+  ],
+  "title": "ReviewPackageCompletenessReport",
+  "type": "object"
+}

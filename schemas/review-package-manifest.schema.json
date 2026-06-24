@@ -129,6 +129,18 @@
       "default": null,
       "title": "Exception Lake Readiness Report Ref"
     },
+    "review_package_completeness_report_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Review Package Completeness Report Ref"
+    },
     "no_conflict_conclusion": {
       "const": true,
       "default": true,

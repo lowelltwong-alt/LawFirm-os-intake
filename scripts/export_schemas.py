@@ -23,6 +23,7 @@ from lawfirm_os_intake.models import (  # noqa: E402
     IngestionResult,
     IntakePreflightPacket,
     PartyCandidate,
+    ReviewPackageCompletenessReport,
     ReviewPackageManifest,
     RunEvent,
     RustIngestionReadinessReport,
@@ -52,6 +53,7 @@ MODELS = {
     "exception-lake-candidate.schema.json": ExceptionLakeCandidate,
     "exception-lake-readiness-report.schema.json": ExceptionLakeReadinessReport,
     "review-package-manifest.schema.json": ReviewPackageManifest,
+    "review-package-completeness-report.schema.json": ReviewPackageCompletenessReport,
     "safety-gate-report.schema.json": SafetyGateReport,
 }
 

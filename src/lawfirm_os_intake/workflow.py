@@ -31,6 +31,10 @@ from .models import (
     RunEvent,
     SourceBundle,
 )
+from .package_completeness import (
+    build_review_package_completeness_report,
+    enforce_review_package_completeness,
+)
 from .preconditions import build_budget_precondition_report, enforce_budget_preconditions
 from .review import (
     render_budget_review_form,
@@ -563,8 +567,17 @@ def run_budget(
     manifest_path = run_dir / "review_package_manifest.json"
     safety_gate_report_path = run_dir / "safety_gate_report.json"
     exception_readiness_report_path = run_dir / "exception_lake_readiness_report.json"
+    completeness_report_path = run_dir / "review_package_completeness_report.json"
+    preflight_dir = preflight_packet_path.parent
     artifact_refs = {
         "preflight_packet": str(preflight_packet_path),
+        "preflight_source_inventory": str(preflight_dir / "source_inventory.json"),
+        "preflight_segments": str(preflight_dir / "segments.json"),
+        "preflight_ingestion_result": packet.ingestion_result_ref or "",
+        "preflight_rust_ingestion_readiness_report": (
+            packet.rust_ingestion_readiness_report_ref or ""
+        ),
+        "preflight_intake_review_form": packet.intake_review_form_ref or "",
         "human_confirmation": str(run_dir / "human_confirmation.json"),
         "conflict_search_seed": str(run_dir / "conflict_search_seed_packet.json"),
         "legal_budget_proposal": str(run_dir / "legal_budget_proposal.json"),
@@ -585,6 +598,9 @@ def run_budget(
         "contract_state_report": packet.contract_state_report_ref,
         "budget_precondition_report": str(budget_precondition_report_path),
         "safety_gate_report": str(safety_gate_report_path),
+        "matter_opening_review_package": str(review_package_path),
+        "review_package_manifest": str(manifest_path),
+        "review_package_completeness_report": str(completeness_report_path),
     }
     safety_report = build_safety_gate_report(
         packet,
@@ -651,8 +667,17 @@ def run_budget(
             ref for ref in [packet.exception_candidates_ref, str(exception_candidates_path)] if ref
         ],
         exception_lake_readiness_report_ref=str(exception_readiness_report_path),
+        review_package_completeness_report_ref=str(completeness_report_path),
     )
     write_json(manifest_path, manifest.model_dump(mode="json"))
+    completeness_report = build_review_package_completeness_report(
+        manifest=manifest,
+        review_package_path=review_package_path,
+        safety_report=safety_report,
+        exception_readiness_report=exception_readiness_report,
+    )
+    write_json(completeness_report_path, completeness_report.model_dump(mode="json"))
+    enforce_review_package_completeness(completeness_report)
     append_jsonl(
         ledger_path,
         _event(
@@ -687,7 +712,11 @@ def run_budget(
             5,
             "matter_opening_review_package_built",
             "completed",
-            output_refs=[str(review_package_path), str(manifest_path)],
+            output_refs=[
+                str(review_package_path),
+                str(manifest_path),
+                str(completeness_report_path),
+            ],
         ).model_dump(mode="json"),
     )
     return budget, run_dir

@@ -82,6 +82,7 @@ synthetic source bundle
 -> budget-blocker dry-run Exception Lake candidate
 -> deterministic safety gate report
 -> consolidated matter-opening review package and manifest
+-> deterministic review package completeness report for artifact, section, gate, blocker, and boundary checks
 -> blocked_pending_conflicts_and_engagement
 ```
 
@@ -105,6 +106,7 @@ The outer runtime owner is `LawFirm-os-orchestrator`. The local intake CLI is a 
 | `ExceptionLakeReadinessReport` in `exception_lake_readiness_report.json` | Intake candidate surface | Intake -> Human reviewer / Orchestrator review path | Deterministic proof that local exception candidates remain dry-run, raw-payload-free, promotion-required, target the Lake runtime repo, and cite known inventory refs, packet evidence refs, structured refs, or blocked states |
 | `EvidenceGraph` in `evidence_graph.json` | Intake candidate surface | Intake -> Human reviewer / Orchestrator review path | Links source, segment, candidate, human confirmation, review outcome, conflict-search term, budget line, budget support, structured-ref, and proposal nodes |
 | `ReviewPackageManifest` and `matter_opening_review_package.md` | Intake candidate surface | Intake -> Human reviewer / Orchestrator review path | One-run review surface linking contract state, knowns, unknowns, evidence refs, conflict seed, budget, exception candidates, blockers, ledgers, and prohibited actions |
+| `ReviewPackageCompletenessReport` in `review_package_completeness_report.json` | Intake candidate surface | Intake -> Human reviewer / Orchestrator review path | Deterministic proof that the final review package includes required artifact refs, review sections, human gates, final blockers, prohibited actions, safety-gate proof, dry-run Exception Lake readiness, run ledgers, and no unauthorized boundary flags |
 | `HumanReviewOutcomeRecord` and `human_confirmation_history.jsonl` | Intake candidate surface | Intake -> Human reviewer / Orchestrator review path | Records how a human confirmation outcome was handled; non-confirmed outcomes block budget, confirmed outcomes advance only to precondition checks, and superseding corrections append new records instead of mutating prior outcomes |
 | `ConflictSeedPacket` / `ConflictSearchTerm` | Intake candidate surface | Intake -> Human reviewer / Orchestrator review path | Search-seed inputs only; normalized terms are grouped by role and must carry evidence refs from the source-bound human confirmation; conclusion remains `no_conflict_conclusion` |
 | `BudgetSupportItem` | Intake candidate surface | Intake -> Human reviewer / Orchestrator review path | Evidence or structured-ref support for budget assumptions, exclusions, and unknowns |

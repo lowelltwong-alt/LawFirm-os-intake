@@ -100,3 +100,9 @@
 - Added `RustIngestionReadinessReport` and `rust_ingestion_readiness_report.json` so each preflight run proves the Python ingestion artifact is suitable as a future Rust parity target.
 - The report verifies adapter lock, source inventory coverage, recomputed source hashes, bounded segment offsets, recomputed segment hashes, segment evidence refs, and absence of legal decision scope.
 - Kept `rust_replacement_allowed=false`; no Rust runtime, FFI bridge, connector write, legal classification, conflict decision, budget decision, or authority expansion was added.
+
+## Review-package completeness slice - 2026-06-24
+
+- Added `ReviewPackageCompletenessReport` and `review_package_completeness_report.json` as the final deterministic package-assembly proof.
+- The report checks required artifact refs, linked file existence, markdown sections, human gates, final blockers, prohibited actions, safety-gate status, dry-run Exception Lake readiness, run ledgers, and non-authorization boundary flags.
+- Added fail-closed tests for missing artifact keys and missing review sections before the package is accepted.

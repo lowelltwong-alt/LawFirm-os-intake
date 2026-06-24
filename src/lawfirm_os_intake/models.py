@@ -582,10 +582,34 @@ class ReviewPackageManifest(StrictModel):
     run_ledger_refs: list[str]
     exception_candidate_refs: list[str]
     exception_lake_readiness_report_ref: str | None = None
+    review_package_completeness_report_ref: str | None = None
     no_conflict_conclusion: Literal[True] = True
     budget_not_authorized_for_client_submission: Literal[True] = True
     contains_raw_payload: Literal[False] = False
     external_writes_performed: Literal[False] = False
+
+
+class ReviewPackageCompletenessCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    artifact_refs: list[str] = Field(default_factory=list)
+    details: dict[str, Any] = Field(default_factory=dict)
+
+
+class ReviewPackageCompletenessReport(StrictModel):
+    schema_version: str = "0.1"
+    review_package_completeness_report_id: str
+    run_id: str
+    preflight_packet_id: str
+    review_package_id: str
+    status: Literal["passed", "failed"]
+    human_readable_review_ref: str
+    review_package_manifest_ref: str
+    required_sections: list[str]
+    required_artifact_keys: list[str]
+    checks: list[ReviewPackageCompletenessCheck]
+    generated_at: str
 
 
 class SafetyGateCheck(StrictModel):

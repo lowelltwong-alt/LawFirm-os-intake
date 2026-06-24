@@ -28,7 +28,7 @@ messy inbound source
 -> legal budget proposal (not approved or submitted)
 -> matter-opening readiness packet
 -> deterministic safety gate report
--> consolidated matter-opening review package and manifest
+-> consolidated matter-opening review package, manifest, and completeness report
 -> blocked pending conflicts, engagement, and authorized matter opening
 ```
 
@@ -95,11 +95,14 @@ The demo emits:
     |-- safety_gate_report.json
     |-- matter_opening_review_package.md
     |-- review_package_manifest.json
+    |-- review_package_completeness_report.json
     |-- evidence_graph.json
     `-- run_ledger.jsonl
 ```
 
 The consolidated `matter_opening_review_package.md` is the human-facing north-star artifact. It points back to the structured packets and tells the reviewer what is known, what remains uncertain, which conflict-search seeds were prepared, what budget scenario was proposed, which exception candidates exist, what the safety gate verified, and why the workflow is still blocked.
+
+The budget run also writes `review_package_completeness_report.json`. This deterministic report proves the final package includes required local artifact refs, required markdown sections, human gates, blockers, safety-gate proof, dry-run Exception Lake readiness, run ledgers, and non-authorization flags before the package is accepted.
 
 Budget runs also write a typed human review outcome record and append it to `human_confirmation_history.jsonl`. Corrections are represented as later records with `supersedes_confirmation_id`; prior review outcomes are not silently mutated.
 
@@ -168,6 +171,8 @@ Every budget run emits `budget_precondition_report.json`. If confirmation is mis
 The final budget run emits `safety_gate_report.json`. This deterministic report checks that the output remains synthetic-only, contract-state-bound, human-confirmed, conflict-search-only, not submittable, blocked from engagement and matter opening, not docketed, not billed, and local-file-only.
 
 The same gate also verifies evidence completeness for normalized conflict-search terms, budget lines, budget support items, and proposal-level assumptions, exclusions, and unknowns. A failed check raises before the final review package is accepted.
+
+After the safety gate passes, `review_package_completeness_report.json` verifies package assembly itself. It fails closed if the manifest omits required artifacts, linked files are missing, review sections disappear, human gates or blockers are absent, or the boundary flags no longer prove no conflict clearance, no budget submission, no raw payload, and no external writes.
 
 ## Agent architecture
 

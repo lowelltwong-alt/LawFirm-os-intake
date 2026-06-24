@@ -105,6 +105,12 @@ The deterministic safety gate verifies that the contract-state report is carried
 
 It also verifies that normalized conflict-search terms, budget lines, budget support items, and proposal-level assumptions, exclusions, and unknowns remain evidence-bound or structured-ref-supported. A failed check blocks final package acceptance.
 
+### 17. Review package completeness report
+
+After the safety gate and review package are written, the workflow emits `review_package_completeness_report.json`. This deterministic report checks that the manifest includes all required local artifacts, those files exist, the markdown package has the expected review sections and boundary text, required human gates and final blockers are preserved, Exception Lake readiness remains dry-run and passed, run ledgers are linked, and the package still proves no conflict clearance, engagement decision, matter opening, docketing, billing, external write, or budget submission.
+
+A failed completeness check blocks final package acceptance.
+
 ## Terminal states
 
 - `human_intake_review_required`

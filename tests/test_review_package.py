@@ -1,5 +1,9 @@
 from lawfirm_os_intake.confirmation import bind_confirmation_to_packet_evidence
-from lawfirm_os_intake.models import HumanConfirmation, ReviewPackageManifest
+from lawfirm_os_intake.models import (
+    HumanConfirmation,
+    ReviewPackageCompletenessReport,
+    ReviewPackageManifest,
+)
 from lawfirm_os_intake.util import load_json, load_jsonl
 from lawfirm_os_intake.workflow import run_budget, run_preflight
 
@@ -32,8 +36,10 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
 
     review_path = budget_dir / "matter_opening_review_package.md"
     manifest_path = budget_dir / "review_package_manifest.json"
+    completeness_path = budget_dir / "review_package_completeness_report.json"
     review_text = review_path.read_text(encoding="utf-8")
     manifest = ReviewPackageManifest.model_validate(load_json(manifest_path))
+    completeness = ReviewPackageCompletenessReport.model_validate(load_json(completeness_path))
     graph = load_json(budget_dir / "evidence_graph.json")
 
     assert "# Matter Opening Review Package" in review_text
@@ -66,6 +72,13 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
         budget_dir / "budget_precondition_report.json"
     )
     assert manifest.artifact_refs["contract_state_report"] == packet.contract_state_report_ref
+    assert manifest.artifact_refs["preflight_source_inventory"].endswith("source_inventory.json")
+    assert manifest.artifact_refs["preflight_segments"].endswith("segments.json")
+    assert manifest.artifact_refs["preflight_ingestion_result"].endswith("ingestion_result.json")
+    assert manifest.artifact_refs["preflight_rust_ingestion_readiness_report"].endswith(
+        "rust_ingestion_readiness_report.json"
+    )
+    assert manifest.artifact_refs["preflight_intake_review_form"].endswith("intake_review_form.md")
     assert manifest.artifact_refs["budget_precondition_report"] == str(
         budget_dir / "budget_precondition_report.json"
     )
@@ -84,11 +97,24 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert manifest.exception_lake_readiness_report_ref == str(
         budget_dir / "exception_lake_readiness_report.json"
     )
+    assert manifest.artifact_refs["matter_opening_review_package"] == str(review_path)
+    assert manifest.artifact_refs["review_package_manifest"] == str(manifest_path)
+    assert manifest.artifact_refs["review_package_completeness_report"] == str(completeness_path)
+    assert manifest.review_package_completeness_report_ref == str(completeness_path)
+    assert completeness.status == "passed"
+    assert completeness.review_package_id == manifest.review_package_id
+    assert completeness.human_readable_review_ref == str(review_path)
+    assert completeness.review_package_manifest_ref == str(manifest_path)
+    assert "review_package_completeness_report" in completeness.required_artifact_keys
+    assert {check.status for check in completeness.checks} == {"passed"}
 
     ledger_events = load_jsonl(budget_dir / "run_ledger.jsonl")
-    assert any(
-        event["step_name"] == "matter_opening_review_package_built" for event in ledger_events
+    package_event = next(
+        event
+        for event in ledger_events
+        if event["step_name"] == "matter_opening_review_package_built"
     )
+    assert str(completeness_path) in package_event["output_refs"]
 
     node_types = {node["node_type"] for node in graph["nodes"]}
     relationships = {edge["relationship"] for edge in graph["edges"]}

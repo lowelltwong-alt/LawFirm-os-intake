@@ -38,6 +38,7 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     budget_exception_readiness = load_json(budget_dir / "exception_lake_readiness_report.json")
     safety = load_json(budget_dir / "safety_gate_report.json")
     manifest = load_json(budget_dir / "review_package_manifest.json")
+    completeness = load_json(budget_dir / "review_package_completeness_report.json")
     budget_preconditions = load_json(budget_dir / "budget_precondition_report.json")
     confirmation_history = load_jsonl(budget_dir / "human_confirmation_history.jsonl")
     graph = load_json(budget_dir / "evidence_graph.json")
@@ -92,6 +93,15 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     )
     assert manifest["artifact_refs"]["human_review_outcome"].endswith(".json")
     assert manifest["artifact_refs"]["safety_gate_report"].endswith("safety_gate_report.json")
+    assert manifest["artifact_refs"]["review_package_completeness_report"].endswith(
+        "review_package_completeness_report.json"
+    )
+    assert manifest["review_package_completeness_report_ref"].endswith(
+        "review_package_completeness_report.json"
+    )
+    assert completeness["status"] == "passed"
+    assert completeness["review_package_id"] == manifest["review_package_id"]
+    assert {check["status"] for check in completeness["checks"]} == {"passed"}
     assert manifest["artifact_refs"]["budget_exception_lake_readiness_report"].endswith(
         "exception_lake_readiness_report.json"
     )
@@ -109,6 +119,7 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
         "missing information: jurisdiction",
         "prompt_injection_source_content",
         "Exception Lake readiness report:",
+        "review_package_completeness_report.json",
         "no_conflict_conclusion",
         "normalized:",
         "evidence:",
