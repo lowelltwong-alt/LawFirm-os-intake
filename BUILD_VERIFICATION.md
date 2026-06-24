@@ -4,22 +4,22 @@ Verified in the artifact build environment on 2026-06-24:
 
 ```text
 PYTHONPATH=src python scripts/export_schemas.py
-# exported 28 schemas
+# exported 29 schemas
 
 PYTHONPATH=src python scripts/validate_repo.py
 # repository validation passed
 
 PYTHONPATH=src python -m pytest -q
-# 80 passed
+# 82 passed
 
 PYTHONPATH=src ruff check src tests scripts
 # All checks passed
 
 PYTHONPATH=src ruff format --check src tests scripts
-# 58 files already formatted
+# 61 files already formatted
 
 PYTHONPATH=src bash scripts/smoke_demo.sh
-# completed without error and wrote budget/starter_release_audit_report.json plus blocked-budget/blocked_budget_attempt_audit_report.json
+# completed without error and wrote starter, blocked-budget, and context-counterfactual audit reports
 ```
 
 The monetary result is a synthetic test calculation, not a fee quote or approved budget.
@@ -27,6 +27,8 @@ The monetary result is a synthetic test calculation, not a fee quote or approved
 The smoke demo now also writes `starter_release_audit_report.json` after the north-star demo finishes. That report is a local, non-authoritative starter release audit over generated artifacts; it fails if required outputs, synthetic-only scope, source-bound evidence refs, human gates, carrier/client separation, conflict/budget boundaries, dry-run Exception Lake posture, safety boundary, fixture-gold gates, run ledgers, candidate-registry noncanonical status, or Rust-readiness posture drift.
 
 The smoke demo also writes `blocked_budget_attempt_audit_report.json` from a synthetic `needs_more_information` confirmation. That report proves the budget path blocks before conflict seed, budget proposal, readiness packet, safety gate, or final package output while preserving the blocked precondition report, review outcome/history, dry-run exception candidate, readiness report, and run ledger.
+
+The smoke demo also writes `context_counterfactual_audit_report.json` from the same synthetic source under defense and plaintiff profiles. That report proves source inventory, segment signatures, and observed evidence refs stay stable while practice context may change rankings, and that context-only matter candidates remain graph anchors rather than observed facts.
 
 The current demo also emits local `exception_lake_candidates.jsonl` files in preflight and budget outputs. These are dry-run candidates only; they are not canonical Exception Lake admissions and include no raw legal payload.
 

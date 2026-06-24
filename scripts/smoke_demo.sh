@@ -101,3 +101,13 @@ grep -q "no_prohibited_budget_outputs_emitted" ".lawfirm-os-intake/smoke/blocked
 grep -q "budget_blocked_before_human_confirmation" ".lawfirm-os-intake/smoke/blocked-budget/blocked_budget_attempt_audit_report.json"
 test ! -e ".lawfirm-os-intake/smoke/blocked-budget/budget/legal_budget_proposal.json"
 test ! -e ".lawfirm-os-intake/smoke/blocked-budget/budget/conflict_search_seed_packet.json"
+python scripts/audit_context_counterfactual.py \
+  --input examples/synthetic/inbound/help-email.json \
+  --baseline-profile context/synthetic-profiles/insurance-defense.yaml \
+  --comparison-profile context/synthetic-profiles/plaintiff-personal-injury.yaml \
+  --out-dir .lawfirm-os-intake/smoke/context-counterfactual
+test -s ".lawfirm-os-intake/smoke/context-counterfactual/context_counterfactual_audit_report.json"
+grep -q '"status": "passed"' ".lawfirm-os-intake/smoke/context-counterfactual/context_counterfactual_audit_report.json"
+grep -q "observed_evidence_refs_stable" ".lawfirm-os-intake/smoke/context-counterfactual/context_counterfactual_audit_report.json"
+grep -q "context_only_candidate_not_observed_fact" ".lawfirm-os-intake/smoke/context-counterfactual/context_counterfactual_audit_report.json"
+grep -q "practice_context_changes_ranking" ".lawfirm-os-intake/smoke/context-counterfactual/context_counterfactual_audit_report.json"

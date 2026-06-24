@@ -14,6 +14,7 @@ from lawfirm_os_intake.models import (  # noqa: E402
     BudgetSupportItem,
     ContractStateDependency,
     ContractStateReport,
+    ContextCounterfactualAuditReport,
     ConflictSeedPacket,
     EffectiveContext,
     EvidenceGraph,
@@ -41,6 +42,7 @@ from lawfirm_os_intake.models import (  # noqa: E402
 MODELS = {
     "source-bundle.schema.json": SourceBundle,
     "blocked-budget-attempt-audit-report.schema.json": BlockedBudgetAttemptAuditReport,
+    "context-counterfactual-audit-report.schema.json": ContextCounterfactualAuditReport,
     "ingestion-result.schema.json": IngestionResult,
     "ingestion-volume-profile.schema.json": IngestionVolumeProfile,
     "rust-ingestion-readiness-report.schema.json": RustIngestionReadinessReport,

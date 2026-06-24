@@ -805,6 +805,29 @@ class BlockedBudgetAttemptAuditReport(StrictModel):
     generated_at: str
 
 
+class ContextCounterfactualAuditCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    artifact_refs: list[str] = Field(default_factory=list)
+    details: dict[str, Any] = Field(default_factory=dict)
+
+
+class ContextCounterfactualAuditReport(StrictModel):
+    schema_version: str = "0.1"
+    context_counterfactual_audit_report_id: str
+    status: Literal["passed", "failed"]
+    input_ref: str
+    baseline_profile_ref: str
+    comparison_profile_ref: str
+    baseline_run_dir: str
+    comparison_run_dir: str
+    non_authoritative: Literal[True] = True
+    external_writes_performed: Literal[False] = False
+    checks: list[ContextCounterfactualAuditCheck]
+    generated_at: str
+
+
 class SafetyGateCheck(StrictModel):
     check_id: str
     status: Literal["passed", "failed"]

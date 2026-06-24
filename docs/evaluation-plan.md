@@ -34,6 +34,8 @@ The smoke harness also runs `scripts/audit_starter_release.py` after the north-s
 
 The smoke harness also runs `scripts/audit_blocked_budget_attempt.py`. It writes `blocked_budget_attempt_audit_report.json`, a local non-authoritative fail-closed audit proving a synthetic `needs_more_information` human-review outcome stops before conflict seed, budget proposal, readiness packet, safety gate, or final package output while preserving the blocked precondition report, review outcome/history, dry-run exception candidate, readiness report, and run ledger.
 
+The smoke harness also runs `scripts/audit_context_counterfactual.py`. It writes `context_counterfactual_audit_report.json`, a local non-authoritative same-source/different-profile audit proving source inventory, segment signatures, and observed evidence refs stay stable while practice context may change candidate ranking. It also checks that context-only matter candidates are graph anchors, not observed support facts.
+
 ### Counterfactual evals
 
 Same source, different practice context. Evidence must remain unchanged.
@@ -73,6 +75,7 @@ Measure review time, correction count, unknown selection, evidence-navigation bu
 - keep `fixture_gold_report.json` local and non-authoritative; it is evaluation evidence, not canonical platform truth.
 - keep `starter_release_audit_report.json` local and non-authoritative; it proves starter artifact invariants only and does not replace tests, CI, Semantic Substrate promotion, Orchestrator runtime ownership, or human legal review.
 - keep `blocked_budget_attempt_audit_report.json` local and non-authoritative; it proves the synthetic blocked-budget canary only and does not authorize any budget-stage output.
+- keep `context_counterfactual_audit_report.json` local and non-authoritative; it proves practice-context separation on synthetic fixtures only and does not promote profiles, priors, or taxonomies.
 
 ## Graduation gates
 
