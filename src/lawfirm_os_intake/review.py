@@ -11,6 +11,7 @@ from .models import (
     ContractStateReport,
     DataScopeGateReport,
     DeadlineDocketingGuardReport,
+    EvidenceCompletenessReport,
     EvidenceGraph,
     ExceptionLakeHandoffManifest,
     ExceptionLakeReadinessReport,
@@ -338,6 +339,34 @@ def _model_adapter_lines(report: ModelAdapterReport | None) -> list[str]:
         "- Adapter guard checks:",
     ]
     lines.extend(f"- {check.status}: {check.check_id} - {check.message}" for check in report.checks)
+    return lines
+
+
+def _evidence_completeness_lines(report: EvidenceCompletenessReport | None) -> list[str]:
+    if report is None:
+        return ["- Evidence completeness report: unavailable"]
+    surface_counts = ", ".join(
+        f"{surface}={count}" for surface, count in sorted(report.surface_counts.items())
+    )
+    source_status_counts = ", ".join(
+        f"{status}={count}"
+        for status, count in sorted(report.source_evidence_status_counts.items())
+    )
+    lines = [
+        f"- Evidence completeness status: {report.status}",
+        f"- Evidence completeness report ID: `{report.evidence_completeness_report_id}`",
+        f"- Strict evidence required: {report.strict_evidence_required}",
+        f"- Evidence refs checked: {report.evidence_ref_count}",
+        f"- Human confirmation required: {report.human_confirmation_required}",
+        f"- Source evidence status counts: {source_status_counts or 'none'}",
+        f"- Surface counts: {surface_counts or 'none'}",
+        "- Evidence completeness checks:",
+    ]
+    lines.extend(
+        f"- {check.status}: {check.check_id} - {check.message}; "
+        f"evidence_refs={len(check.evidence_refs)}"
+        for check in report.checks
+    )
     return lines
 
 
@@ -854,6 +883,7 @@ def render_matter_opening_review_package(
     human_review_outcome: HumanReviewOutcomeRecord | None = None,
     human_gate_status_report: HumanGateStatusReport | None = None,
     deadline_docketing_guard_report: DeadlineDocketingGuardReport | None = None,
+    evidence_completeness_report: EvidenceCompletenessReport | None = None,
     budget_submission_guard_report: BudgetSubmissionGuardReport | None = None,
     budget_precondition_report: BudgetPreconditionReport | None = None,
 ) -> str:
@@ -901,6 +931,9 @@ def render_matter_opening_review_package(
             "",
             "### Model Adapter Boundary",
             *_model_adapter_lines(model_adapter_report),
+            "",
+            "### Evidence Completeness",
+            *_evidence_completeness_lines(evidence_completeness_report),
             "",
             "### Human Review Outcome",
             *_human_review_outcome_lines(human_review_outcome),

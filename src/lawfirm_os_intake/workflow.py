@@ -18,6 +18,10 @@ from .deadline_guard import (
     enforce_deadline_docketing_guard_report,
 )
 from .evidence import build_preflight_graph, extend_graph_with_budget
+from .evidence_completeness import (
+    build_evidence_completeness_report,
+    enforce_evidence_completeness_report,
+)
 from .exception_handoff import (
     build_exception_lake_handoff_manifest,
     enforce_exception_lake_handoff_manifest,
@@ -42,6 +46,7 @@ from .models import (
     ContractStateReport,
     DataScopeGateReport,
     DeadlineDocketingGuardReport,
+    EvidenceCompletenessReport,
     EvidenceRef,
     ExceptionLakeCandidate,
     FixtureGoldSpec,
@@ -401,6 +406,7 @@ def run_preflight(
     exception_handoff_manifest_path = run_dir / "exception_lake_handoff_manifest.json"
     run_ledger_integrity_report_path = run_dir / "run_ledger_integrity_report.json"
     deadline_docketing_guard_report_path = run_dir / "deadline_docketing_guard_report.json"
+    evidence_completeness_report_path = run_dir / "evidence_completeness_report.json"
     fixture_gold_report_path = run_dir / "fixture_gold_report.json" if fixture_gold else None
     packet = IntakePreflightPacket(
         packet_id=new_id("intake"),
@@ -436,9 +442,19 @@ def run_preflight(
         exception_lake_handoff_manifest_ref=str(exception_handoff_manifest_path),
         run_ledger_integrity_report_ref=str(run_ledger_integrity_report_path),
         deadline_docketing_guard_report_ref=str(deadline_docketing_guard_report_path),
+        evidence_completeness_report_ref=str(evidence_completeness_report_path),
         intake_review_form_ref=str(review_form_path),
     )
+    evidence_completeness_report = build_evidence_completeness_report(
+        packet,
+        strict_evidence_required=strict_evidence,
+    )
+    write_json(
+        evidence_completeness_report_path,
+        evidence_completeness_report.model_dump(mode="json"),
+    )
     if strict_evidence:
+        enforce_evidence_completeness_report(evidence_completeness_report)
         _validate_refs(packet)
     deadline_docketing_guard_report = build_deadline_docketing_guard_report(packet)
     enforce_deadline_docketing_guard_report(deadline_docketing_guard_report)
@@ -502,6 +518,7 @@ def run_preflight(
                 str(deadline_docketing_guard_report_path),
                 str(exception_readiness_report_path),
                 str(exception_handoff_manifest_path),
+                str(evidence_completeness_report_path),
             ],
         ).model_dump(mode="json"),
     )
@@ -875,6 +892,7 @@ def run_budget(
         "preflight_deadline_docketing_guard_report": (
             packet.deadline_docketing_guard_report_ref or ""
         ),
+        "preflight_evidence_completeness_report": (packet.evidence_completeness_report_ref or ""),
         "human_confirmation": str(run_dir / "human_confirmation.json"),
         "conflict_search_seed": str(run_dir / "conflict_search_seed_packet.json"),
         "legal_budget_proposal": str(run_dir / "legal_budget_proposal.json"),
@@ -998,6 +1016,13 @@ def run_budget(
         if packet.deadline_docketing_guard_report_ref
         else None
     )
+    evidence_completeness_report = (
+        EvidenceCompletenessReport.model_validate(
+            load_json(packet.evidence_completeness_report_ref)
+        )
+        if packet.evidence_completeness_report_ref
+        else None
+    )
     budget_submission_guard_report = BudgetSubmissionGuardReport.model_validate(
         load_json(budget_submission_guard_report_path)
     )
@@ -1109,6 +1134,7 @@ def run_budget(
             human_review_outcome=human_review_outcome,
             human_gate_status_report=human_gate_status_report,
             deadline_docketing_guard_report=deadline_docketing_guard_report,
+            evidence_completeness_report=evidence_completeness_report,
             budget_submission_guard_report=budget_submission_guard_report,
             budget_precondition_report=budget_precondition_report,
         ),
@@ -1139,6 +1165,7 @@ def run_budget(
         contract_state_report_ref=packet.contract_state_report_ref,
         data_scope_gate_report_ref=packet.data_scope_gate_report_ref,
         budget_precondition_report_ref=str(budget_precondition_report_path),
+        evidence_completeness_report_ref=packet.evidence_completeness_report_ref,
         evidence_graph_ref=str(run_dir / "evidence_graph.json"),
         run_ledger_refs=[packet.run_ledger_ref, str(ledger_path)],
         run_ledger_integrity_report_refs=[

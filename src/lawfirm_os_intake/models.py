@@ -242,6 +242,32 @@ class MissingInformationCandidate(StrictModel):
     status: Literal["candidate"] = "candidate"
 
 
+class EvidenceCompletenessCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    evidence_refs: list[EvidenceRef] = Field(default_factory=list)
+    details: dict[str, Any] = Field(default_factory=dict)
+
+
+class EvidenceCompletenessReport(StrictModel):
+    schema_version: str = "0.1"
+    evidence_completeness_report_id: str
+    run_id: str
+    preflight_packet_id: str
+    status: Literal["passed", "failed"]
+    strict_evidence_required: bool
+    checked_surfaces: list[str]
+    surface_counts: dict[str, int]
+    evidence_ref_count: int = Field(ge=0)
+    source_evidence_status_counts: dict[str, int] = Field(default_factory=dict)
+    human_confirmation_required: bool
+    external_writes_performed: Literal[False] = False
+    non_authoritative: Literal[True] = True
+    checks: list[EvidenceCompletenessCheck]
+    generated_at: str
+
+
 class EscalationDecision(StrictModel):
     required: bool
     triggers: list[str] = Field(default_factory=list)
@@ -481,6 +507,7 @@ class IntakePreflightPacket(StrictModel):
     exception_lake_handoff_manifest_ref: str | None = None
     run_ledger_integrity_report_ref: str | None = None
     deadline_docketing_guard_report_ref: str | None = None
+    evidence_completeness_report_ref: str | None = None
     intake_review_form_ref: str | None = None
 
 
@@ -991,6 +1018,7 @@ class ReviewPackageManifest(StrictModel):
     contract_state_report_ref: str | None = None
     data_scope_gate_report_ref: str | None = None
     budget_precondition_report_ref: str | None = None
+    evidence_completeness_report_ref: str | None = None
     evidence_graph_ref: str
     run_ledger_refs: list[str]
     run_ledger_integrity_report_refs: list[str] = Field(default_factory=list)

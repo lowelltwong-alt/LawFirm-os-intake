@@ -1,0 +1,178 @@
+{
+  "$defs": {
+    "EvidenceCompletenessCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "details": {
+          "additionalProperties": true,
+          "title": "Details",
+          "type": "object"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "EvidenceCompletenessCheck",
+      "type": "object"
+    },
+    "EvidenceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "segment_id": {
+          "title": "Segment Id",
+          "type": "string"
+        },
+        "start_offset": {
+          "title": "Start Offset",
+          "type": "integer"
+        },
+        "end_offset": {
+          "title": "End Offset",
+          "type": "integer"
+        },
+        "sha256": {
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "segment_id",
+        "start_offset",
+        "end_offset",
+        "sha256"
+      ],
+      "title": "EvidenceRef",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "evidence_completeness_report_id": {
+      "title": "Evidence Completeness Report Id",
+      "type": "string"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "preflight_packet_id": {
+      "title": "Preflight Packet Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "passed",
+        "failed"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "strict_evidence_required": {
+      "title": "Strict Evidence Required",
+      "type": "boolean"
+    },
+    "checked_surfaces": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Checked Surfaces",
+      "type": "array"
+    },
+    "surface_counts": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Surface Counts",
+      "type": "object"
+    },
+    "evidence_ref_count": {
+      "minimum": 0,
+      "title": "Evidence Ref Count",
+      "type": "integer"
+    },
+    "source_evidence_status_counts": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Source Evidence Status Counts",
+      "type": "object"
+    },
+    "human_confirmation_required": {
+      "title": "Human Confirmation Required",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/EvidenceCompletenessCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "evidence_completeness_report_id",
+    "run_id",
+    "preflight_packet_id",
+    "status",
+    "strict_evidence_required",
+    "checked_surfaces",
+    "surface_counts",
+    "evidence_ref_count",
+    "human_confirmation_required",
+    "checks",
+    "generated_at"
+  ],
+  "title": "EvidenceCompletenessReport",
+  "type": "object"
+}

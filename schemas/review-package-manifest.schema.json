@@ -123,6 +123,18 @@
       "default": null,
       "title": "Budget Precondition Report Ref"
     },
+    "evidence_completeness_report_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Evidence Completeness Report Ref"
+    },
     "evidence_graph_ref": {
       "title": "Evidence Graph Ref",
       "type": "string"

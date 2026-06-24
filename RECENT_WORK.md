@@ -263,3 +263,9 @@
 - Added message-indexed segmentation for synthetic correspondence dumps with repeated `From:` boundaries.
 - The segmenter now preserves dump preambles, headers, body paragraphs, quoted history, signatures, attachment refs, offsets, hashes, and source-instruction risk flags inside messy exports.
 - Added a synthetic holdout proving risky quoted instructions in a dump become dry-run exception candidates instead of actions.
+
+## Evidence-completeness report slice - 2026-06-24
+
+- Added `evidence_completeness_report.json` so preflight runs durably prove candidate evidence refs match packet segments instead of relying only on no thrown exception.
+- The report covers party candidates, role alternatives, inbound-event, matter-family, representation-posture, deadline, missing-information, and critic outputs, plus unknown options and human-review boundary flags.
+- The final review package, manifest, package completeness report, starter audit, schema export, tests, and docs now fail closed if the evidence-completeness proof is missing or drifts.

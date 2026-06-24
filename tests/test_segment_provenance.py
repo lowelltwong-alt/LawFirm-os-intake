@@ -1,5 +1,10 @@
 import pytest
 
+from lawfirm_os_intake.evidence_completeness import (
+    build_evidence_completeness_report,
+    enforce_evidence_completeness_report,
+)
+from lawfirm_os_intake.models import EvidenceCompletenessReport
 from lawfirm_os_intake.models import SourceBundle
 from lawfirm_os_intake.segmenter import segment_bundle
 from lawfirm_os_intake.util import digest_text, load_json, load_jsonl
@@ -66,6 +71,54 @@ def test_preflight_evidence_refs_preserve_segment_offsets_and_hashes(tmp_path, r
         assert ref["start_offset"] == segment.start_offset
         assert ref["end_offset"] == segment.end_offset
         assert ref["sha256"] == segment.sha256
+
+
+def test_preflight_writes_evidence_completeness_report(tmp_path, repo_root):
+    packet, run_dir = run_preflight(
+        repo_root / "examples/synthetic/inbound/north-star-messy-intake.json",
+        repo_root / "context/synthetic-profiles/insurance-defense.yaml",
+        tmp_path,
+    )
+    report_path = run_dir / "evidence_completeness_report.json"
+    report = EvidenceCompletenessReport.model_validate(load_json(report_path))
+
+    assert packet.evidence_completeness_report_ref == str(report_path)
+    assert report.status == "passed"
+    assert report.strict_evidence_required is True
+    assert report.human_confirmation_required is True
+    assert report.evidence_ref_count > 0
+    assert report.external_writes_performed is False
+    assert report.non_authoritative is True
+    assert {
+        "party_candidates_source_bound",
+        "party_role_candidates_source_bound",
+        "classification_candidates_source_bound",
+        "unknown_options_preserved",
+        "deadline_candidates_source_bound_and_review_only",
+        "missing_information_candidates_source_bound",
+        "critic_findings_source_bound",
+        "evidence_refs_match_segments",
+        "human_review_boundary_present",
+    } == {check.check_id for check in report.checks}
+    assert {check.status for check in report.checks} == {"passed"}
+
+
+def test_evidence_completeness_report_fails_on_role_ref_drift(tmp_path, repo_root):
+    packet, _ = run_preflight(
+        repo_root / "examples/synthetic/inbound/carrier-assignment-medmal.json",
+        repo_root / "context/synthetic-profiles/insurance-defense.yaml",
+        tmp_path,
+    )
+    corrupted = packet.model_copy(deep=True)
+    corrupted.party_candidates[0].role_candidates[0].evidence_refs = []
+
+    report = build_evidence_completeness_report(corrupted)
+
+    assert report.status == "failed"
+    failed = {check.check_id for check in report.checks if check.status == "failed"}
+    assert "party_role_candidates_source_bound" in failed
+    with pytest.raises(ValueError, match="party_role_candidates_source_bound"):
+        enforce_evidence_completeness_report(report)
 
 
 def test_strict_evidence_validation_fails_on_offset_drift(tmp_path, repo_root):

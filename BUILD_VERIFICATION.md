@@ -4,19 +4,19 @@ Verified in the artifact build environment on 2026-06-24:
 
 ```text
 PYTHONPATH=src python scripts/export_schemas.py
-# exported 36 schemas
+# exported 37 schemas
 
 PYTHONPATH=src python scripts/validate_repo.py
 # repository validation passed
 
 PYTHONPATH=src python -m pytest -q
-# 119 passed
+# 123 passed
 
 PYTHONPATH=src ruff check src tests scripts
 # All checks passed
 
 PYTHONPATH=src ruff format --check src tests scripts
-# 74 files already formatted
+# 75 files already formatted
 
 PYTHONPATH=src bash scripts/smoke_demo.sh
 # completed without error and wrote starter, blocked-budget, and context-counterfactual audit reports
@@ -37,6 +37,8 @@ The current demo also emits local `exception_lake_candidates.jsonl` files in pre
 The preflight output now includes `contract_state_report.json`, which verifies the reviewed local sibling-repo lock state before source processing. The report is carried forward into the final review manifest and safety gate.
 
 The preflight output now also includes `data_scope_gate_report.json`, which proves synthetic-only data scope before `raw_input.json` is written. Blocked non-synthetic runs write the gate report and ledger event, then stop before raw payload storage, packet generation, source inventory, ingestion, or review artifacts. The passing report is carried into the final review package, manifest, safety gate, completeness report, starter audit, schema export, and smoke checks.
+
+The preflight output now also includes `evidence_completeness_report.json`, proving candidate evidence refs match the packet segment table for party, role, inbound-event, matter-family, posture, deadline, missing-information, and critic outputs. The final package renders the proof, and package completeness plus starter audit fail closed if it is missing or drifts.
 
 Source-bound evidence references now include segment offsets as well as source ID, segment ID, and hash. Strict evidence validation fails if a ref drifts from the cited segment.
 

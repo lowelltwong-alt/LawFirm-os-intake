@@ -12,6 +12,7 @@ from .models import (
     ContractStateReport,
     DataScopeGateReport,
     DeadlineDocketingGuardReport,
+    EvidenceCompletenessReport,
     EvidenceGraph,
     ExceptionLakeHandoffManifest,
     ExceptionLakeReadinessReport,
@@ -56,6 +57,7 @@ REQUIRED_PREFLIGHT_ARTIFACTS = {
     "contract_state_report": "contract_state_report.json",
     "data_scope_gate_report": "data_scope_gate_report.json",
     "model_adapter_report": "model_adapter_report.json",
+    "evidence_completeness_report": "evidence_completeness_report.json",
     "ingestion_result": "ingestion_result.json",
     "ingestion_volume_profile": "ingestion_volume_profile.json",
     "rust_ingestion_readiness_report": "rust_ingestion_readiness_report.json",
@@ -540,6 +542,9 @@ def build_starter_release_audit_report(
     contract_state = _model_or_none(ContractStateReport, paths["contract_state_report"])
     data_scope_gate = _model_or_none(DataScopeGateReport, paths["data_scope_gate_report"])
     model_adapter = _model_or_none(ModelAdapterReport, paths["model_adapter_report"])
+    evidence_completeness = _model_or_none(
+        EvidenceCompletenessReport, paths["evidence_completeness_report"]
+    )
     ingestion_result = _model_or_none(IngestionResult, paths["ingestion_result"])
     ingestion_volume = _model_or_none(IngestionVolumeProfile, paths["ingestion_volume_profile"])
     rust_readiness = _model_or_none(
@@ -716,15 +721,39 @@ def build_starter_release_audit_report(
         ),
         _check(
             "evidence_refs_validate_against_segments",
-            packet_refs_ok and ingestion_refs_ok,
-            "Candidate and ingestion evidence refs preserve source IDs, segment IDs, offsets, and hashes.",
+            packet_refs_ok
+            and ingestion_refs_ok
+            and bool(
+                evidence_completeness
+                and evidence_completeness.status == "passed"
+                and evidence_completeness.evidence_ref_count > 0
+                and evidence_completeness.strict_evidence_required is True
+                and evidence_completeness.human_confirmation_required is True
+                and all(check.status == "passed" for check in evidence_completeness.checks)
+                and packet
+                and packet.evidence_completeness_report_ref
+                == str(paths["evidence_completeness_report"])
+            ),
+            "Candidate and ingestion evidence refs preserve source IDs, segment IDs, offsets, and hashes with a durable preflight evidence report.",
             requirement_refs=["DoD-7"],
             artifact_refs=_artifact_refs(
-                paths, ["preflight_packet", "segments", "ingestion_result"]
+                paths,
+                [
+                    "preflight_packet",
+                    "segments",
+                    "ingestion_result",
+                    "evidence_completeness_report",
+                ],
             ),
             details={
                 "packet_ref_error": packet_ref_error,
                 "ingestion_ref_error": ingestion_ref_error,
+                "evidence_completeness_status": (
+                    evidence_completeness.status if evidence_completeness else None
+                ),
+                "evidence_completeness_ref_count": (
+                    evidence_completeness.evidence_ref_count if evidence_completeness else None
+                ),
             },
         ),
         _check(

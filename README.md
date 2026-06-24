@@ -20,6 +20,7 @@ messy inbound source
 -> party and relationship-role candidates
 -> inbound-event, matter-family, and representation-posture candidates
 -> date/deadline and missing-information candidates
+-> evidence completeness report proving candidate refs, unknown options, and review boundaries
 -> deadline docketing guard report proving review-only candidates and no docketing
 -> independent evidence review
 -> dry-run Exception Lake candidates for missing source, ambiguity, prompt injection, or blockers
@@ -82,6 +83,7 @@ The demo emits:
 |   |-- effective_context.json
 |   |-- intake_preflight_packet.json
 |   |-- intake_review_form.md
+|   |-- evidence_completeness_report.json
 |   |-- deadline_docketing_guard_report.json
 |   |-- exception_lake_candidates.jsonl
 |   |-- exception_lake_readiness_report.json
@@ -115,7 +117,9 @@ The consolidated `matter_opening_review_package.md` is the human-facing north-st
 
 The same package now renders authority/precondition checks, source inventory, human-gate status, exception readiness, dry-run handoff posture, candidate support details, evidence-graph summary, run-ledger summary, and run-ledger integrity status inline. Reviewers can see contract-state status, human-review outcome, budget precondition checks, completed and pending human gates, each source's read/missing/duplicate state, dry-run Exception Lake posture, the future Exception Lake runtime owner, the fact that no SQLite or external write occurred in intake, hashes, attachment refs, provenance graph counts and key support edges, and the preflight/budget gate trail before opening the JSON artifacts.
 
-The budget run also writes `review_package_completeness_report.json`. This deterministic report proves the final package includes required local artifact refs, required markdown sections, human gates, data-scope gate proof, deadline docketing guard proof, budget submission guard proof, structured blocker details, safety-gate proof, dry-run Exception Lake readiness, run ledgers, run-ledger integrity reports, and non-authorization flags before the package is accepted.
+Preflight runs write `evidence_completeness_report.json`. This local proof artifact records that party candidates, role alternatives, inbound-event, matter-family, representation-posture, deadline, missing-information, and critic outputs carry source-bound refs that match packet segments by source ID, segment ID, offsets, and hashes. It also proves explicit unknown options remain available, deadline candidates remain human-review-only, and human confirmation plus prohibited next steps stay present. The final package renders the report and package completeness fails if it is missing, failed, or no longer linked.
+
+The budget run also writes `review_package_completeness_report.json`. This deterministic report proves the final package includes required local artifact refs, required markdown sections, human gates, data-scope gate proof, evidence-completeness proof, deadline docketing guard proof, budget submission guard proof, structured blocker details, safety-gate proof, dry-run Exception Lake readiness, run ledgers, run-ledger integrity reports, and non-authorization flags before the package is accepted.
 
 The completeness report also checks that the linked intake and budget review forms preserve their required human-review sections, evidence-hash visibility where source-bound evidence exists, and non-authorization boundary text, so those standalone forms cannot silently lose source coverage, outcome handling, budget lines, support items, or submission-boundary content while the consolidated package still passes.
 

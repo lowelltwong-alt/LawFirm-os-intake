@@ -85,6 +85,23 @@ def test_starter_release_audit_fails_when_candidate_surface_is_hollow(tmp_path, 
         enforce_starter_release_audit(report)
 
 
+def test_starter_release_audit_fails_when_evidence_completeness_report_drifts(tmp_path, repo_root):
+    demo_dir = _run_north_star_demo(tmp_path, repo_root)
+    preflight_dirs = list((demo_dir / "preflight").iterdir())
+    report_path = preflight_dirs[0] / "evidence_completeness_report.json"
+    evidence_report = load_json(report_path)
+    evidence_report["status"] = "failed"
+    write_json(report_path, evidence_report)
+
+    report = build_starter_release_audit_report(repo_root=repo_root, demo_dir=demo_dir)
+
+    assert report.status == "failed"
+    failed = {check.check_id for check in report.checks if check.status == "failed"}
+    assert "evidence_refs_validate_against_segments" in failed
+    with pytest.raises(ValueError, match="evidence_refs_validate_against_segments"):
+        enforce_starter_release_audit(report)
+
+
 def test_starter_release_audit_fails_when_evidence_graph_loses_budget_lines(tmp_path, repo_root):
     demo_dir = _run_north_star_demo(tmp_path, repo_root)
     graph_path = demo_dir / "budget/evidence_graph.json"

@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from .models import (
+    EvidenceCompletenessReport,
     ExceptionLakeReadinessReport,
     ReviewPackageCompletenessCheck,
     ReviewPackageCompletenessReport,
@@ -18,6 +19,7 @@ REQUIRED_REVIEW_SECTIONS = [
     "### Contract State",
     "### Data Scope Gate",
     "### Model Adapter Boundary",
+    "### Evidence Completeness",
     "### Human Review Outcome",
     "### Budget Preconditions",
     "## Source Inventory",
@@ -96,6 +98,7 @@ REQUIRED_ARTIFACT_KEYS = [
     "preflight_ingestion_volume_profile",
     "preflight_rust_ingestion_readiness_report",
     "preflight_model_adapter_report",
+    "preflight_evidence_completeness_report",
     "preflight_intake_review_form",
     "preflight_deadline_docketing_guard_report",
     "human_confirmation",
@@ -271,6 +274,9 @@ def build_review_package_completeness_report(
     )
     deadline_docketing_guard_report = _read_json(
         Path(artifact_refs.get("preflight_deadline_docketing_guard_report", ""))
+    )
+    evidence_completeness_report_payload = _read_json(
+        Path(artifact_refs.get("preflight_evidence_completeness_report", ""))
     )
     preflight_ledger_integrity = _read_json(
         Path(artifact_refs.get("preflight_run_ledger_integrity_report", ""))
@@ -468,6 +474,31 @@ def build_review_package_completeness_report(
         and "Docketing action allowed: False" in review_text
         and "human_deadline_review" in review_text
     )
+    evidence_completeness_report: EvidenceCompletenessReport | None = None
+    if isinstance(evidence_completeness_report_payload, dict):
+        try:
+            evidence_completeness_report = EvidenceCompletenessReport.model_validate(
+                evidence_completeness_report_payload
+            )
+        except ValueError:
+            evidence_completeness_report = None
+    evidence_completeness_report_complete = (
+        evidence_completeness_report is not None
+        and evidence_completeness_report.status == "passed"
+        and evidence_completeness_report.strict_evidence_required is True
+        and evidence_completeness_report.human_confirmation_required is True
+        and evidence_completeness_report.evidence_ref_count > 0
+        and evidence_completeness_report.external_writes_performed is False
+        and evidence_completeness_report.non_authoritative is True
+        and all(check.status == "passed" for check in evidence_completeness_report.checks)
+        and artifact_refs.get("preflight_evidence_completeness_report")
+        == manifest.evidence_completeness_report_ref
+        and "Evidence completeness status: passed" in review_text
+        and "Evidence refs checked:" in review_text
+        and "classification_candidates_source_bound" in review_text
+        and "evidence_refs_match_segments" in review_text
+        and "human_review_boundary_present" in review_text
+    )
     missing_blockers = sorted(REQUIRED_FINAL_BLOCKERS - set(manifest.final_blockers))
     missing_prohibited = sorted(REQUIRED_PROHIBITED_ACTIONS - set(manifest.prohibited_actions))
     blocker_detail_rows = (
@@ -649,6 +680,30 @@ def build_review_package_completeness_report(
                 "candidate_count": deadline_guard_candidate_count,
                 "review_required_count": deadline_guard_review_required_count,
                 "passed_checks": sorted(deadline_guard_passed_checks),
+            },
+        ),
+        _check(
+            "evidence_completeness_report_complete",
+            bool(evidence_completeness_report_complete),
+            "Evidence completeness report proves candidate evidence refs, unknown options, and human-review boundary.",
+            [
+                artifact_refs.get("preflight_evidence_completeness_report", ""),
+                str(review_package_path),
+            ],
+            {
+                "status": (
+                    evidence_completeness_report.status if evidence_completeness_report else None
+                ),
+                "strict_evidence_required": (
+                    evidence_completeness_report.strict_evidence_required
+                    if evidence_completeness_report
+                    else None
+                ),
+                "evidence_ref_count": (
+                    evidence_completeness_report.evidence_ref_count
+                    if evidence_completeness_report
+                    else None
+                ),
             },
         ),
         _check(

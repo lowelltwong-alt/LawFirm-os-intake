@@ -904,6 +904,18 @@
       "default": null,
       "title": "Deadline Docketing Guard Report Ref"
     },
+    "evidence_completeness_report_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Evidence Completeness Report Ref"
+    },
     "intake_review_form_ref": {
       "anyOf": [
         {
