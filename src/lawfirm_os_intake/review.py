@@ -13,6 +13,7 @@ from .models import (
     HumanReviewOutcomeRecord,
     IntakePreflightPacket,
     MatterOpeningReadiness,
+    ModelAdapterReport,
     SafetyGateReport,
 )
 
@@ -250,6 +251,29 @@ def _contract_state_lines(report: ContractStateReport | None) -> list[str]:
             f"topology_matches_lock={dependency.topology_matches_lock}"
         )
     lines.append("- Contract checks:")
+    lines.extend(f"- {check.status}: {check.check_id} - {check.message}" for check in report.checks)
+    return lines
+
+
+def _model_adapter_lines(report: ModelAdapterReport | None) -> list[str]:
+    if report is None:
+        return ["- Model adapter report: unavailable"]
+    lines = [
+        f"- Model adapter status: {report.status}",
+        f"- Adapter: {report.adapter_name} ({report.adapter_mode})",
+        f"- Provider call performed: {report.provider_call_performed}",
+        f"- Model calls allowed: {report.model_calls_allowed}",
+        f"- External tools allowed: {report.external_tools_allowed}",
+        f"- Network access allowed: {report.network_access_allowed}",
+        f"- External writes allowed: {report.external_writes_allowed}",
+        f"- Approved for real data: {report.approved_for_real_data}",
+        f"- Typed JSON only: {report.typed_json_only}",
+        f"- Prompt registry: `{report.prompt_registry_ref}`",
+        f"- Prompt hashes pinned: {len(report.prompt_hashes)}",
+        f"- Baseline comparison state: {report.baseline_comparison_state}",
+        f"- Required human gates: {', '.join(report.required_human_gates)}",
+        "- Adapter guard checks:",
+    ]
     lines.extend(f"- {check.status}: {check.check_id} - {check.message}" for check in report.checks)
     return lines
 
@@ -571,6 +595,7 @@ def render_matter_opening_review_package(
     evidence_graph: EvidenceGraph | None = None,
     exception_readiness_report: ExceptionLakeReadinessReport | None = None,
     contract_state_report: ContractStateReport | None = None,
+    model_adapter_report: ModelAdapterReport | None = None,
     human_review_outcome: HumanReviewOutcomeRecord | None = None,
     budget_precondition_report: BudgetPreconditionReport | None = None,
 ) -> str:
@@ -612,6 +637,9 @@ def render_matter_opening_review_package(
             "",
             "### Contract State",
             *_contract_state_lines(contract_state_report),
+            "",
+            "### Model Adapter Boundary",
+            *_model_adapter_lines(model_adapter_report),
             "",
             "### Human Review Outcome",
             *_human_review_outcome_lines(human_review_outcome),

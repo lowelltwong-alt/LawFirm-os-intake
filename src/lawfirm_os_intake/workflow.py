@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-from .adapters import resolve_adapter
+from .adapters import build_model_adapter_report, resolve_adapter
 from .budget import build_budget_proposal
 from .confirmation import build_human_review_outcome_record
 from .contract_state import build_contract_state_report, enforce_contract_state
@@ -29,6 +29,7 @@ from .models import (
     HumanConfirmation,
     IntakePreflightPacket,
     MatterOpeningReadiness,
+    ModelAdapterReport,
     ReviewPackageManifest,
     RunEvent,
     SourceBundle,
@@ -149,6 +150,9 @@ def run_preflight(
 
     append_jsonl(ledger_path, _event(run_id, 0, "run_started", "started").model_dump(mode="json"))
     adapter_decision = resolve_adapter(adapter)
+    model_adapter_report_path = run_dir / "model_adapter_report.json"
+    model_adapter_report = build_model_adapter_report(run_id, adapter_decision)
+    write_json(model_adapter_report_path, model_adapter_report.model_dump(mode="json"))
     append_jsonl(
         ledger_path,
         _event(
@@ -156,6 +160,7 @@ def run_preflight(
             1,
             "adapter_selected",
             "completed",
+            output_refs=[str(model_adapter_report_path)],
             notes=adapter_decision.notes,
         ).model_dump(mode="json"),
     )
@@ -268,6 +273,7 @@ def run_preflight(
         evidence_graph_ref=str(run_dir / "evidence_graph.json"),
         run_ledger_ref=str(ledger_path),
         contract_state_report_ref=str(contract_state_report_path),
+        model_adapter_report_ref=str(model_adapter_report_path),
         exception_candidates_ref=str(exception_candidates_path),
         exception_lake_readiness_report_ref=str(exception_readiness_report_path),
         intake_review_form_ref=str(review_form_path),
@@ -308,6 +314,7 @@ def run_preflight(
                 str(review_form_path),
                 str(run_dir / "evidence_graph.json"),
                 str(contract_state_report_path),
+                str(model_adapter_report_path),
                 str(exception_candidates_path),
                 str(ingestion_result_path),
                 str(ingestion_volume_profile_path),
@@ -589,6 +596,7 @@ def run_budget(
         "preflight_rust_ingestion_readiness_report": (
             packet.rust_ingestion_readiness_report_ref or ""
         ),
+        "preflight_model_adapter_report": packet.model_adapter_report_ref or "",
         "preflight_intake_review_form": packet.intake_review_form_ref or "",
         "human_confirmation": str(run_dir / "human_confirmation.json"),
         "conflict_search_seed": str(run_dir / "conflict_search_seed_packet.json"),
@@ -640,6 +648,11 @@ def run_budget(
     contract_state_report = ContractStateReport.model_validate(
         load_json(packet.contract_state_report_ref)
     )
+    model_adapter_report = (
+        ModelAdapterReport.model_validate(load_json(packet.model_adapter_report_ref))
+        if packet.model_adapter_report_ref
+        else None
+    )
     append_jsonl(
         ledger_path,
         _event(
@@ -684,6 +697,7 @@ def run_budget(
             evidence_graph=extended,
             exception_readiness_report=exception_readiness_report,
             contract_state_report=contract_state_report,
+            model_adapter_report=model_adapter_report,
             human_review_outcome=human_review_outcome,
             budget_precondition_report=budget_precondition_report,
         ),

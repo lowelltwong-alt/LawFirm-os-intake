@@ -37,6 +37,8 @@ Validate the local reviewed lock files before reading the source bundle. The sta
 
 The run writes `contract_state_report.json` and fails closed if the contract state is missing, stale, or mismatched.
 
+The run also writes `model_adapter_report.json` for the selected adapter. `structured-model` is currently dry-run only: zero provider calls, zero external tools, no network or external writes, typed JSON-only requirements, prompt hashes, deterministic baseline authority, independent critic, and human gates.
+
 ### 2. Receive and gate
 
 Validate data origin, scope, and source bundle. The starter stops on non-synthetic content.

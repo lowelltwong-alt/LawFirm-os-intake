@@ -202,6 +202,12 @@ The planned runtime uses bounded specialists, not a swarm:
 
 A deterministic packet writer assembles outputs. Dynamic agent creation is prohibited. Every handoff is typed. A frontier model cannot replace human confirmation.
 
+## Provider adapter boundary
+
+The CLI accepts `--adapter deterministic` and `--adapter structured-model`. The structured-model path is a dry-run boundary only: it writes `model_adapter_report.json`, records the prompt registry hashes, sets a zero-call model budget, denies network/external-write/production connector tools, requires typed JSON under exported schemas, preserves the independent critic and human gates, and keeps deterministic workers authoritative.
+
+No provider call is made, no raw payload is externalized, and the report is carried into the final review package under `### Model Adapter Boundary`.
+
 ## Rust readiness
 
 Python remains the starter reference implementation. If future document volume or constrained compute requires Rust, the only approved hot-path boundary is source inventory, segmentation, hashing, and evidence-ref emission. Any Rust adapter must prove parity with the Python reference for offsets, hashes, segment structure, prompt-injection flags, duplicate/missing-source states, and schema-compatible JSON before it can replace the Python path.
@@ -243,4 +249,4 @@ A builder or AI coding agent must read in this order:
 
 ## Status
 
-Starter repository. The mock workflow is executable and testable. Canonical contract promotion into sibling repositories, live public-data ingestion, provider adapters, and production integration remain governed future work.
+Starter repository. The mock workflow is executable and testable. Canonical contract promotion into sibling repositories, live public-data ingestion, real provider calls, and production integration remain governed future work.

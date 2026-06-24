@@ -28,6 +28,7 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     ingestion_result = load_json(preflight_dir / "ingestion_result.json")
     ingestion_volume = load_json(preflight_dir / "ingestion_volume_profile.json")
     contract_state = load_json(preflight_dir / "contract_state_report.json")
+    model_adapter = load_json(preflight_dir / "model_adapter_report.json")
     preflight_exceptions = load_jsonl(preflight_dir / "exception_lake_candidates.jsonl")
     preflight_exception_readiness = load_json(
         preflight_dir / "exception_lake_readiness_report.json"
@@ -108,6 +109,13 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     assert manifest["artifact_refs"]["preflight_ingestion_volume_profile"].endswith(
         "ingestion_volume_profile.json"
     )
+    assert manifest["artifact_refs"]["preflight_model_adapter_report"].endswith(
+        "model_adapter_report.json"
+    )
+    assert model_adapter["status"] == "passed"
+    assert model_adapter["provider_call_performed"] is False
+    assert model_adapter["model_calls_allowed"] is False
+    assert model_adapter["external_tools_allowed"] is False
     assert manifest["review_package_completeness_report_ref"].endswith(
         "review_package_completeness_report.json"
     )
@@ -129,6 +137,10 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
         "Contract state status: passed",
         "Lock status: reviewed_seed_lock",
         "LawFirm-os-semantic-substrate",
+        "### Model Adapter Boundary",
+        "Model adapter status: passed",
+        "Provider call performed: False",
+        "Model calls allowed: False",
         "### Human Review Outcome",
         "Human review outcome status: confirmed",
         "Budget stage allowed: True",

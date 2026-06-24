@@ -5,6 +5,7 @@ This is a draft promotion package for stable intake components. It is not a dire
 ## Semantic Substrate Candidates
 
 - Intake source bundle, source inventory, and ingestion result contracts.
+- Model adapter report contract for deterministic or structured-model dry-run posture, prompt hashes, model/tool budget, tool denylist, typed-output requirement, human gates, critic requirement, and deterministic baseline authority.
 - Rust ingestion readiness report contract for future high-volume source inventory, segmentation, hashing, and evidence-ref parity checks.
 - Evidence ref contract with source ID, segment ID, segment offsets, and segment hash.
 - Human confirmation contract, including `confirmed`, `unknown`, `needs_more_information`, `human_only`, and `declined_or_referred` outcomes, decision evidence refs, and confirmed-party evidence refs.
@@ -27,8 +28,8 @@ This is a draft promotion package for stable intake components. It is not a dire
 
 - Outer workflow owner: `LawFirm-os-orchestrator`.
 - Intake runtime input: source bundle path, practice profile ref, adapter mode, strict-evidence setting.
-- Intake runtime outputs: contract state report, preflight packet, review form, evidence graph, run ledger, dry-run exception candidates, exception readiness report, human confirmation, human review outcome record, confirmation history, budget precondition report, conflict seed, budget proposal, budget review form, matter-opening readiness, safety gate report, consolidated review package, review package manifest, review package completeness report.
-- Required gates: contract-state gate, data-origin gate, prompt/tool authority gate, human intake confirmation, budget precondition gate, prohibited-transition gate.
+- Intake runtime outputs: contract state report, model adapter report, preflight packet, review form, evidence graph, run ledger, dry-run exception candidates, exception readiness report, human confirmation, human review outcome record, confirmation history, budget precondition report, conflict seed, budget proposal, budget review form, matter-opening readiness, safety gate report, consolidated review package, review package manifest, review package completeness report.
+- Required gates: contract-state gate, model-adapter guard, data-origin gate, prompt/tool authority gate, human intake confirmation, budget precondition gate, prohibited-transition gate.
 
 ## Exception Lake Mapping Draft
 

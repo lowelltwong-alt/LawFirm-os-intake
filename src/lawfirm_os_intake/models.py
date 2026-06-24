@@ -258,6 +258,47 @@ class ContractStateReport(StrictModel):
     generated_at: str
 
 
+class ModelAdapterGuardCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    details: dict[str, Any] = Field(default_factory=dict)
+
+
+class ModelAdapterReport(StrictModel):
+    schema_version: str = "0.1"
+    model_adapter_report_id: str
+    run_id: str
+    adapter_name: Literal["deterministic", "structured-model"]
+    adapter_mode: Literal["deterministic", "dry_run"]
+    status: Literal["passed", "failed"]
+    provider_call_performed: Literal[False] = False
+    model_calls_allowed: bool
+    external_tools_allowed: bool
+    network_access_allowed: Literal[False] = False
+    external_writes_allowed: Literal[False] = False
+    raw_payload_externalized: Literal[False] = False
+    approved_for_real_data: Literal[False] = False
+    typed_json_only: Literal[True] = True
+    prompt_registry_ref: str
+    prompt_hashes: dict[str, str]
+    structured_output_schema_refs: list[str]
+    model_budget: dict[str, int]
+    allowed_tool_refs: list[str] = Field(default_factory=list)
+    tool_denylist: list[str]
+    required_human_gates: list[str]
+    independent_critic_required: Literal[True] = True
+    human_confirmation_required: Literal[True] = True
+    deterministic_baseline_required: Literal[True] = True
+    deterministic_workers_authoritative: Literal[True] = True
+    baseline_comparison_state: Literal[
+        "deterministic_workers_are_current_baseline",
+        "dry_run_no_provider_output",
+    ]
+    checks: list[ModelAdapterGuardCheck]
+    generated_at: str
+
+
 class IntakePreflightPacket(StrictModel):
     schema_version: str = "0.1"
     packet_id: str
@@ -286,6 +327,7 @@ class IntakePreflightPacket(StrictModel):
     evidence_graph_ref: str
     run_ledger_ref: str
     contract_state_report_ref: str
+    model_adapter_report_ref: str | None = None
     exception_candidates_ref: str | None = None
     exception_lake_readiness_report_ref: str | None = None
     intake_review_form_ref: str | None = None

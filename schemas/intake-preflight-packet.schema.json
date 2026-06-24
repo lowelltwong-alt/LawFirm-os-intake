@@ -808,6 +808,18 @@
       "title": "Contract State Report Ref",
       "type": "string"
     },
+    "model_adapter_report_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Model Adapter Report Ref"
+    },
     "exception_candidates_ref": {
       "anyOf": [
         {

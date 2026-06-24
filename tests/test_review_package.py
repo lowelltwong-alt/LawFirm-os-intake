@@ -48,6 +48,11 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert "Contract state status: passed" in review_text
     assert "Lock status: reviewed_seed_lock" in review_text
     assert "LawFirm-os-semantic-substrate" in review_text
+    assert "### Model Adapter Boundary" in review_text
+    assert "Model adapter status: passed" in review_text
+    assert "Provider call performed: False" in review_text
+    assert "Model calls allowed: False" in review_text
+    assert "Baseline comparison state:" in review_text
     assert "### Human Review Outcome" in review_text
     assert "Human review outcome status: confirmed" in review_text
     assert "Budget stage allowed: True" in review_text
@@ -148,6 +153,9 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert manifest.artifact_refs["preflight_rust_ingestion_readiness_report"].endswith(
         "rust_ingestion_readiness_report.json"
     )
+    assert (
+        manifest.artifact_refs["preflight_model_adapter_report"] == packet.model_adapter_report_ref
+    )
     assert manifest.artifact_refs["preflight_intake_review_form"].endswith("intake_review_form.md")
     assert manifest.artifact_refs["budget_precondition_report"] == str(
         budget_dir / "budget_precondition_report.json"
@@ -177,6 +185,7 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert completeness.review_package_manifest_ref == str(manifest_path)
     assert "## Authority And Preconditions" in completeness.required_sections
     assert "### Contract State" in completeness.required_sections
+    assert "### Model Adapter Boundary" in completeness.required_sections
     assert "### Human Review Outcome" in completeness.required_sections
     assert "### Budget Preconditions" in completeness.required_sections
     assert "## Source Inventory" in completeness.required_sections

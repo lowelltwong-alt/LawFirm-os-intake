@@ -88,6 +88,12 @@ Candidate execution envelopes are under `harnesses/`:
 
 The harness controls turns, tools, data scope, writes, validation, and escalation. The model cannot expand the harness authority.
 
+## Structured-model dry-run adapter
+
+`--adapter structured-model` is currently a provider-boundary spike, not a provider integration. Preflight writes `model_adapter_report.json` with prompt hashes from `prompts/registry.yaml`, zero allowed model calls, zero allowed external tools, network and external writes disabled, typed JSON-only requirements, required human gates, independent critic requirement, and deterministic baseline authority.
+
+The structured-model adapter does not call a model, does not externalize raw payload, does not bypass deterministic validation, and does not change human confirmation requirements.
+
 ## Deterministic review forms
 
 The reference workflow writes `intake_review_form.md` and `legal_budget_review_form.md`. These are review surfaces generated from validated packet objects; they are not legal or client-facing documents.
