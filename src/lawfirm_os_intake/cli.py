@@ -6,8 +6,9 @@ from pathlib import Path
 import shutil
 import sys
 
+from .budget_form import render_budget_form
 from .confirmation import bind_confirmation_to_packet_evidence
-from .models import HumanConfirmation
+from .models import BudgetProposal, HumanConfirmation
 from .util import load_json, write_json
 from .workflow import run_budget, run_preflight
 
@@ -49,6 +50,16 @@ def _parser() -> argparse.ArgumentParser:
         "--adapter", choices=["deterministic", "structured-model"], default="deterministic"
     )
     demo.add_argument("--strict-evidence", action=argparse.BooleanOptionalAction, default=True)
+
+    budget_form = sub.add_parser(
+        "budget-form",
+        help="Render a legal budget proposal into a UTBMS budget form workbook (.xlsx).",
+    )
+    budget_form.add_argument("--budget", required=True, help="Path to legal_budget_proposal.json")
+    budget_form.add_argument("--out", required=True, help="Output .xlsx path")
+    budget_form.add_argument(
+        "--template", help="Optional existing UTBMS budget form to fill instead of generating one"
+    )
     return parser
 
 
@@ -194,6 +205,23 @@ def main(argv: list[str] | None = None) -> int:
                     ),
                     "total_proposed_budget": proposal.total_proposed_budget,
                     "final_boundary": "blocked_pending_conflicts_and_engagement",
+                }
+            )
+            return 0
+
+        if args.command == "budget-form":
+            proposal = BudgetProposal.model_validate(load_json(args.budget))
+            out_path = render_budget_form(proposal, args.out, template_path=args.template)
+            _print(
+                {
+                    "status": "budget_form_rendered",
+                    "budget_proposal_id": proposal.budget_proposal_id,
+                    "pricing_status": proposal.pricing_status,
+                    "mode": "fill_existing" if args.template else "synthetic_form",
+                    "out": str(out_path),
+                    "not_authorized_for_client_submission": (
+                        proposal.not_authorized_for_client_submission
+                    ),
                 }
             )
             return 0

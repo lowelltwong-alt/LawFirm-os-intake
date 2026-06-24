@@ -697,6 +697,7 @@ class BudgetLine(StrictModel):
     estimated_expenses: float = Field(default=0, ge=0)
     calculation_formula: str | None = None
     external_code_candidate: str | None = None
+    expense_code: str | None = None
     assumptions: list[str] = Field(default_factory=list)
     evidence_refs: list[EvidenceRef] = Field(default_factory=list)
 

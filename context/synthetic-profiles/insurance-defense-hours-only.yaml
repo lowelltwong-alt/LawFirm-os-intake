@@ -86,6 +86,7 @@ budget_templates:
             estimated_hours: 18
             estimated_expenses: 250
             external_code_candidate: L140
+            expense_code: E101
           - task_id: L150
             task_name: Budgeting
             staffing_role: senior_associate
@@ -98,6 +99,7 @@ budget_templates:
             estimated_hours: 22
             estimated_expenses: 2500
             external_code_candidate: L160
+            expense_code: E121
       - phase_id: L200
         phase_name: Pre-Trial Pleading and Motions
         tasks:
@@ -107,6 +109,7 @@ budget_templates:
             estimated_hours: 16
             estimated_expenses: 300
             external_code_candidate: L210
+            expense_code: E112
             scaling_driver: num_represented_defendants
             hours_per_unit: 8
           - task_id: L230
@@ -121,6 +124,7 @@ budget_templates:
             estimated_hours: 40
             estimated_expenses: 800
             external_code_candidate: L240
+            expense_code: E112
             scaling_driver: num_dispositive_motions
             hours_per_unit: 40
       - phase_id: L300
@@ -132,6 +136,7 @@ budget_templates:
             estimated_hours: 44
             estimated_expenses: 300
             external_code_candidate: L310
+            expense_code: E101
             scaling_driver: written_discovery_rounds
             hours_per_unit: 22
           - task_id: L320
@@ -140,12 +145,14 @@ budget_templates:
             estimated_hours: 30
             estimated_expenses: 1200
             external_code_candidate: L320
+            expense_code: E118
           - task_id: L330
             task_name: Depositions
             staffing_role: senior_associate
             estimated_hours: 48
             estimated_expenses: 0
             external_code_candidate: L330
+            expense_code: E115
             scaling_driver: num_depositions
             hours_per_unit: 8
             expense_per_unit: 700
@@ -155,6 +162,7 @@ budget_templates:
             estimated_hours: 18
             estimated_expenses: 0
             external_code_candidate: L340
+            expense_code: E119
             scaling_driver: num_experts
             hours_per_unit: 6
             expense_per_unit: 7500
@@ -164,6 +172,7 @@ budget_templates:
             estimated_hours: 12
             estimated_expenses: 300
             external_code_candidate: L350
+            expense_code: E112
       - phase_id: L400
         phase_name: Trial Preparation and Trial
         tasks:
@@ -193,6 +202,7 @@ budget_templates:
             estimated_hours: 60
             estimated_expenses: 0
             external_code_candidate: L440
+            expense_code: E117
             scaling_driver: trial_days
             hours_per_unit: 12
             expense_per_unit: 500
@@ -202,6 +212,7 @@ budget_templates:
             estimated_hours: 40
             estimated_expenses: 0
             external_code_candidate: L450
+            expense_code: E116
             scaling_driver: trial_days
             hours_per_unit: 9
             expense_per_unit: 800

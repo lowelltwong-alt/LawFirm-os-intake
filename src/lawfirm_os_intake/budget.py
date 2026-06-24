@@ -257,6 +257,7 @@ def build_budget_proposal(
                     estimated_expenses=expenses,
                     calculation_formula=calculation_formula,
                     external_code_candidate=task.get("external_code_candidate"),
+                    expense_code=task.get("expense_code"),
                     assumptions=assumptions,
                     evidence_refs=evidence_refs,
                 )
