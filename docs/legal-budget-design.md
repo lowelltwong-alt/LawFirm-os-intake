@@ -99,9 +99,14 @@ intake-confirmed baseline
 
 No runtime correction automatically rewrites the template.
 
-## Sample med-mal defense phases
+## Sample synthetic defense families
 
-The synthetic profile demonstrates:
+The synthetic insurance-defense profile now demonstrates medical-malpractice defense
+and auto-liability bodily-injury defense. Both use the same deterministic budget
+engine, driver policy, scenario-set behavior, support-item model, review gates, and
+submission boundary while varying only the local candidate template and defaults.
+
+The medical-malpractice template demonstrates:
 
 - intake and early case assessment;
 - pleadings and initial motions;
@@ -109,4 +114,11 @@ The synthetic profile demonstrates:
 - dispositive motions and resolution;
 - trial preparation and trial.
 
-This is a test template, not a universal legal budget.
+The auto/BI template demonstrates:
+
+- accident investigation and damages strategy;
+- answer and initial pleadings;
+- written discovery, medical records, party/witness/treating-provider depositions, and expert discovery;
+- trial preparation and trial attendance.
+
+These are test templates, not universal legal budgets.

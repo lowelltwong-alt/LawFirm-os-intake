@@ -299,3 +299,9 @@
 - Added bounded severity, liability, and venue intensity multipliers from local synthetic driver policy.
 - Added `BudgetDriverEffect` records so count scaling, intensity multipliers, coverage boundaries, and unknown drivers expose value, provenance, policy refs, affected phases/tasks, cap state, and the no-default-as-observed-fact invariant.
 - Added `BudgetGuidelineFlag` records for synthetic role-rate, phase-budget, and total-budget caps; flags require human review when triggered and never rewrite budget values.
+
+## Second matter-family slice - 2026-06-24
+
+- Added `auto_liability_defense` synthetic driver defaults and a UTBMS-coded auto/BI defense budget template.
+- Added `carrier-assignment-auto-bi.json` plus a matching confirmation fixture.
+- Added end-to-end tests proving auto/BI preflight ranking, confirmation binding, driver resolution, budget generation, scenario set, driver effects, guideline flags, final review package, and non-submission boundary.

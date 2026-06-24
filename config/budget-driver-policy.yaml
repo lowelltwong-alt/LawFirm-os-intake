@@ -78,6 +78,18 @@ matter_family_defaults:
     venue_difficulty: neutral
     # resolution_path and coverage_posture are intentionally omitted so they resolve
     # to 'unknown' unless observed or human-confirmed.
+  auto_liability_defense:
+    num_depositions: 5
+    num_experts: 2
+    written_discovery_rounds: 1
+    num_dispositive_motions: 0
+    esi_volume_tier: light
+    trial_days: 4
+    severity_tier: significant
+    liability_dispute: disputed
+    venue_difficulty: neutral
+    # resolution_path and coverage_posture are intentionally omitted so they resolve
+    # to 'unknown' unless observed or human-confirmed.
 
 scenarios:
   - scenario_id: early_resolution

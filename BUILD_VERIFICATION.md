@@ -16,7 +16,7 @@ python -m ruff check src tests scripts
 # All checks passed
 
 python -m ruff format --check src tests scripts
-# 84 files already formatted
+# 85 files already formatted
 
 bash -lc 'export PATH="/c/Users/lowel/AppData/Local/Programs/Python/Python312:$PATH"; bash scripts/smoke_demo.sh'
 # completed without error and wrote starter, blocked-budget, and context-counterfactual audit reports
@@ -79,6 +79,8 @@ Budget runs now also emit `budget_submission_guard_report.json`, proving the bud
 Budget proposals now embed `BudgetScenarioSet` with `early_resolution`, `standard`, and `through_trial` branches. The compatibility proposal fields map to `standard`, while the review forms render the branch comparison, ranges, included phases, included UTBMS code candidates, monotonic ordering, and non-submission boundary.
 
 Budget proposals now also embed `BudgetDriverEffect` and `BudgetGuidelineFlag` records. Severity, liability, and venue can apply bounded synthetic intensity multipliers, coverage posture remains a review boundary, and synthetic guideline caps produce human-review flags without rewriting rates, hours, expenses, or totals. Profile defaults are labeled as defaults rather than observed facts.
+
+The insurance-defense profile now includes a second synthetic matter family, `auto_liability_defense`, with its own UTBMS-coded template and driver defaults. The auto/BI fixture exercises preflight ranking, human confirmation binding, driver resolution, budget generation, scenario set, review package creation, and the same non-submission boundary as the med-mal fixture.
 
 Human-facing review Markdown now renders evidence refs inline for confirmation evidence, confirmed parties, deadlines, missing-information candidates, critic findings, conflict-search terms, and budget supports.
 

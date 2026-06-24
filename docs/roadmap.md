@@ -36,9 +36,13 @@ Add severity, venue, liability, coverage, and guideline/cap handling without let
 
 ## 4. Second Matter Family
 
-Status: pending.
+Status: implemented for the current synthetic slice.
 
 Add a second synthetic litigation family, likely auto/BI defense, to prove the engine is not med-mal-specific.
+
+- `auto_liability_defense` now has synthetic driver defaults and a UTBMS-coded budget template.
+- `carrier-assignment-auto-bi.json` and its confirmation fixture run through preflight, human confirmation binding, budget generation, and final review package creation.
+- Tests prove the auto/BI family ranks from observed source text and uses the auto template rather than the med-mal template.
 
 ## 5. Human Review Hardening
 
