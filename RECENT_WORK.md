@@ -166,3 +166,9 @@
 - Updated the Exception Candidate Details renderer so dry-run candidate evidence refs also show source ID, segment ID, offsets, and hash inline.
 - Added package and smoke coverage scoped to the exception-detail section, not just the package globally.
 - Kept Exception Lake behavior dry-run only; no admission, SQLite, event-class promotion, or schema change was added.
+
+## Intake-review outcome handling slice - 2026-06-24
+
+- Expanded `intake_review_form.md` source coverage rows with filenames, duplicate links, attachment refs, metadata keys, character counts, and hashes.
+- Added explicit review outcome handling so reviewers see which outcomes block budget-stage output and that corrections append or supersede prior records.
+- Added tests and smoke coverage for detailed source inventory and outcome handling in the preflight review form.

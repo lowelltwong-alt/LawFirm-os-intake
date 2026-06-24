@@ -31,13 +31,6 @@ def _candidate_lines(candidates: list, limit: int = 3) -> list[str]:
 
 
 def render_intake_review_form(packet: IntakePreflightPacket) -> str:
-    source_lines = [
-        (
-            f"- {item.source_id}: {item.source_type}, {item.read_state}, "
-            f"{item.availability_state}, sha={item.source_sha256}"
-        )
-        for item in packet.source_inventory
-    ]
     party_lines = []
     for party in packet.party_candidates:
         roles = ", ".join(
@@ -73,7 +66,7 @@ def render_intake_review_form(packet: IntakePreflightPacket) -> str:
             "",
             "## Source Coverage",
             "",
-            *source_lines,
+            *_source_inventory_lines(packet),
             "",
             f"Coverage complete: `{packet.source_coverage_summary.get('coverage_complete')}`",
             f"Missing sources: `{packet.source_coverage_summary.get('missing_sources')}`",
@@ -114,6 +107,10 @@ def render_intake_review_form(packet: IntakePreflightPacket) -> str:
             "- [ ] Needs more information",
             "- [ ] Human-only",
             "- [ ] Declined or referred by authorized human",
+            "",
+            "## Review Outcome Handling",
+            "",
+            *_review_outcome_handling_lines(),
             "",
             "## Prohibited Next Steps",
             "",
@@ -182,6 +179,17 @@ def render_budget_review_form(budget: BudgetProposal) -> str:
         ]
     )
     return "\n".join(lines)
+
+
+def _review_outcome_handling_lines() -> list[str]:
+    return [
+        "- confirmed -> budget_precondition_gate; budget stage may proceed only after exact packet binding and evidence checks.",
+        "- needs_more_information -> collect_missing_information; blocks conflict seed, budget proposal, readiness, safety, and final package output.",
+        "- unknown -> human_classification_correction; blocks budget-stage output until corrected or superseded.",
+        "- human_only -> human_only_handling; blocks automated budget-stage output.",
+        "- declined or declined_or_referred -> declined_or_referred_handoff; blocks budget-stage output.",
+        "- corrections use append_or_supersede_only; prior review outcomes are not silently mutated.",
+    ]
 
 
 def _lines_or_none(lines: list[str]) -> list[str]:

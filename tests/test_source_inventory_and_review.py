@@ -12,6 +12,7 @@ def test_source_inventory_tracks_duplicates_attachments_and_missing_sources(tmp_
         tmp_path,
     )
     inventory = {item.source_id: item for item in packet.source_inventory}
+    review_text = (run_dir / "intake_review_form.md").read_text(encoding="utf-8")
     assert inventory["syn-email-dup-002"].availability_state == "duplicate"
     assert inventory["syn-email-dup-002"].duplicate_of_source_id == "syn-email-dup-001"
     assert inventory["syn-attachment-missing-001"].read_state == "missing"
@@ -19,6 +20,16 @@ def test_source_inventory_tracks_duplicates_attachments_and_missing_sources(tmp_
     assert packet.source_coverage_summary["attachment_reference_count"] >= 2
     assert (run_dir / "intake_review_form.md").exists()
     assert packet.intake_review_form_ref.endswith("intake_review_form.md")
+    assert "duplicate_of=syn-email-dup-001" in review_text
+    assert "attachments=claim-notes.pdf, complaint.pdf" in review_text
+    assert "filename=assignment_duplicate.txt" in review_text
+    assert "## Review Outcome Handling" in review_text
+    assert (
+        "confirmed -> budget_precondition_gate; budget stage may proceed only after exact "
+        "packet binding and evidence checks."
+    ) in review_text
+    assert "needs_more_information -> collect_missing_information" in review_text
+    assert "append_or_supersede_only" in review_text
 
 
 def test_unread_source_is_coverage_gap_and_exception_candidate(tmp_path, repo_root):
