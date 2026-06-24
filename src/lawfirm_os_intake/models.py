@@ -765,6 +765,53 @@ class BudgetCalculationReport(StrictModel):
     deterministic: bool = True
 
 
+class BudgetFormCodeMapping(StrictModel):
+    code: str
+    kind: Literal["phase", "task"]
+    row: int = Field(ge=1)
+    label: str
+    amount_cell: str
+    amount: float = 0
+
+
+class BudgetFormFormulaCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed", "warning"]
+    message: str
+    cell: str | None = None
+    actual_formula: str | None = None
+    expected_refs: list[str] = Field(default_factory=list)
+    actual_refs: list[str] = Field(default_factory=list)
+
+
+class BudgetFormMappingReport(StrictModel):
+    schema_version: str = "0.1"
+    budget_form_mapping_report_id: str
+    budget_proposal_id: str
+    status: Literal["passed", "failed"]
+    template_sha256: str
+    sheet_name: str
+    task_header_cell: str | None = None
+    amount_header_cell: str | None = None
+    total_cell: str | None = None
+    task_column: int | None = None
+    amount_column: int | None = None
+    code_mappings: list[BudgetFormCodeMapping] = Field(default_factory=list)
+    amounts_by_code: dict[str, float] = Field(default_factory=dict)
+    l_code_total: float = 0
+    e_code_total: float = 0
+    missing_template_codes: list[str] = Field(default_factory=list)
+    duplicate_template_codes: list[str] = Field(default_factory=list)
+    missing_budget_mappings: list[str] = Field(default_factory=list)
+    unmapped_budget_amount_codes: list[str] = Field(default_factory=list)
+    formula_checks: list[BudgetFormFormulaCheck] = Field(default_factory=list)
+    warnings: list[str] = Field(default_factory=list)
+    not_authorized_for_client_submission: bool = True
+    external_writes_performed: Literal[False] = False
+    non_authoritative: Literal[True] = True
+    generated_at: str
+
+
 class BudgetSubmissionGuardCheck(StrictModel):
     check_id: str
     status: Literal["passed", "failed"]

@@ -94,6 +94,8 @@ The final matter-opening review package now includes an evidence-graph summary w
 
 Preflight runs now emit `context_boundary_report.json`, proving observed source evidence stays ahead of practice-context priors, context is not observed evidence, context refs remain structured, unknown options remain available, human confirmation remains required, and no external write or authoritative promotion occurred.
 
+Template-backed budget form rendering now emits `budget_form_mapping_report.json` when requested and blocks before workbook creation if the carrier-style template loses required headers, UTBMS mappings, original-budget total formulas, phase subtotal formulas, or task remaining formulas.
+
 The final matter-opening review package now includes authority and precondition subsections for contract-state status, human-review outcome, and budget precondition checks; package completeness requires those sections.
 
 The final matter-opening review package now includes Exception Lake readiness, handoff, and exception candidate detail subsections showing dry-run posture, raw-payload exclusion, promotion requirement, target runtime repo, no SQLite write, and support refs; package completeness requires those sections.

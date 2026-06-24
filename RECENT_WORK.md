@@ -275,3 +275,9 @@
 - Added `context_boundary_report.json` so preflight runs durably prove practice context remains a transparent prior rather than observed evidence.
 - The report checks evidence precedence, structured context refs, context-influenced candidate status, unknown option preservation, human confirmation, non-authoritative posture, and no external writes.
 - The final review package, manifest, package completeness report, starter audit, schema export, tests, and docs now fail closed if the context-boundary proof is missing or drifts.
+
+## Budget-form mapping report slice - 2026-06-24
+
+- Added `budget_form_mapping_report.json` for template-backed UTBMS workbook rendering.
+- The report checks template hash, header coordinates, code-to-row/write-cell mappings, L/E amount totals, missing/duplicate/unmapped codes, original-budget total formulas, phase subtotal formulas, and task remaining formulas.
+- The renderer blocks before creating a filled workbook when mapping or original-budget formula checks fail; the sanitized workbook remains local and only a structural test manifest is committed.

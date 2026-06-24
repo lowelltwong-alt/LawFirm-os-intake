@@ -56,6 +56,12 @@ A budget proposal contains:
 
 UTBMS/LEDES codes may be stored as `external_code_candidate` references. They are not canonical LawFirm OS values until the Semantic Substrate adopts a mapping. Client-specific code sets remain private and versioned.
 
+## Carrier form rendering
+
+Template-backed `.xlsx` rendering is validation-first. Before filling an existing UTBMS budget form, the renderer writes or can write `budget_form_mapping_report.json`, which records the template hash, header locations, code-to-row mappings, original-budget write cells, L/E totals, missing or duplicate codes, and original-budget formula checks.
+
+The renderer does not repair workbook formulas. Missing or inconsistent original-budget total, phase subtotal, task remaining, header, or budget-code mapping checks block rendering before a filled workbook is created. The filled workbook remains `proposed_for_human_review` and is not authorized for carrier or client submission.
+
 ## Budget refinement loop
 
 Future runtime:

@@ -18,16 +18,23 @@ not require it.
 
 from __future__ import annotations
 
+from hashlib import sha256
 import re
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from .models import BudgetProposal
+from .models import BudgetFormCodeMapping, BudgetFormFormulaCheck, BudgetFormMappingReport
+from .util import new_id, now_iso
 
 AMOUNT_HEADER = "Original Budgeted Amount"
 TASK_HEADER = "Phase / Task"
+AMOUNT_BILLED_HEADER = "Amount Billed to Date"
+AMOUNT_REMAINING_HEADER = "Original Budget Amount Remaining"
+TOTAL_LABEL = "Total Budgeted ($)"
 _CODE_RE = re.compile(r"\((L\d{3}|E\d{3})\)")
+_CELL_REF_RE = re.compile(r"\$?([A-Z]{1,3})\$?(\d+)")
 
 # The UTBMS litigation phase/task and expense code skeleton, in form order.
 UTBMS_FORM_ROWS: list[tuple[str, str, str]] = [
@@ -102,6 +109,9 @@ for _code, _label, _kind in UTBMS_FORM_ROWS:
     elif _current_phase is not None:
         _PHASE_TASKS[_current_phase].append(_code)
 
+_ROW_KINDS = {code: kind for code, _, kind in UTBMS_FORM_ROWS}
+_REQUIRED_CODES = [code for code, _, _ in UTBMS_FORM_ROWS]
+
 
 def form_amounts(budget: BudgetProposal) -> dict[str, float]:
     """Amount per UTBMS code: L-codes carry fees, E-codes carry mapped expenses."""
@@ -124,6 +134,313 @@ def _phase_subtotals(amounts: dict[str, float]) -> dict[str, float]:
         phase: round(sum(amounts.get(task, 0.0) for task in tasks), 2)
         for phase, tasks in _PHASE_TASKS.items()
     }
+
+
+def _file_sha256(path: Path) -> str:
+    return "sha256:" + sha256(path.read_bytes()).hexdigest()
+
+
+def _check(
+    check_id: str,
+    passed: bool,
+    message: str,
+    *,
+    cell: str | None = None,
+    actual_formula: str | None = None,
+    expected_refs: list[str] | None = None,
+    actual_refs: list[str] | None = None,
+    warning: bool = False,
+) -> BudgetFormFormulaCheck:
+    return BudgetFormFormulaCheck(
+        check_id=check_id,
+        status="warning" if warning else ("passed" if passed else "failed"),
+        message=message,
+        cell=cell,
+        actual_formula=actual_formula,
+        expected_refs=expected_refs or [],
+        actual_refs=actual_refs or [],
+    )
+
+
+def _cell_refs(formula: Any) -> list[str]:
+    if not isinstance(formula, str) or not formula.startswith("="):
+        return []
+    refs = {f"{col.upper()}{row}" for col, row in _CELL_REF_RE.findall(formula)}
+    return sorted(refs)
+
+
+def _formula_matches_refs(formula: Any, expected_refs: list[str]) -> tuple[bool, list[str]]:
+    actual_refs = _cell_refs(formula)
+    return sorted(expected_refs) == actual_refs, actual_refs
+
+
+def _find_headers(ws: Any) -> dict[str, tuple[int, int]]:
+    headers: dict[str, tuple[int, int]] = {}
+    for row in ws.iter_rows():
+        for cell in row:
+            value = cell.value
+            if not isinstance(value, str):
+                continue
+            normalized = value.strip()
+            if normalized == AMOUNT_HEADER:
+                headers[AMOUNT_HEADER] = (cell.row, cell.column)
+            elif normalized == AMOUNT_BILLED_HEADER:
+                headers[AMOUNT_BILLED_HEADER] = (cell.row, cell.column)
+            elif normalized == AMOUNT_REMAINING_HEADER:
+                headers[AMOUNT_REMAINING_HEADER] = (cell.row, cell.column)
+            elif TASK_HEADER in normalized:
+                headers[TASK_HEADER] = (cell.row, cell.column)
+    return headers
+
+
+def _find_total_cell(ws: Any) -> str | None:
+    for row in ws.iter_rows():
+        for cell in row:
+            if isinstance(cell.value, str) and cell.value.strip() == TOTAL_LABEL:
+                return ws.cell(row=cell.row, column=cell.column + 1).coordinate
+    return None
+
+
+def _template_code_rows(ws: Any, task_col: int | None) -> dict[str, list[int]]:
+    rows: dict[str, list[int]] = {}
+    if task_col is None:
+        return rows
+    for row_index in range(1, ws.max_row + 1):
+        value = ws.cell(row=row_index, column=task_col).value
+        if not isinstance(value, str):
+            continue
+        match = _CODE_RE.search(value)
+        if match is None:
+            continue
+        rows.setdefault(match.group(1), []).append(row_index)
+    return rows
+
+
+def _build_code_mappings(
+    ws: Any,
+    code_rows: dict[str, list[int]],
+    amount_col: int | None,
+    task_col: int | None,
+    amounts: dict[str, float],
+) -> list[BudgetFormCodeMapping]:
+    mappings: list[BudgetFormCodeMapping] = []
+    if amount_col is None or task_col is None:
+        return mappings
+    for code in _REQUIRED_CODES:
+        rows = code_rows.get(code, [])
+        if len(rows) != 1:
+            continue
+        row_index = rows[0]
+        mappings.append(
+            BudgetFormCodeMapping(
+                code=code,
+                kind=_ROW_KINDS[code],  # type: ignore[arg-type]
+                row=row_index,
+                label=str(ws.cell(row=row_index, column=task_col).value or ""),
+                amount_cell=ws.cell(row=row_index, column=amount_col).coordinate,
+                amount=round(amounts.get(code, 0.0), 2),
+            )
+        )
+    return mappings
+
+
+def _formula_checks(
+    ws: Any,
+    code_rows: dict[str, list[int]],
+    *,
+    amount_col: int | None,
+    billed_col: int | None,
+    remaining_col: int | None,
+    total_cell: str | None,
+) -> list[BudgetFormFormulaCheck]:
+    checks: list[BudgetFormFormulaCheck] = []
+    if amount_col is None:
+        return [
+            _check(
+                "original_budget_amount_column_present",
+                False,
+                "Template must contain the Original Budgeted Amount column.",
+            )
+        ]
+
+    if total_cell is None:
+        checks.append(
+            _check(
+                "original_budget_total_formula",
+                False,
+                "Template must contain a Total Budgeted ($) cell next to the total label.",
+            )
+        )
+    else:
+        expected_refs = [
+            ws.cell(row=code_rows[phase][0], column=amount_col).coordinate
+            for phase, tasks in _PHASE_TASKS.items()
+            if tasks and len(code_rows.get(phase, [])) == 1
+        ]
+        formula = ws[total_cell].value
+        passed, actual_refs = _formula_matches_refs(formula, expected_refs)
+        checks.append(
+            _check(
+                "original_budget_total_formula",
+                passed,
+                "Original budget total must sum original-budget phase cells.",
+                cell=total_cell,
+                actual_formula=formula if isinstance(formula, str) else None,
+                expected_refs=expected_refs,
+                actual_refs=actual_refs,
+            )
+        )
+
+    for phase, tasks in _PHASE_TASKS.items():
+        if len(code_rows.get(phase, [])) != 1:
+            continue
+        phase_cell = ws.cell(row=code_rows[phase][0], column=amount_col)
+        expected_refs = [
+            ws.cell(row=code_rows[task][0], column=amount_col).coordinate
+            for task in tasks
+            if len(code_rows.get(task, [])) == 1
+        ]
+        formula = phase_cell.value
+        passed, actual_refs = _formula_matches_refs(formula, expected_refs)
+        checks.append(
+            _check(
+                f"phase_{phase.lower()}_original_budget_formula",
+                passed,
+                f"Phase {phase} original-budget cell must sum its task cells.",
+                cell=phase_cell.coordinate,
+                actual_formula=formula if isinstance(formula, str) else None,
+                expected_refs=expected_refs,
+                actual_refs=actual_refs,
+            )
+        )
+
+    if billed_col is None or remaining_col is None:
+        checks.append(
+            _check(
+                "task_remaining_formula_columns_present",
+                False,
+                "Template must contain billed-to-date and original-budget remaining columns.",
+            )
+        )
+        return checks
+
+    for code, rows in code_rows.items():
+        if _ROW_KINDS.get(code) != "task" or len(rows) != 1:
+            continue
+        row_index = rows[0]
+        remaining_cell = ws.cell(row=row_index, column=remaining_col)
+        formula = remaining_cell.value
+        if formula in (None, ""):
+            continue
+        amount_ref = ws.cell(row=row_index, column=amount_col).coordinate
+        billed_ref = ws.cell(row=row_index, column=billed_col).coordinate
+        expected_refs = [amount_ref, billed_ref]
+        passed, actual_refs = _formula_matches_refs(formula, expected_refs)
+        checks.append(
+            _check(
+                f"task_{code.lower()}_remaining_formula",
+                passed,
+                f"Task {code} remaining cell must reference original budget and billed-to-date.",
+                cell=remaining_cell.coordinate,
+                actual_formula=formula if isinstance(formula, str) else None,
+                expected_refs=expected_refs,
+                actual_refs=actual_refs,
+            )
+        )
+    return checks
+
+
+def build_budget_form_mapping_report(
+    budget: BudgetProposal,
+    template_path: str | Path,
+) -> BudgetFormMappingReport:
+    from openpyxl import load_workbook
+
+    template = Path(template_path)
+    wb = load_workbook(template, data_only=False)
+    ws = wb.active
+    headers = _find_headers(ws)
+    task_header = headers.get(TASK_HEADER)
+    amount_header = headers.get(AMOUNT_HEADER)
+    billed_header = headers.get(AMOUNT_BILLED_HEADER)
+    remaining_header = headers.get(AMOUNT_REMAINING_HEADER)
+    task_col = task_header[1] if task_header else None
+    amount_col = amount_header[1] if amount_header else None
+    billed_col = billed_header[1] if billed_header else None
+    remaining_col = remaining_header[1] if remaining_header else None
+    code_rows = _template_code_rows(ws, task_col)
+    amounts = form_amounts(budget)
+    duplicate_codes = sorted(code for code, rows in code_rows.items() if len(rows) > 1)
+    missing_template_codes = sorted(code for code in _REQUIRED_CODES if code not in code_rows)
+    missing_budget_mappings = sorted(code for code in amounts if code not in code_rows)
+    unmapped_budget_amount_codes = sorted(set(missing_budget_mappings) | set(duplicate_codes))
+    total_cell = _find_total_cell(ws)
+    checks = _formula_checks(
+        ws,
+        code_rows,
+        amount_col=amount_col,
+        billed_col=billed_col,
+        remaining_col=remaining_col,
+        total_cell=total_cell,
+    )
+    structural_failures = [
+        not task_header,
+        not amount_header,
+        bool(missing_template_codes),
+        bool(duplicate_codes),
+        bool(missing_budget_mappings),
+        budget.not_authorized_for_client_submission is not True,
+    ]
+    status = (
+        "passed"
+        if not any(structural_failures) and all(check.status != "failed" for check in checks)
+        else "failed"
+    )
+    return BudgetFormMappingReport(
+        budget_form_mapping_report_id=new_id("budgetformmap"),
+        budget_proposal_id=budget.budget_proposal_id,
+        status=status,
+        template_sha256=_file_sha256(template),
+        sheet_name=ws.title,
+        task_header_cell=(
+            ws.cell(row=task_header[0], column=task_header[1]).coordinate if task_header else None
+        ),
+        amount_header_cell=(
+            ws.cell(row=amount_header[0], column=amount_header[1]).coordinate
+            if amount_header
+            else None
+        ),
+        total_cell=total_cell,
+        task_column=task_col,
+        amount_column=amount_col,
+        code_mappings=_build_code_mappings(ws, code_rows, amount_col, task_col, amounts),
+        amounts_by_code=dict(sorted(amounts.items())),
+        l_code_total=round(sum(v for k, v in amounts.items() if k.startswith("L")), 2),
+        e_code_total=round(sum(v for k, v in amounts.items() if k.startswith("E")), 2),
+        missing_template_codes=missing_template_codes,
+        duplicate_template_codes=duplicate_codes,
+        missing_budget_mappings=missing_budget_mappings,
+        unmapped_budget_amount_codes=unmapped_budget_amount_codes,
+        formula_checks=checks,
+        warnings=[],
+        not_authorized_for_client_submission=budget.not_authorized_for_client_submission,
+        generated_at=now_iso(),
+    )
+
+
+def enforce_budget_form_mapping_report(report: BudgetFormMappingReport) -> None:
+    if report.status == "passed":
+        return
+    failed_checks = [check.check_id for check in report.formula_checks if check.status == "failed"]
+    reasons = [
+        *failed_checks,
+        *[f"missing_template_code:{code}" for code in report.missing_template_codes],
+        *[f"duplicate_template_code:{code}" for code in report.duplicate_template_codes],
+        *[f"missing_budget_mapping:{code}" for code in report.missing_budget_mappings],
+    ]
+    if report.not_authorized_for_client_submission is not True:
+        reasons.append("budget_authorized_for_submission")
+    raise ValueError("budget form mapping failed: " + ", ".join(reasons))
 
 
 def _build_synthetic_form(budget: BudgetProposal, amounts: dict[str, float], out_path: Path):
@@ -224,6 +541,7 @@ def render_budget_form(
     budget: BudgetProposal,
     out_path: str | Path,
     template_path: str | Path | None = None,
+    mapping_report_out: str | Path | None = None,
 ) -> Path:
     """Render ``budget`` into a UTBMS budget form workbook at ``out_path``.
 
@@ -235,7 +553,14 @@ def render_budget_form(
     out_path = Path(out_path)
     amounts = form_amounts(budget)
     if template_path is not None:
+        report = build_budget_form_mapping_report(budget, template_path)
+        if mapping_report_out is not None:
+            Path(mapping_report_out).parent.mkdir(parents=True, exist_ok=True)
+            Path(mapping_report_out).write_text(report.model_dump_json(indent=2), encoding="utf-8")
+        enforce_budget_form_mapping_report(report)
         _fill_existing_form(Path(template_path), amounts, out_path)
     else:
+        if mapping_report_out is not None:
+            raise ValueError("--mapping-report-out requires --template")
         _build_synthetic_form(budget, amounts, out_path)
     return out_path

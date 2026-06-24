@@ -131,6 +131,8 @@ Budget runs also write a typed human review outcome record and append it to `hum
 
 Budget runs also write `budget_submission_guard_report.json`. This local proof artifact records that the budget remains `proposed_for_human_review`, is not authorized for client or carrier submission, has no client submission, no carrier submission, no billing handoff, no external writes, and remains blocked by the pending `human_budget_review` gate.
 
+Template-backed budget form rendering can also write `budget_form_mapping_report.json`. This local proof artifact records the template hash, header cells, UTBMS row/write-cell mappings, L/E amount totals, and original-budget formula checks before the renderer fills a carrier-style workbook copy. Failed mapping or formula checks block workbook rendering; the sanitized reference workbook remains local and is not committed.
+
 Preflight runs write `deadline_docketing_guard_report.json`. This local proof artifact binds every deadline candidate back to source evidence refs, marks the only next gate as `human_deadline_review`, records `docketing_action_performed=false` and `docketing_action_allowed=false`, and is carried into the final package manifest and completeness check. It does not characterize legal effect or create a docketing action.
 
 Preflight, confirmed budget, and blocked-budget attempts also write `run_ledger_integrity_report.json`. This local report proves required gate events appear in order, event run IDs match, output refs exist, refs stay local, blocked events only appear in blocked paths, and no external writes occurred. It is a vertical proof artifact only; Orchestrator remains the future run-ledger authority.

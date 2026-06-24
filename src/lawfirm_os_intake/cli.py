@@ -60,6 +60,10 @@ def _parser() -> argparse.ArgumentParser:
     budget_form.add_argument(
         "--template", help="Optional existing UTBMS budget form to fill instead of generating one"
     )
+    budget_form.add_argument(
+        "--mapping-report-out",
+        help="Optional budget_form_mapping_report.json path; requires --template.",
+    )
     return parser
 
 
@@ -211,7 +215,12 @@ def main(argv: list[str] | None = None) -> int:
 
         if args.command == "budget-form":
             proposal = BudgetProposal.model_validate(load_json(args.budget))
-            out_path = render_budget_form(proposal, args.out, template_path=args.template)
+            out_path = render_budget_form(
+                proposal,
+                args.out,
+                template_path=args.template,
+                mapping_report_out=args.mapping_report_out,
+            )
             _print(
                 {
                     "status": "budget_form_rendered",
@@ -219,6 +228,7 @@ def main(argv: list[str] | None = None) -> int:
                     "pricing_status": proposal.pricing_status,
                     "mode": "fill_existing" if args.template else "synthetic_form",
                     "out": str(out_path),
+                    "budget_form_mapping_report": args.mapping_report_out,
                     "not_authorized_for_client_submission": (
                         proposal.not_authorized_for_client_submission
                     ),
