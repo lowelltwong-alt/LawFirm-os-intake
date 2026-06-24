@@ -772,6 +772,75 @@ def _exception_handoff_lines(report: ExceptionLakeHandoffManifest | None) -> lis
     return lines
 
 
+def _exception_mapping_package_lines(artifact_refs: dict[str, str]) -> list[str]:
+    path = artifact_refs.get("budget_exception_lake_mapping_package", "")
+    lines = [f"- Exception Lake mapping package: `{path or 'missing'}`"]
+    if not path:
+        return [*lines, "- Mapping package details: unavailable"]
+    try:
+        payload = load_json(Path(path))
+    except (OSError, ValueError):
+        return [*lines, "- Mapping package details: unavailable"]
+    if not isinstance(payload, dict):
+        return [*lines, "- Mapping package details: unavailable"]
+    lines.extend(
+        [
+            f"- Mapping package status: {payload.get('status', 'unknown')}",
+            f"- Admission state: {payload.get('admission_state', 'unknown')}",
+            f"- Target runtime repo: {payload.get('target_runtime_repo', 'unknown')}",
+            f"- SQLite write performed: {payload.get('sqlite_write_performed', 'unknown')}",
+            f"- External writes performed: {payload.get('external_writes_performed', 'unknown')}",
+            f"- Canonical promotion required: {payload.get('canonical_promotion_required', 'unknown')}",
+            "- Mapping rules:",
+        ]
+    )
+    for rule in payload.get("rules", []):
+        if not isinstance(rule, dict):
+            continue
+        support_kinds = ", ".join(rule.get("support_ref_kinds") or []) or "none"
+        lines.append(
+            f"- {rule.get('mapping_id')}: issue={rule.get('issue_family')}; "
+            f"label={rule.get('local_event_label')}; "
+            f"class={rule.get('canonical_lake_class')}; "
+            f"candidate_count={rule.get('candidate_count')}; support={support_kinds}"
+        )
+    return lines
+
+
+def _budget_actual_comparison_lines(artifact_refs: dict[str, str]) -> list[str]:
+    path = artifact_refs.get("budget_actual_comparison_report", "")
+    lines = [f"- Budget actual comparison report: `{path or 'missing'}`"]
+    if not path:
+        return [*lines, "- Budget actual comparison details: unavailable"]
+    try:
+        payload = load_json(Path(path))
+    except (OSError, ValueError):
+        return [*lines, "- Budget actual comparison details: unavailable"]
+    if not isinstance(payload, dict):
+        return [*lines, "- Budget actual comparison details: unavailable"]
+    lines.extend(
+        [
+            f"- Actual comparison status: {payload.get('status', 'unknown')}",
+            f"- Comparison scope: {payload.get('comparison_scope', 'unknown')}",
+            f"- Variance threshold percent: {payload.get('variance_threshold_percent', 'unknown')}",
+            f"- Billing connector read performed: {payload.get('billing_connector_read_performed', 'unknown')}",
+            f"- Billing connector write performed: {payload.get('billing_connector_write_performed', 'unknown')}",
+            f"- External writes performed: {payload.get('external_writes_performed', 'unknown')}",
+            "- Phase comparisons:",
+        ]
+    )
+    for row in payload.get("phase_comparisons", []):
+        if not isinstance(row, dict):
+            continue
+        lines.append(
+            f"- {row.get('phase_id')}: budgeted={row.get('budgeted_total')}; "
+            f"actual={row.get('actual_total')}; "
+            f"variance={row.get('variance_amount')} ({row.get('variance_percent')}%); "
+            f"status={row.get('status')}"
+        )
+    return lines
+
+
 def _exception_candidate_detail_lines(candidates: list[dict[str, Any]]) -> list[str]:
     lines = []
     for candidate in candidates:
@@ -1261,8 +1330,14 @@ def render_matter_opening_review_package(
             ),
             *_exception_handoff_lines(exception_handoff_manifest),
             "",
+            "### Exception Lake Mapping Package",
+            *_exception_mapping_package_lines(artifact_refs),
+            "",
             "### Exception Candidate Details",
             *_exception_candidate_detail_lines(exception_candidates),
+            "",
+            "### Budget Actual Comparison",
+            *_budget_actual_comparison_lines(artifact_refs),
             "",
             "## Safety Gate",
             "",

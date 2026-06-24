@@ -3,6 +3,8 @@ from __future__ import annotations
 import re
 
 from .models import (
+    BudgetActualComparisonReport,
+    BudgetFormMappingReport,
     BudgetProposal,
     BudgetSupportItem,
     BudgetPreconditionReport,
@@ -286,6 +288,7 @@ def build_budget_exception_candidates(
         )
     ]
     candidates.extend(_budget_uncertainty_candidates(run_id, readiness, evidence_refs, budget))
+    candidates.extend(_budget_driver_and_guideline_candidates(run_id, readiness, budget))
     return candidates
 
 
@@ -360,6 +363,162 @@ def _budget_uncertainty_candidates(
         )
 
     return candidates
+
+
+def _budget_driver_and_guideline_candidates(
+    run_id: str,
+    readiness: MatterOpeningReadiness,
+    budget: BudgetProposal,
+) -> list[ExceptionLakeCandidate]:
+    candidates: list[ExceptionLakeCandidate] = []
+    for effect in budget.driver_effects:
+        if effect.effect_type != "unknown_driver":
+            continue
+        candidates.append(
+            ExceptionLakeCandidate(
+                candidate_id=new_id("exc"),
+                run_id=run_id,
+                preflight_packet_id=readiness.preflight_packet_id,
+                local_event_label="budget_unknown_driver_requires_review",
+                canonical_lake_class="workflow_escalation",
+                reason=effect.note,
+                structured_refs=[
+                    ref
+                    for ref in [
+                        effect.structured_ref,
+                        f"budget-proposal://{budget.budget_proposal_id}",
+                    ]
+                    if ref
+                ],
+                blocked_state="budget_driver_unknown",
+            )
+        )
+    for flag in budget.guideline_flags:
+        if flag.status == "not_triggered":
+            continue
+        candidates.append(
+            ExceptionLakeCandidate(
+                candidate_id=new_id("exc"),
+                run_id=run_id,
+                preflight_packet_id=readiness.preflight_packet_id,
+                local_event_label="budget_guideline_or_cap_requires_review",
+                canonical_lake_class="workflow_escalation",
+                reason=flag.note,
+                structured_refs=[
+                    ref
+                    for ref in [
+                        flag.structured_ref,
+                        f"budget-proposal://{budget.budget_proposal_id}",
+                    ]
+                    if ref
+                ],
+                blocked_state="budget_guideline_or_cap_review",
+            )
+        )
+    return candidates
+
+
+def build_budget_form_exception_candidates(
+    *,
+    run_id: str,
+    preflight_packet_id: str,
+    report: BudgetFormMappingReport,
+    report_ref: str,
+) -> list[ExceptionLakeCandidate]:
+    candidates: list[ExceptionLakeCandidate] = []
+    failed_formula_checks = [
+        check
+        for check in report.formula_checks
+        if check.status == "failed"
+        and (
+            check.check_id == "original_budget_total_formula"
+            or (
+                check.check_id.startswith("phase_")
+                and check.check_id.endswith("_original_budget_formula")
+            )
+            or (
+                check.check_id.startswith("task_") and check.check_id.endswith("_remaining_formula")
+            )
+        )
+    ]
+    if failed_formula_checks:
+        candidates.append(
+            ExceptionLakeCandidate(
+                candidate_id=new_id("exc"),
+                run_id=run_id,
+                preflight_packet_id=preflight_packet_id,
+                local_event_label="budget_form_original_formula_broken",
+                canonical_lake_class="workflow_escalation",
+                reason=(
+                    "Budget form mapping found broken original-budget formulas: "
+                    + ", ".join(check.check_id for check in failed_formula_checks)
+                ),
+                structured_refs=[report_ref, "docs/budget-template-checklist.md#formula-policy"],
+                blocked_state="budget_form_render_blocked",
+            )
+        )
+
+    code_issues = sorted(
+        set(
+            report.missing_template_codes
+            + report.duplicate_template_codes
+            + report.missing_budget_mappings
+            + report.unmapped_budget_amount_codes
+        )
+    )
+    if code_issues:
+        candidates.append(
+            ExceptionLakeCandidate(
+                candidate_id=new_id("exc"),
+                run_id=run_id,
+                preflight_packet_id=preflight_packet_id,
+                local_event_label="budget_form_code_mapping_missing",
+                canonical_lake_class="retrieval_miss",
+                reason=(
+                    "Budget form mapping has missing, duplicate, or unmapped UTBMS codes: "
+                    + ", ".join(code_issues)
+                ),
+                structured_refs=[
+                    report_ref,
+                    f"budget-proposal://{report.budget_proposal_id}",
+                    "docs/budget-template-checklist.md#utbms-row-coverage",
+                ],
+                blocked_state="budget_form_render_blocked",
+            )
+        )
+    return candidates
+
+
+def build_budget_actual_variance_exception_candidates(
+    report: BudgetActualComparisonReport,
+    report_ref: str,
+) -> list[ExceptionLakeCandidate]:
+    if report.status != "variance_review_required":
+        return []
+    phase_ids = [
+        row.phase_id
+        for row in report.phase_comparisons
+        if row.status in {"over_threshold", "under_threshold"}
+    ]
+    return [
+        ExceptionLakeCandidate(
+            candidate_id=new_id("exc"),
+            run_id=report.run_id,
+            preflight_packet_id=report.preflight_packet_id,
+            local_event_label="budget_actual_cost_variance_requires_review",
+            canonical_lake_class="workflow_escalation",
+            reason=(
+                "Budget actual-cost comparison exceeded variance threshold for phase(s): "
+                + ", ".join(phase_ids)
+            ),
+            structured_refs=[
+                report_ref,
+                f"budget-proposal://{report.budget_proposal_id}",
+                "docs/legal-budget-design.md#actuals-comparison-boundary",
+            ],
+            blocked_state="budget_actual_variance_requires_review",
+        )
+    ]
 
 
 def build_budget_precondition_exception_candidates(

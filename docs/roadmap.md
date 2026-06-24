@@ -57,9 +57,15 @@ Render driver profile, scenario comparison, workbook mapping status, and unresol
 
 ## 6. Exception Lake Package
 
-Status: pending.
+Status: implemented for the current synthetic slice.
 
 Draft mappings for broken template formulas, missing budget code mappings, unknown budget drivers, and guideline/cap issues. Intake remains dry-run only.
+
+- Budget runs now write `exception_lake_mapping_package.json` with dry-run mappings for broken original-budget formulas, missing budget code mappings, unknown budget drivers, guideline/cap issues, human budget changes, and budget actual-cost variance.
+- Budget exception candidates now include specific unknown-driver and guideline/cap review labels in addition to the broader budget-unknowns label.
+- Template-backed workbook mapping failures can produce dry-run candidates for broken formulas and missing/duplicate/unmapped UTBMS code rows without committing the workbook.
+- `budget_actual_comparison_report.json` records phase-level budget-vs-actual posture; normal starter runs keep actuals unavailable and perform no billing connector reads or writes.
+- Human budget changes are documented as append-only/superseding records that map to future Lake evidence; intake does not mutate approved budgets or admit records to Lake storage.
 
 ## 7. Cross-Repo Promotion Package
 

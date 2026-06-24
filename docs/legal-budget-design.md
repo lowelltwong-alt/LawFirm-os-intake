@@ -90,14 +90,35 @@ Future runtime:
 ```text
 intake-confirmed baseline
 -> budget proposal
--> human approval/revision
--> actuals and variance evidence
--> Exception Lake defect/lesson candidates
+-> human budget review change record
+-> superseding budget proposal or declined/referred budget outcome
+-> phase-level actuals comparison evidence
+-> dry-run Exception Lake change or variance candidates
 -> reviewed template-change proposal
 -> governed promotion
 ```
 
-No runtime correction automatically rewrites the template.
+No runtime correction automatically rewrites the template. Human budget changes are
+append-only or superseding evidence records: a correction records who changed what,
+which proposal/version it supersedes, the target phase/task/code, the previous value,
+the new value, the reason, and the reviewed support. Those records can map to
+Exception Lake as dry-run `budget_human_change_recorded` candidates, but Lake
+admission and storage belong to the Exception Lake runtime.
+
+## Actuals comparison boundary
+
+Actual cost comparison is phase-level in this vertical. A comparison report aligns
+budgeted fees and expenses by phase against supplied actual fees and expenses,
+computes variance amount and percent, and flags over-threshold or under-threshold
+variance for human pricing review.
+
+This repo does not read billing, write billing, or connect to a financial system.
+Normal starter runs emit `budget_actual_comparison_report.json` with
+`actuals_not_available`, `billing_connector_read_performed=false`, and
+`billing_connector_write_performed=false`. Tests may pass synthetic actuals into
+the deterministic comparison builder. Future production actuals should arrive
+through Orchestrator under a governed billing-read contract, then any variance
+candidate should be admitted by the Exception Lake runtime, not by intake.
 
 ## Sample synthetic defense families
 

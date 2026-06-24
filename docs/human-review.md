@@ -38,6 +38,14 @@ The workflow prepares search terms and unresolved relationships. A conflicts pro
 
 The reviewer must verify template fit, staffing, hours, rates, guidelines, expenses, contingency, assumptions, exclusions, unknowns, and required approval authority.
 
+Budget changes by a human reviewer must be append-only or superseding. A change
+record should capture reviewer identity, timestamp, proposal/version being changed,
+target phase/task/code or assumption, previous value, new value, reason, evidence or
+structured support refs, and whether it supersedes a prior budget review record.
+The original proposal remains inspectable. The starter maps these future records to
+dry-run `budget_human_change_recorded` Exception Lake evidence; it does not admit
+them to the Lake or mutate budget history silently.
+
 ## Decision evidence
 
 A review record should contain reviewer identity, role, timestamp, packet ID, decisions, corrections, evidence reviewed, missing sources, and notes. Confirmed party roles carry source-bound evidence refs, and the confirmation as a whole carries decision evidence refs for the matter/posture decisions reviewed. Corrections are appended or superseding records; do not silently overwrite history.

@@ -107,6 +107,8 @@ The demo emits:
     |-- exception_lake_candidates.jsonl
     |-- exception_lake_readiness_report.json
     |-- exception_lake_handoff_manifest.json
+    |-- exception_lake_mapping_package.json
+    |-- budget_actual_comparison_report.json
     |-- safety_gate_report.json
     |-- matter_opening_review_package.md
     |-- review_package_manifest.json
@@ -118,7 +120,7 @@ The demo emits:
 
 The consolidated `matter_opening_review_package.md` is the human-facing north-star artifact. It points back to the structured packets and tells the reviewer what is known, which candidate alternatives were considered, what remains uncertain, which human gates remain, which conflict-search seeds to use, what budget scenario and line items were proposed, which exception candidates exist, what the safety gate verified, and why the workflow is still blocked. Reviewer-facing known facts, candidate alternatives, party-role alternatives, deadlines, missing-information findings, critic findings, conflict terms, budget lines, budget supports, matter-opening blockers, and prohibited-action guardrails show their source evidence refs or structured policy refs inline instead of requiring a reviewer to hunt through JSON first.
 
-The same package now renders authority/precondition checks, source inventory, human-gate status, exception readiness, dry-run handoff posture, candidate support details, evidence-graph summary, run-ledger summary, and run-ledger integrity status inline. Reviewers can see contract-state status, human-review outcome, budget precondition checks, completed and pending human gates, each source's read/missing/duplicate state, dry-run Exception Lake posture, the future Exception Lake runtime owner, the fact that no SQLite or external write occurred in intake, hashes, attachment refs, provenance graph counts and key support edges, and the preflight/budget gate trail before opening the JSON artifacts.
+The same package now renders authority/precondition checks, source inventory, human-gate status, exception readiness, dry-run handoff posture, Exception Lake mapping rules, budget actual-comparison posture, candidate support details, evidence-graph summary, run-ledger summary, and run-ledger integrity status inline. Reviewers can see contract-state status, human-review outcome, budget precondition checks, completed and pending human gates, each source's read/missing/duplicate state, dry-run Exception Lake posture, the future Exception Lake runtime owner, the fact that no SQLite or external write occurred in intake, hashes, attachment refs, provenance graph counts and key support edges, and the preflight/budget gate trail before opening the JSON artifacts.
 
 Preflight runs write `evidence_completeness_report.json`. This local proof artifact records that party candidates, role alternatives, inbound-event, matter-family, representation-posture, deadline, missing-information, and critic outputs carry source-bound refs that match packet segments by source ID, segment ID, offsets, and hashes. It also proves explicit unknown options remain available, deadline candidates remain human-review-only, and human confirmation plus prohibited next steps stay present. The final package renders the report and package completeness fails if it is missing, failed, or no longer linked.
 
@@ -133,6 +135,10 @@ Budget runs also write a typed human review outcome record and append it to `hum
 Budget runs also write `budget_submission_guard_report.json`. This local proof artifact records that the budget remains `proposed_for_human_review`, is not authorized for client or carrier submission, has no client submission, no carrier submission, no billing handoff, no external writes, and remains blocked by the pending `human_budget_review` gate.
 
 Budget runs now also write `case_driver_profile.json` and embed a `BudgetDriverProfileSummary` in `legal_budget_proposal.json`. The review package and standalone budget review form render observed or human-confirmed drivers separately from synthetic profile defaults and unknown drivers, show that profile defaults and context priors are not observed facts, show scenario comparison, show workbook mapping status, and surface unresolved budget assumptions before any reviewer relies on a carrier-form render.
+
+Budget runs now also write `exception_lake_mapping_package.json`. This dry-run package maps broken workbook formulas, missing budget code mappings, unknown budget drivers, guideline/cap issues, human budget changes, and budget actual-cost variance to broad Exception Lake classes while keeping `sqlite_write_performed=false`, `external_writes_performed=false`, and `canonical_promotion_required=true`. Intake still emits evidence pressure only; the Exception Lake runtime owns admission and storage.
+
+Budget runs also write `budget_actual_comparison_report.json`. In the starter demo, actuals are unavailable and no billing connector read or write occurs. The deterministic comparison contract is phase-level: when governed synthetic or future Orchestrator-supplied actuals are present, it compares budgeted fees/expenses to actual fees/expenses by phase and can produce a dry-run variance candidate for human review.
 
 The budget proposal now embeds a local `BudgetScenarioSet` with `early_resolution`, `standard`, and `through_trial` branches. The compatibility fields on `BudgetProposal` (`lines`, subtotal fields, calculation report, and total) map to the selected `standard` scenario, while the scenario set preserves the wider branch comparison, ranges, included phases, and included UTBMS code candidates for human review. Every branch remains proposed for human review only and is not authorized for client or carrier submission.
 

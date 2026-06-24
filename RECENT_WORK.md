@@ -1,5 +1,11 @@
 # Recent Work
 
+## Exception Lake budget-change and actuals package slice - 2026-06-24
+
+- Budget runs now write `exception_lake_mapping_package.json` for broken workbook formulas, missing code mappings, unknown budget drivers, guideline/cap issues, human budget changes, and actual-cost variance.
+- Budget runs now write `budget_actual_comparison_report.json`; starter runs keep actuals unavailable and record no billing connector reads or writes.
+- Added dry-run candidate builders for workbook mapping failures and actual-cost variance, while preserving Lake admission and SQLite ownership outside intake.
+
 ## Human-review hardening slice - 2026-06-24
 
 - Budget runs now write `case_driver_profile.json` and embed `BudgetDriverProfileSummary` in `legal_budget_proposal.json`.

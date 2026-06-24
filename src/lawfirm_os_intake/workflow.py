@@ -5,6 +5,7 @@ from typing import Any
 
 from .adapters import build_model_adapter_report, resolve_adapter
 from .budget import build_budget_proposal
+from .budget_actuals import build_budget_actual_comparison_report
 from .budget_submission_guard import (
     build_budget_submission_guard_report,
     enforce_budget_submission_guard_report,
@@ -27,6 +28,10 @@ from .evidence_completeness import (
 from .exception_handoff import (
     build_exception_lake_handoff_manifest,
     enforce_exception_lake_handoff_manifest,
+)
+from .exception_mapping import (
+    build_exception_lake_mapping_package,
+    enforce_exception_lake_mapping_package,
 )
 from .exception_readiness import (
     build_exception_lake_readiness_report,
@@ -914,6 +919,8 @@ def run_budget(
     safety_gate_report_path = run_dir / "safety_gate_report.json"
     exception_readiness_report_path = run_dir / "exception_lake_readiness_report.json"
     exception_handoff_manifest_path = run_dir / "exception_lake_handoff_manifest.json"
+    exception_mapping_package_path = run_dir / "exception_lake_mapping_package.json"
+    actual_comparison_report_path = run_dir / "budget_actual_comparison_report.json"
     run_ledger_integrity_report_path = run_dir / "run_ledger_integrity_report.json"
     completeness_report_path = run_dir / "review_package_completeness_report.json"
     fixture_gold_report_path = run_dir / "fixture_gold_report.json" if fixture_gold else None
@@ -954,6 +961,8 @@ def run_budget(
         "budget_exception_candidates": str(exception_candidates_path),
         "budget_exception_lake_readiness_report": str(exception_readiness_report_path),
         "budget_exception_lake_handoff_manifest": str(exception_handoff_manifest_path),
+        "budget_exception_lake_mapping_package": str(exception_mapping_package_path),
+        "budget_actual_comparison_report": str(actual_comparison_report_path),
         "budget_run_ledger_integrity_report": str(run_ledger_integrity_report_path),
         "budget_run_ledger": str(ledger_path),
         "preflight_run_ledger": packet.run_ledger_ref,
@@ -1039,6 +1048,27 @@ def run_budget(
         exception_handoff_manifest_path,
         exception_handoff_manifest.model_dump(mode="json"),
     )
+    exception_mapping_package = build_exception_lake_mapping_package(
+        packet=packet,
+        candidates=[
+            ExceptionLakeCandidate.model_validate(candidate)
+            for candidate in all_exception_candidates
+        ],
+    )
+    enforce_exception_lake_mapping_package(exception_mapping_package)
+    write_json(
+        exception_mapping_package_path,
+        exception_mapping_package.model_dump(mode="json"),
+    )
+    actual_comparison_report = build_budget_actual_comparison_report(
+        run_id=packet.run_id,
+        preflight_packet_id=packet.packet_id,
+        budget=budget,
+    )
+    write_json(
+        actual_comparison_report_path,
+        actual_comparison_report.model_dump(mode="json"),
+    )
     contract_state_report = ContractStateReport.model_validate(
         load_json(packet.contract_state_report_ref)
     )
@@ -1101,6 +1131,8 @@ def run_budget(
                 str(safety_gate_report_path),
                 str(exception_readiness_report_path),
                 str(exception_handoff_manifest_path),
+                str(exception_mapping_package_path),
+                str(actual_comparison_report_path),
             ],
         ).model_dump(mode="json"),
     )

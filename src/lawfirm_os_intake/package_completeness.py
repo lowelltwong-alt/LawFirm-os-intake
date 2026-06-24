@@ -41,7 +41,9 @@ REQUIRED_REVIEW_SECTIONS = [
     "## Exception And Escalation Records",
     "### Exception Lake Readiness",
     "### Exception Lake Handoff",
+    "### Exception Lake Mapping Package",
     "### Exception Candidate Details",
+    "### Budget Actual Comparison",
     "## Safety Gate",
     "## Matter-Opening Blockers",
     "## Evidence Graph Summary",
@@ -126,6 +128,8 @@ REQUIRED_ARTIFACT_KEYS = [
     "budget_exception_candidates",
     "budget_exception_lake_readiness_report",
     "budget_exception_lake_handoff_manifest",
+    "budget_exception_lake_mapping_package",
+    "budget_actual_comparison_report",
     "budget_run_ledger",
     "preflight_run_ledger",
     "preflight_run_ledger_integrity_report",
@@ -276,6 +280,12 @@ def build_review_package_completeness_report(
     }
     exception_handoff_manifest = _read_json(
         Path(artifact_refs.get("budget_exception_lake_handoff_manifest", ""))
+    )
+    exception_mapping_package = _read_json(
+        Path(artifact_refs.get("budget_exception_lake_mapping_package", ""))
+    )
+    budget_actual_comparison_report = _read_json(
+        Path(artifact_refs.get("budget_actual_comparison_report", ""))
     )
     preflight_packet = _read_json(Path(artifact_refs.get("preflight_packet", "")))
     data_scope_gate_report = _read_json(Path(artifact_refs.get("data_scope_gate_report", "")))
@@ -573,6 +583,50 @@ def build_review_package_completeness_report(
         and "Context priors treated as observed facts: False" in review_text
         and "Human budget review required: True" in review_text
         and "budget unknown:" in review_text
+    )
+    required_mapping_issue_families = {
+        "broken_template_formula",
+        "missing_budget_code_mapping",
+        "unknown_budget_driver",
+        "guideline_or_cap_issue",
+        "human_budget_change",
+        "budget_actual_cost_variance",
+    }
+    mapping_rules = (
+        exception_mapping_package.get("rules")
+        if isinstance(exception_mapping_package, dict)
+        else None
+    )
+    mapping_issue_families = {
+        str(rule.get("issue_family"))
+        for rule in mapping_rules or []
+        if isinstance(rule, dict) and rule.get("issue_family")
+    }
+    exception_mapping_package_complete = (
+        isinstance(exception_mapping_package, dict)
+        and exception_mapping_package.get("status") == "passed"
+        and exception_mapping_package.get("admission_state") == "dry_run_not_admitted"
+        and exception_mapping_package.get("target_runtime_repo")
+        == "LawFirm-os-exceptions-lake-runtime"
+        and exception_mapping_package.get("sqlite_write_performed") is False
+        and exception_mapping_package.get("external_writes_performed") is False
+        and exception_mapping_package.get("raw_payload_included") is False
+        and exception_mapping_package.get("canonical_promotion_required") is True
+        and required_mapping_issue_families.issubset(mapping_issue_families)
+        and "### Exception Lake Mapping Package" in review_text
+        and "budget_human_change_recorded" in review_text
+        and "budget_actual_cost_variance_requires_review" in review_text
+    )
+    actual_comparison_complete = (
+        isinstance(budget_actual_comparison_report, dict)
+        and budget_actual_comparison_report.get("comparison_scope") == "phase"
+        and budget_actual_comparison_report.get("billing_connector_read_performed") is False
+        and budget_actual_comparison_report.get("billing_connector_write_performed") is False
+        and budget_actual_comparison_report.get("external_writes_performed") is False
+        and isinstance(budget_actual_comparison_report.get("phase_comparisons"), list)
+        and "### Budget Actual Comparison" in review_text
+        and "Billing connector read performed: False" in review_text
+        and "Billing connector write performed: False" in review_text
     )
     missing_blockers = sorted(REQUIRED_FINAL_BLOCKERS - set(manifest.final_blockers))
     missing_prohibited = sorted(REQUIRED_PROHIBITED_ACTIONS - set(manifest.prohibited_actions))
@@ -908,6 +962,42 @@ def build_review_package_completeness_report(
                     exception_handoff_manifest.get("sqlite_write_performed")
                     if isinstance(exception_handoff_manifest, dict)
                     else None
+                ),
+            },
+        ),
+        _check(
+            "exception_lake_mapping_package_complete",
+            bool(exception_mapping_package_complete),
+            "Final package carries dry-run mappings for budget template, code, driver, guideline, human-change, and actual-variance issues.",
+            [
+                artifact_refs.get("budget_exception_lake_mapping_package", ""),
+                str(review_package_path),
+            ],
+            {
+                "issue_families": sorted(mapping_issue_families),
+                "missing_issue_families": sorted(
+                    required_mapping_issue_families - mapping_issue_families
+                ),
+            },
+        ),
+        _check(
+            "budget_actual_comparison_report_complete",
+            bool(actual_comparison_complete),
+            "Budget actual comparison report preserves phase-level comparison posture without billing connector reads or writes.",
+            [
+                artifact_refs.get("budget_actual_comparison_report", ""),
+                str(review_package_path),
+            ],
+            {
+                "status": (
+                    budget_actual_comparison_report.get("status")
+                    if isinstance(budget_actual_comparison_report, dict)
+                    else None
+                ),
+                "phase_count": (
+                    len(budget_actual_comparison_report.get("phase_comparisons", []))
+                    if isinstance(budget_actual_comparison_report, dict)
+                    else 0
                 ),
             },
         ),

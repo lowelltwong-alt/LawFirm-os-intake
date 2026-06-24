@@ -874,6 +874,49 @@ class BudgetCalculationReport(StrictModel):
     deterministic: bool = True
 
 
+class BudgetActualPhaseComparison(StrictModel):
+    phase_id: str
+    budgeted_fees: float | None = None
+    budgeted_expenses: float = 0
+    budgeted_total: float | None = None
+    actual_fees: float | None = None
+    actual_expenses: float | None = None
+    actual_total: float | None = None
+    variance_amount: float | None = None
+    variance_percent: float | None = None
+    status: Literal[
+        "actuals_not_available",
+        "within_threshold",
+        "over_threshold",
+        "under_threshold",
+    ]
+    external_code_candidates: list[str] = Field(default_factory=list)
+    requires_human_review: bool = True
+
+
+class BudgetActualComparisonReport(StrictModel):
+    schema_version: str = "0.1"
+    budget_actual_comparison_report_id: str
+    run_id: str
+    preflight_packet_id: str
+    budget_proposal_id: str
+    status: Literal["actuals_not_available", "passed", "variance_review_required"]
+    comparison_scope: Literal["phase"] = "phase"
+    phase_comparisons: list[BudgetActualPhaseComparison]
+    variance_threshold_percent: float = Field(ge=0)
+    total_budgeted: float | None = None
+    total_actual: float | None = None
+    total_variance_amount: float | None = None
+    total_variance_percent: float | None = None
+    actuals_source_ref: str | None = None
+    actuals_are_synthetic: bool = True
+    billing_connector_read_performed: Literal[False] = False
+    billing_connector_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    non_authoritative: Literal[True] = True
+    generated_at: str
+
+
 class BudgetFormCodeMapping(StrictModel):
     code: str
     kind: Literal["phase", "task"]
@@ -1208,6 +1251,68 @@ class ExceptionLakeHandoffManifest(StrictModel):
     readiness_status: Literal["passed", "failed"]
     label_summaries: list[ExceptionLakeHandoffLabelSummary]
     checks: list[ExceptionLakeHandoffCheck]
+    generated_at: str
+
+
+class ExceptionLakeMappingRule(StrictModel):
+    mapping_id: str
+    issue_family: Literal[
+        "broken_template_formula",
+        "missing_budget_code_mapping",
+        "unknown_budget_driver",
+        "guideline_or_cap_issue",
+        "human_budget_change",
+        "budget_actual_cost_variance",
+    ]
+    local_event_label: str
+    canonical_lake_class: Literal[
+        "retrieval_miss",
+        "workflow_escalation",
+        "authority_conflict_override",
+    ]
+    trigger_summary: str
+    support_ref_kinds: list[
+        Literal[
+            "structured_ref",
+            "budget_form_mapping_report",
+            "budget_proposal",
+            "budget_change_record",
+            "budget_actual_comparison_report",
+        ]
+    ]
+    candidate_ids: list[str] = Field(default_factory=list)
+    structured_refs: list[str] = Field(default_factory=list)
+    candidate_count: int = 0
+    mapped: bool = True
+    admission_state: Literal["dry_run_not_admitted"] = "dry_run_not_admitted"
+    canonical_promotion_required: Literal[True] = True
+
+
+class ExceptionLakeMappingCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    mapping_ids: list[str] = Field(default_factory=list)
+
+
+class ExceptionLakeMappingPackage(StrictModel):
+    schema_version: str = "0.1"
+    exception_lake_mapping_package_id: str
+    run_id: str
+    preflight_packet_id: str
+    stage: Literal["budget"]
+    status: Literal["passed", "failed"]
+    target_runtime_repo: Literal["LawFirm-os-exceptions-lake-runtime"] = (
+        "LawFirm-os-exceptions-lake-runtime"
+    )
+    admission_state: Literal["dry_run_not_admitted"] = "dry_run_not_admitted"
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    raw_payload_included: Literal[False] = False
+    canonical_promotion_required: Literal[True] = True
+    mapping_review_required: Literal[True] = True
+    rules: list[ExceptionLakeMappingRule]
+    checks: list[ExceptionLakeMappingCheck]
     generated_at: str
 
 

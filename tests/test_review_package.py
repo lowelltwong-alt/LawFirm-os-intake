@@ -50,6 +50,8 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     budget_submission_guard = load_json(
         Path(manifest.artifact_refs["budget_submission_guard_report"])
     )
+    exception_mapping = load_json(budget_dir / "exception_lake_mapping_package.json")
+    actual_comparison = load_json(budget_dir / "budget_actual_comparison_report.json")
     budget = load_json(budget_dir / "legal_budget_proposal.json")
     case_driver_profile = load_json(budget_dir / "case_driver_profile.json")
     budget_review_form_text = (budget_dir / "legal_budget_review_form.md").read_text(
@@ -168,11 +170,20 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert "Readiness status: passed" in review_text
     assert "Admission state: dry_run_not_admitted" in review_text
     assert "Target runtime repo: LawFirm-os-exceptions-lake-runtime" in review_text
+    assert "### Exception Lake Mapping Package" in review_text
+    assert "Mapping package status: passed" in review_text
+    assert "budget_form_original_budget_formula_broken.v1" in review_text
+    assert "budget_human_change_recorded" in review_text
+    assert "budget_actual_cost_variance_requires_review" in review_text
     assert "### Exception Candidate Details" in review_text
     assert "raw_payload_included=False" in review_text
     assert "canonical_promotion_required=True" in review_text
     assert "target=LawFirm-os-exceptions-lake-runtime" in review_text
     assert "structured_refs=" in review_text
+    assert "### Budget Actual Comparison" in review_text
+    assert "Actual comparison status: actuals_not_available" in review_text
+    assert "Billing connector read performed: False" in review_text
+    assert "Billing connector write performed: False" in review_text
     exception_details = review_text.split("### Exception Candidate Details", maxsplit=1)[1].split(
         "## Safety Gate", maxsplit=1
     )[0]
@@ -294,6 +305,24 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert manifest.artifact_refs["budget_submission_guard_report"].endswith(
         "budget_submission_guard_report.json"
     )
+    assert manifest.artifact_refs["budget_exception_lake_mapping_package"] == str(
+        budget_dir / "exception_lake_mapping_package.json"
+    )
+    assert manifest.artifact_refs["budget_actual_comparison_report"] == str(
+        budget_dir / "budget_actual_comparison_report.json"
+    )
+    assert exception_mapping["status"] == "passed"
+    assert {rule["issue_family"] for rule in exception_mapping["rules"]} >= {
+        "broken_template_formula",
+        "missing_budget_code_mapping",
+        "unknown_budget_driver",
+        "guideline_or_cap_issue",
+        "human_budget_change",
+        "budget_actual_cost_variance",
+    }
+    assert actual_comparison["status"] == "actuals_not_available"
+    assert actual_comparison["comparison_scope"] == "phase"
+    assert actual_comparison["billing_connector_read_performed"] is False
     assert manifest.budget_submission_guard_report_ref == str(
         budget_dir / "budget_submission_guard_report.json"
     )
@@ -355,6 +384,8 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert "### Workbook Mapping Status" in completeness.required_sections
     assert "### Unresolved Budget Assumptions" in completeness.required_sections
     assert "### Exception Lake Readiness" in completeness.required_sections
+    assert "### Exception Lake Mapping Package" in completeness.required_sections
+    assert "### Budget Actual Comparison" in completeness.required_sections
     assert "### Run Ledger Integrity" in completeness.required_sections
     assert "### Exception Candidate Details" in completeness.required_sections
     assert "## Evidence Graph Summary" in completeness.required_sections
@@ -363,11 +394,19 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert "data_scope_gate_report" in completeness.required_artifact_keys
     assert "preflight_deadline_docketing_guard_report" in completeness.required_artifact_keys
     assert "budget_submission_guard_report" in completeness.required_artifact_keys
+    assert "budget_exception_lake_mapping_package" in completeness.required_artifact_keys
+    assert "budget_actual_comparison_report" in completeness.required_artifact_keys
     assert "data_scope_gate_report_complete" in {check.check_id for check in completeness.checks}
     assert "deadline_docketing_guard_report_complete" in {
         check.check_id for check in completeness.checks
     }
     assert "budget_submission_guard_report_complete" in {
+        check.check_id for check in completeness.checks
+    }
+    assert "exception_lake_mapping_package_complete" in {
+        check.check_id for check in completeness.checks
+    }
+    assert "budget_actual_comparison_report_complete" in {
         check.check_id for check in completeness.checks
     }
     assert "budget_review_hardening_complete" in {check.check_id for check in completeness.checks}
