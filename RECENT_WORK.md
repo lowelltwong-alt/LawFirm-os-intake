@@ -238,3 +238,9 @@
 - Hardened `starter_release_audit_report.json` so the release smoke proves more than file existence: source coverage states, candidate surface completeness, evidence-graph node/edge coverage, review-package story sections, and full preflight/budget ledger steps are now checked.
 - Added fail-closed coverage for hollow matter-family candidates, missing budget-line graph nodes, and a review package that loses the Candidate Alternatives section.
 - Smoke coverage now greps the new content-level audit checks so the north-star release path fails if those objective-level proofs disappear.
+
+## Front-door reference validation slice - 2026-06-24
+
+- Added `docs/claude-for-legal-lessons.md` so the AI/front-door reading order no longer points to a missing local policy file.
+- Updated `AI_TABLE_OF_CONTENTS.md` to point completion readers at `BUILD_VERIFICATION.md` instead of the absent `VALIDATION_REPORT.md`.
+- Hardened `scripts/validate_repo.py` and added tests so README, AI work start, AI table-of-contents, and Claude front-door file refs fail validation if they point to missing local files or directories.

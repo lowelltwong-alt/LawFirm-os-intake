@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
+import re
 import sys
 import yaml
 
@@ -10,6 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 REQUIRED = [
     "README.md",
     "AI_WORK_START_HERE.md",
+    "AI_TABLE_OF_CONTENTS.md",
     "AGENTS.md",
     "CLAUDE.md",
     "REPO_ROLE.md",
@@ -23,6 +25,66 @@ REQUIRED = [
     "repo_topology.yaml",
     "workflow/intake-to-budget.workflow.yaml",
 ]
+FRONT_DOOR_REF_FILES = [
+    "README.md",
+    "AI_WORK_START_HERE.md",
+    "AI_TABLE_OF_CONTENTS.md",
+    "CLAUDE.md",
+]
+FRONT_DOOR_REF_SECTIONS = {
+    "README.md": ["Start here"],
+    "AI_WORK_START_HERE.md": ["Required reading order"],
+}
+FENCED_BLOCK_RE = re.compile(r"```.*?```", re.DOTALL)
+INLINE_CODE_RE = re.compile(r"`([^`\n]+)`")
+
+
+def _looks_like_local_ref(value: str) -> bool:
+    if not value or "://" in value or any(char.isspace() for char in value):
+        return False
+    if "*" in value:
+        return False
+    return value.endswith((".md", ".json", ".yaml", ".yml", "/")) or "/" in value
+
+
+def _section_text(markdown: str, heading: str) -> str:
+    pattern = re.compile(
+        rf"^##\s+{re.escape(heading)}\s*$([\s\S]*?)(?=^##\s+|\Z)",
+        re.MULTILINE,
+    )
+    match = pattern.search(markdown)
+    return match.group(1) if match else ""
+
+
+def front_door_file_refs(root: Path = ROOT) -> dict[str, list[str]]:
+    refs: dict[str, list[str]] = {}
+    for rel in FRONT_DOOR_REF_FILES:
+        path = root / rel
+        if not path.exists():
+            continue
+        text = path.read_text(encoding="utf-8")
+        sections = FRONT_DOOR_REF_SECTIONS.get(rel)
+        if sections:
+            text = "\n".join(_section_text(text, section) for section in sections)
+        text = FENCED_BLOCK_RE.sub("", text)
+        local_refs = sorted(
+            {
+                match.group(1).strip()
+                for match in INLINE_CODE_RE.finditer(text)
+                if _looks_like_local_ref(match.group(1).strip())
+            }
+        )
+        refs[rel] = local_refs
+    return refs
+
+
+def missing_front_door_file_refs(root: Path = ROOT) -> list[str]:
+    missing: list[str] = []
+    for source, refs in front_door_file_refs(root).items():
+        for ref in refs:
+            if not (root / ref.rstrip("/")).exists():
+                missing.append(f"{source} -> {ref}")
+    return sorted(missing)
 
 
 def fail(message: str) -> None:
@@ -33,6 +95,10 @@ def main() -> int:
     for rel in REQUIRED:
         if not (ROOT / rel).is_file():
             fail(f"missing required file: {rel}")
+
+    missing_front_door_refs = missing_front_door_file_refs(ROOT)
+    if missing_front_door_refs:
+        fail("broken front-door file refs: " + ", ".join(missing_front_door_refs))
 
     for path in ROOT.rglob("*.json"):
         try:
