@@ -6,6 +6,7 @@ from typing import Any
 from .models import (
     BudgetPreconditionReport,
     BudgetProposal,
+    BudgetSubmissionGuardReport,
     ConflictSeedPacket,
     ContractStateReport,
     DeadlineDocketingGuardReport,
@@ -774,6 +775,43 @@ def _deadline_docketing_guard_report_lines(
     return lines
 
 
+def _budget_submission_guard_report_lines(
+    artifact_refs: dict[str, str],
+    report: BudgetSubmissionGuardReport | None,
+) -> list[str]:
+    path = artifact_refs.get("budget_submission_guard_report", "")
+    lines = [f"- Budget submission guard report: `{path or 'missing'}`"]
+    if report is None:
+        if not path:
+            return lines
+        try:
+            payload = load_json(Path(path))
+            report = BudgetSubmissionGuardReport.model_validate(payload)
+        except (OSError, ValueError):
+            return [*lines, "- Budget submission guard report details: unavailable"]
+    lines.extend(
+        [
+            f"- Budget submission guard status: {report.status}",
+            f"- Budget guard approval state: {report.approval_state}",
+            "- Budget guard not authorized for client submission: "
+            f"{report.not_authorized_for_client_submission}",
+            f"- Client submission performed: {report.client_submission_performed}",
+            f"- Carrier submission performed: {report.carrier_submission_performed}",
+            f"- Billing handoff performed: {report.billing_handoff_performed}",
+            f"- Budget guard external writes performed: {report.external_writes_performed}",
+            f"- Budget guard required human gate: {report.required_human_gate}",
+            f"- Budget guard actions: {', '.join(report.guarded_actions) or 'none'}",
+        ]
+    )
+    for check in report.checks:
+        structured_refs = ", ".join(check.structured_refs) or "none"
+        lines.append(
+            f"- budget submission guard check {check.check_id}: {check.status}; "
+            f"structured_refs={structured_refs}"
+        )
+    return lines
+
+
 def render_matter_opening_review_package(
     packet: IntakePreflightPacket,
     confirmation: HumanConfirmation,
@@ -793,6 +831,7 @@ def render_matter_opening_review_package(
     human_review_outcome: HumanReviewOutcomeRecord | None = None,
     human_gate_status_report: HumanGateStatusReport | None = None,
     deadline_docketing_guard_report: DeadlineDocketingGuardReport | None = None,
+    budget_submission_guard_report: BudgetSubmissionGuardReport | None = None,
     budget_precondition_report: BudgetPreconditionReport | None = None,
 ) -> str:
     source_summary = packet.source_coverage_summary
@@ -907,6 +946,7 @@ def render_matter_opening_review_package(
             f"- Scenario: {budget.scenario_name}",
             f"- Pricing status: {budget.pricing_status}",
             f"- Total proposed budget: {total_budget}",
+            *_budget_submission_guard_report_lines(artifact_refs, budget_submission_guard_report),
             "",
             "### Calculation Summary",
             *_budget_calculation_lines(budget),

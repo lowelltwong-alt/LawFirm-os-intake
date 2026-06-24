@@ -46,6 +46,9 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     deadline_guard = load_json(
         Path(manifest.artifact_refs["preflight_deadline_docketing_guard_report"])
     )
+    budget_submission_guard = load_json(
+        Path(manifest.artifact_refs["budget_submission_guard_report"])
+    )
     readiness = load_json(budget_dir / "matter_opening_readiness.json")
     graph = load_json(budget_dir / "evidence_graph.json")
 
@@ -112,6 +115,12 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert "evidence:" in review_text
     assert "## Budget Proposal" in review_text
     assert "Scenario: baseline" in review_text
+    assert "Budget submission guard report:" in review_text
+    assert "Budget submission guard status: passed" in review_text
+    assert "Client submission performed: False" in review_text
+    assert "Carrier submission performed: False" in review_text
+    assert "Billing handoff performed: False" in review_text
+    assert "Budget guard required human gate: human_budget_review" in review_text
     assert "### Calculation Summary" in review_text
     assert "Deterministic calculation: True" in review_text
     assert "### Budget Lines" in review_text
@@ -211,6 +220,11 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert deadline_guard["docketing_action_performed"] is False
     assert deadline_guard["docketing_action_allowed"] is False
     assert deadline_guard["review_required_count"] == deadline_guard["candidate_count"]
+    assert budget_submission_guard["status"] == "passed"
+    assert budget_submission_guard["client_submission_performed"] is False
+    assert budget_submission_guard["carrier_submission_performed"] is False
+    assert budget_submission_guard["billing_handoff_performed"] is False
+    assert budget_submission_guard["required_human_gate"] == "human_budget_review"
     assert manifest.contract_state_report_ref == packet.contract_state_report_ref
     assert manifest.budget_precondition_report_ref == str(
         budget_dir / "budget_precondition_report.json"
@@ -237,6 +251,12 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert manifest.artifact_refs["preflight_intake_review_form"].endswith("intake_review_form.md")
     assert manifest.artifact_refs["preflight_deadline_docketing_guard_report"].endswith(
         "deadline_docketing_guard_report.json"
+    )
+    assert manifest.artifact_refs["budget_submission_guard_report"].endswith(
+        "budget_submission_guard_report.json"
+    )
+    assert manifest.budget_submission_guard_report_ref == str(
+        budget_dir / "budget_submission_guard_report.json"
     )
     assert manifest.artifact_refs["budget_precondition_report"] == str(
         budget_dir / "budget_precondition_report.json"
@@ -285,7 +305,11 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert "## Run Ledger Summary" in completeness.required_sections
     assert "review_package_completeness_report" in completeness.required_artifact_keys
     assert "preflight_deadline_docketing_guard_report" in completeness.required_artifact_keys
+    assert "budget_submission_guard_report" in completeness.required_artifact_keys
     assert "deadline_docketing_guard_report_complete" in {
+        check.check_id for check in completeness.checks
+    }
+    assert "budget_submission_guard_report_complete" in {
         check.check_id for check in completeness.checks
     }
     assert {check.status for check in completeness.checks} == {"passed"}

@@ -109,6 +109,9 @@ def main(argv: list[str] | None = None) -> int:
                     "review_package_manifest": str(run_dir / "review_package_manifest.json"),
                     "human_confirmation_history": str(run_dir / "human_confirmation_history.jsonl"),
                     "human_gate_status_report": str(run_dir / "human_gate_status_report.json"),
+                    "budget_submission_guard_report": str(
+                        run_dir / "budget_submission_guard_report.json"
+                    ),
                     "budget_precondition_report": str(run_dir / "budget_precondition_report.json"),
                     "safety_gate_report": str(run_dir / "safety_gate_report.json"),
                     "exception_lake_handoff_manifest": str(
@@ -169,6 +172,9 @@ def main(argv: list[str] | None = None) -> int:
                         budget_dir / "human_confirmation_history.jsonl"
                     ),
                     "human_gate_status_report": str(budget_dir / "human_gate_status_report.json"),
+                    "budget_submission_guard_report": str(
+                        budget_dir / "budget_submission_guard_report.json"
+                    ),
                     "budget_precondition_report": str(
                         budget_dir / "budget_precondition_report.json"
                     ),

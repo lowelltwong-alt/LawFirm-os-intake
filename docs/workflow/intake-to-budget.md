@@ -103,6 +103,8 @@ A confirmed matter type selects an approved practice template. The planner calcu
 
 Future governed step. The starter does not approve or submit.
 
+Confirmed budget runs write `budget_submission_guard_report.json`. The report proves the proposal remains `proposed_for_human_review`, no client or carrier submission occurred, no billing handoff occurred, no external write occurred, and `human_budget_review` remains the required gate before any delivery or billing transition.
+
 ### 15. Matter-opening readiness
 
 The system reports satisfied preconditions, blockers, structured blocker details, prohibited actions, and prohibited-action guardrails. Blocker details point to workflow-policy or prohibited-transition structured refs instead of pretending those boundaries are observed source facts.
@@ -111,13 +113,13 @@ The starter always remains blocked pending conflicts, engagement, matter-opening
 
 ### 16. Safety gate report
 
-The deterministic safety gate verifies that the contract-state report and deadline docketing guard are carried forward and that the final package contains no conflict clearance, engagement decision, docketed deadline, billing or submission state, external write, matter opening, iManage workspace creation, or client/carrier submission authorization.
+The deterministic safety gate verifies that the contract-state report, deadline docketing guard, and budget submission guard are carried forward and that the final package contains no conflict clearance, engagement decision, docketed deadline, billing or submission state, external write, matter opening, iManage workspace creation, or client/carrier submission authorization.
 
 It also verifies that normalized conflict-search terms, budget lines, budget support items, proposal-level assumptions, exclusions, unknowns, readiness blockers, and prohibited-action guardrails remain evidence-bound or structured-ref-supported. A failed check blocks final package acceptance.
 
 ### 17. Review package completeness report
 
-After the safety gate and review package are written, the workflow emits `review_package_completeness_report.json`. This deterministic report checks that the manifest includes all required local artifacts, those files exist, the markdown package has the expected review sections and boundary text, required human gates, human-gate status, deadline docketing guard status, final blockers, and structured blocker details are preserved, Exception Lake readiness remains dry-run and passed, run ledgers are linked, and the package still proves no conflict clearance, engagement decision, matter opening, docketing, billing, external write, or budget submission.
+After the safety gate and review package are written, the workflow emits `review_package_completeness_report.json`. This deterministic report checks that the manifest includes all required local artifacts, those files exist, the markdown package has the expected review sections and boundary text, required human gates, human-gate status, deadline docketing guard status, budget submission guard status, final blockers, and structured blocker details are preserved, Exception Lake readiness remains dry-run and passed, run ledgers are linked, and the package still proves no conflict clearance, engagement decision, matter opening, docketing, billing, external write, or budget submission.
 
 A failed completeness check blocks final package acceptance.
 

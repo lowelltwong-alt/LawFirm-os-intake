@@ -267,6 +267,30 @@ def test_review_package_completeness_fails_on_deadline_docketing_guard_drift(tmp
         enforce_review_package_completeness(report)
 
 
+def test_review_package_completeness_fails_on_budget_submission_guard_drift(tmp_path, repo_root):
+    budget_dir = _run_budget(tmp_path, repo_root)
+    manifest, safety_report, exception_readiness_report, review_path = _load_inputs(budget_dir)
+    guard_path = Path(manifest.artifact_refs["budget_submission_guard_report"])
+    guard_report = load_json(guard_path)
+    guard_report["billing_handoff_performed"] = True
+    guard_path.write_text(json.dumps(guard_report, indent=2) + "\n", encoding="utf-8")
+
+    report = build_review_package_completeness_report(
+        manifest=manifest,
+        review_package_path=review_path,
+        safety_report=safety_report,
+        exception_readiness_report=exception_readiness_report,
+    )
+
+    assert report.status == "failed"
+    assert any(
+        check.check_id == "budget_submission_guard_report_complete" and check.status == "failed"
+        for check in report.checks
+    )
+    with pytest.raises(ValueError, match="budget_submission_guard_report_complete"):
+        enforce_review_package_completeness(report)
+
+
 def test_review_package_completeness_fails_on_failed_ledger_integrity_report(tmp_path, repo_root):
     budget_dir = _run_budget(tmp_path, repo_root)
     manifest, safety_report, exception_readiness_report, review_path = _load_inputs(budget_dir)

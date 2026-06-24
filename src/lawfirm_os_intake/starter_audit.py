@@ -7,8 +7,10 @@ from .ingestion import validate_ingestion_result
 from .models import (
     BudgetPreconditionReport,
     BudgetProposal,
+    BudgetSubmissionGuardReport,
     ConflictSeedPacket,
     ContractStateReport,
+    DeadlineDocketingGuardReport,
     ExceptionLakeHandoffManifest,
     ExceptionLakeReadinessReport,
     FixtureGoldReport,
@@ -54,6 +56,7 @@ REQUIRED_PREFLIGHT_ARTIFACTS = {
     "effective_context": "effective_context.json",
     "preflight_packet": "intake_preflight_packet.json",
     "intake_review_form": "intake_review_form.md",
+    "deadline_docketing_guard_report": "deadline_docketing_guard_report.json",
     "preflight_exception_candidates": "exception_lake_candidates.jsonl",
     "preflight_exception_lake_readiness_report": "exception_lake_readiness_report.json",
     "preflight_exception_lake_handoff_manifest": "exception_lake_handoff_manifest.json",
@@ -68,6 +71,7 @@ REQUIRED_BUDGET_ARTIFACTS = {
     "human_review_outcome": "human_review_outcome",
     "human_confirmation_history": "human_confirmation_history.jsonl",
     "budget_precondition_report": "budget_precondition_report.json",
+    "budget_submission_guard_report": "budget_submission_guard_report.json",
     "conflict_search_seed": "conflict_search_seed_packet.json",
     "legal_budget_proposal": "legal_budget_proposal.json",
     "legal_budget_review_form": "legal_budget_review_form.md",
@@ -306,6 +310,9 @@ def build_starter_release_audit_report(
     rust_readiness = _model_or_none(
         RustIngestionReadinessReport, paths["rust_ingestion_readiness_report"]
     )
+    deadline_guard = _model_or_none(
+        DeadlineDocketingGuardReport, paths["deadline_docketing_guard_report"]
+    )
     preflight_gold = _model_or_none(FixtureGoldReport, paths["preflight_fixture_gold_report"])
     confirmation = _model_or_none(HumanConfirmation, paths["human_confirmation"])
     human_review_outcome = _model_or_none(HumanReviewOutcomeRecord, paths["human_review_outcome"])
@@ -314,6 +321,9 @@ def build_starter_release_audit_report(
     )
     conflict_seed = _model_or_none(ConflictSeedPacket, paths["conflict_search_seed"])
     budget = _model_or_none(BudgetProposal, paths["legal_budget_proposal"])
+    budget_submission_guard = _model_or_none(
+        BudgetSubmissionGuardReport, paths["budget_submission_guard_report"]
+    )
     readiness = _model_or_none(MatterOpeningReadiness, paths["matter_opening_readiness"])
     budget_exception_readiness = _model_or_none(
         ExceptionLakeReadinessReport, paths["budget_exception_lake_readiness_report"]
@@ -533,6 +543,37 @@ def build_starter_release_audit_report(
             requirement_refs=["DoD-12", "DoD-13", "DoD-14"],
             artifact_refs=_artifact_refs(paths, ["legal_budget_proposal"]),
             details=budget_math_details,
+        ),
+        _check(
+            "deadline_and_budget_guard_reports_hold",
+            bool(
+                deadline_guard
+                and deadline_guard.status == "passed"
+                and deadline_guard.docketing_action_performed is False
+                and deadline_guard.docketing_action_allowed is False
+                and deadline_guard.external_writes_performed is False
+                and deadline_guard.proposed_next_gate == "human_deadline_review"
+                and budget_submission_guard
+                and budget_submission_guard.status == "passed"
+                and budget_submission_guard.approval_state == "proposed_for_human_review"
+                and budget_submission_guard.not_authorized_for_client_submission is True
+                and budget_submission_guard.client_submission_performed is False
+                and budget_submission_guard.carrier_submission_performed is False
+                and budget_submission_guard.billing_handoff_performed is False
+                and budget_submission_guard.external_writes_performed is False
+                and budget_submission_guard.required_human_gate == "human_budget_review"
+                and {
+                    "client_budget_submission",
+                    "carrier_budget_submission",
+                    "billing_handoff",
+                }.issubset(set(budget_submission_guard.guarded_actions))
+            ),
+            "Deadline and budget guard reports prove no docketing, submission, billing handoff, or external write occurred.",
+            requirement_refs=["DoD-14", "DoD-15", "Safety-external-writes-zero"],
+            artifact_refs=_artifact_refs(
+                paths,
+                ["deadline_docketing_guard_report", "budget_submission_guard_report"],
+            ),
         ),
         _check(
             "terminal_safety_boundary_holds",

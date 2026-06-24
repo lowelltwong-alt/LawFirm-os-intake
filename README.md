@@ -27,6 +27,7 @@ messy inbound source
 -> budget precondition gate
 -> conflict-search seed packet (no conflict conclusion)
 -> legal budget proposal (not approved or submitted)
+-> budget submission guard report proving no client/carrier delivery or billing handoff
 -> matter-opening readiness packet
 -> deterministic safety gate report
 -> consolidated matter-opening review package, manifest, and completeness report
@@ -92,6 +93,7 @@ The demo emits:
     |-- human_review_outcome.<confirmation_id>.json
     |-- human_confirmation_history.jsonl
     |-- human_gate_status_report.json
+    |-- budget_submission_guard_report.json
     |-- conflict_search_seed_packet.json
     |-- legal_budget_proposal.json
     |-- legal_budget_review_form.md
@@ -112,11 +114,13 @@ The consolidated `matter_opening_review_package.md` is the human-facing north-st
 
 The same package now renders authority/precondition checks, source inventory, human-gate status, exception readiness, dry-run handoff posture, candidate support details, evidence-graph summary, run-ledger summary, and run-ledger integrity status inline. Reviewers can see contract-state status, human-review outcome, budget precondition checks, completed and pending human gates, each source's read/missing/duplicate state, dry-run Exception Lake posture, the future Exception Lake runtime owner, the fact that no SQLite or external write occurred in intake, hashes, attachment refs, provenance graph counts and key support edges, and the preflight/budget gate trail before opening the JSON artifacts.
 
-The budget run also writes `review_package_completeness_report.json`. This deterministic report proves the final package includes required local artifact refs, required markdown sections, human gates, structured blocker details, safety-gate proof, dry-run Exception Lake readiness, run ledgers, run-ledger integrity reports, and non-authorization flags before the package is accepted.
+The budget run also writes `review_package_completeness_report.json`. This deterministic report proves the final package includes required local artifact refs, required markdown sections, human gates, deadline docketing guard proof, budget submission guard proof, structured blocker details, safety-gate proof, dry-run Exception Lake readiness, run ledgers, run-ledger integrity reports, and non-authorization flags before the package is accepted.
 
 The completeness report also checks that the linked intake and budget review forms preserve their required human-review sections, evidence-hash visibility where source-bound evidence exists, and non-authorization boundary text, so those standalone forms cannot silently lose source coverage, outcome handling, budget lines, support items, or submission-boundary content while the consolidated package still passes.
 
 Budget runs also write a typed human review outcome record and append it to `human_confirmation_history.jsonl`. Corrections are represented as later records with `supersedes_confirmation_id`; prior review outcomes are not silently mutated. The budget run also writes `human_gate_status_report.json`, which records intake confirmation as completed and conflicts clearance, engagement authorization, budget review, and matter-opening authorization as pending human gates with the artifacts and workflow refs each gate controls.
+
+Budget runs also write `budget_submission_guard_report.json`. This local proof artifact records that the budget remains `proposed_for_human_review`, is not authorized for client or carrier submission, has no client submission, no carrier submission, no billing handoff, no external writes, and remains blocked by the pending `human_budget_review` gate.
 
 Preflight runs write `deadline_docketing_guard_report.json`. This local proof artifact binds every deadline candidate back to source evidence refs, marks the only next gate as `human_deadline_review`, records `docketing_action_performed=false` and `docketing_action_allowed=false`, and is carried into the final package manifest and completeness check. It does not characterize legal effect or create a docketing action.
 
@@ -197,11 +201,11 @@ Every budget run emits `budget_precondition_report.json`. If confirmation is mis
 
 ## Safety gate
 
-The final budget run emits `safety_gate_report.json`. This deterministic report checks that the output remains synthetic-only, contract-state-bound, human-confirmed, conflict-search-only, not submittable, blocked from engagement and matter opening, carries forward the deadline docketing guard, is not docketed, not billed, and local-file-only.
+The final budget run emits `safety_gate_report.json`. This deterministic report checks that the output remains synthetic-only, contract-state-bound, human-confirmed, conflict-search-only, not submittable, blocked from engagement and matter opening, carries forward the deadline docketing and budget submission guards, is not docketed, not billed, and local-file-only.
 
 The same gate also verifies evidence completeness for normalized conflict-search terms, budget lines, budget support items, proposal-level assumptions, exclusions, unknowns, structured matter-opening blockers, and prohibited-action guardrails. A failed check raises before the final review package is accepted.
 
-After the safety gate passes, `review_package_completeness_report.json` verifies package assembly itself. It fails closed if the manifest omits required artifacts, linked files are missing, review sections disappear, human gates or structured blocker details are absent, or the boundary flags no longer prove no conflict clearance, no budget submission, no raw payload, and no external writes.
+After the safety gate passes, `review_package_completeness_report.json` verifies package assembly itself. It fails closed if the manifest omits required artifacts, linked files are missing, review sections disappear, human gates, deadline docketing guard proof, budget submission guard proof, or structured blocker details are absent, or the boundary flags no longer prove no conflict clearance, no budget submission, no raw payload, and no external writes.
 
 ## Agent architecture
 

@@ -116,6 +116,7 @@ REQUIRED_ARTIFACT_KEYS = [
     "human_review_outcome",
     "human_confirmation_history",
     "human_gate_status_report",
+    "budget_submission_guard_report",
     "contract_state_report",
     "budget_precondition_report",
     "safety_gate_report",
@@ -262,6 +263,9 @@ def build_review_package_completeness_report(
     preflight_packet = _read_json(Path(artifact_refs.get("preflight_packet", "")))
     matter_opening_readiness = _read_json(Path(artifact_refs.get("matter_opening_readiness", "")))
     human_gate_status_report = _read_json(Path(artifact_refs.get("human_gate_status_report", "")))
+    budget_submission_guard_report = _read_json(
+        Path(artifact_refs.get("budget_submission_guard_report", ""))
+    )
     deadline_docketing_guard_report = _read_json(
         Path(artifact_refs.get("preflight_deadline_docketing_guard_report", ""))
     )
@@ -323,6 +327,53 @@ def build_review_package_completeness_report(
         )
         and all(gate_id in review_text for gate_id in REQUIRED_HUMAN_GATES)
         and "Human gate status report:" in review_text
+    )
+    budget_submission_guard_checks = (
+        budget_submission_guard_report.get("checks")
+        if isinstance(budget_submission_guard_report, dict)
+        else None
+    )
+    budget_submission_guard_passed_checks = {
+        str(item.get("check_id"))
+        for item in budget_submission_guard_checks or []
+        if isinstance(item, dict) and item.get("status") == "passed" and item.get("check_id")
+    }
+    budget_submission_guard_actions = (
+        {str(item) for item in (budget_submission_guard_report or {}).get("guarded_actions", [])}
+        if isinstance(budget_submission_guard_report, dict)
+        else set()
+    )
+    budget_submission_guard_complete = (
+        isinstance(budget_submission_guard_report, dict)
+        and budget_submission_guard_report.get("status") == "passed"
+        and budget_submission_guard_report.get("approval_state") == "proposed_for_human_review"
+        and budget_submission_guard_report.get("not_authorized_for_client_submission") is True
+        and budget_submission_guard_report.get("client_submission_performed") is False
+        and budget_submission_guard_report.get("carrier_submission_performed") is False
+        and budget_submission_guard_report.get("billing_handoff_performed") is False
+        and budget_submission_guard_report.get("external_writes_performed") is False
+        and budget_submission_guard_report.get("non_authoritative") is True
+        and budget_submission_guard_report.get("required_human_gate") == "human_budget_review"
+        and artifact_refs.get("budget_submission_guard_report")
+        == manifest.budget_submission_guard_report_ref
+        and {
+            "client_budget_submission",
+            "carrier_budget_submission",
+            "billing_handoff",
+        }.issubset(budget_submission_guard_actions)
+        and {
+            "budget_proposal_review_only",
+            "human_budget_review_gate_pending",
+            "readiness_blocks_budget_submission",
+            "no_submission_or_billing_handoff_performed",
+            "controlled_artifacts_are_local",
+        }.issubset(budget_submission_guard_passed_checks)
+        and "Budget submission guard report:" in review_text
+        and "Budget submission guard status: passed" in review_text
+        and "Client submission performed: False" in review_text
+        and "Carrier submission performed: False" in review_text
+        and "Billing handoff performed: False" in review_text
+        and "human_budget_review" in review_text
     )
     deadline_guard_items = (
         deadline_docketing_guard_report.get("candidate_items")
@@ -526,6 +577,19 @@ def build_review_package_completeness_report(
             {
                 "gate_ids": sorted(human_gate_ids),
                 "gate_statuses": human_gate_statuses,
+            },
+        ),
+        _check(
+            "budget_submission_guard_report_complete",
+            bool(budget_submission_guard_complete),
+            "Budget submission guard report preserves review-only budget, pending budget gate, and no submission or billing handoff.",
+            [
+                artifact_refs.get("budget_submission_guard_report", ""),
+                str(review_package_path),
+            ],
+            {
+                "guarded_actions": sorted(budget_submission_guard_actions),
+                "passed_checks": sorted(budget_submission_guard_passed_checks),
             },
         ),
         _check(

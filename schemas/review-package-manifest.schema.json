@@ -172,6 +172,18 @@
       "default": null,
       "title": "Review Package Completeness Report Ref"
     },
+    "budget_submission_guard_report_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Budget Submission Guard Report Ref"
+    },
     "no_conflict_conclusion": {
       "const": true,
       "default": true,

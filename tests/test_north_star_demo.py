@@ -46,6 +46,7 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     safety = load_json(budget_dir / "safety_gate_report.json")
     readiness = load_json(budget_dir / "matter_opening_readiness.json")
     human_gate_status = load_json(budget_dir / "human_gate_status_report.json")
+    budget_submission_guard = load_json(budget_dir / "budget_submission_guard_report.json")
     manifest = load_json(budget_dir / "review_package_manifest.json")
     completeness = load_json(budget_dir / "review_package_completeness_report.json")
     budget_preconditions = load_json(budget_dir / "budget_precondition_report.json")
@@ -107,6 +108,11 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     assert human_gate_status["status"] == "pending_human_gates"
     assert human_gate_status["completed_gate_count"] == 1
     assert human_gate_status["pending_gate_count"] == 4
+    assert budget_submission_guard["status"] == "passed"
+    assert budget_submission_guard["client_submission_performed"] is False
+    assert budget_submission_guard["carrier_submission_performed"] is False
+    assert budget_submission_guard["billing_handoff_performed"] is False
+    assert budget_submission_guard["required_human_gate"] == "human_budget_review"
     assert {item["gate_id"]: item["status"] for item in human_gate_status["gates"]} == {
         "human_intake_confirmation": "completed",
         "human_conflicts_clearance": "pending",
@@ -186,6 +192,12 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     assert manifest["artifact_refs"]["human_gate_status_report"].endswith(
         "human_gate_status_report.json"
     )
+    assert manifest["artifact_refs"]["budget_submission_guard_report"].endswith(
+        "budget_submission_guard_report.json"
+    )
+    assert manifest["budget_submission_guard_report_ref"].endswith(
+        "budget_submission_guard_report.json"
+    )
     assert manifest["artifact_refs"]["preflight_deadline_docketing_guard_report"].endswith(
         "deadline_docketing_guard_report.json"
     )
@@ -201,6 +213,9 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     assert completeness["review_package_id"] == manifest["review_package_id"]
     assert {check["status"] for check in completeness["checks"]} == {"passed"}
     assert "deadline_docketing_guard_report_complete" in {
+        check["check_id"] for check in completeness["checks"]
+    }
+    assert "budget_submission_guard_report_complete" in {
         check["check_id"] for check in completeness["checks"]
     }
     assert manifest["artifact_refs"]["budget_exception_lake_readiness_report"].endswith(
@@ -303,6 +318,12 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
         "normalized:",
         "evidence:",
         "Scenario: baseline",
+        "Budget submission guard report:",
+        "Budget submission guard status: passed",
+        "Client submission performed: False",
+        "Carrier submission performed: False",
+        "Billing handoff performed: False",
+        "Budget guard required human gate: human_budget_review",
         "### Calculation Summary",
         "### Budget Lines",
         "synthetic rate:",

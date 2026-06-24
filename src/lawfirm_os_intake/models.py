@@ -672,6 +672,39 @@ class BudgetCalculationReport(StrictModel):
     deterministic: bool = True
 
 
+class BudgetSubmissionGuardCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    artifact_refs: list[str] = Field(default_factory=list)
+    structured_refs: list[str] = Field(default_factory=list)
+
+
+class BudgetSubmissionGuardReport(StrictModel):
+    schema_version: str = "0.1"
+    budget_submission_guard_report_id: str
+    run_id: str
+    preflight_packet_id: str
+    confirmation_id: str
+    budget_proposal_id: str
+    status: Literal["passed", "failed"]
+    approval_state: str
+    not_authorized_for_client_submission: bool
+    client_submission_performed: Literal[False] = False
+    carrier_submission_performed: Literal[False] = False
+    billing_handoff_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    non_authoritative: Literal[True] = True
+    required_human_gate: Literal["human_budget_review"] = "human_budget_review"
+    guarded_actions: list[
+        Literal["client_budget_submission", "carrier_budget_submission", "billing_handoff"]
+    ]
+    controlled_artifact_refs: list[str]
+    structured_refs: list[str]
+    checks: list[BudgetSubmissionGuardCheck]
+    generated_at: str
+
+
 class MatterOpeningBlocker(StrictModel):
     blocker_code: str
     label: str
@@ -933,6 +966,7 @@ class ReviewPackageManifest(StrictModel):
     exception_lake_readiness_report_ref: str | None = None
     exception_lake_handoff_manifest_ref: str | None = None
     review_package_completeness_report_ref: str | None = None
+    budget_submission_guard_report_ref: str | None = None
     no_conflict_conclusion: Literal[True] = True
     budget_not_authorized_for_client_submission: Literal[True] = True
     contains_raw_payload: Literal[False] = False

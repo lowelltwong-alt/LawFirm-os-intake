@@ -183,6 +183,12 @@ def build_safety_gate_report(
             [artifact_refs["legal_budget_proposal"]],
         ),
         _check(
+            "budget_submission_guard_report_carried_forward",
+            bool(artifact_refs.get("budget_submission_guard_report")),
+            "The budget package carries a budget submission guard report.",
+            [artifact_refs.get("budget_submission_guard_report", "")],
+        ),
+        _check(
             "budget_lines_evidence_bound",
             _budget_lines_are_evidence_bound(packet, budget),
             "Every budget line carries source-bound evidence refs when lines are present.",
@@ -257,7 +263,11 @@ def build_safety_gate_report(
             "budget_not_submitted_or_billed",
             _contains(readiness.prohibited_actions, "do_not_submit_budget"),
             "Budget submission and billing handoff remain prohibited.",
-            [artifact_refs["matter_opening_readiness"], artifact_refs["legal_budget_proposal"]],
+            [
+                artifact_refs["matter_opening_readiness"],
+                artifact_refs["legal_budget_proposal"],
+                artifact_refs.get("budget_submission_guard_report", ""),
+            ],
         ),
         _check(
             "prohibited_actions_supported",

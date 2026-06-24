@@ -226,3 +226,9 @@
 - Added `deadline_docketing_guard_report.json` so preflight runs have a typed proof that deadline candidates are source-bound, review-only, and not docketed.
 - The final review package now renders the guard status, no-docket flags, `human_deadline_review`, candidate evidence refs, and prohibited-transition refs.
 - The safety gate, package completeness, schema export, focused tests, north-star tests, and smoke coverage now fail closed if the deadline guard is missing, loses evidence, stops requiring human review, or claims docketing occurred.
+
+## Budget submission guard report slice - 2026-06-24
+
+- Added `budget_submission_guard_report.json` so confirmed budget runs have a typed proof that the proposal remains review-only and no client submission, carrier submission, billing handoff, or external write occurred.
+- The final review package now renders the budget guard status, guarded actions, no-submission/no-billing flags, and required `human_budget_review` gate.
+- The safety gate, package completeness, starter release audit, schema export, focused tests, north-star tests, and smoke coverage now fail closed if the budget guard is missing, loses the pending budget gate, or claims submission/billing occurred.

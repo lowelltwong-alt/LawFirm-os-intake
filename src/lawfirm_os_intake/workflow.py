@@ -5,6 +5,10 @@ from typing import Any
 
 from .adapters import build_model_adapter_report, resolve_adapter
 from .budget import build_budget_proposal
+from .budget_submission_guard import (
+    build_budget_submission_guard_report,
+    enforce_budget_submission_guard_report,
+)
 from .confirmation import build_human_review_outcome_record
 from .contract_state import build_contract_state_report, enforce_contract_state
 from .context import build_effective_context, load_profile
@@ -31,6 +35,7 @@ from .human_gates import build_human_gate_status_report, enforce_human_gate_stat
 from .ingestion import build_ingestion_result
 from .ingestion_volume import build_ingestion_volume_profile
 from .models import (
+    BudgetSubmissionGuardReport,
     ConflictSearchTerm,
     ConflictSeedPacket,
     ContractStateReport,
@@ -840,6 +845,7 @@ def run_budget(
     review_package_path = run_dir / "matter_opening_review_package.md"
     manifest_path = run_dir / "review_package_manifest.json"
     human_gate_status_report_path = run_dir / "human_gate_status_report.json"
+    budget_submission_guard_report_path = run_dir / "budget_submission_guard_report.json"
     safety_gate_report_path = run_dir / "safety_gate_report.json"
     exception_readiness_report_path = run_dir / "exception_lake_readiness_report.json"
     exception_handoff_manifest_path = run_dir / "exception_lake_handoff_manifest.json"
@@ -885,6 +891,7 @@ def run_budget(
         "human_review_outcome": str(human_review_outcome_path),
         "human_confirmation_history": str(human_confirmation_history_path),
         "human_gate_status_report": str(human_gate_status_report_path),
+        "budget_submission_guard_report": str(budget_submission_guard_report_path),
         "contract_state_report": packet.contract_state_report_ref,
         "budget_precondition_report": str(budget_precondition_report_path),
         "safety_gate_report": str(safety_gate_report_path),
@@ -907,6 +914,20 @@ def run_budget(
     write_json(
         human_gate_status_report_path,
         human_gate_status_report.model_dump(mode="json"),
+    )
+    budget_submission_guard_report = build_budget_submission_guard_report(
+        run_id=packet.run_id,
+        preflight_packet_id=packet.packet_id,
+        confirmation_id=confirmation.confirmation_id,
+        budget=budget,
+        readiness=readiness,
+        human_gate_status_report=human_gate_status_report,
+        artifact_refs=artifact_refs,
+    )
+    enforce_budget_submission_guard_report(budget_submission_guard_report)
+    write_json(
+        budget_submission_guard_report_path,
+        budget_submission_guard_report.model_dump(mode="json"),
     )
     safety_report = build_safety_gate_report(
         packet,
@@ -964,6 +985,9 @@ def run_budget(
         if packet.deadline_docketing_guard_report_ref
         else None
     )
+    budget_submission_guard_report = BudgetSubmissionGuardReport.model_validate(
+        load_json(budget_submission_guard_report_path)
+    )
     append_jsonl(
         ledger_path,
         _event(
@@ -986,6 +1010,7 @@ def run_budget(
                 str(run_dir / "legal_budget_proposal.json"),
                 str(run_dir / "matter_opening_readiness.json"),
                 str(human_gate_status_report_path),
+                str(budget_submission_guard_report_path),
                 str(exception_candidates_path),
                 str(safety_gate_report_path),
                 str(exception_readiness_report_path),
@@ -1070,6 +1095,7 @@ def run_budget(
             human_review_outcome=human_review_outcome,
             human_gate_status_report=human_gate_status_report,
             deadline_docketing_guard_report=deadline_docketing_guard_report,
+            budget_submission_guard_report=budget_submission_guard_report,
             budget_precondition_report=budget_precondition_report,
         ),
         encoding="utf-8",
@@ -1114,6 +1140,7 @@ def run_budget(
         exception_lake_readiness_report_ref=str(exception_readiness_report_path),
         exception_lake_handoff_manifest_ref=str(exception_handoff_manifest_path),
         review_package_completeness_report_ref=str(completeness_report_path),
+        budget_submission_guard_report_ref=str(budget_submission_guard_report_path),
     )
     write_json(manifest_path, manifest.model_dump(mode="json"))
     completeness_report = build_review_package_completeness_report(

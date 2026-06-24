@@ -1,0 +1,180 @@
+{
+  "$defs": {
+    "BudgetSubmissionGuardCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "artifact_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Artifact Refs",
+          "type": "array"
+        },
+        "structured_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Structured Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "BudgetSubmissionGuardCheck",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "budget_submission_guard_report_id": {
+      "title": "Budget Submission Guard Report Id",
+      "type": "string"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "preflight_packet_id": {
+      "title": "Preflight Packet Id",
+      "type": "string"
+    },
+    "confirmation_id": {
+      "title": "Confirmation Id",
+      "type": "string"
+    },
+    "budget_proposal_id": {
+      "title": "Budget Proposal Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "passed",
+        "failed"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "approval_state": {
+      "title": "Approval State",
+      "type": "string"
+    },
+    "not_authorized_for_client_submission": {
+      "title": "Not Authorized For Client Submission",
+      "type": "boolean"
+    },
+    "client_submission_performed": {
+      "const": false,
+      "default": false,
+      "title": "Client Submission Performed",
+      "type": "boolean"
+    },
+    "carrier_submission_performed": {
+      "const": false,
+      "default": false,
+      "title": "Carrier Submission Performed",
+      "type": "boolean"
+    },
+    "billing_handoff_performed": {
+      "const": false,
+      "default": false,
+      "title": "Billing Handoff Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "required_human_gate": {
+      "const": "human_budget_review",
+      "default": "human_budget_review",
+      "title": "Required Human Gate",
+      "type": "string"
+    },
+    "guarded_actions": {
+      "items": {
+        "enum": [
+          "client_budget_submission",
+          "carrier_budget_submission",
+          "billing_handoff"
+        ],
+        "type": "string"
+      },
+      "title": "Guarded Actions",
+      "type": "array"
+    },
+    "controlled_artifact_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Controlled Artifact Refs",
+      "type": "array"
+    },
+    "structured_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Structured Refs",
+      "type": "array"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/BudgetSubmissionGuardCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "budget_submission_guard_report_id",
+    "run_id",
+    "preflight_packet_id",
+    "confirmation_id",
+    "budget_proposal_id",
+    "status",
+    "approval_state",
+    "not_authorized_for_client_submission",
+    "guarded_actions",
+    "controlled_artifact_refs",
+    "structured_refs",
+    "checks",
+    "generated_at"
+  ],
+  "title": "BudgetSubmissionGuardReport",
+  "type": "object"
+}
