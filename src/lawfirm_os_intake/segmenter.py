@@ -15,6 +15,7 @@ INSTRUCTION_RISK_RE = re.compile(
 QUOTED_BOUNDARY_RE = re.compile(
     r"^(?:>+|On .+ wrote:|From:\s.+|-----Original Message-----)", re.IGNORECASE
 )
+MESSAGE_START_RE = re.compile(r"(?m)^From:\s.+$")
 
 
 def _segment(
@@ -45,14 +46,19 @@ def _segment(
     )
 
 
-def _email_segments(source: SourceItem) -> list[Segment]:
-    text = source.text
+def _email_segments_from_text(
+    source: SourceItem,
+    text: str,
+    *,
+    base_offset: int = 0,
+    sequence_start: int = 0,
+    message_index: int = 0,
+) -> list[Segment]:
     lines = text.splitlines(keepends=True)
     segments: list[Segment] = []
     offset = 0
-    sequence = 0
+    sequence = sequence_start
     body_start = 0
-    message_index = 0
     in_header_block = True
 
     for line in lines:
@@ -63,8 +69,8 @@ def _email_segments(source: SourceItem) -> list[Segment]:
                     source,
                     "email_header",
                     sequence,
-                    offset,
-                    offset + len(line),
+                    base_offset + offset,
+                    base_offset + offset + len(line),
                     stripped,
                     structural_path=f"{source.source_id}/message[{message_index}]/header[{sequence}]",
                     message_index=message_index,
@@ -107,8 +113,8 @@ def _email_segments(source: SourceItem) -> list[Segment]:
                 source,
                 kind,
                 sequence,
-                local_start,
-                local_end,
+                base_offset + local_start,
+                base_offset + local_end,
                 block_text,
                 structural_path=f"{source.source_id}/message[{message_index}]/{kind}[{sequence}]",
                 message_index=message_index,
@@ -122,13 +128,95 @@ def _email_segments(source: SourceItem) -> list[Segment]:
     return segments
 
 
+def _email_segments(source: SourceItem) -> list[Segment]:
+    return _email_segments_from_text(source, source.text)
+
+
+def _correspondence_fallback_segments(source: SourceItem) -> list[Segment]:
+    text = source.text
+    segments: list[Segment] = []
+    sequence = 0
+    pattern = r"\S(?:.*?\S)?(?=\n\s*(?:---+|={3,}|From:|\Z))"
+    for match in re.finditer(pattern, text, re.S | re.M):
+        value = match.group(0).strip()
+        if not value:
+            continue
+        kind = "attachment_reference" if ATTACHMENT_RE.search(value) else "correspondence_dump_item"
+        segments.append(
+            _segment(
+                source,
+                kind,
+                sequence,
+                match.start(),
+                match.end(),
+                value,
+                structural_path=f"{source.source_id}/{kind}[{sequence}]",
+                attachment_ref=f"{source.source_id}:attachment_ref:{sequence}"
+                if kind == "attachment_reference"
+                else None,
+            )
+        )
+        sequence += 1
+    return segments
+
+
+def _correspondence_dump_segments(source: SourceItem) -> list[Segment]:
+    text = source.text
+    message_starts = [match.start() for match in MESSAGE_START_RE.finditer(text)]
+    if not message_starts:
+        return _correspondence_fallback_segments(source)
+
+    segments: list[Segment] = []
+    sequence = 0
+    if message_starts[0] > 0:
+        preamble = text[: message_starts[0]].strip()
+        if preamble:
+            preamble_start = text.find(preamble)
+            segments.append(
+                _segment(
+                    source,
+                    "correspondence_dump_preamble",
+                    sequence,
+                    preamble_start,
+                    preamble_start + len(preamble),
+                    preamble,
+                    structural_path=f"{source.source_id}/preamble[0]",
+                )
+            )
+            sequence += 1
+
+    for message_index, start in enumerate(message_starts):
+        end = (
+            message_starts[message_index + 1]
+            if message_index + 1 < len(message_starts)
+            else len(text)
+        )
+        raw_message = text[start:end]
+        message_text = raw_message.strip("\r\n -")
+        if not message_text:
+            continue
+        message_start = start + raw_message.find(message_text)
+        message_segments = _email_segments_from_text(
+            source,
+            message_text,
+            base_offset=message_start,
+            sequence_start=sequence,
+            message_index=message_index,
+        )
+        segments.extend(message_segments)
+        if message_segments:
+            sequence = max(segment.sequence for segment in message_segments) + 1
+    return segments
+
+
 def _paragraph_segments(source: SourceItem) -> list[Segment]:
+    if source.source_type == "correspondence_dump":
+        return _correspondence_dump_segments(source)
+
     text = source.text
     segments: list[Segment] = []
     sequence = 0
     pattern = r"\S(?:.*?\S)?(?=\n\s*\n|\Z)"
-    if source.source_type == "correspondence_dump":
-        pattern = r"\S(?:.*?\S)?(?=\n\s*(?:---+|={3,}|From:|\Z))"
     for match in re.finditer(pattern, text, re.S | re.M):
         value = match.group(0).strip()
         if not value:

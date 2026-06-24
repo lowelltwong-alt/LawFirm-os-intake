@@ -35,7 +35,7 @@ Rust must not own:
 
 ## Current Preparation
 
-Each preflight run writes three Rust-related artifacts:
+Each preflight run writes four Rust-related artifacts:
 
 - `data_scope_gate_report.json`: the upstream synthetic-only gate that must pass before any ingestion worker runs;
 - `ingestion_result.json`: the Python parity oracle under `rust_ready_ingestion_v0_1`;
@@ -87,7 +87,7 @@ A future Rust PR should include:
 - proof that it only runs after a passing `DataScopeGateReport`;
 - no production connectors and no external writes;
 - golden parity tests against `ingestion_result.json`;
-- hidden or holdout parity fixtures;
+- hidden or holdout parity fixtures, including correspondence dumps with repeated message boundaries;
 - schema export and validation;
 - a performance profile covering the required dimensions above;
 - strict evidence-ref checks for source IDs, segment IDs, offsets, and hashes;

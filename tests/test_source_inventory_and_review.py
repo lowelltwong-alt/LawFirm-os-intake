@@ -68,6 +68,61 @@ def test_email_segmentation_separates_quoted_history_and_attachment_refs(repo_ro
     assert all(segment.structural_path for segment in segments)
 
 
+def test_correspondence_dump_segmentation_preserves_message_boundaries(repo_root):
+    bundle = SourceBundle.model_validate(
+        load_json(
+            repo_root
+            / "examples/synthetic/inbound/holdout-correspondence-dump-message-boundaries.json"
+        )
+    )
+    segments = segment_bundle(bundle)
+    dump_segments = [
+        segment
+        for segment in segments
+        if segment.source_id == "syn-correspondence-dump-boundaries-001"
+    ]
+    kinds = {segment.segment_type for segment in dump_segments}
+
+    assert {0, 1}.issubset(
+        {segment.message_index for segment in dump_segments if segment.message_index is not None}
+    )
+    assert "correspondence_dump_preamble" in kinds
+    assert "email_header" in kinds
+    assert "email_body" in kinds
+    assert "attachment_reference" in kinds
+    assert "quoted_email" in kinds
+    assert "signature" in kinds
+    assert any(
+        segment.segment_type == "quoted_email" and segment.source_instruction_risk
+        for segment in dump_segments
+    )
+    assert all(segment.sha256 for segment in dump_segments)
+    assert all(segment.start_offset < segment.end_offset for segment in dump_segments)
+    assert all(segment.structural_path for segment in dump_segments)
+
+
+def test_correspondence_dump_prohibited_instructions_remain_dry_run_exceptions(tmp_path, repo_root):
+    packet, run_dir = run_preflight(
+        repo_root
+        / "examples/synthetic/inbound/holdout-correspondence-dump-message-boundaries.json",
+        repo_root / "context/synthetic-profiles/insurance-defense.yaml",
+        tmp_path,
+    )
+    candidates = load_jsonl(run_dir / "exception_lake_candidates.jsonl")
+    labels = {candidate["local_event_label"] for candidate in candidates}
+    quoted_segments = [
+        segment
+        for segment in packet.segments
+        if segment.segment_type == "quoted_email" and segment.source_instruction_risk
+    ]
+
+    assert quoted_segments
+    assert "prompt_injection_source_content" in labels
+    assert "prohibited_transition_attempted_matter_opened" in labels
+    assert "prohibited_transition_attempted_conflicts_cleared" in labels
+    assert all(candidate["raw_payload_included"] is False for candidate in candidates)
+
+
 def test_review_packet_preserves_unknown_and_context_separation(tmp_path, repo_root):
     packet, run_dir = run_preflight(
         repo_root / "examples/synthetic/inbound/holdout-misleading-sender-role-ambiguity.json",

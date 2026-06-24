@@ -55,7 +55,7 @@ List every source and whether it was read, unread, missing, duplicated, or unrea
 
 ### 4. Segment structurally
 
-Preserve email headers, current body, quoted history, signatures, attachment boundaries, letter paragraphs, headings, tables, pages, and source offsets.
+Preserve email headers, current body, quoted history, signatures, attachment boundaries, letter paragraphs, correspondence-dump message boundaries, headings, tables, pages, and source offsets.
 
 ### 5. Extract party and role candidates
 

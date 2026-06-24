@@ -257,3 +257,9 @@
 - Added deterministic validation that `examples/public/catalog.yaml` remains planning-only metadata and no catalog entry allows direct runtime ingestion.
 - `scripts/validate_repo.py` and `starter_release_audit_report.json` now fail closed if the public catalog drifts toward downloaded payloads or runtime ingestion.
 - Added focused coverage proving `data_origin: public_reference` bundles block at the data-scope gate before raw input storage.
+
+## Correspondence-dump message-boundary slice - 2026-06-24
+
+- Added message-indexed segmentation for synthetic correspondence dumps with repeated `From:` boundaries.
+- The segmenter now preserves dump preambles, headers, body paragraphs, quoted history, signatures, attachment refs, offsets, hashes, and source-instruction risk flags inside messy exports.
+- Added a synthetic holdout proving risky quoted instructions in a dump become dry-run exception candidates instead of actions.

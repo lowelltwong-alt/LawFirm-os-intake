@@ -18,6 +18,12 @@ Preserve:
 
 Quoted history must not be treated as newly authored content.
 
+## Correspondence dump segmentation
+
+Correspondence dumps may contain multiple pasted or exported messages. The starter separates repeated `From:` message starts into message-indexed structural segments, while preserving any preamble, headers, current body paragraphs, quoted history, signatures, attachment references, offsets, and hashes.
+
+Quoted or forwarded instructions inside a dump remain untrusted source content. If they attempt to clear conflicts, open a matter, docket a deadline, submit a budget, or send external messages, the workflow emits dry-run exception candidates instead of treating the text as an action.
+
 ## Legal document segmentation
 
 Preserve:
@@ -120,6 +126,7 @@ Candidate source edges preserve the evidence/context boundary. `supports_*` edge
 - evidence refs match cited segment offsets and hashes;
 - every party-role candidate has packet-bound evidence refs;
 - quoted email separation;
+- correspondence dump message-boundary separation;
 - attachment inventory completeness;
 - non-target text identity after transformations;
 - no candidate without evidence ref;

@@ -10,7 +10,7 @@ PYTHONPATH=src python scripts/validate_repo.py
 # repository validation passed
 
 PYTHONPATH=src python -m pytest -q
-# 117 passed
+# 119 passed
 
 PYTHONPATH=src ruff check src tests scripts
 # All checks passed
@@ -39,6 +39,8 @@ The preflight output now includes `contract_state_report.json`, which verifies t
 The preflight output now also includes `data_scope_gate_report.json`, which proves synthetic-only data scope before `raw_input.json` is written. Blocked non-synthetic runs write the gate report and ledger event, then stop before raw payload storage, packet generation, source inventory, ingestion, or review artifacts. The passing report is carried into the final review package, manifest, safety gate, completeness report, starter audit, schema export, and smoke checks.
 
 Source-bound evidence references now include segment offsets as well as source ID, segment ID, and hash. Strict evidence validation fails if a ref drifts from the cited segment.
+
+Correspondence dumps with repeated `From:` boundaries now segment into message-indexed headers, body paragraphs, quoted history, signatures, attachment refs, offsets, and hashes. A synthetic holdout proves prohibited quoted instructions in a dump become dry-run exception candidates instead of actions.
 
 Party-role alternatives now carry their own source-bound evidence refs, render in the intake review form, and appear as supported candidate nodes in the evidence graph.
 
