@@ -44,6 +44,8 @@ The budget output now includes `matter_opening_review_package.md` and `review_pa
 
 Budget runs now also emit `review_package_completeness_report.json`, proving the final review package has required artifacts, review sections, human gates, blockers, safety proof, dry-run Exception Lake readiness, run ledgers, and non-authorization boundary flags before the package is accepted.
 
+Human-facing review Markdown now renders evidence refs inline for confirmation evidence, confirmed parties, deadlines, missing-information candidates, critic findings, conflict-search terms, and budget supports.
+
 Budget runs now write `human_review_outcome.<confirmation_id>.json` and append it to `human_confirmation_history.jsonl` before budget preconditions run. Non-confirmed review outcomes remain blocked, and superseding corrections append new history rows instead of mutating prior outcomes.
 
 Budget assumptions, exclusions, and unknowns now emit `budget_support_items` with evidence refs or structured refs for human review.

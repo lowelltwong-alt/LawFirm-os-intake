@@ -44,14 +44,17 @@ def render_intake_review_form(packet: IntakePreflightPacket) -> str:
         party_lines.append(f"- {party.name}: {roles}; evidence: {refs}")
 
     missing_lines = [
-        f"- {item.field_name}: {item.reason}" for item in packet.missing_information_candidates
+        f"- {item.field_name}: {item.reason}; evidence: {_refs_text(item.evidence_refs, limit=3)}"
+        for item in packet.missing_information_candidates
     ] or ["- none"]
     deadline_lines = [
-        f"- {item.expression}: {item.deadline_type_candidate}; human verification required"
+        f"- {item.expression}: {item.deadline_type_candidate}; "
+        f"human verification required; evidence: {_refs_text(item.evidence_refs, limit=3)}"
         for item in packet.deadline_candidates
     ] or ["- none"]
     finding_lines = [
-        f"- [{finding.severity}] {finding.code}: {finding.message}"
+        f"- [{finding.severity}] {finding.code}: {finding.message}; "
+        f"evidence: {_refs_text(finding.evidence_refs, limit=3)}"
         for finding in packet.critic_findings
     ] or ["- none"]
 
@@ -189,6 +192,11 @@ def _budget_support_lines(budget: BudgetProposal) -> list[str]:
     return lines or ["- none"]
 
 
+def _refs_text(refs: list[Any], limit: int | None = None) -> str:
+    selected = refs if limit is None else refs[:limit]
+    return ", ".join(_ref_text(ref) for ref in selected) or "none"
+
+
 def _ref_text(ref: Any) -> str:
     return f"{ref.source_id}/{ref.segment_id}[{ref.start_offset}:{ref.end_offset}]"
 
@@ -197,6 +205,7 @@ def _confirmed_party_lines(confirmation: HumanConfirmation) -> list[str]:
     return [
         f"- {party.confirmed_role}: {party.name}"
         + (f" (aliases: {', '.join(party.aliases)})" if party.aliases else "")
+        + f"; evidence: {_refs_text(party.evidence_refs, limit=3)}"
         for party in confirmation.confirmed_parties
     ]
 
@@ -240,11 +249,18 @@ def render_matter_opening_review_package(
 ) -> str:
     source_summary = packet.source_coverage_summary
     deadline_lines = [
-        f"- {item.expression}: {item.deadline_type_candidate}; not docketed"
+        f"- {item.expression}: {item.deadline_type_candidate}; not docketed; "
+        f"evidence: {_refs_text(item.evidence_refs, limit=3)}"
         for item in packet.deadline_candidates
     ]
+    missing_lines = [
+        f"- missing information: {item.field_name}; {item.reason}; "
+        f"evidence: {_refs_text(item.evidence_refs, limit=3)}"
+        for item in packet.missing_information_candidates
+    ] or [f"- missing information: {item}" for item in packet.missing_information]
     finding_lines = [
-        f"- [{finding.severity}] {finding.code}: {finding.message}"
+        f"- [{finding.severity}] {finding.code}: {finding.message}; "
+        f"evidence: {_refs_text(finding.evidence_refs, limit=3)}"
         for finding in packet.critic_findings
     ]
     conflict_lines = _conflict_seed_lines(conflict_seed)
@@ -271,6 +287,7 @@ def render_matter_opening_review_package(
             f"- Human-confirmed matter family: {confirmation.confirmed_matter_family or 'unknown'}",
             f"- Human-confirmed representation posture: {confirmation.confirmed_representation_posture or 'unknown'}",
             f"- Human-confirmed jurisdiction: {confirmation.confirmed_jurisdiction or 'unknown'}",
+            f"- Human confirmation decision evidence: {_refs_text(confirmation.decision_evidence_refs, limit=5)}",
             *_confirmed_party_lines(confirmation),
             "",
             "## What Still Needs Human Review",
@@ -280,9 +297,7 @@ def render_matter_opening_review_package(
             f"- Unread sources: {source_summary.get('unread_sources')}",
             f"- Unreadable sources: {source_summary.get('unreadable_sources')}",
             f"- Duplicate sources: {source_summary.get('duplicate_sources')}",
-            *_lines_or_none(
-                [f"- missing information: {item}" for item in packet.missing_information]
-            ),
+            *_lines_or_none(missing_lines),
             *_lines_or_none(deadline_lines),
             *_lines_or_none(finding_lines),
             *_lines_or_none([f"- budget unknown: {item}" for item in budget.unknowns]),

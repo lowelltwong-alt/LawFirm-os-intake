@@ -113,10 +113,12 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
 
     for phrase in [
         "Source coverage complete: False",
+        "Human confirmation decision evidence:",
         "Missing sources: 1",
         "Duplicate sources: 1",
-        "missing information: incident_date",
-        "missing information: jurisdiction",
+        "missing information: incident_date;",
+        "missing information: jurisdiction;",
+        "not docketed; evidence:",
         "prompt_injection_source_content",
         "Exception Lake readiness report:",
         "review_package_completeness_report.json",

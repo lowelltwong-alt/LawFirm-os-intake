@@ -106,3 +106,9 @@
 - Added `ReviewPackageCompletenessReport` and `review_package_completeness_report.json` as the final deterministic package-assembly proof.
 - The report checks required artifact refs, linked file existence, markdown sections, human gates, final blockers, prohibited actions, safety-gate status, dry-run Exception Lake readiness, run ledgers, and non-authorization boundary flags.
 - Added fail-closed tests for missing artifact keys and missing review sections before the package is accepted.
+
+## Human-review evidence surface slice - 2026-06-24
+
+- Updated the intake and matter-opening review Markdown to show evidence refs inline for human-confirmation decision evidence, confirmed parties, deadline candidates, missing-information candidates, and critic findings.
+- Kept the change schema-neutral: underlying evidence contracts stay stable, and the Markdown becomes easier for reviewers to audit.
+- Added tests and smoke coverage so the north-star review package cannot hide key evidence refs behind JSON-only artifacts.

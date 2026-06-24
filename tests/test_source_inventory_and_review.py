@@ -70,3 +70,8 @@ def test_review_packet_preserves_unknown_and_context_separation(tmp_path, repo_r
     review_text = (run_dir / "intake_review_form.md").read_text(encoding="utf-8")
     assert "context:" in review_text
     assert "Sample Indemnity Company" in review_text
+    assert any(
+        f"{item.field_name}: {item.reason}; evidence:" in review_text
+        for item in packet.missing_information_candidates
+    )
+    assert "; evidence:" in review_text

@@ -44,7 +44,11 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
 
     assert "# Matter Opening Review Package" in review_text
     assert "## What Is Known" in review_text
+    assert "Human confirmation decision evidence:" in review_text
+    assert "; evidence:" in review_text
     assert "## What Still Needs Human Review" in review_text
+    assert "not docketed; evidence:" in review_text
+    assert "missing information:" in review_text
     assert "## Conflict Search Seed" in review_text
     assert "no_conflict_conclusion" in review_text
     assert "evidence:" in review_text
