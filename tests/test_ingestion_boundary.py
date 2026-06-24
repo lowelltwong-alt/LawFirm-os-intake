@@ -1,7 +1,11 @@
 import pytest
 
 from lawfirm_os_intake.ingestion import build_ingestion_result, validate_ingestion_result
-from lawfirm_os_intake.models import IngestionResult, SourceBundle
+from lawfirm_os_intake.models import IngestionResult, RustIngestionReadinessReport, SourceBundle
+from lawfirm_os_intake.rust_readiness import (
+    build_rust_ingestion_readiness_report,
+    enforce_rust_ingestion_readiness,
+)
 from lawfirm_os_intake.util import load_json, load_jsonl
 from lawfirm_os_intake.workflow import run_preflight
 
@@ -57,6 +61,51 @@ def test_preflight_writes_ingestion_result_matching_legacy_outputs(tmp_path, rep
         item.model_dump(mode="json") for item in result.source_inventory
     ]
     assert any(event["step_name"] == "python_reference_ingestion" for event in ledger)
+
+
+def test_preflight_writes_passing_rust_ingestion_readiness_report(tmp_path, repo_root):
+    packet, run_dir = run_preflight(
+        repo_root / "examples/synthetic/inbound/north-star-messy-intake.json",
+        repo_root / "context/synthetic-profiles/insurance-defense.yaml",
+        tmp_path,
+    )
+    report_path = run_dir / "rust_ingestion_readiness_report.json"
+    report = RustIngestionReadinessReport.model_validate(load_json(report_path))
+    ledger = load_jsonl(run_dir / "run_ledger.jsonl")
+
+    assert packet.rust_ingestion_readiness_report_ref == str(report_path)
+    assert report.status == "passed"
+    assert report.current_adapter_kind == "python_reference_ingestion_adapter"
+    assert report.parity_contract == "rust_ready_ingestion_v0_1"
+    assert report.rust_replacement_allowed is False
+    assert "source_inventory" in report.eligible_hot_path_scope
+    assert "legal_classification" in report.forbidden_rust_scope
+    assert "source_hashes" in report.required_parity_dimensions
+    assert {check.status for check in report.checks} == {"passed"}
+    assert any(str(report_path) in event.get("output_refs", []) for event in ledger)
+
+
+def test_rust_ingestion_readiness_fails_on_source_hash_drift(repo_root):
+    bundle = SourceBundle.model_validate(
+        load_json(repo_root / "examples/synthetic/inbound/carrier-assignment-medmal.json")
+    )
+    result = build_ingestion_result(bundle)
+    drifted = result.model_copy(deep=True)
+    drifted.source_inventory[0].source_sha256 = "sha256:" + ("0" * 64)
+
+    report = build_rust_ingestion_readiness_report(
+        run_id="run_test",
+        bundle=bundle,
+        ingestion_result=drifted,
+    )
+
+    assert report.status == "failed"
+    assert any(
+        check.check_id == "source_inventory_hashes_recomputed" and check.status == "failed"
+        for check in report.checks
+    )
+    with pytest.raises(ValueError, match="source_inventory_hashes_recomputed"):
+        enforce_rust_ingestion_readiness(report)
 
 
 def test_ingestion_result_validation_fails_on_reference_drift(repo_root):

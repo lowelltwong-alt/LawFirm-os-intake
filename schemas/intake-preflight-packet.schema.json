@@ -688,6 +688,18 @@
       "default": null,
       "title": "Ingestion Result Ref"
     },
+    "rust_ingestion_readiness_report_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Rust Ingestion Readiness Report Ref"
+    },
     "effective_context": {
       "$ref": "#/$defs/EffectiveContext"
     },

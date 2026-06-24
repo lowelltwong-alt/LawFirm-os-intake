@@ -1,0 +1,132 @@
+{
+  "$defs": {
+    "RustIngestionReadinessCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "details": {
+          "additionalProperties": true,
+          "title": "Details",
+          "type": "object"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "RustIngestionReadinessCheck",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "rust_ingestion_readiness_report_id": {
+      "title": "Rust Ingestion Readiness Report Id",
+      "type": "string"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "ingestion_result_id": {
+      "title": "Ingestion Result Id",
+      "type": "string"
+    },
+    "bundle_id": {
+      "title": "Bundle Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "passed",
+        "failed"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "current_adapter_kind": {
+      "title": "Current Adapter Kind",
+      "type": "string"
+    },
+    "parity_contract": {
+      "const": "rust_ready_ingestion_v0_1",
+      "title": "Parity Contract",
+      "type": "string"
+    },
+    "rust_replacement_allowed": {
+      "const": false,
+      "default": false,
+      "title": "Rust Replacement Allowed",
+      "type": "boolean"
+    },
+    "eligible_hot_path_scope": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Eligible Hot Path Scope",
+      "type": "array"
+    },
+    "forbidden_rust_scope": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Forbidden Rust Scope",
+      "type": "array"
+    },
+    "required_parity_dimensions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Parity Dimensions",
+      "type": "array"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/RustIngestionReadinessCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "rust_ingestion_readiness_report_id",
+    "run_id",
+    "ingestion_result_id",
+    "bundle_id",
+    "status",
+    "current_adapter_kind",
+    "parity_contract",
+    "eligible_hot_path_scope",
+    "forbidden_rust_scope",
+    "required_parity_dimensions",
+    "checks",
+    "generated_at"
+  ],
+  "title": "RustIngestionReadinessReport",
+  "type": "object"
+}

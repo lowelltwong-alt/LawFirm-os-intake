@@ -31,12 +31,15 @@ The Python implementation remains the readable reference until the Rust path pro
 
 The starter now emits `ingestion_result.json` as the Python parity oracle under `rust_ready_ingestion_v0_1`.
 
+Preflight runs also emit `rust_ingestion_readiness_report.json`. That report verifies the Python adapter boundary is locked, source inventory rows cover the source bundle, source hashes and character counts recompute, segment offsets stay within source bounds, segment hashes recompute, segment evidence refs match segments, and no legal-decision fields have entered the ingestion artifact. A passing report is only parity-readiness evidence. It does not authorize Rust replacement.
+
 ## Preparation Now
 
 Keep the future Rust seam cheap to adopt by preserving:
 
 - schema-first JSON inputs and outputs;
 - a typed `IngestionResult` artifact that can be compared across implementations;
+- a typed `RustIngestionReadinessReport` artifact that proves a run is suitable as a future Rust parity target;
 - deterministic fixture and holdout coverage for ingestion outputs;
 - exact offset/hash validation in the Python reference;
 - no hidden Python object state in persisted artifacts;

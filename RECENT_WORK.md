@@ -94,3 +94,9 @@
 - Added per-role evidence refs to `RoleCandidate` so relationship-role alternatives are source-bound instead of relying only on party-level support.
 - Strict preflight validation now fails if a role candidate ref drifts from the cited segment.
 - Evidence graphs now include `party_role_candidate` nodes and `supports_party_role_candidate` edges.
+
+## Rust-ingestion readiness slice - 2026-06-24
+
+- Added `RustIngestionReadinessReport` and `rust_ingestion_readiness_report.json` so each preflight run proves the Python ingestion artifact is suitable as a future Rust parity target.
+- The report verifies adapter lock, source inventory coverage, recomputed source hashes, bounded segment offsets, recomputed segment hashes, segment evidence refs, and absence of legal decision scope.
+- Kept `rust_replacement_allowed=false`; no Rust runtime, FFI bridge, connector write, legal classification, conflict decision, budget decision, or authority expansion was added.

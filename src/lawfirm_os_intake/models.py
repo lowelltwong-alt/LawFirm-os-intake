@@ -93,6 +93,30 @@ class IngestionResult(StrictModel):
     generated_at: str
 
 
+class RustIngestionReadinessCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    details: dict[str, Any] = Field(default_factory=dict)
+
+
+class RustIngestionReadinessReport(StrictModel):
+    schema_version: str = "0.1"
+    rust_ingestion_readiness_report_id: str
+    run_id: str
+    ingestion_result_id: str
+    bundle_id: str
+    status: Literal["passed", "failed"]
+    current_adapter_kind: str
+    parity_contract: Literal["rust_ready_ingestion_v0_1"]
+    rust_replacement_allowed: Literal[False] = False
+    eligible_hot_path_scope: list[str]
+    forbidden_rust_scope: list[str]
+    required_parity_dimensions: list[str]
+    checks: list[RustIngestionReadinessCheck]
+    generated_at: str
+
+
 class RoleCandidate(StrictModel):
     role: str
     confidence: float = Field(ge=0, le=1)
@@ -217,6 +241,7 @@ class IntakePreflightPacket(StrictModel):
     source_coverage_summary: dict[str, Any] = Field(default_factory=dict)
     segments: list[Segment]
     ingestion_result_ref: str | None = None
+    rust_ingestion_readiness_report_ref: str | None = None
     effective_context: EffectiveContext
     inbound_event_candidates: list[ScoredCandidate]
     matter_family_candidates: list[ScoredCandidate]

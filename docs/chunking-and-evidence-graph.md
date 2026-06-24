@@ -76,7 +76,7 @@ sha256:
 
 The strict preflight validator rejects a ref if its source ID, offsets, or hash do not match the segment ID it cites.
 
-The Python reference ingestion boundary writes `ingestion_result.json` with one segment-level evidence ref per segment. A future Rust ingestion adapter must match this artifact before it can replace the Python path.
+The Python reference ingestion boundary writes `ingestion_result.json` with one segment-level evidence ref per segment. Preflight also writes `rust_ingestion_readiness_report.json` to prove the artifact is currently suitable as a future Rust parity target while keeping Rust replacement unauthorized. A future Rust ingestion adapter must match these artifacts before it can replace the Python path.
 
 ## Evidence graph
 
@@ -114,6 +114,7 @@ A JSON graph is inspectable, portable, and sufficient for the first workflow. In
 
 - exact offset/hash preservation;
 - `ingestion_result.json` parity for inventory, coverage summary, segments, and segment evidence refs;
+- `rust_ingestion_readiness_report.json` status remains passed with replacement still disallowed until a governed adapter decision;
 - evidence refs match cited segment offsets and hashes;
 - every party-role candidate has packet-bound evidence refs;
 - quoted email separation;

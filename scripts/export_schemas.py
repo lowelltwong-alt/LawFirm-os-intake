@@ -25,6 +25,7 @@ from lawfirm_os_intake.models import (  # noqa: E402
     PartyCandidate,
     ReviewPackageManifest,
     RunEvent,
+    RustIngestionReadinessReport,
     SafetyGateReport,
     Segment,
     SourceBundle,
@@ -33,6 +34,7 @@ from lawfirm_os_intake.models import (  # noqa: E402
 MODELS = {
     "source-bundle.schema.json": SourceBundle,
     "ingestion-result.schema.json": IngestionResult,
+    "rust-ingestion-readiness-report.schema.json": RustIngestionReadinessReport,
     "segment.schema.json": Segment,
     "effective-context.schema.json": EffectiveContext,
     "party-candidate.schema.json": PartyCandidate,

@@ -1,22 +1,22 @@
 # Build Verification
 
-Verified in the artifact build environment on 2026-06-23:
+Verified in the artifact build environment on 2026-06-24:
 
 ```text
 PYTHONPATH=src python scripts/export_schemas.py
-# exported 20 schemas
+# exported 21 schemas
 
 PYTHONPATH=src python scripts/validate_repo.py
 # repository validation passed
 
 PYTHONPATH=src python -m pytest -q
-# 58 passed
+# 60 passed
 
 PYTHONPATH=src ruff check src tests scripts
 # All checks passed
 
 PYTHONPATH=src ruff format --check src tests scripts
-# 45 files already formatted
+# 46 files already formatted
 
 PYTHONPATH=src bash scripts/smoke_demo.sh
 # completed without error
@@ -35,6 +35,8 @@ Party-role alternatives now carry their own source-bound evidence refs, render i
 ADR-004 records the Rust-ready ingestion boundary for future high-volume or constrained-compute document processing. Python remains the reference implementation until any Rust adapter proves golden parity.
 
 Preflight runs now emit `ingestion_result.json` as the Python reference parity oracle for source inventory, coverage summary, segments, and segment-level evidence refs.
+
+Preflight runs now also emit `rust_ingestion_readiness_report.json`, proving the Python ingestion artifact is a valid future Rust parity target while keeping `rust_replacement_allowed=false`.
 
 The budget stage now emits `budget_precondition_report.json`; failed confirmation attempts write this report, a blocked ledger event, and a dry-run Exception Lake candidate before any proposal output is created. The gate requires the human confirmation to be matching, confirmed, and evidence-bound.
 

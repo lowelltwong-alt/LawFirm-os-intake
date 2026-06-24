@@ -37,6 +37,10 @@ from .review import (
     render_intake_review_form,
     render_matter_opening_review_package,
 )
+from .rust_readiness import (
+    build_rust_ingestion_readiness_report,
+    enforce_rust_ingestion_readiness,
+)
 from .safety import build_safety_gate_report, enforce_safety_gate
 from .util import append_jsonl, load_json, load_jsonl, new_id, now_iso, write_json
 from .workers import (
@@ -180,10 +184,21 @@ def run_preflight(
 
     ingestion_result = build_ingestion_result(bundle)
     ingestion_result_path = run_dir / "ingestion_result.json"
+    rust_ingestion_readiness_report_path = run_dir / "rust_ingestion_readiness_report.json"
     write_json(ingestion_result_path, ingestion_result.model_dump(mode="json"))
     segments = ingestion_result.segments
     inventory = ingestion_result.source_inventory
     write_json(run_dir / "segments.json", [s.model_dump(mode="json") for s in segments])
+    rust_ingestion_readiness_report = build_rust_ingestion_readiness_report(
+        run_id=run_id,
+        bundle=bundle,
+        ingestion_result=ingestion_result,
+    )
+    write_json(
+        rust_ingestion_readiness_report_path,
+        rust_ingestion_readiness_report.model_dump(mode="json"),
+    )
+    enforce_rust_ingestion_readiness(rust_ingestion_readiness_report)
     append_jsonl(
         ledger_path,
         _event(
@@ -191,8 +206,14 @@ def run_preflight(
             5,
             "python_reference_ingestion",
             "completed",
-            output_refs=[str(ingestion_result_path), str(run_dir / "segments.json")],
-            notes="Rust-ready ingestion parity oracle; no Rust runtime selected.",
+            output_refs=[
+                str(ingestion_result_path),
+                str(rust_ingestion_readiness_report_path),
+                str(run_dir / "segments.json"),
+            ],
+            notes=(
+                "Rust-ready ingestion parity oracle and readiness report; no Rust runtime selected."
+            ),
         ).model_dump(mode="json"),
     )
 
@@ -218,6 +239,7 @@ def run_preflight(
         source_coverage_summary=ingestion_result.source_coverage_summary,
         segments=segments,
         ingestion_result_ref=str(ingestion_result_path),
+        rust_ingestion_readiness_report_ref=str(rust_ingestion_readiness_report_path),
         effective_context=context,
         inbound_event_candidates=inbound,
         matter_family_candidates=matter,
@@ -274,6 +296,7 @@ def run_preflight(
                 str(contract_state_report_path),
                 str(exception_candidates_path),
                 str(ingestion_result_path),
+                str(rust_ingestion_readiness_report_path),
                 str(exception_readiness_report_path),
             ],
         ).model_dump(mode="json"),

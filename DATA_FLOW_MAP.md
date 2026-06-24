@@ -1,6 +1,6 @@
 # Data Flow Map
 
-Last reviewed: 2026-06-23.
+Last reviewed: 2026-06-24.
 
 `LawFirm-os-intake` is the private vertical composition and evaluation repo for the intake-to-budget workflow. It is subordinate to the five public LawFirm OS platform repos and owns no canonical authority.
 
@@ -66,6 +66,7 @@ synthetic source bundle
 -> reviewed contract-state gate for sibling repo locks
 -> data-origin and authorization gate
 -> Python reference ingestion result for source inventory, coverage, segmentation, hashes, and segment evidence refs
+-> Rust ingestion readiness report proving the Python artifact is a future parity target, not replacement authorization
 -> party and relationship-role candidates
 -> inbound-event, matter-family, and representation-posture candidates
 -> date/deadline and missing-information candidates
@@ -93,6 +94,7 @@ The outer runtime owner is `LawFirm-os-orchestrator`. The local intake CLI is a 
 | Candidate intake schemas in `schemas/` | Intake candidate surface | Local only | Must not masquerade as promoted Semantic Substrate canon |
 | `ContractStateReport` in `contract_state_report.json` | Intake candidate surface | Intake -> Human reviewer / Orchestrator review path | Verifies local `contracts.lock.json` and `repo_topology.lock.yaml` are reviewed, parseable, SHA-pinned, topology-matched, and non-authoritative before packet generation |
 | `IngestionResult` in `ingestion_result.json` | Intake candidate surface | Intake -> Human reviewer / Orchestrator review path | Python reference artifact and future Rust parity oracle for source inventory, coverage summary, structural segments, and segment-level evidence refs; does not classify legal meaning |
+| `RustIngestionReadinessReport` in `rust_ingestion_readiness_report.json` | Intake candidate surface | Intake -> Human reviewer / Orchestrator review path | Deterministic proof that the current Python ingestion artifact has a locked adapter boundary, recomputable source hashes, bounded segment offsets, matching segment evidence refs, and no legal decision scope; keeps `rust_replacement_allowed=false` |
 | `EvidenceRef` | Intake candidate surface; future Substrate candidate | Intake -> Human reviewer / Orchestrator review path | Self-contained source evidence pointer with source ID, segment ID, segment offsets, and segment hash; strict mode validates refs against the segment table |
 | `SourceRef` / `PassageRef` / `ClaimRef` | Legal Knowledge Runtime under substrate contracts | Legal Knowledge -> Intake -> Evidence Packet | Prefer refs, offsets, hashes, and bundle IDs over raw text payloads |
 | Legal Context Bundle | Legal Knowledge Runtime under substrate contracts | Legal Knowledge -> Orchestrator/Intake | Context is evidence and decision support, not observed fact |

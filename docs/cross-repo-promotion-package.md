@@ -5,6 +5,7 @@ This is a draft promotion package for stable intake components. It is not a dire
 ## Semantic Substrate Candidates
 
 - Intake source bundle, source inventory, and ingestion result contracts.
+- Rust ingestion readiness report contract for future high-volume source inventory, segmentation, hashing, and evidence-ref parity checks.
 - Evidence ref contract with source ID, segment ID, segment offsets, and segment hash.
 - Human confirmation contract, including `confirmed`, `unknown`, `needs_more_information`, `human_only`, and `declined_or_referred` outcomes, decision evidence refs, and confirmed-party evidence refs.
 - Human review outcome record contract for append-only confirmation history, superseding corrections, non-confirmed blocked states, and required next gates.
