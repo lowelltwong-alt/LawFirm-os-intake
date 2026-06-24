@@ -812,6 +812,28 @@ class BudgetFormMappingReport(StrictModel):
     generated_at: str
 
 
+class BudgetFormTemplateAuditReport(StrictModel):
+    schema_version: str = "0.1"
+    budget_form_template_audit_report_id: str
+    status: Literal["passed", "failed"]
+    template_sha256: str
+    sheet_name: str
+    task_header_cell: str | None = None
+    amount_header_cell: str | None = None
+    total_cell: str | None = None
+    task_column: int | None = None
+    amount_column: int | None = None
+    code_mappings: list[BudgetFormCodeMapping] = Field(default_factory=list)
+    missing_template_codes: list[str] = Field(default_factory=list)
+    duplicate_template_codes: list[str] = Field(default_factory=list)
+    formula_checks: list[BudgetFormFormulaCheck] = Field(default_factory=list)
+    checklist_items: list[str] = Field(default_factory=list)
+    warnings: list[str] = Field(default_factory=list)
+    external_writes_performed: Literal[False] = False
+    non_authoritative: Literal[True] = True
+    generated_at: str
+
+
 class BudgetSubmissionGuardCheck(StrictModel):
     check_id: str
     status: Literal["passed", "failed"]

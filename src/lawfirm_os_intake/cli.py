@@ -6,7 +6,7 @@ from pathlib import Path
 import shutil
 import sys
 
-from .budget_form import render_budget_form
+from .budget_form import build_budget_form_template_audit_report, render_budget_form
 from .confirmation import bind_confirmation_to_packet_evidence
 from .models import BudgetProposal, HumanConfirmation
 from .util import load_json, write_json
@@ -64,6 +64,13 @@ def _parser() -> argparse.ArgumentParser:
         "--mapping-report-out",
         help="Optional budget_form_mapping_report.json path; requires --template.",
     )
+
+    budget_form_audit = sub.add_parser(
+        "budget-form-audit",
+        help="Audit a UTBMS budget form template before template-backed rendering.",
+    )
+    budget_form_audit.add_argument("--template", required=True, help="Existing UTBMS budget form")
+    budget_form_audit.add_argument("--out", required=True, help="Output audit report JSON path")
     return parser
 
 
@@ -235,6 +242,27 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 0
+
+        if args.command == "budget-form-audit":
+            report = build_budget_form_template_audit_report(args.template)
+            write_json(args.out, report.model_dump(mode="json"))
+            failed_checks = [
+                check.check_id for check in report.formula_checks if check.status == "failed"
+            ]
+            _print(
+                {
+                    "status": "budget_form_template_audit_" + report.status,
+                    "out": args.out,
+                    "template_sha256": report.template_sha256,
+                    "sheet_name": report.sheet_name,
+                    "failed_checks": failed_checks,
+                    "missing_template_codes": report.missing_template_codes,
+                    "duplicate_template_codes": report.duplicate_template_codes,
+                    "external_writes_performed": report.external_writes_performed,
+                    "non_authoritative": report.non_authoritative,
+                }
+            )
+            return 0 if report.status == "passed" else 2
     except (ValueError, OSError, json.JSONDecodeError) as exc:
         print(json.dumps({"status": "blocked", "error": str(exc)}, indent=2), file=sys.stderr)
         return 2

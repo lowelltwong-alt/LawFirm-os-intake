@@ -62,6 +62,8 @@ Template-backed `.xlsx` rendering is validation-first. Before filling an existin
 
 The renderer does not repair workbook formulas. Missing or inconsistent original-budget total, phase subtotal, task remaining, header, or budget-code mapping checks block rendering before a filled workbook is created. The filled workbook remains `proposed_for_human_review` and is not authorized for carrier or client submission.
 
+Template truth can be checked before a matter-specific budget exists with `budget-form-audit`, which writes `budget_form_template_audit_report.json`. The audit uses the same header, UTBMS code, and original-budget formula checks as template-backed rendering, but it records zero budget amounts and does not create a filled workbook.
+
 ## Budget refinement loop
 
 Future runtime:

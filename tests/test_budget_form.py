@@ -15,7 +15,11 @@ from lawfirm_os_intake.budget_form import (
 )
 from lawfirm_os_intake.cli import main as cli_main
 from lawfirm_os_intake.confirmation import bind_confirmation_to_packet_evidence
-from lawfirm_os_intake.models import BudgetFormMappingReport, HumanConfirmation
+from lawfirm_os_intake.models import (
+    BudgetFormMappingReport,
+    BudgetFormTemplateAuditReport,
+    HumanConfirmation,
+)
 from lawfirm_os_intake.util import load_json
 from lawfirm_os_intake.workflow import run_budget, run_preflight
 
@@ -275,3 +279,63 @@ def test_budget_form_cli_writes_mapping_report_for_template(tmp_path, repo_root)
     report = BudgetFormMappingReport.model_validate(load_json(report_path))
     assert report.status == "passed"
     assert out.exists()
+
+
+def test_budget_form_audit_cli_passes_structural_template(tmp_path, repo_root):
+    template = _write_structural_template(repo_root, tmp_path / "template.xlsx")
+    report_path = tmp_path / "budget_form_template_audit_report.json"
+
+    assert (
+        cli_main(
+            [
+                "budget-form-audit",
+                "--template",
+                str(template),
+                "--out",
+                str(report_path),
+            ]
+        )
+        == 0
+    )
+
+    report = BudgetFormTemplateAuditReport.model_validate(load_json(report_path))
+    assert report.status == "passed"
+    assert report.template_sha256.startswith("sha256:")
+    assert report.task_header_cell == "A15"
+    assert report.amount_header_cell == "G15"
+    assert report.total_cell == "B11"
+    assert report.missing_template_codes == []
+    assert report.duplicate_template_codes == []
+    assert report.external_writes_performed is False
+    assert report.non_authoritative is True
+    assert any("Original Budgeted Amount" in item for item in report.checklist_items)
+    mappings = {mapping.code: mapping for mapping in report.code_mappings}
+    assert mappings["L330"].amount_cell == "G53"
+    assert mappings["E119"].amount_cell == "G123"
+
+
+def test_budget_form_audit_cli_fails_broken_template_without_rendering(tmp_path, repo_root):
+    template = _write_structural_template(
+        repo_root, tmp_path / "template.xlsx", broken_phase="L400"
+    )
+    report_path = tmp_path / "budget_form_template_audit_report.json"
+
+    assert (
+        cli_main(
+            [
+                "budget-form-audit",
+                "--template",
+                str(template),
+                "--out",
+                str(report_path),
+            ]
+        )
+        == 2
+    )
+
+    report = BudgetFormTemplateAuditReport.model_validate(load_json(report_path))
+    assert report.status == "failed"
+    assert any(
+        check.check_id == "phase_l400_original_budget_formula" and check.status == "failed"
+        for check in report.formula_checks
+    )

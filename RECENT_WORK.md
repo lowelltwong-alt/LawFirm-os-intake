@@ -281,3 +281,9 @@
 - Added `budget_form_mapping_report.json` for template-backed UTBMS workbook rendering.
 - The report checks template hash, header coordinates, code-to-row/write-cell mappings, L/E amount totals, missing/duplicate/unmapped codes, original-budget total formulas, phase subtotal formulas, and task remaining formulas.
 - The renderer blocks before creating a filled workbook when mapping or original-budget formula checks fail; the sanitized workbook remains local and only a structural test manifest is committed.
+
+## Budget-form template audit slice - 2026-06-24
+
+- Added `lawfirm-os-intake budget-form-audit` and `budget_form_template_audit_report.json` so a carrier-style UTBMS workbook can be tested before any matter-specific budget exists.
+- Added `docs/budget-template-checklist.md` with known-good template requirements and the local audit command.
+- The audit writes a report and returns nonzero on missing headers, missing/duplicate UTBMS codes, or broken original-budget formulas without mutating the workbook.

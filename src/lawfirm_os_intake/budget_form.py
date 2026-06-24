@@ -25,7 +25,12 @@ from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from .models import BudgetProposal
-from .models import BudgetFormCodeMapping, BudgetFormFormulaCheck, BudgetFormMappingReport
+from .models import (
+    BudgetFormCodeMapping,
+    BudgetFormFormulaCheck,
+    BudgetFormMappingReport,
+    BudgetFormTemplateAuditReport,
+)
 from .util import new_id, now_iso
 
 AMOUNT_HEADER = "Original Budgeted Amount"
@@ -111,6 +116,15 @@ for _code, _label, _kind in UTBMS_FORM_ROWS:
 
 _ROW_KINDS = {code: kind for code, _, kind in UTBMS_FORM_ROWS}
 _REQUIRED_CODES = [code for code, _, _ in UTBMS_FORM_ROWS]
+_TEMPLATE_CHECKLIST_ITEMS = [
+    "Use the active worksheet that contains the carrier UTBMS budget form.",
+    "Keep the Phase / Task column and Original Budgeted Amount column visible and labeled.",
+    "Keep every expected UTBMS L/E phase and task code present exactly once.",
+    "Keep Total Budgeted ($) tied to original-budget phase subtotal cells.",
+    "Keep original-budget phase cells tied to their original-budget task cells.",
+    "Keep task remaining formulas tied to original budget minus billed-to-date where present.",
+    "Do not add real client data, matter data, private rates, or carrier submission state.",
+]
 
 
 def form_amounts(budget: BudgetProposal) -> dict[str, float]:
@@ -428,6 +442,74 @@ def build_budget_form_mapping_report(
     )
 
 
+def build_budget_form_template_audit_report(
+    template_path: str | Path,
+) -> BudgetFormTemplateAuditReport:
+    """Audit a carrier-style UTBMS budget form template without a budget proposal."""
+
+    from openpyxl import load_workbook
+
+    template = Path(template_path)
+    wb = load_workbook(template, data_only=False)
+    ws = wb.active
+    headers = _find_headers(ws)
+    task_header = headers.get(TASK_HEADER)
+    amount_header = headers.get(AMOUNT_HEADER)
+    billed_header = headers.get(AMOUNT_BILLED_HEADER)
+    remaining_header = headers.get(AMOUNT_REMAINING_HEADER)
+    task_col = task_header[1] if task_header else None
+    amount_col = amount_header[1] if amount_header else None
+    billed_col = billed_header[1] if billed_header else None
+    remaining_col = remaining_header[1] if remaining_header else None
+    code_rows = _template_code_rows(ws, task_col)
+    duplicate_codes = sorted(code for code, rows in code_rows.items() if len(rows) > 1)
+    missing_template_codes = sorted(code for code in _REQUIRED_CODES if code not in code_rows)
+    total_cell = _find_total_cell(ws)
+    checks = _formula_checks(
+        ws,
+        code_rows,
+        amount_col=amount_col,
+        billed_col=billed_col,
+        remaining_col=remaining_col,
+        total_cell=total_cell,
+    )
+    structural_failures = [
+        not task_header,
+        not amount_header,
+        bool(missing_template_codes),
+        bool(duplicate_codes),
+    ]
+    status = (
+        "passed"
+        if not any(structural_failures) and all(check.status != "failed" for check in checks)
+        else "failed"
+    )
+    return BudgetFormTemplateAuditReport(
+        budget_form_template_audit_report_id=new_id("budgetformtemplateaudit"),
+        status=status,
+        template_sha256=_file_sha256(template),
+        sheet_name=ws.title,
+        task_header_cell=(
+            ws.cell(row=task_header[0], column=task_header[1]).coordinate if task_header else None
+        ),
+        amount_header_cell=(
+            ws.cell(row=amount_header[0], column=amount_header[1]).coordinate
+            if amount_header
+            else None
+        ),
+        total_cell=total_cell,
+        task_column=task_col,
+        amount_column=amount_col,
+        code_mappings=_build_code_mappings(ws, code_rows, amount_col, task_col, {}),
+        missing_template_codes=missing_template_codes,
+        duplicate_template_codes=duplicate_codes,
+        formula_checks=checks,
+        checklist_items=_TEMPLATE_CHECKLIST_ITEMS,
+        warnings=[],
+        generated_at=now_iso(),
+    )
+
+
 def enforce_budget_form_mapping_report(report: BudgetFormMappingReport) -> None:
     if report.status == "passed":
         return
@@ -441,6 +523,20 @@ def enforce_budget_form_mapping_report(report: BudgetFormMappingReport) -> None:
     if report.not_authorized_for_client_submission is not True:
         reasons.append("budget_authorized_for_submission")
     raise ValueError("budget form mapping failed: " + ", ".join(reasons))
+
+
+def enforce_budget_form_template_audit_report(
+    report: BudgetFormTemplateAuditReport,
+) -> None:
+    if report.status == "passed":
+        return
+    failed_checks = [check.check_id for check in report.formula_checks if check.status == "failed"]
+    reasons = [
+        *failed_checks,
+        *[f"missing_template_code:{code}" for code in report.missing_template_codes],
+        *[f"duplicate_template_code:{code}" for code in report.duplicate_template_codes],
+    ]
+    raise ValueError("budget form template audit failed: " + ", ".join(reasons))
 
 
 def _build_synthetic_form(budget: BudgetProposal, amounts: dict[str, float], out_path: Path):
