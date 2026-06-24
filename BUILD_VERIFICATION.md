@@ -48,6 +48,8 @@ Human-facing review Markdown now renders evidence refs inline for confirmation e
 
 The final matter-opening review package now includes a candidate-alternatives section for inbound-event, matter-family, representation-posture, and party-role candidates, and package completeness requires that section.
 
+The final matter-opening review package now includes a required-human-gates section for conflicts clearance, engagement authorization, budget review, and matter-opening authorization, and package completeness requires that section.
+
 Budget runs now write `human_review_outcome.<confirmation_id>.json` and append it to `human_confirmation_history.jsonl` before budget preconditions run. Non-confirmed review outcomes remain blocked, and superseding corrections append new history rows instead of mutating prior outcomes.
 
 Budget assumptions, exclusions, and unknowns now emit `budget_support_items` with evidence refs or structured refs for human review.

@@ -118,3 +118,9 @@
 - Added a `Candidate Alternatives` section to the final matter-opening review package.
 - The section renders top inbound-event, matter-family, representation-posture, and party-role candidates with source evidence refs and context signals.
 - The completeness report now requires the section before final package acceptance.
+
+## Final-package human gates slice - 2026-06-24
+
+- Added a `Required Human Gates` section to the final matter-opening review package.
+- The section makes conflicts clearance, engagement authorization, budget review, and matter-opening authorization visibly required before any real-world action.
+- The completeness report now requires the section before final package acceptance.

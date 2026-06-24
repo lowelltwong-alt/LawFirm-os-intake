@@ -17,6 +17,7 @@ REQUIRED_REVIEW_SECTIONS = [
     "## What Is Known",
     "## Candidate Alternatives",
     "## What Still Needs Human Review",
+    "## Required Human Gates",
     "## Conflict Search Seed",
     "## Budget Proposal",
     "## Exception And Escalation Records",

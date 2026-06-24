@@ -253,6 +253,23 @@ def _safety_gate_lines(report: SafetyGateReport) -> list[str]:
     return [f"- {check.status}: {check.check_id} - {check.message}" for check in report.checks]
 
 
+def _required_human_gate_lines(
+    confirmation: HumanConfirmation,
+    conflict_seed: ConflictSeedPacket,
+    budget: BudgetProposal,
+    readiness: MatterOpeningReadiness,
+) -> list[str]:
+    return [
+        f"- human_intake_confirmation: completed for confirmation `{confirmation.confirmation_id}`; "
+        "classification, posture, and principal party roles remain review artifacts.",
+        f"- human_conflicts_clearance: required before any conflict conclusion; current conflict output is `{conflict_seed.conclusion}`.",
+        "- human_engagement_authorization: required before accepting representation; "
+        f"current blockers: {', '.join(readiness.blockers)}.",
+        f"- human_budget_review: required before client/carrier submission; current budget state is `{budget.approval_state}`.",
+        f"- human_matter_opening_authorization: required before matter or workspace creation; current readiness is `{readiness.status}`.",
+    ]
+
+
 def render_matter_opening_review_package(
     packet: IntakePreflightPacket,
     confirmation: HumanConfirmation,
@@ -331,6 +348,10 @@ def render_matter_opening_review_package(
             *_lines_or_none(deadline_lines),
             *_lines_or_none(finding_lines),
             *_lines_or_none([f"- budget unknown: {item}" for item in budget.unknowns]),
+            "",
+            "## Required Human Gates",
+            "",
+            *_required_human_gate_lines(confirmation, conflict_seed, budget, readiness),
             "",
             "## Conflict Search Seed",
             "",

@@ -54,6 +54,10 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert "## What Still Needs Human Review" in review_text
     assert "not docketed; evidence:" in review_text
     assert "missing information:" in review_text
+    assert "## Required Human Gates" in review_text
+    assert "human_conflicts_clearance: required" in review_text
+    assert "human_budget_review: required" in review_text
+    assert "human_matter_opening_authorization: required" in review_text
     assert "## Conflict Search Seed" in review_text
     assert "no_conflict_conclusion" in review_text
     assert "evidence:" in review_text
@@ -115,6 +119,7 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert completeness.human_readable_review_ref == str(review_path)
     assert completeness.review_package_manifest_ref == str(manifest_path)
     assert "## Candidate Alternatives" in completeness.required_sections
+    assert "## Required Human Gates" in completeness.required_sections
     assert "review_package_completeness_report" in completeness.required_artifact_keys
     assert {check.status for check in completeness.checks} == {"passed"}
 
