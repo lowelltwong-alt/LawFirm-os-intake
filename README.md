@@ -78,6 +78,7 @@ The demo emits:
 |   |-- intake_preflight_packet.json
 |   |-- intake_review_form.md
 |   |-- exception_lake_candidates.jsonl
+|   |-- exception_lake_readiness_report.json
 |   |-- evidence_graph.json
 |   `-- run_ledger.jsonl
 `-- budget/
@@ -89,6 +90,7 @@ The demo emits:
     |-- legal_budget_review_form.md
     |-- matter_opening_readiness.json
     |-- exception_lake_candidates.jsonl
+    |-- exception_lake_readiness_report.json
     |-- safety_gate_report.json
     |-- matter_opening_review_package.md
     |-- review_package_manifest.json
@@ -153,6 +155,8 @@ Every proposal-level assumption, exclusion, and unknown is mirrored as a `budget
 If rates are absent, the system emits an **hours-only** proposal. It never invents rates or totals.
 
 Budget-stage uncertainty is also emitted as dry-run Exception Lake candidates. Unknowns, missing approved templates, and hours-only missing-rate states become reviewable workflow escalations with source evidence refs or structured refs, not silent budget defects.
+
+Every preflight and budget candidate file is checked by `exception_lake_readiness_report.json`. The report proves candidates remain dry-run, exclude raw payloads, require canonical promotion or reviewed mapping, target the Exception Lake runtime repo, and carry valid source-inventory refs, source evidence refs, structured refs, or blocked states.
 
 Every budget run emits `budget_precondition_report.json`. If confirmation is missing, mismatched, incomplete, evidence-free, or not `confirmed`, the run writes that failed report, a blocked run-ledger event, and a dry-run Exception Lake candidate, then stops before producing a conflict seed, budget proposal, readiness packet, safety report, or review package.
 

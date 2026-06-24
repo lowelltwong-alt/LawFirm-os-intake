@@ -779,6 +779,18 @@
       "default": null,
       "title": "Exception Candidates Ref"
     },
+    "exception_lake_readiness_report_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Exception Lake Readiness Report Ref"
+    },
     "intake_review_form_ref": {
       "anyOf": [
         {

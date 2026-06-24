@@ -117,6 +117,18 @@
       "title": "Exception Candidate Refs",
       "type": "array"
     },
+    "exception_lake_readiness_report_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Exception Lake Readiness Report Ref"
+    },
     "no_conflict_conclusion": {
       "const": true,
       "default": true,

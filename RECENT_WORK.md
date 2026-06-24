@@ -82,3 +82,9 @@
 - Added `IngestionResult` and `ingestion_result.json` as the Python reference parity oracle for source inventory, coverage summary, structural segments, and segment-level evidence refs.
 - Wired preflight to consume that artifact while preserving existing `source_inventory.json`, `segments.json`, and CLI outputs.
 - Added tests proving parity refs match segment offsets/hashes and fail closed on drift; no Rust runtime or authority expansion was added.
+
+## Exception-Lake readiness slice - 2026-06-23
+
+- Added `ExceptionLakeReadinessReport` and `exception_lake_readiness_report.json` for preflight, budget, and failed budget-precondition exception candidate files.
+- The readiness gate proves candidates remain dry-run, raw-payload-free, promotion-required, target the Lake runtime repo, and carry valid source/evidence/structured/state support.
+- Added fail-closed tests for raw-payload candidates and drifted exception evidence refs.

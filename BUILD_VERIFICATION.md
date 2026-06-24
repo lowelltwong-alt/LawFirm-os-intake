@@ -4,19 +4,19 @@ Verified in the artifact build environment on 2026-06-23:
 
 ```text
 PYTHONPATH=src python scripts/export_schemas.py
-# exported 19 schemas
+# exported 20 schemas
 
 PYTHONPATH=src python scripts/validate_repo.py
 # repository validation passed
 
 PYTHONPATH=src python -m pytest -q
-# 52 passed
+# 57 passed
 
 PYTHONPATH=src ruff check src tests scripts
 # All checks passed
 
 PYTHONPATH=src ruff format --check src tests scripts
-# 43 files already formatted
+# 45 files already formatted
 
 PYTHONPATH=src bash scripts/smoke_demo.sh
 # completed without error
@@ -47,6 +47,8 @@ The budget-stage evidence graph now includes human review outcome, conflict seed
 Budget uncertainty now emits dry-run Exception Lake candidates for proposal unknowns, missing approved synthetic budget templates, and hours-only missing-rate states. These candidates may carry structured refs and still include no raw payload.
 
 Unread sources now count as explicit source coverage gaps, render in review summaries, and emit `source_unread` dry-run `retrieval_miss` candidates.
+
+Exception Lake candidate files now emit `exception_lake_readiness_report.json`, proving dry-run posture, raw-payload exclusion, promotion-required status, target runtime repo, and source/evidence ref integrity before future Lake handoff.
 
 The budget output also includes `safety_gate_report.json`; a failed safety check raises before the final review package is accepted.
 

@@ -232,6 +232,7 @@ class IntakePreflightPacket(StrictModel):
     run_ledger_ref: str
     contract_state_report_ref: str
     exception_candidates_ref: str | None = None
+    exception_lake_readiness_report_ref: str | None = None
     intake_review_form_ref: str | None = None
 
 
@@ -510,6 +511,29 @@ class ExceptionLakeCandidate(StrictModel):
     )
 
 
+class ExceptionLakeReadinessCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    candidate_ids: list[str] = Field(default_factory=list)
+
+
+class ExceptionLakeReadinessReport(StrictModel):
+    schema_version: str = "0.1"
+    exception_lake_readiness_report_id: str
+    run_id: str
+    preflight_packet_id: str
+    status: Literal["passed", "failed"]
+    admission_state: Literal["dry_run_not_admitted"] = "dry_run_not_admitted"
+    target_runtime_repo: Literal["LawFirm-os-exceptions-lake-runtime"] = (
+        "LawFirm-os-exceptions-lake-runtime"
+    )
+    candidate_count: int
+    candidate_file_refs: list[str]
+    checks: list[ExceptionLakeReadinessCheck]
+    generated_at: str
+
+
 class ReviewPackageManifest(StrictModel):
     schema_version: str = "0.1"
     review_package_id: str
@@ -531,6 +555,7 @@ class ReviewPackageManifest(StrictModel):
     evidence_graph_ref: str
     run_ledger_refs: list[str]
     exception_candidate_refs: list[str]
+    exception_lake_readiness_report_ref: str | None = None
     no_conflict_conclusion: Literal[True] = True
     budget_not_authorized_for_client_submission: Literal[True] = True
     contains_raw_payload: Literal[False] = False

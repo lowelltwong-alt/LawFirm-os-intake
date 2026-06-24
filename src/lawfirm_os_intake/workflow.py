@@ -9,6 +9,10 @@ from .confirmation import build_human_review_outcome_record
 from .contract_state import build_contract_state_report, enforce_contract_state
 from .context import build_effective_context, load_profile
 from .evidence import build_preflight_graph, extend_graph_with_budget
+from .exception_readiness import (
+    build_exception_lake_readiness_report,
+    enforce_exception_lake_readiness,
+)
 from .exceptions import (
     build_budget_exception_candidates,
     build_budget_precondition_exception_candidates,
@@ -19,6 +23,7 @@ from .models import (
     ConflictSearchTerm,
     ConflictSeedPacket,
     EvidenceRef,
+    ExceptionLakeCandidate,
     HumanConfirmation,
     IntakePreflightPacket,
     MatterOpeningReadiness,
@@ -200,6 +205,7 @@ def run_preflight(
 
     review_form_path = run_dir / "intake_review_form.md"
     exception_candidates_path = run_dir / "exception_lake_candidates.jsonl"
+    exception_readiness_report_path = run_dir / "exception_lake_readiness_report.json"
     packet = IntakePreflightPacket(
         packet_id=new_id("intake"),
         run_id=run_id,
@@ -225,6 +231,7 @@ def run_preflight(
         run_ledger_ref=str(ledger_path),
         contract_state_report_ref=str(contract_state_report_path),
         exception_candidates_ref=str(exception_candidates_path),
+        exception_lake_readiness_report_ref=str(exception_readiness_report_path),
         intake_review_form_ref=str(review_form_path),
     )
     if strict_evidence:
@@ -234,6 +241,16 @@ def run_preflight(
     exception_candidates_path.touch()
     for candidate in exception_candidates:
         append_jsonl(exception_candidates_path, candidate.model_dump(mode="json"))
+    exception_readiness_report = build_exception_lake_readiness_report(
+        packet,
+        exception_candidates,
+        [str(exception_candidates_path)],
+    )
+    enforce_exception_lake_readiness(exception_readiness_report)
+    write_json(
+        exception_readiness_report_path,
+        exception_readiness_report.model_dump(mode="json"),
+    )
     write_json(
         run_dir / "source_inventory.json",
         [item.model_dump(mode="json") for item in packet.source_inventory],
@@ -255,6 +272,7 @@ def run_preflight(
                 str(contract_state_report_path),
                 str(exception_candidates_path),
                 str(ingestion_result_path),
+                str(exception_readiness_report_path),
             ],
         ).model_dump(mode="json"),
     )
@@ -419,9 +437,23 @@ def run_budget(
     )
     if budget_precondition_report.status == "failed":
         exception_candidates_path = run_dir / "exception_lake_candidates.jsonl"
+        exception_readiness_report_path = run_dir / "exception_lake_readiness_report.json"
         exception_candidates_path.touch()
-        for candidate in build_budget_precondition_exception_candidates(budget_precondition_report):
+        exception_candidates = build_budget_precondition_exception_candidates(
+            budget_precondition_report
+        )
+        for candidate in exception_candidates:
             append_jsonl(exception_candidates_path, candidate.model_dump(mode="json"))
+        exception_readiness_report = build_exception_lake_readiness_report(
+            packet,
+            exception_candidates,
+            [str(exception_candidates_path)],
+        )
+        enforce_exception_lake_readiness(exception_readiness_report)
+        write_json(
+            exception_readiness_report_path,
+            exception_readiness_report.model_dump(mode="json"),
+        )
         append_jsonl(
             ledger_path,
             _event(
@@ -429,7 +461,11 @@ def run_budget(
                 3,
                 "budget_generation_blocked",
                 "blocked",
-                output_refs=[str(budget_precondition_report_path), str(exception_candidates_path)],
+                output_refs=[
+                    str(budget_precondition_report_path),
+                    str(exception_candidates_path),
+                    str(exception_readiness_report_path),
+                ],
                 notes=budget_precondition_report.blocked_state,
             ).model_dump(mode="json"),
         )
@@ -501,6 +537,7 @@ def run_budget(
     review_package_path = run_dir / "matter_opening_review_package.md"
     manifest_path = run_dir / "review_package_manifest.json"
     safety_gate_report_path = run_dir / "safety_gate_report.json"
+    exception_readiness_report_path = run_dir / "exception_lake_readiness_report.json"
     artifact_refs = {
         "preflight_packet": str(preflight_packet_path),
         "human_confirmation": str(run_dir / "human_confirmation.json"),
@@ -511,7 +548,11 @@ def run_budget(
         "budget_evidence_graph": str(run_dir / "evidence_graph.json"),
         "preflight_evidence_graph": packet.evidence_graph_ref,
         "preflight_exception_candidates": packet.exception_candidates_ref or "",
+        "preflight_exception_lake_readiness_report": (
+            packet.exception_lake_readiness_report_ref or ""
+        ),
         "budget_exception_candidates": str(exception_candidates_path),
+        "budget_exception_lake_readiness_report": str(exception_readiness_report_path),
         "budget_run_ledger": str(ledger_path),
         "preflight_run_ledger": packet.run_ledger_ref,
         "human_review_outcome": str(human_review_outcome_path),
@@ -529,7 +570,20 @@ def run_budget(
         artifact_refs,
     )
     enforce_safety_gate(safety_report)
+    exception_readiness_report = build_exception_lake_readiness_report(
+        packet,
+        [
+            ExceptionLakeCandidate.model_validate(candidate)
+            for candidate in all_exception_candidates
+        ],
+        [ref for ref in [packet.exception_candidates_ref, str(exception_candidates_path)] if ref],
+    )
+    enforce_exception_lake_readiness(exception_readiness_report)
     write_json(safety_gate_report_path, safety_report.model_dump(mode="json"))
+    write_json(
+        exception_readiness_report_path,
+        exception_readiness_report.model_dump(mode="json"),
+    )
     review_package_path.write_text(
         render_matter_opening_review_package(
             packet,
@@ -571,6 +625,7 @@ def run_budget(
         exception_candidate_refs=[
             ref for ref in [packet.exception_candidates_ref, str(exception_candidates_path)] if ref
         ],
+        exception_lake_readiness_report_ref=str(exception_readiness_report_path),
     )
     write_json(manifest_path, manifest.model_dump(mode="json"))
     append_jsonl(
@@ -596,6 +651,7 @@ def run_budget(
                 str(run_dir / "matter_opening_readiness.json"),
                 str(exception_candidates_path),
                 str(safety_gate_report_path),
+                str(exception_readiness_report_path),
             ],
         ).model_dump(mode="json"),
     )

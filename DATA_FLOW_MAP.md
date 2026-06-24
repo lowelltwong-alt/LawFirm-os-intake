@@ -71,6 +71,7 @@ synthetic source bundle
 -> date/deadline and missing-information candidates
 -> independent evidence review
 -> dry-run Exception Lake candidates for retrieval misses, workflow escalations, and authority conflicts
+-> Exception Lake readiness report for dry-run candidate handoff safety
 -> human intake confirmation
 -> human review outcome record and append-only confirmation history
 -> budget precondition gate
@@ -98,6 +99,7 @@ The outer runtime owner is `LawFirm-os-orchestrator`. The local intake CLI is a 
 | Execution passport / run ledger | Orchestrator | Orchestrator <-> Intake | Carries contract pin, decision model, approval state, and gate results |
 | Evidence packet | Orchestrator | Orchestrator -> Exception Lake | Principal admission unit for runtime evidence |
 | `ExceptionLakeCandidate` in `exception_lake_candidates.jsonl` | Intake candidate surface | Intake -> Orchestrator -> Exception Lake review path | Dry-run only; maps to broad existing Lake classes, includes no raw payload, and may carry source refs, evidence refs, or structured refs |
+| `ExceptionLakeReadinessReport` in `exception_lake_readiness_report.json` | Intake candidate surface | Intake -> Human reviewer / Orchestrator review path | Deterministic proof that local exception candidates remain dry-run, raw-payload-free, promotion-required, target the Lake runtime repo, and cite known inventory refs, packet evidence refs, structured refs, or blocked states |
 | `EvidenceGraph` in `evidence_graph.json` | Intake candidate surface | Intake -> Human reviewer / Orchestrator review path | Links source, segment, candidate, human confirmation, review outcome, conflict-search term, budget line, budget support, structured-ref, and proposal nodes |
 | `ReviewPackageManifest` and `matter_opening_review_package.md` | Intake candidate surface | Intake -> Human reviewer / Orchestrator review path | One-run review surface linking contract state, knowns, unknowns, evidence refs, conflict seed, budget, exception candidates, blockers, ledgers, and prohibited actions |
 | `HumanReviewOutcomeRecord` and `human_confirmation_history.jsonl` | Intake candidate surface | Intake -> Human reviewer / Orchestrator review path | Records how a human confirmation outcome was handled; non-confirmed outcomes block budget, confirmed outcomes advance only to precondition checks, and superseding corrections append new records instead of mutating prior outcomes |
@@ -123,7 +125,7 @@ Future intake event labels named in this repo, such as `intake_preflight_propose
 1. map to an existing canonical route/event class through a reviewed adapter, or
 2. be promoted first through Semantic Substrate before Exception Lake runtime accepts them as first-class event classes.
 
-The current local workflow writes `exception_lake_candidates.jsonl` in both preflight and budget run directories. Each row is a dry-run candidate with `raw_payload_included=false`, `canonical_promotion_required=true`, a broad canonical Lake class, and source-inventory refs, evidence refs, or structured refs. Failed budget precondition attempts also write a dry-run workflow escalation candidate before stopping. The file is not an admission log and is not a SQLite store.
+The current local workflow writes `exception_lake_candidates.jsonl` in both preflight and budget run directories. Each row is a dry-run candidate with `raw_payload_included=false`, `canonical_promotion_required=true`, a broad canonical Lake class, and source-inventory refs, evidence refs, or structured refs. Failed budget precondition attempts also write a dry-run workflow escalation candidate before stopping. Each candidate file is paired with `exception_lake_readiness_report.json`; the report is not an admission log and is not a SQLite store.
 
 ## SQLite Direction For Exception Lake
 

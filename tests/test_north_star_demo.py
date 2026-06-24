@@ -28,10 +28,14 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     ingestion_result = load_json(preflight_dir / "ingestion_result.json")
     contract_state = load_json(preflight_dir / "contract_state_report.json")
     preflight_exceptions = load_jsonl(preflight_dir / "exception_lake_candidates.jsonl")
+    preflight_exception_readiness = load_json(
+        preflight_dir / "exception_lake_readiness_report.json"
+    )
     budget_dir = tmp_path / "north-star/budget"
     confirmation = load_json(tmp_path / "north-star/human_confirmation.json")
     conflict_seed = load_json(budget_dir / "conflict_search_seed_packet.json")
     budget_exceptions = load_jsonl(budget_dir / "exception_lake_candidates.jsonl")
+    budget_exception_readiness = load_json(budget_dir / "exception_lake_readiness_report.json")
     safety = load_json(budget_dir / "safety_gate_report.json")
     manifest = load_json(budget_dir / "review_package_manifest.json")
     budget_preconditions = load_json(budget_dir / "budget_precondition_report.json")
@@ -63,6 +67,7 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     assert "duplicate_source_detected" in labels
     assert "source_missing" in labels
     assert "prompt_injection_source_content" in labels
+    assert preflight_exception_readiness["status"] == "passed"
     assert {
         ref["source_id"]
         for item in preflight_exceptions
@@ -71,6 +76,8 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     } == {"syn-northstar-injection-001"}
     assert "matter_opening_blocked_pending_conflicts_and_engagement" in budget_labels
     assert "budget_unknowns_require_review" in budget_labels
+    assert budget_exception_readiness["status"] == "passed"
+    assert budget_exception_readiness["admission_state"] == "dry_run_not_admitted"
     assert safety["status"] == "passed"
     assert budget_preconditions["status"] == "passed"
     assert safety["final_boundary"] == "blocked_pending_conflicts_and_engagement"
@@ -83,7 +90,13 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     )
     assert manifest["artifact_refs"]["human_review_outcome"].endswith(".json")
     assert manifest["artifact_refs"]["safety_gate_report"].endswith("safety_gate_report.json")
+    assert manifest["artifact_refs"]["budget_exception_lake_readiness_report"].endswith(
+        "exception_lake_readiness_report.json"
+    )
     assert manifest["artifact_refs"]["contract_state_report"].endswith("contract_state_report.json")
+    assert manifest["exception_lake_readiness_report_ref"].endswith(
+        "exception_lake_readiness_report.json"
+    )
     assert manifest["contract_state_report_ref"].endswith("contract_state_report.json")
 
     for phrase in [
@@ -93,6 +106,7 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
         "missing information: incident_date",
         "missing information: jurisdiction",
         "prompt_injection_source_content",
+        "Exception Lake readiness report:",
         "no_conflict_conclusion",
         "normalized:",
         "evidence:",

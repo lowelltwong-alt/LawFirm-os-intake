@@ -17,6 +17,7 @@ from lawfirm_os_intake.models import (  # noqa: E402
     EffectiveContext,
     EvidenceGraph,
     ExceptionLakeCandidate,
+    ExceptionLakeReadinessReport,
     HumanConfirmation,
     HumanReviewOutcomeRecord,
     IngestionResult,
@@ -47,6 +48,7 @@ MODELS = {
     "evidence-graph.schema.json": EvidenceGraph,
     "run-ledger-event.schema.json": RunEvent,
     "exception-lake-candidate.schema.json": ExceptionLakeCandidate,
+    "exception-lake-readiness-report.schema.json": ExceptionLakeReadinessReport,
     "review-package-manifest.schema.json": ReviewPackageManifest,
     "safety-gate-report.schema.json": SafetyGateReport,
 }

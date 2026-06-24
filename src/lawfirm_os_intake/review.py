@@ -300,6 +300,14 @@ def render_matter_opening_review_package(
             "## Exception And Escalation Records",
             "",
             f"- Dry-run candidate count: {len(exception_candidates)}",
+            *(
+                [
+                    "- Exception Lake readiness report: "
+                    f"`{artifact_refs['budget_exception_lake_readiness_report']}`"
+                ]
+                if "budget_exception_lake_readiness_report" in artifact_refs
+                else []
+            ),
             *_lines_or_none(_exception_lines(exception_candidates)),
             "",
             "## Safety Gate",

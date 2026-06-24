@@ -47,6 +47,7 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert "practice-profile://" in review_text
     assert "workflow-policy://" in review_text
     assert "## Exception And Escalation Records" in review_text
+    assert "Exception Lake readiness report:" in review_text
     assert "## Safety Gate" in review_text
     assert "## Matter-Opening Blockers" in review_text
     assert "blocked_pending_conflicts_and_engagement" in review_text
@@ -77,7 +78,12 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert "conflict_search_seed" in manifest.artifact_refs
     assert "legal_budget_proposal" in manifest.artifact_refs
     assert "preflight_exception_candidates" in manifest.artifact_refs
+    assert "preflight_exception_lake_readiness_report" in manifest.artifact_refs
+    assert "budget_exception_lake_readiness_report" in manifest.artifact_refs
     assert manifest.exception_candidate_refs
+    assert manifest.exception_lake_readiness_report_ref == str(
+        budget_dir / "exception_lake_readiness_report.json"
+    )
 
     ledger_events = load_jsonl(budget_dir / "run_ledger.jsonl")
     assert any(
