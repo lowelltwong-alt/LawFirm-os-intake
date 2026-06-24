@@ -102,6 +102,11 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert "canonical_promotion_required=True" in review_text
     assert "target=LawFirm-os-exceptions-lake-runtime" in review_text
     assert "structured_refs=" in review_text
+    exception_details = review_text.split("### Exception Candidate Details", maxsplit=1)[1].split(
+        "## Safety Gate", maxsplit=1
+    )[0]
+    assert "evidence=syn-email-001/" in exception_details
+    assert "] sha=sha256:" in exception_details
     assert "## Safety Gate" in review_text
     assert "## Matter-Opening Blockers" in review_text
     assert "blocked_pending_conflicts_and_engagement" in review_text

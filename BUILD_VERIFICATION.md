@@ -62,6 +62,8 @@ The final matter-opening review package now includes authority and precondition 
 
 The final matter-opening review package now includes Exception Lake readiness and exception candidate detail subsections showing dry-run posture, raw-payload exclusion, promotion requirement, target runtime repo, and support refs; package completeness requires those sections.
 
+Exception candidate detail evidence refs now render source IDs, segment IDs, offsets, and hashes inline, matching the rest of the reviewer-facing evidence surface.
+
 Budget runs now write `human_review_outcome.<confirmation_id>.json` and append it to `human_confirmation_history.jsonl` before budget preconditions run. Non-confirmed review outcomes remain blocked, and superseding corrections append new history rows instead of mutating prior outcomes.
 
 Budget assumptions, exclusions, and unknowns now emit `budget_support_items` with evidence refs or structured refs for human review.

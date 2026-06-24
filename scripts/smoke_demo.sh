@@ -45,6 +45,8 @@ grep -q "## Candidate Alternatives" ".lawfirm-os-intake/smoke/budget/matter_open
 grep -q "## Required Human Gates" ".lawfirm-os-intake/smoke/budget/matter_opening_review_package.md"
 grep -q "### Budget Lines" ".lawfirm-os-intake/smoke/budget/matter_opening_review_package.md"
 grep -q "### Exception Lake Readiness" ".lawfirm-os-intake/smoke/budget/matter_opening_review_package.md"
+awk '/### Exception Candidate Details/{flag=1;next}/## Safety Gate/{flag=0}flag' \
+  ".lawfirm-os-intake/smoke/budget/matter_opening_review_package.md" | grep -q "] sha=sha256:"
 grep -q "raw_payload_included=False" ".lawfirm-os-intake/smoke/budget/matter_opening_review_package.md"
 grep -q "## Evidence Graph Summary" ".lawfirm-os-intake/smoke/budget/matter_opening_review_package.md"
 grep -q "supports_conflict_search_term=" ".lawfirm-os-intake/smoke/budget/matter_opening_review_package.md"

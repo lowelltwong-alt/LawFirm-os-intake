@@ -409,10 +409,7 @@ def _exception_candidate_detail_lines(candidates: list[dict[str, Any]]) -> list[
     lines = []
     for candidate in candidates:
         evidence_refs = [
-            (
-                f"{ref.get('source_id')}/{ref.get('segment_id')}"
-                f"[{ref.get('start_offset')}:{ref.get('end_offset')}]"
-            )
+            _dict_ref_text(ref)
             for ref in candidate.get("evidence_refs", [])
             if isinstance(ref, dict)
         ]
@@ -431,6 +428,14 @@ def _exception_candidate_detail_lines(candidates: list[dict[str, Any]]) -> list[
             f"structured_refs={', '.join(structured_refs) or 'none'}"
         )
     return lines or ["- none"]
+
+
+def _dict_ref_text(ref: dict[str, Any]) -> str:
+    sha = ref.get("sha256") or "missing-sha"
+    return (
+        f"{ref.get('source_id')}/{ref.get('segment_id')}"
+        f"[{ref.get('start_offset')}:{ref.get('end_offset')}] sha={sha}"
+    )
 
 
 def _safety_gate_lines(report: SafetyGateReport) -> list[str]:

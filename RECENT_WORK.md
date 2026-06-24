@@ -160,3 +160,9 @@
 - Updated reviewer-facing evidence refs to render source ID, segment ID, offsets, and hash inline.
 - Added test and smoke coverage requiring the final matter-opening review package to expose evidence hashes.
 - Kept the change schema-neutral: existing `EvidenceRef` records already carried hashes, and the Markdown now shows them.
+
+## Exception-detail evidence-ref hash slice - 2026-06-24
+
+- Updated the Exception Candidate Details renderer so dry-run candidate evidence refs also show source ID, segment ID, offsets, and hash inline.
+- Added package and smoke coverage scoped to the exception-detail section, not just the package globally.
+- Kept Exception Lake behavior dry-run only; no admission, SQLite, event-class promotion, or schema change was added.
