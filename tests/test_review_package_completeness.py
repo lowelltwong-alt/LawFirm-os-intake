@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pytest
 
 from lawfirm_os_intake.confirmation import bind_confirmation_to_packet_evidence
@@ -97,4 +99,41 @@ def test_review_package_completeness_fails_on_missing_review_section(tmp_path, r
         for check in report.checks
     )
     with pytest.raises(ValueError, match="required_review_sections_present"):
+        enforce_review_package_completeness(report)
+
+
+@pytest.mark.parametrize(
+    ("artifact_key", "old_heading", "new_heading"),
+    [
+        ("preflight_intake_review_form", "## Review Outcome Handling", "## Outcome Notes"),
+        ("legal_budget_review_form", "## Budget Lines", "## Budget Details"),
+    ],
+)
+def test_review_package_completeness_fails_on_incomplete_linked_review_forms(
+    tmp_path,
+    repo_root,
+    artifact_key,
+    old_heading,
+    new_heading,
+):
+    budget_dir = _run_budget(tmp_path, repo_root)
+    manifest, safety_report, exception_readiness_report, review_path = _load_inputs(budget_dir)
+    linked_form = Path(manifest.artifact_refs[artifact_key])
+    linked_form.write_text(
+        linked_form.read_text(encoding="utf-8").replace(old_heading, new_heading),
+        encoding="utf-8",
+    )
+
+    report = build_review_package_completeness_report(
+        manifest=manifest,
+        review_package_path=review_path,
+        safety_report=safety_report,
+        exception_readiness_report=exception_readiness_report,
+    )
+
+    assert report.status == "failed"
+    check = next(item for item in report.checks if item.check_id == "linked_review_forms_complete")
+    assert check.status == "failed"
+    assert artifact_key in check.details["missing_sections_by_form"]
+    with pytest.raises(ValueError, match="linked_review_forms_complete"):
         enforce_review_package_completeness(report)

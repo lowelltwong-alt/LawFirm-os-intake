@@ -46,6 +46,8 @@ The budget output now includes `matter_opening_review_package.md` and `review_pa
 
 Budget runs now also emit `review_package_completeness_report.json`, proving the final review package has required artifacts, review sections, human gates, blockers, safety proof, dry-run Exception Lake readiness, run ledgers, and non-authorization boundary flags before the package is accepted.
 
+The completeness report now also verifies that linked intake and budget review forms preserve their required human-review sections, including source coverage, outcome handling, budget lines, support items, and submission boundary.
+
 Human-facing review Markdown now renders evidence refs inline for confirmation evidence, confirmed parties, deadlines, missing-information candidates, critic findings, conflict-search terms, and budget supports.
 
 Those reviewer-facing evidence refs now include source IDs, segment IDs, offsets, and hashes, so the final package exposes the full source-bound pointer without requiring JSON inspection first.

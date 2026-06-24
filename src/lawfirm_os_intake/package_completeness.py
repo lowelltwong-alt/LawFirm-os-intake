@@ -38,6 +38,25 @@ REQUIRED_REVIEW_SECTIONS = [
     "## Artifact References",
 ]
 
+REQUIRED_LINKED_REVIEW_FORM_SECTIONS = {
+    "preflight_intake_review_form": [
+        "# Intake Review Form",
+        "## Source Coverage",
+        "## Candidate Review",
+        "## Reviewer Decision",
+        "## Review Outcome Handling",
+        "## Prohibited Next Steps",
+    ],
+    "legal_budget_review_form": [
+        "# Proposed Legal Budget Review Form",
+        "## Calculation Report",
+        "## Budget Lines",
+        "## Evidence-Bound Budget Supports",
+        "## Review Checks",
+        "## Submission Boundary",
+    ],
+}
+
 REQUIRED_ARTIFACT_KEYS = [
     "preflight_packet",
     "preflight_source_inventory",
@@ -152,6 +171,12 @@ def build_review_package_completeness_report(
 ) -> ReviewPackageCompletenessReport:
     artifact_refs = manifest.artifact_refs
     review_text = _read_text(review_package_path)
+    linked_review_form_missing_sections: dict[str, list[str]] = {}
+    for key, required_sections in REQUIRED_LINKED_REVIEW_FORM_SECTIONS.items():
+        form_text = _read_text(Path(artifact_refs.get(key, "")))
+        missing = [section for section in required_sections if section not in form_text]
+        if missing:
+            linked_review_form_missing_sections[key] = missing
     missing_keys = [key for key in REQUIRED_ARTIFACT_KEYS if not artifact_refs.get(key)]
     paths_missing = [
         key
@@ -221,6 +246,16 @@ def build_review_package_completeness_report(
                 "missing_sections": missing_sections,
                 "missing_boundary_phrases": missing_boundary_phrases,
             },
+        ),
+        _check(
+            "linked_review_forms_complete",
+            not linked_review_form_missing_sections,
+            "Linked intake and budget review forms preserve required human-review sections.",
+            [
+                artifact_refs.get("preflight_intake_review_form", ""),
+                artifact_refs.get("legal_budget_review_form", ""),
+            ],
+            {"missing_sections_by_form": linked_review_form_missing_sections},
         ),
         _check(
             "required_human_gates_present",

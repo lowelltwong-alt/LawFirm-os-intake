@@ -178,3 +178,9 @@
 - Added itemized budget lines to `legal_budget_review_form.md`, including hours/ranges, rates, synthetic-rate labels, fees, expenses, assumptions, formulas, and evidence refs.
 - Added a submission-boundary section showing `proposed_for_human_review`, no client/carrier submission authorization, and remaining human review blockers.
 - Added focused and smoke coverage so the standalone budget review form cannot become less auditable than the final matter-opening package.
+
+## Linked-review-form completeness slice - 2026-06-24
+
+- Extended `review_package_completeness_report.json` to verify required sections in the linked intake and budget review forms.
+- The report now fails if the intake form loses source coverage, reviewer decision, outcome handling, or prohibited-next-step sections.
+- The report also fails if the budget form loses calculation, budget line, support, review-check, or submission-boundary sections.
