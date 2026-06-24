@@ -227,6 +227,18 @@
           "default": null,
           "title": "External Code Candidate"
         },
+        "expense_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expense Code"
+        },
         "assumptions": {
           "items": {
             "type": "string"
