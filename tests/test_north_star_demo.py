@@ -131,6 +131,7 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
         "read_state=missing",
         "availability=duplicate",
         "Human confirmation decision evidence:",
+        "] sha=sha256:",
         "## Candidate Alternatives",
         "### Matter Family Candidates",
         "### Party And Role Candidates",

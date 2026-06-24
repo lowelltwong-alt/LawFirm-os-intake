@@ -40,6 +40,7 @@ grep -q "Budget precondition status: passed" ".lawfirm-os-intake/smoke/budget/ma
 grep -q "## Source Inventory" ".lawfirm-os-intake/smoke/budget/matter_opening_review_package.md"
 grep -q "syn-northstar-attachment-missing-001" ".lawfirm-os-intake/smoke/budget/matter_opening_review_package.md"
 grep -q "Human confirmation decision evidence:" ".lawfirm-os-intake/smoke/budget/matter_opening_review_package.md"
+grep -q "] sha=sha256:" ".lawfirm-os-intake/smoke/budget/matter_opening_review_package.md"
 grep -q "## Candidate Alternatives" ".lawfirm-os-intake/smoke/budget/matter_opening_review_package.md"
 grep -q "## Required Human Gates" ".lawfirm-os-intake/smoke/budget/matter_opening_review_package.md"
 grep -q "### Budget Lines" ".lawfirm-os-intake/smoke/budget/matter_opening_review_package.md"

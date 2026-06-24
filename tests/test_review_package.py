@@ -65,6 +65,7 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert "## What Is Known" in review_text
     assert "Human confirmation decision evidence:" in review_text
     assert "; evidence:" in review_text
+    assert "] sha=sha256:" in review_text
     assert "## Candidate Alternatives" in review_text
     assert "### Matter Family Candidates" in review_text
     assert "### Party And Role Candidates" in review_text

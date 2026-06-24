@@ -154,3 +154,9 @@
 - Added Exception Lake readiness and exception candidate detail subsections to the final matter-opening review package.
 - The package now renders dry-run admission state, raw-payload exclusion, canonical-promotion requirement, target runtime repo, source refs, evidence refs, structured refs, and blocked states inline.
 - The completeness report now requires those exception readiness/detail sections before final package acceptance.
+
+## Final-package evidence-ref hash slice - 2026-06-24
+
+- Updated reviewer-facing evidence refs to render source ID, segment ID, offsets, and hash inline.
+- Added test and smoke coverage requiring the final matter-opening review package to expose evidence hashes.
+- Kept the change schema-neutral: existing `EvidenceRef` records already carried hashes, and the Markdown now shows them.

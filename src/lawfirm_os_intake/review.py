@@ -335,7 +335,7 @@ def _refs_text(refs: list[Any], limit: int | None = None) -> str:
 
 
 def _ref_text(ref: Any) -> str:
-    return f"{ref.source_id}/{ref.segment_id}[{ref.start_offset}:{ref.end_offset}]"
+    return f"{ref.source_id}/{ref.segment_id}[{ref.start_offset}:{ref.end_offset}] sha={ref.sha256}"
 
 
 def _confirmed_party_lines(confirmation: HumanConfirmation) -> list[str]:

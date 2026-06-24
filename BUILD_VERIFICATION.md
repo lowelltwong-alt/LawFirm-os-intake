@@ -46,6 +46,8 @@ Budget runs now also emit `review_package_completeness_report.json`, proving the
 
 Human-facing review Markdown now renders evidence refs inline for confirmation evidence, confirmed parties, deadlines, missing-information candidates, critic findings, conflict-search terms, and budget supports.
 
+Those reviewer-facing evidence refs now include source IDs, segment IDs, offsets, and hashes, so the final package exposes the full source-bound pointer without requiring JSON inspection first.
+
 The final matter-opening review package now includes a candidate-alternatives section for inbound-event, matter-family, representation-posture, and party-role candidates, and package completeness requires that section.
 
 The final matter-opening review package now includes a required-human-gates section for conflicts clearance, engagement authorization, budget review, and matter-opening authorization, and package completeness requires that section.
