@@ -16,7 +16,7 @@ python -m ruff check src tests scripts
 # All checks passed
 
 python -m ruff format --check src tests scripts
-# 85 files already formatted
+# 89 files already formatted
 
 bash -lc 'export PATH="/c/Users/lowel/AppData/Local/Programs/Python/Python312:$PATH"; bash scripts/smoke_demo.sh'
 # completed without error and wrote starter, blocked-budget, and context-counterfactual audit reports
@@ -35,6 +35,8 @@ The smoke demo also writes `context_counterfactual_audit_report.json` from the s
 The current demo also emits local `exception_lake_candidates.jsonl` files in preflight and budget outputs. These are dry-run candidates only; they are not canonical Exception Lake admissions and include no raw legal payload.
 
 The preflight output now includes `contract_state_report.json`, which verifies the reviewed local sibling-repo lock state before source processing. The report is carried forward into the final review manifest and safety gate.
+
+The preflight output now includes a finalized `model_adapter_report.json` for the selected adapter. The `structured-model` dry-run path requires reviewed synthetic gold, validates typed JSON, records deterministic baseline and structured dry-run candidate hashes, compares against the passing gold gate, and still performs no provider call, network access, external write, raw payload externalization, or real-data approval.
 
 The preflight output now also includes `data_scope_gate_report.json`, which proves synthetic-only data scope before `raw_input.json` is written. Blocked non-synthetic runs write the gate report and ledger event, then stop before raw payload storage, packet generation, source inventory, ingestion, or review artifacts. The passing report is carried into the final review package, manifest, safety gate, completeness report, starter audit, schema export, and smoke checks.
 

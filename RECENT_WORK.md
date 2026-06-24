@@ -1,5 +1,11 @@
 # Recent Work
 
+## Structured-model comparison gate slice - 2026-06-24
+
+- Strengthened `model_adapter_report.json` so `--adapter structured-model` requires reviewed synthetic gold and records typed-JSON validation, deterministic baseline projection hash, structured dry-run candidate hash, comparison status, and fixture-gold status.
+- Added fail-closed coverage for selecting the structured-model dry-run adapter without `--fixture-gold`.
+- Kept the adapter synthetic-only: no provider calls, network access, external writes, real-data approval, or deterministic-worker authority change.
+
 ## Cross-repo promotion package slice - 2026-06-24
 
 - Added `promotion/cross_repo_promotion_package.json` as a machine-readable candidate-only package for sibling repo review.

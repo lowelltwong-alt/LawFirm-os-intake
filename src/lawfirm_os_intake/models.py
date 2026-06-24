@@ -429,7 +429,20 @@ class ModelAdapterReport(StrictModel):
     baseline_comparison_state: Literal[
         "deterministic_workers_are_current_baseline",
         "dry_run_no_provider_output",
+        "compared_to_deterministic_baseline",
+        "failed_missing_synthetic_gold",
+        "failed_synthetic_gold",
     ]
+    comparison_status: Literal["not_run", "passed", "failed"] = "not_run"
+    comparison_basis: list[str] = Field(default_factory=list)
+    deterministic_baseline_hash: str | None = None
+    structured_candidate_hash: str | None = None
+    typed_json_validation_status: Literal["not_run", "passed", "failed"] = "not_run"
+    synthetic_gold_required: bool = False
+    synthetic_gold_compared: bool = False
+    fixture_gold_report_ref: str | None = None
+    fixture_gold_status: Literal["not_requested", "passed", "failed"] = "not_requested"
+    comparison_summary: dict[str, Any] = Field(default_factory=dict)
     checks: list[ModelAdapterGuardCheck]
     generated_at: str
 

@@ -48,7 +48,7 @@ The vertical should integrate through provider-neutral interfaces:
 
 Frameworks such as Claude Agent SDK, LangGraph, MCP, or Temporal may later implement execution seams. They must not become the domain model or audit authority.
 
-The current `structured-model` adapter is a dry-run `ModelAdapter` seam only. It emits `model_adapter_report.json` with prompt hashes, zero model calls, zero external tool calls, tool denylist, typed JSON requirement, independent critic requirement, and mandatory human gates. Deterministic workers remain authoritative until a separate governance decision approves real provider use and baseline comparison.
+The current `structured-model` adapter is a dry-run `ModelAdapter` seam only. It emits `model_adapter_report.json` with prompt hashes, zero model calls, zero external tool calls, tool denylist, typed JSON requirement, independent critic requirement, and mandatory human gates. It requires reviewed synthetic gold and records typed-JSON validation, deterministic baseline projection hash comparison, dry-run structured candidate hash, and fixture-gold status. Deterministic workers remain authoritative until a separate governance decision approves real provider use.
 
 ## State externalization
 

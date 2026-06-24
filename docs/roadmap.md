@@ -80,9 +80,14 @@ Prepare candidate contract proposals for Semantic Substrate, Orchestrator, Excep
 
 ## 8. Provider Adapter Spike
 
-Status: pending.
+Status: implemented for the current synthetic slice.
 
 Add a structured-model adapter only behind existing gates, with no external writes and deterministic comparison against synthetic gold.
+
+- `--adapter structured-model` remains dry-run only: no provider calls, no network, no external tools, no raw payload externalization, and no real-data approval.
+- Structured-model runs now require reviewed synthetic gold through `--fixture-gold`; missing or failing gold fails closed in `model_adapter_report.json`.
+- The final adapter report records typed-JSON validation, deterministic baseline projection hash, structured dry-run candidate hash, comparison status, fixture-gold status, prompt hashes, tool denylist, zero-call budget, independent critic requirement, and human gates.
+- Deterministic workers remain authoritative until a separate governance decision approves real provider use.
 
 ## 9. Rust Readiness
 

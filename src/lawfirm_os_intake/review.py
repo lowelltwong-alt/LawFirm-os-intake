@@ -501,6 +501,13 @@ def _model_adapter_lines(report: ModelAdapterReport | None) -> list[str]:
         f"- Prompt registry: `{report.prompt_registry_ref}`",
         f"- Prompt hashes pinned: {len(report.prompt_hashes)}",
         f"- Baseline comparison state: {report.baseline_comparison_state}",
+        f"- Comparison status: {report.comparison_status}",
+        f"- Synthetic gold required: {report.synthetic_gold_required}",
+        f"- Synthetic gold compared: {report.synthetic_gold_compared}",
+        f"- Fixture gold status: {report.fixture_gold_status}",
+        f"- Typed JSON validation status: {report.typed_json_validation_status}",
+        f"- Deterministic baseline hash: {report.deterministic_baseline_hash}",
+        f"- Structured candidate hash: {report.structured_candidate_hash}",
         f"- Required human gates: {', '.join(report.required_human_gates)}",
         "- Adapter guard checks:",
     ]

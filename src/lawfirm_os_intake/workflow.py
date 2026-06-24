@@ -3,7 +3,12 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-from .adapters import build_model_adapter_report, resolve_adapter
+from .adapters import (
+    build_model_adapter_report,
+    enforce_model_adapter_report,
+    finalize_model_adapter_report,
+    resolve_adapter,
+)
 from .budget import build_budget_proposal
 from .budget_actuals import build_budget_actual_comparison_report
 from .budget_submission_guard import (
@@ -539,9 +544,10 @@ def run_preflight(
             ],
         ).model_dump(mode="json"),
     )
+    completed_fixture_gold_report = None
     if fixture_gold and fixture_gold_report_path:
         gold = FixtureGoldSpec.model_validate(load_json(fixture_gold))
-        gold_report = build_fixture_gold_report(
+        completed_fixture_gold_report = build_fixture_gold_report(
             gold=gold,
             gold_ref=str(fixture_gold),
             packet=packet,
@@ -556,19 +562,30 @@ def run_preflight(
                 candidate.model_dump(mode="json") for candidate in exception_candidates
             ],
         )
-        write_json(fixture_gold_report_path, gold_report.model_dump(mode="json"))
+        write_json(fixture_gold_report_path, completed_fixture_gold_report.model_dump(mode="json"))
         append_jsonl(
             ledger_path,
             _event(
                 run_id,
                 8,
                 "fixture_gold_evaluated",
-                "completed" if gold_report.status == "passed" else "failed",
+                "completed" if completed_fixture_gold_report.status == "passed" else "failed",
                 input_refs=[str(fixture_gold)],
                 output_refs=[str(fixture_gold_report_path)],
             ).model_dump(mode="json"),
         )
-        enforce_fixture_gold_report(gold_report)
+    model_adapter_report = finalize_model_adapter_report(
+        model_adapter_report,
+        packet,
+        fixture_gold_report=completed_fixture_gold_report,
+        fixture_gold_report_ref=(
+            str(fixture_gold_report_path) if completed_fixture_gold_report else None
+        ),
+    )
+    write_json(model_adapter_report_path, model_adapter_report.model_dump(mode="json"))
+    if completed_fixture_gold_report:
+        enforce_fixture_gold_report(completed_fixture_gold_report)
+    enforce_model_adapter_report(model_adapter_report)
     preflight_required_steps = list(PREFLIGHT_REQUIRED_LEDGER_STEPS)
     preflight_terminal_step = "preflight_packet_built"
     if fixture_gold:

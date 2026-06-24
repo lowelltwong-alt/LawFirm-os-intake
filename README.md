@@ -259,7 +259,7 @@ A deterministic packet writer assembles outputs. Dynamic agent creation is prohi
 
 ## Provider adapter boundary
 
-The CLI accepts `--adapter deterministic` and `--adapter structured-model`. The structured-model path is a dry-run boundary only: it writes `model_adapter_report.json`, records the prompt registry hashes, sets a zero-call model budget, denies network/external-write/production connector tools, requires typed JSON under exported schemas, preserves the independent critic and human gates, and keeps deterministic workers authoritative.
+The CLI accepts `--adapter deterministic` and `--adapter structured-model`. The structured-model path is a dry-run boundary only: it writes `model_adapter_report.json`, records the prompt registry hashes, sets a zero-call model budget, denies network/external-write/production connector tools, requires typed JSON under exported schemas, preserves the independent critic and human gates, and keeps deterministic workers authoritative. It now fails closed unless `--fixture-gold` supplies reviewed synthetic gold, then records typed-JSON validation, deterministic baseline hash comparison, structured dry-run candidate hash, and the passing gold status.
 
 No provider call is made, no raw payload is externalized, and the report is carried into the final review package under `### Model Adapter Boundary`.
 
