@@ -34,8 +34,10 @@ from .models import (
     FixtureGoldSpec,
     HumanConfirmation,
     IntakePreflightPacket,
+    MatterOpeningBlocker,
     MatterOpeningReadiness,
     ModelAdapterReport,
+    ProhibitedActionGuardrail,
     ReviewPackageManifest,
     RunEvent,
     SourceBundle,
@@ -135,6 +137,94 @@ def _latest_ledger_attempt(events: list[RunEvent], start_step: str) -> list[RunE
         if events[index].step_name == start_step:
             return events[index:]
     return events
+
+
+def _matter_opening_blocker_details() -> list[MatterOpeningBlocker]:
+    return [
+        MatterOpeningBlocker(
+            blocker_code="conflicts_not_cleared",
+            label="Conflicts clearance is not complete",
+            blocking_scope="conflicts",
+            required_human_gate="human_conflicts_clearance",
+            authority_owner="conflicts_review",
+            support_kind="structured_workflow_policy",
+            structured_ref="workflow/intake-to-budget.workflow.yaml#conflicts_review",
+            reason="The workflow may prepare search seeds only; conflicts clearance is a separate human authority.",
+            prohibits=["conflicts_cleared"],
+        ),
+        MatterOpeningBlocker(
+            blocker_code="engagement_not_authorized",
+            label="Engagement authorization is not complete",
+            blocking_scope="engagement",
+            required_human_gate="human_engagement_authorization",
+            authority_owner="engagement_and_matter_opening",
+            support_kind="structured_workflow_policy",
+            structured_ref=(
+                "workflow/intake-to-budget.workflow.yaml#engagement_and_matter_opening"
+            ),
+            reason="The workflow does not accept representation or send engagement communications.",
+            prohibits=["accept_representation", "send_engagement_letter"],
+        ),
+        MatterOpeningBlocker(
+            blocker_code="matter_opening_not_approved",
+            label="Matter opening approval is not complete",
+            blocking_scope="matter_opening",
+            required_human_gate="human_matter_opening_authorization",
+            authority_owner="engagement_and_matter_opening",
+            support_kind="structured_workflow_policy",
+            structured_ref="workflow/intake-to-budget.workflow.yaml#matter_opening_readiness",
+            reason="The workflow remains a readiness packet and cannot create a matter or workspace.",
+            prohibits=["open_matter", "create_imanage_workspace"],
+        ),
+        MatterOpeningBlocker(
+            blocker_code="budget_review_not_completed",
+            label="Budget review is not complete",
+            blocking_scope="budget_submission",
+            required_human_gate="human_budget_review",
+            authority_owner="human_budget_review",
+            support_kind="budget_submission_boundary",
+            structured_ref="workflow/intake-to-budget.workflow.yaml#human_budget_review",
+            reason="The budget remains proposed for human review and is not authorized for client or carrier submission.",
+            prohibits=["budget_submitted", "billing_handoff"],
+        ),
+    ]
+
+
+def _prohibited_action_details() -> list[ProhibitedActionGuardrail]:
+    return [
+        ProhibitedActionGuardrail(
+            action_code="do_not_open_imanage",
+            transition_blocked="imanage_workspace_created",
+            required_human_gate="human_matter_opening_authorization",
+            support_kind="prohibited_transition_policy",
+            structured_ref=(
+                "workflow/prohibited-transitions.yaml#matter_opening_readiness"
+                "->imanage_workspace_created"
+            ),
+            reason="Workspace creation is a prohibited transition from matter-opening readiness.",
+            linked_blocker_codes=["matter_opening_not_approved"],
+        ),
+        ProhibitedActionGuardrail(
+            action_code="do_not_create_matter",
+            transition_blocked="matter_opened",
+            required_human_gate="human_matter_opening_authorization",
+            support_kind="prohibited_transition_policy",
+            structured_ref="workflow/prohibited-transitions.yaml#raw_received->matter_opened",
+            reason="Matter creation remains outside the starter workflow authority.",
+            linked_blocker_codes=["matter_opening_not_approved"],
+        ),
+        ProhibitedActionGuardrail(
+            action_code="do_not_submit_budget",
+            transition_blocked="budget_submitted",
+            required_human_gate="human_budget_review",
+            support_kind="prohibited_transition_policy",
+            structured_ref=(
+                "workflow/prohibited-transitions.yaml#budget_proposal_ready->budget_submitted"
+            ),
+            reason="Budget submission is prohibited until a separate human budget-review authority approves it.",
+            linked_blocker_codes=["budget_review_not_completed"],
+        ),
+    ]
 
 
 def _validate_refs(packet: IntakePreflightPacket) -> None:
@@ -686,7 +776,9 @@ def run_budget(
             "engagement_not_authorized",
             "matter_opening_not_approved",
         ],
+        blocker_details=_matter_opening_blocker_details(),
         prohibited_actions=["do_not_open_imanage", "do_not_create_matter", "do_not_submit_budget"],
+        prohibited_action_details=_prohibited_action_details(),
     )
 
     graph_path = Path(packet.evidence_graph_ref)
@@ -704,6 +796,7 @@ def run_budget(
         human_review_outcome,
         conflict_seed,
         budget,
+        readiness,
     )
 
     write_json(run_dir / "human_confirmation.json", confirmation.model_dump(mode="json"))

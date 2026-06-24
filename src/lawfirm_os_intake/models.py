@@ -598,6 +598,45 @@ class BudgetCalculationReport(StrictModel):
     deterministic: bool = True
 
 
+class MatterOpeningBlocker(StrictModel):
+    blocker_code: str
+    label: str
+    status: Literal["blocking"] = "blocking"
+    blocking_scope: Literal[
+        "conflicts",
+        "engagement",
+        "matter_opening",
+        "budget_submission",
+    ]
+    required_human_gate: str
+    authority_owner: str
+    support_kind: Literal[
+        "structured_workflow_policy",
+        "prohibited_transition_policy",
+        "budget_submission_boundary",
+    ]
+    structured_ref: str | None = None
+    evidence_refs: list[EvidenceRef] = Field(default_factory=list)
+    reason: str
+    prohibits: list[str] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def evidence_or_structured_ref_required(self) -> "MatterOpeningBlocker":
+        if not self.structured_ref and not self.evidence_refs:
+            raise ValueError("matter-opening blocker requires structured_ref or evidence_refs")
+        return self
+
+
+class ProhibitedActionGuardrail(StrictModel):
+    action_code: str
+    transition_blocked: str
+    required_human_gate: str
+    support_kind: Literal["prohibited_transition_policy", "budget_submission_boundary"]
+    structured_ref: str
+    reason: str
+    linked_blocker_codes: list[str] = Field(default_factory=list)
+
+
 class MatterOpeningReadiness(StrictModel):
     readiness_id: str
     preflight_packet_id: str
@@ -605,7 +644,9 @@ class MatterOpeningReadiness(StrictModel):
     status: Literal["blocked_pending_conflicts_and_engagement"]
     satisfied: list[str]
     blockers: list[str]
+    blocker_details: list[MatterOpeningBlocker] = Field(default_factory=list)
     prohibited_actions: list[str]
+    prohibited_action_details: list[ProhibitedActionGuardrail] = Field(default_factory=list)
 
 
 class BudgetPreconditionCheck(StrictModel):

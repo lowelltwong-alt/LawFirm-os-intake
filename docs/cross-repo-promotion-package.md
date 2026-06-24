@@ -14,7 +14,8 @@ This is a draft promotion package for stable intake components. It is not a dire
 - Matter-family, inbound-event, representation-posture, deadline, missing-information, and critic-finding candidate contracts.
 - Conflict seed and conflict search term contracts that preserve `no_conflict_conclusion` and require evidence refs for every normalized search term.
 - Budget proposal, calculation-report, and budget-support-item contracts.
-- Evidence graph node and edge conventions for source-backed and structured-ref support across preflight, human review, conflict seed, and budget artifacts.
+- Matter-opening readiness contract for final blockers, structured blocker details, prohibited-action guardrails, required human gates, workflow-policy refs, and prohibited-transition refs.
+- Evidence graph node and edge conventions for source-backed and structured-ref support across preflight, human review, conflict seed, budget artifacts, readiness blockers, and prohibited-action guardrails.
 - Dry-run exception lake candidate contract with broad Lake class, local event label, source-inventory refs, evidence refs, structured refs, blocked state, `raw_payload_included=false`, and `canonical_promotion_required=true`.
 - Exception Lake readiness report contract for candidate-file dry-run posture, raw-payload exclusion, promotion requirement, target runtime repo, support pointers, and source/evidence ref integrity.
 - Exception Lake handoff manifest contract for local label-to-class summaries, support modes, candidate file refs, paired readiness report, target runtime owner, mapping review, promotion requirement, `sqlite_write_performed=false`, and `external_writes_performed=false`.
@@ -31,7 +32,7 @@ This is a draft promotion package for stable intake components. It is not a dire
 
 - Outer workflow owner: `LawFirm-os-orchestrator`.
 - Intake runtime input: source bundle path, practice profile ref, adapter mode, strict-evidence setting.
-- Intake runtime outputs: contract state report, model adapter report, optional fixture gold report, preflight packet, review form, evidence graph, run ledger, run ledger integrity report, dry-run exception candidates, exception readiness report, human confirmation, human review outcome record, confirmation history, budget precondition report, conflict seed, budget proposal, budget review form, matter-opening readiness, safety gate report, consolidated review package, review package manifest, review package completeness report.
+- Intake runtime outputs: contract state report, model adapter report, optional fixture gold report, preflight packet, review form, evidence graph, run ledger, run ledger integrity report, dry-run exception candidates, exception readiness report, human confirmation, human review outcome record, confirmation history, budget precondition report, conflict seed, budget proposal, budget review form, matter-opening readiness with structured blockers, safety gate report, consolidated review package, review package manifest, review package completeness report.
 - Required gates: contract-state gate, model-adapter guard, data-origin gate, prompt/tool authority gate, human intake confirmation, budget precondition gate, prohibited-transition gate.
 
 ## Exception Lake Mapping Draft

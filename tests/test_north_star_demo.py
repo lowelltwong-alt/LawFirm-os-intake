@@ -43,6 +43,7 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     budget_exception_handoff = load_json(budget_dir / "exception_lake_handoff_manifest.json")
     budget_ledger_integrity = load_json(budget_dir / "run_ledger_integrity_report.json")
     safety = load_json(budget_dir / "safety_gate_report.json")
+    readiness = load_json(budget_dir / "matter_opening_readiness.json")
     manifest = load_json(budget_dir / "review_package_manifest.json")
     completeness = load_json(budget_dir / "review_package_completeness_report.json")
     budget_preconditions = load_json(budget_dir / "budget_precondition_report.json")
@@ -77,8 +78,22 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     assert "conflict_search_term" in {node["node_type"] for node in graph["nodes"]}
     assert "party_role_candidate" in {node["node_type"] for node in graph["nodes"]}
     assert "budget_support_item" in {node["node_type"] for node in graph["nodes"]}
+    assert "matter_opening_blocker" in {node["node_type"] for node in graph["nodes"]}
+    assert "prohibited_action_guardrail" in {node["node_type"] for node in graph["nodes"]}
     assert "supports_party_role_candidate" in {edge["relationship"] for edge in graph["edges"]}
     assert "supports_conflict_search_term" in {edge["relationship"] for edge in graph["edges"]}
+    assert "supports_matter_opening_blocker" in {edge["relationship"] for edge in graph["edges"]}
+    assert {item["blocker_code"] for item in readiness["blocker_details"]} >= {
+        "conflicts_not_cleared",
+        "engagement_not_authorized",
+        "matter_opening_not_approved",
+        "budget_review_not_completed",
+    }
+    assert {item["action_code"] for item in readiness["prohibited_action_details"]} == {
+        "do_not_open_imanage",
+        "do_not_create_matter",
+        "do_not_submit_budget",
+    }
     assert packet["source_coverage_summary"]["duplicate_sources"] == 1
     assert packet["source_coverage_summary"]["coverage_complete"] is False
     assert "incident_date" in packet["missing_information"]
@@ -257,12 +272,20 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
         "blocker: conflicts_not_cleared",
         "blocker: engagement_not_authorized",
         "blocker: matter_opening_not_approved",
+        "blocker detail: conflicts_not_cleared",
+        "blocker detail: budget_review_not_completed",
+        "structured_ref=workflow/intake-to-budget.workflow.yaml#conflicts_review",
+        "prohibited action detail: do_not_submit_budget",
+        "workflow/prohibited-transitions.yaml#budget_proposal_ready->budget_submitted",
         "## Evidence Graph Summary",
         "Node types:",
         "conflict_search_term=",
         "budget_support_item=",
+        "matter_opening_blocker=",
+        "prohibited_action_guardrail=",
         "Relationships:",
         "supports_party_role_candidate=",
+        "supports_matter_opening_blocker=",
         "edge supports_conflict_search_term:",
         "## Run Ledger Summary",
         "### Run Ledger Integrity",

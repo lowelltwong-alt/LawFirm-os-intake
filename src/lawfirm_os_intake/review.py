@@ -675,6 +675,27 @@ def _required_human_gate_lines(
     ]
 
 
+def _readiness_blocker_detail_lines(readiness: MatterOpeningReadiness) -> list[str]:
+    lines = []
+    for blocker in readiness.blocker_details:
+        structured = blocker.structured_ref or "none"
+        prohibits = ", ".join(blocker.prohibits) or "none"
+        lines.append(
+            f"- blocker detail: {blocker.blocker_code}; gate={blocker.required_human_gate}; "
+            f"scope={blocker.blocking_scope}; support={blocker.support_kind}; "
+            f"structured_ref={structured}; prohibits={prohibits}; reason={blocker.reason}"
+        )
+    for guardrail in readiness.prohibited_action_details:
+        linked = ", ".join(guardrail.linked_blocker_codes) or "none"
+        lines.append(
+            f"- prohibited action detail: {guardrail.action_code}; "
+            f"blocks={guardrail.transition_blocked}; gate={guardrail.required_human_gate}; "
+            f"support={guardrail.support_kind}; structured_ref={guardrail.structured_ref}; "
+            f"linked blockers={linked}; reason={guardrail.reason}"
+        )
+    return lines or ["- none"]
+
+
 def render_matter_opening_review_package(
     packet: IntakePreflightPacket,
     confirmation: HumanConfirmation,
@@ -858,6 +879,7 @@ def render_matter_opening_review_package(
             *_lines_or_none(
                 [f"- prohibited action: {item}" for item in readiness.prohibited_actions]
             ),
+            *_readiness_blocker_detail_lines(readiness),
             "",
             "## Evidence Graph Summary",
             "",

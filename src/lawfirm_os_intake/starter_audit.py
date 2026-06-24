@@ -544,6 +544,19 @@ def build_starter_release_audit_report(
                     "engagement_not_authorized",
                     "matter_opening_not_approved",
                 }.issubset(set(readiness.blockers))
+                and {
+                    "conflicts_not_cleared",
+                    "engagement_not_authorized",
+                    "matter_opening_not_approved",
+                    "budget_review_not_completed",
+                }.issubset({item.blocker_code for item in readiness.blocker_details})
+                and all(
+                    item.structured_ref or item.evidence_refs for item in readiness.blocker_details
+                )
+                and set(readiness.prohibited_actions).issubset(
+                    {item.action_code for item in readiness.prohibited_action_details}
+                )
+                and all(item.structured_ref for item in readiness.prohibited_action_details)
                 and safety
                 and safety.status == "passed"
                 and safety.final_boundary == "blocked_pending_conflicts_and_engagement"

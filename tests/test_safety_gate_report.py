@@ -71,6 +71,8 @@ def test_budget_run_writes_passing_safety_gate_report(tmp_path, repo_root):
     assert "budget_lines_evidence_bound" in {check.check_id for check in report.checks}
     assert "budget_support_items_supported" in {check.check_id for check in report.checks}
     assert "budget_texts_have_support_items" in {check.check_id for check in report.checks}
+    assert "matter_opening_blockers_supported" in {check.check_id for check in report.checks}
+    assert "prohibited_actions_supported" in {check.check_id for check in report.checks}
 
 
 def test_safety_gate_fails_closed_on_forbidden_conflict_conclusion(tmp_path, repo_root):
@@ -230,4 +232,69 @@ def test_safety_gate_fails_closed_on_budget_text_without_support_item(tmp_path, 
         for check in report.checks
     )
     with pytest.raises(ValueError, match="safety gate failed"):
+        enforce_safety_gate(report)
+
+
+def test_safety_gate_fails_closed_on_unsupported_readiness_blocker(tmp_path, repo_root):
+    packet, confirmation, budget, budget_dir = _budget_run(tmp_path, repo_root)
+    conflict_seed = ConflictSeedPacket.model_validate(
+        load_json(budget_dir / "conflict_search_seed_packet.json")
+    )
+    readiness = MatterOpeningReadiness.model_validate(
+        load_json(budget_dir / "matter_opening_readiness.json")
+    )
+    manifest = ReviewPackageManifest.model_validate(
+        load_json(budget_dir / "review_package_manifest.json")
+    )
+    unsafe_readiness = readiness.model_copy(deep=True)
+    unsafe_readiness.blocker_details[0].structured_ref = None
+    unsafe_readiness.blocker_details[0].evidence_refs = []
+
+    report = build_safety_gate_report(
+        packet,
+        confirmation,
+        conflict_seed,
+        budget,
+        unsafe_readiness,
+        manifest.artifact_refs,
+    )
+
+    assert report.status == "failed"
+    assert any(
+        check.check_id == "matter_opening_blockers_supported" and check.status == "failed"
+        for check in report.checks
+    )
+    with pytest.raises(ValueError, match="matter_opening_blockers_supported"):
+        enforce_safety_gate(report)
+
+
+def test_safety_gate_fails_closed_on_unsupported_prohibited_action(tmp_path, repo_root):
+    packet, confirmation, budget, budget_dir = _budget_run(tmp_path, repo_root)
+    conflict_seed = ConflictSeedPacket.model_validate(
+        load_json(budget_dir / "conflict_search_seed_packet.json")
+    )
+    readiness = MatterOpeningReadiness.model_validate(
+        load_json(budget_dir / "matter_opening_readiness.json")
+    )
+    manifest = ReviewPackageManifest.model_validate(
+        load_json(budget_dir / "review_package_manifest.json")
+    )
+    unsafe_readiness = readiness.model_copy(deep=True)
+    unsafe_readiness.prohibited_action_details = unsafe_readiness.prohibited_action_details[1:]
+
+    report = build_safety_gate_report(
+        packet,
+        confirmation,
+        conflict_seed,
+        budget,
+        unsafe_readiness,
+        manifest.artifact_refs,
+    )
+
+    assert report.status == "failed"
+    assert any(
+        check.check_id == "prohibited_actions_supported" and check.status == "failed"
+        for check in report.checks
+    )
+    with pytest.raises(ValueError, match="prohibited_actions_supported"):
         enforce_safety_gate(report)

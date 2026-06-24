@@ -257,6 +257,7 @@ def build_review_package_completeness_report(
     exception_handoff_manifest = _read_json(
         Path(artifact_refs.get("budget_exception_lake_handoff_manifest", ""))
     )
+    matter_opening_readiness = _read_json(Path(artifact_refs.get("matter_opening_readiness", "")))
     preflight_ledger_integrity = _read_json(
         Path(artifact_refs.get("preflight_run_ledger_integrity_report", ""))
     )
@@ -289,6 +290,40 @@ def build_review_package_completeness_report(
     missing_gates = sorted(REQUIRED_HUMAN_GATES - set(manifest.required_human_gates))
     missing_blockers = sorted(REQUIRED_FINAL_BLOCKERS - set(manifest.final_blockers))
     missing_prohibited = sorted(REQUIRED_PROHIBITED_ACTIONS - set(manifest.prohibited_actions))
+    blocker_detail_rows = (
+        matter_opening_readiness.get("blocker_details")
+        if isinstance(matter_opening_readiness, dict)
+        else None
+    )
+    prohibited_detail_rows = (
+        matter_opening_readiness.get("prohibited_action_details")
+        if isinstance(matter_opening_readiness, dict)
+        else None
+    )
+    blocker_detail_rendered = (
+        isinstance(blocker_detail_rows, list)
+        and bool(blocker_detail_rows)
+        and all(
+            isinstance(item, dict)
+            and item.get("blocker_code")
+            and item.get("structured_ref")
+            and str(item["blocker_code"]) in review_text
+            and str(item["structured_ref"]) in review_text
+            for item in blocker_detail_rows
+        )
+    )
+    prohibited_detail_rendered = (
+        isinstance(prohibited_detail_rows, list)
+        and bool(prohibited_detail_rows)
+        and all(
+            isinstance(item, dict)
+            and item.get("action_code")
+            and item.get("structured_ref")
+            and str(item["action_code"]) in review_text
+            and str(item["structured_ref"]) in review_text
+            for item in prohibited_detail_rows
+        )
+    )
 
     review_package_ref = artifact_refs.get("matter_opening_review_package", "")
     manifest_ref = _manifest_ref(manifest)
@@ -386,6 +421,23 @@ def build_review_package_completeness_report(
             "Manifest preserves prohibited matter-opening and budget-submission actions.",
             [manifest_ref],
             {"missing_prohibited_actions": missing_prohibited},
+        ),
+        _check(
+            "readiness_blocker_details_rendered",
+            bool(blocker_detail_rendered and prohibited_detail_rendered),
+            "Review package renders structured blocker and prohibited-action support details.",
+            [
+                artifact_refs.get("matter_opening_readiness", ""),
+                str(review_package_path),
+            ],
+            {
+                "blocker_detail_count": (
+                    len(blocker_detail_rows) if isinstance(blocker_detail_rows, list) else 0
+                ),
+                "prohibited_action_detail_count": (
+                    len(prohibited_detail_rows) if isinstance(prohibited_detail_rows, list) else 0
+                ),
+            },
         ),
         _check(
             "boundary_flags_preserved",

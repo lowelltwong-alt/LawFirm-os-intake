@@ -208,3 +208,9 @@
 - Added a deterministic `ROLE_CANDIDATES_AMBIGUOUS` critic finding when party-role alternatives are too close for automatic reliance.
 - The existing dry-run Exception Lake candidate path now emits `critic_role_candidates_ambiguous` workflow escalations with source-bound evidence refs.
 - Added holdout, north-star, and smoke coverage so role uncertainty becomes an explicit review/evaluation record.
+
+## Structured readiness blocker slice - 2026-06-24
+
+- Added structured `blocker_details` and `prohibited_action_details` to `matter_opening_readiness.json`.
+- The final review package now renders workflow-policy and prohibited-transition refs explaining why conflicts clearance, engagement, matter opening, workspace creation, and budget submission remain blocked.
+- The safety gate, completeness report, evidence graph, schema export, north-star test, and smoke script now fail closed if readiness blockers or prohibited actions lose structured support.

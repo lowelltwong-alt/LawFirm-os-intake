@@ -186,6 +186,35 @@ def test_review_package_completeness_fails_when_linked_forms_lose_evidence_or_bo
         enforce_review_package_completeness(report)
 
 
+def test_review_package_completeness_fails_when_readiness_details_are_not_rendered(
+    tmp_path, repo_root
+):
+    budget_dir = _run_budget(tmp_path, repo_root)
+    manifest, safety_report, exception_readiness_report, review_path = _load_inputs(budget_dir)
+    review_path.write_text(
+        review_path.read_text(encoding="utf-8").replace(
+            "workflow/intake-to-budget.workflow.yaml#conflicts_review",
+            "workflow/intake-to-budget.workflow.yaml#redacted",
+        ),
+        encoding="utf-8",
+    )
+
+    report = build_review_package_completeness_report(
+        manifest=manifest,
+        review_package_path=review_path,
+        safety_report=safety_report,
+        exception_readiness_report=exception_readiness_report,
+    )
+
+    assert report.status == "failed"
+    assert any(
+        check.check_id == "readiness_blocker_details_rendered" and check.status == "failed"
+        for check in report.checks
+    )
+    with pytest.raises(ValueError, match="readiness_blocker_details_rendered"):
+        enforce_review_package_completeness(report)
+
+
 def test_review_package_completeness_fails_on_failed_ledger_integrity_report(tmp_path, repo_root):
     budget_dir = _run_budget(tmp_path, repo_root)
     manifest, safety_report, exception_readiness_report, review_path = _load_inputs(budget_dir)

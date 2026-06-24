@@ -96,6 +96,44 @@ def _budget_texts_are_supported(budget: BudgetProposal) -> bool:
     )
 
 
+def _readiness_blockers_are_supported(
+    packet: IntakePreflightPacket, readiness: MatterOpeningReadiness
+) -> bool:
+    details_by_code = {item.blocker_code: item for item in readiness.blocker_details}
+    if not readiness.blockers or not details_by_code:
+        return False
+    for blocker_code in readiness.blockers:
+        detail = details_by_code.get(blocker_code)
+        if detail is None or not detail.required_human_gate:
+            return False
+        if not detail.structured_ref and not detail.evidence_refs:
+            return False
+        if detail.evidence_refs and not _refs_match_packet_segments(packet, detail.evidence_refs):
+            return False
+    budget_detail = details_by_code.get("budget_review_not_completed")
+    return bool(
+        budget_detail
+        and budget_detail.required_human_gate == "human_budget_review"
+        and budget_detail.structured_ref
+    )
+
+
+def _prohibited_actions_are_supported(readiness: MatterOpeningReadiness) -> bool:
+    details_by_code = {item.action_code: item for item in readiness.prohibited_action_details}
+    if not readiness.prohibited_actions or not details_by_code:
+        return False
+    for action_code in readiness.prohibited_actions:
+        detail = details_by_code.get(action_code)
+        if (
+            detail is None
+            or not detail.structured_ref
+            or not detail.required_human_gate
+            or not detail.transition_blocked
+        ):
+            return False
+    return True
+
+
 def build_safety_gate_report(
     packet: IntakePreflightPacket,
     confirmation: HumanConfirmation,
@@ -169,6 +207,12 @@ def build_safety_gate_report(
             [artifact_refs["matter_opening_readiness"]],
         ),
         _check(
+            "matter_opening_blockers_supported",
+            _readiness_blockers_are_supported(packet, readiness),
+            "Matter-opening and submission blockers carry structured support and human-gate refs.",
+            [artifact_refs["matter_opening_readiness"]],
+        ),
+        _check(
             "engagement_not_authorized",
             _contains(readiness.blockers, "engagement_not_authorized"),
             "Engagement authorization remains a blocker.",
@@ -198,6 +242,12 @@ def build_safety_gate_report(
             _contains(readiness.prohibited_actions, "do_not_submit_budget"),
             "Budget submission and billing handoff remain prohibited.",
             [artifact_refs["matter_opening_readiness"], artifact_refs["legal_budget_proposal"]],
+        ),
+        _check(
+            "prohibited_actions_supported",
+            _prohibited_actions_are_supported(readiness),
+            "Prohibited readiness actions carry structured policy support and required human gates.",
+            [artifact_refs["matter_opening_readiness"]],
         ),
         _check(
             "no_external_write_artifacts",

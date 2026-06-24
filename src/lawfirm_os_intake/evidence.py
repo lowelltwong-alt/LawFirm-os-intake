@@ -9,6 +9,7 @@ from .models import (
     HumanConfirmation,
     HumanReviewOutcomeRecord,
     IntakePreflightPacket,
+    MatterOpeningReadiness,
 )
 from .util import new_id
 
@@ -237,6 +238,7 @@ def extend_graph_with_budget(
     human_review_outcome: HumanReviewOutcomeRecord,
     conflict_seed: ConflictSeedPacket,
     budget: BudgetProposal,
+    readiness: MatterOpeningReadiness,
 ) -> EvidenceGraph:
     nodes = list(graph.nodes)
     edges = list(graph.edges)
@@ -434,6 +436,124 @@ def extend_graph_with_budget(
                     status="structured_evidence",
                 )
             )
+    nodes.append(
+        EvidenceGraphNode(
+            node_id=readiness.readiness_id,
+            node_type="matter_opening_readiness",
+            status=readiness.status,
+            attributes={
+                "preflight_packet_id": readiness.preflight_packet_id,
+                "confirmation_id": readiness.confirmation_id,
+            },
+        )
+    )
+    edges.append(
+        EvidenceGraphEdge(
+            edge_id=new_id("edge"),
+            source_node_id=budget.budget_proposal_id,
+            relationship="precedes_matter_opening_readiness",
+            target_node_id=readiness.readiness_id,
+            status="blocked",
+        )
+    )
+    for blocker in readiness.blocker_details:
+        blocker_node_id = f"{readiness.readiness_id}:blocker:{blocker.blocker_code}"
+        nodes.append(
+            EvidenceGraphNode(
+                node_id=blocker_node_id,
+                node_type="matter_opening_blocker",
+                status=blocker.status,
+                attributes={
+                    "blocker_code": blocker.blocker_code,
+                    "blocking_scope": blocker.blocking_scope,
+                    "required_human_gate": blocker.required_human_gate,
+                    "authority_owner": blocker.authority_owner,
+                    "support_kind": blocker.support_kind,
+                    "structured_ref": blocker.structured_ref,
+                    "prohibits": blocker.prohibits,
+                },
+            )
+        )
+        edges.append(
+            EvidenceGraphEdge(
+                edge_id=new_id("edge"),
+                source_node_id=blocker_node_id,
+                relationship="blocks_matter_opening_readiness",
+                target_node_id=readiness.readiness_id,
+                status="blocking",
+            )
+        )
+        if blocker.structured_ref:
+            nodes.append(
+                EvidenceGraphNode(
+                    node_id=blocker.structured_ref,
+                    node_type="structured_ref",
+                    status="structured_evidence",
+                    attributes={"source_kind": blocker.support_kind},
+                )
+            )
+            edges.append(
+                EvidenceGraphEdge(
+                    edge_id=new_id("edge"),
+                    source_node_id=blocker.structured_ref,
+                    relationship="supports_matter_opening_blocker",
+                    target_node_id=blocker_node_id,
+                    status="structured_evidence",
+                )
+            )
+        for ref in blocker.evidence_refs:
+            edges.append(
+                EvidenceGraphEdge(
+                    edge_id=new_id("edge"),
+                    source_node_id=ref.segment_id,
+                    relationship="supports_matter_opening_blocker",
+                    target_node_id=blocker_node_id,
+                    evidence_refs=[ref],
+                )
+            )
+    for guardrail in readiness.prohibited_action_details:
+        guardrail_node_id = f"{readiness.readiness_id}:prohibited:{guardrail.action_code}"
+        nodes.append(
+            EvidenceGraphNode(
+                node_id=guardrail_node_id,
+                node_type="prohibited_action_guardrail",
+                status="prohibited",
+                attributes={
+                    "action_code": guardrail.action_code,
+                    "transition_blocked": guardrail.transition_blocked,
+                    "required_human_gate": guardrail.required_human_gate,
+                    "support_kind": guardrail.support_kind,
+                    "structured_ref": guardrail.structured_ref,
+                    "linked_blocker_codes": guardrail.linked_blocker_codes,
+                },
+            )
+        )
+        nodes.append(
+            EvidenceGraphNode(
+                node_id=guardrail.structured_ref,
+                node_type="structured_ref",
+                status="structured_evidence",
+                attributes={"source_kind": guardrail.support_kind},
+            )
+        )
+        edges.append(
+            EvidenceGraphEdge(
+                edge_id=new_id("edge"),
+                source_node_id=guardrail.structured_ref,
+                relationship="supports_prohibited_action_guardrail",
+                target_node_id=guardrail_node_id,
+                status="structured_evidence",
+            )
+        )
+        edges.append(
+            EvidenceGraphEdge(
+                edge_id=new_id("edge"),
+                source_node_id=guardrail_node_id,
+                relationship="guards_matter_opening_readiness",
+                target_node_id=readiness.readiness_id,
+                status="prohibited",
+            )
+        )
     return EvidenceGraph(
         schema_version=graph.schema_version, graph_id=graph.graph_id, nodes=nodes, edges=edges
     )

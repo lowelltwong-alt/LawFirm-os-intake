@@ -4,13 +4,13 @@ Verified in the artifact build environment on 2026-06-24:
 
 ```text
 PYTHONPATH=src python scripts/export_schemas.py
-# exported 31 schemas
+# exported 32 schemas
 
 PYTHONPATH=src python scripts/validate_repo.py
 # repository validation passed
 
 PYTHONPATH=src python -m pytest -q
-# 90 passed
+# 93 passed
 
 PYTHONPATH=src ruff check src tests scripts
 # All checks passed
@@ -59,6 +59,8 @@ Budget runs now also emit `review_package_completeness_report.json`, proving the
 Preflight, confirmed budget, and blocked-budget attempts now emit `run_ledger_integrity_report.json`, proving required gate order, expected terminal state, local refs, existing outputs, and no external writes. Superseding corrected budget attempts preserve prior blocked history while validating the latest budget attempt segment.
 
 The completeness report now also verifies that linked intake and budget review forms preserve their required human-review sections, evidence-hash visibility where source-bound evidence exists, and non-authorization boundary text, including source coverage, outcome handling, budget lines, support items, and submission boundary.
+
+Matter-opening readiness now exports a candidate schema and carries structured blocker details plus prohibited-action guardrails. The safety gate and completeness report fail closed if conflicts, engagement, matter-opening, workspace, or budget-submission blockers lose workflow-policy or prohibited-transition support refs.
 
 Human-facing review Markdown now renders evidence refs inline for confirmation evidence, confirmed parties, deadlines, missing-information candidates, critic findings, conflict-search terms, and budget supports.
 

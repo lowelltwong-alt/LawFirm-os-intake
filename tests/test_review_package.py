@@ -40,6 +40,7 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     review_text = review_path.read_text(encoding="utf-8")
     manifest = ReviewPackageManifest.model_validate(load_json(manifest_path))
     completeness = ReviewPackageCompletenessReport.model_validate(load_json(completeness_path))
+    readiness = load_json(budget_dir / "matter_opening_readiness.json")
     graph = load_json(budget_dir / "evidence_graph.json")
 
     assert "# Matter Opening Review Package" in review_text
@@ -122,13 +123,25 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert "## Safety Gate" in review_text
     assert "## Matter-Opening Blockers" in review_text
     assert "blocked_pending_conflicts_and_engagement" in review_text
+    assert "blocker detail: conflicts_not_cleared" in review_text
+    assert "blocker detail: budget_review_not_completed" in review_text
+    assert "structured_ref=workflow/intake-to-budget.workflow.yaml#conflicts_review" in review_text
+    assert "prohibited action detail: do_not_submit_budget" in review_text
+    assert (
+        "workflow/prohibited-transitions.yaml#budget_proposal_ready->budget_submitted"
+        in review_text
+    )
     assert "## Evidence Graph Summary" in review_text
     assert "Graph ID:" in review_text
     assert "Node types:" in review_text
     assert "conflict_search_term=" in review_text
     assert "budget_line=" in review_text
+    assert "matter_opening_blocker=" in review_text
+    assert "prohibited_action_guardrail=" in review_text
     assert "Relationships:" in review_text
     assert "supports_conflict_search_term=" in review_text
+    assert "supports_matter_opening_blocker=" in review_text
+    assert "supports_prohibited_action_guardrail=" in review_text
     assert "edge supports_budget_line:" in review_text
     assert "## Run Ledger Summary" in review_text
     assert "preflight ledger:" in review_text
@@ -140,6 +153,20 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert "budget_success: status=passed" in review_text
     assert "does not clear conflicts" in review_text
     assert "submit a budget" in review_text
+    assert {item["blocker_code"] for item in readiness["blocker_details"]} >= {
+        "conflicts_not_cleared",
+        "engagement_not_authorized",
+        "matter_opening_not_approved",
+        "budget_review_not_completed",
+    }
+    assert {item["action_code"] for item in readiness["prohibited_action_details"]} == {
+        "do_not_open_imanage",
+        "do_not_create_matter",
+        "do_not_submit_budget",
+    }
+    assert "matter_opening_blocker" in {node["node_type"] for node in graph["nodes"]}
+    assert "prohibited_action_guardrail" in {node["node_type"] for node in graph["nodes"]}
+    assert "supports_matter_opening_blocker" in {edge["relationship"] for edge in graph["edges"]}
 
     assert manifest.status == "blocked_pending_conflicts_and_engagement"
     assert manifest.human_readable_review_ref == str(review_path)
