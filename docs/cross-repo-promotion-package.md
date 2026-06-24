@@ -8,7 +8,7 @@ This is a draft promotion package for stable intake components. It is not a dire
 - Evidence ref contract with source ID, segment ID, segment offsets, and segment hash.
 - Human confirmation contract, including `confirmed`, `unknown`, `needs_more_information`, `human_only`, and `declined_or_referred` outcomes, decision evidence refs, and confirmed-party evidence refs.
 - Human review outcome record contract for append-only confirmation history, superseding corrections, non-confirmed blocked states, and required next gates.
-- Party/role candidate contract with aliases, normalized names, role alternatives, evidence refs, and candidate status.
+- Party/role candidate contract with aliases, normalized names, role alternatives, party evidence refs, per-role evidence refs, and candidate status.
 - Matter-family, inbound-event, representation-posture, deadline, missing-information, and critic-finding candidate contracts.
 - Conflict seed and conflict search term contracts that preserve `no_conflict_conclusion` and require evidence refs for every normalized search term.
 - Budget proposal, calculation-report, and budget-support-item contracts.

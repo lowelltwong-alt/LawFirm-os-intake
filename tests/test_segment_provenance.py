@@ -29,6 +29,12 @@ def test_preflight_evidence_refs_preserve_segment_offsets_and_hashes(tmp_path, r
     refs.extend(ref for party in packet.party_candidates for ref in party.evidence_refs)
     refs.extend(
         ref
+        for party in packet.party_candidates
+        for role in party.role_candidates
+        for ref in role.evidence_refs
+    )
+    refs.extend(
+        ref
         for candidate in (
             packet.inbound_event_candidates
             + packet.matter_family_candidates
@@ -70,6 +76,19 @@ def test_strict_evidence_validation_fails_on_offset_drift(tmp_path, repo_root):
     )
     corrupted = packet.model_copy(deep=True)
     corrupted.party_candidates[0].evidence_refs[0].start_offset += 1
+
+    with pytest.raises(ValueError, match="offsets do not match"):
+        _validate_refs(corrupted)
+
+
+def test_strict_evidence_validation_fails_on_role_candidate_offset_drift(tmp_path, repo_root):
+    packet, _ = run_preflight(
+        repo_root / "examples/synthetic/inbound/carrier-assignment-medmal.json",
+        repo_root / "context/synthetic-profiles/insurance-defense.yaml",
+        tmp_path,
+    )
+    corrupted = packet.model_copy(deep=True)
+    corrupted.party_candidates[0].role_candidates[0].evidence_refs[0].start_offset += 1
 
     with pytest.raises(ValueError, match="offsets do not match"):
         _validate_refs(corrupted)

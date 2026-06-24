@@ -9,7 +9,7 @@ The reviewer should see:
 - exact observed evidence;
 - practice-context influence;
 - unknown option;
-- party-role alternatives;
+- party-role alternatives with their own evidence refs;
 - contradictions and missing information;
 - deadline candidates;
 - escalation reason;

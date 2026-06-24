@@ -140,6 +140,8 @@ An insurance carrier may be the sender, instructing source, payer, or source of 
 - claimant/adverse party
 - opposing counsel
 
+Every party candidate and every role alternative carries source-bound evidence refs. A role alternative without packet-bound refs fails strict evidence validation before the preflight packet is accepted.
+
 ## Conflict-search seed boundary
 
 The conflict-search output is a seed packet only. It groups represented client, instructing source, payer, insured, adverse party, claimant, opposing counsel, aliases, and unresolved-role terms for a conflicts team or future governed conflicts workflow.

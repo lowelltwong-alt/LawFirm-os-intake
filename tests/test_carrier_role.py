@@ -11,4 +11,5 @@ def test_carrier_is_not_automatically_represented_client(tmp_path, repo_root):
     roles = {r.role for r in carrier.role_candidates}
     assert "insurance_carrier" in roles
     assert "prospective_represented_client" not in roles
+    assert all(role.evidence_refs for role in carrier.role_candidates)
     assert packet.human_confirmation_required

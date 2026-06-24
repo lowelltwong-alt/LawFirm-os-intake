@@ -350,6 +350,13 @@
           "minimum": 0,
           "title": "Confidence",
           "type": "number"
+        },
+        "evidence_refs": {
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
         }
       },
       "required": [

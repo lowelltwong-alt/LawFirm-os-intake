@@ -58,7 +58,9 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     assert confirmation_history[0]["budget_stage_allowed"] is True
     assert all(term["evidence_refs"] for term in conflict_seed["normalized_search_terms"])
     assert "conflict_search_term" in {node["node_type"] for node in graph["nodes"]}
+    assert "party_role_candidate" in {node["node_type"] for node in graph["nodes"]}
     assert "budget_support_item" in {node["node_type"] for node in graph["nodes"]}
+    assert "supports_party_role_candidate" in {edge["relationship"] for edge in graph["edges"]}
     assert "supports_conflict_search_term" in {edge["relationship"] for edge in graph["edges"]}
     assert packet["source_coverage_summary"]["duplicate_sources"] == 1
     assert packet["source_coverage_summary"]["coverage_complete"] is False

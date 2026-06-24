@@ -81,6 +81,40 @@ def build_preflight_graph(packet: IntakePreflightPacket) -> EvidenceGraph:
                     evidence_refs=[ref],
                 )
             )
+        for index, role in enumerate(party.role_candidates):
+            role_node_id = f"{party.party_candidate_id}:role:{index}"
+            nodes.append(
+                EvidenceGraphNode(
+                    node_id=role_node_id,
+                    node_type="party_role_candidate",
+                    status="candidate",
+                    attributes={
+                        "party_candidate_id": party.party_candidate_id,
+                        "party_name": party.name,
+                        "role": role.role,
+                        "confidence": role.confidence,
+                    },
+                )
+            )
+            edges.append(
+                EvidenceGraphEdge(
+                    edge_id=new_id("edge"),
+                    source_node_id=party.party_candidate_id,
+                    relationship="has_role_candidate",
+                    target_node_id=role_node_id,
+                    status="candidate",
+                )
+            )
+            for ref in role.evidence_refs:
+                edges.append(
+                    EvidenceGraphEdge(
+                        edge_id=new_id("edge"),
+                        source_node_id=ref.segment_id,
+                        relationship="supports_party_role_candidate",
+                        target_node_id=role_node_id,
+                        evidence_refs=[ref],
+                    )
+                )
 
     for node_type, relationship, candidates in [
         (

@@ -80,6 +80,22 @@ DATE_RE = re.compile(
 )
 RELATIVE_RE = re.compile(r"\bwithin\s+(\d{1,3})\s+days\b", re.I)
 
+ROLE_SIGNAL_TERMS: dict[str, list[str]] = {
+    "insurance_carrier": ["insurance", "claim number", "claims"],
+    "carrier_or_instructing_source": ["insurance", "claim number", "assigning defense"],
+    "instructing_source": ["assigning defense", "new assignment"],
+    "payer": ["budget", "claim number", "insurance"],
+    "insured": ["insured"],
+    "insured_or_prospective_represented_client": ["insured", "defense"],
+    "prospective_represented_client": ["insured", "defense"],
+    "represented_client": ["insured", "defense"],
+    "claimant": ["claimant"],
+    "adverse_party": ["claimant", "allegations"],
+    "claimant_or_adverse_party": ["claimant", "allegations"],
+    "opposing_counsel": ["counsel"],
+    "unknown": [],
+}
+
 
 def evidence_for_text(segments: list[Segment], needle: str) -> list[EvidenceRef]:
     lowered = needle.lower()
@@ -100,6 +116,29 @@ def _evidence_ref(segment: Segment) -> EvidenceRef:
         start_offset=segment.start_offset,
         end_offset=segment.end_offset,
         sha256=segment.sha256,
+    )
+
+
+def _dedup_refs(refs: list[EvidenceRef]) -> list[EvidenceRef]:
+    dedup: dict[tuple[str, str, int, int, str], EvidenceRef] = {}
+    for ref in refs:
+        dedup[(ref.source_id, ref.segment_id, ref.start_offset, ref.end_offset, ref.sha256)] = ref
+    return list(dedup.values())
+
+
+def _role_candidate(
+    role: str,
+    confidence: float,
+    segments: list[Segment],
+    party_name: str,
+) -> RoleCandidate:
+    refs = evidence_for_text(segments, party_name)
+    for term in ROLE_SIGNAL_TERMS.get(role, []):
+        refs.extend(evidence_for_text(segments, term))
+    return RoleCandidate(
+        role=role,
+        confidence=confidence,
+        evidence_refs=_dedup_refs(refs) or _first_refs(segments),
     )
 
 
@@ -169,18 +208,24 @@ def extract_parties(bundle: SourceBundle, segments: list[Segment]) -> list[Party
     parties: list[PartyCandidate] = []
     hints = bundle.fixture_hints.get("entities", [])
     for item in hints:
+        party_name = str(item["name"])
         roles = [
-            RoleCandidate(role=str(role["role"]), confidence=float(role.get("confidence", 0.7)))
+            _role_candidate(
+                str(role["role"]),
+                float(role.get("confidence", 0.7)),
+                segments,
+                party_name,
+            )
             for role in item.get("role_candidates", [])
         ]
         parties.append(
             PartyCandidate(
                 party_candidate_id=new_id("party"),
-                name=str(item["name"]),
-                normalized_name=_normal(str(item["name"])),
+                name=party_name,
+                normalized_name=_normal(party_name),
                 aliases=list(item.get("aliases", [])),
-                role_candidates=roles or [RoleCandidate(role="unknown", confidence=0.4)],
-                evidence_refs=evidence_for_text(segments, str(item["name"])),
+                role_candidates=roles or [_role_candidate("unknown", 0.4, segments, party_name)],
+                evidence_refs=evidence_for_text(segments, party_name),
             )
         )
 
@@ -193,13 +238,25 @@ def extract_parties(bundle: SourceBundle, segments: list[Segment]) -> list[Party
         for normalized, name in sorted(found.items()):
             lower = name.lower()
             if "insurance" in lower or "indemnity" in lower:
-                roles = [RoleCandidate(role="carrier_or_instructing_source", confidence=0.65)]
+                roles = [
+                    _role_candidate(
+                        "carrier_or_instructing_source",
+                        0.65,
+                        segments,
+                        name,
+                    )
+                ]
             elif name.startswith("Dr."):
                 roles = [
-                    RoleCandidate(role="insured_or_prospective_represented_client", confidence=0.55)
+                    _role_candidate(
+                        "insured_or_prospective_represented_client",
+                        0.55,
+                        segments,
+                        name,
+                    )
                 ]
             else:
-                roles = [RoleCandidate(role="unknown", confidence=0.4)]
+                roles = [_role_candidate("unknown", 0.4, segments, name)]
             parties.append(
                 PartyCandidate(
                     party_candidate_id=new_id("party"),

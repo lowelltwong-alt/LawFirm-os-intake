@@ -96,6 +96,7 @@ class IngestionResult(StrictModel):
 class RoleCandidate(StrictModel):
     role: str
     confidence: float = Field(ge=0, le=1)
+    evidence_refs: list[EvidenceRef] = Field(default_factory=list)
 
 
 class PartyCandidate(StrictModel):

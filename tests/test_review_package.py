@@ -94,6 +94,7 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     relationships = {edge["relationship"] for edge in graph["edges"]}
     assert {
         "human_review_outcome",
+        "party_role_candidate",
         "conflict_seed_packet",
         "conflict_search_term",
         "budget_line",
@@ -102,6 +103,7 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     }.issubset(node_types)
     assert {
         "supports_human_confirmation",
+        "supports_party_role_candidate",
         "supports_conflict_search_term",
         "supports_budget_line",
         "supports_budget_support_item",

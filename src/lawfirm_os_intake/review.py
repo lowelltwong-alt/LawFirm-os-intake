@@ -35,7 +35,11 @@ def render_intake_review_form(packet: IntakePreflightPacket) -> str:
     ]
     party_lines = []
     for party in packet.party_candidates:
-        roles = ", ".join(f"{role.role} ({role.confidence:.2f})" for role in party.role_candidates)
+        roles = ", ".join(
+            f"{role.role} ({role.confidence:.2f}; evidence: "
+            f"{', '.join(_ref_text(ref) for ref in role.evidence_refs[:2]) or 'none'})"
+            for role in party.role_candidates
+        )
         refs = ", ".join(_ref_text(ref) for ref in party.evidence_refs[:3])
         party_lines.append(f"- {party.name}: {roles}; evidence: {refs}")
 

@@ -88,3 +88,9 @@
 - Added `ExceptionLakeReadinessReport` and `exception_lake_readiness_report.json` for preflight, budget, and failed budget-precondition exception candidate files.
 - The readiness gate proves candidates remain dry-run, raw-payload-free, promotion-required, target the Lake runtime repo, and carry valid source/evidence/structured/state support.
 - Added fail-closed tests for raw-payload candidates and drifted exception evidence refs.
+
+## Party-role evidence slice - 2026-06-23
+
+- Added per-role evidence refs to `RoleCandidate` so relationship-role alternatives are source-bound instead of relying only on party-level support.
+- Strict preflight validation now fails if a role candidate ref drifts from the cited segment.
+- Evidence graphs now include `party_role_candidate` nodes and `supports_party_role_candidate` edges.

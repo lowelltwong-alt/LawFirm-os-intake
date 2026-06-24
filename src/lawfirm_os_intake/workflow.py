@@ -108,6 +108,8 @@ def _validate_refs(packet: IntakePreflightPacket) -> None:
 
     for party in packet.party_candidates:
         ensure_refs(f"party candidate {party.name}", party.evidence_refs)
+        for role in party.role_candidates:
+            ensure_refs(f"role candidate {party.name}:{role.role}", role.evidence_refs)
     for candidate in (
         packet.inbound_event_candidates
         + packet.matter_family_candidates

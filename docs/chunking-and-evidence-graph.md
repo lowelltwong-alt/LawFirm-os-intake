@@ -103,6 +103,7 @@ The budget-stage graph also links:
 source -> conflict search term -> conflict seed
 source/structured ref -> budget support -> budget proposal
 human confirmation -> review outcome
+source -> party role candidate -> party candidate
 ```
 
 ## Why no graph database yet
@@ -114,6 +115,7 @@ A JSON graph is inspectable, portable, and sufficient for the first workflow. In
 - exact offset/hash preservation;
 - `ingestion_result.json` parity for inventory, coverage summary, segments, and segment evidence refs;
 - evidence refs match cited segment offsets and hashes;
+- every party-role candidate has packet-bound evidence refs;
 - quoted email separation;
 - attachment inventory completeness;
 - non-target text identity after transformations;
