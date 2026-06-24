@@ -13,5 +13,6 @@
 | Understand budgets | `docs/legal-budget-design.md`, `templates/legal-budget-review-form.md` |
 | Understand human gates | `docs/human-review.md`, `config/human_gates.yaml` |
 | Understand testing | `docs/evaluation-plan.md`, `docs/public-data-test-plan.md`, `docs/synthetic-data-plan.md` |
+| Understand Rust readiness | `docs/rust-ingestion-transition-plan.md`, `docs/decisions/ADR-004-rust-ready-ingestion-boundary.md` |
 | Understand failure risk | `PREMORTEM.md`, `THREAT_MODEL.md` |
 | Know completion criteria | `DEFINITION_OF_DONE.md`, `ROADMAP.md`, `VALIDATION_REPORT.md` |

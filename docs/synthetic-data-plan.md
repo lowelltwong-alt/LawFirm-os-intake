@@ -20,6 +20,7 @@ Synthetic data tests full legal workflow behavior that public data cannot safely
 - relative deadline without trigger date;
 - conflicting role statements;
 - prompt injection in source text;
+- high-volume ingestion proxy for source/segment scale profiling;
 - budget template with rates;
 - budget template without rates;
 - client/carrier guideline conflicts;
@@ -42,7 +43,7 @@ Gold should be reviewed and versioned for:
 - assumptions and exclusions.
 - north-star review package completeness.
 
-Reviewed synthetic gold files live under `examples/synthetic/gold/`. They are local evaluation gates only. `fixture_gold_report.json` proves whether a specific run matched reviewed expectations; it does not promote labels, roles, event classes, or budgets into canon.
+Reviewed synthetic gold files live under `examples/synthetic/gold/`. They are local evaluation gates only. `fixture_gold_report.json` proves whether a specific run matched reviewed expectations; it does not promote labels, roles, event classes, or budgets into canon. The current reviewed gold set includes the north-star priced demo and a carrier-assignment hours-only budget-mode fixture.
 
 ## Data generation rules
 

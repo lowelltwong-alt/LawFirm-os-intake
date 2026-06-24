@@ -14,6 +14,15 @@ PROFILE_THRESHOLDS = {
     "max_segment_characters": 2500,
 }
 
+REQUIRED_RUST_TRANSITION_GATES = [
+    "hot_path_performance_profile",
+    "python_reference_golden_parity",
+    "synthetic_fixture_and_holdout_parity",
+    "schema_compatibility_export",
+    "orchestrator_adapter_review",
+    "semantic_substrate_contract_review_if_promoted",
+]
+
 
 def _counts(values: list[str]) -> dict[str, int]:
     return dict(sorted(Counter(values).items()))
@@ -87,6 +96,10 @@ def build_ingestion_volume_profile(
         observed_scale_band="profile_candidate" if requires_profile else "starter_fixture",
         performance_profile_required_before_rust=requires_profile,
         rust_replacement_allowed=False,
+        rust_adapter_proposal_state=(
+            "profiling_required_before_adapter_proposal" if requires_profile else "not_warranted"
+        ),
+        required_rust_transition_gates=REQUIRED_RUST_TRANSITION_GATES,
         decision="profile_before_rust_adapter" if requires_profile else "keep_python_reference",
         rationale=rationale,
         generated_at=now_iso(),

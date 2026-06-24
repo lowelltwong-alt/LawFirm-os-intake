@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any
 
 from .models import (
@@ -16,6 +17,7 @@ from .models import (
     ModelAdapterReport,
     SafetyGateReport,
 )
+from .util import load_json
 
 
 def _candidate_lines(candidates: list, limit: int = 3) -> list[str]:
@@ -230,6 +232,32 @@ def _source_inventory_lines(packet: IntakePreflightPacket) -> list[str]:
             f"metadata_keys={metadata_keys}"
         )
     return lines or ["- none"]
+
+
+def _ingestion_volume_profile_lines(artifact_refs: dict[str, str]) -> list[str]:
+    path = artifact_refs.get("preflight_ingestion_volume_profile", "")
+    lines = [f"- Ingestion volume profile: `{path or 'missing'}`"]
+    if not path:
+        return lines
+    try:
+        payload = load_json(Path(path))
+    except (OSError, ValueError):
+        return [*lines, "- Ingestion volume profile details: unavailable"]
+    if not isinstance(payload, dict):
+        return [*lines, "- Ingestion volume profile details: unavailable"]
+
+    scale_signals = ", ".join(payload.get("scale_signals") or []) or "none"
+    transition_gates = ", ".join(payload.get("required_rust_transition_gates") or []) or "none"
+    return [
+        *lines,
+        f"- Ingestion profile decision: {payload.get('decision', 'unknown')}",
+        f"- Rust adapter proposal state: {payload.get('rust_adapter_proposal_state', 'unknown')}",
+        "- Profiling before Rust required: "
+        f"{payload.get('performance_profile_required_before_rust', 'unknown')}",
+        f"- Rust replacement allowed: {payload.get('rust_replacement_allowed', 'unknown')}",
+        f"- Scale signals: {scale_signals}",
+        f"- Required Rust transition gates: {transition_gates}",
+    ]
 
 
 def _contract_state_lines(report: ContractStateReport | None) -> list[str]:
@@ -655,7 +683,7 @@ def render_matter_opening_review_package(
             f"- Unreadable sources: {source_summary.get('unreadable_sources')}",
             f"- Duplicate sources: {source_summary.get('duplicate_sources')}",
             f"- Attachment references: {source_summary.get('attachment_reference_count')}",
-            f"- Ingestion volume profile: `{artifact_refs.get('preflight_ingestion_volume_profile', 'missing')}`",
+            *_ingestion_volume_profile_lines(artifact_refs),
             *_source_inventory_lines(packet),
             "",
             "## What Is Known",

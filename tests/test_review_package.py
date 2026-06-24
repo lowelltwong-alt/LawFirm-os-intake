@@ -67,6 +67,9 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert "read_state=read" in review_text
     assert "availability=available" in review_text
     assert "Ingestion volume profile:" in review_text
+    assert "Ingestion profile decision: keep_python_reference" in review_text
+    assert "Rust adapter proposal state: not_warranted" in review_text
+    assert "Required Rust transition gates:" in review_text
     assert "sha=sha256:" in review_text
     assert "## What Is Known" in review_text
     assert "Human confirmation decision evidence:" in review_text

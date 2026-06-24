@@ -109,8 +109,10 @@ def test_preflight_writes_ingestion_volume_profile(tmp_path, repo_root):
     assert profile.segment_count == len(result.segments)
     assert profile.rust_replacement_allowed is False
     assert profile.performance_profile_required_before_rust is False
+    assert profile.rust_adapter_proposal_state == "not_warranted"
     assert profile.observed_scale_band == "starter_fixture"
     assert profile.decision == "keep_python_reference"
+    assert "python_reference_golden_parity" in profile.required_rust_transition_gates
     assert any(str(profile_path) in event.get("output_refs", []) for event in ledger)
 
 
@@ -124,9 +126,12 @@ def test_ingestion_volume_profile_requires_profiling_for_high_volume_proxy(repo_
     assert profile.source_count == 10
     assert profile.rust_replacement_allowed is False
     assert profile.performance_profile_required_before_rust is True
+    assert profile.rust_adapter_proposal_state == "profiling_required_before_adapter_proposal"
     assert profile.observed_scale_band == "profile_candidate"
     assert profile.decision == "profile_before_rust_adapter"
     assert "source_count_at_or_above_profile_threshold" in profile.scale_signals
+    assert "hot_path_performance_profile" in profile.required_rust_transition_gates
+    assert "orchestrator_adapter_review" in profile.required_rust_transition_gates
     assert "legal_classification" not in profile.model_dump(mode="json")
 
 

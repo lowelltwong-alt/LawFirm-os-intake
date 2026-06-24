@@ -56,6 +56,8 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     assert ingestion_volume["ingestion_result_id"] == ingestion_result["ingestion_result_id"]
     assert ingestion_volume["rust_replacement_allowed"] is False
     assert ingestion_volume["decision"] == "keep_python_reference"
+    assert ingestion_volume["rust_adapter_proposal_state"] == "not_warranted"
+    assert "python_reference_golden_parity" in ingestion_volume["required_rust_transition_gates"]
     assert len(ingestion_result["segment_evidence_refs"]) == len(ingestion_result["segments"])
     assert packet["contract_state_report_ref"].endswith("contract_state_report.json")
     assert contract_state["status"] == "passed"
@@ -152,6 +154,9 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
         "## Source Inventory",
         "Source coverage complete: False",
         "Ingestion volume profile:",
+        "Ingestion profile decision: keep_python_reference",
+        "Rust adapter proposal state: not_warranted",
+        "Required Rust transition gates:",
         "syn-northstar-attachment-missing-001",
         "read_state=missing",
         "availability=duplicate",

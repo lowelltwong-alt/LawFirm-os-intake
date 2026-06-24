@@ -17,6 +17,8 @@ The profile records:
 - source type, source state, and segment type counts;
 - local profiling thresholds;
 - scale signals that require profiling before any Rust adapter proposal;
+- `rust_adapter_proposal_state`;
+- required Rust transition gates;
 - `rust_replacement_allowed=false` in every case.
 
 The profile is also carried into the final review manifest and package completeness checks.

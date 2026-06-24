@@ -105,6 +105,21 @@
       "title": "Rust Replacement Allowed",
       "type": "boolean"
     },
+    "rust_adapter_proposal_state": {
+      "enum": [
+        "not_warranted",
+        "profiling_required_before_adapter_proposal"
+      ],
+      "title": "Rust Adapter Proposal State",
+      "type": "string"
+    },
+    "required_rust_transition_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Rust Transition Gates",
+      "type": "array"
+    },
     "decision": {
       "enum": [
         "keep_python_reference",
@@ -142,6 +157,8 @@
     "profile_thresholds",
     "observed_scale_band",
     "performance_profile_required_before_rust",
+    "rust_adapter_proposal_state",
+    "required_rust_transition_gates",
     "decision",
     "rationale",
     "generated_at"

@@ -137,6 +137,11 @@ class IngestionVolumeProfile(StrictModel):
     observed_scale_band: Literal["starter_fixture", "profile_candidate"]
     performance_profile_required_before_rust: bool
     rust_replacement_allowed: Literal[False] = False
+    rust_adapter_proposal_state: Literal[
+        "not_warranted",
+        "profiling_required_before_adapter_proposal",
+    ]
+    required_rust_transition_gates: list[str]
     decision: Literal["keep_python_reference", "profile_before_rust_adapter"]
     rationale: list[str]
     generated_at: str
