@@ -23,6 +23,7 @@ from .exceptions import (
     build_preflight_exception_candidates,
 )
 from .gold import build_fixture_gold_report, enforce_fixture_gold_report
+from .human_gates import build_human_gate_status_report, enforce_human_gate_status_report
 from .ingestion import build_ingestion_result
 from .ingestion_volume import build_ingestion_volume_profile
 from .models import (
@@ -824,6 +825,7 @@ def run_budget(
     all_exception_candidates = preflight_exception_candidates + budget_exception_candidates
     review_package_path = run_dir / "matter_opening_review_package.md"
     manifest_path = run_dir / "review_package_manifest.json"
+    human_gate_status_report_path = run_dir / "human_gate_status_report.json"
     safety_gate_report_path = run_dir / "safety_gate_report.json"
     exception_readiness_report_path = run_dir / "exception_lake_readiness_report.json"
     exception_handoff_manifest_path = run_dir / "exception_lake_handoff_manifest.json"
@@ -865,6 +867,7 @@ def run_budget(
         "preflight_run_ledger": packet.run_ledger_ref,
         "human_review_outcome": str(human_review_outcome_path),
         "human_confirmation_history": str(human_confirmation_history_path),
+        "human_gate_status_report": str(human_gate_status_report_path),
         "contract_state_report": packet.contract_state_report_ref,
         "budget_precondition_report": str(budget_precondition_report_path),
         "safety_gate_report": str(safety_gate_report_path),
@@ -874,6 +877,20 @@ def run_budget(
     }
     if fixture_gold_report_path:
         artifact_refs["fixture_gold_report"] = str(fixture_gold_report_path)
+    human_gate_status_report = build_human_gate_status_report(
+        packet=packet,
+        confirmation=confirmation,
+        human_review_outcome=human_review_outcome,
+        conflict_seed=conflict_seed,
+        budget=budget,
+        readiness=readiness,
+        artifact_refs=artifact_refs,
+    )
+    enforce_human_gate_status_report(human_gate_status_report)
+    write_json(
+        human_gate_status_report_path,
+        human_gate_status_report.model_dump(mode="json"),
+    )
     safety_report = build_safety_gate_report(
         packet,
         confirmation,
@@ -944,6 +961,7 @@ def run_budget(
                 str(run_dir / "conflict_search_seed_packet.json"),
                 str(run_dir / "legal_budget_proposal.json"),
                 str(run_dir / "matter_opening_readiness.json"),
+                str(human_gate_status_report_path),
                 str(exception_candidates_path),
                 str(safety_gate_report_path),
                 str(exception_readiness_report_path),
@@ -1026,6 +1044,7 @@ def run_budget(
             contract_state_report=contract_state_report,
             model_adapter_report=model_adapter_report,
             human_review_outcome=human_review_outcome,
+            human_gate_status_report=human_gate_status_report,
             budget_precondition_report=budget_precondition_report,
         ),
         encoding="utf-8",
@@ -1048,6 +1067,7 @@ def run_budget(
             "human_budget_review",
             "human_matter_opening_authorization",
         ],
+        human_gate_status_report_ref=str(human_gate_status_report_path),
         final_blockers=readiness.blockers,
         prohibited_actions=readiness.prohibited_actions,
         safety_gate_report_ref=str(safety_gate_report_path),

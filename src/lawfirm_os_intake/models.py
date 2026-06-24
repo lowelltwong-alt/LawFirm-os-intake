@@ -480,6 +480,41 @@ class HumanReviewOutcomeRecord(StrictModel):
     notes: str | None = None
 
 
+class HumanGateStatus(StrictModel):
+    gate_id: Literal[
+        "human_intake_confirmation",
+        "human_conflicts_clearance",
+        "human_engagement_authorization",
+        "human_budget_review",
+        "human_matter_opening_authorization",
+    ]
+    label: str
+    required: Literal[True] = True
+    status: Literal["completed", "pending"]
+    authority_owner: str
+    completed_by_human: bool
+    artifact_refs: list[str] = Field(default_factory=list)
+    structured_refs: list[str] = Field(default_factory=list)
+    blocks: list[str] = Field(default_factory=list)
+    notes: str | None = None
+
+
+class HumanGateStatusReport(StrictModel):
+    schema_version: str = "0.1"
+    human_gate_status_report_id: str
+    run_id: str
+    preflight_packet_id: str
+    confirmation_id: str
+    status: Literal["pending_human_gates", "all_human_gates_complete"]
+    required_gate_ids: list[str]
+    completed_gate_count: int = Field(ge=0)
+    pending_gate_count: int = Field(ge=0)
+    gates: list[HumanGateStatus]
+    external_writes_performed: Literal[False] = False
+    non_authoritative: Literal[True] = True
+    generated_at: str
+
+
 class ConflictSeedPacket(StrictModel):
     schema_version: str = "0.1"
     conflict_seed_id: str
@@ -846,6 +881,7 @@ class ReviewPackageManifest(StrictModel):
     human_readable_review_ref: str
     artifact_refs: dict[str, str]
     required_human_gates: list[str]
+    human_gate_status_report_ref: str | None = None
     final_blockers: list[str]
     prohibited_actions: list[str]
     safety_gate_report_ref: str

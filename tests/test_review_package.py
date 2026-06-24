@@ -40,6 +40,7 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     review_text = review_path.read_text(encoding="utf-8")
     manifest = ReviewPackageManifest.model_validate(load_json(manifest_path))
     completeness = ReviewPackageCompletenessReport.model_validate(load_json(completeness_path))
+    human_gate_status = load_json(budget_dir / "human_gate_status_report.json")
     readiness = load_json(budget_dir / "matter_opening_readiness.json")
     graph = load_json(budget_dir / "evidence_graph.json")
 
@@ -88,8 +89,12 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert "not docketed; evidence:" in review_text
     assert "missing information:" in review_text
     assert "## Required Human Gates" in review_text
+    assert "Human gate status report:" in review_text
+    assert "Human gate status: pending_human_gates" in review_text
+    assert "human_intake_confirmation: completed" in review_text
     assert "human_conflicts_clearance: required" in review_text
     assert "human_budget_review: required" in review_text
+    assert "human_budget_review: pending" in review_text
     assert "human_matter_opening_authorization: required" in review_text
     assert "## Conflict Search Seed" in review_text
     assert "no_conflict_conclusion" in review_text
@@ -175,6 +180,22 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert manifest.contains_raw_payload is False
     assert manifest.external_writes_performed is False
     assert manifest.safety_gate_report_ref == str(budget_dir / "safety_gate_report.json")
+    assert manifest.human_gate_status_report_ref == str(
+        budget_dir / "human_gate_status_report.json"
+    )
+    assert manifest.artifact_refs["human_gate_status_report"].endswith(
+        "human_gate_status_report.json"
+    )
+    assert human_gate_status["status"] == "pending_human_gates"
+    assert human_gate_status["completed_gate_count"] == 1
+    assert human_gate_status["pending_gate_count"] == 4
+    assert {item["gate_id"]: item["status"] for item in human_gate_status["gates"]} == {
+        "human_intake_confirmation": "completed",
+        "human_conflicts_clearance": "pending",
+        "human_engagement_authorization": "pending",
+        "human_budget_review": "pending",
+        "human_matter_opening_authorization": "pending",
+    }
     assert manifest.contract_state_report_ref == packet.contract_state_report_ref
     assert manifest.budget_precondition_report_ref == str(
         budget_dir / "budget_precondition_report.json"

@@ -57,6 +57,18 @@
       "title": "Required Human Gates",
       "type": "array"
     },
+    "human_gate_status_report_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Human Gate Status Report Ref"
+    },
     "final_blockers": {
       "items": {
         "type": "string"

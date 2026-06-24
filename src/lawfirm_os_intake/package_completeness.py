@@ -114,6 +114,7 @@ REQUIRED_ARTIFACT_KEYS = [
     "budget_run_ledger_integrity_report",
     "human_review_outcome",
     "human_confirmation_history",
+    "human_gate_status_report",
     "contract_state_report",
     "budget_precondition_report",
     "safety_gate_report",
@@ -258,6 +259,7 @@ def build_review_package_completeness_report(
         Path(artifact_refs.get("budget_exception_lake_handoff_manifest", ""))
     )
     matter_opening_readiness = _read_json(Path(artifact_refs.get("matter_opening_readiness", "")))
+    human_gate_status_report = _read_json(Path(artifact_refs.get("human_gate_status_report", "")))
     preflight_ledger_integrity = _read_json(
         Path(artifact_refs.get("preflight_run_ledger_integrity_report", ""))
     )
@@ -288,6 +290,35 @@ def build_review_package_completeness_report(
     ]
     missing_boundary_phrases = [phrase for phrase in BOUNDARY_PHRASES if phrase not in review_text]
     missing_gates = sorted(REQUIRED_HUMAN_GATES - set(manifest.required_human_gates))
+    human_gate_rows = (
+        human_gate_status_report.get("gates")
+        if isinstance(human_gate_status_report, dict)
+        else None
+    )
+    human_gate_ids = {
+        str(item.get("gate_id"))
+        for item in human_gate_rows or []
+        if isinstance(item, dict) and item.get("gate_id")
+    }
+    human_gate_statuses = {
+        str(item.get("gate_id")): str(item.get("status"))
+        for item in human_gate_rows or []
+        if isinstance(item, dict) and item.get("gate_id")
+    }
+    human_gate_report_complete = (
+        isinstance(human_gate_status_report, dict)
+        and human_gate_status_report.get("status") == "pending_human_gates"
+        and human_gate_status_report.get("external_writes_performed") is False
+        and artifact_refs.get("human_gate_status_report") == manifest.human_gate_status_report_ref
+        and REQUIRED_HUMAN_GATES.issubset(human_gate_ids)
+        and human_gate_statuses.get("human_intake_confirmation") == "completed"
+        and all(
+            human_gate_statuses.get(gate_id) == "pending"
+            for gate_id in REQUIRED_HUMAN_GATES - {"human_intake_confirmation"}
+        )
+        and all(gate_id in review_text for gate_id in REQUIRED_HUMAN_GATES)
+        and "Human gate status report:" in review_text
+    )
     missing_blockers = sorted(REQUIRED_FINAL_BLOCKERS - set(manifest.final_blockers))
     missing_prohibited = sorted(REQUIRED_PROHIBITED_ACTIONS - set(manifest.prohibited_actions))
     blocker_detail_rows = (
@@ -407,6 +438,19 @@ def build_review_package_completeness_report(
             "Manifest preserves all required human gates.",
             [manifest_ref],
             {"missing_gates": missing_gates},
+        ),
+        _check(
+            "human_gate_status_report_complete",
+            bool(human_gate_report_complete),
+            "Human-gate status report preserves completed intake confirmation and pending approval gates.",
+            [
+                artifact_refs.get("human_gate_status_report", ""),
+                str(review_package_path),
+            ],
+            {
+                "gate_ids": sorted(human_gate_ids),
+                "gate_statuses": human_gate_statuses,
+            },
         ),
         _check(
             "final_blockers_present",

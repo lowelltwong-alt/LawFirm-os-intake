@@ -81,6 +81,8 @@ The reviewer confirms or corrects matter family, posture, principal party roles,
 
 The budget workflow records the consumed review outcome as `human_review_outcome.<confirmation_id>.json` and appends it to `human_confirmation_history.jsonl`. Outcomes of `unknown`, `needs_more_information`, `human_only`, `declined`, and `declined_or_referred` stop before budget output. Corrected confirmations use `supersedes_confirmation_id` and append a new history row rather than overwriting the prior outcome.
 
+Confirmed budget runs also write `human_gate_status_report.json`. The report records human intake confirmation as completed while conflicts clearance, engagement authorization, budget review, and matter-opening authorization remain pending gates that block their respective real-world transitions.
+
 ### 11. Budget precondition gate
 
 Before budget generation, the system verifies that the human confirmation binds to the exact preflight packet, has `confirmed` status, contains human-confirmed matter family, representation posture, and principal party roles, and carries source-bound evidence refs for both decision evidence and confirmed party roles.
@@ -113,7 +115,7 @@ It also verifies that normalized conflict-search terms, budget lines, budget sup
 
 ### 17. Review package completeness report
 
-After the safety gate and review package are written, the workflow emits `review_package_completeness_report.json`. This deterministic report checks that the manifest includes all required local artifacts, those files exist, the markdown package has the expected review sections and boundary text, required human gates, final blockers, and structured blocker details are preserved, Exception Lake readiness remains dry-run and passed, run ledgers are linked, and the package still proves no conflict clearance, engagement decision, matter opening, docketing, billing, external write, or budget submission.
+After the safety gate and review package are written, the workflow emits `review_package_completeness_report.json`. This deterministic report checks that the manifest includes all required local artifacts, those files exist, the markdown package has the expected review sections and boundary text, required human gates, human-gate status, final blockers, and structured blocker details are preserved, Exception Lake readiness remains dry-run and passed, run ledgers are linked, and the package still proves no conflict clearance, engagement decision, matter opening, docketing, billing, external write, or budget submission.
 
 A failed completeness check blocks final package acceptance.
 

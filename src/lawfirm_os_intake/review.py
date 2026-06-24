@@ -12,6 +12,7 @@ from .models import (
     ExceptionLakeHandoffManifest,
     ExceptionLakeReadinessReport,
     HumanConfirmation,
+    HumanGateStatusReport,
     HumanReviewOutcomeRecord,
     IntakePreflightPacket,
     MatterOpeningReadiness,
@@ -696,6 +697,38 @@ def _readiness_blocker_detail_lines(readiness: MatterOpeningReadiness) -> list[s
     return lines or ["- none"]
 
 
+def _human_gate_status_report_lines(
+    artifact_refs: dict[str, str],
+    report: HumanGateStatusReport | None,
+) -> list[str]:
+    path = artifact_refs.get("human_gate_status_report", "")
+    lines = [f"- Human gate status report: `{path or 'missing'}`"]
+    if report is None:
+        if not path:
+            return lines
+        try:
+            payload = load_json(Path(path))
+            report = HumanGateStatusReport.model_validate(payload)
+        except (OSError, ValueError):
+            return [*lines, "- Human gate status report details: unavailable"]
+    lines.extend(
+        [
+            f"- Human gate status: {report.status}",
+            f"- Human gates completed: {report.completed_gate_count}",
+            f"- Human gates pending: {report.pending_gate_count}",
+        ]
+    )
+    for gate in report.gates:
+        blocks = ", ".join(gate.blocks) or "none"
+        structured_refs = ", ".join(gate.structured_refs) or "none"
+        lines.append(
+            f"- {gate.gate_id}: {gate.status}; owner={gate.authority_owner}; "
+            f"completed_by_human={gate.completed_by_human}; blocks={blocks}; "
+            f"structured_refs={structured_refs}"
+        )
+    return lines
+
+
 def render_matter_opening_review_package(
     packet: IntakePreflightPacket,
     confirmation: HumanConfirmation,
@@ -713,6 +746,7 @@ def render_matter_opening_review_package(
     contract_state_report: ContractStateReport | None = None,
     model_adapter_report: ModelAdapterReport | None = None,
     human_review_outcome: HumanReviewOutcomeRecord | None = None,
+    human_gate_status_report: HumanGateStatusReport | None = None,
     budget_precondition_report: BudgetPreconditionReport | None = None,
 ) -> str:
     source_summary = packet.source_coverage_summary
@@ -812,6 +846,7 @@ def render_matter_opening_review_package(
             "## Required Human Gates",
             "",
             *_required_human_gate_lines(confirmation, conflict_seed, budget, readiness),
+            *_human_gate_status_report_lines(artifact_refs, human_gate_status_report),
             "",
             "## Conflict Search Seed",
             "",

@@ -214,3 +214,9 @@
 - Added structured `blocker_details` and `prohibited_action_details` to `matter_opening_readiness.json`.
 - The final review package now renders workflow-policy and prohibited-transition refs explaining why conflicts clearance, engagement, matter opening, workspace creation, and budget submission remain blocked.
 - The safety gate, completeness report, evidence graph, schema export, north-star test, and smoke script now fail closed if readiness blockers or prohibited actions lose structured support.
+
+## Human gate status report slice - 2026-06-24
+
+- Added `human_gate_status_report.json` so confirmed budget runs have a typed record of completed intake confirmation and pending conflicts, engagement, budget-review, and matter-opening gates.
+- The final review package now renders gate status, blocked transitions, artifact refs, and workflow refs beside the existing human-gate checklist.
+- Package completeness, schema export, north-star tests, and smoke coverage now fail closed if pending human gates are omitted or incorrectly marked complete.

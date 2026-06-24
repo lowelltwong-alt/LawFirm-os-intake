@@ -44,6 +44,7 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     budget_ledger_integrity = load_json(budget_dir / "run_ledger_integrity_report.json")
     safety = load_json(budget_dir / "safety_gate_report.json")
     readiness = load_json(budget_dir / "matter_opening_readiness.json")
+    human_gate_status = load_json(budget_dir / "human_gate_status_report.json")
     manifest = load_json(budget_dir / "review_package_manifest.json")
     completeness = load_json(budget_dir / "review_package_completeness_report.json")
     budget_preconditions = load_json(budget_dir / "budget_precondition_report.json")
@@ -93,6 +94,16 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
         "do_not_open_imanage",
         "do_not_create_matter",
         "do_not_submit_budget",
+    }
+    assert human_gate_status["status"] == "pending_human_gates"
+    assert human_gate_status["completed_gate_count"] == 1
+    assert human_gate_status["pending_gate_count"] == 4
+    assert {item["gate_id"]: item["status"] for item in human_gate_status["gates"]} == {
+        "human_intake_confirmation": "completed",
+        "human_conflicts_clearance": "pending",
+        "human_engagement_authorization": "pending",
+        "human_budget_review": "pending",
+        "human_matter_opening_authorization": "pending",
     }
     assert packet["source_coverage_summary"]["duplicate_sources"] == 1
     assert packet["source_coverage_summary"]["coverage_complete"] is False
@@ -163,6 +174,10 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     assert manifest["artifact_refs"]["preflight_model_adapter_report"].endswith(
         "model_adapter_report.json"
     )
+    assert manifest["artifact_refs"]["human_gate_status_report"].endswith(
+        "human_gate_status_report.json"
+    )
+    assert manifest["human_gate_status_report_ref"].endswith("human_gate_status_report.json")
     assert model_adapter["status"] == "passed"
     assert model_adapter["provider_call_performed"] is False
     assert model_adapter["model_calls_allowed"] is False
@@ -233,8 +248,12 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
         "### Party And Role Candidates",
         "role candidates:",
         "## Required Human Gates",
+        "Human gate status report:",
+        "Human gate status: pending_human_gates",
+        "human_intake_confirmation: completed",
         "human_conflicts_clearance: required",
         "human_budget_review: required",
+        "human_budget_review: pending",
         "Missing sources: 1",
         "Duplicate sources: 1",
         "missing information: incident_date;",
