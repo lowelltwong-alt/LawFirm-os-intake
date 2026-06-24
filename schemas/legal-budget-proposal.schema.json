@@ -222,6 +222,81 @@
       "title": "BudgetDriverEffect",
       "type": "object"
     },
+    "BudgetDriverProfileSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "case_driver_profile_id": {
+          "title": "Case Driver Profile Id",
+          "type": "string"
+        },
+        "policy_id": {
+          "title": "Policy Id",
+          "type": "string"
+        },
+        "policy_version": {
+          "title": "Policy Version",
+          "type": "string"
+        },
+        "driver_count": {
+          "minimum": 0,
+          "title": "Driver Count",
+          "type": "integer"
+        },
+        "observed_or_confirmed_driver_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Observed Or Confirmed Driver Ids",
+          "type": "array"
+        },
+        "default_driver_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Default Driver Ids",
+          "type": "array"
+        },
+        "unknown_driver_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Unknown Driver Ids",
+          "type": "array"
+        },
+        "profile_defaults_are_observed_facts": {
+          "const": false,
+          "default": false,
+          "title": "Profile Defaults Are Observed Facts",
+          "type": "boolean"
+        },
+        "context_priors_are_observed_facts": {
+          "const": false,
+          "default": false,
+          "title": "Context Priors Are Observed Facts",
+          "type": "boolean"
+        },
+        "requires_human_review": {
+          "const": true,
+          "default": true,
+          "title": "Requires Human Review",
+          "type": "boolean"
+        },
+        "not_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Not Authoritative",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "case_driver_profile_id",
+        "policy_id",
+        "policy_version",
+        "driver_count"
+      ],
+      "title": "BudgetDriverProfileSummary",
+      "type": "object"
+    },
     "BudgetGuidelineFlag": {
       "additionalProperties": false,
       "properties": {
@@ -985,6 +1060,17 @@
       },
       "title": "Unknowns",
       "type": "array"
+    },
+    "driver_profile_summary": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BudgetDriverProfileSummary"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
     },
     "driver_effects": {
       "items": {

@@ -50,6 +50,11 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     budget_submission_guard = load_json(
         Path(manifest.artifact_refs["budget_submission_guard_report"])
     )
+    budget = load_json(budget_dir / "legal_budget_proposal.json")
+    case_driver_profile = load_json(budget_dir / "case_driver_profile.json")
+    budget_review_form_text = (budget_dir / "legal_budget_review_form.md").read_text(
+        encoding="utf-8"
+    )
     readiness = load_json(budget_dir / "matter_opening_readiness.json")
     graph = load_json(budget_dir / "evidence_graph.json")
 
@@ -136,6 +141,27 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert "### Budget Supports" in review_text
     assert "practice-profile://" in review_text
     assert "workflow-policy://" in review_text
+    assert "### Driver Profile Summary" in review_text
+    assert "Case driver profile ID:" in review_text
+    assert "Profile defaults treated as observed facts: False" in review_text
+    assert "Context priors treated as observed facts: False" in review_text
+    assert "Human budget review required: True" in review_text
+    assert "### Scenario Comparison" in review_text
+    assert "early_resolution:" in review_text
+    assert "through_trial:" in review_text
+    assert "### Workbook Mapping Status" in review_text
+    assert "Template-backed workbook render attempted: False" in review_text
+    assert "Mapping report available: False" in review_text
+    assert "Required before relying on filled carrier form:" in review_text
+    assert "Workbook submission authorized: False" in review_text
+    assert "### Unresolved Budget Assumptions" in review_text
+    assert "budget unknown:" in review_text
+    assert "driver review:" in review_text
+    assert "guideline review:" in review_text
+    assert "## Driver Profile Summary" in budget_review_form_text
+    assert "## Scenario Comparison" in budget_review_form_text
+    assert "## Workbook Mapping Status" in budget_review_form_text
+    assert "## Unresolved Budget Assumptions" in budget_review_form_text
     assert "## Exception And Escalation Records" in review_text
     assert "Exception Lake readiness report:" in review_text
     assert "### Exception Lake Readiness" in review_text
@@ -277,6 +303,18 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert manifest.artifact_refs["human_confirmation_history"] == str(
         budget_dir / "human_confirmation_history.jsonl"
     )
+    assert manifest.artifact_refs["case_driver_profile"] == str(
+        budget_dir / "case_driver_profile.json"
+    )
+    assert (
+        budget["driver_profile_summary"]["case_driver_profile_id"]
+        == case_driver_profile["case_driver_profile_id"]
+    )
+    assert budget["driver_profile_summary"]["profile_defaults_are_observed_facts"] is False
+    assert budget["driver_profile_summary"]["context_priors_are_observed_facts"] is False
+    assert budget["driver_profile_summary"]["requires_human_review"] is True
+    assert budget["driver_profile_summary"]["not_authoritative"] is True
+    assert budget["driver_profile_summary"]["unknown_driver_ids"]
     assert manifest.artifact_refs["human_review_outcome"].endswith(
         f"human_review_outcome.{confirmation.confirmation_id}.json"
     )
@@ -312,6 +350,10 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert "## Candidate Alternatives" in completeness.required_sections
     assert "## Required Human Gates" in completeness.required_sections
     assert "### Budget Lines" in completeness.required_sections
+    assert "### Driver Profile Summary" in completeness.required_sections
+    assert "### Scenario Comparison" in completeness.required_sections
+    assert "### Workbook Mapping Status" in completeness.required_sections
+    assert "### Unresolved Budget Assumptions" in completeness.required_sections
     assert "### Exception Lake Readiness" in completeness.required_sections
     assert "### Run Ledger Integrity" in completeness.required_sections
     assert "### Exception Candidate Details" in completeness.required_sections
@@ -328,6 +370,7 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert "budget_submission_guard_report_complete" in {
         check.check_id for check in completeness.checks
     }
+    assert "budget_review_hardening_complete" in {check.check_id for check in completeness.checks}
     assert {check.status for check in completeness.checks} == {"passed"}
 
     ledger_events = load_jsonl(budget_dir / "run_ledger.jsonl")

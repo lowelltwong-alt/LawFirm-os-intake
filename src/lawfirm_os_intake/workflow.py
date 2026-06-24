@@ -683,6 +683,9 @@ def _find_driver_policy_path(profile_path: Path) -> Path | None:
         candidate = parent / "config" / "budget-driver-policy.yaml"
         if candidate.is_file():
             return candidate
+    repo_candidate = Path(__file__).resolve().parents[2] / "config" / "budget-driver-policy.yaml"
+    if repo_candidate.is_file():
+        return repo_candidate
     return None
 
 
@@ -882,6 +885,7 @@ def run_budget(
 
     write_json(run_dir / "human_confirmation.json", confirmation.model_dump(mode="json"))
     write_json(run_dir / "conflict_search_seed_packet.json", conflict_seed.model_dump(mode="json"))
+    write_json(run_dir / "case_driver_profile.json", case_drivers.model_dump(mode="json"))
     write_json(run_dir / "legal_budget_proposal.json", budget.model_dump(mode="json"))
     (run_dir / "legal_budget_review_form.md").write_text(
         render_budget_review_form(budget), encoding="utf-8"
@@ -933,6 +937,7 @@ def run_budget(
         "preflight_context_boundary_report": (packet.context_boundary_report_ref or ""),
         "human_confirmation": str(run_dir / "human_confirmation.json"),
         "conflict_search_seed": str(run_dir / "conflict_search_seed_packet.json"),
+        "case_driver_profile": str(run_dir / "case_driver_profile.json"),
         "legal_budget_proposal": str(run_dir / "legal_budget_proposal.json"),
         "legal_budget_review_form": str(run_dir / "legal_budget_review_form.md"),
         "matter_opening_readiness": str(run_dir / "matter_opening_readiness.json"),

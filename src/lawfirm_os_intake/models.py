@@ -814,6 +814,20 @@ class BudgetGuidelineFlag(StrictModel):
     requires_human_review: Literal[True] = True
 
 
+class BudgetDriverProfileSummary(StrictModel):
+    case_driver_profile_id: str
+    policy_id: str
+    policy_version: str
+    driver_count: int = Field(ge=0)
+    observed_or_confirmed_driver_ids: list[str] = Field(default_factory=list)
+    default_driver_ids: list[str] = Field(default_factory=list)
+    unknown_driver_ids: list[str] = Field(default_factory=list)
+    profile_defaults_are_observed_facts: Literal[False] = False
+    context_priors_are_observed_facts: Literal[False] = False
+    requires_human_review: Literal[True] = True
+    not_authoritative: Literal[True] = True
+
+
 class BudgetProposal(StrictModel):
     schema_version: str = "0.1"
     budget_proposal_id: str
@@ -836,6 +850,7 @@ class BudgetProposal(StrictModel):
     assumptions: list[str] = Field(default_factory=list)
     exclusions: list[str] = Field(default_factory=list)
     unknowns: list[str] = Field(default_factory=list)
+    driver_profile_summary: BudgetDriverProfileSummary | None = None
     driver_effects: list[BudgetDriverEffect] = Field(default_factory=list)
     guideline_flags: list[BudgetGuidelineFlag] = Field(default_factory=list)
     budget_support_items: list[BudgetSupportItem] = Field(default_factory=list)

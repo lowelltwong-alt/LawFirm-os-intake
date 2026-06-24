@@ -10,6 +10,7 @@ sys.path.insert(0, str(ROOT / "src"))
 from lawfirm_os_intake.models import (  # noqa: E402
     BlockedBudgetAttemptAuditReport,
     BudgetDriverEffect,
+    BudgetDriverProfileSummary,
     BudgetGuidelineFlag,
     BudgetProposal,
     BudgetPreconditionReport,
@@ -84,6 +85,7 @@ MODELS = {
     "matter-opening-readiness.schema.json": MatterOpeningReadiness,
     "legal-budget-proposal.schema.json": BudgetProposal,
     "budget-driver-effect.schema.json": BudgetDriverEffect,
+    "budget-driver-profile-summary.schema.json": BudgetDriverProfileSummary,
     "budget-guideline-flag.schema.json": BudgetGuidelineFlag,
     "budget-scenario-set.schema.json": BudgetScenarioSet,
     "budget-support-item.schema.json": BudgetSupportItem,

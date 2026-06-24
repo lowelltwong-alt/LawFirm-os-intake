@@ -100,6 +100,7 @@ The demo emits:
     |-- human_gate_status_report.json
     |-- budget_submission_guard_report.json
     |-- conflict_search_seed_packet.json
+    |-- case_driver_profile.json
     |-- legal_budget_proposal.json
     |-- legal_budget_review_form.md
     |-- matter_opening_readiness.json
@@ -131,6 +132,8 @@ Budget runs also write a typed human review outcome record and append it to `hum
 
 Budget runs also write `budget_submission_guard_report.json`. This local proof artifact records that the budget remains `proposed_for_human_review`, is not authorized for client or carrier submission, has no client submission, no carrier submission, no billing handoff, no external writes, and remains blocked by the pending `human_budget_review` gate.
 
+Budget runs now also write `case_driver_profile.json` and embed a `BudgetDriverProfileSummary` in `legal_budget_proposal.json`. The review package and standalone budget review form render observed or human-confirmed drivers separately from synthetic profile defaults and unknown drivers, show that profile defaults and context priors are not observed facts, show scenario comparison, show workbook mapping status, and surface unresolved budget assumptions before any reviewer relies on a carrier-form render.
+
 The budget proposal now embeds a local `BudgetScenarioSet` with `early_resolution`, `standard`, and `through_trial` branches. The compatibility fields on `BudgetProposal` (`lines`, subtotal fields, calculation report, and total) map to the selected `standard` scenario, while the scenario set preserves the wider branch comparison, ranges, included phases, and included UTBMS code candidates for human review. Every branch remains proposed for human review only and is not authorized for client or carrier submission.
 
 Budget proposals also embed local `BudgetDriverEffect` and `BudgetGuidelineFlag` records. Severity, liability, and venue drivers may apply bounded synthetic intensity multipliers; coverage posture is surfaced as a review boundary; and synthetic guideline caps become review flags. Profile defaults are labeled as defaults, never observed facts, and guideline flags do not rewrite budget rates, hours, expenses, or totals.
@@ -161,7 +164,7 @@ The preflight run also writes `ingestion_result.json`, a Python reference artifa
 
 The budget-stage `evidence_graph.json` carries the provenance forward into human review outcomes, conflict-search terms, budget lines, budget support items, matter-opening blockers, and prohibited-action guardrails. Structured refs such as human confirmations, synthetic practice-profile entries, workflow-policy references, and prohibited-transition policy references are represented separately from observed source evidence.
 
-The standalone `legal_budget_review_form.md` also renders itemized standard-scenario budget lines with hours, ranges, rates, synthetic-rate labels, expenses, assumptions, evidence refs, the scenario-set comparison, budget driver effects, guideline flags, and a submission boundary. It is an internal review surface only; it does not authorize client or carrier delivery.
+The standalone `legal_budget_review_form.md` also renders itemized standard-scenario budget lines with hours, ranges, rates, synthetic-rate labels, expenses, assumptions, evidence refs, driver profile summary, scenario comparison, budget driver effects, guideline flags, workbook mapping status, unresolved budget assumptions, and a submission boundary. It is an internal review surface only; it does not authorize client or carrier delivery.
 
 ## Practice context is configurable, not hidden prompt text
 

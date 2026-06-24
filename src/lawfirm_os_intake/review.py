@@ -181,6 +181,14 @@ def render_budget_review_form(budget: BudgetProposal) -> str:
             "",
             *_budget_support_lines(budget),
             "",
+            "## Driver Profile Summary",
+            "",
+            *_budget_driver_profile_summary_lines(budget),
+            "",
+            "## Scenario Comparison",
+            "",
+            *_budget_scenario_lines(budget),
+            "",
             "## Scenario Set",
             "",
             *_budget_scenario_lines(budget),
@@ -192,6 +200,14 @@ def render_budget_review_form(budget: BudgetProposal) -> str:
             "## Guideline Flags",
             "",
             *_budget_guideline_flag_lines(budget),
+            "",
+            "## Workbook Mapping Status",
+            "",
+            *_budget_workbook_mapping_status_lines(),
+            "",
+            "## Unresolved Budget Assumptions",
+            "",
+            *_budget_unresolved_assumption_lines(budget),
         ]
     )
 
@@ -220,6 +236,32 @@ def render_budget_review_form(budget: BudgetProposal) -> str:
         ]
     )
     return "\n".join(lines)
+
+
+def _budget_driver_profile_summary_lines(budget: BudgetProposal) -> list[str]:
+    summary = budget.driver_profile_summary
+    if summary is None:
+        return [
+            "- Case driver profile: not generated",
+            "- Profile defaults treated as observed facts: False",
+            "- Context priors treated as observed facts: False",
+            "- Human budget review required: True",
+        ]
+    observed = ", ".join(summary.observed_or_confirmed_driver_ids) or "none"
+    defaults = ", ".join(summary.default_driver_ids) or "none"
+    unknowns = ", ".join(summary.unknown_driver_ids) or "none"
+    return [
+        f"- Case driver profile ID: {summary.case_driver_profile_id}",
+        f"- Policy: {summary.policy_id}@{summary.policy_version}",
+        f"- Driver count: {summary.driver_count}",
+        f"- Observed or human-confirmed drivers: {observed}",
+        f"- Profile default drivers needing review: {defaults}",
+        f"- Unknown drivers needing review: {unknowns}",
+        f"- Profile defaults treated as observed facts: {summary.profile_defaults_are_observed_facts}",
+        f"- Context priors treated as observed facts: {summary.context_priors_are_observed_facts}",
+        f"- Human budget review required: {summary.requires_human_review}",
+        f"- Authoritative budget canon: {not summary.not_authoritative}",
+    ]
 
 
 def _budget_scenario_lines(budget: BudgetProposal) -> list[str]:
@@ -271,6 +313,65 @@ def _budget_guideline_flag_lines(budget: BudgetProposal) -> list[str]:
             f"{flag.status}; current={flag.current_value}; threshold={flag.threshold_value}; "
             f"rewrites budget: {flag.rewrites_budget}; support: {support}; note: {flag.note}"
         )
+    return lines or ["- none"]
+
+
+def _budget_workbook_mapping_status_lines(
+    artifact_refs: dict[str, str] | None = None,
+) -> list[str]:
+    mapping_ref = (artifact_refs or {}).get("budget_form_mapping_report", "")
+    if not mapping_ref:
+        return [
+            "- Template-backed workbook render attempted: False",
+            "- Mapping report available: False",
+            "- Required before relying on filled carrier form: budget_form_mapping_report.json with status=passed",
+            "- Workbook submission authorized: False",
+            "- Sanitized workbook committed or embedded in intake outputs: False",
+        ]
+    lines = [f"- Mapping report: `{mapping_ref}`"]
+    try:
+        payload = load_json(Path(mapping_ref))
+    except (OSError, ValueError):
+        return [
+            *lines,
+            "- Mapping report status: unavailable",
+            "- Workbook submission authorized: False",
+        ]
+    if not isinstance(payload, dict):
+        return [
+            *lines,
+            "- Mapping report status: unavailable",
+            "- Workbook submission authorized: False",
+        ]
+    return [
+        *lines,
+        f"- Mapping report status: {payload.get('status', 'unknown')}",
+        f"- Template hash: {payload.get('template_sha256', 'unknown')}",
+        f"- Sheet name: {payload.get('sheet_name', 'unknown')}",
+        "- Required before relying on filled carrier form: budget_form_mapping_report.json with status=passed",
+        "- Workbook submission authorized: "
+        f"{not payload.get('not_authorized_for_client_submission', True)}",
+        f"- Formula checks passed: {payload.get('formula_checks_passed', 'unknown')}",
+    ]
+
+
+def _budget_unresolved_assumption_lines(budget: BudgetProposal) -> list[str]:
+    lines: list[str] = []
+    for unknown in budget.unknowns:
+        lines.append(f"- budget unknown: {unknown}")
+    for effect in budget.driver_effects:
+        if effect.effect_type == "unknown_driver" or effect.provenance == "profile_default":
+            value = "unknown" if effect.driver_value is None else str(effect.driver_value)
+            lines.append(
+                f"- driver review: {effect.driver_id}={value}; provenance={effect.provenance}; "
+                f"applied={effect.applied}; note={effect.note}"
+            )
+    for flag in budget.guideline_flags:
+        if flag.status != "not_triggered":
+            lines.append(
+                f"- guideline review: {flag.constraint_id}; status={flag.status}; "
+                f"rewrites_budget={flag.rewrites_budget}; note={flag.note}"
+            )
     return lines or ["- none"]
 
 
@@ -1112,6 +1213,12 @@ def render_matter_opening_review_package(
             "### Budget Supports",
             *_budget_support_lines(budget),
             "",
+            "### Driver Profile Summary",
+            *_budget_driver_profile_summary_lines(budget),
+            "",
+            "### Scenario Comparison",
+            *_budget_scenario_lines(budget),
+            "",
             "### Scenario Set",
             *_budget_scenario_lines(budget),
             "",
@@ -1120,6 +1227,12 @@ def render_matter_opening_review_package(
             "",
             "### Guideline Flags",
             *_budget_guideline_flag_lines(budget),
+            "",
+            "### Workbook Mapping Status",
+            *_budget_workbook_mapping_status_lines(artifact_refs),
+            "",
+            "### Unresolved Budget Assumptions",
+            *_budget_unresolved_assumption_lines(budget),
             "",
             "## Exception And Escalation Records",
             "",

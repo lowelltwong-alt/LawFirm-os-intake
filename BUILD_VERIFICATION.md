@@ -4,7 +4,7 @@ Verified in the artifact build environment on 2026-06-24:
 
 ```text
 python scripts/export_schemas.py
-# exported 43 schemas
+# exported 44 schemas
 
 python scripts/validate_repo.py
 # repository validation passed
@@ -79,6 +79,8 @@ Budget runs now also emit `budget_submission_guard_report.json`, proving the bud
 Budget proposals now embed `BudgetScenarioSet` with `early_resolution`, `standard`, and `through_trial` branches. The compatibility proposal fields map to `standard`, while the review forms render the branch comparison, ranges, included phases, included UTBMS code candidates, monotonic ordering, and non-submission boundary.
 
 Budget proposals now also embed `BudgetDriverEffect` and `BudgetGuidelineFlag` records. Severity, liability, and venue can apply bounded synthetic intensity multipliers, coverage posture remains a review boundary, and synthetic guideline caps produce human-review flags without rewriting rates, hours, expenses, or totals. Profile defaults are labeled as defaults rather than observed facts.
+
+Budget runs now also write `case_driver_profile.json` and embed `BudgetDriverProfileSummary` in `legal_budget_proposal.json`. The review package and standalone budget form render driver profile summary, scenario comparison, workbook mapping status, and unresolved budget assumptions, and package completeness fails closed if those surfaces or non-observed-fact boundaries drift.
 
 The insurance-defense profile now includes a second synthetic matter family, `auto_liability_defense`, with its own UTBMS-coded template and driver defaults. The auto/BI fixture exercises preflight ranking, human confirmation binding, driver resolution, budget generation, scenario set, review package creation, and the same non-submission boundary as the med-mal fixture.
 

@@ -34,6 +34,10 @@ REQUIRED_REVIEW_SECTIONS = [
     "### Calculation Summary",
     "### Budget Lines",
     "### Budget Supports",
+    "### Driver Profile Summary",
+    "### Scenario Comparison",
+    "### Workbook Mapping Status",
+    "### Unresolved Budget Assumptions",
     "## Exception And Escalation Records",
     "### Exception Lake Readiness",
     "### Exception Lake Handoff",
@@ -60,6 +64,10 @@ REQUIRED_LINKED_REVIEW_FORM_SECTIONS = {
         "## Calculation Report",
         "## Budget Lines",
         "## Evidence-Bound Budget Supports",
+        "## Driver Profile Summary",
+        "## Scenario Comparison",
+        "## Workbook Mapping Status",
+        "## Unresolved Budget Assumptions",
         "## Review Checks",
         "## Submission Boundary",
     ],
@@ -106,6 +114,7 @@ REQUIRED_ARTIFACT_KEYS = [
     "preflight_deadline_docketing_guard_report",
     "human_confirmation",
     "conflict_search_seed",
+    "case_driver_profile",
     "legal_budget_proposal",
     "legal_budget_review_form",
     "matter_opening_readiness",
@@ -275,6 +284,8 @@ def build_review_package_completeness_report(
     budget_submission_guard_report = _read_json(
         Path(artifact_refs.get("budget_submission_guard_report", ""))
     )
+    legal_budget_proposal = _read_json(Path(artifact_refs.get("legal_budget_proposal", "")))
+    case_driver_profile = _read_json(Path(artifact_refs.get("case_driver_profile", "")))
     deadline_docketing_guard_report = _read_json(
         Path(artifact_refs.get("preflight_deadline_docketing_guard_report", ""))
     )
@@ -530,6 +541,39 @@ def build_review_package_completeness_report(
         and "context_influence_not_observed_fact" in review_text
         and "human_confirmation_required_for_context_ranked_candidates" in review_text
     )
+    driver_profile_summary = (
+        legal_budget_proposal.get("driver_profile_summary")
+        if isinstance(legal_budget_proposal, dict)
+        else None
+    )
+    workbook_mapping_visible = (
+        "### Workbook Mapping Status" in review_text
+        and "Workbook submission authorized: False" in review_text
+        and (
+            "Mapping report available: False" in review_text
+            or "Mapping report status:" in review_text
+        )
+        and "Required before relying on filled carrier form:" in review_text
+    )
+    budget_review_hardening_complete = (
+        isinstance(driver_profile_summary, dict)
+        and isinstance(case_driver_profile, dict)
+        and driver_profile_summary.get("case_driver_profile_id")
+        == case_driver_profile.get("case_driver_profile_id")
+        and driver_profile_summary.get("profile_defaults_are_observed_facts") is False
+        and driver_profile_summary.get("context_priors_are_observed_facts") is False
+        and driver_profile_summary.get("requires_human_review") is True
+        and driver_profile_summary.get("not_authoritative") is True
+        and artifact_refs.get("case_driver_profile")
+        and "### Driver Profile Summary" in review_text
+        and "### Scenario Comparison" in review_text
+        and workbook_mapping_visible
+        and "### Unresolved Budget Assumptions" in review_text
+        and "Profile defaults treated as observed facts: False" in review_text
+        and "Context priors treated as observed facts: False" in review_text
+        and "Human budget review required: True" in review_text
+        and "budget unknown:" in review_text
+    )
     missing_blockers = sorted(REQUIRED_FINAL_BLOCKERS - set(manifest.final_blockers))
     missing_prohibited = sorted(REQUIRED_PROHIBITED_ACTIONS - set(manifest.prohibited_actions))
     blocker_detail_rows = (
@@ -757,6 +801,21 @@ def build_review_package_completeness_report(
                     if context_boundary_report
                     else None
                 ),
+            },
+        ),
+        _check(
+            "budget_review_hardening_complete",
+            bool(budget_review_hardening_complete),
+            "Budget review package renders driver profile, scenario comparison, workbook mapping posture, and unresolved assumptions.",
+            [
+                artifact_refs.get("legal_budget_proposal", ""),
+                artifact_refs.get("case_driver_profile", ""),
+                str(review_package_path),
+            ],
+            {
+                "driver_profile_summary_present": isinstance(driver_profile_summary, dict),
+                "case_driver_profile_ref": artifact_refs.get("case_driver_profile", ""),
+                "workbook_mapping_visible": workbook_mapping_visible,
             },
         ),
         _check(

@@ -6,6 +6,7 @@ from .drivers import CaseDriverProfile
 from .models import (
     BudgetCalculationReport,
     BudgetDriverEffect,
+    BudgetDriverProfileSummary,
     BudgetGuidelineFlag,
     BudgetLine,
     BudgetProposal,
@@ -166,6 +167,22 @@ def _drivers_by_id(case_drivers: CaseDriverProfile | None) -> dict[str, Any]:
     if case_drivers is None:
         return {}
     return {driver.driver_id: driver for driver in case_drivers.drivers}
+
+
+def _driver_profile_summary(
+    case_drivers: CaseDriverProfile | None,
+) -> BudgetDriverProfileSummary | None:
+    if case_drivers is None:
+        return None
+    return BudgetDriverProfileSummary(
+        case_driver_profile_id=case_drivers.case_driver_profile_id,
+        policy_id=case_drivers.policy_id,
+        policy_version=case_drivers.policy_version,
+        driver_count=len(case_drivers.drivers),
+        observed_or_confirmed_driver_ids=case_drivers.observed_or_confirmed_driver_ids,
+        default_driver_ids=case_drivers.default_driver_ids,
+        unknown_driver_ids=case_drivers.unknown_driver_ids,
+    )
 
 
 def _driver_effect_key(effect: BudgetDriverEffect) -> tuple[str, str | None, str, tuple[str, ...]]:
@@ -717,6 +734,7 @@ def build_budget_proposal(
             ),
             unknowns=[unknown],
             exclusions=exclusions,
+            driver_profile_summary=_driver_profile_summary(case_drivers),
             budget_support_items=[
                 _support_item(
                     "unknown",
@@ -932,6 +950,7 @@ def build_budget_proposal(
         assumptions=assumptions,
         exclusions=exclusions,
         unknowns=unknowns,
+        driver_profile_summary=_driver_profile_summary(case_drivers),
         driver_effects=driver_effects,
         guideline_flags=guideline_flags,
         budget_support_items=support_items,

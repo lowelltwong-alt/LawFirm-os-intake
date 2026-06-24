@@ -46,9 +46,14 @@ Add a second synthetic litigation family, likely auto/BI defense, to prove the e
 
 ## 5. Human Review Hardening
 
-Status: pending.
+Status: implemented for the current synthetic slice.
 
 Render driver profile, scenario comparison, workbook mapping status, and unresolved budget assumptions in the final review package.
+
+- Budget runs now write `case_driver_profile.json` and embed a `BudgetDriverProfileSummary` in `legal_budget_proposal.json`.
+- `legal_budget_review_form.md` and `matter_opening_review_package.md` render driver profile summary, scenario comparison, workbook mapping status, and unresolved budget assumptions.
+- Workbook mapping status fails closed as review posture: no template-backed workbook render is assumed unless a mapping report exists, and workbook submission remains unauthorized.
+- `ReviewPackageCompletenessReport` now requires those human-review sections and verifies the driver-profile summary, non-observed-fact boundary, workbook mapping posture, and unresolved budget assumptions before package acceptance.
 
 ## 6. Exception Lake Package
 

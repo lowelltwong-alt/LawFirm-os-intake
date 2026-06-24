@@ -1,5 +1,11 @@
 # Recent Work
 
+## Human-review hardening slice - 2026-06-24
+
+- Budget runs now write `case_driver_profile.json` and embed `BudgetDriverProfileSummary` in `legal_budget_proposal.json`.
+- The standalone budget review form and consolidated matter-opening review package render driver profile summary, scenario comparison, workbook mapping status, and unresolved budget assumptions.
+- Package completeness now fails closed if those human-review surfaces, non-observed-fact boundaries, workbook non-submission posture, or case-driver artifact linkage drift.
+
 ## Starter creation — 2026-06-23
 
 - Established remote target `lowelltwong-alt/LawFirm-os-intake`.
