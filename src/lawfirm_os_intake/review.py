@@ -8,6 +8,7 @@ from .models import (
     BudgetProposal,
     ConflictSeedPacket,
     ContractStateReport,
+    DeadlineDocketingGuardReport,
     EvidenceGraph,
     ExceptionLakeHandoffManifest,
     ExceptionLakeReadinessReport,
@@ -729,6 +730,50 @@ def _human_gate_status_report_lines(
     return lines
 
 
+def _deadline_docketing_guard_report_lines(
+    artifact_refs: dict[str, str],
+    report: DeadlineDocketingGuardReport | None,
+) -> list[str]:
+    path = artifact_refs.get("preflight_deadline_docketing_guard_report", "")
+    lines = [f"- Deadline docketing guard report: `{path or 'missing'}`"]
+    if report is None:
+        if not path:
+            return lines
+        try:
+            payload = load_json(Path(path))
+            report = DeadlineDocketingGuardReport.model_validate(payload)
+        except (OSError, ValueError):
+            return [*lines, "- Deadline docketing guard report details: unavailable"]
+    lines.extend(
+        [
+            f"- Deadline docketing guard status: {report.status}",
+            f"- Deadline candidates under guard: {report.candidate_count}",
+            f"- Deadline candidates requiring review: {report.review_required_count}",
+            f"- Docketing action performed: {report.docketing_action_performed}",
+            f"- Docketing action allowed: {report.docketing_action_allowed}",
+            f"- Deadline guard external writes performed: {report.external_writes_performed}",
+            f"- Deadline proposed next gate: {report.proposed_next_gate}",
+        ]
+    )
+    for item in report.candidate_items:
+        structured_refs = ", ".join(item.structured_refs) or "none"
+        lines.append(
+            f"- deadline guard item: {item.expression}; "
+            f"type={item.deadline_type_candidate}; gate={item.proposed_next_gate}; "
+            f"requires_human_verification={item.requires_human_verification}; "
+            f"source_evidence_status={item.source_evidence_status}; "
+            f"evidence={_refs_text(item.evidence_refs, limit=3)}; "
+            f"structured_refs={structured_refs}"
+        )
+    for check in report.checks:
+        structured_refs = ", ".join(check.structured_refs) or "none"
+        lines.append(
+            f"- deadline guard check {check.check_id}: {check.status}; "
+            f"structured_refs={structured_refs}"
+        )
+    return lines
+
+
 def render_matter_opening_review_package(
     packet: IntakePreflightPacket,
     confirmation: HumanConfirmation,
@@ -747,6 +792,7 @@ def render_matter_opening_review_package(
     model_adapter_report: ModelAdapterReport | None = None,
     human_review_outcome: HumanReviewOutcomeRecord | None = None,
     human_gate_status_report: HumanGateStatusReport | None = None,
+    deadline_docketing_guard_report: DeadlineDocketingGuardReport | None = None,
     budget_precondition_report: BudgetPreconditionReport | None = None,
 ) -> str:
     source_summary = packet.source_coverage_summary
@@ -840,6 +886,7 @@ def render_matter_opening_review_package(
             f"- Duplicate sources: {source_summary.get('duplicate_sources')}",
             *_lines_or_none(missing_lines),
             *_lines_or_none(deadline_lines),
+            *_deadline_docketing_guard_report_lines(artifact_refs, deadline_docketing_guard_report),
             *_lines_or_none(finding_lines),
             *_lines_or_none([f"- budget unknown: {item}" for item in budget.unknowns]),
             "",

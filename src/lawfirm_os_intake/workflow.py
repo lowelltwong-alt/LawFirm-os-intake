@@ -8,6 +8,10 @@ from .budget import build_budget_proposal
 from .confirmation import build_human_review_outcome_record
 from .contract_state import build_contract_state_report, enforce_contract_state
 from .context import build_effective_context, load_profile
+from .deadline_guard import (
+    build_deadline_docketing_guard_report,
+    enforce_deadline_docketing_guard_report,
+)
 from .evidence import build_preflight_graph, extend_graph_with_budget
 from .exception_handoff import (
     build_exception_lake_handoff_manifest,
@@ -30,6 +34,7 @@ from .models import (
     ConflictSearchTerm,
     ConflictSeedPacket,
     ContractStateReport,
+    DeadlineDocketingGuardReport,
     EvidenceRef,
     ExceptionLakeCandidate,
     FixtureGoldSpec,
@@ -385,6 +390,7 @@ def run_preflight(
     exception_readiness_report_path = run_dir / "exception_lake_readiness_report.json"
     exception_handoff_manifest_path = run_dir / "exception_lake_handoff_manifest.json"
     run_ledger_integrity_report_path = run_dir / "run_ledger_integrity_report.json"
+    deadline_docketing_guard_report_path = run_dir / "deadline_docketing_guard_report.json"
     fixture_gold_report_path = run_dir / "fixture_gold_report.json" if fixture_gold else None
     packet = IntakePreflightPacket(
         packet_id=new_id("intake"),
@@ -418,10 +424,17 @@ def run_preflight(
         exception_lake_readiness_report_ref=str(exception_readiness_report_path),
         exception_lake_handoff_manifest_ref=str(exception_handoff_manifest_path),
         run_ledger_integrity_report_ref=str(run_ledger_integrity_report_path),
+        deadline_docketing_guard_report_ref=str(deadline_docketing_guard_report_path),
         intake_review_form_ref=str(review_form_path),
     )
     if strict_evidence:
         _validate_refs(packet)
+    deadline_docketing_guard_report = build_deadline_docketing_guard_report(packet)
+    enforce_deadline_docketing_guard_report(deadline_docketing_guard_report)
+    write_json(
+        deadline_docketing_guard_report_path,
+        deadline_docketing_guard_report.model_dump(mode="json"),
+    )
     graph = build_preflight_graph(packet)
     exception_candidates = build_preflight_exception_candidates(packet)
     exception_candidates_path.touch()
@@ -474,6 +487,7 @@ def run_preflight(
                 str(ingestion_result_path),
                 str(ingestion_volume_profile_path),
                 str(rust_ingestion_readiness_report_path),
+                str(deadline_docketing_guard_report_path),
                 str(exception_readiness_report_path),
                 str(exception_handoff_manifest_path),
             ],
@@ -844,6 +858,9 @@ def run_budget(
         ),
         "preflight_model_adapter_report": packet.model_adapter_report_ref or "",
         "preflight_intake_review_form": packet.intake_review_form_ref or "",
+        "preflight_deadline_docketing_guard_report": (
+            packet.deadline_docketing_guard_report_ref or ""
+        ),
         "human_confirmation": str(run_dir / "human_confirmation.json"),
         "conflict_search_seed": str(run_dir / "conflict_search_seed_packet.json"),
         "legal_budget_proposal": str(run_dir / "legal_budget_proposal.json"),
@@ -938,6 +955,13 @@ def run_budget(
     model_adapter_report = (
         ModelAdapterReport.model_validate(load_json(packet.model_adapter_report_ref))
         if packet.model_adapter_report_ref
+        else None
+    )
+    deadline_docketing_guard_report = (
+        DeadlineDocketingGuardReport.model_validate(
+            load_json(packet.deadline_docketing_guard_report_ref)
+        )
+        if packet.deadline_docketing_guard_report_ref
         else None
     )
     append_jsonl(
@@ -1045,6 +1069,7 @@ def run_budget(
             model_adapter_report=model_adapter_report,
             human_review_outcome=human_review_outcome,
             human_gate_status_report=human_gate_status_report,
+            deadline_docketing_guard_report=deadline_docketing_guard_report,
             budget_precondition_report=budget_precondition_report,
         ),
         encoding="utf-8",

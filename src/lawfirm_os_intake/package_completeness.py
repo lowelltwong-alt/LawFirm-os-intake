@@ -95,6 +95,7 @@ REQUIRED_ARTIFACT_KEYS = [
     "preflight_rust_ingestion_readiness_report",
     "preflight_model_adapter_report",
     "preflight_intake_review_form",
+    "preflight_deadline_docketing_guard_report",
     "human_confirmation",
     "conflict_search_seed",
     "legal_budget_proposal",
@@ -258,8 +259,12 @@ def build_review_package_completeness_report(
     exception_handoff_manifest = _read_json(
         Path(artifact_refs.get("budget_exception_lake_handoff_manifest", ""))
     )
+    preflight_packet = _read_json(Path(artifact_refs.get("preflight_packet", "")))
     matter_opening_readiness = _read_json(Path(artifact_refs.get("matter_opening_readiness", "")))
     human_gate_status_report = _read_json(Path(artifact_refs.get("human_gate_status_report", "")))
+    deadline_docketing_guard_report = _read_json(
+        Path(artifact_refs.get("preflight_deadline_docketing_guard_report", ""))
+    )
     preflight_ledger_integrity = _read_json(
         Path(artifact_refs.get("preflight_run_ledger_integrity_report", ""))
     )
@@ -318,6 +323,77 @@ def build_review_package_completeness_report(
         )
         and all(gate_id in review_text for gate_id in REQUIRED_HUMAN_GATES)
         and "Human gate status report:" in review_text
+    )
+    deadline_guard_items = (
+        deadline_docketing_guard_report.get("candidate_items")
+        if isinstance(deadline_docketing_guard_report, dict)
+        else None
+    )
+    deadline_guard_checks = (
+        deadline_docketing_guard_report.get("checks")
+        if isinstance(deadline_docketing_guard_report, dict)
+        else None
+    )
+    deadline_guard_candidate_count = (
+        deadline_docketing_guard_report.get("candidate_count")
+        if isinstance(deadline_docketing_guard_report, dict)
+        else None
+    )
+    deadline_guard_review_required_count = (
+        deadline_docketing_guard_report.get("review_required_count")
+        if isinstance(deadline_docketing_guard_report, dict)
+        else None
+    )
+    deadline_guard_item_ids = {
+        str(item.get("deadline_candidate_id"))
+        for item in deadline_guard_items or []
+        if isinstance(item, dict) and item.get("deadline_candidate_id")
+    }
+    packet_deadline_rows = (
+        preflight_packet.get("deadline_candidates") if isinstance(preflight_packet, dict) else None
+    )
+    packet_deadline_ids = {
+        str(item.get("deadline_candidate_id"))
+        for item in packet_deadline_rows or []
+        if isinstance(item, dict) and item.get("deadline_candidate_id")
+    }
+    deadline_guard_passed_checks = {
+        str(item.get("check_id"))
+        for item in deadline_guard_checks or []
+        if isinstance(item, dict) and item.get("status") == "passed" and item.get("check_id")
+    }
+    deadline_guard_report_complete = (
+        isinstance(deadline_docketing_guard_report, dict)
+        and deadline_docketing_guard_report.get("status") == "passed"
+        and deadline_docketing_guard_report.get("docketing_action_performed") is False
+        and deadline_docketing_guard_report.get("docketing_action_allowed") is False
+        and deadline_docketing_guard_report.get("external_writes_performed") is False
+        and deadline_docketing_guard_report.get("non_authoritative") is True
+        and deadline_docketing_guard_report.get("proposed_next_gate") == "human_deadline_review"
+        and deadline_guard_candidate_count == deadline_guard_review_required_count
+        and deadline_guard_candidate_count == len(packet_deadline_ids)
+        and deadline_guard_item_ids == packet_deadline_ids
+        and isinstance(deadline_guard_items, list)
+        and isinstance(deadline_guard_checks, list)
+        and {
+            "deadline_candidates_source_bound",
+            "deadline_candidates_require_human_review",
+            "deadline_docketing_forbidden_by_policy",
+            "deadline_docketing_not_performed",
+        }.issubset(deadline_guard_passed_checks)
+        and all(
+            isinstance(item, dict)
+            and item.get("requires_human_verification") is True
+            and item.get("proposed_next_gate") == "human_deadline_review"
+            and item.get("source_evidence_status") == "source_bound_candidate"
+            and item.get("evidence_refs")
+            and str(item.get("expression")) in review_text
+            for item in deadline_guard_items
+        )
+        and "Deadline docketing guard report:" in review_text
+        and "Docketing action performed: False" in review_text
+        and "Docketing action allowed: False" in review_text
+        and "human_deadline_review" in review_text
     )
     missing_blockers = sorted(REQUIRED_FINAL_BLOCKERS - set(manifest.final_blockers))
     missing_prohibited = sorted(REQUIRED_PROHIBITED_ACTIONS - set(manifest.prohibited_actions))
@@ -450,6 +526,22 @@ def build_review_package_completeness_report(
             {
                 "gate_ids": sorted(human_gate_ids),
                 "gate_statuses": human_gate_statuses,
+            },
+        ),
+        _check(
+            "deadline_docketing_guard_report_complete",
+            bool(deadline_guard_report_complete),
+            "Deadline guard report preserves source-bound review-only candidates and no docketing.",
+            [
+                artifact_refs.get("preflight_deadline_docketing_guard_report", ""),
+                str(review_package_path),
+            ],
+            {
+                "deadline_candidate_ids": sorted(deadline_guard_item_ids),
+                "packet_deadline_candidate_ids": sorted(packet_deadline_ids),
+                "candidate_count": deadline_guard_candidate_count,
+                "review_required_count": deadline_guard_review_required_count,
+                "passed_checks": sorted(deadline_guard_passed_checks),
             },
         ),
         _check(

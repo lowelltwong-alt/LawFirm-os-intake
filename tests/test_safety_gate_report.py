@@ -73,6 +73,7 @@ def test_budget_run_writes_passing_safety_gate_report(tmp_path, repo_root):
     assert "budget_texts_have_support_items" in {check.check_id for check in report.checks}
     assert "matter_opening_blockers_supported" in {check.check_id for check in report.checks}
     assert "prohibited_actions_supported" in {check.check_id for check in report.checks}
+    assert "deadline_guard_report_carried_forward" in {check.check_id for check in report.checks}
 
 
 def test_safety_gate_fails_closed_on_forbidden_conflict_conclusion(tmp_path, repo_root):

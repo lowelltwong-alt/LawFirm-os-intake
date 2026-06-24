@@ -29,6 +29,7 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     ingestion_volume = load_json(preflight_dir / "ingestion_volume_profile.json")
     contract_state = load_json(preflight_dir / "contract_state_report.json")
     model_adapter = load_json(preflight_dir / "model_adapter_report.json")
+    deadline_guard = load_json(preflight_dir / "deadline_docketing_guard_report.json")
     preflight_exceptions = load_jsonl(preflight_dir / "exception_lake_candidates.jsonl")
     preflight_exception_readiness = load_json(
         preflight_dir / "exception_lake_readiness_report.json"
@@ -70,7 +71,15 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     assert "python_reference_golden_parity" in ingestion_volume["required_rust_transition_gates"]
     assert len(ingestion_result["segment_evidence_refs"]) == len(ingestion_result["segments"])
     assert packet["contract_state_report_ref"].endswith("contract_state_report.json")
+    assert packet["deadline_docketing_guard_report_ref"].endswith(
+        "deadline_docketing_guard_report.json"
+    )
     assert contract_state["status"] == "passed"
+    assert deadline_guard["status"] == "passed"
+    assert deadline_guard["docketing_action_performed"] is False
+    assert deadline_guard["docketing_action_allowed"] is False
+    assert deadline_guard["external_writes_performed"] is False
+    assert deadline_guard["review_required_count"] == deadline_guard["candidate_count"]
     assert confirmation["decision_evidence_refs"]
     assert all(party["evidence_refs"] for party in confirmation["confirmed_parties"])
     assert confirmation_history[0]["confirmation_id"] == confirmation["confirmation_id"]
@@ -177,6 +186,9 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     assert manifest["artifact_refs"]["human_gate_status_report"].endswith(
         "human_gate_status_report.json"
     )
+    assert manifest["artifact_refs"]["preflight_deadline_docketing_guard_report"].endswith(
+        "deadline_docketing_guard_report.json"
+    )
     assert manifest["human_gate_status_report_ref"].endswith("human_gate_status_report.json")
     assert model_adapter["status"] == "passed"
     assert model_adapter["provider_call_performed"] is False
@@ -188,6 +200,9 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     assert completeness["status"] == "passed"
     assert completeness["review_package_id"] == manifest["review_package_id"]
     assert {check["status"] for check in completeness["checks"]} == {"passed"}
+    assert "deadline_docketing_guard_report_complete" in {
+        check["check_id"] for check in completeness["checks"]
+    }
     assert manifest["artifact_refs"]["budget_exception_lake_readiness_report"].endswith(
         "exception_lake_readiness_report.json"
     )
@@ -259,6 +274,12 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
         "missing information: incident_date;",
         "missing information: jurisdiction;",
         "not docketed; evidence:",
+        "Deadline docketing guard report:",
+        "Deadline docketing guard status: passed",
+        "Docketing action performed: False",
+        "Docketing action allowed: False",
+        "Deadline proposed next gate: human_deadline_review",
+        "deadline guard check deadline_docketing_not_performed: passed",
         "prompt_injection_source_content",
         "critic_role_candidates_ambiguous",
         "prohibited_transition_attempted_deadline_docketed",

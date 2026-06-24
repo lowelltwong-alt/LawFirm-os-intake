@@ -4,19 +4,19 @@ Verified in the artifact build environment on 2026-06-24:
 
 ```text
 PYTHONPATH=src python scripts/export_schemas.py
-# exported 33 schemas
+# exported 34 schemas
 
 PYTHONPATH=src python scripts/validate_repo.py
 # repository validation passed
 
 PYTHONPATH=src python -m pytest -q
-# 94 passed
+# 99 passed
 
 PYTHONPATH=src ruff check src tests scripts
 # All checks passed
 
 PYTHONPATH=src ruff format --check src tests scripts
-# 66 files already formatted
+# 68 files already formatted
 
 PYTHONPATH=src bash scripts/smoke_demo.sh
 # completed without error and wrote starter, blocked-budget, and context-counterfactual audit reports
@@ -47,6 +47,8 @@ Preflight runs now emit `ingestion_volume_profile.json`, a deterministic source/
 The ingestion volume profile now also records compute pressure signals, required performance profile dimensions, and the candidate Rust hot-path scope so constrained-compute pressure can be reviewed before any Rust adapter proposal.
 
 Preflight runs now also emit `rust_ingestion_readiness_report.json`, proving the Python ingestion artifact is a valid future Rust parity target while keeping `rust_replacement_allowed=false`.
+
+Preflight runs now also emit `deadline_docketing_guard_report.json`, proving deadline candidates are source-bound, review-only, proposed only for `human_deadline_review`, and not docketed. The final review package renders the guard, and package completeness fails if the guard is missing, evidence-free, or claims docketing occurred.
 
 The preflight intake review form now renders detailed source inventory fields and explicit review outcome handling, including the fact that only confirmed outcomes can advance toward the budget precondition gate and that corrections append or supersede rather than silently mutating history.
 

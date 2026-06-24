@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from lawfirm_os_intake.confirmation import bind_confirmation_to_packet_evidence
 from lawfirm_os_intake.models import (
     HumanConfirmation,
@@ -41,6 +43,9 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     manifest = ReviewPackageManifest.model_validate(load_json(manifest_path))
     completeness = ReviewPackageCompletenessReport.model_validate(load_json(completeness_path))
     human_gate_status = load_json(budget_dir / "human_gate_status_report.json")
+    deadline_guard = load_json(
+        Path(manifest.artifact_refs["preflight_deadline_docketing_guard_report"])
+    )
     readiness = load_json(budget_dir / "matter_opening_readiness.json")
     graph = load_json(budget_dir / "evidence_graph.json")
 
@@ -87,6 +92,12 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert "party evidence:" in review_text
     assert "## What Still Needs Human Review" in review_text
     assert "not docketed; evidence:" in review_text
+    assert "Deadline docketing guard report:" in review_text
+    assert "Deadline docketing guard status: passed" in review_text
+    assert "Docketing action performed: False" in review_text
+    assert "Docketing action allowed: False" in review_text
+    assert "Deadline proposed next gate: human_deadline_review" in review_text
+    assert "deadline guard check deadline_docketing_not_performed: passed" in review_text
     assert "missing information:" in review_text
     assert "## Required Human Gates" in review_text
     assert "Human gate status report:" in review_text
@@ -196,6 +207,10 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
         "human_budget_review": "pending",
         "human_matter_opening_authorization": "pending",
     }
+    assert deadline_guard["status"] == "passed"
+    assert deadline_guard["docketing_action_performed"] is False
+    assert deadline_guard["docketing_action_allowed"] is False
+    assert deadline_guard["review_required_count"] == deadline_guard["candidate_count"]
     assert manifest.contract_state_report_ref == packet.contract_state_report_ref
     assert manifest.budget_precondition_report_ref == str(
         budget_dir / "budget_precondition_report.json"
@@ -220,6 +235,9 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
         manifest.artifact_refs["preflight_model_adapter_report"] == packet.model_adapter_report_ref
     )
     assert manifest.artifact_refs["preflight_intake_review_form"].endswith("intake_review_form.md")
+    assert manifest.artifact_refs["preflight_deadline_docketing_guard_report"].endswith(
+        "deadline_docketing_guard_report.json"
+    )
     assert manifest.artifact_refs["budget_precondition_report"] == str(
         budget_dir / "budget_precondition_report.json"
     )
@@ -266,6 +284,10 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert "## Evidence Graph Summary" in completeness.required_sections
     assert "## Run Ledger Summary" in completeness.required_sections
     assert "review_package_completeness_report" in completeness.required_artifact_keys
+    assert "preflight_deadline_docketing_guard_report" in completeness.required_artifact_keys
+    assert "deadline_docketing_guard_report_complete" in {
+        check.check_id for check in completeness.checks
+    }
     assert {check.status for check in completeness.checks} == {"passed"}
 
     ledger_events = load_jsonl(budget_dir / "run_ledger.jsonl")

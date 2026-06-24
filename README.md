@@ -20,6 +20,7 @@ messy inbound source
 -> party and relationship-role candidates
 -> inbound-event, matter-family, and representation-posture candidates
 -> date/deadline and missing-information candidates
+-> deadline docketing guard report proving review-only candidates and no docketing
 -> independent evidence review
 -> dry-run Exception Lake candidates for missing source, ambiguity, prompt injection, or blockers
 -> human intake confirmation
@@ -79,6 +80,7 @@ The demo emits:
 |   |-- effective_context.json
 |   |-- intake_preflight_packet.json
 |   |-- intake_review_form.md
+|   |-- deadline_docketing_guard_report.json
 |   |-- exception_lake_candidates.jsonl
 |   |-- exception_lake_readiness_report.json
 |   |-- exception_lake_handoff_manifest.json
@@ -115,6 +117,8 @@ The budget run also writes `review_package_completeness_report.json`. This deter
 The completeness report also checks that the linked intake and budget review forms preserve their required human-review sections, evidence-hash visibility where source-bound evidence exists, and non-authorization boundary text, so those standalone forms cannot silently lose source coverage, outcome handling, budget lines, support items, or submission-boundary content while the consolidated package still passes.
 
 Budget runs also write a typed human review outcome record and append it to `human_confirmation_history.jsonl`. Corrections are represented as later records with `supersedes_confirmation_id`; prior review outcomes are not silently mutated. The budget run also writes `human_gate_status_report.json`, which records intake confirmation as completed and conflicts clearance, engagement authorization, budget review, and matter-opening authorization as pending human gates with the artifacts and workflow refs each gate controls.
+
+Preflight runs write `deadline_docketing_guard_report.json`. This local proof artifact binds every deadline candidate back to source evidence refs, marks the only next gate as `human_deadline_review`, records `docketing_action_performed=false` and `docketing_action_allowed=false`, and is carried into the final package manifest and completeness check. It does not characterize legal effect or create a docketing action.
 
 Preflight, confirmed budget, and blocked-budget attempts also write `run_ledger_integrity_report.json`. This local report proves required gate events appear in order, event run IDs match, output refs exist, refs stay local, blocked events only appear in blocked paths, and no external writes occurred. It is a vertical proof artifact only; Orchestrator remains the future run-ledger authority.
 
@@ -193,7 +197,7 @@ Every budget run emits `budget_precondition_report.json`. If confirmation is mis
 
 ## Safety gate
 
-The final budget run emits `safety_gate_report.json`. This deterministic report checks that the output remains synthetic-only, contract-state-bound, human-confirmed, conflict-search-only, not submittable, blocked from engagement and matter opening, not docketed, not billed, and local-file-only.
+The final budget run emits `safety_gate_report.json`. This deterministic report checks that the output remains synthetic-only, contract-state-bound, human-confirmed, conflict-search-only, not submittable, blocked from engagement and matter opening, carries forward the deadline docketing guard, is not docketed, not billed, and local-file-only.
 
 The same gate also verifies evidence completeness for normalized conflict-search terms, budget lines, budget support items, proposal-level assumptions, exclusions, unknowns, structured matter-opening blockers, and prohibited-action guardrails. A failed check raises before the final review package is accepted.
 

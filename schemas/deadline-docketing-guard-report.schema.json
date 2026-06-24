@@ -1,0 +1,248 @@
+{
+  "$defs": {
+    "DeadlineDocketingGuardCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "structured_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Structured Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "DeadlineDocketingGuardCheck",
+      "type": "object"
+    },
+    "DeadlineDocketingGuardItem": {
+      "additionalProperties": false,
+      "properties": {
+        "deadline_candidate_id": {
+          "title": "Deadline Candidate Id",
+          "type": "string"
+        },
+        "expression": {
+          "title": "Expression",
+          "type": "string"
+        },
+        "normalized_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Normalized Date"
+        },
+        "deadline_type_candidate": {
+          "title": "Deadline Type Candidate",
+          "type": "string"
+        },
+        "source_evidence_status": {
+          "const": "source_bound_candidate",
+          "default": "source_bound_candidate",
+          "title": "Source Evidence Status",
+          "type": "string"
+        },
+        "requires_human_verification": {
+          "const": true,
+          "default": true,
+          "title": "Requires Human Verification",
+          "type": "boolean"
+        },
+        "evidence_refs": {
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "proposed_next_gate": {
+          "const": "human_deadline_review",
+          "default": "human_deadline_review",
+          "title": "Proposed Next Gate",
+          "type": "string"
+        },
+        "structured_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Structured Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "deadline_candidate_id",
+        "expression",
+        "deadline_type_candidate",
+        "evidence_refs"
+      ],
+      "title": "DeadlineDocketingGuardItem",
+      "type": "object"
+    },
+    "EvidenceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "segment_id": {
+          "title": "Segment Id",
+          "type": "string"
+        },
+        "start_offset": {
+          "title": "Start Offset",
+          "type": "integer"
+        },
+        "end_offset": {
+          "title": "End Offset",
+          "type": "integer"
+        },
+        "sha256": {
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "segment_id",
+        "start_offset",
+        "end_offset",
+        "sha256"
+      ],
+      "title": "EvidenceRef",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "deadline_docketing_guard_report_id": {
+      "title": "Deadline Docketing Guard Report Id",
+      "type": "string"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "preflight_packet_id": {
+      "title": "Preflight Packet Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "passed",
+        "failed"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "candidate_count": {
+      "minimum": 0,
+      "title": "Candidate Count",
+      "type": "integer"
+    },
+    "review_required_count": {
+      "minimum": 0,
+      "title": "Review Required Count",
+      "type": "integer"
+    },
+    "docketing_action_performed": {
+      "const": false,
+      "default": false,
+      "title": "Docketing Action Performed",
+      "type": "boolean"
+    },
+    "docketing_action_allowed": {
+      "const": false,
+      "default": false,
+      "title": "Docketing Action Allowed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "proposed_next_gate": {
+      "const": "human_deadline_review",
+      "default": "human_deadline_review",
+      "title": "Proposed Next Gate",
+      "type": "string"
+    },
+    "candidate_items": {
+      "items": {
+        "$ref": "#/$defs/DeadlineDocketingGuardItem"
+      },
+      "title": "Candidate Items",
+      "type": "array"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/DeadlineDocketingGuardCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "deadline_docketing_guard_report_id",
+    "run_id",
+    "preflight_packet_id",
+    "status",
+    "candidate_count",
+    "review_required_count",
+    "candidate_items",
+    "checks",
+    "generated_at"
+  ],
+  "title": "DeadlineDocketingGuardReport",
+  "type": "object"
+}

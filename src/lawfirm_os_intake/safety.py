@@ -232,10 +232,26 @@ def build_safety_gate_report(
             [artifact_refs["matter_opening_readiness"]],
         ),
         _check(
+            "deadline_guard_report_carried_forward",
+            bool(packet.deadline_docketing_guard_report_ref)
+            and artifact_refs.get("preflight_deadline_docketing_guard_report")
+            == packet.deadline_docketing_guard_report_ref,
+            "The budget package carries forward the preflight deadline docketing guard report.",
+            [
+                artifact_refs.get(
+                    "preflight_deadline_docketing_guard_report",
+                    packet.deadline_docketing_guard_report_ref or "",
+                )
+            ],
+        ),
+        _check(
             "deadline_not_docketed",
             _contains(packet.prohibited_next_steps, "do_not_docket_deadlines"),
             "Deadline candidates remain review-only and are not docketed.",
-            [artifact_refs["preflight_packet"]],
+            [
+                artifact_refs["preflight_packet"],
+                artifact_refs.get("preflight_deadline_docketing_guard_report", ""),
+            ],
         ),
         _check(
             "budget_not_submitted_or_billed",

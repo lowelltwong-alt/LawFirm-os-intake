@@ -65,6 +65,8 @@ Return top alternatives for inbound event, matter family, and posture. Show sour
 
 Dates, deadlines, and urgency are candidates. The system identifies missing fields but cannot docket or characterize a legally controlling deadline.
 
+The run writes `deadline_docketing_guard_report.json`. The report proves every deadline candidate is source-bound, requires `human_deadline_review`, and has not been docketed. It records `docketing_action_performed=false`, `docketing_action_allowed=false`, no external writes, and the prohibited transition ref for `deadline_gap_candidates_ready->deadline_docketed`.
+
 ### 8. Independent critic
 
 The critic checks evidence completeness, contradictions, worker disagreement, source coverage, close party-role alternatives, role ambiguity, and prohibited next steps.
@@ -109,13 +111,13 @@ The starter always remains blocked pending conflicts, engagement, matter-opening
 
 ### 16. Safety gate report
 
-The deterministic safety gate verifies that the contract-state report is carried forward and that the final package contains no conflict clearance, engagement decision, docketed deadline, billing or submission state, external write, matter opening, iManage workspace creation, or client/carrier submission authorization.
+The deterministic safety gate verifies that the contract-state report and deadline docketing guard are carried forward and that the final package contains no conflict clearance, engagement decision, docketed deadline, billing or submission state, external write, matter opening, iManage workspace creation, or client/carrier submission authorization.
 
 It also verifies that normalized conflict-search terms, budget lines, budget support items, proposal-level assumptions, exclusions, unknowns, readiness blockers, and prohibited-action guardrails remain evidence-bound or structured-ref-supported. A failed check blocks final package acceptance.
 
 ### 17. Review package completeness report
 
-After the safety gate and review package are written, the workflow emits `review_package_completeness_report.json`. This deterministic report checks that the manifest includes all required local artifacts, those files exist, the markdown package has the expected review sections and boundary text, required human gates, human-gate status, final blockers, and structured blocker details are preserved, Exception Lake readiness remains dry-run and passed, run ledgers are linked, and the package still proves no conflict clearance, engagement decision, matter opening, docketing, billing, external write, or budget submission.
+After the safety gate and review package are written, the workflow emits `review_package_completeness_report.json`. This deterministic report checks that the manifest includes all required local artifacts, those files exist, the markdown package has the expected review sections and boundary text, required human gates, human-gate status, deadline docketing guard status, final blockers, and structured blocker details are preserved, Exception Lake readiness remains dry-run and passed, run ledgers are linked, and the package still proves no conflict clearance, engagement decision, matter opening, docketing, billing, external write, or budget submission.
 
 A failed completeness check blocks final package acceptance.
 

@@ -220,3 +220,9 @@
 - Added `human_gate_status_report.json` so confirmed budget runs have a typed record of completed intake confirmation and pending conflicts, engagement, budget-review, and matter-opening gates.
 - The final review package now renders gate status, blocked transitions, artifact refs, and workflow refs beside the existing human-gate checklist.
 - Package completeness, schema export, north-star tests, and smoke coverage now fail closed if pending human gates are omitted or incorrectly marked complete.
+
+## Deadline docketing guard report slice - 2026-06-24
+
+- Added `deadline_docketing_guard_report.json` so preflight runs have a typed proof that deadline candidates are source-bound, review-only, and not docketed.
+- The final review package now renders the guard status, no-docket flags, `human_deadline_review`, candidate evidence refs, and prohibited-transition refs.
+- The safety gate, package completeness, schema export, focused tests, north-star tests, and smoke coverage now fail closed if the deadline guard is missing, loses evidence, stops requiring human review, or claims docketing occurred.

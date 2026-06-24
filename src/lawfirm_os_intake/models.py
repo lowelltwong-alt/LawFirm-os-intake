@@ -190,6 +190,44 @@ class DeadlineCandidate(StrictModel):
     requires_human_verification: bool = True
 
 
+class DeadlineDocketingGuardItem(StrictModel):
+    deadline_candidate_id: str
+    expression: str
+    normalized_date: str | None = None
+    deadline_type_candidate: str
+    source_evidence_status: Literal["source_bound_candidate"] = "source_bound_candidate"
+    requires_human_verification: Literal[True] = True
+    evidence_refs: list[EvidenceRef]
+    proposed_next_gate: Literal["human_deadline_review"] = "human_deadline_review"
+    structured_refs: list[str] = Field(default_factory=list)
+
+
+class DeadlineDocketingGuardCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    evidence_refs: list[EvidenceRef] = Field(default_factory=list)
+    structured_refs: list[str] = Field(default_factory=list)
+
+
+class DeadlineDocketingGuardReport(StrictModel):
+    schema_version: str = "0.1"
+    deadline_docketing_guard_report_id: str
+    run_id: str
+    preflight_packet_id: str
+    status: Literal["passed", "failed"]
+    candidate_count: int = Field(ge=0)
+    review_required_count: int = Field(ge=0)
+    docketing_action_performed: Literal[False] = False
+    docketing_action_allowed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    non_authoritative: Literal[True] = True
+    proposed_next_gate: Literal["human_deadline_review"] = "human_deadline_review"
+    candidate_items: list[DeadlineDocketingGuardItem]
+    checks: list[DeadlineDocketingGuardCheck]
+    generated_at: str
+
+
 class CriticFinding(StrictModel):
     code: str
     severity: Literal["info", "warning", "blocker"]
@@ -411,6 +449,7 @@ class IntakePreflightPacket(StrictModel):
     exception_lake_readiness_report_ref: str | None = None
     exception_lake_handoff_manifest_ref: str | None = None
     run_ledger_integrity_report_ref: str | None = None
+    deadline_docketing_guard_report_ref: str | None = None
     intake_review_form_ref: str | None = None
 
 
