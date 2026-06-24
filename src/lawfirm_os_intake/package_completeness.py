@@ -29,6 +29,8 @@ REQUIRED_REVIEW_SECTIONS = [
     "### Budget Lines",
     "### Budget Supports",
     "## Exception And Escalation Records",
+    "### Exception Lake Readiness",
+    "### Exception Candidate Details",
     "## Safety Gate",
     "## Matter-Opening Blockers",
     "## Evidence Graph Summary",

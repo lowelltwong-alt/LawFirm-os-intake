@@ -92,6 +92,15 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert "workflow-policy://" in review_text
     assert "## Exception And Escalation Records" in review_text
     assert "Exception Lake readiness report:" in review_text
+    assert "### Exception Lake Readiness" in review_text
+    assert "Readiness status: passed" in review_text
+    assert "Admission state: dry_run_not_admitted" in review_text
+    assert "Target runtime repo: LawFirm-os-exceptions-lake-runtime" in review_text
+    assert "### Exception Candidate Details" in review_text
+    assert "raw_payload_included=False" in review_text
+    assert "canonical_promotion_required=True" in review_text
+    assert "target=LawFirm-os-exceptions-lake-runtime" in review_text
+    assert "structured_refs=" in review_text
     assert "## Safety Gate" in review_text
     assert "## Matter-Opening Blockers" in review_text
     assert "blocked_pending_conflicts_and_engagement" in review_text
@@ -164,6 +173,8 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert "## Candidate Alternatives" in completeness.required_sections
     assert "## Required Human Gates" in completeness.required_sections
     assert "### Budget Lines" in completeness.required_sections
+    assert "### Exception Lake Readiness" in completeness.required_sections
+    assert "### Exception Candidate Details" in completeness.required_sections
     assert "## Evidence Graph Summary" in completeness.required_sections
     assert "## Run Ledger Summary" in completeness.required_sections
     assert "review_package_completeness_report" in completeness.required_artifact_keys

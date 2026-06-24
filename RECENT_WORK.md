@@ -148,3 +148,9 @@
 - Added authority and precondition subsections to the final matter-opening review package.
 - The package now renders contract-state status, reviewed lock status, dependency pins, human review outcome, and budget precondition checks inline.
 - The completeness report now requires those authority/precondition sections before final package acceptance.
+
+## Final-package exception detail slice - 2026-06-24
+
+- Added Exception Lake readiness and exception candidate detail subsections to the final matter-opening review package.
+- The package now renders dry-run admission state, raw-payload exclusion, canonical-promotion requirement, target runtime repo, source refs, evidence refs, structured refs, and blocked states inline.
+- The completeness report now requires those exception readiness/detail sections before final package acceptance.

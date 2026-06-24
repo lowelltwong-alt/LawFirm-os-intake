@@ -8,6 +8,7 @@ from .models import (
     ConflictSeedPacket,
     ContractStateReport,
     EvidenceGraph,
+    ExceptionLakeReadinessReport,
     HumanConfirmation,
     HumanReviewOutcomeRecord,
     IntakePreflightPacket,
@@ -385,6 +386,53 @@ def _exception_lines(candidates: list[dict[str, Any]]) -> list[str]:
     return lines
 
 
+def _exception_readiness_lines(report: ExceptionLakeReadinessReport | None) -> list[str]:
+    if report is None:
+        return ["- Exception Lake readiness: unavailable"]
+    lines = [
+        f"- Readiness status: {report.status}",
+        f"- Admission state: {report.admission_state}",
+        f"- Target runtime repo: {report.target_runtime_repo}",
+        f"- Candidate count: {report.candidate_count}",
+        f"- Candidate files: {', '.join(report.candidate_file_refs) or 'none'}",
+        "- Readiness checks:",
+    ]
+    lines.extend(
+        f"- {check.status}: {check.check_id} - {check.message}; "
+        f"candidate_ids={len(check.candidate_ids)}"
+        for check in report.checks
+    )
+    return lines
+
+
+def _exception_candidate_detail_lines(candidates: list[dict[str, Any]]) -> list[str]:
+    lines = []
+    for candidate in candidates:
+        evidence_refs = [
+            (
+                f"{ref.get('source_id')}/{ref.get('segment_id')}"
+                f"[{ref.get('start_offset')}:{ref.get('end_offset')}]"
+            )
+            for ref in candidate.get("evidence_refs", [])
+            if isinstance(ref, dict)
+        ]
+        source_refs = candidate.get("source_inventory_refs", [])
+        structured_refs = candidate.get("structured_refs", [])
+        lines.append(
+            f"- {candidate.get('candidate_id')}: {candidate.get('local_event_label')}; "
+            f"class={candidate.get('canonical_lake_class')}; "
+            f"status={candidate.get('status')}; "
+            f"raw_payload_included={candidate.get('raw_payload_included')}; "
+            f"canonical_promotion_required={candidate.get('canonical_promotion_required')}; "
+            f"target={candidate.get('target_runtime_repo')}; "
+            f"blocked_state={candidate.get('blocked_state') or 'none'}; "
+            f"source_refs={', '.join(source_refs) or 'none'}; "
+            f"evidence={', '.join(evidence_refs) or 'none'}; "
+            f"structured_refs={', '.join(structured_refs) or 'none'}"
+        )
+    return lines or ["- none"]
+
+
 def _safety_gate_lines(report: SafetyGateReport) -> list[str]:
     return [f"- {check.status}: {check.check_id} - {check.message}" for check in report.checks]
 
@@ -490,6 +538,7 @@ def render_matter_opening_review_package(
     artifact_refs: dict[str, str],
     run_ledger_events: dict[str, list[dict[str, Any]]] | None = None,
     evidence_graph: EvidenceGraph | None = None,
+    exception_readiness_report: ExceptionLakeReadinessReport | None = None,
     contract_state_report: ContractStateReport | None = None,
     human_review_outcome: HumanReviewOutcomeRecord | None = None,
     budget_precondition_report: BudgetPreconditionReport | None = None,
@@ -622,6 +671,12 @@ def render_matter_opening_review_package(
                 else []
             ),
             *_lines_or_none(_exception_lines(exception_candidates)),
+            "",
+            "### Exception Lake Readiness",
+            *_exception_readiness_lines(exception_readiness_report),
+            "",
+            "### Exception Candidate Details",
+            *_exception_candidate_detail_lines(exception_candidates),
             "",
             "## Safety Gate",
             "",

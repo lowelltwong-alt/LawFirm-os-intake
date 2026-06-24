@@ -671,6 +671,7 @@ def run_budget(
                 "budget": load_jsonl(ledger_path),
             },
             evidence_graph=extended,
+            exception_readiness_report=exception_readiness_report,
             contract_state_report=contract_state_report,
             human_review_outcome=human_review_outcome,
             budget_precondition_report=budget_precondition_report,
