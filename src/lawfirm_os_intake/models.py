@@ -117,6 +117,31 @@ class RustIngestionReadinessReport(StrictModel):
     generated_at: str
 
 
+class IngestionVolumeProfile(StrictModel):
+    schema_version: str = "0.1"
+    ingestion_volume_profile_id: str
+    run_id: str
+    ingestion_result_id: str
+    bundle_id: str
+    source_count: int = Field(ge=0)
+    total_source_characters: int = Field(ge=0)
+    max_source_characters: int = Field(ge=0)
+    segment_count: int = Field(ge=0)
+    total_segment_characters: int = Field(ge=0)
+    max_segment_characters: int = Field(ge=0)
+    source_type_counts: dict[str, int]
+    source_state_counts: dict[str, int]
+    segment_type_counts: dict[str, int]
+    profile_thresholds: dict[str, int]
+    scale_signals: list[str] = Field(default_factory=list)
+    observed_scale_band: Literal["starter_fixture", "profile_candidate"]
+    performance_profile_required_before_rust: bool
+    rust_replacement_allowed: Literal[False] = False
+    decision: Literal["keep_python_reference", "profile_before_rust_adapter"]
+    rationale: list[str]
+    generated_at: str
+
+
 class RoleCandidate(StrictModel):
     role: str
     confidence: float = Field(ge=0, le=1)
@@ -242,6 +267,7 @@ class IntakePreflightPacket(StrictModel):
     segments: list[Segment]
     ingestion_result_ref: str | None = None
     rust_ingestion_readiness_report_ref: str | None = None
+    ingestion_volume_profile_ref: str | None = None
     effective_context: EffectiveContext
     inbound_event_candidates: list[ScoredCandidate]
     matter_family_candidates: list[ScoredCandidate]

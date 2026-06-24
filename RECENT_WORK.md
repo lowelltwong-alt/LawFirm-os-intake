@@ -190,3 +190,9 @@
 - Extended the review-package completeness report to verify linked review forms still expose evidence hashes where source-bound evidence exists and preserve non-authorization boundary text.
 - Added regression coverage for intake-form evidence hash loss, budget-form evidence hash loss, and budget-form submission-boundary loss.
 - Added smoke coverage for the new `linked_review_forms_preserve_evidence_and_boundaries` acceptance check.
+
+## Ingestion-volume profile slice - 2026-06-24
+
+- Added `ingestion_volume_profile.json` so preflight runs record deterministic source/segment scale before any future Rust adapter decision.
+- Added a synthetic high-volume proxy fixture that crosses the local source-count profiling threshold while keeping `rust_replacement_allowed=false`.
+- Carried the profile into the review package manifest and completeness checks so the Rust-readiness posture remains visible in the north-star package.

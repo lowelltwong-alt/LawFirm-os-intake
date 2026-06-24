@@ -88,6 +88,7 @@ REQUIRED_ARTIFACT_KEYS = [
     "preflight_source_inventory",
     "preflight_segments",
     "preflight_ingestion_result",
+    "preflight_ingestion_volume_profile",
     "preflight_rust_ingestion_readiness_report",
     "preflight_intake_review_form",
     "human_confirmation",

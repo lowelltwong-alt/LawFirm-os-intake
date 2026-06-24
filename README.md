@@ -72,6 +72,7 @@ The demo emits:
 |   |-- raw_input.json
 |   |-- contract_state_report.json
 |   |-- ingestion_result.json
+|   |-- ingestion_volume_profile.json
 |   |-- rust_ingestion_readiness_report.json
 |   |-- source_inventory.json
 |   |-- segments.json
@@ -116,7 +117,7 @@ The preflight `intake_review_form.md` is the first human pause. It shows detaile
 
 Every source-bound evidence reference in the generated packets includes the cited source ID, segment ID, segment offsets, and segment hash. Strict mode rejects refs that drift from the segment table.
 
-The preflight run also writes `ingestion_result.json`, a Python reference artifact for the future high-volume ingestion boundary. It packages source inventory, coverage summary, structural segments, and one segment-level evidence ref per segment under the `rust_ready_ingestion_v0_1` parity contract. Each preflight also writes `rust_ingestion_readiness_report.json`, which deterministically proves the current artifact is usable as a future Rust parity target while keeping `rust_replacement_allowed=false`.
+The preflight run also writes `ingestion_result.json`, a Python reference artifact for the future high-volume ingestion boundary. It packages source inventory, coverage summary, structural segments, and one segment-level evidence ref per segment under the `rust_ready_ingestion_v0_1` parity contract. Each preflight also writes `ingestion_volume_profile.json`, a deterministic source/segment scale profile that can require profiling before any Rust adapter proposal while still keeping `rust_replacement_allowed=false`. `rust_ingestion_readiness_report.json` then proves the current artifact is usable as a future Rust parity target while keeping replacement unauthorized.
 
 The budget-stage `evidence_graph.json` carries the provenance forward into human review outcomes, conflict-search terms, budget lines, and budget support items. Structured refs such as human confirmations, synthetic practice-profile entries, and workflow-policy references are represented separately from observed source evidence.
 
@@ -200,7 +201,7 @@ A deterministic packet writer assembles outputs. Dynamic agent creation is prohi
 
 Python remains the starter reference implementation. If future document volume or constrained compute requires Rust, the only approved hot-path boundary is source inventory, segmentation, hashing, and evidence-ref emission. Any Rust adapter must prove parity with the Python reference for offsets, hashes, segment structure, prompt-injection flags, duplicate/missing-source states, and schema-compatible JSON before it can replace the Python path.
 
-Preparation now means keeping that boundary narrow, schema-first, and golden-testable. The current `ingestion_result.json` is the local parity oracle, and `rust_ingestion_readiness_report.json` records the checks a future adapter must satisfy before comparison even begins. A Rust adapter may not replace the Python path unless it produces schema-compatible inventory, segments, coverage summary, and segment evidence refs that match the Python reference on synthetic fixtures and holdouts. It does not mean adding a second runtime before profiling proves ingestion is the bottleneck.
+Preparation now means keeping that boundary narrow, schema-first, measurable, and golden-testable. The current `ingestion_result.json` is the local parity oracle, `ingestion_volume_profile.json` records whether synthetic source/segment scale requires profiling before any Rust proposal, and `rust_ingestion_readiness_report.json` records the checks a future adapter must satisfy before comparison even begins. A Rust adapter may not replace the Python path unless profiling justifies it and it produces schema-compatible inventory, segments, coverage summary, and segment evidence refs that match the Python reference on synthetic fixtures and holdouts. It does not mean adding a second runtime before profiling proves ingestion is the bottleneck.
 
 ## Current boundaries
 

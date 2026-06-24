@@ -700,6 +700,18 @@
       "default": null,
       "title": "Rust Ingestion Readiness Report Ref"
     },
+    "ingestion_volume_profile_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Ingestion Volume Profile Ref"
+    },
     "effective_context": {
       "$ref": "#/$defs/EffectiveContext"
     },

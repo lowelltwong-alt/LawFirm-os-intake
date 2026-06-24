@@ -61,6 +61,7 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert "## Source Inventory" in review_text
     assert "read_state=read" in review_text
     assert "availability=available" in review_text
+    assert "Ingestion volume profile:" in review_text
     assert "sha=sha256:" in review_text
     assert "## What Is Known" in review_text
     assert "Human confirmation decision evidence:" in review_text
@@ -141,6 +142,9 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert manifest.artifact_refs["preflight_source_inventory"].endswith("source_inventory.json")
     assert manifest.artifact_refs["preflight_segments"].endswith("segments.json")
     assert manifest.artifact_refs["preflight_ingestion_result"].endswith("ingestion_result.json")
+    assert manifest.artifact_refs["preflight_ingestion_volume_profile"].endswith(
+        "ingestion_volume_profile.json"
+    )
     assert manifest.artifact_refs["preflight_rust_ingestion_readiness_report"].endswith(
         "rust_ingestion_readiness_report.json"
     )

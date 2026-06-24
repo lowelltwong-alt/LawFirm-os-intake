@@ -21,6 +21,7 @@ from lawfirm_os_intake.models import (  # noqa: E402
     HumanConfirmation,
     HumanReviewOutcomeRecord,
     IngestionResult,
+    IngestionVolumeProfile,
     IntakePreflightPacket,
     PartyCandidate,
     ReviewPackageCompletenessReport,
@@ -35,6 +36,7 @@ from lawfirm_os_intake.models import (  # noqa: E402
 MODELS = {
     "source-bundle.schema.json": SourceBundle,
     "ingestion-result.schema.json": IngestionResult,
+    "ingestion-volume-profile.schema.json": IngestionVolumeProfile,
     "rust-ingestion-readiness-report.schema.json": RustIngestionReadinessReport,
     "segment.schema.json": Segment,
     "effective-context.schema.json": EffectiveContext,

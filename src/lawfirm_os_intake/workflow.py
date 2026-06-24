@@ -19,6 +19,7 @@ from .exceptions import (
     build_preflight_exception_candidates,
 )
 from .ingestion import build_ingestion_result
+from .ingestion_volume import build_ingestion_volume_profile
 from .models import (
     ConflictSearchTerm,
     ConflictSeedPacket,
@@ -189,8 +190,14 @@ def run_preflight(
 
     ingestion_result = build_ingestion_result(bundle)
     ingestion_result_path = run_dir / "ingestion_result.json"
+    ingestion_volume_profile_path = run_dir / "ingestion_volume_profile.json"
     rust_ingestion_readiness_report_path = run_dir / "rust_ingestion_readiness_report.json"
     write_json(ingestion_result_path, ingestion_result.model_dump(mode="json"))
+    ingestion_volume_profile = build_ingestion_volume_profile(
+        run_id=run_id,
+        ingestion_result=ingestion_result,
+    )
+    write_json(ingestion_volume_profile_path, ingestion_volume_profile.model_dump(mode="json"))
     segments = ingestion_result.segments
     inventory = ingestion_result.source_inventory
     write_json(run_dir / "segments.json", [s.model_dump(mode="json") for s in segments])
@@ -213,6 +220,7 @@ def run_preflight(
             "completed",
             output_refs=[
                 str(ingestion_result_path),
+                str(ingestion_volume_profile_path),
                 str(rust_ingestion_readiness_report_path),
                 str(run_dir / "segments.json"),
             ],
@@ -245,6 +253,7 @@ def run_preflight(
         segments=segments,
         ingestion_result_ref=str(ingestion_result_path),
         rust_ingestion_readiness_report_ref=str(rust_ingestion_readiness_report_path),
+        ingestion_volume_profile_ref=str(ingestion_volume_profile_path),
         effective_context=context,
         inbound_event_candidates=inbound,
         matter_family_candidates=matter,
@@ -301,6 +310,7 @@ def run_preflight(
                 str(contract_state_report_path),
                 str(exception_candidates_path),
                 str(ingestion_result_path),
+                str(ingestion_volume_profile_path),
                 str(rust_ingestion_readiness_report_path),
                 str(exception_readiness_report_path),
             ],
@@ -575,6 +585,7 @@ def run_budget(
         "preflight_source_inventory": str(preflight_dir / "source_inventory.json"),
         "preflight_segments": str(preflight_dir / "segments.json"),
         "preflight_ingestion_result": packet.ingestion_result_ref or "",
+        "preflight_ingestion_volume_profile": packet.ingestion_volume_profile_ref or "",
         "preflight_rust_ingestion_readiness_report": (
             packet.rust_ingestion_readiness_report_ref or ""
         ),

@@ -26,6 +26,7 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     preflight_dir = next((tmp_path / "north-star/preflight").iterdir())
     packet = load_json(preflight_dir / "intake_preflight_packet.json")
     ingestion_result = load_json(preflight_dir / "ingestion_result.json")
+    ingestion_volume = load_json(preflight_dir / "ingestion_volume_profile.json")
     contract_state = load_json(preflight_dir / "contract_state_report.json")
     preflight_exceptions = load_jsonl(preflight_dir / "exception_lake_candidates.jsonl")
     preflight_exception_readiness = load_json(
@@ -48,8 +49,12 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     budget_labels = {item["local_event_label"] for item in budget_exceptions}
     assert packet["source_coverage_summary"]["missing_sources"] == 1
     assert packet["ingestion_result_ref"].endswith("ingestion_result.json")
+    assert packet["ingestion_volume_profile_ref"].endswith("ingestion_volume_profile.json")
     assert ingestion_result["parity_contract"] == "rust_ready_ingestion_v0_1"
     assert ingestion_result["rust_replacement_allowed"] is False
+    assert ingestion_volume["ingestion_result_id"] == ingestion_result["ingestion_result_id"]
+    assert ingestion_volume["rust_replacement_allowed"] is False
+    assert ingestion_volume["decision"] == "keep_python_reference"
     assert len(ingestion_result["segment_evidence_refs"]) == len(ingestion_result["segments"])
     assert packet["contract_state_report_ref"].endswith("contract_state_report.json")
     assert contract_state["status"] == "passed"
@@ -96,6 +101,9 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     assert manifest["artifact_refs"]["review_package_completeness_report"].endswith(
         "review_package_completeness_report.json"
     )
+    assert manifest["artifact_refs"]["preflight_ingestion_volume_profile"].endswith(
+        "ingestion_volume_profile.json"
+    )
     assert manifest["review_package_completeness_report_ref"].endswith(
         "review_package_completeness_report.json"
     )
@@ -127,6 +135,7 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
         "Prohibited outputs before gate failure:",
         "## Source Inventory",
         "Source coverage complete: False",
+        "Ingestion volume profile:",
         "syn-northstar-attachment-missing-001",
         "read_state=missing",
         "availability=duplicate",

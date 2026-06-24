@@ -4,19 +4,19 @@ Verified in the artifact build environment on 2026-06-24:
 
 ```text
 PYTHONPATH=src python scripts/export_schemas.py
-# exported 22 schemas
+# exported 23 schemas
 
 PYTHONPATH=src python scripts/validate_repo.py
 # repository validation passed
 
 PYTHONPATH=src python -m pytest -q
-# 62 passed
+# 69 passed
 
 PYTHONPATH=src ruff check src tests scripts
 # All checks passed
 
 PYTHONPATH=src ruff format --check src tests scripts
-# 48 files already formatted
+# 49 files already formatted
 
 PYTHONPATH=src bash scripts/smoke_demo.sh
 # completed without error
@@ -35,6 +35,8 @@ Party-role alternatives now carry their own source-bound evidence refs, render i
 ADR-004 records the Rust-ready ingestion boundary for future high-volume or constrained-compute document processing. Python remains the reference implementation until any Rust adapter proves golden parity.
 
 Preflight runs now emit `ingestion_result.json` as the Python reference parity oracle for source inventory, coverage summary, segments, and segment-level evidence refs.
+
+Preflight runs now emit `ingestion_volume_profile.json`, a deterministic source/segment scale report that can require profiling before any future Rust adapter proposal while keeping `rust_replacement_allowed=false`.
 
 Preflight runs now also emit `rust_ingestion_readiness_report.json`, proving the Python ingestion artifact is a valid future Rust parity target while keeping `rust_replacement_allowed=false`.
 

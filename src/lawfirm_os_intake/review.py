@@ -620,6 +620,7 @@ def render_matter_opening_review_package(
             f"- Unreadable sources: {source_summary.get('unreadable_sources')}",
             f"- Duplicate sources: {source_summary.get('duplicate_sources')}",
             f"- Attachment references: {source_summary.get('attachment_reference_count')}",
+            f"- Ingestion volume profile: `{artifact_refs.get('preflight_ingestion_volume_profile', 'missing')}`",
             *_source_inventory_lines(packet),
             "",
             "## What Is Known",

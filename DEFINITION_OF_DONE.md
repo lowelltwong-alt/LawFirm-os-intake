@@ -22,7 +22,7 @@ The starter is complete when all of the following are true:
 16. No production connector, network call, external write, or live-model dependency exists.
 17. Public data is cataloged but not directly ingested.
 18. Local schemas are clearly candidate/reference schemas, not promoted canon.
-19. Any future non-Python ingestion implementation has a documented parity boundary and cannot bypass source/ref/hash/offset validation.
+19. Any future non-Python ingestion implementation has a documented parity boundary, a profiling-before-replacement signal, and cannot bypass source/ref/hash/offset validation.
 
 ## Safety invariants
 

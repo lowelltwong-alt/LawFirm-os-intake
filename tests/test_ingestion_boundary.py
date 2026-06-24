@@ -1,7 +1,13 @@
 import pytest
 
 from lawfirm_os_intake.ingestion import build_ingestion_result, validate_ingestion_result
-from lawfirm_os_intake.models import IngestionResult, RustIngestionReadinessReport, SourceBundle
+from lawfirm_os_intake.ingestion_volume import build_ingestion_volume_profile
+from lawfirm_os_intake.models import (
+    IngestionResult,
+    IngestionVolumeProfile,
+    RustIngestionReadinessReport,
+    SourceBundle,
+)
 from lawfirm_os_intake.rust_readiness import (
     build_rust_ingestion_readiness_report,
     enforce_rust_ingestion_readiness,
@@ -83,6 +89,45 @@ def test_preflight_writes_passing_rust_ingestion_readiness_report(tmp_path, repo
     assert "source_hashes" in report.required_parity_dimensions
     assert {check.status for check in report.checks} == {"passed"}
     assert any(str(report_path) in event.get("output_refs", []) for event in ledger)
+
+
+def test_preflight_writes_ingestion_volume_profile(tmp_path, repo_root):
+    packet, run_dir = run_preflight(
+        repo_root / "examples/synthetic/inbound/north-star-messy-intake.json",
+        repo_root / "context/synthetic-profiles/insurance-defense.yaml",
+        tmp_path,
+    )
+    profile_path = run_dir / "ingestion_volume_profile.json"
+    profile = IngestionVolumeProfile.model_validate(load_json(profile_path))
+    result = IngestionResult.model_validate(load_json(run_dir / "ingestion_result.json"))
+    ledger = load_jsonl(run_dir / "run_ledger.jsonl")
+
+    assert packet.ingestion_volume_profile_ref == str(profile_path)
+    assert profile.ingestion_result_id == result.ingestion_result_id
+    assert profile.bundle_id == result.bundle_id
+    assert profile.source_count == len(result.source_inventory)
+    assert profile.segment_count == len(result.segments)
+    assert profile.rust_replacement_allowed is False
+    assert profile.performance_profile_required_before_rust is False
+    assert profile.observed_scale_band == "starter_fixture"
+    assert profile.decision == "keep_python_reference"
+    assert any(str(profile_path) in event.get("output_refs", []) for event in ledger)
+
+
+def test_ingestion_volume_profile_requires_profiling_for_high_volume_proxy(repo_root):
+    bundle = SourceBundle.model_validate(
+        load_json(repo_root / "examples/synthetic/inbound/high-volume-ingestion-proxy.json")
+    )
+    result = build_ingestion_result(bundle)
+    profile = build_ingestion_volume_profile(run_id="run_volume_proxy", ingestion_result=result)
+
+    assert profile.source_count == 10
+    assert profile.rust_replacement_allowed is False
+    assert profile.performance_profile_required_before_rust is True
+    assert profile.observed_scale_band == "profile_candidate"
+    assert profile.decision == "profile_before_rust_adapter"
+    assert "source_count_at_or_above_profile_threshold" in profile.scale_signals
+    assert "legal_classification" not in profile.model_dump(mode="json")
 
 
 def test_rust_ingestion_readiness_fails_on_source_hash_drift(repo_root):
