@@ -10,7 +10,7 @@ PYTHONPATH=src python scripts/validate_repo.py
 # repository validation passed
 
 PYTHONPATH=src python -m pytest -q
-# 104 passed
+# 107 passed
 
 PYTHONPATH=src ruff check src tests scripts
 # All checks passed
@@ -24,7 +24,7 @@ PYTHONPATH=src bash scripts/smoke_demo.sh
 
 The monetary result is a synthetic test calculation, not a fee quote or approved budget.
 
-The smoke demo now also writes `starter_release_audit_report.json` after the north-star demo finishes. That report is a local, non-authoritative starter release audit over generated artifacts; it fails if required outputs, synthetic-only scope, source-bound evidence refs, human gates, carrier/client separation, conflict/budget boundaries, dry-run Exception Lake posture, safety boundary, fixture-gold gates, run ledgers, candidate-registry noncanonical status, or Rust-readiness posture drift.
+The smoke demo now also writes `starter_release_audit_report.json` after the north-star demo finishes. That report is a local, non-authoritative starter release audit over generated artifacts; it fails if required outputs, synthetic-only scope, source coverage states, candidate surface completeness, source-bound evidence refs, evidence-graph deliverable coverage, human-review package story coverage, human gates, carrier/client separation, conflict/budget boundaries, dry-run Exception Lake posture, safety boundary, fixture-gold gates, run ledgers, candidate-registry noncanonical status, or Rust-readiness posture drift.
 
 The smoke demo also writes `blocked_budget_attempt_audit_report.json` from a synthetic `needs_more_information` confirmation. That report proves the budget path blocks before conflict seed, budget proposal, readiness packet, safety gate, or final package output while preserving the blocked precondition report, review outcome/history, dry-run exception candidate, readiness report, handoff manifest, and run ledger.
 

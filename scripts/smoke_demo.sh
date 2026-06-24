@@ -142,6 +142,10 @@ grep -q "blocked_pending_conflicts_and_engagement" ".lawfirm-os-intake/smoke/bud
 python scripts/audit_starter_release.py --demo-dir .lawfirm-os-intake/smoke
 test -s ".lawfirm-os-intake/smoke/budget/starter_release_audit_report.json"
 grep -q '"status": "passed"' ".lawfirm-os-intake/smoke/budget/starter_release_audit_report.json"
+grep -q "north_star_source_coverage_exercised" ".lawfirm-os-intake/smoke/budget/starter_release_audit_report.json"
+grep -q "north_star_candidate_surface_complete" ".lawfirm-os-intake/smoke/budget/starter_release_audit_report.json"
+grep -q "evidence_graph_covers_intake_to_budget_deliverables" ".lawfirm-os-intake/smoke/budget/starter_release_audit_report.json"
+grep -q "human_review_package_tells_complete_north_star_story" ".lawfirm-os-intake/smoke/budget/starter_release_audit_report.json"
 grep -q "budget_boundary_and_math_hold" ".lawfirm-os-intake/smoke/budget/starter_release_audit_report.json"
 grep -q "deadline_and_budget_guard_reports_hold" ".lawfirm-os-intake/smoke/budget/starter_release_audit_report.json"
 grep -q "exception_lake_candidates_are_dry_run_and_expected" ".lawfirm-os-intake/smoke/budget/starter_release_audit_report.json"

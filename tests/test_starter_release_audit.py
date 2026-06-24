@@ -65,3 +65,54 @@ def test_starter_release_audit_fails_when_budget_submission_boundary_drifts(tmp_
     assert "budget_boundary_and_math_hold" in failed
     with pytest.raises(ValueError, match="budget_boundary_and_math_hold"):
         enforce_starter_release_audit(report)
+
+
+def test_starter_release_audit_fails_when_candidate_surface_is_hollow(tmp_path, repo_root):
+    demo_dir = _run_north_star_demo(tmp_path, repo_root)
+    preflight_dirs = list((demo_dir / "preflight").iterdir())
+    packet_path = preflight_dirs[0] / "intake_preflight_packet.json"
+    packet = load_json(packet_path)
+    packet["matter_family_candidates"] = []
+    write_json(packet_path, packet)
+
+    report = build_starter_release_audit_report(repo_root=repo_root, demo_dir=demo_dir)
+
+    assert report.status == "failed"
+    failed = {check.check_id for check in report.checks if check.status == "failed"}
+    assert "north_star_candidate_surface_complete" in failed
+    with pytest.raises(ValueError, match="north_star_candidate_surface_complete"):
+        enforce_starter_release_audit(report)
+
+
+def test_starter_release_audit_fails_when_evidence_graph_loses_budget_lines(tmp_path, repo_root):
+    demo_dir = _run_north_star_demo(tmp_path, repo_root)
+    graph_path = demo_dir / "budget/evidence_graph.json"
+    graph = load_json(graph_path)
+    graph["nodes"] = [node for node in graph["nodes"] if node["node_type"] != "budget_line"]
+    write_json(graph_path, graph)
+
+    report = build_starter_release_audit_report(repo_root=repo_root, demo_dir=demo_dir)
+
+    assert report.status == "failed"
+    failed = {check.check_id for check in report.checks if check.status == "failed"}
+    assert "evidence_graph_covers_intake_to_budget_deliverables" in failed
+    with pytest.raises(ValueError, match="evidence_graph_covers_intake_to_budget_deliverables"):
+        enforce_starter_release_audit(report)
+
+
+def test_starter_release_audit_fails_when_review_package_loses_story_section(tmp_path, repo_root):
+    demo_dir = _run_north_star_demo(tmp_path, repo_root)
+    review_path = demo_dir / "budget/matter_opening_review_package.md"
+    review_text = review_path.read_text(encoding="utf-8")
+    review_path.write_text(
+        review_text.replace("## Candidate Alternatives", "## Candidate Snapshot"),
+        encoding="utf-8",
+    )
+
+    report = build_starter_release_audit_report(repo_root=repo_root, demo_dir=demo_dir)
+
+    assert report.status == "failed"
+    failed = {check.check_id for check in report.checks if check.status == "failed"}
+    assert "human_review_package_tells_complete_north_star_story" in failed
+    with pytest.raises(ValueError, match="human_review_package_tells_complete_north_star_story"):
+        enforce_starter_release_audit(report)

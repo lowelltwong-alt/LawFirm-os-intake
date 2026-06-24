@@ -11,6 +11,7 @@ from .models import (
     ConflictSeedPacket,
     ContractStateReport,
     DeadlineDocketingGuardReport,
+    EvidenceGraph,
     ExceptionLakeHandoffManifest,
     ExceptionLakeReadinessReport,
     FixtureGoldReport,
@@ -104,6 +105,100 @@ EXPECTED_BUDGET_EXCEPTION_LABELS = {
     "budget_unknowns_require_review",
 }
 
+REQUIRED_PACKET_CANDIDATE_FIELDS = {
+    "party_candidates",
+    "inbound_event_candidates",
+    "matter_family_candidates",
+    "representation_posture_candidates",
+    "deadline_candidates",
+    "missing_information_candidates",
+    "critic_findings",
+}
+
+REQUIRED_SOURCE_COVERAGE_STATES = {"read", "missing"}
+REQUIRED_SOURCE_AVAILABILITY_STATES = {"available", "missing", "duplicate"}
+
+REQUIRED_BUDGET_GRAPH_NODE_TYPES = {
+    "source",
+    "segment",
+    "party_candidate",
+    "party_role_candidate",
+    "inbound_event_candidate",
+    "matter_family_candidate",
+    "representation_posture_candidate",
+    "deadline_candidate",
+    "missing_information_candidate",
+    "critic_finding",
+    "human_confirmation",
+    "human_review_outcome",
+    "conflict_seed_packet",
+    "conflict_search_term",
+    "budget_proposal",
+    "budget_line",
+    "budget_support_item",
+    "matter_opening_readiness",
+    "matter_opening_blocker",
+    "prohibited_action_guardrail",
+    "structured_ref",
+}
+
+REQUIRED_BUDGET_GRAPH_RELATIONSHIPS = {
+    "contains",
+    "supports_party_candidate",
+    "supports_party_role_candidate",
+    "supports_matter_candidate",
+    "supports_representation_posture_candidate",
+    "supports_deadline_candidate",
+    "supports_missing_information_candidate",
+    "supports_critic_finding",
+    "supports_human_confirmation",
+    "recorded_as_human_review_outcome",
+    "supports_conflict_search_term",
+    "included_in_conflict_seed",
+    "authorizes_budget_proposal_generation",
+    "supports_budget_line",
+    "supports_budget_support_item",
+    "blocks_matter_opening_readiness",
+    "supports_matter_opening_blocker",
+    "supports_prohibited_action_guardrail",
+    "guards_matter_opening_readiness",
+}
+
+REQUIRED_REVIEW_PACKAGE_PHRASES = {
+    "# Matter Opening Review Package",
+    "## Source Inventory",
+    "## Candidate Alternatives",
+    "## Conflict Search Seed",
+    "## Budget Proposal",
+    "## Exception And Escalation Records",
+    "## Run Ledger Summary",
+    "blocked_pending_conflicts_and_engagement",
+    "This package does not clear conflicts",
+    "submit a budget",
+}
+
+REQUIRED_PREFLIGHT_LEDGER_STEPS = {
+    "run_started",
+    "adapter_selected",
+    "contract_state_gate",
+    "data_origin_gate",
+    "context_resolution",
+    "python_reference_ingestion",
+    "specialist_workers",
+    "preflight_packet_built",
+    "fixture_gold_evaluated",
+}
+
+REQUIRED_BUDGET_LEDGER_STEPS = {
+    "budget_run_started",
+    "human_review_outcome_recorded",
+    "budget_precondition_gate",
+    "human_confirmation_consumed",
+    "conflict_seed_and_budget_proposal_built",
+    "fixture_gold_evaluated",
+    "matter_opening_review_package_built",
+}
+
 CURRENCY_TOLERANCE = 0.01
 
 
@@ -153,6 +248,15 @@ def _model_or_none(model: type, path: Path) -> Any | None:
         return None
 
 
+def _text_or_empty(path: Path) -> str:
+    if not path.exists() or not path.is_file():
+        return ""
+    try:
+        return path.read_text(encoding="utf-8")
+    except OSError:
+        return ""
+
+
 def _human_review_outcome_path(budget_dir: Path) -> Path | None:
     matches = sorted(budget_dir.glob("human_review_outcome.*.json"))
     return matches[0] if len(matches) == 1 else None
@@ -193,6 +297,10 @@ def _labels(candidates: list[dict[str, Any]]) -> set[str]:
     return {str(item.get("local_event_label")) for item in candidates}
 
 
+def _step_names(events: list[dict[str, Any]]) -> set[str]:
+    return {str(event.get("step_name")) for event in events if event.get("step_name")}
+
+
 def _all_candidate_registry_files_are_noncanonical(repo_root: Path) -> tuple[bool, list[str]]:
     failures: list[str] = []
     for path in sorted((repo_root / "contracts/candidate").glob("*.json")):
@@ -230,6 +338,125 @@ def _candidate_refs_are_valid(packet: IntakePreflightPacket | None) -> tuple[boo
     except ValueError as exc:
         return False, str(exc)
     return True, None
+
+
+def _source_coverage_details(
+    packet: IntakePreflightPacket | None,
+) -> tuple[bool, dict[str, Any]]:
+    if packet is None:
+        return False, {"error": "preflight packet unavailable"}
+    read_states = {item.read_state for item in packet.source_inventory}
+    availability_states = {item.availability_state for item in packet.source_inventory}
+    duplicate_links = [
+        item.source_id
+        for item in packet.source_inventory
+        if item.availability_state == "duplicate" and item.duplicate_of_source_id
+    ]
+    sources_with_attachment_refs = [
+        item.source_id for item in packet.source_inventory if item.attachment_refs
+    ]
+    summary = packet.source_coverage_summary
+    passed = (
+        summary.get("coverage_complete") is False
+        and summary.get("missing_sources", 0) >= 1
+        and summary.get("duplicate_sources", 0) >= 1
+        and summary.get("attachment_reference_count", 0) >= 1
+        and REQUIRED_SOURCE_COVERAGE_STATES.issubset(read_states)
+        and REQUIRED_SOURCE_AVAILABILITY_STATES.issubset(availability_states)
+        and bool(duplicate_links)
+        and bool(sources_with_attachment_refs)
+    )
+    return passed, {
+        "coverage_summary": summary,
+        "read_states": sorted(read_states),
+        "availability_states": sorted(availability_states),
+        "duplicate_source_ids": duplicate_links,
+        "sources_with_attachment_refs": sources_with_attachment_refs,
+    }
+
+
+def _candidate_surface_details(
+    packet: IntakePreflightPacket | None,
+) -> tuple[bool, dict[str, Any]]:
+    if packet is None:
+        return False, {"error": "preflight packet unavailable"}
+    counts = {
+        "party_candidates": len(packet.party_candidates),
+        "party_role_candidates": sum(
+            len(party.role_candidates) for party in packet.party_candidates
+        ),
+        "inbound_event_candidates": len(packet.inbound_event_candidates),
+        "matter_family_candidates": len(packet.matter_family_candidates),
+        "representation_posture_candidates": len(packet.representation_posture_candidates),
+        "deadline_candidates": len(packet.deadline_candidates),
+        "missing_information_candidates": len(packet.missing_information_candidates),
+        "critic_findings": len(packet.critic_findings),
+    }
+    top_labels = {
+        "inbound_event": (
+            packet.inbound_event_candidates[0].label if packet.inbound_event_candidates else None
+        ),
+        "matter_family": (
+            packet.matter_family_candidates[0].label if packet.matter_family_candidates else None
+        ),
+        "representation_posture": (
+            packet.representation_posture_candidates[0].label
+            if packet.representation_posture_candidates
+            else None
+        ),
+    }
+    source_statuses = {
+        candidate.source_evidence_status
+        for candidate in [
+            *packet.inbound_event_candidates,
+            *packet.matter_family_candidates,
+            *packet.representation_posture_candidates,
+        ]
+    }
+    passed = (
+        all(counts[field] > 0 for field in REQUIRED_PACKET_CANDIDATE_FIELDS)
+        and counts["party_role_candidates"] > 0
+        and top_labels["inbound_event"] is not None
+        and top_labels["matter_family"] is not None
+        and top_labels["representation_posture"] is not None
+        and "unknown_option" in source_statuses
+        and "ROLE_CANDIDATES_AMBIGUOUS" in {finding.code for finding in packet.critic_findings}
+    )
+    return passed, {
+        "candidate_counts": counts,
+        "top_labels": top_labels,
+        "source_evidence_statuses": sorted(source_statuses),
+        "critic_codes": sorted({finding.code for finding in packet.critic_findings}),
+    }
+
+
+def _evidence_graph_details(graph: EvidenceGraph | None) -> tuple[bool, dict[str, Any]]:
+    if graph is None:
+        return False, {"error": "evidence graph unavailable"}
+    node_types = {node.node_type for node in graph.nodes}
+    relationships = {edge.relationship for edge in graph.edges}
+    missing_node_types = sorted(REQUIRED_BUDGET_GRAPH_NODE_TYPES - node_types)
+    missing_relationships = sorted(REQUIRED_BUDGET_GRAPH_RELATIONSHIPS - relationships)
+    source_bound_edges = [
+        edge.relationship
+        for edge in graph.edges
+        if edge.relationship.startswith("supports_") and edge.evidence_refs
+    ]
+    passed = not missing_node_types and not missing_relationships and bool(source_bound_edges)
+    return passed, {
+        "node_type_count": len(node_types),
+        "edge_relationship_count": len(relationships),
+        "missing_node_types": missing_node_types,
+        "missing_relationships": missing_relationships,
+        "source_bound_support_edge_count": len(source_bound_edges),
+    }
+
+
+def _review_package_details(review_text: str) -> tuple[bool, dict[str, Any]]:
+    missing = sorted(
+        phrase for phrase in REQUIRED_REVIEW_PACKAGE_PHRASES if phrase not in review_text
+    )
+    return not missing, {"missing_phrases": missing}
 
 
 def _ingestion_refs_are_valid(result: IngestionResult | None) -> tuple[bool, str | None]:
@@ -348,8 +575,10 @@ def build_starter_release_audit_report(
     budget_ledger_integrity = _model_or_none(
         RunLedgerIntegrityReport, paths["budget_run_ledger_integrity_report"]
     )
+    budget_graph = _model_or_none(EvidenceGraph, paths["budget_evidence_graph"])
     budget_gold = _model_or_none(FixtureGoldReport, paths["budget_fixture_gold_report"])
     raw_input = _json_or_none(paths["raw_input"]) if "raw_input" in paths else None
+    review_text = _text_or_empty(paths["review_package"])
 
     preflight_exceptions = load_jsonl(paths["preflight_exception_candidates"])
     budget_exceptions = load_jsonl(paths["budget_exception_candidates"])
@@ -370,9 +599,17 @@ def build_starter_release_audit_report(
     packet_refs_ok, packet_ref_error = _candidate_refs_are_valid(packet)
     ingestion_refs_ok, ingestion_ref_error = _ingestion_refs_are_valid(ingestion_result)
     budget_math_ok, budget_math_details = _deterministic_budget_math_is_valid(budget)
+    source_coverage_ok, source_coverage_details = _source_coverage_details(packet)
+    candidate_surface_ok, candidate_surface_details = _candidate_surface_details(packet)
+    budget_graph_ok, budget_graph_details = _evidence_graph_details(budget_graph)
+    review_text_ok, review_text_details = _review_package_details(review_text)
 
     manifest_refs = list(manifest.artifact_refs.values()) if manifest else []
     all_exception_candidates = preflight_exceptions + budget_exceptions
+    preflight_ledger_steps = _step_names(preflight_ledger)
+    budget_ledger_steps = _step_names(budget_ledger)
+    missing_preflight_steps = sorted(REQUIRED_PREFLIGHT_LEDGER_STEPS - preflight_ledger_steps)
+    missing_budget_steps = sorted(REQUIRED_BUDGET_LEDGER_STEPS - budget_ledger_steps)
     exception_candidates_dry_run = all(
         item.get("status") == "dry_run_candidate"
         and item.get("raw_payload_included") is False
@@ -458,6 +695,41 @@ def build_starter_release_audit_report(
                 "packet_ref_error": packet_ref_error,
                 "ingestion_ref_error": ingestion_ref_error,
             },
+        ),
+        _check(
+            "north_star_source_coverage_exercised",
+            source_coverage_ok,
+            "North-star source inventory exercises missing, duplicate, attachment, and incomplete coverage states.",
+            requirement_refs=["DoD-6", "Repeatable-quality"],
+            artifact_refs=_artifact_refs(
+                paths,
+                ["source_inventory", "preflight_packet", "ingestion_result"],
+            ),
+            details=source_coverage_details,
+        ),
+        _check(
+            "north_star_candidate_surface_complete",
+            candidate_surface_ok,
+            "North-star packet contains reviewable parties, roles, matter, posture, deadlines, gaps, and critic findings.",
+            requirement_refs=["DoD-6", "DoD-7", "DoD-10", "Exception-aware"],
+            artifact_refs=_artifact_refs(paths, ["preflight_packet", "intake_review_form"]),
+            details=candidate_surface_details,
+        ),
+        _check(
+            "evidence_graph_covers_intake_to_budget_deliverables",
+            budget_graph_ok,
+            "Budget evidence graph contains the named intake, conflict, budget, blocker, and guardrail deliverables with support edges.",
+            requirement_refs=["DoD-6", "DoD-7"],
+            artifact_refs=_artifact_refs(paths, ["budget_evidence_graph"]),
+            details=budget_graph_details,
+        ),
+        _check(
+            "human_review_package_tells_complete_north_star_story",
+            review_text_ok,
+            "Human-readable review package includes source inventory, candidates, conflict seed, budget, exceptions, ledgers, blockers, and boundary text.",
+            requirement_refs=["DoD-2", "DoD-6", "DoD-14", "DoD-15"],
+            artifact_refs=_artifact_refs(paths, ["review_package"]),
+            details=review_text_details,
         ),
         _check(
             "rust_boundary_is_prepared_but_not_authorized",
@@ -684,17 +956,8 @@ def build_starter_release_audit_report(
         _check(
             "run_ledgers_capture_expected_steps",
             bool(
-                any(event.get("step_name") == "contract_state_gate" for event in preflight_ledger)
-                and any(
-                    event.get("step_name") == "preflight_packet_built" for event in preflight_ledger
-                )
-                and any(
-                    event.get("step_name") == "budget_precondition_gate" for event in budget_ledger
-                )
-                and any(
-                    event.get("step_name") == "matter_opening_review_package_built"
-                    for event in budget_ledger
-                )
+                not missing_preflight_steps
+                and not missing_budget_steps
                 and preflight_ledger_integrity
                 and preflight_ledger_integrity.status == "passed"
                 and preflight_ledger_integrity.stage == "preflight"
@@ -713,6 +976,12 @@ def build_starter_release_audit_report(
                     "budget_run_ledger_integrity_report",
                 ],
             ),
+            details={
+                "missing_preflight_steps": missing_preflight_steps,
+                "missing_budget_steps": missing_budget_steps,
+                "preflight_steps": sorted(preflight_ledger_steps),
+                "budget_steps": sorted(budget_ledger_steps),
+            },
         ),
     ]
 

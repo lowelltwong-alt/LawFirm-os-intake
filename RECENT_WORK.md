@@ -232,3 +232,9 @@
 - Added `budget_submission_guard_report.json` so confirmed budget runs have a typed proof that the proposal remains review-only and no client submission, carrier submission, billing handoff, or external write occurred.
 - The final review package now renders the budget guard status, guarded actions, no-submission/no-billing flags, and required `human_budget_review` gate.
 - The safety gate, package completeness, starter release audit, schema export, focused tests, north-star tests, and smoke coverage now fail closed if the budget guard is missing, loses the pending budget gate, or claims submission/billing occurred.
+
+## Starter audit north-star content slice - 2026-06-24
+
+- Hardened `starter_release_audit_report.json` so the release smoke proves more than file existence: source coverage states, candidate surface completeness, evidence-graph node/edge coverage, review-package story sections, and full preflight/budget ledger steps are now checked.
+- Added fail-closed coverage for hollow matter-family candidates, missing budget-line graph nodes, and a review package that loses the Candidate Alternatives section.
+- Smoke coverage now greps the new content-level audit checks so the north-star release path fails if those objective-level proofs disappear.
