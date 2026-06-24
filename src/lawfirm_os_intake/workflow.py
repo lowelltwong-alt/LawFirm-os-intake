@@ -22,6 +22,7 @@ from .ingestion import build_ingestion_result
 from .models import (
     ConflictSearchTerm,
     ConflictSeedPacket,
+    ContractStateReport,
     EvidenceRef,
     ExceptionLakeCandidate,
     HumanConfirmation,
@@ -625,6 +626,9 @@ def run_budget(
         exception_readiness_report_path,
         exception_readiness_report.model_dump(mode="json"),
     )
+    contract_state_report = ContractStateReport.model_validate(
+        load_json(packet.contract_state_report_ref)
+    )
     append_jsonl(
         ledger_path,
         _event(
@@ -667,6 +671,9 @@ def run_budget(
                 "budget": load_jsonl(ledger_path),
             },
             evidence_graph=extended,
+            contract_state_report=contract_state_report,
+            human_review_outcome=human_review_outcome,
+            budget_precondition_report=budget_precondition_report,
         ),
         encoding="utf-8",
     )

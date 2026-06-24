@@ -43,6 +43,21 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     graph = load_json(budget_dir / "evidence_graph.json")
 
     assert "# Matter Opening Review Package" in review_text
+    assert "## Authority And Preconditions" in review_text
+    assert "### Contract State" in review_text
+    assert "Contract state status: passed" in review_text
+    assert "Lock status: reviewed_seed_lock" in review_text
+    assert "LawFirm-os-semantic-substrate" in review_text
+    assert "### Human Review Outcome" in review_text
+    assert "Human review outcome status: confirmed" in review_text
+    assert "Budget stage allowed: True" in review_text
+    assert "Required next gate: budget_precondition_gate" in review_text
+    assert "### Budget Preconditions" in review_text
+    assert "Budget precondition status: passed" in review_text
+    assert "Budget blocked state: none" in review_text
+    assert "External writes performed: False" in review_text
+    assert "Prohibited outputs before gate failure:" in review_text
+    assert "matter_opening_review_package" in review_text
     assert "## Source Inventory" in review_text
     assert "read_state=read" in review_text
     assert "availability=available" in review_text
@@ -141,6 +156,10 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert completeness.review_package_id == manifest.review_package_id
     assert completeness.human_readable_review_ref == str(review_path)
     assert completeness.review_package_manifest_ref == str(manifest_path)
+    assert "## Authority And Preconditions" in completeness.required_sections
+    assert "### Contract State" in completeness.required_sections
+    assert "### Human Review Outcome" in completeness.required_sections
+    assert "### Budget Preconditions" in completeness.required_sections
     assert "## Source Inventory" in completeness.required_sections
     assert "## Candidate Alternatives" in completeness.required_sections
     assert "## Required Human Gates" in completeness.required_sections

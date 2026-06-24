@@ -3,10 +3,13 @@ from __future__ import annotations
 from typing import Any
 
 from .models import (
+    BudgetPreconditionReport,
     BudgetProposal,
     ConflictSeedPacket,
+    ContractStateReport,
     EvidenceGraph,
     HumanConfirmation,
+    HumanReviewOutcomeRecord,
     IntakePreflightPacket,
     MatterOpeningReadiness,
     SafetyGateReport,
@@ -199,6 +202,62 @@ def _source_inventory_lines(packet: IntakePreflightPacket) -> list[str]:
             f"metadata_keys={metadata_keys}"
         )
     return lines or ["- none"]
+
+
+def _contract_state_lines(report: ContractStateReport | None) -> list[str]:
+    if report is None:
+        return ["- Contract state report: unavailable"]
+    lines = [
+        f"- Contract state status: {report.status}",
+        f"- Lock status: {report.lock_status or 'unknown'}",
+        f"- Reviewed lock required: {report.reviewed_lock_required}",
+        f"- Lockfile ref: `{report.lockfile_ref}`",
+        f"- Topology lock ref: `{report.topology_lock_ref}`",
+        "- Contract dependencies:",
+    ]
+    for dependency in report.dependencies:
+        sha = dependency.sha or "missing-sha"
+        lines.append(
+            f"- {dependency.repo}: status={dependency.status}; "
+            f"plane={dependency.authority_plane}; sha={sha}; "
+            f"topology_matches_lock={dependency.topology_matches_lock}"
+        )
+    lines.append("- Contract checks:")
+    lines.extend(f"- {check.status}: {check.check_id} - {check.message}" for check in report.checks)
+    return lines
+
+
+def _human_review_outcome_lines(outcome: HumanReviewOutcomeRecord | None) -> list[str]:
+    if outcome is None:
+        return ["- Human review outcome: unavailable"]
+    return [
+        f"- Human review outcome status: {outcome.status}",
+        f"- Reviewer: {outcome.reviewer_id}",
+        f"- Reviewed at: {outcome.reviewed_at}",
+        f"- Matches preflight packet: {outcome.matches_preflight_packet}",
+        f"- Budget stage allowed: {outcome.budget_stage_allowed}",
+        f"- Required next gate: {outcome.required_next_gate}",
+        f"- Mutation policy: {outcome.mutation_policy}",
+        f"- Decision evidence refs: {len(outcome.decision_evidence_refs)}",
+        f"- Confirmed party evidence refs: {len(outcome.confirmed_party_evidence_refs)}",
+    ]
+
+
+def _budget_precondition_lines(report: BudgetPreconditionReport | None) -> list[str]:
+    if report is None:
+        return ["- Budget precondition report: unavailable"]
+    blocked_state = report.blocked_state or "none"
+    prohibited_outputs = ", ".join(report.prohibited_outputs) or "none"
+    lines = [
+        f"- Budget precondition status: {report.status}",
+        f"- Budget blocked state: {blocked_state}",
+        f"- Human review outcome ref: `{report.human_review_outcome_ref or 'missing'}`",
+        f"- External writes performed: {report.external_writes_performed}",
+        f"- Prohibited outputs before gate failure: {prohibited_outputs}",
+        "- Budget precondition checks:",
+    ]
+    lines.extend(f"- {check.status}: {check.check_id} - {check.message}" for check in report.checks)
+    return lines
 
 
 def _budget_support_lines(budget: BudgetProposal) -> list[str]:
@@ -431,6 +490,9 @@ def render_matter_opening_review_package(
     artifact_refs: dict[str, str],
     run_ledger_events: dict[str, list[dict[str, Any]]] | None = None,
     evidence_graph: EvidenceGraph | None = None,
+    contract_state_report: ContractStateReport | None = None,
+    human_review_outcome: HumanReviewOutcomeRecord | None = None,
+    budget_precondition_report: BudgetPreconditionReport | None = None,
 ) -> str:
     source_summary = packet.source_coverage_summary
     deadline_lines = [
@@ -465,6 +527,17 @@ def render_matter_opening_review_package(
             f"**Preflight packet ID:** {packet.packet_id}",
             f"**Human confirmation ID:** {confirmation.confirmation_id}",
             f"**Final boundary:** {readiness.status}",
+            "",
+            "## Authority And Preconditions",
+            "",
+            "### Contract State",
+            *_contract_state_lines(contract_state_report),
+            "",
+            "### Human Review Outcome",
+            *_human_review_outcome_lines(human_review_outcome),
+            "",
+            "### Budget Preconditions",
+            *_budget_precondition_lines(budget_precondition_report),
             "",
             "## Source Inventory",
             "",

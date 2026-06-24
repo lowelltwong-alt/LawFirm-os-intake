@@ -112,6 +112,19 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     assert manifest["contract_state_report_ref"].endswith("contract_state_report.json")
 
     for phrase in [
+        "## Authority And Preconditions",
+        "### Contract State",
+        "Contract state status: passed",
+        "Lock status: reviewed_seed_lock",
+        "LawFirm-os-semantic-substrate",
+        "### Human Review Outcome",
+        "Human review outcome status: confirmed",
+        "Budget stage allowed: True",
+        "Required next gate: budget_precondition_gate",
+        "### Budget Preconditions",
+        "Budget precondition status: passed",
+        "Budget blocked state: none",
+        "Prohibited outputs before gate failure:",
         "## Source Inventory",
         "Source coverage complete: False",
         "syn-northstar-attachment-missing-001",

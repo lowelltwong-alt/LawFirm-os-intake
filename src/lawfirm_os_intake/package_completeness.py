@@ -14,6 +14,10 @@ from .util import new_id, now_iso
 
 REQUIRED_REVIEW_SECTIONS = [
     "# Matter Opening Review Package",
+    "## Authority And Preconditions",
+    "### Contract State",
+    "### Human Review Outcome",
+    "### Budget Preconditions",
     "## Source Inventory",
     "## What Is Known",
     "## Candidate Alternatives",

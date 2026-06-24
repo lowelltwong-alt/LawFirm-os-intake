@@ -142,3 +142,9 @@
 - Added an evidence-graph summary to the final matter-opening review package.
 - The summary renders graph refs, node/edge counts, node-type counts, relationship counts, and key provenance edge examples.
 - The completeness report now requires the evidence-graph summary before final package acceptance.
+
+## Final-package authority and preconditions slice - 2026-06-24
+
+- Added authority and precondition subsections to the final matter-opening review package.
+- The package now renders contract-state status, reviewed lock status, dependency pins, human review outcome, and budget precondition checks inline.
+- The completeness report now requires those authority/precondition sections before final package acceptance.
