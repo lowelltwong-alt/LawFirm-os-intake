@@ -48,6 +48,7 @@ from .exceptions import (
     build_preflight_exception_candidates,
 )
 from .gold import build_fixture_gold_report, enforce_fixture_gold_report
+from .guidelines import attach_carrier_compliant_projection, load_carrier_guideline
 from .human_gates import build_human_gate_status_report, enforce_human_gate_status_report
 from .ingestion import build_ingestion_result
 from .ingestion_volume import build_ingestion_volume_profile
@@ -754,6 +755,19 @@ def _resolve_demo_role_rates(
     )
 
 
+def _find_demo_carrier_guideline(
+    profile: dict[str, Any],
+    profile_path: str | Path,
+) -> tuple[dict[str, Any], str] | None:
+    guideline_ref = profile.get("carrier_guideline_ref")
+    if not guideline_ref:
+        return None
+    guideline_path = _find_repo_file(Path(profile_path), str(guideline_ref))
+    if guideline_path is None:
+        return None
+    return load_carrier_guideline(guideline_path), str(guideline_ref)
+
+
 def run_budget(
     preflight_packet_path: str | Path,
     confirmation_path: str | Path,
@@ -901,6 +915,15 @@ def run_budget(
         case_drivers=case_drivers,
         rate_resolution=rate_resolution,
     )
+    guideline = _find_demo_carrier_guideline(profile, profile_path)
+    if guideline is not None:
+        carrier_id = rate_resolution.carrier_id if rate_resolution is not None else None
+        budget = attach_carrier_compliant_projection(
+            budget,
+            guideline=guideline[0],
+            guideline_ref=guideline[1],
+            carrier_id=carrier_id,
+        )
     readiness = MatterOpeningReadiness(
         readiness_id=new_id("readiness"),
         preflight_packet_id=packet.packet_id,

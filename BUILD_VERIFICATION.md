@@ -1,10 +1,10 @@
 # Build Verification
 
-Verified in the artifact build environment on 2026-06-24:
+Verified in the artifact build environment on 2026-06-25:
 
 ```text
 python scripts/export_schemas.py
-# exported 51 schemas
+# exported 54 schemas
 
 python scripts/validate_repo.py
 # repository validation passed
@@ -16,7 +16,7 @@ python -m ruff check src tests scripts
 # All checks passed
 
 python -m ruff format --check src tests scripts
-# 90 files already formatted
+# 94 files already formatted
 
 bash -lc 'export PATH="/c/Users/lowel/AppData/Local/Programs/Python/Python312:$PATH"; bash scripts/smoke_demo.sh'
 # completed without error and wrote starter, blocked-budget, and context-counterfactual audit reports
@@ -83,6 +83,12 @@ Budget runs now also emit `budget_submission_guard_report.json`, proving the bud
 Budget proposals now embed `BudgetScenarioSet` with `early_resolution`, `standard`, and `through_trial` branches. The compatibility proposal fields map to `standard`, while the review forms render the branch comparison, ranges, included phases, included UTBMS code candidates, monotonic ordering, and non-submission boundary.
 
 Budget proposals now also embed `BudgetDriverEffect` and `BudgetGuidelineFlag` records. Severity, liability, and venue can apply bounded synthetic intensity multipliers, coverage posture remains a review boundary, and synthetic guideline caps produce human-review flags without rewriting rates, hours, expenses, or totals. Profile defaults are labeled as defaults rather than observed facts.
+
+Budget proposals now also embed `CarrierCompliantProjection` when the synthetic
+profile names a carrier guideline artifact. The projection applies synthetic rate
+and expense caps in a separate proposed-vs-compliant view, reports deltas, keeps
+proposal lines unchanged, and carries `rewrites_budget=false`, no external writes,
+and no client/carrier submission authority.
 
 Budget runs now also write `case_driver_profile.json` and embed `BudgetDriverProfileSummary` in `legal_budget_proposal.json`. The review package and standalone budget form render driver profile summary, scenario comparison, workbook mapping status, and unresolved budget assumptions, and package completeness fails closed if those surfaces or non-observed-fact boundaries drift.
 

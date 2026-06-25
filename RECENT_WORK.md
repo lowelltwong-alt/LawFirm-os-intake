@@ -1,5 +1,11 @@
 # Recent Work
 
+## Carrier guideline projection slice - 2026-06-25
+
+- Added `config/synthetic-carrier-guideline.yaml` as a synthetic-only candidate artifact for one fake carrier's rate caps, expense caps, contingency posture, cadence, and variance threshold.
+- Budget proposals now embed `CarrierCompliantProjection`, a separate proposed-vs-carrier-compliant view that applies rate and expense caps while keeping proposal lines unchanged.
+- The budget review form, final matter-opening package, completeness report, schema export, promotion package, and tests now preserve `rewrites_budget=false`, no external writes, and no client/carrier submission authority.
+
 ## Rust transition policy manifest slice - 2026-06-24
 
 - Added `config/rust-ingestion-transition-policy.json` as the local candidate policy for Rust profiling thresholds, benchmark dimensions, hot-path scope, forbidden scope, parity dimensions, and transition gates.

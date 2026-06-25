@@ -1,7 +1,8 @@
 # Carrier Rate & Guideline Layer — Design + Codex Handoff
 
-**Status:** Slice A implemented (carrier x state x title rate resolution). Slices B–E and
-the P1 budget-math fixes are proposed and handed to Codex.
+**Status:** Slices A-B implemented (carrier x state x title rate resolution,
+synthetic carrier guideline projection). Slices C-E and the P1 budget-math fixes
+remain proposed and handed to Codex.
 **Owner repo:** `LawFirm-os-intake` (vertical composition; owns no platform canon).
 **Authority posture:** rate cards and guidelines are synthetic `candidate` artifacts;
 promotion runs through the owning sibling repo. Builds on
@@ -47,6 +48,8 @@ This lets guidelines reshape cost without a silent rewrite of the proposal.
 ## Codex handoff — build these next (each: PR-sized, candidate-only, green CI, TRACE)
 
 ### B. Carrier guideline artifact + proposed-vs-compliant projection
+**Status:** DONE in this repo as a local candidate slice.
+
 - Add `config/synthetic-carrier-guideline.yaml` (one fake carrier): `rate_caps` by title,
   `expense_caps` by E-code, `contingency_allowed`, `budget_cadence`,
   `variance_approval_percent`.

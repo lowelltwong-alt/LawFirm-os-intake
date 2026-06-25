@@ -1,6 +1,6 @@
 # Data Flow Map
 
-Last reviewed: 2026-06-24.
+Last reviewed: 2026-06-25.
 
 `LawFirm-os-intake` is the private vertical composition and evaluation repo for the intake-to-budget workflow. It is subordinate to the five public LawFirm OS platform repos and owns no canonical authority.
 
@@ -87,6 +87,7 @@ synthetic source bundle
 -> conflict-search seed packet, with evidence-bound normalized terms and no conflict conclusion
 -> case driver profile, with provenance-separated observed/confirmed, profile-default, and unknown drivers
 -> legal budget proposal, not approved or submitted
+-> carrier-compliant projection for synthetic guideline caps, proposal lines unchanged
 -> budget submission guard report proving no client/carrier delivery or billing handoff
 -> matter-opening readiness packet
 -> budget-blocker dry-run Exception Lake candidate
@@ -150,10 +151,11 @@ The outer runtime owner is `LawFirm-os-orchestrator`. The local intake CLI is a 
 | `CaseDriverProfile` in `case_driver_profile.json` and `BudgetDriverProfileSummary` embedded in `legal_budget_proposal.json` | Intake candidate surface | Intake -> Human pricing/review authority / Orchestrator review path | Local candidate driver profile that separates observed or human-confirmed drivers from synthetic profile defaults and unknown drivers; review surfaces show `profile_defaults_are_observed_facts=false`, `context_priors_are_observed_facts=false`, and the profile remains non-authoritative |
 | `BudgetDriverEffect` embedded in `legal_budget_proposal.json` | Intake candidate surface | Intake -> Human pricing/review authority / Orchestrator review path | Local candidate record of count scaling, bounded severity/liability/venue multipliers, coverage boundaries, and unknown drivers; exposes driver value, provenance, structured policy refs, affected phases/tasks, cap state, and `default_used_as_observed_fact=false` |
 | `BudgetGuidelineFlag` embedded in `legal_budget_proposal.json` | Intake candidate surface | Intake -> Human pricing/review authority / Orchestrator review path | Local synthetic guideline/cap review flag for role-rate, phase-budget, total-budget, staffing, or unknown-guideline states; flags may require review but always keep `rewrites_budget=false` |
+| `CarrierCompliantProjection` embedded in `legal_budget_proposal.json` | Intake candidate surface | Intake -> Human pricing/review authority / Orchestrator review path | Local candidate projection that applies synthetic carrier rate and expense caps separately from the proposed budget; preserves proposal lines, reports proposed vs compliant totals and deltas, records `rewrites_budget=false`, and authorizes no client/carrier submission |
 | `BudgetActualComparisonReport` in `budget_actual_comparison_report.json` | Intake candidate surface | Intake -> Human pricing/review authority / Orchestrator review path | Phase-level budget-to-actual comparison posture. Starter runs record `actuals_not_available` with no billing connector read/write; tests may use synthetic actuals; future real actuals must arrive through Orchestrator under a governed billing-read contract before Lake admission |
 | Synthetic matter-family templates | Intake candidate/profile surface | Practice profile -> Budget planner | Local candidate templates now cover `medical_malpractice_defense` and `auto_liability_defense`; both consume the same budget engine, driver policy, scenario set, human gates, and non-submission boundary |
 | `BudgetSupportItem` | Intake candidate surface | Intake -> Human reviewer / Orchestrator review path | Evidence or structured-ref support for budget assumptions, exclusions, and unknowns |
-| `legal_budget_review_form.md` | Intake candidate surface | Intake -> Human pricing/review authority / Orchestrator review path | Standalone budget review surface showing calculation summary, itemized standard-scenario budget lines, driver profile summary, scenario comparison, budget driver effects, guideline flags, workbook mapping status, unresolved budget assumptions, evidence-bound supports, review checks, and non-submission boundary |
+| `legal_budget_review_form.md` | Intake candidate surface | Intake -> Human pricing/review authority / Orchestrator review path | Standalone budget review surface showing calculation summary, itemized standard-scenario budget lines, driver profile summary, scenario comparison, budget driver effects, guideline flags, carrier-compliant projection, workbook mapping status, unresolved budget assumptions, evidence-bound supports, review checks, and non-submission boundary |
 | Human budget change records | Orchestrator future runtime; Intake candidate mapping only | Human reviewer -> Orchestrator -> Exception Lake review path | Budget corrections should be append-only or superseding records with reviewer, timestamp, proposal/version, target phase/task/code, prior value, new value, reason, and support refs. Intake maps the future local label `budget_human_change_recorded` but does not mutate budget history or admit records to Lake storage |
 | `CrossRepoPromotionPackage` in `promotion/cross_repo_promotion_package.json` | Intake candidate surface | Intake -> sibling repo owners for review | Machine-readable candidate-only package naming proposed contracts and interfaces for Semantic Substrate, Orchestrator, Exception Lake, Skills Registry, and Legal Knowledge Runtime; carries no canonical mutation, sibling writes, external writes, or direct promotion |
 | `BudgetPreconditionReport` | Intake candidate surface | Intake -> Human reviewer / Orchestrator review path | Deterministic proof that the budget stage had a matching, confirmed, evidence-bound human confirmation before emitting conflict seed, proposal, readiness, safety, or review package artifacts |

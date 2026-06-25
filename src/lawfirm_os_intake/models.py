@@ -846,6 +846,73 @@ class BudgetGuidelineFlag(StrictModel):
     requires_human_review: Literal[True] = True
 
 
+class CarrierCompliantProjectionLine(StrictModel):
+    phase_id: str
+    task_id: str
+    external_code_candidate: str | None = None
+    expense_code: str | None = None
+    staffing_role: str
+    proposed_hours: float = Field(ge=0)
+    proposed_rate: float | None = Field(default=None, ge=0)
+    compliant_rate: float | None = Field(default=None, ge=0)
+    proposed_fees: float | None = Field(default=None, ge=0)
+    compliant_fees: float | None = Field(default=None, ge=0)
+    proposed_expenses: float = Field(ge=0)
+    compliant_expenses: float = Field(ge=0)
+    proposed_line_total: float | None = None
+    compliant_line_total: float | None = None
+    capped: bool = False
+    disallowed: bool = False
+    rate_cap_applied: bool = False
+    expense_cap_applied: bool = False
+    over_cap_amount: float = Field(default=0, ge=0)
+    guideline_refs: list[str] = Field(default_factory=list)
+    note: str
+
+
+class CarrierCompliantProjectionBasis(StrictModel):
+    guideline_id: str
+    guideline_ref: str
+    carrier_id: str
+    guideline_status: Literal["candidate"]
+    data_scope: Literal["synthetic_only"] = "synthetic_only"
+    rate_caps: dict[str, float] = Field(default_factory=dict)
+    expense_caps: dict[str, float] = Field(default_factory=dict)
+    contingency_allowed: bool
+    budget_cadence: str
+    variance_approval_percent: float = Field(ge=0)
+    projection_only: Literal[True] = True
+    proposal_lines_unchanged: Literal[True] = True
+    no_submission_authority: Literal[True] = True
+
+
+class CarrierCompliantProjection(StrictModel):
+    schema_version: str = "0.1"
+    projection_id: str
+    status: Literal["projected_for_human_review"]
+    basis: CarrierCompliantProjectionBasis
+    proposed_total: float | None = None
+    compliant_total: float | None = None
+    proposed_subtotal_fees: float | None = None
+    compliant_subtotal_fees: float | None = None
+    proposed_subtotal_expenses: float = Field(ge=0)
+    compliant_subtotal_expenses: float = Field(ge=0)
+    proposed_contingency_amount: float | None = None
+    compliant_contingency_amount: float | None = None
+    over_cap_amount: float = Field(ge=0)
+    rate_cap_delta: float = Field(ge=0)
+    expense_cap_delta: float = Field(ge=0)
+    contingency_delta: float = Field(ge=0)
+    line_count: int = Field(ge=0)
+    capped_line_count: int = Field(ge=0)
+    disallowed_line_count: int = Field(ge=0)
+    lines: list[CarrierCompliantProjectionLine]
+    rewrites_budget: Literal[False] = False
+    not_authorized_for_client_submission: Literal[True] = True
+    external_writes_performed: Literal[False] = False
+    non_authoritative: Literal[True] = True
+
+
 class BudgetDriverProfileSummary(StrictModel):
     case_driver_profile_id: str
     policy_id: str
@@ -885,6 +952,7 @@ class BudgetProposal(StrictModel):
     driver_profile_summary: BudgetDriverProfileSummary | None = None
     driver_effects: list[BudgetDriverEffect] = Field(default_factory=list)
     guideline_flags: list[BudgetGuidelineFlag] = Field(default_factory=list)
+    carrier_compliant_projection: CarrierCompliantProjection | None = None
     budget_support_items: list[BudgetSupportItem] = Field(default_factory=list)
     approval_state: Literal["proposed_for_human_review"] = "proposed_for_human_review"
     not_authorized_for_client_submission: bool = True

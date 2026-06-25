@@ -1,0 +1,27 @@
+guideline_id: synthetic-carrier-guideline
+version: "0.1"
+status: candidate
+contains_real_carrier_guidelines: false
+data_scope: synthetic_only
+
+# SYNTHETIC ONLY. This is not a real carrier guideline, negotiated rate rule,
+# billing rule, or submission authority. It exists to prove the proposed-vs-compliant
+# projection layer without rewriting the proposal.
+
+default_carrier_id: synthetic-carrier-a
+
+carriers:
+  synthetic-carrier-a:
+    carrier_name: Harbor Point Insurance
+    contingency_allowed: true
+    budget_cadence: quarterly
+    variance_approval_percent: 10.0
+    rate_caps:
+      partner: 425
+      senior_associate: 335
+      associate: 260
+      paralegal: 165
+    expense_caps:
+      E115: 5000
+      E119: 25000
+      E121: 2500

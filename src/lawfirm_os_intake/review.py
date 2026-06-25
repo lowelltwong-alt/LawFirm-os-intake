@@ -201,6 +201,10 @@ def render_budget_review_form(budget: BudgetProposal) -> str:
             "",
             *_budget_guideline_flag_lines(budget),
             "",
+            "## Carrier-Compliant Projection",
+            "",
+            *_carrier_compliant_projection_lines(budget),
+            "",
             "## Workbook Mapping Status",
             "",
             *_budget_workbook_mapping_status_lines(),
@@ -314,6 +318,43 @@ def _budget_guideline_flag_lines(budget: BudgetProposal) -> list[str]:
             f"rewrites budget: {flag.rewrites_budget}; support: {support}; note: {flag.note}"
         )
     return lines or ["- none"]
+
+
+def _carrier_compliant_projection_lines(budget: BudgetProposal) -> list[str]:
+    projection = budget.carrier_compliant_projection
+    if projection is None:
+        return [
+            "- Carrier-compliant projection available: False",
+            "- Proposal lines unchanged: True",
+            "- Client/carrier submission authorized: False",
+        ]
+    capped_refs = []
+    for line in projection.lines:
+        if line.capped or line.disallowed:
+            capped_refs.append(
+                f"{line.phase_id}/{line.task_id}: proposed={_money(line.proposed_line_total, budget.currency)}, "
+                f"compliant={_money(line.compliant_line_total, budget.currency)}, "
+                f"delta={_money(line.over_cap_amount, budget.currency)}, "
+                f"capped={line.capped}, disallowed={line.disallowed}, note={line.note}"
+            )
+    return [
+        f"- Projection status: {projection.status}",
+        f"- Guideline: `{projection.basis.guideline_ref}` ({projection.basis.guideline_id})",
+        f"- Carrier: {projection.basis.carrier_id}",
+        f"- Proposed total: {_money(projection.proposed_total, budget.currency)}",
+        f"- Carrier-compliant total: {_money(projection.compliant_total, budget.currency)}",
+        f"- Over-cap delta: {_money(projection.over_cap_amount, budget.currency)}",
+        f"- Rate cap delta: {_money(projection.rate_cap_delta, budget.currency)}",
+        f"- Expense cap delta: {_money(projection.expense_cap_delta, budget.currency)}",
+        f"- Contingency delta: {_money(projection.contingency_delta, budget.currency)}",
+        f"- Capped lines: {projection.capped_line_count}/{projection.line_count}",
+        f"- Disallowed lines: {projection.disallowed_line_count}/{projection.line_count}",
+        f"- Projection rewrites budget: {projection.rewrites_budget}",
+        f"- Proposal lines unchanged: {projection.basis.proposal_lines_unchanged}",
+        f"- Client/carrier submission authorized: {not projection.not_authorized_for_client_submission}",
+        "- Adjusted projection lines:",
+        *(capped_refs or ["- none"]),
+    ]
 
 
 def _budget_workbook_mapping_status_lines(
@@ -1304,6 +1345,9 @@ def render_matter_opening_review_package(
             "",
             "### Guideline Flags",
             *_budget_guideline_flag_lines(budget),
+            "",
+            "### Carrier-Compliant Projection",
+            *_carrier_compliant_projection_lines(budget),
             "",
             "### Workbook Mapping Status",
             *_budget_workbook_mapping_status_lines(artifact_refs),

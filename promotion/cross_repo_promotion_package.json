@@ -85,7 +85,7 @@
       "target_repo": "LawFirm-os-semantic-substrate",
       "authority_plane": "control",
       "proposal_type": "event_label_mapping",
-      "summary": "Review candidate budget proposal, budget support, scenario set, driver summary, guideline flag, actual comparison, and intake event-label families before any canonical promotion.",
+      "summary": "Review candidate budget proposal, budget support, scenario set, driver summary, guideline flag, carrier-compliant projection, actual comparison, and intake event-label families before any canonical promotion.",
       "candidate_artifact_refs": [
         "schemas/legal-budget-proposal.schema.json",
         "schemas/budget-support-item.schema.json",
@@ -93,6 +93,9 @@
         "schemas/budget-driver-effect.schema.json",
         "schemas/budget-driver-profile-summary.schema.json",
         "schemas/budget-guideline-flag.schema.json",
+        "schemas/carrier-compliant-projection.schema.json",
+        "schemas/carrier-compliant-projection-basis.schema.json",
+        "schemas/carrier-compliant-projection-line.schema.json",
         "schemas/budget-actual-comparison-report.schema.json",
         "docs/cross-repo-promotion-package.md"
       ],

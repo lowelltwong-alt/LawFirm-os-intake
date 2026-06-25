@@ -40,7 +40,8 @@ A budget proposal contains:
 13. budget support items with evidence refs or structured refs;
 14. source references;
 15. scenario set with early, standard, and through-trial branches;
-16. human approval state.
+16. carrier-compliant projection when a synthetic guideline artifact is present;
+17. human approval state.
 
 The compatibility surface of `BudgetProposal` is the `standard` scenario: its
 `lines`, subtotal fields, calculation report, and `total_proposed_budget` mirror the
@@ -56,6 +57,12 @@ defaults may drive synthetic assumptions, but the review surfaces label them as
 defaults rather than observed facts. `BudgetGuidelineFlag` records show synthetic
 rate, phase, and total cap checks. A guideline flag can require human review, but it
 does not rewrite hours, rates, expenses, or totals.
+
+`CarrierCompliantProjection` is the separate math surface for synthetic carrier
+guidelines. It may cap rates and expenses in the projection view, reports proposed
+vs compliant totals and deltas, and keeps the original proposal lines unchanged.
+It is `projected_for_human_review`, records `rewrites_budget=false`, and carries no
+client or carrier submission authority.
 
 ## Avoiding false precision
 

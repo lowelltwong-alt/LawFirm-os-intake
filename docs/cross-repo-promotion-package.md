@@ -23,7 +23,7 @@ repo owners must review and promote any accepted contracts inside their own repo
 - Matter-family, inbound-event, representation-posture, deadline, missing-information, and critic-finding candidate contracts.
 - Conflict seed and conflict search term contracts that preserve `no_conflict_conclusion` and require evidence refs for every normalized search term.
 - Budget proposal, calculation-report, and budget-support-item contracts.
-- Budget scenario set, driver effect, driver profile summary, guideline flag, budget-form mapping, budget actual comparison, and budget exception-mapping contracts.
+- Budget scenario set, driver effect, driver profile summary, guideline flag, carrier-compliant projection, budget-form mapping, budget actual comparison, and budget exception-mapping contracts.
 - Matter-opening readiness contract for final blockers, structured blocker details, prohibited-action guardrails, required human gates, workflow-policy refs, and prohibited-transition refs.
 - Evidence graph node and edge conventions for source-backed and structured-ref support across preflight, human review, conflict seed, budget artifacts, readiness blockers, and prohibited-action guardrails.
 - Dry-run exception lake candidate contract with broad Lake class, local event label, source-inventory refs, evidence refs, structured refs, blocked state, `raw_payload_included=false`, and `canonical_promotion_required=true`.
@@ -42,7 +42,7 @@ repo owners must review and promote any accepted contracts inside their own repo
 
 - Outer workflow owner: `LawFirm-os-orchestrator`.
 - Intake runtime input: source bundle path, practice profile ref, adapter mode, strict-evidence setting.
-- Intake runtime outputs: contract state report, data-scope gate report, model adapter report, optional fixture gold report, preflight packet, review form, deadline docketing guard report, evidence graph, run ledger, run ledger integrity report, dry-run exception candidates, exception readiness report, exception handoff manifest, human confirmation, human review outcome record, confirmation history, human gate status report, budget precondition report, conflict seed, case driver profile, budget proposal, budget review form, budget submission guard report, budget actual comparison report, Exception Lake mapping package, matter-opening readiness with structured blockers, safety gate report, consolidated review package, review package manifest, review package completeness report.
+- Intake runtime outputs: contract state report, data-scope gate report, model adapter report, optional fixture gold report, preflight packet, review form, deadline docketing guard report, evidence graph, run ledger, run ledger integrity report, dry-run exception candidates, exception readiness report, exception handoff manifest, human confirmation, human review outcome record, confirmation history, human gate status report, budget precondition report, conflict seed, case driver profile, budget proposal with optional carrier-compliant projection, budget review form, budget submission guard report, budget actual comparison report, Exception Lake mapping package, matter-opening readiness with structured blockers, safety gate report, consolidated review package, review package manifest, review package completeness report.
 - Required gates: contract-state gate, model-adapter guard, data-origin gate, prompt/tool authority gate, human intake confirmation, budget precondition gate, prohibited-transition gate.
 
 ## Exception Lake Mapping Draft

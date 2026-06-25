@@ -115,6 +115,11 @@ The emitted `BudgetProposal` compatibility fields map to the selected `standard`
 
 The same proposal carries local `BudgetDriverEffect` and `BudgetGuidelineFlag` records. Driver effects show count scaling, bounded severity/liability/venue multipliers, coverage boundaries, and unknown drivers with visible provenance. Guideline flags show synthetic cap checks without changing budget values. Defaults are labeled as defaults and never as observed facts.
 
+When the selected synthetic profile names a carrier guideline artifact, the proposal
+also carries a separate `CarrierCompliantProjection`. That projection applies
+synthetic rate and expense caps to a compliant view only, reports the proposed-vs-compliant
+delta, and preserves the proposed budget lines and `rewrites_budget=false` boundary.
+
 ### 15. Human budget review
 
 Future governed step. The starter does not approve or submit.

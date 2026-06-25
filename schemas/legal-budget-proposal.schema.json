@@ -880,6 +880,457 @@
       "title": "BudgetSupportItem",
       "type": "object"
     },
+    "CarrierCompliantProjection": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "default": "0.1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "projection_id": {
+          "title": "Projection Id",
+          "type": "string"
+        },
+        "status": {
+          "const": "projected_for_human_review",
+          "title": "Status",
+          "type": "string"
+        },
+        "basis": {
+          "$ref": "#/$defs/CarrierCompliantProjectionBasis"
+        },
+        "proposed_total": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Proposed Total"
+        },
+        "compliant_total": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Compliant Total"
+        },
+        "proposed_subtotal_fees": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Proposed Subtotal Fees"
+        },
+        "compliant_subtotal_fees": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Compliant Subtotal Fees"
+        },
+        "proposed_subtotal_expenses": {
+          "minimum": 0,
+          "title": "Proposed Subtotal Expenses",
+          "type": "number"
+        },
+        "compliant_subtotal_expenses": {
+          "minimum": 0,
+          "title": "Compliant Subtotal Expenses",
+          "type": "number"
+        },
+        "proposed_contingency_amount": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Proposed Contingency Amount"
+        },
+        "compliant_contingency_amount": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Compliant Contingency Amount"
+        },
+        "over_cap_amount": {
+          "minimum": 0,
+          "title": "Over Cap Amount",
+          "type": "number"
+        },
+        "rate_cap_delta": {
+          "minimum": 0,
+          "title": "Rate Cap Delta",
+          "type": "number"
+        },
+        "expense_cap_delta": {
+          "minimum": 0,
+          "title": "Expense Cap Delta",
+          "type": "number"
+        },
+        "contingency_delta": {
+          "minimum": 0,
+          "title": "Contingency Delta",
+          "type": "number"
+        },
+        "line_count": {
+          "minimum": 0,
+          "title": "Line Count",
+          "type": "integer"
+        },
+        "capped_line_count": {
+          "minimum": 0,
+          "title": "Capped Line Count",
+          "type": "integer"
+        },
+        "disallowed_line_count": {
+          "minimum": 0,
+          "title": "Disallowed Line Count",
+          "type": "integer"
+        },
+        "lines": {
+          "items": {
+            "$ref": "#/$defs/CarrierCompliantProjectionLine"
+          },
+          "title": "Lines",
+          "type": "array"
+        },
+        "rewrites_budget": {
+          "const": false,
+          "default": false,
+          "title": "Rewrites Budget",
+          "type": "boolean"
+        },
+        "not_authorized_for_client_submission": {
+          "const": true,
+          "default": true,
+          "title": "Not Authorized For Client Submission",
+          "type": "boolean"
+        },
+        "external_writes_performed": {
+          "const": false,
+          "default": false,
+          "title": "External Writes Performed",
+          "type": "boolean"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "projection_id",
+        "status",
+        "basis",
+        "proposed_subtotal_expenses",
+        "compliant_subtotal_expenses",
+        "over_cap_amount",
+        "rate_cap_delta",
+        "expense_cap_delta",
+        "contingency_delta",
+        "line_count",
+        "capped_line_count",
+        "disallowed_line_count",
+        "lines"
+      ],
+      "title": "CarrierCompliantProjection",
+      "type": "object"
+    },
+    "CarrierCompliantProjectionBasis": {
+      "additionalProperties": false,
+      "properties": {
+        "guideline_id": {
+          "title": "Guideline Id",
+          "type": "string"
+        },
+        "guideline_ref": {
+          "title": "Guideline Ref",
+          "type": "string"
+        },
+        "carrier_id": {
+          "title": "Carrier Id",
+          "type": "string"
+        },
+        "guideline_status": {
+          "const": "candidate",
+          "title": "Guideline Status",
+          "type": "string"
+        },
+        "data_scope": {
+          "const": "synthetic_only",
+          "default": "synthetic_only",
+          "title": "Data Scope",
+          "type": "string"
+        },
+        "rate_caps": {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "title": "Rate Caps",
+          "type": "object"
+        },
+        "expense_caps": {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "title": "Expense Caps",
+          "type": "object"
+        },
+        "contingency_allowed": {
+          "title": "Contingency Allowed",
+          "type": "boolean"
+        },
+        "budget_cadence": {
+          "title": "Budget Cadence",
+          "type": "string"
+        },
+        "variance_approval_percent": {
+          "minimum": 0,
+          "title": "Variance Approval Percent",
+          "type": "number"
+        },
+        "projection_only": {
+          "const": true,
+          "default": true,
+          "title": "Projection Only",
+          "type": "boolean"
+        },
+        "proposal_lines_unchanged": {
+          "const": true,
+          "default": true,
+          "title": "Proposal Lines Unchanged",
+          "type": "boolean"
+        },
+        "no_submission_authority": {
+          "const": true,
+          "default": true,
+          "title": "No Submission Authority",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "guideline_id",
+        "guideline_ref",
+        "carrier_id",
+        "guideline_status",
+        "contingency_allowed",
+        "budget_cadence",
+        "variance_approval_percent"
+      ],
+      "title": "CarrierCompliantProjectionBasis",
+      "type": "object"
+    },
+    "CarrierCompliantProjectionLine": {
+      "additionalProperties": false,
+      "properties": {
+        "phase_id": {
+          "title": "Phase Id",
+          "type": "string"
+        },
+        "task_id": {
+          "title": "Task Id",
+          "type": "string"
+        },
+        "external_code_candidate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Code Candidate"
+        },
+        "expense_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expense Code"
+        },
+        "staffing_role": {
+          "title": "Staffing Role",
+          "type": "string"
+        },
+        "proposed_hours": {
+          "minimum": 0,
+          "title": "Proposed Hours",
+          "type": "number"
+        },
+        "proposed_rate": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Proposed Rate"
+        },
+        "compliant_rate": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Compliant Rate"
+        },
+        "proposed_fees": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Proposed Fees"
+        },
+        "compliant_fees": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Compliant Fees"
+        },
+        "proposed_expenses": {
+          "minimum": 0,
+          "title": "Proposed Expenses",
+          "type": "number"
+        },
+        "compliant_expenses": {
+          "minimum": 0,
+          "title": "Compliant Expenses",
+          "type": "number"
+        },
+        "proposed_line_total": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Proposed Line Total"
+        },
+        "compliant_line_total": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Compliant Line Total"
+        },
+        "capped": {
+          "default": false,
+          "title": "Capped",
+          "type": "boolean"
+        },
+        "disallowed": {
+          "default": false,
+          "title": "Disallowed",
+          "type": "boolean"
+        },
+        "rate_cap_applied": {
+          "default": false,
+          "title": "Rate Cap Applied",
+          "type": "boolean"
+        },
+        "expense_cap_applied": {
+          "default": false,
+          "title": "Expense Cap Applied",
+          "type": "boolean"
+        },
+        "over_cap_amount": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Over Cap Amount",
+          "type": "number"
+        },
+        "guideline_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Guideline Refs",
+          "type": "array"
+        },
+        "note": {
+          "title": "Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "phase_id",
+        "task_id",
+        "staffing_role",
+        "proposed_hours",
+        "proposed_expenses",
+        "compliant_expenses",
+        "note"
+      ],
+      "title": "CarrierCompliantProjectionLine",
+      "type": "object"
+    },
     "EvidenceRef": {
       "additionalProperties": false,
       "properties": {
@@ -1085,6 +1536,17 @@
       },
       "title": "Guideline Flags",
       "type": "array"
+    },
+    "carrier_compliant_projection": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CarrierCompliantProjection"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
     },
     "budget_support_items": {
       "items": {

@@ -34,6 +34,18 @@ Add severity, venue, liability, coverage, and guideline/cap handling without let
 - Synthetic guideline caps produce `BudgetGuidelineFlag` records and unknown/review text; they do not rewrite rates, hours, or totals.
 - `BudgetDriverEffect` records expose driver value, provenance, structured policy ref, applied phases/tasks, and whether a default was used as an observed fact.
 
+## 3A. Carrier Guideline Projection
+
+Status: implemented for the current synthetic slice.
+
+Apply synthetic carrier guideline caps as a separate proposed-vs-compliant projection without mutating the proposed budget.
+
+- `config/synthetic-carrier-guideline.yaml` is a synthetic-only candidate artifact, not a real carrier guideline.
+- `CarrierCompliantProjection` is embedded in `legal_budget_proposal.json` and exported as a local candidate schema family.
+- Rate and expense caps apply only inside the projection view; proposal lines stay unchanged.
+- Review surfaces render proposed total, compliant total, deltas, capped lines, and submission boundaries.
+- `ReviewPackageCompletenessReport` fails closed if the projection surface loses `rewrites_budget=false`, unchanged proposal posture, or no-submission state.
+
 ## 4. Second Matter Family
 
 Status: implemented for the current synthetic slice.

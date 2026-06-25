@@ -1,0 +1,180 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "phase_id": {
+      "title": "Phase Id",
+      "type": "string"
+    },
+    "task_id": {
+      "title": "Task Id",
+      "type": "string"
+    },
+    "external_code_candidate": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "External Code Candidate"
+    },
+    "expense_code": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Expense Code"
+    },
+    "staffing_role": {
+      "title": "Staffing Role",
+      "type": "string"
+    },
+    "proposed_hours": {
+      "minimum": 0,
+      "title": "Proposed Hours",
+      "type": "number"
+    },
+    "proposed_rate": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Proposed Rate"
+    },
+    "compliant_rate": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Compliant Rate"
+    },
+    "proposed_fees": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Proposed Fees"
+    },
+    "compliant_fees": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Compliant Fees"
+    },
+    "proposed_expenses": {
+      "minimum": 0,
+      "title": "Proposed Expenses",
+      "type": "number"
+    },
+    "compliant_expenses": {
+      "minimum": 0,
+      "title": "Compliant Expenses",
+      "type": "number"
+    },
+    "proposed_line_total": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Proposed Line Total"
+    },
+    "compliant_line_total": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Compliant Line Total"
+    },
+    "capped": {
+      "default": false,
+      "title": "Capped",
+      "type": "boolean"
+    },
+    "disallowed": {
+      "default": false,
+      "title": "Disallowed",
+      "type": "boolean"
+    },
+    "rate_cap_applied": {
+      "default": false,
+      "title": "Rate Cap Applied",
+      "type": "boolean"
+    },
+    "expense_cap_applied": {
+      "default": false,
+      "title": "Expense Cap Applied",
+      "type": "boolean"
+    },
+    "over_cap_amount": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Over Cap Amount",
+      "type": "number"
+    },
+    "guideline_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Guideline Refs",
+      "type": "array"
+    },
+    "note": {
+      "title": "Note",
+      "type": "string"
+    }
+  },
+  "required": [
+    "phase_id",
+    "task_id",
+    "staffing_role",
+    "proposed_hours",
+    "proposed_expenses",
+    "compliant_expenses",
+    "note"
+  ],
+  "title": "CarrierCompliantProjectionLine",
+  "type": "object"
+}

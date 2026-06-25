@@ -151,6 +151,10 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert "### Scenario Comparison" in review_text
     assert "early_resolution:" in review_text
     assert "through_trial:" in review_text
+    assert "### Carrier-Compliant Projection" in review_text
+    assert "Projection rewrites budget: False" in review_text
+    assert "Proposal lines unchanged: True" in review_text
+    assert "Carrier-compliant total:" in review_text
     assert "### Workbook Mapping Status" in review_text
     assert "Template-backed workbook render attempted: False" in review_text
     assert "Mapping report available: False" in review_text
@@ -162,6 +166,7 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert "guideline review:" in review_text
     assert "## Driver Profile Summary" in budget_review_form_text
     assert "## Scenario Comparison" in budget_review_form_text
+    assert "## Carrier-Compliant Projection" in budget_review_form_text
     assert "## Workbook Mapping Status" in budget_review_form_text
     assert "## Unresolved Budget Assumptions" in budget_review_form_text
     assert "## Exception And Escalation Records" in review_text
@@ -381,6 +386,7 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     assert "### Budget Lines" in completeness.required_sections
     assert "### Driver Profile Summary" in completeness.required_sections
     assert "### Scenario Comparison" in completeness.required_sections
+    assert "### Carrier-Compliant Projection" in completeness.required_sections
     assert "### Workbook Mapping Status" in completeness.required_sections
     assert "### Unresolved Budget Assumptions" in completeness.required_sections
     assert "### Exception Lake Readiness" in completeness.required_sections

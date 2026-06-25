@@ -36,6 +36,7 @@ REQUIRED_REVIEW_SECTIONS = [
     "### Budget Supports",
     "### Driver Profile Summary",
     "### Scenario Comparison",
+    "### Carrier-Compliant Projection",
     "### Workbook Mapping Status",
     "### Unresolved Budget Assumptions",
     "## Exception And Escalation Records",
@@ -68,6 +69,7 @@ REQUIRED_LINKED_REVIEW_FORM_SECTIONS = {
         "## Evidence-Bound Budget Supports",
         "## Driver Profile Summary",
         "## Scenario Comparison",
+        "## Carrier-Compliant Projection",
         "## Workbook Mapping Status",
         "## Unresolved Budget Assumptions",
         "## Review Checks",
@@ -565,6 +567,30 @@ def build_review_package_completeness_report(
         )
         and "Required before relying on filled carrier form:" in review_text
     )
+    carrier_projection = (
+        legal_budget_proposal.get("carrier_compliant_projection")
+        if isinstance(legal_budget_proposal, dict)
+        else None
+    )
+    carrier_projection_object_valid = (
+        isinstance(carrier_projection, dict)
+        and carrier_projection.get("rewrites_budget") is False
+        and carrier_projection.get("not_authorized_for_client_submission") is True
+        and carrier_projection.get("external_writes_performed") is False
+    )
+    carrier_projection_unavailable_visible = (
+        not isinstance(carrier_projection, dict)
+        and "Carrier-compliant projection available: False" in review_text
+    )
+    carrier_projection_visible = (
+        "### Carrier-Compliant Projection" in review_text
+        and "Proposal lines unchanged: True" in review_text
+        and "Client/carrier submission authorized: False" in review_text
+        and (
+            ("Projection rewrites budget: False" in review_text and carrier_projection_object_valid)
+            or carrier_projection_unavailable_visible
+        )
+    )
     budget_review_hardening_complete = (
         isinstance(driver_profile_summary, dict)
         and isinstance(case_driver_profile, dict)
@@ -577,6 +603,7 @@ def build_review_package_completeness_report(
         and artifact_refs.get("case_driver_profile")
         and "### Driver Profile Summary" in review_text
         and "### Scenario Comparison" in review_text
+        and carrier_projection_visible
         and workbook_mapping_visible
         and "### Unresolved Budget Assumptions" in review_text
         and "Profile defaults treated as observed facts: False" in review_text
@@ -860,7 +887,7 @@ def build_review_package_completeness_report(
         _check(
             "budget_review_hardening_complete",
             bool(budget_review_hardening_complete),
-            "Budget review package renders driver profile, scenario comparison, workbook mapping posture, and unresolved assumptions.",
+            "Budget review package renders driver profile, scenario comparison, carrier projection, workbook mapping posture, and unresolved assumptions.",
             [
                 artifact_refs.get("legal_budget_proposal", ""),
                 artifact_refs.get("case_driver_profile", ""),
@@ -869,6 +896,7 @@ def build_review_package_completeness_report(
             {
                 "driver_profile_summary_present": isinstance(driver_profile_summary, dict),
                 "case_driver_profile_ref": artifact_refs.get("case_driver_profile", ""),
+                "carrier_projection_visible": carrier_projection_visible,
                 "workbook_mapping_visible": workbook_mapping_visible,
             },
         ),
