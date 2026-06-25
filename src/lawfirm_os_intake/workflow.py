@@ -78,6 +78,7 @@ from .package_completeness import (
     enforce_review_package_completeness,
 )
 from .preconditions import build_budget_precondition_report, enforce_budget_preconditions
+from .rates import load_rate_card, resolve_role_rates
 from .review import (
     render_budget_review_form,
     render_intake_review_form,
@@ -727,6 +728,32 @@ def _resolve_demo_case_drivers(
     return resolve_case_drivers(packet, confirmation, profile, load_driver_policy(policy_path))
 
 
+def _find_repo_file(profile_path: Path, ref: str) -> Path | None:
+    for parent in [profile_path.parent, *profile_path.parents]:
+        candidate = parent / ref
+        if candidate.is_file():
+            return candidate
+    return None
+
+
+def _resolve_demo_role_rates(
+    profile: dict[str, Any],
+    confirmation: HumanConfirmation,
+    profile_path: str | Path,
+):
+    """Resolve carrier x state x title rates for the demo, or None when no card is referenced."""
+
+    rate_card_ref = profile.get("rate_card_ref")
+    if not rate_card_ref:
+        return None
+    card_path = _find_repo_file(Path(profile_path), str(rate_card_ref))
+    if card_path is None:
+        return None
+    return resolve_role_rates(
+        profile=profile, confirmation=confirmation, rate_card=load_rate_card(card_path)
+    )
+
+
 def run_budget(
     preflight_packet_path: str | Path,
     confirmation_path: str | Path,
@@ -864,9 +891,16 @@ def run_budget(
     enforce_budget_preconditions(budget_precondition_report)
     profile = load_profile(profile_path)
     case_drivers = _resolve_demo_case_drivers(packet, confirmation, profile, profile_path)
+    rate_resolution = _resolve_demo_role_rates(profile, confirmation, profile_path)
 
     conflict_seed = build_conflict_seed(packet, confirmation)
-    budget = build_budget_proposal(packet, confirmation, profile, case_drivers=case_drivers)
+    budget = build_budget_proposal(
+        packet,
+        confirmation,
+        profile,
+        case_drivers=case_drivers,
+        rate_resolution=rate_resolution,
+    )
     readiness = MatterOpeningReadiness(
         readiness_id=new_id("readiness"),
         preflight_packet_id=packet.packet_id,

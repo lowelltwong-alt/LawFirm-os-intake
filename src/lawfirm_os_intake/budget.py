@@ -17,6 +17,7 @@ from .models import (
     HumanConfirmation,
     IntakePreflightPacket,
 )
+from .rates import RoleRateResolution
 from .util import new_id
 
 DEFAULT_SCENARIOS = [
@@ -695,6 +696,7 @@ def build_budget_proposal(
     confirmation: HumanConfirmation,
     profile: dict[str, Any],
     case_drivers: CaseDriverProfile | None = None,
+    rate_resolution: RoleRateResolution | None = None,
 ) -> BudgetProposal:
     if confirmation.status != "confirmed":
         raise ValueError("human confirmation must be confirmed before budget generation")
@@ -754,7 +756,10 @@ def build_budget_proposal(
             ],
         )
 
-    rates = {str(k): float(v) for k, v in profile.get("synthetic_hourly_rates", {}).items()}
+    if rate_resolution is not None:
+        rates = dict(rate_resolution.role_rates)
+    else:
+        rates = {str(k): float(v) for k, v in profile.get("synthetic_hourly_rates", {}).items()}
     driver_values = _numeric_driver_values(case_drivers)
     driver_lookup = _drivers_by_id(case_drivers)
     driver_effects_by_key: dict[
@@ -906,9 +911,28 @@ def build_budget_proposal(
         "carrier/client submission",
         "court filing",
     ]
-    assumptions = list(template.get("assumptions", [])) + driver_assumptions
+    rate_basis_assumptions = (
+        [f"Rate basis: {rate_resolution.note}"]
+        if rate_resolution is not None and rate_resolution.source == "carrier_rate_card"
+        else []
+    )
+    assumptions = (
+        list(template.get("assumptions", [])) + rate_basis_assumptions + driver_assumptions
+    )
     exclusions = list(template.get("exclusions", [])) + policy_exclusions
     unknowns = list(template.get("unknowns", [])) + driver_unknowns
+    rate_basis_support_items = [
+        _support_item(
+            "assumption",
+            text,
+            "synthetic_practice_profile",
+            structured_ref=(
+                f"carrier-rate-card://{rate_resolution.rate_card_id}"
+                f"/{rate_resolution.carrier_id}/{rate_resolution.state}"
+            ),
+        )
+        for text in rate_basis_assumptions
+    ]
     support_items = [
         _support_item(
             "assumption",
@@ -917,6 +941,7 @@ def build_budget_proposal(
             structured_ref=_confirmation_ref(confirmation),
         ),
         *_template_support_items(profile, confirmation.confirmed_matter_family, template),
+        *rate_basis_support_items,
         *_budget_driver_support_items(driver_effects, guideline_flags),
         *_workflow_exclusion_support_items(policy_exclusions),
     ]
