@@ -111,3 +111,29 @@ Keep Python as reference runtime while adding benchmark thresholds and parity re
 - `ingestion_volume_profile.json` and `rust_ingestion_readiness_report.json` now carry `rust_transition_policy_ref` and load their gates from that manifest.
 - Python remains the reference implementation; the policy keeps `rust_replacement_allowed=false`, `no_rust_runtime_added=true`, and `external_writes_performed=false`.
 - A future Rust adapter still requires profiling, golden parity, synthetic fixture and holdout parity, schema compatibility, Orchestrator adapter review, and Substrate review for promoted contract changes.
+
+## 10. Carrier Rejection Capture And Learning Loop
+
+Status: proposed.
+
+Capture 100% of future carrier budget and invoice rejections by deterministic
+reconciliation, not by relying on model classification. See
+`docs/carrier-rejection-learning-loop-roadmap.md`.
+
+- Treat portal notices, email notices, LEDES/e-billing response files, returned
+  workbooks, appeal correspondence, and manual human entries as untrusted source
+  channels owned by future Orchestrator connectors.
+- Keep a response-state ledger for every submitted budget, invoice, appeal, or
+  portal action; missing expected responses and unlinked notices become exceptions.
+- Classify rejections into candidate labels for rate reductions, expense
+  disallowances, missing preapproval, staffing/leverage issues, narrative defects,
+  code-mapping issues, budget-phase variance, portal transport failures, guideline
+  drift, appeals, and appeal results.
+- Route dry-run candidates to the Exception Lake mapping layer with source refs,
+  idempotency keys, parser versions, disputed amounts, and human review state.
+- Create a human-owned remediation case for each rejection: classify, link to the
+  budget/invoice/projection/guideline version, propose fix or appeal, capture human
+  approval, track appeal result, and close with financial outcome.
+- Feed reviewed outcomes into candidate learning loops for guideline drift,
+  budget drivers, UTBMS/template mappings, narrative rules, preapproval gates, and
+  appeal-success patterns without silent profile mutation.

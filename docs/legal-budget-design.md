@@ -99,8 +99,14 @@ intake-confirmed baseline
 -> budget proposal
 -> human budget review change record
 -> superseding budget proposal or declined/referred budget outcome
+-> authorized submission by Orchestrator-owned connector
+-> deterministic carrier response reconciliation
+-> carrier rejection or partial-allowance remediation case
+-> human-approved fix, appeal, no-appeal decision, or write-down
+-> appeal result capture and financial outcome
 -> phase-level actuals comparison evidence
 -> dry-run Exception Lake change or variance candidates
+-> reviewed rejection-learning candidate
 -> reviewed template-change proposal
 -> governed promotion
 ```
@@ -111,6 +117,17 @@ which proposal/version it supersedes, the target phase/task/code, the previous v
 the new value, the reason, and the reviewed support. Those records can map to
 Exception Lake as dry-run `budget_human_change_recorded` candidates, but Lake
 admission and storage belong to the Exception Lake runtime.
+
+Carrier rejection handling is a future governed loop, not a starter connector. Every
+submitted budget, invoice, appeal, or portal action should have a reconciled response
+state. Portal notices, email notices, LEDES response files, returned workbooks, appeal
+correspondence, and manual human entries should be captured by Orchestrator-owned
+connectors, admitted by the Exception Lake runtime, and classified with source refs.
+Rejected or partially allowed amounts should open a human-owned remediation case that
+tracks the proposed fix or appeal, human approval, appeal submission, appeal result,
+recovered amount, remaining write-down, and any reviewed learning candidate. Intake
+may provide candidate schemas, synthetic fixtures, and dry-run mappings only. See
+`docs/carrier-rejection-learning-loop-roadmap.md`.
 
 ## Actuals comparison boundary
 
