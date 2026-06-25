@@ -36,6 +36,9 @@ context_precedence:
   - client_or_referral_source_profile
   - practice_group_profile
   - firm_defaults
+# Carrier x state x title rate card (synthetic). When present, per-title rates resolve
+# from the matter's carrier and jurisdiction; synthetic_hourly_rates remains the fallback.
+rate_card_ref: config/synthetic-carrier-rate-card.yaml
 synthetic_hourly_rates:
   partner: 450
   senior_associate: 325

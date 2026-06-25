@@ -1,0 +1,42 @@
+rate_card_id: synthetic-carrier-rate-card
+version: "0.1"
+status: candidate
+contains_real_firm_data: false
+
+# SYNTHETIC ONLY. Carrier x state x timekeeper-title authorized hourly rates. These are
+# invented numbers, not real firm or carrier rate cards. Rates resolve by:
+#   carrier  -> matched from the confirmed insurance_carrier / instructing_source party
+#   state    -> from the confirmed jurisdiction (jurisdiction_aliases)
+#   title    -> timekeeper title / staffing role (partner, senior_associate, ...)
+# Resolution is deterministic with provenance (carrier_alias vs default_carrier, etc.).
+# This is the firm/carrier-authorized rate schedule, NOT a guideline rate cap; guideline
+# caps and the proposed-vs-compliant projection are a separate future layer.
+# Promotion to canon runs through the Semantic Substrate; until then this is a candidate.
+
+default_carrier_id: synthetic-carrier-a
+default_state: NV
+titles: [partner, senior_associate, associate, paralegal]
+
+jurisdiction_aliases:
+  "Synthetic State Court": NV
+  Nevada: NV
+  California: CA
+  Texas: TX
+
+carriers:
+  synthetic-carrier-a:
+    carrier_name: Harbor Point Insurance
+    aliases: ["Harbor Point Insurance", "Harbor Point", "HPIC"]
+    effective_date: "2026-01-01"
+    schedule:
+      NV: { partner: 450, senior_associate: 325, associate: 250, paralegal: 160 }
+      CA: { partner: 520, senior_associate: 380, associate: 300, paralegal: 190 }
+      TX: { partner: 410, senior_associate: 300, associate: 235, paralegal: 150 }
+  synthetic-carrier-b:
+    carrier_name: Cascade Mutual
+    aliases: ["Cascade Mutual", "Cascade"]
+    effective_date: "2026-01-01"
+    schedule:
+      NV: { partner: 395, senior_associate: 295, associate: 225, paralegal: 145 }
+      CA: { partner: 470, senior_associate: 350, associate: 270, paralegal: 175 }
+      TX: { partner: 365, senior_associate: 275, associate: 215, paralegal: 140 }
