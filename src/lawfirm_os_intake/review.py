@@ -205,6 +205,10 @@ def render_budget_review_form(budget: BudgetProposal) -> str:
             "",
             *_carrier_compliant_projection_lines(budget),
             "",
+            "## Carrier Preapproval Requirements",
+            "",
+            *_carrier_preapproval_lines(budget),
+            "",
             "## Workbook Mapping Status",
             "",
             *_budget_workbook_mapping_status_lines(),
@@ -369,6 +373,38 @@ def _carrier_compliant_projection_lines(budget: BudgetProposal) -> list[str]:
         "- Adjusted projection lines:",
         *(capped_refs or ["- none"]),
     ]
+
+
+def _carrier_preapproval_lines(budget: BudgetProposal) -> list[str]:
+    report = budget.carrier_preapproval_report
+    if report is None:
+        return [
+            "- Carrier preapproval report available: False",
+            "- Carrier preapproval obtained: False",
+            "- Carrier submission authorized: False",
+        ]
+    lines = [
+        f"- Preapproval report ID: {report.report_id}",
+        f"- Preapproval status: {report.status}",
+        f"- Guideline: `{report.guideline_ref}` ({report.guideline_id})",
+        f"- Carrier: {report.carrier_id}",
+        f"- Requirements requiring review: {report.required_count}/{report.requirement_count}",
+        f"- Required human gate: {report.required_human_gate}",
+        f"- Preapproval obtained: {report.preapproval_obtained}",
+        f"- Carrier submission authorized: {report.carrier_submission_authorized}",
+        f"- External writes performed: {report.external_writes_performed}",
+        "- Threshold checks:",
+    ]
+    for requirement in report.requirements:
+        refs = ", ".join(requirement.structured_refs) or "none"
+        lines.append(
+            f"- {requirement.threshold_id}: {requirement.status}; "
+            f"current={requirement.current_value}; threshold={requirement.threshold_value} "
+            f"{requirement.unit}; gate={requirement.required_human_gate}; "
+            f"preapproval_obtained={requirement.preapproval_obtained}; refs={refs}; "
+            f"reason={requirement.reason}"
+        )
+    return lines
 
 
 def _budget_workbook_mapping_status_lines(
@@ -1381,6 +1417,9 @@ def render_matter_opening_review_package(
             "",
             "### Carrier-Compliant Projection",
             *_carrier_compliant_projection_lines(budget),
+            "",
+            "### Carrier Preapproval Requirements",
+            *_carrier_preapproval_lines(budget),
             "",
             "### Workbook Mapping Status",
             *_budget_workbook_mapping_status_lines(artifact_refs),

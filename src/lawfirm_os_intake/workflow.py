@@ -966,6 +966,12 @@ def run_budget(
     write_json(run_dir / "conflict_search_seed_packet.json", conflict_seed.model_dump(mode="json"))
     write_json(run_dir / "case_driver_profile.json", case_drivers.model_dump(mode="json"))
     write_json(run_dir / "legal_budget_proposal.json", budget.model_dump(mode="json"))
+    carrier_preapproval_report_path = run_dir / "carrier_preapproval_report.json"
+    if budget.carrier_preapproval_report is not None:
+        write_json(
+            carrier_preapproval_report_path,
+            budget.carrier_preapproval_report.model_dump(mode="json"),
+        )
     (run_dir / "legal_budget_review_form.md").write_text(
         render_budget_review_form(budget), encoding="utf-8"
     )
@@ -1020,6 +1026,11 @@ def run_budget(
         "conflict_search_seed": str(run_dir / "conflict_search_seed_packet.json"),
         "case_driver_profile": str(run_dir / "case_driver_profile.json"),
         "legal_budget_proposal": str(run_dir / "legal_budget_proposal.json"),
+        "carrier_preapproval_report": (
+            str(carrier_preapproval_report_path)
+            if budget.carrier_preapproval_report is not None
+            else ""
+        ),
         "legal_budget_review_form": str(run_dir / "legal_budget_review_form.md"),
         "matter_opening_readiness": str(run_dir / "matter_opening_readiness.json"),
         "budget_evidence_graph": str(run_dir / "evidence_graph.json"),

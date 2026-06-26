@@ -289,6 +289,7 @@ def build_budget_exception_candidates(
     ]
     candidates.extend(_budget_uncertainty_candidates(run_id, readiness, evidence_refs, budget))
     candidates.extend(_budget_driver_and_guideline_candidates(run_id, readiness, budget))
+    candidates.extend(_carrier_preapproval_candidates(run_id, readiness, budget))
     return candidates
 
 
@@ -413,6 +414,37 @@ def _budget_driver_and_guideline_candidates(
                     if ref
                 ],
                 blocked_state="budget_guideline_or_cap_review",
+            )
+        )
+    return candidates
+
+
+def _carrier_preapproval_candidates(
+    run_id: str,
+    readiness: MatterOpeningReadiness,
+    budget: BudgetProposal,
+) -> list[ExceptionLakeCandidate]:
+    report = budget.carrier_preapproval_report
+    if report is None or report.required_count == 0:
+        return []
+    candidates: list[ExceptionLakeCandidate] = []
+    for requirement in report.requirements:
+        if requirement.status != "preapproval_required":
+            continue
+        candidates.append(
+            ExceptionLakeCandidate(
+                candidate_id=new_id("exc"),
+                run_id=run_id,
+                preflight_packet_id=readiness.preflight_packet_id,
+                local_event_label="carrier_preapproval_required",
+                canonical_lake_class="workflow_escalation",
+                reason=requirement.reason,
+                structured_refs=[
+                    f"carrier-preapproval-report://{report.report_id}",
+                    f"carrier-preapproval-requirement://{requirement.requirement_id}",
+                    *requirement.structured_refs,
+                ],
+                blocked_state="carrier_preapproval_required",
             )
         )
     return candidates

@@ -11,6 +11,7 @@
         "missing_budget_code_mapping",
         "unknown_budget_driver",
         "guideline_or_cap_issue",
+        "carrier_preapproval_required",
         "human_budget_change",
         "budget_actual_cost_variance",
         "carrier_rejection_capture",
@@ -47,6 +48,7 @@
           "budget_change_record",
           "budget_revision_report",
           "budget_actual_comparison_report",
+          "carrier_preapproval_report",
           "carrier_rejection_reconciliation_report",
           "carrier_rejection_remediation_case",
           "carrier_appeal_result"

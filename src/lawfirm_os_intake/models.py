@@ -649,6 +649,7 @@ class HumanGateStatus(StrictModel):
         "human_conflicts_clearance",
         "human_engagement_authorization",
         "human_budget_review",
+        "human_carrier_preapproval",
         "human_matter_opening_authorization",
     ]
     label: str
@@ -938,6 +939,71 @@ class CarrierCompliantProjection(StrictModel):
     non_authoritative: Literal[True] = True
 
 
+class CarrierPreapprovalRequirement(StrictModel):
+    requirement_id: str
+    threshold_id: str
+    requirement_type: Literal[
+        "experts_over_count",
+        "expert_spend_over_amount",
+        "depositions_over_count",
+        "research_hours_over",
+        "vendor_spend_over_amount",
+    ]
+    status: Literal["preapproval_required", "not_triggered", "unknown"]
+    current_value: float | None = Field(default=None, ge=0)
+    threshold_value: float = Field(ge=0)
+    unit: str
+    required_human_gate: Literal["human_carrier_preapproval"] = "human_carrier_preapproval"
+    source: Literal["synthetic_carrier_guideline"] = "synthetic_carrier_guideline"
+    structured_refs: list[str] = Field(default_factory=list)
+    related_phase_ids: list[str] = Field(default_factory=list)
+    related_task_ids: list[str] = Field(default_factory=list)
+    related_external_codes: list[str] = Field(default_factory=list)
+    related_expense_codes: list[str] = Field(default_factory=list)
+    reason: str
+    rewrites_budget: Literal[False] = False
+    preapproval_obtained: Literal[False] = False
+    carrier_submission_authorized: Literal[False] = False
+
+
+class CarrierPreapprovalReport(StrictModel):
+    schema_version: str = "0.1"
+    report_id: str
+    budget_proposal_id: str
+    guideline_id: str
+    guideline_ref: str
+    carrier_id: str
+    status: Literal["preapproval_required", "no_preapproval_required", "unknown"]
+    requirement_count: int = Field(ge=0)
+    required_count: int = Field(ge=0)
+    requirements: list[CarrierPreapprovalRequirement]
+    required_human_gate: Literal["human_carrier_preapproval"] = "human_carrier_preapproval"
+    candidate_only: Literal[True] = True
+    preapproval_obtained: Literal[False] = False
+    carrier_submission_authorized: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    non_authoritative: Literal[True] = True
+    generated_at: str
+
+    @model_validator(mode="after")
+    def preapproval_counts_match(self) -> "CarrierPreapprovalReport":
+        required = sum(
+            1 for requirement in self.requirements if requirement.status == "preapproval_required"
+        )
+        if self.requirement_count != len(self.requirements):
+            raise ValueError("carrier preapproval requirement count does not match")
+        if self.required_count != required:
+            raise ValueError("carrier preapproval required count does not match")
+        if self.status == "preapproval_required" and required == 0:
+            raise ValueError("preapproval-required report must include required items")
+        if self.status == "no_preapproval_required" and required:
+            raise ValueError("no-preapproval report cannot include required items")
+        return self
+
+
 class BudgetDriverProfileSummary(StrictModel):
     case_driver_profile_id: str
     policy_id: str
@@ -978,6 +1044,7 @@ class BudgetProposal(StrictModel):
     driver_effects: list[BudgetDriverEffect] = Field(default_factory=list)
     guideline_flags: list[BudgetGuidelineFlag] = Field(default_factory=list)
     carrier_compliant_projection: CarrierCompliantProjection | None = None
+    carrier_preapproval_report: CarrierPreapprovalReport | None = None
     budget_support_items: list[BudgetSupportItem] = Field(default_factory=list)
     approval_state: Literal["proposed_for_human_review"] = "proposed_for_human_review"
     not_authorized_for_client_submission: bool = True
@@ -3024,6 +3091,7 @@ class ExceptionLakeMappingRule(StrictModel):
         "missing_budget_code_mapping",
         "unknown_budget_driver",
         "guideline_or_cap_issue",
+        "carrier_preapproval_required",
         "human_budget_change",
         "budget_actual_cost_variance",
         "carrier_rejection_capture",
@@ -3046,6 +3114,7 @@ class ExceptionLakeMappingRule(StrictModel):
             "budget_change_record",
             "budget_revision_report",
             "budget_actual_comparison_report",
+            "carrier_preapproval_report",
             "carrier_rejection_reconciliation_report",
             "carrier_rejection_remediation_case",
             "carrier_appeal_result",

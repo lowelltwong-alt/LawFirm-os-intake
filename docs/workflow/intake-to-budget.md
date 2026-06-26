@@ -117,8 +117,12 @@ The same proposal carries local `BudgetDriverEffect` and `BudgetGuidelineFlag` r
 
 When the selected synthetic profile names a carrier guideline artifact, the proposal
 also carries a separate `CarrierCompliantProjection`. That projection applies
-synthetic rate and expense caps to a compliant view only, reports the proposed-vs-compliant
-delta, and preserves the proposed budget lines and `rewrites_budget=false` boundary.
+synthetic rate caps, expense caps, and staffing/leverage role overrides to a
+compliant view only, reports the proposed-vs-compliant delta, and preserves the
+proposed budget lines and `rewrites_budget=false` boundary. The budget run also
+writes `carrier_preapproval_report.json` when guideline thresholds exist; triggered
+thresholds create pending `human_carrier_preapproval` gates and dry-run exception
+candidates without authorizing carrier submission.
 
 ### 15. Human budget review
 

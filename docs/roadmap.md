@@ -44,6 +44,7 @@ Apply synthetic carrier guideline caps and staffing/leverage role overrides as a
 - `CarrierCompliantProjection` is embedded in `legal_budget_proposal.json` and exported as a local candidate schema family.
 - Rate caps, expense caps, and task-level staffing role overrides apply only inside the projection view; proposal lines stay unchanged.
 - Review surfaces render proposed total, compliant total, deltas, capped lines, staffing-adjusted lines, leverage summary, blended-rate delta, and submission boundaries.
+- Synthetic preapproval thresholds emit `carrier_preapproval_report.json`, pending `human_carrier_preapproval` gates, and dry-run `carrier_preapproval_required` candidates without authorizing carrier submission.
 - `ReviewPackageCompletenessReport` fails closed if the projection surface loses `rewrites_budget=false`, unchanged proposal posture, or no-submission state.
 
 ## 4. Second Matter Family

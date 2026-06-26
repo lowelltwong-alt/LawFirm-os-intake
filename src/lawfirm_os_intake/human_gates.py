@@ -95,6 +95,38 @@ def build_human_gate_status_report(
             blocks=["budget_submitted", "billing_handoff", "client_or_carrier_delivery"],
             notes=f"Budget proposal `{budget.budget_proposal_id}` remains proposed for human review.",
         ),
+        *(
+            [
+                HumanGateStatus(
+                    gate_id="human_carrier_preapproval",
+                    label="Human carrier preapproval review",
+                    status="pending",
+                    authority_owner="human_budget_review",
+                    completed_by_human=False,
+                    artifact_refs=[
+                        artifact_refs["legal_budget_proposal"],
+                        artifact_refs["legal_budget_review_form"],
+                        artifact_refs.get("carrier_preapproval_report", ""),
+                    ],
+                    structured_refs=[
+                        "config/human_gates.yaml#carrier_preapproval_review",
+                        f"carrier-preapproval-report://{budget.carrier_preapproval_report.report_id}",
+                    ],
+                    blocks=[
+                        "carrier_budget_submission",
+                        "budget_submitted",
+                        "carrier_preapproval_bypassed",
+                    ],
+                    notes=(
+                        "Synthetic carrier guideline thresholds require human carrier "
+                        "preapproval review before any carrier-facing submission."
+                    ),
+                )
+            ]
+            if budget.carrier_preapproval_report is not None
+            and budget.carrier_preapproval_report.required_count > 0
+            else []
+        ),
         HumanGateStatus(
             gate_id="human_matter_opening_authorization",
             label="Human matter-opening authorization",
@@ -109,13 +141,16 @@ def build_human_gate_status_report(
     ]
     completed = sum(1 for gate in gates if gate.status == "completed")
     pending = sum(1 for gate in gates if gate.status == "pending")
+    required_gate_ids = list(REQUIRED_HUMAN_GATE_IDS)
+    if any(gate.gate_id == "human_carrier_preapproval" for gate in gates):
+        required_gate_ids.append("human_carrier_preapproval")
     return HumanGateStatusReport(
         human_gate_status_report_id=new_id("humangates"),
         run_id=packet.run_id,
         preflight_packet_id=packet.packet_id,
         confirmation_id=confirmation.confirmation_id,
         status="all_human_gates_complete" if pending == 0 else "pending_human_gates",
-        required_gate_ids=REQUIRED_HUMAN_GATE_IDS,
+        required_gate_ids=required_gate_ids,
         completed_gate_count=completed,
         pending_gate_count=pending,
         gates=gates,
@@ -150,5 +185,12 @@ def enforce_human_gate_status_report(report: HumanGateStatusReport) -> None:
         raise ValueError(
             "human gate status report has unsupported gates: " + ", ".join(unsupported)
         )
-    if report.status != "pending_human_gates" or report.pending_gate_count != len(pending_required):
+    actual_pending = sum(1 for gate in report.gates if gate.status == "pending")
+    if report.status != "pending_human_gates" or report.pending_gate_count != actual_pending:
         raise ValueError("human gate status report does not preserve pending human gates")
+    if "human_carrier_preapproval" in gates_by_id:
+        gate = gates_by_id["human_carrier_preapproval"]
+        if gate.status != "pending" or gate.completed_by_human:
+            raise ValueError("carrier preapproval gate must remain pending")
+        if "carrier_budget_submission" not in gate.blocks:
+            raise ValueError("carrier preapproval gate must block carrier submission")

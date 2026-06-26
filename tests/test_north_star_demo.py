@@ -115,7 +115,7 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
     }
     assert human_gate_status["status"] == "pending_human_gates"
     assert human_gate_status["completed_gate_count"] == 1
-    assert human_gate_status["pending_gate_count"] == 4
+    assert human_gate_status["pending_gate_count"] == 5
     assert budget_submission_guard["status"] == "passed"
     assert budget_submission_guard["client_submission_performed"] is False
     assert budget_submission_guard["carrier_submission_performed"] is False
@@ -126,6 +126,7 @@ def test_north_star_demo_outputs_complete_messy_review_package(tmp_path, repo_ro
         "human_conflicts_clearance": "pending",
         "human_engagement_authorization": "pending",
         "human_budget_review": "pending",
+        "human_carrier_preapproval": "pending",
         "human_matter_opening_authorization": "pending",
     }
     assert packet["source_coverage_summary"]["duplicate_sources"] == 1

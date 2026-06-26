@@ -32,3 +32,9 @@ carriers:
       preferred_drafting_role: associate
       max_timekeepers_per_event:
         L330: 1
+    pre_approval_thresholds:
+      experts_over_count: 3
+      expert_spend_over_amount: 25000
+      depositions_over_count: 6
+      research_hours_over: 60
+      vendor_spend_over_amount: 35000

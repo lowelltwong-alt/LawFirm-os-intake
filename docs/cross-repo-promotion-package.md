@@ -23,7 +23,7 @@ repo owners must review and promote any accepted contracts inside their own repo
 - Matter-family, inbound-event, representation-posture, deadline, missing-information, and critic-finding candidate contracts.
 - Conflict seed and conflict search term contracts that preserve `no_conflict_conclusion` and require evidence refs for every normalized search term.
 - Budget proposal, calculation-report, and budget-support-item contracts.
-- Budget scenario set, driver effect, driver profile summary, guideline flag, carrier-compliant projection, leverage summary, budget-form mapping, budget review change, budget revision report, budget actuals source, phase/code actual comparison, variance-driver candidate, and budget exception-mapping contracts.
+- Budget scenario set, driver effect, driver profile summary, guideline flag, carrier-compliant projection, leverage summary, carrier preapproval, budget-form mapping, budget review change, budget revision report, budget actuals source, phase/code actual comparison, variance-driver candidate, and budget exception-mapping contracts.
 - Matter-opening readiness contract for final blockers, structured blocker details, prohibited-action guardrails, required human gates, workflow-policy refs, and prohibited-transition refs.
 - Evidence graph node and edge conventions for source-backed and structured-ref support across preflight, human review, conflict seed, budget artifacts, readiness blockers, and prohibited-action guardrails.
 - Dry-run exception lake candidate contract with broad Lake class, local event label, source-inventory refs, evidence refs, structured refs, blocked state, `raw_payload_included=false`, and `canonical_promotion_required=true`.
@@ -68,7 +68,7 @@ repo owners must review and promote any accepted contracts inside their own repo
 ## Exception Lake Mapping Draft
 
 - `retrieval_miss`: missing source, unread source, unreadable attachment, unresolved source ref, incomplete context bundle, source coverage gap.
-- `workflow_escalation`: human review required, close candidates, role ambiguity, prompt injection, prohibited transition attempted, budget blocked before confirmation, budget unknowns, unknown budget drivers, guideline/cap review, human budget changes, budget actual variance, missing budget template, hours-only missing rates.
+- `workflow_escalation`: human review required, close candidates, role ambiguity, prompt injection, prohibited transition attempted, budget blocked before confirmation, budget unknowns, unknown budget drivers, guideline/cap review, carrier preapproval required, human budget changes, budget actual variance, missing budget template, hours-only missing rates.
 - `authority_conflict_override`: unregistered route/event label, local candidate conflicts with canon, profile attempts to expand authority, missing reviewed lock, topology mismatch, contract SHA drift.
 - Intake emits these as local `ExceptionLakeCandidate` rows and a local `ExceptionLakeHandoffManifest` only. The handoff manifest is not a SQLite schema or admission log; it records actual labels, broad Lake classes, support modes, target owner, and no SQLite/external write. The Exception Lake runtime should perform admission validation, append-only storage, record hashing, and correction/supersession handling.
 - `ExceptionLakeMappingPackage` is the candidate bridge from local budget labels, human budget changes, budget revision reports, and phase/code actual-variance evidence to broad Lake classes. It is not an admission log.

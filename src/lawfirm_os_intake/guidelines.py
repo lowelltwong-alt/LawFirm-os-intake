@@ -9,11 +9,13 @@ from .models import (
     BudgetLine,
     BudgetProposal,
     CarrierCompliantLeverageSummary,
+    CarrierPreapprovalReport,
+    CarrierPreapprovalRequirement,
     CarrierCompliantProjection,
     CarrierCompliantProjectionBasis,
     CarrierCompliantProjectionLine,
 )
-from .util import new_id
+from .util import new_id, now_iso
 
 
 def load_carrier_guideline(path: str | Path) -> dict[str, Any]:
@@ -46,7 +48,100 @@ def attach_carrier_compliant_projection(
     )
     if projection is None:
         return budget
-    return budget.model_copy(update={"carrier_compliant_projection": projection})
+    budget_with_projection = budget.model_copy(update={"carrier_compliant_projection": projection})
+    preapproval_report = build_carrier_preapproval_report(
+        budget_with_projection,
+        guideline=guideline,
+        guideline_ref=guideline_ref,
+        carrier_id=carrier_id,
+    )
+    return budget_with_projection.model_copy(
+        update={"carrier_preapproval_report": preapproval_report}
+    )
+
+
+def build_carrier_preapproval_report(
+    budget: BudgetProposal,
+    *,
+    guideline: dict[str, Any],
+    guideline_ref: str,
+    carrier_id: str | None,
+) -> CarrierPreapprovalReport | None:
+    resolved_carrier_id = carrier_id or str(guideline.get("default_carrier_id", ""))
+    carrier_rules = _carrier_rules(guideline, resolved_carrier_id)
+    if carrier_rules is None:
+        return None
+    thresholds = carrier_rules.get("pre_approval_thresholds") or {}
+    if not isinstance(thresholds, dict):
+        return None
+    guideline_id = str(guideline.get("guideline_id", "unknown"))
+    requirements = [
+        requirement
+        for requirement in [
+            _count_threshold_requirement(
+                budget,
+                guideline_id=guideline_id,
+                carrier_id=resolved_carrier_id,
+                threshold_id="experts_over_count",
+                driver_id="num_experts",
+                threshold_value=thresholds.get("experts_over_count"),
+                unit="experts",
+            ),
+            _amount_threshold_requirement(
+                budget,
+                guideline_id=guideline_id,
+                carrier_id=resolved_carrier_id,
+                threshold_id="expert_spend_over_amount",
+                expense_codes={"E119"},
+                threshold_value=thresholds.get("expert_spend_over_amount"),
+                unit="USD",
+            ),
+            _count_threshold_requirement(
+                budget,
+                guideline_id=guideline_id,
+                carrier_id=resolved_carrier_id,
+                threshold_id="depositions_over_count",
+                driver_id="num_depositions",
+                threshold_value=thresholds.get("depositions_over_count"),
+                unit="depositions",
+            ),
+            _hours_threshold_requirement(
+                budget,
+                guideline_id=guideline_id,
+                carrier_id=resolved_carrier_id,
+                threshold_id="research_hours_over",
+                external_codes={"L420", "L430"},
+                threshold_value=thresholds.get("research_hours_over"),
+                unit="hours",
+            ),
+            _amount_threshold_requirement(
+                budget,
+                guideline_id=guideline_id,
+                carrier_id=resolved_carrier_id,
+                threshold_id="vendor_spend_over_amount",
+                expense_codes={"E115", "E118", "E119", "E121"},
+                threshold_value=thresholds.get("vendor_spend_over_amount"),
+                unit="USD",
+            ),
+        ]
+        if requirement is not None
+    ]
+    required_count = sum(
+        1 for requirement in requirements if requirement.status == "preapproval_required"
+    )
+    status = "preapproval_required" if required_count else "no_preapproval_required"
+    return CarrierPreapprovalReport(
+        report_id=new_id("carrierpreapproval"),
+        budget_proposal_id=budget.budget_proposal_id,
+        guideline_id=guideline_id,
+        guideline_ref=guideline_ref,
+        carrier_id=resolved_carrier_id,
+        status=status,
+        requirement_count=len(requirements),
+        required_count=required_count,
+        requirements=requirements,
+        generated_at=now_iso(),
+    )
 
 
 def build_carrier_compliant_projection(
@@ -333,6 +428,175 @@ def _delta(proposed: float | None, compliant: float | None) -> float:
     if proposed is None or compliant is None:
         return 0.0
     return round(max(0.0, proposed - compliant), 2)
+
+
+def _status_for_threshold(current_value: float | None, threshold_value: float) -> str:
+    if current_value is None:
+        return "unknown"
+    return "preapproval_required" if current_value > threshold_value else "not_triggered"
+
+
+def _threshold_ref(guideline_id: str, carrier_id: str, threshold_id: str) -> str:
+    return _guideline_ref(guideline_id, carrier_id, f"pre_approval_thresholds/{threshold_id}")
+
+
+def _threshold_float(value: Any) -> float | None:
+    if value is None:
+        return None
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def _driver_current_value(budget: BudgetProposal, driver_id: str) -> float | None:
+    values = [
+        float(effect.driver_value)
+        for effect in budget.driver_effects
+        if effect.driver_id == driver_id and isinstance(effect.driver_value, int | float)
+    ]
+    return max(values) if values else None
+
+
+def _driver_effects_for(budget: BudgetProposal, driver_id: str) -> list[Any]:
+    return [effect for effect in budget.driver_effects if effect.driver_id == driver_id]
+
+
+def _count_threshold_requirement(
+    budget: BudgetProposal,
+    *,
+    guideline_id: str,
+    carrier_id: str,
+    threshold_id: str,
+    driver_id: str,
+    threshold_value: Any,
+    unit: str,
+) -> CarrierPreapprovalRequirement | None:
+    threshold = _threshold_float(threshold_value)
+    if threshold is None:
+        return None
+    effects = _driver_effects_for(budget, driver_id)
+    current_value = _driver_current_value(budget, driver_id)
+    status = _status_for_threshold(current_value, threshold)
+    related_phase_ids = sorted({phase for effect in effects for phase in effect.phase_ids})
+    related_task_ids = sorted({task for effect in effects for task in effect.task_ids})
+    structured_refs = [
+        _threshold_ref(guideline_id, carrier_id, threshold_id),
+        f"budget-proposal://{budget.budget_proposal_id}",
+        f"budget-driver://{driver_id}",
+    ]
+    structured_refs.extend(effect.structured_ref for effect in effects if effect.structured_ref)
+    return CarrierPreapprovalRequirement(
+        requirement_id=new_id("carrierpreapprovalreq"),
+        threshold_id=threshold_id,
+        requirement_type=threshold_id,  # type: ignore[arg-type]
+        status=status,  # type: ignore[arg-type]
+        current_value=current_value,
+        threshold_value=threshold,
+        unit=unit,
+        structured_refs=structured_refs,
+        related_phase_ids=related_phase_ids,
+        related_task_ids=related_task_ids,
+        reason=_preapproval_reason(threshold_id, current_value, threshold, unit, status),
+    )
+
+
+def _amount_threshold_requirement(
+    budget: BudgetProposal,
+    *,
+    guideline_id: str,
+    carrier_id: str,
+    threshold_id: str,
+    expense_codes: set[str],
+    threshold_value: Any,
+    unit: str,
+) -> CarrierPreapprovalRequirement | None:
+    threshold = _threshold_float(threshold_value)
+    if threshold is None:
+        return None
+    related_lines = [line for line in budget.lines if line.expense_code in expense_codes]
+    current_value = round(sum(line.estimated_expenses for line in related_lines), 2)
+    status = _status_for_threshold(current_value, threshold)
+    return CarrierPreapprovalRequirement(
+        requirement_id=new_id("carrierpreapprovalreq"),
+        threshold_id=threshold_id,
+        requirement_type=threshold_id,  # type: ignore[arg-type]
+        status=status,  # type: ignore[arg-type]
+        current_value=current_value,
+        threshold_value=threshold,
+        unit=unit,
+        structured_refs=[
+            _threshold_ref(guideline_id, carrier_id, threshold_id),
+            f"budget-proposal://{budget.budget_proposal_id}",
+        ],
+        related_phase_ids=sorted({line.phase_id for line in related_lines}),
+        related_task_ids=sorted({line.task_id for line in related_lines}),
+        related_external_codes=sorted(
+            {line.external_code_candidate for line in related_lines if line.external_code_candidate}
+        ),
+        related_expense_codes=sorted(expense_codes),
+        reason=_preapproval_reason(threshold_id, current_value, threshold, unit, status),
+    )
+
+
+def _hours_threshold_requirement(
+    budget: BudgetProposal,
+    *,
+    guideline_id: str,
+    carrier_id: str,
+    threshold_id: str,
+    external_codes: set[str],
+    threshold_value: Any,
+    unit: str,
+) -> CarrierPreapprovalRequirement | None:
+    threshold = _threshold_float(threshold_value)
+    if threshold is None:
+        return None
+    related_lines = [
+        line for line in budget.lines if line.external_code_candidate in external_codes
+    ]
+    current_value = round(sum(line.estimated_hours for line in related_lines), 2)
+    status = _status_for_threshold(current_value, threshold)
+    return CarrierPreapprovalRequirement(
+        requirement_id=new_id("carrierpreapprovalreq"),
+        threshold_id=threshold_id,
+        requirement_type=threshold_id,  # type: ignore[arg-type]
+        status=status,  # type: ignore[arg-type]
+        current_value=current_value,
+        threshold_value=threshold,
+        unit=unit,
+        structured_refs=[
+            _threshold_ref(guideline_id, carrier_id, threshold_id),
+            f"budget-proposal://{budget.budget_proposal_id}",
+        ],
+        related_phase_ids=sorted({line.phase_id for line in related_lines}),
+        related_task_ids=sorted({line.task_id for line in related_lines}),
+        related_external_codes=sorted(external_codes),
+        reason=_preapproval_reason(threshold_id, current_value, threshold, unit, status),
+    )
+
+
+def _preapproval_reason(
+    threshold_id: str,
+    current_value: float | None,
+    threshold_value: float,
+    unit: str,
+    status: str,
+) -> str:
+    if current_value is None:
+        return (
+            f"Synthetic carrier preapproval threshold {threshold_id} could not be evaluated; "
+            "human carrier preapproval review remains available."
+        )
+    if status == "preapproval_required":
+        return (
+            f"Synthetic carrier preapproval threshold {threshold_id} was exceeded: "
+            f"{current_value:g} {unit} > {threshold_value:g} {unit}."
+        )
+    return (
+        f"Synthetic carrier preapproval threshold {threshold_id} was not triggered: "
+        f"{current_value:g} {unit} <= {threshold_value:g} {unit}."
+    )
 
 
 def _role_rates_from_budget_lines(lines: list[BudgetLine]) -> dict[str, float]:

@@ -1,9 +1,9 @@
 # Carrier Rate & Guideline Layer — Design + Codex Handoff
 
-**Status:** Slices A-C implemented (carrier x state x title rate resolution,
-synthetic carrier guideline projection, and projection-only staffing/leverage
-reshaping). Slices D-E, named-timekeeper overrides, and the P1 budget-math fixes
-remain proposed and handed to Codex.
+**Status:** Slices A-D implemented (carrier x state x title rate resolution,
+synthetic carrier guideline projection, projection-only staffing/leverage
+reshaping, and dry-run preapproval thresholds). Slice E, named-timekeeper
+overrides, and the P1 budget-math fixes remain proposed and handed to Codex.
 **Owner repo:** `LawFirm-os-intake` (vertical composition; owns no platform canon).
 **Authority posture:** rate cards and guidelines are synthetic `candidate` artifacts;
 promotion runs through the owning sibling repo. Builds on
@@ -74,6 +74,8 @@ This lets guidelines reshape cost without a silent rewrite of the proposal.
   role in the projection and lowers the blended rate; proposal unchanged; deterministic.
 
 ### D. Pre-approval thresholds → escalation/exception integration
+**Status:** DONE in this repo as a local candidate slice.
+
 - Guideline `pre_approval_thresholds`: `experts_over_count`, `expert_spend_over_amount`,
   `depositions_over_count`, `research_hours_over`, `vendor_spend_over_amount`.
 - When a resolved driver/expense crosses a threshold, emit an Exception Lake **dry-run**

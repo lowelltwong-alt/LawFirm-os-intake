@@ -37,6 +37,7 @@ REQUIRED_REVIEW_SECTIONS = [
     "### Driver Profile Summary",
     "### Scenario Comparison",
     "### Carrier-Compliant Projection",
+    "### Carrier Preapproval Requirements",
     "### Workbook Mapping Status",
     "### Unresolved Budget Assumptions",
     "## Exception And Escalation Records",
@@ -70,6 +71,7 @@ REQUIRED_LINKED_REVIEW_FORM_SECTIONS = {
         "## Driver Profile Summary",
         "## Scenario Comparison",
         "## Carrier-Compliant Projection",
+        "## Carrier Preapproval Requirements",
         "## Workbook Mapping Status",
         "## Unresolved Budget Assumptions",
         "## Review Checks",
@@ -599,6 +601,17 @@ def build_review_package_completeness_report(
             or carrier_projection_unavailable_visible
         )
     )
+    carrier_preapproval = (
+        legal_budget_proposal.get("carrier_preapproval_report")
+        if isinstance(legal_budget_proposal, dict)
+        else None
+    )
+    carrier_preapproval_visible = not isinstance(carrier_preapproval, dict) or (
+        "### Carrier Preapproval Requirements" in review_text
+        and "Required human gate: human_carrier_preapproval" in review_text
+        and "Carrier submission authorized: False" in review_text
+        and "Preapproval obtained: False" in review_text
+    )
     budget_review_hardening_complete = (
         isinstance(driver_profile_summary, dict)
         and isinstance(case_driver_profile, dict)
@@ -612,6 +625,7 @@ def build_review_package_completeness_report(
         and "### Driver Profile Summary" in review_text
         and "### Scenario Comparison" in review_text
         and carrier_projection_visible
+        and carrier_preapproval_visible
         and workbook_mapping_visible
         and "### Unresolved Budget Assumptions" in review_text
         and "Profile defaults treated as observed facts: False" in review_text

@@ -59,6 +59,25 @@ RULE_DEFINITIONS = [
         "structured_refs": ["config/budget-driver-policy.yaml#synthetic_guideline_constraints"],
     },
     {
+        "mapping_id": "carrier_preapproval_required.v1",
+        "issue_family": "carrier_preapproval_required",
+        "local_event_label": "carrier_preapproval_required",
+        "canonical_lake_class": "workflow_escalation",
+        "trigger_summary": (
+            "A synthetic carrier guideline preapproval threshold was exceeded and requires "
+            "human carrier preapproval review before any carrier-facing submission."
+        ),
+        "support_ref_kinds": [
+            "carrier_preapproval_report",
+            "budget_proposal",
+            "structured_ref",
+        ],
+        "structured_refs": [
+            "config/synthetic-carrier-guideline.yaml#pre_approval_thresholds",
+            "docs/carrier-rate-and-guideline-layer-design.md#d-pre-approval-thresholds--escalationexception-integration",
+        ],
+    },
+    {
         "mapping_id": "budget_human_change_recorded.v1",
         "issue_family": "human_budget_change",
         "local_event_label": "budget_human_change_recorded",
@@ -256,6 +275,7 @@ def build_exception_lake_mapping_package(
         "missing_budget_code_mapping",
         "unknown_budget_driver",
         "guideline_or_cap_issue",
+        "carrier_preapproval_required",
         "human_budget_change",
         "budget_actual_cost_variance",
         "carrier_rejection_capture",
@@ -269,7 +289,7 @@ def build_exception_lake_mapping_package(
         _check(
             "required_issue_families_mapped",
             required_issue_families.issubset(issue_families),
-            "Mapping package covers template formulas, code mappings, drivers, guidelines, human changes, and actual-cost variance.",
+            "Mapping package covers template formulas, code mappings, drivers, guidelines, preapprovals, human changes, and actual-cost variance.",
             sorted(required_issue_families - issue_families),
         ),
         _check(

@@ -257,12 +257,13 @@ def test_run_budget_writes_complete_matter_opening_review_package(tmp_path, repo
     )
     assert human_gate_status["status"] == "pending_human_gates"
     assert human_gate_status["completed_gate_count"] == 1
-    assert human_gate_status["pending_gate_count"] == 4
+    assert human_gate_status["pending_gate_count"] == 5
     assert {item["gate_id"]: item["status"] for item in human_gate_status["gates"]} == {
         "human_intake_confirmation": "completed",
         "human_conflicts_clearance": "pending",
         "human_engagement_authorization": "pending",
         "human_budget_review": "pending",
+        "human_carrier_preapproval": "pending",
         "human_matter_opening_authorization": "pending",
     }
     assert deadline_guard["status"] == "passed"

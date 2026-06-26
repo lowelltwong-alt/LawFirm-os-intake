@@ -66,6 +66,13 @@ proposal lines unchanged.
 It is `projected_for_human_review`, records `rewrites_budget=false`, and carries no
 client or carrier submission authority.
 
+`CarrierPreapprovalReport` is the separate review surface for synthetic
+preapproval thresholds. It can require `human_carrier_preapproval` for expert
+count, expert spend, deposition count, research-hour, or vendor-spend thresholds
+and emit dry-run Exception Lake candidates, but it records
+`preapproval_obtained=false`, `carrier_submission_authorized=false`, and no
+external write.
+
 ## Avoiding false precision
 
 - Never infer a negotiated rate.

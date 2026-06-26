@@ -114,6 +114,7 @@ EXPECTED_PREFLIGHT_EXCEPTION_LABELS = {
 EXPECTED_BUDGET_EXCEPTION_LABELS = {
     "matter_opening_blocked_pending_conflicts_and_engagement",
     "budget_unknowns_require_review",
+    "carrier_preapproval_required",
 }
 
 REQUIRED_PACKET_CANDIDATE_FIELDS = {
