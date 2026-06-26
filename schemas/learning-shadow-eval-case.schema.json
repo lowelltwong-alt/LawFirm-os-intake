@@ -1,0 +1,195 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "shadow_eval_case_id": {
+      "title": "Shadow Eval Case Id",
+      "type": "string"
+    },
+    "candidate_id": {
+      "title": "Candidate Id",
+      "type": "string"
+    },
+    "source_kind": {
+      "enum": [
+        "carrier_rejection_learning_proposal",
+        "budget_revision_delta",
+        "budget_actual_variance_driver"
+      ],
+      "title": "Source Kind",
+      "type": "string"
+    },
+    "target_learning_loop": {
+      "enum": [
+        "guideline_drift",
+        "budget_model",
+        "template_mapping",
+        "narrative_rule",
+        "preapproval_gate",
+        "appeal_success_or_failure",
+        "capture_completeness",
+        "parser_rule",
+        "eval_fixture",
+        "staffing_leverage",
+        "timekeeper_rate",
+        "validation_rule"
+      ],
+      "title": "Target Learning Loop",
+      "type": "string"
+    },
+    "target_owner": {
+      "enum": [
+        "LawFirm-os-intake",
+        "LawFirm-os-orchestrator",
+        "LawFirm-os-exceptions-lake-runtime",
+        "LawFirm-os-semantic-substrate"
+      ],
+      "title": "Target Owner",
+      "type": "string"
+    },
+    "source_artifact_ref": {
+      "title": "Source Artifact Ref",
+      "type": "string"
+    },
+    "source_record_id": {
+      "title": "Source Record Id",
+      "type": "string"
+    },
+    "support_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Support Refs",
+      "type": "array"
+    },
+    "required_fixture_updates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Fixture Updates",
+      "type": "array"
+    },
+    "required_eval_suites": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Eval Suites",
+      "type": "array"
+    },
+    "regression_guardrails": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Regression Guardrails",
+      "type": "array"
+    },
+    "proposed_change_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Proposed Change Ref"
+    },
+    "shadow_eval_result_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Shadow Eval Result Ref"
+    },
+    "status": {
+      "default": "blocked_missing_proposed_change",
+      "enum": [
+        "blocked_missing_proposed_change",
+        "blocked_missing_fixture_update",
+        "blocked_missing_shadow_eval_result"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "proposed_change_applied": {
+      "const": false,
+      "default": false,
+      "title": "Proposed Change Applied",
+      "type": "boolean"
+    },
+    "baseline_mutated": {
+      "const": false,
+      "default": false,
+      "title": "Baseline Mutated",
+      "type": "boolean"
+    },
+    "profile_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Profile Mutation Performed",
+      "type": "boolean"
+    },
+    "template_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Template Mutation Performed",
+      "type": "boolean"
+    },
+    "connector_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Connector Mutation Performed",
+      "type": "boolean"
+    },
+    "budget_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Budget Mutation Performed",
+      "type": "boolean"
+    },
+    "carrier_guideline_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Carrier Guideline Mutation Performed",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "shadow_eval_case_id",
+    "candidate_id",
+    "source_kind",
+    "target_learning_loop",
+    "target_owner",
+    "source_artifact_ref",
+    "source_record_id",
+    "support_refs",
+    "required_fixture_updates",
+    "required_eval_suites",
+    "regression_guardrails"
+  ],
+  "title": "LearningShadowEvalCase",
+  "type": "object"
+}

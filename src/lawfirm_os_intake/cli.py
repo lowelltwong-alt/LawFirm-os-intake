@@ -20,6 +20,7 @@ from .carrier_rejection_roadmap_audit import run_carrier_rejection_roadmap_audit
 from .carrier_rejection_review import run_carrier_rejection_review
 from .carrier_rejections import run_carrier_rejection_capture
 from .confirmation import bind_confirmation_to_packet_evidence
+from .learning_promotion_readiness import run_learning_promotion_readiness
 from .models import BudgetProposal, HumanConfirmation
 from .reviewed_learning_gate import run_reviewed_learning_gate
 from .util import load_json, write_json
@@ -146,6 +147,17 @@ def _parser() -> argparse.ArgumentParser:
         "--budget-actual-comparison-report",
         help="Optional budget_actual_comparison_report.json from compare-budget-actuals.",
     )
+
+    learning_promotion_readiness = sub.add_parser(
+        "audit-learning-promotion-readiness",
+        help="Build shadow-eval plan and promotion-readiness audit for learning candidates.",
+    )
+    learning_promotion_readiness.add_argument(
+        "--reviewed-learning-gate-report",
+        required=True,
+        help="Path to reviewed_learning_gate_report.json.",
+    )
+    learning_promotion_readiness.add_argument("--out-dir", required=True)
 
     carrier_rejection_orchestrator = sub.add_parser(
         "draft-carrier-rejection-orchestrator-interface",
@@ -510,6 +522,30 @@ def main(argv: list[str] | None = None) -> int:
                     "target_owners": report.target_owners,
                     "reviewed_outcome_required": report.reviewed_outcome_required,
                     "shadow_eval_required": report.shadow_eval_required,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0
+
+        if args.command == "audit-learning-promotion-readiness":
+            plan, report, run_dir = run_learning_promotion_readiness(
+                reviewed_learning_gate_report_path=args.reviewed_learning_gate_report,
+                out_dir=args.out_dir,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "promotion_readiness_report_id": report.promotion_readiness_report_id,
+                    "shadow_eval_plan_id": plan.shadow_eval_plan_id,
+                    "candidate_count": report.candidate_count,
+                    "blocked_candidate_count": report.blocked_candidate_count,
+                    "ready_candidate_count": report.ready_candidate_count,
+                    "target_learning_loops": report.target_learning_loops,
+                    "target_owners": report.target_owners,
+                    "promotion_authorized": report.promotion_authorized,
+                    "proposed_changes_applied": report.proposed_changes_applied,
                     "silent_learning_performed": report.silent_learning_performed,
                     "external_writes_performed": report.external_writes_performed,
                     "run_dir": str(run_dir),

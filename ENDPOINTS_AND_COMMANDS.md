@@ -132,6 +132,22 @@ synthetic fixture updates, shadow evals, and owning-repo review exist. The
 command performs no profile, template, connector, budget, guideline, Lake,
 SQLite, or external mutation.
 
+### Audit learning promotion readiness
+
+```bash
+python -m lawfirm_os_intake audit-learning-promotion-readiness \
+  --reviewed-learning-gate-report .lawfirm-os-intake/reviewed-learning-gate/reviewed_learning_gate_report.json \
+  --out-dir .lawfirm-os-intake/learning-promotion-readiness
+```
+
+This writes `learning_shadow_eval_plan.json`,
+`learning_shadow_eval_plan.md`, `learning_promotion_readiness_report.json`, and
+`learning_promotion_readiness_report.md`. The audit builds one shadow-eval case
+per reviewed-learning candidate and blocks promotion until proposed change
+artifacts, synthetic fixture updates, shadow eval results, regression checks, and
+owning-repo review exist. It does not apply proposed changes, mutate baselines,
+authorize promotion, write Lake/SQLite records, or perform external writes.
+
 ### Draft carrier rejection Orchestrator interface
 
 ```bash

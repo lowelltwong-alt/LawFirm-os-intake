@@ -2022,6 +2022,118 @@ class ReviewedLearningGateReport(StrictModel):
     generated_at: str
 
 
+class LearningShadowEvalCase(StrictModel):
+    shadow_eval_case_id: str
+    candidate_id: str
+    source_kind: Literal[
+        "carrier_rejection_learning_proposal",
+        "budget_revision_delta",
+        "budget_actual_variance_driver",
+    ]
+    target_learning_loop: LearningLoopId
+    target_owner: LearningTargetOwner
+    source_artifact_ref: str
+    source_record_id: str
+    support_refs: list[str]
+    required_fixture_updates: list[str]
+    required_eval_suites: list[str]
+    regression_guardrails: list[str]
+    proposed_change_ref: str | None = None
+    shadow_eval_result_ref: str | None = None
+    status: Literal[
+        "blocked_missing_proposed_change",
+        "blocked_missing_fixture_update",
+        "blocked_missing_shadow_eval_result",
+    ] = "blocked_missing_proposed_change"
+    candidate_only: Literal[True] = True
+    proposed_change_applied: Literal[False] = False
+    baseline_mutated: Literal[False] = False
+    profile_mutation_performed: Literal[False] = False
+    template_mutation_performed: Literal[False] = False
+    connector_mutation_performed: Literal[False] = False
+    budget_mutation_performed: Literal[False] = False
+    carrier_guideline_mutation_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def eval_requirements_present(self) -> "LearningShadowEvalCase":
+        if not self.required_fixture_updates:
+            raise ValueError("shadow eval case requires fixture update requirements")
+        if not self.required_eval_suites:
+            raise ValueError("shadow eval case requires eval suites")
+        if not self.regression_guardrails:
+            raise ValueError("shadow eval case requires regression guardrails")
+        if not self.support_refs:
+            raise ValueError("shadow eval case requires support refs")
+        return self
+
+
+class LearningShadowEvalPlan(StrictModel):
+    schema_version: str = "0.1"
+    shadow_eval_plan_id: str
+    reviewed_learning_gate_report_id: str
+    status: Literal[
+        "shadow_eval_required",
+        "no_learning_candidates",
+        "failed",
+    ]
+    source_gate_report_ref: str
+    case_count: int = Field(ge=0)
+    cases: list[LearningShadowEvalCase]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    proposed_changes_applied: Literal[False] = False
+    baseline_mutated: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+
+class LearningPromotionReadinessCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "blocked", "failed"]
+    message: str
+    candidate_ids: list[str] = Field(default_factory=list)
+
+
+class LearningPromotionReadinessReport(StrictModel):
+    schema_version: str = "0.1"
+    promotion_readiness_report_id: str
+    reviewed_learning_gate_report_id: str
+    shadow_eval_plan_id: str
+    status: Literal[
+        "promotion_blocked_shadow_eval_required",
+        "no_learning_candidates",
+        "failed",
+    ]
+    source_gate_report_ref: str
+    shadow_eval_plan_ref: str
+    candidate_count: int = Field(ge=0)
+    blocked_candidate_count: int = Field(ge=0)
+    ready_candidate_count: int = Field(default=0, ge=0)
+    target_learning_loops: list[str]
+    target_owners: list[str]
+    checks: list[LearningPromotionReadinessCheck]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    promotion_authorized: Literal[False] = False
+    owning_repo_review_required: Literal[True] = True
+    semantic_substrate_promotion_required_for_canon: Literal[True] = True
+    orchestrator_runtime_review_required: Literal[True] = True
+    exception_lake_admission_required: Literal[True] = True
+    proposed_changes_applied: Literal[False] = False
+    profile_mutation_performed: Literal[False] = False
+    template_mutation_performed: Literal[False] = False
+    connector_mutation_performed: Literal[False] = False
+    budget_mutation_performed: Literal[False] = False
+    carrier_guideline_mutation_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+
 class CarrierRejectionOrchestratorConnectorChannel(StrictModel):
     channel_id: Literal[
         "carrier_portal_notice",

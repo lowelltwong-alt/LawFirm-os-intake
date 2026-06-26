@@ -228,3 +228,30 @@ canon.
   `carrier_guideline_mutation_performed=false`,
   `lake_write_performed=false`, `external_writes_performed=false`, and
   `silent_learning_performed=false`.
+
+## 13. Shadow Eval And Promotion Readiness
+
+Status: implemented for the current synthetic candidate slice; actual proposed
+changes, passing shadow eval results, and owning-repo promotion remain future
+work.
+
+Prepare every reviewed-learning candidate for a governed shadow eval and prove
+that promotion is still blocked until evidence exists.
+
+- `audit-learning-promotion-readiness` consumes
+  `reviewed_learning_gate_report.json`.
+- It writes `learning_shadow_eval_plan.json`, `learning_shadow_eval_plan.md`,
+  `learning_promotion_readiness_report.json`, and
+  `learning_promotion_readiness_report.md`.
+- The shadow-eval plan creates one case per candidate with required fixture
+  updates, eval suites, and regression guardrails for no conflict conclusion, no
+  budget submission, no matter opening, no external writes, no silent learning,
+  and stable source evidence.
+- The promotion-readiness report records
+  `promotion_authorized=false`, `proposed_changes_applied=false`,
+  `profile_mutation_performed=false`, `template_mutation_performed=false`,
+  `connector_mutation_performed=false`, `budget_mutation_performed=false`,
+  `carrier_guideline_mutation_performed=false`, `lake_write_performed=false`,
+  `external_writes_performed=false`, and `silent_learning_performed=false`.
+- Promotion remains blocked until proposed change artifacts, synthetic fixture
+  updates, shadow eval results, regression checks, and owning-repo review exist.
