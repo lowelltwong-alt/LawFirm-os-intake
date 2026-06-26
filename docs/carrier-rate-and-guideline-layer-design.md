@@ -1,9 +1,10 @@
 # Carrier Rate & Guideline Layer — Design + Codex Handoff
 
-**Status:** Slices A-D implemented (carrier x state x title rate resolution,
+**Status:** Slices A-E implemented (carrier x state x title rate resolution,
 synthetic carrier guideline projection, projection-only staffing/leverage
-reshaping, and dry-run preapproval thresholds). Slice E, named-timekeeper
-overrides, and the P1 budget-math fixes remain proposed and handed to Codex.
+reshaping, dry-run preapproval thresholds, and second-carrier counterfactuals).
+Named-timekeeper overrides and the P1 budget-math fixes remain proposed and
+handed to Codex.
 **Owner repo:** `LawFirm-os-intake` (vertical composition; owns no platform canon).
 **Authority posture:** rate cards and guidelines are synthetic `candidate` artifacts;
 promotion runs through the owning sibling repo. Builds on
@@ -85,6 +86,8 @@ This lets guidelines reshape cost without a silent rewrite of the proposal.
   and produce dry-run candidates routed to the pre-approval human gate.
 
 ### E. Second fake carrier + carrier counterfactual eval
+**Status:** DONE in this repo as a local candidate slice.
+
 - Add a second guideline profile; add `tests/test_carrier_counterfactual.py`: the **same**
   matter under Carrier A vs Carrier B changes rates / caps / staffing / compliant total
   **deterministically and explainably**, while observed evidence and proposal lines stay

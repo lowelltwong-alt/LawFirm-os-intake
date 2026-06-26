@@ -38,3 +38,31 @@ carriers:
       depositions_over_count: 6
       research_hours_over: 60
       vendor_spend_over_amount: 35000
+  synthetic-carrier-b:
+    carrier_name: Cascade Mutual
+    contingency_allowed: false
+    budget_cadence: monthly
+    variance_approval_percent: 5.0
+    rate_caps:
+      partner: 400
+      senior_associate: 300
+      associate: 240
+      paralegal: 150
+    expense_caps:
+      E115: 4500
+      E119: 20000
+      E121: 1800
+    staffing_rules:
+      task_role_overrides:
+        L310: paralegal
+        L340: senior_associate
+        L420: senior_associate
+      preferred_drafting_role: associate
+      max_timekeepers_per_event:
+        L330: 1
+    pre_approval_thresholds:
+      experts_over_count: 2
+      expert_spend_over_amount: 20000
+      depositions_over_count: 4
+      research_hours_over: 40
+      vendor_spend_over_amount: 25000
