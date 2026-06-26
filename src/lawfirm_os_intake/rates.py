@@ -20,7 +20,7 @@ from typing import Any
 import yaml
 from pydantic import Field
 
-from .models import HumanConfirmation, StrictModel
+from .models import HumanConfirmation, NamedTimekeeperRate, StrictModel
 
 # Confirmed party roles that identify the paying/instructing carrier for rate selection.
 CARRIER_ROLES = ("insurance_carrier", "instructing_source", "payer")
@@ -36,6 +36,8 @@ class RoleRateResolution(StrictModel):
     state_matched_by: str  # jurisdiction_alias | default_state | profile_flat
     effective_date: str | None = None
     role_rates: dict[str, float] = Field(default_factory=dict)
+    role_rate_precedence: str = "unknown"
+    named_timekeeper_overrides: dict[str, NamedTimekeeperRate] = Field(default_factory=dict)
     source: str  # carrier_rate_card | practice_profile_flat
     note: str | None = None
 
@@ -92,9 +94,44 @@ def _flat_resolution(profile: dict[str, Any], note: str) -> RoleRateResolution:
         state="none",
         state_matched_by="profile_flat",
         role_rates=_flat_rates(profile),
+        role_rate_precedence="firm_default",
         source="practice_profile_flat",
         note=note,
     )
+
+
+def _named_timekeeper_overrides(
+    *,
+    rate_card: dict[str, Any],
+    carrier_id: str,
+    state: str,
+) -> dict[str, NamedTimekeeperRate]:
+    carrier_spec = rate_card.get("carriers", {}).get(carrier_id, {})
+    if not isinstance(carrier_spec, dict):
+        return {}
+    overrides = carrier_spec.get("named_timekeeper_overrides", {})
+    if not isinstance(overrides, dict):
+        return {}
+
+    resolved: dict[str, NamedTimekeeperRate] = {}
+    for timekeeper_id, raw_spec in overrides.items():
+        if not isinstance(raw_spec, dict):
+            continue
+        override_state = raw_spec.get("state")
+        if override_state is not None and str(override_state) != state:
+            continue
+        approved_rate = raw_spec.get("approved_rate")
+        if approved_rate is None:
+            continue
+        resolved[str(timekeeper_id)] = NamedTimekeeperRate(
+            timekeeper_id=str(timekeeper_id),
+            title=str(raw_spec.get("title", "")),
+            state=str(override_state) if override_state is not None else None,
+            approved_rate=float(approved_rate),
+            carrier_id=carrier_id,
+            rate_card_id=str(rate_card.get("rate_card_id", "unknown")),
+        )
+    return resolved
 
 
 def resolve_role_rates(
@@ -121,13 +158,25 @@ def resolve_role_rates(
     schedule = carrier_spec.get("schedule", {}) if isinstance(carrier_spec, dict) else {}
     state_rates = schedule.get(state, {}) if isinstance(schedule, dict) else {}
     role_rates = {str(k): float(v) for k, v in state_rates.items()} if state_rates else {}
+    role_rate_precedence = "carrier_state_title"
+    if not role_rates and isinstance(carrier_spec, dict):
+        default_title_rates = carrier_spec.get("default_title_rates", {})
+        if isinstance(default_title_rates, dict) and default_title_rates:
+            role_rates = {str(k): float(v) for k, v in default_title_rates.items()}
+            role_rate_precedence = "carrier_title_default"
+    named_overrides = _named_timekeeper_overrides(
+        rate_card=rate_card,
+        carrier_id=carrier_id,
+        state=state,
+    )
 
     if not role_rates:
-        return _flat_resolution(
+        fallback = _flat_resolution(
             profile,
             f"Carrier rate card had no schedule for {carrier_id}/{state}; "
             "fell back to practice-profile flat rates.",
         )
+        return fallback.model_copy(update={"named_timekeeper_overrides": named_overrides})
 
     effective_date = carrier_spec.get("effective_date")
     return RoleRateResolution(
@@ -138,10 +187,14 @@ def resolve_role_rates(
         state_matched_by=state_matched_by,
         effective_date=str(effective_date) if effective_date is not None else None,
         role_rates=role_rates,
+        role_rate_precedence=role_rate_precedence,
+        named_timekeeper_overrides=named_overrides,
         source="carrier_rate_card",
         note=(
             f"Synthetic carrier rate card {carrier_id} for state {state} "
             f"(carrier matched by {carrier_matched_by}, state by {state_matched_by}); "
-            "rates are synthetic and not authorized for real billing."
+            f"title rates resolved by {role_rate_precedence}; "
+            "named timekeeper overrides, when present, take precedence only for matching "
+            "synthetic task timekeeper IDs; rates are synthetic and not authorized for real billing."
         ),
     )

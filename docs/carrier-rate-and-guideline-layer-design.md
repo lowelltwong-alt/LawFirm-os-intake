@@ -3,8 +3,8 @@
 **Status:** Slices A-E implemented (carrier x state x title rate resolution,
 synthetic carrier guideline projection, projection-only staffing/leverage
 reshaping, dry-run preapproval thresholds, and second-carrier counterfactuals).
-Named-timekeeper overrides and the P1 budget-math fixes remain proposed and
-handed to Codex.
+Named-timekeeper overrides are implemented as a local candidate slice. The P1
+budget-math fixes remain proposed and handed to Codex.
 **Owner repo:** `LawFirm-os-intake` (vertical composition; owns no platform canon).
 **Authority posture:** rate cards and guidelines are synthetic `candidate` artifacts;
 promotion runs through the owning sibling repo. Builds on
@@ -94,6 +94,8 @@ This lets guidelines reshape cost without a silent rewrite of the proposal.
   stable (mirror the practice-context counterfactual discipline).
 
 ### Named-timekeeper overrides (fold into B or a small slice)
+**Status:** DONE in this repo as a local candidate slice.
+
 - Add a `timekeeper` concept (`id, title, state, approved_rate`) and
   `named_timekeeper_overrides` to the rate card; resolution precedence:
   named-TK → carrier×state×title → carrier×title default → firm default → absent

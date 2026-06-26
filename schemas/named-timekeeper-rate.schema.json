@@ -1,0 +1,71 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "timekeeper_id": {
+      "title": "Timekeeper Id",
+      "type": "string"
+    },
+    "title": {
+      "title": "Title",
+      "type": "string"
+    },
+    "state": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "State"
+    },
+    "approved_rate": {
+      "minimum": 0,
+      "title": "Approved Rate",
+      "type": "number"
+    },
+    "carrier_id": {
+      "title": "Carrier Id",
+      "type": "string"
+    },
+    "rate_card_id": {
+      "title": "Rate Card Id",
+      "type": "string"
+    },
+    "precedence_tier": {
+      "const": "named_timekeeper_override",
+      "default": "named_timekeeper_override",
+      "title": "Precedence Tier",
+      "type": "string"
+    },
+    "source": {
+      "const": "synthetic_carrier_rate_card",
+      "default": "synthetic_carrier_rate_card",
+      "title": "Source",
+      "type": "string"
+    },
+    "contains_real_firm_data": {
+      "const": false,
+      "default": false,
+      "title": "Contains Real Firm Data",
+      "type": "boolean"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "timekeeper_id",
+    "title",
+    "approved_rate",
+    "carrier_id",
+    "rate_card_id"
+  ],
+  "title": "NamedTimekeeperRate",
+  "type": "object"
+}

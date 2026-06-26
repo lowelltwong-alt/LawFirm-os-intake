@@ -73,6 +73,12 @@ and emit dry-run Exception Lake candidates, but it records
 `preapproval_obtained=false`, `carrier_submission_authorized=false`, and no
 external write.
 
+`NamedTimekeeperRate` is a local candidate model for fake approved individual
+rates in the synthetic carrier rate card. It applies only when a candidate budget
+task explicitly names a matching synthetic `timekeeper_id`; otherwise the budget
+remains role-rate based. Real timekeepers, negotiated rates, private rate stores,
+and billing use remain outside this repo.
+
 ## Avoiding false precision
 
 - Never infer a negotiated rate.

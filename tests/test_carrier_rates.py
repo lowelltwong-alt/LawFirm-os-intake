@@ -48,7 +48,31 @@ def test_resolves_carrier_state_and_title(tmp_path, repo_root):
     assert resolution.effective_date == "2026-01-01"
     # Demo NV rates reproduce the prior flat rates (back-compat for the demo budget).
     assert resolution.role_rates["partner"] == 450.0
+    assert resolution.role_rate_precedence == "carrier_state_title"
     assert TEMPLATE_ROLES <= set(resolution.role_rates)  # stays priced
+
+
+def test_resolves_named_timekeeper_overrides_for_matching_state(tmp_path, repo_root):
+    resolution = resolve_role_rates(
+        profile=_profile(repo_root),
+        confirmation=_confirmation("Harbor Point Insurance", "Synthetic State Court"),
+        rate_card=_card(repo_root),
+    )
+    override = resolution.named_timekeeper_overrides["synthetic-tk-harbor-partner-nv"]
+
+    assert override.title == "partner"
+    assert override.state == "NV"
+    assert override.approved_rate == 430.0
+    assert override.precedence_tier == "named_timekeeper_override"
+    assert override.contains_real_firm_data is False
+    assert override.candidate_only is True
+
+    ca_resolution = resolve_role_rates(
+        profile=_profile(repo_root),
+        confirmation=_confirmation("Harbor Point Insurance", "California"),
+        rate_card=_card(repo_root),
+    )
+    assert "synthetic-tk-harbor-partner-nv" not in ca_resolution.named_timekeeper_overrides
 
 
 def test_rate_varies_by_state(tmp_path, repo_root):

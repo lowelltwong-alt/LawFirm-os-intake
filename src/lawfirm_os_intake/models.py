@@ -720,11 +720,17 @@ class BudgetLine(StrictModel):
     task_id: str
     task_name: str
     staffing_role: str
+    timekeeper_id: str | None = None
     estimated_hours: float = Field(ge=0)
     estimated_hours_min: float | None = Field(default=None, ge=0)
     estimated_hours_max: float | None = Field(default=None, ge=0)
     hourly_rate: float | None = Field(default=None, ge=0)
-    rate_source: Literal["synthetic_profile", "authorized_profile", "absent"] = "absent"
+    rate_source: Literal[
+        "synthetic_profile",
+        "authorized_profile",
+        "synthetic_named_timekeeper_override",
+        "absent",
+    ] = "absent"
     rate_is_synthetic: bool = True
     estimated_fees: float | None = Field(default=None, ge=0)
     estimated_expenses: float = Field(default=0, ge=0)
@@ -875,6 +881,19 @@ class CarrierCompliantProjectionLine(StrictModel):
     staffing_rule_delta: float = Field(default=0, ge=0)
     guideline_refs: list[str] = Field(default_factory=list)
     note: str
+
+
+class NamedTimekeeperRate(StrictModel):
+    timekeeper_id: str
+    title: str
+    state: str | None = None
+    approved_rate: float = Field(ge=0)
+    carrier_id: str
+    rate_card_id: str
+    precedence_tier: Literal["named_timekeeper_override"] = "named_timekeeper_override"
+    source: Literal["synthetic_carrier_rate_card"] = "synthetic_carrier_rate_card"
+    contains_real_firm_data: Literal[False] = False
+    candidate_only: Literal[True] = True
 
 
 class CarrierCompliantLeverageSummary(StrictModel):

@@ -691,6 +691,39 @@ def _selected_scenario_lines(
     return _lines_for_phases(lines, included_phase_ids)
 
 
+def _task_rate(
+    *,
+    task: dict[str, Any],
+    role: str,
+    rates: dict[str, float],
+    rate_resolution: RoleRateResolution | None,
+) -> tuple[float | None, str, str | None, str | None]:
+    timekeeper_id = task.get("timekeeper_id")
+    if timekeeper_id is not None and rate_resolution is not None:
+        override = rate_resolution.named_timekeeper_overrides.get(str(timekeeper_id))
+        if override is not None and override.title == role:
+            note = (
+                f"Named synthetic timekeeper {override.timekeeper_id} ({override.title}) "
+                f"resolved at {override.approved_rate} by {override.precedence_tier}; "
+                "candidate-only and not authorized for real billing."
+            )
+            return (
+                override.approved_rate,
+                "synthetic_named_timekeeper_override",
+                override.timekeeper_id,
+                note,
+            )
+    rate = rates.get(role)
+    if rate is None:
+        return None, "absent", str(timekeeper_id) if timekeeper_id is not None else None, None
+    return (
+        rate,
+        "synthetic_profile",
+        str(timekeeper_id) if timekeeper_id is not None else None,
+        None,
+    )
+
+
 def build_budget_proposal(
     packet: IntakePreflightPacket,
     confirmation: HumanConfirmation,
@@ -833,11 +866,22 @@ def build_budget_proposal(
             for effect in intensity_effects:
                 driver_effects_by_key[_driver_effect_key(effect)] = effect
 
-            rate = rates.get(role)
+            rate, rate_source, timekeeper_id, timekeeper_note = _task_rate(
+                task=task,
+                role=role,
+                rates=rates,
+                rate_resolution=rate_resolution,
+            )
+            if timekeeper_note is not None:
+                assumptions = assumptions + [timekeeper_note]
             fees = round(hours * rate, 2) if rate is not None else None
             hours_min = float(task.get("estimated_hours_min", max(0.0, hours * 0.8)))
             hours_max = float(task.get("estimated_hours_max", hours * 1.25))
-            if rate is not None:
+            if rate is not None and rate_source == "synthetic_named_timekeeper_override":
+                rate_formula = (
+                    f"{hours} hours * {rate} synthetic named timekeeper rate ({timekeeper_id})"
+                )
+            elif rate is not None:
                 rate_formula = f"{hours} hours * {rate} synthetic hourly rate"
             else:
                 rate_formula = "hours only; no authorized rate present"
@@ -851,11 +895,12 @@ def build_budget_proposal(
                     task_id=task_id,
                     task_name=str(task["task_name"]),
                     staffing_role=role,
+                    timekeeper_id=timekeeper_id,
                     estimated_hours=hours,
                     estimated_hours_min=round(hours_min, 2),
                     estimated_hours_max=round(hours_max, 2),
                     hourly_rate=rate,
-                    rate_source="synthetic_profile" if rate is not None else "absent",
+                    rate_source=rate_source,  # type: ignore[arg-type]
                     rate_is_synthetic=True,
                     estimated_fees=fees,
                     estimated_expenses=expenses,

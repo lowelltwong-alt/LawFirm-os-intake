@@ -752,13 +752,14 @@ def _budget_line_lines(budget: BudgetProposal) -> list[str]:
             if line.external_code_candidate
             else ""
         )
+        timekeeper = f"; timekeeper: {line.timekeeper_id}" if line.timekeeper_id else ""
         lines.append(
             f"- {line.phase_name} / {line.task_name} / {line.staffing_role}: "
             f"{hours}; rate: {rate}; rate source: {line.rate_source}; "
             f"synthetic rate: {line.rate_is_synthetic}; fees: {fees}; "
             f"expenses: {expenses}; assumptions: {assumptions}; "
             f"evidence: {_refs_text(line.evidence_refs, limit=3)}"
-            f"{formula}{external_code}"
+            f"{formula}{external_code}{timekeeper}"
         )
     return lines or ["- none"]
 

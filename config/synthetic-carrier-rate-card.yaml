@@ -32,6 +32,15 @@ carriers:
       NV: { partner: 450, senior_associate: 325, associate: 250, paralegal: 160 }
       CA: { partner: 520, senior_associate: 380, associate: 300, paralegal: 190 }
       TX: { partner: 410, senior_associate: 300, associate: 235, paralegal: 150 }
+    named_timekeeper_overrides:
+      synthetic-tk-harbor-partner-nv:
+        title: partner
+        state: NV
+        approved_rate: 430
+      synthetic-tk-harbor-associate-nv:
+        title: associate
+        state: NV
+        approved_rate: 245
   synthetic-carrier-b:
     carrier_name: Cascade Mutual
     aliases: ["Cascade Mutual", "Cascade"]
@@ -40,3 +49,8 @@ carriers:
       NV: { partner: 395, senior_associate: 295, associate: 225, paralegal: 145 }
       CA: { partner: 470, senior_associate: 350, associate: 270, paralegal: 175 }
       TX: { partner: 365, senior_associate: 275, associate: 215, paralegal: 140 }
+    named_timekeeper_overrides:
+      synthetic-tk-cascade-partner-nv:
+        title: partner
+        state: NV
+        approved_rate: 385

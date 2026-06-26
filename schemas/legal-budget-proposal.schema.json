@@ -448,6 +448,18 @@
           "title": "Staffing Role",
           "type": "string"
         },
+        "timekeeper_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Timekeeper Id"
+        },
         "estimated_hours": {
           "minimum": 0,
           "title": "Estimated Hours",
@@ -497,6 +509,7 @@
           "enum": [
             "synthetic_profile",
             "authorized_profile",
+            "synthetic_named_timekeeper_override",
             "absent"
           ],
           "title": "Rate Source",
