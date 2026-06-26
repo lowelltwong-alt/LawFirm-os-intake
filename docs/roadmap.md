@@ -385,8 +385,9 @@ after those owners promote the necessary contracts and runtime gates.
 
 ## 18. Budget Calibration Corpus
 
-Status: implemented for the current synthetic candidate slice; human corpus
-review, corpus replay, real-data pilots, and owner adoption remain future work.
+Status: implemented for the current synthetic candidate slice through corpus
+audit and replay planning; human corpus replay review, replay execution,
+real-data pilots, and owner adoption remain future work.
 
 Separate "we have synthetic evidence artifacts" from "we are allowed to learn
 from them."
@@ -404,3 +405,18 @@ from them."
 - Required next gates are human corpus review, fixture-result binding, shadow
   eval before learning, owning-repo review, and no silent profile/template
   mutation.
+- `plan-budget-corpus-replay` consumes the corpus audit and writes
+  `budget_corpus_replay_plan.json` plus Markdown notes.
+- The replay plan maps eligible artifacts to deterministic local command chains
+  for baseline demo regeneration, human budget reviews, actual-cost comparison,
+  carrier rejection capture/review/learning-gate routing, reviewed gold replay,
+  learning-gate promotion readiness, proposed-change drafting, and shadow-eval
+  fixture replay.
+- Supporting intake/confirmation fixtures remain context-only and do not receive
+  replay commands.
+- If the source corpus report is blocked by real/production/privileged data or
+  mutation flags, the replay plan is `blocked_by_corpus_report` and emits no
+  command chains.
+- The replay plan is still a plan, not a runner: it does not execute commands,
+  calibrate, mutate budgets/profiles/templates/guidelines, write Lake or SQLite
+  records, or authorize learning.

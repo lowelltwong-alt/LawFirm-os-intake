@@ -45,6 +45,15 @@ are only supporting context. It blocks real/production/privileged flags,
 mutation flags, Lake/SQLite writes, external writes, and silent-learning flags.
 It does not calibrate or apply changes.
 
+`plan-budget-corpus-replay` consumes that audit report and writes
+`budget_corpus_replay_plan.json`. The plan binds each eligible synthetic
+artifact to the deterministic local command chain needed to regenerate its
+baseline budget evidence and route review, actuals, rejection, appeal/result,
+or shadow-eval pressure through the existing human gates. Supporting context
+fixtures are not executed, and blocked corpus reports produce no command
+chains. The command is planning-only: it does not run replay commands, mutate
+profiles/templates/guidelines, write Lake or SQLite records, or apply learning.
+
 The learning loop can write `reviewed_learning_gate_report.json`, then
 `audit-learning-promotion-readiness` writes `learning_shadow_eval_plan.json` and
 `learning_promotion_readiness_report.json`. `draft-learning-proposed-changes`

@@ -1482,6 +1482,138 @@ class BudgetCalibrationCorpusReport(StrictModel):
         return self
 
 
+BudgetCorpusReplayCommandExecutionMode = Literal["planned_only_not_executed"]
+
+BudgetCorpusReplayCaseStatus = Literal[
+    "planned_for_replay",
+    "supporting_context_only",
+    "blocked_from_replay",
+]
+
+BudgetCorpusReplayPlanStatus = Literal[
+    "replay_plan_ready_for_review",
+    "blocked_by_corpus_report",
+    "no_replay_candidates",
+]
+
+
+class BudgetCorpusReplayCommand(StrictModel):
+    command_id: str
+    command: str
+    purpose: str
+    input_artifact_refs: list[str] = Field(default_factory=list)
+    expected_output_refs: list[str] = Field(default_factory=list)
+    requires_prior_command_ids: list[str] = Field(default_factory=list)
+    execution_mode: BudgetCorpusReplayCommandExecutionMode = "planned_only_not_executed"
+    candidate_only: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    profile_mutation_performed: Literal[False] = False
+    template_mutation_performed: Literal[False] = False
+    budget_mutation_performed: Literal[False] = False
+    carrier_guideline_mutation_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+
+class BudgetCorpusReplayCase(StrictModel):
+    replay_case_id: str
+    source_artifact_id: str
+    source_artifact_ref: str
+    artifact_kind: BudgetCalibrationArtifactKind
+    calibration_role: BudgetCalibrationRole
+    eligibility: BudgetCalibrationEligibility
+    status: BudgetCorpusReplayCaseStatus
+    baseline_input_ref: str | None = None
+    baseline_practice_profile_ref: str | None = None
+    baseline_confirmation_ref: str | None = None
+    command_chain: list[BudgetCorpusReplayCommand] = Field(default_factory=list)
+    required_inputs: list[str] = Field(default_factory=list)
+    expected_outputs: list[str] = Field(default_factory=list)
+    support_refs: list[str] = Field(default_factory=list)
+    blocking_reasons: list[str] = Field(default_factory=list)
+    required_next_gates: list[str] = Field(default_factory=list)
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    calibration_applied: Literal[False] = False
+    profile_mutation_performed: Literal[False] = False
+    template_mutation_performed: Literal[False] = False
+    budget_mutation_performed: Literal[False] = False
+    carrier_guideline_mutation_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def command_status_matches_case_status(self) -> "BudgetCorpusReplayCase":
+        if self.status != "planned_for_replay" and self.command_chain:
+            raise ValueError("only planned replay cases may include command chains")
+        if self.status == "planned_for_replay" and not self.command_chain:
+            raise ValueError("planned replay cases require at least one command")
+        return self
+
+
+class BudgetCorpusReplayCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed", "warning"]
+    message: str
+    case_ids: list[str] = Field(default_factory=list)
+    artifact_refs: list[str] = Field(default_factory=list)
+
+
+class BudgetCorpusReplayPlan(StrictModel):
+    schema_version: str = "0.1"
+    replay_plan_id: str
+    source_corpus_report_id: str
+    source_corpus_report_ref: str
+    source_corpus_status: str
+    status: BudgetCorpusReplayPlanStatus
+    case_count: int = Field(ge=0)
+    planned_case_count: int = Field(ge=0)
+    supporting_case_count: int = Field(ge=0)
+    blocked_case_count: int = Field(ge=0)
+    cases: list[BudgetCorpusReplayCase]
+    checks: list[BudgetCorpusReplayCheck]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    calibration_applied: Literal[False] = False
+    profile_mutation_performed: Literal[False] = False
+    template_mutation_performed: Literal[False] = False
+    budget_mutation_performed: Literal[False] = False
+    carrier_guideline_mutation_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def counts_match_cases(self) -> "BudgetCorpusReplayPlan":
+        if self.case_count != len(self.cases):
+            raise ValueError("budget corpus replay case count must match cases")
+        if self.planned_case_count != sum(
+            1 for case in self.cases if case.status == "planned_for_replay"
+        ):
+            raise ValueError("planned replay case count does not match cases")
+        if self.supporting_case_count != sum(
+            1 for case in self.cases if case.status == "supporting_context_only"
+        ):
+            raise ValueError("supporting replay case count does not match cases")
+        if self.blocked_case_count != sum(
+            1 for case in self.cases if case.status == "blocked_from_replay"
+        ):
+            raise ValueError("blocked replay case count does not match cases")
+        if self.status == "replay_plan_ready_for_review" and not self.planned_case_count:
+            raise ValueError("ready replay plan requires at least one planned case")
+        return self
+
+
 class BudgetFormCodeMapping(StrictModel):
     code: str
     kind: Literal["phase", "task"]

@@ -8,6 +8,7 @@ import sys
 
 from .budget_actuals import run_budget_actual_comparison
 from .budget_calibration_corpus import run_budget_calibration_corpus_audit
+from .budget_corpus_replay import run_budget_corpus_replay_plan
 from .budget_form import build_budget_form_template_audit_report, render_budget_form
 from .budget_revisions import run_budget_review_record
 from .carrier_rejection_lake_admission import (
@@ -128,6 +129,17 @@ def _parser() -> argparse.ArgumentParser:
         default=".",
         help="Repository root for relative artifact refs; defaults to current directory.",
     )
+
+    budget_corpus_replay = sub.add_parser(
+        "plan-budget-corpus-replay",
+        help="Plan deterministic replay command chains for a budget calibration corpus audit.",
+    )
+    budget_corpus_replay.add_argument(
+        "--corpus-report",
+        required=True,
+        help="Path to budget_calibration_corpus_report.json.",
+    )
+    budget_corpus_replay.add_argument("--out-dir", required=True)
 
     carrier_rejections = sub.add_parser(
         "capture-carrier-rejections",
@@ -539,6 +551,37 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 0 if report.status == "synthetic_corpus_ready_for_review" else 2
+
+        if args.command == "plan-budget-corpus-replay":
+            plan, run_dir = run_budget_corpus_replay_plan(
+                corpus_report_path=args.corpus_report,
+                out_dir=args.out_dir,
+            )
+            _print(
+                {
+                    "status": plan.status,
+                    "replay_plan_id": plan.replay_plan_id,
+                    "source_corpus_report_id": plan.source_corpus_report_id,
+                    "source_corpus_status": plan.source_corpus_status,
+                    "case_count": plan.case_count,
+                    "planned_case_count": plan.planned_case_count,
+                    "supporting_case_count": plan.supporting_case_count,
+                    "blocked_case_count": plan.blocked_case_count,
+                    "calibration_applied": plan.calibration_applied,
+                    "profile_mutation_performed": plan.profile_mutation_performed,
+                    "template_mutation_performed": plan.template_mutation_performed,
+                    "budget_mutation_performed": plan.budget_mutation_performed,
+                    "carrier_guideline_mutation_performed": (
+                        plan.carrier_guideline_mutation_performed
+                    ),
+                    "lake_write_performed": plan.lake_write_performed,
+                    "sqlite_write_performed": plan.sqlite_write_performed,
+                    "external_writes_performed": plan.external_writes_performed,
+                    "silent_learning_performed": plan.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0 if plan.status == "replay_plan_ready_for_review" else 2
 
         if args.command == "capture-carrier-rejections":
             report, run_dir = run_carrier_rejection_capture(
