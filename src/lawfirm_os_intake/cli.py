@@ -21,6 +21,7 @@ from .carrier_rejection_review import run_carrier_rejection_review
 from .carrier_rejections import run_carrier_rejection_capture
 from .confirmation import bind_confirmation_to_packet_evidence
 from .learning_promotion_readiness import run_learning_promotion_readiness
+from .learning_proposed_changes import run_learning_proposed_changes
 from .models import BudgetProposal, HumanConfirmation
 from .reviewed_learning_gate import run_reviewed_learning_gate
 from .util import load_json, write_json
@@ -158,6 +159,21 @@ def _parser() -> argparse.ArgumentParser:
         help="Path to reviewed_learning_gate_report.json.",
     )
     learning_promotion_readiness.add_argument("--out-dir", required=True)
+
+    learning_proposed_changes = sub.add_parser(
+        "draft-learning-proposed-changes",
+        help="Draft candidate learning proposed-change artifacts for human review.",
+    )
+    learning_proposed_changes.add_argument(
+        "--shadow-eval-plan",
+        required=True,
+        help="Path to learning_shadow_eval_plan.json.",
+    )
+    learning_proposed_changes.add_argument("--out-dir", required=True)
+    learning_proposed_changes.add_argument(
+        "--promotion-readiness-report",
+        help="Optional learning_promotion_readiness_report.json.",
+    )
 
     carrier_rejection_orchestrator = sub.add_parser(
         "draft-carrier-rejection-orchestrator-interface",
@@ -548,6 +564,31 @@ def main(argv: list[str] | None = None) -> int:
                     "proposed_changes_applied": report.proposed_changes_applied,
                     "silent_learning_performed": report.silent_learning_performed,
                     "external_writes_performed": report.external_writes_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0
+
+        if args.command == "draft-learning-proposed-changes":
+            change_set, run_dir = run_learning_proposed_changes(
+                shadow_eval_plan_path=args.shadow_eval_plan,
+                promotion_readiness_report_path=args.promotion_readiness_report,
+                out_dir=args.out_dir,
+            )
+            _print(
+                {
+                    "status": change_set.status,
+                    "proposed_change_set_id": change_set.proposed_change_set_id,
+                    "shadow_eval_plan_id": change_set.shadow_eval_plan_id,
+                    "promotion_readiness_report_id": (change_set.promotion_readiness_report_id),
+                    "change_count": change_set.change_count,
+                    "target_learning_loops": change_set.target_learning_loops,
+                    "target_owners": change_set.target_owners,
+                    "promotion_authorized": change_set.promotion_authorized,
+                    "proposed_changes_applied": change_set.proposed_changes_applied,
+                    "baseline_mutated": change_set.baseline_mutated,
+                    "silent_learning_performed": change_set.silent_learning_performed,
+                    "external_writes_performed": change_set.external_writes_performed,
                     "run_dir": str(run_dir),
                 }
             )

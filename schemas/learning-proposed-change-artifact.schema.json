@@ -1,0 +1,356 @@
+{
+  "$defs": {
+    "LearningProposedChangeRedTeamNote": {
+      "additionalProperties": false,
+      "properties": {
+        "note_id": {
+          "title": "Note Id",
+          "type": "string"
+        },
+        "severity": {
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "risk_area": {
+          "enum": [
+            "evidence",
+            "math",
+            "authority",
+            "generalization",
+            "data_scope",
+            "carrier_guideline",
+            "workflow"
+          ],
+          "title": "Risk Area",
+          "type": "string"
+        },
+        "objection": {
+          "title": "Objection",
+          "type": "string"
+        },
+        "required_check": {
+          "title": "Required Check",
+          "type": "string"
+        },
+        "status": {
+          "const": "open_for_human_review",
+          "default": "open_for_human_review",
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "note_id",
+        "severity",
+        "risk_area",
+        "objection",
+        "required_check"
+      ],
+      "title": "LearningProposedChangeRedTeamNote",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "proposed_change_id": {
+      "title": "Proposed Change Id",
+      "type": "string"
+    },
+    "reviewed_learning_gate_report_id": {
+      "title": "Reviewed Learning Gate Report Id",
+      "type": "string"
+    },
+    "shadow_eval_plan_id": {
+      "title": "Shadow Eval Plan Id",
+      "type": "string"
+    },
+    "shadow_eval_case_id": {
+      "title": "Shadow Eval Case Id",
+      "type": "string"
+    },
+    "promotion_readiness_report_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Promotion Readiness Report Id"
+    },
+    "candidate_id": {
+      "title": "Candidate Id",
+      "type": "string"
+    },
+    "source_kind": {
+      "enum": [
+        "carrier_rejection_learning_proposal",
+        "budget_revision_delta",
+        "budget_actual_variance_driver"
+      ],
+      "title": "Source Kind",
+      "type": "string"
+    },
+    "target_learning_loop": {
+      "enum": [
+        "guideline_drift",
+        "budget_model",
+        "template_mapping",
+        "narrative_rule",
+        "preapproval_gate",
+        "appeal_success_or_failure",
+        "capture_completeness",
+        "parser_rule",
+        "eval_fixture",
+        "staffing_leverage",
+        "timekeeper_rate",
+        "validation_rule"
+      ],
+      "title": "Target Learning Loop",
+      "type": "string"
+    },
+    "target_owner": {
+      "enum": [
+        "LawFirm-os-intake",
+        "LawFirm-os-orchestrator",
+        "LawFirm-os-exceptions-lake-runtime",
+        "LawFirm-os-semantic-substrate"
+      ],
+      "title": "Target Owner",
+      "type": "string"
+    },
+    "change_type": {
+      "enum": [
+        "guideline_profile_candidate",
+        "budget_driver_adjustment_candidate",
+        "template_mapping_candidate",
+        "narrative_rule_candidate",
+        "preapproval_gate_candidate",
+        "appeal_outcome_pattern_candidate",
+        "capture_reconciliation_rule_candidate",
+        "parser_rule_candidate",
+        "eval_fixture_candidate",
+        "staffing_leverage_candidate",
+        "timekeeper_rate_candidate",
+        "validation_rule_candidate"
+      ],
+      "title": "Change Type",
+      "type": "string"
+    },
+    "source_artifact_ref": {
+      "title": "Source Artifact Ref",
+      "type": "string"
+    },
+    "source_record_id": {
+      "title": "Source Record Id",
+      "type": "string"
+    },
+    "support_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Support Refs",
+      "type": "array"
+    },
+    "affected_candidate_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Affected Candidate Refs",
+      "type": "array"
+    },
+    "proposal_title": {
+      "title": "Proposal Title",
+      "type": "string"
+    },
+    "proposed_behavior_summary": {
+      "title": "Proposed Behavior Summary",
+      "type": "string"
+    },
+    "recommendation": {
+      "default": "draft_for_human_review",
+      "enum": [
+        "draft_for_human_review",
+        "needs_more_evidence",
+        "hold_for_owning_repo"
+      ],
+      "title": "Recommendation",
+      "type": "string"
+    },
+    "recommendation_rationale": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Recommendation Rationale",
+      "type": "array"
+    },
+    "red_team_notes": {
+      "items": {
+        "$ref": "#/$defs/LearningProposedChangeRedTeamNote"
+      },
+      "title": "Red Team Notes",
+      "type": "array"
+    },
+    "required_fixture_updates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Fixture Updates",
+      "type": "array"
+    },
+    "required_eval_suites": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Eval Suites",
+      "type": "array"
+    },
+    "regression_guardrails": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Regression Guardrails",
+      "type": "array"
+    },
+    "required_next_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Gates",
+      "type": "array"
+    },
+    "status": {
+      "const": "draft_candidate_not_applied",
+      "default": "draft_candidate_not_applied",
+      "title": "Status",
+      "type": "string"
+    },
+    "human_review_status": {
+      "const": "pending_human_review",
+      "default": "pending_human_review",
+      "title": "Human Review Status",
+      "type": "string"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "proposed_change_applied": {
+      "const": false,
+      "default": false,
+      "title": "Proposed Change Applied",
+      "type": "boolean"
+    },
+    "baseline_mutated": {
+      "const": false,
+      "default": false,
+      "title": "Baseline Mutated",
+      "type": "boolean"
+    },
+    "profile_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Profile Mutation Performed",
+      "type": "boolean"
+    },
+    "template_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Template Mutation Performed",
+      "type": "boolean"
+    },
+    "connector_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Connector Mutation Performed",
+      "type": "boolean"
+    },
+    "budget_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Budget Mutation Performed",
+      "type": "boolean"
+    },
+    "carrier_guideline_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Carrier Guideline Mutation Performed",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "promotion_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Promotion Authorized",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "proposed_change_id",
+    "reviewed_learning_gate_report_id",
+    "shadow_eval_plan_id",
+    "shadow_eval_case_id",
+    "candidate_id",
+    "source_kind",
+    "target_learning_loop",
+    "target_owner",
+    "change_type",
+    "source_artifact_ref",
+    "source_record_id",
+    "support_refs",
+    "affected_candidate_refs",
+    "proposal_title",
+    "proposed_behavior_summary",
+    "recommendation_rationale",
+    "red_team_notes",
+    "required_fixture_updates",
+    "required_eval_suites",
+    "regression_guardrails",
+    "required_next_gates"
+  ],
+  "title": "LearningProposedChangeArtifact",
+  "type": "object"
+}

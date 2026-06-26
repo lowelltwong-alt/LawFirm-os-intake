@@ -255,3 +255,32 @@ that promotion is still blocked until evidence exists.
   `external_writes_performed=false`, and `silent_learning_performed=false`.
 - Promotion remains blocked until proposed change artifacts, synthetic fixture
   updates, shadow eval results, regression checks, and owning-repo review exist.
+
+## 14. Learning Proposed-Change Artifacts
+
+Status: implemented for the current synthetic candidate slice; applying
+proposed changes, passing shadow evals, and owning-repo promotion remain future
+work.
+
+Turn blocked shadow-eval cases into human-review draft change artifacts with
+recommendations, why-notes, and red-team objections before any eval or promotion
+path can claim a learning change is ready.
+
+- `draft-learning-proposed-changes` consumes `learning_shadow_eval_plan.json`
+  and optionally `learning_promotion_readiness_report.json`.
+- It writes `learning_proposed_change_set.json`,
+  `learning_proposed_change_set.md`, and `learning_proposed_changes.jsonl`.
+- Each proposed change records the target learning loop, owning repo, change
+  type, source artifact, support refs, recommendation, recommendation rationale,
+  red-team notes, required fixture updates, eval suites, regression guardrails,
+  and required next gates.
+- Cross-repo owner routing is explicit: intake-owned budget candidates may be
+  drafted for human review, while Orchestrator/Lake/Substrate-owned candidates
+  are held for owning-repo review before implementation.
+- The command records `promotion_authorized=false`,
+  `proposed_change_applied=false`, `baseline_mutated=false`,
+  `profile_mutation_performed=false`, `template_mutation_performed=false`,
+  `connector_mutation_performed=false`, `budget_mutation_performed=false`,
+  `carrier_guideline_mutation_performed=false`, `lake_write_performed=false`,
+  `sqlite_write_performed=false`, `external_writes_performed=false`, and
+  `silent_learning_performed=false`.

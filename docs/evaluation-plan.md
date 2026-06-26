@@ -38,11 +38,15 @@ The smoke harness also runs `scripts/audit_context_counterfactual.py`. It writes
 
 The learning loop can write `reviewed_learning_gate_report.json`, then
 `audit-learning-promotion-readiness` writes `learning_shadow_eval_plan.json` and
-`learning_promotion_readiness_report.json`. These artifacts are local
+`learning_promotion_readiness_report.json`. `draft-learning-proposed-changes`
+then writes `learning_proposed_change_set.json` and
+`learning_proposed_changes.jsonl` with recommendations, why-notes, red-team
+objections, required fixtures, eval suites, guardrails, and owning-repo routing.
+These artifacts are local
 non-authoritative eval evidence: they plan the fixture updates, shadow evals, and
 regression checks required before any learning candidate can be considered by an
 owning repo. They do not apply proposed changes, mutate baselines, authorize
-promotion, or replace sibling-repo review.
+promotion, write Lake/SQLite records, or replace sibling-repo review.
 
 ### Counterfactual evals
 

@@ -2134,6 +2134,158 @@ class LearningPromotionReadinessReport(StrictModel):
     generated_at: str
 
 
+LearningProposedChangeType = Literal[
+    "guideline_profile_candidate",
+    "budget_driver_adjustment_candidate",
+    "template_mapping_candidate",
+    "narrative_rule_candidate",
+    "preapproval_gate_candidate",
+    "appeal_outcome_pattern_candidate",
+    "capture_reconciliation_rule_candidate",
+    "parser_rule_candidate",
+    "eval_fixture_candidate",
+    "staffing_leverage_candidate",
+    "timekeeper_rate_candidate",
+    "validation_rule_candidate",
+]
+
+
+class LearningProposedChangeRedTeamNote(StrictModel):
+    note_id: str
+    severity: Literal["low", "medium", "high"]
+    risk_area: Literal[
+        "evidence",
+        "math",
+        "authority",
+        "generalization",
+        "data_scope",
+        "carrier_guideline",
+        "workflow",
+    ]
+    objection: str
+    required_check: str
+    status: Literal["open_for_human_review"] = "open_for_human_review"
+
+
+class LearningProposedChangeArtifact(StrictModel):
+    schema_version: str = "0.1"
+    proposed_change_id: str
+    reviewed_learning_gate_report_id: str
+    shadow_eval_plan_id: str
+    shadow_eval_case_id: str
+    promotion_readiness_report_id: str | None = None
+    candidate_id: str
+    source_kind: Literal[
+        "carrier_rejection_learning_proposal",
+        "budget_revision_delta",
+        "budget_actual_variance_driver",
+    ]
+    target_learning_loop: LearningLoopId
+    target_owner: LearningTargetOwner
+    change_type: LearningProposedChangeType
+    source_artifact_ref: str
+    source_record_id: str
+    support_refs: list[str]
+    affected_candidate_refs: list[str]
+    proposal_title: str
+    proposed_behavior_summary: str
+    recommendation: Literal[
+        "draft_for_human_review",
+        "needs_more_evidence",
+        "hold_for_owning_repo",
+    ] = "draft_for_human_review"
+    recommendation_rationale: list[str]
+    red_team_notes: list[LearningProposedChangeRedTeamNote]
+    required_fixture_updates: list[str]
+    required_eval_suites: list[str]
+    regression_guardrails: list[str]
+    required_next_gates: list[str]
+    status: Literal["draft_candidate_not_applied"] = "draft_candidate_not_applied"
+    human_review_status: Literal["pending_human_review"] = "pending_human_review"
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    proposed_change_applied: Literal[False] = False
+    baseline_mutated: Literal[False] = False
+    profile_mutation_performed: Literal[False] = False
+    template_mutation_performed: Literal[False] = False
+    connector_mutation_performed: Literal[False] = False
+    budget_mutation_performed: Literal[False] = False
+    carrier_guideline_mutation_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    promotion_authorized: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def support_review_and_boundaries_required(self) -> "LearningProposedChangeArtifact":
+        if not self.support_refs:
+            raise ValueError("proposed learning change requires support refs")
+        if not self.recommendation_rationale:
+            raise ValueError("proposed learning change requires recommendation rationale")
+        if not self.red_team_notes:
+            raise ValueError("proposed learning change requires red-team notes")
+        required = {
+            "human_reviewed_outcome_evidence",
+            "append_only_evidence_record",
+            "proposed_change_artifact",
+            "synthetic_fixture_update",
+            "shadow_eval_result",
+            "regression_check",
+            "owning_repo_review",
+        }
+        if not required.issubset(set(self.required_next_gates)):
+            raise ValueError("proposed learning change is missing required gates")
+        if self.candidate_id not in self.affected_candidate_refs:
+            raise ValueError("proposed learning change must reference its source candidate")
+        return self
+
+
+class LearningProposedChangeSet(StrictModel):
+    schema_version: str = "0.1"
+    proposed_change_set_id: str
+    reviewed_learning_gate_report_id: str
+    shadow_eval_plan_id: str
+    promotion_readiness_report_id: str | None = None
+    status: Literal[
+        "draft_candidates_ready_for_human_review",
+        "no_learning_candidates",
+        "failed",
+    ]
+    source_shadow_eval_plan_ref: str
+    source_promotion_readiness_report_ref: str | None = None
+    change_count: int = Field(ge=0)
+    target_learning_loops: list[str]
+    target_owners: list[str]
+    changes: list[LearningProposedChangeArtifact]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    proposed_changes_applied: Literal[False] = False
+    baseline_mutated: Literal[False] = False
+    profile_mutation_performed: Literal[False] = False
+    template_mutation_performed: Literal[False] = False
+    connector_mutation_performed: Literal[False] = False
+    budget_mutation_performed: Literal[False] = False
+    carrier_guideline_mutation_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    promotion_authorized: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def change_count_matches_status(self) -> "LearningProposedChangeSet":
+        if self.change_count != len(self.changes):
+            raise ValueError("proposed learning change set count must match changes")
+        if self.status == "no_learning_candidates" and self.changes:
+            raise ValueError("no-candidate change set cannot include changes")
+        if self.status == "draft_candidates_ready_for_human_review" and not self.changes:
+            raise ValueError("draft change set requires at least one change")
+        return self
+
+
 class CarrierRejectionOrchestratorConnectorChannel(StrictModel):
     channel_id: Literal[
         "carrier_portal_notice",

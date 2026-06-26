@@ -148,6 +148,23 @@ artifacts, synthetic fixture updates, shadow eval results, regression checks, an
 owning-repo review exist. It does not apply proposed changes, mutate baselines,
 authorize promotion, write Lake/SQLite records, or perform external writes.
 
+### Draft learning proposed-change artifacts
+
+```bash
+python -m lawfirm_os_intake draft-learning-proposed-changes \
+  --shadow-eval-plan .lawfirm-os-intake/learning-promotion-readiness/learning_shadow_eval_plan.json \
+  --promotion-readiness-report .lawfirm-os-intake/learning-promotion-readiness/learning_promotion_readiness_report.json \
+  --out-dir .lawfirm-os-intake/learning-proposed-changes
+```
+
+This writes `learning_proposed_change_set.json`,
+`learning_proposed_change_set.md`, and `learning_proposed_changes.jsonl`. Each
+draft change names the target learning loop, owning repo, proposed behavior,
+recommendation, recommendation rationale, red-team objections, required fixture
+updates, eval suites, regression guardrails, and next gates. These are reviewer
+notes and shadow-eval inputs only; the command applies no changes, authorizes no
+promotion, writes no Lake/SQLite records, and performs no external writes.
+
 ### Draft carrier rejection Orchestrator interface
 
 ```bash

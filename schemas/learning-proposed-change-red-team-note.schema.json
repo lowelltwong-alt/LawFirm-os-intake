@@ -1,0 +1,54 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "note_id": {
+      "title": "Note Id",
+      "type": "string"
+    },
+    "severity": {
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "title": "Severity",
+      "type": "string"
+    },
+    "risk_area": {
+      "enum": [
+        "evidence",
+        "math",
+        "authority",
+        "generalization",
+        "data_scope",
+        "carrier_guideline",
+        "workflow"
+      ],
+      "title": "Risk Area",
+      "type": "string"
+    },
+    "objection": {
+      "title": "Objection",
+      "type": "string"
+    },
+    "required_check": {
+      "title": "Required Check",
+      "type": "string"
+    },
+    "status": {
+      "const": "open_for_human_review",
+      "default": "open_for_human_review",
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "note_id",
+    "severity",
+    "risk_area",
+    "objection",
+    "required_check"
+  ],
+  "title": "LearningProposedChangeRedTeamNote",
+  "type": "object"
+}
