@@ -5,6 +5,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 import re
 
+from .carrier_rejection_decision_ledger import (
+    CARRIER_REJECTION_DECISION_LEDGER_REPORT_FILENAME,
+    build_carrier_rejection_decision_ledger_report,
+    write_carrier_rejection_decision_ledger_outputs,
+)
 from .models import (
     BudgetProposal,
     CarrierAppealResult,
@@ -444,6 +449,14 @@ def run_carrier_rejection_capture(
         cases_path,
         [case.model_dump(mode="json") for case in report.remediation_cases],
     )
+    decision_ledger_report = build_carrier_rejection_decision_ledger_report(
+        report=report,
+        bundle=bundle,
+    )
+    write_carrier_rejection_decision_ledger_outputs(
+        run_dir=run_dir,
+        ledger_report=decision_ledger_report,
+    )
     if candidates_path.exists():
         candidates_path.unlink()
     for candidate in report.exception_lake_candidates:
@@ -457,7 +470,12 @@ def run_carrier_rejection_capture(
             status="blocked" if report.status.startswith("blocked") else "completed",
             timestamp=now_iso(),
             input_refs=[str(budget_path), str(source_bundle_path)],
-            output_refs=[str(report_path), str(cases_path), str(candidates_path)],
+            output_refs=[
+                str(report_path),
+                str(cases_path),
+                str(candidates_path),
+                str(run_dir / CARRIER_REJECTION_DECISION_LEDGER_REPORT_FILENAME),
+            ],
         ).model_dump(mode="json"),
     )
     return report, run_dir

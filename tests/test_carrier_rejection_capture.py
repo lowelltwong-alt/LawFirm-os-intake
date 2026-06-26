@@ -3,9 +3,14 @@ from copy import deepcopy
 import pytest
 
 from lawfirm_os_intake.carrier_rejections import run_carrier_rejection_capture
+from lawfirm_os_intake.cli import main
 from lawfirm_os_intake.confirmation import bind_confirmation_to_packet_evidence
-from lawfirm_os_intake.models import CarrierRejectionCaptureSourceBundle, HumanConfirmation
-from lawfirm_os_intake.util import load_json, write_json
+from lawfirm_os_intake.models import (
+    CarrierRejectionCaptureSourceBundle,
+    CarrierRejectionDecisionLedgerReport,
+    HumanConfirmation,
+)
+from lawfirm_os_intake.util import load_json, load_jsonl, write_json
 from lawfirm_os_intake.workflow import run_budget, run_preflight
 
 
@@ -117,6 +122,49 @@ def test_carrier_rejection_capture_reconciles_duplicates_missing_unlinked_and_ap
     assert (run_dir / "carrier_rejection_remediation_cases.json").is_file()
     assert (run_dir / "carrier_rejection_exception_lake_candidates.jsonl").is_file()
 
+    ledger = CarrierRejectionDecisionLedgerReport.model_validate(
+        load_json(run_dir / "carrier_rejection_decision_ledger_report.json")
+    )
+    ledger_rows = load_jsonl(run_dir / "carrier_rejection_decision_ledger.jsonl")
+    event_kinds = {event.event_kind for event in ledger.events}
+
+    assert ledger.status == "decision_ledger_ready_for_review"
+    assert ledger.reconciliation_report_id == report.reconciliation_report_id
+    assert ledger.source_bundle_id == "synthetic-carrier-rejection-capture-001"
+    assert ledger.entry_count == len(ledger_rows)
+    assert ledger.remediation_case_event_count == len(report.remediation_cases)
+    assert ledger.pending_decision_event_count == 3
+    assert ledger.appeal_result_event_count == 1
+    assert ledger.financial_outcome_event_count == 1
+    assert ledger.total_disputed_amount == 21950.0
+    assert ledger.total_recovered_amount == 8000.0
+    assert ledger.total_write_down_amount == 7000.0
+    assert {
+        "carrier_rejection_notice_captured",
+        "carrier_response_missing_after_sla",
+        "carrier_rejection_unlinked_notice",
+        "carrier_rejection_parse_failed",
+        "carrier_duplicate_notice_collapsed",
+        "carrier_fix_or_appeal_decision_pending",
+        "carrier_appeal_result_received",
+        "carrier_financial_outcome_recorded",
+    } <= event_kinds
+    financial_event = next(
+        event for event in ledger.events if event.event_kind == "carrier_financial_outcome_recorded"
+    )
+    assert financial_event.appeal_result_id == "appeal-result-001"
+    assert financial_event.appealed_amount == 15000.0
+    assert financial_event.recovered_amount == 8000.0
+    assert financial_event.write_down_amount == 7000.0
+    assert financial_event.remaining_write_down_amount == 7000.0
+    assert all(event.requires_exception_lake_admission_review for event in ledger.events)
+    assert ledger.lake_write_performed is False
+    assert ledger.sqlite_write_performed is False
+    assert ledger.external_writes_performed is False
+    assert ledger.appeal_submission_performed is False
+    assert ledger.silent_learning_performed is False
+    assert (run_dir / "carrier_rejection_decision_ledger_report.md").is_file()
+
 
 def test_carrier_rejection_capture_blocks_missing_followup_owner_or_due_date(
     tmp_path,
@@ -141,6 +189,11 @@ def test_carrier_rejection_capture_blocks_missing_followup_owner_or_due_date(
     assert report.status == "blocked_missing_required_followup"
     assert any("missing human owner" in gap for gap in report.gap_report)
     assert any("missing follow-up due date" in gap for gap in report.gap_report)
+    ledger = CarrierRejectionDecisionLedgerReport.model_validate(
+        load_json(tmp_path / "carrier-rejections" / "carrier_rejection_decision_ledger_report.json")
+    )
+    assert ledger.status == "decision_ledger_blocked_missing_followup"
+    assert ledger.lake_write_performed is False
 
 
 def test_carrier_rejection_capture_is_synthetic_only(tmp_path, repo_root):
@@ -164,3 +217,34 @@ def test_carrier_rejection_capture_rejects_budget_mismatch(tmp_path, repo_root):
             source_path,
             tmp_path / "carrier-rejections",
         )
+
+
+def test_carrier_rejection_capture_cli_reports_decision_ledger(tmp_path, repo_root, capsys):
+    _, budget_path = _budget(tmp_path, repo_root)
+
+    exit_code = main(
+        [
+            "capture-carrier-rejections",
+            "--budget",
+            str(budget_path),
+            "--source-bundle",
+            str(_fixture_path(repo_root)),
+            "--out-dir",
+            str(tmp_path / "carrier-rejections-cli"),
+        ]
+    )
+    captured = capsys.readouterr()
+    ledger = CarrierRejectionDecisionLedgerReport.model_validate(
+        load_json(
+            tmp_path / "carrier-rejections-cli" / "carrier_rejection_decision_ledger_report.json"
+        )
+    )
+
+    assert exit_code == 0
+    assert ledger.entry_count > 0
+    assert '"decision_ledger_entry_count":' in captured.out
+    assert '"total_recovered_amount": 8000.0' in captured.out
+    assert '"total_write_down_amount": 7000.0' in captured.out
+    assert '"sqlite_write_performed": false' in captured.out
+    assert '"appeal_submission_performed": false' in captured.out
+    assert '"silent_learning_performed": false' in captured.out

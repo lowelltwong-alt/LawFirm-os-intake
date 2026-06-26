@@ -1,0 +1,753 @@
+{
+  "$defs": {
+    "CarrierRejectionDecisionLedgerEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "default": "0.1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "decision_ledger_event_id": {
+          "title": "Decision Ledger Event Id",
+          "type": "string"
+        },
+        "decision_ledger_id": {
+          "title": "Decision Ledger Id",
+          "type": "string"
+        },
+        "sequence_index": {
+          "minimum": 0,
+          "title": "Sequence Index",
+          "type": "integer"
+        },
+        "reconciliation_report_id": {
+          "title": "Reconciliation Report Id",
+          "type": "string"
+        },
+        "source_bundle_id": {
+          "title": "Source Bundle Id",
+          "type": "string"
+        },
+        "run_id": {
+          "title": "Run Id",
+          "type": "string"
+        },
+        "preflight_packet_id": {
+          "title": "Preflight Packet Id",
+          "type": "string"
+        },
+        "budget_proposal_id": {
+          "title": "Budget Proposal Id",
+          "type": "string"
+        },
+        "remediation_case_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Remediation Case Id"
+        },
+        "appeal_result_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Appeal Result Id"
+        },
+        "notice_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Notice Ids",
+          "type": "array"
+        },
+        "carrier_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Carrier Id"
+        },
+        "submission_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Submission Id"
+        },
+        "invoice_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Invoice Id"
+        },
+        "phase_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phase Id"
+        },
+        "task_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Task Id"
+        },
+        "external_code_candidate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Code Candidate"
+        },
+        "event_kind": {
+          "enum": [
+            "carrier_rejection_notice_captured",
+            "carrier_response_missing_after_sla",
+            "carrier_rejection_unlinked_notice",
+            "carrier_rejection_parse_failed",
+            "carrier_duplicate_notice_collapsed",
+            "carrier_fix_or_appeal_decision_pending",
+            "carrier_appeal_result_received",
+            "carrier_financial_outcome_recorded"
+          ],
+          "title": "Event Kind",
+          "type": "string"
+        },
+        "decision_status": {
+          "enum": [
+            "captured_pending_human_review",
+            "pending_human_fix_or_appeal_decision",
+            "appeal_result_captured_pending_review",
+            "financial_outcome_captured_pending_review",
+            "blocked_missing_response_followup",
+            "blocked_linkage_or_parse_review"
+          ],
+          "title": "Decision Status",
+          "type": "string"
+        },
+        "local_event_label": {
+          "title": "Local Event Label",
+          "type": "string"
+        },
+        "canonical_lake_class_candidate": {
+          "enum": [
+            "retrieval_miss",
+            "workflow_escalation",
+            "authority_conflict_override"
+          ],
+          "title": "Canonical Lake Class Candidate",
+          "type": "string"
+        },
+        "source_channels": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Source Channels",
+          "type": "array"
+        },
+        "source_refs": {
+          "items": {
+            "$ref": "#/$defs/CarrierRejectionSourceRef"
+          },
+          "title": "Source Refs",
+          "type": "array"
+        },
+        "response_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Response Type"
+        },
+        "appeal_result": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Appeal Result"
+        },
+        "disputed_amount": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Disputed Amount",
+          "type": "number"
+        },
+        "current_financial_exposure": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Current Financial Exposure",
+          "type": "number"
+        },
+        "appealed_amount": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Appealed Amount",
+          "type": "number"
+        },
+        "recovered_amount": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Recovered Amount",
+          "type": "number"
+        },
+        "write_down_amount": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Write Down Amount",
+          "type": "number"
+        },
+        "remaining_write_down_amount": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Remaining Write Down Amount",
+          "type": "number"
+        },
+        "proposed_next_actions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Proposed Next Actions",
+          "type": "array"
+        },
+        "required_human_decisions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Required Human Decisions",
+          "type": "array"
+        },
+        "exception_candidate_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Exception Candidate Ids",
+          "type": "array"
+        },
+        "structured_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Structured Refs",
+          "type": "array"
+        },
+        "requires_exception_lake_admission_review": {
+          "const": true,
+          "default": true,
+          "title": "Requires Exception Lake Admission Review",
+          "type": "boolean"
+        },
+        "append_only": {
+          "const": true,
+          "default": true,
+          "title": "Append Only",
+          "type": "boolean"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        },
+        "synthetic_only": {
+          "const": true,
+          "default": true,
+          "title": "Synthetic Only",
+          "type": "boolean"
+        },
+        "not_authorized_for_lake_write": {
+          "const": true,
+          "default": true,
+          "title": "Not Authorized For Lake Write",
+          "type": "boolean"
+        },
+        "not_authorized_for_sqlite_write": {
+          "const": true,
+          "default": true,
+          "title": "Not Authorized For Sqlite Write",
+          "type": "boolean"
+        },
+        "not_authorized_for_external_submission": {
+          "const": true,
+          "default": true,
+          "title": "Not Authorized For External Submission",
+          "type": "boolean"
+        },
+        "lake_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Lake Write Performed",
+          "type": "boolean"
+        },
+        "sqlite_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Sqlite Write Performed",
+          "type": "boolean"
+        },
+        "external_writes_performed": {
+          "const": false,
+          "default": false,
+          "title": "External Writes Performed",
+          "type": "boolean"
+        },
+        "carrier_portal_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Carrier Portal Write Performed",
+          "type": "boolean"
+        },
+        "email_send_performed": {
+          "const": false,
+          "default": false,
+          "title": "Email Send Performed",
+          "type": "boolean"
+        },
+        "appeal_submission_performed": {
+          "const": false,
+          "default": false,
+          "title": "Appeal Submission Performed",
+          "type": "boolean"
+        },
+        "budget_mutation_performed": {
+          "const": false,
+          "default": false,
+          "title": "Budget Mutation Performed",
+          "type": "boolean"
+        },
+        "profile_mutation_performed": {
+          "const": false,
+          "default": false,
+          "title": "Profile Mutation Performed",
+          "type": "boolean"
+        },
+        "template_mutation_performed": {
+          "const": false,
+          "default": false,
+          "title": "Template Mutation Performed",
+          "type": "boolean"
+        },
+        "carrier_guideline_mutation_performed": {
+          "const": false,
+          "default": false,
+          "title": "Carrier Guideline Mutation Performed",
+          "type": "boolean"
+        },
+        "silent_learning_performed": {
+          "const": false,
+          "default": false,
+          "title": "Silent Learning Performed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "decision_ledger_event_id",
+        "decision_ledger_id",
+        "sequence_index",
+        "reconciliation_report_id",
+        "source_bundle_id",
+        "run_id",
+        "preflight_packet_id",
+        "budget_proposal_id",
+        "event_kind",
+        "decision_status",
+        "local_event_label",
+        "canonical_lake_class_candidate"
+      ],
+      "title": "CarrierRejectionDecisionLedgerEvent",
+      "type": "object"
+    },
+    "CarrierRejectionSourceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "source_channel": {
+          "enum": [
+            "portal_status",
+            "portal_export",
+            "email_notice",
+            "ledes_response",
+            "returned_workbook",
+            "appeal_correspondence",
+            "manual_entry"
+          ],
+          "title": "Source Channel",
+          "type": "string"
+        },
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "source_record_id": {
+          "title": "Source Record Id",
+          "type": "string"
+        },
+        "retrieved_at": {
+          "title": "Retrieved At",
+          "type": "string"
+        },
+        "content_sha256": {
+          "title": "Content Sha256",
+          "type": "string"
+        },
+        "message_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Message Id"
+        },
+        "portal_status_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Portal Status Id"
+        },
+        "row_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Row Ref"
+        },
+        "attachment_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attachment Id"
+        }
+      },
+      "required": [
+        "source_channel",
+        "source_id",
+        "source_record_id",
+        "retrieved_at",
+        "content_sha256"
+      ],
+      "title": "CarrierRejectionSourceRef",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "decision_ledger_report_id": {
+      "title": "Decision Ledger Report Id",
+      "type": "string"
+    },
+    "decision_ledger_id": {
+      "title": "Decision Ledger Id",
+      "type": "string"
+    },
+    "reconciliation_report_id": {
+      "title": "Reconciliation Report Id",
+      "type": "string"
+    },
+    "source_bundle_id": {
+      "title": "Source Bundle Id",
+      "type": "string"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "preflight_packet_id": {
+      "title": "Preflight Packet Id",
+      "type": "string"
+    },
+    "budget_proposal_id": {
+      "title": "Budget Proposal Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "decision_ledger_ready_for_review",
+        "decision_ledger_blocked_missing_followup",
+        "decision_ledger_no_events"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "entry_count": {
+      "minimum": 0,
+      "title": "Entry Count",
+      "type": "integer"
+    },
+    "remediation_case_event_count": {
+      "minimum": 0,
+      "title": "Remediation Case Event Count",
+      "type": "integer"
+    },
+    "pending_decision_event_count": {
+      "minimum": 0,
+      "title": "Pending Decision Event Count",
+      "type": "integer"
+    },
+    "appeal_result_event_count": {
+      "minimum": 0,
+      "title": "Appeal Result Event Count",
+      "type": "integer"
+    },
+    "financial_outcome_event_count": {
+      "minimum": 0,
+      "title": "Financial Outcome Event Count",
+      "type": "integer"
+    },
+    "total_disputed_amount": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Total Disputed Amount",
+      "type": "number"
+    },
+    "total_recovered_amount": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Total Recovered Amount",
+      "type": "number"
+    },
+    "total_write_down_amount": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Total Write Down Amount",
+      "type": "number"
+    },
+    "event_kind_counts": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Event Kind Counts",
+      "type": "object"
+    },
+    "events": {
+      "items": {
+        "$ref": "#/$defs/CarrierRejectionDecisionLedgerEvent"
+      },
+      "title": "Events",
+      "type": "array"
+    },
+    "required_next_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Gates",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "append_only": {
+      "const": true,
+      "default": true,
+      "title": "Append Only",
+      "type": "boolean"
+    },
+    "not_authorized_for_lake_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Lake Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_sqlite_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Sqlite Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_external_submission": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For External Submission",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "carrier_portal_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Carrier Portal Write Performed",
+      "type": "boolean"
+    },
+    "email_send_performed": {
+      "const": false,
+      "default": false,
+      "title": "Email Send Performed",
+      "type": "boolean"
+    },
+    "appeal_submission_performed": {
+      "const": false,
+      "default": false,
+      "title": "Appeal Submission Performed",
+      "type": "boolean"
+    },
+    "budget_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Budget Mutation Performed",
+      "type": "boolean"
+    },
+    "profile_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Profile Mutation Performed",
+      "type": "boolean"
+    },
+    "template_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Template Mutation Performed",
+      "type": "boolean"
+    },
+    "carrier_guideline_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Carrier Guideline Mutation Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "decision_ledger_report_id",
+    "decision_ledger_id",
+    "reconciliation_report_id",
+    "source_bundle_id",
+    "run_id",
+    "preflight_packet_id",
+    "budget_proposal_id",
+    "status",
+    "entry_count",
+    "remediation_case_event_count",
+    "pending_decision_event_count",
+    "appeal_result_event_count",
+    "financial_outcome_event_count",
+    "events",
+    "required_next_gates",
+    "generated_at"
+  ],
+  "title": "CarrierRejectionDecisionLedgerReport",
+  "type": "object"
+}

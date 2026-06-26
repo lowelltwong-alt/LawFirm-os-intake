@@ -101,6 +101,15 @@ candidate Lake labels while proving no source budget mutation, no superseding
 budget write, no Lake/SQLite admission, no billing connector write, and no
 silent learning.
 
+`capture-carrier-rejections` writes `carrier_rejection_decision_ledger_report.json`,
+`carrier_rejection_decision_ledger.jsonl`, and
+`carrier_rejection_decision_ledger_report.md`. The ledger must preserve one
+append-only candidate row for rejection states, duplicate collapse, pending
+fix/appeal decisions, appeal results, and financial outcomes. Appeal-result
+financial rows must preserve appealed, recovered, write-down, and remaining
+write-down amounts while proving no appeal submission, no portal/email write, no
+Lake/SQLite admission, and no silent learning.
+
 The learning loop can write `reviewed_learning_gate_report.json`, then
 `audit-learning-promotion-readiness` writes `learning_shadow_eval_plan.json` and
 `learning_promotion_readiness_report.json`. `draft-learning-proposed-changes`

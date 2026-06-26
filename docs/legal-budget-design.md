@@ -156,7 +156,11 @@ connectors, admitted by the Exception Lake runtime, and classified with source r
 Rejected or partially allowed amounts should open a human-owned remediation case that
 tracks the proposed fix or appeal, human approval, appeal submission, appeal result,
 recovered amount, remaining write-down, and any reviewed learning candidate. Intake
-may provide candidate schemas, synthetic fixtures, and dry-run mappings only. See
+may provide candidate schemas, synthetic fixtures, dry-run mappings, and local
+decision ledgers only. The local carrier rejection decision ledger records
+captured rejection states, pending fix/appeal decisions, appeal results, recovered
+amounts, and write-downs as append-only candidate evidence; it does not submit
+appeals, write Lake/SQLite records, or mutate learning state. See
 `docs/carrier-rejection-learning-loop-roadmap.md`.
 
 ## Actuals comparison boundary

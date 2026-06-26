@@ -156,6 +156,11 @@ reconciliation, not by relying on model classification. See
   remediation cases, collapses duplicate notices by idempotency key, catches
   unlinked notices and missing responses, records appeal results as append-only
   evidence, and writes dry-run Exception Lake candidates.
+- It also writes `carrier_rejection_decision_ledger_report.json`,
+  `carrier_rejection_decision_ledger.jsonl`, and
+  `carrier_rejection_decision_ledger_report.md` so rejection states, duplicate
+  collapse, pending fix/appeal decisions, appeal results, recovered amounts, and
+  write-downs are append-only candidate evidence before Lake admission review.
 - The local `review-carrier-rejections` command now turns a reconciliation report
   into a human-review packet with recommended actions, why-notes, red-team checks,
   decision templates, dry-run Lake candidate refs, and no-write/no-submission/no-

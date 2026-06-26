@@ -2971,6 +2971,173 @@ class CarrierRejectionLearningReport(StrictModel):
     generated_at: str
 
 
+CarrierRejectionDecisionLedgerEventKind = Literal[
+    "carrier_rejection_notice_captured",
+    "carrier_response_missing_after_sla",
+    "carrier_rejection_unlinked_notice",
+    "carrier_rejection_parse_failed",
+    "carrier_duplicate_notice_collapsed",
+    "carrier_fix_or_appeal_decision_pending",
+    "carrier_appeal_result_received",
+    "carrier_financial_outcome_recorded",
+]
+
+CarrierRejectionDecisionLedgerStatus = Literal[
+    "decision_ledger_ready_for_review",
+    "decision_ledger_blocked_missing_followup",
+    "decision_ledger_no_events",
+]
+
+CarrierRejectionDecisionStatus = Literal[
+    "captured_pending_human_review",
+    "pending_human_fix_or_appeal_decision",
+    "appeal_result_captured_pending_review",
+    "financial_outcome_captured_pending_review",
+    "blocked_missing_response_followup",
+    "blocked_linkage_or_parse_review",
+]
+
+
+class CarrierRejectionDecisionLedgerEvent(StrictModel):
+    schema_version: str = "0.1"
+    decision_ledger_event_id: str
+    decision_ledger_id: str
+    sequence_index: int = Field(ge=0)
+    reconciliation_report_id: str
+    source_bundle_id: str
+    run_id: str
+    preflight_packet_id: str
+    budget_proposal_id: str
+    remediation_case_id: str | None = None
+    appeal_result_id: str | None = None
+    notice_ids: list[str] = Field(default_factory=list)
+    carrier_id: str | None = None
+    submission_id: str | None = None
+    invoice_id: str | None = None
+    phase_id: str | None = None
+    task_id: str | None = None
+    external_code_candidate: str | None = None
+    event_kind: CarrierRejectionDecisionLedgerEventKind
+    decision_status: CarrierRejectionDecisionStatus
+    local_event_label: str
+    canonical_lake_class_candidate: Literal[
+        "retrieval_miss",
+        "workflow_escalation",
+        "authority_conflict_override",
+    ]
+    source_channels: list[str] = Field(default_factory=list)
+    source_refs: list[CarrierRejectionSourceRef] = Field(default_factory=list)
+    response_type: str | None = None
+    appeal_result: str | None = None
+    disputed_amount: float = Field(default=0, ge=0)
+    current_financial_exposure: float = Field(default=0, ge=0)
+    appealed_amount: float = Field(default=0, ge=0)
+    recovered_amount: float = Field(default=0, ge=0)
+    write_down_amount: float = Field(default=0, ge=0)
+    remaining_write_down_amount: float = Field(default=0, ge=0)
+    proposed_next_actions: list[str] = Field(default_factory=list)
+    required_human_decisions: list[str] = Field(default_factory=list)
+    exception_candidate_ids: list[str] = Field(default_factory=list)
+    structured_refs: list[str] = Field(default_factory=list)
+    requires_exception_lake_admission_review: Literal[True] = True
+    append_only: Literal[True] = True
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_external_submission: Literal[True] = True
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    carrier_portal_write_performed: Literal[False] = False
+    email_send_performed: Literal[False] = False
+    appeal_submission_performed: Literal[False] = False
+    budget_mutation_performed: Literal[False] = False
+    profile_mutation_performed: Literal[False] = False
+    template_mutation_performed: Literal[False] = False
+    carrier_guideline_mutation_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def appeal_events_require_appeal_id(self) -> "CarrierRejectionDecisionLedgerEvent":
+        if (
+            self.event_kind
+            in {
+                "carrier_appeal_result_received",
+                "carrier_financial_outcome_recorded",
+            }
+            and not self.appeal_result_id
+        ):
+            raise ValueError("carrier appeal ledger events require appeal_result_id")
+        return self
+
+
+class CarrierRejectionDecisionLedgerReport(StrictModel):
+    schema_version: str = "0.1"
+    decision_ledger_report_id: str
+    decision_ledger_id: str
+    reconciliation_report_id: str
+    source_bundle_id: str
+    run_id: str
+    preflight_packet_id: str
+    budget_proposal_id: str
+    status: CarrierRejectionDecisionLedgerStatus
+    entry_count: int = Field(ge=0)
+    remediation_case_event_count: int = Field(ge=0)
+    pending_decision_event_count: int = Field(ge=0)
+    appeal_result_event_count: int = Field(ge=0)
+    financial_outcome_event_count: int = Field(ge=0)
+    total_disputed_amount: float = Field(default=0, ge=0)
+    total_recovered_amount: float = Field(default=0, ge=0)
+    total_write_down_amount: float = Field(default=0, ge=0)
+    event_kind_counts: dict[str, int] = Field(default_factory=dict)
+    events: list[CarrierRejectionDecisionLedgerEvent]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    append_only: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_external_submission: Literal[True] = True
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    carrier_portal_write_performed: Literal[False] = False
+    email_send_performed: Literal[False] = False
+    appeal_submission_performed: Literal[False] = False
+    budget_mutation_performed: Literal[False] = False
+    profile_mutation_performed: Literal[False] = False
+    template_mutation_performed: Literal[False] = False
+    carrier_guideline_mutation_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def counts_match_events(self) -> "CarrierRejectionDecisionLedgerReport":
+        if self.entry_count != len(self.events):
+            raise ValueError("carrier rejection decision ledger count must match events")
+        kind_counts: dict[str, int] = {}
+        for event in self.events:
+            kind_counts[event.event_kind] = kind_counts.get(event.event_kind, 0) + 1
+        if self.event_kind_counts != kind_counts:
+            raise ValueError("carrier rejection decision ledger kind counts must match events")
+        if self.appeal_result_event_count != kind_counts.get("carrier_appeal_result_received", 0):
+            raise ValueError("carrier rejection appeal result count must match events")
+        if self.financial_outcome_event_count != kind_counts.get(
+            "carrier_financial_outcome_recorded", 0
+        ):
+            raise ValueError("carrier rejection financial outcome count must match events")
+        if self.pending_decision_event_count != kind_counts.get(
+            "carrier_fix_or_appeal_decision_pending", 0
+        ):
+            raise ValueError("carrier rejection pending decision count must match events")
+        if self.status != "decision_ledger_no_events" and not self.events:
+            raise ValueError("carrier rejection decision ledger requires events")
+        return self
+
+
 LearningLoopId = Literal[
     "guideline_drift",
     "budget_model",

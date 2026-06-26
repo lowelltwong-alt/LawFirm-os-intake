@@ -93,7 +93,9 @@ def _build_record_specs() -> list[CarrierRejectionLakeAdmissionRecordSpec]:
             artifacts=[
                 "CarrierResponseReconciliationReport",
                 "CarrierRejectionRemediationCase",
+                "CarrierRejectionDecisionLedgerReport",
                 "carrier_rejection_reconciliation_report.json",
+                "carrier_rejection_decision_ledger_report.json",
             ],
             identifiers=[
                 "reconciliation_report_id",
@@ -202,6 +204,7 @@ def _build_record_specs() -> list[CarrierRejectionLakeAdmissionRecordSpec]:
             artifacts=[
                 "CarrierRejectionRemediationCase",
                 "CarrierAppealResult",
+                "CarrierRejectionDecisionLedgerEvent",
                 "append_only_human_rejection_review_outcome",
             ],
             identifiers=[
@@ -342,6 +345,8 @@ def build_carrier_rejection_lake_admission_proposal() -> CarrierRejectionLakeAdm
         required_upstream_artifacts=[
             "carrier_rejection_reconciliation_report.json",
             "carrier_rejection_exception_lake_candidates.jsonl",
+            "carrier_rejection_decision_ledger_report.json",
+            "carrier_rejection_decision_ledger.jsonl",
             "carrier_rejection_review_packet.json",
             "carrier_rejection_learning_report.json",
             "carrier_rejection_orchestrator_interface.json",

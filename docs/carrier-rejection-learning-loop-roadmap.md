@@ -187,7 +187,12 @@ time, but missing capture is a production incident.
    promotion remains out of scope for this repo.
 3. Deterministic reconciliation report for expected vs captured carrier responses.
    Status: implemented for the synthetic local slice through
-   `carrier_rejection_reconciliation_report.json`.
+   `carrier_rejection_reconciliation_report.json`,
+   `carrier_rejection_decision_ledger_report.json`,
+   `carrier_rejection_decision_ledger.jsonl`, and
+   `carrier_rejection_decision_ledger_report.md`. The ledger records rejection
+   states, duplicate collapse, pending fix/appeal decisions, appeal results, and
+   financial outcomes as candidate evidence only.
 4. Synthetic portal/email/LEDES rejection fixtures with duplicate, unlinked, malformed,
    partial-allowance, and appeal-result cases.
    Status: implemented for the current fixture family; more carrier/matter

@@ -21,6 +21,9 @@ from .budget_revisions import run_budget_review_record
 from .carrier_rejection_lake_admission import (
     run_carrier_rejection_lake_admission_proposal,
 )
+from .carrier_rejection_decision_ledger import (
+    CARRIER_REJECTION_DECISION_LEDGER_REPORT_FILENAME,
+)
 from .carrier_rejection_learning import run_carrier_rejection_learning
 from .carrier_rejection_orchestrator_interface import (
     run_carrier_rejection_orchestrator_interface,
@@ -842,10 +845,15 @@ def main(argv: list[str] | None = None) -> int:
                 args.source_bundle,
                 args.out_dir,
             )
+            decision_ledger = load_json(
+                Path(run_dir) / CARRIER_REJECTION_DECISION_LEDGER_REPORT_FILENAME
+            )
             _print(
                 {
                     "status": report.status,
                     "reconciliation_report_id": report.reconciliation_report_id,
+                    "decision_ledger_report_id": (decision_ledger["decision_ledger_report_id"]),
+                    "decision_ledger_entry_count": decision_ledger["entry_count"],
                     "budget_proposal_id": report.budget_proposal_id,
                     "expected_response_count": report.expected_response_count,
                     "reconciled_response_count": report.reconciled_response_count,
@@ -853,11 +861,16 @@ def main(argv: list[str] | None = None) -> int:
                     "unlinked_notice_count": report.unlinked_notice_count,
                     "duplicate_notice_count": report.duplicate_notice_count,
                     "appeal_result_count": report.appeal_result_count,
+                    "total_recovered_amount": decision_ledger["total_recovered_amount"],
+                    "total_write_down_amount": decision_ledger["total_write_down_amount"],
                     "exception_lake_candidate_count": len(report.exception_lake_candidates),
                     "not_authorized_for_lake_write": report.not_authorized_for_lake_write,
                     "not_authorized_for_external_submission": (
                         report.not_authorized_for_external_submission
                     ),
+                    "sqlite_write_performed": decision_ledger["sqlite_write_performed"],
+                    "appeal_submission_performed": (decision_ledger["appeal_submission_performed"]),
+                    "silent_learning_performed": decision_ledger["silent_learning_performed"],
                     "run_dir": str(run_dir),
                 }
             )
