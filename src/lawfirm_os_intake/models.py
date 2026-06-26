@@ -1573,6 +1573,101 @@ class CarrierRejectionReviewPacket(StrictModel):
     generated_at: str
 
 
+class CarrierRejectionLearningProposal(StrictModel):
+    proposal_id: str
+    proposal_type: Literal[
+        "timekeeper_rate_candidate",
+        "guideline_profile_change_candidate",
+        "eval_fixture_candidate",
+        "validation_rule_candidate",
+        "preapproval_gate_candidate",
+        "staffing_rule_candidate",
+        "narrative_rule_candidate",
+        "template_mapping_candidate",
+        "budget_driver_candidate",
+        "variance_threshold_candidate",
+        "guideline_version_review_candidate",
+        "parser_rule_candidate",
+        "reconciliation_rule_candidate",
+        "capture_sla_candidate",
+        "appeal_outcome_candidate",
+    ]
+    target_learning_loop: Literal[
+        "guideline_drift",
+        "budget_model",
+        "template_mapping",
+        "narrative_rule",
+        "preapproval_gate",
+        "appeal_success_or_failure",
+        "capture_completeness",
+        "parser_rule",
+        "eval_fixture",
+        "staffing_leverage",
+        "timekeeper_rate",
+        "validation_rule",
+    ]
+    target_owner: Literal[
+        "LawFirm-os-intake",
+        "LawFirm-os-orchestrator",
+        "LawFirm-os-exceptions-lake-runtime",
+        "LawFirm-os-semantic-substrate",
+    ]
+    source_review_packet_id: str
+    source_recommendation_ids: list[str]
+    remediation_case_ids: list[str]
+    local_event_labels: list[str]
+    source_structured_refs: list[str]
+    support_count: int = Field(ge=0)
+    before_behavior: str
+    proposed_candidate_behavior: str
+    required_human_review_state: Literal["reviewed_outcome_required"] = "reviewed_outcome_required"
+    required_evaluation: list[str]
+    promotion_target_note: str
+    status: Literal[
+        "candidate_ready_for_human_review",
+        "blocked_until_reviewed_outcome",
+    ]
+    synthetic_fixture_update_required: Literal[True] = True
+    shadow_eval_required: Literal[True] = True
+    human_review_required: Literal[True] = True
+    promotion_review_required: Literal[True] = True
+    profile_mutation_performed: Literal[False] = False
+    template_mutation_performed: Literal[False] = False
+    connector_mutation_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+
+class CarrierRejectionLearningReport(StrictModel):
+    schema_version: str = "0.1"
+    learning_report_id: str
+    review_packet_id: str
+    reconciliation_report_id: str
+    run_id: str
+    preflight_packet_id: str
+    budget_proposal_id: str
+    status: Literal[
+        "candidate_learning_ready_for_review",
+        "blocked_pending_human_review_packet",
+        "no_learning_candidates",
+    ]
+    input_review_status: str
+    proposal_count: int = Field(ge=0)
+    proposals: list[CarrierRejectionLearningProposal]
+    required_next_gates: list[str]
+    target_owners: list[str]
+    reviewed_outcome_required: Literal[True] = True
+    append_only_outcome_required: Literal[True] = True
+    candidate_only: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_external_submission: Literal[True] = True
+    external_writes_performed: Literal[False] = False
+    profile_mutation_performed: Literal[False] = False
+    template_mutation_performed: Literal[False] = False
+    connector_mutation_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+
 class ExceptionLakeReadinessCheck(StrictModel):
     check_id: str
     status: Literal["passed", "failed"]

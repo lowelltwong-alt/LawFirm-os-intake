@@ -7,6 +7,7 @@ import shutil
 import sys
 
 from .budget_form import build_budget_form_template_audit_report, render_budget_form
+from .carrier_rejection_learning import run_carrier_rejection_learning
 from .carrier_rejection_review import run_carrier_rejection_review
 from .carrier_rejections import run_carrier_rejection_capture
 from .confirmation import bind_confirmation_to_packet_evidence
@@ -88,6 +89,13 @@ def _parser() -> argparse.ArgumentParser:
     )
     carrier_rejection_review.add_argument("--reconciliation-report", required=True)
     carrier_rejection_review.add_argument("--out-dir", required=True)
+
+    carrier_rejection_learning = sub.add_parser(
+        "propose-carrier-rejection-learning",
+        help="Build candidate-only learning proposals from a carrier rejection review packet.",
+    )
+    carrier_rejection_learning.add_argument("--review-packet", required=True)
+    carrier_rejection_learning.add_argument("--out-dir", required=True)
     return parser
 
 
@@ -326,6 +334,28 @@ def main(argv: list[str] | None = None) -> int:
                         packet.not_authorized_for_external_submission
                     ),
                     "external_writes_performed": packet.external_writes_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0
+
+        if args.command == "propose-carrier-rejection-learning":
+            report, run_dir = run_carrier_rejection_learning(
+                args.review_packet,
+                args.out_dir,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "learning_report_id": report.learning_report_id,
+                    "review_packet_id": report.review_packet_id,
+                    "proposal_count": report.proposal_count,
+                    "target_owners": report.target_owners,
+                    "reviewed_outcome_required": report.reviewed_outcome_required,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "profile_mutation_performed": report.profile_mutation_performed,
+                    "template_mutation_performed": report.template_mutation_performed,
+                    "connector_mutation_performed": report.connector_mutation_performed,
                     "run_dir": str(run_dir),
                 }
             )

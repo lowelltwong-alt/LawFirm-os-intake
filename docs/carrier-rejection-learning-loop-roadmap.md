@@ -194,6 +194,11 @@ time, but missing capture is a production incident.
    `carrier_rejection_review_decision_template.json`.
 6. Learning-candidate report that proposes guideline, budget-driver, template, or
    narrative-rule updates without mutating profiles.
+   Status: implemented for the synthetic local slice through
+   `propose-carrier-rejection-learning`,
+   `carrier_rejection_learning_report.json`, and
+   `carrier_rejection_learning_report.md`. Proposals remain blocked until
+   human-reviewed outcome evidence exists and perform no silent mutation.
 7. Orchestrator interface draft for future connector-owned portal/email capture and
    appeal submission.
 8. Exception Lake admission proposal for append-only rejection, appeal, outcome, and

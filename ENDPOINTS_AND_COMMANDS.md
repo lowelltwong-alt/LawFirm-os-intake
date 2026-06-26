@@ -60,6 +60,22 @@ remediation case a recommended human review action, explains why, surfaces
 red-team checks, and preserves the no-Lake-write, no-external-submission, and
 no-silent-learning boundaries.
 
+### Propose carrier rejection learning candidates
+
+```bash
+python -m lawfirm_os_intake propose-carrier-rejection-learning \
+  --review-packet .lawfirm-os-intake/carrier-rejection-review/carrier_rejection_review_packet.json \
+  --out-dir .lawfirm-os-intake/carrier-rejection-learning
+```
+
+This writes `carrier_rejection_learning_report.json` and
+`carrier_rejection_learning_report.md`. The report groups reviewed rejection
+pressure into candidate learning proposals for guideline, budget-driver,
+template, narrative, preapproval, parser, reconciliation, SLA, validation, and
+appeal-outcome loops. Every proposal remains blocked until human-reviewed outcome
+evidence exists, and the command performs no profile, template, connector, Lake,
+or external mutation.
+
 ## Exit posture
 
 - `0`: local workflow step completed and artifacts emitted.
