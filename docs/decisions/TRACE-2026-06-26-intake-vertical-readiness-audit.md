@@ -25,9 +25,14 @@ implying production readiness or external adoption.
 - Required `budget_event_lake_admission_bundle_report.json` input, checked for
   ready-for-owner-review status, artifact refs, record families, and no-write
   boundaries.
+- Required `budget_calibration_readiness_report.json` input, checked for manual
+  fixture-update review readiness, source refs, approved replay-output refs,
+  target fixture refs, and no fixture/calibration/Lake/SQLite/silent-learning
+  side effects.
 - Synthetic reviewed-learning gate fixture used by the proposed-change shadow
   eval chain.
-- Tests for ready, missing-local-surface, blocked-learning-chain, and CLI paths.
+- Tests for ready, missing-local-surface, blocked-learning-chain,
+  blocked-Lake-bundle, blocked-calibration-readiness, and CLI paths.
 - Data-flow, endpoint, roadmap, evaluation, and promotion-package updates.
 
 ## Boundary
@@ -53,6 +58,8 @@ and Exception Lake for append-only admission and SQLite migrations.
 - A green owner handoff is still only owner-review input; it is not approval.
 - A green budget-event Lake bundle is only Exception Lake owner-review input; it
   is not admission, a SQLite write, or a record-hash assignment.
+- A green budget calibration readiness report is only manual fixture-update
+  review input; it is not approval to mutate fixtures or apply calibration.
 - Real budget actuals, carrier rejections, appeals, and guideline drift require
   governed connector capture and append-only evidence storage outside intake.
 - Learning from human corrections must remain explicit, reviewed, replayed, and

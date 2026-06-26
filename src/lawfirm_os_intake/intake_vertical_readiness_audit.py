@@ -7,6 +7,7 @@ from typing import TypeVar
 from pydantic import ValidationError
 
 from .models import (
+    BudgetCalibrationReadinessReport,
     BudgetLakeAdmissionBundleReport,
     IntakeVerticalReadinessArtifactCheck,
     IntakeVerticalReadinessAuditReport,
@@ -257,10 +258,30 @@ REQUIRED_SLICES: tuple[SliceDefinition, ...] = (
     ),
     SliceDefinition(
         slice_id=10,
+        title="Budget calibration readiness",
+        requirement_summary=(
+            "Synthetic corpus replay, human replay outcome, fixture-binding candidates, "
+            "and fixture-update handoff are auditable before any manual fixture-update PR."
+        ),
+        proof_artifact_refs=(
+            "src/lawfirm_os_intake/budget_calibration_readiness.py",
+            "schemas/budget-calibration-readiness-report.schema.json",
+            "schemas/budget-calibration-readiness-check.schema.json",
+            "tests/test_budget_calibration_readiness.py",
+            "docs/decisions/TRACE-2026-06-26-budget-calibration-readiness.md",
+        ),
+        command_refs=("audit-budget-calibration-readiness",),
+        target_owner_repos=("LawFirm-os-intake",),
+        remaining_external_actions=(
+            "Humans must review any fixture update in a separate change before learning use.",
+        ),
+    ),
+    SliceDefinition(
+        slice_id=11,
         title="Final intake vertical readiness audit",
         requirement_summary=(
             "A deterministic final audit checks local surfaces plus the generated learning "
-            "artifact chain and budget-event Lake bundle before humans consider marking the PR ready."
+            "artifact chain, budget-event Lake bundle, and calibration-readiness chain before humans consider marking the PR ready."
         ),
         proof_artifact_refs=(
             "src/lawfirm_os_intake/intake_vertical_readiness_audit.py",
@@ -652,10 +673,86 @@ def _check_budget_event_lake_bundle(
     return checks
 
 
+def _check_budget_calibration_readiness(
+    *,
+    budget_calibration_readiness_report_path: Path,
+    repo_root: Path,
+) -> list[IntakeVerticalReadinessArtifactCheck]:
+    checks: list[IntakeVerticalReadinessArtifactCheck] = []
+    report = _load_model(
+        BudgetCalibrationReadinessReport,
+        budget_calibration_readiness_report_path,
+        "budget_calibration_readiness_report_valid",
+        checks,
+    )
+    if report is None:
+        return checks
+    failed_readiness_checks = [
+        check.check_id for check in report.checks if check.status == "failed"
+    ]
+    missing_source_refs = [
+        ref
+        for ref in [
+            report.source_corpus_report_ref,
+            report.source_replay_plan_ref,
+            report.source_replay_execution_report_ref,
+            report.source_review_packet_ref,
+            report.source_review_outcome_report_ref,
+            report.source_fixture_binding_candidate_report_ref,
+            report.source_fixture_binding_handoff_report_ref,
+        ]
+        if not _ref_is_file(
+            ref,
+            repo_root=repo_root,
+            base_dir=budget_calibration_readiness_report_path.parent,
+        )
+    ]
+    checks.extend(
+        [
+            _artifact_check(
+                "budget_calibration_readiness_ready_without_writes",
+                report.status == "ready_for_manual_fixture_update_review"
+                and not failed_readiness_checks
+                and report.ready_fixture_binding_handoff_count > 0
+                and report.blocked_fixture_binding_handoff_count == 0
+                and report.manual_fixture_update_review_required is True
+                and report.fixture_update_authorized is False
+                and report.fixture_update_pr_created is False
+                and report.fixture_files_mutated is False
+                and report.fixture_binding_applied is False
+                and report.downstream_learning_gate_allowed is False
+                and report.calibration_applied is False
+                and report.lake_write_performed is False
+                and report.sqlite_write_performed is False
+                and report.external_writes_performed is False
+                and report.silent_learning_performed is False,
+                "Budget calibration readiness is ready for manual fixture-update review only and preserves no-write/no-learning boundaries.",
+                artifact_ref=str(budget_calibration_readiness_report_path),
+                missing_refs=failed_readiness_checks,
+            ),
+            _artifact_check(
+                "budget_calibration_source_refs_exist",
+                not missing_source_refs,
+                "Every source report ref named by the budget calibration readiness report exists.",
+                artifact_ref=str(budget_calibration_readiness_report_path),
+                missing_refs=missing_source_refs,
+            ),
+            _artifact_check(
+                "budget_calibration_binding_refs_present",
+                bool(report.approved_output_refs) and bool(report.proposed_target_fixture_refs),
+                "Budget calibration readiness report names approved output refs and proposed target fixture refs.",
+                artifact_ref=str(budget_calibration_readiness_report_path),
+            ),
+        ]
+    )
+    return checks
+
+
 def build_intake_vertical_readiness_audit(
     *,
     owner_handoff_report_path: str | Path,
     budget_event_lake_bundle_report_path: str | Path,
+    budget_calibration_readiness_report_path: str | Path,
     repo_root: str | Path = ".",
 ) -> IntakeVerticalReadinessAuditReport:
     root = Path(repo_root)
@@ -690,6 +787,14 @@ def build_intake_vertical_readiness_audit(
     lake_bundle_passed = bool(lake_bundle_checks) and all(
         check.status == "passed" for check in lake_bundle_checks
     )
+    calibration_checks = _check_budget_calibration_readiness(
+        budget_calibration_readiness_report_path=Path(budget_calibration_readiness_report_path),
+        repo_root=root,
+    )
+    artifact_checks.extend(calibration_checks)
+    calibration_passed = bool(calibration_checks) and all(
+        check.status == "passed" for check in calibration_checks
+    )
     local_slices_passed = implemented_count == len(REQUIRED_SLICES) and not (
         missing_artifacts or missing_commands
     )
@@ -702,6 +807,9 @@ def build_intake_vertical_readiness_audit(
     elif not lake_bundle_passed:
         status = "blocked_missing_or_failed_lake_bundle"
         review_readiness = "not_ready_lake_bundle_blocked"
+    elif not calibration_passed:
+        status = "blocked_missing_or_failed_calibration_readiness"
+        review_readiness = "not_ready_calibration_readiness_blocked"
     else:
         status = "ready_for_pr_review_external_adoption_required"
         review_readiness = "ready_for_human_pr_review_not_auto_marked"
@@ -712,6 +820,9 @@ def build_intake_vertical_readiness_audit(
         review_readiness=review_readiness,  # type: ignore[arg-type]
         source_owner_handoff_report_ref=str(owner_handoff_report_path),
         source_budget_event_lake_bundle_report_ref=str(budget_event_lake_bundle_report_path),
+        source_budget_calibration_readiness_report_ref=str(
+            budget_calibration_readiness_report_path
+        ),
         total_slice_count=len(REQUIRED_SLICES),
         implemented_slice_count=implemented_count,
         missing_artifact_refs=missing_artifacts,
@@ -740,6 +851,7 @@ def render_intake_vertical_readiness_audit(
         f"**Implemented local slices:** {report.implemented_slice_count} / {report.total_slice_count}",
         f"**Owner handoff report:** `{report.source_owner_handoff_report_ref}`",
         f"**Budget-event Lake bundle:** `{report.source_budget_event_lake_bundle_report_ref}`",
+        f"**Budget calibration readiness:** `{report.source_budget_calibration_readiness_report_ref}`",
         "",
         "## Local Slice Status",
         "",
@@ -814,12 +926,14 @@ def run_intake_vertical_readiness_audit(
     *,
     owner_handoff_report_path: str | Path,
     budget_event_lake_bundle_report_path: str | Path,
+    budget_calibration_readiness_report_path: str | Path,
     out_dir: str | Path,
     repo_root: str | Path = ".",
 ) -> tuple[IntakeVerticalReadinessAuditReport, Path]:
     report = build_intake_vertical_readiness_audit(
         owner_handoff_report_path=owner_handoff_report_path,
         budget_event_lake_bundle_report_path=budget_event_lake_bundle_report_path,
+        budget_calibration_readiness_report_path=budget_calibration_readiness_report_path,
         repo_root=repo_root,
     )
     run_dir = Path(out_dir)

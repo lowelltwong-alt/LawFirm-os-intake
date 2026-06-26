@@ -4344,15 +4344,18 @@ class IntakeVerticalReadinessAuditReport(StrictModel):
         "incomplete_missing_local_artifacts",
         "blocked_missing_or_failed_learning_artifacts",
         "blocked_missing_or_failed_lake_bundle",
+        "blocked_missing_or_failed_calibration_readiness",
     ]
     review_readiness: Literal[
         "ready_for_human_pr_review_not_auto_marked",
         "not_ready_missing_local_artifacts",
         "not_ready_learning_artifact_chain_blocked",
         "not_ready_lake_bundle_blocked",
+        "not_ready_calibration_readiness_blocked",
     ]
     source_owner_handoff_report_ref: str
     source_budget_event_lake_bundle_report_ref: str
+    source_budget_calibration_readiness_report_ref: str
     total_slice_count: int = Field(ge=0)
     implemented_slice_count: int = Field(ge=0)
     missing_artifact_refs: list[str] = Field(default_factory=list)
@@ -4400,6 +4403,7 @@ class PRReviewChecklistItem(StrictModel):
         "readiness_audit",
         "lake_bundle",
         "learning_chain",
+        "calibration_chain",
         "authority_boundary",
         "validation",
         "external_owner_review",
@@ -4448,12 +4452,14 @@ class PRReviewChecklistReport(StrictModel):
         "incomplete_missing_local_artifacts",
         "blocked_missing_or_failed_learning_artifacts",
         "blocked_missing_or_failed_lake_bundle",
+        "blocked_missing_or_failed_calibration_readiness",
     ]
     source_review_readiness: Literal[
         "ready_for_human_pr_review_not_auto_marked",
         "not_ready_missing_local_artifacts",
         "not_ready_learning_artifact_chain_blocked",
         "not_ready_lake_bundle_blocked",
+        "not_ready_calibration_readiness_blocked",
     ]
     status: Literal["ready_for_human_pr_review", "blocked_by_readiness_audit"]
     recommendation: Literal[

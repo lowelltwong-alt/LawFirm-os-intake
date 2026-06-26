@@ -8,6 +8,8 @@ from lawfirm_os_intake.learning_owner_handoffs import run_learning_owner_handoff
 from lawfirm_os_intake.learning_proposed_changes import run_learning_proposed_changes
 from lawfirm_os_intake.learning_shadow_eval_results import run_learning_shadow_eval_results
 from lawfirm_os_intake.models import (
+    BudgetCalibrationReadinessCheck,
+    BudgetCalibrationReadinessReport,
     BudgetLakeAdmissionBundleCheck,
     BudgetLakeAdmissionBundleReport,
     BudgetLakeEvidenceArtifact,
@@ -109,16 +111,97 @@ def _lake_bundle_report_path(tmp_path, *, ready=True):
     )
 
 
+def _calibration_readiness_report_path(tmp_path, *, ready=True):
+    calibration_dir = tmp_path / "budget-calibration-readiness"
+    source_dir = calibration_dir / "source-chain"
+    source_dir.mkdir(parents=True, exist_ok=True)
+    source_refs = {}
+    for name in [
+        "budget_calibration_corpus_report",
+        "budget_corpus_replay_plan",
+        "budget_corpus_replay_execution_report",
+        "budget_corpus_replay_review_packet",
+        "budget_corpus_replay_review_outcome_report",
+        "budget_fixture_binding_candidate_report",
+        "budget_fixture_binding_handoff_report",
+    ]:
+        source_refs[name] = write_json(source_dir / f"{name}.json", {"synthetic": True})
+    checks = [
+        BudgetCalibrationReadinessCheck(
+            check_id="synthetic_calibration_readiness_check",
+            status="passed" if ready else "failed",
+            message="Synthetic calibration readiness fixture.",
+            artifact_refs=[str(path) for path in source_refs.values()],
+        )
+    ]
+    report = BudgetCalibrationReadinessReport(
+        budget_calibration_readiness_report_id="budget-calibration-readiness-fixture",
+        status=(
+            "ready_for_manual_fixture_update_review" if ready else "blocked_by_calibration_chain"
+        ),
+        corpus_report_id="corpus-report-readiness-fixture",
+        replay_plan_id="replay-plan-readiness-fixture",
+        replay_execution_report_id="replay-execution-readiness-fixture",
+        review_packet_id="review-packet-readiness-fixture",
+        review_outcome_report_id="review-outcome-readiness-fixture",
+        fixture_binding_candidate_report_id="fixture-binding-candidate-readiness-fixture",
+        fixture_binding_handoff_report_id="fixture-binding-handoff-readiness-fixture",
+        replay_case_id="replay-case-readiness-fixture",
+        source_corpus_report_ref=str(source_refs["budget_calibration_corpus_report"]),
+        source_replay_plan_ref=str(source_refs["budget_corpus_replay_plan"]),
+        source_replay_execution_report_ref=str(
+            source_refs["budget_corpus_replay_execution_report"]
+        ),
+        source_review_packet_ref=str(source_refs["budget_corpus_replay_review_packet"]),
+        source_review_outcome_report_ref=str(
+            source_refs["budget_corpus_replay_review_outcome_report"]
+        ),
+        source_fixture_binding_candidate_report_ref=str(
+            source_refs["budget_fixture_binding_candidate_report"]
+        ),
+        source_fixture_binding_handoff_report_ref=str(
+            source_refs["budget_fixture_binding_handoff_report"]
+        ),
+        ready_fixture_binding_handoff_count=1 if ready else 0,
+        blocked_fixture_binding_handoff_count=0 if ready else 1,
+        approved_output_refs=[".lawfirm-os-intake/replay/budget_revision_report.json"]
+        if ready
+        else [],
+        proposed_target_fixture_refs=[
+            "examples/synthetic/budget-review/medmal-human-budget-review-change.json"
+        ]
+        if ready
+        else [],
+        checks=checks,
+        required_next_gates=[
+            "human_fixture_update_review",
+            "separate_fixture_update_pr_if_accepted",
+            "append_only_fixture_update_record",
+            "reviewed_learning_gate_before_candidate_changes",
+            "shadow_eval_before_learning",
+            "owning_repo_review",
+            "no_silent_profile_template_or_guideline_mutation",
+        ],
+        generated_at="2026-06-26T00:00:00Z",
+    )
+    return write_json(
+        calibration_dir / "budget_calibration_readiness_report.json",
+        report.model_dump(mode="json"),
+    )
+
+
 def test_intake_vertical_readiness_audit_marks_pr_review_ready_but_not_promoted(
     tmp_path,
     repo_root,
 ):
     owner_handoff_report_path = _owner_handoff_report_path(tmp_path, repo_root)
     lake_bundle_report_path = _lake_bundle_report_path(tmp_path)
+    calibration_readiness_report_path = _calibration_readiness_report_path(tmp_path)
 
     report, run_dir = run_intake_vertical_readiness_audit(
         owner_handoff_report_path=owner_handoff_report_path,
         budget_event_lake_bundle_report_path=lake_bundle_report_path,
+        budget_calibration_readiness_report_path=calibration_readiness_report_path,
         repo_root=repo_root,
         out_dir=tmp_path / "intake-vertical-readiness",
     )
@@ -130,7 +213,10 @@ def test_intake_vertical_readiness_audit_marks_pr_review_ready_but_not_promoted(
     assert persisted.status == "ready_for_pr_review_external_adoption_required"
     assert persisted.review_readiness == "ready_for_human_pr_review_not_auto_marked"
     assert persisted.source_budget_event_lake_bundle_report_ref == str(lake_bundle_report_path)
-    assert persisted.implemented_slice_count == persisted.total_slice_count == 10
+    assert persisted.source_budget_calibration_readiness_report_ref == str(
+        calibration_readiness_report_path
+    )
+    assert persisted.implemented_slice_count == persisted.total_slice_count == 11
     assert persisted.missing_artifact_refs == []
     assert persisted.missing_command_refs == []
     assert all(
@@ -139,6 +225,11 @@ def test_intake_vertical_readiness_audit_marks_pr_review_ready_but_not_promoted(
     assert all(check.status == "passed" for check in persisted.artifact_checks)
     assert any(
         check.check_id == "budget_event_lake_bundle_ready_without_writes"
+        and check.status == "passed"
+        for check in persisted.artifact_checks
+    )
+    assert any(
+        check.check_id == "budget_calibration_readiness_ready_without_writes"
         and check.status == "passed"
         for check in persisted.artifact_checks
     )
@@ -170,10 +261,12 @@ def test_intake_vertical_readiness_audit_fails_closed_for_missing_local_surfaces
 ):
     owner_handoff_report_path = _owner_handoff_report_path(tmp_path, repo_root)
     lake_bundle_report_path = _lake_bundle_report_path(tmp_path)
+    calibration_readiness_report_path = _calibration_readiness_report_path(tmp_path)
 
     report, _ = run_intake_vertical_readiness_audit(
         owner_handoff_report_path=owner_handoff_report_path,
         budget_event_lake_bundle_report_path=lake_bundle_report_path,
+        budget_calibration_readiness_report_path=calibration_readiness_report_path,
         repo_root=tmp_path / "empty-repo-root",
         out_dir=tmp_path / "intake-vertical-readiness-missing",
     )
@@ -191,6 +284,7 @@ def test_intake_vertical_readiness_audit_blocks_failed_or_missing_learning_chain
     repo_root,
 ):
     lake_bundle_report_path = _lake_bundle_report_path(tmp_path)
+    calibration_readiness_report_path = _calibration_readiness_report_path(tmp_path)
     owner_handoff_report_path = _owner_handoff_report_path(
         tmp_path,
         repo_root,
@@ -200,13 +294,14 @@ def test_intake_vertical_readiness_audit_blocks_failed_or_missing_learning_chain
     report, _ = run_intake_vertical_readiness_audit(
         owner_handoff_report_path=owner_handoff_report_path,
         budget_event_lake_bundle_report_path=lake_bundle_report_path,
+        budget_calibration_readiness_report_path=calibration_readiness_report_path,
         repo_root=repo_root,
         out_dir=tmp_path / "intake-vertical-readiness-blocked",
     )
 
     assert report.status == "blocked_missing_or_failed_learning_artifacts"
     assert report.review_readiness == "not_ready_learning_artifact_chain_blocked"
-    assert report.implemented_slice_count == report.total_slice_count == 10
+    assert report.implemented_slice_count == report.total_slice_count == 11
     assert any(
         check.check_id == "owner_handoff_ready_without_writes" and check.status == "failed"
         for check in report.artifact_checks
@@ -225,10 +320,12 @@ def test_intake_vertical_readiness_audit_blocks_failed_lake_bundle(
 ):
     owner_handoff_report_path = _owner_handoff_report_path(tmp_path, repo_root)
     lake_bundle_report_path = _lake_bundle_report_path(tmp_path, ready=False)
+    calibration_readiness_report_path = _calibration_readiness_report_path(tmp_path)
 
     report, _ = run_intake_vertical_readiness_audit(
         owner_handoff_report_path=owner_handoff_report_path,
         budget_event_lake_bundle_report_path=lake_bundle_report_path,
+        budget_calibration_readiness_report_path=calibration_readiness_report_path,
         repo_root=repo_root,
         out_dir=tmp_path / "intake-vertical-readiness-lake-blocked",
     )
@@ -245,9 +342,40 @@ def test_intake_vertical_readiness_audit_blocks_failed_lake_bundle(
     assert report.sqlite_write_performed is False
 
 
+def test_intake_vertical_readiness_audit_blocks_failed_calibration_readiness(
+    tmp_path,
+    repo_root,
+):
+    owner_handoff_report_path = _owner_handoff_report_path(tmp_path, repo_root)
+    lake_bundle_report_path = _lake_bundle_report_path(tmp_path)
+    calibration_readiness_report_path = _calibration_readiness_report_path(
+        tmp_path,
+        ready=False,
+    )
+
+    report, _ = run_intake_vertical_readiness_audit(
+        owner_handoff_report_path=owner_handoff_report_path,
+        budget_event_lake_bundle_report_path=lake_bundle_report_path,
+        budget_calibration_readiness_report_path=calibration_readiness_report_path,
+        repo_root=repo_root,
+        out_dir=tmp_path / "intake-vertical-readiness-calibration-blocked",
+    )
+
+    assert report.status == "blocked_missing_or_failed_calibration_readiness"
+    assert report.review_readiness == "not_ready_calibration_readiness_blocked"
+    assert any(
+        check.check_id == "budget_calibration_readiness_ready_without_writes"
+        and check.status == "failed"
+        for check in report.artifact_checks
+    )
+    assert report.pr_marked_ready is False
+    assert report.external_writes_performed is False
+
+
 def test_intake_vertical_readiness_audit_cli(tmp_path, repo_root, capsys):
     owner_handoff_report_path = _owner_handoff_report_path(tmp_path, repo_root)
     lake_bundle_report_path = _lake_bundle_report_path(tmp_path)
+    calibration_readiness_report_path = _calibration_readiness_report_path(tmp_path)
 
     exit_code = main(
         [
@@ -256,6 +384,8 @@ def test_intake_vertical_readiness_audit_cli(tmp_path, repo_root, capsys):
             str(owner_handoff_report_path),
             "--budget-event-lake-bundle-report",
             str(lake_bundle_report_path),
+            "--budget-calibration-readiness-report",
+            str(calibration_readiness_report_path),
             "--repo-root",
             str(repo_root),
             "--out-dir",
@@ -268,6 +398,7 @@ def test_intake_vertical_readiness_audit_cli(tmp_path, repo_root, capsys):
     assert '"status": "ready_for_pr_review_external_adoption_required"' in captured.out
     assert '"review_readiness": "ready_for_human_pr_review_not_auto_marked"' in captured.out
     assert '"budget_event_lake_bundle_report_ref":' in captured.out
+    assert '"budget_calibration_readiness_report_ref":' in captured.out
     assert '"pr_marked_ready": false' in captured.out
     assert '"promotion_authorized": false' in captured.out
     assert (

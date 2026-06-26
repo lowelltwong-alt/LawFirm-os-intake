@@ -164,12 +164,14 @@ sibling-repo review.
 
 The final local close-out eval is `audit-intake-vertical-readiness`. It consumes
 `learning_owner_handoff_report.json` and
-`budget_event_lake_admission_bundle_report.json`, checks the local candidate
-slices, generated learning artifact chain, and generated budget-event Lake
-bundle, and writes `intake_vertical_readiness_audit_report.json`. Passing status
-means ready for human PR review only; it does not mark a PR ready, promote canon,
-implement connectors, admit Lake records, write SQLite, apply proposed changes,
-or prove production readiness.
+`budget_event_lake_admission_bundle_report.json`, plus
+`budget_calibration_readiness_report.json`, checks the local candidate slices,
+generated learning artifact chain, generated budget-event Lake bundle, and
+calibration-readiness chain, and writes
+`intake_vertical_readiness_audit_report.json`. Passing status means ready for
+human PR review only; it does not mark a PR ready, promote canon, implement
+connectors, admit Lake records, write SQLite, apply proposed changes, mutate
+fixtures, apply calibration, or prove production readiness.
 
 `build-pr-review-checklist` consumes the final readiness audit and writes
 `pr_review_checklist.json` plus `pr_review_checklist.md`. The checklist is the

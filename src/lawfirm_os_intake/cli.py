@@ -400,6 +400,11 @@ def _parser() -> argparse.ArgumentParser:
         required=True,
         help="Path to budget_event_lake_admission_bundle_report.json.",
     )
+    intake_vertical_audit.add_argument(
+        "--budget-calibration-readiness-report",
+        required=True,
+        help="Path to budget_calibration_readiness_report.json.",
+    )
     intake_vertical_audit.add_argument("--out-dir", required=True)
     intake_vertical_audit.add_argument(
         "--repo-root",
@@ -1392,6 +1397,7 @@ def main(argv: list[str] | None = None) -> int:
             report, run_dir = run_intake_vertical_readiness_audit(
                 owner_handoff_report_path=args.owner_handoff_report,
                 budget_event_lake_bundle_report_path=args.budget_event_lake_bundle_report,
+                budget_calibration_readiness_report_path=(args.budget_calibration_readiness_report),
                 out_dir=args.out_dir,
                 repo_root=args.repo_root,
             )
@@ -1405,6 +1411,9 @@ def main(argv: list[str] | None = None) -> int:
                     "review_readiness": report.review_readiness,
                     "budget_event_lake_bundle_report_ref": (
                         report.source_budget_event_lake_bundle_report_ref
+                    ),
+                    "budget_calibration_readiness_report_ref": (
+                        report.source_budget_calibration_readiness_report_ref
                     ),
                     "implemented_slice_count": report.implemented_slice_count,
                     "total_slice_count": report.total_slice_count,

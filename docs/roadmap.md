@@ -516,7 +516,8 @@ proof work from the higher-risk owner-adoption work.
 
 - `audit-intake-vertical-readiness` consumes
   `learning_owner_handoff_report.json` and
-  `budget_event_lake_admission_bundle_report.json`.
+  `budget_event_lake_admission_bundle_report.json`, plus
+  `budget_calibration_readiness_report.json`.
 - It writes `intake_vertical_readiness_audit_report.json` and
   `intake_vertical_readiness_audit_report.md`.
 - It checks that the intake-to-budget, budget revision, actual-cost comparison,
@@ -529,6 +530,10 @@ proof work from the higher-risk owner-adoption work.
 - It validates the generated budget-event Lake bundle for ready-for-owner-review
   status, existing artifact refs, candidate record-family coverage, and no
   Lake/SQLite/billing/submission/mutation/silent-learning side effects.
+- It validates the generated calibration-readiness chain for manual
+  fixture-update review status, source refs, approved replay-output refs, target
+  fixture refs, and no fixture/calibration/Lake/SQLite/silent-learning side
+  effects.
 - Passing status is `ready_for_pr_review_external_adoption_required`, which
   means ready for human PR review only.
 - The report records `pr_marked_ready=false`, `promotion_authorized=false`,

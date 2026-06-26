@@ -166,6 +166,24 @@ def _checklist_items(
                 ),
             ),
             _item(
+                item_id="pr-review-budget-calibration-readiness",
+                section="calibration_chain",
+                title="Review budget calibration readiness evidence",
+                recommendation="inspect",
+                artifact_refs=[report.source_budget_calibration_readiness_report_ref],
+                why=(
+                    "Synthetic corpus replay and fixture-binding outputs must be ready "
+                    "for manual fixture-update review before any calibration fixture changes."
+                ),
+                red_team_note=(
+                    "Check that approved replay outputs were not automatically bound into "
+                    "fixtures and that no calibration or silent learning was applied."
+                ),
+                required_human_decision=(
+                    "Confirm calibration readiness is only a manual fixture-update review gate."
+                ),
+            ),
+            _item(
                 item_id="pr-review-authority-boundaries",
                 section="authority_boundary",
                 title="Confirm no authority boundary was crossed",
