@@ -29,7 +29,7 @@ messy inbound source
 -> budget precondition gate
 -> conflict-search seed packet (no conflict conclusion)
 -> legal budget proposal (not approved or submitted)
--> carrier-compliant projection (synthetic caps only; proposal unchanged)
+-> carrier-compliant projection (synthetic caps/staffing rules only; proposal unchanged)
 -> budget submission guard report proving no client/carrier delivery or billing handoff
 -> matter-opening readiness packet
 -> deterministic safety gate report
@@ -159,7 +159,7 @@ The budget proposal now embeds a local `BudgetScenarioSet` with `early_resolutio
 
 Budget proposals also embed local `BudgetDriverEffect` and `BudgetGuidelineFlag` records. Severity, liability, and venue drivers may apply bounded synthetic intensity multipliers; coverage posture is surfaced as a review boundary; and synthetic guideline caps become review flags. Profile defaults are labeled as defaults, never observed facts, and guideline flags do not rewrite budget rates, hours, expenses, or totals.
 
-Budget proposals now also embed a local `CarrierCompliantProjection` when the synthetic profile names a carrier guideline artifact. The projection applies synthetic carrier rate and expense caps to a separate proposed-vs-compliant view, reports the delta, and keeps the underlying proposal lines unchanged with `rewrites_budget=false` and no client/carrier submission authority.
+Budget proposals now also embed a local `CarrierCompliantProjection` when the synthetic profile names a carrier guideline artifact. The projection applies synthetic carrier rate caps, expense caps, and staffing/leverage role overrides to a separate proposed-vs-compliant view, reports the delta, blended-rate change, and leverage summary, and keeps the underlying proposal lines unchanged with `rewrites_budget=false` and no client/carrier submission authority.
 
 Template-backed budget form rendering can also write `budget_form_mapping_report.json`. This local proof artifact records the template hash, header cells, UTBMS row/write-cell mappings, L/E amount totals, and original-budget formula checks before the renderer fills a carrier-style workbook copy. Failed mapping or formula checks block workbook rendering; the sanitized reference workbook remains local and is not committed.
 

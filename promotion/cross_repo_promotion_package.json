@@ -95,6 +95,7 @@
         "schemas/budget-guideline-flag.schema.json",
         "schemas/carrier-compliant-projection.schema.json",
         "schemas/carrier-compliant-projection-basis.schema.json",
+        "schemas/carrier-compliant-leverage-summary.schema.json",
         "schemas/carrier-compliant-projection-line.schema.json",
         "schemas/budget-review-change.schema.json",
         "schemas/budget-review-change-record.schema.json",

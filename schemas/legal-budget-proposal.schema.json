@@ -880,6 +880,68 @@
       "title": "BudgetSupportItem",
       "type": "object"
     },
+    "CarrierCompliantLeverageSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "role": {
+          "title": "Role",
+          "type": "string"
+        },
+        "proposed_hours": {
+          "minimum": 0,
+          "title": "Proposed Hours",
+          "type": "number"
+        },
+        "compliant_hours": {
+          "minimum": 0,
+          "title": "Compliant Hours",
+          "type": "number"
+        },
+        "proposed_fees": {
+          "minimum": 0,
+          "title": "Proposed Fees",
+          "type": "number"
+        },
+        "compliant_fees": {
+          "minimum": 0,
+          "title": "Compliant Fees",
+          "type": "number"
+        },
+        "proposed_hours_percent": {
+          "minimum": 0,
+          "title": "Proposed Hours Percent",
+          "type": "number"
+        },
+        "compliant_hours_percent": {
+          "minimum": 0,
+          "title": "Compliant Hours Percent",
+          "type": "number"
+        },
+        "proposed_fee_percent": {
+          "minimum": 0,
+          "title": "Proposed Fee Percent",
+          "type": "number"
+        },
+        "compliant_fee_percent": {
+          "minimum": 0,
+          "title": "Compliant Fee Percent",
+          "type": "number"
+        }
+      },
+      "required": [
+        "role",
+        "proposed_hours",
+        "compliant_hours",
+        "proposed_fees",
+        "compliant_fees",
+        "proposed_hours_percent",
+        "compliant_hours_percent",
+        "proposed_fee_percent",
+        "compliant_fee_percent"
+      ],
+      "title": "CarrierCompliantLeverageSummary",
+      "type": "object"
+    },
     "CarrierCompliantProjection": {
       "additionalProperties": false,
       "properties": {
@@ -997,9 +1059,44 @@
           "title": "Expense Cap Delta",
           "type": "number"
         },
+        "staffing_rule_delta": {
+          "minimum": 0,
+          "title": "Staffing Rule Delta",
+          "type": "number"
+        },
         "contingency_delta": {
           "minimum": 0,
           "title": "Contingency Delta",
+          "type": "number"
+        },
+        "proposed_blended_rate": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Proposed Blended Rate"
+        },
+        "compliant_blended_rate": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Compliant Blended Rate"
+        },
+        "blended_rate_delta": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Blended Rate Delta",
           "type": "number"
         },
         "line_count": {
@@ -1016,6 +1113,18 @@
           "minimum": 0,
           "title": "Disallowed Line Count",
           "type": "integer"
+        },
+        "staffing_rule_adjusted_line_count": {
+          "minimum": 0,
+          "title": "Staffing Rule Adjusted Line Count",
+          "type": "integer"
+        },
+        "leverage_summary": {
+          "items": {
+            "$ref": "#/$defs/CarrierCompliantLeverageSummary"
+          },
+          "title": "Leverage Summary",
+          "type": "array"
         },
         "lines": {
           "items": {
@@ -1058,10 +1167,12 @@
         "over_cap_amount",
         "rate_cap_delta",
         "expense_cap_delta",
+        "staffing_rule_delta",
         "contingency_delta",
         "line_count",
         "capped_line_count",
         "disallowed_line_count",
+        "staffing_rule_adjusted_line_count",
         "lines"
       ],
       "title": "CarrierCompliantProjection",
@@ -1105,6 +1216,13 @@
             "type": "number"
           },
           "title": "Expense Caps",
+          "type": "object"
+        },
+        "staffing_task_role_overrides": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Staffing Task Role Overrides",
           "type": "object"
         },
         "contingency_allowed": {
@@ -1190,6 +1308,18 @@
           "title": "Staffing Role",
           "type": "string"
         },
+        "compliant_staffing_role": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Compliant Staffing Role"
+        },
         "proposed_hours": {
           "minimum": 0,
           "title": "Proposed Hours",
@@ -1207,6 +1337,19 @@
           ],
           "default": null,
           "title": "Proposed Rate"
+        },
+        "staffing_rule_rate": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Staffing Rule Rate"
         },
         "compliant_rate": {
           "anyOf": [
@@ -1301,10 +1444,33 @@
           "title": "Expense Cap Applied",
           "type": "boolean"
         },
+        "staffing_rule_applied": {
+          "default": false,
+          "title": "Staffing Rule Applied",
+          "type": "boolean"
+        },
         "over_cap_amount": {
           "default": 0,
           "minimum": 0,
           "title": "Over Cap Amount",
+          "type": "number"
+        },
+        "rate_cap_delta": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Rate Cap Delta",
+          "type": "number"
+        },
+        "expense_cap_delta": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Expense Cap Delta",
+          "type": "number"
+        },
+        "staffing_rule_delta": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Staffing Rule Delta",
           "type": "number"
         },
         "guideline_refs": {

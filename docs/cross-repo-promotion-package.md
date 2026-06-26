@@ -23,7 +23,7 @@ repo owners must review and promote any accepted contracts inside their own repo
 - Matter-family, inbound-event, representation-posture, deadline, missing-information, and critic-finding candidate contracts.
 - Conflict seed and conflict search term contracts that preserve `no_conflict_conclusion` and require evidence refs for every normalized search term.
 - Budget proposal, calculation-report, and budget-support-item contracts.
-- Budget scenario set, driver effect, driver profile summary, guideline flag, carrier-compliant projection, budget-form mapping, budget review change, budget revision report, budget actuals source, phase/code actual comparison, variance-driver candidate, and budget exception-mapping contracts.
+- Budget scenario set, driver effect, driver profile summary, guideline flag, carrier-compliant projection, leverage summary, budget-form mapping, budget review change, budget revision report, budget actuals source, phase/code actual comparison, variance-driver candidate, and budget exception-mapping contracts.
 - Matter-opening readiness contract for final blockers, structured blocker details, prohibited-action guardrails, required human gates, workflow-policy refs, and prohibited-transition refs.
 - Evidence graph node and edge conventions for source-backed and structured-ref support across preflight, human review, conflict seed, budget artifacts, readiness blockers, and prohibited-action guardrails.
 - Dry-run exception lake candidate contract with broad Lake class, local event label, source-inventory refs, evidence refs, structured refs, blocked state, `raw_payload_included=false`, and `canonical_promotion_required=true`.

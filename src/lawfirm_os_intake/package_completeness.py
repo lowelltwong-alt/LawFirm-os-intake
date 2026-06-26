@@ -577,6 +577,14 @@ def build_review_package_completeness_report(
         and carrier_projection.get("rewrites_budget") is False
         and carrier_projection.get("not_authorized_for_client_submission") is True
         and carrier_projection.get("external_writes_performed") is False
+        and (
+            not carrier_projection.get("leverage_summary")
+            or (
+                "Leverage summary:" in review_text
+                and "Blended-rate delta:" in review_text
+                and "Staffing-adjusted lines:" in review_text
+            )
+        )
     )
     carrier_projection_unavailable_visible = (
         not isinstance(carrier_projection, dict)

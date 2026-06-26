@@ -38,6 +38,13 @@
       "title": "Expense Caps",
       "type": "object"
     },
+    "staffing_task_role_overrides": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Staffing Task Role Overrides",
+      "type": "object"
+    },
     "contingency_allowed": {
       "title": "Contingency Allowed",
       "type": "boolean"

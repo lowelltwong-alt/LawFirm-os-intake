@@ -78,6 +78,50 @@ def test_carrier_guideline_projection_applies_rate_and_expense_caps(tmp_path, re
     assert expert_expense_line.disallowed is False
 
 
+def test_carrier_guideline_projection_applies_staffing_rules_and_leverage(
+    tmp_path,
+    repo_root,
+):
+    budget, _run_dir = _run_medmal_budget(tmp_path, repo_root)
+    projection = budget.carrier_compliant_projection
+    assert projection is not None
+
+    proposal_line = next(line for line in budget.lines if line.external_code_candidate == "L310")
+    projected_line = next(
+        line for line in projection.lines if line.external_code_candidate == "L310"
+    )
+
+    assert proposal_line.staffing_role == "associate"
+    assert proposal_line.hourly_rate == 250.0
+    assert projected_line.staffing_role == "associate"
+    assert projected_line.compliant_staffing_role == "paralegal"
+    assert projected_line.staffing_rule_applied is True
+    assert projected_line.staffing_rule_rate == 160.0
+    assert projected_line.compliant_rate == 160.0
+    assert projected_line.staffing_rule_delta > 0
+    assert "staffing_rules/task_role_overrides/L310" in projected_line.guideline_refs[0]
+
+    assert projection.basis.staffing_task_role_overrides["L310"] == "paralegal"
+    assert projection.staffing_rule_adjusted_line_count >= 1
+    assert projection.staffing_rule_delta >= projected_line.staffing_rule_delta
+    assert projection.proposed_blended_rate is not None
+    assert projection.compliant_blended_rate is not None
+    assert projection.proposed_blended_rate > projection.compliant_blended_rate
+    assert projection.blended_rate_delta > 0
+
+    associate = next(
+        summary for summary in projection.leverage_summary if summary.role == "associate"
+    )
+    paralegal = next(
+        summary for summary in projection.leverage_summary if summary.role == "paralegal"
+    )
+    assert associate.compliant_hours < associate.proposed_hours
+    assert paralegal.compliant_hours > paralegal.proposed_hours
+    assert projection.rewrites_budget is False
+    assert projection.not_authorized_for_client_submission is True
+    assert projection.external_writes_performed is False
+
+
 def test_carrier_guideline_projection_renders_in_review_forms(tmp_path, repo_root):
     budget, run_dir = _run_medmal_budget(tmp_path, repo_root)
     review_text = (run_dir / "legal_budget_review_form.md").read_text(encoding="utf-8")
@@ -88,6 +132,10 @@ def test_carrier_guideline_projection_renders_in_review_forms(tmp_path, repo_roo
     assert "### Carrier-Compliant Projection" in package_text
     assert "Projection rewrites budget: False" in review_text
     assert "Client/carrier submission authorized: False" in package_text
+    assert "Staffing-rule delta:" in review_text
+    assert "Blended-rate delta:" in review_text
+    assert "Leverage summary:" in package_text
+    assert "role=associate->paralegal" in package_text
 
 
 def test_real_carrier_guideline_artifact_is_rejected(tmp_path):

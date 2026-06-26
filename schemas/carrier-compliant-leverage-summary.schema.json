@@ -1,0 +1,62 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "role": {
+      "title": "Role",
+      "type": "string"
+    },
+    "proposed_hours": {
+      "minimum": 0,
+      "title": "Proposed Hours",
+      "type": "number"
+    },
+    "compliant_hours": {
+      "minimum": 0,
+      "title": "Compliant Hours",
+      "type": "number"
+    },
+    "proposed_fees": {
+      "minimum": 0,
+      "title": "Proposed Fees",
+      "type": "number"
+    },
+    "compliant_fees": {
+      "minimum": 0,
+      "title": "Compliant Fees",
+      "type": "number"
+    },
+    "proposed_hours_percent": {
+      "minimum": 0,
+      "title": "Proposed Hours Percent",
+      "type": "number"
+    },
+    "compliant_hours_percent": {
+      "minimum": 0,
+      "title": "Compliant Hours Percent",
+      "type": "number"
+    },
+    "proposed_fee_percent": {
+      "minimum": 0,
+      "title": "Proposed Fee Percent",
+      "type": "number"
+    },
+    "compliant_fee_percent": {
+      "minimum": 0,
+      "title": "Compliant Fee Percent",
+      "type": "number"
+    }
+  },
+  "required": [
+    "role",
+    "proposed_hours",
+    "compliant_hours",
+    "proposed_fees",
+    "compliant_fees",
+    "proposed_hours_percent",
+    "compliant_hours_percent",
+    "proposed_fee_percent",
+    "compliant_fee_percent"
+  ],
+  "title": "CarrierCompliantLeverageSummary",
+  "type": "object"
+}

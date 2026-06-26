@@ -59,8 +59,10 @@ rate, phase, and total cap checks. A guideline flag can require human review, bu
 does not rewrite hours, rates, expenses, or totals.
 
 `CarrierCompliantProjection` is the separate math surface for synthetic carrier
-guidelines. It may cap rates and expenses in the projection view, reports proposed
-vs compliant totals and deltas, and keeps the original proposal lines unchanged.
+guidelines. It may cap rates and expenses and apply staffing/leverage role
+overrides in the projection view, reports proposed vs compliant totals, deltas,
+blended-rate change, and role-level leverage summary, and keeps the original
+proposal lines unchanged.
 It is `projected_for_human_review`, records `rewrites_budget=false`, and carries no
 client or carrier submission authority.
 

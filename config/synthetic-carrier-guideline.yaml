@@ -25,3 +25,10 @@ carriers:
       E115: 5000
       E119: 25000
       E121: 2500
+    staffing_rules:
+      task_role_overrides:
+        L310: paralegal
+        L320: paralegal
+      preferred_drafting_role: associate
+      max_timekeepers_per_event:
+        L330: 1

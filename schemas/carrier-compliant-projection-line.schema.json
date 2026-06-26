@@ -37,6 +37,18 @@
       "title": "Staffing Role",
       "type": "string"
     },
+    "compliant_staffing_role": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Compliant Staffing Role"
+    },
     "proposed_hours": {
       "minimum": 0,
       "title": "Proposed Hours",
@@ -54,6 +66,19 @@
       ],
       "default": null,
       "title": "Proposed Rate"
+    },
+    "staffing_rule_rate": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Staffing Rule Rate"
     },
     "compliant_rate": {
       "anyOf": [
@@ -148,10 +173,33 @@
       "title": "Expense Cap Applied",
       "type": "boolean"
     },
+    "staffing_rule_applied": {
+      "default": false,
+      "title": "Staffing Rule Applied",
+      "type": "boolean"
+    },
     "over_cap_amount": {
       "default": 0,
       "minimum": 0,
       "title": "Over Cap Amount",
+      "type": "number"
+    },
+    "rate_cap_delta": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Rate Cap Delta",
+      "type": "number"
+    },
+    "expense_cap_delta": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Expense Cap Delta",
+      "type": "number"
+    },
+    "staffing_rule_delta": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Staffing Rule Delta",
       "type": "number"
     },
     "guideline_refs": {

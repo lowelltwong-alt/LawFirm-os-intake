@@ -1,7 +1,8 @@
 # Carrier Rate & Guideline Layer — Design + Codex Handoff
 
-**Status:** Slices A-B implemented (carrier x state x title rate resolution,
-synthetic carrier guideline projection). Slices C-E and the P1 budget-math fixes
+**Status:** Slices A-C implemented (carrier x state x title rate resolution,
+synthetic carrier guideline projection, and projection-only staffing/leverage
+reshaping). Slices D-E, named-timekeeper overrides, and the P1 budget-math fixes
 remain proposed and handed to Codex.
 **Owner repo:** `LawFirm-os-intake` (vertical composition; owns no platform canon).
 **Authority posture:** rate cards and guidelines are synthetic `candidate` artifacts;
@@ -62,6 +63,8 @@ This lets guidelines reshape cost without a silent rewrite of the proposal.
   unchanged; `rewrites_budget` stays `False`; no submission.
 
 ### C. Staffing / leverage reshaping + blended-rate reporting
+**Status:** DONE in this repo as a local candidate slice.
+
 - Guideline `staffing_rules`: `task_role_overrides` (e.g. L320 → paralegal), `max_timekeepers_per_event`,
   `preferred_drafting_role`.
 - In the compliant projection, reassign task roles per the rules and recompute fees; emit

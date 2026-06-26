@@ -852,8 +852,10 @@ class CarrierCompliantProjectionLine(StrictModel):
     external_code_candidate: str | None = None
     expense_code: str | None = None
     staffing_role: str
+    compliant_staffing_role: str | None = None
     proposed_hours: float = Field(ge=0)
     proposed_rate: float | None = Field(default=None, ge=0)
+    staffing_rule_rate: float | None = Field(default=None, ge=0)
     compliant_rate: float | None = Field(default=None, ge=0)
     proposed_fees: float | None = Field(default=None, ge=0)
     compliant_fees: float | None = Field(default=None, ge=0)
@@ -865,9 +867,25 @@ class CarrierCompliantProjectionLine(StrictModel):
     disallowed: bool = False
     rate_cap_applied: bool = False
     expense_cap_applied: bool = False
+    staffing_rule_applied: bool = False
     over_cap_amount: float = Field(default=0, ge=0)
+    rate_cap_delta: float = Field(default=0, ge=0)
+    expense_cap_delta: float = Field(default=0, ge=0)
+    staffing_rule_delta: float = Field(default=0, ge=0)
     guideline_refs: list[str] = Field(default_factory=list)
     note: str
+
+
+class CarrierCompliantLeverageSummary(StrictModel):
+    role: str
+    proposed_hours: float = Field(ge=0)
+    compliant_hours: float = Field(ge=0)
+    proposed_fees: float = Field(ge=0)
+    compliant_fees: float = Field(ge=0)
+    proposed_hours_percent: float = Field(ge=0)
+    compliant_hours_percent: float = Field(ge=0)
+    proposed_fee_percent: float = Field(ge=0)
+    compliant_fee_percent: float = Field(ge=0)
 
 
 class CarrierCompliantProjectionBasis(StrictModel):
@@ -878,6 +896,7 @@ class CarrierCompliantProjectionBasis(StrictModel):
     data_scope: Literal["synthetic_only"] = "synthetic_only"
     rate_caps: dict[str, float] = Field(default_factory=dict)
     expense_caps: dict[str, float] = Field(default_factory=dict)
+    staffing_task_role_overrides: dict[str, str] = Field(default_factory=dict)
     contingency_allowed: bool
     budget_cadence: str
     variance_approval_percent: float = Field(ge=0)
@@ -902,10 +921,16 @@ class CarrierCompliantProjection(StrictModel):
     over_cap_amount: float = Field(ge=0)
     rate_cap_delta: float = Field(ge=0)
     expense_cap_delta: float = Field(ge=0)
+    staffing_rule_delta: float = Field(ge=0)
     contingency_delta: float = Field(ge=0)
+    proposed_blended_rate: float | None = None
+    compliant_blended_rate: float | None = None
+    blended_rate_delta: float = Field(default=0, ge=0)
     line_count: int = Field(ge=0)
     capped_line_count: int = Field(ge=0)
     disallowed_line_count: int = Field(ge=0)
+    staffing_rule_adjusted_line_count: int = Field(ge=0)
+    leverage_summary: list[CarrierCompliantLeverageSummary] = Field(default_factory=list)
     lines: list[CarrierCompliantProjectionLine]
     rewrites_budget: Literal[False] = False
     not_authorized_for_client_submission: Literal[True] = True
