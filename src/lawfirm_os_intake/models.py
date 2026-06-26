@@ -1369,6 +1369,119 @@ class BudgetActualComparisonReport(StrictModel):
     generated_at: str
 
 
+BudgetCalibrationArtifactKind = Literal[
+    "intake_source_fixture",
+    "human_confirmation_fixture",
+    "budget_review_fixture",
+    "actuals_fixture",
+    "carrier_rejection_fixture",
+    "reviewed_gold_fixture",
+    "learning_gate_fixture",
+    "learning_shadow_eval_fixture",
+    "unclassified_json_fixture",
+]
+
+BudgetCalibrationRole = Literal[
+    "input_context_fixture",
+    "outcome_evidence_fixture",
+    "reviewed_baseline_fixture",
+    "learning_gate_fixture",
+    "shadow_eval_fixture",
+    "unclassified_supporting_fixture",
+]
+
+BudgetCalibrationEligibility = Literal[
+    "eligible_for_synthetic_calibration_review",
+    "supporting_context_only",
+    "blocked_real_or_privileged_data",
+    "blocked_boundary_violation",
+]
+
+
+class BudgetCalibrationCorpusArtifact(StrictModel):
+    artifact_id: str
+    artifact_ref: str
+    artifact_kind: BudgetCalibrationArtifactKind
+    calibration_role: BudgetCalibrationRole
+    eligibility: BudgetCalibrationEligibility
+    sha256: str
+    data_origin: str | None = None
+    synthetic_only: bool | None = None
+    contains_real_client_data: bool | None = None
+    contains_real_matter_data: bool | None = None
+    contains_privileged_data: bool | None = None
+    scope_failures: list[str] = Field(default_factory=list)
+    boundary_failures: list[str] = Field(default_factory=list)
+    support_refs: list[str] = Field(default_factory=list)
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+
+
+class BudgetCalibrationCorpusCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed", "warning"]
+    message: str
+    artifact_refs: list[str] = Field(default_factory=list)
+
+
+class BudgetCalibrationCorpusReport(StrictModel):
+    schema_version: str = "0.1"
+    corpus_report_id: str
+    status: Literal[
+        "synthetic_corpus_ready_for_review",
+        "blocked_real_or_privileged_data",
+        "failed",
+        "empty_corpus",
+    ]
+    corpus_root_ref: str
+    artifact_count: int = Field(ge=0)
+    eligible_artifact_count: int = Field(ge=0)
+    supporting_artifact_count: int = Field(ge=0)
+    blocked_artifact_count: int = Field(ge=0)
+    artifact_kind_counts: dict[str, int] = Field(default_factory=dict)
+    calibration_role_counts: dict[str, int] = Field(default_factory=dict)
+    artifacts: list[BudgetCalibrationCorpusArtifact]
+    checks: list[BudgetCalibrationCorpusCheck]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    calibration_applied: Literal[False] = False
+    profile_mutation_performed: Literal[False] = False
+    template_mutation_performed: Literal[False] = False
+    budget_mutation_performed: Literal[False] = False
+    carrier_guideline_mutation_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def counts_match_artifacts(self) -> "BudgetCalibrationCorpusReport":
+        if self.artifact_count != len(self.artifacts):
+            raise ValueError("budget calibration corpus artifact count must match artifacts")
+        if self.eligible_artifact_count != sum(
+            1
+            for artifact in self.artifacts
+            if artifact.eligibility == "eligible_for_synthetic_calibration_review"
+        ):
+            raise ValueError("eligible artifact count does not match artifacts")
+        blocked = sum(
+            1
+            for artifact in self.artifacts
+            if artifact.eligibility
+            in {"blocked_real_or_privileged_data", "blocked_boundary_violation"}
+        )
+        if self.blocked_artifact_count != blocked:
+            raise ValueError("blocked artifact count does not match artifacts")
+        if self.status == "synthetic_corpus_ready_for_review" and (
+            self.blocked_artifact_count or not self.eligible_artifact_count
+        ):
+            raise ValueError("ready corpus requires eligible artifacts and no blocked artifacts")
+        return self
+
+
 class BudgetFormCodeMapping(StrictModel):
     code: str
     kind: Literal["phase", "task"]

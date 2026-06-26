@@ -7,6 +7,7 @@ import shutil
 import sys
 
 from .budget_actuals import run_budget_actual_comparison
+from .budget_calibration_corpus import run_budget_calibration_corpus_audit
 from .budget_form import build_budget_form_template_audit_report, render_budget_form
 from .budget_revisions import run_budget_review_record
 from .carrier_rejection_lake_admission import (
@@ -110,6 +111,22 @@ def _parser() -> argparse.ArgumentParser:
     budget_actuals.add_argument(
         "--budget-revision-report",
         help="Optional budget_revision_report.json from record-budget-review.",
+    )
+
+    budget_corpus = sub.add_parser(
+        "audit-budget-calibration-corpus",
+        help="Classify synthetic budget/rejection/actuals fixtures for calibration review.",
+    )
+    budget_corpus.add_argument(
+        "--corpus-root",
+        default="examples/synthetic",
+        help="Synthetic fixture corpus root to audit.",
+    )
+    budget_corpus.add_argument("--out-dir", required=True)
+    budget_corpus.add_argument(
+        "--repo-root",
+        default=".",
+        help="Repository root for relative artifact refs; defaults to current directory.",
     )
 
     carrier_rejections = sub.add_parser(
@@ -491,6 +508,37 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 0
+
+        if args.command == "audit-budget-calibration-corpus":
+            report, run_dir = run_budget_calibration_corpus_audit(
+                corpus_root=args.corpus_root,
+                out_dir=args.out_dir,
+                repo_root=args.repo_root,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "corpus_report_id": report.corpus_report_id,
+                    "corpus_root_ref": report.corpus_root_ref,
+                    "artifact_count": report.artifact_count,
+                    "eligible_artifact_count": report.eligible_artifact_count,
+                    "supporting_artifact_count": report.supporting_artifact_count,
+                    "blocked_artifact_count": report.blocked_artifact_count,
+                    "calibration_applied": report.calibration_applied,
+                    "profile_mutation_performed": report.profile_mutation_performed,
+                    "template_mutation_performed": report.template_mutation_performed,
+                    "budget_mutation_performed": report.budget_mutation_performed,
+                    "carrier_guideline_mutation_performed": (
+                        report.carrier_guideline_mutation_performed
+                    ),
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0 if report.status == "synthetic_corpus_ready_for_review" else 2
 
         if args.command == "capture-carrier-rejections":
             report, run_dir = run_carrier_rejection_capture(

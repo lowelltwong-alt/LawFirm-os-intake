@@ -36,6 +36,15 @@ The smoke harness also runs `scripts/audit_blocked_budget_attempt.py`. It writes
 
 The smoke harness also runs `scripts/audit_context_counterfactual.py`. It writes `context_counterfactual_audit_report.json`, a local non-authoritative same-source/different-profile audit proving source inventory, segment signatures, and observed evidence refs stay stable while practice context may change candidate ranking. It also checks that context-only matter candidates are graph anchors, not observed support facts.
 
+Before any budget learning candidate moves into replay or shadow eval,
+`audit-budget-calibration-corpus` can write
+`budget_calibration_corpus_report.json`. The report classifies which budget
+review, actuals, carrier rejection, reviewed-gold, learning-gate, and
+shadow-eval fixtures are eligible for synthetic calibration review and which
+are only supporting context. It blocks real/production/privileged flags,
+mutation flags, Lake/SQLite writes, external writes, and silent-learning flags.
+It does not calibrate or apply changes.
+
 The learning loop can write `reviewed_learning_gate_report.json`, then
 `audit-learning-promotion-readiness` writes `learning_shadow_eval_plan.json` and
 `learning_promotion_readiness_report.json`. `draft-learning-proposed-changes`

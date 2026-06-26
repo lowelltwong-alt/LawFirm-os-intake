@@ -382,3 +382,25 @@ From here, the easy next work is mostly review packaging, fixture expansion,
 and docs cleanup. The critical higher-risk work is owner adoption in Semantic
 Substrate, Orchestrator, and Exception Lake, then governed real-data pilots only
 after those owners promote the necessary contracts and runtime gates.
+
+## 18. Budget Calibration Corpus
+
+Status: implemented for the current synthetic candidate slice; human corpus
+review, corpus replay, real-data pilots, and owner adoption remain future work.
+
+Separate "we have synthetic evidence artifacts" from "we are allowed to learn
+from them."
+
+- `audit-budget-calibration-corpus` scans a synthetic fixture corpus and writes
+  `budget_calibration_corpus_report.json` plus Markdown notes.
+- The report classifies intake sources, confirmations, reviewed gold, human
+  budget review changes, synthetic actuals, carrier rejection bundles,
+  learning-gate fixtures, and shadow-eval fixture results by calibration role.
+- Real/production/privileged flags, mutation flags, Lake/SQLite writes, external
+  writes, and silent-learning flags block the corpus.
+- Eligible artifacts are only `eligible_for_synthetic_calibration_review`; no
+  calibration, profile mutation, template mutation, carrier-guideline mutation,
+  or learning is applied.
+- Required next gates are human corpus review, fixture-result binding, shadow
+  eval before learning, owning-repo review, and no silent profile/template
+  mutation.
