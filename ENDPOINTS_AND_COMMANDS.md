@@ -279,6 +279,25 @@ repaired, and blocked candidates stay blocked pending evidence. The command
 performs no promotion, implementation, Lake/SQLite write, sibling-repo write, or
 external write.
 
+### Audit budget lifecycle
+
+```bash
+python -m lawfirm_os_intake audit-budget-lifecycle \
+  --budget-change-ledger-report .lawfirm-os-intake/budget-review/budget_change_ledger_report.json \
+  --budget-actual-variance-ledger-report .lawfirm-os-intake/actuals/budget_actual_variance_ledger_report.json \
+  --carrier-rejection-decision-ledger-report .lawfirm-os-intake/carrier-rejections/carrier_rejection_decision_ledger_report.json \
+  --budget-event-lake-bundle-report .lawfirm-os-intake/budget-event-lake-bundle/budget_event_lake_admission_bundle_report.json \
+  --out-dir .lawfirm-os-intake/budget-lifecycle-audit
+```
+
+This writes `budget_lifecycle_audit_report.json` and
+`budget_lifecycle_audit_report.md`. The audit checks that the human budget
+change, actual-variance, carrier-rejection, and Lake-bundle evidence streams
+refer to the same budget and preflight chain, summarizes financial deltas,
+lists pending human decisions and next actions, and preserves no connector,
+Lake/SQLite, submission, mutation, sibling-repo write, or silent-learning
+authority.
+
 ### Audit intake vertical readiness
 
 ```bash
@@ -295,8 +314,8 @@ python -m lawfirm_os_intake audit-intake-vertical-readiness \
 This writes `intake_vertical_readiness_audit_report.json` and
 `intake_vertical_readiness_audit_report.md`. The audit checks the local
 intake-to-budget, carrier rejection, budget revision, actual-cost comparison,
-reviewed learning, shadow-eval, owner-handoff, promotion-package, and command
-surfaces, then validates the generated learning artifact chain back through the
+budget lifecycle audit, reviewed learning, shadow-eval, owner-handoff,
+promotion-package, and command surfaces, then validates the generated learning artifact chain back through the
 reviewed-learning gate, the generated budget-event Lake bundle, and the
 calibration-readiness chain plus fixture-update review record and PR package. A
 passing audit means the branch is ready for human PR review while external

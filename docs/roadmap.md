@@ -258,7 +258,37 @@ package without letting intake become the Lake runtime.
   classes, submit appeals or budgets, read billing, write billing, or apply
   learning.
 
-## 11B. PR Review Checklist
+## 11B. Budget Lifecycle Audit
+
+Status: implemented for the current synthetic candidate slice; production
+capture, real actuals, appeal submission, and Lake admission remain future owner
+work.
+
+Give reviewers one deterministic view of the whole budget lifecycle before any
+Exception Lake or learning handoff is trusted.
+
+- `audit-budget-lifecycle` consumes `budget_change_ledger_report.json`,
+  `budget_actual_variance_ledger_report.json`,
+  `carrier_rejection_decision_ledger_report.json`, and
+  `budget_event_lake_admission_bundle_report.json`.
+- It writes `budget_lifecycle_audit_report.json` and
+  `budget_lifecycle_audit_report.md`.
+- It checks that the budget-change, actual-variance, carrier-rejection, and
+  Lake-bundle streams refer to the same budget proposal and preflight packet.
+- It summarizes original budget, human revision delta, human-revised candidate
+  budget, actual budget/actual/variance totals, carrier disputed amount,
+  recovered amount, write-down amount, pending human decisions, proposed next
+  actions, candidate record families, and local event labels.
+- Missing artifacts, inconsistent IDs, empty lifecycle streams, failed Lake
+  bundles, missing lifecycle record-family coverage, or prohibited
+  Lake/SQLite/billing/submission/mutation/silent-learning flags block the audit.
+- Pending human decisions are preserved as review content, not treated as an
+  intake authority to fix, appeal, submit, or learn.
+- Passing status is only `ready_for_budget_lifecycle_review`; it does not admit
+  records, submit appeals or budgets, write billing, write SQLite, write sibling
+  repos, mutate profiles/templates/budgets/guidelines, or apply learning.
+
+## 11C. PR Review Checklist
 
 Status: implemented for the current synthetic candidate slice; the actual PR
 state change remains a human GitHub action.

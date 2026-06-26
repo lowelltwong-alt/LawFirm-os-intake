@@ -158,6 +158,15 @@ budget/preflight IDs, map events to candidate record families, and fail closed o
 missing artifacts or any Lake/SQLite/billing/submission/mutation/silent-learning
 flag drift. Passing status means ready for Exception Lake owner review only.
 
+`audit-budget-lifecycle` consumes the budget change ledger, budget actual
+variance ledger, carrier rejection decision ledger, and budget-event Lake
+bundle. It writes `budget_lifecycle_audit_report.json` and Markdown notes. The
+audit must require consistent budget/preflight IDs, summarize original,
+human-revised, actual, disputed, recovered, and write-down amounts, preserve
+pending human decisions as review content, and fail closed on missing artifacts,
+ID drift, Lake-bundle failure, missing lifecycle record families, or prohibited
+write/submission/mutation/silent-learning flag drift.
+
 The learning loop can write `reviewed_learning_gate_report.json`, then
 `audit-learning-promotion-readiness` writes `learning_shadow_eval_plan.json` and
 `learning_promotion_readiness_report.json`. `draft-learning-proposed-changes`

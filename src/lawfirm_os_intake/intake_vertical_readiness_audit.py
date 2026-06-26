@@ -320,6 +320,30 @@ REQUIRED_SLICES: tuple[SliceDefinition, ...] = (
     ),
     SliceDefinition(
         slice_id=13,
+        title="Budget lifecycle audit",
+        requirement_summary=(
+            "Budget change, actual variance, carrier rejection, and Lake-bundle evidence "
+            "can be audited together as one local lifecycle review surface."
+        ),
+        proof_artifact_refs=(
+            "src/lawfirm_os_intake/budget_lifecycle_audit.py",
+            "schemas/budget-lifecycle-audit-report.schema.json",
+            "schemas/budget-lifecycle-financial-summary.schema.json",
+            "tests/test_budget_lifecycle_audit.py",
+            "docs/decisions/TRACE-2026-06-26-budget-lifecycle-audit.md",
+        ),
+        command_refs=("audit-budget-lifecycle",),
+        target_owner_repos=(
+            "LawFirm-os-intake",
+            "LawFirm-os-orchestrator",
+            "LawFirm-os-exceptions-lake-runtime",
+        ),
+        remaining_external_actions=(
+            "Orchestrator and Exception Lake owners must still adopt runtime capture and admission.",
+        ),
+    ),
+    SliceDefinition(
+        slice_id=14,
         title="Final intake vertical readiness audit",
         requirement_summary=(
             "A deterministic final audit checks local surfaces plus the generated learning "

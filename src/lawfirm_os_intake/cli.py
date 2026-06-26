@@ -23,6 +23,7 @@ from .budget_fixture_update_pr_package import run_budget_fixture_update_pr_packa
 from .budget_fixture_update_review import run_budget_fixture_update_review_record
 from .budget_form import build_budget_form_template_audit_report, render_budget_form
 from .budget_lake_admission_bundle import run_budget_event_lake_admission_bundle
+from .budget_lifecycle_audit import run_budget_lifecycle_audit
 from .budget_revisions import run_budget_review_record
 from .carrier_rejection_lake_admission import (
     run_carrier_rejection_lake_admission_proposal,
@@ -403,6 +404,16 @@ def _parser() -> argparse.ArgumentParser:
     budget_event_lake_bundle.add_argument("--budget-actual-variance-ledger-jsonl")
     budget_event_lake_bundle.add_argument("--carrier-rejection-decision-ledger-report")
     budget_event_lake_bundle.add_argument("--carrier-rejection-decision-ledger-jsonl")
+
+    budget_lifecycle_audit = sub.add_parser(
+        "audit-budget-lifecycle",
+        help="Audit budget change, actual variance, carrier rejection, and Lake-bundle evidence together.",
+    )
+    budget_lifecycle_audit.add_argument("--out-dir", required=True)
+    budget_lifecycle_audit.add_argument("--budget-change-ledger-report", required=True)
+    budget_lifecycle_audit.add_argument("--budget-actual-variance-ledger-report", required=True)
+    budget_lifecycle_audit.add_argument("--carrier-rejection-decision-ledger-report", required=True)
+    budget_lifecycle_audit.add_argument("--budget-event-lake-bundle-report", required=True)
 
     carrier_rejection_audit = sub.add_parser(
         "audit-carrier-rejection-roadmap",
@@ -1482,6 +1493,38 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 0 if report.status == "ready_for_exception_lake_review" else 2
+
+        if args.command == "audit-budget-lifecycle":
+            report, run_dir = run_budget_lifecycle_audit(
+                out_dir=args.out_dir,
+                budget_change_ledger_report_path=args.budget_change_ledger_report,
+                budget_actual_variance_ledger_report_path=(
+                    args.budget_actual_variance_ledger_report
+                ),
+                carrier_rejection_decision_ledger_report_path=(
+                    args.carrier_rejection_decision_ledger_report
+                ),
+                budget_event_lake_bundle_report_path=args.budget_event_lake_bundle_report,
+            )
+            failed_checks = [check.check_id for check in report.checks if check.status == "failed"]
+            _print(
+                {
+                    "status": report.status,
+                    "lifecycle_audit_report_id": report.lifecycle_audit_report_id,
+                    "budget_proposal_id": report.budget_proposal_id,
+                    "preflight_packet_id": report.preflight_packet_id,
+                    "total_lifecycle_event_count": report.total_lifecycle_event_count,
+                    "pending_human_decision_count": report.pending_human_decision_count,
+                    "candidate_record_families": report.candidate_record_families,
+                    "failed_checks": failed_checks,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0 if report.status == "ready_for_budget_lifecycle_review" else 2
 
         if args.command == "audit-carrier-rejection-roadmap":
             report, run_dir = run_carrier_rejection_roadmap_audit(

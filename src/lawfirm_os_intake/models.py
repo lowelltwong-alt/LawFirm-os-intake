@@ -5131,6 +5131,118 @@ class BudgetLakeAdmissionBundleReport(StrictModel):
         return self
 
 
+class BudgetLifecycleAuditCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed", "warning"]
+    message: str
+    artifact_refs: list[str] = Field(default_factory=list)
+
+
+class BudgetLifecycleFinancialSummary(StrictModel):
+    original_budget_total: float | None = None
+    human_revision_total_delta: float | None = None
+    human_revised_candidate_total: float | None = None
+    actual_comparison_budgeted_total: float | None = None
+    actual_total: float | None = None
+    actual_variance_amount: float | None = None
+    carrier_disputed_amount: float = Field(default=0, ge=0)
+    carrier_recovered_amount: float = Field(default=0, ge=0)
+    carrier_write_down_amount: float = Field(default=0, ge=0)
+
+
+class BudgetLifecycleAuditReport(StrictModel):
+    schema_version: str = "0.1"
+    lifecycle_audit_report_id: str
+    status: Literal[
+        "ready_for_budget_lifecycle_review",
+        "blocked_missing_lifecycle_artifacts",
+        "blocked_inconsistent_lifecycle_evidence",
+    ]
+    budget_proposal_id: str | None = None
+    preflight_packet_id: str | None = None
+    run_ids: list[str] = Field(default_factory=list)
+    source_budget_change_ledger_report_ref: str
+    source_budget_actual_variance_ledger_report_ref: str
+    source_carrier_rejection_decision_ledger_report_ref: str
+    source_budget_event_lake_bundle_report_ref: str
+    budget_change_ledger_report_id: str | None = None
+    budget_actual_variance_ledger_report_id: str | None = None
+    carrier_rejection_decision_ledger_report_id: str | None = None
+    budget_event_lake_bundle_report_id: str | None = None
+    budget_change_event_count: int = Field(ge=0)
+    actual_variance_event_count: int = Field(ge=0)
+    carrier_rejection_event_count: int = Field(ge=0)
+    total_lifecycle_event_count: int = Field(ge=0)
+    human_budget_change_event_count: int = Field(ge=0)
+    actual_variance_review_event_count: int = Field(ge=0)
+    carrier_pending_decision_event_count: int = Field(ge=0)
+    carrier_appeal_result_event_count: int = Field(ge=0)
+    carrier_financial_outcome_event_count: int = Field(ge=0)
+    pending_human_decision_count: int = Field(ge=0)
+    required_human_decisions: list[str] = Field(default_factory=list)
+    proposed_next_actions: list[str] = Field(default_factory=list)
+    candidate_record_families: list[BudgetLakeCandidateRecordFamily] = Field(default_factory=list)
+    local_event_labels: list[str] = Field(default_factory=list)
+    financial_summary: BudgetLifecycleFinancialSummary
+    checks: list[BudgetLifecycleAuditCheck]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    append_only_evidence_required: Literal[True] = True
+    human_review_required: Literal[True] = True
+    orchestrator_owner_for_runtime_capture: Literal[True] = True
+    exception_lake_owner_for_admission: Literal[True] = True
+    no_connector_implemented: Literal[True] = True
+    no_lake_admission_performed: Literal[True] = True
+    no_sibling_repo_writes: Literal[True] = True
+    no_canonical_mutation: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    not_authorized_for_carrier_submission: Literal[True] = True
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    billing_connector_read_performed: Literal[False] = False
+    billing_connector_write_performed: Literal[False] = False
+    carrier_portal_write_performed: Literal[False] = False
+    email_send_performed: Literal[False] = False
+    appeal_submission_performed: Literal[False] = False
+    budget_submission_performed: Literal[False] = False
+    budget_mutation_performed: Literal[False] = False
+    profile_mutation_performed: Literal[False] = False
+    template_mutation_performed: Literal[False] = False
+    carrier_guideline_mutation_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def budget_lifecycle_counts_and_status_match(self) -> "BudgetLifecycleAuditReport":
+        if self.total_lifecycle_event_count != (
+            self.budget_change_event_count
+            + self.actual_variance_event_count
+            + self.carrier_rejection_event_count
+        ):
+            raise ValueError("budget lifecycle total event count must match stream counts")
+        failed_checks = [check for check in self.checks if check.status == "failed"]
+        if self.status == "ready_for_budget_lifecycle_review" and failed_checks:
+            raise ValueError("ready budget lifecycle audit cannot have failed checks")
+        if self.status != "ready_for_budget_lifecycle_review" and not failed_checks:
+            raise ValueError("blocked budget lifecycle audit requires failed checks")
+        required = {
+            "human_budget_lifecycle_review",
+            "orchestrator_evidence_packet_assembly",
+            "exception_lake_runtime_admission_validation",
+            "reviewed_learning_gate_before_candidate_changes",
+            "no_silent_profile_template_budget_or_guideline_mutation",
+        }
+        if not required.issubset(set(self.required_next_gates)):
+            raise ValueError("budget lifecycle audit is missing required gates")
+        return self
+
+
 class CarrierRejectionRoadmapSliceStatus(StrictModel):
     slice_id: int = Field(ge=1, le=8)
     title: str
