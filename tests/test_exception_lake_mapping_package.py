@@ -66,6 +66,10 @@ def test_budget_run_writes_exception_lake_mapping_package_and_actuals_report(tmp
         "guideline_or_cap_issue",
         "human_budget_change",
         "budget_actual_cost_variance",
+        "carrier_rejection_capture",
+        "carrier_rejection_reconciliation",
+        "carrier_rejection_appeal_result",
+        "carrier_rejection_learning",
     }
     assert "budget_unknown_driver_requires_review" in candidate_labels
     assert "budget_guideline_or_cap_requires_review" in candidate_labels

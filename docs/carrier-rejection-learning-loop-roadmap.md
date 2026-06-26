@@ -175,7 +175,11 @@ time, but missing capture is a production incident.
 
 1. Candidate schema and synthetic fixture for `CarrierRejectionNotice`,
    `CarrierRejectionRemediationCase`, and `CarrierAppealResult`.
+   Status: implemented for the synthetic local slice through
+   `capture-carrier-rejections`.
 2. Dry-run Exception Lake mapping package for carrier rejection and appeal labels.
+   Status: implemented for broad-class local mapping; canonical route/event
+   promotion remains out of scope for this repo.
 3. Deterministic reconciliation report for expected vs captured carrier responses.
 4. Synthetic portal/email/LEDES rejection fixtures with duplicate, unlinked, malformed,
    partial-allowance, and appeal-result cases.

@@ -1278,6 +1278,188 @@ class ExceptionLakeCandidate(StrictModel):
     )
 
 
+class CarrierExpectedResponse(StrictModel):
+    submission_id: str
+    submission_type: Literal["budget", "invoice", "appeal", "portal_action"]
+    carrier_id: str
+    budget_proposal_id: str | None = None
+    invoice_id: str | None = None
+    amount_submitted: float | None = Field(default=None, ge=0)
+    expected_response_due_at: str
+    human_owner: str | None = None
+    source_ref: str
+
+
+class CarrierRejectionSourceRef(StrictModel):
+    source_channel: Literal[
+        "portal_status",
+        "portal_export",
+        "email_notice",
+        "ledes_response",
+        "returned_workbook",
+        "appeal_correspondence",
+        "manual_entry",
+    ]
+    source_id: str
+    source_record_id: str
+    retrieved_at: str
+    content_sha256: str
+    message_id: str | None = None
+    portal_status_id: str | None = None
+    row_ref: str | None = None
+    attachment_id: str | None = None
+
+
+class CarrierRejectionNotice(StrictModel):
+    notice_id: str
+    carrier_id: str
+    platform: str
+    submission_id: str | None = None
+    budget_proposal_id: str | None = None
+    invoice_id: str | None = None
+    line_id: str | None = None
+    phase_id: str | None = None
+    task_id: str | None = None
+    external_code_candidate: str | None = None
+    expense_code: str | None = None
+    timekeeper_id: str | None = None
+    status_timestamp: str
+    response_type: Literal[
+        "accepted",
+        "rejected",
+        "partially_accepted",
+        "transport_failure",
+        "comment_only",
+        "unknown",
+    ]
+    parse_status: Literal["parsed", "parse_failed"] = "parsed"
+    parser_version: str
+    amount_submitted: float | None = Field(default=None, ge=0)
+    amount_rejected: float | None = Field(default=None, ge=0)
+    amount_allowed: float | None = Field(default=None, ge=0)
+    amount_disputed: float | None = Field(default=None, ge=0)
+    reason_code: str | None = None
+    reason_text_excerpt: str
+    human_owner: str | None = None
+    followup_due_at: str | None = None
+    idempotency_key: str
+    source_refs: list[CarrierRejectionSourceRef]
+
+
+class CarrierAppealResult(StrictModel):
+    appeal_result_id: str
+    related_notice_id: str
+    result: Literal[
+        "accepted",
+        "denied",
+        "partially_accepted",
+        "withdrawn",
+        "no_response",
+        "stale",
+    ]
+    appealed_amount: float | None = Field(default=None, ge=0)
+    recovered_amount: float | None = Field(default=None, ge=0)
+    write_down_amount: float | None = Field(default=None, ge=0)
+    status_timestamp: str
+    source_refs: list[CarrierRejectionSourceRef]
+    append_only: Literal[True] = True
+
+
+class CarrierRejectionCaptureSourceBundle(StrictModel):
+    schema_version: str = "0.1"
+    bundle_id: str
+    run_id: str
+    preflight_packet_id: str
+    budget_proposal_id: str
+    data_origin: Literal["synthetic", "production"] = "synthetic"
+    contains_real_client_data: bool = False
+    contains_real_matter_data: bool = False
+    contains_privileged_data: bool = False
+    as_of: str
+    expected_responses: list[CarrierExpectedResponse]
+    notices: list[CarrierRejectionNotice] = Field(default_factory=list)
+    appeal_results: list[CarrierAppealResult] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def synthetic_only(self) -> "CarrierRejectionCaptureSourceBundle":
+        if self.data_origin != "synthetic":
+            raise ValueError("carrier rejection capture is synthetic-only in this repo")
+        if (
+            self.contains_real_client_data
+            or self.contains_real_matter_data
+            or self.contains_privileged_data
+        ):
+            raise ValueError("real client, matter, or privileged data is prohibited")
+        return self
+
+
+class CarrierRejectionRemediationCase(StrictModel):
+    remediation_case_id: str
+    case_key: str
+    status: Literal[
+        "captured_for_human_review",
+        "needs_linkage_review",
+        "missing_response_followup",
+        "parse_failed",
+        "appeal_result_captured",
+    ]
+    local_event_label: str
+    canonical_lake_class: Literal[
+        "retrieval_miss",
+        "workflow_escalation",
+        "authority_conflict_override",
+    ]
+    carrier_id: str | None = None
+    submission_id: str | None = None
+    budget_proposal_id: str | None = None
+    invoice_id: str | None = None
+    phase_id: str | None = None
+    task_id: str | None = None
+    external_code_candidate: str | None = None
+    duplicate_notice_ids: list[str] = Field(default_factory=list)
+    source_refs: list[CarrierRejectionSourceRef] = Field(default_factory=list)
+    disputed_amount: float = Field(default=0, ge=0)
+    current_financial_exposure: float = Field(default=0, ge=0)
+    human_owner: str | None = None
+    followup_due_at: str | None = None
+    required_human_decisions: list[str] = Field(default_factory=list)
+    linked_appeal_result_ids: list[str] = Field(default_factory=list)
+    learning_disposition_candidates: list[str] = Field(default_factory=list)
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_external_submission: Literal[True] = True
+    silent_learning_performed: Literal[False] = False
+
+
+class CarrierResponseReconciliationReport(StrictModel):
+    schema_version: str = "0.1"
+    reconciliation_report_id: str
+    source_bundle_id: str
+    run_id: str
+    preflight_packet_id: str
+    budget_proposal_id: str
+    status: Literal[
+        "dry_run_ready_for_review",
+        "blocked_missing_required_followup",
+        "no_rejections_or_missing_responses",
+    ]
+    expected_response_count: int = Field(ge=0)
+    reconciled_response_count: int = Field(ge=0)
+    missing_response_count: int = Field(ge=0)
+    unlinked_notice_count: int = Field(ge=0)
+    duplicate_notice_count: int = Field(ge=0)
+    parser_failure_count: int = Field(ge=0)
+    appeal_result_count: int = Field(ge=0)
+    remediation_cases: list[CarrierRejectionRemediationCase]
+    exception_lake_candidates: list[ExceptionLakeCandidate]
+    gap_report: list[str] = Field(default_factory=list)
+    capture_completeness_target_percent: Literal[100] = 100
+    candidate_only: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_external_submission: Literal[True] = True
+    external_writes_performed: Literal[False] = False
+    generated_at: str
+
+
 class ExceptionLakeReadinessCheck(StrictModel):
     check_id: str
     status: Literal["passed", "failed"]
@@ -1363,6 +1545,10 @@ class ExceptionLakeMappingRule(StrictModel):
         "guideline_or_cap_issue",
         "human_budget_change",
         "budget_actual_cost_variance",
+        "carrier_rejection_capture",
+        "carrier_rejection_reconciliation",
+        "carrier_rejection_appeal_result",
+        "carrier_rejection_learning",
     ]
     local_event_label: str
     canonical_lake_class: Literal[
@@ -1378,6 +1564,9 @@ class ExceptionLakeMappingRule(StrictModel):
             "budget_proposal",
             "budget_change_record",
             "budget_actual_comparison_report",
+            "carrier_rejection_reconciliation_report",
+            "carrier_rejection_remediation_case",
+            "carrier_appeal_result",
         ]
     ]
     candidate_ids: list[str] = Field(default_factory=list)

@@ -1,0 +1,363 @@
+{
+  "$defs": {
+    "CarrierRejectionSourceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "source_channel": {
+          "enum": [
+            "portal_status",
+            "portal_export",
+            "email_notice",
+            "ledes_response",
+            "returned_workbook",
+            "appeal_correspondence",
+            "manual_entry"
+          ],
+          "title": "Source Channel",
+          "type": "string"
+        },
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "source_record_id": {
+          "title": "Source Record Id",
+          "type": "string"
+        },
+        "retrieved_at": {
+          "title": "Retrieved At",
+          "type": "string"
+        },
+        "content_sha256": {
+          "title": "Content Sha256",
+          "type": "string"
+        },
+        "message_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Message Id"
+        },
+        "portal_status_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Portal Status Id"
+        },
+        "row_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Row Ref"
+        },
+        "attachment_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attachment Id"
+        }
+      },
+      "required": [
+        "source_channel",
+        "source_id",
+        "source_record_id",
+        "retrieved_at",
+        "content_sha256"
+      ],
+      "title": "CarrierRejectionSourceRef",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "notice_id": {
+      "title": "Notice Id",
+      "type": "string"
+    },
+    "carrier_id": {
+      "title": "Carrier Id",
+      "type": "string"
+    },
+    "platform": {
+      "title": "Platform",
+      "type": "string"
+    },
+    "submission_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Submission Id"
+    },
+    "budget_proposal_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Budget Proposal Id"
+    },
+    "invoice_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Invoice Id"
+    },
+    "line_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Line Id"
+    },
+    "phase_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Phase Id"
+    },
+    "task_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Task Id"
+    },
+    "external_code_candidate": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "External Code Candidate"
+    },
+    "expense_code": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Expense Code"
+    },
+    "timekeeper_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Timekeeper Id"
+    },
+    "status_timestamp": {
+      "title": "Status Timestamp",
+      "type": "string"
+    },
+    "response_type": {
+      "enum": [
+        "accepted",
+        "rejected",
+        "partially_accepted",
+        "transport_failure",
+        "comment_only",
+        "unknown"
+      ],
+      "title": "Response Type",
+      "type": "string"
+    },
+    "parse_status": {
+      "default": "parsed",
+      "enum": [
+        "parsed",
+        "parse_failed"
+      ],
+      "title": "Parse Status",
+      "type": "string"
+    },
+    "parser_version": {
+      "title": "Parser Version",
+      "type": "string"
+    },
+    "amount_submitted": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Amount Submitted"
+    },
+    "amount_rejected": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Amount Rejected"
+    },
+    "amount_allowed": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Amount Allowed"
+    },
+    "amount_disputed": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Amount Disputed"
+    },
+    "reason_code": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Reason Code"
+    },
+    "reason_text_excerpt": {
+      "title": "Reason Text Excerpt",
+      "type": "string"
+    },
+    "human_owner": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Human Owner"
+    },
+    "followup_due_at": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Followup Due At"
+    },
+    "idempotency_key": {
+      "title": "Idempotency Key",
+      "type": "string"
+    },
+    "source_refs": {
+      "items": {
+        "$ref": "#/$defs/CarrierRejectionSourceRef"
+      },
+      "title": "Source Refs",
+      "type": "array"
+    }
+  },
+  "required": [
+    "notice_id",
+    "carrier_id",
+    "platform",
+    "status_timestamp",
+    "response_type",
+    "parser_version",
+    "reason_text_excerpt",
+    "idempotency_key",
+    "source_refs"
+  ],
+  "title": "CarrierRejectionNotice",
+  "type": "object"
+}

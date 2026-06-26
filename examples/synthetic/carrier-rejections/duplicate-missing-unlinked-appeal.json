@@ -1,0 +1,233 @@
+{
+  "schema_version": "0.1",
+  "bundle_id": "synthetic-carrier-rejection-capture-001",
+  "run_id": "synthetic-carrier-rejection-run-001",
+  "preflight_packet_id": "filled-by-test-preflight-packet",
+  "budget_proposal_id": "filled-by-test-budget-proposal",
+  "data_origin": "synthetic",
+  "contains_real_client_data": false,
+  "contains_real_matter_data": false,
+  "contains_privileged_data": false,
+  "as_of": "2026-07-06T12:00:00Z",
+  "expected_responses": [
+    {
+      "submission_id": "SUB-INV-1001",
+      "submission_type": "invoice",
+      "carrier_id": "synthetic-harbor-point",
+      "budget_proposal_id": "filled-by-test-budget-proposal",
+      "invoice_id": "INV-SYN-1001",
+      "amount_submitted": 15000.0,
+      "expected_response_due_at": "2026-07-05T17:00:00Z",
+      "human_owner": "synthetic-pricing-reviewer",
+      "source_ref": "carrier-submission-ledger://SUB-INV-1001"
+    },
+    {
+      "submission_id": "SUB-INV-1002",
+      "submission_type": "invoice",
+      "carrier_id": "synthetic-harbor-point",
+      "budget_proposal_id": "filled-by-test-budget-proposal",
+      "invoice_id": "INV-SYN-1002",
+      "amount_submitted": 5000.0,
+      "expected_response_due_at": "2026-07-01T17:00:00Z",
+      "human_owner": "synthetic-billing-reviewer",
+      "source_ref": "carrier-submission-ledger://SUB-INV-1002"
+    },
+    {
+      "submission_id": "SUB-INV-1003",
+      "submission_type": "invoice",
+      "carrier_id": "synthetic-harbor-point",
+      "budget_proposal_id": "filled-by-test-budget-proposal",
+      "invoice_id": "INV-SYN-1003",
+      "amount_submitted": 1200.0,
+      "expected_response_due_at": "2026-07-04T17:00:00Z",
+      "human_owner": "synthetic-billing-reviewer",
+      "source_ref": "carrier-submission-ledger://SUB-INV-1003"
+    }
+  ],
+  "notices": [
+    {
+      "notice_id": "notice-portal-001",
+      "carrier_id": "synthetic-harbor-point",
+      "platform": "Synthetic Bill Portal",
+      "submission_id": "SUB-INV-1001",
+      "budget_proposal_id": "filled-by-test-budget-proposal",
+      "invoice_id": "INV-SYN-1001",
+      "line_id": "INV-SYN-1001-L340-001",
+      "phase_id": "L300",
+      "task_id": "L330",
+      "external_code_candidate": "L340",
+      "expense_code": "E120",
+      "timekeeper_id": null,
+      "status_timestamp": "2026-07-05T14:30:00Z",
+      "response_type": "rejected",
+      "parse_status": "parsed",
+      "parser_version": "carrier-rejection-parser.v0_1",
+      "amount_submitted": 15000.0,
+      "amount_rejected": 15000.0,
+      "amount_allowed": 0.0,
+      "amount_disputed": 15000.0,
+      "reason_code": "NO_PREAPPROVAL_EXPERT",
+      "reason_text_excerpt": "Expert expense rejected because prior approval was not attached.",
+      "human_owner": "synthetic-pricing-reviewer",
+      "followup_due_at": "2026-07-10T17:00:00Z",
+      "idempotency_key": "synthetic-harbor-point|SUB-INV-1001|INV-SYN-1001-L340-001|NO_PREAPPROVAL_EXPERT",
+      "source_refs": [
+        {
+          "source_channel": "portal_status",
+          "source_id": "synthetic-portal-export-20260705",
+          "source_record_id": "portal-status-HP-1001-L340",
+          "retrieved_at": "2026-07-05T15:00:00Z",
+          "content_sha256": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+          "message_id": null,
+          "portal_status_id": "portal-status-HP-1001-L340",
+          "row_ref": "portal-export.csv#row=17",
+          "attachment_id": null
+        }
+      ]
+    },
+    {
+      "notice_id": "notice-email-001",
+      "carrier_id": "synthetic-harbor-point",
+      "platform": "Synthetic Bill Portal",
+      "submission_id": "SUB-INV-1001",
+      "budget_proposal_id": "filled-by-test-budget-proposal",
+      "invoice_id": "INV-SYN-1001",
+      "line_id": "INV-SYN-1001-L340-001",
+      "phase_id": "L300",
+      "task_id": "L330",
+      "external_code_candidate": "L340",
+      "expense_code": "E120",
+      "timekeeper_id": null,
+      "status_timestamp": "2026-07-05T14:30:00Z",
+      "response_type": "rejected",
+      "parse_status": "parsed",
+      "parser_version": "carrier-rejection-parser.v0_1",
+      "amount_submitted": 15000.0,
+      "amount_rejected": 15000.0,
+      "amount_allowed": 0.0,
+      "amount_disputed": 15000.0,
+      "reason_code": "NO_PREAPPROVAL_EXPERT",
+      "reason_text_excerpt": "Expert expense rejected because prior approval was not attached.",
+      "human_owner": "synthetic-pricing-reviewer",
+      "followup_due_at": "2026-07-10T17:00:00Z",
+      "idempotency_key": "synthetic-harbor-point|SUB-INV-1001|INV-SYN-1001-L340-001|NO_PREAPPROVAL_EXPERT",
+      "source_refs": [
+        {
+          "source_channel": "email_notice",
+          "source_id": "synthetic-email-notice-20260705",
+          "source_record_id": "email-msg-HP-1001-L340",
+          "retrieved_at": "2026-07-05T15:03:00Z",
+          "content_sha256": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+          "message_id": "<synthetic-hp-1001-l340@example.invalid>",
+          "portal_status_id": null,
+          "row_ref": null,
+          "attachment_id": "email-attachment-export-001"
+        }
+      ]
+    },
+    {
+      "notice_id": "notice-unlinked-001",
+      "carrier_id": "synthetic-harbor-point",
+      "platform": "Synthetic Bill Portal",
+      "submission_id": "SUB-UNKNOWN-9999",
+      "budget_proposal_id": "filled-by-test-budget-proposal",
+      "invoice_id": "INV-SYN-9999",
+      "line_id": null,
+      "phase_id": null,
+      "task_id": null,
+      "external_code_candidate": null,
+      "expense_code": null,
+      "timekeeper_id": null,
+      "status_timestamp": "2026-07-05T16:30:00Z",
+      "response_type": "rejected",
+      "parse_status": "parsed",
+      "parser_version": "carrier-rejection-parser.v0_1",
+      "amount_submitted": 750.0,
+      "amount_rejected": 750.0,
+      "amount_allowed": 0.0,
+      "amount_disputed": 750.0,
+      "reason_code": "UNKNOWN_SUBMISSION",
+      "reason_text_excerpt": "Carrier notice references a submission ID not present in the local expected-response ledger.",
+      "human_owner": "synthetic-billing-reviewer",
+      "followup_due_at": "2026-07-08T17:00:00Z",
+      "idempotency_key": "synthetic-harbor-point|SUB-UNKNOWN-9999|UNKNOWN_SUBMISSION",
+      "source_refs": [
+        {
+          "source_channel": "portal_export",
+          "source_id": "synthetic-portal-export-20260705",
+          "source_record_id": "portal-status-HP-9999",
+          "retrieved_at": "2026-07-05T17:00:00Z",
+          "content_sha256": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+          "message_id": null,
+          "portal_status_id": "portal-status-HP-9999",
+          "row_ref": "portal-export.csv#row=29",
+          "attachment_id": null
+        }
+      ]
+    },
+    {
+      "notice_id": "notice-parse-001",
+      "carrier_id": "synthetic-harbor-point",
+      "platform": "Synthetic Bill Portal",
+      "submission_id": "SUB-INV-1003",
+      "budget_proposal_id": "filled-by-test-budget-proposal",
+      "invoice_id": "INV-SYN-1003",
+      "line_id": null,
+      "phase_id": "L200",
+      "task_id": null,
+      "external_code_candidate": null,
+      "expense_code": null,
+      "timekeeper_id": null,
+      "status_timestamp": "2026-07-05T18:30:00Z",
+      "response_type": "unknown",
+      "parse_status": "parse_failed",
+      "parser_version": "carrier-rejection-parser.v0_1",
+      "amount_submitted": 1200.0,
+      "amount_rejected": null,
+      "amount_allowed": null,
+      "amount_disputed": null,
+      "reason_code": "PARSE_FAILED",
+      "reason_text_excerpt": "Deterministic parser could not extract the carrier response state from the returned workbook comment.",
+      "human_owner": "synthetic-billing-reviewer",
+      "followup_due_at": "2026-07-08T17:00:00Z",
+      "idempotency_key": "synthetic-harbor-point|SUB-INV-1003|PARSE_FAILED",
+      "source_refs": [
+        {
+          "source_channel": "returned_workbook",
+          "source_id": "synthetic-returned-workbook-20260705",
+          "source_record_id": "workbook-comment-12",
+          "retrieved_at": "2026-07-05T19:00:00Z",
+          "content_sha256": "sha256:4444444444444444444444444444444444444444444444444444444444444444",
+          "message_id": null,
+          "portal_status_id": null,
+          "row_ref": "Budget!H42",
+          "attachment_id": "returned-workbook-001"
+        }
+      ]
+    }
+  ],
+  "appeal_results": [
+    {
+      "appeal_result_id": "appeal-result-001",
+      "related_notice_id": "notice-portal-001",
+      "result": "partially_accepted",
+      "appealed_amount": 15000.0,
+      "recovered_amount": 8000.0,
+      "write_down_amount": 7000.0,
+      "status_timestamp": "2026-07-12T18:15:00Z",
+      "source_refs": [
+        {
+          "source_channel": "appeal_correspondence",
+          "source_id": "synthetic-appeal-result-20260712",
+          "source_record_id": "appeal-result-HP-1001-L340",
+          "retrieved_at": "2026-07-12T19:00:00Z",
+          "content_sha256": "sha256:5555555555555555555555555555555555555555555555555555555555555555",
+          "message_id": "<synthetic-appeal-result@example.invalid>",
+          "portal_status_id": "portal-appeal-result-HP-1001-L340",
+          "row_ref": null,
+          "attachment_id": null
+        }
+      ]
+    }
+  ]
+}

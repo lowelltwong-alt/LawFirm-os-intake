@@ -1,0 +1,91 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "source_channel": {
+      "enum": [
+        "portal_status",
+        "portal_export",
+        "email_notice",
+        "ledes_response",
+        "returned_workbook",
+        "appeal_correspondence",
+        "manual_entry"
+      ],
+      "title": "Source Channel",
+      "type": "string"
+    },
+    "source_id": {
+      "title": "Source Id",
+      "type": "string"
+    },
+    "source_record_id": {
+      "title": "Source Record Id",
+      "type": "string"
+    },
+    "retrieved_at": {
+      "title": "Retrieved At",
+      "type": "string"
+    },
+    "content_sha256": {
+      "title": "Content Sha256",
+      "type": "string"
+    },
+    "message_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Message Id"
+    },
+    "portal_status_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Portal Status Id"
+    },
+    "row_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Row Ref"
+    },
+    "attachment_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Attachment Id"
+    }
+  },
+  "required": [
+    "source_channel",
+    "source_id",
+    "source_record_id",
+    "retrieved_at",
+    "content_sha256"
+  ],
+  "title": "CarrierRejectionSourceRef",
+  "type": "object"
+}

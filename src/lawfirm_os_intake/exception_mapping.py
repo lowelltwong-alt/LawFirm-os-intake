@@ -86,6 +86,104 @@ RULE_DEFINITIONS = [
         ],
         "structured_refs": ["docs/legal-budget-design.md#actuals-comparison-boundary"],
     },
+    {
+        "mapping_id": "carrier_rejection_notice_received.v1",
+        "issue_family": "carrier_rejection_capture",
+        "local_event_label": "carrier_rejection_notice_received",
+        "canonical_lake_class": "workflow_escalation",
+        "trigger_summary": (
+            "A carrier rejection or partial rejection notice was captured and linked to a "
+            "known synthetic submission."
+        ),
+        "support_ref_kinds": [
+            "carrier_rejection_reconciliation_report",
+            "carrier_rejection_remediation_case",
+        ],
+        "structured_refs": [
+            "docs/carrier-rejection-learning-loop-roadmap.md#candidate-rejection-classes"
+        ],
+    },
+    {
+        "mapping_id": "carrier_rejection_duplicate_notice.v1",
+        "issue_family": "carrier_rejection_reconciliation",
+        "local_event_label": "carrier_rejection_duplicate_notice",
+        "canonical_lake_class": "workflow_escalation",
+        "trigger_summary": (
+            "Multiple carrier notices collapsed to one logical rejection by deterministic "
+            "idempotency key."
+        ),
+        "support_ref_kinds": [
+            "carrier_rejection_reconciliation_report",
+            "carrier_rejection_remediation_case",
+        ],
+        "structured_refs": [
+            "docs/carrier-rejection-learning-loop-roadmap.md#deterministic-completeness"
+        ],
+    },
+    {
+        "mapping_id": "carrier_rejection_unlinked.v1",
+        "issue_family": "carrier_rejection_reconciliation",
+        "local_event_label": "carrier_rejection_unlinked",
+        "canonical_lake_class": "retrieval_miss",
+        "trigger_summary": (
+            "A carrier rejection notice could not be linked to a known submitted budget, "
+            "invoice, appeal, or portal action."
+        ),
+        "support_ref_kinds": [
+            "carrier_rejection_reconciliation_report",
+            "carrier_rejection_remediation_case",
+        ],
+        "structured_refs": [
+            "docs/carrier-rejection-learning-loop-roadmap.md#deterministic-completeness"
+        ],
+    },
+    {
+        "mapping_id": "carrier_response_missing_after_sla.v1",
+        "issue_family": "carrier_rejection_reconciliation",
+        "local_event_label": "carrier_response_missing_after_sla",
+        "canonical_lake_class": "workflow_escalation",
+        "trigger_summary": (
+            "An expected carrier response was not captured by its configured review SLA."
+        ),
+        "support_ref_kinds": [
+            "carrier_rejection_reconciliation_report",
+            "carrier_rejection_remediation_case",
+        ],
+        "structured_refs": [
+            "docs/carrier-rejection-learning-loop-roadmap.md#deterministic-completeness"
+        ],
+    },
+    {
+        "mapping_id": "carrier_appeal_result_received.v1",
+        "issue_family": "carrier_rejection_appeal_result",
+        "local_event_label": "carrier_appeal_result_received",
+        "canonical_lake_class": "workflow_escalation",
+        "trigger_summary": (
+            "A carrier appeal result was captured as append-only outcome evidence."
+        ),
+        "support_ref_kinds": [
+            "carrier_rejection_reconciliation_report",
+            "carrier_appeal_result",
+        ],
+        "structured_refs": [
+            "docs/carrier-rejection-learning-loop-roadmap.md#follow-up-and-appeal-workflow"
+        ],
+    },
+    {
+        "mapping_id": "carrier_rejection_learning_candidate.v1",
+        "issue_family": "carrier_rejection_learning",
+        "local_event_label": "carrier_rejection_learning_candidate",
+        "canonical_lake_class": "workflow_escalation",
+        "trigger_summary": (
+            "A reviewed carrier rejection outcome may support a future guideline, budget-driver, "
+            "template, narrative-rule, or preapproval candidate."
+        ),
+        "support_ref_kinds": [
+            "carrier_rejection_reconciliation_report",
+            "carrier_rejection_remediation_case",
+        ],
+        "structured_refs": ["docs/carrier-rejection-learning-loop-roadmap.md#learning-loops"],
+    },
 ]
 
 
@@ -155,6 +253,10 @@ def build_exception_lake_mapping_package(
         "guideline_or_cap_issue",
         "human_budget_change",
         "budget_actual_cost_variance",
+        "carrier_rejection_capture",
+        "carrier_rejection_reconciliation",
+        "carrier_rejection_appeal_result",
+        "carrier_rejection_learning",
     }
     issue_families = {rule.issue_family for rule in rules}
 

@@ -1,0 +1,89 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "submission_id": {
+      "title": "Submission Id",
+      "type": "string"
+    },
+    "submission_type": {
+      "enum": [
+        "budget",
+        "invoice",
+        "appeal",
+        "portal_action"
+      ],
+      "title": "Submission Type",
+      "type": "string"
+    },
+    "carrier_id": {
+      "title": "Carrier Id",
+      "type": "string"
+    },
+    "budget_proposal_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Budget Proposal Id"
+    },
+    "invoice_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Invoice Id"
+    },
+    "amount_submitted": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Amount Submitted"
+    },
+    "expected_response_due_at": {
+      "title": "Expected Response Due At",
+      "type": "string"
+    },
+    "human_owner": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Human Owner"
+    },
+    "source_ref": {
+      "title": "Source Ref",
+      "type": "string"
+    }
+  },
+  "required": [
+    "submission_id",
+    "submission_type",
+    "carrier_id",
+    "expected_response_due_at",
+    "source_ref"
+  ],
+  "title": "CarrierExpectedResponse",
+  "type": "object"
+}

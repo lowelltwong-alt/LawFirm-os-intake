@@ -1,0 +1,183 @@
+{
+  "$defs": {
+    "CarrierRejectionSourceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "source_channel": {
+          "enum": [
+            "portal_status",
+            "portal_export",
+            "email_notice",
+            "ledes_response",
+            "returned_workbook",
+            "appeal_correspondence",
+            "manual_entry"
+          ],
+          "title": "Source Channel",
+          "type": "string"
+        },
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "source_record_id": {
+          "title": "Source Record Id",
+          "type": "string"
+        },
+        "retrieved_at": {
+          "title": "Retrieved At",
+          "type": "string"
+        },
+        "content_sha256": {
+          "title": "Content Sha256",
+          "type": "string"
+        },
+        "message_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Message Id"
+        },
+        "portal_status_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Portal Status Id"
+        },
+        "row_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Row Ref"
+        },
+        "attachment_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attachment Id"
+        }
+      },
+      "required": [
+        "source_channel",
+        "source_id",
+        "source_record_id",
+        "retrieved_at",
+        "content_sha256"
+      ],
+      "title": "CarrierRejectionSourceRef",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "appeal_result_id": {
+      "title": "Appeal Result Id",
+      "type": "string"
+    },
+    "related_notice_id": {
+      "title": "Related Notice Id",
+      "type": "string"
+    },
+    "result": {
+      "enum": [
+        "accepted",
+        "denied",
+        "partially_accepted",
+        "withdrawn",
+        "no_response",
+        "stale"
+      ],
+      "title": "Result",
+      "type": "string"
+    },
+    "appealed_amount": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Appealed Amount"
+    },
+    "recovered_amount": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Recovered Amount"
+    },
+    "write_down_amount": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Write Down Amount"
+    },
+    "status_timestamp": {
+      "title": "Status Timestamp",
+      "type": "string"
+    },
+    "source_refs": {
+      "items": {
+        "$ref": "#/$defs/CarrierRejectionSourceRef"
+      },
+      "title": "Source Refs",
+      "type": "array"
+    },
+    "append_only": {
+      "const": true,
+      "default": true,
+      "title": "Append Only",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "appeal_result_id",
+    "related_notice_id",
+    "result",
+    "status_timestamp",
+    "source_refs"
+  ],
+  "title": "CarrierAppealResult",
+  "type": "object"
+}

@@ -12,7 +12,11 @@
         "unknown_budget_driver",
         "guideline_or_cap_issue",
         "human_budget_change",
-        "budget_actual_cost_variance"
+        "budget_actual_cost_variance",
+        "carrier_rejection_capture",
+        "carrier_rejection_reconciliation",
+        "carrier_rejection_appeal_result",
+        "carrier_rejection_learning"
       ],
       "title": "Issue Family",
       "type": "string"
@@ -41,7 +45,10 @@
           "budget_form_mapping_report",
           "budget_proposal",
           "budget_change_record",
-          "budget_actual_comparison_report"
+          "budget_actual_comparison_report",
+          "carrier_rejection_reconciliation_report",
+          "carrier_rejection_remediation_case",
+          "carrier_appeal_result"
         ],
         "type": "string"
       },

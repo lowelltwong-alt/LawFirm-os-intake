@@ -7,6 +7,7 @@ import shutil
 import sys
 
 from .budget_form import build_budget_form_template_audit_report, render_budget_form
+from .carrier_rejections import run_carrier_rejection_capture
 from .confirmation import bind_confirmation_to_packet_evidence
 from .models import BudgetProposal, HumanConfirmation
 from .util import load_json, write_json
@@ -71,6 +72,14 @@ def _parser() -> argparse.ArgumentParser:
     )
     budget_form_audit.add_argument("--template", required=True, help="Existing UTBMS budget form")
     budget_form_audit.add_argument("--out", required=True, help="Output audit report JSON path")
+
+    carrier_rejections = sub.add_parser(
+        "capture-carrier-rejections",
+        help="Build a synthetic carrier rejection reconciliation and learning packet.",
+    )
+    carrier_rejections.add_argument("--budget", required=True)
+    carrier_rejections.add_argument("--source-bundle", required=True)
+    carrier_rejections.add_argument("--out-dir", required=True)
     return parser
 
 
@@ -263,6 +272,33 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 0 if report.status == "passed" else 2
+
+        if args.command == "capture-carrier-rejections":
+            report, run_dir = run_carrier_rejection_capture(
+                args.budget,
+                args.source_bundle,
+                args.out_dir,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "reconciliation_report_id": report.reconciliation_report_id,
+                    "budget_proposal_id": report.budget_proposal_id,
+                    "expected_response_count": report.expected_response_count,
+                    "reconciled_response_count": report.reconciled_response_count,
+                    "missing_response_count": report.missing_response_count,
+                    "unlinked_notice_count": report.unlinked_notice_count,
+                    "duplicate_notice_count": report.duplicate_notice_count,
+                    "appeal_result_count": report.appeal_result_count,
+                    "exception_lake_candidate_count": len(report.exception_lake_candidates),
+                    "not_authorized_for_lake_write": report.not_authorized_for_lake_write,
+                    "not_authorized_for_external_submission": (
+                        report.not_authorized_for_external_submission
+                    ),
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0
     except (ValueError, OSError, json.JSONDecodeError) as exc:
         print(json.dumps({"status": "blocked", "error": str(exc)}, indent=2), file=sys.stderr)
         return 2
