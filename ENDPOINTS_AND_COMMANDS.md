@@ -334,6 +334,26 @@ plan is not ready and never approves fixture generation, creates fixture PRs,
 ingests public records, authorizes adapters, mutates fixture files, writes
 Lake/SQLite records, or applies learning.
 
+### Record public synthetic fixture conversion review
+
+```bash
+python -m lawfirm_os_intake record-public-synthetic-fixture-conversion-review \
+  --review-packet .lawfirm-os-intake/public-synthetic-fixture-conversion-review/public_synthetic_fixture_conversion_review_packet.json \
+  --review .lawfirm-os-intake/public-synthetic-fixture-conversion-review/public_conversion_review_decision.json \
+  --out-dir .lawfirm-os-intake/public-synthetic-fixture-conversion-review-outcome
+```
+
+This writes `public_synthetic_fixture_conversion_review_record.json`,
+`public_synthetic_fixture_conversion_review_history.jsonl`,
+`public_synthetic_fixture_conversion_review_outcome_report.json`, and
+`public_synthetic_fixture_conversion_review_outcome_report.md`. The review input
+must be a human-authored decision JSON bound to the supplied review packet,
+source, conversion spec, and decision template. Approved decisions mean only
+that a separate fixture-generation PR is required if humans choose to proceed.
+The command does not create fixtures, create a PR, ingest public records,
+authorize adapters, mutate fixture files, write Lake/SQLite records, or apply
+learning.
+
 ### Build learning owner handoffs
 
 ```bash

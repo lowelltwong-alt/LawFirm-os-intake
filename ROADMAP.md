@@ -65,6 +65,7 @@ Exit criteria:
 - methodology audit passes with direct runtime ingestion and adapter authorization still disabled;
 - synthetic fixture conversion plan is ready for human review with red-team checks and no fixture mutation;
 - conversion review packet is ready for human decision with no fixture PR creation or silent learning;
+- human conversion review outcome is recorded append-only before any fixture PR is prepared;
 - no copyrighted bulk corpus is committed;
 - no real public party data enters runtime fixtures;
 - provenance and transformation method are documented.

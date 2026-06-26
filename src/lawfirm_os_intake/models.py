@@ -773,6 +773,180 @@ class PublicSyntheticFixtureConversionReviewPacket(StrictModel):
         return self
 
 
+class PublicSyntheticFixtureConversionReviewOutcomeCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed", "warning"]
+    message: str
+    artifact_refs: list[str] = Field(default_factory=list)
+    source_ids: list[str] = Field(default_factory=list)
+    conversion_spec_ids: list[str] = Field(default_factory=list)
+    blocking_refs: list[str] = Field(default_factory=list)
+
+
+class PublicSyntheticFixtureConversionReviewRecord(StrictModel):
+    schema_version: str = "0.1"
+    conversion_review_id: str
+    review_packet_id: str
+    conversion_plan_id: str
+    conversion_spec_id: str
+    source_id: str
+    reviewer_id: str
+    reviewed_at: str
+    outcome: PublicSyntheticFixtureReviewOutcome
+    decision_reason: str
+    accepted_required_gates: list[str] = Field(default_factory=list)
+    rejected_or_revision_reasons: list[str] = Field(default_factory=list)
+    required_followups: list[str] = Field(default_factory=list)
+    evidence_refs: list[str] = Field(default_factory=list)
+    supersedes_review_outcome_id: str | None = None
+    append_only: Literal[True] = True
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    planning_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_fixture_generation: Literal[True] = True
+    fixture_generation_authorized: Literal[False] = False
+    fixture_pr_created: Literal[False] = False
+    fixture_files_mutated: Literal[False] = False
+    public_records_ingested: Literal[False] = False
+    raw_public_payload_committed: Literal[False] = False
+    connector_implemented: Literal[False] = False
+    legal_knowledge_adapter_authorized: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def conversion_review_record_is_complete(
+        self,
+    ) -> "PublicSyntheticFixtureConversionReviewRecord":
+        if not self.conversion_review_id.strip():
+            raise ValueError("conversion review record requires conversion_review_id")
+        if not self.reviewer_id.strip():
+            raise ValueError("conversion review record requires reviewer_id")
+        if not self.reviewed_at.strip():
+            raise ValueError("conversion review record requires reviewed_at")
+        if not self.decision_reason.strip():
+            raise ValueError("conversion review record requires decision_reason")
+        if not self.evidence_refs:
+            raise ValueError("conversion review record requires evidence_refs")
+        approval_gates = {
+            "human_public_synthetic_conversion_review",
+            "source_license_review",
+            "privacy_review",
+            "retention_decision",
+            "separate_synthetic_fixture_generation_pr_if_approved",
+            "synthetic_fixture_gold_review",
+            "red_team_identity_reconstruction_review",
+        }
+        if self.outcome == "approve_conversion_spec_for_separate_fixture_pr":
+            if not approval_gates.issubset(set(self.accepted_required_gates)):
+                raise ValueError("approved conversion reviews require all approval gates")
+        if self.outcome in {"require_spec_revision", "reject_source_for_fixture_use"}:
+            if not self.rejected_or_revision_reasons:
+                raise ValueError("revision or rejection conversion reviews require reasons")
+        if self.outcome == "needs_more_information" and not self.required_followups:
+            raise ValueError("needs_more_information conversion reviews require followups")
+        return self
+
+
+class PublicSyntheticFixtureConversionReviewOutcomeReport(StrictModel):
+    schema_version: str = "0.1"
+    review_outcome_report_id: str
+    status: Literal[
+        "conversion_review_recorded_separate_fixture_pr_required",
+        "conversion_review_recorded_revision_or_rejection",
+        "conversion_review_recorded_more_information_required",
+        "conversion_review_recorded_human_only_hold",
+        "conversion_review_blocked_by_review_evidence",
+    ]
+    source_review_packet_ref: str
+    review_packet_id: str
+    conversion_plan_id: str
+    conversion_review_id: str
+    conversion_spec_id: str
+    source_id: str
+    outcome: PublicSyntheticFixtureReviewOutcome
+    decision_reason: str
+    source_review_packet_status: Literal[
+        "ready_for_human_conversion_review",
+        "blocked_by_conversion_plan",
+        "no_specs_to_review",
+    ]
+    source_recommendation_id: str | None = None
+    source_recommended_action: PublicSyntheticFixtureReviewAction | None = None
+    source_recommended_outcome: PublicSyntheticFixtureReviewOutcome | None = None
+    source_decision_template_id: str | None = None
+    accepted_required_gates: list[str] = Field(default_factory=list)
+    rejected_or_revision_reasons: list[str] = Field(default_factory=list)
+    required_followups: list[str] = Field(default_factory=list)
+    evidence_refs: list[str] = Field(default_factory=list)
+    append_only_history_ref: str
+    checks: list[PublicSyntheticFixtureConversionReviewOutcomeCheck]
+    required_next_gates: list[str]
+    accepted_for_separate_fixture_pr: bool = False
+    separate_fixture_generation_pr_required: bool = False
+    append_only: Literal[True] = True
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    planning_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_fixture_generation: Literal[True] = True
+    fixture_generation_authorized: Literal[False] = False
+    fixture_pr_created: Literal[False] = False
+    fixture_files_mutated: Literal[False] = False
+    public_records_ingested: Literal[False] = False
+    raw_public_payload_committed: Literal[False] = False
+    connector_implemented: Literal[False] = False
+    legal_knowledge_adapter_authorized: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def conversion_review_outcome_report_status_matches_checks(
+        self,
+    ) -> "PublicSyntheticFixtureConversionReviewOutcomeReport":
+        failed = [check for check in self.checks if check.status == "failed"]
+        if self.status == "conversion_review_blocked_by_review_evidence" and not failed:
+            raise ValueError("blocked conversion review outcome report requires failed checks")
+        if self.status != "conversion_review_blocked_by_review_evidence" and failed:
+            raise ValueError(
+                "non-blocked conversion review outcome report cannot have failed checks"
+            )
+        if self.status == "conversion_review_recorded_separate_fixture_pr_required":
+            if not (
+                self.outcome == "approve_conversion_spec_for_separate_fixture_pr"
+                and self.accepted_for_separate_fixture_pr
+                and self.separate_fixture_generation_pr_required
+            ):
+                raise ValueError("separate fixture PR status requires approved outcome")
+        if self.status != "conversion_review_recorded_separate_fixture_pr_required" and (
+            self.accepted_for_separate_fixture_pr or self.separate_fixture_generation_pr_required
+        ):
+            raise ValueError("non-approval conversion review cannot require a fixture PR")
+        required = {
+            "append_only_conversion_review_outcome",
+            "separate_synthetic_fixture_generation_pr_if_approved",
+            "synthetic_fixture_gold_review",
+            "red_team_identity_reconstruction_review",
+            "legal_knowledge_runtime_owner_review_before_adapter",
+            "no_public_payload_or_identity_contamination",
+        }
+        if not required.issubset(set(self.required_next_gates)):
+            raise ValueError("conversion review outcome report is missing required gates")
+        return self
+
+
 class ContractStateDependency(StrictModel):
     repo: str
     remote: str | None = None

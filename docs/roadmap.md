@@ -645,6 +645,11 @@ without letting public records enter the runtime.
   writes `public_synthetic_fixture_conversion_review_packet.json`,
   `public_synthetic_fixture_conversion_review_packet.md`, and
   `public_synthetic_fixture_conversion_review_decision_template.json`.
+- `record-public-synthetic-fixture-conversion-review` consumes the review packet
+  and an explicit human decision JSON, then writes
+  `public_synthetic_fixture_conversion_review_record.json`,
+  `public_synthetic_fixture_conversion_review_history.jsonl`, and
+  `public_synthetic_fixture_conversion_review_outcome_report.json`.
 - It checks that CourtListener/RECAP, FJC IDB, and the Enron email corpus are
   present for Phase 2 structure research, while all sources remain planning-only
   and direct ingestion remains disabled.
@@ -658,6 +663,9 @@ without letting public records enter the runtime.
 - The review packet adds source-by-source recommendations, why-notes, required
   human decisions, red-team notes, and append-only decision templates before any
   separate fixture PR can be prepared.
+- The review outcome record binds one human decision to a source, conversion
+  spec, decision template, evidence refs, accepted gates, reasons, and followups
+  before any fixture PR planning can rely on it.
 - Passing means `ready_for_human_public_source_methodology_review`, not
   adapter approval or runtime eligibility.
 - The command records `public_records_ingested=false`,
@@ -669,6 +677,11 @@ without letting public records enter the runtime.
   human-reviewed PR.
 - The review packet records `fixture_pr_created=false` and
   `silent_learning_performed=false`; it is not approval by itself.
+- The review outcome report records `fixture_generation_authorized=false`,
+  `fixture_pr_created=false`, `fixture_files_mutated=false`,
+  `public_records_ingested=false`, `raw_public_payload_committed=false`,
+  `legal_knowledge_adapter_authorized=false`, `lake_write_performed=false`,
+  `sqlite_write_performed=false`, and `silent_learning_performed=false`.
 
 ## 19. Budget Calibration Corpus
 

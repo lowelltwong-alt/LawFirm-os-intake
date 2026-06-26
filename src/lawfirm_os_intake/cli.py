@@ -60,6 +60,9 @@ from .public_synthetic_fixture_conversion import (
 from .public_synthetic_fixture_conversion_review import (
     run_public_synthetic_fixture_conversion_review,
 )
+from .public_synthetic_fixture_conversion_review_outcomes import (
+    run_public_synthetic_fixture_conversion_review_outcome_record,
+)
 from .reviewed_learning_gate import run_reviewed_learning_gate
 from .util import load_json, write_json
 from .workflow import run_budget, run_preflight
@@ -330,6 +333,22 @@ def _parser() -> argparse.ArgumentParser:
         help="Path to public_synthetic_fixture_conversion_plan.json.",
     )
     public_synthetic_conversion_review.add_argument("--out-dir", required=True)
+
+    public_synthetic_conversion_review_outcome = sub.add_parser(
+        "record-public-synthetic-fixture-conversion-review",
+        help="Record a human public synthetic fixture conversion review decision.",
+    )
+    public_synthetic_conversion_review_outcome.add_argument(
+        "--review-packet",
+        required=True,
+        help="Path to public_synthetic_fixture_conversion_review_packet.json.",
+    )
+    public_synthetic_conversion_review_outcome.add_argument(
+        "--review",
+        required=True,
+        help="Path to public synthetic fixture conversion review decision JSON.",
+    )
+    public_synthetic_conversion_review_outcome.add_argument("--out-dir", required=True)
 
     carrier_rejections = sub.add_parser(
         "capture-carrier-rejections",
@@ -1374,6 +1393,46 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             if packet.status != "ready_for_human_conversion_review":
+                return 2
+            return 0
+
+        if args.command == "record-public-synthetic-fixture-conversion-review":
+            report, run_dir = run_public_synthetic_fixture_conversion_review_outcome_record(
+                review_packet_path=args.review_packet,
+                review_path=args.review,
+                out_dir=args.out_dir,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "review_outcome_report_id": report.review_outcome_report_id,
+                    "review_packet_id": report.review_packet_id,
+                    "conversion_plan_id": report.conversion_plan_id,
+                    "conversion_review_id": report.conversion_review_id,
+                    "conversion_spec_id": report.conversion_spec_id,
+                    "source_id": report.source_id,
+                    "outcome": report.outcome,
+                    "accepted_for_separate_fixture_pr": (report.accepted_for_separate_fixture_pr),
+                    "separate_fixture_generation_pr_required": (
+                        report.separate_fixture_generation_pr_required
+                    ),
+                    "fixture_generation_authorized": report.fixture_generation_authorized,
+                    "fixture_pr_created": report.fixture_pr_created,
+                    "fixture_files_mutated": report.fixture_files_mutated,
+                    "public_records_ingested": report.public_records_ingested,
+                    "raw_public_payload_committed": report.raw_public_payload_committed,
+                    "connector_implemented": report.connector_implemented,
+                    "legal_knowledge_adapter_authorized": (
+                        report.legal_knowledge_adapter_authorized
+                    ),
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            if report.status == "conversion_review_blocked_by_review_evidence":
                 return 2
             return 0
 

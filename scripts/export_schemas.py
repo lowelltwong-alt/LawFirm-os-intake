@@ -123,8 +123,11 @@ from lawfirm_os_intake.models import (  # noqa: E402
     PublicSyntheticFixtureConversionCheck,
     PublicSyntheticFixtureConversionPlan,
     PublicSyntheticFixtureConversionReviewDecisionTemplate,
+    PublicSyntheticFixtureConversionReviewOutcomeCheck,
+    PublicSyntheticFixtureConversionReviewOutcomeReport,
     PublicSyntheticFixtureConversionReviewPacket,
     PublicSyntheticFixtureConversionReviewRecommendation,
+    PublicSyntheticFixtureConversionReviewRecord,
     PublicSyntheticFixtureConversionReviewRedTeamNote,
     PublicSyntheticFixtureConversionSpec,
     DeadlineDocketingGuardReport,
@@ -234,6 +237,15 @@ MODELS = {
     ),
     "public-synthetic-fixture-conversion-review-packet.schema.json": (
         PublicSyntheticFixtureConversionReviewPacket
+    ),
+    "public-synthetic-fixture-conversion-review-record.schema.json": (
+        PublicSyntheticFixtureConversionReviewRecord
+    ),
+    "public-synthetic-fixture-conversion-review-outcome-check.schema.json": (
+        PublicSyntheticFixtureConversionReviewOutcomeCheck
+    ),
+    "public-synthetic-fixture-conversion-review-outcome-report.schema.json": (
+        PublicSyntheticFixtureConversionReviewOutcomeReport
     ),
     "model-adapter-report.schema.json": ModelAdapterReport,
     "evidence-completeness-report.schema.json": EvidenceCompletenessReport,
