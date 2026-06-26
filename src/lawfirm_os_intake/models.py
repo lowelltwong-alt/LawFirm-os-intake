@@ -2528,6 +2528,155 @@ class BudgetFixtureBindingCandidateReport(StrictModel):
         return self
 
 
+BudgetFixtureBindingHandoffDisposition = Literal[
+    "ready_for_human_fixture_update_review",
+    "blocked_pending_approved_outcome",
+    "blocked_missing_approved_outputs",
+]
+
+BudgetFixtureBindingHandoffReportStatus = Literal[
+    "fixture_binding_handoff_ready_for_human_review",
+    "fixture_binding_handoff_blocked",
+    "no_fixture_binding_handoff_candidates",
+]
+
+
+class BudgetFixtureBindingHandoffItem(StrictModel):
+    schema_version: str = "0.1"
+    handoff_item_id: str
+    fixture_binding_candidate_id: str
+    fixture_binding_candidate_report_id: str
+    review_packet_id: str
+    review_outcome_report_id: str
+    replay_execution_report_id: str
+    replay_case_id: str
+    source_artifact_ref: str
+    artifact_kind: BudgetCalibrationArtifactKind
+    approved_output_refs: list[str] = Field(default_factory=list)
+    proposed_target_fixture_refs: list[str] = Field(default_factory=list)
+    proposed_binding_action: BudgetFixtureBindingAction
+    source_candidate_status: BudgetFixtureBindingCandidateStatus
+    disposition: BudgetFixtureBindingHandoffDisposition
+    target_owner: Literal["LawFirm-os-intake"] = "LawFirm-os-intake"
+    recommended_owner_actions: list[str]
+    why: list[str]
+    red_team_notes: list[str]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    fixture_update_review_required: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    fixture_update_authorized: Literal[False] = False
+    fixture_update_pr_created: Literal[False] = False
+    fixture_files_mutated: Literal[False] = False
+    fixture_binding_applied: Literal[False] = False
+    downstream_learning_gate_allowed: Literal[False] = False
+    calibration_applied: Literal[False] = False
+    profile_mutation_performed: Literal[False] = False
+    template_mutation_performed: Literal[False] = False
+    budget_mutation_performed: Literal[False] = False
+    carrier_guideline_mutation_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def disposition_matches_candidate_status(self) -> "BudgetFixtureBindingHandoffItem":
+        if (
+            self.source_candidate_status == "candidate_ready_for_fixture_update_review"
+            and self.disposition != "ready_for_human_fixture_update_review"
+        ):
+            raise ValueError("ready fixture-binding candidates must create ready handoff items")
+        if (
+            self.source_candidate_status == "blocked_pending_approved_outcome"
+            and self.disposition != "blocked_pending_approved_outcome"
+        ):
+            raise ValueError("pending-outcome fixture-binding candidates must stay blocked")
+        if (
+            self.source_candidate_status == "blocked_missing_approved_outputs"
+            and self.disposition != "blocked_missing_approved_outputs"
+        ):
+            raise ValueError("missing-output fixture-binding candidates must stay blocked")
+        if self.disposition == "ready_for_human_fixture_update_review" and not (
+            self.approved_output_refs and self.proposed_target_fixture_refs
+        ):
+            raise ValueError("ready fixture-binding handoffs require outputs and target refs")
+        if not self.recommended_owner_actions:
+            raise ValueError("fixture-binding handoff item requires owner actions")
+        if not self.red_team_notes:
+            raise ValueError("fixture-binding handoff item requires red-team notes")
+        return self
+
+
+class BudgetFixtureBindingHandoffReport(StrictModel):
+    schema_version: str = "0.1"
+    fixture_binding_handoff_report_id: str
+    source_fixture_binding_candidate_report_id: str
+    source_fixture_binding_candidate_report_ref: str
+    source_fixture_binding_candidate_report_status: BudgetFixtureBindingCandidateReportStatus
+    status: BudgetFixtureBindingHandoffReportStatus
+    item_count: int = Field(ge=0)
+    ready_item_count: int = Field(ge=0)
+    blocked_item_count: int = Field(ge=0)
+    target_owner: Literal["LawFirm-os-intake"] = "LawFirm-os-intake"
+    handoff_items: list[BudgetFixtureBindingHandoffItem]
+    handoff_item_output_ref: str | None = None
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    fixture_update_review_required: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    fixture_update_authorized: Literal[False] = False
+    fixture_update_pr_created: Literal[False] = False
+    fixture_files_mutated: Literal[False] = False
+    fixture_binding_applied: Literal[False] = False
+    downstream_learning_gate_allowed: Literal[False] = False
+    calibration_applied: Literal[False] = False
+    profile_mutation_performed: Literal[False] = False
+    template_mutation_performed: Literal[False] = False
+    budget_mutation_performed: Literal[False] = False
+    carrier_guideline_mutation_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def handoff_counts_match(self) -> "BudgetFixtureBindingHandoffReport":
+        if self.item_count != len(self.handoff_items):
+            raise ValueError("fixture-binding handoff item count does not match")
+        ready_count = sum(
+            1
+            for item in self.handoff_items
+            if item.disposition == "ready_for_human_fixture_update_review"
+        )
+        if self.ready_item_count != ready_count:
+            raise ValueError("fixture-binding handoff ready count does not match")
+        if self.blocked_item_count != self.item_count - self.ready_item_count:
+            raise ValueError("fixture-binding handoff blocked count does not match")
+        if self.status == "fixture_binding_handoff_ready_for_human_review" and (
+            not self.ready_item_count or self.blocked_item_count
+        ):
+            raise ValueError("ready fixture-binding handoff cannot include blocked items")
+        if self.status == "fixture_binding_handoff_blocked" and not self.blocked_item_count:
+            raise ValueError("blocked fixture-binding handoff requires blocked items")
+        if self.status == "no_fixture_binding_handoff_candidates" and self.handoff_items:
+            raise ValueError("no-candidate fixture-binding handoff cannot include items")
+        return self
+
+
 class BudgetFormCodeMapping(StrictModel):
     code: str
     kind: Literal["phase", "task"]

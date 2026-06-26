@@ -16,6 +16,7 @@ from .budget_corpus_replay_review import run_budget_corpus_replay_review
 from .budget_corpus_replay_review_outcomes import (
     run_budget_corpus_replay_review_outcome_record,
 )
+from .budget_fixture_binding_handoff import run_budget_fixture_binding_handoff
 from .budget_fixture_bindings import run_budget_fixture_binding_candidates
 from .budget_form import build_budget_form_template_audit_report, render_budget_form
 from .budget_lake_admission_bundle import run_budget_event_lake_admission_bundle
@@ -230,6 +231,17 @@ def _parser() -> argparse.ArgumentParser:
         help="Path to budget_corpus_replay_review_outcome_report.json.",
     )
     budget_fixture_bindings.add_argument("--out-dir", required=True)
+
+    budget_fixture_binding_handoff = sub.add_parser(
+        "build-budget-fixture-binding-handoff",
+        help="Build a human fixture-update handoff from fixture-binding candidates.",
+    )
+    budget_fixture_binding_handoff.add_argument(
+        "--fixture-binding-candidate-report",
+        required=True,
+        help="Path to budget_fixture_binding_candidate_report.json.",
+    )
+    budget_fixture_binding_handoff.add_argument("--out-dir", required=True)
 
     carrier_rejections = sub.add_parser(
         "capture-carrier-rejections",
@@ -926,6 +938,46 @@ def main(argv: list[str] | None = None) -> int:
                     "candidate_count": report.candidate_count,
                     "ready_candidate_count": report.ready_candidate_count,
                     "blocked_candidate_count": report.blocked_candidate_count,
+                    "fixture_files_mutated": report.fixture_files_mutated,
+                    "fixture_binding_applied": report.fixture_binding_applied,
+                    "downstream_learning_gate_allowed": report.downstream_learning_gate_allowed,
+                    "calibration_applied": report.calibration_applied,
+                    "profile_mutation_performed": report.profile_mutation_performed,
+                    "template_mutation_performed": report.template_mutation_performed,
+                    "budget_mutation_performed": report.budget_mutation_performed,
+                    "carrier_guideline_mutation_performed": (
+                        report.carrier_guideline_mutation_performed
+                    ),
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0
+
+        if args.command == "build-budget-fixture-binding-handoff":
+            report, run_dir = run_budget_fixture_binding_handoff(
+                fixture_binding_candidate_report_path=args.fixture_binding_candidate_report,
+                out_dir=args.out_dir,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "fixture_binding_handoff_report_id": (report.fixture_binding_handoff_report_id),
+                    "source_fixture_binding_candidate_report_id": (
+                        report.source_fixture_binding_candidate_report_id
+                    ),
+                    "source_fixture_binding_candidate_report_status": (
+                        report.source_fixture_binding_candidate_report_status
+                    ),
+                    "item_count": report.item_count,
+                    "ready_item_count": report.ready_item_count,
+                    "blocked_item_count": report.blocked_item_count,
+                    "target_owner": report.target_owner,
+                    "fixture_update_authorized": report.fixture_update_authorized,
+                    "fixture_update_pr_created": report.fixture_update_pr_created,
                     "fixture_files_mutated": report.fixture_files_mutated,
                     "fixture_binding_applied": report.fixture_binding_applied,
                     "downstream_learning_gate_allowed": report.downstream_learning_gate_allowed,

@@ -92,6 +92,13 @@ change fixture files, apply learning, mutate profiles/templates/guidelines,
 write Lake/SQLite records, submit budgets, open matters, or authorize external
 action.
 
+`build-budget-fixture-binding-handoff` consumes the fixture-binding candidate
+report and writes a human fixture-update handoff report plus JSONL handoff
+items. It must preserve ready-vs-blocked candidate state, include why-notes,
+recommended owner actions, red-team objections, and required next gates, and
+prove that no fixture update, fixture-binding application, PR creation, Lake or
+SQLite write, calibration, or silent learning occurred.
+
 `record-budget-review` also writes `budget_change_ledger_report.json`,
 `budget_change_ledger.jsonl`, and `budget_change_ledger_report.md`. Corrected
 review outcomes must produce one ledger row per human change; no-change or

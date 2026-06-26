@@ -185,6 +185,23 @@ still require human shadow-eval review and owning-repo promotion review. The
 command applies no proposed changes, mutates no baselines, writes no Lake/SQLite
 records, and performs no external writes.
 
+### Build budget fixture-binding handoff
+
+```bash
+python -m lawfirm_os_intake build-budget-fixture-binding-handoff \
+  --fixture-binding-candidate-report .lawfirm-os-intake/budget-fixture-bindings/budget_fixture_binding_candidate_report.json \
+  --out-dir .lawfirm-os-intake/budget-fixture-binding-handoff
+```
+
+This writes `budget_fixture_binding_handoff_report.json`,
+`budget_fixture_binding_handoff_report.md`, and
+`budget_fixture_binding_handoff_items.jsonl`. The handoff tells the human
+reviewer which approved synthetic replay outputs are ready for a separate
+fixture-update PR and which candidates remain blocked, with why-notes,
+recommended owner actions, and red-team objections. It does not update fixture
+files, create a PR, apply learning, mutate profiles/templates/guidelines, write
+Lake/SQLite records, or perform external writes.
+
 ### Build learning owner handoffs
 
 ```bash

@@ -546,8 +546,9 @@ after those owners promote the necessary contracts and runtime gates.
 ## 18. Budget Calibration Corpus
 
 Status: implemented for the current synthetic candidate slice through corpus
-audit, replay planning, selected replay execution audit, and human replay review
-packet/outcome recording; broader replay execution, reviewed fixture binding,
+audit, replay planning, selected replay execution audit, human replay review
+packet/outcome recording, fixture-binding candidates, and fixture-update
+handoff packaging; broader replay execution, reviewed fixture edits,
 real-data pilots, and owner adoption remain future work.
 
 Separate "we have synthetic evidence artifacts" from "we are allowed to learn
@@ -634,3 +635,12 @@ from them."
 - The fixture-binding report still does not update fixture files, apply
   learning, mutate budgets/profiles/templates/guidelines, write Lake or SQLite
   records, submit budgets, open matters, or authorize external actions.
+- `build-budget-fixture-binding-handoff` consumes the fixture-binding candidate
+  report and writes `budget_fixture_binding_handoff_report.json`,
+  `budget_fixture_binding_handoff_report.md`, and
+  `budget_fixture_binding_handoff_items.jsonl`.
+- The handoff preserves ready-vs-blocked state, explains why a candidate is or
+  is not ready for human fixture-update review, adds recommended owner actions
+  and red-team objections, and still does not update fixtures, create a PR,
+  apply learning, mutate budgets/profiles/templates/guidelines, write Lake or
+  SQLite records, submit budgets, open matters, or authorize external actions.
