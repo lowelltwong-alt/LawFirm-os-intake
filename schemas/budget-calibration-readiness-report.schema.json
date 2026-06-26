@@ -1,0 +1,327 @@
+{
+  "$defs": {
+    "BudgetCalibrationReadinessCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed",
+            "warning"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "artifact_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Artifact Refs",
+          "type": "array"
+        },
+        "blocking_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Blocking Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "BudgetCalibrationReadinessCheck",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "budget_calibration_readiness_report_id": {
+      "title": "Budget Calibration Readiness Report Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "ready_for_manual_fixture_update_review",
+        "blocked_by_calibration_chain"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "corpus_report_id": {
+      "title": "Corpus Report Id",
+      "type": "string"
+    },
+    "replay_plan_id": {
+      "title": "Replay Plan Id",
+      "type": "string"
+    },
+    "replay_execution_report_id": {
+      "title": "Replay Execution Report Id",
+      "type": "string"
+    },
+    "review_packet_id": {
+      "title": "Review Packet Id",
+      "type": "string"
+    },
+    "review_outcome_report_id": {
+      "title": "Review Outcome Report Id",
+      "type": "string"
+    },
+    "fixture_binding_candidate_report_id": {
+      "title": "Fixture Binding Candidate Report Id",
+      "type": "string"
+    },
+    "fixture_binding_handoff_report_id": {
+      "title": "Fixture Binding Handoff Report Id",
+      "type": "string"
+    },
+    "replay_case_id": {
+      "title": "Replay Case Id",
+      "type": "string"
+    },
+    "source_corpus_report_ref": {
+      "title": "Source Corpus Report Ref",
+      "type": "string"
+    },
+    "source_replay_plan_ref": {
+      "title": "Source Replay Plan Ref",
+      "type": "string"
+    },
+    "source_replay_execution_report_ref": {
+      "title": "Source Replay Execution Report Ref",
+      "type": "string"
+    },
+    "source_review_packet_ref": {
+      "title": "Source Review Packet Ref",
+      "type": "string"
+    },
+    "source_review_outcome_report_ref": {
+      "title": "Source Review Outcome Report Ref",
+      "type": "string"
+    },
+    "source_fixture_binding_candidate_report_ref": {
+      "title": "Source Fixture Binding Candidate Report Ref",
+      "type": "string"
+    },
+    "source_fixture_binding_handoff_report_ref": {
+      "title": "Source Fixture Binding Handoff Report Ref",
+      "type": "string"
+    },
+    "ready_fixture_binding_handoff_count": {
+      "minimum": 0,
+      "title": "Ready Fixture Binding Handoff Count",
+      "type": "integer"
+    },
+    "blocked_fixture_binding_handoff_count": {
+      "minimum": 0,
+      "title": "Blocked Fixture Binding Handoff Count",
+      "type": "integer"
+    },
+    "approved_output_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Approved Output Refs",
+      "type": "array"
+    },
+    "proposed_target_fixture_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Proposed Target Fixture Refs",
+      "type": "array"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/BudgetCalibrationReadinessCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "required_next_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Gates",
+      "type": "array"
+    },
+    "manual_fixture_update_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Manual Fixture Update Review Required",
+      "type": "boolean"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "not_authorized_for_external_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For External Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_lake_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Lake Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_sqlite_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Sqlite Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_budget_submission": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Budget Submission",
+      "type": "boolean"
+    },
+    "fixture_update_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Fixture Update Authorized",
+      "type": "boolean"
+    },
+    "fixture_update_pr_created": {
+      "const": false,
+      "default": false,
+      "title": "Fixture Update Pr Created",
+      "type": "boolean"
+    },
+    "fixture_files_mutated": {
+      "const": false,
+      "default": false,
+      "title": "Fixture Files Mutated",
+      "type": "boolean"
+    },
+    "fixture_binding_applied": {
+      "const": false,
+      "default": false,
+      "title": "Fixture Binding Applied",
+      "type": "boolean"
+    },
+    "downstream_learning_gate_allowed": {
+      "const": false,
+      "default": false,
+      "title": "Downstream Learning Gate Allowed",
+      "type": "boolean"
+    },
+    "calibration_applied": {
+      "const": false,
+      "default": false,
+      "title": "Calibration Applied",
+      "type": "boolean"
+    },
+    "profile_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Profile Mutation Performed",
+      "type": "boolean"
+    },
+    "template_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Template Mutation Performed",
+      "type": "boolean"
+    },
+    "budget_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Budget Mutation Performed",
+      "type": "boolean"
+    },
+    "carrier_guideline_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Carrier Guideline Mutation Performed",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "budget_calibration_readiness_report_id",
+    "status",
+    "corpus_report_id",
+    "replay_plan_id",
+    "replay_execution_report_id",
+    "review_packet_id",
+    "review_outcome_report_id",
+    "fixture_binding_candidate_report_id",
+    "fixture_binding_handoff_report_id",
+    "replay_case_id",
+    "source_corpus_report_ref",
+    "source_replay_plan_ref",
+    "source_replay_execution_report_ref",
+    "source_review_packet_ref",
+    "source_review_outcome_report_ref",
+    "source_fixture_binding_candidate_report_ref",
+    "source_fixture_binding_handoff_report_ref",
+    "ready_fixture_binding_handoff_count",
+    "blocked_fixture_binding_handoff_count",
+    "checks",
+    "required_next_gates",
+    "generated_at"
+  ],
+  "title": "BudgetCalibrationReadinessReport",
+  "type": "object"
+}

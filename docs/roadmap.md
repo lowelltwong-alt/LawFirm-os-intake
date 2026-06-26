@@ -548,8 +548,9 @@ after those owners promote the necessary contracts and runtime gates.
 Status: implemented for the current synthetic candidate slice through corpus
 audit, replay planning, selected replay execution audit, human replay review
 packet/outcome recording, fixture-binding candidates, and fixture-update
-handoff packaging; broader replay execution, reviewed fixture edits,
-real-data pilots, and owner adoption remain future work.
+handoff packaging, plus calibration-chain readiness audit; broader replay
+execution, reviewed fixture edits, real-data pilots, and owner adoption remain
+future work.
 
 Separate "we have synthetic evidence artifacts" from "we are allowed to learn
 from them."
@@ -644,3 +645,13 @@ from them."
   and red-team objections, and still does not update fixtures, create a PR,
   apply learning, mutate budgets/profiles/templates/guidelines, write Lake or
   SQLite records, submit budgets, open matters, or authorize external actions.
+- `audit-budget-calibration-readiness` consumes the corpus report, replay plan,
+  replay execution report, replay review packet, review outcome report,
+  fixture-binding candidate report, and fixture-binding handoff report, then
+  writes `budget_calibration_readiness_report.json` and Markdown notes.
+- A passing readiness audit means the synthetic calibration chain is ready for
+  manual fixture-update review only. It checks ID continuity, approved output
+  refs, target fixture refs, required gates, and no side effects. It still does
+  not update fixtures, create a PR, apply learning, mutate
+  budgets/profiles/templates/guidelines, write Lake or SQLite records, submit
+  budgets, open matters, or authorize external actions.

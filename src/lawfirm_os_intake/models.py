@@ -2677,6 +2677,91 @@ class BudgetFixtureBindingHandoffReport(StrictModel):
         return self
 
 
+class BudgetCalibrationReadinessCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed", "warning"]
+    message: str
+    artifact_refs: list[str] = Field(default_factory=list)
+    blocking_refs: list[str] = Field(default_factory=list)
+
+
+class BudgetCalibrationReadinessReport(StrictModel):
+    schema_version: str = "0.1"
+    budget_calibration_readiness_report_id: str
+    status: Literal[
+        "ready_for_manual_fixture_update_review",
+        "blocked_by_calibration_chain",
+    ]
+    corpus_report_id: str
+    replay_plan_id: str
+    replay_execution_report_id: str
+    review_packet_id: str
+    review_outcome_report_id: str
+    fixture_binding_candidate_report_id: str
+    fixture_binding_handoff_report_id: str
+    replay_case_id: str
+    source_corpus_report_ref: str
+    source_replay_plan_ref: str
+    source_replay_execution_report_ref: str
+    source_review_packet_ref: str
+    source_review_outcome_report_ref: str
+    source_fixture_binding_candidate_report_ref: str
+    source_fixture_binding_handoff_report_ref: str
+    ready_fixture_binding_handoff_count: int = Field(ge=0)
+    blocked_fixture_binding_handoff_count: int = Field(ge=0)
+    approved_output_refs: list[str] = Field(default_factory=list)
+    proposed_target_fixture_refs: list[str] = Field(default_factory=list)
+    checks: list[BudgetCalibrationReadinessCheck]
+    required_next_gates: list[str]
+    manual_fixture_update_review_required: Literal[True] = True
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    fixture_update_authorized: Literal[False] = False
+    fixture_update_pr_created: Literal[False] = False
+    fixture_files_mutated: Literal[False] = False
+    fixture_binding_applied: Literal[False] = False
+    downstream_learning_gate_allowed: Literal[False] = False
+    calibration_applied: Literal[False] = False
+    profile_mutation_performed: Literal[False] = False
+    template_mutation_performed: Literal[False] = False
+    budget_mutation_performed: Literal[False] = False
+    carrier_guideline_mutation_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def readiness_status_matches_checks(self) -> "BudgetCalibrationReadinessReport":
+        failed = [check for check in self.checks if check.status == "failed"]
+        if self.status == "ready_for_manual_fixture_update_review" and (
+            failed
+            or not self.ready_fixture_binding_handoff_count
+            or self.blocked_fixture_binding_handoff_count
+        ):
+            raise ValueError("ready calibration readiness report cannot include blockers")
+        if self.status == "blocked_by_calibration_chain" and not failed:
+            raise ValueError("blocked calibration readiness report requires failed checks")
+        required = {
+            "human_fixture_update_review",
+            "separate_fixture_update_pr_if_accepted",
+            "append_only_fixture_update_record",
+            "reviewed_learning_gate_before_candidate_changes",
+            "shadow_eval_before_learning",
+            "owning_repo_review",
+            "no_silent_profile_template_or_guideline_mutation",
+        }
+        if not required.issubset(set(self.required_next_gates)):
+            raise ValueError("budget calibration readiness report is missing required gates")
+        return self
+
+
 class BudgetFormCodeMapping(StrictModel):
     code: str
     kind: Literal["phase", "task"]

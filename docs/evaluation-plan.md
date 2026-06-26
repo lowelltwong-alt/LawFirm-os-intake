@@ -99,6 +99,15 @@ recommended owner actions, red-team objections, and required next gates, and
 prove that no fixture update, fixture-binding application, PR creation, Lake or
 SQLite write, calibration, or silent learning occurred.
 
+`audit-budget-calibration-readiness` consumes the corpus, replay plan,
+execution, review packet, review outcome, fixture-binding candidate, and
+fixture-binding handoff reports. It must prove ID continuity across the chain,
+ready status for manual fixture-update review, approved output refs, proposed
+target fixture refs, required next gates, and no fixture mutation, no PR
+creation, no calibration application, no Lake/SQLite write, no external write,
+and no silent learning. Any rejected outcome, blocked handoff, missing approved
+output, or chain mismatch must produce a blocked report.
+
 `record-budget-review` also writes `budget_change_ledger_report.json`,
 `budget_change_ledger.jsonl`, and `budget_change_ledger_report.md`. Corrected
 review outcomes must produce one ledger row per human change; no-change or

@@ -10,6 +10,7 @@ from .budget_actuals import run_budget_actual_comparison
 from .budget_actual_variance_ledger import BUDGET_ACTUAL_VARIANCE_LEDGER_REPORT_FILENAME
 from .budget_change_ledger import BUDGET_CHANGE_LEDGER_REPORT_FILENAME
 from .budget_calibration_corpus import run_budget_calibration_corpus_audit
+from .budget_calibration_readiness import run_budget_calibration_readiness_audit
 from .budget_corpus_replay import run_budget_corpus_replay_plan
 from .budget_corpus_replay_execution import run_budget_corpus_replay_execution
 from .budget_corpus_replay_review import run_budget_corpus_replay_review
@@ -242,6 +243,19 @@ def _parser() -> argparse.ArgumentParser:
         help="Path to budget_fixture_binding_candidate_report.json.",
     )
     budget_fixture_binding_handoff.add_argument("--out-dir", required=True)
+
+    budget_calibration_readiness = sub.add_parser(
+        "audit-budget-calibration-readiness",
+        help="Audit the synthetic budget calibration chain before manual fixture update review.",
+    )
+    budget_calibration_readiness.add_argument("--corpus-report", required=True)
+    budget_calibration_readiness.add_argument("--replay-plan", required=True)
+    budget_calibration_readiness.add_argument("--replay-execution-report", required=True)
+    budget_calibration_readiness.add_argument("--replay-review-packet", required=True)
+    budget_calibration_readiness.add_argument("--replay-review-outcome-report", required=True)
+    budget_calibration_readiness.add_argument("--fixture-binding-candidate-report", required=True)
+    budget_calibration_readiness.add_argument("--fixture-binding-handoff-report", required=True)
+    budget_calibration_readiness.add_argument("--out-dir", required=True)
 
     carrier_rejections = sub.add_parser(
         "capture-carrier-rejections",
@@ -996,6 +1010,62 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 0
+
+        if args.command == "audit-budget-calibration-readiness":
+            report, run_dir = run_budget_calibration_readiness_audit(
+                corpus_report_path=args.corpus_report,
+                replay_plan_path=args.replay_plan,
+                replay_execution_report_path=args.replay_execution_report,
+                replay_review_packet_path=args.replay_review_packet,
+                replay_review_outcome_report_path=args.replay_review_outcome_report,
+                fixture_binding_candidate_report_path=args.fixture_binding_candidate_report,
+                fixture_binding_handoff_report_path=args.fixture_binding_handoff_report,
+                out_dir=args.out_dir,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "budget_calibration_readiness_report_id": (
+                        report.budget_calibration_readiness_report_id
+                    ),
+                    "corpus_report_id": report.corpus_report_id,
+                    "replay_plan_id": report.replay_plan_id,
+                    "replay_execution_report_id": report.replay_execution_report_id,
+                    "review_packet_id": report.review_packet_id,
+                    "review_outcome_report_id": report.review_outcome_report_id,
+                    "fixture_binding_candidate_report_id": (
+                        report.fixture_binding_candidate_report_id
+                    ),
+                    "fixture_binding_handoff_report_id": (report.fixture_binding_handoff_report_id),
+                    "ready_fixture_binding_handoff_count": (
+                        report.ready_fixture_binding_handoff_count
+                    ),
+                    "blocked_fixture_binding_handoff_count": (
+                        report.blocked_fixture_binding_handoff_count
+                    ),
+                    "manual_fixture_update_review_required": (
+                        report.manual_fixture_update_review_required
+                    ),
+                    "fixture_update_authorized": report.fixture_update_authorized,
+                    "fixture_update_pr_created": report.fixture_update_pr_created,
+                    "fixture_files_mutated": report.fixture_files_mutated,
+                    "fixture_binding_applied": report.fixture_binding_applied,
+                    "downstream_learning_gate_allowed": report.downstream_learning_gate_allowed,
+                    "calibration_applied": report.calibration_applied,
+                    "profile_mutation_performed": report.profile_mutation_performed,
+                    "template_mutation_performed": report.template_mutation_performed,
+                    "budget_mutation_performed": report.budget_mutation_performed,
+                    "carrier_guideline_mutation_performed": (
+                        report.carrier_guideline_mutation_performed
+                    ),
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0 if report.status == "ready_for_manual_fixture_update_review" else 2
 
         if args.command == "capture-carrier-rejections":
             report, run_dir = run_carrier_rejection_capture(

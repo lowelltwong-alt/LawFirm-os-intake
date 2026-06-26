@@ -202,6 +202,29 @@ recommended owner actions, and red-team objections. It does not update fixture
 files, create a PR, apply learning, mutate profiles/templates/guidelines, write
 Lake/SQLite records, or perform external writes.
 
+### Audit budget calibration readiness
+
+```bash
+python -m lawfirm_os_intake audit-budget-calibration-readiness \
+  --corpus-report .lawfirm-os-intake/budget-corpus/budget_calibration_corpus_report.json \
+  --replay-plan .lawfirm-os-intake/budget-replay-plan/budget_corpus_replay_plan.json \
+  --replay-execution-report .lawfirm-os-intake/budget-replay-execution/budget_corpus_replay_execution_report.json \
+  --replay-review-packet .lawfirm-os-intake/budget-replay-review/budget_corpus_replay_review_packet.json \
+  --replay-review-outcome-report .lawfirm-os-intake/budget-replay-review-outcome/budget_corpus_replay_review_outcome_report.json \
+  --fixture-binding-candidate-report .lawfirm-os-intake/budget-fixture-bindings/budget_fixture_binding_candidate_report.json \
+  --fixture-binding-handoff-report .lawfirm-os-intake/budget-fixture-binding-handoff/budget_fixture_binding_handoff_report.json \
+  --out-dir .lawfirm-os-intake/budget-calibration-readiness
+```
+
+This writes `budget_calibration_readiness_report.json` and
+`budget_calibration_readiness_report.md`. The audit checks that the corpus,
+replay plan, replay execution, human replay review packet, append-only review
+outcome, fixture-binding candidate report, and fixture-binding handoff all line
+up by ID and preserve no-mutation/no-write boundaries. A passing report means
+ready for manual fixture-update review only. It does not update fixtures, create
+a PR, apply learning, mutate profiles/templates/guidelines, write Lake/SQLite
+records, or perform external writes.
+
 ### Build learning owner handoffs
 
 ```bash
