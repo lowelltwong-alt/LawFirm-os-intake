@@ -22,6 +22,9 @@ implying production readiness or external adoption.
 - `IntakeVerticalReadinessSliceStatus`,
   `IntakeVerticalReadinessArtifactCheck`, and
   `IntakeVerticalReadinessAuditReport` candidate schemas.
+- Required `budget_event_lake_admission_bundle_report.json` input, checked for
+  ready-for-owner-review status, artifact refs, record families, and no-write
+  boundaries.
 - Synthetic reviewed-learning gate fixture used by the proposed-change shadow
   eval chain.
 - Tests for ready, missing-local-surface, blocked-learning-chain, and CLI paths.
@@ -48,6 +51,8 @@ and Exception Lake for append-only admission and SQLite migrations.
   readiness.
 - Passing synthetic shadow evals can overfit narrow fixtures.
 - A green owner handoff is still only owner-review input; it is not approval.
+- A green budget-event Lake bundle is only Exception Lake owner-review input; it
+  is not admission, a SQLite write, or a record-hash assignment.
 - Real budget actuals, carrier rejections, appeals, and guideline drift require
   governed connector capture and append-only evidence storage outside intake.
 - Learning from human corrections must remain explicit, reviewed, replayed, and
@@ -56,5 +61,5 @@ and Exception Lake for append-only admission and SQLite migrations.
 ## Validation Plan
 
 - Export schemas.
-- Run focused readiness and learning-chain tests.
+- Run focused readiness, Lake-bundle, and learning-chain tests.
 - Run full repo tests, lint, formatting, smoke demo, and front-door validators.

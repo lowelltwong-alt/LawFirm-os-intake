@@ -404,15 +404,20 @@ Close the build-out with a deterministic audit that separates the easy local
 proof work from the higher-risk owner-adoption work.
 
 - `audit-intake-vertical-readiness` consumes
-  `learning_owner_handoff_report.json`.
+  `learning_owner_handoff_report.json` and
+  `budget_event_lake_admission_bundle_report.json`.
 - It writes `intake_vertical_readiness_audit_report.json` and
   `intake_vertical_readiness_audit_report.md`.
 - It checks that the intake-to-budget, budget revision, actual-cost comparison,
   carrier rejection, reviewed learning, proposed-change, shadow-eval,
-  owner-handoff, and cross-repo promotion surfaces have local candidate proof.
+  owner-handoff, budget-event Lake bundle, and cross-repo promotion surfaces
+  have local candidate proof.
 - It validates the generated learning artifact chain from owner handoff back to
   shadow eval, proposed changes, promotion readiness, shadow plan, and reviewed
   learning gate.
+- It validates the generated budget-event Lake bundle for ready-for-owner-review
+  status, existing artifact refs, candidate record-family coverage, and no
+  Lake/SQLite/billing/submission/mutation/silent-learning side effects.
 - Passing status is `ready_for_pr_review_external_adoption_required`, which
   means ready for human PR review only.
 - The report records `pr_marked_ready=false`, `promotion_authorized=false`,

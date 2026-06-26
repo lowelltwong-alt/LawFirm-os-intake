@@ -7,6 +7,7 @@ from typing import TypeVar
 from pydantic import ValidationError
 
 from .models import (
+    BudgetLakeAdmissionBundleReport,
     IntakeVerticalReadinessArtifactCheck,
     IntakeVerticalReadinessAuditReport,
     IntakeVerticalReadinessSliceStatus,
@@ -231,10 +232,35 @@ REQUIRED_SLICES: tuple[SliceDefinition, ...] = (
     ),
     SliceDefinition(
         slice_id=9,
+        title="Budget event Lake review bundle",
+        requirement_summary=(
+            "Budget change, actual-variance, and carrier-rejection decision ledgers "
+            "can be bundled into hash-addressed candidate evidence for Exception Lake owner review."
+        ),
+        proof_artifact_refs=(
+            "src/lawfirm_os_intake/budget_lake_admission_bundle.py",
+            "schemas/budget-lake-admission-bundle-report.schema.json",
+            "schemas/budget-lake-evidence-artifact.schema.json",
+            "tests/test_budget_lake_admission_bundle.py",
+            "docs/decisions/TRACE-2026-06-26-budget-event-lake-bundle.md",
+        ),
+        command_refs=("build-budget-event-lake-bundle",),
+        target_owner_repos=(
+            "LawFirm-os-intake",
+            "LawFirm-os-exceptions-lake-runtime",
+            "LawFirm-os-orchestrator",
+        ),
+        remaining_external_actions=(
+            "Exception Lake must validate and admit any runtime records under its own schemas.",
+            "Orchestrator must assemble governed evidence packets before real Lake handoff.",
+        ),
+    ),
+    SliceDefinition(
+        slice_id=10,
         title="Final intake vertical readiness audit",
         requirement_summary=(
             "A deterministic final audit checks local surfaces plus the generated learning "
-            "artifact chain before humans consider marking the PR ready."
+            "artifact chain and budget-event Lake bundle before humans consider marking the PR ready."
         ),
         proof_artifact_refs=(
             "src/lawfirm_os_intake/intake_vertical_readiness_audit.py",
@@ -263,6 +289,7 @@ REQUIRED_EXTERNAL_ADOPTION_ACTIONS = (
     "Semantic Substrate must own any canonical schema, event-label, route-ID, or lifecycle promotion.",
     "Orchestrator must own production workflow execution, connectors, human pauses, billing reads, and appeal submission gates.",
     "Exception Lake must own append-only runtime evidence admission, SQLite migrations if approved, record hashes, and supersession.",
+    "Exception Lake must review the budget-event Lake bundle before any budget, actuals, rejection, appeal, or financial-outcome event is admitted.",
     "Real client, matter, carrier guideline, actual-cost, and rate data require separate governance approval before pilot use.",
 )
 
@@ -560,9 +587,75 @@ def _check_learning_artifact_chain(
     return checks
 
 
+def _check_budget_event_lake_bundle(
+    *,
+    budget_event_lake_bundle_report_path: Path,
+    repo_root: Path,
+) -> list[IntakeVerticalReadinessArtifactCheck]:
+    checks: list[IntakeVerticalReadinessArtifactCheck] = []
+    bundle = _load_model(
+        BudgetLakeAdmissionBundleReport,
+        budget_event_lake_bundle_report_path,
+        "budget_event_lake_bundle_report_valid",
+        checks,
+    )
+    if bundle is None:
+        return checks
+    missing_artifact_refs = [
+        artifact.artifact_ref
+        for artifact in bundle.artifacts
+        if not _ref_is_file(
+            artifact.artifact_ref,
+            repo_root=repo_root,
+            base_dir=budget_event_lake_bundle_report_path.parent,
+        )
+    ]
+    failed_bundle_checks = [check.check_id for check in bundle.checks if check.status == "failed"]
+    checks.extend(
+        [
+            _artifact_check(
+                "budget_event_lake_bundle_ready_without_writes",
+                bundle.status == "ready_for_exception_lake_review"
+                and not failed_bundle_checks
+                and bundle.no_lake_admission_performed is True
+                and bundle.sqlite_write_performed is False
+                and bundle.lake_write_performed is False
+                and bundle.external_writes_performed is False
+                and bundle.billing_connector_read_performed is False
+                and bundle.billing_connector_write_performed is False
+                and bundle.carrier_portal_write_performed is False
+                and bundle.email_send_performed is False
+                and bundle.appeal_submission_performed is False
+                and bundle.budget_mutation_performed is False
+                and bundle.silent_learning_performed is False,
+                "Budget-event Lake bundle is ready for Exception Lake owner review and preserves no-write/no-learning boundaries.",
+                artifact_ref=str(budget_event_lake_bundle_report_path),
+                missing_refs=failed_bundle_checks,
+            ),
+            _artifact_check(
+                "budget_event_lake_bundle_artifact_refs_exist",
+                not missing_artifact_refs and bool(bundle.artifacts),
+                "Every artifact ref named by the budget-event Lake bundle exists.",
+                artifact_ref=str(budget_event_lake_bundle_report_path),
+                missing_refs=missing_artifact_refs,
+            ),
+            _artifact_check(
+                "budget_event_lake_bundle_has_record_families",
+                bool(bundle.candidate_record_families)
+                and bool(bundle.local_event_labels)
+                and bundle.artifact_count == len(bundle.artifacts),
+                "Budget-event Lake bundle maps events to candidate record families and local labels.",
+                artifact_ref=str(budget_event_lake_bundle_report_path),
+            ),
+        ]
+    )
+    return checks
+
+
 def build_intake_vertical_readiness_audit(
     *,
     owner_handoff_report_path: str | Path,
+    budget_event_lake_bundle_report_path: str | Path,
     repo_root: str | Path = ".",
 ) -> IntakeVerticalReadinessAuditReport:
     root = Path(repo_root)
@@ -584,8 +677,18 @@ def build_intake_vertical_readiness_audit(
         owner_handoff_report_path=Path(owner_handoff_report_path),
         repo_root=root,
     )
-    artifact_chain_passed = bool(artifact_checks) and all(
-        check.status == "passed" for check in artifact_checks
+    learning_artifact_chain_passed = bool(artifact_checks) and all(
+        check.status == "passed"
+        for check in artifact_checks
+        if not check.check_id.startswith("budget_event_lake_bundle")
+    )
+    lake_bundle_checks = _check_budget_event_lake_bundle(
+        budget_event_lake_bundle_report_path=Path(budget_event_lake_bundle_report_path),
+        repo_root=root,
+    )
+    artifact_checks.extend(lake_bundle_checks)
+    lake_bundle_passed = bool(lake_bundle_checks) and all(
+        check.status == "passed" for check in lake_bundle_checks
     )
     local_slices_passed = implemented_count == len(REQUIRED_SLICES) and not (
         missing_artifacts or missing_commands
@@ -593,9 +696,12 @@ def build_intake_vertical_readiness_audit(
     if not local_slices_passed:
         status = "incomplete_missing_local_artifacts"
         review_readiness = "not_ready_missing_local_artifacts"
-    elif not artifact_chain_passed:
+    elif not learning_artifact_chain_passed:
         status = "blocked_missing_or_failed_learning_artifacts"
         review_readiness = "not_ready_learning_artifact_chain_blocked"
+    elif not lake_bundle_passed:
+        status = "blocked_missing_or_failed_lake_bundle"
+        review_readiness = "not_ready_lake_bundle_blocked"
     else:
         status = "ready_for_pr_review_external_adoption_required"
         review_readiness = "ready_for_human_pr_review_not_auto_marked"
@@ -605,6 +711,7 @@ def build_intake_vertical_readiness_audit(
         status=status,  # type: ignore[arg-type]
         review_readiness=review_readiness,  # type: ignore[arg-type]
         source_owner_handoff_report_ref=str(owner_handoff_report_path),
+        source_budget_event_lake_bundle_report_ref=str(budget_event_lake_bundle_report_path),
         total_slice_count=len(REQUIRED_SLICES),
         implemented_slice_count=implemented_count,
         missing_artifact_refs=missing_artifacts,
@@ -631,6 +738,8 @@ def render_intake_vertical_readiness_audit(
         f"**Status:** {report.status}",
         f"**Review readiness:** {report.review_readiness}",
         f"**Implemented local slices:** {report.implemented_slice_count} / {report.total_slice_count}",
+        f"**Owner handoff report:** `{report.source_owner_handoff_report_ref}`",
+        f"**Budget-event Lake bundle:** `{report.source_budget_event_lake_bundle_report_ref}`",
         "",
         "## Local Slice Status",
         "",
@@ -663,7 +772,7 @@ def render_intake_vertical_readiness_audit(
                 "",
             ]
         )
-    lines.extend(["## Generated Learning Artifact Chain", ""])
+    lines.extend(["## Generated Artifact Checks", ""])
     for check in report.artifact_checks:
         suffix = ""
         if check.missing_refs:
@@ -704,11 +813,13 @@ def render_intake_vertical_readiness_audit(
 def run_intake_vertical_readiness_audit(
     *,
     owner_handoff_report_path: str | Path,
+    budget_event_lake_bundle_report_path: str | Path,
     out_dir: str | Path,
     repo_root: str | Path = ".",
 ) -> tuple[IntakeVerticalReadinessAuditReport, Path]:
     report = build_intake_vertical_readiness_audit(
         owner_handoff_report_path=owner_handoff_report_path,
+        budget_event_lake_bundle_report_path=budget_event_lake_bundle_report_path,
         repo_root=repo_root,
     )
     run_dir = Path(out_dir)
