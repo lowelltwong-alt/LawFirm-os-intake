@@ -1,0 +1,77 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "step_id": {
+      "title": "Step Id",
+      "type": "string"
+    },
+    "owner_repo": {
+      "enum": [
+        "LawFirm-os-orchestrator",
+        "LawFirm-os-intake",
+        "LawFirm-os-exceptions-lake-runtime"
+      ],
+      "title": "Owner Repo",
+      "type": "string"
+    },
+    "action": {
+      "title": "Action",
+      "type": "string"
+    },
+    "input_artifacts": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Input Artifacts",
+      "type": "array"
+    },
+    "output_artifacts": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Output Artifacts",
+      "type": "array"
+    },
+    "required_human_gate": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Required Human Gate"
+    },
+    "failure_exception_labels": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Failure Exception Labels",
+      "type": "array"
+    },
+    "external_write_allowed": {
+      "default": false,
+      "title": "External Write Allowed",
+      "type": "boolean"
+    },
+    "intake_runtime_authority": {
+      "default": "none",
+      "enum": [
+        "reference_eval_only",
+        "dry_run_candidate_only",
+        "none"
+      ],
+      "title": "Intake Runtime Authority",
+      "type": "string"
+    }
+  },
+  "required": [
+    "step_id",
+    "owner_repo",
+    "action"
+  ],
+  "title": "CarrierRejectionOrchestratorWorkflowStep",
+  "type": "object"
+}

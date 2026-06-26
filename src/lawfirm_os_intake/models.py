@@ -1668,6 +1668,80 @@ class CarrierRejectionLearningReport(StrictModel):
     generated_at: str
 
 
+class CarrierRejectionOrchestratorConnectorChannel(StrictModel):
+    channel_id: Literal[
+        "carrier_portal_notice",
+        "email_rejection_notice",
+        "ledes_response_file",
+        "returned_budget_workbook",
+        "appeal_correspondence",
+        "manual_human_entry",
+    ]
+    connector_owner: Literal["LawFirm-os-orchestrator"] = "LawFirm-os-orchestrator"
+    side_effect_class: Literal[
+        "read_capture_only",
+        "human_entered_record",
+    ]
+    produces_candidate_artifacts: list[
+        Literal[
+            "CarrierRejectionNotice",
+            "CarrierAppealResult",
+            "CarrierRejectionSourceRef",
+        ]
+    ]
+    required_identifiers: list[str]
+    required_source_metadata: list[str]
+    raw_payload_storage_allowed: Literal[False] = False
+    intake_connector_implementation_allowed: Literal[False] = False
+
+
+class CarrierRejectionOrchestratorWorkflowStep(StrictModel):
+    step_id: str
+    owner_repo: Literal[
+        "LawFirm-os-orchestrator",
+        "LawFirm-os-intake",
+        "LawFirm-os-exceptions-lake-runtime",
+    ]
+    action: str
+    input_artifacts: list[str] = Field(default_factory=list)
+    output_artifacts: list[str] = Field(default_factory=list)
+    required_human_gate: str | None = None
+    failure_exception_labels: list[str] = Field(default_factory=list)
+    external_write_allowed: bool = False
+    intake_runtime_authority: Literal[
+        "reference_eval_only",
+        "dry_run_candidate_only",
+        "none",
+    ] = "none"
+
+
+class CarrierRejectionOrchestratorInterfaceDraft(StrictModel):
+    schema_version: str = "0.1"
+    interface_id: str
+    status: Literal["candidate_only"]
+    origin_repo: Literal["LawFirm-os-intake"] = "LawFirm-os-intake"
+    target_repo: Literal["LawFirm-os-orchestrator"] = "LawFirm-os-orchestrator"
+    purpose: str
+    response_state_ledger_required: Literal[True] = True
+    deterministic_reconciliation_required: Literal[True] = True
+    connector_channels: list[CarrierRejectionOrchestratorConnectorChannel]
+    workflow_steps: list[CarrierRejectionOrchestratorWorkflowStep]
+    required_human_pause_points: list[str]
+    required_intake_reference_commands: list[str]
+    expected_intake_outputs: list[str]
+    expected_lake_handoff_candidates: list[str]
+    prohibited_intake_actions: list[str]
+    proposed_contract_refs: list[str]
+    promotion_blockers: list[str]
+    no_route_ids_assigned: Literal[True] = True
+    no_connector_implemented: Literal[True] = True
+    no_external_writes_performed: Literal[True] = True
+    no_lake_write_performed: Literal[True] = True
+    no_canonical_mutation: Literal[True] = True
+    human_approval_required_for_external_writes: Literal[True] = True
+    generated_at: str
+
+
 class ExceptionLakeReadinessCheck(StrictModel):
     check_id: str
     status: Literal["passed", "failed"]

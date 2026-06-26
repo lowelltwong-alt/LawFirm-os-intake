@@ -44,6 +44,20 @@ repo owners must review and promote any accepted contracts inside their own repo
 - Intake runtime input: source bundle path, practice profile ref, adapter mode, strict-evidence setting.
 - Intake runtime outputs: contract state report, data-scope gate report, model adapter report, optional fixture gold report, preflight packet, review form, deadline docketing guard report, evidence graph, run ledger, run ledger integrity report, dry-run exception candidates, exception readiness report, exception handoff manifest, human confirmation, human review outcome record, confirmation history, human gate status report, budget precondition report, conflict seed, case driver profile, budget proposal with optional carrier-compliant projection, budget review form, budget submission guard report, budget actual comparison report, Exception Lake mapping package, matter-opening readiness with structured blockers, safety gate report, consolidated review package, review package manifest, review package completeness report.
 - Required gates: contract-state gate, model-adapter guard, data-origin gate, prompt/tool authority gate, human intake confirmation, budget precondition gate, prohibited-transition gate.
+- Carrier rejection interface draft: Orchestrator owns future portal, email,
+  LEDES, returned-workbook, appeal-correspondence, and manual-entry capture
+  channels; response-state ledger creation; human rejection review pauses;
+  human-authorized appeal submission; and guarded Lake handoff. Intake may
+  provide reference commands and candidate artifacts only:
+  `capture-carrier-rejections`, `review-carrier-rejections`,
+  `propose-carrier-rejection-learning`, and
+  `draft-carrier-rejection-orchestrator-interface`.
+- Carrier rejection external-write boundary: the only proposed external write is
+  Orchestrator-owned appeal submission after
+  `human_appeal_submission_authorization` and connector authority checks. Intake
+  remains prohibited from production connector capture, carrier portal writes,
+  email sends, appeal submission, Lake admission, SQLite writes, profile
+  mutation, template mutation, and route/event assignment.
 
 ## Exception Lake Mapping Draft
 

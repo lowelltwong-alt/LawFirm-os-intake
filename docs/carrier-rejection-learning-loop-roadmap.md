@@ -201,6 +201,12 @@ time, but missing capture is a production incident.
    human-reviewed outcome evidence exists and perform no silent mutation.
 7. Orchestrator interface draft for future connector-owned portal/email capture and
    appeal submission.
+   Status: implemented for the synthetic local slice through
+   `draft-carrier-rejection-orchestrator-interface`,
+   `carrier_rejection_orchestrator_interface.json`, and
+   `carrier_rejection_orchestrator_interface.md`. The draft names connector
+   channels, response-state ledger duties, human pauses, appeal-submission gates,
+   and guarded Lake handoff while implementing no connectors or external writes.
 8. Exception Lake admission proposal for append-only rejection, appeal, outcome, and
    learning-candidate records.
 

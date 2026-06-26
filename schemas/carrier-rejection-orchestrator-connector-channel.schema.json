@@ -1,0 +1,78 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "channel_id": {
+      "enum": [
+        "carrier_portal_notice",
+        "email_rejection_notice",
+        "ledes_response_file",
+        "returned_budget_workbook",
+        "appeal_correspondence",
+        "manual_human_entry"
+      ],
+      "title": "Channel Id",
+      "type": "string"
+    },
+    "connector_owner": {
+      "const": "LawFirm-os-orchestrator",
+      "default": "LawFirm-os-orchestrator",
+      "title": "Connector Owner",
+      "type": "string"
+    },
+    "side_effect_class": {
+      "enum": [
+        "read_capture_only",
+        "human_entered_record"
+      ],
+      "title": "Side Effect Class",
+      "type": "string"
+    },
+    "produces_candidate_artifacts": {
+      "items": {
+        "enum": [
+          "CarrierRejectionNotice",
+          "CarrierAppealResult",
+          "CarrierRejectionSourceRef"
+        ],
+        "type": "string"
+      },
+      "title": "Produces Candidate Artifacts",
+      "type": "array"
+    },
+    "required_identifiers": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Identifiers",
+      "type": "array"
+    },
+    "required_source_metadata": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Source Metadata",
+      "type": "array"
+    },
+    "raw_payload_storage_allowed": {
+      "const": false,
+      "default": false,
+      "title": "Raw Payload Storage Allowed",
+      "type": "boolean"
+    },
+    "intake_connector_implementation_allowed": {
+      "const": false,
+      "default": false,
+      "title": "Intake Connector Implementation Allowed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "channel_id",
+    "side_effect_class",
+    "produces_candidate_artifacts",
+    "required_identifiers",
+    "required_source_metadata"
+  ],
+  "title": "CarrierRejectionOrchestratorConnectorChannel",
+  "type": "object"
+}

@@ -1,0 +1,324 @@
+{
+  "$defs": {
+    "CarrierRejectionOrchestratorConnectorChannel": {
+      "additionalProperties": false,
+      "properties": {
+        "channel_id": {
+          "enum": [
+            "carrier_portal_notice",
+            "email_rejection_notice",
+            "ledes_response_file",
+            "returned_budget_workbook",
+            "appeal_correspondence",
+            "manual_human_entry"
+          ],
+          "title": "Channel Id",
+          "type": "string"
+        },
+        "connector_owner": {
+          "const": "LawFirm-os-orchestrator",
+          "default": "LawFirm-os-orchestrator",
+          "title": "Connector Owner",
+          "type": "string"
+        },
+        "side_effect_class": {
+          "enum": [
+            "read_capture_only",
+            "human_entered_record"
+          ],
+          "title": "Side Effect Class",
+          "type": "string"
+        },
+        "produces_candidate_artifacts": {
+          "items": {
+            "enum": [
+              "CarrierRejectionNotice",
+              "CarrierAppealResult",
+              "CarrierRejectionSourceRef"
+            ],
+            "type": "string"
+          },
+          "title": "Produces Candidate Artifacts",
+          "type": "array"
+        },
+        "required_identifiers": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Required Identifiers",
+          "type": "array"
+        },
+        "required_source_metadata": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Required Source Metadata",
+          "type": "array"
+        },
+        "raw_payload_storage_allowed": {
+          "const": false,
+          "default": false,
+          "title": "Raw Payload Storage Allowed",
+          "type": "boolean"
+        },
+        "intake_connector_implementation_allowed": {
+          "const": false,
+          "default": false,
+          "title": "Intake Connector Implementation Allowed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "channel_id",
+        "side_effect_class",
+        "produces_candidate_artifacts",
+        "required_identifiers",
+        "required_source_metadata"
+      ],
+      "title": "CarrierRejectionOrchestratorConnectorChannel",
+      "type": "object"
+    },
+    "CarrierRejectionOrchestratorWorkflowStep": {
+      "additionalProperties": false,
+      "properties": {
+        "step_id": {
+          "title": "Step Id",
+          "type": "string"
+        },
+        "owner_repo": {
+          "enum": [
+            "LawFirm-os-orchestrator",
+            "LawFirm-os-intake",
+            "LawFirm-os-exceptions-lake-runtime"
+          ],
+          "title": "Owner Repo",
+          "type": "string"
+        },
+        "action": {
+          "title": "Action",
+          "type": "string"
+        },
+        "input_artifacts": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Input Artifacts",
+          "type": "array"
+        },
+        "output_artifacts": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Output Artifacts",
+          "type": "array"
+        },
+        "required_human_gate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Required Human Gate"
+        },
+        "failure_exception_labels": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Failure Exception Labels",
+          "type": "array"
+        },
+        "external_write_allowed": {
+          "default": false,
+          "title": "External Write Allowed",
+          "type": "boolean"
+        },
+        "intake_runtime_authority": {
+          "default": "none",
+          "enum": [
+            "reference_eval_only",
+            "dry_run_candidate_only",
+            "none"
+          ],
+          "title": "Intake Runtime Authority",
+          "type": "string"
+        }
+      },
+      "required": [
+        "step_id",
+        "owner_repo",
+        "action"
+      ],
+      "title": "CarrierRejectionOrchestratorWorkflowStep",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "interface_id": {
+      "title": "Interface Id",
+      "type": "string"
+    },
+    "status": {
+      "const": "candidate_only",
+      "title": "Status",
+      "type": "string"
+    },
+    "origin_repo": {
+      "const": "LawFirm-os-intake",
+      "default": "LawFirm-os-intake",
+      "title": "Origin Repo",
+      "type": "string"
+    },
+    "target_repo": {
+      "const": "LawFirm-os-orchestrator",
+      "default": "LawFirm-os-orchestrator",
+      "title": "Target Repo",
+      "type": "string"
+    },
+    "purpose": {
+      "title": "Purpose",
+      "type": "string"
+    },
+    "response_state_ledger_required": {
+      "const": true,
+      "default": true,
+      "title": "Response State Ledger Required",
+      "type": "boolean"
+    },
+    "deterministic_reconciliation_required": {
+      "const": true,
+      "default": true,
+      "title": "Deterministic Reconciliation Required",
+      "type": "boolean"
+    },
+    "connector_channels": {
+      "items": {
+        "$ref": "#/$defs/CarrierRejectionOrchestratorConnectorChannel"
+      },
+      "title": "Connector Channels",
+      "type": "array"
+    },
+    "workflow_steps": {
+      "items": {
+        "$ref": "#/$defs/CarrierRejectionOrchestratorWorkflowStep"
+      },
+      "title": "Workflow Steps",
+      "type": "array"
+    },
+    "required_human_pause_points": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Human Pause Points",
+      "type": "array"
+    },
+    "required_intake_reference_commands": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Intake Reference Commands",
+      "type": "array"
+    },
+    "expected_intake_outputs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Expected Intake Outputs",
+      "type": "array"
+    },
+    "expected_lake_handoff_candidates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Expected Lake Handoff Candidates",
+      "type": "array"
+    },
+    "prohibited_intake_actions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Prohibited Intake Actions",
+      "type": "array"
+    },
+    "proposed_contract_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Proposed Contract Refs",
+      "type": "array"
+    },
+    "promotion_blockers": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Promotion Blockers",
+      "type": "array"
+    },
+    "no_route_ids_assigned": {
+      "const": true,
+      "default": true,
+      "title": "No Route Ids Assigned",
+      "type": "boolean"
+    },
+    "no_connector_implemented": {
+      "const": true,
+      "default": true,
+      "title": "No Connector Implemented",
+      "type": "boolean"
+    },
+    "no_external_writes_performed": {
+      "const": true,
+      "default": true,
+      "title": "No External Writes Performed",
+      "type": "boolean"
+    },
+    "no_lake_write_performed": {
+      "const": true,
+      "default": true,
+      "title": "No Lake Write Performed",
+      "type": "boolean"
+    },
+    "no_canonical_mutation": {
+      "const": true,
+      "default": true,
+      "title": "No Canonical Mutation",
+      "type": "boolean"
+    },
+    "human_approval_required_for_external_writes": {
+      "const": true,
+      "default": true,
+      "title": "Human Approval Required For External Writes",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "interface_id",
+    "status",
+    "purpose",
+    "connector_channels",
+    "workflow_steps",
+    "required_human_pause_points",
+    "required_intake_reference_commands",
+    "expected_intake_outputs",
+    "expected_lake_handoff_candidates",
+    "prohibited_intake_actions",
+    "proposed_contract_refs",
+    "promotion_blockers",
+    "generated_at"
+  ],
+  "title": "CarrierRejectionOrchestratorInterfaceDraft",
+  "type": "object"
+}

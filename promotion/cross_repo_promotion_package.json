@@ -154,6 +154,46 @@
       "external_writes_performed": false
     },
     {
+      "proposal_id": "orchestrator.carrier-rejection-capture-appeal.v0_1",
+      "target_repo": "LawFirm-os-orchestrator",
+      "authority_plane": "execution",
+      "proposal_type": "workflow_interface",
+      "summary": "Define future Orchestrator-owned carrier rejection connector capture, response-state ledger, human rejection review pauses, human-authorized appeal submission, and guarded Exception Lake handoff.",
+      "candidate_artifact_refs": [
+        "schemas/carrier-rejection-orchestrator-interface-draft.schema.json",
+        "schemas/carrier-rejection-orchestrator-connector-channel.schema.json",
+        "schemas/carrier-rejection-orchestrator-workflow-step.schema.json",
+        "schemas/carrier-response-reconciliation-report.schema.json",
+        "schemas/carrier-rejection-review-packet.schema.json",
+        "schemas/carrier-rejection-learning-report.schema.json",
+        "docs/carrier-rejection-learning-loop-roadmap.md",
+        "ENDPOINTS_AND_COMMANDS.md"
+      ],
+      "proposed_contract_refs": [
+        "orchestrator://candidate/interfaces/carrier-rejection-capture.v0_1",
+        "orchestrator://candidate/interfaces/response-state-ledger.v0_1",
+        "orchestrator://candidate/interfaces/human-carrier-rejection-pause.v0_1",
+        "orchestrator://candidate/interfaces/appeal-submission-gate.v0_1",
+        "orchestrator://candidate/interfaces/exception-lake-handoff.v0_1"
+      ],
+      "required_governance_actions": [
+        "define connector-owned capture envelope and source metadata requirements",
+        "define response-state ledger creation and SLA checks",
+        "define human pause, correction, appeal authorization, and retry semantics",
+        "define evidence-packet handoff to Exception Lake admission review"
+      ],
+      "promotion_blockers": [
+        "no production connector contract approved",
+        "no Orchestrator route IDs assigned",
+        "no human appeal authorization workflow promoted",
+        "no Exception Lake admission schema promoted",
+        "intake remains reference/eval only"
+      ],
+      "non_authoritative": true,
+      "direct_promotion_performed": false,
+      "external_writes_performed": false
+    },
+    {
       "proposal_id": "lake.intake-budget-evidence-mapping.v0_1",
       "target_repo": "LawFirm-os-exceptions-lake-runtime",
       "authority_plane": "evidence",

@@ -8,6 +8,9 @@ import sys
 
 from .budget_form import build_budget_form_template_audit_report, render_budget_form
 from .carrier_rejection_learning import run_carrier_rejection_learning
+from .carrier_rejection_orchestrator_interface import (
+    run_carrier_rejection_orchestrator_interface,
+)
 from .carrier_rejection_review import run_carrier_rejection_review
 from .carrier_rejections import run_carrier_rejection_capture
 from .confirmation import bind_confirmation_to_packet_evidence
@@ -96,6 +99,12 @@ def _parser() -> argparse.ArgumentParser:
     )
     carrier_rejection_learning.add_argument("--review-packet", required=True)
     carrier_rejection_learning.add_argument("--out-dir", required=True)
+
+    carrier_rejection_orchestrator = sub.add_parser(
+        "draft-carrier-rejection-orchestrator-interface",
+        help="Write the candidate Orchestrator interface for future carrier rejection capture and appeal workflows.",
+    )
+    carrier_rejection_orchestrator.add_argument("--out-dir", required=True)
     return parser
 
 
@@ -356,6 +365,28 @@ def main(argv: list[str] | None = None) -> int:
                     "profile_mutation_performed": report.profile_mutation_performed,
                     "template_mutation_performed": report.template_mutation_performed,
                     "connector_mutation_performed": report.connector_mutation_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0
+
+        if args.command == "draft-carrier-rejection-orchestrator-interface":
+            draft, run_dir = run_carrier_rejection_orchestrator_interface(args.out_dir)
+            external_write_steps = [
+                step.step_id for step in draft.workflow_steps if step.external_write_allowed
+            ]
+            _print(
+                {
+                    "status": draft.status,
+                    "interface_id": draft.interface_id,
+                    "target_repo": draft.target_repo,
+                    "connector_channel_count": len(draft.connector_channels),
+                    "workflow_step_count": len(draft.workflow_steps),
+                    "external_write_steps": external_write_steps,
+                    "no_connector_implemented": draft.no_connector_implemented,
+                    "no_external_writes_performed": draft.no_external_writes_performed,
+                    "no_lake_write_performed": draft.no_lake_write_performed,
+                    "no_canonical_mutation": draft.no_canonical_mutation,
                     "run_dir": str(run_dir),
                 }
             )

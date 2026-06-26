@@ -30,6 +30,9 @@ from lawfirm_os_intake.models import (  # noqa: E402
     CarrierRejectionLearningReport,
     CarrierRejectionCaptureSourceBundle,
     CarrierRejectionNotice,
+    CarrierRejectionOrchestratorConnectorChannel,
+    CarrierRejectionOrchestratorInterfaceDraft,
+    CarrierRejectionOrchestratorWorkflowStep,
     CarrierRejectionReviewDecisionTemplate,
     CarrierRejectionRemediationCase,
     CarrierRejectionReviewPacket,
@@ -135,6 +138,15 @@ MODELS = {
     "carrier-rejection-review-packet.schema.json": CarrierRejectionReviewPacket,
     "carrier-rejection-learning-proposal.schema.json": CarrierRejectionLearningProposal,
     "carrier-rejection-learning-report.schema.json": CarrierRejectionLearningReport,
+    "carrier-rejection-orchestrator-connector-channel.schema.json": (
+        CarrierRejectionOrchestratorConnectorChannel
+    ),
+    "carrier-rejection-orchestrator-workflow-step.schema.json": (
+        CarrierRejectionOrchestratorWorkflowStep
+    ),
+    "carrier-rejection-orchestrator-interface-draft.schema.json": (
+        CarrierRejectionOrchestratorInterfaceDraft
+    ),
     "evidence-graph.schema.json": EvidenceGraph,
     "run-ledger-event.schema.json": RunEvent,
     "run-ledger-integrity-report.schema.json": RunLedgerIntegrityReport,

@@ -76,6 +76,20 @@ appeal-outcome loops. Every proposal remains blocked until human-reviewed outcom
 evidence exists, and the command performs no profile, template, connector, Lake,
 or external mutation.
 
+### Draft carrier rejection Orchestrator interface
+
+```bash
+python -m lawfirm_os_intake draft-carrier-rejection-orchestrator-interface \
+  --out-dir .lawfirm-os-intake/carrier-rejection-orchestrator-interface
+```
+
+This writes `carrier_rejection_orchestrator_interface.json` and
+`carrier_rejection_orchestrator_interface.md`. The draft specifies future
+Orchestrator-owned connector channels, response-state ledger duties, human pause
+points, appeal-submission gate requirements, and guarded Exception Lake handoff.
+It does not implement connectors, assign routes, submit appeals, write Lake
+records, or authorize intake to perform production capture.
+
 ## Exit posture
 
 - `0`: local workflow step completed and artifacts emitted.
