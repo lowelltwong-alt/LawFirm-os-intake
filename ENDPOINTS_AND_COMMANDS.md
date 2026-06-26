@@ -165,6 +165,26 @@ updates, eval suites, regression guardrails, and next gates. These are reviewer
 notes and shadow-eval inputs only; the command applies no changes, authorizes no
 promotion, writes no Lake/SQLite records, and performs no external writes.
 
+### Run learning shadow eval
+
+```bash
+python -m lawfirm_os_intake run-learning-shadow-eval \
+  --proposed-change-set .lawfirm-os-intake/learning-proposed-changes/learning_proposed_change_set.json \
+  --fixture-result examples/synthetic/learning/shadow-eval-result-budget-driver.json \
+  --fixture-result examples/synthetic/learning/shadow-eval-result-capture-completeness.json \
+  --out-dir .lawfirm-os-intake/learning-shadow-eval
+```
+
+This writes `learning_shadow_eval_result_report.json`,
+`learning_shadow_eval_result_report.md`, and
+`learning_shadow_eval_results.jsonl`. The harness checks that every proposed
+change has synthetic fixture result evidence, required eval suites, regression
+guardrails, red-team notes, and no-mutation/no-promotion boundaries. Missing
+fixture evidence blocks; failed eval or guardrail evidence fails; passing results
+still require human shadow-eval review and owning-repo promotion review. The
+command applies no proposed changes, mutates no baselines, writes no Lake/SQLite
+records, and performs no external writes.
+
 ### Draft carrier rejection Orchestrator interface
 
 ```bash

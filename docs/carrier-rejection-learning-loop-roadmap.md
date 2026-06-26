@@ -154,6 +154,9 @@ Each learning proposal should include:
 - target owning repo for promotion;
 - explicit `silent_learning_performed=false`.
 
+The current local candidate harness for this gate is `run-learning-shadow-eval`;
+passing results still require human review and owning-repo promotion review.
+
 ## Metrics
 
 Track these as deterministic reports:

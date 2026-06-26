@@ -2286,6 +2286,176 @@ class LearningProposedChangeSet(StrictModel):
         return self
 
 
+class LearningShadowEvalFixtureResult(StrictModel):
+    schema_version: str = "0.1"
+    fixture_result_id: str
+    proposed_change_id: str
+    candidate_id: str
+    baseline_behavior_ref: str
+    proposed_behavior_ref: str
+    baseline_output_hash: str
+    proposed_output_hash: str
+    expected_behavior_summary: str
+    observed_behavior_summary: str
+    evaluation_outcome: Literal["passed", "failed", "blocked"]
+    passed_eval_suites: list[str]
+    failed_eval_suites: list[str] = Field(default_factory=list)
+    passed_regression_guardrails: list[str]
+    failed_regression_guardrails: list[str] = Field(default_factory=list)
+    support_refs: list[str]
+    synthetic_only: Literal[True] = True
+    contains_real_client_data: Literal[False] = False
+    contains_real_matter_data: Literal[False] = False
+    contains_privileged_data: Literal[False] = False
+    proposed_change_applied: Literal[False] = False
+    baseline_mutated: Literal[False] = False
+    profile_mutation_performed: Literal[False] = False
+    template_mutation_performed: Literal[False] = False
+    connector_mutation_performed: Literal[False] = False
+    budget_mutation_performed: Literal[False] = False
+    carrier_guideline_mutation_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def fixture_support_required(self) -> "LearningShadowEvalFixtureResult":
+        if not self.support_refs:
+            raise ValueError("shadow eval fixture result requires support refs")
+        if self.evaluation_outcome == "passed":
+            if not self.passed_eval_suites:
+                raise ValueError("passed shadow eval fixture requires passed eval suites")
+            if not self.passed_regression_guardrails:
+                raise ValueError("passed shadow eval fixture requires passed guardrails")
+            if self.failed_eval_suites or self.failed_regression_guardrails:
+                raise ValueError("passed shadow eval fixture cannot include failed checks")
+        return self
+
+
+class LearningShadowEvalResult(StrictModel):
+    schema_version: str = "0.1"
+    shadow_eval_result_id: str
+    proposed_change_set_id: str
+    proposed_change_id: str
+    candidate_id: str
+    target_learning_loop: LearningLoopId
+    target_owner: LearningTargetOwner
+    change_type: LearningProposedChangeType
+    status: Literal[
+        "passed_for_owning_repo_review",
+        "failed_shadow_eval",
+        "blocked_missing_fixture_result",
+        "blocked_missing_required_eval",
+        "blocked_missing_regression_guardrail",
+        "blocked_fixture_mismatch",
+    ]
+    fixture_result_ref: str | None = None
+    fixture_result_id: str | None = None
+    baseline_behavior_ref: str | None = None
+    proposed_behavior_ref: str | None = None
+    baseline_output_hash: str | None = None
+    proposed_output_hash: str | None = None
+    passed_checks: list[str]
+    failed_checks: list[str]
+    blocked_checks: list[str]
+    red_team_note_count: int = Field(ge=0)
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    human_review_required: Literal[True] = True
+    owning_repo_review_required: Literal[True] = True
+    promotion_authorized: Literal[False] = False
+    proposed_change_applied: Literal[False] = False
+    baseline_mutated: Literal[False] = False
+    profile_mutation_performed: Literal[False] = False
+    template_mutation_performed: Literal[False] = False
+    connector_mutation_performed: Literal[False] = False
+    budget_mutation_performed: Literal[False] = False
+    carrier_guideline_mutation_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def result_checks_match_status(self) -> "LearningShadowEvalResult":
+        if self.status == "passed_for_owning_repo_review":
+            if self.failed_checks or self.blocked_checks:
+                raise ValueError(
+                    "passed shadow eval result cannot include failed or blocked checks"
+                )
+            if not self.fixture_result_id:
+                raise ValueError("passed shadow eval result requires a fixture result")
+        if self.status.startswith("blocked") and not self.blocked_checks:
+            raise ValueError("blocked shadow eval result requires blocked checks")
+        if self.status == "failed_shadow_eval" and not self.failed_checks:
+            raise ValueError("failed shadow eval result requires failed checks")
+        return self
+
+
+class LearningShadowEvalResultReport(StrictModel):
+    schema_version: str = "0.1"
+    shadow_eval_result_report_id: str
+    proposed_change_set_id: str
+    status: Literal[
+        "shadow_eval_passed_owner_review_required",
+        "shadow_eval_blocked",
+        "shadow_eval_failed",
+        "no_learning_candidates",
+    ]
+    source_proposed_change_set_ref: str
+    fixture_result_refs: list[str]
+    change_count: int = Field(ge=0)
+    result_count: int = Field(ge=0)
+    passed_result_count: int = Field(ge=0)
+    failed_result_count: int = Field(ge=0)
+    blocked_result_count: int = Field(ge=0)
+    target_learning_loops: list[str]
+    target_owners: list[str]
+    results: list[LearningShadowEvalResult]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    human_review_required: Literal[True] = True
+    owning_repo_review_required: Literal[True] = True
+    promotion_authorized: Literal[False] = False
+    proposed_changes_applied: Literal[False] = False
+    baseline_mutated: Literal[False] = False
+    profile_mutation_performed: Literal[False] = False
+    template_mutation_performed: Literal[False] = False
+    connector_mutation_performed: Literal[False] = False
+    budget_mutation_performed: Literal[False] = False
+    carrier_guideline_mutation_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def result_counts_match(self) -> "LearningShadowEvalResultReport":
+        if self.result_count != len(self.results):
+            raise ValueError("shadow eval result report count must match results")
+        if self.change_count != self.result_count:
+            raise ValueError("shadow eval result report requires one result per change")
+        counted_passed = sum(
+            1 for result in self.results if result.status == "passed_for_owning_repo_review"
+        )
+        counted_failed = sum(1 for result in self.results if result.status == "failed_shadow_eval")
+        counted_blocked = self.result_count - counted_passed - counted_failed
+        if (
+            self.passed_result_count != counted_passed
+            or self.failed_result_count != counted_failed
+            or self.blocked_result_count != counted_blocked
+        ):
+            raise ValueError("shadow eval result report aggregate counts do not match")
+        if self.status == "no_learning_candidates" and self.results:
+            raise ValueError("no-candidate shadow eval report cannot include results")
+        return self
+
+
 class CarrierRejectionOrchestratorConnectorChannel(StrictModel):
     channel_id: Literal[
         "carrier_portal_notice",

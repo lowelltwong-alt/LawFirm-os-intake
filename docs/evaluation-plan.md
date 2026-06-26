@@ -42,7 +42,10 @@ The learning loop can write `reviewed_learning_gate_report.json`, then
 then writes `learning_proposed_change_set.json` and
 `learning_proposed_changes.jsonl` with recommendations, why-notes, red-team
 objections, required fixtures, eval suites, guardrails, and owning-repo routing.
-These artifacts are local
+`run-learning-shadow-eval` writes `learning_shadow_eval_result_report.json` and
+`learning_shadow_eval_results.jsonl` after checking synthetic fixture result
+evidence, required eval suites, regression guardrails, and no-mutation
+boundaries. These artifacts are local
 non-authoritative eval evidence: they plan the fixture updates, shadow evals, and
 regression checks required before any learning candidate can be considered by an
 owning repo. They do not apply proposed changes, mutate baselines, authorize

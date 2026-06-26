@@ -116,6 +116,9 @@
         "schemas/learning-proposed-change-red-team-note.schema.json",
         "schemas/learning-proposed-change-artifact.schema.json",
         "schemas/learning-proposed-change-set.schema.json",
+        "schemas/learning-shadow-eval-fixture-result.schema.json",
+        "schemas/learning-shadow-eval-result.schema.json",
+        "schemas/learning-shadow-eval-result-report.schema.json",
         "docs/cross-repo-promotion-package.md"
       ],
       "proposed_contract_refs": [
@@ -235,6 +238,8 @@
         "schemas/learning-promotion-readiness-report.schema.json",
         "schemas/learning-proposed-change-artifact.schema.json",
         "schemas/learning-proposed-change-set.schema.json",
+        "schemas/learning-shadow-eval-fixture-result.schema.json",
+        "schemas/learning-shadow-eval-result-report.schema.json",
         "DATA_FLOW_MAP.md"
       ],
       "proposed_contract_refs": [

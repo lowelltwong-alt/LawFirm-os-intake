@@ -284,3 +284,32 @@ path can claim a learning change is ready.
   `carrier_guideline_mutation_performed=false`, `lake_write_performed=false`,
   `sqlite_write_performed=false`, `external_writes_performed=false`, and
   `silent_learning_performed=false`.
+
+## 15. Learning Shadow-Eval Results
+
+Status: implemented for the current synthetic candidate slice; owning-repo
+promotion decisions, runtime adoption, and real-data calibration remain future
+work.
+
+Evaluate draft proposed changes against synthetic fixture result evidence before
+any candidate can leave the intake-local eval surface.
+
+- `run-learning-shadow-eval` consumes `learning_proposed_change_set.json` and
+  zero or more synthetic `LearningShadowEvalFixtureResult` files.
+- It writes `learning_shadow_eval_result_report.json`,
+  `learning_shadow_eval_result_report.md`, and
+  `learning_shadow_eval_results.jsonl`.
+- Missing fixture evidence produces `shadow_eval_blocked`; failed eval suites or
+  failed regression guardrails produce `shadow_eval_failed`.
+- Fully passing candidates are only `passed_for_owning_repo_review`; they are
+  not promoted or applied.
+- The harness checks required eval suites, regression guardrails, red-team
+  notes, fixture/change ID binding, synthetic-only scope, and no-mutation
+  boundaries.
+- The command records `promotion_authorized=false`,
+  `proposed_changes_applied=false`, `baseline_mutated=false`,
+  `profile_mutation_performed=false`, `template_mutation_performed=false`,
+  `connector_mutation_performed=false`, `budget_mutation_performed=false`,
+  `carrier_guideline_mutation_performed=false`, `lake_write_performed=false`,
+  `sqlite_write_performed=false`, `external_writes_performed=false`, and
+  `silent_learning_performed=false`.

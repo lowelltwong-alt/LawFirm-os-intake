@@ -22,6 +22,7 @@ from .carrier_rejections import run_carrier_rejection_capture
 from .confirmation import bind_confirmation_to_packet_evidence
 from .learning_promotion_readiness import run_learning_promotion_readiness
 from .learning_proposed_changes import run_learning_proposed_changes
+from .learning_shadow_eval_results import run_learning_shadow_eval_results
 from .models import BudgetProposal, HumanConfirmation
 from .reviewed_learning_gate import run_reviewed_learning_gate
 from .util import load_json, write_json
@@ -173,6 +174,23 @@ def _parser() -> argparse.ArgumentParser:
     learning_proposed_changes.add_argument(
         "--promotion-readiness-report",
         help="Optional learning_promotion_readiness_report.json.",
+    )
+
+    learning_shadow_eval = sub.add_parser(
+        "run-learning-shadow-eval",
+        help="Run local synthetic shadow-eval result checks for proposed learning changes.",
+    )
+    learning_shadow_eval.add_argument(
+        "--proposed-change-set",
+        required=True,
+        help="Path to learning_proposed_change_set.json.",
+    )
+    learning_shadow_eval.add_argument("--out-dir", required=True)
+    learning_shadow_eval.add_argument(
+        "--fixture-result",
+        action="append",
+        default=[],
+        help="Synthetic shadow-eval fixture result JSON. May be supplied multiple times.",
     )
 
     carrier_rejection_orchestrator = sub.add_parser(
@@ -589,6 +607,33 @@ def main(argv: list[str] | None = None) -> int:
                     "baseline_mutated": change_set.baseline_mutated,
                     "silent_learning_performed": change_set.silent_learning_performed,
                     "external_writes_performed": change_set.external_writes_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0
+
+        if args.command == "run-learning-shadow-eval":
+            report, run_dir = run_learning_shadow_eval_results(
+                proposed_change_set_path=args.proposed_change_set,
+                fixture_result_paths=args.fixture_result,
+                out_dir=args.out_dir,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "shadow_eval_result_report_id": report.shadow_eval_result_report_id,
+                    "proposed_change_set_id": report.proposed_change_set_id,
+                    "change_count": report.change_count,
+                    "passed_result_count": report.passed_result_count,
+                    "failed_result_count": report.failed_result_count,
+                    "blocked_result_count": report.blocked_result_count,
+                    "target_learning_loops": report.target_learning_loops,
+                    "target_owners": report.target_owners,
+                    "promotion_authorized": report.promotion_authorized,
+                    "proposed_changes_applied": report.proposed_changes_applied,
+                    "baseline_mutated": report.baseline_mutated,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "external_writes_performed": report.external_writes_performed,
                     "run_dir": str(run_dir),
                 }
             )
