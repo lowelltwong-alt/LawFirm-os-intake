@@ -277,6 +277,9 @@ def _budget_scenario_lines(budget: BudgetProposal) -> list[str]:
         return ["- none"]
     lines = [
         f"- Selected scenario: {budget.scenario_set.selected_scenario_id}",
+        f"- Selected scenario basis: {budget.scenario_set.selected_scenario_basis}",
+        f"- Expected total: {_money(budget.scenario_set.expected_total, budget.currency)}",
+        f"- Expected total probability sum: {budget.scenario_set.expected_total_probability_sum}",
         f"- Monotonic order: {budget.scenario_set.monotonic_total_order} "
         f"({budget.scenario_set.total_order_basis})",
     ]
@@ -289,6 +292,7 @@ def _budget_scenario_lines(budget: BudgetProposal) -> list[str]:
             f"total: {_money(scenario.total_proposed_budget, budget.currency)}; "
             f"range: {_money(scenario.total_budget_min, budget.currency)}-"
             f"{_money(scenario.total_budget_max, budget.currency)}; "
+            f"probability: {scenario.probability}; "
             f"codes: {', '.join(scenario.included_external_codes) or 'none'}"
         )
     return lines

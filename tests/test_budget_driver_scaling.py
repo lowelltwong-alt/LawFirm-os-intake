@@ -82,6 +82,7 @@ def _drivers(packet, confirmation, num_depositions, provenance="human_confirmed"
                 source_refs=["human-confirmation://test"] if prov != "unknown" else [],
             )
         ],
+        count_driver_range_policy={"num_depositions": {"min": 3, "likely": 8, "max": 12}},
     )
 
 
@@ -129,6 +130,36 @@ def test_unknown_driver_falls_back_to_template_hours(tmp_path, repo_root):
     depo = _line(budget, "P320")
     assert depo.estimated_hours == 50.0  # template fallback, not invented
     assert depo.estimated_expenses == 200.0
+    assert depo.estimated_hours_min == 18.0
+    assert depo.estimated_hours_max == 72.0
+    assert depo.estimated_expenses_min == 200.0
+    assert depo.estimated_expenses_max == 7400.0
+
+
+def test_unknown_driver_range_is_wider_than_confirmed_driver_range(tmp_path, repo_root):
+    packet, confirmation = _packet_and_confirmation(tmp_path, repo_root)
+    profile = _scaling_profile()
+    confirmed = build_budget_proposal(
+        packet, confirmation, profile, case_drivers=_drivers(packet, confirmation, 8)
+    )
+    unknown = build_budget_proposal(
+        packet, confirmation, profile, case_drivers=_drivers(packet, confirmation, None)
+    )
+
+    confirmed_depo = _line(confirmed, "P320")
+    unknown_depo = _line(unknown, "P320")
+    confirmed_width = confirmed_depo.estimated_hours_max - confirmed_depo.estimated_hours_min
+    unknown_width = unknown_depo.estimated_hours_max - unknown_depo.estimated_hours_min
+
+    assert confirmed_width == 0
+    assert unknown_width > confirmed_width
+    assert unknown.scenario_set is not None
+    standard = next(
+        scenario
+        for scenario in unknown.scenario_set.scenarios
+        if scenario.scenario_id == "standard"
+    )
+    assert standard.total_budget_max > standard.total_budget_min
 
 
 def test_no_drivers_is_exact_back_compat(tmp_path, repo_root):

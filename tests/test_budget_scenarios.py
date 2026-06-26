@@ -1,5 +1,12 @@
+from lawfirm_os_intake.budget import build_budget_proposal
 from lawfirm_os_intake.confirmation import bind_confirmation_to_packet_evidence
 from lawfirm_os_intake.context import load_profile
+from lawfirm_os_intake.drivers import (
+    CaseDriverProfile,
+    DriverValue,
+    load_driver_policy,
+    resolve_case_drivers,
+)
 from lawfirm_os_intake.models import HumanConfirmation
 from lawfirm_os_intake.util import load_json
 from lawfirm_os_intake.workflow import run_budget, run_preflight
@@ -44,6 +51,44 @@ def _scenario(budget, scenario_id):
     )
 
 
+def _replace_driver(
+    drivers: CaseDriverProfile,
+    driver_id: str,
+    value: str,
+    provenance: str = "human_confirmed",
+) -> CaseDriverProfile:
+    current = next(driver for driver in drivers.drivers if driver.driver_id == driver_id)
+    replacement = DriverValue(
+        driver_id=driver_id,
+        driver_class=current.driver_class,
+        value=value,
+        unit=current.unit,
+        provenance=provenance,  # type: ignore[arg-type]
+        source_refs=["human-confirmation://synthetic-resolution-path-test"],
+        note="test override",
+    )
+    return drivers.model_copy(
+        update={
+            "drivers": [
+                replacement if driver.driver_id == driver_id else driver
+                for driver in drivers.drivers
+            ],
+            "observed_or_confirmed_driver_ids": sorted(
+                {
+                    *drivers.observed_or_confirmed_driver_ids,
+                    driver_id,
+                }
+            ),
+            "default_driver_ids": [
+                item for item in drivers.default_driver_ids if item != driver_id
+            ],
+            "unknown_driver_ids": [
+                item for item in drivers.unknown_driver_ids if item != driver_id
+            ],
+        }
+    )
+
+
 def test_budget_emits_monotonic_scenario_set_and_selects_standard(tmp_path, repo_root):
     budget = _budget(tmp_path, repo_root)
 
@@ -55,6 +100,10 @@ def test_budget_emits_monotonic_scenario_set_and_selects_standard(tmp_path, repo
         "through_trial",
     ]
     assert budget.scenario_set.selected_scenario_id == "standard"
+    assert budget.scenario_set.selected_scenario_basis == "default_standard"
+    assert budget.scenario_set.standard_scenario_id == "standard"
+    assert budget.scenario_set.expected_total_probability_sum == 1
+    assert budget.scenario_set.expected_total is not None
     assert budget.scenario_set.monotonic_total_order is True
     assert budget.scenario_set.not_authorized_for_client_submission is True
     assert budget.scenario_set.external_writes_performed is False
@@ -68,6 +117,48 @@ def test_budget_emits_monotonic_scenario_set_and_selects_standard(tmp_path, repo
     assert (
         early.total_proposed_budget <= standard.total_proposed_budget <= trial.total_proposed_budget
     )
+    assert [early.probability, standard.probability, trial.probability] == [0.25, 0.5, 0.25]
+
+
+def test_confirmed_resolution_path_selects_through_trial_and_expected_value(
+    tmp_path,
+    repo_root,
+):
+    packet, _run_dir, confirmation_path = _confirmed_packet(tmp_path, repo_root)
+    confirmation = HumanConfirmation.model_validate(load_json(confirmation_path))
+    profile = load_profile(repo_root / "context/synthetic-profiles/insurance-defense.yaml")
+    policy = load_driver_policy(repo_root / "config/budget-driver-policy.yaml")
+    resolved = resolve_case_drivers(packet, confirmation, profile, policy)
+    confirmed_trial_path = _replace_driver(resolved, "resolution_path", "through_trial")
+
+    budget = build_budget_proposal(
+        packet,
+        confirmation,
+        profile,
+        case_drivers=confirmed_trial_path,
+    )
+
+    assert budget.scenario_name == "through_trial"
+    assert budget.scenario_set is not None
+    assert budget.scenario_set.selected_scenario_id == "through_trial"
+    assert budget.scenario_set.standard_scenario_id == "standard"
+    assert budget.scenario_set.selected_scenario_basis == "confirmed_resolution_path"
+    assert budget.scenario_set.expected_total_probability_sum == 1
+    assert budget.scenario_set.expected_total is not None
+
+    standard = _scenario(budget, "standard")
+    trial = _scenario(budget, "through_trial")
+    assert budget.total_proposed_budget == trial.total_proposed_budget
+    assert standard.total_proposed_budget < budget.total_proposed_budget
+    assert "L450" in {line.external_code_candidate for line in budget.lines}
+
+    trial_day_tasks = {
+        tuple(effect.task_ids)
+        for effect in budget.driver_effects
+        if effect.driver_id == "trial_days" and effect.effect_type == "count_scaling"
+    }
+    assert ("L440",) in trial_day_tasks
+    assert ("L450",) in trial_day_tasks
 
 
 def test_legacy_budget_surface_maps_to_standard_scenario(tmp_path, repo_root):

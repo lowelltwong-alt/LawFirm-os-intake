@@ -57,14 +57,16 @@ def test_demo_budget_is_driver_scaled(tmp_path, repo_root):
     # Policy default num_depositions = 8; L330 scales by count and then by intensity.
     depo = _line(budget, "L330")
     assert depo.estimated_hours == 72.58
-    assert depo.estimated_expenses == 5600.0
+    assert depo.estimated_expenses == 6350.4
+    assert depo.estimated_expenses_min < depo.estimated_expenses
+    assert depo.estimated_expenses_max > depo.estimated_expenses
     assert any("num_depositions" in note for note in depo.assumptions)
     # Pleading (L210) scales by human-confirmed represented defendants and liability.
     assert _line(budget, "L210").estimated_hours == 16.8
     # Expert discovery (L340) scales by num_experts and then by intensity.
     expert = _line(budget, "L340")
     assert expert.estimated_hours == 27.22
-    assert expert.estimated_expenses == 30000.0
+    assert expert.estimated_expenses == 34020.0
 
 
 def test_subtotal_fees_match_lines(tmp_path, repo_root):

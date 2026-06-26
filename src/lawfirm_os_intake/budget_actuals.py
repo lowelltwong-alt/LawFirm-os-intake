@@ -25,7 +25,7 @@ BUDGET_ACTUAL_VARIANCE_CANDIDATES_FILENAME = "budget_actual_variance_candidates.
 
 def _phase_budget_totals(budget: BudgetProposal) -> dict[str, dict[str, float | set[str]]]:
     totals: dict[str, dict[str, float | set[str]]] = {}
-    for line in budget.lines:
+    for line in _comparison_lines(budget):
         row = totals.setdefault(
             line.phase_id,
             {"fees": 0.0, "expenses": 0.0, "codes": set()},
@@ -43,7 +43,79 @@ def _phase_budget_totals(budget: BudgetProposal) -> dict[str, dict[str, float | 
 
 def _code_budget_totals(budget: BudgetProposal) -> dict[str, BudgetCodeBudgetSnapshot]:
     rows: dict[str, dict[str, Any]] = {}
-    for line in budget.lines:
+    for line in _comparison_lines(budget):
+        if line.external_code_candidate:
+            fee_row = rows.setdefault(
+                line.external_code_candidate,
+                {"fees": 0.0, "expenses": 0.0, "phase_ids": set()},
+            )
+            fee_row["fees"] += float(line.estimated_fees or 0.0)
+            fee_row["phase_ids"].add(line.phase_id)
+        expense_code = line.expense_code or line.external_code_candidate
+        if expense_code:
+            expense_row = rows.setdefault(
+                expense_code,
+                {"fees": 0.0, "expenses": 0.0, "phase_ids": set()},
+            )
+            expense_row["expenses"] += float(line.estimated_expenses or 0.0)
+            expense_row["phase_ids"].add(line.phase_id)
+    snapshots = {}
+    for code, row in rows.items():
+        phase_ids = sorted(row["phase_ids"])
+        phase_id = phase_ids[0] if len(phase_ids) == 1 else None
+        snapshots[code] = BudgetCodeBudgetSnapshot(
+            code=code,
+            phase_id=phase_id,
+            budgeted_fees=round(row["fees"], 2),
+            budgeted_expenses=round(row["expenses"], 2),
+            budgeted_total=round(row["fees"] + row["expenses"], 2),
+        )
+    return snapshots
+
+
+def _comparison_lines(
+    budget: BudgetProposal,
+    actual_resolution_scenario_id: str | None = None,
+) -> list[Any]:
+    if not actual_resolution_scenario_id or budget.scenario_set is None:
+        return budget.lines
+    scenario = next(
+        (
+            item
+            for item in budget.scenario_set.scenarios
+            if item.scenario_id == actual_resolution_scenario_id
+        ),
+        None,
+    )
+    if scenario is None:
+        return budget.lines
+    included = set(scenario.included_phase_ids)
+    return [line for line in budget.lines if line.phase_id in included]
+
+
+def _phase_budget_totals_for_lines(
+    lines: list[Any],
+) -> dict[str, dict[str, float | set[str]]]:
+    totals: dict[str, dict[str, float | set[str]]] = {}
+    for line in lines:
+        row = totals.setdefault(
+            line.phase_id,
+            {"fees": 0.0, "expenses": 0.0, "codes": set()},
+        )
+        row["fees"] = float(row["fees"]) + float(line.estimated_fees or 0.0)
+        row["expenses"] = float(row["expenses"]) + float(line.estimated_expenses or 0.0)
+        codes = row["codes"]
+        if isinstance(codes, set):
+            if line.external_code_candidate:
+                codes.add(line.external_code_candidate)
+            if line.expense_code:
+                codes.add(line.expense_code)
+    return totals
+
+
+def _code_budget_totals_for_lines(lines: list[Any]) -> dict[str, BudgetCodeBudgetSnapshot]:
+    rows: dict[str, dict[str, Any]] = {}
+    for line in lines:
         if line.external_code_candidate:
             fee_row = rows.setdefault(
                 line.external_code_candidate,
@@ -314,8 +386,9 @@ def build_budget_actual_comparison_report(
         code_rows = _code_rows_from_revision(budget_revision_report)
         comparison_budget_state = "human_revised_candidate"
     else:
-        phase_rows = _phase_budget_totals(budget)
-        code_rows = _code_budget_totals(budget)
+        comparison_lines = _comparison_lines(budget, actual_resolution_scenario_id)
+        phase_rows = _phase_budget_totals_for_lines(comparison_lines)
+        code_rows = _code_budget_totals_for_lines(comparison_lines)
         comparison_budget_state = "original_proposal"
     all_phase_ids = sorted(set(phase_rows) | set(phase_actuals))
     phase_comparisons: list[BudgetActualPhaseComparison] = []

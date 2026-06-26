@@ -94,16 +94,42 @@ matter_family_defaults:
 scenarios:
   - scenario_id: early_resolution
     resolution_phase: L200
+    probability: 0.25
     description: Motion to dismiss granted or pre-discovery settlement.
   - scenario_id: standard
     resolution_phase: L300
+    probability: 0.5
     description: Resolves at mediation or on summary judgment after discovery.
   - scenario_id: through_trial
     resolution_phase: L400
+    probability: 0.25
     description: Full discovery, dispositive motions, trial preparation, and trial.
 
+count_driver_ranges:
+  num_depositions:
+    min: 3
+    likely: 8
+    max: 12
+  num_experts:
+    min: 1
+    likely: 4
+    max: 6
+  written_discovery_rounds:
+    min: 1
+    likely: 2
+    max: 4
+  num_dispositive_motions:
+    min: 0
+    likely: 1
+    max: 2
+  trial_days:
+    min: 3
+    likely: 7
+    max: 12
+
 intensity_multiplier_policy:
-  cumulative_multiplier_cap: 1.35
+  cumulative_multiplier_cap: 2.5
+  applies_to_expense_bearing_lines: true
   effects:
     severity_tier:
       soft_tissue:

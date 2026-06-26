@@ -3,8 +3,8 @@
 **Status:** Slices A-E implemented (carrier x state x title rate resolution,
 synthetic carrier guideline projection, projection-only staffing/leverage
 reshaping, dry-run preapproval thresholds, and second-carrier counterfactuals).
-Named-timekeeper overrides are implemented as a local candidate slice. The P1
-budget-math fixes remain proposed and handed to Codex.
+Named-timekeeper overrides and the P1 budget-math hardening fixes are implemented
+as local candidate slices.
 **Owner repo:** `LawFirm-os-intake` (vertical composition; owns no platform canon).
 **Authority posture:** rate cards and guidelines are synthetic `candidate` artifacts;
 promotion runs through the owning sibling repo. Builds on
@@ -105,6 +105,8 @@ This lets guidelines reshape cost without a silent rewrite of the proposal.
 
 ## P1 budget-math fixes (from the algorithm review — do alongside B/C)
 
+**Status:** DONE in this repo as a local candidate slice.
+
 1. **Propagate uncertainty from driver unknowns.** Today `estimated_hours_min/max` is a
    flat `hours*0.8 … *1.25` and expenses have no range (`budget.py` `_budget_totals`).
    Give count drivers `min/likely/max` in `budget-driver-policy.yaml`; for
@@ -126,6 +128,21 @@ This lets guidelines reshape cost without a silent rewrite of the proposal.
    actuals against the scenario matching the actual resolution path and flag
    `budgeted==0 & actual>0` as over-threshold (`budget_actuals.py`); replace the 6-tuple
    return of `_budget_totals` with a dataclass.
+
+Implementation notes:
+
+- `CaseDriverProfile` carries candidate `scenario_policy` from
+  `config/budget-driver-policy.yaml`; `BudgetScenario` can carry optional
+  probabilities, and `BudgetScenarioSet` computes a labeled `expected_total` only
+  when all scenario probabilities are present and sum to 1.
+- A confirmed or observed `resolution_path` selects the headline scenario;
+  otherwise the compatibility surface remains `standard`.
+- Count-driver ranges widen hour and expense ranges for unknown/profile-default
+  drivers while human-confirmed count drivers stay tight.
+- The synthetic intensity policy has a finite 2.5 cap and applies to
+  expense-bearing lines when the policy flag is set.
+- Budget actual comparison can filter the comparison surface by an actual
+  resolution scenario and still flags zero-budget/positive-actual rows for review.
 
 ## Governance (unchanged for every slice)
 

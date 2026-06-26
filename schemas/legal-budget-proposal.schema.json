@@ -539,6 +539,32 @@
           "title": "Estimated Expenses",
           "type": "number"
         },
+        "estimated_expenses_min": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Estimated Expenses Min"
+        },
+        "estimated_expenses_max": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Estimated Expenses Max"
+        },
         "calculation_formula": {
           "anyOf": [
             {
@@ -714,6 +740,20 @@
           "default": null,
           "title": "Total Budget Max"
         },
+        "probability": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Probability"
+        },
         "pricing_status": {
           "enum": [
             "priced",
@@ -785,6 +825,40 @@
           },
           "title": "Scenarios",
           "type": "array"
+        },
+        "selected_scenario_basis": {
+          "default": "default_standard",
+          "enum": [
+            "default_standard",
+            "confirmed_resolution_path",
+            "fallback_last_scenario"
+          ],
+          "title": "Selected Scenario Basis",
+          "type": "string"
+        },
+        "expected_total": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Total"
+        },
+        "expected_total_probability_sum": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Total Probability Sum"
         },
         "monotonic_total_order": {
           "title": "Monotonic Total Order",

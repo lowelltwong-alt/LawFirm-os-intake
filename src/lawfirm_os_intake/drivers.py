@@ -77,6 +77,8 @@ class CaseDriverProfile(StrictModel):
     intensity_multiplier_policy: dict[str, Any] = Field(default_factory=dict)
     coverage_posture_policy: dict[str, Any] = Field(default_factory=dict)
     synthetic_guideline_constraints: dict[str, Any] = Field(default_factory=dict)
+    count_driver_range_policy: dict[str, Any] = Field(default_factory=dict)
+    scenario_policy: list[dict[str, Any]] = Field(default_factory=list)
     status: Literal["candidate"] = "candidate"
     not_applied_to_math: bool = False
 
@@ -188,4 +190,6 @@ def resolve_case_drivers(
         intensity_multiplier_policy=policy.get("intensity_multiplier_policy", {}),
         coverage_posture_policy=policy.get("coverage_posture_policy", {}),
         synthetic_guideline_constraints=policy.get("synthetic_guideline_constraints", {}),
+        count_driver_range_policy=policy.get("count_driver_ranges", {}),
+        scenario_policy=policy.get("scenarios", []),
     )

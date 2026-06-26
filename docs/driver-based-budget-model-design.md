@@ -1,6 +1,6 @@
 # Driver-Based Litigation Budget Model — Design
 
-**Status:** Partially implemented in local candidate slices; stronger drivers, guideline constraints, and second matter family remain proposed.
+**Status:** Implemented in local candidate slices through driver capture, scenario sets, stronger drivers, guideline constraints, second matter family, carrier projections, and P1 budget-math hardening.
 **Owner repo:** `LawFirm-os-intake` (vertical composition; owns no platform canon)
 **Authority posture:** all new vocabulary is `candidate`; promotion runs through the owning sibling repo
 
@@ -84,6 +84,13 @@ output(S)   = { lines, subtotal_fees, subtotal_expenses, contingency, total rang
 `min/likely/max` derive from per-line `estimated_hours_min/max` (already in the model)
 and from driver ranges where a count is unknown.
 
+P1 hardening adds `min/likely/max` count-driver ranges to the synthetic driver policy,
+ranges expense-bearing count lines as well as hours, lets confirmed/observed
+`resolution_path` select the headline scenario, and computes a labeled expected
+total only when scenario probabilities are complete and sum to 1. Unknown or
+profile-default count drivers widen uncertainty; human-confirmed counts remain
+tight.
+
 ## 4. Driver provenance (the anti-bias rule)
 
 Every driver value carries a source, mirroring the existing
@@ -150,8 +157,9 @@ matter family with no approved template still returns `insufficient_information`
 
 Current local implementation covers driver capture, count scaling, scenario sets,
 bounded severity/liability/venue intensity multipliers, coverage-boundary surfacing,
-and synthetic guideline cap flags. The remaining roadmap work starts with the second
-matter family, followed by calibration and cross-repo promotion.
+synthetic guideline cap flags, second matter family proof, carrier-compliant
+projection, named timekeeper overrides, and P1 budget-math hardening. Remaining
+runtime adoption work lives with cross-repo owners and governed calibration.
 
 1. **Driver capture, not yet applied.** Add `CaseDriverProfile` + `budget-driver-policy.yaml`
    (taxonomy + med-mal defaults/multipliers). Extract drivers from the confirmed packet

@@ -57,6 +57,10 @@ def _fee(budget, code):
     )
 
 
+def _expense(budget, code):
+    return next(line.estimated_expenses for line in budget.lines if line.expense_code == code)
+
+
 def _amounts_by_code(ws):
     amount_col = None
     task_col = 1
@@ -136,7 +140,7 @@ def test_form_amounts_split_fees_and_expenses(tmp_path, repo_root):
     e_total = round(sum(v for k, v in amounts.items() if k.startswith("E")), 2)
     assert l_total == budget.subtotal_fees
     assert e_total == budget.subtotal_expenses
-    assert amounts["E119"] == 30000.0  # expert vendor (E119) from L340
+    assert amounts["E119"] == _expense(budget, "E119")
     assert amounts["L330"] == _fee(budget, "L330")
 
 
@@ -148,7 +152,7 @@ def test_synthetic_form_has_codes_and_total(tmp_path, repo_root):
     ws = load_workbook(out).active
     by_code = _amounts_by_code(ws)
     assert by_code["L330"] == _fee(budget, "L330")
-    assert by_code["E119"] == 30000.0
+    assert by_code["E119"] == _expense(budget, "E119")
     total = None
     for r in range(1, ws.max_row + 1):
         if ws.cell(row=r, column=1).value == "Total Budgeted ($)":
@@ -165,7 +169,7 @@ def test_fill_existing_form_writes_into_template(tmp_path, repo_root):
     render_budget_form(budget, filled, template_path=template)
     by_code = _amounts_by_code(load_workbook(filled).active)
     assert by_code["L330"] == _fee(budget, "L330")
-    assert by_code["E119"] == 30000.0
+    assert by_code["E119"] == _expense(budget, "E119")
 
 
 def test_budget_form_mapping_report_targets_sanitized_structure(tmp_path, repo_root):
@@ -199,7 +203,7 @@ def test_budget_form_mapping_report_targets_sanitized_structure(tmp_path, repo_r
     assert mappings["L330"].amount_cell == "G53"
     assert mappings["E119"].amount_cell == "G123"
     assert mappings["L330"].amount == _fee(budget, "L330")
-    assert mappings["E119"].amount == 30000.0
+    assert mappings["E119"].amount == _expense(budget, "E119")
     assert {check.status for check in report.formula_checks} == {"passed"}
     assert filled.exists()
 

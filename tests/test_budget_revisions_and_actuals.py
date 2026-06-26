@@ -65,7 +65,7 @@ def test_budget_review_record_writes_append_only_revision_report(tmp_path, repo_
     assert persisted.budget_proposal_id == budget.budget_proposal_id
     assert persisted.change_count == 2
     assert persisted.numeric_change_count == 2
-    assert persisted.total_delta > 0
+    assert persisted.total_delta != 0
     assert persisted.revised_total == round(persisted.original_total + persisted.total_delta, 2)
     assert persisted.original_budget_mutated is False
     assert persisted.superseding_budget_written is False
@@ -142,6 +142,34 @@ def test_budgeted_zero_actual_positive_is_over_threshold(tmp_path, repo_root):
     assert next(row for row in report.code_comparisons if row.code == "L599").status == (
         "over_threshold"
     )
+
+
+def test_budget_actuals_use_actual_resolution_scenario_when_available(tmp_path, repo_root):
+    budget, _ = _run_budget(tmp_path, repo_root)
+
+    default_report = build_budget_actual_comparison_report(
+        run_id="budgetactualrun-default",
+        preflight_packet_id=budget.preflight_packet_id,
+        budget=budget,
+        actuals_by_phase={"L300": {"fees": 1.0, "expenses": 0.0}},
+    )
+    early_report = build_budget_actual_comparison_report(
+        run_id="budgetactualrun-early",
+        preflight_packet_id=budget.preflight_packet_id,
+        budget=budget,
+        actuals_by_phase={"L300": {"fees": 1.0, "expenses": 0.0}},
+        actual_resolution_scenario_id="early_resolution",
+    )
+
+    default_l300 = next(row for row in default_report.phase_comparisons if row.phase_id == "L300")
+    early_l300 = next(row for row in early_report.phase_comparisons if row.phase_id == "L300")
+    assert default_l300.budgeted_total > 0
+    assert early_l300.budgeted_total == 0
+    assert early_l300.status == "over_threshold"
+    assert early_report.actual_resolution_scenario_id == "early_resolution"
+    assert "actuals_without_budget" in {
+        driver.driver_label for driver in early_report.variance_driver_candidates
+    }
 
 
 def test_budget_review_and_actuals_cli(tmp_path, repo_root, capsys):

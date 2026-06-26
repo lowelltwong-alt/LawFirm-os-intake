@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import Any
 
 from .drivers import CaseDriverProfile
@@ -40,6 +41,16 @@ DEFAULT_SCENARIOS = [
         "description": "Full discovery, dispositive motions, trial preparation, and trial.",
     },
 ]
+
+
+@dataclass(frozen=True)
+class BudgetTotals:
+    subtotal_fees: float | None
+    subtotal_expenses: float
+    contingency_amount: float | None
+    total: float | None
+    total_min: float | None
+    total_max: float | None
 
 
 def _budget_template(profile: dict[str, Any], matter_family: str) -> dict[str, Any] | None:
@@ -170,6 +181,62 @@ def _drivers_by_id(case_drivers: CaseDriverProfile | None) -> dict[str, Any]:
     return {driver.driver_id: driver for driver in case_drivers.drivers}
 
 
+def _driver_range(
+    case_drivers: CaseDriverProfile | None,
+    driver_id: str,
+) -> tuple[float, float, float] | None:
+    if case_drivers is None:
+        return None
+    ranges = case_drivers.count_driver_range_policy or {}
+    raw = ranges.get(driver_id) if isinstance(ranges, dict) else None
+    if not isinstance(raw, dict):
+        return None
+    try:
+        minimum = float(raw["min"])
+        likely = float(raw.get("likely", minimum))
+        maximum = float(raw["max"])
+    except (KeyError, TypeError, ValueError):
+        return None
+    if minimum > maximum:
+        return None
+    likely = min(max(likely, minimum), maximum)
+    return minimum, likely, maximum
+
+
+def _range_from_scaled_driver(
+    *,
+    base_value: float,
+    per_unit: float,
+    likely_value: float,
+    driver_range: tuple[float, float, float] | None,
+    provenance: str | None,
+    allow_wide_range: bool,
+) -> tuple[float, float]:
+    if (
+        allow_wide_range
+        and driver_range is not None
+        and provenance in {"unknown", "profile_default"}
+    ):
+        minimum, _likely, maximum = driver_range
+        low = round(base_value + per_unit * minimum, 2)
+        high = round(base_value + per_unit * maximum, 2)
+        likely = round(base_value + per_unit * likely_value, 2)
+        return min(low, likely), max(high, likely)
+    likely = round(base_value + per_unit * likely_value, 2)
+    return likely, likely
+
+
+def _resolution_path_driver(case_drivers: CaseDriverProfile | None) -> Any | None:
+    if case_drivers is None:
+        return None
+    driver = _drivers_by_id(case_drivers).get("resolution_path")
+    if driver is None or driver.provenance not in {"observed_support", "human_confirmed"}:
+        return None
+    if driver.value is None:
+        return None
+    return driver
+
+
 def _driver_profile_summary(
     case_drivers: CaseDriverProfile | None,
 ) -> BudgetDriverProfileSummary | None:
@@ -186,12 +253,15 @@ def _driver_profile_summary(
     )
 
 
-def _driver_effect_key(effect: BudgetDriverEffect) -> tuple[str, str | None, str, tuple[str, ...]]:
+def _driver_effect_key(
+    effect: BudgetDriverEffect,
+) -> tuple[str, str | None, str, tuple[str, ...], tuple[str, ...]]:
     return (
         effect.driver_id,
         None if effect.driver_value is None else str(effect.driver_value),
         effect.effect_type,
         tuple(effect.phase_ids),
+        tuple(effect.task_ids),
     )
 
 
@@ -252,7 +322,7 @@ def _intensity_adjustment(
             )
         )
 
-    cap = float(policy.get("cumulative_multiplier_cap", multiplier))
+    cap = float(policy.get("cumulative_multiplier_cap", 2.5))
     if multiplier > cap:
         note = (
             f"Cumulative driver multiplier {round(multiplier, 4)}x for {phase_id}/{task_id} "
@@ -488,9 +558,16 @@ def _phase_order(template: dict[str, Any]) -> list[str]:
     return [str(phase["phase_id"]) for phase in template.get("phases", [])]
 
 
-def _scenario_definitions(template: dict[str, Any]) -> list[dict[str, str]]:
-    raw = template.get("scenarios") or DEFAULT_SCENARIOS
-    definitions: list[dict[str, str]] = []
+def _scenario_definitions(
+    template: dict[str, Any],
+    case_drivers: CaseDriverProfile | None = None,
+) -> list[dict[str, Any]]:
+    raw = (
+        template.get("scenarios")
+        or (case_drivers.scenario_policy if case_drivers is not None else None)
+        or DEFAULT_SCENARIOS
+    )
+    definitions: list[dict[str, Any]] = []
     for scenario in raw:
         scenario_id = str(scenario["scenario_id"])
         definitions.append(
@@ -501,6 +578,9 @@ def _scenario_definitions(template: dict[str, Any]) -> list[dict[str, str]]:
                 ),
                 "resolution_phase": str(scenario["resolution_phase"]),
                 "description": str(scenario.get("description", "")),
+                "probability": (
+                    float(scenario["probability"]) if "probability" in scenario else None
+                ),
             }
         )
     return definitions
@@ -534,7 +614,7 @@ def _line_external_codes(lines: list[BudgetLine]) -> list[str]:
 def _budget_totals(
     lines: list[BudgetLine],
     contingency_percent: float,
-) -> tuple[float | None, float, float | None, float | None, float | None, float | None]:
+) -> BudgetTotals:
     all_priced = all(line.hourly_rate is not None for line in lines)
     subtotal_fees = (
         round(sum(line.estimated_fees or 0 for line in lines), 2) if all_priced else None
@@ -565,17 +645,25 @@ def _budget_totals(
             ),
             2,
         )
+        min_expenses = round(
+            sum(line.estimated_expenses_min or line.estimated_expenses for line in lines),
+            2,
+        )
+        max_expenses = round(
+            sum(line.estimated_expenses_max or line.estimated_expenses for line in lines),
+            2,
+        )
         min_contingency = round(min_fees * contingency_percent / 100, 2)
         max_contingency = round(max_fees * contingency_percent / 100, 2)
-        total_min = round(min_fees + subtotal_expenses + min_contingency, 2)
-        total_max = round(max_fees + subtotal_expenses + max_contingency, 2)
-    return (
-        subtotal_fees,
-        subtotal_expenses,
-        contingency_amount,
-        total,
-        total_min,
-        total_max,
+        total_min = round(min_fees + min_expenses + min_contingency, 2)
+        total_max = round(max_fees + max_expenses + max_contingency, 2)
+    return BudgetTotals(
+        subtotal_fees=subtotal_fees,
+        subtotal_expenses=subtotal_expenses,
+        contingency_amount=contingency_amount,
+        total=total,
+        total_min=total_min,
+        total_max=total_max,
     )
 
 
@@ -591,14 +679,7 @@ def _calculation_report(
     *,
     mode: str,
 ) -> BudgetCalculationReport:
-    (
-        subtotal_fees,
-        subtotal_expenses,
-        contingency_amount,
-        total,
-        _total_min,
-        _total_max,
-    ) = _budget_totals(lines, contingency_percent)
+    totals = _budget_totals(lines, contingency_percent)
     return BudgetCalculationReport(
         calculation_report_id=new_id("calcreport"),
         mode=mode,  # type: ignore[arg-type]
@@ -606,11 +687,11 @@ def _calculation_report(
         total_hours=round(sum(line.estimated_hours for line in lines), 2),
         priced_line_count=sum(1 for line in lines if line.hourly_rate is not None),
         unpriced_line_count=sum(1 for line in lines if line.hourly_rate is None),
-        subtotal_fees=subtotal_fees,
-        subtotal_expenses=subtotal_expenses,
+        subtotal_fees=totals.subtotal_fees,
+        subtotal_expenses=totals.subtotal_expenses,
         contingency_percent=contingency_percent,
-        contingency_amount=contingency_amount,
-        total_proposed_budget=total,
+        contingency_amount=totals.contingency_amount,
+        total_proposed_budget=totals.total,
         rate_sources=sorted({line.rate_source for line in lines}),
     )
 
@@ -619,20 +700,14 @@ def _build_scenario_set(
     template: dict[str, Any],
     lines: list[BudgetLine],
     contingency_percent: float,
+    case_drivers: CaseDriverProfile | None = None,
 ) -> BudgetScenarioSet:
     phase_order = _phase_order(template)
     scenarios: list[BudgetScenario] = []
-    for definition in _scenario_definitions(template):
+    for definition in _scenario_definitions(template, case_drivers):
         included_phase_ids = _included_phase_ids(phase_order, definition["resolution_phase"])
         scenario_lines = _lines_for_phases(lines, included_phase_ids)
-        (
-            subtotal_fees,
-            subtotal_expenses,
-            contingency_amount,
-            total,
-            total_min,
-            total_max,
-        ) = _budget_totals(scenario_lines, contingency_percent)
+        totals = _budget_totals(scenario_lines, contingency_percent)
         scenarios.append(
             BudgetScenario(
                 scenario_id=definition["scenario_id"],
@@ -643,13 +718,14 @@ def _build_scenario_set(
                 included_external_codes=_line_external_codes(scenario_lines),
                 included_line_count=len(scenario_lines),
                 total_hours=round(sum(line.estimated_hours for line in scenario_lines), 2),
-                subtotal_fees=subtotal_fees,
-                subtotal_expenses=subtotal_expenses,
+                subtotal_fees=totals.subtotal_fees,
+                subtotal_expenses=totals.subtotal_expenses,
                 contingency_percent=contingency_percent,
-                contingency_amount=contingency_amount,
-                total_proposed_budget=total,
-                total_budget_min=total_min,
-                total_budget_max=total_max,
+                contingency_amount=totals.contingency_amount,
+                total_proposed_budget=totals.total,
+                total_budget_min=totals.total_min,
+                total_budget_max=totals.total_max,
+                probability=definition.get("probability"),
                 pricing_status=_pricing_status(scenario_lines),  # type: ignore[arg-type]
             )
         )
@@ -666,11 +742,38 @@ def _build_scenario_set(
         monotonic = all(hours[index] <= hours[index + 1] for index in range(len(hours) - 1))
         basis = "total_hours"
     scenario_ids = {scenario.scenario_id for scenario in scenarios}
-    selected = "standard" if "standard" in scenario_ids else scenarios[-1].scenario_id
+    standard = "standard" if "standard" in scenario_ids else scenarios[-1].scenario_id
+    selected = standard
+    selected_basis = "default_standard"
+    resolution_driver = _resolution_path_driver(case_drivers)
+    if resolution_driver is not None and str(resolution_driver.value) in scenario_ids:
+        selected = str(resolution_driver.value)
+        selected_basis = "confirmed_resolution_path"
+    elif "standard" not in scenario_ids:
+        selected_basis = "fallback_last_scenario"
+
+    probability_values = [scenario.probability for scenario in scenarios]
+    probability_sum = None
+    expected_total = None
+    if all(value is not None for value in probability_values):
+        probability_sum = round(sum(float(value) for value in probability_values), 6)
+        if probability_sum == 1 and all(
+            scenario.total_proposed_budget is not None for scenario in scenarios
+        ):
+            expected_total = round(
+                sum(
+                    float(scenario.probability or 0) * float(scenario.total_proposed_budget or 0)
+                    for scenario in scenarios
+                ),
+                2,
+            )
     return BudgetScenarioSet(
         scenario_set_id=new_id("budgetscenarios"),
         selected_scenario_id=selected,
-        standard_scenario_id=selected,
+        standard_scenario_id=standard,
+        selected_scenario_basis=selected_basis,  # type: ignore[arg-type]
+        expected_total=expected_total,
+        expected_total_probability_sum=probability_sum,
         scenarios=scenarios,
         monotonic_total_order=monotonic,
         total_order_basis=basis,  # type: ignore[arg-type]
@@ -796,7 +899,7 @@ def build_budget_proposal(
     driver_values = _numeric_driver_values(case_drivers)
     driver_lookup = _drivers_by_id(case_drivers)
     driver_effects_by_key: dict[
-        tuple[str, str | None, str, tuple[str, ...]], BudgetDriverEffect
+        tuple[str, str | None, str, tuple[str, ...], tuple[str, ...]], BudgetDriverEffect
     ] = {}
     lines: list[BudgetLine] = []
     evidence_refs = _confirmed_matter_observed_refs(packet, confirmation)
@@ -813,12 +916,33 @@ def build_budget_proposal(
 
             scaling_driver = task.get("scaling_driver")
             scaling_formula: str | None = None
+            hours_min: float | None = None
+            hours_max: float | None = None
+            expenses_min: float | None = None
+            expenses_max: float | None = None
             if scaling_driver is not None and scaling_driver in driver_values:
                 units, provenance = driver_values[scaling_driver]
                 hours_per_unit = float(task.get("hours_per_unit", 0.0))
                 expense_per_unit = float(task.get("expense_per_unit", 0.0))
                 hours = round(hours_per_unit * units, 2)
                 expenses = round(base_expenses + expense_per_unit * units, 2)
+                driver_range = _driver_range(case_drivers, str(scaling_driver))
+                hours_min, hours_max = _range_from_scaled_driver(
+                    base_value=0.0,
+                    per_unit=hours_per_unit,
+                    likely_value=units,
+                    driver_range=driver_range,
+                    provenance=provenance,
+                    allow_wide_range=True,
+                )
+                expenses_min, expenses_max = _range_from_scaled_driver(
+                    base_value=base_expenses,
+                    per_unit=expense_per_unit,
+                    likely_value=units,
+                    driver_range=driver_range,
+                    provenance=provenance,
+                    allow_wide_range=expense_per_unit > 0,
+                )
                 scaling_formula = (
                     f"{hours_per_unit} hours/unit * {units} {scaling_driver} ({provenance})"
                 )
@@ -827,6 +951,11 @@ def build_budget_proposal(
                     f"Hours scaled by driver {scaling_driver}={units} ({provenance}); "
                     f"template hours {base_hours} used only as fallback."
                 ]
+                if provenance == "profile_default" and driver_range is not None:
+                    assumptions = assumptions + [
+                        f"Range widened by synthetic {scaling_driver} min/likely/max policy; "
+                        "profile default is not observed fact."
+                    ]
                 if driver is not None:
                     note = (
                         f"Count driver {scaling_driver}={units} ({provenance}) scaled "
@@ -851,17 +980,70 @@ def build_budget_proposal(
             else:
                 hours = base_hours
                 expenses = base_expenses
+                if scaling_driver is not None:
+                    driver = driver_lookup.get(str(scaling_driver))
+                    driver_range = _driver_range(case_drivers, str(scaling_driver))
+                    if driver is not None and driver.provenance == "unknown" and driver_range:
+                        hours_per_unit = float(task.get("hours_per_unit", 0.0))
+                        expense_per_unit = float(task.get("expense_per_unit", 0.0))
+                        minimum, _likely, maximum = driver_range
+                        ranged_hours_min = round(hours_per_unit * minimum, 2)
+                        ranged_hours_max = round(hours_per_unit * maximum, 2)
+                        ranged_expenses_min = round(
+                            base_expenses + expense_per_unit * minimum,
+                            2,
+                        )
+                        ranged_expenses_max = round(
+                            base_expenses + expense_per_unit * maximum,
+                            2,
+                        )
+                        hours_min = min(hours, ranged_hours_min)
+                        hours_max = max(hours, ranged_hours_max)
+                        expenses_min = min(expenses, ranged_expenses_min)
+                        expenses_max = max(expenses, ranged_expenses_max)
+                        assumptions = assumptions + [
+                            f"Range widened by unknown {scaling_driver} min/max policy; "
+                            "template value remains the likely fallback."
+                        ]
 
             intensity_multiplier, intensity_notes, intensity_effects = _intensity_adjustment(
                 phase_id,
                 task_id,
                 case_drivers,
             )
+            if hours_min is None:
+                hours_min = float(task.get("estimated_hours_min", max(0.0, hours * 0.8)))
+            if hours_max is None:
+                hours_max = float(task.get("estimated_hours_max", hours * 1.25))
+            if expenses_min is None:
+                expenses_min = float(task.get("estimated_expenses_min", expenses))
+            if expenses_max is None:
+                expenses_max = float(task.get("estimated_expenses_max", expenses))
             if intensity_multiplier != 1.0:
                 hours = round(hours * intensity_multiplier, 2)
+                hours_min = round(hours_min * intensity_multiplier, 2)
+                hours_max = round(hours_max * intensity_multiplier, 2)
+                apply_intensity_to_expenses = (
+                    bool(
+                        (case_drivers.intensity_multiplier_policy or {}).get(
+                            "applies_to_expense_bearing_lines",
+                            False,
+                        )
+                    )
+                    if case_drivers is not None
+                    else False
+                )
+                if apply_intensity_to_expenses and expenses > 0:
+                    expenses = round(expenses * intensity_multiplier, 2)
+                    expenses_min = round(expenses_min * intensity_multiplier, 2)
+                    expenses_max = round(expenses_max * intensity_multiplier, 2)
                 assumptions = assumptions + [
                     f"Hours adjusted by cumulative intensity multiplier {intensity_multiplier}x."
                 ]
+                if apply_intensity_to_expenses and expenses > 0:
+                    assumptions = assumptions + [
+                        "Expense-bearing line adjusted by the same synthetic intensity multiplier."
+                    ]
             assumptions = assumptions + intensity_notes
             for effect in intensity_effects:
                 driver_effects_by_key[_driver_effect_key(effect)] = effect
@@ -875,8 +1057,6 @@ def build_budget_proposal(
             if timekeeper_note is not None:
                 assumptions = assumptions + [timekeeper_note]
             fees = round(hours * rate, 2) if rate is not None else None
-            hours_min = float(task.get("estimated_hours_min", max(0.0, hours * 0.8)))
-            hours_max = float(task.get("estimated_hours_max", hours * 1.25))
             if rate is not None and rate_source == "synthetic_named_timekeeper_override":
                 rate_formula = (
                     f"{hours} hours * {rate} synthetic named timekeeper rate ({timekeeper_id})"
@@ -904,6 +1084,8 @@ def build_budget_proposal(
                     rate_is_synthetic=True,
                     estimated_fees=fees,
                     estimated_expenses=expenses,
+                    estimated_expenses_min=round(expenses_min, 2),
+                    estimated_expenses_max=round(expenses_max, 2),
                     calculation_formula=calculation_formula,
                     external_code_candidate=task.get("external_code_candidate"),
                     expense_code=task.get("expense_code"),
@@ -913,21 +1095,19 @@ def build_budget_proposal(
             )
 
     contingency_percent = float(template.get("contingency_percent", 0.0))
-    scenario_set = _build_scenario_set(template, lines, contingency_percent)
+    scenario_set = _build_scenario_set(
+        template,
+        lines,
+        contingency_percent,
+        case_drivers=case_drivers,
+    )
     selected_lines = _selected_scenario_lines(template, lines, scenario_set)
     selected_scenario = next(
         scenario
         for scenario in scenario_set.scenarios
         if scenario.scenario_id == scenario_set.selected_scenario_id
     )
-    (
-        subtotal_fees,
-        subtotal_expenses,
-        contingency_amount,
-        total,
-        _total_min,
-        _total_max,
-    ) = _budget_totals(selected_lines, contingency_percent)
+    selected_totals = _budget_totals(selected_lines, contingency_percent)
     mode = _pricing_status(selected_lines)
     report = _calculation_report(selected_lines, contingency_percent, mode=mode)
     driver_effects = sorted(
@@ -942,7 +1122,7 @@ def build_budget_proposal(
             ",".join(effect.task_ids),
         ),
     )
-    guideline_flags = _guideline_flags(selected_lines, total, case_drivers)
+    guideline_flags = _guideline_flags(selected_lines, selected_totals.total, case_drivers)
     driver_assumptions = [
         effect.note for effect in driver_effects if effect.effect_type != "unknown_driver"
     ]
@@ -1009,11 +1189,11 @@ def build_budget_proposal(
         representation_posture=confirmation.confirmed_representation_posture,
         pricing_status=mode,
         lines=selected_lines,
-        subtotal_fees=subtotal_fees,
-        subtotal_expenses=subtotal_expenses,
+        subtotal_fees=selected_totals.subtotal_fees,
+        subtotal_expenses=selected_totals.subtotal_expenses,
         contingency_percent=contingency_percent,
-        contingency_amount=contingency_amount,
-        total_proposed_budget=total,
+        contingency_amount=selected_totals.contingency_amount,
+        total_proposed_budget=selected_totals.total,
         scenario_name=selected_scenario.scenario_id,
         scenario_set=scenario_set,
         calculation_report=report,

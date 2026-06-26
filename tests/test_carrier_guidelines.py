@@ -72,7 +72,7 @@ def test_carrier_guideline_projection_applies_rate_and_expense_caps(tmp_path, re
     )
 
     expert_expense_line = next(line for line in projection.lines if line.expense_code == "E119")
-    assert expert_expense_line.proposed_expenses == 30000.0
+    assert expert_expense_line.proposed_expenses == 34020.0
     assert expert_expense_line.compliant_expenses == 25000.0
     assert expert_expense_line.expense_cap_applied is True
     assert expert_expense_line.disallowed is False
@@ -157,7 +157,7 @@ def test_carrier_guideline_preapproval_thresholds_create_gate_and_dry_run_candid
         triggered
     )
     assert triggered["experts_over_count"].current_value == 4
-    assert triggered["expert_spend_over_amount"].current_value == 30000.0
+    assert triggered["expert_spend_over_amount"].current_value == 34020.0
     assert triggered["depositions_over_count"].current_value == 8
     assert all(
         requirement.required_human_gate == "human_carrier_preapproval"

@@ -43,18 +43,22 @@ A budget proposal contains:
 16. carrier-compliant projection when a synthetic guideline artifact is present;
 17. human approval state.
 
-The compatibility surface of `BudgetProposal` is the `standard` scenario: its
-`lines`, subtotal fields, calculation report, and `total_proposed_budget` mirror the
-standard branch. The embedded `BudgetScenarioSet` preserves the wider early,
-standard, and through-trial comparison with included phases, included UTBMS code
-candidates, totals, and min/max ranges. Scenario vocabulary remains local candidate
-data until promoted by the owning authority repo.
+The compatibility surface of `BudgetProposal` defaults to the `standard` scenario:
+its `lines`, subtotal fields, calculation report, and `total_proposed_budget`
+mirror the standard branch unless an observed or human-confirmed `resolution_path`
+selects another scenario. The embedded `BudgetScenarioSet` preserves the wider
+early, standard, and through-trial comparison with included phases, included UTBMS
+code candidates, totals, min/max ranges, optional probabilities, and a labeled
+expected total when probabilities are complete. Scenario vocabulary remains local
+candidate data until promoted by the owning authority repo.
 
 `BudgetDriverEffect` records show count scaling, bounded intensity multipliers,
 coverage boundaries, and unknown drivers with driver value, provenance, structured
 policy refs, and the `default_used_as_observed_fact=false` invariant. Profile
 defaults may drive synthetic assumptions, but the review surfaces label them as
-defaults rather than observed facts. `BudgetGuidelineFlag` records show synthetic
+defaults rather than observed facts. Count-driver ranges widen hour and expense
+ranges for unknown/profile-default drivers; human-confirmed counts remain tight.
+`BudgetGuidelineFlag` records show synthetic
 rate, phase, and total cap checks. A guideline flag can require human review, but it
 does not rewrite hours, rates, expenses, or totals.
 
@@ -165,8 +169,9 @@ This repo does not read billing, write billing, or connect to a financial system
 Normal starter runs emit `budget_actual_comparison_report.json` with
 `actuals_not_available`, `billing_connector_read_performed=false`, and
 `billing_connector_write_performed=false`. The local `compare-budget-actuals`
-command may pass synthetic actuals into the deterministic comparison builder and
-may compare against a `budget_revision_report.json` from human review. Future
+command may pass synthetic actuals into the deterministic comparison builder,
+may filter the comparison surface by an actual resolution scenario, and may
+compare against a `budget_revision_report.json` from human review. Future
 production actuals should arrive through Orchestrator under a governed billing-read
 contract, then any variance candidate should be admitted by the Exception Lake
 runtime, not by intake. Variance never silently mutates a profile, template,

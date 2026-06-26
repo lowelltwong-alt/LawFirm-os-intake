@@ -734,6 +734,8 @@ class BudgetLine(StrictModel):
     rate_is_synthetic: bool = True
     estimated_fees: float | None = Field(default=None, ge=0)
     estimated_expenses: float = Field(default=0, ge=0)
+    estimated_expenses_min: float | None = Field(default=None, ge=0)
+    estimated_expenses_max: float | None = Field(default=None, ge=0)
     calculation_formula: str | None = None
     external_code_candidate: str | None = None
     expense_code: str | None = None
@@ -779,6 +781,7 @@ class BudgetScenario(StrictModel):
     total_proposed_budget: float | None = None
     total_budget_min: float | None = None
     total_budget_max: float | None = None
+    probability: float | None = Field(default=None, ge=0, le=1)
     pricing_status: Literal["priced", "hours_only", "insufficient_information"]
     proposed_for_human_review: Literal[True] = True
     not_authorized_for_client_submission: Literal[True] = True
@@ -791,6 +794,13 @@ class BudgetScenarioSet(StrictModel):
     selected_scenario_id: str = "standard"
     standard_scenario_id: str = "standard"
     scenarios: list[BudgetScenario]
+    selected_scenario_basis: Literal[
+        "default_standard",
+        "confirmed_resolution_path",
+        "fallback_last_scenario",
+    ] = "default_standard"
+    expected_total: float | None = None
+    expected_total_probability_sum: float | None = None
     monotonic_total_order: bool
     total_order_basis: Literal["total_proposed_budget", "total_hours"] = "total_proposed_budget"
     requires_human_budget_review: Literal[True] = True

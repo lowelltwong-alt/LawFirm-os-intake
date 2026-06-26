@@ -19,6 +19,11 @@ Emit early, standard, and through-trial budget branches with ranges while preser
 
 - `BudgetScenarioSet` is embedded in `legal_budget_proposal.json` and exported as a local candidate schema.
 - The legacy proposal totals and `budget.lines` map to `standard`.
+- Observed or human-confirmed `resolution_path` can select the headline scenario;
+  otherwise the compatibility surface remains `standard`.
+- Synthetic scenario probabilities are carried from the driver policy, and a
+  labeled expected total is computed only when probabilities are complete and
+  sum to 1.
 - `early_resolution`, `standard`, and `through_trial` branch totals are monotonic; hours-only budgets prove monotonicity by hours.
 - Scenario branch details render in `legal_budget_review_form.md` and `matter_opening_review_package.md`.
 
@@ -29,7 +34,10 @@ Status: implemented for the current synthetic slice.
 Add severity, venue, liability, coverage, and guideline/cap handling without letting defaults masquerade as observed facts.
 
 - Severity, liability, and venue drivers can apply bounded intensity multipliers from local synthetic policy.
-- Cumulative multipliers are capped by policy.
+- Cumulative multipliers are capped by policy, with a finite default cap and
+  policy-controlled application to expense-bearing lines.
+- Count-driver min/likely/max ranges widen hour and expense ranges for
+  unknown/profile-default drivers while human-confirmed counts remain tight.
 - Coverage posture remains a review boundary and is not blended into defense-fee math.
 - Synthetic guideline caps produce `BudgetGuidelineFlag` records and unknown/review text; they do not rewrite rates, hours, or totals.
 - `BudgetDriverEffect` records expose driver value, provenance, structured policy ref, applied phases/tasks, and whether a default was used as an observed fact.
@@ -198,6 +206,8 @@ Lake runtime.
 - The actuals report records comparison budget state, scenario ID, phase/code
   comparisons, variance-driver candidates, learning-disposition candidates, and
   dry-run variance candidates while preserving no billing connector reads/writes.
+- When an actual resolution scenario is supplied, the comparison surface is
+  filtered to that scenario before phase/code variance is calculated.
 - The zero-budget/positive-actual case is classified as over-threshold rather
   than hidden by a missing percent denominator.
 - Learning remains candidate-only: variance and human-revision evidence can feed
