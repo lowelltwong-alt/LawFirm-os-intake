@@ -517,7 +517,8 @@ proof work from the higher-risk owner-adoption work.
 - `audit-intake-vertical-readiness` consumes
   `learning_owner_handoff_report.json` and
   `budget_event_lake_admission_bundle_report.json`, plus
-  `budget_calibration_readiness_report.json`.
+  `budget_calibration_readiness_report.json` and
+  `budget_fixture_update_review_report.json`.
 - It writes `intake_vertical_readiness_audit_report.json` and
   `intake_vertical_readiness_audit_report.md`.
 - It checks that the intake-to-budget, budget revision, actual-cost comparison,
@@ -534,6 +535,9 @@ proof work from the higher-risk owner-adoption work.
   fixture-update review status, source refs, approved replay-output refs, target
   fixture refs, and no fixture/calibration/Lake/SQLite/silent-learning side
   effects.
+- It validates the generated fixture-update review record for append-only local
+  history, accepted/rejected decision posture, source calibration-readiness
+  binding, and no fixture/calibration/Lake/SQLite/silent-learning side effects.
 - Passing status is `ready_for_pr_review_external_adoption_required`, which
   means ready for human PR review only.
 - The report records `pr_marked_ready=false`, `promotion_authorized=false`,
@@ -553,9 +557,9 @@ after those owners promote the necessary contracts and runtime gates.
 Status: implemented for the current synthetic candidate slice through corpus
 audit, replay planning, selected replay execution audit, human replay review
 packet/outcome recording, fixture-binding candidates, and fixture-update
-handoff packaging, plus calibration-chain readiness audit; broader replay
-execution, reviewed fixture edits, real-data pilots, and owner adoption remain
-future work.
+handoff packaging, calibration-chain readiness audit, and manual fixture-update
+review record; broader replay execution, reviewed fixture edit PRs, real-data
+pilots, and owner adoption remain future work.
 
 Separate "we have synthetic evidence artifacts" from "we are allowed to learn
 from them."
@@ -658,5 +662,16 @@ from them."
   manual fixture-update review only. It checks ID continuity, approved output
   refs, target fixture refs, required gates, and no side effects. It still does
   not update fixtures, create a PR, apply learning, mutate
+  budgets/profiles/templates/guidelines, write Lake or SQLite records, submit
+  budgets, open matters, or authorize external actions.
+- `record-budget-fixture-update-review` consumes the readiness report plus an
+  explicit human fixture-update review decision JSON, then writes
+  `budget_fixture_update_review_record.json`,
+  `budget_fixture_update_review_history.jsonl`,
+  `budget_fixture_update_review_report.json`, and Markdown notes.
+- Accepted decisions require a separate human-reviewed fixture-update PR if
+  humans choose to update fixtures. Rejected or needs-more-information decisions
+  remain recorded evidence and do not open a PR. The recorder still does not
+  update fixtures, create a PR, apply learning, mutate
   budgets/profiles/templates/guidelines, write Lake or SQLite records, submit
   budgets, open matters, or authorize external actions.

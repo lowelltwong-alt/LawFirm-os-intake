@@ -2762,6 +2762,177 @@ class BudgetCalibrationReadinessReport(StrictModel):
         return self
 
 
+BudgetFixtureUpdateReviewDecision = Literal[
+    "accept_for_separate_fixture_update_pr",
+    "accept_with_corrections_for_separate_fixture_update_pr",
+    "reject_fixture_update",
+    "needs_more_information",
+]
+
+
+class BudgetFixtureUpdateReviewCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed", "warning"]
+    message: str
+    artifact_refs: list[str] = Field(default_factory=list)
+    blocking_refs: list[str] = Field(default_factory=list)
+
+
+class BudgetFixtureUpdateReviewRecord(StrictModel):
+    schema_version: str = "0.1"
+    fixture_update_review_id: str
+    budget_calibration_readiness_report_id: str
+    fixture_binding_handoff_report_id: str
+    replay_case_id: str
+    reviewer_id: str
+    reviewed_at: str
+    decision: BudgetFixtureUpdateReviewDecision
+    decision_reason: str
+    accepted_output_refs: list[str] = Field(default_factory=list)
+    rejected_output_refs: list[str] = Field(default_factory=list)
+    target_fixture_refs: list[str] = Field(default_factory=list)
+    reviewer_corrections: list[str] = Field(default_factory=list)
+    required_followups: list[str] = Field(default_factory=list)
+    reviewed_red_team_notes: list[str] = Field(default_factory=list)
+    append_only: Literal[True] = True
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    source_readiness_report_mutated: Literal[False] = False
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    fixture_update_pr_created: Literal[False] = False
+    fixture_files_mutated: Literal[False] = False
+    fixture_binding_applied: Literal[False] = False
+    downstream_learning_gate_allowed: Literal[False] = False
+    calibration_applied: Literal[False] = False
+    profile_mutation_performed: Literal[False] = False
+    template_mutation_performed: Literal[False] = False
+    budget_mutation_performed: Literal[False] = False
+    carrier_guideline_mutation_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def fixture_update_review_decision_is_complete(
+        self,
+    ) -> "BudgetFixtureUpdateReviewRecord":
+        if not self.reviewer_id.strip():
+            raise ValueError("fixture update review requires reviewer_id")
+        if not self.reviewed_at.strip():
+            raise ValueError("fixture update review requires reviewed_at")
+        if not self.decision_reason.strip():
+            raise ValueError("fixture update review requires decision_reason")
+        accept_decisions = {
+            "accept_for_separate_fixture_update_pr",
+            "accept_with_corrections_for_separate_fixture_update_pr",
+        }
+        if self.decision in accept_decisions and not (
+            self.accepted_output_refs and self.target_fixture_refs
+        ):
+            raise ValueError("accepted fixture update reviews require output and target refs")
+        if (
+            self.decision == "accept_with_corrections_for_separate_fixture_update_pr"
+            and not self.reviewer_corrections
+        ):
+            raise ValueError("accept_with_corrections requires reviewer_corrections")
+        return self
+
+
+class BudgetFixtureUpdateReviewReport(StrictModel):
+    schema_version: str = "0.1"
+    fixture_update_review_report_id: str
+    status: Literal[
+        "fixture_update_review_recorded_separate_pr_required",
+        "fixture_update_review_recorded_no_fixture_pr",
+        "blocked_by_fixture_update_review_evidence",
+    ]
+    source_budget_calibration_readiness_report_id: str
+    source_budget_calibration_readiness_report_ref: str
+    source_budget_calibration_readiness_status: Literal[
+        "ready_for_manual_fixture_update_review",
+        "blocked_by_calibration_chain",
+    ]
+    fixture_binding_handoff_report_id: str
+    replay_case_id: str
+    fixture_update_review_id: str
+    decision: BudgetFixtureUpdateReviewDecision
+    decision_reason: str
+    accepted_output_refs: list[str] = Field(default_factory=list)
+    rejected_output_refs: list[str] = Field(default_factory=list)
+    target_fixture_refs: list[str] = Field(default_factory=list)
+    reviewer_corrections: list[str] = Field(default_factory=list)
+    required_followups: list[str] = Field(default_factory=list)
+    reviewed_red_team_notes: list[str] = Field(default_factory=list)
+    append_only_history_ref: str
+    checks: list[BudgetFixtureUpdateReviewCheck]
+    required_next_gates: list[str]
+    accepted_for_fixture_update_pr: bool = False
+    separate_fixture_update_pr_required: bool = False
+    append_only: Literal[True] = True
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    source_readiness_report_mutated: Literal[False] = False
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    fixture_update_pr_created: Literal[False] = False
+    fixture_files_mutated: Literal[False] = False
+    fixture_binding_applied: Literal[False] = False
+    downstream_learning_gate_allowed: Literal[False] = False
+    calibration_applied: Literal[False] = False
+    profile_mutation_performed: Literal[False] = False
+    template_mutation_performed: Literal[False] = False
+    budget_mutation_performed: Literal[False] = False
+    carrier_guideline_mutation_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def fixture_update_review_status_matches_checks(
+        self,
+    ) -> "BudgetFixtureUpdateReviewReport":
+        failed = [check for check in self.checks if check.status == "failed"]
+        if self.status == "blocked_by_fixture_update_review_evidence" and not failed:
+            raise ValueError("blocked fixture update review report requires failed checks")
+        if self.status != "blocked_by_fixture_update_review_evidence" and failed:
+            raise ValueError("non-blocked fixture update review report cannot have failed checks")
+        if self.status == "fixture_update_review_recorded_separate_pr_required":
+            if not (
+                self.accepted_for_fixture_update_pr
+                and self.separate_fixture_update_pr_required
+                and self.accepted_output_refs
+                and self.target_fixture_refs
+            ):
+                raise ValueError("separate fixture PR review requires accepted refs")
+        if self.status == "fixture_update_review_recorded_no_fixture_pr" and (
+            self.accepted_for_fixture_update_pr or self.separate_fixture_update_pr_required
+        ):
+            raise ValueError("no-fixture-PR review cannot require a fixture update PR")
+        required = {
+            "append_only_fixture_update_review_record",
+            "separate_fixture_update_pr_if_accepted",
+            "reviewed_learning_gate_before_candidate_changes",
+            "shadow_eval_before_learning",
+            "owning_repo_review",
+            "no_silent_profile_template_or_guideline_mutation",
+        }
+        if not required.issubset(set(self.required_next_gates)):
+            raise ValueError("fixture update review report is missing required gates")
+        return self
+
+
 class BudgetFormCodeMapping(StrictModel):
     code: str
     kind: Literal["phase", "task"]
@@ -4345,6 +4516,7 @@ class IntakeVerticalReadinessAuditReport(StrictModel):
         "blocked_missing_or_failed_learning_artifacts",
         "blocked_missing_or_failed_lake_bundle",
         "blocked_missing_or_failed_calibration_readiness",
+        "blocked_missing_or_failed_fixture_update_review",
     ]
     review_readiness: Literal[
         "ready_for_human_pr_review_not_auto_marked",
@@ -4352,10 +4524,12 @@ class IntakeVerticalReadinessAuditReport(StrictModel):
         "not_ready_learning_artifact_chain_blocked",
         "not_ready_lake_bundle_blocked",
         "not_ready_calibration_readiness_blocked",
+        "not_ready_fixture_update_review_blocked",
     ]
     source_owner_handoff_report_ref: str
     source_budget_event_lake_bundle_report_ref: str
     source_budget_calibration_readiness_report_ref: str
+    source_budget_fixture_update_review_report_ref: str
     total_slice_count: int = Field(ge=0)
     implemented_slice_count: int = Field(ge=0)
     missing_artifact_refs: list[str] = Field(default_factory=list)
@@ -4404,6 +4578,7 @@ class PRReviewChecklistItem(StrictModel):
         "lake_bundle",
         "learning_chain",
         "calibration_chain",
+        "fixture_update_review",
         "authority_boundary",
         "validation",
         "external_owner_review",
@@ -4453,6 +4628,7 @@ class PRReviewChecklistReport(StrictModel):
         "blocked_missing_or_failed_learning_artifacts",
         "blocked_missing_or_failed_lake_bundle",
         "blocked_missing_or_failed_calibration_readiness",
+        "blocked_missing_or_failed_fixture_update_review",
     ]
     source_review_readiness: Literal[
         "ready_for_human_pr_review_not_auto_marked",
@@ -4460,6 +4636,7 @@ class PRReviewChecklistReport(StrictModel):
         "not_ready_learning_artifact_chain_blocked",
         "not_ready_lake_bundle_blocked",
         "not_ready_calibration_readiness_blocked",
+        "not_ready_fixture_update_review_blocked",
     ]
     status: Literal["ready_for_human_pr_review", "blocked_by_readiness_audit"]
     recommendation: Literal[

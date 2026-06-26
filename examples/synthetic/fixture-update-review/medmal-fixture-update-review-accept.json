@@ -1,0 +1,27 @@
+{
+  "schema_version": "0.1",
+  "fixture_update_review_id": "fixture-update-review-medmal-accept-001",
+  "budget_calibration_readiness_report_id": "budget-calibration-readiness-1",
+  "fixture_binding_handoff_report_id": "fixture-binding-handoff-report-1",
+  "replay_case_id": "replay-case-1",
+  "reviewer_id": "synthetic-reviewer",
+  "reviewed_at": "2026-06-26T00:00:00Z",
+  "decision": "accept_for_separate_fixture_update_pr",
+  "decision_reason": "Synthetic reviewer accepts the approved replay output for a separate fixture-update PR after checking the no-learning boundary.",
+  "accepted_output_refs": [
+    ".lawfirm-os-intake/replay/budget_revision_report.json"
+  ],
+  "rejected_output_refs": [],
+  "target_fixture_refs": [
+    "examples/synthetic/budget-review/medmal-human-budget-review-change.json"
+  ],
+  "reviewer_corrections": [],
+  "required_followups": [
+    "Open a separate reviewed fixture-update PR if humans choose to update the target fixture.",
+    "Rerun regression and shadow-eval checks before any learning candidate is considered."
+  ],
+  "reviewed_red_team_notes": [
+    "Fixture-update acceptance is not learning approval.",
+    "Do not mutate carrier guidelines, profiles, templates, or budget math from this record."
+  ]
+}

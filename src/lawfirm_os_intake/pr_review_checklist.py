@@ -96,7 +96,8 @@ def _checklist_items(
                 artifact_refs=[readiness_audit_report_ref],
                 why=(
                     "The audit says local candidate slices, learning handoffs, and the "
-                    "budget-event Lake bundle are ready for human PR review only."
+                    "budget-event Lake bundle are ready for human PR review only, "
+                    "with fixture-update review recorded but not applied."
                 ),
                 red_team_note=(
                     "A green readiness audit can still be stale if generated before the "
@@ -181,6 +182,24 @@ def _checklist_items(
                 ),
                 required_human_decision=(
                     "Confirm calibration readiness is only a manual fixture-update review gate."
+                ),
+            ),
+            _item(
+                item_id="pr-review-budget-fixture-update-review",
+                section="fixture_update_review",
+                title="Review manual fixture-update decision evidence",
+                recommendation="inspect",
+                artifact_refs=[report.source_budget_fixture_update_review_report_ref],
+                why=(
+                    "Accepted replay outputs must become a separate fixture-update PR only "
+                    "after explicit human review evidence; rejected or unclear outputs must stay blocked."
+                ),
+                red_team_note=(
+                    "Confirm the review record did not mutate fixtures, create a PR, "
+                    "apply calibration, or unlock silent learning."
+                ),
+                required_human_decision=(
+                    "Confirm any accepted fixture update remains a separate human-reviewed PR."
                 ),
             ),
             _item(

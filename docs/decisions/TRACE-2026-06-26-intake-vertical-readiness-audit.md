@@ -29,10 +29,15 @@ implying production readiness or external adoption.
   fixture-update review readiness, source refs, approved replay-output refs,
   target fixture refs, and no fixture/calibration/Lake/SQLite/silent-learning
   side effects.
+- Required `budget_fixture_update_review_report.json` input, checked for
+  append-only local review history, accepted/rejected decision posture, source
+  calibration-readiness binding, and no fixture/calibration/Lake/SQLite/silent
+  learning side effects.
 - Synthetic reviewed-learning gate fixture used by the proposed-change shadow
   eval chain.
 - Tests for ready, missing-local-surface, blocked-learning-chain,
-  blocked-Lake-bundle, blocked-calibration-readiness, and CLI paths.
+  blocked-Lake-bundle, blocked-calibration-readiness,
+  blocked-fixture-update-review, and CLI paths.
 - Data-flow, endpoint, roadmap, evaluation, and promotion-package updates.
 
 ## Boundary
@@ -60,6 +65,9 @@ and Exception Lake for append-only admission and SQLite migrations.
   is not admission, a SQLite write, or a record-hash assignment.
 - A green budget calibration readiness report is only manual fixture-update
   review input; it is not approval to mutate fixtures or apply calibration.
+- A green budget fixture-update review report can require a separate fixture
+  update PR, but it is not that PR and it is not approval to apply calibration
+  or learning.
 - Real budget actuals, carrier rejections, appeals, and guideline drift require
   governed connector capture and append-only evidence storage outside intake.
 - Learning from human corrections must remain explicit, reviewed, replayed, and

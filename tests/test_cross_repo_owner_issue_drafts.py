@@ -59,6 +59,7 @@ def _readiness_report_path(tmp_path, *, ready=True):
             "budget_event_lake_admission_bundle_report.json"
         ),
         source_budget_calibration_readiness_report_ref=("budget_calibration_readiness_report.json"),
+        source_budget_fixture_update_review_report_ref=("budget_fixture_update_review_report.json"),
         total_slice_count=1,
         implemented_slice_count=1,
         slices=[slice_status],

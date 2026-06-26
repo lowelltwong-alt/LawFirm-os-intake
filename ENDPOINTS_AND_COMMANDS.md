@@ -225,6 +225,27 @@ ready for manual fixture-update review only. It does not update fixtures, create
 a PR, apply learning, mutate profiles/templates/guidelines, write Lake/SQLite
 records, or perform external writes.
 
+### Record budget fixture update review
+
+```bash
+python -m lawfirm_os_intake record-budget-fixture-update-review \
+  --calibration-readiness-report .lawfirm-os-intake/budget-calibration-readiness/budget_calibration_readiness_report.json \
+  --review .lawfirm-os-intake/budget-fixture-update-review/fixture_update_review_decision.json \
+  --out-dir .lawfirm-os-intake/budget-fixture-update-review
+```
+
+This writes `budget_fixture_update_review_record.json`,
+`budget_fixture_update_review_history.jsonl`,
+`budget_fixture_update_review_report.json`, and
+`budget_fixture_update_review_report.md`. The review input must be a
+human-authored decision JSON bound to the supplied readiness report; see
+`examples/synthetic/fixture-update-review/medmal-fixture-update-review-accept.json`
+for a synthetic shape example. Accepted decisions mean only that a separate
+human-reviewed fixture-update PR is required if humans choose to update fixtures.
+The command does not update fixtures, create a PR, apply calibration or learning,
+mutate budgets/profiles/templates/guidelines, write Lake/SQLite records, or
+perform external writes.
+
 ### Build learning owner handoffs
 
 ```bash
@@ -249,6 +270,7 @@ python -m lawfirm_os_intake audit-intake-vertical-readiness \
   --owner-handoff-report .lawfirm-os-intake/learning-owner-handoffs/learning_owner_handoff_report.json \
   --budget-event-lake-bundle-report .lawfirm-os-intake/budget-event-lake-bundle/budget_event_lake_admission_bundle_report.json \
   --budget-calibration-readiness-report .lawfirm-os-intake/budget-calibration-readiness/budget_calibration_readiness_report.json \
+  --budget-fixture-update-review-report .lawfirm-os-intake/budget-fixture-update-review/budget_fixture_update_review_report.json \
   --repo-root . \
   --out-dir .lawfirm-os-intake/intake-vertical-readiness-audit
 ```
@@ -259,9 +281,9 @@ intake-to-budget, carrier rejection, budget revision, actual-cost comparison,
 reviewed learning, shadow-eval, owner-handoff, promotion-package, and command
 surfaces, then validates the generated learning artifact chain back through the
 reviewed-learning gate, the generated budget-event Lake bundle, and the
-calibration-readiness chain for manual fixture-update review only. A passing
-audit means the branch is ready for human PR review while external adoption
-remains required. It does not mark the PR ready,
+calibration-readiness chain plus fixture-update review record. A passing audit
+means the branch is ready for human PR review while external adoption remains
+required. It does not mark the PR ready,
 promote canon, write sibling repos, implement connectors, admit Lake records,
 write SQLite, apply proposed changes, or perform silent learning.
 

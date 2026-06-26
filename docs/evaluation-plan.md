@@ -108,6 +108,13 @@ creation, no calibration application, no Lake/SQLite write, no external write,
 and no silent learning. Any rejected outcome, blocked handoff, missing approved
 output, or chain mismatch must produce a blocked report.
 
+`record-budget-fixture-update-review` consumes the calibration readiness report
+and an explicit fixture-update review decision JSON. It must bind accepted output
+refs and target fixture refs to the readiness report, append a local review
+history row, distinguish accepted-for-separate-PR from rejected or
+needs-more-information decisions, and prove that no fixture update, PR creation,
+calibration, Lake/SQLite write, external write, or silent learning occurred.
+
 `record-budget-review` also writes `budget_change_ledger_report.json`,
 `budget_change_ledger.jsonl`, and `budget_change_ledger_report.md`. Corrected
 review outcomes must produce one ledger row per human change; no-change or
@@ -165,9 +172,10 @@ sibling-repo review.
 The final local close-out eval is `audit-intake-vertical-readiness`. It consumes
 `learning_owner_handoff_report.json` and
 `budget_event_lake_admission_bundle_report.json`, plus
-`budget_calibration_readiness_report.json`, checks the local candidate slices,
-generated learning artifact chain, generated budget-event Lake bundle, and
-calibration-readiness chain, and writes
+`budget_calibration_readiness_report.json` and
+`budget_fixture_update_review_report.json`, checks the local candidate slices,
+generated learning artifact chain, generated budget-event Lake bundle,
+calibration-readiness chain, and fixture-update review record, and writes
 `intake_vertical_readiness_audit_report.json`. Passing status means ready for
 human PR review only; it does not mark a PR ready, promote canon, implement
 connectors, admit Lake records, write SQLite, apply proposed changes, mutate

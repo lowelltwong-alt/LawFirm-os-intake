@@ -11,6 +11,7 @@
         "lake_bundle",
         "learning_chain",
         "calibration_chain",
+        "fixture_update_review",
         "authority_boundary",
         "validation",
         "external_owner_review",

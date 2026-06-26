@@ -13,6 +13,7 @@
             "lake_bundle",
             "learning_chain",
             "calibration_chain",
+            "fixture_update_review",
             "authority_boundary",
             "validation",
             "external_owner_review",
@@ -126,7 +127,8 @@
         "incomplete_missing_local_artifacts",
         "blocked_missing_or_failed_learning_artifacts",
         "blocked_missing_or_failed_lake_bundle",
-        "blocked_missing_or_failed_calibration_readiness"
+        "blocked_missing_or_failed_calibration_readiness",
+        "blocked_missing_or_failed_fixture_update_review"
       ],
       "title": "Source Readiness Status",
       "type": "string"
@@ -137,7 +139,8 @@
         "not_ready_missing_local_artifacts",
         "not_ready_learning_artifact_chain_blocked",
         "not_ready_lake_bundle_blocked",
-        "not_ready_calibration_readiness_blocked"
+        "not_ready_calibration_readiness_blocked",
+        "not_ready_fixture_update_review_blocked"
       ],
       "title": "Source Review Readiness",
       "type": "string"
