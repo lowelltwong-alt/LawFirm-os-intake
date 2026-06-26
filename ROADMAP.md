@@ -54,11 +54,13 @@ Build:
 - FJC Integrated Database field mapping;
 - Enron email structural parser stress tests;
 - source/license/privacy/retention review templates;
+- planning-only public-source methodology audit;
 - approved process for converting public structures into non-identifying synthetic fixtures.
 
 Exit criteria:
 
 - public source catalog is complete and reviewed;
+- methodology audit passes with direct runtime ingestion and adapter authorization still disabled;
 - no copyrighted bulk corpus is committed;
 - no real public party data enters runtime fixtures;
 - provenance and transformation method are documented.

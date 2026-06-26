@@ -281,6 +281,24 @@ for a separate fixture-update PR; it does not edit fixtures, create a GitHub PR,
 apply calibration or learning, mutate budgets/profiles/templates/guidelines,
 write Lake/SQLite records, or perform external writes.
 
+### Audit public source methodology
+
+```bash
+python -m lawfirm_os_intake audit-public-source-methodology \
+  --repo-root . \
+  --out-dir .lawfirm-os-intake/public-source-methodology
+```
+
+This writes `public_source_methodology_report.json` and
+`public_source_methodology_report.md`. The audit checks that the planning-only
+public source catalog covers the Phase 2 structural sources, every source has
+methodology role, safe/prohibited uses, review gates, synthetic-conversion
+rules, retention/privacy posture, and `adapter_status=not_authorized`, and that
+the existing metadata-only public-data boundary still passes. A passing report
+means ready for human public-source methodology review only; it does not ingest
+public records, authorize adapters, write Lake/SQLite records, or permit runtime
+public-data use.
+
 ### Build learning owner handoffs
 
 ```bash

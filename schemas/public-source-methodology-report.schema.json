@@ -1,0 +1,317 @@
+{
+  "$defs": {
+    "PublicSourceMethodologyCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "blocked",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "source_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Source Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "PublicSourceMethodologyCheck",
+      "type": "object"
+    },
+    "PublicSourceMethodologySource": {
+      "additionalProperties": false,
+      "properties": {
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "url": {
+          "title": "Url",
+          "type": "string"
+        },
+        "methodology_role": {
+          "title": "Methodology Role",
+          "type": "string"
+        },
+        "useful_for": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Useful For",
+          "type": "array"
+        },
+        "safe_use_classes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Safe Use Classes",
+          "type": "array"
+        },
+        "prohibited_use_classes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Prohibited Use Classes",
+          "type": "array"
+        },
+        "review_requirements": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Review Requirements",
+          "type": "array"
+        },
+        "synthetic_conversion_rules": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Synthetic Conversion Rules",
+          "type": "array"
+        },
+        "retention_policy": {
+          "title": "Retention Policy",
+          "type": "string"
+        },
+        "privacy_posture": {
+          "title": "Privacy Posture",
+          "type": "string"
+        },
+        "adapter_status": {
+          "title": "Adapter Status",
+          "type": "string"
+        },
+        "direct_runtime_ingestion": {
+          "title": "Direct Runtime Ingestion",
+          "type": "boolean"
+        },
+        "status": {
+          "enum": [
+            "ready_for_human_methodology_review",
+            "blocked"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "blocking_reasons": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Blocking Reasons",
+          "type": "array"
+        }
+      },
+      "required": [
+        "source_id",
+        "url",
+        "methodology_role",
+        "useful_for",
+        "safe_use_classes",
+        "prohibited_use_classes",
+        "review_requirements",
+        "synthetic_conversion_rules",
+        "retention_policy",
+        "privacy_posture",
+        "adapter_status",
+        "direct_runtime_ingestion",
+        "status"
+      ],
+      "title": "PublicSourceMethodologySource",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "public_source_methodology_report_id": {
+      "title": "Public Source Methodology Report Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "ready_for_human_public_source_methodology_review",
+        "blocked_public_source_methodology"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "source_catalog_ref": {
+      "title": "Source Catalog Ref",
+      "type": "string"
+    },
+    "data_policy_ref": {
+      "title": "Data Policy Ref",
+      "type": "string"
+    },
+    "source_count": {
+      "minimum": 0,
+      "title": "Source Count",
+      "type": "integer"
+    },
+    "required_source_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Source Ids",
+      "type": "array"
+    },
+    "missing_required_source_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Missing Required Source Ids",
+      "type": "array"
+    },
+    "sources": {
+      "items": {
+        "$ref": "#/$defs/PublicSourceMethodologySource"
+      },
+      "title": "Sources",
+      "type": "array"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/PublicSourceMethodologyCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "required_next_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Gates",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "planning_only": {
+      "const": true,
+      "default": true,
+      "title": "Planning Only",
+      "type": "boolean"
+    },
+    "metadata_only": {
+      "const": true,
+      "default": true,
+      "title": "Metadata Only",
+      "type": "boolean"
+    },
+    "human_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Human Review Required",
+      "type": "boolean"
+    },
+    "direct_runtime_ingestion_allowed": {
+      "const": false,
+      "default": false,
+      "title": "Direct Runtime Ingestion Allowed",
+      "type": "boolean"
+    },
+    "public_records_ingested": {
+      "const": false,
+      "default": false,
+      "title": "Public Records Ingested",
+      "type": "boolean"
+    },
+    "raw_public_payload_committed": {
+      "const": false,
+      "default": false,
+      "title": "Raw Public Payload Committed",
+      "type": "boolean"
+    },
+    "real_party_records_committed": {
+      "const": false,
+      "default": false,
+      "title": "Real Party Records Committed",
+      "type": "boolean"
+    },
+    "real_matter_records_committed": {
+      "const": false,
+      "default": false,
+      "title": "Real Matter Records Committed",
+      "type": "boolean"
+    },
+    "connector_implemented": {
+      "const": false,
+      "default": false,
+      "title": "Connector Implemented",
+      "type": "boolean"
+    },
+    "legal_knowledge_adapter_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Legal Knowledge Adapter Authorized",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "public_source_methodology_report_id",
+    "status",
+    "source_catalog_ref",
+    "data_policy_ref",
+    "source_count",
+    "required_source_ids",
+    "missing_required_source_ids",
+    "sources",
+    "checks",
+    "required_next_gates",
+    "generated_at"
+  ],
+  "title": "PublicSourceMethodologyReport",
+  "type": "object"
+}

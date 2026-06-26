@@ -621,7 +621,36 @@ and docs cleanup. The critical higher-risk work is owner adoption in Semantic
 Substrate, Orchestrator, and Exception Lake, then governed real-data pilots only
 after those owners promote the necessary contracts and runtime gates.
 
-## 18. Budget Calibration Corpus
+## 18. Public Source Methodology Audit
+
+Status: implemented for the planning-only Phase 2 methodology slice; public
+record ingestion, public-source adapters, reviewed source-license decisions,
+and real-data pilots remain future owner-approved work.
+
+Create a deterministic review surface for public-source structure research
+without letting public records enter the runtime.
+
+- `examples/public/catalog.yaml` remains metadata-only and now records
+  methodology role, safe uses, prohibited uses, review gates,
+  synthetic-conversion rules, retention policy, privacy posture, and
+  `adapter_status=not_authorized` for each cataloged source.
+- `audit-public-source-methodology` consumes the public catalog and data policy.
+- It writes `public_source_methodology_report.json` and
+  `public_source_methodology_report.md`.
+- It checks that CourtListener/RECAP, FJC IDB, and the Enron email corpus are
+  present for Phase 2 structure research, while all sources remain planning-only
+  and direct ingestion remains disabled.
+- It reuses the existing public-data boundary validator so raw public payloads,
+  public example files, direct public runtime origins, and payload fields fail
+  closed.
+- Passing means `ready_for_human_public_source_methodology_review`, not
+  adapter approval or runtime eligibility.
+- The command records `public_records_ingested=false`,
+  `raw_public_payload_committed=false`, `connector_implemented=false`,
+  `legal_knowledge_adapter_authorized=false`, `lake_write_performed=false`,
+  `sqlite_write_performed=false`, and `external_writes_performed=false`.
+
+## 19. Budget Calibration Corpus
 
 Status: implemented for the current synthetic candidate slice through corpus
 audit, replay planning, selected replay execution audit, human replay review

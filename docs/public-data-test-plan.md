@@ -8,6 +8,8 @@ Public data is a **planning and source-structure input**, not a live runtime inp
 
 Runtime source bundles with `data_origin: public_reference` are blocked by the data-scope gate before `raw_input.json`, source inventory, segmentation, review forms, or Exception Lake candidates are written.
 
+Run `audit-public-source-methodology` before using any public source to design new synthetic fixtures. The audit requires methodology role, safe/prohibited use classes, review gates, synthetic-conversion rules, retention policy, privacy posture, and `adapter_status=not_authorized` for every catalog entry. A passing report is still only ready for human methodology review; it does not authorize a public-source adapter or runtime ingestion.
+
 ## Recommended sources
 
 ### CourtListener / RECAP

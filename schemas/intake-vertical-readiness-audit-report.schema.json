@@ -101,12 +101,6 @@
         },
         "target_owner_repos": {
           "items": {
-            "enum": [
-              "LawFirm-os-intake",
-              "LawFirm-os-orchestrator",
-              "LawFirm-os-exceptions-lake-runtime",
-              "LawFirm-os-semantic-substrate"
-            ],
             "type": "string"
           },
           "title": "Target Owner Repos",

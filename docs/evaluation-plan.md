@@ -292,6 +292,7 @@ Measure review time, correction count, unknown selection, evidence-navigation bu
 - keep `cross_repo_owner_adoption_report.json` local and non-authoritative; it turns candidate proposals into owner-review packets but must not create issues, open PRs, write sibling repos, promote canon, admit Lake/SQLite records, or apply learning.
 - keep `cross_repo_owner_issue_draft_report.json` local and non-authoritative; it drafts owner issue text for manual use but must not create issues, open PRs, write sibling repos, promote canon, admit Lake/SQLite records, or apply learning.
 - keep `intake_local_closeout_report.json` local and non-authoritative; it proves the local closeout evidence chain and remaining manual gates but must not mark a PR ready, create issues, open PRs, write sibling repos, promote canon, admit Lake/SQLite records, or apply learning.
+- keep `public_source_methodology_report.json` local and non-authoritative; it prepares public-source methodology review but must not ingest public records, authorize adapters, commit public payloads, write Lake/SQLite records, or permit runtime public-data use.
 
 ## Graduation gates
 

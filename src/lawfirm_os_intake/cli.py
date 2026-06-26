@@ -53,6 +53,7 @@ from .learning_shadow_eval_fixture_results import (
 from .learning_shadow_eval_results import run_learning_shadow_eval_results
 from .models import BudgetProposal, HumanConfirmation
 from .pr_review_checklist import run_pr_review_checklist
+from .public_source_methodology import run_public_source_methodology_audit
 from .reviewed_learning_gate import run_reviewed_learning_gate
 from .util import load_json, write_json
 from .workflow import run_budget, run_preflight
@@ -290,6 +291,17 @@ def _parser() -> argparse.ArgumentParser:
         help="Path to budget_fixture_update_review_report.json.",
     )
     budget_fixture_update_pr_package.add_argument("--out-dir", required=True)
+
+    public_source_methodology = sub.add_parser(
+        "audit-public-source-methodology",
+        help="Audit planning-only public-source methodology before synthetic fixture use.",
+    )
+    public_source_methodology.add_argument("--out-dir", required=True)
+    public_source_methodology.add_argument(
+        "--repo-root",
+        default=".",
+        help="Repository root to inspect; defaults to the current working directory.",
+    )
 
     carrier_rejections = sub.add_parser(
         "capture-carrier-rejections",
@@ -1237,6 +1249,36 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             if report.status == "blocked_by_fixture_update_review":
+                return 2
+            return 0
+
+        if args.command == "audit-public-source-methodology":
+            report, run_dir = run_public_source_methodology_audit(
+                repo_root=args.repo_root,
+                out_dir=args.out_dir,
+            )
+            failed_checks = [check.check_id for check in report.checks if check.status != "passed"]
+            _print(
+                {
+                    "status": report.status,
+                    "public_source_methodology_report_id": (
+                        report.public_source_methodology_report_id
+                    ),
+                    "source_count": report.source_count,
+                    "missing_required_source_ids": report.missing_required_source_ids,
+                    "failed_checks": failed_checks,
+                    "direct_runtime_ingestion_allowed": (report.direct_runtime_ingestion_allowed),
+                    "public_records_ingested": report.public_records_ingested,
+                    "raw_public_payload_committed": report.raw_public_payload_committed,
+                    "connector_implemented": report.connector_implemented,
+                    "legal_knowledge_adapter_authorized": (
+                        report.legal_knowledge_adapter_authorized
+                    ),
+                    "external_writes_performed": report.external_writes_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            if report.status == "blocked_public_source_methodology":
                 return 2
             return 0
 

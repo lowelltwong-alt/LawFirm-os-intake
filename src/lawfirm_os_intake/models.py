@@ -376,6 +376,106 @@ class DataScopeGateReport(StrictModel):
     generated_at: str
 
 
+class PublicSourceMethodologySource(StrictModel):
+    source_id: str
+    url: str
+    methodology_role: str
+    useful_for: list[str]
+    safe_use_classes: list[str]
+    prohibited_use_classes: list[str]
+    review_requirements: list[str]
+    synthetic_conversion_rules: list[str]
+    retention_policy: str
+    privacy_posture: str
+    adapter_status: str
+    direct_runtime_ingestion: bool
+    status: Literal["ready_for_human_methodology_review", "blocked"]
+    blocking_reasons: list[str] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def public_source_methodology_required(self) -> "PublicSourceMethodologySource":
+        required_review = {
+            "source_license_review",
+            "privacy_review",
+            "retention_decision",
+            "owner_approval_before_adapter",
+            "no_raw_payload_commit",
+        }
+        if self.status == "ready_for_human_methodology_review" and self.blocking_reasons:
+            raise ValueError("ready public source methodology cannot include blockers")
+        if self.status == "ready_for_human_methodology_review":
+            if not required_review.issubset(set(self.review_requirements)):
+                raise ValueError("public source methodology is missing required review gates")
+            if not self.synthetic_conversion_rules:
+                raise ValueError("public source methodology requires synthetic conversion rules")
+            if self.adapter_status != "not_authorized":
+                raise ValueError("ready public source methodology requires adapter not authorized")
+            if self.direct_runtime_ingestion is not False:
+                raise ValueError("ready public source methodology cannot allow direct ingestion")
+        if self.status == "blocked" and not self.blocking_reasons:
+            raise ValueError("blocked public source methodology requires blockers")
+        return self
+
+
+class PublicSourceMethodologyCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "blocked", "failed"]
+    message: str
+    source_ids: list[str] = Field(default_factory=list)
+
+
+class PublicSourceMethodologyReport(StrictModel):
+    schema_version: str = "0.1"
+    public_source_methodology_report_id: str
+    status: Literal[
+        "ready_for_human_public_source_methodology_review",
+        "blocked_public_source_methodology",
+    ]
+    source_catalog_ref: str
+    data_policy_ref: str
+    source_count: int = Field(ge=0)
+    required_source_ids: list[str]
+    missing_required_source_ids: list[str]
+    sources: list[PublicSourceMethodologySource]
+    checks: list[PublicSourceMethodologyCheck]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    planning_only: Literal[True] = True
+    metadata_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    direct_runtime_ingestion_allowed: Literal[False] = False
+    public_records_ingested: Literal[False] = False
+    raw_public_payload_committed: Literal[False] = False
+    real_party_records_committed: Literal[False] = False
+    real_matter_records_committed: Literal[False] = False
+    connector_implemented: Literal[False] = False
+    legal_knowledge_adapter_authorized: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def public_methodology_counts_match(self) -> "PublicSourceMethodologyReport":
+        if self.source_count != len(self.sources):
+            raise ValueError("public source methodology source count must match sources")
+        if self.status == "ready_for_human_public_source_methodology_review":
+            if self.missing_required_source_ids:
+                raise ValueError("ready public source methodology cannot miss required sources")
+            if any(check.status != "passed" for check in self.checks):
+                raise ValueError("ready public source methodology cannot include failed checks")
+            if any(
+                source.status != "ready_for_human_methodology_review" for source in self.sources
+            ):
+                raise ValueError("ready public source methodology cannot include blocked sources")
+        if self.status == "blocked_public_source_methodology" and not any(
+            check.status in {"blocked", "failed"} for check in self.checks
+        ):
+            raise ValueError("blocked public source methodology requires blocked or failed checks")
+        return self
+
+
 class ContractStateDependency(StrictModel):
     repo: str
     remote: str | None = None
@@ -4807,7 +4907,7 @@ class IntakeVerticalReadinessSliceStatus(StrictModel):
     missing_artifact_refs: list[str] = Field(default_factory=list)
     command_refs: list[str] = Field(default_factory=list)
     missing_command_refs: list[str] = Field(default_factory=list)
-    target_owner_repos: list[LearningTargetOwner]
+    target_owner_repos: list[str]
     remaining_external_actions: list[str] = Field(default_factory=list)
     candidate_only: Literal[True] = True
     non_authoritative: Literal[True] = True

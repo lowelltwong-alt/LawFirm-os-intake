@@ -375,6 +375,32 @@ REQUIRED_SLICES: tuple[SliceDefinition, ...] = (
     ),
     SliceDefinition(
         slice_id=15,
+        title="Public source methodology audit",
+        requirement_summary=(
+            "Planning-only public-source methodology can be reviewed without ingesting "
+            "public records, committing payloads, authorizing adapters, or permitting runtime use."
+        ),
+        proof_artifact_refs=(
+            "src/lawfirm_os_intake/public_source_methodology.py",
+            "schemas/public-source-methodology-report.schema.json",
+            "schemas/public-source-methodology-source.schema.json",
+            "tests/test_public_source_methodology.py",
+            "docs/decisions/TRACE-2026-06-26-public-source-methodology-audit.md",
+            "examples/public/catalog.yaml",
+            "docs/public-data-test-plan.md",
+        ),
+        command_refs=("audit-public-source-methodology",),
+        target_owner_repos=(
+            "LawFirm-os-intake",
+            "LawFirm-os-legal-knowledge-runtime",
+        ),
+        remaining_external_actions=(
+            "Humans must review source license, privacy, and retention posture before any public-source adapter.",
+            "Legal Knowledge Runtime must own any future public-source lookup adapter.",
+        ),
+    ),
+    SliceDefinition(
+        slice_id=16,
         title="Final intake vertical readiness audit",
         requirement_summary=(
             "A deterministic final audit checks local surfaces plus the generated learning "
