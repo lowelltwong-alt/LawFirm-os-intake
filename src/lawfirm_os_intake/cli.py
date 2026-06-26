@@ -20,6 +20,7 @@ from .carrier_rejection_roadmap_audit import run_carrier_rejection_roadmap_audit
 from .carrier_rejection_review import run_carrier_rejection_review
 from .carrier_rejections import run_carrier_rejection_capture
 from .confirmation import bind_confirmation_to_packet_evidence
+from .intake_vertical_readiness_audit import run_intake_vertical_readiness_audit
 from .learning_promotion_readiness import run_learning_promotion_readiness
 from .learning_owner_handoffs import run_learning_owner_handoffs
 from .learning_proposed_changes import run_learning_proposed_changes
@@ -223,6 +224,22 @@ def _parser() -> argparse.ArgumentParser:
     )
     carrier_rejection_audit.add_argument("--out-dir", required=True)
     carrier_rejection_audit.add_argument(
+        "--repo-root",
+        default=".",
+        help="Repository root to inspect; defaults to the current working directory.",
+    )
+
+    intake_vertical_audit = sub.add_parser(
+        "audit-intake-vertical-readiness",
+        help="Audit local intake vertical surfaces plus the generated learning artifact chain before PR readiness review.",
+    )
+    intake_vertical_audit.add_argument(
+        "--owner-handoff-report",
+        required=True,
+        help="Path to learning_owner_handoff_report.json.",
+    )
+    intake_vertical_audit.add_argument("--out-dir", required=True)
+    intake_vertical_audit.add_argument(
         "--repo-root",
         default=".",
         help="Repository root to inspect; defaults to the current working directory.",
@@ -747,6 +764,35 @@ def main(argv: list[str] | None = None) -> int:
             return (
                 0 if report.status == "local_candidate_complete_external_adoption_required" else 2
             )
+
+        if args.command == "audit-intake-vertical-readiness":
+            report, run_dir = run_intake_vertical_readiness_audit(
+                owner_handoff_report_path=args.owner_handoff_report,
+                out_dir=args.out_dir,
+                repo_root=args.repo_root,
+            )
+            failed_checks = [
+                check.check_id for check in report.artifact_checks if check.status == "failed"
+            ]
+            _print(
+                {
+                    "status": report.status,
+                    "audit_report_id": report.audit_report_id,
+                    "review_readiness": report.review_readiness,
+                    "implemented_slice_count": report.implemented_slice_count,
+                    "total_slice_count": report.total_slice_count,
+                    "failed_artifact_checks": failed_checks,
+                    "missing_artifact_refs": report.missing_artifact_refs,
+                    "missing_command_refs": report.missing_command_refs,
+                    "external_adoption_target_repos": report.external_adoption_target_repos,
+                    "pr_marked_ready": report.pr_marked_ready,
+                    "promotion_authorized": report.promotion_authorized,
+                    "proposed_changes_applied": report.proposed_changes_applied,
+                    "external_writes_performed": report.external_writes_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0 if report.status == "ready_for_pr_review_external_adoption_required" else 2
     except (ValueError, OSError, json.JSONDecodeError) as exc:
         print(json.dumps({"status": "blocked", "error": str(exc)}, indent=2), file=sys.stderr)
         return 2

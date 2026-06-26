@@ -337,3 +337,35 @@ authority plane without intake promoting or applying the change.
   `proposed_changes_applied=false`, `baseline_mutated=false`,
   `lake_write_performed=false`, `sqlite_write_performed=false`,
   `external_writes_performed=false`, and `silent_learning_performed=false`.
+
+## 17. Intake Vertical Readiness Audit
+
+Status: implemented for local candidate proof; human PR review and all external
+adoption decisions remain future work.
+
+Close the build-out with a deterministic audit that separates the easy local
+proof work from the higher-risk owner-adoption work.
+
+- `audit-intake-vertical-readiness` consumes
+  `learning_owner_handoff_report.json`.
+- It writes `intake_vertical_readiness_audit_report.json` and
+  `intake_vertical_readiness_audit_report.md`.
+- It checks that the intake-to-budget, budget revision, actual-cost comparison,
+  carrier rejection, reviewed learning, proposed-change, shadow-eval,
+  owner-handoff, and cross-repo promotion surfaces have local candidate proof.
+- It validates the generated learning artifact chain from owner handoff back to
+  shadow eval, proposed changes, promotion readiness, shadow plan, and reviewed
+  learning gate.
+- Passing status is `ready_for_pr_review_external_adoption_required`, which
+  means ready for human PR review only.
+- The report records `pr_marked_ready=false`, `promotion_authorized=false`,
+  `proposed_changes_applied=false`, `no_connector_implemented=true`,
+  `no_lake_admission_performed=true`, `no_sibling_repo_writes=true`,
+  `no_canonical_mutation=true`, `sqlite_write_performed=false`,
+  `lake_write_performed=false`, `external_writes_performed=false`, and
+  `silent_learning_performed=false`.
+
+From here, the easy next work is mostly review packaging, fixture expansion,
+and docs cleanup. The critical higher-risk work is owner adoption in Semantic
+Substrate, Orchestrator, and Exception Lake, then governed real-data pilots only
+after those owners promote the necessary contracts and runtime gates.

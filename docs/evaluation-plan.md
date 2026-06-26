@@ -54,6 +54,14 @@ owning repo. They do not apply proposed changes, mutate baselines, authorize
 promotion, write Lake/SQLite records, write sibling repos, or replace
 sibling-repo review.
 
+The final local close-out eval is `audit-intake-vertical-readiness`. It consumes
+`learning_owner_handoff_report.json`, checks the local candidate slices and the
+generated learning artifact chain, and writes
+`intake_vertical_readiness_audit_report.json`. Passing status means ready for
+human PR review only; it does not mark a PR ready, promote canon, implement
+connectors, admit Lake records, write SQLite, apply proposed changes, or prove
+production readiness.
+
 ### Counterfactual evals
 
 Same source, different practice context. Evidence must remain unchanged.
@@ -95,6 +103,7 @@ Measure review time, correction count, unknown selection, evidence-navigation bu
 - keep `blocked_budget_attempt_audit_report.json` local and non-authoritative; it proves the synthetic blocked-budget canary only and does not authorize any budget-stage output.
 - keep `context_counterfactual_audit_report.json` local and non-authoritative; it proves practice-context separation on synthetic fixtures only and does not promote profiles, priors, or taxonomies.
 - keep learning shadow-eval and promotion-readiness reports local and non-authoritative; they plan required eval evidence and block promotion, but do not apply changes or prove production readiness by themselves.
+- keep `intake_vertical_readiness_audit_report.json` local and non-authoritative; it proves PR-review readiness for candidate artifacts only and keeps external adoption with the owning repos.
 
 ## Graduation gates
 

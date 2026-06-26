@@ -1,0 +1,96 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "slice_id": {
+      "minimum": 1,
+      "title": "Slice Id",
+      "type": "integer"
+    },
+    "title": {
+      "title": "Title",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "implemented_local_candidate",
+        "missing_required_artifact"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "requirement_summary": {
+      "title": "Requirement Summary",
+      "type": "string"
+    },
+    "proof_artifact_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Proof Artifact Refs",
+      "type": "array"
+    },
+    "missing_artifact_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Missing Artifact Refs",
+      "type": "array"
+    },
+    "command_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Command Refs",
+      "type": "array"
+    },
+    "missing_command_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Missing Command Refs",
+      "type": "array"
+    },
+    "target_owner_repos": {
+      "items": {
+        "enum": [
+          "LawFirm-os-intake",
+          "LawFirm-os-orchestrator",
+          "LawFirm-os-exceptions-lake-runtime",
+          "LawFirm-os-semantic-substrate"
+        ],
+        "type": "string"
+      },
+      "title": "Target Owner Repos",
+      "type": "array"
+    },
+    "remaining_external_actions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Remaining External Actions",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "slice_id",
+    "title",
+    "status",
+    "requirement_summary",
+    "proof_artifact_refs",
+    "target_owner_repos"
+  ],
+  "title": "IntakeVerticalReadinessSliceStatus",
+  "type": "object"
+}

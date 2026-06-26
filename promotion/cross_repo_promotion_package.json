@@ -122,6 +122,9 @@
         "schemas/learning-owner-handoff-item.schema.json",
         "schemas/learning-owner-handoff-package.schema.json",
         "schemas/learning-owner-handoff-report.schema.json",
+        "schemas/intake-vertical-readiness-slice-status.schema.json",
+        "schemas/intake-vertical-readiness-artifact-check.schema.json",
+        "schemas/intake-vertical-readiness-audit-report.schema.json",
         "docs/cross-repo-promotion-package.md"
       ],
       "proposed_contract_refs": [
@@ -245,6 +248,7 @@
         "schemas/learning-shadow-eval-result-report.schema.json",
         "schemas/learning-owner-handoff-package.schema.json",
         "schemas/learning-owner-handoff-report.schema.json",
+        "schemas/intake-vertical-readiness-audit-report.schema.json",
         "DATA_FLOW_MAP.md"
       ],
       "proposed_contract_refs": [

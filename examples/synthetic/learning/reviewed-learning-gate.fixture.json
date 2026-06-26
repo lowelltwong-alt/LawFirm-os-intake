@@ -1,0 +1,167 @@
+{
+  "schema_version": "0.1",
+  "reviewed_learning_gate_report_id": "reviewedlearninggate_fixture_learning_proposed_changes",
+  "run_id": "run_fixture_learning_proposed_changes",
+  "status": "candidate_learning_gate_ready",
+  "source_report_refs": [
+    "examples/synthetic/learning/budget-revision-report.fixture.json",
+    "examples/synthetic/learning/carrier-rejection-learning-report.fixture.json"
+  ],
+  "carrier_rejection_learning_report_ref": "examples/synthetic/learning/carrier-rejection-learning-report.fixture.json",
+  "budget_revision_report_ref": "examples/synthetic/learning/budget-revision-report.fixture.json",
+  "budget_actual_comparison_report_ref": null,
+  "candidate_count": 2,
+  "carrier_learning_candidate_count": 1,
+  "budget_revision_candidate_count": 1,
+  "budget_actual_variance_candidate_count": 0,
+  "target_learning_loops": [
+    "budget_model",
+    "capture_completeness"
+  ],
+  "target_owners": [
+    "LawFirm-os-intake",
+    "LawFirm-os-orchestrator"
+  ],
+  "candidates": [
+    {
+      "candidate_id": "learninggate_fixture_budget_driver",
+      "source_kind": "budget_revision_delta",
+      "source_artifact_ref": "examples/synthetic/learning/budget-revision-report.fixture.json",
+      "source_record_id": "budgetrevisiondelta_fixture_hours",
+      "source_status": "revision_recorded",
+      "target_learning_loop": "budget_model",
+      "target_owner": "LawFirm-os-intake",
+      "trigger_summary": "Human review changed synthetic discovery hours.",
+      "before_behavior": "Budget proposal used the original deterministic candidate estimate.",
+      "proposed_candidate_behavior": "Review whether phase/task hours, range drivers, or scenario assumptions should change.",
+      "support_refs": [
+        "examples/synthetic/learning/budget-revision-report.fixture.json",
+        "budget-revision-delta://budgetrevisiondelta_fixture_hours"
+      ],
+      "support_count": 1,
+      "required_evidence": [
+        "human budget review outcome",
+        "append-only budget revision record",
+        "source or structured support for the changed assumption"
+      ],
+      "required_evaluation": [
+        "budget driver counterfactual",
+        "synthetic fixture update",
+        "shadow eval before promotion",
+        "regression check against budget mutation"
+      ],
+      "required_next_gates": [
+        "human_reviewed_outcome_evidence",
+        "append_only_evidence_record",
+        "synthetic_fixture_update",
+        "shadow_eval",
+        "owning_repo_review"
+      ],
+      "status": "blocked_until_reviewed_learning_gate",
+      "human_review_required": true,
+      "synthetic_fixture_update_required": true,
+      "shadow_eval_required": true,
+      "owning_repo_review_required": true,
+      "append_only_evidence_required": true,
+      "profile_mutation_performed": false,
+      "template_mutation_performed": false,
+      "connector_mutation_performed": false,
+      "budget_mutation_performed": false,
+      "carrier_guideline_mutation_performed": false,
+      "lake_write_performed": false,
+      "external_writes_performed": false,
+      "silent_learning_performed": false
+    },
+    {
+      "candidate_id": "learninggate_fixture_capture_completeness",
+      "source_kind": "carrier_rejection_learning_proposal",
+      "source_artifact_ref": "examples/synthetic/learning/carrier-rejection-learning-report.fixture.json",
+      "source_record_id": "carrierlearningproposal_fixture_missing_portal_notice",
+      "source_status": "blocked_pending_review",
+      "target_learning_loop": "capture_completeness",
+      "target_owner": "LawFirm-os-orchestrator",
+      "trigger_summary": "Carrier rejection learning proposal from missing portal notice fixture.",
+      "before_behavior": "Response completeness is visible only after manual review.",
+      "proposed_candidate_behavior": "Review whether Orchestrator response-state capture should surface missing portal notices earlier.",
+      "support_refs": [
+        "examples/synthetic/learning/carrier-rejection-learning-report.fixture.json",
+        "carrier-rejection-learning-proposal://carrierlearningproposal_fixture_missing_portal_notice"
+      ],
+      "support_count": 1,
+      "required_evidence": [
+        "human-reviewed rejection or appeal outcome",
+        "append-only Exception Lake admission candidate",
+        "source/support hashes from Orchestrator evidence packet"
+      ],
+      "required_evaluation": [
+        "carrier rejection capture replay",
+        "synthetic fixture update",
+        "shadow eval before promotion",
+        "regression check against no-silent-learning boundary"
+      ],
+      "required_next_gates": [
+        "human_reviewed_outcome_evidence",
+        "append_only_evidence_record",
+        "synthetic_fixture_update",
+        "shadow_eval",
+        "owning_repo_review"
+      ],
+      "status": "blocked_until_reviewed_learning_gate",
+      "human_review_required": true,
+      "synthetic_fixture_update_required": true,
+      "shadow_eval_required": true,
+      "owning_repo_review_required": true,
+      "append_only_evidence_required": true,
+      "profile_mutation_performed": false,
+      "template_mutation_performed": false,
+      "connector_mutation_performed": false,
+      "budget_mutation_performed": false,
+      "carrier_guideline_mutation_performed": false,
+      "lake_write_performed": false,
+      "external_writes_performed": false,
+      "silent_learning_performed": false
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "source_reports_present",
+      "status": "passed",
+      "message": "Synthetic fixture source reports are represented.",
+      "candidate_ids": []
+    },
+    {
+      "check_id": "candidates_blocked_until_review",
+      "status": "passed",
+      "message": "Every fixture learning candidate remains blocked.",
+      "candidate_ids": [
+        "learninggate_fixture_budget_driver",
+        "learninggate_fixture_capture_completeness"
+      ]
+    }
+  ],
+  "required_next_gates": [
+    "human_reviewed_outcome_evidence",
+    "append_only_evidence_record",
+    "synthetic_fixture_update",
+    "shadow_eval",
+    "owning_repo_review"
+  ],
+  "reviewed_outcome_required": true,
+  "append_only_evidence_required": true,
+  "synthetic_fixture_update_required": true,
+  "shadow_eval_required": true,
+  "owning_repo_review_required": true,
+  "candidate_only": true,
+  "admission_state": "dry_run_not_admitted",
+  "not_authorized_for_lake_write": true,
+  "not_authorized_for_external_submission": true,
+  "profile_mutation_performed": false,
+  "template_mutation_performed": false,
+  "connector_mutation_performed": false,
+  "budget_mutation_performed": false,
+  "carrier_guideline_mutation_performed": false,
+  "lake_write_performed": false,
+  "external_writes_performed": false,
+  "silent_learning_performed": false,
+  "generated_at": "2026-06-26T00:00:00Z"
+}

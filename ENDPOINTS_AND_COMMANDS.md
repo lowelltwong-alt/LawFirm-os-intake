@@ -202,6 +202,25 @@ repaired, and blocked candidates stay blocked pending evidence. The command
 performs no promotion, implementation, Lake/SQLite write, sibling-repo write, or
 external write.
 
+### Audit intake vertical readiness
+
+```bash
+python -m lawfirm_os_intake audit-intake-vertical-readiness \
+  --owner-handoff-report .lawfirm-os-intake/learning-owner-handoffs/learning_owner_handoff_report.json \
+  --repo-root . \
+  --out-dir .lawfirm-os-intake/intake-vertical-readiness-audit
+```
+
+This writes `intake_vertical_readiness_audit_report.json` and
+`intake_vertical_readiness_audit_report.md`. The audit checks the local
+intake-to-budget, carrier rejection, budget revision, actual-cost comparison,
+reviewed learning, shadow-eval, owner-handoff, promotion-package, and command
+surfaces, then validates the generated learning artifact chain back through the
+reviewed-learning gate. A passing audit means the branch is ready for human PR
+review while external adoption remains required. It does not mark the PR ready,
+promote canon, write sibling repos, implement connectors, admit Lake records,
+write SQLite, apply proposed changes, or perform silent learning.
+
 ### Draft carrier rejection Orchestrator interface
 
 ```bash

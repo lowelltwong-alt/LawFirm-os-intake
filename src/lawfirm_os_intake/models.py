@@ -2632,6 +2632,84 @@ class LearningOwnerHandoffReport(StrictModel):
         return self
 
 
+class IntakeVerticalReadinessSliceStatus(StrictModel):
+    slice_id: int = Field(ge=1)
+    title: str
+    status: Literal["implemented_local_candidate", "missing_required_artifact"]
+    requirement_summary: str
+    proof_artifact_refs: list[str]
+    missing_artifact_refs: list[str] = Field(default_factory=list)
+    command_refs: list[str] = Field(default_factory=list)
+    missing_command_refs: list[str] = Field(default_factory=list)
+    target_owner_repos: list[LearningTargetOwner]
+    remaining_external_actions: list[str] = Field(default_factory=list)
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+
+
+class IntakeVerticalReadinessArtifactCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    artifact_ref: str | None = None
+    message: str
+    missing_refs: list[str] = Field(default_factory=list)
+
+
+class IntakeVerticalReadinessAuditReport(StrictModel):
+    schema_version: str = "0.1"
+    audit_report_id: str
+    status: Literal[
+        "ready_for_pr_review_external_adoption_required",
+        "incomplete_missing_local_artifacts",
+        "blocked_missing_or_failed_learning_artifacts",
+    ]
+    review_readiness: Literal[
+        "ready_for_human_pr_review_not_auto_marked",
+        "not_ready_missing_local_artifacts",
+        "not_ready_learning_artifact_chain_blocked",
+    ]
+    source_owner_handoff_report_ref: str
+    total_slice_count: int = Field(ge=0)
+    implemented_slice_count: int = Field(ge=0)
+    missing_artifact_refs: list[str] = Field(default_factory=list)
+    missing_command_refs: list[str] = Field(default_factory=list)
+    slices: list[IntakeVerticalReadinessSliceStatus]
+    artifact_checks: list[IntakeVerticalReadinessArtifactCheck]
+    required_external_adoption_actions: list[str]
+    external_adoption_target_repos: list[LearningTargetOwner]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    local_completion_scope: Literal["synthetic_candidate_only"] = "synthetic_candidate_only"
+    pr_marked_ready: Literal[False] = False
+    promotion_authorized: Literal[False] = False
+    proposed_changes_applied: Literal[False] = False
+    baseline_mutated: Literal[False] = False
+    no_connector_implemented: Literal[True] = True
+    no_lake_admission_performed: Literal[True] = True
+    no_sibling_repo_writes: Literal[True] = True
+    no_canonical_mutation: Literal[True] = True
+    sqlite_write_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def readiness_counts_match(self) -> "IntakeVerticalReadinessAuditReport":
+        if self.total_slice_count != len(self.slices):
+            raise ValueError("intake vertical readiness slice count does not match")
+        if self.implemented_slice_count != sum(
+            1 for item in self.slices if item.status == "implemented_local_candidate"
+        ):
+            raise ValueError("intake vertical readiness implemented count does not match")
+        if self.status == "ready_for_pr_review_external_adoption_required":
+            if self.missing_artifact_refs or self.missing_command_refs:
+                raise ValueError("ready readiness audit cannot include missing refs")
+            if any(check.status == "failed" for check in self.artifact_checks):
+                raise ValueError("ready readiness audit cannot include failed artifact checks")
+        return self
+
+
 class CarrierRejectionOrchestratorConnectorChannel(StrictModel):
     channel_id: Literal[
         "carrier_portal_notice",
