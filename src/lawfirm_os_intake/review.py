@@ -871,6 +871,9 @@ def _budget_actual_comparison_lines(artifact_refs: dict[str, str]) -> list[str]:
         [
             f"- Actual comparison status: {payload.get('status', 'unknown')}",
             f"- Comparison scope: {payload.get('comparison_scope', 'unknown')}",
+            f"- Comparison budget state: {payload.get('comparison_budget_state', 'unknown')}",
+            f"- Budget revision report: {payload.get('budget_revision_report_ref') or 'none'}",
+            f"- Actual resolution scenario: {payload.get('actual_resolution_scenario_id') or 'none'}",
             f"- Variance threshold percent: {payload.get('variance_threshold_percent', 'unknown')}",
             f"- Billing connector read performed: {payload.get('billing_connector_read_performed', 'unknown')}",
             f"- Billing connector write performed: {payload.get('billing_connector_write_performed', 'unknown')}",
@@ -887,6 +890,22 @@ def _budget_actual_comparison_lines(artifact_refs: dict[str, str]) -> list[str]:
             f"variance={row.get('variance_amount')} ({row.get('variance_percent')}%); "
             f"status={row.get('status')}"
         )
+    lines.append("- Code comparisons:")
+    code_rows = [row for row in payload.get("code_comparisons", []) if isinstance(row, dict)]
+    if not code_rows:
+        lines.append("- none")
+    for row in code_rows:
+        lines.append(
+            f"- {row.get('code')}: budgeted={row.get('budgeted_total')}; "
+            f"actual={row.get('actual_total')}; "
+            f"variance={row.get('variance_amount')} ({row.get('variance_percent')}%); "
+            f"status={row.get('status')}"
+        )
+    learning = payload.get("learning_disposition_candidates") or []
+    lines.append(
+        "- Learning disposition candidates: "
+        + (", ".join(str(item) for item in learning) if learning else "none")
+    )
     return lines
 
 

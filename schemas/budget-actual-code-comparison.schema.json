@@ -1,21 +1,26 @@
 {
   "additionalProperties": false,
   "properties": {
-    "phase_id": {
-      "title": "Phase Id",
+    "code": {
+      "title": "Code",
       "type": "string"
     },
-    "budgeted_fees": {
+    "phase_id": {
       "anyOf": [
         {
-          "type": "number"
+          "type": "string"
         },
         {
           "type": "null"
         }
       ],
       "default": null,
-      "title": "Budgeted Fees"
+      "title": "Phase Id"
+    },
+    "budgeted_fees": {
+      "default": 0,
+      "title": "Budgeted Fees",
+      "type": "number"
     },
     "budgeted_expenses": {
       "default": 0,
@@ -23,16 +28,9 @@
       "type": "number"
     },
     "budgeted_total": {
-      "anyOf": [
-        {
-          "type": "number"
-        },
-        {
-          "type": "null"
-        }
-      ],
-      "default": null,
-      "title": "Budgeted Total"
+      "default": 0,
+      "title": "Budgeted Total",
+      "type": "number"
     },
     "actual_fees": {
       "anyOf": [
@@ -104,13 +102,6 @@
       "title": "Status",
       "type": "string"
     },
-    "external_code_candidates": {
-      "items": {
-        "type": "string"
-      },
-      "title": "External Code Candidates",
-      "type": "array"
-    },
     "variance_driver_candidates": {
       "items": {
         "type": "string"
@@ -125,9 +116,9 @@
     }
   },
   "required": [
-    "phase_id",
+    "code",
     "status"
   ],
-  "title": "BudgetActualPhaseComparison",
+  "title": "BudgetActualCodeComparison",
   "type": "object"
 }

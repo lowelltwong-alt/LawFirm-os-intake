@@ -1,0 +1,151 @@
+{
+  "$defs": {
+    "BudgetActualAmount": {
+      "additionalProperties": false,
+      "properties": {
+        "fees": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Fees",
+          "type": "number"
+        },
+        "expenses": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Expenses",
+          "type": "number"
+        },
+        "hours": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hours"
+        }
+      },
+      "title": "BudgetActualAmount",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "actuals_source_id": {
+      "title": "Actuals Source Id",
+      "type": "string"
+    },
+    "budget_proposal_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Budget Proposal Id"
+    },
+    "data_origin": {
+      "const": "synthetic",
+      "default": "synthetic",
+      "title": "Data Origin",
+      "type": "string"
+    },
+    "contains_real_client_data": {
+      "const": false,
+      "default": false,
+      "title": "Contains Real Client Data",
+      "type": "boolean"
+    },
+    "contains_real_matter_data": {
+      "const": false,
+      "default": false,
+      "title": "Contains Real Matter Data",
+      "type": "boolean"
+    },
+    "contains_privileged_data": {
+      "const": false,
+      "default": false,
+      "title": "Contains Privileged Data",
+      "type": "boolean"
+    },
+    "actual_resolution_scenario_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Actual Resolution Scenario Id"
+    },
+    "actuals_by_phase": {
+      "additionalProperties": {
+        "$ref": "#/$defs/BudgetActualAmount"
+      },
+      "title": "Actuals By Phase",
+      "type": "object"
+    },
+    "actuals_by_code": {
+      "additionalProperties": {
+        "$ref": "#/$defs/BudgetActualAmount"
+      },
+      "title": "Actuals By Code",
+      "type": "object"
+    },
+    "source_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Ref"
+    },
+    "billing_connector_read_performed": {
+      "const": false,
+      "default": false,
+      "title": "Billing Connector Read Performed",
+      "type": "boolean"
+    },
+    "billing_connector_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Billing Connector Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "actuals_source_id"
+  ],
+  "title": "BudgetActualsSource",
+  "type": "object"
+}

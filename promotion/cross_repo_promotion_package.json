@@ -96,7 +96,16 @@
         "schemas/carrier-compliant-projection.schema.json",
         "schemas/carrier-compliant-projection-basis.schema.json",
         "schemas/carrier-compliant-projection-line.schema.json",
+        "schemas/budget-review-change.schema.json",
+        "schemas/budget-review-change-record.schema.json",
+        "schemas/budget-revision-delta.schema.json",
+        "schemas/budget-revision-report.schema.json",
+        "schemas/budget-actual-amount.schema.json",
+        "schemas/budget-actuals-source.schema.json",
         "schemas/budget-actual-comparison-report.schema.json",
+        "schemas/budget-actual-phase-comparison.schema.json",
+        "schemas/budget-actual-code-comparison.schema.json",
+        "schemas/budget-actual-variance-driver-candidate.schema.json",
         "docs/cross-repo-promotion-package.md"
       ],
       "proposed_contract_refs": [
@@ -206,6 +215,10 @@
         "schemas/exception-lake-handoff-manifest.schema.json",
         "schemas/exception-lake-mapping-package.schema.json",
         "schemas/exception-lake-mapping-rule.schema.json",
+        "schemas/budget-review-change-record.schema.json",
+        "schemas/budget-revision-report.schema.json",
+        "schemas/budget-actual-comparison-report.schema.json",
+        "schemas/budget-actual-variance-driver-candidate.schema.json",
         "DATA_FLOW_MAP.md"
       ],
       "proposed_contract_refs": [

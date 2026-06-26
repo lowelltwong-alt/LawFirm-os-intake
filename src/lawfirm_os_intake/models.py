@@ -974,6 +974,184 @@ class BudgetCalculationReport(StrictModel):
     deterministic: bool = True
 
 
+class BudgetReviewChange(StrictModel):
+    change_id: str
+    target_type: Literal[
+        "budget_line",
+        "proposal_assumption",
+        "proposal_exclusion",
+        "proposal_unknown",
+        "scenario_selection",
+    ]
+    phase_id: str | None = None
+    task_id: str | None = None
+    external_code_candidate: str | None = None
+    expense_code: str | None = None
+    staffing_role: str | None = None
+    field: Literal[
+        "estimated_hours",
+        "hourly_rate",
+        "estimated_expenses",
+        "assumption",
+        "exclusion",
+        "unknown",
+        "scenario_id",
+    ]
+    new_value: float | str | None = None
+    reason: str
+    evidence_refs: list[EvidenceRef] = Field(default_factory=list)
+    structured_refs: list[str] = Field(default_factory=list)
+    requires_human_review: Literal[True] = True
+
+    @model_validator(mode="after")
+    def support_required(self) -> "BudgetReviewChange":
+        if not self.evidence_refs and not self.structured_refs:
+            raise ValueError("budget review change requires evidence_refs or structured_refs")
+        if self.target_type == "budget_line" and (not self.phase_id or not self.task_id):
+            raise ValueError("budget line review change requires phase_id and task_id")
+        return self
+
+
+class BudgetReviewChangeRecord(StrictModel):
+    schema_version: str = "0.1"
+    budget_review_change_record_id: str
+    budget_proposal_id: str
+    source_budget_proposal_ref: str | None = None
+    reviewer_id: str
+    reviewer_role: str
+    reviewed_at: str
+    outcome: Literal[
+        "confirmed_no_change",
+        "corrected",
+        "needs_more_information",
+        "human_only",
+        "declined_referred",
+    ]
+    decision_reason: str
+    supersedes_budget_review_change_record_id: str | None = None
+    changes: list[BudgetReviewChange] = Field(default_factory=list)
+    mutation_policy: Literal["append_only_supersession"] = "append_only_supersession"
+    original_budget_mutated: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    carrier_submission_authorized: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    non_authoritative: Literal[True] = True
+
+    @model_validator(mode="after")
+    def corrected_requires_change(self) -> "BudgetReviewChangeRecord":
+        if self.outcome == "corrected" and not self.changes:
+            raise ValueError("corrected budget review requires at least one change")
+        if self.outcome == "confirmed_no_change" and self.changes:
+            raise ValueError("confirmed_no_change review cannot carry changes")
+        return self
+
+
+class BudgetPhaseBudgetSnapshot(StrictModel):
+    phase_id: str
+    budgeted_fees: float | None = None
+    budgeted_expenses: float = Field(default=0, ge=0)
+    budgeted_total: float | None = None
+    external_code_candidates: list[str] = Field(default_factory=list)
+
+
+class BudgetCodeBudgetSnapshot(StrictModel):
+    code: str
+    phase_id: str | None = None
+    budgeted_fees: float = Field(default=0, ge=0)
+    budgeted_expenses: float = Field(default=0, ge=0)
+    budgeted_total: float = Field(default=0, ge=0)
+
+
+class BudgetRevisionDelta(StrictModel):
+    delta_id: str
+    change_id: str
+    target_type: str
+    phase_id: str | None = None
+    task_id: str | None = None
+    external_code_candidate: str | None = None
+    expense_code: str | None = None
+    staffing_role: str | None = None
+    field: str
+    previous_value: float | str | None = None
+    new_value: float | str | None = None
+    hours_delta: float = 0
+    fee_delta: float = 0
+    expense_delta: float = 0
+    total_delta: float = 0
+    reason: str
+    evidence_refs: list[EvidenceRef] = Field(default_factory=list)
+    structured_refs: list[str] = Field(default_factory=list)
+
+
+class BudgetRevisionReport(StrictModel):
+    schema_version: str = "0.1"
+    budget_revision_report_id: str
+    run_id: str
+    preflight_packet_id: str
+    budget_proposal_id: str
+    budget_review_change_record_id: str
+    source_budget_proposal_ref: str
+    status: Literal[
+        "revision_recorded",
+        "confirmed_no_change",
+        "blocked_needs_more_information",
+        "human_only",
+        "declined_referred",
+    ]
+    review_outcome: str
+    change_count: int = Field(ge=0)
+    numeric_change_count: int = Field(ge=0)
+    original_phase_totals: list[BudgetPhaseBudgetSnapshot]
+    revised_phase_totals: list[BudgetPhaseBudgetSnapshot]
+    original_code_totals: list[BudgetCodeBudgetSnapshot] = Field(default_factory=list)
+    revised_code_totals: list[BudgetCodeBudgetSnapshot] = Field(default_factory=list)
+    original_total: float | None = None
+    revised_total: float | None = None
+    total_delta: float = 0
+    deltas: list[BudgetRevisionDelta]
+    mutation_policy: Literal["append_only_supersession"] = "append_only_supersession"
+    original_budget_mutated: Literal[False] = False
+    superseding_budget_written: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    carrier_submission_authorized: Literal[False] = False
+    not_authorized_for_client_submission: Literal[True] = True
+    not_authorized_for_carrier_submission: Literal[True] = True
+    candidate_only: Literal[True] = True
+    append_only_history_ref: str | None = None
+    dry_run_exception_label: Literal["budget_human_change_recorded"] = (
+        "budget_human_change_recorded"
+    )
+    not_authorized_for_lake_write: Literal[True] = True
+    lake_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    non_authoritative: Literal[True] = True
+    generated_at: str
+
+
+class BudgetActualAmount(StrictModel):
+    fees: float = Field(default=0, ge=0)
+    expenses: float = Field(default=0, ge=0)
+    hours: float | None = Field(default=None, ge=0)
+
+
+class BudgetActualsSource(StrictModel):
+    schema_version: str = "0.1"
+    actuals_source_id: str
+    budget_proposal_id: str | None = None
+    data_origin: Literal["synthetic"] = "synthetic"
+    contains_real_client_data: Literal[False] = False
+    contains_real_matter_data: Literal[False] = False
+    contains_privileged_data: Literal[False] = False
+    actual_resolution_scenario_id: str | None = None
+    actuals_by_phase: dict[str, BudgetActualAmount] = Field(default_factory=dict)
+    actuals_by_code: dict[str, BudgetActualAmount] = Field(default_factory=dict)
+    source_ref: str | None = None
+    billing_connector_read_performed: Literal[False] = False
+    billing_connector_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    non_authoritative: Literal[True] = True
+
+
 class BudgetActualPhaseComparison(StrictModel):
     phase_id: str
     budgeted_fees: float | None = None
@@ -991,7 +1169,49 @@ class BudgetActualPhaseComparison(StrictModel):
         "under_threshold",
     ]
     external_code_candidates: list[str] = Field(default_factory=list)
+    variance_driver_candidates: list[str] = Field(default_factory=list)
     requires_human_review: bool = True
+
+
+class BudgetActualCodeComparison(StrictModel):
+    code: str
+    phase_id: str | None = None
+    budgeted_fees: float = 0
+    budgeted_expenses: float = 0
+    budgeted_total: float = 0
+    actual_fees: float | None = None
+    actual_expenses: float | None = None
+    actual_total: float | None = None
+    variance_amount: float | None = None
+    variance_percent: float | None = None
+    status: Literal[
+        "actuals_not_available",
+        "within_threshold",
+        "over_threshold",
+        "under_threshold",
+    ]
+    variance_driver_candidates: list[str] = Field(default_factory=list)
+    requires_human_review: bool = True
+
+
+class BudgetActualVarianceDriverCandidate(StrictModel):
+    candidate_id: str
+    driver_label: Literal[
+        "actuals_without_budget",
+        "fee_overrun",
+        "fee_underrun",
+        "expense_overrun",
+        "expense_underrun",
+        "human_revision_delta",
+        "unknown_driver",
+    ]
+    phase_id: str | None = None
+    code: str | None = None
+    variance_amount: float | None = None
+    reason: str
+    target_learning_loop: Literal["budget_driver", "template_mapping", "validation_rule"]
+    requires_human_review: Literal[True] = True
+    silent_learning_performed: Literal[False] = False
 
 
 class BudgetActualComparisonReport(StrictModel):
@@ -1001,8 +1221,19 @@ class BudgetActualComparisonReport(StrictModel):
     preflight_packet_id: str
     budget_proposal_id: str
     status: Literal["actuals_not_available", "passed", "variance_review_required"]
-    comparison_scope: Literal["phase"] = "phase"
+    comparison_scope: Literal["phase", "phase_and_code"] = "phase"
+    comparison_budget_state: Literal["original_proposal", "human_revised_candidate"] = (
+        "original_proposal"
+    )
+    budget_revision_report_id: str | None = None
+    budget_revision_report_ref: str | None = None
+    actual_resolution_scenario_id: str | None = None
     phase_comparisons: list[BudgetActualPhaseComparison]
+    code_comparisons: list[BudgetActualCodeComparison] = Field(default_factory=list)
+    variance_driver_candidates: list[BudgetActualVarianceDriverCandidate] = Field(
+        default_factory=list
+    )
+    learning_disposition_candidates: list[str] = Field(default_factory=list)
     variance_threshold_percent: float = Field(ge=0)
     total_budgeted: float | None = None
     total_actual: float | None = None
@@ -1977,6 +2208,7 @@ class ExceptionLakeMappingRule(StrictModel):
             "budget_form_mapping_report",
             "budget_proposal",
             "budget_change_record",
+            "budget_revision_report",
             "budget_actual_comparison_report",
             "carrier_rejection_reconciliation_report",
             "carrier_rejection_remediation_case",

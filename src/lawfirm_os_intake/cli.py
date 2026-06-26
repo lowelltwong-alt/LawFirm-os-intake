@@ -6,7 +6,9 @@ from pathlib import Path
 import shutil
 import sys
 
+from .budget_actuals import run_budget_actual_comparison
 from .budget_form import build_budget_form_template_audit_report, render_budget_form
+from .budget_revisions import run_budget_review_record
 from .carrier_rejection_lake_admission import (
     run_carrier_rejection_lake_admission_proposal,
 )
@@ -81,6 +83,28 @@ def _parser() -> argparse.ArgumentParser:
     )
     budget_form_audit.add_argument("--template", required=True, help="Existing UTBMS budget form")
     budget_form_audit.add_argument("--out", required=True, help="Output audit report JSON path")
+
+    budget_review = sub.add_parser(
+        "record-budget-review",
+        help="Record append-only human budget review changes without mutating the proposal.",
+    )
+    budget_review.add_argument("--budget", required=True, help="Path to legal_budget_proposal.json")
+    budget_review.add_argument("--review", required=True, help="Path to budget review changes JSON")
+    budget_review.add_argument("--out-dir", required=True)
+
+    budget_actuals = sub.add_parser(
+        "compare-budget-actuals",
+        help="Compare synthetic actual costs against an original or human-revised budget.",
+    )
+    budget_actuals.add_argument(
+        "--budget", required=True, help="Path to legal_budget_proposal.json"
+    )
+    budget_actuals.add_argument("--actuals", required=True, help="Path to synthetic actuals JSON")
+    budget_actuals.add_argument("--out-dir", required=True)
+    budget_actuals.add_argument(
+        "--budget-revision-report",
+        help="Optional budget_revision_report.json from record-budget-review.",
+    )
 
     carrier_rejections = sub.add_parser(
         "capture-carrier-rejections",
@@ -318,6 +342,61 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 0 if report.status == "passed" else 2
+
+        if args.command == "record-budget-review":
+            report, run_dir = run_budget_review_record(
+                budget_path=args.budget,
+                review_path=args.review,
+                out_dir=args.out_dir,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "budget_revision_report_id": report.budget_revision_report_id,
+                    "budget_review_change_record_id": report.budget_review_change_record_id,
+                    "budget_proposal_id": report.budget_proposal_id,
+                    "change_count": report.change_count,
+                    "numeric_change_count": report.numeric_change_count,
+                    "original_total": report.original_total,
+                    "revised_total": report.revised_total,
+                    "total_delta": report.total_delta,
+                    "original_budget_mutated": report.original_budget_mutated,
+                    "budget_submission_authorized": report.budget_submission_authorized,
+                    "carrier_submission_authorized": report.carrier_submission_authorized,
+                    "lake_write_performed": report.lake_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0
+
+        if args.command == "compare-budget-actuals":
+            report, run_dir = run_budget_actual_comparison(
+                budget_path=args.budget,
+                actuals_path=args.actuals,
+                out_dir=args.out_dir,
+                budget_revision_report_path=args.budget_revision_report,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "budget_actual_comparison_report_id": (
+                        report.budget_actual_comparison_report_id
+                    ),
+                    "budget_proposal_id": report.budget_proposal_id,
+                    "comparison_scope": report.comparison_scope,
+                    "comparison_budget_state": report.comparison_budget_state,
+                    "phase_comparison_count": len(report.phase_comparisons),
+                    "code_comparison_count": len(report.code_comparisons),
+                    "variance_driver_candidate_count": len(report.variance_driver_candidates),
+                    "learning_disposition_candidates": report.learning_disposition_candidates,
+                    "billing_connector_read_performed": report.billing_connector_read_performed,
+                    "billing_connector_write_performed": report.billing_connector_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0
 
         if args.command == "capture-carrier-rejections":
             report, run_dir = run_carrier_rejection_capture(

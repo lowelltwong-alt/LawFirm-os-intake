@@ -29,6 +29,42 @@ python -m lawfirm_os_intake build-budget \
 bash scripts/smoke_demo.sh
 ```
 
+### Record append-only human budget review changes
+
+```bash
+python -m lawfirm_os_intake record-budget-review \
+  --budget PATH/TO/legal_budget_proposal.json \
+  --review examples/synthetic/budget-review/medmal-human-budget-review-change.json \
+  --out-dir .lawfirm-os-intake/budget-review
+```
+
+This writes `budget_review_change_record.json`,
+`budget_revision_history.jsonl`, `budget_revision_report.json`,
+`budget_revision_report.md`, and
+`budget_revision_exception_lake_candidates.jsonl`. The command records human
+budget changes as candidate append-only evidence, calculates phase/code deltas,
+and emits a dry-run `budget_human_change_recorded` Lake candidate. It does not
+mutate the original budget, write a superseding budget, authorize submission,
+write billing, write SQLite, or admit Lake records.
+
+### Compare budget to synthetic actual costs
+
+```bash
+python -m lawfirm_os_intake compare-budget-actuals \
+  --budget PATH/TO/legal_budget_proposal.json \
+  --actuals examples/synthetic/actuals/medmal-phase-code-actuals.json \
+  --budget-revision-report .lawfirm-os-intake/budget-review/budget_revision_report.json \
+  --out-dir .lawfirm-os-intake/budget-actuals
+```
+
+This writes `budget_actual_comparison_report.json`,
+`budget_actual_comparison_report.md`, and
+`budget_actual_variance_candidates.jsonl`. The command compares original or
+human-revised candidate budgets to governed synthetic actuals by phase and UTBMS
+code, flags zero-budget/positive-actual rows as over-threshold, and emits dry-run
+variance candidates. It performs no billing connector read or write and does not
+silently learn from variance.
+
 ### Capture synthetic carrier rejection responses
 
 ```bash

@@ -67,7 +67,12 @@ RULE_DEFINITIONS = [
             "A human budget correction, revision, or superseding decision was recorded and "
             "should be preserved as append-only evidence."
         ),
-        "support_ref_kinds": ["budget_change_record", "budget_proposal", "structured_ref"],
+        "support_ref_kinds": [
+            "budget_change_record",
+            "budget_revision_report",
+            "budget_proposal",
+            "structured_ref",
+        ],
         "structured_refs": ["docs/human-review.md#budget-review"],
     },
     {
@@ -76,8 +81,8 @@ RULE_DEFINITIONS = [
         "local_event_label": "budget_actual_cost_variance_requires_review",
         "canonical_lake_class": "workflow_escalation",
         "trigger_summary": (
-            "Phase-level actual cost differs from the proposed budget outside the review "
-            "threshold and requires human pricing review."
+            "Phase-level or UTBMS-code actual cost differs from the comparison budget outside "
+            "the review threshold and requires human pricing review."
         ),
         "support_ref_kinds": [
             "budget_actual_comparison_report",

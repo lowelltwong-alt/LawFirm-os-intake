@@ -1,0 +1,36 @@
+{
+  "schema_version": "0.1",
+  "actuals_source_id": "synthetic-medmal-phase-code-actuals.v0_1",
+  "budget_proposal_id": "__BUDGET_PROPOSAL_ID__",
+  "data_origin": "synthetic",
+  "actual_resolution_scenario_id": "standard",
+  "actuals_by_phase": {
+    "L100": {
+      "fees": 23000,
+      "expenses": 2500
+    },
+    "L300": {
+      "fees": 76000,
+      "expenses": 38500
+    },
+    "L500": {
+      "fees": 4500,
+      "expenses": 900
+    }
+  },
+  "actuals_by_code": {
+    "L330": {
+      "fees": 24500,
+      "expenses": 0
+    },
+    "E119": {
+      "fees": 0,
+      "expenses": 39000
+    },
+    "L599": {
+      "fees": 4500,
+      "expenses": 900
+    }
+  },
+  "source_ref": "synthetic-actuals://medmal-phase-code-actuals"
+}

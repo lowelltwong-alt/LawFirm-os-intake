@@ -1,5 +1,129 @@
 {
   "$defs": {
+    "BudgetActualCodeComparison": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "phase_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phase Id"
+        },
+        "budgeted_fees": {
+          "default": 0,
+          "title": "Budgeted Fees",
+          "type": "number"
+        },
+        "budgeted_expenses": {
+          "default": 0,
+          "title": "Budgeted Expenses",
+          "type": "number"
+        },
+        "budgeted_total": {
+          "default": 0,
+          "title": "Budgeted Total",
+          "type": "number"
+        },
+        "actual_fees": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Actual Fees"
+        },
+        "actual_expenses": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Actual Expenses"
+        },
+        "actual_total": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Actual Total"
+        },
+        "variance_amount": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Variance Amount"
+        },
+        "variance_percent": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Variance Percent"
+        },
+        "status": {
+          "enum": [
+            "actuals_not_available",
+            "within_threshold",
+            "over_threshold",
+            "under_threshold"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "variance_driver_candidates": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Variance Driver Candidates",
+          "type": "array"
+        },
+        "requires_human_review": {
+          "default": true,
+          "title": "Requires Human Review",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "code",
+        "status"
+      ],
+      "title": "BudgetActualCodeComparison",
+      "type": "object"
+    },
     "BudgetActualPhaseComparison": {
       "additionalProperties": false,
       "properties": {
@@ -113,6 +237,13 @@
           "title": "External Code Candidates",
           "type": "array"
         },
+        "variance_driver_candidates": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Variance Driver Candidates",
+          "type": "array"
+        },
         "requires_human_review": {
           "default": true,
           "title": "Requires Human Review",
@@ -124,6 +255,97 @@
         "status"
       ],
       "title": "BudgetActualPhaseComparison",
+      "type": "object"
+    },
+    "BudgetActualVarianceDriverCandidate": {
+      "additionalProperties": false,
+      "properties": {
+        "candidate_id": {
+          "title": "Candidate Id",
+          "type": "string"
+        },
+        "driver_label": {
+          "enum": [
+            "actuals_without_budget",
+            "fee_overrun",
+            "fee_underrun",
+            "expense_overrun",
+            "expense_underrun",
+            "human_revision_delta",
+            "unknown_driver"
+          ],
+          "title": "Driver Label",
+          "type": "string"
+        },
+        "phase_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phase Id"
+        },
+        "code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Code"
+        },
+        "variance_amount": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Variance Amount"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "target_learning_loop": {
+          "enum": [
+            "budget_driver",
+            "template_mapping",
+            "validation_rule"
+          ],
+          "title": "Target Learning Loop",
+          "type": "string"
+        },
+        "requires_human_review": {
+          "const": true,
+          "default": true,
+          "title": "Requires Human Review",
+          "type": "boolean"
+        },
+        "silent_learning_performed": {
+          "const": false,
+          "default": false,
+          "title": "Silent Learning Performed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "candidate_id",
+        "driver_label",
+        "reason",
+        "target_learning_loop"
+      ],
+      "title": "BudgetActualVarianceDriverCandidate",
       "type": "object"
     }
   },
@@ -160,16 +382,85 @@
       "type": "string"
     },
     "comparison_scope": {
-      "const": "phase",
       "default": "phase",
+      "enum": [
+        "phase",
+        "phase_and_code"
+      ],
       "title": "Comparison Scope",
       "type": "string"
+    },
+    "comparison_budget_state": {
+      "default": "original_proposal",
+      "enum": [
+        "original_proposal",
+        "human_revised_candidate"
+      ],
+      "title": "Comparison Budget State",
+      "type": "string"
+    },
+    "budget_revision_report_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Budget Revision Report Id"
+    },
+    "budget_revision_report_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Budget Revision Report Ref"
+    },
+    "actual_resolution_scenario_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Actual Resolution Scenario Id"
     },
     "phase_comparisons": {
       "items": {
         "$ref": "#/$defs/BudgetActualPhaseComparison"
       },
       "title": "Phase Comparisons",
+      "type": "array"
+    },
+    "code_comparisons": {
+      "items": {
+        "$ref": "#/$defs/BudgetActualCodeComparison"
+      },
+      "title": "Code Comparisons",
+      "type": "array"
+    },
+    "variance_driver_candidates": {
+      "items": {
+        "$ref": "#/$defs/BudgetActualVarianceDriverCandidate"
+      },
+      "title": "Variance Driver Candidates",
+      "type": "array"
+    },
+    "learning_disposition_candidates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Learning Disposition Candidates",
       "type": "array"
     },
     "variance_threshold_percent": {

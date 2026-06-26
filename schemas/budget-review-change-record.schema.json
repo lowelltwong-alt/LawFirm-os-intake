@@ -1,0 +1,299 @@
+{
+  "$defs": {
+    "BudgetReviewChange": {
+      "additionalProperties": false,
+      "properties": {
+        "change_id": {
+          "title": "Change Id",
+          "type": "string"
+        },
+        "target_type": {
+          "enum": [
+            "budget_line",
+            "proposal_assumption",
+            "proposal_exclusion",
+            "proposal_unknown",
+            "scenario_selection"
+          ],
+          "title": "Target Type",
+          "type": "string"
+        },
+        "phase_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phase Id"
+        },
+        "task_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Task Id"
+        },
+        "external_code_candidate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Code Candidate"
+        },
+        "expense_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expense Code"
+        },
+        "staffing_role": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Staffing Role"
+        },
+        "field": {
+          "enum": [
+            "estimated_hours",
+            "hourly_rate",
+            "estimated_expenses",
+            "assumption",
+            "exclusion",
+            "unknown",
+            "scenario_id"
+          ],
+          "title": "Field",
+          "type": "string"
+        },
+        "new_value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "New Value"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "structured_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Structured Refs",
+          "type": "array"
+        },
+        "requires_human_review": {
+          "const": true,
+          "default": true,
+          "title": "Requires Human Review",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "change_id",
+        "target_type",
+        "field",
+        "reason"
+      ],
+      "title": "BudgetReviewChange",
+      "type": "object"
+    },
+    "EvidenceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "segment_id": {
+          "title": "Segment Id",
+          "type": "string"
+        },
+        "start_offset": {
+          "title": "Start Offset",
+          "type": "integer"
+        },
+        "end_offset": {
+          "title": "End Offset",
+          "type": "integer"
+        },
+        "sha256": {
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "segment_id",
+        "start_offset",
+        "end_offset",
+        "sha256"
+      ],
+      "title": "EvidenceRef",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "budget_review_change_record_id": {
+      "title": "Budget Review Change Record Id",
+      "type": "string"
+    },
+    "budget_proposal_id": {
+      "title": "Budget Proposal Id",
+      "type": "string"
+    },
+    "source_budget_proposal_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Budget Proposal Ref"
+    },
+    "reviewer_id": {
+      "title": "Reviewer Id",
+      "type": "string"
+    },
+    "reviewer_role": {
+      "title": "Reviewer Role",
+      "type": "string"
+    },
+    "reviewed_at": {
+      "title": "Reviewed At",
+      "type": "string"
+    },
+    "outcome": {
+      "enum": [
+        "confirmed_no_change",
+        "corrected",
+        "needs_more_information",
+        "human_only",
+        "declined_referred"
+      ],
+      "title": "Outcome",
+      "type": "string"
+    },
+    "decision_reason": {
+      "title": "Decision Reason",
+      "type": "string"
+    },
+    "supersedes_budget_review_change_record_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Supersedes Budget Review Change Record Id"
+    },
+    "changes": {
+      "items": {
+        "$ref": "#/$defs/BudgetReviewChange"
+      },
+      "title": "Changes",
+      "type": "array"
+    },
+    "mutation_policy": {
+      "const": "append_only_supersession",
+      "default": "append_only_supersession",
+      "title": "Mutation Policy",
+      "type": "string"
+    },
+    "original_budget_mutated": {
+      "const": false,
+      "default": false,
+      "title": "Original Budget Mutated",
+      "type": "boolean"
+    },
+    "budget_submission_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Submission Authorized",
+      "type": "boolean"
+    },
+    "carrier_submission_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Carrier Submission Authorized",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "budget_review_change_record_id",
+    "budget_proposal_id",
+    "reviewer_id",
+    "reviewer_role",
+    "reviewed_at",
+    "outcome",
+    "decision_reason"
+  ],
+  "title": "BudgetReviewChangeRecord",
+  "type": "object"
+}

@@ -1,0 +1,524 @@
+{
+  "$defs": {
+    "BudgetCodeBudgetSnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "phase_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phase Id"
+        },
+        "budgeted_fees": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Budgeted Fees",
+          "type": "number"
+        },
+        "budgeted_expenses": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Budgeted Expenses",
+          "type": "number"
+        },
+        "budgeted_total": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Budgeted Total",
+          "type": "number"
+        }
+      },
+      "required": [
+        "code"
+      ],
+      "title": "BudgetCodeBudgetSnapshot",
+      "type": "object"
+    },
+    "BudgetPhaseBudgetSnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "phase_id": {
+          "title": "Phase Id",
+          "type": "string"
+        },
+        "budgeted_fees": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Budgeted Fees"
+        },
+        "budgeted_expenses": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Budgeted Expenses",
+          "type": "number"
+        },
+        "budgeted_total": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Budgeted Total"
+        },
+        "external_code_candidates": {
+          "items": {
+            "type": "string"
+          },
+          "title": "External Code Candidates",
+          "type": "array"
+        }
+      },
+      "required": [
+        "phase_id"
+      ],
+      "title": "BudgetPhaseBudgetSnapshot",
+      "type": "object"
+    },
+    "BudgetRevisionDelta": {
+      "additionalProperties": false,
+      "properties": {
+        "delta_id": {
+          "title": "Delta Id",
+          "type": "string"
+        },
+        "change_id": {
+          "title": "Change Id",
+          "type": "string"
+        },
+        "target_type": {
+          "title": "Target Type",
+          "type": "string"
+        },
+        "phase_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phase Id"
+        },
+        "task_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Task Id"
+        },
+        "external_code_candidate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Code Candidate"
+        },
+        "expense_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expense Code"
+        },
+        "staffing_role": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Staffing Role"
+        },
+        "field": {
+          "title": "Field",
+          "type": "string"
+        },
+        "previous_value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Previous Value"
+        },
+        "new_value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "New Value"
+        },
+        "hours_delta": {
+          "default": 0,
+          "title": "Hours Delta",
+          "type": "number"
+        },
+        "fee_delta": {
+          "default": 0,
+          "title": "Fee Delta",
+          "type": "number"
+        },
+        "expense_delta": {
+          "default": 0,
+          "title": "Expense Delta",
+          "type": "number"
+        },
+        "total_delta": {
+          "default": 0,
+          "title": "Total Delta",
+          "type": "number"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "structured_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Structured Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "delta_id",
+        "change_id",
+        "target_type",
+        "field",
+        "reason"
+      ],
+      "title": "BudgetRevisionDelta",
+      "type": "object"
+    },
+    "EvidenceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "segment_id": {
+          "title": "Segment Id",
+          "type": "string"
+        },
+        "start_offset": {
+          "title": "Start Offset",
+          "type": "integer"
+        },
+        "end_offset": {
+          "title": "End Offset",
+          "type": "integer"
+        },
+        "sha256": {
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "segment_id",
+        "start_offset",
+        "end_offset",
+        "sha256"
+      ],
+      "title": "EvidenceRef",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "budget_revision_report_id": {
+      "title": "Budget Revision Report Id",
+      "type": "string"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "preflight_packet_id": {
+      "title": "Preflight Packet Id",
+      "type": "string"
+    },
+    "budget_proposal_id": {
+      "title": "Budget Proposal Id",
+      "type": "string"
+    },
+    "budget_review_change_record_id": {
+      "title": "Budget Review Change Record Id",
+      "type": "string"
+    },
+    "source_budget_proposal_ref": {
+      "title": "Source Budget Proposal Ref",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "revision_recorded",
+        "confirmed_no_change",
+        "blocked_needs_more_information",
+        "human_only",
+        "declined_referred"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "review_outcome": {
+      "title": "Review Outcome",
+      "type": "string"
+    },
+    "change_count": {
+      "minimum": 0,
+      "title": "Change Count",
+      "type": "integer"
+    },
+    "numeric_change_count": {
+      "minimum": 0,
+      "title": "Numeric Change Count",
+      "type": "integer"
+    },
+    "original_phase_totals": {
+      "items": {
+        "$ref": "#/$defs/BudgetPhaseBudgetSnapshot"
+      },
+      "title": "Original Phase Totals",
+      "type": "array"
+    },
+    "revised_phase_totals": {
+      "items": {
+        "$ref": "#/$defs/BudgetPhaseBudgetSnapshot"
+      },
+      "title": "Revised Phase Totals",
+      "type": "array"
+    },
+    "original_code_totals": {
+      "items": {
+        "$ref": "#/$defs/BudgetCodeBudgetSnapshot"
+      },
+      "title": "Original Code Totals",
+      "type": "array"
+    },
+    "revised_code_totals": {
+      "items": {
+        "$ref": "#/$defs/BudgetCodeBudgetSnapshot"
+      },
+      "title": "Revised Code Totals",
+      "type": "array"
+    },
+    "original_total": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Original Total"
+    },
+    "revised_total": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Revised Total"
+    },
+    "total_delta": {
+      "default": 0,
+      "title": "Total Delta",
+      "type": "number"
+    },
+    "deltas": {
+      "items": {
+        "$ref": "#/$defs/BudgetRevisionDelta"
+      },
+      "title": "Deltas",
+      "type": "array"
+    },
+    "mutation_policy": {
+      "const": "append_only_supersession",
+      "default": "append_only_supersession",
+      "title": "Mutation Policy",
+      "type": "string"
+    },
+    "original_budget_mutated": {
+      "const": false,
+      "default": false,
+      "title": "Original Budget Mutated",
+      "type": "boolean"
+    },
+    "superseding_budget_written": {
+      "const": false,
+      "default": false,
+      "title": "Superseding Budget Written",
+      "type": "boolean"
+    },
+    "budget_submission_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Submission Authorized",
+      "type": "boolean"
+    },
+    "carrier_submission_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Carrier Submission Authorized",
+      "type": "boolean"
+    },
+    "not_authorized_for_client_submission": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Client Submission",
+      "type": "boolean"
+    },
+    "not_authorized_for_carrier_submission": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Carrier Submission",
+      "type": "boolean"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "append_only_history_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Append Only History Ref"
+    },
+    "dry_run_exception_label": {
+      "const": "budget_human_change_recorded",
+      "default": "budget_human_change_recorded",
+      "title": "Dry Run Exception Label",
+      "type": "string"
+    },
+    "not_authorized_for_lake_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Lake Write",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "budget_revision_report_id",
+    "run_id",
+    "preflight_packet_id",
+    "budget_proposal_id",
+    "budget_review_change_record_id",
+    "source_budget_proposal_ref",
+    "status",
+    "review_outcome",
+    "change_count",
+    "numeric_change_count",
+    "original_phase_totals",
+    "revised_phase_totals",
+    "deltas",
+    "generated_at"
+  ],
+  "title": "BudgetRevisionReport",
+  "type": "object"
+}

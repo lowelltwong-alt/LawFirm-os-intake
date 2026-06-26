@@ -104,7 +104,7 @@ intake-confirmed baseline
 -> carrier rejection or partial-allowance remediation case
 -> human-approved fix, appeal, no-appeal decision, or write-down
 -> appeal result capture and financial outcome
--> phase-level actuals comparison evidence
+-> phase/code actuals comparison evidence
 -> dry-run Exception Lake change or variance candidates
 -> reviewed rejection-learning candidate
 -> reviewed template-change proposal
@@ -117,6 +117,14 @@ which proposal/version it supersedes, the target phase/task/code, the previous v
 the new value, the reason, and the reviewed support. Those records can map to
 Exception Lake as dry-run `budget_human_change_recorded` candidates, but Lake
 admission and storage belong to the Exception Lake runtime.
+
+The local `record-budget-review` command implements the candidate evidence slice
+for this loop. It writes a bound `budget_review_change_record.json`, appends the
+record to `budget_revision_history.jsonl`, emits `budget_revision_report.json` and
+`.md`, calculates phase and UTBMS-code deltas, and writes dry-run revision
+Exception Lake candidates. It does not mutate the original proposal, write a
+superseding budget, authorize client/carrier submission, write billing, write
+SQLite, or admit Lake records.
 
 Carrier rejection handling is a future governed loop, not a starter connector. Every
 submitted budget, invoice, appeal, or portal action should have a reconciled response
@@ -131,18 +139,23 @@ may provide candidate schemas, synthetic fixtures, and dry-run mappings only. Se
 
 ## Actuals comparison boundary
 
-Actual cost comparison is phase-level in this vertical. A comparison report aligns
-budgeted fees and expenses by phase against supplied actual fees and expenses,
-computes variance amount and percent, and flags over-threshold or under-threshold
-variance for human pricing review.
+Actual cost comparison is phase-level in normal starter runs and phase-plus-code
+when governed synthetic actuals include UTBMS-code rows. A comparison report aligns
+budgeted fees and expenses by phase and, when available, by code against supplied
+actual fees and expenses. It computes variance amount and percent, flags
+zero-budget/positive-actual rows as over-threshold, and proposes variance-driver
+and learning-disposition candidates for human pricing review.
 
 This repo does not read billing, write billing, or connect to a financial system.
 Normal starter runs emit `budget_actual_comparison_report.json` with
 `actuals_not_available`, `billing_connector_read_performed=false`, and
-`billing_connector_write_performed=false`. Tests may pass synthetic actuals into
-the deterministic comparison builder. Future production actuals should arrive
-through Orchestrator under a governed billing-read contract, then any variance
-candidate should be admitted by the Exception Lake runtime, not by intake.
+`billing_connector_write_performed=false`. The local `compare-budget-actuals`
+command may pass synthetic actuals into the deterministic comparison builder and
+may compare against a `budget_revision_report.json` from human review. Future
+production actuals should arrive through Orchestrator under a governed billing-read
+contract, then any variance candidate should be admitted by the Exception Lake
+runtime, not by intake. Variance never silently mutates a profile, template,
+carrier guideline, or budget.
 
 ## Sample synthetic defense families
 

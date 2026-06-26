@@ -39,12 +39,15 @@ The workflow prepares search terms and unresolved relationships. A conflicts pro
 The reviewer must verify template fit, staffing, hours, rates, guidelines, expenses, contingency, assumptions, exclusions, unknowns, and required approval authority.
 
 Budget changes by a human reviewer must be append-only or superseding. A change
-record should capture reviewer identity, timestamp, proposal/version being changed,
+record captures reviewer identity, timestamp, proposal/version being changed,
 target phase/task/code or assumption, previous value, new value, reason, evidence or
 structured support refs, and whether it supersedes a prior budget review record.
-The original proposal remains inspectable. The starter maps these future records to
-dry-run `budget_human_change_recorded` Exception Lake evidence; it does not admit
-them to the Lake or mutate budget history silently.
+The original proposal remains inspectable. The local `record-budget-review` command
+writes `budget_review_change_record.json`, appends to
+`budget_revision_history.jsonl`, writes `budget_revision_report.json` and `.md`,
+calculates candidate phase/code deltas, and emits dry-run
+`budget_human_change_recorded` evidence. It does not admit records to the Lake,
+write SQLite, submit budgets, or mutate budget history silently.
 
 ## Decision evidence
 

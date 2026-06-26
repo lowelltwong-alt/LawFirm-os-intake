@@ -1,0 +1,32 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "fees": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Fees",
+      "type": "number"
+    },
+    "expenses": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Expenses",
+      "type": "number"
+    },
+    "hours": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Hours"
+    }
+  },
+  "title": "BudgetActualAmount",
+  "type": "object"
+}

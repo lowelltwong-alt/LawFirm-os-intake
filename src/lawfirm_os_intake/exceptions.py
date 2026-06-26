@@ -500,6 +500,11 @@ def build_budget_actual_variance_exception_candidates(
         for row in report.phase_comparisons
         if row.status in {"over_threshold", "under_threshold"}
     ]
+    codes = [
+        row.code
+        for row in report.code_comparisons
+        if row.status in {"over_threshold", "under_threshold"}
+    ]
     return [
         ExceptionLakeCandidate(
             candidate_id=new_id("exc"),
@@ -508,8 +513,8 @@ def build_budget_actual_variance_exception_candidates(
             local_event_label="budget_actual_cost_variance_requires_review",
             canonical_lake_class="workflow_escalation",
             reason=(
-                "Budget actual-cost comparison exceeded variance threshold for phase(s): "
-                + ", ".join(phase_ids)
+                "Budget actual-cost comparison exceeded variance threshold for phase(s) "
+                f"{', '.join(phase_ids) or 'none'} and code(s) {', '.join(codes) or 'none'}."
             ),
             structured_refs=[
                 report_ref,

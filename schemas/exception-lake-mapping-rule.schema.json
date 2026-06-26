@@ -45,6 +45,7 @@
           "budget_form_mapping_report",
           "budget_proposal",
           "budget_change_record",
+          "budget_revision_report",
           "budget_actual_comparison_report",
           "carrier_rejection_reconciliation_report",
           "carrier_rejection_remediation_case",

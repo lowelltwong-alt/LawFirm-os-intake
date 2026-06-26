@@ -76,8 +76,8 @@ Draft mappings for broken template formulas, missing budget code mappings, unkno
 - Budget runs now write `exception_lake_mapping_package.json` with dry-run mappings for broken original-budget formulas, missing budget code mappings, unknown budget drivers, guideline/cap issues, human budget changes, and budget actual-cost variance.
 - Budget exception candidates now include specific unknown-driver and guideline/cap review labels in addition to the broader budget-unknowns label.
 - Template-backed workbook mapping failures can produce dry-run candidates for broken formulas and missing/duplicate/unmapped UTBMS code rows without committing the workbook.
-- `budget_actual_comparison_report.json` records phase-level budget-vs-actual posture; normal starter runs keep actuals unavailable and perform no billing connector reads or writes.
-- Human budget changes are documented as append-only/superseding records that map to future Lake evidence; intake does not mutate approved budgets or admit records to Lake storage.
+- `budget_actual_comparison_report.json` records budget-vs-actual posture; normal starter runs keep actuals unavailable and perform no billing connector reads or writes.
+- Human budget changes can now be recorded as append-only/superseding candidate evidence with `record-budget-review`; intake does not mutate approved budgets or admit records to Lake storage.
 
 ## 7. Cross-Repo Promotion Package
 
@@ -171,3 +171,32 @@ reconciliation, not by relying on model classification. See
   `carrier_rejection_roadmap_audit_report.md`, proving local slices 1-8 have
   candidate proof artifacts while preserving Orchestrator, Exception Lake, and
   Semantic Substrate adoption as external required work.
+
+## 11. Budget Revision And Actuals Lifecycle
+
+Status: implemented for the current synthetic candidate slice; production actuals
+and admitted Lake records remain future Orchestrator/Exception Lake work.
+
+Close the loop from proposed budget to human revision to synthetic actual-cost
+variance without turning intake into a billing connector, approval system, or
+Lake runtime.
+
+- `record-budget-review` writes `budget_review_change_record.json`,
+  `budget_revision_history.jsonl`, `budget_revision_report.json`,
+  `budget_revision_report.md`, and
+  `budget_revision_exception_lake_candidates.jsonl`.
+- Human budget changes are append-only candidate evidence. The report calculates
+  phase and UTBMS-code deltas while preserving `original_budget_mutated=false`,
+  `superseding_budget_written=false`, no submission authorization, no Lake write,
+  and no external write.
+- `compare-budget-actuals` accepts a synthetic actuals source and optional
+  `budget_revision_report.json`, then compares actuals against the original
+  proposal or the human-revised candidate by phase and UTBMS code.
+- The actuals report records comparison budget state, scenario ID, phase/code
+  comparisons, variance-driver candidates, learning-disposition candidates, and
+  dry-run variance candidates while preserving no billing connector reads/writes.
+- The zero-budget/positive-actual case is classified as over-threshold rather
+  than hidden by a missing percent denominator.
+- Learning remains candidate-only: variance and human-revision evidence can feed
+  future reviewed budget-driver, template-mapping, and validation-rule loops, but
+  no profile, template, budget, or carrier guideline is silently mutated.

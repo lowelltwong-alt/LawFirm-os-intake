@@ -646,11 +646,12 @@ def build_review_package_completeness_report(
     )
     actual_comparison_complete = (
         isinstance(budget_actual_comparison_report, dict)
-        and budget_actual_comparison_report.get("comparison_scope") == "phase"
+        and budget_actual_comparison_report.get("comparison_scope") in {"phase", "phase_and_code"}
         and budget_actual_comparison_report.get("billing_connector_read_performed") is False
         and budget_actual_comparison_report.get("billing_connector_write_performed") is False
         and budget_actual_comparison_report.get("external_writes_performed") is False
         and isinstance(budget_actual_comparison_report.get("phase_comparisons"), list)
+        and isinstance(budget_actual_comparison_report.get("code_comparisons", []), list)
         and "### Budget Actual Comparison" in review_text
         and "Billing connector read performed: False" in review_text
         and "Billing connector write performed: False" in review_text
@@ -1011,7 +1012,7 @@ def build_review_package_completeness_report(
         _check(
             "budget_actual_comparison_report_complete",
             bool(actual_comparison_complete),
-            "Budget actual comparison report preserves phase-level comparison posture without billing connector reads or writes.",
+            "Budget actual comparison report preserves phase/code comparison posture without billing connector reads or writes.",
             [
                 artifact_refs.get("budget_actual_comparison_report", ""),
                 str(review_package_path),

@@ -1,0 +1,91 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "candidate_id": {
+      "title": "Candidate Id",
+      "type": "string"
+    },
+    "driver_label": {
+      "enum": [
+        "actuals_without_budget",
+        "fee_overrun",
+        "fee_underrun",
+        "expense_overrun",
+        "expense_underrun",
+        "human_revision_delta",
+        "unknown_driver"
+      ],
+      "title": "Driver Label",
+      "type": "string"
+    },
+    "phase_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Phase Id"
+    },
+    "code": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Code"
+    },
+    "variance_amount": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Variance Amount"
+    },
+    "reason": {
+      "title": "Reason",
+      "type": "string"
+    },
+    "target_learning_loop": {
+      "enum": [
+        "budget_driver",
+        "template_mapping",
+        "validation_rule"
+      ],
+      "title": "Target Learning Loop",
+      "type": "string"
+    },
+    "requires_human_review": {
+      "const": true,
+      "default": true,
+      "title": "Requires Human Review",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "candidate_id",
+    "driver_label",
+    "reason",
+    "target_learning_loop"
+  ],
+  "title": "BudgetActualVarianceDriverCandidate",
+  "type": "object"
+}
