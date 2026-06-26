@@ -7,6 +7,7 @@ import shutil
 import sys
 
 from .budget_actuals import run_budget_actual_comparison
+from .budget_actual_variance_ledger import BUDGET_ACTUAL_VARIANCE_LEDGER_REPORT_FILENAME
 from .budget_change_ledger import BUDGET_CHANGE_LEDGER_REPORT_FILENAME
 from .budget_calibration_corpus import run_budget_calibration_corpus_audit
 from .budget_corpus_replay import run_budget_corpus_replay_plan
@@ -591,11 +592,20 @@ def main(argv: list[str] | None = None) -> int:
                 out_dir=args.out_dir,
                 budget_revision_report_path=args.budget_revision_report,
             )
+            ledger_report = load_json(run_dir / BUDGET_ACTUAL_VARIANCE_LEDGER_REPORT_FILENAME)
             _print(
                 {
                     "status": report.status,
                     "budget_actual_comparison_report_id": (
                         report.budget_actual_comparison_report_id
+                    ),
+                    "budget_actual_variance_ledger_report_id": (
+                        ledger_report["budget_actual_variance_ledger_report_id"]
+                    ),
+                    "budget_actual_variance_ledger_entry_count": ledger_report["entry_count"],
+                    "variance_review_event_count": ledger_report["variance_review_event_count"],
+                    "actuals_without_budget_event_count": (
+                        ledger_report["actuals_without_budget_event_count"]
                     ),
                     "budget_proposal_id": report.budget_proposal_id,
                     "comparison_scope": report.comparison_scope,
@@ -606,7 +616,9 @@ def main(argv: list[str] | None = None) -> int:
                     "learning_disposition_candidates": report.learning_disposition_candidates,
                     "billing_connector_read_performed": report.billing_connector_read_performed,
                     "billing_connector_write_performed": report.billing_connector_write_performed,
+                    "sqlite_write_performed": ledger_report["sqlite_write_performed"],
                     "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": ledger_report["silent_learning_performed"],
                     "run_dir": str(run_dir),
                 }
             )

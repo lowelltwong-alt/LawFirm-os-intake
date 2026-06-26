@@ -184,6 +184,16 @@ contract, then any variance candidate should be admitted by the Exception Lake
 runtime, not by intake. Variance never silently mutates a profile, template,
 carrier guideline, or budget.
 
+The command also writes `budget_actual_variance_ledger_report.json`,
+`budget_actual_variance_ledger.jsonl`, and
+`budget_actual_variance_ledger_report.md`. The ledger records every phase and
+code comparison row, not just over-threshold rows, so later Lake admission can
+prove complete comparison coverage. It adds review events for zero-budget
+positive-actual rows, missing actuals, and human-revised comparison context while
+preserving `billing_connector_read_performed=false`,
+`sqlite_write_performed=false`, `lake_write_performed=false`, and
+`silent_learning_performed=false`.
+
 The local `review-learning-gate` command aggregates budget revisions, budget
 actual variance drivers, and carrier rejection learning proposals into one
 candidate gate. It requires human-reviewed outcome evidence, append-only evidence

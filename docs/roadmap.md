@@ -216,6 +216,12 @@ Lake runtime.
 - The actuals report records comparison budget state, scenario ID, phase/code
   comparisons, variance-driver candidates, learning-disposition candidates, and
   dry-run variance candidates while preserving no billing connector reads/writes.
+- `compare-budget-actuals` also writes
+  `budget_actual_variance_ledger_report.json`,
+  `budget_actual_variance_ledger.jsonl`, and
+  `budget_actual_variance_ledger_report.md` so every phase/code comparison row,
+  missing-actuals row, zero-budget/positive-actual row, and human-revised
+  comparison context is append-only candidate evidence before Lake admission.
 - When an actual resolution scenario is supplied, the comparison surface is
   filtered to that scenario before phase/code variance is calculated.
 - The zero-budget/positive-actual case is classified as over-threshold rather

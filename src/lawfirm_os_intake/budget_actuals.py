@@ -3,6 +3,10 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
+from .budget_actual_variance_ledger import (
+    build_budget_actual_variance_ledger_report,
+    write_budget_actual_variance_ledger_outputs,
+)
 from .models import (
     BudgetActualAmount,
     BudgetActualCodeComparison,
@@ -629,6 +633,16 @@ def run_budget_actual_comparison(
     write_json(report_path, report.model_dump(mode="json"))
     notes_path.write_text(render_budget_actual_comparison_report(report), encoding="utf-8")
     candidates_path.touch()
-    for candidate in build_budget_actual_variance_exception_candidates(report, str(report_path)):
+    candidates = build_budget_actual_variance_exception_candidates(report, str(report_path))
+    for candidate in candidates:
         append_jsonl(candidates_path, candidate.model_dump(mode="json"))
+    ledger_report = build_budget_actual_variance_ledger_report(
+        report=report,
+        report_ref=str(report_path),
+        exception_candidates=candidates,
+    )
+    write_budget_actual_variance_ledger_outputs(
+        run_dir=run_dir,
+        ledger_report=ledger_report,
+    )
     return report, run_dir

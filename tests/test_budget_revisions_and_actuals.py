@@ -4,11 +4,15 @@ from lawfirm_os_intake.budget_actuals import (
     build_budget_actual_comparison_report,
     run_budget_actual_comparison,
 )
+from lawfirm_os_intake.budget_actual_variance_ledger import (
+    build_budget_actual_variance_ledger_report,
+)
 from lawfirm_os_intake.budget_revisions import run_budget_review_record
 from lawfirm_os_intake.cli import main
 from lawfirm_os_intake.confirmation import bind_confirmation_to_packet_evidence
 from lawfirm_os_intake.models import (
     BudgetActualComparisonReport,
+    BudgetActualVarianceLedgerReport,
     BudgetChangeLedgerReport,
     BudgetProposal,
     BudgetRevisionReport,
@@ -177,6 +181,10 @@ def test_budget_actuals_compare_against_human_revised_candidate(tmp_path, repo_r
         load_json(actuals_dir / "budget_actual_comparison_report.json")
     )
     candidates = load_jsonl(actuals_dir / "budget_actual_variance_candidates.jsonl")
+    ledger = BudgetActualVarianceLedgerReport.model_validate(
+        load_json(actuals_dir / "budget_actual_variance_ledger_report.json")
+    )
+    ledger_rows = load_jsonl(actuals_dir / "budget_actual_variance_ledger.jsonl")
     code_status = {row.code: row.status for row in persisted.code_comparisons}
     phase_status = {row.phase_id: row.status for row in persisted.phase_comparisons}
 
@@ -201,6 +209,37 @@ def test_budget_actuals_compare_against_human_revised_candidate(tmp_path, repo_r
     assert persisted.billing_connector_write_performed is False
     assert persisted.external_writes_performed is False
     assert candidates[0]["local_event_label"] == "budget_actual_cost_variance_requires_review"
+    assert ledger.status == "variance_ledger_ready_for_review"
+    assert ledger.budget_actual_comparison_report_id == persisted.budget_actual_comparison_report_id
+    assert ledger.budget_revision_report_id == revision_report.budget_revision_report_id
+    assert ledger.comparison_budget_state == "human_revised_candidate"
+    assert ledger.phase_event_count == len(persisted.phase_comparisons)
+    assert ledger.code_event_count == len(persisted.code_comparisons)
+    assert ledger.revision_context_event_count == 1
+    assert ledger.entry_count == (
+        len(persisted.phase_comparisons) + len(persisted.code_comparisons) + 1
+    )
+    assert len(ledger_rows) == ledger.entry_count
+    assert ledger_rows[0]["budget_actual_variance_ledger_event_id"] == (
+        ledger.events[0].budget_actual_variance_ledger_event_id
+    )
+    assert ledger.variance_review_event_count >= 1
+    assert ledger.actuals_without_budget_event_count >= 1
+    assert {
+        "budget_actual_phase_comparison_recorded",
+        "budget_actual_code_comparison_recorded",
+        "budget_actual_without_budget_recorded",
+        "budget_actual_human_revision_context_recorded",
+    } <= set(ledger.event_kind_counts)
+    assert all(event.requires_exception_lake_admission_review for event in ledger.events)
+    assert all(event.lake_write_performed is False for event in ledger.events)
+    assert ledger.lake_write_performed is False
+    assert ledger.sqlite_write_performed is False
+    assert ledger.billing_connector_read_performed is False
+    assert ledger.billing_connector_write_performed is False
+    assert ledger.external_writes_performed is False
+    assert ledger.silent_learning_performed is False
+    assert (actuals_dir / "budget_actual_variance_ledger_report.md").is_file()
 
 
 def test_budgeted_zero_actual_positive_is_over_threshold(tmp_path, repo_root):
@@ -220,6 +259,35 @@ def test_budgeted_zero_actual_positive_is_over_threshold(tmp_path, repo_root):
     assert next(row for row in report.code_comparisons if row.code == "L599").status == (
         "over_threshold"
     )
+
+
+def test_budget_actual_variance_ledger_records_missing_actuals(tmp_path, repo_root):
+    budget, _ = _run_budget(tmp_path, repo_root)
+    report = build_budget_actual_comparison_report(
+        run_id="budgetactualrun-missing",
+        preflight_packet_id=budget.preflight_packet_id,
+        budget=budget,
+        actuals_by_phase={},
+        actuals_by_code={},
+    )
+    ledger = build_budget_actual_variance_ledger_report(
+        report=report,
+        report_ref="synthetic://budget_actual_comparison_report.json",
+    )
+
+    assert report.status == "actuals_not_available"
+    assert ledger.status == "variance_ledger_no_actuals"
+    assert ledger.entry_count == len(report.phase_comparisons)
+    assert ledger.missing_actuals_event_count == ledger.entry_count
+    assert ledger.variance_review_event_count == 0
+    assert all(
+        event.event_kind == "budget_actual_missing_actuals_recorded" for event in ledger.events
+    )
+    assert all(event.decision_status == "actuals_missing_pending_source" for event in ledger.events)
+    assert all(event.required_human_decisions for event in ledger.events)
+    assert ledger.lake_write_performed is False
+    assert ledger.sqlite_write_performed is False
+    assert ledger.silent_learning_performed is False
 
 
 def test_budget_actuals_use_actual_resolution_scenario_when_available(tmp_path, repo_root):
@@ -288,7 +356,13 @@ def test_budget_review_and_actuals_cli(tmp_path, repo_root, capsys):
     assert '"sqlite_write_performed": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out
     assert '"comparison_budget_state": "human_revised_candidate"' in captured.out
+    assert '"budget_actual_variance_ledger_entry_count":' in captured.out
+    assert '"actuals_without_budget_event_count":' in captured.out
+    assert '"sqlite_write_performed": false' in captured.out
+    assert '"silent_learning_performed": false' in captured.out
     assert (tmp_path / "review-cli" / "budget_revision_report.json").is_file()
     assert (tmp_path / "review-cli" / "budget_change_ledger_report.json").is_file()
     assert (tmp_path / "review-cli" / "budget_change_ledger.jsonl").is_file()
     assert (tmp_path / "actuals-cli" / "budget_actual_comparison_report.json").is_file()
+    assert (tmp_path / "actuals-cli" / "budget_actual_variance_ledger_report.json").is_file()
+    assert (tmp_path / "actuals-cli" / "budget_actual_variance_ledger.jsonl").is_file()

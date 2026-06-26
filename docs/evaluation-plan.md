@@ -101,6 +101,16 @@ candidate Lake labels while proving no source budget mutation, no superseding
 budget write, no Lake/SQLite admission, no billing connector write, and no
 silent learning.
 
+`compare-budget-actuals` also writes
+`budget_actual_variance_ledger_report.json`,
+`budget_actual_variance_ledger.jsonl`, and
+`budget_actual_variance_ledger_report.md`. The ledger must preserve one
+append-only candidate row for every phase and code comparison, plus context rows
+for human-revised comparison budgets. Missing actuals and zero-budget/positive
+actuals must become reviewable events. The ledger proves no billing connector
+read or write, no Lake/SQLite admission, no budget mutation, and no silent
+learning.
+
 `capture-carrier-rejections` writes `carrier_rejection_decision_ledger_report.json`,
 `carrier_rejection_decision_ledger.jsonl`, and
 `carrier_rejection_decision_ledger_report.md`. The ledger must preserve one

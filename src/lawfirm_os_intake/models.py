@@ -1540,6 +1540,214 @@ class BudgetActualComparisonReport(StrictModel):
     generated_at: str
 
 
+BudgetActualVarianceLedgerEventKind = Literal[
+    "budget_actual_phase_comparison_recorded",
+    "budget_actual_code_comparison_recorded",
+    "budget_actual_missing_actuals_recorded",
+    "budget_actual_without_budget_recorded",
+    "budget_actual_human_revision_context_recorded",
+]
+
+BudgetActualVarianceLedgerDecisionStatus = Literal[
+    "recorded_within_threshold",
+    "over_threshold_requires_review",
+    "under_threshold_requires_review",
+    "actuals_missing_pending_source",
+    "actuals_without_budget_requires_review",
+    "human_revision_context_requires_review",
+]
+
+BudgetActualVarianceLedgerStatus = Literal[
+    "variance_ledger_ready_for_review",
+    "variance_ledger_passed",
+    "variance_ledger_no_actuals",
+]
+
+
+class BudgetActualVarianceLedgerEvent(StrictModel):
+    schema_version: str = "0.1"
+    budget_actual_variance_ledger_event_id: str
+    ledger_id: str
+    sequence_index: int = Field(ge=0)
+    budget_actual_comparison_report_id: str
+    run_id: str
+    preflight_packet_id: str
+    budget_proposal_id: str
+    budget_revision_report_id: str | None = None
+    actuals_source_ref: str | None = None
+    comparison_budget_state: Literal["original_proposal", "human_revised_candidate"]
+    actual_resolution_scenario_id: str | None = None
+    comparison_scope: Literal["phase", "code", "revision_context"]
+    phase_id: str | None = None
+    code: str | None = None
+    event_kind: BudgetActualVarianceLedgerEventKind
+    decision_status: BudgetActualVarianceLedgerDecisionStatus
+    local_event_label: str
+    canonical_lake_class_candidate: Literal["workflow_escalation"] = "workflow_escalation"
+    comparison_status: Literal[
+        "actuals_not_available",
+        "within_threshold",
+        "over_threshold",
+        "under_threshold",
+        "revision_context",
+    ]
+    budgeted_fees: float | None = None
+    budgeted_expenses: float | None = None
+    budgeted_total: float | None = None
+    actual_fees: float | None = None
+    actual_expenses: float | None = None
+    actual_total: float | None = None
+    variance_amount: float | None = None
+    variance_percent: float | None = None
+    variance_driver_candidates: list[str] = Field(default_factory=list)
+    learning_disposition_candidates: list[str] = Field(default_factory=list)
+    proposed_next_actions: list[str] = Field(default_factory=list)
+    required_human_decisions: list[str] = Field(default_factory=list)
+    exception_candidate_ids: list[str] = Field(default_factory=list)
+    structured_refs: list[str] = Field(default_factory=list)
+    requires_human_review: bool = True
+    requires_exception_lake_admission_review: Literal[True] = True
+    append_only: Literal[True] = True
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_external_submission: Literal[True] = True
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    billing_connector_read_performed: Literal[False] = False
+    billing_connector_write_performed: Literal[False] = False
+    budget_mutation_performed: Literal[False] = False
+    profile_mutation_performed: Literal[False] = False
+    template_mutation_performed: Literal[False] = False
+    carrier_guideline_mutation_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def variance_event_scope_is_complete(self) -> "BudgetActualVarianceLedgerEvent":
+        if self.comparison_scope == "phase" and not self.phase_id:
+            raise ValueError("phase variance ledger events require phase_id")
+        if self.comparison_scope == "code" and not self.code:
+            raise ValueError("code variance ledger events require code")
+        if (
+            self.decision_status
+            in {
+                "over_threshold_requires_review",
+                "under_threshold_requires_review",
+                "actuals_without_budget_requires_review",
+                "actuals_missing_pending_source",
+                "human_revision_context_requires_review",
+            }
+            and not self.required_human_decisions
+        ):
+            raise ValueError("variance review events require human decision prompts")
+        if self.event_kind == "budget_actual_without_budget_recorded":
+            if (self.budgeted_total or 0) != 0 or (self.actual_total or 0) <= 0:
+                raise ValueError("actuals-without-budget events require zero budget and actuals")
+        return self
+
+
+class BudgetActualVarianceLedgerReport(StrictModel):
+    schema_version: str = "0.1"
+    budget_actual_variance_ledger_report_id: str
+    ledger_id: str
+    budget_actual_comparison_report_id: str
+    run_id: str
+    preflight_packet_id: str
+    budget_proposal_id: str
+    budget_revision_report_id: str | None = None
+    budget_revision_report_ref: str | None = None
+    actuals_source_ref: str | None = None
+    status: BudgetActualVarianceLedgerStatus
+    comparison_scope: Literal["phase", "phase_and_code"] = "phase"
+    comparison_budget_state: Literal["original_proposal", "human_revised_candidate"]
+    actual_resolution_scenario_id: str | None = None
+    entry_count: int = Field(ge=0)
+    phase_event_count: int = Field(ge=0)
+    code_event_count: int = Field(ge=0)
+    revision_context_event_count: int = Field(ge=0)
+    variance_review_event_count: int = Field(ge=0)
+    missing_actuals_event_count: int = Field(ge=0)
+    actuals_without_budget_event_count: int = Field(ge=0)
+    within_threshold_event_count: int = Field(ge=0)
+    event_kind_counts: dict[str, int] = Field(default_factory=dict)
+    total_budgeted: float | None = None
+    total_actual: float | None = None
+    total_variance_amount: float | None = None
+    total_variance_percent: float | None = None
+    events: list[BudgetActualVarianceLedgerEvent]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    append_only: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_external_submission: Literal[True] = True
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    billing_connector_read_performed: Literal[False] = False
+    billing_connector_write_performed: Literal[False] = False
+    budget_mutation_performed: Literal[False] = False
+    profile_mutation_performed: Literal[False] = False
+    template_mutation_performed: Literal[False] = False
+    carrier_guideline_mutation_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def counts_match_events(self) -> "BudgetActualVarianceLedgerReport":
+        if self.entry_count != len(self.events):
+            raise ValueError("budget actual variance ledger count must match events")
+        if self.phase_event_count != sum(
+            1 for event in self.events if event.comparison_scope == "phase"
+        ):
+            raise ValueError("budget actual variance phase count must match events")
+        if self.code_event_count != sum(
+            1 for event in self.events if event.comparison_scope == "code"
+        ):
+            raise ValueError("budget actual variance code count must match events")
+        if self.revision_context_event_count != sum(
+            1 for event in self.events if event.comparison_scope == "revision_context"
+        ):
+            raise ValueError("budget actual variance revision-context count must match events")
+        review_statuses = {
+            "over_threshold_requires_review",
+            "under_threshold_requires_review",
+            "actuals_without_budget_requires_review",
+            "human_revision_context_requires_review",
+        }
+        if self.variance_review_event_count != sum(
+            1 for event in self.events if event.decision_status in review_statuses
+        ):
+            raise ValueError("budget actual variance review count must match events")
+        if self.missing_actuals_event_count != sum(
+            1 for event in self.events if event.decision_status == "actuals_missing_pending_source"
+        ):
+            raise ValueError("budget actual variance missing-actuals count must match events")
+        if self.actuals_without_budget_event_count != sum(
+            1
+            for event in self.events
+            if event.decision_status == "actuals_without_budget_requires_review"
+        ):
+            raise ValueError("budget actuals-without-budget count must match events")
+        if self.within_threshold_event_count != sum(
+            1 for event in self.events if event.decision_status == "recorded_within_threshold"
+        ):
+            raise ValueError("budget actual within-threshold count must match events")
+        kind_counts: dict[str, int] = {}
+        for event in self.events:
+            kind_counts[event.event_kind] = kind_counts.get(event.event_kind, 0) + 1
+        if self.event_kind_counts != kind_counts:
+            raise ValueError("budget actual variance ledger kind counts must match events")
+        if self.status != "variance_ledger_no_actuals" and not self.events:
+            raise ValueError("budget actual variance ledger requires events")
+        return self
+
+
 BudgetCalibrationArtifactKind = Literal[
     "intake_source_fixture",
     "human_confirmation_fixture",
