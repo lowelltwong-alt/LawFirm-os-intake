@@ -239,6 +239,27 @@ mark a PR ready, call GitHub write APIs, promote canon, write sibling repos,
 admit Lake records, write SQLite, apply proposed changes, or authorize
 production use.
 
+### Build cross-repo owner adoption packets
+
+```bash
+python -m lawfirm_os_intake build-cross-repo-owner-adoption \
+  --promotion-package promotion/cross_repo_promotion_package.json \
+  --readiness-audit-report .lawfirm-os-intake/intake-vertical-readiness-audit/intake_vertical_readiness_audit_report.json \
+  --pr-review-checklist .lawfirm-os-intake/pr-review-checklist/pr_review_checklist.json \
+  --out-dir .lawfirm-os-intake/cross-repo-owner-adoption
+```
+
+This writes `cross_repo_owner_adoption_report.json`,
+`cross_repo_owner_adoption_report.md`,
+`cross_repo_owner_adoption_packets.jsonl`, and owner-specific packets under
+`owner_adoption_packets/`. The packets group the static promotion proposals by
+target owner and bind them to the live readiness audit and PR checklist. They
+name owner actions, acceptance checks, and red-team notes for Semantic
+Substrate, Orchestrator, Exception Lake, Skills Registry, and Legal Knowledge
+Runtime. The command does not create issues, open PRs, write sibling repos,
+promote canon, admit Lake records, write SQLite, apply learning, or authorize
+production use.
+
 ### Draft carrier rejection Orchestrator interface
 
 ```bash

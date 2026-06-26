@@ -283,6 +283,35 @@ forward.
   `lake_write_performed=false`, `sqlite_write_performed=false`,
   `external_writes_performed=false`, and `silent_learning_performed=false`.
 
+## 11C. Cross-Repo Owner Adoption Packets
+
+Status: implemented for the current synthetic candidate slice; actual owner repo
+issues, PRs, canon promotion, runtime adoption, and Lake admission remain future
+owner work.
+
+Turn the static cross-repo promotion package plus live PR readiness evidence into
+owner-specific packets that are easier to hand to Semantic Substrate,
+Orchestrator, Exception Lake, Skills Registry, and Legal Knowledge Runtime.
+
+- `build-cross-repo-owner-adoption` consumes
+  `promotion/cross_repo_promotion_package.json`,
+  `intake_vertical_readiness_audit_report.json`, and
+  `pr_review_checklist.json`.
+- It writes `cross_repo_owner_adoption_report.json`,
+  `cross_repo_owner_adoption_report.md`,
+  `cross_repo_owner_adoption_packets.jsonl`, and per-owner JSON/Markdown packets
+  under `owner_adoption_packets/`.
+- Each owner packet includes candidate proposal summaries, proposed contract
+  refs, required owner actions, acceptance checks, red-team notes, and required
+  next gates.
+- A blocked readiness audit or blocked PR checklist keeps all owner packets at
+  `blocked_by_pr_readiness`.
+- The packets record `github_issue_created=false`,
+  `github_pr_created=false`, `github_write_performed=false`,
+  `sibling_repo_write_performed=false`, `promotion_authorized=false`,
+  `lake_write_performed=false`, `sqlite_write_performed=false`,
+  `external_writes_performed=false`, and `silent_learning_performed=false`.
+
 ## 12. Reviewed Learning Gate
 
 Status: implemented for the current synthetic candidate slice; owning-repo

@@ -34,6 +34,7 @@ from .carrier_rejection_roadmap_audit import run_carrier_rejection_roadmap_audit
 from .carrier_rejection_review import run_carrier_rejection_review
 from .carrier_rejections import run_carrier_rejection_capture
 from .confirmation import bind_confirmation_to_packet_evidence
+from .cross_repo_owner_adoption import run_cross_repo_owner_adoption
 from .intake_vertical_readiness_audit import run_intake_vertical_readiness_audit
 from .learning_promotion_readiness import run_learning_promotion_readiness
 from .learning_owner_handoffs import run_learning_owner_handoffs
@@ -387,6 +388,26 @@ def _parser() -> argparse.ArgumentParser:
         help="Path to intake_vertical_readiness_audit_report.json.",
     )
     pr_review_checklist.add_argument("--out-dir", required=True)
+    owner_adoption = sub.add_parser(
+        "build-cross-repo-owner-adoption",
+        help="Build owner-specific adoption packets from the promotion package and PR review evidence.",
+    )
+    owner_adoption.add_argument(
+        "--promotion-package",
+        required=True,
+        help="Path to promotion/cross_repo_promotion_package.json.",
+    )
+    owner_adoption.add_argument(
+        "--readiness-audit-report",
+        required=True,
+        help="Path to intake_vertical_readiness_audit_report.json.",
+    )
+    owner_adoption.add_argument(
+        "--pr-review-checklist",
+        required=True,
+        help="Path to pr_review_checklist.json.",
+    )
+    owner_adoption.add_argument("--out-dir", required=True)
     return parser
 
 
@@ -1264,6 +1285,37 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 0 if report.status == "ready_for_human_pr_review" else 2
+
+        if args.command == "build-cross-repo-owner-adoption":
+            report, run_dir = run_cross_repo_owner_adoption(
+                promotion_package_path=args.promotion_package,
+                readiness_audit_report_path=args.readiness_audit_report,
+                pr_review_checklist_path=args.pr_review_checklist,
+                out_dir=args.out_dir,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "owner_adoption_report_id": report.owner_adoption_report_id,
+                    "source_promotion_package_id": report.source_promotion_package_id,
+                    "source_readiness_status": report.source_readiness_status,
+                    "source_pr_review_checklist_status": (report.source_pr_review_checklist_status),
+                    "packet_count": report.packet_count,
+                    "ready_packet_count": report.ready_packet_count,
+                    "blocked_packet_count": report.blocked_packet_count,
+                    "proposal_count": report.proposal_count,
+                    "target_repos": report.target_repos,
+                    "github_issue_created": report.github_issue_created,
+                    "github_pr_created": report.github_pr_created,
+                    "github_write_performed": report.github_write_performed,
+                    "sibling_repo_write_performed": report.sibling_repo_write_performed,
+                    "promotion_authorized": report.promotion_authorized,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0 if report.status == "owner_adoption_packets_ready" else 2
     except (ValueError, OSError, json.JSONDecodeError) as exc:
         print(json.dumps({"status": "blocked", "error": str(exc)}, indent=2), file=sys.stderr)
         return 2

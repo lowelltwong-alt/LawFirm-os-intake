@@ -164,6 +164,15 @@ item. A ready checklist still records `pr_marked_ready=false` and
 `github_write_performed=false`; it does not change PR state, promote canon,
 write Lake/SQLite records, write sibling repos, or apply learning.
 
+`build-cross-repo-owner-adoption` consumes the static cross-repo promotion
+package plus the live readiness audit and PR checklist, then writes owner-specific
+adoption packets for Semantic Substrate, Orchestrator, Exception Lake, Skills
+Registry, and Legal Knowledge Runtime. The report is an owner-review planning
+artifact: it groups candidate proposals by target owner, names owner actions,
+acceptance checks, and red-team notes, and blocks if PR readiness evidence is
+blocked. It does not create issues, open PRs, write sibling repos, promote canon,
+admit Lake/SQLite records, or apply learning.
+
 ### Counterfactual evals
 
 Same source, different practice context. Evidence must remain unchanged.
@@ -207,6 +216,7 @@ Measure review time, correction count, unknown selection, evidence-navigation bu
 - keep learning shadow-eval and promotion-readiness reports local and non-authoritative; they plan required eval evidence and block promotion, but do not apply changes or prove production readiness by themselves.
 - keep `intake_vertical_readiness_audit_report.json` local and non-authoritative; it proves PR-review readiness for candidate artifacts only and keeps external adoption with the owning repos.
 - keep `pr_review_checklist.json` local and non-authoritative; it helps a human make the draft-PR decision but must not mark the PR ready, call GitHub write APIs, promote canon, write Lake/SQLite records, or apply learning.
+- keep `cross_repo_owner_adoption_report.json` local and non-authoritative; it turns candidate proposals into owner-review packets but must not create issues, open PRs, write sibling repos, promote canon, admit Lake/SQLite records, or apply learning.
 
 ## Graduation gates
 

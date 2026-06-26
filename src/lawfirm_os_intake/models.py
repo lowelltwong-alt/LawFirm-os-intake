@@ -4955,6 +4955,132 @@ class CrossRepoPromotionPackage(StrictModel):
     non_authoritative: Literal[True] = True
 
 
+CrossRepoAdoptionTargetRepo = Literal[
+    "LawFirm-os-semantic-substrate",
+    "LawFirm-os-orchestrator",
+    "LawFirm-os-exceptions-lake-runtime",
+    "LawFirm-os-skills-registry",
+    "LawFirm-os-legal-knowledge-runtime",
+]
+
+
+class CrossRepoOwnerAdoptionPacket(StrictModel):
+    schema_version: str = "0.1"
+    adoption_packet_id: str
+    target_repo: CrossRepoAdoptionTargetRepo
+    authority_plane: Literal[
+        "control",
+        "execution",
+        "evidence",
+        "skills_registry",
+        "legal_knowledge_runtime",
+        "mixed",
+    ]
+    status: Literal["ready_for_owner_review", "blocked_by_pr_readiness"]
+    source_promotion_package_id: str
+    source_promotion_package_ref: str
+    source_readiness_audit_report_id: str
+    source_readiness_audit_report_ref: str
+    source_readiness_status: str
+    source_pr_review_checklist_id: str
+    source_pr_review_checklist_ref: str
+    source_pr_review_checklist_status: str
+    proposal_count: int = Field(ge=0)
+    proposals: list[CrossRepoPromotionProposal]
+    required_owner_actions: list[str]
+    acceptance_checks: list[str]
+    red_team_notes: list[str]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    blocked_until_owner_review: Literal[True] = True
+    direct_promotion_performed: Literal[False] = False
+    promotion_authorized: Literal[False] = False
+    sibling_repo_write_performed: Literal[False] = False
+    github_issue_created: Literal[False] = False
+    github_pr_created: Literal[False] = False
+    github_write_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def owner_packet_counts_and_boundaries_match(self) -> "CrossRepoOwnerAdoptionPacket":
+        if self.proposal_count != len(self.proposals):
+            raise ValueError("owner adoption proposal count does not match")
+        if not self.required_owner_actions:
+            raise ValueError("owner adoption packet requires owner actions")
+        if not self.acceptance_checks:
+            raise ValueError("owner adoption packet requires acceptance checks")
+        if not self.red_team_notes:
+            raise ValueError("owner adoption packet requires red-team notes")
+        if not self.required_next_gates:
+            raise ValueError("owner adoption packet requires next gates")
+        if any(proposal.target_repo != self.target_repo for proposal in self.proposals):
+            raise ValueError("owner adoption packet contains proposal for another repo")
+        return self
+
+
+class CrossRepoOwnerAdoptionReport(StrictModel):
+    schema_version: str = "0.1"
+    owner_adoption_report_id: str
+    status: Literal["owner_adoption_packets_ready", "blocked_by_pr_readiness"]
+    source_promotion_package_id: str
+    source_promotion_package_ref: str
+    source_readiness_audit_report_id: str
+    source_readiness_audit_report_ref: str
+    source_readiness_status: str
+    source_pr_review_checklist_id: str
+    source_pr_review_checklist_ref: str
+    source_pr_review_checklist_status: str
+    source_pr_review_checklist_recommendation: str
+    target_repo_count: int = Field(ge=0)
+    packet_count: int = Field(ge=0)
+    ready_packet_count: int = Field(ge=0)
+    blocked_packet_count: int = Field(ge=0)
+    proposal_count: int = Field(ge=0)
+    target_repos: list[CrossRepoAdoptionTargetRepo]
+    packets: list[CrossRepoOwnerAdoptionPacket]
+    packet_output_refs: list[str] = Field(default_factory=list)
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    direct_promotion_performed: Literal[False] = False
+    promotion_authorized: Literal[False] = False
+    sibling_repo_write_performed: Literal[False] = False
+    github_issue_created: Literal[False] = False
+    github_pr_created: Literal[False] = False
+    github_write_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def adoption_report_counts_match(self) -> "CrossRepoOwnerAdoptionReport":
+        if self.packet_count != len(self.packets):
+            raise ValueError("owner adoption packet count does not match")
+        if self.target_repo_count != len(self.target_repos):
+            raise ValueError("owner adoption target repo count does not match")
+        if self.packet_count != len(self.packet_output_refs):
+            raise ValueError("owner adoption packet output ref count does not match")
+        if self.proposal_count != sum(packet.proposal_count for packet in self.packets):
+            raise ValueError("owner adoption proposal count does not match packets")
+        ready_count = sum(1 for packet in self.packets if packet.status == "ready_for_owner_review")
+        blocked_count = self.packet_count - ready_count
+        if self.ready_packet_count != ready_count or self.blocked_packet_count != blocked_count:
+            raise ValueError("owner adoption ready/blocked counts do not match")
+        if self.status == "owner_adoption_packets_ready" and self.blocked_packet_count:
+            raise ValueError("ready owner adoption report cannot include blocked packets")
+        if self.status == "blocked_by_pr_readiness" and not self.blocked_packet_count:
+            raise ValueError("blocked owner adoption report requires blocked packets")
+        if not self.required_next_gates:
+            raise ValueError("owner adoption report requires next gates")
+        return self
+
+
 class SafetyGateCheck(StrictModel):
     check_id: str
     status: Literal["passed", "failed"]

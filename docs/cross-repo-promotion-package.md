@@ -8,6 +8,13 @@ The package is candidate-only. It records `no_canonical_mutation=true`,
 `no_sibling_repo_writes=true`, and `no_external_writes_performed=true`. Sibling
 repo owners must review and promote any accepted contracts inside their own repos.
 
+After a readiness audit and PR review checklist are generated, run
+`build-cross-repo-owner-adoption` to produce owner-specific adoption packets
+from this static package. Those packets are handoff evidence only: they group
+candidate proposals by target repo and name owner actions, acceptance checks,
+and red-team notes. They do not create issues, open PRs, write sibling repos,
+promote canon, admit Lake records, or apply learning.
+
 ## Semantic Substrate Candidates
 
 - Intake source bundle, source inventory, and ingestion result contracts.
