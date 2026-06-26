@@ -24,6 +24,7 @@ from .budget_fixture_update_review import run_budget_fixture_update_review_recor
 from .budget_form import build_budget_form_template_audit_report, render_budget_form
 from .budget_lake_admission_bundle import run_budget_event_lake_admission_bundle
 from .budget_lifecycle_audit import run_budget_lifecycle_audit
+from .budget_lifecycle_owner_adoption import run_budget_lifecycle_owner_adoption
 from .budget_revisions import run_budget_review_record
 from .carrier_rejection_lake_admission import (
     run_carrier_rejection_lake_admission_proposal,
@@ -414,6 +415,17 @@ def _parser() -> argparse.ArgumentParser:
     budget_lifecycle_audit.add_argument("--budget-actual-variance-ledger-report", required=True)
     budget_lifecycle_audit.add_argument("--carrier-rejection-decision-ledger-report", required=True)
     budget_lifecycle_audit.add_argument("--budget-event-lake-bundle-report", required=True)
+
+    budget_lifecycle_owner_adoption = sub.add_parser(
+        "build-budget-lifecycle-owner-adoption",
+        help="Build owner-review packets for budget lifecycle adoption without writing sibling repos.",
+    )
+    budget_lifecycle_owner_adoption.add_argument(
+        "--budget-lifecycle-audit-report",
+        required=True,
+        help="Path to budget_lifecycle_audit_report.json.",
+    )
+    budget_lifecycle_owner_adoption.add_argument("--out-dir", required=True)
 
     carrier_rejection_audit = sub.add_parser(
         "audit-carrier-rejection-roadmap",
@@ -1525,6 +1537,38 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 0 if report.status == "ready_for_budget_lifecycle_review" else 2
+
+        if args.command == "build-budget-lifecycle-owner-adoption":
+            report, run_dir = run_budget_lifecycle_owner_adoption(
+                budget_lifecycle_audit_report_path=args.budget_lifecycle_audit_report,
+                out_dir=args.out_dir,
+            )
+            failed = report.status != "owner_adoption_packets_ready"
+            _print(
+                {
+                    "status": report.status,
+                    "owner_adoption_report_id": report.owner_adoption_report_id,
+                    "source_budget_lifecycle_audit_report_id": (
+                        report.source_budget_lifecycle_audit_report_id
+                    ),
+                    "source_budget_lifecycle_audit_status": (
+                        report.source_budget_lifecycle_audit_status
+                    ),
+                    "packet_count": report.packet_count,
+                    "ready_packet_count": report.ready_packet_count,
+                    "blocked_packet_count": report.blocked_packet_count,
+                    "target_repos": report.target_repos,
+                    "github_write_performed": report.github_write_performed,
+                    "sibling_repo_write_performed": report.sibling_repo_write_performed,
+                    "connector_implemented": report.connector_implemented,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 2 if failed else 0
 
         if args.command == "audit-carrier-rejection-roadmap":
             report, run_dir = run_carrier_rejection_roadmap_audit(

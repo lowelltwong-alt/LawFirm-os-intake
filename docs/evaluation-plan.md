@@ -167,6 +167,16 @@ pending human decisions as review content, and fail closed on missing artifacts,
 ID drift, Lake-bundle failure, missing lifecycle record families, or prohibited
 write/submission/mutation/silent-learning flag drift.
 
+`build-budget-lifecycle-owner-adoption` consumes
+`budget_lifecycle_audit_report.json` and writes
+`budget_lifecycle_owner_adoption_report.json`, Markdown notes, and owner packet
+JSONL. Ready reports must emit packets for Semantic Substrate, Orchestrator, and
+Exception Lake with owner actions, acceptance checks, candidate contract refs,
+and red-team notes. Blocked lifecycle audits must produce blocked packets. The
+command must prove no issue/PR creation, no sibling repo write, no connector
+implementation, no Lake/SQLite write, no budget or appeal submission, no budget
+mutation, and no silent learning.
+
 The learning loop can write `reviewed_learning_gate_report.json`, then
 `audit-learning-promotion-readiness` writes `learning_shadow_eval_plan.json` and
 `learning_promotion_readiness_report.json`. `draft-learning-proposed-changes`
@@ -192,6 +202,7 @@ The final local close-out eval is `audit-intake-vertical-readiness`. It consumes
 `budget_fixture_update_review_report.json` and
 `budget_fixture_update_pr_package_report.json`, checks the local candidate
 slices, generated learning artifact chain, generated budget-event Lake bundle,
+budget lifecycle audit surface, budget lifecycle owner-adoption packet surface,
 calibration-readiness chain, fixture-update review record, and fixture-update PR
 package, and writes
 `intake_vertical_readiness_audit_report.json`. Passing status means ready for

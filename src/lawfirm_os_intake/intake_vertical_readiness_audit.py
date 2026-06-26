@@ -344,6 +344,30 @@ REQUIRED_SLICES: tuple[SliceDefinition, ...] = (
     ),
     SliceDefinition(
         slice_id=14,
+        title="Budget lifecycle owner adoption packets",
+        requirement_summary=(
+            "Budget lifecycle audit evidence can be routed to Semantic Substrate, "
+            "Orchestrator, and Exception Lake owner-review packets without sibling writes."
+        ),
+        proof_artifact_refs=(
+            "src/lawfirm_os_intake/budget_lifecycle_owner_adoption.py",
+            "schemas/budget-lifecycle-owner-adoption-report.schema.json",
+            "schemas/budget-lifecycle-owner-adoption-packet.schema.json",
+            "tests/test_budget_lifecycle_owner_adoption.py",
+            "docs/decisions/TRACE-2026-06-26-budget-lifecycle-owner-adoption.md",
+        ),
+        command_refs=("build-budget-lifecycle-owner-adoption",),
+        target_owner_repos=(
+            "LawFirm-os-semantic-substrate",
+            "LawFirm-os-orchestrator",
+            "LawFirm-os-exceptions-lake-runtime",
+        ),
+        remaining_external_actions=(
+            "Owning repos must review and implement any accepted lifecycle adoption work.",
+        ),
+    ),
+    SliceDefinition(
+        slice_id=15,
         title="Final intake vertical readiness audit",
         requirement_summary=(
             "A deterministic final audit checks local surfaces plus the generated learning "

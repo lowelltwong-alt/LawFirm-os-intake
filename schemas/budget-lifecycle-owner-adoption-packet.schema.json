@@ -1,0 +1,253 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "owner_adoption_packet_id": {
+      "title": "Owner Adoption Packet Id",
+      "type": "string"
+    },
+    "target_repo": {
+      "enum": [
+        "LawFirm-os-semantic-substrate",
+        "LawFirm-os-orchestrator",
+        "LawFirm-os-exceptions-lake-runtime"
+      ],
+      "title": "Target Repo",
+      "type": "string"
+    },
+    "adoption_focus": {
+      "enum": [
+        "semantic_contract_and_event_labels",
+        "runtime_capture_and_human_workflow",
+        "append_only_lake_admission"
+      ],
+      "title": "Adoption Focus",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "ready_for_owner_review",
+        "blocked_by_lifecycle_audit"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "source_budget_lifecycle_audit_report_id": {
+      "title": "Source Budget Lifecycle Audit Report Id",
+      "type": "string"
+    },
+    "source_budget_lifecycle_audit_report_ref": {
+      "title": "Source Budget Lifecycle Audit Report Ref",
+      "type": "string"
+    },
+    "source_budget_lifecycle_audit_status": {
+      "title": "Source Budget Lifecycle Audit Status",
+      "type": "string"
+    },
+    "source_budget_proposal_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Budget Proposal Id"
+    },
+    "source_preflight_packet_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Preflight Packet Id"
+    },
+    "source_artifact_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Source Artifact Refs",
+      "type": "array"
+    },
+    "candidate_contract_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Candidate Contract Refs",
+      "type": "array"
+    },
+    "required_owner_actions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Owner Actions",
+      "type": "array"
+    },
+    "acceptance_checks": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Acceptance Checks",
+      "type": "array"
+    },
+    "red_team_notes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Red Team Notes",
+      "type": "array"
+    },
+    "required_next_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Gates",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "blocked_until_owner_review": {
+      "const": true,
+      "default": true,
+      "title": "Blocked Until Owner Review",
+      "type": "boolean"
+    },
+    "direct_promotion_performed": {
+      "const": false,
+      "default": false,
+      "title": "Direct Promotion Performed",
+      "type": "boolean"
+    },
+    "promotion_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Promotion Authorized",
+      "type": "boolean"
+    },
+    "sibling_repo_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sibling Repo Write Performed",
+      "type": "boolean"
+    },
+    "github_issue_created": {
+      "const": false,
+      "default": false,
+      "title": "Github Issue Created",
+      "type": "boolean"
+    },
+    "github_pr_created": {
+      "const": false,
+      "default": false,
+      "title": "Github Pr Created",
+      "type": "boolean"
+    },
+    "github_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Github Write Performed",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "connector_implemented": {
+      "const": false,
+      "default": false,
+      "title": "Connector Implemented",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "budget_submission_performed": {
+      "const": false,
+      "default": false,
+      "title": "Budget Submission Performed",
+      "type": "boolean"
+    },
+    "appeal_submission_performed": {
+      "const": false,
+      "default": false,
+      "title": "Appeal Submission Performed",
+      "type": "boolean"
+    },
+    "budget_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Budget Mutation Performed",
+      "type": "boolean"
+    },
+    "profile_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Profile Mutation Performed",
+      "type": "boolean"
+    },
+    "template_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Template Mutation Performed",
+      "type": "boolean"
+    },
+    "carrier_guideline_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Carrier Guideline Mutation Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "owner_adoption_packet_id",
+    "target_repo",
+    "adoption_focus",
+    "status",
+    "source_budget_lifecycle_audit_report_id",
+    "source_budget_lifecycle_audit_report_ref",
+    "source_budget_lifecycle_audit_status",
+    "required_owner_actions",
+    "acceptance_checks",
+    "red_team_notes",
+    "required_next_gates"
+  ],
+  "title": "BudgetLifecycleOwnerAdoptionPacket",
+  "type": "object"
+}

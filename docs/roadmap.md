@@ -288,7 +288,32 @@ Exception Lake or learning handoff is trusted.
   records, submit appeals or budgets, write billing, write SQLite, write sibling
   repos, mutate profiles/templates/budgets/guidelines, or apply learning.
 
-## 11C. PR Review Checklist
+## 11C. Budget Lifecycle Owner Adoption Packets
+
+Status: implemented for the current synthetic candidate slice; actual owner repo
+adoption remains future owner work.
+
+Turn the budget lifecycle audit into owner-specific review packets for the three
+repos that must own production behavior.
+
+- `build-budget-lifecycle-owner-adoption` consumes
+  `budget_lifecycle_audit_report.json`.
+- It writes `budget_lifecycle_owner_adoption_report.json`,
+  `budget_lifecycle_owner_adoption_report.md`,
+  `budget_lifecycle_owner_adoption_packets.jsonl`, and per-owner JSON/Markdown
+  packets under `budget_lifecycle_owner_packets/`.
+- Semantic Substrate receives semantic contract, event-label, and lifecycle
+  state review actions.
+- Orchestrator receives runtime capture, connector boundary, human pause, appeal
+  authorization, billing actuals read, and evidence-packet assembly actions.
+- Exception Lake receives append-only admission, idempotency, record hash,
+  correction/supersession, and SQLite migration actions.
+- Blocked lifecycle audits produce blocked owner packets.
+- The packets do not create issues, open PRs, write sibling repos, promote
+  canon, implement connectors, admit Lake records, write SQLite, submit budgets
+  or appeals, mutate budgets/profiles/templates/guidelines, or apply learning.
+
+## 11D. PR Review Checklist
 
 Status: implemented for the current synthetic candidate slice; the actual PR
 state change remains a human GitHub action.
@@ -313,7 +338,7 @@ forward.
   `lake_write_performed=false`, `sqlite_write_performed=false`,
   `external_writes_performed=false`, and `silent_learning_performed=false`.
 
-## 11C. Cross-Repo Owner Adoption Packets
+## 11E. Cross-Repo Owner Adoption Packets
 
 Status: implemented for the current synthetic candidate slice; actual owner repo
 issues, PRs, canon promotion, runtime adoption, and Lake admission remain future
@@ -342,7 +367,7 @@ Orchestrator, Exception Lake, Skills Registry, and Legal Knowledge Runtime.
   `lake_write_performed=false`, `sqlite_write_performed=false`,
   `external_writes_performed=false`, and `silent_learning_performed=false`.
 
-## 11D. Cross-Repo Owner Issue Drafts
+## 11F. Cross-Repo Owner Issue Drafts
 
 Status: implemented for the current synthetic candidate slice; actual issue
 creation, owner triage, implementation PRs, and sibling-repo writes remain
@@ -368,7 +393,7 @@ repos without creating issues or writing to GitHub.
   `sqlite_write_performed=false`, `external_writes_performed=false`, and
   `silent_learning_performed=false`.
 
-## 11E. Intake Local Closeout Audit
+## 11G. Intake Local Closeout Audit
 
 Status: implemented for the current synthetic candidate slice; PR state changes,
 owner issue creation, owner implementation, canonical promotion, runtime

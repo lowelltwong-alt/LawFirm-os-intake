@@ -298,6 +298,24 @@ lists pending human decisions and next actions, and preserves no connector,
 Lake/SQLite, submission, mutation, sibling-repo write, or silent-learning
 authority.
 
+### Build budget lifecycle owner adoption packets
+
+```bash
+python -m lawfirm_os_intake build-budget-lifecycle-owner-adoption \
+  --budget-lifecycle-audit-report .lawfirm-os-intake/budget-lifecycle-audit/budget_lifecycle_audit_report.json \
+  --out-dir .lawfirm-os-intake/budget-lifecycle-owner-adoption
+```
+
+This writes `budget_lifecycle_owner_adoption_report.json`,
+`budget_lifecycle_owner_adoption_report.md`,
+`budget_lifecycle_owner_adoption_packets.jsonl`, and owner-specific
+JSON/Markdown packets under `budget_lifecycle_owner_packets/`. The packets route
+the lifecycle evidence to Semantic Substrate, Orchestrator, and Exception Lake
+with owner actions, acceptance checks, candidate contract refs, and red-team
+notes. Intake does not create issues, open PRs, write sibling repos, promote
+canon, implement connectors, admit Lake records, write SQLite, submit budgets or
+appeals, mutate budgets, or apply learning.
+
 ### Audit intake vertical readiness
 
 ```bash
@@ -314,8 +332,8 @@ python -m lawfirm_os_intake audit-intake-vertical-readiness \
 This writes `intake_vertical_readiness_audit_report.json` and
 `intake_vertical_readiness_audit_report.md`. The audit checks the local
 intake-to-budget, carrier rejection, budget revision, actual-cost comparison,
-budget lifecycle audit, reviewed learning, shadow-eval, owner-handoff,
-promotion-package, and command surfaces, then validates the generated learning artifact chain back through the
+budget lifecycle audit, budget lifecycle owner-adoption, reviewed learning,
+shadow-eval, owner-handoff, promotion-package, and command surfaces, then validates the generated learning artifact chain back through the
 reviewed-learning gate, the generated budget-event Lake bundle, and the
 calibration-readiness chain plus fixture-update review record and PR package. A
 passing audit means the branch is ready for human PR review while external

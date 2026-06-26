@@ -40,6 +40,9 @@ implying production readiness or external adoption.
 - Add the budget lifecycle audit as a required local slice surface so final
   readiness knows the whole-life budget review command, schemas, tests, and
   trace exist.
+- Add the budget lifecycle owner-adoption packets as a required local slice
+  surface so final readiness knows the three owner-review handoffs exist without
+  treating them as owner acceptance.
 - Synthetic reviewed-learning gate fixture used by the proposed-change shadow
   eval chain.
 - Tests for ready, missing-local-surface, blocked-learning-chain,
@@ -81,6 +84,9 @@ and Exception Lake for append-only admission and SQLite migrations.
 - A green budget lifecycle audit summarizes review evidence; it is not connector
   capture, Lake admission, appeal authority, billing authority, or learning
   approval.
+- Green budget lifecycle owner-adoption packets are only owner-review inputs;
+  they are not Semantic Substrate canon, Orchestrator implementation, Exception
+  Lake admission, GitHub issues, PRs, or sibling-repo writes.
 - Real budget actuals, carrier rejections, appeals, and guideline drift require
   governed connector capture and append-only evidence storage outside intake.
 - Learning from human corrections must remain explicit, reviewed, replayed, and
