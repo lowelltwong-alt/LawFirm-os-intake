@@ -28,6 +28,7 @@ REQUIRED_PROPOSAL_IDS = {
     "orchestrator.workflow-human-pauses-evidence-packet.v0_1",
     "orchestrator.carrier-rejection-capture-appeal.v0_1",
     "lake.intake-budget-evidence-mapping.v0_1",
+    "lake.carrier-rejection-admission.v0_1",
     "skills.intake-specialist-metadata.v0_1",
     "lkr.context-bundle-source-passage-claim-refs.v0_1",
 }

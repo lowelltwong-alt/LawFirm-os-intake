@@ -26,6 +26,9 @@ from lawfirm_os_intake.models import (  # noqa: E402
     CarrierCompliantProjectionBasis,
     CarrierCompliantProjectionLine,
     CarrierExpectedResponse,
+    CarrierRejectionLakeAdmissionCheck,
+    CarrierRejectionLakeAdmissionProposal,
+    CarrierRejectionLakeAdmissionRecordSpec,
     CarrierRejectionLearningProposal,
     CarrierRejectionLearningReport,
     CarrierRejectionCaptureSourceBundle,
@@ -138,6 +141,13 @@ MODELS = {
     "carrier-rejection-review-packet.schema.json": CarrierRejectionReviewPacket,
     "carrier-rejection-learning-proposal.schema.json": CarrierRejectionLearningProposal,
     "carrier-rejection-learning-report.schema.json": CarrierRejectionLearningReport,
+    "carrier-rejection-lake-admission-record-spec.schema.json": (
+        CarrierRejectionLakeAdmissionRecordSpec
+    ),
+    "carrier-rejection-lake-admission-check.schema.json": CarrierRejectionLakeAdmissionCheck,
+    "carrier-rejection-lake-admission-proposal.schema.json": (
+        CarrierRejectionLakeAdmissionProposal
+    ),
     "carrier-rejection-orchestrator-connector-channel.schema.json": (
         CarrierRejectionOrchestratorConnectorChannel
     ),

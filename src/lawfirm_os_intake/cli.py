@@ -7,6 +7,9 @@ import shutil
 import sys
 
 from .budget_form import build_budget_form_template_audit_report, render_budget_form
+from .carrier_rejection_lake_admission import (
+    run_carrier_rejection_lake_admission_proposal,
+)
 from .carrier_rejection_learning import run_carrier_rejection_learning
 from .carrier_rejection_orchestrator_interface import (
     run_carrier_rejection_orchestrator_interface,
@@ -105,6 +108,12 @@ def _parser() -> argparse.ArgumentParser:
         help="Write the candidate Orchestrator interface for future carrier rejection capture and appeal workflows.",
     )
     carrier_rejection_orchestrator.add_argument("--out-dir", required=True)
+
+    carrier_rejection_lake = sub.add_parser(
+        "draft-carrier-rejection-lake-admission",
+        help="Write the candidate Exception Lake admission proposal for carrier rejection records.",
+    )
+    carrier_rejection_lake.add_argument("--out-dir", required=True)
     return parser
 
 
@@ -387,6 +396,28 @@ def main(argv: list[str] | None = None) -> int:
                     "no_external_writes_performed": draft.no_external_writes_performed,
                     "no_lake_write_performed": draft.no_lake_write_performed,
                     "no_canonical_mutation": draft.no_canonical_mutation,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0
+
+        if args.command == "draft-carrier-rejection-lake-admission":
+            proposal, run_dir = run_carrier_rejection_lake_admission_proposal(args.out_dir)
+            failed_checks = [
+                check.check_id for check in proposal.checks if check.status == "failed"
+            ]
+            _print(
+                {
+                    "status": proposal.status,
+                    "proposal_id": proposal.proposal_id,
+                    "target_repo": proposal.target_repo,
+                    "record_family_count": len(proposal.record_specs),
+                    "failed_checks": failed_checks,
+                    "admission_state": proposal.admission_state,
+                    "sqlite_owner": proposal.sqlite_owner,
+                    "sqlite_write_performed": proposal.sqlite_write_performed,
+                    "lake_write_performed": proposal.lake_write_performed,
+                    "raw_payload_storage_allowed": proposal.raw_payload_storage_allowed,
                     "run_dir": str(run_dir),
                 }
             )

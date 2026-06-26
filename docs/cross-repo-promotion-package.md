@@ -66,6 +66,19 @@ repo owners must review and promote any accepted contracts inside their own repo
 - `authority_conflict_override`: unregistered route/event label, local candidate conflicts with canon, profile attempts to expand authority, missing reviewed lock, topology mismatch, contract SHA drift.
 - Intake emits these as local `ExceptionLakeCandidate` rows and a local `ExceptionLakeHandoffManifest` only. The handoff manifest is not a SQLite schema or admission log; it records actual labels, broad Lake classes, support modes, target owner, and no SQLite/external write. The Exception Lake runtime should perform admission validation, append-only storage, record hashing, and correction/supersession handling.
 - `ExceptionLakeMappingPackage` is the candidate bridge from local budget labels and actual-variance evidence to broad Lake classes. It is not an admission log.
+- Carrier rejection Lake admission proposal: `draft-carrier-rejection-lake-admission`
+  names candidate append-only record families for rejection notices,
+  reconciliation records, human review outcomes, appeal submissions, appeal
+  results, financial outcomes, and learning candidates.
+- Carrier rejection admission requirements: every record family requires
+  idempotency fields, source/support hashes, a Lake-owned record hash,
+  Orchestrator evidence packet input, and correction-by-supersession rather than
+  update-in-place.
+- Carrier rejection Lake boundary: SQLite tables, migrations, admission
+  validation, admitted record hashes, and correction/supersession records belong
+  in `LawFirm-os-exceptions-lake-runtime`. Intake performs no SQLite write, Lake
+  admission, canonical event assignment, record-hash authority, or raw payload
+  storage.
 
 ## Skills Registry Draft
 

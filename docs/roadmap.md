@@ -115,9 +115,9 @@ Keep Python as reference runtime while adding benchmark thresholds and parity re
 ## 10. Carrier Rejection Capture And Learning Loop
 
 Status: capture, reconciliation, dry-run mapping, human-review packet,
-learning-candidate report, and Orchestrator interface draft slices implemented
-for the current synthetic candidate; production capture remains future
-Orchestrator/Lake work.
+learning-candidate report, Orchestrator interface draft, and Exception Lake
+admission proposal slices implemented for the current synthetic candidate;
+production capture remains future Orchestrator/Lake work.
 
 Capture 100% of future carrier budget and invoice rejections by deterministic
 reconciliation, not by relying on model classification. See
@@ -160,3 +160,9 @@ reconciliation, not by relying on model classification. See
   response-state ledger duties, human pauses, appeal-submission gates, and
   guarded Lake handoff. Intake still implements no connector, no external write,
   no route/event assignment, and no Lake admission.
+- The local `draft-carrier-rejection-lake-admission` command now emits a
+  candidate Exception Lake admission proposal for append-only rejection,
+  reconciliation, human review outcome, appeal submission, appeal result,
+  financial outcome, and learning-candidate record families. It requires
+  idempotency, support hashes, record hashes, Orchestrator evidence packets, and
+  supersession corrections while performing no SQLite write or Lake admission.

@@ -90,6 +90,22 @@ points, appeal-submission gate requirements, and guarded Exception Lake handoff.
 It does not implement connectors, assign routes, submit appeals, write Lake
 records, or authorize intake to perform production capture.
 
+### Draft carrier rejection Exception Lake admission proposal
+
+```bash
+python -m lawfirm_os_intake draft-carrier-rejection-lake-admission \
+  --out-dir .lawfirm-os-intake/carrier-rejection-lake-admission
+```
+
+This writes `carrier_rejection_lake_admission_proposal.json` and
+`carrier_rejection_lake_admission_proposal.md`. The proposal defines candidate
+append-only Lake record families for carrier rejection notices, reconciliation,
+human review outcomes, appeal submissions, appeal results, financial outcomes,
+and learning candidates. It requires idempotency fields, support hashes,
+record hashes, Orchestrator evidence packets, and correction-by-supersession.
+It does not create SQLite tables, write Lake records, assign canonical event
+classes, or authorize intake to persist runtime evidence.
+
 ## Exit posture
 
 - `0`: local workflow step completed and artifacts emitted.

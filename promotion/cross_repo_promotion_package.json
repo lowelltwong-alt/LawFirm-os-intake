@@ -226,6 +226,49 @@
       "external_writes_performed": false
     },
     {
+      "proposal_id": "lake.carrier-rejection-admission.v0_1",
+      "target_repo": "LawFirm-os-exceptions-lake-runtime",
+      "authority_plane": "evidence",
+      "proposal_type": "lake_evidence_mapping",
+      "summary": "Define candidate append-only Lake admission record families for carrier rejection notices, reconciliation, human review outcomes, appeal submissions, appeal results, financial outcomes, and learning candidates.",
+      "candidate_artifact_refs": [
+        "schemas/carrier-rejection-lake-admission-proposal.schema.json",
+        "schemas/carrier-rejection-lake-admission-record-spec.schema.json",
+        "schemas/carrier-rejection-lake-admission-check.schema.json",
+        "schemas/carrier-rejection-notice.schema.json",
+        "schemas/carrier-appeal-result.schema.json",
+        "schemas/carrier-response-reconciliation-report.schema.json",
+        "schemas/carrier-rejection-review-packet.schema.json",
+        "schemas/carrier-rejection-learning-report.schema.json",
+        "docs/carrier-rejection-learning-loop-roadmap.md"
+      ],
+      "proposed_contract_refs": [
+        "exception-lake://candidate/admission/carrier-rejection-notice.v0_1",
+        "exception-lake://candidate/admission/carrier-rejection-reconciliation.v0_1",
+        "exception-lake://candidate/admission/carrier-rejection-review-outcome.v0_1",
+        "exception-lake://candidate/admission/carrier-appeal-submission.v0_1",
+        "exception-lake://candidate/admission/carrier-appeal-result.v0_1",
+        "exception-lake://candidate/admission/carrier-financial-outcome.v0_1",
+        "exception-lake://candidate/admission/carrier-rejection-learning.v0_1"
+      ],
+      "required_governance_actions": [
+        "map local carrier rejection labels to canonical Lake event classes",
+        "define append-only SQLite tables and migrations inside the Lake repo",
+        "define admission validation for idempotency, source hashes, record hashes, and Orchestrator evidence packets",
+        "define correction and supersession records instead of updates in place"
+      ],
+      "promotion_blockers": [
+        "no Exception Lake admission schema promoted",
+        "no canonical carrier rejection event classes assigned",
+        "no Lake SQLite migration written",
+        "no Orchestrator evidence-packet handoff promoted",
+        "no real-data pilot approved"
+      ],
+      "non_authoritative": true,
+      "direct_promotion_performed": false,
+      "external_writes_performed": false
+    },
+    {
       "proposal_id": "skills.intake-specialist-metadata.v0_1",
       "target_repo": "LawFirm-os-skills-registry",
       "authority_plane": "skills_registry",

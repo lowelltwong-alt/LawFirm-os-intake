@@ -1742,6 +1742,74 @@ class CarrierRejectionOrchestratorInterfaceDraft(StrictModel):
     generated_at: str
 
 
+class CarrierRejectionLakeAdmissionRecordSpec(StrictModel):
+    record_type: Literal[
+        "carrier_rejection_notice_record",
+        "carrier_rejection_reconciliation_record",
+        "carrier_rejection_review_outcome_record",
+        "carrier_appeal_submission_record",
+        "carrier_appeal_result_record",
+        "carrier_financial_outcome_record",
+        "carrier_rejection_learning_candidate_record",
+    ]
+    proposed_sqlite_table: str
+    local_event_labels: list[str]
+    canonical_lake_class_candidates: list[
+        Literal[
+            "retrieval_miss",
+            "workflow_escalation",
+            "authority_conflict_override",
+        ]
+    ]
+    source_artifact_refs: list[str]
+    required_identifiers: list[str]
+    idempotency_fields: list[str]
+    required_hash_fields: list[str]
+    required_human_review_fields: list[str] = Field(default_factory=list)
+    correction_policy: Literal["append_only_supersession"] = "append_only_supersession"
+    raw_payload_storage_allowed: Literal[False] = False
+    admitted_by_intake: Literal[False] = False
+    requires_orchestrator_evidence_packet: Literal[True] = True
+    requires_lake_record_hash: Literal[True] = True
+
+
+class CarrierRejectionLakeAdmissionCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    record_types: list[str] = Field(default_factory=list)
+
+
+class CarrierRejectionLakeAdmissionProposal(StrictModel):
+    schema_version: str = "0.1"
+    proposal_id: str
+    status: Literal["candidate_only"]
+    origin_repo: Literal["LawFirm-os-intake"] = "LawFirm-os-intake"
+    target_repo: Literal["LawFirm-os-exceptions-lake-runtime"] = (
+        "LawFirm-os-exceptions-lake-runtime"
+    )
+    admission_state: Literal["proposal_not_admitted"] = "proposal_not_admitted"
+    purpose: str
+    record_specs: list[CarrierRejectionLakeAdmissionRecordSpec]
+    checks: list[CarrierRejectionLakeAdmissionCheck]
+    required_upstream_artifacts: list[str]
+    proposed_contract_refs: list[str]
+    promotion_blockers: list[str]
+    prohibited_intake_actions: list[str]
+    append_only_required: Literal[True] = True
+    correction_supersession_required: Literal[True] = True
+    record_hash_required: Literal[True] = True
+    sqlite_owner: Literal["LawFirm-os-exceptions-lake-runtime"] = (
+        "LawFirm-os-exceptions-lake-runtime"
+    )
+    sqlite_write_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    raw_payload_storage_allowed: Literal[False] = False
+    no_canonical_mutation: Literal[True] = True
+    generated_at: str
+
+
 class ExceptionLakeReadinessCheck(StrictModel):
     check_id: str
     status: Literal["passed", "failed"]

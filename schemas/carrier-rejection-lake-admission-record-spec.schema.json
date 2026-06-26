@@ -1,0 +1,118 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "record_type": {
+      "enum": [
+        "carrier_rejection_notice_record",
+        "carrier_rejection_reconciliation_record",
+        "carrier_rejection_review_outcome_record",
+        "carrier_appeal_submission_record",
+        "carrier_appeal_result_record",
+        "carrier_financial_outcome_record",
+        "carrier_rejection_learning_candidate_record"
+      ],
+      "title": "Record Type",
+      "type": "string"
+    },
+    "proposed_sqlite_table": {
+      "title": "Proposed Sqlite Table",
+      "type": "string"
+    },
+    "local_event_labels": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Local Event Labels",
+      "type": "array"
+    },
+    "canonical_lake_class_candidates": {
+      "items": {
+        "enum": [
+          "retrieval_miss",
+          "workflow_escalation",
+          "authority_conflict_override"
+        ],
+        "type": "string"
+      },
+      "title": "Canonical Lake Class Candidates",
+      "type": "array"
+    },
+    "source_artifact_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Source Artifact Refs",
+      "type": "array"
+    },
+    "required_identifiers": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Identifiers",
+      "type": "array"
+    },
+    "idempotency_fields": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Idempotency Fields",
+      "type": "array"
+    },
+    "required_hash_fields": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Hash Fields",
+      "type": "array"
+    },
+    "required_human_review_fields": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Human Review Fields",
+      "type": "array"
+    },
+    "correction_policy": {
+      "const": "append_only_supersession",
+      "default": "append_only_supersession",
+      "title": "Correction Policy",
+      "type": "string"
+    },
+    "raw_payload_storage_allowed": {
+      "const": false,
+      "default": false,
+      "title": "Raw Payload Storage Allowed",
+      "type": "boolean"
+    },
+    "admitted_by_intake": {
+      "const": false,
+      "default": false,
+      "title": "Admitted By Intake",
+      "type": "boolean"
+    },
+    "requires_orchestrator_evidence_packet": {
+      "const": true,
+      "default": true,
+      "title": "Requires Orchestrator Evidence Packet",
+      "type": "boolean"
+    },
+    "requires_lake_record_hash": {
+      "const": true,
+      "default": true,
+      "title": "Requires Lake Record Hash",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "record_type",
+    "proposed_sqlite_table",
+    "local_event_labels",
+    "canonical_lake_class_candidates",
+    "source_artifact_refs",
+    "required_identifiers",
+    "idempotency_fields",
+    "required_hash_fields"
+  ],
+  "title": "CarrierRejectionLakeAdmissionRecordSpec",
+  "type": "object"
+}

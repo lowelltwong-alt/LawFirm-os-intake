@@ -209,6 +209,13 @@ time, but missing capture is a production incident.
    and guarded Lake handoff while implementing no connectors or external writes.
 8. Exception Lake admission proposal for append-only rejection, appeal, outcome, and
    learning-candidate records.
+   Status: implemented for the synthetic local slice through
+   `draft-carrier-rejection-lake-admission`,
+   `carrier_rejection_lake_admission_proposal.json`, and
+   `carrier_rejection_lake_admission_proposal.md`. The proposal names append-only
+   record families, idempotency fields, hash requirements, Orchestrator evidence
+   packet prerequisites, and supersession rules while performing no SQLite write
+   or Lake admission.
 
 ## Non-Goals
 
