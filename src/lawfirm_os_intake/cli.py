@@ -19,6 +19,7 @@ from .budget_corpus_replay_review_outcomes import (
 )
 from .budget_fixture_binding_handoff import run_budget_fixture_binding_handoff
 from .budget_fixture_bindings import run_budget_fixture_binding_candidates
+from .budget_fixture_update_pr_package import run_budget_fixture_update_pr_package
 from .budget_fixture_update_review import run_budget_fixture_update_review_record
 from .budget_form import build_budget_form_template_audit_report, render_budget_form
 from .budget_lake_admission_bundle import run_budget_event_lake_admission_bundle
@@ -274,6 +275,17 @@ def _parser() -> argparse.ArgumentParser:
     )
     budget_fixture_update_review.add_argument("--out-dir", required=True)
 
+    budget_fixture_update_pr_package = sub.add_parser(
+        "build-budget-fixture-update-pr-package",
+        help="Build a manual fixture-update PR package without creating a PR or editing fixtures.",
+    )
+    budget_fixture_update_pr_package.add_argument(
+        "--fixture-update-review-report",
+        required=True,
+        help="Path to budget_fixture_update_review_report.json.",
+    )
+    budget_fixture_update_pr_package.add_argument("--out-dir", required=True)
+
     carrier_rejections = sub.add_parser(
         "capture-carrier-rejections",
         help="Build a synthetic carrier rejection reconciliation and learning packet.",
@@ -426,6 +438,11 @@ def _parser() -> argparse.ArgumentParser:
         "--budget-fixture-update-review-report",
         required=True,
         help="Path to budget_fixture_update_review_report.json.",
+    )
+    intake_vertical_audit.add_argument(
+        "--budget-fixture-update-pr-package-report",
+        required=True,
+        help="Path to budget_fixture_update_pr_package_report.json.",
     )
     intake_vertical_audit.add_argument("--out-dir", required=True)
     intake_vertical_audit.add_argument(
@@ -1136,6 +1153,42 @@ def main(argv: list[str] | None = None) -> int:
                 return 2
             return 0
 
+        if args.command == "build-budget-fixture-update-pr-package":
+            report, run_dir = run_budget_fixture_update_pr_package(
+                fixture_update_review_report_path=args.fixture_update_review_report,
+                out_dir=args.out_dir,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "fixture_update_pr_package_report_id": (
+                        report.fixture_update_pr_package_report_id
+                    ),
+                    "source_budget_fixture_update_review_report_id": (
+                        report.source_budget_fixture_update_review_report_id
+                    ),
+                    "fixture_update_review_id": report.fixture_update_review_id,
+                    "decision": report.decision,
+                    "item_count": report.item_count,
+                    "ready_item_count": report.ready_item_count,
+                    "blocked_item_count": report.blocked_item_count,
+                    "manual_fixture_update_pr_required": (report.manual_fixture_update_pr_required),
+                    "github_pr_created": report.github_pr_created,
+                    "fixture_files_mutated": report.fixture_files_mutated,
+                    "fixture_binding_applied": report.fixture_binding_applied,
+                    "downstream_learning_gate_allowed": report.downstream_learning_gate_allowed,
+                    "calibration_applied": report.calibration_applied,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            if report.status == "blocked_by_fixture_update_review":
+                return 2
+            return 0
+
         if args.command == "capture-carrier-rejections":
             report, run_dir = run_carrier_rejection_capture(
                 args.budget,
@@ -1463,6 +1516,9 @@ def main(argv: list[str] | None = None) -> int:
                 budget_event_lake_bundle_report_path=args.budget_event_lake_bundle_report,
                 budget_calibration_readiness_report_path=(args.budget_calibration_readiness_report),
                 budget_fixture_update_review_report_path=(args.budget_fixture_update_review_report),
+                budget_fixture_update_pr_package_report_path=(
+                    args.budget_fixture_update_pr_package_report
+                ),
                 out_dir=args.out_dir,
                 repo_root=args.repo_root,
             )
@@ -1482,6 +1538,9 @@ def main(argv: list[str] | None = None) -> int:
                     ),
                     "budget_fixture_update_review_report_ref": (
                         report.source_budget_fixture_update_review_report_ref
+                    ),
+                    "budget_fixture_update_pr_package_report_ref": (
+                        report.source_budget_fixture_update_pr_package_report_ref
                     ),
                     "implemented_slice_count": report.implemented_slice_count,
                     "total_slice_count": report.total_slice_count,

@@ -7,6 +7,9 @@ from lawfirm_os_intake.intake_vertical_readiness_audit import (
 from lawfirm_os_intake.budget_fixture_update_review import (
     run_budget_fixture_update_review_record,
 )
+from lawfirm_os_intake.budget_fixture_update_pr_package import (
+    run_budget_fixture_update_pr_package,
+)
 from lawfirm_os_intake.learning_owner_handoffs import run_learning_owner_handoffs
 from lawfirm_os_intake.learning_proposed_changes import run_learning_proposed_changes
 from lawfirm_os_intake.learning_shadow_eval_results import run_learning_shadow_eval_results
@@ -16,6 +19,8 @@ from lawfirm_os_intake.models import (
     BudgetFixtureUpdateReviewCheck,
     BudgetFixtureUpdateReviewRecord,
     BudgetFixtureUpdateReviewReport,
+    BudgetFixtureUpdatePRPackageCheck,
+    BudgetFixtureUpdatePRPackageReport,
     BudgetLakeAdmissionBundleCheck,
     BudgetLakeAdmissionBundleReport,
     BudgetLakeEvidenceArtifact,
@@ -283,6 +288,63 @@ def _fixture_update_review_report_path(
     )
 
 
+def _fixture_update_pr_package_report_path(
+    tmp_path,
+    fixture_update_review_report_path,
+    *,
+    ready=True,
+):
+    package_dir = tmp_path / "budget-fixture-update-pr-package"
+    if ready:
+        _, run_dir = run_budget_fixture_update_pr_package(
+            fixture_update_review_report_path=fixture_update_review_report_path,
+            out_dir=package_dir,
+        )
+        return run_dir / "budget_fixture_update_pr_package_report.json"
+
+    review_report = BudgetFixtureUpdateReviewReport.model_validate(
+        load_json(fixture_update_review_report_path)
+    )
+    report = BudgetFixtureUpdatePRPackageReport(
+        fixture_update_pr_package_report_id="budget-fixture-update-pr-package-blocked-fixture",
+        status="blocked_by_fixture_update_review",
+        source_budget_fixture_update_review_report_id=(
+            review_report.fixture_update_review_report_id
+        ),
+        source_budget_fixture_update_review_report_ref=str(fixture_update_review_report_path),
+        source_budget_fixture_update_review_status=review_report.status,
+        fixture_update_review_id=review_report.fixture_update_review_id,
+        decision=review_report.decision,
+        item_count=0,
+        ready_item_count=0,
+        blocked_item_count=0,
+        accepted_output_refs=review_report.accepted_output_refs,
+        target_fixture_refs=review_report.target_fixture_refs,
+        package_items=[],
+        checks=[
+            BudgetFixtureUpdatePRPackageCheck(
+                check_id="synthetic_fixture_update_pr_package_blocker",
+                status="failed",
+                message="Synthetic blocked fixture-update PR package.",
+            )
+        ],
+        required_next_gates=[
+            "manual_fixture_update_pr_review",
+            "apply_fixture_update_only_in_separate_pr",
+            "run_regression_after_fixture_update_pr",
+            "reviewed_learning_gate_before_candidate_changes",
+            "shadow_eval_before_learning",
+            "owning_repo_review",
+            "no_silent_profile_template_or_guideline_mutation",
+        ],
+        generated_at="2026-06-26T00:00:00Z",
+    )
+    return write_json(
+        package_dir / "budget_fixture_update_pr_package_report.json",
+        report.model_dump(mode="json"),
+    )
+
+
 def test_intake_vertical_readiness_audit_marks_pr_review_ready_but_not_promoted(
     tmp_path,
     repo_root,
@@ -294,12 +356,17 @@ def test_intake_vertical_readiness_audit_marks_pr_review_ready_but_not_promoted(
         tmp_path,
         calibration_readiness_report_path,
     )
+    fixture_update_pr_package_report_path = _fixture_update_pr_package_report_path(
+        tmp_path,
+        fixture_update_review_report_path,
+    )
 
     report, run_dir = run_intake_vertical_readiness_audit(
         owner_handoff_report_path=owner_handoff_report_path,
         budget_event_lake_bundle_report_path=lake_bundle_report_path,
         budget_calibration_readiness_report_path=calibration_readiness_report_path,
         budget_fixture_update_review_report_path=fixture_update_review_report_path,
+        budget_fixture_update_pr_package_report_path=fixture_update_pr_package_report_path,
         repo_root=repo_root,
         out_dir=tmp_path / "intake-vertical-readiness",
     )
@@ -317,7 +384,10 @@ def test_intake_vertical_readiness_audit_marks_pr_review_ready_but_not_promoted(
     assert persisted.source_budget_fixture_update_review_report_ref == str(
         fixture_update_review_report_path
     )
-    assert persisted.implemented_slice_count == persisted.total_slice_count == 12
+    assert persisted.source_budget_fixture_update_pr_package_report_ref == str(
+        fixture_update_pr_package_report_path
+    )
+    assert persisted.implemented_slice_count == persisted.total_slice_count == 13
     assert persisted.missing_artifact_refs == []
     assert persisted.missing_command_refs == []
     assert all(
@@ -336,6 +406,11 @@ def test_intake_vertical_readiness_audit_marks_pr_review_ready_but_not_promoted(
     )
     assert any(
         check.check_id == "budget_fixture_update_review_recorded_without_writes"
+        and check.status == "passed"
+        for check in persisted.artifact_checks
+    )
+    assert any(
+        check.check_id == "budget_fixture_update_pr_package_ready_without_writes"
         and check.status == "passed"
         for check in persisted.artifact_checks
     )
@@ -372,12 +447,17 @@ def test_intake_vertical_readiness_audit_fails_closed_for_missing_local_surfaces
         tmp_path,
         calibration_readiness_report_path,
     )
+    fixture_update_pr_package_report_path = _fixture_update_pr_package_report_path(
+        tmp_path,
+        fixture_update_review_report_path,
+    )
 
     report, _ = run_intake_vertical_readiness_audit(
         owner_handoff_report_path=owner_handoff_report_path,
         budget_event_lake_bundle_report_path=lake_bundle_report_path,
         budget_calibration_readiness_report_path=calibration_readiness_report_path,
         budget_fixture_update_review_report_path=fixture_update_review_report_path,
+        budget_fixture_update_pr_package_report_path=fixture_update_pr_package_report_path,
         repo_root=tmp_path / "empty-repo-root",
         out_dir=tmp_path / "intake-vertical-readiness-missing",
     )
@@ -400,6 +480,10 @@ def test_intake_vertical_readiness_audit_blocks_failed_or_missing_learning_chain
         tmp_path,
         calibration_readiness_report_path,
     )
+    fixture_update_pr_package_report_path = _fixture_update_pr_package_report_path(
+        tmp_path,
+        fixture_update_review_report_path,
+    )
     owner_handoff_report_path = _owner_handoff_report_path(
         tmp_path,
         repo_root,
@@ -411,13 +495,14 @@ def test_intake_vertical_readiness_audit_blocks_failed_or_missing_learning_chain
         budget_event_lake_bundle_report_path=lake_bundle_report_path,
         budget_calibration_readiness_report_path=calibration_readiness_report_path,
         budget_fixture_update_review_report_path=fixture_update_review_report_path,
+        budget_fixture_update_pr_package_report_path=fixture_update_pr_package_report_path,
         repo_root=repo_root,
         out_dir=tmp_path / "intake-vertical-readiness-blocked",
     )
 
     assert report.status == "blocked_missing_or_failed_learning_artifacts"
     assert report.review_readiness == "not_ready_learning_artifact_chain_blocked"
-    assert report.implemented_slice_count == report.total_slice_count == 12
+    assert report.implemented_slice_count == report.total_slice_count == 13
     assert any(
         check.check_id == "owner_handoff_ready_without_writes" and check.status == "failed"
         for check in report.artifact_checks
@@ -441,12 +526,17 @@ def test_intake_vertical_readiness_audit_blocks_failed_lake_bundle(
         tmp_path,
         calibration_readiness_report_path,
     )
+    fixture_update_pr_package_report_path = _fixture_update_pr_package_report_path(
+        tmp_path,
+        fixture_update_review_report_path,
+    )
 
     report, _ = run_intake_vertical_readiness_audit(
         owner_handoff_report_path=owner_handoff_report_path,
         budget_event_lake_bundle_report_path=lake_bundle_report_path,
         budget_calibration_readiness_report_path=calibration_readiness_report_path,
         budget_fixture_update_review_report_path=fixture_update_review_report_path,
+        budget_fixture_update_pr_package_report_path=fixture_update_pr_package_report_path,
         repo_root=repo_root,
         out_dir=tmp_path / "intake-vertical-readiness-lake-blocked",
     )
@@ -478,12 +568,18 @@ def test_intake_vertical_readiness_audit_blocks_failed_calibration_readiness(
         calibration_readiness_report_path,
         ready=False,
     )
+    fixture_update_pr_package_report_path = _fixture_update_pr_package_report_path(
+        tmp_path,
+        fixture_update_review_report_path,
+        ready=False,
+    )
 
     report, _ = run_intake_vertical_readiness_audit(
         owner_handoff_report_path=owner_handoff_report_path,
         budget_event_lake_bundle_report_path=lake_bundle_report_path,
         budget_calibration_readiness_report_path=calibration_readiness_report_path,
         budget_fixture_update_review_report_path=fixture_update_review_report_path,
+        budget_fixture_update_pr_package_report_path=fixture_update_pr_package_report_path,
         repo_root=repo_root,
         out_dir=tmp_path / "intake-vertical-readiness-calibration-blocked",
     )
@@ -511,12 +607,18 @@ def test_intake_vertical_readiness_audit_blocks_failed_fixture_update_review(
         calibration_readiness_report_path,
         ready=False,
     )
+    fixture_update_pr_package_report_path = _fixture_update_pr_package_report_path(
+        tmp_path,
+        fixture_update_review_report_path,
+        ready=False,
+    )
 
     report, _ = run_intake_vertical_readiness_audit(
         owner_handoff_report_path=owner_handoff_report_path,
         budget_event_lake_bundle_report_path=lake_bundle_report_path,
         budget_calibration_readiness_report_path=calibration_readiness_report_path,
         budget_fixture_update_review_report_path=fixture_update_review_report_path,
+        budget_fixture_update_pr_package_report_path=fixture_update_pr_package_report_path,
         repo_root=repo_root,
         out_dir=tmp_path / "intake-vertical-readiness-fixture-review-blocked",
     )
@@ -532,6 +634,44 @@ def test_intake_vertical_readiness_audit_blocks_failed_fixture_update_review(
     assert report.external_writes_performed is False
 
 
+def test_intake_vertical_readiness_audit_blocks_failed_fixture_update_pr_package(
+    tmp_path,
+    repo_root,
+):
+    owner_handoff_report_path = _owner_handoff_report_path(tmp_path, repo_root)
+    lake_bundle_report_path = _lake_bundle_report_path(tmp_path)
+    calibration_readiness_report_path = _calibration_readiness_report_path(tmp_path)
+    fixture_update_review_report_path = _fixture_update_review_report_path(
+        tmp_path,
+        calibration_readiness_report_path,
+    )
+    fixture_update_pr_package_report_path = _fixture_update_pr_package_report_path(
+        tmp_path,
+        fixture_update_review_report_path,
+        ready=False,
+    )
+
+    report, _ = run_intake_vertical_readiness_audit(
+        owner_handoff_report_path=owner_handoff_report_path,
+        budget_event_lake_bundle_report_path=lake_bundle_report_path,
+        budget_calibration_readiness_report_path=calibration_readiness_report_path,
+        budget_fixture_update_review_report_path=fixture_update_review_report_path,
+        budget_fixture_update_pr_package_report_path=fixture_update_pr_package_report_path,
+        repo_root=repo_root,
+        out_dir=tmp_path / "intake-vertical-readiness-fixture-pr-package-blocked",
+    )
+
+    assert report.status == "blocked_missing_or_failed_fixture_update_pr_package"
+    assert report.review_readiness == "not_ready_fixture_update_pr_package_blocked"
+    assert any(
+        check.check_id == "budget_fixture_update_pr_package_ready_without_writes"
+        and check.status == "failed"
+        for check in report.artifact_checks
+    )
+    assert report.pr_marked_ready is False
+    assert report.external_writes_performed is False
+
+
 def test_intake_vertical_readiness_audit_cli(tmp_path, repo_root, capsys):
     owner_handoff_report_path = _owner_handoff_report_path(tmp_path, repo_root)
     lake_bundle_report_path = _lake_bundle_report_path(tmp_path)
@@ -539,6 +679,10 @@ def test_intake_vertical_readiness_audit_cli(tmp_path, repo_root, capsys):
     fixture_update_review_report_path = _fixture_update_review_report_path(
         tmp_path,
         calibration_readiness_report_path,
+    )
+    fixture_update_pr_package_report_path = _fixture_update_pr_package_report_path(
+        tmp_path,
+        fixture_update_review_report_path,
     )
 
     exit_code = main(
@@ -552,6 +696,8 @@ def test_intake_vertical_readiness_audit_cli(tmp_path, repo_root, capsys):
             str(calibration_readiness_report_path),
             "--budget-fixture-update-review-report",
             str(fixture_update_review_report_path),
+            "--budget-fixture-update-pr-package-report",
+            str(fixture_update_pr_package_report_path),
             "--repo-root",
             str(repo_root),
             "--out-dir",
@@ -566,6 +712,7 @@ def test_intake_vertical_readiness_audit_cli(tmp_path, repo_root, capsys):
     assert '"budget_event_lake_bundle_report_ref":' in captured.out
     assert '"budget_calibration_readiness_report_ref":' in captured.out
     assert '"budget_fixture_update_review_report_ref":' in captured.out
+    assert '"budget_fixture_update_pr_package_report_ref":' in captured.out
     assert '"pr_marked_ready": false' in captured.out
     assert '"promotion_authorized": false' in captured.out
     assert (

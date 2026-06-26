@@ -8,6 +8,7 @@ from pydantic import ValidationError
 
 from .models import (
     BudgetCalibrationReadinessReport,
+    BudgetFixtureUpdatePRPackageReport,
     BudgetFixtureUpdateReviewReport,
     BudgetLakeAdmissionBundleReport,
     IntakeVerticalReadinessArtifactCheck,
@@ -299,11 +300,31 @@ REQUIRED_SLICES: tuple[SliceDefinition, ...] = (
     ),
     SliceDefinition(
         slice_id=12,
+        title="Manual fixture-update PR package",
+        requirement_summary=(
+            "Accepted fixture-update review decisions can be packaged as a separate "
+            "manual PR plan without creating a PR or editing fixtures."
+        ),
+        proof_artifact_refs=(
+            "src/lawfirm_os_intake/budget_fixture_update_pr_package.py",
+            "schemas/budget-fixture-update-pr-package-report.schema.json",
+            "schemas/budget-fixture-update-pr-package-item.schema.json",
+            "tests/test_budget_fixture_update_pr_package.py",
+            "docs/decisions/TRACE-2026-06-26-budget-fixture-update-pr-package.md",
+        ),
+        command_refs=("build-budget-fixture-update-pr-package",),
+        target_owner_repos=("LawFirm-os-intake",),
+        remaining_external_actions=(
+            "Humans must create, review, and merge any fixture update in a separate PR.",
+        ),
+    ),
+    SliceDefinition(
+        slice_id=13,
         title="Final intake vertical readiness audit",
         requirement_summary=(
             "A deterministic final audit checks local surfaces plus the generated learning "
             "artifact chain, budget-event Lake bundle, calibration-readiness chain, "
-            "and fixture-update review record before humans consider marking the PR ready."
+            "fixture-update review record, and fixture-update PR package before humans consider marking the PR ready."
         ),
         proof_artifact_refs=(
             "src/lawfirm_os_intake/intake_vertical_readiness_audit.py",
@@ -862,12 +883,108 @@ def _check_budget_fixture_update_review(
     return checks
 
 
+def _check_budget_fixture_update_pr_package(
+    *,
+    budget_fixture_update_pr_package_report_path: Path,
+    budget_fixture_update_review_report_path: Path,
+    repo_root: Path,
+) -> list[IntakeVerticalReadinessArtifactCheck]:
+    checks: list[IntakeVerticalReadinessArtifactCheck] = []
+    report = _load_model(
+        BudgetFixtureUpdatePRPackageReport,
+        budget_fixture_update_pr_package_report_path,
+        "budget_fixture_update_pr_package_report_valid",
+        checks,
+    )
+    if report is None:
+        return checks
+    failed_package_checks = [check.check_id for check in report.checks if check.status == "failed"]
+    package_item_ref_ok = report.item_count == 0 or bool(
+        report.package_item_output_ref
+        and _ref_is_file(
+            report.package_item_output_ref,
+            repo_root=repo_root,
+            base_dir=budget_fixture_update_pr_package_report_path.parent,
+        )
+    )
+    source_review_ref_exists = _ref_is_file(
+        report.source_budget_fixture_update_review_report_ref,
+        repo_root=repo_root,
+        base_dir=budget_fixture_update_pr_package_report_path.parent,
+    )
+    source_review_matches_input = _ref_matches_path(
+        report.source_budget_fixture_update_review_report_ref,
+        budget_fixture_update_review_report_path,
+        repo_root=repo_root,
+        base_dir=budget_fixture_update_pr_package_report_path.parent,
+    )
+    package_ready_or_not_needed = report.status in {
+        "fixture_update_pr_package_ready_for_manual_pr",
+        "no_fixture_update_pr_package_needed",
+    }
+    package_state_consistent = (
+        report.status == "no_fixture_update_pr_package_needed"
+        and report.manual_fixture_update_pr_required is False
+        and report.item_count == 0
+    ) or (
+        report.status == "fixture_update_pr_package_ready_for_manual_pr"
+        and report.manual_fixture_update_pr_required is True
+        and report.item_count > 0
+        and report.ready_item_count == report.item_count
+        and report.blocked_item_count == 0
+        and bool(report.accepted_output_refs)
+        and bool(report.target_fixture_refs)
+    )
+    checks.extend(
+        [
+            _artifact_check(
+                "budget_fixture_update_pr_package_ready_without_writes",
+                package_ready_or_not_needed
+                and package_state_consistent
+                and not failed_package_checks
+                and report.github_pr_created is False
+                and report.fixture_files_mutated is False
+                and report.fixture_binding_applied is False
+                and report.downstream_learning_gate_allowed is False
+                and report.calibration_applied is False
+                and report.lake_write_performed is False
+                and report.sqlite_write_performed is False
+                and report.external_writes_performed is False
+                and report.silent_learning_performed is False,
+                "Budget fixture-update PR package is ready or not needed and preserves no-PR/no-write/no-learning boundaries.",
+                artifact_ref=str(budget_fixture_update_pr_package_report_path),
+                missing_refs=failed_package_checks,
+            ),
+            _artifact_check(
+                "budget_fixture_update_pr_package_item_ref_exists",
+                package_item_ref_ok,
+                "Fixture-update PR package JSONL item ref exists when package items are present.",
+                artifact_ref=str(budget_fixture_update_pr_package_report_path),
+                missing_refs=[]
+                if package_item_ref_ok
+                else [report.package_item_output_ref or "missing package_item_output_ref"],
+            ),
+            _artifact_check(
+                "budget_fixture_update_pr_package_source_review_ref_matches",
+                source_review_ref_exists and source_review_matches_input,
+                "Fixture-update PR package is bound to the supplied fixture-update review report.",
+                artifact_ref=str(budget_fixture_update_pr_package_report_path),
+                missing_refs=[]
+                if source_review_ref_exists and source_review_matches_input
+                else [report.source_budget_fixture_update_review_report_ref],
+            ),
+        ]
+    )
+    return checks
+
+
 def build_intake_vertical_readiness_audit(
     *,
     owner_handoff_report_path: str | Path,
     budget_event_lake_bundle_report_path: str | Path,
     budget_calibration_readiness_report_path: str | Path,
     budget_fixture_update_review_report_path: str | Path,
+    budget_fixture_update_pr_package_report_path: str | Path,
     repo_root: str | Path = ".",
 ) -> IntakeVerticalReadinessAuditReport:
     root = Path(repo_root)
@@ -919,6 +1036,17 @@ def build_intake_vertical_readiness_audit(
     fixture_update_review_passed = bool(fixture_update_review_checks) and all(
         check.status == "passed" for check in fixture_update_review_checks
     )
+    fixture_update_pr_package_checks = _check_budget_fixture_update_pr_package(
+        budget_fixture_update_pr_package_report_path=Path(
+            budget_fixture_update_pr_package_report_path
+        ),
+        budget_fixture_update_review_report_path=Path(budget_fixture_update_review_report_path),
+        repo_root=root,
+    )
+    artifact_checks.extend(fixture_update_pr_package_checks)
+    fixture_update_pr_package_passed = bool(fixture_update_pr_package_checks) and all(
+        check.status == "passed" for check in fixture_update_pr_package_checks
+    )
     local_slices_passed = implemented_count == len(REQUIRED_SLICES) and not (
         missing_artifacts or missing_commands
     )
@@ -937,6 +1065,9 @@ def build_intake_vertical_readiness_audit(
     elif not fixture_update_review_passed:
         status = "blocked_missing_or_failed_fixture_update_review"
         review_readiness = "not_ready_fixture_update_review_blocked"
+    elif not fixture_update_pr_package_passed:
+        status = "blocked_missing_or_failed_fixture_update_pr_package"
+        review_readiness = "not_ready_fixture_update_pr_package_blocked"
     else:
         status = "ready_for_pr_review_external_adoption_required"
         review_readiness = "ready_for_human_pr_review_not_auto_marked"
@@ -952,6 +1083,9 @@ def build_intake_vertical_readiness_audit(
         ),
         source_budget_fixture_update_review_report_ref=str(
             budget_fixture_update_review_report_path
+        ),
+        source_budget_fixture_update_pr_package_report_ref=str(
+            budget_fixture_update_pr_package_report_path
         ),
         total_slice_count=len(REQUIRED_SLICES),
         implemented_slice_count=implemented_count,
@@ -983,6 +1117,7 @@ def render_intake_vertical_readiness_audit(
         f"**Budget-event Lake bundle:** `{report.source_budget_event_lake_bundle_report_ref}`",
         f"**Budget calibration readiness:** `{report.source_budget_calibration_readiness_report_ref}`",
         f"**Budget fixture-update review:** `{report.source_budget_fixture_update_review_report_ref}`",
+        f"**Budget fixture-update PR package:** `{report.source_budget_fixture_update_pr_package_report_ref}`",
         "",
         "## Local Slice Status",
         "",
@@ -1059,6 +1194,7 @@ def run_intake_vertical_readiness_audit(
     budget_event_lake_bundle_report_path: str | Path,
     budget_calibration_readiness_report_path: str | Path,
     budget_fixture_update_review_report_path: str | Path,
+    budget_fixture_update_pr_package_report_path: str | Path,
     out_dir: str | Path,
     repo_root: str | Path = ".",
 ) -> tuple[IntakeVerticalReadinessAuditReport, Path]:
@@ -1067,6 +1203,7 @@ def run_intake_vertical_readiness_audit(
         budget_event_lake_bundle_report_path=budget_event_lake_bundle_report_path,
         budget_calibration_readiness_report_path=budget_calibration_readiness_report_path,
         budget_fixture_update_review_report_path=budget_fixture_update_review_report_path,
+        budget_fixture_update_pr_package_report_path=(budget_fixture_update_pr_package_report_path),
         repo_root=repo_root,
     )
     run_dir = Path(out_dir)

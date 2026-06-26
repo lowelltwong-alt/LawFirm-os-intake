@@ -60,6 +60,9 @@ def _readiness_report_path(tmp_path, *, ready=True):
         ),
         source_budget_calibration_readiness_report_ref=("budget_calibration_readiness_report.json"),
         source_budget_fixture_update_review_report_ref=("budget_fixture_update_review_report.json"),
+        source_budget_fixture_update_pr_package_report_ref=(
+            "budget_fixture_update_pr_package_report.json"
+        ),
         total_slice_count=1,
         implemented_slice_count=1,
         slices=[slice_status],

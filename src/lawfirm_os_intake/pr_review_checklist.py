@@ -203,6 +203,24 @@ def _checklist_items(
                 ),
             ),
             _item(
+                item_id="pr-review-budget-fixture-update-pr-package",
+                section="fixture_update_pr_package",
+                title="Review fixture-update PR package instructions",
+                recommendation="inspect",
+                artifact_refs=[report.source_budget_fixture_update_pr_package_report_ref],
+                why=(
+                    "Accepted fixture-update decisions must be packaged as manual PR instructions "
+                    "without editing fixtures or creating a GitHub PR from intake."
+                ),
+                red_team_note=(
+                    "Confirm the package is not itself a patch, does not mark fixtures updated, "
+                    "and does not unlock calibration or learning."
+                ),
+                required_human_decision=(
+                    "Decide whether a separate fixture-update PR should be created manually."
+                ),
+            ),
+            _item(
                 item_id="pr-review-authority-boundaries",
                 section="authority_boundary",
                 title="Confirm no authority boundary was crossed",

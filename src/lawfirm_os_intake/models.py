@@ -2933,6 +2933,157 @@ class BudgetFixtureUpdateReviewReport(StrictModel):
         return self
 
 
+class BudgetFixtureUpdatePRPackageCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed", "warning"]
+    message: str
+    artifact_refs: list[str] = Field(default_factory=list)
+    blocking_refs: list[str] = Field(default_factory=list)
+
+
+class BudgetFixtureUpdatePRPackageItem(StrictModel):
+    schema_version: str = "0.1"
+    package_item_id: str
+    fixture_update_review_id: str
+    decision: BudgetFixtureUpdateReviewDecision
+    accepted_output_refs: list[str]
+    target_fixture_ref: str
+    proposed_manual_action: Literal[
+        "update_synthetic_fixture_in_separate_pr",
+        "create_synthetic_fixture_in_separate_pr",
+        "hold_no_fixture_change",
+    ]
+    manual_patch_summary: str
+    reviewer_corrections: list[str] = Field(default_factory=list)
+    required_manual_steps: list[str]
+    red_team_notes: list[str]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    github_pr_created: Literal[False] = False
+    fixture_files_mutated: Literal[False] = False
+    fixture_binding_applied: Literal[False] = False
+    downstream_learning_gate_allowed: Literal[False] = False
+    calibration_applied: Literal[False] = False
+    profile_mutation_performed: Literal[False] = False
+    template_mutation_performed: Literal[False] = False
+    budget_mutation_performed: Literal[False] = False
+    carrier_guideline_mutation_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def fixture_update_pr_item_is_reviewable(self) -> "BudgetFixtureUpdatePRPackageItem":
+        if not self.accepted_output_refs:
+            raise ValueError("fixture update PR package item requires accepted output refs")
+        if not self.target_fixture_ref.strip():
+            raise ValueError("fixture update PR package item requires target fixture ref")
+        if not self.manual_patch_summary.strip():
+            raise ValueError("fixture update PR package item requires manual patch summary")
+        if not self.required_manual_steps:
+            raise ValueError("fixture update PR package item requires manual steps")
+        if not self.red_team_notes:
+            raise ValueError("fixture update PR package item requires red-team notes")
+        return self
+
+
+class BudgetFixtureUpdatePRPackageReport(StrictModel):
+    schema_version: str = "0.1"
+    fixture_update_pr_package_report_id: str
+    status: Literal[
+        "fixture_update_pr_package_ready_for_manual_pr",
+        "no_fixture_update_pr_package_needed",
+        "blocked_by_fixture_update_review",
+    ]
+    source_budget_fixture_update_review_report_id: str
+    source_budget_fixture_update_review_report_ref: str
+    source_budget_fixture_update_review_status: Literal[
+        "fixture_update_review_recorded_separate_pr_required",
+        "fixture_update_review_recorded_no_fixture_pr",
+        "blocked_by_fixture_update_review_evidence",
+    ]
+    fixture_update_review_id: str
+    decision: BudgetFixtureUpdateReviewDecision
+    item_count: int = Field(ge=0)
+    ready_item_count: int = Field(ge=0)
+    blocked_item_count: int = Field(ge=0)
+    accepted_output_refs: list[str] = Field(default_factory=list)
+    target_fixture_refs: list[str] = Field(default_factory=list)
+    package_items: list[BudgetFixtureUpdatePRPackageItem]
+    package_item_output_ref: str | None = None
+    checks: list[BudgetFixtureUpdatePRPackageCheck]
+    required_next_gates: list[str]
+    manual_fixture_update_pr_required: bool = False
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    github_pr_created: Literal[False] = False
+    fixture_files_mutated: Literal[False] = False
+    fixture_binding_applied: Literal[False] = False
+    downstream_learning_gate_allowed: Literal[False] = False
+    calibration_applied: Literal[False] = False
+    profile_mutation_performed: Literal[False] = False
+    template_mutation_performed: Literal[False] = False
+    budget_mutation_performed: Literal[False] = False
+    carrier_guideline_mutation_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def fixture_update_pr_package_status_matches_items(
+        self,
+    ) -> "BudgetFixtureUpdatePRPackageReport":
+        failed = [check for check in self.checks if check.status == "failed"]
+        if self.item_count != len(self.package_items):
+            raise ValueError("fixture update PR package item count does not match")
+        if self.ready_item_count + self.blocked_item_count != self.item_count:
+            raise ValueError("fixture update PR package ready/blocked counts do not add up")
+        if self.status == "blocked_by_fixture_update_review" and not failed:
+            raise ValueError("blocked fixture update PR package requires failed checks")
+        if self.status != "blocked_by_fixture_update_review" and failed:
+            raise ValueError("non-blocked fixture update PR package cannot have failed checks")
+        if self.status == "fixture_update_pr_package_ready_for_manual_pr" and not (
+            self.manual_fixture_update_pr_required
+            and self.item_count > 0
+            and self.ready_item_count == self.item_count
+            and self.accepted_output_refs
+            and self.target_fixture_refs
+        ):
+            raise ValueError("ready fixture update PR package requires ready items and refs")
+        if self.status == "no_fixture_update_pr_package_needed" and (
+            self.manual_fixture_update_pr_required or self.item_count
+        ):
+            raise ValueError("no fixture update PR package needed cannot include package items")
+        required = {
+            "manual_fixture_update_pr_review",
+            "apply_fixture_update_only_in_separate_pr",
+            "run_regression_after_fixture_update_pr",
+            "reviewed_learning_gate_before_candidate_changes",
+            "shadow_eval_before_learning",
+            "owning_repo_review",
+            "no_silent_profile_template_or_guideline_mutation",
+        }
+        if not required.issubset(set(self.required_next_gates)):
+            raise ValueError("fixture update PR package is missing required gates")
+        return self
+
+
 class BudgetFormCodeMapping(StrictModel):
     code: str
     kind: Literal["phase", "task"]
@@ -4517,6 +4668,7 @@ class IntakeVerticalReadinessAuditReport(StrictModel):
         "blocked_missing_or_failed_lake_bundle",
         "blocked_missing_or_failed_calibration_readiness",
         "blocked_missing_or_failed_fixture_update_review",
+        "blocked_missing_or_failed_fixture_update_pr_package",
     ]
     review_readiness: Literal[
         "ready_for_human_pr_review_not_auto_marked",
@@ -4525,11 +4677,13 @@ class IntakeVerticalReadinessAuditReport(StrictModel):
         "not_ready_lake_bundle_blocked",
         "not_ready_calibration_readiness_blocked",
         "not_ready_fixture_update_review_blocked",
+        "not_ready_fixture_update_pr_package_blocked",
     ]
     source_owner_handoff_report_ref: str
     source_budget_event_lake_bundle_report_ref: str
     source_budget_calibration_readiness_report_ref: str
     source_budget_fixture_update_review_report_ref: str
+    source_budget_fixture_update_pr_package_report_ref: str
     total_slice_count: int = Field(ge=0)
     implemented_slice_count: int = Field(ge=0)
     missing_artifact_refs: list[str] = Field(default_factory=list)
@@ -4579,6 +4733,7 @@ class PRReviewChecklistItem(StrictModel):
         "learning_chain",
         "calibration_chain",
         "fixture_update_review",
+        "fixture_update_pr_package",
         "authority_boundary",
         "validation",
         "external_owner_review",
@@ -4629,6 +4784,7 @@ class PRReviewChecklistReport(StrictModel):
         "blocked_missing_or_failed_lake_bundle",
         "blocked_missing_or_failed_calibration_readiness",
         "blocked_missing_or_failed_fixture_update_review",
+        "blocked_missing_or_failed_fixture_update_pr_package",
     ]
     source_review_readiness: Literal[
         "ready_for_human_pr_review_not_auto_marked",
@@ -4637,6 +4793,7 @@ class PRReviewChecklistReport(StrictModel):
         "not_ready_lake_bundle_blocked",
         "not_ready_calibration_readiness_blocked",
         "not_ready_fixture_update_review_blocked",
+        "not_ready_fixture_update_pr_package_blocked",
     ]
     status: Literal["ready_for_human_pr_review", "blocked_by_readiness_audit"]
     recommendation: Literal[

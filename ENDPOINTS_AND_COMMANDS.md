@@ -246,6 +246,22 @@ The command does not update fixtures, create a PR, apply calibration or learning
 mutate budgets/profiles/templates/guidelines, write Lake/SQLite records, or
 perform external writes.
 
+### Build budget fixture update PR package
+
+```bash
+python -m lawfirm_os_intake build-budget-fixture-update-pr-package \
+  --fixture-update-review-report .lawfirm-os-intake/budget-fixture-update-review/budget_fixture_update_review_report.json \
+  --out-dir .lawfirm-os-intake/budget-fixture-update-pr-package
+```
+
+This writes `budget_fixture_update_pr_package_report.json`,
+`budget_fixture_update_pr_package_report.md`, and
+`budget_fixture_update_pr_package_items.jsonl` when accepted review decisions
+require manual package items. The package is a reviewer-ready instruction set
+for a separate fixture-update PR; it does not edit fixtures, create a GitHub PR,
+apply calibration or learning, mutate budgets/profiles/templates/guidelines,
+write Lake/SQLite records, or perform external writes.
+
 ### Build learning owner handoffs
 
 ```bash
@@ -271,6 +287,7 @@ python -m lawfirm_os_intake audit-intake-vertical-readiness \
   --budget-event-lake-bundle-report .lawfirm-os-intake/budget-event-lake-bundle/budget_event_lake_admission_bundle_report.json \
   --budget-calibration-readiness-report .lawfirm-os-intake/budget-calibration-readiness/budget_calibration_readiness_report.json \
   --budget-fixture-update-review-report .lawfirm-os-intake/budget-fixture-update-review/budget_fixture_update_review_report.json \
+  --budget-fixture-update-pr-package-report .lawfirm-os-intake/budget-fixture-update-pr-package/budget_fixture_update_pr_package_report.json \
   --repo-root . \
   --out-dir .lawfirm-os-intake/intake-vertical-readiness-audit
 ```
@@ -281,9 +298,9 @@ intake-to-budget, carrier rejection, budget revision, actual-cost comparison,
 reviewed learning, shadow-eval, owner-handoff, promotion-package, and command
 surfaces, then validates the generated learning artifact chain back through the
 reviewed-learning gate, the generated budget-event Lake bundle, and the
-calibration-readiness chain plus fixture-update review record. A passing audit
-means the branch is ready for human PR review while external adoption remains
-required. It does not mark the PR ready,
+calibration-readiness chain plus fixture-update review record and PR package. A
+passing audit means the branch is ready for human PR review while external
+adoption remains required. It does not mark the PR ready,
 promote canon, write sibling repos, implement connectors, admit Lake records,
 write SQLite, apply proposed changes, or perform silent learning.
 

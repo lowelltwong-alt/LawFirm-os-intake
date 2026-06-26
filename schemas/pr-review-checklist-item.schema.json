@@ -12,6 +12,7 @@
         "learning_chain",
         "calibration_chain",
         "fixture_update_review",
+        "fixture_update_pr_package",
         "authority_boundary",
         "validation",
         "external_owner_review",

@@ -1,0 +1,79 @@
+{
+  "schema_version": "0.1",
+  "fixture_update_pr_package_report_id": "fixture-update-pr-package-medmal-shape-001",
+  "status": "fixture_update_pr_package_ready_for_manual_pr",
+  "source_budget_fixture_update_review_report_id": "fixture-update-review-report-medmal-shape-001",
+  "source_budget_fixture_update_review_report_ref": ".lawfirm-os-intake/budget-fixture-update-review/budget_fixture_update_review_report.json",
+  "source_budget_fixture_update_review_status": "fixture_update_review_recorded_separate_pr_required",
+  "fixture_update_review_id": "fixture-update-review-medmal-accept-001",
+  "decision": "accept_for_separate_fixture_update_pr",
+  "item_count": 1,
+  "ready_item_count": 1,
+  "blocked_item_count": 0,
+  "accepted_output_refs": [
+    ".lawfirm-os-intake/replay/budget_revision_report.json"
+  ],
+  "target_fixture_refs": [
+    "examples/synthetic/budget-review/medmal-human-budget-review-change.json"
+  ],
+  "package_items": [
+    {
+      "schema_version": "0.1",
+      "package_item_id": "fixture-update-pr-package-item-medmal-shape-001",
+      "fixture_update_review_id": "fixture-update-review-medmal-accept-001",
+      "decision": "accept_for_separate_fixture_update_pr",
+      "accepted_output_refs": [
+        ".lawfirm-os-intake/replay/budget_revision_report.json"
+      ],
+      "target_fixture_ref": "examples/synthetic/budget-review/medmal-human-budget-review-change.json",
+      "proposed_manual_action": "update_synthetic_fixture_in_separate_pr",
+      "manual_patch_summary": "Shape example only: inspect accepted replay output and update the target synthetic fixture in a separate human-reviewed PR if accepted.",
+      "reviewer_corrections": [],
+      "required_manual_steps": [
+        "Inspect accepted replay output refs before editing.",
+        "Apply fixture edits only in a separate reviewed PR.",
+        "Rerun regression, replay, and shadow-eval checks after any fixture edit."
+      ],
+      "red_team_notes": [
+        "This package is not a patch application.",
+        "Do not apply calibration or learning from this package."
+      ],
+      "required_next_gates": [
+        "manual_fixture_update_pr_review",
+        "apply_fixture_update_only_in_separate_pr",
+        "run_regression_after_fixture_update_pr",
+        "reviewed_learning_gate_before_candidate_changes",
+        "shadow_eval_before_learning",
+        "owning_repo_review",
+        "no_silent_profile_template_or_guideline_mutation"
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "shape_example_only",
+      "status": "passed",
+      "message": "Synthetic shape example for manual fixture-update PR package review."
+    }
+  ],
+  "required_next_gates": [
+    "manual_fixture_update_pr_review",
+    "apply_fixture_update_only_in_separate_pr",
+    "run_regression_after_fixture_update_pr",
+    "reviewed_learning_gate_before_candidate_changes",
+    "shadow_eval_before_learning",
+    "owning_repo_review",
+    "no_silent_profile_template_or_guideline_mutation"
+  ],
+  "manual_fixture_update_pr_required": true,
+  "github_pr_created": false,
+  "fixture_files_mutated": false,
+  "fixture_binding_applied": false,
+  "downstream_learning_gate_allowed": false,
+  "calibration_applied": false,
+  "lake_write_performed": false,
+  "sqlite_write_performed": false,
+  "external_writes_performed": false,
+  "silent_learning_performed": false,
+  "generated_at": "2026-06-26T00:00:00Z"
+}

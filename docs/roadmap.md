@@ -518,7 +518,8 @@ proof work from the higher-risk owner-adoption work.
   `learning_owner_handoff_report.json` and
   `budget_event_lake_admission_bundle_report.json`, plus
   `budget_calibration_readiness_report.json` and
-  `budget_fixture_update_review_report.json`.
+  `budget_fixture_update_review_report.json` and
+  `budget_fixture_update_pr_package_report.json`.
 - It writes `intake_vertical_readiness_audit_report.json` and
   `intake_vertical_readiness_audit_report.md`.
 - It checks that the intake-to-budget, budget revision, actual-cost comparison,
@@ -538,6 +539,9 @@ proof work from the higher-risk owner-adoption work.
 - It validates the generated fixture-update review record for append-only local
   history, accepted/rejected decision posture, source calibration-readiness
   binding, and no fixture/calibration/Lake/SQLite/silent-learning side effects.
+- It validates the generated fixture-update PR package for manual PR package
+  posture, source review binding, item JSONL refs, and no GitHub PR,
+  fixture/calibration/Lake/SQLite/silent-learning side effects.
 - Passing status is `ready_for_pr_review_external_adoption_required`, which
   means ready for human PR review only.
 - The report records `pr_marked_ready=false`, `promotion_authorized=false`,
@@ -558,8 +562,9 @@ Status: implemented for the current synthetic candidate slice through corpus
 audit, replay planning, selected replay execution audit, human replay review
 packet/outcome recording, fixture-binding candidates, and fixture-update
 handoff packaging, calibration-chain readiness audit, and manual fixture-update
-review record; broader replay execution, reviewed fixture edit PRs, real-data
-pilots, and owner adoption remain future work.
+review record plus manual fixture-update PR package; broader replay execution,
+reviewed fixture edit PRs, real-data pilots, and owner adoption remain future
+work.
 
 Separate "we have synthetic evidence artifacts" from "we are allowed to learn
 from them."
@@ -673,5 +678,13 @@ from them."
   humans choose to update fixtures. Rejected or needs-more-information decisions
   remain recorded evidence and do not open a PR. The recorder still does not
   update fixtures, create a PR, apply learning, mutate
+  budgets/profiles/templates/guidelines, write Lake or SQLite records, submit
+  budgets, open matters, or authorize external actions.
+- `build-budget-fixture-update-pr-package` consumes the fixture-update review
+  report and writes `budget_fixture_update_pr_package_report.json`, Markdown
+  notes, and package-item JSONL when accepted decisions require manual package
+  items.
+- The PR package is a reviewer-ready instruction set only. It does not edit
+  fixtures, create a GitHub PR, apply learning, mutate
   budgets/profiles/templates/guidelines, write Lake or SQLite records, submit
   budgets, open matters, or authorize external actions.

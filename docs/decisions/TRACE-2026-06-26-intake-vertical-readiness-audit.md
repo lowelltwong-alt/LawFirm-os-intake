@@ -33,11 +33,16 @@ implying production readiness or external adoption.
   append-only local review history, accepted/rejected decision posture, source
   calibration-readiness binding, and no fixture/calibration/Lake/SQLite/silent
   learning side effects.
+- Required `budget_fixture_update_pr_package_report.json` input, checked for
+  manual PR package posture, source fixture-update review binding, item JSONL
+  refs, and no GitHub PR, fixture/calibration/Lake/SQLite/silent-learning side
+  effects.
 - Synthetic reviewed-learning gate fixture used by the proposed-change shadow
   eval chain.
 - Tests for ready, missing-local-surface, blocked-learning-chain,
   blocked-Lake-bundle, blocked-calibration-readiness,
-  blocked-fixture-update-review, and CLI paths.
+  blocked-fixture-update-review, blocked-fixture-update-PR-package, and CLI
+  paths.
 - Data-flow, endpoint, roadmap, evaluation, and promotion-package updates.
 
 ## Boundary
@@ -68,6 +73,8 @@ and Exception Lake for append-only admission and SQLite migrations.
 - A green budget fixture-update review report can require a separate fixture
   update PR, but it is not that PR and it is not approval to apply calibration
   or learning.
+- A green budget fixture-update PR package can guide a separate human PR, but it
+  is not a patch, not a GitHub PR, and not fixture-update completion evidence.
 - Real budget actuals, carrier rejections, appeals, and guideline drift require
   governed connector capture and append-only evidence storage outside intake.
 - Learning from human corrections must remain explicit, reviewed, replayed, and

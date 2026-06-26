@@ -115,6 +115,13 @@ history row, distinguish accepted-for-separate-PR from rejected or
 needs-more-information decisions, and prove that no fixture update, PR creation,
 calibration, Lake/SQLite write, external write, or silent learning occurred.
 
+`build-budget-fixture-update-pr-package` consumes the fixture-update review
+report. It must create manual PR package items only for accepted fixture-update
+decisions, record no-package-needed status for rejected or needs-more-information
+decisions, block on failed review evidence, and prove that no fixture edit,
+GitHub PR creation, calibration, Lake/SQLite write, external write, or silent
+learning occurred.
+
 `record-budget-review` also writes `budget_change_ledger_report.json`,
 `budget_change_ledger.jsonl`, and `budget_change_ledger_report.md`. Corrected
 review outcomes must produce one ledger row per human change; no-change or
@@ -173,9 +180,11 @@ The final local close-out eval is `audit-intake-vertical-readiness`. It consumes
 `learning_owner_handoff_report.json` and
 `budget_event_lake_admission_bundle_report.json`, plus
 `budget_calibration_readiness_report.json` and
-`budget_fixture_update_review_report.json`, checks the local candidate slices,
-generated learning artifact chain, generated budget-event Lake bundle,
-calibration-readiness chain, and fixture-update review record, and writes
+`budget_fixture_update_review_report.json` and
+`budget_fixture_update_pr_package_report.json`, checks the local candidate
+slices, generated learning artifact chain, generated budget-event Lake bundle,
+calibration-readiness chain, fixture-update review record, and fixture-update PR
+package, and writes
 `intake_vertical_readiness_audit_report.json`. Passing status means ready for
 human PR review only; it does not mark a PR ready, promote canon, implement
 connectors, admit Lake records, write SQLite, apply proposed changes, mutate
