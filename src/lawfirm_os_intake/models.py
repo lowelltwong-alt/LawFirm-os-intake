@@ -2456,6 +2456,182 @@ class LearningShadowEvalResultReport(StrictModel):
         return self
 
 
+LearningOwnerHandoffDisposition = Literal[
+    "ready_for_owner_review",
+    "failed_before_owner_review",
+    "blocked_before_owner_review",
+]
+
+
+class LearningOwnerHandoffItem(StrictModel):
+    schema_version: str = "0.1"
+    handoff_item_id: str
+    shadow_eval_result_id: str
+    proposed_change_id: str
+    candidate_id: str
+    target_learning_loop: LearningLoopId
+    target_owner: LearningTargetOwner
+    change_type: LearningProposedChangeType
+    shadow_eval_status: Literal[
+        "passed_for_owning_repo_review",
+        "failed_shadow_eval",
+        "blocked_missing_fixture_result",
+        "blocked_missing_required_eval",
+        "blocked_missing_regression_guardrail",
+        "blocked_fixture_mismatch",
+    ]
+    disposition: LearningOwnerHandoffDisposition
+    passed_checks: list[str]
+    failed_checks: list[str]
+    blocked_checks: list[str]
+    required_owner_actions: list[str]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    human_review_required: Literal[True] = True
+    owning_repo_review_required: Literal[True] = True
+    promotion_authorized: Literal[False] = False
+    proposed_change_applied: Literal[False] = False
+    baseline_mutated: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def disposition_matches_status(self) -> "LearningOwnerHandoffItem":
+        if (
+            self.shadow_eval_status == "passed_for_owning_repo_review"
+            and self.disposition != "ready_for_owner_review"
+        ):
+            raise ValueError("passed shadow eval item must be ready for owner review")
+        if (
+            self.shadow_eval_status == "failed_shadow_eval"
+            and self.disposition != "failed_before_owner_review"
+        ):
+            raise ValueError("failed shadow eval item must stay failed before owner review")
+        if self.shadow_eval_status.startswith("blocked") and self.disposition != (
+            "blocked_before_owner_review"
+        ):
+            raise ValueError("blocked shadow eval item must stay blocked before owner review")
+        if not self.required_owner_actions:
+            raise ValueError("owner handoff item requires owner actions")
+        return self
+
+
+class LearningOwnerHandoffPackage(StrictModel):
+    schema_version: str = "0.1"
+    owner_handoff_package_id: str
+    target_owner: LearningTargetOwner
+    source_shadow_eval_result_report_id: str
+    status: Literal[
+        "ready_for_owner_review",
+        "mixed_review_and_blockers",
+        "blocked_or_failed_before_review",
+    ]
+    item_count: int = Field(ge=0)
+    passed_candidate_count: int = Field(ge=0)
+    failed_candidate_count: int = Field(ge=0)
+    blocked_candidate_count: int = Field(ge=0)
+    ready_items: list[LearningOwnerHandoffItem]
+    failed_items: list[LearningOwnerHandoffItem]
+    blocked_items: list[LearningOwnerHandoffItem]
+    required_owner_review_scope: list[str]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    human_review_required: Literal[True] = True
+    owning_repo_review_required: Literal[True] = True
+    promotion_authorized: Literal[False] = False
+    proposed_changes_applied: Literal[False] = False
+    baseline_mutated: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def package_counts_match(self) -> "LearningOwnerHandoffPackage":
+        if self.item_count != (
+            len(self.ready_items) + len(self.failed_items) + len(self.blocked_items)
+        ):
+            raise ValueError("owner handoff package item count does not match items")
+        if self.passed_candidate_count != len(self.ready_items):
+            raise ValueError("owner handoff package passed count does not match")
+        if self.failed_candidate_count != len(self.failed_items):
+            raise ValueError("owner handoff package failed count does not match")
+        if self.blocked_candidate_count != len(self.blocked_items):
+            raise ValueError("owner handoff package blocked count does not match")
+        if self.status == "ready_for_owner_review" and (
+            self.failed_items or self.blocked_items or not self.ready_items
+        ):
+            raise ValueError("ready owner handoff package must contain only ready items")
+        if self.status == "mixed_review_and_blockers" and not (
+            self.ready_items and (self.failed_items or self.blocked_items)
+        ):
+            raise ValueError("mixed owner handoff package requires ready and blocked/failed items")
+        if self.status == "blocked_or_failed_before_review" and self.ready_items:
+            raise ValueError("blocked/failed owner handoff package cannot contain ready items")
+        return self
+
+
+class LearningOwnerHandoffReport(StrictModel):
+    schema_version: str = "0.1"
+    owner_handoff_report_id: str
+    source_shadow_eval_result_report_id: str
+    source_shadow_eval_result_report_ref: str
+    status: Literal[
+        "owner_handoff_ready_review_required",
+        "owner_handoff_mixed_review_and_blockers",
+        "owner_handoff_blocked_or_failed",
+        "no_learning_candidates",
+    ]
+    package_count: int = Field(ge=0)
+    target_owners: list[str]
+    passed_candidate_count: int = Field(ge=0)
+    failed_candidate_count: int = Field(ge=0)
+    blocked_candidate_count: int = Field(ge=0)
+    packages: list[LearningOwnerHandoffPackage]
+    package_output_refs: list[str] = Field(default_factory=list)
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    human_review_required: Literal[True] = True
+    owning_repo_review_required: Literal[True] = True
+    promotion_authorized: Literal[False] = False
+    proposed_changes_applied: Literal[False] = False
+    baseline_mutated: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def report_counts_match(self) -> "LearningOwnerHandoffReport":
+        if self.package_count != len(self.packages):
+            raise ValueError("owner handoff report package count does not match")
+        if self.passed_candidate_count != sum(
+            package.passed_candidate_count for package in self.packages
+        ):
+            raise ValueError("owner handoff report passed count does not match")
+        if self.failed_candidate_count != sum(
+            package.failed_candidate_count for package in self.packages
+        ):
+            raise ValueError("owner handoff report failed count does not match")
+        if self.blocked_candidate_count != sum(
+            package.blocked_candidate_count for package in self.packages
+        ):
+            raise ValueError("owner handoff report blocked count does not match")
+        if self.status == "no_learning_candidates" and self.packages:
+            raise ValueError("no-candidate owner handoff report cannot include packages")
+        if self.status == "owner_handoff_ready_review_required" and (
+            self.failed_candidate_count or self.blocked_candidate_count
+        ):
+            raise ValueError("ready owner handoff report cannot include failed/blocked counts")
+        return self
+
+
 class CarrierRejectionOrchestratorConnectorChannel(StrictModel):
     channel_id: Literal[
         "carrier_portal_notice",

@@ -313,3 +313,27 @@ any candidate can leave the intake-local eval surface.
   `carrier_guideline_mutation_performed=false`, `lake_write_performed=false`,
   `sqlite_write_performed=false`, `external_writes_performed=false`, and
   `silent_learning_performed=false`.
+
+## 16. Learning Owner Handoff Packages
+
+Status: implemented for the current synthetic candidate slice; actual promotion
+decisions, sibling-repo changes, runtime adoption, and real-data pilots remain
+future work.
+
+Package shadow-eval results by owning repo so review work can move to the right
+authority plane without intake promoting or applying the change.
+
+- `build-learning-owner-handoffs` consumes
+  `learning_shadow_eval_result_report.json`.
+- It writes `learning_owner_handoff_report.json`,
+  `learning_owner_handoff_report.md`, `learning_owner_handoff_packages.jsonl`,
+  and one JSON/Markdown package per target owner under `owner_handoffs/`.
+- Each owner package separates ready, failed, and blocked items.
+- Ready items mean only `ready_for_owner_review`; they are not approved,
+  promoted, implemented, or adopted.
+- Failed items require decline or repair; blocked items require missing fixture,
+  eval, guardrail, or matching evidence before owner review.
+- The command records `promotion_authorized=false`,
+  `proposed_changes_applied=false`, `baseline_mutated=false`,
+  `lake_write_performed=false`, `sqlite_write_performed=false`,
+  `external_writes_performed=false`, and `silent_learning_performed=false`.

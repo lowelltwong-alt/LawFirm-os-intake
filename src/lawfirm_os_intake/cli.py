@@ -21,6 +21,7 @@ from .carrier_rejection_review import run_carrier_rejection_review
 from .carrier_rejections import run_carrier_rejection_capture
 from .confirmation import bind_confirmation_to_packet_evidence
 from .learning_promotion_readiness import run_learning_promotion_readiness
+from .learning_owner_handoffs import run_learning_owner_handoffs
 from .learning_proposed_changes import run_learning_proposed_changes
 from .learning_shadow_eval_results import run_learning_shadow_eval_results
 from .models import BudgetProposal, HumanConfirmation
@@ -192,6 +193,17 @@ def _parser() -> argparse.ArgumentParser:
         default=[],
         help="Synthetic shadow-eval fixture result JSON. May be supplied multiple times.",
     )
+
+    learning_owner_handoff = sub.add_parser(
+        "build-learning-owner-handoffs",
+        help="Group shadow-eval results into owner-specific review handoff packages.",
+    )
+    learning_owner_handoff.add_argument(
+        "--shadow-eval-result-report",
+        required=True,
+        help="Path to learning_shadow_eval_result_report.json.",
+    )
+    learning_owner_handoff.add_argument("--out-dir", required=True)
 
     carrier_rejection_orchestrator = sub.add_parser(
         "draft-carrier-rejection-orchestrator-interface",
@@ -632,6 +644,32 @@ def main(argv: list[str] | None = None) -> int:
                     "promotion_authorized": report.promotion_authorized,
                     "proposed_changes_applied": report.proposed_changes_applied,
                     "baseline_mutated": report.baseline_mutated,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0
+
+        if args.command == "build-learning-owner-handoffs":
+            report, run_dir = run_learning_owner_handoffs(
+                shadow_eval_result_report_path=args.shadow_eval_result_report,
+                out_dir=args.out_dir,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "owner_handoff_report_id": report.owner_handoff_report_id,
+                    "source_shadow_eval_result_report_id": (
+                        report.source_shadow_eval_result_report_id
+                    ),
+                    "package_count": report.package_count,
+                    "target_owners": report.target_owners,
+                    "passed_candidate_count": report.passed_candidate_count,
+                    "failed_candidate_count": report.failed_candidate_count,
+                    "blocked_candidate_count": report.blocked_candidate_count,
+                    "promotion_authorized": report.promotion_authorized,
+                    "proposed_changes_applied": report.proposed_changes_applied,
                     "silent_learning_performed": report.silent_learning_performed,
                     "external_writes_performed": report.external_writes_performed,
                     "run_dir": str(run_dir),

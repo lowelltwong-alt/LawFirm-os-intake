@@ -1,0 +1,555 @@
+{
+  "$defs": {
+    "LearningOwnerHandoffItem": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "default": "0.1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "handoff_item_id": {
+          "title": "Handoff Item Id",
+          "type": "string"
+        },
+        "shadow_eval_result_id": {
+          "title": "Shadow Eval Result Id",
+          "type": "string"
+        },
+        "proposed_change_id": {
+          "title": "Proposed Change Id",
+          "type": "string"
+        },
+        "candidate_id": {
+          "title": "Candidate Id",
+          "type": "string"
+        },
+        "target_learning_loop": {
+          "enum": [
+            "guideline_drift",
+            "budget_model",
+            "template_mapping",
+            "narrative_rule",
+            "preapproval_gate",
+            "appeal_success_or_failure",
+            "capture_completeness",
+            "parser_rule",
+            "eval_fixture",
+            "staffing_leverage",
+            "timekeeper_rate",
+            "validation_rule"
+          ],
+          "title": "Target Learning Loop",
+          "type": "string"
+        },
+        "target_owner": {
+          "enum": [
+            "LawFirm-os-intake",
+            "LawFirm-os-orchestrator",
+            "LawFirm-os-exceptions-lake-runtime",
+            "LawFirm-os-semantic-substrate"
+          ],
+          "title": "Target Owner",
+          "type": "string"
+        },
+        "change_type": {
+          "enum": [
+            "guideline_profile_candidate",
+            "budget_driver_adjustment_candidate",
+            "template_mapping_candidate",
+            "narrative_rule_candidate",
+            "preapproval_gate_candidate",
+            "appeal_outcome_pattern_candidate",
+            "capture_reconciliation_rule_candidate",
+            "parser_rule_candidate",
+            "eval_fixture_candidate",
+            "staffing_leverage_candidate",
+            "timekeeper_rate_candidate",
+            "validation_rule_candidate"
+          ],
+          "title": "Change Type",
+          "type": "string"
+        },
+        "shadow_eval_status": {
+          "enum": [
+            "passed_for_owning_repo_review",
+            "failed_shadow_eval",
+            "blocked_missing_fixture_result",
+            "blocked_missing_required_eval",
+            "blocked_missing_regression_guardrail",
+            "blocked_fixture_mismatch"
+          ],
+          "title": "Shadow Eval Status",
+          "type": "string"
+        },
+        "disposition": {
+          "enum": [
+            "ready_for_owner_review",
+            "failed_before_owner_review",
+            "blocked_before_owner_review"
+          ],
+          "title": "Disposition",
+          "type": "string"
+        },
+        "passed_checks": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Passed Checks",
+          "type": "array"
+        },
+        "failed_checks": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Failed Checks",
+          "type": "array"
+        },
+        "blocked_checks": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Blocked Checks",
+          "type": "array"
+        },
+        "required_owner_actions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Required Owner Actions",
+          "type": "array"
+        },
+        "required_next_gates": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Required Next Gates",
+          "type": "array"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        },
+        "human_review_required": {
+          "const": true,
+          "default": true,
+          "title": "Human Review Required",
+          "type": "boolean"
+        },
+        "owning_repo_review_required": {
+          "const": true,
+          "default": true,
+          "title": "Owning Repo Review Required",
+          "type": "boolean"
+        },
+        "promotion_authorized": {
+          "const": false,
+          "default": false,
+          "title": "Promotion Authorized",
+          "type": "boolean"
+        },
+        "proposed_change_applied": {
+          "const": false,
+          "default": false,
+          "title": "Proposed Change Applied",
+          "type": "boolean"
+        },
+        "baseline_mutated": {
+          "const": false,
+          "default": false,
+          "title": "Baseline Mutated",
+          "type": "boolean"
+        },
+        "lake_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Lake Write Performed",
+          "type": "boolean"
+        },
+        "sqlite_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Sqlite Write Performed",
+          "type": "boolean"
+        },
+        "external_writes_performed": {
+          "const": false,
+          "default": false,
+          "title": "External Writes Performed",
+          "type": "boolean"
+        },
+        "silent_learning_performed": {
+          "const": false,
+          "default": false,
+          "title": "Silent Learning Performed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "handoff_item_id",
+        "shadow_eval_result_id",
+        "proposed_change_id",
+        "candidate_id",
+        "target_learning_loop",
+        "target_owner",
+        "change_type",
+        "shadow_eval_status",
+        "disposition",
+        "passed_checks",
+        "failed_checks",
+        "blocked_checks",
+        "required_owner_actions",
+        "required_next_gates"
+      ],
+      "title": "LearningOwnerHandoffItem",
+      "type": "object"
+    },
+    "LearningOwnerHandoffPackage": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "default": "0.1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "owner_handoff_package_id": {
+          "title": "Owner Handoff Package Id",
+          "type": "string"
+        },
+        "target_owner": {
+          "enum": [
+            "LawFirm-os-intake",
+            "LawFirm-os-orchestrator",
+            "LawFirm-os-exceptions-lake-runtime",
+            "LawFirm-os-semantic-substrate"
+          ],
+          "title": "Target Owner",
+          "type": "string"
+        },
+        "source_shadow_eval_result_report_id": {
+          "title": "Source Shadow Eval Result Report Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "ready_for_owner_review",
+            "mixed_review_and_blockers",
+            "blocked_or_failed_before_review"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "item_count": {
+          "minimum": 0,
+          "title": "Item Count",
+          "type": "integer"
+        },
+        "passed_candidate_count": {
+          "minimum": 0,
+          "title": "Passed Candidate Count",
+          "type": "integer"
+        },
+        "failed_candidate_count": {
+          "minimum": 0,
+          "title": "Failed Candidate Count",
+          "type": "integer"
+        },
+        "blocked_candidate_count": {
+          "minimum": 0,
+          "title": "Blocked Candidate Count",
+          "type": "integer"
+        },
+        "ready_items": {
+          "items": {
+            "$ref": "#/$defs/LearningOwnerHandoffItem"
+          },
+          "title": "Ready Items",
+          "type": "array"
+        },
+        "failed_items": {
+          "items": {
+            "$ref": "#/$defs/LearningOwnerHandoffItem"
+          },
+          "title": "Failed Items",
+          "type": "array"
+        },
+        "blocked_items": {
+          "items": {
+            "$ref": "#/$defs/LearningOwnerHandoffItem"
+          },
+          "title": "Blocked Items",
+          "type": "array"
+        },
+        "required_owner_review_scope": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Required Owner Review Scope",
+          "type": "array"
+        },
+        "required_next_gates": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Required Next Gates",
+          "type": "array"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        },
+        "human_review_required": {
+          "const": true,
+          "default": true,
+          "title": "Human Review Required",
+          "type": "boolean"
+        },
+        "owning_repo_review_required": {
+          "const": true,
+          "default": true,
+          "title": "Owning Repo Review Required",
+          "type": "boolean"
+        },
+        "promotion_authorized": {
+          "const": false,
+          "default": false,
+          "title": "Promotion Authorized",
+          "type": "boolean"
+        },
+        "proposed_changes_applied": {
+          "const": false,
+          "default": false,
+          "title": "Proposed Changes Applied",
+          "type": "boolean"
+        },
+        "baseline_mutated": {
+          "const": false,
+          "default": false,
+          "title": "Baseline Mutated",
+          "type": "boolean"
+        },
+        "lake_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Lake Write Performed",
+          "type": "boolean"
+        },
+        "sqlite_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Sqlite Write Performed",
+          "type": "boolean"
+        },
+        "external_writes_performed": {
+          "const": false,
+          "default": false,
+          "title": "External Writes Performed",
+          "type": "boolean"
+        },
+        "silent_learning_performed": {
+          "const": false,
+          "default": false,
+          "title": "Silent Learning Performed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "owner_handoff_package_id",
+        "target_owner",
+        "source_shadow_eval_result_report_id",
+        "status",
+        "item_count",
+        "passed_candidate_count",
+        "failed_candidate_count",
+        "blocked_candidate_count",
+        "ready_items",
+        "failed_items",
+        "blocked_items",
+        "required_owner_review_scope",
+        "required_next_gates"
+      ],
+      "title": "LearningOwnerHandoffPackage",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "owner_handoff_report_id": {
+      "title": "Owner Handoff Report Id",
+      "type": "string"
+    },
+    "source_shadow_eval_result_report_id": {
+      "title": "Source Shadow Eval Result Report Id",
+      "type": "string"
+    },
+    "source_shadow_eval_result_report_ref": {
+      "title": "Source Shadow Eval Result Report Ref",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "owner_handoff_ready_review_required",
+        "owner_handoff_mixed_review_and_blockers",
+        "owner_handoff_blocked_or_failed",
+        "no_learning_candidates"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "package_count": {
+      "minimum": 0,
+      "title": "Package Count",
+      "type": "integer"
+    },
+    "target_owners": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Target Owners",
+      "type": "array"
+    },
+    "passed_candidate_count": {
+      "minimum": 0,
+      "title": "Passed Candidate Count",
+      "type": "integer"
+    },
+    "failed_candidate_count": {
+      "minimum": 0,
+      "title": "Failed Candidate Count",
+      "type": "integer"
+    },
+    "blocked_candidate_count": {
+      "minimum": 0,
+      "title": "Blocked Candidate Count",
+      "type": "integer"
+    },
+    "packages": {
+      "items": {
+        "$ref": "#/$defs/LearningOwnerHandoffPackage"
+      },
+      "title": "Packages",
+      "type": "array"
+    },
+    "package_output_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Package Output Refs",
+      "type": "array"
+    },
+    "required_next_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Gates",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "human_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Human Review Required",
+      "type": "boolean"
+    },
+    "owning_repo_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Owning Repo Review Required",
+      "type": "boolean"
+    },
+    "promotion_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Promotion Authorized",
+      "type": "boolean"
+    },
+    "proposed_changes_applied": {
+      "const": false,
+      "default": false,
+      "title": "Proposed Changes Applied",
+      "type": "boolean"
+    },
+    "baseline_mutated": {
+      "const": false,
+      "default": false,
+      "title": "Baseline Mutated",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "owner_handoff_report_id",
+    "source_shadow_eval_result_report_id",
+    "source_shadow_eval_result_report_ref",
+    "status",
+    "package_count",
+    "target_owners",
+    "passed_candidate_count",
+    "failed_candidate_count",
+    "blocked_candidate_count",
+    "packages",
+    "required_next_gates",
+    "generated_at"
+  ],
+  "title": "LearningOwnerHandoffReport",
+  "type": "object"
+}

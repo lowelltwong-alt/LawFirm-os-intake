@@ -119,6 +119,9 @@
         "schemas/learning-shadow-eval-fixture-result.schema.json",
         "schemas/learning-shadow-eval-result.schema.json",
         "schemas/learning-shadow-eval-result-report.schema.json",
+        "schemas/learning-owner-handoff-item.schema.json",
+        "schemas/learning-owner-handoff-package.schema.json",
+        "schemas/learning-owner-handoff-report.schema.json",
         "docs/cross-repo-promotion-package.md"
       ],
       "proposed_contract_refs": [
@@ -240,6 +243,8 @@
         "schemas/learning-proposed-change-set.schema.json",
         "schemas/learning-shadow-eval-fixture-result.schema.json",
         "schemas/learning-shadow-eval-result-report.schema.json",
+        "schemas/learning-owner-handoff-package.schema.json",
+        "schemas/learning-owner-handoff-report.schema.json",
         "DATA_FLOW_MAP.md"
       ],
       "proposed_contract_refs": [

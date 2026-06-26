@@ -155,7 +155,9 @@ Each learning proposal should include:
 - explicit `silent_learning_performed=false`.
 
 The current local candidate harness for this gate is `run-learning-shadow-eval`;
-passing results still require human review and owning-repo promotion review.
+`build-learning-owner-handoffs` then packages passed, failed, and blocked
+candidates by target owner. Passing results still require human review and
+owning-repo promotion review.
 
 ## Metrics
 

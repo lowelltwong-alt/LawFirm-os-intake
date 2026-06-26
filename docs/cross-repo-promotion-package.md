@@ -35,6 +35,7 @@ repo owners must review and promote any accepted contracts inside their own repo
 - Learning shadow-eval plan and promotion-readiness report contracts for proposed change artifacts, fixture updates, shadow eval results, regression guardrails, owning-repo review, and explicit blocked-promotion/no-mutation posture.
 - Learning proposed-change artifact contract for recommendation, why-note, red-team objection, fixture, eval, guardrail, owner-routing, and no-application/no-promotion posture before any learning candidate can enter shadow eval.
 - Learning shadow-eval fixture/result/report contracts for baseline-versus-proposed synthetic evidence, eval-suite outcomes, regression guardrail outcomes, owner-review routing, and no-application/no-promotion posture.
+- Learning owner handoff contracts for passed/failed/blocked candidate separation by owning repo, required owner actions, owner review scope, and no-promotion/no-sibling-write posture.
 - Run ledger integrity report contract for local gate-order proof, expected terminal state, existing local output refs, blocked-vs-success status, and no external writes.
 - Fixture gold spec and report contracts for local synthetic evaluation gates, reviewed expectations, run artifact refs, pass/fail checks, and non-authoritative eval evidence.
 - Contract state report contract tying each local run to reviewed lock status, sibling repo SHAs, authority planes, topology agreement, and fail-closed check results.

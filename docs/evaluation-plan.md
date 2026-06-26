@@ -45,11 +45,14 @@ objections, required fixtures, eval suites, guardrails, and owning-repo routing.
 `run-learning-shadow-eval` writes `learning_shadow_eval_result_report.json` and
 `learning_shadow_eval_results.jsonl` after checking synthetic fixture result
 evidence, required eval suites, regression guardrails, and no-mutation
-boundaries. These artifacts are local
+boundaries. `build-learning-owner-handoffs` writes
+`learning_owner_handoff_report.json` and owner-specific packages that separate
+passed, failed, and blocked candidates by target repo. These artifacts are local
 non-authoritative eval evidence: they plan the fixture updates, shadow evals, and
 regression checks required before any learning candidate can be considered by an
 owning repo. They do not apply proposed changes, mutate baselines, authorize
-promotion, write Lake/SQLite records, or replace sibling-repo review.
+promotion, write Lake/SQLite records, write sibling repos, or replace
+sibling-repo review.
 
 ### Counterfactual evals
 

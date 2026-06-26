@@ -185,6 +185,23 @@ still require human shadow-eval review and owning-repo promotion review. The
 command applies no proposed changes, mutates no baselines, writes no Lake/SQLite
 records, and performs no external writes.
 
+### Build learning owner handoffs
+
+```bash
+python -m lawfirm_os_intake build-learning-owner-handoffs \
+  --shadow-eval-result-report .lawfirm-os-intake/learning-shadow-eval/learning_shadow_eval_result_report.json \
+  --out-dir .lawfirm-os-intake/learning-owner-handoffs
+```
+
+This writes `learning_owner_handoff_report.json`,
+`learning_owner_handoff_report.md`, `learning_owner_handoff_packages.jsonl`, and
+one JSON/Markdown package per owning repo under `owner_handoffs/`. The handoff
+separates passed, failed, and blocked candidates for each target owner. Passed
+candidates are only ready for owner review, failed candidates must be declined or
+repaired, and blocked candidates stay blocked pending evidence. The command
+performs no promotion, implementation, Lake/SQLite write, sibling-repo write, or
+external write.
+
 ### Draft carrier rejection Orchestrator interface
 
 ```bash
