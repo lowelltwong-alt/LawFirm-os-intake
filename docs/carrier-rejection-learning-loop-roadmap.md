@@ -181,9 +181,17 @@ time, but missing capture is a production incident.
    Status: implemented for broad-class local mapping; canonical route/event
    promotion remains out of scope for this repo.
 3. Deterministic reconciliation report for expected vs captured carrier responses.
+   Status: implemented for the synthetic local slice through
+   `carrier_rejection_reconciliation_report.json`.
 4. Synthetic portal/email/LEDES rejection fixtures with duplicate, unlinked, malformed,
    partial-allowance, and appeal-result cases.
+   Status: implemented for the current fixture family; more carrier/matter
+   counterfactual fixtures remain useful.
 5. Human review packet for rejection triage and appeal decision.
+   Status: implemented for the synthetic local slice through
+   `review-carrier-rejections`, `carrier_rejection_review_packet.json`,
+   `carrier_rejection_review_notes.md`, and
+   `carrier_rejection_review_decision_template.json`.
 6. Learning-candidate report that proposes guideline, budget-driver, template, or
    narrative-rule updates without mutating profiles.
 7. Orchestrator interface draft for future connector-owned portal/email capture and

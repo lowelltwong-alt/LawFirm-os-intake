@@ -7,6 +7,7 @@ import shutil
 import sys
 
 from .budget_form import build_budget_form_template_audit_report, render_budget_form
+from .carrier_rejection_review import run_carrier_rejection_review
 from .carrier_rejections import run_carrier_rejection_capture
 from .confirmation import bind_confirmation_to_packet_evidence
 from .models import BudgetProposal, HumanConfirmation
@@ -80,6 +81,13 @@ def _parser() -> argparse.ArgumentParser:
     carrier_rejections.add_argument("--budget", required=True)
     carrier_rejections.add_argument("--source-bundle", required=True)
     carrier_rejections.add_argument("--out-dir", required=True)
+
+    carrier_rejection_review = sub.add_parser(
+        "review-carrier-rejections",
+        help="Build a human-review packet for carrier rejection remediation cases.",
+    )
+    carrier_rejection_review.add_argument("--reconciliation-report", required=True)
+    carrier_rejection_review.add_argument("--out-dir", required=True)
     return parser
 
 
@@ -295,6 +303,29 @@ def main(argv: list[str] | None = None) -> int:
                     "not_authorized_for_external_submission": (
                         report.not_authorized_for_external_submission
                     ),
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0
+
+        if args.command == "review-carrier-rejections":
+            packet, run_dir = run_carrier_rejection_review(
+                args.reconciliation_report,
+                args.out_dir,
+            )
+            _print(
+                {
+                    "status": packet.status,
+                    "review_packet_id": packet.review_packet_id,
+                    "reconciliation_report_id": packet.reconciliation_report_id,
+                    "recommendation_count": len(packet.recommendations),
+                    "red_team_note_count": len(packet.red_team_notes),
+                    "decision_template_count": len(packet.decision_templates),
+                    "not_authorized_for_lake_write": packet.not_authorized_for_lake_write,
+                    "not_authorized_for_external_submission": (
+                        packet.not_authorized_for_external_submission
+                    ),
+                    "external_writes_performed": packet.external_writes_performed,
                     "run_dir": str(run_dir),
                 }
             )

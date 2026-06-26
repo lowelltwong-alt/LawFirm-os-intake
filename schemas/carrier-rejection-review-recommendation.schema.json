@@ -1,0 +1,132 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "recommendation_id": {
+      "title": "Recommendation Id",
+      "type": "string"
+    },
+    "remediation_case_id": {
+      "title": "Remediation Case Id",
+      "type": "string"
+    },
+    "local_event_label": {
+      "title": "Local Event Label",
+      "type": "string"
+    },
+    "recommended_action": {
+      "enum": [
+        "appeal_review_required",
+        "confirm_missing_response_followup",
+        "link_or_escalate_unlinked_notice",
+        "parse_repair_required",
+        "record_appeal_result",
+        "human_decision_required"
+      ],
+      "title": "Recommended Action",
+      "type": "string"
+    },
+    "priority": {
+      "enum": [
+        "critical",
+        "high",
+        "medium",
+        "low"
+      ],
+      "title": "Priority",
+      "type": "string"
+    },
+    "human_owner": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Human Owner"
+    },
+    "followup_due_at": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Followup Due At"
+    },
+    "financial_exposure": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Financial Exposure",
+      "type": "number"
+    },
+    "source_ref_count": {
+      "minimum": 0,
+      "title": "Source Ref Count",
+      "type": "integer"
+    },
+    "source_channels": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Source Channels",
+      "type": "array"
+    },
+    "why": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Why",
+      "type": "array"
+    },
+    "required_human_decisions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Human Decisions",
+      "type": "array"
+    },
+    "learning_disposition_candidates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Learning Disposition Candidates",
+      "type": "array"
+    },
+    "exception_candidate_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Exception Candidate Ids",
+      "type": "array"
+    },
+    "not_authorized_for_external_submission": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For External Submission",
+      "type": "boolean"
+    },
+    "not_authorized_for_lake_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Lake Write",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "recommendation_id",
+    "remediation_case_id",
+    "local_event_label",
+    "recommended_action",
+    "priority",
+    "source_ref_count",
+    "why"
+  ],
+  "title": "CarrierRejectionReviewRecommendation",
+  "type": "object"
+}

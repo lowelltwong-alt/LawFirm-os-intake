@@ -114,7 +114,9 @@ Keep Python as reference runtime while adding benchmark thresholds and parity re
 
 ## 10. Carrier Rejection Capture And Learning Loop
 
-Status: first synthetic candidate slice implemented; production capture remains future Orchestrator/Lake work.
+Status: capture, reconciliation, dry-run mapping, and human-review packet slices
+implemented for the current synthetic candidate; production capture remains future
+Orchestrator/Lake work.
 
 Capture 100% of future carrier budget and invoice rejections by deterministic
 reconciliation, not by relying on model classification. See
@@ -142,3 +144,7 @@ reconciliation, not by relying on model classification. See
   remediation cases, collapses duplicate notices by idempotency key, catches
   unlinked notices and missing responses, records appeal results as append-only
   evidence, and writes dry-run Exception Lake candidates.
+- The local `review-carrier-rejections` command now turns a reconciliation report
+  into a human-review packet with recommended actions, why-notes, red-team checks,
+  decision templates, dry-run Lake candidate refs, and no-write/no-submission/no-
+  silent-learning boundaries.

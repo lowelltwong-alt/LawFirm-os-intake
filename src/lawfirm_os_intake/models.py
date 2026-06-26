@@ -1460,6 +1460,119 @@ class CarrierResponseReconciliationReport(StrictModel):
     generated_at: str
 
 
+class CarrierRejectionReviewRecommendation(StrictModel):
+    recommendation_id: str
+    remediation_case_id: str
+    local_event_label: str
+    recommended_action: Literal[
+        "appeal_review_required",
+        "confirm_missing_response_followup",
+        "link_or_escalate_unlinked_notice",
+        "parse_repair_required",
+        "record_appeal_result",
+        "human_decision_required",
+    ]
+    priority: Literal["critical", "high", "medium", "low"]
+    human_owner: str | None = None
+    followup_due_at: str | None = None
+    financial_exposure: float = Field(default=0, ge=0)
+    source_ref_count: int = Field(ge=0)
+    source_channels: list[str] = Field(default_factory=list)
+    why: list[str]
+    required_human_decisions: list[str] = Field(default_factory=list)
+    learning_disposition_candidates: list[str] = Field(default_factory=list)
+    exception_candidate_ids: list[str] = Field(default_factory=list)
+    not_authorized_for_external_submission: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+
+
+class CarrierRejectionReviewRedTeamNote(StrictModel):
+    note_id: str
+    severity: Literal["critical", "high", "medium", "low"]
+    scope: Literal[
+        "capture_completeness",
+        "idempotency",
+        "linkage",
+        "parser_failure",
+        "financial_math",
+        "human_authority",
+        "learning_loop",
+        "boundary",
+    ]
+    remediation_case_ids: list[str] = Field(default_factory=list)
+    message: str
+    recommended_check: str
+
+
+class CarrierRejectionReviewDecisionTemplate(StrictModel):
+    remediation_case_id: str
+    allowed_outcomes: list[
+        Literal[
+            "confirm_classification",
+            "correct_classification",
+            "confirm_linkage",
+            "correct_linkage",
+            "needs_more_information",
+            "appeal",
+            "no_appeal",
+            "accept_write_down",
+            "fix_and_resubmit",
+            "record_appeal_result",
+            "human_only",
+            "close_no_action",
+            "create_learning_candidate",
+            "no_learning_change",
+        ]
+    ]
+    required_fields: list[str]
+    mutation_policy: Literal["append_or_supersede_only"] = "append_or_supersede_only"
+    external_submission_authorized: Literal[False] = False
+    silent_learning_allowed: Literal[False] = False
+
+
+class CarrierRejectionReviewPacket(StrictModel):
+    schema_version: str = "0.1"
+    review_packet_id: str
+    reconciliation_report_id: str
+    run_id: str
+    preflight_packet_id: str
+    budget_proposal_id: str
+    status: Literal[
+        "ready_for_human_review",
+        "blocked_missing_required_followup",
+        "no_cases_to_review",
+    ]
+    expected_response_count: int = Field(ge=0)
+    reconciled_response_count: int = Field(ge=0)
+    missing_response_count: int = Field(ge=0)
+    unlinked_notice_count: int = Field(ge=0)
+    duplicate_notice_count: int = Field(ge=0)
+    parser_failure_count: int = Field(ge=0)
+    appeal_result_count: int = Field(ge=0)
+    remediation_case_count: int = Field(ge=0)
+    total_financial_exposure: float = Field(ge=0)
+    dry_run_exception_candidate_count: int = Field(ge=0)
+    recommendations: list[CarrierRejectionReviewRecommendation]
+    red_team_notes: list[CarrierRejectionReviewRedTeamNote]
+    decision_templates: list[CarrierRejectionReviewDecisionTemplate]
+    dry_run_exception_candidate_ids: list[str] = Field(default_factory=list)
+    gap_report: list[str] = Field(default_factory=list)
+    allowed_reviewer_outcomes: list[str]
+    required_review_sections: list[str]
+    human_readable_review_ref: str | None = None
+    mutation_policy: Literal["append_or_supersede_only"] = "append_or_supersede_only"
+    target_orchestrator_owner: Literal["LawFirm-os-orchestrator"] = "LawFirm-os-orchestrator"
+    target_exception_lake_owner: Literal["LawFirm-os-exceptions-lake-runtime"] = (
+        "LawFirm-os-exceptions-lake-runtime"
+    )
+    candidate_only: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_external_submission: Literal[True] = True
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+
 class ExceptionLakeReadinessCheck(StrictModel):
     check_id: str
     status: Literal["passed", "failed"]

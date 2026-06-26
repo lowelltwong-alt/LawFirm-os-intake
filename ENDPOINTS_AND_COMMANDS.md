@@ -45,6 +45,21 @@ synthetic expected responses against captured notices, classifies local candidat
 labels deterministically, collapses duplicate notices by idempotency key, and
 keeps all Lake records dry-run only.
 
+### Review synthetic carrier rejection remediation cases
+
+```bash
+python -m lawfirm_os_intake review-carrier-rejections \
+  --reconciliation-report .lawfirm-os-intake/carrier-rejections/carrier_rejection_reconciliation_report.json \
+  --out-dir .lawfirm-os-intake/carrier-rejection-review
+```
+
+This writes `carrier_rejection_review_packet.json`,
+`carrier_rejection_review_notes.md`, and
+`carrier_rejection_review_decision_template.json`. The packet gives each
+remediation case a recommended human review action, explains why, surfaces
+red-team checks, and preserves the no-Lake-write, no-external-submission, and
+no-silent-learning boundaries.
+
 ## Exit posture
 
 - `0`: local workflow step completed and artifacts emitted.
