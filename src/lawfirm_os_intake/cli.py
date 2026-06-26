@@ -57,6 +57,9 @@ from .public_source_methodology import run_public_source_methodology_audit
 from .public_synthetic_fixture_conversion import (
     run_public_synthetic_fixture_conversion_plan,
 )
+from .public_synthetic_fixture_conversion_review import (
+    run_public_synthetic_fixture_conversion_review,
+)
 from .reviewed_learning_gate import run_reviewed_learning_gate
 from .util import load_json, write_json
 from .workflow import run_budget, run_preflight
@@ -316,6 +319,17 @@ def _parser() -> argparse.ArgumentParser:
         help="Path to public_source_methodology_report.json.",
     )
     public_synthetic_conversion.add_argument("--out-dir", required=True)
+
+    public_synthetic_conversion_review = sub.add_parser(
+        "review-public-synthetic-fixture-conversion",
+        help="Build a human-review packet for public synthetic fixture conversion specs.",
+    )
+    public_synthetic_conversion_review.add_argument(
+        "--conversion-plan",
+        required=True,
+        help="Path to public_synthetic_fixture_conversion_plan.json.",
+    )
+    public_synthetic_conversion_review.add_argument("--out-dir", required=True)
 
     carrier_rejections = sub.add_parser(
         "capture-carrier-rejections",
@@ -1323,6 +1337,43 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             if plan.status == "blocked_public_methodology_not_ready":
+                return 2
+            return 0
+
+        if args.command == "review-public-synthetic-fixture-conversion":
+            packet, run_dir = run_public_synthetic_fixture_conversion_review(
+                conversion_plan_path=args.conversion_plan,
+                out_dir=args.out_dir,
+            )
+            _print(
+                {
+                    "status": packet.status,
+                    "review_packet_id": packet.review_packet_id,
+                    "conversion_plan_id": packet.conversion_plan_id,
+                    "conversion_plan_status": packet.conversion_plan_status,
+                    "spec_count": packet.spec_count,
+                    "recommendation_count": packet.recommendation_count,
+                    "red_team_note_count": packet.red_team_note_count,
+                    "decision_template_count": packet.decision_template_count,
+                    "human_readable_review_ref": packet.human_readable_review_ref,
+                    "decision_template_ref": packet.decision_template_ref,
+                    "public_records_ingested": packet.public_records_ingested,
+                    "raw_public_payload_committed": packet.raw_public_payload_committed,
+                    "synthetic_fixtures_created": packet.synthetic_fixtures_created,
+                    "fixture_files_mutated": packet.fixture_files_mutated,
+                    "fixture_pr_created": packet.fixture_pr_created,
+                    "connector_implemented": packet.connector_implemented,
+                    "legal_knowledge_adapter_authorized": (
+                        packet.legal_knowledge_adapter_authorized
+                    ),
+                    "lake_write_performed": packet.lake_write_performed,
+                    "sqlite_write_performed": packet.sqlite_write_performed,
+                    "external_writes_performed": packet.external_writes_performed,
+                    "silent_learning_performed": packet.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            if packet.status != "ready_for_human_conversion_review":
                 return 2
             return 0
 

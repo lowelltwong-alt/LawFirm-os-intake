@@ -294,6 +294,7 @@ Measure review time, correction count, unknown selection, evidence-navigation bu
 - keep `intake_local_closeout_report.json` local and non-authoritative; it proves the local closeout evidence chain and remaining manual gates but must not mark a PR ready, create issues, open PRs, write sibling repos, promote canon, admit Lake/SQLite records, or apply learning.
 - keep `public_source_methodology_report.json` local and non-authoritative; it prepares public-source methodology review but must not ingest public records, authorize adapters, commit public payloads, write Lake/SQLite records, or permit runtime public-data use.
 - keep `public_synthetic_fixture_conversion_plan.json` local and non-authoritative; it plans structure-only synthetic fixture conversion but must not create fixture files, ingest public records, authorize adapters, commit payloads, write Lake/SQLite records, or apply public-data learning.
+- keep `public_synthetic_fixture_conversion_review_packet.json` local and non-authoritative; it helps humans decide whether conversion specs may proceed to a separate fixture PR but must not approve fixture generation by itself, create PRs, mutate fixtures, ingest public records, authorize adapters, write Lake/SQLite records, or apply learning.
 
 ## Graduation gates
 

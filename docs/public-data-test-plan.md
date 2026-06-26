@@ -12,6 +12,8 @@ Run `audit-public-source-methodology` before using any public source to design n
 
 Run `plan-public-synthetic-fixture-conversion` after a ready methodology report and before any fixture work. The conversion plan records what structure may be abstracted, what identity or payload inputs are forbidden, how identities must be replaced, and which synthetic gold/red-team checks must pass. It creates no fixture files and remains blocked until human conversion review.
 
+Run `review-public-synthetic-fixture-conversion` after the conversion plan. The review packet gives a human reviewer recommendations, why-notes, required decisions, red-team notes, and append-only decision templates. A ready packet is not fixture approval; it still does not create fixtures, create PRs, authorize adapters, or ingest public records.
+
 ## Recommended sources
 
 ### CourtListener / RECAP
@@ -42,11 +44,12 @@ Use only after a specific privacy and use review, primarily for aggregate medica
 
 1. Catalog source, fields, terms, license, retention, and privacy risks.
 2. Map fields to local candidate schemas without downloading content into the repo.
-3. Generate a public synthetic fixture conversion plan and complete human review.
-4. Create non-identifying synthetic fixtures that preserve document structure in a separate PR.
-5. Run extraction and segmentation evals.
-6. Compare against hand-labeled synthetic gold.
-7. Seek governance approval before any direct public-record processing.
+3. Generate a public synthetic fixture conversion plan.
+4. Build and review the public synthetic fixture conversion review packet.
+5. Create non-identifying synthetic fixtures that preserve document structure in a separate PR only after approval.
+6. Run extraction and segmentation evals.
+7. Compare against hand-labeled synthetic gold.
+8. Seek governance approval before any direct public-record processing.
 
 ## What public data can test
 

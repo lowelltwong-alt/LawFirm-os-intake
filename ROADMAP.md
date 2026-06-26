@@ -56,6 +56,7 @@ Build:
 - source/license/privacy/retention review templates;
 - planning-only public-source methodology audit;
 - planning-only conversion specs for public structures to non-identifying synthetic fixtures;
+- human review packet with recommendations, why-notes, red-team checks, and decision templates;
 - approved process for creating those fixtures in a separate reviewed PR.
 
 Exit criteria:
@@ -63,6 +64,7 @@ Exit criteria:
 - public source catalog is complete and reviewed;
 - methodology audit passes with direct runtime ingestion and adapter authorization still disabled;
 - synthetic fixture conversion plan is ready for human review with red-team checks and no fixture mutation;
+- conversion review packet is ready for human decision with no fixture PR creation or silent learning;
 - no copyrighted bulk corpus is committed;
 - no real public party data enters runtime fixtures;
 - provenance and transformation method are documented.

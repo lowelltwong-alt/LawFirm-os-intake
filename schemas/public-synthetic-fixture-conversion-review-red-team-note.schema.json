@@ -1,0 +1,57 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "note_id": {
+      "title": "Note Id",
+      "type": "string"
+    },
+    "severity": {
+      "enum": [
+        "critical",
+        "high",
+        "medium",
+        "low"
+      ],
+      "title": "Severity",
+      "type": "string"
+    },
+    "scope": {
+      "enum": [
+        "boundary",
+        "identity_reconstruction",
+        "privacy_license_retention",
+        "payload_contamination",
+        "legal_fact_misuse",
+        "adapter_scope",
+        "aggregate_reidentification",
+        "prompt_injection"
+      ],
+      "title": "Scope",
+      "type": "string"
+    },
+    "message": {
+      "title": "Message",
+      "type": "string"
+    },
+    "recommended_check": {
+      "title": "Recommended Check",
+      "type": "string"
+    },
+    "source_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Source Ids",
+      "type": "array"
+    }
+  },
+  "required": [
+    "note_id",
+    "severity",
+    "scope",
+    "message",
+    "recommended_check"
+  ],
+  "title": "PublicSyntheticFixtureConversionReviewRedTeamNote",
+  "type": "object"
+}

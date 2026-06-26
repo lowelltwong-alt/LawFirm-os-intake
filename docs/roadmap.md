@@ -641,6 +641,10 @@ without letting public records enter the runtime.
   report and writes `public_synthetic_fixture_conversion_plan.json`,
   `public_synthetic_fixture_conversion_plan.md`, and
   `public_synthetic_fixture_conversion_specs.jsonl`.
+- `review-public-synthetic-fixture-conversion` consumes the conversion plan and
+  writes `public_synthetic_fixture_conversion_review_packet.json`,
+  `public_synthetic_fixture_conversion_review_packet.md`, and
+  `public_synthetic_fixture_conversion_review_decision_template.json`.
 - It checks that CourtListener/RECAP, FJC IDB, and the Enron email corpus are
   present for Phase 2 structure research, while all sources remain planning-only
   and direct ingestion remains disabled.
@@ -651,6 +655,9 @@ without letting public records enter the runtime.
   synthetic fixture families with allowed structure inputs, forbidden
   identity/payload inputs, identity-replacement rules, synthetic gold checks,
   and red-team checks.
+- The review packet adds source-by-source recommendations, why-notes, required
+  human decisions, red-team notes, and append-only decision templates before any
+  separate fixture PR can be prepared.
 - Passing means `ready_for_human_public_source_methodology_review`, not
   adapter approval or runtime eligibility.
 - The command records `public_records_ingested=false`,
@@ -660,6 +667,8 @@ without letting public records enter the runtime.
 - The conversion plan records `synthetic_fixtures_created=false` and
   `fixture_files_mutated=false`; fixture creation still requires a separate
   human-reviewed PR.
+- The review packet records `fixture_pr_created=false` and
+  `silent_learning_performed=false`; it is not approval by itself.
 
 ## 19. Budget Calibration Corpus
 

@@ -604,6 +604,175 @@ class PublicSyntheticFixtureConversionPlan(StrictModel):
         return self
 
 
+PublicSyntheticFixtureReviewPriority = Literal["critical", "high", "medium", "low"]
+
+PublicSyntheticFixtureReviewAction = Literal[
+    "approve_for_separate_fixture_pr_after_required_reviews",
+    "hold_for_privacy_or_license_review",
+    "revise_conversion_spec_before_fixture_pr",
+    "reject_source_for_fixture_use",
+    "human_only_hold",
+]
+
+PublicSyntheticFixtureReviewOutcome = Literal[
+    "approve_conversion_spec_for_separate_fixture_pr",
+    "require_spec_revision",
+    "reject_source_for_fixture_use",
+    "needs_more_information",
+    "human_only_hold",
+]
+
+
+class PublicSyntheticFixtureConversionReviewRecommendation(StrictModel):
+    recommendation_id: str
+    conversion_spec_id: str
+    source_id: str
+    target_fixture_family: PublicSyntheticFixtureFamily
+    recommended_action: PublicSyntheticFixtureReviewAction
+    priority: PublicSyntheticFixtureReviewPriority
+    why: list[str]
+    required_human_decisions: list[str]
+    required_evidence_refs: list[str]
+    red_team_focus: list[str]
+    fixture_generation_authorized: Literal[False] = False
+    fixture_pr_created: Literal[False] = False
+    external_submission_authorized: Literal[False] = False
+    lake_write_authorized: Literal[False] = False
+    silent_learning_allowed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def recommendation_requires_review_basis(
+        self,
+    ) -> "PublicSyntheticFixtureConversionReviewRecommendation":
+        if not self.why:
+            raise ValueError("conversion review recommendation requires why notes")
+        if not self.required_human_decisions:
+            raise ValueError("conversion review recommendation requires human decisions")
+        if not self.required_evidence_refs:
+            raise ValueError("conversion review recommendation requires evidence refs")
+        if not self.red_team_focus:
+            raise ValueError("conversion review recommendation requires red-team focus")
+        return self
+
+
+class PublicSyntheticFixtureConversionReviewRedTeamNote(StrictModel):
+    note_id: str
+    severity: PublicSyntheticFixtureReviewPriority
+    scope: Literal[
+        "boundary",
+        "identity_reconstruction",
+        "privacy_license_retention",
+        "payload_contamination",
+        "legal_fact_misuse",
+        "adapter_scope",
+        "aggregate_reidentification",
+        "prompt_injection",
+    ]
+    message: str
+    recommended_check: str
+    source_ids: list[str] = Field(default_factory=list)
+
+
+class PublicSyntheticFixtureConversionReviewDecisionTemplate(StrictModel):
+    decision_template_id: str
+    conversion_spec_id: str
+    source_id: str
+    recommended_action: PublicSyntheticFixtureReviewAction
+    allowed_outcomes: list[PublicSyntheticFixtureReviewOutcome]
+    recommended_outcome: PublicSyntheticFixtureReviewOutcome
+    required_fields: list[str]
+    required_evidence_refs: list[str]
+    append_only_review_outcome_required: Literal[True] = True
+    reviewer_id_required: Literal[True] = True
+    reviewed_at_required: Literal[True] = True
+    decision_reason_required: Literal[True] = True
+    fixture_generation_authorized: Literal[False] = False
+    fixture_files_mutated: Literal[False] = False
+    external_submission_authorized: Literal[False] = False
+    lake_write_authorized: Literal[False] = False
+    silent_learning_allowed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def decision_template_requires_fields(
+        self,
+    ) -> "PublicSyntheticFixtureConversionReviewDecisionTemplate":
+        if not self.allowed_outcomes:
+            raise ValueError("conversion review decision template requires outcomes")
+        if self.recommended_outcome not in self.allowed_outcomes:
+            raise ValueError("recommended outcome must be allowed")
+        if not self.required_fields:
+            raise ValueError("conversion review decision template requires fields")
+        if not self.required_evidence_refs:
+            raise ValueError("conversion review decision template requires evidence refs")
+        return self
+
+
+class PublicSyntheticFixtureConversionReviewPacket(StrictModel):
+    schema_version: str = "0.1"
+    review_packet_id: str
+    conversion_plan_id: str
+    conversion_plan_ref: str
+    conversion_plan_status: str
+    status: Literal[
+        "ready_for_human_conversion_review",
+        "blocked_by_conversion_plan",
+        "no_specs_to_review",
+    ]
+    spec_count: int = Field(ge=0)
+    recommendation_count: int = Field(ge=0)
+    red_team_note_count: int = Field(ge=0)
+    decision_template_count: int = Field(ge=0)
+    recommendations: list[PublicSyntheticFixtureConversionReviewRecommendation]
+    red_team_notes: list[PublicSyntheticFixtureConversionReviewRedTeamNote]
+    decision_templates: list[PublicSyntheticFixtureConversionReviewDecisionTemplate]
+    allowed_reviewer_outcomes: list[PublicSyntheticFixtureReviewOutcome]
+    required_next_gates: list[str]
+    human_readable_review_ref: str | None = None
+    decision_template_ref: str | None = None
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    planning_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    append_only_review_outcome_required: Literal[True] = True
+    public_records_ingested: Literal[False] = False
+    raw_public_payload_committed: Literal[False] = False
+    synthetic_fixtures_created: Literal[False] = False
+    fixture_files_mutated: Literal[False] = False
+    fixture_pr_created: Literal[False] = False
+    connector_implemented: Literal[False] = False
+    legal_knowledge_adapter_authorized: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def conversion_review_packet_counts_match(
+        self,
+    ) -> "PublicSyntheticFixtureConversionReviewPacket":
+        if self.recommendation_count != len(self.recommendations):
+            raise ValueError("conversion review recommendation count must match")
+        if self.red_team_note_count != len(self.red_team_notes):
+            raise ValueError("conversion review red-team note count must match")
+        if self.decision_template_count != len(self.decision_templates):
+            raise ValueError("conversion review decision template count must match")
+        if self.status == "ready_for_human_conversion_review":
+            if self.conversion_plan_status != "ready_for_human_conversion_review":
+                raise ValueError("ready review packet requires ready conversion plan")
+            if self.spec_count == 0:
+                raise ValueError("ready review packet requires specs")
+            if self.recommendation_count != self.spec_count:
+                raise ValueError("ready review packet requires one recommendation per spec")
+            if self.decision_template_count != self.spec_count:
+                raise ValueError("ready review packet requires one decision template per spec")
+            if not self.red_team_notes:
+                raise ValueError("ready review packet requires red-team notes")
+        if self.status == "blocked_by_conversion_plan" and self.recommendations:
+            raise ValueError("blocked review packet cannot include recommendations")
+        return self
+
+
 class ContractStateDependency(StrictModel):
     repo: str
     remote: str | None = None

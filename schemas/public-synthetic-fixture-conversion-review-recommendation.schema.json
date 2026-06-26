@@ -1,0 +1,123 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "recommendation_id": {
+      "title": "Recommendation Id",
+      "type": "string"
+    },
+    "conversion_spec_id": {
+      "title": "Conversion Spec Id",
+      "type": "string"
+    },
+    "source_id": {
+      "title": "Source Id",
+      "type": "string"
+    },
+    "target_fixture_family": {
+      "enum": [
+        "docket_structure",
+        "aggregate_case_metadata",
+        "messy_email_structure",
+        "public_filing_structure",
+        "auto_liability_distribution",
+        "medical_malpractice_distribution",
+        "public_structure_review"
+      ],
+      "title": "Target Fixture Family",
+      "type": "string"
+    },
+    "recommended_action": {
+      "enum": [
+        "approve_for_separate_fixture_pr_after_required_reviews",
+        "hold_for_privacy_or_license_review",
+        "revise_conversion_spec_before_fixture_pr",
+        "reject_source_for_fixture_use",
+        "human_only_hold"
+      ],
+      "title": "Recommended Action",
+      "type": "string"
+    },
+    "priority": {
+      "enum": [
+        "critical",
+        "high",
+        "medium",
+        "low"
+      ],
+      "title": "Priority",
+      "type": "string"
+    },
+    "why": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Why",
+      "type": "array"
+    },
+    "required_human_decisions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Human Decisions",
+      "type": "array"
+    },
+    "required_evidence_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Evidence Refs",
+      "type": "array"
+    },
+    "red_team_focus": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Red Team Focus",
+      "type": "array"
+    },
+    "fixture_generation_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Fixture Generation Authorized",
+      "type": "boolean"
+    },
+    "fixture_pr_created": {
+      "const": false,
+      "default": false,
+      "title": "Fixture Pr Created",
+      "type": "boolean"
+    },
+    "external_submission_authorized": {
+      "const": false,
+      "default": false,
+      "title": "External Submission Authorized",
+      "type": "boolean"
+    },
+    "lake_write_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Authorized",
+      "type": "boolean"
+    },
+    "silent_learning_allowed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Allowed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "recommendation_id",
+    "conversion_spec_id",
+    "source_id",
+    "target_fixture_family",
+    "recommended_action",
+    "priority",
+    "why",
+    "required_human_decisions",
+    "required_evidence_refs",
+    "red_team_focus"
+  ],
+  "title": "PublicSyntheticFixtureConversionReviewRecommendation",
+  "type": "object"
+}

@@ -317,6 +317,23 @@ blocks if the methodology report is not ready and never creates fixtures,
 ingests public records, authorizes adapters, mutates fixture files, writes
 Lake/SQLite records, or permits runtime public-data use.
 
+### Review public synthetic fixture conversion
+
+```bash
+python -m lawfirm_os_intake review-public-synthetic-fixture-conversion \
+  --conversion-plan .lawfirm-os-intake/public-synthetic-fixture-conversion/public_synthetic_fixture_conversion_plan.json \
+  --out-dir .lawfirm-os-intake/public-synthetic-fixture-conversion-review
+```
+
+This writes `public_synthetic_fixture_conversion_review_packet.json`,
+`public_synthetic_fixture_conversion_review_packet.md`, and
+`public_synthetic_fixture_conversion_review_decision_template.json`. The packet
+adds source-by-source recommendations, why-notes, required human decisions,
+red-team notes, and append-only decision templates. It blocks if the conversion
+plan is not ready and never approves fixture generation, creates fixture PRs,
+ingests public records, authorizes adapters, mutates fixture files, writes
+Lake/SQLite records, or applies learning.
+
 ### Build learning owner handoffs
 
 ```bash

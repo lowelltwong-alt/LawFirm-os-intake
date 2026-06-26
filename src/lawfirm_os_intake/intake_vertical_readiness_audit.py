@@ -428,6 +428,33 @@ REQUIRED_SLICES: tuple[SliceDefinition, ...] = (
     ),
     SliceDefinition(
         slice_id=17,
+        title="Public synthetic fixture conversion review packet",
+        requirement_summary=(
+            "Public synthetic fixture conversion specs can be packaged for human "
+            "review with recommendations, why-notes, red-team notes, and append-only "
+            "decision templates without approving fixture generation or creating fixture PRs."
+        ),
+        proof_artifact_refs=(
+            "src/lawfirm_os_intake/public_synthetic_fixture_conversion_review.py",
+            "schemas/public-synthetic-fixture-conversion-review-packet.schema.json",
+            "schemas/public-synthetic-fixture-conversion-review-decision-template.schema.json",
+            "tests/test_public_synthetic_fixture_conversion_review.py",
+            "docs/decisions/TRACE-2026-06-26-public-synthetic-fixture-conversion-review.md",
+            "docs/public-data-test-plan.md",
+        ),
+        command_refs=("review-public-synthetic-fixture-conversion",),
+        target_owner_repos=(
+            "LawFirm-os-intake",
+            "LawFirm-os-legal-knowledge-runtime",
+        ),
+        remaining_external_actions=(
+            "Humans must record an append-only conversion review outcome before any fixture PR.",
+            "Fixture generation must happen in a separate reviewed PR.",
+            "Legal Knowledge Runtime must own any future lookup or retrieval adapter.",
+        ),
+    ),
+    SliceDefinition(
+        slice_id=18,
         title="Final intake vertical readiness audit",
         requirement_summary=(
             "A deterministic final audit checks local surfaces plus the generated learning "
