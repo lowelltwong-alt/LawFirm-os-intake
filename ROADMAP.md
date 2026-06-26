@@ -55,12 +55,14 @@ Build:
 - Enron email structural parser stress tests;
 - source/license/privacy/retention review templates;
 - planning-only public-source methodology audit;
-- approved process for converting public structures into non-identifying synthetic fixtures.
+- planning-only conversion specs for public structures to non-identifying synthetic fixtures;
+- approved process for creating those fixtures in a separate reviewed PR.
 
 Exit criteria:
 
 - public source catalog is complete and reviewed;
 - methodology audit passes with direct runtime ingestion and adapter authorization still disabled;
+- synthetic fixture conversion plan is ready for human review with red-team checks and no fixture mutation;
 - no copyrighted bulk corpus is committed;
 - no real public party data enters runtime fixtures;
 - provenance and transformation method are documented.

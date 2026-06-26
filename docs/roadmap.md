@@ -637,18 +637,29 @@ without letting public records enter the runtime.
 - `audit-public-source-methodology` consumes the public catalog and data policy.
 - It writes `public_source_methodology_report.json` and
   `public_source_methodology_report.md`.
+- `plan-public-synthetic-fixture-conversion` consumes a ready methodology
+  report and writes `public_synthetic_fixture_conversion_plan.json`,
+  `public_synthetic_fixture_conversion_plan.md`, and
+  `public_synthetic_fixture_conversion_specs.jsonl`.
 - It checks that CourtListener/RECAP, FJC IDB, and the Enron email corpus are
   present for Phase 2 structure research, while all sources remain planning-only
   and direct ingestion remains disabled.
 - It reuses the existing public-data boundary validator so raw public payloads,
   public example files, direct public runtime origins, and payload fields fail
   closed.
+- The conversion plan maps public methodology sources to non-identifying
+  synthetic fixture families with allowed structure inputs, forbidden
+  identity/payload inputs, identity-replacement rules, synthetic gold checks,
+  and red-team checks.
 - Passing means `ready_for_human_public_source_methodology_review`, not
   adapter approval or runtime eligibility.
 - The command records `public_records_ingested=false`,
   `raw_public_payload_committed=false`, `connector_implemented=false`,
   `legal_knowledge_adapter_authorized=false`, `lake_write_performed=false`,
   `sqlite_write_performed=false`, and `external_writes_performed=false`.
+- The conversion plan records `synthetic_fixtures_created=false` and
+  `fixture_files_mutated=false`; fixture creation still requires a separate
+  human-reviewed PR.
 
 ## 19. Budget Calibration Corpus
 

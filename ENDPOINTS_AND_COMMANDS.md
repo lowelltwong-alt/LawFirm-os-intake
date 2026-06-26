@@ -299,6 +299,24 @@ means ready for human public-source methodology review only; it does not ingest
 public records, authorize adapters, write Lake/SQLite records, or permit runtime
 public-data use.
 
+### Plan public synthetic fixture conversion
+
+```bash
+python -m lawfirm_os_intake plan-public-synthetic-fixture-conversion \
+  --methodology-report .lawfirm-os-intake/public-source-methodology/public_source_methodology_report.json \
+  --out-dir .lawfirm-os-intake/public-synthetic-fixture-conversion
+```
+
+This writes `public_synthetic_fixture_conversion_plan.json`,
+`public_synthetic_fixture_conversion_plan.md`, and
+`public_synthetic_fixture_conversion_specs.jsonl`. The plan maps each reviewed
+public methodology source to a target synthetic fixture family, allowed
+structure-only inputs, forbidden real identity/payload inputs,
+identity-replacement rules, synthetic gold checks, and red-team checks. It
+blocks if the methodology report is not ready and never creates fixtures,
+ingests public records, authorizes adapters, mutates fixture files, writes
+Lake/SQLite records, or permits runtime public-data use.
+
 ### Build learning owner handoffs
 
 ```bash

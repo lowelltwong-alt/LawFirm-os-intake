@@ -54,6 +54,9 @@ from .learning_shadow_eval_results import run_learning_shadow_eval_results
 from .models import BudgetProposal, HumanConfirmation
 from .pr_review_checklist import run_pr_review_checklist
 from .public_source_methodology import run_public_source_methodology_audit
+from .public_synthetic_fixture_conversion import (
+    run_public_synthetic_fixture_conversion_plan,
+)
 from .reviewed_learning_gate import run_reviewed_learning_gate
 from .util import load_json, write_json
 from .workflow import run_budget, run_preflight
@@ -302,6 +305,17 @@ def _parser() -> argparse.ArgumentParser:
         default=".",
         help="Repository root to inspect; defaults to the current working directory.",
     )
+
+    public_synthetic_conversion = sub.add_parser(
+        "plan-public-synthetic-fixture-conversion",
+        help="Plan human-reviewed public-structure to synthetic-fixture conversion.",
+    )
+    public_synthetic_conversion.add_argument(
+        "--methodology-report",
+        required=True,
+        help="Path to public_source_methodology_report.json.",
+    )
+    public_synthetic_conversion.add_argument("--out-dir", required=True)
 
     carrier_rejections = sub.add_parser(
         "capture-carrier-rejections",
@@ -1279,6 +1293,36 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             if report.status == "blocked_public_source_methodology":
+                return 2
+            return 0
+
+        if args.command == "plan-public-synthetic-fixture-conversion":
+            plan, run_dir = run_public_synthetic_fixture_conversion_plan(
+                methodology_report_path=args.methodology_report,
+                out_dir=args.out_dir,
+            )
+            failed_checks = [check.check_id for check in plan.checks if check.status != "passed"]
+            _print(
+                {
+                    "status": plan.status,
+                    "conversion_plan_id": plan.conversion_plan_id,
+                    "source_methodology_report_ref": plan.source_methodology_report_ref,
+                    "spec_count": plan.spec_count,
+                    "specs_output_ref": plan.specs_output_ref,
+                    "failed_checks": failed_checks,
+                    "public_records_ingested": plan.public_records_ingested,
+                    "raw_public_payload_committed": plan.raw_public_payload_committed,
+                    "synthetic_fixtures_created": plan.synthetic_fixtures_created,
+                    "fixture_files_mutated": plan.fixture_files_mutated,
+                    "connector_implemented": plan.connector_implemented,
+                    "legal_knowledge_adapter_authorized": (plan.legal_knowledge_adapter_authorized),
+                    "lake_write_performed": plan.lake_write_performed,
+                    "sqlite_write_performed": plan.sqlite_write_performed,
+                    "external_writes_performed": plan.external_writes_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            if plan.status == "blocked_public_methodology_not_ready":
                 return 2
             return 0
 

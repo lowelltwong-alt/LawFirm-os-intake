@@ -120,6 +120,9 @@ from lawfirm_os_intake.models import (  # noqa: E402
     PublicSourceMethodologyCheck,
     PublicSourceMethodologyReport,
     PublicSourceMethodologySource,
+    PublicSyntheticFixtureConversionCheck,
+    PublicSyntheticFixtureConversionPlan,
+    PublicSyntheticFixtureConversionSpec,
     DeadlineDocketingGuardReport,
     EffectiveContext,
     EvidenceCompletenessReport,
@@ -211,6 +214,11 @@ MODELS = {
     "public-source-methodology-source.schema.json": PublicSourceMethodologySource,
     "public-source-methodology-check.schema.json": PublicSourceMethodologyCheck,
     "public-source-methodology-report.schema.json": PublicSourceMethodologyReport,
+    "public-synthetic-fixture-conversion-spec.schema.json": (PublicSyntheticFixtureConversionSpec),
+    "public-synthetic-fixture-conversion-check.schema.json": (
+        PublicSyntheticFixtureConversionCheck
+    ),
+    "public-synthetic-fixture-conversion-plan.schema.json": (PublicSyntheticFixtureConversionPlan),
     "model-adapter-report.schema.json": ModelAdapterReport,
     "evidence-completeness-report.schema.json": EvidenceCompletenessReport,
     "fixture-gold-spec.schema.json": FixtureGoldSpec,

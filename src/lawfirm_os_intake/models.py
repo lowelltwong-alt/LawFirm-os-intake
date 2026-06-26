@@ -476,6 +476,134 @@ class PublicSourceMethodologyReport(StrictModel):
         return self
 
 
+PublicSyntheticFixtureFamily = Literal[
+    "docket_structure",
+    "aggregate_case_metadata",
+    "messy_email_structure",
+    "public_filing_structure",
+    "auto_liability_distribution",
+    "medical_malpractice_distribution",
+    "public_structure_review",
+]
+
+
+class PublicSyntheticFixtureConversionSpec(StrictModel):
+    schema_version: str = "0.1"
+    conversion_spec_id: str
+    source_id: str
+    source_methodology_ref: str
+    methodology_role: str
+    target_fixture_family: PublicSyntheticFixtureFamily
+    allowed_structure_inputs: list[str]
+    forbidden_inputs: list[str]
+    identity_replacement_rules: list[str]
+    field_transformation_rules: list[str]
+    required_synthetic_gold_checks: list[str]
+    required_red_team_checks: list[str]
+    review_status: Literal[
+        "planned_for_human_conversion_review",
+        "blocked_by_methodology",
+    ]
+    blocking_reasons: list[str] = Field(default_factory=list)
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    planning_only: Literal[True] = True
+    no_public_payload_ingested: Literal[True] = True
+    no_real_party_records: Literal[True] = True
+    no_real_matter_records: Literal[True] = True
+    no_adapter_authorized: Literal[True] = True
+    fixture_file_mutation_allowed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def conversion_spec_has_reviewable_boundaries(self) -> "PublicSyntheticFixtureConversionSpec":
+        required_forbidden = {
+            "real_party_names",
+            "real_case_numbers",
+            "raw_public_payloads",
+            "downloaded_public_payloads",
+            "privileged_or_confidential_material",
+        }
+        missing_forbidden = required_forbidden - set(self.forbidden_inputs)
+        if self.review_status == "planned_for_human_conversion_review":
+            if self.blocking_reasons:
+                raise ValueError("ready conversion spec cannot include blockers")
+            if not self.allowed_structure_inputs:
+                raise ValueError("conversion spec requires allowed structure inputs")
+            if missing_forbidden:
+                raise ValueError("conversion spec is missing required forbidden inputs")
+            if not self.identity_replacement_rules:
+                raise ValueError("conversion spec requires identity replacement rules")
+            if not self.field_transformation_rules:
+                raise ValueError("conversion spec requires field transformation rules")
+            if not self.required_synthetic_gold_checks:
+                raise ValueError("conversion spec requires synthetic gold checks")
+            if not self.required_red_team_checks:
+                raise ValueError("conversion spec requires red-team checks")
+        if self.review_status == "blocked_by_methodology" and not self.blocking_reasons:
+            raise ValueError("blocked conversion spec requires blockers")
+        return self
+
+
+class PublicSyntheticFixtureConversionCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "blocked", "failed"]
+    message: str
+    source_ids: list[str] = Field(default_factory=list)
+
+
+class PublicSyntheticFixtureConversionPlan(StrictModel):
+    schema_version: str = "0.1"
+    conversion_plan_id: str
+    status: Literal[
+        "ready_for_human_conversion_review",
+        "blocked_public_methodology_not_ready",
+    ]
+    source_methodology_report_id: str
+    source_methodology_report_ref: str
+    source_catalog_ref: str
+    specs_output_ref: str
+    spec_count: int = Field(ge=0)
+    specs: list[PublicSyntheticFixtureConversionSpec]
+    checks: list[PublicSyntheticFixtureConversionCheck]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    planning_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    public_records_ingested: Literal[False] = False
+    raw_public_payload_committed: Literal[False] = False
+    synthetic_fixtures_created: Literal[False] = False
+    fixture_files_mutated: Literal[False] = False
+    connector_implemented: Literal[False] = False
+    legal_knowledge_adapter_authorized: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def conversion_plan_counts_and_status_match(self) -> "PublicSyntheticFixtureConversionPlan":
+        if self.spec_count != len(self.specs):
+            raise ValueError("conversion plan spec count must match specs")
+        if not self.required_next_gates:
+            raise ValueError("conversion plan requires next gates")
+        if self.status == "ready_for_human_conversion_review":
+            if self.spec_count == 0:
+                raise ValueError("ready conversion plan requires specs")
+            if any(check.status != "passed" for check in self.checks):
+                raise ValueError("ready conversion plan cannot include failed checks")
+            if any(
+                spec.review_status != "planned_for_human_conversion_review" for spec in self.specs
+            ):
+                raise ValueError("ready conversion plan cannot include blocked specs")
+        if self.status == "blocked_public_methodology_not_ready" and not any(
+            check.status in {"blocked", "failed"} for check in self.checks
+        ):
+            raise ValueError("blocked conversion plan requires blocked or failed checks")
+        return self
+
+
 class ContractStateDependency(StrictModel):
     repo: str
     remote: str | None = None

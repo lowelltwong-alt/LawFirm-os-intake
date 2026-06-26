@@ -10,6 +10,8 @@ Runtime source bundles with `data_origin: public_reference` are blocked by the d
 
 Run `audit-public-source-methodology` before using any public source to design new synthetic fixtures. The audit requires methodology role, safe/prohibited use classes, review gates, synthetic-conversion rules, retention policy, privacy posture, and `adapter_status=not_authorized` for every catalog entry. A passing report is still only ready for human methodology review; it does not authorize a public-source adapter or runtime ingestion.
 
+Run `plan-public-synthetic-fixture-conversion` after a ready methodology report and before any fixture work. The conversion plan records what structure may be abstracted, what identity or payload inputs are forbidden, how identities must be replaced, and which synthetic gold/red-team checks must pass. It creates no fixture files and remains blocked until human conversion review.
+
 ## Recommended sources
 
 ### CourtListener / RECAP
@@ -40,10 +42,11 @@ Use only after a specific privacy and use review, primarily for aggregate medica
 
 1. Catalog source, fields, terms, license, retention, and privacy risks.
 2. Map fields to local candidate schemas without downloading content into the repo.
-3. Create non-identifying synthetic fixtures that preserve document structure.
-4. Run extraction and segmentation evals.
-5. Compare against hand-labeled synthetic gold.
-6. Seek governance approval before any direct public-record processing.
+3. Generate a public synthetic fixture conversion plan and complete human review.
+4. Create non-identifying synthetic fixtures that preserve document structure in a separate PR.
+5. Run extraction and segmentation evals.
+6. Compare against hand-labeled synthetic gold.
+7. Seek governance approval before any direct public-record processing.
 
 ## What public data can test
 
