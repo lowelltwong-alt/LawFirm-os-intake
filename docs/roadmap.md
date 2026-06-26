@@ -447,8 +447,9 @@ from them."
 - Executed-passed cases are eligible only for human fixture-binding review; dry
   runs remain blocked pending execution; failed or blocked cases require repair
   or exclusion; support-only cases remain non-executable context.
-- Human review outcomes are still future append-only artifacts. The packet does
-  not approve fixture binding, apply learning, mutate
+- Human review outcomes are append-only artifacts recorded by
+  `record-budget-corpus-replay-review-outcome`. The packet itself does not
+  approve fixture binding, apply learning, mutate
   budgets/profiles/templates/guidelines, write Lake or SQLite records, submit
   budgets, open matters, or authorize external actions.
 - `record-budget-corpus-replay-review-outcome` consumes a replay review packet
@@ -463,3 +464,13 @@ from them."
   do not mutate the packet, replay report, source fixtures, budget profiles,
   templates, carrier guidelines, Lake records, SQLite records, or learning
   state.
+- `propose-budget-fixture-bindings` consumes the replay review packet and
+  outcome report, then writes `budget_fixture_binding_candidate_report.json`,
+  `budget_fixture_binding_candidates.jsonl`, and Markdown notes.
+- Ready fixture-binding candidates require an append-only
+  `approve_fixture_binding` outcome plus approved output refs. Rejected,
+  repair, hold, or missing-output states generate blocked reports instead of
+  guessing.
+- The fixture-binding report still does not update fixture files, apply
+  learning, mutate budgets/profiles/templates/guidelines, write Lake or SQLite
+  records, submit budgets, open matters, or authorize external actions.

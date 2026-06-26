@@ -14,6 +14,7 @@ from .budget_corpus_replay_review import run_budget_corpus_replay_review
 from .budget_corpus_replay_review_outcomes import (
     run_budget_corpus_replay_review_outcome_record,
 )
+from .budget_fixture_bindings import run_budget_fixture_binding_candidates
 from .budget_form import build_budget_form_template_audit_report, render_budget_form
 from .budget_revisions import run_budget_review_record
 from .carrier_rejection_lake_admission import (
@@ -203,6 +204,22 @@ def _parser() -> argparse.ArgumentParser:
         help="Path to budget corpus replay review outcome JSON.",
     )
     budget_corpus_replay_review_outcome.add_argument("--out-dir", required=True)
+
+    budget_fixture_bindings = sub.add_parser(
+        "propose-budget-fixture-bindings",
+        help="Propose candidate fixture bindings from approved budget replay review outcomes.",
+    )
+    budget_fixture_bindings.add_argument(
+        "--review-packet",
+        required=True,
+        help="Path to budget_corpus_replay_review_packet.json.",
+    )
+    budget_fixture_bindings.add_argument(
+        "--review-outcome-report",
+        required=True,
+        help="Path to budget_corpus_replay_review_outcome_report.json.",
+    )
+    budget_fixture_bindings.add_argument("--out-dir", required=True)
 
     carrier_rejections = sub.add_parser(
         "capture-carrier-rejections",
@@ -771,6 +788,45 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 0 if not report.status.endswith("failed_validation") else 2
+
+        if args.command == "propose-budget-fixture-bindings":
+            report, run_dir = run_budget_fixture_binding_candidates(
+                review_packet_path=args.review_packet,
+                review_outcome_report_path=args.review_outcome_report,
+                out_dir=args.out_dir,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "fixture_binding_candidate_report_id": (
+                        report.fixture_binding_candidate_report_id
+                    ),
+                    "review_packet_id": report.review_packet_id,
+                    "review_outcome_report_id": report.review_outcome_report_id,
+                    "review_outcome_record_id": report.review_outcome_record_id,
+                    "replay_execution_report_id": report.replay_execution_report_id,
+                    "replay_case_id": report.replay_case_id,
+                    "candidate_count": report.candidate_count,
+                    "ready_candidate_count": report.ready_candidate_count,
+                    "blocked_candidate_count": report.blocked_candidate_count,
+                    "fixture_files_mutated": report.fixture_files_mutated,
+                    "fixture_binding_applied": report.fixture_binding_applied,
+                    "downstream_learning_gate_allowed": report.downstream_learning_gate_allowed,
+                    "calibration_applied": report.calibration_applied,
+                    "profile_mutation_performed": report.profile_mutation_performed,
+                    "template_mutation_performed": report.template_mutation_performed,
+                    "budget_mutation_performed": report.budget_mutation_performed,
+                    "carrier_guideline_mutation_performed": (
+                        report.carrier_guideline_mutation_performed
+                    ),
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0
 
         if args.command == "capture-carrier-rejections":
             report, run_dir = run_carrier_rejection_capture(

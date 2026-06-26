@@ -83,6 +83,15 @@ approved output refs fail closed. Even an approved fixture-binding outcome does
 not apply learning, mutate source fixtures, write Lake/SQLite records, submit
 budgets, open matters, or authorize external action.
 
+`propose-budget-fixture-bindings` consumes the replay review packet and replay
+review outcome report, then writes a candidate fixture-binding report plus JSONL
+candidate rows. It emits a ready candidate only when the append-only outcome is
+`approve_fixture_binding` and approved output refs are present. Rejected,
+repair, hold, or malformed approval states stay blocked. The report does not
+change fixture files, apply learning, mutate profiles/templates/guidelines,
+write Lake/SQLite records, submit budgets, open matters, or authorize external
+action.
+
 The learning loop can write `reviewed_learning_gate_report.json`, then
 `audit-learning-promotion-readiness` writes `learning_shadow_eval_plan.json` and
 `learning_promotion_readiness_report.json`. `draft-learning-proposed-changes`

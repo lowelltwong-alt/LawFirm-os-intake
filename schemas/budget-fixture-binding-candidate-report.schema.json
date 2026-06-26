@@ -1,0 +1,527 @@
+{
+  "$defs": {
+    "BudgetFixtureBindingCandidate": {
+      "additionalProperties": false,
+      "properties": {
+        "fixture_binding_candidate_id": {
+          "title": "Fixture Binding Candidate Id",
+          "type": "string"
+        },
+        "review_outcome_report_id": {
+          "title": "Review Outcome Report Id",
+          "type": "string"
+        },
+        "review_outcome_record_id": {
+          "title": "Review Outcome Record Id",
+          "type": "string"
+        },
+        "review_packet_id": {
+          "title": "Review Packet Id",
+          "type": "string"
+        },
+        "replay_execution_report_id": {
+          "title": "Replay Execution Report Id",
+          "type": "string"
+        },
+        "replay_case_id": {
+          "title": "Replay Case Id",
+          "type": "string"
+        },
+        "source_artifact_ref": {
+          "title": "Source Artifact Ref",
+          "type": "string"
+        },
+        "artifact_kind": {
+          "enum": [
+            "intake_source_fixture",
+            "human_confirmation_fixture",
+            "budget_review_fixture",
+            "actuals_fixture",
+            "carrier_rejection_fixture",
+            "reviewed_gold_fixture",
+            "learning_gate_fixture",
+            "learning_shadow_eval_fixture",
+            "learning_support_fixture",
+            "unclassified_json_fixture"
+          ],
+          "title": "Artifact Kind",
+          "type": "string"
+        },
+        "approved_output_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Approved Output Refs",
+          "type": "array"
+        },
+        "proposed_target_fixture_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Proposed Target Fixture Refs",
+          "type": "array"
+        },
+        "proposed_binding_action": {
+          "enum": [
+            "bind_replay_outputs_to_synthetic_fixture",
+            "bind_replay_outputs_to_reviewed_gold",
+            "hold_for_manual_fixture_design",
+            "exclude_from_fixture_binding"
+          ],
+          "title": "Proposed Binding Action",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "candidate_ready_for_fixture_update_review",
+            "blocked_pending_approved_outcome",
+            "blocked_missing_approved_outputs"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "why": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Why",
+          "type": "array"
+        },
+        "required_human_steps": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Required Human Steps",
+          "type": "array"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        },
+        "synthetic_only": {
+          "const": true,
+          "default": true,
+          "title": "Synthetic Only",
+          "type": "boolean"
+        },
+        "not_authorized_for_external_write": {
+          "const": true,
+          "default": true,
+          "title": "Not Authorized For External Write",
+          "type": "boolean"
+        },
+        "not_authorized_for_lake_write": {
+          "const": true,
+          "default": true,
+          "title": "Not Authorized For Lake Write",
+          "type": "boolean"
+        },
+        "not_authorized_for_sqlite_write": {
+          "const": true,
+          "default": true,
+          "title": "Not Authorized For Sqlite Write",
+          "type": "boolean"
+        },
+        "not_authorized_for_budget_submission": {
+          "const": true,
+          "default": true,
+          "title": "Not Authorized For Budget Submission",
+          "type": "boolean"
+        },
+        "review_packet_mutated": {
+          "const": false,
+          "default": false,
+          "title": "Review Packet Mutated",
+          "type": "boolean"
+        },
+        "source_fixture_mutated": {
+          "const": false,
+          "default": false,
+          "title": "Source Fixture Mutated",
+          "type": "boolean"
+        },
+        "fixture_files_mutated": {
+          "const": false,
+          "default": false,
+          "title": "Fixture Files Mutated",
+          "type": "boolean"
+        },
+        "fixture_binding_applied": {
+          "const": false,
+          "default": false,
+          "title": "Fixture Binding Applied",
+          "type": "boolean"
+        },
+        "downstream_learning_gate_allowed": {
+          "const": false,
+          "default": false,
+          "title": "Downstream Learning Gate Allowed",
+          "type": "boolean"
+        },
+        "calibration_applied": {
+          "const": false,
+          "default": false,
+          "title": "Calibration Applied",
+          "type": "boolean"
+        },
+        "profile_mutation_performed": {
+          "const": false,
+          "default": false,
+          "title": "Profile Mutation Performed",
+          "type": "boolean"
+        },
+        "template_mutation_performed": {
+          "const": false,
+          "default": false,
+          "title": "Template Mutation Performed",
+          "type": "boolean"
+        },
+        "budget_mutation_performed": {
+          "const": false,
+          "default": false,
+          "title": "Budget Mutation Performed",
+          "type": "boolean"
+        },
+        "carrier_guideline_mutation_performed": {
+          "const": false,
+          "default": false,
+          "title": "Carrier Guideline Mutation Performed",
+          "type": "boolean"
+        },
+        "lake_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Lake Write Performed",
+          "type": "boolean"
+        },
+        "sqlite_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Sqlite Write Performed",
+          "type": "boolean"
+        },
+        "external_writes_performed": {
+          "const": false,
+          "default": false,
+          "title": "External Writes Performed",
+          "type": "boolean"
+        },
+        "silent_learning_performed": {
+          "const": false,
+          "default": false,
+          "title": "Silent Learning Performed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "fixture_binding_candidate_id",
+        "review_outcome_report_id",
+        "review_outcome_record_id",
+        "review_packet_id",
+        "replay_execution_report_id",
+        "replay_case_id",
+        "source_artifact_ref",
+        "artifact_kind",
+        "proposed_binding_action",
+        "status",
+        "why",
+        "required_human_steps"
+      ],
+      "title": "BudgetFixtureBindingCandidate",
+      "type": "object"
+    },
+    "BudgetFixtureBindingCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed",
+            "warning"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "candidate_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Candidate Ids",
+          "type": "array"
+        },
+        "replay_case_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Replay Case Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "BudgetFixtureBindingCheck",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "fixture_binding_candidate_report_id": {
+      "title": "Fixture Binding Candidate Report Id",
+      "type": "string"
+    },
+    "review_packet_id": {
+      "title": "Review Packet Id",
+      "type": "string"
+    },
+    "review_outcome_report_id": {
+      "title": "Review Outcome Report Id",
+      "type": "string"
+    },
+    "review_outcome_record_id": {
+      "title": "Review Outcome Record Id",
+      "type": "string"
+    },
+    "replay_execution_report_id": {
+      "title": "Replay Execution Report Id",
+      "type": "string"
+    },
+    "replay_case_id": {
+      "title": "Replay Case Id",
+      "type": "string"
+    },
+    "source_review_packet_ref": {
+      "title": "Source Review Packet Ref",
+      "type": "string"
+    },
+    "source_review_outcome_report_ref": {
+      "title": "Source Review Outcome Report Ref",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "fixture_binding_candidates_ready_for_review",
+        "blocked_pending_approved_outcome",
+        "blocked_missing_approved_outputs",
+        "no_fixture_binding_candidates"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "candidate_count": {
+      "minimum": 0,
+      "title": "Candidate Count",
+      "type": "integer"
+    },
+    "ready_candidate_count": {
+      "minimum": 0,
+      "title": "Ready Candidate Count",
+      "type": "integer"
+    },
+    "blocked_candidate_count": {
+      "minimum": 0,
+      "title": "Blocked Candidate Count",
+      "type": "integer"
+    },
+    "candidates": {
+      "items": {
+        "$ref": "#/$defs/BudgetFixtureBindingCandidate"
+      },
+      "title": "Candidates",
+      "type": "array"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/BudgetFixtureBindingCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "required_next_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Gates",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "not_authorized_for_external_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For External Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_lake_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Lake Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_sqlite_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Sqlite Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_budget_submission": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Budget Submission",
+      "type": "boolean"
+    },
+    "review_packet_mutated": {
+      "const": false,
+      "default": false,
+      "title": "Review Packet Mutated",
+      "type": "boolean"
+    },
+    "outcome_report_mutated": {
+      "const": false,
+      "default": false,
+      "title": "Outcome Report Mutated",
+      "type": "boolean"
+    },
+    "source_fixture_mutated": {
+      "const": false,
+      "default": false,
+      "title": "Source Fixture Mutated",
+      "type": "boolean"
+    },
+    "fixture_files_mutated": {
+      "const": false,
+      "default": false,
+      "title": "Fixture Files Mutated",
+      "type": "boolean"
+    },
+    "fixture_binding_applied": {
+      "const": false,
+      "default": false,
+      "title": "Fixture Binding Applied",
+      "type": "boolean"
+    },
+    "downstream_learning_gate_allowed": {
+      "const": false,
+      "default": false,
+      "title": "Downstream Learning Gate Allowed",
+      "type": "boolean"
+    },
+    "calibration_applied": {
+      "const": false,
+      "default": false,
+      "title": "Calibration Applied",
+      "type": "boolean"
+    },
+    "profile_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Profile Mutation Performed",
+      "type": "boolean"
+    },
+    "template_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Template Mutation Performed",
+      "type": "boolean"
+    },
+    "budget_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Budget Mutation Performed",
+      "type": "boolean"
+    },
+    "carrier_guideline_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Carrier Guideline Mutation Performed",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "fixture_binding_candidate_report_id",
+    "review_packet_id",
+    "review_outcome_report_id",
+    "review_outcome_record_id",
+    "replay_execution_report_id",
+    "replay_case_id",
+    "source_review_packet_ref",
+    "source_review_outcome_report_ref",
+    "status",
+    "candidate_count",
+    "ready_candidate_count",
+    "blocked_candidate_count",
+    "candidates",
+    "checks",
+    "required_next_gates",
+    "generated_at"
+  ],
+  "title": "BudgetFixtureBindingCandidateReport",
+  "type": "object"
+}

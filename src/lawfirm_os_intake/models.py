@@ -2013,6 +2013,142 @@ class BudgetCorpusReplayReviewOutcomeReport(StrictModel):
     generated_at: str
 
 
+BudgetFixtureBindingAction = Literal[
+    "bind_replay_outputs_to_synthetic_fixture",
+    "bind_replay_outputs_to_reviewed_gold",
+    "hold_for_manual_fixture_design",
+    "exclude_from_fixture_binding",
+]
+
+BudgetFixtureBindingCandidateStatus = Literal[
+    "candidate_ready_for_fixture_update_review",
+    "blocked_pending_approved_outcome",
+    "blocked_missing_approved_outputs",
+]
+
+BudgetFixtureBindingCandidateReportStatus = Literal[
+    "fixture_binding_candidates_ready_for_review",
+    "blocked_pending_approved_outcome",
+    "blocked_missing_approved_outputs",
+    "no_fixture_binding_candidates",
+]
+
+
+class BudgetFixtureBindingCandidate(StrictModel):
+    fixture_binding_candidate_id: str
+    review_outcome_report_id: str
+    review_outcome_record_id: str
+    review_packet_id: str
+    replay_execution_report_id: str
+    replay_case_id: str
+    source_artifact_ref: str
+    artifact_kind: BudgetCalibrationArtifactKind
+    approved_output_refs: list[str] = Field(default_factory=list)
+    proposed_target_fixture_refs: list[str] = Field(default_factory=list)
+    proposed_binding_action: BudgetFixtureBindingAction
+    status: BudgetFixtureBindingCandidateStatus
+    why: list[str]
+    required_human_steps: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    review_packet_mutated: Literal[False] = False
+    source_fixture_mutated: Literal[False] = False
+    fixture_files_mutated: Literal[False] = False
+    fixture_binding_applied: Literal[False] = False
+    downstream_learning_gate_allowed: Literal[False] = False
+    calibration_applied: Literal[False] = False
+    profile_mutation_performed: Literal[False] = False
+    template_mutation_performed: Literal[False] = False
+    budget_mutation_performed: Literal[False] = False
+    carrier_guideline_mutation_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def ready_candidates_require_outputs(self) -> "BudgetFixtureBindingCandidate":
+        if self.status == "candidate_ready_for_fixture_update_review" and not (
+            self.approved_output_refs and self.proposed_target_fixture_refs
+        ):
+            raise ValueError(
+                "ready fixture binding candidates require approved outputs and target refs"
+            )
+        return self
+
+
+class BudgetFixtureBindingCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed", "warning"]
+    message: str
+    candidate_ids: list[str] = Field(default_factory=list)
+    replay_case_ids: list[str] = Field(default_factory=list)
+
+
+class BudgetFixtureBindingCandidateReport(StrictModel):
+    schema_version: str = "0.1"
+    fixture_binding_candidate_report_id: str
+    review_packet_id: str
+    review_outcome_report_id: str
+    review_outcome_record_id: str
+    replay_execution_report_id: str
+    replay_case_id: str
+    source_review_packet_ref: str
+    source_review_outcome_report_ref: str
+    status: BudgetFixtureBindingCandidateReportStatus
+    candidate_count: int = Field(ge=0)
+    ready_candidate_count: int = Field(ge=0)
+    blocked_candidate_count: int = Field(ge=0)
+    candidates: list[BudgetFixtureBindingCandidate]
+    checks: list[BudgetFixtureBindingCheck]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    review_packet_mutated: Literal[False] = False
+    outcome_report_mutated: Literal[False] = False
+    source_fixture_mutated: Literal[False] = False
+    fixture_files_mutated: Literal[False] = False
+    fixture_binding_applied: Literal[False] = False
+    downstream_learning_gate_allowed: Literal[False] = False
+    calibration_applied: Literal[False] = False
+    profile_mutation_performed: Literal[False] = False
+    template_mutation_performed: Literal[False] = False
+    budget_mutation_performed: Literal[False] = False
+    carrier_guideline_mutation_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def counts_match_candidates(self) -> "BudgetFixtureBindingCandidateReport":
+        if self.candidate_count != len(self.candidates):
+            raise ValueError("fixture binding candidate count must match candidates")
+        ready_count = sum(
+            1
+            for candidate in self.candidates
+            if candidate.status == "candidate_ready_for_fixture_update_review"
+        )
+        if self.ready_candidate_count != ready_count:
+            raise ValueError("ready fixture binding candidate count does not match candidates")
+        if self.blocked_candidate_count != self.candidate_count - self.ready_candidate_count:
+            raise ValueError("blocked fixture binding candidate count does not match candidates")
+        if self.status == "fixture_binding_candidates_ready_for_review" and not ready_count:
+            raise ValueError("ready fixture binding candidate report requires ready candidates")
+        return self
+
+
 class BudgetFormCodeMapping(StrictModel):
     code: str
     kind: Literal["phase", "task"]
