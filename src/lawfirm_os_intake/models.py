@@ -1899,6 +1899,129 @@ class CarrierRejectionLearningReport(StrictModel):
     generated_at: str
 
 
+LearningLoopId = Literal[
+    "guideline_drift",
+    "budget_model",
+    "template_mapping",
+    "narrative_rule",
+    "preapproval_gate",
+    "appeal_success_or_failure",
+    "capture_completeness",
+    "parser_rule",
+    "eval_fixture",
+    "staffing_leverage",
+    "timekeeper_rate",
+    "validation_rule",
+]
+
+LearningTargetOwner = Literal[
+    "LawFirm-os-intake",
+    "LawFirm-os-orchestrator",
+    "LawFirm-os-exceptions-lake-runtime",
+    "LawFirm-os-semantic-substrate",
+]
+
+
+class ReviewedLearningGateCandidate(StrictModel):
+    candidate_id: str
+    source_kind: Literal[
+        "carrier_rejection_learning_proposal",
+        "budget_revision_delta",
+        "budget_actual_variance_driver",
+    ]
+    source_artifact_ref: str
+    source_record_id: str
+    source_status: str | None = None
+    target_learning_loop: LearningLoopId
+    target_owner: LearningTargetOwner
+    trigger_summary: str
+    before_behavior: str
+    proposed_candidate_behavior: str
+    support_refs: list[str]
+    support_count: int = Field(ge=0)
+    required_evidence: list[str]
+    required_evaluation: list[str]
+    required_next_gates: list[str]
+    status: Literal["blocked_until_reviewed_learning_gate"] = "blocked_until_reviewed_learning_gate"
+    human_review_required: Literal[True] = True
+    synthetic_fixture_update_required: Literal[True] = True
+    shadow_eval_required: Literal[True] = True
+    owning_repo_review_required: Literal[True] = True
+    append_only_evidence_required: Literal[True] = True
+    profile_mutation_performed: Literal[False] = False
+    template_mutation_performed: Literal[False] = False
+    connector_mutation_performed: Literal[False] = False
+    budget_mutation_performed: Literal[False] = False
+    carrier_guideline_mutation_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def support_and_gates_required(self) -> "ReviewedLearningGateCandidate":
+        if not self.support_refs:
+            raise ValueError("reviewed learning candidate requires support_refs")
+        required = {
+            "human_reviewed_outcome_evidence",
+            "append_only_evidence_record",
+            "synthetic_fixture_update",
+            "shadow_eval",
+            "owning_repo_review",
+        }
+        if not required.issubset(set(self.required_next_gates)):
+            raise ValueError("reviewed learning candidate is missing required gates")
+        return self
+
+
+class ReviewedLearningGateCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    candidate_ids: list[str] = Field(default_factory=list)
+
+
+class ReviewedLearningGateReport(StrictModel):
+    schema_version: str = "0.1"
+    reviewed_learning_gate_report_id: str
+    run_id: str
+    status: Literal[
+        "candidate_learning_gate_ready",
+        "no_learning_candidates",
+        "failed",
+    ]
+    source_report_refs: list[str]
+    carrier_rejection_learning_report_ref: str | None = None
+    budget_revision_report_ref: str | None = None
+    budget_actual_comparison_report_ref: str | None = None
+    candidate_count: int = Field(ge=0)
+    carrier_learning_candidate_count: int = Field(ge=0)
+    budget_revision_candidate_count: int = Field(ge=0)
+    budget_actual_variance_candidate_count: int = Field(ge=0)
+    target_learning_loops: list[str]
+    target_owners: list[str]
+    candidates: list[ReviewedLearningGateCandidate]
+    checks: list[ReviewedLearningGateCheck]
+    required_next_gates: list[str]
+    reviewed_outcome_required: Literal[True] = True
+    append_only_evidence_required: Literal[True] = True
+    synthetic_fixture_update_required: Literal[True] = True
+    shadow_eval_required: Literal[True] = True
+    owning_repo_review_required: Literal[True] = True
+    candidate_only: Literal[True] = True
+    admission_state: Literal["dry_run_not_admitted"] = "dry_run_not_admitted"
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_external_submission: Literal[True] = True
+    profile_mutation_performed: Literal[False] = False
+    template_mutation_performed: Literal[False] = False
+    connector_mutation_performed: Literal[False] = False
+    budget_mutation_performed: Literal[False] = False
+    carrier_guideline_mutation_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+
 class CarrierRejectionOrchestratorConnectorChannel(StrictModel):
     channel_id: Literal[
         "carrier_portal_notice",

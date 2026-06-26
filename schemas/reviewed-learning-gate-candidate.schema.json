@@ -1,0 +1,213 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "candidate_id": {
+      "title": "Candidate Id",
+      "type": "string"
+    },
+    "source_kind": {
+      "enum": [
+        "carrier_rejection_learning_proposal",
+        "budget_revision_delta",
+        "budget_actual_variance_driver"
+      ],
+      "title": "Source Kind",
+      "type": "string"
+    },
+    "source_artifact_ref": {
+      "title": "Source Artifact Ref",
+      "type": "string"
+    },
+    "source_record_id": {
+      "title": "Source Record Id",
+      "type": "string"
+    },
+    "source_status": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Status"
+    },
+    "target_learning_loop": {
+      "enum": [
+        "guideline_drift",
+        "budget_model",
+        "template_mapping",
+        "narrative_rule",
+        "preapproval_gate",
+        "appeal_success_or_failure",
+        "capture_completeness",
+        "parser_rule",
+        "eval_fixture",
+        "staffing_leverage",
+        "timekeeper_rate",
+        "validation_rule"
+      ],
+      "title": "Target Learning Loop",
+      "type": "string"
+    },
+    "target_owner": {
+      "enum": [
+        "LawFirm-os-intake",
+        "LawFirm-os-orchestrator",
+        "LawFirm-os-exceptions-lake-runtime",
+        "LawFirm-os-semantic-substrate"
+      ],
+      "title": "Target Owner",
+      "type": "string"
+    },
+    "trigger_summary": {
+      "title": "Trigger Summary",
+      "type": "string"
+    },
+    "before_behavior": {
+      "title": "Before Behavior",
+      "type": "string"
+    },
+    "proposed_candidate_behavior": {
+      "title": "Proposed Candidate Behavior",
+      "type": "string"
+    },
+    "support_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Support Refs",
+      "type": "array"
+    },
+    "support_count": {
+      "minimum": 0,
+      "title": "Support Count",
+      "type": "integer"
+    },
+    "required_evidence": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Evidence",
+      "type": "array"
+    },
+    "required_evaluation": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Evaluation",
+      "type": "array"
+    },
+    "required_next_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Gates",
+      "type": "array"
+    },
+    "status": {
+      "const": "blocked_until_reviewed_learning_gate",
+      "default": "blocked_until_reviewed_learning_gate",
+      "title": "Status",
+      "type": "string"
+    },
+    "human_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Human Review Required",
+      "type": "boolean"
+    },
+    "synthetic_fixture_update_required": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Fixture Update Required",
+      "type": "boolean"
+    },
+    "shadow_eval_required": {
+      "const": true,
+      "default": true,
+      "title": "Shadow Eval Required",
+      "type": "boolean"
+    },
+    "owning_repo_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Owning Repo Review Required",
+      "type": "boolean"
+    },
+    "append_only_evidence_required": {
+      "const": true,
+      "default": true,
+      "title": "Append Only Evidence Required",
+      "type": "boolean"
+    },
+    "profile_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Profile Mutation Performed",
+      "type": "boolean"
+    },
+    "template_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Template Mutation Performed",
+      "type": "boolean"
+    },
+    "connector_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Connector Mutation Performed",
+      "type": "boolean"
+    },
+    "budget_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Budget Mutation Performed",
+      "type": "boolean"
+    },
+    "carrier_guideline_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Carrier Guideline Mutation Performed",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "candidate_id",
+    "source_kind",
+    "source_artifact_ref",
+    "source_record_id",
+    "target_learning_loop",
+    "target_owner",
+    "trigger_summary",
+    "before_behavior",
+    "proposed_candidate_behavior",
+    "support_refs",
+    "support_count",
+    "required_evidence",
+    "required_evaluation",
+    "required_next_gates"
+  ],
+  "title": "ReviewedLearningGateCandidate",
+  "type": "object"
+}

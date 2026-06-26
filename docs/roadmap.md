@@ -200,3 +200,31 @@ Lake runtime.
 - Learning remains candidate-only: variance and human-revision evidence can feed
   future reviewed budget-driver, template-mapping, and validation-rule loops, but
   no profile, template, budget, or carrier guideline is silently mutated.
+
+## 12. Reviewed Learning Gate
+
+Status: implemented for the current synthetic candidate slice; owning-repo
+promotion, admitted Lake records, and production learning remain future work.
+
+Aggregate the learning pressure created by carrier rejections, human budget
+revisions, appeal outcomes, and actual-cost variance without letting any source
+silently mutate profiles, templates, budgets, carrier guidelines, connectors, or
+canon.
+
+- `review-learning-gate` accepts optional `carrier_rejection_learning_report.json`,
+  `budget_revision_report.json`, and `budget_actual_comparison_report.json`
+  inputs.
+- It writes `reviewed_learning_gate_report.json`,
+  `reviewed_learning_gate_report.md`, and
+  `reviewed_learning_gate_candidates.jsonl`.
+- Candidate sources include carrier rejection learning proposals, budget revision
+  deltas, and budget actual variance-driver candidates.
+- Every candidate is blocked until human-reviewed outcome evidence,
+  append-only evidence recording, synthetic fixture updates, shadow evals, and
+  owning-repo review are complete.
+- The gate records `profile_mutation_performed=false`,
+  `template_mutation_performed=false`, `connector_mutation_performed=false`,
+  `budget_mutation_performed=false`,
+  `carrier_guideline_mutation_performed=false`,
+  `lake_write_performed=false`, `external_writes_performed=false`, and
+  `silent_learning_performed=false`.

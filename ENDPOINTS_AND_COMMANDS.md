@@ -112,6 +112,26 @@ appeal-outcome loops. Every proposal remains blocked until human-reviewed outcom
 evidence exists, and the command performs no profile, template, connector, Lake,
 or external mutation.
 
+### Review aggregate learning gate candidates
+
+```bash
+python -m lawfirm_os_intake review-learning-gate \
+  --carrier-learning-report .lawfirm-os-intake/carrier-rejection-learning/carrier_rejection_learning_report.json \
+  --budget-revision-report .lawfirm-os-intake/budget-review/budget_revision_report.json \
+  --budget-actual-comparison-report .lawfirm-os-intake/budget-actuals/budget_actual_comparison_report.json \
+  --out-dir .lawfirm-os-intake/reviewed-learning-gate
+```
+
+This writes `reviewed_learning_gate_report.json`,
+`reviewed_learning_gate_report.md`, and
+`reviewed_learning_gate_candidates.jsonl`. The report aggregates carrier
+rejection learning proposals, human budget-revision deltas, and budget actual
+variance drivers into one candidate learning gate. Every candidate remains
+blocked until human-reviewed outcome evidence, append-only evidence recording,
+synthetic fixture updates, shadow evals, and owning-repo review exist. The
+command performs no profile, template, connector, budget, guideline, Lake,
+SQLite, or external mutation.
+
 ### Draft carrier rejection Orchestrator interface
 
 ```bash

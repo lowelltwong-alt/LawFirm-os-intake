@@ -106,6 +106,9 @@
         "schemas/budget-actual-phase-comparison.schema.json",
         "schemas/budget-actual-code-comparison.schema.json",
         "schemas/budget-actual-variance-driver-candidate.schema.json",
+        "schemas/reviewed-learning-gate-candidate.schema.json",
+        "schemas/reviewed-learning-gate-check.schema.json",
+        "schemas/reviewed-learning-gate-report.schema.json",
         "docs/cross-repo-promotion-package.md"
       ],
       "proposed_contract_refs": [
@@ -219,6 +222,8 @@
         "schemas/budget-revision-report.schema.json",
         "schemas/budget-actual-comparison-report.schema.json",
         "schemas/budget-actual-variance-driver-candidate.schema.json",
+        "schemas/reviewed-learning-gate-candidate.schema.json",
+        "schemas/reviewed-learning-gate-report.schema.json",
         "DATA_FLOW_MAP.md"
       ],
       "proposed_contract_refs": [
