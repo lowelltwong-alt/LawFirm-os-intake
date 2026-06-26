@@ -120,6 +120,14 @@ financial rows must preserve appealed, recovered, write-down, and remaining
 write-down amounts while proving no appeal submission, no portal/email write, no
 Lake/SQLite admission, and no silent learning.
 
+`build-budget-event-lake-bundle` consumes the budget change ledger, budget
+actual variance ledger, and carrier rejection decision ledger and writes
+`budget_event_lake_admission_bundle_report.json` plus Markdown notes. The bundle
+must hash each artifact, match JSONL rows to report event IDs, require consistent
+budget/preflight IDs, map events to candidate record families, and fail closed on
+missing artifacts or any Lake/SQLite/billing/submission/mutation/silent-learning
+flag drift. Passing status means ready for Exception Lake owner review only.
+
 The learning loop can write `reviewed_learning_gate_report.json`, then
 `audit-learning-promotion-readiness` writes `learning_shadow_eval_plan.json` and
 `learning_promotion_readiness_report.json`. `draft-learning-proposed-changes`

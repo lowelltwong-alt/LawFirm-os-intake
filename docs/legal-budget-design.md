@@ -201,6 +201,17 @@ recording, synthetic fixture updates, shadow evals, and owning-repo review befor
 any learning candidate can move toward a profile, template, guideline, budget
 driver, validation rule, or promoted contract change.
 
+The local `build-budget-event-lake-bundle` command is the run-specific bridge
+from append-only intake evidence to future Lake owner review. It can bundle the
+budget change ledger, budget actual variance ledger, and carrier rejection
+decision ledger into `budget_event_lake_admission_bundle_report.json` and
+`budget_event_lake_admission_bundle.md`. The bundle hashes each artifact, checks
+report-vs-JSONL row counts, verifies event IDs, requires one budget proposal and
+preflight packet across provided ledgers, and blocks if any ledger claims a Lake,
+SQLite, billing, submission, mutation, or silent-learning side effect. It does
+not create Lake records or record hashes; those remain Exception Lake runtime
+responsibilities.
+
 ## Sample synthetic defense families
 
 The synthetic insurance-defense profile now demonstrates medical-malpractice defense

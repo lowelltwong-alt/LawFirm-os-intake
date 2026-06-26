@@ -230,6 +230,34 @@ Lake runtime.
   future reviewed budget-driver, template-mapping, and validation-rule loops, but
   no profile, template, budget, or carrier guideline is silently mutated.
 
+## 11A. Budget Event Lake Review Bundle
+
+Status: implemented for the current synthetic candidate slice; Exception Lake
+admission, SQLite persistence, record hashes, and canonical event classes remain
+future owner work.
+
+Bridge the budget-event ledgers into one hashed, run-specific owner-review
+package without letting intake become the Lake runtime.
+
+- `build-budget-event-lake-bundle` consumes optional
+  `budget_change_ledger_report.json`,
+  `budget_actual_variance_ledger_report.json`, and
+  `carrier_rejection_decision_ledger_report.json` inputs.
+- It infers each paired JSONL ledger when not supplied explicitly.
+- It writes `budget_event_lake_admission_bundle_report.json` and
+  `budget_event_lake_admission_bundle.md`.
+- The bundle hashes every ledger artifact, checks report-vs-JSONL row counts,
+  verifies event ID sets, requires consistent budget proposal and preflight
+  packet IDs, and maps events to candidate record families for Exception Lake
+  owner review.
+- Missing artifacts, mismatched budget/preflight IDs, JSONL/report drift,
+  duplicate artifact refs, missing candidate record families, or any prohibited
+  Lake/SQLite/billing/submission/mutation/silent-learning flag block the bundle.
+- Passing status is only `ready_for_exception_lake_review`; it does not admit
+  records, create record hashes, write SQLite, write sibling repos, promote event
+  classes, submit appeals or budgets, read billing, write billing, or apply
+  learning.
+
 ## 12. Reviewed Learning Gate
 
 Status: implemented for the current synthetic candidate slice; owning-repo

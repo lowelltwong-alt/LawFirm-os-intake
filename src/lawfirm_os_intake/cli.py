@@ -18,6 +18,7 @@ from .budget_corpus_replay_review_outcomes import (
 )
 from .budget_fixture_bindings import run_budget_fixture_binding_candidates
 from .budget_form import build_budget_form_template_audit_report, render_budget_form
+from .budget_lake_admission_bundle import run_budget_event_lake_admission_bundle
 from .budget_revisions import run_budget_review_record
 from .carrier_rejection_lake_admission import (
     run_carrier_rejection_lake_admission_proposal,
@@ -331,6 +332,18 @@ def _parser() -> argparse.ArgumentParser:
         help="Write the candidate Exception Lake admission proposal for carrier rejection records.",
     )
     carrier_rejection_lake.add_argument("--out-dir", required=True)
+
+    budget_event_lake_bundle = sub.add_parser(
+        "build-budget-event-lake-bundle",
+        help="Bundle budget/rejection ledgers into candidate Exception Lake review evidence.",
+    )
+    budget_event_lake_bundle.add_argument("--out-dir", required=True)
+    budget_event_lake_bundle.add_argument("--budget-change-ledger-report")
+    budget_event_lake_bundle.add_argument("--budget-change-ledger-jsonl")
+    budget_event_lake_bundle.add_argument("--budget-actual-variance-ledger-report")
+    budget_event_lake_bundle.add_argument("--budget-actual-variance-ledger-jsonl")
+    budget_event_lake_bundle.add_argument("--carrier-rejection-decision-ledger-report")
+    budget_event_lake_bundle.add_argument("--carrier-rejection-decision-ledger-jsonl")
 
     carrier_rejection_audit = sub.add_parser(
         "audit-carrier-rejection-roadmap",
@@ -1106,6 +1119,44 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 0
+
+        if args.command == "build-budget-event-lake-bundle":
+            report, run_dir = run_budget_event_lake_admission_bundle(
+                out_dir=args.out_dir,
+                budget_change_ledger_report_path=args.budget_change_ledger_report,
+                budget_change_ledger_jsonl_path=args.budget_change_ledger_jsonl,
+                budget_actual_variance_ledger_report_path=(
+                    args.budget_actual_variance_ledger_report
+                ),
+                budget_actual_variance_ledger_jsonl_path=(args.budget_actual_variance_ledger_jsonl),
+                carrier_rejection_decision_ledger_report_path=(
+                    args.carrier_rejection_decision_ledger_report
+                ),
+                carrier_rejection_decision_ledger_jsonl_path=(
+                    args.carrier_rejection_decision_ledger_jsonl
+                ),
+            )
+            failed_checks = [check.check_id for check in report.checks if check.status == "failed"]
+            _print(
+                {
+                    "status": report.status,
+                    "bundle_report_id": report.bundle_report_id,
+                    "target_repo": report.target_repo,
+                    "artifact_count": report.artifact_count,
+                    "ledger_report_count": report.ledger_report_count,
+                    "jsonl_row_count": report.jsonl_row_count,
+                    "total_event_count": report.total_event_count,
+                    "candidate_record_families": report.candidate_record_families,
+                    "failed_checks": failed_checks,
+                    "admission_state": report.admission_state,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "lake_write_performed": report.lake_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0 if report.status == "ready_for_exception_lake_review" else 2
 
         if args.command == "audit-carrier-rejection-roadmap":
             report, run_dir = run_carrier_rejection_roadmap_audit(

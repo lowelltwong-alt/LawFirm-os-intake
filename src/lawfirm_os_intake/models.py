@@ -4299,6 +4299,142 @@ class CarrierRejectionLakeAdmissionProposal(StrictModel):
     generated_at: str
 
 
+BudgetLakeEvidenceArtifactKind = Literal[
+    "budget_change_ledger_report",
+    "budget_change_ledger_jsonl",
+    "budget_actual_variance_ledger_report",
+    "budget_actual_variance_ledger_jsonl",
+    "carrier_rejection_decision_ledger_report",
+    "carrier_rejection_decision_ledger_jsonl",
+]
+
+BudgetLakeCandidateRecordFamily = Literal[
+    "budget_human_change_record",
+    "budget_actual_variance_record",
+    "budget_actual_missing_source_record",
+    "carrier_rejection_decision_record",
+    "carrier_appeal_result_record",
+    "carrier_financial_outcome_record",
+]
+
+
+class BudgetLakeEvidenceArtifact(StrictModel):
+    schema_version: str = "0.1"
+    artifact_id: str
+    artifact_kind: BudgetLakeEvidenceArtifactKind
+    artifact_ref: str
+    sha256: str
+    report_id: str | None = None
+    ledger_id: str | None = None
+    run_id: str | None = None
+    preflight_packet_id: str | None = None
+    budget_proposal_id: str | None = None
+    event_count: int = Field(ge=0)
+    row_event_count: int = Field(ge=0)
+    event_kind_counts: dict[str, int] = Field(default_factory=dict)
+    local_event_labels: list[str] = Field(default_factory=list)
+    candidate_record_families: list[BudgetLakeCandidateRecordFamily] = Field(default_factory=list)
+    admission_state: Literal["candidate_not_admitted"] = "candidate_not_admitted"
+    requires_exception_lake_owner_review: Literal[True] = True
+    artifact_hash_required: Literal[True] = True
+    append_only: Literal[True] = True
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    raw_payload_included: Literal[False] = False
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def artifact_hash_is_sha256(self) -> "BudgetLakeEvidenceArtifact":
+        if not self.sha256.startswith("sha256:"):
+            raise ValueError("budget Lake evidence artifact hash must be sha256")
+        return self
+
+
+class BudgetLakeAdmissionBundleCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    artifact_refs: list[str] = Field(default_factory=list)
+
+
+class BudgetLakeAdmissionBundleReport(StrictModel):
+    schema_version: str = "0.1"
+    bundle_report_id: str
+    status: Literal[
+        "ready_for_exception_lake_review",
+        "blocked_missing_artifacts",
+        "blocked_inconsistent_evidence",
+    ]
+    origin_repo: Literal["LawFirm-os-intake"] = "LawFirm-os-intake"
+    target_repo: Literal["LawFirm-os-exceptions-lake-runtime"] = (
+        "LawFirm-os-exceptions-lake-runtime"
+    )
+    admission_state: Literal["dry_run_not_admitted"] = "dry_run_not_admitted"
+    artifact_count: int = Field(ge=0)
+    ledger_report_count: int = Field(ge=0)
+    jsonl_row_count: int = Field(ge=0)
+    total_event_count: int = Field(ge=0)
+    budget_proposal_ids: list[str] = Field(default_factory=list)
+    preflight_packet_ids: list[str] = Field(default_factory=list)
+    run_ids: list[str] = Field(default_factory=list)
+    candidate_record_families: list[BudgetLakeCandidateRecordFamily] = Field(default_factory=list)
+    local_event_labels: list[str] = Field(default_factory=list)
+    artifacts: list[BudgetLakeEvidenceArtifact]
+    checks: list[BudgetLakeAdmissionBundleCheck]
+    required_next_gates: list[str]
+    append_only_required: Literal[True] = True
+    correction_supersession_required: Literal[True] = True
+    record_hash_required: Literal[True] = True
+    orchestrator_evidence_packet_required: Literal[True] = True
+    exception_lake_owner_admission_required: Literal[True] = True
+    no_connector_implemented: Literal[True] = True
+    no_lake_admission_performed: Literal[True] = True
+    no_sibling_repo_writes: Literal[True] = True
+    no_canonical_mutation: Literal[True] = True
+    raw_payload_included: Literal[False] = False
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    billing_connector_read_performed: Literal[False] = False
+    billing_connector_write_performed: Literal[False] = False
+    carrier_portal_write_performed: Literal[False] = False
+    email_send_performed: Literal[False] = False
+    appeal_submission_performed: Literal[False] = False
+    budget_mutation_performed: Literal[False] = False
+    profile_mutation_performed: Literal[False] = False
+    template_mutation_performed: Literal[False] = False
+    carrier_guideline_mutation_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def bundle_counts_match_artifacts(self) -> "BudgetLakeAdmissionBundleReport":
+        if self.artifact_count != len(self.artifacts):
+            raise ValueError("budget Lake bundle artifact count must match artifacts")
+        if self.ledger_report_count != sum(
+            1 for artifact in self.artifacts if artifact.artifact_kind.endswith("_report")
+        ):
+            raise ValueError("budget Lake bundle report count must match artifacts")
+        if self.jsonl_row_count != sum(artifact.row_event_count for artifact in self.artifacts):
+            raise ValueError("budget Lake bundle JSONL row count must match artifacts")
+        if self.total_event_count != sum(artifact.event_count for artifact in self.artifacts):
+            raise ValueError("budget Lake bundle event count must match artifacts")
+        failed_checks = [check for check in self.checks if check.status == "failed"]
+        if self.status == "ready_for_exception_lake_review" and failed_checks:
+            raise ValueError("ready budget Lake bundle cannot have failed checks")
+        if self.status != "ready_for_exception_lake_review" and not failed_checks:
+            raise ValueError("blocked budget Lake bundle requires failed checks")
+        return self
+
+
 class CarrierRejectionRoadmapSliceStatus(StrictModel):
     slice_id: int = Field(ge=1, le=8)
     title: str
