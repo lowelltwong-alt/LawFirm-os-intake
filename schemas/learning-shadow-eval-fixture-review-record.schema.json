@@ -1,0 +1,317 @@
+{
+  "$defs": {
+    "LearningShadowEvalFixtureReviewItem": {
+      "additionalProperties": false,
+      "properties": {
+        "proposed_change_id": {
+          "title": "Proposed Change Id",
+          "type": "string"
+        },
+        "candidate_id": {
+          "title": "Candidate Id",
+          "type": "string"
+        },
+        "evaluation_outcome": {
+          "enum": [
+            "passed",
+            "failed",
+            "blocked"
+          ],
+          "title": "Evaluation Outcome",
+          "type": "string"
+        },
+        "passed_eval_suites": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Passed Eval Suites",
+          "type": "array"
+        },
+        "failed_eval_suites": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Failed Eval Suites",
+          "type": "array"
+        },
+        "passed_regression_guardrails": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Passed Regression Guardrails",
+          "type": "array"
+        },
+        "failed_regression_guardrails": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Failed Regression Guardrails",
+          "type": "array"
+        },
+        "baseline_behavior_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Baseline Behavior Ref"
+        },
+        "proposed_behavior_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Proposed Behavior Ref"
+        },
+        "expected_behavior_summary": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Behavior Summary"
+        },
+        "observed_behavior_summary": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Observed Behavior Summary"
+        },
+        "support_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Support Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "proposed_change_id",
+        "candidate_id",
+        "evaluation_outcome"
+      ],
+      "title": "LearningShadowEvalFixtureReviewItem",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "shadow_eval_fixture_review_id": {
+      "title": "Shadow Eval Fixture Review Id",
+      "type": "string"
+    },
+    "proposed_change_set_id": {
+      "title": "Proposed Change Set Id",
+      "type": "string"
+    },
+    "reviewer_id": {
+      "title": "Reviewer Id",
+      "type": "string"
+    },
+    "reviewer_role": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Reviewer Role"
+    },
+    "reviewed_at": {
+      "title": "Reviewed At",
+      "type": "string"
+    },
+    "decision": {
+      "enum": [
+        "record_fixture_results",
+        "record_partial_fixture_results",
+        "reject_fixture_results"
+      ],
+      "title": "Decision",
+      "type": "string"
+    },
+    "decision_reason": {
+      "title": "Decision Reason",
+      "type": "string"
+    },
+    "items": {
+      "items": {
+        "$ref": "#/$defs/LearningShadowEvalFixtureReviewItem"
+      },
+      "title": "Items",
+      "type": "array"
+    },
+    "evidence_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Evidence Refs",
+      "type": "array"
+    },
+    "required_followups": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Followups",
+      "type": "array"
+    },
+    "reviewed_red_team_notes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Reviewed Red Team Notes",
+      "type": "array"
+    },
+    "append_only": {
+      "const": true,
+      "default": true,
+      "title": "Append Only",
+      "type": "boolean"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "contains_real_client_data": {
+      "const": false,
+      "default": false,
+      "title": "Contains Real Client Data",
+      "type": "boolean"
+    },
+    "contains_real_matter_data": {
+      "const": false,
+      "default": false,
+      "title": "Contains Real Matter Data",
+      "type": "boolean"
+    },
+    "contains_privileged_data": {
+      "const": false,
+      "default": false,
+      "title": "Contains Privileged Data",
+      "type": "boolean"
+    },
+    "promotion_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Promotion Authorized",
+      "type": "boolean"
+    },
+    "proposed_changes_applied": {
+      "const": false,
+      "default": false,
+      "title": "Proposed Changes Applied",
+      "type": "boolean"
+    },
+    "baseline_mutated": {
+      "const": false,
+      "default": false,
+      "title": "Baseline Mutated",
+      "type": "boolean"
+    },
+    "profile_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Profile Mutation Performed",
+      "type": "boolean"
+    },
+    "template_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Template Mutation Performed",
+      "type": "boolean"
+    },
+    "connector_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Connector Mutation Performed",
+      "type": "boolean"
+    },
+    "budget_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Budget Mutation Performed",
+      "type": "boolean"
+    },
+    "carrier_guideline_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Carrier Guideline Mutation Performed",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "shadow_eval_fixture_review_id",
+    "proposed_change_set_id",
+    "reviewer_id",
+    "reviewed_at",
+    "decision",
+    "decision_reason"
+  ],
+  "title": "LearningShadowEvalFixtureReviewRecord",
+  "type": "object"
+}

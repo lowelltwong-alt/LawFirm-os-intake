@@ -47,6 +47,9 @@ from .intake_vertical_readiness_audit import run_intake_vertical_readiness_audit
 from .learning_promotion_readiness import run_learning_promotion_readiness
 from .learning_owner_handoffs import run_learning_owner_handoffs
 from .learning_proposed_changes import run_learning_proposed_changes
+from .learning_shadow_eval_fixture_results import (
+    run_learning_shadow_eval_fixture_results,
+)
 from .learning_shadow_eval_results import run_learning_shadow_eval_results
 from .models import BudgetProposal, HumanConfirmation
 from .pr_review_checklist import run_pr_review_checklist
@@ -370,6 +373,31 @@ def _parser() -> argparse.ArgumentParser:
         default=[],
         help="Synthetic shadow-eval fixture result JSON. May be supplied multiple times.",
     )
+    learning_shadow_eval.add_argument(
+        "--fixture-result-report",
+        action="append",
+        default=[],
+        help=(
+            "learning_shadow_eval_fixture_evidence_report.json containing reviewed "
+            "synthetic fixture results. May be supplied multiple times."
+        ),
+    )
+
+    learning_shadow_eval_fixture_results = sub.add_parser(
+        "record-learning-shadow-eval-fixture-results",
+        help="Record reviewed synthetic fixture evidence for current proposed learning changes.",
+    )
+    learning_shadow_eval_fixture_results.add_argument(
+        "--proposed-change-set",
+        required=True,
+        help="Path to learning_proposed_change_set.json.",
+    )
+    learning_shadow_eval_fixture_results.add_argument(
+        "--review",
+        required=True,
+        help="Path to a LearningShadowEvalFixtureReviewRecord JSON.",
+    )
+    learning_shadow_eval_fixture_results.add_argument("--out-dir", required=True)
 
     learning_owner_handoff = sub.add_parser(
         "build-learning-owner-handoffs",
@@ -1375,6 +1403,7 @@ def main(argv: list[str] | None = None) -> int:
             report, run_dir = run_learning_shadow_eval_results(
                 proposed_change_set_path=args.proposed_change_set,
                 fixture_result_paths=args.fixture_result,
+                fixture_result_report_paths=args.fixture_result_report,
                 out_dir=args.out_dir,
             )
             _print(
@@ -1397,6 +1426,34 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 0
+
+        if args.command == "record-learning-shadow-eval-fixture-results":
+            report, run_dir = run_learning_shadow_eval_fixture_results(
+                proposed_change_set_path=args.proposed_change_set,
+                review_path=args.review,
+                out_dir=args.out_dir,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "fixture_evidence_report_id": report.fixture_evidence_report_id,
+                    "source_proposed_change_set_id": report.source_proposed_change_set_id,
+                    "source_review_record_id": report.source_review_record_id,
+                    "change_count": report.change_count,
+                    "passed_item_count": report.passed_item_count,
+                    "failed_item_count": report.failed_item_count,
+                    "blocked_item_count": report.blocked_item_count,
+                    "missing_item_count": report.missing_item_count,
+                    "fixture_result_count": len(report.fixture_results),
+                    "promotion_authorized": report.promotion_authorized,
+                    "proposed_changes_applied": report.proposed_changes_applied,
+                    "baseline_mutated": report.baseline_mutated,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0 if report.status != "blocked_by_fixture_review" else 2
 
         if args.command == "build-learning-owner-handoffs":
             report, run_dir = run_learning_owner_handoffs(

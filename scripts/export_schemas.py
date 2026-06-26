@@ -148,6 +148,10 @@ from lawfirm_os_intake.models import (  # noqa: E402
     LearningProposedChangeRedTeamNote,
     LearningProposedChangeSet,
     LearningShadowEvalCase,
+    LearningShadowEvalFixtureEvidenceCheck,
+    LearningShadowEvalFixtureEvidenceReport,
+    LearningShadowEvalFixtureReviewItem,
+    LearningShadowEvalFixtureReviewRecord,
     LearningShadowEvalFixtureResult,
     LearningShadowEvalPlan,
     LearningShadowEvalResult,
@@ -350,6 +354,16 @@ MODELS = {
     "learning-proposed-change-artifact.schema.json": LearningProposedChangeArtifact,
     "learning-proposed-change-set.schema.json": LearningProposedChangeSet,
     "learning-shadow-eval-fixture-result.schema.json": LearningShadowEvalFixtureResult,
+    "learning-shadow-eval-fixture-review-item.schema.json": (LearningShadowEvalFixtureReviewItem),
+    "learning-shadow-eval-fixture-review-record.schema.json": (
+        LearningShadowEvalFixtureReviewRecord
+    ),
+    "learning-shadow-eval-fixture-evidence-check.schema.json": (
+        LearningShadowEvalFixtureEvidenceCheck
+    ),
+    "learning-shadow-eval-fixture-evidence-report.schema.json": (
+        LearningShadowEvalFixtureEvidenceReport
+    ),
     "learning-shadow-eval-result.schema.json": LearningShadowEvalResult,
     "learning-shadow-eval-result-report.schema.json": LearningShadowEvalResultReport,
     "learning-owner-handoff-item.schema.json": LearningOwnerHandoffItem,

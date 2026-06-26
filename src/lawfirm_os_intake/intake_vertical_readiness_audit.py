@@ -171,13 +171,20 @@ REQUIRED_SLICES: tuple[SliceDefinition, ...] = (
             "changes while keeping owner review required."
         ),
         proof_artifact_refs=(
+            "src/lawfirm_os_intake/learning_shadow_eval_fixture_results.py",
             "src/lawfirm_os_intake/learning_shadow_eval_results.py",
+            "schemas/learning-shadow-eval-fixture-evidence-report.schema.json",
             "schemas/learning-shadow-eval-fixture-result.schema.json",
             "schemas/learning-shadow-eval-result-report.schema.json",
+            "tests/test_learning_shadow_eval_fixture_results.py",
             "tests/test_learning_shadow_eval_results.py",
+            "docs/decisions/TRACE-2026-06-26-learning-shadow-eval-fixture-evidence.md",
             "docs/decisions/TRACE-2026-06-26-learning-shadow-eval-results.md",
         ),
-        command_refs=("run-learning-shadow-eval",),
+        command_refs=(
+            "record-learning-shadow-eval-fixture-results",
+            "run-learning-shadow-eval",
+        ),
         target_owner_repos=("LawFirm-os-intake",),
         remaining_external_actions=(
             "Passing synthetic eval evidence must still be reviewed by the owning repo.",

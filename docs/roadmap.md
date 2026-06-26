@@ -514,11 +514,21 @@ Status: implemented for the current synthetic candidate slice; owning-repo
 promotion decisions, runtime adoption, and real-data calibration remain future
 work.
 
-Evaluate draft proposed changes against synthetic fixture result evidence before
-any candidate can leave the intake-local eval surface.
+Bind human-reviewed synthetic fixture evidence to draft proposed changes, then
+evaluate those draft changes before any candidate can leave the intake-local eval
+surface.
 
+- `record-learning-shadow-eval-fixture-results` consumes
+  `learning_proposed_change_set.json` and a human fixture review record.
+- It writes `learning_shadow_eval_fixture_evidence_report.json`,
+  `learning_shadow_eval_fixture_evidence_report.md`,
+  `learning_shadow_eval_fixture_results.jsonl`, a normalized review record, and
+  per-fixture JSON files.
+- It fails closed on proposed-change ID or candidate ID mismatch and records
+  partial evidence when a reviewed item is missing, failed, blocked, or rejected.
 - `run-learning-shadow-eval` consumes `learning_proposed_change_set.json` and
-  zero or more synthetic `LearningShadowEvalFixtureResult` files.
+  zero or more synthetic `LearningShadowEvalFixtureResult` files or reviewed
+  fixture evidence reports.
 - It writes `learning_shadow_eval_result_report.json`,
   `learning_shadow_eval_result_report.md`, and
   `learning_shadow_eval_results.jsonl`.

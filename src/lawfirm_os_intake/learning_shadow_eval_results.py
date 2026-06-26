@@ -5,6 +5,7 @@ from pathlib import Path
 from .models import (
     LearningProposedChangeArtifact,
     LearningProposedChangeSet,
+    LearningShadowEvalFixtureEvidenceReport,
     LearningShadowEvalFixtureResult,
     LearningShadowEvalResult,
     LearningShadowEvalResultReport,
@@ -262,6 +263,7 @@ def run_learning_shadow_eval_results(
     proposed_change_set_path: str | Path,
     out_dir: str | Path,
     fixture_result_paths: list[str | Path] | None = None,
+    fixture_result_report_paths: list[str | Path] | None = None,
 ) -> tuple[LearningShadowEvalResultReport, Path]:
     change_set_path = Path(proposed_change_set_path)
     proposed_change_set = LearningProposedChangeSet.model_validate(load_json(change_set_path))
@@ -274,6 +276,13 @@ def run_learning_shadow_eval_results(
                 str(fixture_path),
             )
         )
+    for path_value in fixture_result_report_paths or []:
+        report_path = Path(path_value)
+        fixture_evidence_report = LearningShadowEvalFixtureEvidenceReport.model_validate(
+            load_json(report_path)
+        )
+        for fixture in fixture_evidence_report.fixture_results:
+            fixture_pairs.append((fixture, str(report_path)))
 
     run_dir = Path(out_dir)
     run_dir.mkdir(parents=True, exist_ok=True)

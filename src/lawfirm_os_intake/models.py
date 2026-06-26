@@ -4337,6 +4337,169 @@ class LearningShadowEvalFixtureResult(StrictModel):
         return self
 
 
+class LearningShadowEvalFixtureReviewItem(StrictModel):
+    proposed_change_id: str
+    candidate_id: str
+    evaluation_outcome: Literal["passed", "failed", "blocked"]
+    passed_eval_suites: list[str] = Field(default_factory=list)
+    failed_eval_suites: list[str] = Field(default_factory=list)
+    passed_regression_guardrails: list[str] = Field(default_factory=list)
+    failed_regression_guardrails: list[str] = Field(default_factory=list)
+    baseline_behavior_ref: str | None = None
+    proposed_behavior_ref: str | None = None
+    expected_behavior_summary: str | None = None
+    observed_behavior_summary: str | None = None
+    support_refs: list[str] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def review_item_evidence_required(self) -> "LearningShadowEvalFixtureReviewItem":
+        if not self.support_refs:
+            raise ValueError("shadow eval fixture review item requires support_refs")
+        if self.evaluation_outcome == "passed":
+            if not self.passed_eval_suites:
+                raise ValueError("passed shadow eval review item requires passed eval suites")
+            if not self.passed_regression_guardrails:
+                raise ValueError("passed shadow eval review item requires passed guardrails")
+            if self.failed_eval_suites or self.failed_regression_guardrails:
+                raise ValueError("passed shadow eval review item cannot include failed checks")
+        return self
+
+
+class LearningShadowEvalFixtureReviewRecord(StrictModel):
+    schema_version: str = "0.1"
+    shadow_eval_fixture_review_id: str
+    proposed_change_set_id: str
+    reviewer_id: str
+    reviewer_role: str | None = None
+    reviewed_at: str
+    decision: Literal[
+        "record_fixture_results",
+        "record_partial_fixture_results",
+        "reject_fixture_results",
+    ]
+    decision_reason: str
+    items: list[LearningShadowEvalFixtureReviewItem] = Field(default_factory=list)
+    evidence_refs: list[str] = Field(default_factory=list)
+    required_followups: list[str] = Field(default_factory=list)
+    reviewed_red_team_notes: list[str] = Field(default_factory=list)
+    append_only: Literal[True] = True
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    contains_real_client_data: Literal[False] = False
+    contains_real_matter_data: Literal[False] = False
+    contains_privileged_data: Literal[False] = False
+    promotion_authorized: Literal[False] = False
+    proposed_changes_applied: Literal[False] = False
+    baseline_mutated: Literal[False] = False
+    profile_mutation_performed: Literal[False] = False
+    template_mutation_performed: Literal[False] = False
+    connector_mutation_performed: Literal[False] = False
+    budget_mutation_performed: Literal[False] = False
+    carrier_guideline_mutation_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def review_record_evidence_required(self) -> "LearningShadowEvalFixtureReviewRecord":
+        if not self.decision_reason:
+            raise ValueError("shadow eval fixture review record requires a decision reason")
+        if not self.evidence_refs:
+            raise ValueError("shadow eval fixture review record requires evidence_refs")
+        if not self.required_followups:
+            raise ValueError("shadow eval fixture review record requires followups")
+        if not self.reviewed_red_team_notes:
+            raise ValueError("shadow eval fixture review record requires red-team notes")
+        if self.decision in {"record_fixture_results", "record_partial_fixture_results"}:
+            if not self.items:
+                raise ValueError("shadow eval fixture review record requires review items")
+        if self.decision == "record_fixture_results" and any(
+            item.evaluation_outcome != "passed" for item in self.items
+        ):
+            raise ValueError("record_fixture_results requires all review items to pass")
+        return self
+
+
+class LearningShadowEvalFixtureEvidenceCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "blocked", "failed"]
+    message: str
+    proposed_change_ids: list[str] = Field(default_factory=list)
+    blocking_refs: list[str] = Field(default_factory=list)
+
+
+class LearningShadowEvalFixtureEvidenceReport(StrictModel):
+    schema_version: str = "0.1"
+    fixture_evidence_report_id: str
+    status: Literal[
+        "fixture_results_recorded",
+        "fixture_results_partially_recorded",
+        "blocked_by_fixture_review",
+    ]
+    source_proposed_change_set_id: str
+    source_proposed_change_set_ref: str
+    source_review_record_id: str
+    source_review_record_ref: str
+    reviewer_id: str
+    reviewed_at: str
+    change_count: int = Field(ge=0)
+    reviewed_item_count: int = Field(ge=0)
+    passed_item_count: int = Field(ge=0)
+    failed_item_count: int = Field(ge=0)
+    blocked_item_count: int = Field(ge=0)
+    missing_item_count: int = Field(ge=0)
+    fixture_result_refs: list[str]
+    fixture_results: list[LearningShadowEvalFixtureResult]
+    checks: list[LearningShadowEvalFixtureEvidenceCheck]
+    required_next_gates: list[str]
+    append_only: Literal[True] = True
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    contains_real_client_data: Literal[False] = False
+    contains_real_matter_data: Literal[False] = False
+    contains_privileged_data: Literal[False] = False
+    promotion_authorized: Literal[False] = False
+    proposed_changes_applied: Literal[False] = False
+    proposed_changes_applied_by_fixture_recorder: Literal[False] = False
+    baseline_mutated: Literal[False] = False
+    profile_mutation_performed: Literal[False] = False
+    template_mutation_performed: Literal[False] = False
+    connector_mutation_performed: Literal[False] = False
+    budget_mutation_performed: Literal[False] = False
+    carrier_guideline_mutation_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def evidence_counts_match(self) -> "LearningShadowEvalFixtureEvidenceReport":
+        if self.reviewed_item_count != (
+            self.passed_item_count + self.failed_item_count + self.blocked_item_count
+        ):
+            raise ValueError("shadow eval fixture evidence item counts do not match")
+        if self.change_count != self.reviewed_item_count + self.missing_item_count:
+            raise ValueError("shadow eval fixture evidence change count does not match")
+        if self.passed_item_count != len(self.fixture_results):
+            raise ValueError("shadow eval fixture evidence result count must match passed items")
+        if len(self.fixture_result_refs) != len(self.fixture_results):
+            raise ValueError("shadow eval fixture evidence refs must match results")
+        if self.status == "fixture_results_recorded":
+            if self.missing_item_count or self.failed_item_count or self.blocked_item_count:
+                raise ValueError("recorded fixture evidence cannot have missing or blocked items")
+            if len(self.fixture_result_refs) != self.change_count:
+                raise ValueError("recorded fixture evidence requires one fixture per change")
+        if self.status == "blocked_by_fixture_review" and not any(
+            check.status in {"blocked", "failed"} for check in self.checks
+        ):
+            raise ValueError("blocked fixture evidence requires blocking or failed checks")
+        return self
+
+
 class LearningShadowEvalResult(StrictModel):
     schema_version: str = "0.1"
     shadow_eval_result_id: str

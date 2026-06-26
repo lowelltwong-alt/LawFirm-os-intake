@@ -1,0 +1,43 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "check_id": {
+      "title": "Check Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "passed",
+        "blocked",
+        "failed"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "message": {
+      "title": "Message",
+      "type": "string"
+    },
+    "proposed_change_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Proposed Change Ids",
+      "type": "array"
+    },
+    "blocking_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Blocking Refs",
+      "type": "array"
+    }
+  },
+  "required": [
+    "check_id",
+    "status",
+    "message"
+  ],
+  "title": "LearningShadowEvalFixtureEvidenceCheck",
+  "type": "object"
+}

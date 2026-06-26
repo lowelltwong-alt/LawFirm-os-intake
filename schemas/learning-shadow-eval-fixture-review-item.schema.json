@@ -1,0 +1,112 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "proposed_change_id": {
+      "title": "Proposed Change Id",
+      "type": "string"
+    },
+    "candidate_id": {
+      "title": "Candidate Id",
+      "type": "string"
+    },
+    "evaluation_outcome": {
+      "enum": [
+        "passed",
+        "failed",
+        "blocked"
+      ],
+      "title": "Evaluation Outcome",
+      "type": "string"
+    },
+    "passed_eval_suites": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Passed Eval Suites",
+      "type": "array"
+    },
+    "failed_eval_suites": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Failed Eval Suites",
+      "type": "array"
+    },
+    "passed_regression_guardrails": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Passed Regression Guardrails",
+      "type": "array"
+    },
+    "failed_regression_guardrails": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Failed Regression Guardrails",
+      "type": "array"
+    },
+    "baseline_behavior_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Baseline Behavior Ref"
+    },
+    "proposed_behavior_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Proposed Behavior Ref"
+    },
+    "expected_behavior_summary": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Expected Behavior Summary"
+    },
+    "observed_behavior_summary": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Observed Behavior Summary"
+    },
+    "support_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Support Refs",
+      "type": "array"
+    }
+  },
+  "required": [
+    "proposed_change_id",
+    "candidate_id",
+    "evaluation_outcome"
+  ],
+  "title": "LearningShadowEvalFixtureReviewItem",
+  "type": "object"
+}
