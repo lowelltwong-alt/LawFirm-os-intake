@@ -11,6 +11,9 @@ from .budget_calibration_corpus import run_budget_calibration_corpus_audit
 from .budget_corpus_replay import run_budget_corpus_replay_plan
 from .budget_corpus_replay_execution import run_budget_corpus_replay_execution
 from .budget_corpus_replay_review import run_budget_corpus_replay_review
+from .budget_corpus_replay_review_outcomes import (
+    run_budget_corpus_replay_review_outcome_record,
+)
 from .budget_form import build_budget_form_template_audit_report, render_budget_form
 from .budget_revisions import run_budget_review_record
 from .carrier_rejection_lake_admission import (
@@ -184,6 +187,22 @@ def _parser() -> argparse.ArgumentParser:
         help="Path to budget_corpus_replay_execution_report.json.",
     )
     budget_corpus_replay_review.add_argument("--out-dir", required=True)
+
+    budget_corpus_replay_review_outcome = sub.add_parser(
+        "record-budget-corpus-replay-review-outcome",
+        help="Record an append-only human outcome for a budget corpus replay review packet.",
+    )
+    budget_corpus_replay_review_outcome.add_argument(
+        "--review-packet",
+        required=True,
+        help="Path to budget_corpus_replay_review_packet.json.",
+    )
+    budget_corpus_replay_review_outcome.add_argument(
+        "--outcome",
+        required=True,
+        help="Path to budget corpus replay review outcome JSON.",
+    )
+    budget_corpus_replay_review_outcome.add_argument("--out-dir", required=True)
 
     carrier_rejections = sub.add_parser(
         "capture-carrier-rejections",
@@ -716,6 +735,42 @@ def main(argv: list[str] | None = None) -> int:
                 in {"ready_for_human_replay_review", "blocked_pending_replay_execution"}
                 else 2
             )
+
+        if args.command == "record-budget-corpus-replay-review-outcome":
+            report, run_dir = run_budget_corpus_replay_review_outcome_record(
+                review_packet_path=args.review_packet,
+                outcome_path=args.outcome,
+                out_dir=args.out_dir,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "review_outcome_report_id": report.review_outcome_report_id,
+                    "review_packet_id": report.review_packet_id,
+                    "replay_execution_report_id": report.replay_execution_report_id,
+                    "review_outcome_record_id": report.review_outcome_record_id,
+                    "replay_case_id": report.replay_case_id,
+                    "outcome": report.outcome,
+                    "decision_action": report.decision_action,
+                    "append_only_history_ref": report.append_only_history_ref,
+                    "fixture_binding_approved": report.fixture_binding_approved,
+                    "downstream_learning_gate_allowed": report.downstream_learning_gate_allowed,
+                    "source_packet_mutated": report.source_packet_mutated,
+                    "calibration_applied": report.calibration_applied,
+                    "profile_mutation_performed": report.profile_mutation_performed,
+                    "template_mutation_performed": report.template_mutation_performed,
+                    "budget_mutation_performed": report.budget_mutation_performed,
+                    "carrier_guideline_mutation_performed": (
+                        report.carrier_guideline_mutation_performed
+                    ),
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0 if not report.status.endswith("failed_validation") else 2
 
         if args.command == "capture-carrier-rejections":
             report, run_dir = run_carrier_rejection_capture(

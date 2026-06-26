@@ -74,6 +74,15 @@ does not approve fixture binding, apply learning, mutate
 budgets/profiles/templates/guidelines, write Lake or SQLite records, submit
 budgets, open matters, or authorize external action.
 
+`record-budget-corpus-replay-review-outcome` records a reviewer decision as
+append-only local evidence. It validates the outcome against the review packet
+decision template, writes a single outcome record, appends that record to
+`budget_corpus_replay_review_outcome_history.jsonl`, and writes an outcome
+report. Mismatched packet IDs, unknown cases, disallowed outcomes, and unbound
+approved output refs fail closed. Even an approved fixture-binding outcome does
+not apply learning, mutate source fixtures, write Lake/SQLite records, submit
+budgets, open matters, or authorize external action.
+
 The learning loop can write `reviewed_learning_gate_report.json`, then
 `audit-learning-promotion-readiness` writes `learning_shadow_eval_plan.json` and
 `learning_promotion_readiness_report.json`. `draft-learning-proposed-changes`

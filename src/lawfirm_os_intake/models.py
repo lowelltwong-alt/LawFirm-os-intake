@@ -1920,6 +1920,99 @@ class BudgetCorpusReplayReviewPacket(StrictModel):
         return self
 
 
+class BudgetCorpusReplayReviewOutcomeRecord(StrictModel):
+    schema_version: str = "0.1"
+    review_outcome_id: str
+    review_packet_id: str
+    replay_execution_report_id: str | None = None
+    replay_case_id: str
+    reviewer_id: str
+    reviewer_role: str | None = None
+    reviewed_at: str
+    outcome: BudgetCorpusReplayReviewOutcome
+    decision_reason: str
+    approved_output_refs: list[str] = Field(default_factory=list)
+    rejected_output_refs: list[str] = Field(default_factory=list)
+    evidence_refs: list[str] = Field(default_factory=list)
+    required_followups: list[str] = Field(default_factory=list)
+    supersedes_review_outcome_id: str | None = None
+    source_review_packet_ref: str | None = None
+    append_only: Literal[True] = True
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    fixture_binding_approved: bool = False
+    downstream_learning_gate_allowed: Literal[False] = False
+    calibration_applied: Literal[False] = False
+    profile_mutation_performed: Literal[False] = False
+    template_mutation_performed: Literal[False] = False
+    budget_mutation_performed: Literal[False] = False
+    carrier_guideline_mutation_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def approved_binding_requires_outputs(self) -> "BudgetCorpusReplayReviewOutcomeRecord":
+        if self.outcome == "approve_fixture_binding" and not self.approved_output_refs:
+            raise ValueError("approve_fixture_binding requires approved_output_refs")
+        if self.outcome == "reject_fixture_binding" and not (
+            self.rejected_output_refs or self.decision_reason
+        ):
+            raise ValueError("reject_fixture_binding requires rejected refs or a reason")
+        return self
+
+
+class BudgetCorpusReplayReviewOutcomeCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed", "warning"]
+    message: str
+    replay_case_ids: list[str] = Field(default_factory=list)
+
+
+class BudgetCorpusReplayReviewOutcomeReport(StrictModel):
+    schema_version: str = "0.1"
+    review_outcome_report_id: str
+    review_packet_id: str
+    replay_execution_report_id: str
+    source_review_packet_ref: str
+    review_outcome_record_id: str
+    status: Literal[
+        "review_outcome_recorded",
+        "review_outcome_recorded_learning_still_blocked",
+        "review_outcome_rejected_or_needs_repair",
+        "review_outcome_failed_validation",
+    ]
+    replay_case_id: str
+    outcome: BudgetCorpusReplayReviewOutcome
+    decision_action: BudgetCorpusReplayReviewAction | None = None
+    decision_reason: str
+    append_only_history_ref: str
+    approved_output_refs: list[str] = Field(default_factory=list)
+    rejected_output_refs: list[str] = Field(default_factory=list)
+    required_followups: list[str] = Field(default_factory=list)
+    checks: list[BudgetCorpusReplayReviewOutcomeCheck]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    append_only: Literal[True] = True
+    source_packet_mutated: Literal[False] = False
+    fixture_binding_approved: bool = False
+    downstream_learning_gate_allowed: Literal[False] = False
+    calibration_applied: Literal[False] = False
+    profile_mutation_performed: Literal[False] = False
+    template_mutation_performed: Literal[False] = False
+    budget_mutation_performed: Literal[False] = False
+    carrier_guideline_mutation_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+
 class BudgetFormCodeMapping(StrictModel):
     code: str
     kind: Literal["phase", "task"]

@@ -387,7 +387,7 @@ after those owners promote the necessary contracts and runtime gates.
 
 Status: implemented for the current synthetic candidate slice through corpus
 audit, replay planning, selected replay execution audit, and human replay review
-packet generation; append-only human replay outcomes, broader replay execution,
+packet/outcome recording; broader replay execution, reviewed fixture binding,
 real-data pilots, and owner adoption remain future work.
 
 Separate "we have synthetic evidence artifacts" from "we are allowed to learn
@@ -451,3 +451,15 @@ from them."
   not approve fixture binding, apply learning, mutate
   budgets/profiles/templates/guidelines, write Lake or SQLite records, submit
   budgets, open matters, or authorize external actions.
+- `record-budget-corpus-replay-review-outcome` consumes a replay review packet
+  and reviewer-supplied outcome JSON, then writes
+  `budget_corpus_replay_review_outcome_record.json`,
+  `budget_corpus_replay_review_outcome_history.jsonl`,
+  `budget_corpus_replay_review_outcome_report.json`, and Markdown notes.
+- Outcomes are validated against the decision template. Unknown cases,
+  disallowed outcomes, mismatched packet IDs, and unbound approved output refs
+  fail closed.
+- Outcome records are append-only and may supersede earlier outcome IDs, but they
+  do not mutate the packet, replay report, source fixtures, budget profiles,
+  templates, carrier guidelines, Lake records, SQLite records, or learning
+  state.

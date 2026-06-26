@@ -28,6 +28,9 @@ from lawfirm_os_intake.models import (  # noqa: E402
     BudgetCorpusReplayOutputCheck,
     BudgetCorpusReplayPlan,
     BudgetCorpusReplayReviewDecisionTemplate,
+    BudgetCorpusReplayReviewOutcomeCheck,
+    BudgetCorpusReplayReviewOutcomeRecord,
+    BudgetCorpusReplayReviewOutcomeReport,
     BudgetCorpusReplayReviewPacket,
     BudgetCorpusReplayReviewRecommendation,
     BudgetCorpusReplayReviewRedTeamNote,
@@ -191,6 +194,13 @@ MODELS = {
     "budget-corpus-replay-plan.schema.json": BudgetCorpusReplayPlan,
     "budget-corpus-replay-review-decision-template.schema.json": (
         BudgetCorpusReplayReviewDecisionTemplate
+    ),
+    "budget-corpus-replay-review-outcome-check.schema.json": (BudgetCorpusReplayReviewOutcomeCheck),
+    "budget-corpus-replay-review-outcome-record.schema.json": (
+        BudgetCorpusReplayReviewOutcomeRecord
+    ),
+    "budget-corpus-replay-review-outcome-report.schema.json": (
+        BudgetCorpusReplayReviewOutcomeReport
     ),
     "budget-corpus-replay-review-packet.schema.json": BudgetCorpusReplayReviewPacket,
     "budget-corpus-replay-review-recommendation.schema.json": (
