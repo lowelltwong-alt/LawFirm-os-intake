@@ -40,6 +40,7 @@ from .learning_owner_handoffs import run_learning_owner_handoffs
 from .learning_proposed_changes import run_learning_proposed_changes
 from .learning_shadow_eval_results import run_learning_shadow_eval_results
 from .models import BudgetProposal, HumanConfirmation
+from .pr_review_checklist import run_pr_review_checklist
 from .reviewed_learning_gate import run_reviewed_learning_gate
 from .util import load_json, write_json
 from .workflow import run_budget, run_preflight
@@ -376,6 +377,16 @@ def _parser() -> argparse.ArgumentParser:
         default=".",
         help="Repository root to inspect; defaults to the current working directory.",
     )
+    pr_review_checklist = sub.add_parser(
+        "build-pr-review-checklist",
+        help="Build a human PR review checklist from intake vertical readiness evidence.",
+    )
+    pr_review_checklist.add_argument(
+        "--readiness-audit-report",
+        required=True,
+        help="Path to intake_vertical_readiness_audit_report.json.",
+    )
+    pr_review_checklist.add_argument("--out-dir", required=True)
     return parser
 
 
@@ -1222,6 +1233,37 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 0 if report.status == "ready_for_pr_review_external_adoption_required" else 2
+
+        if args.command == "build-pr-review-checklist":
+            report, run_dir = run_pr_review_checklist(
+                readiness_audit_report_path=args.readiness_audit_report,
+                out_dir=args.out_dir,
+            )
+            blocking_items = [
+                item.item_id
+                for item in report.items
+                if item.recommendation == "block_until_resolved"
+            ]
+            _print(
+                {
+                    "status": report.status,
+                    "checklist_report_id": report.checklist_report_id,
+                    "source_readiness_status": report.source_readiness_status,
+                    "source_review_readiness": report.source_review_readiness,
+                    "recommendation": report.recommendation,
+                    "item_count": report.item_count,
+                    "blocking_item_count": report.blocking_item_count,
+                    "blocking_items": blocking_items,
+                    "pr_marked_ready": report.pr_marked_ready,
+                    "github_write_performed": report.github_write_performed,
+                    "promotion_authorized": report.promotion_authorized,
+                    "proposed_changes_applied": report.proposed_changes_applied,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0 if report.status == "ready_for_human_pr_review" else 2
     except (ValueError, OSError, json.JSONDecodeError) as exc:
         print(json.dumps({"status": "blocked", "error": str(exc)}, indent=2), file=sys.stderr)
         return 2

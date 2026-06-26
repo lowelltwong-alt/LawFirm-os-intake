@@ -58,3 +58,13 @@ Candidate lines must distinguish direct evidence from packet anchors. `observed_
 The starter budget path writes `human_review_outcome.<confirmation_id>.json` and appends the same record to `human_confirmation_history.jsonl` before the budget precondition gate runs. The record preserves reviewer identity, status, supersession ID, evidence refs, required next gate, and whether budget-stage output is allowed. Only a `confirmed` outcome bound to the same preflight packet may be marked budget-stage eligible; every other review outcome remains blocked and inspectable.
 
 The preflight path writes `evidence_completeness_report.json` so reviewers and future Orchestrator handoff can see that candidate evidence refs, unknown options, deadline review-only posture, and prohibited next steps were checked before the package was accepted. The report is local proof only, not platform canon.
+
+## PR close-out review
+
+Before a draft PR is moved forward, `build-pr-review-checklist` should consume
+the final readiness audit and produce a reviewer checklist. Each item includes a
+recommendation, why-note, artifact refs, red-team note, and required human
+decision where applicable. A blocked readiness audit becomes a blocking checklist
+item. A ready checklist remains human-review evidence only; it does not mark a
+PR ready, call GitHub write APIs, promote canon, admit Lake records, write
+SQLite, apply learning, or authorize production use.

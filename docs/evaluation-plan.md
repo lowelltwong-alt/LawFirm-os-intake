@@ -155,6 +155,15 @@ means ready for human PR review only; it does not mark a PR ready, promote canon
 implement connectors, admit Lake records, write SQLite, apply proposed changes,
 or prove production readiness.
 
+`build-pr-review-checklist` consumes the final readiness audit and writes
+`pr_review_checklist.json` plus `pr_review_checklist.md`. The checklist is the
+human close-out review packet for a draft PR: it records recommended checks,
+why-notes, red-team notes, blocking readiness items, required human decisions,
+and validation commands. A blocked readiness audit produces a blocking checklist
+item. A ready checklist still records `pr_marked_ready=false` and
+`github_write_performed=false`; it does not change PR state, promote canon,
+write Lake/SQLite records, write sibling repos, or apply learning.
+
 ### Counterfactual evals
 
 Same source, different practice context. Evidence must remain unchanged.
@@ -197,6 +206,7 @@ Measure review time, correction count, unknown selection, evidence-navigation bu
 - keep `context_counterfactual_audit_report.json` local and non-authoritative; it proves practice-context separation on synthetic fixtures only and does not promote profiles, priors, or taxonomies.
 - keep learning shadow-eval and promotion-readiness reports local and non-authoritative; they plan required eval evidence and block promotion, but do not apply changes or prove production readiness by themselves.
 - keep `intake_vertical_readiness_audit_report.json` local and non-authoritative; it proves PR-review readiness for candidate artifacts only and keeps external adoption with the owning repos.
+- keep `pr_review_checklist.json` local and non-authoritative; it helps a human make the draft-PR decision but must not mark the PR ready, call GitHub write APIs, promote canon, write Lake/SQLite records, or apply learning.
 
 ## Graduation gates
 

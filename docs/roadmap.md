@@ -258,6 +258,31 @@ package without letting intake become the Lake runtime.
   classes, submit appeals or budgets, read billing, write billing, or apply
   learning.
 
+## 11B. PR Review Checklist
+
+Status: implemented for the current synthetic candidate slice; the actual PR
+state change remains a human GitHub action.
+
+Turn the final readiness audit into an explicit human-review checklist with
+recommendations, why-notes, red-team objections, blocking readiness items,
+validation commands, and required human decisions before a draft PR is moved
+forward.
+
+- `build-pr-review-checklist` consumes
+  `intake_vertical_readiness_audit_report.json`.
+- It writes `pr_review_checklist.json` and `pr_review_checklist.md`.
+- Ready status is only `ready_for_human_pr_review`; it is not production
+  readiness and does not override required owner adoption in Semantic Substrate,
+  Orchestrator, or Exception Lake.
+- A blocked readiness audit produces a blocking checklist item and keeps the
+  recommendation at `keep_draft_until_human_review_complete`.
+- The checklist records `pr_marked_ready=false`,
+  `github_write_performed=false`, `promotion_authorized=false`,
+  `proposed_changes_applied=false`, `no_lake_admission_performed=true`,
+  `no_sibling_repo_writes=true`, `no_canonical_mutation=true`,
+  `lake_write_performed=false`, `sqlite_write_performed=false`,
+  `external_writes_performed=false`, and `silent_learning_performed=false`.
+
 ## 12. Reviewed Learning Gate
 
 Status: implemented for the current synthetic candidate slice; owning-repo

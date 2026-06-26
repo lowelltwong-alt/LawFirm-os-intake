@@ -4160,6 +4160,125 @@ class IntakeVerticalReadinessAuditReport(StrictModel):
         return self
 
 
+class PRReviewChecklistItem(StrictModel):
+    item_id: str
+    section: Literal[
+        "readiness_audit",
+        "lake_bundle",
+        "learning_chain",
+        "authority_boundary",
+        "validation",
+        "external_owner_review",
+        "human_decision",
+    ]
+    title: str
+    recommendation: Literal[
+        "inspect",
+        "confirm",
+        "block_until_resolved",
+        "external_owner_review",
+    ]
+    why: str
+    artifact_refs: list[str] = Field(default_factory=list)
+    required_before_ready: bool = True
+    red_team_note: str
+    required_human_decision: str | None = None
+    status: Literal["open_for_human_review", "blocked_by_readiness_audit"] = "open_for_human_review"
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+
+    @model_validator(mode="after")
+    def blocked_items_must_block(self) -> "PRReviewChecklistItem":
+        if self.status == "blocked_by_readiness_audit" and (
+            self.recommendation != "block_until_resolved"
+        ):
+            raise ValueError("blocked checklist item must recommend block_until_resolved")
+        if self.recommendation == "block_until_resolved" and (
+            self.status != "blocked_by_readiness_audit"
+        ):
+            raise ValueError("blocking checklist item must be blocked_by_readiness_audit")
+        if not self.why:
+            raise ValueError("checklist item requires why")
+        if not self.red_team_note:
+            raise ValueError("checklist item requires red-team note")
+        return self
+
+
+class PRReviewChecklistReport(StrictModel):
+    schema_version: str = "0.1"
+    checklist_report_id: str
+    source_readiness_audit_report_ref: str
+    source_readiness_audit_report_id: str
+    source_readiness_status: Literal[
+        "ready_for_pr_review_external_adoption_required",
+        "incomplete_missing_local_artifacts",
+        "blocked_missing_or_failed_learning_artifacts",
+        "blocked_missing_or_failed_lake_bundle",
+    ]
+    source_review_readiness: Literal[
+        "ready_for_human_pr_review_not_auto_marked",
+        "not_ready_missing_local_artifacts",
+        "not_ready_learning_artifact_chain_blocked",
+        "not_ready_lake_bundle_blocked",
+    ]
+    status: Literal["ready_for_human_pr_review", "blocked_by_readiness_audit"]
+    recommendation: Literal[
+        "eligible_for_human_to_mark_ready_after_review",
+        "keep_draft_until_human_review_complete",
+    ]
+    item_count: int = Field(ge=0)
+    blocking_item_count: int = Field(ge=0)
+    items: list[PRReviewChecklistItem]
+    required_human_decisions: list[str]
+    validation_commands: list[str]
+    external_adoption_target_repos: list[LearningTargetOwner]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    local_completion_scope: Literal["synthetic_candidate_only"] = "synthetic_candidate_only"
+    pr_marked_ready: Literal[False] = False
+    github_write_performed: Literal[False] = False
+    promotion_authorized: Literal[False] = False
+    proposed_changes_applied: Literal[False] = False
+    no_connector_implemented: Literal[True] = True
+    no_lake_admission_performed: Literal[True] = True
+    no_sibling_repo_writes: Literal[True] = True
+    no_canonical_mutation: Literal[True] = True
+    sqlite_write_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def checklist_counts_and_boundaries_match(self) -> "PRReviewChecklistReport":
+        if self.item_count != len(self.items):
+            raise ValueError("PR review checklist item count does not match")
+        counted_blocking = sum(
+            1 for item in self.items if item.recommendation == "block_until_resolved"
+        )
+        if self.blocking_item_count != counted_blocking:
+            raise ValueError("PR review checklist blocking count does not match")
+        if not self.required_human_decisions:
+            raise ValueError("PR review checklist requires human decisions")
+        if not self.validation_commands:
+            raise ValueError("PR review checklist requires validation commands")
+        if self.status == "ready_for_human_pr_review":
+            if self.source_readiness_status != "ready_for_pr_review_external_adoption_required":
+                raise ValueError("ready PR review checklist requires ready readiness audit")
+            if self.source_review_readiness != "ready_for_human_pr_review_not_auto_marked":
+                raise ValueError("ready PR review checklist requires ready review_readiness")
+            if self.blocking_item_count:
+                raise ValueError("ready PR review checklist cannot include blocking items")
+            if self.recommendation != "eligible_for_human_to_mark_ready_after_review":
+                raise ValueError("ready PR review checklist has invalid recommendation")
+        if self.status == "blocked_by_readiness_audit":
+            if not self.blocking_item_count:
+                raise ValueError("blocked PR review checklist requires a blocking item")
+            if self.recommendation != "keep_draft_until_human_review_complete":
+                raise ValueError("blocked PR review checklist must keep draft")
+        return self
+
+
 class CarrierRejectionOrchestratorConnectorChannel(StrictModel):
     channel_id: Literal[
         "carrier_portal_notice",

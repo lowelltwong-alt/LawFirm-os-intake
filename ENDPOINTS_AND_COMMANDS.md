@@ -223,6 +223,22 @@ remains required. It does not mark the PR ready,
 promote canon, write sibling repos, implement connectors, admit Lake records,
 write SQLite, apply proposed changes, or perform silent learning.
 
+### Build PR review checklist
+
+```bash
+python -m lawfirm_os_intake build-pr-review-checklist \
+  --readiness-audit-report .lawfirm-os-intake/intake-vertical-readiness-audit/intake_vertical_readiness_audit_report.json \
+  --out-dir .lawfirm-os-intake/pr-review-checklist
+```
+
+This writes `pr_review_checklist.json` and `pr_review_checklist.md`. The
+checklist gives the human reviewer explicit recommended checks, why-notes,
+red-team notes, blocking readiness items, required human decisions, validation
+commands, and no-write boundary flags before any PR state change. It does not
+mark a PR ready, call GitHub write APIs, promote canon, write sibling repos,
+admit Lake records, write SQLite, apply proposed changes, or authorize
+production use.
+
 ### Draft carrier rejection Orchestrator interface
 
 ```bash

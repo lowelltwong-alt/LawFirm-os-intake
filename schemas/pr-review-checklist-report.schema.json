@@ -1,0 +1,315 @@
+{
+  "$defs": {
+    "PRReviewChecklistItem": {
+      "additionalProperties": false,
+      "properties": {
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "section": {
+          "enum": [
+            "readiness_audit",
+            "lake_bundle",
+            "learning_chain",
+            "authority_boundary",
+            "validation",
+            "external_owner_review",
+            "human_decision"
+          ],
+          "title": "Section",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "recommendation": {
+          "enum": [
+            "inspect",
+            "confirm",
+            "block_until_resolved",
+            "external_owner_review"
+          ],
+          "title": "Recommendation",
+          "type": "string"
+        },
+        "why": {
+          "title": "Why",
+          "type": "string"
+        },
+        "artifact_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Artifact Refs",
+          "type": "array"
+        },
+        "required_before_ready": {
+          "default": true,
+          "title": "Required Before Ready",
+          "type": "boolean"
+        },
+        "red_team_note": {
+          "title": "Red Team Note",
+          "type": "string"
+        },
+        "required_human_decision": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Required Human Decision"
+        },
+        "status": {
+          "default": "open_for_human_review",
+          "enum": [
+            "open_for_human_review",
+            "blocked_by_readiness_audit"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "item_id",
+        "section",
+        "title",
+        "recommendation",
+        "why",
+        "red_team_note"
+      ],
+      "title": "PRReviewChecklistItem",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "checklist_report_id": {
+      "title": "Checklist Report Id",
+      "type": "string"
+    },
+    "source_readiness_audit_report_ref": {
+      "title": "Source Readiness Audit Report Ref",
+      "type": "string"
+    },
+    "source_readiness_audit_report_id": {
+      "title": "Source Readiness Audit Report Id",
+      "type": "string"
+    },
+    "source_readiness_status": {
+      "enum": [
+        "ready_for_pr_review_external_adoption_required",
+        "incomplete_missing_local_artifacts",
+        "blocked_missing_or_failed_learning_artifacts",
+        "blocked_missing_or_failed_lake_bundle"
+      ],
+      "title": "Source Readiness Status",
+      "type": "string"
+    },
+    "source_review_readiness": {
+      "enum": [
+        "ready_for_human_pr_review_not_auto_marked",
+        "not_ready_missing_local_artifacts",
+        "not_ready_learning_artifact_chain_blocked",
+        "not_ready_lake_bundle_blocked"
+      ],
+      "title": "Source Review Readiness",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "ready_for_human_pr_review",
+        "blocked_by_readiness_audit"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "recommendation": {
+      "enum": [
+        "eligible_for_human_to_mark_ready_after_review",
+        "keep_draft_until_human_review_complete"
+      ],
+      "title": "Recommendation",
+      "type": "string"
+    },
+    "item_count": {
+      "minimum": 0,
+      "title": "Item Count",
+      "type": "integer"
+    },
+    "blocking_item_count": {
+      "minimum": 0,
+      "title": "Blocking Item Count",
+      "type": "integer"
+    },
+    "items": {
+      "items": {
+        "$ref": "#/$defs/PRReviewChecklistItem"
+      },
+      "title": "Items",
+      "type": "array"
+    },
+    "required_human_decisions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Human Decisions",
+      "type": "array"
+    },
+    "validation_commands": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Validation Commands",
+      "type": "array"
+    },
+    "external_adoption_target_repos": {
+      "items": {
+        "enum": [
+          "LawFirm-os-intake",
+          "LawFirm-os-orchestrator",
+          "LawFirm-os-exceptions-lake-runtime",
+          "LawFirm-os-semantic-substrate"
+        ],
+        "type": "string"
+      },
+      "title": "External Adoption Target Repos",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "local_completion_scope": {
+      "const": "synthetic_candidate_only",
+      "default": "synthetic_candidate_only",
+      "title": "Local Completion Scope",
+      "type": "string"
+    },
+    "pr_marked_ready": {
+      "const": false,
+      "default": false,
+      "title": "Pr Marked Ready",
+      "type": "boolean"
+    },
+    "github_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Github Write Performed",
+      "type": "boolean"
+    },
+    "promotion_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Promotion Authorized",
+      "type": "boolean"
+    },
+    "proposed_changes_applied": {
+      "const": false,
+      "default": false,
+      "title": "Proposed Changes Applied",
+      "type": "boolean"
+    },
+    "no_connector_implemented": {
+      "const": true,
+      "default": true,
+      "title": "No Connector Implemented",
+      "type": "boolean"
+    },
+    "no_lake_admission_performed": {
+      "const": true,
+      "default": true,
+      "title": "No Lake Admission Performed",
+      "type": "boolean"
+    },
+    "no_sibling_repo_writes": {
+      "const": true,
+      "default": true,
+      "title": "No Sibling Repo Writes",
+      "type": "boolean"
+    },
+    "no_canonical_mutation": {
+      "const": true,
+      "default": true,
+      "title": "No Canonical Mutation",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "checklist_report_id",
+    "source_readiness_audit_report_ref",
+    "source_readiness_audit_report_id",
+    "source_readiness_status",
+    "source_review_readiness",
+    "status",
+    "recommendation",
+    "item_count",
+    "blocking_item_count",
+    "items",
+    "required_human_decisions",
+    "validation_commands",
+    "external_adoption_target_repos",
+    "generated_at"
+  ],
+  "title": "PRReviewChecklistReport",
+  "type": "object"
+}
