@@ -1,0 +1,228 @@
+{
+  "$defs": {
+    "BudgetCorpusReplayOutputCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "output_ref": {
+          "title": "Output Ref",
+          "type": "string"
+        },
+        "resolved_output_path": {
+          "title": "Resolved Output Path",
+          "type": "string"
+        },
+        "exists": {
+          "title": "Exists",
+          "type": "boolean"
+        },
+        "sha256": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sha256"
+        },
+        "size_bytes": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Size Bytes"
+        }
+      },
+      "required": [
+        "output_ref",
+        "resolved_output_path",
+        "exists"
+      ],
+      "title": "BudgetCorpusReplayOutputCheck",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "command_id": {
+      "title": "Command Id",
+      "type": "string"
+    },
+    "replay_case_id": {
+      "title": "Replay Case Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "planned_only_not_executed",
+        "executed_passed",
+        "executed_failed",
+        "skipped_not_selected",
+        "skipped_supporting_context",
+        "blocked_from_plan",
+        "blocked_missing_input",
+        "blocked_prior_command_failed",
+        "blocked_unsupported_command",
+        "blocked_missing_placeholder"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "execution_mode": {
+      "enum": [
+        "dry_run",
+        "execute"
+      ],
+      "title": "Execution Mode",
+      "type": "string"
+    },
+    "planned_command": {
+      "title": "Planned Command",
+      "type": "string"
+    },
+    "resolved_command": {
+      "title": "Resolved Command",
+      "type": "string"
+    },
+    "return_code": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Return Code"
+    },
+    "stdout_excerpt": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Stdout Excerpt"
+    },
+    "stderr_excerpt": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Stderr Excerpt"
+    },
+    "output_checks": {
+      "items": {
+        "$ref": "#/$defs/BudgetCorpusReplayOutputCheck"
+      },
+      "title": "Output Checks",
+      "type": "array"
+    },
+    "blocking_reasons": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Blocking Reasons",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "not_authorized_for_external_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For External Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_lake_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Lake Write",
+      "type": "boolean"
+    },
+    "calibration_applied": {
+      "const": false,
+      "default": false,
+      "title": "Calibration Applied",
+      "type": "boolean"
+    },
+    "profile_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Profile Mutation Performed",
+      "type": "boolean"
+    },
+    "template_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Template Mutation Performed",
+      "type": "boolean"
+    },
+    "budget_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Budget Mutation Performed",
+      "type": "boolean"
+    },
+    "carrier_guideline_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Carrier Guideline Mutation Performed",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "command_id",
+    "replay_case_id",
+    "status",
+    "execution_mode",
+    "planned_command",
+    "resolved_command"
+  ],
+  "title": "BudgetCorpusReplayCommandResult",
+  "type": "object"
+}

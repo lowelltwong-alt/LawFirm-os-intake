@@ -70,6 +70,9 @@ def test_budget_corpus_replay_plan_maps_eligible_artifacts_to_command_chains(rep
     for case in plan.cases:
         if case.status == "supporting_context_only":
             assert case.command_chain == []
+        if case.artifact_kind == "learning_support_fixture":
+            assert case.status == "supporting_context_only"
+            assert case.command_chain == []
         for command in case.command_chain:
             assert command.execution_mode == "planned_only_not_executed"
             assert command.not_authorized_for_external_write is True

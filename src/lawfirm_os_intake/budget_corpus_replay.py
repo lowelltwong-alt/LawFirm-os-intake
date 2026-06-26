@@ -125,7 +125,7 @@ def _baseline_command(
             *([fixture_gold_ref] if fixture_gold_ref else []),
         ],
         expected_output_refs=[
-            f"{case_dir}/baseline/preflight/intake_preflight_packet.json",
+            f"{case_dir}/baseline/preflight/*/intake_preflight_packet.json",
             f"{case_dir}/baseline/human_confirmation.json",
             f"{case_dir}/baseline/budget/legal_budget_proposal.json",
         ],

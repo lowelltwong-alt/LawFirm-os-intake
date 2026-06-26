@@ -70,8 +70,10 @@ def _kind_for_path(path: Path) -> BudgetCalibrationArtifactKind:
         return "reviewed_gold_fixture"
     if "learning" in parts and name.startswith("shadow-eval-result"):
         return "learning_shadow_eval_fixture"
-    if "learning" in parts:
+    if "learning" in parts and name.startswith("reviewed-learning-gate"):
         return "learning_gate_fixture"
+    if "learning" in parts:
+        return "learning_support_fixture"
     return "unclassified_json_fixture"
 
 

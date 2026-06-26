@@ -1378,6 +1378,7 @@ BudgetCalibrationArtifactKind = Literal[
     "reviewed_gold_fixture",
     "learning_gate_fixture",
     "learning_shadow_eval_fixture",
+    "learning_support_fixture",
     "unclassified_json_fixture",
 ]
 
@@ -1611,6 +1612,177 @@ class BudgetCorpusReplayPlan(StrictModel):
             raise ValueError("blocked replay case count does not match cases")
         if self.status == "replay_plan_ready_for_review" and not self.planned_case_count:
             raise ValueError("ready replay plan requires at least one planned case")
+        return self
+
+
+BudgetCorpusReplayRunMode = Literal["dry_run", "execute"]
+
+BudgetCorpusReplayCommandResultStatus = Literal[
+    "planned_only_not_executed",
+    "executed_passed",
+    "executed_failed",
+    "skipped_not_selected",
+    "skipped_supporting_context",
+    "blocked_from_plan",
+    "blocked_missing_input",
+    "blocked_prior_command_failed",
+    "blocked_unsupported_command",
+    "blocked_missing_placeholder",
+]
+
+BudgetCorpusReplayCaseResultStatus = Literal[
+    "dry_run_ready",
+    "executed_passed",
+    "executed_failed",
+    "skipped_not_selected",
+    "skipped_supporting_context",
+    "blocked",
+]
+
+BudgetCorpusReplayExecutionReportStatus = Literal[
+    "dry_run_ready_for_review",
+    "execution_passed_for_review",
+    "execution_failed",
+    "blocked_by_plan",
+    "no_executable_cases",
+]
+
+
+class BudgetCorpusReplayOutputCheck(StrictModel):
+    output_ref: str
+    resolved_output_path: str
+    exists: bool
+    sha256: str | None = None
+    size_bytes: int | None = Field(default=None, ge=0)
+
+
+class BudgetCorpusReplayCommandResult(StrictModel):
+    command_id: str
+    replay_case_id: str
+    status: BudgetCorpusReplayCommandResultStatus
+    execution_mode: BudgetCorpusReplayRunMode
+    planned_command: str
+    resolved_command: str
+    return_code: int | None = None
+    stdout_excerpt: str | None = None
+    stderr_excerpt: str | None = None
+    output_checks: list[BudgetCorpusReplayOutputCheck] = Field(default_factory=list)
+    blocking_reasons: list[str] = Field(default_factory=list)
+    candidate_only: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    calibration_applied: Literal[False] = False
+    profile_mutation_performed: Literal[False] = False
+    template_mutation_performed: Literal[False] = False
+    budget_mutation_performed: Literal[False] = False
+    carrier_guideline_mutation_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+
+class BudgetCorpusReplayCaseResult(StrictModel):
+    replay_case_id: str
+    source_artifact_ref: str
+    artifact_kind: BudgetCalibrationArtifactKind
+    status: BudgetCorpusReplayCaseResultStatus
+    command_results: list[BudgetCorpusReplayCommandResult] = Field(default_factory=list)
+    output_checks: list[BudgetCorpusReplayOutputCheck] = Field(default_factory=list)
+    blocking_reasons: list[str] = Field(default_factory=list)
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    calibration_applied: Literal[False] = False
+    profile_mutation_performed: Literal[False] = False
+    template_mutation_performed: Literal[False] = False
+    budget_mutation_performed: Literal[False] = False
+    carrier_guideline_mutation_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+
+class BudgetCorpusReplayExecutionCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed", "warning"]
+    message: str
+    case_ids: list[str] = Field(default_factory=list)
+    command_ids: list[str] = Field(default_factory=list)
+
+
+class BudgetCorpusReplayExecutionReport(StrictModel):
+    schema_version: str = "0.1"
+    replay_execution_report_id: str
+    replay_plan_id: str
+    replay_plan_ref: str
+    execution_mode: BudgetCorpusReplayRunMode
+    status: BudgetCorpusReplayExecutionReportStatus
+    replay_run_root: str
+    selected_case_ids: list[str] = Field(default_factory=list)
+    case_count: int = Field(ge=0)
+    executed_case_count: int = Field(ge=0)
+    dry_run_case_count: int = Field(ge=0)
+    skipped_case_count: int = Field(ge=0)
+    blocked_case_count: int = Field(ge=0)
+    failed_case_count: int = Field(ge=0)
+    command_count: int = Field(ge=0)
+    executed_command_count: int = Field(ge=0)
+    failed_command_count: int = Field(ge=0)
+    cases: list[BudgetCorpusReplayCaseResult]
+    checks: list[BudgetCorpusReplayExecutionCheck]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    calibration_applied: Literal[False] = False
+    profile_mutation_performed: Literal[False] = False
+    template_mutation_performed: Literal[False] = False
+    budget_mutation_performed: Literal[False] = False
+    carrier_guideline_mutation_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def counts_match_case_results(self) -> "BudgetCorpusReplayExecutionReport":
+        if self.case_count != len(self.cases):
+            raise ValueError("budget corpus replay execution case count must match cases")
+        if self.executed_case_count != sum(
+            1 for case in self.cases if case.status == "executed_passed"
+        ):
+            raise ValueError("executed case count does not match cases")
+        if self.dry_run_case_count != sum(
+            1 for case in self.cases if case.status == "dry_run_ready"
+        ):
+            raise ValueError("dry-run case count does not match cases")
+        if self.failed_case_count != sum(
+            1 for case in self.cases if case.status == "executed_failed"
+        ):
+            raise ValueError("failed case count does not match cases")
+        if self.blocked_case_count != sum(1 for case in self.cases if case.status == "blocked"):
+            raise ValueError("blocked case count does not match cases")
+        skipped = sum(
+            1
+            for case in self.cases
+            if case.status in {"skipped_not_selected", "skipped_supporting_context"}
+        )
+        if self.skipped_case_count != skipped:
+            raise ValueError("skipped case count does not match cases")
+        command_results = [command for case in self.cases for command in case.command_results]
+        if self.command_count != len(command_results):
+            raise ValueError("command count does not match command results")
+        if self.executed_command_count != sum(
+            1 for command in command_results if command.status == "executed_passed"
+        ):
+            raise ValueError("executed command count does not match command results")
+        if self.failed_command_count != sum(
+            1 for command in command_results if command.status == "executed_failed"
+        ):
+            raise ValueError("failed command count does not match command results")
         return self
 
 

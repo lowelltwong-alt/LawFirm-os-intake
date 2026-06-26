@@ -19,6 +19,7 @@
         "reviewed_gold_fixture",
         "learning_gate_fixture",
         "learning_shadow_eval_fixture",
+        "learning_support_fixture",
         "unclassified_json_fixture"
       ],
       "title": "Artifact Kind",

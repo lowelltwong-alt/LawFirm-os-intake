@@ -54,6 +54,17 @@ fixtures are not executed, and blocked corpus reports produce no command
 chains. The command is planning-only: it does not run replay commands, mutate
 profiles/templates/guidelines, write Lake or SQLite records, or apply learning.
 
+`replay-budget-corpus` consumes the replay plan and writes
+`budget_corpus_replay_execution_report.json`. Dry-run mode is the default and
+records planned command readiness without executing. With `--execute` and
+optional `--case-id`, it can run selected synthetic command chains locally and
+verify expected output artifacts. Missing placeholders, missing inputs,
+unsupported commands, failed commands, and missing expected outputs fail closed.
+Learning-support artifacts remain supporting context unless an upstream reviewed
+chain produces the needed input. The report remains non-authoritative and does
+not calibrate, mutate budgets/profiles/templates/guidelines, write Lake or
+SQLite records, submit budgets, open matters, or apply learning.
+
 The learning loop can write `reviewed_learning_gate_report.json`, then
 `audit-learning-promotion-readiness` writes `learning_shadow_eval_plan.json` and
 `learning_promotion_readiness_report.json`. `draft-learning-proposed-changes`

@@ -386,8 +386,9 @@ after those owners promote the necessary contracts and runtime gates.
 ## 18. Budget Calibration Corpus
 
 Status: implemented for the current synthetic candidate slice through corpus
-audit and replay planning; human corpus replay review, replay execution,
-real-data pilots, and owner adoption remain future work.
+audit, replay planning, and selected replay execution audit; human corpus
+replay review, broader replay execution, real-data pilots, and owner adoption
+remain future work.
 
 Separate "we have synthetic evidence artifacts" from "we are allowed to learn
 from them."
@@ -420,3 +421,20 @@ from them."
 - The replay plan is still a plan, not a runner: it does not execute commands,
   calibrate, mutate budgets/profiles/templates/guidelines, write Lake or SQLite
   records, or authorize learning.
+- `replay-budget-corpus` consumes the replay plan and writes
+  `budget_corpus_replay_execution_report.json` plus Markdown notes.
+- Dry-run mode is the default and records which command chains are ready,
+  skipped as support context, blocked by the source plan, or missing required
+  placeholders.
+- `--execute --case-id <id>` can execute selected local synthetic command chains
+  and verify expected output files before human corpus replay review.
+- Execution uses argv lists against existing local CLI commands, not shell
+  strings, and remains bounded to local synthetic artifacts under the replay run
+  directory.
+- Learning-support artifacts such as proposed-change readiness reports and
+  shadow-eval plans are classified as `learning_support_fixture` and stay
+  supporting context unless a reviewed upstream chain produces the required
+  input.
+- Replay execution audit still does not calibrate, mutate
+  budgets/profiles/templates/guidelines, write Lake or SQLite records, submit
+  budgets, open matters, or authorize learning.

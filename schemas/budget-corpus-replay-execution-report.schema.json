@@ -1,14 +1,10 @@
 {
   "$defs": {
-    "BudgetCorpusReplayCase": {
+    "BudgetCorpusReplayCaseResult": {
       "additionalProperties": false,
       "properties": {
         "replay_case_id": {
           "title": "Replay Case Id",
-          "type": "string"
-        },
-        "source_artifact_id": {
-          "title": "Source Artifact Id",
           "type": "string"
         },
         "source_artifact_ref": {
@@ -31,99 +27,30 @@
           "title": "Artifact Kind",
           "type": "string"
         },
-        "calibration_role": {
-          "enum": [
-            "input_context_fixture",
-            "outcome_evidence_fixture",
-            "reviewed_baseline_fixture",
-            "learning_gate_fixture",
-            "shadow_eval_fixture",
-            "unclassified_supporting_fixture"
-          ],
-          "title": "Calibration Role",
-          "type": "string"
-        },
-        "eligibility": {
-          "enum": [
-            "eligible_for_synthetic_calibration_review",
-            "supporting_context_only",
-            "blocked_real_or_privileged_data",
-            "blocked_boundary_violation"
-          ],
-          "title": "Eligibility",
-          "type": "string"
-        },
         "status": {
           "enum": [
-            "planned_for_replay",
-            "supporting_context_only",
-            "blocked_from_replay"
+            "dry_run_ready",
+            "executed_passed",
+            "executed_failed",
+            "skipped_not_selected",
+            "skipped_supporting_context",
+            "blocked"
           ],
           "title": "Status",
           "type": "string"
         },
-        "baseline_input_ref": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Baseline Input Ref"
-        },
-        "baseline_practice_profile_ref": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Baseline Practice Profile Ref"
-        },
-        "baseline_confirmation_ref": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Baseline Confirmation Ref"
-        },
-        "command_chain": {
+        "command_results": {
           "items": {
-            "$ref": "#/$defs/BudgetCorpusReplayCommand"
+            "$ref": "#/$defs/BudgetCorpusReplayCommandResult"
           },
-          "title": "Command Chain",
+          "title": "Command Results",
           "type": "array"
         },
-        "required_inputs": {
+        "output_checks": {
           "items": {
-            "type": "string"
+            "$ref": "#/$defs/BudgetCorpusReplayOutputCheck"
           },
-          "title": "Required Inputs",
-          "type": "array"
-        },
-        "expected_outputs": {
-          "items": {
-            "type": "string"
-          },
-          "title": "Expected Outputs",
-          "type": "array"
-        },
-        "support_refs": {
-          "items": {
-            "type": "string"
-          },
-          "title": "Support Refs",
+          "title": "Output Checks",
           "type": "array"
         },
         "blocking_reasons": {
@@ -131,13 +58,6 @@
             "type": "string"
           },
           "title": "Blocking Reasons",
-          "type": "array"
-        },
-        "required_next_gates": {
-          "items": {
-            "type": "string"
-          },
-          "title": "Required Next Gates",
           "type": "array"
         },
         "candidate_only": {
@@ -215,100 +135,105 @@
       },
       "required": [
         "replay_case_id",
-        "source_artifact_id",
         "source_artifact_ref",
         "artifact_kind",
-        "calibration_role",
-        "eligibility",
         "status"
       ],
-      "title": "BudgetCorpusReplayCase",
+      "title": "BudgetCorpusReplayCaseResult",
       "type": "object"
     },
-    "BudgetCorpusReplayCheck": {
-      "additionalProperties": false,
-      "properties": {
-        "check_id": {
-          "title": "Check Id",
-          "type": "string"
-        },
-        "status": {
-          "enum": [
-            "passed",
-            "failed",
-            "warning"
-          ],
-          "title": "Status",
-          "type": "string"
-        },
-        "message": {
-          "title": "Message",
-          "type": "string"
-        },
-        "case_ids": {
-          "items": {
-            "type": "string"
-          },
-          "title": "Case Ids",
-          "type": "array"
-        },
-        "artifact_refs": {
-          "items": {
-            "type": "string"
-          },
-          "title": "Artifact Refs",
-          "type": "array"
-        }
-      },
-      "required": [
-        "check_id",
-        "status",
-        "message"
-      ],
-      "title": "BudgetCorpusReplayCheck",
-      "type": "object"
-    },
-    "BudgetCorpusReplayCommand": {
+    "BudgetCorpusReplayCommandResult": {
       "additionalProperties": false,
       "properties": {
         "command_id": {
           "title": "Command Id",
           "type": "string"
         },
-        "command": {
-          "title": "Command",
+        "replay_case_id": {
+          "title": "Replay Case Id",
           "type": "string"
         },
-        "purpose": {
-          "title": "Purpose",
+        "status": {
+          "enum": [
+            "planned_only_not_executed",
+            "executed_passed",
+            "executed_failed",
+            "skipped_not_selected",
+            "skipped_supporting_context",
+            "blocked_from_plan",
+            "blocked_missing_input",
+            "blocked_prior_command_failed",
+            "blocked_unsupported_command",
+            "blocked_missing_placeholder"
+          ],
+          "title": "Status",
           "type": "string"
-        },
-        "input_artifact_refs": {
-          "items": {
-            "type": "string"
-          },
-          "title": "Input Artifact Refs",
-          "type": "array"
-        },
-        "expected_output_refs": {
-          "items": {
-            "type": "string"
-          },
-          "title": "Expected Output Refs",
-          "type": "array"
-        },
-        "requires_prior_command_ids": {
-          "items": {
-            "type": "string"
-          },
-          "title": "Requires Prior Command Ids",
-          "type": "array"
         },
         "execution_mode": {
-          "const": "planned_only_not_executed",
-          "default": "planned_only_not_executed",
+          "enum": [
+            "dry_run",
+            "execute"
+          ],
           "title": "Execution Mode",
           "type": "string"
+        },
+        "planned_command": {
+          "title": "Planned Command",
+          "type": "string"
+        },
+        "resolved_command": {
+          "title": "Resolved Command",
+          "type": "string"
+        },
+        "return_code": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Return Code"
+        },
+        "stdout_excerpt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stdout Excerpt"
+        },
+        "stderr_excerpt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stderr Excerpt"
+        },
+        "output_checks": {
+          "items": {
+            "$ref": "#/$defs/BudgetCorpusReplayOutputCheck"
+          },
+          "title": "Output Checks",
+          "type": "array"
+        },
+        "blocking_reasons": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Blocking Reasons",
+          "type": "array"
         },
         "candidate_only": {
           "const": true,
@@ -326,6 +251,12 @@
           "const": true,
           "default": true,
           "title": "Not Authorized For Lake Write",
+          "type": "boolean"
+        },
+        "calibration_applied": {
+          "const": false,
+          "default": false,
+          "title": "Calibration Applied",
           "type": "boolean"
         },
         "profile_mutation_performed": {
@@ -379,10 +310,105 @@
       },
       "required": [
         "command_id",
-        "command",
-        "purpose"
+        "replay_case_id",
+        "status",
+        "execution_mode",
+        "planned_command",
+        "resolved_command"
       ],
-      "title": "BudgetCorpusReplayCommand",
+      "title": "BudgetCorpusReplayCommandResult",
+      "type": "object"
+    },
+    "BudgetCorpusReplayExecutionCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed",
+            "warning"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "case_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Case Ids",
+          "type": "array"
+        },
+        "command_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Command Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "BudgetCorpusReplayExecutionCheck",
+      "type": "object"
+    },
+    "BudgetCorpusReplayOutputCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "output_ref": {
+          "title": "Output Ref",
+          "type": "string"
+        },
+        "resolved_output_path": {
+          "title": "Resolved Output Path",
+          "type": "string"
+        },
+        "exists": {
+          "title": "Exists",
+          "type": "boolean"
+        },
+        "sha256": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sha256"
+        },
+        "size_bytes": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Size Bytes"
+        }
+      },
+      "required": [
+        "output_ref",
+        "resolved_output_path",
+        "exists"
+      ],
+      "title": "BudgetCorpusReplayOutputCheck",
       "type": "object"
     }
   },
@@ -393,44 +419,66 @@
       "title": "Schema Version",
       "type": "string"
     },
+    "replay_execution_report_id": {
+      "title": "Replay Execution Report Id",
+      "type": "string"
+    },
     "replay_plan_id": {
       "title": "Replay Plan Id",
       "type": "string"
     },
-    "source_corpus_report_id": {
-      "title": "Source Corpus Report Id",
+    "replay_plan_ref": {
+      "title": "Replay Plan Ref",
       "type": "string"
     },
-    "source_corpus_report_ref": {
-      "title": "Source Corpus Report Ref",
-      "type": "string"
-    },
-    "source_corpus_status": {
-      "title": "Source Corpus Status",
+    "execution_mode": {
+      "enum": [
+        "dry_run",
+        "execute"
+      ],
+      "title": "Execution Mode",
       "type": "string"
     },
     "status": {
       "enum": [
-        "replay_plan_ready_for_review",
-        "blocked_by_corpus_report",
-        "no_replay_candidates"
+        "dry_run_ready_for_review",
+        "execution_passed_for_review",
+        "execution_failed",
+        "blocked_by_plan",
+        "no_executable_cases"
       ],
       "title": "Status",
       "type": "string"
+    },
+    "replay_run_root": {
+      "title": "Replay Run Root",
+      "type": "string"
+    },
+    "selected_case_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Selected Case Ids",
+      "type": "array"
     },
     "case_count": {
       "minimum": 0,
       "title": "Case Count",
       "type": "integer"
     },
-    "planned_case_count": {
+    "executed_case_count": {
       "minimum": 0,
-      "title": "Planned Case Count",
+      "title": "Executed Case Count",
       "type": "integer"
     },
-    "supporting_case_count": {
+    "dry_run_case_count": {
       "minimum": 0,
-      "title": "Supporting Case Count",
+      "title": "Dry Run Case Count",
+      "type": "integer"
+    },
+    "skipped_case_count": {
+      "minimum": 0,
+      "title": "Skipped Case Count",
       "type": "integer"
     },
     "blocked_case_count": {
@@ -438,16 +486,36 @@
       "title": "Blocked Case Count",
       "type": "integer"
     },
+    "failed_case_count": {
+      "minimum": 0,
+      "title": "Failed Case Count",
+      "type": "integer"
+    },
+    "command_count": {
+      "minimum": 0,
+      "title": "Command Count",
+      "type": "integer"
+    },
+    "executed_command_count": {
+      "minimum": 0,
+      "title": "Executed Command Count",
+      "type": "integer"
+    },
+    "failed_command_count": {
+      "minimum": 0,
+      "title": "Failed Command Count",
+      "type": "integer"
+    },
     "cases": {
       "items": {
-        "$ref": "#/$defs/BudgetCorpusReplayCase"
+        "$ref": "#/$defs/BudgetCorpusReplayCaseResult"
       },
       "title": "Cases",
       "type": "array"
     },
     "checks": {
       "items": {
-        "$ref": "#/$defs/BudgetCorpusReplayCheck"
+        "$ref": "#/$defs/BudgetCorpusReplayExecutionCheck"
       },
       "title": "Checks",
       "type": "array"
@@ -537,20 +605,26 @@
     }
   },
   "required": [
+    "replay_execution_report_id",
     "replay_plan_id",
-    "source_corpus_report_id",
-    "source_corpus_report_ref",
-    "source_corpus_status",
+    "replay_plan_ref",
+    "execution_mode",
     "status",
+    "replay_run_root",
     "case_count",
-    "planned_case_count",
-    "supporting_case_count",
+    "executed_case_count",
+    "dry_run_case_count",
+    "skipped_case_count",
     "blocked_case_count",
+    "failed_case_count",
+    "command_count",
+    "executed_command_count",
+    "failed_command_count",
     "cases",
     "checks",
     "required_next_gates",
     "generated_at"
   ],
-  "title": "BudgetCorpusReplayPlan",
+  "title": "BudgetCorpusReplayExecutionReport",
   "type": "object"
 }

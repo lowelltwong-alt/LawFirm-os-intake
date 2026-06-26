@@ -9,6 +9,7 @@ import sys
 from .budget_actuals import run_budget_actual_comparison
 from .budget_calibration_corpus import run_budget_calibration_corpus_audit
 from .budget_corpus_replay import run_budget_corpus_replay_plan
+from .budget_corpus_replay_execution import run_budget_corpus_replay_execution
 from .budget_form import build_budget_form_template_audit_report, render_budget_form
 from .budget_revisions import run_budget_review_record
 from .carrier_rejection_lake_admission import (
@@ -140,6 +141,37 @@ def _parser() -> argparse.ArgumentParser:
         help="Path to budget_calibration_corpus_report.json.",
     )
     budget_corpus_replay.add_argument("--out-dir", required=True)
+
+    budget_corpus_replay_execution = sub.add_parser(
+        "replay-budget-corpus",
+        help="Dry-run or execute selected budget corpus replay command chains locally.",
+    )
+    budget_corpus_replay_execution.add_argument(
+        "--replay-plan",
+        required=True,
+        help="Path to budget_corpus_replay_plan.json.",
+    )
+    budget_corpus_replay_execution.add_argument("--out-dir", required=True)
+    budget_corpus_replay_execution.add_argument(
+        "--repo-root",
+        default=".",
+        help="Repository root for relative replay refs; defaults to current directory.",
+    )
+    budget_corpus_replay_execution.add_argument(
+        "--execute",
+        action="store_true",
+        help="Execute selected planned replay command chains. Default is dry-run audit.",
+    )
+    budget_corpus_replay_execution.add_argument(
+        "--case-id",
+        action="append",
+        default=[],
+        help="Replay case ID to include. May be supplied multiple times. Defaults to all planned cases.",
+    )
+    budget_corpus_replay_execution.add_argument(
+        "--proposed-change-set",
+        help="Optional learning_proposed_change_set.json for shadow-eval replay cases.",
+    )
 
     carrier_rejections = sub.add_parser(
         "capture-carrier-rejections",
@@ -582,6 +614,50 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 0 if plan.status == "replay_plan_ready_for_review" else 2
+
+        if args.command == "replay-budget-corpus":
+            report, run_dir = run_budget_corpus_replay_execution(
+                replay_plan_path=args.replay_plan,
+                out_dir=args.out_dir,
+                repo_root=args.repo_root,
+                execute=args.execute,
+                case_ids=args.case_id,
+                proposed_change_set_path=args.proposed_change_set,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "replay_execution_report_id": report.replay_execution_report_id,
+                    "replay_plan_id": report.replay_plan_id,
+                    "execution_mode": report.execution_mode,
+                    "case_count": report.case_count,
+                    "executed_case_count": report.executed_case_count,
+                    "dry_run_case_count": report.dry_run_case_count,
+                    "skipped_case_count": report.skipped_case_count,
+                    "blocked_case_count": report.blocked_case_count,
+                    "failed_case_count": report.failed_case_count,
+                    "command_count": report.command_count,
+                    "executed_command_count": report.executed_command_count,
+                    "failed_command_count": report.failed_command_count,
+                    "calibration_applied": report.calibration_applied,
+                    "profile_mutation_performed": report.profile_mutation_performed,
+                    "template_mutation_performed": report.template_mutation_performed,
+                    "budget_mutation_performed": report.budget_mutation_performed,
+                    "carrier_guideline_mutation_performed": (
+                        report.carrier_guideline_mutation_performed
+                    ),
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return (
+                0
+                if report.status in {"dry_run_ready_for_review", "execution_passed_for_review"}
+                else 2
+            )
 
         if args.command == "capture-carrier-rejections":
             report, run_dir = run_carrier_rejection_capture(

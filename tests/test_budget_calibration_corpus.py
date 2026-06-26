@@ -20,7 +20,9 @@ def test_budget_calibration_corpus_audit_classifies_synthetic_fixtures(repo_root
     assert report.artifact_kind_counts["budget_review_fixture"] >= 1
     assert report.artifact_kind_counts["actuals_fixture"] >= 1
     assert report.artifact_kind_counts["carrier_rejection_fixture"] >= 1
+    assert report.artifact_kind_counts["learning_gate_fixture"] >= 1
     assert report.artifact_kind_counts["learning_shadow_eval_fixture"] >= 1
+    assert report.artifact_kind_counts["learning_support_fixture"] >= 1
     assert {
         "outcome_evidence_fixture",
         "shadow_eval_fixture",
@@ -28,6 +30,11 @@ def test_budget_calibration_corpus_audit_classifies_synthetic_fixtures(repo_root
     } <= set(report.calibration_role_counts)
     assert all(
         artifact.eligibility != "blocked_real_or_privileged_data" for artifact in report.artifacts
+    )
+    assert all(
+        artifact.eligibility == "supporting_context_only"
+        for artifact in report.artifacts
+        if artifact.artifact_kind == "learning_support_fixture"
     )
     assert report.calibration_applied is False
     assert report.profile_mutation_performed is False
