@@ -338,6 +338,37 @@ repos without creating issues or writing to GitHub.
   `sqlite_write_performed=false`, `external_writes_performed=false`, and
   `silent_learning_performed=false`.
 
+## 11E. Intake Local Closeout Audit
+
+Status: implemented for the current synthetic candidate slice; PR state changes,
+owner issue creation, owner implementation, canonical promotion, runtime
+adoption, and Lake admission remain manual external work.
+
+Aggregate the final readiness audit, PR checklist, owner-adoption packets, and
+owner issue drafts into one local closeout report.
+
+- `audit-intake-local-closeout` consumes
+  `intake_vertical_readiness_audit_report.json`, `pr_review_checklist.json`,
+  `cross_repo_owner_adoption_report.json`, and
+  `cross_repo_owner_issue_draft_report.json`.
+- It writes `intake_local_closeout_report.json` and
+  `intake_local_closeout_report.md`.
+- Passing status is
+  `intake_local_closeout_ready_manual_actions_required`, which means
+  intake-local candidate evidence is ready but human PR decision, manual owner
+  issue creation, owner triage, owner implementation PRs if accepted, and
+  cross-repo validation still remain.
+- Blocked readiness, PR checklist, owner adoption, or owner issue-draft evidence
+  blocks closeout.
+- The report records `manual_pr_state_change_required=true`,
+  `manual_owner_issue_creation_required=true`,
+  `pr_state_change_performed=false`, `github_issue_created=false`,
+  `github_pr_created=false`, `github_write_performed=false`,
+  `sibling_repo_write_performed=false`, `promotion_authorized=false`,
+  `proposed_changes_applied=false`, `lake_write_performed=false`,
+  `sqlite_write_performed=false`, `external_writes_performed=false`, and
+  `silent_learning_performed=false`.
+
 ## 12. Reviewed Learning Gate
 
 Status: implemented for the current synthetic candidate slice; owning-repo

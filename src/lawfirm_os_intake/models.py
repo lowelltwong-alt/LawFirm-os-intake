@@ -5191,6 +5191,87 @@ class CrossRepoOwnerIssueDraftReport(StrictModel):
         return self
 
 
+class IntakeLocalCloseoutCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "blocked"]
+    message: str
+    artifact_refs: list[str] = Field(default_factory=list)
+
+
+class IntakeLocalCloseoutReport(StrictModel):
+    schema_version: str = "0.1"
+    closeout_report_id: str
+    status: Literal[
+        "intake_local_closeout_ready_manual_actions_required",
+        "blocked_by_closeout_evidence",
+    ]
+    observed_pr_number: int | None = None
+    observed_pr_url: str | None = None
+    observed_pr_state: Literal["draft", "ready_for_review", "not_supplied"] = "not_supplied"
+    source_readiness_audit_report_id: str
+    source_readiness_audit_report_ref: str
+    source_readiness_status: str
+    source_review_readiness: str
+    source_pr_review_checklist_id: str
+    source_pr_review_checklist_ref: str
+    source_pr_review_checklist_status: str
+    source_pr_review_checklist_recommendation: str
+    source_owner_adoption_report_id: str
+    source_owner_adoption_report_ref: str
+    source_owner_adoption_status: str
+    source_owner_issue_draft_report_id: str
+    source_owner_issue_draft_report_ref: str
+    source_owner_issue_draft_status: str
+    check_count: int = Field(ge=0)
+    passed_check_count: int = Field(ge=0)
+    blocking_check_count: int = Field(ge=0)
+    checks: list[IntakeLocalCloseoutCheck]
+    manual_actions_remaining: list[str]
+    generated_artifact_refs: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    local_completion_scope: Literal[
+        "intake_candidate_complete_manual_external_actions_required"
+    ] = "intake_candidate_complete_manual_external_actions_required"
+    manual_pr_state_change_required: Literal[True] = True
+    manual_owner_issue_creation_required: Literal[True] = True
+    pr_state_change_performed: Literal[False] = False
+    github_issue_created: Literal[False] = False
+    github_pr_created: Literal[False] = False
+    github_write_performed: Literal[False] = False
+    sibling_repo_write_performed: Literal[False] = False
+    promotion_authorized: Literal[False] = False
+    proposed_changes_applied: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def closeout_counts_and_boundaries_match(self) -> "IntakeLocalCloseoutReport":
+        if self.check_count != len(self.checks):
+            raise ValueError("closeout check count does not match")
+        passed_count = sum(1 for check in self.checks if check.status == "passed")
+        blocked_count = self.check_count - passed_count
+        if self.passed_check_count != passed_count:
+            raise ValueError("closeout passed check count does not match")
+        if self.blocking_check_count != blocked_count:
+            raise ValueError("closeout blocking check count does not match")
+        if not self.manual_actions_remaining:
+            raise ValueError("closeout report requires manual actions")
+        if not self.generated_artifact_refs:
+            raise ValueError("closeout report requires generated artifact refs")
+        if (
+            self.status == "intake_local_closeout_ready_manual_actions_required"
+            and self.blocking_check_count
+        ):
+            raise ValueError("ready closeout cannot include blocked checks")
+        if self.status == "blocked_by_closeout_evidence" and not self.blocking_check_count:
+            raise ValueError("blocked closeout requires blocked checks")
+        return self
+
+
 class SafetyGateCheck(StrictModel):
     check_id: str
     status: Literal["passed", "failed"]

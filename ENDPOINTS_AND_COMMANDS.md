@@ -277,6 +277,28 @@ for manual creation in the owning repos. The command does not create issues,
 open PRs, write sibling repos, promote canon, admit Lake records, write SQLite,
 apply learning, or authorize production use.
 
+### Audit intake local closeout
+
+```bash
+python -m lawfirm_os_intake audit-intake-local-closeout \
+  --readiness-audit-report .lawfirm-os-intake/intake-vertical-readiness-audit/intake_vertical_readiness_audit_report.json \
+  --pr-review-checklist .lawfirm-os-intake/pr-review-checklist/pr_review_checklist.json \
+  --owner-adoption-report .lawfirm-os-intake/cross-repo-owner-adoption/cross_repo_owner_adoption_report.json \
+  --owner-issue-draft-report .lawfirm-os-intake/cross-repo-owner-issue-drafts/cross_repo_owner_issue_draft_report.json \
+  --observed-pr-number 7 \
+  --observed-pr-state draft \
+  --out-dir .lawfirm-os-intake/intake-local-closeout
+```
+
+This writes `intake_local_closeout_report.json` and
+`intake_local_closeout_report.md`. The audit aggregates the final local evidence
+chain and reports whether intake-local candidate work is ready for manual
+external actions. It preserves the remaining human PR decision, manual owner
+issue creation, owner triage, owner implementation PR, and cross-repo validation
+gates. It does not mark a PR ready, create issues, open PRs, write sibling repos,
+promote canon, admit Lake records, write SQLite, apply learning, or authorize
+production use.
+
 ### Draft carrier rejection Orchestrator interface
 
 ```bash

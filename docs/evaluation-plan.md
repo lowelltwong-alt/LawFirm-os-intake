@@ -180,6 +180,14 @@ checks, red-team notes, and no-write boundaries. A blocked owner-adoption packet
 produces a blocked issue draft. The command does not create issues, open PRs,
 write sibling repos, promote canon, admit Lake/SQLite records, or apply learning.
 
+`audit-intake-local-closeout` consumes the final readiness audit, PR checklist,
+owner-adoption report, and owner issue-draft report. It writes
+`intake_local_closeout_report.json` plus Markdown notes. Passing status means the
+intake-local candidate evidence chain is ready for manual external actions, not
+that the PR was marked ready or sibling repos adopted anything. Blocked evidence
+blocks closeout. The command does not mark a PR ready, create issues, open PRs,
+write sibling repos, promote canon, admit Lake/SQLite records, or apply learning.
+
 ### Counterfactual evals
 
 Same source, different practice context. Evidence must remain unchanged.
@@ -225,6 +233,7 @@ Measure review time, correction count, unknown selection, evidence-navigation bu
 - keep `pr_review_checklist.json` local and non-authoritative; it helps a human make the draft-PR decision but must not mark the PR ready, call GitHub write APIs, promote canon, write Lake/SQLite records, or apply learning.
 - keep `cross_repo_owner_adoption_report.json` local and non-authoritative; it turns candidate proposals into owner-review packets but must not create issues, open PRs, write sibling repos, promote canon, admit Lake/SQLite records, or apply learning.
 - keep `cross_repo_owner_issue_draft_report.json` local and non-authoritative; it drafts owner issue text for manual use but must not create issues, open PRs, write sibling repos, promote canon, admit Lake/SQLite records, or apply learning.
+- keep `intake_local_closeout_report.json` local and non-authoritative; it proves the local closeout evidence chain and remaining manual gates but must not mark a PR ready, create issues, open PRs, write sibling repos, promote canon, admit Lake/SQLite records, or apply learning.
 
 ## Graduation gates
 

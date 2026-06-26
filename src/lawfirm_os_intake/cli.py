@@ -36,6 +36,7 @@ from .carrier_rejections import run_carrier_rejection_capture
 from .confirmation import bind_confirmation_to_packet_evidence
 from .cross_repo_owner_adoption import run_cross_repo_owner_adoption
 from .cross_repo_owner_issue_drafts import run_cross_repo_owner_issue_drafts
+from .intake_local_closeout import run_intake_local_closeout
 from .intake_vertical_readiness_audit import run_intake_vertical_readiness_audit
 from .learning_promotion_readiness import run_learning_promotion_readiness
 from .learning_owner_handoffs import run_learning_owner_handoffs
@@ -419,6 +420,38 @@ def _parser() -> argparse.ArgumentParser:
         help="Path to cross_repo_owner_adoption_report.json.",
     )
     owner_issue_drafts.add_argument("--out-dir", required=True)
+    local_closeout = sub.add_parser(
+        "audit-intake-local-closeout",
+        help="Audit final local closeout evidence and remaining manual external gates.",
+    )
+    local_closeout.add_argument(
+        "--readiness-audit-report",
+        required=True,
+        help="Path to intake_vertical_readiness_audit_report.json.",
+    )
+    local_closeout.add_argument(
+        "--pr-review-checklist",
+        required=True,
+        help="Path to pr_review_checklist.json.",
+    )
+    local_closeout.add_argument(
+        "--owner-adoption-report",
+        required=True,
+        help="Path to cross_repo_owner_adoption_report.json.",
+    )
+    local_closeout.add_argument(
+        "--owner-issue-draft-report",
+        required=True,
+        help="Path to cross_repo_owner_issue_draft_report.json.",
+    )
+    local_closeout.add_argument("--out-dir", required=True)
+    local_closeout.add_argument("--observed-pr-number", type=int)
+    local_closeout.add_argument("--observed-pr-url")
+    local_closeout.add_argument(
+        "--observed-pr-state",
+        choices=["draft", "ready_for_review", "not_supplied"],
+        default="not_supplied",
+    )
     return parser
 
 
@@ -1354,6 +1387,49 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 0 if report.status == "issue_drafts_ready_for_manual_creation" else 2
+
+        if args.command == "audit-intake-local-closeout":
+            report, run_dir = run_intake_local_closeout(
+                readiness_audit_report_path=args.readiness_audit_report,
+                pr_review_checklist_path=args.pr_review_checklist,
+                owner_adoption_report_path=args.owner_adoption_report,
+                owner_issue_draft_report_path=args.owner_issue_draft_report,
+                out_dir=args.out_dir,
+                observed_pr_number=args.observed_pr_number,
+                observed_pr_url=args.observed_pr_url,
+                observed_pr_state=args.observed_pr_state,
+            )
+            blocking_checks = [
+                check.check_id for check in report.checks if check.status == "blocked"
+            ]
+            _print(
+                {
+                    "status": report.status,
+                    "closeout_report_id": report.closeout_report_id,
+                    "observed_pr_number": report.observed_pr_number,
+                    "observed_pr_state": report.observed_pr_state,
+                    "check_count": report.check_count,
+                    "passed_check_count": report.passed_check_count,
+                    "blocking_check_count": report.blocking_check_count,
+                    "blocking_checks": blocking_checks,
+                    "manual_actions_remaining": report.manual_actions_remaining,
+                    "manual_pr_state_change_required": report.manual_pr_state_change_required,
+                    "manual_owner_issue_creation_required": (
+                        report.manual_owner_issue_creation_required
+                    ),
+                    "pr_state_change_performed": report.pr_state_change_performed,
+                    "github_issue_created": report.github_issue_created,
+                    "github_write_performed": report.github_write_performed,
+                    "sibling_repo_write_performed": report.sibling_repo_write_performed,
+                    "promotion_authorized": report.promotion_authorized,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return (
+                0 if report.status == "intake_local_closeout_ready_manual_actions_required" else 2
+            )
     except (ValueError, OSError, json.JSONDecodeError) as exc:
         print(json.dumps({"status": "blocked", "error": str(exc)}, indent=2), file=sys.stderr)
         return 2
