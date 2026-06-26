@@ -1,0 +1,290 @@
+{
+  "$defs": {
+    "CarrierRejectionRoadmapAuditCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "missing_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Missing Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "CarrierRejectionRoadmapAuditCheck",
+      "type": "object"
+    },
+    "CarrierRejectionRoadmapSliceStatus": {
+      "additionalProperties": false,
+      "properties": {
+        "slice_id": {
+          "maximum": 8,
+          "minimum": 1,
+          "title": "Slice Id",
+          "type": "integer"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "implemented_local_candidate",
+            "missing_required_artifact"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "requirement_summary": {
+          "title": "Requirement Summary",
+          "type": "string"
+        },
+        "proof_artifact_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Proof Artifact Refs",
+          "type": "array"
+        },
+        "missing_artifact_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Missing Artifact Refs",
+          "type": "array"
+        },
+        "command_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Command Refs",
+          "type": "array"
+        },
+        "missing_command_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Missing Command Refs",
+          "type": "array"
+        },
+        "local_authority_scope": {
+          "const": "synthetic_candidate_only",
+          "default": "synthetic_candidate_only",
+          "title": "Local Authority Scope",
+          "type": "string"
+        },
+        "runtime_owner_repo": {
+          "enum": [
+            "LawFirm-os-intake",
+            "LawFirm-os-orchestrator",
+            "LawFirm-os-exceptions-lake-runtime",
+            "LawFirm-os-semantic-substrate"
+          ],
+          "title": "Runtime Owner Repo",
+          "type": "string"
+        },
+        "remaining_external_actions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Remaining External Actions",
+          "type": "array"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "slice_id",
+        "title",
+        "status",
+        "requirement_summary",
+        "proof_artifact_refs",
+        "runtime_owner_repo"
+      ],
+      "title": "CarrierRejectionRoadmapSliceStatus",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "audit_report_id": {
+      "title": "Audit Report Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "local_candidate_complete_external_adoption_required",
+        "incomplete_missing_local_artifacts"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "local_completion_scope": {
+      "const": "synthetic_candidate_only",
+      "default": "synthetic_candidate_only",
+      "title": "Local Completion Scope",
+      "type": "string"
+    },
+    "total_slice_count": {
+      "minimum": 0,
+      "title": "Total Slice Count",
+      "type": "integer"
+    },
+    "implemented_slice_count": {
+      "minimum": 0,
+      "title": "Implemented Slice Count",
+      "type": "integer"
+    },
+    "missing_artifact_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Missing Artifact Refs",
+      "type": "array"
+    },
+    "missing_command_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Missing Command Refs",
+      "type": "array"
+    },
+    "slices": {
+      "items": {
+        "$ref": "#/$defs/CarrierRejectionRoadmapSliceStatus"
+      },
+      "title": "Slices",
+      "type": "array"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/CarrierRejectionRoadmapAuditCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "required_external_adoption_actions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required External Adoption Actions",
+      "type": "array"
+    },
+    "external_adoption_target_repos": {
+      "items": {
+        "enum": [
+          "LawFirm-os-orchestrator",
+          "LawFirm-os-exceptions-lake-runtime",
+          "LawFirm-os-semantic-substrate"
+        ],
+        "type": "string"
+      },
+      "title": "External Adoption Target Repos",
+      "type": "array"
+    },
+    "review_readiness": {
+      "enum": [
+        "ready_for_intake_pr_review",
+        "not_ready_missing_local_artifacts"
+      ],
+      "title": "Review Readiness",
+      "type": "string"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "no_connector_implemented": {
+      "const": true,
+      "default": true,
+      "title": "No Connector Implemented",
+      "type": "boolean"
+    },
+    "no_lake_admission_performed": {
+      "const": true,
+      "default": true,
+      "title": "No Lake Admission Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "no_sibling_repo_writes": {
+      "const": true,
+      "default": true,
+      "title": "No Sibling Repo Writes",
+      "type": "boolean"
+    },
+    "no_canonical_mutation": {
+      "const": true,
+      "default": true,
+      "title": "No Canonical Mutation",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "audit_report_id",
+    "status",
+    "total_slice_count",
+    "implemented_slice_count",
+    "slices",
+    "checks",
+    "required_external_adoption_actions",
+    "external_adoption_target_repos",
+    "review_readiness",
+    "generated_at"
+  ],
+  "title": "CarrierRejectionRoadmapAuditReport",
+  "type": "object"
+}

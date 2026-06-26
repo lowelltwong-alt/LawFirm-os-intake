@@ -106,6 +106,21 @@ record hashes, Orchestrator evidence packets, and correction-by-supersession.
 It does not create SQLite tables, write Lake records, assign canonical event
 classes, or authorize intake to persist runtime evidence.
 
+### Audit carrier rejection roadmap completion
+
+```bash
+python -m lawfirm_os_intake audit-carrier-rejection-roadmap \
+  --repo-root . \
+  --out-dir .lawfirm-os-intake/carrier-rejection-roadmap-audit
+```
+
+This writes `carrier_rejection_roadmap_audit_report.json` and
+`carrier_rejection_roadmap_audit_report.md`. The audit checks that carrier
+rejection roadmap slices 1-8 have local proof artifacts and command refs, then
+keeps Orchestrator, Exception Lake, and Semantic Substrate adoption as required
+external work. It performs no connector implementation, SQLite write, Lake
+admission, sibling repo write, external write, or canonical mutation.
+
 ## Exit posture
 
 - `0`: local workflow step completed and artifacts emitted.

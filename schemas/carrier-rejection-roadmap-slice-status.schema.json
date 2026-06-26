@@ -1,0 +1,94 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "slice_id": {
+      "maximum": 8,
+      "minimum": 1,
+      "title": "Slice Id",
+      "type": "integer"
+    },
+    "title": {
+      "title": "Title",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "implemented_local_candidate",
+        "missing_required_artifact"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "requirement_summary": {
+      "title": "Requirement Summary",
+      "type": "string"
+    },
+    "proof_artifact_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Proof Artifact Refs",
+      "type": "array"
+    },
+    "missing_artifact_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Missing Artifact Refs",
+      "type": "array"
+    },
+    "command_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Command Refs",
+      "type": "array"
+    },
+    "missing_command_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Missing Command Refs",
+      "type": "array"
+    },
+    "local_authority_scope": {
+      "const": "synthetic_candidate_only",
+      "default": "synthetic_candidate_only",
+      "title": "Local Authority Scope",
+      "type": "string"
+    },
+    "runtime_owner_repo": {
+      "enum": [
+        "LawFirm-os-intake",
+        "LawFirm-os-orchestrator",
+        "LawFirm-os-exceptions-lake-runtime",
+        "LawFirm-os-semantic-substrate"
+      ],
+      "title": "Runtime Owner Repo",
+      "type": "string"
+    },
+    "remaining_external_actions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Remaining External Actions",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "slice_id",
+    "title",
+    "status",
+    "requirement_summary",
+    "proof_artifact_refs",
+    "runtime_owner_repo"
+  ],
+  "title": "CarrierRejectionRoadmapSliceStatus",
+  "type": "object"
+}

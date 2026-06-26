@@ -14,6 +14,7 @@ from .carrier_rejection_learning import run_carrier_rejection_learning
 from .carrier_rejection_orchestrator_interface import (
     run_carrier_rejection_orchestrator_interface,
 )
+from .carrier_rejection_roadmap_audit import run_carrier_rejection_roadmap_audit
 from .carrier_rejection_review import run_carrier_rejection_review
 from .carrier_rejections import run_carrier_rejection_capture
 from .confirmation import bind_confirmation_to_packet_evidence
@@ -114,6 +115,17 @@ def _parser() -> argparse.ArgumentParser:
         help="Write the candidate Exception Lake admission proposal for carrier rejection records.",
     )
     carrier_rejection_lake.add_argument("--out-dir", required=True)
+
+    carrier_rejection_audit = sub.add_parser(
+        "audit-carrier-rejection-roadmap",
+        help="Write the local completion and sibling-adoption audit for carrier rejection work.",
+    )
+    carrier_rejection_audit.add_argument("--out-dir", required=True)
+    carrier_rejection_audit.add_argument(
+        "--repo-root",
+        default=".",
+        help="Repository root to inspect; defaults to the current working directory.",
+    )
     return parser
 
 
@@ -422,6 +434,33 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 0
+
+        if args.command == "audit-carrier-rejection-roadmap":
+            report, run_dir = run_carrier_rejection_roadmap_audit(
+                args.out_dir,
+                repo_root=args.repo_root,
+            )
+            failed_checks = [check.check_id for check in report.checks if check.status == "failed"]
+            _print(
+                {
+                    "status": report.status,
+                    "audit_report_id": report.audit_report_id,
+                    "implemented_slice_count": report.implemented_slice_count,
+                    "total_slice_count": report.total_slice_count,
+                    "review_readiness": report.review_readiness,
+                    "failed_checks": failed_checks,
+                    "missing_artifact_refs": report.missing_artifact_refs,
+                    "missing_command_refs": report.missing_command_refs,
+                    "external_adoption_target_repos": report.external_adoption_target_repos,
+                    "external_writes_performed": report.external_writes_performed,
+                    "no_sibling_repo_writes": report.no_sibling_repo_writes,
+                    "no_canonical_mutation": report.no_canonical_mutation,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return (
+                0 if report.status == "local_candidate_complete_external_adoption_required" else 2
+            )
     except (ValueError, OSError, json.JSONDecodeError) as exc:
         print(json.dumps({"status": "blocked", "error": str(exc)}, indent=2), file=sys.stderr)
         return 2

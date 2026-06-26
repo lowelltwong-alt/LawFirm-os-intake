@@ -217,6 +217,18 @@ time, but missing capture is a production incident.
    packet prerequisites, and supersession rules while performing no SQLite write
    or Lake admission.
 
+Local completion audit:
+
+- `audit-carrier-rejection-roadmap` writes
+  `carrier_rejection_roadmap_audit_report.json` and
+  `carrier_rejection_roadmap_audit_report.md`.
+- The audit checks local proof artifacts and command refs for slices 1-8, fails
+  closed when required artifacts are missing, and records remaining external
+  adoption actions for Orchestrator, Exception Lake, and Semantic Substrate.
+- The audit is candidate-only. It does not implement production connectors,
+  submit appeals, write SQLite, admit Lake records, write sibling repos, perform
+  external writes, or mutate platform canon.
+
 ## Non-Goals
 
 - No direct portal or email connectors in intake.

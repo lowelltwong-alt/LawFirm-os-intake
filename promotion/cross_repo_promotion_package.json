@@ -166,6 +166,7 @@
         "schemas/carrier-response-reconciliation-report.schema.json",
         "schemas/carrier-rejection-review-packet.schema.json",
         "schemas/carrier-rejection-learning-report.schema.json",
+        "schemas/carrier-rejection-roadmap-audit-report.schema.json",
         "docs/carrier-rejection-learning-loop-roadmap.md",
         "ENDPOINTS_AND_COMMANDS.md"
       ],
@@ -240,6 +241,7 @@
         "schemas/carrier-response-reconciliation-report.schema.json",
         "schemas/carrier-rejection-review-packet.schema.json",
         "schemas/carrier-rejection-learning-report.schema.json",
+        "schemas/carrier-rejection-roadmap-audit-report.schema.json",
         "docs/carrier-rejection-learning-loop-roadmap.md"
       ],
       "proposed_contract_refs": [

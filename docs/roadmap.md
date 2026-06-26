@@ -166,3 +166,8 @@ reconciliation, not by relying on model classification. See
   financial outcome, and learning-candidate record families. It requires
   idempotency, support hashes, record hashes, Orchestrator evidence packets, and
   supersession corrections while performing no SQLite write or Lake admission.
+- The local `audit-carrier-rejection-roadmap` command now emits
+  `carrier_rejection_roadmap_audit_report.json` and
+  `carrier_rejection_roadmap_audit_report.md`, proving local slices 1-8 have
+  candidate proof artifacts while preserving Orchestrator, Exception Lake, and
+  Semantic Substrate adoption as external required work.

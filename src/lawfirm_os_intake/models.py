@@ -1810,6 +1810,70 @@ class CarrierRejectionLakeAdmissionProposal(StrictModel):
     generated_at: str
 
 
+class CarrierRejectionRoadmapSliceStatus(StrictModel):
+    slice_id: int = Field(ge=1, le=8)
+    title: str
+    status: Literal["implemented_local_candidate", "missing_required_artifact"]
+    requirement_summary: str
+    proof_artifact_refs: list[str]
+    missing_artifact_refs: list[str] = Field(default_factory=list)
+    command_refs: list[str] = Field(default_factory=list)
+    missing_command_refs: list[str] = Field(default_factory=list)
+    local_authority_scope: Literal["synthetic_candidate_only"] = "synthetic_candidate_only"
+    runtime_owner_repo: Literal[
+        "LawFirm-os-intake",
+        "LawFirm-os-orchestrator",
+        "LawFirm-os-exceptions-lake-runtime",
+        "LawFirm-os-semantic-substrate",
+    ]
+    remaining_external_actions: list[str] = Field(default_factory=list)
+    candidate_only: Literal[True] = True
+
+
+class CarrierRejectionRoadmapAuditCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    missing_refs: list[str] = Field(default_factory=list)
+
+
+class CarrierRejectionRoadmapAuditReport(StrictModel):
+    schema_version: str = "0.1"
+    audit_report_id: str
+    status: Literal[
+        "local_candidate_complete_external_adoption_required",
+        "incomplete_missing_local_artifacts",
+    ]
+    local_completion_scope: Literal["synthetic_candidate_only"] = "synthetic_candidate_only"
+    total_slice_count: int = Field(ge=0)
+    implemented_slice_count: int = Field(ge=0)
+    missing_artifact_refs: list[str] = Field(default_factory=list)
+    missing_command_refs: list[str] = Field(default_factory=list)
+    slices: list[CarrierRejectionRoadmapSliceStatus]
+    checks: list[CarrierRejectionRoadmapAuditCheck]
+    required_external_adoption_actions: list[str]
+    external_adoption_target_repos: list[
+        Literal[
+            "LawFirm-os-orchestrator",
+            "LawFirm-os-exceptions-lake-runtime",
+            "LawFirm-os-semantic-substrate",
+        ]
+    ]
+    review_readiness: Literal[
+        "ready_for_intake_pr_review",
+        "not_ready_missing_local_artifacts",
+    ]
+    candidate_only: Literal[True] = True
+    no_connector_implemented: Literal[True] = True
+    no_lake_admission_performed: Literal[True] = True
+    sqlite_write_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    no_sibling_repo_writes: Literal[True] = True
+    no_canonical_mutation: Literal[True] = True
+    generated_at: str
+
+
 class ExceptionLakeReadinessCheck(StrictModel):
     check_id: str
     status: Literal["passed", "failed"]

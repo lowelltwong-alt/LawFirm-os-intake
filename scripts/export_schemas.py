@@ -36,6 +36,9 @@ from lawfirm_os_intake.models import (  # noqa: E402
     CarrierRejectionOrchestratorConnectorChannel,
     CarrierRejectionOrchestratorInterfaceDraft,
     CarrierRejectionOrchestratorWorkflowStep,
+    CarrierRejectionRoadmapAuditCheck,
+    CarrierRejectionRoadmapAuditReport,
+    CarrierRejectionRoadmapSliceStatus,
     CarrierRejectionReviewDecisionTemplate,
     CarrierRejectionRemediationCase,
     CarrierRejectionReviewPacket,
@@ -157,6 +160,9 @@ MODELS = {
     "carrier-rejection-orchestrator-interface-draft.schema.json": (
         CarrierRejectionOrchestratorInterfaceDraft
     ),
+    "carrier-rejection-roadmap-slice-status.schema.json": (CarrierRejectionRoadmapSliceStatus),
+    "carrier-rejection-roadmap-audit-check.schema.json": CarrierRejectionRoadmapAuditCheck,
+    "carrier-rejection-roadmap-audit-report.schema.json": (CarrierRejectionRoadmapAuditReport),
     "evidence-graph.schema.json": EvidenceGraph,
     "run-ledger-event.schema.json": RunEvent,
     "run-ledger-integrity-report.schema.json": RunLedgerIntegrityReport,
