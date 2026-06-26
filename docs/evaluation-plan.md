@@ -173,6 +173,13 @@ acceptance checks, and red-team notes, and blocks if PR readiness evidence is
 blocked. It does not create issues, open PRs, write sibling repos, promote canon,
 admit Lake/SQLite records, or apply learning.
 
+`build-cross-repo-owner-issue-drafts` consumes the owner-adoption report and
+writes per-owner Markdown/JSON issue drafts for manual creation. Drafts preserve
+source evidence refs, candidate proposal summaries, owner actions, acceptance
+checks, red-team notes, and no-write boundaries. A blocked owner-adoption packet
+produces a blocked issue draft. The command does not create issues, open PRs,
+write sibling repos, promote canon, admit Lake/SQLite records, or apply learning.
+
 ### Counterfactual evals
 
 Same source, different practice context. Evidence must remain unchanged.
@@ -217,6 +224,7 @@ Measure review time, correction count, unknown selection, evidence-navigation bu
 - keep `intake_vertical_readiness_audit_report.json` local and non-authoritative; it proves PR-review readiness for candidate artifacts only and keeps external adoption with the owning repos.
 - keep `pr_review_checklist.json` local and non-authoritative; it helps a human make the draft-PR decision but must not mark the PR ready, call GitHub write APIs, promote canon, write Lake/SQLite records, or apply learning.
 - keep `cross_repo_owner_adoption_report.json` local and non-authoritative; it turns candidate proposals into owner-review packets but must not create issues, open PRs, write sibling repos, promote canon, admit Lake/SQLite records, or apply learning.
+- keep `cross_repo_owner_issue_draft_report.json` local and non-authoritative; it drafts owner issue text for manual use but must not create issues, open PRs, write sibling repos, promote canon, admit Lake/SQLite records, or apply learning.
 
 ## Graduation gates
 

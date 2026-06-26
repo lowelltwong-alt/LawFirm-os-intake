@@ -15,6 +15,11 @@ candidate proposals by target repo and name owner actions, acceptance checks,
 and red-team notes. They do not create issues, open PRs, write sibling repos,
 promote canon, admit Lake records, or apply learning.
 
+After owner-adoption packets exist, run `build-cross-repo-owner-issue-drafts`
+to produce per-owner issue-shaped Markdown for manual creation. Those drafts are
+local text only; intake still does not create issues, open PRs, or write sibling
+repos.
+
 ## Semantic Substrate Candidates
 
 - Intake source bundle, source inventory, and ingestion result contracts.

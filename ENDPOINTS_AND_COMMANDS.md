@@ -260,6 +260,23 @@ Runtime. The command does not create issues, open PRs, write sibling repos,
 promote canon, admit Lake records, write SQLite, apply learning, or authorize
 production use.
 
+### Build cross-repo owner issue drafts
+
+```bash
+python -m lawfirm_os_intake build-cross-repo-owner-issue-drafts \
+  --owner-adoption-report .lawfirm-os-intake/cross-repo-owner-adoption/cross_repo_owner_adoption_report.json \
+  --out-dir .lawfirm-os-intake/cross-repo-owner-issue-drafts
+```
+
+This writes `cross_repo_owner_issue_draft_report.json`,
+`cross_repo_owner_issue_draft_report.md`,
+`cross_repo_owner_issue_drafts.jsonl`, and per-owner Markdown/JSON drafts under
+`owner_issue_drafts/`. The drafts contain suggested issue titles, labels, source
+evidence refs, owner actions, acceptance checks, red-team notes, and boundaries
+for manual creation in the owning repos. The command does not create issues,
+open PRs, write sibling repos, promote canon, admit Lake records, write SQLite,
+apply learning, or authorize production use.
+
 ### Draft carrier rejection Orchestrator interface
 
 ```bash

@@ -5081,6 +5081,116 @@ class CrossRepoOwnerAdoptionReport(StrictModel):
         return self
 
 
+class CrossRepoOwnerIssueDraft(StrictModel):
+    schema_version: str = "0.1"
+    issue_draft_id: str
+    target_repo: CrossRepoAdoptionTargetRepo
+    source_owner_adoption_packet_id: str
+    source_owner_adoption_packet_ref: str
+    source_owner_adoption_packet_status: str
+    status: Literal["ready_for_manual_issue_creation", "blocked_by_owner_adoption_packet"]
+    suggested_title: str
+    suggested_labels: list[str]
+    issue_body_markdown: str
+    proposal_count: int = Field(ge=0)
+    proposal_ids: list[str]
+    required_owner_actions: list[str]
+    acceptance_checks: list[str]
+    red_team_notes: list[str]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    manual_creation_required: Literal[True] = True
+    github_issue_created: Literal[False] = False
+    github_pr_created: Literal[False] = False
+    github_write_performed: Literal[False] = False
+    sibling_repo_write_performed: Literal[False] = False
+    promotion_authorized: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def issue_draft_counts_and_boundaries_match(self) -> "CrossRepoOwnerIssueDraft":
+        if self.proposal_count != len(self.proposal_ids):
+            raise ValueError("owner issue draft proposal count does not match")
+        if not self.suggested_title:
+            raise ValueError("owner issue draft requires a suggested title")
+        if not self.suggested_labels:
+            raise ValueError("owner issue draft requires suggested labels")
+        if not self.issue_body_markdown:
+            raise ValueError("owner issue draft requires issue body")
+        if not self.required_owner_actions:
+            raise ValueError("owner issue draft requires owner actions")
+        if not self.acceptance_checks:
+            raise ValueError("owner issue draft requires acceptance checks")
+        if not self.red_team_notes:
+            raise ValueError("owner issue draft requires red-team notes")
+        if not self.required_next_gates:
+            raise ValueError("owner issue draft requires next gates")
+        if (
+            self.status == "ready_for_manual_issue_creation"
+            and self.source_owner_adoption_packet_status != "ready_for_owner_review"
+        ):
+            raise ValueError("ready issue draft requires a ready owner adoption packet")
+        if (
+            self.status == "blocked_by_owner_adoption_packet"
+            and self.source_owner_adoption_packet_status == "ready_for_owner_review"
+        ):
+            raise ValueError("blocked issue draft cannot come from a ready packet")
+        return self
+
+
+class CrossRepoOwnerIssueDraftReport(StrictModel):
+    schema_version: str = "0.1"
+    issue_draft_report_id: str
+    status: Literal["issue_drafts_ready_for_manual_creation", "blocked_by_owner_adoption"]
+    source_owner_adoption_report_id: str
+    source_owner_adoption_report_ref: str
+    source_owner_adoption_status: str
+    draft_count: int = Field(ge=0)
+    ready_draft_count: int = Field(ge=0)
+    blocked_draft_count: int = Field(ge=0)
+    target_repos: list[CrossRepoAdoptionTargetRepo]
+    drafts: list[CrossRepoOwnerIssueDraft]
+    draft_output_refs: list[str] = Field(default_factory=list)
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    manual_creation_required: Literal[True] = True
+    github_issue_created: Literal[False] = False
+    github_pr_created: Literal[False] = False
+    github_write_performed: Literal[False] = False
+    sibling_repo_write_performed: Literal[False] = False
+    promotion_authorized: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def issue_draft_report_counts_match(self) -> "CrossRepoOwnerIssueDraftReport":
+        if self.draft_count != len(self.drafts):
+            raise ValueError("owner issue draft count does not match")
+        if self.draft_count != len(self.draft_output_refs):
+            raise ValueError("owner issue draft output ref count does not match")
+        ready_count = sum(
+            1 for draft in self.drafts if draft.status == "ready_for_manual_issue_creation"
+        )
+        blocked_count = self.draft_count - ready_count
+        if self.ready_draft_count != ready_count or self.blocked_draft_count != blocked_count:
+            raise ValueError("owner issue draft ready/blocked counts do not match")
+        if self.status == "issue_drafts_ready_for_manual_creation" and self.blocked_draft_count:
+            raise ValueError("ready issue draft report cannot include blocked drafts")
+        if self.status == "blocked_by_owner_adoption" and not self.blocked_draft_count:
+            raise ValueError("blocked issue draft report requires blocked drafts")
+        if not self.required_next_gates:
+            raise ValueError("owner issue draft report requires next gates")
+        return self
+
+
 class SafetyGateCheck(StrictModel):
     check_id: str
     status: Literal["passed", "failed"]

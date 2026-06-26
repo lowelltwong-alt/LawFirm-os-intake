@@ -312,6 +312,32 @@ Orchestrator, Exception Lake, Skills Registry, and Legal Knowledge Runtime.
   `lake_write_performed=false`, `sqlite_write_performed=false`,
   `external_writes_performed=false`, and `silent_learning_performed=false`.
 
+## 11D. Cross-Repo Owner Issue Drafts
+
+Status: implemented for the current synthetic candidate slice; actual issue
+creation, owner triage, implementation PRs, and sibling-repo writes remain
+manual owner work.
+
+Turn owner-adoption packets into ready-to-review issue text for the five owning
+repos without creating issues or writing to GitHub.
+
+- `build-cross-repo-owner-issue-drafts` consumes
+  `cross_repo_owner_adoption_report.json`.
+- It writes `cross_repo_owner_issue_draft_report.json`,
+  `cross_repo_owner_issue_draft_report.md`,
+  `cross_repo_owner_issue_drafts.jsonl`, and per-owner Markdown/JSON drafts
+  under `owner_issue_drafts/`.
+- Each issue draft includes a suggested title, labels, source evidence refs,
+  candidate proposal summaries, required owner actions, acceptance checks,
+  red-team notes, required next gates, and explicit no-write boundaries.
+- Blocked owner-adoption packets produce blocked issue drafts.
+- The report records `manual_creation_required=true`,
+  `github_issue_created=false`, `github_pr_created=false`,
+  `github_write_performed=false`, `sibling_repo_write_performed=false`,
+  `promotion_authorized=false`, `lake_write_performed=false`,
+  `sqlite_write_performed=false`, `external_writes_performed=false`, and
+  `silent_learning_performed=false`.
+
 ## 12. Reviewed Learning Gate
 
 Status: implemented for the current synthetic candidate slice; owning-repo

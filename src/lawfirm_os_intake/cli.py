@@ -35,6 +35,7 @@ from .carrier_rejection_review import run_carrier_rejection_review
 from .carrier_rejections import run_carrier_rejection_capture
 from .confirmation import bind_confirmation_to_packet_evidence
 from .cross_repo_owner_adoption import run_cross_repo_owner_adoption
+from .cross_repo_owner_issue_drafts import run_cross_repo_owner_issue_drafts
 from .intake_vertical_readiness_audit import run_intake_vertical_readiness_audit
 from .learning_promotion_readiness import run_learning_promotion_readiness
 from .learning_owner_handoffs import run_learning_owner_handoffs
@@ -408,6 +409,16 @@ def _parser() -> argparse.ArgumentParser:
         help="Path to pr_review_checklist.json.",
     )
     owner_adoption.add_argument("--out-dir", required=True)
+    owner_issue_drafts = sub.add_parser(
+        "build-cross-repo-owner-issue-drafts",
+        help="Build local GitHub issue draft text from owner adoption packets without creating issues.",
+    )
+    owner_issue_drafts.add_argument(
+        "--owner-adoption-report",
+        required=True,
+        help="Path to cross_repo_owner_adoption_report.json.",
+    )
+    owner_issue_drafts.add_argument("--out-dir", required=True)
     return parser
 
 
@@ -1316,6 +1327,33 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 0 if report.status == "owner_adoption_packets_ready" else 2
+
+        if args.command == "build-cross-repo-owner-issue-drafts":
+            report, run_dir = run_cross_repo_owner_issue_drafts(
+                owner_adoption_report_path=args.owner_adoption_report,
+                out_dir=args.out_dir,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "issue_draft_report_id": report.issue_draft_report_id,
+                    "source_owner_adoption_status": report.source_owner_adoption_status,
+                    "draft_count": report.draft_count,
+                    "ready_draft_count": report.ready_draft_count,
+                    "blocked_draft_count": report.blocked_draft_count,
+                    "target_repos": report.target_repos,
+                    "manual_creation_required": report.manual_creation_required,
+                    "github_issue_created": report.github_issue_created,
+                    "github_pr_created": report.github_pr_created,
+                    "github_write_performed": report.github_write_performed,
+                    "sibling_repo_write_performed": report.sibling_repo_write_performed,
+                    "promotion_authorized": report.promotion_authorized,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0 if report.status == "issue_drafts_ready_for_manual_creation" else 2
     except (ValueError, OSError, json.JSONDecodeError) as exc:
         print(json.dumps({"status": "blocked", "error": str(exc)}, indent=2), file=sys.stderr)
         return 2
