@@ -27,6 +27,10 @@ from lawfirm_os_intake.models import (  # noqa: E402
     BudgetCorpusReplayExecutionReport,
     BudgetCorpusReplayOutputCheck,
     BudgetCorpusReplayPlan,
+    BudgetCorpusReplayReviewDecisionTemplate,
+    BudgetCorpusReplayReviewPacket,
+    BudgetCorpusReplayReviewRecommendation,
+    BudgetCorpusReplayReviewRedTeamNote,
     BudgetCodeBudgetSnapshot,
     BudgetDriverEffect,
     BudgetDriverProfileSummary,
@@ -185,6 +189,14 @@ MODELS = {
     "budget-corpus-replay-execution-report.schema.json": (BudgetCorpusReplayExecutionReport),
     "budget-corpus-replay-output-check.schema.json": BudgetCorpusReplayOutputCheck,
     "budget-corpus-replay-plan.schema.json": BudgetCorpusReplayPlan,
+    "budget-corpus-replay-review-decision-template.schema.json": (
+        BudgetCorpusReplayReviewDecisionTemplate
+    ),
+    "budget-corpus-replay-review-packet.schema.json": BudgetCorpusReplayReviewPacket,
+    "budget-corpus-replay-review-recommendation.schema.json": (
+        BudgetCorpusReplayReviewRecommendation
+    ),
+    "budget-corpus-replay-review-red-team-note.schema.json": (BudgetCorpusReplayReviewRedTeamNote),
     "budget-review-change.schema.json": BudgetReviewChange,
     "budget-review-change-record.schema.json": BudgetReviewChangeRecord,
     "budget-phase-budget-snapshot.schema.json": BudgetPhaseBudgetSnapshot,

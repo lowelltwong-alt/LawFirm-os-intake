@@ -65,6 +65,15 @@ chain produces the needed input. The report remains non-authoritative and does
 not calibrate, mutate budgets/profiles/templates/guidelines, write Lake or
 SQLite records, submit budgets, open matters, or apply learning.
 
+`review-budget-corpus-replay` consumes the replay execution report and writes a
+human-facing review packet plus decision templates. The packet separates
+executed-passed cases, dry-run-only cases, failed/blocked cases, selected-but-not
+run cases, and supporting context. It records recommendations, red-team notes,
+required human decisions, and append-only review outcome requirements. It still
+does not approve fixture binding, apply learning, mutate
+budgets/profiles/templates/guidelines, write Lake or SQLite records, submit
+budgets, open matters, or authorize external action.
+
 The learning loop can write `reviewed_learning_gate_report.json`, then
 `audit-learning-promotion-readiness` writes `learning_shadow_eval_plan.json` and
 `learning_promotion_readiness_report.json`. `draft-learning-proposed-changes`

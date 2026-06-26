@@ -1786,6 +1786,140 @@ class BudgetCorpusReplayExecutionReport(StrictModel):
         return self
 
 
+BudgetCorpusReplayReviewAction = Literal[
+    "review_fixture_binding",
+    "execute_before_learning_review",
+    "repair_replay_before_learning",
+    "provide_shadow_eval_input_or_hold",
+    "resolve_blocker_or_exclude",
+    "run_selected_case_before_review",
+    "acknowledge_supporting_context",
+]
+
+BudgetCorpusReplayReviewPriority = Literal["critical", "high", "medium", "low"]
+
+BudgetCorpusReplayReviewPacketStatus = Literal[
+    "ready_for_human_replay_review",
+    "replay_repair_required",
+    "blocked_pending_replay_execution",
+    "no_reviewable_cases",
+]
+
+BudgetCorpusReplayReviewOutcome = Literal[
+    "approve_fixture_binding",
+    "reject_fixture_binding",
+    "needs_replay_repair",
+    "needs_more_information",
+    "human_only_hold",
+    "exclude_from_learning",
+    "provide_shadow_eval_input",
+    "acknowledge_supporting_context",
+]
+
+
+class BudgetCorpusReplayReviewRecommendation(StrictModel):
+    recommendation_id: str
+    replay_case_id: str
+    source_artifact_ref: str
+    artifact_kind: BudgetCalibrationArtifactKind
+    replay_case_status: BudgetCorpusReplayCaseResultStatus
+    recommended_action: BudgetCorpusReplayReviewAction
+    priority: BudgetCorpusReplayReviewPriority
+    why: list[str]
+    command_result_statuses: dict[str, str] = Field(default_factory=dict)
+    output_refs: list[str] = Field(default_factory=list)
+    missing_output_refs: list[str] = Field(default_factory=list)
+    blocking_reasons: list[str] = Field(default_factory=list)
+    required_human_decisions: list[str]
+    downstream_learning_gate_candidate: bool = False
+    downstream_learning_gate_allowed_without_review: Literal[False] = False
+    external_submission_authorized: Literal[False] = False
+    lake_write_authorized: Literal[False] = False
+    silent_learning_allowed: Literal[False] = False
+
+
+class BudgetCorpusReplayReviewRedTeamNote(StrictModel):
+    note_id: str
+    severity: BudgetCorpusReplayReviewPriority
+    scope: Literal[
+        "boundary",
+        "execution_scope",
+        "output_integrity",
+        "learning_loop",
+        "supporting_context",
+        "shadow_eval",
+    ]
+    message: str
+    recommended_check: str
+    replay_case_ids: list[str] = Field(default_factory=list)
+
+
+class BudgetCorpusReplayReviewDecisionTemplate(StrictModel):
+    decision_template_id: str
+    replay_case_id: str
+    source_artifact_ref: str
+    recommended_action: BudgetCorpusReplayReviewAction
+    allowed_outcomes: list[BudgetCorpusReplayReviewOutcome]
+    recommended_outcome: BudgetCorpusReplayReviewOutcome
+    required_fields: list[str]
+    required_evidence_refs: list[str] = Field(default_factory=list)
+    append_only_review_outcome_required: Literal[True] = True
+    reviewer_id_required: Literal[True] = True
+    reviewed_at_required: Literal[True] = True
+    decision_reason_required: Literal[True] = True
+    downstream_learning_gate_allowed_without_review: Literal[False] = False
+    external_submission_authorized: Literal[False] = False
+    lake_write_authorized: Literal[False] = False
+    silent_learning_allowed: Literal[False] = False
+
+
+class BudgetCorpusReplayReviewPacket(StrictModel):
+    schema_version: str = "0.1"
+    review_packet_id: str
+    replay_execution_report_id: str
+    replay_execution_report_ref: str
+    replay_execution_status: BudgetCorpusReplayExecutionReportStatus
+    replay_execution_mode: BudgetCorpusReplayRunMode
+    status: BudgetCorpusReplayReviewPacketStatus
+    recommendation_count: int = Field(ge=0)
+    decision_template_count: int = Field(ge=0)
+    executed_passed_case_count: int = Field(ge=0)
+    dry_run_case_count: int = Field(ge=0)
+    failed_case_count: int = Field(ge=0)
+    blocked_case_count: int = Field(ge=0)
+    supporting_context_case_count: int = Field(ge=0)
+    recommendations: list[BudgetCorpusReplayReviewRecommendation]
+    red_team_notes: list[BudgetCorpusReplayReviewRedTeamNote]
+    decision_templates: list[BudgetCorpusReplayReviewDecisionTemplate]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    append_only_review_outcome_required: Literal[True] = True
+    downstream_learning_gate_allowed_without_review: Literal[False] = False
+    calibration_applied: Literal[False] = False
+    profile_mutation_performed: Literal[False] = False
+    template_mutation_performed: Literal[False] = False
+    budget_mutation_performed: Literal[False] = False
+    carrier_guideline_mutation_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def counts_match_review_packet(self) -> "BudgetCorpusReplayReviewPacket":
+        if self.recommendation_count != len(self.recommendations):
+            raise ValueError("replay review recommendation count must match recommendations")
+        if self.decision_template_count != len(self.decision_templates):
+            raise ValueError("replay review decision template count must match templates")
+        if self.status == "ready_for_human_replay_review" and not self.recommendations:
+            raise ValueError("ready replay review packet requires recommendations")
+        return self
+
+
 class BudgetFormCodeMapping(StrictModel):
     code: str
     kind: Literal["phase", "task"]

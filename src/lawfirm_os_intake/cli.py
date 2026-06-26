@@ -10,6 +10,7 @@ from .budget_actuals import run_budget_actual_comparison
 from .budget_calibration_corpus import run_budget_calibration_corpus_audit
 from .budget_corpus_replay import run_budget_corpus_replay_plan
 from .budget_corpus_replay_execution import run_budget_corpus_replay_execution
+from .budget_corpus_replay_review import run_budget_corpus_replay_review
 from .budget_form import build_budget_form_template_audit_report, render_budget_form
 from .budget_revisions import run_budget_review_record
 from .carrier_rejection_lake_admission import (
@@ -172,6 +173,17 @@ def _parser() -> argparse.ArgumentParser:
         "--proposed-change-set",
         help="Optional learning_proposed_change_set.json for shadow-eval replay cases.",
     )
+
+    budget_corpus_replay_review = sub.add_parser(
+        "review-budget-corpus-replay",
+        help="Build a human-review packet for budget corpus replay execution results.",
+    )
+    budget_corpus_replay_review.add_argument(
+        "--replay-execution-report",
+        required=True,
+        help="Path to budget_corpus_replay_execution_report.json.",
+    )
+    budget_corpus_replay_review.add_argument("--out-dir", required=True)
 
     carrier_rejections = sub.add_parser(
         "capture-carrier-rejections",
@@ -656,6 +668,52 @@ def main(argv: list[str] | None = None) -> int:
             return (
                 0
                 if report.status in {"dry_run_ready_for_review", "execution_passed_for_review"}
+                else 2
+            )
+
+        if args.command == "review-budget-corpus-replay":
+            packet, run_dir = run_budget_corpus_replay_review(
+                replay_execution_report_path=args.replay_execution_report,
+                out_dir=args.out_dir,
+            )
+            _print(
+                {
+                    "status": packet.status,
+                    "review_packet_id": packet.review_packet_id,
+                    "replay_execution_report_id": packet.replay_execution_report_id,
+                    "replay_execution_status": packet.replay_execution_status,
+                    "replay_execution_mode": packet.replay_execution_mode,
+                    "recommendation_count": packet.recommendation_count,
+                    "decision_template_count": packet.decision_template_count,
+                    "executed_passed_case_count": packet.executed_passed_case_count,
+                    "dry_run_case_count": packet.dry_run_case_count,
+                    "failed_case_count": packet.failed_case_count,
+                    "blocked_case_count": packet.blocked_case_count,
+                    "human_review_required": packet.human_review_required,
+                    "append_only_review_outcome_required": (
+                        packet.append_only_review_outcome_required
+                    ),
+                    "downstream_learning_gate_allowed_without_review": (
+                        packet.downstream_learning_gate_allowed_without_review
+                    ),
+                    "calibration_applied": packet.calibration_applied,
+                    "profile_mutation_performed": packet.profile_mutation_performed,
+                    "template_mutation_performed": packet.template_mutation_performed,
+                    "budget_mutation_performed": packet.budget_mutation_performed,
+                    "carrier_guideline_mutation_performed": (
+                        packet.carrier_guideline_mutation_performed
+                    ),
+                    "lake_write_performed": packet.lake_write_performed,
+                    "sqlite_write_performed": packet.sqlite_write_performed,
+                    "external_writes_performed": packet.external_writes_performed,
+                    "silent_learning_performed": packet.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return (
+                0
+                if packet.status
+                in {"ready_for_human_replay_review", "blocked_pending_replay_execution"}
                 else 2
             )
 

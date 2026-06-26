@@ -1,0 +1,152 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "recommendation_id": {
+      "title": "Recommendation Id",
+      "type": "string"
+    },
+    "replay_case_id": {
+      "title": "Replay Case Id",
+      "type": "string"
+    },
+    "source_artifact_ref": {
+      "title": "Source Artifact Ref",
+      "type": "string"
+    },
+    "artifact_kind": {
+      "enum": [
+        "intake_source_fixture",
+        "human_confirmation_fixture",
+        "budget_review_fixture",
+        "actuals_fixture",
+        "carrier_rejection_fixture",
+        "reviewed_gold_fixture",
+        "learning_gate_fixture",
+        "learning_shadow_eval_fixture",
+        "learning_support_fixture",
+        "unclassified_json_fixture"
+      ],
+      "title": "Artifact Kind",
+      "type": "string"
+    },
+    "replay_case_status": {
+      "enum": [
+        "dry_run_ready",
+        "executed_passed",
+        "executed_failed",
+        "skipped_not_selected",
+        "skipped_supporting_context",
+        "blocked"
+      ],
+      "title": "Replay Case Status",
+      "type": "string"
+    },
+    "recommended_action": {
+      "enum": [
+        "review_fixture_binding",
+        "execute_before_learning_review",
+        "repair_replay_before_learning",
+        "provide_shadow_eval_input_or_hold",
+        "resolve_blocker_or_exclude",
+        "run_selected_case_before_review",
+        "acknowledge_supporting_context"
+      ],
+      "title": "Recommended Action",
+      "type": "string"
+    },
+    "priority": {
+      "enum": [
+        "critical",
+        "high",
+        "medium",
+        "low"
+      ],
+      "title": "Priority",
+      "type": "string"
+    },
+    "why": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Why",
+      "type": "array"
+    },
+    "command_result_statuses": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Command Result Statuses",
+      "type": "object"
+    },
+    "output_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Output Refs",
+      "type": "array"
+    },
+    "missing_output_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Missing Output Refs",
+      "type": "array"
+    },
+    "blocking_reasons": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Blocking Reasons",
+      "type": "array"
+    },
+    "required_human_decisions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Human Decisions",
+      "type": "array"
+    },
+    "downstream_learning_gate_candidate": {
+      "default": false,
+      "title": "Downstream Learning Gate Candidate",
+      "type": "boolean"
+    },
+    "downstream_learning_gate_allowed_without_review": {
+      "const": false,
+      "default": false,
+      "title": "Downstream Learning Gate Allowed Without Review",
+      "type": "boolean"
+    },
+    "external_submission_authorized": {
+      "const": false,
+      "default": false,
+      "title": "External Submission Authorized",
+      "type": "boolean"
+    },
+    "lake_write_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Authorized",
+      "type": "boolean"
+    },
+    "silent_learning_allowed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Allowed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "recommendation_id",
+    "replay_case_id",
+    "source_artifact_ref",
+    "artifact_kind",
+    "replay_case_status",
+    "recommended_action",
+    "priority",
+    "why",
+    "required_human_decisions"
+  ],
+  "title": "BudgetCorpusReplayReviewRecommendation",
+  "type": "object"
+}

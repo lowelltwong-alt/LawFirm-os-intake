@@ -386,9 +386,9 @@ after those owners promote the necessary contracts and runtime gates.
 ## 18. Budget Calibration Corpus
 
 Status: implemented for the current synthetic candidate slice through corpus
-audit, replay planning, and selected replay execution audit; human corpus
-replay review, broader replay execution, real-data pilots, and owner adoption
-remain future work.
+audit, replay planning, selected replay execution audit, and human replay review
+packet generation; append-only human replay outcomes, broader replay execution,
+real-data pilots, and owner adoption remain future work.
 
 Separate "we have synthetic evidence artifacts" from "we are allowed to learn
 from them."
@@ -438,3 +438,16 @@ from them."
 - Replay execution audit still does not calibrate, mutate
   budgets/profiles/templates/guidelines, write Lake or SQLite records, submit
   budgets, open matters, or authorize learning.
+- `review-budget-corpus-replay` consumes the replay execution report and writes
+  `budget_corpus_replay_review_packet.json`,
+  `budget_corpus_replay_review_packet.md`, and
+  `budget_corpus_replay_review_decision_template.json`.
+- The review packet translates replay results into human-facing
+  recommendations, red-team notes, and append-only decision templates.
+- Executed-passed cases are eligible only for human fixture-binding review; dry
+  runs remain blocked pending execution; failed or blocked cases require repair
+  or exclusion; support-only cases remain non-executable context.
+- Human review outcomes are still future append-only artifacts. The packet does
+  not approve fixture binding, apply learning, mutate
+  budgets/profiles/templates/guidelines, write Lake or SQLite records, submit
+  budgets, open matters, or authorize external actions.
