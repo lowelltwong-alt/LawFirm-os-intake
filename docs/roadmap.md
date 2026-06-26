@@ -194,12 +194,17 @@ Lake runtime.
 
 - `record-budget-review` writes `budget_review_change_record.json`,
   `budget_revision_history.jsonl`, `budget_revision_report.json`,
-  `budget_revision_report.md`, and
+  `budget_revision_report.md`, `budget_change_ledger_report.json`,
+  `budget_change_ledger.jsonl`, `budget_change_ledger_report.md`, and
   `budget_revision_exception_lake_candidates.jsonl`.
 - Human budget changes are append-only candidate evidence. The report calculates
   phase and UTBMS-code deltas while preserving `original_budget_mutated=false`,
   `superseding_budget_written=false`, no submission authorization, no Lake write,
   and no external write.
+- The budget change ledger records one row per human change or outcome-only
+  decision with reviewer metadata, before/after totals, evidence refs,
+  structured refs, and local candidate Lake labels. It remains candidate-only
+  and does not admit Lake/SQLite records or authorize learning.
 - `compare-budget-actuals` accepts a synthetic actuals source and optional
   `budget_revision_report.json`, then compares actuals against the original
   proposal or the human-revised candidate by phase and UTBMS code.

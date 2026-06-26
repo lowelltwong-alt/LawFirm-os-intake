@@ -92,6 +92,15 @@ change fixture files, apply learning, mutate profiles/templates/guidelines,
 write Lake/SQLite records, submit budgets, open matters, or authorize external
 action.
 
+`record-budget-review` also writes `budget_change_ledger_report.json`,
+`budget_change_ledger.jsonl`, and `budget_change_ledger_report.md`. Corrected
+review outcomes must produce one ledger row per human change; no-change or
+blocked outcomes must produce an outcome-only row. Each row preserves reviewer
+metadata, before/after totals, evidence refs, structured refs, and local
+candidate Lake labels while proving no source budget mutation, no superseding
+budget write, no Lake/SQLite admission, no billing connector write, and no
+silent learning.
+
 The learning loop can write `reviewed_learning_gate_report.json`, then
 `audit-learning-promotion-readiness` writes `learning_shadow_eval_plan.json` and
 `learning_promotion_readiness_report.json`. `draft-learning-proposed-changes`

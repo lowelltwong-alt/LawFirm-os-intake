@@ -9,11 +9,12 @@ from lawfirm_os_intake.cli import main
 from lawfirm_os_intake.confirmation import bind_confirmation_to_packet_evidence
 from lawfirm_os_intake.models import (
     BudgetActualComparisonReport,
+    BudgetChangeLedgerReport,
     BudgetProposal,
     BudgetRevisionReport,
     HumanConfirmation,
 )
-from lawfirm_os_intake.util import load_json, load_jsonl
+from lawfirm_os_intake.util import load_json, load_jsonl, write_json
 from lawfirm_os_intake.workflow import run_budget, run_preflight
 
 
@@ -59,6 +60,10 @@ def test_budget_review_record_writes_append_only_revision_report(tmp_path, repo_
     )
     history = load_jsonl(review_dir / "budget_revision_history.jsonl")
     candidates = load_jsonl(review_dir / "budget_revision_exception_lake_candidates.jsonl")
+    ledger = BudgetChangeLedgerReport.model_validate(
+        load_json(review_dir / "budget_change_ledger_report.json")
+    )
+    ledger_rows = load_jsonl(review_dir / "budget_change_ledger.jsonl")
 
     assert persisted.budget_revision_report_id == report.budget_revision_report_id
     assert persisted.status == "revision_recorded"
@@ -77,7 +82,80 @@ def test_budget_review_record_writes_append_only_revision_report(tmp_path, repo_
     assert candidates[0]["local_event_label"] == "budget_human_change_recorded"
     assert candidates[0]["raw_payload_included"] is False
     assert candidates[0]["canonical_promotion_required"] is True
+    assert ledger.status == "ledger_recorded"
+    assert ledger.budget_revision_report_id == persisted.budget_revision_report_id
+    assert ledger.budget_review_change_record_id == persisted.budget_review_change_record_id
+    assert ledger.entry_count == 2
+    assert ledger.numeric_change_entry_count == 2
+    assert ledger.total_delta == persisted.total_delta
+    assert ledger.event_kind_counts == {"human_budget_change_recorded": 2}
+    assert len(ledger_rows) == 2
+    assert ledger_rows[0]["budget_change_ledger_event_id"] == (
+        ledger.events[0].budget_change_ledger_event_id
+    )
+    assert [event.change_class for event in ledger.events] == [
+        "hours_change",
+        "expense_change",
+    ]
+    assert ledger.events[0].budget_total_before_event == persisted.original_total
+    assert ledger.events[-1].budget_total_after_event == persisted.revised_total
+    assert all(
+        event.exception_lake_local_event_label == "budget_human_change_recorded"
+        for event in ledger.events
+    )
+    assert all(event.requires_exception_lake_admission_review for event in ledger.events)
+    assert ledger.source_budget_mutated is False
+    assert ledger.source_revision_report_mutated is False
+    assert ledger.lake_write_performed is False
+    assert ledger.sqlite_write_performed is False
+    assert ledger.external_writes_performed is False
+    assert ledger.silent_learning_performed is False
+    assert (review_dir / "budget_change_ledger_report.md").is_file()
     assert load_json(budget_dir / "legal_budget_proposal.json") == original_payload
+
+
+def test_budget_review_no_change_writes_outcome_ledger_event(tmp_path, repo_root):
+    budget, budget_dir = _run_budget(tmp_path, repo_root)
+    review_path = write_json(
+        tmp_path / "confirmed-no-change-review.json",
+        {
+            "schema_version": "0.1",
+            "budget_review_change_record_id": "budget-review-no-change.synthetic-medmal.v0_1",
+            "budget_proposal_id": "__BUDGET_PROPOSAL_ID__",
+            "reviewer_id": "synthetic-pricing-reviewer",
+            "reviewer_role": "human_pricing_reviewer",
+            "reviewed_at": "2026-06-26T00:00:00Z",
+            "outcome": "confirmed_no_change",
+            "decision_reason": "Synthetic reviewer confirms no budget edits are needed.",
+            "changes": [],
+        },
+    )
+
+    report, review_dir = run_budget_review_record(
+        budget_path=budget_dir / "legal_budget_proposal.json",
+        review_path=review_path,
+        out_dir=tmp_path / "budget-review-no-change",
+    )
+    ledger = BudgetChangeLedgerReport.model_validate(
+        load_json(review_dir / "budget_change_ledger_report.json")
+    )
+    event = ledger.events[0]
+
+    assert report.status == "confirmed_no_change"
+    assert ledger.status == "no_change_confirmed"
+    assert ledger.entry_count == 1
+    assert ledger.numeric_change_entry_count == 0
+    assert ledger.event_kind_counts == {"human_budget_no_change_confirmed": 1}
+    assert event.event_kind == "human_budget_no_change_confirmed"
+    assert event.status == "no_change_confirmed"
+    assert event.change_class == "review_outcome_only"
+    assert event.change_id is None
+    assert event.budget_total_before_event == report.original_total
+    assert event.budget_total_after_event == report.original_total
+    assert event.reviewer_id == "synthetic-pricing-reviewer"
+    assert event.lake_write_performed is False
+    assert event.sqlite_write_performed is False
+    assert event.silent_learning_performed is False
 
 
 def test_budget_actuals_compare_against_human_revised_candidate(tmp_path, repo_root):
@@ -206,6 +284,11 @@ def test_budget_review_and_actuals_cli(tmp_path, repo_root, capsys):
     assert review_exit == 0
     assert actuals_exit == 0
     assert '"status": "revision_recorded"' in captured.out
+    assert '"budget_change_ledger_entry_count": 2' in captured.out
+    assert '"sqlite_write_performed": false' in captured.out
+    assert '"silent_learning_performed": false' in captured.out
     assert '"comparison_budget_state": "human_revised_candidate"' in captured.out
     assert (tmp_path / "review-cli" / "budget_revision_report.json").is_file()
+    assert (tmp_path / "review-cli" / "budget_change_ledger_report.json").is_file()
+    assert (tmp_path / "review-cli" / "budget_change_ledger.jsonl").is_file()
     assert (tmp_path / "actuals-cli" / "budget_actual_comparison_report.json").is_file()

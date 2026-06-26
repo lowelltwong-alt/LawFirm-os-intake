@@ -3,6 +3,11 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
+from .budget_change_ledger import (
+    BUDGET_CHANGE_LEDGER_FILENAME,
+    build_budget_change_ledger_report,
+    write_budget_change_ledger_outputs,
+)
 from .models import (
     BudgetCodeBudgetSnapshot,
     BudgetLine,
@@ -418,6 +423,13 @@ def run_budget_review_record(
     write_json(record_path, record.model_dump(mode="json"))
     append_jsonl(history_path, record.model_dump(mode="json"))
     write_json(report_path, report.model_dump(mode="json"))
+    ledger_report = build_budget_change_ledger_report(
+        record=record,
+        report=report,
+        ledger_ref=str(run_dir / BUDGET_CHANGE_LEDGER_FILENAME),
+        revision_report_ref=str(report_path),
+    )
+    write_budget_change_ledger_outputs(run_dir=run_dir, ledger_report=ledger_report)
     candidates_path.touch()
     for candidate in build_budget_revision_exception_candidates(report, str(report_path)):
         append_jsonl(candidates_path, candidate.model_dump(mode="json"))

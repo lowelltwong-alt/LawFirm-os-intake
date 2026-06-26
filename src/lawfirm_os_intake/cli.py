@@ -7,6 +7,7 @@ import shutil
 import sys
 
 from .budget_actuals import run_budget_actual_comparison
+from .budget_change_ledger import BUDGET_CHANGE_LEDGER_REPORT_FILENAME
 from .budget_calibration_corpus import run_budget_calibration_corpus_audit
 from .budget_corpus_replay import run_budget_corpus_replay_plan
 from .budget_corpus_replay_execution import run_budget_corpus_replay_execution
@@ -552,10 +553,15 @@ def main(argv: list[str] | None = None) -> int:
                 review_path=args.review,
                 out_dir=args.out_dir,
             )
+            ledger_report = load_json(Path(run_dir) / BUDGET_CHANGE_LEDGER_REPORT_FILENAME)
             _print(
                 {
                     "status": report.status,
                     "budget_revision_report_id": report.budget_revision_report_id,
+                    "budget_change_ledger_report_id": (
+                        ledger_report["budget_change_ledger_report_id"]
+                    ),
+                    "budget_change_ledger_entry_count": ledger_report["entry_count"],
                     "budget_review_change_record_id": report.budget_review_change_record_id,
                     "budget_proposal_id": report.budget_proposal_id,
                     "change_count": report.change_count,
@@ -567,7 +573,9 @@ def main(argv: list[str] | None = None) -> int:
                     "budget_submission_authorized": report.budget_submission_authorized,
                     "carrier_submission_authorized": report.carrier_submission_authorized,
                     "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": ledger_report["sqlite_write_performed"],
                     "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": ledger_report["silent_learning_performed"],
                     "run_dir": str(run_dir),
                 }
             )

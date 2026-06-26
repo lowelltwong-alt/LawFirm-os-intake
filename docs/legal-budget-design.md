@@ -141,9 +141,12 @@ The local `record-budget-review` command implements the candidate evidence slice
 for this loop. It writes a bound `budget_review_change_record.json`, appends the
 record to `budget_revision_history.jsonl`, emits `budget_revision_report.json` and
 `.md`, calculates phase and UTBMS-code deltas, and writes dry-run revision
-Exception Lake candidates. It does not mutate the original proposal, write a
-superseding budget, authorize client/carrier submission, write billing, write
-SQLite, or admit Lake records.
+Exception Lake candidates. It also writes `budget_change_ledger_report.json`,
+`budget_change_ledger.jsonl`, and `budget_change_ledger_report.md` so each human
+review decision or field-level edit has reviewer metadata, before/after totals,
+evidence refs, structured refs, and a local candidate Lake label. It does not
+mutate the original proposal, write a superseding budget, authorize
+client/carrier submission, write billing, write SQLite, or admit Lake records.
 
 Carrier rejection handling is a future governed loop, not a starter connector. Every
 submitted budget, invoice, appeal, or portal action should have a reconciled response

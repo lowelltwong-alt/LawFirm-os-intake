@@ -1249,6 +1249,177 @@ class BudgetRevisionReport(StrictModel):
     generated_at: str
 
 
+BudgetChangeLedgerEventKind = Literal[
+    "human_budget_change_recorded",
+    "human_budget_no_change_confirmed",
+    "human_budget_review_blocked",
+    "human_budget_human_only_hold",
+    "human_budget_declined_referred",
+]
+
+BudgetChangeLedgerEventStatus = Literal[
+    "recorded_candidate",
+    "no_change_confirmed",
+    "blocked_from_budget_use",
+]
+
+BudgetChangeLedgerChangeClass = Literal[
+    "hours_change",
+    "rate_change",
+    "expense_change",
+    "assumption_change",
+    "exclusion_change",
+    "unknown_info_change",
+    "scenario_change",
+    "other_non_numeric_change",
+    "review_outcome_only",
+]
+
+
+class BudgetChangeLedgerEvent(StrictModel):
+    schema_version: str = "0.1"
+    budget_change_ledger_event_id: str
+    ledger_id: str
+    sequence_index: int = Field(ge=0)
+    budget_revision_report_id: str
+    run_id: str
+    preflight_packet_id: str
+    budget_proposal_id: str
+    budget_review_change_record_id: str
+    source_budget_proposal_ref: str
+    reviewer_id: str
+    reviewer_role: str
+    reviewed_at: str
+    review_outcome: str
+    decision_reason: str
+    supersedes_budget_review_change_record_id: str | None = None
+    change_id: str | None = None
+    delta_id: str | None = None
+    event_kind: BudgetChangeLedgerEventKind
+    status: BudgetChangeLedgerEventStatus
+    change_class: BudgetChangeLedgerChangeClass
+    target_type: str | None = None
+    phase_id: str | None = None
+    task_id: str | None = None
+    external_code_candidate: str | None = None
+    expense_code: str | None = None
+    staffing_role: str | None = None
+    field: str | None = None
+    previous_value: float | str | None = None
+    new_value: float | str | None = None
+    hours_delta: float = 0
+    fee_delta: float = 0
+    expense_delta: float = 0
+    total_delta: float = 0
+    budget_total_before_event: float | None = None
+    budget_total_after_event: float | None = None
+    reason: str
+    evidence_refs: list[EvidenceRef] = Field(default_factory=list)
+    structured_refs: list[str] = Field(default_factory=list)
+    exception_lake_local_event_label: str
+    exception_lake_candidate_reason: str
+    requires_exception_lake_admission_review: Literal[True] = True
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    append_only: Literal[True] = True
+    original_budget_mutated: Literal[False] = False
+    superseding_budget_written: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    carrier_submission_authorized: Literal[False] = False
+    not_authorized_for_client_submission: Literal[True] = True
+    not_authorized_for_carrier_submission: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    billing_connector_read_performed: Literal[False] = False
+    billing_connector_write_performed: Literal[False] = False
+    profile_mutation_performed: Literal[False] = False
+    template_mutation_performed: Literal[False] = False
+    budget_mutation_performed: Literal[False] = False
+    carrier_guideline_mutation_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def changed_events_require_change_id(self) -> "BudgetChangeLedgerEvent":
+        if self.event_kind == "human_budget_change_recorded" and not (
+            self.change_id and self.delta_id
+        ):
+            raise ValueError("human budget change ledger events require change_id and delta_id")
+        return self
+
+
+class BudgetChangeLedgerReport(StrictModel):
+    schema_version: str = "0.1"
+    budget_change_ledger_report_id: str
+    ledger_id: str
+    run_id: str
+    preflight_packet_id: str
+    budget_proposal_id: str
+    budget_revision_report_id: str
+    budget_review_change_record_id: str
+    source_budget_proposal_ref: str
+    source_budget_revision_report_ref: str
+    ledger_ref: str
+    status: Literal[
+        "ledger_recorded",
+        "no_change_confirmed",
+        "blocked_budget_review_outcome_recorded",
+    ]
+    review_outcome: str
+    entry_count: int = Field(ge=0)
+    numeric_change_entry_count: int = Field(ge=0)
+    total_delta: float = 0
+    event_kind_counts: dict[str, int] = Field(default_factory=dict)
+    events: list[BudgetChangeLedgerEvent]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    append_only: Literal[True] = True
+    source_budget_mutated: Literal[False] = False
+    source_revision_report_mutated: Literal[False] = False
+    superseding_budget_written: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    carrier_submission_authorized: Literal[False] = False
+    not_authorized_for_client_submission: Literal[True] = True
+    not_authorized_for_carrier_submission: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    billing_connector_read_performed: Literal[False] = False
+    billing_connector_write_performed: Literal[False] = False
+    profile_mutation_performed: Literal[False] = False
+    template_mutation_performed: Literal[False] = False
+    budget_mutation_performed: Literal[False] = False
+    carrier_guideline_mutation_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def counts_match_events(self) -> "BudgetChangeLedgerReport":
+        if self.entry_count != len(self.events):
+            raise ValueError("budget change ledger entry count must match events")
+        if self.numeric_change_entry_count != sum(
+            1
+            for event in self.events
+            if event.fee_delta or event.expense_delta or event.hours_delta
+        ):
+            raise ValueError("budget change ledger numeric count must match events")
+        kind_counts: dict[str, int] = {}
+        for event in self.events:
+            kind_counts[event.event_kind] = kind_counts.get(event.event_kind, 0) + 1
+        if self.event_kind_counts != kind_counts:
+            raise ValueError("budget change ledger kind counts must match events")
+        if self.status == "ledger_recorded" and not self.events:
+            raise ValueError("recorded budget change ledger requires events")
+        return self
+
+
 class BudgetActualAmount(StrictModel):
     fees: float = Field(default=0, ge=0)
     expenses: float = Field(default=0, ge=0)
