@@ -424,6 +424,32 @@ owner issue drafts into one local closeout report.
   `sqlite_write_performed=false`, `external_writes_performed=false`, and
   `silent_learning_performed=false`.
 
+## 11H. PR Readiness Decision Record
+
+Status: implemented for the current synthetic candidate slice; any GitHub PR
+state change remains a separate manual human action.
+
+Record the human PR readiness decision after the PR checklist and local closeout
+reports are available. This gives the branch an append-only local answer to
+whether the PR should stay draft, needs more work, should be split into
+follow-up work, or is ready for a human to manually mark ready for review.
+
+- `record-pr-readiness-decision` consumes `pr_review_checklist.json`,
+  `intake_local_closeout_report.json`, and a human-authored decision JSON.
+- It writes `pr_readiness_decision_record.json`,
+  `pr_readiness_decision_history.jsonl`, `pr_readiness_decision_report.json`,
+  and `pr_readiness_decision_report.md`.
+- `mark_ready_for_review` decisions must accept every checklist item and cite
+  validation evidence; draft or followup decisions must name required followups.
+- A mark-ready decision records `manual_ready_action_required=true`, not a
+  completed GitHub write.
+- The report records `pr_marked_ready=false`, `github_write_performed=false`,
+  `github_issue_created=false`, `github_pr_created=false`,
+  `sibling_repo_write_performed=false`, `promotion_authorized=false`,
+  `proposed_changes_applied=false`, `lake_write_performed=false`,
+  `sqlite_write_performed=false`, `external_writes_performed=false`, and
+  `silent_learning_performed=false`.
+
 ## 12. Reviewed Learning Gate
 
 Status: implemented for the current synthetic candidate slice; owning-repo

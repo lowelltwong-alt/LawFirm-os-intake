@@ -68,3 +68,10 @@ decision where applicable. A blocked readiness audit becomes a blocking checklis
 item. A ready checklist remains human-review evidence only; it does not mark a
 PR ready, call GitHub write APIs, promote canon, admit Lake records, write
 SQLite, apply learning, or authorize production use.
+
+After the local closeout report exists, `record-pr-readiness-decision` records
+the human PR decision append-only. The allowed decisions are keep draft, needs
+more work, split follow-up work, or mark ready for review. A mark-ready decision
+only records that a separate manual GitHub action is required; it does not mark
+the PR ready, create issues or PRs, write sibling repos, promote canon, admit
+Lake/SQLite records, apply proposed changes, or apply learning.

@@ -5762,6 +5762,167 @@ class PRReviewChecklistReport(StrictModel):
         return self
 
 
+PRReadinessDecision = Literal[
+    "mark_ready_for_review",
+    "keep_draft",
+    "needs_more_work",
+    "split_followup_work",
+]
+
+
+class PRReadinessDecisionCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed", "warning"]
+    message: str
+    artifact_refs: list[str] = Field(default_factory=list)
+    blocking_refs: list[str] = Field(default_factory=list)
+
+
+class PRReadinessDecisionRecord(StrictModel):
+    schema_version: str = "0.1"
+    pr_readiness_decision_id: str
+    checklist_report_id: str
+    closeout_report_id: str
+    observed_pr_number: int | None = None
+    observed_pr_url: str | None = None
+    observed_pr_state: Literal["draft", "ready_for_review", "not_supplied"] = "not_supplied"
+    reviewer_id: str
+    reviewed_at: str
+    decision: PRReadinessDecision
+    decision_reason: str
+    accepted_checklist_item_ids: list[str] = Field(default_factory=list)
+    validation_evidence_refs: list[str] = Field(default_factory=list)
+    required_followups: list[str] = Field(default_factory=list)
+    red_team_notes: list[str] = Field(default_factory=list)
+    supersedes_pr_readiness_decision_id: str | None = None
+    append_only: Literal[True] = True
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    human_review_required: Literal[True] = True
+    manual_github_action_required: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    pr_marked_ready: Literal[False] = False
+    github_write_performed: Literal[False] = False
+    github_issue_created: Literal[False] = False
+    github_pr_created: Literal[False] = False
+    sibling_repo_write_performed: Literal[False] = False
+    promotion_authorized: Literal[False] = False
+    proposed_changes_applied: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def pr_readiness_decision_is_complete(self) -> "PRReadinessDecisionRecord":
+        if not self.pr_readiness_decision_id.strip():
+            raise ValueError("PR readiness decision requires pr_readiness_decision_id")
+        if not self.reviewer_id.strip():
+            raise ValueError("PR readiness decision requires reviewer_id")
+        if not self.reviewed_at.strip():
+            raise ValueError("PR readiness decision requires reviewed_at")
+        if not self.decision_reason.strip():
+            raise ValueError("PR readiness decision requires decision_reason")
+        if self.decision == "mark_ready_for_review":
+            if not self.accepted_checklist_item_ids:
+                raise ValueError("mark_ready_for_review requires accepted checklist item IDs")
+            if not self.validation_evidence_refs:
+                raise ValueError("mark_ready_for_review requires validation evidence refs")
+        if self.decision in {"keep_draft", "needs_more_work", "split_followup_work"}:
+            if not self.required_followups:
+                raise ValueError("draft/work decisions require required_followups")
+        if not self.red_team_notes:
+            raise ValueError("PR readiness decision requires red-team notes")
+        return self
+
+
+class PRReadinessDecisionReport(StrictModel):
+    schema_version: str = "0.1"
+    pr_readiness_decision_report_id: str
+    status: Literal[
+        "pr_readiness_decision_recorded_manual_ready_action_required",
+        "pr_readiness_decision_recorded_keep_draft",
+        "pr_readiness_decision_recorded_more_work_required",
+        "pr_readiness_decision_recorded_split_followup_work",
+        "blocked_by_pr_readiness_decision_evidence",
+    ]
+    source_pr_review_checklist_id: str
+    source_pr_review_checklist_ref: str
+    source_pr_review_checklist_status: Literal[
+        "ready_for_human_pr_review",
+        "blocked_by_readiness_audit",
+    ]
+    source_closeout_report_id: str
+    source_closeout_report_ref: str
+    source_closeout_status: Literal[
+        "intake_local_closeout_ready_manual_actions_required",
+        "blocked_by_closeout_evidence",
+    ]
+    pr_readiness_decision_id: str
+    observed_pr_number: int | None = None
+    observed_pr_url: str | None = None
+    observed_pr_state: Literal["draft", "ready_for_review", "not_supplied"] = "not_supplied"
+    reviewer_id: str
+    decision: PRReadinessDecision
+    decision_reason: str
+    accepted_checklist_item_ids: list[str] = Field(default_factory=list)
+    validation_evidence_refs: list[str] = Field(default_factory=list)
+    required_followups: list[str] = Field(default_factory=list)
+    red_team_notes: list[str] = Field(default_factory=list)
+    append_only_history_ref: str
+    checks: list[PRReadinessDecisionCheck]
+    required_next_gates: list[str]
+    manual_ready_action_required: bool = False
+    append_only: Literal[True] = True
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    human_review_required: Literal[True] = True
+    manual_github_action_required: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    pr_marked_ready: Literal[False] = False
+    github_write_performed: Literal[False] = False
+    github_issue_created: Literal[False] = False
+    github_pr_created: Literal[False] = False
+    sibling_repo_write_performed: Literal[False] = False
+    promotion_authorized: Literal[False] = False
+    proposed_changes_applied: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def pr_readiness_decision_report_status_matches_checks(
+        self,
+    ) -> "PRReadinessDecisionReport":
+        failed = [check for check in self.checks if check.status == "failed"]
+        if self.status == "blocked_by_pr_readiness_decision_evidence" and not failed:
+            raise ValueError("blocked PR readiness decision report requires failed checks")
+        if self.status != "blocked_by_pr_readiness_decision_evidence" and failed:
+            raise ValueError("non-blocked PR readiness decision report cannot have failed checks")
+        if self.status == "pr_readiness_decision_recorded_manual_ready_action_required":
+            if not (self.decision == "mark_ready_for_review" and self.manual_ready_action_required):
+                raise ValueError("manual-ready status requires mark_ready_for_review decision")
+        if self.status != "pr_readiness_decision_recorded_manual_ready_action_required":
+            if self.manual_ready_action_required:
+                raise ValueError("non-ready PR decision cannot require manual ready action")
+        required = {
+            "manual_github_pr_state_change_if_accepted",
+            "owner_issue_creation_remains_manual",
+            "cross_repo_validation_after_owner_changes",
+            "no_automated_github_write",
+            "no_sibling_repo_or_lake_write",
+        }
+        if not required.issubset(set(self.required_next_gates)):
+            raise ValueError("PR readiness decision report is missing required gates")
+        return self
+
+
 class CarrierRejectionOrchestratorConnectorChannel(StrictModel):
     channel_id: Literal[
         "carrier_portal_notice",

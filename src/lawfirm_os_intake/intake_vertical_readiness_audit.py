@@ -509,6 +509,29 @@ REQUIRED_SLICES: tuple[SliceDefinition, ...] = (
     ),
     SliceDefinition(
         slice_id=20,
+        title="PR readiness decision record",
+        requirement_summary=(
+            "Human PR readiness decisions can be recorded append-only against the "
+            "PR checklist and local closeout evidence without changing GitHub state, "
+            "creating issues, writing sibling repos, admitting Lake records, or applying learning."
+        ),
+        proof_artifact_refs=(
+            "src/lawfirm_os_intake/pr_readiness_decision.py",
+            "schemas/pr-readiness-decision-record.schema.json",
+            "schemas/pr-readiness-decision-report.schema.json",
+            "tests/test_pr_readiness_decision.py",
+            "docs/decisions/TRACE-2026-06-27-pr-readiness-decision.md",
+        ),
+        command_refs=("record-pr-readiness-decision",),
+        target_owner_repos=("LawFirm-os-intake",),
+        remaining_external_actions=(
+            "Humans must perform any accepted GitHub PR state change manually.",
+            "Owner issue creation remains a manual action after review.",
+            "Cross-repo validation remains required after any owner changes land.",
+        ),
+    ),
+    SliceDefinition(
+        slice_id=21,
         title="Final intake vertical readiness audit",
         requirement_summary=(
             "A deterministic final audit checks local surfaces plus the generated learning "

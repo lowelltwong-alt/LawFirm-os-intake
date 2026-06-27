@@ -52,6 +52,7 @@ from .learning_shadow_eval_fixture_results import (
 )
 from .learning_shadow_eval_results import run_learning_shadow_eval_results
 from .models import BudgetProposal, HumanConfirmation
+from .pr_readiness_decision import run_pr_readiness_decision_record
 from .pr_review_checklist import run_pr_review_checklist
 from .public_source_methodology import run_public_source_methodology_audit
 from .public_synthetic_fixture_pr_package import run_public_synthetic_fixture_pr_package
@@ -587,6 +588,26 @@ def _parser() -> argparse.ArgumentParser:
         help="Path to intake_vertical_readiness_audit_report.json.",
     )
     pr_review_checklist.add_argument("--out-dir", required=True)
+    pr_readiness_decision = sub.add_parser(
+        "record-pr-readiness-decision",
+        help="Record a human PR readiness decision without changing GitHub state.",
+    )
+    pr_readiness_decision.add_argument(
+        "--pr-review-checklist",
+        required=True,
+        help="Path to pr_review_checklist.json.",
+    )
+    pr_readiness_decision.add_argument(
+        "--intake-local-closeout-report",
+        required=True,
+        help="Path to intake_local_closeout_report.json.",
+    )
+    pr_readiness_decision.add_argument(
+        "--decision",
+        required=True,
+        help="Path to human PR readiness decision JSON.",
+    )
+    pr_readiness_decision.add_argument("--out-dir", required=True)
     owner_adoption = sub.add_parser(
         "build-cross-repo-owner-adoption",
         help="Build owner-specific adoption packets from the promotion package and PR review evidence.",
@@ -1986,6 +2007,43 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 0 if report.status == "ready_for_human_pr_review" else 2
+
+        if args.command == "record-pr-readiness-decision":
+            report, run_dir = run_pr_readiness_decision_record(
+                pr_review_checklist_path=args.pr_review_checklist,
+                intake_local_closeout_report_path=args.intake_local_closeout_report,
+                decision_path=args.decision,
+                out_dir=args.out_dir,
+            )
+            failed_checks = [check.check_id for check in report.checks if check.status == "failed"]
+            _print(
+                {
+                    "status": report.status,
+                    "pr_readiness_decision_report_id": (report.pr_readiness_decision_report_id),
+                    "pr_readiness_decision_id": report.pr_readiness_decision_id,
+                    "source_pr_review_checklist_status": (report.source_pr_review_checklist_status),
+                    "source_closeout_status": report.source_closeout_status,
+                    "decision": report.decision,
+                    "observed_pr_number": report.observed_pr_number,
+                    "observed_pr_state": report.observed_pr_state,
+                    "manual_ready_action_required": report.manual_ready_action_required,
+                    "failed_checks": failed_checks,
+                    "pr_marked_ready": report.pr_marked_ready,
+                    "github_write_performed": report.github_write_performed,
+                    "github_issue_created": report.github_issue_created,
+                    "github_pr_created": report.github_pr_created,
+                    "sibling_repo_write_performed": report.sibling_repo_write_performed,
+                    "promotion_authorized": report.promotion_authorized,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            if report.status == "blocked_by_pr_readiness_decision_evidence":
+                return 2
+            return 0
 
         if args.command == "build-cross-repo-owner-adoption":
             report, run_dir = run_cross_repo_owner_adoption(

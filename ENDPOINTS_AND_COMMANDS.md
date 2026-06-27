@@ -468,6 +468,26 @@ mark a PR ready, call GitHub write APIs, promote canon, write sibling repos,
 admit Lake records, write SQLite, apply proposed changes, or authorize
 production use.
 
+### Record PR readiness decision
+
+```bash
+python -m lawfirm_os_intake record-pr-readiness-decision \
+  --pr-review-checklist .lawfirm-os-intake/pr-review-checklist/pr_review_checklist.json \
+  --intake-local-closeout-report .lawfirm-os-intake/intake-local-closeout/intake_local_closeout_report.json \
+  --decision .lawfirm-os-intake/pr-readiness-decision/pr_readiness_decision.json \
+  --out-dir .lawfirm-os-intake/pr-readiness-decision
+```
+
+This writes `pr_readiness_decision_record.json`,
+`pr_readiness_decision_history.jsonl`, `pr_readiness_decision_report.json`, and
+`pr_readiness_decision_report.md`. The decision input must be human-authored and
+bound to the supplied PR checklist and local closeout report. A
+`mark_ready_for_review` decision records that a manual GitHub state change is
+required if the human chooses to proceed. The command does not mark the PR
+ready, call GitHub write APIs, create issues, open PRs, write sibling repos,
+promote canon, admit Lake records, write SQLite, apply proposed changes, or
+perform silent learning.
+
 ### Build cross-repo owner adoption packets
 
 ```bash

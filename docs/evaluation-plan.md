@@ -246,6 +246,17 @@ that the PR was marked ready or sibling repos adopted anything. Blocked evidence
 blocks closeout. The command does not mark a PR ready, create issues, open PRs,
 write sibling repos, promote canon, admit Lake/SQLite records, or apply learning.
 
+`record-pr-readiness-decision` consumes the PR checklist, local closeout report,
+and an explicit human-authored decision JSON. It writes
+`pr_readiness_decision_record.json`, appends
+`pr_readiness_decision_history.jsonl`, and writes
+`pr_readiness_decision_report.json` plus Markdown notes. Mark-ready decisions
+must accept every checklist item and cite validation evidence; draft or followup
+decisions must name required followups. The command records the decision only
+and must not mark a PR ready, call GitHub write APIs, create issues, open PRs,
+write sibling repos, promote canon, admit Lake/SQLite records, apply proposed
+changes, or apply learning.
+
 ### Counterfactual evals
 
 Same source, different practice context. Evidence must remain unchanged.
@@ -292,6 +303,7 @@ Measure review time, correction count, unknown selection, evidence-navigation bu
 - keep `cross_repo_owner_adoption_report.json` local and non-authoritative; it turns candidate proposals into owner-review packets but must not create issues, open PRs, write sibling repos, promote canon, admit Lake/SQLite records, or apply learning.
 - keep `cross_repo_owner_issue_draft_report.json` local and non-authoritative; it drafts owner issue text for manual use but must not create issues, open PRs, write sibling repos, promote canon, admit Lake/SQLite records, or apply learning.
 - keep `intake_local_closeout_report.json` local and non-authoritative; it proves the local closeout evidence chain and remaining manual gates but must not mark a PR ready, create issues, open PRs, write sibling repos, promote canon, admit Lake/SQLite records, or apply learning.
+- keep `pr_readiness_decision_report.json` local and non-authoritative; it records the human PR readiness decision append-only but must not mark a PR ready, call GitHub write APIs, create issues, open PRs, write sibling repos, promote canon, admit Lake/SQLite records, apply proposed changes, or apply learning.
 - keep `public_source_methodology_report.json` local and non-authoritative; it prepares public-source methodology review but must not ingest public records, authorize adapters, commit public payloads, write Lake/SQLite records, or permit runtime public-data use.
 - keep `public_synthetic_fixture_conversion_plan.json` local and non-authoritative; it plans structure-only synthetic fixture conversion but must not create fixture files, ingest public records, authorize adapters, commit payloads, write Lake/SQLite records, or apply public-data learning.
 - keep `public_synthetic_fixture_conversion_review_packet.json` local and non-authoritative; it helps humans decide whether conversion specs may proceed to a separate fixture PR but must not approve fixture generation by itself, create PRs, mutate fixtures, ingest public records, authorize adapters, write Lake/SQLite records, or apply learning.
