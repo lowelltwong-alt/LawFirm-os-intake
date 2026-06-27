@@ -54,6 +54,7 @@ from .learning_shadow_eval_results import run_learning_shadow_eval_results
 from .models import BudgetProposal, HumanConfirmation
 from .pr_review_checklist import run_pr_review_checklist
 from .public_source_methodology import run_public_source_methodology_audit
+from .public_synthetic_fixture_pr_package import run_public_synthetic_fixture_pr_package
 from .public_synthetic_fixture_conversion import (
     run_public_synthetic_fixture_conversion_plan,
 )
@@ -349,6 +350,22 @@ def _parser() -> argparse.ArgumentParser:
         help="Path to public synthetic fixture conversion review decision JSON.",
     )
     public_synthetic_conversion_review_outcome.add_argument("--out-dir", required=True)
+
+    public_synthetic_fixture_pr_package = sub.add_parser(
+        "build-public-synthetic-fixture-pr-package",
+        help="Build manual public synthetic fixture PR instructions without editing fixtures.",
+    )
+    public_synthetic_fixture_pr_package.add_argument(
+        "--review-outcome-report",
+        required=True,
+        help="Path to public_synthetic_fixture_conversion_review_outcome_report.json.",
+    )
+    public_synthetic_fixture_pr_package.add_argument(
+        "--conversion-plan",
+        required=True,
+        help="Path to public_synthetic_fixture_conversion_plan.json.",
+    )
+    public_synthetic_fixture_pr_package.add_argument("--out-dir", required=True)
 
     carrier_rejections = sub.add_parser(
         "capture-carrier-rejections",
@@ -1433,6 +1450,48 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             if report.status == "conversion_review_blocked_by_review_evidence":
+                return 2
+            return 0
+
+        if args.command == "build-public-synthetic-fixture-pr-package":
+            report, run_dir = run_public_synthetic_fixture_pr_package(
+                review_outcome_report_path=args.review_outcome_report,
+                conversion_plan_path=args.conversion_plan,
+                out_dir=args.out_dir,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "fixture_pr_package_report_id": report.fixture_pr_package_report_id,
+                    "source_review_outcome_report_id": (report.source_review_outcome_report_id),
+                    "source_conversion_plan_id": report.source_conversion_plan_id,
+                    "conversion_review_id": report.conversion_review_id,
+                    "source_id": report.source_id,
+                    "conversion_spec_id": report.conversion_spec_id,
+                    "target_fixture_family": report.target_fixture_family,
+                    "item_count": report.item_count,
+                    "ready_item_count": report.ready_item_count,
+                    "blocked_item_count": report.blocked_item_count,
+                    "manual_fixture_generation_pr_required": (
+                        report.manual_fixture_generation_pr_required
+                    ),
+                    "fixture_generation_authorized": report.fixture_generation_authorized,
+                    "github_pr_created": report.github_pr_created,
+                    "fixture_files_mutated": report.fixture_files_mutated,
+                    "public_records_ingested": report.public_records_ingested,
+                    "raw_public_payload_committed": report.raw_public_payload_committed,
+                    "connector_implemented": report.connector_implemented,
+                    "legal_knowledge_adapter_authorized": (
+                        report.legal_knowledge_adapter_authorized
+                    ),
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            if report.status == "blocked_by_public_fixture_review_outcome":
                 return 2
             return 0
 

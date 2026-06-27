@@ -291,6 +291,7 @@ def build_public_synthetic_fixture_conversion_review_outcome_report(
         outcome=review_record.outcome,
         decision_reason=review_record.decision_reason,
         source_review_packet_status=review_packet.status,
+        target_fixture_family=recommendation.target_fixture_family if recommendation else None,
         source_recommendation_id=recommendation.recommendation_id if recommendation else None,
         source_recommended_action=recommendation.recommended_action if recommendation else None,
         source_recommended_outcome=decision_template.recommended_outcome

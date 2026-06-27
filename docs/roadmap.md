@@ -650,6 +650,10 @@ without letting public records enter the runtime.
   `public_synthetic_fixture_conversion_review_record.json`,
   `public_synthetic_fixture_conversion_review_history.jsonl`, and
   `public_synthetic_fixture_conversion_review_outcome_report.json`.
+- `build-public-synthetic-fixture-pr-package` consumes an approved review
+  outcome report plus the matching conversion plan, then writes
+  `public_synthetic_fixture_pr_package_report.json`, Markdown notes, and package
+  item JSONL.
 - It checks that CourtListener/RECAP, FJC IDB, and the Enron email corpus are
   present for Phase 2 structure research, while all sources remain planning-only
   and direct ingestion remains disabled.
@@ -666,6 +670,10 @@ without letting public records enter the runtime.
 - The review outcome record binds one human decision to a source, conversion
   spec, decision template, evidence refs, accepted gates, reasons, and followups
   before any fixture PR planning can rely on it.
+- The fixture PR package preserves the conversion spec's allowed structure
+  inputs, forbidden inputs, identity replacement rules, field transformation
+  rules, required synthetic gold checks, required red-team checks, and manual
+  steps for the separate PR author.
 - Passing means `ready_for_human_public_source_methodology_review`, not
   adapter approval or runtime eligibility.
 - The command records `public_records_ingested=false`,
@@ -679,6 +687,11 @@ without letting public records enter the runtime.
   `silent_learning_performed=false`; it is not approval by itself.
 - The review outcome report records `fixture_generation_authorized=false`,
   `fixture_pr_created=false`, `fixture_files_mutated=false`,
+  `public_records_ingested=false`, `raw_public_payload_committed=false`,
+  `legal_knowledge_adapter_authorized=false`, `lake_write_performed=false`,
+  `sqlite_write_performed=false`, and `silent_learning_performed=false`.
+- The fixture PR package records `fixture_generation_authorized=false`,
+  `github_pr_created=false`, `fixture_files_mutated=false`,
   `public_records_ingested=false`, `raw_public_payload_committed=false`,
   `legal_knowledge_adapter_authorized=false`, `lake_write_performed=false`,
   `sqlite_write_performed=false`, and `silent_learning_performed=false`.

@@ -877,6 +877,7 @@ class PublicSyntheticFixtureConversionReviewOutcomeReport(StrictModel):
         "blocked_by_conversion_plan",
         "no_specs_to_review",
     ]
+    target_fixture_family: PublicSyntheticFixtureFamily | None = None
     source_recommendation_id: str | None = None
     source_recommended_action: PublicSyntheticFixtureReviewAction | None = None
     source_recommended_outcome: PublicSyntheticFixtureReviewOutcome | None = None
@@ -944,6 +945,180 @@ class PublicSyntheticFixtureConversionReviewOutcomeReport(StrictModel):
         }
         if not required.issubset(set(self.required_next_gates)):
             raise ValueError("conversion review outcome report is missing required gates")
+        return self
+
+
+class PublicSyntheticFixturePRPackageCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed", "warning"]
+    message: str
+    artifact_refs: list[str] = Field(default_factory=list)
+    source_ids: list[str] = Field(default_factory=list)
+    conversion_spec_ids: list[str] = Field(default_factory=list)
+    blocking_refs: list[str] = Field(default_factory=list)
+
+
+class PublicSyntheticFixturePRPackageItem(StrictModel):
+    schema_version: str = "0.1"
+    package_item_id: str
+    review_outcome_report_id: str
+    conversion_review_id: str
+    source_id: str
+    conversion_spec_id: str
+    target_fixture_family: PublicSyntheticFixtureFamily
+    proposed_manual_action: Literal[
+        "create_non_identifying_synthetic_fixture_in_separate_pr",
+        "hold_no_fixture_change",
+    ]
+    source_methodology_ref: str
+    proposed_fixture_scope: str
+    allowed_structure_inputs: list[str]
+    forbidden_inputs: list[str]
+    identity_replacement_rules: list[str]
+    field_transformation_rules: list[str]
+    required_synthetic_gold_checks: list[str]
+    required_red_team_checks: list[str]
+    required_manual_steps: list[str]
+    red_team_notes: list[str]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    planning_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_fixture_generation: Literal[True] = True
+    fixture_generation_authorized: Literal[False] = False
+    github_pr_created: Literal[False] = False
+    fixture_files_mutated: Literal[False] = False
+    public_records_ingested: Literal[False] = False
+    raw_public_payload_committed: Literal[False] = False
+    connector_implemented: Literal[False] = False
+    legal_knowledge_adapter_authorized: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def public_fixture_pr_item_is_reviewable(
+        self,
+    ) -> "PublicSyntheticFixturePRPackageItem":
+        if not self.source_methodology_ref.strip():
+            raise ValueError("public fixture PR package item requires source methodology ref")
+        if not self.proposed_fixture_scope.strip():
+            raise ValueError("public fixture PR package item requires fixture scope")
+        if not self.allowed_structure_inputs:
+            raise ValueError("public fixture PR package item requires allowed structure inputs")
+        if not self.forbidden_inputs:
+            raise ValueError("public fixture PR package item requires forbidden inputs")
+        if not self.identity_replacement_rules:
+            raise ValueError("public fixture PR package item requires identity replacement rules")
+        if not self.field_transformation_rules:
+            raise ValueError("public fixture PR package item requires transformation rules")
+        if not self.required_synthetic_gold_checks:
+            raise ValueError("public fixture PR package item requires synthetic gold checks")
+        if not self.required_red_team_checks:
+            raise ValueError("public fixture PR package item requires red-team checks")
+        if not self.required_manual_steps:
+            raise ValueError("public fixture PR package item requires manual steps")
+        if not self.red_team_notes:
+            raise ValueError("public fixture PR package item requires red-team notes")
+        return self
+
+
+class PublicSyntheticFixturePRPackageReport(StrictModel):
+    schema_version: str = "0.1"
+    fixture_pr_package_report_id: str
+    status: Literal[
+        "public_fixture_pr_package_ready_for_manual_pr",
+        "no_public_fixture_pr_package_needed",
+        "blocked_by_public_fixture_review_outcome",
+    ]
+    source_review_outcome_report_id: str
+    source_review_outcome_report_ref: str
+    source_review_outcome_status: Literal[
+        "conversion_review_recorded_separate_fixture_pr_required",
+        "conversion_review_recorded_revision_or_rejection",
+        "conversion_review_recorded_more_information_required",
+        "conversion_review_recorded_human_only_hold",
+        "conversion_review_blocked_by_review_evidence",
+    ]
+    source_conversion_plan_id: str
+    source_conversion_plan_ref: str
+    source_conversion_plan_status: Literal[
+        "ready_for_human_conversion_review",
+        "blocked_public_methodology_not_ready",
+    ]
+    conversion_review_id: str
+    outcome: PublicSyntheticFixtureReviewOutcome
+    source_id: str
+    conversion_spec_id: str
+    target_fixture_family: PublicSyntheticFixtureFamily | None = None
+    item_count: int = Field(ge=0)
+    ready_item_count: int = Field(ge=0)
+    blocked_item_count: int = Field(ge=0)
+    package_items: list[PublicSyntheticFixturePRPackageItem]
+    package_item_output_ref: str | None = None
+    checks: list[PublicSyntheticFixturePRPackageCheck]
+    required_next_gates: list[str]
+    manual_fixture_generation_pr_required: bool = False
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    planning_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_fixture_generation: Literal[True] = True
+    fixture_generation_authorized: Literal[False] = False
+    github_pr_created: Literal[False] = False
+    fixture_files_mutated: Literal[False] = False
+    public_records_ingested: Literal[False] = False
+    raw_public_payload_committed: Literal[False] = False
+    connector_implemented: Literal[False] = False
+    legal_knowledge_adapter_authorized: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def public_fixture_pr_package_status_matches_items(
+        self,
+    ) -> "PublicSyntheticFixturePRPackageReport":
+        failed = [check for check in self.checks if check.status == "failed"]
+        if self.item_count != len(self.package_items):
+            raise ValueError("public fixture PR package item count does not match")
+        if self.ready_item_count + self.blocked_item_count != self.item_count:
+            raise ValueError("public fixture PR package ready/blocked counts do not add up")
+        if self.status == "blocked_by_public_fixture_review_outcome" and not failed:
+            raise ValueError("blocked public fixture PR package requires failed checks")
+        if self.status != "blocked_by_public_fixture_review_outcome" and failed:
+            raise ValueError("non-blocked public fixture PR package cannot have failed checks")
+        if self.status == "public_fixture_pr_package_ready_for_manual_pr" and not (
+            self.manual_fixture_generation_pr_required
+            and self.item_count == 1
+            and self.ready_item_count == self.item_count
+            and self.target_fixture_family is not None
+        ):
+            raise ValueError("ready public fixture PR package requires one ready item")
+        if self.status == "no_public_fixture_pr_package_needed" and (
+            self.manual_fixture_generation_pr_required or self.item_count
+        ):
+            raise ValueError("no public fixture PR package needed cannot include package items")
+        required = {
+            "manual_fixture_generation_pr_review",
+            "create_fixture_only_in_separate_pr",
+            "synthetic_fixture_gold_review",
+            "red_team_identity_reconstruction_review",
+            "legal_knowledge_runtime_owner_review_before_adapter",
+            "no_public_payload_or_identity_contamination",
+        }
+        if not required.issubset(set(self.required_next_gates)):
+            raise ValueError("public fixture PR package is missing required gates")
         return self
 
 

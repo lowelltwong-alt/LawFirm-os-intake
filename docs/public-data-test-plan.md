@@ -16,6 +16,8 @@ Run `review-public-synthetic-fixture-conversion` after the conversion plan. The 
 
 Run `record-public-synthetic-fixture-conversion-review` only with an explicit human decision JSON bound to the review packet. The outcome record is append-only candidate evidence. An approved outcome means a separate fixture-generation PR may be prepared for review; it does not create fixtures, create PRs, ingest public records, authorize adapters, write Lake/SQLite records, or learn from the decision.
 
+Run `build-public-synthetic-fixture-pr-package` after an approved review outcome and the matching conversion plan. The package is a manual instruction set for a separate fixture-generation PR. It carries allowed structure inputs, forbidden inputs, identity replacement rules, transformation rules, synthetic gold checks, and red-team checks, but it still does not edit fixtures, create PRs, ingest public records, authorize adapters, write Lake/SQLite records, or learn from the decision.
+
 ## Recommended sources
 
 ### CourtListener / RECAP
@@ -49,10 +51,11 @@ Use only after a specific privacy and use review, primarily for aggregate medica
 3. Generate a public synthetic fixture conversion plan.
 4. Build and review the public synthetic fixture conversion review packet.
 5. Record the human conversion review outcome as append-only evidence.
-6. Create non-identifying synthetic fixtures that preserve document structure in a separate PR only after approval.
-7. Run extraction and segmentation evals.
-8. Compare against hand-labeled synthetic gold.
-9. Seek governance approval before any direct public-record processing.
+6. Build a manual public synthetic fixture PR package for approved outcomes.
+7. Create non-identifying synthetic fixtures that preserve document structure in a separate PR only after approval.
+8. Run extraction and segmentation evals.
+9. Compare against hand-labeled synthetic gold.
+10. Seek governance approval before any direct public-record processing.
 
 ## What public data can test
 

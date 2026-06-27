@@ -66,6 +66,7 @@ Exit criteria:
 - synthetic fixture conversion plan is ready for human review with red-team checks and no fixture mutation;
 - conversion review packet is ready for human decision with no fixture PR creation or silent learning;
 - human conversion review outcome is recorded append-only before any fixture PR is prepared;
+- manual fixture PR package preserves allowed inputs, forbidden inputs, identity rules, gold checks, and red-team checks without editing fixtures;
 - no copyrighted bulk corpus is committed;
 - no real public party data enters runtime fixtures;
 - provenance and transformation method are documented.

@@ -354,6 +354,25 @@ The command does not create fixtures, create a PR, ingest public records,
 authorize adapters, mutate fixture files, write Lake/SQLite records, or apply
 learning.
 
+### Build public synthetic fixture PR package
+
+```bash
+python -m lawfirm_os_intake build-public-synthetic-fixture-pr-package \
+  --review-outcome-report .lawfirm-os-intake/public-synthetic-fixture-conversion-review-outcome/public_synthetic_fixture_conversion_review_outcome_report.json \
+  --conversion-plan .lawfirm-os-intake/public-synthetic-fixture-conversion/public_synthetic_fixture_conversion_plan.json \
+  --out-dir .lawfirm-os-intake/public-synthetic-fixture-pr-package
+```
+
+This writes `public_synthetic_fixture_pr_package_report.json`,
+`public_synthetic_fixture_pr_package_report.md`, and
+`public_synthetic_fixture_pr_package_items.jsonl` when an approved conversion
+review outcome requires manual package items. The package is a reviewer-ready
+instruction set for a separate fixture-generation PR. It preserves the
+conversion spec's allowed structure inputs, forbidden inputs, identity
+replacement rules, synthetic gold checks, red-team checks, and manual steps. It
+does not edit fixtures, create a GitHub PR, ingest public records, authorize
+adapters, write Lake/SQLite records, or apply learning.
+
 ### Build learning owner handoffs
 
 ```bash
