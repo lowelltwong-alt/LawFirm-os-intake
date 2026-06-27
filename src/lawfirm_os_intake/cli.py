@@ -22,6 +22,7 @@ from .budget_fixture_bindings import run_budget_fixture_binding_candidates
 from .budget_fixture_update_pr_package import run_budget_fixture_update_pr_package
 from .budget_fixture_update_review import run_budget_fixture_update_review_record
 from .budget_form import build_budget_form_template_audit_report, render_budget_form
+from .budget_human_review_packet import run_budget_human_review_packet
 from .budget_lake_admission_bundle import run_budget_event_lake_admission_bundle
 from .budget_lifecycle_audit import run_budget_lifecycle_audit
 from .budget_lifecycle_owner_adoption import run_budget_lifecycle_owner_adoption
@@ -520,6 +521,33 @@ def _parser() -> argparse.ArgumentParser:
     budget_lifecycle_audit.add_argument("--budget-actual-variance-ledger-report", required=True)
     budget_lifecycle_audit.add_argument("--carrier-rejection-decision-ledger-report", required=True)
     budget_lifecycle_audit.add_argument("--budget-event-lake-bundle-report", required=True)
+
+    budget_human_review_packet = sub.add_parser(
+        "build-budget-human-review-packet",
+        help="Build a consolidated human review packet for budget lifecycle evidence.",
+    )
+    budget_human_review_packet.add_argument("--out-dir", required=True)
+    budget_human_review_packet.add_argument(
+        "--budget-lifecycle-audit-report",
+        required=True,
+        help="Path to budget_lifecycle_audit_report.json.",
+    )
+    budget_human_review_packet.add_argument(
+        "--budget-revision-report",
+        help="Optional budget_revision_report.json.",
+    )
+    budget_human_review_packet.add_argument(
+        "--budget-actual-comparison-report",
+        help="Optional budget_actual_comparison_report.json.",
+    )
+    budget_human_review_packet.add_argument(
+        "--carrier-rejection-review-packet",
+        help="Optional carrier_rejection_review_packet.json.",
+    )
+    budget_human_review_packet.add_argument(
+        "--carrier-rejection-learning-report",
+        help="Optional carrier_rejection_learning_report.json.",
+    )
 
     budget_lifecycle_owner_adoption = sub.add_parser(
         "build-budget-lifecycle-owner-adoption",
@@ -1870,6 +1898,48 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 0 if report.status == "ready_for_budget_lifecycle_review" else 2
+
+        if args.command == "build-budget-human-review-packet":
+            report, run_dir = run_budget_human_review_packet(
+                out_dir=args.out_dir,
+                budget_lifecycle_audit_report_path=args.budget_lifecycle_audit_report,
+                budget_revision_report_path=args.budget_revision_report,
+                budget_actual_comparison_report_path=args.budget_actual_comparison_report,
+                carrier_rejection_review_packet_path=args.carrier_rejection_review_packet,
+                carrier_rejection_learning_report_path=args.carrier_rejection_learning_report,
+            )
+            failed_checks = [check.check_id for check in report.checks if check.status == "failed"]
+            _print(
+                {
+                    "status": report.status,
+                    "budget_human_review_packet_id": report.budget_human_review_packet_id,
+                    "source_budget_lifecycle_audit_report_id": (
+                        report.source_budget_lifecycle_audit_report_id
+                    ),
+                    "source_budget_lifecycle_audit_status": (
+                        report.source_budget_lifecycle_audit_status
+                    ),
+                    "budget_proposal_id": report.budget_proposal_id,
+                    "preflight_packet_id": report.preflight_packet_id,
+                    "pending_human_decision_count": report.pending_human_decision_count,
+                    "recommendation_count": len(report.recommendations),
+                    "red_team_note_count": len(report.red_team_notes),
+                    "decision_template_count": len(report.decision_templates),
+                    "failed_checks": failed_checks,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "budget_submission_performed": report.budget_submission_performed,
+                    "appeal_submission_performed": report.appeal_submission_performed,
+                    "budget_mutation_performed": report.budget_mutation_performed,
+                    "carrier_guideline_mutation_performed": (
+                        report.carrier_guideline_mutation_performed
+                    ),
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0 if report.status == "ready_for_human_budget_review" else 2
 
         if args.command == "build-budget-lifecycle-owner-adoption":
             report, run_dir = run_budget_lifecycle_owner_adoption(

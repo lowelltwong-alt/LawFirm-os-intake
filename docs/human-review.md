@@ -57,6 +57,13 @@ Candidate lines must distinguish direct evidence from packet anchors. `observed_
 
 The starter budget path writes `human_review_outcome.<confirmation_id>.json` and appends the same record to `human_confirmation_history.jsonl` before the budget precondition gate runs. The record preserves reviewer identity, status, supersession ID, evidence refs, required next gate, and whether budget-stage output is allowed. Only a `confirmed` outcome bound to the same preflight packet may be marked budget-stage eligible; every other review outcome remains blocked and inspectable.
 
+The budget lifecycle path writes `budget_human_review_packet.json` so reviewers
+can see budget revision, actual-variance, carrier-rejection, appeal-result,
+Lake-handoff, and learning-loop pressure in one place. The packet must show
+recommendations, why-notes, red-team notes, decision templates, and financial
+summary without approving budget submission, appeal submission, Lake admission,
+billing writes, profile/template/budget/guideline mutation, or learning.
+
 The preflight path writes `evidence_completeness_report.json` so reviewers and future Orchestrator handoff can see that candidate evidence refs, unknown options, deadline review-only posture, and prohibited next steps were checked before the package was accepted. The report is local proof only, not platform canon.
 
 ## PR close-out review

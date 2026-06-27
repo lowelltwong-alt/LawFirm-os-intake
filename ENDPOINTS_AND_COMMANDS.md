@@ -409,6 +409,27 @@ lists pending human decisions and next actions, and preserves no connector,
 Lake/SQLite, submission, mutation, sibling-repo write, or silent-learning
 authority.
 
+### Build budget human review packet
+
+```bash
+python -m lawfirm_os_intake build-budget-human-review-packet \
+  --budget-lifecycle-audit-report .lawfirm-os-intake/budget-lifecycle-audit/budget_lifecycle_audit_report.json \
+  --budget-revision-report .lawfirm-os-intake/budget-review/budget_revision_report.json \
+  --budget-actual-comparison-report .lawfirm-os-intake/actuals/budget_actual_comparison_report.json \
+  --carrier-rejection-review-packet .lawfirm-os-intake/carrier-rejection-review/carrier_rejection_review_packet.json \
+  --carrier-rejection-learning-report .lawfirm-os-intake/carrier-rejection-learning/carrier_rejection_learning_report.json \
+  --out-dir .lawfirm-os-intake/budget-human-review
+```
+
+This writes `budget_human_review_packet.json`,
+`budget_human_review_packet.md`, and
+`budget_human_review_decision_templates.json`. The packet consolidates budget
+revision, actual variance, carrier rejection, appeal-result, Lake-handoff, and
+learning-loop review pressure into recommendations with why-notes, red-team
+notes, and append-only decision templates. It does not submit budgets or
+appeals, write billing, admit Lake/SQLite records, mutate budgets, profiles,
+templates, or guidelines, write sibling repos, promote canon, or apply learning.
+
 ### Build budget lifecycle owner adoption packets
 
 ```bash

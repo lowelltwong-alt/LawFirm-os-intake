@@ -288,7 +288,34 @@ Exception Lake or learning handoff is trusted.
   records, submit appeals or budgets, write billing, write SQLite, write sibling
   repos, mutate profiles/templates/budgets/guidelines, or apply learning.
 
-## 11C. Budget Lifecycle Owner Adoption Packets
+## 11C. Budget Human Review Packet
+
+Status: implemented for the current synthetic candidate slice; human budget
+decisions, appeal submission, Lake admission, and learning remain future gated
+work.
+
+Turn the budget lifecycle audit into a consolidated human packet before any
+owner handoff or learning review is trusted.
+
+- `build-budget-human-review-packet` consumes
+  `budget_lifecycle_audit_report.json` and optional
+  `budget_revision_report.json`, `budget_actual_comparison_report.json`,
+  `carrier_rejection_review_packet.json`, and
+  `carrier_rejection_learning_report.json`.
+- It writes `budget_human_review_packet.json`,
+  `budget_human_review_packet.md`, and
+  `budget_human_review_decision_templates.json`.
+- The packet includes recommendations, why-notes, red-team notes, required
+  review sections, financial summary, candidate record families, pending human
+  decisions, and append-only decision templates.
+- Review areas include budget revision, actual variance, carrier rejection,
+  appeal result, Lake handoff, learning-loop pressure, and authority boundary.
+- Blocked lifecycle audits produce a blocked review packet.
+- The packet records no budget submission, no appeal submission, no billing
+  connector write, no Lake/SQLite write, no budget/profile/template/guideline
+  mutation, no sibling repo write, no canonical mutation, and no silent learning.
+
+## 11D. Budget Lifecycle Owner Adoption Packets
 
 Status: implemented for the current synthetic candidate slice; actual owner repo
 adoption remains future owner work.
@@ -313,7 +340,7 @@ repos that must own production behavior.
   canon, implement connectors, admit Lake records, write SQLite, submit budgets
   or appeals, mutate budgets/profiles/templates/guidelines, or apply learning.
 
-## 11D. PR Review Checklist
+## 11E. PR Review Checklist
 
 Status: implemented for the current synthetic candidate slice; the actual PR
 state change remains a human GitHub action.
@@ -338,7 +365,7 @@ forward.
   `lake_write_performed=false`, `sqlite_write_performed=false`,
   `external_writes_performed=false`, and `silent_learning_performed=false`.
 
-## 11E. Cross-Repo Owner Adoption Packets
+## 11F. Cross-Repo Owner Adoption Packets
 
 Status: implemented for the current synthetic candidate slice; actual owner repo
 issues, PRs, canon promotion, runtime adoption, and Lake admission remain future
@@ -367,7 +394,7 @@ Orchestrator, Exception Lake, Skills Registry, and Legal Knowledge Runtime.
   `lake_write_performed=false`, `sqlite_write_performed=false`,
   `external_writes_performed=false`, and `silent_learning_performed=false`.
 
-## 11F. Cross-Repo Owner Issue Drafts
+## 11G. Cross-Repo Owner Issue Drafts
 
 Status: implemented for the current synthetic candidate slice; actual issue
 creation, owner triage, implementation PRs, and sibling-repo writes remain
@@ -393,7 +420,7 @@ repos without creating issues or writing to GitHub.
   `sqlite_write_performed=false`, `external_writes_performed=false`, and
   `silent_learning_performed=false`.
 
-## 11G. Intake Local Closeout Audit
+## 11H. Intake Local Closeout Audit
 
 Status: implemented for the current synthetic candidate slice; PR state changes,
 owner issue creation, owner implementation, canonical promotion, runtime
@@ -424,7 +451,7 @@ owner issue drafts into one local closeout report.
   `sqlite_write_performed=false`, `external_writes_performed=false`, and
   `silent_learning_performed=false`.
 
-## 11H. PR Readiness Decision Record
+## 11I. PR Readiness Decision Record
 
 Status: implemented for the current synthetic candidate slice; any GitHub PR
 state change remains a separate manual human action.
@@ -614,15 +641,18 @@ proof work from the higher-risk owner-adoption work.
 - It writes `intake_vertical_readiness_audit_report.json` and
   `intake_vertical_readiness_audit_report.md`.
 - It checks that the intake-to-budget, budget revision, actual-cost comparison,
-  carrier rejection, reviewed learning, proposed-change, shadow-eval,
-  owner-handoff, budget-event Lake bundle, and cross-repo promotion surfaces
-  have local candidate proof.
+  carrier rejection, budget human review, reviewed learning, proposed-change,
+  shadow-eval, owner-handoff, budget-event Lake bundle, and cross-repo promotion
+  surfaces have local candidate proof.
 - It validates the generated learning artifact chain from owner handoff back to
   shadow eval, proposed changes, promotion readiness, shadow plan, and reviewed
   learning gate.
 - It validates the generated budget-event Lake bundle for ready-for-owner-review
   status, existing artifact refs, candidate record-family coverage, and no
   Lake/SQLite/billing/submission/mutation/silent-learning side effects.
+- It validates the budget human-review packet surface for recommendations,
+  why-notes, red-team notes, append-only decision templates, and no
+  submission/Lake/SQLite/mutation/silent-learning side effects.
 - It validates the generated calibration-readiness chain for manual
   fixture-update review status, source refs, approved replay-output refs, target
   fixture refs, and no fixture/calibration/Lake/SQLite/silent-learning side

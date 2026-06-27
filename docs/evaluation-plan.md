@@ -167,6 +167,16 @@ pending human decisions as review content, and fail closed on missing artifacts,
 ID drift, Lake-bundle failure, missing lifecycle record families, or prohibited
 write/submission/mutation/silent-learning flag drift.
 
+`build-budget-human-review-packet` consumes the budget lifecycle audit and
+optional budget revision, actual comparison, carrier rejection review, and
+carrier rejection learning reports. It writes a consolidated human packet,
+Markdown notes, and decision templates. The packet must include recommendations,
+why-notes, red-team notes, required review sections, pending human decisions,
+financial summary, and append-only decision templates while preserving no budget
+submission, no appeal submission, no billing write, no Lake/SQLite write, no
+budget/profile/template/guideline mutation, no sibling repo write, and no silent
+learning. Blocked lifecycle audits must produce a blocked packet.
+
 `build-budget-lifecycle-owner-adoption` consumes
 `budget_lifecycle_audit_report.json` and writes
 `budget_lifecycle_owner_adoption_report.json`, Markdown notes, and owner packet
@@ -205,7 +215,8 @@ The final local close-out eval is `audit-intake-vertical-readiness`. It consumes
 `budget_fixture_update_review_report.json` and
 `budget_fixture_update_pr_package_report.json`, checks the local candidate
 slices, generated learning artifact chain, generated budget-event Lake bundle,
-budget lifecycle audit surface, budget lifecycle owner-adoption packet surface,
+budget lifecycle audit surface, budget human-review packet surface,
+budget lifecycle owner-adoption packet surface,
 calibration-readiness chain, fixture-update review record, and fixture-update PR
 package, and writes
 `intake_vertical_readiness_audit_report.json`. Passing status means ready for
@@ -298,6 +309,7 @@ Measure review time, correction count, unknown selection, evidence-navigation bu
 - keep `blocked_budget_attempt_audit_report.json` local and non-authoritative; it proves the synthetic blocked-budget canary only and does not authorize any budget-stage output.
 - keep `context_counterfactual_audit_report.json` local and non-authoritative; it proves practice-context separation on synthetic fixtures only and does not promote profiles, priors, or taxonomies.
 - keep learning shadow-eval and promotion-readiness reports local and non-authoritative; they plan required eval evidence and block promotion, but do not apply changes or prove production readiness by themselves.
+- keep `budget_human_review_packet.json` local and non-authoritative; it gives humans recommendations, why-notes, red-team notes, and decision templates for budget lifecycle evidence but must not submit budgets or appeals, write billing, admit Lake/SQLite records, mutate budgets/profiles/templates/guidelines, write sibling repos, promote canon, or apply learning.
 - keep `intake_vertical_readiness_audit_report.json` local and non-authoritative; it proves PR-review readiness for candidate artifacts only and keeps external adoption with the owning repos.
 - keep `pr_review_checklist.json` local and non-authoritative; it helps a human make the draft-PR decision but must not mark the PR ready, call GitHub write APIs, promote canon, write Lake/SQLite records, or apply learning.
 - keep `cross_repo_owner_adoption_report.json` local and non-authoritative; it turns candidate proposals into owner-review packets but must not create issues, open PRs, write sibling repos, promote canon, admit Lake/SQLite records, or apply learning.
