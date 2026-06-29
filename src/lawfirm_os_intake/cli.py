@@ -8,6 +8,9 @@ import sys
 
 from .budget_actuals import run_budget_actual_comparison
 from .budget_actual_variance_ledger import BUDGET_ACTUAL_VARIANCE_LEDGER_REPORT_FILENAME
+from .budget_actual_variance_owner_adoption import (
+    run_budget_actual_variance_owner_adoption,
+)
 from .budget_change_ledger import BUDGET_CHANGE_LEDGER_REPORT_FILENAME
 from .budget_calibration_corpus import run_budget_calibration_corpus_audit
 from .budget_calibration_readiness import run_budget_calibration_readiness_audit
@@ -583,6 +586,22 @@ def _parser() -> argparse.ArgumentParser:
         "--budget-human-review-outcome-record",
         required=True,
         help="Path to budget_human_review_outcome_record.json.",
+    )
+
+    budget_actual_variance_owner_adoption = sub.add_parser(
+        "build-budget-actual-variance-owner-adoption",
+        help="Build owner-review packets from budget actual variance evidence.",
+    )
+    budget_actual_variance_owner_adoption.add_argument("--out-dir", required=True)
+    budget_actual_variance_owner_adoption.add_argument(
+        "--budget-actual-comparison-report",
+        required=True,
+        help="Path to budget_actual_comparison_report.json.",
+    )
+    budget_actual_variance_owner_adoption.add_argument(
+        "--budget-actual-variance-ledger-report",
+        required=True,
+        help="Path to budget_actual_variance_ledger_report.json.",
     )
 
     budget_lifecycle_owner_adoption = sub.add_parser(
@@ -2064,6 +2083,62 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 0 if report.status == "budget_outcome_owner_adoption_packets_ready" else 2
+
+        if args.command == "build-budget-actual-variance-owner-adoption":
+            report, run_dir = run_budget_actual_variance_owner_adoption(
+                budget_actual_comparison_report_path=(args.budget_actual_comparison_report),
+                budget_actual_variance_ledger_report_path=(
+                    args.budget_actual_variance_ledger_report
+                ),
+                out_dir=args.out_dir,
+            )
+            failed_checks = [check.check_id for check in report.checks if check.status == "failed"]
+            _print(
+                {
+                    "status": report.status,
+                    "owner_adoption_report_id": report.owner_adoption_report_id,
+                    "source_budget_actual_comparison_status": (
+                        report.source_budget_actual_comparison_status
+                    ),
+                    "source_budget_actual_comparison_report_id": (
+                        report.source_budget_actual_comparison_report_id
+                    ),
+                    "source_budget_actual_variance_ledger_status": (
+                        report.source_budget_actual_variance_ledger_status
+                    ),
+                    "source_budget_actual_variance_ledger_report_id": (
+                        report.source_budget_actual_variance_ledger_report_id
+                    ),
+                    "packet_count": report.packet_count,
+                    "ready_packet_count": report.ready_packet_count,
+                    "blocked_packet_count": report.blocked_packet_count,
+                    "target_repos": report.target_repos,
+                    "candidate_lake_event_labels": report.candidate_lake_event_labels,
+                    "entry_count": report.entry_count,
+                    "variance_review_event_count": report.variance_review_event_count,
+                    "missing_actuals_event_count": report.missing_actuals_event_count,
+                    "actuals_without_budget_event_count": (
+                        report.actuals_without_budget_event_count
+                    ),
+                    "failed_checks": failed_checks,
+                    "github_issue_created": report.github_issue_created,
+                    "github_pr_created": report.github_pr_created,
+                    "github_write_performed": report.github_write_performed,
+                    "sibling_repo_write_performed": report.sibling_repo_write_performed,
+                    "promotion_authorized": report.promotion_authorized,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "billing_connector_read_performed": report.billing_connector_read_performed,
+                    "billing_connector_write_performed": report.billing_connector_write_performed,
+                    "budget_mutation_performed": report.budget_mutation_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return (
+                0 if report.status == "budget_actual_variance_owner_adoption_packets_ready" else 2
+            )
 
         if args.command == "build-budget-lifecycle-owner-adoption":
             report, run_dir = run_budget_lifecycle_owner_adoption(

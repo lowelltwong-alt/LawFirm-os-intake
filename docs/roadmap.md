@@ -258,7 +258,39 @@ package without letting intake become the Lake runtime.
   classes, submit appeals or budgets, read billing, write billing, or apply
   learning.
 
-## 11B. Budget Lifecycle Audit
+## 11B. Budget Actual Variance Owner Adoption Packets
+
+Status: implemented for the current synthetic candidate slice; real billing
+actuals reads, owner repo adoption, Lake admission, SQLite persistence, and
+learning remain future governed owner work.
+
+Turn actual-cost variance ledger evidence into owner-specific review packets
+before any production billing-read workflow, Lake admission, or learning loop is
+trusted.
+
+- `build-budget-actual-variance-owner-adoption` consumes
+  `budget_actual_comparison_report.json` and
+  `budget_actual_variance_ledger_report.json`.
+- It writes `budget_actual_variance_owner_adoption_report.json`,
+  `budget_actual_variance_owner_adoption_report.md`,
+  `budget_actual_variance_owner_adoption_packets.jsonl`, and per-owner
+  JSON/Markdown packets under `budget_actual_variance_owner_packets/`.
+- Semantic Substrate receives candidate actual-variance, missing-actuals,
+  actuals-without-budget, lifecycle-state, and no-silent-learning label review
+  actions.
+- Orchestrator receives governed billing-actuals read-boundary, human pause,
+  source-followup, revised-baseline preservation, and evidence-packet review
+  actions.
+- Exception Lake receives append-only actual-variance admission, missing-source
+  record, actuals-without-budget, idempotency, hash, supersession, and SQLite
+  owner review actions.
+- Mismatched comparison/ledger lineage, prohibited write flags, missing labels,
+  or empty review signals produce blocked owner packets.
+- The packets do not read billing, write billing, create issues, open PRs, write
+  sibling repos, promote canon, implement connectors, admit Lake records, write
+  SQLite, mutate budgets/profiles/templates/guidelines, or apply learning.
+
+## 11C. Budget Lifecycle Audit
 
 Status: implemented for the current synthetic candidate slice; production
 capture, real actuals, appeal submission, and Lake admission remain future owner
@@ -288,7 +320,7 @@ Exception Lake or learning handoff is trusted.
   records, submit appeals or budgets, write billing, write SQLite, write sibling
   repos, mutate profiles/templates/budgets/guidelines, or apply learning.
 
-## 11C. Budget Human Review Packet
+## 11D. Budget Human Review Packet
 
 Status: implemented for the current synthetic candidate slice; human budget
 decisions, appeal submission, Lake admission, and learning remain future gated
@@ -315,7 +347,7 @@ owner handoff or learning review is trusted.
   connector write, no Lake/SQLite write, no budget/profile/template/guideline
   mutation, no sibling repo write, no canonical mutation, and no silent learning.
 
-## 11D. Budget Human Review Outcome Record
+## 11E. Budget Human Review Outcome Record
 
 Status: implemented for the current synthetic candidate slice; external action,
 Lake admission, appeal submission, and learning remain future gated owner work.
@@ -338,7 +370,7 @@ appeal follow-up, Lake admission, or learning-loop pressure is trusted.
   admits no Lake/SQLite record, mutates no budget/profile/template/guideline,
   writes no sibling repo, promotes no canon, and applies no learning.
 
-## 11E. Budget Human Review Outcome Owner Adoption Packets
+## 11F. Budget Human Review Outcome Owner Adoption Packets
 
 Status: implemented for the current synthetic candidate slice; actual owner repo
 adoption, external action, Lake admission, and learning remain future owner
@@ -365,7 +397,7 @@ before any runtime follow-up, Lake admission, or semantic promotion is trusted.
   canon, implement connectors, admit Lake records, write SQLite, submit budgets
   or appeals, mutate budgets/profiles/templates/guidelines, or apply learning.
 
-## 11F. Budget Lifecycle Owner Adoption Packets
+## 11G. Budget Lifecycle Owner Adoption Packets
 
 Status: implemented for the current synthetic candidate slice; actual owner repo
 adoption remains future owner work.
@@ -390,7 +422,7 @@ repos that must own production behavior.
   canon, implement connectors, admit Lake records, write SQLite, submit budgets
   or appeals, mutate budgets/profiles/templates/guidelines, or apply learning.
 
-## 11G. PR Review Checklist
+## 11H. PR Review Checklist
 
 Status: implemented for the current synthetic candidate slice; the actual PR
 state change remains a human GitHub action.
@@ -415,7 +447,7 @@ forward.
   `lake_write_performed=false`, `sqlite_write_performed=false`,
   `external_writes_performed=false`, and `silent_learning_performed=false`.
 
-## 11H. Cross-Repo Owner Adoption Packets
+## 11I. Cross-Repo Owner Adoption Packets
 
 Status: implemented for the current synthetic candidate slice; actual owner repo
 issues, PRs, canon promotion, runtime adoption, and Lake admission remain future
@@ -444,7 +476,7 @@ Orchestrator, Exception Lake, Skills Registry, and Legal Knowledge Runtime.
   `lake_write_performed=false`, `sqlite_write_performed=false`,
   `external_writes_performed=false`, and `silent_learning_performed=false`.
 
-## 11I. Cross-Repo Owner Issue Drafts
+## 11J. Cross-Repo Owner Issue Drafts
 
 Status: implemented for the current synthetic candidate slice; actual issue
 creation, owner triage, implementation PRs, and sibling-repo writes remain
@@ -470,7 +502,7 @@ repos without creating issues or writing to GitHub.
   `sqlite_write_performed=false`, `external_writes_performed=false`, and
   `silent_learning_performed=false`.
 
-## 11J. Intake Local Closeout Audit
+## 11K. Intake Local Closeout Audit
 
 Status: implemented for the current synthetic candidate slice; PR state changes,
 owner issue creation, owner implementation, canonical promotion, runtime
@@ -501,7 +533,7 @@ owner issue drafts into one local closeout report.
   `sqlite_write_performed=false`, `external_writes_performed=false`, and
   `silent_learning_performed=false`.
 
-## 11K. PR Readiness Decision Record
+## 11L. PR Readiness Decision Record
 
 Status: implemented for the current synthetic candidate slice; any GitHub PR
 state change remains a separate manual human action.

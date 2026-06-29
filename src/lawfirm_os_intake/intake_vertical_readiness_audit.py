@@ -436,6 +436,34 @@ REQUIRED_SLICES: tuple[SliceDefinition, ...] = (
     ),
     SliceDefinition(
         slice_id=17,
+        title="Budget actual variance owner adoption packets",
+        requirement_summary=(
+            "Actual-cost variance ledger evidence can be routed to Semantic "
+            "Substrate, Orchestrator, and Exception Lake owner-review packets "
+            "without billing reads/writes, sibling writes, Lake/SQLite admission, "
+            "budget mutation, or learning."
+        ),
+        proof_artifact_refs=(
+            "src/lawfirm_os_intake/budget_actual_variance_owner_adoption.py",
+            "schemas/budget-actual-variance-owner-adoption-report.schema.json",
+            "schemas/budget-actual-variance-owner-adoption-packet.schema.json",
+            "tests/test_budget_actual_variance_owner_adoption.py",
+            "docs/decisions/TRACE-2026-06-29-budget-actual-variance-owner-adoption.md",
+        ),
+        command_refs=("build-budget-actual-variance-owner-adoption",),
+        target_owner_repos=(
+            "LawFirm-os-semantic-substrate",
+            "LawFirm-os-orchestrator",
+            "LawFirm-os-exceptions-lake-runtime",
+        ),
+        remaining_external_actions=(
+            "Orchestrator must own any production billing actuals read boundary.",
+            "Exception Lake must own append-only actual-variance admission and SQLite migrations.",
+            "Humans must still review any variance, source-followup, or learning disposition.",
+        ),
+    ),
+    SliceDefinition(
+        slice_id=18,
         title="Budget lifecycle owner adoption packets",
         requirement_summary=(
             "Budget lifecycle audit evidence can be routed to Semantic Substrate, "
@@ -459,7 +487,7 @@ REQUIRED_SLICES: tuple[SliceDefinition, ...] = (
         ),
     ),
     SliceDefinition(
-        slice_id=18,
+        slice_id=19,
         title="Public source methodology audit",
         requirement_summary=(
             "Planning-only public-source methodology can be reviewed without ingesting "
@@ -485,7 +513,7 @@ REQUIRED_SLICES: tuple[SliceDefinition, ...] = (
         ),
     ),
     SliceDefinition(
-        slice_id=19,
+        slice_id=20,
         title="Public synthetic fixture conversion plan",
         requirement_summary=(
             "Public-source methodology can be mapped to human-reviewed synthetic "
@@ -512,7 +540,7 @@ REQUIRED_SLICES: tuple[SliceDefinition, ...] = (
         ),
     ),
     SliceDefinition(
-        slice_id=20,
+        slice_id=21,
         title="Public synthetic fixture conversion review packet",
         requirement_summary=(
             "Public synthetic fixture conversion specs can be packaged for human "
@@ -539,7 +567,7 @@ REQUIRED_SLICES: tuple[SliceDefinition, ...] = (
         ),
     ),
     SliceDefinition(
-        slice_id=21,
+        slice_id=22,
         title="Public synthetic fixture conversion review outcome record",
         requirement_summary=(
             "Human public synthetic fixture conversion decisions can be recorded as "
@@ -566,7 +594,7 @@ REQUIRED_SLICES: tuple[SliceDefinition, ...] = (
         ),
     ),
     SliceDefinition(
-        slice_id=22,
+        slice_id=23,
         title="Public synthetic fixture PR package",
         requirement_summary=(
             "Approved public conversion review outcomes can be converted into manual "
@@ -593,7 +621,7 @@ REQUIRED_SLICES: tuple[SliceDefinition, ...] = (
         ),
     ),
     SliceDefinition(
-        slice_id=23,
+        slice_id=24,
         title="PR readiness decision record",
         requirement_summary=(
             "Human PR readiness decisions can be recorded append-only against the "
@@ -616,7 +644,7 @@ REQUIRED_SLICES: tuple[SliceDefinition, ...] = (
         ),
     ),
     SliceDefinition(
-        slice_id=24,
+        slice_id=25,
         title="Final intake vertical readiness audit",
         requirement_summary=(
             "A deterministic final audit checks local surfaces plus the generated learning "

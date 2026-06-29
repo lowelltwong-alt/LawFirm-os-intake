@@ -64,6 +64,15 @@ recommendations, why-notes, red-team notes, decision templates, and financial
 summary without approving budget submission, appeal submission, Lake admission,
 billing writes, profile/template/budget/guideline mutation, or learning.
 
+Before real billing actuals or actual-cost variance records are adopted by the
+platform, `build-budget-actual-variance-owner-adoption` packages the actual
+comparison and variance ledger for Semantic Substrate, Orchestrator, and
+Exception Lake owner review. The packets tell owners which labels, billing-read
+workflow duties, source-followup states, idempotency keys, hashes, and SQLite
+questions remain open. They are not authority to read billing systems, admit
+Lake/SQLite records, mutate budgets/profiles/templates/guidelines, or learn from
+variance.
+
 After the reviewer decides, `record-budget-human-review-outcome` writes
 `budget_human_review_outcome_record.json`,
 `budget_human_review_outcome_history.jsonl`, and

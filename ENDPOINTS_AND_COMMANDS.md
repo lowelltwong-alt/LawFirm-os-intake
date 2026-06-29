@@ -65,6 +65,26 @@ code, flags zero-budget/positive-actual rows as over-threshold, and emits dry-ru
 variance candidates. It performs no billing connector read or write and does not
 silently learn from variance.
 
+### Build budget actual variance owner adoption packets
+
+```bash
+python -m lawfirm_os_intake build-budget-actual-variance-owner-adoption \
+  --budget-actual-comparison-report .lawfirm-os-intake/budget-actuals/budget_actual_comparison_report.json \
+  --budget-actual-variance-ledger-report .lawfirm-os-intake/budget-actuals/budget_actual_variance_ledger_report.json \
+  --out-dir .lawfirm-os-intake/budget-actual-variance-owner-adoption
+```
+
+This writes `budget_actual_variance_owner_adoption_report.json`,
+`budget_actual_variance_owner_adoption_report.md`,
+`budget_actual_variance_owner_adoption_packets.jsonl`, and owner-specific
+JSON/Markdown packets under `budget_actual_variance_owner_packets/`. The packets
+route candidate actual-variance labels to Semantic Substrate, governed
+billing-actuals workflow work to Orchestrator, and append-only admission,
+idempotency, hash, and SQLite-owner work to Exception Lake. Intake does not
+read or write billing systems, create issues or PRs, write sibling repos, promote
+canon, admit Lake/SQLite records, mutate budgets, profiles, templates, or
+guidelines, or apply learning.
+
 ### Capture synthetic carrier rejection responses
 
 ```bash
@@ -501,8 +521,9 @@ python -m lawfirm_os_intake audit-intake-vertical-readiness \
 This writes `intake_vertical_readiness_audit_report.json` and
 `intake_vertical_readiness_audit_report.md`. The audit checks the local
 intake-to-budget, carrier rejection, budget revision, actual-cost comparison,
-budget lifecycle audit, budget lifecycle owner-adoption, reviewed learning,
-shadow-eval, owner-handoff, promotion-package, and command surfaces, then validates the generated learning artifact chain back through the
+actual-variance owner-adoption, budget lifecycle audit, budget lifecycle
+owner-adoption, reviewed learning, shadow-eval, owner-handoff, promotion-package,
+and command surfaces, then validates the generated learning artifact chain back through the
 reviewed-learning gate, the generated budget-event Lake bundle, and the
 calibration-readiness chain plus fixture-update review record and PR package. A
 passing audit means the branch is ready for human PR review while external

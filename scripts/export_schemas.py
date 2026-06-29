@@ -17,6 +17,9 @@ from lawfirm_os_intake.models import (  # noqa: E402
     BudgetActualVarianceDriverCandidate,
     BudgetActualVarianceLedgerEvent,
     BudgetActualVarianceLedgerReport,
+    BudgetActualVarianceOwnerAdoptionCheck,
+    BudgetActualVarianceOwnerAdoptionPacket,
+    BudgetActualVarianceOwnerAdoptionReport,
     BudgetCalibrationCorpusArtifact,
     BudgetCalibrationCorpusCheck,
     BudgetCalibrationCorpusReport,
@@ -297,6 +300,15 @@ MODELS = {
     "budget-actual-variance-driver-candidate.schema.json": (BudgetActualVarianceDriverCandidate),
     "budget-actual-variance-ledger-event.schema.json": BudgetActualVarianceLedgerEvent,
     "budget-actual-variance-ledger-report.schema.json": BudgetActualVarianceLedgerReport,
+    "budget-actual-variance-owner-adoption-check.schema.json": (
+        BudgetActualVarianceOwnerAdoptionCheck
+    ),
+    "budget-actual-variance-owner-adoption-packet.schema.json": (
+        BudgetActualVarianceOwnerAdoptionPacket
+    ),
+    "budget-actual-variance-owner-adoption-report.schema.json": (
+        BudgetActualVarianceOwnerAdoptionReport
+    ),
     "budget-calibration-corpus-artifact.schema.json": BudgetCalibrationCorpusArtifact,
     "budget-calibration-corpus-check.schema.json": BudgetCalibrationCorpusCheck,
     "budget-calibration-corpus-report.schema.json": BudgetCalibrationCorpusReport,

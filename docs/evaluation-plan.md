@@ -141,6 +141,14 @@ actuals must become reviewable events. The ledger proves no billing connector
 read or write, no Lake/SQLite admission, no budget mutation, and no silent
 learning.
 
+`build-budget-actual-variance-owner-adoption` consumes the actual comparison
+report and variance ledger report. It writes an owner-adoption report, Markdown
+notes, packet JSONL, and per-owner packets for Semantic Substrate, Orchestrator,
+and Exception Lake. Ready packets require matching comparison/ledger lineage,
+candidate local labels, review signals, append-only event posture, and no
+billing, Lake/SQLite, mutation, sibling-repo, or learning side effects. Lineage
+drift or prohibited flags must produce blocked owner packets.
+
 `capture-carrier-rejections` writes `carrier_rejection_decision_ledger_report.json`,
 `carrier_rejection_decision_ledger.jsonl`, and
 `carrier_rejection_decision_ledger_report.md`. The ledger must preserve one
@@ -196,6 +204,13 @@ outcomes must produce blocked owner packets. The command must prove no issue/PR
 creation, no sibling repo write, no canon promotion, no Lake/SQLite admission,
 no budget or appeal submission, no mutation, and no silent learning.
 
+`build-budget-actual-variance-owner-adoption` must remain narrower than the full
+lifecycle owner packet: it reviews actual-cost variance labels, governed billing
+actuals workflow needs, and append-only actual-variance Lake admission only. It
+must not claim actuals are complete when the ledger contains missing-source
+events, and it must not treat variance drivers as learning changes without the
+reviewed learning gate.
+
 `build-budget-lifecycle-owner-adoption` consumes
 `budget_lifecycle_audit_report.json` and writes
 `budget_lifecycle_owner_adoption_report.json`, Markdown notes, and owner packet
@@ -235,7 +250,8 @@ The final local close-out eval is `audit-intake-vertical-readiness`. It consumes
 `budget_fixture_update_pr_package_report.json`, checks the local candidate
 slices, generated learning artifact chain, generated budget-event Lake bundle,
 budget lifecycle audit surface, budget human-review packet surface,
-budget lifecycle owner-adoption packet surface,
+budget human-review outcome and outcome-owner-adoption surfaces, budget
+actual-variance owner-adoption packet surface, budget lifecycle owner-adoption packet surface,
 calibration-readiness chain, fixture-update review record, and fixture-update PR
 package, and writes
 `intake_vertical_readiness_audit_report.json`. Passing status means ready for

@@ -2494,6 +2494,219 @@ class BudgetActualVarianceLedgerReport(StrictModel):
         return self
 
 
+BudgetActualVarianceOwnerTargetRepo = Literal[
+    "LawFirm-os-semantic-substrate",
+    "LawFirm-os-orchestrator",
+    "LawFirm-os-exceptions-lake-runtime",
+]
+
+BudgetActualVarianceOwnerAdoptionFocus = Literal[
+    "semantic_actual_variance_label_review",
+    "runtime_billing_actuals_workflow",
+    "append_only_actual_variance_lake_admission",
+]
+
+
+class BudgetActualVarianceOwnerAdoptionCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed", "warning"]
+    message: str
+    artifact_refs: list[str] = Field(default_factory=list)
+    blocking_refs: list[str] = Field(default_factory=list)
+
+
+class BudgetActualVarianceOwnerAdoptionPacket(StrictModel):
+    schema_version: str = "0.1"
+    owner_adoption_packet_id: str
+    target_repo: BudgetActualVarianceOwnerTargetRepo
+    adoption_focus: BudgetActualVarianceOwnerAdoptionFocus
+    status: Literal["ready_for_owner_review", "blocked_by_actual_variance_evidence"]
+    source_budget_actual_comparison_report_id: str
+    source_budget_actual_comparison_report_ref: str
+    source_budget_actual_comparison_status: Literal[
+        "actuals_not_available",
+        "passed",
+        "variance_review_required",
+    ]
+    source_budget_actual_variance_ledger_report_id: str
+    source_budget_actual_variance_ledger_report_ref: str
+    source_budget_actual_variance_ledger_status: BudgetActualVarianceLedgerStatus
+    run_id: str
+    preflight_packet_id: str
+    budget_proposal_id: str
+    budget_revision_report_id: str | None = None
+    actuals_source_ref: str | None = None
+    comparison_scope: Literal["phase", "phase_and_code"]
+    comparison_budget_state: Literal["original_proposal", "human_revised_candidate"]
+    actual_resolution_scenario_id: str | None = None
+    entry_count: int = Field(ge=0)
+    phase_event_count: int = Field(ge=0)
+    code_event_count: int = Field(ge=0)
+    revision_context_event_count: int = Field(ge=0)
+    variance_review_event_count: int = Field(ge=0)
+    missing_actuals_event_count: int = Field(ge=0)
+    actuals_without_budget_event_count: int = Field(ge=0)
+    within_threshold_event_count: int = Field(ge=0)
+    total_budgeted: float | None = None
+    total_actual: float | None = None
+    total_variance_amount: float | None = None
+    total_variance_percent: float | None = None
+    candidate_lake_event_labels: list[str] = Field(default_factory=list)
+    variance_driver_candidates: list[str] = Field(default_factory=list)
+    learning_disposition_candidates: list[str] = Field(default_factory=list)
+    source_artifact_refs: list[str] = Field(default_factory=list)
+    candidate_contract_refs: list[str] = Field(default_factory=list)
+    required_owner_actions: list[str]
+    acceptance_checks: list[str]
+    red_team_notes: list[str]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    no_connector_implemented: Literal[True] = True
+    no_lake_admission_performed: Literal[True] = True
+    no_sibling_repo_writes: Literal[True] = True
+    no_canonical_mutation: Literal[True] = True
+    github_issue_created: Literal[False] = False
+    github_pr_created: Literal[False] = False
+    github_write_performed: Literal[False] = False
+    sibling_repo_write_performed: Literal[False] = False
+    promotion_authorized: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    billing_connector_read_performed: Literal[False] = False
+    billing_connector_write_performed: Literal[False] = False
+    budget_submission_performed: Literal[False] = False
+    appeal_submission_performed: Literal[False] = False
+    budget_mutation_performed: Literal[False] = False
+    profile_mutation_performed: Literal[False] = False
+    template_mutation_performed: Literal[False] = False
+    carrier_guideline_mutation_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def actual_variance_owner_packet_is_complete(
+        self,
+    ) -> "BudgetActualVarianceOwnerAdoptionPacket":
+        if not self.required_owner_actions:
+            raise ValueError("actual variance owner packet requires owner actions")
+        if not self.acceptance_checks:
+            raise ValueError("actual variance owner packet requires acceptance checks")
+        if not self.red_team_notes:
+            raise ValueError("actual variance owner packet requires red-team notes")
+        required = {
+            "human_actual_variance_owner_review",
+            "manual_owner_issue_creation_if_desired",
+            "owning_repo_triage",
+            "owner_repo_implementation_pr_if_accepted",
+            "cross_repo_contract_validation_after_owner_changes",
+            "no_intake_billing_lake_or_learning_write",
+        }
+        if not required.issubset(set(self.required_next_gates)):
+            raise ValueError("actual variance owner packet is missing required gates")
+        return self
+
+
+class BudgetActualVarianceOwnerAdoptionReport(StrictModel):
+    schema_version: str = "0.1"
+    owner_adoption_report_id: str
+    status: Literal[
+        "budget_actual_variance_owner_adoption_packets_ready",
+        "blocked_by_budget_actual_variance_evidence",
+    ]
+    source_budget_actual_comparison_report_id: str
+    source_budget_actual_comparison_report_ref: str
+    source_budget_actual_comparison_status: Literal[
+        "actuals_not_available",
+        "passed",
+        "variance_review_required",
+    ]
+    source_budget_actual_variance_ledger_report_id: str
+    source_budget_actual_variance_ledger_report_ref: str
+    source_budget_actual_variance_ledger_status: BudgetActualVarianceLedgerStatus
+    target_repo_count: int = Field(ge=0)
+    packet_count: int = Field(ge=0)
+    ready_packet_count: int = Field(ge=0)
+    blocked_packet_count: int = Field(ge=0)
+    target_repos: list[BudgetActualVarianceOwnerTargetRepo]
+    packets: list[BudgetActualVarianceOwnerAdoptionPacket]
+    packet_output_refs: list[str] = Field(default_factory=list)
+    checks: list[BudgetActualVarianceOwnerAdoptionCheck]
+    entry_count: int = Field(ge=0)
+    variance_review_event_count: int = Field(ge=0)
+    missing_actuals_event_count: int = Field(ge=0)
+    actuals_without_budget_event_count: int = Field(ge=0)
+    within_threshold_event_count: int = Field(ge=0)
+    total_budgeted: float | None = None
+    total_actual: float | None = None
+    total_variance_amount: float | None = None
+    candidate_lake_event_labels: list[str] = Field(default_factory=list)
+    variance_driver_candidates: list[str] = Field(default_factory=list)
+    learning_disposition_candidates: list[str] = Field(default_factory=list)
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    no_connector_implemented: Literal[True] = True
+    no_lake_admission_performed: Literal[True] = True
+    no_sibling_repo_writes: Literal[True] = True
+    no_canonical_mutation: Literal[True] = True
+    github_issue_created: Literal[False] = False
+    github_pr_created: Literal[False] = False
+    github_write_performed: Literal[False] = False
+    sibling_repo_write_performed: Literal[False] = False
+    promotion_authorized: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    billing_connector_read_performed: Literal[False] = False
+    billing_connector_write_performed: Literal[False] = False
+    budget_submission_performed: Literal[False] = False
+    appeal_submission_performed: Literal[False] = False
+    budget_mutation_performed: Literal[False] = False
+    profile_mutation_performed: Literal[False] = False
+    template_mutation_performed: Literal[False] = False
+    carrier_guideline_mutation_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def actual_variance_owner_report_counts_match(
+        self,
+    ) -> "BudgetActualVarianceOwnerAdoptionReport":
+        failed = [check for check in self.checks if check.status == "failed"]
+        if self.status == "budget_actual_variance_owner_adoption_packets_ready" and failed:
+            raise ValueError("ready actual variance owner report cannot have failed checks")
+        if self.status == "blocked_by_budget_actual_variance_evidence" and not failed:
+            raise ValueError("blocked actual variance owner report requires failed checks")
+        if self.packet_count != len(self.packets):
+            raise ValueError("actual variance owner report packet_count mismatch")
+        if self.packet_count != len(self.packet_output_refs):
+            raise ValueError("actual variance owner report packet refs mismatch")
+        if self.target_repo_count != len(self.target_repos):
+            raise ValueError("actual variance owner report target_repo_count mismatch")
+        if self.ready_packet_count != sum(
+            1 for packet in self.packets if packet.status == "ready_for_owner_review"
+        ):
+            raise ValueError("actual variance owner ready count mismatch")
+        if self.blocked_packet_count != sum(
+            1 for packet in self.packets if packet.status == "blocked_by_actual_variance_evidence"
+        ):
+            raise ValueError("actual variance owner blocked count mismatch")
+        required = {
+            "human_actual_variance_owner_review",
+            "manual_owner_issue_creation_if_desired",
+            "owning_repo_triage",
+            "owner_repo_implementation_pr_if_accepted",
+            "cross_repo_contract_validation_after_owner_changes",
+            "no_intake_billing_lake_or_learning_write",
+        }
+        if not required.issubset(set(self.required_next_gates)):
+            raise ValueError("actual variance owner report is missing required gates")
+        return self
+
+
 BudgetCalibrationArtifactKind = Literal[
     "intake_source_fixture",
     "human_confirmation_fixture",
