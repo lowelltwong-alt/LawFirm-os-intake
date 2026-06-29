@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Validate the local mirror of the upstream LawFirm OS governance dependency map."""
+
 from __future__ import annotations
 
 import argparse
@@ -123,9 +124,13 @@ def validate_governance_dependency_map_mirror(path: Path = MIRROR) -> dict[str, 
     if missing:
         raise MirrorValidationError(f"{_rel(path)} missing keys: {missing}")
     if data["object_type"] != "governance_dependency_map_mirror":
-        raise MirrorValidationError(f"{_rel(path)} object_type must be governance_dependency_map_mirror")
+        raise MirrorValidationError(
+            f"{_rel(path)} object_type must be governance_dependency_map_mirror"
+        )
     if data["schema_version"] != "governance_dependency_map_mirror.v1":
-        raise MirrorValidationError(f"{_rel(path)} schema_version must be governance_dependency_map_mirror.v1")
+        raise MirrorValidationError(
+            f"{_rel(path)} schema_version must be governance_dependency_map_mirror.v1"
+        )
     if data["owner_repo"] != EXPECTED_OWNER_REPO:
         raise MirrorValidationError(f"{_rel(path)} owner_repo must be {EXPECTED_OWNER_REPO}")
 
@@ -134,7 +139,9 @@ def validate_governance_dependency_map_mirror(path: Path = MIRROR) -> dict[str, 
         raise MirrorValidationError(f"{_rel(path)} upstream_dependency_map must be an object")
     for key, expected in REQUIRED_UPSTREAM.items():
         if upstream.get(key) != expected:
-            raise MirrorValidationError(f"{_rel(path)} upstream_dependency_map.{key} must be {expected!r}")
+            raise MirrorValidationError(
+                f"{_rel(path)} upstream_dependency_map.{key} must be {expected!r}"
+            )
 
     authority = data["authority"]
     if not isinstance(authority, dict):
@@ -154,7 +161,9 @@ def validate_governance_dependency_map_mirror(path: Path = MIRROR) -> dict[str, 
         if authority.get(key) is not False:
             raise MirrorValidationError(f"{_rel(path)} authority.{key} must be false")
     if authority.get("local_repo_must_stop_if_upstream_map_conflicts") is not True:
-        raise MirrorValidationError(f"{_rel(path)} authority.local_repo_must_stop_if_upstream_map_conflicts must be true")
+        raise MirrorValidationError(
+            f"{_rel(path)} authority.local_repo_must_stop_if_upstream_map_conflicts must be true"
+        )
 
     watched = set(_require_strings(data, "watched_local_governance_surfaces", _rel(path)))
     missing_watched = sorted(REQUIRED_WATCHED - watched)
@@ -165,8 +174,14 @@ def validate_governance_dependency_map_mirror(path: Path = MIRROR) -> dict[str, 
     if not isinstance(enforcement, dict):
         raise MirrorValidationError(f"{_rel(path)} local_enforcement must be an object")
     for rel in enforcement.values():
-        if isinstance(rel, str) and rel.endswith((".json", ".md", ".py", ".yml", ".yaml")) and not (ROOT / rel).exists():
-            raise MirrorValidationError(f"{_rel(path)} references missing local enforcement surface: {rel}")
+        if (
+            isinstance(rel, str)
+            and rel.endswith((".json", ".md", ".py", ".yml", ".yaml"))
+            and not (ROOT / rel).exists()
+        ):
+            raise MirrorValidationError(
+                f"{_rel(path)} references missing local enforcement surface: {rel}"
+            )
 
     for rel, phrases in REQUIRED_SURFACE_PHRASES.items():
         text = (ROOT / rel).read_text(encoding="utf-8")
@@ -188,7 +203,9 @@ def _git_changed_files(base_ref: str) -> list[str]:
             stderr=subprocess.PIPE,
         )
     except subprocess.CalledProcessError as exc:
-        raise MirrorValidationError(f"could not compute changed files against {base_ref}: {exc.stderr.strip()}") from exc
+        raise MirrorValidationError(
+            f"could not compute changed files against {base_ref}: {exc.stderr.strip()}"
+        ) from exc
     return [line.strip() for line in result.stdout.splitlines() if line.strip()]
 
 
