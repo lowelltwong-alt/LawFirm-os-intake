@@ -58,8 +58,7 @@ See `docs/lawfirm-os-integration.md` and `repo_topology.yaml`.
 
 ```bash
 python -m pip install -e ".[dev]"
-python scripts/export_schemas.py
-python scripts/run_full_pytest.py
+python scripts/run_validation_suite.py
 
 python -m lawfirm_os_intake demo \
   --input examples/synthetic/inbound/north-star-messy-intake.json \
@@ -75,6 +74,10 @@ and stamps the run with the required validation-policy marker. Direct pytest
 invocation is blocked so the suite cannot silently fall back to a short ceiling
 for the repo's heavier test paths. The wrapper also suppresses pytest cache and
 Python bytecode artifacts so repository validation can run on a clean tree.
+For the complete local check sequence, use
+`python scripts/run_validation_suite.py`; it runs repo validation, schema export,
+lint, full pytest, smoke, and final repo validation with the configured policy
+timeouts.
 
 The demo emits:
 
@@ -239,7 +242,7 @@ The CourtListener early-case corpus strategy is also planning-only. `config/cour
 
 The first offline CourtListener-style fixture is synthetic and lives under `examples/synthetic/courtlistener-derived/`. Run `lawfirm-os-intake audit-courtlistener-fixture --repo-root . --manifest examples/synthetic/courtlistener-derived/labor-employment-dataset-manifest.json --out-dir <dir>` to prove the manifest labels resolve to exact synthetic snapshot segments, offsets, and hashes while keeping later discovery material as negative/routing examples only. The audit records no live calls, no public-record ingestion, no purchases, no training, no budget accuracy claim, and no external writes.
 
-Labor/employment budget readiness now has its own source-bound fact-gap audit. Run `lawfirm-os-intake audit-labor-employment-budget-facts --repo-root . --manifest examples/synthetic/courtlistener-derived/labor-employment-dataset-manifest.json --out-dir <dir>` to write `labor_employment_budget_fact_audit_report.json` and `.md`. The audit checks whether the fixture has enough candidate evidence for L&E budget drivers such as employee/employer identity, payer/client posture, individual supervisors, joint-employer structure, claims, class/collective scope, timeline, damages, ESI/custodians, depositions, experts/vendors, policy documents, and carrier/rate guideline context. Missing critical facts keep the budget posture at `blocked_missing_critical_facts`; no budget amount, submission, conflict conclusion, matter opening, Lake/SQLite write, or learning update is authorized.
+Labor/employment budget readiness now has its own source-bound fact-gap audit. Run `lawfirm-os-intake audit-labor-employment-budget-facts --repo-root . --manifest examples/synthetic/courtlistener-derived/labor-employment-dataset-manifest.json --out-dir <dir>` to write `labor_employment_budget_fact_audit_report.json` and `.md`. The audit checks whether the fixture has enough candidate evidence for L&E budget drivers such as employee/employer identity, payer/client posture, individual supervisors, joint-employer structure, claims, class/collective scope, timeline, damages, ESI/custodians, depositions, experts/vendors, policy documents, and carrier/rate guideline context. Passing that report to `build-budget --labor-employment-budget-fact-report <path>` makes critical gaps fail the budget precondition gate before proposal output; non-critical gaps become supported budget unknowns for human review. No budget amount, submission, conflict conclusion, matter opening, Lake/SQLite write, or learning update is authorized by the audit.
 
 The preflight `intake_review_form.md` is the first human pause. It shows detailed source inventory rows, including duplicate links, attachment refs, filenames, metadata keys, hashes, candidate alternatives, deadline and missing-information evidence, and review outcome handling. Only `confirmed` can proceed toward the budget precondition gate, and even then only after exact packet binding and evidence checks; all other outcomes remain blocked or human-only.
 
@@ -312,7 +315,7 @@ Budget-stage uncertainty is also emitted as dry-run Exception Lake candidates. U
 
 Every preflight and budget candidate file is checked by `exception_lake_readiness_report.json`. The report proves candidates remain dry-run, exclude raw payloads, require canonical promotion or reviewed mapping, target the Exception Lake runtime repo, and carry valid source-inventory refs, source evidence refs, structured refs, or blocked states. Each stage also writes `exception_lake_handoff_manifest.json`, a local non-authoritative map of actual labels to broad future Lake classes, support modes, candidate files, and target runtime ownership. It explicitly records `sqlite_write_performed=false`; any SQLite persistence belongs in `LawFirm-os-exceptions-lake-runtime`, not this intake repo. Close party-role alternatives are emitted as `critic_role_candidates_ambiguous` workflow escalations so role uncertainty is reviewable. Untrusted source attempts to clear conflicts, open a matter, create an iManage workspace, docket deadlines, submit a budget, or send external messages are emitted as specific local `prohibited_transition_attempted_*` workflow-escalation candidates with evidence refs and structured refs to `workflow/prohibited-transitions.yaml`.
 
-Every budget run emits `budget_precondition_report.json`. If confirmation is missing, mismatched, incomplete, evidence-free, or not `confirmed`, the run writes that failed report, a blocked run-ledger event, and a dry-run Exception Lake candidate, then stops before producing a conflict seed, budget proposal, readiness packet, safety report, or review package.
+Every budget run emits `budget_precondition_report.json`. If confirmation is missing, mismatched, incomplete, evidence-free, not `confirmed`, or has an explicitly supplied L&E fact report with critical budget gaps, the run writes that failed report, a blocked run-ledger event, and a dry-run Exception Lake candidate, then stops before producing a conflict seed, budget proposal, readiness packet, safety report, or review package.
 
 ## Safety gate
 

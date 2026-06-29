@@ -565,6 +565,9 @@ def build_budget_precondition_exception_candidates(
         return []
     failed = [check.check_id for check in report.checks if check.status == "failed"]
     label = report.blocked_state or "budget_precondition_failed"
+    structured_refs = []
+    if report.labor_employment_budget_fact_report_ref:
+        structured_refs.append(report.labor_employment_budget_fact_report_ref)
     return [
         ExceptionLakeCandidate(
             candidate_id=new_id("exc"),
@@ -576,6 +579,7 @@ def build_budget_precondition_exception_candidates(
                 "Budget generation was blocked before proposal output because preconditions failed: "
                 + ", ".join(failed)
             ),
+            structured_refs=structured_refs,
             blocked_state=label,
         )
     ]

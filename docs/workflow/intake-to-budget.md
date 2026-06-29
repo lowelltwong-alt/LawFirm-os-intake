@@ -99,9 +99,9 @@ Confirmed budget runs also write `human_gate_status_report.json`. The report rec
 
 ### 12. Budget precondition gate
 
-Before budget generation, the system verifies that the human confirmation binds to the exact preflight packet, has `confirmed` status, contains human-confirmed matter family, representation posture, and principal party roles, and carries source-bound evidence refs for both decision evidence and confirmed party roles.
+Before budget generation, the system verifies that the human confirmation binds to the exact preflight packet, has `confirmed` status, contains human-confirmed matter family, representation posture, and principal party roles, and carries source-bound evidence refs for both decision evidence and confirmed party roles. If an L&E budget fact report is supplied, the same gate also verifies that the report is candidate-only, has no Lake/SQLite/training/submission side effects, and has no critical L&E budget fact gaps.
 
-The run writes `budget_precondition_report.json`. If the gate fails, it records a blocked run event and dry-run Exception Lake candidate, then stops before emitting a conflict seed, budget proposal, matter-opening readiness packet, safety report, or review package.
+The run writes `budget_precondition_report.json`. If the gate fails, including for `labor_employment_budget_facts_blocked`, it records a blocked run event and dry-run Exception Lake candidate, then stops before emitting a conflict seed, budget proposal, matter-opening readiness packet, safety report, or review package. Non-critical L&E fact gaps pass forward only as supported budget unknowns for human review.
 
 ### 13. Conflict-search seed
 

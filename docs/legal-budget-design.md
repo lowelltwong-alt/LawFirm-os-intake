@@ -29,6 +29,14 @@ The local `audit-labor-employment-budget-facts` command reads the synthetic Cour
 
 Critical missing or review-only facts set `budget_readiness_state=blocked_missing_critical_facts`. That state is a pricing guard, not a failed audit: it tells the reviewer the current packet should stay at hours-only, broad-range, or no-amount posture until the missing facts are confirmed. The report does not output a budget amount, submit a budget, clear conflicts, open a matter, write Lake/SQLite records, or learn from corrections.
 
+When a human or harness supplies `labor_employment_budget_fact_audit_report.json`
+to `build-budget`, the budget precondition gate consumes it explicitly. Critical
+L&E gaps set `blocked_state=labor_employment_budget_facts_blocked` and stop
+before conflict seed, budget proposal, readiness, safety, or review-package
+output. Non-critical needs-review gaps do not rewrite the budget math; they add
+supported `unknown` entries and `BudgetSupportItem` refs so human reviewers see
+the broad-range or hours-only posture constraint alongside the proposal.
+
 ## Form structure
 
 A budget proposal contains:

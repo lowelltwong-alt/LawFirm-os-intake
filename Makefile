@@ -1,10 +1,13 @@
-.PHONY: install validate lint test smoke schemas tree
+.PHONY: install validate validate-all lint test smoke schemas tree
 
 install:
 	python -m pip install -e ".[dev]"
 
 validate:
 	python scripts/validate_repo.py
+
+validate-all:
+	python scripts/run_validation_suite.py
 
 lint:
 	python -m ruff check --no-cache src tests scripts
