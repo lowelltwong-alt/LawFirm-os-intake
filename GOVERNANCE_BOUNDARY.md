@@ -2,6 +2,12 @@
 
 This repository must never invert the LawFirm OS authority order.
 
+## Governance dependency-map mirror
+
+This repo carries `.ai/control/governance-dependency-map-mirror.json` as a local mirror of the upstream governance dependency map in `LawFirm-os-semantic-substrate/registry/governance-dependency-map.json`.
+
+If governance-facing intake files change, check the upstream governance dependency map and update the local mirror, AI work router, AI table of contents, README, validator, and tests when affected. The mirror is downstream enforcement only; it cannot override Semantic Substrate governance or convert intake workflow convenience into platform authority.
+
 ## Candidate lifecycle
 
 Local schemas, taxonomies, worker manifests, prompts, and templates are experimental candidates. They become platform-authoritative only through the owning sibling repository and its promotion process.
