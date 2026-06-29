@@ -554,8 +554,9 @@ This writes `intake_vertical_readiness_audit_report.json` and
 `intake_vertical_readiness_audit_report.md`. The audit checks the local
 intake-to-budget, carrier rejection, budget revision, actual-cost comparison,
 actual-variance owner-adoption, budget lifecycle audit, budget lifecycle
-owner-adoption, reviewed learning, shadow-eval, owner-handoff, promotion-package,
-and command surfaces, then validates the generated learning artifact chain back through the
+owner-adoption, labor/employment budget fact-gap audit, reviewed learning,
+shadow-eval, owner-handoff, promotion-package, and command surfaces, then
+validates the generated learning artifact chain back through the
 reviewed-learning gate, the generated budget-event Lake bundle, and the
 calibration-readiness chain plus fixture-update review record and PR package. A
 passing audit means the branch is ready for human PR review while external

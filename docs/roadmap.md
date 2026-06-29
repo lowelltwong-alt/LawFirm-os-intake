@@ -779,9 +779,9 @@ proof work from the higher-risk owner-adoption work.
 - It writes `intake_vertical_readiness_audit_report.json` and
   `intake_vertical_readiness_audit_report.md`.
 - It checks that the intake-to-budget, budget revision, actual-cost comparison,
-  carrier rejection, budget human review, reviewed learning, proposed-change,
-  shadow-eval, owner-handoff, budget-event Lake bundle, and cross-repo promotion
-  surfaces have local candidate proof.
+  carrier rejection, budget human review, labor/employment budget fact-gap,
+  reviewed learning, proposed-change, shadow-eval, owner-handoff, budget-event
+  Lake bundle, and cross-repo promotion surfaces have local candidate proof.
 - It validates the generated learning artifact chain from owner handoff back to
   shadow eval, proposed changes, promotion readiness, shadow plan, and reviewed
   learning gate.

@@ -704,6 +704,36 @@ REQUIRED_SLICES: tuple[SliceDefinition, ...] = (
     ),
     SliceDefinition(
         slice_id=27,
+        title="Labor/employment budget fact-gap audit",
+        requirement_summary=(
+            "Labor/employment budget readiness can be audited against source-bound "
+            "entity, relationship, claim, timeline, damages, discovery, deposition, "
+            "expert/vendor, and carrier/rate facts while blocking precise budget posture "
+            "when critical facts are missing or human-review-only."
+        ),
+        proof_artifact_refs=(
+            "src/lawfirm_os_intake/labor_employment_budget_facts.py",
+            "config/labor-employment-budget-fact-needs.yaml",
+            "schemas/labor-employment-budget-fact-audit-report.schema.json",
+            "schemas/labor-employment-budget-fact-finding.schema.json",
+            "schemas/labor-employment-budget-fact-gap.schema.json",
+            "tests/test_labor_employment_budget_facts.py",
+            "docs/decisions/TRACE-2026-06-29-labor-employment-budget-fact-gaps.md",
+        ),
+        command_refs=("audit-labor-employment-budget-facts",),
+        target_owner_repos=(
+            "LawFirm-os-intake",
+            "LawFirm-os-semantic-substrate",
+            "LawFirm-os-orchestrator",
+        ),
+        remaining_external_actions=(
+            "Humans must review L&E critical fact gaps before relying on budget ranges or amounts.",
+            "Semantic Substrate must own any canonical L&E role, relationship, or fact taxonomy promotion.",
+            "Orchestrator must own any future runtime budget-sufficiency gate and human pause.",
+        ),
+    ),
+    SliceDefinition(
+        slice_id=28,
         title="Final intake vertical readiness audit",
         requirement_summary=(
             "A deterministic final audit checks local surfaces plus the generated learning "
