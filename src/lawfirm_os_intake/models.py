@@ -376,6 +376,90 @@ class DataScopeGateReport(StrictModel):
     generated_at: str
 
 
+class CourtListenerDatasetStrategyCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    details: dict[str, Any] = Field(default_factory=dict)
+
+
+class CourtListenerDatasetStrategyReport(StrictModel):
+    schema_version: str = "0.1"
+    courtlistener_dataset_strategy_report_id: str
+    status: Literal[
+        "ready_for_human_dataset_strategy_review",
+        "blocked_courtlistener_dataset_strategy",
+    ]
+    strategy_config_ref: str
+    rust_transition_policy_ref: str
+    source_id: str
+    base_url: str
+    token_env_var: str
+    offline_fixture_mode: bool
+    allow_live_calls: bool
+    endpoint_paths: list[str]
+    primary_practice_area: Literal["labor_employment"]
+    starter_matter_families: list[str]
+    positive_document_types: list[str]
+    excluded_positive_document_types: list[str]
+    negative_case_stage_labels: list[str]
+    source_profile_ids: list[str]
+    rust_shadow_scope: list[str]
+    rust_forbidden_scope: list[str]
+    required_rust_gates: list[str]
+    checks: list[CourtListenerDatasetStrategyCheck]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    planning_only: Literal[True] = True
+    public_records_ingested: Literal[False] = False
+    public_payload_committed: Literal[False] = False
+    live_calls_performed: Literal[False] = False
+    pacer_purchase_allowed: bool
+    recap_fetch_purchase_allowed: bool
+    uploads_allowed: bool
+    court_writes_allowed: bool
+    sealed_or_restricted_requests_allowed: bool
+    real_client_data_allowed: bool
+    privileged_data_allowed: bool
+    connector_implemented: Literal[False] = False
+    rust_runtime_added: Literal[False] = False
+    rust_replacement_allowed: Literal[False] = False
+    budget_accuracy_claimed: Literal[False] = False
+    training_pipeline_created: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def dataset_strategy_status_matches_checks(self) -> "CourtListenerDatasetStrategyReport":
+        if not self.checks:
+            raise ValueError("courtlistener dataset strategy report requires checks")
+        failed = [check.check_id for check in self.checks if check.status == "failed"]
+        if self.status == "ready_for_human_dataset_strategy_review" and failed:
+            raise ValueError("ready courtlistener dataset strategy cannot include failed checks")
+        if self.status == "ready_for_human_dataset_strategy_review":
+            unsafe = [
+                self.allow_live_calls,
+                self.pacer_purchase_allowed,
+                self.recap_fetch_purchase_allowed,
+                self.uploads_allowed,
+                self.court_writes_allowed,
+                self.sealed_or_restricted_requests_allowed,
+                self.real_client_data_allowed,
+                self.privileged_data_allowed,
+            ]
+            if self.offline_fixture_mode is not True or any(unsafe):
+                raise ValueError("ready courtlistener dataset strategy has unsafe source mode")
+        if self.status == "blocked_courtlistener_dataset_strategy" and not failed:
+            raise ValueError("blocked courtlistener dataset strategy requires failed checks")
+        if not self.endpoint_paths:
+            raise ValueError("courtlistener dataset strategy requires endpoint paths")
+        if "courtlistener_removal_state_pleadings_proxy" not in self.source_profile_ids:
+            raise ValueError("courtlistener removal proxy profile is required")
+        return self
+
+
 class PublicSourceMethodologySource(StrictModel):
     source_id: str
     url: str

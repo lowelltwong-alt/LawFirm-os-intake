@@ -24,7 +24,11 @@
     "structural_segmentation",
     "sha256_hashing",
     "segment_evidence_ref_emission",
-    "schema_compatible_ingestion_result_serialization"
+    "schema_compatible_ingestion_result_serialization",
+    "courtlistener_snapshot_normalization",
+    "offline_corpus_manifest_indexing",
+    "document_label_offset_indexing",
+    "source_span_indexing"
   ],
   "eligible_hot_path_scope": [
     "source_inventory",
@@ -39,6 +43,10 @@
     "matter_routing",
     "conflict_clearance",
     "budget_decisioning",
+    "dataset_selection_or_training_decision",
+    "public_record_download_or_purchase",
+    "budget_learning_promotion",
+    "legal_training_corpus_admission",
     "human_confirmation",
     "exception_lake_persistence",
     "connector_or_external_writes",

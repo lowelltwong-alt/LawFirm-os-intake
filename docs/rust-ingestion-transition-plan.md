@@ -17,6 +17,16 @@ Rust may be proposed only for this hot path:
 - segment-level `EvidenceRef` emission;
 - schema-compatible `IngestionResult` JSON serialization.
 
+For larger public/synthetic dataset preparation, Rust may also be proposed later
+in shadow mode for deterministic corpus mechanics:
+
+- CourtListener snapshot normalization;
+- offline corpus manifest indexing;
+- source hashing and duplicate detection;
+- source-span indexing;
+- document-label offset indexing;
+- candidate JSONL artifact serialization.
+
 Rust may run only after the same `DataScopeGateReport` has passed. It must never write raw payload before the data-scope gate, relax synthetic-only checks, or become a separate data-origin authority.
 
 Rust must not own:
@@ -24,10 +34,13 @@ Rust must not own:
 - legal classification;
 - party-role assignment;
 - matter routing;
+- dataset selection or training-corpus admission;
 - deadline docketing;
 - conflict clearance;
 - engagement decisions;
 - budget decisions;
+- budget learning promotion;
+- public-record download or purchase;
 - human confirmation;
 - Exception Lake persistence;
 - connector or external writes;
@@ -46,6 +59,13 @@ The local candidate policy lives at `config/rust-ingestion-transition-policy.jso
 It names profiling thresholds, required benchmark dimensions, candidate Rust
 hot-path scope, forbidden Rust scope, parity dimensions, and transition gates.
 It is not Semantic Substrate canon and does not authorize a Rust runtime.
+
+The CourtListener/public-derived dataset strategy lives at
+`config/courtlistener-dataset-strategy.yaml` and is audited by
+`audit-courtlistener-dataset-strategy`. That strategy keeps Rust in shadow mode
+for deterministic corpus mechanics and keeps live calls, public-record
+purchases, uploads, court writes, real-client data, privileged data, and
+training-pipeline creation disabled.
 
 `ingestion_volume_profile.json` now carries:
 
@@ -93,6 +113,7 @@ A future Rust PR should include:
 - proof that it only runs after a passing `DataScopeGateReport`;
 - no production connectors and no external writes;
 - golden parity tests against `ingestion_result.json`;
+- no-network fixture tests for CourtListener-derived snapshots if the adapter touches public-source corpus mechanics;
 - hidden or holdout parity fixtures, including correspondence dumps with repeated message boundaries;
 - schema export and validation;
 - a performance profile covering the required dimensions above;

@@ -48,6 +48,7 @@ from .carrier_rejection_roadmap_audit import run_carrier_rejection_roadmap_audit
 from .carrier_rejection_review import run_carrier_rejection_review
 from .carrier_rejections import run_carrier_rejection_capture
 from .confirmation import bind_confirmation_to_packet_evidence
+from .courtlistener_dataset_strategy import run_courtlistener_dataset_strategy_audit
 from .cross_repo_owner_adoption import run_cross_repo_owner_adoption
 from .cross_repo_owner_issue_drafts import run_cross_repo_owner_issue_drafts
 from .intake_local_closeout import run_intake_local_closeout
@@ -322,6 +323,21 @@ def _parser() -> argparse.ArgumentParser:
         "--repo-root",
         default=".",
         help="Repository root to inspect; defaults to the current working directory.",
+    )
+
+    courtlistener_dataset_strategy = sub.add_parser(
+        "audit-courtlistener-dataset-strategy",
+        help="Audit the offline CourtListener early-case corpus and Rust shadow strategy.",
+    )
+    courtlistener_dataset_strategy.add_argument("--out-dir", required=True)
+    courtlistener_dataset_strategy.add_argument(
+        "--repo-root",
+        default=".",
+        help="Repository root to inspect; defaults to the current working directory.",
+    )
+    courtlistener_dataset_strategy.add_argument(
+        "--strategy-config",
+        help="Optional CourtListener dataset strategy YAML path.",
     )
 
     public_synthetic_conversion = sub.add_parser(
@@ -1488,6 +1504,41 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             if report.status == "blocked_public_source_methodology":
+                return 2
+            return 0
+
+        if args.command == "audit-courtlistener-dataset-strategy":
+            report, run_dir = run_courtlistener_dataset_strategy_audit(
+                repo_root=args.repo_root,
+                out_dir=args.out_dir,
+                strategy_config_path=args.strategy_config,
+            )
+            failed_checks = [check.check_id for check in report.checks if check.status != "passed"]
+            _print(
+                {
+                    "status": report.status,
+                    "courtlistener_dataset_strategy_report_id": (
+                        report.courtlistener_dataset_strategy_report_id
+                    ),
+                    "strategy_config_ref": report.strategy_config_ref,
+                    "source_id": report.source_id,
+                    "primary_practice_area": report.primary_practice_area,
+                    "endpoint_count": len(report.endpoint_paths),
+                    "starter_matter_family_count": len(report.starter_matter_families),
+                    "failed_checks": failed_checks,
+                    "offline_fixture_mode": report.offline_fixture_mode,
+                    "allow_live_calls": report.allow_live_calls,
+                    "pacer_purchase_allowed": report.pacer_purchase_allowed,
+                    "recap_fetch_purchase_allowed": report.recap_fetch_purchase_allowed,
+                    "rust_runtime_added": report.rust_runtime_added,
+                    "rust_replacement_allowed": report.rust_replacement_allowed,
+                    "training_pipeline_created": report.training_pipeline_created,
+                    "public_records_ingested": report.public_records_ingested,
+                    "external_writes_performed": report.external_writes_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            if report.status == "blocked_courtlistener_dataset_strategy":
                 return 2
             return 0
 

@@ -1,0 +1,308 @@
+{
+  "$defs": {
+    "CourtListenerDatasetStrategyCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "details": {
+          "additionalProperties": true,
+          "title": "Details",
+          "type": "object"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "CourtListenerDatasetStrategyCheck",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "courtlistener_dataset_strategy_report_id": {
+      "title": "Courtlistener Dataset Strategy Report Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "ready_for_human_dataset_strategy_review",
+        "blocked_courtlistener_dataset_strategy"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "strategy_config_ref": {
+      "title": "Strategy Config Ref",
+      "type": "string"
+    },
+    "rust_transition_policy_ref": {
+      "title": "Rust Transition Policy Ref",
+      "type": "string"
+    },
+    "source_id": {
+      "title": "Source Id",
+      "type": "string"
+    },
+    "base_url": {
+      "title": "Base Url",
+      "type": "string"
+    },
+    "token_env_var": {
+      "title": "Token Env Var",
+      "type": "string"
+    },
+    "offline_fixture_mode": {
+      "title": "Offline Fixture Mode",
+      "type": "boolean"
+    },
+    "allow_live_calls": {
+      "title": "Allow Live Calls",
+      "type": "boolean"
+    },
+    "endpoint_paths": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Endpoint Paths",
+      "type": "array"
+    },
+    "primary_practice_area": {
+      "const": "labor_employment",
+      "title": "Primary Practice Area",
+      "type": "string"
+    },
+    "starter_matter_families": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Starter Matter Families",
+      "type": "array"
+    },
+    "positive_document_types": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Positive Document Types",
+      "type": "array"
+    },
+    "excluded_positive_document_types": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Excluded Positive Document Types",
+      "type": "array"
+    },
+    "negative_case_stage_labels": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Negative Case Stage Labels",
+      "type": "array"
+    },
+    "source_profile_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Source Profile Ids",
+      "type": "array"
+    },
+    "rust_shadow_scope": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Rust Shadow Scope",
+      "type": "array"
+    },
+    "rust_forbidden_scope": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Rust Forbidden Scope",
+      "type": "array"
+    },
+    "required_rust_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Rust Gates",
+      "type": "array"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/CourtListenerDatasetStrategyCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "planning_only": {
+      "const": true,
+      "default": true,
+      "title": "Planning Only",
+      "type": "boolean"
+    },
+    "public_records_ingested": {
+      "const": false,
+      "default": false,
+      "title": "Public Records Ingested",
+      "type": "boolean"
+    },
+    "public_payload_committed": {
+      "const": false,
+      "default": false,
+      "title": "Public Payload Committed",
+      "type": "boolean"
+    },
+    "live_calls_performed": {
+      "const": false,
+      "default": false,
+      "title": "Live Calls Performed",
+      "type": "boolean"
+    },
+    "pacer_purchase_allowed": {
+      "title": "Pacer Purchase Allowed",
+      "type": "boolean"
+    },
+    "recap_fetch_purchase_allowed": {
+      "title": "Recap Fetch Purchase Allowed",
+      "type": "boolean"
+    },
+    "uploads_allowed": {
+      "title": "Uploads Allowed",
+      "type": "boolean"
+    },
+    "court_writes_allowed": {
+      "title": "Court Writes Allowed",
+      "type": "boolean"
+    },
+    "sealed_or_restricted_requests_allowed": {
+      "title": "Sealed Or Restricted Requests Allowed",
+      "type": "boolean"
+    },
+    "real_client_data_allowed": {
+      "title": "Real Client Data Allowed",
+      "type": "boolean"
+    },
+    "privileged_data_allowed": {
+      "title": "Privileged Data Allowed",
+      "type": "boolean"
+    },
+    "connector_implemented": {
+      "const": false,
+      "default": false,
+      "title": "Connector Implemented",
+      "type": "boolean"
+    },
+    "rust_runtime_added": {
+      "const": false,
+      "default": false,
+      "title": "Rust Runtime Added",
+      "type": "boolean"
+    },
+    "rust_replacement_allowed": {
+      "const": false,
+      "default": false,
+      "title": "Rust Replacement Allowed",
+      "type": "boolean"
+    },
+    "budget_accuracy_claimed": {
+      "const": false,
+      "default": false,
+      "title": "Budget Accuracy Claimed",
+      "type": "boolean"
+    },
+    "training_pipeline_created": {
+      "const": false,
+      "default": false,
+      "title": "Training Pipeline Created",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "courtlistener_dataset_strategy_report_id",
+    "status",
+    "strategy_config_ref",
+    "rust_transition_policy_ref",
+    "source_id",
+    "base_url",
+    "token_env_var",
+    "offline_fixture_mode",
+    "allow_live_calls",
+    "endpoint_paths",
+    "primary_practice_area",
+    "starter_matter_families",
+    "positive_document_types",
+    "excluded_positive_document_types",
+    "negative_case_stage_labels",
+    "source_profile_ids",
+    "rust_shadow_scope",
+    "rust_forbidden_scope",
+    "required_rust_gates",
+    "checks",
+    "pacer_purchase_allowed",
+    "recap_fetch_purchase_allowed",
+    "uploads_allowed",
+    "court_writes_allowed",
+    "sealed_or_restricted_requests_allowed",
+    "real_client_data_allowed",
+    "privileged_data_allowed",
+    "generated_at"
+  ],
+  "title": "CourtListenerDatasetStrategyReport",
+  "type": "object"
+}
