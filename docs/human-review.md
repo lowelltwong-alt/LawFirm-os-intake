@@ -108,3 +108,11 @@ more work, split follow-up work, or mark ready for review. A mark-ready decision
 only records that a separate manual GitHub action is required; it does not mark
 the PR ready, create issues or PRs, write sibling repos, promote canon, admit
 Lake/SQLite records, apply proposed changes, or apply learning.
+
+`plan-remaining-roadmap` can then turn the readiness audit, closeout report, and
+optional PR decision report into a typed remaining-work packet. Reviewers should
+use it to separate easy human/local steps from critical owner-gated steps and to
+check the attached red-team notes before creating manual owner issues or moving
+the PR state. The report remains planning evidence only and does not create
+issues, mark the PR ready, write sibling repos, promote canon, admit Lake/SQLite
+records, approve a real-data pilot, or apply learning.

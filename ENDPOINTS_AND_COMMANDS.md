@@ -627,6 +627,26 @@ gates. It does not mark a PR ready, create issues, open PRs, write sibling repos
 promote canon, admit Lake records, write SQLite, apply learning, or authorize
 production use.
 
+### Plan remaining roadmap
+
+```bash
+python -m lawfirm_os_intake plan-remaining-roadmap \
+  --readiness-audit-report .lawfirm-os-intake/intake-vertical-readiness-audit/intake_vertical_readiness_audit_report.json \
+  --intake-local-closeout-report .lawfirm-os-intake/intake-local-closeout/intake_local_closeout_report.json \
+  --pr-readiness-decision-report .lawfirm-os-intake/pr-readiness-decision/pr_readiness_decision_report.json \
+  --out-dir .lawfirm-os-intake/remaining-roadmap
+```
+
+This writes `remaining_roadmap_report.json`,
+`remaining_roadmap_items.jsonl`, and `remaining_roadmap_report.md`. The report
+turns the final readiness, closeout, and optional PR decision evidence into a
+typed list of remaining work, including effort, risk, owner, gate, next actions,
+acceptance evidence, red-team notes, and next recommended items. It preserves
+manual human review, owner repo review, governance approval, production pilot
+approval, and cross-repo validation gates. It does not mark a PR ready, create
+issues, open PRs, write sibling repos, promote canon, admit Lake records, write
+SQLite, apply learning, or authorize production use.
+
 ### Draft carrier rejection Orchestrator interface
 
 ```bash

@@ -559,6 +559,35 @@ follow-up work, or is ready for a human to manually mark ready for review.
   `sqlite_write_performed=false`, `external_writes_performed=false`, and
   `silent_learning_performed=false`.
 
+## 11M. Remaining Roadmap Plan
+
+Status: implemented for the current synthetic candidate slice; execution remains
+manual, owner-gated, and outside intake where authority belongs elsewhere.
+
+Turn the final readiness audit, local closeout report, and optional PR readiness
+decision report into a typed remaining-work plan that separates easy local or
+human-review actions from critical owner-gated work.
+
+- `plan-remaining-roadmap` consumes `intake_vertical_readiness_audit_report.json`,
+  `intake_local_closeout_report.json`, and optionally
+  `pr_readiness_decision_report.json`.
+- It writes `remaining_roadmap_report.json`, `remaining_roadmap_items.jsonl`,
+  and `remaining_roadmap_report.md`.
+- Items are grouped by workstream, owner, effort, risk, gate, status, source
+  evidence refs, required next actions, acceptance evidence, and red-team notes.
+- The next recommended items are human PR state decision, optional manual owner
+  issue creation, and owner triage / PR splitting.
+- Critical items remain owner- or governance-gated: Semantic Substrate contract
+  review, Orchestrator runtime adoption, Exception Lake admission, and governed
+  real-data pilot approval.
+- Failed readiness or closeout evidence blocks the roadmap report instead of
+  treating stale proof as executable truth.
+- The report records `github_issue_created=false`, `github_pr_created=false`,
+  `github_write_performed=false`, `sibling_repo_write_performed=false`,
+  `promotion_authorized=false`, `proposed_changes_applied=false`,
+  `lake_write_performed=false`, `sqlite_write_performed=false`,
+  `external_writes_performed=false`, and `silent_learning_performed=false`.
+
 ## 12. Reviewed Learning Gate
 
 Status: implemented for the current synthetic candidate slice; owning-repo

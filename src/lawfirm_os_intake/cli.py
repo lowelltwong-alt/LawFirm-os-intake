@@ -73,6 +73,7 @@ from .public_synthetic_fixture_conversion_review import (
 from .public_synthetic_fixture_conversion_review_outcomes import (
     run_public_synthetic_fixture_conversion_review_outcome_record,
 )
+from .remaining_roadmap import run_remaining_roadmap_plan
 from .reviewed_learning_gate import run_reviewed_learning_gate
 from .util import load_json, write_json
 from .workflow import run_budget, run_preflight
@@ -691,6 +692,25 @@ def _parser() -> argparse.ArgumentParser:
         help="Path to human PR readiness decision JSON.",
     )
     pr_readiness_decision.add_argument("--out-dir", required=True)
+    remaining_roadmap = sub.add_parser(
+        "plan-remaining-roadmap",
+        help="Build a local remaining-phase roadmap from readiness and closeout evidence.",
+    )
+    remaining_roadmap.add_argument(
+        "--readiness-audit-report",
+        required=True,
+        help="Path to intake_vertical_readiness_audit_report.json.",
+    )
+    remaining_roadmap.add_argument(
+        "--intake-local-closeout-report",
+        required=True,
+        help="Path to intake_local_closeout_report.json.",
+    )
+    remaining_roadmap.add_argument(
+        "--pr-readiness-decision-report",
+        help="Optional path to pr_readiness_decision_report.json.",
+    )
+    remaining_roadmap.add_argument("--out-dir", required=True)
     owner_adoption = sub.add_parser(
         "build-cross-repo-owner-adoption",
         help="Build owner-specific adoption packets from the promotion package and PR review evidence.",
@@ -2313,6 +2333,47 @@ def main(argv: list[str] | None = None) -> int:
             if report.status == "blocked_by_pr_readiness_decision_evidence":
                 return 2
             return 0
+
+        if args.command == "plan-remaining-roadmap":
+            report, run_dir = run_remaining_roadmap_plan(
+                readiness_audit_report_path=args.readiness_audit_report,
+                intake_local_closeout_report_path=args.intake_local_closeout_report,
+                pr_readiness_decision_report_path=args.pr_readiness_decision_report,
+                out_dir=args.out_dir,
+            )
+            failed_checks = [check.check_id for check in report.checks if check.status == "failed"]
+            _print(
+                {
+                    "status": report.status,
+                    "remaining_roadmap_report_id": report.remaining_roadmap_report_id,
+                    "source_readiness_status": report.source_readiness_status,
+                    "source_closeout_status": report.source_closeout_status,
+                    "source_pr_readiness_decision_status": (
+                        report.source_pr_readiness_decision_status
+                    ),
+                    "source_pr_readiness_decision": report.source_pr_readiness_decision,
+                    "item_count": report.item_count,
+                    "easy_item_count": report.easy_item_count,
+                    "medium_item_count": report.medium_item_count,
+                    "large_item_count": report.large_item_count,
+                    "critical_item_count": report.critical_item_count,
+                    "owner_gated_item_count": report.owner_gated_item_count,
+                    "local_or_human_item_count": report.local_or_human_item_count,
+                    "next_recommended_item_ids": report.next_recommended_item_ids,
+                    "failed_checks": failed_checks,
+                    "github_issue_created": report.github_issue_created,
+                    "github_pr_created": report.github_pr_created,
+                    "github_write_performed": report.github_write_performed,
+                    "sibling_repo_write_performed": report.sibling_repo_write_performed,
+                    "promotion_authorized": report.promotion_authorized,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0 if report.status == "remaining_roadmap_ready_manual_execution_required" else 2
 
         if args.command == "build-cross-repo-owner-adoption":
             report, run_dir = run_cross_repo_owner_adoption(

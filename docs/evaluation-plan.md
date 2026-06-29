@@ -303,6 +303,15 @@ and must not mark a PR ready, call GitHub write APIs, create issues, open PRs,
 write sibling repos, promote canon, admit Lake/SQLite records, apply proposed
 changes, or apply learning.
 
+`plan-remaining-roadmap` consumes the final readiness audit, local closeout
+report, and optional PR readiness decision report. It writes a typed remaining
+roadmap report and JSONL item list that classify remaining work by owner,
+workstream, effort, risk, gate, acceptance evidence, and red-team notes. Eval
+coverage must prove the plan is blocked by failed source evidence, preserves
+next recommended manual/owner steps, distinguishes easy local work from
+critical owner-gated work, and performs no GitHub, sibling repo, Lake, SQLite,
+promotion, real-data, or learning side effects.
+
 ### Counterfactual evals
 
 Same source, different practice context. Evidence must remain unchanged.

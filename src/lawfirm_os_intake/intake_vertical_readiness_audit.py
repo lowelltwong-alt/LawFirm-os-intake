@@ -645,6 +645,37 @@ REQUIRED_SLICES: tuple[SliceDefinition, ...] = (
     ),
     SliceDefinition(
         slice_id=25,
+        title="Remaining roadmap plan",
+        requirement_summary=(
+            "The ready PR/local-closeout evidence can be converted into a typed "
+            "remaining-work roadmap that separates easy local human actions from "
+            "critical owner-gated work without creating issues, changing GitHub state, "
+            "writing sibling repos, admitting Lake records, or applying learning."
+        ),
+        proof_artifact_refs=(
+            "src/lawfirm_os_intake/remaining_roadmap.py",
+            "schemas/remaining-roadmap-report.schema.json",
+            "schemas/remaining-roadmap-item.schema.json",
+            "tests/test_remaining_roadmap.py",
+            "docs/decisions/TRACE-2026-06-29-remaining-roadmap-plan.md",
+        ),
+        command_refs=("plan-remaining-roadmap",),
+        target_owner_repos=(
+            "LawFirm-os-intake",
+            "LawFirm-os-semantic-substrate",
+            "LawFirm-os-orchestrator",
+            "LawFirm-os-exceptions-lake-runtime",
+            "LawFirm-os-skills-registry",
+            "LawFirm-os-legal-knowledge-runtime",
+        ),
+        remaining_external_actions=(
+            "Humans must choose the PR state and owner issue creation path manually.",
+            "Owner repos must triage and accept or reject candidate proposals.",
+            "Critical cross-repo work still requires owner implementation PRs and validation.",
+        ),
+    ),
+    SliceDefinition(
+        slice_id=26,
         title="Final intake vertical readiness audit",
         requirement_summary=(
             "A deterministic final audit checks local surfaces plus the generated learning "

@@ -6136,6 +6136,184 @@ class PRReadinessDecisionReport(StrictModel):
         return self
 
 
+RemainingRoadmapOwner = Literal[
+    "Human reviewer",
+    "LawFirm-os-intake",
+    "LawFirm-os-semantic-substrate",
+    "LawFirm-os-orchestrator",
+    "LawFirm-os-exceptions-lake-runtime",
+    "LawFirm-os-skills-registry",
+    "LawFirm-os-legal-knowledge-runtime",
+    "Cross-repo owners",
+]
+
+RemainingRoadmapWorkstream = Literal[
+    "human_pr_review",
+    "manual_owner_issue_creation",
+    "owner_triage",
+    "semantic_contract_promotion",
+    "runtime_orchestration_adoption",
+    "exception_lake_admission",
+    "fixture_and_eval_expansion",
+    "public_source_methodology",
+    "skill_registry_review",
+    "real_data_pilot_governance",
+]
+
+RemainingRoadmapEffort = Literal["easy", "medium", "large"]
+RemainingRoadmapRisk = Literal["low", "medium", "high", "critical"]
+RemainingRoadmapGate = Literal[
+    "local_candidate",
+    "manual_human_review",
+    "owner_repo_review",
+    "cross_repo_validation",
+    "governance_approval",
+    "production_pilot_approval",
+]
+RemainingRoadmapItemStatus = Literal[
+    "ready_to_start",
+    "blocked_until_human_decision",
+    "blocked_until_owner_action",
+    "deferred_governance_required",
+]
+
+
+class RemainingRoadmapCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed", "warning"]
+    message: str
+    artifact_refs: list[str] = Field(default_factory=list)
+    blocking_refs: list[str] = Field(default_factory=list)
+
+
+class RemainingRoadmapItem(StrictModel):
+    item_id: str
+    title: str
+    workstream: RemainingRoadmapWorkstream
+    owner: RemainingRoadmapOwner
+    effort: RemainingRoadmapEffort
+    risk: RemainingRoadmapRisk
+    gate: RemainingRoadmapGate
+    status: RemainingRoadmapItemStatus
+    why_now: str
+    source_evidence_refs: list[str]
+    required_next_actions: list[str]
+    acceptance_evidence_required: list[str]
+    red_team_notes: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    no_external_action_performed: Literal[True] = True
+    github_issue_created: Literal[False] = False
+    github_pr_created: Literal[False] = False
+    github_write_performed: Literal[False] = False
+    sibling_repo_write_performed: Literal[False] = False
+    promotion_authorized: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def remaining_roadmap_item_is_actionable(self) -> "RemainingRoadmapItem":
+        if not self.source_evidence_refs:
+            raise ValueError("remaining roadmap item requires source evidence refs")
+        if not self.required_next_actions:
+            raise ValueError("remaining roadmap item requires next actions")
+        if not self.acceptance_evidence_required:
+            raise ValueError("remaining roadmap item requires acceptance evidence")
+        if not self.red_team_notes:
+            raise ValueError("remaining roadmap item requires red-team notes")
+        if self.risk == "critical" and self.gate in {"local_candidate", "manual_human_review"}:
+            raise ValueError("critical remaining roadmap items require owner/governance gates")
+        return self
+
+
+class RemainingRoadmapReport(StrictModel):
+    schema_version: str = "0.1"
+    remaining_roadmap_report_id: str
+    status: Literal[
+        "remaining_roadmap_ready_manual_execution_required",
+        "blocked_by_source_evidence",
+    ]
+    source_readiness_audit_report_id: str
+    source_readiness_audit_report_ref: str
+    source_readiness_status: str
+    source_closeout_report_id: str
+    source_closeout_report_ref: str
+    source_closeout_status: str
+    source_pr_readiness_decision_report_id: str | None = None
+    source_pr_readiness_decision_report_ref: str | None = None
+    source_pr_readiness_decision_status: str | None = None
+    source_pr_readiness_decision: PRReadinessDecision | None = None
+    item_count: int = Field(ge=0)
+    easy_item_count: int = Field(ge=0)
+    medium_item_count: int = Field(ge=0)
+    large_item_count: int = Field(ge=0)
+    critical_item_count: int = Field(ge=0)
+    owner_gated_item_count: int = Field(ge=0)
+    local_or_human_item_count: int = Field(ge=0)
+    next_recommended_item_ids: list[str]
+    items: list[RemainingRoadmapItem]
+    checks: list[RemainingRoadmapCheck]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    local_completion_scope: Literal["remaining_phase_plan_manual_execution_required"] = (
+        "remaining_phase_plan_manual_execution_required"
+    )
+    github_issue_created: Literal[False] = False
+    github_pr_created: Literal[False] = False
+    github_write_performed: Literal[False] = False
+    sibling_repo_write_performed: Literal[False] = False
+    promotion_authorized: Literal[False] = False
+    proposed_changes_applied: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def remaining_roadmap_counts_and_status_match(self) -> "RemainingRoadmapReport":
+        if self.item_count != len(self.items):
+            raise ValueError("remaining roadmap item count does not match")
+        if self.easy_item_count != sum(1 for item in self.items if item.effort == "easy"):
+            raise ValueError("remaining roadmap easy count does not match")
+        if self.medium_item_count != sum(1 for item in self.items if item.effort == "medium"):
+            raise ValueError("remaining roadmap medium count does not match")
+        if self.large_item_count != sum(1 for item in self.items if item.effort == "large"):
+            raise ValueError("remaining roadmap large count does not match")
+        if self.critical_item_count != sum(1 for item in self.items if item.risk == "critical"):
+            raise ValueError("remaining roadmap critical count does not match")
+        owner_gates = {"owner_repo_review", "cross_repo_validation", "governance_approval"}
+        owner_gates.add("production_pilot_approval")
+        if self.owner_gated_item_count != sum(1 for item in self.items if item.gate in owner_gates):
+            raise ValueError("remaining roadmap owner-gated count does not match")
+        if self.local_or_human_item_count != sum(
+            1 for item in self.items if item.gate in {"local_candidate", "manual_human_review"}
+        ):
+            raise ValueError("remaining roadmap local/human count does not match")
+        failed = [check for check in self.checks if check.status == "failed"]
+        if self.status == "remaining_roadmap_ready_manual_execution_required" and failed:
+            raise ValueError("ready remaining roadmap cannot have failed checks")
+        if self.status == "blocked_by_source_evidence" and not failed:
+            raise ValueError("blocked remaining roadmap requires failed checks")
+        known_item_ids = {item.item_id for item in self.items}
+        if not set(self.next_recommended_item_ids).issubset(known_item_ids):
+            raise ValueError("remaining roadmap recommendation references unknown items")
+        required = {
+            "human_pr_state_decision",
+            "manual_owner_issue_creation_if_desired",
+            "owner_repo_triage",
+            "owner_repo_implementation_prs_if_accepted",
+            "cross_repo_validation_after_owner_changes",
+            "no_intake_external_write_or_promotion",
+        }
+        if not required.issubset(set(self.required_next_gates)):
+            raise ValueError("remaining roadmap report is missing required gates")
+        return self
+
+
 class CarrierRejectionOrchestratorConnectorChannel(StrictModel):
     channel_id: Literal[
         "carrier_portal_notice",
