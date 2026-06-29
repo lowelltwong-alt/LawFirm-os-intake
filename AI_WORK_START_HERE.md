@@ -94,6 +94,8 @@ bash scripts/smoke_demo.sh
 A local validation runtime policy lives at
 `config/validation-runtime-policy.yaml`. Use its configured minimum timeout or
 higher for pytest, schema export, repo validation, lint, and smoke commands;
-full and focused pytest must not run with a 300 second ceiling.
+full and focused pytest must not run with a 300 second ceiling. Direct pytest
+invocation is blocked; use `python scripts/run_full_pytest.py` for full or
+focused test runs.
 
 A successful run ends in `blocked_pending_conflicts_and_engagement`. That is expected and correct.

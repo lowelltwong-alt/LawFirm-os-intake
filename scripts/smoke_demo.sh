@@ -3,6 +3,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 rm -rf .lawfirm-os-intake/smoke
+export PYTHONDONTWRITEBYTECODE=1
 PYTHON_BIN="${PYTHON_BIN:-}"
 if [[ -z "$PYTHON_BIN" ]]; then
   if command -v python >/dev/null 2>&1; then
@@ -27,7 +28,7 @@ if [[ "$PYTHON_BIN" == *.exe ]]; then
 else
   export PYTHONPATH="$ROOT/src${PYTHONPATH:+:$PYTHONPATH}"
 fi
-"$PYTHON_BIN" -m lawfirm_os_intake demo \
+"$PYTHON_BIN" -B -m lawfirm_os_intake demo \
   --input examples/synthetic/inbound/north-star-messy-intake.json \
   --practice-profile context/synthetic-profiles/insurance-defense.yaml \
   --confirmation-template examples/synthetic/confirmations/north-star-messy-intake.confirmation-template.json \
@@ -176,7 +177,7 @@ grep -q "budget_submission_guard_report_complete" ".lawfirm-os-intake/smoke/budg
 grep -q "budget_submission_guard_report" ".lawfirm-os-intake/smoke/budget/review_package_manifest.json"
 grep -q "review_package_completeness_report.json" ".lawfirm-os-intake/smoke/budget/matter_opening_review_package.md"
 grep -q "blocked_pending_conflicts_and_engagement" ".lawfirm-os-intake/smoke/budget/safety_gate_report.json"
-"$PYTHON_BIN" scripts/audit_starter_release.py --demo-dir .lawfirm-os-intake/smoke
+"$PYTHON_BIN" -B scripts/audit_starter_release.py --demo-dir .lawfirm-os-intake/smoke
 test -s ".lawfirm-os-intake/smoke/budget/starter_release_audit_report.json"
 grep -q '"status": "passed"' ".lawfirm-os-intake/smoke/budget/starter_release_audit_report.json"
 grep -q "public_data_catalog_is_metadata_only" ".lawfirm-os-intake/smoke/budget/starter_release_audit_report.json"
@@ -187,7 +188,7 @@ grep -q "human_review_package_tells_complete_north_star_story" ".lawfirm-os-inta
 grep -q "budget_boundary_and_math_hold" ".lawfirm-os-intake/smoke/budget/starter_release_audit_report.json"
 grep -q "deadline_and_budget_guard_reports_hold" ".lawfirm-os-intake/smoke/budget/starter_release_audit_report.json"
 grep -q "exception_lake_candidates_are_dry_run_and_expected" ".lawfirm-os-intake/smoke/budget/starter_release_audit_report.json"
-"$PYTHON_BIN" scripts/audit_blocked_budget_attempt.py \
+"$PYTHON_BIN" -B scripts/audit_blocked_budget_attempt.py \
   --preflight-packet "$preflight_dir/intake_preflight_packet.json" \
   --confirmation-template examples/synthetic/confirmations/north-star-messy-intake.confirmation-template.json \
   --practice-profile context/synthetic-profiles/insurance-defense.yaml \
@@ -204,7 +205,7 @@ grep -q '"stage": "budget_precondition_blocked"' ".lawfirm-os-intake/smoke/block
 grep -q '"terminal_status": "blocked"' ".lawfirm-os-intake/smoke/blocked-budget/budget/run_ledger_integrity_report.json"
 test ! -e ".lawfirm-os-intake/smoke/blocked-budget/budget/legal_budget_proposal.json"
 test ! -e ".lawfirm-os-intake/smoke/blocked-budget/budget/conflict_search_seed_packet.json"
-"$PYTHON_BIN" scripts/audit_context_counterfactual.py \
+"$PYTHON_BIN" -B scripts/audit_context_counterfactual.py \
   --input examples/synthetic/inbound/help-email.json \
   --baseline-profile context/synthetic-profiles/insurance-defense.yaml \
   --comparison-profile context/synthetic-profiles/plaintiff-personal-injury.yaml \

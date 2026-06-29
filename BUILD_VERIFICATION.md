@@ -12,10 +12,10 @@ python scripts/validate_repo.py
 python scripts/run_full_pytest.py
 # 373 passed in 294.99s
 
-python -m ruff check src tests scripts
+python -m ruff check --no-cache src tests scripts
 # All checks passed
 
-python -m ruff format --check src tests scripts
+python -m ruff format --check --no-cache src tests scripts
 # 193 files already formatted
 
 bash -lc 'export PATH="/c/Users/lowel/AppData/Local/Programs/Python/Python312:$PATH"; bash scripts/smoke_demo.sh'
@@ -27,7 +27,8 @@ The monetary result is a synthetic test calculation, not a fee quote or approved
 Validation runtime ceilings are candidate-governed in
 `config/validation-runtime-policy.yaml`. The full pytest path is intentionally
 run through `scripts/run_full_pytest.py` so local validation does not inherit a
-300 second ceiling as the suite grows.
+300 second ceiling as the suite grows. Direct pytest invocation is blocked by
+the test harness; use the wrapper for full and focused test runs.
 
 Repository validation now checks the AI/front-door orientation files for broken local file references and verifies that the public-data catalog remains planning-only metadata with no direct runtime ingestion. The builder reading order in `README.md`, `AI_WORK_START_HERE.md`, `AI_TABLE_OF_CONTENTS.md`, and `CLAUDE.md` must point only to existing local files or directories.
 

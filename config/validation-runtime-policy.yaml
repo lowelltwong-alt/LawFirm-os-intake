@@ -29,12 +29,12 @@ commands:
     minimum_timeout_seconds: 180
     reason: Repository validation walks JSON/YAML and generated-cache guards.
   ruff_check:
-    command: python -m ruff check src tests scripts
+    command: python -m ruff check --no-cache src tests scripts
     minimum_timeout_seconds: 180
     reason: Linting walks the source, tests, and scripts tree.
   ruff_format_check:
-    command: python -m ruff format --check src tests scripts
+    command: python -m ruff format --check --no-cache src tests scripts
     minimum_timeout_seconds: 180
     reason: Format check walks the source, tests, and scripts tree.
 
-agent_instruction: Use the configured minimum timeout or higher for these commands; never run full/focused pytest with a 300 second ceiling.
+agent_instruction: Use the configured minimum timeout or higher for these commands; full and focused pytest must run through scripts/run_full_pytest.py and direct pytest invocation is blocked.
