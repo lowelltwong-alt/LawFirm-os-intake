@@ -252,6 +252,7 @@ slices, generated learning artifact chain, generated budget-event Lake bundle,
 budget lifecycle audit surface, budget human-review packet surface,
 budget human-review outcome and outcome-owner-adoption surfaces, budget
 actual-variance owner-adoption packet surface, budget lifecycle owner-adoption packet surface,
+labor/employment budget fact-gap audit surface,
 calibration-readiness chain, fixture-update review record, and fixture-update PR
 package, and writes
 `intake_vertical_readiness_audit_report.json`. Passing status means ready for
