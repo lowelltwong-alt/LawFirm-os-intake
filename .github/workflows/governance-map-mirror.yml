@@ -1,0 +1,21 @@
+name: Governance Map Mirror
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+jobs:
+  validate_governance_map_mirror:
+    name: Validate governance map mirror
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Validate mirror and watched governance paths
+        run: python scripts/validate_governance_dependency_map_mirror.py --base-ref "origin/${{ github.base_ref }}"
+      - name: Run mirror test
+        run: python -m unittest discover -s tests -p 'test_governance_dependency_map_mirror.py'

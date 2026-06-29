@@ -98,3 +98,9 @@ full repo check sequence; it applies the configured policy ceiling to every
 heavy validation step.
 
 A successful run ends in `blocked_pending_conflicts_and_engagement`. That is expected and correct.
+
+## Governance Dependency-Map Mirror
+
+If this repo changes governance-facing files, check the upstream `../LawFirm-os-semantic-substrate/registry/governance-dependency-map.json` and update `.ai/control/governance-dependency-map-mirror.json`, local discovery surfaces, and `scripts/validate_governance_dependency_map_mirror.py` when affected.
+
+The governance dependency-map mirror is downstream enforcement only. It cannot override Semantic Substrate governance, define canonical schema/route/event/taxonomy authority, ingest real client or matter data, make conflict conclusions, approve or submit budgets, open matters, authorize engagement, or authorize production automation.

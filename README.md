@@ -366,6 +366,12 @@ Preparation now means keeping that boundary narrow, schema-first, measurable, an
 - no external write;
 - no dynamic agent creation.
 
+## Governance Dependency-Map Mirror
+
+This repo carries `.ai/control/governance-dependency-map-mirror.json` as a local mirror of the upstream governance dependency map in `LawFirm-os-semantic-substrate/registry/governance-dependency-map.json`.
+
+If governance-facing intake files change, check the upstream governance dependency map and update the local mirror, AI work router, AI table of contents, governance boundary, README, validator, and tests when affected. The mirror is downstream enforcement only; it cannot override Semantic Substrate governance, define canonical schema/route/event/taxonomy authority, ingest real client or matter data, make conflict conclusions, approve or submit budgets, open matters, authorize engagement, or authorize production automation.
+
 ## Start here
 
 A builder or AI coding agent must read in this order:
