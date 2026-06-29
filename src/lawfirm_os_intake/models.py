@@ -6739,6 +6739,185 @@ class BudgetHumanReviewOutcomeReport(StrictModel):
         return self
 
 
+BudgetHumanReviewOutcomeOwnerAdoptionFocus = Literal[
+    "semantic_outcome_label_review",
+    "runtime_action_followup_workflow",
+    "append_only_outcome_lake_admission",
+]
+
+
+class BudgetHumanReviewOutcomeOwnerAdoptionCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed", "warning"]
+    message: str
+    artifact_refs: list[str] = Field(default_factory=list)
+    blocking_refs: list[str] = Field(default_factory=list)
+
+
+class BudgetHumanReviewOutcomeOwnerAdoptionPacket(StrictModel):
+    schema_version: str = "0.1"
+    owner_adoption_packet_id: str
+    target_repo: BudgetHumanReviewTargetOwnerRepo
+    adoption_focus: BudgetHumanReviewOutcomeOwnerAdoptionFocus
+    status: Literal["ready_for_owner_review", "blocked_by_outcome_evidence"]
+    source_budget_human_review_outcome_report_id: str
+    source_budget_human_review_outcome_report_ref: str
+    source_budget_human_review_outcome_record_id: str
+    source_budget_human_review_outcome_record_ref: str
+    source_budget_human_review_packet_id: str
+    source_budget_human_review_outcome_status: BudgetHumanReviewOutcomeStatus
+    overall_outcome: BudgetHumanReviewOutcome
+    decision_count: int = Field(ge=0)
+    appeal_decision_count: int = Field(ge=0)
+    write_off_decision_count: int = Field(ge=0)
+    correction_decision_count: int = Field(ge=0)
+    route_to_owner_decision_count: int = Field(ge=0)
+    no_learning_change_decision_count: int = Field(ge=0)
+    unresolved_followup_count: int = Field(ge=0)
+    candidate_lake_event_labels: list[str] = Field(default_factory=list)
+    required_followups: list[str] = Field(default_factory=list)
+    source_artifact_refs: list[str] = Field(default_factory=list)
+    candidate_contract_refs: list[str] = Field(default_factory=list)
+    required_owner_actions: list[str]
+    acceptance_checks: list[str]
+    red_team_notes: list[str]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    no_connector_implemented: Literal[True] = True
+    no_lake_admission_performed: Literal[True] = True
+    no_sibling_repo_writes: Literal[True] = True
+    no_canonical_mutation: Literal[True] = True
+    github_issue_created: Literal[False] = False
+    github_pr_created: Literal[False] = False
+    github_write_performed: Literal[False] = False
+    sibling_repo_write_performed: Literal[False] = False
+    promotion_authorized: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    billing_connector_write_performed: Literal[False] = False
+    carrier_portal_write_performed: Literal[False] = False
+    email_send_performed: Literal[False] = False
+    appeal_submission_performed: Literal[False] = False
+    budget_submission_performed: Literal[False] = False
+    budget_mutation_performed: Literal[False] = False
+    profile_mutation_performed: Literal[False] = False
+    template_mutation_performed: Literal[False] = False
+    carrier_guideline_mutation_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def outcome_owner_packet_is_complete(
+        self,
+    ) -> "BudgetHumanReviewOutcomeOwnerAdoptionPacket":
+        if not self.required_owner_actions:
+            raise ValueError("budget outcome owner packet requires owner actions")
+        if not self.acceptance_checks:
+            raise ValueError("budget outcome owner packet requires acceptance checks")
+        if not self.red_team_notes:
+            raise ValueError("budget outcome owner packet requires red-team notes")
+        required = {
+            "human_budget_outcome_owner_review",
+            "manual_owner_issue_creation_if_desired",
+            "owning_repo_triage",
+            "owner_repo_implementation_pr_if_accepted",
+            "cross_repo_contract_validation_after_owner_changes",
+            "no_intake_external_action_or_lake_admission",
+        }
+        if not required.issubset(set(self.required_next_gates)):
+            raise ValueError("budget outcome owner packet is missing required gates")
+        return self
+
+
+class BudgetHumanReviewOutcomeOwnerAdoptionReport(StrictModel):
+    schema_version: str = "0.1"
+    owner_adoption_report_id: str
+    status: Literal[
+        "budget_outcome_owner_adoption_packets_ready",
+        "blocked_by_budget_outcome_evidence",
+    ]
+    source_budget_human_review_outcome_report_id: str
+    source_budget_human_review_outcome_report_ref: str
+    source_budget_human_review_outcome_record_id: str
+    source_budget_human_review_outcome_record_ref: str
+    source_budget_human_review_packet_id: str
+    source_budget_human_review_outcome_status: BudgetHumanReviewOutcomeStatus
+    target_repo_count: int = Field(ge=0)
+    packet_count: int = Field(ge=0)
+    ready_packet_count: int = Field(ge=0)
+    blocked_packet_count: int = Field(ge=0)
+    target_repos: list[BudgetHumanReviewTargetOwnerRepo]
+    packets: list[BudgetHumanReviewOutcomeOwnerAdoptionPacket]
+    packet_output_refs: list[str] = Field(default_factory=list)
+    checks: list[BudgetHumanReviewOutcomeOwnerAdoptionCheck]
+    candidate_lake_event_labels: list[str] = Field(default_factory=list)
+    required_followups: list[str] = Field(default_factory=list)
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    no_connector_implemented: Literal[True] = True
+    no_lake_admission_performed: Literal[True] = True
+    no_sibling_repo_writes: Literal[True] = True
+    no_canonical_mutation: Literal[True] = True
+    github_issue_created: Literal[False] = False
+    github_pr_created: Literal[False] = False
+    github_write_performed: Literal[False] = False
+    sibling_repo_write_performed: Literal[False] = False
+    promotion_authorized: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    billing_connector_write_performed: Literal[False] = False
+    carrier_portal_write_performed: Literal[False] = False
+    email_send_performed: Literal[False] = False
+    appeal_submission_performed: Literal[False] = False
+    budget_submission_performed: Literal[False] = False
+    budget_mutation_performed: Literal[False] = False
+    profile_mutation_performed: Literal[False] = False
+    template_mutation_performed: Literal[False] = False
+    carrier_guideline_mutation_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def outcome_owner_report_counts_match(
+        self,
+    ) -> "BudgetHumanReviewOutcomeOwnerAdoptionReport":
+        failed = [check for check in self.checks if check.status == "failed"]
+        if self.status == "budget_outcome_owner_adoption_packets_ready" and failed:
+            raise ValueError("ready budget outcome owner report cannot have failed checks")
+        if self.status == "blocked_by_budget_outcome_evidence" and not failed:
+            raise ValueError("blocked budget outcome owner report requires failed checks")
+        if self.packet_count != len(self.packets):
+            raise ValueError("budget outcome owner report packet_count mismatch")
+        if self.packet_count != len(self.packet_output_refs):
+            raise ValueError("budget outcome owner report packet refs mismatch")
+        if self.target_repo_count != len(self.target_repos):
+            raise ValueError("budget outcome owner report target_repo_count mismatch")
+        if self.ready_packet_count != sum(
+            1 for packet in self.packets if packet.status == "ready_for_owner_review"
+        ):
+            raise ValueError("budget outcome owner ready count mismatch")
+        if self.blocked_packet_count != sum(
+            1 for packet in self.packets if packet.status == "blocked_by_outcome_evidence"
+        ):
+            raise ValueError("budget outcome owner blocked count mismatch")
+        required = {
+            "human_budget_outcome_owner_review",
+            "manual_owner_issue_creation_if_desired",
+            "owning_repo_triage",
+            "owner_repo_implementation_pr_if_accepted",
+            "cross_repo_contract_validation_after_owner_changes",
+            "no_intake_external_action_or_lake_admission",
+        }
+        if not required.issubset(set(self.required_next_gates)):
+            raise ValueError("budget outcome owner report is missing required gates")
+        return self
+
+
 BudgetLifecycleOwnerTargetRepo = Literal[
     "LawFirm-os-semantic-substrate",
     "LawFirm-os-orchestrator",

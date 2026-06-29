@@ -74,6 +74,13 @@ Exception Lake owner review, not authority to submit budgets or appeals, admit
 Lake/SQLite records, mutate budgets/profiles/templates/guidelines, or apply
 learning.
 
+`build-budget-human-review-outcome-owner-adoption` packages that recorded
+outcome for Semantic Substrate, Orchestrator, and Exception Lake owner review.
+This is where correction, appeal, write-off, owner-route, and no-learning
+decisions become manual owner actions. The packets still do not create issues,
+write sibling repos, submit budgets or appeals, admit Lake/SQLite records,
+mutate budgets/profiles/templates/guidelines, or apply learning.
+
 The preflight path writes `evidence_completeness_report.json` so reviewers and future Orchestrator handoff can see that candidate evidence refs, unknown options, deadline review-only posture, and prohibited next steps were checked before the package was accepted. The report is local proof only, not platform canon.
 
 ## PR close-out review

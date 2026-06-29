@@ -338,7 +338,34 @@ appeal follow-up, Lake admission, or learning-loop pressure is trusted.
   admits no Lake/SQLite record, mutates no budget/profile/template/guideline,
   writes no sibling repo, promotes no canon, and applies no learning.
 
-## 11E. Budget Lifecycle Owner Adoption Packets
+## 11E. Budget Human Review Outcome Owner Adoption Packets
+
+Status: implemented for the current synthetic candidate slice; actual owner repo
+adoption, external action, Lake admission, and learning remain future owner
+work.
+
+Turn recorded human budget review outcomes into owner-specific review packets
+before any runtime follow-up, Lake admission, or semantic promotion is trusted.
+
+- `build-budget-human-review-outcome-owner-adoption` consumes
+  `budget_human_review_outcome_report.json` and
+  `budget_human_review_outcome_record.json`.
+- It writes `budget_human_review_outcome_owner_adoption_report.json`,
+  `budget_human_review_outcome_owner_adoption_report.md`,
+  `budget_human_review_outcome_owner_adoption_packets.jsonl`, and per-owner
+  JSON/Markdown packets under `budget_human_review_outcome_owner_packets/`.
+- Semantic Substrate receives candidate outcome label, lifecycle-state, and
+  no-silent-learning review actions.
+- Orchestrator receives runtime follow-up workflow, human-pause, evidence
+  packet, and external-action gate review actions.
+- Exception Lake receives append-only outcome admission, idempotency, hash,
+  correction/supersession, and SQLite-owner review actions.
+- Blocked outcome reports produce blocked owner packets.
+- The packets do not create issues, open PRs, write sibling repos, promote
+  canon, implement connectors, admit Lake records, write SQLite, submit budgets
+  or appeals, mutate budgets/profiles/templates/guidelines, or apply learning.
+
+## 11F. Budget Lifecycle Owner Adoption Packets
 
 Status: implemented for the current synthetic candidate slice; actual owner repo
 adoption remains future owner work.
@@ -363,7 +390,7 @@ repos that must own production behavior.
   canon, implement connectors, admit Lake records, write SQLite, submit budgets
   or appeals, mutate budgets/profiles/templates/guidelines, or apply learning.
 
-## 11F. PR Review Checklist
+## 11G. PR Review Checklist
 
 Status: implemented for the current synthetic candidate slice; the actual PR
 state change remains a human GitHub action.
@@ -388,7 +415,7 @@ forward.
   `lake_write_performed=false`, `sqlite_write_performed=false`,
   `external_writes_performed=false`, and `silent_learning_performed=false`.
 
-## 11G. Cross-Repo Owner Adoption Packets
+## 11H. Cross-Repo Owner Adoption Packets
 
 Status: implemented for the current synthetic candidate slice; actual owner repo
 issues, PRs, canon promotion, runtime adoption, and Lake admission remain future
@@ -417,7 +444,7 @@ Orchestrator, Exception Lake, Skills Registry, and Legal Knowledge Runtime.
   `lake_write_performed=false`, `sqlite_write_performed=false`,
   `external_writes_performed=false`, and `silent_learning_performed=false`.
 
-## 11H. Cross-Repo Owner Issue Drafts
+## 11I. Cross-Repo Owner Issue Drafts
 
 Status: implemented for the current synthetic candidate slice; actual issue
 creation, owner triage, implementation PRs, and sibling-repo writes remain
@@ -443,7 +470,7 @@ repos without creating issues or writing to GitHub.
   `sqlite_write_performed=false`, `external_writes_performed=false`, and
   `silent_learning_performed=false`.
 
-## 11I. Intake Local Closeout Audit
+## 11J. Intake Local Closeout Audit
 
 Status: implemented for the current synthetic candidate slice; PR state changes,
 owner issue creation, owner implementation, canonical promotion, runtime
@@ -474,7 +501,7 @@ owner issue drafts into one local closeout report.
   `sqlite_write_performed=false`, `external_writes_performed=false`, and
   `silent_learning_performed=false`.
 
-## 11J. PR Readiness Decision Record
+## 11K. PR Readiness Decision Record
 
 Status: implemented for the current synthetic candidate slice; any GitHub PR
 state change remains a separate manual human action.

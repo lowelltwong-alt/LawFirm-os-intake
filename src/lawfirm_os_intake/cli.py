@@ -22,6 +22,9 @@ from .budget_fixture_bindings import run_budget_fixture_binding_candidates
 from .budget_fixture_update_pr_package import run_budget_fixture_update_pr_package
 from .budget_fixture_update_review import run_budget_fixture_update_review_record
 from .budget_form import build_budget_form_template_audit_report, render_budget_form
+from .budget_human_review_outcome_owner_adoption import (
+    run_budget_human_review_outcome_owner_adoption,
+)
 from .budget_human_review_packet import run_budget_human_review_packet
 from .budget_human_review_outcomes import run_budget_human_review_outcome_record
 from .budget_lake_admission_bundle import run_budget_event_lake_admission_bundle
@@ -564,6 +567,22 @@ def _parser() -> argparse.ArgumentParser:
         "--outcome",
         required=True,
         help="Path to a human-authored budget human review outcome record JSON.",
+    )
+
+    budget_human_review_outcome_owner_adoption = sub.add_parser(
+        "build-budget-human-review-outcome-owner-adoption",
+        help="Build owner-review packets from budget human review outcome evidence.",
+    )
+    budget_human_review_outcome_owner_adoption.add_argument("--out-dir", required=True)
+    budget_human_review_outcome_owner_adoption.add_argument(
+        "--budget-human-review-outcome-report",
+        required=True,
+        help="Path to budget_human_review_outcome_report.json.",
+    )
+    budget_human_review_outcome_owner_adoption.add_argument(
+        "--budget-human-review-outcome-record",
+        required=True,
+        help="Path to budget_human_review_outcome_record.json.",
     )
 
     budget_lifecycle_owner_adoption = sub.add_parser(
@@ -2002,6 +2021,49 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 0 if report.status == "budget_human_review_outcome_recorded" else 2
+
+        if args.command == "build-budget-human-review-outcome-owner-adoption":
+            report, run_dir = run_budget_human_review_outcome_owner_adoption(
+                budget_human_review_outcome_report_path=(args.budget_human_review_outcome_report),
+                budget_human_review_outcome_record_path=(args.budget_human_review_outcome_record),
+                out_dir=args.out_dir,
+            )
+            failed_checks = [check.check_id for check in report.checks if check.status == "failed"]
+            _print(
+                {
+                    "status": report.status,
+                    "owner_adoption_report_id": report.owner_adoption_report_id,
+                    "source_budget_human_review_outcome_status": (
+                        report.source_budget_human_review_outcome_status
+                    ),
+                    "source_budget_human_review_outcome_report_id": (
+                        report.source_budget_human_review_outcome_report_id
+                    ),
+                    "source_budget_human_review_outcome_record_id": (
+                        report.source_budget_human_review_outcome_record_id
+                    ),
+                    "packet_count": report.packet_count,
+                    "ready_packet_count": report.ready_packet_count,
+                    "blocked_packet_count": report.blocked_packet_count,
+                    "target_repos": report.target_repos,
+                    "candidate_lake_event_labels": report.candidate_lake_event_labels,
+                    "required_followup_count": len(report.required_followups),
+                    "failed_checks": failed_checks,
+                    "github_issue_created": report.github_issue_created,
+                    "github_pr_created": report.github_pr_created,
+                    "github_write_performed": report.github_write_performed,
+                    "sibling_repo_write_performed": report.sibling_repo_write_performed,
+                    "promotion_authorized": report.promotion_authorized,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "budget_submission_performed": report.budget_submission_performed,
+                    "appeal_submission_performed": report.appeal_submission_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0 if report.status == "budget_outcome_owner_adoption_packets_ready" else 2
 
         if args.command == "build-budget-lifecycle-owner-adoption":
             report, run_dir = run_budget_lifecycle_owner_adoption(

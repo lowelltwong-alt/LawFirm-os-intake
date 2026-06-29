@@ -448,6 +448,25 @@ emits candidate Lake event labels for owner review. It does not submit budgets
 or appeals, write billing, admit Lake/SQLite records, mutate budgets, profiles,
 templates, or guidelines, write sibling repos, promote canon, or apply learning.
 
+### Build budget human review outcome owner adoption packets
+
+```bash
+python -m lawfirm_os_intake build-budget-human-review-outcome-owner-adoption \
+  --budget-human-review-outcome-report .lawfirm-os-intake/budget-human-review-outcome/budget_human_review_outcome_report.json \
+  --budget-human-review-outcome-record .lawfirm-os-intake/budget-human-review-outcome/budget_human_review_outcome_record.json \
+  --out-dir .lawfirm-os-intake/budget-human-review-outcome-owner-adoption
+```
+
+This writes `budget_human_review_outcome_owner_adoption_report.json`,
+`budget_human_review_outcome_owner_adoption_report.md`,
+`budget_human_review_outcome_owner_adoption_packets.jsonl`, and owner-specific
+JSON/Markdown packets under `budget_human_review_outcome_owner_packets/`. The
+packets route human outcome labels to Semantic Substrate review, runtime
+followups to Orchestrator review, and append-only admission/idempotency/hash
+work to Exception Lake review. Intake does not create issues or PRs, write
+sibling repos, promote canon, admit Lake/SQLite records, submit budgets or
+appeals, mutate budgets, profiles, templates, or guidelines, or apply learning.
+
 ### Build budget lifecycle owner adoption packets
 
 ```bash

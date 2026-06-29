@@ -407,6 +407,35 @@ REQUIRED_SLICES: tuple[SliceDefinition, ...] = (
     ),
     SliceDefinition(
         slice_id=16,
+        title="Budget human review outcome owner adoption packets",
+        requirement_summary=(
+            "Recorded human budget review outcomes can be routed to Semantic "
+            "Substrate, Orchestrator, and Exception Lake owner-review packets "
+            "without creating issues, writing sibling repos, admitting Lake/SQLite "
+            "records, submitting budgets or appeals, mutating budgets or guidelines, "
+            "or applying learning."
+        ),
+        proof_artifact_refs=(
+            "src/lawfirm_os_intake/budget_human_review_outcome_owner_adoption.py",
+            "schemas/budget-human-review-outcome-owner-adoption-report.schema.json",
+            "schemas/budget-human-review-outcome-owner-adoption-packet.schema.json",
+            "tests/test_budget_human_review_outcome_owner_adoption.py",
+            "docs/decisions/TRACE-2026-06-29-budget-human-review-outcome-owner-adoption.md",
+        ),
+        command_refs=("build-budget-human-review-outcome-owner-adoption",),
+        target_owner_repos=(
+            "LawFirm-os-semantic-substrate",
+            "LawFirm-os-orchestrator",
+            "LawFirm-os-exceptions-lake-runtime",
+        ),
+        remaining_external_actions=(
+            "Owning repos must review and implement any accepted outcome follow-up work.",
+            "Humans must still perform any external budget, appeal, write-off, or follow-up action.",
+            "Exception Lake must still own append-only admission and SQLite migrations.",
+        ),
+    ),
+    SliceDefinition(
+        slice_id=17,
         title="Budget lifecycle owner adoption packets",
         requirement_summary=(
             "Budget lifecycle audit evidence can be routed to Semantic Substrate, "
@@ -430,7 +459,7 @@ REQUIRED_SLICES: tuple[SliceDefinition, ...] = (
         ),
     ),
     SliceDefinition(
-        slice_id=17,
+        slice_id=18,
         title="Public source methodology audit",
         requirement_summary=(
             "Planning-only public-source methodology can be reviewed without ingesting "
@@ -456,7 +485,7 @@ REQUIRED_SLICES: tuple[SliceDefinition, ...] = (
         ),
     ),
     SliceDefinition(
-        slice_id=18,
+        slice_id=19,
         title="Public synthetic fixture conversion plan",
         requirement_summary=(
             "Public-source methodology can be mapped to human-reviewed synthetic "
@@ -483,7 +512,7 @@ REQUIRED_SLICES: tuple[SliceDefinition, ...] = (
         ),
     ),
     SliceDefinition(
-        slice_id=19,
+        slice_id=20,
         title="Public synthetic fixture conversion review packet",
         requirement_summary=(
             "Public synthetic fixture conversion specs can be packaged for human "
@@ -510,7 +539,7 @@ REQUIRED_SLICES: tuple[SliceDefinition, ...] = (
         ),
     ),
     SliceDefinition(
-        slice_id=20,
+        slice_id=21,
         title="Public synthetic fixture conversion review outcome record",
         requirement_summary=(
             "Human public synthetic fixture conversion decisions can be recorded as "
@@ -537,7 +566,7 @@ REQUIRED_SLICES: tuple[SliceDefinition, ...] = (
         ),
     ),
     SliceDefinition(
-        slice_id=21,
+        slice_id=22,
         title="Public synthetic fixture PR package",
         requirement_summary=(
             "Approved public conversion review outcomes can be converted into manual "
@@ -564,7 +593,7 @@ REQUIRED_SLICES: tuple[SliceDefinition, ...] = (
         ),
     ),
     SliceDefinition(
-        slice_id=22,
+        slice_id=23,
         title="PR readiness decision record",
         requirement_summary=(
             "Human PR readiness decisions can be recorded append-only against the "
@@ -587,7 +616,7 @@ REQUIRED_SLICES: tuple[SliceDefinition, ...] = (
         ),
     ),
     SliceDefinition(
-        slice_id=23,
+        slice_id=24,
         title="Final intake vertical readiness audit",
         requirement_summary=(
             "A deterministic final audit checks local surfaces plus the generated learning "

@@ -58,6 +58,9 @@ from lawfirm_os_intake.models import (  # noqa: E402
     BudgetHumanReviewDecisionTemplate,
     BudgetHumanReviewOutcomeCheck,
     BudgetHumanReviewOutcomeDecision,
+    BudgetHumanReviewOutcomeOwnerAdoptionCheck,
+    BudgetHumanReviewOutcomeOwnerAdoptionPacket,
+    BudgetHumanReviewOutcomeOwnerAdoptionReport,
     BudgetHumanReviewOutcomeRecord,
     BudgetHumanReviewOutcomeReport,
     BudgetHumanReviewPacket,
@@ -360,6 +363,15 @@ MODELS = {
     "budget-human-review-outcome-record.schema.json": BudgetHumanReviewOutcomeRecord,
     "budget-human-review-outcome-check.schema.json": BudgetHumanReviewOutcomeCheck,
     "budget-human-review-outcome-report.schema.json": BudgetHumanReviewOutcomeReport,
+    "budget-human-review-outcome-owner-adoption-check.schema.json": (
+        BudgetHumanReviewOutcomeOwnerAdoptionCheck
+    ),
+    "budget-human-review-outcome-owner-adoption-packet.schema.json": (
+        BudgetHumanReviewOutcomeOwnerAdoptionPacket
+    ),
+    "budget-human-review-outcome-owner-adoption-report.schema.json": (
+        BudgetHumanReviewOutcomeOwnerAdoptionReport
+    ),
     "budget-lifecycle-owner-adoption-packet.schema.json": (BudgetLifecycleOwnerAdoptionPacket),
     "budget-lifecycle-owner-adoption-report.schema.json": (BudgetLifecycleOwnerAdoptionReport),
     "carrier-compliant-projection.schema.json": CarrierCompliantProjection,
