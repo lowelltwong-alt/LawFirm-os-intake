@@ -69,6 +69,7 @@ Exit criteria:
 - public source catalog is complete and reviewed;
 - `audit-courtlistener-dataset-strategy` passes with offline fixture mode, purchase/upload/write paths disabled, and Rust replacement unauthorized;
 - `audit-courtlistener-fixture` passes on the synthetic labor/employment removal snapshot while blocking hash drift and post-discovery positive-corpus leaks;
+- `audit-labor-employment-budget-facts` produces a source-bound fact-gap report and blocks precise budget posture when critical L&E facts such as party/entity relationships, claims, damages, ESI, depositions, experts, or carrier/rate context are missing;
 - methodology audit passes with direct runtime ingestion and adapter authorization still disabled;
 - synthetic fixture conversion plan is ready for human review with red-team checks and no fixture mutation;
 - conversion review packet is ready for human decision with no fixture PR creation or silent learning;

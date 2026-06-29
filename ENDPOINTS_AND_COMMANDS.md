@@ -29,6 +29,38 @@ python -m lawfirm_os_intake build-budget \
 bash scripts/smoke_demo.sh
 ```
 
+### Validation runtime policy
+
+```bash
+python scripts/run_full_pytest.py
+```
+
+`config/validation-runtime-policy.yaml` declares the minimum local ceilings for
+heavy validation commands. Full and focused pytest runs use the wrapper above
+and require a 900 second ceiling; smoke runs also require a 900 second ceiling.
+Schema export, repo validation, and ruff checks require at least 180 seconds.
+
+### Audit labor/employment budget fact gaps
+
+```bash
+python -m lawfirm_os_intake audit-labor-employment-budget-facts \
+  --repo-root . \
+  --manifest examples/synthetic/courtlistener-derived/labor-employment-dataset-manifest.json \
+  --out-dir .lawfirm-os-intake/le-budget-facts
+```
+
+This writes `labor_employment_budget_fact_audit_report.json` and
+`labor_employment_budget_fact_audit_report.md`. The command checks candidate
+source-bound coverage for labor/employment budget facts: employee/employer
+identity, payer/client posture, supervisors or individual defendants,
+joint-employer or affiliate structure, claims, class/collective posture,
+timeline, damages, ESI/custodians, depositions, experts/vendors, policy
+documents, and carrier/rate guideline context. Critical missing or
+human-review-only facts keep the budget readiness state at
+`blocked_missing_critical_facts`. It does not output a budget amount, approve or
+submit a budget, clear conflicts, open a matter, write Lake/SQLite records,
+perform external writes, or learn from corrections.
+
 ### Record append-only human budget review changes
 
 ```bash

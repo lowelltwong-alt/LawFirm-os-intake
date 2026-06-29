@@ -12,9 +12,12 @@ Harden and extend a synthetic-only, local-first reference workflow from inbound 
 python -m pip install -e ".[dev]"
 python scripts/validate_repo.py
 python scripts/export_schemas.py
-python -m pytest
+python scripts/run_full_pytest.py
 bash scripts/smoke_demo.sh
 ```
+
+Use `config/validation-runtime-policy.yaml` for minimum local validation
+timeouts; full and focused pytest and smoke runs require a 900 second ceiling.
 
 The code currently provides deterministic/source-hint-backed mock workers. It is intentionally not a production NLP system.
 

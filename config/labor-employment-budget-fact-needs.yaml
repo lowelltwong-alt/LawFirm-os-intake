@@ -1,0 +1,244 @@
+policy_id: synthetic-labor-employment-budget-fact-needs
+version: "0.1"
+status: candidate
+primary_practice_area: labor_employment
+contains_real_firm_data: false
+
+# Candidate-only fact needs for deciding whether an L&E intake has enough
+# source-bound information to produce a useful budget range. This policy does not
+# define canonical LawFirm OS roles or budget taxonomy.
+fact_needs:
+  - fact_id: employee_claimant_identity
+    fact_category: entity_relationship
+    required_level: critical
+    question: "Who is the employee, former employee, applicant, or claimant?"
+    budget_effects:
+      - conflict_seed
+      - deposition_count
+      - damages_period
+    human_confirmation_required: true
+    recommended_budget_treatment: block_amount_budget
+    match:
+      conflict_observed_roles: [employee, claimant]
+      conflict_inferred_roles: [adverse_party_candidate]
+
+  - fact_id: employer_or_defendant_identity
+    fact_category: entity_relationship
+    required_level: critical
+    question: "Which employer/entity is the prospective represented client or defendant?"
+    budget_effects:
+      - conflict_seed
+      - represented_party_count
+      - discovery_scope
+    human_confirmation_required: true
+    recommended_budget_treatment: block_amount_budget
+    match:
+      conflict_observed_roles: [employer]
+      conflict_inferred_roles: [prospective_client_candidate]
+
+  - fact_id: prospective_client_payer_carrier_posture
+    fact_category: entity_relationship
+    required_level: critical
+    question: "Is the firm being asked to represent the employer, an insurer/payer, an individual manager, or another entity?"
+    budget_effects:
+      - conflict_seed
+      - rate_guideline_source
+      - appeal_path
+    human_confirmation_required: true
+    recommended_budget_treatment: block_amount_budget
+    match:
+      budget_driver_ids: [representation_posture]
+
+  - fact_id: individual_supervisor_or_manager_defendants
+    fact_category: entity_relationship
+    required_level: critical
+    question: "Are any supervisors, managers, HR representatives, or individual employees named defendants or key actors?"
+    budget_effects:
+      - party_count
+      - depositions
+      - conflict_seed
+      - indemnity_or_separate_counsel_review
+    human_confirmation_required: true
+    recommended_budget_treatment: hours_only_or_broad_range
+    match:
+      conflict_observed_roles: [supervisor, manager, hr_representative, individual_defendant]
+
+  - fact_id: joint_employer_or_affiliate_structure
+    fact_category: entity_relationship
+    required_level: critical
+    question: "Are parent, subsidiary, affiliate, joint-employer, staffing-agency, franchise, or PEO relationships implicated?"
+    budget_effects:
+      - party_count
+      - document_collection_scope
+      - written_discovery_rounds
+      - conflict_seed
+    human_confirmation_required: true
+    recommended_budget_treatment: hours_only_or_broad_range
+    match:
+      conflict_observed_roles: [parent_entity, subsidiary, affiliate, joint_employer, staffing_agency, peo, franchise_entity]
+
+  - fact_id: claims_and_causes_of_action
+    fact_category: claims_and_posture
+    required_level: critical
+    question: "What claims are actually asserted: discrimination, retaliation, harassment, wrongful termination, FMLA, ADA, FLSA/wage-hour, contract, tort, or statutory penalties?"
+    budget_effects:
+      - motion_practice
+      - expert_needs
+      - damages_categories
+      - discovery_scope
+    human_confirmation_required: true
+    recommended_budget_treatment: block_amount_budget
+    match:
+      budget_driver_ids: [matter_family]
+      intake_document_values: [complaint, right_to_sue_letter_attached, eeoc_charge]
+      timeline_event_types: [protected_leave_request, right_to_sue_letter]
+
+  - fact_id: administrative_exhaustion_and_agency_record
+    fact_category: claims_and_posture
+    required_level: important
+    question: "Is there an EEOC, state-agency, NLRB, DOL, or other administrative charge, right-to-sue letter, or agency file?"
+    budget_effects:
+      - record_review
+      - deadline_review
+      - motion_practice
+    human_confirmation_required: true
+    recommended_budget_treatment: candidate_range_budget_after_review
+    match:
+      intake_document_values: [right_to_sue_letter_attached, eeoc_charge, agency_charge]
+      timeline_event_types: [right_to_sue_letter, agency_charge]
+
+  - fact_id: class_collective_or_group_scope
+    fact_category: claims_and_posture
+    required_level: critical
+    question: "Is this single-plaintiff, multi-plaintiff, class, collective, representative, or agency-wide litigation?"
+    budget_effects:
+      - discovery_scope
+      - motion_practice
+      - notice_and_opt_in_work
+      - settlement_administration
+    human_confirmation_required: true
+    recommended_budget_treatment: block_amount_budget
+    match:
+      budget_driver_ids: [class_or_collective_indicator, number_of_parties]
+
+  - fact_id: forum_removed_and_arbitration_posture
+    fact_category: claims_and_posture
+    required_level: important
+    question: "What is the forum, removal posture, venue, and any arbitration or forum-selection posture?"
+    budget_effects:
+      - venue_difficulty
+      - motion_practice
+      - scheduling_path
+    human_confirmation_required: true
+    recommended_budget_treatment: candidate_range_budget_after_review
+    match:
+      budget_driver_ids: [forum, procedural_stage]
+      intake_document_values: [notice_of_removal]
+
+  - fact_id: relevant_employment_timeline
+    fact_category: timeline_and_stage
+    required_level: critical
+    question: "What are the key dates for hiring, protected activity, complaint, leave/accommodation request, discipline, termination, charge, right-to-sue, and filing?"
+    budget_effects:
+      - fact_investigation
+      - damages_period
+      - limitations_review
+      - witness_count
+    human_confirmation_required: true
+    recommended_budget_treatment: hours_only_or_broad_range
+    match:
+      timeline_event_types: [protected_leave_request, termination, right_to_sue_letter]
+
+  - fact_id: damages_categories_and_exposure
+    fact_category: damages_and_exposure
+    required_level: critical
+    question: "Which damages categories are at issue: back pay, front pay, emotional distress, punitive, liquidated, statutory, attorneys' fees, reinstatement, or injunctive relief?"
+    budget_effects:
+      - expert_needs
+      - settlement_posture
+      - trial_preparation
+      - fee_shifting_risk
+    human_confirmation_required: true
+    recommended_budget_treatment: hours_only_or_broad_range
+    match:
+      budget_driver_ids: [damages_categories, fee_shifting_indicator, injunctive_relief_indicator]
+
+  - fact_id: wage_hour_pay_period_and_employee_volume
+    fact_category: damages_and_exposure
+    required_level: important
+    question: "For wage/hour matters, how many employees, pay periods, job categories, locations, and payroll/timekeeping systems are implicated?"
+    budget_effects:
+      - data_volume
+      - expert_needs
+      - document_collection_scope
+      - settlement_modeling
+    human_confirmation_required: true
+    recommended_budget_treatment: hours_only_or_broad_range
+    match:
+      budget_driver_ids: [employee_count, pay_period_count, worksite_count, payroll_system_count]
+
+  - fact_id: esi_custodians_and_sources
+    fact_category: discovery_and_evidence
+    required_level: critical
+    question: "Which custodians and ESI/document sources matter: HRIS, email, chat, payroll, timekeeping, personnel files, policy repositories, manager files, cameras, or phone data?"
+    budget_effects:
+      - esi_volume_tier
+      - written_discovery_rounds
+      - vendor_or_forensic_cost
+      - review_hours
+    human_confirmation_required: true
+    recommended_budget_treatment: hours_only_or_broad_range
+    match:
+      budget_driver_ids: [esi_volume_tier, custodian_count, document_source_count]
+
+  - fact_id: anticipated_depositions
+    fact_category: discovery_and_evidence
+    required_level: critical
+    question: "Which depositions are likely: claimant, managers, HR, decisionmakers, comparators, payroll/timekeeping, agency witnesses, experts, and corporate representatives?"
+    budget_effects:
+      - deposition_count
+      - preparation_hours
+      - court_reporting_expense
+    human_confirmation_required: true
+    recommended_budget_treatment: hours_only_or_broad_range
+    match:
+      budget_driver_ids: [num_depositions]
+
+  - fact_id: expert_and_vendor_needs
+    fact_category: discovery_and_evidence
+    required_level: important
+    question: "Are damages, economics, HR practices, medical, vocational, payroll/timekeeping, statistics, or e-discovery experts/vendors likely?"
+    budget_effects:
+      - expert_count
+      - preapproval_thresholds
+      - expense_caps
+    human_confirmation_required: true
+    recommended_budget_treatment: candidate_range_budget_after_review
+    match:
+      budget_driver_ids: [num_experts, vendor_needs]
+
+  - fact_id: policy_handbook_contract_documents
+    fact_category: discovery_and_evidence
+    required_level: important
+    question: "Are handbooks, policies, employment agreements, arbitration agreements, restrictive covenants, accommodation/leave documents, or offer/termination letters available?"
+    budget_effects:
+      - early_case_assessment
+      - motion_practice
+      - document_review
+    human_confirmation_required: true
+    recommended_budget_treatment: candidate_range_budget_after_review
+    match:
+      intake_document_values: [employment_agreement_attached, handbook_policy_attached, arbitration_agreement_attached]
+
+  - fact_id: carrier_guideline_and_rate_source
+    fact_category: guideline_and_rate_context
+    required_level: critical
+    question: "If insurance or outside guideline review applies, what carrier, guideline version, approved timekeepers, rates, caps, and preapproval rules govern?"
+    budget_effects:
+      - proposed_vs_compliant_projection
+      - preapproval_exceptions
+      - appeal_path
+    human_confirmation_required: true
+    recommended_budget_treatment: block_amount_budget
+    match:
+      budget_driver_ids: [carrier_guideline, rate_card, approved_timekeeper_source]
