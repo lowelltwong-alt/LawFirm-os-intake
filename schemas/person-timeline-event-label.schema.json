@@ -1,0 +1,224 @@
+{
+  "$defs": {
+    "CourtListenerLabelSourceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "docket_id": {
+          "title": "Docket Id",
+          "type": "string"
+        },
+        "source_document_id": {
+          "title": "Source Document Id",
+          "type": "string"
+        },
+        "source_segment_id": {
+          "title": "Source Segment Id",
+          "type": "string"
+        },
+        "source_span_ref": {
+          "title": "Source Span Ref",
+          "type": "string"
+        },
+        "start_offset": {
+          "minimum": 0,
+          "title": "Start Offset",
+          "type": "integer"
+        },
+        "end_offset": {
+          "minimum": 0,
+          "title": "End Offset",
+          "type": "integer"
+        },
+        "sha256": {
+          "title": "Sha256",
+          "type": "string"
+        },
+        "public_source_profile_id": {
+          "const": "courtlistener_removal_state_pleadings_proxy",
+          "title": "Public Source Profile Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "docket_id",
+        "source_document_id",
+        "source_segment_id",
+        "source_span_ref",
+        "start_offset",
+        "end_offset",
+        "sha256",
+        "public_source_profile_id"
+      ],
+      "title": "CourtListenerLabelSourceRef",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "label_id": {
+      "title": "Label Id",
+      "type": "string"
+    },
+    "person_id": {
+      "title": "Person Id",
+      "type": "string"
+    },
+    "person_name": {
+      "title": "Person Name",
+      "type": "string"
+    },
+    "event_type": {
+      "title": "Event Type",
+      "type": "string"
+    },
+    "event_datetime_text": {
+      "title": "Event Datetime Text",
+      "type": "string"
+    },
+    "normalized_datetime_candidate": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Normalized Datetime Candidate"
+    },
+    "timezone_candidate": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Timezone Candidate"
+    },
+    "location_text": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Location Text"
+    },
+    "normalized_location_candidate": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Normalized Location Candidate"
+    },
+    "source_ref": {
+      "$ref": "#/$defs/CourtListenerLabelSourceRef"
+    },
+    "asserted_by": {
+      "title": "Asserted By",
+      "type": "string"
+    },
+    "document_type": {
+      "title": "Document Type",
+      "type": "string"
+    },
+    "contradiction_links": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Contradiction Links",
+      "type": "array"
+    },
+    "plausibility_status": {
+      "enum": [
+        "plausible",
+        "implausible",
+        "unknown",
+        "needs_review"
+      ],
+      "title": "Plausibility Status",
+      "type": "string"
+    },
+    "labeler": {
+      "enum": [
+        "human",
+        "rule",
+        "model_candidate",
+        "imported_metadata"
+      ],
+      "title": "Labeler",
+      "type": "string"
+    },
+    "review_status": {
+      "enum": [
+        "candidate",
+        "reviewed",
+        "rejected",
+        "needs_review"
+      ],
+      "title": "Review Status",
+      "type": "string"
+    },
+    "uncertainty": {
+      "default": "medium",
+      "title": "Uncertainty",
+      "type": "string"
+    },
+    "contradiction_candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Contradiction Candidate Only",
+      "type": "boolean"
+    },
+    "legal_or_factual_impossibility_claimed": {
+      "const": false,
+      "default": false,
+      "title": "Legal Or Factual Impossibility Claimed",
+      "type": "boolean"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "label_id",
+    "person_id",
+    "person_name",
+    "event_type",
+    "event_datetime_text",
+    "source_ref",
+    "asserted_by",
+    "document_type",
+    "plausibility_status",
+    "labeler",
+    "review_status"
+  ],
+  "title": "PersonTimelineEventLabel",
+  "type": "object"
+}

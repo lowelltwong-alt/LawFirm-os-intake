@@ -1,0 +1,332 @@
+{
+  "$defs": {
+    "CourtListenerDocketEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "docket_entry_id": {
+          "title": "Docket Entry Id",
+          "type": "string"
+        },
+        "entry_number": {
+          "minimum": 1,
+          "title": "Entry Number",
+          "type": "integer"
+        },
+        "filed_day": {
+          "minimum": 0,
+          "title": "Filed Day",
+          "type": "integer"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "source_document_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Source Document Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "docket_entry_id",
+        "entry_number",
+        "filed_day",
+        "description"
+      ],
+      "title": "CourtListenerDocketEntry",
+      "type": "object"
+    },
+    "CourtListenerSnapshotDocument": {
+      "additionalProperties": false,
+      "properties": {
+        "source_document_id": {
+          "title": "Source Document Id",
+          "type": "string"
+        },
+        "document_type": {
+          "title": "Document Type",
+          "type": "string"
+        },
+        "case_stage": {
+          "title": "Case Stage",
+          "type": "string"
+        },
+        "source_role": {
+          "title": "Source Role",
+          "type": "string"
+        },
+        "filed_day": {
+          "minimum": 0,
+          "title": "Filed Day",
+          "type": "integer"
+        },
+        "source_access_mode": {
+          "const": "offline_fixture",
+          "title": "Source Access Mode",
+          "type": "string"
+        },
+        "sha256": {
+          "title": "Sha256",
+          "type": "string"
+        },
+        "segments": {
+          "items": {
+            "$ref": "#/$defs/CourtListenerSnapshotSegment"
+          },
+          "title": "Segments",
+          "type": "array"
+        }
+      },
+      "required": [
+        "source_document_id",
+        "document_type",
+        "case_stage",
+        "source_role",
+        "filed_day",
+        "source_access_mode",
+        "sha256",
+        "segments"
+      ],
+      "title": "CourtListenerSnapshotDocument",
+      "type": "object"
+    },
+    "CourtListenerSnapshotSegment": {
+      "additionalProperties": false,
+      "properties": {
+        "segment_id": {
+          "title": "Segment Id",
+          "type": "string"
+        },
+        "source_document_id": {
+          "title": "Source Document Id",
+          "type": "string"
+        },
+        "start_offset": {
+          "minimum": 0,
+          "title": "Start Offset",
+          "type": "integer"
+        },
+        "end_offset": {
+          "minimum": 0,
+          "title": "End Offset",
+          "type": "integer"
+        },
+        "sha256": {
+          "title": "Sha256",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "segment_id",
+        "source_document_id",
+        "start_offset",
+        "end_offset",
+        "sha256",
+        "text"
+      ],
+      "title": "CourtListenerSnapshotSegment",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "snapshot_id": {
+      "title": "Snapshot Id",
+      "type": "string"
+    },
+    "source_profile_id": {
+      "const": "courtlistener_removal_state_pleadings_proxy",
+      "title": "Source Profile Id",
+      "type": "string"
+    },
+    "synthetic_wrapper_id": {
+      "title": "Synthetic Wrapper Id",
+      "type": "string"
+    },
+    "source_access_mode": {
+      "const": "offline_fixture",
+      "title": "Source Access Mode",
+      "type": "string"
+    },
+    "public_data_sensitivity_level": {
+      "const": "synthetic_no_real_public_identity",
+      "title": "Public Data Sensitivity Level",
+      "type": "string"
+    },
+    "real_person_data_present": {
+      "const": false,
+      "title": "Real Person Data Present",
+      "type": "boolean"
+    },
+    "fixture_redaction_status": {
+      "const": "synthetic_no_real_identity",
+      "title": "Fixture Redaction Status",
+      "type": "string"
+    },
+    "originating_jurisdiction_type": {
+      "enum": [
+        "state",
+        "federal",
+        "administrative",
+        "unknown"
+      ],
+      "title": "Originating Jurisdiction Type",
+      "type": "string"
+    },
+    "originating_state": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Originating State"
+    },
+    "originating_county": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Originating County"
+    },
+    "originating_court_name": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Originating Court Name"
+    },
+    "originating_case_number": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Originating Case Number"
+    },
+    "federal_court": {
+      "title": "Federal Court",
+      "type": "string"
+    },
+    "federal_docket_id": {
+      "title": "Federal Docket Id",
+      "type": "string"
+    },
+    "federal_docket_number": {
+      "title": "Federal Docket Number",
+      "type": "string"
+    },
+    "removed_to_federal": {
+      "title": "Removed To Federal",
+      "type": "boolean"
+    },
+    "first_docket_day_count": {
+      "minimum": 0,
+      "title": "First Docket Day Count",
+      "type": "integer"
+    },
+    "docket_entries": {
+      "items": {
+        "$ref": "#/$defs/CourtListenerDocketEntry"
+      },
+      "title": "Docket Entries",
+      "type": "array"
+    },
+    "documents": {
+      "items": {
+        "$ref": "#/$defs/CourtListenerSnapshotDocument"
+      },
+      "title": "Documents",
+      "type": "array"
+    },
+    "public_records_ingested": {
+      "const": false,
+      "default": false,
+      "title": "Public Records Ingested",
+      "type": "boolean"
+    },
+    "live_calls_performed": {
+      "const": false,
+      "default": false,
+      "title": "Live Calls Performed",
+      "type": "boolean"
+    },
+    "pacer_purchase_performed": {
+      "const": false,
+      "default": false,
+      "title": "Pacer Purchase Performed",
+      "type": "boolean"
+    },
+    "recap_fetch_purchase_performed": {
+      "const": false,
+      "default": false,
+      "title": "Recap Fetch Purchase Performed",
+      "type": "boolean"
+    },
+    "uploads_performed": {
+      "const": false,
+      "default": false,
+      "title": "Uploads Performed",
+      "type": "boolean"
+    },
+    "court_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "Court Writes Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "snapshot_id",
+    "source_profile_id",
+    "synthetic_wrapper_id",
+    "source_access_mode",
+    "public_data_sensitivity_level",
+    "real_person_data_present",
+    "fixture_redaction_status",
+    "originating_jurisdiction_type",
+    "federal_court",
+    "federal_docket_id",
+    "federal_docket_number",
+    "removed_to_federal",
+    "first_docket_day_count",
+    "docket_entries",
+    "documents"
+  ],
+  "title": "CourtListenerDocketSnapshot",
+  "type": "object"
+}

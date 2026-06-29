@@ -1,0 +1,208 @@
+{
+  "$defs": {
+    "CourtListenerFixtureAuditCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "details": {
+          "additionalProperties": true,
+          "title": "Details",
+          "type": "object"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "CourtListenerFixtureAuditCheck",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "courtlistener_fixture_audit_report_id": {
+      "title": "Courtlistener Fixture Audit Report Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "courtlistener_fixture_ready_for_review",
+        "blocked_courtlistener_fixture"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "manifest_ref": {
+      "title": "Manifest Ref",
+      "type": "string"
+    },
+    "manifest_id": {
+      "title": "Manifest Id",
+      "type": "string"
+    },
+    "snapshot_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Snapshot Refs",
+      "type": "array"
+    },
+    "snapshot_count": {
+      "minimum": 0,
+      "title": "Snapshot Count",
+      "type": "integer"
+    },
+    "document_label_count": {
+      "minimum": 0,
+      "title": "Document Label Count",
+      "type": "integer"
+    },
+    "conflict_seed_label_count": {
+      "minimum": 0,
+      "title": "Conflict Seed Label Count",
+      "type": "integer"
+    },
+    "budget_driver_label_count": {
+      "minimum": 0,
+      "title": "Budget Driver Label Count",
+      "type": "integer"
+    },
+    "timeline_event_label_count": {
+      "minimum": 0,
+      "title": "Timeline Event Label Count",
+      "type": "integer"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/CourtListenerFixtureAuditCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "public_records_ingested": {
+      "const": false,
+      "default": false,
+      "title": "Public Records Ingested",
+      "type": "boolean"
+    },
+    "live_calls_performed": {
+      "const": false,
+      "default": false,
+      "title": "Live Calls Performed",
+      "type": "boolean"
+    },
+    "pacer_purchase_performed": {
+      "const": false,
+      "default": false,
+      "title": "Pacer Purchase Performed",
+      "type": "boolean"
+    },
+    "recap_fetch_purchase_performed": {
+      "const": false,
+      "default": false,
+      "title": "Recap Fetch Purchase Performed",
+      "type": "boolean"
+    },
+    "uploads_performed": {
+      "const": false,
+      "default": false,
+      "title": "Uploads Performed",
+      "type": "boolean"
+    },
+    "court_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "Court Writes Performed",
+      "type": "boolean"
+    },
+    "training_pipeline_created": {
+      "const": false,
+      "default": false,
+      "title": "Training Pipeline Created",
+      "type": "boolean"
+    },
+    "budget_accuracy_claimed": {
+      "const": false,
+      "default": false,
+      "title": "Budget Accuracy Claimed",
+      "type": "boolean"
+    },
+    "fixture_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Fixture Mutation Performed",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "courtlistener_fixture_audit_report_id",
+    "status",
+    "manifest_ref",
+    "manifest_id",
+    "snapshot_refs",
+    "snapshot_count",
+    "document_label_count",
+    "conflict_seed_label_count",
+    "budget_driver_label_count",
+    "timeline_event_label_count",
+    "checks",
+    "generated_at"
+  ],
+  "title": "CourtListenerFixtureAuditReport",
+  "type": "object"
+}

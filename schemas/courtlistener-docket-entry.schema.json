@@ -1,0 +1,38 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "docket_entry_id": {
+      "title": "Docket Entry Id",
+      "type": "string"
+    },
+    "entry_number": {
+      "minimum": 1,
+      "title": "Entry Number",
+      "type": "integer"
+    },
+    "filed_day": {
+      "minimum": 0,
+      "title": "Filed Day",
+      "type": "integer"
+    },
+    "description": {
+      "title": "Description",
+      "type": "string"
+    },
+    "source_document_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Source Document Ids",
+      "type": "array"
+    }
+  },
+  "required": [
+    "docket_entry_id",
+    "entry_number",
+    "filed_day",
+    "description"
+  ],
+  "title": "CourtListenerDocketEntry",
+  "type": "object"
+}

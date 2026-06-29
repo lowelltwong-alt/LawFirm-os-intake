@@ -49,6 +49,7 @@ from .carrier_rejection_review import run_carrier_rejection_review
 from .carrier_rejections import run_carrier_rejection_capture
 from .confirmation import bind_confirmation_to_packet_evidence
 from .courtlistener_dataset_strategy import run_courtlistener_dataset_strategy_audit
+from .courtlistener_fixture_audit import run_courtlistener_fixture_audit
 from .cross_repo_owner_adoption import run_cross_repo_owner_adoption
 from .cross_repo_owner_issue_drafts import run_cross_repo_owner_issue_drafts
 from .intake_local_closeout import run_intake_local_closeout
@@ -338,6 +339,22 @@ def _parser() -> argparse.ArgumentParser:
     courtlistener_dataset_strategy.add_argument(
         "--strategy-config",
         help="Optional CourtListener dataset strategy YAML path.",
+    )
+
+    courtlistener_fixture_audit = sub.add_parser(
+        "audit-courtlistener-fixture",
+        help="Audit an offline CourtListener-style fixture manifest and source-bound labels.",
+    )
+    courtlistener_fixture_audit.add_argument(
+        "--manifest",
+        required=True,
+        help="Path to courtlistener dataset manifest JSON.",
+    )
+    courtlistener_fixture_audit.add_argument("--out-dir", required=True)
+    courtlistener_fixture_audit.add_argument(
+        "--repo-root",
+        default=".",
+        help="Repository root for relative fixture refs; defaults to current directory.",
     )
 
     public_synthetic_conversion = sub.add_parser(
@@ -1539,6 +1556,40 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             if report.status == "blocked_courtlistener_dataset_strategy":
+                return 2
+            return 0
+
+        if args.command == "audit-courtlistener-fixture":
+            report, run_dir = run_courtlistener_fixture_audit(
+                repo_root=args.repo_root,
+                manifest_path=args.manifest,
+                out_dir=args.out_dir,
+            )
+            failed_checks = [check.check_id for check in report.checks if check.status != "passed"]
+            _print(
+                {
+                    "status": report.status,
+                    "courtlistener_fixture_audit_report_id": (
+                        report.courtlistener_fixture_audit_report_id
+                    ),
+                    "manifest_id": report.manifest_id,
+                    "snapshot_count": report.snapshot_count,
+                    "document_label_count": report.document_label_count,
+                    "conflict_seed_label_count": report.conflict_seed_label_count,
+                    "budget_driver_label_count": report.budget_driver_label_count,
+                    "timeline_event_label_count": report.timeline_event_label_count,
+                    "failed_checks": failed_checks,
+                    "public_records_ingested": report.public_records_ingested,
+                    "live_calls_performed": report.live_calls_performed,
+                    "pacer_purchase_performed": report.pacer_purchase_performed,
+                    "recap_fetch_purchase_performed": report.recap_fetch_purchase_performed,
+                    "training_pipeline_created": report.training_pipeline_created,
+                    "budget_accuracy_claimed": report.budget_accuracy_claimed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            if report.status == "blocked_courtlistener_fixture":
                 return 2
             return 0
 

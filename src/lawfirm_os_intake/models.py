@@ -460,6 +460,301 @@ class CourtListenerDatasetStrategyReport(StrictModel):
         return self
 
 
+class CourtListenerSnapshotSegment(StrictModel):
+    segment_id: str
+    source_document_id: str
+    start_offset: int = Field(ge=0)
+    end_offset: int = Field(ge=0)
+    sha256: str
+    text: str
+
+    @model_validator(mode="after")
+    def segment_offsets_match_text(self) -> "CourtListenerSnapshotSegment":
+        if self.end_offset <= self.start_offset:
+            raise ValueError("courtlistener snapshot segment end offset must exceed start offset")
+        if self.end_offset - self.start_offset != len(self.text):
+            raise ValueError("courtlistener snapshot segment offsets must match text length")
+        return self
+
+
+class CourtListenerSnapshotDocument(StrictModel):
+    source_document_id: str
+    document_type: str
+    case_stage: str
+    source_role: str
+    filed_day: int = Field(ge=0)
+    source_access_mode: Literal["offline_fixture"]
+    sha256: str
+    segments: list[CourtListenerSnapshotSegment]
+
+    @model_validator(mode="after")
+    def snapshot_document_segments_required(self) -> "CourtListenerSnapshotDocument":
+        if not self.segments:
+            raise ValueError("courtlistener snapshot document requires at least one segment")
+        if any(segment.source_document_id != self.source_document_id for segment in self.segments):
+            raise ValueError("courtlistener snapshot segment document id drift")
+        return self
+
+
+class CourtListenerDocketEntry(StrictModel):
+    docket_entry_id: str
+    entry_number: int = Field(ge=1)
+    filed_day: int = Field(ge=0)
+    description: str
+    source_document_ids: list[str] = Field(default_factory=list)
+
+
+class CourtListenerDocketSnapshot(StrictModel):
+    schema_version: str = "0.1"
+    snapshot_id: str
+    source_profile_id: Literal["courtlistener_removal_state_pleadings_proxy"]
+    synthetic_wrapper_id: str
+    source_access_mode: Literal["offline_fixture"]
+    public_data_sensitivity_level: Literal["synthetic_no_real_public_identity"]
+    real_person_data_present: Literal[False]
+    fixture_redaction_status: Literal["synthetic_no_real_identity"]
+    originating_jurisdiction_type: Literal["state", "federal", "administrative", "unknown"]
+    originating_state: str | None = None
+    originating_county: str | None = None
+    originating_court_name: str | None = None
+    originating_case_number: str | None = None
+    federal_court: str
+    federal_docket_id: str
+    federal_docket_number: str
+    removed_to_federal: bool
+    first_docket_day_count: int = Field(ge=0)
+    docket_entries: list[CourtListenerDocketEntry]
+    documents: list[CourtListenerSnapshotDocument]
+    public_records_ingested: Literal[False] = False
+    live_calls_performed: Literal[False] = False
+    pacer_purchase_performed: Literal[False] = False
+    recap_fetch_purchase_performed: Literal[False] = False
+    uploads_performed: Literal[False] = False
+    court_writes_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def snapshot_documents_and_entries_match(self) -> "CourtListenerDocketSnapshot":
+        if not self.documents:
+            raise ValueError("courtlistener docket snapshot requires documents")
+        document_ids = {document.source_document_id for document in self.documents}
+        for entry in self.docket_entries:
+            missing = set(entry.source_document_ids) - document_ids
+            if missing:
+                raise ValueError("courtlistener docket entry references unknown document")
+        return self
+
+
+class CourtListenerLabelSourceRef(StrictModel):
+    docket_id: str
+    source_document_id: str
+    source_segment_id: str
+    source_span_ref: str
+    start_offset: int = Field(ge=0)
+    end_offset: int = Field(ge=0)
+    sha256: str
+    public_source_profile_id: Literal["courtlistener_removal_state_pleadings_proxy"]
+
+    @model_validator(mode="after")
+    def label_source_ref_span_matches_offsets(self) -> "CourtListenerLabelSourceRef":
+        expected = f"{self.source_segment_id}:{self.start_offset}-{self.end_offset}"
+        if self.source_span_ref != expected:
+            raise ValueError("courtlistener label source span ref must match offsets")
+        if self.end_offset <= self.start_offset:
+            raise ValueError("courtlistener label source ref end offset must exceed start offset")
+        return self
+
+
+DatasetLabeler = Literal["human", "rule", "model_candidate", "imported_metadata"]
+DatasetReviewStatus = Literal["candidate", "reviewed", "rejected", "needs_review"]
+
+
+class IntakeStageDocumentLabel(StrictModel):
+    schema_version: str = "0.1"
+    label_id: str
+    label_type: Literal["document_type", "case_stage", "source_role"]
+    value: str
+    source_ref: CourtListenerLabelSourceRef
+    confidence: float = Field(ge=0, le=1)
+    labeler: DatasetLabeler
+    review_status: DatasetReviewStatus
+    notes: str = ""
+    uncertainty: str = "low"
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+
+
+class ConflictSeedLabel(StrictModel):
+    schema_version: str = "0.1"
+    label_id: str
+    name: str
+    normalized_name: str
+    observed_role: str
+    inferred_role: str | None = None
+    source_ref: CourtListenerLabelSourceRef
+    confidence: float = Field(ge=0, le=1)
+    labeler: DatasetLabeler
+    review_status: DatasetReviewStatus
+    uncertainty: str = "medium"
+    conflict_conclusion_emitted: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+
+
+BudgetDriverValue = str | int | float | bool | None
+
+
+class BudgetDriverLabel(StrictModel):
+    schema_version: str = "0.1"
+    label_id: str
+    driver_id: str
+    value: BudgetDriverValue
+    value_status: Literal["observed", "missing", "unknown", "synthetic_context_wrapper"]
+    source_ref: CourtListenerLabelSourceRef
+    confidence: float = Field(ge=0, le=1)
+    labeler: DatasetLabeler
+    review_status: DatasetReviewStatus
+    uncertainty: str = "medium"
+    budget_amount_inferred: Literal[False] = False
+    rate_inferred: Literal[False] = False
+    guideline_inferred: Literal[False] = False
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+
+
+class PersonTimelineEventLabel(StrictModel):
+    schema_version: str = "0.1"
+    label_id: str
+    person_id: str
+    person_name: str
+    event_type: str
+    event_datetime_text: str
+    normalized_datetime_candidate: str | None = None
+    timezone_candidate: str | None = None
+    location_text: str | None = None
+    normalized_location_candidate: str | None = None
+    source_ref: CourtListenerLabelSourceRef
+    asserted_by: str
+    document_type: str
+    contradiction_links: list[str] = Field(default_factory=list)
+    plausibility_status: Literal["plausible", "implausible", "unknown", "needs_review"]
+    labeler: DatasetLabeler
+    review_status: DatasetReviewStatus
+    uncertainty: str = "medium"
+    contradiction_candidate_only: Literal[True] = True
+    legal_or_factual_impossibility_claimed: Literal[False] = False
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+
+
+class SyntheticIntakeWrapper(StrictModel):
+    schema_version: str = "0.1"
+    synthetic_wrapper_id: str
+    wrapper_type: Literal[
+        "defense_carrier_assignment_wrapper",
+        "employer_defense_assignment_wrapper",
+        "plaintiff_side_consultation_wrapper",
+        "generic_referral_wrapper",
+        "public_docket_review_wrapper",
+    ]
+    observed_public_source_refs: list[str]
+    synthetic_role_assumptions: list[str]
+    context_prior_refs: list[str] = Field(default_factory=list)
+    human_confirmed_fact_refs: list[str] = Field(default_factory=list)
+    observed_facts_manufactured: Literal[False] = False
+    distinguishes_synthetic_context_from_observed_evidence: Literal[True] = True
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+
+
+class CourtListenerDatasetManifest(StrictModel):
+    schema_version: str = "0.1"
+    manifest_id: str
+    dataset_strategy_ref: str
+    source_profile_id: Literal["courtlistener_removal_state_pleadings_proxy"]
+    primary_practice_area: Literal["labor_employment"]
+    fixture_snapshot_refs: list[str]
+    synthetic_intake_wrapper: SyntheticIntakeWrapper
+    intake_stage_document_labels: list[IntakeStageDocumentLabel]
+    conflict_seed_labels: list[ConflictSeedLabel]
+    budget_driver_labels: list[BudgetDriverLabel]
+    person_timeline_event_labels: list[PersonTimelineEventLabel]
+    public_records_ingested: Literal[False] = False
+    live_calls_performed: Literal[False] = False
+    pacer_purchase_performed: Literal[False] = False
+    recap_fetch_purchase_performed: Literal[False] = False
+    uploads_performed: Literal[False] = False
+    court_writes_performed: Literal[False] = False
+    training_pipeline_created: Literal[False] = False
+    budget_accuracy_claimed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+
+    @model_validator(mode="after")
+    def dataset_manifest_has_required_labels(self) -> "CourtListenerDatasetManifest":
+        if not self.fixture_snapshot_refs:
+            raise ValueError("courtlistener dataset manifest requires snapshot refs")
+        if not self.intake_stage_document_labels:
+            raise ValueError("courtlistener dataset manifest requires document labels")
+        if not self.conflict_seed_labels:
+            raise ValueError("courtlistener dataset manifest requires conflict seed labels")
+        if not self.budget_driver_labels:
+            raise ValueError("courtlistener dataset manifest requires budget driver labels")
+        if not self.person_timeline_event_labels:
+            raise ValueError("courtlistener dataset manifest requires timeline event labels")
+        return self
+
+
+class CourtListenerFixtureAuditCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    details: dict[str, Any] = Field(default_factory=dict)
+
+
+class CourtListenerFixtureAuditReport(StrictModel):
+    schema_version: str = "0.1"
+    courtlistener_fixture_audit_report_id: str
+    status: Literal["courtlistener_fixture_ready_for_review", "blocked_courtlistener_fixture"]
+    manifest_ref: str
+    manifest_id: str
+    snapshot_refs: list[str]
+    snapshot_count: int = Field(ge=0)
+    document_label_count: int = Field(ge=0)
+    conflict_seed_label_count: int = Field(ge=0)
+    budget_driver_label_count: int = Field(ge=0)
+    timeline_event_label_count: int = Field(ge=0)
+    checks: list[CourtListenerFixtureAuditCheck]
+    public_records_ingested: Literal[False] = False
+    live_calls_performed: Literal[False] = False
+    pacer_purchase_performed: Literal[False] = False
+    recap_fetch_purchase_performed: Literal[False] = False
+    uploads_performed: Literal[False] = False
+    court_writes_performed: Literal[False] = False
+    training_pipeline_created: Literal[False] = False
+    budget_accuracy_claimed: Literal[False] = False
+    fixture_mutation_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    generated_at: str
+
+    @model_validator(mode="after")
+    def fixture_audit_status_matches_checks(self) -> "CourtListenerFixtureAuditReport":
+        failed = [check.check_id for check in self.checks if check.status == "failed"]
+        if self.status == "courtlistener_fixture_ready_for_review" and failed:
+            raise ValueError("ready courtlistener fixture audit cannot include failed checks")
+        if self.status == "blocked_courtlistener_fixture" and not failed:
+            raise ValueError("blocked courtlistener fixture audit requires failed checks")
+        if self.snapshot_count != len(self.snapshot_refs):
+            raise ValueError("courtlistener fixture snapshot count mismatch")
+        return self
+
+
 class PublicSourceMethodologySource(StrictModel):
     source_id: str
     url: str

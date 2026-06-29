@@ -1,0 +1,97 @@
+{
+  "$defs": {
+    "CourtListenerSnapshotSegment": {
+      "additionalProperties": false,
+      "properties": {
+        "segment_id": {
+          "title": "Segment Id",
+          "type": "string"
+        },
+        "source_document_id": {
+          "title": "Source Document Id",
+          "type": "string"
+        },
+        "start_offset": {
+          "minimum": 0,
+          "title": "Start Offset",
+          "type": "integer"
+        },
+        "end_offset": {
+          "minimum": 0,
+          "title": "End Offset",
+          "type": "integer"
+        },
+        "sha256": {
+          "title": "Sha256",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "segment_id",
+        "source_document_id",
+        "start_offset",
+        "end_offset",
+        "sha256",
+        "text"
+      ],
+      "title": "CourtListenerSnapshotSegment",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "source_document_id": {
+      "title": "Source Document Id",
+      "type": "string"
+    },
+    "document_type": {
+      "title": "Document Type",
+      "type": "string"
+    },
+    "case_stage": {
+      "title": "Case Stage",
+      "type": "string"
+    },
+    "source_role": {
+      "title": "Source Role",
+      "type": "string"
+    },
+    "filed_day": {
+      "minimum": 0,
+      "title": "Filed Day",
+      "type": "integer"
+    },
+    "source_access_mode": {
+      "const": "offline_fixture",
+      "title": "Source Access Mode",
+      "type": "string"
+    },
+    "sha256": {
+      "title": "Sha256",
+      "type": "string"
+    },
+    "segments": {
+      "items": {
+        "$ref": "#/$defs/CourtListenerSnapshotSegment"
+      },
+      "title": "Segments",
+      "type": "array"
+    }
+  },
+  "required": [
+    "source_document_id",
+    "document_type",
+    "case_stage",
+    "source_role",
+    "filed_day",
+    "source_access_mode",
+    "sha256",
+    "segments"
+  ],
+  "title": "CourtListenerSnapshotDocument",
+  "type": "object"
+}

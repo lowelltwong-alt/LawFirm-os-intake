@@ -29,6 +29,19 @@ python -m lawfirm_os_intake.cli audit-courtlistener-dataset-strategy --repo-root
 
 It writes `courtlistener_dataset_strategy_report.json` and a Markdown report. A passing report means the strategy is ready for human review, not that data has been ingested.
 
+The first offline fixture shape lives under `examples/synthetic/courtlistener-derived/`:
+
+- `labor-employment-removal-snapshot.json` is a synthetic CourtListener-style removal docket snapshot;
+- `labor-employment-dataset-manifest.json` binds document-stage, conflict-seed, budget-driver, and person-timeline labels to exact synthetic source spans.
+
+Audit it with:
+
+```bash
+python -m lawfirm_os_intake audit-courtlistener-fixture --repo-root . --manifest examples/synthetic/courtlistener-derived/labor-employment-dataset-manifest.json --out-dir .lawfirm-os-intake/courtlistener-fixture
+```
+
+A passing fixture audit proves only that the local synthetic fixture is source-bound, offline, early-case, and reviewable. It does not approve public-data collection, training, or budget accuracy.
+
 ## First Corpus
 
 Start with labor and employment:
@@ -67,6 +80,8 @@ Every future label must preserve:
 Labels can train or evaluate document recognition, chronology, party/counsel extraction, conflict-search seed extraction, claims/damages/procedural posture extraction, budget-driver recognition, person timelines, and contradiction candidates.
 
 Labels cannot establish negotiated rates, carrier guidelines, true law-firm costs, budget accuracy, settlement authority, conflict clearance, matter opening, or approved budgets.
+
+The starter fixture intentionally includes one later deposition notice as a negative/routing example. The audit fails if that post-discovery document leaks into the positive intake-stage corpus.
 
 ## Rust Posture
 

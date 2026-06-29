@@ -1,0 +1,162 @@
+{
+  "$defs": {
+    "CourtListenerLabelSourceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "docket_id": {
+          "title": "Docket Id",
+          "type": "string"
+        },
+        "source_document_id": {
+          "title": "Source Document Id",
+          "type": "string"
+        },
+        "source_segment_id": {
+          "title": "Source Segment Id",
+          "type": "string"
+        },
+        "source_span_ref": {
+          "title": "Source Span Ref",
+          "type": "string"
+        },
+        "start_offset": {
+          "minimum": 0,
+          "title": "Start Offset",
+          "type": "integer"
+        },
+        "end_offset": {
+          "minimum": 0,
+          "title": "End Offset",
+          "type": "integer"
+        },
+        "sha256": {
+          "title": "Sha256",
+          "type": "string"
+        },
+        "public_source_profile_id": {
+          "const": "courtlistener_removal_state_pleadings_proxy",
+          "title": "Public Source Profile Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "docket_id",
+        "source_document_id",
+        "source_segment_id",
+        "source_span_ref",
+        "start_offset",
+        "end_offset",
+        "sha256",
+        "public_source_profile_id"
+      ],
+      "title": "CourtListenerLabelSourceRef",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "label_id": {
+      "title": "Label Id",
+      "type": "string"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "normalized_name": {
+      "title": "Normalized Name",
+      "type": "string"
+    },
+    "observed_role": {
+      "title": "Observed Role",
+      "type": "string"
+    },
+    "inferred_role": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Inferred Role"
+    },
+    "source_ref": {
+      "$ref": "#/$defs/CourtListenerLabelSourceRef"
+    },
+    "confidence": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Confidence",
+      "type": "number"
+    },
+    "labeler": {
+      "enum": [
+        "human",
+        "rule",
+        "model_candidate",
+        "imported_metadata"
+      ],
+      "title": "Labeler",
+      "type": "string"
+    },
+    "review_status": {
+      "enum": [
+        "candidate",
+        "reviewed",
+        "rejected",
+        "needs_review"
+      ],
+      "title": "Review Status",
+      "type": "string"
+    },
+    "uncertainty": {
+      "default": "medium",
+      "title": "Uncertainty",
+      "type": "string"
+    },
+    "conflict_conclusion_emitted": {
+      "const": false,
+      "default": false,
+      "title": "Conflict Conclusion Emitted",
+      "type": "boolean"
+    },
+    "matter_opening_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Matter Opening Authorized",
+      "type": "boolean"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "label_id",
+    "name",
+    "normalized_name",
+    "observed_role",
+    "source_ref",
+    "confidence",
+    "labeler",
+    "review_status"
+  ],
+  "title": "ConflictSeedLabel",
+  "type": "object"
+}

@@ -54,6 +54,7 @@ Build:
 - CourtListener early-case dataset strategy with offline fixture mode, live calls disabled, no PACER/RECAP Fetch purchase path, and labor/employment as the first corpus;
 - removal-packet state-court starter-pleading proxy profile for already-available RECAP material;
 - dataset label strategy for document type, case stage, conflict seed roles, budget drivers, person timelines, contradictions, and risk tier;
+- offline synthetic CourtListener-style snapshot and dataset manifest with source-bound document, conflict, budget-driver, and timeline labels;
 - Rust shadow-acceleration boundary for deterministic corpus mechanics only, with no Rust runtime until profiling and parity justify it;
 - FJC Integrated Database field mapping;
 - Enron email structural parser stress tests;
@@ -67,6 +68,7 @@ Exit criteria:
 
 - public source catalog is complete and reviewed;
 - `audit-courtlistener-dataset-strategy` passes with offline fixture mode, purchase/upload/write paths disabled, and Rust replacement unauthorized;
+- `audit-courtlistener-fixture` passes on the synthetic labor/employment removal snapshot while blocking hash drift and post-discovery positive-corpus leaks;
 - methodology audit passes with direct runtime ingestion and adapter authorization still disabled;
 - synthetic fixture conversion plan is ready for human review with red-team checks and no fixture mutation;
 - conversion review packet is ready for human decision with no fixture PR creation or silent learning;

@@ -1,0 +1,193 @@
+{
+  "schema_version": "0.1",
+  "snapshot_id": "synthetic-courtlistener-le-removal-snapshot.v0_1",
+  "source_profile_id": "courtlistener_removal_state_pleadings_proxy",
+  "synthetic_wrapper_id": "synthetic-employer-defense-wrapper.v0_1",
+  "source_access_mode": "offline_fixture",
+  "public_data_sensitivity_level": "synthetic_no_real_public_identity",
+  "real_person_data_present": false,
+  "fixture_redaction_status": "synthetic_no_real_identity",
+  "originating_jurisdiction_type": "state",
+  "originating_state": "Synthetic State",
+  "originating_county": "Synthetic County",
+  "originating_court_name": "Synthetic County Civil Court",
+  "originating_case_number": "SYNTH-ST-0001",
+  "federal_court": "Synthetic Federal District Court",
+  "federal_docket_id": "synthetic-fed-docket-0001",
+  "federal_docket_number": "1:26-cv-00001-SYN",
+  "removed_to_federal": true,
+  "first_docket_day_count": 120,
+  "docket_entries": [
+    {
+      "docket_entry_id": "synthetic-dkt-001",
+      "entry_number": 1,
+      "filed_day": 1,
+      "description": "Synthetic notice of removal with attached state complaint and service papers.",
+      "source_document_ids": [
+        "synthetic_notice_removal_doc",
+        "synthetic_state_complaint_doc",
+        "synthetic_state_summons_doc"
+      ]
+    },
+    {
+      "docket_entry_id": "synthetic-dkt-014",
+      "entry_number": 14,
+      "filed_day": 70,
+      "description": "Synthetic joint status report before discovery starts.",
+      "source_document_ids": [
+        "synthetic_joint_status_report_doc"
+      ]
+    },
+    {
+      "docket_entry_id": "synthetic-dkt-033",
+      "entry_number": 33,
+      "filed_day": 150,
+      "description": "Synthetic later deposition notice retained as a negative routing example.",
+      "source_document_ids": [
+        "synthetic_deposition_notice_doc"
+      ]
+    }
+  ],
+  "documents": [
+    {
+      "source_document_id": "synthetic_assignment_wrapper_doc",
+      "document_type": "synthetic_intake_wrapper",
+      "case_stage": "intake_stage",
+      "source_role": "correspondence",
+      "filed_day": 0,
+      "source_access_mode": "offline_fixture",
+      "sha256": "sha256:2a6b4c3e95a7b2035f57a38b5b6b122bf025b4b2ec290f966c85b84d19fb929a",
+      "segments": [
+        {
+          "segment_id": "doc_assignment_seg_001",
+          "source_document_id": "synthetic_assignment_wrapper_doc",
+          "start_offset": 0,
+          "end_offset": 104,
+          "sha256": "sha256:2a6b4c3e95a7b2035f57a38b5b6b122bf025b4b2ec290f966c85b84d19fb929a",
+          "text": "Synthetic employer defense assignment wrapper asks counsel to evaluate complaint, conflicts, and budget."
+        }
+      ]
+    },
+    {
+      "source_document_id": "synthetic_state_complaint_doc",
+      "document_type": "complaint",
+      "case_stage": "intake_stage",
+      "source_role": "plaintiff_filing",
+      "filed_day": 1,
+      "source_access_mode": "offline_fixture",
+      "sha256": "sha256:b5600e76dc873f09ba4a974ba737266db3c6dda86815c23b871039aef87f0d2f",
+      "segments": [
+        {
+          "segment_id": "doc_complaint_seg_001",
+          "source_document_id": "synthetic_state_complaint_doc",
+          "start_offset": 0,
+          "end_offset": 98,
+          "sha256": "sha256:b5600e76dc873f09ba4a974ba737266db3c6dda86815c23b871039aef87f0d2f",
+          "text": "Synthetic complaint alleges retaliation after protected leave request and termination by employer."
+        }
+      ]
+    },
+    {
+      "source_document_id": "synthetic_state_summons_doc",
+      "document_type": "summons",
+      "case_stage": "intake_stage",
+      "source_role": "service_document",
+      "filed_day": 1,
+      "source_access_mode": "offline_fixture",
+      "sha256": "sha256:b9325a5fcc2ad7167a4ee1cc54ab79ec7a00cbade0734bd1448f74493f82b551",
+      "segments": [
+        {
+          "segment_id": "doc_summons_seg_001",
+          "source_document_id": "synthetic_state_summons_doc",
+          "start_offset": 0,
+          "end_offset": 65,
+          "sha256": "sha256:b9325a5fcc2ad7167a4ee1cc54ab79ec7a00cbade0734bd1448f74493f82b551",
+          "text": "Synthetic summons shows employer defendant served in state court."
+        }
+      ]
+    },
+    {
+      "source_document_id": "synthetic_notice_removal_doc",
+      "document_type": "notice_of_removal",
+      "case_stage": "pre_answer",
+      "source_role": "removal_document",
+      "filed_day": 1,
+      "source_access_mode": "offline_fixture",
+      "sha256": "sha256:203d94443cd19f76691911ac5290ac3ae4919d3922eea77b82ec79a4637eb8ed",
+      "segments": [
+        {
+          "segment_id": "doc_removal_seg_001",
+          "source_document_id": "synthetic_notice_removal_doc",
+          "start_offset": 0,
+          "end_offset": 97,
+          "sha256": "sha256:203d94443cd19f76691911ac5290ac3ae4919d3922eea77b82ec79a4637eb8ed",
+          "text": "Synthetic notice of removal attaches state complaint and service papers before federal docketing."
+        }
+      ]
+    },
+    {
+      "source_document_id": "synthetic_right_to_sue_doc",
+      "document_type": "right_to_sue_letter_attached",
+      "case_stage": "intake_stage",
+      "source_role": "agency_exhibit",
+      "filed_day": 1,
+      "source_access_mode": "offline_fixture",
+      "sha256": "sha256:aaa4af2da9585a618751860d39111a68fd14c371bf1257dd899638365e2de049",
+      "segments": [
+        {
+          "segment_id": "doc_rts_seg_001",
+          "source_document_id": "synthetic_right_to_sue_doc",
+          "start_offset": 0,
+          "end_offset": 77,
+          "sha256": "sha256:aaa4af2da9585a618751860d39111a68fd14c371bf1257dd899638365e2de049",
+          "text": "Synthetic exhibit references an EEOC right-to-sue letter dated before filing."
+        }
+      ]
+    },
+    {
+      "source_document_id": "synthetic_joint_status_report_doc",
+      "document_type": "joint_status_report",
+      "case_stage": "initial_scheduling",
+      "source_role": "plaintiff_and_defendant_filing",
+      "filed_day": 70,
+      "source_access_mode": "offline_fixture",
+      "sha256": "sha256:26e558c3424777bf8e7f464c8a8acaee948ef9751d8afc9d14eb95077407db7d",
+      "segments": [
+        {
+          "segment_id": "doc_status_seg_001",
+          "source_document_id": "synthetic_joint_status_report_doc",
+          "start_offset": 0,
+          "end_offset": 100,
+          "sha256": "sha256:26e558c3424777bf8e7f464c8a8acaee948ef9751d8afc9d14eb95077407db7d",
+          "text": "Synthetic joint status report says discovery has not started and parties expect limited depositions."
+        }
+      ]
+    },
+    {
+      "source_document_id": "synthetic_deposition_notice_doc",
+      "document_type": "deposition_notices",
+      "case_stage": "discovery",
+      "source_role": "discovery_document",
+      "filed_day": 150,
+      "source_access_mode": "offline_fixture",
+      "sha256": "sha256:e50c80b40dfe6421304cd9dcbc20dc198d8fefd63b4111674eedde52b65da77e",
+      "segments": [
+        {
+          "segment_id": "doc_deposition_notice_seg_001",
+          "source_document_id": "synthetic_deposition_notice_doc",
+          "start_offset": 0,
+          "end_offset": 100,
+          "sha256": "sha256:e50c80b40dfe6421304cd9dcbc20dc198d8fefd63b4111674eedde52b65da77e",
+          "text": "Synthetic deposition notice appears after the intake-stage window and is a negative routing example."
+        }
+      ]
+    }
+  ],
+  "public_records_ingested": false,
+  "live_calls_performed": false,
+  "pacer_purchase_performed": false,
+  "recap_fetch_purchase_performed": false,
+  "uploads_performed": false,
+  "court_writes_performed": false,
+  "external_writes_performed": false
+}
