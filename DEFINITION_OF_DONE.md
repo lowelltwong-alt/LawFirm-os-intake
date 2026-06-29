@@ -7,7 +7,7 @@ The starter is complete when all of the following are true:
 1. The repository unpacks directly into `LawFirm-os-intake` without a nested duplicate root.
 2. A new builder can identify the repo role, authority order, first command, and prohibited actions from the root files.
 3. The package installs on Python 3.11+.
-4. `python -m pytest` passes.
+4. `python scripts/run_full_pytest.py` passes under `config/validation-runtime-policy.yaml`.
 5. `bash scripts/smoke_demo.sh` completes locally.
 6. The demo emits a source inventory, segments, effective context, preflight packet, human confirmation, conflict-search seed, legal budget proposal, matter-opening readiness packet, evidence graph, and run ledger.
 7. Every observed candidate has a source-bound evidence reference with source ID, segment ID, offsets, and hash.

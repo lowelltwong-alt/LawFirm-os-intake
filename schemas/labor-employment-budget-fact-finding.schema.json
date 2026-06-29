@@ -1,0 +1,261 @@
+{
+  "$defs": {
+    "CourtListenerLabelSourceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "docket_id": {
+          "title": "Docket Id",
+          "type": "string"
+        },
+        "source_document_id": {
+          "title": "Source Document Id",
+          "type": "string"
+        },
+        "source_segment_id": {
+          "title": "Source Segment Id",
+          "type": "string"
+        },
+        "source_span_ref": {
+          "title": "Source Span Ref",
+          "type": "string"
+        },
+        "start_offset": {
+          "minimum": 0,
+          "title": "Start Offset",
+          "type": "integer"
+        },
+        "end_offset": {
+          "minimum": 0,
+          "title": "End Offset",
+          "type": "integer"
+        },
+        "sha256": {
+          "title": "Sha256",
+          "type": "string"
+        },
+        "public_source_profile_id": {
+          "const": "courtlistener_removal_state_pleadings_proxy",
+          "title": "Public Source Profile Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "docket_id",
+        "source_document_id",
+        "source_segment_id",
+        "source_span_ref",
+        "start_offset",
+        "end_offset",
+        "sha256",
+        "public_source_profile_id"
+      ],
+      "title": "CourtListenerLabelSourceRef",
+      "type": "object"
+    },
+    "LaborEmploymentBudgetFactSource": {
+      "additionalProperties": false,
+      "properties": {
+        "label_family": {
+          "enum": [
+            "budget_driver_label",
+            "conflict_seed_label",
+            "intake_stage_document_label",
+            "person_timeline_event_label"
+          ],
+          "title": "Label Family",
+          "type": "string"
+        },
+        "label_id": {
+          "title": "Label Id",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Value"
+        },
+        "observed_role": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Observed Role"
+        },
+        "inferred_role": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Inferred Role"
+        },
+        "value_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value Status"
+        },
+        "review_status": {
+          "enum": [
+            "candidate",
+            "reviewed",
+            "rejected",
+            "needs_review"
+          ],
+          "title": "Review Status",
+          "type": "string"
+        },
+        "uncertainty": {
+          "title": "Uncertainty",
+          "type": "string"
+        },
+        "source_ref": {
+          "$ref": "#/$defs/CourtListenerLabelSourceRef"
+        }
+      },
+      "required": [
+        "label_family",
+        "label_id",
+        "value",
+        "review_status",
+        "uncertainty",
+        "source_ref"
+      ],
+      "title": "LaborEmploymentBudgetFactSource",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "fact_id": {
+      "title": "Fact Id",
+      "type": "string"
+    },
+    "fact_category": {
+      "enum": [
+        "entity_relationship",
+        "claims_and_posture",
+        "damages_and_exposure",
+        "discovery_and_evidence",
+        "timeline_and_stage",
+        "guideline_and_rate_context"
+      ],
+      "title": "Fact Category",
+      "type": "string"
+    },
+    "required_level": {
+      "enum": [
+        "critical",
+        "important",
+        "context"
+      ],
+      "title": "Required Level",
+      "type": "string"
+    },
+    "question": {
+      "title": "Question",
+      "type": "string"
+    },
+    "current_state": {
+      "enum": [
+        "source_bound_observed_candidate",
+        "source_bound_needs_review",
+        "synthetic_context_requires_confirmation",
+        "unknown_missing"
+      ],
+      "title": "Current State",
+      "type": "string"
+    },
+    "budget_effects": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Budget Effects",
+      "type": "array"
+    },
+    "sources": {
+      "items": {
+        "$ref": "#/$defs/LaborEmploymentBudgetFactSource"
+      },
+      "title": "Sources",
+      "type": "array"
+    },
+    "reviewer_action": {
+      "title": "Reviewer Action",
+      "type": "string"
+    },
+    "recommended_budget_treatment": {
+      "enum": [
+        "block_amount_budget",
+        "hours_only_or_broad_range",
+        "candidate_range_budget_after_review"
+      ],
+      "title": "Recommended Budget Treatment",
+      "type": "string"
+    },
+    "source_bound": {
+      "title": "Source Bound",
+      "type": "boolean"
+    },
+    "human_confirmation_required": {
+      "title": "Human Confirmation Required",
+      "type": "boolean"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "fact_id",
+    "fact_category",
+    "required_level",
+    "question",
+    "current_state",
+    "budget_effects",
+    "reviewer_action",
+    "recommended_budget_treatment",
+    "source_bound",
+    "human_confirmation_required"
+  ],
+  "title": "LaborEmploymentBudgetFactFinding",
+  "type": "object"
+}

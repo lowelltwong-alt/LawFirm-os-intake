@@ -87,8 +87,13 @@ Preserve and harden the existing local demo before adding model providers:
 python -m pip install -e ".[dev]"
 python scripts/validate_repo.py
 python scripts/export_schemas.py
-python -m pytest
+python scripts/run_full_pytest.py
 bash scripts/smoke_demo.sh
 ```
+
+A local validation runtime policy lives at
+`config/validation-runtime-policy.yaml`. Use its configured minimum timeout or
+higher for pytest, schema export, repo validation, lint, and smoke commands;
+full and focused pytest must not run with a 300 second ceiling.
 
 A successful run ends in `blocked_pending_conflicts_and_engagement`. That is expected and correct.

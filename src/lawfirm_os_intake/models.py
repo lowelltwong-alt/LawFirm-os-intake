@@ -755,6 +755,167 @@ class CourtListenerFixtureAuditReport(StrictModel):
         return self
 
 
+LaborEmploymentBudgetFactCategory = Literal[
+    "entity_relationship",
+    "claims_and_posture",
+    "damages_and_exposure",
+    "discovery_and_evidence",
+    "timeline_and_stage",
+    "guideline_and_rate_context",
+]
+
+
+LaborEmploymentBudgetFactState = Literal[
+    "source_bound_observed_candidate",
+    "source_bound_needs_review",
+    "synthetic_context_requires_confirmation",
+    "unknown_missing",
+]
+
+
+class LaborEmploymentBudgetFactSource(StrictModel):
+    label_family: Literal[
+        "budget_driver_label",
+        "conflict_seed_label",
+        "intake_stage_document_label",
+        "person_timeline_event_label",
+    ]
+    label_id: str
+    value: BudgetDriverValue
+    observed_role: str | None = None
+    inferred_role: str | None = None
+    value_status: str | None = None
+    review_status: DatasetReviewStatus
+    uncertainty: str
+    source_ref: CourtListenerLabelSourceRef
+
+
+class LaborEmploymentBudgetFactFinding(StrictModel):
+    fact_id: str
+    fact_category: LaborEmploymentBudgetFactCategory
+    required_level: Literal["critical", "important", "context"]
+    question: str
+    current_state: LaborEmploymentBudgetFactState
+    budget_effects: list[str]
+    sources: list[LaborEmploymentBudgetFactSource] = Field(default_factory=list)
+    reviewer_action: str
+    recommended_budget_treatment: Literal[
+        "block_amount_budget",
+        "hours_only_or_broad_range",
+        "candidate_range_budget_after_review",
+    ]
+    source_bound: bool
+    human_confirmation_required: bool
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+
+
+class LaborEmploymentBudgetFactGap(StrictModel):
+    gap_id: str
+    fact_id: str
+    severity: Literal["critical", "warning", "info"]
+    gap_type: Literal[
+        "missing_evidence",
+        "human_confirmation_required",
+        "uncertain_candidate",
+    ]
+    budget_risk: str
+    recommended_question: str
+    blocks_precise_budget: bool
+    source_refs: list[CourtListenerLabelSourceRef] = Field(default_factory=list)
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+
+
+class LaborEmploymentBudgetFactAuditCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    details: dict[str, Any] = Field(default_factory=dict)
+
+
+class LaborEmploymentBudgetFactAuditReport(StrictModel):
+    schema_version: str = "0.1"
+    labor_employment_budget_fact_audit_report_id: str
+    status: Literal[
+        "labor_employment_budget_facts_ready_for_review",
+        "blocked_labor_employment_budget_fact_audit",
+    ]
+    manifest_ref: str
+    manifest_id: str
+    policy_ref: str
+    primary_practice_area: Literal["labor_employment"]
+    budget_readiness_state: Literal[
+        "blocked_missing_critical_facts",
+        "range_only_pending_human_review",
+        "candidate_ready_for_budget_review",
+    ]
+    review_gate: Literal["human_labor_employment_budget_fact_review"] = (
+        "human_labor_employment_budget_fact_review"
+    )
+    finding_count: int = Field(ge=0)
+    source_bound_finding_count: int = Field(ge=0)
+    needs_review_finding_count: int = Field(ge=0)
+    unknown_finding_count: int = Field(ge=0)
+    gap_count: int = Field(ge=0)
+    critical_gap_count: int = Field(ge=0)
+    findings: list[LaborEmploymentBudgetFactFinding]
+    gaps: list[LaborEmploymentBudgetFactGap]
+    required_human_questions: list[str]
+    checks: list[LaborEmploymentBudgetFactAuditCheck]
+    budget_amount_output_authorized: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    conflict_conclusion_emitted: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    training_pipeline_created: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    generated_at: str
+
+    @model_validator(mode="after")
+    def le_budget_fact_report_counts_match(self) -> "LaborEmploymentBudgetFactAuditReport":
+        failed = [check.check_id for check in self.checks if check.status == "failed"]
+        if self.status == "labor_employment_budget_facts_ready_for_review" and failed:
+            raise ValueError("ready L&E budget fact audit cannot include failed checks")
+        if self.status == "blocked_labor_employment_budget_fact_audit" and not failed:
+            raise ValueError("blocked L&E budget fact audit requires failed checks")
+        if self.finding_count != len(self.findings):
+            raise ValueError("L&E budget fact finding count mismatch")
+        if self.gap_count != len(self.gaps):
+            raise ValueError("L&E budget fact gap count mismatch")
+        if self.source_bound_finding_count != sum(
+            1 for finding in self.findings if finding.source_bound
+        ):
+            raise ValueError("L&E source-bound finding count mismatch")
+        if self.needs_review_finding_count != sum(
+            1
+            for finding in self.findings
+            if finding.current_state
+            in {"source_bound_needs_review", "synthetic_context_requires_confirmation"}
+        ):
+            raise ValueError("L&E needs-review finding count mismatch")
+        if self.unknown_finding_count != sum(
+            1 for finding in self.findings if finding.current_state == "unknown_missing"
+        ):
+            raise ValueError("L&E unknown finding count mismatch")
+        if self.critical_gap_count != sum(1 for gap in self.gaps if gap.severity == "critical"):
+            raise ValueError("L&E critical gap count mismatch")
+        if (
+            self.budget_readiness_state == "blocked_missing_critical_facts"
+            and self.critical_gap_count == 0
+        ):
+            raise ValueError("blocked L&E budget readiness requires critical gaps")
+        if (
+            self.budget_readiness_state != "blocked_missing_critical_facts"
+            and self.critical_gap_count > 0
+        ):
+            raise ValueError("L&E critical gaps require blocked budget readiness")
+        return self
+
+
 class PublicSourceMethodologySource(StrictModel):
     source_id: str
     url: str

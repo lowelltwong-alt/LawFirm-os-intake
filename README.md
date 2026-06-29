@@ -59,7 +59,7 @@ See `docs/lawfirm-os-integration.md` and `repo_topology.yaml`.
 ```bash
 python -m pip install -e ".[dev]"
 python scripts/export_schemas.py
-python -m pytest
+python scripts/run_full_pytest.py
 
 python -m lawfirm_os_intake demo \
   --input examples/synthetic/inbound/north-star-messy-intake.json \
@@ -67,6 +67,11 @@ python -m lawfirm_os_intake demo \
   --confirmation-template examples/synthetic/confirmations/north-star-messy-intake.confirmation-template.json \
   --out-dir .lawfirm-os-intake/demo
 ```
+
+Validation runtime ceilings are declared in
+`config/validation-runtime-policy.yaml`. Full and focused pytest runs should use
+`python scripts/run_full_pytest.py`, which enforces the 900 second local ceiling
+for the repo's heavier test paths.
 
 The demo emits:
 
@@ -230,6 +235,8 @@ Run `bash scripts/smoke_demo.sh` for the north-star release smoke. After the dem
 The CourtListener early-case corpus strategy is also planning-only. `config/courtlistener-dataset-strategy.yaml` declares offline fixture mode, disables live calls, PACER/RECAP Fetch purchase paths, uploads, court writes, sealed/restricted requests, real-client data, and privileged data, and makes labor/employment the first public-derived corpus. Run `lawfirm-os-intake audit-courtlistener-dataset-strategy --repo-root . --out-dir <dir>` to write `courtlistener_dataset_strategy_report.json`; a passing report means the strategy is ready for human dataset review, not that public records were ingested or a training pipeline exists. See `docs/data/courtlistener-early-case-dataset-strategy.md`.
 
 The first offline CourtListener-style fixture is synthetic and lives under `examples/synthetic/courtlistener-derived/`. Run `lawfirm-os-intake audit-courtlistener-fixture --repo-root . --manifest examples/synthetic/courtlistener-derived/labor-employment-dataset-manifest.json --out-dir <dir>` to prove the manifest labels resolve to exact synthetic snapshot segments, offsets, and hashes while keeping later discovery material as negative/routing examples only. The audit records no live calls, no public-record ingestion, no purchases, no training, no budget accuracy claim, and no external writes.
+
+Labor/employment budget readiness now has its own source-bound fact-gap audit. Run `lawfirm-os-intake audit-labor-employment-budget-facts --repo-root . --manifest examples/synthetic/courtlistener-derived/labor-employment-dataset-manifest.json --out-dir <dir>` to write `labor_employment_budget_fact_audit_report.json` and `.md`. The audit checks whether the fixture has enough candidate evidence for L&E budget drivers such as employee/employer identity, payer/client posture, individual supervisors, joint-employer structure, claims, class/collective scope, timeline, damages, ESI/custodians, depositions, experts/vendors, policy documents, and carrier/rate guideline context. Missing critical facts keep the budget posture at `blocked_missing_critical_facts`; no budget amount, submission, conflict conclusion, matter opening, Lake/SQLite write, or learning update is authorized.
 
 The preflight `intake_review_form.md` is the first human pause. It shows detailed source inventory rows, including duplicate links, attachment refs, filenames, metadata keys, hashes, candidate alternatives, deadline and missing-information evidence, and review outcome handling. Only `confirmed` can proceed toward the budget precondition gate, and even then only after exact packet binding and evidence checks; all other outcomes remain blocked or human-only.
 

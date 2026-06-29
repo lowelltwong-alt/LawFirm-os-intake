@@ -21,6 +21,14 @@ The starter persists these runtime checks in `budget_precondition_report.json`. 
 
 The later `safety_gate_report.json` verifies that emitted budget lines and support items still carry source-bound evidence refs or structured refs before the final review package is accepted.
 
+## Labor/Employment fact sufficiency
+
+Labor and employment budgets are especially sensitive to entity relationships and litigation posture. A source packet that merely names a person and a company is not enough to produce a reliable amount. The intake layer must distinguish, at candidate level, employees, former employees, applicants, employers, parent/subsidiary/affiliate entities, joint employers, staffing agencies, PEOs, franchises, unions, agencies, insurers/payers, opposing counsel, supervisors/managers, HR actors, individual defendants, witnesses, and experts.
+
+The local `audit-labor-employment-budget-facts` command reads the synthetic CourtListener-style L&E manifest and `config/labor-employment-budget-fact-needs.yaml`. It emits `labor_employment_budget_fact_audit_report.json` with observed candidate facts, source refs, unknowns, human questions, and critical gaps. Required budget drivers include claims/causes of action, class or collective posture, administrative exhaustion, forum/removal/arbitration posture, employment timeline, damages categories, wage/hour volume, worksites, ESI/custodians, anticipated depositions, experts/vendors, policy or contract documents, and carrier/rate guideline source.
+
+Critical missing or review-only facts set `budget_readiness_state=blocked_missing_critical_facts`. That state is a pricing guard, not a failed audit: it tells the reviewer the current packet should stay at hours-only, broad-range, or no-amount posture until the missing facts are confirmed. The report does not output a budget amount, submit a budget, clear conflicts, open a matter, write Lake/SQLite records, or learn from corrections.
+
 ## Form structure
 
 A budget proposal contains:

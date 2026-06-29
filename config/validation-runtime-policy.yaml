@@ -1,0 +1,40 @@
+policy_id: intake-validation-runtime-policy
+version: "0.1"
+status: candidate
+contains_real_firm_data: false
+
+# Local validation commands have grown beyond the default 300 second tool ceiling.
+# Agents and humans should use these minimum ceilings when invoking the commands.
+commands:
+  full_pytest:
+    command: python -m pytest -q
+    minimum_timeout_seconds: 900
+    reason: Full suite can exceed 300 seconds on local Windows/OneDrive worktrees.
+    wrapper: python scripts/run_full_pytest.py
+  focused_pytest:
+    command: python -m pytest <paths> -q
+    minimum_timeout_seconds: 900
+    reason: Focused tests may expand into workflow-heavy paths and should not inherit a short ceiling.
+    wrapper: python scripts/run_full_pytest.py <paths> -q
+  smoke_demo:
+    command: bash scripts/smoke_demo.sh
+    minimum_timeout_seconds: 900
+    reason: Smoke demo performs the full intake-to-budget flow plus audits.
+  export_schemas:
+    command: python scripts/export_schemas.py
+    minimum_timeout_seconds: 180
+    reason: Schema export imports the full model surface.
+  validate_repo:
+    command: python scripts/validate_repo.py
+    minimum_timeout_seconds: 180
+    reason: Repository validation walks JSON/YAML and generated-cache guards.
+  ruff_check:
+    command: python -m ruff check src tests scripts
+    minimum_timeout_seconds: 180
+    reason: Linting walks the source, tests, and scripts tree.
+  ruff_format_check:
+    command: python -m ruff format --check src tests scripts
+    minimum_timeout_seconds: 180
+    reason: Format check walks the source, tests, and scripts tree.
+
+agent_instruction: Use the configured minimum timeout or higher for these commands; never run full/focused pytest with a 300 second ceiling.

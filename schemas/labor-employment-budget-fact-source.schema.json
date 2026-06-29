@@ -1,0 +1,156 @@
+{
+  "$defs": {
+    "CourtListenerLabelSourceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "docket_id": {
+          "title": "Docket Id",
+          "type": "string"
+        },
+        "source_document_id": {
+          "title": "Source Document Id",
+          "type": "string"
+        },
+        "source_segment_id": {
+          "title": "Source Segment Id",
+          "type": "string"
+        },
+        "source_span_ref": {
+          "title": "Source Span Ref",
+          "type": "string"
+        },
+        "start_offset": {
+          "minimum": 0,
+          "title": "Start Offset",
+          "type": "integer"
+        },
+        "end_offset": {
+          "minimum": 0,
+          "title": "End Offset",
+          "type": "integer"
+        },
+        "sha256": {
+          "title": "Sha256",
+          "type": "string"
+        },
+        "public_source_profile_id": {
+          "const": "courtlistener_removal_state_pleadings_proxy",
+          "title": "Public Source Profile Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "docket_id",
+        "source_document_id",
+        "source_segment_id",
+        "source_span_ref",
+        "start_offset",
+        "end_offset",
+        "sha256",
+        "public_source_profile_id"
+      ],
+      "title": "CourtListenerLabelSourceRef",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "label_family": {
+      "enum": [
+        "budget_driver_label",
+        "conflict_seed_label",
+        "intake_stage_document_label",
+        "person_timeline_event_label"
+      ],
+      "title": "Label Family",
+      "type": "string"
+    },
+    "label_id": {
+      "title": "Label Id",
+      "type": "string"
+    },
+    "value": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Value"
+    },
+    "observed_role": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Observed Role"
+    },
+    "inferred_role": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Inferred Role"
+    },
+    "value_status": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Value Status"
+    },
+    "review_status": {
+      "enum": [
+        "candidate",
+        "reviewed",
+        "rejected",
+        "needs_review"
+      ],
+      "title": "Review Status",
+      "type": "string"
+    },
+    "uncertainty": {
+      "title": "Uncertainty",
+      "type": "string"
+    },
+    "source_ref": {
+      "$ref": "#/$defs/CourtListenerLabelSourceRef"
+    }
+  },
+  "required": [
+    "label_family",
+    "label_id",
+    "value",
+    "review_status",
+    "uncertainty",
+    "source_ref"
+  ],
+  "title": "LaborEmploymentBudgetFactSource",
+  "type": "object"
+}

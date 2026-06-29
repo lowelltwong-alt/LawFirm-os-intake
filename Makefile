@@ -11,7 +11,7 @@ lint:
 	python -m ruff format --check src tests scripts
 
 test:
-	python -m pytest
+	python scripts/run_full_pytest.py
 
 smoke:
 	bash scripts/smoke_demo.sh

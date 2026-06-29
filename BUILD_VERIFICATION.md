@@ -1,28 +1,33 @@
 # Build Verification
 
-Verified in the artifact build environment on 2026-06-25:
+Verified in the local build environment on 2026-06-29:
 
 ```text
 python scripts/export_schemas.py
-# exported 54 schemas
+# exported 228 schemas
 
 python scripts/validate_repo.py
 # repository validation passed
 
-python -m pytest -q
-# passed
+python scripts/run_full_pytest.py
+# 373 passed in 294.99s
 
 python -m ruff check src tests scripts
 # All checks passed
 
 python -m ruff format --check src tests scripts
-# 94 files already formatted
+# 193 files already formatted
 
 bash -lc 'export PATH="/c/Users/lowel/AppData/Local/Programs/Python/Python312:$PATH"; bash scripts/smoke_demo.sh'
 # completed without error and wrote starter, blocked-budget, and context-counterfactual audit reports
 ```
 
 The monetary result is a synthetic test calculation, not a fee quote or approved budget.
+
+Validation runtime ceilings are candidate-governed in
+`config/validation-runtime-policy.yaml`. The full pytest path is intentionally
+run through `scripts/run_full_pytest.py` so local validation does not inherit a
+300 second ceiling as the suite grows.
 
 Repository validation now checks the AI/front-door orientation files for broken local file references and verifies that the public-data catalog remains planning-only metadata with no direct runtime ingestion. The builder reading order in `README.md`, `AI_WORK_START_HERE.md`, `AI_TABLE_OF_CONTENTS.md`, and `CLAUDE.md` must point only to existing local files or directories.
 

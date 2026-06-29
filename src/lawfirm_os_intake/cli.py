@@ -61,6 +61,7 @@ from .learning_shadow_eval_fixture_results import (
     run_learning_shadow_eval_fixture_results,
 )
 from .learning_shadow_eval_results import run_learning_shadow_eval_results
+from .labor_employment_budget_facts import run_labor_employment_budget_fact_audit
 from .models import BudgetProposal, HumanConfirmation
 from .pr_readiness_decision import run_pr_readiness_decision_record
 from .pr_review_checklist import run_pr_review_checklist
@@ -355,6 +356,26 @@ def _parser() -> argparse.ArgumentParser:
         "--repo-root",
         default=".",
         help="Repository root for relative fixture refs; defaults to current directory.",
+    )
+
+    labor_employment_budget_facts = sub.add_parser(
+        "audit-labor-employment-budget-facts",
+        help="Audit source-bound L&E budget fact coverage and missing budget blockers.",
+    )
+    labor_employment_budget_facts.add_argument(
+        "--manifest",
+        required=True,
+        help="Path to courtlistener dataset manifest JSON.",
+    )
+    labor_employment_budget_facts.add_argument("--out-dir", required=True)
+    labor_employment_budget_facts.add_argument(
+        "--repo-root",
+        default=".",
+        help="Repository root for relative fixture refs; defaults to current directory.",
+    )
+    labor_employment_budget_facts.add_argument(
+        "--fact-policy",
+        help="Optional L&E budget fact needs YAML path.",
     )
 
     public_synthetic_conversion = sub.add_parser(
@@ -1590,6 +1611,43 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             if report.status == "blocked_courtlistener_fixture":
+                return 2
+            return 0
+
+        if args.command == "audit-labor-employment-budget-facts":
+            report, run_dir = run_labor_employment_budget_fact_audit(
+                repo_root=args.repo_root,
+                manifest_path=args.manifest,
+                policy_path=args.fact_policy,
+                out_dir=args.out_dir,
+            )
+            failed_checks = [check.check_id for check in report.checks if check.status != "passed"]
+            _print(
+                {
+                    "status": report.status,
+                    "labor_employment_budget_fact_audit_report_id": (
+                        report.labor_employment_budget_fact_audit_report_id
+                    ),
+                    "manifest_id": report.manifest_id,
+                    "policy_ref": report.policy_ref,
+                    "budget_readiness_state": report.budget_readiness_state,
+                    "finding_count": report.finding_count,
+                    "source_bound_finding_count": report.source_bound_finding_count,
+                    "needs_review_finding_count": report.needs_review_finding_count,
+                    "unknown_finding_count": report.unknown_finding_count,
+                    "critical_gap_count": report.critical_gap_count,
+                    "failed_checks": failed_checks,
+                    "budget_amount_output_authorized": report.budget_amount_output_authorized,
+                    "budget_submission_authorized": report.budget_submission_authorized,
+                    "conflict_conclusion_emitted": report.conflict_conclusion_emitted,
+                    "matter_opening_authorized": report.matter_opening_authorized,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            if report.status == "blocked_labor_employment_budget_fact_audit":
                 return 2
             return 0
 
