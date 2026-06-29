@@ -23,6 +23,7 @@ from .budget_fixture_update_pr_package import run_budget_fixture_update_pr_packa
 from .budget_fixture_update_review import run_budget_fixture_update_review_record
 from .budget_form import build_budget_form_template_audit_report, render_budget_form
 from .budget_human_review_packet import run_budget_human_review_packet
+from .budget_human_review_outcomes import run_budget_human_review_outcome_record
 from .budget_lake_admission_bundle import run_budget_event_lake_admission_bundle
 from .budget_lifecycle_audit import run_budget_lifecycle_audit
 from .budget_lifecycle_owner_adoption import run_budget_lifecycle_owner_adoption
@@ -547,6 +548,22 @@ def _parser() -> argparse.ArgumentParser:
     budget_human_review_packet.add_argument(
         "--carrier-rejection-learning-report",
         help="Optional carrier_rejection_learning_report.json.",
+    )
+
+    budget_human_review_outcome = sub.add_parser(
+        "record-budget-human-review-outcome",
+        help="Record append-only human decisions from a budget human review packet.",
+    )
+    budget_human_review_outcome.add_argument("--out-dir", required=True)
+    budget_human_review_outcome.add_argument(
+        "--budget-human-review-packet",
+        required=True,
+        help="Path to budget_human_review_packet.json.",
+    )
+    budget_human_review_outcome.add_argument(
+        "--outcome",
+        required=True,
+        help="Path to a human-authored budget human review outcome record JSON.",
     )
 
     budget_lifecycle_owner_adoption = sub.add_parser(
@@ -1940,6 +1957,51 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 0 if report.status == "ready_for_human_budget_review" else 2
+
+        if args.command == "record-budget-human-review-outcome":
+            report, run_dir = run_budget_human_review_outcome_record(
+                budget_human_review_packet_path=args.budget_human_review_packet,
+                outcome_path=args.outcome,
+                out_dir=args.out_dir,
+            )
+            failed_checks = [check.check_id for check in report.checks if check.status == "failed"]
+            _print(
+                {
+                    "status": report.status,
+                    "budget_human_review_outcome_report_id": (
+                        report.budget_human_review_outcome_report_id
+                    ),
+                    "budget_human_review_outcome_record_id": (
+                        report.budget_human_review_outcome_record_id
+                    ),
+                    "budget_human_review_packet_id": report.budget_human_review_packet_id,
+                    "source_budget_human_review_packet_status": (
+                        report.source_budget_human_review_packet_status
+                    ),
+                    "overall_outcome": report.overall_outcome,
+                    "decision_count": report.decision_count,
+                    "appeal_decision_count": report.appeal_decision_count,
+                    "write_off_decision_count": report.write_off_decision_count,
+                    "correction_decision_count": report.correction_decision_count,
+                    "route_to_owner_decision_count": report.route_to_owner_decision_count,
+                    "no_learning_change_decision_count": (report.no_learning_change_decision_count),
+                    "unresolved_followup_count": report.unresolved_followup_count,
+                    "candidate_lake_event_labels": report.candidate_lake_event_labels,
+                    "failed_checks": failed_checks,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "budget_submission_performed": report.budget_submission_performed,
+                    "appeal_submission_performed": report.appeal_submission_performed,
+                    "budget_mutation_performed": report.budget_mutation_performed,
+                    "carrier_guideline_mutation_performed": (
+                        report.carrier_guideline_mutation_performed
+                    ),
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0 if report.status == "budget_human_review_outcome_recorded" else 2
 
         if args.command == "build-budget-lifecycle-owner-adoption":
             report, run_dir = run_budget_lifecycle_owner_adoption(

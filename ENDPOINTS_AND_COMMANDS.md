@@ -430,6 +430,24 @@ notes, and append-only decision templates. It does not submit budgets or
 appeals, write billing, admit Lake/SQLite records, mutate budgets, profiles,
 templates, or guidelines, write sibling repos, promote canon, or apply learning.
 
+### Record budget human review outcome
+
+```bash
+python -m lawfirm_os_intake record-budget-human-review-outcome \
+  --budget-human-review-packet .lawfirm-os-intake/budget-human-review/budget_human_review_packet.json \
+  --outcome .lawfirm-os-intake/budget-human-review-outcome/budget_human_review_outcome.json \
+  --out-dir .lawfirm-os-intake/budget-human-review-outcome
+```
+
+This writes `budget_human_review_outcome_record.json`,
+`budget_human_review_outcome_history.jsonl`,
+`budget_human_review_outcome_report.json`, and Markdown notes. The outcome
+record binds human decisions to packet templates, counts appeal/write-off/
+correction/owner-routing/no-learning decisions, records required followups, and
+emits candidate Lake event labels for owner review. It does not submit budgets
+or appeals, write billing, admit Lake/SQLite records, mutate budgets, profiles,
+templates, or guidelines, write sibling repos, promote canon, or apply learning.
+
 ### Build budget lifecycle owner adoption packets
 
 ```bash

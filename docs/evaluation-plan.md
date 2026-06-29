@@ -177,6 +177,16 @@ submission, no appeal submission, no billing write, no Lake/SQLite write, no
 budget/profile/template/guideline mutation, no sibling repo write, and no silent
 learning. Blocked lifecycle audits must produce a blocked packet.
 
+`record-budget-human-review-outcome` consumes the budget human review packet and
+an explicit human outcome JSON. It writes an append-only outcome record, JSONL
+history, outcome report, and Markdown notes. The report must prove every decision
+is bound to a packet template, outcomes are allowed by that template,
+follow-up-heavy decisions name owners/due dates, and candidate Lake event labels
+remain review-only. Bad packet evidence or unbound outcome evidence must block
+the report while preserving no budget/appeal submission, no Lake/SQLite write,
+no budget/profile/template/guideline mutation, no sibling repo write, and no
+silent learning.
+
 `build-budget-lifecycle-owner-adoption` consumes
 `budget_lifecycle_audit_report.json` and writes
 `budget_lifecycle_owner_adoption_report.json`, Markdown notes, and owner packet
@@ -310,6 +320,7 @@ Measure review time, correction count, unknown selection, evidence-navigation bu
 - keep `context_counterfactual_audit_report.json` local and non-authoritative; it proves practice-context separation on synthetic fixtures only and does not promote profiles, priors, or taxonomies.
 - keep learning shadow-eval and promotion-readiness reports local and non-authoritative; they plan required eval evidence and block promotion, but do not apply changes or prove production readiness by themselves.
 - keep `budget_human_review_packet.json` local and non-authoritative; it gives humans recommendations, why-notes, red-team notes, and decision templates for budget lifecycle evidence but must not submit budgets or appeals, write billing, admit Lake/SQLite records, mutate budgets/profiles/templates/guidelines, write sibling repos, promote canon, or apply learning.
+- keep `budget_human_review_outcome_report.json` local and non-authoritative; it records append-only human budget review decisions and followups, but must not submit budgets or appeals, write billing, admit Lake/SQLite records, mutate budgets/profiles/templates/guidelines, write sibling repos, promote canon, or apply learning.
 - keep `intake_vertical_readiness_audit_report.json` local and non-authoritative; it proves PR-review readiness for candidate artifacts only and keeps external adoption with the owning repos.
 - keep `pr_review_checklist.json` local and non-authoritative; it helps a human make the draft-PR decision but must not mark the PR ready, call GitHub write APIs, promote canon, write Lake/SQLite records, or apply learning.
 - keep `cross_repo_owner_adoption_report.json` local and non-authoritative; it turns candidate proposals into owner-review packets but must not create issues, open PRs, write sibling repos, promote canon, admit Lake/SQLite records, or apply learning.

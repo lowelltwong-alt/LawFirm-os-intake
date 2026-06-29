@@ -64,6 +64,16 @@ recommendations, why-notes, red-team notes, decision templates, and financial
 summary without approving budget submission, appeal submission, Lake admission,
 billing writes, profile/template/budget/guideline mutation, or learning.
 
+After the reviewer decides, `record-budget-human-review-outcome` writes
+`budget_human_review_outcome_record.json`,
+`budget_human_review_outcome_history.jsonl`, and
+`budget_human_review_outcome_report.json`. The outcome record must bind each
+decision to a packet template, preserve correction/appeal/write-off/owner-route
+followups, and remain append-only. It is evidence for future Orchestrator and
+Exception Lake owner review, not authority to submit budgets or appeals, admit
+Lake/SQLite records, mutate budgets/profiles/templates/guidelines, or apply
+learning.
+
 The preflight path writes `evidence_completeness_report.json` so reviewers and future Orchestrator handoff can see that candidate evidence refs, unknown options, deadline review-only posture, and prohibited next steps were checked before the package was accepted. The report is local proof only, not platform canon.
 
 ## PR close-out review

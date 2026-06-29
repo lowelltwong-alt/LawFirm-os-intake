@@ -6517,6 +6517,228 @@ class BudgetHumanReviewPacket(StrictModel):
         return self
 
 
+BudgetHumanReviewOutcomeStatus = Literal[
+    "budget_human_review_outcome_recorded",
+    "blocked_by_review_packet_evidence",
+    "blocked_by_outcome_evidence",
+]
+
+BudgetHumanReviewTargetOwnerRepo = Literal[
+    "LawFirm-os-intake",
+    "LawFirm-os-semantic-substrate",
+    "LawFirm-os-orchestrator",
+    "LawFirm-os-exceptions-lake-runtime",
+    "LawFirm-os-legal-knowledge-runtime",
+    "LawFirm-os-skills-registry",
+]
+
+
+class BudgetHumanReviewOutcomeDecision(StrictModel):
+    decision_id: str
+    template_id: str
+    review_area: BudgetHumanReviewArea
+    outcome: BudgetHumanReviewOutcome
+    decision_reason: str
+    evidence_refs: list[str] = Field(default_factory=list)
+    source_recommendation_ids: list[str] = Field(default_factory=list)
+    required_followups: list[str] = Field(default_factory=list)
+    followup_owner: str | None = None
+    followup_due_at: str | None = None
+    financial_amount: float | None = None
+    target_owner_repo: BudgetHumanReviewTargetOwnerRepo | None = None
+    proposed_correction_refs: list[str] = Field(default_factory=list)
+    candidate_record_families: list[BudgetLakeCandidateRecordFamily] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def budget_human_review_decision_is_complete(
+        self,
+    ) -> "BudgetHumanReviewOutcomeDecision":
+        if not self.decision_id.strip():
+            raise ValueError("budget human review outcome decision requires decision_id")
+        if not self.template_id.strip():
+            raise ValueError("budget human review outcome decision requires template_id")
+        if not self.decision_reason.strip():
+            raise ValueError("budget human review outcome decision requires decision_reason")
+        if not self.evidence_refs:
+            raise ValueError("budget human review outcome decision requires evidence_refs")
+        if self.outcome == "correct" and not self.proposed_correction_refs:
+            raise ValueError("correct budget human review decisions require correction refs")
+        if self.outcome in {"appeal", "reopen", "needs_more_information"}:
+            if not (self.followup_owner and self.followup_owner.strip()):
+                raise ValueError(f"{self.outcome} decisions require followup_owner")
+            if not (self.followup_due_at and self.followup_due_at.strip()):
+                raise ValueError(f"{self.outcome} decisions require followup_due_at")
+            if not self.required_followups:
+                raise ValueError(f"{self.outcome} decisions require required_followups")
+        if self.outcome == "route_to_owner_review" and self.target_owner_repo is None:
+            raise ValueError("route_to_owner_review decisions require target_owner_repo")
+        if self.outcome == "write_off":
+            if self.financial_amount is None:
+                raise ValueError("write_off decisions require financial_amount")
+            if self.financial_amount < 0:
+                raise ValueError("write_off financial_amount cannot be negative")
+        return self
+
+
+class BudgetHumanReviewOutcomeRecord(StrictModel):
+    schema_version: str = "0.1"
+    budget_human_review_outcome_record_id: str
+    budget_human_review_packet_id: str
+    source_budget_human_review_packet_ref: str | None = None
+    reviewer_id: str
+    reviewer_role: str | None = None
+    reviewed_at: str
+    overall_outcome: BudgetHumanReviewOutcome
+    decision_reason: str
+    decisions: list[BudgetHumanReviewOutcomeDecision]
+    supersedes_budget_human_review_outcome_record_id: str | None = None
+    append_only: Literal[True] = True
+    mutation_policy: Literal["append_only_supersession"] = "append_only_supersession"
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    not_authorized_for_carrier_submission: Literal[True] = True
+    no_connector_implemented: Literal[True] = True
+    no_lake_admission_performed: Literal[True] = True
+    no_sibling_repo_writes: Literal[True] = True
+    no_canonical_mutation: Literal[True] = True
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    billing_connector_write_performed: Literal[False] = False
+    carrier_portal_write_performed: Literal[False] = False
+    email_send_performed: Literal[False] = False
+    appeal_submission_performed: Literal[False] = False
+    budget_submission_performed: Literal[False] = False
+    budget_mutation_performed: Literal[False] = False
+    profile_mutation_performed: Literal[False] = False
+    template_mutation_performed: Literal[False] = False
+    carrier_guideline_mutation_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def budget_human_review_outcome_record_is_complete(
+        self,
+    ) -> "BudgetHumanReviewOutcomeRecord":
+        if not self.budget_human_review_outcome_record_id.strip():
+            raise ValueError("budget human review outcome record requires id")
+        if not self.budget_human_review_packet_id.strip():
+            raise ValueError("budget human review outcome record requires packet id")
+        if not self.reviewer_id.strip():
+            raise ValueError("budget human review outcome record requires reviewer_id")
+        if not self.reviewed_at.strip():
+            raise ValueError("budget human review outcome record requires reviewed_at")
+        if not self.decision_reason.strip():
+            raise ValueError("budget human review outcome record requires decision_reason")
+        if not self.decisions:
+            raise ValueError("budget human review outcome record requires decisions")
+        decision_ids = [decision.decision_id for decision in self.decisions]
+        if len(set(decision_ids)) != len(decision_ids):
+            raise ValueError("budget human review outcome decision IDs must be unique")
+        template_ids = [decision.template_id for decision in self.decisions]
+        if len(set(template_ids)) != len(template_ids):
+            raise ValueError("budget human review outcome template IDs must be unique")
+        return self
+
+
+class BudgetHumanReviewOutcomeCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed", "warning"]
+    message: str
+    artifact_refs: list[str] = Field(default_factory=list)
+    decision_ids: list[str] = Field(default_factory=list)
+    template_ids: list[str] = Field(default_factory=list)
+    blocking_refs: list[str] = Field(default_factory=list)
+
+
+class BudgetHumanReviewOutcomeReport(StrictModel):
+    schema_version: str = "0.1"
+    budget_human_review_outcome_report_id: str
+    status: BudgetHumanReviewOutcomeStatus
+    source_budget_human_review_packet_ref: str
+    budget_human_review_packet_id: str
+    source_budget_human_review_packet_status: Literal[
+        "ready_for_human_budget_review",
+        "blocked_by_lifecycle_audit",
+    ]
+    budget_human_review_outcome_record_id: str
+    overall_outcome: BudgetHumanReviewOutcome
+    decision_reason: str
+    reviewer_id: str
+    reviewed_at: str
+    decision_count: int = Field(ge=0)
+    appeal_decision_count: int = Field(ge=0)
+    write_off_decision_count: int = Field(ge=0)
+    correction_decision_count: int = Field(ge=0)
+    route_to_owner_decision_count: int = Field(ge=0)
+    no_learning_change_decision_count: int = Field(ge=0)
+    unresolved_followup_count: int = Field(ge=0)
+    recorded_outcomes: list[BudgetHumanReviewOutcome] = Field(default_factory=list)
+    required_followups: list[str] = Field(default_factory=list)
+    candidate_lake_event_labels: list[str] = Field(default_factory=list)
+    append_only_history_ref: str
+    checks: list[BudgetHumanReviewOutcomeCheck]
+    required_next_gates: list[str]
+    append_only: Literal[True] = True
+    mutation_policy: Literal["append_only_supersession"] = "append_only_supersession"
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    not_authorized_for_carrier_submission: Literal[True] = True
+    no_connector_implemented: Literal[True] = True
+    no_lake_admission_performed: Literal[True] = True
+    no_sibling_repo_writes: Literal[True] = True
+    no_canonical_mutation: Literal[True] = True
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    billing_connector_write_performed: Literal[False] = False
+    carrier_portal_write_performed: Literal[False] = False
+    email_send_performed: Literal[False] = False
+    appeal_submission_performed: Literal[False] = False
+    budget_submission_performed: Literal[False] = False
+    budget_mutation_performed: Literal[False] = False
+    profile_mutation_performed: Literal[False] = False
+    template_mutation_performed: Literal[False] = False
+    carrier_guideline_mutation_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def budget_human_review_outcome_report_status_matches_checks(
+        self,
+    ) -> "BudgetHumanReviewOutcomeReport":
+        failed = [check for check in self.checks if check.status == "failed"]
+        if self.status == "budget_human_review_outcome_recorded" and failed:
+            raise ValueError("recorded budget human review outcome cannot have failed checks")
+        if self.status != "budget_human_review_outcome_recorded" and not failed:
+            raise ValueError("blocked budget human review outcome report requires failed checks")
+        if self.decision_count != len(self.recorded_outcomes):
+            raise ValueError("budget human review outcome decision count must match outcomes")
+        if self.unresolved_followup_count != len(self.required_followups):
+            raise ValueError("budget human review followup count must match followups")
+        required = {
+            "append_only_human_budget_decision",
+            "orchestrator_human_pause_before_external_action",
+            "exception_lake_owner_review_before_admission",
+            "reviewed_learning_gate_before_mutation",
+            "no_budget_or_appeal_submission_from_intake",
+        }
+        if not required.issubset(set(self.required_next_gates)):
+            raise ValueError("budget human review outcome report is missing required gates")
+        return self
+
+
 BudgetLifecycleOwnerTargetRepo = Literal[
     "LawFirm-os-semantic-substrate",
     "LawFirm-os-orchestrator",
