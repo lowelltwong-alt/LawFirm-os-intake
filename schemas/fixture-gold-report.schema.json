@@ -1,0 +1,133 @@
+{
+  "$defs": {
+    "FixtureGoldCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed",
+            "skipped"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "expected": {
+          "default": null,
+          "title": "Expected"
+        },
+        "actual": {
+          "default": null,
+          "title": "Actual"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "FixtureGoldCheck",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "fixture_gold_report_id": {
+      "title": "Fixture Gold Report Id",
+      "type": "string"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "preflight_packet_id": {
+      "title": "Preflight Packet Id",
+      "type": "string"
+    },
+    "stage": {
+      "enum": [
+        "preflight",
+        "demo"
+      ],
+      "title": "Stage",
+      "type": "string"
+    },
+    "gold_id": {
+      "title": "Gold Id",
+      "type": "string"
+    },
+    "gold_ref": {
+      "title": "Gold Ref",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "passed",
+        "failed"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "reviewed_gold": {
+      "title": "Reviewed Gold",
+      "type": "boolean"
+    },
+    "data_scope": {
+      "const": "synthetic_only",
+      "default": "synthetic_only",
+      "title": "Data Scope",
+      "type": "string"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "evaluated_artifact_refs": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Evaluated Artifact Refs",
+      "type": "object"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/FixtureGoldCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "fixture_gold_report_id",
+    "run_id",
+    "preflight_packet_id",
+    "stage",
+    "gold_id",
+    "gold_ref",
+    "status",
+    "reviewed_gold",
+    "checks",
+    "generated_at"
+  ],
+  "title": "FixtureGoldReport",
+  "type": "object"
+}

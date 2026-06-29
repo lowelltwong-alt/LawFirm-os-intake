@@ -1,0 +1,243 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "pr_readiness_decision_id": {
+      "title": "Pr Readiness Decision Id",
+      "type": "string"
+    },
+    "checklist_report_id": {
+      "title": "Checklist Report Id",
+      "type": "string"
+    },
+    "closeout_report_id": {
+      "title": "Closeout Report Id",
+      "type": "string"
+    },
+    "observed_pr_number": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Observed Pr Number"
+    },
+    "observed_pr_url": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Observed Pr Url"
+    },
+    "observed_pr_state": {
+      "default": "not_supplied",
+      "enum": [
+        "draft",
+        "ready_for_review",
+        "not_supplied"
+      ],
+      "title": "Observed Pr State",
+      "type": "string"
+    },
+    "reviewer_id": {
+      "title": "Reviewer Id",
+      "type": "string"
+    },
+    "reviewed_at": {
+      "title": "Reviewed At",
+      "type": "string"
+    },
+    "decision": {
+      "enum": [
+        "mark_ready_for_review",
+        "keep_draft",
+        "needs_more_work",
+        "split_followup_work"
+      ],
+      "title": "Decision",
+      "type": "string"
+    },
+    "decision_reason": {
+      "title": "Decision Reason",
+      "type": "string"
+    },
+    "accepted_checklist_item_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Accepted Checklist Item Ids",
+      "type": "array"
+    },
+    "validation_evidence_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Validation Evidence Refs",
+      "type": "array"
+    },
+    "required_followups": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Followups",
+      "type": "array"
+    },
+    "red_team_notes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Red Team Notes",
+      "type": "array"
+    },
+    "supersedes_pr_readiness_decision_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Supersedes Pr Readiness Decision Id"
+    },
+    "append_only": {
+      "const": true,
+      "default": true,
+      "title": "Append Only",
+      "type": "boolean"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "human_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Human Review Required",
+      "type": "boolean"
+    },
+    "manual_github_action_required": {
+      "const": true,
+      "default": true,
+      "title": "Manual Github Action Required",
+      "type": "boolean"
+    },
+    "not_authorized_for_external_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For External Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_lake_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Lake Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_sqlite_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Sqlite Write",
+      "type": "boolean"
+    },
+    "pr_marked_ready": {
+      "const": false,
+      "default": false,
+      "title": "Pr Marked Ready",
+      "type": "boolean"
+    },
+    "github_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Github Write Performed",
+      "type": "boolean"
+    },
+    "github_issue_created": {
+      "const": false,
+      "default": false,
+      "title": "Github Issue Created",
+      "type": "boolean"
+    },
+    "github_pr_created": {
+      "const": false,
+      "default": false,
+      "title": "Github Pr Created",
+      "type": "boolean"
+    },
+    "sibling_repo_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sibling Repo Write Performed",
+      "type": "boolean"
+    },
+    "promotion_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Promotion Authorized",
+      "type": "boolean"
+    },
+    "proposed_changes_applied": {
+      "const": false,
+      "default": false,
+      "title": "Proposed Changes Applied",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "pr_readiness_decision_id",
+    "checklist_report_id",
+    "closeout_report_id",
+    "reviewer_id",
+    "reviewed_at",
+    "decision",
+    "decision_reason"
+  ],
+  "title": "PRReadinessDecisionRecord",
+  "type": "object"
+}

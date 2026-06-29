@@ -1,0 +1,47 @@
+{
+  "schema_version": "0.1",
+  "fixture_result_id": "shadowevalfixture_fixture_budget_driver_pass",
+  "proposed_change_id": "proposedchange_dfaf8194ec0516692e7b",
+  "candidate_id": "learninggate_fixture_budget_driver",
+  "baseline_behavior_ref": "synthetic-shadow-eval://budget-driver/baseline",
+  "proposed_behavior_ref": "synthetic-shadow-eval://budget-driver/proposed",
+  "baseline_output_hash": "sha256:5fbf4b86b35d8b11134a220a4f21b0344fbe8e3f1a421c5a593a37a6eb1dce51",
+  "proposed_output_hash": "sha256:87f13e3a70a3306a5f42b0d325debb4f6e3b27c89eb2866509749b104340a0b2",
+  "expected_behavior_summary": "Synthetic budget-driver replay preserves source evidence and non-submission gates while surfacing revised discovery hours as candidate review pressure.",
+  "observed_behavior_summary": "Replay passed the declared budget-driver eval suites and guardrails without applying the proposed change.",
+  "evaluation_outcome": "passed",
+  "passed_eval_suites": [
+    "budget driver counterfactual",
+    "fixture-gold replay",
+    "starter boundary regression"
+  ],
+  "failed_eval_suites": [],
+  "passed_regression_guardrails": [
+    "no budget submission",
+    "no external writes",
+    "no silent learning",
+    "source evidence remains stable"
+  ],
+  "failed_regression_guardrails": [],
+  "support_refs": [
+    "examples/synthetic/learning/proposed-change-shadow-eval-plan.json",
+    "examples/synthetic/learning/proposed-change-readiness-report.json",
+    "synthetic-shadow-eval://budget-driver/replay"
+  ],
+  "synthetic_only": true,
+  "contains_real_client_data": false,
+  "contains_real_matter_data": false,
+  "contains_privileged_data": false,
+  "proposed_change_applied": false,
+  "baseline_mutated": false,
+  "profile_mutation_performed": false,
+  "template_mutation_performed": false,
+  "connector_mutation_performed": false,
+  "budget_mutation_performed": false,
+  "carrier_guideline_mutation_performed": false,
+  "lake_write_performed": false,
+  "sqlite_write_performed": false,
+  "external_writes_performed": false,
+  "silent_learning_performed": false,
+  "generated_at": "2026-06-26T00:00:00Z"
+}

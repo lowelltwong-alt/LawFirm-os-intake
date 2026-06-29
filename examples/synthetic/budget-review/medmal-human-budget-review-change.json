@@ -1,0 +1,41 @@
+{
+  "schema_version": "0.1",
+  "budget_review_change_record_id": "budget-review-change.synthetic-medmal.v0_1",
+  "budget_proposal_id": "__BUDGET_PROPOSAL_ID__",
+  "reviewer_id": "synthetic-pricing-reviewer",
+  "reviewer_role": "human_pricing_reviewer",
+  "reviewed_at": "2026-06-26T00:00:00Z",
+  "outcome": "corrected",
+  "decision_reason": "Synthetic reviewer widened discovery budget after reviewing deposition and expert uncertainty.",
+  "changes": [
+    {
+      "change_id": "change-l330-hours",
+      "target_type": "budget_line",
+      "phase_id": "L300",
+      "task_id": "L330",
+      "external_code_candidate": "L330",
+      "staffing_role": "senior_associate",
+      "field": "estimated_hours",
+      "new_value": 64,
+      "reason": "Synthetic reviewer expects additional deposition preparation and follow-up.",
+      "structured_refs": [
+        "synthetic-review://medmal-budget-review/deposition-uncertainty"
+      ]
+    },
+    {
+      "change_id": "change-l340-expenses",
+      "target_type": "budget_line",
+      "phase_id": "L300",
+      "task_id": "L340",
+      "external_code_candidate": "L340",
+      "expense_code": "E119",
+      "staffing_role": "partner",
+      "field": "estimated_expenses",
+      "new_value": 34000,
+      "reason": "Synthetic reviewer expects higher expert discovery spend before carrier preapproval.",
+      "structured_refs": [
+        "synthetic-review://medmal-budget-review/expert-cost-uncertainty"
+      ]
+    }
+  ]
+}

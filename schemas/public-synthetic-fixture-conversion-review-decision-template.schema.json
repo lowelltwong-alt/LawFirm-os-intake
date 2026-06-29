@@ -1,0 +1,133 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "decision_template_id": {
+      "title": "Decision Template Id",
+      "type": "string"
+    },
+    "conversion_spec_id": {
+      "title": "Conversion Spec Id",
+      "type": "string"
+    },
+    "source_id": {
+      "title": "Source Id",
+      "type": "string"
+    },
+    "recommended_action": {
+      "enum": [
+        "approve_for_separate_fixture_pr_after_required_reviews",
+        "hold_for_privacy_or_license_review",
+        "revise_conversion_spec_before_fixture_pr",
+        "reject_source_for_fixture_use",
+        "human_only_hold"
+      ],
+      "title": "Recommended Action",
+      "type": "string"
+    },
+    "allowed_outcomes": {
+      "items": {
+        "enum": [
+          "approve_conversion_spec_for_separate_fixture_pr",
+          "require_spec_revision",
+          "reject_source_for_fixture_use",
+          "needs_more_information",
+          "human_only_hold"
+        ],
+        "type": "string"
+      },
+      "title": "Allowed Outcomes",
+      "type": "array"
+    },
+    "recommended_outcome": {
+      "enum": [
+        "approve_conversion_spec_for_separate_fixture_pr",
+        "require_spec_revision",
+        "reject_source_for_fixture_use",
+        "needs_more_information",
+        "human_only_hold"
+      ],
+      "title": "Recommended Outcome",
+      "type": "string"
+    },
+    "required_fields": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Fields",
+      "type": "array"
+    },
+    "required_evidence_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Evidence Refs",
+      "type": "array"
+    },
+    "append_only_review_outcome_required": {
+      "const": true,
+      "default": true,
+      "title": "Append Only Review Outcome Required",
+      "type": "boolean"
+    },
+    "reviewer_id_required": {
+      "const": true,
+      "default": true,
+      "title": "Reviewer Id Required",
+      "type": "boolean"
+    },
+    "reviewed_at_required": {
+      "const": true,
+      "default": true,
+      "title": "Reviewed At Required",
+      "type": "boolean"
+    },
+    "decision_reason_required": {
+      "const": true,
+      "default": true,
+      "title": "Decision Reason Required",
+      "type": "boolean"
+    },
+    "fixture_generation_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Fixture Generation Authorized",
+      "type": "boolean"
+    },
+    "fixture_files_mutated": {
+      "const": false,
+      "default": false,
+      "title": "Fixture Files Mutated",
+      "type": "boolean"
+    },
+    "external_submission_authorized": {
+      "const": false,
+      "default": false,
+      "title": "External Submission Authorized",
+      "type": "boolean"
+    },
+    "lake_write_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Authorized",
+      "type": "boolean"
+    },
+    "silent_learning_allowed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Allowed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "decision_template_id",
+    "conversion_spec_id",
+    "source_id",
+    "recommended_action",
+    "allowed_outcomes",
+    "recommended_outcome",
+    "required_fields",
+    "required_evidence_refs"
+  ],
+  "title": "PublicSyntheticFixtureConversionReviewDecisionTemplate",
+  "type": "object"
+}

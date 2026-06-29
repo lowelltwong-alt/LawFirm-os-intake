@@ -1,0 +1,232 @@
+{
+  "$defs": {
+    "LearningPromotionReadinessCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "blocked",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "candidate_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Candidate Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "LearningPromotionReadinessCheck",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "promotion_readiness_report_id": {
+      "title": "Promotion Readiness Report Id",
+      "type": "string"
+    },
+    "reviewed_learning_gate_report_id": {
+      "title": "Reviewed Learning Gate Report Id",
+      "type": "string"
+    },
+    "shadow_eval_plan_id": {
+      "title": "Shadow Eval Plan Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "promotion_blocked_shadow_eval_required",
+        "no_learning_candidates",
+        "failed"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "source_gate_report_ref": {
+      "title": "Source Gate Report Ref",
+      "type": "string"
+    },
+    "shadow_eval_plan_ref": {
+      "title": "Shadow Eval Plan Ref",
+      "type": "string"
+    },
+    "candidate_count": {
+      "minimum": 0,
+      "title": "Candidate Count",
+      "type": "integer"
+    },
+    "blocked_candidate_count": {
+      "minimum": 0,
+      "title": "Blocked Candidate Count",
+      "type": "integer"
+    },
+    "ready_candidate_count": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Ready Candidate Count",
+      "type": "integer"
+    },
+    "target_learning_loops": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Target Learning Loops",
+      "type": "array"
+    },
+    "target_owners": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Target Owners",
+      "type": "array"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/LearningPromotionReadinessCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "required_next_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Gates",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "promotion_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Promotion Authorized",
+      "type": "boolean"
+    },
+    "owning_repo_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Owning Repo Review Required",
+      "type": "boolean"
+    },
+    "semantic_substrate_promotion_required_for_canon": {
+      "const": true,
+      "default": true,
+      "title": "Semantic Substrate Promotion Required For Canon",
+      "type": "boolean"
+    },
+    "orchestrator_runtime_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Orchestrator Runtime Review Required",
+      "type": "boolean"
+    },
+    "exception_lake_admission_required": {
+      "const": true,
+      "default": true,
+      "title": "Exception Lake Admission Required",
+      "type": "boolean"
+    },
+    "proposed_changes_applied": {
+      "const": false,
+      "default": false,
+      "title": "Proposed Changes Applied",
+      "type": "boolean"
+    },
+    "profile_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Profile Mutation Performed",
+      "type": "boolean"
+    },
+    "template_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Template Mutation Performed",
+      "type": "boolean"
+    },
+    "connector_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Connector Mutation Performed",
+      "type": "boolean"
+    },
+    "budget_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Budget Mutation Performed",
+      "type": "boolean"
+    },
+    "carrier_guideline_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Carrier Guideline Mutation Performed",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "promotion_readiness_report_id",
+    "reviewed_learning_gate_report_id",
+    "shadow_eval_plan_id",
+    "status",
+    "source_gate_report_ref",
+    "shadow_eval_plan_ref",
+    "candidate_count",
+    "blocked_candidate_count",
+    "target_learning_loops",
+    "target_owners",
+    "checks",
+    "required_next_gates",
+    "generated_at"
+  ],
+  "title": "LearningPromotionReadinessReport",
+  "type": "object"
+}

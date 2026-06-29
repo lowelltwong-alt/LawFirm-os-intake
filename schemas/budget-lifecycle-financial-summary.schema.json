@@ -1,0 +1,97 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "original_budget_total": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Original Budget Total"
+    },
+    "human_revision_total_delta": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Human Revision Total Delta"
+    },
+    "human_revised_candidate_total": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Human Revised Candidate Total"
+    },
+    "actual_comparison_budgeted_total": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Actual Comparison Budgeted Total"
+    },
+    "actual_total": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Actual Total"
+    },
+    "actual_variance_amount": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Actual Variance Amount"
+    },
+    "carrier_disputed_amount": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Carrier Disputed Amount",
+      "type": "number"
+    },
+    "carrier_recovered_amount": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Carrier Recovered Amount",
+      "type": "number"
+    },
+    "carrier_write_down_amount": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Carrier Write Down Amount",
+      "type": "number"
+    }
+  },
+  "title": "BudgetLifecycleFinancialSummary",
+  "type": "object"
+}

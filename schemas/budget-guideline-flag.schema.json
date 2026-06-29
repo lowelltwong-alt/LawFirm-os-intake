@@ -1,0 +1,128 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "constraint_id": {
+      "title": "Constraint Id",
+      "type": "string"
+    },
+    "constraint_type": {
+      "enum": [
+        "role_rate_cap",
+        "phase_budget_cap",
+        "total_budget_cap",
+        "staffing_rule",
+        "unknown_guidelines"
+      ],
+      "title": "Constraint Type",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "flagged_for_human_review",
+        "not_triggered",
+        "unknown"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "phase_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Phase Id"
+    },
+    "role": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Role"
+    },
+    "current_value": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Current Value"
+    },
+    "threshold_value": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Threshold Value"
+    },
+    "provenance": {
+      "default": "synthetic_policy",
+      "enum": [
+        "synthetic_policy",
+        "unknown"
+      ],
+      "title": "Provenance",
+      "type": "string"
+    },
+    "structured_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Structured Ref"
+    },
+    "note": {
+      "title": "Note",
+      "type": "string"
+    },
+    "rewrites_budget": {
+      "const": false,
+      "default": false,
+      "title": "Rewrites Budget",
+      "type": "boolean"
+    },
+    "requires_human_review": {
+      "const": true,
+      "default": true,
+      "title": "Requires Human Review",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "constraint_id",
+    "constraint_type",
+    "status",
+    "note"
+  ],
+  "title": "BudgetGuidelineFlag",
+  "type": "object"
+}

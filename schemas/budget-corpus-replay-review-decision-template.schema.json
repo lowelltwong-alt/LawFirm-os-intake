@@ -1,0 +1,134 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "decision_template_id": {
+      "title": "Decision Template Id",
+      "type": "string"
+    },
+    "replay_case_id": {
+      "title": "Replay Case Id",
+      "type": "string"
+    },
+    "source_artifact_ref": {
+      "title": "Source Artifact Ref",
+      "type": "string"
+    },
+    "recommended_action": {
+      "enum": [
+        "review_fixture_binding",
+        "execute_before_learning_review",
+        "repair_replay_before_learning",
+        "provide_shadow_eval_input_or_hold",
+        "resolve_blocker_or_exclude",
+        "run_selected_case_before_review",
+        "acknowledge_supporting_context"
+      ],
+      "title": "Recommended Action",
+      "type": "string"
+    },
+    "allowed_outcomes": {
+      "items": {
+        "enum": [
+          "approve_fixture_binding",
+          "reject_fixture_binding",
+          "needs_replay_repair",
+          "needs_more_information",
+          "human_only_hold",
+          "exclude_from_learning",
+          "provide_shadow_eval_input",
+          "acknowledge_supporting_context"
+        ],
+        "type": "string"
+      },
+      "title": "Allowed Outcomes",
+      "type": "array"
+    },
+    "recommended_outcome": {
+      "enum": [
+        "approve_fixture_binding",
+        "reject_fixture_binding",
+        "needs_replay_repair",
+        "needs_more_information",
+        "human_only_hold",
+        "exclude_from_learning",
+        "provide_shadow_eval_input",
+        "acknowledge_supporting_context"
+      ],
+      "title": "Recommended Outcome",
+      "type": "string"
+    },
+    "required_fields": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Fields",
+      "type": "array"
+    },
+    "required_evidence_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Evidence Refs",
+      "type": "array"
+    },
+    "append_only_review_outcome_required": {
+      "const": true,
+      "default": true,
+      "title": "Append Only Review Outcome Required",
+      "type": "boolean"
+    },
+    "reviewer_id_required": {
+      "const": true,
+      "default": true,
+      "title": "Reviewer Id Required",
+      "type": "boolean"
+    },
+    "reviewed_at_required": {
+      "const": true,
+      "default": true,
+      "title": "Reviewed At Required",
+      "type": "boolean"
+    },
+    "decision_reason_required": {
+      "const": true,
+      "default": true,
+      "title": "Decision Reason Required",
+      "type": "boolean"
+    },
+    "downstream_learning_gate_allowed_without_review": {
+      "const": false,
+      "default": false,
+      "title": "Downstream Learning Gate Allowed Without Review",
+      "type": "boolean"
+    },
+    "external_submission_authorized": {
+      "const": false,
+      "default": false,
+      "title": "External Submission Authorized",
+      "type": "boolean"
+    },
+    "lake_write_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Authorized",
+      "type": "boolean"
+    },
+    "silent_learning_allowed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Allowed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "decision_template_id",
+    "replay_case_id",
+    "source_artifact_ref",
+    "recommended_action",
+    "allowed_outcomes",
+    "recommended_outcome",
+    "required_fields"
+  ],
+  "title": "BudgetCorpusReplayReviewDecisionTemplate",
+  "type": "object"
+}

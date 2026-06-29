@@ -1,0 +1,241 @@
+{
+  "$defs": {
+    "EvidenceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "segment_id": {
+          "title": "Segment Id",
+          "type": "string"
+        },
+        "start_offset": {
+          "title": "Start Offset",
+          "type": "integer"
+        },
+        "end_offset": {
+          "title": "End Offset",
+          "type": "integer"
+        },
+        "sha256": {
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "segment_id",
+        "start_offset",
+        "end_offset",
+        "sha256"
+      ],
+      "title": "EvidenceRef",
+      "type": "object"
+    },
+    "MatterOpeningBlocker": {
+      "additionalProperties": false,
+      "properties": {
+        "blocker_code": {
+          "title": "Blocker Code",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "status": {
+          "const": "blocking",
+          "default": "blocking",
+          "title": "Status",
+          "type": "string"
+        },
+        "blocking_scope": {
+          "enum": [
+            "conflicts",
+            "engagement",
+            "matter_opening",
+            "budget_submission"
+          ],
+          "title": "Blocking Scope",
+          "type": "string"
+        },
+        "required_human_gate": {
+          "title": "Required Human Gate",
+          "type": "string"
+        },
+        "authority_owner": {
+          "title": "Authority Owner",
+          "type": "string"
+        },
+        "support_kind": {
+          "enum": [
+            "structured_workflow_policy",
+            "prohibited_transition_policy",
+            "budget_submission_boundary"
+          ],
+          "title": "Support Kind",
+          "type": "string"
+        },
+        "structured_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Structured Ref"
+        },
+        "evidence_refs": {
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "prohibits": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Prohibits",
+          "type": "array"
+        }
+      },
+      "required": [
+        "blocker_code",
+        "label",
+        "blocking_scope",
+        "required_human_gate",
+        "authority_owner",
+        "support_kind",
+        "reason"
+      ],
+      "title": "MatterOpeningBlocker",
+      "type": "object"
+    },
+    "ProhibitedActionGuardrail": {
+      "additionalProperties": false,
+      "properties": {
+        "action_code": {
+          "title": "Action Code",
+          "type": "string"
+        },
+        "transition_blocked": {
+          "title": "Transition Blocked",
+          "type": "string"
+        },
+        "required_human_gate": {
+          "title": "Required Human Gate",
+          "type": "string"
+        },
+        "support_kind": {
+          "enum": [
+            "prohibited_transition_policy",
+            "budget_submission_boundary"
+          ],
+          "title": "Support Kind",
+          "type": "string"
+        },
+        "structured_ref": {
+          "title": "Structured Ref",
+          "type": "string"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "linked_blocker_codes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Linked Blocker Codes",
+          "type": "array"
+        }
+      },
+      "required": [
+        "action_code",
+        "transition_blocked",
+        "required_human_gate",
+        "support_kind",
+        "structured_ref",
+        "reason"
+      ],
+      "title": "ProhibitedActionGuardrail",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "readiness_id": {
+      "title": "Readiness Id",
+      "type": "string"
+    },
+    "preflight_packet_id": {
+      "title": "Preflight Packet Id",
+      "type": "string"
+    },
+    "confirmation_id": {
+      "title": "Confirmation Id",
+      "type": "string"
+    },
+    "status": {
+      "const": "blocked_pending_conflicts_and_engagement",
+      "title": "Status",
+      "type": "string"
+    },
+    "satisfied": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Satisfied",
+      "type": "array"
+    },
+    "blockers": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Blockers",
+      "type": "array"
+    },
+    "blocker_details": {
+      "items": {
+        "$ref": "#/$defs/MatterOpeningBlocker"
+      },
+      "title": "Blocker Details",
+      "type": "array"
+    },
+    "prohibited_actions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Prohibited Actions",
+      "type": "array"
+    },
+    "prohibited_action_details": {
+      "items": {
+        "$ref": "#/$defs/ProhibitedActionGuardrail"
+      },
+      "title": "Prohibited Action Details",
+      "type": "array"
+    }
+  },
+  "required": [
+    "readiness_id",
+    "preflight_packet_id",
+    "confirmation_id",
+    "status",
+    "satisfied",
+    "blockers",
+    "prohibited_actions"
+  ],
+  "title": "MatterOpeningReadiness",
+  "type": "object"
+}

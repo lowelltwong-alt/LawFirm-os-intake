@@ -2,7 +2,7 @@ harness_id: intake-preflight.local.v0_1
 owner_repo: LawFirm-os-intake
 authority: local_candidate
 mode: synthetic_only_local
-purpose: Validate source gating, source inventory, segmentation, candidate extraction, evidence critique, and intake preflight packet assembly.
+purpose: Validate source gating, Python reference ingestion, candidate extraction, evidence critique, and intake preflight packet assembly.
 command:
   - python
   - -m
@@ -12,6 +12,7 @@ required_inputs:
   - examples/synthetic/inbound/carrier-assignment-medmal.json
   - context/synthetic-profiles/insurance-defense.yaml
 expected_outputs:
+  - ingestion_result.json
   - source_inventory.json
   - segments.json
   - effective_context.json

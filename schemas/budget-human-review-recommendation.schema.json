@@ -1,0 +1,113 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "recommendation_id": {
+      "title": "Recommendation Id",
+      "type": "string"
+    },
+    "review_area": {
+      "enum": [
+        "budget_revision",
+        "actual_variance",
+        "carrier_rejection",
+        "appeal_result",
+        "lake_handoff",
+        "learning_loop",
+        "authority_boundary",
+        "overall"
+      ],
+      "title": "Review Area",
+      "type": "string"
+    },
+    "recommended_action": {
+      "enum": [
+        "confirm_no_change",
+        "correct_budget",
+        "request_more_information",
+        "appeal",
+        "accept_write_down",
+        "reopen",
+        "block_submission",
+        "human_only",
+        "route_to_owner_review",
+        "no_learning_change"
+      ],
+      "title": "Recommended Action",
+      "type": "string"
+    },
+    "priority": {
+      "enum": [
+        "critical",
+        "high",
+        "medium",
+        "low"
+      ],
+      "title": "Priority",
+      "type": "string"
+    },
+    "why": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Why",
+      "type": "array"
+    },
+    "source_artifact_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Source Artifact Refs",
+      "type": "array"
+    },
+    "required_human_decisions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Human Decisions",
+      "type": "array"
+    },
+    "proposed_next_actions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Proposed Next Actions",
+      "type": "array"
+    },
+    "financial_impact": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Financial Impact"
+    },
+    "candidate_record_families": {
+      "items": {
+        "enum": [
+          "budget_human_change_record",
+          "budget_actual_variance_record",
+          "budget_actual_missing_source_record",
+          "carrier_rejection_decision_record",
+          "carrier_appeal_result_record",
+          "carrier_financial_outcome_record"
+        ],
+        "type": "string"
+      },
+      "title": "Candidate Record Families",
+      "type": "array"
+    }
+  },
+  "required": [
+    "recommendation_id",
+    "review_area",
+    "recommended_action",
+    "priority",
+    "why"
+  ],
+  "title": "BudgetHumanReviewRecommendation",
+  "type": "object"
+}

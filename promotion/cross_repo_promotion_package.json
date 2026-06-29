@@ -1,0 +1,391 @@
+{
+  "schema_version": "0.1",
+  "package_id": "cross-repo-promotion-package.intake-to-budget.v0_1",
+  "status": "candidate_only",
+  "origin_repo": "LawFirm-os-intake",
+  "generated_at": "2026-06-24T00:00:00Z",
+  "reviewed_lock_status": "reviewed_seed_lock",
+  "target_repos": [
+    "LawFirm-os-semantic-substrate",
+    "LawFirm-os-orchestrator",
+    "LawFirm-os-exceptions-lake-runtime",
+    "LawFirm-os-skills-registry",
+    "LawFirm-os-legal-knowledge-runtime"
+  ],
+  "proposals": [
+    {
+      "proposal_id": "substrate.intake-source-and-evidence-refs.v0_1",
+      "target_repo": "LawFirm-os-semantic-substrate",
+      "authority_plane": "control",
+      "proposal_type": "schema_contract",
+      "summary": "Promote intake source, source inventory, ingestion result, evidence ref, segment ref, data-scope gate, evidence-completeness, context-boundary, and review-package completeness contracts after substrate governance review.",
+      "candidate_artifact_refs": [
+        "schemas/intake-preflight-packet.schema.json",
+        "schemas/ingestion-result.schema.json",
+        "schemas/source-bundle.schema.json",
+        "schemas/segment.schema.json",
+        "schemas/model-adapter-report.schema.json",
+        "schemas/rust-transition-policy.schema.json",
+        "config/rust-ingestion-transition-policy.json",
+        "schemas/evidence-completeness-report.schema.json",
+        "schemas/context-boundary-report.schema.json",
+        "schemas/review-package-completeness-report.schema.json"
+      ],
+      "proposed_contract_refs": [
+        "semantic-substrate://candidate/contracts/intake-source.v0_1",
+        "semantic-substrate://candidate/contracts/source-bound-evidence-ref.v0_1"
+      ],
+      "required_governance_actions": [
+        "review field names against existing source-ref doctrine",
+        "decide which local candidate fields become canonical and which remain intake-local",
+        "assign canonical schema IDs only inside Semantic Substrate"
+      ],
+      "promotion_blockers": [
+        "local schemas are candidate-only",
+        "no real-data pilot approved",
+        "no canonical schema IDs assigned"
+      ],
+      "non_authoritative": true,
+      "direct_promotion_performed": false,
+      "external_writes_performed": false
+    },
+    {
+      "proposal_id": "substrate.human-confirmation-and-candidates.v0_1",
+      "target_repo": "LawFirm-os-semantic-substrate",
+      "authority_plane": "control",
+      "proposal_type": "schema_contract",
+      "summary": "Promote candidate contracts for human confirmation, human review outcomes, party-role alternatives, matter-family candidates, representation-posture candidates, deadline candidates, and missing-information candidates.",
+      "candidate_artifact_refs": [
+        "schemas/human-confirmation.schema.json",
+        "schemas/human-review-outcome-record.schema.json",
+        "schemas/party-candidate.schema.json",
+        "schemas/intake-preflight-packet.schema.json",
+        "docs/human-review.md"
+      ],
+      "proposed_contract_refs": [
+        "semantic-substrate://candidate/contracts/human-confirmation.v0_1",
+        "semantic-substrate://candidate/contracts/party-role-candidate.v0_1",
+        "semantic-substrate://candidate/contracts/matter-posture-candidate.v0_1"
+      ],
+      "required_governance_actions": [
+        "map local candidate labels to substrate-controlled vocabularies",
+        "confirm unknown and human-only outcomes under lifecycle policy",
+        "define correction/supersession semantics in canonical doctrine"
+      ],
+      "promotion_blockers": [
+        "local matter and role labels are not canon",
+        "human review outcome states need substrate lifecycle approval"
+      ],
+      "non_authoritative": true,
+      "direct_promotion_performed": false,
+      "external_writes_performed": false
+    },
+    {
+      "proposal_id": "substrate.budget-and-event-labels.v0_1",
+      "target_repo": "LawFirm-os-semantic-substrate",
+      "authority_plane": "control",
+      "proposal_type": "event_label_mapping",
+      "summary": "Review candidate budget proposal, budget support, scenario set, driver summary, guideline flag, carrier-compliant projection, actual comparison, and intake event-label families before any canonical promotion.",
+      "candidate_artifact_refs": [
+        "schemas/legal-budget-proposal.schema.json",
+        "schemas/budget-support-item.schema.json",
+        "schemas/budget-scenario-set.schema.json",
+        "schemas/budget-driver-effect.schema.json",
+        "schemas/budget-driver-profile-summary.schema.json",
+        "schemas/budget-guideline-flag.schema.json",
+        "schemas/named-timekeeper-rate.schema.json",
+        "schemas/carrier-compliant-projection.schema.json",
+        "schemas/carrier-compliant-projection-basis.schema.json",
+        "schemas/carrier-compliant-leverage-summary.schema.json",
+        "schemas/carrier-compliant-projection-line.schema.json",
+        "schemas/carrier-preapproval-requirement.schema.json",
+        "schemas/carrier-preapproval-report.schema.json",
+        "schemas/budget-review-change.schema.json",
+        "schemas/budget-review-change-record.schema.json",
+        "schemas/budget-revision-delta.schema.json",
+        "schemas/budget-revision-report.schema.json",
+        "schemas/budget-actual-amount.schema.json",
+        "schemas/budget-actuals-source.schema.json",
+        "schemas/budget-actual-comparison-report.schema.json",
+        "schemas/budget-actual-phase-comparison.schema.json",
+        "schemas/budget-actual-code-comparison.schema.json",
+        "schemas/budget-actual-variance-driver-candidate.schema.json",
+        "schemas/reviewed-learning-gate-candidate.schema.json",
+        "schemas/reviewed-learning-gate-check.schema.json",
+        "schemas/reviewed-learning-gate-report.schema.json",
+        "schemas/learning-shadow-eval-case.schema.json",
+        "schemas/learning-shadow-eval-plan.schema.json",
+        "schemas/learning-promotion-readiness-check.schema.json",
+        "schemas/learning-promotion-readiness-report.schema.json",
+        "schemas/learning-proposed-change-red-team-note.schema.json",
+        "schemas/learning-proposed-change-artifact.schema.json",
+        "schemas/learning-proposed-change-set.schema.json",
+        "schemas/learning-shadow-eval-fixture-result.schema.json",
+        "schemas/learning-shadow-eval-result.schema.json",
+        "schemas/learning-shadow-eval-result-report.schema.json",
+        "schemas/learning-owner-handoff-item.schema.json",
+        "schemas/learning-owner-handoff-package.schema.json",
+        "schemas/learning-owner-handoff-report.schema.json",
+        "schemas/intake-vertical-readiness-slice-status.schema.json",
+        "schemas/intake-vertical-readiness-artifact-check.schema.json",
+        "schemas/intake-vertical-readiness-audit-report.schema.json",
+        "docs/cross-repo-promotion-package.md"
+      ],
+      "proposed_contract_refs": [
+        "semantic-substrate://candidate/contracts/legal-budget-proposal.v0_1",
+        "semantic-substrate://candidate/event-labels/intake-to-budget.v0_1"
+      ],
+      "required_governance_actions": [
+        "decide event-label canonical names and route IDs",
+        "decide whether UTBMS mappings remain external taxonomy candidates",
+        "separate budget proposal schema from budget approval/submission schemas"
+      ],
+      "promotion_blockers": [
+        "no budget approval or submission authority exists in intake",
+        "no canonical event label registration performed",
+        "UTBMS and driver taxonomies remain local candidates"
+      ],
+      "non_authoritative": true,
+      "direct_promotion_performed": false,
+      "external_writes_performed": false
+    },
+    {
+      "proposal_id": "orchestrator.workflow-human-pauses-evidence-packet.v0_1",
+      "target_repo": "LawFirm-os-orchestrator",
+      "authority_plane": "execution",
+      "proposal_type": "workflow_interface",
+      "summary": "Define Orchestrator as the outer runtime owner for the intake-to-budget workflow, including gate order, human pauses, evidence packet assembly, run ledger ownership, and guarded Lake handoff.",
+      "candidate_artifact_refs": [
+        "workflow/intake-to-budget.workflow.yaml",
+        "schemas/review-package-manifest.schema.json",
+        "schemas/run-ledger-event.schema.json",
+        "schemas/run-ledger-integrity-report.schema.json",
+        "schemas/human-gate-status-report.schema.json",
+        "schemas/budget-precondition-report.schema.json",
+        "schemas/safety-gate-report.schema.json",
+        "docs/workflow/intake-to-budget.md",
+        "docs/workflow/state-machine.md"
+      ],
+      "proposed_contract_refs": [
+        "orchestrator://candidate/workflows/intake-to-budget.v0_1",
+        "orchestrator://candidate/interfaces/human-pause.v0_1",
+        "orchestrator://candidate/interfaces/evidence-packet-assembly.v0_1"
+      ],
+      "required_governance_actions": [
+        "review gate ordering and terminal blocked states",
+        "define execution passport and retry semantics",
+        "decide package assembly and Lake handoff owner interface"
+      ],
+      "promotion_blockers": [
+        "local CLI remains reference only",
+        "no Orchestrator route IDs assigned",
+        "no runtime queue or connector integration approved"
+      ],
+      "non_authoritative": true,
+      "direct_promotion_performed": false,
+      "external_writes_performed": false
+    },
+    {
+      "proposal_id": "orchestrator.carrier-rejection-capture-appeal.v0_1",
+      "target_repo": "LawFirm-os-orchestrator",
+      "authority_plane": "execution",
+      "proposal_type": "workflow_interface",
+      "summary": "Define future Orchestrator-owned carrier rejection connector capture, response-state ledger, human rejection review pauses, human-authorized appeal submission, and guarded Exception Lake handoff.",
+      "candidate_artifact_refs": [
+        "schemas/carrier-rejection-orchestrator-interface-draft.schema.json",
+        "schemas/carrier-rejection-orchestrator-connector-channel.schema.json",
+        "schemas/carrier-rejection-orchestrator-workflow-step.schema.json",
+        "schemas/carrier-response-reconciliation-report.schema.json",
+        "schemas/carrier-rejection-review-packet.schema.json",
+        "schemas/carrier-rejection-learning-report.schema.json",
+        "schemas/carrier-rejection-roadmap-audit-report.schema.json",
+        "docs/carrier-rejection-learning-loop-roadmap.md",
+        "ENDPOINTS_AND_COMMANDS.md"
+      ],
+      "proposed_contract_refs": [
+        "orchestrator://candidate/interfaces/carrier-rejection-capture.v0_1",
+        "orchestrator://candidate/interfaces/response-state-ledger.v0_1",
+        "orchestrator://candidate/interfaces/human-carrier-rejection-pause.v0_1",
+        "orchestrator://candidate/interfaces/appeal-submission-gate.v0_1",
+        "orchestrator://candidate/interfaces/exception-lake-handoff.v0_1"
+      ],
+      "required_governance_actions": [
+        "define connector-owned capture envelope and source metadata requirements",
+        "define response-state ledger creation and SLA checks",
+        "define human pause, correction, appeal authorization, and retry semantics",
+        "define evidence-packet handoff to Exception Lake admission review"
+      ],
+      "promotion_blockers": [
+        "no production connector contract approved",
+        "no Orchestrator route IDs assigned",
+        "no human appeal authorization workflow promoted",
+        "no Exception Lake admission schema promoted",
+        "intake remains reference/eval only"
+      ],
+      "non_authoritative": true,
+      "direct_promotion_performed": false,
+      "external_writes_performed": false
+    },
+    {
+      "proposal_id": "lake.intake-budget-evidence-mapping.v0_1",
+      "target_repo": "LawFirm-os-exceptions-lake-runtime",
+      "authority_plane": "evidence",
+      "proposal_type": "lake_evidence_mapping",
+      "summary": "Define dry-run to admitted-evidence mappings for intake proposal, correction, escalation, budget template, human budget change, and budget actual-variance evidence.",
+      "candidate_artifact_refs": [
+        "schemas/exception-lake-candidate.schema.json",
+        "schemas/exception-lake-readiness-report.schema.json",
+        "schemas/exception-lake-handoff-manifest.schema.json",
+        "schemas/exception-lake-mapping-package.schema.json",
+        "schemas/exception-lake-mapping-rule.schema.json",
+        "schemas/carrier-preapproval-report.schema.json",
+        "schemas/budget-review-change-record.schema.json",
+        "schemas/budget-revision-report.schema.json",
+        "schemas/budget-actual-comparison-report.schema.json",
+        "schemas/budget-actual-variance-driver-candidate.schema.json",
+        "schemas/reviewed-learning-gate-candidate.schema.json",
+        "schemas/reviewed-learning-gate-report.schema.json",
+        "schemas/learning-shadow-eval-plan.schema.json",
+        "schemas/learning-promotion-readiness-report.schema.json",
+        "schemas/learning-proposed-change-artifact.schema.json",
+        "schemas/learning-proposed-change-set.schema.json",
+        "schemas/learning-shadow-eval-fixture-result.schema.json",
+        "schemas/learning-shadow-eval-result-report.schema.json",
+        "schemas/learning-owner-handoff-package.schema.json",
+        "schemas/learning-owner-handoff-report.schema.json",
+        "schemas/intake-vertical-readiness-audit-report.schema.json",
+        "DATA_FLOW_MAP.md"
+      ],
+      "proposed_contract_refs": [
+        "exception-lake://candidate/evidence/intake-proposal-correction-escalation.v0_1",
+        "exception-lake://candidate/evidence/budget-template-change-actual-variance.v0_1"
+      ],
+      "required_governance_actions": [
+        "map local labels to canonical Lake event classes",
+        "define admission validation and append-only record hashes",
+        "decide SQLite schema and migration outside intake"
+      ],
+      "promotion_blockers": [
+        "intake writes dry-run candidates only",
+        "no SQLite write performed",
+        "no canonical Lake admission schema promoted"
+      ],
+      "non_authoritative": true,
+      "direct_promotion_performed": false,
+      "external_writes_performed": false
+    },
+    {
+      "proposal_id": "lake.carrier-rejection-admission.v0_1",
+      "target_repo": "LawFirm-os-exceptions-lake-runtime",
+      "authority_plane": "evidence",
+      "proposal_type": "lake_evidence_mapping",
+      "summary": "Define candidate append-only Lake admission record families for carrier rejection notices, reconciliation, human review outcomes, appeal submissions, appeal results, financial outcomes, and learning candidates.",
+      "candidate_artifact_refs": [
+        "schemas/carrier-rejection-lake-admission-proposal.schema.json",
+        "schemas/carrier-rejection-lake-admission-record-spec.schema.json",
+        "schemas/carrier-rejection-lake-admission-check.schema.json",
+        "schemas/carrier-rejection-notice.schema.json",
+        "schemas/carrier-appeal-result.schema.json",
+        "schemas/carrier-response-reconciliation-report.schema.json",
+        "schemas/carrier-rejection-review-packet.schema.json",
+        "schemas/carrier-rejection-learning-report.schema.json",
+        "schemas/carrier-rejection-roadmap-audit-report.schema.json",
+        "docs/carrier-rejection-learning-loop-roadmap.md"
+      ],
+      "proposed_contract_refs": [
+        "exception-lake://candidate/admission/carrier-rejection-notice.v0_1",
+        "exception-lake://candidate/admission/carrier-rejection-reconciliation.v0_1",
+        "exception-lake://candidate/admission/carrier-rejection-review-outcome.v0_1",
+        "exception-lake://candidate/admission/carrier-appeal-submission.v0_1",
+        "exception-lake://candidate/admission/carrier-appeal-result.v0_1",
+        "exception-lake://candidate/admission/carrier-financial-outcome.v0_1",
+        "exception-lake://candidate/admission/carrier-rejection-learning.v0_1"
+      ],
+      "required_governance_actions": [
+        "map local carrier rejection labels to canonical Lake event classes",
+        "define append-only SQLite tables and migrations inside the Lake repo",
+        "define admission validation for idempotency, source hashes, record hashes, and Orchestrator evidence packets",
+        "define correction and supersession records instead of updates in place"
+      ],
+      "promotion_blockers": [
+        "no Exception Lake admission schema promoted",
+        "no canonical carrier rejection event classes assigned",
+        "no Lake SQLite migration written",
+        "no Orchestrator evidence-packet handoff promoted",
+        "no real-data pilot approved"
+      ],
+      "non_authoritative": true,
+      "direct_promotion_performed": false,
+      "external_writes_performed": false
+    },
+    {
+      "proposal_id": "skills.intake-specialist-metadata.v0_1",
+      "target_repo": "LawFirm-os-skills-registry",
+      "authority_plane": "skills_registry",
+      "proposal_type": "skill_metadata",
+      "summary": "Package reusable specialist metadata for source reader, party-role extractor, matter router, deadline/gap extractor, evidence critic, budget planner, and frontier adjudicator.",
+      "candidate_artifact_refs": [
+        "skill-agent-manifest.json",
+        "agents/source-reader.yaml",
+        "agents/party-role-extractor.yaml",
+        "agents/matter-router.yaml",
+        "agents/deadline-gap-extractor.yaml",
+        "agents/evidence-critic.yaml",
+        "agents/budget-planner.yaml",
+        "agents/frontier-adjudicator.yaml",
+        "harnesses/intake-preflight.local.yaml"
+      ],
+      "proposed_contract_refs": [
+        "skills-registry://candidate/skills/intake-specialists.v0_1"
+      ],
+      "required_governance_actions": [
+        "review accepted and forbidden context classes",
+        "bind each specialist to input/output schemas and tool authority",
+        "add trust record, prompt hash, eval suite, reviewer, and revocation metadata"
+      ],
+      "promotion_blockers": [
+        "skills are predeclared local candidates",
+        "no promoted skill trust record exists",
+        "frontier adjudicator remains deny-by-default"
+      ],
+      "non_authoritative": true,
+      "direct_promotion_performed": false,
+      "external_writes_performed": false
+    },
+    {
+      "proposal_id": "lkr.context-bundle-source-passage-claim-refs.v0_1",
+      "target_repo": "LawFirm-os-legal-knowledge-runtime",
+      "authority_plane": "legal_knowledge_runtime",
+      "proposal_type": "context_bundle_interface",
+      "summary": "Define the Legal Knowledge Runtime interface intake needs for SourceRef, PassageRef, ClaimRef, retrieval trace, and Legal Context Bundle handoff without raw payload fanout.",
+      "candidate_artifact_refs": [
+        "schemas/context-boundary-report.schema.json",
+        "schemas/intake-preflight-packet.schema.json",
+        "docs/practice-context.md",
+        "docs/chunking-and-evidence-graph.md"
+      ],
+      "proposed_contract_refs": [
+        "legal-knowledge-runtime://candidate/interfaces/legal-context-bundle.v0_1",
+        "legal-knowledge-runtime://candidate/interfaces/source-passage-claim-refs.v0_1"
+      ],
+      "required_governance_actions": [
+        "define bundle hash, retrieval trace, source currency, and authority fields",
+        "confirm raw legal payload fanout prohibition",
+        "map Legal Knowledge refs into Orchestrator evidence packets"
+      ],
+      "promotion_blockers": [
+        "no production legal retrieval connector is authorized",
+        "public-data ingestion remains planning-only",
+        "context is not observed evidence"
+      ],
+      "non_authoritative": true,
+      "direct_promotion_performed": false,
+      "external_writes_performed": false
+    }
+  ],
+  "promotion_rule": "Stable components graduate only through the owning sibling repo after review. LawFirm-os-intake may propose contracts, fixtures, and eval evidence, but must not assign canonical schema IDs, route IDs, event classes, skill trust state, Lake admission rules, or runtime connector authority.",
+  "no_canonical_mutation": true,
+  "no_sibling_repo_writes": true,
+  "no_external_writes_performed": true,
+  "non_authoritative": true
+}

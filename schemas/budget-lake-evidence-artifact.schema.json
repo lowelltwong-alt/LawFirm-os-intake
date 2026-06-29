@@ -1,0 +1,227 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "artifact_id": {
+      "title": "Artifact Id",
+      "type": "string"
+    },
+    "artifact_kind": {
+      "enum": [
+        "budget_change_ledger_report",
+        "budget_change_ledger_jsonl",
+        "budget_actual_variance_ledger_report",
+        "budget_actual_variance_ledger_jsonl",
+        "carrier_rejection_decision_ledger_report",
+        "carrier_rejection_decision_ledger_jsonl"
+      ],
+      "title": "Artifact Kind",
+      "type": "string"
+    },
+    "artifact_ref": {
+      "title": "Artifact Ref",
+      "type": "string"
+    },
+    "sha256": {
+      "title": "Sha256",
+      "type": "string"
+    },
+    "report_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Report Id"
+    },
+    "ledger_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Ledger Id"
+    },
+    "run_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Run Id"
+    },
+    "preflight_packet_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Preflight Packet Id"
+    },
+    "budget_proposal_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Budget Proposal Id"
+    },
+    "event_count": {
+      "minimum": 0,
+      "title": "Event Count",
+      "type": "integer"
+    },
+    "row_event_count": {
+      "minimum": 0,
+      "title": "Row Event Count",
+      "type": "integer"
+    },
+    "event_kind_counts": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Event Kind Counts",
+      "type": "object"
+    },
+    "local_event_labels": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Local Event Labels",
+      "type": "array"
+    },
+    "candidate_record_families": {
+      "items": {
+        "enum": [
+          "budget_human_change_record",
+          "budget_actual_variance_record",
+          "budget_actual_missing_source_record",
+          "carrier_rejection_decision_record",
+          "carrier_appeal_result_record",
+          "carrier_financial_outcome_record"
+        ],
+        "type": "string"
+      },
+      "title": "Candidate Record Families",
+      "type": "array"
+    },
+    "admission_state": {
+      "const": "candidate_not_admitted",
+      "default": "candidate_not_admitted",
+      "title": "Admission State",
+      "type": "string"
+    },
+    "requires_exception_lake_owner_review": {
+      "const": true,
+      "default": true,
+      "title": "Requires Exception Lake Owner Review",
+      "type": "boolean"
+    },
+    "artifact_hash_required": {
+      "const": true,
+      "default": true,
+      "title": "Artifact Hash Required",
+      "type": "boolean"
+    },
+    "append_only": {
+      "const": true,
+      "default": true,
+      "title": "Append Only",
+      "type": "boolean"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "raw_payload_included": {
+      "const": false,
+      "default": false,
+      "title": "Raw Payload Included",
+      "type": "boolean"
+    },
+    "not_authorized_for_lake_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Lake Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_sqlite_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Sqlite Write",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "artifact_id",
+    "artifact_kind",
+    "artifact_ref",
+    "sha256",
+    "event_count",
+    "row_event_count"
+  ],
+  "title": "BudgetLakeEvidenceArtifact",
+  "type": "object"
+}

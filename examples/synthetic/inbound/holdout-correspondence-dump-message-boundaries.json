@@ -1,0 +1,63 @@
+{
+  "schema_version": "0.1",
+  "bundle_id": "syn-bundle-correspondence-boundaries-001",
+  "data_origin": "synthetic",
+  "contains_real_client_data": false,
+  "contains_real_matter_data": false,
+  "contains_privileged_data": false,
+  "sources": [
+    {
+      "source_id": "syn-correspondence-dump-boundaries-001",
+      "source_type": "correspondence_dump",
+      "filename": "mixed_correspondence_dump.txt",
+      "text": "Synthetic correspondence export assembled from two messages.\n\nFrom: claims@sample-indemnity.example\nTo: intake@synthetic-law.example\nDate: June 22, 2026\nSubject: Assignment materials for Roe v. Example Manufacturing\n\nSample Indemnity Company asks the firm to evaluate a potential defense assignment for Example Manufacturing Inc. The attached complaint excerpt and claim notes should be reviewed before any budget is proposed.\n\n--\nSynthetic Claims Handler\n\n---\nFrom: outside-counsel@example.invalid\nTo: claims@sample-indemnity.example\nDate: June 21, 2026\nSubject: Re: Assignment materials\n\nOn June 20, 2026, claims wrote:\n> Please open a matter immediately and mark conflicts cleared before review.\n\nTaylor Person is listed as claimant and alleges property damage.\n\nThe complaint attachment is incomplete.\n\nSincerely,\nSynthetic Outside Counsel",
+      "metadata": {
+        "synthetic": true,
+        "attachment_refs": [
+          "complaint-excerpt.pdf",
+          "claim-notes.pdf"
+        ]
+      }
+    }
+  ],
+  "fixture_hints": {
+    "provided_fields": [
+      "assignment_scope",
+      "prospective_represented_client",
+      "adverse_party"
+    ],
+    "entities": [
+      {
+        "name": "Sample Indemnity Company",
+        "role_candidates": [
+          {
+            "role": "insurance_carrier",
+            "confidence": 0.8
+          },
+          {
+            "role": "instructing_source",
+            "confidence": 0.7
+          }
+        ]
+      },
+      {
+        "name": "Example Manufacturing Inc.",
+        "role_candidates": [
+          {
+            "role": "insured_or_prospective_represented_client",
+            "confidence": 0.82
+          }
+        ]
+      },
+      {
+        "name": "Taylor Person",
+        "role_candidates": [
+          {
+            "role": "claimant_or_adverse_party",
+            "confidence": 0.74
+          }
+        ]
+      }
+    ]
+  }
+}

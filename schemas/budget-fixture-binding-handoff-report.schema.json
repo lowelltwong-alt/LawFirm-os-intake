@@ -1,0 +1,539 @@
+{
+  "$defs": {
+    "BudgetFixtureBindingHandoffItem": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "default": "0.1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "handoff_item_id": {
+          "title": "Handoff Item Id",
+          "type": "string"
+        },
+        "fixture_binding_candidate_id": {
+          "title": "Fixture Binding Candidate Id",
+          "type": "string"
+        },
+        "fixture_binding_candidate_report_id": {
+          "title": "Fixture Binding Candidate Report Id",
+          "type": "string"
+        },
+        "review_packet_id": {
+          "title": "Review Packet Id",
+          "type": "string"
+        },
+        "review_outcome_report_id": {
+          "title": "Review Outcome Report Id",
+          "type": "string"
+        },
+        "replay_execution_report_id": {
+          "title": "Replay Execution Report Id",
+          "type": "string"
+        },
+        "replay_case_id": {
+          "title": "Replay Case Id",
+          "type": "string"
+        },
+        "source_artifact_ref": {
+          "title": "Source Artifact Ref",
+          "type": "string"
+        },
+        "artifact_kind": {
+          "enum": [
+            "intake_source_fixture",
+            "human_confirmation_fixture",
+            "budget_review_fixture",
+            "actuals_fixture",
+            "carrier_rejection_fixture",
+            "reviewed_gold_fixture",
+            "learning_gate_fixture",
+            "learning_shadow_eval_fixture",
+            "learning_support_fixture",
+            "unclassified_json_fixture"
+          ],
+          "title": "Artifact Kind",
+          "type": "string"
+        },
+        "approved_output_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Approved Output Refs",
+          "type": "array"
+        },
+        "proposed_target_fixture_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Proposed Target Fixture Refs",
+          "type": "array"
+        },
+        "proposed_binding_action": {
+          "enum": [
+            "bind_replay_outputs_to_synthetic_fixture",
+            "bind_replay_outputs_to_reviewed_gold",
+            "hold_for_manual_fixture_design",
+            "exclude_from_fixture_binding"
+          ],
+          "title": "Proposed Binding Action",
+          "type": "string"
+        },
+        "source_candidate_status": {
+          "enum": [
+            "candidate_ready_for_fixture_update_review",
+            "blocked_pending_approved_outcome",
+            "blocked_missing_approved_outputs"
+          ],
+          "title": "Source Candidate Status",
+          "type": "string"
+        },
+        "disposition": {
+          "enum": [
+            "ready_for_human_fixture_update_review",
+            "blocked_pending_approved_outcome",
+            "blocked_missing_approved_outputs"
+          ],
+          "title": "Disposition",
+          "type": "string"
+        },
+        "target_owner": {
+          "const": "LawFirm-os-intake",
+          "default": "LawFirm-os-intake",
+          "title": "Target Owner",
+          "type": "string"
+        },
+        "recommended_owner_actions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Recommended Owner Actions",
+          "type": "array"
+        },
+        "why": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Why",
+          "type": "array"
+        },
+        "red_team_notes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Red Team Notes",
+          "type": "array"
+        },
+        "required_next_gates": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Required Next Gates",
+          "type": "array"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        },
+        "synthetic_only": {
+          "const": true,
+          "default": true,
+          "title": "Synthetic Only",
+          "type": "boolean"
+        },
+        "human_review_required": {
+          "const": true,
+          "default": true,
+          "title": "Human Review Required",
+          "type": "boolean"
+        },
+        "fixture_update_review_required": {
+          "const": true,
+          "default": true,
+          "title": "Fixture Update Review Required",
+          "type": "boolean"
+        },
+        "not_authorized_for_external_write": {
+          "const": true,
+          "default": true,
+          "title": "Not Authorized For External Write",
+          "type": "boolean"
+        },
+        "not_authorized_for_lake_write": {
+          "const": true,
+          "default": true,
+          "title": "Not Authorized For Lake Write",
+          "type": "boolean"
+        },
+        "not_authorized_for_sqlite_write": {
+          "const": true,
+          "default": true,
+          "title": "Not Authorized For Sqlite Write",
+          "type": "boolean"
+        },
+        "not_authorized_for_budget_submission": {
+          "const": true,
+          "default": true,
+          "title": "Not Authorized For Budget Submission",
+          "type": "boolean"
+        },
+        "fixture_update_authorized": {
+          "const": false,
+          "default": false,
+          "title": "Fixture Update Authorized",
+          "type": "boolean"
+        },
+        "fixture_update_pr_created": {
+          "const": false,
+          "default": false,
+          "title": "Fixture Update Pr Created",
+          "type": "boolean"
+        },
+        "fixture_files_mutated": {
+          "const": false,
+          "default": false,
+          "title": "Fixture Files Mutated",
+          "type": "boolean"
+        },
+        "fixture_binding_applied": {
+          "const": false,
+          "default": false,
+          "title": "Fixture Binding Applied",
+          "type": "boolean"
+        },
+        "downstream_learning_gate_allowed": {
+          "const": false,
+          "default": false,
+          "title": "Downstream Learning Gate Allowed",
+          "type": "boolean"
+        },
+        "calibration_applied": {
+          "const": false,
+          "default": false,
+          "title": "Calibration Applied",
+          "type": "boolean"
+        },
+        "profile_mutation_performed": {
+          "const": false,
+          "default": false,
+          "title": "Profile Mutation Performed",
+          "type": "boolean"
+        },
+        "template_mutation_performed": {
+          "const": false,
+          "default": false,
+          "title": "Template Mutation Performed",
+          "type": "boolean"
+        },
+        "budget_mutation_performed": {
+          "const": false,
+          "default": false,
+          "title": "Budget Mutation Performed",
+          "type": "boolean"
+        },
+        "carrier_guideline_mutation_performed": {
+          "const": false,
+          "default": false,
+          "title": "Carrier Guideline Mutation Performed",
+          "type": "boolean"
+        },
+        "lake_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Lake Write Performed",
+          "type": "boolean"
+        },
+        "sqlite_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Sqlite Write Performed",
+          "type": "boolean"
+        },
+        "external_writes_performed": {
+          "const": false,
+          "default": false,
+          "title": "External Writes Performed",
+          "type": "boolean"
+        },
+        "silent_learning_performed": {
+          "const": false,
+          "default": false,
+          "title": "Silent Learning Performed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "handoff_item_id",
+        "fixture_binding_candidate_id",
+        "fixture_binding_candidate_report_id",
+        "review_packet_id",
+        "review_outcome_report_id",
+        "replay_execution_report_id",
+        "replay_case_id",
+        "source_artifact_ref",
+        "artifact_kind",
+        "proposed_binding_action",
+        "source_candidate_status",
+        "disposition",
+        "recommended_owner_actions",
+        "why",
+        "red_team_notes",
+        "required_next_gates"
+      ],
+      "title": "BudgetFixtureBindingHandoffItem",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "fixture_binding_handoff_report_id": {
+      "title": "Fixture Binding Handoff Report Id",
+      "type": "string"
+    },
+    "source_fixture_binding_candidate_report_id": {
+      "title": "Source Fixture Binding Candidate Report Id",
+      "type": "string"
+    },
+    "source_fixture_binding_candidate_report_ref": {
+      "title": "Source Fixture Binding Candidate Report Ref",
+      "type": "string"
+    },
+    "source_fixture_binding_candidate_report_status": {
+      "enum": [
+        "fixture_binding_candidates_ready_for_review",
+        "blocked_pending_approved_outcome",
+        "blocked_missing_approved_outputs",
+        "no_fixture_binding_candidates"
+      ],
+      "title": "Source Fixture Binding Candidate Report Status",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "fixture_binding_handoff_ready_for_human_review",
+        "fixture_binding_handoff_blocked",
+        "no_fixture_binding_handoff_candidates"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "item_count": {
+      "minimum": 0,
+      "title": "Item Count",
+      "type": "integer"
+    },
+    "ready_item_count": {
+      "minimum": 0,
+      "title": "Ready Item Count",
+      "type": "integer"
+    },
+    "blocked_item_count": {
+      "minimum": 0,
+      "title": "Blocked Item Count",
+      "type": "integer"
+    },
+    "target_owner": {
+      "const": "LawFirm-os-intake",
+      "default": "LawFirm-os-intake",
+      "title": "Target Owner",
+      "type": "string"
+    },
+    "handoff_items": {
+      "items": {
+        "$ref": "#/$defs/BudgetFixtureBindingHandoffItem"
+      },
+      "title": "Handoff Items",
+      "type": "array"
+    },
+    "handoff_item_output_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Handoff Item Output Ref"
+    },
+    "required_next_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Gates",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "human_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Human Review Required",
+      "type": "boolean"
+    },
+    "fixture_update_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Fixture Update Review Required",
+      "type": "boolean"
+    },
+    "not_authorized_for_external_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For External Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_lake_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Lake Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_sqlite_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Sqlite Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_budget_submission": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Budget Submission",
+      "type": "boolean"
+    },
+    "fixture_update_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Fixture Update Authorized",
+      "type": "boolean"
+    },
+    "fixture_update_pr_created": {
+      "const": false,
+      "default": false,
+      "title": "Fixture Update Pr Created",
+      "type": "boolean"
+    },
+    "fixture_files_mutated": {
+      "const": false,
+      "default": false,
+      "title": "Fixture Files Mutated",
+      "type": "boolean"
+    },
+    "fixture_binding_applied": {
+      "const": false,
+      "default": false,
+      "title": "Fixture Binding Applied",
+      "type": "boolean"
+    },
+    "downstream_learning_gate_allowed": {
+      "const": false,
+      "default": false,
+      "title": "Downstream Learning Gate Allowed",
+      "type": "boolean"
+    },
+    "calibration_applied": {
+      "const": false,
+      "default": false,
+      "title": "Calibration Applied",
+      "type": "boolean"
+    },
+    "profile_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Profile Mutation Performed",
+      "type": "boolean"
+    },
+    "template_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Template Mutation Performed",
+      "type": "boolean"
+    },
+    "budget_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Budget Mutation Performed",
+      "type": "boolean"
+    },
+    "carrier_guideline_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Carrier Guideline Mutation Performed",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "fixture_binding_handoff_report_id",
+    "source_fixture_binding_candidate_report_id",
+    "source_fixture_binding_candidate_report_ref",
+    "source_fixture_binding_candidate_report_status",
+    "status",
+    "item_count",
+    "ready_item_count",
+    "blocked_item_count",
+    "handoff_items",
+    "required_next_gates",
+    "generated_at"
+  ],
+  "title": "BudgetFixtureBindingHandoffReport",
+  "type": "object"
+}

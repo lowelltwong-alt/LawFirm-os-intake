@@ -29,6 +29,15 @@ def load_json(path: str | Path) -> Any:
     return json.loads(Path(path).read_text(encoding="utf-8"))
 
 
+def load_jsonl(path: str | Path) -> list[Any]:
+    target = Path(path)
+    if not target.exists():
+        return []
+    return [
+        json.loads(line) for line in target.read_text(encoding="utf-8").splitlines() if line.strip()
+    ]
+
+
 def write_json(path: str | Path, value: Any) -> Path:
     target = Path(path)
     target.parent.mkdir(parents=True, exist_ok=True)

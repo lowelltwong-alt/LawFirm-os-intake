@@ -1,0 +1,351 @@
+{
+  "$defs": {
+    "SyntheticFixtureExpansionCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "artifact_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Artifact Refs",
+          "type": "array"
+        },
+        "blocking_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Blocking Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "SyntheticFixtureExpansionCheck",
+      "type": "object"
+    },
+    "SyntheticFixtureExpansionHoldoutSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "holdout_id": {
+          "title": "Holdout Id",
+          "type": "string"
+        },
+        "family": {
+          "enum": [
+            "ambiguous_roles",
+            "missing_actuals",
+            "carrier_rejection_variants",
+            "budget_driver_edges"
+          ],
+          "title": "Family",
+          "type": "string"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "fixture_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Fixture Refs",
+          "type": "array"
+        },
+        "test_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Test Refs",
+          "type": "array"
+        },
+        "expected_signals": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Expected Signals",
+          "type": "array"
+        },
+        "red_team_notes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Red Team Notes",
+          "type": "array"
+        },
+        "synthetic_only": {
+          "const": true,
+          "default": true,
+          "title": "Synthetic Only",
+          "type": "boolean"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        },
+        "calibration_approved": {
+          "const": false,
+          "default": false,
+          "title": "Calibration Approved",
+          "type": "boolean"
+        },
+        "fixture_files_mutated_by_audit": {
+          "const": false,
+          "default": false,
+          "title": "Fixture Files Mutated By Audit",
+          "type": "boolean"
+        },
+        "lake_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Lake Write Performed",
+          "type": "boolean"
+        },
+        "sqlite_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Sqlite Write Performed",
+          "type": "boolean"
+        },
+        "external_writes_performed": {
+          "const": false,
+          "default": false,
+          "title": "External Writes Performed",
+          "type": "boolean"
+        },
+        "silent_learning_performed": {
+          "const": false,
+          "default": false,
+          "title": "Silent Learning Performed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "holdout_id",
+        "family",
+        "description",
+        "fixture_refs",
+        "test_refs",
+        "expected_signals",
+        "red_team_notes"
+      ],
+      "title": "SyntheticFixtureExpansionHoldoutSpec",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "fixture_expansion_report_id": {
+      "title": "Fixture Expansion Report Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "synthetic_fixture_expansion_ready_for_review",
+        "blocked_by_fixture_expansion_evidence"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "source_remaining_roadmap_report_id": {
+      "title": "Source Remaining Roadmap Report Id",
+      "type": "string"
+    },
+    "source_remaining_roadmap_report_ref": {
+      "title": "Source Remaining Roadmap Report Ref",
+      "type": "string"
+    },
+    "source_remaining_roadmap_status": {
+      "title": "Source Remaining Roadmap Status",
+      "type": "string"
+    },
+    "source_remaining_roadmap_item_id": {
+      "const": "fixture-and-eval-expansion",
+      "title": "Source Remaining Roadmap Item Id",
+      "type": "string"
+    },
+    "source_remaining_roadmap_item_status": {
+      "title": "Source Remaining Roadmap Item Status",
+      "type": "string"
+    },
+    "manifest_id": {
+      "title": "Manifest Id",
+      "type": "string"
+    },
+    "manifest_ref": {
+      "title": "Manifest Ref",
+      "type": "string"
+    },
+    "required_family_count": {
+      "minimum": 0,
+      "title": "Required Family Count",
+      "type": "integer"
+    },
+    "holdout_count": {
+      "minimum": 0,
+      "title": "Holdout Count",
+      "type": "integer"
+    },
+    "family_counts": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Family Counts",
+      "type": "object"
+    },
+    "missing_required_families": {
+      "items": {
+        "enum": [
+          "ambiguous_roles",
+          "missing_actuals",
+          "carrier_rejection_variants",
+          "budget_driver_edges"
+        ],
+        "type": "string"
+      },
+      "title": "Missing Required Families",
+      "type": "array"
+    },
+    "holdouts": {
+      "items": {
+        "$ref": "#/$defs/SyntheticFixtureExpansionHoldoutSpec"
+      },
+      "title": "Holdouts",
+      "type": "array"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/SyntheticFixtureExpansionCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "calibration_approved": {
+      "const": false,
+      "default": false,
+      "title": "Calibration Approved",
+      "type": "boolean"
+    },
+    "fixture_files_mutated_by_audit": {
+      "const": false,
+      "default": false,
+      "title": "Fixture Files Mutated By Audit",
+      "type": "boolean"
+    },
+    "github_issue_created": {
+      "const": false,
+      "default": false,
+      "title": "Github Issue Created",
+      "type": "boolean"
+    },
+    "github_pr_created": {
+      "const": false,
+      "default": false,
+      "title": "Github Pr Created",
+      "type": "boolean"
+    },
+    "github_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Github Write Performed",
+      "type": "boolean"
+    },
+    "sibling_repo_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sibling Repo Write Performed",
+      "type": "boolean"
+    },
+    "promotion_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Promotion Authorized",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "fixture_expansion_report_id",
+    "status",
+    "source_remaining_roadmap_report_id",
+    "source_remaining_roadmap_report_ref",
+    "source_remaining_roadmap_status",
+    "source_remaining_roadmap_item_id",
+    "source_remaining_roadmap_item_status",
+    "manifest_id",
+    "manifest_ref",
+    "required_family_count",
+    "holdout_count",
+    "family_counts",
+    "missing_required_families",
+    "holdouts",
+    "checks",
+    "generated_at"
+  ],
+  "title": "SyntheticFixtureExpansionReport",
+  "type": "object"
+}

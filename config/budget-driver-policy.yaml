@@ -1,0 +1,188 @@
+policy_id: synthetic-budget-driver-policy
+version: "0.1"
+status: candidate
+contains_real_firm_data: false
+
+# SYNTHETIC ONLY. Driver taxonomy and per-matter-family defaults for the driver-based
+# budget model (see docs/driver-based-budget-model-design.md).
+#
+# Resolved drivers carry provenance. Defaults below are labeled
+# provenance=profile_default at resolution time: they are assumptions for an unknown
+# case, never observed case facts. Promotion of this taxonomy to canon runs through
+# the Semantic Substrate; until then it is a candidate.
+
+drivers:
+  resolution_path:
+    class: resolution_path
+    unit: scenario
+    description: How far the matter proceeds; selects scenario truncation.
+  num_represented_defendants:
+    class: count
+    unit: parties
+    description: Count of represented/insured defendants; derivable from confirmed parties.
+  num_adverse_parties:
+    class: count
+    unit: parties
+    description: Count of adverse parties/claimants; derivable from confirmed parties.
+  num_depositions:
+    class: count
+    unit: depositions
+    description: Total depositions taken and defended.
+  num_experts:
+    class: count
+    unit: experts
+    description: Retained and opposing experts requiring work.
+  written_discovery_rounds:
+    class: count
+    unit: rounds
+    description: Rounds of interrogatories, requests for production, and admissions.
+  num_dispositive_motions:
+    class: count
+    unit: motions
+    description: Summary-judgment and other dispositive motions briefed.
+  esi_volume_tier:
+    class: count_tier
+    unit: tier
+    description: none | light | moderate | heavy electronic discovery volume.
+  trial_days:
+    class: count
+    unit: days
+    description: Expected days of trial attendance.
+  severity_tier:
+    class: intensity
+    unit: tier
+    description: soft_tissue | significant | catastrophic_or_death exposure.
+  liability_dispute:
+    class: intensity
+    unit: tier
+    description: clear | disputed | hotly_contested liability posture.
+  venue_difficulty:
+    class: intensity
+    unit: tier
+    description: favorable | neutral | plaintiff_friendly venue.
+  coverage_posture:
+    class: coverage
+    unit: tier
+    description: none | reservation_of_rights | coverage_counsel | dj_action.
+
+matter_family_defaults:
+  medical_malpractice_defense:
+    num_depositions: 8
+    num_experts: 4
+    written_discovery_rounds: 2
+    num_dispositive_motions: 1
+    esi_volume_tier: moderate
+    trial_days: 7
+    severity_tier: significant
+    liability_dispute: disputed
+    venue_difficulty: neutral
+    # resolution_path and coverage_posture are intentionally omitted so they resolve
+    # to 'unknown' unless observed or human-confirmed.
+  auto_liability_defense:
+    num_depositions: 5
+    num_experts: 2
+    written_discovery_rounds: 1
+    num_dispositive_motions: 0
+    esi_volume_tier: light
+    trial_days: 4
+    severity_tier: significant
+    liability_dispute: disputed
+    venue_difficulty: neutral
+    # resolution_path and coverage_posture are intentionally omitted so they resolve
+    # to 'unknown' unless observed or human-confirmed.
+
+scenarios:
+  - scenario_id: early_resolution
+    resolution_phase: L200
+    probability: 0.25
+    description: Motion to dismiss granted or pre-discovery settlement.
+  - scenario_id: standard
+    resolution_phase: L300
+    probability: 0.5
+    description: Resolves at mediation or on summary judgment after discovery.
+  - scenario_id: through_trial
+    resolution_phase: L400
+    probability: 0.25
+    description: Full discovery, dispositive motions, trial preparation, and trial.
+
+count_driver_ranges:
+  num_depositions:
+    min: 3
+    likely: 8
+    max: 12
+  num_experts:
+    min: 1
+    likely: 4
+    max: 6
+  written_discovery_rounds:
+    min: 1
+    likely: 2
+    max: 4
+  num_dispositive_motions:
+    min: 0
+    likely: 1
+    max: 2
+  trial_days:
+    min: 3
+    likely: 7
+    max: 12
+
+intensity_multiplier_policy:
+  cumulative_multiplier_cap: 2.5
+  applies_to_expense_bearing_lines: true
+  effects:
+    severity_tier:
+      soft_tissue:
+        multiplier: 0.95
+        phase_ids: [L300, L400]
+        note: Lower-exposure synthetic severity assumption modestly reduces discovery and trial effort.
+      significant:
+        multiplier: 1.08
+        phase_ids: [L300, L400]
+        note: Significant-exposure synthetic severity assumption increases discovery and trial effort.
+      catastrophic_or_death:
+        multiplier: 1.22
+        phase_ids: [L300, L400]
+        note: Catastrophic/death synthetic severity assumption materially increases discovery and trial effort.
+    liability_dispute:
+      clear:
+        multiplier: 0.9
+        phase_ids: [L200, L300]
+        note: Clear-liability synthetic assumption reduces pleading/discovery fight intensity.
+      disputed:
+        multiplier: 1.05
+        phase_ids: [L200, L300]
+        note: Disputed-liability synthetic assumption modestly increases pleading and discovery work.
+      hotly_contested:
+        multiplier: 1.18
+        phase_ids: [L200, L300, L400]
+        note: Hotly contested synthetic liability assumption increases litigation effort.
+    venue_difficulty:
+      favorable:
+        multiplier: 0.95
+        phase_ids: [L200, L300, L400]
+        note: Favorable synthetic venue assumption modestly reduces effort.
+      neutral:
+        multiplier: 1.0
+        phase_ids: [L200, L300, L400]
+        note: Neutral synthetic venue assumption does not change hours.
+      plaintiff_friendly:
+        multiplier: 1.12
+        phase_ids: [L200, L300, L400]
+        note: Plaintiff-friendly synthetic venue assumption increases litigation effort.
+
+coverage_posture_policy:
+  review_required_values: [reservation_of_rights, coverage_counsel, dj_action]
+  no_math_values: [none]
+  note: Coverage posture is surfaced as a review boundary and never blended into defense-fee math.
+
+synthetic_guideline_constraints:
+  note: Synthetic-only review flags; constraints do not rewrite hours, rates, or totals.
+  role_rate_caps:
+    partner: 425
+    senior_associate: 335
+    associate: 260
+    paralegal: 165
+  phase_budget_caps:
+    L300: 90000
+  total_budget_cap: 150000

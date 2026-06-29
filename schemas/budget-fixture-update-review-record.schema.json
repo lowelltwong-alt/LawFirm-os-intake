@@ -1,0 +1,240 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "fixture_update_review_id": {
+      "title": "Fixture Update Review Id",
+      "type": "string"
+    },
+    "budget_calibration_readiness_report_id": {
+      "title": "Budget Calibration Readiness Report Id",
+      "type": "string"
+    },
+    "fixture_binding_handoff_report_id": {
+      "title": "Fixture Binding Handoff Report Id",
+      "type": "string"
+    },
+    "replay_case_id": {
+      "title": "Replay Case Id",
+      "type": "string"
+    },
+    "reviewer_id": {
+      "title": "Reviewer Id",
+      "type": "string"
+    },
+    "reviewed_at": {
+      "title": "Reviewed At",
+      "type": "string"
+    },
+    "decision": {
+      "enum": [
+        "accept_for_separate_fixture_update_pr",
+        "accept_with_corrections_for_separate_fixture_update_pr",
+        "reject_fixture_update",
+        "needs_more_information"
+      ],
+      "title": "Decision",
+      "type": "string"
+    },
+    "decision_reason": {
+      "title": "Decision Reason",
+      "type": "string"
+    },
+    "accepted_output_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Accepted Output Refs",
+      "type": "array"
+    },
+    "rejected_output_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Rejected Output Refs",
+      "type": "array"
+    },
+    "target_fixture_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Target Fixture Refs",
+      "type": "array"
+    },
+    "reviewer_corrections": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Reviewer Corrections",
+      "type": "array"
+    },
+    "required_followups": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Followups",
+      "type": "array"
+    },
+    "reviewed_red_team_notes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Reviewed Red Team Notes",
+      "type": "array"
+    },
+    "append_only": {
+      "const": true,
+      "default": true,
+      "title": "Append Only",
+      "type": "boolean"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "human_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Human Review Required",
+      "type": "boolean"
+    },
+    "source_readiness_report_mutated": {
+      "const": false,
+      "default": false,
+      "title": "Source Readiness Report Mutated",
+      "type": "boolean"
+    },
+    "not_authorized_for_external_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For External Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_lake_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Lake Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_sqlite_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Sqlite Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_budget_submission": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Budget Submission",
+      "type": "boolean"
+    },
+    "fixture_update_pr_created": {
+      "const": false,
+      "default": false,
+      "title": "Fixture Update Pr Created",
+      "type": "boolean"
+    },
+    "fixture_files_mutated": {
+      "const": false,
+      "default": false,
+      "title": "Fixture Files Mutated",
+      "type": "boolean"
+    },
+    "fixture_binding_applied": {
+      "const": false,
+      "default": false,
+      "title": "Fixture Binding Applied",
+      "type": "boolean"
+    },
+    "downstream_learning_gate_allowed": {
+      "const": false,
+      "default": false,
+      "title": "Downstream Learning Gate Allowed",
+      "type": "boolean"
+    },
+    "calibration_applied": {
+      "const": false,
+      "default": false,
+      "title": "Calibration Applied",
+      "type": "boolean"
+    },
+    "profile_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Profile Mutation Performed",
+      "type": "boolean"
+    },
+    "template_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Template Mutation Performed",
+      "type": "boolean"
+    },
+    "budget_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Budget Mutation Performed",
+      "type": "boolean"
+    },
+    "carrier_guideline_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Carrier Guideline Mutation Performed",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "fixture_update_review_id",
+    "budget_calibration_readiness_report_id",
+    "fixture_binding_handoff_report_id",
+    "replay_case_id",
+    "reviewer_id",
+    "reviewed_at",
+    "decision",
+    "decision_reason"
+  ],
+  "title": "BudgetFixtureUpdateReviewRecord",
+  "type": "object"
+}

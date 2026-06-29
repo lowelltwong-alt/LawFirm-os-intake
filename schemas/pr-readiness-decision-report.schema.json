@@ -1,0 +1,347 @@
+{
+  "$defs": {
+    "PRReadinessDecisionCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed",
+            "warning"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "artifact_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Artifact Refs",
+          "type": "array"
+        },
+        "blocking_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Blocking Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "PRReadinessDecisionCheck",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "pr_readiness_decision_report_id": {
+      "title": "Pr Readiness Decision Report Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "pr_readiness_decision_recorded_manual_ready_action_required",
+        "pr_readiness_decision_recorded_keep_draft",
+        "pr_readiness_decision_recorded_more_work_required",
+        "pr_readiness_decision_recorded_split_followup_work",
+        "blocked_by_pr_readiness_decision_evidence"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "source_pr_review_checklist_id": {
+      "title": "Source Pr Review Checklist Id",
+      "type": "string"
+    },
+    "source_pr_review_checklist_ref": {
+      "title": "Source Pr Review Checklist Ref",
+      "type": "string"
+    },
+    "source_pr_review_checklist_status": {
+      "enum": [
+        "ready_for_human_pr_review",
+        "blocked_by_readiness_audit"
+      ],
+      "title": "Source Pr Review Checklist Status",
+      "type": "string"
+    },
+    "source_closeout_report_id": {
+      "title": "Source Closeout Report Id",
+      "type": "string"
+    },
+    "source_closeout_report_ref": {
+      "title": "Source Closeout Report Ref",
+      "type": "string"
+    },
+    "source_closeout_status": {
+      "enum": [
+        "intake_local_closeout_ready_manual_actions_required",
+        "blocked_by_closeout_evidence"
+      ],
+      "title": "Source Closeout Status",
+      "type": "string"
+    },
+    "pr_readiness_decision_id": {
+      "title": "Pr Readiness Decision Id",
+      "type": "string"
+    },
+    "observed_pr_number": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Observed Pr Number"
+    },
+    "observed_pr_url": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Observed Pr Url"
+    },
+    "observed_pr_state": {
+      "default": "not_supplied",
+      "enum": [
+        "draft",
+        "ready_for_review",
+        "not_supplied"
+      ],
+      "title": "Observed Pr State",
+      "type": "string"
+    },
+    "reviewer_id": {
+      "title": "Reviewer Id",
+      "type": "string"
+    },
+    "decision": {
+      "enum": [
+        "mark_ready_for_review",
+        "keep_draft",
+        "needs_more_work",
+        "split_followup_work"
+      ],
+      "title": "Decision",
+      "type": "string"
+    },
+    "decision_reason": {
+      "title": "Decision Reason",
+      "type": "string"
+    },
+    "accepted_checklist_item_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Accepted Checklist Item Ids",
+      "type": "array"
+    },
+    "validation_evidence_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Validation Evidence Refs",
+      "type": "array"
+    },
+    "required_followups": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Followups",
+      "type": "array"
+    },
+    "red_team_notes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Red Team Notes",
+      "type": "array"
+    },
+    "append_only_history_ref": {
+      "title": "Append Only History Ref",
+      "type": "string"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/PRReadinessDecisionCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "required_next_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Gates",
+      "type": "array"
+    },
+    "manual_ready_action_required": {
+      "default": false,
+      "title": "Manual Ready Action Required",
+      "type": "boolean"
+    },
+    "append_only": {
+      "const": true,
+      "default": true,
+      "title": "Append Only",
+      "type": "boolean"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "human_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Human Review Required",
+      "type": "boolean"
+    },
+    "manual_github_action_required": {
+      "const": true,
+      "default": true,
+      "title": "Manual Github Action Required",
+      "type": "boolean"
+    },
+    "not_authorized_for_external_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For External Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_lake_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Lake Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_sqlite_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Sqlite Write",
+      "type": "boolean"
+    },
+    "pr_marked_ready": {
+      "const": false,
+      "default": false,
+      "title": "Pr Marked Ready",
+      "type": "boolean"
+    },
+    "github_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Github Write Performed",
+      "type": "boolean"
+    },
+    "github_issue_created": {
+      "const": false,
+      "default": false,
+      "title": "Github Issue Created",
+      "type": "boolean"
+    },
+    "github_pr_created": {
+      "const": false,
+      "default": false,
+      "title": "Github Pr Created",
+      "type": "boolean"
+    },
+    "sibling_repo_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sibling Repo Write Performed",
+      "type": "boolean"
+    },
+    "promotion_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Promotion Authorized",
+      "type": "boolean"
+    },
+    "proposed_changes_applied": {
+      "const": false,
+      "default": false,
+      "title": "Proposed Changes Applied",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "pr_readiness_decision_report_id",
+    "status",
+    "source_pr_review_checklist_id",
+    "source_pr_review_checklist_ref",
+    "source_pr_review_checklist_status",
+    "source_closeout_report_id",
+    "source_closeout_report_ref",
+    "source_closeout_status",
+    "pr_readiness_decision_id",
+    "reviewer_id",
+    "decision",
+    "decision_reason",
+    "append_only_history_ref",
+    "checks",
+    "required_next_gates",
+    "generated_at"
+  ],
+  "title": "PRReadinessDecisionReport",
+  "type": "object"
+}

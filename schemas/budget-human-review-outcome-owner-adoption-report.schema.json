@@ -1,0 +1,706 @@
+{
+  "$defs": {
+    "BudgetHumanReviewOutcomeOwnerAdoptionCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed",
+            "warning"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "artifact_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Artifact Refs",
+          "type": "array"
+        },
+        "blocking_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Blocking Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "BudgetHumanReviewOutcomeOwnerAdoptionCheck",
+      "type": "object"
+    },
+    "BudgetHumanReviewOutcomeOwnerAdoptionPacket": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "default": "0.1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "owner_adoption_packet_id": {
+          "title": "Owner Adoption Packet Id",
+          "type": "string"
+        },
+        "target_repo": {
+          "enum": [
+            "LawFirm-os-intake",
+            "LawFirm-os-semantic-substrate",
+            "LawFirm-os-orchestrator",
+            "LawFirm-os-exceptions-lake-runtime",
+            "LawFirm-os-legal-knowledge-runtime",
+            "LawFirm-os-skills-registry"
+          ],
+          "title": "Target Repo",
+          "type": "string"
+        },
+        "adoption_focus": {
+          "enum": [
+            "semantic_outcome_label_review",
+            "runtime_action_followup_workflow",
+            "append_only_outcome_lake_admission"
+          ],
+          "title": "Adoption Focus",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "ready_for_owner_review",
+            "blocked_by_outcome_evidence"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "source_budget_human_review_outcome_report_id": {
+          "title": "Source Budget Human Review Outcome Report Id",
+          "type": "string"
+        },
+        "source_budget_human_review_outcome_report_ref": {
+          "title": "Source Budget Human Review Outcome Report Ref",
+          "type": "string"
+        },
+        "source_budget_human_review_outcome_record_id": {
+          "title": "Source Budget Human Review Outcome Record Id",
+          "type": "string"
+        },
+        "source_budget_human_review_outcome_record_ref": {
+          "title": "Source Budget Human Review Outcome Record Ref",
+          "type": "string"
+        },
+        "source_budget_human_review_packet_id": {
+          "title": "Source Budget Human Review Packet Id",
+          "type": "string"
+        },
+        "source_budget_human_review_outcome_status": {
+          "enum": [
+            "budget_human_review_outcome_recorded",
+            "blocked_by_review_packet_evidence",
+            "blocked_by_outcome_evidence"
+          ],
+          "title": "Source Budget Human Review Outcome Status",
+          "type": "string"
+        },
+        "overall_outcome": {
+          "enum": [
+            "confirm",
+            "correct",
+            "unknown",
+            "needs_more_information",
+            "human_only",
+            "declined_referred",
+            "no_change",
+            "appeal",
+            "write_off",
+            "reopen",
+            "block",
+            "route_to_owner_review",
+            "no_learning_change"
+          ],
+          "title": "Overall Outcome",
+          "type": "string"
+        },
+        "decision_count": {
+          "minimum": 0,
+          "title": "Decision Count",
+          "type": "integer"
+        },
+        "appeal_decision_count": {
+          "minimum": 0,
+          "title": "Appeal Decision Count",
+          "type": "integer"
+        },
+        "write_off_decision_count": {
+          "minimum": 0,
+          "title": "Write Off Decision Count",
+          "type": "integer"
+        },
+        "correction_decision_count": {
+          "minimum": 0,
+          "title": "Correction Decision Count",
+          "type": "integer"
+        },
+        "route_to_owner_decision_count": {
+          "minimum": 0,
+          "title": "Route To Owner Decision Count",
+          "type": "integer"
+        },
+        "no_learning_change_decision_count": {
+          "minimum": 0,
+          "title": "No Learning Change Decision Count",
+          "type": "integer"
+        },
+        "unresolved_followup_count": {
+          "minimum": 0,
+          "title": "Unresolved Followup Count",
+          "type": "integer"
+        },
+        "candidate_lake_event_labels": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Candidate Lake Event Labels",
+          "type": "array"
+        },
+        "required_followups": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Required Followups",
+          "type": "array"
+        },
+        "source_artifact_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Source Artifact Refs",
+          "type": "array"
+        },
+        "candidate_contract_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Candidate Contract Refs",
+          "type": "array"
+        },
+        "required_owner_actions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Required Owner Actions",
+          "type": "array"
+        },
+        "acceptance_checks": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Acceptance Checks",
+          "type": "array"
+        },
+        "red_team_notes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Red Team Notes",
+          "type": "array"
+        },
+        "required_next_gates": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Required Next Gates",
+          "type": "array"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        },
+        "synthetic_only": {
+          "const": true,
+          "default": true,
+          "title": "Synthetic Only",
+          "type": "boolean"
+        },
+        "no_connector_implemented": {
+          "const": true,
+          "default": true,
+          "title": "No Connector Implemented",
+          "type": "boolean"
+        },
+        "no_lake_admission_performed": {
+          "const": true,
+          "default": true,
+          "title": "No Lake Admission Performed",
+          "type": "boolean"
+        },
+        "no_sibling_repo_writes": {
+          "const": true,
+          "default": true,
+          "title": "No Sibling Repo Writes",
+          "type": "boolean"
+        },
+        "no_canonical_mutation": {
+          "const": true,
+          "default": true,
+          "title": "No Canonical Mutation",
+          "type": "boolean"
+        },
+        "github_issue_created": {
+          "const": false,
+          "default": false,
+          "title": "Github Issue Created",
+          "type": "boolean"
+        },
+        "github_pr_created": {
+          "const": false,
+          "default": false,
+          "title": "Github Pr Created",
+          "type": "boolean"
+        },
+        "github_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Github Write Performed",
+          "type": "boolean"
+        },
+        "sibling_repo_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Sibling Repo Write Performed",
+          "type": "boolean"
+        },
+        "promotion_authorized": {
+          "const": false,
+          "default": false,
+          "title": "Promotion Authorized",
+          "type": "boolean"
+        },
+        "lake_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Lake Write Performed",
+          "type": "boolean"
+        },
+        "sqlite_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Sqlite Write Performed",
+          "type": "boolean"
+        },
+        "external_writes_performed": {
+          "const": false,
+          "default": false,
+          "title": "External Writes Performed",
+          "type": "boolean"
+        },
+        "billing_connector_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Billing Connector Write Performed",
+          "type": "boolean"
+        },
+        "carrier_portal_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Carrier Portal Write Performed",
+          "type": "boolean"
+        },
+        "email_send_performed": {
+          "const": false,
+          "default": false,
+          "title": "Email Send Performed",
+          "type": "boolean"
+        },
+        "appeal_submission_performed": {
+          "const": false,
+          "default": false,
+          "title": "Appeal Submission Performed",
+          "type": "boolean"
+        },
+        "budget_submission_performed": {
+          "const": false,
+          "default": false,
+          "title": "Budget Submission Performed",
+          "type": "boolean"
+        },
+        "budget_mutation_performed": {
+          "const": false,
+          "default": false,
+          "title": "Budget Mutation Performed",
+          "type": "boolean"
+        },
+        "profile_mutation_performed": {
+          "const": false,
+          "default": false,
+          "title": "Profile Mutation Performed",
+          "type": "boolean"
+        },
+        "template_mutation_performed": {
+          "const": false,
+          "default": false,
+          "title": "Template Mutation Performed",
+          "type": "boolean"
+        },
+        "carrier_guideline_mutation_performed": {
+          "const": false,
+          "default": false,
+          "title": "Carrier Guideline Mutation Performed",
+          "type": "boolean"
+        },
+        "silent_learning_performed": {
+          "const": false,
+          "default": false,
+          "title": "Silent Learning Performed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "owner_adoption_packet_id",
+        "target_repo",
+        "adoption_focus",
+        "status",
+        "source_budget_human_review_outcome_report_id",
+        "source_budget_human_review_outcome_report_ref",
+        "source_budget_human_review_outcome_record_id",
+        "source_budget_human_review_outcome_record_ref",
+        "source_budget_human_review_packet_id",
+        "source_budget_human_review_outcome_status",
+        "overall_outcome",
+        "decision_count",
+        "appeal_decision_count",
+        "write_off_decision_count",
+        "correction_decision_count",
+        "route_to_owner_decision_count",
+        "no_learning_change_decision_count",
+        "unresolved_followup_count",
+        "required_owner_actions",
+        "acceptance_checks",
+        "red_team_notes",
+        "required_next_gates"
+      ],
+      "title": "BudgetHumanReviewOutcomeOwnerAdoptionPacket",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "owner_adoption_report_id": {
+      "title": "Owner Adoption Report Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "budget_outcome_owner_adoption_packets_ready",
+        "blocked_by_budget_outcome_evidence"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "source_budget_human_review_outcome_report_id": {
+      "title": "Source Budget Human Review Outcome Report Id",
+      "type": "string"
+    },
+    "source_budget_human_review_outcome_report_ref": {
+      "title": "Source Budget Human Review Outcome Report Ref",
+      "type": "string"
+    },
+    "source_budget_human_review_outcome_record_id": {
+      "title": "Source Budget Human Review Outcome Record Id",
+      "type": "string"
+    },
+    "source_budget_human_review_outcome_record_ref": {
+      "title": "Source Budget Human Review Outcome Record Ref",
+      "type": "string"
+    },
+    "source_budget_human_review_packet_id": {
+      "title": "Source Budget Human Review Packet Id",
+      "type": "string"
+    },
+    "source_budget_human_review_outcome_status": {
+      "enum": [
+        "budget_human_review_outcome_recorded",
+        "blocked_by_review_packet_evidence",
+        "blocked_by_outcome_evidence"
+      ],
+      "title": "Source Budget Human Review Outcome Status",
+      "type": "string"
+    },
+    "target_repo_count": {
+      "minimum": 0,
+      "title": "Target Repo Count",
+      "type": "integer"
+    },
+    "packet_count": {
+      "minimum": 0,
+      "title": "Packet Count",
+      "type": "integer"
+    },
+    "ready_packet_count": {
+      "minimum": 0,
+      "title": "Ready Packet Count",
+      "type": "integer"
+    },
+    "blocked_packet_count": {
+      "minimum": 0,
+      "title": "Blocked Packet Count",
+      "type": "integer"
+    },
+    "target_repos": {
+      "items": {
+        "enum": [
+          "LawFirm-os-intake",
+          "LawFirm-os-semantic-substrate",
+          "LawFirm-os-orchestrator",
+          "LawFirm-os-exceptions-lake-runtime",
+          "LawFirm-os-legal-knowledge-runtime",
+          "LawFirm-os-skills-registry"
+        ],
+        "type": "string"
+      },
+      "title": "Target Repos",
+      "type": "array"
+    },
+    "packets": {
+      "items": {
+        "$ref": "#/$defs/BudgetHumanReviewOutcomeOwnerAdoptionPacket"
+      },
+      "title": "Packets",
+      "type": "array"
+    },
+    "packet_output_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Packet Output Refs",
+      "type": "array"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/BudgetHumanReviewOutcomeOwnerAdoptionCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "candidate_lake_event_labels": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Candidate Lake Event Labels",
+      "type": "array"
+    },
+    "required_followups": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Followups",
+      "type": "array"
+    },
+    "required_next_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Gates",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "no_connector_implemented": {
+      "const": true,
+      "default": true,
+      "title": "No Connector Implemented",
+      "type": "boolean"
+    },
+    "no_lake_admission_performed": {
+      "const": true,
+      "default": true,
+      "title": "No Lake Admission Performed",
+      "type": "boolean"
+    },
+    "no_sibling_repo_writes": {
+      "const": true,
+      "default": true,
+      "title": "No Sibling Repo Writes",
+      "type": "boolean"
+    },
+    "no_canonical_mutation": {
+      "const": true,
+      "default": true,
+      "title": "No Canonical Mutation",
+      "type": "boolean"
+    },
+    "github_issue_created": {
+      "const": false,
+      "default": false,
+      "title": "Github Issue Created",
+      "type": "boolean"
+    },
+    "github_pr_created": {
+      "const": false,
+      "default": false,
+      "title": "Github Pr Created",
+      "type": "boolean"
+    },
+    "github_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Github Write Performed",
+      "type": "boolean"
+    },
+    "sibling_repo_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sibling Repo Write Performed",
+      "type": "boolean"
+    },
+    "promotion_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Promotion Authorized",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "billing_connector_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Billing Connector Write Performed",
+      "type": "boolean"
+    },
+    "carrier_portal_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Carrier Portal Write Performed",
+      "type": "boolean"
+    },
+    "email_send_performed": {
+      "const": false,
+      "default": false,
+      "title": "Email Send Performed",
+      "type": "boolean"
+    },
+    "appeal_submission_performed": {
+      "const": false,
+      "default": false,
+      "title": "Appeal Submission Performed",
+      "type": "boolean"
+    },
+    "budget_submission_performed": {
+      "const": false,
+      "default": false,
+      "title": "Budget Submission Performed",
+      "type": "boolean"
+    },
+    "budget_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Budget Mutation Performed",
+      "type": "boolean"
+    },
+    "profile_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Profile Mutation Performed",
+      "type": "boolean"
+    },
+    "template_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Template Mutation Performed",
+      "type": "boolean"
+    },
+    "carrier_guideline_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Carrier Guideline Mutation Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "owner_adoption_report_id",
+    "status",
+    "source_budget_human_review_outcome_report_id",
+    "source_budget_human_review_outcome_report_ref",
+    "source_budget_human_review_outcome_record_id",
+    "source_budget_human_review_outcome_record_ref",
+    "source_budget_human_review_packet_id",
+    "source_budget_human_review_outcome_status",
+    "target_repo_count",
+    "packet_count",
+    "ready_packet_count",
+    "blocked_packet_count",
+    "target_repos",
+    "packets",
+    "checks",
+    "required_next_gates",
+    "generated_at"
+  ],
+  "title": "BudgetHumanReviewOutcomeOwnerAdoptionReport",
+  "type": "object"
+}

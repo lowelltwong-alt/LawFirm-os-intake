@@ -1,0 +1,68 @@
+guideline_id: synthetic-carrier-guideline
+version: "0.1"
+status: candidate
+contains_real_carrier_guidelines: false
+data_scope: synthetic_only
+
+# SYNTHETIC ONLY. This is not a real carrier guideline, negotiated rate rule,
+# billing rule, or submission authority. It exists to prove the proposed-vs-compliant
+# projection layer without rewriting the proposal.
+
+default_carrier_id: synthetic-carrier-a
+
+carriers:
+  synthetic-carrier-a:
+    carrier_name: Harbor Point Insurance
+    contingency_allowed: true
+    budget_cadence: quarterly
+    variance_approval_percent: 10.0
+    rate_caps:
+      partner: 425
+      senior_associate: 335
+      associate: 260
+      paralegal: 165
+    expense_caps:
+      E115: 5000
+      E119: 25000
+      E121: 2500
+    staffing_rules:
+      task_role_overrides:
+        L310: paralegal
+        L320: paralegal
+      preferred_drafting_role: associate
+      max_timekeepers_per_event:
+        L330: 1
+    pre_approval_thresholds:
+      experts_over_count: 3
+      expert_spend_over_amount: 25000
+      depositions_over_count: 6
+      research_hours_over: 60
+      vendor_spend_over_amount: 35000
+  synthetic-carrier-b:
+    carrier_name: Cascade Mutual
+    contingency_allowed: false
+    budget_cadence: monthly
+    variance_approval_percent: 5.0
+    rate_caps:
+      partner: 400
+      senior_associate: 300
+      associate: 240
+      paralegal: 150
+    expense_caps:
+      E115: 4500
+      E119: 20000
+      E121: 1800
+    staffing_rules:
+      task_role_overrides:
+        L310: paralegal
+        L340: senior_associate
+        L420: senior_associate
+      preferred_drafting_role: associate
+      max_timekeepers_per_event:
+        L330: 1
+    pre_approval_thresholds:
+      experts_over_count: 2
+      expert_spend_over_amount: 20000
+      depositions_over_count: 4
+      research_hours_over: 40
+      vendor_spend_over_amount: 25000

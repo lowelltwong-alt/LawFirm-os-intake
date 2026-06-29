@@ -1,0 +1,133 @@
+{
+  "$defs": {
+    "BlockedBudgetAttemptAuditCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "artifact_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Artifact Refs",
+          "type": "array"
+        },
+        "details": {
+          "additionalProperties": true,
+          "title": "Details",
+          "type": "object"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "BlockedBudgetAttemptAuditCheck",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "blocked_budget_attempt_audit_report_id": {
+      "title": "Blocked Budget Attempt Audit Report Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "passed",
+        "failed"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "preflight_packet_ref": {
+      "title": "Preflight Packet Ref",
+      "type": "string"
+    },
+    "confirmation_ref": {
+      "title": "Confirmation Ref",
+      "type": "string"
+    },
+    "blocked_budget_dir": {
+      "title": "Blocked Budget Dir",
+      "type": "string"
+    },
+    "expected_blocked_state": {
+      "const": "budget_blocked_before_human_confirmation",
+      "title": "Expected Blocked State",
+      "type": "string"
+    },
+    "exception_raised": {
+      "title": "Exception Raised",
+      "type": "boolean"
+    },
+    "blocked_error": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Blocked Error"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/BlockedBudgetAttemptAuditCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "blocked_budget_attempt_audit_report_id",
+    "status",
+    "preflight_packet_ref",
+    "confirmation_ref",
+    "blocked_budget_dir",
+    "expected_blocked_state",
+    "exception_raised",
+    "checks",
+    "generated_at"
+  ],
+  "title": "BlockedBudgetAttemptAuditReport",
+  "type": "object"
+}

@@ -10,13 +10,15 @@ from .models import (
     EffectiveContext,
     EscalationDecision,
     EvidenceRef,
+    MissingInformationCandidate,
     PartyCandidate,
     RoleCandidate,
     ScoredCandidate,
     Segment,
     SourceBundle,
+    SourceInventoryItem,
 )
-from .util import new_id
+from .util import digest_text, new_id
 
 
 MATTER_SIGNALS: dict[str, list[str]] = {
@@ -78,29 +80,124 @@ DATE_RE = re.compile(
 )
 RELATIVE_RE = re.compile(r"\bwithin\s+(\d{1,3})\s+days\b", re.I)
 
+ROLE_SIGNAL_TERMS: dict[str, list[str]] = {
+    "insurance_carrier": ["insurance", "claim number", "claims"],
+    "carrier_or_instructing_source": ["insurance", "claim number", "assigning defense"],
+    "instructing_source": ["assigning defense", "new assignment"],
+    "payer": ["budget", "claim number", "insurance"],
+    "insured": ["insured"],
+    "insured_or_prospective_represented_client": ["insured", "defense"],
+    "prospective_represented_client": ["insured", "defense"],
+    "represented_client": ["insured", "defense"],
+    "claimant": ["claimant"],
+    "adverse_party": ["claimant", "allegations"],
+    "claimant_or_adverse_party": ["claimant", "allegations"],
+    "opposing_counsel": ["counsel"],
+    "unknown": [],
+}
+
 
 def evidence_for_text(segments: list[Segment], needle: str) -> list[EvidenceRef]:
     lowered = needle.lower()
     matches = [s for s in segments if lowered in s.text.lower()]
     if not matches and segments:
         matches = [segments[0]]
-    return [
-        EvidenceRef(source_id=s.source_id, segment_id=s.segment_id, sha256=s.sha256)
-        for s in matches[:3]
-    ]
+    return [_evidence_ref(s) for s in matches[:3]]
 
 
-def source_inventory(bundle: SourceBundle) -> list[dict[str, Any]]:
-    return [
-        {
-            "source_id": source.source_id,
-            "source_type": source.source_type,
-            "filename": source.filename,
-            "character_count": len(source.text),
-            "metadata_keys": sorted(source.metadata.keys()),
-        }
-        for source in bundle.sources
-    ]
+def _first_refs(segments: list[Segment], count: int = 1) -> list[EvidenceRef]:
+    return [_evidence_ref(s) for s in segments[:count]]
+
+
+def _evidence_ref(segment: Segment) -> EvidenceRef:
+    return EvidenceRef(
+        source_id=segment.source_id,
+        segment_id=segment.segment_id,
+        start_offset=segment.start_offset,
+        end_offset=segment.end_offset,
+        sha256=segment.sha256,
+    )
+
+
+def _dedup_refs(refs: list[EvidenceRef]) -> list[EvidenceRef]:
+    dedup: dict[tuple[str, str, int, int, str], EvidenceRef] = {}
+    for ref in refs:
+        dedup[(ref.source_id, ref.segment_id, ref.start_offset, ref.end_offset, ref.sha256)] = ref
+    return list(dedup.values())
+
+
+def _role_candidate(
+    role: str,
+    confidence: float,
+    segments: list[Segment],
+    party_name: str,
+) -> RoleCandidate:
+    refs = evidence_for_text(segments, party_name)
+    for term in ROLE_SIGNAL_TERMS.get(role, []):
+        refs.extend(evidence_for_text(segments, term))
+    return RoleCandidate(
+        role=role,
+        confidence=confidence,
+        evidence_refs=_dedup_refs(refs) or _first_refs(segments),
+    )
+
+
+def source_inventory(
+    bundle: SourceBundle, segments: list[Segment] | None = None
+) -> list[SourceInventoryItem]:
+    seen: dict[str, str] = {}
+    inventory: list[SourceInventoryItem] = []
+    attachment_refs_by_source: dict[str, list[str]] = {}
+    for segment in segments or []:
+        if segment.attachment_ref:
+            attachment_refs_by_source.setdefault(segment.source_id, []).append(
+                segment.attachment_ref
+            )
+
+    for source in bundle.sources:
+        source_hash = digest_text(source.text)
+        duplicate_of = seen.get(source_hash)
+        if duplicate_of is None:
+            seen[source_hash] = source.source_id
+        read_state = str(source.metadata.get("read_state", "read"))
+        if source.metadata.get("missing") is True:
+            read_state = "missing"
+        if source.metadata.get("unreadable") is True:
+            read_state = "unreadable"
+        availability = "duplicate" if duplicate_of else "available"
+        if read_state in {"missing", "unreadable"}:
+            availability = read_state
+        attachment_refs = list(source.metadata.get("attachment_refs", []))
+        attachment_refs.extend(attachment_refs_by_source.get(source.source_id, []))
+        inventory.append(
+            SourceInventoryItem(
+                source_id=source.source_id,
+                source_type=source.source_type,
+                filename=source.filename,
+                read_state=read_state,  # type: ignore[arg-type]
+                availability_state=availability,  # type: ignore[arg-type]
+                character_count=len(source.text),
+                source_sha256=source_hash,
+                duplicate_of_source_id=duplicate_of,
+                attachment_refs=sorted(set(attachment_refs)),
+                metadata_keys=sorted(source.metadata.keys()),
+            )
+        )
+    return inventory
+
+
+def source_coverage_summary(inventory: list[SourceInventoryItem]) -> dict[str, Any]:
+    total = len(inventory)
+    return {
+        "total_sources": total,
+        "read_sources": sum(1 for item in inventory if item.read_state == "read"),
+        "unread_sources": sum(1 for item in inventory if item.read_state == "unread"),
+        "missing_sources": sum(1 for item in inventory if item.read_state == "missing"),
+        "unreadable_sources": sum(1 for item in inventory if item.read_state == "unreadable"),
+        "duplicate_sources": sum(1 for item in inventory if item.availability_state == "duplicate"),
+        "attachment_reference_count": sum(len(item.attachment_refs) for item in inventory),
+        "coverage_complete": all(item.read_state == "read" for item in inventory),
+    }
 
 
 def _normal(value: str) -> str:
@@ -111,18 +208,24 @@ def extract_parties(bundle: SourceBundle, segments: list[Segment]) -> list[Party
     parties: list[PartyCandidate] = []
     hints = bundle.fixture_hints.get("entities", [])
     for item in hints:
+        party_name = str(item["name"])
         roles = [
-            RoleCandidate(role=str(role["role"]), confidence=float(role.get("confidence", 0.7)))
+            _role_candidate(
+                str(role["role"]),
+                float(role.get("confidence", 0.7)),
+                segments,
+                party_name,
+            )
             for role in item.get("role_candidates", [])
         ]
         parties.append(
             PartyCandidate(
                 party_candidate_id=new_id("party"),
-                name=str(item["name"]),
-                normalized_name=_normal(str(item["name"])),
+                name=party_name,
+                normalized_name=_normal(party_name),
                 aliases=list(item.get("aliases", [])),
-                role_candidates=roles or [RoleCandidate(role="unknown", confidence=0.4)],
-                evidence_refs=evidence_for_text(segments, str(item["name"])),
+                role_candidates=roles or [_role_candidate("unknown", 0.4, segments, party_name)],
+                evidence_refs=evidence_for_text(segments, party_name),
             )
         )
 
@@ -135,13 +238,25 @@ def extract_parties(bundle: SourceBundle, segments: list[Segment]) -> list[Party
         for normalized, name in sorted(found.items()):
             lower = name.lower()
             if "insurance" in lower or "indemnity" in lower:
-                roles = [RoleCandidate(role="carrier_or_instructing_source", confidence=0.65)]
+                roles = [
+                    _role_candidate(
+                        "carrier_or_instructing_source",
+                        0.65,
+                        segments,
+                        name,
+                    )
+                ]
             elif name.startswith("Dr."):
                 roles = [
-                    RoleCandidate(role="insured_or_prospective_represented_client", confidence=0.55)
+                    _role_candidate(
+                        "insured_or_prospective_represented_client",
+                        0.55,
+                        segments,
+                        name,
+                    )
                 ]
             else:
-                roles = [RoleCandidate(role="unknown", confidence=0.4)]
+                roles = [_role_candidate("unknown", 0.4, segments, name)]
             parties.append(
                 PartyCandidate(
                     party_candidate_id=new_id("party"),
@@ -172,12 +287,21 @@ def _score_family(
     context_refs = []
     if prior:
         context_refs.append(f"practice-profile://{context.profile_id}/matter_family_priors/{label}")
+    fallback_refs = _first_refs(segments)
+    observed_refs = list(dedup.values()) or fallback_refs
+    calibration = "context_influenced" if prior and not observed else "observed"
+    source_evidence_status = "observed_support" if observed else "source_anchor_only"
     return ScoredCandidate(
         candidate_id=new_id("matter"),
         label=label,
         confidence=round(score, 4),
-        observed_evidence_refs=list(dedup.values()),
+        observed_evidence_refs=observed_refs,
+        source_evidence_status=source_evidence_status,
         context_signal_refs=context_refs,
+        calibration_label=calibration,
+        support_summary=", ".join(observed)
+        if observed
+        else "No direct lexical signal; retained for comparison/context prior.",
     )
 
 
@@ -195,12 +319,18 @@ def _score_signal_set(
         for term in observed[:4]:
             refs.extend(evidence_for_text(segments, term))
         dedup = {(r.source_id, r.segment_id): r for r in refs}
+        fallback_refs = _first_refs(segments)
+        source_evidence_status = "observed_support" if observed else "source_anchor_only"
         candidates.append(
             ScoredCandidate(
                 candidate_id=new_id(prefix),
                 label=label,
                 confidence=round(score, 4),
-                observed_evidence_refs=list(dedup.values()),
+                observed_evidence_refs=list(dedup.values()) or fallback_refs,
+                source_evidence_status=source_evidence_status,
+                support_summary=", ".join(observed)
+                if observed
+                else "No direct lexical signal; retained as alternative.",
             )
         )
     candidates.append(
@@ -208,7 +338,10 @@ def _score_signal_set(
             candidate_id=new_id(prefix),
             label="unknown",
             confidence=0.2,
-            observed_evidence_refs=[],
+            observed_evidence_refs=_first_refs(segments),
+            source_evidence_status="unknown_option",
+            calibration_label="unknown_option",
+            support_summary="Explicit unknown option preserved for human review.",
         )
     )
     return sorted(candidates, key=lambda c: c.confidence, reverse=True)
@@ -224,11 +357,35 @@ def classify_matter(
         _score_family(label, terms, text, context, segments)
         for label, terms in MATTER_SIGNALS.items()
     ]
-    matter.append(ScoredCandidate(candidate_id=new_id("matter"), label="unknown", confidence=0.2))
+    matter.append(
+        ScoredCandidate(
+            candidate_id=new_id("matter"),
+            label="unknown",
+            confidence=0.2,
+            observed_evidence_refs=_first_refs(segments),
+            source_evidence_status="unknown_option",
+            calibration_label="unknown_option",
+            support_summary="Explicit unknown option preserved for human review.",
+        )
+    )
     matter.sort(key=lambda c: c.confidence, reverse=True)
     inbound = _score_signal_set(INBOUND_SIGNALS, text, segments, "inbound")
     posture = _score_signal_set(POSTURE_SIGNALS, text, segments, "posture")
     return inbound, matter, posture
+
+
+def missing_information_candidates(
+    missing: list[str], segments: list[Segment]
+) -> list[MissingInformationCandidate]:
+    refs = _first_refs(segments)
+    return [
+        MissingInformationCandidate(
+            field_name=field,
+            reason="Required intake field was not found in the permitted structured source segments.",
+            evidence_refs=refs,
+        )
+        for field in missing
+    ]
 
 
 def extract_deadlines_and_gaps(
@@ -276,9 +433,11 @@ def review_evidence(
     matter: list[ScoredCandidate],
     deadlines: list[DeadlineCandidate],
     missing: list[str],
+    segments: list[Segment],
 ) -> tuple[list[CriticFinding], EscalationDecision]:
     findings: list[CriticFinding] = []
     triggers: list[str] = []
+    fallback_refs = _first_refs(segments)
 
     if len(matter) >= 2 and (matter[0].confidence - matter[1].confidence) < 0.15:
         findings.append(
@@ -286,9 +445,39 @@ def review_evidence(
                 code="MATTER_CANDIDATES_CLOSE",
                 severity="warning",
                 message="Top matter-family candidates are too close for reliable automatic routing.",
+                evidence_refs=matter[0].observed_evidence_refs[:2]
+                + matter[1].observed_evidence_refs[:2],
             )
         )
         triggers.append("worker_disagreement_or_close_candidate_scores")
+
+    ambiguous_role_refs: list[EvidenceRef] = []
+    ambiguous_role_summaries: list[str] = []
+    for party in parties:
+        roles = sorted(party.role_candidates, key=lambda role: role.confidence, reverse=True)
+        if len(roles) < 2:
+            continue
+        if roles[0].confidence - roles[1].confidence > 0.25:
+            continue
+        ambiguous_role_summaries.append(
+            f"{party.name}: {roles[0].role} ({roles[0].confidence:.2f}) "
+            f"vs {roles[1].role} ({roles[1].confidence:.2f})"
+        )
+        ambiguous_role_refs.extend(roles[0].evidence_refs[:2])
+        ambiguous_role_refs.extend(roles[1].evidence_refs[:2])
+    if ambiguous_role_summaries:
+        findings.append(
+            CriticFinding(
+                code="ROLE_CANDIDATES_AMBIGUOUS",
+                severity="warning",
+                message=(
+                    "One or more parties have close role alternatives requiring human "
+                    "confirmation: " + "; ".join(ambiguous_role_summaries)
+                ),
+                evidence_refs=_dedup_refs(ambiguous_role_refs)[:8] or fallback_refs,
+            )
+        )
+        triggers.append("party_role_candidates_ambiguous")
 
     role_names = {role.role for party in parties for role in party.role_candidates}
     carrier_present = any("carrier" in role for role in role_names)
@@ -304,6 +493,8 @@ def review_evidence(
                     "An instructing carrier or payer is present, but the prospective represented client "
                     "has not been identified. Human confirmation is mandatory."
                 ),
+                evidence_refs=[ref for party in parties for ref in party.evidence_refs][:5]
+                or fallback_refs,
             )
         )
         triggers.append("represented_client_or_payer_relationship_ambiguous")
@@ -325,6 +516,7 @@ def review_evidence(
                 code="MISSING_REQUIRED_INTAKE_INFORMATION",
                 severity="warning",
                 message="Required intake fields remain missing: " + ", ".join(missing),
+                evidence_refs=fallback_refs,
             )
         )
         triggers.append("missing_required_information")
@@ -335,6 +527,7 @@ def review_evidence(
                 code="PARTY_WITHOUT_EVIDENCE_REF",
                 severity="blocker",
                 message="A party candidate lacks a source-bound evidence reference.",
+                evidence_refs=fallback_refs,
             )
         )
         triggers.append("evidence_completeness_failure")

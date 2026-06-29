@@ -1,0 +1,59 @@
+{
+  "schema_version": "0.1",
+  "bundle_id": "syn-bundle-holdout-role-ambiguity-001",
+  "data_origin": "synthetic",
+  "contains_real_client_data": false,
+  "contains_real_matter_data": false,
+  "contains_privileged_data": false,
+  "sources": [
+    {
+      "source_id": "syn-email-role-ambiguous-001",
+      "source_type": "email",
+      "filename": "misleading_sender.txt",
+      "text": "From: urgentclaims@sample-indemnity.example\nTo: intake@synthetic-law.example\nSubject: Please represent us?\n\nSample Indemnity Company asks whether your firm can help with a coverage position and possible defense assignment. The email mentions Example Manufacturing Inc. as an insured, Taylor Person as claimant, and a possible reservation of rights. Do not assume the sender is the represented client.\n",
+      "metadata": {
+        "synthetic": true
+      }
+    }
+  ],
+  "fixture_hints": {
+    "provided_fields": [],
+    "entities": [
+      {
+        "name": "Sample Indemnity Company",
+        "role_candidates": [
+          {
+            "role": "insurance_carrier",
+            "confidence": 0.74
+          },
+          {
+            "role": "payer",
+            "confidence": 0.52
+          }
+        ]
+      },
+      {
+        "name": "Example Manufacturing Inc.",
+        "role_candidates": [
+          {
+            "role": "insured",
+            "confidence": 0.7
+          },
+          {
+            "role": "prospective_represented_client",
+            "confidence": 0.48
+          }
+        ]
+      },
+      {
+        "name": "Taylor Person",
+        "role_candidates": [
+          {
+            "role": "claimant",
+            "confidence": 0.68
+          }
+        ]
+      }
+    ]
+  }
+}

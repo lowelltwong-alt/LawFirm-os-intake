@@ -9,7 +9,9 @@ def test_prohibited_transitions_are_declared(repo_root):
     text = (repo_root / "workflow/prohibited-transitions.yaml").read_text()
     for phrase in [
         "matter_opened",
+        "external_message_sent",
         "conflicts_cleared",
+        "deadline_docketed",
         "budget_submitted",
         "imanage_workspace_created",
     ]:

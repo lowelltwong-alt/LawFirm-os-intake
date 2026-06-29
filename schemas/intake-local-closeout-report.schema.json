@@ -1,0 +1,312 @@
+{
+  "$defs": {
+    "IntakeLocalCloseoutCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "blocked"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "artifact_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Artifact Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "IntakeLocalCloseoutCheck",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "closeout_report_id": {
+      "title": "Closeout Report Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "intake_local_closeout_ready_manual_actions_required",
+        "blocked_by_closeout_evidence"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "observed_pr_number": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Observed Pr Number"
+    },
+    "observed_pr_url": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Observed Pr Url"
+    },
+    "observed_pr_state": {
+      "default": "not_supplied",
+      "enum": [
+        "draft",
+        "ready_for_review",
+        "not_supplied"
+      ],
+      "title": "Observed Pr State",
+      "type": "string"
+    },
+    "source_readiness_audit_report_id": {
+      "title": "Source Readiness Audit Report Id",
+      "type": "string"
+    },
+    "source_readiness_audit_report_ref": {
+      "title": "Source Readiness Audit Report Ref",
+      "type": "string"
+    },
+    "source_readiness_status": {
+      "title": "Source Readiness Status",
+      "type": "string"
+    },
+    "source_review_readiness": {
+      "title": "Source Review Readiness",
+      "type": "string"
+    },
+    "source_pr_review_checklist_id": {
+      "title": "Source Pr Review Checklist Id",
+      "type": "string"
+    },
+    "source_pr_review_checklist_ref": {
+      "title": "Source Pr Review Checklist Ref",
+      "type": "string"
+    },
+    "source_pr_review_checklist_status": {
+      "title": "Source Pr Review Checklist Status",
+      "type": "string"
+    },
+    "source_pr_review_checklist_recommendation": {
+      "title": "Source Pr Review Checklist Recommendation",
+      "type": "string"
+    },
+    "source_owner_adoption_report_id": {
+      "title": "Source Owner Adoption Report Id",
+      "type": "string"
+    },
+    "source_owner_adoption_report_ref": {
+      "title": "Source Owner Adoption Report Ref",
+      "type": "string"
+    },
+    "source_owner_adoption_status": {
+      "title": "Source Owner Adoption Status",
+      "type": "string"
+    },
+    "source_owner_issue_draft_report_id": {
+      "title": "Source Owner Issue Draft Report Id",
+      "type": "string"
+    },
+    "source_owner_issue_draft_report_ref": {
+      "title": "Source Owner Issue Draft Report Ref",
+      "type": "string"
+    },
+    "source_owner_issue_draft_status": {
+      "title": "Source Owner Issue Draft Status",
+      "type": "string"
+    },
+    "check_count": {
+      "minimum": 0,
+      "title": "Check Count",
+      "type": "integer"
+    },
+    "passed_check_count": {
+      "minimum": 0,
+      "title": "Passed Check Count",
+      "type": "integer"
+    },
+    "blocking_check_count": {
+      "minimum": 0,
+      "title": "Blocking Check Count",
+      "type": "integer"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/IntakeLocalCloseoutCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "manual_actions_remaining": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Manual Actions Remaining",
+      "type": "array"
+    },
+    "generated_artifact_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Generated Artifact Refs",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "local_completion_scope": {
+      "const": "intake_candidate_complete_manual_external_actions_required",
+      "default": "intake_candidate_complete_manual_external_actions_required",
+      "title": "Local Completion Scope",
+      "type": "string"
+    },
+    "manual_pr_state_change_required": {
+      "const": true,
+      "default": true,
+      "title": "Manual Pr State Change Required",
+      "type": "boolean"
+    },
+    "manual_owner_issue_creation_required": {
+      "const": true,
+      "default": true,
+      "title": "Manual Owner Issue Creation Required",
+      "type": "boolean"
+    },
+    "pr_state_change_performed": {
+      "const": false,
+      "default": false,
+      "title": "Pr State Change Performed",
+      "type": "boolean"
+    },
+    "github_issue_created": {
+      "const": false,
+      "default": false,
+      "title": "Github Issue Created",
+      "type": "boolean"
+    },
+    "github_pr_created": {
+      "const": false,
+      "default": false,
+      "title": "Github Pr Created",
+      "type": "boolean"
+    },
+    "github_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Github Write Performed",
+      "type": "boolean"
+    },
+    "sibling_repo_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sibling Repo Write Performed",
+      "type": "boolean"
+    },
+    "promotion_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Promotion Authorized",
+      "type": "boolean"
+    },
+    "proposed_changes_applied": {
+      "const": false,
+      "default": false,
+      "title": "Proposed Changes Applied",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "closeout_report_id",
+    "status",
+    "source_readiness_audit_report_id",
+    "source_readiness_audit_report_ref",
+    "source_readiness_status",
+    "source_review_readiness",
+    "source_pr_review_checklist_id",
+    "source_pr_review_checklist_ref",
+    "source_pr_review_checklist_status",
+    "source_pr_review_checklist_recommendation",
+    "source_owner_adoption_report_id",
+    "source_owner_adoption_report_ref",
+    "source_owner_adoption_status",
+    "source_owner_issue_draft_report_id",
+    "source_owner_issue_draft_report_ref",
+    "source_owner_issue_draft_status",
+    "check_count",
+    "passed_check_count",
+    "blocking_check_count",
+    "checks",
+    "manual_actions_remaining",
+    "generated_artifact_refs",
+    "generated_at"
+  ],
+  "title": "IntakeLocalCloseoutReport",
+  "type": "object"
+}

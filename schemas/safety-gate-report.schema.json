@@ -1,0 +1,113 @@
+{
+  "$defs": {
+    "SafetyGateCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "SafetyGateCheck",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "safety_gate_report_id": {
+      "title": "Safety Gate Report Id",
+      "type": "string"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "preflight_packet_id": {
+      "title": "Preflight Packet Id",
+      "type": "string"
+    },
+    "confirmation_id": {
+      "title": "Confirmation Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "passed",
+        "failed"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/SafetyGateCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "prohibited_actions_verified": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Prohibited Actions Verified",
+      "type": "array"
+    },
+    "final_boundary": {
+      "const": "blocked_pending_conflicts_and_engagement",
+      "title": "Final Boundary",
+      "type": "string"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "safety_gate_report_id",
+    "run_id",
+    "preflight_packet_id",
+    "confirmation_id",
+    "status",
+    "checks",
+    "prohibited_actions_verified",
+    "final_boundary",
+    "generated_at"
+  ],
+  "title": "SafetyGateReport",
+  "type": "object"
+}

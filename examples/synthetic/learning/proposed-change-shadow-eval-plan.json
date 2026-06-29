@@ -1,0 +1,104 @@
+{
+  "schema_version": "0.1",
+  "shadow_eval_plan_id": "shadowevalplan_fixture_learning_proposed_changes",
+  "reviewed_learning_gate_report_id": "reviewedlearninggate_fixture_learning_proposed_changes",
+  "status": "shadow_eval_required",
+  "source_gate_report_ref": "examples/synthetic/learning/reviewed-learning-gate.fixture.json",
+  "case_count": 2,
+  "cases": [
+    {
+      "shadow_eval_case_id": "shadoweval_fixture_budget_driver",
+      "candidate_id": "learninggate_fixture_budget_driver",
+      "source_kind": "budget_revision_delta",
+      "target_learning_loop": "budget_model",
+      "target_owner": "LawFirm-os-intake",
+      "source_artifact_ref": "examples/synthetic/learning/budget-revision-report.fixture.json",
+      "source_record_id": "budgetrevisiondelta_fixture_hours",
+      "support_refs": [
+        "examples/synthetic/learning/budget-revision-report.fixture.json",
+        "budget-revision-delta://budgetrevisiondelta_fixture_hours"
+      ],
+      "required_fixture_updates": [
+        "Add synthetic fixture for revised discovery hours.",
+        "Bind before/after expectations to budgetrevisiondelta_fixture_hours."
+      ],
+      "required_eval_suites": [
+        "budget driver counterfactual",
+        "fixture-gold replay",
+        "starter boundary regression"
+      ],
+      "regression_guardrails": [
+        "no budget submission",
+        "no external writes",
+        "no silent learning",
+        "source evidence remains stable"
+      ],
+      "status": "blocked_missing_proposed_change",
+      "candidate_only": true,
+      "proposed_change_applied": false,
+      "baseline_mutated": false,
+      "profile_mutation_performed": false,
+      "template_mutation_performed": false,
+      "connector_mutation_performed": false,
+      "budget_mutation_performed": false,
+      "carrier_guideline_mutation_performed": false,
+      "lake_write_performed": false,
+      "external_writes_performed": false
+    },
+    {
+      "shadow_eval_case_id": "shadoweval_fixture_capture_completeness",
+      "candidate_id": "learninggate_fixture_capture_completeness",
+      "source_kind": "carrier_rejection_learning_proposal",
+      "target_learning_loop": "capture_completeness",
+      "target_owner": "LawFirm-os-orchestrator",
+      "source_artifact_ref": "examples/synthetic/learning/carrier-rejection-learning-report.fixture.json",
+      "source_record_id": "carrierlearningproposal_fixture_missing_portal_notice",
+      "support_refs": [
+        "examples/synthetic/learning/carrier-rejection-learning-report.fixture.json",
+        "carrier-rejection-learning-proposal://carrierlearningproposal_fixture_missing_portal_notice"
+      ],
+      "required_fixture_updates": [
+        "Add synthetic fixture for missing portal rejection notice.",
+        "Bind capture expectations to carrierlearningproposal_fixture_missing_portal_notice."
+      ],
+      "required_eval_suites": [
+        "carrier rejection capture replay",
+        "fixture-gold replay",
+        "starter boundary regression"
+      ],
+      "regression_guardrails": [
+        "no Lake write",
+        "no connector write",
+        "no external writes",
+        "no silent learning",
+        "source evidence remains stable"
+      ],
+      "status": "blocked_missing_proposed_change",
+      "candidate_only": true,
+      "proposed_change_applied": false,
+      "baseline_mutated": false,
+      "profile_mutation_performed": false,
+      "template_mutation_performed": false,
+      "connector_mutation_performed": false,
+      "budget_mutation_performed": false,
+      "carrier_guideline_mutation_performed": false,
+      "lake_write_performed": false,
+      "external_writes_performed": false
+    }
+  ],
+  "required_next_gates": [
+    "human_reviewed_outcome_evidence",
+    "append_only_evidence_record",
+    "proposed_change_artifact",
+    "synthetic_fixture_update",
+    "shadow_eval_result",
+    "regression_check",
+    "owning_repo_review"
+  ],
+  "candidate_only": true,
+  "proposed_changes_applied": false,
+  "baseline_mutated": false,
+  "external_writes_performed": false,
+  "silent_learning_performed": false,
+  "generated_at": "2026-06-26T00:00:00Z"
+}

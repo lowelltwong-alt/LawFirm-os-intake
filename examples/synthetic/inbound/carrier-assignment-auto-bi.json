@@ -1,0 +1,80 @@
+{
+  "schema_version": "0.1",
+  "bundle_id": "syn-bundle-carrier-auto-bi-001",
+  "data_origin": "synthetic",
+  "contains_real_client_data": false,
+  "contains_real_matter_data": false,
+  "contains_privileged_data": false,
+  "sources": [
+    {
+      "source_id": "syn-auto-email-001",
+      "source_type": "email",
+      "filename": "synthetic_auto_bi_assignment.eml.txt",
+      "text": "From: claims@harborpoint-insurance.example\nTo: intake@synthetic-law.example\nDate: June 21, 2026\nSubject: New Assignment - Lee v. Northstar Delivery LLC\n\nHarbor Point Insurance is assigning defense of insured Northstar Delivery LLC and driver Marcus Reed arising from a vehicle collision involving claimant Olivia Lee. Claim number HP-AUTO-2026-2217. The complaint alleges bodily injury from an automobile collision and identifies Beacon & Vale as claimant's counsel. Please acknowledge receipt and provide an initial litigation budget within 21 days for auto liability defense.\n\nRegards,\nSynthetic Auto Claims Professional",
+      "metadata": {
+        "synthetic": true
+      }
+    }
+  ],
+  "fixture_hints": {
+    "provided_fields": [
+      "claim_number",
+      "incident_date",
+      "prospective_represented_client",
+      "adverse_party",
+      "assignment_scope",
+      "response_or_reporting_deadline"
+    ],
+    "entities": [
+      {
+        "name": "Harbor Point Insurance",
+        "role_candidates": [
+          {
+            "role": "insurance_carrier",
+            "confidence": 0.96
+          },
+          {
+            "role": "payer",
+            "confidence": 0.78
+          }
+        ]
+      },
+      {
+        "name": "Northstar Delivery LLC",
+        "role_candidates": [
+          {
+            "role": "insured_or_prospective_represented_client",
+            "confidence": 0.9
+          }
+        ]
+      },
+      {
+        "name": "Marcus Reed",
+        "role_candidates": [
+          {
+            "role": "insured_or_prospective_represented_client",
+            "confidence": 0.86
+          }
+        ]
+      },
+      {
+        "name": "Olivia Lee",
+        "role_candidates": [
+          {
+            "role": "claimant_or_adverse_party",
+            "confidence": 0.9
+          }
+        ]
+      },
+      {
+        "name": "Beacon & Vale",
+        "role_candidates": [
+          {
+            "role": "opposing_counsel",
+            "confidence": 0.82
+          }
+        ]
+      }
+    ]
+  }
+}

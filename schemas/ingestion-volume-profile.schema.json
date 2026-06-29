@@ -1,0 +1,194 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "ingestion_volume_profile_id": {
+      "title": "Ingestion Volume Profile Id",
+      "type": "string"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "ingestion_result_id": {
+      "title": "Ingestion Result Id",
+      "type": "string"
+    },
+    "bundle_id": {
+      "title": "Bundle Id",
+      "type": "string"
+    },
+    "source_count": {
+      "minimum": 0,
+      "title": "Source Count",
+      "type": "integer"
+    },
+    "total_source_characters": {
+      "minimum": 0,
+      "title": "Total Source Characters",
+      "type": "integer"
+    },
+    "max_source_characters": {
+      "minimum": 0,
+      "title": "Max Source Characters",
+      "type": "integer"
+    },
+    "segment_count": {
+      "minimum": 0,
+      "title": "Segment Count",
+      "type": "integer"
+    },
+    "total_segment_characters": {
+      "minimum": 0,
+      "title": "Total Segment Characters",
+      "type": "integer"
+    },
+    "max_segment_characters": {
+      "minimum": 0,
+      "title": "Max Segment Characters",
+      "type": "integer"
+    },
+    "source_type_counts": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Source Type Counts",
+      "type": "object"
+    },
+    "source_state_counts": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Source State Counts",
+      "type": "object"
+    },
+    "segment_type_counts": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Segment Type Counts",
+      "type": "object"
+    },
+    "rust_transition_policy_ref": {
+      "title": "Rust Transition Policy Ref",
+      "type": "string"
+    },
+    "profile_thresholds": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Profile Thresholds",
+      "type": "object"
+    },
+    "scale_signals": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Scale Signals",
+      "type": "array"
+    },
+    "compute_pressure_signals": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Compute Pressure Signals",
+      "type": "array"
+    },
+    "required_performance_profile_dimensions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Performance Profile Dimensions",
+      "type": "array"
+    },
+    "candidate_rust_hot_path_scope": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Candidate Rust Hot Path Scope",
+      "type": "array"
+    },
+    "observed_scale_band": {
+      "enum": [
+        "starter_fixture",
+        "profile_candidate"
+      ],
+      "title": "Observed Scale Band",
+      "type": "string"
+    },
+    "performance_profile_required_before_rust": {
+      "title": "Performance Profile Required Before Rust",
+      "type": "boolean"
+    },
+    "rust_replacement_allowed": {
+      "const": false,
+      "default": false,
+      "title": "Rust Replacement Allowed",
+      "type": "boolean"
+    },
+    "rust_adapter_proposal_state": {
+      "enum": [
+        "not_warranted",
+        "profiling_required_before_adapter_proposal"
+      ],
+      "title": "Rust Adapter Proposal State",
+      "type": "string"
+    },
+    "required_rust_transition_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Rust Transition Gates",
+      "type": "array"
+    },
+    "decision": {
+      "enum": [
+        "keep_python_reference",
+        "profile_before_rust_adapter"
+      ],
+      "title": "Decision",
+      "type": "string"
+    },
+    "rationale": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Rationale",
+      "type": "array"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "ingestion_volume_profile_id",
+    "run_id",
+    "ingestion_result_id",
+    "bundle_id",
+    "source_count",
+    "total_source_characters",
+    "max_source_characters",
+    "segment_count",
+    "total_segment_characters",
+    "max_segment_characters",
+    "source_type_counts",
+    "source_state_counts",
+    "segment_type_counts",
+    "rust_transition_policy_ref",
+    "profile_thresholds",
+    "observed_scale_band",
+    "performance_profile_required_before_rust",
+    "rust_adapter_proposal_state",
+    "required_rust_transition_gates",
+    "decision",
+    "rationale",
+    "generated_at"
+  ],
+  "title": "IngestionVolumeProfile",
+  "type": "object"
+}

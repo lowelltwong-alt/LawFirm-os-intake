@@ -1,0 +1,776 @@
+{
+  "$defs": {
+    "BudgetDriverLabel": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "default": "0.1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "label_id": {
+          "title": "Label Id",
+          "type": "string"
+        },
+        "driver_id": {
+          "title": "Driver Id",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Value"
+        },
+        "value_status": {
+          "enum": [
+            "observed",
+            "missing",
+            "unknown",
+            "synthetic_context_wrapper"
+          ],
+          "title": "Value Status",
+          "type": "string"
+        },
+        "source_ref": {
+          "$ref": "#/$defs/CourtListenerLabelSourceRef"
+        },
+        "confidence": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "labeler": {
+          "enum": [
+            "human",
+            "rule",
+            "model_candidate",
+            "imported_metadata"
+          ],
+          "title": "Labeler",
+          "type": "string"
+        },
+        "review_status": {
+          "enum": [
+            "candidate",
+            "reviewed",
+            "rejected",
+            "needs_review"
+          ],
+          "title": "Review Status",
+          "type": "string"
+        },
+        "uncertainty": {
+          "default": "medium",
+          "title": "Uncertainty",
+          "type": "string"
+        },
+        "budget_amount_inferred": {
+          "const": false,
+          "default": false,
+          "title": "Budget Amount Inferred",
+          "type": "boolean"
+        },
+        "rate_inferred": {
+          "const": false,
+          "default": false,
+          "title": "Rate Inferred",
+          "type": "boolean"
+        },
+        "guideline_inferred": {
+          "const": false,
+          "default": false,
+          "title": "Guideline Inferred",
+          "type": "boolean"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "label_id",
+        "driver_id",
+        "value",
+        "value_status",
+        "source_ref",
+        "confidence",
+        "labeler",
+        "review_status"
+      ],
+      "title": "BudgetDriverLabel",
+      "type": "object"
+    },
+    "ConflictSeedLabel": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "default": "0.1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "label_id": {
+          "title": "Label Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "normalized_name": {
+          "title": "Normalized Name",
+          "type": "string"
+        },
+        "observed_role": {
+          "title": "Observed Role",
+          "type": "string"
+        },
+        "inferred_role": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Inferred Role"
+        },
+        "source_ref": {
+          "$ref": "#/$defs/CourtListenerLabelSourceRef"
+        },
+        "confidence": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "labeler": {
+          "enum": [
+            "human",
+            "rule",
+            "model_candidate",
+            "imported_metadata"
+          ],
+          "title": "Labeler",
+          "type": "string"
+        },
+        "review_status": {
+          "enum": [
+            "candidate",
+            "reviewed",
+            "rejected",
+            "needs_review"
+          ],
+          "title": "Review Status",
+          "type": "string"
+        },
+        "uncertainty": {
+          "default": "medium",
+          "title": "Uncertainty",
+          "type": "string"
+        },
+        "conflict_conclusion_emitted": {
+          "const": false,
+          "default": false,
+          "title": "Conflict Conclusion Emitted",
+          "type": "boolean"
+        },
+        "matter_opening_authorized": {
+          "const": false,
+          "default": false,
+          "title": "Matter Opening Authorized",
+          "type": "boolean"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "label_id",
+        "name",
+        "normalized_name",
+        "observed_role",
+        "source_ref",
+        "confidence",
+        "labeler",
+        "review_status"
+      ],
+      "title": "ConflictSeedLabel",
+      "type": "object"
+    },
+    "CourtListenerLabelSourceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "docket_id": {
+          "title": "Docket Id",
+          "type": "string"
+        },
+        "source_document_id": {
+          "title": "Source Document Id",
+          "type": "string"
+        },
+        "source_segment_id": {
+          "title": "Source Segment Id",
+          "type": "string"
+        },
+        "source_span_ref": {
+          "title": "Source Span Ref",
+          "type": "string"
+        },
+        "start_offset": {
+          "minimum": 0,
+          "title": "Start Offset",
+          "type": "integer"
+        },
+        "end_offset": {
+          "minimum": 0,
+          "title": "End Offset",
+          "type": "integer"
+        },
+        "sha256": {
+          "title": "Sha256",
+          "type": "string"
+        },
+        "public_source_profile_id": {
+          "const": "courtlistener_removal_state_pleadings_proxy",
+          "title": "Public Source Profile Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "docket_id",
+        "source_document_id",
+        "source_segment_id",
+        "source_span_ref",
+        "start_offset",
+        "end_offset",
+        "sha256",
+        "public_source_profile_id"
+      ],
+      "title": "CourtListenerLabelSourceRef",
+      "type": "object"
+    },
+    "IntakeStageDocumentLabel": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "default": "0.1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "label_id": {
+          "title": "Label Id",
+          "type": "string"
+        },
+        "label_type": {
+          "enum": [
+            "document_type",
+            "case_stage",
+            "source_role"
+          ],
+          "title": "Label Type",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "string"
+        },
+        "source_ref": {
+          "$ref": "#/$defs/CourtListenerLabelSourceRef"
+        },
+        "confidence": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "labeler": {
+          "enum": [
+            "human",
+            "rule",
+            "model_candidate",
+            "imported_metadata"
+          ],
+          "title": "Labeler",
+          "type": "string"
+        },
+        "review_status": {
+          "enum": [
+            "candidate",
+            "reviewed",
+            "rejected",
+            "needs_review"
+          ],
+          "title": "Review Status",
+          "type": "string"
+        },
+        "notes": {
+          "default": "",
+          "title": "Notes",
+          "type": "string"
+        },
+        "uncertainty": {
+          "default": "low",
+          "title": "Uncertainty",
+          "type": "string"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "label_id",
+        "label_type",
+        "value",
+        "source_ref",
+        "confidence",
+        "labeler",
+        "review_status"
+      ],
+      "title": "IntakeStageDocumentLabel",
+      "type": "object"
+    },
+    "PersonTimelineEventLabel": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "default": "0.1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "label_id": {
+          "title": "Label Id",
+          "type": "string"
+        },
+        "person_id": {
+          "title": "Person Id",
+          "type": "string"
+        },
+        "person_name": {
+          "title": "Person Name",
+          "type": "string"
+        },
+        "event_type": {
+          "title": "Event Type",
+          "type": "string"
+        },
+        "event_datetime_text": {
+          "title": "Event Datetime Text",
+          "type": "string"
+        },
+        "normalized_datetime_candidate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Normalized Datetime Candidate"
+        },
+        "timezone_candidate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Timezone Candidate"
+        },
+        "location_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Location Text"
+        },
+        "normalized_location_candidate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Normalized Location Candidate"
+        },
+        "source_ref": {
+          "$ref": "#/$defs/CourtListenerLabelSourceRef"
+        },
+        "asserted_by": {
+          "title": "Asserted By",
+          "type": "string"
+        },
+        "document_type": {
+          "title": "Document Type",
+          "type": "string"
+        },
+        "contradiction_links": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Contradiction Links",
+          "type": "array"
+        },
+        "plausibility_status": {
+          "enum": [
+            "plausible",
+            "implausible",
+            "unknown",
+            "needs_review"
+          ],
+          "title": "Plausibility Status",
+          "type": "string"
+        },
+        "labeler": {
+          "enum": [
+            "human",
+            "rule",
+            "model_candidate",
+            "imported_metadata"
+          ],
+          "title": "Labeler",
+          "type": "string"
+        },
+        "review_status": {
+          "enum": [
+            "candidate",
+            "reviewed",
+            "rejected",
+            "needs_review"
+          ],
+          "title": "Review Status",
+          "type": "string"
+        },
+        "uncertainty": {
+          "default": "medium",
+          "title": "Uncertainty",
+          "type": "string"
+        },
+        "contradiction_candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Contradiction Candidate Only",
+          "type": "boolean"
+        },
+        "legal_or_factual_impossibility_claimed": {
+          "const": false,
+          "default": false,
+          "title": "Legal Or Factual Impossibility Claimed",
+          "type": "boolean"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "label_id",
+        "person_id",
+        "person_name",
+        "event_type",
+        "event_datetime_text",
+        "source_ref",
+        "asserted_by",
+        "document_type",
+        "plausibility_status",
+        "labeler",
+        "review_status"
+      ],
+      "title": "PersonTimelineEventLabel",
+      "type": "object"
+    },
+    "SyntheticIntakeWrapper": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "default": "0.1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "synthetic_wrapper_id": {
+          "title": "Synthetic Wrapper Id",
+          "type": "string"
+        },
+        "wrapper_type": {
+          "enum": [
+            "defense_carrier_assignment_wrapper",
+            "employer_defense_assignment_wrapper",
+            "plaintiff_side_consultation_wrapper",
+            "generic_referral_wrapper",
+            "public_docket_review_wrapper"
+          ],
+          "title": "Wrapper Type",
+          "type": "string"
+        },
+        "observed_public_source_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Observed Public Source Refs",
+          "type": "array"
+        },
+        "synthetic_role_assumptions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Synthetic Role Assumptions",
+          "type": "array"
+        },
+        "context_prior_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Context Prior Refs",
+          "type": "array"
+        },
+        "human_confirmed_fact_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Human Confirmed Fact Refs",
+          "type": "array"
+        },
+        "observed_facts_manufactured": {
+          "const": false,
+          "default": false,
+          "title": "Observed Facts Manufactured",
+          "type": "boolean"
+        },
+        "distinguishes_synthetic_context_from_observed_evidence": {
+          "const": true,
+          "default": true,
+          "title": "Distinguishes Synthetic Context From Observed Evidence",
+          "type": "boolean"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "synthetic_wrapper_id",
+        "wrapper_type",
+        "observed_public_source_refs",
+        "synthetic_role_assumptions"
+      ],
+      "title": "SyntheticIntakeWrapper",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "manifest_id": {
+      "title": "Manifest Id",
+      "type": "string"
+    },
+    "dataset_strategy_ref": {
+      "title": "Dataset Strategy Ref",
+      "type": "string"
+    },
+    "source_profile_id": {
+      "const": "courtlistener_removal_state_pleadings_proxy",
+      "title": "Source Profile Id",
+      "type": "string"
+    },
+    "primary_practice_area": {
+      "const": "labor_employment",
+      "title": "Primary Practice Area",
+      "type": "string"
+    },
+    "fixture_snapshot_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Fixture Snapshot Refs",
+      "type": "array"
+    },
+    "synthetic_intake_wrapper": {
+      "$ref": "#/$defs/SyntheticIntakeWrapper"
+    },
+    "intake_stage_document_labels": {
+      "items": {
+        "$ref": "#/$defs/IntakeStageDocumentLabel"
+      },
+      "title": "Intake Stage Document Labels",
+      "type": "array"
+    },
+    "conflict_seed_labels": {
+      "items": {
+        "$ref": "#/$defs/ConflictSeedLabel"
+      },
+      "title": "Conflict Seed Labels",
+      "type": "array"
+    },
+    "budget_driver_labels": {
+      "items": {
+        "$ref": "#/$defs/BudgetDriverLabel"
+      },
+      "title": "Budget Driver Labels",
+      "type": "array"
+    },
+    "person_timeline_event_labels": {
+      "items": {
+        "$ref": "#/$defs/PersonTimelineEventLabel"
+      },
+      "title": "Person Timeline Event Labels",
+      "type": "array"
+    },
+    "public_records_ingested": {
+      "const": false,
+      "default": false,
+      "title": "Public Records Ingested",
+      "type": "boolean"
+    },
+    "live_calls_performed": {
+      "const": false,
+      "default": false,
+      "title": "Live Calls Performed",
+      "type": "boolean"
+    },
+    "pacer_purchase_performed": {
+      "const": false,
+      "default": false,
+      "title": "Pacer Purchase Performed",
+      "type": "boolean"
+    },
+    "recap_fetch_purchase_performed": {
+      "const": false,
+      "default": false,
+      "title": "Recap Fetch Purchase Performed",
+      "type": "boolean"
+    },
+    "uploads_performed": {
+      "const": false,
+      "default": false,
+      "title": "Uploads Performed",
+      "type": "boolean"
+    },
+    "court_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "Court Writes Performed",
+      "type": "boolean"
+    },
+    "training_pipeline_created": {
+      "const": false,
+      "default": false,
+      "title": "Training Pipeline Created",
+      "type": "boolean"
+    },
+    "budget_accuracy_claimed": {
+      "const": false,
+      "default": false,
+      "title": "Budget Accuracy Claimed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "manifest_id",
+    "dataset_strategy_ref",
+    "source_profile_id",
+    "primary_practice_area",
+    "fixture_snapshot_refs",
+    "synthetic_intake_wrapper",
+    "intake_stage_document_labels",
+    "conflict_seed_labels",
+    "budget_driver_labels",
+    "person_timeline_event_labels"
+  ],
+  "title": "CourtListenerDatasetManifest",
+  "type": "object"
+}

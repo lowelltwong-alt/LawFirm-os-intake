@@ -1,0 +1,102 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "item_id": {
+      "title": "Item Id",
+      "type": "string"
+    },
+    "section": {
+      "enum": [
+        "readiness_audit",
+        "lake_bundle",
+        "learning_chain",
+        "calibration_chain",
+        "fixture_update_review",
+        "fixture_update_pr_package",
+        "authority_boundary",
+        "validation",
+        "external_owner_review",
+        "human_decision"
+      ],
+      "title": "Section",
+      "type": "string"
+    },
+    "title": {
+      "title": "Title",
+      "type": "string"
+    },
+    "recommendation": {
+      "enum": [
+        "inspect",
+        "confirm",
+        "block_until_resolved",
+        "external_owner_review"
+      ],
+      "title": "Recommendation",
+      "type": "string"
+    },
+    "why": {
+      "title": "Why",
+      "type": "string"
+    },
+    "artifact_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Artifact Refs",
+      "type": "array"
+    },
+    "required_before_ready": {
+      "default": true,
+      "title": "Required Before Ready",
+      "type": "boolean"
+    },
+    "red_team_note": {
+      "title": "Red Team Note",
+      "type": "string"
+    },
+    "required_human_decision": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Required Human Decision"
+    },
+    "status": {
+      "default": "open_for_human_review",
+      "enum": [
+        "open_for_human_review",
+        "blocked_by_readiness_audit"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "item_id",
+    "section",
+    "title",
+    "recommendation",
+    "why",
+    "red_team_note"
+  ],
+  "title": "PRReviewChecklistItem",
+  "type": "object"
+}

@@ -1,0 +1,249 @@
+{
+  "$defs": {
+    "ContractStateCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "ContractStateCheck",
+      "type": "object"
+    },
+    "ContractStateDependency": {
+      "additionalProperties": false,
+      "properties": {
+        "repo": {
+          "title": "Repo",
+          "type": "string"
+        },
+        "remote": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Remote"
+        },
+        "branch": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Branch"
+        },
+        "ref_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ref Type"
+        },
+        "sha": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sha"
+        },
+        "authority_plane": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Authority Plane"
+        },
+        "local_folder": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Local Folder"
+        },
+        "topology_sha": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Topology Sha"
+        },
+        "topology_authority_plane": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Topology Authority Plane"
+        },
+        "topology_matches_lock": {
+          "default": false,
+          "title": "Topology Matches Lock",
+          "type": "boolean"
+        },
+        "status": {
+          "enum": [
+            "verified",
+            "invalid"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "repo",
+        "status"
+      ],
+      "title": "ContractStateDependency",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "contract_state_report_id": {
+      "title": "Contract State Report Id",
+      "type": "string"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "passed",
+        "failed"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "lock_status": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Lock Status"
+    },
+    "reviewed_lock_required": {
+      "default": true,
+      "title": "Reviewed Lock Required",
+      "type": "boolean"
+    },
+    "lockfile_ref": {
+      "title": "Lockfile Ref",
+      "type": "string"
+    },
+    "topology_lock_ref": {
+      "title": "Topology Lock Ref",
+      "type": "string"
+    },
+    "dependencies": {
+      "items": {
+        "$ref": "#/$defs/ContractStateDependency"
+      },
+      "title": "Dependencies",
+      "type": "array"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/ContractStateCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "errors": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Errors",
+      "type": "array"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "contract_state_report_id",
+    "run_id",
+    "status",
+    "lockfile_ref",
+    "topology_lock_ref",
+    "dependencies",
+    "checks",
+    "generated_at"
+  ],
+  "title": "ContractStateReport",
+  "type": "object"
+}

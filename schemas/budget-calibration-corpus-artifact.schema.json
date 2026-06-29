@@ -1,0 +1,158 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "artifact_id": {
+      "title": "Artifact Id",
+      "type": "string"
+    },
+    "artifact_ref": {
+      "title": "Artifact Ref",
+      "type": "string"
+    },
+    "artifact_kind": {
+      "enum": [
+        "intake_source_fixture",
+        "human_confirmation_fixture",
+        "budget_review_fixture",
+        "actuals_fixture",
+        "carrier_rejection_fixture",
+        "reviewed_gold_fixture",
+        "learning_gate_fixture",
+        "learning_shadow_eval_fixture",
+        "learning_support_fixture",
+        "unclassified_json_fixture"
+      ],
+      "title": "Artifact Kind",
+      "type": "string"
+    },
+    "calibration_role": {
+      "enum": [
+        "input_context_fixture",
+        "outcome_evidence_fixture",
+        "reviewed_baseline_fixture",
+        "learning_gate_fixture",
+        "shadow_eval_fixture",
+        "unclassified_supporting_fixture"
+      ],
+      "title": "Calibration Role",
+      "type": "string"
+    },
+    "eligibility": {
+      "enum": [
+        "eligible_for_synthetic_calibration_review",
+        "supporting_context_only",
+        "blocked_real_or_privileged_data",
+        "blocked_boundary_violation"
+      ],
+      "title": "Eligibility",
+      "type": "string"
+    },
+    "sha256": {
+      "title": "Sha256",
+      "type": "string"
+    },
+    "data_origin": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Data Origin"
+    },
+    "synthetic_only": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Synthetic Only"
+    },
+    "contains_real_client_data": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Contains Real Client Data"
+    },
+    "contains_real_matter_data": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Contains Real Matter Data"
+    },
+    "contains_privileged_data": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Contains Privileged Data"
+    },
+    "scope_failures": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Scope Failures",
+      "type": "array"
+    },
+    "boundary_failures": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Boundary Failures",
+      "type": "array"
+    },
+    "support_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Support Refs",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "artifact_id",
+    "artifact_ref",
+    "artifact_kind",
+    "calibration_role",
+    "eligibility",
+    "sha256"
+  ],
+  "title": "BudgetCalibrationCorpusArtifact",
+  "type": "object"
+}

@@ -1,0 +1,310 @@
+{
+  "$defs": {
+    "CarrierRejectionLakeAdmissionCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "record_types": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Record Types",
+          "type": "array"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "CarrierRejectionLakeAdmissionCheck",
+      "type": "object"
+    },
+    "CarrierRejectionLakeAdmissionRecordSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "record_type": {
+          "enum": [
+            "carrier_rejection_notice_record",
+            "carrier_rejection_reconciliation_record",
+            "carrier_rejection_review_outcome_record",
+            "carrier_appeal_submission_record",
+            "carrier_appeal_result_record",
+            "carrier_financial_outcome_record",
+            "carrier_rejection_learning_candidate_record"
+          ],
+          "title": "Record Type",
+          "type": "string"
+        },
+        "proposed_sqlite_table": {
+          "title": "Proposed Sqlite Table",
+          "type": "string"
+        },
+        "local_event_labels": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Local Event Labels",
+          "type": "array"
+        },
+        "canonical_lake_class_candidates": {
+          "items": {
+            "enum": [
+              "retrieval_miss",
+              "workflow_escalation",
+              "authority_conflict_override"
+            ],
+            "type": "string"
+          },
+          "title": "Canonical Lake Class Candidates",
+          "type": "array"
+        },
+        "source_artifact_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Source Artifact Refs",
+          "type": "array"
+        },
+        "required_identifiers": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Required Identifiers",
+          "type": "array"
+        },
+        "idempotency_fields": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Idempotency Fields",
+          "type": "array"
+        },
+        "required_hash_fields": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Required Hash Fields",
+          "type": "array"
+        },
+        "required_human_review_fields": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Required Human Review Fields",
+          "type": "array"
+        },
+        "correction_policy": {
+          "const": "append_only_supersession",
+          "default": "append_only_supersession",
+          "title": "Correction Policy",
+          "type": "string"
+        },
+        "raw_payload_storage_allowed": {
+          "const": false,
+          "default": false,
+          "title": "Raw Payload Storage Allowed",
+          "type": "boolean"
+        },
+        "admitted_by_intake": {
+          "const": false,
+          "default": false,
+          "title": "Admitted By Intake",
+          "type": "boolean"
+        },
+        "requires_orchestrator_evidence_packet": {
+          "const": true,
+          "default": true,
+          "title": "Requires Orchestrator Evidence Packet",
+          "type": "boolean"
+        },
+        "requires_lake_record_hash": {
+          "const": true,
+          "default": true,
+          "title": "Requires Lake Record Hash",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "record_type",
+        "proposed_sqlite_table",
+        "local_event_labels",
+        "canonical_lake_class_candidates",
+        "source_artifact_refs",
+        "required_identifiers",
+        "idempotency_fields",
+        "required_hash_fields"
+      ],
+      "title": "CarrierRejectionLakeAdmissionRecordSpec",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "proposal_id": {
+      "title": "Proposal Id",
+      "type": "string"
+    },
+    "status": {
+      "const": "candidate_only",
+      "title": "Status",
+      "type": "string"
+    },
+    "origin_repo": {
+      "const": "LawFirm-os-intake",
+      "default": "LawFirm-os-intake",
+      "title": "Origin Repo",
+      "type": "string"
+    },
+    "target_repo": {
+      "const": "LawFirm-os-exceptions-lake-runtime",
+      "default": "LawFirm-os-exceptions-lake-runtime",
+      "title": "Target Repo",
+      "type": "string"
+    },
+    "admission_state": {
+      "const": "proposal_not_admitted",
+      "default": "proposal_not_admitted",
+      "title": "Admission State",
+      "type": "string"
+    },
+    "purpose": {
+      "title": "Purpose",
+      "type": "string"
+    },
+    "record_specs": {
+      "items": {
+        "$ref": "#/$defs/CarrierRejectionLakeAdmissionRecordSpec"
+      },
+      "title": "Record Specs",
+      "type": "array"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/CarrierRejectionLakeAdmissionCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "required_upstream_artifacts": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Upstream Artifacts",
+      "type": "array"
+    },
+    "proposed_contract_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Proposed Contract Refs",
+      "type": "array"
+    },
+    "promotion_blockers": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Promotion Blockers",
+      "type": "array"
+    },
+    "prohibited_intake_actions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Prohibited Intake Actions",
+      "type": "array"
+    },
+    "append_only_required": {
+      "const": true,
+      "default": true,
+      "title": "Append Only Required",
+      "type": "boolean"
+    },
+    "correction_supersession_required": {
+      "const": true,
+      "default": true,
+      "title": "Correction Supersession Required",
+      "type": "boolean"
+    },
+    "record_hash_required": {
+      "const": true,
+      "default": true,
+      "title": "Record Hash Required",
+      "type": "boolean"
+    },
+    "sqlite_owner": {
+      "const": "LawFirm-os-exceptions-lake-runtime",
+      "default": "LawFirm-os-exceptions-lake-runtime",
+      "title": "Sqlite Owner",
+      "type": "string"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "raw_payload_storage_allowed": {
+      "const": false,
+      "default": false,
+      "title": "Raw Payload Storage Allowed",
+      "type": "boolean"
+    },
+    "no_canonical_mutation": {
+      "const": true,
+      "default": true,
+      "title": "No Canonical Mutation",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "proposal_id",
+    "status",
+    "purpose",
+    "record_specs",
+    "checks",
+    "required_upstream_artifacts",
+    "proposed_contract_refs",
+    "promotion_blockers",
+    "prohibited_intake_actions",
+    "generated_at"
+  ],
+  "title": "CarrierRejectionLakeAdmissionProposal",
+  "type": "object"
+}

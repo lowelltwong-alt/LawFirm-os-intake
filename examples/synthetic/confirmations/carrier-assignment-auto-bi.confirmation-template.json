@@ -1,0 +1,50 @@
+{
+  "schema_version": "0.1",
+  "confirmation_id": "human-confirmation-synthetic-auto-001",
+  "preflight_packet_id": "REPLACED_BY_DEMO_COMMAND",
+  "status": "confirmed",
+  "confirmed_inbound_event": "carrier_assignment",
+  "confirmed_matter_family": "auto_liability_defense",
+  "confirmed_representation_posture": "defense_of_insured",
+  "confirmed_parties": [
+    {
+      "name": "Harbor Point Insurance",
+      "confirmed_role": "insurance_carrier",
+      "aliases": [
+        "Harbor Point"
+      ]
+    },
+    {
+      "name": "Harbor Point Insurance",
+      "confirmed_role": "payer",
+      "aliases": []
+    },
+    {
+      "name": "Northstar Delivery LLC",
+      "confirmed_role": "prospective_represented_client",
+      "aliases": [
+        "Northstar"
+      ]
+    },
+    {
+      "name": "Marcus Reed",
+      "confirmed_role": "prospective_represented_client",
+      "aliases": []
+    },
+    {
+      "name": "Olivia Lee",
+      "confirmed_role": "adverse_party",
+      "aliases": []
+    },
+    {
+      "name": "Beacon & Vale",
+      "confirmed_role": "opposing_counsel",
+      "aliases": []
+    }
+  ],
+  "confirmed_jurisdiction": "Synthetic State Court",
+  "confirmed_deadlines": [],
+  "reviewer_id": "synthetic-human-reviewer",
+  "reviewed_at": "2026-06-24T12:00:00Z",
+  "notes": "Synthetic auto-liability demonstration only. No conflict clearance or engagement decision."
+}

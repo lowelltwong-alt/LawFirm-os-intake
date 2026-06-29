@@ -1,0 +1,85 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "synthetic_wrapper_id": {
+      "title": "Synthetic Wrapper Id",
+      "type": "string"
+    },
+    "wrapper_type": {
+      "enum": [
+        "defense_carrier_assignment_wrapper",
+        "employer_defense_assignment_wrapper",
+        "plaintiff_side_consultation_wrapper",
+        "generic_referral_wrapper",
+        "public_docket_review_wrapper"
+      ],
+      "title": "Wrapper Type",
+      "type": "string"
+    },
+    "observed_public_source_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Observed Public Source Refs",
+      "type": "array"
+    },
+    "synthetic_role_assumptions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Synthetic Role Assumptions",
+      "type": "array"
+    },
+    "context_prior_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Context Prior Refs",
+      "type": "array"
+    },
+    "human_confirmed_fact_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Human Confirmed Fact Refs",
+      "type": "array"
+    },
+    "observed_facts_manufactured": {
+      "const": false,
+      "default": false,
+      "title": "Observed Facts Manufactured",
+      "type": "boolean"
+    },
+    "distinguishes_synthetic_context_from_observed_evidence": {
+      "const": true,
+      "default": true,
+      "title": "Distinguishes Synthetic Context From Observed Evidence",
+      "type": "boolean"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "synthetic_wrapper_id",
+    "wrapper_type",
+    "observed_public_source_refs",
+    "synthetic_role_assumptions"
+  ],
+  "title": "SyntheticIntakeWrapper",
+  "type": "object"
+}

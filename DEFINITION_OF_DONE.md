@@ -10,7 +10,7 @@ The starter is complete when all of the following are true:
 4. `python -m pytest` passes.
 5. `bash scripts/smoke_demo.sh` completes locally.
 6. The demo emits a source inventory, segments, effective context, preflight packet, human confirmation, conflict-search seed, legal budget proposal, matter-opening readiness packet, evidence graph, and run ledger.
-7. Every observed candidate has a source-bound evidence reference.
+7. Every observed candidate has a source-bound evidence reference with source ID, segment ID, offsets, and hash.
 8. Practice context changes rankings without changing observed source evidence.
 9. The carrier is not automatically labeled as the represented client.
 10. Matter family, posture, and principal party roles require human confirmation.
@@ -22,6 +22,7 @@ The starter is complete when all of the following are true:
 16. No production connector, network call, external write, or live-model dependency exists.
 17. Public data is cataloged but not directly ingested.
 18. Local schemas are clearly candidate/reference schemas, not promoted canon.
+19. Any future non-Python ingestion implementation has a documented parity boundary, a profiling-before-replacement signal, and cannot bypass source/ref/hash/offset validation.
 
 ## Safety invariants
 

@@ -9,9 +9,9 @@ steps:
   - id: data_origin_gate
     executor: deterministic
     stop_on: [real_client_data, real_matter_data, privileged_data]
-  - id: inventory_and_segment
+  - id: python_reference_ingestion
     executor: source-reader
-    output: source_inventory_and_segments
+    output: ingestion_result_source_inventory_and_segments
   - id: extract_party_candidates
     executor: party-role-extractor
     output: party_candidates

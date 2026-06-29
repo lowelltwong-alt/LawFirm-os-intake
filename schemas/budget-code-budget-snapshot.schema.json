@@ -1,0 +1,44 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "code": {
+      "title": "Code",
+      "type": "string"
+    },
+    "phase_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Phase Id"
+    },
+    "budgeted_fees": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Budgeted Fees",
+      "type": "number"
+    },
+    "budgeted_expenses": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Budgeted Expenses",
+      "type": "number"
+    },
+    "budgeted_total": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Budgeted Total",
+      "type": "number"
+    }
+  },
+  "required": [
+    "code"
+  ],
+  "title": "BudgetCodeBudgetSnapshot",
+  "type": "object"
+}

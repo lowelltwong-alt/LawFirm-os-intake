@@ -1,0 +1,169 @@
+version: "0.1"
+status: local_candidate
+source_id: courtlistener_recap_early_case_corpus
+base_url: https://www.courtlistener.com/api/rest/v4
+token_env_var: COURTLISTENER_API_TOKEN
+rate_limit_policy: conservative
+cache_dir: .lawfirm-os-intake/courtlistener-cache
+snapshot_dir: examples/public-derived/courtlistener-snapshots
+fixture_dir: examples/synthetic/courtlistener-derived
+source_modes:
+  offline_fixture_mode: true
+  allow_live_calls: false
+  live_call_test_marker: explicit_opt_in_only
+permissions:
+  allow_pacer_purchase: false
+  allow_recap_fetch_purchase: false
+  allow_uploads: false
+  allow_court_writes: false
+  allow_sealed_or_restricted_requests: false
+  allow_real_client_data: false
+  allow_privileged_data: false
+endpoint_families:
+  - path: /search/
+    modeled_for: public_docket_discovery_metadata_only
+  - path: /dockets/
+    modeled_for: docket_metadata_snapshot
+  - path: /docket-entries/
+    modeled_for: first_90_to_120_days_chronology
+  - path: /recap-documents/
+    modeled_for: available_document_metadata_and_plain_text_when_already_available
+  - path: /parties/
+    modeled_for: party_role_extraction_labels
+  - path: /attorneys/
+    modeled_for: counsel_extraction_labels
+  - path: /courts/
+    modeled_for: court_metadata_context
+  - path: /citation-lookup/
+    modeled_for: citation_reference_normalization
+  - path: /fjc-integrated-database/
+    modeled_for: later_experimental_cohort_context_only
+practice_area_strategy:
+  primary_practice_area: labor_employment
+  starter_matter_families:
+    - single_plaintiff_employment_discrimination
+    - retaliation
+    - fmla
+    - ada_employment
+    - single_plaintiff_wage_and_hour_flsa
+  tier_3_flags:
+    - class_or_collective_indicator
+    - mdl_indicator
+    - mass_tort_indicator
+    - high_dollar_exposure
+    - punitive_damages_indicator
+case_selection:
+  federal_civil_only: true
+  public_synthetic_evaluation_only: true
+  first_docket_days_min: 90
+  first_docket_days_max: 120
+  already_available_recap_only: true
+  no_pacer_purchasing: true
+  no_recap_fetch_purchase_flow: true
+  no_sealed_or_restricted_documents: true
+  no_real_client_data: true
+positive_document_types:
+  - complaint
+  - amended_complaint
+  - summons
+  - civil_cover_sheet
+  - notice_of_removal
+  - state_court_complaint_attached_to_notice_of_removal
+  - state_court_summons_or_service_papers_attached_to_notice_of_removal
+  - notice_of_appearance
+  - corporate_disclosure_statement
+  - waiver_return_proof_or_affidavit_of_service
+  - answer
+  - counterclaim
+  - crossclaim
+  - early_motion_to_dismiss
+  - early_motion_to_compel_arbitration
+  - early_motion_to_remand
+  - initial_scheduling_order
+  - case_management_order
+  - preliminary_conference_order
+  - joint_status_report
+  - right_to_sue_letter_attached
+  - eeoc_charge_attached
+  - employment_agreement_attached
+  - arbitration_agreement_attached
+  - severance_agreement_attached
+  - employee_handbook_or_policy_excerpt_attached
+  - unknown
+excluded_positive_document_types:
+  - interrogatories
+  - requests_for_production
+  - requests_for_admission
+  - deposition_notices
+  - deposition_transcripts
+  - expert_reports
+  - discovery_motions_except_negative_examples
+  - privilege_logs
+  - summary_judgment_records
+  - daubert_motions
+  - trial_exhibits
+  - trial_transcripts
+  - fee_petitions
+  - appellate_briefs
+  - post_judgment_enforcement
+  - settlement_approval_records
+negative_case_stage_labels:
+  - post_discovery
+  - dispositive_motion
+  - trial
+  - post_judgment
+  - appellate
+  - unknown
+source_profiles:
+  - profile_id: courtlistener_removal_state_pleadings_proxy
+    purpose: use_federal_removal_dockets_to_model_state_court_starter_pleadings_when_already_attached
+    expected_documents:
+      - notice_of_removal
+      - state_court_complaint
+      - state_court_summons
+      - service_papers
+      - state_court_docket_excerpt
+      - early_state_court_orders
+      - civil_cover_sheet
+      - corporate_disclosure
+      - first_federal_docket_entries
+    rules:
+      - use_only_already_available_recap_documents
+      - do_not_buy_pacer_documents
+      - do_not_call_recap_fetch_purchase_apis
+      - do_not_upload_documents
+      - do_not_request_sealed_or_restricted_material
+      - mark_originating_jurisdiction_type_state_when_state_document_is_attached
+      - link_state_source_refs_to_federal_docket_and_document_refs
+rust_shadow_acceleration:
+  policy_ref: config/rust-ingestion-transition-policy.json
+  no_rust_runtime_added: true
+  rust_replacement_allowed: false
+  allowed_shadow_scope:
+    - courtlistener_snapshot_normalization
+    - offline_corpus_manifest_indexing
+    - source_hashing
+    - duplicate_detection
+    - document_label_offset_indexing
+    - source_span_indexing
+    - jsonl_candidate_artifact_serialization
+  forbidden_scope:
+    - legal_classification
+    - party_role_assignment
+    - conflict_clearance
+    - matter_opening
+    - docketing_deadlines
+    - budget_decisioning
+    - budget_submission
+    - training_corpus_admission
+    - public_record_download_or_purchase
+    - exception_lake_persistence
+    - canonical_authority_changes
+  required_gates:
+    - hot_path_performance_profile
+    - python_reference_golden_parity
+    - courtlistener_fixture_no_network
+    - synthetic_fixture_and_holdout_parity
+    - schema_compatibility_export
+    - orchestrator_adapter_review
+    - semantic_substrate_contract_review_if_promoted

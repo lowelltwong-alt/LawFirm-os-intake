@@ -1,0 +1,120 @@
+{
+  "$defs": {
+    "ContextCounterfactualAuditCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "artifact_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Artifact Refs",
+          "type": "array"
+        },
+        "details": {
+          "additionalProperties": true,
+          "title": "Details",
+          "type": "object"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "ContextCounterfactualAuditCheck",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "context_counterfactual_audit_report_id": {
+      "title": "Context Counterfactual Audit Report Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "passed",
+        "failed"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "input_ref": {
+      "title": "Input Ref",
+      "type": "string"
+    },
+    "baseline_profile_ref": {
+      "title": "Baseline Profile Ref",
+      "type": "string"
+    },
+    "comparison_profile_ref": {
+      "title": "Comparison Profile Ref",
+      "type": "string"
+    },
+    "baseline_run_dir": {
+      "title": "Baseline Run Dir",
+      "type": "string"
+    },
+    "comparison_run_dir": {
+      "title": "Comparison Run Dir",
+      "type": "string"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/ContextCounterfactualAuditCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "context_counterfactual_audit_report_id",
+    "status",
+    "input_ref",
+    "baseline_profile_ref",
+    "comparison_profile_ref",
+    "baseline_run_dir",
+    "comparison_run_dir",
+    "checks",
+    "generated_at"
+  ],
+  "title": "ContextCounterfactualAuditReport",
+  "type": "object"
+}

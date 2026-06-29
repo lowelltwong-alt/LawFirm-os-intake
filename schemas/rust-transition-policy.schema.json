@@ -1,0 +1,104 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "policy_id": {
+      "title": "Policy Id",
+      "type": "string"
+    },
+    "status": {
+      "const": "local_candidate",
+      "title": "Status",
+      "type": "string"
+    },
+    "authority": {
+      "title": "Authority",
+      "type": "string"
+    },
+    "profile_thresholds": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Profile Thresholds",
+      "type": "object"
+    },
+    "required_rust_transition_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Rust Transition Gates",
+      "type": "array"
+    },
+    "candidate_rust_hot_path_scope": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Candidate Rust Hot Path Scope",
+      "type": "array"
+    },
+    "eligible_hot_path_scope": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Eligible Hot Path Scope",
+      "type": "array"
+    },
+    "forbidden_rust_scope": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Forbidden Rust Scope",
+      "type": "array"
+    },
+    "required_parity_dimensions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Parity Dimensions",
+      "type": "array"
+    },
+    "required_performance_profile_dimensions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Performance Profile Dimensions",
+      "type": "array"
+    },
+    "rust_replacement_allowed": {
+      "const": false,
+      "default": false,
+      "title": "Rust Replacement Allowed",
+      "type": "boolean"
+    },
+    "no_rust_runtime_added": {
+      "const": true,
+      "default": true,
+      "title": "No Rust Runtime Added",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "policy_id",
+    "status",
+    "authority",
+    "profile_thresholds",
+    "required_rust_transition_gates",
+    "candidate_rust_hot_path_scope",
+    "eligible_hot_path_scope",
+    "forbidden_rust_scope",
+    "required_parity_dimensions",
+    "required_performance_profile_dimensions"
+  ],
+  "title": "RustTransitionPolicy",
+  "type": "object"
+}

@@ -1,0 +1,531 @@
+from __future__ import annotations
+
+from pathlib import Path
+
+from .models import (
+    BudgetActualComparisonReport,
+    BudgetActualVarianceDriverCandidate,
+    BudgetRevisionDelta,
+    BudgetRevisionReport,
+    CarrierRejectionLearningProposal,
+    CarrierRejectionLearningReport,
+    ReviewedLearningGateCandidate,
+    ReviewedLearningGateCheck,
+    ReviewedLearningGateReport,
+)
+from .util import append_jsonl, digest_text, load_json, new_id, now_iso, write_json
+
+
+REVIEWED_LEARNING_GATE_REPORT_FILENAME = "reviewed_learning_gate_report.json"
+REVIEWED_LEARNING_GATE_NOTES_FILENAME = "reviewed_learning_gate_report.md"
+REVIEWED_LEARNING_GATE_CANDIDATES_FILENAME = "reviewed_learning_gate_candidates.jsonl"
+
+REQUIRED_NEXT_GATES = [
+    "human_reviewed_outcome_evidence",
+    "append_only_evidence_record",
+    "synthetic_fixture_update",
+    "shadow_eval",
+    "owning_repo_review",
+]
+
+
+def _stable_id(prefix: str, value: str) -> str:
+    return f"{prefix}_{digest_text(value).split(':', maxsplit=1)[1][:20]}"
+
+
+def _carrier_candidate(
+    *,
+    proposal: CarrierRejectionLearningProposal,
+    report: CarrierRejectionLearningReport,
+    report_ref: str,
+) -> ReviewedLearningGateCandidate:
+    return ReviewedLearningGateCandidate(
+        candidate_id=_stable_id("learninggate", f"{report_ref}|{proposal.proposal_id}"),
+        source_kind="carrier_rejection_learning_proposal",
+        source_artifact_ref=report_ref,
+        source_record_id=proposal.proposal_id,
+        source_status=proposal.status,
+        target_learning_loop=proposal.target_learning_loop,
+        target_owner=proposal.target_owner,
+        trigger_summary=(
+            f"Carrier rejection learning proposal {proposal.proposal_type} "
+            f"from report {report.learning_report_id}."
+        ),
+        before_behavior=proposal.before_behavior,
+        proposed_candidate_behavior=proposal.proposed_candidate_behavior,
+        support_refs=[
+            report_ref,
+            f"carrier-rejection-learning-report://{report.learning_report_id}",
+            *proposal.source_structured_refs,
+        ],
+        support_count=proposal.support_count,
+        required_evidence=[
+            "human-reviewed rejection or appeal outcome",
+            "append-only Exception Lake admission candidate",
+            "source/support hashes from Orchestrator evidence packet",
+        ],
+        required_evaluation=list(
+            dict.fromkeys(
+                [
+                    *proposal.required_evaluation,
+                    "synthetic fixture update",
+                    "shadow eval before promotion",
+                    "regression check against no-silent-learning boundary",
+                ]
+            )
+        ),
+        required_next_gates=REQUIRED_NEXT_GATES,
+    )
+
+
+def _loop_for_budget_revision(delta: BudgetRevisionDelta) -> tuple[str, str, str]:
+    if delta.field == "hourly_rate":
+        return (
+            "timekeeper_rate",
+            "LawFirm-os-intake",
+            "Review whether a named-timekeeper or role-rate candidate should be proposed.",
+        )
+    if delta.field == "estimated_expenses":
+        return (
+            "budget_model",
+            "LawFirm-os-intake",
+            "Review whether expense drivers, ranges, or preapproval warnings should change.",
+        )
+    if delta.field == "estimated_hours":
+        return (
+            "budget_model",
+            "LawFirm-os-intake",
+            "Review whether phase/task hours, range drivers, or scenario assumptions should change.",
+        )
+    return (
+        "validation_rule",
+        "LawFirm-os-intake",
+        "Review whether assumption or unknown handling needs a candidate validation rule.",
+    )
+
+
+def _revision_candidate(
+    *,
+    delta: BudgetRevisionDelta,
+    report: BudgetRevisionReport,
+    report_ref: str,
+) -> ReviewedLearningGateCandidate:
+    target_loop, owner, proposed_behavior = _loop_for_budget_revision(delta)
+    target = "/".join(
+        item
+        for item in [
+            delta.phase_id,
+            delta.task_id,
+            delta.external_code_candidate or delta.expense_code,
+            delta.staffing_role,
+        ]
+        if item
+    )
+    return ReviewedLearningGateCandidate(
+        candidate_id=_stable_id("learninggate", f"{report_ref}|{delta.delta_id}"),
+        source_kind="budget_revision_delta",
+        source_artifact_ref=report_ref,
+        source_record_id=delta.delta_id,
+        source_status=report.status,
+        target_learning_loop=target_loop,  # type: ignore[arg-type]
+        target_owner=owner,  # type: ignore[arg-type]
+        trigger_summary=(
+            f"Human budget review changed {delta.field} for {target or delta.target_type} "
+            f"with total delta {delta.total_delta}."
+        ),
+        before_behavior="Budget proposal used the original deterministic candidate estimate.",
+        proposed_candidate_behavior=proposed_behavior,
+        support_refs=[
+            report_ref,
+            f"budget-revision-report://{report.budget_revision_report_id}",
+            f"budget-revision-delta://{delta.delta_id}",
+            *delta.structured_refs,
+        ],
+        support_count=1,
+        required_evidence=[
+            "human budget review outcome",
+            "append-only budget revision record",
+            "source or structured support for the changed assumption",
+        ],
+        required_evaluation=[
+            "budget driver counterfactual",
+            "synthetic fixture update",
+            "shadow eval before promotion",
+            "regression check against budget mutation",
+        ],
+        required_next_gates=REQUIRED_NEXT_GATES,
+    )
+
+
+def _loop_for_actual_driver(
+    driver: BudgetActualVarianceDriverCandidate,
+) -> tuple[str, str, str]:
+    if driver.target_learning_loop == "template_mapping":
+        return (
+            "template_mapping",
+            "LawFirm-os-intake",
+            "Review whether UTBMS/template mapping or missing-budget validation needs a candidate fixture.",
+        )
+    if driver.target_learning_loop == "validation_rule":
+        return (
+            "validation_rule",
+            "LawFirm-os-intake",
+            "Review whether actuals validation should surface this condition earlier.",
+        )
+    return (
+        "budget_model",
+        "LawFirm-os-intake",
+        "Review whether budget drivers, ranges, or scenario assumptions explain the variance.",
+    )
+
+
+def _actual_variance_candidate(
+    *,
+    driver: BudgetActualVarianceDriverCandidate,
+    report: BudgetActualComparisonReport,
+    report_ref: str,
+) -> ReviewedLearningGateCandidate:
+    target_loop, owner, proposed_behavior = _loop_for_actual_driver(driver)
+    target = driver.code or driver.phase_id or "proposal"
+    return ReviewedLearningGateCandidate(
+        candidate_id=_stable_id("learninggate", f"{report_ref}|{driver.candidate_id}"),
+        source_kind="budget_actual_variance_driver",
+        source_artifact_ref=report_ref,
+        source_record_id=driver.candidate_id,
+        source_status=report.status,
+        target_learning_loop=target_loop,  # type: ignore[arg-type]
+        target_owner=owner,  # type: ignore[arg-type]
+        trigger_summary=(
+            f"Budget actual variance driver {driver.driver_label} for {target} "
+            f"with variance amount {driver.variance_amount}."
+        ),
+        before_behavior="Budget-to-actual variance is visible only as review pressure.",
+        proposed_candidate_behavior=proposed_behavior,
+        support_refs=[
+            report_ref,
+            f"budget-actual-comparison-report://{report.budget_actual_comparison_report_id}",
+            f"budget-actual-variance-driver://{driver.candidate_id}",
+            *(
+                [f"budget-revision-report://{report.budget_revision_report_id}"]
+                if report.budget_revision_report_id
+                else []
+            ),
+        ],
+        support_count=1,
+        required_evidence=[
+            "governed actual-cost source",
+            "human-reviewed variance disposition",
+            "append-only variance or outcome record",
+        ],
+        required_evaluation=[
+            "actual-vs-budget replay",
+            "synthetic fixture update",
+            "shadow eval before promotion",
+            "regression check against no-silent-learning boundary",
+        ],
+        required_next_gates=REQUIRED_NEXT_GATES,
+    )
+
+
+def _check(
+    check_id: str,
+    passed: bool,
+    message: str,
+    candidate_ids: list[str] | None = None,
+) -> ReviewedLearningGateCheck:
+    return ReviewedLearningGateCheck(
+        check_id=check_id,
+        status="passed" if passed else "failed",
+        message=message,
+        candidate_ids=candidate_ids or [],
+    )
+
+
+def build_reviewed_learning_gate_report(
+    *,
+    carrier_rejection_learning_report: CarrierRejectionLearningReport | None = None,
+    carrier_rejection_learning_report_ref: str | None = None,
+    budget_revision_report: BudgetRevisionReport | None = None,
+    budget_revision_report_ref: str | None = None,
+    budget_actual_comparison_report: BudgetActualComparisonReport | None = None,
+    budget_actual_comparison_report_ref: str | None = None,
+) -> ReviewedLearningGateReport:
+    source_refs = [
+        ref
+        for ref in [
+            carrier_rejection_learning_report_ref,
+            budget_revision_report_ref,
+            budget_actual_comparison_report_ref,
+        ]
+        if ref
+    ]
+    if not source_refs:
+        raise ValueError("reviewed learning gate requires at least one source report")
+
+    candidates: list[ReviewedLearningGateCandidate] = []
+    carrier_count = 0
+    revision_count = 0
+    actual_count = 0
+
+    if carrier_rejection_learning_report is not None:
+        report_ref = carrier_rejection_learning_report_ref or "carrier_rejection_learning_report"
+        for proposal in carrier_rejection_learning_report.proposals:
+            candidates.append(
+                _carrier_candidate(
+                    proposal=proposal,
+                    report=carrier_rejection_learning_report,
+                    report_ref=report_ref,
+                )
+            )
+        carrier_count = len(carrier_rejection_learning_report.proposals)
+
+    if budget_revision_report is not None:
+        report_ref = budget_revision_report_ref or "budget_revision_report"
+        for delta in budget_revision_report.deltas:
+            candidates.append(
+                _revision_candidate(
+                    delta=delta, report=budget_revision_report, report_ref=report_ref
+                )
+            )
+        revision_count = len(budget_revision_report.deltas)
+
+    if budget_actual_comparison_report is not None:
+        report_ref = budget_actual_comparison_report_ref or "budget_actual_comparison_report"
+        for driver in budget_actual_comparison_report.variance_driver_candidates:
+            candidates.append(
+                _actual_variance_candidate(
+                    driver=driver,
+                    report=budget_actual_comparison_report,
+                    report_ref=report_ref,
+                )
+            )
+        actual_count = len(budget_actual_comparison_report.variance_driver_candidates)
+
+    candidate_ids = [candidate.candidate_id for candidate in candidates]
+    candidates_blocked = all(
+        candidate.status == "blocked_until_reviewed_learning_gate"
+        and candidate.human_review_required
+        and candidate.shadow_eval_required
+        and candidate.owning_repo_review_required
+        for candidate in candidates
+    )
+    no_mutations = all(
+        not any(
+            [
+                candidate.profile_mutation_performed,
+                candidate.template_mutation_performed,
+                candidate.connector_mutation_performed,
+                candidate.budget_mutation_performed,
+                candidate.carrier_guideline_mutation_performed,
+                candidate.lake_write_performed,
+                candidate.external_writes_performed,
+                candidate.silent_learning_performed,
+            ]
+        )
+        for candidate in candidates
+    )
+    required_evals_present = all(
+        "synthetic fixture update" in candidate.required_evaluation
+        and "shadow eval before promotion" in candidate.required_evaluation
+        for candidate in candidates
+    )
+    support_refs_present = all(candidate.support_refs for candidate in candidates)
+    required_gates_present = all(
+        set(REQUIRED_NEXT_GATES).issubset(set(candidate.required_next_gates))
+        for candidate in candidates
+    )
+    checks = [
+        _check(
+            "source_reports_present",
+            bool(source_refs),
+            "At least one source learning, revision, or variance report is present.",
+        ),
+        _check(
+            "candidates_blocked_until_review",
+            candidates_blocked,
+            "Every learning candidate is blocked until human review, shadow eval, and owning-repo review.",
+            candidate_ids,
+        ),
+        _check(
+            "no_mutations_or_external_writes",
+            no_mutations,
+            "Learning gate performs no profile, template, connector, budget, guideline, Lake, or external mutation.",
+            candidate_ids,
+        ),
+        _check(
+            "required_evaluations_declared",
+            required_evals_present,
+            "Every candidate declares synthetic fixture and shadow-eval requirements.",
+            candidate_ids,
+        ),
+        _check(
+            "support_refs_declared",
+            support_refs_present,
+            "Every candidate carries source artifact or structured support refs.",
+            candidate_ids,
+        ),
+        _check(
+            "required_gates_declared",
+            required_gates_present,
+            "Every candidate carries the reviewed-learning gate sequence.",
+            candidate_ids,
+        ),
+    ]
+    failed = [check for check in checks if check.status == "failed"]
+    if failed:
+        status = "failed"
+    elif candidates:
+        status = "candidate_learning_gate_ready"
+    else:
+        status = "no_learning_candidates"
+
+    run_id = new_id("learninggaterun")
+    if carrier_rejection_learning_report is not None:
+        run_id = carrier_rejection_learning_report.run_id
+    elif budget_revision_report is not None:
+        run_id = budget_revision_report.run_id
+    elif budget_actual_comparison_report is not None:
+        run_id = budget_actual_comparison_report.run_id
+
+    return ReviewedLearningGateReport(
+        reviewed_learning_gate_report_id=new_id("reviewedlearninggate"),
+        run_id=run_id,
+        status=status,  # type: ignore[arg-type]
+        source_report_refs=source_refs,
+        carrier_rejection_learning_report_ref=carrier_rejection_learning_report_ref,
+        budget_revision_report_ref=budget_revision_report_ref,
+        budget_actual_comparison_report_ref=budget_actual_comparison_report_ref,
+        candidate_count=len(candidates),
+        carrier_learning_candidate_count=carrier_count,
+        budget_revision_candidate_count=revision_count,
+        budget_actual_variance_candidate_count=actual_count,
+        target_learning_loops=sorted({candidate.target_learning_loop for candidate in candidates}),
+        target_owners=sorted({candidate.target_owner for candidate in candidates}),
+        candidates=candidates,
+        checks=checks,
+        required_next_gates=REQUIRED_NEXT_GATES,
+        generated_at=now_iso(),
+    )
+
+
+def render_reviewed_learning_gate_report(report: ReviewedLearningGateReport) -> str:
+    lines = [
+        "# Reviewed Learning Gate Report",
+        "",
+        f"**Report ID:** {report.reviewed_learning_gate_report_id}",
+        f"**Status:** {report.status}",
+        f"**Candidate count:** {report.candidate_count}",
+        "",
+        "## Inputs",
+        "",
+        *(f"- {ref}" for ref in report.source_report_refs),
+        "",
+        "## Boundary",
+        "",
+        f"- Candidate only: {report.candidate_only}",
+        f"- Reviewed outcome required: {report.reviewed_outcome_required}",
+        f"- Append-only evidence required: {report.append_only_evidence_required}",
+        f"- Synthetic fixture update required: {report.synthetic_fixture_update_required}",
+        f"- Shadow eval required: {report.shadow_eval_required}",
+        f"- Owning repo review required: {report.owning_repo_review_required}",
+        f"- Profile mutation performed: {report.profile_mutation_performed}",
+        f"- Template mutation performed: {report.template_mutation_performed}",
+        f"- Connector mutation performed: {report.connector_mutation_performed}",
+        f"- Budget mutation performed: {report.budget_mutation_performed}",
+        f"- Carrier guideline mutation performed: {report.carrier_guideline_mutation_performed}",
+        f"- Lake write performed: {report.lake_write_performed}",
+        f"- External writes performed: {report.external_writes_performed}",
+        f"- Silent learning performed: {report.silent_learning_performed}",
+        "",
+        "## Required Next Gates",
+        "",
+        *(f"- {item}" for item in report.required_next_gates),
+        "",
+        "## Checks",
+        "",
+    ]
+    for check in report.checks:
+        lines.append(f"- {check.check_id}: {check.status}; {check.message}")
+    lines.extend(
+        [
+            "",
+            "## Candidates",
+            "",
+        ]
+    )
+    if not report.candidates:
+        lines.append("- none")
+    for candidate in report.candidates:
+        lines.extend(
+            [
+                f"- `{candidate.candidate_id}`: {candidate.source_kind}; "
+                f"loop={candidate.target_learning_loop}; owner={candidate.target_owner}; "
+                f"status={candidate.status}",
+                f"  Trigger: {candidate.trigger_summary}",
+                f"  Candidate behavior: {candidate.proposed_candidate_behavior}",
+                "  Required evidence:",
+                *(f"  - {item}" for item in candidate.required_evidence),
+                "  Required evaluation:",
+                *(f"  - {item}" for item in candidate.required_evaluation),
+                "  Support refs:",
+                *(f"  - {item}" for item in candidate.support_refs),
+            ]
+        )
+    lines.extend(
+        [
+            "",
+            "This report routes candidate learning pressure only. It does not mutate profiles, templates, connectors, budgets, carrier guidelines, Lake records, or canonical contracts.",
+            "",
+        ]
+    )
+    return "\n".join(lines)
+
+
+def run_reviewed_learning_gate(
+    *,
+    out_dir: str | Path,
+    carrier_rejection_learning_report_path: str | Path | None = None,
+    budget_revision_report_path: str | Path | None = None,
+    budget_actual_comparison_report_path: str | Path | None = None,
+) -> tuple[ReviewedLearningGateReport, Path]:
+    carrier_report = None
+    carrier_ref = None
+    if carrier_rejection_learning_report_path is not None:
+        carrier_path = Path(carrier_rejection_learning_report_path)
+        carrier_report = CarrierRejectionLearningReport.model_validate(load_json(carrier_path))
+        carrier_ref = str(carrier_path)
+
+    revision_report = None
+    revision_ref = None
+    if budget_revision_report_path is not None:
+        revision_path = Path(budget_revision_report_path)
+        revision_report = BudgetRevisionReport.model_validate(load_json(revision_path))
+        revision_ref = str(revision_path)
+
+    actuals_report = None
+    actuals_ref = None
+    if budget_actual_comparison_report_path is not None:
+        actuals_path = Path(budget_actual_comparison_report_path)
+        actuals_report = BudgetActualComparisonReport.model_validate(load_json(actuals_path))
+        actuals_ref = str(actuals_path)
+
+    report = build_reviewed_learning_gate_report(
+        carrier_rejection_learning_report=carrier_report,
+        carrier_rejection_learning_report_ref=carrier_ref,
+        budget_revision_report=revision_report,
+        budget_revision_report_ref=revision_ref,
+        budget_actual_comparison_report=actuals_report,
+        budget_actual_comparison_report_ref=actuals_ref,
+    )
+
+    run_dir = Path(out_dir)
+    run_dir.mkdir(parents=True, exist_ok=True)
+    report_path = run_dir / REVIEWED_LEARNING_GATE_REPORT_FILENAME
+    notes_path = run_dir / REVIEWED_LEARNING_GATE_NOTES_FILENAME
+    candidates_path = run_dir / REVIEWED_LEARNING_GATE_CANDIDATES_FILENAME
+    write_json(report_path, report.model_dump(mode="json"))
+    notes_path.write_text(render_reviewed_learning_gate_report(report), encoding="utf-8")
+    candidates_path.touch()
+    for candidate in report.candidates:
+        append_jsonl(candidates_path, candidate.model_dump(mode="json"))
+    return report, run_dir

@@ -1,0 +1,428 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "budget_actual_variance_ledger_event_id": {
+      "title": "Budget Actual Variance Ledger Event Id",
+      "type": "string"
+    },
+    "ledger_id": {
+      "title": "Ledger Id",
+      "type": "string"
+    },
+    "sequence_index": {
+      "minimum": 0,
+      "title": "Sequence Index",
+      "type": "integer"
+    },
+    "budget_actual_comparison_report_id": {
+      "title": "Budget Actual Comparison Report Id",
+      "type": "string"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "preflight_packet_id": {
+      "title": "Preflight Packet Id",
+      "type": "string"
+    },
+    "budget_proposal_id": {
+      "title": "Budget Proposal Id",
+      "type": "string"
+    },
+    "budget_revision_report_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Budget Revision Report Id"
+    },
+    "actuals_source_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Actuals Source Ref"
+    },
+    "comparison_budget_state": {
+      "enum": [
+        "original_proposal",
+        "human_revised_candidate"
+      ],
+      "title": "Comparison Budget State",
+      "type": "string"
+    },
+    "actual_resolution_scenario_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Actual Resolution Scenario Id"
+    },
+    "comparison_scope": {
+      "enum": [
+        "phase",
+        "code",
+        "revision_context"
+      ],
+      "title": "Comparison Scope",
+      "type": "string"
+    },
+    "phase_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Phase Id"
+    },
+    "code": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Code"
+    },
+    "event_kind": {
+      "enum": [
+        "budget_actual_phase_comparison_recorded",
+        "budget_actual_code_comparison_recorded",
+        "budget_actual_missing_actuals_recorded",
+        "budget_actual_without_budget_recorded",
+        "budget_actual_human_revision_context_recorded"
+      ],
+      "title": "Event Kind",
+      "type": "string"
+    },
+    "decision_status": {
+      "enum": [
+        "recorded_within_threshold",
+        "over_threshold_requires_review",
+        "under_threshold_requires_review",
+        "actuals_missing_pending_source",
+        "actuals_without_budget_requires_review",
+        "human_revision_context_requires_review"
+      ],
+      "title": "Decision Status",
+      "type": "string"
+    },
+    "local_event_label": {
+      "title": "Local Event Label",
+      "type": "string"
+    },
+    "canonical_lake_class_candidate": {
+      "const": "workflow_escalation",
+      "default": "workflow_escalation",
+      "title": "Canonical Lake Class Candidate",
+      "type": "string"
+    },
+    "comparison_status": {
+      "enum": [
+        "actuals_not_available",
+        "within_threshold",
+        "over_threshold",
+        "under_threshold",
+        "revision_context"
+      ],
+      "title": "Comparison Status",
+      "type": "string"
+    },
+    "budgeted_fees": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Budgeted Fees"
+    },
+    "budgeted_expenses": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Budgeted Expenses"
+    },
+    "budgeted_total": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Budgeted Total"
+    },
+    "actual_fees": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Actual Fees"
+    },
+    "actual_expenses": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Actual Expenses"
+    },
+    "actual_total": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Actual Total"
+    },
+    "variance_amount": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Variance Amount"
+    },
+    "variance_percent": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Variance Percent"
+    },
+    "variance_driver_candidates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Variance Driver Candidates",
+      "type": "array"
+    },
+    "learning_disposition_candidates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Learning Disposition Candidates",
+      "type": "array"
+    },
+    "proposed_next_actions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Proposed Next Actions",
+      "type": "array"
+    },
+    "required_human_decisions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Human Decisions",
+      "type": "array"
+    },
+    "exception_candidate_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Exception Candidate Ids",
+      "type": "array"
+    },
+    "structured_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Structured Refs",
+      "type": "array"
+    },
+    "requires_human_review": {
+      "default": true,
+      "title": "Requires Human Review",
+      "type": "boolean"
+    },
+    "requires_exception_lake_admission_review": {
+      "const": true,
+      "default": true,
+      "title": "Requires Exception Lake Admission Review",
+      "type": "boolean"
+    },
+    "append_only": {
+      "const": true,
+      "default": true,
+      "title": "Append Only",
+      "type": "boolean"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "not_authorized_for_lake_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Lake Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_sqlite_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Sqlite Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_external_submission": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For External Submission",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "billing_connector_read_performed": {
+      "const": false,
+      "default": false,
+      "title": "Billing Connector Read Performed",
+      "type": "boolean"
+    },
+    "billing_connector_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Billing Connector Write Performed",
+      "type": "boolean"
+    },
+    "budget_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Budget Mutation Performed",
+      "type": "boolean"
+    },
+    "profile_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Profile Mutation Performed",
+      "type": "boolean"
+    },
+    "template_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Template Mutation Performed",
+      "type": "boolean"
+    },
+    "carrier_guideline_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Carrier Guideline Mutation Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "budget_actual_variance_ledger_event_id",
+    "ledger_id",
+    "sequence_index",
+    "budget_actual_comparison_report_id",
+    "run_id",
+    "preflight_packet_id",
+    "budget_proposal_id",
+    "comparison_budget_state",
+    "comparison_scope",
+    "event_kind",
+    "decision_status",
+    "local_event_label",
+    "comparison_status"
+  ],
+  "title": "BudgetActualVarianceLedgerEvent",
+  "type": "object"
+}

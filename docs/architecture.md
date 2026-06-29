@@ -48,6 +48,8 @@ The vertical should integrate through provider-neutral interfaces:
 
 Frameworks such as Claude Agent SDK, LangGraph, MCP, or Temporal may later implement execution seams. They must not become the domain model or audit authority.
 
+The current `structured-model` adapter is a dry-run `ModelAdapter` seam only. It emits `model_adapter_report.json` with prompt hashes, zero model calls, zero external tool calls, tool denylist, typed JSON requirement, independent critic requirement, and mandatory human gates. It requires reviewed synthetic gold and records typed-JSON validation, deterministic baseline projection hash comparison, dry-run structured candidate hash, and fixture-gold status. Deterministic workers remain authoritative until a separate governance decision approves real provider use.
+
 ## State externalization
 
 Authoritative run state never lives only in a model context window. The workflow persists:
@@ -65,7 +67,17 @@ Authoritative run state never lives only in a model context window. The workflow
 
 ## Graph posture
 
-The starter emits a typed JSON evidence graph. It does not require a graph database or GraphRAG. A graph runtime may be justified later only if evaluation shows that cross-document relationship retrieval is the bottleneck.
+The starter emits a typed JSON evidence graph across preflight and budget-stage artifacts. It links source segments to candidates, human confirmations, review outcomes, conflict-search terms, budget lines, budget support items, structured refs, and proposals. Candidate segment edges use `supports_*` only when the candidate has observed source support; context-only alternatives and unknown options use `anchors_*` edges for packet binding. It does not require a graph database or GraphRAG. A graph runtime may be justified later only if evaluation shows that cross-document relationship retrieval is the bottleneck.
+
+## Rust-ready ingestion posture
+
+Python is the reference implementation for the starter. If future document volume or constrained compute makes ingestion expensive, the only Rust-ready boundary is the deterministic source inventory, structural segmentation, hashing, and `EvidenceRef` emission layer.
+
+Rust must not own legal classification, party roles, matter routing, conflict conclusions, budget decisions, connector writes, or authority policy. Before adoption, a Rust adapter must prove golden parity with the Python reference for offsets, hashes, segment structure, prompt-injection flags, duplicate/missing-source states, and schema-compatible JSON.
+
+The starter writes `ingestion_result.json` as that Python reference. It contains the source inventory, coverage summary, structural segments, and one segment evidence ref per segment under `rust_ready_ingestion_v0_1`. `config/rust-ingestion-transition-policy.json` is the local candidate policy for thresholds, benchmark dimensions, hot-path scope, forbidden scope, parity dimensions, and transition gates. The starter also writes `ingestion_volume_profile.json`, which records source/segment scale, local profiling thresholds, compute pressure signals, required performance profile dimensions, candidate Rust hot-path scope, `rust_adapter_proposal_state`, required Rust transition gates, and `rust_transition_policy_ref`. `rust_ingestion_readiness_report.json` proves the artifact is a valid Rust parity target while preserving `rust_replacement_allowed=false`.
+
+Preparing for Rust now means preserving JSON contracts, deterministic fixture outputs, narrow adapter seams, benchmark dimensions, and reviewer-visible transition gates. The starter should not add a Rust crate or dual implementation until profiling shows ingestion is the bottleneck.
 
 ## Throughput
 

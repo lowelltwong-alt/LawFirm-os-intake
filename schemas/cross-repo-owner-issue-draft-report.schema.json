@@ -1,0 +1,369 @@
+{
+  "$defs": {
+    "CrossRepoOwnerIssueDraft": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "default": "0.1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "issue_draft_id": {
+          "title": "Issue Draft Id",
+          "type": "string"
+        },
+        "target_repo": {
+          "enum": [
+            "LawFirm-os-semantic-substrate",
+            "LawFirm-os-orchestrator",
+            "LawFirm-os-exceptions-lake-runtime",
+            "LawFirm-os-skills-registry",
+            "LawFirm-os-legal-knowledge-runtime"
+          ],
+          "title": "Target Repo",
+          "type": "string"
+        },
+        "source_owner_adoption_packet_id": {
+          "title": "Source Owner Adoption Packet Id",
+          "type": "string"
+        },
+        "source_owner_adoption_packet_ref": {
+          "title": "Source Owner Adoption Packet Ref",
+          "type": "string"
+        },
+        "source_owner_adoption_packet_status": {
+          "title": "Source Owner Adoption Packet Status",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "ready_for_manual_issue_creation",
+            "blocked_by_owner_adoption_packet"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "suggested_title": {
+          "title": "Suggested Title",
+          "type": "string"
+        },
+        "suggested_labels": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Suggested Labels",
+          "type": "array"
+        },
+        "issue_body_markdown": {
+          "title": "Issue Body Markdown",
+          "type": "string"
+        },
+        "proposal_count": {
+          "minimum": 0,
+          "title": "Proposal Count",
+          "type": "integer"
+        },
+        "proposal_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Proposal Ids",
+          "type": "array"
+        },
+        "required_owner_actions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Required Owner Actions",
+          "type": "array"
+        },
+        "acceptance_checks": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Acceptance Checks",
+          "type": "array"
+        },
+        "red_team_notes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Red Team Notes",
+          "type": "array"
+        },
+        "required_next_gates": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Required Next Gates",
+          "type": "array"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        },
+        "manual_creation_required": {
+          "const": true,
+          "default": true,
+          "title": "Manual Creation Required",
+          "type": "boolean"
+        },
+        "github_issue_created": {
+          "const": false,
+          "default": false,
+          "title": "Github Issue Created",
+          "type": "boolean"
+        },
+        "github_pr_created": {
+          "const": false,
+          "default": false,
+          "title": "Github Pr Created",
+          "type": "boolean"
+        },
+        "github_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Github Write Performed",
+          "type": "boolean"
+        },
+        "sibling_repo_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Sibling Repo Write Performed",
+          "type": "boolean"
+        },
+        "promotion_authorized": {
+          "const": false,
+          "default": false,
+          "title": "Promotion Authorized",
+          "type": "boolean"
+        },
+        "lake_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Lake Write Performed",
+          "type": "boolean"
+        },
+        "sqlite_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Sqlite Write Performed",
+          "type": "boolean"
+        },
+        "external_writes_performed": {
+          "const": false,
+          "default": false,
+          "title": "External Writes Performed",
+          "type": "boolean"
+        },
+        "silent_learning_performed": {
+          "const": false,
+          "default": false,
+          "title": "Silent Learning Performed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "issue_draft_id",
+        "target_repo",
+        "source_owner_adoption_packet_id",
+        "source_owner_adoption_packet_ref",
+        "source_owner_adoption_packet_status",
+        "status",
+        "suggested_title",
+        "suggested_labels",
+        "issue_body_markdown",
+        "proposal_count",
+        "proposal_ids",
+        "required_owner_actions",
+        "acceptance_checks",
+        "red_team_notes",
+        "required_next_gates"
+      ],
+      "title": "CrossRepoOwnerIssueDraft",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "issue_draft_report_id": {
+      "title": "Issue Draft Report Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "issue_drafts_ready_for_manual_creation",
+        "blocked_by_owner_adoption"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "source_owner_adoption_report_id": {
+      "title": "Source Owner Adoption Report Id",
+      "type": "string"
+    },
+    "source_owner_adoption_report_ref": {
+      "title": "Source Owner Adoption Report Ref",
+      "type": "string"
+    },
+    "source_owner_adoption_status": {
+      "title": "Source Owner Adoption Status",
+      "type": "string"
+    },
+    "draft_count": {
+      "minimum": 0,
+      "title": "Draft Count",
+      "type": "integer"
+    },
+    "ready_draft_count": {
+      "minimum": 0,
+      "title": "Ready Draft Count",
+      "type": "integer"
+    },
+    "blocked_draft_count": {
+      "minimum": 0,
+      "title": "Blocked Draft Count",
+      "type": "integer"
+    },
+    "target_repos": {
+      "items": {
+        "enum": [
+          "LawFirm-os-semantic-substrate",
+          "LawFirm-os-orchestrator",
+          "LawFirm-os-exceptions-lake-runtime",
+          "LawFirm-os-skills-registry",
+          "LawFirm-os-legal-knowledge-runtime"
+        ],
+        "type": "string"
+      },
+      "title": "Target Repos",
+      "type": "array"
+    },
+    "drafts": {
+      "items": {
+        "$ref": "#/$defs/CrossRepoOwnerIssueDraft"
+      },
+      "title": "Drafts",
+      "type": "array"
+    },
+    "draft_output_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Draft Output Refs",
+      "type": "array"
+    },
+    "required_next_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Gates",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "manual_creation_required": {
+      "const": true,
+      "default": true,
+      "title": "Manual Creation Required",
+      "type": "boolean"
+    },
+    "github_issue_created": {
+      "const": false,
+      "default": false,
+      "title": "Github Issue Created",
+      "type": "boolean"
+    },
+    "github_pr_created": {
+      "const": false,
+      "default": false,
+      "title": "Github Pr Created",
+      "type": "boolean"
+    },
+    "github_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Github Write Performed",
+      "type": "boolean"
+    },
+    "sibling_repo_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sibling Repo Write Performed",
+      "type": "boolean"
+    },
+    "promotion_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Promotion Authorized",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "issue_draft_report_id",
+    "status",
+    "source_owner_adoption_report_id",
+    "source_owner_adoption_report_ref",
+    "source_owner_adoption_status",
+    "draft_count",
+    "ready_draft_count",
+    "blocked_draft_count",
+    "target_repos",
+    "drafts",
+    "required_next_gates",
+    "generated_at"
+  ],
+  "title": "CrossRepoOwnerIssueDraftReport",
+  "type": "object"
+}

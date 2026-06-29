@@ -1,0 +1,111 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "template_id": {
+      "title": "Template Id",
+      "type": "string"
+    },
+    "review_area": {
+      "enum": [
+        "budget_revision",
+        "actual_variance",
+        "carrier_rejection",
+        "appeal_result",
+        "lake_handoff",
+        "learning_loop",
+        "authority_boundary",
+        "overall"
+      ],
+      "title": "Review Area",
+      "type": "string"
+    },
+    "source_recommendation_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Source Recommendation Ids",
+      "type": "array"
+    },
+    "allowed_outcomes": {
+      "items": {
+        "enum": [
+          "confirm",
+          "correct",
+          "unknown",
+          "needs_more_information",
+          "human_only",
+          "declined_referred",
+          "no_change",
+          "appeal",
+          "write_off",
+          "reopen",
+          "block",
+          "route_to_owner_review",
+          "no_learning_change"
+        ],
+        "type": "string"
+      },
+      "title": "Allowed Outcomes",
+      "type": "array"
+    },
+    "recommended_outcome": {
+      "enum": [
+        "confirm",
+        "correct",
+        "unknown",
+        "needs_more_information",
+        "human_only",
+        "declined_referred",
+        "no_change",
+        "appeal",
+        "write_off",
+        "reopen",
+        "block",
+        "route_to_owner_review",
+        "no_learning_change"
+      ],
+      "title": "Recommended Outcome",
+      "type": "string"
+    },
+    "required_fields": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Fields",
+      "type": "array"
+    },
+    "mutation_policy": {
+      "const": "append_or_supersede_only",
+      "default": "append_or_supersede_only",
+      "title": "Mutation Policy",
+      "type": "string"
+    },
+    "external_submission_authorized": {
+      "const": false,
+      "default": false,
+      "title": "External Submission Authorized",
+      "type": "boolean"
+    },
+    "lake_write_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Authorized",
+      "type": "boolean"
+    },
+    "silent_learning_allowed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Allowed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "template_id",
+    "review_area",
+    "allowed_outcomes",
+    "recommended_outcome",
+    "required_fields"
+  ],
+  "title": "BudgetHumanReviewDecisionTemplate",
+  "type": "object"
+}

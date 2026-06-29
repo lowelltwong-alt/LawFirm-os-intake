@@ -1,0 +1,158 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "decision_id": {
+      "title": "Decision Id",
+      "type": "string"
+    },
+    "template_id": {
+      "title": "Template Id",
+      "type": "string"
+    },
+    "review_area": {
+      "enum": [
+        "budget_revision",
+        "actual_variance",
+        "carrier_rejection",
+        "appeal_result",
+        "lake_handoff",
+        "learning_loop",
+        "authority_boundary",
+        "overall"
+      ],
+      "title": "Review Area",
+      "type": "string"
+    },
+    "outcome": {
+      "enum": [
+        "confirm",
+        "correct",
+        "unknown",
+        "needs_more_information",
+        "human_only",
+        "declined_referred",
+        "no_change",
+        "appeal",
+        "write_off",
+        "reopen",
+        "block",
+        "route_to_owner_review",
+        "no_learning_change"
+      ],
+      "title": "Outcome",
+      "type": "string"
+    },
+    "decision_reason": {
+      "title": "Decision Reason",
+      "type": "string"
+    },
+    "evidence_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Evidence Refs",
+      "type": "array"
+    },
+    "source_recommendation_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Source Recommendation Ids",
+      "type": "array"
+    },
+    "required_followups": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Followups",
+      "type": "array"
+    },
+    "followup_owner": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Followup Owner"
+    },
+    "followup_due_at": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Followup Due At"
+    },
+    "financial_amount": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Financial Amount"
+    },
+    "target_owner_repo": {
+      "anyOf": [
+        {
+          "enum": [
+            "LawFirm-os-intake",
+            "LawFirm-os-semantic-substrate",
+            "LawFirm-os-orchestrator",
+            "LawFirm-os-exceptions-lake-runtime",
+            "LawFirm-os-legal-knowledge-runtime",
+            "LawFirm-os-skills-registry"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Target Owner Repo"
+    },
+    "proposed_correction_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Proposed Correction Refs",
+      "type": "array"
+    },
+    "candidate_record_families": {
+      "items": {
+        "enum": [
+          "budget_human_change_record",
+          "budget_actual_variance_record",
+          "budget_actual_missing_source_record",
+          "carrier_rejection_decision_record",
+          "carrier_appeal_result_record",
+          "carrier_financial_outcome_record"
+        ],
+        "type": "string"
+      },
+      "title": "Candidate Record Families",
+      "type": "array"
+    }
+  },
+  "required": [
+    "decision_id",
+    "template_id",
+    "review_area",
+    "outcome",
+    "decision_reason"
+  ],
+  "title": "BudgetHumanReviewOutcomeDecision",
+  "type": "object"
+}

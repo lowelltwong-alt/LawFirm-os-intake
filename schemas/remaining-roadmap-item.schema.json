@@ -1,0 +1,205 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "item_id": {
+      "title": "Item Id",
+      "type": "string"
+    },
+    "title": {
+      "title": "Title",
+      "type": "string"
+    },
+    "workstream": {
+      "enum": [
+        "human_pr_review",
+        "manual_owner_issue_creation",
+        "owner_triage",
+        "semantic_contract_promotion",
+        "runtime_orchestration_adoption",
+        "exception_lake_admission",
+        "fixture_and_eval_expansion",
+        "public_source_methodology",
+        "skill_registry_review",
+        "real_data_pilot_governance"
+      ],
+      "title": "Workstream",
+      "type": "string"
+    },
+    "owner": {
+      "enum": [
+        "Human reviewer",
+        "LawFirm-os-intake",
+        "LawFirm-os-semantic-substrate",
+        "LawFirm-os-orchestrator",
+        "LawFirm-os-exceptions-lake-runtime",
+        "LawFirm-os-skills-registry",
+        "LawFirm-os-legal-knowledge-runtime",
+        "Cross-repo owners"
+      ],
+      "title": "Owner",
+      "type": "string"
+    },
+    "effort": {
+      "enum": [
+        "easy",
+        "medium",
+        "large"
+      ],
+      "title": "Effort",
+      "type": "string"
+    },
+    "risk": {
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "title": "Risk",
+      "type": "string"
+    },
+    "gate": {
+      "enum": [
+        "local_candidate",
+        "manual_human_review",
+        "owner_repo_review",
+        "cross_repo_validation",
+        "governance_approval",
+        "production_pilot_approval"
+      ],
+      "title": "Gate",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "ready_to_start",
+        "blocked_until_human_decision",
+        "blocked_until_owner_action",
+        "deferred_governance_required"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "why_now": {
+      "title": "Why Now",
+      "type": "string"
+    },
+    "source_evidence_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Source Evidence Refs",
+      "type": "array"
+    },
+    "required_next_actions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Actions",
+      "type": "array"
+    },
+    "acceptance_evidence_required": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Acceptance Evidence Required",
+      "type": "array"
+    },
+    "red_team_notes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Red Team Notes",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "no_external_action_performed": {
+      "const": true,
+      "default": true,
+      "title": "No External Action Performed",
+      "type": "boolean"
+    },
+    "github_issue_created": {
+      "const": false,
+      "default": false,
+      "title": "Github Issue Created",
+      "type": "boolean"
+    },
+    "github_pr_created": {
+      "const": false,
+      "default": false,
+      "title": "Github Pr Created",
+      "type": "boolean"
+    },
+    "github_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Github Write Performed",
+      "type": "boolean"
+    },
+    "sibling_repo_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sibling Repo Write Performed",
+      "type": "boolean"
+    },
+    "promotion_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Promotion Authorized",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "item_id",
+    "title",
+    "workstream",
+    "owner",
+    "effort",
+    "risk",
+    "gate",
+    "status",
+    "why_now",
+    "source_evidence_refs",
+    "required_next_actions",
+    "acceptance_evidence_required",
+    "red_team_notes"
+  ],
+  "title": "RemainingRoadmapItem",
+  "type": "object"
+}

@@ -1,0 +1,58 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "note_id": {
+      "title": "Note Id",
+      "type": "string"
+    },
+    "severity": {
+      "enum": [
+        "critical",
+        "high",
+        "medium",
+        "low"
+      ],
+      "title": "Severity",
+      "type": "string"
+    },
+    "scope": {
+      "enum": [
+        "proposed_vs_compliant_collapse",
+        "duplicate_rejection",
+        "scenario_variance_mismatch",
+        "source_coverage",
+        "authority_boundary",
+        "learning_loop_mutation",
+        "financial_math",
+        "actuals_coverage",
+        "lake_handoff"
+      ],
+      "title": "Scope",
+      "type": "string"
+    },
+    "message": {
+      "title": "Message",
+      "type": "string"
+    },
+    "recommended_check": {
+      "title": "Recommended Check",
+      "type": "string"
+    },
+    "artifact_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Artifact Refs",
+      "type": "array"
+    }
+  },
+  "required": [
+    "note_id",
+    "severity",
+    "scope",
+    "message",
+    "recommended_check"
+  ],
+  "title": "BudgetHumanReviewRedTeamNote",
+  "type": "object"
+}

@@ -1,0 +1,304 @@
+{
+  "$defs": {
+    "BudgetFormCodeMapping": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "phase",
+            "task"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "row": {
+          "minimum": 1,
+          "title": "Row",
+          "type": "integer"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "amount_cell": {
+          "title": "Amount Cell",
+          "type": "string"
+        },
+        "amount": {
+          "default": 0,
+          "title": "Amount",
+          "type": "number"
+        }
+      },
+      "required": [
+        "code",
+        "kind",
+        "row",
+        "label",
+        "amount_cell"
+      ],
+      "title": "BudgetFormCodeMapping",
+      "type": "object"
+    },
+    "BudgetFormFormulaCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed",
+            "warning"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "cell": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cell"
+        },
+        "actual_formula": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Actual Formula"
+        },
+        "expected_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Expected Refs",
+          "type": "array"
+        },
+        "actual_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Actual Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "BudgetFormFormulaCheck",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "budget_form_mapping_report_id": {
+      "title": "Budget Form Mapping Report Id",
+      "type": "string"
+    },
+    "budget_proposal_id": {
+      "title": "Budget Proposal Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "passed",
+        "failed"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "template_sha256": {
+      "title": "Template Sha256",
+      "type": "string"
+    },
+    "sheet_name": {
+      "title": "Sheet Name",
+      "type": "string"
+    },
+    "task_header_cell": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Task Header Cell"
+    },
+    "amount_header_cell": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Amount Header Cell"
+    },
+    "total_cell": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Total Cell"
+    },
+    "task_column": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Task Column"
+    },
+    "amount_column": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Amount Column"
+    },
+    "code_mappings": {
+      "items": {
+        "$ref": "#/$defs/BudgetFormCodeMapping"
+      },
+      "title": "Code Mappings",
+      "type": "array"
+    },
+    "amounts_by_code": {
+      "additionalProperties": {
+        "type": "number"
+      },
+      "title": "Amounts By Code",
+      "type": "object"
+    },
+    "l_code_total": {
+      "default": 0,
+      "title": "L Code Total",
+      "type": "number"
+    },
+    "e_code_total": {
+      "default": 0,
+      "title": "E Code Total",
+      "type": "number"
+    },
+    "missing_template_codes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Missing Template Codes",
+      "type": "array"
+    },
+    "duplicate_template_codes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Duplicate Template Codes",
+      "type": "array"
+    },
+    "missing_budget_mappings": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Missing Budget Mappings",
+      "type": "array"
+    },
+    "unmapped_budget_amount_codes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Unmapped Budget Amount Codes",
+      "type": "array"
+    },
+    "formula_checks": {
+      "items": {
+        "$ref": "#/$defs/BudgetFormFormulaCheck"
+      },
+      "title": "Formula Checks",
+      "type": "array"
+    },
+    "warnings": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Warnings",
+      "type": "array"
+    },
+    "not_authorized_for_client_submission": {
+      "default": true,
+      "title": "Not Authorized For Client Submission",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "budget_form_mapping_report_id",
+    "budget_proposal_id",
+    "status",
+    "template_sha256",
+    "sheet_name",
+    "generated_at"
+  ],
+  "title": "BudgetFormMappingReport",
+  "type": "object"
+}

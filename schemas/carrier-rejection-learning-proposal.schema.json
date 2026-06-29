@@ -1,0 +1,195 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "proposal_id": {
+      "title": "Proposal Id",
+      "type": "string"
+    },
+    "proposal_type": {
+      "enum": [
+        "timekeeper_rate_candidate",
+        "guideline_profile_change_candidate",
+        "eval_fixture_candidate",
+        "validation_rule_candidate",
+        "preapproval_gate_candidate",
+        "staffing_rule_candidate",
+        "narrative_rule_candidate",
+        "template_mapping_candidate",
+        "budget_driver_candidate",
+        "variance_threshold_candidate",
+        "guideline_version_review_candidate",
+        "parser_rule_candidate",
+        "reconciliation_rule_candidate",
+        "capture_sla_candidate",
+        "appeal_outcome_candidate"
+      ],
+      "title": "Proposal Type",
+      "type": "string"
+    },
+    "target_learning_loop": {
+      "enum": [
+        "guideline_drift",
+        "budget_model",
+        "template_mapping",
+        "narrative_rule",
+        "preapproval_gate",
+        "appeal_success_or_failure",
+        "capture_completeness",
+        "parser_rule",
+        "eval_fixture",
+        "staffing_leverage",
+        "timekeeper_rate",
+        "validation_rule"
+      ],
+      "title": "Target Learning Loop",
+      "type": "string"
+    },
+    "target_owner": {
+      "enum": [
+        "LawFirm-os-intake",
+        "LawFirm-os-orchestrator",
+        "LawFirm-os-exceptions-lake-runtime",
+        "LawFirm-os-semantic-substrate"
+      ],
+      "title": "Target Owner",
+      "type": "string"
+    },
+    "source_review_packet_id": {
+      "title": "Source Review Packet Id",
+      "type": "string"
+    },
+    "source_recommendation_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Source Recommendation Ids",
+      "type": "array"
+    },
+    "remediation_case_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Remediation Case Ids",
+      "type": "array"
+    },
+    "local_event_labels": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Local Event Labels",
+      "type": "array"
+    },
+    "source_structured_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Source Structured Refs",
+      "type": "array"
+    },
+    "support_count": {
+      "minimum": 0,
+      "title": "Support Count",
+      "type": "integer"
+    },
+    "before_behavior": {
+      "title": "Before Behavior",
+      "type": "string"
+    },
+    "proposed_candidate_behavior": {
+      "title": "Proposed Candidate Behavior",
+      "type": "string"
+    },
+    "required_human_review_state": {
+      "const": "reviewed_outcome_required",
+      "default": "reviewed_outcome_required",
+      "title": "Required Human Review State",
+      "type": "string"
+    },
+    "required_evaluation": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Evaluation",
+      "type": "array"
+    },
+    "promotion_target_note": {
+      "title": "Promotion Target Note",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "candidate_ready_for_human_review",
+        "blocked_until_reviewed_outcome"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "synthetic_fixture_update_required": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Fixture Update Required",
+      "type": "boolean"
+    },
+    "shadow_eval_required": {
+      "const": true,
+      "default": true,
+      "title": "Shadow Eval Required",
+      "type": "boolean"
+    },
+    "human_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Human Review Required",
+      "type": "boolean"
+    },
+    "promotion_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Promotion Review Required",
+      "type": "boolean"
+    },
+    "profile_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Profile Mutation Performed",
+      "type": "boolean"
+    },
+    "template_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Template Mutation Performed",
+      "type": "boolean"
+    },
+    "connector_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Connector Mutation Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "proposal_id",
+    "proposal_type",
+    "target_learning_loop",
+    "target_owner",
+    "source_review_packet_id",
+    "source_recommendation_ids",
+    "remediation_case_ids",
+    "local_event_labels",
+    "source_structured_refs",
+    "support_count",
+    "before_behavior",
+    "proposed_candidate_behavior",
+    "required_evaluation",
+    "promotion_target_note",
+    "status"
+  ],
+  "title": "CarrierRejectionLearningProposal",
+  "type": "object"
+}

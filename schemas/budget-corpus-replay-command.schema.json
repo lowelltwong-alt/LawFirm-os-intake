@@ -1,0 +1,117 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "command_id": {
+      "title": "Command Id",
+      "type": "string"
+    },
+    "command": {
+      "title": "Command",
+      "type": "string"
+    },
+    "purpose": {
+      "title": "Purpose",
+      "type": "string"
+    },
+    "input_artifact_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Input Artifact Refs",
+      "type": "array"
+    },
+    "expected_output_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Expected Output Refs",
+      "type": "array"
+    },
+    "requires_prior_command_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Requires Prior Command Ids",
+      "type": "array"
+    },
+    "execution_mode": {
+      "const": "planned_only_not_executed",
+      "default": "planned_only_not_executed",
+      "title": "Execution Mode",
+      "type": "string"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "not_authorized_for_external_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For External Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_lake_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Lake Write",
+      "type": "boolean"
+    },
+    "profile_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Profile Mutation Performed",
+      "type": "boolean"
+    },
+    "template_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Template Mutation Performed",
+      "type": "boolean"
+    },
+    "budget_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Budget Mutation Performed",
+      "type": "boolean"
+    },
+    "carrier_guideline_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Carrier Guideline Mutation Performed",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "command_id",
+    "command",
+    "purpose"
+  ],
+  "title": "BudgetCorpusReplayCommand",
+  "type": "object"
+}

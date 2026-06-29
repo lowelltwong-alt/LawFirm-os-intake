@@ -1,0 +1,57 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "note_id": {
+      "title": "Note Id",
+      "type": "string"
+    },
+    "severity": {
+      "enum": [
+        "critical",
+        "high",
+        "medium",
+        "low"
+      ],
+      "title": "Severity",
+      "type": "string"
+    },
+    "scope": {
+      "enum": [
+        "capture_completeness",
+        "idempotency",
+        "linkage",
+        "parser_failure",
+        "financial_math",
+        "human_authority",
+        "learning_loop",
+        "boundary"
+      ],
+      "title": "Scope",
+      "type": "string"
+    },
+    "remediation_case_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Remediation Case Ids",
+      "type": "array"
+    },
+    "message": {
+      "title": "Message",
+      "type": "string"
+    },
+    "recommended_check": {
+      "title": "Recommended Check",
+      "type": "string"
+    }
+  },
+  "required": [
+    "note_id",
+    "severity",
+    "scope",
+    "message",
+    "recommended_check"
+  ],
+  "title": "CarrierRejectionReviewRedTeamNote",
+  "type": "object"
+}

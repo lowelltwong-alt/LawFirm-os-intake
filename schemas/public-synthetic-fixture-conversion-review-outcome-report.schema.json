@@ -1,0 +1,414 @@
+{
+  "$defs": {
+    "PublicSyntheticFixtureConversionReviewOutcomeCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed",
+            "warning"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "artifact_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Artifact Refs",
+          "type": "array"
+        },
+        "source_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Source Ids",
+          "type": "array"
+        },
+        "conversion_spec_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Conversion Spec Ids",
+          "type": "array"
+        },
+        "blocking_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Blocking Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "PublicSyntheticFixtureConversionReviewOutcomeCheck",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "review_outcome_report_id": {
+      "title": "Review Outcome Report Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "conversion_review_recorded_separate_fixture_pr_required",
+        "conversion_review_recorded_revision_or_rejection",
+        "conversion_review_recorded_more_information_required",
+        "conversion_review_recorded_human_only_hold",
+        "conversion_review_blocked_by_review_evidence"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "source_review_packet_ref": {
+      "title": "Source Review Packet Ref",
+      "type": "string"
+    },
+    "review_packet_id": {
+      "title": "Review Packet Id",
+      "type": "string"
+    },
+    "conversion_plan_id": {
+      "title": "Conversion Plan Id",
+      "type": "string"
+    },
+    "conversion_review_id": {
+      "title": "Conversion Review Id",
+      "type": "string"
+    },
+    "conversion_spec_id": {
+      "title": "Conversion Spec Id",
+      "type": "string"
+    },
+    "source_id": {
+      "title": "Source Id",
+      "type": "string"
+    },
+    "outcome": {
+      "enum": [
+        "approve_conversion_spec_for_separate_fixture_pr",
+        "require_spec_revision",
+        "reject_source_for_fixture_use",
+        "needs_more_information",
+        "human_only_hold"
+      ],
+      "title": "Outcome",
+      "type": "string"
+    },
+    "decision_reason": {
+      "title": "Decision Reason",
+      "type": "string"
+    },
+    "source_review_packet_status": {
+      "enum": [
+        "ready_for_human_conversion_review",
+        "blocked_by_conversion_plan",
+        "no_specs_to_review"
+      ],
+      "title": "Source Review Packet Status",
+      "type": "string"
+    },
+    "target_fixture_family": {
+      "anyOf": [
+        {
+          "enum": [
+            "docket_structure",
+            "aggregate_case_metadata",
+            "messy_email_structure",
+            "public_filing_structure",
+            "auto_liability_distribution",
+            "medical_malpractice_distribution",
+            "public_structure_review"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Target Fixture Family"
+    },
+    "source_recommendation_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Recommendation Id"
+    },
+    "source_recommended_action": {
+      "anyOf": [
+        {
+          "enum": [
+            "approve_for_separate_fixture_pr_after_required_reviews",
+            "hold_for_privacy_or_license_review",
+            "revise_conversion_spec_before_fixture_pr",
+            "reject_source_for_fixture_use",
+            "human_only_hold"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Recommended Action"
+    },
+    "source_recommended_outcome": {
+      "anyOf": [
+        {
+          "enum": [
+            "approve_conversion_spec_for_separate_fixture_pr",
+            "require_spec_revision",
+            "reject_source_for_fixture_use",
+            "needs_more_information",
+            "human_only_hold"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Recommended Outcome"
+    },
+    "source_decision_template_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Decision Template Id"
+    },
+    "accepted_required_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Accepted Required Gates",
+      "type": "array"
+    },
+    "rejected_or_revision_reasons": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Rejected Or Revision Reasons",
+      "type": "array"
+    },
+    "required_followups": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Followups",
+      "type": "array"
+    },
+    "evidence_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Evidence Refs",
+      "type": "array"
+    },
+    "append_only_history_ref": {
+      "title": "Append Only History Ref",
+      "type": "string"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/PublicSyntheticFixtureConversionReviewOutcomeCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "required_next_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Gates",
+      "type": "array"
+    },
+    "accepted_for_separate_fixture_pr": {
+      "default": false,
+      "title": "Accepted For Separate Fixture Pr",
+      "type": "boolean"
+    },
+    "separate_fixture_generation_pr_required": {
+      "default": false,
+      "title": "Separate Fixture Generation Pr Required",
+      "type": "boolean"
+    },
+    "append_only": {
+      "const": true,
+      "default": true,
+      "title": "Append Only",
+      "type": "boolean"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "planning_only": {
+      "const": true,
+      "default": true,
+      "title": "Planning Only",
+      "type": "boolean"
+    },
+    "human_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Human Review Required",
+      "type": "boolean"
+    },
+    "not_authorized_for_external_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For External Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_lake_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Lake Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_sqlite_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Sqlite Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_fixture_generation": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Fixture Generation",
+      "type": "boolean"
+    },
+    "fixture_generation_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Fixture Generation Authorized",
+      "type": "boolean"
+    },
+    "fixture_pr_created": {
+      "const": false,
+      "default": false,
+      "title": "Fixture Pr Created",
+      "type": "boolean"
+    },
+    "fixture_files_mutated": {
+      "const": false,
+      "default": false,
+      "title": "Fixture Files Mutated",
+      "type": "boolean"
+    },
+    "public_records_ingested": {
+      "const": false,
+      "default": false,
+      "title": "Public Records Ingested",
+      "type": "boolean"
+    },
+    "raw_public_payload_committed": {
+      "const": false,
+      "default": false,
+      "title": "Raw Public Payload Committed",
+      "type": "boolean"
+    },
+    "connector_implemented": {
+      "const": false,
+      "default": false,
+      "title": "Connector Implemented",
+      "type": "boolean"
+    },
+    "legal_knowledge_adapter_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Legal Knowledge Adapter Authorized",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "review_outcome_report_id",
+    "status",
+    "source_review_packet_ref",
+    "review_packet_id",
+    "conversion_plan_id",
+    "conversion_review_id",
+    "conversion_spec_id",
+    "source_id",
+    "outcome",
+    "decision_reason",
+    "source_review_packet_status",
+    "append_only_history_ref",
+    "checks",
+    "required_next_gates",
+    "generated_at"
+  ],
+  "title": "PublicSyntheticFixtureConversionReviewOutcomeReport",
+  "type": "object"
+}

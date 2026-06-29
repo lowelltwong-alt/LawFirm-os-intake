@@ -1,0 +1,124 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "code": {
+      "title": "Code",
+      "type": "string"
+    },
+    "phase_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Phase Id"
+    },
+    "budgeted_fees": {
+      "default": 0,
+      "title": "Budgeted Fees",
+      "type": "number"
+    },
+    "budgeted_expenses": {
+      "default": 0,
+      "title": "Budgeted Expenses",
+      "type": "number"
+    },
+    "budgeted_total": {
+      "default": 0,
+      "title": "Budgeted Total",
+      "type": "number"
+    },
+    "actual_fees": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Actual Fees"
+    },
+    "actual_expenses": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Actual Expenses"
+    },
+    "actual_total": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Actual Total"
+    },
+    "variance_amount": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Variance Amount"
+    },
+    "variance_percent": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Variance Percent"
+    },
+    "status": {
+      "enum": [
+        "actuals_not_available",
+        "within_threshold",
+        "over_threshold",
+        "under_threshold"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "variance_driver_candidates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Variance Driver Candidates",
+      "type": "array"
+    },
+    "requires_human_review": {
+      "default": true,
+      "title": "Requires Human Review",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "code",
+    "status"
+  ],
+  "title": "BudgetActualCodeComparison",
+  "type": "object"
+}

@@ -1,0 +1,57 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "check_id": {
+      "title": "Check Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "passed",
+        "failed",
+        "warning"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "message": {
+      "title": "Message",
+      "type": "string"
+    },
+    "artifact_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Artifact Refs",
+      "type": "array"
+    },
+    "decision_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Decision Ids",
+      "type": "array"
+    },
+    "template_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Template Ids",
+      "type": "array"
+    },
+    "blocking_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Blocking Refs",
+      "type": "array"
+    }
+  },
+  "required": [
+    "check_id",
+    "status",
+    "message"
+  ],
+  "title": "BudgetHumanReviewOutcomeCheck",
+  "type": "object"
+}

@@ -81,6 +81,14 @@
           "title": "Segment Id",
           "type": "string"
         },
+        "start_offset": {
+          "title": "Start Offset",
+          "type": "integer"
+        },
+        "end_offset": {
+          "title": "End Offset",
+          "type": "integer"
+        },
         "sha256": {
           "title": "Sha256",
           "type": "string"
@@ -89,6 +97,8 @@
       "required": [
         "source_id",
         "segment_id",
+        "start_offset",
+        "end_offset",
         "sha256"
       ],
       "title": "EvidenceRef",

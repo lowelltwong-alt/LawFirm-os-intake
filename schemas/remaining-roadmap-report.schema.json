@@ -1,0 +1,519 @@
+{
+  "$defs": {
+    "RemainingRoadmapCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed",
+            "warning"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "artifact_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Artifact Refs",
+          "type": "array"
+        },
+        "blocking_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Blocking Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "RemainingRoadmapCheck",
+      "type": "object"
+    },
+    "RemainingRoadmapItem": {
+      "additionalProperties": false,
+      "properties": {
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "workstream": {
+          "enum": [
+            "human_pr_review",
+            "manual_owner_issue_creation",
+            "owner_triage",
+            "semantic_contract_promotion",
+            "runtime_orchestration_adoption",
+            "exception_lake_admission",
+            "fixture_and_eval_expansion",
+            "public_source_methodology",
+            "skill_registry_review",
+            "real_data_pilot_governance"
+          ],
+          "title": "Workstream",
+          "type": "string"
+        },
+        "owner": {
+          "enum": [
+            "Human reviewer",
+            "LawFirm-os-intake",
+            "LawFirm-os-semantic-substrate",
+            "LawFirm-os-orchestrator",
+            "LawFirm-os-exceptions-lake-runtime",
+            "LawFirm-os-skills-registry",
+            "LawFirm-os-legal-knowledge-runtime",
+            "Cross-repo owners"
+          ],
+          "title": "Owner",
+          "type": "string"
+        },
+        "effort": {
+          "enum": [
+            "easy",
+            "medium",
+            "large"
+          ],
+          "title": "Effort",
+          "type": "string"
+        },
+        "risk": {
+          "enum": [
+            "low",
+            "medium",
+            "high",
+            "critical"
+          ],
+          "title": "Risk",
+          "type": "string"
+        },
+        "gate": {
+          "enum": [
+            "local_candidate",
+            "manual_human_review",
+            "owner_repo_review",
+            "cross_repo_validation",
+            "governance_approval",
+            "production_pilot_approval"
+          ],
+          "title": "Gate",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "ready_to_start",
+            "blocked_until_human_decision",
+            "blocked_until_owner_action",
+            "deferred_governance_required"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "why_now": {
+          "title": "Why Now",
+          "type": "string"
+        },
+        "source_evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Source Evidence Refs",
+          "type": "array"
+        },
+        "required_next_actions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Required Next Actions",
+          "type": "array"
+        },
+        "acceptance_evidence_required": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Acceptance Evidence Required",
+          "type": "array"
+        },
+        "red_team_notes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Red Team Notes",
+          "type": "array"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        },
+        "no_external_action_performed": {
+          "const": true,
+          "default": true,
+          "title": "No External Action Performed",
+          "type": "boolean"
+        },
+        "github_issue_created": {
+          "const": false,
+          "default": false,
+          "title": "Github Issue Created",
+          "type": "boolean"
+        },
+        "github_pr_created": {
+          "const": false,
+          "default": false,
+          "title": "Github Pr Created",
+          "type": "boolean"
+        },
+        "github_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Github Write Performed",
+          "type": "boolean"
+        },
+        "sibling_repo_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Sibling Repo Write Performed",
+          "type": "boolean"
+        },
+        "promotion_authorized": {
+          "const": false,
+          "default": false,
+          "title": "Promotion Authorized",
+          "type": "boolean"
+        },
+        "lake_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Lake Write Performed",
+          "type": "boolean"
+        },
+        "sqlite_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Sqlite Write Performed",
+          "type": "boolean"
+        },
+        "external_writes_performed": {
+          "const": false,
+          "default": false,
+          "title": "External Writes Performed",
+          "type": "boolean"
+        },
+        "silent_learning_performed": {
+          "const": false,
+          "default": false,
+          "title": "Silent Learning Performed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "item_id",
+        "title",
+        "workstream",
+        "owner",
+        "effort",
+        "risk",
+        "gate",
+        "status",
+        "why_now",
+        "source_evidence_refs",
+        "required_next_actions",
+        "acceptance_evidence_required",
+        "red_team_notes"
+      ],
+      "title": "RemainingRoadmapItem",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "remaining_roadmap_report_id": {
+      "title": "Remaining Roadmap Report Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "remaining_roadmap_ready_manual_execution_required",
+        "blocked_by_source_evidence"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "source_readiness_audit_report_id": {
+      "title": "Source Readiness Audit Report Id",
+      "type": "string"
+    },
+    "source_readiness_audit_report_ref": {
+      "title": "Source Readiness Audit Report Ref",
+      "type": "string"
+    },
+    "source_readiness_status": {
+      "title": "Source Readiness Status",
+      "type": "string"
+    },
+    "source_closeout_report_id": {
+      "title": "Source Closeout Report Id",
+      "type": "string"
+    },
+    "source_closeout_report_ref": {
+      "title": "Source Closeout Report Ref",
+      "type": "string"
+    },
+    "source_closeout_status": {
+      "title": "Source Closeout Status",
+      "type": "string"
+    },
+    "source_pr_readiness_decision_report_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Pr Readiness Decision Report Id"
+    },
+    "source_pr_readiness_decision_report_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Pr Readiness Decision Report Ref"
+    },
+    "source_pr_readiness_decision_status": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Pr Readiness Decision Status"
+    },
+    "source_pr_readiness_decision": {
+      "anyOf": [
+        {
+          "enum": [
+            "mark_ready_for_review",
+            "keep_draft",
+            "needs_more_work",
+            "split_followup_work"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Pr Readiness Decision"
+    },
+    "item_count": {
+      "minimum": 0,
+      "title": "Item Count",
+      "type": "integer"
+    },
+    "easy_item_count": {
+      "minimum": 0,
+      "title": "Easy Item Count",
+      "type": "integer"
+    },
+    "medium_item_count": {
+      "minimum": 0,
+      "title": "Medium Item Count",
+      "type": "integer"
+    },
+    "large_item_count": {
+      "minimum": 0,
+      "title": "Large Item Count",
+      "type": "integer"
+    },
+    "critical_item_count": {
+      "minimum": 0,
+      "title": "Critical Item Count",
+      "type": "integer"
+    },
+    "owner_gated_item_count": {
+      "minimum": 0,
+      "title": "Owner Gated Item Count",
+      "type": "integer"
+    },
+    "local_or_human_item_count": {
+      "minimum": 0,
+      "title": "Local Or Human Item Count",
+      "type": "integer"
+    },
+    "next_recommended_item_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Next Recommended Item Ids",
+      "type": "array"
+    },
+    "items": {
+      "items": {
+        "$ref": "#/$defs/RemainingRoadmapItem"
+      },
+      "title": "Items",
+      "type": "array"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/RemainingRoadmapCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "required_next_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Gates",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "local_completion_scope": {
+      "const": "remaining_phase_plan_manual_execution_required",
+      "default": "remaining_phase_plan_manual_execution_required",
+      "title": "Local Completion Scope",
+      "type": "string"
+    },
+    "github_issue_created": {
+      "const": false,
+      "default": false,
+      "title": "Github Issue Created",
+      "type": "boolean"
+    },
+    "github_pr_created": {
+      "const": false,
+      "default": false,
+      "title": "Github Pr Created",
+      "type": "boolean"
+    },
+    "github_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Github Write Performed",
+      "type": "boolean"
+    },
+    "sibling_repo_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sibling Repo Write Performed",
+      "type": "boolean"
+    },
+    "promotion_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Promotion Authorized",
+      "type": "boolean"
+    },
+    "proposed_changes_applied": {
+      "const": false,
+      "default": false,
+      "title": "Proposed Changes Applied",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "remaining_roadmap_report_id",
+    "status",
+    "source_readiness_audit_report_id",
+    "source_readiness_audit_report_ref",
+    "source_readiness_status",
+    "source_closeout_report_id",
+    "source_closeout_report_ref",
+    "source_closeout_status",
+    "item_count",
+    "easy_item_count",
+    "medium_item_count",
+    "large_item_count",
+    "critical_item_count",
+    "owner_gated_item_count",
+    "local_or_human_item_count",
+    "next_recommended_item_ids",
+    "items",
+    "checks",
+    "required_next_gates",
+    "generated_at"
+  ],
+  "title": "RemainingRoadmapReport",
+  "type": "object"
+}

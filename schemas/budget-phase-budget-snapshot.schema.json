@@ -1,0 +1,51 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "phase_id": {
+      "title": "Phase Id",
+      "type": "string"
+    },
+    "budgeted_fees": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Budgeted Fees"
+    },
+    "budgeted_expenses": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Budgeted Expenses",
+      "type": "number"
+    },
+    "budgeted_total": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Budgeted Total"
+    },
+    "external_code_candidates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "External Code Candidates",
+      "type": "array"
+    }
+  },
+  "required": [
+    "phase_id"
+  ],
+  "title": "BudgetPhaseBudgetSnapshot",
+  "type": "object"
+}

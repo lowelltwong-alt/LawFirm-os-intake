@@ -1,0 +1,534 @@
+{
+  "$defs": {
+    "BudgetFixtureUpdatePRPackageCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed",
+            "warning"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "artifact_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Artifact Refs",
+          "type": "array"
+        },
+        "blocking_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Blocking Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "BudgetFixtureUpdatePRPackageCheck",
+      "type": "object"
+    },
+    "BudgetFixtureUpdatePRPackageItem": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "default": "0.1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "package_item_id": {
+          "title": "Package Item Id",
+          "type": "string"
+        },
+        "fixture_update_review_id": {
+          "title": "Fixture Update Review Id",
+          "type": "string"
+        },
+        "decision": {
+          "enum": [
+            "accept_for_separate_fixture_update_pr",
+            "accept_with_corrections_for_separate_fixture_update_pr",
+            "reject_fixture_update",
+            "needs_more_information"
+          ],
+          "title": "Decision",
+          "type": "string"
+        },
+        "accepted_output_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Accepted Output Refs",
+          "type": "array"
+        },
+        "target_fixture_ref": {
+          "title": "Target Fixture Ref",
+          "type": "string"
+        },
+        "proposed_manual_action": {
+          "enum": [
+            "update_synthetic_fixture_in_separate_pr",
+            "create_synthetic_fixture_in_separate_pr",
+            "hold_no_fixture_change"
+          ],
+          "title": "Proposed Manual Action",
+          "type": "string"
+        },
+        "manual_patch_summary": {
+          "title": "Manual Patch Summary",
+          "type": "string"
+        },
+        "reviewer_corrections": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Reviewer Corrections",
+          "type": "array"
+        },
+        "required_manual_steps": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Required Manual Steps",
+          "type": "array"
+        },
+        "red_team_notes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Red Team Notes",
+          "type": "array"
+        },
+        "required_next_gates": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Required Next Gates",
+          "type": "array"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        },
+        "synthetic_only": {
+          "const": true,
+          "default": true,
+          "title": "Synthetic Only",
+          "type": "boolean"
+        },
+        "human_review_required": {
+          "const": true,
+          "default": true,
+          "title": "Human Review Required",
+          "type": "boolean"
+        },
+        "not_authorized_for_external_write": {
+          "const": true,
+          "default": true,
+          "title": "Not Authorized For External Write",
+          "type": "boolean"
+        },
+        "not_authorized_for_lake_write": {
+          "const": true,
+          "default": true,
+          "title": "Not Authorized For Lake Write",
+          "type": "boolean"
+        },
+        "not_authorized_for_sqlite_write": {
+          "const": true,
+          "default": true,
+          "title": "Not Authorized For Sqlite Write",
+          "type": "boolean"
+        },
+        "not_authorized_for_budget_submission": {
+          "const": true,
+          "default": true,
+          "title": "Not Authorized For Budget Submission",
+          "type": "boolean"
+        },
+        "github_pr_created": {
+          "const": false,
+          "default": false,
+          "title": "Github Pr Created",
+          "type": "boolean"
+        },
+        "fixture_files_mutated": {
+          "const": false,
+          "default": false,
+          "title": "Fixture Files Mutated",
+          "type": "boolean"
+        },
+        "fixture_binding_applied": {
+          "const": false,
+          "default": false,
+          "title": "Fixture Binding Applied",
+          "type": "boolean"
+        },
+        "downstream_learning_gate_allowed": {
+          "const": false,
+          "default": false,
+          "title": "Downstream Learning Gate Allowed",
+          "type": "boolean"
+        },
+        "calibration_applied": {
+          "const": false,
+          "default": false,
+          "title": "Calibration Applied",
+          "type": "boolean"
+        },
+        "profile_mutation_performed": {
+          "const": false,
+          "default": false,
+          "title": "Profile Mutation Performed",
+          "type": "boolean"
+        },
+        "template_mutation_performed": {
+          "const": false,
+          "default": false,
+          "title": "Template Mutation Performed",
+          "type": "boolean"
+        },
+        "budget_mutation_performed": {
+          "const": false,
+          "default": false,
+          "title": "Budget Mutation Performed",
+          "type": "boolean"
+        },
+        "carrier_guideline_mutation_performed": {
+          "const": false,
+          "default": false,
+          "title": "Carrier Guideline Mutation Performed",
+          "type": "boolean"
+        },
+        "lake_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Lake Write Performed",
+          "type": "boolean"
+        },
+        "sqlite_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Sqlite Write Performed",
+          "type": "boolean"
+        },
+        "external_writes_performed": {
+          "const": false,
+          "default": false,
+          "title": "External Writes Performed",
+          "type": "boolean"
+        },
+        "silent_learning_performed": {
+          "const": false,
+          "default": false,
+          "title": "Silent Learning Performed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "package_item_id",
+        "fixture_update_review_id",
+        "decision",
+        "accepted_output_refs",
+        "target_fixture_ref",
+        "proposed_manual_action",
+        "manual_patch_summary",
+        "required_manual_steps",
+        "red_team_notes",
+        "required_next_gates"
+      ],
+      "title": "BudgetFixtureUpdatePRPackageItem",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "fixture_update_pr_package_report_id": {
+      "title": "Fixture Update Pr Package Report Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "fixture_update_pr_package_ready_for_manual_pr",
+        "no_fixture_update_pr_package_needed",
+        "blocked_by_fixture_update_review"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "source_budget_fixture_update_review_report_id": {
+      "title": "Source Budget Fixture Update Review Report Id",
+      "type": "string"
+    },
+    "source_budget_fixture_update_review_report_ref": {
+      "title": "Source Budget Fixture Update Review Report Ref",
+      "type": "string"
+    },
+    "source_budget_fixture_update_review_status": {
+      "enum": [
+        "fixture_update_review_recorded_separate_pr_required",
+        "fixture_update_review_recorded_no_fixture_pr",
+        "blocked_by_fixture_update_review_evidence"
+      ],
+      "title": "Source Budget Fixture Update Review Status",
+      "type": "string"
+    },
+    "fixture_update_review_id": {
+      "title": "Fixture Update Review Id",
+      "type": "string"
+    },
+    "decision": {
+      "enum": [
+        "accept_for_separate_fixture_update_pr",
+        "accept_with_corrections_for_separate_fixture_update_pr",
+        "reject_fixture_update",
+        "needs_more_information"
+      ],
+      "title": "Decision",
+      "type": "string"
+    },
+    "item_count": {
+      "minimum": 0,
+      "title": "Item Count",
+      "type": "integer"
+    },
+    "ready_item_count": {
+      "minimum": 0,
+      "title": "Ready Item Count",
+      "type": "integer"
+    },
+    "blocked_item_count": {
+      "minimum": 0,
+      "title": "Blocked Item Count",
+      "type": "integer"
+    },
+    "accepted_output_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Accepted Output Refs",
+      "type": "array"
+    },
+    "target_fixture_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Target Fixture Refs",
+      "type": "array"
+    },
+    "package_items": {
+      "items": {
+        "$ref": "#/$defs/BudgetFixtureUpdatePRPackageItem"
+      },
+      "title": "Package Items",
+      "type": "array"
+    },
+    "package_item_output_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Package Item Output Ref"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/BudgetFixtureUpdatePRPackageCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "required_next_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Gates",
+      "type": "array"
+    },
+    "manual_fixture_update_pr_required": {
+      "default": false,
+      "title": "Manual Fixture Update Pr Required",
+      "type": "boolean"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "human_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Human Review Required",
+      "type": "boolean"
+    },
+    "not_authorized_for_external_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For External Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_lake_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Lake Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_sqlite_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Sqlite Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_budget_submission": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Budget Submission",
+      "type": "boolean"
+    },
+    "github_pr_created": {
+      "const": false,
+      "default": false,
+      "title": "Github Pr Created",
+      "type": "boolean"
+    },
+    "fixture_files_mutated": {
+      "const": false,
+      "default": false,
+      "title": "Fixture Files Mutated",
+      "type": "boolean"
+    },
+    "fixture_binding_applied": {
+      "const": false,
+      "default": false,
+      "title": "Fixture Binding Applied",
+      "type": "boolean"
+    },
+    "downstream_learning_gate_allowed": {
+      "const": false,
+      "default": false,
+      "title": "Downstream Learning Gate Allowed",
+      "type": "boolean"
+    },
+    "calibration_applied": {
+      "const": false,
+      "default": false,
+      "title": "Calibration Applied",
+      "type": "boolean"
+    },
+    "profile_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Profile Mutation Performed",
+      "type": "boolean"
+    },
+    "template_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Template Mutation Performed",
+      "type": "boolean"
+    },
+    "budget_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Budget Mutation Performed",
+      "type": "boolean"
+    },
+    "carrier_guideline_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Carrier Guideline Mutation Performed",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "fixture_update_pr_package_report_id",
+    "status",
+    "source_budget_fixture_update_review_report_id",
+    "source_budget_fixture_update_review_report_ref",
+    "source_budget_fixture_update_review_status",
+    "fixture_update_review_id",
+    "decision",
+    "item_count",
+    "ready_item_count",
+    "blocked_item_count",
+    "package_items",
+    "checks",
+    "required_next_gates",
+    "generated_at"
+  ],
+  "title": "BudgetFixtureUpdatePRPackageReport",
+  "type": "object"
+}

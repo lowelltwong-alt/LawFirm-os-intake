@@ -1,0 +1,65 @@
+{
+  "schema_version": "0.1",
+  "promotion_readiness_report_id": "learningpromotion_fixture_learning_proposed_changes",
+  "reviewed_learning_gate_report_id": "reviewedlearninggate_fixture_learning_proposed_changes",
+  "shadow_eval_plan_id": "shadowevalplan_fixture_learning_proposed_changes",
+  "status": "promotion_blocked_shadow_eval_required",
+  "source_gate_report_ref": "examples/synthetic/learning/reviewed-learning-gate.fixture.json",
+  "shadow_eval_plan_ref": "examples/synthetic/learning/proposed-change-shadow-eval-plan.json",
+  "candidate_count": 2,
+  "blocked_candidate_count": 2,
+  "ready_candidate_count": 0,
+  "target_learning_loops": [
+    "budget_model",
+    "capture_completeness"
+  ],
+  "target_owners": [
+    "LawFirm-os-intake",
+    "LawFirm-os-orchestrator"
+  ],
+  "checks": [
+    {
+      "check_id": "proposed_change_artifacts_present",
+      "status": "blocked",
+      "message": "Promotion remains blocked until proposed change artifacts exist.",
+      "candidate_ids": [
+        "learninggate_fixture_budget_driver",
+        "learninggate_fixture_capture_completeness"
+      ]
+    },
+    {
+      "check_id": "shadow_eval_results_present",
+      "status": "blocked",
+      "message": "Promotion remains blocked until shadow eval results exist.",
+      "candidate_ids": [
+        "learninggate_fixture_budget_driver",
+        "learninggate_fixture_capture_completeness"
+      ]
+    }
+  ],
+  "required_next_gates": [
+    "human_reviewed_outcome_evidence",
+    "append_only_evidence_record",
+    "proposed_change_artifact",
+    "synthetic_fixture_update",
+    "shadow_eval_result",
+    "regression_check",
+    "owning_repo_review"
+  ],
+  "candidate_only": true,
+  "promotion_authorized": false,
+  "owning_repo_review_required": true,
+  "semantic_substrate_promotion_required_for_canon": true,
+  "orchestrator_runtime_review_required": true,
+  "exception_lake_admission_required": true,
+  "proposed_changes_applied": false,
+  "profile_mutation_performed": false,
+  "template_mutation_performed": false,
+  "connector_mutation_performed": false,
+  "budget_mutation_performed": false,
+  "carrier_guideline_mutation_performed": false,
+  "lake_write_performed": false,
+  "external_writes_performed": false,
+  "silent_learning_performed": false,
+  "generated_at": "2026-06-26T00:00:00Z"
+}

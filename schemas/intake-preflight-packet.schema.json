@@ -229,6 +229,14 @@
           "title": "Segment Id",
           "type": "string"
         },
+        "start_offset": {
+          "title": "Start Offset",
+          "type": "integer"
+        },
+        "end_offset": {
+          "title": "End Offset",
+          "type": "integer"
+        },
         "sha256": {
           "title": "Sha256",
           "type": "string"
@@ -237,9 +245,44 @@
       "required": [
         "source_id",
         "segment_id",
+        "start_offset",
+        "end_offset",
         "sha256"
       ],
       "title": "EvidenceRef",
+      "type": "object"
+    },
+    "MissingInformationCandidate": {
+      "additionalProperties": false,
+      "properties": {
+        "field_name": {
+          "title": "Field Name",
+          "type": "string"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "status": {
+          "const": "candidate",
+          "default": "candidate",
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "field_name",
+        "reason",
+        "evidence_refs"
+      ],
+      "title": "MissingInformationCandidate",
       "type": "object"
     },
     "PartyCandidate": {
@@ -307,6 +350,13 @@
           "minimum": 0,
           "title": "Confidence",
           "type": "number"
+        },
+        "evidence_refs": {
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
         }
       },
       "required": [
@@ -340,12 +390,44 @@
           "title": "Observed Evidence Refs",
           "type": "array"
         },
+        "source_evidence_status": {
+          "default": "observed_support",
+          "enum": [
+            "observed_support",
+            "source_anchor_only",
+            "unknown_option"
+          ],
+          "title": "Source Evidence Status",
+          "type": "string"
+        },
         "context_signal_refs": {
           "items": {
             "type": "string"
           },
           "title": "Context Signal Refs",
           "type": "array"
+        },
+        "calibration_label": {
+          "default": "observed",
+          "enum": [
+            "observed",
+            "context_influenced",
+            "unknown_option"
+          ],
+          "title": "Calibration Label",
+          "type": "string"
+        },
+        "support_summary": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Support Summary"
         },
         "status": {
           "const": "candidate",
@@ -408,6 +490,47 @@
         "text": {
           "title": "Text",
           "type": "string"
+        },
+        "structural_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Structural Path"
+        },
+        "message_index": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Message Index"
+        },
+        "attachment_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attachment Ref"
+        },
+        "source_instruction_risk": {
+          "default": false,
+          "title": "Source Instruction Risk",
+          "type": "boolean"
         }
       },
       "required": [
@@ -421,6 +544,95 @@
         "text"
       ],
       "title": "Segment",
+      "type": "object"
+    },
+    "SourceInventoryItem": {
+      "additionalProperties": false,
+      "properties": {
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "source_type": {
+          "title": "Source Type",
+          "type": "string"
+        },
+        "filename": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filename"
+        },
+        "read_state": {
+          "default": "read",
+          "enum": [
+            "read",
+            "unread",
+            "missing",
+            "unreadable"
+          ],
+          "title": "Read State",
+          "type": "string"
+        },
+        "availability_state": {
+          "default": "available",
+          "enum": [
+            "available",
+            "missing",
+            "duplicate",
+            "unreadable"
+          ],
+          "title": "Availability State",
+          "type": "string"
+        },
+        "character_count": {
+          "title": "Character Count",
+          "type": "integer"
+        },
+        "source_sha256": {
+          "title": "Source Sha256",
+          "type": "string"
+        },
+        "duplicate_of_source_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Duplicate Of Source Id"
+        },
+        "attachment_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Attachment Refs",
+          "type": "array"
+        },
+        "metadata_keys": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Metadata Keys",
+          "type": "array"
+        }
+      },
+      "required": [
+        "source_id",
+        "source_type",
+        "character_count",
+        "source_sha256"
+      ],
+      "title": "SourceInventoryItem",
       "type": "object"
     }
   },
@@ -457,11 +669,15 @@
     },
     "source_inventory": {
       "items": {
-        "additionalProperties": true,
-        "type": "object"
+        "$ref": "#/$defs/SourceInventoryItem"
       },
       "title": "Source Inventory",
       "type": "array"
+    },
+    "source_coverage_summary": {
+      "additionalProperties": true,
+      "title": "Source Coverage Summary",
+      "type": "object"
     },
     "segments": {
       "items": {
@@ -469,6 +685,42 @@
       },
       "title": "Segments",
       "type": "array"
+    },
+    "ingestion_result_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Ingestion Result Ref"
+    },
+    "rust_ingestion_readiness_report_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Rust Ingestion Readiness Report Ref"
+    },
+    "ingestion_volume_profile_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Ingestion Volume Profile Ref"
     },
     "effective_context": {
       "$ref": "#/$defs/EffectiveContext"
@@ -515,6 +767,13 @@
       "title": "Missing Information",
       "type": "array"
     },
+    "missing_information_candidates": {
+      "items": {
+        "$ref": "#/$defs/MissingInformationCandidate"
+      },
+      "title": "Missing Information Candidates",
+      "type": "array"
+    },
     "critic_findings": {
       "items": {
         "$ref": "#/$defs/CriticFinding"
@@ -544,6 +803,142 @@
     "run_ledger_ref": {
       "title": "Run Ledger Ref",
       "type": "string"
+    },
+    "contract_state_report_ref": {
+      "title": "Contract State Report Ref",
+      "type": "string"
+    },
+    "data_scope_gate_report_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Data Scope Gate Report Ref"
+    },
+    "model_adapter_report_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Model Adapter Report Ref"
+    },
+    "fixture_gold_report_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Fixture Gold Report Ref"
+    },
+    "exception_candidates_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Exception Candidates Ref"
+    },
+    "exception_lake_readiness_report_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Exception Lake Readiness Report Ref"
+    },
+    "exception_lake_handoff_manifest_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Exception Lake Handoff Manifest Ref"
+    },
+    "run_ledger_integrity_report_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Run Ledger Integrity Report Ref"
+    },
+    "deadline_docketing_guard_report_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Deadline Docketing Guard Report Ref"
+    },
+    "evidence_completeness_report_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Evidence Completeness Report Ref"
+    },
+    "context_boundary_report_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Context Boundary Report Ref"
+    },
+    "intake_review_form_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Intake Review Form Ref"
     }
   },
   "required": [
@@ -565,7 +960,8 @@
     "escalation",
     "prohibited_next_steps",
     "evidence_graph_ref",
-    "run_ledger_ref"
+    "run_ledger_ref",
+    "contract_state_report_ref"
   ],
   "title": "IntakePreflightPacket",
   "type": "object"

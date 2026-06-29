@@ -1,0 +1,431 @@
+{
+  "$defs": {
+    "BudgetHumanReviewOutcomeDecision": {
+      "additionalProperties": false,
+      "properties": {
+        "decision_id": {
+          "title": "Decision Id",
+          "type": "string"
+        },
+        "template_id": {
+          "title": "Template Id",
+          "type": "string"
+        },
+        "review_area": {
+          "enum": [
+            "budget_revision",
+            "actual_variance",
+            "carrier_rejection",
+            "appeal_result",
+            "lake_handoff",
+            "learning_loop",
+            "authority_boundary",
+            "overall"
+          ],
+          "title": "Review Area",
+          "type": "string"
+        },
+        "outcome": {
+          "enum": [
+            "confirm",
+            "correct",
+            "unknown",
+            "needs_more_information",
+            "human_only",
+            "declined_referred",
+            "no_change",
+            "appeal",
+            "write_off",
+            "reopen",
+            "block",
+            "route_to_owner_review",
+            "no_learning_change"
+          ],
+          "title": "Outcome",
+          "type": "string"
+        },
+        "decision_reason": {
+          "title": "Decision Reason",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "source_recommendation_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Source Recommendation Ids",
+          "type": "array"
+        },
+        "required_followups": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Required Followups",
+          "type": "array"
+        },
+        "followup_owner": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Followup Owner"
+        },
+        "followup_due_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Followup Due At"
+        },
+        "financial_amount": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Financial Amount"
+        },
+        "target_owner_repo": {
+          "anyOf": [
+            {
+              "enum": [
+                "LawFirm-os-intake",
+                "LawFirm-os-semantic-substrate",
+                "LawFirm-os-orchestrator",
+                "LawFirm-os-exceptions-lake-runtime",
+                "LawFirm-os-legal-knowledge-runtime",
+                "LawFirm-os-skills-registry"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Owner Repo"
+        },
+        "proposed_correction_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Proposed Correction Refs",
+          "type": "array"
+        },
+        "candidate_record_families": {
+          "items": {
+            "enum": [
+              "budget_human_change_record",
+              "budget_actual_variance_record",
+              "budget_actual_missing_source_record",
+              "carrier_rejection_decision_record",
+              "carrier_appeal_result_record",
+              "carrier_financial_outcome_record"
+            ],
+            "type": "string"
+          },
+          "title": "Candidate Record Families",
+          "type": "array"
+        }
+      },
+      "required": [
+        "decision_id",
+        "template_id",
+        "review_area",
+        "outcome",
+        "decision_reason"
+      ],
+      "title": "BudgetHumanReviewOutcomeDecision",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "budget_human_review_outcome_record_id": {
+      "title": "Budget Human Review Outcome Record Id",
+      "type": "string"
+    },
+    "budget_human_review_packet_id": {
+      "title": "Budget Human Review Packet Id",
+      "type": "string"
+    },
+    "source_budget_human_review_packet_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Budget Human Review Packet Ref"
+    },
+    "reviewer_id": {
+      "title": "Reviewer Id",
+      "type": "string"
+    },
+    "reviewer_role": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Reviewer Role"
+    },
+    "reviewed_at": {
+      "title": "Reviewed At",
+      "type": "string"
+    },
+    "overall_outcome": {
+      "enum": [
+        "confirm",
+        "correct",
+        "unknown",
+        "needs_more_information",
+        "human_only",
+        "declined_referred",
+        "no_change",
+        "appeal",
+        "write_off",
+        "reopen",
+        "block",
+        "route_to_owner_review",
+        "no_learning_change"
+      ],
+      "title": "Overall Outcome",
+      "type": "string"
+    },
+    "decision_reason": {
+      "title": "Decision Reason",
+      "type": "string"
+    },
+    "decisions": {
+      "items": {
+        "$ref": "#/$defs/BudgetHumanReviewOutcomeDecision"
+      },
+      "title": "Decisions",
+      "type": "array"
+    },
+    "supersedes_budget_human_review_outcome_record_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Supersedes Budget Human Review Outcome Record Id"
+    },
+    "append_only": {
+      "const": true,
+      "default": true,
+      "title": "Append Only",
+      "type": "boolean"
+    },
+    "mutation_policy": {
+      "const": "append_only_supersession",
+      "default": "append_only_supersession",
+      "title": "Mutation Policy",
+      "type": "string"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "human_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Human Review Required",
+      "type": "boolean"
+    },
+    "not_authorized_for_lake_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Lake Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_sqlite_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Sqlite Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_external_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For External Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_budget_submission": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Budget Submission",
+      "type": "boolean"
+    },
+    "not_authorized_for_carrier_submission": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Carrier Submission",
+      "type": "boolean"
+    },
+    "no_connector_implemented": {
+      "const": true,
+      "default": true,
+      "title": "No Connector Implemented",
+      "type": "boolean"
+    },
+    "no_lake_admission_performed": {
+      "const": true,
+      "default": true,
+      "title": "No Lake Admission Performed",
+      "type": "boolean"
+    },
+    "no_sibling_repo_writes": {
+      "const": true,
+      "default": true,
+      "title": "No Sibling Repo Writes",
+      "type": "boolean"
+    },
+    "no_canonical_mutation": {
+      "const": true,
+      "default": true,
+      "title": "No Canonical Mutation",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "billing_connector_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Billing Connector Write Performed",
+      "type": "boolean"
+    },
+    "carrier_portal_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Carrier Portal Write Performed",
+      "type": "boolean"
+    },
+    "email_send_performed": {
+      "const": false,
+      "default": false,
+      "title": "Email Send Performed",
+      "type": "boolean"
+    },
+    "appeal_submission_performed": {
+      "const": false,
+      "default": false,
+      "title": "Appeal Submission Performed",
+      "type": "boolean"
+    },
+    "budget_submission_performed": {
+      "const": false,
+      "default": false,
+      "title": "Budget Submission Performed",
+      "type": "boolean"
+    },
+    "budget_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Budget Mutation Performed",
+      "type": "boolean"
+    },
+    "profile_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Profile Mutation Performed",
+      "type": "boolean"
+    },
+    "template_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Template Mutation Performed",
+      "type": "boolean"
+    },
+    "carrier_guideline_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Carrier Guideline Mutation Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "budget_human_review_outcome_record_id",
+    "budget_human_review_packet_id",
+    "reviewer_id",
+    "reviewed_at",
+    "overall_outcome",
+    "decision_reason",
+    "decisions"
+  ],
+  "title": "BudgetHumanReviewOutcomeRecord",
+  "type": "object"
+}

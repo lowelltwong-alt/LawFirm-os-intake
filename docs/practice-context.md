@@ -29,6 +29,10 @@ observed source evidence
 
 Context cannot override a contradiction in the source. Human-confirmed facts are not model context; they are governed review artifacts.
 
+Candidate refs remain source-bound even when a candidate is retained only for comparison or practice-context review. In those cases the candidate must set `source_evidence_status=source_anchor_only`; the refs bind the candidate to the packet but do not become observed support for the label. Direct lexical/source support uses `source_evidence_status=observed_support`, and the explicit unknown option uses `source_evidence_status=unknown_option`.
+
+Each preflight run writes `context_boundary_report.json`. The report proves observed source evidence remains first, practice context is not observed evidence, context refs are structured profile refs, context-influenced candidates remain packet-anchored, unknown options remain present, and human confirmation remains required.
+
 ## Profile fields
 
 A practice profile may contain:
@@ -64,6 +68,7 @@ Expected behavior:
 
 - source segment hashes remain identical;
 - observed evidence refs remain identical;
+- context-only alternatives are labeled `source_anchor_only`, not observed support;
 - candidate rankings may change;
 - unknown remains available;
 - human confirmation remains mandatory.

@@ -1,0 +1,76 @@
+{
+  "schema_version": "0.1",
+  "bundle_id": "syn-bundle-holdout-unread-source-001",
+  "data_origin": "synthetic",
+  "contains_real_client_data": false,
+  "contains_real_matter_data": false,
+  "contains_privileged_data": false,
+  "sources": [
+    {
+      "source_id": "syn-unread-email-001",
+      "source_type": "email",
+      "filename": "assignment-with-unread-attachment.eml.txt",
+      "text": "From: claims@harborpoint-insurance.example\nTo: intake@synthetic-law.example\nDate: June 22, 2026\nSubject: New assignment with unread guidelines\n\nHarbor Point Insurance is assigning defense of insured Dr. Maya Chen arising from a synthetic medical malpractice claim by John Smith. Claim number HP-UNREAD-01. Please review the attached carrier guidelines before proposing any budget.",
+      "metadata": {
+        "synthetic": true,
+        "attachment_refs": [
+          "carrier-guidelines.pdf"
+        ]
+      }
+    },
+    {
+      "source_id": "syn-unread-guidelines-001",
+      "source_type": "attachment_text",
+      "filename": "carrier-guidelines.pdf",
+      "text": "",
+      "metadata": {
+        "synthetic": true,
+        "read_state": "unread"
+      }
+    }
+  ],
+  "fixture_hints": {
+    "provided_fields": [
+      "claim_number",
+      "prospective_represented_client",
+      "adverse_party",
+      "assignment_scope"
+    ],
+    "entities": [
+      {
+        "name": "Harbor Point Insurance",
+        "aliases": [
+          "Harbor Point"
+        ],
+        "role_candidates": [
+          {
+            "role": "insurance_carrier",
+            "confidence": 0.9
+          },
+          {
+            "role": "payer",
+            "confidence": 0.68
+          }
+        ]
+      },
+      {
+        "name": "Dr. Maya Chen",
+        "role_candidates": [
+          {
+            "role": "insured_or_prospective_represented_client",
+            "confidence": 0.84
+          }
+        ]
+      },
+      {
+        "name": "John Smith",
+        "role_candidates": [
+          {
+            "role": "claimant_or_adverse_party",
+            "confidence": 0.86
+          }
+        ]
+      }
+    ]
+  }
+}

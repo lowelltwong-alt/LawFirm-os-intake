@@ -2,8 +2,12 @@ version: "0.1"
 prohibited:
   - from: raw_received
     to: matter_opened
+  - from: raw_received
+    to: external_message_sent
   - from: party_candidates_ready
     to: client_identity_final
+  - from: deadline_gap_candidates_ready
+    to: deadline_docketed
   - from: conflict_seed_ready
     to: conflicts_cleared
   - from: intake_confirmed

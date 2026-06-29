@@ -1,0 +1,281 @@
+{
+  "$defs": {
+    "BudgetScenario": {
+      "additionalProperties": false,
+      "properties": {
+        "scenario_id": {
+          "title": "Scenario Id",
+          "type": "string"
+        },
+        "scenario_name": {
+          "title": "Scenario Name",
+          "type": "string"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "resolution_phase": {
+          "title": "Resolution Phase",
+          "type": "string"
+        },
+        "included_phase_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Included Phase Ids",
+          "type": "array"
+        },
+        "included_external_codes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Included External Codes",
+          "type": "array"
+        },
+        "included_line_count": {
+          "minimum": 0,
+          "title": "Included Line Count",
+          "type": "integer"
+        },
+        "total_hours": {
+          "minimum": 0,
+          "title": "Total Hours",
+          "type": "number"
+        },
+        "subtotal_fees": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subtotal Fees"
+        },
+        "subtotal_expenses": {
+          "minimum": 0,
+          "title": "Subtotal Expenses",
+          "type": "number"
+        },
+        "contingency_percent": {
+          "minimum": 0,
+          "title": "Contingency Percent",
+          "type": "number"
+        },
+        "contingency_amount": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contingency Amount"
+        },
+        "total_proposed_budget": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Total Proposed Budget"
+        },
+        "total_budget_min": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Total Budget Min"
+        },
+        "total_budget_max": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Total Budget Max"
+        },
+        "probability": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Probability"
+        },
+        "pricing_status": {
+          "enum": [
+            "priced",
+            "hours_only",
+            "insufficient_information"
+          ],
+          "title": "Pricing Status",
+          "type": "string"
+        },
+        "proposed_for_human_review": {
+          "const": true,
+          "default": true,
+          "title": "Proposed For Human Review",
+          "type": "boolean"
+        },
+        "not_authorized_for_client_submission": {
+          "const": true,
+          "default": true,
+          "title": "Not Authorized For Client Submission",
+          "type": "boolean"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "scenario_id",
+        "scenario_name",
+        "description",
+        "resolution_phase",
+        "included_phase_ids",
+        "included_line_count",
+        "total_hours",
+        "subtotal_expenses",
+        "contingency_percent",
+        "pricing_status"
+      ],
+      "title": "BudgetScenario",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "scenario_set_id": {
+      "title": "Scenario Set Id",
+      "type": "string"
+    },
+    "selected_scenario_id": {
+      "default": "standard",
+      "title": "Selected Scenario Id",
+      "type": "string"
+    },
+    "standard_scenario_id": {
+      "default": "standard",
+      "title": "Standard Scenario Id",
+      "type": "string"
+    },
+    "scenarios": {
+      "items": {
+        "$ref": "#/$defs/BudgetScenario"
+      },
+      "title": "Scenarios",
+      "type": "array"
+    },
+    "selected_scenario_basis": {
+      "default": "default_standard",
+      "enum": [
+        "default_standard",
+        "confirmed_resolution_path",
+        "fallback_last_scenario"
+      ],
+      "title": "Selected Scenario Basis",
+      "type": "string"
+    },
+    "expected_total": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Expected Total"
+    },
+    "expected_total_probability_sum": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Expected Total Probability Sum"
+    },
+    "monotonic_total_order": {
+      "title": "Monotonic Total Order",
+      "type": "boolean"
+    },
+    "total_order_basis": {
+      "default": "total_proposed_budget",
+      "enum": [
+        "total_proposed_budget",
+        "total_hours"
+      ],
+      "title": "Total Order Basis",
+      "type": "string"
+    },
+    "requires_human_budget_review": {
+      "const": true,
+      "default": true,
+      "title": "Requires Human Budget Review",
+      "type": "boolean"
+    },
+    "not_authorized_for_client_submission": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Client Submission",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "scenario_set_id",
+    "scenarios",
+    "monotonic_total_order"
+  ],
+  "title": "BudgetScenarioSet",
+  "type": "object"
+}

@@ -1,0 +1,252 @@
+{
+  "$defs": {
+    "ExceptionLakeMappingCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "mapping_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Mapping Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "ExceptionLakeMappingCheck",
+      "type": "object"
+    },
+    "ExceptionLakeMappingRule": {
+      "additionalProperties": false,
+      "properties": {
+        "mapping_id": {
+          "title": "Mapping Id",
+          "type": "string"
+        },
+        "issue_family": {
+          "enum": [
+            "broken_template_formula",
+            "missing_budget_code_mapping",
+            "unknown_budget_driver",
+            "guideline_or_cap_issue",
+            "carrier_preapproval_required",
+            "human_budget_change",
+            "budget_actual_cost_variance",
+            "carrier_rejection_capture",
+            "carrier_rejection_reconciliation",
+            "carrier_rejection_appeal_result",
+            "carrier_rejection_learning"
+          ],
+          "title": "Issue Family",
+          "type": "string"
+        },
+        "local_event_label": {
+          "title": "Local Event Label",
+          "type": "string"
+        },
+        "canonical_lake_class": {
+          "enum": [
+            "retrieval_miss",
+            "workflow_escalation",
+            "authority_conflict_override"
+          ],
+          "title": "Canonical Lake Class",
+          "type": "string"
+        },
+        "trigger_summary": {
+          "title": "Trigger Summary",
+          "type": "string"
+        },
+        "support_ref_kinds": {
+          "items": {
+            "enum": [
+              "structured_ref",
+              "budget_form_mapping_report",
+              "budget_proposal",
+              "budget_change_record",
+              "budget_revision_report",
+              "budget_actual_comparison_report",
+              "carrier_preapproval_report",
+              "carrier_rejection_reconciliation_report",
+              "carrier_rejection_remediation_case",
+              "carrier_appeal_result"
+            ],
+            "type": "string"
+          },
+          "title": "Support Ref Kinds",
+          "type": "array"
+        },
+        "candidate_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Candidate Ids",
+          "type": "array"
+        },
+        "structured_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Structured Refs",
+          "type": "array"
+        },
+        "candidate_count": {
+          "default": 0,
+          "title": "Candidate Count",
+          "type": "integer"
+        },
+        "mapped": {
+          "default": true,
+          "title": "Mapped",
+          "type": "boolean"
+        },
+        "admission_state": {
+          "const": "dry_run_not_admitted",
+          "default": "dry_run_not_admitted",
+          "title": "Admission State",
+          "type": "string"
+        },
+        "canonical_promotion_required": {
+          "const": true,
+          "default": true,
+          "title": "Canonical Promotion Required",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "mapping_id",
+        "issue_family",
+        "local_event_label",
+        "canonical_lake_class",
+        "trigger_summary",
+        "support_ref_kinds"
+      ],
+      "title": "ExceptionLakeMappingRule",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "exception_lake_mapping_package_id": {
+      "title": "Exception Lake Mapping Package Id",
+      "type": "string"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "preflight_packet_id": {
+      "title": "Preflight Packet Id",
+      "type": "string"
+    },
+    "stage": {
+      "const": "budget",
+      "title": "Stage",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "passed",
+        "failed"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "target_runtime_repo": {
+      "const": "LawFirm-os-exceptions-lake-runtime",
+      "default": "LawFirm-os-exceptions-lake-runtime",
+      "title": "Target Runtime Repo",
+      "type": "string"
+    },
+    "admission_state": {
+      "const": "dry_run_not_admitted",
+      "default": "dry_run_not_admitted",
+      "title": "Admission State",
+      "type": "string"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "raw_payload_included": {
+      "const": false,
+      "default": false,
+      "title": "Raw Payload Included",
+      "type": "boolean"
+    },
+    "canonical_promotion_required": {
+      "const": true,
+      "default": true,
+      "title": "Canonical Promotion Required",
+      "type": "boolean"
+    },
+    "mapping_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Mapping Review Required",
+      "type": "boolean"
+    },
+    "rules": {
+      "items": {
+        "$ref": "#/$defs/ExceptionLakeMappingRule"
+      },
+      "title": "Rules",
+      "type": "array"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/ExceptionLakeMappingCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "exception_lake_mapping_package_id",
+    "run_id",
+    "preflight_packet_id",
+    "stage",
+    "status",
+    "rules",
+    "checks",
+    "generated_at"
+  ],
+  "title": "ExceptionLakeMappingPackage",
+  "type": "object"
+}

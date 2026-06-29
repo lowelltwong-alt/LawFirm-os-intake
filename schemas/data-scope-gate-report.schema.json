@@ -1,0 +1,172 @@
+{
+  "$defs": {
+    "DataScopeGateCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "policy_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Policy Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "DataScopeGateCheck",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "data_scope_gate_report_id": {
+      "title": "Data Scope Gate Report Id",
+      "type": "string"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "bundle_id": {
+      "title": "Bundle Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "passed",
+        "blocked"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "blocked_state": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Blocked State"
+    },
+    "runtime_mode": {
+      "const": "synthetic_only",
+      "default": "synthetic_only",
+      "title": "Runtime Mode",
+      "type": "string"
+    },
+    "data_origin": {
+      "title": "Data Origin",
+      "type": "string"
+    },
+    "allowed_data_origins": {
+      "items": {
+        "const": "synthetic",
+        "type": "string"
+      },
+      "title": "Allowed Data Origins",
+      "type": "array"
+    },
+    "contains_real_client_data": {
+      "title": "Contains Real Client Data",
+      "type": "boolean"
+    },
+    "contains_real_matter_data": {
+      "title": "Contains Real Matter Data",
+      "type": "boolean"
+    },
+    "contains_privileged_data": {
+      "title": "Contains Privileged Data",
+      "type": "boolean"
+    },
+    "source_count": {
+      "minimum": 0,
+      "title": "Source Count",
+      "type": "integer"
+    },
+    "raw_payload_written": {
+      "const": false,
+      "default": false,
+      "title": "Raw Payload Written",
+      "type": "boolean"
+    },
+    "public_data_direct_ingestion_allowed": {
+      "const": false,
+      "default": false,
+      "title": "Public Data Direct Ingestion Allowed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "policy_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Policy Refs",
+      "type": "array"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/DataScopeGateCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "data_scope_gate_report_id",
+    "run_id",
+    "bundle_id",
+    "status",
+    "data_origin",
+    "contains_real_client_data",
+    "contains_real_matter_data",
+    "contains_privileged_data",
+    "source_count",
+    "policy_refs",
+    "checks",
+    "generated_at"
+  ],
+  "title": "DataScopeGateReport",
+  "type": "object"
+}

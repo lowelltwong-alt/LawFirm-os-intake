@@ -1,0 +1,370 @@
+{
+  "$defs": {
+    "IntakeVerticalReadinessArtifactCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "artifact_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Artifact Ref"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "missing_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Missing Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "IntakeVerticalReadinessArtifactCheck",
+      "type": "object"
+    },
+    "IntakeVerticalReadinessSliceStatus": {
+      "additionalProperties": false,
+      "properties": {
+        "slice_id": {
+          "minimum": 1,
+          "title": "Slice Id",
+          "type": "integer"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "implemented_local_candidate",
+            "missing_required_artifact"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "requirement_summary": {
+          "title": "Requirement Summary",
+          "type": "string"
+        },
+        "proof_artifact_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Proof Artifact Refs",
+          "type": "array"
+        },
+        "missing_artifact_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Missing Artifact Refs",
+          "type": "array"
+        },
+        "command_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Command Refs",
+          "type": "array"
+        },
+        "missing_command_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Missing Command Refs",
+          "type": "array"
+        },
+        "target_owner_repos": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Target Owner Repos",
+          "type": "array"
+        },
+        "remaining_external_actions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Remaining External Actions",
+          "type": "array"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "slice_id",
+        "title",
+        "status",
+        "requirement_summary",
+        "proof_artifact_refs",
+        "target_owner_repos"
+      ],
+      "title": "IntakeVerticalReadinessSliceStatus",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "audit_report_id": {
+      "title": "Audit Report Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "ready_for_pr_review_external_adoption_required",
+        "incomplete_missing_local_artifacts",
+        "blocked_missing_or_failed_learning_artifacts",
+        "blocked_missing_or_failed_lake_bundle",
+        "blocked_missing_or_failed_calibration_readiness",
+        "blocked_missing_or_failed_fixture_update_review",
+        "blocked_missing_or_failed_fixture_update_pr_package"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "review_readiness": {
+      "enum": [
+        "ready_for_human_pr_review_not_auto_marked",
+        "not_ready_missing_local_artifacts",
+        "not_ready_learning_artifact_chain_blocked",
+        "not_ready_lake_bundle_blocked",
+        "not_ready_calibration_readiness_blocked",
+        "not_ready_fixture_update_review_blocked",
+        "not_ready_fixture_update_pr_package_blocked"
+      ],
+      "title": "Review Readiness",
+      "type": "string"
+    },
+    "source_owner_handoff_report_ref": {
+      "title": "Source Owner Handoff Report Ref",
+      "type": "string"
+    },
+    "source_budget_event_lake_bundle_report_ref": {
+      "title": "Source Budget Event Lake Bundle Report Ref",
+      "type": "string"
+    },
+    "source_budget_calibration_readiness_report_ref": {
+      "title": "Source Budget Calibration Readiness Report Ref",
+      "type": "string"
+    },
+    "source_budget_fixture_update_review_report_ref": {
+      "title": "Source Budget Fixture Update Review Report Ref",
+      "type": "string"
+    },
+    "source_budget_fixture_update_pr_package_report_ref": {
+      "title": "Source Budget Fixture Update Pr Package Report Ref",
+      "type": "string"
+    },
+    "total_slice_count": {
+      "minimum": 0,
+      "title": "Total Slice Count",
+      "type": "integer"
+    },
+    "implemented_slice_count": {
+      "minimum": 0,
+      "title": "Implemented Slice Count",
+      "type": "integer"
+    },
+    "missing_artifact_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Missing Artifact Refs",
+      "type": "array"
+    },
+    "missing_command_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Missing Command Refs",
+      "type": "array"
+    },
+    "slices": {
+      "items": {
+        "$ref": "#/$defs/IntakeVerticalReadinessSliceStatus"
+      },
+      "title": "Slices",
+      "type": "array"
+    },
+    "artifact_checks": {
+      "items": {
+        "$ref": "#/$defs/IntakeVerticalReadinessArtifactCheck"
+      },
+      "title": "Artifact Checks",
+      "type": "array"
+    },
+    "required_external_adoption_actions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required External Adoption Actions",
+      "type": "array"
+    },
+    "external_adoption_target_repos": {
+      "items": {
+        "enum": [
+          "LawFirm-os-intake",
+          "LawFirm-os-orchestrator",
+          "LawFirm-os-exceptions-lake-runtime",
+          "LawFirm-os-semantic-substrate"
+        ],
+        "type": "string"
+      },
+      "title": "External Adoption Target Repos",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "local_completion_scope": {
+      "const": "synthetic_candidate_only",
+      "default": "synthetic_candidate_only",
+      "title": "Local Completion Scope",
+      "type": "string"
+    },
+    "pr_marked_ready": {
+      "const": false,
+      "default": false,
+      "title": "Pr Marked Ready",
+      "type": "boolean"
+    },
+    "promotion_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Promotion Authorized",
+      "type": "boolean"
+    },
+    "proposed_changes_applied": {
+      "const": false,
+      "default": false,
+      "title": "Proposed Changes Applied",
+      "type": "boolean"
+    },
+    "baseline_mutated": {
+      "const": false,
+      "default": false,
+      "title": "Baseline Mutated",
+      "type": "boolean"
+    },
+    "no_connector_implemented": {
+      "const": true,
+      "default": true,
+      "title": "No Connector Implemented",
+      "type": "boolean"
+    },
+    "no_lake_admission_performed": {
+      "const": true,
+      "default": true,
+      "title": "No Lake Admission Performed",
+      "type": "boolean"
+    },
+    "no_sibling_repo_writes": {
+      "const": true,
+      "default": true,
+      "title": "No Sibling Repo Writes",
+      "type": "boolean"
+    },
+    "no_canonical_mutation": {
+      "const": true,
+      "default": true,
+      "title": "No Canonical Mutation",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "audit_report_id",
+    "status",
+    "review_readiness",
+    "source_owner_handoff_report_ref",
+    "source_budget_event_lake_bundle_report_ref",
+    "source_budget_calibration_readiness_report_ref",
+    "source_budget_fixture_update_review_report_ref",
+    "source_budget_fixture_update_pr_package_report_ref",
+    "total_slice_count",
+    "implemented_slice_count",
+    "slices",
+    "artifact_checks",
+    "required_external_adoption_actions",
+    "external_adoption_target_repos",
+    "generated_at"
+  ],
+  "title": "IntakeVerticalReadinessAuditReport",
+  "type": "object"
+}

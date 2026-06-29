@@ -1,0 +1,202 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "fixture_result_id": {
+      "title": "Fixture Result Id",
+      "type": "string"
+    },
+    "proposed_change_id": {
+      "title": "Proposed Change Id",
+      "type": "string"
+    },
+    "candidate_id": {
+      "title": "Candidate Id",
+      "type": "string"
+    },
+    "baseline_behavior_ref": {
+      "title": "Baseline Behavior Ref",
+      "type": "string"
+    },
+    "proposed_behavior_ref": {
+      "title": "Proposed Behavior Ref",
+      "type": "string"
+    },
+    "baseline_output_hash": {
+      "title": "Baseline Output Hash",
+      "type": "string"
+    },
+    "proposed_output_hash": {
+      "title": "Proposed Output Hash",
+      "type": "string"
+    },
+    "expected_behavior_summary": {
+      "title": "Expected Behavior Summary",
+      "type": "string"
+    },
+    "observed_behavior_summary": {
+      "title": "Observed Behavior Summary",
+      "type": "string"
+    },
+    "evaluation_outcome": {
+      "enum": [
+        "passed",
+        "failed",
+        "blocked"
+      ],
+      "title": "Evaluation Outcome",
+      "type": "string"
+    },
+    "passed_eval_suites": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Passed Eval Suites",
+      "type": "array"
+    },
+    "failed_eval_suites": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Failed Eval Suites",
+      "type": "array"
+    },
+    "passed_regression_guardrails": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Passed Regression Guardrails",
+      "type": "array"
+    },
+    "failed_regression_guardrails": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Failed Regression Guardrails",
+      "type": "array"
+    },
+    "support_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Support Refs",
+      "type": "array"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "contains_real_client_data": {
+      "const": false,
+      "default": false,
+      "title": "Contains Real Client Data",
+      "type": "boolean"
+    },
+    "contains_real_matter_data": {
+      "const": false,
+      "default": false,
+      "title": "Contains Real Matter Data",
+      "type": "boolean"
+    },
+    "contains_privileged_data": {
+      "const": false,
+      "default": false,
+      "title": "Contains Privileged Data",
+      "type": "boolean"
+    },
+    "proposed_change_applied": {
+      "const": false,
+      "default": false,
+      "title": "Proposed Change Applied",
+      "type": "boolean"
+    },
+    "baseline_mutated": {
+      "const": false,
+      "default": false,
+      "title": "Baseline Mutated",
+      "type": "boolean"
+    },
+    "profile_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Profile Mutation Performed",
+      "type": "boolean"
+    },
+    "template_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Template Mutation Performed",
+      "type": "boolean"
+    },
+    "connector_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Connector Mutation Performed",
+      "type": "boolean"
+    },
+    "budget_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Budget Mutation Performed",
+      "type": "boolean"
+    },
+    "carrier_guideline_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Carrier Guideline Mutation Performed",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "fixture_result_id",
+    "proposed_change_id",
+    "candidate_id",
+    "baseline_behavior_ref",
+    "proposed_behavior_ref",
+    "baseline_output_hash",
+    "proposed_output_hash",
+    "expected_behavior_summary",
+    "observed_behavior_summary",
+    "evaluation_outcome",
+    "passed_eval_suites",
+    "passed_regression_guardrails",
+    "support_refs",
+    "generated_at"
+  ],
+  "title": "LearningShadowEvalFixtureResult",
+  "type": "object"
+}

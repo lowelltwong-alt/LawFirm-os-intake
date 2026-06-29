@@ -1,0 +1,64 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "remediation_case_id": {
+      "title": "Remediation Case Id",
+      "type": "string"
+    },
+    "allowed_outcomes": {
+      "items": {
+        "enum": [
+          "confirm_classification",
+          "correct_classification",
+          "confirm_linkage",
+          "correct_linkage",
+          "needs_more_information",
+          "appeal",
+          "no_appeal",
+          "accept_write_down",
+          "fix_and_resubmit",
+          "record_appeal_result",
+          "human_only",
+          "close_no_action",
+          "create_learning_candidate",
+          "no_learning_change"
+        ],
+        "type": "string"
+      },
+      "title": "Allowed Outcomes",
+      "type": "array"
+    },
+    "required_fields": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Fields",
+      "type": "array"
+    },
+    "mutation_policy": {
+      "const": "append_or_supersede_only",
+      "default": "append_or_supersede_only",
+      "title": "Mutation Policy",
+      "type": "string"
+    },
+    "external_submission_authorized": {
+      "const": false,
+      "default": false,
+      "title": "External Submission Authorized",
+      "type": "boolean"
+    },
+    "silent_learning_allowed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Allowed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "remediation_case_id",
+    "allowed_outcomes",
+    "required_fields"
+  ],
+  "title": "CarrierRejectionReviewDecisionTemplate",
+  "type": "object"
+}

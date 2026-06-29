@@ -1,0 +1,265 @@
+{
+  "$defs": {
+    "CarrierPreapprovalRequirement": {
+      "additionalProperties": false,
+      "properties": {
+        "requirement_id": {
+          "title": "Requirement Id",
+          "type": "string"
+        },
+        "threshold_id": {
+          "title": "Threshold Id",
+          "type": "string"
+        },
+        "requirement_type": {
+          "enum": [
+            "experts_over_count",
+            "expert_spend_over_amount",
+            "depositions_over_count",
+            "research_hours_over",
+            "vendor_spend_over_amount"
+          ],
+          "title": "Requirement Type",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "preapproval_required",
+            "not_triggered",
+            "unknown"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "current_value": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Current Value"
+        },
+        "threshold_value": {
+          "minimum": 0,
+          "title": "Threshold Value",
+          "type": "number"
+        },
+        "unit": {
+          "title": "Unit",
+          "type": "string"
+        },
+        "required_human_gate": {
+          "const": "human_carrier_preapproval",
+          "default": "human_carrier_preapproval",
+          "title": "Required Human Gate",
+          "type": "string"
+        },
+        "source": {
+          "const": "synthetic_carrier_guideline",
+          "default": "synthetic_carrier_guideline",
+          "title": "Source",
+          "type": "string"
+        },
+        "structured_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Structured Refs",
+          "type": "array"
+        },
+        "related_phase_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Related Phase Ids",
+          "type": "array"
+        },
+        "related_task_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Related Task Ids",
+          "type": "array"
+        },
+        "related_external_codes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Related External Codes",
+          "type": "array"
+        },
+        "related_expense_codes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Related Expense Codes",
+          "type": "array"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "rewrites_budget": {
+          "const": false,
+          "default": false,
+          "title": "Rewrites Budget",
+          "type": "boolean"
+        },
+        "preapproval_obtained": {
+          "const": false,
+          "default": false,
+          "title": "Preapproval Obtained",
+          "type": "boolean"
+        },
+        "carrier_submission_authorized": {
+          "const": false,
+          "default": false,
+          "title": "Carrier Submission Authorized",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "requirement_id",
+        "threshold_id",
+        "requirement_type",
+        "status",
+        "threshold_value",
+        "unit",
+        "reason"
+      ],
+      "title": "CarrierPreapprovalRequirement",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "report_id": {
+      "title": "Report Id",
+      "type": "string"
+    },
+    "budget_proposal_id": {
+      "title": "Budget Proposal Id",
+      "type": "string"
+    },
+    "guideline_id": {
+      "title": "Guideline Id",
+      "type": "string"
+    },
+    "guideline_ref": {
+      "title": "Guideline Ref",
+      "type": "string"
+    },
+    "carrier_id": {
+      "title": "Carrier Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "preapproval_required",
+        "no_preapproval_required",
+        "unknown"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "requirement_count": {
+      "minimum": 0,
+      "title": "Requirement Count",
+      "type": "integer"
+    },
+    "required_count": {
+      "minimum": 0,
+      "title": "Required Count",
+      "type": "integer"
+    },
+    "requirements": {
+      "items": {
+        "$ref": "#/$defs/CarrierPreapprovalRequirement"
+      },
+      "title": "Requirements",
+      "type": "array"
+    },
+    "required_human_gate": {
+      "const": "human_carrier_preapproval",
+      "default": "human_carrier_preapproval",
+      "title": "Required Human Gate",
+      "type": "string"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "preapproval_obtained": {
+      "const": false,
+      "default": false,
+      "title": "Preapproval Obtained",
+      "type": "boolean"
+    },
+    "carrier_submission_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Carrier Submission Authorized",
+      "type": "boolean"
+    },
+    "budget_submission_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Submission Authorized",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "report_id",
+    "budget_proposal_id",
+    "guideline_id",
+    "guideline_ref",
+    "carrier_id",
+    "status",
+    "requirement_count",
+    "required_count",
+    "requirements",
+    "generated_at"
+  ],
+  "title": "CarrierPreapprovalReport",
+  "type": "object"
+}

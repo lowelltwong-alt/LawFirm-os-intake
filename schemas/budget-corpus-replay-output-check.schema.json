@@ -1,0 +1,49 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "output_ref": {
+      "title": "Output Ref",
+      "type": "string"
+    },
+    "resolved_output_path": {
+      "title": "Resolved Output Path",
+      "type": "string"
+    },
+    "exists": {
+      "title": "Exists",
+      "type": "boolean"
+    },
+    "sha256": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Sha256"
+    },
+    "size_bytes": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Size Bytes"
+    }
+  },
+  "required": [
+    "output_ref",
+    "resolved_output_path",
+    "exists"
+  ],
+  "title": "BudgetCorpusReplayOutputCheck",
+  "type": "object"
+}

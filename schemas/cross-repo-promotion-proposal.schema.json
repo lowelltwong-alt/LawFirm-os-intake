@@ -1,0 +1,102 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "proposal_id": {
+      "title": "Proposal Id",
+      "type": "string"
+    },
+    "target_repo": {
+      "enum": [
+        "LawFirm-os-semantic-substrate",
+        "LawFirm-os-orchestrator",
+        "LawFirm-os-exceptions-lake-runtime",
+        "LawFirm-os-skills-registry",
+        "LawFirm-os-legal-knowledge-runtime"
+      ],
+      "title": "Target Repo",
+      "type": "string"
+    },
+    "authority_plane": {
+      "enum": [
+        "control",
+        "execution",
+        "evidence",
+        "skills_registry",
+        "legal_knowledge_runtime"
+      ],
+      "title": "Authority Plane",
+      "type": "string"
+    },
+    "proposal_type": {
+      "enum": [
+        "schema_contract",
+        "event_label_mapping",
+        "workflow_interface",
+        "lake_evidence_mapping",
+        "skill_metadata",
+        "context_bundle_interface"
+      ],
+      "title": "Proposal Type",
+      "type": "string"
+    },
+    "summary": {
+      "title": "Summary",
+      "type": "string"
+    },
+    "candidate_artifact_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Candidate Artifact Refs",
+      "type": "array"
+    },
+    "proposed_contract_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Proposed Contract Refs",
+      "type": "array"
+    },
+    "required_governance_actions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Governance Actions",
+      "type": "array"
+    },
+    "promotion_blockers": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Promotion Blockers",
+      "type": "array"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "direct_promotion_performed": {
+      "const": false,
+      "default": false,
+      "title": "Direct Promotion Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "proposal_id",
+    "target_repo",
+    "authority_plane",
+    "proposal_type",
+    "summary"
+  ],
+  "title": "CrossRepoPromotionProposal",
+  "type": "object"
+}

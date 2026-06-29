@@ -1,0 +1,312 @@
+{
+  "$defs": {
+    "CarrierRejectionSourceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "source_channel": {
+          "enum": [
+            "portal_status",
+            "portal_export",
+            "email_notice",
+            "ledes_response",
+            "returned_workbook",
+            "appeal_correspondence",
+            "manual_entry"
+          ],
+          "title": "Source Channel",
+          "type": "string"
+        },
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "source_record_id": {
+          "title": "Source Record Id",
+          "type": "string"
+        },
+        "retrieved_at": {
+          "title": "Retrieved At",
+          "type": "string"
+        },
+        "content_sha256": {
+          "title": "Content Sha256",
+          "type": "string"
+        },
+        "message_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Message Id"
+        },
+        "portal_status_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Portal Status Id"
+        },
+        "row_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Row Ref"
+        },
+        "attachment_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attachment Id"
+        }
+      },
+      "required": [
+        "source_channel",
+        "source_id",
+        "source_record_id",
+        "retrieved_at",
+        "content_sha256"
+      ],
+      "title": "CarrierRejectionSourceRef",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "remediation_case_id": {
+      "title": "Remediation Case Id",
+      "type": "string"
+    },
+    "case_key": {
+      "title": "Case Key",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "captured_for_human_review",
+        "needs_linkage_review",
+        "missing_response_followup",
+        "parse_failed",
+        "appeal_result_captured"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "local_event_label": {
+      "title": "Local Event Label",
+      "type": "string"
+    },
+    "canonical_lake_class": {
+      "enum": [
+        "retrieval_miss",
+        "workflow_escalation",
+        "authority_conflict_override"
+      ],
+      "title": "Canonical Lake Class",
+      "type": "string"
+    },
+    "carrier_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Carrier Id"
+    },
+    "submission_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Submission Id"
+    },
+    "budget_proposal_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Budget Proposal Id"
+    },
+    "invoice_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Invoice Id"
+    },
+    "phase_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Phase Id"
+    },
+    "task_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Task Id"
+    },
+    "external_code_candidate": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "External Code Candidate"
+    },
+    "duplicate_notice_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Duplicate Notice Ids",
+      "type": "array"
+    },
+    "source_refs": {
+      "items": {
+        "$ref": "#/$defs/CarrierRejectionSourceRef"
+      },
+      "title": "Source Refs",
+      "type": "array"
+    },
+    "disputed_amount": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Disputed Amount",
+      "type": "number"
+    },
+    "current_financial_exposure": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Current Financial Exposure",
+      "type": "number"
+    },
+    "human_owner": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Human Owner"
+    },
+    "followup_due_at": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Followup Due At"
+    },
+    "required_human_decisions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Human Decisions",
+      "type": "array"
+    },
+    "linked_appeal_result_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Linked Appeal Result Ids",
+      "type": "array"
+    },
+    "learning_disposition_candidates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Learning Disposition Candidates",
+      "type": "array"
+    },
+    "not_authorized_for_lake_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Lake Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_external_submission": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For External Submission",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "remediation_case_id",
+    "case_key",
+    "status",
+    "local_event_label",
+    "canonical_lake_class"
+  ],
+  "title": "CarrierRejectionRemediationCase",
+  "type": "object"
+}

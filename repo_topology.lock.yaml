@@ -1,8 +1,8 @@
 lock_version: "0.1"
-status: initial_seed_lock
+status: reviewed_seed_lock
 generated_by: LawFirm-os-intake
 generated_at: "2026-06-23T20:17:57.043924Z"
-status_note: "Pins captured from live public main branches on 2026-06-23 for private intake repo seeding. This is a bootstrap lock, not a completed promotion review."
+status_note: "Pins captured from live public main branches on 2026-06-23 and reviewed for the private intake seed. Future sibling adoption must still refresh this lock intentionally."
 repos:
   LawFirm-os-semantic-substrate:
     remote: https://github.com/lowelltwong-alt/LawFirm-os-semantic-substrate

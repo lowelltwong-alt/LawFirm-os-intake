@@ -1,0 +1,55 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "note_id": {
+      "title": "Note Id",
+      "type": "string"
+    },
+    "severity": {
+      "enum": [
+        "critical",
+        "high",
+        "medium",
+        "low"
+      ],
+      "title": "Severity",
+      "type": "string"
+    },
+    "scope": {
+      "enum": [
+        "boundary",
+        "execution_scope",
+        "output_integrity",
+        "learning_loop",
+        "supporting_context",
+        "shadow_eval"
+      ],
+      "title": "Scope",
+      "type": "string"
+    },
+    "message": {
+      "title": "Message",
+      "type": "string"
+    },
+    "recommended_check": {
+      "title": "Recommended Check",
+      "type": "string"
+    },
+    "replay_case_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Replay Case Ids",
+      "type": "array"
+    }
+  },
+  "required": [
+    "note_id",
+    "severity",
+    "scope",
+    "message",
+    "recommended_check"
+  ],
+  "title": "BudgetCorpusReplayReviewRedTeamNote",
+  "type": "object"
+}

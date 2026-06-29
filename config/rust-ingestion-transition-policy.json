@@ -1,0 +1,87 @@
+{
+  "schema_version": "0.1",
+  "policy_id": "rust-ingestion-transition-policy.v0_1",
+  "status": "local_candidate",
+  "authority": "LawFirm-os-intake local candidate; not Semantic Substrate canon",
+  "profile_thresholds": {
+    "source_count": 10,
+    "total_source_characters": 5000,
+    "max_source_characters": 3000,
+    "segment_count": 60,
+    "max_segment_characters": 2500
+  },
+  "required_rust_transition_gates": [
+    "hot_path_performance_profile",
+    "python_reference_golden_parity",
+    "synthetic_fixture_and_holdout_parity",
+    "schema_compatibility_export",
+    "orchestrator_adapter_review",
+    "semantic_substrate_contract_review_if_promoted"
+  ],
+  "candidate_rust_hot_path_scope": [
+    "source_inventory",
+    "source_coverage_summary",
+    "structural_segmentation",
+    "sha256_hashing",
+    "segment_evidence_ref_emission",
+    "schema_compatible_ingestion_result_serialization",
+    "courtlistener_snapshot_normalization",
+    "offline_corpus_manifest_indexing",
+    "document_label_offset_indexing",
+    "source_span_indexing"
+  ],
+  "eligible_hot_path_scope": [
+    "source_inventory",
+    "source_coverage_summary",
+    "structural_segmentation",
+    "sha256_hashing",
+    "segment_evidence_ref_emission"
+  ],
+  "forbidden_rust_scope": [
+    "legal_classification",
+    "party_role_assignment",
+    "matter_routing",
+    "conflict_clearance",
+    "budget_decisioning",
+    "dataset_selection_or_training_decision",
+    "public_record_download_or_purchase",
+    "budget_learning_promotion",
+    "legal_training_corpus_admission",
+    "human_confirmation",
+    "exception_lake_persistence",
+    "connector_or_external_writes",
+    "canonical_authority_changes"
+  ],
+  "required_parity_dimensions": [
+    "source_ids",
+    "source_hashes",
+    "source_read_and_availability_states",
+    "source_coverage_summary",
+    "segment_ids",
+    "segment_types",
+    "segment_sequence",
+    "structural_paths",
+    "parent_segment_ids",
+    "message_indices",
+    "attachment_refs",
+    "start_and_end_offsets",
+    "segment_sha256_hashes",
+    "prompt_injection_source_flags",
+    "segment_evidence_refs",
+    "schema_compatible_json"
+  ],
+  "required_performance_profile_dimensions": [
+    "wall_clock_ms_by_ingestion_stage",
+    "peak_memory_mb",
+    "characters_per_second",
+    "sources_per_second",
+    "segment_count_and_segment_size_distribution",
+    "hashing_and_segmentation_cpu_time",
+    "serialized_ingestion_result_bytes",
+    "bounded_concurrency_plan",
+    "python_to_rust_parity_diff_count"
+  ],
+  "rust_replacement_allowed": false,
+  "no_rust_runtime_added": true,
+  "external_writes_performed": false
+}

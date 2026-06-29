@@ -1,0 +1,321 @@
+{
+  "$defs": {
+    "ModelAdapterGuardCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "details": {
+          "additionalProperties": true,
+          "title": "Details",
+          "type": "object"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "ModelAdapterGuardCheck",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "model_adapter_report_id": {
+      "title": "Model Adapter Report Id",
+      "type": "string"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "adapter_name": {
+      "enum": [
+        "deterministic",
+        "structured-model"
+      ],
+      "title": "Adapter Name",
+      "type": "string"
+    },
+    "adapter_mode": {
+      "enum": [
+        "deterministic",
+        "dry_run"
+      ],
+      "title": "Adapter Mode",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "passed",
+        "failed"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "provider_call_performed": {
+      "const": false,
+      "default": false,
+      "title": "Provider Call Performed",
+      "type": "boolean"
+    },
+    "model_calls_allowed": {
+      "title": "Model Calls Allowed",
+      "type": "boolean"
+    },
+    "external_tools_allowed": {
+      "title": "External Tools Allowed",
+      "type": "boolean"
+    },
+    "network_access_allowed": {
+      "const": false,
+      "default": false,
+      "title": "Network Access Allowed",
+      "type": "boolean"
+    },
+    "external_writes_allowed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Allowed",
+      "type": "boolean"
+    },
+    "raw_payload_externalized": {
+      "const": false,
+      "default": false,
+      "title": "Raw Payload Externalized",
+      "type": "boolean"
+    },
+    "approved_for_real_data": {
+      "const": false,
+      "default": false,
+      "title": "Approved For Real Data",
+      "type": "boolean"
+    },
+    "typed_json_only": {
+      "const": true,
+      "default": true,
+      "title": "Typed Json Only",
+      "type": "boolean"
+    },
+    "prompt_registry_ref": {
+      "title": "Prompt Registry Ref",
+      "type": "string"
+    },
+    "prompt_hashes": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Prompt Hashes",
+      "type": "object"
+    },
+    "structured_output_schema_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Structured Output Schema Refs",
+      "type": "array"
+    },
+    "model_budget": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Model Budget",
+      "type": "object"
+    },
+    "allowed_tool_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Allowed Tool Refs",
+      "type": "array"
+    },
+    "tool_denylist": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Tool Denylist",
+      "type": "array"
+    },
+    "required_human_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Human Gates",
+      "type": "array"
+    },
+    "independent_critic_required": {
+      "const": true,
+      "default": true,
+      "title": "Independent Critic Required",
+      "type": "boolean"
+    },
+    "human_confirmation_required": {
+      "const": true,
+      "default": true,
+      "title": "Human Confirmation Required",
+      "type": "boolean"
+    },
+    "deterministic_baseline_required": {
+      "const": true,
+      "default": true,
+      "title": "Deterministic Baseline Required",
+      "type": "boolean"
+    },
+    "deterministic_workers_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Deterministic Workers Authoritative",
+      "type": "boolean"
+    },
+    "baseline_comparison_state": {
+      "enum": [
+        "deterministic_workers_are_current_baseline",
+        "dry_run_no_provider_output",
+        "compared_to_deterministic_baseline",
+        "failed_missing_synthetic_gold",
+        "failed_synthetic_gold"
+      ],
+      "title": "Baseline Comparison State",
+      "type": "string"
+    },
+    "comparison_status": {
+      "default": "not_run",
+      "enum": [
+        "not_run",
+        "passed",
+        "failed"
+      ],
+      "title": "Comparison Status",
+      "type": "string"
+    },
+    "comparison_basis": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Comparison Basis",
+      "type": "array"
+    },
+    "deterministic_baseline_hash": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Deterministic Baseline Hash"
+    },
+    "structured_candidate_hash": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Structured Candidate Hash"
+    },
+    "typed_json_validation_status": {
+      "default": "not_run",
+      "enum": [
+        "not_run",
+        "passed",
+        "failed"
+      ],
+      "title": "Typed Json Validation Status",
+      "type": "string"
+    },
+    "synthetic_gold_required": {
+      "default": false,
+      "title": "Synthetic Gold Required",
+      "type": "boolean"
+    },
+    "synthetic_gold_compared": {
+      "default": false,
+      "title": "Synthetic Gold Compared",
+      "type": "boolean"
+    },
+    "fixture_gold_report_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Fixture Gold Report Ref"
+    },
+    "fixture_gold_status": {
+      "default": "not_requested",
+      "enum": [
+        "not_requested",
+        "passed",
+        "failed"
+      ],
+      "title": "Fixture Gold Status",
+      "type": "string"
+    },
+    "comparison_summary": {
+      "additionalProperties": true,
+      "title": "Comparison Summary",
+      "type": "object"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/ModelAdapterGuardCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "model_adapter_report_id",
+    "run_id",
+    "adapter_name",
+    "adapter_mode",
+    "status",
+    "model_calls_allowed",
+    "external_tools_allowed",
+    "prompt_registry_ref",
+    "prompt_hashes",
+    "structured_output_schema_refs",
+    "model_budget",
+    "tool_denylist",
+    "required_human_gates",
+    "baseline_comparison_state",
+    "checks",
+    "generated_at"
+  ],
+  "title": "ModelAdapterReport",
+  "type": "object"
+}

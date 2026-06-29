@@ -1,0 +1,557 @@
+{
+  "$defs": {
+    "BudgetLakeAdmissionBundleCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "artifact_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Artifact Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "BudgetLakeAdmissionBundleCheck",
+      "type": "object"
+    },
+    "BudgetLakeEvidenceArtifact": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "default": "0.1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "artifact_id": {
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "artifact_kind": {
+          "enum": [
+            "budget_change_ledger_report",
+            "budget_change_ledger_jsonl",
+            "budget_actual_variance_ledger_report",
+            "budget_actual_variance_ledger_jsonl",
+            "carrier_rejection_decision_ledger_report",
+            "carrier_rejection_decision_ledger_jsonl"
+          ],
+          "title": "Artifact Kind",
+          "type": "string"
+        },
+        "artifact_ref": {
+          "title": "Artifact Ref",
+          "type": "string"
+        },
+        "sha256": {
+          "title": "Sha256",
+          "type": "string"
+        },
+        "report_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Report Id"
+        },
+        "ledger_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ledger Id"
+        },
+        "run_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Run Id"
+        },
+        "preflight_packet_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Preflight Packet Id"
+        },
+        "budget_proposal_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Budget Proposal Id"
+        },
+        "event_count": {
+          "minimum": 0,
+          "title": "Event Count",
+          "type": "integer"
+        },
+        "row_event_count": {
+          "minimum": 0,
+          "title": "Row Event Count",
+          "type": "integer"
+        },
+        "event_kind_counts": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "title": "Event Kind Counts",
+          "type": "object"
+        },
+        "local_event_labels": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Local Event Labels",
+          "type": "array"
+        },
+        "candidate_record_families": {
+          "items": {
+            "enum": [
+              "budget_human_change_record",
+              "budget_actual_variance_record",
+              "budget_actual_missing_source_record",
+              "carrier_rejection_decision_record",
+              "carrier_appeal_result_record",
+              "carrier_financial_outcome_record"
+            ],
+            "type": "string"
+          },
+          "title": "Candidate Record Families",
+          "type": "array"
+        },
+        "admission_state": {
+          "const": "candidate_not_admitted",
+          "default": "candidate_not_admitted",
+          "title": "Admission State",
+          "type": "string"
+        },
+        "requires_exception_lake_owner_review": {
+          "const": true,
+          "default": true,
+          "title": "Requires Exception Lake Owner Review",
+          "type": "boolean"
+        },
+        "artifact_hash_required": {
+          "const": true,
+          "default": true,
+          "title": "Artifact Hash Required",
+          "type": "boolean"
+        },
+        "append_only": {
+          "const": true,
+          "default": true,
+          "title": "Append Only",
+          "type": "boolean"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        },
+        "synthetic_only": {
+          "const": true,
+          "default": true,
+          "title": "Synthetic Only",
+          "type": "boolean"
+        },
+        "raw_payload_included": {
+          "const": false,
+          "default": false,
+          "title": "Raw Payload Included",
+          "type": "boolean"
+        },
+        "not_authorized_for_lake_write": {
+          "const": true,
+          "default": true,
+          "title": "Not Authorized For Lake Write",
+          "type": "boolean"
+        },
+        "not_authorized_for_sqlite_write": {
+          "const": true,
+          "default": true,
+          "title": "Not Authorized For Sqlite Write",
+          "type": "boolean"
+        },
+        "lake_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Lake Write Performed",
+          "type": "boolean"
+        },
+        "sqlite_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Sqlite Write Performed",
+          "type": "boolean"
+        },
+        "external_writes_performed": {
+          "const": false,
+          "default": false,
+          "title": "External Writes Performed",
+          "type": "boolean"
+        },
+        "silent_learning_performed": {
+          "const": false,
+          "default": false,
+          "title": "Silent Learning Performed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "artifact_id",
+        "artifact_kind",
+        "artifact_ref",
+        "sha256",
+        "event_count",
+        "row_event_count"
+      ],
+      "title": "BudgetLakeEvidenceArtifact",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "bundle_report_id": {
+      "title": "Bundle Report Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "ready_for_exception_lake_review",
+        "blocked_missing_artifacts",
+        "blocked_inconsistent_evidence"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "origin_repo": {
+      "const": "LawFirm-os-intake",
+      "default": "LawFirm-os-intake",
+      "title": "Origin Repo",
+      "type": "string"
+    },
+    "target_repo": {
+      "const": "LawFirm-os-exceptions-lake-runtime",
+      "default": "LawFirm-os-exceptions-lake-runtime",
+      "title": "Target Repo",
+      "type": "string"
+    },
+    "admission_state": {
+      "const": "dry_run_not_admitted",
+      "default": "dry_run_not_admitted",
+      "title": "Admission State",
+      "type": "string"
+    },
+    "artifact_count": {
+      "minimum": 0,
+      "title": "Artifact Count",
+      "type": "integer"
+    },
+    "ledger_report_count": {
+      "minimum": 0,
+      "title": "Ledger Report Count",
+      "type": "integer"
+    },
+    "jsonl_row_count": {
+      "minimum": 0,
+      "title": "Jsonl Row Count",
+      "type": "integer"
+    },
+    "total_event_count": {
+      "minimum": 0,
+      "title": "Total Event Count",
+      "type": "integer"
+    },
+    "budget_proposal_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Budget Proposal Ids",
+      "type": "array"
+    },
+    "preflight_packet_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Preflight Packet Ids",
+      "type": "array"
+    },
+    "run_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Run Ids",
+      "type": "array"
+    },
+    "candidate_record_families": {
+      "items": {
+        "enum": [
+          "budget_human_change_record",
+          "budget_actual_variance_record",
+          "budget_actual_missing_source_record",
+          "carrier_rejection_decision_record",
+          "carrier_appeal_result_record",
+          "carrier_financial_outcome_record"
+        ],
+        "type": "string"
+      },
+      "title": "Candidate Record Families",
+      "type": "array"
+    },
+    "local_event_labels": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Local Event Labels",
+      "type": "array"
+    },
+    "artifacts": {
+      "items": {
+        "$ref": "#/$defs/BudgetLakeEvidenceArtifact"
+      },
+      "title": "Artifacts",
+      "type": "array"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/BudgetLakeAdmissionBundleCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "required_next_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Gates",
+      "type": "array"
+    },
+    "append_only_required": {
+      "const": true,
+      "default": true,
+      "title": "Append Only Required",
+      "type": "boolean"
+    },
+    "correction_supersession_required": {
+      "const": true,
+      "default": true,
+      "title": "Correction Supersession Required",
+      "type": "boolean"
+    },
+    "record_hash_required": {
+      "const": true,
+      "default": true,
+      "title": "Record Hash Required",
+      "type": "boolean"
+    },
+    "orchestrator_evidence_packet_required": {
+      "const": true,
+      "default": true,
+      "title": "Orchestrator Evidence Packet Required",
+      "type": "boolean"
+    },
+    "exception_lake_owner_admission_required": {
+      "const": true,
+      "default": true,
+      "title": "Exception Lake Owner Admission Required",
+      "type": "boolean"
+    },
+    "no_connector_implemented": {
+      "const": true,
+      "default": true,
+      "title": "No Connector Implemented",
+      "type": "boolean"
+    },
+    "no_lake_admission_performed": {
+      "const": true,
+      "default": true,
+      "title": "No Lake Admission Performed",
+      "type": "boolean"
+    },
+    "no_sibling_repo_writes": {
+      "const": true,
+      "default": true,
+      "title": "No Sibling Repo Writes",
+      "type": "boolean"
+    },
+    "no_canonical_mutation": {
+      "const": true,
+      "default": true,
+      "title": "No Canonical Mutation",
+      "type": "boolean"
+    },
+    "raw_payload_included": {
+      "const": false,
+      "default": false,
+      "title": "Raw Payload Included",
+      "type": "boolean"
+    },
+    "not_authorized_for_lake_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Lake Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_sqlite_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Sqlite Write",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "billing_connector_read_performed": {
+      "const": false,
+      "default": false,
+      "title": "Billing Connector Read Performed",
+      "type": "boolean"
+    },
+    "billing_connector_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Billing Connector Write Performed",
+      "type": "boolean"
+    },
+    "carrier_portal_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Carrier Portal Write Performed",
+      "type": "boolean"
+    },
+    "email_send_performed": {
+      "const": false,
+      "default": false,
+      "title": "Email Send Performed",
+      "type": "boolean"
+    },
+    "appeal_submission_performed": {
+      "const": false,
+      "default": false,
+      "title": "Appeal Submission Performed",
+      "type": "boolean"
+    },
+    "budget_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Budget Mutation Performed",
+      "type": "boolean"
+    },
+    "profile_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Profile Mutation Performed",
+      "type": "boolean"
+    },
+    "template_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Template Mutation Performed",
+      "type": "boolean"
+    },
+    "carrier_guideline_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Carrier Guideline Mutation Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "bundle_report_id",
+    "status",
+    "artifact_count",
+    "ledger_report_count",
+    "jsonl_row_count",
+    "total_event_count",
+    "artifacts",
+    "checks",
+    "required_next_gates",
+    "generated_at"
+  ],
+  "title": "BudgetLakeAdmissionBundleReport",
+  "type": "object"
+}

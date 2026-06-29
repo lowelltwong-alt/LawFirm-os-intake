@@ -1,58 +1,202 @@
-version: '0.1'
+version: "0.2"
 status: planning_only
 sources:
-- source_id: courtlistener-recap
-  url: https://www.courtlistener.com/recap/
-  useful_for:
-  - docket_structure
-  - party_and_attorney_fields
-  - filing_metadata
-  - provenance
-  direct_runtime_ingestion: false
-- source_id: fjc-idb
-  url: https://www.fjc.gov/research/idb
-  useful_for:
-  - case_metadata_fields
-  - nature_of_suit
-  - procedural_dates
-  - synthetic_distribution_design
-  direct_runtime_ingestion: false
-- source_id: cmu-enron-email
-  url: https://www.cs.cmu.edu/~enron/
-  useful_for:
-  - email_threading
-  - quoted_text
-  - participants
-  - signatures
-  - duplicates
-  limitations:
-  - not_legal_intake
-  - privacy_review_required
-  - attachments_not_equivalent_to_law_firm_data
-  direct_runtime_ingestion: false
-- source_id: sec-edgar
-  url: https://www.sec.gov/edgar
-  useful_for:
-  - public_document_structure
-  - entity_extraction
-  direct_runtime_ingestion: false
-- source_id: nhtsa-public-crash-data
-  url: https://www.nhtsa.gov/data
-  useful_for:
-  - auto_liability_synthetic_distribution_design
-  - vehicle_date_location_field_mapping
-  limitations:
-  - not_law_firm_intake
-  - no_representation_or_liability_inference
-  direct_runtime_ingestion: false
-- source_id: npdb-public-use-data
-  url: https://www.npdb.hrsa.gov/resources/publicData.jsp
-  useful_for:
-  - aggregate_medical_malpractice_distribution_design
-  - field_mapping
-  limitations:
-  - privacy_and_use_review_required
-  - not_case_intake
-  - no_identity_enrichment
-  - no_merits_or_budget_inference
-  direct_runtime_ingestion: false
+  - source_id: courtlistener-recap
+    url: https://www.courtlistener.com/recap/
+    methodology_role: docket_and_party_metadata_structure
+    useful_for:
+      - docket_structure
+      - party_and_attorney_fields
+      - filing_metadata
+      - provenance
+    safe_use_classes:
+      - schema_field_mapping
+      - provenance_shape_review
+      - synthetic_docket_fixture_design
+    prohibited_use_classes:
+      - direct_runtime_ingestion
+      - real_party_identity_enrichment
+      - legal_conclusion_or_conflict_clearance
+      - budget_or_merits_inference
+    review_requirements:
+      - source_license_review
+      - privacy_review
+      - retention_decision
+      - owner_approval_before_adapter
+      - no_raw_payload_commit
+    synthetic_conversion_rules:
+      - preserve_field_shape_not_identity
+      - replace_party_and_attorney_names
+      - use_synthetic_docket_ids
+      - keep_source_url_as_methodology_ref_only
+    retention_policy: catalog_metadata_only_no_downloads
+    privacy_posture: public_records_are_real_matters_not_runtime_inputs
+    adapter_status: not_authorized
+    direct_runtime_ingestion: false
+  - source_id: fjc-idb
+    url: https://www.fjc.gov/research/idb
+    methodology_role: aggregate_case_metadata_distribution_design
+    useful_for:
+      - case_metadata_fields
+      - nature_of_suit
+      - procedural_dates
+      - synthetic_distribution_design
+    safe_use_classes:
+      - aggregate_schema_mapping
+      - synthetic_distribution_design
+      - procedural_date_field_review
+    prohibited_use_classes:
+      - direct_runtime_ingestion
+      - case_specific_fact_inference
+      - firm_specific_accuracy_claims
+      - legal_or_budget_recommendations
+    review_requirements:
+      - source_license_review
+      - privacy_review
+      - retention_decision
+      - owner_approval_before_adapter
+      - no_raw_payload_commit
+    synthetic_conversion_rules:
+      - use_aggregate_distributions_only
+      - avoid_real_case_reconstruction
+      - synthesize_dates_and_postures
+      - preserve_codebook_field_names_as_methodology_refs
+    retention_policy: catalog_metadata_only_no_downloads
+    privacy_posture: aggregate_public_data_still_requires_review_before_use
+    adapter_status: not_authorized
+    direct_runtime_ingestion: false
+  - source_id: cmu-enron-email
+    url: https://www.cs.cmu.edu/~enron/
+    methodology_role: messy_correspondence_structure_stress
+    useful_for:
+      - email_threading
+      - quoted_text
+      - participants
+      - signatures
+      - duplicates
+    safe_use_classes:
+      - email_boundary_parser_stress
+      - quote_and_signature_detection_design
+      - duplicate_correspondence_pattern_design
+    prohibited_use_classes:
+      - direct_runtime_ingestion
+      - legal_intake_fact_generation
+      - confidential_law_firm_analogy_claims
+      - attachment_equivalence_claims
+    review_requirements:
+      - source_license_review
+      - privacy_review
+      - retention_decision
+      - owner_approval_before_adapter
+      - no_raw_payload_commit
+    synthetic_conversion_rules:
+      - preserve_threading_shape_only
+      - replace_people_domains_and_message_content
+      - synthesize_attachments_separately
+      - treat_instructions_as_untrusted_data
+    retention_policy: catalog_metadata_only_no_downloads
+    privacy_posture: public_corpus_with_privacy_history_review_required
+    adapter_status: not_authorized
+    limitations:
+      - not_legal_intake
+      - privacy_review_required
+      - attachments_not_equivalent_to_law_firm_data
+    direct_runtime_ingestion: false
+  - source_id: sec-edgar
+    url: https://www.sec.gov/edgar
+    methodology_role: public_filing_document_structure
+    useful_for:
+      - public_document_structure
+      - entity_extraction
+    safe_use_classes:
+      - public_filing_section_shape_review
+      - entity_mention_pattern_design
+      - synthetic_document_structure_design
+    prohibited_use_classes:
+      - direct_runtime_ingestion
+      - real_entity_enrichment_for_intake
+      - conflicts_or_representation_inference
+      - budget_or_merits_inference
+    review_requirements:
+      - source_license_review
+      - privacy_review
+      - retention_decision
+      - owner_approval_before_adapter
+      - no_raw_payload_commit
+    synthetic_conversion_rules:
+      - preserve_section_shape_not_payload
+      - replace_entity_names_and_identifiers
+      - avoid_real_filing_reconstruction
+      - keep_accession_refs_out_of_runtime_fixtures
+    retention_policy: catalog_metadata_only_no_downloads
+    privacy_posture: public_company_records_not_client_or_matter_inputs
+    adapter_status: not_authorized
+    direct_runtime_ingestion: false
+  - source_id: nhtsa-public-crash-data
+    url: https://www.nhtsa.gov/data
+    methodology_role: auto_liability_field_and_distribution_design
+    useful_for:
+      - auto_liability_synthetic_distribution_design
+      - vehicle_date_location_field_mapping
+    safe_use_classes:
+      - aggregate_field_mapping
+      - synthetic_auto_fact_pattern_design
+      - date_location_vehicle_schema_review
+    prohibited_use_classes:
+      - direct_runtime_ingestion
+      - representation_or_liability_inference
+      - real_person_or_crash_enrichment
+      - budget_or_merits_inference
+    review_requirements:
+      - source_license_review
+      - privacy_review
+      - retention_decision
+      - owner_approval_before_adapter
+      - no_raw_payload_commit
+    synthetic_conversion_rules:
+      - use_aggregate_patterns_only
+      - replace_dates_locations_and_vehicle_ids
+      - avoid_real_incident_reconstruction
+      - keep_no_liability_inference
+    retention_policy: catalog_metadata_only_no_downloads
+    privacy_posture: public_safety_records_not_law_firm_intake_inputs
+    adapter_status: not_authorized
+    limitations:
+      - not_law_firm_intake
+      - no_representation_or_liability_inference
+    direct_runtime_ingestion: false
+  - source_id: npdb-public-use-data
+    url: https://www.npdb.hrsa.gov/resources/publicData.jsp
+    methodology_role: aggregate_medical_malpractice_distribution_design
+    useful_for:
+      - aggregate_medical_malpractice_distribution_design
+      - field_mapping
+    safe_use_classes:
+      - aggregate_distribution_review
+      - synthetic_medmal_field_design
+      - schema_gap_analysis
+    prohibited_use_classes:
+      - direct_runtime_ingestion
+      - identity_enrichment
+      - merits_or_budget_inference
+      - case_specific_provider_or_claim_inference
+    review_requirements:
+      - source_license_review
+      - privacy_review
+      - retention_decision
+      - owner_approval_before_adapter
+      - no_raw_payload_commit
+    synthetic_conversion_rules:
+      - use_aggregate_patterns_only
+      - avoid_identifiable_provider_or_claim_reconstruction
+      - synthesize_roles_and_events
+      - keep_no_merits_or_budget_inference
+    retention_policy: catalog_metadata_only_no_downloads
+    privacy_posture: public_use_healthcare_data_requires_specific_privacy_review
+    adapter_status: not_authorized
+    limitations:
+      - privacy_and_use_review_required
+      - not_case_intake
+      - no_identity_enrichment
+      - no_merits_or_budget_inference
+    direct_runtime_ingestion: false

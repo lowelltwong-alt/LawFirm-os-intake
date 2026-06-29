@@ -1,0 +1,303 @@
+{
+  "$defs": {
+    "EvidenceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "segment_id": {
+          "title": "Segment Id",
+          "type": "string"
+        },
+        "start_offset": {
+          "title": "Start Offset",
+          "type": "integer"
+        },
+        "end_offset": {
+          "title": "End Offset",
+          "type": "integer"
+        },
+        "sha256": {
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "segment_id",
+        "start_offset",
+        "end_offset",
+        "sha256"
+      ],
+      "title": "EvidenceRef",
+      "type": "object"
+    },
+    "Segment": {
+      "additionalProperties": false,
+      "properties": {
+        "segment_id": {
+          "title": "Segment Id",
+          "type": "string"
+        },
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "parent_segment_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent Segment Id"
+        },
+        "segment_type": {
+          "title": "Segment Type",
+          "type": "string"
+        },
+        "sequence": {
+          "title": "Sequence",
+          "type": "integer"
+        },
+        "start_offset": {
+          "title": "Start Offset",
+          "type": "integer"
+        },
+        "end_offset": {
+          "title": "End Offset",
+          "type": "integer"
+        },
+        "sha256": {
+          "title": "Sha256",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "structural_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Structural Path"
+        },
+        "message_index": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Message Index"
+        },
+        "attachment_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attachment Ref"
+        },
+        "source_instruction_risk": {
+          "default": false,
+          "title": "Source Instruction Risk",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "segment_id",
+        "source_id",
+        "segment_type",
+        "sequence",
+        "start_offset",
+        "end_offset",
+        "sha256",
+        "text"
+      ],
+      "title": "Segment",
+      "type": "object"
+    },
+    "SourceInventoryItem": {
+      "additionalProperties": false,
+      "properties": {
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "source_type": {
+          "title": "Source Type",
+          "type": "string"
+        },
+        "filename": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filename"
+        },
+        "read_state": {
+          "default": "read",
+          "enum": [
+            "read",
+            "unread",
+            "missing",
+            "unreadable"
+          ],
+          "title": "Read State",
+          "type": "string"
+        },
+        "availability_state": {
+          "default": "available",
+          "enum": [
+            "available",
+            "missing",
+            "duplicate",
+            "unreadable"
+          ],
+          "title": "Availability State",
+          "type": "string"
+        },
+        "character_count": {
+          "title": "Character Count",
+          "type": "integer"
+        },
+        "source_sha256": {
+          "title": "Source Sha256",
+          "type": "string"
+        },
+        "duplicate_of_source_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Duplicate Of Source Id"
+        },
+        "attachment_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Attachment Refs",
+          "type": "array"
+        },
+        "metadata_keys": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Metadata Keys",
+          "type": "array"
+        }
+      },
+      "required": [
+        "source_id",
+        "source_type",
+        "character_count",
+        "source_sha256"
+      ],
+      "title": "SourceInventoryItem",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "ingestion_result_id": {
+      "title": "Ingestion Result Id",
+      "type": "string"
+    },
+    "bundle_id": {
+      "title": "Bundle Id",
+      "type": "string"
+    },
+    "adapter_kind": {
+      "const": "python_reference_ingestion_adapter",
+      "default": "python_reference_ingestion_adapter",
+      "title": "Adapter Kind",
+      "type": "string"
+    },
+    "parity_contract": {
+      "const": "rust_ready_ingestion_v0_1",
+      "default": "rust_ready_ingestion_v0_1",
+      "title": "Parity Contract",
+      "type": "string"
+    },
+    "rust_replacement_allowed": {
+      "const": false,
+      "default": false,
+      "title": "Rust Replacement Allowed",
+      "type": "boolean"
+    },
+    "source_inventory": {
+      "items": {
+        "$ref": "#/$defs/SourceInventoryItem"
+      },
+      "title": "Source Inventory",
+      "type": "array"
+    },
+    "source_coverage_summary": {
+      "additionalProperties": true,
+      "title": "Source Coverage Summary",
+      "type": "object"
+    },
+    "segments": {
+      "items": {
+        "$ref": "#/$defs/Segment"
+      },
+      "title": "Segments",
+      "type": "array"
+    },
+    "segment_evidence_refs": {
+      "items": {
+        "$ref": "#/$defs/EvidenceRef"
+      },
+      "title": "Segment Evidence Refs",
+      "type": "array"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "ingestion_result_id",
+    "bundle_id",
+    "source_inventory",
+    "segments",
+    "segment_evidence_refs",
+    "generated_at"
+  ],
+  "title": "IngestionResult",
+  "type": "object"
+}

@@ -1,0 +1,74 @@
+{
+  "schema_version": "0.1",
+  "bundle_id": "synthetic-high-volume-ingestion-proxy",
+  "data_origin": "synthetic",
+  "contains_real_client_data": false,
+  "contains_real_matter_data": false,
+  "contains_privileged_data": false,
+  "fixture_hints": {
+    "purpose": "synthetic proxy for many-document intake volume profiling",
+    "expected_profile_signal": "source_count_at_or_above_profile_threshold"
+  },
+  "sources": [
+    {
+      "source_id": "syn-volume-email-001",
+      "source_type": "email",
+      "filename": "volume-001.eml",
+      "text": "From: intake-synthetic@example.test\nTo: intake@example.test\nSubject: Synthetic intake volume proxy 001\n\nSynthetic note 001 says an attached chronology may exist. Human review remains required."
+    },
+    {
+      "source_id": "syn-volume-email-002",
+      "source_type": "email",
+      "filename": "volume-002.eml",
+      "text": "From: intake-synthetic@example.test\nTo: intake@example.test\nSubject: Synthetic intake volume proxy 002\n\nSynthetic note 002 repeats party and timing details for segmentation load only."
+    },
+    {
+      "source_id": "syn-volume-email-003",
+      "source_type": "email",
+      "filename": "volume-003.eml",
+      "text": "From: intake-synthetic@example.test\nTo: intake@example.test\nSubject: Synthetic intake volume proxy 003\n\nSynthetic note 003 includes a possible missing attachment reference."
+    },
+    {
+      "source_id": "syn-volume-email-004",
+      "source_type": "email",
+      "filename": "volume-004.eml",
+      "text": "From: intake-synthetic@example.test\nTo: intake@example.test\nSubject: Synthetic intake volume proxy 004\n\nSynthetic note 004 is intentionally generic and contains no real matter data."
+    },
+    {
+      "source_id": "syn-volume-email-005",
+      "source_type": "email",
+      "filename": "volume-005.eml",
+      "text": "From: intake-synthetic@example.test\nTo: intake@example.test\nSubject: Synthetic intake volume proxy 005\n\nSynthetic note 005 asks only for candidate intake review."
+    },
+    {
+      "source_id": "syn-volume-letter-006",
+      "source_type": "letter",
+      "filename": "volume-006.txt",
+      "text": "Synthetic letter 006. This text exists to create deterministic source inventory and segment counts for ingestion volume profiling."
+    },
+    {
+      "source_id": "syn-volume-letter-007",
+      "source_type": "letter",
+      "filename": "volume-007.txt",
+      "text": "Synthetic letter 007. This fixture is not a real case, does not contain privileged content, and authorizes no action."
+    },
+    {
+      "source_id": "syn-volume-letter-008",
+      "source_type": "letter",
+      "filename": "volume-008.txt",
+      "text": "Synthetic letter 008. The only expected result is local scale profiling for a future Rust-readiness decision."
+    },
+    {
+      "source_id": "syn-volume-letter-009",
+      "source_type": "letter",
+      "filename": "volume-009.txt",
+      "text": "Synthetic letter 009. Source IDs, offsets, hashes, and segment refs must remain deterministic."
+    },
+    {
+      "source_id": "syn-volume-letter-010",
+      "source_type": "letter",
+      "filename": "volume-010.txt",
+      "text": "Synthetic letter 010. Crossing the local source-count threshold requires profiling before any Rust adapter proposal."
+    }
+  ]
+}

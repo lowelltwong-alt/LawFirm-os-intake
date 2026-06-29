@@ -1,0 +1,48 @@
+{
+  "schema_version": "0.1",
+  "fixture_result_id": "shadowevalfixture_fixture_capture_completeness_pass",
+  "proposed_change_id": "proposedchange_b3f91017e338b1d2474a",
+  "candidate_id": "learninggate_fixture_capture_completeness",
+  "baseline_behavior_ref": "synthetic-shadow-eval://capture-completeness/baseline",
+  "proposed_behavior_ref": "synthetic-shadow-eval://capture-completeness/proposed",
+  "baseline_output_hash": "sha256:3574f0fae63e5d875cf24db3630976dcf83de254de4819ddf76cc6d8c1ef0fb9",
+  "proposed_output_hash": "sha256:09c05f749f2e9a902b6308780895cb2fd19d30997a4c9e3c243b4ce83c8baf92",
+  "expected_behavior_summary": "Synthetic capture-completeness replay preserves source coverage, missing-response detection, and no connector writes while routing runtime ownership to Orchestrator.",
+  "observed_behavior_summary": "Replay passed declared carrier rejection capture eval suites and guardrails without implementing connector capture.",
+  "evaluation_outcome": "passed",
+  "passed_eval_suites": [
+    "carrier rejection capture replay",
+    "fixture-gold replay",
+    "starter boundary regression"
+  ],
+  "failed_eval_suites": [],
+  "passed_regression_guardrails": [
+    "no Lake write",
+    "no connector write",
+    "no external writes",
+    "no silent learning",
+    "source evidence remains stable"
+  ],
+  "failed_regression_guardrails": [],
+  "support_refs": [
+    "examples/synthetic/learning/proposed-change-shadow-eval-plan.json",
+    "examples/synthetic/learning/proposed-change-readiness-report.json",
+    "synthetic-shadow-eval://capture-completeness/replay"
+  ],
+  "synthetic_only": true,
+  "contains_real_client_data": false,
+  "contains_real_matter_data": false,
+  "contains_privileged_data": false,
+  "proposed_change_applied": false,
+  "baseline_mutated": false,
+  "profile_mutation_performed": false,
+  "template_mutation_performed": false,
+  "connector_mutation_performed": false,
+  "budget_mutation_performed": false,
+  "carrier_guideline_mutation_performed": false,
+  "lake_write_performed": false,
+  "sqlite_write_performed": false,
+  "external_writes_performed": false,
+  "silent_learning_performed": false,
+  "generated_at": "2026-06-26T00:00:00Z"
+}

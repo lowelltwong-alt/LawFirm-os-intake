@@ -1,0 +1,269 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "review_package_id": {
+      "title": "Review Package Id",
+      "type": "string"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "preflight_packet_id": {
+      "title": "Preflight Packet Id",
+      "type": "string"
+    },
+    "confirmation_id": {
+      "title": "Confirmation Id",
+      "type": "string"
+    },
+    "conflict_seed_id": {
+      "title": "Conflict Seed Id",
+      "type": "string"
+    },
+    "budget_proposal_id": {
+      "title": "Budget Proposal Id",
+      "type": "string"
+    },
+    "readiness_id": {
+      "title": "Readiness Id",
+      "type": "string"
+    },
+    "status": {
+      "const": "blocked_pending_conflicts_and_engagement",
+      "title": "Status",
+      "type": "string"
+    },
+    "human_readable_review_ref": {
+      "title": "Human Readable Review Ref",
+      "type": "string"
+    },
+    "artifact_refs": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Artifact Refs",
+      "type": "object"
+    },
+    "required_human_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Human Gates",
+      "type": "array"
+    },
+    "human_gate_status_report_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Human Gate Status Report Ref"
+    },
+    "final_blockers": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Final Blockers",
+      "type": "array"
+    },
+    "prohibited_actions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Prohibited Actions",
+      "type": "array"
+    },
+    "safety_gate_report_ref": {
+      "title": "Safety Gate Report Ref",
+      "type": "string"
+    },
+    "contract_state_report_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Contract State Report Ref"
+    },
+    "data_scope_gate_report_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Data Scope Gate Report Ref"
+    },
+    "budget_precondition_report_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Budget Precondition Report Ref"
+    },
+    "evidence_completeness_report_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Evidence Completeness Report Ref"
+    },
+    "context_boundary_report_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Context Boundary Report Ref"
+    },
+    "evidence_graph_ref": {
+      "title": "Evidence Graph Ref",
+      "type": "string"
+    },
+    "run_ledger_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Run Ledger Refs",
+      "type": "array"
+    },
+    "run_ledger_integrity_report_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Run Ledger Integrity Report Refs",
+      "type": "array"
+    },
+    "exception_candidate_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Exception Candidate Refs",
+      "type": "array"
+    },
+    "exception_lake_readiness_report_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Exception Lake Readiness Report Ref"
+    },
+    "exception_lake_handoff_manifest_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Exception Lake Handoff Manifest Ref"
+    },
+    "review_package_completeness_report_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Review Package Completeness Report Ref"
+    },
+    "budget_submission_guard_report_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Budget Submission Guard Report Ref"
+    },
+    "no_conflict_conclusion": {
+      "const": true,
+      "default": true,
+      "title": "No Conflict Conclusion",
+      "type": "boolean"
+    },
+    "budget_not_authorized_for_client_submission": {
+      "const": true,
+      "default": true,
+      "title": "Budget Not Authorized For Client Submission",
+      "type": "boolean"
+    },
+    "contains_raw_payload": {
+      "const": false,
+      "default": false,
+      "title": "Contains Raw Payload",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "review_package_id",
+    "run_id",
+    "preflight_packet_id",
+    "confirmation_id",
+    "conflict_seed_id",
+    "budget_proposal_id",
+    "readiness_id",
+    "status",
+    "human_readable_review_ref",
+    "artifact_refs",
+    "required_human_gates",
+    "final_blockers",
+    "prohibited_actions",
+    "safety_gate_report_ref",
+    "evidence_graph_ref",
+    "run_ledger_refs",
+    "exception_candidate_refs"
+  ],
+  "title": "ReviewPackageManifest",
+  "type": "object"
+}

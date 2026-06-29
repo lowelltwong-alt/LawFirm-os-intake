@@ -1,0 +1,73 @@
+{
+  "schema_version": "0.1",
+  "bundle_id": "syn-bundle-holdout-dup-attach-001",
+  "data_origin": "synthetic",
+  "contains_real_client_data": false,
+  "contains_real_matter_data": false,
+  "contains_privileged_data": false,
+  "sources": [
+    {
+      "source_id": "syn-email-dup-001",
+      "source_type": "email",
+      "filename": "assignment_a.txt",
+      "text": "From: adjuster@harborpoint.example\nTo: intake@synthetic-law.example\nSubject: New assignment with missing attachment\n\nWe are assigning defense of insured Dr. Maya Chen. Please see the attached complaint and claim notes. Claim number HP-4455.\n\n> Prior note: patient alleges malpractice after surgery.\n",
+      "metadata": {
+        "synthetic": true,
+        "attachment_refs": [
+          "complaint.pdf",
+          "claim-notes.pdf"
+        ]
+      }
+    },
+    {
+      "source_id": "syn-email-dup-002",
+      "source_type": "email",
+      "filename": "assignment_duplicate.txt",
+      "text": "From: adjuster@harborpoint.example\nTo: intake@synthetic-law.example\nSubject: New assignment with missing attachment\n\nWe are assigning defense of insured Dr. Maya Chen. Please see the attached complaint and claim notes. Claim number HP-4455.\n\n> Prior note: patient alleges malpractice after surgery.\n",
+      "metadata": {
+        "synthetic": true
+      }
+    },
+    {
+      "source_id": "syn-attachment-missing-001",
+      "source_type": "attachment_text",
+      "filename": "complaint.pdf",
+      "text": "",
+      "metadata": {
+        "synthetic": true,
+        "missing": true,
+        "read_state": "missing"
+      }
+    }
+  ],
+  "fixture_hints": {
+    "provided_fields": [
+      "claim_number",
+      "prospective_represented_client"
+    ],
+    "entities": [
+      {
+        "name": "Harbor Point Insurance",
+        "role_candidates": [
+          {
+            "role": "insurance_carrier",
+            "confidence": 0.82
+          },
+          {
+            "role": "instructing_source",
+            "confidence": 0.79
+          }
+        ]
+      },
+      {
+        "name": "Dr. Maya Chen",
+        "role_candidates": [
+          {
+            "role": "insured_or_prospective_represented_client",
+            "confidence": 0.72
+          }
+        ]
+      }
+    ]
+  }
+}

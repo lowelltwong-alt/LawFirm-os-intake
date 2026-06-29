@@ -1,0 +1,140 @@
+{
+  "$defs": {
+    "EvidenceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "segment_id": {
+          "title": "Segment Id",
+          "type": "string"
+        },
+        "start_offset": {
+          "title": "Start Offset",
+          "type": "integer"
+        },
+        "end_offset": {
+          "title": "End Offset",
+          "type": "integer"
+        },
+        "sha256": {
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "segment_id",
+        "start_offset",
+        "end_offset",
+        "sha256"
+      ],
+      "title": "EvidenceRef",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "candidate_id": {
+      "title": "Candidate Id",
+      "type": "string"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "preflight_packet_id": {
+      "title": "Preflight Packet Id",
+      "type": "string"
+    },
+    "local_event_label": {
+      "title": "Local Event Label",
+      "type": "string"
+    },
+    "canonical_lake_class": {
+      "enum": [
+        "retrieval_miss",
+        "workflow_escalation",
+        "authority_conflict_override"
+      ],
+      "title": "Canonical Lake Class",
+      "type": "string"
+    },
+    "status": {
+      "const": "dry_run_candidate",
+      "default": "dry_run_candidate",
+      "title": "Status",
+      "type": "string"
+    },
+    "reason": {
+      "title": "Reason",
+      "type": "string"
+    },
+    "source_inventory_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Source Inventory Refs",
+      "type": "array"
+    },
+    "evidence_refs": {
+      "items": {
+        "$ref": "#/$defs/EvidenceRef"
+      },
+      "title": "Evidence Refs",
+      "type": "array"
+    },
+    "structured_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Structured Refs",
+      "type": "array"
+    },
+    "blocked_state": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Blocked State"
+    },
+    "raw_payload_included": {
+      "default": false,
+      "title": "Raw Payload Included",
+      "type": "boolean"
+    },
+    "canonical_promotion_required": {
+      "default": true,
+      "title": "Canonical Promotion Required",
+      "type": "boolean"
+    },
+    "target_runtime_repo": {
+      "const": "LawFirm-os-exceptions-lake-runtime",
+      "default": "LawFirm-os-exceptions-lake-runtime",
+      "title": "Target Runtime Repo",
+      "type": "string"
+    }
+  },
+  "required": [
+    "candidate_id",
+    "run_id",
+    "preflight_packet_id",
+    "local_event_label",
+    "canonical_lake_class",
+    "reason"
+  ],
+  "title": "ExceptionLakeCandidate",
+  "type": "object"
+}

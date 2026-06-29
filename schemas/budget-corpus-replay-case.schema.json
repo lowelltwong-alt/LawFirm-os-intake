@@ -1,0 +1,344 @@
+{
+  "$defs": {
+    "BudgetCorpusReplayCommand": {
+      "additionalProperties": false,
+      "properties": {
+        "command_id": {
+          "title": "Command Id",
+          "type": "string"
+        },
+        "command": {
+          "title": "Command",
+          "type": "string"
+        },
+        "purpose": {
+          "title": "Purpose",
+          "type": "string"
+        },
+        "input_artifact_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Input Artifact Refs",
+          "type": "array"
+        },
+        "expected_output_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Expected Output Refs",
+          "type": "array"
+        },
+        "requires_prior_command_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Requires Prior Command Ids",
+          "type": "array"
+        },
+        "execution_mode": {
+          "const": "planned_only_not_executed",
+          "default": "planned_only_not_executed",
+          "title": "Execution Mode",
+          "type": "string"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "not_authorized_for_external_write": {
+          "const": true,
+          "default": true,
+          "title": "Not Authorized For External Write",
+          "type": "boolean"
+        },
+        "not_authorized_for_lake_write": {
+          "const": true,
+          "default": true,
+          "title": "Not Authorized For Lake Write",
+          "type": "boolean"
+        },
+        "profile_mutation_performed": {
+          "const": false,
+          "default": false,
+          "title": "Profile Mutation Performed",
+          "type": "boolean"
+        },
+        "template_mutation_performed": {
+          "const": false,
+          "default": false,
+          "title": "Template Mutation Performed",
+          "type": "boolean"
+        },
+        "budget_mutation_performed": {
+          "const": false,
+          "default": false,
+          "title": "Budget Mutation Performed",
+          "type": "boolean"
+        },
+        "carrier_guideline_mutation_performed": {
+          "const": false,
+          "default": false,
+          "title": "Carrier Guideline Mutation Performed",
+          "type": "boolean"
+        },
+        "lake_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Lake Write Performed",
+          "type": "boolean"
+        },
+        "sqlite_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Sqlite Write Performed",
+          "type": "boolean"
+        },
+        "external_writes_performed": {
+          "const": false,
+          "default": false,
+          "title": "External Writes Performed",
+          "type": "boolean"
+        },
+        "silent_learning_performed": {
+          "const": false,
+          "default": false,
+          "title": "Silent Learning Performed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "command_id",
+        "command",
+        "purpose"
+      ],
+      "title": "BudgetCorpusReplayCommand",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "replay_case_id": {
+      "title": "Replay Case Id",
+      "type": "string"
+    },
+    "source_artifact_id": {
+      "title": "Source Artifact Id",
+      "type": "string"
+    },
+    "source_artifact_ref": {
+      "title": "Source Artifact Ref",
+      "type": "string"
+    },
+    "artifact_kind": {
+      "enum": [
+        "intake_source_fixture",
+        "human_confirmation_fixture",
+        "budget_review_fixture",
+        "actuals_fixture",
+        "carrier_rejection_fixture",
+        "reviewed_gold_fixture",
+        "learning_gate_fixture",
+        "learning_shadow_eval_fixture",
+        "learning_support_fixture",
+        "unclassified_json_fixture"
+      ],
+      "title": "Artifact Kind",
+      "type": "string"
+    },
+    "calibration_role": {
+      "enum": [
+        "input_context_fixture",
+        "outcome_evidence_fixture",
+        "reviewed_baseline_fixture",
+        "learning_gate_fixture",
+        "shadow_eval_fixture",
+        "unclassified_supporting_fixture"
+      ],
+      "title": "Calibration Role",
+      "type": "string"
+    },
+    "eligibility": {
+      "enum": [
+        "eligible_for_synthetic_calibration_review",
+        "supporting_context_only",
+        "blocked_real_or_privileged_data",
+        "blocked_boundary_violation"
+      ],
+      "title": "Eligibility",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "planned_for_replay",
+        "supporting_context_only",
+        "blocked_from_replay"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "baseline_input_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Baseline Input Ref"
+    },
+    "baseline_practice_profile_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Baseline Practice Profile Ref"
+    },
+    "baseline_confirmation_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Baseline Confirmation Ref"
+    },
+    "command_chain": {
+      "items": {
+        "$ref": "#/$defs/BudgetCorpusReplayCommand"
+      },
+      "title": "Command Chain",
+      "type": "array"
+    },
+    "required_inputs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Inputs",
+      "type": "array"
+    },
+    "expected_outputs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Expected Outputs",
+      "type": "array"
+    },
+    "support_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Support Refs",
+      "type": "array"
+    },
+    "blocking_reasons": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Blocking Reasons",
+      "type": "array"
+    },
+    "required_next_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Gates",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "calibration_applied": {
+      "const": false,
+      "default": false,
+      "title": "Calibration Applied",
+      "type": "boolean"
+    },
+    "profile_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Profile Mutation Performed",
+      "type": "boolean"
+    },
+    "template_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Template Mutation Performed",
+      "type": "boolean"
+    },
+    "budget_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Budget Mutation Performed",
+      "type": "boolean"
+    },
+    "carrier_guideline_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Carrier Guideline Mutation Performed",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "replay_case_id",
+    "source_artifact_id",
+    "source_artifact_ref",
+    "artifact_kind",
+    "calibration_role",
+    "eligibility",
+    "status"
+  ],
+  "title": "BudgetCorpusReplayCase",
+  "type": "object"
+}

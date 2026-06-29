@@ -1,0 +1,881 @@
+{
+  "$defs": {
+    "BudgetActualVarianceOwnerAdoptionCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed",
+            "warning"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "artifact_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Artifact Refs",
+          "type": "array"
+        },
+        "blocking_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Blocking Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "BudgetActualVarianceOwnerAdoptionCheck",
+      "type": "object"
+    },
+    "BudgetActualVarianceOwnerAdoptionPacket": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "default": "0.1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "owner_adoption_packet_id": {
+          "title": "Owner Adoption Packet Id",
+          "type": "string"
+        },
+        "target_repo": {
+          "enum": [
+            "LawFirm-os-semantic-substrate",
+            "LawFirm-os-orchestrator",
+            "LawFirm-os-exceptions-lake-runtime"
+          ],
+          "title": "Target Repo",
+          "type": "string"
+        },
+        "adoption_focus": {
+          "enum": [
+            "semantic_actual_variance_label_review",
+            "runtime_billing_actuals_workflow",
+            "append_only_actual_variance_lake_admission"
+          ],
+          "title": "Adoption Focus",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "ready_for_owner_review",
+            "blocked_by_actual_variance_evidence"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "source_budget_actual_comparison_report_id": {
+          "title": "Source Budget Actual Comparison Report Id",
+          "type": "string"
+        },
+        "source_budget_actual_comparison_report_ref": {
+          "title": "Source Budget Actual Comparison Report Ref",
+          "type": "string"
+        },
+        "source_budget_actual_comparison_status": {
+          "enum": [
+            "actuals_not_available",
+            "passed",
+            "variance_review_required"
+          ],
+          "title": "Source Budget Actual Comparison Status",
+          "type": "string"
+        },
+        "source_budget_actual_variance_ledger_report_id": {
+          "title": "Source Budget Actual Variance Ledger Report Id",
+          "type": "string"
+        },
+        "source_budget_actual_variance_ledger_report_ref": {
+          "title": "Source Budget Actual Variance Ledger Report Ref",
+          "type": "string"
+        },
+        "source_budget_actual_variance_ledger_status": {
+          "enum": [
+            "variance_ledger_ready_for_review",
+            "variance_ledger_passed",
+            "variance_ledger_no_actuals"
+          ],
+          "title": "Source Budget Actual Variance Ledger Status",
+          "type": "string"
+        },
+        "run_id": {
+          "title": "Run Id",
+          "type": "string"
+        },
+        "preflight_packet_id": {
+          "title": "Preflight Packet Id",
+          "type": "string"
+        },
+        "budget_proposal_id": {
+          "title": "Budget Proposal Id",
+          "type": "string"
+        },
+        "budget_revision_report_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Budget Revision Report Id"
+        },
+        "actuals_source_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Actuals Source Ref"
+        },
+        "comparison_scope": {
+          "enum": [
+            "phase",
+            "phase_and_code"
+          ],
+          "title": "Comparison Scope",
+          "type": "string"
+        },
+        "comparison_budget_state": {
+          "enum": [
+            "original_proposal",
+            "human_revised_candidate"
+          ],
+          "title": "Comparison Budget State",
+          "type": "string"
+        },
+        "actual_resolution_scenario_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Actual Resolution Scenario Id"
+        },
+        "entry_count": {
+          "minimum": 0,
+          "title": "Entry Count",
+          "type": "integer"
+        },
+        "phase_event_count": {
+          "minimum": 0,
+          "title": "Phase Event Count",
+          "type": "integer"
+        },
+        "code_event_count": {
+          "minimum": 0,
+          "title": "Code Event Count",
+          "type": "integer"
+        },
+        "revision_context_event_count": {
+          "minimum": 0,
+          "title": "Revision Context Event Count",
+          "type": "integer"
+        },
+        "variance_review_event_count": {
+          "minimum": 0,
+          "title": "Variance Review Event Count",
+          "type": "integer"
+        },
+        "missing_actuals_event_count": {
+          "minimum": 0,
+          "title": "Missing Actuals Event Count",
+          "type": "integer"
+        },
+        "actuals_without_budget_event_count": {
+          "minimum": 0,
+          "title": "Actuals Without Budget Event Count",
+          "type": "integer"
+        },
+        "within_threshold_event_count": {
+          "minimum": 0,
+          "title": "Within Threshold Event Count",
+          "type": "integer"
+        },
+        "total_budgeted": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Total Budgeted"
+        },
+        "total_actual": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Total Actual"
+        },
+        "total_variance_amount": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Total Variance Amount"
+        },
+        "total_variance_percent": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Total Variance Percent"
+        },
+        "candidate_lake_event_labels": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Candidate Lake Event Labels",
+          "type": "array"
+        },
+        "variance_driver_candidates": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Variance Driver Candidates",
+          "type": "array"
+        },
+        "learning_disposition_candidates": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Learning Disposition Candidates",
+          "type": "array"
+        },
+        "source_artifact_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Source Artifact Refs",
+          "type": "array"
+        },
+        "candidate_contract_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Candidate Contract Refs",
+          "type": "array"
+        },
+        "required_owner_actions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Required Owner Actions",
+          "type": "array"
+        },
+        "acceptance_checks": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Acceptance Checks",
+          "type": "array"
+        },
+        "red_team_notes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Red Team Notes",
+          "type": "array"
+        },
+        "required_next_gates": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Required Next Gates",
+          "type": "array"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        },
+        "synthetic_only": {
+          "const": true,
+          "default": true,
+          "title": "Synthetic Only",
+          "type": "boolean"
+        },
+        "no_connector_implemented": {
+          "const": true,
+          "default": true,
+          "title": "No Connector Implemented",
+          "type": "boolean"
+        },
+        "no_lake_admission_performed": {
+          "const": true,
+          "default": true,
+          "title": "No Lake Admission Performed",
+          "type": "boolean"
+        },
+        "no_sibling_repo_writes": {
+          "const": true,
+          "default": true,
+          "title": "No Sibling Repo Writes",
+          "type": "boolean"
+        },
+        "no_canonical_mutation": {
+          "const": true,
+          "default": true,
+          "title": "No Canonical Mutation",
+          "type": "boolean"
+        },
+        "github_issue_created": {
+          "const": false,
+          "default": false,
+          "title": "Github Issue Created",
+          "type": "boolean"
+        },
+        "github_pr_created": {
+          "const": false,
+          "default": false,
+          "title": "Github Pr Created",
+          "type": "boolean"
+        },
+        "github_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Github Write Performed",
+          "type": "boolean"
+        },
+        "sibling_repo_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Sibling Repo Write Performed",
+          "type": "boolean"
+        },
+        "promotion_authorized": {
+          "const": false,
+          "default": false,
+          "title": "Promotion Authorized",
+          "type": "boolean"
+        },
+        "lake_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Lake Write Performed",
+          "type": "boolean"
+        },
+        "sqlite_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Sqlite Write Performed",
+          "type": "boolean"
+        },
+        "external_writes_performed": {
+          "const": false,
+          "default": false,
+          "title": "External Writes Performed",
+          "type": "boolean"
+        },
+        "billing_connector_read_performed": {
+          "const": false,
+          "default": false,
+          "title": "Billing Connector Read Performed",
+          "type": "boolean"
+        },
+        "billing_connector_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Billing Connector Write Performed",
+          "type": "boolean"
+        },
+        "budget_submission_performed": {
+          "const": false,
+          "default": false,
+          "title": "Budget Submission Performed",
+          "type": "boolean"
+        },
+        "appeal_submission_performed": {
+          "const": false,
+          "default": false,
+          "title": "Appeal Submission Performed",
+          "type": "boolean"
+        },
+        "budget_mutation_performed": {
+          "const": false,
+          "default": false,
+          "title": "Budget Mutation Performed",
+          "type": "boolean"
+        },
+        "profile_mutation_performed": {
+          "const": false,
+          "default": false,
+          "title": "Profile Mutation Performed",
+          "type": "boolean"
+        },
+        "template_mutation_performed": {
+          "const": false,
+          "default": false,
+          "title": "Template Mutation Performed",
+          "type": "boolean"
+        },
+        "carrier_guideline_mutation_performed": {
+          "const": false,
+          "default": false,
+          "title": "Carrier Guideline Mutation Performed",
+          "type": "boolean"
+        },
+        "silent_learning_performed": {
+          "const": false,
+          "default": false,
+          "title": "Silent Learning Performed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "owner_adoption_packet_id",
+        "target_repo",
+        "adoption_focus",
+        "status",
+        "source_budget_actual_comparison_report_id",
+        "source_budget_actual_comparison_report_ref",
+        "source_budget_actual_comparison_status",
+        "source_budget_actual_variance_ledger_report_id",
+        "source_budget_actual_variance_ledger_report_ref",
+        "source_budget_actual_variance_ledger_status",
+        "run_id",
+        "preflight_packet_id",
+        "budget_proposal_id",
+        "comparison_scope",
+        "comparison_budget_state",
+        "entry_count",
+        "phase_event_count",
+        "code_event_count",
+        "revision_context_event_count",
+        "variance_review_event_count",
+        "missing_actuals_event_count",
+        "actuals_without_budget_event_count",
+        "within_threshold_event_count",
+        "required_owner_actions",
+        "acceptance_checks",
+        "red_team_notes",
+        "required_next_gates"
+      ],
+      "title": "BudgetActualVarianceOwnerAdoptionPacket",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "owner_adoption_report_id": {
+      "title": "Owner Adoption Report Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "budget_actual_variance_owner_adoption_packets_ready",
+        "blocked_by_budget_actual_variance_evidence"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "source_budget_actual_comparison_report_id": {
+      "title": "Source Budget Actual Comparison Report Id",
+      "type": "string"
+    },
+    "source_budget_actual_comparison_report_ref": {
+      "title": "Source Budget Actual Comparison Report Ref",
+      "type": "string"
+    },
+    "source_budget_actual_comparison_status": {
+      "enum": [
+        "actuals_not_available",
+        "passed",
+        "variance_review_required"
+      ],
+      "title": "Source Budget Actual Comparison Status",
+      "type": "string"
+    },
+    "source_budget_actual_variance_ledger_report_id": {
+      "title": "Source Budget Actual Variance Ledger Report Id",
+      "type": "string"
+    },
+    "source_budget_actual_variance_ledger_report_ref": {
+      "title": "Source Budget Actual Variance Ledger Report Ref",
+      "type": "string"
+    },
+    "source_budget_actual_variance_ledger_status": {
+      "enum": [
+        "variance_ledger_ready_for_review",
+        "variance_ledger_passed",
+        "variance_ledger_no_actuals"
+      ],
+      "title": "Source Budget Actual Variance Ledger Status",
+      "type": "string"
+    },
+    "target_repo_count": {
+      "minimum": 0,
+      "title": "Target Repo Count",
+      "type": "integer"
+    },
+    "packet_count": {
+      "minimum": 0,
+      "title": "Packet Count",
+      "type": "integer"
+    },
+    "ready_packet_count": {
+      "minimum": 0,
+      "title": "Ready Packet Count",
+      "type": "integer"
+    },
+    "blocked_packet_count": {
+      "minimum": 0,
+      "title": "Blocked Packet Count",
+      "type": "integer"
+    },
+    "target_repos": {
+      "items": {
+        "enum": [
+          "LawFirm-os-semantic-substrate",
+          "LawFirm-os-orchestrator",
+          "LawFirm-os-exceptions-lake-runtime"
+        ],
+        "type": "string"
+      },
+      "title": "Target Repos",
+      "type": "array"
+    },
+    "packets": {
+      "items": {
+        "$ref": "#/$defs/BudgetActualVarianceOwnerAdoptionPacket"
+      },
+      "title": "Packets",
+      "type": "array"
+    },
+    "packet_output_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Packet Output Refs",
+      "type": "array"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/BudgetActualVarianceOwnerAdoptionCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "entry_count": {
+      "minimum": 0,
+      "title": "Entry Count",
+      "type": "integer"
+    },
+    "variance_review_event_count": {
+      "minimum": 0,
+      "title": "Variance Review Event Count",
+      "type": "integer"
+    },
+    "missing_actuals_event_count": {
+      "minimum": 0,
+      "title": "Missing Actuals Event Count",
+      "type": "integer"
+    },
+    "actuals_without_budget_event_count": {
+      "minimum": 0,
+      "title": "Actuals Without Budget Event Count",
+      "type": "integer"
+    },
+    "within_threshold_event_count": {
+      "minimum": 0,
+      "title": "Within Threshold Event Count",
+      "type": "integer"
+    },
+    "total_budgeted": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Total Budgeted"
+    },
+    "total_actual": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Total Actual"
+    },
+    "total_variance_amount": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Total Variance Amount"
+    },
+    "candidate_lake_event_labels": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Candidate Lake Event Labels",
+      "type": "array"
+    },
+    "variance_driver_candidates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Variance Driver Candidates",
+      "type": "array"
+    },
+    "learning_disposition_candidates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Learning Disposition Candidates",
+      "type": "array"
+    },
+    "required_next_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Gates",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "no_connector_implemented": {
+      "const": true,
+      "default": true,
+      "title": "No Connector Implemented",
+      "type": "boolean"
+    },
+    "no_lake_admission_performed": {
+      "const": true,
+      "default": true,
+      "title": "No Lake Admission Performed",
+      "type": "boolean"
+    },
+    "no_sibling_repo_writes": {
+      "const": true,
+      "default": true,
+      "title": "No Sibling Repo Writes",
+      "type": "boolean"
+    },
+    "no_canonical_mutation": {
+      "const": true,
+      "default": true,
+      "title": "No Canonical Mutation",
+      "type": "boolean"
+    },
+    "github_issue_created": {
+      "const": false,
+      "default": false,
+      "title": "Github Issue Created",
+      "type": "boolean"
+    },
+    "github_pr_created": {
+      "const": false,
+      "default": false,
+      "title": "Github Pr Created",
+      "type": "boolean"
+    },
+    "github_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Github Write Performed",
+      "type": "boolean"
+    },
+    "sibling_repo_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sibling Repo Write Performed",
+      "type": "boolean"
+    },
+    "promotion_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Promotion Authorized",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "billing_connector_read_performed": {
+      "const": false,
+      "default": false,
+      "title": "Billing Connector Read Performed",
+      "type": "boolean"
+    },
+    "billing_connector_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Billing Connector Write Performed",
+      "type": "boolean"
+    },
+    "budget_submission_performed": {
+      "const": false,
+      "default": false,
+      "title": "Budget Submission Performed",
+      "type": "boolean"
+    },
+    "appeal_submission_performed": {
+      "const": false,
+      "default": false,
+      "title": "Appeal Submission Performed",
+      "type": "boolean"
+    },
+    "budget_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Budget Mutation Performed",
+      "type": "boolean"
+    },
+    "profile_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Profile Mutation Performed",
+      "type": "boolean"
+    },
+    "template_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Template Mutation Performed",
+      "type": "boolean"
+    },
+    "carrier_guideline_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Carrier Guideline Mutation Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "owner_adoption_report_id",
+    "status",
+    "source_budget_actual_comparison_report_id",
+    "source_budget_actual_comparison_report_ref",
+    "source_budget_actual_comparison_status",
+    "source_budget_actual_variance_ledger_report_id",
+    "source_budget_actual_variance_ledger_report_ref",
+    "source_budget_actual_variance_ledger_status",
+    "target_repo_count",
+    "packet_count",
+    "ready_packet_count",
+    "blocked_packet_count",
+    "target_repos",
+    "packets",
+    "checks",
+    "entry_count",
+    "variance_review_event_count",
+    "missing_actuals_event_count",
+    "actuals_without_budget_event_count",
+    "within_threshold_event_count",
+    "required_next_gates",
+    "generated_at"
+  ],
+  "title": "BudgetActualVarianceOwnerAdoptionReport",
+  "type": "object"
+}

@@ -1,0 +1,158 @@
+{
+  "$defs": {
+    "RunLedgerIntegrityCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "event_step_names": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Event Step Names",
+          "type": "array"
+        },
+        "details": {
+          "additionalProperties": true,
+          "title": "Details",
+          "type": "object"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "RunLedgerIntegrityCheck",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "run_ledger_integrity_report_id": {
+      "title": "Run Ledger Integrity Report Id",
+      "type": "string"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "stage": {
+      "enum": [
+        "preflight",
+        "budget_success",
+        "budget_precondition_blocked"
+      ],
+      "title": "Stage",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "passed",
+        "failed"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "run_ledger_ref": {
+      "title": "Run Ledger Ref",
+      "type": "string"
+    },
+    "event_count": {
+      "minimum": 0,
+      "title": "Event Count",
+      "type": "integer"
+    },
+    "required_steps": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Steps",
+      "type": "array"
+    },
+    "observed_steps": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Observed Steps",
+      "type": "array"
+    },
+    "terminal_step_name": {
+      "title": "Terminal Step Name",
+      "type": "string"
+    },
+    "terminal_status": {
+      "enum": [
+        "started",
+        "completed",
+        "blocked",
+        "failed"
+      ],
+      "title": "Terminal Status",
+      "type": "string"
+    },
+    "local_artifact_refs_only": {
+      "title": "Local Artifact Refs Only",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/RunLedgerIntegrityCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "run_ledger_integrity_report_id",
+    "run_id",
+    "stage",
+    "status",
+    "run_ledger_ref",
+    "event_count",
+    "required_steps",
+    "observed_steps",
+    "terminal_step_name",
+    "terminal_status",
+    "local_artifact_refs_only",
+    "checks",
+    "generated_at"
+  ],
+  "title": "RunLedgerIntegrityReport",
+  "type": "object"
+}

@@ -1,0 +1,124 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "repo": {
+      "title": "Repo",
+      "type": "string"
+    },
+    "remote": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Remote"
+    },
+    "branch": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Branch"
+    },
+    "ref_type": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Ref Type"
+    },
+    "sha": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Sha"
+    },
+    "authority_plane": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Authority Plane"
+    },
+    "local_folder": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Local Folder"
+    },
+    "topology_sha": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Topology Sha"
+    },
+    "topology_authority_plane": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Topology Authority Plane"
+    },
+    "topology_matches_lock": {
+      "default": false,
+      "title": "Topology Matches Lock",
+      "type": "boolean"
+    },
+    "status": {
+      "enum": [
+        "verified",
+        "invalid"
+      ],
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "repo",
+    "status"
+  ],
+  "title": "ContractStateDependency",
+  "type": "object"
+}
