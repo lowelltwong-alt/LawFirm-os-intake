@@ -222,8 +222,13 @@ def main(argv: list[str] | None = None) -> int:
 
     try:
         validate_governance_dependency_map_mirror()
-        changed_files = args.changed_file or _git_changed_files(args.base_ref)
         mirror_updated = None if args.mirror_updated is None else args.mirror_updated == "true"
+        if args.changed_file:
+            changed_files = args.changed_file
+        elif mirror_updated is True:
+            changed_files = [_rel(MIRROR)]
+        else:
+            changed_files = _git_changed_files(args.base_ref)
         validate_changed_path_gate(changed_files=changed_files, mirror_updated=mirror_updated)
     except MirrorValidationError as exc:
         print(f"Governance dependency-map mirror validation failed: {exc}", file=sys.stderr)
