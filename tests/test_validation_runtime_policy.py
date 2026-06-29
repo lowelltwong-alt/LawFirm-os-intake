@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import os
+import subprocess
+import sys
 from pathlib import Path
 
 import yaml
@@ -34,14 +37,74 @@ def test_validation_runtime_policy_requires_long_heavy_command_ceilings() -> Non
     assert commands["validate_repo"]["minimum_timeout_seconds"] >= 180
     assert commands["ruff_check"]["minimum_timeout_seconds"] >= 180
     assert commands["ruff_format_check"]["minimum_timeout_seconds"] >= 180
+    assert "--no-cache" in commands["ruff_check"]["command"]
+    assert "--no-cache" in commands["ruff_format_check"]["command"]
 
 
 def test_make_test_uses_validation_runtime_policy_wrapper() -> None:
     makefile = (REPO_ROOT / "Makefile").read_text(encoding="utf-8").replace("\r\n", "\n")
 
     assert "\ntest:\n\tpython scripts/run_full_pytest.py\n" in f"\n{makefile}"
+    assert "\n\tpython -m ruff check --no-cache src tests scripts\n" in f"\n{makefile}"
+    assert "\n\tpython -m ruff format --check --no-cache src tests scripts\n" in f"\n{makefile}"
 
 
 def test_pytest_wrapper_reads_validation_runtime_policy() -> None:
     assert run_full_pytest.POLICY_PATH == POLICY_PATH
     assert run_full_pytest.pytest_timeout_seconds() >= 900
+    assert run_full_pytest.pytest_timeout_seconds("focused_pytest") >= 900
+
+
+def test_pytest_wrapper_sets_policy_marker() -> None:
+    env = run_full_pytest.validation_environment({})
+
+    assert env[run_full_pytest.POLICY_MARKER_ENV_VAR] == run_full_pytest.POLICY_MARKER_VALUE
+    assert env["PYTHONDONTWRITEBYTECODE"] == "1"
+
+
+def test_pytest_wrapper_disables_pytest_cache_provider() -> None:
+    command = run_full_pytest.pytest_command(["tests/test_validation_runtime_policy.py", "-q"])
+
+    assert command[1:6] == ["-B", "-m", "pytest", "-p", "no:cacheprovider"]
+
+
+def test_direct_pytest_without_policy_marker_fails_closed() -> None:
+    env = dict(os.environ)
+    env.pop(run_full_pytest.POLICY_MARKER_ENV_VAR, None)
+    completed = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "pytest",
+            "--collect-only",
+            "tests/test_validation_runtime_policy.py",
+        ],
+        cwd=REPO_ROOT,
+        env=env,
+        capture_output=True,
+        check=False,
+        text=True,
+        timeout=30,
+    )
+
+    assert completed.returncode == 4
+    output = f"{completed.stdout}\n{completed.stderr}"
+    assert "Direct pytest invocation is blocked by the validation runtime policy" in output
+
+
+def test_ci_uses_validation_runtime_policy_wrapper() -> None:
+    workflow = (REPO_ROOT / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
+
+    assert "python scripts/run_full_pytest.py" in workflow
+    assert "python -m pytest" not in workflow
+    assert "python -m ruff check --no-cache src tests scripts" in workflow
+    assert "python -m ruff format --check --no-cache src tests scripts" in workflow
+
+
+def test_schema_export_and_smoke_suppress_bytecode() -> None:
+    export_schemas = (REPO_ROOT / "scripts" / "export_schemas.py").read_text(encoding="utf-8")
+    smoke_demo = (REPO_ROOT / "scripts" / "smoke_demo.sh").read_text(encoding="utf-8")
+
+    assert "sys.dont_write_bytecode = True" in export_schemas
+    assert "export PYTHONDONTWRITEBYTECODE=1" in smoke_demo
+    assert '"$PYTHON_BIN" -B -m lawfirm_os_intake demo' in smoke_demo

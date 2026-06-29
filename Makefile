@@ -7,8 +7,8 @@ validate:
 	python scripts/validate_repo.py
 
 lint:
-	python -m ruff check src tests scripts
-	python -m ruff format --check src tests scripts
+	python -m ruff check --no-cache src tests scripts
+	python -m ruff format --check --no-cache src tests scripts
 
 test:
 	python scripts/run_full_pytest.py

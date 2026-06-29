@@ -37,8 +37,10 @@ python scripts/run_full_pytest.py
 
 `config/validation-runtime-policy.yaml` declares the minimum local ceilings for
 heavy validation commands. Full and focused pytest runs use the wrapper above
-and require a 900 second ceiling; smoke runs also require a 900 second ceiling.
-Schema export, repo validation, and ruff checks require at least 180 seconds.
+and require a 900 second ceiling. Direct pytest invocation is blocked so a run
+cannot silently inherit a shorter ceiling. Smoke runs also require a 900 second
+ceiling. Schema export, repo validation, and ruff checks require at least 180
+seconds.
 
 ### Audit labor/employment budget fact gaps
 

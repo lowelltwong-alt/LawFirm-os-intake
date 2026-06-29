@@ -71,7 +71,10 @@ python -m lawfirm_os_intake demo \
 Validation runtime ceilings are declared in
 `config/validation-runtime-policy.yaml`. Full and focused pytest runs should use
 `python scripts/run_full_pytest.py`, which enforces the 900 second local ceiling
-for the repo's heavier test paths.
+and stamps the run with the required validation-policy marker. Direct pytest
+invocation is blocked so the suite cannot silently fall back to a short ceiling
+for the repo's heavier test paths. The wrapper also suppresses pytest cache and
+Python bytecode artifacts so repository validation can run on a clean tree.
 
 The demo emits:
 
