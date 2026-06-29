@@ -6314,6 +6314,145 @@ class RemainingRoadmapReport(StrictModel):
         return self
 
 
+SyntheticFixtureExpansionFamily = Literal[
+    "ambiguous_roles",
+    "missing_actuals",
+    "carrier_rejection_variants",
+    "budget_driver_edges",
+]
+
+
+class SyntheticFixtureExpansionHoldoutSpec(StrictModel):
+    holdout_id: str
+    family: SyntheticFixtureExpansionFamily
+    description: str
+    fixture_refs: list[str]
+    test_refs: list[str]
+    expected_signals: list[str]
+    red_team_notes: list[str]
+    synthetic_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    calibration_approved: Literal[False] = False
+    fixture_files_mutated_by_audit: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def synthetic_fixture_expansion_holdout_has_review_material(
+        self,
+    ) -> "SyntheticFixtureExpansionHoldoutSpec":
+        if not self.fixture_refs:
+            raise ValueError("synthetic fixture expansion holdout requires fixture refs")
+        if not self.test_refs:
+            raise ValueError("synthetic fixture expansion holdout requires test refs")
+        if not self.expected_signals:
+            raise ValueError("synthetic fixture expansion holdout requires expected signals")
+        if not self.red_team_notes:
+            raise ValueError("synthetic fixture expansion holdout requires red-team notes")
+        return self
+
+
+class SyntheticFixtureExpansionManifest(StrictModel):
+    schema_version: str = "0.1"
+    manifest_id: str
+    source_remaining_roadmap_item_id: Literal["fixture-and-eval-expansion"]
+    required_families: list[SyntheticFixtureExpansionFamily]
+    holdouts: list[SyntheticFixtureExpansionHoldoutSpec]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    calibration_approved: Literal[False] = False
+    fixture_files_mutated_by_audit: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def synthetic_fixture_expansion_manifest_covers_required_families(
+        self,
+    ) -> "SyntheticFixtureExpansionManifest":
+        if not self.holdouts:
+            raise ValueError("synthetic fixture expansion manifest requires holdouts")
+        holdout_ids = [holdout.holdout_id for holdout in self.holdouts]
+        if len(holdout_ids) != len(set(holdout_ids)):
+            raise ValueError("synthetic fixture expansion holdout IDs must be unique")
+        required = set(self.required_families)
+        covered = {holdout.family for holdout in self.holdouts}
+        if not required:
+            raise ValueError("synthetic fixture expansion manifest requires families")
+        if not required.issubset(covered):
+            raise ValueError("synthetic fixture expansion manifest is missing required families")
+        return self
+
+
+class SyntheticFixtureExpansionCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    artifact_refs: list[str] = Field(default_factory=list)
+    blocking_refs: list[str] = Field(default_factory=list)
+
+
+class SyntheticFixtureExpansionReport(StrictModel):
+    schema_version: str = "0.1"
+    fixture_expansion_report_id: str
+    status: Literal[
+        "synthetic_fixture_expansion_ready_for_review",
+        "blocked_by_fixture_expansion_evidence",
+    ]
+    source_remaining_roadmap_report_id: str
+    source_remaining_roadmap_report_ref: str
+    source_remaining_roadmap_status: str
+    source_remaining_roadmap_item_id: Literal["fixture-and-eval-expansion"]
+    source_remaining_roadmap_item_status: str
+    manifest_id: str
+    manifest_ref: str
+    required_family_count: int = Field(ge=0)
+    holdout_count: int = Field(ge=0)
+    family_counts: dict[str, int]
+    missing_required_families: list[SyntheticFixtureExpansionFamily]
+    holdouts: list[SyntheticFixtureExpansionHoldoutSpec]
+    checks: list[SyntheticFixtureExpansionCheck]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    calibration_approved: Literal[False] = False
+    fixture_files_mutated_by_audit: Literal[False] = False
+    github_issue_created: Literal[False] = False
+    github_pr_created: Literal[False] = False
+    github_write_performed: Literal[False] = False
+    sibling_repo_write_performed: Literal[False] = False
+    promotion_authorized: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def synthetic_fixture_expansion_counts_and_status_match(
+        self,
+    ) -> "SyntheticFixtureExpansionReport":
+        if self.holdout_count != len(self.holdouts):
+            raise ValueError("synthetic fixture expansion holdout count does not match")
+        if self.required_family_count != len(set(self.family_counts)) + len(
+            set(self.missing_required_families)
+        ):
+            raise ValueError("synthetic fixture expansion required family count does not match")
+        expected_counts: dict[str, int] = {}
+        for holdout in self.holdouts:
+            expected_counts[holdout.family] = expected_counts.get(holdout.family, 0) + 1
+        if self.family_counts != expected_counts:
+            raise ValueError("synthetic fixture expansion family counts do not match")
+        failed = [check for check in self.checks if check.status == "failed"]
+        if self.status == "synthetic_fixture_expansion_ready_for_review" and failed:
+            raise ValueError("ready synthetic fixture expansion cannot have failed checks")
+        if self.status == "blocked_by_fixture_expansion_evidence" and not failed:
+            raise ValueError("blocked synthetic fixture expansion requires failed checks")
+        return self
+
+
 class CarrierRejectionOrchestratorConnectorChannel(StrictModel):
     channel_id: Literal[
         "carrier_portal_notice",

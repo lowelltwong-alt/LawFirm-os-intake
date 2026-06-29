@@ -312,6 +312,13 @@ next recommended manual/owner steps, distinguishes easy local work from
 critical owner-gated work, and performs no GitHub, sibling repo, Lake, SQLite,
 promotion, real-data, or learning side effects.
 
+`audit-synthetic-fixture-expansion` consumes the remaining-roadmap report and
+the synthetic holdout manifest. Eval coverage must prove all required holdout
+families are present, fixture and test refs stay under the repo root, scoped JSON
+fixtures are synthetic-only and not calibration-approved, missing required
+families fail closed, and the audit performs no fixture mutation, GitHub write,
+sibling repo write, Lake/SQLite write, promotion, or learning.
+
 ### Counterfactual evals
 
 Same source, different practice context. Evidence must remain unchanged.

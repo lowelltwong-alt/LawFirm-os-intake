@@ -1,0 +1,46 @@
+{
+  "schema_version": "0.1",
+  "fixture_id": "synthetic-medmal-budget-driver-edge-cases.v0_1",
+  "data_origin": "synthetic",
+  "contains_real_client_data": false,
+  "contains_real_matter_data": false,
+  "contains_privileged_data": false,
+  "case_family": "medical_malpractice_defense",
+  "driver_policy_ref": "config/budget-driver-policy.yaml",
+  "driver_cases": [
+    {
+      "case_id": "soft-clear-favorable",
+      "drivers": {
+        "severity_tier": "soft_tissue",
+        "liability_dispute": "clear_liability",
+        "venue_difficulty": "favorable"
+      },
+      "expected_signal": "lower_intensity_projection"
+    },
+    {
+      "case_id": "catastrophic-contested-plaintiff-friendly",
+      "drivers": {
+        "severity_tier": "catastrophic_or_death",
+        "liability_dispute": "hotly_contested",
+        "venue_difficulty": "plaintiff_friendly"
+      },
+      "expected_signal": "higher_intensity_projection"
+    },
+    {
+      "case_id": "unknown-coverage-posture",
+      "drivers": {
+        "coverage_posture": "unknown"
+      },
+      "expected_signal": "unknown_driver_visible_not_observed_fact"
+    }
+  ],
+  "expected_signals": [
+    "profile defaults remain visible but not observed facts",
+    "human-confirmed catastrophic severity increases budget compared with soft-tissue severity",
+    "coverage posture remains an unknown driver until human-confirmed"
+  ],
+  "calibration_approved": false,
+  "non_authoritative": true,
+  "external_writes_performed": false,
+  "silent_learning_performed": false
+}

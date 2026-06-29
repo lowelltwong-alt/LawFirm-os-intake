@@ -588,6 +588,33 @@ human-review actions from critical owner-gated work.
   `lake_write_performed=false`, `sqlite_write_performed=false`,
   `external_writes_performed=false`, and `silent_learning_performed=false`.
 
+## 11N. Synthetic Fixture Expansion Audit
+
+Status: implemented for the current synthetic candidate slice; holdouts are
+review evidence only and are not calibration-approved.
+
+Execute the local fixture/eval expansion item from the remaining roadmap by
+binding four synthetic holdout families to concrete fixture refs, test refs,
+expected signals, and red-team notes.
+
+- `audit-synthetic-fixture-expansion` consumes `remaining_roadmap_report.json`
+  and `examples/synthetic/fixture-expansion/remaining-roadmap-holdouts.json`.
+- It writes `synthetic_fixture_expansion_report.json` and
+  `synthetic_fixture_expansion_report.md`.
+- The manifest covers ambiguous roles, missing actuals, carrier rejection
+  variants, and budget driver edge cases.
+- New local fixtures include a missing-actuals `BudgetActualsSource` and a
+  budget-driver edge-case fixture for low-intensity, high-intensity, and unknown
+  driver states.
+- The audit checks fixture/test refs stay under the repo root, scoped JSON
+  fixtures remain synthetic-only, and fixtures are not calibration-approved.
+- The report records `calibration_approved=false`,
+  `fixture_files_mutated_by_audit=false`, `github_issue_created=false`,
+  `github_pr_created=false`, `github_write_performed=false`,
+  `sibling_repo_write_performed=false`, `promotion_authorized=false`,
+  `lake_write_performed=false`, `sqlite_write_performed=false`,
+  `external_writes_performed=false`, and `silent_learning_performed=false`.
+
 ## 12. Reviewed Learning Gate
 
 Status: implemented for the current synthetic candidate slice; owning-repo

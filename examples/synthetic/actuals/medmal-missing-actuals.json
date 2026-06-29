@@ -1,0 +1,17 @@
+{
+  "schema_version": "0.1",
+  "actuals_source_id": "synthetic-medmal-missing-actuals.v0_1",
+  "budget_proposal_id": "__BUDGET_PROPOSAL_ID__",
+  "data_origin": "synthetic",
+  "contains_real_client_data": false,
+  "contains_real_matter_data": false,
+  "contains_privileged_data": false,
+  "actual_resolution_scenario_id": "standard",
+  "actuals_by_phase": {},
+  "actuals_by_code": {},
+  "source_ref": "synthetic-actuals://medmal-missing-actuals",
+  "billing_connector_read_performed": false,
+  "billing_connector_write_performed": false,
+  "external_writes_performed": false,
+  "non_authoritative": true
+}

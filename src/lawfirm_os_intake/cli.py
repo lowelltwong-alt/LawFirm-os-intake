@@ -75,6 +75,7 @@ from .public_synthetic_fixture_conversion_review_outcomes import (
 )
 from .remaining_roadmap import run_remaining_roadmap_plan
 from .reviewed_learning_gate import run_reviewed_learning_gate
+from .synthetic_fixture_expansion import run_synthetic_fixture_expansion_audit
 from .util import load_json, write_json
 from .workflow import run_budget, run_preflight
 
@@ -711,6 +712,26 @@ def _parser() -> argparse.ArgumentParser:
         help="Optional path to pr_readiness_decision_report.json.",
     )
     remaining_roadmap.add_argument("--out-dir", required=True)
+    fixture_expansion = sub.add_parser(
+        "audit-synthetic-fixture-expansion",
+        help="Audit synthetic holdout fixture expansion against the remaining roadmap.",
+    )
+    fixture_expansion.add_argument(
+        "--remaining-roadmap-report",
+        required=True,
+        help="Path to remaining_roadmap_report.json.",
+    )
+    fixture_expansion.add_argument(
+        "--manifest",
+        required=True,
+        help="Path to synthetic fixture expansion manifest JSON.",
+    )
+    fixture_expansion.add_argument(
+        "--repo-root",
+        default=".",
+        help="Repository root for relative fixture/test refs.",
+    )
+    fixture_expansion.add_argument("--out-dir", required=True)
     owner_adoption = sub.add_parser(
         "build-cross-repo-owner-adoption",
         help="Build owner-specific adoption packets from the promotion package and PR review evidence.",
@@ -2374,6 +2395,44 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 0 if report.status == "remaining_roadmap_ready_manual_execution_required" else 2
+
+        if args.command == "audit-synthetic-fixture-expansion":
+            report, run_dir = run_synthetic_fixture_expansion_audit(
+                remaining_roadmap_report_path=args.remaining_roadmap_report,
+                manifest_path=args.manifest,
+                repo_root=args.repo_root,
+                out_dir=args.out_dir,
+            )
+            failed_checks = [check.check_id for check in report.checks if check.status == "failed"]
+            _print(
+                {
+                    "status": report.status,
+                    "fixture_expansion_report_id": report.fixture_expansion_report_id,
+                    "source_remaining_roadmap_status": (report.source_remaining_roadmap_status),
+                    "source_remaining_roadmap_item_status": (
+                        report.source_remaining_roadmap_item_status
+                    ),
+                    "manifest_id": report.manifest_id,
+                    "required_family_count": report.required_family_count,
+                    "holdout_count": report.holdout_count,
+                    "family_counts": report.family_counts,
+                    "missing_required_families": report.missing_required_families,
+                    "failed_checks": failed_checks,
+                    "calibration_approved": report.calibration_approved,
+                    "fixture_files_mutated_by_audit": report.fixture_files_mutated_by_audit,
+                    "github_issue_created": report.github_issue_created,
+                    "github_pr_created": report.github_pr_created,
+                    "github_write_performed": report.github_write_performed,
+                    "sibling_repo_write_performed": report.sibling_repo_write_performed,
+                    "promotion_authorized": report.promotion_authorized,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0 if report.status == "synthetic_fixture_expansion_ready_for_review" else 2
 
         if args.command == "build-cross-repo-owner-adoption":
             report, run_dir = run_cross_repo_owner_adoption(

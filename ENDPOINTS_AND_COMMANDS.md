@@ -647,6 +647,26 @@ approval, and cross-repo validation gates. It does not mark a PR ready, create
 issues, open PRs, write sibling repos, promote canon, admit Lake records, write
 SQLite, apply learning, or authorize production use.
 
+### Audit synthetic fixture expansion
+
+```bash
+python -m lawfirm_os_intake audit-synthetic-fixture-expansion \
+  --remaining-roadmap-report .lawfirm-os-intake/remaining-roadmap/remaining_roadmap_report.json \
+  --manifest examples/synthetic/fixture-expansion/remaining-roadmap-holdouts.json \
+  --repo-root . \
+  --out-dir .lawfirm-os-intake/synthetic-fixture-expansion
+```
+
+This writes `synthetic_fixture_expansion_report.json` and
+`synthetic_fixture_expansion_report.md`. The report proves the local holdout
+manifest covers ambiguous roles, missing actuals, carrier rejection variants,
+and budget driver edge cases, and that referenced fixture/test files exist under
+the repo root. It records expected signals and red-team notes while keeping the
+holdouts candidate-only and not calibration-approved. It does not mutate
+fixtures during audit, create issues, open PRs, write sibling repos, promote
+canon, admit Lake records, write SQLite, apply learning, or authorize production
+use.
+
 ### Draft carrier rejection Orchestrator interface
 
 ```bash

@@ -212,6 +212,10 @@ from lawfirm_os_intake.models import (  # noqa: E402
     Segment,
     SourceBundle,
     StarterReleaseAuditReport,
+    SyntheticFixtureExpansionCheck,
+    SyntheticFixtureExpansionHoldoutSpec,
+    SyntheticFixtureExpansionManifest,
+    SyntheticFixtureExpansionReport,
 )
 
 MODELS = {
@@ -239,6 +243,10 @@ MODELS = {
     "remaining-roadmap-check.schema.json": RemainingRoadmapCheck,
     "remaining-roadmap-item.schema.json": RemainingRoadmapItem,
     "remaining-roadmap-report.schema.json": RemainingRoadmapReport,
+    "synthetic-fixture-expansion-check.schema.json": SyntheticFixtureExpansionCheck,
+    "synthetic-fixture-expansion-holdout-spec.schema.json": (SyntheticFixtureExpansionHoldoutSpec),
+    "synthetic-fixture-expansion-manifest.schema.json": SyntheticFixtureExpansionManifest,
+    "synthetic-fixture-expansion-report.schema.json": SyntheticFixtureExpansionReport,
     "rust-ingestion-readiness-report.schema.json": RustIngestionReadinessReport,
     "rust-transition-policy.schema.json": RustTransitionPolicy,
     "segment.schema.json": Segment,

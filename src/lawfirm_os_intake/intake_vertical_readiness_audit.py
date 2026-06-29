@@ -676,6 +676,34 @@ REQUIRED_SLICES: tuple[SliceDefinition, ...] = (
     ),
     SliceDefinition(
         slice_id=26,
+        title="Synthetic fixture expansion audit",
+        requirement_summary=(
+            "Remaining-roadmap fixture/eval expansion work can be bound to a "
+            "synthetic holdout manifest covering ambiguous roles, missing actuals, "
+            "carrier rejection variants, and budget driver edge cases without "
+            "approving calibration, mutating fixtures during audit, writing Lake/SQLite "
+            "records, or applying learning."
+        ),
+        proof_artifact_refs=(
+            "src/lawfirm_os_intake/synthetic_fixture_expansion.py",
+            "examples/synthetic/fixture-expansion/remaining-roadmap-holdouts.json",
+            "examples/synthetic/actuals/medmal-missing-actuals.json",
+            "examples/synthetic/budget-drivers/medmal-driver-edge-cases.json",
+            "schemas/synthetic-fixture-expansion-report.schema.json",
+            "schemas/synthetic-fixture-expansion-manifest.schema.json",
+            "tests/test_synthetic_fixture_expansion.py",
+            "docs/decisions/TRACE-2026-06-29-synthetic-fixture-expansion.md",
+        ),
+        command_refs=("audit-synthetic-fixture-expansion",),
+        target_owner_repos=("LawFirm-os-intake",),
+        remaining_external_actions=(
+            "Humans must review holdout coverage before treating it as fixture-update evidence.",
+            "Any calibration or fixture-gold use still requires reviewed fixture update records and shadow eval.",
+            "Owner repos must still review any promoted learning or runtime contract changes.",
+        ),
+    ),
+    SliceDefinition(
+        slice_id=27,
         title="Final intake vertical readiness audit",
         requirement_summary=(
             "A deterministic final audit checks local surfaces plus the generated learning "

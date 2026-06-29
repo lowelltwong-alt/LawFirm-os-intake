@@ -116,3 +116,10 @@ check the attached red-team notes before creating manual owner issues or moving
 the PR state. The report remains planning evidence only and does not create
 issues, mark the PR ready, write sibling repos, promote canon, admit Lake/SQLite
 records, approve a real-data pilot, or apply learning.
+
+When the roadmap points to fixture/eval expansion,
+`audit-synthetic-fixture-expansion` gives reviewers a compact holdout coverage
+packet. It should be treated as proof that synthetic holdouts exist for review,
+not as calibration approval or fixture-gold acceptance. Any later calibration or
+learning use still needs reviewed fixture-update evidence, shadow eval, and
+owning-repo review.

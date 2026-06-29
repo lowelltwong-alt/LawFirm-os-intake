@@ -1,0 +1,100 @@
+{
+  "schema_version": "0.1",
+  "manifest_id": "synthetic-fixture-expansion.remaining-roadmap.v0_1",
+  "source_remaining_roadmap_item_id": "fixture-and-eval-expansion",
+  "required_families": [
+    "ambiguous_roles",
+    "missing_actuals",
+    "carrier_rejection_variants",
+    "budget_driver_edges"
+  ],
+  "holdouts": [
+    {
+      "holdout_id": "holdout-ambiguous-roles-misleading-sender.v0_1",
+      "family": "ambiguous_roles",
+      "description": "Misleading sender identity with carrier, payer, insured, and represented-client ambiguity.",
+      "fixture_refs": [
+        "examples/synthetic/inbound/holdout-misleading-sender-role-ambiguity.json"
+      ],
+      "test_refs": [
+        "tests/test_source_inventory_and_review.py::test_review_packet_preserves_unknown_and_context_separation"
+      ],
+      "expected_signals": [
+        "ROLE_CANDIDATES_AMBIGUOUS critic finding",
+        "unknown matter-family option remains available",
+        "context-influenced candidates stay source-anchor-only"
+      ],
+      "red_team_notes": [
+        "A carrier sender must not collapse into represented-client fact.",
+        "Practice context must not become observed evidence."
+      ]
+    },
+    {
+      "holdout_id": "holdout-missing-actuals-empty-source.v0_1",
+      "family": "missing_actuals",
+      "description": "Synthetic actual-cost source with no phase or code actuals to force missing-actuals ledger events.",
+      "fixture_refs": [
+        "examples/synthetic/actuals/medmal-missing-actuals.json"
+      ],
+      "test_refs": [
+        "tests/test_budget_revisions_and_actuals.py::test_budget_actual_variance_ledger_records_missing_actuals"
+      ],
+      "expected_signals": [
+        "actuals_not_available comparison status",
+        "budget_actual_missing_actuals_recorded ledger events",
+        "no billing connector read or write"
+      ],
+      "red_team_notes": [
+        "Missing actuals must not be treated as zero spend.",
+        "Intake must not query billing systems directly to fill the gap."
+      ]
+    },
+    {
+      "holdout_id": "holdout-carrier-rejection-duplicate-missing-unlinked-appeal.v0_1",
+      "family": "carrier_rejection_variants",
+      "description": "Synthetic carrier rejection capture bundle with duplicate notices, missing response, unlinked notice, parser failure, and appeal outcome.",
+      "fixture_refs": [
+        "examples/synthetic/carrier-rejections/duplicate-missing-unlinked-appeal.json"
+      ],
+      "test_refs": [
+        "tests/test_carrier_rejection_capture.py::test_carrier_rejection_capture_reconciles_duplicates_missing_unlinked_and_appeal"
+      ],
+      "expected_signals": [
+        "duplicate notice collapse",
+        "missing response after SLA",
+        "appeal financial outcome recorded without appeal submission"
+      ],
+      "red_team_notes": [
+        "Duplicate portal/email notices must not double-count disputed dollars.",
+        "Appeal results are evidence, not permission to mutate guideline profiles."
+      ]
+    },
+    {
+      "holdout_id": "holdout-budget-driver-edge-cases-medmal.v0_1",
+      "family": "budget_driver_edges",
+      "description": "Synthetic budget-driver edge cases for low-intensity, high-intensity, and unknown-driver states.",
+      "fixture_refs": [
+        "examples/synthetic/budget-drivers/medmal-driver-edge-cases.json"
+      ],
+      "test_refs": [
+        "tests/test_budget_stronger_drivers.py::test_human_confirmed_higher_severity_increases_budget",
+        "tests/test_budget_stronger_drivers.py::test_profile_default_intensity_effects_are_visible_not_observed"
+      ],
+      "expected_signals": [
+        "catastrophic severity produces a higher budget than soft-tissue severity",
+        "profile-default intensity effects remain visible but not observed facts",
+        "coverage posture remains unknown until human-confirmed"
+      ],
+      "red_team_notes": [
+        "Driver fixtures can overfit deterministic multipliers if promoted without shadow eval.",
+        "Unknown drivers must widen review posture, not invent facts."
+      ]
+    }
+  ],
+  "calibration_approved": false,
+  "fixture_files_mutated_by_audit": false,
+  "lake_write_performed": false,
+  "sqlite_write_performed": false,
+  "external_writes_performed": false,
+  "silent_learning_performed": false
+}
