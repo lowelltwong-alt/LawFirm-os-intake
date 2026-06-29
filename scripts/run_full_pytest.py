@@ -11,6 +11,7 @@ from typing import Any, Mapping
 import yaml
 
 
+sys.dont_write_bytecode = True
 REPO_ROOT = Path(__file__).resolve().parents[1]
 POLICY_PATH = REPO_ROOT / "config" / "validation-runtime-policy.yaml"
 DEFAULT_MINIMUM_TIMEOUT_SECONDS = 900

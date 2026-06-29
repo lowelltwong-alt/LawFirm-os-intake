@@ -534,6 +534,7 @@ def main() -> int:
         (target / filename).write_text(
             json.dumps(model.model_json_schema(), indent=2) + "\n",
             encoding="utf-8",
+            newline="\n",
         )
     print(f"exported {len(MODELS)} schemas to {target}")
     return 0

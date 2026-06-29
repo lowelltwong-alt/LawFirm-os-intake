@@ -20,8 +20,14 @@ python -m lawfirm_os_intake build-budget \
   --preflight-packet PATH/TO/intake_preflight_packet.json \
   --confirmation PATH/TO/human_confirmation.json \
   --practice-profile context/synthetic-profiles/insurance-defense.yaml \
+  --labor-employment-budget-fact-report PATH/TO/labor_employment_budget_fact_audit_report.json \
   --out-dir .lawfirm-os-intake/budget
 ```
+
+`--labor-employment-budget-fact-report` is optional. When supplied, critical
+L&E fact gaps fail the budget precondition gate before conflict seed or budget
+proposal output. Non-critical L&E review gaps pass through as supported budget
+unknowns for human review.
 
 ### Complete synthetic demo
 
@@ -33,6 +39,7 @@ bash scripts/smoke_demo.sh
 
 ```bash
 python scripts/run_full_pytest.py
+python scripts/run_validation_suite.py
 ```
 
 `config/validation-runtime-policy.yaml` declares the minimum local ceilings for
@@ -40,7 +47,8 @@ heavy validation commands. Full and focused pytest runs use the wrapper above
 and require a 900 second ceiling. Direct pytest invocation is blocked so a run
 cannot silently inherit a shorter ceiling. Smoke runs also require a 900 second
 ceiling. Schema export, repo validation, and ruff checks require at least 180
-seconds.
+seconds. The full validation-suite runner applies those policy ceilings to repo
+validation, schema export, lint, full pytest, smoke, and final repo validation.
 
 ### Audit labor/employment budget fact gaps
 

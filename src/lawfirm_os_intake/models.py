@@ -2039,6 +2039,7 @@ class BudgetSupportItem(StrictModel):
         "budget_driver_policy",
         "workflow_policy",
         "missing_template",
+        "labor_employment_budget_fact_report",
     ]
     evidence_refs: list[EvidenceRef] = Field(default_factory=list)
     structured_ref: str | None = None
@@ -4754,9 +4755,53 @@ class BudgetPreconditionReport(StrictModel):
     blocked_state: str | None = None
     input_refs: list[str]
     human_review_outcome_ref: str | None = None
+    labor_employment_budget_fact_report_ref: str | None = None
+    labor_employment_budget_readiness_state: (
+        Literal[
+            "blocked_missing_critical_facts",
+            "range_only_pending_human_review",
+            "candidate_ready_for_budget_review",
+        ]
+        | None
+    ) = None
+    labor_employment_budget_treatment: Literal[
+        "not_applicable",
+        "block_amount_budget",
+        "hours_only_or_broad_range",
+        "candidate_range_budget_after_review",
+        "candidate_ready_for_budget_review",
+    ] = "not_applicable"
+    labor_employment_critical_gap_count: int = Field(default=0, ge=0)
+    labor_employment_required_human_questions: list[str] = Field(default_factory=list)
     prohibited_outputs: list[str]
     external_writes_performed: Literal[False] = False
     generated_at: str
+
+    @model_validator(mode="after")
+    def budget_precondition_status_matches_checks(self) -> "BudgetPreconditionReport":
+        failed = [check.check_id for check in self.checks if check.status == "failed"]
+        if self.status == "passed" and failed:
+            raise ValueError("passed budget precondition report cannot include failed checks")
+        if self.status == "failed" and not failed:
+            raise ValueError("failed budget precondition report requires failed checks")
+        if (
+            self.labor_employment_budget_treatment != "not_applicable"
+            and not self.labor_employment_budget_fact_report_ref
+        ):
+            raise ValueError("L&E budget treatment requires a fact report ref")
+        if self.labor_employment_critical_gap_count > 0:
+            if self.status != "failed":
+                raise ValueError("L&E critical fact gaps must fail the budget precondition gate")
+            if self.blocked_state != "labor_employment_budget_facts_blocked":
+                raise ValueError("L&E critical fact gaps require the L&E blocked state")
+            if self.labor_employment_budget_treatment != "block_amount_budget":
+                raise ValueError("L&E critical fact gaps require block_amount_budget treatment")
+        if self.blocked_state == "labor_employment_budget_facts_blocked":
+            if not self.labor_employment_budget_fact_report_ref:
+                raise ValueError("L&E blocked state requires a fact report ref")
+            if self.labor_employment_critical_gap_count == 0:
+                raise ValueError("L&E blocked state requires at least one critical gap")
+        return self
 
 
 class EvidenceGraphNode(StrictModel):

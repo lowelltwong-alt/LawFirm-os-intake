@@ -691,10 +691,19 @@ def _budget_precondition_lines(report: BudgetPreconditionReport | None) -> list[
         f"- Budget precondition status: {report.status}",
         f"- Budget blocked state: {blocked_state}",
         f"- Human review outcome ref: `{report.human_review_outcome_ref or 'missing'}`",
+        f"- L&E budget fact report ref: `{report.labor_employment_budget_fact_report_ref or 'not supplied'}`",
+        f"- L&E budget readiness state: {report.labor_employment_budget_readiness_state or 'not_applicable'}",
+        f"- L&E budget treatment: {report.labor_employment_budget_treatment}",
+        f"- L&E critical gap count: {report.labor_employment_critical_gap_count}",
         f"- External writes performed: {report.external_writes_performed}",
         f"- Prohibited outputs before gate failure: {prohibited_outputs}",
         "- Budget precondition checks:",
     ]
+    if report.labor_employment_required_human_questions:
+        lines.append("- L&E required human questions:")
+        lines.extend(
+            f"- {question}" for question in report.labor_employment_required_human_questions
+        )
     lines.extend(f"- {check.status}: {check.check_id} - {check.message}" for check in report.checks)
     return lines
 

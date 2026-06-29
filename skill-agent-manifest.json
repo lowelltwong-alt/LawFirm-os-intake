@@ -70,7 +70,7 @@
   ],
   "validation": [
     "python scripts/validate_repo.py",
-    "python -m pytest",
+    "python scripts/run_full_pytest.py",
     "../LawFirm-os-semantic-substrate/scripts/validate_skill_agent_control_plane.py --workspace .."
   ]
 }

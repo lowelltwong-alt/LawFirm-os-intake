@@ -6,6 +6,7 @@ from .models import (
     EvidenceRef,
     HumanConfirmation,
     IntakePreflightPacket,
+    LaborEmploymentBudgetFactAuditReport,
 )
 from .util import new_id, now_iso
 
@@ -40,6 +41,8 @@ def build_budget_precondition_report(
     confirmation: HumanConfirmation,
     input_refs: list[str],
     human_review_outcome_ref: str | None = None,
+    labor_employment_budget_fact_report: LaborEmploymentBudgetFactAuditReport | None = None,
+    labor_employment_budget_fact_report_ref: str | None = None,
 ) -> BudgetPreconditionReport:
     confirmation_ref = f"human-confirmation://{confirmation.confirmation_id}"
     packet_ref = f"intake-preflight-packet://{packet.packet_id}"
@@ -106,19 +109,56 @@ def build_budget_precondition_report(
             [confirmation_ref, packet_ref],
         ),
     ]
+    resolved_labor_employment_budget_fact_report_ref = None
+    if labor_employment_budget_fact_report is not None:
+        resolved_labor_employment_budget_fact_report_ref = (
+            labor_employment_budget_fact_report_ref
+            or (
+                "labor-employment-budget-fact-report://"
+                f"{labor_employment_budget_fact_report.labor_employment_budget_fact_audit_report_id}"
+            )
+        )
+        checks.extend(
+            [
+                _check(
+                    "labor_employment_budget_fact_report_ready",
+                    labor_employment_budget_fact_report.status
+                    == "labor_employment_budget_facts_ready_for_review",
+                    "L&E budget fact report must be ready for human fact review.",
+                    [resolved_labor_employment_budget_fact_report_ref],
+                ),
+                _check(
+                    "labor_employment_budget_fact_no_critical_gaps",
+                    labor_employment_budget_fact_report.budget_readiness_state
+                    != "blocked_missing_critical_facts"
+                    and labor_employment_budget_fact_report.critical_gap_count == 0,
+                    "Critical L&E fact gaps must block amount budget generation.",
+                    [resolved_labor_employment_budget_fact_report_ref],
+                ),
+                _check(
+                    "labor_employment_budget_fact_report_no_side_effects",
+                    _labor_employment_fact_report_has_no_side_effects(
+                        labor_employment_budget_fact_report
+                    ),
+                    "L&E fact report must be candidate-only and must not claim Lake, SQLite, training, matter-opening, conflict, or submission side effects.",
+                    [resolved_labor_employment_budget_fact_report_ref],
+                ),
+            ]
+        )
     failed = [check.check_id for check in checks if check.status == "failed"]
     status = "passed" if not failed else "failed"
     blocked_state = None
     if failed:
-        blocked_state = (
-            "budget_blocked_before_human_confirmation"
-            if "confirmation_status_confirmed" in failed
-            else "budget_precondition_failed"
-            if "confirmation_matches_preflight_packet" in failed
-            else "budget_confirmation_evidence_missing"
-            if any("evidence_refs" in check_id for check_id in failed)
-            else "budget_precondition_failed"
-        )
+        if "labor_employment_budget_fact_no_critical_gaps" in failed:
+            blocked_state = "labor_employment_budget_facts_blocked"
+        elif "confirmation_status_confirmed" in failed:
+            blocked_state = "budget_blocked_before_human_confirmation"
+        elif "confirmation_matches_preflight_packet" in failed:
+            blocked_state = "budget_precondition_failed"
+        elif any("evidence_refs" in check_id for check_id in failed):
+            blocked_state = "budget_confirmation_evidence_missing"
+        else:
+            blocked_state = "budget_precondition_failed"
     return BudgetPreconditionReport(
         budget_precondition_report_id=new_id("budgetprecondition"),
         run_id=packet.run_id,
@@ -129,9 +169,72 @@ def build_budget_precondition_report(
         blocked_state=blocked_state,
         input_refs=input_refs,
         human_review_outcome_ref=human_review_outcome_ref,
+        labor_employment_budget_fact_report_ref=resolved_labor_employment_budget_fact_report_ref,
+        labor_employment_budget_readiness_state=(
+            labor_employment_budget_fact_report.budget_readiness_state
+            if labor_employment_budget_fact_report is not None
+            else None
+        ),
+        labor_employment_budget_treatment=_labor_employment_budget_treatment(
+            labor_employment_budget_fact_report
+        ),
+        labor_employment_critical_gap_count=(
+            labor_employment_budget_fact_report.critical_gap_count
+            if labor_employment_budget_fact_report is not None
+            else 0
+        ),
+        labor_employment_required_human_questions=(
+            labor_employment_budget_fact_report.required_human_questions
+            if labor_employment_budget_fact_report is not None
+            else []
+        ),
         prohibited_outputs=PROHIBITED_PRECONDITION_FAILURE_OUTPUTS,
         generated_at=now_iso(),
     )
+
+
+def _labor_employment_fact_report_has_no_side_effects(
+    report: LaborEmploymentBudgetFactAuditReport,
+) -> bool:
+    return (
+        report.budget_amount_output_authorized is False
+        and report.budget_submission_authorized is False
+        and report.conflict_conclusion_emitted is False
+        and report.matter_opening_authorized is False
+        and report.training_pipeline_created is False
+        and report.lake_write_performed is False
+        and report.sqlite_write_performed is False
+        and report.external_writes_performed is False
+        and report.candidate_only is True
+        and report.non_authoritative is True
+    )
+
+
+def _labor_employment_budget_treatment(
+    report: LaborEmploymentBudgetFactAuditReport | None,
+) -> str:
+    if report is None:
+        return "not_applicable"
+    if (
+        report.budget_readiness_state == "blocked_missing_critical_facts"
+        or report.critical_gap_count > 0
+    ):
+        return "block_amount_budget"
+    if report.budget_readiness_state == "range_only_pending_human_review":
+        return "hours_only_or_broad_range"
+    if any(
+        finding.recommended_budget_treatment == "hours_only_or_broad_range"
+        for finding in report.findings
+        if finding.human_confirmation_required or not finding.source_bound
+    ):
+        return "hours_only_or_broad_range"
+    if any(
+        finding.recommended_budget_treatment == "candidate_range_budget_after_review"
+        for finding in report.findings
+        if finding.human_confirmation_required or not finding.source_bound
+    ):
+        return "candidate_range_budget_after_review"
+    return "candidate_ready_for_budget_review"
 
 
 def enforce_budget_preconditions(report: BudgetPreconditionReport) -> None:

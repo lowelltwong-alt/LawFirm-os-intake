@@ -85,10 +85,7 @@ Preserve and harden the existing local demo before adding model providers:
 
 ```bash
 python -m pip install -e ".[dev]"
-python scripts/validate_repo.py
-python scripts/export_schemas.py
-python scripts/run_full_pytest.py
-bash scripts/smoke_demo.sh
+python scripts/run_validation_suite.py
 ```
 
 A local validation runtime policy lives at
@@ -96,6 +93,8 @@ A local validation runtime policy lives at
 higher for pytest, schema export, repo validation, lint, and smoke commands;
 full and focused pytest must not run with a 300 second ceiling. Direct pytest
 invocation is blocked; use `python scripts/run_full_pytest.py` for full or
-focused test runs.
+focused test runs. Use `python scripts/run_validation_suite.py` when running the
+full repo check sequence; it applies the configured policy ceiling to every
+heavy validation step.
 
 A successful run ends in `blocked_pending_conflicts_and_engagement`. That is expected and correct.

@@ -105,6 +105,60 @@
       "default": null,
       "title": "Human Review Outcome Ref"
     },
+    "labor_employment_budget_fact_report_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Labor Employment Budget Fact Report Ref"
+    },
+    "labor_employment_budget_readiness_state": {
+      "anyOf": [
+        {
+          "enum": [
+            "blocked_missing_critical_facts",
+            "range_only_pending_human_review",
+            "candidate_ready_for_budget_review"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Labor Employment Budget Readiness State"
+    },
+    "labor_employment_budget_treatment": {
+      "default": "not_applicable",
+      "enum": [
+        "not_applicable",
+        "block_amount_budget",
+        "hours_only_or_broad_range",
+        "candidate_range_budget_after_review",
+        "candidate_ready_for_budget_review"
+      ],
+      "title": "Labor Employment Budget Treatment",
+      "type": "string"
+    },
+    "labor_employment_critical_gap_count": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Labor Employment Critical Gap Count",
+      "type": "integer"
+    },
+    "labor_employment_required_human_questions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Labor Employment Required Human Questions",
+      "type": "array"
+    },
     "prohibited_outputs": {
       "items": {
         "type": "string"

@@ -17,6 +17,7 @@ from .models import (
     EvidenceRef,
     HumanConfirmation,
     IntakePreflightPacket,
+    LaborEmploymentBudgetFactAuditReport,
 )
 from .rates import RoleRateResolution
 from .util import new_id
@@ -102,6 +103,66 @@ def _support_item(
         evidence_refs=evidence_refs or [],
         structured_ref=structured_ref,
     )
+
+
+def apply_labor_employment_budget_fact_constraints(
+    budget: BudgetProposal,
+    report: LaborEmploymentBudgetFactAuditReport | None,
+    report_ref: str | None,
+) -> BudgetProposal:
+    if report is None:
+        return budget
+    if (
+        report.budget_readiness_state == "blocked_missing_critical_facts"
+        or report.critical_gap_count > 0
+    ):
+        return budget
+
+    unknowns = list(budget.unknowns)
+    support_items = list(budget.budget_support_items)
+    seen_unknowns = set(unknowns)
+    seen_structured_refs = {
+        item.structured_ref for item in support_items if item.structured_ref is not None
+    }
+    base_ref = (
+        "labor-employment-budget-fact-report://"
+        f"{report.labor_employment_budget_fact_audit_report_id}"
+    )
+
+    def add_unknown(text: str, structured_ref: str) -> None:
+        if text not in seen_unknowns:
+            unknowns.append(text)
+            seen_unknowns.add(text)
+        if structured_ref not in seen_structured_refs:
+            support_items.append(
+                _support_item(
+                    "unknown",
+                    text,
+                    "labor_employment_budget_fact_report",
+                    structured_ref=structured_ref,
+                )
+            )
+            seen_structured_refs.add(structured_ref)
+
+    if report.budget_readiness_state == "range_only_pending_human_review":
+        add_unknown(
+            "L&E budget fact report requires broad/range or hours-only treatment until human fact review is complete.",
+            f"{base_ref}/budget_readiness_state/range_only_pending_human_review",
+        )
+
+    for gap in report.gaps:
+        add_unknown(
+            f"L&E budget fact needs review: {gap.recommended_question}",
+            f"{base_ref}/gap/{gap.gap_id}",
+        )
+
+    for index, question in enumerate(report.required_human_questions):
+        add_unknown(
+            f"L&E budget fact human question: {question}",
+            f"{base_ref}/required_human_questions/{index}",
+        )
+
+    return budget.model_copy(update={"unknowns": unknowns, "budget_support_items": support_items})
 
 
 def _template_support_items(

@@ -9,7 +9,7 @@ from .adapters import (
     finalize_model_adapter_report,
     resolve_adapter,
 )
-from .budget import build_budget_proposal
+from .budget import apply_labor_employment_budget_fact_constraints, build_budget_proposal
 from .budget_actuals import build_budget_actual_comparison_report
 from .budget_submission_guard import (
     build_budget_submission_guard_report,
@@ -66,6 +66,7 @@ from .models import (
     FixtureGoldSpec,
     HumanConfirmation,
     IntakePreflightPacket,
+    LaborEmploymentBudgetFactAuditReport,
     MatterOpeningBlocker,
     MatterOpeningReadiness,
     ModelAdapterReport,
@@ -775,11 +776,24 @@ def run_budget(
     out_dir: str | Path,
     *,
     fixture_gold: str | Path | None = None,
+    labor_employment_budget_fact_report: str | Path | None = None,
 ) -> tuple[Any, Path]:
     preflight_packet_path = Path(preflight_packet_path)
     confirmation_path = Path(confirmation_path)
+    labor_employment_budget_fact_report_path = (
+        Path(labor_employment_budget_fact_report)
+        if labor_employment_budget_fact_report is not None
+        else None
+    )
     packet = IntakePreflightPacket.model_validate(load_json(preflight_packet_path))
     confirmation = HumanConfirmation.model_validate(load_json(confirmation_path))
+    loaded_labor_employment_budget_fact_report = (
+        LaborEmploymentBudgetFactAuditReport.model_validate(
+            load_json(labor_employment_budget_fact_report_path)
+        )
+        if labor_employment_budget_fact_report_path is not None
+        else None
+    )
     run_dir = Path(out_dir)
     run_dir.mkdir(parents=True, exist_ok=True)
     ledger_path = run_dir / "run_ledger.jsonl"
@@ -790,7 +804,17 @@ def run_budget(
             0,
             "budget_run_started",
             "started",
-            input_refs=[str(preflight_packet_path), str(confirmation_path)],
+            input_refs=[
+                ref
+                for ref in [
+                    str(preflight_packet_path),
+                    str(confirmation_path),
+                    str(labor_employment_budget_fact_report_path)
+                    if labor_employment_budget_fact_report_path is not None
+                    else None,
+                ]
+                if ref
+            ],
         ).model_dump(mode="json"),
     )
     human_review_outcome = build_human_review_outcome_record(packet, confirmation)
@@ -816,11 +840,22 @@ def run_budget(
         ).model_dump(mode="json"),
     )
     budget_precondition_report_path = run_dir / "budget_precondition_report.json"
+    budget_input_refs = [
+        str(preflight_packet_path),
+        str(confirmation_path),
+        str(human_review_outcome_path),
+    ]
+    if labor_employment_budget_fact_report_path is not None:
+        budget_input_refs.append(str(labor_employment_budget_fact_report_path))
     budget_precondition_report = build_budget_precondition_report(
         packet,
         confirmation,
-        [str(preflight_packet_path), str(confirmation_path), str(human_review_outcome_path)],
+        budget_input_refs,
         str(human_review_outcome_path),
+        loaded_labor_employment_budget_fact_report,
+        str(labor_employment_budget_fact_report_path)
+        if labor_employment_budget_fact_report_path is not None
+        else None,
     )
     write_json(
         budget_precondition_report_path,
@@ -924,6 +959,13 @@ def run_budget(
             guideline_ref=guideline[1],
             carrier_id=carrier_id,
         )
+    budget = apply_labor_employment_budget_fact_constraints(
+        budget,
+        loaded_labor_employment_budget_fact_report,
+        str(labor_employment_budget_fact_report_path)
+        if labor_employment_budget_fact_report_path is not None
+        else None,
+    )
     readiness = MatterOpeningReadiness(
         readiness_id=new_id("readiness"),
         preflight_packet_id=packet.packet_id,
@@ -1062,6 +1104,10 @@ def run_budget(
         "review_package_manifest": str(manifest_path),
         "review_package_completeness_report": str(completeness_report_path),
     }
+    if labor_employment_budget_fact_report_path is not None:
+        artifact_refs["labor_employment_budget_fact_report"] = str(
+            labor_employment_budget_fact_report_path
+        )
     if fixture_gold_report_path:
         artifact_refs["fixture_gold_report"] = str(fixture_gold_report_path)
     human_gate_status_report = build_human_gate_status_report(

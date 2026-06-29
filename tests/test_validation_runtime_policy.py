@@ -7,7 +7,7 @@ from pathlib import Path
 
 import yaml
 
-from scripts import run_full_pytest
+from scripts import run_full_pytest, run_validation_suite
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -44,6 +44,7 @@ def test_validation_runtime_policy_requires_long_heavy_command_ceilings() -> Non
 def test_make_test_uses_validation_runtime_policy_wrapper() -> None:
     makefile = (REPO_ROOT / "Makefile").read_text(encoding="utf-8").replace("\r\n", "\n")
 
+    assert "\nvalidate-all:\n\tpython scripts/run_validation_suite.py\n" in f"\n{makefile}"
     assert "\ntest:\n\tpython scripts/run_full_pytest.py\n" in f"\n{makefile}"
     assert "\n\tpython -m ruff check --no-cache src tests scripts\n" in f"\n{makefile}"
     assert "\n\tpython -m ruff format --check --no-cache src tests scripts\n" in f"\n{makefile}"
@@ -60,6 +61,7 @@ def test_pytest_wrapper_sets_policy_marker() -> None:
 
     assert env[run_full_pytest.POLICY_MARKER_ENV_VAR] == run_full_pytest.POLICY_MARKER_VALUE
     assert env["PYTHONDONTWRITEBYTECODE"] == "1"
+    assert run_full_pytest.sys.dont_write_bytecode is True
 
 
 def test_pytest_wrapper_disables_pytest_cache_provider() -> None:
@@ -106,5 +108,34 @@ def test_schema_export_and_smoke_suppress_bytecode() -> None:
     smoke_demo = (REPO_ROOT / "scripts" / "smoke_demo.sh").read_text(encoding="utf-8")
 
     assert "sys.dont_write_bytecode = True" in export_schemas
+    assert 'newline="\\n"' in export_schemas
+    assert "sys.dont_write_bytecode = True" in (
+        REPO_ROOT / "scripts" / "run_full_pytest.py"
+    ).read_text(encoding="utf-8")
+    assert "sys.dont_write_bytecode = True" in (
+        REPO_ROOT / "scripts" / "run_validation_suite.py"
+    ).read_text(encoding="utf-8")
     assert "export PYTHONDONTWRITEBYTECODE=1" in smoke_demo
     assert '"$PYTHON_BIN" -B -m lawfirm_os_intake demo' in smoke_demo
+
+
+def test_validation_suite_runs_every_heavy_step_under_policy_timeout() -> None:
+    commands = _load_policy()["commands"]
+    steps = run_validation_suite.validation_steps()
+    steps_by_name = {step.name: step for step in steps}
+
+    assert list(steps_by_name) == [
+        "validate_repo",
+        "export_schemas",
+        "ruff_check",
+        "ruff_format_check",
+        "full_pytest",
+        "smoke_demo",
+        "validate_repo_final",
+    ]
+    for step in steps:
+        expected_timeout = commands[step.command_key]["minimum_timeout_seconds"]
+        assert step.timeout_seconds >= expected_timeout
+
+    assert "scripts/run_full_pytest.py" in steps_by_name["full_pytest"].command
+    assert steps_by_name["smoke_demo"].command == ("bash", "scripts/smoke_demo.sh")

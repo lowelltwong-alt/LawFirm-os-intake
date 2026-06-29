@@ -109,6 +109,13 @@ def _parser() -> argparse.ArgumentParser:
     budget.add_argument("--practice-profile", required=True)
     budget.add_argument("--out-dir", required=True)
     budget.add_argument("--fixture-gold")
+    budget.add_argument(
+        "--labor-employment-budget-fact-report",
+        help=(
+            "Optional labor_employment_budget_fact_audit_report.json used as a "
+            "budget precondition gate."
+        ),
+    )
 
     demo = sub.add_parser("demo", help="Run the complete synthetic intake-to-budget demonstration.")
     demo.add_argument("--input", required=True)
@@ -897,6 +904,7 @@ def main(argv: list[str] | None = None) -> int:
                 args.practice_profile,
                 args.out_dir,
                 fixture_gold=args.fixture_gold,
+                labor_employment_budget_fact_report=args.labor_employment_budget_fact_report,
             )
             _print(
                 {
@@ -915,6 +923,7 @@ def main(argv: list[str] | None = None) -> int:
                         run_dir / "budget_submission_guard_report.json"
                     ),
                     "budget_precondition_report": str(run_dir / "budget_precondition_report.json"),
+                    "labor_employment_budget_fact_report": args.labor_employment_budget_fact_report,
                     "safety_gate_report": str(run_dir / "safety_gate_report.json"),
                     "exception_lake_handoff_manifest": str(
                         run_dir / "exception_lake_handoff_manifest.json"
