@@ -502,6 +502,35 @@ repos without creating issues or writing to GitHub.
   `sqlite_write_performed=false`, `external_writes_performed=false`, and
   `silent_learning_performed=false`.
 
+## 11J.1. Owner Issue Draft Quality Audit
+
+Status: implemented for the current synthetic candidate slice; issue creation,
+owner triage, implementation PRs, and sibling-repo writes remain manual owner
+work.
+
+Add a deterministic local gate over generated owner issue drafts before humans
+copy anything into owner repos.
+
+- `audit-owner-issue-draft-quality` consumes
+  `cross_repo_owner_issue_draft_report.json`.
+- It writes `owner_issue_draft_quality_report.json` and
+  `owner_issue_draft_quality_report.md`.
+- The audit checks that every ready draft has required review sections, source
+  evidence labels, suggested labels, required owner actions, acceptance checks,
+  red-team notes, required next gates, explicit no-write/no-promotion/no-learning
+  boundary text, and a Markdown output file that exactly matches the embedded
+  issue body.
+- Blocked source issue drafts remain blocked and cannot be counted as ready for
+  manual owner issue review.
+- Passing status is `owner_issue_draft_quality_ready_for_manual_review`, which
+  means ready for human review of the copied text only.
+- The report records `manual_creation_required=true`,
+  `github_issue_created=false`, `github_pr_created=false`,
+  `github_write_performed=false`, `sibling_repo_write_performed=false`,
+  `promotion_authorized=false`, `lake_write_performed=false`,
+  `sqlite_write_performed=false`, `external_writes_performed=false`, and
+  `silent_learning_performed=false`.
+
 ## 11K. Intake Local Closeout Audit
 
 Status: implemented for the current synthetic candidate slice; PR state changes,

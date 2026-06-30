@@ -285,6 +285,16 @@ checks, red-team notes, and no-write boundaries. A blocked owner-adoption packet
 produces a blocked issue draft. The command does not create issues, open PRs,
 write sibling repos, promote canon, admit Lake/SQLite records, or apply learning.
 
+`audit-owner-issue-draft-quality` consumes the issue draft report and writes
+`owner_issue_draft_quality_report.json` plus Markdown notes. Eval coverage must
+prove that every ready draft includes required sections, source-evidence labels,
+suggested labels, owner actions, acceptance checks, red-team notes, next gates,
+explicit no-write/no-promotion/no-learning boundary text, and a Markdown output
+that exactly matches the embedded issue body. Blocked source drafts must stay
+blocked, tampered draft bodies must fail closed, and the command must create no
+issues or PRs, write no sibling repos, promote no canon, admit no Lake/SQLite
+records, and apply no learning.
+
 `audit-intake-local-closeout` consumes the final readiness audit, PR checklist,
 owner-adoption report, and owner issue-draft report. It writes
 `intake_local_closeout_report.json` plus Markdown notes. Passing status means the
@@ -369,6 +379,7 @@ Measure review time, correction count, unknown selection, evidence-navigation bu
 - keep `pr_review_checklist.json` local and non-authoritative; it helps a human make the draft-PR decision but must not mark the PR ready, call GitHub write APIs, promote canon, write Lake/SQLite records, or apply learning.
 - keep `cross_repo_owner_adoption_report.json` local and non-authoritative; it turns candidate proposals into owner-review packets but must not create issues, open PRs, write sibling repos, promote canon, admit Lake/SQLite records, or apply learning.
 - keep `cross_repo_owner_issue_draft_report.json` local and non-authoritative; it drafts owner issue text for manual use but must not create issues, open PRs, write sibling repos, promote canon, admit Lake/SQLite records, or apply learning.
+- keep `owner_issue_draft_quality_report.json` local and non-authoritative; it audits draft completeness before manual copying but must not create issues, open PRs, write sibling repos, promote canon, admit Lake/SQLite records, or apply learning.
 - keep `intake_local_closeout_report.json` local and non-authoritative; it proves the local closeout evidence chain and remaining manual gates but must not mark a PR ready, create issues, open PRs, write sibling repos, promote canon, admit Lake/SQLite records, or apply learning.
 - keep `pr_readiness_decision_report.json` local and non-authoritative; it records the human PR readiness decision append-only but must not mark a PR ready, call GitHub write APIs, create issues, open PRs, write sibling repos, promote canon, admit Lake/SQLite records, apply proposed changes, or apply learning.
 - keep `public_source_methodology_report.json` local and non-authoritative; it prepares public-source methodology review but must not ingest public records, authorize adapters, commit public payloads, write Lake/SQLite records, or permit runtime public-data use.

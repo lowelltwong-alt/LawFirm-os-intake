@@ -8927,6 +8927,168 @@ class CrossRepoOwnerIssueDraftReport(StrictModel):
         return self
 
 
+class CrossRepoOwnerIssueDraftQualityCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed", "warning"]
+    message: str
+    artifact_refs: list[str] = Field(default_factory=list)
+    blocking_refs: list[str] = Field(default_factory=list)
+
+
+class CrossRepoOwnerIssueDraftQualityItem(StrictModel):
+    target_repo: CrossRepoAdoptionTargetRepo
+    issue_draft_id: str
+    source_issue_draft_status: Literal[
+        "ready_for_manual_issue_creation",
+        "blocked_by_owner_adoption_packet",
+    ]
+    status: Literal[
+        "ready_for_manual_owner_issue_review",
+        "blocked_by_source_issue_draft",
+        "failed_quality_gate",
+    ]
+    issue_draft_output_ref: str
+    markdown_output_exists: bool
+    markdown_matches_embedded_body: bool
+    missing_required_sections: list[str] = Field(default_factory=list)
+    missing_source_evidence_labels: list[str] = Field(default_factory=list)
+    missing_boundary_phrases: list[str] = Field(default_factory=list)
+    suggested_label_count: int = Field(ge=0)
+    required_owner_action_count: int = Field(ge=0)
+    acceptance_check_count: int = Field(ge=0)
+    red_team_note_count: int = Field(ge=0)
+    required_next_gate_count: int = Field(ge=0)
+    proposal_count: int = Field(ge=0)
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    manual_creation_required: Literal[True] = True
+    github_issue_created: Literal[False] = False
+    github_pr_created: Literal[False] = False
+    github_write_performed: Literal[False] = False
+    sibling_repo_write_performed: Literal[False] = False
+    promotion_authorized: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def owner_issue_draft_quality_item_status_matches_findings(
+        self,
+    ) -> "CrossRepoOwnerIssueDraftQualityItem":
+        quality_blockers = (
+            self.missing_required_sections
+            or self.missing_source_evidence_labels
+            or self.missing_boundary_phrases
+            or not self.markdown_output_exists
+            or not self.markdown_matches_embedded_body
+            or not self.suggested_label_count
+            or not self.required_owner_action_count
+            or not self.acceptance_check_count
+            or not self.red_team_note_count
+            or not self.required_next_gate_count
+        )
+        if self.status == "ready_for_manual_owner_issue_review":
+            if self.source_issue_draft_status != "ready_for_manual_issue_creation":
+                raise ValueError("ready quality item requires ready source issue draft")
+            if quality_blockers:
+                raise ValueError("ready quality item cannot contain quality blockers")
+        if self.status == "blocked_by_source_issue_draft":
+            if self.source_issue_draft_status == "ready_for_manual_issue_creation":
+                raise ValueError("source-blocked quality item requires blocked source draft")
+        if self.status == "failed_quality_gate":
+            if self.source_issue_draft_status != "ready_for_manual_issue_creation":
+                raise ValueError("quality failure requires otherwise ready source draft")
+            if not quality_blockers:
+                raise ValueError("quality failure requires at least one quality blocker")
+        return self
+
+
+class CrossRepoOwnerIssueDraftQualityReport(StrictModel):
+    schema_version: str = "0.1"
+    quality_report_id: str
+    status: Literal[
+        "owner_issue_draft_quality_ready_for_manual_review",
+        "blocked_by_owner_issue_draft_quality",
+    ]
+    source_issue_draft_report_id: str
+    source_issue_draft_report_ref: str
+    source_issue_draft_status: Literal[
+        "issue_drafts_ready_for_manual_creation",
+        "blocked_by_owner_adoption",
+    ]
+    draft_count: int = Field(ge=0)
+    ready_item_count: int = Field(ge=0)
+    blocked_item_count: int = Field(ge=0)
+    failed_item_count: int = Field(ge=0)
+    target_repos: list[CrossRepoAdoptionTargetRepo]
+    quality_items: list[CrossRepoOwnerIssueDraftQualityItem]
+    checks: list[CrossRepoOwnerIssueDraftQualityCheck]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    manual_creation_required: Literal[True] = True
+    github_issue_created: Literal[False] = False
+    github_pr_created: Literal[False] = False
+    github_write_performed: Literal[False] = False
+    sibling_repo_write_performed: Literal[False] = False
+    promotion_authorized: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def owner_issue_draft_quality_report_counts_match(
+        self,
+    ) -> "CrossRepoOwnerIssueDraftQualityReport":
+        if self.draft_count != len(self.quality_items):
+            raise ValueError("owner issue draft quality item count does not match")
+        item_target_repos = [item.target_repo for item in self.quality_items]
+        if set(self.target_repos) != set(item_target_repos) or len(self.target_repos) != len(
+            item_target_repos
+        ):
+            raise ValueError("owner issue draft quality target repos do not match items")
+        ready_count = sum(
+            1 for item in self.quality_items if item.status == "ready_for_manual_owner_issue_review"
+        )
+        blocked_count = sum(
+            1 for item in self.quality_items if item.status == "blocked_by_source_issue_draft"
+        )
+        failed_count = sum(1 for item in self.quality_items if item.status == "failed_quality_gate")
+        if self.ready_item_count != ready_count:
+            raise ValueError("owner issue draft quality ready count does not match")
+        if self.blocked_item_count != blocked_count:
+            raise ValueError("owner issue draft quality blocked count does not match")
+        if self.failed_item_count != failed_count:
+            raise ValueError("owner issue draft quality failed count does not match")
+        failed_checks = [check for check in self.checks if check.status == "failed"]
+        if (
+            self.status == "owner_issue_draft_quality_ready_for_manual_review"
+            and self.source_issue_draft_status != "issue_drafts_ready_for_manual_creation"
+        ):
+            raise ValueError("ready owner issue draft quality report requires ready source report")
+        if self.status == "owner_issue_draft_quality_ready_for_manual_review" and (
+            failed_checks or blocked_count or failed_count
+        ):
+            raise ValueError("ready owner issue draft quality report cannot include blockers")
+        if self.status == "blocked_by_owner_issue_draft_quality" and not (
+            failed_checks or blocked_count or failed_count
+        ):
+            raise ValueError("blocked owner issue draft quality report requires blockers")
+        required = {
+            "manual_owner_issue_creation_if_desired",
+            "owning_repo_triage",
+            "owner_repo_implementation_pr_if_accepted",
+            "cross_repo_contract_validation_after_owner_changes",
+            "no_intake_github_or_sibling_repo_write",
+        }
+        if not required.issubset(set(self.required_next_gates)):
+            raise ValueError("owner issue draft quality report is missing required gates")
+        return self
+
+
 class IntakeLocalCloseoutCheck(StrictModel):
     check_id: str
     status: Literal["passed", "blocked"]
