@@ -1,0 +1,36 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "surface_ref": {
+      "title": "Surface Ref",
+      "type": "string"
+    },
+    "pr_numbers": {
+      "items": {
+        "type": "integer"
+      },
+      "title": "Pr Numbers",
+      "type": "array"
+    },
+    "risk": {
+      "enum": [
+        "medium",
+        "high"
+      ],
+      "title": "Risk",
+      "type": "string"
+    },
+    "reason": {
+      "title": "Reason",
+      "type": "string"
+    }
+  },
+  "required": [
+    "surface_ref",
+    "pr_numbers",
+    "risk",
+    "reason"
+  ],
+  "title": "PRMergeOrderSharedSurface",
+  "type": "object"
+}

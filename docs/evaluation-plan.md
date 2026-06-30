@@ -324,6 +324,13 @@ when `observed_pr_state=merged`, distinguishes easy local work from critical
 owner-gated work, and performs no GitHub, sibling repo, Lake, SQLite, promotion,
 real-data, or learning side effects.
 
+`plan-pr-merge-order` consumes an explicit local PR snapshot and writes a
+candidate-only merge-order packet. Eval coverage must prove the default
+`gap_first_then_depth_audit` order, detect shared changed-file surfaces,
+fail closed when draft PR evidence is stale or checks are not green, and
+perform no ready-state, merge, GitHub, sibling repo, Lake, SQLite, promotion,
+external-write, or learning side effects.
+
 `audit-synthetic-fixture-expansion` consumes the remaining-roadmap report and
 the synthetic holdout manifest. Eval coverage must prove all required holdout
 families are present, fixture and test refs stay under the repo root, scoped JSON

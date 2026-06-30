@@ -1,0 +1,482 @@
+{
+  "$defs": {
+    "PRMergeOrderCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed",
+            "warning"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "artifact_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Artifact Refs",
+          "type": "array"
+        },
+        "blocking_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Blocking Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "PRMergeOrderCheck",
+      "type": "object"
+    },
+    "PRMergeOrderRecommendation": {
+      "additionalProperties": false,
+      "properties": {
+        "order_index": {
+          "exclusiveMinimum": 0,
+          "title": "Order Index",
+          "type": "integer"
+        },
+        "pr_number": {
+          "exclusiveMinimum": 0,
+          "title": "Pr Number",
+          "type": "integer"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "head_ref_name": {
+          "title": "Head Ref Name",
+          "type": "string"
+        },
+        "recommended_sequence_role": {
+          "enum": [
+            "fixture_gap_closer",
+            "fixture_role_expander",
+            "audit_verifier",
+            "unknown"
+          ],
+          "title": "Recommended Sequence Role",
+          "type": "string"
+        },
+        "recommended_after_pr_numbers": {
+          "items": {
+            "type": "integer"
+          },
+          "title": "Recommended After Pr Numbers",
+          "type": "array"
+        },
+        "shared_surface_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Shared Surface Refs",
+          "type": "array"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "required_manual_actions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Required Manual Actions",
+          "type": "array"
+        },
+        "validation_required": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Validation Required",
+          "type": "array"
+        },
+        "red_team_notes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Red Team Notes",
+          "type": "array"
+        },
+        "merge_gate": {
+          "const": "manual_human_review_required",
+          "default": "manual_human_review_required",
+          "title": "Merge Gate",
+          "type": "string"
+        },
+        "ready_state_gate": {
+          "const": "manual_human_review_required",
+          "default": "manual_human_review_required",
+          "title": "Ready State Gate",
+          "type": "string"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        },
+        "ready_for_review_marked": {
+          "const": false,
+          "default": false,
+          "title": "Ready For Review Marked",
+          "type": "boolean"
+        },
+        "merge_performed": {
+          "const": false,
+          "default": false,
+          "title": "Merge Performed",
+          "type": "boolean"
+        },
+        "github_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Github Write Performed",
+          "type": "boolean"
+        },
+        "external_writes_performed": {
+          "const": false,
+          "default": false,
+          "title": "External Writes Performed",
+          "type": "boolean"
+        },
+        "silent_learning_performed": {
+          "const": false,
+          "default": false,
+          "title": "Silent Learning Performed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "order_index",
+        "pr_number",
+        "title",
+        "head_ref_name",
+        "recommended_sequence_role",
+        "reason",
+        "required_manual_actions",
+        "validation_required",
+        "red_team_notes"
+      ],
+      "title": "PRMergeOrderRecommendation",
+      "type": "object"
+    },
+    "PRMergeOrderSharedSurface": {
+      "additionalProperties": false,
+      "properties": {
+        "surface_ref": {
+          "title": "Surface Ref",
+          "type": "string"
+        },
+        "pr_numbers": {
+          "items": {
+            "type": "integer"
+          },
+          "title": "Pr Numbers",
+          "type": "array"
+        },
+        "risk": {
+          "enum": [
+            "medium",
+            "high"
+          ],
+          "title": "Risk",
+          "type": "string"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "surface_ref",
+        "pr_numbers",
+        "risk",
+        "reason"
+      ],
+      "title": "PRMergeOrderSharedSurface",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "packet_id": {
+      "title": "Packet Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "pr_merge_order_ready_manual_queue_required",
+        "blocked_by_pr_merge_order_evidence"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "source_snapshot_id": {
+      "title": "Source Snapshot Id",
+      "type": "string"
+    },
+    "source_snapshot_ref": {
+      "title": "Source Snapshot Ref",
+      "type": "string"
+    },
+    "repository_full_name": {
+      "title": "Repository Full Name",
+      "type": "string"
+    },
+    "base_ref_name": {
+      "title": "Base Ref Name",
+      "type": "string"
+    },
+    "strategy": {
+      "const": "gap_first_then_depth_audit",
+      "title": "Strategy",
+      "type": "string"
+    },
+    "pr_count": {
+      "minimum": 0,
+      "title": "Pr Count",
+      "type": "integer"
+    },
+    "ready_queue_count": {
+      "minimum": 0,
+      "title": "Ready Queue Count",
+      "type": "integer"
+    },
+    "blocked_pr_count": {
+      "minimum": 0,
+      "title": "Blocked Pr Count",
+      "type": "integer"
+    },
+    "recommended_merge_order_pr_numbers": {
+      "items": {
+        "type": "integer"
+      },
+      "title": "Recommended Merge Order Pr Numbers",
+      "type": "array"
+    },
+    "blocked_pr_numbers": {
+      "items": {
+        "type": "integer"
+      },
+      "title": "Blocked Pr Numbers",
+      "type": "array"
+    },
+    "shared_surface_count": {
+      "minimum": 0,
+      "title": "Shared Surface Count",
+      "type": "integer"
+    },
+    "high_risk_shared_surface_count": {
+      "minimum": 0,
+      "title": "High Risk Shared Surface Count",
+      "type": "integer"
+    },
+    "recommendations": {
+      "items": {
+        "$ref": "#/$defs/PRMergeOrderRecommendation"
+      },
+      "title": "Recommendations",
+      "type": "array"
+    },
+    "shared_surfaces": {
+      "items": {
+        "$ref": "#/$defs/PRMergeOrderSharedSurface"
+      },
+      "title": "Shared Surfaces",
+      "type": "array"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/PRMergeOrderCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "required_next_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Gates",
+      "type": "array"
+    },
+    "observed_at": {
+      "title": "Observed At",
+      "type": "string"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "human_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Human Review Required",
+      "type": "boolean"
+    },
+    "manual_github_action_required": {
+      "const": true,
+      "default": true,
+      "title": "Manual Github Action Required",
+      "type": "boolean"
+    },
+    "not_authorized_for_pr_merge": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Pr Merge",
+      "type": "boolean"
+    },
+    "not_authorized_for_ready_state_change": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Ready State Change",
+      "type": "boolean"
+    },
+    "not_authorized_for_external_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For External Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_lake_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Lake Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_sqlite_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Sqlite Write",
+      "type": "boolean"
+    },
+    "ready_for_review_marked": {
+      "const": false,
+      "default": false,
+      "title": "Ready For Review Marked",
+      "type": "boolean"
+    },
+    "merge_performed": {
+      "const": false,
+      "default": false,
+      "title": "Merge Performed",
+      "type": "boolean"
+    },
+    "github_issue_created": {
+      "const": false,
+      "default": false,
+      "title": "Github Issue Created",
+      "type": "boolean"
+    },
+    "github_pr_created": {
+      "const": false,
+      "default": false,
+      "title": "Github Pr Created",
+      "type": "boolean"
+    },
+    "github_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Github Write Performed",
+      "type": "boolean"
+    },
+    "sibling_repo_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sibling Repo Write Performed",
+      "type": "boolean"
+    },
+    "promotion_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Promotion Authorized",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "packet_id",
+    "status",
+    "source_snapshot_id",
+    "source_snapshot_ref",
+    "repository_full_name",
+    "base_ref_name",
+    "strategy",
+    "pr_count",
+    "ready_queue_count",
+    "blocked_pr_count",
+    "recommended_merge_order_pr_numbers",
+    "blocked_pr_numbers",
+    "shared_surface_count",
+    "high_risk_shared_surface_count",
+    "recommendations",
+    "shared_surfaces",
+    "checks",
+    "required_next_gates",
+    "observed_at",
+    "generated_at"
+  ],
+  "title": "PRMergeOrderReadinessPacket",
+  "type": "object"
+}
