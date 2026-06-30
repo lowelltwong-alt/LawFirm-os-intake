@@ -89,6 +89,29 @@
         "Driver fixtures can overfit deterministic multipliers if promoted without shadow eval.",
         "Unknown drivers must widen review posture, not invent facts."
       ]
+    },
+    {
+      "holdout_id": "holdout-labor-employment-ready-critical-facts.v0_1",
+      "family": "budget_driver_edges",
+      "description": "Synthetic labor/employment entity and budget-fact holdout where critical facts are source-bound but budget use remains range-only pending human review.",
+      "fixture_refs": [
+        "examples/synthetic/courtlistener-derived/labor-employment-ready-critical-facts-manifest.json"
+      ],
+      "test_refs": [
+        "tests/test_labor_employment_budget_facts.py::test_ready_critical_labor_employment_facts_still_require_human_range_review",
+        "tests/test_labor_employment_budget_facts.py::test_source_bound_budget_fact_findings_keep_exact_refs"
+      ],
+      "expected_signals": [
+        "critical labor/employment budget facts have source-bound candidate support",
+        "supervisor and affiliate relationship facts are captured as candidate evidence",
+        "important expert/vendor and policy-document facts still require human review",
+        "budget readiness is range-only pending human review with no budget submission authority"
+      ],
+      "red_team_notes": [
+        "Source-bound critical facts are still not human-confirmed facts.",
+        "Supervisor, affiliate, and carrier/rate labels must not clear conflicts or authorize matter opening.",
+        "Needs-review important facts must keep budget posture broad and review-gated."
+      ]
     }
   ],
   "calibration_approved": false,
