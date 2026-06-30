@@ -100,7 +100,14 @@ def _decision_record(checklist, closeout):
     )
 
 
-def _source_paths(tmp_path, repo_root, *, ready=True, with_decision=True):
+def _source_paths(
+    tmp_path,
+    repo_root,
+    *,
+    ready=True,
+    with_decision=True,
+    observed_pr_state="draft",
+):
     readiness_path = _readiness_report_path(tmp_path, ready=ready)
     _, checklist_dir = run_pr_review_checklist(
         readiness_audit_report_path=readiness_path,
@@ -126,7 +133,7 @@ def _source_paths(tmp_path, repo_root, *, ready=True, with_decision=True):
         out_dir=tmp_path / ("local-closeout-ready" if ready else "local-closeout-blocked"),
         observed_pr_number=7,
         observed_pr_url="https://github.com/lowelltwong-alt/LawFirm-os-intake/pull/7",
-        observed_pr_state="draft",
+        observed_pr_state=observed_pr_state,
     )
     closeout_path = closeout_dir / "intake_local_closeout_report.json"
     paths = {
@@ -227,6 +234,53 @@ def test_remaining_roadmap_fails_closed_when_source_evidence_is_blocked(
     assert report.github_write_performed is False
     assert report.sibling_repo_write_performed is False
     assert report.external_writes_performed is False
+
+
+def test_remaining_roadmap_moves_to_owner_followup_after_observed_merge(
+    tmp_path,
+    repo_root,
+):
+    paths = _source_paths(
+        tmp_path,
+        repo_root,
+        ready=True,
+        with_decision=False,
+        observed_pr_state="merged",
+    )
+
+    report, run_dir = run_remaining_roadmap_plan(
+        readiness_audit_report_path=paths["readiness"],
+        intake_local_closeout_report_path=paths["closeout"],
+        out_dir=tmp_path / "remaining-roadmap-post-merge",
+    )
+    persisted = RemainingRoadmapReport.model_validate(
+        load_json(run_dir / "remaining_roadmap_report.json")
+    )
+    items_by_id = {item.item_id: item for item in persisted.items}
+
+    assert report.status == "remaining_roadmap_ready_manual_execution_required"
+    assert persisted.next_recommended_item_ids == [
+        "manual-owner-issue-creation",
+        "owner-triage-and-pr-splitting",
+        "semantic-substrate-contract-review",
+    ]
+    assert (
+        items_by_id["human-pr-review-and-state-decision"].status
+        == "completed_by_observed_merged_pr"
+    )
+    assert "human_pr_state_decision" not in persisted.required_next_gates
+    assert "human_pr_state_decision_completed_by_observed_merge" in persisted.required_next_gates
+    assert any(
+        check.check_id == "observed_pr_merged_for_remaining_plan" and check.status == "passed"
+        for check in persisted.checks
+    )
+    assert all(check.check_id != "pr_readiness_decision_not_supplied" for check in persisted.checks)
+    assert persisted.github_write_performed is False
+    assert persisted.external_writes_performed is False
+
+    notes = (run_dir / "remaining_roadmap_report.md").read_text(encoding="utf-8")
+    assert "Human PR Review And State Decision" in notes
+    assert "completed_by_observed_merged_pr" in notes
 
 
 def test_remaining_roadmap_cli_writes_report(tmp_path, repo_root, capsys):

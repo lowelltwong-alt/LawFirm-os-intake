@@ -120,7 +120,8 @@
             "ready_to_start",
             "blocked_until_human_decision",
             "blocked_until_owner_action",
-            "deferred_governance_required"
+            "deferred_governance_required",
+            "completed_by_observed_merged_pr"
           ],
           "title": "Status",
           "type": "string"

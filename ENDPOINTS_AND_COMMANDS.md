@@ -664,9 +664,11 @@ python -m lawfirm_os_intake audit-intake-local-closeout \
 This writes `intake_local_closeout_report.json` and
 `intake_local_closeout_report.md`. The audit aggregates the final local evidence
 chain and reports whether intake-local candidate work is ready for manual
-external actions. It preserves the remaining human PR decision, manual owner
-issue creation, owner triage, owner implementation PR, and cross-repo validation
-gates. It does not mark a PR ready, create issues, open PRs, write sibling repos,
+external actions. `--observed-pr-state` accepts `draft`, `ready_for_review`,
+`merged`, or `not_supplied` as observed evidence only. It preserves the remaining
+human PR decision unless the PR is observed as already merged, manual owner issue
+creation, owner triage, owner implementation PR, and cross-repo validation gates.
+It does not mark a PR ready, create issues, open PRs, write sibling repos,
 promote canon, admit Lake records, write SQLite, apply learning, or authorize
 production use.
 
@@ -686,9 +688,12 @@ turns the final readiness, closeout, and optional PR decision evidence into a
 typed list of remaining work, including effort, risk, owner, gate, next actions,
 acceptance evidence, red-team notes, and next recommended items. It preserves
 manual human review, owner repo review, governance approval, production pilot
-approval, and cross-repo validation gates. It does not mark a PR ready, create
-issues, open PRs, write sibling repos, promote canon, admit Lake records, write
-SQLite, apply learning, or authorize production use.
+approval, and cross-repo validation gates. When a supplied closeout or PR
+decision report records `observed_pr_state=merged`, the human PR state item is
+kept as completed evidence and the next recommendations move to owner follow-up
+work. It does not mark a PR ready, create issues, open PRs, write sibling repos,
+promote canon, admit Lake records, write SQLite, apply learning, or authorize
+production use.
 
 ### Audit synthetic fixture expansion
 

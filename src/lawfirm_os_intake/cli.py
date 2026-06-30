@@ -852,7 +852,7 @@ def _parser() -> argparse.ArgumentParser:
     local_closeout.add_argument("--observed-pr-url")
     local_closeout.add_argument(
         "--observed-pr-state",
-        choices=["draft", "ready_for_review", "not_supplied"],
+        choices=["draft", "ready_for_review", "merged", "not_supplied"],
         default="not_supplied",
     )
     return parser

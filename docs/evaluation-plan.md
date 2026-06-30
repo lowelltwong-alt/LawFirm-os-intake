@@ -309,9 +309,10 @@ report, and optional PR readiness decision report. It writes a typed remaining
 roadmap report and JSONL item list that classify remaining work by owner,
 workstream, effort, risk, gate, acceptance evidence, and red-team notes. Eval
 coverage must prove the plan is blocked by failed source evidence, preserves
-next recommended manual/owner steps, distinguishes easy local work from
-critical owner-gated work, and performs no GitHub, sibling repo, Lake, SQLite,
-promotion, real-data, or learning side effects.
+next recommended manual/owner steps, moves recommendations to owner follow-up
+when `observed_pr_state=merged`, distinguishes easy local work from critical
+owner-gated work, and performs no GitHub, sibling repo, Lake, SQLite, promotion,
+real-data, or learning side effects.
 
 `audit-synthetic-fixture-expansion` consumes the remaining-roadmap report and
 the synthetic holdout manifest. Eval coverage must prove all required holdout

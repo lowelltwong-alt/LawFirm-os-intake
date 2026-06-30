@@ -113,9 +113,11 @@ Lake/SQLite records, apply proposed changes, or apply learning.
 optional PR decision report into a typed remaining-work packet. Reviewers should
 use it to separate easy human/local steps from critical owner-gated steps and to
 check the attached red-team notes before creating manual owner issues or moving
-the PR state. The report remains planning evidence only and does not create
-issues, mark the PR ready, write sibling repos, promote canon, admit Lake/SQLite
-records, approve a real-data pilot, or apply learning.
+the PR state. If the supplied evidence records `observed_pr_state=merged`, the
+PR state item is retained as completed evidence and next recommendations move to
+owner follow-up work. The report remains planning evidence only and does not
+create issues, mark the PR ready, write sibling repos, promote canon, admit
+Lake/SQLite records, approve a real-data pilot, or apply learning.
 
 When the roadmap points to fixture/eval expansion,
 `audit-synthetic-fixture-expansion` gives reviewers a compact holdout coverage
