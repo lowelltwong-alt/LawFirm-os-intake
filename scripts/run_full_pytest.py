@@ -14,7 +14,7 @@ import yaml
 sys.dont_write_bytecode = True
 REPO_ROOT = Path(__file__).resolve().parents[1]
 POLICY_PATH = REPO_ROOT / "config" / "validation-runtime-policy.yaml"
-DEFAULT_MINIMUM_TIMEOUT_SECONDS = 1800
+DEFAULT_MINIMUM_TIMEOUT_SECONDS = 3600
 POLICY_MARKER_ENV_VAR = "LAWFIRM_OS_VALIDATION_RUNTIME_POLICY"
 POLICY_MARKER_VALUE = "intake-validation-runtime-policy.v1"
 

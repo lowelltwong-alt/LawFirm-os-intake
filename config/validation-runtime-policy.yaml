@@ -8,18 +8,18 @@ contains_real_firm_data: false
 commands:
   full_pytest:
     command: python -m pytest -q
-    minimum_timeout_seconds: 1800
-    reason: Full suite can exceed short local tool ceilings on Windows/OneDrive worktrees.
+    minimum_timeout_seconds: 3600
+    reason: Full suite can exceed shorter local tool ceilings on Windows/OneDrive worktrees and during multi-repo validation; use the deterministic long ceiling to avoid reruns.
     wrapper: python scripts/run_full_pytest.py
   focused_pytest:
     command: python -m pytest <paths> -q
-    minimum_timeout_seconds: 1800
-    reason: Focused tests may expand into workflow-heavy paths and should not inherit a short ceiling.
+    minimum_timeout_seconds: 3600
+    reason: Focused tests may expand into workflow-heavy paths and should not inherit a short or stale ceiling.
     wrapper: python scripts/run_full_pytest.py <paths> -q
   smoke_demo:
     command: bash scripts/smoke_demo.sh
-    minimum_timeout_seconds: 1800
-    reason: Smoke demo performs the full intake-to-budget flow plus audits.
+    minimum_timeout_seconds: 3600
+    reason: Smoke demo performs the full intake-to-budget flow plus audits and must not inherit a short local tool ceiling.
   export_schemas:
     command: python scripts/export_schemas.py
     minimum_timeout_seconds: 180
