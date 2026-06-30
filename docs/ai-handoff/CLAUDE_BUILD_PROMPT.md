@@ -24,7 +24,7 @@ First run:
 - python scripts/run_full_pytest.py
 - bash scripts/smoke_demo.sh
 
-Use config/validation-runtime-policy.yaml for local command ceilings. Full and focused pytest and smoke runs require a 900 second ceiling.
+Use config/validation-runtime-policy.yaml for local command ceilings. Full and focused pytest and smoke runs require a 1800 second ceiling.
 
 Task:
 Assess the current repository against the starter definition of done. Produce a PR-sized plan for the smallest next improvement to source inventory and provenance-preserving email segmentation.

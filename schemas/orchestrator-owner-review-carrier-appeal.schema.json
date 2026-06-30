@@ -1,0 +1,26 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "requested": {
+      "title": "Requested",
+      "type": "boolean"
+    },
+    "human_authorization_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Human Authorization Ref"
+    }
+  },
+  "required": [
+    "requested"
+  ],
+  "title": "OrchestratorOwnerReviewCarrierAppeal",
+  "type": "object"
+}

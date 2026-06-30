@@ -1,0 +1,54 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "line_id": {
+      "title": "Line Id",
+      "type": "string"
+    },
+    "budget_phase": {
+      "title": "Budget Phase",
+      "type": "string"
+    },
+    "budget_task_code": {
+      "title": "Budget Task Code",
+      "type": "string"
+    },
+    "proposed_budget_amount": {
+      "title": "Proposed Budget Amount",
+      "type": "string"
+    },
+    "carrier_compliant_projection_amount": {
+      "title": "Carrier Compliant Projection Amount",
+      "type": "string"
+    },
+    "approved_budget_amount_if_known": {
+      "default": "",
+      "title": "Approved Budget Amount If Known",
+      "type": "string"
+    },
+    "actual_billed_amount": {
+      "title": "Actual Billed Amount",
+      "type": "string"
+    },
+    "write_down_or_disallowed_amount": {
+      "title": "Write Down Or Disallowed Amount",
+      "type": "string"
+    },
+    "variance_driver_candidate": {
+      "title": "Variance Driver Candidate",
+      "type": "string"
+    }
+  },
+  "required": [
+    "line_id",
+    "budget_phase",
+    "budget_task_code",
+    "proposed_budget_amount",
+    "carrier_compliant_projection_amount",
+    "actual_billed_amount",
+    "write_down_or_disallowed_amount",
+    "variance_driver_candidate"
+  ],
+  "title": "OrchestratorOwnerReviewBudgetActualLine",
+  "type": "object"
+}

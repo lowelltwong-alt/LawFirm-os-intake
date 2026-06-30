@@ -69,7 +69,7 @@ python -m lawfirm_os_intake demo \
 
 Validation runtime ceilings are declared in
 `config/validation-runtime-policy.yaml`. Full and focused pytest runs should use
-`python scripts/run_full_pytest.py`, which enforces the 900 second local ceiling
+`python scripts/run_full_pytest.py`, which enforces the 1800 second local ceiling
 and stamps the run with the required validation-policy marker. Direct pytest
 invocation is blocked so the suite cannot silently fall back to a short ceiling
 for the repo's heavier test paths. The wrapper also suppresses pytest cache and
@@ -159,6 +159,8 @@ Human budget-review edits can be recorded with `record-budget-review`. That comm
 The `audit-budget-lifecycle` command consumes the budget change ledger, budget actual variance ledger, carrier rejection decision ledger, and budget-event Lake bundle. It writes `budget_lifecycle_audit_report.json` and `.md`, checks ID continuity across the lifecycle, summarizes original/revised/actual/rejection financials, lists pending human decisions and next actions, and proves the lifecycle evidence remains candidate-only with no connector, Lake/SQLite, submission, mutation, or silent-learning side effects.
 
 The `build-budget-lifecycle-owner-adoption` command consumes `budget_lifecycle_audit_report.json` and writes `budget_lifecycle_owner_adoption_report.json`, Markdown notes, owner packet JSONL, and owner-specific packets for Semantic Substrate, Orchestrator, and Exception Lake. The packets name concrete adoption actions, acceptance checks, candidate contract refs, and red-team notes while preserving no GitHub issue/PR creation, no sibling repo write, no connector implementation, no Lake/SQLite write, no submission, and no silent learning.
+
+The `build-orchestrator-owner-review-request` command consumes the local intake preflight packet, human confirmation, budget proposal, optional budget precondition report, optional budget actual comparison report, and optional carrier rejection source/ledger artifacts. It writes `orchestrator_owner_review_request.json` plus Markdown notes in the Orchestrator `intake_owner_review_request.v0_1` shape, using the exact local workflow label `orchestrator.local.intake_to_budget_owner_review`. The request keeps source refs/hash anchors, budget preconditions, budget-to-actual rows, carrier rejection notices, appeal results, and pending human pauses local and synthetic-only; it does not call Orchestrator, write sibling repos, submit budgets or appeals, admit Lake/SQLite records, or create canonical route/event authority.
 
 The `review-learning-gate` command aggregates candidate learning pressure from carrier rejection learning reports, human budget revisions, and budget actual variance reports. It writes `reviewed_learning_gate_report.json`, `reviewed_learning_gate_report.md`, and `reviewed_learning_gate_candidates.jsonl`, and keeps every candidate blocked until human-reviewed outcome evidence, append-only evidence recording, synthetic fixture updates, shadow evals, and owning-repo review exist. It performs no profile, template, connector, budget, guideline, Lake, SQLite, or external mutation.
 

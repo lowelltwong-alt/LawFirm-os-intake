@@ -1,0 +1,119 @@
+{
+  "$defs": {
+    "OrchestratorOwnerReviewCarrierAppeal": {
+      "additionalProperties": false,
+      "properties": {
+        "requested": {
+          "title": "Requested",
+          "type": "boolean"
+        },
+        "human_authorization_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Human Authorization Ref"
+        }
+      },
+      "required": [
+        "requested"
+      ],
+      "title": "OrchestratorOwnerReviewCarrierAppeal",
+      "type": "object"
+    },
+    "OrchestratorOwnerReviewCarrierAppealResult": {
+      "additionalProperties": false,
+      "properties": {
+        "result_id": {
+          "title": "Result Id",
+          "type": "string"
+        },
+        "result": {
+          "title": "Result",
+          "type": "string"
+        },
+        "received_at": {
+          "title": "Received At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "result_id",
+        "result",
+        "received_at"
+      ],
+      "title": "OrchestratorOwnerReviewCarrierAppealResult",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "notice_id": {
+      "title": "Notice Id",
+      "type": "string"
+    },
+    "channel": {
+      "title": "Channel",
+      "type": "string"
+    },
+    "source_ref_id": {
+      "title": "Source Ref Id",
+      "type": "string"
+    },
+    "notice_title": {
+      "title": "Notice Title",
+      "type": "string"
+    },
+    "reason_summary": {
+      "title": "Reason Summary",
+      "type": "string"
+    },
+    "carrier_reason_code": {
+      "title": "Carrier Reason Code",
+      "type": "string"
+    },
+    "matched_budget_line_id": {
+      "default": "",
+      "title": "Matched Budget Line Id",
+      "type": "string"
+    },
+    "appeal": {
+      "$ref": "#/$defs/OrchestratorOwnerReviewCarrierAppeal"
+    },
+    "appeal_results": {
+      "items": {
+        "$ref": "#/$defs/OrchestratorOwnerReviewCarrierAppealResult"
+      },
+      "title": "Appeal Results",
+      "type": "array"
+    },
+    "financial_outcome": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Financial Outcome"
+    }
+  },
+  "required": [
+    "notice_id",
+    "channel",
+    "source_ref_id",
+    "notice_title",
+    "reason_summary",
+    "carrier_reason_code",
+    "appeal"
+  ],
+  "title": "OrchestratorOwnerReviewCarrierRejectionNotice",
+  "type": "object"
+}

@@ -1,0 +1,44 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "status": {
+      "enum": [
+        "confirmed",
+        "approved",
+        "pending",
+        "needs_more_information",
+        "unknown",
+        "human_only",
+        "declined",
+        "declined_referred",
+        "declined_or_referred"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "human_review_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Human Review Ref"
+    },
+    "evidence_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Evidence Refs",
+      "type": "array"
+    }
+  },
+  "required": [
+    "status"
+  ],
+  "title": "OrchestratorOwnerReviewHumanConfirmation",
+  "type": "object"
+}

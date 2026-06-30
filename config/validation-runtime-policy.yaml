@@ -8,17 +8,17 @@ contains_real_firm_data: false
 commands:
   full_pytest:
     command: python -m pytest -q
-    minimum_timeout_seconds: 900
-    reason: Full suite can exceed 300 seconds on local Windows/OneDrive worktrees.
+    minimum_timeout_seconds: 1800
+    reason: Full suite can exceed short local tool ceilings on Windows/OneDrive worktrees.
     wrapper: python scripts/run_full_pytest.py
   focused_pytest:
     command: python -m pytest <paths> -q
-    minimum_timeout_seconds: 900
+    minimum_timeout_seconds: 1800
     reason: Focused tests may expand into workflow-heavy paths and should not inherit a short ceiling.
     wrapper: python scripts/run_full_pytest.py <paths> -q
   smoke_demo:
     command: bash scripts/smoke_demo.sh
-    minimum_timeout_seconds: 900
+    minimum_timeout_seconds: 1800
     reason: Smoke demo performs the full intake-to-budget flow plus audits.
   export_schemas:
     command: python scripts/export_schemas.py
