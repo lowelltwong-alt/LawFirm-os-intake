@@ -1,0 +1,34 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "party_count_known": {
+      "title": "Party Count Known",
+      "type": "boolean"
+    },
+    "complexity_known": {
+      "title": "Complexity Known",
+      "type": "boolean"
+    },
+    "matter_family_confirmed": {
+      "title": "Matter Family Confirmed",
+      "type": "boolean"
+    },
+    "representation_posture_confirmed": {
+      "title": "Representation Posture Confirmed",
+      "type": "boolean"
+    },
+    "principal_roles_confirmed": {
+      "title": "Principal Roles Confirmed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "party_count_known",
+    "complexity_known",
+    "matter_family_confirmed",
+    "representation_posture_confirmed",
+    "principal_roles_confirmed"
+  ],
+  "title": "OrchestratorOwnerReviewBudgetPreconditions",
+  "type": "object"
+}

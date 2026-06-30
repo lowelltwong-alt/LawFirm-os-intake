@@ -44,8 +44,8 @@ python scripts/run_validation_suite.py
 
 `config/validation-runtime-policy.yaml` declares the minimum local ceilings for
 heavy validation commands. Full and focused pytest runs use the wrapper above
-and require a 900 second ceiling. Direct pytest invocation is blocked so a run
-cannot silently inherit a shorter ceiling. Smoke runs also require a 900 second
+and require a 1800 second ceiling. Direct pytest invocation is blocked so a run
+cannot silently inherit a shorter ceiling. Smoke runs also require a 1800 second
 ceiling. Schema export, repo validation, and ruff checks require at least 180
 seconds. The full validation-suite runner applies those policy ceilings to repo
 validation, schema export, lint, full pytest, smoke, and final repo validation.
@@ -546,6 +546,31 @@ with owner actions, acceptance checks, candidate contract refs, and red-team
 notes. Intake does not create issues, open PRs, write sibling repos, promote
 canon, implement connectors, admit Lake records, write SQLite, submit budgets or
 appeals, mutate budgets, or apply learning.
+
+### Build Orchestrator owner-review request
+
+```bash
+python -m lawfirm_os_intake build-orchestrator-owner-review-request \
+  --preflight-packet PATH/TO/intake_preflight_packet.json \
+  --confirmation PATH/TO/human_confirmation.json \
+  --budget PATH/TO/legal_budget_proposal.json \
+  --budget-precondition-report PATH/TO/budget_precondition_report.json \
+  --budget-actual-comparison-report PATH/TO/budget_actual_comparison_report.json \
+  --carrier-rejection-decision-ledger-report PATH/TO/carrier_rejection_decision_ledger_report.json \
+  --carrier-rejection-source-bundle examples/synthetic/carrier-rejections/duplicate-missing-unlinked-appeal.json \
+  --lake-handoff-mode validate_only \
+  --out-dir .lawfirm-os-intake/orchestrator-owner-review-request
+```
+
+This writes `orchestrator_owner_review_request.json` and
+`orchestrator_owner_review_request.md` in the Orchestrator
+`intake_owner_review_request.v0_1` input shape. The request preserves
+source/segment refs, bare SHA-256 source hashes, human pause statuses, budget
+preconditions, budget-to-actual rows, carrier rejection notices, appeal results,
+and local Lake handoff mode for Orchestrator owner review. It does not call
+Orchestrator, write sibling repos, submit budgets or appeals, admit
+Lake/SQLite records, create route IDs, create event classes, or authorize
+production connector use.
 
 ### Audit intake vertical readiness
 

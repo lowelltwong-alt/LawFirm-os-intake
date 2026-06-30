@@ -1,15 +1,15 @@
 # Data Flow Map
 
-Last reviewed: 2026-06-29.
+Last reviewed: 2026-06-30.
 
 `LawFirm-os-intake` is the private vertical composition and evaluation repo for the intake-to-budget workflow. It is subordinate to the five public LawFirm OS platform repos and owns no canonical authority.
 
 Current GitHub posture:
 
 - `lowelltwong-alt/LawFirm-os-intake` exists as a private repo with default branch `main`.
-- The private repo has been seeded and CI is green as of commit `4d3d67b0324c59aba90f9a3100dc082f19f8b84a`.
-- Build-out branch `codex/build-out-intake-vertical` adds the governed intake-to-budget vertical, messy north-star fixture, dry-run Exception Lake candidates, review package, safety gate, and local contract-state gate. CI status must be checked against the latest pushed commit before claiming it is green.
-- Semantic Substrate registration branch `codex/register-intake-control-plane` is pushed and CI green; it must still be reviewed/merged before treating intake membership as canonical on Substrate `main`.
+- The private repo has been seeded and `main` is the working branch for reviewed intake-local candidate slices as of commit `8bf06258e62854adf8d415a9e23a3788282b5ca6`.
+- Build-out work now proceeds through PR-sized branches from the private repo's `main`. CI status must be checked against the latest pushed commit before claiming it is green.
+- Semantic Substrate, Orchestrator, Exception Lake, Legal Knowledge Runtime, and Skills Registry intake-adoption slices have their own owner-repo review history. Intake still treats those owner decisions as external authority and does not promote local candidate schemas, routes, event classes, or runtime behavior by itself.
 - The five public sibling repos are reachable on `main`; pin adoption must use reviewed immutable SHAs, not local copied-folder assumptions.
 
 ## Authority Order
@@ -101,6 +101,7 @@ synthetic source bundle
 -> optional starter release audit report over generated demo artifacts
 -> optional blocked-budget attempt audit proving failed human confirmation emits no proposal outputs
 -> optional context counterfactual audit proving rankings may change but source evidence stays stable
+-> optional Orchestrator owner-review request artifact in `intake_owner_review_request.v0_1` shape
 -> blocked_pending_conflicts_and_engagement
 ```
 
@@ -187,6 +188,7 @@ The outer runtime owner is `LawFirm-os-orchestrator`. The local intake CLI is a 
 | `SyntheticFixtureExpansionManifest` and `SyntheticFixtureExpansionReport` in `remaining-roadmap-holdouts.json` and `synthetic_fixture_expansion_report.json` | Intake candidate/eval surface | Remaining roadmap fixture/eval expansion item -> Human reviewer / future fixture-update and shadow-eval review path | Local synthetic holdout coverage proof for ambiguous roles, missing actuals, carrier rejection variants, and budget driver edge cases. The audit checks manifest binding, required family coverage, local fixture/test refs, synthetic-only scope fields, calibration non-approval, and no-write boundaries. It does not mutate fixtures during audit, approve calibration, create issues or PRs, write sibling repos, promote canon, admit Lake/SQLite records, authorize production use, or apply learning. |
 | `CarrierRejectionNotice` / `CarrierRejectionRemediationCase` / `CarrierAppealResult` / `CarrierResponseReconciliationReport` / `CarrierRejectionReviewPacket` / `CarrierRejectionLearningReport` / `CarrierRejectionOrchestratorInterfaceDraft` / `CarrierRejectionLakeAdmissionProposal` | Intake candidate surface now; Orchestrator + Exception Lake future runtime owner | Synthetic expected-response fixture -> Intake dry-run reconciliation -> human rejection review packet -> candidate learning report -> candidate Orchestrator interface draft -> candidate Lake admission proposal -> Orchestrator and Lake review path | Current local command `capture-carrier-rejections` reconciles synthetic expected responses against captured notices, collapses duplicates, catches unlinked notices, missing responses, parse failures, appeal results, and learning candidates. `review-carrier-rejections` emits recommended human actions, why-notes, red-team checks, and decision templates while preserving no Lake write, no appeal submission, no external submission, and no silent learning. `propose-carrier-rejection-learning` groups reviewed rejection pressure into candidate learning proposals for guideline, budget, template, narrative, preapproval, parser, reconciliation, SLA, validation, and appeal-outcome loops; each proposal remains blocked until human-reviewed outcome evidence, fixture updates, shadow eval, and owning-repo review exist. `draft-carrier-rejection-orchestrator-interface` names future Orchestrator-owned connector channels, response-state ledger duties, human pauses, appeal-submission gates, and guarded Lake handoff while implementing no connector or external write. `draft-carrier-rejection-lake-admission` names append-only Lake record families, idempotency, hash, evidence-packet, and supersession requirements while performing no SQLite write or Lake admission. Production portal/email/LEDES/manual capture, appeal submission, and append-only Lake admission remain owned by Orchestrator and Exception Lake. See `docs/carrier-rejection-learning-loop-roadmap.md` |
 | `CarrierRejectionRoadmapAuditReport` in `carrier_rejection_roadmap_audit_report.json` | Intake candidate/eval surface | Local carrier-rejection roadmap proof -> Human reviewer / sibling-repo adoption review path | Local proof that carrier rejection slices 1-8 have required candidate artifacts and command refs while external adoption remains required. `audit-carrier-rejection-roadmap` fails closed if local proof artifacts are missing and records no connector implementation, no SQLite write, no Lake admission, no sibling repo writes, no external writes, and no canonical mutation. |
+| `OrchestratorOwnerReviewRequest` in `orchestrator_owner_review_request.json` | Intake candidate/eval surface; Orchestrator owns runtime interpretation | Intake local artifacts -> Orchestrator owner-review CLI input / human owner docket | Local request artifact in the Orchestrator `intake_owner_review_request.v0_1` shape. It carries source refs, bare SHA-256 hashes, human pause statuses, budget preconditions, budget-to-actual rows, carrier rejection notices, appeal results, and Lake handoff mode for owner review while performing no Orchestrator call, sibling repo write, budget/appeal submission, Lake/SQLite admission, route ID creation, event class creation, connector implementation, or production authorization. |
 | Synthetic matter-family templates | Intake candidate/profile surface | Practice profile -> Budget planner | Local candidate templates now cover `medical_malpractice_defense` and `auto_liability_defense`; both consume the same budget engine, driver policy, scenario set, human gates, and non-submission boundary |
 | `BudgetSupportItem` | Intake candidate surface | Intake -> Human reviewer / Orchestrator review path | Evidence or structured-ref support for budget assumptions, exclusions, and unknowns |
 | `legal_budget_review_form.md` | Intake candidate surface | Intake -> Human pricing/review authority / Orchestrator review path | Standalone budget review surface showing calculation summary, itemized standard-scenario budget lines, driver profile summary, scenario comparison, budget driver effects, guideline flags, carrier-compliant projection, workbook mapping status, unresolved budget assumptions, evidence-bound supports, review checks, and non-submission boundary |
@@ -271,7 +273,7 @@ For this repo:
 
 ```powershell
 python .\scripts\validate_repo.py
-python -m pytest
+python .\scripts\run_full_pytest.py
 bash .\scripts\smoke_demo.sh
 ```
 

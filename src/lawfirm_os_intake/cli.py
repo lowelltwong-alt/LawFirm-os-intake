@@ -63,6 +63,7 @@ from .learning_shadow_eval_fixture_results import (
 from .learning_shadow_eval_results import run_learning_shadow_eval_results
 from .labor_employment_budget_facts import run_labor_employment_budget_fact_audit
 from .models import BudgetProposal, HumanConfirmation
+from .orchestrator_owner_review_request import run_orchestrator_owner_review_request
 from .pr_readiness_decision import run_pr_readiness_decision_record
 from .pr_review_checklist import run_pr_review_checklist
 from .public_source_methodology import run_public_source_methodology_audit
@@ -677,6 +678,24 @@ def _parser() -> argparse.ArgumentParser:
         help="Path to budget_lifecycle_audit_report.json.",
     )
     budget_lifecycle_owner_adoption.add_argument("--out-dir", required=True)
+
+    orchestrator_owner_review_request = sub.add_parser(
+        "build-orchestrator-owner-review-request",
+        help="Build a local Orchestrator-compatible intake owner-review request.",
+    )
+    orchestrator_owner_review_request.add_argument("--preflight-packet", required=True)
+    orchestrator_owner_review_request.add_argument("--confirmation", required=True)
+    orchestrator_owner_review_request.add_argument("--budget", required=True)
+    orchestrator_owner_review_request.add_argument("--out-dir", required=True)
+    orchestrator_owner_review_request.add_argument("--budget-precondition-report")
+    orchestrator_owner_review_request.add_argument("--budget-actual-comparison-report")
+    orchestrator_owner_review_request.add_argument("--carrier-rejection-decision-ledger-report")
+    orchestrator_owner_review_request.add_argument("--carrier-rejection-source-bundle")
+    orchestrator_owner_review_request.add_argument(
+        "--lake-handoff-mode",
+        choices=["disabled", "validate_only"],
+        default="disabled",
+    )
 
     carrier_rejection_audit = sub.add_parser(
         "audit-carrier-rejection-roadmap",
@@ -2381,6 +2400,58 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 2 if failed else 0
+
+        if args.command == "build-orchestrator-owner-review-request":
+            request, run_dir = run_orchestrator_owner_review_request(
+                preflight_packet_path=args.preflight_packet,
+                confirmation_path=args.confirmation,
+                budget_path=args.budget,
+                budget_precondition_report_path=args.budget_precondition_report,
+                budget_actual_comparison_report_path=args.budget_actual_comparison_report,
+                carrier_rejection_decision_ledger_report_path=(
+                    args.carrier_rejection_decision_ledger_report
+                ),
+                carrier_rejection_source_bundle_path=args.carrier_rejection_source_bundle,
+                lake_handoff_mode=args.lake_handoff_mode,
+                out_dir=args.out_dir,
+            )
+            pending_pauses = [
+                key
+                for key, value in request.human_confirmations.items()
+                if value.status
+                not in {
+                    "confirmed",
+                    "approved",
+                    "human_only",
+                    "declined_referred",
+                }
+            ]
+            missing_preconditions = [
+                key
+                for key, value in request.budget_preconditions.model_dump(mode="json").items()
+                if value is not True
+            ]
+            _print(
+                {
+                    "status": "orchestrator_owner_review_request_ready",
+                    "request_id": request.request_id,
+                    "schema_version": request.schema_version,
+                    "workflow_label": request.workflow_label,
+                    "source_ref_count": len(request.source_refs),
+                    "budget_actual_line_count": len(request.budget_actual_lines),
+                    "carrier_rejection_notice_count": len(request.carrier_rejection_notices),
+                    "pending_human_pause_count": len(pending_pauses),
+                    "pending_human_pauses": pending_pauses,
+                    "missing_budget_preconditions": missing_preconditions,
+                    "lake_handoff_mode": request.lake_handoff_mode,
+                    "contains_real_firm_data": request.contains_real_firm_data,
+                    "contains_real_client_data": request.contains_real_client_data,
+                    "contains_real_matter_data": request.contains_real_matter_data,
+                    "contains_privileged_data": request.contains_privileged_data,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0
 
         if args.command == "audit-carrier-rejection-roadmap":
             report, run_dir = run_carrier_rejection_roadmap_audit(

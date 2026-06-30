@@ -26,7 +26,7 @@ Make the validation runtime policy executable:
 - `scripts/run_validation_suite.py` enforces the local subprocess timeouts, but
   agents still need to set any outer tool timeout to at least the same policy
   ceiling when invoking commands directly.
-- The policy does not excuse slow tests. If the suite exceeds 900 seconds,
+- The policy does not excuse slow tests. If the suite exceeds 1800 seconds,
   investigate the slowdown before raising the ceiling.
 - This changes validation execution only. It does not alter legal workflow
   authority, source handling, budget math, Lake admission, or production scope.

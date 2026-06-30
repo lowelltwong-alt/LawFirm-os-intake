@@ -209,6 +209,14 @@ from lawfirm_os_intake.models import (  # noqa: E402
     MatterOpeningReadiness,
     ModelAdapterReport,
     NamedTimekeeperRate,
+    OrchestratorOwnerReviewBudgetActualLine,
+    OrchestratorOwnerReviewBudgetPreconditions,
+    OrchestratorOwnerReviewCarrierAppeal,
+    OrchestratorOwnerReviewCarrierAppealResult,
+    OrchestratorOwnerReviewCarrierRejectionNotice,
+    OrchestratorOwnerReviewHumanConfirmation,
+    OrchestratorOwnerReviewRequest,
+    OrchestratorOwnerReviewSourceRef,
     PartyCandidate,
     PersonTimelineEventLabel,
     PRReadinessDecisionCheck,
@@ -483,6 +491,24 @@ MODELS = {
     "carrier-rejection-orchestrator-interface-draft.schema.json": (
         CarrierRejectionOrchestratorInterfaceDraft
     ),
+    "orchestrator-owner-review-source-ref.schema.json": OrchestratorOwnerReviewSourceRef,
+    "orchestrator-owner-review-human-confirmation.schema.json": (
+        OrchestratorOwnerReviewHumanConfirmation
+    ),
+    "orchestrator-owner-review-budget-preconditions.schema.json": (
+        OrchestratorOwnerReviewBudgetPreconditions
+    ),
+    "orchestrator-owner-review-budget-actual-line.schema.json": (
+        OrchestratorOwnerReviewBudgetActualLine
+    ),
+    "orchestrator-owner-review-carrier-appeal.schema.json": OrchestratorOwnerReviewCarrierAppeal,
+    "orchestrator-owner-review-carrier-appeal-result.schema.json": (
+        OrchestratorOwnerReviewCarrierAppealResult
+    ),
+    "orchestrator-owner-review-carrier-rejection-notice.schema.json": (
+        OrchestratorOwnerReviewCarrierRejectionNotice
+    ),
+    "orchestrator-owner-review-request.schema.json": OrchestratorOwnerReviewRequest,
     "carrier-rejection-roadmap-slice-status.schema.json": (CarrierRejectionRoadmapSliceStatus),
     "carrier-rejection-roadmap-audit-check.schema.json": CarrierRejectionRoadmapAuditCheck,
     "carrier-rejection-roadmap-audit-report.schema.json": (CarrierRejectionRoadmapAuditReport),

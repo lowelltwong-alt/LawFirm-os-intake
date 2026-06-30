@@ -1,0 +1,393 @@
+{
+  "$defs": {
+    "OrchestratorOwnerReviewBudgetActualLine": {
+      "additionalProperties": false,
+      "properties": {
+        "line_id": {
+          "title": "Line Id",
+          "type": "string"
+        },
+        "budget_phase": {
+          "title": "Budget Phase",
+          "type": "string"
+        },
+        "budget_task_code": {
+          "title": "Budget Task Code",
+          "type": "string"
+        },
+        "proposed_budget_amount": {
+          "title": "Proposed Budget Amount",
+          "type": "string"
+        },
+        "carrier_compliant_projection_amount": {
+          "title": "Carrier Compliant Projection Amount",
+          "type": "string"
+        },
+        "approved_budget_amount_if_known": {
+          "default": "",
+          "title": "Approved Budget Amount If Known",
+          "type": "string"
+        },
+        "actual_billed_amount": {
+          "title": "Actual Billed Amount",
+          "type": "string"
+        },
+        "write_down_or_disallowed_amount": {
+          "title": "Write Down Or Disallowed Amount",
+          "type": "string"
+        },
+        "variance_driver_candidate": {
+          "title": "Variance Driver Candidate",
+          "type": "string"
+        }
+      },
+      "required": [
+        "line_id",
+        "budget_phase",
+        "budget_task_code",
+        "proposed_budget_amount",
+        "carrier_compliant_projection_amount",
+        "actual_billed_amount",
+        "write_down_or_disallowed_amount",
+        "variance_driver_candidate"
+      ],
+      "title": "OrchestratorOwnerReviewBudgetActualLine",
+      "type": "object"
+    },
+    "OrchestratorOwnerReviewBudgetPreconditions": {
+      "additionalProperties": false,
+      "properties": {
+        "party_count_known": {
+          "title": "Party Count Known",
+          "type": "boolean"
+        },
+        "complexity_known": {
+          "title": "Complexity Known",
+          "type": "boolean"
+        },
+        "matter_family_confirmed": {
+          "title": "Matter Family Confirmed",
+          "type": "boolean"
+        },
+        "representation_posture_confirmed": {
+          "title": "Representation Posture Confirmed",
+          "type": "boolean"
+        },
+        "principal_roles_confirmed": {
+          "title": "Principal Roles Confirmed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "party_count_known",
+        "complexity_known",
+        "matter_family_confirmed",
+        "representation_posture_confirmed",
+        "principal_roles_confirmed"
+      ],
+      "title": "OrchestratorOwnerReviewBudgetPreconditions",
+      "type": "object"
+    },
+    "OrchestratorOwnerReviewCarrierAppeal": {
+      "additionalProperties": false,
+      "properties": {
+        "requested": {
+          "title": "Requested",
+          "type": "boolean"
+        },
+        "human_authorization_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Human Authorization Ref"
+        }
+      },
+      "required": [
+        "requested"
+      ],
+      "title": "OrchestratorOwnerReviewCarrierAppeal",
+      "type": "object"
+    },
+    "OrchestratorOwnerReviewCarrierAppealResult": {
+      "additionalProperties": false,
+      "properties": {
+        "result_id": {
+          "title": "Result Id",
+          "type": "string"
+        },
+        "result": {
+          "title": "Result",
+          "type": "string"
+        },
+        "received_at": {
+          "title": "Received At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "result_id",
+        "result",
+        "received_at"
+      ],
+      "title": "OrchestratorOwnerReviewCarrierAppealResult",
+      "type": "object"
+    },
+    "OrchestratorOwnerReviewCarrierRejectionNotice": {
+      "additionalProperties": false,
+      "properties": {
+        "notice_id": {
+          "title": "Notice Id",
+          "type": "string"
+        },
+        "channel": {
+          "title": "Channel",
+          "type": "string"
+        },
+        "source_ref_id": {
+          "title": "Source Ref Id",
+          "type": "string"
+        },
+        "notice_title": {
+          "title": "Notice Title",
+          "type": "string"
+        },
+        "reason_summary": {
+          "title": "Reason Summary",
+          "type": "string"
+        },
+        "carrier_reason_code": {
+          "title": "Carrier Reason Code",
+          "type": "string"
+        },
+        "matched_budget_line_id": {
+          "default": "",
+          "title": "Matched Budget Line Id",
+          "type": "string"
+        },
+        "appeal": {
+          "$ref": "#/$defs/OrchestratorOwnerReviewCarrierAppeal"
+        },
+        "appeal_results": {
+          "items": {
+            "$ref": "#/$defs/OrchestratorOwnerReviewCarrierAppealResult"
+          },
+          "title": "Appeal Results",
+          "type": "array"
+        },
+        "financial_outcome": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Financial Outcome"
+        }
+      },
+      "required": [
+        "notice_id",
+        "channel",
+        "source_ref_id",
+        "notice_title",
+        "reason_summary",
+        "carrier_reason_code",
+        "appeal"
+      ],
+      "title": "OrchestratorOwnerReviewCarrierRejectionNotice",
+      "type": "object"
+    },
+    "OrchestratorOwnerReviewHumanConfirmation": {
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "enum": [
+            "confirmed",
+            "approved",
+            "pending",
+            "needs_more_information",
+            "unknown",
+            "human_only",
+            "declined",
+            "declined_referred",
+            "declined_or_referred"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "human_review_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Human Review Ref"
+        },
+        "evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "status"
+      ],
+      "title": "OrchestratorOwnerReviewHumanConfirmation",
+      "type": "object"
+    },
+    "OrchestratorOwnerReviewSourceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "source_ref_id": {
+          "title": "Source Ref Id",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "segment_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Segment Refs",
+          "type": "array"
+        },
+        "coverage": {
+          "enum": [
+            "full",
+            "partial",
+            "missing"
+          ],
+          "title": "Coverage",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_ref_id",
+        "sha256",
+        "segment_refs",
+        "coverage"
+      ],
+      "title": "OrchestratorOwnerReviewSourceRef",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "intake_owner_review_request.v0_1",
+      "default": "intake_owner_review_request.v0_1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "request_id": {
+      "title": "Request Id",
+      "type": "string"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    },
+    "workflow_label": {
+      "const": "orchestrator.local.intake_to_budget_owner_review",
+      "default": "orchestrator.local.intake_to_budget_owner_review",
+      "title": "Workflow Label",
+      "type": "string"
+    },
+    "synthetic": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic",
+      "type": "boolean"
+    },
+    "contains_real_firm_data": {
+      "const": false,
+      "default": false,
+      "title": "Contains Real Firm Data",
+      "type": "boolean"
+    },
+    "contains_real_client_data": {
+      "const": false,
+      "default": false,
+      "title": "Contains Real Client Data",
+      "type": "boolean"
+    },
+    "contains_real_matter_data": {
+      "const": false,
+      "default": false,
+      "title": "Contains Real Matter Data",
+      "type": "boolean"
+    },
+    "contains_privileged_data": {
+      "const": false,
+      "default": false,
+      "title": "Contains Privileged Data",
+      "type": "boolean"
+    },
+    "source_refs": {
+      "items": {
+        "$ref": "#/$defs/OrchestratorOwnerReviewSourceRef"
+      },
+      "title": "Source Refs",
+      "type": "array"
+    },
+    "human_confirmations": {
+      "additionalProperties": {
+        "$ref": "#/$defs/OrchestratorOwnerReviewHumanConfirmation"
+      },
+      "title": "Human Confirmations",
+      "type": "object"
+    },
+    "budget_preconditions": {
+      "$ref": "#/$defs/OrchestratorOwnerReviewBudgetPreconditions"
+    },
+    "budget_actual_lines": {
+      "items": {
+        "$ref": "#/$defs/OrchestratorOwnerReviewBudgetActualLine"
+      },
+      "title": "Budget Actual Lines",
+      "type": "array"
+    },
+    "carrier_rejection_notices": {
+      "items": {
+        "$ref": "#/$defs/OrchestratorOwnerReviewCarrierRejectionNotice"
+      },
+      "title": "Carrier Rejection Notices",
+      "type": "array"
+    },
+    "lake_handoff_mode": {
+      "default": "disabled",
+      "enum": [
+        "disabled",
+        "validate_only"
+      ],
+      "title": "Lake Handoff Mode",
+      "type": "string"
+    }
+  },
+  "required": [
+    "request_id",
+    "generated_at",
+    "source_refs",
+    "human_confirmations",
+    "budget_preconditions"
+  ],
+  "title": "OrchestratorOwnerReviewRequest",
+  "type": "object"
+}

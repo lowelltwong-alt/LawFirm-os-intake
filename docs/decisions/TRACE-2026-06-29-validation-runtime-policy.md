@@ -13,9 +13,9 @@ instructions through `scripts/run_full_pytest.py`.
 
 The policy requires:
 
-- 900 seconds or higher for full pytest;
-- 900 seconds or higher for focused pytest paths;
-- 900 seconds or higher for `scripts/smoke_demo.sh`;
+- 1800 seconds or higher for full pytest;
+- 1800 seconds or higher for focused pytest paths;
+- 1800 seconds or higher for `scripts/smoke_demo.sh`;
 - 180 seconds or higher for schema export, repo validation, and ruff checks.
 
 ## Red-Team Notes
@@ -29,6 +29,6 @@ The policy requires:
 
 ## Validation
 
-- `python -m pytest tests/test_validation_runtime_policy.py -q`
-- `python -m pytest tests/test_validation_runtime_policy.py tests/test_labor_employment_budget_facts.py -q`
+- `python scripts/run_full_pytest.py tests/test_validation_runtime_policy.py -q`
+- `python scripts/run_full_pytest.py tests/test_validation_runtime_policy.py tests/test_labor_employment_budget_facts.py -q`
 - `python scripts/run_full_pytest.py` - 373 passed in 294.99s

@@ -7122,6 +7122,129 @@ class CarrierRejectionOrchestratorInterfaceDraft(StrictModel):
     generated_at: str
 
 
+class OrchestratorOwnerReviewSourceRef(StrictModel):
+    source_ref_id: str
+    sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    segment_refs: list[str]
+    coverage: Literal["full", "partial", "missing"]
+
+
+class OrchestratorOwnerReviewHumanConfirmation(StrictModel):
+    status: Literal[
+        "confirmed",
+        "approved",
+        "pending",
+        "needs_more_information",
+        "unknown",
+        "human_only",
+        "declined",
+        "declined_referred",
+        "declined_or_referred",
+    ]
+    human_review_ref: str | None = None
+    evidence_refs: list[str] = Field(default_factory=list)
+
+
+class OrchestratorOwnerReviewBudgetPreconditions(StrictModel):
+    party_count_known: bool
+    complexity_known: bool
+    matter_family_confirmed: bool
+    representation_posture_confirmed: bool
+    principal_roles_confirmed: bool
+
+
+class OrchestratorOwnerReviewBudgetActualLine(StrictModel):
+    line_id: str
+    budget_phase: str
+    budget_task_code: str
+    proposed_budget_amount: str
+    carrier_compliant_projection_amount: str
+    approved_budget_amount_if_known: str = ""
+    actual_billed_amount: str
+    write_down_or_disallowed_amount: str
+    variance_driver_candidate: str
+
+
+class OrchestratorOwnerReviewCarrierAppeal(StrictModel):
+    requested: bool
+    human_authorization_ref: str | None = None
+
+
+class OrchestratorOwnerReviewCarrierAppealResult(StrictModel):
+    result_id: str
+    result: str
+    received_at: str
+
+
+class OrchestratorOwnerReviewCarrierRejectionNotice(StrictModel):
+    notice_id: str
+    channel: str
+    source_ref_id: str
+    notice_title: str
+    reason_summary: str
+    carrier_reason_code: str
+    matched_budget_line_id: str = ""
+    appeal: OrchestratorOwnerReviewCarrierAppeal
+    appeal_results: list[OrchestratorOwnerReviewCarrierAppealResult] = Field(default_factory=list)
+    financial_outcome: str | None = None
+
+
+class OrchestratorOwnerReviewRequest(StrictModel):
+    schema_version: Literal["intake_owner_review_request.v0_1"] = "intake_owner_review_request.v0_1"
+    request_id: str
+    generated_at: str
+    workflow_label: Literal["orchestrator.local.intake_to_budget_owner_review"] = (
+        "orchestrator.local.intake_to_budget_owner_review"
+    )
+    synthetic: Literal[True] = True
+    contains_real_firm_data: Literal[False] = False
+    contains_real_client_data: Literal[False] = False
+    contains_real_matter_data: Literal[False] = False
+    contains_privileged_data: Literal[False] = False
+    source_refs: list[OrchestratorOwnerReviewSourceRef]
+    human_confirmations: dict[str, OrchestratorOwnerReviewHumanConfirmation]
+    budget_preconditions: OrchestratorOwnerReviewBudgetPreconditions
+    budget_actual_lines: list[OrchestratorOwnerReviewBudgetActualLine] = Field(default_factory=list)
+    carrier_rejection_notices: list[OrchestratorOwnerReviewCarrierRejectionNotice] = Field(
+        default_factory=list
+    )
+    lake_handoff_mode: Literal["disabled", "validate_only"] = "disabled"
+
+    @model_validator(mode="after")
+    def required_orchestrator_fields_present(self) -> "OrchestratorOwnerReviewRequest":
+        required_pauses = {
+            "confirm_matter_family",
+            "confirm_representation_posture",
+            "confirm_principal_party_roles",
+            "approve_budget_proposal_before_external_submission",
+            "approve_exception_lake_handoff_before_admission",
+        }
+        missing = sorted(required_pauses - set(self.human_confirmations))
+        if missing:
+            raise ValueError(f"orchestrator owner-review request missing pauses: {missing}")
+        if not self.source_refs:
+            raise ValueError("orchestrator owner-review request requires source_refs")
+        source_ids = [source.source_ref_id for source in self.source_refs]
+        if len(source_ids) != len(set(source_ids)):
+            raise ValueError(
+                "orchestrator owner-review request source_ref_id values must be unique"
+            )
+        known_sources = set(source_ids)
+        missing_notice_sources = sorted(
+            {
+                notice.source_ref_id
+                for notice in self.carrier_rejection_notices
+                if notice.source_ref_id not in known_sources
+            }
+        )
+        if missing_notice_sources:
+            raise ValueError(
+                "carrier rejection notice source_ref_id values must be present in source_refs: "
+                + ", ".join(missing_notice_sources)
+            )
+        return self
+
+
 class CarrierRejectionLakeAdmissionRecordSpec(StrictModel):
     record_type: Literal[
         "carrier_rejection_notice_record",
