@@ -2,7 +2,7 @@
   "object_type": "governance_dependency_map_mirror",
   "trust_zone": "downstream_control",
   "lifecycle_status": "active",
-  "provenance_note": "Created 2026-06-29 to mirror the upstream LawFirm OS governance dependency-map update gate inside LawFirm-os-intake. This fresh main clone was used so unrelated dirty local intake work was not overwritten.",
+  "provenance_note": "Created 2026-06-29 to mirror the upstream LawFirm OS governance dependency-map update gate inside LawFirm-os-intake. Updated 2026-06-30 after post-merge remaining-roadmap docs and schema surfaces changed so the watched governance-surface gate remains explicit.",
   "reason_for_inclusion": "Force intake-vertical governance changes to check the upstream governance dependency map and local mirror surfaces instead of letting vertical convenience become platform authority.",
   "schema_version": "governance_dependency_map_mirror.v1",
   "mirror_id": "lawfirm_os_intake_governance_dependency_map_mirror",
