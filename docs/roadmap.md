@@ -594,6 +594,37 @@ human-review actions from critical owner-gated work.
   `lake_write_performed=false`, `sqlite_write_performed=false`,
   `external_writes_performed=false`, and `silent_learning_performed=false`.
 
+## 11M.1. Draft PR Merge Order Readiness Packet
+
+Status: implemented for the current synthetic candidate slice; merge and
+ready-for-review actions remain manual human actions in GitHub.
+
+Turn an explicit local snapshot of open draft PR metadata into a typed manual
+merge-order queue and shared-surface warning packet.
+
+- `plan-pr-merge-order` consumes a local PR snapshot JSON, such as
+  `examples/synthetic/pr-merge-order/open-draft-prs-20260630.json`.
+- It writes `pr_merge_order_readiness_packet.json` and
+  `pr_merge_order_readiness_packet.md`.
+- The packet records observed PR state, draft state, mergeability, status-check
+  conclusion, changed files, addressed depth gaps, recommended sequence role,
+  shared surfaces, required manual actions, validation gates, and red-team notes.
+- The default strategy is `gap_first_then_depth_audit`: merge direct fixture gap
+  closers first, then adjacent role-expansion coverage, then rebase the depth
+  audit so it verifies the expanded holdout set instead of freezing stale gap
+  evidence.
+- Shared governance, roadmap, manifest, schema, CLI, model, and test surfaces
+  become high-risk rebase warnings even when GitHub reports each draft PR as
+  mergeable.
+- Failed PR evidence blocks the packet instead of turning stale or red checks
+  into a merge queue.
+- The report records `ready_for_review_marked=false`, `merge_performed=false`,
+  `github_issue_created=false`, `github_pr_created=false`,
+  `github_write_performed=false`, `sibling_repo_write_performed=false`,
+  `promotion_authorized=false`, `lake_write_performed=false`,
+  `sqlite_write_performed=false`, `external_writes_performed=false`, and
+  `silent_learning_performed=false`.
+
 ## 11N. Synthetic Fixture Expansion Audit
 
 Status: implemented for the current synthetic candidate slice; holdouts are

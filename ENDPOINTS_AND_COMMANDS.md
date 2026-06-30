@@ -720,6 +720,25 @@ work. It does not mark a PR ready, create issues, open PRs, write sibling repos,
 promote canon, admit Lake records, write SQLite, apply learning, or authorize
 production use.
 
+### Plan PR merge order
+
+```bash
+python -m lawfirm_os_intake plan-pr-merge-order \
+  --pr-snapshot examples/synthetic/pr-merge-order/open-draft-prs-20260630.json \
+  --out-dir .lawfirm-os-intake/pr-merge-order-readiness
+```
+
+This writes `pr_merge_order_readiness_packet.json` and
+`pr_merge_order_readiness_packet.md`. The packet consumes an explicit local PR
+snapshot as observed evidence, recommends a manual draft-PR merge queue, and
+identifies shared changed-file surfaces that need rebase attention after each
+accepted merge. The default strategy is `gap_first_then_depth_audit`: land
+direct fixture gap closers first, then adjacent role-expansion coverage, then
+the depth audit after it is rebased onto the expanded holdout set. It does not
+mark a PR ready, merge a PR, call GitHub write APIs, create issues, open PRs,
+write sibling repos, promote canon, admit Lake records, write SQLite, apply
+learning, or authorize production use.
+
 ### Audit synthetic fixture expansion
 
 ```bash

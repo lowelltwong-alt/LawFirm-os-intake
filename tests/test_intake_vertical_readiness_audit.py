@@ -387,7 +387,7 @@ def test_intake_vertical_readiness_audit_marks_pr_review_ready_but_not_promoted(
     assert persisted.source_budget_fixture_update_pr_package_report_ref == str(
         fixture_update_pr_package_report_path
     )
-    assert persisted.implemented_slice_count == persisted.total_slice_count == 28
+    assert persisted.implemented_slice_count == persisted.total_slice_count == 29
     le_slice = next(
         slice_status
         for slice_status in persisted.slices
@@ -511,7 +511,7 @@ def test_intake_vertical_readiness_audit_blocks_failed_or_missing_learning_chain
 
     assert report.status == "blocked_missing_or_failed_learning_artifacts"
     assert report.review_readiness == "not_ready_learning_artifact_chain_blocked"
-    assert report.implemented_slice_count == report.total_slice_count == 28
+    assert report.implemented_slice_count == report.total_slice_count == 29
     assert any(
         check.check_id == "owner_handoff_ready_without_writes" and check.status == "failed"
         for check in report.artifact_checks

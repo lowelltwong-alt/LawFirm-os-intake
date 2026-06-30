@@ -734,6 +734,31 @@ REQUIRED_SLICES: tuple[SliceDefinition, ...] = (
     ),
     SliceDefinition(
         slice_id=28,
+        title="Draft PR merge-order readiness packet",
+        requirement_summary=(
+            "An explicit local snapshot of open draft PR metadata can be converted "
+            "into a manual merge-order queue and shared-surface warning packet "
+            "without marking PRs ready, merging PRs, writing GitHub, admitting "
+            "Lake records, or applying learning."
+        ),
+        proof_artifact_refs=(
+            "src/lawfirm_os_intake/pr_merge_order_readiness.py",
+            "examples/synthetic/pr-merge-order/open-draft-prs-20260630.json",
+            "schemas/pr-merge-order-readiness-packet.schema.json",
+            "schemas/pr-merge-order-snapshot.schema.json",
+            "tests/test_pr_merge_order_readiness.py",
+            "docs/decisions/TRACE-2026-06-30-pr-merge-order-readiness.md",
+        ),
+        command_refs=("plan-pr-merge-order",),
+        target_owner_repos=("LawFirm-os-intake",),
+        remaining_external_actions=(
+            "Humans must perform all ready-for-review and merge actions manually.",
+            "Humans must rebase and rerun validation after each shared-surface merge.",
+            "The depth audit should be rebased after fixture gap PRs if accepted.",
+        ),
+    ),
+    SliceDefinition(
+        slice_id=29,
         title="Final intake vertical readiness audit",
         requirement_summary=(
             "A deterministic final audit checks local surfaces plus the generated learning "

@@ -64,6 +64,7 @@ from .learning_shadow_eval_results import run_learning_shadow_eval_results
 from .labor_employment_budget_facts import run_labor_employment_budget_fact_audit
 from .models import BudgetProposal, HumanConfirmation
 from .orchestrator_owner_review_request import run_orchestrator_owner_review_request
+from .pr_merge_order_readiness import run_pr_merge_order_readiness_packet
 from .pr_readiness_decision import run_pr_readiness_decision_record
 from .pr_review_checklist import run_pr_review_checklist
 from .public_source_methodology import run_public_source_methodology_audit
@@ -792,6 +793,16 @@ def _parser() -> argparse.ArgumentParser:
         help="Optional path to pr_readiness_decision_report.json.",
     )
     remaining_roadmap.add_argument("--out-dir", required=True)
+    pr_merge_order = sub.add_parser(
+        "plan-pr-merge-order",
+        help="Build a local manual merge-order packet from observed draft PR metadata.",
+    )
+    pr_merge_order.add_argument(
+        "--pr-snapshot",
+        required=True,
+        help="Path to local PR merge-order snapshot JSON.",
+    )
+    pr_merge_order.add_argument("--out-dir", required=True)
     fixture_expansion = sub.add_parser(
         "audit-synthetic-fixture-expansion",
         help="Audit synthetic holdout fixture expansion against the remaining roadmap.",
@@ -2635,6 +2646,46 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 0 if report.status == "remaining_roadmap_ready_manual_execution_required" else 2
+
+        if args.command == "plan-pr-merge-order":
+            report, run_dir = run_pr_merge_order_readiness_packet(
+                pr_snapshot_path=args.pr_snapshot,
+                out_dir=args.out_dir,
+            )
+            failed_checks = [check.check_id for check in report.checks if check.status == "failed"]
+            _print(
+                {
+                    "status": report.status,
+                    "packet_id": report.packet_id,
+                    "source_snapshot_id": report.source_snapshot_id,
+                    "repository_full_name": report.repository_full_name,
+                    "base_ref_name": report.base_ref_name,
+                    "strategy": report.strategy,
+                    "pr_count": report.pr_count,
+                    "ready_queue_count": report.ready_queue_count,
+                    "blocked_pr_count": report.blocked_pr_count,
+                    "recommended_merge_order_pr_numbers": (
+                        report.recommended_merge_order_pr_numbers
+                    ),
+                    "blocked_pr_numbers": report.blocked_pr_numbers,
+                    "shared_surface_count": report.shared_surface_count,
+                    "high_risk_shared_surface_count": (report.high_risk_shared_surface_count),
+                    "failed_checks": failed_checks,
+                    "ready_for_review_marked": report.ready_for_review_marked,
+                    "merge_performed": report.merge_performed,
+                    "github_issue_created": report.github_issue_created,
+                    "github_pr_created": report.github_pr_created,
+                    "github_write_performed": report.github_write_performed,
+                    "sibling_repo_write_performed": report.sibling_repo_write_performed,
+                    "promotion_authorized": report.promotion_authorized,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0 if report.status == "pr_merge_order_ready_manual_queue_required" else 2
 
         if args.command == "audit-synthetic-fixture-expansion":
             report, run_dir = run_synthetic_fixture_expansion_audit(

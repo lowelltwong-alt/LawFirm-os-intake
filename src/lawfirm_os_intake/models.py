@@ -6909,6 +6909,288 @@ class RemainingRoadmapReport(StrictModel):
         return self
 
 
+PRMergeOrderObservedState = Literal["open", "closed", "merged", "not_supplied"]
+PRMergeOrderMergeableState = Literal[
+    "MERGEABLE",
+    "CONFLICTING",
+    "UNKNOWN",
+    "CLEAN",
+    "DIRTY",
+    "UNSTABLE",
+    "BLOCKED",
+    "BEHIND",
+    "DRAFT",
+    "HAS_HOOKS",
+    "not_supplied",
+]
+PRMergeOrderChecksConclusion = Literal[
+    "success",
+    "failure",
+    "pending",
+    "cancelled",
+    "skipped",
+    "neutral",
+    "timed_out",
+    "action_required",
+    "startup_failure",
+    "stale",
+    "not_supplied",
+]
+PRMergeOrderRole = Literal[
+    "fixture_gap_closer",
+    "fixture_role_expander",
+    "audit_verifier",
+    "unknown",
+]
+
+
+class PRMergeOrderCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed", "warning"]
+    message: str
+    artifact_refs: list[str] = Field(default_factory=list)
+    blocking_refs: list[str] = Field(default_factory=list)
+
+
+class PRMergeOrderSnapshotItem(StrictModel):
+    pr_number: int = Field(gt=0)
+    title: str
+    pr_url: str | None = None
+    head_ref_name: str
+    base_ref_name: str
+    observed_state: PRMergeOrderObservedState = "open"
+    is_draft: bool = True
+    mergeable_state: PRMergeOrderMergeableState = "not_supplied"
+    checks_conclusion: PRMergeOrderChecksConclusion = "not_supplied"
+    status_check_count: int = Field(ge=0)
+    successful_status_check_count: int = Field(ge=0)
+    changed_files: list[str]
+    depth_gap_ids_addressed: list[str] = Field(default_factory=list)
+    validation_evidence_refs: list[str] = Field(default_factory=list)
+    recommended_sequence_role: PRMergeOrderRole = "unknown"
+    notes: list[str] = Field(default_factory=list)
+    ready_for_review_marked: Literal[False] = False
+    merge_performed: Literal[False] = False
+    github_write_performed: Literal[False] = False
+    sibling_repo_write_performed: Literal[False] = False
+    promotion_authorized: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def pr_merge_order_snapshot_item_has_evidence(
+        self,
+    ) -> "PRMergeOrderSnapshotItem":
+        if not self.title.strip():
+            raise ValueError("PR merge-order snapshot item requires title")
+        if not self.head_ref_name.strip():
+            raise ValueError("PR merge-order snapshot item requires head_ref_name")
+        if not self.base_ref_name.strip():
+            raise ValueError("PR merge-order snapshot item requires base_ref_name")
+        if not self.changed_files:
+            raise ValueError("PR merge-order snapshot item requires changed files")
+        if any(not path.strip() for path in self.changed_files):
+            raise ValueError("PR merge-order changed files must be non-empty strings")
+        if self.successful_status_check_count > self.status_check_count:
+            raise ValueError("successful status check count cannot exceed status check count")
+        return self
+
+
+class PRMergeOrderSnapshot(StrictModel):
+    schema_version: str = "0.1"
+    snapshot_id: str
+    repository_full_name: str
+    base_ref_name: str
+    observed_at: str
+    source_kind: Literal["manual_github_snapshot", "synthetic_fixture"]
+    source_refs: list[str]
+    prs: list[PRMergeOrderSnapshotItem]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    human_review_required: Literal[True] = True
+    manual_github_action_required: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    ready_for_review_marked: Literal[False] = False
+    merge_performed: Literal[False] = False
+    github_issue_created: Literal[False] = False
+    github_pr_created: Literal[False] = False
+    github_write_performed: Literal[False] = False
+    sibling_repo_write_performed: Literal[False] = False
+    promotion_authorized: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def pr_merge_order_snapshot_is_complete(self) -> "PRMergeOrderSnapshot":
+        if not self.snapshot_id.strip():
+            raise ValueError("PR merge-order snapshot requires snapshot_id")
+        if not self.repository_full_name.strip():
+            raise ValueError("PR merge-order snapshot requires repository_full_name")
+        if not self.base_ref_name.strip():
+            raise ValueError("PR merge-order snapshot requires base_ref_name")
+        if not self.observed_at.strip():
+            raise ValueError("PR merge-order snapshot requires observed_at")
+        if not self.source_refs:
+            raise ValueError("PR merge-order snapshot requires source refs")
+        if not self.prs:
+            raise ValueError("PR merge-order snapshot requires PR items")
+        numbers = [pr.pr_number for pr in self.prs]
+        if len(numbers) != len(set(numbers)):
+            raise ValueError("PR merge-order snapshot contains duplicate PR numbers")
+        return self
+
+
+class PRMergeOrderSharedSurface(StrictModel):
+    surface_ref: str
+    pr_numbers: list[int]
+    risk: Literal["medium", "high"]
+    reason: str
+
+    @model_validator(mode="after")
+    def pr_merge_order_shared_surface_is_shared(self) -> "PRMergeOrderSharedSurface":
+        if not self.surface_ref.strip():
+            raise ValueError("PR merge-order shared surface requires surface_ref")
+        if len(set(self.pr_numbers)) < 2:
+            raise ValueError("PR merge-order shared surface requires at least two PRs")
+        if not self.reason.strip():
+            raise ValueError("PR merge-order shared surface requires reason")
+        return self
+
+
+class PRMergeOrderRecommendation(StrictModel):
+    order_index: int = Field(gt=0)
+    pr_number: int = Field(gt=0)
+    title: str
+    head_ref_name: str
+    recommended_sequence_role: PRMergeOrderRole
+    recommended_after_pr_numbers: list[int] = Field(default_factory=list)
+    shared_surface_refs: list[str] = Field(default_factory=list)
+    reason: str
+    required_manual_actions: list[str]
+    validation_required: list[str]
+    red_team_notes: list[str]
+    merge_gate: Literal["manual_human_review_required"] = "manual_human_review_required"
+    ready_state_gate: Literal["manual_human_review_required"] = "manual_human_review_required"
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    ready_for_review_marked: Literal[False] = False
+    merge_performed: Literal[False] = False
+    github_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def pr_merge_order_recommendation_is_actionable(
+        self,
+    ) -> "PRMergeOrderRecommendation":
+        if not self.title.strip():
+            raise ValueError("PR merge-order recommendation requires title")
+        if not self.head_ref_name.strip():
+            raise ValueError("PR merge-order recommendation requires head_ref_name")
+        if not self.reason.strip():
+            raise ValueError("PR merge-order recommendation requires reason")
+        if not self.required_manual_actions:
+            raise ValueError("PR merge-order recommendation requires manual actions")
+        if not self.validation_required:
+            raise ValueError("PR merge-order recommendation requires validation gates")
+        if not self.red_team_notes:
+            raise ValueError("PR merge-order recommendation requires red-team notes")
+        return self
+
+
+class PRMergeOrderReadinessPacket(StrictModel):
+    schema_version: str = "0.1"
+    packet_id: str
+    status: Literal[
+        "pr_merge_order_ready_manual_queue_required",
+        "blocked_by_pr_merge_order_evidence",
+    ]
+    source_snapshot_id: str
+    source_snapshot_ref: str
+    repository_full_name: str
+    base_ref_name: str
+    strategy: Literal["gap_first_then_depth_audit"]
+    pr_count: int = Field(ge=0)
+    ready_queue_count: int = Field(ge=0)
+    blocked_pr_count: int = Field(ge=0)
+    recommended_merge_order_pr_numbers: list[int]
+    blocked_pr_numbers: list[int]
+    shared_surface_count: int = Field(ge=0)
+    high_risk_shared_surface_count: int = Field(ge=0)
+    recommendations: list[PRMergeOrderRecommendation]
+    shared_surfaces: list[PRMergeOrderSharedSurface]
+    checks: list[PRMergeOrderCheck]
+    required_next_gates: list[str]
+    observed_at: str
+    generated_at: str
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    human_review_required: Literal[True] = True
+    manual_github_action_required: Literal[True] = True
+    not_authorized_for_pr_merge: Literal[True] = True
+    not_authorized_for_ready_state_change: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    ready_for_review_marked: Literal[False] = False
+    merge_performed: Literal[False] = False
+    github_issue_created: Literal[False] = False
+    github_pr_created: Literal[False] = False
+    github_write_performed: Literal[False] = False
+    sibling_repo_write_performed: Literal[False] = False
+    promotion_authorized: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def pr_merge_order_packet_counts_and_gates_match(
+        self,
+    ) -> "PRMergeOrderReadinessPacket":
+        if self.pr_count != self.ready_queue_count + self.blocked_pr_count:
+            raise ValueError("PR merge-order ready and blocked counts do not sum to PR count")
+        if self.ready_queue_count != len(self.recommendations):
+            raise ValueError("PR merge-order ready queue count does not match recommendations")
+        if self.blocked_pr_count != len(set(self.blocked_pr_numbers)):
+            raise ValueError("PR merge-order blocked count does not match blocked PRs")
+        if self.shared_surface_count != len(self.shared_surfaces):
+            raise ValueError("PR merge-order shared surface count does not match")
+        if self.high_risk_shared_surface_count != sum(
+            1 for surface in self.shared_surfaces if surface.risk == "high"
+        ):
+            raise ValueError("PR merge-order high-risk shared surface count does not match")
+        ordered = [
+            item.pr_number
+            for item in sorted(
+                self.recommendations, key=lambda recommendation: recommendation.order_index
+            )
+        ]
+        if self.recommended_merge_order_pr_numbers != ordered:
+            raise ValueError("PR merge-order recommendation numbers do not match order")
+        failed = [check for check in self.checks if check.status == "failed"]
+        if self.status == "pr_merge_order_ready_manual_queue_required" and failed:
+            raise ValueError("ready PR merge-order packet cannot have failed checks")
+        if self.status == "blocked_by_pr_merge_order_evidence" and not failed:
+            raise ValueError("blocked PR merge-order packet requires failed checks")
+        required = {
+            "manual_pr_review_before_any_merge",
+            "manual_github_merge_or_ready_state_change_if_accepted",
+            "rebase_and_rerun_ci_after_each_shared_surface_merge",
+            "run_full_long_ceiling_validation_after_each_merge",
+            "no_automated_github_write",
+        }
+        if not required.issubset(set(self.required_next_gates)):
+            raise ValueError("PR merge-order packet is missing required gates")
+        return self
+
+
 SyntheticFixtureExpansionFamily = Literal[
     "ambiguous_roles",
     "missing_actuals",
