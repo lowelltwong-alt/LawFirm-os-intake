@@ -522,6 +522,9 @@ owner issue drafts into one local closeout report.
   intake-local candidate evidence is ready but human PR decision, manual owner
   issue creation, owner triage, owner implementation PRs if accepted, and
   cross-repo validation still remain.
+- `observed_pr_state` may be `draft`, `ready_for_review`, `merged`, or
+  `not_supplied`; it is source-bound observation only and does not mean intake
+  performed a GitHub write.
 - Blocked readiness, PR checklist, owner adoption, or owner issue-draft evidence
   blocks closeout.
 - The report records `manual_pr_state_change_required=true`,
@@ -576,7 +579,10 @@ human-review actions from critical owner-gated work.
 - Items are grouped by workstream, owner, effort, risk, gate, status, source
   evidence refs, required next actions, acceptance evidence, and red-team notes.
 - The next recommended items are human PR state decision, optional manual owner
-  issue creation, and owner triage / PR splitting.
+  issue creation, and owner triage / PR splitting unless supplied source
+  evidence records `observed_pr_state=merged`; in that post-merge case the PR
+  state item is marked completed by observation and recommendations move to
+  owner follow-up work.
 - Critical items remain owner- or governance-gated: Semantic Substrate contract
   review, Orchestrator runtime adoption, Exception Lake admission, and governed
   real-data pilot approval.

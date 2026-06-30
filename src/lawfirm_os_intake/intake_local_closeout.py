@@ -148,6 +148,11 @@ def _manual_actions(observed_pr_state: str) -> list[str]:
         actions.insert(
             0, "PR is already ready for review; verify that change was human-authorized."
         )
+    elif observed_pr_state == "merged":
+        actions.insert(
+            0,
+            "PR is already merged; preserve the observed merge evidence and continue owner follow-up planning.",
+        )
     else:
         actions.insert(0, "PR state was not supplied; verify state manually before acting.")
     return actions

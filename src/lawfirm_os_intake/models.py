@@ -6583,7 +6583,9 @@ class PRReadinessDecisionRecord(StrictModel):
     closeout_report_id: str
     observed_pr_number: int | None = None
     observed_pr_url: str | None = None
-    observed_pr_state: Literal["draft", "ready_for_review", "not_supplied"] = "not_supplied"
+    observed_pr_state: Literal["draft", "ready_for_review", "merged", "not_supplied"] = (
+        "not_supplied"
+    )
     reviewer_id: str
     reviewed_at: str
     decision: PRReadinessDecision
@@ -6661,7 +6663,9 @@ class PRReadinessDecisionReport(StrictModel):
     pr_readiness_decision_id: str
     observed_pr_number: int | None = None
     observed_pr_url: str | None = None
-    observed_pr_state: Literal["draft", "ready_for_review", "not_supplied"] = "not_supplied"
+    observed_pr_state: Literal["draft", "ready_for_review", "merged", "not_supplied"] = (
+        "not_supplied"
+    )
     reviewer_id: str
     decision: PRReadinessDecision
     decision_reason: str
@@ -6760,6 +6764,7 @@ RemainingRoadmapItemStatus = Literal[
     "blocked_until_human_decision",
     "blocked_until_owner_action",
     "deferred_governance_required",
+    "completed_by_observed_merged_pr",
 ]
 
 
@@ -6887,7 +6892,6 @@ class RemainingRoadmapReport(StrictModel):
         if not set(self.next_recommended_item_ids).issubset(known_item_ids):
             raise ValueError("remaining roadmap recommendation references unknown items")
         required = {
-            "human_pr_state_decision",
             "manual_owner_issue_creation_if_desired",
             "owner_repo_triage",
             "owner_repo_implementation_prs_if_accepted",
@@ -6896,6 +6900,12 @@ class RemainingRoadmapReport(StrictModel):
         }
         if not required.issubset(set(self.required_next_gates)):
             raise ValueError("remaining roadmap report is missing required gates")
+        pr_gate_alternatives = {
+            "human_pr_state_decision",
+            "human_pr_state_decision_completed_by_observed_merge",
+        }
+        if not pr_gate_alternatives.intersection(set(self.required_next_gates)):
+            raise ValueError("remaining roadmap report is missing required PR state gate")
         return self
 
 
@@ -8810,7 +8820,9 @@ class IntakeLocalCloseoutReport(StrictModel):
     ]
     observed_pr_number: int | None = None
     observed_pr_url: str | None = None
-    observed_pr_state: Literal["draft", "ready_for_review", "not_supplied"] = "not_supplied"
+    observed_pr_state: Literal["draft", "ready_for_review", "merged", "not_supplied"] = (
+        "not_supplied"
+    )
     source_readiness_audit_report_id: str
     source_readiness_audit_report_ref: str
     source_readiness_status: str

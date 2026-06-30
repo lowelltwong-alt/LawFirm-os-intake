@@ -47,6 +47,7 @@
       "enum": [
         "draft",
         "ready_for_review",
+        "merged",
         "not_supplied"
       ],
       "title": "Observed Pr State",

@@ -158,6 +158,30 @@ def test_intake_local_closeout_blocks_when_evidence_is_blocked(tmp_path, repo_ro
     assert report.sibling_repo_write_performed is False
 
 
+def test_intake_local_closeout_accepts_observed_merged_pr_state(tmp_path, repo_root):
+    paths = _closeout_source_paths(tmp_path, repo_root, ready=True)
+
+    report, run_dir = run_intake_local_closeout(
+        readiness_audit_report_path=paths["readiness"],
+        pr_review_checklist_path=paths["checklist"],
+        owner_adoption_report_path=paths["owner_adoption"],
+        owner_issue_draft_report_path=paths["owner_issue"],
+        out_dir=tmp_path / "local-closeout-merged",
+        observed_pr_number=11,
+        observed_pr_url="https://github.com/lowelltwong-alt/LawFirm-os-intake/pull/11",
+        observed_pr_state="merged",
+    )
+    persisted = IntakeLocalCloseoutReport.model_validate(
+        load_json(run_dir / "intake_local_closeout_report.json")
+    )
+
+    assert persisted.closeout_report_id == report.closeout_report_id
+    assert persisted.observed_pr_state == "merged"
+    assert any("already merged" in action for action in persisted.manual_actions_remaining)
+    assert persisted.github_write_performed is False
+    assert persisted.external_writes_performed is False
+
+
 def test_intake_local_closeout_cli(tmp_path, repo_root, capsys):
     paths = _closeout_source_paths(tmp_path, repo_root, ready=True)
 

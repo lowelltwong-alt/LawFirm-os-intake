@@ -20,13 +20,31 @@ REMAINING_ROADMAP_ITEMS_FILENAME = "remaining_roadmap_items.jsonl"
 READY_READINESS_STATUS = "ready_for_pr_review_external_adoption_required"
 READY_CLOSEOUT_STATUS = "intake_local_closeout_ready_manual_actions_required"
 
-REMAINING_ROADMAP_REQUIRED_NEXT_GATES = [
-    "human_pr_state_decision",
+REMAINING_ROADMAP_BASE_REQUIRED_NEXT_GATES = [
     "manual_owner_issue_creation_if_desired",
     "owner_repo_triage",
     "owner_repo_implementation_prs_if_accepted",
     "cross_repo_validation_after_owner_changes",
     "no_intake_external_write_or_promotion",
+]
+REMAINING_ROADMAP_REQUIRED_NEXT_GATES = [
+    "human_pr_state_decision",
+    *REMAINING_ROADMAP_BASE_REQUIRED_NEXT_GATES,
+]
+REMAINING_ROADMAP_POST_MERGE_REQUIRED_NEXT_GATES = [
+    "human_pr_state_decision_completed_by_observed_merge",
+    *REMAINING_ROADMAP_BASE_REQUIRED_NEXT_GATES,
+]
+
+DEFAULT_NEXT_RECOMMENDED_ITEM_IDS = [
+    "human-pr-review-and-state-decision",
+    "manual-owner-issue-creation",
+    "owner-triage-and-pr-splitting",
+]
+POST_MERGE_NEXT_RECOMMENDED_ITEM_IDS = [
+    "manual-owner-issue-creation",
+    "owner-triage-and-pr-splitting",
+    "semantic-substrate-contract-review",
 ]
 
 
@@ -85,6 +103,16 @@ def _pr_decision_boundary_clear(report: PRReadinessDecisionReport | None) -> boo
     )
 
 
+def _pr_review_completed_by_observed_merge(
+    *,
+    closeout: IntakeLocalCloseoutReport,
+    pr_decision: PRReadinessDecisionReport | None,
+) -> bool:
+    return closeout.observed_pr_state == "merged" or (
+        pr_decision is not None and pr_decision.observed_pr_state == "merged"
+    )
+
+
 def _build_checks(
     *,
     readiness: IntakeVerticalReadinessAuditReport,
@@ -97,6 +125,10 @@ def _build_checks(
     refs = [readiness_ref, closeout_ref]
     if pr_decision_ref:
         refs.append(pr_decision_ref)
+    pr_review_completed = _pr_review_completed_by_observed_merge(
+        closeout=closeout,
+        pr_decision=pr_decision,
+    )
     checks = [
         _check(
             "readiness_audit_ready_for_remaining_plan",
@@ -139,6 +171,15 @@ def _build_checks(
                 artifact_refs=[pr_decision_ref] if pr_decision_ref else [],
             )
         )
+    elif pr_review_completed:
+        checks.append(
+            _check(
+                "pr_readiness_decision_not_required_after_observed_merge",
+                True,
+                "Observed merged PR state completes the PR review gate for roadmap ordering; no local GitHub write occurred.",
+                artifact_refs=[closeout_ref],
+            )
+        )
     else:
         checks.append(
             RemainingRoadmapCheck(
@@ -149,6 +190,15 @@ def _build_checks(
                     "a human PR state decision."
                 ),
                 artifact_refs=[],
+            )
+        )
+    if pr_review_completed:
+        checks.append(
+            _check(
+                "observed_pr_merged_for_remaining_plan",
+                True,
+                "A supplied closeout or PR decision report records the PR as merged before this remaining-roadmap report.",
+                artifact_refs=refs,
             )
         )
     return checks
@@ -192,10 +242,54 @@ def _roadmap_items(
     readiness_ref: str,
     closeout_ref: str,
     pr_decision_ref: str | None,
+    pr_review_completed: bool,
 ) -> list[RemainingRoadmapItem]:
     evidence = [readiness_ref, closeout_ref]
     if pr_decision_ref:
         evidence.append(pr_decision_ref)
+    human_pr_status = "completed_by_observed_merged_pr" if pr_review_completed else "ready_to_start"
+    human_pr_why_now = (
+        "The PR is observed as merged, so the remaining roadmap should move to owner follow-up and adoption work."
+        if pr_review_completed
+        else "Local readiness and closeout evidence are ready; the PR remains draft until a human decides."
+    )
+    human_pr_actions = (
+        [
+            "Preserve the closeout or PR decision evidence that recorded the merged PR state.",
+            "Do not attempt any intake-side GitHub state change.",
+            "Move remaining recommendations to owner issue creation, owner triage, and owner-gated adoption.",
+        ]
+        if pr_review_completed
+        else [
+            "Review pr_review_checklist.md and intake_local_closeout_report.md.",
+            "Decide keep draft, mark ready manually, split follow-up work, or request more work.",
+            "Record any decision append-only before changing PR state.",
+        ]
+    )
+    human_pr_acceptance = (
+        [
+            "Merged PR state is source-bound in the closeout or PR decision report.",
+            "No intake-local GitHub write flags are set.",
+            "Next recommendations exclude PR state decision and point at owner follow-up work.",
+        ]
+        if pr_review_completed
+        else [
+            "Reviewed PR checklist with no unresolved blocking items.",
+            "Human-authored PR readiness decision record.",
+            "If marked ready, GitHub state change performed manually by the human reviewer.",
+        ]
+    )
+    human_pr_red_team = (
+        [
+            "A merged intake PR does not authorize owner repo implementation, canonical promotion, Lake admission, or production use.",
+            "The merged state is observed evidence; intake still must not perform GitHub writes.",
+        ]
+        if pr_review_completed
+        else [
+            "Ready local evidence is not production readiness.",
+            "Automating the GitHub state change would break the review boundary.",
+        ]
+    )
     return [
         _item(
             item_id="human-pr-review-and-state-decision",
@@ -205,23 +299,12 @@ def _roadmap_items(
             effort="easy",
             risk="medium",
             gate="manual_human_review",
-            status="ready_to_start",
-            why_now="Local readiness and closeout evidence are ready; the PR remains draft until a human decides.",
+            status=human_pr_status,
+            why_now=human_pr_why_now,
             source_evidence_refs=evidence,
-            required_next_actions=[
-                "Review pr_review_checklist.md and intake_local_closeout_report.md.",
-                "Decide keep draft, mark ready manually, split follow-up work, or request more work.",
-                "Record any decision append-only before changing PR state.",
-            ],
-            acceptance_evidence_required=[
-                "Reviewed PR checklist with no unresolved blocking items.",
-                "Human-authored PR readiness decision record.",
-                "If marked ready, GitHub state change performed manually by the human reviewer.",
-            ],
-            red_team_notes=[
-                "Ready local evidence is not production readiness.",
-                "Automating the GitHub state change would break the review boundary.",
-            ],
+            required_next_actions=human_pr_actions,
+            acceptance_evidence_required=human_pr_acceptance,
+            red_team_notes=human_pr_red_team,
         ),
         _item(
             item_id="manual-owner-issue-creation",
@@ -467,6 +550,10 @@ def build_remaining_roadmap_report(
     pr_decision: PRReadinessDecisionReport | None = None,
     pr_decision_ref: str | None = None,
 ) -> RemainingRoadmapReport:
+    pr_review_completed = _pr_review_completed_by_observed_merge(
+        closeout=closeout,
+        pr_decision=pr_decision,
+    )
     checks = _build_checks(
         readiness=readiness,
         readiness_ref=readiness_ref,
@@ -479,13 +566,14 @@ def build_remaining_roadmap_report(
         readiness_ref=readiness_ref,
         closeout_ref=closeout_ref,
         pr_decision_ref=pr_decision_ref,
+        pr_review_completed=pr_review_completed,
     )
     failed = [check for check in checks if check.status == "failed"]
-    next_ids = [
-        "human-pr-review-and-state-decision",
-        "manual-owner-issue-creation",
-        "owner-triage-and-pr-splitting",
-    ]
+    next_ids = (
+        POST_MERGE_NEXT_RECOMMENDED_ITEM_IDS
+        if pr_review_completed
+        else DEFAULT_NEXT_RECOMMENDED_ITEM_IDS
+    )
     return RemainingRoadmapReport(
         remaining_roadmap_report_id=_stable_id(
             "remainingroadmap",
@@ -538,7 +626,11 @@ def build_remaining_roadmap_report(
         next_recommended_item_ids=next_ids,
         items=items,
         checks=checks,
-        required_next_gates=REMAINING_ROADMAP_REQUIRED_NEXT_GATES,
+        required_next_gates=(
+            REMAINING_ROADMAP_POST_MERGE_REQUIRED_NEXT_GATES
+            if pr_review_completed
+            else REMAINING_ROADMAP_REQUIRED_NEXT_GATES
+        ),
         generated_at=now_iso(),
     )
 
