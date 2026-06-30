@@ -163,3 +163,56 @@ def test_review_packet_preserves_unknown_and_context_separation(tmp_path, repo_r
     assert "; evidence:" in review_text
     assert any(finding.code == "ROLE_CANDIDATES_AMBIGUOUS" for finding in packet.critic_findings)
     assert "ROLE_CANDIDATES_AMBIGUOUS" in review_text
+
+
+def test_carrier_client_role_matrix_keeps_sender_payer_and_insured_separate(
+    tmp_path,
+    repo_root,
+):
+    packet, run_dir = run_preflight(
+        repo_root / "examples/synthetic/inbound/holdout-carrier-client-role-matrix.json",
+        repo_root / "context/synthetic-profiles/insurance-defense.yaml",
+        tmp_path,
+    )
+    parties = {party.name: party for party in packet.party_candidates}
+
+    carrier_roles = {role.role for role in parties["Harbor Point Insurance"].role_candidates}
+    tpa_roles = {role.role for role in parties["ClaimsPro Administrators"].role_candidates}
+    insured_roles = {role.role for role in parties["Northstar Delivery LLC"].role_candidates}
+    affiliate_roles = {role.role for role in parties["Fleet Parent Holdings Inc."].role_candidates}
+    claimant_roles = {role.role for role in parties["Olivia Lee"].role_candidates}
+
+    assert {"insurance_carrier", "payer", "instructing_source"} <= carrier_roles
+    assert "prospective_represented_client" not in carrier_roles
+    assert {"third_party_administrator", "instructing_source"} <= tpa_roles
+    assert {"insured", "prospective_represented_client"} <= insured_roles
+    assert {"affiliate", "document_custodian"} <= affiliate_roles
+    assert {"claimant", "adverse_party"} <= claimant_roles
+
+    for party in packet.party_candidates:
+        assert party.evidence_refs, f"{party.name} has no party evidence refs"
+        for role in party.role_candidates:
+            assert role.evidence_refs, f"{party.name}:{role.role} has no role evidence refs"
+
+    findings = {finding.code: finding for finding in packet.critic_findings}
+    assert "ROLE_CANDIDATES_AMBIGUOUS" in findings
+    assert "Harbor Point Insurance" in findings["ROLE_CANDIDATES_AMBIGUOUS"].message
+    assert "Northstar Delivery LLC" in findings["ROLE_CANDIDATES_AMBIGUOUS"].message
+
+    candidates = load_jsonl(run_dir / "exception_lake_candidates.jsonl")
+    role_ambiguity = [
+        candidate
+        for candidate in candidates
+        if candidate["local_event_label"] == "critic_role_candidates_ambiguous"
+    ]
+    assert role_ambiguity
+    assert role_ambiguity[0]["raw_payload_included"] is False
+    assert role_ambiguity[0]["canonical_lake_class"] == "workflow_escalation"
+
+    review_text = (run_dir / "intake_review_form.md").read_text(encoding="utf-8")
+    assert "Harbor Point Insurance: insurance_carrier" in review_text
+    assert "payer" in review_text
+    assert "instructing_source" in review_text
+    assert "Northstar Delivery LLC: insured" in review_text
+    assert "prospective_represented_client" in review_text
+    assert "ROLE_CANDIDATES_AMBIGUOUS" in review_text

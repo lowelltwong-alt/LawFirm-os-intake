@@ -600,8 +600,8 @@ Status: implemented for the current synthetic candidate slice; holdouts are
 review evidence only and are not calibration-approved.
 
 Execute the local fixture/eval expansion item from the remaining roadmap by
-binding four synthetic holdout families to concrete fixture refs, test refs,
-expected signals, and red-team notes.
+binding four synthetic holdout families and five concrete holdouts to fixture
+refs, test refs, expected signals, and red-team notes.
 
 - `audit-synthetic-fixture-expansion` consumes `remaining_roadmap_report.json`
   and `examples/synthetic/fixture-expansion/remaining-roadmap-holdouts.json`.
@@ -609,6 +609,9 @@ expected signals, and red-team notes.
   `synthetic_fixture_expansion_report.md`.
 - The manifest covers ambiguous roles, missing actuals, carrier rejection
   variants, and budget driver edge cases.
+- The ambiguous-role family now includes a carrier/client role matrix that keeps
+  carrier, payer, third-party administrator, insured, affiliate, driver, and
+  claimant alternatives separated for human confirmation.
 - New local fixtures include a missing-actuals `BudgetActualsSource` and a
   budget-driver edge-case fixture for low-intensity, high-intensity, and unknown
   driver states.
