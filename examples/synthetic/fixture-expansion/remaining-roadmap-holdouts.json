@@ -70,6 +70,26 @@
       ]
     },
     {
+      "holdout_id": "holdout-carrier-rejection-partial-allowance-stale-denied-appeals.v0_1",
+      "family": "carrier_rejection_variants",
+      "description": "Synthetic carrier rejection capture bundle with partial allowances, guideline drift, rate reduction, stale appeal, and denied appeal outcomes.",
+      "fixture_refs": [
+        "examples/synthetic/carrier-rejections/partial-allowance-guideline-drift-stale-appeal.json"
+      ],
+      "test_refs": [
+        "tests/test_carrier_rejection_capture.py::test_carrier_rejection_capture_records_partial_allowance_and_stale_denied_appeals"
+      ],
+      "expected_signals": [
+        "partial allowances remain source-bound rejection evidence",
+        "guideline version drift maps to authority_conflict_override candidate class",
+        "stale and denied appeals record financial outcomes without appeal submission"
+      ],
+      "red_team_notes": [
+        "Partial allowances must not be inflated into full denial exposure.",
+        "Stale or denied appeal outcomes must not silently mutate carrier guideline profiles."
+      ]
+    },
+    {
       "holdout_id": "holdout-budget-driver-edge-cases-medmal.v0_1",
       "family": "budget_driver_edges",
       "description": "Synthetic budget-driver edge cases for low-intensity, high-intensity, and unknown-driver states.",
