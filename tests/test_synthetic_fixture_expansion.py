@@ -240,3 +240,24 @@ def test_missing_actuals_holdout_fixture_is_valid_synthetic_source(repo_root):
     assert actuals.billing_connector_read_performed is False
     assert actuals.billing_connector_write_performed is False
     assert actuals.external_writes_performed is False
+
+
+def test_budget_driver_edge_holdout_fixture_is_valid_synthetic_source(repo_root):
+    fixture = load_json(
+        repo_root / "examples/synthetic/budget-drivers/medmal-driver-edge-cases.json"
+    )
+
+    assert fixture["fixture_id"] == "synthetic-medmal-budget-driver-edge-cases.v0_1"
+    assert fixture["data_origin"] == "synthetic"
+    assert fixture["contains_real_client_data"] is False
+    assert fixture["contains_real_matter_data"] is False
+    assert fixture["contains_privileged_data"] is False
+    assert {case["case_id"]: case["expected_signal"] for case in fixture["driver_cases"]} == {
+        "soft-clear-favorable": "lower_intensity_projection",
+        "catastrophic-contested-plaintiff-friendly": "higher_intensity_projection",
+        "unknown-coverage-posture": "unknown_driver_visible_not_observed_fact",
+    }
+    assert any("not observed facts" in signal for signal in fixture["expected_signals"])
+    assert fixture["calibration_approved"] is False
+    assert fixture["external_writes_performed"] is False
+    assert fixture["silent_learning_performed"] is False

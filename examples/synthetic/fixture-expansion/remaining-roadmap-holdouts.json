@@ -37,7 +37,8 @@
         "examples/synthetic/actuals/medmal-missing-actuals.json"
       ],
       "test_refs": [
-        "tests/test_budget_revisions_and_actuals.py::test_budget_actual_variance_ledger_records_missing_actuals"
+        "tests/test_budget_revisions_and_actuals.py::test_budget_actual_variance_ledger_records_missing_actuals",
+        "tests/test_synthetic_fixture_expansion.py::test_missing_actuals_holdout_fixture_is_valid_synthetic_source"
       ],
       "expected_signals": [
         "actuals_not_available comparison status",
@@ -78,7 +79,8 @@
       ],
       "test_refs": [
         "tests/test_budget_stronger_drivers.py::test_human_confirmed_higher_severity_increases_budget",
-        "tests/test_budget_stronger_drivers.py::test_profile_default_intensity_effects_are_visible_not_observed"
+        "tests/test_budget_stronger_drivers.py::test_profile_default_intensity_effects_are_visible_not_observed",
+        "tests/test_synthetic_fixture_expansion.py::test_budget_driver_edge_holdout_fixture_is_valid_synthetic_source"
       ],
       "expected_signals": [
         "catastrophic severity produces a higher budget than soft-tissue severity",
