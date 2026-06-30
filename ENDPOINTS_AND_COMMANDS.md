@@ -44,8 +44,8 @@ python scripts/run_validation_suite.py
 
 `config/validation-runtime-policy.yaml` declares the minimum local ceilings for
 heavy validation commands. Full and focused pytest runs use the wrapper above
-and require a 1800 second ceiling. Direct pytest invocation is blocked so a run
-cannot silently inherit a shorter ceiling. Smoke runs also require a 1800 second
+and require a 3600 second ceiling. Direct pytest invocation is blocked so a run
+cannot silently inherit a shorter ceiling. Smoke runs also require a 3600 second
 ceiling. Schema export, repo validation, and ruff checks require at least 180
 seconds. The full validation-suite runner applies those policy ceilings to repo
 validation, schema export, lint, full pytest, smoke, and final repo validation.

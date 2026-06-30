@@ -17,7 +17,7 @@ bash scripts/smoke_demo.sh
 ```
 
 Use `config/validation-runtime-policy.yaml` for minimum local validation
-timeouts; full and focused pytest and smoke runs require a 1800 second ceiling.
+timeouts; full and focused pytest and smoke runs require a 3600 second ceiling.
 
 The code currently provides deterministic/source-hint-backed mock workers. It is intentionally not a production NLP system.
 

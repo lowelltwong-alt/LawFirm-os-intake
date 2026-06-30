@@ -21,7 +21,7 @@ VALIDATION_COMMANDS = [
     "python scripts/export_schemas.py",
     "python -m ruff check src tests scripts",
     "python -m ruff format --check src tests scripts",
-    "python -m pytest -q",
+    "python scripts/run_full_pytest.py",
     "bash scripts/smoke_demo.sh",
 ]
 

@@ -123,7 +123,7 @@ def _decision_record(checklist, closeout, *, decision="mark_ready_for_review", a
         else (item_ids if accepted else []),
         validation_evidence_refs=(
             [
-                "python -m pytest -q",
+                "python scripts/run_full_pytest.py",
                 "python scripts/validate_repo.py",
                 "bash scripts/smoke_demo.sh",
             ]
