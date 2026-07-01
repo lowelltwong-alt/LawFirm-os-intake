@@ -1,0 +1,74 @@
+{
+  "schema_version": "0.1",
+  "budget_human_review_outcome_record_id": "budget-human-review-outcome.synthetic-medmal-carrier-appeal.v0_1",
+  "budget_human_review_packet_id": "__BUDGET_HUMAN_REVIEW_PACKET_ID__",
+  "source_budget_human_review_packet_ref": "__BUDGET_HUMAN_REVIEW_PACKET_REF__",
+  "reviewer_id": "synthetic-budget-reviewer",
+  "reviewer_role": "budget_review_owner",
+  "reviewed_at": "2026-07-01T00:00:00Z",
+  "overall_outcome": "appeal",
+  "decision_reason": "Synthetic reviewer records carrier appeal follow-up, accepted write-down evidence, and no-learning posture as append-only review evidence.",
+  "decisions": [
+    {
+      "decision_id": "budget-human-review-decision.synthetic-medmal-carrier-rejection-appeal",
+      "template_id": "__TEMPLATE_ID:carrier_rejection__",
+      "review_area": "carrier_rejection",
+      "outcome": "appeal",
+      "decision_reason": "Synthetic reviewer directs a human-only carrier appeal follow-up for the disputed rejection notice.",
+      "evidence_refs": [
+        "__BUDGET_HUMAN_REVIEW_PACKET_ID__",
+        "__TEMPLATE_ID:carrier_rejection__",
+        "__SOURCE_RECOMMENDATION_ID:carrier_rejection__"
+      ],
+      "source_recommendation_ids": [
+        "__SOURCE_RECOMMENDATION_ID:carrier_rejection__"
+      ],
+      "required_followups": [
+        "Prepare carrier appeal packet for human authorization only; do not submit from intake.",
+        "Verify duplicate rejection notices are reconciled before any external action."
+      ],
+      "followup_owner": "synthetic-appeal-reviewer",
+      "followup_due_at": "2026-07-15T00:00:00Z",
+      "candidate_record_families": [
+        "carrier_appeal_result_record"
+      ]
+    },
+    {
+      "decision_id": "budget-human-review-decision.synthetic-medmal-appeal-result-write-off",
+      "template_id": "__TEMPLATE_ID:appeal_result__",
+      "review_area": "appeal_result",
+      "outcome": "write_off",
+      "decision_reason": "Synthetic reviewer accepts the unresolved carrier write-down amount as a candidate financial outcome for later Lake owner review.",
+      "evidence_refs": [
+        "__BUDGET_HUMAN_REVIEW_PACKET_ID__",
+        "__TEMPLATE_ID:appeal_result__",
+        "__SOURCE_RECOMMENDATION_ID:appeal_result__"
+      ],
+      "source_recommendation_ids": [
+        "__SOURCE_RECOMMENDATION_ID:appeal_result__"
+      ],
+      "financial_amount": "__CARRIER_WRITE_DOWN_AMOUNT__",
+      "candidate_record_families": [
+        "carrier_financial_outcome_record"
+      ]
+    },
+    {
+      "decision_id": "budget-human-review-decision.synthetic-medmal-learning-no-change",
+      "template_id": "__TEMPLATE_ID:learning_loop__",
+      "review_area": "learning_loop",
+      "outcome": "no_learning_change",
+      "decision_reason": "Synthetic reviewer records that this appeal/write-down outcome is evidence only and must not mutate guidelines, profiles, templates, or budget logic.",
+      "evidence_refs": [
+        "__BUDGET_HUMAN_REVIEW_PACKET_ID__",
+        "__TEMPLATE_ID:learning_loop__",
+        "__SOURCE_RECOMMENDATION_ID:learning_loop__"
+      ],
+      "source_recommendation_ids": [
+        "__SOURCE_RECOMMENDATION_ID:learning_loop__"
+      ],
+      "candidate_record_families": [
+        "carrier_rejection_decision_record"
+      ]
+    }
+  ]
+}

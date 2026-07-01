@@ -1,4 +1,5 @@
 import pytest
+import yaml
 
 from lawfirm_os_intake.cli import main
 from lawfirm_os_intake.labor_employment_budget_facts import (
@@ -53,6 +54,21 @@ def test_labor_employment_budget_fact_audit_surfaces_blocking_unknowns(tmp_path,
         "synthetic_context_requires_confirmation"
     )
 
+    topology = persisted.relationship_topology
+    assert topology.budget_treatment == "block_amount_budget"
+    assert topology.person_candidate_count == 1
+    assert topology.organization_candidate_count == 1
+    assert topology.source_bound_relationship_count == 3
+    assert topology.missing_or_review_relationship_count == 3
+    assert topology.critical_relationship_gap_count == 3
+    assert topology.unresolved_relationship_fact_ids == [
+        "prospective_client_payer_carrier_posture",
+        "individual_supervisor_or_manager_defendants",
+        "joint_employer_or_affiliate_structure",
+    ]
+    assert topology.canonical_role_promotion_authorized is False
+    assert topology.relationship_classification_authoritative is False
+
     critical_gap_ids = {gap.fact_id for gap in persisted.gaps if gap.severity == "critical"}
     assert "damages_categories_and_exposure" in critical_gap_ids
     assert "esi_custodians_and_sources" in critical_gap_ids
@@ -61,6 +77,8 @@ def test_labor_employment_budget_fact_audit_surfaces_blocking_unknowns(tmp_path,
 
     notes = (run_dir / "labor_employment_budget_fact_audit_report.md").read_text(encoding="utf-8")
     assert "**Budget readiness:** blocked_missing_critical_facts" in notes
+    assert "## Relationship Topology" in notes
+    assert "individual_supervisor_or_manager_defendants" in notes
     assert "Budget submission authorized: False" in notes
 
 
@@ -175,6 +193,65 @@ def test_missing_employee_or_person_relationship_blocks_budget_readiness(
     assert employee_gap.blocks_precise_budget is True
     assert report.budget_readiness_state == "blocked_missing_critical_facts"
     assert report.budget_amount_output_authorized is False
+    assert "employee_claimant_identity" in (
+        report.relationship_topology.unresolved_relationship_fact_ids
+    )
+    assert report.relationship_topology.person_candidate_count == 0
+    assert report.relationship_topology.critical_relationship_gap_count == 4
+
+
+def test_relationship_topology_counts_are_validated(tmp_path, repo_root):
+    report, _ = run_labor_employment_budget_fact_audit(
+        repo_root=repo_root,
+        manifest_path=MANIFEST_REF,
+        out_dir=tmp_path / "relationship-topology-counts",
+    )
+    payload = report.model_dump(mode="json")
+    payload["relationship_topology"]["critical_relationship_gap_count"] = 0
+
+    with pytest.raises(ValueError, match="critical relationship gap count mismatch"):
+        LaborEmploymentBudgetFactAuditReport.model_validate(payload)
+
+
+def test_relationship_topology_check_fails_when_policy_bucket_is_missing(
+    tmp_path,
+    repo_root,
+):
+    policy = yaml.safe_load(
+        (repo_root / "config" / "labor-employment-budget-fact-needs.yaml").read_text(
+            encoding="utf-8"
+        )
+    )
+    policy["fact_needs"].append(
+        {
+            "fact_id": "union_or_agency_relationship",
+            "fact_category": "entity_relationship",
+            "required_level": "critical",
+            "question": "Is a union, agency, DOL, NLRB, or other third-party employment actor implicated?",
+            "budget_effects": ["party_count", "agency_record_review", "conflict_seed"],
+            "human_confirmation_required": True,
+            "recommended_budget_treatment": "hours_only_or_broad_range",
+            "match": {"conflict_observed_roles": ["union", "agency"]},
+        }
+    )
+    policy_path = tmp_path / "le-policy-with-unmapped-relationship.yaml"
+    policy_path.write_text(yaml.safe_dump(policy, sort_keys=False), encoding="utf-8")
+
+    report, _ = run_labor_employment_budget_fact_audit(
+        repo_root=repo_root,
+        manifest_path=MANIFEST_REF,
+        policy_path=policy_path,
+        out_dir=tmp_path / "unmapped-relationship-policy",
+    )
+
+    check = next(
+        check
+        for check in report.checks
+        if check.check_id == "relationship_topology_includes_entity_relationship_findings"
+    )
+    assert report.status == "blocked_labor_employment_budget_fact_audit"
+    assert check.status == "failed"
+    assert check.details["missing_from_topology"] == ["union_or_agency_relationship"]
 
 
 def test_critical_budget_fact_gaps_must_block_budget_readiness(tmp_path, repo_root):
