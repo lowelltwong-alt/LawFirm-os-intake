@@ -1,0 +1,338 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "specialist_candidate_id": {
+      "title": "Specialist Candidate Id",
+      "type": "string"
+    },
+    "worker_id": {
+      "title": "Worker Id",
+      "type": "string"
+    },
+    "version": {
+      "title": "Version",
+      "type": "string"
+    },
+    "agent_ref": {
+      "title": "Agent Ref",
+      "type": "string"
+    },
+    "prompt_ref": {
+      "title": "Prompt Ref",
+      "type": "string"
+    },
+    "prompt_file_ref": {
+      "title": "Prompt File Ref",
+      "type": "string"
+    },
+    "prompt_hash": {
+      "title": "Prompt Hash",
+      "type": "string"
+    },
+    "prompt_hash_verified": {
+      "title": "Prompt Hash Verified",
+      "type": "boolean"
+    },
+    "prompt_lifecycle": {
+      "title": "Prompt Lifecycle",
+      "type": "string"
+    },
+    "approved_for_real_data": {
+      "const": false,
+      "default": false,
+      "title": "Approved For Real Data",
+      "type": "boolean"
+    },
+    "purpose": {
+      "title": "Purpose",
+      "type": "string"
+    },
+    "model_class": {
+      "title": "Model Class",
+      "type": "string"
+    },
+    "raw_source_access": {
+      "title": "Raw Source Access",
+      "type": "string"
+    },
+    "cross_matter_access": {
+      "const": false,
+      "default": false,
+      "title": "Cross Matter Access",
+      "type": "boolean"
+    },
+    "network_access": {
+      "const": false,
+      "default": false,
+      "title": "Network Access",
+      "type": "boolean"
+    },
+    "write_scope": {
+      "title": "Write Scope",
+      "type": "string"
+    },
+    "allowed_tool_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Allowed Tool Refs",
+      "type": "array"
+    },
+    "tool_denylist": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Tool Denylist",
+      "type": "array"
+    },
+    "input_schema_ref": {
+      "title": "Input Schema Ref",
+      "type": "string"
+    },
+    "output_schema_ref": {
+      "title": "Output Schema Ref",
+      "type": "string"
+    },
+    "input_schema_exists": {
+      "title": "Input Schema Exists",
+      "type": "boolean"
+    },
+    "output_schema_exists": {
+      "title": "Output Schema Exists",
+      "type": "boolean"
+    },
+    "requirements": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Requirements",
+      "type": "array"
+    },
+    "prohibited_actions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Prohibited Actions",
+      "type": "array"
+    },
+    "accepted_context_classes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Accepted Context Classes",
+      "type": "array"
+    },
+    "forbidden_context_classes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Forbidden Context Classes",
+      "type": "array"
+    },
+    "evidence_requirements": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Evidence Requirements",
+      "type": "array"
+    },
+    "human_gate_required": {
+      "const": true,
+      "default": true,
+      "title": "Human Gate Required",
+      "type": "boolean"
+    },
+    "revocation_owner": {
+      "const": "LawFirm-os-skills-registry",
+      "default": "LawFirm-os-skills-registry",
+      "title": "Revocation Owner",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "ready_for_skills_registry_review",
+        "blocked_by_specialist_metadata_gap"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "missing_metadata_fields": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Missing Metadata Fields",
+      "type": "array"
+    },
+    "required_owner_actions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Owner Actions",
+      "type": "array"
+    },
+    "acceptance_checks": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Acceptance Checks",
+      "type": "array"
+    },
+    "red_team_notes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Red Team Notes",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "metadata_only": {
+      "const": true,
+      "default": true,
+      "title": "Metadata Only",
+      "type": "boolean"
+    },
+    "blocked_until_owner_review": {
+      "const": true,
+      "default": true,
+      "title": "Blocked Until Owner Review",
+      "type": "boolean"
+    },
+    "skill_promoted": {
+      "const": false,
+      "default": false,
+      "title": "Skill Promoted",
+      "type": "boolean"
+    },
+    "skill_trust_record_created": {
+      "const": false,
+      "default": false,
+      "title": "Skill Trust Record Created",
+      "type": "boolean"
+    },
+    "dynamic_agent_created": {
+      "const": false,
+      "default": false,
+      "title": "Dynamic Agent Created",
+      "type": "boolean"
+    },
+    "model_provider_enabled": {
+      "const": false,
+      "default": false,
+      "title": "Model Provider Enabled",
+      "type": "boolean"
+    },
+    "real_data_approved": {
+      "const": false,
+      "default": false,
+      "title": "Real Data Approved",
+      "type": "boolean"
+    },
+    "external_tools_allowed": {
+      "const": false,
+      "default": false,
+      "title": "External Tools Allowed",
+      "type": "boolean"
+    },
+    "github_issue_created": {
+      "const": false,
+      "default": false,
+      "title": "Github Issue Created",
+      "type": "boolean"
+    },
+    "github_pr_created": {
+      "const": false,
+      "default": false,
+      "title": "Github Pr Created",
+      "type": "boolean"
+    },
+    "github_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Github Write Performed",
+      "type": "boolean"
+    },
+    "sibling_repo_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sibling Repo Write Performed",
+      "type": "boolean"
+    },
+    "promotion_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Promotion Authorized",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "specialist_candidate_id",
+    "worker_id",
+    "version",
+    "agent_ref",
+    "prompt_ref",
+    "prompt_file_ref",
+    "prompt_hash",
+    "prompt_hash_verified",
+    "prompt_lifecycle",
+    "purpose",
+    "model_class",
+    "raw_source_access",
+    "write_scope",
+    "tool_denylist",
+    "input_schema_ref",
+    "output_schema_ref",
+    "input_schema_exists",
+    "output_schema_exists",
+    "requirements",
+    "prohibited_actions",
+    "accepted_context_classes",
+    "forbidden_context_classes",
+    "evidence_requirements",
+    "status",
+    "required_owner_actions",
+    "acceptance_checks",
+    "red_team_notes"
+  ],
+  "title": "SkillsRegistrySpecialistCandidate",
+  "type": "object"
+}

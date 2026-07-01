@@ -148,6 +148,7 @@ from .rust_fixture_snapshot_coherence import run_rust_fixture_snapshot_coherence
 from .rust_public_data_cache_custody import run_rust_public_data_cache_custody_check
 from .rust_synthetic_identity_guard import run_rust_synthetic_identity_guard
 from .rust_ui_bundle_source_hash import run_rust_ui_bundle_source_hash_check
+from .skills_registry_specialist_review import run_skills_registry_specialist_review
 from .synthetic_fixture_depth_audit import run_synthetic_fixture_depth_audit
 from .synthetic_fixture_expansion import run_synthetic_fixture_expansion_audit
 from .synthetic_confidence_summary import run_synthetic_confidence_summary
@@ -1926,6 +1927,26 @@ def _parser() -> argparse.ArgumentParser:
         help="Repository root for relative fixture refs.",
     )
     fixture_depth.add_argument("--out-dir", required=True)
+    skills_registry_specialist_review = sub.add_parser(
+        "build-skills-registry-specialist-review",
+        help="Build a local candidate review packet for predeclared intake specialists.",
+    )
+    skills_registry_specialist_review.add_argument(
+        "--repo-root",
+        default=".",
+        help="Repository root for relative manifest, agent, prompt, and schema refs.",
+    )
+    skills_registry_specialist_review.add_argument(
+        "--manifest",
+        default="skill-agent-manifest.json",
+        help="Path to skill-agent-manifest.json.",
+    )
+    skills_registry_specialist_review.add_argument(
+        "--prompt-registry",
+        default="prompts/registry.yaml",
+        help="Path to prompts/registry.yaml.",
+    )
+    skills_registry_specialist_review.add_argument("--out-dir", required=True)
     owner_adoption = sub.add_parser(
         "build-cross-repo-owner-adoption",
         help="Build owner-specific adoption packets from the promotion package and PR review evidence.",
@@ -5472,6 +5493,52 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 2 if report.status == "blocked_by_depth_audit_boundary_violation" else 0
+
+        if args.command == "build-skills-registry-specialist-review":
+            report, run_dir = run_skills_registry_specialist_review(
+                repo_root=args.repo_root,
+                manifest_path=args.manifest,
+                prompt_registry_path=args.prompt_registry,
+                out_dir=args.out_dir,
+            )
+            failed_checks = [check.check_id for check in report.checks if check.status == "failed"]
+            _print(
+                {
+                    "status": report.status,
+                    "specialist_review_report_id": report.specialist_review_report_id,
+                    "target_repo": report.target_repo,
+                    "manifest_ref": report.manifest_ref,
+                    "prompt_registry_ref": report.prompt_registry_ref,
+                    "expected_harness_count": report.expected_harness_count,
+                    "missing_harness_refs": report.missing_harness_refs,
+                    "expected_worker_count": report.expected_worker_count,
+                    "candidate_count": report.candidate_count,
+                    "ready_candidate_count": report.ready_candidate_count,
+                    "blocked_candidate_count": report.blocked_candidate_count,
+                    "missing_worker_ids": report.missing_worker_ids,
+                    "unexpected_worker_ids": report.unexpected_worker_ids,
+                    "prompt_hash_count": report.prompt_hash_count,
+                    "candidate_packet_count": len(report.candidate_packet_refs),
+                    "failed_checks": failed_checks,
+                    "skill_promoted": report.skill_promoted,
+                    "skill_trust_record_created": report.skill_trust_record_created,
+                    "dynamic_agent_created": report.dynamic_agent_created,
+                    "model_provider_enabled": report.model_provider_enabled,
+                    "real_data_approved": report.real_data_approved,
+                    "external_tools_allowed": report.external_tools_allowed,
+                    "github_issue_created": report.github_issue_created,
+                    "github_pr_created": report.github_pr_created,
+                    "github_write_performed": report.github_write_performed,
+                    "sibling_repo_write_performed": report.sibling_repo_write_performed,
+                    "promotion_authorized": report.promotion_authorized,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0 if report.status == "skills_registry_specialist_review_ready" else 2
 
         if args.command == "build-cross-repo-owner-adoption":
             report, run_dir = run_cross_repo_owner_adoption(

@@ -903,6 +903,28 @@ fixtures during audit, create issues, open PRs, write sibling repos, promote
 canon, admit Lake records, write SQLite, apply learning, or authorize production
 use.
 
+### Build Skills Registry specialist review
+
+```bash
+python -m lawfirm_os_intake build-skills-registry-specialist-review \
+  --repo-root . \
+  --manifest skill-agent-manifest.json \
+  --prompt-registry prompts/registry.yaml \
+  --out-dir .lawfirm-os-intake/skills-registry-specialist-review
+```
+
+This writes `skills_registry_specialist_review_report.json`,
+`skills_registry_specialist_review_report.md`,
+`skills_registry_specialist_candidates.jsonl`, and per-worker JSON/Markdown
+packets under `skills_registry_specialist_packets/`. The report packages the
+seven predeclared intake specialists for Skills Registry owner review, verifies
+prompt hashes against `prompts/registry.yaml`, checks schema and declared
+harness refs, keeps tools empty and denied by default, and surfaces metadata
+gaps as blockers. It does not promote skills, create skill trust records, add
+dynamic agents, enable model providers, approve real data, create issues, open
+PRs, write sibling repos, promote canon, admit Lake records, write SQLite, apply
+learning, or authorize production use.
+
 ### Draft carrier rejection Orchestrator interface
 
 ```bash
