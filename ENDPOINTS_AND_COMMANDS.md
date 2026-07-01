@@ -71,6 +71,25 @@ human-review-only facts keep the budget readiness state at
 submit a budget, clear conflicts, open a matter, write Lake/SQLite records,
 perform external writes, or learn from corrections.
 
+### Audit ignored public-data cache
+
+```bash
+python -m lawfirm_os_intake audit-public-data-cache \
+  --repo-root . \
+  --cache-root .lawfirm-os-intake/public-data-cache \
+  --out-dir .lawfirm-os-intake/public-data-cache-audit
+```
+
+This writes `public_data_cache_audit_report.json` and
+`public_data_cache_audit_report.md`. The command validates
+`public_data_cache_manifest.json`, checks that each source is cataloged in
+`examples/public/catalog.yaml`, verifies each cached file's SHA-256 digest and
+byte count, and blocks samples that resolve into tracked repo payload paths. A
+passing report is only ready for human public-data cache review. It does not
+ingest public records into runtime, create fixtures, authorize adapters, write
+Lake/SQLite records, perform external writes, or permit public data as intake
+input.
+
 ### Record append-only human budget review changes
 
 ```bash

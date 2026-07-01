@@ -99,6 +99,22 @@ heavy validation step.
 
 A successful run ends in `blocked_pending_conflicts_and_engagement`. That is expected and correct.
 
+## Public Data And Review UI
+
+Public records are real matters even when publicly available. This repo may use
+public data only as reviewed methodology evidence. Any downloaded public sample
+must stay in an ignored cache and pass `audit-public-data-cache` before it can
+inform public-source methodology or synthetic fixture conversion review. Never
+commit public payloads, real party records, real matter records, or public-data
+runtime fixtures.
+
+The review UI scaffold lives at `apps/legal-intake-budget/`. It is a read-only
+local JSON surface for run artifacts, public-data cache reports, methodology
+reports, reviewed gold, red-team notes, and blockers. It must not add network
+calls, mutation commands, connectors, GitHub/email/billing/carrier/court calls,
+SQLite writes, Exception Lake writes, budget submission, or matter-opening
+authority.
+
 ## Governance Dependency-Map Mirror
 
 If this repo changes governance-facing files, check the upstream `../LawFirm-os-semantic-substrate/registry/governance-dependency-map.json` and update `.ai/control/governance-dependency-map-mirror.json`, local discovery surfaces, and `scripts/validate_governance_dependency_map_mirror.py` when affected.

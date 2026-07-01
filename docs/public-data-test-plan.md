@@ -10,6 +10,17 @@ Runtime source bundles with `data_origin: public_reference` are blocked by the d
 
 Run `audit-public-source-methodology` before using any public source to design new synthetic fixtures. The audit requires methodology role, safe/prohibited use classes, review gates, synthetic-conversion rules, retention policy, privacy posture, and `adapter_status=not_authorized` for every catalog entry. A passing report is still only ready for human methodology review; it does not authorize a public-source adapter or runtime ingestion.
 
+Run `audit-public-data-cache` only when a small approved public reference sample
+has been downloaded into an ignored local cache such as
+`.lawfirm-os-intake/public-data-cache/` or an external cache path. The command
+requires `public_data_cache_manifest.json` with source URL, source type,
+retrieval timestamp, SHA-256 hash, byte count, license/terms note, allowed use,
+prohibited use, retention posture, and relative cache ref for each sample. It
+blocks unknown sources, hash/size drift, missing files, and cache refs that
+resolve into tracked repo payload space. A passing report is ready for human
+cache review only; public records still cannot become runtime intake inputs or
+committed fixtures.
+
 Run `plan-public-synthetic-fixture-conversion` after a ready methodology report and before any fixture work. The conversion plan records what structure may be abstracted, what identity or payload inputs are forbidden, how identities must be replaced, and which synthetic gold/red-team checks must pass. It creates no fixture files and remains blocked until human conversion review.
 
 Run `review-public-synthetic-fixture-conversion` after the conversion plan. The review packet gives a human reviewer recommendations, why-notes, required decisions, red-team notes, and append-only decision templates. A ready packet is not fixture approval; it still does not create fixtures, create PRs, authorize adapters, or ingest public records.
@@ -47,15 +58,17 @@ Use only after a specific privacy and use review, primarily for aggregate medica
 ## Safe sequence
 
 1. Catalog source, fields, terms, license, retention, and privacy risks.
-2. Map fields to local candidate schemas without downloading content into the repo.
-3. Generate a public synthetic fixture conversion plan.
-4. Build and review the public synthetic fixture conversion review packet.
-5. Record the human conversion review outcome as append-only evidence.
-6. Build a manual public synthetic fixture PR package for approved outcomes.
-7. Create non-identifying synthetic fixtures that preserve document structure in a separate PR only after approval.
-8. Run extraction and segmentation evals.
-9. Compare against hand-labeled synthetic gold.
-10. Seek governance approval before any direct public-record processing.
+2. Download only small approved samples into an ignored cache when needed.
+3. Audit the public-data cache manifest and hashes.
+4. Map fields to local candidate schemas without committing public payloads.
+5. Generate a public synthetic fixture conversion plan.
+6. Build and review the public synthetic fixture conversion review packet.
+7. Record the human conversion review outcome as append-only evidence.
+8. Build a manual public synthetic fixture PR package for approved outcomes.
+9. Create non-identifying synthetic fixtures that preserve document structure in a separate PR only after approval.
+10. Run extraction and segmentation evals.
+11. Compare against hand-labeled synthetic gold.
+12. Seek governance approval before any direct public-record processing.
 
 ## What public data can test
 

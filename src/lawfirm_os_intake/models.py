@@ -1088,6 +1088,127 @@ class PublicSourceMethodologyReport(StrictModel):
         return self
 
 
+class PublicDataCacheSourceManifest(StrictModel):
+    schema_version: str = "0.1"
+    source_id: str
+    source_url: str
+    source_type: str
+    retrieved_at: str
+    sha256: str
+    byte_count: int = Field(ge=0)
+    cache_ref: str
+    license_terms_note: str
+    allowed_use: str
+    prohibited_use: str
+    retention_posture: str
+    data_origin: Literal["public_reference_cache"] = "public_reference_cache"
+    public_payload_committed: Literal[False] = False
+    direct_runtime_ingestion_allowed: Literal[False] = False
+    runtime_intake_input: Literal[False] = False
+
+    @model_validator(mode="after")
+    def cache_source_manifest_is_reviewable(self) -> "PublicDataCacheSourceManifest":
+        required_text = {
+            "source_id": self.source_id,
+            "source_url": self.source_url,
+            "source_type": self.source_type,
+            "retrieved_at": self.retrieved_at,
+            "cache_ref": self.cache_ref,
+            "license_terms_note": self.license_terms_note,
+            "allowed_use": self.allowed_use,
+            "prohibited_use": self.prohibited_use,
+            "retention_posture": self.retention_posture,
+        }
+        missing = [field for field, value in required_text.items() if not value.strip()]
+        if missing:
+            raise ValueError(f"public data cache source manifest missing fields: {missing}")
+        digest = self.sha256.removeprefix("sha256:")
+        if len(digest) != 64 or any(char not in "0123456789abcdefABCDEF" for char in digest):
+            raise ValueError("public data cache source manifest sha256 must be a SHA-256 digest")
+        if self.cache_ref.startswith(("/", "\\")) or ":" in self.cache_ref:
+            raise ValueError("public data cache source manifest cache_ref must be relative")
+        return self
+
+
+class PublicDataCacheAuditCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "blocked", "failed"]
+    message: str
+    source_ids: list[str] = Field(default_factory=list)
+    path_refs: list[str] = Field(default_factory=list)
+
+
+class PublicDataCacheAuditReport(StrictModel):
+    schema_version: str = "0.1"
+    public_data_cache_audit_report_id: str
+    status: Literal[
+        "ready_for_human_public_data_cache_review",
+        "blocked_public_data_cache",
+    ]
+    source_catalog_ref: str
+    data_policy_ref: str
+    cache_root_ref: str
+    manifest_ref: str
+    manifest_entry_count: int = Field(ge=0)
+    valid_manifest_entry_count: int = Field(ge=0)
+    cache_sample_count: int = Field(ge=0)
+    total_cache_sample_bytes: int = Field(ge=0)
+    approved_source_ids: list[str]
+    unknown_source_ids: list[str] = Field(default_factory=list)
+    failed_hash_source_ids: list[str] = Field(default_factory=list)
+    missing_cache_file_source_ids: list[str] = Field(default_factory=list)
+    blocked_path_refs: list[str] = Field(default_factory=list)
+    sources: list[PublicDataCacheSourceManifest]
+    checks: list[PublicDataCacheAuditCheck]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    planning_only: Literal[True] = True
+    report_payload_metadata_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    public_cache_samples_present: bool
+    direct_runtime_ingestion_allowed: Literal[False] = False
+    public_records_runtime_ingested: Literal[False] = False
+    raw_public_payload_committed: Literal[False] = False
+    tracked_public_payload_committed: Literal[False] = False
+    real_party_records_committed: Literal[False] = False
+    real_matter_records_committed: Literal[False] = False
+    connector_implemented: Literal[False] = False
+    legal_knowledge_adapter_authorized: Literal[False] = False
+    synthetic_fixtures_created: Literal[False] = False
+    fixture_files_mutated: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def public_data_cache_counts_match(self) -> "PublicDataCacheAuditReport":
+        if self.valid_manifest_entry_count != len(self.sources):
+            raise ValueError("public data cache valid manifest count must match sources")
+        if self.cache_sample_count > self.valid_manifest_entry_count:
+            raise ValueError("public data cache sample count cannot exceed valid manifest count")
+        if self.public_cache_samples_present != (self.cache_sample_count > 0):
+            raise ValueError("public data cache sample presence must match sample count")
+        if self.status == "ready_for_human_public_data_cache_review":
+            if self.manifest_entry_count == 0:
+                raise ValueError("ready public data cache audit requires manifest entries")
+            if any(check.status != "passed" for check in self.checks):
+                raise ValueError("ready public data cache audit cannot include failed checks")
+            if (
+                self.unknown_source_ids
+                or self.failed_hash_source_ids
+                or self.missing_cache_file_source_ids
+                or self.blocked_path_refs
+            ):
+                raise ValueError("ready public data cache audit cannot include blockers")
+        if self.status == "blocked_public_data_cache" and not any(
+            check.status in {"blocked", "failed"} for check in self.checks
+        ):
+            raise ValueError("blocked public data cache audit requires blocked or failed checks")
+        return self
+
+
 PublicSyntheticFixtureFamily = Literal[
     "docket_structure",
     "aggregate_case_metadata",

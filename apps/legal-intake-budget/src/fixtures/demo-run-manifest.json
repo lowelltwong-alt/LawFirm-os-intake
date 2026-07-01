@@ -1,0 +1,174 @@
+{
+  "manifestId": "demo_review_manifest_001",
+  "generatedAt": "2026-07-01T00:00:00Z",
+  "runLabel": "Synthetic L&E intake-to-budget review",
+  "practiceArea": "labor_and_employment",
+  "matterFamily": "employment_litigation_defense",
+  "overallStatus": "blocked",
+  "boundaryFlags": {
+    "readOnly": true,
+    "localJsonOnly": true,
+    "networkCallsAllowed": false,
+    "mutationCommandsAllowed": false,
+    "exceptionLakeWritesAllowed": false,
+    "sqliteWritesAllowed": false,
+    "publicRuntimeIngestionAllowed": false,
+    "budgetSubmissionAllowed": false,
+    "matterOpeningAllowed": false
+  },
+  "artifacts": [
+    {
+      "artifactId": "preflight",
+      "label": "Intake Preflight",
+      "fileName": "intake_preflight_packet.json",
+      "status": "present",
+      "owner": "intake-reference",
+      "gateState": "passed",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": ["Source coverage, offsets, hashes, deadlines, and missing facts ready for review."]
+    },
+    {
+      "artifactId": "human-gate",
+      "label": "Human Gate",
+      "fileName": "human_gate_status_report.json",
+      "status": "blocked",
+      "owner": "human-reviewer",
+      "gateState": "blocked",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": ["Principal party roles and representation posture still require confirmation."]
+    },
+    {
+      "artifactId": "conflict-seed",
+      "label": "Conflict Seed",
+      "fileName": "conflict_search_seed_packet.json",
+      "status": "pending_review",
+      "owner": "intake-reference",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": ["Seed terms only; no conflict conclusion."]
+    },
+    {
+      "artifactId": "budget-proposal",
+      "label": "Budget Proposal",
+      "fileName": "legal_budget_proposal.json",
+      "status": "blocked",
+      "owner": "pricing-review",
+      "gateState": "blocked",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": ["Critical L&E budget facts are missing, including party count and discovery scope."]
+    },
+    {
+      "artifactId": "matter-opening",
+      "label": "Matter Opening",
+      "fileName": "matter_opening_readiness.json",
+      "status": "blocked",
+      "owner": "orchestrator-future-owner",
+      "gateState": "blocked",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": ["Conflicts and engagement remain unresolved."]
+    },
+    {
+      "artifactId": "submission-guard",
+      "label": "Budget Submission Guard",
+      "fileName": "budget_submission_guard_report.json",
+      "status": "present",
+      "owner": "intake-reference",
+      "gateState": "passed",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": ["No client or carrier submission authorized."]
+    },
+    {
+      "artifactId": "lake-handoff",
+      "label": "Lake Handoff",
+      "fileName": "exception_lake_handoff_manifest.json",
+      "status": "pending_review",
+      "owner": "exception-lake-future-owner",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": ["Candidate labels only; no SQLite or Lake admission."]
+    },
+    {
+      "artifactId": "run-ledger",
+      "label": "Run Ledger Integrity",
+      "fileName": "run_ledger_integrity_report.json",
+      "status": "present",
+      "owner": "intake-reference",
+      "gateState": "passed",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": ["Gate order and no-write flags verified."]
+    },
+    {
+      "artifactId": "budget-human-review",
+      "label": "Budget Human Review",
+      "fileName": "budget_human_review_packet.json",
+      "status": "pending_review",
+      "owner": "pricing-review",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": ["Reviewer must confirm assumptions, unknowns, and prohibited next steps."]
+    },
+    {
+      "artifactId": "carrier-rejection-ledger",
+      "label": "Carrier Rejection Ledger",
+      "fileName": "carrier_rejection_decision_ledger_report.json",
+      "status": "pending_review",
+      "owner": "carrier-response-review",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": ["Future rejection and appeal outcomes stay append-only evidence."]
+    },
+    {
+      "artifactId": "actual-variance",
+      "label": "Actual Variance Ledger",
+      "fileName": "budget_actual_variance_ledger_report.json",
+      "status": "pending_review",
+      "owner": "pricing-review",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": ["Budget-to-actual variance is a candidate learning surface only."]
+    },
+    {
+      "artifactId": "public-methodology",
+      "label": "Public Methodology",
+      "fileName": "public_source_methodology_report.json",
+      "status": "present",
+      "owner": "methodology-review",
+      "gateState": "passed",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": ["Public records are used for structure review only, not runtime facts."]
+    },
+    {
+      "artifactId": "public-cache",
+      "label": "Public Data Cache",
+      "fileName": "public_data_cache_audit_report.json",
+      "status": "pending_review",
+      "owner": "methodology-review",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": ["Ignored local cache manifest and hashes require human review before conversion."]
+    }
+  ],
+  "blockerSummary": [
+    "Human confirmation required for matter family, posture, and principal party roles.",
+    "Critical L&E budget facts missing: party count, class/collective posture, discovery scope, ESI custodians.",
+    "No conflict conclusion, matter opening, budget submission, public runtime ingestion, or Lake write is authorized."
+  ],
+  "redTeamNotes": [
+    "Budget math must not invent rates, parties, staffing levels, or discovery scope from context priors.",
+    "Public data can shape synthetic fixtures only after cache, methodology, conversion, and human review gates pass.",
+    "Carrier rejection learning must remain append-only and shadow-evaluated before any owner adoption."
+  ]
+}

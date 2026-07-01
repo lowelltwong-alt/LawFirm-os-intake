@@ -9,6 +9,13 @@ This repository is the end-to-end reference implementation for a governed law-fi
 
 It is not a second orchestrator, a conflicts system, an engagement system, or a DMS connector.
 
+Public datasets, when used for research, are methodology inputs only. Use
+`audit-public-data-cache` to prove any local public samples live in an ignored
+cache with source manifests and hashes before they can inform human-reviewed
+synthetic fixture conversion. Public payloads, real party records, real matter
+records, adapters, connectors, Lake writes, and runtime ingestion remain out of
+scope.
+
 ## Target workflow
 
 ```text
@@ -78,6 +85,12 @@ For the complete local check sequence, use
 `python scripts/run_validation_suite.py`; it runs repo validation, schema export,
 lint, full pytest, smoke, and final repo validation with the configured policy
 timeouts.
+
+The read-only review UI scaffold lives under `apps/legal-intake-budget/`. It is a
+local JSON review surface for run artifacts, public-methodology/cache reports,
+reviewed gold, red-team notes, and blocker status. It is not a workflow owner,
+connector, mutation surface, budget submission tool, Exception Lake writer, or
+canonical contract authority.
 
 The demo emits:
 
