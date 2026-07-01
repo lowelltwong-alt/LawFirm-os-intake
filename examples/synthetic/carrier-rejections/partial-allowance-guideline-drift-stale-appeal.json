@@ -1,0 +1,164 @@
+{
+  "schema_version": "0.1",
+  "bundle_id": "synthetic-carrier-rejection-counterfactual-002",
+  "run_id": "synthetic-carrier-rejection-run-002",
+  "preflight_packet_id": "filled-by-test-preflight-packet",
+  "budget_proposal_id": "filled-by-test-budget-proposal",
+  "data_origin": "synthetic",
+  "contains_real_client_data": false,
+  "contains_real_matter_data": false,
+  "contains_privileged_data": false,
+  "as_of": "2026-07-20T12:00:00Z",
+  "expected_responses": [
+    {
+      "submission_id": "SUB-BUD-2001",
+      "submission_type": "budget",
+      "carrier_id": "synthetic-harbor-point",
+      "budget_proposal_id": "filled-by-test-budget-proposal",
+      "invoice_id": null,
+      "amount_submitted": 100000.0,
+      "expected_response_due_at": "2026-07-12T17:00:00Z",
+      "human_owner": "synthetic-pricing-reviewer",
+      "source_ref": "carrier-submission-ledger://SUB-BUD-2001"
+    },
+    {
+      "submission_id": "SUB-INV-2001",
+      "submission_type": "invoice",
+      "carrier_id": "synthetic-summit-mutual",
+      "budget_proposal_id": "filled-by-test-budget-proposal",
+      "invoice_id": "INV-SYN-2001",
+      "amount_submitted": 4200.0,
+      "expected_response_due_at": "2026-07-15T17:00:00Z",
+      "human_owner": "synthetic-billing-reviewer",
+      "source_ref": "carrier-submission-ledger://SUB-INV-2001"
+    }
+  ],
+  "notices": [
+    {
+      "notice_id": "notice-guideline-drift-partial-001",
+      "carrier_id": "synthetic-harbor-point",
+      "platform": "Synthetic Budget Portal",
+      "submission_id": "SUB-BUD-2001",
+      "budget_proposal_id": "filled-by-test-budget-proposal",
+      "invoice_id": null,
+      "line_id": "BUD-SYN-2001-L320-001",
+      "phase_id": "L300",
+      "task_id": "L320",
+      "external_code_candidate": "L320",
+      "expense_code": null,
+      "timekeeper_id": null,
+      "status_timestamp": "2026-07-12T16:20:00Z",
+      "response_type": "partially_accepted",
+      "parse_status": "parsed",
+      "parser_version": "carrier-rejection-parser.v0_1",
+      "amount_submitted": 100000.0,
+      "amount_rejected": 15000.0,
+      "amount_allowed": 85000.0,
+      "amount_disputed": 15000.0,
+      "reason_code": "STALE_GUIDELINE_VERSION",
+      "reason_text_excerpt": "Budget partially reduced because the proposal used an old guideline version and the carrier applied a newer discovery phase cap.",
+      "human_owner": "synthetic-pricing-reviewer",
+      "followup_due_at": "2026-07-18T17:00:00Z",
+      "idempotency_key": "synthetic-harbor-point|SUB-BUD-2001|BUD-SYN-2001-L320-001|STALE_GUIDELINE_VERSION",
+      "source_refs": [
+        {
+          "source_channel": "portal_status",
+          "source_id": "synthetic-portal-export-20260712",
+          "source_record_id": "portal-status-HP-2001-L320",
+          "retrieved_at": "2026-07-12T17:00:00Z",
+          "content_sha256": "sha256:6666666666666666666666666666666666666666666666666666666666666666",
+          "message_id": null,
+          "portal_status_id": "portal-status-HP-2001-L320",
+          "row_ref": "portal-export.csv#row=41",
+          "attachment_id": null
+        }
+      ]
+    },
+    {
+      "notice_id": "notice-rate-reduction-denied-001",
+      "carrier_id": "synthetic-summit-mutual",
+      "platform": "Synthetic E-Billing Portal",
+      "submission_id": "SUB-INV-2001",
+      "budget_proposal_id": "filled-by-test-budget-proposal",
+      "invoice_id": "INV-SYN-2001",
+      "line_id": "INV-SYN-2001-L110-002",
+      "phase_id": "L100",
+      "task_id": "L110",
+      "external_code_candidate": "L110",
+      "expense_code": null,
+      "timekeeper_id": "synthetic-partner-001",
+      "status_timestamp": "2026-07-15T14:10:00Z",
+      "response_type": "partially_accepted",
+      "parse_status": "parsed",
+      "parser_version": "carrier-rejection-parser.v0_1",
+      "amount_submitted": 4200.0,
+      "amount_rejected": 600.0,
+      "amount_allowed": 3600.0,
+      "amount_disputed": 600.0,
+      "reason_code": "TITLE_RATE_CAP",
+      "reason_text_excerpt": "Partner title rate reduced to carrier cap for pre-answer analysis time.",
+      "human_owner": "synthetic-billing-reviewer",
+      "followup_due_at": "2026-07-21T17:00:00Z",
+      "idempotency_key": "synthetic-summit-mutual|SUB-INV-2001|INV-SYN-2001-L110-002|TITLE_RATE_CAP",
+      "source_refs": [
+        {
+          "source_channel": "ledes_response",
+          "source_id": "synthetic-ledes-response-20260715",
+          "source_record_id": "ledes-line-SM-2001-L110",
+          "retrieved_at": "2026-07-15T15:00:00Z",
+          "content_sha256": "sha256:7777777777777777777777777777777777777777777777777777777777777777",
+          "message_id": null,
+          "portal_status_id": "portal-status-SM-2001-L110",
+          "row_ref": "ledes-response.txt#line=88",
+          "attachment_id": "ledes-response-001"
+        }
+      ]
+    }
+  ],
+  "appeal_results": [
+    {
+      "appeal_result_id": "appeal-result-stale-001",
+      "related_notice_id": "notice-guideline-drift-partial-001",
+      "result": "stale",
+      "appealed_amount": 15000.0,
+      "recovered_amount": 0.0,
+      "write_down_amount": 15000.0,
+      "status_timestamp": "2026-07-19T18:00:00Z",
+      "source_refs": [
+        {
+          "source_channel": "appeal_correspondence",
+          "source_id": "synthetic-appeal-stale-20260719",
+          "source_record_id": "appeal-stale-HP-2001-L320",
+          "retrieved_at": "2026-07-19T19:00:00Z",
+          "content_sha256": "sha256:8888888888888888888888888888888888888888888888888888888888888888",
+          "message_id": "<synthetic-stale-appeal@example.invalid>",
+          "portal_status_id": "portal-appeal-stale-HP-2001-L320",
+          "row_ref": null,
+          "attachment_id": null
+        }
+      ]
+    },
+    {
+      "appeal_result_id": "appeal-result-denied-001",
+      "related_notice_id": "notice-rate-reduction-denied-001",
+      "result": "denied",
+      "appealed_amount": 600.0,
+      "recovered_amount": 0.0,
+      "write_down_amount": 600.0,
+      "status_timestamp": "2026-07-22T18:30:00Z",
+      "source_refs": [
+        {
+          "source_channel": "appeal_correspondence",
+          "source_id": "synthetic-appeal-denied-20260722",
+          "source_record_id": "appeal-denied-SM-2001-L110",
+          "retrieved_at": "2026-07-22T19:00:00Z",
+          "content_sha256": "sha256:9999999999999999999999999999999999999999999999999999999999999999",
+          "message_id": "<synthetic-denied-appeal@example.invalid>",
+          "portal_status_id": "portal-appeal-denied-SM-2001-L110",
+          "row_ref": null,
+          "attachment_id": null
+        }
+      ]
+    }
+  ]
+}

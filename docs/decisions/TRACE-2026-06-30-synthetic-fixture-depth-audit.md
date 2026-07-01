@@ -22,19 +22,25 @@ no-silent-learning guardrails.
 - Add `audit-synthetic-fixture-depth`.
 - Write `synthetic_fixture_depth_audit_report.json` and
   `synthetic_fixture_depth_audit_report.md`.
-- Add tests for current gaps, depth-ready augmented manifest behavior, boundary
-  violations, and CLI output.
+- Add tests for the current manifest ready state, depth-ready augmented
+  manifest behavior, negative gap behavior, boundary violations, and CLI output.
 
 ## Current Main Findings
 
-The current `main` holdout manifest audits successfully but reports open depth
-gaps:
+After the carrier-rejection counterfactual, ambiguous-role matrix,
+missing-actuals, budget-driver, and labor/employment critical-fact holdouts were
+merged, the current `main` holdout manifest audits successfully as
+`synthetic_fixture_depth_ready_for_review`:
 
-- `carrier_partial_allowance_and_appeal_outcome_variety`;
-- `labor_employment_budget_fact_gap_holdout`.
+- seven holdouts;
+- seven covered depth dimensions;
+- zero missing depth dimensions;
+- zero boundary violations.
 
-These are candidate review findings, not repo-health failures. They are meant to
-shape the next fixture PRs and owner-review queue.
+This is still candidate review evidence, not calibration approval or production
+readiness. Negative tests keep proving that prose-only matches, missing named
+tests, unbound fixture refs, external refs, and recursive forbidden flags fail
+closed.
 
 ## Boundaries
 
@@ -55,8 +61,9 @@ shape the next fixture PRs and owner-review queue.
   semantic proof that a fixture is sufficient.
 - Covered dimensions require structural fixture evidence plus named test
   evidence; manifest prose alone is reported as a gap.
-- Current gaps are useful because they keep the roadmap honest before real or
-  synthetic training data expands.
+- A ready depth audit is useful only as a review gate. It keeps the roadmap
+  honest by proving the currently declared synthetic holdouts hit the named
+  danger dimensions, while separate negative tests keep gap behavior visible.
 
 ## Validation
 

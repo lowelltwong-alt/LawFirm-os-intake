@@ -166,7 +166,7 @@ def test_budget_labor_employment_depth():
     return repo, manifest_path
 
 
-def test_synthetic_fixture_depth_audit_identifies_current_depth_gaps(tmp_path, repo_root):
+def test_synthetic_fixture_depth_audit_reports_current_manifest_ready(tmp_path, repo_root):
     report, run_dir = run_synthetic_fixture_depth_audit(
         manifest_path=_manifest_path(repo_root),
         repo_root=repo_root,
@@ -177,15 +177,13 @@ def test_synthetic_fixture_depth_audit_identifies_current_depth_gaps(tmp_path, r
     )
 
     assert persisted.fixture_depth_audit_report_id == report.fixture_depth_audit_report_id
-    assert persisted.status == "synthetic_fixture_depth_gaps_identified"
-    assert persisted.holdout_count == 4
+    assert persisted.status == "synthetic_fixture_depth_ready_for_review"
+    assert persisted.holdout_count == 7
     assert persisted.dimension_count == 7
+    assert persisted.covered_dimension_count == 7
     assert persisted.boundary_violation_count == 0
-    assert persisted.missing_dimension_count == 2
-    assert persisted.missing_dimension_ids == [
-        "carrier_partial_allowance_and_appeal_outcome_variety",
-        "labor_employment_budget_fact_gap_holdout",
-    ]
+    assert persisted.missing_dimension_count == 0
+    assert persisted.missing_dimension_ids == []
     assert persisted.calibration_approved is False
     assert persisted.fixture_files_mutated_by_audit is False
     assert persisted.lake_write_performed is False
@@ -194,9 +192,9 @@ def test_synthetic_fixture_depth_audit_identifies_current_depth_gaps(tmp_path, r
     assert persisted.silent_learning_performed is False
 
     notes = (run_dir / "synthetic_fixture_depth_audit_report.md").read_text(encoding="utf-8")
-    assert "synthetic_fixture_depth_gaps_identified" in notes
-    assert "carrier_partial_allowance_and_appeal_outcome_variety" in notes
-    assert "labor_employment_budget_fact_gap_holdout" in notes
+    assert "synthetic_fixture_depth_ready_for_review" in notes
+    assert "Covered dimensions: 7" in notes
+    assert "Missing dimensions: 0" in notes
     assert "does not approve calibration" in notes
 
 
@@ -351,7 +349,11 @@ def test_synthetic_fixture_depth_audit_blocks_recursive_forbidden_flags(tmp_path
     )
 
 
-def test_synthetic_fixture_depth_audit_cli_reports_depth_gaps(tmp_path, repo_root, capsys):
+def test_synthetic_fixture_depth_audit_cli_reports_current_manifest_ready(
+    tmp_path,
+    repo_root,
+    capsys,
+):
     exit_code = main(
         [
             "audit-synthetic-fixture-depth",
@@ -366,9 +368,10 @@ def test_synthetic_fixture_depth_audit_cli_reports_depth_gaps(tmp_path, repo_roo
     captured = capsys.readouterr()
 
     assert exit_code == 0
-    assert '"status": "synthetic_fixture_depth_gaps_identified"' in captured.out
-    assert '"holdout_count": 4' in captured.out
+    assert '"status": "synthetic_fixture_depth_ready_for_review"' in captured.out
+    assert '"holdout_count": 7' in captured.out
     assert '"dimension_count": 7' in captured.out
-    assert '"missing_dimension_count": 2' in captured.out
+    assert '"covered_dimension_count": 7' in captured.out
+    assert '"missing_dimension_count": 0' in captured.out
     assert '"external_writes_performed": false' in captured.out
     assert (tmp_path / "fixture-depth-cli" / "synthetic_fixture_depth_audit_report.json").is_file()

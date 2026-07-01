@@ -827,6 +827,77 @@ class LaborEmploymentBudgetFactGap(StrictModel):
     non_authoritative: Literal[True] = True
 
 
+LaborEmploymentRelationshipBucket = Literal[
+    "employee_or_claimant_person",
+    "employer_or_defendant_entity",
+    "prospective_client_payer_or_carrier_posture",
+    "individual_actor_or_defendant",
+    "joint_employer_affiliate_or_staffing_structure",
+]
+
+
+class LaborEmploymentRelationshipCoverage(StrictModel):
+    fact_id: str
+    relationship_bucket: LaborEmploymentRelationshipBucket
+    current_state: LaborEmploymentBudgetFactState
+    required_level: Literal["critical", "important", "context"]
+    question: str
+    observed_roles: list[str] = Field(default_factory=list)
+    inferred_roles: list[str] = Field(default_factory=list)
+    source_label_ids: list[str] = Field(default_factory=list)
+    source_refs: list[CourtListenerLabelSourceRef] = Field(default_factory=list)
+    budget_effects: list[str] = Field(default_factory=list)
+    blocks_precise_budget: bool
+    human_confirmation_required: bool
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+
+
+class LaborEmploymentRelationshipTopologySummary(StrictModel):
+    coverage: list[LaborEmploymentRelationshipCoverage]
+    source_bound_relationship_count: int = Field(ge=0)
+    missing_or_review_relationship_count: int = Field(ge=0)
+    critical_relationship_gap_count: int = Field(ge=0)
+    person_candidate_count: int = Field(ge=0)
+    organization_candidate_count: int = Field(ge=0)
+    unresolved_relationship_fact_ids: list[str] = Field(default_factory=list)
+    required_human_relationship_questions: list[str] = Field(default_factory=list)
+    budget_treatment: Literal[
+        "block_amount_budget",
+        "hours_only_or_broad_range",
+        "candidate_range_budget_after_review",
+    ]
+    canonical_role_promotion_authorized: Literal[False] = False
+    relationship_classification_authoritative: Literal[False] = False
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+
+    @model_validator(mode="after")
+    def relationship_topology_counts_match(self) -> "LaborEmploymentRelationshipTopologySummary":
+        if self.source_bound_relationship_count != sum(
+            1 for item in self.coverage if item.source_refs
+        ):
+            raise ValueError("L&E relationship source-bound count mismatch")
+        if self.missing_or_review_relationship_count != sum(
+            1 for item in self.coverage if item.current_state != "source_bound_observed_candidate"
+        ):
+            raise ValueError("L&E relationship missing/review count mismatch")
+        if self.critical_relationship_gap_count != sum(
+            1
+            for item in self.coverage
+            if item.required_level == "critical"
+            and item.current_state != "source_bound_observed_candidate"
+        ):
+            raise ValueError("L&E critical relationship gap count mismatch")
+        if self.unresolved_relationship_fact_ids != [
+            item.fact_id
+            for item in self.coverage
+            if item.current_state != "source_bound_observed_candidate"
+        ]:
+            raise ValueError("L&E unresolved relationship fact IDs mismatch")
+        return self
+
+
 class LaborEmploymentBudgetFactAuditCheck(StrictModel):
     check_id: str
     status: Literal["passed", "failed"]
@@ -859,6 +930,7 @@ class LaborEmploymentBudgetFactAuditReport(StrictModel):
     unknown_finding_count: int = Field(ge=0)
     gap_count: int = Field(ge=0)
     critical_gap_count: int = Field(ge=0)
+    relationship_topology: LaborEmploymentRelationshipTopologySummary
     findings: list[LaborEmploymentBudgetFactFinding]
     gaps: list[LaborEmploymentBudgetFactGap]
     required_human_questions: list[str]

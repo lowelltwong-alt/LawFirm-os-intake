@@ -42,10 +42,21 @@ python -m lawfirm_os_intake audit-courtlistener-fixture --repo-root . --manifest
 
 A passing fixture audit proves only that the local synthetic fixture is source-bound, offline, early-case, and reviewable. It does not approve public-data collection, training, or budget accuracy.
 
-The L&E budget fact-gap audit uses the same synthetic manifest to test whether early intake material has enough source-bound budget drivers:
+The L&E budget fact-gap audit uses the synthetic manifests to test both sides of
+early budget fact sufficiency. The starter manifest remains blocked by critical
+unknowns:
 
 ```bash
 python -m lawfirm_os_intake audit-labor-employment-budget-facts --repo-root . --manifest examples/synthetic/courtlistener-derived/labor-employment-dataset-manifest.json --out-dir .lawfirm-os-intake/le-budget-facts
+```
+
+The ready-critical-facts manifest uses the same synthetic snapshot to prove that
+critical entity, relationship, timeline, damages, ESI, deposition, and
+carrier/rate facts can be source-bound while important expert/vendor and policy
+document signals still force range-only human review:
+
+```bash
+python -m lawfirm_os_intake audit-labor-employment-budget-facts --repo-root . --manifest examples/synthetic/courtlistener-derived/labor-employment-ready-critical-facts-manifest.json --out-dir .lawfirm-os-intake/le-budget-facts-ready-critical
 ```
 
 It writes `labor_employment_budget_fact_audit_report.json` and Markdown notes. The report surfaces person/entity relationships and complexity drivers such as employee/employer identity, payer/client posture, individual supervisors, joint employers or affiliates, claims, class/collective posture, timeline, damages, ESI/custodians, depositions, experts, policy documents, and carrier/rate context. Missing critical facts block precise budget posture but do not fail the fixture, produce a budget amount, submit anything, write Lake/SQLite records, or approve training.
