@@ -2,7 +2,7 @@
   "object_type": "governance_dependency_map_mirror",
   "trust_zone": "downstream_control",
   "lifecycle_status": "active",
-  "provenance_note": "Created 2026-06-29 to mirror the upstream LawFirm OS governance dependency-map update gate inside LawFirm-os-intake. Updated 2026-06-30 after Orchestrator owner-review request docs, schema surfaces, validation-runtime ceilings, PR readiness evidence commands, and carrier-rejection counterfactual fixture governance docs changed so the watched governance-surface gate remains explicit.",
+  "provenance_note": "Created 2026-06-29 to mirror the upstream LawFirm OS governance dependency-map update gate inside LawFirm-os-intake. Updated 2026-07-01 after carrier appeal human-outcome evidence, carrier-rejection counterfactual fixture governance docs, ambiguous-role holdout matrix docs/TRACE updates, L&E ready-critical-facts holdout docs/TRACE/README updates, and L&E budget relationship-topology schema, fact audit, tests, budget design notes, and decision traces changed watched governance and schema surfaces.",
   "reason_for_inclusion": "Force intake-vertical governance changes to check the upstream governance dependency map and local mirror surfaces instead of letting vertical convenience become platform authority.",
   "schema_version": "governance_dependency_map_mirror.v1",
   "mirror_id": "lawfirm_os_intake_governance_dependency_map_mirror",
@@ -29,7 +29,14 @@
     "pr_readiness_review_checklist": "src/lawfirm_os_intake/pr_review_checklist.py",
     "pr_readiness_review_test": "tests/test_pr_readiness_decision.py",
     "validation_policy_builder_brief": "docs/ai-handoff/BUILDER_BRIEF.md",
-    "validation_policy_claude_prompt": "docs/ai-handoff/CLAUDE_BUILD_PROMPT.md"
+    "validation_policy_claude_prompt": "docs/ai-handoff/CLAUDE_BUILD_PROMPT.md",
+    "carrier_appeal_human_outcome_fixture": "examples/synthetic/budget-human-review/medmal-carrier-appeal-human-outcome.json",
+    "carrier_appeal_human_outcome_test": "tests/test_budget_human_review_outcomes.py",
+    "carrier_appeal_human_outcome_trace": "docs/decisions/TRACE-2026-07-01-carrier-appeal-human-outcome-fixture.md",
+    "le_budget_relationship_topology_model": "src/lawfirm_os_intake/models.py",
+    "le_budget_relationship_topology_audit": "src/lawfirm_os_intake/labor_employment_budget_facts.py",
+    "le_budget_relationship_topology_test": "tests/test_labor_employment_budget_facts.py",
+    "le_budget_relationship_topology_trace": "docs/decisions/TRACE-2026-07-01-le-budget-relationship-topology.md"
   },
   "authority": {
     "local_repo_may_override_upstream_dependency_map": false,

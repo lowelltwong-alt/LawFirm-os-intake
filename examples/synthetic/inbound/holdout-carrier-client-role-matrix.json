@@ -1,0 +1,111 @@
+{
+  "schema_version": "0.1",
+  "bundle_id": "syn-bundle-holdout-carrier-client-role-matrix-001",
+  "data_origin": "synthetic",
+  "contains_real_client_data": false,
+  "contains_real_matter_data": false,
+  "contains_privileged_data": false,
+  "sources": [
+    {
+      "source_id": "syn-email-carrier-client-role-matrix-001",
+      "source_type": "email",
+      "filename": "carrier_client_role_matrix.txt",
+      "text": "From: assignment-desk@harborpoint.example\nTo: intake@synthetic-law.example\nSubject: Need counsel for mixed carrier and insured roles\n\nHarbor Point Insurance says it may pay defense costs and may instruct counsel, but asks the firm not to assume Harbor Point Insurance is the represented client. ClaimsPro Administrators forwarded the assignment as a third-party administrator. The email identifies Northstar Delivery LLC as the insured and possible prospective represented client, Fleet Parent Holdings Inc. as an affiliate that may have documents, Marcus Reed as a driver witness, and Olivia Lee as claimant. The sender also says a coverage reservation may follow and asks for a budget after roles are confirmed.\n",
+      "metadata": {
+        "synthetic": true,
+        "holdout_family": "ambiguous_roles"
+      }
+    }
+  ],
+  "fixture_hints": {
+    "provided_fields": [],
+    "entities": [
+      {
+        "name": "Harbor Point Insurance",
+        "role_candidates": [
+          {
+            "role": "insurance_carrier",
+            "confidence": 0.76
+          },
+          {
+            "role": "payer",
+            "confidence": 0.66
+          },
+          {
+            "role": "instructing_source",
+            "confidence": 0.62
+          }
+        ]
+      },
+      {
+        "name": "ClaimsPro Administrators",
+        "role_candidates": [
+          {
+            "role": "third_party_administrator",
+            "confidence": 0.68
+          },
+          {
+            "role": "instructing_source",
+            "confidence": 0.58
+          },
+          {
+            "role": "payer",
+            "confidence": 0.43
+          }
+        ]
+      },
+      {
+        "name": "Northstar Delivery LLC",
+        "role_candidates": [
+          {
+            "role": "insured",
+            "confidence": 0.72
+          },
+          {
+            "role": "prospective_represented_client",
+            "confidence": 0.64
+          }
+        ]
+      },
+      {
+        "name": "Fleet Parent Holdings Inc.",
+        "role_candidates": [
+          {
+            "role": "affiliate",
+            "confidence": 0.69
+          },
+          {
+            "role": "document_custodian",
+            "confidence": 0.51
+          }
+        ]
+      },
+      {
+        "name": "Marcus Reed",
+        "role_candidates": [
+          {
+            "role": "witness",
+            "confidence": 0.63
+          },
+          {
+            "role": "insured_driver",
+            "confidence": 0.54
+          }
+        ]
+      },
+      {
+        "name": "Olivia Lee",
+        "role_candidates": [
+          {
+            "role": "claimant",
+            "confidence": 0.74
+          },
+          {
+            "role": "adverse_party",
+            "confidence": 0.58
+          }
+        ]
+      }
+    ]
+  }
+}

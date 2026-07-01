@@ -56,6 +56,16 @@ def _budget_revision_and_actuals(tmp_path, repo_root):
     return review_dir, actuals_dir
 
 
+def _missing_actuals_dir(tmp_path, repo_root):
+    budget_dir = _budget_dir(tmp_path, repo_root)
+    _, actuals_dir = run_budget_actual_comparison(
+        budget_path=budget_dir / "legal_budget_proposal.json",
+        actuals_path=repo_root / "examples/synthetic/actuals/medmal-missing-actuals.json",
+        out_dir=tmp_path / "missing-actuals",
+    )
+    return actuals_dir
+
+
 def _carrier_learning_report_path(tmp_path, repo_root):
     budget_dir = _budget_dir(tmp_path, repo_root)
     _, capture_dir = run_carrier_rejection_capture(
@@ -120,6 +130,47 @@ def test_reviewed_learning_gate_aggregates_budget_revision_and_actuals(
     assert "Reviewed Learning Gate Report" in notes_text
     assert "Silent learning performed: False" in notes_text
     assert "does not mutate profiles" in notes_text
+
+
+def test_reviewed_learning_gate_does_not_learn_from_missing_actuals(
+    tmp_path,
+    repo_root,
+):
+    actuals_dir = _missing_actuals_dir(tmp_path, repo_root)
+
+    report, run_dir = run_reviewed_learning_gate(
+        budget_actual_comparison_report_path=actuals_dir / "budget_actual_comparison_report.json",
+        out_dir=tmp_path / "reviewed-learning-gate-missing-actuals",
+    )
+    persisted = ReviewedLearningGateReport.model_validate(
+        load_json(run_dir / "reviewed_learning_gate_report.json")
+    )
+    candidates = load_jsonl(run_dir / "reviewed_learning_gate_candidates.jsonl")
+
+    assert persisted.reviewed_learning_gate_report_id == report.reviewed_learning_gate_report_id
+    assert persisted.status == "no_learning_candidates"
+    assert persisted.candidate_count == 0
+    assert persisted.budget_actual_variance_candidate_count == 0
+    assert persisted.budget_revision_candidate_count == 0
+    assert persisted.carrier_learning_candidate_count == 0
+    assert persisted.target_learning_loops == []
+    assert persisted.target_owners == []
+    assert persisted.candidates == []
+    assert candidates == []
+    assert all(check.status == "passed" for check in persisted.checks)
+    assert persisted.reviewed_outcome_required is True
+    assert persisted.append_only_evidence_required is True
+    assert persisted.synthetic_fixture_update_required is True
+    assert persisted.shadow_eval_required is True
+    assert persisted.owning_repo_review_required is True
+    assert persisted.profile_mutation_performed is False
+    assert persisted.template_mutation_performed is False
+    assert persisted.connector_mutation_performed is False
+    assert persisted.budget_mutation_performed is False
+    assert persisted.carrier_guideline_mutation_performed is False
+    assert persisted.lake_write_performed is False
+    assert persisted.external_writes_performed is False
+    assert persisted.silent_learning_performed is False
 
 
 def test_reviewed_learning_gate_aggregates_carrier_learning(
