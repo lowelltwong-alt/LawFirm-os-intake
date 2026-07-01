@@ -139,6 +139,9 @@ from lawfirm_os_intake.models import (  # noqa: E402
     CourtListenerSnapshotDocument,
     CourtListenerSnapshotSegment,
     CrossRepoOwnerIssueDraft,
+    CrossRepoOwnerIssueDraftQualityCheck,
+    CrossRepoOwnerIssueDraftQualityItem,
+    CrossRepoOwnerIssueDraftQualityReport,
     CrossRepoOwnerIssueDraftReport,
     CrossRepoOwnerAdoptionPacket,
     CrossRepoOwnerAdoptionReport,
@@ -255,6 +258,13 @@ MODELS = {
     "blocked-budget-attempt-audit-report.schema.json": BlockedBudgetAttemptAuditReport,
     "context-counterfactual-audit-report.schema.json": ContextCounterfactualAuditReport,
     "cross-repo-owner-issue-draft.schema.json": CrossRepoOwnerIssueDraft,
+    "cross-repo-owner-issue-draft-quality-check.schema.json": (
+        CrossRepoOwnerIssueDraftQualityCheck
+    ),
+    "cross-repo-owner-issue-draft-quality-item.schema.json": (CrossRepoOwnerIssueDraftQualityItem),
+    "cross-repo-owner-issue-draft-quality-report.schema.json": (
+        CrossRepoOwnerIssueDraftQualityReport
+    ),
     "cross-repo-owner-issue-draft-report.schema.json": CrossRepoOwnerIssueDraftReport,
     "cross-repo-owner-adoption-packet.schema.json": CrossRepoOwnerAdoptionPacket,
     "cross-repo-owner-adoption-report.schema.json": CrossRepoOwnerAdoptionReport,

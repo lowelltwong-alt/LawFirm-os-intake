@@ -673,6 +673,22 @@ for manual creation in the owning repos. The command does not create issues,
 open PRs, write sibling repos, promote canon, admit Lake records, write SQLite,
 apply learning, or authorize production use.
 
+### Audit owner issue draft quality
+
+```bash
+python -m lawfirm_os_intake audit-owner-issue-draft-quality \
+  --issue-draft-report .lawfirm-os-intake/cross-repo-owner-issue-drafts/cross_repo_owner_issue_draft_report.json \
+  --out-dir .lawfirm-os-intake/owner-issue-draft-quality
+```
+
+This writes `owner_issue_draft_quality_report.json` and
+`owner_issue_draft_quality_report.md`. The report checks every generated owner
+issue draft for required sections, source evidence labels, matching markdown
+output, red-team notes, acceptance checks, next gates, and explicit no-write /
+no-promotion / no-learning boundary text. Blocked source drafts stay blocked.
+The command does not create issues, open PRs, write sibling repos, promote canon,
+admit Lake records, write SQLite, apply learning, or authorize production use.
+
 ### Audit intake local closeout
 
 ```bash

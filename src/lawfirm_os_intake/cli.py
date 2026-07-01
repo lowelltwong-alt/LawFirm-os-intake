@@ -51,6 +51,7 @@ from .confirmation import bind_confirmation_to_packet_evidence
 from .courtlistener_dataset_strategy import run_courtlistener_dataset_strategy_audit
 from .courtlistener_fixture_audit import run_courtlistener_fixture_audit
 from .cross_repo_owner_adoption import run_cross_repo_owner_adoption
+from .cross_repo_owner_issue_draft_quality import run_owner_issue_draft_quality_audit
 from .cross_repo_owner_issue_drafts import run_cross_repo_owner_issue_drafts
 from .intake_local_closeout import run_intake_local_closeout
 from .intake_vertical_readiness_audit import run_intake_vertical_readiness_audit
@@ -858,6 +859,16 @@ def _parser() -> argparse.ArgumentParser:
         help="Path to cross_repo_owner_adoption_report.json.",
     )
     owner_issue_drafts.add_argument("--out-dir", required=True)
+    owner_issue_draft_quality = sub.add_parser(
+        "audit-owner-issue-draft-quality",
+        help="Audit local owner issue draft text before manual issue creation.",
+    )
+    owner_issue_draft_quality.add_argument(
+        "--issue-draft-report",
+        required=True,
+        help="Path to cross_repo_owner_issue_draft_report.json.",
+    )
+    owner_issue_draft_quality.add_argument("--out-dir", required=True)
     local_closeout = sub.add_parser(
         "audit-intake-local-closeout",
         help="Audit final local closeout evidence and remaining manual external gates.",
@@ -2780,6 +2791,37 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 0 if report.status == "issue_drafts_ready_for_manual_creation" else 2
+
+        if args.command == "audit-owner-issue-draft-quality":
+            report, run_dir = run_owner_issue_draft_quality_audit(
+                issue_draft_report_path=args.issue_draft_report,
+                out_dir=args.out_dir,
+            )
+            failed_checks = [check.check_id for check in report.checks if check.status == "failed"]
+            _print(
+                {
+                    "status": report.status,
+                    "quality_report_id": report.quality_report_id,
+                    "source_issue_draft_status": report.source_issue_draft_status,
+                    "draft_count": report.draft_count,
+                    "ready_item_count": report.ready_item_count,
+                    "blocked_item_count": report.blocked_item_count,
+                    "failed_item_count": report.failed_item_count,
+                    "failed_checks": failed_checks,
+                    "manual_creation_required": report.manual_creation_required,
+                    "github_issue_created": report.github_issue_created,
+                    "github_pr_created": report.github_pr_created,
+                    "github_write_performed": report.github_write_performed,
+                    "sibling_repo_write_performed": report.sibling_repo_write_performed,
+                    "promotion_authorized": report.promotion_authorized,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0 if report.status == "owner_issue_draft_quality_ready_for_manual_review" else 2
 
         if args.command == "audit-intake-local-closeout":
             report, run_dir = run_intake_local_closeout(

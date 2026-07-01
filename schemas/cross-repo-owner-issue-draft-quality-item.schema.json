@@ -1,0 +1,189 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "target_repo": {
+      "enum": [
+        "LawFirm-os-semantic-substrate",
+        "LawFirm-os-orchestrator",
+        "LawFirm-os-exceptions-lake-runtime",
+        "LawFirm-os-skills-registry",
+        "LawFirm-os-legal-knowledge-runtime"
+      ],
+      "title": "Target Repo",
+      "type": "string"
+    },
+    "issue_draft_id": {
+      "title": "Issue Draft Id",
+      "type": "string"
+    },
+    "source_issue_draft_status": {
+      "enum": [
+        "ready_for_manual_issue_creation",
+        "blocked_by_owner_adoption_packet"
+      ],
+      "title": "Source Issue Draft Status",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "ready_for_manual_owner_issue_review",
+        "blocked_by_source_issue_draft",
+        "failed_quality_gate"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "issue_draft_output_ref": {
+      "title": "Issue Draft Output Ref",
+      "type": "string"
+    },
+    "markdown_output_exists": {
+      "title": "Markdown Output Exists",
+      "type": "boolean"
+    },
+    "markdown_matches_embedded_body": {
+      "title": "Markdown Matches Embedded Body",
+      "type": "boolean"
+    },
+    "missing_required_sections": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Missing Required Sections",
+      "type": "array"
+    },
+    "missing_source_evidence_labels": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Missing Source Evidence Labels",
+      "type": "array"
+    },
+    "missing_boundary_phrases": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Missing Boundary Phrases",
+      "type": "array"
+    },
+    "suggested_label_count": {
+      "minimum": 0,
+      "title": "Suggested Label Count",
+      "type": "integer"
+    },
+    "required_owner_action_count": {
+      "minimum": 0,
+      "title": "Required Owner Action Count",
+      "type": "integer"
+    },
+    "acceptance_check_count": {
+      "minimum": 0,
+      "title": "Acceptance Check Count",
+      "type": "integer"
+    },
+    "red_team_note_count": {
+      "minimum": 0,
+      "title": "Red Team Note Count",
+      "type": "integer"
+    },
+    "required_next_gate_count": {
+      "minimum": 0,
+      "title": "Required Next Gate Count",
+      "type": "integer"
+    },
+    "proposal_count": {
+      "minimum": 0,
+      "title": "Proposal Count",
+      "type": "integer"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "manual_creation_required": {
+      "const": true,
+      "default": true,
+      "title": "Manual Creation Required",
+      "type": "boolean"
+    },
+    "github_issue_created": {
+      "const": false,
+      "default": false,
+      "title": "Github Issue Created",
+      "type": "boolean"
+    },
+    "github_pr_created": {
+      "const": false,
+      "default": false,
+      "title": "Github Pr Created",
+      "type": "boolean"
+    },
+    "github_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Github Write Performed",
+      "type": "boolean"
+    },
+    "sibling_repo_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sibling Repo Write Performed",
+      "type": "boolean"
+    },
+    "promotion_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Promotion Authorized",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "target_repo",
+    "issue_draft_id",
+    "source_issue_draft_status",
+    "status",
+    "issue_draft_output_ref",
+    "markdown_output_exists",
+    "markdown_matches_embedded_body",
+    "suggested_label_count",
+    "required_owner_action_count",
+    "acceptance_check_count",
+    "red_team_note_count",
+    "required_next_gate_count",
+    "proposal_count"
+  ],
+  "title": "CrossRepoOwnerIssueDraftQualityItem",
+  "type": "object"
+}

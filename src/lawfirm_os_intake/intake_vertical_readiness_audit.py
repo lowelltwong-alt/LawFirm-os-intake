@@ -734,6 +734,36 @@ REQUIRED_SLICES: tuple[SliceDefinition, ...] = (
     ),
     SliceDefinition(
         slice_id=28,
+        title="Owner issue draft quality audit",
+        requirement_summary=(
+            "Generated owner issue draft text can be audited for source refs, "
+            "required sections, red-team notes, acceptance checks, and explicit "
+            "manual-only boundaries before a human copies it into owner repos."
+        ),
+        proof_artifact_refs=(
+            "src/lawfirm_os_intake/cross_repo_owner_issue_draft_quality.py",
+            "schemas/cross-repo-owner-issue-draft-quality-report.schema.json",
+            "schemas/cross-repo-owner-issue-draft-quality-item.schema.json",
+            "tests/test_cross_repo_owner_issue_draft_quality.py",
+            "docs/decisions/TRACE-2026-06-30-owner-issue-draft-quality.md",
+        ),
+        command_refs=("audit-owner-issue-draft-quality",),
+        target_owner_repos=(
+            "LawFirm-os-intake",
+            "LawFirm-os-semantic-substrate",
+            "LawFirm-os-orchestrator",
+            "LawFirm-os-exceptions-lake-runtime",
+            "LawFirm-os-skills-registry",
+            "LawFirm-os-legal-knowledge-runtime",
+        ),
+        remaining_external_actions=(
+            "Humans must still create any owner issues manually.",
+            "Owning repos must still triage and accept or reject any proposed work.",
+            "Cross-repo validation remains required after any owner changes land.",
+        ),
+    ),
+    SliceDefinition(
+        slice_id=29,
         title="Final intake vertical readiness audit",
         requirement_summary=(
             "A deterministic final audit checks local surfaces plus the generated learning "
