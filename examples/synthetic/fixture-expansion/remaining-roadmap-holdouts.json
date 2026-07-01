@@ -30,6 +30,28 @@
       ]
     },
     {
+      "holdout_id": "holdout-ambiguous-roles-carrier-client-matrix.v0_1",
+      "family": "ambiguous_roles",
+      "description": "Carrier, payer, third-party administrator, insured, affiliate, driver, and claimant role matrix that must stay separated for human confirmation.",
+      "fixture_refs": [
+        "examples/synthetic/inbound/holdout-carrier-client-role-matrix.json"
+      ],
+      "test_refs": [
+        "tests/test_source_inventory_and_review.py::test_carrier_client_role_matrix_keeps_sender_payer_and_insured_separate"
+      ],
+      "expected_signals": [
+        "carrier sender carries insurance_carrier, payer, and instructing_source candidates without becoming prospective represented client",
+        "insured entity carries insured and prospective_represented_client alternatives",
+        "third-party administrator and affiliate roles remain distinct candidate roles",
+        "ROLE_CANDIDATES_AMBIGUOUS dry-run workflow escalation remains review-only"
+      ],
+      "red_team_notes": [
+        "Carrier, payer, and TPA labels must not silently become client identity.",
+        "Insured or affiliate labels must not clear conflicts or authorize matter opening.",
+        "Role ambiguity is evidence pressure for human confirmation, not a reason to infer representation."
+      ]
+    },
+    {
       "holdout_id": "holdout-missing-actuals-empty-source.v0_1",
       "family": "missing_actuals",
       "description": "Synthetic actual-cost source with no phase or code actuals to force missing-actuals ledger events.",

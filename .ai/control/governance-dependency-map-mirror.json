@@ -2,7 +2,7 @@
   "object_type": "governance_dependency_map_mirror",
   "trust_zone": "downstream_control",
   "lifecycle_status": "active",
-  "provenance_note": "Created 2026-06-29 to mirror the upstream LawFirm OS governance dependency-map update gate inside LawFirm-os-intake. Updated 2026-07-01 after carrier appeal human-outcome evidence, L&E ready-critical-facts holdout docs/TRACE/README updates, and L&E budget relationship-topology schema, fact audit, tests, budget design notes, and decision traces changed watched governance and schema surfaces.",
+  "provenance_note": "Created 2026-06-29 to mirror the upstream LawFirm OS governance dependency-map update gate inside LawFirm-os-intake. Updated 2026-07-01 after carrier appeal human-outcome evidence, ambiguous-role holdout matrix docs/TRACE updates, L&E ready-critical-facts holdout docs/TRACE/README updates, and L&E budget relationship-topology schema, fact audit, tests, budget design notes, and decision traces changed watched governance and schema surfaces.",
   "reason_for_inclusion": "Force intake-vertical governance changes to check the upstream governance dependency map and local mirror surfaces instead of letting vertical convenience become platform authority.",
   "schema_version": "governance_dependency_map_mirror.v1",
   "mirror_id": "lawfirm_os_intake_governance_dependency_map_mirror",
