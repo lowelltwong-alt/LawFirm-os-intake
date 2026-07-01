@@ -10,6 +10,9 @@ from lawfirm_os_intake.util import load_json, write_json
 
 
 MANIFEST_REF = "examples/synthetic/courtlistener-derived/labor-employment-dataset-manifest.json"
+READY_CRITICAL_FACTS_MANIFEST_REF = (
+    "examples/synthetic/courtlistener-derived/labor-employment-ready-critical-facts-manifest.json"
+)
 
 
 def test_labor_employment_budget_fact_audit_surfaces_blocking_unknowns(tmp_path, repo_root):
@@ -79,10 +82,17 @@ def test_labor_employment_budget_fact_audit_surfaces_blocking_unknowns(tmp_path,
     assert "Budget submission authorized: False" in notes
 
 
-def test_source_bound_budget_fact_findings_keep_exact_refs(tmp_path, repo_root):
+@pytest.mark.parametrize(
+    "manifest_ref",
+    [
+        MANIFEST_REF,
+        READY_CRITICAL_FACTS_MANIFEST_REF,
+    ],
+)
+def test_source_bound_budget_fact_findings_keep_exact_refs(tmp_path, repo_root, manifest_ref):
     report, _ = run_labor_employment_budget_fact_audit(
         repo_root=repo_root,
-        manifest_path=MANIFEST_REF,
+        manifest_path=manifest_ref,
         out_dir=tmp_path / "source-bound-le-budget-facts",
     )
 
@@ -95,6 +105,65 @@ def test_source_bound_budget_fact_findings_keep_exact_refs(tmp_path, repo_root):
             assert source.source_ref.source_segment_id
             assert source.source_ref.start_offset < source.source_ref.end_offset
             assert source.source_ref.sha256.startswith("sha256:")
+
+
+def test_ready_critical_labor_employment_facts_still_require_human_range_review(
+    tmp_path,
+    repo_root,
+):
+    report, run_dir = run_labor_employment_budget_fact_audit(
+        repo_root=repo_root,
+        manifest_path=READY_CRITICAL_FACTS_MANIFEST_REF,
+        out_dir=tmp_path / "ready-critical-le-budget-facts",
+    )
+    persisted = LaborEmploymentBudgetFactAuditReport.model_validate(
+        load_json(run_dir / "labor_employment_budget_fact_audit_report.json")
+    )
+
+    assert persisted.status == "labor_employment_budget_facts_ready_for_review"
+    assert persisted.manifest_id == "synthetic-courtlistener-le-ready-critical-facts-manifest.v0_1"
+    assert persisted.budget_readiness_state == "range_only_pending_human_review"
+    assert persisted.critical_gap_count == 0
+    assert persisted.needs_review_finding_count >= 1
+    assert persisted.gap_count >= 1
+    assert all(check.status == "passed" for check in persisted.checks)
+
+    by_fact = {finding.fact_id: finding for finding in persisted.findings}
+    critical_findings = [
+        finding for finding in persisted.findings if finding.required_level == "critical"
+    ]
+    assert critical_findings
+    assert all(
+        finding.current_state == "source_bound_observed_candidate" for finding in critical_findings
+    )
+    assert by_fact["individual_supervisor_or_manager_defendants"].source_bound is True
+    assert by_fact["individual_supervisor_or_manager_defendants"].current_state == (
+        "source_bound_observed_candidate"
+    )
+    assert by_fact["joint_employer_or_affiliate_structure"].source_bound is True
+    assert by_fact["joint_employer_or_affiliate_structure"].current_state == (
+        "source_bound_observed_candidate"
+    )
+    assert by_fact["expert_and_vendor_needs"].current_state == "source_bound_needs_review"
+    assert by_fact["policy_handbook_contract_documents"].current_state == (
+        "source_bound_needs_review"
+    )
+
+    warning_gap_ids = {gap.fact_id for gap in persisted.gaps if gap.severity == "warning"}
+    assert "expert_and_vendor_needs" in warning_gap_ids
+    assert "policy_handbook_contract_documents" in warning_gap_ids
+    assert persisted.review_gate == "human_labor_employment_budget_fact_review"
+    assert persisted.budget_amount_output_authorized is False
+    assert persisted.budget_submission_authorized is False
+    assert persisted.conflict_conclusion_emitted is False
+    assert persisted.matter_opening_authorized is False
+    assert persisted.lake_write_performed is False
+    assert persisted.sqlite_write_performed is False
+    assert persisted.external_writes_performed is False
+
+    notes = (run_dir / "labor_employment_budget_fact_audit_report.md").read_text(encoding="utf-8")
+    assert "**Budget readiness:** range_only_pending_human_review" in notes
+    assert "Budget submission authorized: False" in notes
 
 
 def test_missing_employee_or_person_relationship_blocks_budget_readiness(
