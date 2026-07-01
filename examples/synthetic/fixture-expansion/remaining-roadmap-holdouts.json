@@ -30,6 +30,28 @@
       ]
     },
     {
+      "holdout_id": "holdout-ambiguous-roles-carrier-client-matrix.v0_1",
+      "family": "ambiguous_roles",
+      "description": "Carrier, payer, third-party administrator, insured, affiliate, driver, and claimant role matrix that must stay separated for human confirmation.",
+      "fixture_refs": [
+        "examples/synthetic/inbound/holdout-carrier-client-role-matrix.json"
+      ],
+      "test_refs": [
+        "tests/test_source_inventory_and_review.py::test_carrier_client_role_matrix_keeps_sender_payer_and_insured_separate"
+      ],
+      "expected_signals": [
+        "carrier sender carries insurance_carrier, payer, and instructing_source candidates without becoming prospective represented client",
+        "insured entity carries insured and prospective_represented_client alternatives",
+        "third-party administrator and affiliate roles remain distinct candidate roles",
+        "ROLE_CANDIDATES_AMBIGUOUS dry-run workflow escalation remains review-only"
+      ],
+      "red_team_notes": [
+        "Carrier, payer, and TPA labels must not silently become client identity.",
+        "Insured or affiliate labels must not clear conflicts or authorize matter opening.",
+        "Role ambiguity is evidence pressure for human confirmation, not a reason to infer representation."
+      ]
+    },
+    {
       "holdout_id": "holdout-missing-actuals-empty-source.v0_1",
       "family": "missing_actuals",
       "description": "Synthetic actual-cost source with no phase or code actuals to force missing-actuals ledger events.",
@@ -37,7 +59,8 @@
         "examples/synthetic/actuals/medmal-missing-actuals.json"
       ],
       "test_refs": [
-        "tests/test_budget_revisions_and_actuals.py::test_budget_actual_variance_ledger_records_missing_actuals"
+        "tests/test_budget_revisions_and_actuals.py::test_budget_actual_variance_ledger_records_missing_actuals",
+        "tests/test_synthetic_fixture_expansion.py::test_missing_actuals_holdout_fixture_is_valid_synthetic_source"
       ],
       "expected_signals": [
         "actuals_not_available comparison status",
@@ -70,6 +93,26 @@
       ]
     },
     {
+      "holdout_id": "holdout-carrier-rejection-partial-allowance-stale-denied-appeals.v0_1",
+      "family": "carrier_rejection_variants",
+      "description": "Synthetic carrier rejection capture bundle with partial allowances, guideline drift, rate reduction, stale appeal, and denied appeal outcomes.",
+      "fixture_refs": [
+        "examples/synthetic/carrier-rejections/partial-allowance-guideline-drift-stale-appeal.json"
+      ],
+      "test_refs": [
+        "tests/test_carrier_rejection_capture.py::test_carrier_rejection_capture_records_partial_allowance_and_stale_denied_appeals"
+      ],
+      "expected_signals": [
+        "partial allowances remain source-bound rejection evidence",
+        "guideline version drift maps to authority_conflict_override candidate class",
+        "stale and denied appeals record financial outcomes without appeal submission"
+      ],
+      "red_team_notes": [
+        "Partial allowances must not be inflated into full denial exposure.",
+        "Stale or denied appeal outcomes must not silently mutate carrier guideline profiles."
+      ]
+    },
+    {
       "holdout_id": "holdout-budget-driver-edge-cases-medmal.v0_1",
       "family": "budget_driver_edges",
       "description": "Synthetic budget-driver edge cases for low-intensity, high-intensity, and unknown-driver states.",
@@ -78,7 +121,8 @@
       ],
       "test_refs": [
         "tests/test_budget_stronger_drivers.py::test_human_confirmed_higher_severity_increases_budget",
-        "tests/test_budget_stronger_drivers.py::test_profile_default_intensity_effects_are_visible_not_observed"
+        "tests/test_budget_stronger_drivers.py::test_profile_default_intensity_effects_are_visible_not_observed",
+        "tests/test_synthetic_fixture_expansion.py::test_budget_driver_edge_holdout_fixture_is_valid_synthetic_source"
       ],
       "expected_signals": [
         "catastrophic severity produces a higher budget than soft-tissue severity",
@@ -88,6 +132,29 @@
       "red_team_notes": [
         "Driver fixtures can overfit deterministic multipliers if promoted without shadow eval.",
         "Unknown drivers must widen review posture, not invent facts."
+      ]
+    },
+    {
+      "holdout_id": "holdout-labor-employment-ready-critical-facts.v0_1",
+      "family": "budget_driver_edges",
+      "description": "Synthetic labor/employment entity and budget-fact holdout where critical facts are source-bound but budget use remains range-only pending human review.",
+      "fixture_refs": [
+        "examples/synthetic/courtlistener-derived/labor-employment-ready-critical-facts-manifest.json"
+      ],
+      "test_refs": [
+        "tests/test_labor_employment_budget_facts.py::test_ready_critical_labor_employment_facts_still_require_human_range_review",
+        "tests/test_labor_employment_budget_facts.py::test_source_bound_budget_fact_findings_keep_exact_refs"
+      ],
+      "expected_signals": [
+        "critical labor/employment budget facts have source-bound candidate support",
+        "supervisor and affiliate relationship facts are captured as candidate evidence",
+        "important expert/vendor and policy-document facts still require human review",
+        "budget readiness is range-only pending human review with no budget submission authority"
+      ],
+      "red_team_notes": [
+        "Source-bound critical facts are still not human-confirmed facts.",
+        "Supervisor, affiliate, and carrier/rate labels must not clear conflicts or authorize matter opening.",
+        "Needs-review important facts must keep budget posture broad and review-gated."
       ]
     }
   ],

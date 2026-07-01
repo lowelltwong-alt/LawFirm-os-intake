@@ -9,6 +9,9 @@ from lawfirm_os_intake.util import load_json, write_json
 
 
 MANIFEST_REF = "examples/synthetic/courtlistener-derived/labor-employment-dataset-manifest.json"
+READY_CRITICAL_FACTS_MANIFEST_REF = (
+    "examples/synthetic/courtlistener-derived/labor-employment-ready-critical-facts-manifest.json"
+)
 SNAPSHOT_REF = "examples/synthetic/courtlistener-derived/labor-employment-removal-snapshot.json"
 
 
@@ -56,6 +59,30 @@ def test_courtlistener_fixture_audit_ready_for_review(tmp_path, repo_root):
     notes = (run_dir / "courtlistener_fixture_audit_report.md").read_text(encoding="utf-8")
     assert "Public records ingested: False" in notes
     assert "Budget accuracy claimed: False" in notes
+
+
+def test_ready_critical_labor_employment_fixture_audit_resolves_all_labels(
+    tmp_path,
+    repo_root,
+):
+    report, _ = run_courtlistener_fixture_audit(
+        repo_root=repo_root,
+        manifest_path=READY_CRITICAL_FACTS_MANIFEST_REF,
+        out_dir=tmp_path / "ready-critical-courtlistener-fixture-audit",
+    )
+
+    assert report.status == "courtlistener_fixture_ready_for_review"
+    assert report.manifest_id == "synthetic-courtlistener-le-ready-critical-facts-manifest.v0_1"
+    assert report.snapshot_count == 1
+    assert report.document_label_count == 5
+    assert report.conflict_seed_label_count == 6
+    assert report.budget_driver_label_count == 16
+    assert report.timeline_event_label_count == 3
+    assert all(check.status == "passed" for check in report.checks)
+    assert report.public_records_ingested is False
+    assert report.training_pipeline_created is False
+    assert report.budget_accuracy_claimed is False
+    assert report.external_writes_performed is False
 
 
 def test_courtlistener_fixture_audit_blocks_label_hash_drift(tmp_path, repo_root):

@@ -364,6 +364,210 @@
       ],
       "title": "LaborEmploymentBudgetFactSource",
       "type": "object"
+    },
+    "LaborEmploymentRelationshipCoverage": {
+      "additionalProperties": false,
+      "properties": {
+        "fact_id": {
+          "title": "Fact Id",
+          "type": "string"
+        },
+        "relationship_bucket": {
+          "enum": [
+            "employee_or_claimant_person",
+            "employer_or_defendant_entity",
+            "prospective_client_payer_or_carrier_posture",
+            "individual_actor_or_defendant",
+            "joint_employer_affiliate_or_staffing_structure"
+          ],
+          "title": "Relationship Bucket",
+          "type": "string"
+        },
+        "current_state": {
+          "enum": [
+            "source_bound_observed_candidate",
+            "source_bound_needs_review",
+            "synthetic_context_requires_confirmation",
+            "unknown_missing"
+          ],
+          "title": "Current State",
+          "type": "string"
+        },
+        "required_level": {
+          "enum": [
+            "critical",
+            "important",
+            "context"
+          ],
+          "title": "Required Level",
+          "type": "string"
+        },
+        "question": {
+          "title": "Question",
+          "type": "string"
+        },
+        "observed_roles": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Observed Roles",
+          "type": "array"
+        },
+        "inferred_roles": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Inferred Roles",
+          "type": "array"
+        },
+        "source_label_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Source Label Ids",
+          "type": "array"
+        },
+        "source_refs": {
+          "items": {
+            "$ref": "#/$defs/CourtListenerLabelSourceRef"
+          },
+          "title": "Source Refs",
+          "type": "array"
+        },
+        "budget_effects": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Budget Effects",
+          "type": "array"
+        },
+        "blocks_precise_budget": {
+          "title": "Blocks Precise Budget",
+          "type": "boolean"
+        },
+        "human_confirmation_required": {
+          "title": "Human Confirmation Required",
+          "type": "boolean"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "fact_id",
+        "relationship_bucket",
+        "current_state",
+        "required_level",
+        "question",
+        "blocks_precise_budget",
+        "human_confirmation_required"
+      ],
+      "title": "LaborEmploymentRelationshipCoverage",
+      "type": "object"
+    },
+    "LaborEmploymentRelationshipTopologySummary": {
+      "additionalProperties": false,
+      "properties": {
+        "coverage": {
+          "items": {
+            "$ref": "#/$defs/LaborEmploymentRelationshipCoverage"
+          },
+          "title": "Coverage",
+          "type": "array"
+        },
+        "source_bound_relationship_count": {
+          "minimum": 0,
+          "title": "Source Bound Relationship Count",
+          "type": "integer"
+        },
+        "missing_or_review_relationship_count": {
+          "minimum": 0,
+          "title": "Missing Or Review Relationship Count",
+          "type": "integer"
+        },
+        "critical_relationship_gap_count": {
+          "minimum": 0,
+          "title": "Critical Relationship Gap Count",
+          "type": "integer"
+        },
+        "person_candidate_count": {
+          "minimum": 0,
+          "title": "Person Candidate Count",
+          "type": "integer"
+        },
+        "organization_candidate_count": {
+          "minimum": 0,
+          "title": "Organization Candidate Count",
+          "type": "integer"
+        },
+        "unresolved_relationship_fact_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Unresolved Relationship Fact Ids",
+          "type": "array"
+        },
+        "required_human_relationship_questions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Required Human Relationship Questions",
+          "type": "array"
+        },
+        "budget_treatment": {
+          "enum": [
+            "block_amount_budget",
+            "hours_only_or_broad_range",
+            "candidate_range_budget_after_review"
+          ],
+          "title": "Budget Treatment",
+          "type": "string"
+        },
+        "canonical_role_promotion_authorized": {
+          "const": false,
+          "default": false,
+          "title": "Canonical Role Promotion Authorized",
+          "type": "boolean"
+        },
+        "relationship_classification_authoritative": {
+          "const": false,
+          "default": false,
+          "title": "Relationship Classification Authoritative",
+          "type": "boolean"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "coverage",
+        "source_bound_relationship_count",
+        "missing_or_review_relationship_count",
+        "critical_relationship_gap_count",
+        "person_candidate_count",
+        "organization_candidate_count",
+        "budget_treatment"
+      ],
+      "title": "LaborEmploymentRelationshipTopologySummary",
+      "type": "object"
     }
   },
   "additionalProperties": false,
@@ -446,6 +650,9 @@
       "minimum": 0,
       "title": "Critical Gap Count",
       "type": "integer"
+    },
+    "relationship_topology": {
+      "$ref": "#/$defs/LaborEmploymentRelationshipTopologySummary"
     },
     "findings": {
       "items": {
@@ -554,6 +761,7 @@
     "unknown_finding_count",
     "gap_count",
     "critical_gap_count",
+    "relationship_topology",
     "findings",
     "gaps",
     "required_human_questions",

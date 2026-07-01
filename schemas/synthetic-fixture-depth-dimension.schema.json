@@ -1,0 +1,114 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "dimension_id": {
+      "title": "Dimension Id",
+      "type": "string"
+    },
+    "family": {
+      "title": "Family",
+      "type": "string"
+    },
+    "danger_loop": {
+      "title": "Danger Loop",
+      "type": "string"
+    },
+    "description": {
+      "title": "Description",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "covered",
+        "missing"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "matched_holdout_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Matched Holdout Ids",
+      "type": "array"
+    },
+    "matched_terms": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Matched Terms",
+      "type": "array"
+    },
+    "required_term_groups": {
+      "items": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "title": "Required Term Groups",
+      "type": "array"
+    },
+    "fixture_evidence_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Fixture Evidence Refs",
+      "type": "array"
+    },
+    "test_evidence_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Test Evidence Refs",
+      "type": "array"
+    },
+    "source_json_pointers": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Source Json Pointers",
+      "type": "array"
+    },
+    "fixture_test_binding_statuses": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Fixture Test Binding Statuses",
+      "type": "object"
+    },
+    "test_refs_verified": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Test Refs Verified",
+      "type": "array"
+    },
+    "prose_only_match_count": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Prose Only Match Count",
+      "type": "integer"
+    },
+    "why_it_matters": {
+      "title": "Why It Matters",
+      "type": "string"
+    },
+    "remediation_hint": {
+      "title": "Remediation Hint",
+      "type": "string"
+    }
+  },
+  "required": [
+    "dimension_id",
+    "family",
+    "danger_loop",
+    "description",
+    "status",
+    "required_term_groups",
+    "why_it_matters",
+    "remediation_hint"
+  ],
+  "title": "SyntheticFixtureDepthDimension",
+  "type": "object"
+}

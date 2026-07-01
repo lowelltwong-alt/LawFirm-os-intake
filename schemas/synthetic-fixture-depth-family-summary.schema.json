@@ -1,0 +1,39 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "family": {
+      "title": "Family",
+      "type": "string"
+    },
+    "holdout_count": {
+      "minimum": 0,
+      "title": "Holdout Count",
+      "type": "integer"
+    },
+    "covered_dimension_count": {
+      "minimum": 0,
+      "title": "Covered Dimension Count",
+      "type": "integer"
+    },
+    "missing_dimension_count": {
+      "minimum": 0,
+      "title": "Missing Dimension Count",
+      "type": "integer"
+    },
+    "missing_dimension_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Missing Dimension Ids",
+      "type": "array"
+    }
+  },
+  "required": [
+    "family",
+    "holdout_count",
+    "covered_dimension_count",
+    "missing_dimension_count"
+  ],
+  "title": "SyntheticFixtureDepthFamilySummary",
+  "type": "object"
+}

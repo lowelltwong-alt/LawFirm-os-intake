@@ -629,8 +629,8 @@ Status: implemented for the current synthetic candidate slice; holdouts are
 review evidence only and are not calibration-approved.
 
 Execute the local fixture/eval expansion item from the remaining roadmap by
-binding four synthetic holdout families to concrete fixture refs, test refs,
-expected signals, and red-team notes.
+binding four synthetic holdout families and five concrete holdouts to fixture
+refs, test refs, expected signals, and red-team notes.
 
 - `audit-synthetic-fixture-expansion` consumes `remaining_roadmap_report.json`
   and `examples/synthetic/fixture-expansion/remaining-roadmap-holdouts.json`.
@@ -638,11 +638,47 @@ expected signals, and red-team notes.
   `synthetic_fixture_expansion_report.md`.
 - The manifest covers ambiguous roles, missing actuals, carrier rejection
   variants, and budget driver edge cases.
+- The ambiguous-role family now includes a carrier/client role matrix that keeps
+  carrier, payer, third-party administrator, insured, affiliate, driver, and
+  claimant alternatives separated for human confirmation.
 - New local fixtures include a missing-actuals `BudgetActualsSource` and a
   budget-driver edge-case fixture for low-intensity, high-intensity, and unknown
   driver states.
+- The budget-driver edge family also includes a labor/employment ready-critical
+  facts holdout that proves critical entity, relationship, discovery, deposition,
+  damages, and carrier/rate facts can be source-bound while important
+  expert/vendor and policy-document facts keep budget posture at
+  `range_only_pending_human_review`.
 - The audit checks fixture/test refs stay under the repo root, scoped JSON
   fixtures remain synthetic-only, and fixtures are not calibration-approved.
+- The report records `calibration_approved=false`,
+  `fixture_files_mutated_by_audit=false`, `github_issue_created=false`,
+  `github_pr_created=false`, `github_write_performed=false`,
+  `sibling_repo_write_performed=false`, `promotion_authorized=false`,
+  `lake_write_performed=false`, `sqlite_write_performed=false`,
+  `external_writes_performed=false`, and `silent_learning_performed=false`.
+
+## 11O. Synthetic Fixture Depth Audit
+
+Status: implemented for the current synthetic candidate slice; depth findings
+are review guidance, not calibration approval.
+
+`audit-synthetic-fixture-depth` consumes
+`examples/synthetic/fixture-expansion/remaining-roadmap-holdouts.json` and
+writes `synthetic_fixture_depth_audit_report.json` plus
+`synthetic_fixture_depth_audit_report.md`.
+
+- The audit checks deterministic risk dimensions for ambiguous roles, missing
+  actuals, carrier rejection completeness, partial allowance and stale/denied
+  appeal outcomes, budget-driver unknowns, labor/employment budget fact gaps,
+  and visible review/no-write/no-learning guardrails.
+- Covered dimensions require structural fixture evidence, exact named test refs,
+  and fixture/test binding. Manifest prose alone is reported as a depth gap.
+- The current `main` manifest can audit cleanly while still reporting open
+  depth gaps. That is intentional: the report separates boundary violations
+  from roadmap follow-up findings.
+- Boundary violations, such as external fixture refs or real-data flags, block
+  the depth audit.
 - The report records `calibration_approved=false`,
   `fixture_files_mutated_by_audit=false`, `github_issue_created=false`,
   `github_pr_created=false`, `github_write_performed=false`,
