@@ -49,6 +49,13 @@ def _fixture_path(repo_root):
     )
 
 
+def _counterfactual_fixture_path(repo_root):
+    return (
+        repo_root / "examples/synthetic/carrier-rejections/"
+        "partial-allowance-guideline-drift-stale-appeal.json"
+    )
+
+
 def _bound_fixture(repo_root, budget):
     raw = deepcopy(load_json(_fixture_path(repo_root)))
     raw["budget_proposal_id"] = budget.budget_proposal_id
@@ -164,6 +171,120 @@ def test_carrier_rejection_capture_reconciles_duplicates_missing_unlinked_and_ap
     assert ledger.appeal_submission_performed is False
     assert ledger.silent_learning_performed is False
     assert (run_dir / "carrier_rejection_decision_ledger_report.md").is_file()
+
+
+def test_carrier_rejection_capture_records_partial_allowance_and_stale_denied_appeals(
+    tmp_path,
+    repo_root,
+):
+    _, budget_path = _budget(tmp_path, repo_root)
+
+    report, run_dir = run_carrier_rejection_capture(
+        budget_path,
+        _counterfactual_fixture_path(repo_root),
+        tmp_path / "carrier-rejections-counterfactual",
+    )
+
+    assert report.status == "dry_run_ready_for_review"
+    assert report.source_bundle_id == "synthetic-carrier-rejection-counterfactual-002"
+    assert report.expected_response_count == 2
+    assert report.reconciled_response_count == 2
+    assert report.missing_response_count == 0
+    assert report.unlinked_notice_count == 0
+    assert report.duplicate_notice_count == 0
+    assert report.parser_failure_count == 0
+    assert report.appeal_result_count == 2
+    assert report.not_authorized_for_lake_write is True
+    assert report.not_authorized_for_external_submission is True
+    assert report.external_writes_performed is False
+
+    cases_by_label = {case.local_event_label: case for case in report.remediation_cases}
+    assert set(cases_by_label) == {
+        "carrier_guideline_version_drift",
+        "carrier_rate_reduction",
+    }
+
+    guideline_case = cases_by_label["carrier_guideline_version_drift"]
+    rate_case = cases_by_label["carrier_rate_reduction"]
+
+    assert guideline_case.canonical_lake_class == "authority_conflict_override"
+    assert guideline_case.status == "appeal_result_captured"
+    assert guideline_case.disputed_amount == 15000.0
+    assert guideline_case.current_financial_exposure == 15000.0
+    assert guideline_case.linked_appeal_result_ids == ["appeal-result-stale-001"]
+    assert "guideline_version_review_candidate" in guideline_case.learning_disposition_candidates
+    assert guideline_case.not_authorized_for_lake_write is True
+    assert guideline_case.not_authorized_for_external_submission is True
+    assert guideline_case.silent_learning_performed is False
+
+    assert rate_case.canonical_lake_class == "workflow_escalation"
+    assert rate_case.status == "appeal_result_captured"
+    assert rate_case.disputed_amount == 600.0
+    assert rate_case.current_financial_exposure == 600.0
+    assert rate_case.linked_appeal_result_ids == ["appeal-result-denied-001"]
+    assert "timekeeper_rate_candidate" in rate_case.learning_disposition_candidates
+
+    candidate_labels = {
+        candidate.local_event_label for candidate in report.exception_lake_candidates
+    }
+    assert {
+        "carrier_guideline_version_drift",
+        "carrier_rate_reduction",
+        "carrier_appeal_result_received",
+        "carrier_rejection_learning_candidate",
+    } <= candidate_labels
+    assert all(not candidate.raw_payload_included for candidate in report.exception_lake_candidates)
+    assert all(
+        candidate.canonical_promotion_required for candidate in report.exception_lake_candidates
+    )
+
+    ledger = CarrierRejectionDecisionLedgerReport.model_validate(
+        load_json(run_dir / "carrier_rejection_decision_ledger_report.json")
+    )
+    event_kinds = {event.event_kind for event in ledger.events}
+    appeal_events = {
+        event.appeal_result_id: event
+        for event in ledger.events
+        if event.event_kind == "carrier_appeal_result_received"
+    }
+    financial_events = {
+        event.appeal_result_id: event
+        for event in ledger.events
+        if event.event_kind == "carrier_financial_outcome_recorded"
+    }
+    case_events = [
+        event for event in ledger.events if event.event_kind == "carrier_rejection_notice_captured"
+    ]
+
+    assert ledger.status == "decision_ledger_ready_for_review"
+    assert ledger.entry_count == 6
+    assert ledger.remediation_case_event_count == 2
+    assert ledger.pending_decision_event_count == 0
+    assert ledger.appeal_result_event_count == 2
+    assert ledger.financial_outcome_event_count == 2
+    assert ledger.total_disputed_amount == 15600.0
+    assert ledger.total_recovered_amount == 0.0
+    assert ledger.total_write_down_amount == 15600.0
+    assert {
+        "carrier_rejection_notice_captured",
+        "carrier_appeal_result_received",
+        "carrier_financial_outcome_recorded",
+    } == event_kinds
+    assert {event.response_type for event in case_events} == {"partially_accepted"}
+
+    assert appeal_events["appeal-result-stale-001"].appeal_result == "stale"
+    assert appeal_events["appeal-result-denied-001"].appeal_result == "denied"
+    assert financial_events["appeal-result-stale-001"].write_down_amount == 15000.0
+    assert financial_events["appeal-result-stale-001"].remaining_write_down_amount == 15000.0
+    assert financial_events["appeal-result-denied-001"].write_down_amount == 600.0
+    assert financial_events["appeal-result-denied-001"].remaining_write_down_amount == 600.0
+
+    assert all(event.requires_exception_lake_admission_review for event in ledger.events)
+    assert ledger.lake_write_performed is False
+    assert ledger.sqlite_write_performed is False
+    assert ledger.external_writes_performed is False
+    assert ledger.appeal_submission_performed is False
+    assert ledger.silent_learning_performed is False
 
 
 def test_carrier_rejection_capture_blocks_missing_followup_owner_or_due_date(
