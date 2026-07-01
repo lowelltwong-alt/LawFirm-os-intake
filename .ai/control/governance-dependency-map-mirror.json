@@ -2,7 +2,7 @@
   "object_type": "governance_dependency_map_mirror",
   "trust_zone": "downstream_control",
   "lifecycle_status": "active",
-  "provenance_note": "Created 2026-06-29 to mirror the upstream LawFirm OS governance dependency-map update gate inside LawFirm-os-intake. Updated 2026-06-30 after Orchestrator owner-review request docs, schema surfaces, validation-runtime ceilings, and PR readiness evidence commands changed so the watched governance-surface gate remains explicit.",
+  "provenance_note": "Created 2026-06-29 to mirror the upstream LawFirm OS governance dependency-map update gate inside LawFirm-os-intake. Updated 2026-07-01 after Skills Registry specialist review metadata, declared harness checks, per-worker packet outputs, docs, schemas, and CLI/model surfaces changed so the watched governance-surface gate remains explicit.",
   "reason_for_inclusion": "Force intake-vertical governance changes to check the upstream governance dependency map and local mirror surfaces instead of letting vertical convenience become platform authority.",
   "schema_version": "governance_dependency_map_mirror.v1",
   "mirror_id": "lawfirm_os_intake_governance_dependency_map_mirror",
@@ -29,7 +29,10 @@
     "pr_readiness_review_checklist": "src/lawfirm_os_intake/pr_review_checklist.py",
     "pr_readiness_review_test": "tests/test_pr_readiness_decision.py",
     "validation_policy_builder_brief": "docs/ai-handoff/BUILDER_BRIEF.md",
-    "validation_policy_claude_prompt": "docs/ai-handoff/CLAUDE_BUILD_PROMPT.md"
+    "validation_policy_claude_prompt": "docs/ai-handoff/CLAUDE_BUILD_PROMPT.md",
+    "skills_registry_specialist_review_module": "src/lawfirm_os_intake/skills_registry_specialist_review.py",
+    "skills_registry_specialist_review_test": "tests/test_skills_registry_specialist_review.py",
+    "skills_registry_specialist_review_trace": "docs/decisions/TRACE-2026-07-01-skills-registry-specialist-review.md"
   },
   "authority": {
     "local_repo_may_override_upstream_dependency_map": false,
@@ -66,7 +69,9 @@
     "scripts/check_",
     "scripts/validate_governance_dependency_map_mirror.py",
     "src/lawfirm_os_intake/pr_review_checklist.py",
+    "src/lawfirm_os_intake/skills_registry_specialist_review.py",
     "skill-agent-manifest.json",
+    "tests/test_skills_registry_specialist_review.py",
     "tests/test_pr_readiness_decision.py",
     "tests/test_validation_runtime_policy.py",
     "tests/test_governance_dependency_map_mirror.py",

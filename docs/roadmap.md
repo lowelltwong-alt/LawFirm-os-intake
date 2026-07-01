@@ -621,6 +621,38 @@ expected signals, and red-team notes.
   `lake_write_performed=false`, `sqlite_write_performed=false`,
   `external_writes_performed=false`, and `silent_learning_performed=false`.
 
+## 11O. Skills Registry Specialist Review
+
+Status: implemented for the current synthetic candidate slice; skill promotion,
+trust records, model-provider enablement, real-data approval, and owner repo
+changes remain Skills Registry work.
+
+Execute the Skills Registry review item from the remaining roadmap by packaging
+the seven predeclared intake specialists as local candidate metadata.
+
+- `build-skills-registry-specialist-review` consumes
+  `skill-agent-manifest.json`, `agents/*.yaml`, declared `harnesses/*.yaml`,
+  `prompts/registry.yaml`, and local schema refs.
+- It writes `skills_registry_specialist_review_report.json`,
+  `skills_registry_specialist_review_report.md`,
+  `skills_registry_specialist_candidates.jsonl`, and per-worker JSON/Markdown
+  packets under `skills_registry_specialist_packets/`.
+- The review checks manifest-to-agent coverage, prompt registry entries,
+  prompt hashes, staged-candidate/no-real-data prompt status, declared harness
+  existence, explicit schema refs, no network/cross-matter/external-tool
+  authority, bounded write scopes, human gates, revocation owner, and
+  frontier-adjudicator deny-by-default posture.
+- Metadata gaps block the report and remain review debt rather than being
+  treated as promoted skill readiness.
+- The report records `skill_promoted=false`,
+  `skill_trust_record_created=false`, `dynamic_agent_created=false`,
+  `model_provider_enabled=false`, `real_data_approved=false`,
+  `external_tools_allowed=false`, `github_issue_created=false`,
+  `github_pr_created=false`, `github_write_performed=false`,
+  `sibling_repo_write_performed=false`, `promotion_authorized=false`,
+  `lake_write_performed=false`, `sqlite_write_performed=false`,
+  `external_writes_performed=false`, and `silent_learning_performed=false`.
+
 ## 12. Reviewed Learning Gate
 
 Status: implemented for the current synthetic candidate slice; owning-repo

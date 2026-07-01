@@ -2,10 +2,16 @@ worker_id: matter-router
 version: "0.1"
 purpose: Rank inbound-event, matter-family, and representation-posture candidates.
 model_class: small_reasoning_router
+prompt_ref: matter-router
 raw_source_access: structured_segments_only
 cross_matter_access: false
 network_access: false
 write_scope: none
+allowed_tools: []
+input_schema_ref: schemas/segment.schema.json
+output_schema_ref: schemas/intake-preflight-packet.schema.json
+human_gate_required: true
+revocation_owner: LawFirm-os-skills-registry
 requirements:
   - return top alternatives and unknown
   - separate observed evidence from practice-context priors

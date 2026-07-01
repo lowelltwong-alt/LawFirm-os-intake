@@ -8691,6 +8691,195 @@ class CrossRepoPromotionPackage(StrictModel):
     non_authoritative: Literal[True] = True
 
 
+SkillsRegistrySpecialistStatus = Literal[
+    "ready_for_skills_registry_review",
+    "blocked_by_specialist_metadata_gap",
+]
+
+
+class SkillsRegistrySpecialistCandidate(StrictModel):
+    schema_version: str = "0.1"
+    specialist_candidate_id: str
+    worker_id: str
+    version: str
+    agent_ref: str
+    prompt_ref: str
+    prompt_file_ref: str
+    prompt_hash: str
+    prompt_hash_verified: bool
+    prompt_lifecycle: str
+    approved_for_real_data: Literal[False] = False
+    purpose: str
+    model_class: str
+    raw_source_access: str
+    cross_matter_access: Literal[False] = False
+    network_access: Literal[False] = False
+    write_scope: str
+    allowed_tool_refs: list[str] = Field(default_factory=list)
+    tool_denylist: list[str]
+    input_schema_ref: str
+    output_schema_ref: str
+    input_schema_exists: bool
+    output_schema_exists: bool
+    requirements: list[str]
+    prohibited_actions: list[str]
+    accepted_context_classes: list[str]
+    forbidden_context_classes: list[str]
+    evidence_requirements: list[str]
+    human_gate_required: Literal[True] = True
+    revocation_owner: Literal["LawFirm-os-skills-registry"] = "LawFirm-os-skills-registry"
+    status: SkillsRegistrySpecialistStatus
+    missing_metadata_fields: list[str] = Field(default_factory=list)
+    required_owner_actions: list[str]
+    acceptance_checks: list[str]
+    red_team_notes: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    metadata_only: Literal[True] = True
+    blocked_until_owner_review: Literal[True] = True
+    skill_promoted: Literal[False] = False
+    skill_trust_record_created: Literal[False] = False
+    dynamic_agent_created: Literal[False] = False
+    model_provider_enabled: Literal[False] = False
+    real_data_approved: Literal[False] = False
+    external_tools_allowed: Literal[False] = False
+    github_issue_created: Literal[False] = False
+    github_pr_created: Literal[False] = False
+    github_write_performed: Literal[False] = False
+    sibling_repo_write_performed: Literal[False] = False
+    promotion_authorized: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def skills_candidate_is_reviewable(self) -> "SkillsRegistrySpecialistCandidate":
+        if not self.prompt_hash.startswith("sha256:"):
+            raise ValueError("skills specialist prompt hash must be sha256")
+        if self.status == "ready_for_skills_registry_review":
+            if self.missing_metadata_fields:
+                raise ValueError("ready skills specialist cannot have metadata gaps")
+            if not self.prompt_hash_verified:
+                raise ValueError("ready skills specialist requires verified prompt hash")
+            if not self.input_schema_exists or not self.output_schema_exists:
+                raise ValueError("ready skills specialist requires existing schema refs")
+        if self.status == "blocked_by_specialist_metadata_gap" and not (
+            self.missing_metadata_fields
+        ):
+            raise ValueError("blocked skills specialist requires metadata gaps")
+        if not self.tool_denylist:
+            raise ValueError("skills specialist requires a tool denylist")
+        if not self.required_owner_actions:
+            raise ValueError("skills specialist requires owner actions")
+        if not self.acceptance_checks:
+            raise ValueError("skills specialist requires acceptance checks")
+        if not self.red_team_notes:
+            raise ValueError("skills specialist requires red-team notes")
+        return self
+
+
+class SkillsRegistrySpecialistReviewCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    artifact_refs: list[str] = Field(default_factory=list)
+    worker_ids: list[str] = Field(default_factory=list)
+    blocking_refs: list[str] = Field(default_factory=list)
+
+
+class SkillsRegistrySpecialistReviewReport(StrictModel):
+    schema_version: str = "0.1"
+    specialist_review_report_id: str
+    status: Literal[
+        "skills_registry_specialist_review_ready",
+        "blocked_by_specialist_metadata_gaps",
+    ]
+    target_repo: Literal["LawFirm-os-skills-registry"] = "LawFirm-os-skills-registry"
+    manifest_ref: str
+    prompt_registry_ref: str
+    expected_harness_count: int = Field(ge=0)
+    missing_harness_refs: list[str] = Field(default_factory=list)
+    expected_worker_count: int = Field(ge=0)
+    candidate_count: int = Field(ge=0)
+    ready_candidate_count: int = Field(ge=0)
+    blocked_candidate_count: int = Field(ge=0)
+    missing_worker_ids: list[str] = Field(default_factory=list)
+    unexpected_worker_ids: list[str] = Field(default_factory=list)
+    prompt_hash_count: int = Field(ge=0)
+    candidates: list[SkillsRegistrySpecialistCandidate]
+    candidate_packet_refs: list[str] = Field(default_factory=list)
+    checks: list[SkillsRegistrySpecialistReviewCheck]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    metadata_only: Literal[True] = True
+    blocked_until_owner_review: Literal[True] = True
+    skill_promoted: Literal[False] = False
+    skill_trust_record_created: Literal[False] = False
+    dynamic_agent_created: Literal[False] = False
+    model_provider_enabled: Literal[False] = False
+    real_data_approved: Literal[False] = False
+    external_tools_allowed: Literal[False] = False
+    github_issue_created: Literal[False] = False
+    github_pr_created: Literal[False] = False
+    github_write_performed: Literal[False] = False
+    sibling_repo_write_performed: Literal[False] = False
+    promotion_authorized: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def skills_report_counts_match(self) -> "SkillsRegistrySpecialistReviewReport":
+        failed = [check for check in self.checks if check.status == "failed"]
+        if self.candidate_count != len(self.candidates):
+            raise ValueError("skills specialist candidate count does not match")
+        ready_count = sum(
+            1
+            for candidate in self.candidates
+            if candidate.status == "ready_for_skills_registry_review"
+        )
+        blocked_count = self.candidate_count - ready_count
+        if self.ready_candidate_count != ready_count:
+            raise ValueError("skills specialist ready count does not match")
+        if self.blocked_candidate_count != blocked_count:
+            raise ValueError("skills specialist blocked count does not match")
+        if self.status == "skills_registry_specialist_review_ready" and (
+            failed
+            or blocked_count
+            or self.missing_worker_ids
+            or self.unexpected_worker_ids
+            or self.missing_harness_refs
+        ):
+            raise ValueError("ready skills specialist report cannot include blockers")
+        if self.status == "blocked_by_specialist_metadata_gaps" and not (
+            failed
+            or blocked_count
+            or self.missing_worker_ids
+            or self.unexpected_worker_ids
+            or self.missing_harness_refs
+        ):
+            raise ValueError("blocked skills specialist report requires blockers")
+        if len(self.candidate_packet_refs) != self.candidate_count * 2:
+            raise ValueError(
+                "skills specialist packet refs must include JSON and Markdown per candidate"
+            )
+        required = {
+            "skills_registry_owner_review",
+            "prompt_hash_review",
+            "tool_authority_review",
+            "eval_suite_review_before_promotion",
+            "revocation_path_review",
+            "no_skill_promotion_from_intake",
+        }
+        if not required.issubset(set(self.required_next_gates)):
+            raise ValueError("skills specialist report is missing required gates")
+        return self
+
+
 CrossRepoAdoptionTargetRepo = Literal[
     "LawFirm-os-semantic-substrate",
     "LawFirm-os-orchestrator",
