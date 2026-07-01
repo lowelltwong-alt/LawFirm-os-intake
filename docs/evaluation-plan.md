@@ -321,6 +321,16 @@ fixtures are synthetic-only and not calibration-approved, missing required
 families fail closed, and the audit performs no fixture mutation, GitHub write,
 sibling repo write, Lake/SQLite write, promotion, or learning.
 
+`audit-synthetic-fixture-depth` consumes the synthetic holdout manifest and
+checks deterministic risk dimensions for depth. Eval coverage must prove the
+current manifest can satisfy all dimensions with structural fixture and
+named-test evidence, intentionally weakened fixtures surface depth gaps without
+becoming repo-health failures, prose-only matches remain gaps, missing named
+tests and unbound fixture refs block the audit, recursive forbidden flags block
+the audit, and the command performs no calibration, fixture mutation, GitHub
+write, sibling repo write, Lake/SQLite write, external write, promotion, or
+learning.
+
 ### Counterfactual evals
 
 Same source, different practice context. Evidence must remain unchanged.

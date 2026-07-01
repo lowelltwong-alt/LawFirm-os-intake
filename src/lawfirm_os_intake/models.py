@@ -7120,6 +7120,119 @@ class SyntheticFixtureExpansionReport(StrictModel):
         return self
 
 
+SyntheticFixtureDepthAuditStatus = Literal[
+    "synthetic_fixture_depth_ready_for_review",
+    "synthetic_fixture_depth_gaps_identified",
+    "blocked_by_depth_audit_boundary_violation",
+]
+
+
+class SyntheticFixtureDepthDimension(StrictModel):
+    dimension_id: str
+    family: str
+    danger_loop: str
+    description: str
+    status: Literal["covered", "missing"]
+    matched_holdout_ids: list[str] = Field(default_factory=list)
+    matched_terms: list[str] = Field(default_factory=list)
+    required_term_groups: list[list[str]]
+    fixture_evidence_refs: list[str] = Field(default_factory=list)
+    test_evidence_refs: list[str] = Field(default_factory=list)
+    source_json_pointers: list[str] = Field(default_factory=list)
+    fixture_test_binding_statuses: dict[str, str] = Field(default_factory=dict)
+    test_refs_verified: list[str] = Field(default_factory=list)
+    prose_only_match_count: int = Field(default=0, ge=0)
+    why_it_matters: str
+    remediation_hint: str
+
+    @model_validator(mode="after")
+    def synthetic_fixture_depth_dimension_status_matches_matches(
+        self,
+    ) -> "SyntheticFixtureDepthDimension":
+        if self.status == "covered" and not self.matched_holdout_ids:
+            raise ValueError("covered fixture depth dimension requires matched holdouts")
+        if self.status == "covered" and not self.fixture_evidence_refs:
+            raise ValueError("covered fixture depth dimension requires fixture evidence")
+        if self.status == "covered" and not self.test_evidence_refs:
+            raise ValueError("covered fixture depth dimension requires test evidence")
+        if self.status == "missing" and self.matched_holdout_ids:
+            raise ValueError("missing fixture depth dimension cannot have matched holdouts")
+        if not self.required_term_groups:
+            raise ValueError("fixture depth dimension requires term groups")
+        return self
+
+
+class SyntheticFixtureDepthFamilySummary(StrictModel):
+    family: str
+    holdout_count: int = Field(ge=0)
+    covered_dimension_count: int = Field(ge=0)
+    missing_dimension_count: int = Field(ge=0)
+    missing_dimension_ids: list[str] = Field(default_factory=list)
+
+
+class SyntheticFixtureDepthAuditReport(StrictModel):
+    schema_version: str = "0.1"
+    fixture_depth_audit_report_id: str
+    status: SyntheticFixtureDepthAuditStatus
+    manifest_id: str
+    manifest_ref: str
+    holdout_count: int = Field(ge=0)
+    dimension_count: int = Field(ge=0)
+    covered_dimension_count: int = Field(ge=0)
+    missing_dimension_count: int = Field(ge=0)
+    boundary_violation_count: int = Field(ge=0)
+    missing_dimension_ids: list[str] = Field(default_factory=list)
+    boundary_violations: list[str] = Field(default_factory=list)
+    family_summaries: list[SyntheticFixtureDepthFamilySummary]
+    dimensions: list[SyntheticFixtureDepthDimension]
+    required_next_actions: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    calibration_approved: Literal[False] = False
+    fixture_files_mutated_by_audit: Literal[False] = False
+    github_issue_created: Literal[False] = False
+    github_pr_created: Literal[False] = False
+    github_write_performed: Literal[False] = False
+    sibling_repo_write_performed: Literal[False] = False
+    promotion_authorized: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def synthetic_fixture_depth_counts_and_status_match(
+        self,
+    ) -> "SyntheticFixtureDepthAuditReport":
+        if self.dimension_count != len(self.dimensions):
+            raise ValueError("fixture depth dimension count does not match")
+        covered = [dimension for dimension in self.dimensions if dimension.status == "covered"]
+        missing = [dimension for dimension in self.dimensions if dimension.status == "missing"]
+        if self.covered_dimension_count != len(covered):
+            raise ValueError("fixture depth covered dimension count does not match")
+        if self.missing_dimension_count != len(missing):
+            raise ValueError("fixture depth missing dimension count does not match")
+        if self.missing_dimension_ids != [dimension.dimension_id for dimension in missing]:
+            raise ValueError("fixture depth missing dimension IDs do not match")
+        if self.boundary_violation_count != len(self.boundary_violations):
+            raise ValueError("fixture depth boundary violation count does not match")
+        if self.status == "synthetic_fixture_depth_ready_for_review" and (
+            self.missing_dimension_count or self.boundary_violation_count
+        ):
+            raise ValueError("ready fixture depth audit cannot have gaps or boundary violations")
+        if self.status == "synthetic_fixture_depth_gaps_identified" and (
+            not self.missing_dimension_count or self.boundary_violation_count
+        ):
+            raise ValueError("fixture depth gaps status requires gaps and no boundary violations")
+        if (
+            self.status == "blocked_by_depth_audit_boundary_violation"
+            and not self.boundary_violation_count
+        ):
+            raise ValueError("blocked fixture depth audit requires boundary violations")
+        return self
+
+
 class CarrierRejectionOrchestratorConnectorChannel(StrictModel):
     channel_id: Literal[
         "carrier_portal_notice",

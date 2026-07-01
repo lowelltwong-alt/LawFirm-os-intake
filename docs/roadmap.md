@@ -629,6 +629,34 @@ refs, test refs, expected signals, and red-team notes.
   `lake_write_performed=false`, `sqlite_write_performed=false`,
   `external_writes_performed=false`, and `silent_learning_performed=false`.
 
+## 11O. Synthetic Fixture Depth Audit
+
+Status: implemented for the current synthetic candidate slice; depth findings
+are review guidance, not calibration approval.
+
+`audit-synthetic-fixture-depth` consumes
+`examples/synthetic/fixture-expansion/remaining-roadmap-holdouts.json` and
+writes `synthetic_fixture_depth_audit_report.json` plus
+`synthetic_fixture_depth_audit_report.md`.
+
+- The audit checks deterministic risk dimensions for ambiguous roles, missing
+  actuals, carrier rejection completeness, partial allowance and stale/denied
+  appeal outcomes, budget-driver unknowns, labor/employment budget fact gaps,
+  and visible review/no-write/no-learning guardrails.
+- Covered dimensions require structural fixture evidence, exact named test refs,
+  and fixture/test binding. Manifest prose alone is reported as a depth gap.
+- The current `main` manifest can audit cleanly while still reporting open
+  depth gaps. That is intentional: the report separates boundary violations
+  from roadmap follow-up findings.
+- Boundary violations, such as external fixture refs or real-data flags, block
+  the depth audit.
+- The report records `calibration_approved=false`,
+  `fixture_files_mutated_by_audit=false`, `github_issue_created=false`,
+  `github_pr_created=false`, `github_write_performed=false`,
+  `sibling_repo_write_performed=false`, `promotion_authorized=false`,
+  `lake_write_performed=false`, `sqlite_write_performed=false`,
+  `external_writes_performed=false`, and `silent_learning_performed=false`.
+
 ## 12. Reviewed Learning Gate
 
 Status: implemented for the current synthetic candidate slice; owning-repo

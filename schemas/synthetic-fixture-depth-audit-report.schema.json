@@ -1,0 +1,345 @@
+{
+  "$defs": {
+    "SyntheticFixtureDepthDimension": {
+      "additionalProperties": false,
+      "properties": {
+        "dimension_id": {
+          "title": "Dimension Id",
+          "type": "string"
+        },
+        "family": {
+          "title": "Family",
+          "type": "string"
+        },
+        "danger_loop": {
+          "title": "Danger Loop",
+          "type": "string"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "covered",
+            "missing"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "matched_holdout_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Matched Holdout Ids",
+          "type": "array"
+        },
+        "matched_terms": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Matched Terms",
+          "type": "array"
+        },
+        "required_term_groups": {
+          "items": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "title": "Required Term Groups",
+          "type": "array"
+        },
+        "fixture_evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Fixture Evidence Refs",
+          "type": "array"
+        },
+        "test_evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Test Evidence Refs",
+          "type": "array"
+        },
+        "source_json_pointers": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Source Json Pointers",
+          "type": "array"
+        },
+        "fixture_test_binding_statuses": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Fixture Test Binding Statuses",
+          "type": "object"
+        },
+        "test_refs_verified": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Test Refs Verified",
+          "type": "array"
+        },
+        "prose_only_match_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Prose Only Match Count",
+          "type": "integer"
+        },
+        "why_it_matters": {
+          "title": "Why It Matters",
+          "type": "string"
+        },
+        "remediation_hint": {
+          "title": "Remediation Hint",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dimension_id",
+        "family",
+        "danger_loop",
+        "description",
+        "status",
+        "required_term_groups",
+        "why_it_matters",
+        "remediation_hint"
+      ],
+      "title": "SyntheticFixtureDepthDimension",
+      "type": "object"
+    },
+    "SyntheticFixtureDepthFamilySummary": {
+      "additionalProperties": false,
+      "properties": {
+        "family": {
+          "title": "Family",
+          "type": "string"
+        },
+        "holdout_count": {
+          "minimum": 0,
+          "title": "Holdout Count",
+          "type": "integer"
+        },
+        "covered_dimension_count": {
+          "minimum": 0,
+          "title": "Covered Dimension Count",
+          "type": "integer"
+        },
+        "missing_dimension_count": {
+          "minimum": 0,
+          "title": "Missing Dimension Count",
+          "type": "integer"
+        },
+        "missing_dimension_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Missing Dimension Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "family",
+        "holdout_count",
+        "covered_dimension_count",
+        "missing_dimension_count"
+      ],
+      "title": "SyntheticFixtureDepthFamilySummary",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "fixture_depth_audit_report_id": {
+      "title": "Fixture Depth Audit Report Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "synthetic_fixture_depth_ready_for_review",
+        "synthetic_fixture_depth_gaps_identified",
+        "blocked_by_depth_audit_boundary_violation"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "manifest_id": {
+      "title": "Manifest Id",
+      "type": "string"
+    },
+    "manifest_ref": {
+      "title": "Manifest Ref",
+      "type": "string"
+    },
+    "holdout_count": {
+      "minimum": 0,
+      "title": "Holdout Count",
+      "type": "integer"
+    },
+    "dimension_count": {
+      "minimum": 0,
+      "title": "Dimension Count",
+      "type": "integer"
+    },
+    "covered_dimension_count": {
+      "minimum": 0,
+      "title": "Covered Dimension Count",
+      "type": "integer"
+    },
+    "missing_dimension_count": {
+      "minimum": 0,
+      "title": "Missing Dimension Count",
+      "type": "integer"
+    },
+    "boundary_violation_count": {
+      "minimum": 0,
+      "title": "Boundary Violation Count",
+      "type": "integer"
+    },
+    "missing_dimension_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Missing Dimension Ids",
+      "type": "array"
+    },
+    "boundary_violations": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Boundary Violations",
+      "type": "array"
+    },
+    "family_summaries": {
+      "items": {
+        "$ref": "#/$defs/SyntheticFixtureDepthFamilySummary"
+      },
+      "title": "Family Summaries",
+      "type": "array"
+    },
+    "dimensions": {
+      "items": {
+        "$ref": "#/$defs/SyntheticFixtureDepthDimension"
+      },
+      "title": "Dimensions",
+      "type": "array"
+    },
+    "required_next_actions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Actions",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "calibration_approved": {
+      "const": false,
+      "default": false,
+      "title": "Calibration Approved",
+      "type": "boolean"
+    },
+    "fixture_files_mutated_by_audit": {
+      "const": false,
+      "default": false,
+      "title": "Fixture Files Mutated By Audit",
+      "type": "boolean"
+    },
+    "github_issue_created": {
+      "const": false,
+      "default": false,
+      "title": "Github Issue Created",
+      "type": "boolean"
+    },
+    "github_pr_created": {
+      "const": false,
+      "default": false,
+      "title": "Github Pr Created",
+      "type": "boolean"
+    },
+    "github_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Github Write Performed",
+      "type": "boolean"
+    },
+    "sibling_repo_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sibling Repo Write Performed",
+      "type": "boolean"
+    },
+    "promotion_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Promotion Authorized",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "fixture_depth_audit_report_id",
+    "status",
+    "manifest_id",
+    "manifest_ref",
+    "holdout_count",
+    "dimension_count",
+    "covered_dimension_count",
+    "missing_dimension_count",
+    "boundary_violation_count",
+    "family_summaries",
+    "dimensions",
+    "required_next_actions",
+    "generated_at"
+  ],
+  "title": "SyntheticFixtureDepthAuditReport",
+  "type": "object"
+}
