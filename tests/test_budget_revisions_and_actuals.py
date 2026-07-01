@@ -290,6 +290,54 @@ def test_budget_actual_variance_ledger_records_missing_actuals(tmp_path, repo_ro
     assert ledger.silent_learning_performed is False
 
 
+def test_missing_actuals_fixture_does_not_emit_variance_or_learning_pressure(
+    tmp_path,
+    repo_root,
+):
+    _, budget_dir = _run_budget(tmp_path, repo_root)
+
+    report, actuals_dir = run_budget_actual_comparison(
+        budget_path=budget_dir / "legal_budget_proposal.json",
+        actuals_path=repo_root / "examples/synthetic/actuals/medmal-missing-actuals.json",
+        out_dir=tmp_path / "missing-actuals",
+    )
+    persisted = BudgetActualComparisonReport.model_validate(
+        load_json(actuals_dir / "budget_actual_comparison_report.json")
+    )
+    candidates = load_jsonl(actuals_dir / "budget_actual_variance_candidates.jsonl")
+    ledger = BudgetActualVarianceLedgerReport.model_validate(
+        load_json(actuals_dir / "budget_actual_variance_ledger_report.json")
+    )
+    ledger_rows = load_jsonl(actuals_dir / "budget_actual_variance_ledger.jsonl")
+
+    assert persisted.budget_actual_comparison_report_id == report.budget_actual_comparison_report_id
+    assert persisted.status == "actuals_not_available"
+    assert persisted.total_actual is None
+    assert persisted.total_variance_amount is None
+    assert persisted.total_variance_percent is None
+    assert persisted.variance_driver_candidates == []
+    assert persisted.learning_disposition_candidates == []
+    assert all(row.status == "actuals_not_available" for row in persisted.phase_comparisons)
+    assert persisted.code_comparisons == []
+    assert candidates == []
+    assert ledger.status == "variance_ledger_no_actuals"
+    assert ledger.entry_count == len(persisted.phase_comparisons)
+    assert len(ledger_rows) == ledger.entry_count
+    assert ledger.missing_actuals_event_count == ledger.entry_count
+    assert ledger.variance_review_event_count == 0
+    assert ledger.actuals_without_budget_event_count == 0
+    assert ledger.event_kind_counts == {
+        "budget_actual_missing_actuals_recorded": ledger.entry_count
+    }
+    assert all(event.decision_status == "actuals_missing_pending_source" for event in ledger.events)
+    assert ledger.billing_connector_read_performed is False
+    assert ledger.billing_connector_write_performed is False
+    assert ledger.lake_write_performed is False
+    assert ledger.sqlite_write_performed is False
+    assert ledger.external_writes_performed is False
+    assert ledger.silent_learning_performed is False
+
+
 def test_budget_actuals_use_actual_resolution_scenario_when_available(tmp_path, repo_root):
     budget, _ = _run_budget(tmp_path, repo_root)
 
