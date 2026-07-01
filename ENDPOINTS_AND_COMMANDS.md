@@ -435,6 +435,25 @@ replacement rules, synthetic gold checks, red-team checks, and manual steps. It
 does not edit fixtures, create a GitHub PR, ingest public records, authorize
 adapters, write Lake/SQLite records, or apply learning.
 
+### Build public methodology owner handoff
+
+```bash
+python -m lawfirm_os_intake build-public-methodology-owner-handoff \
+  --methodology-report .lawfirm-os-intake/public-source-methodology/public_source_methodology_report.json \
+  --conversion-plan .lawfirm-os-intake/public-synthetic-fixture-conversion/public_synthetic_fixture_conversion_plan.json \
+  --conversion-review-packet .lawfirm-os-intake/public-synthetic-fixture-conversion-review/public_synthetic_fixture_conversion_review_packet.json \
+  --out-dir .lawfirm-os-intake/public-methodology-owner-handoff
+```
+
+This writes `public_methodology_owner_handoff_report.json`,
+`public_methodology_owner_handoff_report.md`,
+`public_methodology_owner_handoff_packets.jsonl`, and one JSON/Markdown packet
+per owner under `public_methodology_owner_packets/`. It routes the
+public-methodology chain to Intake, Legal Knowledge Runtime, Semantic Substrate,
+Orchestrator, and Exception Lake for manual review. It does not create issues,
+open PRs, write sibling repos, promote canon, create fixtures, ingest public
+records, authorize adapters, write Lake/SQLite records, or apply learning.
+
 ### Build learning owner handoffs
 
 ```bash

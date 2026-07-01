@@ -854,6 +854,11 @@ without letting public records enter the runtime.
   outcome report plus the matching conversion plan, then writes
   `public_synthetic_fixture_pr_package_report.json`, Markdown notes, and package
   item JSONL.
+- `build-public-methodology-owner-handoff` consumes the methodology report,
+  conversion plan, and conversion review packet, then writes
+  `public_methodology_owner_handoff_report.json`, Markdown notes, owner packet
+  JSONL, and per-owner packets for Intake, Legal Knowledge Runtime, Semantic
+  Substrate, Orchestrator, and Exception Lake.
 - It checks that CourtListener/RECAP, FJC IDB, and the Enron email corpus are
   present for Phase 2 structure research, while all sources remain planning-only
   and direct ingestion remains disabled.
@@ -874,6 +879,9 @@ without letting public records enter the runtime.
   inputs, forbidden inputs, identity replacement rules, field transformation
   rules, required synthetic gold checks, required red-team checks, and manual
   steps for the separate PR author.
+- The owner handoff checks source-to-spec coverage, spec-to-review coverage,
+  lineage IDs/refs, required red-team scopes, no-write/no-adapter flags, and
+  manual owner review gates before any owning repo can consider implementation.
 - Passing means `ready_for_human_public_source_methodology_review`, not
   adapter approval or runtime eligibility.
 - The command records `public_records_ingested=false`,

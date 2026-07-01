@@ -1662,6 +1662,237 @@ class PublicSyntheticFixturePRPackageReport(StrictModel):
         return self
 
 
+PublicMethodologyOwnerTargetRepo = Literal[
+    "LawFirm-os-intake",
+    "LawFirm-os-legal-knowledge-runtime",
+    "LawFirm-os-semantic-substrate",
+    "LawFirm-os-orchestrator",
+    "LawFirm-os-exceptions-lake-runtime",
+]
+
+PublicMethodologyOwnerHandoffFocus = Literal[
+    "local_intake_candidate_stewardship",
+    "legal_knowledge_public_adapter_boundary",
+    "public_data_governance_policy",
+    "runtime_public_source_gate",
+    "append_only_public_methodology_audit",
+]
+
+
+class PublicMethodologyOwnerHandoffCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "blocked", "failed"]
+    message: str
+    artifact_refs: list[str] = Field(default_factory=list)
+    blocking_refs: list[str] = Field(default_factory=list)
+
+
+class PublicMethodologyOwnerHandoffPacket(StrictModel):
+    schema_version: str = "0.1"
+    handoff_packet_id: str
+    target_repo: PublicMethodologyOwnerTargetRepo
+    handoff_focus: PublicMethodologyOwnerHandoffFocus
+    status: Literal["ready_for_owner_review", "blocked_by_public_methodology_chain"]
+    source_public_methodology_report_id: str
+    source_public_methodology_report_ref: str
+    source_public_methodology_status: Literal[
+        "ready_for_human_public_source_methodology_review",
+        "blocked_public_source_methodology",
+    ]
+    source_conversion_plan_id: str
+    source_conversion_plan_ref: str
+    source_conversion_plan_status: Literal[
+        "ready_for_human_conversion_review",
+        "blocked_public_methodology_not_ready",
+    ]
+    source_conversion_review_packet_id: str
+    source_conversion_review_packet_ref: str
+    source_conversion_review_packet_status: Literal[
+        "ready_for_human_conversion_review",
+        "blocked_by_conversion_plan",
+        "no_specs_to_review",
+    ]
+    source_count: int = Field(ge=0)
+    spec_count: int = Field(ge=0)
+    recommendation_count: int = Field(ge=0)
+    red_team_note_count: int = Field(ge=0)
+    source_ids: list[str]
+    source_artifact_refs: list[str] = Field(default_factory=list)
+    candidate_contract_refs: list[str] = Field(default_factory=list)
+    required_owner_actions: list[str]
+    acceptance_checks: list[str]
+    red_team_notes: list[str]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    planning_only: Literal[True] = True
+    metadata_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    owning_repo_review_required: Literal[True] = True
+    blocked_until_owner_review: Literal[True] = True
+    direct_runtime_ingestion_allowed: Literal[False] = False
+    direct_promotion_performed: Literal[False] = False
+    promotion_authorized: Literal[False] = False
+    sibling_repo_write_performed: Literal[False] = False
+    github_issue_created: Literal[False] = False
+    github_pr_created: Literal[False] = False
+    github_write_performed: Literal[False] = False
+    public_records_ingested: Literal[False] = False
+    raw_public_payload_committed: Literal[False] = False
+    real_party_records_committed: Literal[False] = False
+    real_matter_records_committed: Literal[False] = False
+    synthetic_fixtures_created: Literal[False] = False
+    fixture_files_mutated: Literal[False] = False
+    fixture_generation_authorized: Literal[False] = False
+    fixture_pr_created: Literal[False] = False
+    connector_implemented: Literal[False] = False
+    legal_knowledge_adapter_authorized: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def public_methodology_owner_packet_is_reviewable(
+        self,
+    ) -> "PublicMethodologyOwnerHandoffPacket":
+        if self.status == "ready_for_owner_review" and not self.source_ids:
+            raise ValueError("public methodology owner packet requires source ids")
+        if not self.source_artifact_refs:
+            raise ValueError("public methodology owner packet requires source artifact refs")
+        if not self.candidate_contract_refs:
+            raise ValueError("public methodology owner packet requires candidate contract refs")
+        if not self.required_owner_actions:
+            raise ValueError("public methodology owner packet requires owner actions")
+        if not self.acceptance_checks:
+            raise ValueError("public methodology owner packet requires acceptance checks")
+        if not self.red_team_notes:
+            raise ValueError("public methodology owner packet requires red-team notes")
+        required = {
+            "human_public_methodology_owner_review",
+            "manual_owner_issue_creation_if_desired",
+            "owning_repo_triage",
+            "owner_repo_implementation_pr_if_accepted",
+            "source_license_privacy_retention_review",
+            "legal_knowledge_runtime_owner_review_before_adapter",
+            "no_intake_public_ingestion_or_adapter_authorization",
+        }
+        if not required.issubset(set(self.required_next_gates)):
+            raise ValueError("public methodology owner packet is missing required gates")
+        return self
+
+
+class PublicMethodologyOwnerHandoffReport(StrictModel):
+    schema_version: str = "0.1"
+    owner_handoff_report_id: str
+    status: Literal[
+        "public_methodology_owner_handoff_packets_ready",
+        "blocked_by_public_methodology_chain",
+    ]
+    source_public_methodology_report_id: str
+    source_public_methodology_report_ref: str
+    source_public_methodology_status: Literal[
+        "ready_for_human_public_source_methodology_review",
+        "blocked_public_source_methodology",
+    ]
+    source_conversion_plan_id: str
+    source_conversion_plan_ref: str
+    source_conversion_plan_status: Literal[
+        "ready_for_human_conversion_review",
+        "blocked_public_methodology_not_ready",
+    ]
+    source_conversion_review_packet_id: str
+    source_conversion_review_packet_ref: str
+    source_conversion_review_packet_status: Literal[
+        "ready_for_human_conversion_review",
+        "blocked_by_conversion_plan",
+        "no_specs_to_review",
+    ]
+    target_repo_count: int = Field(ge=0)
+    packet_count: int = Field(ge=0)
+    ready_packet_count: int = Field(ge=0)
+    blocked_packet_count: int = Field(ge=0)
+    target_repos: list[PublicMethodologyOwnerTargetRepo]
+    packets: list[PublicMethodologyOwnerHandoffPacket]
+    packet_output_refs: list[str] = Field(default_factory=list)
+    checks: list[PublicMethodologyOwnerHandoffCheck]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    planning_only: Literal[True] = True
+    metadata_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    owning_repo_review_required: Literal[True] = True
+    blocked_until_owner_review: Literal[True] = True
+    direct_runtime_ingestion_allowed: Literal[False] = False
+    direct_promotion_performed: Literal[False] = False
+    promotion_authorized: Literal[False] = False
+    sibling_repo_write_performed: Literal[False] = False
+    github_issue_created: Literal[False] = False
+    github_pr_created: Literal[False] = False
+    github_write_performed: Literal[False] = False
+    public_records_ingested: Literal[False] = False
+    raw_public_payload_committed: Literal[False] = False
+    real_party_records_committed: Literal[False] = False
+    real_matter_records_committed: Literal[False] = False
+    synthetic_fixtures_created: Literal[False] = False
+    fixture_files_mutated: Literal[False] = False
+    fixture_generation_authorized: Literal[False] = False
+    fixture_pr_created: Literal[False] = False
+    connector_implemented: Literal[False] = False
+    legal_knowledge_adapter_authorized: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def public_methodology_owner_report_counts_match(
+        self,
+    ) -> "PublicMethodologyOwnerHandoffReport":
+        blocked_checks = [check for check in self.checks if check.status != "passed"]
+        if self.packet_count != len(self.packets):
+            raise ValueError("public methodology owner packet count does not match")
+        if self.packet_count != len(self.packet_output_refs):
+            raise ValueError("public methodology owner packet output ref count does not match")
+        if self.target_repo_count != len(self.target_repos):
+            raise ValueError("public methodology owner target repo count does not match")
+        packet_targets = [packet.target_repo for packet in self.packets]
+        if set(packet_targets) != set(self.target_repos) or len(packet_targets) != len(
+            self.target_repos
+        ):
+            raise ValueError("public methodology owner target repos do not match packets")
+        ready_count = sum(1 for packet in self.packets if packet.status == "ready_for_owner_review")
+        blocked_count = sum(
+            1 for packet in self.packets if packet.status == "blocked_by_public_methodology_chain"
+        )
+        if self.ready_packet_count != ready_count:
+            raise ValueError("public methodology owner ready count does not match")
+        if self.blocked_packet_count != blocked_count:
+            raise ValueError("public methodology owner blocked count does not match")
+        if self.status == "public_methodology_owner_handoff_packets_ready" and (
+            blocked_checks or blocked_count
+        ):
+            raise ValueError("ready public methodology owner handoff cannot include blockers")
+        if self.status == "blocked_by_public_methodology_chain" and not (
+            blocked_checks or blocked_count
+        ):
+            raise ValueError("blocked public methodology owner handoff requires blockers")
+        required = {
+            "human_public_methodology_owner_review",
+            "manual_owner_issue_creation_if_desired",
+            "owning_repo_triage",
+            "owner_repo_implementation_pr_if_accepted",
+            "source_license_privacy_retention_review",
+            "legal_knowledge_runtime_owner_review_before_adapter",
+            "no_intake_public_ingestion_or_adapter_authorization",
+        }
+        if not required.issubset(set(self.required_next_gates)):
+            raise ValueError("public methodology owner report is missing required gates")
+        return self
+
+
 class ContractStateDependency(StrictModel):
     repo: str
     remote: str | None = None

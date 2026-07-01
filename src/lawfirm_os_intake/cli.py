@@ -67,6 +67,7 @@ from .orchestrator_owner_review_request import run_orchestrator_owner_review_req
 from .pr_readiness_decision import run_pr_readiness_decision_record
 from .pr_review_checklist import run_pr_review_checklist
 from .public_source_methodology import run_public_source_methodology_audit
+from .public_methodology_owner_handoff import run_public_methodology_owner_handoff
 from .public_synthetic_fixture_pr_package import run_public_synthetic_fixture_pr_package
 from .public_synthetic_fixture_conversion import (
     run_public_synthetic_fixture_conversion_plan,
@@ -439,6 +440,27 @@ def _parser() -> argparse.ArgumentParser:
         help="Path to public_synthetic_fixture_conversion_plan.json.",
     )
     public_synthetic_fixture_pr_package.add_argument("--out-dir", required=True)
+
+    public_methodology_owner_handoff = sub.add_parser(
+        "build-public-methodology-owner-handoff",
+        help="Build local owner-review packets for public methodology governance handoff.",
+    )
+    public_methodology_owner_handoff.add_argument(
+        "--methodology-report",
+        required=True,
+        help="Path to public_source_methodology_report.json.",
+    )
+    public_methodology_owner_handoff.add_argument(
+        "--conversion-plan",
+        required=True,
+        help="Path to public_synthetic_fixture_conversion_plan.json.",
+    )
+    public_methodology_owner_handoff.add_argument(
+        "--conversion-review-packet",
+        required=True,
+        help="Path to public_synthetic_fixture_conversion_review_packet.json.",
+    )
+    public_methodology_owner_handoff.add_argument("--out-dir", required=True)
 
     carrier_rejections = sub.add_parser(
         "capture-carrier-rejections",
@@ -1825,6 +1847,63 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             if report.status == "blocked_by_public_fixture_review_outcome":
+                return 2
+            return 0
+
+        if args.command == "build-public-methodology-owner-handoff":
+            report, run_dir = run_public_methodology_owner_handoff(
+                methodology_report_path=args.methodology_report,
+                conversion_plan_path=args.conversion_plan,
+                conversion_review_packet_path=args.conversion_review_packet,
+                out_dir=args.out_dir,
+            )
+            blocking_checks = [
+                check.check_id for check in report.checks if check.status != "passed"
+            ]
+            _print(
+                {
+                    "status": report.status,
+                    "owner_handoff_report_id": report.owner_handoff_report_id,
+                    "source_public_methodology_status": (report.source_public_methodology_status),
+                    "source_conversion_plan_status": report.source_conversion_plan_status,
+                    "source_conversion_review_packet_status": (
+                        report.source_conversion_review_packet_status
+                    ),
+                    "target_repo_count": report.target_repo_count,
+                    "target_repos": report.target_repos,
+                    "packet_count": report.packet_count,
+                    "ready_packet_count": report.ready_packet_count,
+                    "blocked_packet_count": report.blocked_packet_count,
+                    "blocking_checks": blocking_checks,
+                    "human_review_required": report.human_review_required,
+                    "owning_repo_review_required": report.owning_repo_review_required,
+                    "direct_runtime_ingestion_allowed": (report.direct_runtime_ingestion_allowed),
+                    "direct_promotion_performed": report.direct_promotion_performed,
+                    "promotion_authorized": report.promotion_authorized,
+                    "sibling_repo_write_performed": report.sibling_repo_write_performed,
+                    "github_issue_created": report.github_issue_created,
+                    "github_pr_created": report.github_pr_created,
+                    "github_write_performed": report.github_write_performed,
+                    "public_records_ingested": report.public_records_ingested,
+                    "raw_public_payload_committed": report.raw_public_payload_committed,
+                    "real_party_records_committed": report.real_party_records_committed,
+                    "real_matter_records_committed": report.real_matter_records_committed,
+                    "synthetic_fixtures_created": report.synthetic_fixtures_created,
+                    "fixture_files_mutated": report.fixture_files_mutated,
+                    "fixture_generation_authorized": report.fixture_generation_authorized,
+                    "fixture_pr_created": report.fixture_pr_created,
+                    "connector_implemented": report.connector_implemented,
+                    "legal_knowledge_adapter_authorized": (
+                        report.legal_knowledge_adapter_authorized
+                    ),
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            if report.status == "blocked_by_public_methodology_chain":
                 return 2
             return 0
 

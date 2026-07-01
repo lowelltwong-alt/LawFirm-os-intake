@@ -148,6 +148,9 @@ from lawfirm_os_intake.models import (  # noqa: E402
     PublicSourceMethodologyCheck,
     PublicSourceMethodologyReport,
     PublicSourceMethodologySource,
+    PublicMethodologyOwnerHandoffCheck,
+    PublicMethodologyOwnerHandoffPacket,
+    PublicMethodologyOwnerHandoffReport,
     PublicSyntheticFixtureConversionCheck,
     PublicSyntheticFixtureConversionPlan,
     PublicSyntheticFixtureConversionReviewDecisionTemplate,
@@ -305,6 +308,9 @@ MODELS = {
     "public-source-methodology-source.schema.json": PublicSourceMethodologySource,
     "public-source-methodology-check.schema.json": PublicSourceMethodologyCheck,
     "public-source-methodology-report.schema.json": PublicSourceMethodologyReport,
+    "public-methodology-owner-handoff-check.schema.json": (PublicMethodologyOwnerHandoffCheck),
+    "public-methodology-owner-handoff-packet.schema.json": (PublicMethodologyOwnerHandoffPacket),
+    "public-methodology-owner-handoff-report.schema.json": (PublicMethodologyOwnerHandoffReport),
     "public-synthetic-fixture-conversion-spec.schema.json": (PublicSyntheticFixtureConversionSpec),
     "public-synthetic-fixture-conversion-check.schema.json": (
         PublicSyntheticFixtureConversionCheck
