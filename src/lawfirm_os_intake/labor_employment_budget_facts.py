@@ -17,6 +17,8 @@ from .models import (
     LaborEmploymentBudgetFactGap,
     LaborEmploymentBudgetFactSource,
     LaborEmploymentBudgetFactState,
+    LaborEmploymentRelationshipCoverage,
+    LaborEmploymentRelationshipTopologySummary,
     PersonTimelineEventLabel,
 )
 from .util import load_json, new_id, now_iso, write_json
@@ -25,6 +27,35 @@ from .util import load_json, new_id, now_iso, write_json
 LABOR_EMPLOYMENT_BUDGET_FACT_REPORT_FILENAME = "labor_employment_budget_fact_audit_report.json"
 LABOR_EMPLOYMENT_BUDGET_FACT_NOTES_FILENAME = "labor_employment_budget_fact_audit_report.md"
 DEFAULT_FACT_POLICY_REF = "config/labor-employment-budget-fact-needs.yaml"
+
+RELATIONSHIP_FACT_BUCKETS = {
+    "employee_claimant_identity": "employee_or_claimant_person",
+    "employer_or_defendant_identity": "employer_or_defendant_entity",
+    "prospective_client_payer_carrier_posture": "prospective_client_payer_or_carrier_posture",
+    "individual_supervisor_or_manager_defendants": "individual_actor_or_defendant",
+    "joint_employer_or_affiliate_structure": "joint_employer_affiliate_or_staffing_structure",
+}
+PERSON_RELATIONSHIP_ROLES = {
+    "employee",
+    "claimant",
+    "supervisor",
+    "manager",
+    "hr_representative",
+    "individual_defendant",
+}
+ORGANIZATION_RELATIONSHIP_ROLES = {
+    "employer",
+    "parent_entity",
+    "subsidiary",
+    "affiliate",
+    "joint_employer",
+    "staffing_agency",
+    "peo",
+    "franchise_entity",
+    "insurer",
+    "payer",
+    "carrier",
+}
 
 
 DatasetFactLabel = (
@@ -255,10 +286,112 @@ def _check(
     )
 
 
+def _relationship_roles(
+    sources: list[LaborEmploymentBudgetFactSource],
+) -> tuple[list[str], list[str]]:
+    observed = sorted(
+        {
+            source.observed_role
+            for source in sources
+            if source.label_family == "conflict_seed_label" and source.observed_role
+        }
+    )
+    inferred = sorted(
+        {
+            source.inferred_role
+            for source in sources
+            if source.label_family == "conflict_seed_label" and source.inferred_role
+        }
+    )
+    return observed, inferred
+
+
+def _relationship_candidate_counts(
+    coverage: list[LaborEmploymentRelationshipCoverage],
+) -> tuple[int, int]:
+    person_ids: set[str] = set()
+    organization_ids: set[str] = set()
+    for item in coverage:
+        roles = set(item.observed_roles)
+        if roles & PERSON_RELATIONSHIP_ROLES:
+            person_ids.update(item.source_label_ids)
+        if roles & ORGANIZATION_RELATIONSHIP_ROLES:
+            organization_ids.update(item.source_label_ids)
+    return len(person_ids), len(organization_ids)
+
+
+def _build_relationship_topology(
+    findings: list[LaborEmploymentBudgetFactFinding],
+    gaps: list[LaborEmploymentBudgetFactGap],
+) -> LaborEmploymentRelationshipTopologySummary:
+    gap_by_fact = {gap.fact_id: gap for gap in gaps}
+    coverage: list[LaborEmploymentRelationshipCoverage] = []
+    for finding in findings:
+        if finding.fact_category != "entity_relationship":
+            continue
+        bucket = RELATIONSHIP_FACT_BUCKETS.get(finding.fact_id)
+        if bucket is None:
+            continue
+        observed_roles, inferred_roles = _relationship_roles(finding.sources)
+        gap = gap_by_fact.get(finding.fact_id)
+        coverage.append(
+            LaborEmploymentRelationshipCoverage(
+                fact_id=finding.fact_id,
+                relationship_bucket=bucket,  # type: ignore[arg-type]
+                current_state=finding.current_state,
+                required_level=finding.required_level,
+                question=finding.question,
+                observed_roles=observed_roles,
+                inferred_roles=inferred_roles,
+                source_label_ids=sorted({source.label_id for source in finding.sources}),
+                source_refs=[source.source_ref for source in finding.sources],
+                budget_effects=finding.budget_effects,
+                blocks_precise_budget=gap.blocks_precise_budget if gap else False,
+                human_confirmation_required=finding.human_confirmation_required,
+            )
+        )
+    person_count, organization_count = _relationship_candidate_counts(coverage)
+    critical_gap_count = sum(
+        1
+        for item in coverage
+        if item.required_level == "critical"
+        and item.current_state != "source_bound_observed_candidate"
+    )
+    missing_or_review_count = sum(
+        1 for item in coverage if item.current_state != "source_bound_observed_candidate"
+    )
+    if critical_gap_count:
+        treatment = "block_amount_budget"
+    elif missing_or_review_count:
+        treatment = "hours_only_or_broad_range"
+    else:
+        treatment = "candidate_range_budget_after_review"
+    return LaborEmploymentRelationshipTopologySummary(
+        coverage=coverage,
+        source_bound_relationship_count=sum(1 for item in coverage if item.source_refs),
+        missing_or_review_relationship_count=missing_or_review_count,
+        critical_relationship_gap_count=critical_gap_count,
+        person_candidate_count=person_count,
+        organization_candidate_count=organization_count,
+        unresolved_relationship_fact_ids=[
+            item.fact_id
+            for item in coverage
+            if item.current_state != "source_bound_observed_candidate"
+        ],
+        required_human_relationship_questions=[
+            item.question
+            for item in coverage
+            if item.current_state != "source_bound_observed_candidate"
+        ],
+        budget_treatment=treatment,  # type: ignore[arg-type]
+    )
+
+
 def _build_checks(
     manifest: CourtListenerDatasetManifest,
     policy: dict[str, Any],
     findings: list[LaborEmploymentBudgetFactFinding],
+    relationship_topology: LaborEmploymentRelationshipTopologySummary,
 ) -> list[LaborEmploymentBudgetFactAuditCheck]:
     side_effect_flags = [
         "public_records_ingested",
@@ -283,6 +416,17 @@ def _build_checks(
         if fact.get("required_level") == "critical"
     }
     represented = {"employee_claimant_identity", "employer_or_defendant_identity"}
+    relationship_fact_ids = {
+        finding.fact_id for finding in findings if finding.fact_category == "entity_relationship"
+    }
+    topology_fact_ids = {item.fact_id for item in relationship_topology.coverage}
+    critical_relationship_gap_ids = {
+        finding.fact_id
+        for finding in findings
+        if finding.fact_category == "entity_relationship"
+        and finding.required_level == "critical"
+        and finding.current_state != "source_bound_observed_candidate"
+    }
     return [
         _check(
             "practice_area_is_labor_employment",
@@ -307,6 +451,37 @@ def _build_checks(
             not non_source_bound,
             "Every non-unknown fact finding keeps source label refs with offsets and hashes.",
             {"non_source_bound_fact_ids": non_source_bound},
+        ),
+        _check(
+            "relationship_topology_includes_entity_relationship_findings",
+            relationship_fact_ids == topology_fact_ids,
+            "Relationship topology covers every entity-relationship fact need in the local policy.",
+            {
+                "missing_from_topology": sorted(relationship_fact_ids - topology_fact_ids),
+                "extra_topology_fact_ids": sorted(topology_fact_ids - relationship_fact_ids),
+            },
+        ),
+        _check(
+            "relationship_topology_blocks_unresolved_critical_relationships",
+            relationship_topology.critical_relationship_gap_count
+            == len(critical_relationship_gap_ids)
+            and (
+                relationship_topology.budget_treatment == "block_amount_budget"
+                if critical_relationship_gap_ids
+                else True
+            ),
+            "Unresolved critical relationship facts remain visible as amount-budget blockers.",
+            {
+                "critical_relationship_gap_ids": sorted(critical_relationship_gap_ids),
+                "budget_treatment": relationship_topology.budget_treatment,
+            },
+        ),
+        _check(
+            "relationship_topology_preserves_candidate_boundary",
+            relationship_topology.canonical_role_promotion_authorized is False
+            and relationship_topology.relationship_classification_authoritative is False,
+            "Relationship topology is candidate-only and does not promote canonical roles.",
+            {},
         ),
     ]
 
@@ -334,7 +509,8 @@ def build_labor_employment_budget_fact_audit_report(
         for finding, fact_need in zip(findings, policy["fact_needs"], strict=True)
         if (gap := _gap_for_finding(finding, fact_need)) is not None
     ]
-    checks = _build_checks(manifest, policy, findings)
+    relationship_topology = _build_relationship_topology(findings, gaps)
+    checks = _build_checks(manifest, policy, findings, relationship_topology)
     critical_gap_count = sum(1 for gap in gaps if gap.severity == "critical")
     if critical_gap_count:
         budget_readiness_state = "blocked_missing_critical_facts"
@@ -372,6 +548,7 @@ def build_labor_employment_budget_fact_audit_report(
         ),
         gap_count=len(gaps),
         critical_gap_count=critical_gap_count,
+        relationship_topology=relationship_topology,
         findings=findings,
         gaps=gaps,
         required_human_questions=[gap.recommended_question for gap in gaps],
@@ -400,9 +577,38 @@ def render_labor_employment_budget_fact_audit_report(
         f"- Unknown findings: {report.unknown_finding_count}",
         f"- Critical gaps: {report.critical_gap_count}",
         "",
-        "## Human Questions",
+        "## Relationship Topology",
+        "",
+        f"- Source-bound relationship facts: {report.relationship_topology.source_bound_relationship_count}",
+        f"- Missing/review relationship facts: {report.relationship_topology.missing_or_review_relationship_count}",
+        f"- Critical relationship gaps: {report.relationship_topology.critical_relationship_gap_count}",
+        f"- Person candidates: {report.relationship_topology.person_candidate_count}",
+        f"- Organization candidates: {report.relationship_topology.organization_candidate_count}",
+        f"- Budget treatment: {report.relationship_topology.budget_treatment}",
         "",
     ]
+    for item in report.relationship_topology.coverage:
+        lines.append(
+            f"- `{item.fact_id}` ({item.relationship_bucket}): {item.current_state}; "
+            f"roles={', '.join(item.observed_roles) or 'none'}; "
+            f"blocks_precise_budget={item.blocks_precise_budget}"
+        )
+    lines.extend(
+        [
+            "",
+            "## Human Relationship Questions",
+            "",
+        ]
+    )
+    for question in report.relationship_topology.required_human_relationship_questions:
+        lines.append(f"- {question}")
+    lines.extend(
+        [
+            "",
+            "## Human Questions",
+            "",
+        ]
+    )
     for question in report.required_human_questions:
         lines.append(f"- {question}")
     lines.extend(["", "## Findings", ""])

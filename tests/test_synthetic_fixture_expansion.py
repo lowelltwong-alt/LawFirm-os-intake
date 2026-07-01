@@ -134,10 +134,10 @@ def test_synthetic_fixture_expansion_manifest_is_ready_for_review(tmp_path, repo
     assert persisted.fixture_expansion_report_id == report.fixture_expansion_report_id
     assert persisted.status == "synthetic_fixture_expansion_ready_for_review"
     assert persisted.required_family_count == 4
-    assert persisted.holdout_count == 5
+    assert persisted.holdout_count == 6
     assert persisted.family_counts == {
         "ambiguous_roles": 2,
-        "budget_driver_edges": 1,
+        "budget_driver_edges": 2,
         "carrier_rejection_variants": 1,
         "missing_actuals": 1,
     }
@@ -153,6 +153,7 @@ def test_synthetic_fixture_expansion_manifest_is_ready_for_review(tmp_path, repo
 
     notes = (run_dir / "synthetic_fixture_expansion_report.md").read_text(encoding="utf-8")
     assert "ambiguous_roles: 2" in notes
+    assert "budget_driver_edges: 2" in notes
     assert "missing_actuals: 1" in notes
     assert "does not approve calibration" in notes
 
@@ -220,7 +221,7 @@ def test_synthetic_fixture_expansion_cli(tmp_path, repo_root, capsys):
     assert exit_code == 0
     assert '"status": "synthetic_fixture_expansion_ready_for_review"' in captured.out
     assert '"required_family_count": 4' in captured.out
-    assert '"holdout_count": 5' in captured.out
+    assert '"holdout_count": 6' in captured.out
     assert '"calibration_approved": false' in captured.out
     assert '"external_writes_performed": false' in captured.out
     assert (

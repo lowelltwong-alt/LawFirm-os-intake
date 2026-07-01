@@ -615,6 +615,11 @@ refs, test refs, expected signals, and red-team notes.
 - New local fixtures include a missing-actuals `BudgetActualsSource` and a
   budget-driver edge-case fixture for low-intensity, high-intensity, and unknown
   driver states.
+- The budget-driver edge family also includes a labor/employment ready-critical
+  facts holdout that proves critical entity, relationship, discovery, deposition,
+  damages, and carrier/rate facts can be source-bound while important
+  expert/vendor and policy-document facts keep budget posture at
+  `range_only_pending_human_review`.
 - The audit checks fixture/test refs stay under the repo root, scoped JSON
   fixtures remain synthetic-only, and fixtures are not calibration-approved.
 - The report records `calibration_approved=false`,
