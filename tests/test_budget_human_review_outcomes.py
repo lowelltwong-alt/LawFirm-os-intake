@@ -176,6 +176,40 @@ def _outcome_record_from_packet(packet):
     )
 
 
+def _template_for_area(packet, review_area):
+    matches = [
+        template for template in packet.decision_templates if template.review_area == review_area
+    ]
+    assert len(matches) == 1
+    return matches[0]
+
+
+def _carrier_appeal_outcome_record_from_fixture(packet, packet_path, repo_root):
+    raw = load_json(
+        repo_root
+        / "examples/synthetic/budget-human-review/medmal-carrier-appeal-human-outcome.json"
+    )
+    raw["budget_human_review_packet_id"] = packet.budget_human_review_packet_id
+    raw["source_budget_human_review_packet_ref"] = str(packet_path)
+    for decision in raw["decisions"]:
+        template = _template_for_area(packet, decision["review_area"])
+        source_recommendation_ids = template.source_recommendation_ids
+        assert len(source_recommendation_ids) == 1
+        source_recommendation_id = source_recommendation_ids[0]
+        decision["template_id"] = template.template_id
+        decision["source_recommendation_ids"] = source_recommendation_ids
+        decision["evidence_refs"] = [
+            packet.budget_human_review_packet_id,
+            template.template_id,
+            source_recommendation_id,
+        ]
+        if decision.get("financial_amount") == "__CARRIER_WRITE_DOWN_AMOUNT__":
+            decision["financial_amount"] = abs(
+                packet.financial_summary.carrier_write_down_amount or 1.0
+            )
+    return BudgetHumanReviewOutcomeRecord.model_validate(raw)
+
+
 def test_budget_human_review_outcome_records_append_only_decisions(tmp_path, repo_root):
     packet, packet_path = _generate_human_review_packet(tmp_path, repo_root)
     record = _outcome_record_from_packet(packet)
@@ -219,6 +253,58 @@ def test_budget_human_review_outcome_records_append_only_decisions(tmp_path, rep
     assert report.carrier_guideline_mutation_performed is False
     assert report.silent_learning_performed is False
     assert "does not submit a budget or appeal" in notes
+
+
+def test_budget_human_review_outcome_accepts_carrier_appeal_fixture(
+    tmp_path,
+    repo_root,
+):
+    packet, packet_path = _generate_human_review_packet(tmp_path, repo_root)
+    record = _carrier_appeal_outcome_record_from_fixture(packet, packet_path, repo_root)
+    record_path = write_json(
+        tmp_path / "carrier_appeal_human_outcome.json",
+        record.model_dump(mode="json"),
+    )
+
+    report, run_dir = run_budget_human_review_outcome_record(
+        budget_human_review_packet_path=packet_path,
+        outcome_path=record_path,
+        out_dir=tmp_path / "carrier-appeal-human-outcome",
+    )
+    history = load_jsonl(run_dir / "budget_human_review_outcome_history.jsonl")
+    persisted_record = BudgetHumanReviewOutcomeRecord.model_validate(
+        load_json(run_dir / "budget_human_review_outcome_record.json")
+    )
+
+    assert report.status == "budget_human_review_outcome_recorded"
+    assert report.overall_outcome == "appeal"
+    assert report.decision_count == 3
+    assert report.appeal_decision_count == 1
+    assert report.write_off_decision_count == 1
+    assert report.correction_decision_count == 0
+    assert report.route_to_owner_decision_count == 0
+    assert report.no_learning_change_decision_count == 1
+    assert "carrier_rejection_appeal_followup_candidate" in (report.candidate_lake_event_labels)
+    assert "carrier_financial_outcome_candidate" in report.candidate_lake_event_labels
+    assert "budget_learning_no_change_candidate" in report.candidate_lake_event_labels
+    assert any("do not submit from intake" in followup for followup in report.required_followups)
+    assert len(history) == 1
+    assert history[0]["budget_human_review_outcome_record_id"] == (
+        "budget-human-review-outcome.synthetic-medmal-carrier-appeal.v0_1"
+    )
+    assert persisted_record.append_only is True
+    assert persisted_record.appeal_submission_performed is False
+    assert persisted_record.budget_submission_performed is False
+    assert persisted_record.lake_write_performed is False
+    assert persisted_record.sqlite_write_performed is False
+    assert persisted_record.carrier_guideline_mutation_performed is False
+    assert persisted_record.silent_learning_performed is False
+    assert report.appeal_submission_performed is False
+    assert report.budget_submission_performed is False
+    assert report.lake_write_performed is False
+    assert report.sqlite_write_performed is False
+    assert report.carrier_guideline_mutation_performed is False
+    assert report.silent_learning_performed is False
 
 
 def test_budget_human_review_outcome_blocks_unknown_template(tmp_path, repo_root):
