@@ -11,6 +11,10 @@ build/
 .coverage
 htmlcov/
 .lawfirm-os-intake/
+.lawfirm-os-intake/public-data-cache/
+apps/legal-intake-budget/dist/
+apps/legal-intake-budget/node_modules/
+apps/legal-intake-budget/tsconfig.tsbuildinfo
 
 # Never commit real firm, client, matter, carrier, rate, guideline, or credential data.
 context/firm-private/

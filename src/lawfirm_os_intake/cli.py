@@ -67,6 +67,7 @@ from .models import BudgetProposal, HumanConfirmation
 from .orchestrator_owner_review_request import run_orchestrator_owner_review_request
 from .pr_readiness_decision import run_pr_readiness_decision_record
 from .pr_review_checklist import run_pr_review_checklist
+from .public_data_cache import run_public_data_cache_audit
 from .public_source_methodology import run_public_source_methodology_audit
 from .public_synthetic_fixture_pr_package import run_public_synthetic_fixture_pr_package
 from .public_synthetic_fixture_conversion import (
@@ -332,6 +333,22 @@ def _parser() -> argparse.ArgumentParser:
     )
     public_source_methodology.add_argument("--out-dir", required=True)
     public_source_methodology.add_argument(
+        "--repo-root",
+        default=".",
+        help="Repository root to inspect; defaults to the current working directory.",
+    )
+
+    public_data_cache = sub.add_parser(
+        "audit-public-data-cache",
+        help="Audit a local ignored public-data cache manifest before methodology review.",
+    )
+    public_data_cache.add_argument("--cache-root", required=True)
+    public_data_cache.add_argument("--out-dir", required=True)
+    public_data_cache.add_argument(
+        "--manifest",
+        help="Optional path to public_data_cache_manifest.json; defaults under --cache-root.",
+    )
+    public_data_cache.add_argument(
         "--repo-root",
         default=".",
         help="Repository root to inspect; defaults to the current working directory.",
@@ -1597,6 +1614,43 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             if report.status == "blocked_public_source_methodology":
+                return 2
+            return 0
+
+        if args.command == "audit-public-data-cache":
+            report, run_dir = run_public_data_cache_audit(
+                repo_root=args.repo_root,
+                cache_root=args.cache_root,
+                manifest_path=args.manifest,
+                out_dir=args.out_dir,
+            )
+            failed_checks = [check.check_id for check in report.checks if check.status != "passed"]
+            _print(
+                {
+                    "status": report.status,
+                    "public_data_cache_audit_report_id": (report.public_data_cache_audit_report_id),
+                    "manifest_entry_count": report.manifest_entry_count,
+                    "valid_manifest_entry_count": report.valid_manifest_entry_count,
+                    "cache_sample_count": report.cache_sample_count,
+                    "failed_checks": failed_checks,
+                    "unknown_source_ids": report.unknown_source_ids,
+                    "failed_hash_source_ids": report.failed_hash_source_ids,
+                    "missing_cache_file_source_ids": report.missing_cache_file_source_ids,
+                    "blocked_path_refs": report.blocked_path_refs,
+                    "direct_runtime_ingestion_allowed": (report.direct_runtime_ingestion_allowed),
+                    "public_records_runtime_ingested": (report.public_records_runtime_ingested),
+                    "raw_public_payload_committed": report.raw_public_payload_committed,
+                    "tracked_public_payload_committed": (report.tracked_public_payload_committed),
+                    "connector_implemented": report.connector_implemented,
+                    "legal_knowledge_adapter_authorized": (
+                        report.legal_knowledge_adapter_authorized
+                    ),
+                    "synthetic_fixtures_created": report.synthetic_fixtures_created,
+                    "external_writes_performed": report.external_writes_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            if report.status == "blocked_public_data_cache":
                 return 2
             return 0
 

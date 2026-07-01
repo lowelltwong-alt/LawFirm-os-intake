@@ -14,7 +14,8 @@
 | Understand budgets | `docs/legal-budget-design.md`, `templates/legal-budget-review-form.md`, `docs/carrier-rejection-learning-loop-roadmap.md` |
 | Understand owner handoffs | `DATA_FLOW_MAP.md`, `ENDPOINTS_AND_COMMANDS.md`, `promotion/cross_repo_promotion_package.json` |
 | Understand human gates | `docs/human-review.md`, `config/human_gates.yaml` |
-| Understand testing | `docs/evaluation-plan.md`, `docs/public-data-test-plan.md`, `docs/synthetic-data-plan.md`, `docs/data/courtlistener-early-case-dataset-strategy.md` |
+| Understand testing and public data | `docs/evaluation-plan.md`, `docs/public-data-test-plan.md`, `docs/synthetic-data-plan.md`, `docs/data/courtlistener-early-case-dataset-strategy.md` |
+| Understand review UI drop-in | `apps/legal-intake-budget/README.md`, `apps/legal-intake-budget/CLAUDE_DESIGN_BRIEF.md`, `apps/legal-intake-budget/src/data-contract.ts` |
 | Understand Rust readiness | `docs/rust-ingestion-transition-plan.md`, `docs/decisions/ADR-004-rust-ready-ingestion-boundary.md` |
 | Understand failure risk | `PREMORTEM.md`, `THREAT_MODEL.md` |
 | Know completion criteria | `DEFINITION_OF_DONE.md`, `ROADMAP.md`, `BUILD_VERIFICATION.md` |

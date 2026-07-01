@@ -1,0 +1,94 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source_id": {
+      "title": "Source Id",
+      "type": "string"
+    },
+    "source_url": {
+      "title": "Source Url",
+      "type": "string"
+    },
+    "source_type": {
+      "title": "Source Type",
+      "type": "string"
+    },
+    "retrieved_at": {
+      "title": "Retrieved At",
+      "type": "string"
+    },
+    "sha256": {
+      "title": "Sha256",
+      "type": "string"
+    },
+    "byte_count": {
+      "minimum": 0,
+      "title": "Byte Count",
+      "type": "integer"
+    },
+    "cache_ref": {
+      "title": "Cache Ref",
+      "type": "string"
+    },
+    "license_terms_note": {
+      "title": "License Terms Note",
+      "type": "string"
+    },
+    "allowed_use": {
+      "title": "Allowed Use",
+      "type": "string"
+    },
+    "prohibited_use": {
+      "title": "Prohibited Use",
+      "type": "string"
+    },
+    "retention_posture": {
+      "title": "Retention Posture",
+      "type": "string"
+    },
+    "data_origin": {
+      "const": "public_reference_cache",
+      "default": "public_reference_cache",
+      "title": "Data Origin",
+      "type": "string"
+    },
+    "public_payload_committed": {
+      "const": false,
+      "default": false,
+      "title": "Public Payload Committed",
+      "type": "boolean"
+    },
+    "direct_runtime_ingestion_allowed": {
+      "const": false,
+      "default": false,
+      "title": "Direct Runtime Ingestion Allowed",
+      "type": "boolean"
+    },
+    "runtime_intake_input": {
+      "const": false,
+      "default": false,
+      "title": "Runtime Intake Input",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "source_id",
+    "source_url",
+    "source_type",
+    "retrieved_at",
+    "sha256",
+    "byte_count",
+    "cache_ref",
+    "license_terms_note",
+    "allowed_use",
+    "prohibited_use",
+    "retention_posture"
+  ],
+  "title": "PublicDataCacheSourceManifest",
+  "type": "object"
+}

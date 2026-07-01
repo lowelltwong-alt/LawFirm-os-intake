@@ -1,0 +1,389 @@
+{
+  "$defs": {
+    "PublicDataCacheAuditCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "blocked",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "source_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Source Ids",
+          "type": "array"
+        },
+        "path_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Path Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "PublicDataCacheAuditCheck",
+      "type": "object"
+    },
+    "PublicDataCacheSourceManifest": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "default": "0.1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "source_url": {
+          "title": "Source Url",
+          "type": "string"
+        },
+        "source_type": {
+          "title": "Source Type",
+          "type": "string"
+        },
+        "retrieved_at": {
+          "title": "Retrieved At",
+          "type": "string"
+        },
+        "sha256": {
+          "title": "Sha256",
+          "type": "string"
+        },
+        "byte_count": {
+          "minimum": 0,
+          "title": "Byte Count",
+          "type": "integer"
+        },
+        "cache_ref": {
+          "title": "Cache Ref",
+          "type": "string"
+        },
+        "license_terms_note": {
+          "title": "License Terms Note",
+          "type": "string"
+        },
+        "allowed_use": {
+          "title": "Allowed Use",
+          "type": "string"
+        },
+        "prohibited_use": {
+          "title": "Prohibited Use",
+          "type": "string"
+        },
+        "retention_posture": {
+          "title": "Retention Posture",
+          "type": "string"
+        },
+        "data_origin": {
+          "const": "public_reference_cache",
+          "default": "public_reference_cache",
+          "title": "Data Origin",
+          "type": "string"
+        },
+        "public_payload_committed": {
+          "const": false,
+          "default": false,
+          "title": "Public Payload Committed",
+          "type": "boolean"
+        },
+        "direct_runtime_ingestion_allowed": {
+          "const": false,
+          "default": false,
+          "title": "Direct Runtime Ingestion Allowed",
+          "type": "boolean"
+        },
+        "runtime_intake_input": {
+          "const": false,
+          "default": false,
+          "title": "Runtime Intake Input",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "source_id",
+        "source_url",
+        "source_type",
+        "retrieved_at",
+        "sha256",
+        "byte_count",
+        "cache_ref",
+        "license_terms_note",
+        "allowed_use",
+        "prohibited_use",
+        "retention_posture"
+      ],
+      "title": "PublicDataCacheSourceManifest",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "public_data_cache_audit_report_id": {
+      "title": "Public Data Cache Audit Report Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "ready_for_human_public_data_cache_review",
+        "blocked_public_data_cache"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "source_catalog_ref": {
+      "title": "Source Catalog Ref",
+      "type": "string"
+    },
+    "data_policy_ref": {
+      "title": "Data Policy Ref",
+      "type": "string"
+    },
+    "cache_root_ref": {
+      "title": "Cache Root Ref",
+      "type": "string"
+    },
+    "manifest_ref": {
+      "title": "Manifest Ref",
+      "type": "string"
+    },
+    "manifest_entry_count": {
+      "minimum": 0,
+      "title": "Manifest Entry Count",
+      "type": "integer"
+    },
+    "valid_manifest_entry_count": {
+      "minimum": 0,
+      "title": "Valid Manifest Entry Count",
+      "type": "integer"
+    },
+    "cache_sample_count": {
+      "minimum": 0,
+      "title": "Cache Sample Count",
+      "type": "integer"
+    },
+    "total_cache_sample_bytes": {
+      "minimum": 0,
+      "title": "Total Cache Sample Bytes",
+      "type": "integer"
+    },
+    "approved_source_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Approved Source Ids",
+      "type": "array"
+    },
+    "unknown_source_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Unknown Source Ids",
+      "type": "array"
+    },
+    "failed_hash_source_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Failed Hash Source Ids",
+      "type": "array"
+    },
+    "missing_cache_file_source_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Missing Cache File Source Ids",
+      "type": "array"
+    },
+    "blocked_path_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Blocked Path Refs",
+      "type": "array"
+    },
+    "sources": {
+      "items": {
+        "$ref": "#/$defs/PublicDataCacheSourceManifest"
+      },
+      "title": "Sources",
+      "type": "array"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/PublicDataCacheAuditCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "required_next_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Gates",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "planning_only": {
+      "const": true,
+      "default": true,
+      "title": "Planning Only",
+      "type": "boolean"
+    },
+    "report_payload_metadata_only": {
+      "const": true,
+      "default": true,
+      "title": "Report Payload Metadata Only",
+      "type": "boolean"
+    },
+    "human_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Human Review Required",
+      "type": "boolean"
+    },
+    "public_cache_samples_present": {
+      "title": "Public Cache Samples Present",
+      "type": "boolean"
+    },
+    "direct_runtime_ingestion_allowed": {
+      "const": false,
+      "default": false,
+      "title": "Direct Runtime Ingestion Allowed",
+      "type": "boolean"
+    },
+    "public_records_runtime_ingested": {
+      "const": false,
+      "default": false,
+      "title": "Public Records Runtime Ingested",
+      "type": "boolean"
+    },
+    "raw_public_payload_committed": {
+      "const": false,
+      "default": false,
+      "title": "Raw Public Payload Committed",
+      "type": "boolean"
+    },
+    "tracked_public_payload_committed": {
+      "const": false,
+      "default": false,
+      "title": "Tracked Public Payload Committed",
+      "type": "boolean"
+    },
+    "real_party_records_committed": {
+      "const": false,
+      "default": false,
+      "title": "Real Party Records Committed",
+      "type": "boolean"
+    },
+    "real_matter_records_committed": {
+      "const": false,
+      "default": false,
+      "title": "Real Matter Records Committed",
+      "type": "boolean"
+    },
+    "connector_implemented": {
+      "const": false,
+      "default": false,
+      "title": "Connector Implemented",
+      "type": "boolean"
+    },
+    "legal_knowledge_adapter_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Legal Knowledge Adapter Authorized",
+      "type": "boolean"
+    },
+    "synthetic_fixtures_created": {
+      "const": false,
+      "default": false,
+      "title": "Synthetic Fixtures Created",
+      "type": "boolean"
+    },
+    "fixture_files_mutated": {
+      "const": false,
+      "default": false,
+      "title": "Fixture Files Mutated",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "public_data_cache_audit_report_id",
+    "status",
+    "source_catalog_ref",
+    "data_policy_ref",
+    "cache_root_ref",
+    "manifest_ref",
+    "manifest_entry_count",
+    "valid_manifest_entry_count",
+    "cache_sample_count",
+    "total_cache_sample_bytes",
+    "approved_source_ids",
+    "sources",
+    "checks",
+    "required_next_gates",
+    "public_cache_samples_present",
+    "generated_at"
+  ],
+  "title": "PublicDataCacheAuditReport",
+  "type": "object"
+}

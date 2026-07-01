@@ -1,0 +1,43 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "check_id": {
+      "title": "Check Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "passed",
+        "blocked",
+        "failed"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "message": {
+      "title": "Message",
+      "type": "string"
+    },
+    "source_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Source Ids",
+      "type": "array"
+    },
+    "path_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Path Refs",
+      "type": "array"
+    }
+  },
+  "required": [
+    "check_id",
+    "status",
+    "message"
+  ],
+  "title": "PublicDataCacheAuditCheck",
+  "type": "object"
+}
