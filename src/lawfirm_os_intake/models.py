@@ -9745,6 +9745,63 @@ class SyntheticQABundleReport(StrictModel):
         return self
 
 
+class SyntheticQAReviewRunStep(StrictModel):
+    step_id: str
+    label: str
+    status: Literal["passed", "failed"]
+    observed_status: str
+    artifact_ref: str
+    notes: list[str] = Field(default_factory=list)
+
+
+class SyntheticQAReviewRunReport(StrictModel):
+    schema_version: str = "0.1"
+    synthetic_qa_review_run_report_id: str
+    status: Literal["synthetic_qa_review_run_ready", "blocked_by_synthetic_qa_review_run"]
+    run_root_ref: str
+    quality_dir_ref: str
+    step_count: int = Field(ge=0)
+    failed_step_count: int = Field(ge=0)
+    steps: list[SyntheticQAReviewRunStep]
+    synthetic_qa_bundle_ref: str
+    ui_manifest_ref: str
+    ui_data_bundle_ref: str
+    required_next_actions: list[str]
+    candidate_only: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    local_json_only: Literal[True] = True
+    budget_amount_output_authorized: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    conflict_conclusion_emitted: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    training_pipeline_created: Literal[False] = False
+    calibration_applied: Literal[False] = False
+    fixture_files_mutated: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def synthetic_qa_review_run_counts_and_status_match(
+        self,
+    ) -> "SyntheticQAReviewRunReport":
+        failed_steps = [step for step in self.steps if step.status == "failed"]
+        if self.step_count != len(self.steps):
+            raise ValueError("synthetic QA review run step count mismatch")
+        if self.failed_step_count != len(failed_steps):
+            raise ValueError("synthetic QA review run failed step count mismatch")
+        if self.status == "synthetic_qa_review_run_ready" and failed_steps:
+            raise ValueError("ready synthetic QA review run cannot include failed steps")
+        if self.status == "blocked_by_synthetic_qa_review_run" and not failed_steps:
+            raise ValueError("blocked synthetic QA review run requires failed steps")
+        if not self.required_next_actions:
+            raise ValueError("synthetic QA review run requires next actions")
+        return self
+
+
 UIReviewDataBundleStatus = Literal[
     "ready_for_review",
     "blocked_missing_required_reports",

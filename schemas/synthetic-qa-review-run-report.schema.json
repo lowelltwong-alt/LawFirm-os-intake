@@ -1,0 +1,223 @@
+{
+  "$defs": {
+    "SyntheticQAReviewRunStep": {
+      "additionalProperties": false,
+      "properties": {
+        "step_id": {
+          "title": "Step Id",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "observed_status": {
+          "title": "Observed Status",
+          "type": "string"
+        },
+        "artifact_ref": {
+          "title": "Artifact Ref",
+          "type": "string"
+        },
+        "notes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Notes",
+          "type": "array"
+        }
+      },
+      "required": [
+        "step_id",
+        "label",
+        "status",
+        "observed_status",
+        "artifact_ref"
+      ],
+      "title": "SyntheticQAReviewRunStep",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "synthetic_qa_review_run_report_id": {
+      "title": "Synthetic Qa Review Run Report Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "synthetic_qa_review_run_ready",
+        "blocked_by_synthetic_qa_review_run"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "run_root_ref": {
+      "title": "Run Root Ref",
+      "type": "string"
+    },
+    "quality_dir_ref": {
+      "title": "Quality Dir Ref",
+      "type": "string"
+    },
+    "step_count": {
+      "minimum": 0,
+      "title": "Step Count",
+      "type": "integer"
+    },
+    "failed_step_count": {
+      "minimum": 0,
+      "title": "Failed Step Count",
+      "type": "integer"
+    },
+    "steps": {
+      "items": {
+        "$ref": "#/$defs/SyntheticQAReviewRunStep"
+      },
+      "title": "Steps",
+      "type": "array"
+    },
+    "synthetic_qa_bundle_ref": {
+      "title": "Synthetic Qa Bundle Ref",
+      "type": "string"
+    },
+    "ui_manifest_ref": {
+      "title": "Ui Manifest Ref",
+      "type": "string"
+    },
+    "ui_data_bundle_ref": {
+      "title": "Ui Data Bundle Ref",
+      "type": "string"
+    },
+    "required_next_actions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Actions",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "local_json_only": {
+      "const": true,
+      "default": true,
+      "title": "Local Json Only",
+      "type": "boolean"
+    },
+    "budget_amount_output_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Amount Output Authorized",
+      "type": "boolean"
+    },
+    "budget_submission_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Submission Authorized",
+      "type": "boolean"
+    },
+    "conflict_conclusion_emitted": {
+      "const": false,
+      "default": false,
+      "title": "Conflict Conclusion Emitted",
+      "type": "boolean"
+    },
+    "matter_opening_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Matter Opening Authorized",
+      "type": "boolean"
+    },
+    "training_pipeline_created": {
+      "const": false,
+      "default": false,
+      "title": "Training Pipeline Created",
+      "type": "boolean"
+    },
+    "calibration_applied": {
+      "const": false,
+      "default": false,
+      "title": "Calibration Applied",
+      "type": "boolean"
+    },
+    "fixture_files_mutated": {
+      "const": false,
+      "default": false,
+      "title": "Fixture Files Mutated",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "synthetic_qa_review_run_report_id",
+    "status",
+    "run_root_ref",
+    "quality_dir_ref",
+    "step_count",
+    "failed_step_count",
+    "steps",
+    "synthetic_qa_bundle_ref",
+    "ui_manifest_ref",
+    "ui_data_bundle_ref",
+    "required_next_actions",
+    "generated_at"
+  ],
+  "title": "SyntheticQAReviewRunReport",
+  "type": "object"
+}

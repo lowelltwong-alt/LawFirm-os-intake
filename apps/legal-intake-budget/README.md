@@ -27,7 +27,20 @@ The expected local artifact list and matrix guardrails live in
 `src/fixtures/demo-labor-employment-qa-matrix-report.json`, and
 `src/fixtures/demo-labor-employment-blocked-driver-impact-review-report.json`.
 
-Generate a run-specific manifest with:
+Generate a complete synthetic QA review run with:
+
+```bash
+python -m lawfirm_os_intake build-synthetic-qa-review-run \
+  --run-root .lawfirm-os-intake/synthetic-qa-review \
+  --repo-root .
+```
+
+That command builds the deterministic synthetic demo budget coherence report,
+the L&E QA matrix, fixture-family reports, executable L&E driver reports,
+blocked-driver review, reviewed gold, the synthetic QA bundle, the UI manifest,
+and `ui_review_data_bundle.json`.
+
+Regenerate only the synthetic QA bundle and UI wrappers with:
 
 ```bash
 python -m lawfirm_os_intake build-synthetic-qa-bundle \

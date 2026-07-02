@@ -115,6 +115,7 @@ from .reviewed_learning_gate import run_reviewed_learning_gate
 from .synthetic_fixture_depth_audit import run_synthetic_fixture_depth_audit
 from .synthetic_fixture_expansion import run_synthetic_fixture_expansion_audit
 from .synthetic_qa_bundle import run_synthetic_qa_bundle
+from .synthetic_qa_review_run import run_synthetic_qa_review_run
 from .ui_review_data_bundle import build_ui_review_data_bundle
 from .ui_review_manifest import build_ui_review_manifest
 from .util import load_json, write_json
@@ -249,6 +250,24 @@ def _parser() -> argparse.ArgumentParser:
     synthetic_qa_bundle.add_argument(
         "--generated-at",
         help="Optional fixed timestamp for deterministic tests and replayed manifests.",
+    )
+
+    synthetic_qa_review_run = sub.add_parser(
+        "build-synthetic-qa-review-run",
+        help=(
+            "Build the deterministic synthetic QA review chain, including L&E QA "
+            "reports and read-only UI artifacts."
+        ),
+    )
+    synthetic_qa_review_run.add_argument("--run-root", required=True)
+    synthetic_qa_review_run.add_argument(
+        "--repo-root",
+        default=".",
+        help="Repository root for synthetic examples and config.",
+    )
+    synthetic_qa_review_run.add_argument(
+        "--generated-at",
+        help="Optional fixed timestamp for deterministic tests and replayed reports.",
     )
 
     calibration_starter_pack = sub.add_parser(
@@ -1557,6 +1576,30 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 0 if report.status in {"passed", "pending_review"} else 2
+
+        if args.command == "build-synthetic-qa-review-run":
+            report, run_dir = run_synthetic_qa_review_run(
+                run_root=args.run_root,
+                repo_root=args.repo_root,
+                generated_at=args.generated_at,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "synthetic_qa_review_run_report_id": (report.synthetic_qa_review_run_report_id),
+                    "run_dir": str(run_dir),
+                    "step_count": report.step_count,
+                    "failed_step_count": report.failed_step_count,
+                    "synthetic_qa_bundle_ref": report.synthetic_qa_bundle_ref,
+                    "ui_manifest_ref": report.ui_manifest_ref,
+                    "ui_data_bundle_ref": report.ui_data_bundle_ref,
+                    "external_writes_performed": False,
+                    "lake_write_performed": False,
+                    "sqlite_write_performed": False,
+                    "silent_learning_performed": False,
+                }
+            )
+            return 0 if report.status == "synthetic_qa_review_run_ready" else 2
 
         if args.command == "build-budget-calibration-starter-pack":
             report, run_dir = run_budget_calibration_starter_pack(
