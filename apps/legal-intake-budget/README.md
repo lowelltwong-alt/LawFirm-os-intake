@@ -25,6 +25,7 @@ The expected local artifact list and matrix guardrails live in
 `src/fixtures/demo-ui-review-data-bundle.json`,
 `src/fixtures/demo-run-manifest.json`,
 `src/fixtures/demo-synthetic-confidence-summary-report.json`,
+`src/fixtures/demo-synthetic-qa-blocker-report.json`,
 `src/fixtures/demo-synthetic-qa-review-run-report.json`,
 `src/fixtures/demo-labor-employment-qa-matrix-report.json`, and
 `src/fixtures/demo-labor-employment-blocked-driver-impact-review-report.json`.
@@ -41,9 +42,10 @@ That command builds the deterministic synthetic demo budget coherence report,
 the L&E QA matrix, fixture-family reports, executable L&E driver reports,
 blocked-driver review, reviewed gold, the synthetic QA bundle, the UI manifest,
 `synthetic_qa_review_run_report.json`, `synthetic_confidence_summary_report.json`,
-and `ui_review_data_bundle.json`. The demo UI renders the confidence summary
-as the top-level synthetic QA posture panel and the review-run report as the
-recipe panel when they are present.
+`synthetic_qa_blocker_report.json`, and `ui_review_data_bundle.json`. The demo UI
+renders the confidence summary as the top-level synthetic QA posture panel, the
+blocker report as the review queue, and the review-run report as the recipe
+panel when they are present.
 
 Regenerate only the synthetic QA bundle and UI wrappers with:
 

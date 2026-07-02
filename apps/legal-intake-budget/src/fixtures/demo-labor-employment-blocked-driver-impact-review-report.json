@@ -2,9 +2,9 @@
   "schema_version": "0.1",
   "blocked_driver_impact_review_report_id": "leblockeddriverimpactreview_0637d73d5d44edda",
   "status": "labor_employment_blocked_driver_impacts_ready_for_review",
-  "source_fact_binding_report_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-os-intake-merge-20260702-011307\\.lawfirm-os-intake\\ui-fixture-refresh-confidence\\quality\\le-executable-fact-binding\\labor_employment_executable_fact_binding_report.json",
-  "source_driver_binding_report_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-os-intake-merge-20260702-011307\\.lawfirm-os-intake\\ui-fixture-refresh-confidence\\quality\\le-executable-driver-binding\\labor_employment_executable_driver_binding_report.json",
-  "source_driver_impact_report_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-os-intake-merge-20260702-011307\\.lawfirm-os-intake\\ui-fixture-refresh-confidence\\quality\\le-executable-driver-impact\\labor_employment_executable_driver_impact_report.json",
+  "source_fact_binding_report_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-os-intake-merge-20260702-011307\\.lawfirm-os-intake\\ui-fixture-refresh-blocker-report\\quality\\le-executable-fact-binding\\labor_employment_executable_fact_binding_report.json",
+  "source_driver_binding_report_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-os-intake-merge-20260702-011307\\.lawfirm-os-intake\\ui-fixture-refresh-blocker-report\\quality\\le-executable-driver-binding\\labor_employment_executable_driver_binding_report.json",
+  "source_driver_impact_report_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-os-intake-merge-20260702-011307\\.lawfirm-os-intake\\ui-fixture-refresh-blocker-report\\quality\\le-executable-driver-impact\\labor_employment_executable_driver_impact_report.json",
   "source_driver_impact_report_id": "leexecdriverimpact_67cef89e5e2ce54e732e",
   "case_count": 8,
   "blocked_case_count": 6,
@@ -717,5 +717,5 @@
   "sqlite_write_performed": false,
   "external_writes_performed": false,
   "silent_learning_performed": false,
-  "generated_at": "2026-07-02T18:42:36.772310Z"
+  "generated_at": "2026-07-02T21:10:28.653623Z"
 }

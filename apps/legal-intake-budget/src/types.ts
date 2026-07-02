@@ -22,6 +22,7 @@ export type UIReviewDataBundleReportKind =
   | "ui_review_manifest"
   | "synthetic_qa_review_run"
   | "synthetic_confidence_summary"
+  | "synthetic_qa_blocker_report"
   | "matter_linking_preflight"
   | "labor_employment_qa_matrix"
   | "labor_employment_blocked_driver_impact_review"
@@ -264,6 +265,69 @@ export type SyntheticConfidenceSummaryReport = {
   readiness_items: SyntheticConfidenceSummaryItem[];
   top_blockers: string[];
   display_banner: SyntheticConfidenceDisplayBanner;
+  required_next_actions: string[];
+  candidate_only: boolean;
+  synthetic_only: boolean;
+  non_authoritative: boolean;
+  local_json_only: boolean;
+  human_review_required: boolean;
+  not_authorized_for_external_write: boolean;
+  not_authorized_for_lake_write: boolean;
+  not_authorized_for_sqlite_write: boolean;
+  not_authorized_for_budget_submission: boolean;
+  not_authorized_for_matter_opening: boolean;
+  not_authorized_for_calibration: boolean;
+  budget_amount_output_authorized: boolean;
+  budget_submission_authorized: boolean;
+  conflict_conclusion_emitted: boolean;
+  matter_opening_authorized: boolean;
+  training_pipeline_created: boolean;
+  lake_write_performed: boolean;
+  sqlite_write_performed: boolean;
+  external_writes_performed: boolean;
+  silent_learning_performed: boolean;
+  generated_at: string;
+};
+
+export type SyntheticQABlockerRowState = "failed" | "blocked" | "pending_review";
+
+export type SyntheticQABlockerRowSource =
+  | "quality_gate"
+  | "qa_step"
+  | "readiness_item"
+  | "top_blocker";
+
+export type SyntheticQABlockerRow = {
+  row_id: string;
+  source: SyntheticQABlockerRowSource;
+  label: string;
+  state: SyntheticQABlockerRowState;
+  owner: string;
+  evidence_refs: string[];
+  notes: string[];
+};
+
+export type SyntheticQABlockerReport = {
+  schema_version: string;
+  synthetic_qa_blocker_report_id: string;
+  status:
+    | "synthetic_qa_blocker_report_ready_for_review"
+    | "blocked_by_synthetic_qa_blocker_report"
+    | "failed_synthetic_qa_blocker_boundary";
+  source_ui_manifest_ref: string;
+  source_ui_manifest_id: string;
+  source_ui_manifest_overall_status: string;
+  source_synthetic_confidence_summary_ref: string;
+  source_synthetic_confidence_summary_report_id: string;
+  source_synthetic_confidence_summary_status: string;
+  source_synthetic_qa_review_run_ref: string;
+  source_synthetic_qa_review_run_report_id: string;
+  source_synthetic_qa_review_run_status: string;
+  row_count: number;
+  failed_row_count: number;
+  blocked_row_count: number;
+  pending_review_row_count: number;
+  rows: SyntheticQABlockerRow[];
   required_next_actions: string[];
   candidate_only: boolean;
   synthetic_only: boolean;

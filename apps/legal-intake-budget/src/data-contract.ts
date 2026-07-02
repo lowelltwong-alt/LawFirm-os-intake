@@ -7,6 +7,7 @@ import type {
   QualityGate,
   ReviewArtifact,
   ReviewManifest,
+  SyntheticQABlockerReport,
   SyntheticConfidenceSummaryReport,
   SyntheticQAReviewRunReport,
   UIReviewDataBundle,
@@ -25,6 +26,7 @@ export const REQUIRED_ARTIFACT_FILES = [
   "synthetic_qa_bundle_report.json",
   "synthetic_qa_review_run_report.json",
   "synthetic_confidence_summary_report.json",
+  "synthetic_qa_blocker_report.json",
   "matter_linking_preflight_report.json",
   "synthetic_fixture_depth_audit_report.json",
   "budget_calibration_readiness_report.json",
@@ -301,6 +303,68 @@ export function assertSyntheticConfidenceSummaryReport(
   }
   if (!report.required_next_actions.length) {
     failures.push("synthetic_confidence_summary_missing_next_actions");
+  }
+  return failures;
+}
+
+export function assertSyntheticQABlockerReport(report: SyntheticQABlockerReport): string[] {
+  const failures: string[] = [];
+  if (
+    !report.candidate_only ||
+    !report.synthetic_only ||
+    !report.non_authoritative ||
+    !report.local_json_only ||
+    !report.human_review_required
+  ) {
+    failures.push("synthetic_qa_blocker_report_authority_boundary_failed");
+  }
+  if (
+    report.budget_amount_output_authorized ||
+    report.budget_submission_authorized ||
+    report.conflict_conclusion_emitted ||
+    report.matter_opening_authorized ||
+    report.training_pipeline_created ||
+    report.lake_write_performed ||
+    report.sqlite_write_performed ||
+    report.external_writes_performed ||
+    report.silent_learning_performed
+  ) {
+    failures.push("synthetic_qa_blocker_report_side_effect_boundary_failed");
+  }
+  if (report.row_count !== report.rows.length) {
+    failures.push("synthetic_qa_blocker_report_row_count_mismatch");
+  }
+  const failedRows = report.rows.filter((row) => row.state === "failed");
+  const blockedRows = report.rows.filter((row) => row.state === "blocked");
+  const pendingRows = report.rows.filter((row) => row.state === "pending_review");
+  if (report.failed_row_count !== failedRows.length) {
+    failures.push("synthetic_qa_blocker_report_failed_count_mismatch");
+  }
+  if (report.blocked_row_count !== blockedRows.length) {
+    failures.push("synthetic_qa_blocker_report_blocked_count_mismatch");
+  }
+  if (report.pending_review_row_count !== pendingRows.length) {
+    failures.push("synthetic_qa_blocker_report_pending_count_mismatch");
+  }
+  if (
+    report.status === "synthetic_qa_blocker_report_ready_for_review" &&
+    (failedRows.length > 0 || blockedRows.length > 0)
+  ) {
+    failures.push("synthetic_qa_blocker_report_ready_with_failed_blockers");
+  }
+  if (
+    report.status !== "synthetic_qa_blocker_report_ready_for_review" &&
+    failedRows.length + blockedRows.length === 0
+  ) {
+    failures.push("synthetic_qa_blocker_report_blocked_without_failed_blockers");
+  }
+  for (const row of report.rows) {
+    if (!row.row_id || !row.label || !row.owner || row.evidence_refs.length === 0) {
+      failures.push(`synthetic_qa_blocker_report_row_not_actionable:${row.row_id}`);
+    }
+  }
+  if (!report.required_next_actions.length) {
+    failures.push("synthetic_qa_blocker_report_missing_next_actions");
   }
   return failures;
 }

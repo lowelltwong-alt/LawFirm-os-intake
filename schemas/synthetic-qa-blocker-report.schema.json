@@ -1,85 +1,45 @@
 {
   "$defs": {
-    "UIReviewDataBundleDetailReport": {
+    "SyntheticQABlockerRow": {
       "additionalProperties": false,
       "properties": {
-        "detail_report_id": {
-          "title": "Detail Report Id",
+        "row_id": {
+          "title": "Row Id",
+          "type": "string"
+        },
+        "source": {
+          "enum": [
+            "quality_gate",
+            "qa_step",
+            "readiness_item",
+            "top_blocker"
+          ],
+          "title": "Source",
           "type": "string"
         },
         "label": {
           "title": "Label",
           "type": "string"
         },
-        "report_kind": {
+        "state": {
           "enum": [
-            "ui_review_manifest",
-            "synthetic_qa_review_run",
-            "synthetic_confidence_summary",
-            "synthetic_qa_blocker_report",
-            "matter_linking_preflight",
-            "labor_employment_qa_matrix",
-            "labor_employment_blocked_driver_impact_review",
-            "labor_employment_budget_output_expectations"
+            "failed",
+            "blocked",
+            "pending_review"
           ],
-          "title": "Report Kind",
+          "title": "State",
           "type": "string"
         },
-        "file_name": {
-          "title": "File Name",
+        "owner": {
+          "title": "Owner",
           "type": "string"
         },
-        "required": {
-          "title": "Required",
-          "type": "boolean"
-        },
-        "present": {
-          "title": "Present",
-          "type": "boolean"
-        },
-        "status": {
-          "title": "Status",
-          "type": "string"
-        },
-        "renderer": {
-          "title": "Renderer",
-          "type": "string"
-        },
-        "artifact_ref": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Artifact Ref"
-        },
-        "source_sha256": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Source Sha256"
-        },
-        "candidate_only": {
-          "title": "Candidate Only",
-          "type": "boolean"
-        },
-        "synthetic_only": {
-          "title": "Synthetic Only",
-          "type": "boolean"
-        },
-        "external_writes_performed": {
-          "title": "External Writes Performed",
-          "type": "boolean"
+        "evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
         },
         "notes": {
           "items": {
@@ -90,19 +50,15 @@
         }
       },
       "required": [
-        "detail_report_id",
+        "row_id",
+        "source",
         "label",
-        "report_kind",
-        "file_name",
-        "required",
-        "present",
-        "status",
-        "renderer",
-        "candidate_only",
-        "synthetic_only",
-        "external_writes_performed"
+        "state",
+        "owner",
+        "evidence_refs",
+        "notes"
       ],
-      "title": "UIReviewDataBundleDetailReport",
+      "title": "SyntheticQABlockerRow",
       "type": "object"
     }
   },
@@ -113,53 +69,80 @@
       "title": "Schema Version",
       "type": "string"
     },
-    "ui_review_data_bundle_id": {
-      "title": "Ui Review Data Bundle Id",
+    "synthetic_qa_blocker_report_id": {
+      "title": "Synthetic Qa Blocker Report Id",
       "type": "string"
     },
     "status": {
       "enum": [
-        "ready_for_review",
-        "blocked_missing_required_reports",
-        "failed_side_effect_boundary"
+        "synthetic_qa_blocker_report_ready_for_review",
+        "blocked_by_synthetic_qa_blocker_report",
+        "failed_synthetic_qa_blocker_boundary"
       ],
       "title": "Status",
       "type": "string"
     },
-    "run_root_ref": {
-      "title": "Run Root Ref",
+    "source_ui_manifest_ref": {
+      "title": "Source Ui Manifest Ref",
       "type": "string"
     },
-    "detail_report_count": {
+    "source_ui_manifest_id": {
+      "title": "Source Ui Manifest Id",
+      "type": "string"
+    },
+    "source_ui_manifest_overall_status": {
+      "title": "Source Ui Manifest Overall Status",
+      "type": "string"
+    },
+    "source_synthetic_confidence_summary_ref": {
+      "title": "Source Synthetic Confidence Summary Ref",
+      "type": "string"
+    },
+    "source_synthetic_confidence_summary_report_id": {
+      "title": "Source Synthetic Confidence Summary Report Id",
+      "type": "string"
+    },
+    "source_synthetic_confidence_summary_status": {
+      "title": "Source Synthetic Confidence Summary Status",
+      "type": "string"
+    },
+    "source_synthetic_qa_review_run_ref": {
+      "title": "Source Synthetic Qa Review Run Ref",
+      "type": "string"
+    },
+    "source_synthetic_qa_review_run_report_id": {
+      "title": "Source Synthetic Qa Review Run Report Id",
+      "type": "string"
+    },
+    "source_synthetic_qa_review_run_status": {
+      "title": "Source Synthetic Qa Review Run Status",
+      "type": "string"
+    },
+    "row_count": {
       "minimum": 0,
-      "title": "Detail Report Count",
+      "title": "Row Count",
       "type": "integer"
     },
-    "required_detail_report_count": {
+    "failed_row_count": {
       "minimum": 0,
-      "title": "Required Detail Report Count",
+      "title": "Failed Row Count",
       "type": "integer"
     },
-    "present_detail_report_count": {
+    "blocked_row_count": {
       "minimum": 0,
-      "title": "Present Detail Report Count",
+      "title": "Blocked Row Count",
       "type": "integer"
     },
-    "missing_required_detail_report_count": {
+    "pending_review_row_count": {
       "minimum": 0,
-      "title": "Missing Required Detail Report Count",
+      "title": "Pending Review Row Count",
       "type": "integer"
     },
-    "external_write_report_count": {
-      "minimum": 0,
-      "title": "External Write Report Count",
-      "type": "integer"
-    },
-    "detail_reports": {
+    "rows": {
       "items": {
-        "$ref": "#/$defs/UIReviewDataBundleDetailReport"
+        "$ref": "#/$defs/SyntheticQABlockerRow"
       },
-      "title": "Detail Reports",
+      "title": "Rows",
       "type": "array"
     },
     "required_next_actions": {
@@ -191,6 +174,12 @@
       "const": true,
       "default": true,
       "title": "Local Json Only",
+      "type": "boolean"
+    },
+    "human_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Human Review Required",
       "type": "boolean"
     },
     "not_authorized_for_external_write": {
@@ -289,18 +278,25 @@
     }
   },
   "required": [
-    "ui_review_data_bundle_id",
+    "synthetic_qa_blocker_report_id",
     "status",
-    "run_root_ref",
-    "detail_report_count",
-    "required_detail_report_count",
-    "present_detail_report_count",
-    "missing_required_detail_report_count",
-    "external_write_report_count",
-    "detail_reports",
+    "source_ui_manifest_ref",
+    "source_ui_manifest_id",
+    "source_ui_manifest_overall_status",
+    "source_synthetic_confidence_summary_ref",
+    "source_synthetic_confidence_summary_report_id",
+    "source_synthetic_confidence_summary_status",
+    "source_synthetic_qa_review_run_ref",
+    "source_synthetic_qa_review_run_report_id",
+    "source_synthetic_qa_review_run_status",
+    "row_count",
+    "failed_row_count",
+    "blocked_row_count",
+    "pending_review_row_count",
+    "rows",
     "required_next_actions",
     "generated_at"
   ],
-  "title": "UIReviewDataBundle",
+  "title": "SyntheticQABlockerReport",
   "type": "object"
 }

@@ -46,6 +46,14 @@ DETAIL_REPORT_SPECS = [
         renderer="SyntheticConfidenceSummaryPanel",
     ),
     UIReviewDetailSpec(
+        detail_report_id="synthetic-qa-blocker-report",
+        label="Synthetic QA Blocker Report",
+        report_kind="synthetic_qa_blocker_report",
+        file_name="synthetic_qa_blocker_report.json",
+        renderer="SyntheticQABlockerDrilldownPanel",
+        required=False,
+    ),
+    UIReviewDetailSpec(
         detail_report_id="matter-linking-preflight",
         label="Matter-Linking Preflight",
         report_kind="matter_linking_preflight",

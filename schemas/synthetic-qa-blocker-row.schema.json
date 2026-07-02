@@ -1,0 +1,61 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "row_id": {
+      "title": "Row Id",
+      "type": "string"
+    },
+    "source": {
+      "enum": [
+        "quality_gate",
+        "qa_step",
+        "readiness_item",
+        "top_blocker"
+      ],
+      "title": "Source",
+      "type": "string"
+    },
+    "label": {
+      "title": "Label",
+      "type": "string"
+    },
+    "state": {
+      "enum": [
+        "failed",
+        "blocked",
+        "pending_review"
+      ],
+      "title": "State",
+      "type": "string"
+    },
+    "owner": {
+      "title": "Owner",
+      "type": "string"
+    },
+    "evidence_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Evidence Refs",
+      "type": "array"
+    },
+    "notes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Notes",
+      "type": "array"
+    }
+  },
+  "required": [
+    "row_id",
+    "source",
+    "label",
+    "state",
+    "owner",
+    "evidence_refs",
+    "notes"
+  ],
+  "title": "SyntheticQABlockerRow",
+  "type": "object"
+}

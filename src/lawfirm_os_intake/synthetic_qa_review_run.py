@@ -63,6 +63,10 @@ from .synthetic_confidence_summary import (
     SYNTHETIC_CONFIDENCE_SUMMARY_REPORT_FILENAME,
     run_synthetic_confidence_summary,
 )
+from .synthetic_qa_blocker_report import (
+    SYNTHETIC_QA_BLOCKER_REPORT_FILENAME,
+    run_synthetic_qa_blocker_report,
+)
 from .synthetic_qa_bundle import SYNTHETIC_QA_BUNDLE_REPORT_FILENAME, run_synthetic_qa_bundle
 from .ui_review_data_bundle import UI_REVIEW_DATA_BUNDLE_FILENAME, build_ui_review_data_bundle
 from .ui_review_manifest import build_ui_review_manifest
@@ -480,6 +484,42 @@ def run_synthetic_qa_review_run(
     )
     _stage_for_bundle(
         confidence_summary_dir / SYNTHETIC_CONFIDENCE_SUMMARY_REPORT_FILENAME,
+        quality_dir,
+    )
+    build_ui_review_manifest(
+        run_root=run_dir,
+        out_path=ui_manifest_ref,
+        generated_at=generated_at,
+    )
+    _blocker_report, blocker_report_dir = run_synthetic_qa_blocker_report(
+        ui_manifest_path=ui_manifest_ref,
+        synthetic_confidence_summary_path=(
+            quality_dir / SYNTHETIC_CONFIDENCE_SUMMARY_REPORT_FILENAME
+        ),
+        synthetic_qa_review_run_report_path=run_dir / SYNTHETIC_QA_REVIEW_RUN_REPORT_FILENAME,
+        out_dir=quality_dir / "synthetic-qa-blocker-report",
+        generated_at=generated_at,
+    )
+    _stage_for_bundle(
+        blocker_report_dir / SYNTHETIC_QA_BLOCKER_REPORT_FILENAME,
+        quality_dir,
+    )
+    build_ui_review_manifest(
+        run_root=run_dir,
+        out_path=ui_manifest_ref,
+        generated_at=generated_at,
+    )
+    _blocker_report, blocker_report_dir = run_synthetic_qa_blocker_report(
+        ui_manifest_path=ui_manifest_ref,
+        synthetic_confidence_summary_path=(
+            quality_dir / SYNTHETIC_CONFIDENCE_SUMMARY_REPORT_FILENAME
+        ),
+        synthetic_qa_review_run_report_path=run_dir / SYNTHETIC_QA_REVIEW_RUN_REPORT_FILENAME,
+        out_dir=quality_dir / "synthetic-qa-blocker-report",
+        generated_at=generated_at,
+    )
+    _stage_for_bundle(
+        blocker_report_dir / SYNTHETIC_QA_BLOCKER_REPORT_FILENAME,
         quality_dir,
     )
     build_ui_review_manifest(

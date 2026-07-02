@@ -6,6 +6,7 @@ import demoLaborEmploymentBudgetOutputExpectations from "./fixtures/demo-labor-e
 import demoLaborEmploymentQAMatrix from "./fixtures/demo-labor-employment-qa-matrix-report.json";
 import demoManifest from "./fixtures/demo-run-manifest.json";
 import demoMatterLinkingPreflight from "./fixtures/demo-matter-linking-preflight-report.json";
+import demoSyntheticQABlockerReport from "./fixtures/demo-synthetic-qa-blocker-report.json";
 import demoSyntheticConfidenceSummary from "./fixtures/demo-synthetic-confidence-summary-report.json";
 import demoSyntheticQAReviewRun from "./fixtures/demo-synthetic-qa-review-run-report.json";
 import demoReviewDataBundle from "./fixtures/demo-ui-review-data-bundle.json";
@@ -15,6 +16,7 @@ import {
   assertLaborEmploymentBlockedDriverImpactReviewReport,
   assertLaborEmploymentQAMatrixReport,
   assertReadOnlyManifest,
+  assertSyntheticQABlockerReport,
   assertSyntheticConfidenceSummaryReport,
   assertSyntheticQAReviewRunReport,
   assertUIReviewDataBundle,
@@ -36,6 +38,8 @@ import type {
   QualityGateStatus,
   ReviewArtifact,
   ReviewManifest,
+  SyntheticQABlockerReport,
+  SyntheticQABlockerRowState,
   SyntheticConfidenceSummaryReport,
   SyntheticConfidenceSummaryItemState,
   SyntheticQAReviewRunReport,
@@ -46,6 +50,7 @@ import "./styles.css";
 const reviewDataBundle = demoReviewDataBundle as UIReviewDataBundle;
 const manifest = demoManifest as ReviewManifest;
 const syntheticQAReviewRun = demoSyntheticQAReviewRun as SyntheticQAReviewRunReport;
+const syntheticQABlockerReport = demoSyntheticQABlockerReport as SyntheticQABlockerReport;
 const syntheticConfidenceSummary =
   demoSyntheticConfidenceSummary as SyntheticConfidenceSummaryReport;
 const matterLinkingPreflight = demoMatterLinkingPreflight as MatterLinkingPreflightReport;
@@ -57,6 +62,7 @@ const laborEmploymentBudgetOutputExpectations =
 const bundleContractFailures = assertUIReviewDataBundle(reviewDataBundle);
 const manifestContractFailures = assertReadOnlyManifest(manifest);
 const syntheticQAReviewRunFailures = assertSyntheticQAReviewRunReport(syntheticQAReviewRun);
+const syntheticQABlockerFailures = assertSyntheticQABlockerReport(syntheticQABlockerReport);
 const syntheticConfidenceSummaryFailures =
   assertSyntheticConfidenceSummaryReport(syntheticConfidenceSummary);
 const matterLinkingFailures = assertMatterLinkingPreflightReport(matterLinkingPreflight);
@@ -70,6 +76,7 @@ const contractFailures = [
   ...bundleContractFailures,
   ...manifestContractFailures,
   ...syntheticQAReviewRunFailures,
+  ...syntheticQABlockerFailures,
   ...syntheticConfidenceSummaryFailures,
   ...matterLinkingFailures,
   ...matrixContractFailures,
@@ -77,7 +84,7 @@ const contractFailures = [
   ...budgetOutputExpectationFailures,
 ];
 
-function gateClass(state: GateState | ArtifactStatus | QualityGateStatus) {
+function gateClass(state: GateState | ArtifactStatus | QualityGateStatus | SyntheticQABlockerRowState) {
   return `state state-${state.replace("_", "-")}`;
 }
 
@@ -120,16 +127,6 @@ type FixtureDrilldownRow = {
   blockerReview?: LaborEmploymentBlockedDriverImpactCaseReview;
 };
 
-type SyntheticQABlockerRow = {
-  rowId: string;
-  source: "quality_gate" | "qa_step" | "readiness_item" | "top_blocker";
-  label: string;
-  state: "failed" | "blocked" | "pending_review";
-  owner: string;
-  evidenceRefs: string[];
-  notes: string[];
-};
-
 function buildFixtureDrilldownRows(
   outputReport: LaborEmploymentBudgetOutputExpectationReport,
   blockedReviewReport: LaborEmploymentBlockedDriverImpactReviewReport,
@@ -142,82 +139,6 @@ function buildFixtureDrilldownRows(
     outputCase,
     blockerReview: blockerReviewByFixture.get(outputCase.executable_fixture_id),
   }));
-}
-
-function readinessItemStateToBlockerState(
-  state: SyntheticConfidenceSummaryItemState,
-): SyntheticQABlockerRow["state"] {
-  if (state === "failed") {
-    return "failed";
-  }
-  if (state === "blocked") {
-    return "blocked";
-  }
-  return "pending_review";
-}
-
-function buildSyntheticQABlockerRows(
-  reviewManifest: ReviewManifest,
-  confidenceReport: SyntheticConfidenceSummaryReport,
-  qaReviewRun: SyntheticQAReviewRunReport,
-): SyntheticQABlockerRow[] {
-  const rows: SyntheticQABlockerRow[] = [];
-
-  reviewManifest.qualityGates
-    .filter((gate) => gate.status !== "passed")
-    .forEach((gate) => {
-      rows.push({
-        rowId: `quality_gate:${gate.gateId}`,
-        source: "quality_gate",
-        label: gate.label,
-        state: gate.status === "failed" || gate.status === "blocked" ? gate.status : "pending_review",
-        owner: gate.owner,
-        evidenceRefs: [gate.evidenceFile],
-        notes: gate.notes,
-      });
-    });
-
-  qaReviewRun.steps
-    .filter((step) => step.status !== "passed")
-    .forEach((step) => {
-      rows.push({
-        rowId: `qa_step:${step.step_id}`,
-        source: "qa_step",
-        label: step.label,
-        state: "failed",
-        owner: "synthetic_qa_review_run",
-        evidenceRefs: [step.artifact_ref],
-        notes: [step.observed_status, ...step.notes],
-      });
-    });
-
-  confidenceReport.readiness_items
-    .filter((item) => item.state !== "ready_for_review")
-    .forEach((item) => {
-      rows.push({
-        rowId: `readiness_item:${item.item_id}`,
-        source: "readiness_item",
-        label: item.label,
-        state: readinessItemStateToBlockerState(item.state),
-        owner: item.owner,
-        evidenceRefs: item.evidence_refs,
-        notes: item.notes,
-      });
-    });
-
-  confidenceReport.top_blockers.forEach((blocker, index) => {
-    rows.push({
-      rowId: `top_blocker:${index + 1}`,
-      source: "top_blocker",
-      label: blocker,
-      state: "blocked",
-      owner: "synthetic_confidence_summary",
-      evidenceRefs: [confidenceReport.synthetic_confidence_summary_report_id],
-      notes: ["Reported as a top blocker in the synthetic confidence summary."],
-    });
-  });
-
-  return rows;
 }
 
 function BoundaryGrid({ manifest }: { manifest: ReviewManifest }) {
@@ -368,19 +289,10 @@ function QualityGatePanel({ gates }: { gates: QualityGate[] }) {
   );
 }
 
-function SyntheticQABlockerDrilldownPanel({
-  reviewManifest,
-  confidenceReport,
-  qaReviewRun,
-}: {
-  reviewManifest: ReviewManifest;
-  confidenceReport: SyntheticConfidenceSummaryReport;
-  qaReviewRun: SyntheticQAReviewRunReport;
-}) {
-  const rows = buildSyntheticQABlockerRows(reviewManifest, confidenceReport, qaReviewRun);
-  const failedCount = rows.filter((row) => row.state === "failed").length;
-  const blockedCount = rows.filter((row) => row.state === "blocked").length;
-  const pendingCount = rows.filter((row) => row.state === "pending_review").length;
+function SyntheticQABlockerDrilldownPanel({ report }: { report: SyntheticQABlockerReport }) {
+  const failedCount = report.failed_row_count;
+  const blockedCount = report.blocked_row_count;
+  const pendingCount = report.pending_review_row_count;
   const queueStateClass =
     failedCount + blockedCount > 0
       ? "state state-blocked"
@@ -400,7 +312,7 @@ function SyntheticQABlockerDrilldownPanel({
         <div>
           <p className="eyebrow">Synthetic QA queue</p>
           <h2 id="qa-blocker-title">Synthetic QA Blocker Drilldown</h2>
-          <code>{confidenceReport.synthetic_confidence_summary_report_id}</code>
+          <code>{report.synthetic_qa_blocker_report_id}</code>
         </div>
         <span className={queueStateClass}>{queueStateLabel}</span>
       </div>
@@ -420,11 +332,11 @@ function SyntheticQABlockerDrilldownPanel({
         </div>
         <div>
           <span>Next Actions</span>
-          <strong>{confidenceReport.required_next_actions.length}</strong>
+          <strong>{report.required_next_actions.length}</strong>
         </div>
       </div>
 
-      {rows.length === 0 ? (
+      {report.rows.length === 0 ? (
         <div className="empty-state">
           <strong>No failed or blocked synthetic QA rows in the current local JSON bundle.</strong>
           <span>
@@ -445,8 +357,8 @@ function SyntheticQABlockerDrilldownPanel({
               </tr>
             </thead>
             <tbody>
-              {rows.map((row) => (
-                <tr key={row.rowId}>
+              {report.rows.map((row) => (
+                <tr key={row.row_id}>
                   <td>
                     <div className="artifact-title">{row.label}</div>
                     <code>{row.source}</code>
@@ -456,7 +368,7 @@ function SyntheticQABlockerDrilldownPanel({
                   </td>
                   <td>{row.owner}</td>
                   <td>
-                    <TokenList items={row.evidenceRefs} limit={3} />
+                    <TokenList items={row.evidence_refs} limit={3} />
                   </td>
                   <td>{row.notes.join(" ")}</td>
                 </tr>
@@ -469,7 +381,7 @@ function SyntheticQABlockerDrilldownPanel({
       <div className="next-gates">
         <h3>Review-Only Next Actions</h3>
         <div>
-          {confidenceReport.required_next_actions.map((action) => (
+          {report.required_next_actions.map((action) => (
             <code key={action}>{action}</code>
           ))}
         </div>
@@ -1237,11 +1149,7 @@ function App() {
 
       <BundlePanel bundle={reviewDataBundle} />
       <SyntheticConfidenceSummaryPanel report={syntheticConfidenceSummary} />
-      <SyntheticQABlockerDrilldownPanel
-        reviewManifest={manifest}
-        confidenceReport={syntheticConfidenceSummary}
-        qaReviewRun={syntheticQAReviewRun}
-      />
+      <SyntheticQABlockerDrilldownPanel report={syntheticQABlockerReport} />
       <SyntheticQAReviewRunPanel report={syntheticQAReviewRun} />
       <div className="grid-layout">
         <BoundaryGrid manifest={manifest} />

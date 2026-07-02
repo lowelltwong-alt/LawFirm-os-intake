@@ -14,6 +14,7 @@
         "ui_review_manifest",
         "synthetic_qa_review_run",
         "synthetic_confidence_summary",
+        "synthetic_qa_blocker_report",
         "matter_linking_preflight",
         "labor_employment_qa_matrix",
         "labor_employment_blocked_driver_impact_review",

@@ -1,0 +1,293 @@
+{
+  "schema_version": "0.1",
+  "synthetic_qa_blocker_report_id": "synthetic_qa_blocker_report_aa9969303979a0f9",
+  "status": "synthetic_qa_blocker_report_ready_for_review",
+  "source_ui_manifest_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-os-intake-merge-20260702-011307\\.lawfirm-os-intake\\ui-fixture-refresh-blocker-report\\ui_review_manifest.json",
+  "source_ui_manifest_id": "ui_review_manifest_4a2ec3080304",
+  "source_ui_manifest_overall_status": "blocked",
+  "source_synthetic_confidence_summary_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-os-intake-merge-20260702-011307\\.lawfirm-os-intake\\ui-fixture-refresh-blocker-report\\quality\\synthetic_confidence_summary_report.json",
+  "source_synthetic_confidence_summary_report_id": "synthetic_confidence_summary_ed0476ca334d9f36",
+  "source_synthetic_confidence_summary_status": "synthetic_confidence_summary_ready_for_review",
+  "source_synthetic_qa_review_run_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-os-intake-merge-20260702-011307\\.lawfirm-os-intake\\ui-fixture-refresh-blocker-report\\synthetic_qa_review_run_report.json",
+  "source_synthetic_qa_review_run_report_id": "syntheticqareviewrun_140008234a061488",
+  "source_synthetic_qa_review_run_status": "synthetic_qa_review_run_ready",
+  "row_count": 19,
+  "failed_row_count": 0,
+  "blocked_row_count": 0,
+  "pending_review_row_count": 19,
+  "rows": [
+    {
+      "row_id": "quality_gate:synthetic_qa_bundle",
+      "source": "quality_gate",
+      "label": "Synthetic QA Bundle",
+      "state": "pending_review",
+      "owner": "qa-reference",
+      "evidence_refs": [
+        "synthetic_qa_bundle_report.json"
+      ],
+      "notes": [
+        "Budget coherence, fixture depth, calibration readiness, and UI evidence are bundled for QA review."
+      ]
+    },
+    {
+      "row_id": "quality_gate:synthetic_confidence_summary",
+      "source": "quality_gate",
+      "label": "Synthetic Confidence Summary",
+      "state": "pending_review",
+      "owner": "qa-reference",
+      "evidence_refs": [
+        "synthetic_confidence_summary_report.json"
+      ],
+      "notes": [
+        "The aggregate synthetic QA confidence banner must make review readiness, blockers, and no-production-authority boundaries visible."
+      ]
+    },
+    {
+      "row_id": "quality_gate:matter_linking_preflight",
+      "source": "quality_gate",
+      "label": "Matter-Linking Preflight",
+      "state": "pending_review",
+      "owner": "qa-reference",
+      "evidence_refs": [
+        "matter_linking_preflight_report.json"
+      ],
+      "notes": [
+        "Upfront-like document clusters must stay human-gated and no-write before budget or matter-opening workflows rely on them."
+      ]
+    },
+    {
+      "row_id": "quality_gate:synthetic_fixture_depth",
+      "source": "quality_gate",
+      "label": "Synthetic Fixture Depth",
+      "state": "pending_review",
+      "owner": "qa-reference",
+      "evidence_refs": [
+        "synthetic_fixture_depth_audit_report.json"
+      ],
+      "notes": [
+        "Fixture-family depth remains visible before synthetic QA coverage is trusted."
+      ]
+    },
+    {
+      "row_id": "quality_gate:budget_calibration_readiness",
+      "source": "quality_gate",
+      "label": "Calibration Readiness",
+      "state": "pending_review",
+      "owner": "pricing-review",
+      "evidence_refs": [
+        "budget_calibration_readiness_report.json"
+      ],
+      "notes": [
+        "Budget calibration stays blocked until reviewed gold, replay outputs, and variance evidence exist."
+      ]
+    },
+    {
+      "row_id": "quality_gate:labor_employment_qa_matrix",
+      "source": "quality_gate",
+      "label": "L&E QA Matrix",
+      "state": "pending_review",
+      "owner": "qa-reference",
+      "evidence_refs": [
+        "labor_employment_qa_matrix_report.json"
+      ],
+      "notes": [
+        "L&E synthetic fact fixtures must prove critical blockers and range-only review posture."
+      ]
+    },
+    {
+      "row_id": "quality_gate:labor_employment_fixture_family_pack",
+      "source": "quality_gate",
+      "label": "L&E Fixture Family Pack",
+      "state": "pending_review",
+      "owner": "qa-reference",
+      "evidence_refs": [
+        "labor_employment_fixture_family_pack_report.json"
+      ],
+      "notes": [
+        "L&E synthetic fixtures must cover required families, variants, fact needs, and budget-driver dimensions."
+      ]
+    },
+    {
+      "row_id": "quality_gate:labor_employment_executable_fixtures",
+      "source": "quality_gate",
+      "label": "L&E Executable Fixtures",
+      "state": "pending_review",
+      "owner": "qa-reference",
+      "evidence_refs": [
+        "labor_employment_executable_fixtures_report.json"
+      ],
+      "notes": [
+        "Selected L&E source bundles must execute through deterministic preflight before fixture generation is trusted."
+      ]
+    },
+    {
+      "row_id": "quality_gate:labor_employment_executable_coverage",
+      "source": "quality_gate",
+      "label": "L&E Executable Coverage",
+      "state": "pending_review",
+      "owner": "qa-reference",
+      "evidence_refs": [
+        "labor_employment_executable_coverage_report.json"
+      ],
+      "notes": [
+        "QA must show which L&E fixture-family pack cases are executable today and which remain planned coverage gaps."
+      ]
+    },
+    {
+      "row_id": "quality_gate:labor_employment_executable_fact_binding",
+      "source": "quality_gate",
+      "label": "L&E Executable Fact Binding",
+      "state": "pending_review",
+      "owner": "qa-reference",
+      "evidence_refs": [
+        "labor_employment_executable_fact_binding_report.json"
+      ],
+      "notes": [
+        "Executable L&E preflight packets must bind expected budget-fact gaps to source evidence, source inventory, or dry-run exception labels."
+      ]
+    },
+    {
+      "row_id": "quality_gate:labor_employment_executable_driver_binding",
+      "source": "quality_gate",
+      "label": "L&E Executable Driver Binding",
+      "state": "pending_review",
+      "owner": "qa-reference",
+      "evidence_refs": [
+        "labor_employment_executable_driver_binding_report.json"
+      ],
+      "notes": [
+        "Executable L&E fact-gap evidence must map to budget-driver focus dimensions before budget-driver QA is trusted."
+      ]
+    },
+    {
+      "row_id": "quality_gate:labor_employment_executable_driver_impact",
+      "source": "quality_gate",
+      "label": "L&E Executable Driver Impact",
+      "state": "pending_review",
+      "owner": "qa-reference",
+      "evidence_refs": [
+        "labor_employment_executable_driver_impact_report.json"
+      ],
+      "notes": [
+        "Executable L&E driver bindings must declare candidate budget blockers, range widening, scenario forks, and rate/guideline review effects before budget math can consume them."
+      ]
+    },
+    {
+      "row_id": "quality_gate:labor_employment_driver_impact_review",
+      "source": "quality_gate",
+      "label": "L&E Driver Impact Review",
+      "state": "pending_review",
+      "owner": "qa-reference",
+      "evidence_refs": [
+        "labor_employment_driver_impact_review_report.json"
+      ],
+      "notes": [
+        "Nonblocking L&E driver-impact budget-gate replay must be backed by reviewed synthetic evidence, not hand-filtered test data."
+      ]
+    },
+    {
+      "row_id": "quality_gate:labor_employment_blocked_driver_impact_review",
+      "source": "quality_gate",
+      "label": "L&E Blocked Driver Impact Review",
+      "state": "pending_review",
+      "owner": "qa-reference",
+      "evidence_refs": [
+        "labor_employment_blocked_driver_impact_review_report.json"
+      ],
+      "notes": [
+        "Blocked L&E amount-budget cases must explain blocker facts, follow-up actions, and candidate Lake labels before QA trusts budget gating."
+      ]
+    },
+    {
+      "row_id": "quality_gate:labor_employment_budget_output_expectations",
+      "source": "quality_gate",
+      "label": "L&E Budget Output Expectations",
+      "state": "pending_review",
+      "owner": "qa-reference",
+      "evidence_refs": [
+        "labor_employment_budget_output_expectations_report.json"
+      ],
+      "notes": [
+        "Every executable L&E case must have one allowed budget-output state, next gates, and candidate Lake labels before budget QA can rely on it."
+      ]
+    },
+    {
+      "row_id": "quality_gate:full_pytest",
+      "source": "quality_gate",
+      "label": "Full Pytest",
+      "state": "pending_review",
+      "owner": "qa-reference",
+      "evidence_refs": [
+        "scripts/run_full_pytest.py"
+      ],
+      "notes": [
+        "scripts/run_full_pytest.py is missing; Use the repo wrapper so tests receive the configured long timeout ceiling."
+      ]
+    },
+    {
+      "row_id": "quality_gate:smoke_demo",
+      "source": "quality_gate",
+      "label": "North-Star Smoke",
+      "state": "pending_review",
+      "owner": "qa-reference",
+      "evidence_refs": [
+        "scripts/smoke_demo.sh"
+      ],
+      "notes": [
+        "scripts/smoke_demo.sh is missing; Smoke should prove the checkout demo, budget coherence, starter audit, blocked-budget audit, and counterfactual audit."
+      ]
+    },
+    {
+      "row_id": "readiness_item:required_qa_artifacts",
+      "source": "readiness_item",
+      "label": "Required QA Artifacts",
+      "state": "pending_review",
+      "owner": "qa-reference",
+      "evidence_refs": [
+        "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-os-intake-merge-20260702-011307\\.lawfirm-os-intake\\ui-fixture-refresh-blocker-report\\quality\\synthetic_qa_bundle_report.json"
+      ],
+      "notes": [
+        "0 missing required, 0 blocked, 12 pending review."
+      ]
+    },
+    {
+      "row_id": "readiness_item:owner_review_backlog",
+      "source": "readiness_item",
+      "label": "Owner Review Backlog",
+      "state": "pending_review",
+      "owner": "human-or-owner-review",
+      "evidence_refs": [
+        "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-os-intake-merge-20260702-011307\\.lawfirm-os-intake\\ui-fixture-refresh-blocker-report\\ui_review_manifest.json"
+      ],
+      "notes": [
+        "18 pending gates remain; pending is expected until human/owner review accepts candidate QA evidence."
+      ]
+    }
+  ],
+  "required_next_actions": [
+    "Start manual synthetic QA review from the read-only UI.",
+    "Treat this as candidate-only synthetic readiness, not production readiness.",
+    "Expand reviewed gold and fixture families before calibration or real-data pilot work."
+  ],
+  "candidate_only": true,
+  "synthetic_only": true,
+  "non_authoritative": true,
+  "local_json_only": true,
+  "human_review_required": true,
+  "not_authorized_for_external_write": true,
+  "not_authorized_for_lake_write": true,
+  "not_authorized_for_sqlite_write": true,
+  "not_authorized_for_budget_submission": true,
+  "not_authorized_for_matter_opening": true,
+  "not_authorized_for_calibration": true,
+  "budget_amount_output_authorized": false,
+  "budget_submission_authorized": false,
+  "conflict_conclusion_emitted": false,
+  "matter_opening_authorized": false,
+  "training_pipeline_created": false,
+  "lake_write_performed": false,
+  "sqlite_write_performed": false,
+  "external_writes_performed": false,
+  "silent_learning_performed": false,
+  "generated_at": "2026-07-02T00:00:00Z"
+}

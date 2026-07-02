@@ -10467,6 +10467,110 @@ class SyntheticConfidenceSummaryReport(StrictModel):
         return self
 
 
+SyntheticQABlockerRowSource = Literal[
+    "quality_gate",
+    "qa_step",
+    "readiness_item",
+    "top_blocker",
+]
+SyntheticQABlockerRowState = Literal["failed", "blocked", "pending_review"]
+
+
+class SyntheticQABlockerRow(StrictModel):
+    row_id: str
+    source: SyntheticQABlockerRowSource
+    label: str
+    state: SyntheticQABlockerRowState
+    owner: str
+    evidence_refs: list[str]
+    notes: list[str]
+
+    @model_validator(mode="after")
+    def synthetic_qa_blocker_row_is_actionable(self) -> "SyntheticQABlockerRow":
+        if not self.row_id.strip():
+            raise ValueError("synthetic QA blocker row requires row_id")
+        if not self.label.strip():
+            raise ValueError("synthetic QA blocker row requires label")
+        if not self.owner.strip():
+            raise ValueError("synthetic QA blocker row requires owner")
+        if not self.evidence_refs or any(not ref.strip() for ref in self.evidence_refs):
+            raise ValueError("synthetic QA blocker row requires evidence refs")
+        if not self.notes or any(not note.strip() for note in self.notes):
+            raise ValueError("synthetic QA blocker row requires notes")
+        return self
+
+
+class SyntheticQABlockerReport(StrictModel):
+    schema_version: str = "0.1"
+    synthetic_qa_blocker_report_id: str
+    status: Literal[
+        "synthetic_qa_blocker_report_ready_for_review",
+        "blocked_by_synthetic_qa_blocker_report",
+        "failed_synthetic_qa_blocker_boundary",
+    ]
+    source_ui_manifest_ref: str
+    source_ui_manifest_id: str
+    source_ui_manifest_overall_status: str
+    source_synthetic_confidence_summary_ref: str
+    source_synthetic_confidence_summary_report_id: str
+    source_synthetic_confidence_summary_status: str
+    source_synthetic_qa_review_run_ref: str
+    source_synthetic_qa_review_run_report_id: str
+    source_synthetic_qa_review_run_status: str
+    row_count: int = Field(ge=0)
+    failed_row_count: int = Field(ge=0)
+    blocked_row_count: int = Field(ge=0)
+    pending_review_row_count: int = Field(ge=0)
+    rows: list[SyntheticQABlockerRow]
+    required_next_actions: list[str]
+    candidate_only: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    local_json_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    not_authorized_for_matter_opening: Literal[True] = True
+    not_authorized_for_calibration: Literal[True] = True
+    budget_amount_output_authorized: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    conflict_conclusion_emitted: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    training_pipeline_created: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def synthetic_qa_blocker_report_counts_and_status_match(
+        self,
+    ) -> "SyntheticQABlockerReport":
+        failed = [row for row in self.rows if row.state == "failed"]
+        blocked = [row for row in self.rows if row.state == "blocked"]
+        pending = [row for row in self.rows if row.state == "pending_review"]
+        if self.row_count != len(self.rows):
+            raise ValueError("synthetic QA blocker row count mismatch")
+        if self.failed_row_count != len(failed):
+            raise ValueError("synthetic QA blocker failed row count mismatch")
+        if self.blocked_row_count != len(blocked):
+            raise ValueError("synthetic QA blocker blocked row count mismatch")
+        if self.pending_review_row_count != len(pending):
+            raise ValueError("synthetic QA blocker pending row count mismatch")
+        if self.status == "synthetic_qa_blocker_report_ready_for_review" and (failed or blocked):
+            raise ValueError("ready synthetic QA blocker report cannot contain failed blockers")
+        if self.status == "blocked_by_synthetic_qa_blocker_report" and not (failed or blocked):
+            raise ValueError("blocked synthetic QA blocker report requires failed or blocked rows")
+        if self.status == "failed_synthetic_qa_blocker_boundary" and not (failed or blocked):
+            raise ValueError("failed synthetic QA blocker report requires failed or blocked rows")
+        if not self.required_next_actions:
+            raise ValueError("synthetic QA blocker report requires next actions")
+        return self
+
+
 UIReviewDataBundleStatus = Literal[
     "ready_for_review",
     "blocked_missing_required_reports",
@@ -10477,6 +10581,7 @@ UIReviewDataBundleReportKind = Literal[
     "ui_review_manifest",
     "synthetic_qa_review_run",
     "synthetic_confidence_summary",
+    "synthetic_qa_blocker_report",
     "matter_linking_preflight",
     "labor_employment_qa_matrix",
     "labor_employment_blocked_driver_impact_review",

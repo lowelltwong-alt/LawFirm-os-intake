@@ -122,6 +122,7 @@ from .reviewed_learning_gate import run_reviewed_learning_gate
 from .synthetic_fixture_depth_audit import run_synthetic_fixture_depth_audit
 from .synthetic_fixture_expansion import run_synthetic_fixture_expansion_audit
 from .synthetic_confidence_summary import run_synthetic_confidence_summary
+from .synthetic_qa_blocker_report import run_synthetic_qa_blocker_report
 from .synthetic_qa_bundle import run_synthetic_qa_bundle
 from .synthetic_qa_review_run import run_synthetic_qa_review_run
 from .ui_review_data_bundle import build_ui_review_data_bundle
@@ -246,6 +247,22 @@ def _parser() -> argparse.ArgumentParser:
     synthetic_confidence_summary.add_argument("--ui-review-data-bundle", required=True)
     synthetic_confidence_summary.add_argument("--out-dir", required=True)
     synthetic_confidence_summary.add_argument(
+        "--generated-at",
+        help="Optional fixed timestamp for deterministic tests and replayed reports.",
+    )
+
+    synthetic_qa_blocker_report = sub.add_parser(
+        "build-synthetic-qa-blocker-report",
+        help=(
+            "Build a deterministic candidate-only QA blocker queue from the UI "
+            "manifest, confidence summary, and synthetic QA review run."
+        ),
+    )
+    synthetic_qa_blocker_report.add_argument("--ui-manifest", required=True)
+    synthetic_qa_blocker_report.add_argument("--synthetic-confidence-summary", required=True)
+    synthetic_qa_blocker_report.add_argument("--synthetic-qa-review-run-report", required=True)
+    synthetic_qa_blocker_report.add_argument("--out-dir", required=True)
+    synthetic_qa_blocker_report.add_argument(
         "--generated-at",
         help="Optional fixed timestamp for deterministic tests and replayed reports.",
     )
@@ -1669,6 +1686,32 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 0 if report.status == "synthetic_confidence_summary_ready_for_review" else 2
+
+        if args.command == "build-synthetic-qa-blocker-report":
+            report, run_dir = run_synthetic_qa_blocker_report(
+                ui_manifest_path=args.ui_manifest,
+                synthetic_confidence_summary_path=args.synthetic_confidence_summary,
+                synthetic_qa_review_run_report_path=args.synthetic_qa_review_run_report,
+                out_dir=args.out_dir,
+                generated_at=args.generated_at,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "synthetic_qa_blocker_report_id": report.synthetic_qa_blocker_report_id,
+                    "run_dir": str(run_dir),
+                    "row_count": report.row_count,
+                    "failed_row_count": report.failed_row_count,
+                    "blocked_row_count": report.blocked_row_count,
+                    "pending_review_row_count": report.pending_review_row_count,
+                    "budget_submission_authorized": report.budget_submission_authorized,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                }
+            )
+            return 0 if report.status == "synthetic_qa_blocker_report_ready_for_review" else 2
 
         if args.command == "build-synthetic-qa-bundle":
             report, run_dir, ui_manifest = run_synthetic_qa_bundle(

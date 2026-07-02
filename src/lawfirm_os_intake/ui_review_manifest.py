@@ -109,6 +109,13 @@ ARTIFACT_SPECS = [
         "pending_review",
     ),
     ArtifactSpec(
+        "synthetic-qa-blocker-report",
+        "Synthetic QA Blocker Report",
+        "synthetic_qa_blocker_report.json",
+        "qa-reference",
+        "pending_review",
+    ),
+    ArtifactSpec(
         "matter-linking-preflight",
         "Matter-Linking Preflight",
         "matter_linking_preflight_report.json",
@@ -278,6 +285,13 @@ QUALITY_GATE_SPECS = {
         "synthetic_confidence_summary_report.json",
         "qa-reference",
         "The aggregate synthetic QA confidence banner must make review readiness, blockers, and no-production-authority boundaries visible.",
+        "pending_review",
+    ),
+    "synthetic_qa_blocker_report": (
+        "Synthetic QA Blocker Report",
+        "synthetic_qa_blocker_report.json",
+        "qa-reference",
+        "The synthetic QA blocker queue must be emitted as deterministic local JSON before the review UI relies on it.",
         "pending_review",
     ),
     "matter_linking_preflight": (

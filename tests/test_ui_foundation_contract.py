@@ -16,6 +16,7 @@ def test_legal_intake_budget_ui_required_files_exist(repo_root):
         "src/data-contract.ts",
         "src/fixtures/demo-run-manifest.json",
         "src/fixtures/demo-synthetic-confidence-summary-report.json",
+        "src/fixtures/demo-synthetic-qa-blocker-report.json",
         "src/fixtures/demo-synthetic-qa-review-run-report.json",
         "src/fixtures/demo-ui-review-data-bundle.json",
         "src/fixtures/demo-matter-linking-preflight-report.json",
@@ -54,6 +55,7 @@ def test_legal_intake_budget_ui_data_contract_lists_required_artifacts(repo_root
         "synthetic_qa_bundle_report.json",
         "synthetic_qa_review_run_report.json",
         "synthetic_confidence_summary_report.json",
+        "synthetic_qa_blocker_report.json",
         "matter_linking_preflight_report.json",
         "synthetic_fixture_depth_audit_report.json",
         "budget_calibration_readiness_report.json",
@@ -109,6 +111,7 @@ def test_legal_intake_budget_demo_manifest_is_read_only_and_candidate_only(repo_
         "synthetic_qa_bundle",
         "synthetic_qa_review_run",
         "synthetic_confidence_summary",
+        "synthetic_qa_blocker_report",
         "matter_linking_preflight",
         "synthetic_fixture_depth",
         "budget_calibration_readiness",
@@ -138,9 +141,9 @@ def test_legal_intake_budget_demo_ui_review_data_bundle_is_local_and_no_write(re
     detail_reports = {report["file_name"]: report for report in bundle["detail_reports"]}
 
     assert bundle["status"] == "ready_for_review"
-    assert bundle["detail_report_count"] == len(bundle["detail_reports"]) == 7
+    assert bundle["detail_report_count"] == len(bundle["detail_reports"]) == 8
     assert bundle["required_detail_report_count"] == 5
-    assert bundle["present_detail_report_count"] == 7
+    assert bundle["present_detail_report_count"] == 8
     assert bundle["missing_required_detail_report_count"] == 0
     assert bundle["external_write_report_count"] == 0
     assert bundle["candidate_only"] is True
@@ -156,6 +159,7 @@ def test_legal_intake_budget_demo_ui_review_data_bundle_is_local_and_no_write(re
     assert {
         "ui_review_manifest.json",
         "synthetic_confidence_summary_report.json",
+        "synthetic_qa_blocker_report.json",
         "synthetic_qa_review_run_report.json",
         "matter_linking_preflight_report.json",
         "labor_employment_qa_matrix_report.json",
@@ -321,6 +325,34 @@ def test_legal_intake_budget_demo_synthetic_confidence_summary_is_no_write(repo_
     assert not list((repo_root / UI_ROOT / "src/fixtures").glob("*.db"))
 
 
+def test_legal_intake_budget_demo_synthetic_qa_blocker_report_is_no_write(repo_root):
+    report = json.loads(
+        (repo_root / UI_ROOT / "src/fixtures/demo-synthetic-qa-blocker-report.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    assert report["status"] == "synthetic_qa_blocker_report_ready_for_review"
+    assert report["row_count"] == len(report["rows"]) == 19
+    assert report["failed_row_count"] == 0
+    assert report["blocked_row_count"] == 0
+    assert report["pending_review_row_count"] == 19
+    assert report["candidate_only"] is True
+    assert report["synthetic_only"] is True
+    assert report["non_authoritative"] is True
+    assert report["local_json_only"] is True
+    assert report["human_review_required"] is True
+    assert report["budget_submission_authorized"] is False
+    assert report["matter_opening_authorized"] is False
+    assert report["lake_write_performed"] is False
+    assert report["sqlite_write_performed"] is False
+    assert report["external_writes_performed"] is False
+    assert report["silent_learning_performed"] is False
+    assert {row["source"] for row in report["rows"]} == {"quality_gate", "readiness_item"}
+    assert all(row["evidence_refs"] for row in report["rows"])
+    assert all(row["notes"] for row in report["rows"])
+
+
 def test_legal_intake_budget_demo_budget_output_expectations_are_no_write(repo_root):
     report = json.loads(
         (
@@ -386,9 +418,9 @@ def test_legal_intake_budget_ui_disclaims_mutating_authority(repo_root):
     assert "L&amp;E Budget Output Expectations" in app
     assert "L&amp;E Fixture Drilldown" in app
     assert "buildFixtureDrilldownRows" in app
-    assert "buildSyntheticQABlockerRows" in app
     assert "assertUIReviewDataBundle" in app
     assert "assertSyntheticConfidenceSummaryReport" in app
+    assert "assertSyntheticQABlockerReport" in app
     assert "assertSyntheticQAReviewRunReport" in app
     assert "assertMatterLinkingPreflightReport" in app
     assert "assertLaborEmploymentQAMatrixReport" in app
@@ -405,44 +437,26 @@ def test_legal_intake_budget_ui_disclaims_mutating_authority(repo_root):
 
 def test_legal_intake_budget_qa_blocker_drilldown_tracks_review_queue(repo_root):
     app = (repo_root / UI_ROOT / "src/App.tsx").read_text(encoding="utf-8")
-    manifest = json.loads(
-        (repo_root / UI_ROOT / "src/fixtures/demo-run-manifest.json").read_text(encoding="utf-8")
-    )
-    confidence = json.loads(
-        (
-            repo_root / UI_ROOT / "src/fixtures/demo-synthetic-confidence-summary-report.json"
-        ).read_text(encoding="utf-8")
-    )
-    qa_review_run = json.loads(
-        (repo_root / UI_ROOT / "src/fixtures/demo-synthetic-qa-review-run-report.json").read_text(
+    blocker_report = json.loads(
+        (repo_root / UI_ROOT / "src/fixtures/demo-synthetic-qa-blocker-report.json").read_text(
             encoding="utf-8"
         )
     )
 
-    assert "function buildSyntheticQABlockerRows" in app
-    assert "reviewManifest.qualityGates" in app
-    assert "qaReviewRun.steps" in app
-    assert "confidenceReport.readiness_items" in app
-    assert "confidenceReport.top_blockers" in app
+    assert "demoSyntheticQABlockerReport" in app
+    assert "const syntheticQABlockerReport" in app
+    assert "SyntheticQABlockerDrilldownPanel report={syntheticQABlockerReport}" in app
+    assert "report.rows.map" in app
+    assert "report.required_next_actions.map" in app
     assert "No failed or blocked synthetic QA rows" in app
     assert "review, not calibration, submission, or" in app
     assert "Lake write" in app
-    pending_quality_gate_count = sum(
-        1 for gate in manifest["qualityGates"] if gate["status"] == "pending_review"
-    )
-    pending_readiness_count = sum(
-        1 for item in confidence["readiness_items"] if item["state"] == "pending_review"
-    )
-
-    assert pending_quality_gate_count > 0
-    assert pending_readiness_count > 0
-    assert not any(gate["status"] in {"blocked", "failed"} for gate in manifest["qualityGates"])
-    assert all(step["status"] == "passed" for step in qa_review_run["steps"])
-    assert not any(item["state"] in {"blocked", "failed"} for item in confidence["readiness_items"])
-    assert confidence["top_blockers"] == []
-    assert confidence["budget_submission_authorized"] is False
-    assert confidence["lake_write_performed"] is False
-    assert confidence["silent_learning_performed"] is False
+    assert blocker_report["pending_review_row_count"] > 0
+    assert blocker_report["failed_row_count"] == 0
+    assert blocker_report["blocked_row_count"] == 0
+    assert blocker_report["budget_submission_authorized"] is False
+    assert blocker_report["lake_write_performed"] is False
+    assert blocker_report["silent_learning_performed"] is False
 
 
 def test_legal_intake_budget_fixture_drilldown_joins_existing_le_reports(repo_root):
