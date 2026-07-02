@@ -48,6 +48,8 @@ Reviewed synthetic gold files live under `examples/synthetic/gold/`. They are lo
 
 The L&E fixture-family pack lives at `examples/synthetic/labor-employment/labor-employment-budget-fixture-family-pack.json`. Run `lawfirm-os-intake audit-labor-employment-fixture-family-pack --out-dir <dir>` to write `labor_employment_fixture_family_pack_report.json`. That report checks family/variant coverage, configured fact needs, budget-driver dimensions, blocked/range-only expectations, adversarial holdout exclusion, and no-write/no-calibration boundaries.
 
+The first executable L&E fixture manifest lives at `examples/synthetic/labor-employment/labor-employment-executable-fixtures-manifest.json`. Run `lawfirm-os-intake audit-labor-employment-executable-fixtures --repo-root . --out-dir <dir>` to write `labor_employment_executable_fixtures_report.json`. That report runs selected synthetic source bundles through deterministic preflight and checks pack links, source-signal terms, missing/duplicate source inventory, prompt-injection/prohibited-transition exception labels, and no-write boundaries. It does not perform L&E budget fact extraction or authorize amount budgeting; it proves that the selected inbound fixture files are executable preflight inputs before the next fixture-binding slice.
+
 ## Data generation rules
 
 - clearly label all names/domains/claims as synthetic;

@@ -216,6 +216,11 @@ from lawfirm_os_intake.models import (  # noqa: E402
     LaborEmploymentBudgetFactFinding,
     LaborEmploymentBudgetFactGap,
     LaborEmploymentBudgetFactSource,
+    LaborEmploymentExecutableFixtureAuditCase,
+    LaborEmploymentExecutableFixtureAuditCheck,
+    LaborEmploymentExecutableFixtureAuditReport,
+    LaborEmploymentExecutableFixtureManifest,
+    LaborEmploymentExecutableFixtureSpec,
     LaborEmploymentQAMatrixCase,
     LaborEmploymentQAMatrixReport,
     LaborEmploymentSyntheticFixtureCase,
@@ -335,6 +340,19 @@ MODELS = {
     "labor-employment-budget-fact-gap.schema.json": LaborEmploymentBudgetFactGap,
     "labor-employment-budget-fact-audit-check.schema.json": (LaborEmploymentBudgetFactAuditCheck),
     "labor-employment-budget-fact-audit-report.schema.json": (LaborEmploymentBudgetFactAuditReport),
+    "labor-employment-executable-fixture-spec.schema.json": (LaborEmploymentExecutableFixtureSpec),
+    "labor-employment-executable-fixture-manifest.schema.json": (
+        LaborEmploymentExecutableFixtureManifest
+    ),
+    "labor-employment-executable-fixture-audit-case.schema.json": (
+        LaborEmploymentExecutableFixtureAuditCase
+    ),
+    "labor-employment-executable-fixture-audit-check.schema.json": (
+        LaborEmploymentExecutableFixtureAuditCheck
+    ),
+    "labor-employment-executable-fixture-audit-report.schema.json": (
+        LaborEmploymentExecutableFixtureAuditReport
+    ),
     "labor-employment-qa-matrix-case.schema.json": LaborEmploymentQAMatrixCase,
     "labor-employment-qa-matrix-report.schema.json": LaborEmploymentQAMatrixReport,
     "labor-employment-synthetic-fixture-case.schema.json": (LaborEmploymentSyntheticFixtureCase),

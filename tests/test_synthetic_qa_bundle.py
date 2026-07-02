@@ -33,6 +33,21 @@ def _write_ready_labor_employment_fixture_family_pack(path):
     )
 
 
+def _write_ready_labor_employment_executable_fixtures(path):
+    write_json(
+        path,
+        {
+            "status": "labor_employment_executable_fixtures_ready_for_review",
+            "external_writes_performed": False,
+            "lake_write_performed": False,
+            "sqlite_write_performed": False,
+            "budget_submission_authorized": False,
+            "fixture_generation_authorized": False,
+            "calibration_approved": False,
+        },
+    )
+
+
 def test_synthetic_qa_bundle_blocks_missing_calibration_and_builds_ui(tmp_path):
     run_root = tmp_path / "demo"
     budget_dir = run_root / "budget"
@@ -55,6 +70,9 @@ def test_synthetic_qa_bundle_blocks_missing_calibration_and_builds_ui(tmp_path):
     _write_ready_labor_employment_qa_matrix(quality_dir / "labor_employment_qa_matrix_report.json")
     _write_ready_labor_employment_fixture_family_pack(
         quality_dir / "labor_employment_fixture_family_pack_report.json"
+    )
+    _write_ready_labor_employment_executable_fixtures(
+        quality_dir / "labor_employment_executable_fixtures_report.json"
     )
 
     report, run_dir, ui_manifest = run_synthetic_qa_bundle(
@@ -94,6 +112,9 @@ def test_synthetic_qa_bundle_can_generate_fixture_depth_from_manifest(tmp_path, 
     _write_ready_labor_employment_fixture_family_pack(
         quality_dir / "labor_employment_fixture_family_pack_report.json"
     )
+    _write_ready_labor_employment_executable_fixtures(
+        quality_dir / "labor_employment_executable_fixtures_report.json"
+    )
 
     report, run_dir, _ = run_synthetic_qa_bundle(
         run_root=run_root,
@@ -123,6 +144,7 @@ def test_synthetic_qa_bundle_cli_writes_bundle_and_manifest(tmp_path):
         "budget_calibration_readiness_report.json",
         "labor_employment_qa_matrix_report.json",
         "labor_employment_fixture_family_pack_report.json",
+        "labor_employment_executable_fixtures_report.json",
     ]:
         write_json(
             quality_dir / file_name,
@@ -132,6 +154,8 @@ def test_synthetic_qa_bundle_cli_writes_bundle_and_manifest(tmp_path):
                     if file_name == "labor_employment_qa_matrix_report.json"
                     else "labor_employment_fixture_family_pack_ready_for_review"
                     if file_name == "labor_employment_fixture_family_pack_report.json"
+                    else "labor_employment_executable_fixtures_ready_for_review"
+                    if file_name == "labor_employment_executable_fixtures_report.json"
                     else "passed"
                 ),
                 "external_writes_performed": False,

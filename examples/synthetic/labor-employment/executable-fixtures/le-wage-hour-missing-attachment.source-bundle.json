@@ -1,0 +1,86 @@
+{
+  "schema_version": "0.1",
+  "bundle_id": "syn-le-wage-hour-missing-attachment-001",
+  "data_origin": "synthetic",
+  "contains_real_client_data": false,
+  "contains_real_matter_data": false,
+  "contains_privileged_data": false,
+  "sources": [
+    {
+      "source_id": "syn-le-wage-hour-demand-email-001",
+      "source_type": "email",
+      "filename": "synthetic_wage_hour_missing_payroll_thread.txt",
+      "text": "From: intake-referral@synthetic-referral.example\nTo: intake@synthetic-law.example\nDate: July 1, 2026\nSubject: Wage/hour demand - missing payroll exports\n\nNora Alvarez says Riverbend Packaging LLC failed to pay overtime for line leads and hourly packers. The demand letter alleges unpaid overtime, meal-period premium issues, and waiting-time penalties. The sender says the payroll export and timekeeping export are attached, but the packet we received does not include either file. The email asks whether this could involve more than one worksite and whether a class or collective group is possible.\n\nPlease do not estimate a dollar budget until payroll volume, pay periods, employee counts, and the timekeeping system are confirmed.",
+      "metadata": {
+        "synthetic": true,
+        "attachment_refs": [
+          "payroll-export.csv",
+          "timekeeping-export.xlsx"
+        ]
+      }
+    },
+    {
+      "source_id": "syn-le-wage-hour-payroll-export-missing-001",
+      "source_type": "attachment_text",
+      "filename": "payroll-export.csv",
+      "text": "Synthetic placeholder only: referenced payroll export was not included in the inbound packet.",
+      "metadata": {
+        "synthetic": true,
+        "missing": true,
+        "read_state": "missing",
+        "attachment_refs": [
+          "payroll-export.csv"
+        ]
+      }
+    },
+    {
+      "source_id": "syn-le-wage-hour-timekeeping-export-missing-001",
+      "source_type": "attachment_text",
+      "filename": "timekeeping-export.xlsx",
+      "text": "Synthetic placeholder only: referenced timekeeping export was not included in the inbound packet.",
+      "metadata": {
+        "synthetic": true,
+        "missing": true,
+        "read_state": "missing",
+        "attachment_refs": [
+          "timekeeping-export.xlsx"
+        ]
+      }
+    }
+  ],
+  "fixture_hints": {
+    "provided_fields": [
+      "employee_claimant_identity",
+      "employer_or_defendant_identity",
+      "claims_and_causes_of_action"
+    ],
+    "entities": [
+      {
+        "name": "Nora Alvarez",
+        "role_candidates": [
+          {
+            "role": "claimant",
+            "confidence": 0.78
+          },
+          {
+            "role": "adverse_party",
+            "confidence": 0.58
+          }
+        ]
+      },
+      {
+        "name": "Riverbend Packaging LLC",
+        "role_candidates": [
+          {
+            "role": "prospective_represented_client",
+            "confidence": 0.64
+          },
+          {
+            "role": "employer_or_defendant",
+            "confidence": 0.74
+          }
+        ]
+      }
+    ]
+  }
+}

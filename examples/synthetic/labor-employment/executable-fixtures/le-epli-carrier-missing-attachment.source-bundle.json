@@ -1,0 +1,129 @@
+{
+  "schema_version": "0.1",
+  "bundle_id": "syn-le-epli-carrier-missing-attachment-001",
+  "data_origin": "synthetic",
+  "contains_real_client_data": false,
+  "contains_real_matter_data": false,
+  "contains_privileged_data": false,
+  "sources": [
+    {
+      "source_id": "syn-le-epli-assignment-email-001",
+      "source_type": "email",
+      "filename": "synthetic_epli_assignment_missing_guidelines.txt",
+      "text": "From: claimsdesk@granite-shield-epli.example\nTo: intake@synthetic-law.example\nDate: July 1, 2026\nSubject: EPLI assignment - Brightline Foods / Nguyen\n\nGranite Shield EPLI asks the firm to evaluate a potential defense assignment for its insured Brightline Foods Inc. The underlying claimant is Talia Nguyen, represented by Stone & Hart. ClaimsBridge Administrators forwarded the matter as third-party administrator. Granite Shield may pay approved defense costs but asks counsel not to assume Granite Shield is the represented client. The carrier guideline attachment and approved rate schedule were referenced in the portal note but are not included in this packet. Please identify the insured, payer, instructing source, and unresolved roles before preparing any labor and employment budget range.",
+      "metadata": {
+        "synthetic": true,
+        "attachment_refs": [
+          "carrier-guidelines.pdf",
+          "approved-rate-schedule.pdf"
+        ]
+      }
+    },
+    {
+      "source_id": "syn-le-epli-guidelines-missing-001",
+      "source_type": "attachment_text",
+      "filename": "carrier-guidelines.pdf",
+      "text": "Synthetic placeholder only: referenced EPLI carrier guideline attachment was not included in the inbound packet.",
+      "metadata": {
+        "synthetic": true,
+        "missing": true,
+        "read_state": "missing",
+        "attachment_refs": [
+          "carrier-guidelines.pdf"
+        ]
+      }
+    },
+    {
+      "source_id": "syn-le-epli-rate-schedule-missing-001",
+      "source_type": "attachment_text",
+      "filename": "approved-rate-schedule.pdf",
+      "text": "Synthetic placeholder only: referenced approved rate schedule was not included in the inbound packet.",
+      "metadata": {
+        "synthetic": true,
+        "missing": true,
+        "read_state": "missing",
+        "attachment_refs": [
+          "approved-rate-schedule.pdf"
+        ]
+      }
+    }
+  ],
+  "fixture_hints": {
+    "provided_fields": [
+      "prospective_client_payer_carrier_posture",
+      "employee_claimant_identity",
+      "employer_or_defendant_identity"
+    ],
+    "entities": [
+      {
+        "name": "Granite Shield EPLI",
+        "role_candidates": [
+          {
+            "role": "insurance_carrier",
+            "confidence": 0.82
+          },
+          {
+            "role": "payer",
+            "confidence": 0.72
+          },
+          {
+            "role": "instructing_source",
+            "confidence": 0.63
+          }
+        ]
+      },
+      {
+        "name": "ClaimsBridge Administrators",
+        "role_candidates": [
+          {
+            "role": "third_party_administrator",
+            "confidence": 0.7
+          },
+          {
+            "role": "instructing_source",
+            "confidence": 0.55
+          }
+        ]
+      },
+      {
+        "name": "Brightline Foods Inc.",
+        "role_candidates": [
+          {
+            "role": "insured",
+            "confidence": 0.77
+          },
+          {
+            "role": "prospective_represented_client",
+            "confidence": 0.67
+          },
+          {
+            "role": "employer_or_defendant",
+            "confidence": 0.7
+          }
+        ]
+      },
+      {
+        "name": "Talia Nguyen",
+        "role_candidates": [
+          {
+            "role": "claimant",
+            "confidence": 0.75
+          },
+          {
+            "role": "adverse_party",
+            "confidence": 0.58
+          }
+        ]
+      },
+      {
+        "name": "Stone & Hart",
+        "role_candidates": [
+          {
+            "role": "opposing_counsel",
+            "confidence": 0.76
+          }
+        ]
+      }
+    ]
+  }
+}

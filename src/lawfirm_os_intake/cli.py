@@ -65,6 +65,9 @@ from .learning_shadow_eval_fixture_results import (
 )
 from .learning_shadow_eval_results import run_learning_shadow_eval_results
 from .labor_employment_budget_facts import run_labor_employment_budget_fact_audit
+from .labor_employment_executable_fixtures import (
+    run_labor_employment_executable_fixture_audit,
+)
 from .labor_employment_fixture_family_pack import (
     run_labor_employment_fixture_family_pack_audit,
 )
@@ -276,6 +279,31 @@ def _parser() -> argparse.ArgumentParser:
         help="Path to the candidate L&E budget fact-needs policy.",
     )
     le_fixture_family_pack.add_argument("--out-dir", required=True)
+
+    le_executable_fixtures = sub.add_parser(
+        "audit-labor-employment-executable-fixtures",
+        help=(
+            "Run selected synthetic L&E source bundles through preflight and audit "
+            "their pack links, source signals, exception labels, and no-write boundaries."
+        ),
+    )
+    le_executable_fixtures.add_argument(
+        "--manifest",
+        default=(
+            "examples/synthetic/labor-employment/labor-employment-executable-fixtures-manifest.json"
+        ),
+        help="Path to labor-employment-executable-fixtures-manifest.json.",
+    )
+    le_executable_fixtures.add_argument(
+        "--pack",
+        help="Optional override path to labor-employment-budget-fixture-family-pack.json.",
+    )
+    le_executable_fixtures.add_argument(
+        "--repo-root",
+        default=".",
+        help="Repository root for relative synthetic L&E executable fixture refs.",
+    )
+    le_executable_fixtures.add_argument("--out-dir", required=True)
 
     budget_review = sub.add_parser(
         "record-budget-review",
@@ -1380,6 +1408,45 @@ def main(argv: list[str] | None = None) -> int:
             )
             return (
                 0 if report.status == "labor_employment_fixture_family_pack_ready_for_review" else 2
+            )
+
+        if args.command == "audit-labor-employment-executable-fixtures":
+            report, run_dir = run_labor_employment_executable_fixture_audit(
+                manifest_path=args.manifest,
+                pack_path=args.pack,
+                repo_root=args.repo_root,
+                out_dir=args.out_dir,
+            )
+            failed_checks = [check.check_id for check in report.checks if check.status == "failed"]
+            _print(
+                {
+                    "status": report.status,
+                    "executable_fixture_audit_report_id": (
+                        report.executable_fixture_audit_report_id
+                    ),
+                    "manifest_id": report.manifest_id,
+                    "fixture_count": report.fixture_count,
+                    "preflight_executed_count": report.preflight_executed_count,
+                    "failed_case_count": report.failed_case_count,
+                    "missing_pack_link_count": report.missing_pack_link_count,
+                    "missing_source_signal_count": report.missing_source_signal_count,
+                    "missing_expected_exception_label_count": (
+                        report.missing_expected_exception_label_count
+                    ),
+                    "failed_checks": failed_checks,
+                    "budget_amount_output_authorized": (report.budget_amount_output_authorized),
+                    "budget_submission_authorized": report.budget_submission_authorized,
+                    "fixture_generation_authorized": report.fixture_generation_authorized,
+                    "calibration_approved": report.calibration_approved,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return (
+                0 if report.status == "labor_employment_executable_fixtures_ready_for_review" else 2
             )
 
         if args.command == "record-budget-review":

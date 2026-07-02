@@ -76,6 +76,16 @@ QA_BUNDLE_ARTIFACTS = [
             "family/variant/fact-need coverage is visible."
         ),
     ),
+    QABundleArtifactSpec(
+        artifact_id="labor_employment_executable_fixtures",
+        label="Labor/Employment Executable Fixtures",
+        file_name="labor_employment_executable_fixtures_report.json",
+        required=True,
+        missing_note=(
+            "Run audit-labor-employment-executable-fixtures so selected L&E "
+            "source bundles prove they execute through deterministic preflight."
+        ),
+    ),
 ]
 
 
@@ -135,6 +145,11 @@ def run_synthetic_qa_bundle(
             root=root,
             explicit_path=None,
             file_name="labor_employment_fixture_family_pack_report.json",
+        ),
+        "labor_employment_executable_fixtures": _resolve_artifact_source(
+            root=root,
+            explicit_path=None,
+            file_name="labor_employment_executable_fixtures_report.json",
         ),
     }
     artifacts = [

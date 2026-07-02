@@ -1299,6 +1299,272 @@ class LaborEmploymentSyntheticFixtureFamilyPackReport(StrictModel):
         return self
 
 
+class LaborEmploymentExecutableFixtureSpec(StrictModel):
+    executable_fixture_id: str
+    source_bundle_ref: str
+    linked_pack_case_ids: list[str]
+    family: LaborEmploymentSyntheticFixtureFamily
+    variant: LaborEmploymentSyntheticFixtureVariant
+    data_origin: Literal["synthetic"] = "synthetic"
+    expected_budget_readiness_state: Literal[
+        "blocked_missing_critical_facts",
+        "range_only_pending_human_review",
+        "candidate_ready_for_budget_review",
+    ]
+    expected_budget_gate_effect: LaborEmploymentQAMatrixBudgetGateEffect
+    expected_budget_treatment: Literal[
+        "block_amount_budget",
+        "hours_only_or_broad_range",
+        "candidate_range_budget_after_review",
+    ]
+    expected_min_sources: int = Field(default=1, ge=1)
+    expected_min_segments: int = Field(default=1, ge=1)
+    expected_min_missing_sources: int = Field(default=0, ge=0)
+    expected_min_duplicate_sources: int = Field(default=0, ge=0)
+    expected_source_signal_terms: list[str]
+    expected_preflight_exception_labels: list[str] = Field(default_factory=list)
+    expected_budget_fact_gap_ids: list[str] = Field(default_factory=list)
+    red_team_notes: list[str]
+    public_structure_only: Literal[True] = True
+    holdout_excluded_from_prompt_assembly: Literal[True] = True
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    contains_real_client_data: Literal[False] = False
+    contains_real_matter_data: Literal[False] = False
+    contains_privileged_data: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def le_executable_fixture_spec_is_reviewable(
+        self,
+    ) -> "LaborEmploymentExecutableFixtureSpec":
+        if not self.linked_pack_case_ids:
+            raise ValueError("executable L&E fixture requires at least one pack case link")
+        if not self.expected_source_signal_terms:
+            raise ValueError("executable L&E fixture requires source signal terms")
+        if self.missing_critical_fact_expected:
+            if self.expected_budget_readiness_state != "blocked_missing_critical_facts":
+                raise ValueError("critical L&E fact gaps require blocked readiness")
+            if self.expected_budget_gate_effect != "block_amount_budget_before_proposal":
+                raise ValueError("critical L&E fact gaps require amount-budget block")
+        return self
+
+    @property
+    def missing_critical_fact_expected(self) -> bool:
+        return bool(self.expected_budget_fact_gap_ids) and (
+            self.expected_budget_treatment == "block_amount_budget"
+        )
+
+
+class LaborEmploymentExecutableFixtureManifest(StrictModel):
+    schema_version: str = "0.1"
+    manifest_id: str
+    status: Literal["candidate_executable_fixture_manifest"]
+    practice_area: Literal["labor_employment"] = "labor_employment"
+    pack_ref: str
+    practice_profile_ref: str
+    source_methodology_refs: list[str]
+    fixtures: list[LaborEmploymentExecutableFixtureSpec]
+    human_review_required: Literal[True] = True
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    not_authorized_for_matter_opening: Literal[True] = True
+    not_authorized_for_calibration: Literal[True] = True
+    fixture_generation_authorized: Literal[False] = False
+    calibration_approved: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def le_executable_fixture_manifest_ids_are_unique(
+        self,
+    ) -> "LaborEmploymentExecutableFixtureManifest":
+        fixture_ids = [fixture.executable_fixture_id for fixture in self.fixtures]
+        if len(fixture_ids) != len(set(fixture_ids)):
+            raise ValueError("executable L&E fixture IDs must be unique")
+        source_refs = [fixture.source_bundle_ref for fixture in self.fixtures]
+        if len(source_refs) != len(set(source_refs)):
+            raise ValueError("executable L&E source bundle refs must be unique")
+        if not self.fixtures:
+            raise ValueError("executable L&E manifest requires at least one fixture")
+        return self
+
+
+class LaborEmploymentExecutableFixtureAuditCase(StrictModel):
+    executable_fixture_id: str
+    source_bundle_ref: str
+    linked_pack_case_ids: list[str]
+    family: LaborEmploymentSyntheticFixtureFamily
+    variant: LaborEmploymentSyntheticFixtureVariant
+    status: Literal["passed", "failed"]
+    preflight_packet_ref: str | None = None
+    data_scope_gate_report_ref: str | None = None
+    intake_review_form_ref: str | None = None
+    source_count: int = Field(ge=0)
+    segment_count: int = Field(ge=0)
+    source_hash_count: int = Field(ge=0)
+    missing_source_count: int = Field(ge=0)
+    duplicate_source_count: int = Field(ge=0)
+    party_candidate_count: int = Field(ge=0)
+    matter_candidate_count: int = Field(ge=0)
+    deadline_candidate_count: int = Field(ge=0)
+    prohibited_next_step_count: int = Field(ge=0)
+    exception_labels: list[str]
+    missing_expected_exception_labels: list[str]
+    missing_source_signal_terms: list[str]
+    missing_pack_case_ids: list[str]
+    pack_family_variant_mismatch_case_ids: list[str]
+    failed_expectation_ids: list[str] = Field(default_factory=list)
+    expected_budget_readiness_state: Literal[
+        "blocked_missing_critical_facts",
+        "range_only_pending_human_review",
+        "candidate_ready_for_budget_review",
+    ]
+    expected_budget_gate_effect: LaborEmploymentQAMatrixBudgetGateEffect
+    expected_budget_treatment: Literal[
+        "block_amount_budget",
+        "hours_only_or_broad_range",
+        "candidate_range_budget_after_review",
+    ]
+    expected_budget_fact_gap_ids: list[str]
+    budget_fact_audit_required: Literal[True] = True
+    budget_amount_output_authorized: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    conflict_conclusion_emitted: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    training_pipeline_created: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    notes: list[str]
+
+    @model_validator(mode="after")
+    def le_executable_fixture_case_status_matches_findings(
+        self,
+    ) -> "LaborEmploymentExecutableFixtureAuditCase":
+        failed = bool(
+            self.missing_expected_exception_labels
+            or self.missing_source_signal_terms
+            or self.missing_pack_case_ids
+            or self.pack_family_variant_mismatch_case_ids
+            or self.failed_expectation_ids
+        )
+        if self.preflight_packet_ref is None:
+            failed = True
+        if self.status == "passed" and failed:
+            raise ValueError("passed executable L&E fixture case cannot have unresolved gaps")
+        if self.status == "failed" and not failed:
+            raise ValueError("failed executable L&E fixture case requires an unresolved gap")
+        return self
+
+
+class LaborEmploymentExecutableFixtureAuditCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    evidence_refs: list[str] = Field(default_factory=list)
+    blocking_refs: list[str] = Field(default_factory=list)
+
+
+class LaborEmploymentExecutableFixtureAuditReport(StrictModel):
+    schema_version: str = "0.1"
+    executable_fixture_audit_report_id: str
+    status: Literal[
+        "labor_employment_executable_fixtures_ready_for_review",
+        "blocked_by_labor_employment_executable_fixtures",
+    ]
+    manifest_id: str
+    manifest_ref: str
+    pack_ref: str
+    practice_profile_ref: str
+    fixture_count: int = Field(ge=0)
+    preflight_executed_count: int = Field(ge=0)
+    failed_case_count: int = Field(ge=0)
+    missing_pack_link_count: int = Field(ge=0)
+    missing_source_signal_count: int = Field(ge=0)
+    missing_expected_exception_label_count: int = Field(ge=0)
+    cases: list[LaborEmploymentExecutableFixtureAuditCase]
+    checks: list[LaborEmploymentExecutableFixtureAuditCheck]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    not_authorized_for_matter_opening: Literal[True] = True
+    not_authorized_for_calibration: Literal[True] = True
+    fixture_generation_authorized: Literal[False] = False
+    calibration_approved: Literal[False] = False
+    budget_amount_output_authorized: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    conflict_conclusion_emitted: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    training_pipeline_created: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def le_executable_fixture_report_status_matches_counts(
+        self,
+    ) -> "LaborEmploymentExecutableFixtureAuditReport":
+        failed_cases = [case for case in self.cases if case.status == "failed"]
+        failed_checks = [check for check in self.checks if check.status == "failed"]
+        if self.fixture_count != len(self.cases):
+            raise ValueError("executable L&E fixture count does not match")
+        if self.failed_case_count != len(failed_cases):
+            raise ValueError("executable L&E failed case count does not match")
+        if self.preflight_executed_count != sum(
+            1 for case in self.cases if case.preflight_packet_ref is not None
+        ):
+            raise ValueError("executable L&E preflight executed count does not match")
+        if self.missing_pack_link_count != sum(
+            len(case.missing_pack_case_ids) for case in self.cases
+        ):
+            raise ValueError("executable L&E missing pack link count does not match")
+        if self.missing_source_signal_count != sum(
+            len(case.missing_source_signal_terms) for case in self.cases
+        ):
+            raise ValueError("executable L&E missing signal count does not match")
+        if self.missing_expected_exception_label_count != sum(
+            len(case.missing_expected_exception_labels) for case in self.cases
+        ):
+            raise ValueError("executable L&E missing exception label count does not match")
+        has_gap = bool(failed_cases or failed_checks)
+        if self.status == "labor_employment_executable_fixtures_ready_for_review" and has_gap:
+            raise ValueError("ready executable L&E report cannot include failed cases/checks")
+        if self.status == "blocked_by_labor_employment_executable_fixtures" and not has_gap:
+            raise ValueError("blocked executable L&E report requires a failed case/check")
+        required = {
+            "human_labor_employment_budget_fact_review",
+            "preflight_to_budget_fact_fixture_binding",
+            "no_amount_budget_from_preflight_only",
+            "no_real_public_payload_or_identity_reconstruction",
+            "no_lake_or_sqlite_write_from_executable_fixtures",
+        }
+        if not required.issubset(set(self.required_next_gates)):
+            raise ValueError("executable L&E report missing required next gates")
+        return self
+
+
 class PublicSourceMethodologySource(StrictModel):
     source_id: str
     url: str

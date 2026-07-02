@@ -1,0 +1,209 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "executable_fixture_id": {
+      "title": "Executable Fixture Id",
+      "type": "string"
+    },
+    "source_bundle_ref": {
+      "title": "Source Bundle Ref",
+      "type": "string"
+    },
+    "linked_pack_case_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Linked Pack Case Ids",
+      "type": "array"
+    },
+    "family": {
+      "enum": [
+        "discrimination_harassment",
+        "retaliation_wrongful_termination",
+        "wage_hour_flsa_state",
+        "ada_fmla_accommodation_leave",
+        "restrictive_covenant_trade_secret",
+        "epli_carrier_assignment",
+        "class_collective_paga_representative",
+        "administrative_exhaustion_agency_record"
+      ],
+      "title": "Family",
+      "type": "string"
+    },
+    "variant": {
+      "enum": [
+        "clean",
+        "messy_thread",
+        "missing_attachment",
+        "adversarial"
+      ],
+      "title": "Variant",
+      "type": "string"
+    },
+    "data_origin": {
+      "const": "synthetic",
+      "default": "synthetic",
+      "title": "Data Origin",
+      "type": "string"
+    },
+    "expected_budget_readiness_state": {
+      "enum": [
+        "blocked_missing_critical_facts",
+        "range_only_pending_human_review",
+        "candidate_ready_for_budget_review"
+      ],
+      "title": "Expected Budget Readiness State",
+      "type": "string"
+    },
+    "expected_budget_gate_effect": {
+      "enum": [
+        "block_amount_budget_before_proposal",
+        "allow_range_or_hours_only_pending_review",
+        "candidate_ready_for_budget_review_after_review"
+      ],
+      "title": "Expected Budget Gate Effect",
+      "type": "string"
+    },
+    "expected_budget_treatment": {
+      "enum": [
+        "block_amount_budget",
+        "hours_only_or_broad_range",
+        "candidate_range_budget_after_review"
+      ],
+      "title": "Expected Budget Treatment",
+      "type": "string"
+    },
+    "expected_min_sources": {
+      "default": 1,
+      "minimum": 1,
+      "title": "Expected Min Sources",
+      "type": "integer"
+    },
+    "expected_min_segments": {
+      "default": 1,
+      "minimum": 1,
+      "title": "Expected Min Segments",
+      "type": "integer"
+    },
+    "expected_min_missing_sources": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Expected Min Missing Sources",
+      "type": "integer"
+    },
+    "expected_min_duplicate_sources": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Expected Min Duplicate Sources",
+      "type": "integer"
+    },
+    "expected_source_signal_terms": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Expected Source Signal Terms",
+      "type": "array"
+    },
+    "expected_preflight_exception_labels": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Expected Preflight Exception Labels",
+      "type": "array"
+    },
+    "expected_budget_fact_gap_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Expected Budget Fact Gap Ids",
+      "type": "array"
+    },
+    "red_team_notes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Red Team Notes",
+      "type": "array"
+    },
+    "public_structure_only": {
+      "const": true,
+      "default": true,
+      "title": "Public Structure Only",
+      "type": "boolean"
+    },
+    "holdout_excluded_from_prompt_assembly": {
+      "const": true,
+      "default": true,
+      "title": "Holdout Excluded From Prompt Assembly",
+      "type": "boolean"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "contains_real_client_data": {
+      "const": false,
+      "default": false,
+      "title": "Contains Real Client Data",
+      "type": "boolean"
+    },
+    "contains_real_matter_data": {
+      "const": false,
+      "default": false,
+      "title": "Contains Real Matter Data",
+      "type": "boolean"
+    },
+    "contains_privileged_data": {
+      "const": false,
+      "default": false,
+      "title": "Contains Privileged Data",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "executable_fixture_id",
+    "source_bundle_ref",
+    "linked_pack_case_ids",
+    "family",
+    "variant",
+    "expected_budget_readiness_state",
+    "expected_budget_gate_effect",
+    "expected_budget_treatment",
+    "expected_source_signal_terms",
+    "red_team_notes"
+  ],
+  "title": "LaborEmploymentExecutableFixtureSpec",
+  "type": "object"
+}

@@ -130,6 +130,13 @@ ARTIFACT_SPECS = [
         "blocked",
     ),
     ArtifactSpec(
+        "labor-employment-executable-fixtures",
+        "L&E Executable Fixtures",
+        "labor_employment_executable_fixtures_report.json",
+        "qa-reference",
+        "blocked",
+    ),
+    ArtifactSpec(
         "budget-human-review",
         "Budget Human Review",
         "budget_human_review_packet.json",
@@ -208,6 +215,13 @@ QUALITY_GATE_SPECS = {
         "labor_employment_fixture_family_pack_report.json",
         "qa-reference",
         "L&E synthetic fixtures must cover required families, variants, fact needs, and budget-driver dimensions.",
+        "blocked",
+    ),
+    "labor_employment_executable_fixtures": (
+        "L&E Executable Fixtures",
+        "labor_employment_executable_fixtures_report.json",
+        "qa-reference",
+        "Selected L&E source bundles must execute through deterministic preflight before fixture generation is trusted.",
         "blocked",
     ),
     "full_pytest": (

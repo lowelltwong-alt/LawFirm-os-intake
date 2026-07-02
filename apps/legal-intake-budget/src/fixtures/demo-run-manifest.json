@@ -183,6 +183,17 @@
       "notes": ["L&E fixture coverage includes required families, clean/messy/missing/adversarial variants, fact needs, and budget-driver dimensions."]
     },
     {
+      "artifactId": "labor-employment-executable-fixtures",
+      "label": "L&E Executable Fixtures",
+      "fileName": "labor_employment_executable_fixtures_report.json",
+      "status": "pending_review",
+      "owner": "qa-reference",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": ["Selected L&E source bundles execute through deterministic preflight before fixture generation is trusted."]
+    },
+    {
       "artifactId": "budget-human-review",
       "label": "Budget Human Review",
       "fileName": "budget_human_review_packet.json",
@@ -286,6 +297,14 @@
       "evidenceFile": "labor_employment_fixture_family_pack_report.json",
       "owner": "qa-reference",
       "notes": ["L&E synthetic fixtures must cover required families, variants, fact needs, and budget-driver dimensions."]
+    },
+    {
+      "gateId": "labor_employment_executable_fixtures",
+      "label": "L&E Executable Fixtures",
+      "status": "pending_review",
+      "evidenceFile": "labor_employment_executable_fixtures_report.json",
+      "owner": "qa-reference",
+      "notes": ["Selected L&E source bundles must execute through deterministic preflight before fixture generation is trusted."]
     },
     {
       "gateId": "full_pytest",

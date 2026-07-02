@@ -38,6 +38,8 @@ non-authoritative.
 
 Critical missing or review-only facts set `budget_readiness_state=blocked_missing_critical_facts`. That state is a pricing guard, not a failed audit: it tells the reviewer the current packet should stay at hours-only, broad-range, or no-amount posture until the missing facts are confirmed. The report does not output a budget amount, submit a budget, clear conflicts, open a matter, write Lake/SQLite records, or learn from corrections.
 
+The local `audit-labor-employment-executable-fixtures` command is a narrower preflight proof. It reads `labor-employment-executable-fixtures-manifest.json`, executes selected synthetic L&E source bundles through `run_preflight`, and emits `labor_employment_executable_fixtures_report.json` with packet refs, source counts, segment counts, hashes, missing/duplicate source counts, observed dry-run exception labels, and expected budget fact gaps. The command intentionally stops short of amount budgeting and marks `budget_fact_audit_required=true` for every case because preflight source mechanics are not enough to price L&E matters.
+
 When a human or harness supplies `labor_employment_budget_fact_audit_report.json`
 to `build-budget`, the budget precondition gate consumes it explicitly. Critical
 L&E gaps set `blocked_state=labor_employment_budget_facts_blocked` and stop

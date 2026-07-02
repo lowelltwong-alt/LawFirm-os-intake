@@ -1,0 +1,600 @@
+{
+  "$defs": {
+    "LaborEmploymentExecutableFixtureAuditCase": {
+      "additionalProperties": false,
+      "properties": {
+        "executable_fixture_id": {
+          "title": "Executable Fixture Id",
+          "type": "string"
+        },
+        "source_bundle_ref": {
+          "title": "Source Bundle Ref",
+          "type": "string"
+        },
+        "linked_pack_case_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Linked Pack Case Ids",
+          "type": "array"
+        },
+        "family": {
+          "enum": [
+            "discrimination_harassment",
+            "retaliation_wrongful_termination",
+            "wage_hour_flsa_state",
+            "ada_fmla_accommodation_leave",
+            "restrictive_covenant_trade_secret",
+            "epli_carrier_assignment",
+            "class_collective_paga_representative",
+            "administrative_exhaustion_agency_record"
+          ],
+          "title": "Family",
+          "type": "string"
+        },
+        "variant": {
+          "enum": [
+            "clean",
+            "messy_thread",
+            "missing_attachment",
+            "adversarial"
+          ],
+          "title": "Variant",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "preflight_packet_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Preflight Packet Ref"
+        },
+        "data_scope_gate_report_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Data Scope Gate Report Ref"
+        },
+        "intake_review_form_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Intake Review Form Ref"
+        },
+        "source_count": {
+          "minimum": 0,
+          "title": "Source Count",
+          "type": "integer"
+        },
+        "segment_count": {
+          "minimum": 0,
+          "title": "Segment Count",
+          "type": "integer"
+        },
+        "source_hash_count": {
+          "minimum": 0,
+          "title": "Source Hash Count",
+          "type": "integer"
+        },
+        "missing_source_count": {
+          "minimum": 0,
+          "title": "Missing Source Count",
+          "type": "integer"
+        },
+        "duplicate_source_count": {
+          "minimum": 0,
+          "title": "Duplicate Source Count",
+          "type": "integer"
+        },
+        "party_candidate_count": {
+          "minimum": 0,
+          "title": "Party Candidate Count",
+          "type": "integer"
+        },
+        "matter_candidate_count": {
+          "minimum": 0,
+          "title": "Matter Candidate Count",
+          "type": "integer"
+        },
+        "deadline_candidate_count": {
+          "minimum": 0,
+          "title": "Deadline Candidate Count",
+          "type": "integer"
+        },
+        "prohibited_next_step_count": {
+          "minimum": 0,
+          "title": "Prohibited Next Step Count",
+          "type": "integer"
+        },
+        "exception_labels": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Exception Labels",
+          "type": "array"
+        },
+        "missing_expected_exception_labels": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Missing Expected Exception Labels",
+          "type": "array"
+        },
+        "missing_source_signal_terms": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Missing Source Signal Terms",
+          "type": "array"
+        },
+        "missing_pack_case_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Missing Pack Case Ids",
+          "type": "array"
+        },
+        "pack_family_variant_mismatch_case_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Pack Family Variant Mismatch Case Ids",
+          "type": "array"
+        },
+        "failed_expectation_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Failed Expectation Ids",
+          "type": "array"
+        },
+        "expected_budget_readiness_state": {
+          "enum": [
+            "blocked_missing_critical_facts",
+            "range_only_pending_human_review",
+            "candidate_ready_for_budget_review"
+          ],
+          "title": "Expected Budget Readiness State",
+          "type": "string"
+        },
+        "expected_budget_gate_effect": {
+          "enum": [
+            "block_amount_budget_before_proposal",
+            "allow_range_or_hours_only_pending_review",
+            "candidate_ready_for_budget_review_after_review"
+          ],
+          "title": "Expected Budget Gate Effect",
+          "type": "string"
+        },
+        "expected_budget_treatment": {
+          "enum": [
+            "block_amount_budget",
+            "hours_only_or_broad_range",
+            "candidate_range_budget_after_review"
+          ],
+          "title": "Expected Budget Treatment",
+          "type": "string"
+        },
+        "expected_budget_fact_gap_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Expected Budget Fact Gap Ids",
+          "type": "array"
+        },
+        "budget_fact_audit_required": {
+          "const": true,
+          "default": true,
+          "title": "Budget Fact Audit Required",
+          "type": "boolean"
+        },
+        "budget_amount_output_authorized": {
+          "const": false,
+          "default": false,
+          "title": "Budget Amount Output Authorized",
+          "type": "boolean"
+        },
+        "budget_submission_authorized": {
+          "const": false,
+          "default": false,
+          "title": "Budget Submission Authorized",
+          "type": "boolean"
+        },
+        "conflict_conclusion_emitted": {
+          "const": false,
+          "default": false,
+          "title": "Conflict Conclusion Emitted",
+          "type": "boolean"
+        },
+        "matter_opening_authorized": {
+          "const": false,
+          "default": false,
+          "title": "Matter Opening Authorized",
+          "type": "boolean"
+        },
+        "training_pipeline_created": {
+          "const": false,
+          "default": false,
+          "title": "Training Pipeline Created",
+          "type": "boolean"
+        },
+        "lake_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Lake Write Performed",
+          "type": "boolean"
+        },
+        "sqlite_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Sqlite Write Performed",
+          "type": "boolean"
+        },
+        "external_writes_performed": {
+          "const": false,
+          "default": false,
+          "title": "External Writes Performed",
+          "type": "boolean"
+        },
+        "silent_learning_performed": {
+          "const": false,
+          "default": false,
+          "title": "Silent Learning Performed",
+          "type": "boolean"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        },
+        "notes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Notes",
+          "type": "array"
+        }
+      },
+      "required": [
+        "executable_fixture_id",
+        "source_bundle_ref",
+        "linked_pack_case_ids",
+        "family",
+        "variant",
+        "status",
+        "source_count",
+        "segment_count",
+        "source_hash_count",
+        "missing_source_count",
+        "duplicate_source_count",
+        "party_candidate_count",
+        "matter_candidate_count",
+        "deadline_candidate_count",
+        "prohibited_next_step_count",
+        "exception_labels",
+        "missing_expected_exception_labels",
+        "missing_source_signal_terms",
+        "missing_pack_case_ids",
+        "pack_family_variant_mismatch_case_ids",
+        "expected_budget_readiness_state",
+        "expected_budget_gate_effect",
+        "expected_budget_treatment",
+        "expected_budget_fact_gap_ids",
+        "notes"
+      ],
+      "title": "LaborEmploymentExecutableFixtureAuditCase",
+      "type": "object"
+    },
+    "LaborEmploymentExecutableFixtureAuditCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "blocking_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Blocking Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "LaborEmploymentExecutableFixtureAuditCheck",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "executable_fixture_audit_report_id": {
+      "title": "Executable Fixture Audit Report Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "labor_employment_executable_fixtures_ready_for_review",
+        "blocked_by_labor_employment_executable_fixtures"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "manifest_id": {
+      "title": "Manifest Id",
+      "type": "string"
+    },
+    "manifest_ref": {
+      "title": "Manifest Ref",
+      "type": "string"
+    },
+    "pack_ref": {
+      "title": "Pack Ref",
+      "type": "string"
+    },
+    "practice_profile_ref": {
+      "title": "Practice Profile Ref",
+      "type": "string"
+    },
+    "fixture_count": {
+      "minimum": 0,
+      "title": "Fixture Count",
+      "type": "integer"
+    },
+    "preflight_executed_count": {
+      "minimum": 0,
+      "title": "Preflight Executed Count",
+      "type": "integer"
+    },
+    "failed_case_count": {
+      "minimum": 0,
+      "title": "Failed Case Count",
+      "type": "integer"
+    },
+    "missing_pack_link_count": {
+      "minimum": 0,
+      "title": "Missing Pack Link Count",
+      "type": "integer"
+    },
+    "missing_source_signal_count": {
+      "minimum": 0,
+      "title": "Missing Source Signal Count",
+      "type": "integer"
+    },
+    "missing_expected_exception_label_count": {
+      "minimum": 0,
+      "title": "Missing Expected Exception Label Count",
+      "type": "integer"
+    },
+    "cases": {
+      "items": {
+        "$ref": "#/$defs/LaborEmploymentExecutableFixtureAuditCase"
+      },
+      "title": "Cases",
+      "type": "array"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/LaborEmploymentExecutableFixtureAuditCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "required_next_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Gates",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "human_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Human Review Required",
+      "type": "boolean"
+    },
+    "not_authorized_for_external_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For External Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_lake_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Lake Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_sqlite_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Sqlite Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_budget_submission": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Budget Submission",
+      "type": "boolean"
+    },
+    "not_authorized_for_matter_opening": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Matter Opening",
+      "type": "boolean"
+    },
+    "not_authorized_for_calibration": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Calibration",
+      "type": "boolean"
+    },
+    "fixture_generation_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Fixture Generation Authorized",
+      "type": "boolean"
+    },
+    "calibration_approved": {
+      "const": false,
+      "default": false,
+      "title": "Calibration Approved",
+      "type": "boolean"
+    },
+    "budget_amount_output_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Amount Output Authorized",
+      "type": "boolean"
+    },
+    "budget_submission_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Submission Authorized",
+      "type": "boolean"
+    },
+    "conflict_conclusion_emitted": {
+      "const": false,
+      "default": false,
+      "title": "Conflict Conclusion Emitted",
+      "type": "boolean"
+    },
+    "matter_opening_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Matter Opening Authorized",
+      "type": "boolean"
+    },
+    "training_pipeline_created": {
+      "const": false,
+      "default": false,
+      "title": "Training Pipeline Created",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "executable_fixture_audit_report_id",
+    "status",
+    "manifest_id",
+    "manifest_ref",
+    "pack_ref",
+    "practice_profile_ref",
+    "fixture_count",
+    "preflight_executed_count",
+    "failed_case_count",
+    "missing_pack_link_count",
+    "missing_source_signal_count",
+    "missing_expected_exception_label_count",
+    "cases",
+    "checks",
+    "required_next_gates",
+    "generated_at"
+  ],
+  "title": "LaborEmploymentExecutableFixtureAuditReport",
+  "type": "object"
+}
