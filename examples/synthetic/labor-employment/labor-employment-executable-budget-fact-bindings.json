@@ -150,6 +150,76 @@
       ]
     },
     {
+      "binding_case_id": "le-restrictive-covenant-missing-attachment.fact-binding.v0_1",
+      "executable_fixture_id": "le-restrictive-covenant-missing-attachment.executable.v0_1",
+      "expected_budget_readiness_state": "blocked_missing_critical_facts",
+      "expected_budget_gate_effect": "block_amount_budget_before_proposal",
+      "expected_budget_treatment": "block_amount_budget",
+      "fact_bindings": [
+        {
+          "fact_id": "policy_handbook_contract_documents",
+          "expected_gap_type": "missing_evidence",
+          "source_signal_terms": [
+            "employment agreement",
+            "non-solicitation clause",
+            "confidentiality agreement"
+          ],
+          "expected_exception_labels": ["source_missing"],
+          "expected_source_ids": ["syn-le-restrictive-covenant-agreement-missing-001"],
+          "reason": "The restrictive covenant agreement and related policy/contract terms are referenced but missing."
+        },
+        {
+          "fact_id": "esi_custodians_and_sources",
+          "expected_gap_type": "missing_evidence",
+          "source_signal_terms": ["laptop logs", "email export", "device inventory"],
+          "expected_exception_labels": ["source_missing"],
+          "expected_source_ids": ["syn-le-restrictive-covenant-device-scope-missing-001"],
+          "reason": "Device and ESI scope are referenced but missing, so review volume and forensic work cannot be priced."
+        },
+        {
+          "fact_id": "expert_and_vendor_needs",
+          "expected_gap_type": "missing_evidence",
+          "source_signal_terms": ["device-forensics estimate", "forensic vendor"],
+          "expected_exception_labels": ["source_missing"],
+          "expected_source_ids": ["syn-le-restrictive-covenant-vendor-estimate-missing-001"],
+          "reason": "The forensic vendor estimate is missing, so vendor expenses remain review-only and not approved."
+        }
+      ],
+      "red_team_notes": [
+        "The bridge must not price emergency injunction, ESI, or forensic vendor work from attachment names alone."
+      ]
+    },
+    {
+      "binding_case_id": "le-admin-exhaustion-clean.fact-binding.v0_1",
+      "executable_fixture_id": "le-admin-exhaustion-clean.executable.v0_1",
+      "expected_budget_readiness_state": "range_only_pending_human_review",
+      "expected_budget_gate_effect": "allow_range_or_hours_only_pending_review",
+      "expected_budget_treatment": "candidate_range_budget_after_review",
+      "fact_bindings": [
+        {
+          "fact_id": "administrative_exhaustion_and_agency_record",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": ["agency charge", "right-to-sue letter"],
+          "reason": "Agency record details are source-bound but still require human confirmation before budget narrowing."
+        },
+        {
+          "fact_id": "forum_removed_and_arbitration_posture",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": ["federal forum", "removal posture"],
+          "reason": "Forum and removal posture are identified as candidates and must not become confirmed procedural posture."
+        },
+        {
+          "fact_id": "policy_handbook_contract_documents",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": ["employee handbook is not yet provided"],
+          "reason": "Policy documents are still absent from the clean agency packet, so the budget remains range-only pending review."
+        }
+      ],
+      "red_team_notes": [
+        "The bridge must keep agency dates as deadline candidates and never docket from this binding report."
+      ]
+    },
+    {
       "binding_case_id": "le-ada-fmla-missing-thread.fact-binding.v0_1",
       "executable_fixture_id": "le-ada-fmla-missing-thread.executable.v0_1",
       "expected_budget_readiness_state": "blocked_missing_critical_facts",
