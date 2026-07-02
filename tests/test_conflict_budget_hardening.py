@@ -57,7 +57,8 @@ def test_budget_has_ranges_calculation_report_and_review_form(tmp_path, repo_roo
     assert "## Budget Lines" in review_text
     assert "rate source: synthetic_profile" in review_text
     assert "synthetic rate: True" in review_text
-    assert "evidence: syn-email-001/" in review_text
+    assert "estimate basis: " in review_text
+    assert "estimate refs: practice-profile://" in review_text
     assert "] sha=sha256:" in review_text
     assert "## Evidence-Bound Budget Supports" in review_text
     assert "## Submission Boundary" in review_text

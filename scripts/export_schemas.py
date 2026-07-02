@@ -9,6 +9,7 @@ sys.dont_write_bytecode = True
 sys.path.insert(0, str(ROOT / "src"))
 
 from lawfirm_os_intake.models import (  # noqa: E402
+    BenchmarkSnapshotManifest,
     BlockedBudgetAttemptAuditReport,
     BudgetActualComparisonReport,
     BudgetActualAmount,
@@ -92,6 +93,7 @@ from lawfirm_os_intake.models import (  # noqa: E402
     BudgetScenarioSet,
     BudgetSubmissionGuardReport,
     BudgetSupportItem,
+    RateBenchmarkCell,
     CarrierAppealResult,
     CarrierCompliantProjection,
     CarrierCompliantProjectionBasis,
@@ -445,6 +447,8 @@ MODELS = {
     "budget-driver-effect.schema.json": BudgetDriverEffect,
     "budget-driver-profile-summary.schema.json": BudgetDriverProfileSummary,
     "budget-guideline-flag.schema.json": BudgetGuidelineFlag,
+    "rate-benchmark-cell.schema.json": RateBenchmarkCell,
+    "benchmark-snapshot-manifest.schema.json": BenchmarkSnapshotManifest,
     "budget-lake-evidence-artifact.schema.json": BudgetLakeEvidenceArtifact,
     "budget-lake-admission-bundle-check.schema.json": BudgetLakeAdmissionBundleCheck,
     "budget-lake-admission-bundle-report.schema.json": BudgetLakeAdmissionBundleReport,

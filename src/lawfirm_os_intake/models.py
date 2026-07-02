@@ -2220,6 +2220,14 @@ class BudgetLine(StrictModel):
     expense_code: str | None = None
     assumptions: list[str] = Field(default_factory=list)
     evidence_refs: list[EvidenceRef] = Field(default_factory=list)
+    estimate_basis: Literal[
+        "template_default",
+        "driver_adjusted",
+        "human_confirmed",
+        "benchmark_cell",
+        "unknown",
+    ] = "template_default"
+    estimate_basis_refs: list[str] = Field(default_factory=list)
 
 
 class BudgetSupportItem(StrictModel):
@@ -2254,10 +2262,18 @@ class BudgetScenario(StrictModel):
     included_external_codes: list[str] = Field(default_factory=list)
     included_line_count: int = Field(ge=0)
     total_hours: float = Field(ge=0)
+    total_hours_min: float | None = Field(default=None, ge=0)
+    total_hours_max: float | None = Field(default=None, ge=0)
     subtotal_fees: float | None = None
+    subtotal_fees_min: float | None = Field(default=None, ge=0)
+    subtotal_fees_max: float | None = Field(default=None, ge=0)
     subtotal_expenses: float = Field(ge=0)
+    subtotal_expenses_min: float | None = Field(default=None, ge=0)
+    subtotal_expenses_max: float | None = Field(default=None, ge=0)
     contingency_percent: float = Field(ge=0)
     contingency_amount: float | None = None
+    contingency_amount_min: float | None = Field(default=None, ge=0)
+    contingency_amount_max: float | None = Field(default=None, ge=0)
     total_proposed_budget: float | None = None
     total_budget_min: float | None = None
     total_budget_max: float | None = None
@@ -2280,6 +2296,14 @@ class BudgetScenarioSet(StrictModel):
         "fallback_last_scenario",
     ] = "default_standard"
     expected_total: float | None = None
+    unknown_probability_mass: float | None = Field(default=None, ge=0, le=1)
+    expected_total_min: float | None = None
+    expected_total_max: float | None = None
+    expected_value_method: Literal[
+        "reviewed_probabilities",
+        "bounded_unknown_mass",
+        "not_computed",
+    ] = "not_computed"
     expected_total_probability_sum: float | None = None
     monotonic_total_order: bool
     total_order_basis: Literal["total_proposed_budget", "total_hours"] = "total_proposed_budget"
@@ -2365,10 +2389,13 @@ class CarrierCompliantProjectionLine(StrictModel):
     rate_cap_applied: bool = False
     expense_cap_applied: bool = False
     staffing_rule_applied: bool = False
+    rate_unknown_for_reshaped_role: bool = False
     over_cap_amount: float = Field(default=0, ge=0)
     rate_cap_delta: float = Field(default=0, ge=0)
     expense_cap_delta: float = Field(default=0, ge=0)
+    disallowed_delta: float = Field(default=0, ge=0)
     staffing_rule_delta: float = Field(default=0, ge=0)
+    delta_breakdown: dict[str, float] = Field(default_factory=dict)
     guideline_refs: list[str] = Field(default_factory=list)
     note: str
 
@@ -2428,9 +2455,13 @@ class CarrierCompliantProjection(StrictModel):
     compliant_subtotal_expenses: float = Field(ge=0)
     proposed_contingency_amount: float | None = None
     compliant_contingency_amount: float | None = None
+    projection_pricing_status: Literal["priced", "hours_only_partial"] = "priced"
+    total_delta: float = Field(default=0, ge=0)
     over_cap_amount: float = Field(ge=0)
+    disallowed_amount: float = Field(default=0, ge=0)
     rate_cap_delta: float = Field(ge=0)
     expense_cap_delta: float = Field(ge=0)
+    disallowed_delta: float = Field(default=0, ge=0)
     staffing_rule_delta: float = Field(ge=0)
     contingency_delta: float = Field(ge=0)
     proposed_blended_rate: float | None = None
@@ -2544,6 +2575,20 @@ class BudgetProposal(StrictModel):
     contingency_amount: float | None = None
     total_proposed_budget: float | None = None
     scenario_name: str = "standard"
+    headline_subtotal_fees: float | None = None
+    headline_subtotal_expenses: float | None = None
+    headline_contingency_amount: float | None = None
+    headline_total_proposed_budget: float | None = None
+    headline_total_proposed_budget_min: float | None = None
+    headline_total_proposed_budget_max: float | None = None
+    expected_total_proposed_budget_min: float | None = None
+    expected_total_proposed_budget_max: float | None = None
+    unknown_probability_mass: float | None = Field(default=None, ge=0, le=1)
+    expected_value_method: Literal[
+        "reviewed_probabilities",
+        "bounded_unknown_mass",
+        "not_computed",
+    ] = "not_computed"
     scenario_set: BudgetScenarioSet | None = None
     calculation_report: "BudgetCalculationReport | None" = None
     assumptions: list[str] = Field(default_factory=list)
@@ -2555,8 +2600,52 @@ class BudgetProposal(StrictModel):
     carrier_compliant_projection: CarrierCompliantProjection | None = None
     carrier_preapproval_report: CarrierPreapprovalReport | None = None
     budget_support_items: list[BudgetSupportItem] = Field(default_factory=list)
+    display_banner: dict[str, Any] = Field(default_factory=dict)
     approval_state: Literal["proposed_for_human_review"] = "proposed_for_human_review"
     not_authorized_for_client_submission: bool = True
+
+
+class RateBenchmarkCell(StrictModel):
+    schema_version: str = "0.1"
+    benchmark_cell_id: str
+    jurisdiction: str
+    role: str
+    experience_band: str
+    year: int
+    percentile: str
+    value: float = Field(ge=0)
+    benchmark_type: Literal[
+        "public_procurement_proxy",
+        "synthetic_candidate",
+        "carrier_panel_candidate",
+    ]
+    source_url: str
+    retrieved_at: str
+    page_sha256: str
+    quote_span: str
+    license_note: str
+    grade: Literal["A", "B", "C", "proxy_only", "ungraded"]
+    human_grading_status: Literal["pending", "reviewed", "rejected"]
+    candidate_only: Literal[True] = True
+    not_authorized_as_carrier_rate: Literal[True] = True
+
+
+class BenchmarkSnapshotManifest(StrictModel):
+    schema_version: str = "0.1"
+    benchmark_snapshot_id: str
+    created_at: str
+    source_owner: Literal["legal_knowledge_runtime", "local_candidate_fixture"]
+    cells: list[RateBenchmarkCell]
+    pinned_hash: str
+    candidate_only: Literal[True] = True
+    not_authorized_as_carrier_rate: Literal[True] = True
+
+    @model_validator(mode="after")
+    def benchmark_cell_ids_are_unique(self) -> "BenchmarkSnapshotManifest":
+        cell_ids = [cell.benchmark_cell_id for cell in self.cells]
+        if len(cell_ids) != len(set(cell_ids)):
+            raise ValueError("benchmark snapshot cell ids must be unique")
+        return self
 
 
 class BudgetCalculationReport(StrictModel):

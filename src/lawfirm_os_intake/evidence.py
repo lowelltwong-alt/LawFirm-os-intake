@@ -362,6 +362,7 @@ def extend_graph_with_budget(
                     "estimated_hours": line.estimated_hours,
                     "rate_source": line.rate_source,
                     "rate_is_synthetic": line.rate_is_synthetic,
+                    "estimate_basis": line.estimate_basis,
                 },
             )
         )
@@ -382,6 +383,24 @@ def extend_graph_with_budget(
                     relationship="supports_budget_line",
                     target_node_id=line_node_id,
                     evidence_refs=[ref],
+                )
+            )
+        for structured_ref in line.estimate_basis_refs:
+            nodes.append(
+                EvidenceGraphNode(
+                    node_id=structured_ref,
+                    node_type="structured_ref",
+                    status="structured_evidence",
+                    attributes={"source_kind": "budget_estimate_basis"},
+                )
+            )
+            edges.append(
+                EvidenceGraphEdge(
+                    edge_id=new_id("edge"),
+                    source_node_id=structured_ref,
+                    relationship="supports_budget_line",
+                    target_node_id=line_node_id,
+                    status="structured_evidence",
                 )
             )
     for index, item in enumerate(budget.budget_support_items):

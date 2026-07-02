@@ -34,6 +34,7 @@ from .budget_lake_admission_bundle import run_budget_event_lake_admission_bundle
 from .budget_lifecycle_audit import run_budget_lifecycle_audit
 from .budget_lifecycle_owner_adoption import run_budget_lifecycle_owner_adoption
 from .budget_revisions import run_budget_review_record
+from .coherence import validate_budget_artifacts
 from .carrier_rejection_lake_admission import (
     run_carrier_rejection_lake_admission_proposal,
 )
@@ -152,6 +153,14 @@ def _parser() -> argparse.ArgumentParser:
     )
     budget_form_audit.add_argument("--template", required=True, help="Existing UTBMS budget form")
     budget_form_audit.add_argument("--out", required=True, help="Output audit report JSON path")
+
+    validate_budget_artifact = sub.add_parser(
+        "validate-budget-artifact",
+        help="Validate serialized budget/projection artifacts for deterministic coherence.",
+    )
+    validate_budget_artifact.add_argument("--budget-proposal", required=True)
+    validate_budget_artifact.add_argument("--carrier-projection")
+    validate_budget_artifact.add_argument("--report-out")
 
     budget_review = sub.add_parser(
         "record-budget-review",
@@ -1112,6 +1121,15 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 0 if report.status == "passed" else 2
+
+        if args.command == "validate-budget-artifact":
+            report = validate_budget_artifacts(
+                args.budget_proposal,
+                carrier_projection_path=args.carrier_projection,
+                report_out=args.report_out,
+            )
+            _print(report)
+            return 0 if report["status"] == "passed" else 1
 
         if args.command == "record-budget-review":
             report, run_dir = run_budget_review_record(

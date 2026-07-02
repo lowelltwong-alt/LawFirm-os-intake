@@ -156,6 +156,7 @@ def test_safety_gate_fails_closed_on_budget_line_without_evidence(tmp_path, repo
     )
     unsafe_budget = budget.model_copy(deep=True)
     unsafe_budget.lines[0].evidence_refs = []
+    unsafe_budget.lines[0].estimate_basis_refs = []
 
     report = build_safety_gate_report(
         packet,

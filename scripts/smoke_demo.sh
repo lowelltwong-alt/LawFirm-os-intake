@@ -18,7 +18,11 @@ if [[ -z "$PYTHON_BIN" ]]; then
   fi
 fi
 if [[ "$PYTHON_BIN" == *.exe ]]; then
-  if command -v cygpath >/dev/null 2>&1; then
+  if [[ "$ROOT" =~ ^/mnt/([A-Za-z])/(.*)$ ]]; then
+    drive="${BASH_REMATCH[1]^^}"
+    rest="${BASH_REMATCH[2]}"
+    export PYTHONPATH="${drive}:/${rest}/src${PYTHONPATH:+;$PYTHONPATH}"
+  elif command -v cygpath >/dev/null 2>&1; then
     export PYTHONPATH="$(cygpath -w "$ROOT/src")${PYTHONPATH:+;$PYTHONPATH}"
   elif command -v wslpath >/dev/null 2>&1; then
     export PYTHONPATH="$(wslpath -w "$ROOT/src")${PYTHONPATH:+;$PYTHONPATH}"
@@ -28,12 +32,28 @@ if [[ "$PYTHON_BIN" == *.exe ]]; then
 else
   export PYTHONPATH="$ROOT/src${PYTHONPATH:+:$PYTHONPATH}"
 fi
-"$PYTHON_BIN" -B -m lawfirm_os_intake demo \
-  --input examples/synthetic/inbound/north-star-messy-intake.json \
-  --practice-profile context/synthetic-profiles/insurance-defense.yaml \
-  --confirmation-template examples/synthetic/confirmations/north-star-messy-intake.confirmation-template.json \
-  --fixture-gold examples/synthetic/gold/north-star-messy-intake.fixture-gold.json \
-  --out-dir .lawfirm-os-intake/smoke
+"$PYTHON_BIN" -B - <<'PY'
+from pathlib import Path
+import runpy
+import sys
+
+sys.path.insert(0, str(Path.cwd() / "src"))
+sys.argv = [
+    "lawfirm_os_intake",
+    "demo",
+    "--input",
+    "examples/synthetic/inbound/north-star-messy-intake.json",
+    "--practice-profile",
+    "context/synthetic-profiles/insurance-defense.yaml",
+    "--confirmation-template",
+    "examples/synthetic/confirmations/north-star-messy-intake.confirmation-template.json",
+    "--fixture-gold",
+    "examples/synthetic/gold/north-star-messy-intake.fixture-gold.json",
+    "--out-dir",
+    ".lawfirm-os-intake/smoke",
+]
+runpy.run_module("lawfirm_os_intake", run_name="__main__")
+PY
 
 preflight_dir="$(find .lawfirm-os-intake/smoke/preflight -mindepth 1 -maxdepth 1 -type d | head -n 1)"
 test -n "$preflight_dir"
@@ -101,6 +121,21 @@ grep -q "## Budget Lines" ".lawfirm-os-intake/smoke/budget/legal_budget_review_f
 grep -q "rate source: synthetic_profile" ".lawfirm-os-intake/smoke/budget/legal_budget_review_form.md"
 grep -q "## Submission Boundary" ".lawfirm-os-intake/smoke/budget/legal_budget_review_form.md"
 grep -q "Client/carrier submission authorized: False" ".lawfirm-os-intake/smoke/budget/legal_budget_review_form.md"
+"$PYTHON_BIN" -B - <<'PY'
+from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path.cwd() / "src"))
+from lawfirm_os_intake.coherence import validate_budget_artifacts
+
+report = validate_budget_artifacts(
+    ".lawfirm-os-intake/smoke/budget/legal_budget_proposal.json",
+    report_out=".lawfirm-os-intake/smoke/budget/budget_coherence_report.json",
+)
+raise SystemExit(0 if report["status"] == "passed" else 1)
+PY
+test -s ".lawfirm-os-intake/smoke/budget/budget_coherence_report.json"
+grep -q '"status": "passed"' ".lawfirm-os-intake/smoke/budget/budget_coherence_report.json"
 test -s ".lawfirm-os-intake/smoke/budget/matter_opening_review_package.md"
 test -s ".lawfirm-os-intake/smoke/budget/review_package_manifest.json"
 test -s ".lawfirm-os-intake/smoke/budget/review_package_completeness_report.json"

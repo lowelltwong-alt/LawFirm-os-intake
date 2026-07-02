@@ -1,0 +1,18 @@
+schema_version: "0.1"
+harness_id: budget-coherence-local
+description: Validate serialized budget artifacts for arithmetic, provenance, and boundary coherence.
+candidate_only: true
+not_authorized_for_client_submission: true
+command:
+  - python
+  - -B
+  - -m
+  - lawfirm_os_intake
+  - validate-budget-artifact
+required_inputs:
+  - legal_budget_proposal.json
+optional_inputs:
+  - carrier_compliant_projection.json
+expected_outputs:
+  - budget_coherence_report.json
+failure_policy: fail_closed

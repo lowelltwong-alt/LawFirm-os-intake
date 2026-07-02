@@ -178,6 +178,11 @@
       "title": "Staffing Rule Applied",
       "type": "boolean"
     },
+    "rate_unknown_for_reshaped_role": {
+      "default": false,
+      "title": "Rate Unknown For Reshaped Role",
+      "type": "boolean"
+    },
     "over_cap_amount": {
       "default": 0,
       "minimum": 0,
@@ -196,11 +201,24 @@
       "title": "Expense Cap Delta",
       "type": "number"
     },
+    "disallowed_delta": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Disallowed Delta",
+      "type": "number"
+    },
     "staffing_rule_delta": {
       "default": 0,
       "minimum": 0,
       "title": "Staffing Rule Delta",
       "type": "number"
+    },
+    "delta_breakdown": {
+      "additionalProperties": {
+        "type": "number"
+      },
+      "title": "Delta Breakdown",
+      "type": "object"
     },
     "guideline_refs": {
       "items": {

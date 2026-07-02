@@ -43,6 +43,32 @@
           "title": "Total Hours",
           "type": "number"
         },
+        "total_hours_min": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Total Hours Min"
+        },
+        "total_hours_max": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Total Hours Max"
+        },
         "subtotal_fees": {
           "anyOf": [
             {
@@ -55,10 +81,62 @@
           "default": null,
           "title": "Subtotal Fees"
         },
+        "subtotal_fees_min": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subtotal Fees Min"
+        },
+        "subtotal_fees_max": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subtotal Fees Max"
+        },
         "subtotal_expenses": {
           "minimum": 0,
           "title": "Subtotal Expenses",
           "type": "number"
+        },
+        "subtotal_expenses_min": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subtotal Expenses Min"
+        },
+        "subtotal_expenses_max": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subtotal Expenses Max"
         },
         "contingency_percent": {
           "minimum": 0,
@@ -76,6 +154,32 @@
           ],
           "default": null,
           "title": "Contingency Amount"
+        },
+        "contingency_amount_min": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contingency Amount Min"
+        },
+        "contingency_amount_max": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contingency Amount Max"
         },
         "total_proposed_budget": {
           "anyOf": [
@@ -220,6 +324,54 @@
       ],
       "default": null,
       "title": "Expected Total"
+    },
+    "unknown_probability_mass": {
+      "anyOf": [
+        {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Unknown Probability Mass"
+    },
+    "expected_total_min": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Expected Total Min"
+    },
+    "expected_total_max": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Expected Total Max"
+    },
+    "expected_value_method": {
+      "default": "not_computed",
+      "enum": [
+        "reviewed_probabilities",
+        "bounded_unknown_mass",
+        "not_computed"
+      ],
+      "title": "Expected Value Method",
+      "type": "string"
     },
     "expected_total_probability_sum": {
       "anyOf": [

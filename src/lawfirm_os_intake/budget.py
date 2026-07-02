@@ -47,11 +47,20 @@ DEFAULT_SCENARIOS = [
 @dataclass(frozen=True)
 class BudgetTotals:
     subtotal_fees: float | None
+    subtotal_fees_min: float | None
+    subtotal_fees_max: float | None
     subtotal_expenses: float
+    subtotal_expenses_min: float | None
+    subtotal_expenses_max: float | None
     contingency_amount: float | None
+    contingency_amount_min: float | None
+    contingency_amount_max: float | None
     total: float | None
     total_min: float | None
     total_max: float | None
+    total_hours: float
+    total_hours_min: float | None
+    total_hours_max: float | None
 
 
 def _budget_template(profile: dict[str, Any], matter_family: str) -> dict[str, Any] | None:
@@ -677,10 +686,47 @@ def _budget_totals(
     contingency_percent: float,
 ) -> BudgetTotals:
     all_priced = all(line.hourly_rate is not None for line in lines)
+    total_hours = round(sum(line.estimated_hours for line in lines), 2)
+    total_hours_min = round(
+        sum(
+            line.estimated_hours_min
+            if line.estimated_hours_min is not None
+            else line.estimated_hours
+            for line in lines
+        ),
+        2,
+    )
+    total_hours_max = round(
+        sum(
+            line.estimated_hours_max
+            if line.estimated_hours_max is not None
+            else line.estimated_hours
+            for line in lines
+        ),
+        2,
+    )
     subtotal_fees = (
         round(sum(line.estimated_fees or 0 for line in lines), 2) if all_priced else None
     )
     subtotal_expenses = round(sum(line.estimated_expenses for line in lines), 2)
+    subtotal_expenses_min = round(
+        sum(
+            line.estimated_expenses_min
+            if line.estimated_expenses_min is not None
+            else line.estimated_expenses
+            for line in lines
+        ),
+        2,
+    )
+    subtotal_expenses_max = round(
+        sum(
+            line.estimated_expenses_max
+            if line.estimated_expenses_max is not None
+            else line.estimated_expenses
+            for line in lines
+        ),
+        2,
+    )
     contingency_amount = (
         round((subtotal_fees or 0) * contingency_percent / 100, 2) if all_priced else None
     )
@@ -689,42 +735,53 @@ def _budget_totals(
         if all_priced
         else None
     )
+    subtotal_fees_min = None
+    subtotal_fees_max = None
+    contingency_amount_min = None
+    contingency_amount_max = None
     total_min = None
     total_max = None
     if all_priced:
-        min_fees = round(
+        subtotal_fees_min = round(
             sum(
                 (line.estimated_hours_min or line.estimated_hours) * (line.hourly_rate or 0)
                 for line in lines
             ),
             2,
         )
-        max_fees = round(
+        subtotal_fees_max = round(
             sum(
                 (line.estimated_hours_max or line.estimated_hours) * (line.hourly_rate or 0)
                 for line in lines
             ),
             2,
         )
-        min_expenses = round(
-            sum(line.estimated_expenses_min or line.estimated_expenses for line in lines),
+        contingency_amount_min = round(subtotal_fees_min * contingency_percent / 100, 2)
+        contingency_amount_max = round(subtotal_fees_max * contingency_percent / 100, 2)
+        total_min = round(
+            subtotal_fees_min + subtotal_expenses_min + contingency_amount_min,
             2,
         )
-        max_expenses = round(
-            sum(line.estimated_expenses_max or line.estimated_expenses for line in lines),
+        total_max = round(
+            subtotal_fees_max + subtotal_expenses_max + contingency_amount_max,
             2,
         )
-        min_contingency = round(min_fees * contingency_percent / 100, 2)
-        max_contingency = round(max_fees * contingency_percent / 100, 2)
-        total_min = round(min_fees + min_expenses + min_contingency, 2)
-        total_max = round(max_fees + max_expenses + max_contingency, 2)
     return BudgetTotals(
         subtotal_fees=subtotal_fees,
+        subtotal_fees_min=subtotal_fees_min,
+        subtotal_fees_max=subtotal_fees_max,
         subtotal_expenses=subtotal_expenses,
+        subtotal_expenses_min=subtotal_expenses_min,
+        subtotal_expenses_max=subtotal_expenses_max,
         contingency_amount=contingency_amount,
+        contingency_amount_min=contingency_amount_min,
+        contingency_amount_max=contingency_amount_max,
         total=total,
         total_min=total_min,
         total_max=total_max,
+        total_hours=total_hours,
+        total_hours_min=total_hours_min,
+        total_hours_max=total_hours_max,
     )
 
 
@@ -778,11 +835,19 @@ def _build_scenario_set(
                 included_phase_ids=included_phase_ids,
                 included_external_codes=_line_external_codes(scenario_lines),
                 included_line_count=len(scenario_lines),
-                total_hours=round(sum(line.estimated_hours for line in scenario_lines), 2),
+                total_hours=totals.total_hours,
+                total_hours_min=totals.total_hours_min,
+                total_hours_max=totals.total_hours_max,
                 subtotal_fees=totals.subtotal_fees,
+                subtotal_fees_min=totals.subtotal_fees_min,
+                subtotal_fees_max=totals.subtotal_fees_max,
                 subtotal_expenses=totals.subtotal_expenses,
+                subtotal_expenses_min=totals.subtotal_expenses_min,
+                subtotal_expenses_max=totals.subtotal_expenses_max,
                 contingency_percent=contingency_percent,
                 contingency_amount=totals.contingency_amount,
+                contingency_amount_min=totals.contingency_amount_min,
+                contingency_amount_max=totals.contingency_amount_max,
                 total_proposed_budget=totals.total,
                 total_budget_min=totals.total_min,
                 total_budget_max=totals.total_max,
@@ -816,6 +881,10 @@ def _build_scenario_set(
     probability_values = [scenario.probability for scenario in scenarios]
     probability_sum = None
     expected_total = None
+    unknown_probability_mass = None
+    expected_total_min = None
+    expected_total_max = None
+    expected_value_method = "not_computed"
     if all(value is not None for value in probability_values):
         probability_sum = round(sum(float(value) for value in probability_values), 6)
         if probability_sum == 1 and all(
@@ -828,12 +897,47 @@ def _build_scenario_set(
                 ),
                 2,
             )
+            expected_total_min = expected_total
+            expected_total_max = expected_total
+            expected_value_method = "reviewed_probabilities"
+        elif 0 <= probability_sum < 1:
+            unknown_probability_mass = round(1 - probability_sum, 6)
+            known_min = sum(
+                float(scenario.probability or 0) * float(scenario.total_budget_min or 0)
+                for scenario in scenarios
+            )
+            known_max = sum(
+                float(scenario.probability or 0) * float(scenario.total_budget_max or 0)
+                for scenario in scenarios
+            )
+            unweighted_totals = [
+                float(scenario.total_budget_min or scenario.total_proposed_budget or 0)
+                for scenario in scenarios
+            ]
+            unweighted_max_totals = [
+                float(scenario.total_budget_max or scenario.total_proposed_budget or 0)
+                for scenario in scenarios
+            ]
+            if unweighted_totals and unweighted_max_totals:
+                expected_total_min = round(
+                    known_min + unknown_probability_mass * min(unweighted_totals),
+                    2,
+                )
+                expected_total_max = round(
+                    known_max + unknown_probability_mass * max(unweighted_max_totals),
+                    2,
+                )
+                expected_value_method = "bounded_unknown_mass"
     return BudgetScenarioSet(
         scenario_set_id=new_id("budgetscenarios"),
         selected_scenario_id=selected,
         standard_scenario_id=standard,
         selected_scenario_basis=selected_basis,  # type: ignore[arg-type]
         expected_total=expected_total,
+        unknown_probability_mass=unknown_probability_mass,
+        expected_total_min=expected_total_min,
+        expected_total_max=expected_total_max,
+        expected_value_method=expected_value_method,  # type: ignore[arg-type]
         expected_total_probability_sum=probability_sum,
         scenarios=scenarios,
         monotonic_total_order=monotonic,
@@ -981,12 +1085,24 @@ def build_budget_proposal(
             hours_max: float | None = None
             expenses_min: float | None = None
             expenses_max: float | None = None
+            estimate_basis = "template_default"
+            estimate_basis_refs = [
+                _template_ref(
+                    profile,
+                    confirmation.confirmed_matter_family,
+                    f"phases/{phase_id}/tasks/{task_id}",
+                )
+            ]
             if scaling_driver is not None and scaling_driver in driver_values:
                 units, provenance = driver_values[scaling_driver]
                 hours_per_unit = float(task.get("hours_per_unit", 0.0))
                 expense_per_unit = float(task.get("expense_per_unit", 0.0))
                 hours = round(hours_per_unit * units, 2)
                 expenses = round(base_expenses + expense_per_unit * units, 2)
+                estimate_basis = "driver_adjusted"
+                estimate_basis_refs.append(
+                    _driver_policy_ref(case_drivers, f"drivers/{scaling_driver}")
+                )
                 driver_range = _driver_range(case_drivers, str(scaling_driver))
                 hours_min, hours_max = _range_from_scaled_driver(
                     base_value=0.0,
@@ -1045,6 +1161,10 @@ def build_budget_proposal(
                     driver = driver_lookup.get(str(scaling_driver))
                     driver_range = _driver_range(case_drivers, str(scaling_driver))
                     if driver is not None and driver.provenance == "unknown" and driver_range:
+                        estimate_basis = "unknown"
+                        estimate_basis_refs.append(
+                            _driver_policy_ref(case_drivers, f"drivers/{scaling_driver}")
+                        )
                         hours_per_unit = float(task.get("hours_per_unit", 0.0))
                         expense_per_unit = float(task.get("expense_per_unit", 0.0))
                         minimum, _likely, maximum = driver_range
@@ -1151,7 +1271,9 @@ def build_budget_proposal(
                     external_code_candidate=task.get("external_code_candidate"),
                     expense_code=task.get("expense_code"),
                     assumptions=assumptions,
-                    evidence_refs=evidence_refs,
+                    evidence_refs=[],
+                    estimate_basis=estimate_basis,  # type: ignore[arg-type]
+                    estimate_basis_refs=estimate_basis_refs,
                 )
             )
 
@@ -1256,6 +1378,16 @@ def build_budget_proposal(
         contingency_amount=selected_totals.contingency_amount,
         total_proposed_budget=selected_totals.total,
         scenario_name=selected_scenario.scenario_id,
+        headline_subtotal_fees=selected_scenario.subtotal_fees,
+        headline_subtotal_expenses=selected_scenario.subtotal_expenses,
+        headline_contingency_amount=selected_scenario.contingency_amount,
+        headline_total_proposed_budget=selected_scenario.total_proposed_budget,
+        headline_total_proposed_budget_min=selected_scenario.total_budget_min,
+        headline_total_proposed_budget_max=selected_scenario.total_budget_max,
+        expected_total_proposed_budget_min=scenario_set.expected_total_min,
+        expected_total_proposed_budget_max=scenario_set.expected_total_max,
+        unknown_probability_mass=scenario_set.unknown_probability_mass,
+        expected_value_method=scenario_set.expected_value_method,
         scenario_set=scenario_set,
         calculation_report=report,
         assumptions=assumptions,
@@ -1265,4 +1397,16 @@ def build_budget_proposal(
         driver_effects=driver_effects,
         guideline_flags=guideline_flags,
         budget_support_items=support_items,
+        display_banner={
+            "candidate_only": True,
+            "synthetic_only": True,
+            "pricing_status": mode,
+            "not_authorized_for_client_submission": True,
+            "blocked_actions": [
+                "client_submission",
+                "carrier_submission",
+                "matter_opening",
+                "conflict_clearance",
+            ],
+        },
     )

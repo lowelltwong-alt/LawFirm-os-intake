@@ -184,11 +184,16 @@ def build_carrier_compliant_projection(
         )
         for line in budget.lines
     ]
+    projection_pricing_status = (
+        "hours_only_partial"
+        if any(line.rate_unknown_for_reshaped_role for line in projection_lines)
+        else "priced"
+    )
 
     proposed_subtotal_fees = budget.subtotal_fees
     compliant_subtotal_fees = (
         round(sum(line.compliant_fees or 0.0 for line in projection_lines), 2)
-        if proposed_subtotal_fees is not None
+        if proposed_subtotal_fees is not None and projection_pricing_status == "priced"
         else None
     )
     proposed_subtotal_expenses = budget.subtotal_expenses
@@ -199,9 +204,9 @@ def build_carrier_compliant_projection(
     proposed_contingency = budget.contingency_amount
     compliant_contingency = (
         round((compliant_subtotal_fees or 0.0) * budget.contingency_percent / 100, 2)
-        if proposed_subtotal_fees is not None and contingency_allowed
+        if compliant_subtotal_fees is not None and contingency_allowed
         else 0.0
-        if proposed_subtotal_fees is not None
+        if compliant_subtotal_fees is not None
         else None
     )
     compliant_total = (
@@ -211,21 +216,26 @@ def build_carrier_compliant_projection(
             + (compliant_contingency or 0.0),
             2,
         )
-        if budget.total_proposed_budget is not None
+        if budget.total_proposed_budget is not None and projection_pricing_status == "priced"
         else None
-    )
-    over_cap_amount = (
-        round(max(0.0, budget.total_proposed_budget - compliant_total), 2)
-        if budget.total_proposed_budget is not None and compliant_total is not None
-        else 0.0
     )
     rate_cap_delta = round(
         sum(line.rate_cap_delta for line in projection_lines),
         2,
     )
     expense_cap_delta = round(sum(line.expense_cap_delta for line in projection_lines), 2)
+    disallowed_delta = round(sum(line.disallowed_delta for line in projection_lines), 2)
     staffing_rule_delta = round(sum(line.staffing_rule_delta for line in projection_lines), 2)
     contingency_delta = _delta(proposed_contingency, compliant_contingency)
+    over_cap_amount = round(rate_cap_delta + expense_cap_delta, 2)
+    total_delta = round(
+        rate_cap_delta
+        + expense_cap_delta
+        + disallowed_delta
+        + staffing_rule_delta
+        + contingency_delta,
+        2,
+    )
     proposed_blended_rate = _blended_rate(
         total_fees=proposed_subtotal_fees,
         total_hours=sum(line.proposed_hours for line in projection_lines),
@@ -258,9 +268,13 @@ def build_carrier_compliant_projection(
         compliant_subtotal_expenses=compliant_subtotal_expenses,
         proposed_contingency_amount=proposed_contingency,
         compliant_contingency_amount=compliant_contingency,
+        projection_pricing_status=projection_pricing_status,  # type: ignore[arg-type]
+        total_delta=total_delta,
         over_cap_amount=over_cap_amount,
+        disallowed_amount=disallowed_delta,
         rate_cap_delta=rate_cap_delta,
         expense_cap_delta=expense_cap_delta,
+        disallowed_delta=disallowed_delta,
         staffing_rule_delta=staffing_rule_delta,
         contingency_delta=contingency_delta,
         proposed_blended_rate=proposed_blended_rate,
@@ -303,6 +317,7 @@ def _project_line(
     staffing_rule_rate = None
     if staffing_rule_applied:
         staffing_rule_rate = role_rates.get(compliant_staffing_role)
+    rate_unknown_for_reshaped_role = staffing_rule_applied and staffing_rule_rate is None
     rate_before_cap = staffing_rule_rate if staffing_rule_applied else proposed_rate
     compliant_rate = rate_before_cap
     rate_cap_applied = False
@@ -335,9 +350,11 @@ def _project_line(
     compliant_expenses = proposed_expenses
     expense_cap_applied = False
     disallowed = False
+    disallowed_delta = 0.0
     if line.expense_code and line.expense_code in disallowed_expense_codes:
         compliant_expenses = 0.0
         disallowed = True
+        disallowed_delta = proposed_expenses
         guideline_refs.append(
             _guideline_ref(
                 guideline_id, carrier_id, f"disallowed_expense_codes/{line.expense_code}"
@@ -369,7 +386,9 @@ def _project_line(
         if rate_cap_applied
         else 0.0
     )
-    expense_cap_delta = max(0.0, round(proposed_expenses - compliant_expenses, 2))
+    expense_cap_delta = (
+        0.0 if disallowed else max(0.0, round(proposed_expenses - compliant_expenses, 2))
+    )
     capped = rate_cap_applied or expense_cap_applied
     note_parts = []
     if staffing_rule_applied:
@@ -411,10 +430,18 @@ def _project_line(
         rate_cap_applied=rate_cap_applied,
         expense_cap_applied=expense_cap_applied,
         staffing_rule_applied=staffing_rule_applied,
+        rate_unknown_for_reshaped_role=rate_unknown_for_reshaped_role,
         over_cap_amount=over_cap_amount,
         rate_cap_delta=rate_cap_delta,
         expense_cap_delta=expense_cap_delta,
+        disallowed_delta=disallowed_delta,
         staffing_rule_delta=staffing_rule_delta,
+        delta_breakdown={
+            "rate_cap_delta": rate_cap_delta,
+            "expense_cap_delta": expense_cap_delta,
+            "disallowed_delta": disallowed_delta,
+            "staffing_delta": staffing_rule_delta,
+        },
         guideline_refs=guideline_refs,
         note=note,
     )
@@ -602,8 +629,12 @@ def _preapproval_reason(
 def _role_rates_from_budget_lines(lines: list[BudgetLine]) -> dict[str, float]:
     rates: dict[str, float] = {}
     for line in lines:
-        if line.hourly_rate is not None and line.staffing_role not in rates:
-            rates[line.staffing_role] = line.hourly_rate
+        if line.hourly_rate is None:
+            continue
+        existing = rates.get(line.staffing_role)
+        if existing is not None and existing != line.hourly_rate:
+            raise ValueError(f"conflicting role rates for staffing role {line.staffing_role}")
+        rates[line.staffing_role] = line.hourly_rate
     return rates
 
 

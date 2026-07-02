@@ -333,6 +333,11 @@
           "title": "Staffing Rule Applied",
           "type": "boolean"
         },
+        "rate_unknown_for_reshaped_role": {
+          "default": false,
+          "title": "Rate Unknown For Reshaped Role",
+          "type": "boolean"
+        },
         "over_cap_amount": {
           "default": 0,
           "minimum": 0,
@@ -351,11 +356,24 @@
           "title": "Expense Cap Delta",
           "type": "number"
         },
+        "disallowed_delta": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Disallowed Delta",
+          "type": "number"
+        },
         "staffing_rule_delta": {
           "default": 0,
           "minimum": 0,
           "title": "Staffing Rule Delta",
           "type": "number"
+        },
+        "delta_breakdown": {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "title": "Delta Breakdown",
+          "type": "object"
         },
         "guideline_refs": {
           "items": {
@@ -483,9 +501,30 @@
       "default": null,
       "title": "Compliant Contingency Amount"
     },
+    "projection_pricing_status": {
+      "default": "priced",
+      "enum": [
+        "priced",
+        "hours_only_partial"
+      ],
+      "title": "Projection Pricing Status",
+      "type": "string"
+    },
+    "total_delta": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Total Delta",
+      "type": "number"
+    },
     "over_cap_amount": {
       "minimum": 0,
       "title": "Over Cap Amount",
+      "type": "number"
+    },
+    "disallowed_amount": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Disallowed Amount",
       "type": "number"
     },
     "rate_cap_delta": {
@@ -496,6 +535,12 @@
     "expense_cap_delta": {
       "minimum": 0,
       "title": "Expense Cap Delta",
+      "type": "number"
+    },
+    "disallowed_delta": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Disallowed Delta",
       "type": "number"
     },
     "staffing_rule_delta": {

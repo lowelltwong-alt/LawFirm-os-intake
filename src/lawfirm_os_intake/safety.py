@@ -61,9 +61,10 @@ def _conflict_terms_are_evidence_bound(
 
 def _budget_lines_are_evidence_bound(packet: IntakePreflightPacket, budget: BudgetProposal) -> bool:
     refs = [ref for line in budget.lines for ref in line.evidence_refs]
-    return all(line.evidence_refs for line in budget.lines) and _refs_match_packet_segments(
-        packet, refs
+    line_support_present = all(
+        line.evidence_refs or line.estimate_basis_refs for line in budget.lines
     )
+    return line_support_present and _refs_match_packet_segments(packet, refs)
 
 
 def _budget_support_items_are_supported(

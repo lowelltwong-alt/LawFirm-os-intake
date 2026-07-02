@@ -1,0 +1,179 @@
+{
+  "$defs": {
+    "RateBenchmarkCell": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "default": "0.1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "benchmark_cell_id": {
+          "title": "Benchmark Cell Id",
+          "type": "string"
+        },
+        "jurisdiction": {
+          "title": "Jurisdiction",
+          "type": "string"
+        },
+        "role": {
+          "title": "Role",
+          "type": "string"
+        },
+        "experience_band": {
+          "title": "Experience Band",
+          "type": "string"
+        },
+        "year": {
+          "title": "Year",
+          "type": "integer"
+        },
+        "percentile": {
+          "title": "Percentile",
+          "type": "string"
+        },
+        "value": {
+          "minimum": 0,
+          "title": "Value",
+          "type": "number"
+        },
+        "benchmark_type": {
+          "enum": [
+            "public_procurement_proxy",
+            "synthetic_candidate",
+            "carrier_panel_candidate"
+          ],
+          "title": "Benchmark Type",
+          "type": "string"
+        },
+        "source_url": {
+          "title": "Source Url",
+          "type": "string"
+        },
+        "retrieved_at": {
+          "title": "Retrieved At",
+          "type": "string"
+        },
+        "page_sha256": {
+          "title": "Page Sha256",
+          "type": "string"
+        },
+        "quote_span": {
+          "title": "Quote Span",
+          "type": "string"
+        },
+        "license_note": {
+          "title": "License Note",
+          "type": "string"
+        },
+        "grade": {
+          "enum": [
+            "A",
+            "B",
+            "C",
+            "proxy_only",
+            "ungraded"
+          ],
+          "title": "Grade",
+          "type": "string"
+        },
+        "human_grading_status": {
+          "enum": [
+            "pending",
+            "reviewed",
+            "rejected"
+          ],
+          "title": "Human Grading Status",
+          "type": "string"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "not_authorized_as_carrier_rate": {
+          "const": true,
+          "default": true,
+          "title": "Not Authorized As Carrier Rate",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "benchmark_cell_id",
+        "jurisdiction",
+        "role",
+        "experience_band",
+        "year",
+        "percentile",
+        "value",
+        "benchmark_type",
+        "source_url",
+        "retrieved_at",
+        "page_sha256",
+        "quote_span",
+        "license_note",
+        "grade",
+        "human_grading_status"
+      ],
+      "title": "RateBenchmarkCell",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "benchmark_snapshot_id": {
+      "title": "Benchmark Snapshot Id",
+      "type": "string"
+    },
+    "created_at": {
+      "title": "Created At",
+      "type": "string"
+    },
+    "source_owner": {
+      "enum": [
+        "legal_knowledge_runtime",
+        "local_candidate_fixture"
+      ],
+      "title": "Source Owner",
+      "type": "string"
+    },
+    "cells": {
+      "items": {
+        "$ref": "#/$defs/RateBenchmarkCell"
+      },
+      "title": "Cells",
+      "type": "array"
+    },
+    "pinned_hash": {
+      "title": "Pinned Hash",
+      "type": "string"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "not_authorized_as_carrier_rate": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized As Carrier Rate",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "benchmark_snapshot_id",
+    "created_at",
+    "source_owner",
+    "cells",
+    "pinned_hash"
+  ],
+  "title": "BenchmarkSnapshotManifest",
+  "type": "object"
+}

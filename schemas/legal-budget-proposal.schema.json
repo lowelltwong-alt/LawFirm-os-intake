@@ -614,6 +614,25 @@
           },
           "title": "Evidence Refs",
           "type": "array"
+        },
+        "estimate_basis": {
+          "default": "template_default",
+          "enum": [
+            "template_default",
+            "driver_adjusted",
+            "human_confirmed",
+            "benchmark_cell",
+            "unknown"
+          ],
+          "title": "Estimate Basis",
+          "type": "string"
+        },
+        "estimate_basis_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Estimate Basis Refs",
+          "type": "array"
         }
       },
       "required": [
@@ -670,6 +689,32 @@
           "title": "Total Hours",
           "type": "number"
         },
+        "total_hours_min": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Total Hours Min"
+        },
+        "total_hours_max": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Total Hours Max"
+        },
         "subtotal_fees": {
           "anyOf": [
             {
@@ -682,10 +727,62 @@
           "default": null,
           "title": "Subtotal Fees"
         },
+        "subtotal_fees_min": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subtotal Fees Min"
+        },
+        "subtotal_fees_max": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subtotal Fees Max"
+        },
         "subtotal_expenses": {
           "minimum": 0,
           "title": "Subtotal Expenses",
           "type": "number"
+        },
+        "subtotal_expenses_min": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subtotal Expenses Min"
+        },
+        "subtotal_expenses_max": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subtotal Expenses Max"
         },
         "contingency_percent": {
           "minimum": 0,
@@ -703,6 +800,32 @@
           ],
           "default": null,
           "title": "Contingency Amount"
+        },
+        "contingency_amount_min": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contingency Amount Min"
+        },
+        "contingency_amount_max": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contingency Amount Max"
         },
         "total_proposed_budget": {
           "anyOf": [
@@ -847,6 +970,54 @@
           ],
           "default": null,
           "title": "Expected Total"
+        },
+        "unknown_probability_mass": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unknown Probability Mass"
+        },
+        "expected_total_min": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Total Min"
+        },
+        "expected_total_max": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Total Max"
+        },
+        "expected_value_method": {
+          "default": "not_computed",
+          "enum": [
+            "reviewed_probabilities",
+            "bounded_unknown_mass",
+            "not_computed"
+          ],
+          "title": "Expected Value Method",
+          "type": "string"
         },
         "expected_total_probability_sum": {
           "anyOf": [
@@ -1132,9 +1303,30 @@
           "default": null,
           "title": "Compliant Contingency Amount"
         },
+        "projection_pricing_status": {
+          "default": "priced",
+          "enum": [
+            "priced",
+            "hours_only_partial"
+          ],
+          "title": "Projection Pricing Status",
+          "type": "string"
+        },
+        "total_delta": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Total Delta",
+          "type": "number"
+        },
         "over_cap_amount": {
           "minimum": 0,
           "title": "Over Cap Amount",
+          "type": "number"
+        },
+        "disallowed_amount": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Disallowed Amount",
           "type": "number"
         },
         "rate_cap_delta": {
@@ -1145,6 +1337,12 @@
         "expense_cap_delta": {
           "minimum": 0,
           "title": "Expense Cap Delta",
+          "type": "number"
+        },
+        "disallowed_delta": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Disallowed Delta",
           "type": "number"
         },
         "staffing_rule_delta": {
@@ -1537,6 +1735,11 @@
           "title": "Staffing Rule Applied",
           "type": "boolean"
         },
+        "rate_unknown_for_reshaped_role": {
+          "default": false,
+          "title": "Rate Unknown For Reshaped Role",
+          "type": "boolean"
+        },
         "over_cap_amount": {
           "default": 0,
           "minimum": 0,
@@ -1555,11 +1758,24 @@
           "title": "Expense Cap Delta",
           "type": "number"
         },
+        "disallowed_delta": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Disallowed Delta",
+          "type": "number"
+        },
         "staffing_rule_delta": {
           "default": 0,
           "minimum": 0,
           "title": "Staffing Rule Delta",
           "type": "number"
+        },
+        "delta_breakdown": {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "title": "Delta Breakdown",
+          "type": "object"
         },
         "guideline_refs": {
           "items": {
@@ -1986,6 +2202,126 @@
       "title": "Scenario Name",
       "type": "string"
     },
+    "headline_subtotal_fees": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Headline Subtotal Fees"
+    },
+    "headline_subtotal_expenses": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Headline Subtotal Expenses"
+    },
+    "headline_contingency_amount": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Headline Contingency Amount"
+    },
+    "headline_total_proposed_budget": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Headline Total Proposed Budget"
+    },
+    "headline_total_proposed_budget_min": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Headline Total Proposed Budget Min"
+    },
+    "headline_total_proposed_budget_max": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Headline Total Proposed Budget Max"
+    },
+    "expected_total_proposed_budget_min": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Expected Total Proposed Budget Min"
+    },
+    "expected_total_proposed_budget_max": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Expected Total Proposed Budget Max"
+    },
+    "unknown_probability_mass": {
+      "anyOf": [
+        {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Unknown Probability Mass"
+    },
+    "expected_value_method": {
+      "default": "not_computed",
+      "enum": [
+        "reviewed_probabilities",
+        "bounded_unknown_mass",
+        "not_computed"
+      ],
+      "title": "Expected Value Method",
+      "type": "string"
+    },
     "scenario_set": {
       "anyOf": [
         {
@@ -2082,6 +2418,11 @@
       },
       "title": "Budget Support Items",
       "type": "array"
+    },
+    "display_banner": {
+      "additionalProperties": true,
+      "title": "Display Banner",
+      "type": "object"
     },
     "approval_state": {
       "const": "proposed_for_human_review",

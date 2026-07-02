@@ -33,9 +33,12 @@ def test_budget_requires_human_confirmation_and_calculates(tmp_path, repo_root):
         if candidate.label == confirmation.confirmed_matter_family
     )
     assert confirmed_matter_candidate.source_evidence_status == "observed_support"
-    assert all(
-        line.evidence_refs == confirmed_matter_candidate.observed_evidence_refs[:3]
-        for line in budget.lines
+    assert all(line.evidence_refs == [] for line in budget.lines)
+    assert all(line.estimate_basis_refs for line in budget.lines)
+    assert any(
+        item.source_kind == "observed_evidence"
+        and item.evidence_refs == confirmed_matter_candidate.observed_evidence_refs[:3]
+        for item in budget.budget_support_items
     )
     expected_fees = round(
         sum(line.estimated_hours * line.hourly_rate for line in budget.lines if line.hourly_rate), 2
