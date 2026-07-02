@@ -1,0 +1,672 @@
+{
+  "schema_version": "0.1",
+  "blocked_driver_impact_review_report_id": "leblockeddriverimpactreview_demo_001",
+  "status": "labor_employment_blocked_driver_impacts_ready_for_review",
+  "source_fact_binding_report_ref": "quality/labor_employment_executable_fact_binding_report.json",
+  "source_driver_binding_report_ref": "quality/labor_employment_executable_driver_binding_report.json",
+  "source_driver_impact_report_ref": "quality/labor_employment_executable_driver_impact_report.json",
+  "source_driver_impact_report_id": "leexecdriverimpact_demo_001",
+  "case_count": 8,
+  "blocked_case_count": 6,
+  "nonblocking_case_count": 2,
+  "blocker_fact_count": 8,
+  "block_amount_budget_impact_count": 12,
+  "candidate_exception_lake_labels": [
+    "budget_amount_blocked_pending_labor_employment_driver_review",
+    "labor_employment_budget_driver_requires_human_confirmation",
+    "labor_employment_critical_budget_fact_block",
+    "labor_employment_driver_impacts_blocked",
+    "missing_budget_driver_source_requires_follow_up",
+    "prompt_injection_source_content",
+    "source_missing"
+  ],
+  "case_reviews": [
+    {
+      "executable_fixture_id": "le-wage-hour-missing-attachment.executable.v0_1",
+      "family": "wage_hour_flsa_state",
+      "variant": "missing_attachment",
+      "allowed_budget_output": "blocked_amount_budget",
+      "block_reason": "Amount-budget output is blocked because one or more critical L&E budget facts remain unresolved or exception-bound.",
+      "block_amount_budget_impact_count": 2,
+      "range_widening_impact_count": 5,
+      "scenario_fork_impact_count": 3,
+      "rate_guideline_review_impact_count": 0,
+      "critical_driver_dimensions": ["class_collective_scope", "party_topology"],
+      "blocker_fact_count": 1,
+      "blocker_facts": [
+        {
+          "fact_id": "class_collective_or_group_scope",
+          "required_level": "critical",
+          "binding_state": "source_bound_gap_candidate",
+          "blocks_precise_budget": true,
+          "reason": "The source raises possible group scope, but does not confirm single-plaintiff, class, collective, representative, or agency-wide posture.",
+          "budget_effects": [
+            "discovery_scope",
+            "motion_practice",
+            "notice_and_opt_in_work",
+            "settlement_administration"
+          ],
+          "evidence_ref_count": 1,
+          "source_inventory_ref_count": 0,
+          "matched_source_signal_terms": ["class or collective", "more than one worksite"],
+          "missing_source_signal_terms": [],
+          "matched_exception_labels": [],
+          "missing_exception_labels": [],
+          "matched_source_ids": [],
+          "missing_source_ids": [],
+          "unblock_actions": [
+            "human_confirm_labor_employment_budget_fact:class_collective_or_group_scope",
+            "human_review_source_bound_fact:class_collective_or_group_scope"
+          ],
+          "candidate_exception_lake_labels": [
+            "budget_amount_blocked_pending_labor_employment_driver_review",
+            "labor_employment_budget_driver_requires_human_confirmation",
+            "labor_employment_critical_budget_fact_block",
+            "labor_employment_driver_impacts_blocked"
+          ],
+          "candidate_only": true,
+          "synthetic_only": true
+        }
+      ],
+      "candidate_exception_lake_labels": [
+        "budget_amount_blocked_pending_labor_employment_driver_review",
+        "labor_employment_budget_driver_requires_human_confirmation",
+        "labor_employment_critical_budget_fact_block",
+        "labor_employment_driver_impacts_blocked"
+      ],
+      "unblock_actions": [
+        "human_confirm_labor_employment_budget_fact:class_collective_or_group_scope",
+        "human_review_source_bound_fact:class_collective_or_group_scope",
+        "rerun_labor_employment_driver_impact_review_after_corrections"
+      ],
+      "next_review_gates": [
+        "human_labor_employment_budget_driver_review",
+        "append_or_supersede_missing_source_corrections",
+        "rerun_budget_precondition_after_review"
+      ],
+      "candidate_only": true,
+      "synthetic_only": true,
+      "amount_budget_blocked": true,
+      "budget_amount_output_authorized": false,
+      "budget_submission_authorized": false,
+      "lake_write_performed": false,
+      "sqlite_write_performed": false,
+      "external_writes_performed": false
+    },
+    {
+      "executable_fixture_id": "le-epli-carrier-missing-attachment.executable.v0_1",
+      "family": "epli_carrier_assignment",
+      "variant": "missing_attachment",
+      "allowed_budget_output": "blocked_amount_budget",
+      "block_reason": "Amount-budget output is blocked because one or more critical L&E budget facts remain unresolved or exception-bound.",
+      "block_amount_budget_impact_count": 3,
+      "range_widening_impact_count": 1,
+      "scenario_fork_impact_count": 0,
+      "rate_guideline_review_impact_count": 2,
+      "critical_driver_dimensions": [
+        "carrier_guideline_rate_context",
+        "party_topology",
+        "representation_posture"
+      ],
+      "blocker_fact_count": 2,
+      "blocker_facts": [
+        {
+          "fact_id": "prospective_client_payer_carrier_posture",
+          "required_level": "critical",
+          "binding_state": "source_bound_gap_candidate",
+          "blocks_precise_budget": true,
+          "reason": "Carrier, TPA, insured, payer, instructing source, and represented client posture are all present as candidate roles requiring confirmation.",
+          "budget_effects": ["conflict_seed", "rate_guideline_source", "appeal_path"],
+          "evidence_ref_count": 1,
+          "source_inventory_ref_count": 0,
+          "matched_source_signal_terms": [
+            "insured",
+            "payer",
+            "instructing source",
+            "represented client"
+          ],
+          "missing_source_signal_terms": [],
+          "matched_exception_labels": [],
+          "missing_exception_labels": [],
+          "matched_source_ids": [],
+          "missing_source_ids": [],
+          "unblock_actions": [
+            "human_confirm_labor_employment_budget_fact:prospective_client_payer_carrier_posture",
+            "human_review_source_bound_fact:prospective_client_payer_carrier_posture"
+          ],
+          "candidate_exception_lake_labels": [
+            "budget_amount_blocked_pending_labor_employment_driver_review",
+            "labor_employment_budget_driver_requires_human_confirmation",
+            "labor_employment_critical_budget_fact_block",
+            "labor_employment_driver_impacts_blocked"
+          ],
+          "candidate_only": true,
+          "synthetic_only": true
+        },
+        {
+          "fact_id": "carrier_guideline_and_rate_source",
+          "required_level": "critical",
+          "binding_state": "source_and_exception_bound_gap_candidate",
+          "blocks_precise_budget": true,
+          "reason": "The carrier guideline and approved rate schedule are referenced but not included, so proposed-vs-compliant pricing cannot be narrowed.",
+          "budget_effects": [
+            "proposed_vs_compliant_projection",
+            "preapproval_exceptions",
+            "appeal_path"
+          ],
+          "evidence_ref_count": 3,
+          "source_inventory_ref_count": 2,
+          "matched_source_signal_terms": ["carrier guideline", "approved rate schedule"],
+          "missing_source_signal_terms": [],
+          "matched_exception_labels": ["source_missing"],
+          "missing_exception_labels": [],
+          "matched_source_ids": [
+            "syn-le-epli-guidelines-missing-001",
+            "syn-le-epli-rate-schedule-missing-001"
+          ],
+          "missing_source_ids": [],
+          "unblock_actions": [
+            "collect_or_confirm_unavailable_source:syn-le-epli-guidelines-missing-001",
+            "collect_or_confirm_unavailable_source:syn-le-epli-rate-schedule-missing-001",
+            "human_confirm_labor_employment_budget_fact:carrier_guideline_and_rate_source",
+            "human_review_source_bound_fact:carrier_guideline_and_rate_source",
+            "resolve_exception_label:source_missing"
+          ],
+          "candidate_exception_lake_labels": [
+            "budget_amount_blocked_pending_labor_employment_driver_review",
+            "labor_employment_budget_driver_requires_human_confirmation",
+            "labor_employment_critical_budget_fact_block",
+            "labor_employment_driver_impacts_blocked",
+            "missing_budget_driver_source_requires_follow_up",
+            "source_missing"
+          ],
+          "candidate_only": true,
+          "synthetic_only": true
+        }
+      ],
+      "candidate_exception_lake_labels": [
+        "budget_amount_blocked_pending_labor_employment_driver_review",
+        "labor_employment_budget_driver_requires_human_confirmation",
+        "labor_employment_critical_budget_fact_block",
+        "labor_employment_driver_impacts_blocked",
+        "missing_budget_driver_source_requires_follow_up",
+        "source_missing"
+      ],
+      "unblock_actions": [
+        "collect_or_confirm_unavailable_source:syn-le-epli-guidelines-missing-001",
+        "collect_or_confirm_unavailable_source:syn-le-epli-rate-schedule-missing-001",
+        "human_confirm_labor_employment_budget_fact:carrier_guideline_and_rate_source",
+        "human_confirm_labor_employment_budget_fact:prospective_client_payer_carrier_posture",
+        "human_review_source_bound_fact:carrier_guideline_and_rate_source",
+        "human_review_source_bound_fact:prospective_client_payer_carrier_posture",
+        "rerun_labor_employment_driver_impact_review_after_corrections",
+        "resolve_exception_label:source_missing"
+      ],
+      "next_review_gates": [
+        "human_labor_employment_budget_driver_review",
+        "append_or_supersede_missing_source_corrections",
+        "rerun_budget_precondition_after_review"
+      ],
+      "candidate_only": true,
+      "synthetic_only": true,
+      "amount_budget_blocked": true,
+      "budget_amount_output_authorized": false,
+      "budget_submission_authorized": false,
+      "lake_write_performed": false,
+      "sqlite_write_performed": false,
+      "external_writes_performed": false
+    },
+    {
+      "executable_fixture_id": "le-discrimination-harassment-missing-attachment.executable.v0_1",
+      "family": "discrimination_harassment",
+      "variant": "missing_attachment",
+      "allowed_budget_output": "blocked_amount_budget",
+      "block_reason": "Amount-budget output is blocked because one or more critical L&E budget facts remain unresolved or exception-bound.",
+      "block_amount_budget_impact_count": 1,
+      "range_widening_impact_count": 4,
+      "scenario_fork_impact_count": 1,
+      "rate_guideline_review_impact_count": 1,
+      "critical_driver_dimensions": ["carrier_guideline_rate_context"],
+      "blocker_fact_count": 1,
+      "blocker_facts": [
+        {
+          "fact_id": "carrier_guideline_and_rate_source",
+          "required_level": "critical",
+          "binding_state": "source_and_exception_bound_gap_candidate",
+          "blocks_precise_budget": true,
+          "reason": "The carrier guideline and approved rate schedule are missing, so amount budgeting remains blocked.",
+          "budget_effects": [
+            "proposed_vs_compliant_projection",
+            "preapproval_exceptions",
+            "appeal_path"
+          ],
+          "evidence_ref_count": 2,
+          "source_inventory_ref_count": 1,
+          "matched_source_signal_terms": ["carrier guideline", "approved rate schedule"],
+          "missing_source_signal_terms": [],
+          "matched_exception_labels": ["source_missing"],
+          "missing_exception_labels": [],
+          "matched_source_ids": ["syn-le-discrimination-guidelines-missing-001"],
+          "missing_source_ids": [],
+          "unblock_actions": [
+            "collect_or_confirm_unavailable_source:syn-le-discrimination-guidelines-missing-001",
+            "human_confirm_labor_employment_budget_fact:carrier_guideline_and_rate_source",
+            "human_review_source_bound_fact:carrier_guideline_and_rate_source",
+            "resolve_exception_label:source_missing"
+          ],
+          "candidate_exception_lake_labels": [
+            "budget_amount_blocked_pending_labor_employment_driver_review",
+            "labor_employment_budget_driver_requires_human_confirmation",
+            "labor_employment_critical_budget_fact_block",
+            "labor_employment_driver_impacts_blocked",
+            "missing_budget_driver_source_requires_follow_up",
+            "source_missing"
+          ],
+          "candidate_only": true,
+          "synthetic_only": true
+        }
+      ],
+      "candidate_exception_lake_labels": [
+        "budget_amount_blocked_pending_labor_employment_driver_review",
+        "labor_employment_budget_driver_requires_human_confirmation",
+        "labor_employment_critical_budget_fact_block",
+        "labor_employment_driver_impacts_blocked",
+        "missing_budget_driver_source_requires_follow_up",
+        "source_missing"
+      ],
+      "unblock_actions": [
+        "collect_or_confirm_unavailable_source:syn-le-discrimination-guidelines-missing-001",
+        "human_confirm_labor_employment_budget_fact:carrier_guideline_and_rate_source",
+        "human_review_source_bound_fact:carrier_guideline_and_rate_source",
+        "rerun_labor_employment_driver_impact_review_after_corrections",
+        "resolve_exception_label:source_missing"
+      ],
+      "next_review_gates": [
+        "human_labor_employment_budget_driver_review",
+        "append_or_supersede_missing_source_corrections",
+        "rerun_budget_precondition_after_review"
+      ],
+      "candidate_only": true,
+      "synthetic_only": true,
+      "amount_budget_blocked": true,
+      "budget_amount_output_authorized": false,
+      "budget_submission_authorized": false,
+      "lake_write_performed": false,
+      "sqlite_write_performed": false,
+      "external_writes_performed": false
+    },
+    {
+      "executable_fixture_id": "le-class-collective-adversarial.executable.v0_1",
+      "family": "class_collective_paga_representative",
+      "variant": "adversarial",
+      "allowed_budget_output": "blocked_amount_budget",
+      "block_reason": "Amount-budget output is blocked because one or more critical L&E budget facts remain unresolved or exception-bound.",
+      "block_amount_budget_impact_count": 3,
+      "range_widening_impact_count": 3,
+      "scenario_fork_impact_count": 1,
+      "rate_guideline_review_impact_count": 1,
+      "critical_driver_dimensions": [
+        "carrier_guideline_rate_context",
+        "deposition_plan",
+        "party_topology"
+      ],
+      "blocker_fact_count": 2,
+      "blocker_facts": [
+        {
+          "fact_id": "joint_employer_or_affiliate_structure",
+          "required_level": "critical",
+          "binding_state": "source_bound_gap_candidate",
+          "blocks_precise_budget": true,
+          "reason": "Parent and joint-employer facts are candidate-only and must not become resolved party topology.",
+          "budget_effects": [
+            "party_count",
+            "document_collection_scope",
+            "written_discovery_rounds",
+            "conflict_seed"
+          ],
+          "evidence_ref_count": 1,
+          "source_inventory_ref_count": 0,
+          "matched_source_signal_terms": ["parent", "joint employer"],
+          "missing_source_signal_terms": [],
+          "matched_exception_labels": [],
+          "missing_exception_labels": [],
+          "matched_source_ids": [],
+          "missing_source_ids": [],
+          "unblock_actions": [
+            "human_confirm_labor_employment_budget_fact:joint_employer_or_affiliate_structure",
+            "human_review_source_bound_fact:joint_employer_or_affiliate_structure"
+          ],
+          "candidate_exception_lake_labels": [
+            "budget_amount_blocked_pending_labor_employment_driver_review",
+            "labor_employment_budget_driver_requires_human_confirmation",
+            "labor_employment_critical_budget_fact_block",
+            "labor_employment_driver_impacts_blocked"
+          ],
+          "candidate_only": true,
+          "synthetic_only": true
+        },
+        {
+          "fact_id": "carrier_guideline_and_rate_source",
+          "required_level": "critical",
+          "binding_state": "source_and_exception_bound_gap_candidate",
+          "blocks_precise_budget": true,
+          "reason": "The source asks whether carrier coverage exists and also includes prompt injection, so guideline/rate source remains blocked.",
+          "budget_effects": [
+            "proposed_vs_compliant_projection",
+            "preapproval_exceptions",
+            "appeal_path"
+          ],
+          "evidence_ref_count": 1,
+          "source_inventory_ref_count": 0,
+          "matched_source_signal_terms": ["coverage", "ignore prior instructions"],
+          "missing_source_signal_terms": [],
+          "matched_exception_labels": ["prompt_injection_source_content"],
+          "missing_exception_labels": [],
+          "matched_source_ids": [],
+          "missing_source_ids": [],
+          "unblock_actions": [
+            "human_confirm_labor_employment_budget_fact:carrier_guideline_and_rate_source",
+            "human_review_source_bound_fact:carrier_guideline_and_rate_source",
+            "resolve_exception_label:prompt_injection_source_content"
+          ],
+          "candidate_exception_lake_labels": [
+            "budget_amount_blocked_pending_labor_employment_driver_review",
+            "labor_employment_budget_driver_requires_human_confirmation",
+            "labor_employment_critical_budget_fact_block",
+            "labor_employment_driver_impacts_blocked",
+            "prompt_injection_source_content"
+          ],
+          "candidate_only": true,
+          "synthetic_only": true
+        }
+      ],
+      "candidate_exception_lake_labels": [
+        "budget_amount_blocked_pending_labor_employment_driver_review",
+        "labor_employment_budget_driver_requires_human_confirmation",
+        "labor_employment_critical_budget_fact_block",
+        "labor_employment_driver_impacts_blocked",
+        "prompt_injection_source_content"
+      ],
+      "unblock_actions": [
+        "human_confirm_labor_employment_budget_fact:carrier_guideline_and_rate_source",
+        "human_confirm_labor_employment_budget_fact:joint_employer_or_affiliate_structure",
+        "human_review_source_bound_fact:carrier_guideline_and_rate_source",
+        "human_review_source_bound_fact:joint_employer_or_affiliate_structure",
+        "rerun_labor_employment_driver_impact_review_after_corrections",
+        "resolve_exception_label:prompt_injection_source_content"
+      ],
+      "next_review_gates": [
+        "human_labor_employment_budget_driver_review",
+        "append_or_supersede_missing_source_corrections",
+        "rerun_budget_precondition_after_review"
+      ],
+      "candidate_only": true,
+      "synthetic_only": true,
+      "amount_budget_blocked": true,
+      "budget_amount_output_authorized": false,
+      "budget_submission_authorized": false,
+      "lake_write_performed": false,
+      "sqlite_write_performed": false,
+      "external_writes_performed": false
+    },
+    {
+      "executable_fixture_id": "le-restrictive-covenant-missing-attachment.executable.v0_1",
+      "family": "restrictive_covenant_trade_secret",
+      "variant": "missing_attachment",
+      "allowed_budget_output": "blocked_amount_budget",
+      "block_reason": "Amount-budget output is blocked because one or more critical L&E budget facts remain unresolved or exception-bound.",
+      "block_amount_budget_impact_count": 1,
+      "range_widening_impact_count": 3,
+      "scenario_fork_impact_count": 1,
+      "rate_guideline_review_impact_count": 0,
+      "critical_driver_dimensions": ["esi_discovery"],
+      "blocker_fact_count": 1,
+      "blocker_facts": [
+        {
+          "fact_id": "esi_custodians_and_sources",
+          "required_level": "critical",
+          "binding_state": "source_and_exception_bound_gap_candidate",
+          "blocks_precise_budget": true,
+          "reason": "Device and ESI scope are referenced but missing, so review volume and forensic work cannot be priced.",
+          "budget_effects": [
+            "esi_volume_tier",
+            "written_discovery_rounds",
+            "vendor_or_forensic_cost",
+            "review_hours"
+          ],
+          "evidence_ref_count": 2,
+          "source_inventory_ref_count": 1,
+          "matched_source_signal_terms": ["device", "ESI"],
+          "missing_source_signal_terms": [],
+          "matched_exception_labels": ["source_missing"],
+          "missing_exception_labels": [],
+          "matched_source_ids": ["syn-le-restrictive-covenant-device-scope-missing-001"],
+          "missing_source_ids": [],
+          "unblock_actions": [
+            "collect_or_confirm_unavailable_source:syn-le-restrictive-covenant-device-scope-missing-001",
+            "human_confirm_labor_employment_budget_fact:esi_custodians_and_sources",
+            "human_review_source_bound_fact:esi_custodians_and_sources",
+            "resolve_exception_label:source_missing"
+          ],
+          "candidate_exception_lake_labels": [
+            "budget_amount_blocked_pending_labor_employment_driver_review",
+            "labor_employment_budget_driver_requires_human_confirmation",
+            "labor_employment_critical_budget_fact_block",
+            "labor_employment_driver_impacts_blocked",
+            "missing_budget_driver_source_requires_follow_up",
+            "source_missing"
+          ],
+          "candidate_only": true,
+          "synthetic_only": true
+        }
+      ],
+      "candidate_exception_lake_labels": [
+        "budget_amount_blocked_pending_labor_employment_driver_review",
+        "labor_employment_budget_driver_requires_human_confirmation",
+        "labor_employment_critical_budget_fact_block",
+        "labor_employment_driver_impacts_blocked",
+        "missing_budget_driver_source_requires_follow_up",
+        "source_missing"
+      ],
+      "unblock_actions": [
+        "collect_or_confirm_unavailable_source:syn-le-restrictive-covenant-device-scope-missing-001",
+        "human_confirm_labor_employment_budget_fact:esi_custodians_and_sources",
+        "human_review_source_bound_fact:esi_custodians_and_sources",
+        "rerun_labor_employment_driver_impact_review_after_corrections",
+        "resolve_exception_label:source_missing"
+      ],
+      "next_review_gates": [
+        "human_labor_employment_budget_driver_review",
+        "append_or_supersede_missing_source_corrections",
+        "rerun_budget_precondition_after_review"
+      ],
+      "candidate_only": true,
+      "synthetic_only": true,
+      "amount_budget_blocked": true,
+      "budget_amount_output_authorized": false,
+      "budget_submission_authorized": false,
+      "lake_write_performed": false,
+      "sqlite_write_performed": false,
+      "external_writes_performed": false
+    },
+    {
+      "executable_fixture_id": "le-ada-fmla-missing-thread.executable.v0_1",
+      "family": "ada_fmla_accommodation_leave",
+      "variant": "missing_attachment",
+      "allowed_budget_output": "blocked_amount_budget",
+      "block_reason": "Amount-budget output is blocked because one or more critical L&E budget facts remain unresolved or exception-bound.",
+      "block_amount_budget_impact_count": 2,
+      "range_widening_impact_count": 4,
+      "scenario_fork_impact_count": 0,
+      "rate_guideline_review_impact_count": 0,
+      "critical_driver_dimensions": ["deposition_plan", "party_topology"],
+      "blocker_fact_count": 1,
+      "blocker_facts": [
+        {
+          "fact_id": "individual_supervisor_or_manager_defendants",
+          "required_level": "critical",
+          "binding_state": "source_bound_gap_candidate",
+          "blocks_precise_budget": true,
+          "reason": "The source identifies potential individual actors but not whether they are witnesses, defendants, or separate role candidates.",
+          "budget_effects": [
+            "party_count",
+            "depositions",
+            "conflict_seed",
+            "indemnity_or_separate_counsel_review"
+          ],
+          "evidence_ref_count": 1,
+          "source_inventory_ref_count": 0,
+          "matched_source_signal_terms": ["manager", "supervisor"],
+          "missing_source_signal_terms": [],
+          "matched_exception_labels": [],
+          "missing_exception_labels": [],
+          "matched_source_ids": [],
+          "missing_source_ids": [],
+          "unblock_actions": [
+            "human_confirm_labor_employment_budget_fact:individual_supervisor_or_manager_defendants",
+            "human_review_source_bound_fact:individual_supervisor_or_manager_defendants"
+          ],
+          "candidate_exception_lake_labels": [
+            "budget_amount_blocked_pending_labor_employment_driver_review",
+            "labor_employment_budget_driver_requires_human_confirmation",
+            "labor_employment_critical_budget_fact_block",
+            "labor_employment_driver_impacts_blocked"
+          ],
+          "candidate_only": true,
+          "synthetic_only": true
+        }
+      ],
+      "candidate_exception_lake_labels": [
+        "budget_amount_blocked_pending_labor_employment_driver_review",
+        "labor_employment_budget_driver_requires_human_confirmation",
+        "labor_employment_critical_budget_fact_block",
+        "labor_employment_driver_impacts_blocked"
+      ],
+      "unblock_actions": [
+        "human_confirm_labor_employment_budget_fact:individual_supervisor_or_manager_defendants",
+        "human_review_source_bound_fact:individual_supervisor_or_manager_defendants",
+        "rerun_labor_employment_driver_impact_review_after_corrections"
+      ],
+      "next_review_gates": [
+        "human_labor_employment_budget_driver_review",
+        "append_or_supersede_missing_source_corrections",
+        "rerun_budget_precondition_after_review"
+      ],
+      "candidate_only": true,
+      "synthetic_only": true,
+      "amount_budget_blocked": true,
+      "budget_amount_output_authorized": false,
+      "budget_submission_authorized": false,
+      "lake_write_performed": false,
+      "sqlite_write_performed": false,
+      "external_writes_performed": false
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "source_reports_ready",
+      "status": "passed",
+      "message": "Fact, driver-binding, and driver-impact reports are ready for blocked review.",
+      "evidence_refs": [
+        "leexecfactbinding_demo_001",
+        "leexecdriverbinding_demo_001",
+        "leexecdriverimpact_demo_001"
+      ],
+      "blocking_refs": []
+    },
+    {
+      "check_id": "all_blocked_impact_cases_reviewed",
+      "status": "passed",
+      "message": "Every blocked source impact case has a blocked-case review entry.",
+      "evidence_refs": [
+        "le-wage-hour-missing-attachment.executable.v0_1",
+        "le-epli-carrier-missing-attachment.executable.v0_1",
+        "le-discrimination-harassment-missing-attachment.executable.v0_1",
+        "le-class-collective-adversarial.executable.v0_1",
+        "le-restrictive-covenant-missing-attachment.executable.v0_1",
+        "le-ada-fmla-missing-thread.executable.v0_1"
+      ],
+      "blocking_refs": []
+    },
+    {
+      "check_id": "blocked_cases_have_blocker_facts",
+      "status": "passed",
+      "message": "Every blocked case has at least one critical fact blocker.",
+      "evidence_refs": [
+        "le-wage-hour-missing-attachment.executable.v0_1",
+        "le-epli-carrier-missing-attachment.executable.v0_1",
+        "le-discrimination-harassment-missing-attachment.executable.v0_1",
+        "le-class-collective-adversarial.executable.v0_1",
+        "le-restrictive-covenant-missing-attachment.executable.v0_1",
+        "le-ada-fmla-missing-thread.executable.v0_1"
+      ],
+      "blocking_refs": []
+    },
+    {
+      "check_id": "blocked_cases_have_critical_driver_dimensions",
+      "status": "passed",
+      "message": "Every blocked case identifies critical driver dimensions.",
+      "evidence_refs": [
+        "le-wage-hour-missing-attachment.executable.v0_1",
+        "le-epli-carrier-missing-attachment.executable.v0_1",
+        "le-discrimination-harassment-missing-attachment.executable.v0_1",
+        "le-class-collective-adversarial.executable.v0_1",
+        "le-restrictive-covenant-missing-attachment.executable.v0_1",
+        "le-ada-fmla-missing-thread.executable.v0_1"
+      ],
+      "blocking_refs": []
+    },
+    {
+      "check_id": "blocked_cases_have_unblock_actions",
+      "status": "passed",
+      "message": "Every blocked case has deterministic human/correction follow-up actions.",
+      "evidence_refs": [
+        "le-wage-hour-missing-attachment.executable.v0_1",
+        "le-epli-carrier-missing-attachment.executable.v0_1",
+        "le-discrimination-harassment-missing-attachment.executable.v0_1",
+        "le-class-collective-adversarial.executable.v0_1",
+        "le-restrictive-covenant-missing-attachment.executable.v0_1",
+        "le-ada-fmla-missing-thread.executable.v0_1"
+      ],
+      "blocking_refs": []
+    },
+    {
+      "check_id": "no_side_effect_boundaries_crossed",
+      "status": "passed",
+      "message": "Blocked review did not authorize budget, matter, Lake, SQLite, external, or learning actions.",
+      "evidence_refs": [
+        "leexecfactbinding_demo_001",
+        "leexecdriverbinding_demo_001",
+        "leexecdriverimpact_demo_001"
+      ],
+      "blocking_refs": []
+    }
+  ],
+  "required_next_gates": [
+    "human_labor_employment_budget_driver_review",
+    "collect_or_confirm_missing_labor_employment_budget_driver_sources",
+    "rerun_driver_fact_binding_after_append_only_correction",
+    "no_amount_budget_until_blocker_facts_are_resolved",
+    "no_lake_or_sqlite_write_from_blocked_driver_impact_review"
+  ],
+  "candidate_only": true,
+  "non_authoritative": true,
+  "synthetic_only": true,
+  "human_review_required": true,
+  "not_authorized_for_external_write": true,
+  "not_authorized_for_lake_write": true,
+  "not_authorized_for_sqlite_write": true,
+  "not_authorized_for_budget_submission": true,
+  "not_authorized_for_matter_opening": true,
+  "not_authorized_for_calibration": true,
+  "budget_amount_output_authorized": false,
+  "budget_submission_authorized": false,
+  "conflict_conclusion_emitted": false,
+  "matter_opening_authorized": false,
+  "training_pipeline_created": false,
+  "lake_write_performed": false,
+  "sqlite_write_performed": false,
+  "external_writes_performed": false,
+  "silent_learning_performed": false,
+  "generated_at": "2026-07-02T00:00:00Z"
+}

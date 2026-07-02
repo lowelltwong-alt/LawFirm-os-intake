@@ -262,6 +262,10 @@ code {
   margin-top: 14px;
 }
 
+.blocked-review-panel {
+  margin-top: 14px;
+}
+
 .matrix-summary {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -329,6 +333,87 @@ code {
   border: 1px solid #d2ddd0;
   border-radius: 6px;
   background: #f6f8f3;
+}
+
+.lake-label-strip {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 14px;
+  padding: 12px;
+  border: 1px solid #dde4d8;
+  border-radius: 6px;
+  background: #fafbf8;
+}
+
+.lake-label-strip span {
+  color: #536056;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.token-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-width: 0;
+}
+
+.token-list code,
+.more-count {
+  padding: 4px 6px;
+  border: 1px solid #d2ddd0;
+  border-radius: 6px;
+  background: #f6f8f3;
+  line-height: 1.25;
+}
+
+.more-count {
+  color: #536056;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.blocked-review-table {
+  table-layout: auto;
+}
+
+.blocked-review-table th:nth-child(1),
+.blocked-review-table td:nth-child(1) {
+  width: 24%;
+}
+
+.blocked-review-table th:nth-child(2),
+.blocked-review-table td:nth-child(2),
+.blocked-review-table th:nth-child(4),
+.blocked-review-table td:nth-child(4) {
+  width: 22%;
+}
+
+.impact-counts {
+  display: grid;
+  gap: 4px;
+  margin-top: 10px;
+  color: #536056;
+  font-size: 0.78rem;
+}
+
+.fact-stack {
+  display: grid;
+  gap: 10px;
+}
+
+.fact-row {
+  display: grid;
+  gap: 6px;
+}
+
+.fact-row strong {
+  color: #17201b;
+}
+
+.fact-row span {
+  color: #2f3932;
 }
 
 .artifact-panel {

@@ -16,6 +16,7 @@ def test_legal_intake_budget_ui_required_files_exist(repo_root):
         "src/data-contract.ts",
         "src/fixtures/demo-run-manifest.json",
         "src/fixtures/demo-labor-employment-qa-matrix-report.json",
+        "src/fixtures/demo-labor-employment-blocked-driver-impact-review-report.json",
     ]
 
     for relative_path in required:
@@ -147,6 +148,66 @@ def test_legal_intake_budget_demo_le_matrix_is_synthetic_and_no_write(repo_root)
     assert cases["ready_critical_facts_still_range_only"]["critical_gap_count"] == 0
 
 
+def test_legal_intake_budget_demo_blocked_driver_review_is_synthetic_and_no_write(repo_root):
+    report = json.loads(
+        (
+            repo_root
+            / UI_ROOT
+            / "src/fixtures/demo-labor-employment-blocked-driver-impact-review-report.json"
+        ).read_text(encoding="utf-8")
+    )
+    cases = {case["executable_fixture_id"]: case for case in report["case_reviews"]}
+
+    assert report["status"] == "labor_employment_blocked_driver_impacts_ready_for_review"
+    assert report["case_count"] == 8
+    assert report["blocked_case_count"] == len(report["case_reviews"]) == 6
+    assert report["nonblocking_case_count"] == 2
+    assert report["blocker_fact_count"] == sum(
+        case["blocker_fact_count"] for case in report["case_reviews"]
+    )
+    assert report["block_amount_budget_impact_count"] == sum(
+        case["block_amount_budget_impact_count"] for case in report["case_reviews"]
+    )
+    assert report["candidate_only"] is True
+    assert report["non_authoritative"] is True
+    assert report["synthetic_only"] is True
+    assert report["human_review_required"] is True
+    assert report["budget_amount_output_authorized"] is False
+    assert report["budget_submission_authorized"] is False
+    assert report["lake_write_performed"] is False
+    assert report["sqlite_write_performed"] is False
+    assert report["external_writes_performed"] is False
+    assert report["silent_learning_performed"] is False
+    assert "source_missing" in report["candidate_exception_lake_labels"]
+    assert "prompt_injection_source_content" in report["candidate_exception_lake_labels"]
+    assert (
+        "labor_employment_critical_budget_fact_block" in (report["candidate_exception_lake_labels"])
+    )
+    assert all(case["allowed_budget_output"] == "blocked_amount_budget" for case in cases.values())
+    assert all(case["amount_budget_blocked"] is True for case in cases.values())
+    assert all(case["critical_driver_dimensions"] for case in cases.values())
+    assert all(case["unblock_actions"] for case in cases.values())
+    assert (
+        "carrier_guideline_rate_context"
+        in (
+            cases["le-epli-carrier-missing-attachment.executable.v0_1"][
+                "critical_driver_dimensions"
+            ]
+        )
+    )
+    assert (
+        "prompt_injection_source_content"
+        in (
+            cases["le-class-collective-adversarial.executable.v0_1"][
+                "candidate_exception_lake_labels"
+            ]
+        )
+    )
+    assert all(check["status"] == "passed" for check in report["checks"])
+    assert not list((repo_root / UI_ROOT / "src/fixtures").glob("*.sqlite"))
+    assert not list((repo_root / UI_ROOT / "src/fixtures").glob("*.db"))
+
+
 def test_legal_intake_budget_ui_disclaims_mutating_authority(repo_root):
     readme = (repo_root / UI_ROOT / "README.md").read_text(encoding="utf-8")
     app = (repo_root / UI_ROOT / "src/App.tsx").read_text(encoding="utf-8")
@@ -158,6 +219,8 @@ def test_legal_intake_budget_ui_disclaims_mutating_authority(repo_root):
     assert "Local JSON only" in app
     assert "QA Gates" in app
     assert "L&amp;E Budget Fact QA" in app
+    assert "L&amp;E Blocked Driver Review" in app
     assert "assertLaborEmploymentQAMatrixReport" in app
+    assert "assertLaborEmploymentBlockedDriverImpactReviewReport" in app
     assert "failingQualityGates" in app
     assert "grid-template-columns" in styles

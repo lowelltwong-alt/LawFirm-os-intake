@@ -1,9 +1,11 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 
+import demoLaborEmploymentBlockedDriverReview from "./fixtures/demo-labor-employment-blocked-driver-impact-review-report.json";
 import demoLaborEmploymentQAMatrix from "./fixtures/demo-labor-employment-qa-matrix-report.json";
 import demoManifest from "./fixtures/demo-run-manifest.json";
 import {
+  assertLaborEmploymentBlockedDriverImpactReviewReport,
   assertLaborEmploymentQAMatrixReport,
   assertReadOnlyManifest,
   failingQualityGates,
@@ -11,6 +13,8 @@ import {
 import type {
   ArtifactStatus,
   GateState,
+  LaborEmploymentBlockedDriverImpactCaseReview,
+  LaborEmploymentBlockedDriverImpactReviewReport,
   LaborEmploymentBudgetGateEffect,
   LaborEmploymentBudgetReadinessState,
   LaborEmploymentQAMatrixReport,
@@ -23,9 +27,17 @@ import "./styles.css";
 
 const manifest = demoManifest as ReviewManifest;
 const laborEmploymentQAMatrix = demoLaborEmploymentQAMatrix as LaborEmploymentQAMatrixReport;
+const laborEmploymentBlockedDriverReview =
+  demoLaborEmploymentBlockedDriverReview as LaborEmploymentBlockedDriverImpactReviewReport;
 const manifestContractFailures = assertReadOnlyManifest(manifest);
 const matrixContractFailures = assertLaborEmploymentQAMatrixReport(laborEmploymentQAMatrix);
-const contractFailures = [...manifestContractFailures, ...matrixContractFailures];
+const blockedDriverContractFailures =
+  assertLaborEmploymentBlockedDriverImpactReviewReport(laborEmploymentBlockedDriverReview);
+const contractFailures = [
+  ...manifestContractFailures,
+  ...matrixContractFailures,
+  ...blockedDriverContractFailures,
+];
 
 function gateClass(state: GateState | ArtifactStatus | QualityGateStatus) {
   return `state state-${state.replace("_", "-")}`;
@@ -258,6 +270,138 @@ function LaborEmploymentMatrixPanel({ report }: { report: LaborEmploymentQAMatri
   );
 }
 
+function TokenList({ items, limit }: { items: string[]; limit?: number }) {
+  const visibleItems = typeof limit === "number" ? items.slice(0, limit) : items;
+  const hiddenCount = Math.max(items.length - visibleItems.length, 0);
+  return (
+    <div className="token-list">
+      {visibleItems.map((item) => (
+        <code key={item}>{item}</code>
+      ))}
+      {hiddenCount > 0 ? <span className="more-count">+{hiddenCount}</span> : null}
+    </div>
+  );
+}
+
+function BlockedDriverFacts({
+  testCase,
+}: {
+  testCase: LaborEmploymentBlockedDriverImpactCaseReview;
+}) {
+  return (
+    <div className="fact-stack">
+      {testCase.blocker_facts.map((fact) => (
+        <div className="fact-row" key={`${testCase.executable_fixture_id}-${fact.fact_id}`}>
+          <strong>{fact.fact_id}</strong>
+          <span>{fact.reason}</span>
+          <TokenList items={fact.budget_effects} limit={4} />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function LaborEmploymentBlockedDriverPanel({
+  report,
+}: {
+  report: LaborEmploymentBlockedDriverImpactReviewReport;
+}) {
+  const passedChecks = report.checks.filter((check) => check.status === "passed").length;
+
+  return (
+    <section className="panel blocked-review-panel" aria-labelledby="blocked-driver-title">
+      <div className="panel-heading">
+        <div>
+          <h2 id="blocked-driver-title">L&amp;E Blocked Driver Review</h2>
+          <code>{report.blocked_driver_impact_review_report_id}</code>
+        </div>
+        <span
+          className={
+            blockedDriverContractFailures.length === 0
+              ? "state state-passed"
+              : "state state-failed"
+          }
+        >
+          {blockedDriverContractFailures.length === 0 ? "review packet held" : "review packet failed"}
+        </span>
+      </div>
+
+      <div className="matrix-summary" aria-label="L&E blocked driver review summary">
+        <div>
+          <span>Blocked Cases</span>
+          <strong>{report.blocked_case_count}</strong>
+        </div>
+        <div>
+          <span>Blocker Facts</span>
+          <strong>{report.blocker_fact_count}</strong>
+        </div>
+        <div>
+          <span>Amount Blocks</span>
+          <strong>{report.block_amount_budget_impact_count}</strong>
+        </div>
+        <div>
+          <span>Checks Passed</span>
+          <strong>
+            {passedChecks}/{report.checks.length}
+          </strong>
+        </div>
+      </div>
+
+      <div className="lake-label-strip" aria-label="Candidate exception lake labels">
+        <span>Candidate Lake labels</span>
+        <TokenList items={report.candidate_exception_lake_labels} />
+      </div>
+
+      <div className="table-wrap">
+        <table className="blocked-review-table">
+          <thead>
+            <tr>
+              <th>Blocked Case</th>
+              <th>Critical Drivers</th>
+              <th>Blocker Facts</th>
+              <th>Follow-Up</th>
+            </tr>
+          </thead>
+          <tbody>
+            {report.case_reviews.map((testCase) => (
+              <tr key={testCase.executable_fixture_id}>
+                <td>
+                  <div className="artifact-title">{testCase.family}</div>
+                  <code>{testCase.executable_fixture_id}</code>
+                  <div className="impact-counts">
+                    <span>{testCase.block_amount_budget_impact_count} amount blocks</span>
+                    <span>{testCase.range_widening_impact_count} range impacts</span>
+                    <span>{testCase.scenario_fork_impact_count} scenario forks</span>
+                    <span>{testCase.rate_guideline_review_impact_count} rate reviews</span>
+                  </div>
+                </td>
+                <td>
+                  <TokenList items={testCase.critical_driver_dimensions} />
+                </td>
+                <td>
+                  <BlockedDriverFacts testCase={testCase} />
+                </td>
+                <td>
+                  <TokenList items={testCase.unblock_actions} limit={4} />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="next-gates">
+        <h3>Required Next Gates</h3>
+        <div>
+          {report.required_next_gates.map((gate) => (
+            <code key={gate}>{gate}</code>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function App() {
   const blockedCount = manifest.artifacts.filter(
     (artifact) => artifact.status === "blocked" || artifact.gateState === "blocked",
@@ -310,6 +454,7 @@ function App() {
 
       <QualityGatePanel gates={manifest.qualityGates} />
       <LaborEmploymentMatrixPanel report={laborEmploymentQAMatrix} />
+      <LaborEmploymentBlockedDriverPanel report={laborEmploymentBlockedDriverReview} />
       <ArtifactTable artifacts={manifest.artifacts} />
     </main>
   );

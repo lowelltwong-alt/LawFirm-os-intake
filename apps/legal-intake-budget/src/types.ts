@@ -77,6 +77,107 @@ export type LaborEmploymentQAMatrixReport = {
   generated_at: string;
 };
 
+export type LaborEmploymentBlockedDriverImpactCheck = {
+  check_id: string;
+  status: "passed" | "failed";
+  message: string;
+  evidence_refs: string[];
+  blocking_refs: string[];
+};
+
+export type LaborEmploymentBlockedDriverImpactFactReview = {
+  fact_id: string;
+  required_level: "critical";
+  binding_state:
+    | "source_bound_gap_candidate"
+    | "exception_bound_gap_candidate"
+    | "source_and_exception_bound_gap_candidate"
+    | "inventory_bound_gap_candidate"
+    | "unbound_gap_candidate";
+  blocks_precise_budget: boolean;
+  reason: string;
+  budget_effects: string[];
+  evidence_ref_count: number;
+  source_inventory_ref_count: number;
+  matched_source_signal_terms: string[];
+  missing_source_signal_terms: string[];
+  matched_exception_labels: string[];
+  missing_exception_labels: string[];
+  matched_source_ids: string[];
+  missing_source_ids: string[];
+  unblock_actions: string[];
+  candidate_exception_lake_labels: string[];
+  candidate_only: boolean;
+  synthetic_only: boolean;
+};
+
+export type LaborEmploymentBlockedDriverImpactCaseReview = {
+  executable_fixture_id: string;
+  family: string;
+  variant: string;
+  allowed_budget_output: "blocked_amount_budget";
+  block_reason: string;
+  block_amount_budget_impact_count: number;
+  range_widening_impact_count: number;
+  scenario_fork_impact_count: number;
+  rate_guideline_review_impact_count: number;
+  critical_driver_dimensions: string[];
+  blocker_fact_count: number;
+  blocker_facts: LaborEmploymentBlockedDriverImpactFactReview[];
+  candidate_exception_lake_labels: string[];
+  unblock_actions: string[];
+  next_review_gates: string[];
+  candidate_only: boolean;
+  synthetic_only: boolean;
+  amount_budget_blocked: boolean;
+  budget_amount_output_authorized: boolean;
+  budget_submission_authorized: boolean;
+  lake_write_performed: boolean;
+  sqlite_write_performed: boolean;
+  external_writes_performed: boolean;
+};
+
+export type LaborEmploymentBlockedDriverImpactReviewReport = {
+  schema_version: string;
+  blocked_driver_impact_review_report_id: string;
+  status:
+    | "labor_employment_blocked_driver_impacts_ready_for_review"
+    | "blocked_by_labor_employment_blocked_driver_impact_review";
+  source_fact_binding_report_ref: string;
+  source_driver_binding_report_ref: string;
+  source_driver_impact_report_ref: string;
+  source_driver_impact_report_id: string;
+  case_count: number;
+  blocked_case_count: number;
+  nonblocking_case_count: number;
+  blocker_fact_count: number;
+  block_amount_budget_impact_count: number;
+  candidate_exception_lake_labels: string[];
+  case_reviews: LaborEmploymentBlockedDriverImpactCaseReview[];
+  checks: LaborEmploymentBlockedDriverImpactCheck[];
+  required_next_gates: string[];
+  candidate_only: boolean;
+  non_authoritative: boolean;
+  synthetic_only: boolean;
+  human_review_required: boolean;
+  not_authorized_for_external_write: boolean;
+  not_authorized_for_lake_write: boolean;
+  not_authorized_for_sqlite_write: boolean;
+  not_authorized_for_budget_submission: boolean;
+  not_authorized_for_matter_opening: boolean;
+  not_authorized_for_calibration: boolean;
+  budget_amount_output_authorized: boolean;
+  budget_submission_authorized: boolean;
+  conflict_conclusion_emitted: boolean;
+  matter_opening_authorized: boolean;
+  training_pipeline_created: boolean;
+  lake_write_performed: boolean;
+  sqlite_write_performed: boolean;
+  external_writes_performed: boolean;
+  silent_learning_performed: boolean;
+  generated_at: string;
+};
+
 export type ReviewArtifact = {
   artifactId: string;
   label: string;

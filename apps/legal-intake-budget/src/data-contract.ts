@@ -1,5 +1,6 @@
 import type {
   BoundaryFlags,
+  LaborEmploymentBlockedDriverImpactReviewReport,
   LaborEmploymentQAMatrixReport,
   QualityGate,
   ReviewArtifact,
@@ -130,6 +131,104 @@ export function assertLaborEmploymentQAMatrixReport(
     ) {
       failures.push(`le_matrix_case_expectation_mismatch:${testCase.case_id}`);
     }
+  }
+  return failures;
+}
+
+export function assertLaborEmploymentBlockedDriverImpactReviewReport(
+  report: LaborEmploymentBlockedDriverImpactReviewReport,
+): string[] {
+  const failures: string[] = [];
+  if (!report.candidate_only || !report.non_authoritative || !report.synthetic_only) {
+    failures.push("le_blocked_driver_review_authority_boundary_failed");
+  }
+  if (!report.human_review_required) {
+    failures.push("le_blocked_driver_review_missing_human_review_gate");
+  }
+  if (
+    report.budget_amount_output_authorized ||
+    report.budget_submission_authorized ||
+    report.conflict_conclusion_emitted ||
+    report.matter_opening_authorized ||
+    report.training_pipeline_created ||
+    report.lake_write_performed ||
+    report.sqlite_write_performed ||
+    report.external_writes_performed ||
+    report.silent_learning_performed
+  ) {
+    failures.push("le_blocked_driver_review_side_effect_boundary_failed");
+  }
+  if (report.case_count !== report.blocked_case_count + report.nonblocking_case_count) {
+    failures.push("le_blocked_driver_review_case_partition_mismatch");
+  }
+  if (report.blocked_case_count !== report.case_reviews.length) {
+    failures.push("le_blocked_driver_review_case_count_mismatch");
+  }
+  if (
+    report.blocker_fact_count !==
+    report.case_reviews.reduce((total, testCase) => total + testCase.blocker_fact_count, 0)
+  ) {
+    failures.push("le_blocked_driver_review_fact_count_mismatch");
+  }
+  if (
+    report.block_amount_budget_impact_count !==
+    report.case_reviews.reduce(
+      (total, testCase) => total + testCase.block_amount_budget_impact_count,
+      0,
+    )
+  ) {
+    failures.push("le_blocked_driver_review_budget_block_count_mismatch");
+  }
+  for (const requiredLabel of [
+    "labor_employment_critical_budget_fact_block",
+    "source_missing",
+    "prompt_injection_source_content",
+  ]) {
+    if (!report.candidate_exception_lake_labels.includes(requiredLabel)) {
+      failures.push(`le_blocked_driver_review_missing_label:${requiredLabel}`);
+    }
+  }
+  for (const testCase of report.case_reviews) {
+    if (!testCase.candidate_only || !testCase.synthetic_only || !testCase.amount_budget_blocked) {
+      failures.push(
+        `le_blocked_driver_review_case_boundary_failed:${testCase.executable_fixture_id}`,
+      );
+    }
+    if (
+      testCase.allowed_budget_output !== "blocked_amount_budget" ||
+      testCase.budget_amount_output_authorized ||
+      testCase.budget_submission_authorized ||
+      testCase.lake_write_performed ||
+      testCase.sqlite_write_performed ||
+      testCase.external_writes_performed
+    ) {
+      failures.push(
+        `le_blocked_driver_review_case_side_effect_failed:${testCase.executable_fixture_id}`,
+      );
+    }
+    if (testCase.blocker_fact_count !== testCase.blocker_facts.length) {
+      failures.push(
+        `le_blocked_driver_review_case_fact_count_mismatch:${testCase.executable_fixture_id}`,
+      );
+    }
+    if (testCase.critical_driver_dimensions.length === 0 || testCase.unblock_actions.length === 0) {
+      failures.push(`le_blocked_driver_review_case_not_actionable:${testCase.executable_fixture_id}`);
+    }
+    for (const fact of testCase.blocker_facts) {
+      if (
+        fact.required_level !== "critical" ||
+        !fact.blocks_precise_budget ||
+        !fact.candidate_only ||
+        !fact.synthetic_only ||
+        fact.unblock_actions.length === 0 ||
+        fact.candidate_exception_lake_labels.length === 0
+      ) {
+        failures.push(`le_blocked_driver_review_fact_boundary_failed:${fact.fact_id}`);
+      }
+    }
+  }
+  if (report.checks.some((check) => check.status === "failed")) {
+    failures.push("le_blocked_driver_review_failed_check");
   }
   return failures;
 }
