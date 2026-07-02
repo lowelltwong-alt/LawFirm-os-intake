@@ -7462,6 +7462,180 @@ class RunLedgerIntegrityReport(StrictModel):
     generated_at: str
 
 
+DADReviewIssueSeverity = Literal["P0", "P1", "P2", "P3"]
+DADReviewIssueClass = Literal[
+    "architecture_risk",
+    "budget_math_risk",
+    "carrier_guideline_risk",
+    "authority_boundary_risk",
+    "matter_linking_ambiguity",
+    "budget_driver_gap",
+    "synthetic_data_gap",
+    "evidence_gap",
+    "data_flow_gap",
+    "ui_authority_risk",
+    "exception_lake_mapping_gap",
+    "learning_loop_gap",
+    "test_gap",
+    "performance_or_rust_candidate",
+    "security_privacy_risk",
+    "governance_drift_risk",
+    "unknown",
+]
+DADReviewIssueFixStatus = Literal[
+    "observed",
+    "planned",
+    "in_progress",
+    "fixed_pending_validation",
+    "fixed_validated",
+    "deferred",
+    "rejected_duplicate",
+]
+
+
+class DADReviewIssueRecord(StrictModel):
+    schema_version: str = "0.1"
+    issue_id: str
+    issue_version: str = "0.1.0"
+    observed_at: str
+    source_repo_id: Literal["LawFirm-os-intake"] = "LawFirm-os-intake"
+    source_repo_path: str | None = None
+    originating_agent: Literal["fable_5", "codex", "claude", "human", "other"]
+    review_context: str
+    finding_title: str
+    severity: DADReviewIssueSeverity
+    issue_classes: list[DADReviewIssueClass]
+    finding_summary: str
+    observable_context: list[str]
+    observable_decision_logic: list[str]
+    solution_path: list[str]
+    fix_status: DADReviewIssueFixStatus
+    fix_refs: list[str] = Field(default_factory=list)
+    test_refs: list[str] = Field(default_factory=list)
+    artifact_refs: list[str] = Field(default_factory=list)
+    candidate_exception_labels: list[str]
+    applies_when: list[str]
+    does_not_apply_when: list[str]
+    danger_if_misapplied: str
+    suggested_actions: list[str]
+    reviewer_notes: list[str] = Field(default_factory=list)
+    red_team_notes: list[str] = Field(default_factory=list)
+    raw_private_payload_included: Literal[False] = False
+    hidden_chain_of_thought_included: Literal[False] = False
+    candidate_only: Literal[True] = True
+    dad_outbox_required: Literal[True] = True
+    dad_review_required_before_promotion: Literal[True] = True
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def review_issue_is_classified_and_bounded(self) -> "DADReviewIssueRecord":
+        if not self.issue_classes:
+            raise ValueError("DAD review issue requires at least one issue class")
+        if "unknown" in self.issue_classes and len(self.issue_classes) > 1:
+            raise ValueError("DAD review issue class unknown must stand alone")
+        if not self.finding_title.strip():
+            raise ValueError("DAD review issue requires a finding title")
+        if not self.finding_summary.strip():
+            raise ValueError("DAD review issue requires a finding summary")
+        required_lists = {
+            "observable_context": self.observable_context,
+            "observable_decision_logic": self.observable_decision_logic,
+            "solution_path": self.solution_path,
+            "candidate_exception_labels": self.candidate_exception_labels,
+            "applies_when": self.applies_when,
+            "does_not_apply_when": self.does_not_apply_when,
+            "suggested_actions": self.suggested_actions,
+        }
+        for field_name, values in required_lists.items():
+            if not values or any(not value.strip() for value in values):
+                raise ValueError(f"DAD review issue requires non-empty {field_name}")
+        if self.fix_status == "fixed_validated" and not self.test_refs:
+            raise ValueError("validated DAD review issue requires test refs")
+        if not self.danger_if_misapplied.strip():
+            raise ValueError("DAD review issue requires danger_if_misapplied")
+        return self
+
+
+class DADReviewIssueOutboxMail(StrictModel):
+    schema_version: Literal["0.1.0"] = "0.1.0"
+    mail_id: str
+    thread_id: str
+    message_type: Literal["governance_notice"] = "governance_notice"
+    source_repo: str
+    target_repo: Literal["central_only", "dad"] = "central_only"
+    created_at: str
+    dedupe_key: str
+    sensitivity: Literal["internal"] = "internal"
+    review_status: Literal["generated_candidate"] = "generated_candidate"
+    payload: dict[str, Any]
+    evidence: list[str]
+    suggested_actions: list[str]
+    source_provenance: dict[str, Any]
+    public_release: dict[str, Any]
+
+
+class DADReviewIssueOutboxCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed", "warning"]
+    message: str
+    details: dict[str, Any] = Field(default_factory=dict)
+
+
+class DADReviewIssueOutboxReport(StrictModel):
+    schema_version: str = "0.1"
+    dad_review_issue_outbox_report_id: str
+    status: Literal["dad_review_issue_recorded_to_outbox", "dad_review_issue_duplicate_suppressed"]
+    source_issue_id: str
+    source_issue_version: str
+    severity: DADReviewIssueSeverity
+    issue_classes: list[DADReviewIssueClass]
+    candidate_exception_labels: list[str]
+    dad_mail_id: str
+    dad_thread_id: str
+    dedupe_key: str
+    outbox_ref: str
+    outbox_append_performed: bool
+    outbox_duplicate_suppressed: bool
+    payload_sha256: str
+    mail_payload: DADReviewIssueOutboxMail
+    checks: list[DADReviewIssueOutboxCheck]
+    candidate_only: Literal[True] = True
+    dad_pickup_required: Literal[True] = True
+    dad_review_required_before_promotion: Literal[True] = True
+    raw_private_payload_included: Literal[False] = False
+    hidden_chain_of_thought_included: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def outbox_report_flags_are_consistent(self) -> "DADReviewIssueOutboxReport":
+        if self.outbox_append_performed == self.outbox_duplicate_suppressed:
+            raise ValueError(
+                "DAD issue outbox report requires exactly one append/duplicate outcome"
+            )
+        if (
+            self.status == "dad_review_issue_recorded_to_outbox"
+            and not self.outbox_append_performed
+        ):
+            raise ValueError("recorded DAD issue outbox report requires append")
+        if (
+            self.status == "dad_review_issue_duplicate_suppressed"
+            and not self.outbox_duplicate_suppressed
+        ):
+            raise ValueError("duplicate DAD issue outbox report requires duplicate suppression")
+        if not self.checks:
+            raise ValueError("DAD issue outbox report requires checks")
+        if any(check.status == "failed" for check in self.checks):
+            raise ValueError("DAD issue outbox report cannot persist with failed checks")
+        return self
+
+
 class ExceptionLakeCandidate(StrictModel):
     schema_version: str = "0.1"
     candidate_id: str

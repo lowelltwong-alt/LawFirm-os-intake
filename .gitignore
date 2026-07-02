@@ -15,6 +15,8 @@ htmlcov/
 apps/legal-intake-budget/dist/
 apps/legal-intake-budget/node_modules/
 apps/legal-intake-budget/tsconfig.tsbuildinfo
+.digital-asset/mail/*.jsonl
+.digital-asset/mail/last_checked.json
 
 # Never commit real firm, client, matter, carrier, rate, guideline, or credential data.
 context/firm-private/

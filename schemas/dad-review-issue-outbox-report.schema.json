@@ -1,0 +1,327 @@
+{
+  "$defs": {
+    "DADReviewIssueOutboxCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed",
+            "warning"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "details": {
+          "additionalProperties": true,
+          "title": "Details",
+          "type": "object"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "DADReviewIssueOutboxCheck",
+      "type": "object"
+    },
+    "DADReviewIssueOutboxMail": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "0.1.0",
+          "default": "0.1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "mail_id": {
+          "title": "Mail Id",
+          "type": "string"
+        },
+        "thread_id": {
+          "title": "Thread Id",
+          "type": "string"
+        },
+        "message_type": {
+          "const": "governance_notice",
+          "default": "governance_notice",
+          "title": "Message Type",
+          "type": "string"
+        },
+        "source_repo": {
+          "title": "Source Repo",
+          "type": "string"
+        },
+        "target_repo": {
+          "default": "central_only",
+          "enum": [
+            "central_only",
+            "dad"
+          ],
+          "title": "Target Repo",
+          "type": "string"
+        },
+        "created_at": {
+          "title": "Created At",
+          "type": "string"
+        },
+        "dedupe_key": {
+          "title": "Dedupe Key",
+          "type": "string"
+        },
+        "sensitivity": {
+          "const": "internal",
+          "default": "internal",
+          "title": "Sensitivity",
+          "type": "string"
+        },
+        "review_status": {
+          "const": "generated_candidate",
+          "default": "generated_candidate",
+          "title": "Review Status",
+          "type": "string"
+        },
+        "payload": {
+          "additionalProperties": true,
+          "title": "Payload",
+          "type": "object"
+        },
+        "evidence": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "suggested_actions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Suggested Actions",
+          "type": "array"
+        },
+        "source_provenance": {
+          "additionalProperties": true,
+          "title": "Source Provenance",
+          "type": "object"
+        },
+        "public_release": {
+          "additionalProperties": true,
+          "title": "Public Release",
+          "type": "object"
+        }
+      },
+      "required": [
+        "mail_id",
+        "thread_id",
+        "source_repo",
+        "created_at",
+        "dedupe_key",
+        "payload",
+        "evidence",
+        "suggested_actions",
+        "source_provenance",
+        "public_release"
+      ],
+      "title": "DADReviewIssueOutboxMail",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "dad_review_issue_outbox_report_id": {
+      "title": "Dad Review Issue Outbox Report Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "dad_review_issue_recorded_to_outbox",
+        "dad_review_issue_duplicate_suppressed"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "source_issue_id": {
+      "title": "Source Issue Id",
+      "type": "string"
+    },
+    "source_issue_version": {
+      "title": "Source Issue Version",
+      "type": "string"
+    },
+    "severity": {
+      "enum": [
+        "P0",
+        "P1",
+        "P2",
+        "P3"
+      ],
+      "title": "Severity",
+      "type": "string"
+    },
+    "issue_classes": {
+      "items": {
+        "enum": [
+          "architecture_risk",
+          "budget_math_risk",
+          "carrier_guideline_risk",
+          "authority_boundary_risk",
+          "matter_linking_ambiguity",
+          "budget_driver_gap",
+          "synthetic_data_gap",
+          "evidence_gap",
+          "data_flow_gap",
+          "ui_authority_risk",
+          "exception_lake_mapping_gap",
+          "learning_loop_gap",
+          "test_gap",
+          "performance_or_rust_candidate",
+          "security_privacy_risk",
+          "governance_drift_risk",
+          "unknown"
+        ],
+        "type": "string"
+      },
+      "title": "Issue Classes",
+      "type": "array"
+    },
+    "candidate_exception_labels": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Candidate Exception Labels",
+      "type": "array"
+    },
+    "dad_mail_id": {
+      "title": "Dad Mail Id",
+      "type": "string"
+    },
+    "dad_thread_id": {
+      "title": "Dad Thread Id",
+      "type": "string"
+    },
+    "dedupe_key": {
+      "title": "Dedupe Key",
+      "type": "string"
+    },
+    "outbox_ref": {
+      "title": "Outbox Ref",
+      "type": "string"
+    },
+    "outbox_append_performed": {
+      "title": "Outbox Append Performed",
+      "type": "boolean"
+    },
+    "outbox_duplicate_suppressed": {
+      "title": "Outbox Duplicate Suppressed",
+      "type": "boolean"
+    },
+    "payload_sha256": {
+      "title": "Payload Sha256",
+      "type": "string"
+    },
+    "mail_payload": {
+      "$ref": "#/$defs/DADReviewIssueOutboxMail"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/DADReviewIssueOutboxCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "dad_pickup_required": {
+      "const": true,
+      "default": true,
+      "title": "Dad Pickup Required",
+      "type": "boolean"
+    },
+    "dad_review_required_before_promotion": {
+      "const": true,
+      "default": true,
+      "title": "Dad Review Required Before Promotion",
+      "type": "boolean"
+    },
+    "raw_private_payload_included": {
+      "const": false,
+      "default": false,
+      "title": "Raw Private Payload Included",
+      "type": "boolean"
+    },
+    "hidden_chain_of_thought_included": {
+      "const": false,
+      "default": false,
+      "title": "Hidden Chain Of Thought Included",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "dad_review_issue_outbox_report_id",
+    "status",
+    "source_issue_id",
+    "source_issue_version",
+    "severity",
+    "issue_classes",
+    "candidate_exception_labels",
+    "dad_mail_id",
+    "dad_thread_id",
+    "dedupe_key",
+    "outbox_ref",
+    "outbox_append_performed",
+    "outbox_duplicate_suppressed",
+    "payload_sha256",
+    "mail_payload",
+    "checks",
+    "generated_at"
+  ],
+  "title": "DADReviewIssueOutboxReport",
+  "type": "object"
+}

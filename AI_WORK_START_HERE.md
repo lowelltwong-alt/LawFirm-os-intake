@@ -115,6 +115,17 @@ calls, mutation commands, connectors, GitHub/email/billing/carrier/court calls,
 SQLite writes, Exception Lake writes, budget submission, or matter-opening
 authority.
 
+## DAD Review Issue Outbox
+
+Complex Fable/Codex/Claude/human review findings that reveal hard issues,
+exceptions, reusable lessons, or recurring failure patterns should be recorded
+with `lawfirm-os-intake record-dad-review-issue`. The command writes classified
+candidate mail to `.digital-asset/mail/outbox.jsonl` for DAD pickup and duplicate
+suppression. Capture observable context, decision logic, solution path,
+applicability limits, fix refs, test refs, and candidate exception labels. Do
+not capture hidden chain-of-thought, raw private payloads, real case facts,
+credentials, or private rates. See `docs/dad-review-issue-outbox.md`.
+
 ## Governance Dependency-Map Mirror
 
 If this repo changes governance-facing files, check the upstream `../LawFirm-os-semantic-substrate/registry/governance-dependency-map.json` and update `.ai/control/governance-dependency-map-mirror.json`, local discovery surfaces, and `scripts/validate_governance_dependency_map_mirror.py` when affected.

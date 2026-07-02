@@ -1,0 +1,276 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "issue_id": {
+      "title": "Issue Id",
+      "type": "string"
+    },
+    "issue_version": {
+      "default": "0.1.0",
+      "title": "Issue Version",
+      "type": "string"
+    },
+    "observed_at": {
+      "title": "Observed At",
+      "type": "string"
+    },
+    "source_repo_id": {
+      "const": "LawFirm-os-intake",
+      "default": "LawFirm-os-intake",
+      "title": "Source Repo Id",
+      "type": "string"
+    },
+    "source_repo_path": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Repo Path"
+    },
+    "originating_agent": {
+      "enum": [
+        "fable_5",
+        "codex",
+        "claude",
+        "human",
+        "other"
+      ],
+      "title": "Originating Agent",
+      "type": "string"
+    },
+    "review_context": {
+      "title": "Review Context",
+      "type": "string"
+    },
+    "finding_title": {
+      "title": "Finding Title",
+      "type": "string"
+    },
+    "severity": {
+      "enum": [
+        "P0",
+        "P1",
+        "P2",
+        "P3"
+      ],
+      "title": "Severity",
+      "type": "string"
+    },
+    "issue_classes": {
+      "items": {
+        "enum": [
+          "architecture_risk",
+          "budget_math_risk",
+          "carrier_guideline_risk",
+          "authority_boundary_risk",
+          "matter_linking_ambiguity",
+          "budget_driver_gap",
+          "synthetic_data_gap",
+          "evidence_gap",
+          "data_flow_gap",
+          "ui_authority_risk",
+          "exception_lake_mapping_gap",
+          "learning_loop_gap",
+          "test_gap",
+          "performance_or_rust_candidate",
+          "security_privacy_risk",
+          "governance_drift_risk",
+          "unknown"
+        ],
+        "type": "string"
+      },
+      "title": "Issue Classes",
+      "type": "array"
+    },
+    "finding_summary": {
+      "title": "Finding Summary",
+      "type": "string"
+    },
+    "observable_context": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Observable Context",
+      "type": "array"
+    },
+    "observable_decision_logic": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Observable Decision Logic",
+      "type": "array"
+    },
+    "solution_path": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Solution Path",
+      "type": "array"
+    },
+    "fix_status": {
+      "enum": [
+        "observed",
+        "planned",
+        "in_progress",
+        "fixed_pending_validation",
+        "fixed_validated",
+        "deferred",
+        "rejected_duplicate"
+      ],
+      "title": "Fix Status",
+      "type": "string"
+    },
+    "fix_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Fix Refs",
+      "type": "array"
+    },
+    "test_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Test Refs",
+      "type": "array"
+    },
+    "artifact_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Artifact Refs",
+      "type": "array"
+    },
+    "candidate_exception_labels": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Candidate Exception Labels",
+      "type": "array"
+    },
+    "applies_when": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Applies When",
+      "type": "array"
+    },
+    "does_not_apply_when": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Does Not Apply When",
+      "type": "array"
+    },
+    "danger_if_misapplied": {
+      "title": "Danger If Misapplied",
+      "type": "string"
+    },
+    "suggested_actions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Suggested Actions",
+      "type": "array"
+    },
+    "reviewer_notes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Reviewer Notes",
+      "type": "array"
+    },
+    "red_team_notes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Red Team Notes",
+      "type": "array"
+    },
+    "raw_private_payload_included": {
+      "const": false,
+      "default": false,
+      "title": "Raw Private Payload Included",
+      "type": "boolean"
+    },
+    "hidden_chain_of_thought_included": {
+      "const": false,
+      "default": false,
+      "title": "Hidden Chain Of Thought Included",
+      "type": "boolean"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "dad_outbox_required": {
+      "const": true,
+      "default": true,
+      "title": "Dad Outbox Required",
+      "type": "boolean"
+    },
+    "dad_review_required_before_promotion": {
+      "const": true,
+      "default": true,
+      "title": "Dad Review Required Before Promotion",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "issue_id",
+    "observed_at",
+    "originating_agent",
+    "review_context",
+    "finding_title",
+    "severity",
+    "issue_classes",
+    "finding_summary",
+    "observable_context",
+    "observable_decision_logic",
+    "solution_path",
+    "fix_status",
+    "candidate_exception_labels",
+    "applies_when",
+    "does_not_apply_when",
+    "danger_if_misapplied",
+    "suggested_actions"
+  ],
+  "title": "DADReviewIssueRecord",
+  "type": "object"
+}

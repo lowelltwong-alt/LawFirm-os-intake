@@ -6,6 +6,8 @@ from pathlib import Path
 import shutil
 import sys
 
+from pydantic import ValidationError
+
 from .budget_actuals import run_budget_actual_comparison
 from .budget_actual_variance_ledger import BUDGET_ACTUAL_VARIANCE_LEDGER_REPORT_FILENAME
 from .budget_actual_variance_owner_adoption import (
@@ -55,6 +57,7 @@ from .courtlistener_fixture_audit import run_courtlistener_fixture_audit
 from .cross_repo_owner_adoption import run_cross_repo_owner_adoption
 from .cross_repo_owner_issue_draft_quality import run_owner_issue_draft_quality_audit
 from .cross_repo_owner_issue_drafts import run_cross_repo_owner_issue_drafts
+from .dad_review_issue_outbox import record_dad_review_issue_to_outbox
 from .intake_local_closeout import run_intake_local_closeout
 from .intake_vertical_readiness_audit import run_intake_vertical_readiness_audit
 from .learning_promotion_readiness import run_learning_promotion_readiness
@@ -1309,6 +1312,33 @@ def _parser() -> argparse.ArgumentParser:
         "--observed-pr-state",
         choices=["draft", "ready_for_review", "merged", "not_supplied"],
         default="not_supplied",
+    )
+
+    dad_review_issue = sub.add_parser(
+        "record-dad-review-issue",
+        help=(
+            "Record a complex review finding as candidate DAD mail in "
+            ".digital-asset/mail/outbox.jsonl."
+        ),
+    )
+    dad_review_issue.add_argument(
+        "--issue",
+        required=True,
+        help="Path to a dad-review-issue JSON record.",
+    )
+    dad_review_issue.add_argument(
+        "--repo-root",
+        default=".",
+        help="Repo root whose .digital-asset/mail/outbox.jsonl should receive the record.",
+    )
+    dad_review_issue.add_argument(
+        "--outbox",
+        default=".digital-asset/mail/outbox.jsonl",
+        help="Repo-local DAD outbox path. Must stay under .digital-asset/mail.",
+    )
+    dad_review_issue.add_argument(
+        "--report-out",
+        help="Optional path for dad_review_issue_outbox_report.json.",
     )
     return parser
 
@@ -3865,7 +3895,41 @@ def main(argv: list[str] | None = None) -> int:
             return (
                 0 if report.status == "intake_local_closeout_ready_manual_actions_required" else 2
             )
-    except (ValueError, OSError, json.JSONDecodeError) as exc:
+
+        if args.command == "record-dad-review-issue":
+            report, outbox = record_dad_review_issue_to_outbox(
+                issue_path=args.issue,
+                repo_root=args.repo_root,
+                outbox_path=args.outbox,
+                report_out=args.report_out,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "dad_review_issue_outbox_report_id": (report.dad_review_issue_outbox_report_id),
+                    "source_issue_id": report.source_issue_id,
+                    "severity": report.severity,
+                    "issue_classes": report.issue_classes,
+                    "candidate_exception_labels": report.candidate_exception_labels,
+                    "dad_mail_id": report.dad_mail_id,
+                    "dad_thread_id": report.dad_thread_id,
+                    "dedupe_key": report.dedupe_key,
+                    "outbox_ref": str(outbox),
+                    "outbox_append_performed": report.outbox_append_performed,
+                    "outbox_duplicate_suppressed": report.outbox_duplicate_suppressed,
+                    "candidate_only": report.candidate_only,
+                    "dad_pickup_required": report.dad_pickup_required,
+                    "hidden_chain_of_thought_included": report.hidden_chain_of_thought_included,
+                    "raw_private_payload_included": report.raw_private_payload_included,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "report_out": args.report_out,
+                }
+            )
+            return 0
+    except (ValueError, OSError, json.JSONDecodeError, ValidationError) as exc:
         print(json.dumps({"status": "blocked", "error": str(exc)}, indent=2), file=sys.stderr)
         return 2
     return 2

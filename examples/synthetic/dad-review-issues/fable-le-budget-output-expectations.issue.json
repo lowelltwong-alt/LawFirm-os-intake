@@ -1,0 +1,88 @@
+{
+  "schema_version": "0.1",
+  "issue_id": "fable-le-budget-output-expectations-001",
+  "issue_version": "0.1.0",
+  "observed_at": "2026-07-02T17:25:00Z",
+  "source_repo_id": "LawFirm-os-intake",
+  "source_repo_path": "LawFirm-os-intake",
+  "originating_agent": "fable_5",
+  "review_context": "Fable red-team review of the planned L&E budget-output expectation audit.",
+  "finding_title": "Budget-output expectation audit must classify allowed output, not just upstream driver findings.",
+  "severity": "P0",
+  "issue_classes": [
+    "budget_driver_gap",
+    "budget_math_risk",
+    "authority_boundary_risk",
+    "exception_lake_mapping_gap",
+    "learning_loop_gap",
+    "ui_authority_risk",
+    "test_gap"
+  ],
+  "finding_summary": "The L&E QA chain needs a deterministic aggregate that proves whether each executable case must block amount budgeting, stay range or hours-only, or remain candidate-only after review.",
+  "observable_context": [
+    "The repo already has executable L&E fixtures, fact binding, driver binding, driver impact, reviewed driver impact, blocked-driver review, and budget fact gold.",
+    "Those reports do not yet provide one per-case allowed-output decision that the UI and DAD exception patterning can consume.",
+    "The output must preserve candidate-only and no-submission boundaries."
+  ],
+  "observable_decision_logic": [
+    "If critical driver facts are unresolved, amount budgeting must be blocked.",
+    "If facts are present but uncertainty remains, the allowed output should be range or hours-only pending human review.",
+    "If review evidence exists, the output may be candidate range after review, still not approved or submittable.",
+    "Every case needs exception labels and required next gates so DAD can group recurring failure modes."
+  ],
+  "solution_path": [
+    "Add a labor_employment_budget_output_expectations report over executable L&E cases.",
+    "Emit allowed output state, blocker reasons, candidate exception labels, next gates, and no-write proof per case.",
+    "Wire the report into synthetic QA review and read-only UI data after tests are green."
+  ],
+  "fix_status": "planned",
+  "fix_refs": [
+    "planned:src/lawfirm_os_intake/labor_employment_budget_output_expectations.py"
+  ],
+  "test_refs": [
+    "planned:tests/test_labor_employment_budget_output_expectations.py"
+  ],
+  "artifact_refs": [
+    "docs/roadmap.md",
+    "examples/synthetic/labor-employment/labor-employment-executable-fixtures-manifest.json",
+    "examples/synthetic/gold/labor-employment-budget-fact-gold.json"
+  ],
+  "candidate_exception_labels": [
+    "fable_red_team_finding",
+    "labor_employment_budget_output_not_classified",
+    "budget_amount_block_required_when_driver_facts_missing",
+    "candidate_only_budget_review_required",
+    "dad_learning_loop_candidate"
+  ],
+  "applies_when": [
+    "A reviewer identifies a hard or novel issue in intake budget math, driver ontology, authority boundaries, matter linking, synthetic QA, UI authority, or exception mapping.",
+    "The finding needs to survive beyond chat as a candidate DAD learning or exception-lake pattern."
+  ],
+  "does_not_apply_when": [
+    "The finding is a routine typo or duplicate already captured in a tracked issue.",
+    "The finding requires raw private matter data, credentials, real client names, or long source payloads to be useful."
+  ],
+  "danger_if_misapplied": "If this is treated as approved learning instead of candidate mail, DAD may promote unreviewed Fable advice across repos or create false confidence in budget outputs.",
+  "suggested_actions": [
+    "DAD should classify this as a candidate red-team review issue and map it to exception-lake event classes.",
+    "Codex should implement the deterministic budget-output expectation audit with fixture and UI tests.",
+    "A human/DAD review gate should decide whether the pattern becomes a reusable learning rule."
+  ],
+  "reviewer_notes": [
+    "This record is synthetic and metadata-only.",
+    "It intentionally summarizes observable decision logic and excludes hidden chain-of-thought."
+  ],
+  "red_team_notes": [
+    "Do not let the UI display a total without candidate-only and blocked-action context.",
+    "Do not route this directly to Exception Lake; intake can only create candidate mail for DAD pickup."
+  ],
+  "raw_private_payload_included": false,
+  "hidden_chain_of_thought_included": false,
+  "candidate_only": true,
+  "dad_outbox_required": true,
+  "dad_review_required_before_promotion": true,
+  "lake_write_performed": false,
+  "sqlite_write_performed": false,
+  "external_writes_performed": false,
+  "silent_learning_performed": false
+}

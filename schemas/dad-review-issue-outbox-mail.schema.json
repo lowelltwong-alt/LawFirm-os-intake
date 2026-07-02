@@ -1,0 +1,101 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "0.1.0",
+      "default": "0.1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "mail_id": {
+      "title": "Mail Id",
+      "type": "string"
+    },
+    "thread_id": {
+      "title": "Thread Id",
+      "type": "string"
+    },
+    "message_type": {
+      "const": "governance_notice",
+      "default": "governance_notice",
+      "title": "Message Type",
+      "type": "string"
+    },
+    "source_repo": {
+      "title": "Source Repo",
+      "type": "string"
+    },
+    "target_repo": {
+      "default": "central_only",
+      "enum": [
+        "central_only",
+        "dad"
+      ],
+      "title": "Target Repo",
+      "type": "string"
+    },
+    "created_at": {
+      "title": "Created At",
+      "type": "string"
+    },
+    "dedupe_key": {
+      "title": "Dedupe Key",
+      "type": "string"
+    },
+    "sensitivity": {
+      "const": "internal",
+      "default": "internal",
+      "title": "Sensitivity",
+      "type": "string"
+    },
+    "review_status": {
+      "const": "generated_candidate",
+      "default": "generated_candidate",
+      "title": "Review Status",
+      "type": "string"
+    },
+    "payload": {
+      "additionalProperties": true,
+      "title": "Payload",
+      "type": "object"
+    },
+    "evidence": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Evidence",
+      "type": "array"
+    },
+    "suggested_actions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Suggested Actions",
+      "type": "array"
+    },
+    "source_provenance": {
+      "additionalProperties": true,
+      "title": "Source Provenance",
+      "type": "object"
+    },
+    "public_release": {
+      "additionalProperties": true,
+      "title": "Public Release",
+      "type": "object"
+    }
+  },
+  "required": [
+    "mail_id",
+    "thread_id",
+    "source_repo",
+    "created_at",
+    "dedupe_key",
+    "payload",
+    "evidence",
+    "suggested_actions",
+    "source_provenance",
+    "public_release"
+  ],
+  "title": "DADReviewIssueOutboxMail",
+  "type": "object"
+}
