@@ -20,7 +20,10 @@ Claude or another design agent can replace these files while preserving the cont
 - `apps/legal-intake-budget/src/types.ts`
 - `apps/legal-intake-budget/src/data-contract.ts`
 
-The expected local artifact list lives in `src/data-contract.ts`; a demo manifest lives in `src/fixtures/demo-run-manifest.json`.
+The expected local artifact list and matrix guardrails live in
+`src/data-contract.ts`. Demo review data lives in
+`src/fixtures/demo-run-manifest.json` and
+`src/fixtures/demo-labor-employment-qa-matrix-report.json`.
 
 Generate a run-specific manifest with:
 

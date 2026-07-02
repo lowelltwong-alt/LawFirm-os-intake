@@ -1,11 +1,19 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 
+import demoLaborEmploymentQAMatrix from "./fixtures/demo-labor-employment-qa-matrix-report.json";
 import demoManifest from "./fixtures/demo-run-manifest.json";
-import { assertReadOnlyManifest, failingQualityGates } from "./data-contract";
+import {
+  assertLaborEmploymentQAMatrixReport,
+  assertReadOnlyManifest,
+  failingQualityGates,
+} from "./data-contract";
 import type {
   ArtifactStatus,
   GateState,
+  LaborEmploymentBudgetGateEffect,
+  LaborEmploymentBudgetReadinessState,
+  LaborEmploymentQAMatrixReport,
   QualityGate,
   QualityGateStatus,
   ReviewArtifact,
@@ -14,10 +22,33 @@ import type {
 import "./styles.css";
 
 const manifest = demoManifest as ReviewManifest;
-const contractFailures = assertReadOnlyManifest(manifest);
+const laborEmploymentQAMatrix = demoLaborEmploymentQAMatrix as LaborEmploymentQAMatrixReport;
+const manifestContractFailures = assertReadOnlyManifest(manifest);
+const matrixContractFailures = assertLaborEmploymentQAMatrixReport(laborEmploymentQAMatrix);
+const contractFailures = [...manifestContractFailures, ...matrixContractFailures];
 
 function gateClass(state: GateState | ArtifactStatus | QualityGateStatus) {
   return `state state-${state.replace("_", "-")}`;
+}
+
+function budgetGateClass(effect: LaborEmploymentBudgetGateEffect) {
+  if (effect === "block_amount_budget_before_proposal") {
+    return "state state-blocked";
+  }
+  if (effect === "allow_range_or_hours_only_pending_review") {
+    return "state state-pending";
+  }
+  return "state state-passed";
+}
+
+function readinessClass(state: LaborEmploymentBudgetReadinessState) {
+  if (state === "blocked_missing_critical_facts") {
+    return "state state-blocked";
+  }
+  if (state === "range_only_pending_human_review") {
+    return "state state-pending";
+  }
+  return "state state-passed";
 }
 
 function BoundaryGrid({ manifest }: { manifest: ReviewManifest }) {
@@ -129,6 +160,104 @@ function QualityGatePanel({ gates }: { gates: QualityGate[] }) {
   );
 }
 
+function LaborEmploymentMatrixPanel({ report }: { report: LaborEmploymentQAMatrixReport }) {
+  const criticalGaps = report.cases.reduce(
+    (total, testCase) => total + testCase.critical_gap_count,
+    0,
+  );
+  const reviewQuestions = report.cases.reduce(
+    (total, testCase) => total + testCase.required_human_question_count,
+    0,
+  );
+  const sourceBoundFindings = report.cases.reduce(
+    (total, testCase) => total + testCase.source_bound_finding_count,
+    0,
+  );
+
+  return (
+    <section className="panel matrix-panel" aria-labelledby="matrix-title">
+      <div className="panel-heading">
+        <div>
+          <h2 id="matrix-title">L&amp;E Budget Fact QA</h2>
+          <code>{report.labor_employment_qa_matrix_report_id}</code>
+        </div>
+        <span className={report.failed_case_count === 0 ? "state state-passed" : "state state-failed"}>
+          {report.failed_case_count === 0 ? "matrix held" : "matrix failed"}
+        </span>
+      </div>
+
+      <div className="matrix-summary" aria-label="L&E matrix summary">
+        <div>
+          <span>Cases</span>
+          <strong>{report.case_count}</strong>
+        </div>
+        <div>
+          <span>Critical Gaps</span>
+          <strong>{criticalGaps}</strong>
+        </div>
+        <div>
+          <span>Source-Bound Facts</span>
+          <strong>{sourceBoundFindings}</strong>
+        </div>
+        <div>
+          <span>Review Questions</span>
+          <strong>{reviewQuestions}</strong>
+        </div>
+      </div>
+
+      <div className="table-wrap">
+        <table className="matrix-table">
+          <thead>
+            <tr>
+              <th>Case</th>
+              <th>Budget Readiness</th>
+              <th>Gate Effect</th>
+              <th>Gaps</th>
+              <th>Evidence</th>
+            </tr>
+          </thead>
+          <tbody>
+            {report.cases.map((testCase) => (
+              <tr key={testCase.case_id}>
+                <td>
+                  <div className="artifact-title">{testCase.label}</div>
+                  <code>{testCase.manifest_ref}</code>
+                </td>
+                <td>
+                  <span className={readinessClass(testCase.actual_budget_readiness_state)}>
+                    {testCase.actual_budget_readiness_state}
+                  </span>
+                </td>
+                <td>
+                  <span className={budgetGateClass(testCase.actual_budget_gate_effect)}>
+                    {testCase.actual_budget_gate_effect}
+                  </span>
+                </td>
+                <td>
+                  <strong>{testCase.critical_gap_count}</strong> critical / {testCase.gap_count} total
+                </td>
+                <td>
+                  {testCase.source_bound_finding_count} source-bound,{" "}
+                  {testCase.required_human_question_count} questions
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="next-gates">
+        <h3>Required Next Gates</h3>
+        <div>
+          {report.required_next_gates.map((gate) => (
+            <code key={gate}>{gate}</code>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function App() {
   const blockedCount = manifest.artifacts.filter(
     (artifact) => artifact.status === "blocked" || artifact.gateState === "blocked",
@@ -180,6 +309,7 @@ function App() {
       </div>
 
       <QualityGatePanel gates={manifest.qualityGates} />
+      <LaborEmploymentMatrixPanel report={laborEmploymentQAMatrix} />
       <ArtifactTable artifacts={manifest.artifacts} />
     </main>
   );

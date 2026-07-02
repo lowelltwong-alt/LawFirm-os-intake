@@ -1,4 +1,10 @@
-import type { BoundaryFlags, QualityGate, ReviewArtifact, ReviewManifest } from "./types";
+import type {
+  BoundaryFlags,
+  LaborEmploymentQAMatrixReport,
+  QualityGate,
+  ReviewArtifact,
+  ReviewManifest,
+} from "./types";
 
 export const REQUIRED_ARTIFACT_FILES = [
   "intake_preflight_packet.json",
@@ -72,4 +78,49 @@ export function assertReadOnlyManifest(manifest: ReviewManifest): string[] {
 
 export function failingQualityGates(gates: QualityGate[]): QualityGate[] {
   return gates.filter((gate) => gate.status === "failed" || gate.status === "blocked");
+}
+
+export function assertLaborEmploymentQAMatrixReport(
+  report: LaborEmploymentQAMatrixReport,
+): string[] {
+  const failures: string[] = [];
+  if (!report.candidate_only) {
+    failures.push("le_matrix_not_candidate_only");
+  }
+  if (!report.non_authoritative || !report.synthetic_only) {
+    failures.push("le_matrix_authority_boundary_failed");
+  }
+  if (
+    report.budget_amount_output_authorized ||
+    report.budget_submission_authorized ||
+    report.conflict_conclusion_emitted ||
+    report.matter_opening_authorized ||
+    report.training_pipeline_created ||
+    report.lake_write_performed ||
+    report.sqlite_write_performed ||
+    report.external_writes_performed ||
+    report.silent_learning_performed
+  ) {
+    failures.push("le_matrix_side_effect_boundary_failed");
+  }
+  if (report.case_count !== report.cases.length) {
+    failures.push("le_matrix_case_count_mismatch");
+  }
+  const failedCases = report.cases.filter((testCase) => testCase.status === "failed");
+  if (report.failed_case_count !== failedCases.length) {
+    failures.push("le_matrix_failed_case_count_mismatch");
+  }
+  for (const testCase of report.cases) {
+    if (!testCase.candidate_only || !testCase.non_authoritative) {
+      failures.push(`le_matrix_case_authority_boundary_failed:${testCase.case_id}`);
+    }
+    if (
+      testCase.status === "passed" &&
+      (testCase.expected_budget_readiness_state !== testCase.actual_budget_readiness_state ||
+        testCase.expected_budget_gate_effect !== testCase.actual_budget_gate_effect)
+    ) {
+      failures.push(`le_matrix_case_expectation_mismatch:${testCase.case_id}`);
+    }
+  }
+  return failures;
 }

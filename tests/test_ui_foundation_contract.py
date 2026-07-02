@@ -15,6 +15,7 @@ def test_legal_intake_budget_ui_required_files_exist(repo_root):
         "src/types.ts",
         "src/data-contract.ts",
         "src/fixtures/demo-run-manifest.json",
+        "src/fixtures/demo-labor-employment-qa-matrix-report.json",
     ]
 
     for relative_path in required:
@@ -96,6 +97,38 @@ def test_legal_intake_budget_demo_manifest_is_read_only_and_candidate_only(repo_
     assert all(gate["evidenceFile"] for gate in manifest["qualityGates"])
 
 
+def test_legal_intake_budget_demo_le_matrix_is_synthetic_and_no_write(repo_root):
+    matrix = json.loads(
+        (
+            repo_root / UI_ROOT / "src/fixtures/demo-labor-employment-qa-matrix-report.json"
+        ).read_text(encoding="utf-8")
+    )
+    cases = {case["case_id"]: case for case in matrix["cases"]}
+
+    assert matrix["status"] == "labor_employment_qa_matrix_ready_for_review"
+    assert matrix["case_count"] == len(matrix["cases"]) == 2
+    assert matrix["failed_case_count"] == 0
+    assert matrix["candidate_only"] is True
+    assert matrix["non_authoritative"] is True
+    assert matrix["synthetic_only"] is True
+    assert matrix["budget_amount_output_authorized"] is False
+    assert matrix["budget_submission_authorized"] is False
+    assert matrix["lake_write_performed"] is False
+    assert matrix["sqlite_write_performed"] is False
+    assert matrix["external_writes_performed"] is False
+    assert matrix["silent_learning_performed"] is False
+    assert (
+        cases["critical_fact_gaps_block_amount_budget"]["actual_budget_gate_effect"]
+        == "block_amount_budget_before_proposal"
+    )
+    assert cases["critical_fact_gaps_block_amount_budget"]["critical_gap_count"] > 0
+    assert (
+        cases["ready_critical_facts_still_range_only"]["actual_budget_gate_effect"]
+        == "allow_range_or_hours_only_pending_review"
+    )
+    assert cases["ready_critical_facts_still_range_only"]["critical_gap_count"] == 0
+
+
 def test_legal_intake_budget_ui_disclaims_mutating_authority(repo_root):
     readme = (repo_root / UI_ROOT / "README.md").read_text(encoding="utf-8")
     app = (repo_root / UI_ROOT / "src/App.tsx").read_text(encoding="utf-8")
@@ -106,5 +139,7 @@ def test_legal_intake_budget_ui_disclaims_mutating_authority(repo_root):
     assert "Exception Lake writer" in readme
     assert "Local JSON only" in app
     assert "QA Gates" in app
+    assert "L&amp;E Budget Fact QA" in app
+    assert "assertLaborEmploymentQAMatrixReport" in app
     assert "failingQualityGates" in app
     assert "grid-template-columns" in styles
