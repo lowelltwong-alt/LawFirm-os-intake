@@ -357,7 +357,7 @@ PY
 test -s ".lawfirm-os-intake/smoke/quality/le-executable-fixtures/labor_employment_executable_fixtures_report.json"
 grep -q '"status": "labor_employment_executable_fixtures_ready_for_review"' \
   ".lawfirm-os-intake/smoke/quality/le-executable-fixtures/labor_employment_executable_fixtures_report.json"
-grep -q '"preflight_executed_count": 4' \
+grep -q '"preflight_executed_count": 6' \
   ".lawfirm-os-intake/smoke/quality/le-executable-fixtures/labor_employment_executable_fixtures_report.json"
 grep -q '"budget_fact_audit_required": true' \
   ".lawfirm-os-intake/smoke/quality/le-executable-fixtures/labor_employment_executable_fixtures_report.json"
@@ -389,9 +389,9 @@ grep -q '"coverage_state": "partial_executable_coverage"' \
   ".lawfirm-os-intake/smoke/quality/le-executable-coverage/labor_employment_executable_coverage_report.json"
 grep -q '"pack_case_count": 32' \
   ".lawfirm-os-intake/smoke/quality/le-executable-coverage/labor_employment_executable_coverage_report.json"
-grep -q '"covered_pack_case_count": 5' \
+grep -q '"covered_pack_case_count": 7' \
   ".lawfirm-os-intake/smoke/quality/le-executable-coverage/labor_employment_executable_coverage_report.json"
-grep -q '"missing_executable_pack_case_count": 27' \
+grep -q '"missing_executable_pack_case_count": 25' \
   ".lawfirm-os-intake/smoke/quality/le-executable-coverage/labor_employment_executable_coverage_report.json"
 grep -q '"fixture_generation_authorized": false' \
   ".lawfirm-os-intake/smoke/quality/le-executable-coverage/labor_employment_executable_coverage_report.json"
@@ -426,7 +426,7 @@ PY
 test -s ".lawfirm-os-intake/smoke/quality/le-executable-fact-binding/labor_employment_executable_fact_binding_report.json"
 grep -q '"status": "labor_employment_executable_budget_fact_bindings_ready_for_review"' \
   ".lawfirm-os-intake/smoke/quality/le-executable-fact-binding/labor_employment_executable_fact_binding_report.json"
-grep -q '"fact_binding_count": 9' \
+grep -q '"fact_binding_count": 13' \
   ".lawfirm-os-intake/smoke/quality/le-executable-fact-binding/labor_employment_executable_fact_binding_report.json"
 grep -q '"budget_amount_output_authorized": false' \
   ".lawfirm-os-intake/smoke/quality/le-executable-fact-binding/labor_employment_executable_fact_binding_report.json"

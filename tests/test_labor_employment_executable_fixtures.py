@@ -31,8 +31,8 @@ def test_labor_employment_executable_fixtures_run_preflight_and_preserve_boundar
     )
 
     assert report.status == "labor_employment_executable_fixtures_ready_for_review"
-    assert persisted.fixture_count == 4
-    assert persisted.preflight_executed_count == 4
+    assert persisted.fixture_count == 6
+    assert persisted.preflight_executed_count == 6
     assert persisted.failed_case_count == 0
     assert persisted.missing_pack_link_count == 0
     assert persisted.missing_source_signal_count == 0
@@ -55,6 +55,24 @@ def test_labor_employment_executable_fixtures_run_preflight_and_preserve_boundar
     cases = {case.executable_fixture_id: case for case in persisted.cases}
     assert cases["le-wage-hour-missing-attachment.executable.v0_1"].missing_source_count == 2
     assert cases["le-epli-carrier-missing-attachment.executable.v0_1"].missing_source_count == 2
+    assert (
+        cases[
+            "le-discrimination-harassment-missing-attachment.executable.v0_1"
+        ].missing_source_count
+        == 3
+    )
+    assert "source_missing" in (
+        cases["le-discrimination-harassment-missing-attachment.executable.v0_1"].exception_labels
+    )
+    assert (
+        cases[
+            "le-retaliation-wrongful-termination-messy-thread.executable.v0_1"
+        ].duplicate_source_count
+        == 1
+    )
+    assert "duplicate_source_detected" in (
+        cases["le-retaliation-wrongful-termination-messy-thread.executable.v0_1"].exception_labels
+    )
     assert cases["le-ada-fmla-missing-thread.executable.v0_1"].duplicate_source_count == 1
     assert "prompt_injection_source_content" in (
         cases["le-class-collective-adversarial.executable.v0_1"].exception_labels
@@ -156,7 +174,7 @@ def test_labor_employment_executable_fixtures_cli_writes_candidate_report(
 
     assert exit_code == 0
     assert report["status"] == "labor_employment_executable_fixtures_ready_for_review"
-    assert report["fixture_count"] == 4
-    assert report["preflight_executed_count"] == 4
+    assert report["fixture_count"] == 6
+    assert report["preflight_executed_count"] == 6
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out

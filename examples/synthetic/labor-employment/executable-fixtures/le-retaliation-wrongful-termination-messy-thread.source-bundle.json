@@ -1,0 +1,95 @@
+{
+  "schema_version": "0.1",
+  "bundle_id": "syn-le-retaliation-wrongful-termination-messy-thread-001",
+  "data_origin": "synthetic",
+  "contains_real_client_data": false,
+  "contains_real_matter_data": false,
+  "contains_privileged_data": false,
+  "sources": [
+    {
+      "source_id": "syn-le-retaliation-correspondence-001",
+      "source_type": "correspondence_dump",
+      "filename": "synthetic_retaliation_wrongful_termination_thread.txt",
+      "text": "From: hr-director@mapleforge.example\nTo: intake@synthetic-law.example\nDate: July 1, 2026\nSubject: Retaliation and wrongful termination correspondence dump\n\nMaple Forge Logistics received a synthetic demand from Jordan Lee alleging retaliation and wrongful termination after protected activity about safety complaints. The HR director says an operations manager, HR business partner, and site lead are likely witnesses or role candidates, but the thread does not confirm whether any individual supervisor or manager is a named defendant. The forum and arbitration agreement status is unknown, and the sender asks for only a candidate range after human review.\n\n-----Original Message-----\nFrom: sitelead@mapleforge.example\nTo: hr-director@mapleforge.example\nSubject: RE: Lee termination timeline\n\nThe termination followed a performance meeting and a protected activity complaint. Please separate quoted history from current sender assertions before using this for budget drivers.\n\n-----Original Message-----\nFrom: jordan.lee@example.invalid\nTo: hr-director@mapleforge.example\nSubject: Wrongful termination demand\n\nI reported safety concerns and then was fired. This is retaliation and wrongful termination.",
+      "metadata": {
+        "synthetic": true,
+        "thread_state": "messy_quoted_history"
+      }
+    },
+    {
+      "source_id": "syn-le-retaliation-correspondence-duplicate-001",
+      "source_type": "correspondence_dump",
+      "filename": "synthetic_retaliation_wrongful_termination_thread_duplicate.txt",
+      "text": "From: hr-director@mapleforge.example\nTo: intake@synthetic-law.example\nDate: July 1, 2026\nSubject: Retaliation and wrongful termination correspondence dump\n\nMaple Forge Logistics received a synthetic demand from Jordan Lee alleging retaliation and wrongful termination after protected activity about safety complaints. The HR director says an operations manager, HR business partner, and site lead are likely witnesses or role candidates, but the thread does not confirm whether any individual supervisor or manager is a named defendant. The forum and arbitration agreement status is unknown, and the sender asks for only a candidate range after human review.\n\n-----Original Message-----\nFrom: sitelead@mapleforge.example\nTo: hr-director@mapleforge.example\nSubject: RE: Lee termination timeline\n\nThe termination followed a performance meeting and a protected activity complaint. Please separate quoted history from current sender assertions before using this for budget drivers.\n\n-----Original Message-----\nFrom: jordan.lee@example.invalid\nTo: hr-director@mapleforge.example\nSubject: Wrongful termination demand\n\nI reported safety concerns and then was fired. This is retaliation and wrongful termination.",
+      "metadata": {
+        "synthetic": true,
+        "thread_state": "duplicate_messy_quoted_history"
+      }
+    }
+  ],
+  "fixture_hints": {
+    "provided_fields": [
+      "employee_claimant_identity",
+      "employer_or_defendant_identity",
+      "individual_supervisor_or_manager_defendants",
+      "claims_and_causes_of_action",
+      "relevant_employment_timeline",
+      "esi_custodians_and_sources",
+      "anticipated_depositions"
+    ],
+    "entities": [
+      {
+        "name": "Jordan Lee",
+        "role_candidates": [
+          {
+            "role": "claimant",
+            "confidence": 0.77
+          },
+          {
+            "role": "adverse_party",
+            "confidence": 0.59
+          }
+        ]
+      },
+      {
+        "name": "Maple Forge Logistics",
+        "role_candidates": [
+          {
+            "role": "employer_or_defendant",
+            "confidence": 0.75
+          },
+          {
+            "role": "prospective_represented_client",
+            "confidence": 0.61
+          }
+        ]
+      },
+      {
+        "name": "operations manager",
+        "role_candidates": [
+          {
+            "role": "manager",
+            "confidence": 0.57
+          },
+          {
+            "role": "witness",
+            "confidence": 0.49
+          }
+        ]
+      },
+      {
+        "name": "HR business partner",
+        "role_candidates": [
+          {
+            "role": "hr_actor",
+            "confidence": 0.56
+          },
+          {
+            "role": "witness",
+            "confidence": 0.47
+          }
+        ]
+      }
+    ]
+  }
+}

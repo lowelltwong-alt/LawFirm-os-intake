@@ -1,0 +1,129 @@
+{
+  "schema_version": "0.1",
+  "bundle_id": "syn-le-discrimination-harassment-missing-attachment-001",
+  "data_origin": "synthetic",
+  "contains_real_client_data": false,
+  "contains_real_matter_data": false,
+  "contains_privileged_data": false,
+  "sources": [
+    {
+      "source_id": "syn-le-discrimination-demand-email-001",
+      "source_type": "email",
+      "filename": "synthetic_discrimination_harassment_missing_attachments.txt",
+      "text": "From: claims-intake@harbor-epli.example\nTo: intake@synthetic-law.example\nDate: July 1, 2026\nSubject: Discrimination and harassment demand - missing right-to-sue letter\n\nHarbor EPLI forwards a synthetic defense intake for its insured Cedar Loom Manufacturing LLC. The claimant, Maya Reed, alleges sex discrimination, harassment, retaliation, emotional distress, back pay, front pay, and punitive damages after reporting a supervisor's conduct. The sender says the EEOC charge, right-to-sue letter, employee handbook, anti-harassment policy, carrier guideline, and approved rate schedule were attached, but the received packet includes only this email. Do not assume the right-to-sue letter exists, do not assume the employer is confirmed as the represented client, and do not produce an amount budget until administrative exhaustion and carrier guideline/rate source facts are reviewed.",
+      "metadata": {
+        "synthetic": true,
+        "attachment_refs": [
+          "right-to-sue-letter.pdf",
+          "eeoc-charge.pdf",
+          "employee-handbook.pdf",
+          "anti-harassment-policy.pdf",
+          "carrier-guideline.pdf",
+          "approved-rate-schedule.pdf"
+        ]
+      }
+    },
+    {
+      "source_id": "syn-le-discrimination-right-to-sue-missing-001",
+      "source_type": "attachment_text",
+      "filename": "right-to-sue-letter.pdf",
+      "text": "Synthetic placeholder only: referenced EEOC charge and right-to-sue letter were not included in the inbound packet.",
+      "metadata": {
+        "synthetic": true,
+        "missing": true,
+        "read_state": "missing",
+        "attachment_refs": [
+          "right-to-sue-letter.pdf",
+          "eeoc-charge.pdf"
+        ]
+      }
+    },
+    {
+      "source_id": "syn-le-discrimination-policy-file-missing-001",
+      "source_type": "attachment_text",
+      "filename": "employee-handbook.pdf",
+      "text": "Synthetic placeholder only: referenced employee handbook and anti-harassment policy were not included in the inbound packet.",
+      "metadata": {
+        "synthetic": true,
+        "missing": true,
+        "read_state": "missing",
+        "attachment_refs": [
+          "employee-handbook.pdf",
+          "anti-harassment-policy.pdf"
+        ]
+      }
+    },
+    {
+      "source_id": "syn-le-discrimination-guidelines-missing-001",
+      "source_type": "attachment_text",
+      "filename": "carrier-guideline.pdf",
+      "text": "Synthetic placeholder only: referenced carrier guideline and approved rate schedule were not included in the inbound packet.",
+      "metadata": {
+        "synthetic": true,
+        "missing": true,
+        "read_state": "missing",
+        "attachment_refs": [
+          "carrier-guideline.pdf",
+          "approved-rate-schedule.pdf"
+        ]
+      }
+    }
+  ],
+  "fixture_hints": {
+    "provided_fields": [
+      "employee_claimant_identity",
+      "employer_or_defendant_identity",
+      "claims_and_causes_of_action",
+      "damages_categories_and_exposure"
+    ],
+    "entities": [
+      {
+        "name": "Maya Reed",
+        "role_candidates": [
+          {
+            "role": "claimant",
+            "confidence": 0.76
+          },
+          {
+            "role": "adverse_party",
+            "confidence": 0.58
+          }
+        ]
+      },
+      {
+        "name": "Cedar Loom Manufacturing LLC",
+        "role_candidates": [
+          {
+            "role": "insured",
+            "confidence": 0.72
+          },
+          {
+            "role": "employer_or_defendant",
+            "confidence": 0.74
+          },
+          {
+            "role": "prospective_represented_client",
+            "confidence": 0.6
+          }
+        ]
+      },
+      {
+        "name": "Harbor EPLI",
+        "role_candidates": [
+          {
+            "role": "insurance_carrier",
+            "confidence": 0.81
+          },
+          {
+            "role": "payer",
+            "confidence": 0.7
+          },
+          {
+            "role": "instructing_source",
+            "confidence": 0.66
+          }
+        ]
+      }
+    ]
+  }
+}

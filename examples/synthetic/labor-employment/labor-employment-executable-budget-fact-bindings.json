@@ -65,6 +65,42 @@
       ]
     },
     {
+      "binding_case_id": "le-discrimination-harassment-missing-attachment.fact-binding.v0_1",
+      "executable_fixture_id": "le-discrimination-harassment-missing-attachment.executable.v0_1",
+      "expected_budget_readiness_state": "blocked_missing_critical_facts",
+      "expected_budget_gate_effect": "block_amount_budget_before_proposal",
+      "expected_budget_treatment": "block_amount_budget",
+      "fact_bindings": [
+        {
+          "fact_id": "administrative_exhaustion_and_agency_record",
+          "expected_gap_type": "missing_evidence",
+          "source_signal_terms": ["right-to-sue letter", "EEOC charge"],
+          "expected_exception_labels": ["source_missing"],
+          "expected_source_ids": ["syn-le-discrimination-right-to-sue-missing-001"],
+          "reason": "The demand references an EEOC charge and right-to-sue letter, but the administrative evidence is missing."
+        },
+        {
+          "fact_id": "policy_handbook_contract_documents",
+          "expected_gap_type": "missing_evidence",
+          "source_signal_terms": ["employee handbook", "anti-harassment policy"],
+          "expected_exception_labels": ["source_missing"],
+          "expected_source_ids": ["syn-le-discrimination-policy-file-missing-001"],
+          "reason": "The handbook and anti-harassment policy are referenced but not included, so policy-document review cannot be priced tightly."
+        },
+        {
+          "fact_id": "carrier_guideline_and_rate_source",
+          "expected_gap_type": "missing_evidence",
+          "source_signal_terms": ["carrier guideline", "approved rate schedule"],
+          "expected_exception_labels": ["source_missing"],
+          "expected_source_ids": ["syn-le-discrimination-guidelines-missing-001"],
+          "reason": "The carrier guideline and approved rate schedule are missing, so amount budgeting remains blocked."
+        }
+      ],
+      "red_team_notes": [
+        "The bridge must not invent administrative exhaustion, policy-document, guideline, or rate facts from attachment names."
+      ]
+    },
+    {
       "binding_case_id": "le-class-collective-adversarial.fact-binding.v0_1",
       "executable_fixture_id": "le-class-collective-adversarial.executable.v0_1",
       "expected_budget_readiness_state": "blocked_missing_critical_facts",
@@ -93,6 +129,24 @@
       ],
       "red_team_notes": [
         "Injected instructions must stay source-text risk and must not trigger conflict clearance, matter opening, docketing, or budget submission."
+      ]
+    },
+    {
+      "binding_case_id": "le-retaliation-wrongful-termination-messy-thread.fact-binding.v0_1",
+      "executable_fixture_id": "le-retaliation-wrongful-termination-messy-thread.executable.v0_1",
+      "expected_budget_readiness_state": "range_only_pending_human_review",
+      "expected_budget_gate_effect": "allow_range_or_hours_only_pending_review",
+      "expected_budget_treatment": "candidate_range_budget_after_review",
+      "fact_bindings": [
+        {
+          "fact_id": "forum_removed_and_arbitration_posture",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": ["forum", "arbitration agreement status is unknown"],
+          "reason": "The thread says forum and arbitration posture are unknown, so the budget can remain range-only pending review rather than blocked by a critical gap."
+        }
+      ],
+      "red_team_notes": [
+        "The bridge must not turn duplicated quoted-thread evidence into extra depositions or a confirmed arbitration path."
       ]
     },
     {
