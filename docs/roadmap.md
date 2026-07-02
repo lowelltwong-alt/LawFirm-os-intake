@@ -1093,3 +1093,45 @@ from them."
   fixtures, create a GitHub PR, apply learning, mutate
   budgets/profiles/templates/guidelines, write Lake or SQLite records, submit
   budgets, open matters, or authorize external actions.
+
+## 20. Upfront-Like Intake Integration And Matter Linking
+
+Status: public research and synthetic target fixture added; real Upfront
+connector, vendor API contract, and production document linking remain future
+Orchestrator-owned work.
+
+Research Fulcrum GT Upfront as a new business intake/conflicts system and
+define the closest safe local output shape when this repo is doing the
+Upfront-like intake preparation work itself.
+
+- `docs/integrations/upfront-intake-integration-research.md` records public
+  research, known capabilities, unknown API/manual details, candidate input and
+  output shapes, and a matter-linking roadmap.
+- `examples/synthetic/upfront/upfront-like-intake-output.example.json` provides
+  a synthetic target artifact for a high-risk scenario: the same insurance
+  adjuster sends documents for two different prospective matters before any
+  official firm matter number exists.
+- The target artifact separates sender identity, carrier/payer identity,
+  prospective client identity, claim/reference numbers, party pairs, document
+  clusters, and source hashes.
+- Weak signals such as same sender or same carrier must never merge candidate
+  matters without stronger source-bound identifiers.
+- Strong but not final signals include claim numbers, party pairs, policy/claim
+  references, docket/agency numbers, incident dates, and attachment hashes.
+- Uncertain states must be explicit: unmatched, high-evidence candidate,
+  ambiguous multiple candidates, conflicting identifiers, insufficient
+  identifiers, sender follow-up required, and human linking review required.
+- Candidate exception labels include ambiguous source-to-matter links, missing
+  official matter number, unresolved sender reference, cross-matter thread risk,
+  and document cluster split/merge candidates.
+- No real Upfront API endpoint, auth scheme, webhook, field name, object ID, or
+  write-back permission is assumed from public research.
+- Intake still implements no Upfront connector, no conflict conclusion, no
+  matter opening, no screen creation, no Lake/SQLite write, no budget
+  submission, and no silent learning.
+
+Next PR-sized slice: add a deterministic `matter-linking-preflight` audit for
+synthetic source bundles with shared senders, conflicting references, missing
+official matter numbers, duplicate attachments, and later reference-resolution
+follow-ups. The audit should emit a review packet and UI panel before any
+budget amount can rely on the cluster.
