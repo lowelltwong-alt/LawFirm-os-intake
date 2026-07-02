@@ -4,10 +4,12 @@ import { createRoot } from "react-dom/client";
 import demoLaborEmploymentBlockedDriverReview from "./fixtures/demo-labor-employment-blocked-driver-impact-review-report.json";
 import demoLaborEmploymentQAMatrix from "./fixtures/demo-labor-employment-qa-matrix-report.json";
 import demoManifest from "./fixtures/demo-run-manifest.json";
+import demoReviewDataBundle from "./fixtures/demo-ui-review-data-bundle.json";
 import {
   assertLaborEmploymentBlockedDriverImpactReviewReport,
   assertLaborEmploymentQAMatrixReport,
   assertReadOnlyManifest,
+  assertUIReviewDataBundle,
   failingQualityGates,
 } from "./data-contract";
 import type {
@@ -22,18 +24,22 @@ import type {
   QualityGateStatus,
   ReviewArtifact,
   ReviewManifest,
+  UIReviewDataBundle,
 } from "./types";
 import "./styles.css";
 
+const reviewDataBundle = demoReviewDataBundle as UIReviewDataBundle;
 const manifest = demoManifest as ReviewManifest;
 const laborEmploymentQAMatrix = demoLaborEmploymentQAMatrix as LaborEmploymentQAMatrixReport;
 const laborEmploymentBlockedDriverReview =
   demoLaborEmploymentBlockedDriverReview as LaborEmploymentBlockedDriverImpactReviewReport;
+const bundleContractFailures = assertUIReviewDataBundle(reviewDataBundle);
 const manifestContractFailures = assertReadOnlyManifest(manifest);
 const matrixContractFailures = assertLaborEmploymentQAMatrixReport(laborEmploymentQAMatrix);
 const blockedDriverContractFailures =
   assertLaborEmploymentBlockedDriverImpactReviewReport(laborEmploymentBlockedDriverReview);
 const contractFailures = [
+  ...bundleContractFailures,
   ...manifestContractFailures,
   ...matrixContractFailures,
   ...blockedDriverContractFailures,
@@ -79,6 +85,45 @@ function BoundaryGrid({ manifest }: { manifest: ReviewManifest }) {
             <span>{key}</span>
             <strong>{String(value)}</strong>
           </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function BundlePanel({ bundle }: { bundle: UIReviewDataBundle }) {
+  return (
+    <section className="panel bundle-panel" aria-labelledby="bundle-title">
+      <div className="panel-heading">
+        <div>
+          <h2 id="bundle-title">UI Review Data Bundle</h2>
+          <code>{bundle.ui_review_data_bundle_id}</code>
+        </div>
+        <span
+          className={
+            bundleContractFailures.length === 0 ? "state state-passed" : "state state-failed"
+          }
+        >
+          {bundle.status}
+        </span>
+      </div>
+      <div className="bundle-source">
+        <span>Run Root</span>
+        <code>{bundle.run_root_ref}</code>
+      </div>
+      <div className="bundle-report-grid">
+        {bundle.detail_reports.map((report) => (
+          <article className="bundle-report" key={report.detail_report_id}>
+            <div>
+              <strong>{report.label}</strong>
+              <code>{report.file_name}</code>
+            </div>
+            <span className={report.present ? "state state-present" : "state state-blocked"}>
+              {report.present ? "present" : "missing"}
+            </span>
+            <p>{report.renderer}</p>
+            <code>{report.source_sha256 ?? "missing hash"}</code>
+          </article>
         ))}
       </div>
     </section>
@@ -446,6 +491,7 @@ function App() {
         </div>
       </section>
 
+      <BundlePanel bundle={reviewDataBundle} />
       <div className="grid-layout">
         <BoundaryGrid manifest={manifest} />
         <NotesPanel title="Blockers" items={manifest.blockerSummary} />

@@ -15,6 +15,7 @@ def test_legal_intake_budget_ui_required_files_exist(repo_root):
         "src/types.ts",
         "src/data-contract.ts",
         "src/fixtures/demo-run-manifest.json",
+        "src/fixtures/demo-ui-review-data-bundle.json",
         "src/fixtures/demo-labor-employment-qa-matrix-report.json",
         "src/fixtures/demo-labor-employment-blocked-driver-impact-review-report.json",
     ]
@@ -114,6 +115,40 @@ def test_legal_intake_budget_demo_manifest_is_read_only_and_candidate_only(repo_
         "smoke_demo",
     } <= {gate["gateId"] for gate in manifest["qualityGates"]}
     assert all(gate["evidenceFile"] for gate in manifest["qualityGates"])
+
+
+def test_legal_intake_budget_demo_ui_review_data_bundle_is_local_and_no_write(repo_root):
+    bundle = json.loads(
+        (repo_root / UI_ROOT / "src/fixtures/demo-ui-review-data-bundle.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    detail_reports = {report["file_name"]: report for report in bundle["detail_reports"]}
+
+    assert bundle["status"] == "ready_for_review"
+    assert bundle["detail_report_count"] == len(bundle["detail_reports"]) == 3
+    assert bundle["required_detail_report_count"] == 3
+    assert bundle["present_detail_report_count"] == 3
+    assert bundle["missing_required_detail_report_count"] == 0
+    assert bundle["external_write_report_count"] == 0
+    assert bundle["candidate_only"] is True
+    assert bundle["synthetic_only"] is True
+    assert bundle["non_authoritative"] is True
+    assert bundle["local_json_only"] is True
+    assert bundle["budget_amount_output_authorized"] is False
+    assert bundle["budget_submission_authorized"] is False
+    assert bundle["lake_write_performed"] is False
+    assert bundle["sqlite_write_performed"] is False
+    assert bundle["external_writes_performed"] is False
+    assert bundle["silent_learning_performed"] is False
+    assert {
+        "ui_review_manifest.json",
+        "labor_employment_qa_matrix_report.json",
+        "labor_employment_blocked_driver_impact_review_report.json",
+    } <= set(detail_reports)
+    assert all(report["present"] is True for report in bundle["detail_reports"])
+    assert all(report["source_sha256"].startswith("sha256:") for report in bundle["detail_reports"])
+    assert all(report["external_writes_performed"] is False for report in bundle["detail_reports"])
 
 
 def test_legal_intake_budget_demo_le_matrix_is_synthetic_and_no_write(repo_root):
@@ -217,9 +252,11 @@ def test_legal_intake_budget_ui_disclaims_mutating_authority(repo_root):
     assert "local JSON" in readme
     assert "Exception Lake writer" in readme
     assert "Local JSON only" in app
+    assert "UI Review Data Bundle" in app
     assert "QA Gates" in app
     assert "L&amp;E Budget Fact QA" in app
     assert "L&amp;E Blocked Driver Review" in app
+    assert "assertUIReviewDataBundle" in app
     assert "assertLaborEmploymentQAMatrixReport" in app
     assert "assertLaborEmploymentBlockedDriverImpactReviewReport" in app
     assert "failingQualityGates" in app

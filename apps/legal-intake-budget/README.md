@@ -22,8 +22,10 @@ Claude or another design agent can replace these files while preserving the cont
 
 The expected local artifact list and matrix guardrails live in
 `src/data-contract.ts`. Demo review data lives in
-`src/fixtures/demo-run-manifest.json` and
-`src/fixtures/demo-labor-employment-qa-matrix-report.json`.
+`src/fixtures/demo-ui-review-data-bundle.json`,
+`src/fixtures/demo-run-manifest.json`,
+`src/fixtures/demo-labor-employment-qa-matrix-report.json`, and
+`src/fixtures/demo-labor-employment-blocked-driver-impact-review-report.json`.
 
 Generate a run-specific manifest with:
 
@@ -37,3 +39,15 @@ python -m lawfirm_os_intake build-synthetic-qa-bundle \
 ```
 
 That command reads local artifacts only, writes a candidate-only synthetic QA bundle, refreshes the UI manifest, and leaves missing calibration, L&E matrix, or L&E fixture family pack evidence blocked or pending.
+
+Generate the UI data-bundle wrapper for a local run with:
+
+```bash
+python -m lawfirm_os_intake build-ui-review-data-bundle \
+  --run-root .lawfirm-os-intake/smoke \
+  --out .lawfirm-os-intake/smoke/ui_review_data_bundle.json
+```
+
+That bundle records which local JSON detail reports the frontend can render, with
+hashes and no-write checks. It does not copy source payloads or grant mutation
+authority.

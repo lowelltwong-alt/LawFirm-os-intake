@@ -9744,6 +9744,112 @@ class SyntheticQABundleReport(StrictModel):
         return self
 
 
+UIReviewDataBundleStatus = Literal[
+    "ready_for_review",
+    "blocked_missing_required_reports",
+    "failed_side_effect_boundary",
+]
+
+UIReviewDataBundleReportKind = Literal[
+    "ui_review_manifest",
+    "labor_employment_qa_matrix",
+    "labor_employment_blocked_driver_impact_review",
+]
+
+
+class UIReviewDataBundleDetailReport(StrictModel):
+    detail_report_id: str
+    label: str
+    report_kind: UIReviewDataBundleReportKind
+    file_name: str
+    required: bool
+    present: bool
+    status: str
+    renderer: str
+    artifact_ref: str | None = None
+    source_sha256: str | None = None
+    candidate_only: bool
+    synthetic_only: bool
+    external_writes_performed: bool
+    notes: list[str] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def ui_review_data_bundle_detail_refs_match_presence(
+        self,
+    ) -> "UIReviewDataBundleDetailReport":
+        if self.present and not self.artifact_ref:
+            raise ValueError("present UI detail report requires artifact_ref")
+        if self.present and not self.source_sha256:
+            raise ValueError("present UI detail report requires source_sha256")
+        if not self.present and self.source_sha256:
+            raise ValueError("missing UI detail report cannot have source_sha256")
+        if self.required and not self.notes:
+            raise ValueError("required UI detail report needs a note")
+        return self
+
+
+class UIReviewDataBundle(StrictModel):
+    schema_version: str = "0.1"
+    ui_review_data_bundle_id: str
+    status: UIReviewDataBundleStatus
+    run_root_ref: str
+    detail_report_count: int = Field(ge=0)
+    required_detail_report_count: int = Field(ge=0)
+    present_detail_report_count: int = Field(ge=0)
+    missing_required_detail_report_count: int = Field(ge=0)
+    external_write_report_count: int = Field(ge=0)
+    detail_reports: list[UIReviewDataBundleDetailReport]
+    required_next_actions: list[str]
+    candidate_only: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    local_json_only: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    not_authorized_for_matter_opening: Literal[True] = True
+    not_authorized_for_calibration: Literal[True] = True
+    budget_amount_output_authorized: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    conflict_conclusion_emitted: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    training_pipeline_created: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def ui_review_data_bundle_counts_and_status_match(self) -> "UIReviewDataBundle":
+        required = [report for report in self.detail_reports if report.required]
+        present = [report for report in self.detail_reports if report.present]
+        missing_required = [report for report in required if not report.present]
+        external_write_reports = [
+            report for report in self.detail_reports if report.external_writes_performed
+        ]
+        if self.detail_report_count != len(self.detail_reports):
+            raise ValueError("UI review data bundle detail count mismatch")
+        if self.required_detail_report_count != len(required):
+            raise ValueError("UI review data bundle required count mismatch")
+        if self.present_detail_report_count != len(present):
+            raise ValueError("UI review data bundle present count mismatch")
+        if self.missing_required_detail_report_count != len(missing_required):
+            raise ValueError("UI review data bundle missing required count mismatch")
+        if self.external_write_report_count != len(external_write_reports):
+            raise ValueError("UI review data bundle external-write count mismatch")
+        if self.status == "ready_for_review" and (missing_required or external_write_reports):
+            raise ValueError("ready UI review data bundle cannot have missing or write reports")
+        if self.status == "blocked_missing_required_reports" and not missing_required:
+            raise ValueError("blocked UI review data bundle requires missing reports")
+        if self.status == "failed_side_effect_boundary" and not external_write_reports:
+            raise ValueError("failed UI review data bundle requires external-write reports")
+        if not self.required_next_actions:
+            raise ValueError("UI review data bundle requires next actions")
+        return self
+
+
 class CarrierRejectionOrchestratorConnectorChannel(StrictModel):
     channel_id: Literal[
         "carrier_portal_notice",

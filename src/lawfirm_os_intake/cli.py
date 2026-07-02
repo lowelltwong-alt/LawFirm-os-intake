@@ -115,6 +115,7 @@ from .reviewed_learning_gate import run_reviewed_learning_gate
 from .synthetic_fixture_depth_audit import run_synthetic_fixture_depth_audit
 from .synthetic_fixture_expansion import run_synthetic_fixture_expansion_audit
 from .synthetic_qa_bundle import run_synthetic_qa_bundle
+from .ui_review_data_bundle import build_ui_review_data_bundle
 from .ui_review_manifest import build_ui_review_manifest
 from .util import load_json, write_json
 from .workflow import run_budget, run_preflight
@@ -210,6 +211,17 @@ def _parser() -> argparse.ArgumentParser:
     ui_review_manifest.add_argument(
         "--generated-at",
         help="Optional fixed timestamp for deterministic tests and replayed manifests.",
+    )
+
+    ui_review_data_bundle = sub.add_parser(
+        "build-ui-review-data-bundle",
+        help="Build a read-only local JSON bundle for the review UI detail reports.",
+    )
+    ui_review_data_bundle.add_argument("--run-root", required=True)
+    ui_review_data_bundle.add_argument("--out", required=True)
+    ui_review_data_bundle.add_argument(
+        "--generated-at",
+        help="Optional fixed timestamp for deterministic tests and replayed bundles.",
     )
 
     synthetic_qa_bundle = sub.add_parser(
@@ -1485,6 +1497,29 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 0 if manifest["overallStatus"] != "failed" else 1
+
+        if args.command == "build-ui-review-data-bundle":
+            bundle = build_ui_review_data_bundle(
+                run_root=args.run_root,
+                out_path=args.out,
+                generated_at=args.generated_at,
+            )
+            _print(
+                {
+                    "status": bundle.status,
+                    "ui_review_data_bundle_id": bundle.ui_review_data_bundle_id,
+                    "out": args.out,
+                    "detail_report_count": bundle.detail_report_count,
+                    "missing_required_detail_report_count": (
+                        bundle.missing_required_detail_report_count
+                    ),
+                    "external_write_report_count": bundle.external_write_report_count,
+                    "external_writes_performed": False,
+                    "lake_write_performed": False,
+                    "sqlite_write_performed": False,
+                }
+            )
+            return 0 if bundle.status == "ready_for_review" else 2
 
         if args.command == "build-synthetic-qa-bundle":
             report, run_dir, ui_manifest = run_synthetic_qa_bundle(

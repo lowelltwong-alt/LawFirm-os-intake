@@ -13,6 +13,67 @@ export type QualityGate = {
   notes: string[];
 };
 
+export type UIReviewDataBundleStatus =
+  | "ready_for_review"
+  | "blocked_missing_required_reports"
+  | "failed_side_effect_boundary";
+
+export type UIReviewDataBundleReportKind =
+  | "ui_review_manifest"
+  | "labor_employment_qa_matrix"
+  | "labor_employment_blocked_driver_impact_review";
+
+export type UIReviewDataBundleDetailReport = {
+  detail_report_id: string;
+  label: string;
+  report_kind: UIReviewDataBundleReportKind;
+  file_name: string;
+  required: boolean;
+  present: boolean;
+  status: string;
+  renderer: string;
+  artifact_ref?: string;
+  source_sha256?: string;
+  candidate_only: boolean;
+  synthetic_only: boolean;
+  external_writes_performed: boolean;
+  notes: string[];
+};
+
+export type UIReviewDataBundle = {
+  schema_version: string;
+  ui_review_data_bundle_id: string;
+  status: UIReviewDataBundleStatus;
+  run_root_ref: string;
+  detail_report_count: number;
+  required_detail_report_count: number;
+  present_detail_report_count: number;
+  missing_required_detail_report_count: number;
+  external_write_report_count: number;
+  detail_reports: UIReviewDataBundleDetailReport[];
+  required_next_actions: string[];
+  candidate_only: boolean;
+  synthetic_only: boolean;
+  non_authoritative: boolean;
+  local_json_only: boolean;
+  not_authorized_for_external_write: boolean;
+  not_authorized_for_lake_write: boolean;
+  not_authorized_for_sqlite_write: boolean;
+  not_authorized_for_budget_submission: boolean;
+  not_authorized_for_matter_opening: boolean;
+  not_authorized_for_calibration: boolean;
+  budget_amount_output_authorized: boolean;
+  budget_submission_authorized: boolean;
+  conflict_conclusion_emitted: boolean;
+  matter_opening_authorized: boolean;
+  training_pipeline_created: boolean;
+  lake_write_performed: boolean;
+  sqlite_write_performed: boolean;
+  external_writes_performed: boolean;
+  silent_learning_performed: boolean;
+  generated_at: string;
+};
+
 export type LaborEmploymentBudgetReadinessState =
   | "blocked_missing_critical_facts"
   | "range_only_pending_human_review"

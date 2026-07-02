@@ -183,6 +183,61 @@ code {
   font-weight: 700;
 }
 
+.bundle-panel {
+  margin-bottom: 14px;
+}
+
+.bundle-source {
+  display: grid;
+  grid-template-columns: 100px minmax(0, 1fr);
+  gap: 10px;
+  margin-bottom: 12px;
+  padding: 10px;
+  border: 1px solid #dde4d8;
+  border-radius: 6px;
+  background: #fafbf8;
+}
+
+.bundle-source span {
+  color: #536056;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.bundle-report-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.bundle-report {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  min-height: 112px;
+  padding: 12px;
+  border: 1px solid #dde4d8;
+  border-radius: 8px;
+  background: #fbfcfa;
+}
+
+.bundle-report strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.bundle-report p {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: #536056;
+  font-size: 0.84rem;
+}
+
+.bundle-report > code {
+  grid-column: 1 / -1;
+}
+
 .boundary-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -500,6 +555,10 @@ td:nth-child(4) {
   }
 
   .quality-list {
+    grid-template-columns: 1fr;
+  }
+
+  .bundle-report-grid {
     grid-template-columns: 1fr;
   }
 

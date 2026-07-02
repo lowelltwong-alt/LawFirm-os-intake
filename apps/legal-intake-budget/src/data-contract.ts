@@ -5,6 +5,7 @@ import type {
   QualityGate,
   ReviewArtifact,
   ReviewManifest,
+  UIReviewDataBundle,
 } from "./types";
 
 export const REQUIRED_ARTIFACT_FILES = [
@@ -50,6 +51,12 @@ export const REQUIRED_BOUNDARY_FLAGS: BoundaryFlags = {
   matterOpeningAllowed: false,
 };
 
+export const REQUIRED_DETAIL_REPORT_FILES = [
+  "ui_review_manifest.json",
+  "labor_employment_qa_matrix_report.json",
+  "labor_employment_blocked_driver_impact_review_report.json",
+] as const;
+
 export function missingRequiredArtifacts(artifacts: ReviewArtifact[]): string[] {
   const available = new Set(artifacts.map((artifact) => artifact.fileName));
   return REQUIRED_ARTIFACT_FILES.filter((fileName) => !available.has(fileName));
@@ -88,6 +95,70 @@ export function assertReadOnlyManifest(manifest: ReviewManifest): string[] {
 
 export function failingQualityGates(gates: QualityGate[]): QualityGate[] {
   return gates.filter((gate) => gate.status === "failed" || gate.status === "blocked");
+}
+
+export function assertUIReviewDataBundle(bundle: UIReviewDataBundle): string[] {
+  const failures: string[] = [];
+  if (!bundle.candidate_only || !bundle.synthetic_only || !bundle.non_authoritative) {
+    failures.push("ui_review_bundle_authority_boundary_failed");
+  }
+  if (!bundle.local_json_only) {
+    failures.push("ui_review_bundle_not_local_json_only");
+  }
+  if (
+    bundle.budget_amount_output_authorized ||
+    bundle.budget_submission_authorized ||
+    bundle.conflict_conclusion_emitted ||
+    bundle.matter_opening_authorized ||
+    bundle.training_pipeline_created ||
+    bundle.lake_write_performed ||
+    bundle.sqlite_write_performed ||
+    bundle.external_writes_performed ||
+    bundle.silent_learning_performed
+  ) {
+    failures.push("ui_review_bundle_side_effect_boundary_failed");
+  }
+  if (bundle.detail_report_count !== bundle.detail_reports.length) {
+    failures.push("ui_review_bundle_detail_count_mismatch");
+  }
+  const required = bundle.detail_reports.filter((report) => report.required);
+  const present = bundle.detail_reports.filter((report) => report.present);
+  const missingRequired = required.filter((report) => !report.present);
+  const externalWriteReports = bundle.detail_reports.filter(
+    (report) => report.external_writes_performed,
+  );
+  if (bundle.required_detail_report_count !== required.length) {
+    failures.push("ui_review_bundle_required_count_mismatch");
+  }
+  if (bundle.present_detail_report_count !== present.length) {
+    failures.push("ui_review_bundle_present_count_mismatch");
+  }
+  if (bundle.missing_required_detail_report_count !== missingRequired.length) {
+    failures.push("ui_review_bundle_missing_required_count_mismatch");
+  }
+  if (bundle.external_write_report_count !== externalWriteReports.length) {
+    failures.push("ui_review_bundle_external_write_count_mismatch");
+  }
+  for (const requiredFile of REQUIRED_DETAIL_REPORT_FILES) {
+    if (!bundle.detail_reports.some((report) => report.file_name === requiredFile)) {
+      failures.push(`ui_review_bundle_missing_detail:${requiredFile}`);
+    }
+  }
+  for (const report of bundle.detail_reports) {
+    if (report.required && !report.present) {
+      failures.push(`ui_review_bundle_required_detail_missing:${report.file_name}`);
+    }
+    if (!report.candidate_only || !report.synthetic_only || report.external_writes_performed) {
+      failures.push(`ui_review_bundle_detail_boundary_failed:${report.file_name}`);
+    }
+    if (report.present && !report.source_sha256?.startsWith("sha256:")) {
+      failures.push(`ui_review_bundle_detail_missing_hash:${report.file_name}`);
+    }
+  }
+  if (bundle.status !== "ready_for_review") {
+    failures.push(`ui_review_bundle_not_ready:${bundle.status}`);
+  }
+  return failures;
 }
 
 export function assertLaborEmploymentQAMatrixReport(
