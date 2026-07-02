@@ -92,6 +92,14 @@ reviewed gold, red-team notes, and blocker status. It is not a workflow owner,
 connector, mutation surface, budget submission tool, Exception Lake writer, or
 canonical contract authority.
 
+Use `python -m lawfirm_os_intake build-ui-review-manifest --run-root PATH --out
+PATH/ui_review_manifest.json` to assemble the frontend manifest from local run
+and QA artifacts. Missing fixture-depth, calibration-readiness, smoke, pytest, or
+budget-coherence evidence remains visible as blocked or pending review; the
+command writes only the manifest JSON. The north-star smoke also writes
+`.lawfirm-os-intake/smoke/ui_review_manifest.json` after the starter,
+blocked-budget, and counterfactual audits complete.
+
 The demo emits:
 
 ```text

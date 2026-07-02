@@ -84,6 +84,7 @@ from .remaining_roadmap import run_remaining_roadmap_plan
 from .reviewed_learning_gate import run_reviewed_learning_gate
 from .synthetic_fixture_depth_audit import run_synthetic_fixture_depth_audit
 from .synthetic_fixture_expansion import run_synthetic_fixture_expansion_audit
+from .ui_review_manifest import build_ui_review_manifest
 from .util import load_json, write_json
 from .workflow import run_budget, run_preflight
 
@@ -161,6 +162,17 @@ def _parser() -> argparse.ArgumentParser:
     validate_budget_artifact.add_argument("--budget-proposal", required=True)
     validate_budget_artifact.add_argument("--carrier-projection")
     validate_budget_artifact.add_argument("--report-out")
+
+    ui_review_manifest = sub.add_parser(
+        "build-ui-review-manifest",
+        help="Build a read-only frontend manifest from local synthetic run and QA artifacts.",
+    )
+    ui_review_manifest.add_argument("--run-root", required=True)
+    ui_review_manifest.add_argument("--out", required=True)
+    ui_review_manifest.add_argument(
+        "--generated-at",
+        help="Optional fixed timestamp for deterministic tests and replayed manifests.",
+    )
 
     budget_review = sub.add_parser(
         "record-budget-review",
@@ -1130,6 +1142,24 @@ def main(argv: list[str] | None = None) -> int:
             )
             _print(report)
             return 0 if report["status"] == "passed" else 1
+
+        if args.command == "build-ui-review-manifest":
+            manifest = build_ui_review_manifest(
+                run_root=args.run_root,
+                out_path=args.out,
+                generated_at=args.generated_at,
+            )
+            _print(
+                {
+                    "status": manifest["overallStatus"],
+                    "manifest_id": manifest["manifestId"],
+                    "out": args.out,
+                    "artifact_count": len(manifest["artifacts"]),
+                    "quality_gate_count": len(manifest["qualityGates"]),
+                    "external_writes_performed": False,
+                }
+            )
+            return 0 if manifest["overallStatus"] != "failed" else 1
 
         if args.command == "record-budget-review":
             report, run_dir = run_budget_review_record(

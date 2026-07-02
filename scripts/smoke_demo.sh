@@ -250,3 +250,20 @@ grep -q '"status": "passed"' ".lawfirm-os-intake/smoke/context-counterfactual/co
 grep -q "observed_evidence_refs_stable" ".lawfirm-os-intake/smoke/context-counterfactual/context_counterfactual_audit_report.json"
 grep -q "context_only_candidate_not_observed_fact" ".lawfirm-os-intake/smoke/context-counterfactual/context_counterfactual_audit_report.json"
 grep -q "practice_context_changes_ranking" ".lawfirm-os-intake/smoke/context-counterfactual/context_counterfactual_audit_report.json"
+"$PYTHON_BIN" -B - <<'PY'
+from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path.cwd() / "src"))
+from lawfirm_os_intake.ui_review_manifest import build_ui_review_manifest
+
+manifest = build_ui_review_manifest(
+    run_root=".lawfirm-os-intake/smoke",
+    out_path=".lawfirm-os-intake/smoke/ui_review_manifest.json",
+)
+raise SystemExit(0 if manifest["overallStatus"] in {"blocked", "pending", "passed"} else 1)
+PY
+test -s ".lawfirm-os-intake/smoke/ui_review_manifest.json"
+grep -q '"budget_coherence"' ".lawfirm-os-intake/smoke/ui_review_manifest.json"
+grep -q '"budget_calibration_readiness"' ".lawfirm-os-intake/smoke/ui_review_manifest.json"
+grep -q '"networkCallsAllowed": false' ".lawfirm-os-intake/smoke/ui_review_manifest.json"

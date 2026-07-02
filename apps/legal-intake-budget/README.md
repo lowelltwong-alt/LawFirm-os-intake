@@ -21,3 +21,13 @@ Claude or another design agent can replace these files while preserving the cont
 - `apps/legal-intake-budget/src/data-contract.ts`
 
 The expected local artifact list lives in `src/data-contract.ts`; a demo manifest lives in `src/fixtures/demo-run-manifest.json`.
+
+Generate a run-specific manifest with:
+
+```bash
+python -m lawfirm_os_intake build-ui-review-manifest \
+  --run-root .lawfirm-os-intake/smoke \
+  --out .lawfirm-os-intake/smoke/ui_review_manifest.json
+```
+
+That command reads local artifacts only and leaves missing QA evidence blocked or pending.

@@ -35,6 +35,21 @@ unknowns for human review.
 bash scripts/smoke_demo.sh
 ```
 
+### Build read-only UI review manifest
+
+```bash
+python -m lawfirm_os_intake build-ui-review-manifest \
+  --run-root .lawfirm-os-intake/smoke \
+  --out .lawfirm-os-intake/smoke/ui_review_manifest.json
+```
+
+This writes a local manifest for `apps/legal-intake-budget/` from existing run
+and QA artifacts, including budget coherence, fixture-depth, calibration,
+pytest, and smoke evidence. Missing calibration or other required QA evidence
+remains visible as blocked or pending review. The command does not run a server,
+call connectors, mutate fixtures, write Lake/SQLite records, submit budgets, or
+open matters.
+
 ### Validation runtime policy
 
 ```bash
