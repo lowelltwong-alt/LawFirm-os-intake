@@ -216,6 +216,17 @@
       "notes": ["Executable preflight evidence is bound to expected L&E budget-fact gaps without resolving facts or producing an amount budget."]
     },
     {
+      "artifactId": "labor-employment-executable-driver-binding",
+      "label": "L&E Executable Driver Binding",
+      "fileName": "labor_employment_executable_driver_binding_report.json",
+      "status": "pending_review",
+      "owner": "qa-reference",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": ["Executable fact-gap evidence is mapped to L&E budget-driver focus dimensions without resolving driver values or producing an amount budget."]
+    },
+    {
       "artifactId": "labor-employment-budget-fact-gold",
       "label": "L&E Budget Fact Gold",
       "fileName": "labor_employment_budget_fact_gold_report.json",
@@ -354,6 +365,14 @@
       "evidenceFile": "labor_employment_executable_fact_binding_report.json",
       "owner": "qa-reference",
       "notes": ["Executable L&E preflight packets must bind expected budget-fact gaps to source evidence, source inventory, or dry-run exception labels."]
+    },
+    {
+      "gateId": "labor_employment_executable_driver_binding",
+      "label": "L&E Executable Driver Binding",
+      "status": "pending_review",
+      "evidenceFile": "labor_employment_executable_driver_binding_report.json",
+      "owner": "qa-reference",
+      "notes": ["Executable L&E fact-gap evidence must map to budget-driver focus dimensions before budget-driver QA is trusted."]
     },
     {
       "gateId": "labor_employment_budget_fact_gold",

@@ -74,6 +74,9 @@ from .labor_employment_executable_coverage import (
 from .labor_employment_executable_fact_binding import (
     run_labor_employment_executable_fact_binding_audit,
 )
+from .labor_employment_executable_driver_binding import (
+    run_labor_employment_executable_driver_binding_audit,
+)
 from .labor_employment_executable_fixtures import (
     run_labor_employment_executable_fixture_audit,
 )
@@ -369,6 +372,34 @@ def _parser() -> argparse.ArgumentParser:
         help="Repository root for relative synthetic L&E binding refs.",
     )
     le_executable_fact_binding.add_argument("--out-dir", required=True)
+
+    le_executable_driver_binding = sub.add_parser(
+        "audit-labor-employment-executable-driver-binding",
+        help=(
+            "Bind executable synthetic L&E fact-gap evidence to budget-driver "
+            "focus dimensions without producing an amount budget."
+        ),
+    )
+    le_executable_driver_binding.add_argument(
+        "--executable-fixture-report",
+        required=True,
+        help="Path to labor_employment_executable_fixtures_report.json.",
+    )
+    le_executable_driver_binding.add_argument(
+        "--executable-fact-binding-report",
+        required=True,
+        help="Path to labor_employment_executable_fact_binding_report.json.",
+    )
+    le_executable_driver_binding.add_argument(
+        "--pack",
+        help="Optional override path to labor-employment-budget-fixture-family-pack.json.",
+    )
+    le_executable_driver_binding.add_argument(
+        "--repo-root",
+        default=".",
+        help="Repository root for relative synthetic L&E driver-binding refs.",
+    )
+    le_executable_driver_binding.add_argument("--out-dir", required=True)
 
     budget_review = sub.add_parser(
         "record-budget-review",
@@ -1612,6 +1643,45 @@ def main(argv: list[str] | None = None) -> int:
                 0
                 if report.status
                 == "labor_employment_executable_budget_fact_bindings_ready_for_review"
+                else 2
+            )
+
+        if args.command == "audit-labor-employment-executable-driver-binding":
+            report, run_dir = run_labor_employment_executable_driver_binding_audit(
+                executable_fixture_report_path=args.executable_fixture_report,
+                executable_fact_binding_report_path=args.executable_fact_binding_report,
+                pack_path=args.pack,
+                repo_root=args.repo_root,
+                out_dir=args.out_dir,
+            )
+            failed_checks = [check.check_id for check in report.checks if check.status == "failed"]
+            _print(
+                {
+                    "status": report.status,
+                    "executable_driver_binding_report_id": (
+                        report.executable_driver_binding_report_id
+                    ),
+                    "case_count": report.case_count,
+                    "failed_case_count": report.failed_case_count,
+                    "driver_binding_count": report.driver_binding_count,
+                    "source_bound_driver_count": report.source_bound_driver_count,
+                    "unbound_driver_count": report.unbound_driver_count,
+                    "critical_driver_block_count": report.critical_driver_block_count,
+                    "covered_driver_dimensions": report.covered_driver_dimensions,
+                    "missing_driver_dimensions": report.missing_driver_dimensions,
+                    "failed_checks": failed_checks,
+                    "budget_amount_output_authorized": (report.budget_amount_output_authorized),
+                    "budget_submission_authorized": report.budget_submission_authorized,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return (
+                0
+                if report.status == "labor_employment_executable_driver_bindings_ready_for_review"
                 else 2
             )
 

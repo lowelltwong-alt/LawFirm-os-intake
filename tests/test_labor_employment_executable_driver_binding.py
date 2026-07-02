@@ -1,0 +1,207 @@
+from lawfirm_os_intake.cli import main
+from lawfirm_os_intake.labor_employment_executable_driver_binding import (
+    LABOR_EMPLOYMENT_EXECUTABLE_DRIVER_BINDING_REPORT_FILENAME,
+    run_labor_employment_executable_driver_binding_audit,
+)
+from lawfirm_os_intake.labor_employment_executable_fact_binding import (
+    LABOR_EMPLOYMENT_EXECUTABLE_FACT_BINDING_REPORT_FILENAME,
+    run_labor_employment_executable_fact_binding_audit,
+)
+from lawfirm_os_intake.labor_employment_executable_fixtures import (
+    LABOR_EMPLOYMENT_EXECUTABLE_FIXTURE_AUDIT_REPORT_FILENAME,
+    run_labor_employment_executable_fixture_audit,
+)
+from lawfirm_os_intake.models import LaborEmploymentExecutableDriverBindingReport
+from lawfirm_os_intake.util import load_json, write_json
+
+
+EXECUTABLE_MANIFEST_PATH = (
+    "examples/synthetic/labor-employment/labor-employment-executable-fixtures-manifest.json"
+)
+BINDING_MANIFEST_PATH = (
+    "examples/synthetic/labor-employment/labor-employment-executable-budget-fact-bindings.json"
+)
+
+
+def _run_fact_binding_chain(repo_root, tmp_path):
+    _, executable_run_dir = run_labor_employment_executable_fixture_audit(
+        manifest_path=repo_root / EXECUTABLE_MANIFEST_PATH,
+        repo_root=repo_root,
+        out_dir=tmp_path / "le-executable-fixtures",
+    )
+    _, fact_binding_run_dir = run_labor_employment_executable_fact_binding_audit(
+        binding_manifest_path=repo_root / BINDING_MANIFEST_PATH,
+        executable_fixture_report_path=(
+            executable_run_dir / LABOR_EMPLOYMENT_EXECUTABLE_FIXTURE_AUDIT_REPORT_FILENAME
+        ),
+        repo_root=repo_root,
+        out_dir=tmp_path / "le-executable-fact-binding",
+    )
+    return executable_run_dir, fact_binding_run_dir
+
+
+def test_labor_employment_executable_driver_binding_maps_fact_gaps_to_budget_drivers(
+    repo_root,
+    tmp_path,
+):
+    executable_run_dir, fact_binding_run_dir = _run_fact_binding_chain(repo_root, tmp_path)
+
+    report, run_dir = run_labor_employment_executable_driver_binding_audit(
+        executable_fixture_report_path=(
+            executable_run_dir / LABOR_EMPLOYMENT_EXECUTABLE_FIXTURE_AUDIT_REPORT_FILENAME
+        ),
+        executable_fact_binding_report_path=(
+            fact_binding_run_dir / LABOR_EMPLOYMENT_EXECUTABLE_FACT_BINDING_REPORT_FILENAME
+        ),
+        repo_root=repo_root,
+        out_dir=tmp_path / "le-executable-driver-binding",
+    )
+    persisted = LaborEmploymentExecutableDriverBindingReport.model_validate(
+        load_json(run_dir / LABOR_EMPLOYMENT_EXECUTABLE_DRIVER_BINDING_REPORT_FILENAME)
+    )
+
+    assert report.status == "labor_employment_executable_driver_bindings_ready_for_review"
+    assert persisted.case_count == 8
+    assert persisted.failed_case_count == 0
+    assert persisted.driver_binding_count == 30
+    assert persisted.source_bound_driver_count == 30
+    assert persisted.unbound_driver_count == 0
+    assert persisted.critical_driver_block_count == 12
+    assert persisted.missing_driver_dimensions == []
+    assert set(persisted.covered_driver_dimensions) == set(persisted.required_driver_dimensions)
+    assert all(check.status == "passed" for check in persisted.checks)
+    assert all(case.status == "passed" for case in persisted.cases)
+    assert persisted.budget_amount_output_authorized is False
+    assert persisted.budget_submission_authorized is False
+    assert persisted.lake_write_performed is False
+    assert persisted.sqlite_write_performed is False
+    assert persisted.external_writes_performed is False
+    assert persisted.silent_learning_performed is False
+
+    cases = {case.executable_fixture_id: case for case in persisted.cases}
+    restrictive = {
+        binding.driver_dimension: binding
+        for binding in cases[
+            "le-restrictive-covenant-missing-attachment.executable.v0_1"
+        ].driver_bindings
+    }
+    assert "esi_custodians_and_sources" in restrictive["esi_discovery"].matched_fact_ids
+    assert restrictive["expert_vendor_needs"].exception_label_count == 1
+    admin = {
+        binding.driver_dimension: binding
+        for binding in cases["le-admin-exhaustion-clean.executable.v0_1"].driver_bindings
+    }
+    assert admin["administrative_exhaustion"].matched_fact_ids == [
+        "administrative_exhaustion_and_agency_record"
+    ]
+    assert admin["employment_timeline"].matched_fact_ids == [
+        "administrative_exhaustion_and_agency_record"
+    ]
+    assert cases["le-admin-exhaustion-clean.executable.v0_1"].critical_driver_block_count == 0
+
+    notes = (run_dir / "labor_employment_executable_driver_binding_report.md").read_text(
+        encoding="utf-8"
+    )
+    assert "does not resolve driver values" in notes
+    assert "write Lake/SQLite records" in notes
+    assert not list(run_dir.rglob("*.sqlite"))
+    assert not list(run_dir.rglob("*.db"))
+
+
+def test_labor_employment_executable_driver_binding_blocks_missing_focus_dimension(
+    repo_root,
+    tmp_path,
+    monkeypatch,
+):
+    executable_run_dir, fact_binding_run_dir = _run_fact_binding_chain(repo_root, tmp_path)
+    import lawfirm_os_intake.labor_employment_executable_driver_binding as driver_binding
+
+    monkeypatch.setattr(
+        driver_binding,
+        "REQUIRED_DRIVER_DIMENSIONS",
+        [*driver_binding.REQUIRED_DRIVER_DIMENSIONS, "claim_family"],
+    )
+
+    report, _ = run_labor_employment_executable_driver_binding_audit(
+        executable_fixture_report_path=(
+            executable_run_dir / LABOR_EMPLOYMENT_EXECUTABLE_FIXTURE_AUDIT_REPORT_FILENAME
+        ),
+        executable_fact_binding_report_path=(
+            fact_binding_run_dir / LABOR_EMPLOYMENT_EXECUTABLE_FACT_BINDING_REPORT_FILENAME
+        ),
+        repo_root=repo_root,
+        out_dir=tmp_path / "blocked-le-executable-driver-binding",
+    )
+
+    assert report.status == "blocked_by_labor_employment_executable_driver_bindings"
+    assert report.missing_driver_dimensions == ["claim_family"]
+    assert any(
+        check.check_id == "required_driver_focus_dimensions_covered" and check.status == "failed"
+        for check in report.checks
+    )
+
+
+def test_labor_employment_executable_driver_binding_cli_writes_candidate_report(
+    repo_root,
+    tmp_path,
+    capsys,
+):
+    executable_run_dir, fact_binding_run_dir = _run_fact_binding_chain(repo_root, tmp_path)
+
+    exit_code = main(
+        [
+            "audit-labor-employment-executable-driver-binding",
+            "--executable-fixture-report",
+            str(executable_run_dir / LABOR_EMPLOYMENT_EXECUTABLE_FIXTURE_AUDIT_REPORT_FILENAME),
+            "--executable-fact-binding-report",
+            str(fact_binding_run_dir / LABOR_EMPLOYMENT_EXECUTABLE_FACT_BINDING_REPORT_FILENAME),
+            "--repo-root",
+            str(repo_root),
+            "--out-dir",
+            str(tmp_path / "le-executable-driver-binding-cli"),
+        ]
+    )
+    captured = capsys.readouterr()
+    report = load_json(
+        tmp_path
+        / "le-executable-driver-binding-cli"
+        / LABOR_EMPLOYMENT_EXECUTABLE_DRIVER_BINDING_REPORT_FILENAME
+    )
+
+    assert exit_code == 0
+    assert report["status"] == "labor_employment_executable_driver_bindings_ready_for_review"
+    assert report["case_count"] == 8
+    assert report["missing_driver_dimensions"] == []
+    assert '"budget_amount_output_authorized": false' in captured.out
+    assert '"silent_learning_performed": false' in captured.out
+
+
+def test_labor_employment_executable_driver_binding_rejects_pack_outside_repo(
+    repo_root,
+    tmp_path,
+):
+    executable_run_dir, fact_binding_run_dir = _run_fact_binding_chain(repo_root, tmp_path)
+    outside_pack = write_json(
+        tmp_path / "outside-pack.json",
+        load_json(
+            repo_root
+            / "examples/synthetic/labor-employment/labor-employment-budget-fixture-family-pack.json"
+        ),
+    )
+
+    try:
+        run_labor_employment_executable_driver_binding_audit(
+            executable_fixture_report_path=(
+                executable_run_dir / LABOR_EMPLOYMENT_EXECUTABLE_FIXTURE_AUDIT_REPORT_FILENAME
+            ),
+            executable_fact_binding_report_path=(
+                fact_binding_run_dir / LABOR_EMPLOYMENT_EXECUTABLE_FACT_BINDING_REPORT_FILENAME
+            ),
+            repo_root=repo_root,
+            pack_path=outside_pack,
+            out_dir=tmp_path / "pack-escape",
+        )
+    except ValueError as exc:
+        assert "escapes repo root" in str(exc)
+    else:
+        raise AssertionError("expected pack path escape to fail")

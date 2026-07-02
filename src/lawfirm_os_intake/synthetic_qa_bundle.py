@@ -107,6 +107,16 @@ QA_BUNDLE_ARTIFACTS = [
         ),
     ),
     QABundleArtifactSpec(
+        artifact_id="labor_employment_executable_driver_binding",
+        label="Labor/Employment Executable Driver Binding",
+        file_name="labor_employment_executable_driver_binding_report.json",
+        required=True,
+        missing_note=(
+            "Run audit-labor-employment-executable-driver-binding so executable "
+            "fact-gap evidence is mapped to L&E budget-driver focus dimensions."
+        ),
+    ),
+    QABundleArtifactSpec(
         artifact_id="labor_employment_budget_fact_gold",
         label="Labor/Employment Budget Fact Gold",
         file_name="labor_employment_budget_fact_gold_report.json",
@@ -190,6 +200,11 @@ def run_synthetic_qa_bundle(
             root=root,
             explicit_path=None,
             file_name="labor_employment_executable_fact_binding_report.json",
+        ),
+        "labor_employment_executable_driver_binding": _resolve_artifact_source(
+            root=root,
+            explicit_path=None,
+            file_name="labor_employment_executable_driver_binding_report.json",
         ),
         "labor_employment_budget_fact_gold": _resolve_artifact_source(
             root=root,

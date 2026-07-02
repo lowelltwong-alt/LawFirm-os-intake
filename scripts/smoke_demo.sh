@@ -439,6 +439,42 @@ from pathlib import Path
 import sys
 
 sys.path.insert(0, str(Path.cwd() / "src"))
+from lawfirm_os_intake.labor_employment_executable_driver_binding import (
+    run_labor_employment_executable_driver_binding_audit,
+)
+
+report, _ = run_labor_employment_executable_driver_binding_audit(
+    executable_fixture_report_path=(
+        ".lawfirm-os-intake/smoke/quality/le-executable-fixtures/"
+        "labor_employment_executable_fixtures_report.json"
+    ),
+    executable_fact_binding_report_path=(
+        ".lawfirm-os-intake/smoke/quality/le-executable-fact-binding/"
+        "labor_employment_executable_fact_binding_report.json"
+    ),
+    repo_root=".",
+    out_dir=".lawfirm-os-intake/smoke/quality/le-executable-driver-binding",
+)
+raise SystemExit(
+    0
+    if report.status == "labor_employment_executable_driver_bindings_ready_for_review"
+    else 1
+)
+PY
+test -s ".lawfirm-os-intake/smoke/quality/le-executable-driver-binding/labor_employment_executable_driver_binding_report.json"
+grep -q '"status": "labor_employment_executable_driver_bindings_ready_for_review"' \
+  ".lawfirm-os-intake/smoke/quality/le-executable-driver-binding/labor_employment_executable_driver_binding_report.json"
+grep -q '"missing_driver_dimensions": \[\]' \
+  ".lawfirm-os-intake/smoke/quality/le-executable-driver-binding/labor_employment_executable_driver_binding_report.json"
+grep -q '"budget_amount_output_authorized": false' \
+  ".lawfirm-os-intake/smoke/quality/le-executable-driver-binding/labor_employment_executable_driver_binding_report.json"
+grep -q '"sqlite_write_performed": false' \
+  ".lawfirm-os-intake/smoke/quality/le-executable-driver-binding/labor_employment_executable_driver_binding_report.json"
+"$PYTHON_BIN" -B - <<'PY'
+from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path.cwd() / "src"))
 from lawfirm_os_intake.labor_employment_budget_fact_gold import (
     run_labor_employment_budget_fact_gold_validation,
 )
@@ -489,6 +525,7 @@ grep -q '"labor_employment_fixture_family_pack"' ".lawfirm-os-intake/smoke/quali
 grep -q '"labor_employment_executable_fixtures"' ".lawfirm-os-intake/smoke/quality/synthetic_qa_bundle_report.json"
 grep -q '"labor_employment_executable_coverage"' ".lawfirm-os-intake/smoke/quality/synthetic_qa_bundle_report.json"
 grep -q '"labor_employment_executable_fact_binding"' ".lawfirm-os-intake/smoke/quality/synthetic_qa_bundle_report.json"
+grep -q '"labor_employment_executable_driver_binding"' ".lawfirm-os-intake/smoke/quality/synthetic_qa_bundle_report.json"
 grep -q '"labor_employment_budget_fact_gold"' ".lawfirm-os-intake/smoke/quality/synthetic_qa_bundle_report.json"
 test -s ".lawfirm-os-intake/smoke/ui_review_manifest.json"
 grep -q '"synthetic_qa_bundle"' ".lawfirm-os-intake/smoke/ui_review_manifest.json"
@@ -499,6 +536,7 @@ grep -q '"labor_employment_fixture_family_pack"' ".lawfirm-os-intake/smoke/ui_re
 grep -q '"labor_employment_executable_fixtures"' ".lawfirm-os-intake/smoke/ui_review_manifest.json"
 grep -q '"labor_employment_executable_coverage"' ".lawfirm-os-intake/smoke/ui_review_manifest.json"
 grep -q '"labor_employment_executable_fact_binding"' ".lawfirm-os-intake/smoke/ui_review_manifest.json"
+grep -q '"labor_employment_executable_driver_binding"' ".lawfirm-os-intake/smoke/ui_review_manifest.json"
 grep -q '"labor_employment_budget_fact_gold"' ".lawfirm-os-intake/smoke/ui_review_manifest.json"
 grep -q '"status": "pending_review"' ".lawfirm-os-intake/smoke/ui_review_manifest.json"
 grep -q '"networkCallsAllowed": false' ".lawfirm-os-intake/smoke/ui_review_manifest.json"

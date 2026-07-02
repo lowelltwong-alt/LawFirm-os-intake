@@ -2251,6 +2251,199 @@ class LaborEmploymentExecutableBudgetFactBindingReport(StrictModel):
         return self
 
 
+LaborEmploymentBudgetDriverDimension = Literal[
+    "party_topology",
+    "representation_posture",
+    "claim_family",
+    "administrative_exhaustion",
+    "class_collective_scope",
+    "forum_arbitration",
+    "employment_timeline",
+    "damages_exposure",
+    "wage_hour_volume",
+    "esi_discovery",
+    "deposition_plan",
+    "expert_vendor_needs",
+    "policy_contract_documents",
+    "carrier_guideline_rate_context",
+]
+
+
+class LaborEmploymentExecutableDriverBindingItem(StrictModel):
+    driver_dimension: LaborEmploymentBudgetDriverDimension
+    binding_state: Literal["source_bound_driver_candidate", "unbound_driver_candidate"]
+    fact_ids: list[str]
+    evidence_ref_count: int = Field(ge=0)
+    exception_label_count: int = Field(ge=0)
+    source_inventory_ref_count: int = Field(ge=0)
+    matched_fact_ids: list[str]
+    missing_fact_ids: list[str]
+    notes: list[str] = Field(default_factory=list)
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+
+    @model_validator(mode="after")
+    def le_executable_driver_binding_item_counts_match(
+        self,
+    ) -> "LaborEmploymentExecutableDriverBindingItem":
+        if self.binding_state == "source_bound_driver_candidate" and not self.matched_fact_ids:
+            raise ValueError("source-bound driver candidate requires matched facts")
+        if self.binding_state == "unbound_driver_candidate" and not self.missing_fact_ids:
+            raise ValueError("unbound driver candidate requires missing facts")
+        if sorted(set(self.matched_fact_ids + self.missing_fact_ids)) != sorted(set(self.fact_ids)):
+            raise ValueError("driver binding fact coverage mismatch")
+        return self
+
+
+class LaborEmploymentExecutableDriverBindingCase(StrictModel):
+    executable_fixture_id: str
+    linked_pack_case_ids: list[str]
+    family: LaborEmploymentSyntheticFixtureFamily
+    variant: LaborEmploymentSyntheticFixtureVariant
+    status: Literal["passed", "failed"]
+    expected_budget_readiness_state: Literal[
+        "blocked_missing_critical_facts",
+        "range_only_pending_human_review",
+        "candidate_ready_for_budget_review",
+    ]
+    expected_budget_treatment: Literal[
+        "block_amount_budget",
+        "hours_only_or_broad_range",
+        "candidate_range_budget_after_review",
+    ]
+    driver_binding_count: int = Field(ge=0)
+    source_bound_driver_count: int = Field(ge=0)
+    unbound_driver_count: int = Field(ge=0)
+    critical_driver_block_count: int = Field(ge=0)
+    budget_driver_dimensions: list[LaborEmploymentBudgetDriverDimension]
+    driver_bindings: list[LaborEmploymentExecutableDriverBindingItem]
+    failed_expectation_ids: list[str] = Field(default_factory=list)
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    budget_amount_output_authorized: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    conflict_conclusion_emitted: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    training_pipeline_created: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def le_executable_driver_binding_case_counts_match(
+        self,
+    ) -> "LaborEmploymentExecutableDriverBindingCase":
+        unbound = [
+            item
+            for item in self.driver_bindings
+            if item.binding_state == "unbound_driver_candidate"
+        ]
+        if self.driver_binding_count != len(self.driver_bindings):
+            raise ValueError("executable L&E driver binding count mismatch")
+        if self.source_bound_driver_count != sum(
+            1
+            for item in self.driver_bindings
+            if item.binding_state == "source_bound_driver_candidate"
+        ):
+            raise ValueError("executable L&E source-bound driver count mismatch")
+        if self.unbound_driver_count != len(unbound):
+            raise ValueError("executable L&E unbound driver count mismatch")
+        if self.status == "passed" and (self.failed_expectation_ids or unbound):
+            raise ValueError("passed executable L&E driver binding case has failures")
+        if self.status == "failed" and not (self.failed_expectation_ids or unbound):
+            raise ValueError("failed executable L&E driver binding case requires failures")
+        return self
+
+
+class LaborEmploymentExecutableDriverBindingCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    evidence_refs: list[str] = Field(default_factory=list)
+    blocking_refs: list[str] = Field(default_factory=list)
+
+
+class LaborEmploymentExecutableDriverBindingReport(StrictModel):
+    schema_version: str = "0.1"
+    executable_driver_binding_report_id: str
+    status: Literal[
+        "labor_employment_executable_driver_bindings_ready_for_review",
+        "blocked_by_labor_employment_executable_driver_bindings",
+    ]
+    executable_fixture_report_ref: str
+    executable_fact_binding_report_ref: str
+    pack_ref: str
+    case_count: int = Field(ge=0)
+    failed_case_count: int = Field(ge=0)
+    driver_binding_count: int = Field(ge=0)
+    source_bound_driver_count: int = Field(ge=0)
+    unbound_driver_count: int = Field(ge=0)
+    critical_driver_block_count: int = Field(ge=0)
+    required_driver_dimensions: list[LaborEmploymentBudgetDriverDimension]
+    covered_driver_dimensions: list[LaborEmploymentBudgetDriverDimension]
+    missing_driver_dimensions: list[LaborEmploymentBudgetDriverDimension]
+    cases: list[LaborEmploymentExecutableDriverBindingCase]
+    checks: list[LaborEmploymentExecutableDriverBindingCheck]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    not_authorized_for_matter_opening: Literal[True] = True
+    not_authorized_for_calibration: Literal[True] = True
+    budget_amount_output_authorized: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    conflict_conclusion_emitted: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    training_pipeline_created: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def le_executable_driver_binding_report_counts_match(
+        self,
+    ) -> "LaborEmploymentExecutableDriverBindingReport":
+        failed_cases = [case for case in self.cases if case.status == "failed"]
+        failed_checks = [check for check in self.checks if check.status == "failed"]
+        if self.case_count != len(self.cases):
+            raise ValueError("executable L&E driver binding case count mismatch")
+        if self.failed_case_count != len(failed_cases):
+            raise ValueError("executable L&E driver binding failed case count mismatch")
+        if self.driver_binding_count != sum(case.driver_binding_count for case in self.cases):
+            raise ValueError("executable L&E driver binding aggregate count mismatch")
+        if self.source_bound_driver_count != sum(
+            case.source_bound_driver_count for case in self.cases
+        ):
+            raise ValueError("executable L&E source-bound driver aggregate count mismatch")
+        if self.unbound_driver_count != sum(case.unbound_driver_count for case in self.cases):
+            raise ValueError("executable L&E unbound driver aggregate count mismatch")
+        if self.critical_driver_block_count != sum(
+            case.critical_driver_block_count for case in self.cases
+        ):
+            raise ValueError("executable L&E critical driver block aggregate count mismatch")
+        if sorted(set(self.covered_driver_dimensions + self.missing_driver_dimensions)) != sorted(
+            set(self.required_driver_dimensions)
+        ):
+            raise ValueError("executable L&E driver dimension coverage mismatch")
+        if self.status == "labor_employment_executable_driver_bindings_ready_for_review" and (
+            failed_cases or failed_checks or self.missing_driver_dimensions
+        ):
+            raise ValueError("ready executable L&E driver binding cannot include gaps")
+        if self.status == "blocked_by_labor_employment_executable_driver_bindings" and not (
+            failed_cases or failed_checks or self.missing_driver_dimensions
+        ):
+            raise ValueError("blocked executable L&E driver binding requires gaps")
+        return self
+
+
 class PublicSourceMethodologySource(StrictModel):
     source_id: str
     url: str

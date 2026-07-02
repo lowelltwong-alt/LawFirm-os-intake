@@ -8,7 +8,11 @@ from lawfirm_os_intake.labor_employment_executable_fixtures import (
     run_labor_employment_executable_fixture_audit,
 )
 from lawfirm_os_intake.labor_employment_executable_fact_binding import (
+    LABOR_EMPLOYMENT_EXECUTABLE_FACT_BINDING_REPORT_FILENAME,
     run_labor_employment_executable_fact_binding_audit,
+)
+from lawfirm_os_intake.labor_employment_executable_driver_binding import (
+    run_labor_employment_executable_driver_binding_audit,
 )
 from lawfirm_os_intake.labor_employment_budget_fact_gold import (
     run_labor_employment_budget_fact_gold_validation,
@@ -133,7 +137,7 @@ def test_starter_pack_allows_synthetic_qa_bundle_to_reach_pending_review(
         repo_root=repo_root,
         out_dir=run_root / "quality" / "le-executable-coverage",
     )
-    run_labor_employment_executable_fact_binding_audit(
+    _, executable_fact_binding_run_dir = run_labor_employment_executable_fact_binding_audit(
         binding_manifest_path=(
             repo_root
             / "examples/synthetic/labor-employment/"
@@ -144,6 +148,17 @@ def test_starter_pack_allows_synthetic_qa_bundle_to_reach_pending_review(
         ),
         repo_root=repo_root,
         out_dir=run_root / "quality" / "le-executable-fact-binding",
+    )
+    run_labor_employment_executable_driver_binding_audit(
+        executable_fixture_report_path=(
+            executable_fixture_run_dir / LABOR_EMPLOYMENT_EXECUTABLE_FIXTURE_AUDIT_REPORT_FILENAME
+        ),
+        executable_fact_binding_report_path=(
+            executable_fact_binding_run_dir
+            / LABOR_EMPLOYMENT_EXECUTABLE_FACT_BINDING_REPORT_FILENAME
+        ),
+        repo_root=repo_root,
+        out_dir=run_root / "quality" / "le-executable-driver-binding",
     )
     run_labor_employment_budget_fact_gold_validation(
         gold_path=repo_root / "examples/synthetic/gold/labor-employment-budget-fact-gold.json",
@@ -173,5 +188,6 @@ def test_starter_pack_allows_synthetic_qa_bundle_to_reach_pending_review(
     assert gates["labor_employment_executable_fixtures"]["status"] == "pending_review"
     assert gates["labor_employment_executable_coverage"]["status"] == "pending_review"
     assert gates["labor_employment_executable_fact_binding"]["status"] == "pending_review"
+    assert gates["labor_employment_executable_driver_binding"]["status"] == "pending_review"
     assert gates["labor_employment_budget_fact_gold"]["status"] == "passed"
     assert ui_manifest["overallStatus"] == "blocked"

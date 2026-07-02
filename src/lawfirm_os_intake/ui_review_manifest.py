@@ -151,6 +151,13 @@ ARTIFACT_SPECS = [
         "blocked",
     ),
     ArtifactSpec(
+        "labor-employment-executable-driver-binding",
+        "L&E Executable Driver Binding",
+        "labor_employment_executable_driver_binding_report.json",
+        "qa-reference",
+        "blocked",
+    ),
+    ArtifactSpec(
         "labor-employment-budget-fact-gold",
         "L&E Budget Fact Gold",
         "labor_employment_budget_fact_gold_report.json",
@@ -257,6 +264,13 @@ QUALITY_GATE_SPECS = {
         "labor_employment_executable_fact_binding_report.json",
         "qa-reference",
         "Executable L&E preflight packets must bind expected budget-fact gaps to source evidence, source inventory, or dry-run exception labels.",
+        "blocked",
+    ),
+    "labor_employment_executable_driver_binding": (
+        "L&E Executable Driver Binding",
+        "labor_employment_executable_driver_binding_report.json",
+        "qa-reference",
+        "Executable L&E fact-gap evidence must map to budget-driver focus dimensions before budget-driver QA is trusted.",
         "blocked",
     ),
     "labor_employment_budget_fact_gold": (
