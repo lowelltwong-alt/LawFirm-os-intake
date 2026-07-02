@@ -3279,6 +3279,121 @@ class PublicDataCacheAuditReport(StrictModel):
         return self
 
 
+class MatterLinkingPreflightCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    evidence_refs: list[str] = Field(default_factory=list)
+    blocking_refs: list[str] = Field(default_factory=list)
+
+
+class MatterLinkingPreflightCluster(StrictModel):
+    cluster_id: str
+    link_state: str
+    match_strength: str
+    proposed_short_label: str | None = None
+    source_ids: list[str]
+    source_hashes: list[str]
+    supporting_signal_count: int = Field(ge=0)
+    strong_supporting_signal_count: int = Field(ge=0)
+    negative_signal_count: int = Field(ge=0)
+    strong_negative_signal_count: int = Field(ge=0)
+    supporting_signal_types: list[str]
+    negative_signal_types: list[str]
+    requires_human_confirmation: Literal[True] = True
+    matter_link_finalized: Literal[False] = False
+
+    @model_validator(mode="after")
+    def matter_linking_cluster_counts_match(self) -> "MatterLinkingPreflightCluster":
+        if self.supporting_signal_count < self.strong_supporting_signal_count:
+            raise ValueError("strong supporting signal count cannot exceed supporting signals")
+        if self.negative_signal_count < self.strong_negative_signal_count:
+            raise ValueError("strong negative signal count cannot exceed negative signals")
+        return self
+
+
+class MatterLinkingPreflightReport(StrictModel):
+    schema_version: str = "0.1"
+    matter_linking_preflight_report_id: str
+    status: Literal[
+        "matter_linking_preflight_requires_review",
+        "blocked_matter_linking_preflight",
+    ]
+    source_artifact_ref: str
+    source_artifact_id: str
+    source_artifact_type: str
+    source_artifact_status: str
+    source_artifact_hash: str
+    data_origin: str
+    source_system_name: str
+    real_upfront_export: bool
+    api_contract_verified: bool
+    official_matter_number_status: str
+    overall_link_state: str
+    requires_human_confirmation: bool
+    requires_sender_followup: bool
+    cluster_count: int = Field(ge=0)
+    high_evidence_candidate_count: int = Field(ge=0)
+    weak_signal_count: int = Field(ge=0)
+    strong_negative_signal_count: int = Field(ge=0)
+    source_count: int = Field(ge=0)
+    source_hashes_by_id: dict[str, str]
+    weak_merge_signal_types: list[str]
+    candidate_exception_lake_labels: list[str]
+    clusters: list[MatterLinkingPreflightCluster]
+    checks: list[MatterLinkingPreflightCheck]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    local_json_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    sender_followup_required: bool
+    upfront_connector_implemented: bool = False
+    vendor_api_called: bool = False
+    external_write_performed: bool = False
+    lake_write_performed: bool = False
+    sqlite_write_performed: bool = False
+    matter_opening_authorized: bool = False
+    budget_amount_output_authorized: bool = False
+    budget_submission_authorized: bool = False
+    conflict_conclusion_emitted: bool = False
+    screen_created: bool = False
+    silent_learning_performed: bool = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def matter_linking_preflight_counts_and_status_match(
+        self,
+    ) -> "MatterLinkingPreflightReport":
+        failed = [check for check in self.checks if check.status == "failed"]
+        if self.cluster_count != len(self.clusters):
+            raise ValueError("matter-linking cluster count does not match clusters")
+        if self.high_evidence_candidate_count != sum(
+            1 for cluster in self.clusters if "high_evidence" in cluster.match_strength
+        ):
+            raise ValueError("matter-linking high-evidence count does not match clusters")
+        if self.strong_negative_signal_count != sum(
+            cluster.strong_negative_signal_count for cluster in self.clusters
+        ):
+            raise ValueError("matter-linking strong negative signal count mismatch")
+        if self.source_count != len(self.source_hashes_by_id):
+            raise ValueError("matter-linking source count must match source hashes")
+        if self.status == "matter_linking_preflight_requires_review" and failed:
+            raise ValueError("ready matter-linking preflight cannot include failed checks")
+        if self.status == "blocked_matter_linking_preflight" and not failed:
+            raise ValueError("blocked matter-linking preflight requires failed checks")
+        required_gates = {
+            "human_matter_linking_review",
+            "sender_reference_followup",
+            "no_budget_amount_until_cluster_and_roles_confirmed",
+            "no_matter_opening_without_official_authority",
+        }
+        if not required_gates.issubset(set(self.required_next_gates)):
+            raise ValueError("matter-linking preflight is missing required next gates")
+        return self
+
+
 PublicSyntheticFixtureFamily = Literal[
     "docket_structure",
     "aggregate_case_metadata",

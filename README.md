@@ -129,6 +129,18 @@ range/hours-only pending human review. The report is local candidate QA evidence
 only and does not promote role taxonomies, write Lake/SQLite records, submit
 budgets, open matters, or authorize learning.
 
+Use `python -m lawfirm_os_intake audit-matter-linking-preflight --input
+examples/synthetic/upfront/upfront-like-intake-output.example.json --out-dir
+PATH/matter-linking-preflight` to audit an Upfront-like synthetic output before
+budget or matter-opening work relies on its document cluster. It emits
+`matter_linking_preflight_report.json` and `.md`, verifies that same sender and
+same carrier are weak merge signals, requires human matter-linking review and
+sender follow-up when no official matter number exists, and preserves candidate
+Exception Lake labels for unresolved matching. The audit is local JSON only: no
+Upfront connector, vendor API call, screen, conflict conclusion, budget amount,
+matter opening, Lake/SQLite write, external write, or silent learning is
+authorized.
+
 Use `python -m lawfirm_os_intake audit-labor-employment-fixture-family-pack
 --out-dir PATH/le-fixture-family-pack` to audit
 `examples/synthetic/labor-employment/labor-employment-budget-fixture-family-pack.json`.

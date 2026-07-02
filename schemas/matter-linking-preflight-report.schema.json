@@ -1,0 +1,414 @@
+{
+  "$defs": {
+    "MatterLinkingPreflightCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "blocking_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Blocking Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "MatterLinkingPreflightCheck",
+      "type": "object"
+    },
+    "MatterLinkingPreflightCluster": {
+      "additionalProperties": false,
+      "properties": {
+        "cluster_id": {
+          "title": "Cluster Id",
+          "type": "string"
+        },
+        "link_state": {
+          "title": "Link State",
+          "type": "string"
+        },
+        "match_strength": {
+          "title": "Match Strength",
+          "type": "string"
+        },
+        "proposed_short_label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Proposed Short Label"
+        },
+        "source_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Source Ids",
+          "type": "array"
+        },
+        "source_hashes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Source Hashes",
+          "type": "array"
+        },
+        "supporting_signal_count": {
+          "minimum": 0,
+          "title": "Supporting Signal Count",
+          "type": "integer"
+        },
+        "strong_supporting_signal_count": {
+          "minimum": 0,
+          "title": "Strong Supporting Signal Count",
+          "type": "integer"
+        },
+        "negative_signal_count": {
+          "minimum": 0,
+          "title": "Negative Signal Count",
+          "type": "integer"
+        },
+        "strong_negative_signal_count": {
+          "minimum": 0,
+          "title": "Strong Negative Signal Count",
+          "type": "integer"
+        },
+        "supporting_signal_types": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Supporting Signal Types",
+          "type": "array"
+        },
+        "negative_signal_types": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Negative Signal Types",
+          "type": "array"
+        },
+        "requires_human_confirmation": {
+          "const": true,
+          "default": true,
+          "title": "Requires Human Confirmation",
+          "type": "boolean"
+        },
+        "matter_link_finalized": {
+          "const": false,
+          "default": false,
+          "title": "Matter Link Finalized",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "cluster_id",
+        "link_state",
+        "match_strength",
+        "source_ids",
+        "source_hashes",
+        "supporting_signal_count",
+        "strong_supporting_signal_count",
+        "negative_signal_count",
+        "strong_negative_signal_count",
+        "supporting_signal_types",
+        "negative_signal_types"
+      ],
+      "title": "MatterLinkingPreflightCluster",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "matter_linking_preflight_report_id": {
+      "title": "Matter Linking Preflight Report Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "matter_linking_preflight_requires_review",
+        "blocked_matter_linking_preflight"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "source_artifact_ref": {
+      "title": "Source Artifact Ref",
+      "type": "string"
+    },
+    "source_artifact_id": {
+      "title": "Source Artifact Id",
+      "type": "string"
+    },
+    "source_artifact_type": {
+      "title": "Source Artifact Type",
+      "type": "string"
+    },
+    "source_artifact_status": {
+      "title": "Source Artifact Status",
+      "type": "string"
+    },
+    "source_artifact_hash": {
+      "title": "Source Artifact Hash",
+      "type": "string"
+    },
+    "data_origin": {
+      "title": "Data Origin",
+      "type": "string"
+    },
+    "source_system_name": {
+      "title": "Source System Name",
+      "type": "string"
+    },
+    "real_upfront_export": {
+      "title": "Real Upfront Export",
+      "type": "boolean"
+    },
+    "api_contract_verified": {
+      "title": "Api Contract Verified",
+      "type": "boolean"
+    },
+    "official_matter_number_status": {
+      "title": "Official Matter Number Status",
+      "type": "string"
+    },
+    "overall_link_state": {
+      "title": "Overall Link State",
+      "type": "string"
+    },
+    "requires_human_confirmation": {
+      "title": "Requires Human Confirmation",
+      "type": "boolean"
+    },
+    "requires_sender_followup": {
+      "title": "Requires Sender Followup",
+      "type": "boolean"
+    },
+    "cluster_count": {
+      "minimum": 0,
+      "title": "Cluster Count",
+      "type": "integer"
+    },
+    "high_evidence_candidate_count": {
+      "minimum": 0,
+      "title": "High Evidence Candidate Count",
+      "type": "integer"
+    },
+    "weak_signal_count": {
+      "minimum": 0,
+      "title": "Weak Signal Count",
+      "type": "integer"
+    },
+    "strong_negative_signal_count": {
+      "minimum": 0,
+      "title": "Strong Negative Signal Count",
+      "type": "integer"
+    },
+    "source_count": {
+      "minimum": 0,
+      "title": "Source Count",
+      "type": "integer"
+    },
+    "source_hashes_by_id": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Source Hashes By Id",
+      "type": "object"
+    },
+    "weak_merge_signal_types": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Weak Merge Signal Types",
+      "type": "array"
+    },
+    "candidate_exception_lake_labels": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Candidate Exception Lake Labels",
+      "type": "array"
+    },
+    "clusters": {
+      "items": {
+        "$ref": "#/$defs/MatterLinkingPreflightCluster"
+      },
+      "title": "Clusters",
+      "type": "array"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/MatterLinkingPreflightCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "required_next_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Gates",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "local_json_only": {
+      "const": true,
+      "default": true,
+      "title": "Local Json Only",
+      "type": "boolean"
+    },
+    "human_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Human Review Required",
+      "type": "boolean"
+    },
+    "sender_followup_required": {
+      "title": "Sender Followup Required",
+      "type": "boolean"
+    },
+    "upfront_connector_implemented": {
+      "default": false,
+      "title": "Upfront Connector Implemented",
+      "type": "boolean"
+    },
+    "vendor_api_called": {
+      "default": false,
+      "title": "Vendor Api Called",
+      "type": "boolean"
+    },
+    "external_write_performed": {
+      "default": false,
+      "title": "External Write Performed",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "matter_opening_authorized": {
+      "default": false,
+      "title": "Matter Opening Authorized",
+      "type": "boolean"
+    },
+    "budget_amount_output_authorized": {
+      "default": false,
+      "title": "Budget Amount Output Authorized",
+      "type": "boolean"
+    },
+    "budget_submission_authorized": {
+      "default": false,
+      "title": "Budget Submission Authorized",
+      "type": "boolean"
+    },
+    "conflict_conclusion_emitted": {
+      "default": false,
+      "title": "Conflict Conclusion Emitted",
+      "type": "boolean"
+    },
+    "screen_created": {
+      "default": false,
+      "title": "Screen Created",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "matter_linking_preflight_report_id",
+    "status",
+    "source_artifact_ref",
+    "source_artifact_id",
+    "source_artifact_type",
+    "source_artifact_status",
+    "source_artifact_hash",
+    "data_origin",
+    "source_system_name",
+    "real_upfront_export",
+    "api_contract_verified",
+    "official_matter_number_status",
+    "overall_link_state",
+    "requires_human_confirmation",
+    "requires_sender_followup",
+    "cluster_count",
+    "high_evidence_candidate_count",
+    "weak_signal_count",
+    "strong_negative_signal_count",
+    "source_count",
+    "source_hashes_by_id",
+    "weak_merge_signal_types",
+    "candidate_exception_lake_labels",
+    "clusters",
+    "checks",
+    "required_next_gates",
+    "sender_followup_required",
+    "generated_at"
+  ],
+  "title": "MatterLinkingPreflightReport",
+  "type": "object"
+}

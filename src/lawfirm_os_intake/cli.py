@@ -94,6 +94,7 @@ from .labor_employment_fixture_family_pack import (
     run_labor_employment_fixture_family_pack_audit,
 )
 from .labor_employment_qa_matrix import run_labor_employment_qa_matrix
+from .matter_linking_preflight import run_matter_linking_preflight
 from .models import BudgetProposal, HumanConfirmation
 from .orchestrator_owner_review_request import run_orchestrator_owner_review_request
 from .pr_readiness_decision import run_pr_readiness_decision_record
@@ -689,6 +690,24 @@ def _parser() -> argparse.ArgumentParser:
         "--repo-root",
         default=".",
         help="Repository root to inspect; defaults to the current working directory.",
+    )
+
+    matter_linking_preflight = sub.add_parser(
+        "audit-matter-linking-preflight",
+        help=(
+            "Audit an Upfront-like intake output for ambiguous matter/document linking "
+            "without connector or Lake writes."
+        ),
+    )
+    matter_linking_preflight.add_argument(
+        "--input",
+        required=True,
+        help="Path to upfront-like-intake-output JSON.",
+    )
+    matter_linking_preflight.add_argument("--out-dir", required=True)
+    matter_linking_preflight.add_argument(
+        "--generated-at",
+        help="Optional fixed timestamp for deterministic tests and replayed reports.",
     )
 
     public_data_cache = sub.add_parser(
@@ -2470,6 +2489,45 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             if report.status == "blocked_public_source_methodology":
+                return 2
+            return 0
+
+        if args.command == "audit-matter-linking-preflight":
+            report, run_dir = run_matter_linking_preflight(
+                input_path=args.input,
+                out_dir=args.out_dir,
+                generated_at=args.generated_at,
+            )
+            failed_checks = [check.check_id for check in report.checks if check.status == "failed"]
+            _print(
+                {
+                    "status": report.status,
+                    "matter_linking_preflight_report_id": (
+                        report.matter_linking_preflight_report_id
+                    ),
+                    "source_artifact_id": report.source_artifact_id,
+                    "overall_link_state": report.overall_link_state,
+                    "official_matter_number_status": report.official_matter_number_status,
+                    "cluster_count": report.cluster_count,
+                    "weak_signal_count": report.weak_signal_count,
+                    "strong_negative_signal_count": report.strong_negative_signal_count,
+                    "failed_checks": failed_checks,
+                    "required_next_gates": report.required_next_gates,
+                    "upfront_connector_implemented": report.upfront_connector_implemented,
+                    "vendor_api_called": report.vendor_api_called,
+                    "external_write_performed": report.external_write_performed,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "matter_opening_authorized": report.matter_opening_authorized,
+                    "budget_amount_output_authorized": (report.budget_amount_output_authorized),
+                    "budget_submission_authorized": report.budget_submission_authorized,
+                    "conflict_conclusion_emitted": report.conflict_conclusion_emitted,
+                    "screen_created": report.screen_created,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            if report.status == "blocked_matter_linking_preflight":
                 return 2
             return 0
 

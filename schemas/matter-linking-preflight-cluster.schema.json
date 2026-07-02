@@ -1,0 +1,104 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "cluster_id": {
+      "title": "Cluster Id",
+      "type": "string"
+    },
+    "link_state": {
+      "title": "Link State",
+      "type": "string"
+    },
+    "match_strength": {
+      "title": "Match Strength",
+      "type": "string"
+    },
+    "proposed_short_label": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Proposed Short Label"
+    },
+    "source_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Source Ids",
+      "type": "array"
+    },
+    "source_hashes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Source Hashes",
+      "type": "array"
+    },
+    "supporting_signal_count": {
+      "minimum": 0,
+      "title": "Supporting Signal Count",
+      "type": "integer"
+    },
+    "strong_supporting_signal_count": {
+      "minimum": 0,
+      "title": "Strong Supporting Signal Count",
+      "type": "integer"
+    },
+    "negative_signal_count": {
+      "minimum": 0,
+      "title": "Negative Signal Count",
+      "type": "integer"
+    },
+    "strong_negative_signal_count": {
+      "minimum": 0,
+      "title": "Strong Negative Signal Count",
+      "type": "integer"
+    },
+    "supporting_signal_types": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Supporting Signal Types",
+      "type": "array"
+    },
+    "negative_signal_types": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Negative Signal Types",
+      "type": "array"
+    },
+    "requires_human_confirmation": {
+      "const": true,
+      "default": true,
+      "title": "Requires Human Confirmation",
+      "type": "boolean"
+    },
+    "matter_link_finalized": {
+      "const": false,
+      "default": false,
+      "title": "Matter Link Finalized",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "cluster_id",
+    "link_state",
+    "match_strength",
+    "source_ids",
+    "source_hashes",
+    "supporting_signal_count",
+    "strong_supporting_signal_count",
+    "negative_signal_count",
+    "strong_negative_signal_count",
+    "supporting_signal_types",
+    "negative_signal_types"
+  ],
+  "title": "MatterLinkingPreflightCluster",
+  "type": "object"
+}

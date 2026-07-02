@@ -180,6 +180,10 @@ Implement `matter-linking-preflight` before any real Upfront connector:
 
 1. Add synthetic source bundles where one adjuster sends documents for two
    unrelated cases with overlapping carrier names and no official matter number.
+   Initial fixture and deterministic audit: `lawfirm-os-intake
+   audit-matter-linking-preflight --input
+   examples/synthetic/upfront/upfront-like-intake-output.example.json --out-dir
+   <dir>`.
 2. Add synthetic bundles where a later email supplies a carrier claim number or
    Upfront-like request ID that resolves the cluster.
 3. Add deterministic matching candidate contracts with source-bound signal
