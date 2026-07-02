@@ -116,7 +116,9 @@ def test_schema_export_and_smoke_suppress_bytecode() -> None:
         REPO_ROOT / "scripts" / "run_validation_suite.py"
     ).read_text(encoding="utf-8")
     assert "export PYTHONDONTWRITEBYTECODE=1" in smoke_demo
-    assert '"$PYTHON_BIN" -B -m lawfirm_os_intake demo' in smoke_demo
+    assert '"$PYTHON_BIN" -B - <<' in smoke_demo
+    assert 'sys.path.insert(0, str(Path.cwd() / "src"))' in smoke_demo
+    assert 'runpy.run_module("lawfirm_os_intake", run_name="__main__")' in smoke_demo
 
 
 def test_validation_suite_runs_every_heavy_step_under_policy_timeout() -> None:

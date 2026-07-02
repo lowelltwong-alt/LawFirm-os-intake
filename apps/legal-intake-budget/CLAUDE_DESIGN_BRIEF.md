@@ -20,3 +20,4 @@ Useful views:
 - carrier rejection, appeal outcome, and learning-loop blockers;
 - public-data cache and public-source methodology reports;
 - reviewed gold and synthetic fixture status.
+- QA gate strip for budget coherence, fixture depth, calibration readiness, smoke, and full pytest evidence.

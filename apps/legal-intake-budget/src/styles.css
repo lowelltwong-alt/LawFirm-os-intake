@@ -217,6 +217,40 @@ code {
   line-height: 1.45;
 }
 
+.quality-panel {
+  margin-top: 14px;
+}
+
+.quality-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.quality-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  min-height: 126px;
+  padding: 12px;
+  border: 1px solid #dde4d8;
+  border-radius: 8px;
+  background: #fbfcfa;
+}
+
+.quality-item strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.quality-item p {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: #2f3932;
+  font-size: 0.88rem;
+  line-height: 1.42;
+}
+
 .artifact-panel {
   margin-top: 14px;
   padding: 0;
@@ -298,6 +332,10 @@ td:nth-child(4) {
 
   .metric-strip {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .quality-list {
+    grid-template-columns: 1fr;
   }
 }
 

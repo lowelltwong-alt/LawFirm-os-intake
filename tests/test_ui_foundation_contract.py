@@ -43,6 +43,9 @@ def test_legal_intake_budget_ui_data_contract_lists_required_artifacts(repo_root
         "budget_submission_guard_report.json",
         "exception_lake_handoff_manifest.json",
         "run_ledger_integrity_report.json",
+        "budget_coherence_report.json",
+        "synthetic_fixture_depth_audit_report.json",
+        "budget_calibration_readiness_report.json",
         "budget_human_review_packet.json",
         "carrier_rejection_decision_ledger_report.json",
         "budget_actual_variance_ledger_report.json",
@@ -77,6 +80,15 @@ def test_legal_intake_budget_demo_manifest_is_read_only_and_candidate_only(repo_
     assert flags["matterOpeningAllowed"] is False
     assert all(artifact["candidateOnly"] is True for artifact in manifest["artifacts"])
     assert all(artifact["externalWritesPerformed"] is False for artifact in manifest["artifacts"])
+    assert manifest["qualityGates"]
+    assert {
+        "budget_coherence",
+        "synthetic_fixture_depth",
+        "budget_calibration_readiness",
+        "full_pytest",
+        "smoke_demo",
+    } <= {gate["gateId"] for gate in manifest["qualityGates"]}
+    assert all(gate["evidenceFile"] for gate in manifest["qualityGates"])
 
 
 def test_legal_intake_budget_ui_disclaims_mutating_authority(repo_root):
@@ -88,4 +100,6 @@ def test_legal_intake_budget_ui_disclaims_mutating_authority(repo_root):
     assert "local JSON" in readme
     assert "Exception Lake writer" in readme
     assert "Local JSON only" in app
+    assert "QA Gates" in app
+    assert "failingQualityGates" in app
     assert "grid-template-columns" in styles

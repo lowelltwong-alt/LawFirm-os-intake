@@ -1,4 +1,4 @@
-import type { BoundaryFlags, ReviewArtifact, ReviewManifest } from "./types";
+import type { BoundaryFlags, QualityGate, ReviewArtifact, ReviewManifest } from "./types";
 
 export const REQUIRED_ARTIFACT_FILES = [
   "intake_preflight_packet.json",
@@ -9,6 +9,9 @@ export const REQUIRED_ARTIFACT_FILES = [
   "budget_submission_guard_report.json",
   "exception_lake_handoff_manifest.json",
   "run_ledger_integrity_report.json",
+  "budget_coherence_report.json",
+  "synthetic_fixture_depth_audit_report.json",
+  "budget_calibration_readiness_report.json",
   "budget_human_review_packet.json",
   "carrier_rejection_decision_ledger_report.json",
   "budget_actual_variance_ledger_report.json",
@@ -53,5 +56,17 @@ export function assertReadOnlyManifest(manifest: ReviewManifest): string[] {
       failures.push(`artifact_external_write:${artifact.artifactId}`);
     }
   }
+  for (const gate of manifest.qualityGates) {
+    if (gate.status === "failed") {
+      failures.push(`quality_gate_failed:${gate.gateId}`);
+    }
+    if (!gate.evidenceFile) {
+      failures.push(`quality_gate_missing_evidence:${gate.gateId}`);
+    }
+  }
   return failures;
+}
+
+export function failingQualityGates(gates: QualityGate[]): QualityGate[] {
+  return gates.filter((gate) => gate.status === "failed" || gate.status === "blocked");
 }

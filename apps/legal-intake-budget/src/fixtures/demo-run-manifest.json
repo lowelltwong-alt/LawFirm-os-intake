@@ -106,6 +106,39 @@
       "notes": ["Gate order and no-write flags verified."]
     },
     {
+      "artifactId": "budget-coherence",
+      "label": "Budget Coherence",
+      "fileName": "budget_coherence_report.json",
+      "status": "present",
+      "owner": "qa-reference",
+      "gateState": "passed",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": ["Serialized budget totals, headline scenario, estimate basis, and display boundary validated."]
+    },
+    {
+      "artifactId": "fixture-depth",
+      "label": "Synthetic Fixture Depth",
+      "fileName": "synthetic_fixture_depth_audit_report.json",
+      "status": "pending_review",
+      "owner": "qa-reference",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": ["Depth audit tracks fixture-family breadth, holdouts, red-team coverage, and remaining L&E gaps."]
+    },
+    {
+      "artifactId": "calibration-readiness",
+      "label": "Calibration Readiness",
+      "fileName": "budget_calibration_readiness_report.json",
+      "status": "pending_review",
+      "owner": "pricing-review",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": ["Calibration remains blocked until reviewed synthetic fixture evidence and replay outputs are sufficient."]
+    },
+    {
       "artifactId": "budget-human-review",
       "label": "Budget Human Review",
       "fileName": "budget_human_review_packet.json",
@@ -159,6 +192,48 @@
       "candidateOnly": true,
       "externalWritesPerformed": false,
       "notes": ["Ignored local cache manifest and hashes require human review before conversion."]
+    }
+  ],
+  "qualityGates": [
+    {
+      "gateId": "budget_coherence",
+      "label": "Budget Coherence",
+      "status": "passed",
+      "evidenceFile": "budget_coherence_report.json",
+      "owner": "qa-reference",
+      "notes": ["Serialized artifact math and no-submission display banner are checked before demo acceptance."]
+    },
+    {
+      "gateId": "synthetic_fixture_depth",
+      "label": "Synthetic Fixture Depth",
+      "status": "pending_review",
+      "evidenceFile": "synthetic_fixture_depth_audit_report.json",
+      "owner": "qa-reference",
+      "notes": ["Fixture-family depth is visible but still needs larger L&E coverage and holdout review."]
+    },
+    {
+      "gateId": "budget_calibration_readiness",
+      "label": "Calibration Readiness",
+      "status": "blocked",
+      "evidenceFile": "budget_calibration_readiness_report.json",
+      "owner": "pricing-review",
+      "notes": ["Budget calibration is blocked until reviewed gold, replay outcomes, and variance evidence exist."]
+    },
+    {
+      "gateId": "full_pytest",
+      "label": "Full Pytest",
+      "status": "passed",
+      "evidenceFile": "scripts/run_full_pytest.py",
+      "owner": "qa-reference",
+      "notes": ["Use the repo wrapper so focused and full tests receive the configured long timeout ceiling."]
+    },
+    {
+      "gateId": "smoke_demo",
+      "label": "North-Star Smoke",
+      "status": "passed",
+      "evidenceFile": "scripts/smoke_demo.sh",
+      "owner": "qa-reference",
+      "notes": ["North-star smoke runs the local checkout, budget coherence, starter audit, blocked-budget audit, and counterfactual audit."]
     }
   ],
   "blockerSummary": [

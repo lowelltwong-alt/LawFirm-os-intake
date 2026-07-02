@@ -2,14 +2,21 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 
 import demoManifest from "./fixtures/demo-run-manifest.json";
-import { assertReadOnlyManifest } from "./data-contract";
-import type { ArtifactStatus, GateState, ReviewArtifact, ReviewManifest } from "./types";
+import { assertReadOnlyManifest, failingQualityGates } from "./data-contract";
+import type {
+  ArtifactStatus,
+  GateState,
+  QualityGate,
+  QualityGateStatus,
+  ReviewArtifact,
+  ReviewManifest,
+} from "./types";
 import "./styles.css";
 
 const manifest = demoManifest as ReviewManifest;
 const contractFailures = assertReadOnlyManifest(manifest);
 
-function gateClass(state: GateState | ArtifactStatus) {
+function gateClass(state: GateState | ArtifactStatus | QualityGateStatus) {
   return `state state-${state.replace("_", "-")}`;
 }
 
@@ -96,6 +103,32 @@ function NotesPanel({ title, items }: { title: string; items: string[] }) {
   );
 }
 
+function QualityGatePanel({ gates }: { gates: QualityGate[] }) {
+  const blocked = failingQualityGates(gates).length;
+  return (
+    <section className="panel quality-panel" aria-labelledby="quality-title">
+      <div className="panel-heading">
+        <h2 id="quality-title">QA Gates</h2>
+        <span className={blocked === 0 ? "state state-passed" : "state state-blocked"}>
+          {blocked === 0 ? "ready" : `${blocked} blocked`}
+        </span>
+      </div>
+      <div className="quality-list">
+        {gates.map((gate) => (
+          <article className="quality-item" key={gate.gateId}>
+            <div>
+              <strong>{gate.label}</strong>
+              <code>{gate.evidenceFile}</code>
+            </div>
+            <span className={gateClass(gate.status)}>{gate.status}</span>
+            <p>{gate.notes.join(" ")}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function App() {
   const blockedCount = manifest.artifacts.filter(
     (artifact) => artifact.status === "blocked" || artifact.gateState === "blocked",
@@ -103,6 +136,7 @@ function App() {
   const pendingCount = manifest.artifacts.filter(
     (artifact) => artifact.status === "pending_review" || artifact.gateState === "pending",
   ).length;
+  const qualityBlockedCount = failingQualityGates(manifest.qualityGates).length;
 
   return (
     <main className="app-shell">
@@ -134,8 +168,8 @@ function App() {
           <strong>{pendingCount}</strong>
         </div>
         <div>
-          <span>Contract Failures</span>
-          <strong>{contractFailures.length}</strong>
+          <span>QA Blockers</span>
+          <strong>{qualityBlockedCount}</strong>
         </div>
       </section>
 
@@ -145,6 +179,7 @@ function App() {
         <NotesPanel title="Red Team" items={manifest.redTeamNotes} />
       </div>
 
+      <QualityGatePanel gates={manifest.qualityGates} />
       <ArtifactTable artifacts={manifest.artifacts} />
     </main>
   );
