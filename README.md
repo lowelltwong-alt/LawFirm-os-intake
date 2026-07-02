@@ -109,6 +109,15 @@ not been generated yet; it still writes local candidate-only review evidence and
 does not mutate fixtures, write Lake/SQLite records, submit budgets, open
 matters, or apply learning.
 
+Use `python -m lawfirm_os_intake build-budget-calibration-starter-pack --corpus-root
+examples/synthetic --repo-root . --out-dir PATH/calibration-starter` to generate
+a small deterministic synthetic calibration-readiness chain for QA. It executes
+one synthetic replay case, records a synthetic QA review outcome, proposes a
+fixture-binding handoff, and emits `budget_calibration_readiness_report.json`.
+The synthetic outcome is not real human approval and the command does not apply
+calibration, mutate fixtures, write Lake/SQLite records, submit budgets, open
+matters, or perform learning.
+
 The demo emits:
 
 ```text

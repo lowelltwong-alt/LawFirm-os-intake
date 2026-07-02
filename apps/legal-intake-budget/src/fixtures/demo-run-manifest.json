@@ -150,6 +150,17 @@
       "notes": ["Calibration remains blocked until reviewed synthetic fixture evidence and replay outputs are sufficient."]
     },
     {
+      "artifactId": "calibration-starter-pack",
+      "label": "Calibration Starter Pack",
+      "fileName": "budget_calibration_starter_pack_report.json",
+      "status": "pending_review",
+      "owner": "pricing-review",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": ["Synthetic QA starter evidence can exercise the calibration chain but does not replace real human fixture-update review."]
+    },
+    {
       "artifactId": "budget-human-review",
       "label": "Budget Human Review",
       "fileName": "budget_human_review_packet.json",

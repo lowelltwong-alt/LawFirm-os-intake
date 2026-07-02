@@ -255,6 +255,35 @@ from pathlib import Path
 import sys
 
 sys.path.insert(0, str(Path.cwd() / "src"))
+from lawfirm_os_intake.budget_calibration_starter_pack import (
+    run_budget_calibration_starter_pack,
+)
+
+report, _ = run_budget_calibration_starter_pack(
+    corpus_root="examples/synthetic",
+    repo_root=".",
+    out_dir=".lawfirm-os-intake/smoke/quality/calibration-starter",
+    reviewed_at="2026-07-02T00:00:00Z",
+)
+raise SystemExit(
+    0
+    if report.status == "starter_pack_ready_for_manual_fixture_update_review"
+    else 1
+)
+PY
+test -s ".lawfirm-os-intake/smoke/quality/calibration-starter/budget_calibration_starter_pack_report.json"
+test -s ".lawfirm-os-intake/smoke/quality/calibration-starter/budget-calibration-readiness/budget_calibration_readiness_report.json"
+grep -q '"status": "starter_pack_ready_for_manual_fixture_update_review"' \
+  ".lawfirm-os-intake/smoke/quality/calibration-starter/budget_calibration_starter_pack_report.json"
+grep -q '"budget_calibration_readiness_status": "ready_for_manual_fixture_update_review"' \
+  ".lawfirm-os-intake/smoke/quality/calibration-starter/budget_calibration_starter_pack_report.json"
+grep -q '"status": "ready_for_manual_fixture_update_review"' \
+  ".lawfirm-os-intake/smoke/quality/calibration-starter/budget-calibration-readiness/budget_calibration_readiness_report.json"
+"$PYTHON_BIN" -B - <<'PY'
+from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path.cwd() / "src"))
 from lawfirm_os_intake.synthetic_qa_bundle import run_synthetic_qa_bundle
 
 report, _, manifest = run_synthetic_qa_bundle(
@@ -272,11 +301,12 @@ if manifest is None or manifest["overallStatus"] not in {"blocked", "pending", "
     raise SystemExit(1)
 PY
 test -s ".lawfirm-os-intake/smoke/quality/synthetic_qa_bundle_report.json"
-grep -q '"status": "blocked"' ".lawfirm-os-intake/smoke/quality/synthetic_qa_bundle_report.json"
+grep -q '"status": "pending_review"' ".lawfirm-os-intake/smoke/quality/synthetic_qa_bundle_report.json"
 grep -q '"synthetic_fixture_depth"' ".lawfirm-os-intake/smoke/quality/synthetic_qa_bundle_report.json"
 grep -q '"budget_calibration_readiness"' ".lawfirm-os-intake/smoke/quality/synthetic_qa_bundle_report.json"
 test -s ".lawfirm-os-intake/smoke/ui_review_manifest.json"
 grep -q '"synthetic_qa_bundle"' ".lawfirm-os-intake/smoke/ui_review_manifest.json"
 grep -q '"budget_coherence"' ".lawfirm-os-intake/smoke/ui_review_manifest.json"
 grep -q '"budget_calibration_readiness"' ".lawfirm-os-intake/smoke/ui_review_manifest.json"
+grep -q '"status": "pending_review"' ".lawfirm-os-intake/smoke/ui_review_manifest.json"
 grep -q '"networkCallsAllowed": false' ".lawfirm-os-intake/smoke/ui_review_manifest.json"

@@ -109,6 +109,13 @@ ARTIFACT_SPECS = [
         "blocked",
     ),
     ArtifactSpec(
+        "calibration-starter-pack",
+        "Calibration Starter Pack",
+        "budget_calibration_starter_pack_report.json",
+        "pricing-review",
+        "pending_review",
+    ),
+    ArtifactSpec(
         "budget-human-review",
         "Budget Human Review",
         "budget_human_review_packet.json",

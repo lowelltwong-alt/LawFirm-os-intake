@@ -4544,6 +4544,90 @@ class BudgetCalibrationReadinessReport(StrictModel):
         return self
 
 
+class BudgetCalibrationStarterPackStep(StrictModel):
+    step_id: str
+    status: Literal["passed", "failed"]
+    artifact_ref: str
+    notes: list[str] = Field(default_factory=list)
+
+
+class BudgetCalibrationStarterPackReport(StrictModel):
+    schema_version: str = "0.1"
+    starter_pack_report_id: str
+    status: Literal[
+        "starter_pack_ready_for_manual_fixture_update_review",
+        "blocked_by_starter_pack",
+    ]
+    selected_replay_case_id: str
+    selected_artifact_kind: BudgetCalibrationArtifactKind
+    corpus_report_ref: str
+    replay_plan_ref: str
+    replay_execution_report_ref: str
+    replay_review_packet_ref: str
+    synthetic_review_outcome_input_ref: str
+    replay_review_outcome_report_ref: str
+    fixture_binding_candidate_report_ref: str
+    fixture_binding_handoff_report_ref: str
+    budget_calibration_readiness_report_ref: str
+    budget_calibration_readiness_status: Literal[
+        "ready_for_manual_fixture_update_review",
+        "blocked_by_calibration_chain",
+    ]
+    step_count: int = Field(ge=0)
+    failed_step_count: int = Field(ge=0)
+    steps: list[BudgetCalibrationStarterPackStep]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    qa_fixture_review_only: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    not_authorized_for_matter_opening: Literal[True] = True
+    fixture_update_authorized: Literal[False] = False
+    fixture_update_pr_created: Literal[False] = False
+    fixture_files_mutated: Literal[False] = False
+    fixture_binding_applied: Literal[False] = False
+    calibration_applied: Literal[False] = False
+    profile_mutation_performed: Literal[False] = False
+    template_mutation_performed: Literal[False] = False
+    budget_mutation_performed: Literal[False] = False
+    carrier_guideline_mutation_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def starter_pack_counts_and_status_match(self) -> "BudgetCalibrationStarterPackReport":
+        failed = [step for step in self.steps if step.status == "failed"]
+        if self.step_count != len(self.steps):
+            raise ValueError("starter pack step count does not match")
+        if self.failed_step_count != len(failed):
+            raise ValueError("starter pack failed step count does not match")
+        if self.status == "starter_pack_ready_for_manual_fixture_update_review" and (
+            failed
+            or self.budget_calibration_readiness_status != "ready_for_manual_fixture_update_review"
+        ):
+            raise ValueError("ready starter pack requires passed steps and readiness")
+        if self.status == "blocked_by_starter_pack" and not (
+            failed or self.budget_calibration_readiness_status == "blocked_by_calibration_chain"
+        ):
+            raise ValueError("blocked starter pack requires failed steps or blocked readiness")
+        required = {
+            "inspect_synthetic_qa_review_outcome",
+            "manual_fixture_update_review",
+            "no_learning_without_reviewed_gate_and_shadow_eval",
+            "no_fixture_mutation_from_starter_pack",
+        }
+        if not required.issubset(set(self.required_next_gates)):
+            raise ValueError("starter pack is missing required next gates")
+        return self
+
+
 BudgetFixtureUpdateReviewDecision = Literal[
     "accept_for_separate_fixture_update_pr",
     "accept_with_corrections_for_separate_fixture_update_pr",

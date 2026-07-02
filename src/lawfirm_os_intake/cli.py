@@ -11,6 +11,7 @@ from .budget_actual_variance_ledger import BUDGET_ACTUAL_VARIANCE_LEDGER_REPORT_
 from .budget_actual_variance_owner_adoption import (
     run_budget_actual_variance_owner_adoption,
 )
+from .budget_calibration_starter_pack import run_budget_calibration_starter_pack
 from .budget_change_ledger import BUDGET_CHANGE_LEDGER_REPORT_FILENAME
 from .budget_calibration_corpus import run_budget_calibration_corpus_audit
 from .budget_calibration_readiness import run_budget_calibration_readiness_audit
@@ -200,6 +201,41 @@ def _parser() -> argparse.ArgumentParser:
     synthetic_qa_bundle.add_argument(
         "--generated-at",
         help="Optional fixed timestamp for deterministic tests and replayed manifests.",
+    )
+
+    calibration_starter_pack = sub.add_parser(
+        "build-budget-calibration-starter-pack",
+        help=(
+            "Build a deterministic synthetic budget calibration review chain for QA "
+            "without applying calibration."
+        ),
+    )
+    calibration_starter_pack.add_argument(
+        "--corpus-root",
+        default="examples/synthetic",
+        help="Synthetic fixture corpus root to use for the starter chain.",
+    )
+    calibration_starter_pack.add_argument(
+        "--repo-root",
+        default=".",
+        help="Repository root for relative fixture and replay refs.",
+    )
+    calibration_starter_pack.add_argument("--out-dir", required=True)
+    calibration_starter_pack.add_argument(
+        "--artifact-kind",
+        default="budget_review_fixture",
+        choices=[
+            "budget_review_fixture",
+            "actuals_fixture",
+            "carrier_rejection_fixture",
+            "reviewed_gold_fixture",
+            "learning_gate_fixture",
+        ],
+        help="Planned replay artifact kind to execute for the starter chain.",
+    )
+    calibration_starter_pack.add_argument(
+        "--reviewed-at",
+        help="Optional fixed timestamp for the synthetic QA review outcome.",
     )
 
     budget_review = sub.add_parser(
@@ -1218,6 +1254,40 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 0 if report.status in {"passed", "pending_review"} else 2
+
+        if args.command == "build-budget-calibration-starter-pack":
+            report, run_dir = run_budget_calibration_starter_pack(
+                corpus_root=args.corpus_root,
+                repo_root=args.repo_root,
+                out_dir=args.out_dir,
+                artifact_kind=args.artifact_kind,
+                reviewed_at=args.reviewed_at,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "starter_pack_report_id": report.starter_pack_report_id,
+                    "selected_replay_case_id": report.selected_replay_case_id,
+                    "selected_artifact_kind": report.selected_artifact_kind,
+                    "budget_calibration_readiness_status": (
+                        report.budget_calibration_readiness_status
+                    ),
+                    "budget_calibration_readiness_report_ref": (
+                        report.budget_calibration_readiness_report_ref
+                    ),
+                    "run_dir": str(run_dir),
+                    "fixture_files_mutated": report.fixture_files_mutated,
+                    "fixture_binding_applied": report.fixture_binding_applied,
+                    "calibration_applied": report.calibration_applied,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                }
+            )
+            return (
+                0 if report.status == "starter_pack_ready_for_manual_fixture_update_review" else 2
+            )
 
         if args.command == "record-budget-review":
             report, run_dir = run_budget_review_record(

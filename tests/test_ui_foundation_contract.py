@@ -47,6 +47,7 @@ def test_legal_intake_budget_ui_data_contract_lists_required_artifacts(repo_root
         "synthetic_qa_bundle_report.json",
         "synthetic_fixture_depth_audit_report.json",
         "budget_calibration_readiness_report.json",
+        "budget_calibration_starter_pack_report.json",
         "budget_human_review_packet.json",
         "carrier_rejection_decision_ledger_report.json",
         "budget_actual_variance_ledger_report.json",

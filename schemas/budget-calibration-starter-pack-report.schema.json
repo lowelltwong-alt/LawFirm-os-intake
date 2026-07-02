@@ -1,0 +1,306 @@
+{
+  "$defs": {
+    "BudgetCalibrationStarterPackStep": {
+      "additionalProperties": false,
+      "properties": {
+        "step_id": {
+          "title": "Step Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "artifact_ref": {
+          "title": "Artifact Ref",
+          "type": "string"
+        },
+        "notes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Notes",
+          "type": "array"
+        }
+      },
+      "required": [
+        "step_id",
+        "status",
+        "artifact_ref"
+      ],
+      "title": "BudgetCalibrationStarterPackStep",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "starter_pack_report_id": {
+      "title": "Starter Pack Report Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "starter_pack_ready_for_manual_fixture_update_review",
+        "blocked_by_starter_pack"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "selected_replay_case_id": {
+      "title": "Selected Replay Case Id",
+      "type": "string"
+    },
+    "selected_artifact_kind": {
+      "enum": [
+        "intake_source_fixture",
+        "human_confirmation_fixture",
+        "budget_review_fixture",
+        "actuals_fixture",
+        "carrier_rejection_fixture",
+        "reviewed_gold_fixture",
+        "learning_gate_fixture",
+        "learning_shadow_eval_fixture",
+        "learning_support_fixture",
+        "unclassified_json_fixture"
+      ],
+      "title": "Selected Artifact Kind",
+      "type": "string"
+    },
+    "corpus_report_ref": {
+      "title": "Corpus Report Ref",
+      "type": "string"
+    },
+    "replay_plan_ref": {
+      "title": "Replay Plan Ref",
+      "type": "string"
+    },
+    "replay_execution_report_ref": {
+      "title": "Replay Execution Report Ref",
+      "type": "string"
+    },
+    "replay_review_packet_ref": {
+      "title": "Replay Review Packet Ref",
+      "type": "string"
+    },
+    "synthetic_review_outcome_input_ref": {
+      "title": "Synthetic Review Outcome Input Ref",
+      "type": "string"
+    },
+    "replay_review_outcome_report_ref": {
+      "title": "Replay Review Outcome Report Ref",
+      "type": "string"
+    },
+    "fixture_binding_candidate_report_ref": {
+      "title": "Fixture Binding Candidate Report Ref",
+      "type": "string"
+    },
+    "fixture_binding_handoff_report_ref": {
+      "title": "Fixture Binding Handoff Report Ref",
+      "type": "string"
+    },
+    "budget_calibration_readiness_report_ref": {
+      "title": "Budget Calibration Readiness Report Ref",
+      "type": "string"
+    },
+    "budget_calibration_readiness_status": {
+      "enum": [
+        "ready_for_manual_fixture_update_review",
+        "blocked_by_calibration_chain"
+      ],
+      "title": "Budget Calibration Readiness Status",
+      "type": "string"
+    },
+    "step_count": {
+      "minimum": 0,
+      "title": "Step Count",
+      "type": "integer"
+    },
+    "failed_step_count": {
+      "minimum": 0,
+      "title": "Failed Step Count",
+      "type": "integer"
+    },
+    "steps": {
+      "items": {
+        "$ref": "#/$defs/BudgetCalibrationStarterPackStep"
+      },
+      "title": "Steps",
+      "type": "array"
+    },
+    "required_next_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Gates",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "qa_fixture_review_only": {
+      "const": true,
+      "default": true,
+      "title": "Qa Fixture Review Only",
+      "type": "boolean"
+    },
+    "not_authorized_for_external_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For External Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_lake_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Lake Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_sqlite_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Sqlite Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_budget_submission": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Budget Submission",
+      "type": "boolean"
+    },
+    "not_authorized_for_matter_opening": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Matter Opening",
+      "type": "boolean"
+    },
+    "fixture_update_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Fixture Update Authorized",
+      "type": "boolean"
+    },
+    "fixture_update_pr_created": {
+      "const": false,
+      "default": false,
+      "title": "Fixture Update Pr Created",
+      "type": "boolean"
+    },
+    "fixture_files_mutated": {
+      "const": false,
+      "default": false,
+      "title": "Fixture Files Mutated",
+      "type": "boolean"
+    },
+    "fixture_binding_applied": {
+      "const": false,
+      "default": false,
+      "title": "Fixture Binding Applied",
+      "type": "boolean"
+    },
+    "calibration_applied": {
+      "const": false,
+      "default": false,
+      "title": "Calibration Applied",
+      "type": "boolean"
+    },
+    "profile_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Profile Mutation Performed",
+      "type": "boolean"
+    },
+    "template_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Template Mutation Performed",
+      "type": "boolean"
+    },
+    "budget_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Budget Mutation Performed",
+      "type": "boolean"
+    },
+    "carrier_guideline_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Carrier Guideline Mutation Performed",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "starter_pack_report_id",
+    "status",
+    "selected_replay_case_id",
+    "selected_artifact_kind",
+    "corpus_report_ref",
+    "replay_plan_ref",
+    "replay_execution_report_ref",
+    "replay_review_packet_ref",
+    "synthetic_review_outcome_input_ref",
+    "replay_review_outcome_report_ref",
+    "fixture_binding_candidate_report_ref",
+    "fixture_binding_handoff_report_ref",
+    "budget_calibration_readiness_report_ref",
+    "budget_calibration_readiness_status",
+    "step_count",
+    "failed_step_count",
+    "steps",
+    "required_next_gates",
+    "generated_at"
+  ],
+  "title": "BudgetCalibrationStarterPackReport",
+  "type": "object"
+}

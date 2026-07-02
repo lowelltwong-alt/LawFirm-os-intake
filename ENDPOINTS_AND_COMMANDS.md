@@ -68,6 +68,25 @@ when calibration readiness is missing or blocked; it is not authorization to
 mutate fixtures, apply calibration, write Lake/SQLite records, submit budgets,
 open matters, or create external writes.
 
+### Build budget calibration starter pack
+
+```bash
+python -m lawfirm_os_intake build-budget-calibration-starter-pack \
+  --corpus-root examples/synthetic \
+  --repo-root . \
+  --out-dir .lawfirm-os-intake/smoke/quality/calibration-starter \
+  --reviewed-at 2026-07-02T00:00:00Z
+```
+
+This runs a small deterministic synthetic replay chain from the calibration
+corpus through replay execution, replay review packet, synthetic QA review
+outcome, fixture-binding candidates, fixture-binding handoff, and calibration
+readiness. It writes `budget_calibration_starter_pack_report.json` and
+`budget_calibration_readiness_report.json`. The synthetic QA review outcome is a
+fixture for exercising the chain, not production human approval, and the command
+does not apply calibration, mutate fixtures, write Lake/SQLite records, submit
+budgets, open matters, or perform external writes.
+
 ### Validation runtime policy
 
 ```bash
