@@ -1748,6 +1748,141 @@ class LaborEmploymentExecutableFixtureAuditReport(StrictModel):
         return self
 
 
+class LaborEmploymentExecutableCoverageCase(StrictModel):
+    pack_case_id: str
+    family: LaborEmploymentSyntheticFixtureFamily
+    variant: LaborEmploymentSyntheticFixtureVariant
+    coverage_state: Literal["covered_executable", "missing_executable"]
+    executable_fixture_ids: list[str] = Field(default_factory=list)
+    expected_budget_readiness_state: Literal[
+        "blocked_missing_critical_facts",
+        "range_only_pending_human_review",
+        "candidate_ready_for_budget_review",
+    ]
+    expected_budget_treatment: Literal[
+        "block_amount_budget",
+        "hours_only_or_broad_range",
+        "candidate_range_budget_after_review",
+    ]
+    missing_critical_fact_ids: list[str] = Field(default_factory=list)
+    missing_important_fact_ids: list[str] = Field(default_factory=list)
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+
+    @model_validator(mode="after")
+    def le_executable_coverage_case_state_matches_links(
+        self,
+    ) -> "LaborEmploymentExecutableCoverageCase":
+        if self.coverage_state == "covered_executable" and not self.executable_fixture_ids:
+            raise ValueError("covered executable L&E case requires executable fixture IDs")
+        if self.coverage_state == "missing_executable" and self.executable_fixture_ids:
+            raise ValueError("missing executable L&E case cannot include executable fixture IDs")
+        return self
+
+
+class LaborEmploymentExecutableCoverageFamily(StrictModel):
+    family: LaborEmploymentSyntheticFixtureFamily
+    pack_case_count: int = Field(ge=0)
+    covered_case_count: int = Field(ge=0)
+    missing_case_count: int = Field(ge=0)
+    covered_variants: list[LaborEmploymentSyntheticFixtureVariant]
+    missing_variants: list[LaborEmploymentSyntheticFixtureVariant]
+    executable_fixture_ids: list[str] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def le_executable_coverage_family_counts_match(
+        self,
+    ) -> "LaborEmploymentExecutableCoverageFamily":
+        if self.pack_case_count != self.covered_case_count + self.missing_case_count:
+            raise ValueError("L&E executable family coverage count mismatch")
+        return self
+
+
+class LaborEmploymentExecutableCoverageCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    evidence_refs: list[str] = Field(default_factory=list)
+    blocking_refs: list[str] = Field(default_factory=list)
+
+
+class LaborEmploymentExecutableCoverageReport(StrictModel):
+    schema_version: str = "0.1"
+    executable_coverage_report_id: str
+    status: Literal[
+        "labor_employment_executable_coverage_ready_for_review",
+        "blocked_labor_employment_executable_coverage",
+    ]
+    coverage_state: Literal["partial_executable_coverage", "complete_executable_coverage"]
+    pack_id: str
+    pack_ref: str
+    executable_manifest_id: str
+    executable_manifest_ref: str
+    pack_case_count: int = Field(ge=0)
+    executable_fixture_count: int = Field(ge=0)
+    executable_pack_case_link_count: int = Field(ge=0)
+    covered_pack_case_count: int = Field(ge=0)
+    missing_executable_pack_case_count: int = Field(ge=0)
+    covered_family_count: int = Field(ge=0)
+    missing_family_count: int = Field(ge=0)
+    covered_family_variant_count: int = Field(ge=0)
+    missing_family_variant_count: int = Field(ge=0)
+    covered_pack_case_ids: list[str]
+    missing_executable_pack_case_ids: list[str]
+    missing_family_variant_refs: list[str]
+    family_coverage: list[LaborEmploymentExecutableCoverageFamily]
+    case_coverage: list[LaborEmploymentExecutableCoverageCase]
+    checks: list[LaborEmploymentExecutableCoverageCheck]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    fixture_generation_authorized: Literal[False] = False
+    calibration_approved: Literal[False] = False
+    budget_amount_output_authorized: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    conflict_conclusion_emitted: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    training_pipeline_created: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def le_executable_coverage_report_counts_match(
+        self,
+    ) -> "LaborEmploymentExecutableCoverageReport":
+        failed = [check for check in self.checks if check.status == "failed"]
+        covered_cases = [
+            case for case in self.case_coverage if case.coverage_state == "covered_executable"
+        ]
+        missing_cases = [
+            case for case in self.case_coverage if case.coverage_state == "missing_executable"
+        ]
+        if self.pack_case_count != len(self.case_coverage):
+            raise ValueError("L&E executable coverage pack case count mismatch")
+        if self.covered_pack_case_count != len(covered_cases):
+            raise ValueError("L&E executable covered case count mismatch")
+        if self.missing_executable_pack_case_count != len(missing_cases):
+            raise ValueError("L&E executable missing case count mismatch")
+        if self.covered_pack_case_ids != [case.pack_case_id for case in covered_cases]:
+            raise ValueError("L&E executable covered case IDs mismatch")
+        if self.missing_executable_pack_case_ids != [case.pack_case_id for case in missing_cases]:
+            raise ValueError("L&E executable missing case IDs mismatch")
+        if self.coverage_state == "complete_executable_coverage" and missing_cases:
+            raise ValueError("complete L&E executable coverage cannot have missing cases")
+        if self.coverage_state == "partial_executable_coverage" and not missing_cases:
+            raise ValueError("partial L&E executable coverage requires missing cases")
+        if self.status == "labor_employment_executable_coverage_ready_for_review" and failed:
+            raise ValueError("ready L&E executable coverage report cannot include failed checks")
+        if self.status == "blocked_labor_employment_executable_coverage" and not failed:
+            raise ValueError("blocked L&E executable coverage report requires failed checks")
+        return self
+
+
 class LaborEmploymentExecutableBudgetFactBindingItemSpec(StrictModel):
     fact_id: str
     expected_gap_type: Literal[

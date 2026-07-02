@@ -48,6 +48,23 @@ def _write_ready_labor_employment_executable_fixtures(path):
     )
 
 
+def _write_ready_labor_employment_executable_coverage(path):
+    write_json(
+        path,
+        {
+            "status": "labor_employment_executable_coverage_ready_for_review",
+            "coverage_state": "partial_executable_coverage",
+            "external_writes_performed": False,
+            "lake_write_performed": False,
+            "sqlite_write_performed": False,
+            "budget_amount_output_authorized": False,
+            "fixture_generation_authorized": False,
+            "calibration_approved": False,
+            "silent_learning_performed": False,
+        },
+    )
+
+
 def _write_ready_labor_employment_executable_fact_binding(path):
     write_json(
         path,
@@ -107,6 +124,9 @@ def test_synthetic_qa_bundle_blocks_missing_calibration_and_builds_ui(tmp_path):
     _write_ready_labor_employment_executable_fixtures(
         quality_dir / "labor_employment_executable_fixtures_report.json"
     )
+    _write_ready_labor_employment_executable_coverage(
+        quality_dir / "labor_employment_executable_coverage_report.json"
+    )
     _write_ready_labor_employment_executable_fact_binding(
         quality_dir / "labor_employment_executable_fact_binding_report.json"
     )
@@ -154,6 +174,9 @@ def test_synthetic_qa_bundle_can_generate_fixture_depth_from_manifest(tmp_path, 
     _write_ready_labor_employment_executable_fixtures(
         quality_dir / "labor_employment_executable_fixtures_report.json"
     )
+    _write_ready_labor_employment_executable_coverage(
+        quality_dir / "labor_employment_executable_coverage_report.json"
+    )
     _write_ready_labor_employment_executable_fact_binding(
         quality_dir / "labor_employment_executable_fact_binding_report.json"
     )
@@ -190,6 +213,7 @@ def test_synthetic_qa_bundle_cli_writes_bundle_and_manifest(tmp_path):
         "labor_employment_qa_matrix_report.json",
         "labor_employment_fixture_family_pack_report.json",
         "labor_employment_executable_fixtures_report.json",
+        "labor_employment_executable_coverage_report.json",
         "labor_employment_executable_fact_binding_report.json",
         "labor_employment_budget_fact_gold_report.json",
     ]:
@@ -203,6 +227,8 @@ def test_synthetic_qa_bundle_cli_writes_bundle_and_manifest(tmp_path):
                     if file_name == "labor_employment_fixture_family_pack_report.json"
                     else "labor_employment_executable_fixtures_ready_for_review"
                     if file_name == "labor_employment_executable_fixtures_report.json"
+                    else "labor_employment_executable_coverage_ready_for_review"
+                    if file_name == "labor_employment_executable_coverage_report.json"
                     else "passed"
                     if file_name != "labor_employment_executable_fact_binding_report.json"
                     else "labor_employment_executable_budget_fact_bindings_ready_for_review"

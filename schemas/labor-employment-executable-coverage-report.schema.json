@@ -1,0 +1,485 @@
+{
+  "$defs": {
+    "LaborEmploymentExecutableCoverageCase": {
+      "additionalProperties": false,
+      "properties": {
+        "pack_case_id": {
+          "title": "Pack Case Id",
+          "type": "string"
+        },
+        "family": {
+          "enum": [
+            "discrimination_harassment",
+            "retaliation_wrongful_termination",
+            "wage_hour_flsa_state",
+            "ada_fmla_accommodation_leave",
+            "restrictive_covenant_trade_secret",
+            "epli_carrier_assignment",
+            "class_collective_paga_representative",
+            "administrative_exhaustion_agency_record"
+          ],
+          "title": "Family",
+          "type": "string"
+        },
+        "variant": {
+          "enum": [
+            "clean",
+            "messy_thread",
+            "missing_attachment",
+            "adversarial"
+          ],
+          "title": "Variant",
+          "type": "string"
+        },
+        "coverage_state": {
+          "enum": [
+            "covered_executable",
+            "missing_executable"
+          ],
+          "title": "Coverage State",
+          "type": "string"
+        },
+        "executable_fixture_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Executable Fixture Ids",
+          "type": "array"
+        },
+        "expected_budget_readiness_state": {
+          "enum": [
+            "blocked_missing_critical_facts",
+            "range_only_pending_human_review",
+            "candidate_ready_for_budget_review"
+          ],
+          "title": "Expected Budget Readiness State",
+          "type": "string"
+        },
+        "expected_budget_treatment": {
+          "enum": [
+            "block_amount_budget",
+            "hours_only_or_broad_range",
+            "candidate_range_budget_after_review"
+          ],
+          "title": "Expected Budget Treatment",
+          "type": "string"
+        },
+        "missing_critical_fact_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Missing Critical Fact Ids",
+          "type": "array"
+        },
+        "missing_important_fact_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Missing Important Fact Ids",
+          "type": "array"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "pack_case_id",
+        "family",
+        "variant",
+        "coverage_state",
+        "expected_budget_readiness_state",
+        "expected_budget_treatment"
+      ],
+      "title": "LaborEmploymentExecutableCoverageCase",
+      "type": "object"
+    },
+    "LaborEmploymentExecutableCoverageCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "blocking_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Blocking Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "LaborEmploymentExecutableCoverageCheck",
+      "type": "object"
+    },
+    "LaborEmploymentExecutableCoverageFamily": {
+      "additionalProperties": false,
+      "properties": {
+        "family": {
+          "enum": [
+            "discrimination_harassment",
+            "retaliation_wrongful_termination",
+            "wage_hour_flsa_state",
+            "ada_fmla_accommodation_leave",
+            "restrictive_covenant_trade_secret",
+            "epli_carrier_assignment",
+            "class_collective_paga_representative",
+            "administrative_exhaustion_agency_record"
+          ],
+          "title": "Family",
+          "type": "string"
+        },
+        "pack_case_count": {
+          "minimum": 0,
+          "title": "Pack Case Count",
+          "type": "integer"
+        },
+        "covered_case_count": {
+          "minimum": 0,
+          "title": "Covered Case Count",
+          "type": "integer"
+        },
+        "missing_case_count": {
+          "minimum": 0,
+          "title": "Missing Case Count",
+          "type": "integer"
+        },
+        "covered_variants": {
+          "items": {
+            "enum": [
+              "clean",
+              "messy_thread",
+              "missing_attachment",
+              "adversarial"
+            ],
+            "type": "string"
+          },
+          "title": "Covered Variants",
+          "type": "array"
+        },
+        "missing_variants": {
+          "items": {
+            "enum": [
+              "clean",
+              "messy_thread",
+              "missing_attachment",
+              "adversarial"
+            ],
+            "type": "string"
+          },
+          "title": "Missing Variants",
+          "type": "array"
+        },
+        "executable_fixture_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Executable Fixture Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "family",
+        "pack_case_count",
+        "covered_case_count",
+        "missing_case_count",
+        "covered_variants",
+        "missing_variants"
+      ],
+      "title": "LaborEmploymentExecutableCoverageFamily",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "executable_coverage_report_id": {
+      "title": "Executable Coverage Report Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "labor_employment_executable_coverage_ready_for_review",
+        "blocked_labor_employment_executable_coverage"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "coverage_state": {
+      "enum": [
+        "partial_executable_coverage",
+        "complete_executable_coverage"
+      ],
+      "title": "Coverage State",
+      "type": "string"
+    },
+    "pack_id": {
+      "title": "Pack Id",
+      "type": "string"
+    },
+    "pack_ref": {
+      "title": "Pack Ref",
+      "type": "string"
+    },
+    "executable_manifest_id": {
+      "title": "Executable Manifest Id",
+      "type": "string"
+    },
+    "executable_manifest_ref": {
+      "title": "Executable Manifest Ref",
+      "type": "string"
+    },
+    "pack_case_count": {
+      "minimum": 0,
+      "title": "Pack Case Count",
+      "type": "integer"
+    },
+    "executable_fixture_count": {
+      "minimum": 0,
+      "title": "Executable Fixture Count",
+      "type": "integer"
+    },
+    "executable_pack_case_link_count": {
+      "minimum": 0,
+      "title": "Executable Pack Case Link Count",
+      "type": "integer"
+    },
+    "covered_pack_case_count": {
+      "minimum": 0,
+      "title": "Covered Pack Case Count",
+      "type": "integer"
+    },
+    "missing_executable_pack_case_count": {
+      "minimum": 0,
+      "title": "Missing Executable Pack Case Count",
+      "type": "integer"
+    },
+    "covered_family_count": {
+      "minimum": 0,
+      "title": "Covered Family Count",
+      "type": "integer"
+    },
+    "missing_family_count": {
+      "minimum": 0,
+      "title": "Missing Family Count",
+      "type": "integer"
+    },
+    "covered_family_variant_count": {
+      "minimum": 0,
+      "title": "Covered Family Variant Count",
+      "type": "integer"
+    },
+    "missing_family_variant_count": {
+      "minimum": 0,
+      "title": "Missing Family Variant Count",
+      "type": "integer"
+    },
+    "covered_pack_case_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Covered Pack Case Ids",
+      "type": "array"
+    },
+    "missing_executable_pack_case_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Missing Executable Pack Case Ids",
+      "type": "array"
+    },
+    "missing_family_variant_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Missing Family Variant Refs",
+      "type": "array"
+    },
+    "family_coverage": {
+      "items": {
+        "$ref": "#/$defs/LaborEmploymentExecutableCoverageFamily"
+      },
+      "title": "Family Coverage",
+      "type": "array"
+    },
+    "case_coverage": {
+      "items": {
+        "$ref": "#/$defs/LaborEmploymentExecutableCoverageCase"
+      },
+      "title": "Case Coverage",
+      "type": "array"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/LaborEmploymentExecutableCoverageCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "required_next_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Gates",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "human_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Human Review Required",
+      "type": "boolean"
+    },
+    "fixture_generation_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Fixture Generation Authorized",
+      "type": "boolean"
+    },
+    "calibration_approved": {
+      "const": false,
+      "default": false,
+      "title": "Calibration Approved",
+      "type": "boolean"
+    },
+    "budget_amount_output_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Amount Output Authorized",
+      "type": "boolean"
+    },
+    "budget_submission_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Submission Authorized",
+      "type": "boolean"
+    },
+    "conflict_conclusion_emitted": {
+      "const": false,
+      "default": false,
+      "title": "Conflict Conclusion Emitted",
+      "type": "boolean"
+    },
+    "matter_opening_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Matter Opening Authorized",
+      "type": "boolean"
+    },
+    "training_pipeline_created": {
+      "const": false,
+      "default": false,
+      "title": "Training Pipeline Created",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "executable_coverage_report_id",
+    "status",
+    "coverage_state",
+    "pack_id",
+    "pack_ref",
+    "executable_manifest_id",
+    "executable_manifest_ref",
+    "pack_case_count",
+    "executable_fixture_count",
+    "executable_pack_case_link_count",
+    "covered_pack_case_count",
+    "missing_executable_pack_case_count",
+    "covered_family_count",
+    "missing_family_count",
+    "covered_family_variant_count",
+    "missing_family_variant_count",
+    "covered_pack_case_ids",
+    "missing_executable_pack_case_ids",
+    "missing_family_variant_refs",
+    "family_coverage",
+    "case_coverage",
+    "checks",
+    "required_next_gates",
+    "generated_at"
+  ],
+  "title": "LaborEmploymentExecutableCoverageReport",
+  "type": "object"
+}

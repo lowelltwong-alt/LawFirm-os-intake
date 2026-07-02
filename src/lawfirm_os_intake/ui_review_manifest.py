@@ -137,6 +137,13 @@ ARTIFACT_SPECS = [
         "blocked",
     ),
     ArtifactSpec(
+        "labor-employment-executable-coverage",
+        "L&E Executable Coverage",
+        "labor_employment_executable_coverage_report.json",
+        "qa-reference",
+        "blocked",
+    ),
+    ArtifactSpec(
         "labor-employment-executable-fact-binding",
         "L&E Executable Fact Binding",
         "labor_employment_executable_fact_binding_report.json",
@@ -236,6 +243,13 @@ QUALITY_GATE_SPECS = {
         "labor_employment_executable_fixtures_report.json",
         "qa-reference",
         "Selected L&E source bundles must execute through deterministic preflight before fixture generation is trusted.",
+        "blocked",
+    ),
+    "labor_employment_executable_coverage": (
+        "L&E Executable Coverage",
+        "labor_employment_executable_coverage_report.json",
+        "qa-reference",
+        "QA must show which L&E fixture-family pack cases are executable today and which remain planned coverage gaps.",
         "blocked",
     ),
     "labor_employment_executable_fact_binding": (

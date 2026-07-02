@@ -194,6 +194,17 @@
       "notes": ["Selected L&E source bundles execute through deterministic preflight before fixture generation is trusted."]
     },
     {
+      "artifactId": "labor-employment-executable-coverage",
+      "label": "L&E Executable Coverage",
+      "fileName": "labor_employment_executable_coverage_report.json",
+      "status": "pending_review",
+      "owner": "qa-reference",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": ["QA shows which L&E fixture-family pack cases are executable today and which remain planned coverage gaps."]
+    },
+    {
       "artifactId": "labor-employment-executable-fact-binding",
       "label": "L&E Executable Fact Binding",
       "fileName": "labor_employment_executable_fact_binding_report.json",
@@ -327,6 +338,14 @@
       "evidenceFile": "labor_employment_executable_fixtures_report.json",
       "owner": "qa-reference",
       "notes": ["Selected L&E source bundles must execute through deterministic preflight before fixture generation is trusted."]
+    },
+    {
+      "gateId": "labor_employment_executable_coverage",
+      "label": "L&E Executable Coverage",
+      "status": "pending_review",
+      "evidenceFile": "labor_employment_executable_coverage_report.json",
+      "owner": "qa-reference",
+      "notes": ["QA must show which L&E fixture-family pack cases are executable today and which remain planned coverage gaps."]
     },
     {
       "gateId": "labor_employment_executable_fact_binding",

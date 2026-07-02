@@ -68,6 +68,9 @@ from .labor_employment_budget_facts import run_labor_employment_budget_fact_audi
 from .labor_employment_budget_fact_gold import (
     run_labor_employment_budget_fact_gold_validation,
 )
+from .labor_employment_executable_coverage import (
+    run_labor_employment_executable_coverage_audit,
+)
 from .labor_employment_executable_fact_binding import (
     run_labor_employment_executable_fact_binding_audit,
 )
@@ -310,6 +313,31 @@ def _parser() -> argparse.ArgumentParser:
         help="Repository root for relative synthetic L&E executable fixture refs.",
     )
     le_executable_fixtures.add_argument("--out-dir", required=True)
+
+    le_executable_coverage = sub.add_parser(
+        "audit-labor-employment-executable-coverage",
+        help=(
+            "Compare the L&E executable fixture manifest to the full fixture-family "
+            "pack and report remaining executable coverage gaps."
+        ),
+    )
+    le_executable_coverage.add_argument(
+        "--manifest",
+        default=(
+            "examples/synthetic/labor-employment/labor-employment-executable-fixtures-manifest.json"
+        ),
+        help="Path to labor-employment-executable-fixtures-manifest.json.",
+    )
+    le_executable_coverage.add_argument(
+        "--pack",
+        help="Optional override path to labor-employment-budget-fixture-family-pack.json.",
+    )
+    le_executable_coverage.add_argument(
+        "--repo-root",
+        default=".",
+        help="Repository root for relative synthetic L&E coverage refs.",
+    )
+    le_executable_coverage.add_argument("--out-dir", required=True)
 
     le_executable_fact_binding = sub.add_parser(
         "audit-labor-employment-executable-fact-binding",
@@ -1504,6 +1532,44 @@ def main(argv: list[str] | None = None) -> int:
             )
             return (
                 0 if report.status == "labor_employment_executable_fixtures_ready_for_review" else 2
+            )
+
+        if args.command == "audit-labor-employment-executable-coverage":
+            report, run_dir = run_labor_employment_executable_coverage_audit(
+                manifest_path=args.manifest,
+                pack_path=args.pack,
+                repo_root=args.repo_root,
+                out_dir=args.out_dir,
+            )
+            failed_checks = [check.check_id for check in report.checks if check.status == "failed"]
+            _print(
+                {
+                    "status": report.status,
+                    "coverage_state": report.coverage_state,
+                    "executable_coverage_report_id": report.executable_coverage_report_id,
+                    "pack_id": report.pack_id,
+                    "executable_manifest_id": report.executable_manifest_id,
+                    "pack_case_count": report.pack_case_count,
+                    "executable_fixture_count": report.executable_fixture_count,
+                    "covered_pack_case_count": report.covered_pack_case_count,
+                    "missing_executable_pack_case_count": (
+                        report.missing_executable_pack_case_count
+                    ),
+                    "covered_family_variant_count": report.covered_family_variant_count,
+                    "missing_family_variant_count": report.missing_family_variant_count,
+                    "failed_checks": failed_checks,
+                    "fixture_generation_authorized": report.fixture_generation_authorized,
+                    "calibration_approved": report.calibration_approved,
+                    "budget_amount_output_authorized": report.budget_amount_output_authorized,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return (
+                0 if report.status == "labor_employment_executable_coverage_ready_for_review" else 2
             )
 
         if args.command == "audit-labor-employment-executable-fact-binding":

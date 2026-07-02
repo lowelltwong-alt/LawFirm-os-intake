@@ -87,6 +87,16 @@ QA_BUNDLE_ARTIFACTS = [
         ),
     ),
     QABundleArtifactSpec(
+        artifact_id="labor_employment_executable_coverage",
+        label="Labor/Employment Executable Coverage",
+        file_name="labor_employment_executable_coverage_report.json",
+        required=True,
+        missing_note=(
+            "Run audit-labor-employment-executable-coverage so QA can see which "
+            "L&E family-pack cases are not yet executable source bundles."
+        ),
+    ),
+    QABundleArtifactSpec(
         artifact_id="labor_employment_executable_fact_binding",
         label="Labor/Employment Executable Fact Binding",
         file_name="labor_employment_executable_fact_binding_report.json",
@@ -170,6 +180,11 @@ def run_synthetic_qa_bundle(
             root=root,
             explicit_path=None,
             file_name="labor_employment_executable_fixtures_report.json",
+        ),
+        "labor_employment_executable_coverage": _resolve_artifact_source(
+            root=root,
+            explicit_path=None,
+            file_name="labor_employment_executable_coverage_report.json",
         ),
         "labor_employment_executable_fact_binding": _resolve_artifact_source(
             root=root,

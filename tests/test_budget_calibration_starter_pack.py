@@ -13,6 +13,9 @@ from lawfirm_os_intake.labor_employment_executable_fact_binding import (
 from lawfirm_os_intake.labor_employment_budget_fact_gold import (
     run_labor_employment_budget_fact_gold_validation,
 )
+from lawfirm_os_intake.labor_employment_executable_coverage import (
+    run_labor_employment_executable_coverage_audit,
+)
 from lawfirm_os_intake.labor_employment_fixture_family_pack import (
     run_labor_employment_fixture_family_pack_audit,
 )
@@ -121,6 +124,15 @@ def test_starter_pack_allows_synthetic_qa_bundle_to_reach_pending_review(
         repo_root=repo_root,
         out_dir=run_root / "quality" / "le-executable-fixtures",
     )
+    run_labor_employment_executable_coverage_audit(
+        manifest_path=(
+            repo_root
+            / "examples/synthetic/labor-employment/"
+            / "labor-employment-executable-fixtures-manifest.json"
+        ),
+        repo_root=repo_root,
+        out_dir=run_root / "quality" / "le-executable-coverage",
+    )
     run_labor_employment_executable_fact_binding_audit(
         binding_manifest_path=(
             repo_root
@@ -159,6 +171,7 @@ def test_starter_pack_allows_synthetic_qa_bundle_to_reach_pending_review(
     assert gates["labor_employment_qa_matrix"]["status"] == "pending_review"
     assert gates["labor_employment_fixture_family_pack"]["status"] == "pending_review"
     assert gates["labor_employment_executable_fixtures"]["status"] == "pending_review"
+    assert gates["labor_employment_executable_coverage"]["status"] == "pending_review"
     assert gates["labor_employment_executable_fact_binding"]["status"] == "pending_review"
     assert gates["labor_employment_budget_fact_gold"]["status"] == "passed"
     assert ui_manifest["overallStatus"] == "blocked"
