@@ -120,6 +120,16 @@ type FixtureDrilldownRow = {
   blockerReview?: LaborEmploymentBlockedDriverImpactCaseReview;
 };
 
+type SyntheticQABlockerRow = {
+  rowId: string;
+  source: "quality_gate" | "qa_step" | "readiness_item" | "top_blocker";
+  label: string;
+  state: "failed" | "blocked" | "pending_review";
+  owner: string;
+  evidenceRefs: string[];
+  notes: string[];
+};
+
 function buildFixtureDrilldownRows(
   outputReport: LaborEmploymentBudgetOutputExpectationReport,
   blockedReviewReport: LaborEmploymentBlockedDriverImpactReviewReport,
@@ -132,6 +142,82 @@ function buildFixtureDrilldownRows(
     outputCase,
     blockerReview: blockerReviewByFixture.get(outputCase.executable_fixture_id),
   }));
+}
+
+function readinessItemStateToBlockerState(
+  state: SyntheticConfidenceSummaryItemState,
+): SyntheticQABlockerRow["state"] {
+  if (state === "failed") {
+    return "failed";
+  }
+  if (state === "blocked") {
+    return "blocked";
+  }
+  return "pending_review";
+}
+
+function buildSyntheticQABlockerRows(
+  reviewManifest: ReviewManifest,
+  confidenceReport: SyntheticConfidenceSummaryReport,
+  qaReviewRun: SyntheticQAReviewRunReport,
+): SyntheticQABlockerRow[] {
+  const rows: SyntheticQABlockerRow[] = [];
+
+  reviewManifest.qualityGates
+    .filter((gate) => gate.status !== "passed")
+    .forEach((gate) => {
+      rows.push({
+        rowId: `quality_gate:${gate.gateId}`,
+        source: "quality_gate",
+        label: gate.label,
+        state: gate.status === "failed" || gate.status === "blocked" ? gate.status : "pending_review",
+        owner: gate.owner,
+        evidenceRefs: [gate.evidenceFile],
+        notes: gate.notes,
+      });
+    });
+
+  qaReviewRun.steps
+    .filter((step) => step.status !== "passed")
+    .forEach((step) => {
+      rows.push({
+        rowId: `qa_step:${step.step_id}`,
+        source: "qa_step",
+        label: step.label,
+        state: "failed",
+        owner: "synthetic_qa_review_run",
+        evidenceRefs: [step.artifact_ref],
+        notes: [step.observed_status, ...step.notes],
+      });
+    });
+
+  confidenceReport.readiness_items
+    .filter((item) => item.state !== "ready_for_review")
+    .forEach((item) => {
+      rows.push({
+        rowId: `readiness_item:${item.item_id}`,
+        source: "readiness_item",
+        label: item.label,
+        state: readinessItemStateToBlockerState(item.state),
+        owner: item.owner,
+        evidenceRefs: item.evidence_refs,
+        notes: item.notes,
+      });
+    });
+
+  confidenceReport.top_blockers.forEach((blocker, index) => {
+    rows.push({
+      rowId: `top_blocker:${index + 1}`,
+      source: "top_blocker",
+      label: blocker,
+      state: "blocked",
+      owner: "synthetic_confidence_summary",
+      evidenceRefs: [confidenceReport.synthetic_confidence_summary_report_id],
+      notes: ["Reported as a top blocker in the synthetic confidence summary."],
+    });
+  });
+
+  return rows;
 }
 
 function BoundaryGrid({ manifest }: { manifest: ReviewManifest }) {
@@ -277,6 +363,116 @@ function QualityGatePanel({ gates }: { gates: QualityGate[] }) {
             <p>{gate.notes.join(" ")}</p>
           </article>
         ))}
+      </div>
+    </section>
+  );
+}
+
+function SyntheticQABlockerDrilldownPanel({
+  reviewManifest,
+  confidenceReport,
+  qaReviewRun,
+}: {
+  reviewManifest: ReviewManifest;
+  confidenceReport: SyntheticConfidenceSummaryReport;
+  qaReviewRun: SyntheticQAReviewRunReport;
+}) {
+  const rows = buildSyntheticQABlockerRows(reviewManifest, confidenceReport, qaReviewRun);
+  const failedCount = rows.filter((row) => row.state === "failed").length;
+  const blockedCount = rows.filter((row) => row.state === "blocked").length;
+  const pendingCount = rows.filter((row) => row.state === "pending_review").length;
+  const queueStateClass =
+    failedCount + blockedCount > 0
+      ? "state state-blocked"
+      : pendingCount > 0
+        ? "state state-pending"
+        : "state state-passed";
+  const queueStateLabel =
+    failedCount + blockedCount > 0
+      ? `${failedCount + blockedCount} blocked`
+      : pendingCount > 0
+        ? `${pendingCount} pending`
+        : "no active blockers";
+
+  return (
+    <section className="panel qa-blocker-panel" aria-labelledby="qa-blocker-title">
+      <div className="panel-heading">
+        <div>
+          <p className="eyebrow">Synthetic QA queue</p>
+          <h2 id="qa-blocker-title">Synthetic QA Blocker Drilldown</h2>
+          <code>{confidenceReport.synthetic_confidence_summary_report_id}</code>
+        </div>
+        <span className={queueStateClass}>{queueStateLabel}</span>
+      </div>
+
+      <div className="matrix-summary" aria-label="Synthetic QA blocker drilldown summary">
+        <div>
+          <span>Failed</span>
+          <strong>{failedCount}</strong>
+        </div>
+        <div>
+          <span>Blocked</span>
+          <strong>{blockedCount}</strong>
+        </div>
+        <div>
+          <span>Pending Review</span>
+          <strong>{pendingCount}</strong>
+        </div>
+        <div>
+          <span>Next Actions</span>
+          <strong>{confidenceReport.required_next_actions.length}</strong>
+        </div>
+      </div>
+
+      {rows.length === 0 ? (
+        <div className="empty-state">
+          <strong>No failed or blocked synthetic QA rows in the current local JSON bundle.</strong>
+          <span>
+            This remains candidate-only: the next action is review, not calibration, submission, or
+            Lake write.
+          </span>
+        </div>
+      ) : (
+        <div className="table-wrap">
+          <table className="qa-blocker-table">
+            <thead>
+              <tr>
+                <th>Source</th>
+                <th>State</th>
+                <th>Owner</th>
+                <th>Evidence</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row) => (
+                <tr key={row.rowId}>
+                  <td>
+                    <div className="artifact-title">{row.label}</div>
+                    <code>{row.source}</code>
+                  </td>
+                  <td>
+                    <span className={gateClass(row.state)}>{row.state}</span>
+                  </td>
+                  <td>{row.owner}</td>
+                  <td>
+                    <TokenList items={row.evidenceRefs} limit={3} />
+                  </td>
+                  <td>{row.notes.join(" ")}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      <div className="next-gates">
+        <h3>Review-Only Next Actions</h3>
+        <div>
+          {confidenceReport.required_next_actions.map((action) => (
+            <code key={action}>{action}</code>
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -1041,6 +1237,11 @@ function App() {
 
       <BundlePanel bundle={reviewDataBundle} />
       <SyntheticConfidenceSummaryPanel report={syntheticConfidenceSummary} />
+      <SyntheticQABlockerDrilldownPanel
+        reviewManifest={manifest}
+        confidenceReport={syntheticConfidenceSummary}
+        qaReviewRun={syntheticQAReviewRun}
+      />
       <SyntheticQAReviewRunPanel report={syntheticQAReviewRun} />
       <div className="grid-layout">
         <BoundaryGrid manifest={manifest} />

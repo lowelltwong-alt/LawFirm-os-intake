@@ -377,6 +377,7 @@ def test_legal_intake_budget_ui_disclaims_mutating_authority(repo_root):
     assert "Local JSON only" in app
     assert "UI Review Data Bundle" in app
     assert "Confidence Summary" in app
+    assert "Synthetic QA Blocker Drilldown" in app
     assert "Synthetic QA Review Run" in app
     assert "Matter-Linking Preflight" in app
     assert "QA Gates" in app
@@ -385,6 +386,7 @@ def test_legal_intake_budget_ui_disclaims_mutating_authority(repo_root):
     assert "L&amp;E Budget Output Expectations" in app
     assert "L&amp;E Fixture Drilldown" in app
     assert "buildFixtureDrilldownRows" in app
+    assert "buildSyntheticQABlockerRows" in app
     assert "assertUIReviewDataBundle" in app
     assert "assertSyntheticConfidenceSummaryReport" in app
     assert "assertSyntheticQAReviewRunReport" in app
@@ -393,9 +395,54 @@ def test_legal_intake_budget_ui_disclaims_mutating_authority(repo_root):
     assert "assertLaborEmploymentBlockedDriverImpactReviewReport" in app
     assert "assertLaborEmploymentBudgetOutputExpectationReport" in app
     assert "failingQualityGates" in app
+    assert "qa-blocker-panel" in styles
+    assert "qa-blocker-table" in styles
+    assert "empty-state" in styles
     assert "fixture-drilldown-panel" in styles
     assert "fixture-family-grid" in styles
     assert "grid-template-columns" in styles
+
+
+def test_legal_intake_budget_qa_blocker_drilldown_tracks_review_queue(repo_root):
+    app = (repo_root / UI_ROOT / "src/App.tsx").read_text(encoding="utf-8")
+    manifest = json.loads(
+        (repo_root / UI_ROOT / "src/fixtures/demo-run-manifest.json").read_text(encoding="utf-8")
+    )
+    confidence = json.loads(
+        (
+            repo_root / UI_ROOT / "src/fixtures/demo-synthetic-confidence-summary-report.json"
+        ).read_text(encoding="utf-8")
+    )
+    qa_review_run = json.loads(
+        (repo_root / UI_ROOT / "src/fixtures/demo-synthetic-qa-review-run-report.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    assert "function buildSyntheticQABlockerRows" in app
+    assert "reviewManifest.qualityGates" in app
+    assert "qaReviewRun.steps" in app
+    assert "confidenceReport.readiness_items" in app
+    assert "confidenceReport.top_blockers" in app
+    assert "No failed or blocked synthetic QA rows" in app
+    assert "review, not calibration, submission, or" in app
+    assert "Lake write" in app
+    pending_quality_gate_count = sum(
+        1 for gate in manifest["qualityGates"] if gate["status"] == "pending_review"
+    )
+    pending_readiness_count = sum(
+        1 for item in confidence["readiness_items"] if item["state"] == "pending_review"
+    )
+
+    assert pending_quality_gate_count > 0
+    assert pending_readiness_count > 0
+    assert not any(gate["status"] in {"blocked", "failed"} for gate in manifest["qualityGates"])
+    assert all(step["status"] == "passed" for step in qa_review_run["steps"])
+    assert not any(item["state"] in {"blocked", "failed"} for item in confidence["readiness_items"])
+    assert confidence["top_blockers"] == []
+    assert confidence["budget_submission_authorized"] is False
+    assert confidence["lake_write_performed"] is False
+    assert confidence["silent_learning_performed"] is False
 
 
 def test_legal_intake_budget_fixture_drilldown_joins_existing_le_reports(repo_root):
