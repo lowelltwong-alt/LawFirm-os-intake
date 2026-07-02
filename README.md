@@ -139,7 +139,11 @@ sender follow-up when no official matter number exists, and preserves candidate
 Exception Lake labels for unresolved matching. The audit is local JSON only: no
 Upfront connector, vendor API call, screen, conflict conclusion, budget amount,
 matter opening, Lake/SQLite write, external write, or silent learning is
-authorized.
+authorized. A resolving follow-up fixture also exists at
+`examples/synthetic/upfront/upfront-like-intake-output.resolved-followup.example.json`;
+it can clear sender-follow-up need while still requiring human matter-linking
+confirmation and blocking budget output, matter opening, Lake/SQLite writes, and
+silent learning.
 
 Use `python -m lawfirm_os_intake audit-labor-employment-fixture-family-pack
 --out-dir PATH/le-fixture-family-pack` to audit

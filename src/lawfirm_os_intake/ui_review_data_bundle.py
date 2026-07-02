@@ -39,6 +39,14 @@ DETAIL_REPORT_SPECS = [
         required=False,
     ),
     UIReviewDetailSpec(
+        detail_report_id="matter-linking-preflight",
+        label="Matter-Linking Preflight",
+        report_kind="matter_linking_preflight",
+        file_name="matter_linking_preflight_report.json",
+        renderer="MatterLinkingPreflightPanel",
+        required=False,
+    ),
+    UIReviewDetailSpec(
         detail_report_id="labor-employment-qa-matrix",
         label="L&E Budget Fact QA",
         report_kind="labor_employment_qa_matrix",

@@ -3317,6 +3317,7 @@ class MatterLinkingPreflightReport(StrictModel):
     matter_linking_preflight_report_id: str
     status: Literal[
         "matter_linking_preflight_requires_review",
+        "matter_linking_preflight_resolved_candidate_requires_review",
         "blocked_matter_linking_preflight",
     ]
     source_artifact_ref: str
@@ -3379,16 +3380,24 @@ class MatterLinkingPreflightReport(StrictModel):
             raise ValueError("matter-linking strong negative signal count mismatch")
         if self.source_count != len(self.source_hashes_by_id):
             raise ValueError("matter-linking source count must match source hashes")
-        if self.status == "matter_linking_preflight_requires_review" and failed:
+        if (
+            self.status
+            in {
+                "matter_linking_preflight_requires_review",
+                "matter_linking_preflight_resolved_candidate_requires_review",
+            }
+            and failed
+        ):
             raise ValueError("ready matter-linking preflight cannot include failed checks")
         if self.status == "blocked_matter_linking_preflight" and not failed:
             raise ValueError("blocked matter-linking preflight requires failed checks")
         required_gates = {
             "human_matter_linking_review",
-            "sender_reference_followup",
             "no_budget_amount_until_cluster_and_roles_confirmed",
             "no_matter_opening_without_official_authority",
         }
+        if self.sender_followup_required:
+            required_gates.add("sender_reference_followup")
         if not required_gates.issubset(set(self.required_next_gates)):
             raise ValueError("matter-linking preflight is missing required next gates")
         return self
@@ -9926,6 +9935,7 @@ UIReviewDataBundleStatus = Literal[
 UIReviewDataBundleReportKind = Literal[
     "ui_review_manifest",
     "synthetic_qa_review_run",
+    "matter_linking_preflight",
     "labor_employment_qa_matrix",
     "labor_employment_blocked_driver_impact_review",
 ]

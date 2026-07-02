@@ -33,6 +33,7 @@ def _write_quality_evidence(run_root):
         "budget_coherence_report.json",
         "synthetic_qa_bundle_report.json",
         "synthetic_fixture_depth_audit_report.json",
+        "matter_linking_preflight_report.json",
         "budget_calibration_readiness_report.json",
         "budget_calibration_starter_pack_report.json",
         "labor_employment_qa_matrix_report.json",

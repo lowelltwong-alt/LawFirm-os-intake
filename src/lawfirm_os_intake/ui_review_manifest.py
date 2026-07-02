@@ -102,6 +102,13 @@ ARTIFACT_SPECS = [
         "pending_review",
     ),
     ArtifactSpec(
+        "matter-linking-preflight",
+        "Matter-Linking Preflight",
+        "matter_linking_preflight_report.json",
+        "qa-reference",
+        "pending_review",
+    ),
+    ArtifactSpec(
         "fixture-depth",
         "Synthetic Fixture Depth",
         "synthetic_fixture_depth_audit_report.json",
@@ -250,6 +257,13 @@ QUALITY_GATE_SPECS = {
         "synthetic_qa_review_run_report.json",
         "qa-reference",
         "The one-command synthetic QA recipe must prove each generated QA/UI artifact step before the frontend treats the run as review-ready.",
+        "pending_review",
+    ),
+    "matter_linking_preflight": (
+        "Matter-Linking Preflight",
+        "matter_linking_preflight_report.json",
+        "qa-reference",
+        "Upfront-like document clusters must stay human-gated and no-write before budget or matter-opening workflows rely on them.",
         "pending_review",
     ),
     "synthetic_fixture_depth": (

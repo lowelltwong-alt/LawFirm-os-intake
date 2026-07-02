@@ -161,6 +161,7 @@
     "status": {
       "enum": [
         "matter_linking_preflight_requires_review",
+        "matter_linking_preflight_resolved_candidate_requires_review",
         "blocked_matter_linking_preflight"
       ],
       "title": "Status",

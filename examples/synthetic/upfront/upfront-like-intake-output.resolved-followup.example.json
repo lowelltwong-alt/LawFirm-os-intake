@@ -1,8 +1,8 @@
 {
   "schema_version": "0.1",
-  "artifact_id": "upfront_like_intake_output.synthetic.multi_case_adjuster.v0_1",
+  "artifact_id": "upfront_like_intake_output.synthetic.resolved_followup.v0_1",
   "artifact_type": "upfront_like_intake_output_candidate",
-  "status": "requires_human_linking_review",
+  "status": "resolved_candidate_requires_human_confirmation",
   "data_origin": "synthetic",
   "candidate_only": true,
   "non_authoritative": true,
@@ -14,12 +14,12 @@
     "api_contract_verified": false,
     "public_research_ref": "docs/integrations/upfront-intake-integration-research.md",
     "notes": [
-      "This fixture is a synthetic target shape based on public product capabilities, not a real Upfront export.",
+      "This fixture is synthetic and models a follow-up source that resolves document clusters.",
       "No vendor endpoint names, tenant field names, credentials, or production object IDs are represented."
     ]
   },
   "intake_request": {
-    "intake_request_id": "synthetic-upfront-request-20260702-001",
+    "intake_request_id": "synthetic-upfront-request-20260702-002",
     "request_type": "new_matter_intake",
     "request_status": "draft_pre_clearance",
     "practice_area_candidate": "labor_and_employment",
@@ -31,19 +31,7 @@
       "role_candidate": "insurance_adjuster",
       "organization": "Northstar Mutual Synthetic Claims",
       "email": "morgan.lee@example.invalid"
-    },
-    "firm_owner_candidates": [
-      {
-        "owner_role": "requesting_attorney",
-        "display_name": "Avery Patel",
-        "status": "needs_confirmation"
-      },
-      {
-        "owner_role": "risk_team",
-        "display_name": "Risk intake queue",
-        "status": "not_started"
-      }
-    ]
+    }
   },
   "external_references": [
     {
@@ -51,21 +39,21 @@
       "reference_value": "NSM-LAB-4421",
       "source_ref": "source.email.001:body:120-132",
       "strength": "medium",
-      "notes": ["Sender reference may be internal to the carrier and is not known to be unique."]
+      "notes": ["Sender reference is not treated as globally unique."]
     },
     {
-      "reference_type": "carrier_claim_number",
-      "reference_value": "CLM-77820-A",
-      "source_ref": "source.attachment.001:page1:44-55",
+      "reference_type": "upfront_like_request_id",
+      "reference_value": "UPF-SYN-1001",
+      "source_ref": "source.email.002:body:42-54",
       "strength": "strong",
-      "notes": ["Claim number appears in the assignment letter for one candidate case."]
+      "notes": ["Synthetic follow-up maps the Rivera documents to one candidate request."]
     },
     {
-      "reference_type": "carrier_claim_number",
-      "reference_value": "CLM-77821-B",
-      "source_ref": "source.attachment.003:page1:41-52",
+      "reference_type": "upfront_like_request_id",
+      "reference_value": "UPF-SYN-1002",
+      "source_ref": "source.email.002:body:116-128",
       "strength": "strong",
-      "notes": ["Second claim number appears in a different attachment from the same sender."]
+      "notes": ["Synthetic follow-up maps the Sato documents to a separate candidate request."]
     },
     {
       "reference_type": "official_firm_matter_number",
@@ -86,7 +74,20 @@
       "coverage_state": "read",
       "document_cluster_candidate_ids": ["cluster.case-a", "cluster.case-b"],
       "notes": [
-        "Email text states two assignments are attached but does not clearly separate the cases."
+        "Initial email text states two assignments are attached but does not clearly separate the cases."
+      ]
+    },
+    {
+      "source_id": "source.email.002",
+      "source_kind": "email",
+      "sender": "morgan.lee@example.invalid",
+      "subject": "Re: Two new employment assignments - claim split",
+      "received_at": "2026-07-02T15:25:00Z",
+      "source_hash": "sha256:synthetic-email-002-resolution",
+      "coverage_state": "read",
+      "document_cluster_candidate_ids": ["cluster.case-a", "cluster.case-b"],
+      "notes": [
+        "Follow-up email confirms CLM-77820-A/UPF-SYN-1001 and CLM-77821-B/UPF-SYN-1002 are separate candidate matters."
       ]
     },
     {
@@ -124,14 +125,14 @@
   ],
   "matter_linking": {
     "official_matter_number_status": "not_available",
-    "overall_link_state": "ambiguous_multiple_candidates",
+    "overall_link_state": "resolved_split_candidates_pending_human_confirmation",
     "requires_human_confirmation": true,
-    "requires_sender_followup": true,
+    "requires_sender_followup": false,
     "candidate_clusters": [
       {
         "cluster_id": "cluster.case-a",
-        "link_state": "linked_high_evidence_candidate",
-        "match_strength": "high_evidence_candidate_not_authorized",
+        "link_state": "resolved_candidate_pending_human_confirmation",
+        "match_strength": "resolved_high_evidence_candidate_not_authorized",
         "proposed_short_label": "Rivera v. Synthetic Bistro Group",
         "supporting_signals": [
           {
@@ -148,6 +149,18 @@
               "source.attachment.002:page1:12-48"
             ],
             "weight_class": "strong"
+          },
+          {
+            "signal_type": "sender_followup_claim_cluster_confirmation",
+            "signal_value": "CLM-77820-A maps to attachments 001-002",
+            "source_refs": ["source.email.002:body:42-98"],
+            "weight_class": "strong"
+          },
+          {
+            "signal_type": "upfront_like_request_id",
+            "signal_value": "UPF-SYN-1001",
+            "source_refs": ["source.email.002:body:42-54"],
+            "weight_class": "strong"
           }
         ],
         "negative_signals": [
@@ -158,12 +171,12 @@
             "weight_class": "strong"
           }
         ],
-        "source_ids": ["source.attachment.001", "source.attachment.002"]
+        "source_ids": ["source.attachment.001", "source.attachment.002", "source.email.002"]
       },
       {
         "cluster_id": "cluster.case-b",
-        "link_state": "linked_high_evidence_candidate",
-        "match_strength": "high_evidence_candidate_not_authorized",
+        "link_state": "resolved_candidate_pending_human_confirmation",
+        "match_strength": "resolved_high_evidence_candidate_not_authorized",
         "proposed_short_label": "Sato v. Synthetic Harbor Logistics",
         "supporting_signals": [
           {
@@ -180,6 +193,18 @@
               "source.attachment.004:page1:10-46"
             ],
             "weight_class": "strong"
+          },
+          {
+            "signal_type": "sender_followup_claim_cluster_confirmation",
+            "signal_value": "CLM-77821-B maps to attachments 003-004",
+            "source_refs": ["source.email.002:body:116-172"],
+            "weight_class": "strong"
+          },
+          {
+            "signal_type": "upfront_like_request_id",
+            "signal_value": "UPF-SYN-1002",
+            "source_refs": ["source.email.002:body:116-128"],
+            "weight_class": "strong"
           }
         ],
         "negative_signals": [
@@ -190,98 +215,34 @@
             "weight_class": "strong"
           }
         ],
-        "source_ids": ["source.attachment.003", "source.attachment.004"]
+        "source_ids": ["source.attachment.003", "source.attachment.004", "source.email.002"]
       }
     ],
     "weak_signals_not_sufficient_for_merge": [
       {
         "signal_type": "same_sender",
         "signal_value": "morgan.lee@example.invalid",
-        "source_refs": ["source.email.001:headers"],
+        "source_refs": ["source.email.001:headers", "source.email.002:headers"],
         "reason": "One adjuster can send multiple unrelated assignments."
       },
       {
         "signal_type": "same_carrier",
         "signal_value": "Northstar Mutual Synthetic Claims",
-        "source_refs": ["source.email.001:signature"],
+        "source_refs": ["source.email.001:signature", "source.email.002:signature"],
         "reason": "Carrier identity does not identify a specific matter."
       }
     ],
     "required_review_actions": [
-      "confirm whether attachments 001-002 and 003-004 are two separate prospective matters",
-      "request any firm intake request ID, official matter number, or additional carrier reference from sender",
-      "confirm prospective represented client, insured, payer, and carrier roles separately for each cluster"
+      "confirm that cluster.case-a and cluster.case-b should become two separate prospective matters",
+      "confirm prospective represented client, insured, payer, and carrier roles separately for each cluster",
+      "obtain official firm matter authority before matter opening or budget output"
     ]
-  },
-  "party_relationship_candidates": [
-    {
-      "party_id": "party.synthetic.northstar",
-      "display_name": "Northstar Mutual Synthetic Claims",
-      "role_candidates": ["carrier", "payer", "instructing_source"],
-      "source_refs": ["source.email.001:signature"],
-      "must_not_collapse_to_client": true
-    },
-    {
-      "party_id": "party.synthetic.bistro",
-      "display_name": "Synthetic Bistro Group",
-      "role_candidates": ["insured", "prospective_client_candidate", "employer_defendant"],
-      "source_refs": ["source.attachment.001:page1:80-118"],
-      "requires_human_confirmation": true
-    },
-    {
-      "party_id": "party.synthetic.harbor",
-      "display_name": "Synthetic Harbor Logistics",
-      "role_candidates": ["insured", "prospective_client_candidate", "employer_defendant"],
-      "source_refs": ["source.attachment.003:page1:78-121"],
-      "requires_human_confirmation": true
-    }
-  ],
-  "conflicts_and_risk": {
-    "conflict_search_requested": true,
-    "conflict_conclusion_emitted": false,
-    "risk_score_status": "not_authoritative_candidate",
-    "aml_kyc_status": "not_run_in_intake_repo",
-    "sanctions_status": "not_run_in_intake_repo",
-    "ethical_screen_candidate": {
-      "screen_required_status": "unknown_pending_conflicts_review",
-      "screen_created": false,
-      "access_list_created": false,
-      "acknowledgment_requested": false
-    },
-    "conflict_seed_terms": [
-      "Northstar Mutual Synthetic Claims",
-      "Synthetic Bistro Group",
-      "Dana Rivera",
-      "Synthetic Harbor Logistics",
-      "Jordan Sato",
-      "CLM-77820-A",
-      "CLM-77821-B"
-    ]
-  },
-  "workflow_state": {
-    "workflow_status": "blocked_pending_human_linking_review",
-    "current_tasks": [
-      {
-        "task_id": "task.synthetic.confirm-cluster-split",
-        "assigned_role": "human_intake_reviewer",
-        "task_status": "open",
-        "required_before": ["budget_amount_output", "matter_opening", "conflict_clearance"]
-      },
-      {
-        "task_id": "task.synthetic.request-sender-reference",
-        "assigned_role": "human_intake_reviewer",
-        "task_status": "open",
-        "required_before": ["matter_link_finalization"]
-      }
-    ],
-    "audit_trail_refs": ["source.email.001", "source.attachment.001", "source.attachment.003"]
   },
   "candidate_exception_lake_labels": [
-    "source_matter_link_ambiguous",
-    "multiple_possible_matters_same_sender",
+    "source_matter_link_resolved_candidate",
     "missing_official_matter_number",
-    "unresolved_sender_internal_reference",
-    "document_cluster_split_required"
+    "document_cluster_split_resolved_candidate",
+    "human_matter_linking_confirmation_required"
   ],
   "output_boundaries": {
     "upfront_connector_implemented": false,
@@ -298,7 +259,6 @@
   },
   "required_next_gates": [
     "human_matter_linking_review",
-    "sender_reference_followup",
     "conflict_seed_review",
     "no_budget_amount_until_cluster_and_roles_confirmed",
     "no_matter_opening_without_official_authority",

@@ -1,0 +1,115 @@
+{
+  "schema_version": "0.1",
+  "matter_linking_preflight_report_id": "matterlinkpreflight_demo_resolved_001",
+  "status": "matter_linking_preflight_resolved_candidate_requires_review",
+  "source_artifact_ref": "examples/synthetic/upfront/upfront-like-intake-output.resolved-followup.example.json",
+  "source_artifact_id": "upfront_like_intake_output.synthetic.resolved_followup.v0_1",
+  "source_artifact_type": "upfront_like_intake_output_candidate",
+  "source_artifact_status": "resolved_candidate_requires_human_confirmation",
+  "source_artifact_hash": "sha256:demo-matter-linking-preflight",
+  "data_origin": "synthetic",
+  "source_system_name": "Upfront-like intake output",
+  "real_upfront_export": false,
+  "api_contract_verified": false,
+  "official_matter_number_status": "not_available",
+  "overall_link_state": "resolved_split_candidates_pending_human_confirmation",
+  "requires_human_confirmation": true,
+  "requires_sender_followup": false,
+  "cluster_count": 2,
+  "high_evidence_candidate_count": 2,
+  "weak_signal_count": 2,
+  "strong_negative_signal_count": 2,
+  "source_count": 6,
+  "source_hashes_by_id": {
+    "source.email.001": "sha256:synthetic-email-001",
+    "source.email.002": "sha256:synthetic-email-002-resolution",
+    "source.attachment.001": "sha256:synthetic-attachment-001",
+    "source.attachment.002": "sha256:synthetic-attachment-002",
+    "source.attachment.003": "sha256:synthetic-attachment-003",
+    "source.attachment.004": "sha256:synthetic-attachment-004"
+  },
+  "weak_merge_signal_types": ["same_carrier", "same_sender"],
+  "candidate_exception_lake_labels": [
+    "document_cluster_split_resolved_candidate",
+    "human_matter_linking_confirmation_required",
+    "missing_official_matter_number",
+    "source_matter_link_resolved_candidate"
+  ],
+  "clusters": [
+    {
+      "cluster_id": "cluster.case-a",
+      "link_state": "resolved_candidate_pending_human_confirmation",
+      "match_strength": "resolved_high_evidence_candidate_not_authorized",
+      "proposed_short_label": "Rivera v. Synthetic Bistro Group",
+      "source_ids": ["source.attachment.001", "source.attachment.002", "source.email.002"],
+      "source_hashes": [
+        "sha256:synthetic-attachment-001",
+        "sha256:synthetic-attachment-002",
+        "sha256:synthetic-email-002-resolution"
+      ],
+      "supporting_signal_count": 4,
+      "strong_supporting_signal_count": 4,
+      "negative_signal_count": 1,
+      "strong_negative_signal_count": 1,
+      "supporting_signal_types": [
+        "carrier_claim_number",
+        "party_pair",
+        "sender_followup_claim_cluster_confirmation",
+        "upfront_like_request_id"
+      ],
+      "negative_signal_types": ["different_claim_number_in_same_email"],
+      "requires_human_confirmation": true,
+      "matter_link_finalized": false
+    },
+    {
+      "cluster_id": "cluster.case-b",
+      "link_state": "resolved_candidate_pending_human_confirmation",
+      "match_strength": "resolved_high_evidence_candidate_not_authorized",
+      "proposed_short_label": "Sato v. Synthetic Harbor Logistics",
+      "source_ids": ["source.attachment.003", "source.attachment.004", "source.email.002"],
+      "source_hashes": [
+        "sha256:synthetic-attachment-003",
+        "sha256:synthetic-attachment-004",
+        "sha256:synthetic-email-002-resolution"
+      ],
+      "supporting_signal_count": 4,
+      "strong_supporting_signal_count": 4,
+      "negative_signal_count": 1,
+      "strong_negative_signal_count": 1,
+      "supporting_signal_types": [
+        "carrier_claim_number",
+        "party_pair",
+        "sender_followup_claim_cluster_confirmation",
+        "upfront_like_request_id"
+      ],
+      "negative_signal_types": ["different_claim_number_in_same_email"],
+      "requires_human_confirmation": true,
+      "matter_link_finalized": false
+    }
+  ],
+  "required_next_gates": [
+    "conflict_seed_review",
+    "human_matter_linking_review",
+    "no_budget_amount_until_cluster_and_roles_confirmed",
+    "no_lake_or_sqlite_write_from_matter_linking_preflight",
+    "no_matter_opening_without_official_authority"
+  ],
+  "candidate_only": true,
+  "synthetic_only": true,
+  "non_authoritative": true,
+  "local_json_only": true,
+  "human_review_required": true,
+  "sender_followup_required": false,
+  "upfront_connector_implemented": false,
+  "vendor_api_called": false,
+  "external_write_performed": false,
+  "lake_write_performed": false,
+  "sqlite_write_performed": false,
+  "matter_opening_authorized": false,
+  "budget_amount_output_authorized": false,
+  "budget_submission_authorized": false,
+  "conflict_conclusion_emitted": false,
+  "screen_created": false,
+  "silent_learning_performed": false,
+  "generated_at": "2026-07-02T00:00:00Z"
+}

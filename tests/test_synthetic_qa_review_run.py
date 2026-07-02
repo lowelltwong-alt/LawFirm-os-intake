@@ -42,7 +42,7 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
 
     assert code == 0
     assert report["status"] == "synthetic_qa_review_run_ready"
-    assert report["step_count"] == len(report["steps"]) == 15
+    assert report["step_count"] == len(report["steps"]) == 16
     assert report["failed_step_count"] == 0
     assert report["candidate_only"] is True
     assert report["synthetic_only"] is True
@@ -53,6 +53,7 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
     assert report["silent_learning_performed"] is False
     assert {
         "budget_coherence",
+        "matter_linking_preflight",
         "budget_calibration_starter_pack",
         "labor_employment_qa_matrix",
         "labor_employment_fixture_family_pack",
@@ -82,17 +83,22 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
     assert {
         "synthetic_qa_review_run",
         "synthetic_qa_bundle",
+        "matter_linking_preflight",
         "labor_employment_blocked_driver_impact_review",
     } <= {gate["gateId"] for gate in ui_manifest["qualityGates"]}
     assert ui_data_bundle["status"] == "ready_for_review"
     ui_detail_reports = {
         report["report_kind"]: report for report in ui_data_bundle["detail_reports"]
     }
-    assert ui_data_bundle["detail_report_count"] == 4
-    assert ui_data_bundle["present_detail_report_count"] == 4
+    assert ui_data_bundle["detail_report_count"] == 5
+    assert ui_data_bundle["present_detail_report_count"] == 5
     assert ui_detail_reports["synthetic_qa_review_run"]["present"] is True
     assert ui_detail_reports["synthetic_qa_review_run"]["artifact_ref"] == str(
         run_root / SYNTHETIC_QA_REVIEW_RUN_REPORT_FILENAME
+    )
+    assert ui_detail_reports["matter_linking_preflight"]["present"] is True
+    assert ui_detail_reports["matter_linking_preflight"]["status"] == (
+        "matter_linking_preflight_resolved_candidate_requires_review"
     )
     assert ui_data_bundle["external_writes_performed"] is False
     assert ui_data_bundle["lake_write_performed"] is False

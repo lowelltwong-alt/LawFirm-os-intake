@@ -139,6 +139,17 @@
       "notes": ["The one-command synthetic QA recipe generated all local QA and UI review artifacts."]
     },
     {
+      "artifactId": "matter-linking-preflight",
+      "label": "Matter-Linking Preflight",
+      "fileName": "matter_linking_preflight_report.json",
+      "status": "pending_review",
+      "owner": "qa-reference",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": ["Upfront-like document clusters are resolved only as human-gated candidates."]
+    },
+    {
       "artifactId": "fixture-depth",
       "label": "Synthetic Fixture Depth",
       "fileName": "synthetic_fixture_depth_audit_report.json",
@@ -361,6 +372,14 @@
       "evidenceFile": "synthetic_qa_review_run_report.json",
       "owner": "qa-reference",
       "notes": ["The one-command synthetic QA recipe proves each generated QA/UI artifact step before frontend review."]
+    },
+    {
+      "gateId": "matter_linking_preflight",
+      "label": "Matter-Linking Preflight",
+      "status": "pending_review",
+      "evidenceFile": "matter_linking_preflight_report.json",
+      "owner": "qa-reference",
+      "notes": ["Upfront-like document clusters must stay human-gated and no-write before budget or matter-opening workflows rely on them."]
     },
     {
       "gateId": "synthetic_fixture_depth",

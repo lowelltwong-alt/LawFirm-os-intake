@@ -4,9 +4,11 @@ import { createRoot } from "react-dom/client";
 import demoLaborEmploymentBlockedDriverReview from "./fixtures/demo-labor-employment-blocked-driver-impact-review-report.json";
 import demoLaborEmploymentQAMatrix from "./fixtures/demo-labor-employment-qa-matrix-report.json";
 import demoManifest from "./fixtures/demo-run-manifest.json";
+import demoMatterLinkingPreflight from "./fixtures/demo-matter-linking-preflight-report.json";
 import demoSyntheticQAReviewRun from "./fixtures/demo-synthetic-qa-review-run-report.json";
 import demoReviewDataBundle from "./fixtures/demo-ui-review-data-bundle.json";
 import {
+  assertMatterLinkingPreflightReport,
   assertLaborEmploymentBlockedDriverImpactReviewReport,
   assertLaborEmploymentQAMatrixReport,
   assertReadOnlyManifest,
@@ -22,6 +24,7 @@ import type {
   LaborEmploymentBudgetGateEffect,
   LaborEmploymentBudgetReadinessState,
   LaborEmploymentQAMatrixReport,
+  MatterLinkingPreflightReport,
   QualityGate,
   QualityGateStatus,
   ReviewArtifact,
@@ -34,12 +37,14 @@ import "./styles.css";
 const reviewDataBundle = demoReviewDataBundle as UIReviewDataBundle;
 const manifest = demoManifest as ReviewManifest;
 const syntheticQAReviewRun = demoSyntheticQAReviewRun as SyntheticQAReviewRunReport;
+const matterLinkingPreflight = demoMatterLinkingPreflight as MatterLinkingPreflightReport;
 const laborEmploymentQAMatrix = demoLaborEmploymentQAMatrix as LaborEmploymentQAMatrixReport;
 const laborEmploymentBlockedDriverReview =
   demoLaborEmploymentBlockedDriverReview as LaborEmploymentBlockedDriverImpactReviewReport;
 const bundleContractFailures = assertUIReviewDataBundle(reviewDataBundle);
 const manifestContractFailures = assertReadOnlyManifest(manifest);
 const syntheticQAReviewRunFailures = assertSyntheticQAReviewRunReport(syntheticQAReviewRun);
+const matterLinkingFailures = assertMatterLinkingPreflightReport(matterLinkingPreflight);
 const matrixContractFailures = assertLaborEmploymentQAMatrixReport(laborEmploymentQAMatrix);
 const blockedDriverContractFailures =
   assertLaborEmploymentBlockedDriverImpactReviewReport(laborEmploymentBlockedDriverReview);
@@ -47,6 +52,7 @@ const contractFailures = [
   ...bundleContractFailures,
   ...manifestContractFailures,
   ...syntheticQAReviewRunFailures,
+  ...matterLinkingFailures,
   ...matrixContractFailures,
   ...blockedDriverContractFailures,
 ];
@@ -274,6 +280,90 @@ function SyntheticQAReviewRunPanel({ report }: { report: SyntheticQAReviewRunRep
             </p>
           </article>
         ))}
+      </div>
+    </section>
+  );
+}
+
+function MatterLinkingPreflightPanel({ report }: { report: MatterLinkingPreflightReport }) {
+  const statusClass =
+    report.status === "blocked_matter_linking_preflight" || matterLinkingFailures.length > 0
+      ? "state state-blocked"
+      : "state state-pending";
+
+  return (
+    <section className="panel matrix-panel" aria-labelledby="matter-linking-title">
+      <div className="panel-heading">
+        <div>
+          <h2 id="matter-linking-title">Matter-Linking Preflight</h2>
+          <code>{report.matter_linking_preflight_report_id}</code>
+        </div>
+        <span className={statusClass}>{report.status}</span>
+      </div>
+
+      <div className="matrix-summary" aria-label="Matter-linking preflight summary">
+        <div>
+          <span>Clusters</span>
+          <strong>{report.cluster_count}</strong>
+        </div>
+        <div>
+          <span>High Evidence</span>
+          <strong>{report.high_evidence_candidate_count}</strong>
+        </div>
+        <div>
+          <span>Weak Signals</span>
+          <strong>{report.weak_signal_count}</strong>
+        </div>
+        <div>
+          <span>Split Evidence</span>
+          <strong>{report.strong_negative_signal_count}</strong>
+        </div>
+      </div>
+
+      <div className="table-wrap">
+        <table className="matrix-table">
+          <thead>
+            <tr>
+              <th>Candidate Cluster</th>
+              <th>Support</th>
+              <th>Negative Evidence</th>
+              <th>Sources</th>
+            </tr>
+          </thead>
+          <tbody>
+            {report.clusters.map((cluster) => (
+              <tr key={cluster.cluster_id}>
+                <td>
+                  <div className="artifact-title">{cluster.proposed_short_label}</div>
+                  <code>{cluster.cluster_id}</code>
+                </td>
+                <td>
+                  <TokenList items={cluster.supporting_signal_types} limit={4} />
+                </td>
+                <td>
+                  <TokenList items={cluster.negative_signal_types} limit={4} />
+                </td>
+                <td>
+                  <TokenList items={cluster.source_ids} limit={4} />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="lake-label-strip" aria-label="Rejected weak merge signals">
+        <span>Weak merge signals</span>
+        <TokenList items={report.weak_merge_signal_types} />
+      </div>
+
+      <div className="next-gates">
+        <h3>Required Next Gates</h3>
+        <div>
+          {report.required_next_gates.map((gate) => (
+            <code key={gate}>{gate}</code>
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -562,6 +652,7 @@ function App() {
       </div>
 
       <QualityGatePanel gates={manifest.qualityGates} />
+      <MatterLinkingPreflightPanel report={matterLinkingPreflight} />
       <LaborEmploymentMatrixPanel report={laborEmploymentQAMatrix} />
       <LaborEmploymentBlockedDriverPanel report={laborEmploymentBlockedDriverReview} />
       <ArtifactTable artifacts={manifest.artifacts} />

@@ -21,8 +21,70 @@ export type UIReviewDataBundleStatus =
 export type UIReviewDataBundleReportKind =
   | "ui_review_manifest"
   | "synthetic_qa_review_run"
+  | "matter_linking_preflight"
   | "labor_employment_qa_matrix"
   | "labor_employment_blocked_driver_impact_review";
+
+export type MatterLinkingPreflightCluster = {
+  cluster_id: string;
+  link_state: string;
+  match_strength: string;
+  proposed_short_label?: string;
+  source_ids: string[];
+  source_hashes: string[];
+  supporting_signal_count: number;
+  strong_supporting_signal_count: number;
+  negative_signal_count: number;
+  strong_negative_signal_count: number;
+  supporting_signal_types: string[];
+  negative_signal_types: string[];
+  requires_human_confirmation: boolean;
+  matter_link_finalized: boolean;
+};
+
+export type MatterLinkingPreflightReport = {
+  schema_version: string;
+  matter_linking_preflight_report_id: string;
+  status:
+    | "matter_linking_preflight_requires_review"
+    | "matter_linking_preflight_resolved_candidate_requires_review"
+    | "blocked_matter_linking_preflight";
+  source_artifact_ref: string;
+  source_artifact_id: string;
+  source_artifact_type: string;
+  source_artifact_status: string;
+  source_artifact_hash: string;
+  official_matter_number_status: string;
+  overall_link_state: string;
+  requires_human_confirmation: boolean;
+  requires_sender_followup: boolean;
+  cluster_count: number;
+  high_evidence_candidate_count: number;
+  weak_signal_count: number;
+  strong_negative_signal_count: number;
+  weak_merge_signal_types: string[];
+  candidate_exception_lake_labels: string[];
+  clusters: MatterLinkingPreflightCluster[];
+  required_next_gates: string[];
+  candidate_only: boolean;
+  synthetic_only: boolean;
+  non_authoritative: boolean;
+  local_json_only: boolean;
+  human_review_required: boolean;
+  sender_followup_required: boolean;
+  upfront_connector_implemented: boolean;
+  vendor_api_called: boolean;
+  external_write_performed: boolean;
+  lake_write_performed: boolean;
+  sqlite_write_performed: boolean;
+  matter_opening_authorized: boolean;
+  budget_amount_output_authorized: boolean;
+  budget_submission_authorized: boolean;
+  conflict_conclusion_emitted: boolean;
+  screen_created: boolean;
+  silent_learning_performed: boolean;
+  generated_at: string;
+};
 
 export type UIReviewDataBundleDetailReport = {
   detail_report_id: string;

@@ -17,6 +17,7 @@ def test_legal_intake_budget_ui_required_files_exist(repo_root):
         "src/fixtures/demo-run-manifest.json",
         "src/fixtures/demo-synthetic-qa-review-run-report.json",
         "src/fixtures/demo-ui-review-data-bundle.json",
+        "src/fixtures/demo-matter-linking-preflight-report.json",
         "src/fixtures/demo-labor-employment-qa-matrix-report.json",
         "src/fixtures/demo-labor-employment-blocked-driver-impact-review-report.json",
     ]
@@ -50,6 +51,7 @@ def test_legal_intake_budget_ui_data_contract_lists_required_artifacts(repo_root
         "budget_coherence_report.json",
         "synthetic_qa_bundle_report.json",
         "synthetic_qa_review_run_report.json",
+        "matter_linking_preflight_report.json",
         "synthetic_fixture_depth_audit_report.json",
         "budget_calibration_readiness_report.json",
         "budget_calibration_starter_pack_report.json",
@@ -102,6 +104,7 @@ def test_legal_intake_budget_demo_manifest_is_read_only_and_candidate_only(repo_
         "budget_coherence",
         "synthetic_qa_bundle",
         "synthetic_qa_review_run",
+        "matter_linking_preflight",
         "synthetic_fixture_depth",
         "budget_calibration_readiness",
         "labor_employment_qa_matrix",
@@ -129,9 +132,9 @@ def test_legal_intake_budget_demo_ui_review_data_bundle_is_local_and_no_write(re
     detail_reports = {report["file_name"]: report for report in bundle["detail_reports"]}
 
     assert bundle["status"] == "ready_for_review"
-    assert bundle["detail_report_count"] == len(bundle["detail_reports"]) == 4
+    assert bundle["detail_report_count"] == len(bundle["detail_reports"]) == 5
     assert bundle["required_detail_report_count"] == 3
-    assert bundle["present_detail_report_count"] == 4
+    assert bundle["present_detail_report_count"] == 5
     assert bundle["missing_required_detail_report_count"] == 0
     assert bundle["external_write_report_count"] == 0
     assert bundle["candidate_only"] is True
@@ -147,6 +150,7 @@ def test_legal_intake_budget_demo_ui_review_data_bundle_is_local_and_no_write(re
     assert {
         "ui_review_manifest.json",
         "synthetic_qa_review_run_report.json",
+        "matter_linking_preflight_report.json",
         "labor_employment_qa_matrix_report.json",
         "labor_employment_blocked_driver_impact_review_report.json",
     } <= set(detail_reports)
@@ -163,7 +167,7 @@ def test_legal_intake_budget_demo_synthetic_qa_review_run_is_no_write(repo_root)
     )
 
     assert report["status"] == "synthetic_qa_review_run_ready"
-    assert report["step_count"] == len(report["steps"]) == 15
+    assert report["step_count"] == len(report["steps"]) == 16
     assert report["failed_step_count"] == 0
     assert report["candidate_only"] is True
     assert report["synthetic_only"] is True
@@ -178,6 +182,7 @@ def test_legal_intake_budget_demo_synthetic_qa_review_run_is_no_write(repo_root)
     assert all(step["status"] == "passed" for step in report["steps"])
     assert {
         "budget_coherence",
+        "matter_linking_preflight",
         "synthetic_qa_bundle",
         "ui_review_manifest",
         "ui_review_data_bundle",
@@ -288,11 +293,13 @@ def test_legal_intake_budget_ui_disclaims_mutating_authority(repo_root):
     assert "Local JSON only" in app
     assert "UI Review Data Bundle" in app
     assert "Synthetic QA Review Run" in app
+    assert "Matter-Linking Preflight" in app
     assert "QA Gates" in app
     assert "L&amp;E Budget Fact QA" in app
     assert "L&amp;E Blocked Driver Review" in app
     assert "assertUIReviewDataBundle" in app
     assert "assertSyntheticQAReviewRunReport" in app
+    assert "assertMatterLinkingPreflightReport" in app
     assert "assertLaborEmploymentQAMatrixReport" in app
     assert "assertLaborEmploymentBlockedDriverImpactReviewReport" in app
     assert "failingQualityGates" in app

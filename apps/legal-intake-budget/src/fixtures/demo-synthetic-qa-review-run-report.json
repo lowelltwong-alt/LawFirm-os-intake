@@ -4,7 +4,7 @@
   "status": "synthetic_qa_review_run_ready",
   "run_root_ref": "apps/legal-intake-budget/src/fixtures",
   "quality_dir_ref": "apps/legal-intake-budget/src/fixtures/quality",
-  "step_count": 15,
+  "step_count": 16,
   "failed_step_count": 0,
   "steps": [
     {
@@ -14,6 +14,14 @@
       "observed_status": "passed",
       "artifact_ref": "quality/budget_coherence_report.json",
       "notes": ["Budget proposal coherence is generated from the synthetic demo budget."]
+    },
+    {
+      "step_id": "matter_linking_preflight",
+      "label": "Matter-Linking Preflight",
+      "status": "passed",
+      "observed_status": "matter_linking_preflight_resolved_candidate_requires_review",
+      "artifact_ref": "quality/matter_linking_preflight_report.json",
+      "notes": ["Resolved Upfront-like document clusters remain human-gated and no-write."]
     },
     {
       "step_id": "budget_calibration_starter_pack",

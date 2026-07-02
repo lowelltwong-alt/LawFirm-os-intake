@@ -51,6 +51,10 @@ from .models import (
     SyntheticQAReviewRunReport,
     SyntheticQAReviewRunStep,
 )
+from .matter_linking_preflight import (
+    MATTER_LINKING_PREFLIGHT_REPORT_FILENAME,
+    run_matter_linking_preflight,
+)
 from .synthetic_qa_bundle import SYNTHETIC_QA_BUNDLE_REPORT_FILENAME, run_synthetic_qa_bundle
 from .ui_review_data_bundle import UI_REVIEW_DATA_BUNDLE_FILENAME, build_ui_review_data_bundle
 from .ui_review_manifest import build_ui_review_manifest
@@ -76,6 +80,9 @@ LE_BINDING_MANIFEST_REF = (
 )
 LE_DRIVER_IMPACT_REVIEW_REF = "examples/synthetic/gold/labor-employment-driver-impact-review.json"
 LE_BUDGET_FACT_GOLD_REF = "examples/synthetic/gold/labor-employment-budget-fact-gold.json"
+UPFRONT_RESOLVED_FOLLOWUP_REF = (
+    "examples/synthetic/upfront/upfront-like-intake-output.resolved-followup.example.json"
+)
 
 
 def run_synthetic_qa_review_run(
@@ -107,6 +114,23 @@ def run_synthetic_qa_review_run(
             budget_coherence_ref,
             load_json(budget_coherence_ref).get("status") == "passed",
             "Budget proposal coherence is generated from the synthetic demo budget.",
+        )
+    )
+
+    matter_linking, matter_linking_dir = run_matter_linking_preflight(
+        input_path=root / UPFRONT_RESOLVED_FOLLOWUP_REF,
+        out_dir=quality_dir / "matter-linking-preflight",
+        generated_at=generated_at,
+    )
+    matter_linking_ref = matter_linking_dir / MATTER_LINKING_PREFLIGHT_REPORT_FILENAME
+    steps.append(
+        _step(
+            "matter_linking_preflight",
+            "Matter-Linking Preflight",
+            matter_linking.status,
+            matter_linking_ref,
+            matter_linking.status == "matter_linking_preflight_resolved_candidate_requires_review",
+            "Resolved Upfront-like document clusters remain human-gated and no-write.",
         )
     )
 
@@ -302,6 +326,7 @@ def run_synthetic_qa_review_run(
 
     for source_path in [
         starter_dir / "budget-calibration-readiness" / "budget_calibration_readiness_report.json",
+        matter_linking_ref,
         le_matrix_dir / LABOR_EMPLOYMENT_QA_MATRIX_REPORT_FILENAME,
         family_pack_dir / LABOR_EMPLOYMENT_FIXTURE_FAMILY_PACK_REPORT_FILENAME,
         executable_report_ref,

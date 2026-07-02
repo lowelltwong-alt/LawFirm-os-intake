@@ -20,6 +20,13 @@ def _fixture(repo_root):
     )
 
 
+def _resolved_fixture(repo_root):
+    return load_json(
+        repo_root
+        / "examples/synthetic/upfront/upfront-like-intake-output.resolved-followup.example.json"
+    )
+
+
 def test_matter_linking_preflight_reports_ambiguous_same_sender_clusters(repo_root, tmp_path):
     report, run_dir = run_matter_linking_preflight(
         input_path=repo_root / "examples/synthetic/upfront/upfront-like-intake-output.example.json",
@@ -50,6 +57,7 @@ def test_matter_linking_preflight_reports_ambiguous_same_sender_clusters(repo_ro
     assert "sender_reference_followup" in report.required_next_gates
     assert "no_budget_amount_until_cluster_and_roles_confirmed" in report.required_next_gates
     assert "no_matter_opening_without_official_authority" in report.required_next_gates
+    assert "no_lake_or_sqlite_write_from_matter_linking_preflight" in report.required_next_gates
     assert all(check.status == "passed" for check in report.checks)
     assert (run_dir / MATTER_LINKING_PREFLIGHT_REPORT_FILENAME).is_file()
     assert (run_dir / MATTER_LINKING_PREFLIGHT_NOTES_FILENAME).is_file()
@@ -62,9 +70,73 @@ def test_matter_linking_preflight_reports_ambiguous_same_sender_clusters(repo_ro
         assert cluster.source_hashes
 
 
+def test_matter_linking_preflight_reports_resolved_followup_candidates(repo_root, tmp_path):
+    report, run_dir = run_matter_linking_preflight(
+        input_path=(
+            repo_root
+            / "examples/synthetic/upfront/upfront-like-intake-output.resolved-followup.example.json"
+        ),
+        out_dir=tmp_path,
+        generated_at=FIXED_TIME,
+    )
+
+    assert report.status == "matter_linking_preflight_resolved_candidate_requires_review"
+    assert (
+        report.source_artifact_id == "upfront_like_intake_output.synthetic.resolved_followup.v0_1"
+    )
+    assert report.overall_link_state == "resolved_split_candidates_pending_human_confirmation"
+    assert report.official_matter_number_status == "not_available"
+    assert report.requires_human_confirmation is True
+    assert report.requires_sender_followup is False
+    assert report.sender_followup_required is False
+    assert report.cluster_count == 2
+    assert report.high_evidence_candidate_count == 2
+    assert set(report.weak_merge_signal_types) == {"same_sender", "same_carrier"}
+    assert "sender_reference_followup" not in report.required_next_gates
+    assert "human_matter_linking_review" in report.required_next_gates
+    assert "no_budget_amount_until_cluster_and_roles_confirmed" in report.required_next_gates
+    assert "no_matter_opening_without_official_authority" in report.required_next_gates
+    assert set(report.candidate_exception_lake_labels).issuperset(
+        {
+            "source_matter_link_resolved_candidate",
+            "missing_official_matter_number",
+            "document_cluster_split_resolved_candidate",
+            "human_matter_linking_confirmation_required",
+        }
+    )
+    assert all(check.status == "passed" for check in report.checks)
+    assert (run_dir / MATTER_LINKING_PREFLIGHT_REPORT_FILENAME).is_file()
+
+    for cluster in report.clusters:
+        assert "upfront_like_request_id" in cluster.supporting_signal_types
+        assert "sender_followup_claim_cluster_confirmation" in cluster.supporting_signal_types
+        assert cluster.requires_human_confirmation is True
+        assert cluster.matter_link_finalized is False
+
+
 def test_matter_linking_preflight_preserves_no_write_and_no_budget_boundaries(repo_root):
     report = build_matter_linking_preflight_report(
         payload=_fixture(repo_root),
+        source_artifact_ref="fixture.json",
+        generated_at=FIXED_TIME,
+    )
+
+    assert report.upfront_connector_implemented is False
+    assert report.vendor_api_called is False
+    assert report.external_write_performed is False
+    assert report.lake_write_performed is False
+    assert report.sqlite_write_performed is False
+    assert report.matter_opening_authorized is False
+    assert report.budget_amount_output_authorized is False
+    assert report.budget_submission_authorized is False
+    assert report.conflict_conclusion_emitted is False
+    assert report.screen_created is False
+    assert report.silent_learning_performed is False
+
+
+def test_matter_linking_preflight_preserves_resolved_candidate_no_write_boundaries(repo_root):
+    report = build_matter_linking_preflight_report(
+        payload=_resolved_fixture(repo_root),
         source_artifact_ref="fixture.json",
         generated_at=FIXED_TIME,
     )
@@ -111,6 +183,27 @@ def test_matter_linking_preflight_blocks_missing_source_hash_without_raising(rep
 
     assert report.status == "blocked_matter_linking_preflight"
     assert "clusters_have_source_bound_strong_support" in failed
+
+
+def test_matter_linking_preflight_blocks_resolved_without_resolution_signal(repo_root):
+    payload = deepcopy(_resolved_fixture(repo_root))
+    for cluster in payload["matter_linking"]["candidate_clusters"]:
+        cluster["supporting_signals"] = [
+            signal
+            for signal in cluster["supporting_signals"]
+            if signal["signal_type"]
+            not in {"sender_followup_claim_cluster_confirmation", "upfront_like_request_id"}
+        ]
+
+    report = build_matter_linking_preflight_report(
+        payload=payload,
+        source_artifact_ref="fixture.json",
+        generated_at=FIXED_TIME,
+    )
+    failed = {check.check_id for check in report.checks if check.status == "failed"}
+
+    assert report.status == "blocked_matter_linking_preflight"
+    assert "resolved_candidates_have_source_bound_resolution_signal" in failed
 
 
 def test_matter_linking_preflight_blocks_connector_and_write_boundary_violation(repo_root):

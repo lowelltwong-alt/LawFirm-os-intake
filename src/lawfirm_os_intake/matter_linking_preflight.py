@@ -14,21 +14,40 @@ from .util import digest_json, load_json, now_iso, write_json
 MATTER_LINKING_PREFLIGHT_REPORT_FILENAME = "matter_linking_preflight_report.json"
 MATTER_LINKING_PREFLIGHT_NOTES_FILENAME = "matter_linking_preflight_report.md"
 
-REQUIRED_EXCEPTION_LABELS = {
+AMBIGUOUS_REQUIRED_EXCEPTION_LABELS = {
     "source_matter_link_ambiguous",
     "multiple_possible_matters_same_sender",
     "missing_official_matter_number",
     "document_cluster_split_required",
 }
 
-REQUIRED_NEXT_GATES = [
+RESOLVED_REQUIRED_EXCEPTION_LABELS = {
+    "source_matter_link_resolved_candidate",
+    "missing_official_matter_number",
+    "document_cluster_split_resolved_candidate",
+    "human_matter_linking_confirmation_required",
+}
+
+BASE_REQUIRED_NEXT_GATES = [
     "human_matter_linking_review",
-    "sender_reference_followup",
     "conflict_seed_review",
     "no_budget_amount_until_cluster_and_roles_confirmed",
     "no_matter_opening_without_official_authority",
     "no_lake_or_sqlite_write_from_matter_linking_preflight",
 ]
+SENDER_REFERENCE_FOLLOWUP_GATE = "sender_reference_followup"
+REQUIRED_NEXT_GATES = [*BASE_REQUIRED_NEXT_GATES, SENDER_REFERENCE_FOLLOWUP_GATE]
+
+RESOLVED_LINK_STATES = {
+    "resolved_split_candidates_pending_human_confirmation",
+    "resolved_single_candidate_pending_human_confirmation",
+}
+
+RESOLUTION_SIGNAL_TYPES = {
+    "sender_followup_claim_cluster_confirmation",
+    "sender_confirmed_document_cluster",
+    "upfront_like_request_id",
+}
 
 PROHIBITED_BOUNDARY_FLAGS = [
     "upfront_connector_implemented",
@@ -91,8 +110,7 @@ def build_matter_linking_preflight_report(
         }
     )
     labels = sorted(str(label) for label in payload.get("candidate_exception_lake_labels", []))
-    required_next_gates = list(payload.get("required_next_gates", [])) or REQUIRED_NEXT_GATES
-    required_next_gates = sorted(set(required_next_gates).union(REQUIRED_NEXT_GATES))
+    required_next_gates = _required_next_gates(payload=payload, linking=linking)
 
     checks = _checks(
         payload=payload,
@@ -104,11 +122,12 @@ def build_matter_linking_preflight_report(
         labels=labels,
         source_hashes_by_id=source_hashes_by_id,
     )
-    status = (
-        "blocked_matter_linking_preflight"
-        if any(check.status == "failed" for check in checks)
-        else "matter_linking_preflight_requires_review"
-    )
+    if any(check.status == "failed" for check in checks):
+        status = "blocked_matter_linking_preflight"
+    elif _is_resolved_link_state(linking):
+        status = "matter_linking_preflight_resolved_candidate_requires_review"
+    else:
+        status = "matter_linking_preflight_requires_review"
     report_core = {
         "source_artifact_id": payload.get("artifact_id", "unknown"),
         "source_artifact_hash": digest_json(payload),
@@ -185,6 +204,7 @@ def render_matter_linking_preflight_report(report: MatterLinkingPreflightReport)
         f"- Strong negative split signals: {report.strong_negative_signal_count}",
         f"- Requires human confirmation: {report.requires_human_confirmation}",
         f"- Requires sender follow-up: {report.requires_sender_followup}",
+        f"- Candidate-only resolved status: {report.status}",
         "",
         "## Clusters",
         "",
@@ -293,7 +313,12 @@ def _checks(
     negative_missing = [
         cluster.cluster_id for cluster in clusters if cluster.strong_negative_signal_count == 0
     ]
-    missing_labels = sorted(REQUIRED_EXCEPTION_LABELS.difference(labels))
+    resolution_missing = (
+        _clusters_missing_resolution_support(linking, source_hashes_by_id)
+        if _is_resolved_link_state(linking)
+        else []
+    )
+    missing_labels = sorted(_required_exception_labels(linking).difference(labels))
     return [
         _check(
             "input_is_synthetic_candidate_only",
@@ -325,10 +350,14 @@ def _checks(
         ),
         _check(
             "multiple_candidate_clusters_require_review",
-            len(clusters) >= 2
-            and linking.get("overall_link_state") == "ambiguous_multiple_candidates"
+            len(clusters) >= 1
+            and str(linking.get("overall_link_state"))
+            in {
+                "ambiguous_multiple_candidates",
+                *RESOLVED_LINK_STATES,
+            }
             and linking.get("requires_human_confirmation") is True,
-            "Multiple candidate clusters remain blocked for human linking review.",
+            "Candidate clusters remain blocked for human linking review.",
             evidence_refs=[cluster.cluster_id for cluster in clusters],
         ),
         _check(
@@ -343,6 +372,13 @@ def _checks(
             "Every cluster has source-bound strong support mapped to known source hashes.",
             evidence_refs=[cluster.cluster_id for cluster in clusters],
             blocking_refs=cluster_refs_missing,
+        ),
+        _check(
+            "resolved_candidates_have_source_bound_resolution_signal",
+            not resolution_missing,
+            "Resolved candidates include source-bound sender/request resolution signals.",
+            evidence_refs=[cluster.cluster_id for cluster in clusters],
+            blocking_refs=resolution_missing,
         ),
         _check(
             "clusters_have_negative_split_evidence",
@@ -360,12 +396,9 @@ def _checks(
         ),
         _check(
             "required_gates_block_budget_and_matter_opening",
-            {
-                "human_matter_linking_review",
-                "sender_reference_followup",
-                "no_budget_amount_until_cluster_and_roles_confirmed",
-                "no_matter_opening_without_official_authority",
-            }.issubset(set(payload.get("required_next_gates", []))),
+            set(_required_next_gates(payload={}, linking=linking)).issubset(
+                set(payload.get("required_next_gates", []))
+            ),
             "Next gates block budget output and matter opening until linking and roles are confirmed.",
             evidence_refs=list(payload.get("required_next_gates", [])),
         ),
@@ -393,6 +426,45 @@ def _clusters_missing_source_bound_support(
         ):
             missing.append(cluster_id)
     return sorted(set(missing))
+
+
+def _clusters_missing_resolution_support(
+    linking: dict[str, Any],
+    source_hashes_by_id: dict[str, str],
+) -> list[str]:
+    missing: list[str] = []
+    for raw_cluster in _list_of_mappings(linking.get("candidate_clusters")):
+        cluster_id = str(raw_cluster.get("cluster_id", "unknown"))
+        resolution_signals = [
+            signal
+            for signal in _list_of_mappings(raw_cluster.get("supporting_signals"))
+            if signal.get("weight_class") == "strong"
+            and signal.get("signal_type") in RESOLUTION_SIGNAL_TYPES
+        ]
+        if not resolution_signals or any(
+            not _signal_has_known_source_ref(signal, source_hashes_by_id)
+            for signal in resolution_signals
+        ):
+            missing.append(cluster_id)
+    return sorted(set(missing))
+
+
+def _required_exception_labels(linking: dict[str, Any]) -> set[str]:
+    if _is_resolved_link_state(linking):
+        return RESOLVED_REQUIRED_EXCEPTION_LABELS
+    return AMBIGUOUS_REQUIRED_EXCEPTION_LABELS
+
+
+def _required_next_gates(payload: dict[str, Any], linking: dict[str, Any]) -> list[str]:
+    gates = set(BASE_REQUIRED_NEXT_GATES)
+    if linking.get("requires_sender_followup") is True:
+        gates.add(SENDER_REFERENCE_FOLLOWUP_GATE)
+    gates.update(str(gate) for gate in payload.get("required_next_gates", []))
+    return sorted(gates)
+
+
+def _is_resolved_link_state(linking: dict[str, Any]) -> bool:
+    return str(linking.get("overall_link_state")) in RESOLVED_LINK_STATES
 
 
 def _signal_has_known_source_ref(

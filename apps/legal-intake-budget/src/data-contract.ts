@@ -2,6 +2,7 @@ import type {
   BoundaryFlags,
   LaborEmploymentBlockedDriverImpactReviewReport,
   LaborEmploymentQAMatrixReport,
+  MatterLinkingPreflightReport,
   QualityGate,
   ReviewArtifact,
   ReviewManifest,
@@ -21,6 +22,7 @@ export const REQUIRED_ARTIFACT_FILES = [
   "budget_coherence_report.json",
   "synthetic_qa_bundle_report.json",
   "synthetic_qa_review_run_report.json",
+  "matter_linking_preflight_report.json",
   "synthetic_fixture_depth_audit_report.json",
   "budget_calibration_readiness_report.json",
   "budget_calibration_starter_pack_report.json",
@@ -55,6 +57,7 @@ export const REQUIRED_BOUNDARY_FLAGS: BoundaryFlags = {
 
 export const REQUIRED_DETAIL_REPORT_FILES = [
   "ui_review_manifest.json",
+  "matter_linking_preflight_report.json",
   "labor_employment_qa_matrix_report.json",
   "labor_employment_blocked_driver_impact_review_report.json",
 ] as const;
@@ -204,6 +207,54 @@ export function assertSyntheticQAReviewRunReport(
   for (const step of report.steps) {
     if (!step.artifact_ref || step.notes.length === 0) {
       failures.push(`synthetic_qa_review_run_step_not_actionable:${step.step_id}`);
+    }
+  }
+  return failures;
+}
+
+export function assertMatterLinkingPreflightReport(
+  report: MatterLinkingPreflightReport,
+): string[] {
+  const failures: string[] = [];
+  if (!report.candidate_only || !report.synthetic_only || !report.non_authoritative) {
+    failures.push("matter_linking_authority_boundary_failed");
+  }
+  if (!report.local_json_only || !report.human_review_required) {
+    failures.push("matter_linking_review_boundary_failed");
+  }
+  if (
+    report.upfront_connector_implemented ||
+    report.vendor_api_called ||
+    report.external_write_performed ||
+    report.lake_write_performed ||
+    report.sqlite_write_performed ||
+    report.matter_opening_authorized ||
+    report.budget_amount_output_authorized ||
+    report.budget_submission_authorized ||
+    report.conflict_conclusion_emitted ||
+    report.screen_created ||
+    report.silent_learning_performed
+  ) {
+    failures.push("matter_linking_side_effect_boundary_failed");
+  }
+  if (report.cluster_count !== report.clusters.length) {
+    failures.push("matter_linking_cluster_count_mismatch");
+  }
+  if (!report.required_next_gates.includes("human_matter_linking_review")) {
+    failures.push("matter_linking_missing_human_gate");
+  }
+  if (
+    report.sender_followup_required &&
+    !report.required_next_gates.includes("sender_reference_followup")
+  ) {
+    failures.push("matter_linking_missing_sender_followup_gate");
+  }
+  for (const cluster of report.clusters) {
+    if (!cluster.requires_human_confirmation || cluster.matter_link_finalized) {
+      failures.push(`matter_linking_cluster_finalized:${cluster.cluster_id}`);
+    }
+    if (cluster.source_hashes.length === 0 || cluster.supporting_signal_types.length === 0) {
+      failures.push(`matter_linking_cluster_missing_evidence:${cluster.cluster_id}`);
     }
   }
   return failures;

@@ -2,9 +2,9 @@
 
 ## Decision
 
-Add a deterministic `audit-matter-linking-preflight` command for Upfront-like
-intake output before any connector or budget workflow relies on document
-clusters.
+Add a deterministic `audit-matter-linking-preflight` command and synthetic
+ambiguous/resolved Upfront-like fixtures before any connector or budget workflow
+relies on document clusters.
 
 ## Why
 
@@ -23,6 +23,10 @@ positive and negative signals, and explicit human/sender follow-up gates.
   no connector/write side effects, explicit missing official matter number,
   human review gates, rejected weak merge signals, source-bound strong support,
   negative split evidence, and candidate Exception Lake labels.
+- Supports both ambiguous multiple-candidate inputs and resolved split-candidate
+  follow-up inputs that still require human confirmation.
+- Surfaces the report in the one-command synthetic QA recipe and read-only UI
+  data bundle.
 
 ## Boundaries
 
@@ -33,8 +37,6 @@ Orchestrator-owned workflow and Exception Lake owner review.
 
 ## Follow-Ups
 
-- Add a resolving fixture where a later email supplies a trusted claim number or
-  Upfront-like request ID.
 - Add a human review artifact for split, merge, unknown, and request-more-info
   decisions.
 - Add read-only UI panels for unmatched, ambiguous, and conflicting clusters.
