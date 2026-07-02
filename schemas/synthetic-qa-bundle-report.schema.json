@@ -180,6 +180,18 @@
       "default": null,
       "title": "Ui Manifest Ref"
     },
+    "ui_data_bundle_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Ui Data Bundle Ref"
+    },
     "required_next_actions": {
       "items": {
         "type": "string"

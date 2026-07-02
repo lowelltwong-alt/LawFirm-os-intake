@@ -9687,6 +9687,7 @@ class SyntheticQABundleReport(StrictModel):
     failed_artifact_count: int = Field(ge=0)
     artifacts: list[SyntheticQABundleArtifact]
     ui_manifest_ref: str | None = None
+    ui_data_bundle_ref: str | None = None
     required_next_actions: list[str]
     candidate_only: Literal[True] = True
     synthetic_only: Literal[True] = True

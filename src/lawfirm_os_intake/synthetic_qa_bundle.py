@@ -11,6 +11,10 @@ from .synthetic_fixture_depth_audit import (
     SYNTHETIC_FIXTURE_DEPTH_AUDIT_REPORT_FILENAME,
     run_synthetic_fixture_depth_audit,
 )
+from .ui_review_data_bundle import (
+    UI_REVIEW_DATA_BUNDLE_FILENAME,
+    build_ui_review_data_bundle,
+)
 from .ui_review_manifest import build_ui_review_manifest
 from .util import digest_json, load_json, now_iso, write_json
 
@@ -269,11 +273,15 @@ def run_synthetic_qa_bundle(
         for spec in QA_BUNDLE_ARTIFACTS
     ]
     ui_ref = str(ui_manifest_out) if ui_manifest_out else None
+    ui_data_bundle_out = (
+        Path(ui_manifest_out).with_name(UI_REVIEW_DATA_BUNDLE_FILENAME) if ui_manifest_out else None
+    )
     report = _build_report(
         root=root,
         output_dir=output_dir,
         artifacts=artifacts,
         ui_manifest_ref=ui_ref,
+        ui_data_bundle_ref=str(ui_data_bundle_out) if ui_data_bundle_out else None,
         generated_at=generated_at,
     )
     write_json(output_dir / SYNTHETIC_QA_BUNDLE_REPORT_FILENAME, report.model_dump(mode="json"))
@@ -289,6 +297,12 @@ def run_synthetic_qa_bundle(
             out_path=ui_manifest_out,
             generated_at=generated_at,
         )
+        if ui_data_bundle_out:
+            build_ui_review_data_bundle(
+                run_root=root,
+                out_path=ui_data_bundle_out,
+                generated_at=generated_at,
+            )
     return report, output_dir, ui_manifest
 
 
@@ -457,6 +471,7 @@ def _build_report(
     output_dir: Path,
     artifacts: list[SyntheticQABundleArtifact],
     ui_manifest_ref: str | None,
+    ui_data_bundle_ref: str | None,
     generated_at: str | None,
 ) -> SyntheticQABundleReport:
     required = [artifact for artifact in artifacts if artifact.required]
@@ -487,6 +502,7 @@ def _build_report(
             for artifact in artifacts
         ],
         "ui_manifest_ref": ui_manifest_ref,
+        "ui_data_bundle_ref": ui_data_bundle_ref,
     }
     return SyntheticQABundleReport(
         synthetic_qa_bundle_report_id="synthetic_qa_bundle_"
@@ -502,6 +518,7 @@ def _build_report(
         failed_artifact_count=len(failed),
         artifacts=artifacts,
         ui_manifest_ref=ui_manifest_ref,
+        ui_data_bundle_ref=ui_data_bundle_ref,
         required_next_actions=_required_next_actions(
             missing_required=missing_required,
             blocked=blocked,

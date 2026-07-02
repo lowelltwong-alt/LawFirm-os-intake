@@ -221,13 +221,21 @@ def test_synthetic_qa_bundle_blocks_missing_calibration_and_builds_ui(tmp_path):
     )
 
     persisted = load_json(run_dir / SYNTHETIC_QA_BUNDLE_REPORT_FILENAME)
+    ui_data_bundle = load_json(run_root / "ui_review_data_bundle.json")
     gates = {gate["gateId"]: gate for gate in ui_manifest["qualityGates"]}
     assert report.status == "blocked"
     assert persisted["missing_required_artifact_count"] == 1
+    assert persisted["ui_manifest_ref"] == str(run_root / "ui_review_manifest.json")
+    assert persisted["ui_data_bundle_ref"] == str(run_root / "ui_review_data_bundle.json")
     assert persisted["lake_write_performed"] is False
     assert persisted["sqlite_write_performed"] is False
     assert persisted["budget_submission_performed"] is False
     assert (run_dir / "synthetic_fixture_depth_audit_report.json").is_file()
+    assert ui_data_bundle["status"] == "ready_for_review"
+    assert ui_data_bundle["local_json_only"] is True
+    assert ui_data_bundle["external_writes_performed"] is False
+    assert ui_data_bundle["lake_write_performed"] is False
+    assert ui_data_bundle["sqlite_write_performed"] is False
     assert gates["synthetic_qa_bundle"]["status"] == "blocked"
     assert gates["budget_coherence"]["status"] == "passed"
     assert ui_manifest["boundaryFlags"]["networkCallsAllowed"] is False
@@ -353,7 +361,11 @@ def test_synthetic_qa_bundle_cli_writes_bundle_and_manifest(tmp_path):
 
     report = load_json(quality_dir / SYNTHETIC_QA_BUNDLE_REPORT_FILENAME)
     manifest = load_json(run_root / "ui_review_manifest.json")
+    ui_data_bundle = load_json(run_root / "ui_review_data_bundle.json")
     assert code == 0
     assert report["status"] == "pending_review"
+    assert report["ui_data_bundle_ref"] == str(run_root / "ui_review_data_bundle.json")
     assert manifest["overallStatus"] in {"passed", "blocked"}
+    assert ui_data_bundle["status"] == "ready_for_review"
+    assert ui_data_bundle["external_writes_performed"] is False
     assert any(gate["gateId"] == "synthetic_qa_bundle" for gate in manifest["qualityGates"])

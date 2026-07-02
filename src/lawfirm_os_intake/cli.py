@@ -1533,6 +1533,11 @@ def main(argv: list[str] | None = None) -> int:
                 ui_manifest_out=args.ui_manifest_out,
                 generated_at=args.generated_at,
             )
+            ui_data_bundle = (
+                load_json(Path(report.ui_data_bundle_ref))
+                if report.ui_data_bundle_ref and Path(report.ui_data_bundle_ref).is_file()
+                else None
+            )
             _print(
                 {
                     "status": report.status,
@@ -1544,6 +1549,8 @@ def main(argv: list[str] | None = None) -> int:
                     "pending_artifact_count": report.pending_artifact_count,
                     "ui_manifest_ref": report.ui_manifest_ref,
                     "ui_manifest_status": (ui_manifest["overallStatus"] if ui_manifest else None),
+                    "ui_data_bundle_ref": report.ui_data_bundle_ref,
+                    "ui_data_bundle_status": (ui_data_bundle["status"] if ui_data_bundle else None),
                     "external_writes_performed": False,
                     "lake_write_performed": False,
                     "sqlite_write_performed": False,

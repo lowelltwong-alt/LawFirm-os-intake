@@ -38,9 +38,9 @@ python -m lawfirm_os_intake build-synthetic-qa-bundle \
   --ui-manifest-out .lawfirm-os-intake/smoke/ui_review_manifest.json
 ```
 
-That command reads local artifacts only, writes a candidate-only synthetic QA bundle, refreshes the UI manifest, and leaves missing calibration, L&E matrix, or L&E fixture family pack evidence blocked or pending.
+That command reads local artifacts only, writes a candidate-only synthetic QA bundle, refreshes the UI manifest, emits `ui_review_data_bundle.json` beside the manifest, and leaves missing calibration, L&E matrix, or L&E fixture family pack evidence blocked or pending.
 
-Generate the UI data-bundle wrapper for a local run with:
+You can also regenerate only the UI data-bundle wrapper for a local run with:
 
 ```bash
 python -m lawfirm_os_intake build-ui-review-data-bundle \
