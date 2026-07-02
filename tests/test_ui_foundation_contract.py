@@ -383,6 +383,8 @@ def test_legal_intake_budget_ui_disclaims_mutating_authority(repo_root):
     assert "L&amp;E Budget Fact QA" in app
     assert "L&amp;E Blocked Driver Review" in app
     assert "L&amp;E Budget Output Expectations" in app
+    assert "L&amp;E Fixture Drilldown" in app
+    assert "buildFixtureDrilldownRows" in app
     assert "assertUIReviewDataBundle" in app
     assert "assertSyntheticConfidenceSummaryReport" in app
     assert "assertSyntheticQAReviewRunReport" in app
@@ -391,4 +393,36 @@ def test_legal_intake_budget_ui_disclaims_mutating_authority(repo_root):
     assert "assertLaborEmploymentBlockedDriverImpactReviewReport" in app
     assert "assertLaborEmploymentBudgetOutputExpectationReport" in app
     assert "failingQualityGates" in app
+    assert "fixture-drilldown-panel" in styles
+    assert "fixture-family-grid" in styles
     assert "grid-template-columns" in styles
+
+
+def test_legal_intake_budget_fixture_drilldown_joins_existing_le_reports(repo_root):
+    app = (repo_root / UI_ROOT / "src/App.tsx").read_text(encoding="utf-8")
+    output_report = json.loads(
+        (
+            repo_root
+            / UI_ROOT
+            / "src/fixtures/demo-labor-employment-budget-output-expectations-report.json"
+        ).read_text(encoding="utf-8")
+    )
+    blocked_review = json.loads(
+        (
+            repo_root
+            / UI_ROOT
+            / "src/fixtures/demo-labor-employment-blocked-driver-impact-review-report.json"
+        ).read_text(encoding="utf-8")
+    )
+    output_ids = {case["executable_fixture_id"] for case in output_report["cases"]}
+    blocked_ids = {case["executable_fixture_id"] for case in blocked_review["case_reviews"]}
+
+    assert "function buildFixtureDrilldownRows" in app
+    assert "outputReport.cases.map" in app
+    assert "blockedReviewReport.case_reviews.map" in app
+    assert "blockedReviewReport={laborEmploymentBlockedDriverReview}" in app
+    assert "outputReport={laborEmploymentBudgetOutputExpectations}" in app
+    assert blocked_ids <= output_ids
+    assert len(output_ids - blocked_ids) == output_report["candidate_range_after_review_case_count"]
+    assert all(case["candidate_only"] is True for case in output_report["cases"])
+    assert all(case["external_writes_performed"] is False for case in output_report["cases"])

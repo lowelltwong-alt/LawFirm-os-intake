@@ -23,6 +23,8 @@ import {
 import type {
   ArtifactStatus,
   GateState,
+  LaborEmploymentAllowedBudgetOutput,
+  LaborEmploymentBudgetOutputExpectationCase,
   LaborEmploymentBudgetOutputExpectationReport,
   LaborEmploymentBlockedDriverImpactCaseReview,
   LaborEmploymentBlockedDriverImpactReviewReport,
@@ -107,6 +109,29 @@ function summaryItemClass(state: SyntheticConfidenceSummaryItemState) {
     return "state state-pending";
   }
   return "state state-blocked";
+}
+
+function allowedBudgetOutputClass(output: LaborEmploymentAllowedBudgetOutput) {
+  return output === "blocked_amount_budget" ? "state state-blocked" : "state state-pending";
+}
+
+type FixtureDrilldownRow = {
+  outputCase: LaborEmploymentBudgetOutputExpectationCase;
+  blockerReview?: LaborEmploymentBlockedDriverImpactCaseReview;
+};
+
+function buildFixtureDrilldownRows(
+  outputReport: LaborEmploymentBudgetOutputExpectationReport,
+  blockedReviewReport: LaborEmploymentBlockedDriverImpactReviewReport,
+): FixtureDrilldownRow[] {
+  const blockerReviewByFixture = new Map(
+    blockedReviewReport.case_reviews.map((review) => [review.executable_fixture_id, review]),
+  );
+
+  return outputReport.cases.map((outputCase) => ({
+    outputCase,
+    blockerReview: blockerReviewByFixture.get(outputCase.executable_fixture_id),
+  }));
 }
 
 function BoundaryGrid({ manifest }: { manifest: ReviewManifest }) {
@@ -776,11 +801,7 @@ function LaborEmploymentBudgetOutputExpectationsPanel({
                 </td>
                 <td>
                   <span
-                    className={
-                      testCase.final_allowed_budget_output === "blocked_amount_budget"
-                        ? "state state-blocked"
-                        : "state state-pending"
-                    }
+                    className={allowedBudgetOutputClass(testCase.final_allowed_budget_output)}
                   >
                     {testCase.final_allowed_budget_output}
                   </span>
@@ -809,6 +830,166 @@ function LaborEmploymentBudgetOutputExpectationsPanel({
             <code key={gate}>{gate}</code>
           ))}
         </div>
+      </div>
+    </section>
+  );
+}
+
+function LaborEmploymentFixtureDrilldownPanel({
+  outputReport,
+  blockedReviewReport,
+}: {
+  outputReport: LaborEmploymentBudgetOutputExpectationReport;
+  blockedReviewReport: LaborEmploymentBlockedDriverImpactReviewReport;
+}) {
+  const rows = buildFixtureDrilldownRows(outputReport, blockedReviewReport);
+  const reviewMatchedCount = rows.filter((row) => row.blockerReview).length;
+  const candidateRangeCount = rows.filter(
+    (row) =>
+      row.outputCase.final_allowed_budget_output ===
+      "candidate_range_after_review_pending_human_review",
+  ).length;
+  const familyRows = Array.from(
+    rows
+      .reduce(
+        (families, row) => {
+          const existing = families.get(row.outputCase.family) ?? {
+            family: row.outputCase.family,
+            total: 0,
+            blocked: 0,
+            reviewed: 0,
+            candidateRange: 0,
+          };
+          existing.total += 1;
+          if (row.outputCase.final_allowed_budget_output === "blocked_amount_budget") {
+            existing.blocked += 1;
+          }
+          if (row.outputCase.final_allowed_budget_output === "candidate_range_after_review_pending_human_review") {
+            existing.candidateRange += 1;
+          }
+          if (row.blockerReview) {
+            existing.reviewed += 1;
+          }
+          families.set(row.outputCase.family, existing);
+          return families;
+        },
+        new Map<
+          string,
+          { family: string; total: number; blocked: number; reviewed: number; candidateRange: number }
+        >(),
+      )
+      .values(),
+  ).sort((left, right) => left.family.localeCompare(right.family));
+
+  return (
+    <section className="panel fixture-drilldown-panel" aria-labelledby="fixture-drilldown-title">
+      <div className="panel-heading">
+        <div>
+          <p className="eyebrow">Read-only synthetic QA</p>
+          <h2 id="fixture-drilldown-title">L&amp;E Fixture Drilldown</h2>
+          <code>{outputReport.budget_output_expectation_report_id}</code>
+        </div>
+        <span className="state state-pending">candidate review only</span>
+      </div>
+
+      <div className="matrix-summary" aria-label="L&E fixture drilldown summary">
+        <div>
+          <span>Families</span>
+          <strong>{familyRows.length}</strong>
+        </div>
+        <div>
+          <span>Executable Cases</span>
+          <strong>{rows.length}</strong>
+        </div>
+        <div>
+          <span>Blocker Reviews</span>
+          <strong>
+            {reviewMatchedCount}/{blockedReviewReport.blocked_case_count}
+          </strong>
+        </div>
+        <div>
+          <span>Candidate Ranges</span>
+          <strong>{candidateRangeCount}</strong>
+        </div>
+      </div>
+
+      <div className="fixture-family-grid" aria-label="Fixture family coverage">
+        {familyRows.map((family) => (
+          <div className="fixture-family-item" key={family.family}>
+            <strong>{family.family}</strong>
+            <span>
+              {family.blocked} blocked / {family.candidateRange} range / {family.reviewed} reviews
+            </span>
+          </div>
+        ))}
+      </div>
+
+      <div className="table-wrap">
+        <table className="fixture-drilldown-table">
+          <thead>
+            <tr>
+              <th>Fixture</th>
+              <th>Allowed Output</th>
+              <th>Review Evidence</th>
+              <th>Driver Counts</th>
+              <th>Follow-Up</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((row) => {
+              const { outputCase, blockerReview } = row;
+              const reviewState = blockerReview
+                ? "blocked review present"
+                : outputCase.selected_for_reviewed_nonblocking_slice
+                  ? "reviewed nonblocking slice"
+                  : "no blocker review";
+              const followUpItems = blockerReview
+                ? blockerReview.unblock_actions
+                : outputCase.required_next_gates;
+
+              return (
+                <tr key={outputCase.executable_fixture_id}>
+                  <td>
+                    <div className="artifact-title">{outputCase.family}</div>
+                    <code>{outputCase.executable_fixture_id}</code>
+                    <div className="impact-counts">
+                      <span>{outputCase.variant}</span>
+                      <span>{outputCase.expectation_state}</span>
+                    </div>
+                  </td>
+                  <td>
+                    <span className={allowedBudgetOutputClass(outputCase.final_allowed_budget_output)}>
+                      {outputCase.final_allowed_budget_output}
+                    </span>
+                  </td>
+                  <td>
+                    <div className="fixture-evidence-stack">
+                      <span className={blockerReview ? "state state-passed" : "state state-pending"}>
+                        {reviewState}
+                      </span>
+                      <span>
+                        {blockerReview
+                          ? `${blockerReview.blocker_fact_count} blocker facts`
+                          : `${outputCase.evidence_refs.length} output refs`}
+                      </span>
+                    </div>
+                  </td>
+                  <td>
+                    <div className="impact-counts">
+                      <span>{outputCase.block_amount_budget_impact_count} amount blocks</span>
+                      <span>{outputCase.range_widening_impact_count} range impacts</span>
+                      <span>{outputCase.scenario_fork_impact_count} scenario forks</span>
+                      <span>{outputCase.rate_guideline_review_impact_count} rate reviews</span>
+                    </div>
+                  </td>
+                  <td>
+                    <TokenList items={followUpItems} limit={4} />
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
       </div>
     </section>
   );
@@ -873,6 +1054,10 @@ function App() {
       <LaborEmploymentBlockedDriverPanel report={laborEmploymentBlockedDriverReview} />
       <LaborEmploymentBudgetOutputExpectationsPanel
         report={laborEmploymentBudgetOutputExpectations}
+      />
+      <LaborEmploymentFixtureDrilldownPanel
+        outputReport={laborEmploymentBudgetOutputExpectations}
+        blockedReviewReport={laborEmploymentBlockedDriverReview}
       />
       <ArtifactTable artifacts={manifest.artifacts} />
     </main>
