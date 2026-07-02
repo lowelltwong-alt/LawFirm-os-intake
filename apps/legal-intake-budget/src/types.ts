@@ -21,6 +21,7 @@ export type UIReviewDataBundleStatus =
 export type UIReviewDataBundleReportKind =
   | "ui_review_manifest"
   | "synthetic_qa_review_run"
+  | "synthetic_confidence_summary"
   | "matter_linking_preflight"
   | "labor_employment_qa_matrix"
   | "labor_employment_blocked_driver_impact_review"
@@ -181,6 +182,105 @@ export type SyntheticQAReviewRunReport = {
   training_pipeline_created: boolean;
   calibration_applied: boolean;
   fixture_files_mutated: boolean;
+  lake_write_performed: boolean;
+  sqlite_write_performed: boolean;
+  external_writes_performed: boolean;
+  silent_learning_performed: boolean;
+  generated_at: string;
+};
+
+export type SyntheticConfidenceSummaryItemState =
+  | "ready_for_review"
+  | "pending_review"
+  | "blocked"
+  | "failed";
+
+export type SyntheticConfidenceSummaryItem = {
+  item_id: string;
+  label: string;
+  owner: string;
+  state: SyntheticConfidenceSummaryItemState;
+  evidence_refs: string[];
+  notes: string[];
+  no_write_boundary_confirmed: boolean;
+};
+
+export type SyntheticConfidenceDisplayBanner = {
+  candidate_only: boolean;
+  synthetic_only: boolean;
+  local_json_only: boolean;
+  not_production_ready: boolean;
+  human_review_required: boolean;
+  testing_readiness_state: string;
+  budget_submission_authorized: boolean;
+  matter_opening_authorized: boolean;
+  lake_write_performed: boolean;
+  sqlite_write_performed: boolean;
+  external_writes_performed: boolean;
+  summary: string;
+};
+
+export type SyntheticConfidenceSummaryReport = {
+  schema_version: string;
+  synthetic_confidence_summary_report_id: string;
+  status:
+    | "synthetic_confidence_summary_ready_for_review"
+    | "blocked_by_synthetic_confidence_summary"
+    | "failed_synthetic_confidence_summary_boundary";
+  testing_readiness_state:
+    | "synthetic_qa_ready_pending_review"
+    | "blocked_missing_or_failed_evidence"
+    | "failed_side_effect_boundary";
+  source_synthetic_qa_review_run_ref: string;
+  source_synthetic_qa_review_run_report_id: string;
+  source_synthetic_qa_review_run_status: string;
+  source_synthetic_qa_bundle_ref: string;
+  source_synthetic_qa_bundle_report_id: string;
+  source_synthetic_qa_bundle_status: string;
+  source_ui_manifest_ref: string;
+  source_ui_manifest_id: string;
+  source_ui_manifest_overall_status: string;
+  source_ui_review_data_bundle_ref: string;
+  source_ui_review_data_bundle_id: string;
+  source_ui_review_data_bundle_status: string;
+  qa_step_count: number;
+  qa_passed_step_count: number;
+  qa_failed_step_count: number;
+  qa_artifact_count: number;
+  qa_missing_required_artifact_count: number;
+  qa_blocked_artifact_count: number;
+  qa_pending_artifact_count: number;
+  qa_failed_artifact_count: number;
+  ui_detail_report_count: number;
+  ui_present_detail_report_count: number;
+  ui_missing_required_detail_report_count: number;
+  ui_external_write_report_count: number;
+  quality_gate_count: number;
+  quality_gate_passed_count: number;
+  quality_gate_pending_count: number;
+  quality_gate_blocked_count: number;
+  quality_gate_failed_count: number;
+  readiness_item_count: number;
+  readiness_items: SyntheticConfidenceSummaryItem[];
+  top_blockers: string[];
+  display_banner: SyntheticConfidenceDisplayBanner;
+  required_next_actions: string[];
+  candidate_only: boolean;
+  synthetic_only: boolean;
+  non_authoritative: boolean;
+  local_json_only: boolean;
+  human_review_required: boolean;
+  not_authorized_for_external_write: boolean;
+  not_authorized_for_lake_write: boolean;
+  not_authorized_for_sqlite_write: boolean;
+  not_authorized_for_budget_submission: boolean;
+  not_authorized_for_matter_opening: boolean;
+  not_authorized_for_calibration: boolean;
+  budget_amount_output_authorized: boolean;
+  budget_submission_authorized: boolean;
+  conflict_conclusion_emitted: boolean;
+  matter_opening_authorized: boolean;
+  training_pipeline_created: boolean;
   lake_write_performed: boolean;
   sqlite_write_performed: boolean;
   external_writes_performed: boolean;

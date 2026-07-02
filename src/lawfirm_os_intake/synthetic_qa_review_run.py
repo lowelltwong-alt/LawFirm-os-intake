@@ -59,6 +59,10 @@ from .matter_linking_preflight import (
     MATTER_LINKING_PREFLIGHT_REPORT_FILENAME,
     run_matter_linking_preflight,
 )
+from .synthetic_confidence_summary import (
+    SYNTHETIC_CONFIDENCE_SUMMARY_REPORT_FILENAME,
+    run_synthetic_confidence_summary,
+)
 from .synthetic_qa_bundle import SYNTHETIC_QA_BUNDLE_REPORT_FILENAME, run_synthetic_qa_bundle
 from .ui_review_data_bundle import UI_REVIEW_DATA_BUNDLE_FILENAME, build_ui_review_data_bundle
 from .ui_review_manifest import build_ui_review_manifest
@@ -404,6 +408,47 @@ def run_synthetic_qa_review_run(
             "Read-only frontend manifest is generated from local artifacts.",
         )
     )
+    report = _build_review_run_report(
+        run_dir=run_dir,
+        quality_dir=quality_dir,
+        steps=steps,
+        synthetic_qa_bundle_ref=synthetic_qa_bundle_ref,
+        ui_manifest_ref=ui_manifest_ref,
+        ui_data_bundle_ref=ui_data_bundle_ref,
+        generated_at=generated_at,
+    )
+    write_json(run_dir / SYNTHETIC_QA_REVIEW_RUN_REPORT_FILENAME, report.model_dump(mode="json"))
+
+    confidence_summary, confidence_summary_dir = run_synthetic_confidence_summary(
+        synthetic_qa_review_run_report_path=run_dir / SYNTHETIC_QA_REVIEW_RUN_REPORT_FILENAME,
+        synthetic_qa_bundle_report_path=synthetic_qa_bundle_ref,
+        ui_manifest_path=ui_manifest_ref,
+        ui_review_data_bundle_path=ui_data_bundle_ref,
+        out_dir=quality_dir / "synthetic-confidence-summary",
+        generated_at=generated_at,
+    )
+    confidence_summary_ref = confidence_summary_dir / SYNTHETIC_CONFIDENCE_SUMMARY_REPORT_FILENAME
+    _stage_for_bundle(confidence_summary_ref, quality_dir)
+    steps.append(
+        _step(
+            "synthetic_confidence_summary",
+            "Synthetic Confidence Summary",
+            confidence_summary.status,
+            confidence_summary_ref,
+            confidence_summary.status == "synthetic_confidence_summary_ready_for_review",
+            "Aggregate QA/UI readiness banner is generated without production authority.",
+        )
+    )
+    build_ui_review_manifest(
+        run_root=run_dir,
+        out_path=ui_manifest_ref,
+        generated_at=generated_at,
+    )
+    build_ui_review_data_bundle(
+        run_root=run_dir,
+        out_path=ui_data_bundle_ref,
+        generated_at=generated_at,
+    )
     ui_data_bundle = load_json(ui_data_bundle_ref) if ui_data_bundle_ref.is_file() else {}
     steps.append(
         _step(
@@ -415,38 +460,28 @@ def run_synthetic_qa_review_run(
             "UI-renderable detail reports are hash-bound for local review.",
         )
     )
-
-    failed = [step for step in steps if step.status == "failed"]
-    report_core = {
-        "run_root_ref": str(run_dir),
-        "steps": [
-            {
-                "step_id": step.step_id,
-                "status": step.status,
-                "observed_status": step.observed_status,
-                "artifact_ref": step.artifact_ref,
-            }
-            for step in steps
-        ],
-    }
-    report = SyntheticQAReviewRunReport(
-        synthetic_qa_review_run_report_id="syntheticqareviewrun_"
-        + digest_json(report_core)[len("sha256:") : len("sha256:") + 16],
-        status=(
-            "blocked_by_synthetic_qa_review_run" if failed else "synthetic_qa_review_run_ready"
-        ),
-        run_root_ref=str(run_dir),
-        quality_dir_ref=str(quality_dir),
-        step_count=len(steps),
-        failed_step_count=len(failed),
+    report = _build_review_run_report(
+        run_dir=run_dir,
+        quality_dir=quality_dir,
         steps=steps,
-        synthetic_qa_bundle_ref=str(synthetic_qa_bundle_ref),
-        ui_manifest_ref=str(ui_manifest_ref),
-        ui_data_bundle_ref=str(ui_data_bundle_ref),
-        required_next_actions=_required_next_actions(failed),
-        generated_at=generated_at or now_iso(),
+        synthetic_qa_bundle_ref=synthetic_qa_bundle_ref,
+        ui_manifest_ref=ui_manifest_ref,
+        ui_data_bundle_ref=ui_data_bundle_ref,
+        generated_at=generated_at,
     )
     write_json(run_dir / SYNTHETIC_QA_REVIEW_RUN_REPORT_FILENAME, report.model_dump(mode="json"))
+    confidence_summary, confidence_summary_dir = run_synthetic_confidence_summary(
+        synthetic_qa_review_run_report_path=run_dir / SYNTHETIC_QA_REVIEW_RUN_REPORT_FILENAME,
+        synthetic_qa_bundle_report_path=synthetic_qa_bundle_ref,
+        ui_manifest_path=ui_manifest_ref,
+        ui_review_data_bundle_path=ui_data_bundle_ref,
+        out_dir=quality_dir / "synthetic-confidence-summary",
+        generated_at=generated_at,
+    )
+    _stage_for_bundle(
+        confidence_summary_dir / SYNTHETIC_CONFIDENCE_SUMMARY_REPORT_FILENAME,
+        quality_dir,
+    )
     build_ui_review_manifest(
         run_root=run_dir,
         out_path=ui_manifest_ref,
@@ -495,6 +530,48 @@ def _stage_for_bundle(source_path: Path, quality_dir: Path) -> Path:
     if source_path.resolve() != destination.resolve():
         copy2(source_path, destination)
     return destination
+
+
+def _build_review_run_report(
+    *,
+    run_dir: Path,
+    quality_dir: Path,
+    steps: list[SyntheticQAReviewRunStep],
+    synthetic_qa_bundle_ref: Path,
+    ui_manifest_ref: Path,
+    ui_data_bundle_ref: Path,
+    generated_at: str | None,
+) -> SyntheticQAReviewRunReport:
+    failed = [step for step in steps if step.status == "failed"]
+    report_core = {
+        "run_root_ref": str(run_dir),
+        "steps": [
+            {
+                "step_id": step.step_id,
+                "status": step.status,
+                "observed_status": step.observed_status,
+                "artifact_ref": step.artifact_ref,
+            }
+            for step in steps
+        ],
+    }
+    return SyntheticQAReviewRunReport(
+        synthetic_qa_review_run_report_id="syntheticqareviewrun_"
+        + digest_json(report_core)[len("sha256:") : len("sha256:") + 16],
+        status=(
+            "blocked_by_synthetic_qa_review_run" if failed else "synthetic_qa_review_run_ready"
+        ),
+        run_root_ref=str(run_dir),
+        quality_dir_ref=str(quality_dir),
+        step_count=len(steps),
+        failed_step_count=len(failed),
+        steps=steps,
+        synthetic_qa_bundle_ref=str(synthetic_qa_bundle_ref),
+        ui_manifest_ref=str(ui_manifest_ref),
+        ui_data_bundle_ref=str(ui_data_bundle_ref),
+        required_next_actions=_required_next_actions(failed),
+        generated_at=generated_at or now_iso(),
+    )
 
 
 def _step(

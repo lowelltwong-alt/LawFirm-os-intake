@@ -10298,6 +10298,175 @@ class SyntheticQAReviewRunReport(StrictModel):
         return self
 
 
+SyntheticConfidenceSummaryItemState = Literal[
+    "ready_for_review",
+    "pending_review",
+    "blocked",
+    "failed",
+]
+
+
+class SyntheticConfidenceSummaryItem(StrictModel):
+    item_id: str
+    label: str
+    owner: str
+    state: SyntheticConfidenceSummaryItemState
+    evidence_refs: list[str]
+    notes: list[str]
+    no_write_boundary_confirmed: Literal[True] = True
+
+    @model_validator(mode="after")
+    def synthetic_confidence_summary_item_is_actionable(
+        self,
+    ) -> "SyntheticConfidenceSummaryItem":
+        if not self.evidence_refs:
+            raise ValueError("synthetic confidence summary item requires evidence refs")
+        if not self.notes:
+            raise ValueError("synthetic confidence summary item requires notes")
+        return self
+
+
+class SyntheticConfidenceSummaryReport(StrictModel):
+    schema_version: str = "0.1"
+    synthetic_confidence_summary_report_id: str
+    status: Literal[
+        "synthetic_confidence_summary_ready_for_review",
+        "blocked_by_synthetic_confidence_summary",
+        "failed_synthetic_confidence_summary_boundary",
+    ]
+    testing_readiness_state: Literal[
+        "synthetic_qa_ready_pending_review",
+        "blocked_missing_or_failed_evidence",
+        "failed_side_effect_boundary",
+    ]
+    source_synthetic_qa_review_run_ref: str
+    source_synthetic_qa_review_run_report_id: str
+    source_synthetic_qa_review_run_status: str
+    source_synthetic_qa_bundle_ref: str
+    source_synthetic_qa_bundle_report_id: str
+    source_synthetic_qa_bundle_status: str
+    source_ui_manifest_ref: str
+    source_ui_manifest_id: str
+    source_ui_manifest_overall_status: str
+    source_ui_review_data_bundle_ref: str
+    source_ui_review_data_bundle_id: str
+    source_ui_review_data_bundle_status: str
+    qa_step_count: int = Field(ge=0)
+    qa_passed_step_count: int = Field(ge=0)
+    qa_failed_step_count: int = Field(ge=0)
+    qa_artifact_count: int = Field(ge=0)
+    qa_missing_required_artifact_count: int = Field(ge=0)
+    qa_blocked_artifact_count: int = Field(ge=0)
+    qa_pending_artifact_count: int = Field(ge=0)
+    qa_failed_artifact_count: int = Field(ge=0)
+    ui_detail_report_count: int = Field(ge=0)
+    ui_present_detail_report_count: int = Field(ge=0)
+    ui_missing_required_detail_report_count: int = Field(ge=0)
+    ui_external_write_report_count: int = Field(ge=0)
+    quality_gate_count: int = Field(ge=0)
+    quality_gate_passed_count: int = Field(ge=0)
+    quality_gate_pending_count: int = Field(ge=0)
+    quality_gate_blocked_count: int = Field(ge=0)
+    quality_gate_failed_count: int = Field(ge=0)
+    readiness_item_count: int = Field(ge=0)
+    readiness_items: list[SyntheticConfidenceSummaryItem]
+    top_blockers: list[str] = Field(default_factory=list)
+    display_banner: dict[str, Any]
+    required_next_actions: list[str]
+    candidate_only: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    local_json_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    not_authorized_for_matter_opening: Literal[True] = True
+    not_authorized_for_calibration: Literal[True] = True
+    budget_amount_output_authorized: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    conflict_conclusion_emitted: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    training_pipeline_created: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def synthetic_confidence_summary_counts_and_status_match(
+        self,
+    ) -> "SyntheticConfidenceSummaryReport":
+        if self.qa_step_count != self.qa_passed_step_count + self.qa_failed_step_count:
+            raise ValueError("synthetic confidence QA step counts do not match")
+        if self.readiness_item_count != len(self.readiness_items):
+            raise ValueError("synthetic confidence readiness item count does not match")
+        if self.ui_present_detail_report_count > self.ui_detail_report_count:
+            raise ValueError("synthetic confidence UI present count cannot exceed detail count")
+        if (
+            self.quality_gate_count
+            != self.quality_gate_passed_count
+            + self.quality_gate_pending_count
+            + self.quality_gate_blocked_count
+            + self.quality_gate_failed_count
+        ):
+            raise ValueError("synthetic confidence quality gate counts do not match")
+        failed_or_blocked_items = [
+            item for item in self.readiness_items if item.state in {"failed", "blocked"}
+        ]
+        side_effect_failure = (
+            self.ui_external_write_report_count > 0
+            or self.external_writes_performed
+            or self.lake_write_performed
+            or self.sqlite_write_performed
+            or self.silent_learning_performed
+        )
+        evidence_blocked = (
+            self.qa_failed_step_count > 0
+            or self.qa_missing_required_artifact_count > 0
+            or self.qa_blocked_artifact_count > 0
+            or self.qa_failed_artifact_count > 0
+            or self.ui_missing_required_detail_report_count > 0
+            or self.quality_gate_blocked_count > 0
+            or self.quality_gate_failed_count > 0
+            or bool(failed_or_blocked_items)
+        )
+        if side_effect_failure and self.status != "failed_synthetic_confidence_summary_boundary":
+            raise ValueError("side-effect confidence summary failure must use failed status")
+        if side_effect_failure and self.testing_readiness_state != "failed_side_effect_boundary":
+            raise ValueError("side-effect confidence summary failure must use failed state")
+        if self.status == "synthetic_confidence_summary_ready_for_review" and (
+            side_effect_failure or evidence_blocked
+        ):
+            raise ValueError("ready confidence summary cannot have blocked evidence")
+        if self.status == "blocked_by_synthetic_confidence_summary" and not evidence_blocked:
+            raise ValueError("blocked confidence summary requires blocked evidence")
+        if self.testing_readiness_state == "synthetic_qa_ready_pending_review" and (
+            side_effect_failure or evidence_blocked
+        ):
+            raise ValueError("ready pending review state cannot have blocked evidence")
+        if not self.display_banner:
+            raise ValueError("synthetic confidence summary requires display banner")
+        for key in [
+            "candidate_only",
+            "synthetic_only",
+            "local_json_only",
+            "not_production_ready",
+            "human_review_required",
+            "budget_submission_authorized",
+            "matter_opening_authorized",
+            "lake_write_performed",
+            "sqlite_write_performed",
+        ]:
+            if key not in self.display_banner:
+                raise ValueError(f"synthetic confidence display banner missing {key}")
+        if not self.required_next_actions:
+            raise ValueError("synthetic confidence summary requires next actions")
+        return self
+
+
 UIReviewDataBundleStatus = Literal[
     "ready_for_review",
     "blocked_missing_required_reports",
@@ -10307,6 +10476,7 @@ UIReviewDataBundleStatus = Literal[
 UIReviewDataBundleReportKind = Literal[
     "ui_review_manifest",
     "synthetic_qa_review_run",
+    "synthetic_confidence_summary",
     "matter_linking_preflight",
     "labor_employment_qa_matrix",
     "labor_employment_blocked_driver_impact_review",

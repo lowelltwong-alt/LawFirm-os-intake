@@ -53,6 +53,18 @@ def _write_ui_detail_reports(
                 "sqlite_write_performed": False,
             },
         )
+    write_json(
+        quality_dir / "synthetic_confidence_summary_report.json",
+        {
+            "status": "synthetic_confidence_summary_ready_for_review",
+            "candidate_only": True,
+            "synthetic_only": True,
+            "external_writes_performed": False,
+            "lake_write_performed": False,
+            "sqlite_write_performed": False,
+            "silent_learning_performed": False,
+        },
+    )
 
 
 def _write_synthetic_qa_review_run_report(run_root):
@@ -100,9 +112,9 @@ def test_build_ui_review_data_bundle_tracks_renderable_local_json(tmp_path):
 
     assert out.is_file()
     assert bundle.status == "ready_for_review"
-    assert bundle.detail_report_count == 6
-    assert bundle.required_detail_report_count == 4
-    assert bundle.present_detail_report_count == 4
+    assert bundle.detail_report_count == 7
+    assert bundle.required_detail_report_count == 5
+    assert bundle.present_detail_report_count == 5
     assert bundle.missing_required_detail_report_count == 0
     assert bundle.external_write_report_count == 0
     assert bundle.local_json_only is True
@@ -112,6 +124,7 @@ def test_build_ui_review_data_bundle_tracks_renderable_local_json(tmp_path):
     assert {report.report_kind for report in bundle.detail_reports} == {
         "ui_review_manifest",
         "synthetic_qa_review_run",
+        "synthetic_confidence_summary",
         "matter_linking_preflight",
         "labor_employment_qa_matrix",
         "labor_employment_blocked_driver_impact_review",
@@ -142,12 +155,15 @@ def test_build_ui_review_data_bundle_includes_optional_synthetic_qa_review_run(t
 
     details = {report.report_kind: report for report in bundle.detail_reports}
     assert bundle.status == "ready_for_review"
-    assert bundle.detail_report_count == 6
-    assert bundle.present_detail_report_count == 5
+    assert bundle.detail_report_count == 7
+    assert bundle.present_detail_report_count == 6
     assert details["synthetic_qa_review_run"].present is True
     assert details["synthetic_qa_review_run"].required is False
     assert details["synthetic_qa_review_run"].renderer == "SyntheticQAReviewRunPanel"
     assert details["synthetic_qa_review_run"].source_sha256.startswith("sha256:")
+    assert details["synthetic_confidence_summary"].present is True
+    assert details["synthetic_confidence_summary"].required is True
+    assert details["synthetic_confidence_summary"].renderer == "SyntheticConfidenceSummaryPanel"
 
 
 def test_build_ui_review_data_bundle_includes_optional_matter_linking_preflight(tmp_path):
@@ -165,8 +181,8 @@ def test_build_ui_review_data_bundle_includes_optional_matter_linking_preflight(
 
     details = {report.report_kind: report for report in bundle.detail_reports}
     assert bundle.status == "ready_for_review"
-    assert bundle.detail_report_count == 6
-    assert bundle.present_detail_report_count == 6
+    assert bundle.detail_report_count == 7
+    assert bundle.present_detail_report_count == 7
     assert details["matter_linking_preflight"].present is True
     assert details["matter_linking_preflight"].required is False
     assert details["matter_linking_preflight"].renderer == "MatterLinkingPreflightPanel"

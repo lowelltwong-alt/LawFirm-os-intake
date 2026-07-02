@@ -39,6 +39,13 @@ DETAIL_REPORT_SPECS = [
         required=False,
     ),
     UIReviewDetailSpec(
+        detail_report_id="synthetic-confidence-summary",
+        label="Synthetic Confidence Summary",
+        report_kind="synthetic_confidence_summary",
+        file_name="synthetic_confidence_summary_report.json",
+        renderer="SyntheticConfidenceSummaryPanel",
+    ),
+    UIReviewDetailSpec(
         detail_report_id="matter-linking-preflight",
         label="Matter-Linking Preflight",
         report_kind="matter_linking_preflight",

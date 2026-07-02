@@ -1,0 +1,94 @@
+{
+  "schema_version": "0.1",
+  "issue_id": "chat-cross-repo-dad-capture-policy-001",
+  "issue_version": "0.1.0",
+  "observed_at": "2026-07-02T18:20:00Z",
+  "source_repo_id": "LawFirm-os-intake",
+  "source_repo_path": "LawFirm-os-intake",
+  "originating_agent": "codex",
+  "review_context": "Codex review of current thread instructions requesting deterministic DAD capture for hard issues, exceptions, and cross-repo workflow or asset discoveries.",
+  "finding_title": "Hard issues and cross-repo workflow assets need deterministic DAD outbox capture across repos.",
+  "severity": "P0",
+  "issue_classes": [
+    "governance_drift_risk",
+    "learning_loop_gap",
+    "exception_lake_mapping_gap",
+    "data_flow_gap",
+    "authority_boundary_risk",
+    "test_gap"
+  ],
+  "finding_summary": "The user repeatedly directed that complex issues, exceptions, workflow discoveries, and combined cross-repo assets must be captured as candidate DAD mail with classification, evidence, assumptions, decision logic, fix rationale, and no hidden chain-of-thought.",
+  "observable_context": [
+    "The current intake repo already has a candidate-only DAD review issue outbox recorder that appends to .digital-asset/mail/outbox.jsonl.",
+    "The user wants the same pattern enforced across all repos so hard issues and reusable workflow assets are not trapped in chat or one repo.",
+    "The user specifically called out cross-repo combined assets and partial assets discovered in one repo then reused in another as events DAD should see.",
+    "The boundary remains candidate mail only; DAD or human review must decide whether any pattern becomes reusable learning or an Exception Lake event class."
+  ],
+  "observable_decision_logic": [
+    "If an agent discovers a hard issue, novel fix, exception pattern, or cross-repo workflow asset, a durable candidate mail record should be produced.",
+    "The mail record should carry issue classes, candidate exception labels, source repo, artifact refs, fix refs, test refs, observable decision logic, and promotion boundaries.",
+    "The mail record should explicitly exclude hidden chain-of-thought and raw private payloads.",
+    "DAD should classify recurring patterns before any cross-repo learning rule or Exception Lake event mapping is promoted."
+  ],
+  "solution_path": [
+    "Use the intake DAD review issue outbox contract as a candidate reference implementation.",
+    "Ask DAD to define a cross-repo deterministic capture policy for hard issues, exceptions, workflow assets, and combined assets.",
+    "Add repo-local tests or hooks in each participating repo so candidate DAD mail is written before promotion or learning claims are made.",
+    "Map mail issue classes and candidate exception labels to DAD's future exception-lake classification strategy."
+  ],
+  "fix_status": "planned",
+  "fix_refs": [
+    "src/lawfirm_os_intake/dad_review_issue_outbox.py",
+    "examples/synthetic/dad-review-issues/fable-le-budget-output-expectations.issue.json"
+  ],
+  "test_refs": [
+    "tests/test_dad_review_issue_outbox.py"
+  ],
+  "artifact_refs": [
+    ".digital-asset/mail/outbox.jsonl",
+    "docs/decisions/TRACE-2026-07-02-synthetic-confidence-summary.md"
+  ],
+  "candidate_exception_labels": [
+    "cross_repo_dad_outbox_required",
+    "exception_pattern_capture_required",
+    "workflow_asset_discovery_mail_required",
+    "combined_asset_lineage_capture_required",
+    "no_hidden_chain_of_thought",
+    "dad_learning_loop_candidate"
+  ],
+  "applies_when": [
+    "An agent identifies a complex issue, exception, workflow asset, cross-repo dependency, or reusable fix pattern that should survive beyond chat.",
+    "A repo-local agent combines an external repo asset with local implementation work to create a new workflow artifact.",
+    "A human asks that DAD learn from a hard problem, exception pattern, or review output."
+  ],
+  "does_not_apply_when": [
+    "The item is a routine typo with no reusable issue pattern.",
+    "The record would require raw private matter payloads, credentials, or hidden chain-of-thought to be useful.",
+    "The issue is already captured by a newer DAD mail record with the same issue id and version."
+  ],
+  "danger_if_misapplied": "If this becomes silent learning instead of candidate mail, DAD could promote unreviewed chat conclusions across repos or admit misleading exception classes into the future Lake.",
+  "suggested_actions": [
+    "DAD should classify this as a cross-repo governance and learning-loop candidate.",
+    "DAD should design a deterministic mail/outbox contract for issue, exception, workflow-asset, and combined-asset capture across repos.",
+    "DAD should define exception-lake event classes only after reviewing candidate mail patterns and owner boundaries."
+  ],
+  "reviewer_notes": [
+    "This record is metadata-only and summarizes observable user instructions and repo behavior.",
+    "It intentionally excludes hidden chain-of-thought and raw private payloads.",
+    "The intake implementation is a reference, not cross-repo canon."
+  ],
+  "red_team_notes": [
+    "Do not treat DAD mail as approved learning.",
+    "Do not let issue capture bypass repo owner review or Semantic Substrate authority.",
+    "Do not store private matter data or chain-of-thought in DAD mail."
+  ],
+  "raw_private_payload_included": false,
+  "hidden_chain_of_thought_included": false,
+  "candidate_only": true,
+  "dad_outbox_required": true,
+  "dad_review_required_before_promotion": true,
+  "lake_write_performed": false,
+  "sqlite_write_performed": false,
+  "external_writes_performed": false,
+  "silent_learning_performed": false
+}

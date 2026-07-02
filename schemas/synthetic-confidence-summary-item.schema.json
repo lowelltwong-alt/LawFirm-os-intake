@@ -1,0 +1,57 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "item_id": {
+      "title": "Item Id",
+      "type": "string"
+    },
+    "label": {
+      "title": "Label",
+      "type": "string"
+    },
+    "owner": {
+      "title": "Owner",
+      "type": "string"
+    },
+    "state": {
+      "enum": [
+        "ready_for_review",
+        "pending_review",
+        "blocked",
+        "failed"
+      ],
+      "title": "State",
+      "type": "string"
+    },
+    "evidence_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Evidence Refs",
+      "type": "array"
+    },
+    "notes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Notes",
+      "type": "array"
+    },
+    "no_write_boundary_confirmed": {
+      "const": true,
+      "default": true,
+      "title": "No Write Boundary Confirmed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "item_id",
+    "label",
+    "owner",
+    "state",
+    "evidence_refs",
+    "notes"
+  ],
+  "title": "SyntheticConfidenceSummaryItem",
+  "type": "object"
+}

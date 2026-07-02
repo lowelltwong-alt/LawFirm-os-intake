@@ -1,12 +1,12 @@
 {
   "schema_version": "0.1",
-  "matter_linking_preflight_report_id": "matterlinkpreflight_demo_resolved_001",
+  "matter_linking_preflight_report_id": "matterlinkpreflight_b6256d36c7d774ea7124",
   "status": "matter_linking_preflight_resolved_candidate_requires_review",
-  "source_artifact_ref": "examples/synthetic/upfront/upfront-like-intake-output.resolved-followup.example.json",
+  "source_artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-os-intake-merge-20260702-011307\\examples\\synthetic\\upfront\\upfront-like-intake-output.resolved-followup.example.json",
   "source_artifact_id": "upfront_like_intake_output.synthetic.resolved_followup.v0_1",
   "source_artifact_type": "upfront_like_intake_output_candidate",
   "source_artifact_status": "resolved_candidate_requires_human_confirmation",
-  "source_artifact_hash": "sha256:demo-matter-linking-preflight",
+  "source_artifact_hash": "sha256:95febec975fb888d16bde1c8f9a98a23f281d40f3b3f870f8612afb43ebe4f4a",
   "data_origin": "synthetic",
   "source_system_name": "Upfront-like intake output",
   "real_upfront_export": false,
@@ -28,7 +28,10 @@
     "source.attachment.003": "sha256:synthetic-attachment-003",
     "source.attachment.004": "sha256:synthetic-attachment-004"
   },
-  "weak_merge_signal_types": ["same_carrier", "same_sender"],
+  "weak_merge_signal_types": [
+    "same_carrier",
+    "same_sender"
+  ],
   "candidate_exception_lake_labels": [
     "document_cluster_split_resolved_candidate",
     "human_matter_linking_confirmation_required",
@@ -41,7 +44,11 @@
       "link_state": "resolved_candidate_pending_human_confirmation",
       "match_strength": "resolved_high_evidence_candidate_not_authorized",
       "proposed_short_label": "Rivera v. Synthetic Bistro Group",
-      "source_ids": ["source.attachment.001", "source.attachment.002", "source.email.002"],
+      "source_ids": [
+        "source.attachment.001",
+        "source.attachment.002",
+        "source.email.002"
+      ],
       "source_hashes": [
         "sha256:synthetic-attachment-001",
         "sha256:synthetic-attachment-002",
@@ -57,7 +64,9 @@
         "sender_followup_claim_cluster_confirmation",
         "upfront_like_request_id"
       ],
-      "negative_signal_types": ["different_claim_number_in_same_email"],
+      "negative_signal_types": [
+        "different_claim_number_in_same_email"
+      ],
       "requires_human_confirmation": true,
       "matter_link_finalized": false
     },
@@ -66,7 +75,11 @@
       "link_state": "resolved_candidate_pending_human_confirmation",
       "match_strength": "resolved_high_evidence_candidate_not_authorized",
       "proposed_short_label": "Sato v. Synthetic Harbor Logistics",
-      "source_ids": ["source.attachment.003", "source.attachment.004", "source.email.002"],
+      "source_ids": [
+        "source.attachment.003",
+        "source.attachment.004",
+        "source.email.002"
+      ],
       "source_hashes": [
         "sha256:synthetic-attachment-003",
         "sha256:synthetic-attachment-004",
@@ -82,9 +95,122 @@
         "sender_followup_claim_cluster_confirmation",
         "upfront_like_request_id"
       ],
-      "negative_signal_types": ["different_claim_number_in_same_email"],
+      "negative_signal_types": [
+        "different_claim_number_in_same_email"
+      ],
       "requires_human_confirmation": true,
       "matter_link_finalized": false
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "input_is_synthetic_candidate_only",
+      "status": "passed",
+      "message": "Input remains synthetic, candidate-only, and non-authoritative.",
+      "evidence_refs": [
+        "upfront_like_intake_output.synthetic.resolved_followup.v0_1"
+      ],
+      "blocking_refs": []
+    },
+    {
+      "check_id": "not_real_upfront_export_or_api_contract",
+      "status": "passed",
+      "message": "The fixture is an Upfront-like public-research proxy, not a verified export/API contract.",
+      "evidence_refs": [
+        "Upfront-like intake output"
+      ],
+      "blocking_refs": []
+    },
+    {
+      "check_id": "no_connector_or_external_write",
+      "status": "passed",
+      "message": "No connector, vendor API call, external write, Lake/SQLite write, screen, matter opening, budget authorization, conflict conclusion, or silent learning is present.",
+      "evidence_refs": [],
+      "blocking_refs": []
+    },
+    {
+      "check_id": "official_matter_number_missing_is_explicit",
+      "status": "passed",
+      "message": "Missing official firm matter number is explicit.",
+      "evidence_refs": [
+        "matter_linking.official_matter_number_status"
+      ],
+      "blocking_refs": []
+    },
+    {
+      "check_id": "multiple_candidate_clusters_require_review",
+      "status": "passed",
+      "message": "Candidate clusters remain blocked for human linking review.",
+      "evidence_refs": [
+        "cluster.case-a",
+        "cluster.case-b"
+      ],
+      "blocking_refs": []
+    },
+    {
+      "check_id": "weak_sender_carrier_signals_do_not_merge",
+      "status": "passed",
+      "message": "Same sender and same carrier are recorded as weak signals, not merge authority.",
+      "evidence_refs": [
+        "same_carrier",
+        "same_sender"
+      ],
+      "blocking_refs": []
+    },
+    {
+      "check_id": "clusters_have_source_bound_strong_support",
+      "status": "passed",
+      "message": "Every cluster has source-bound strong support mapped to known source hashes.",
+      "evidence_refs": [
+        "cluster.case-a",
+        "cluster.case-b"
+      ],
+      "blocking_refs": []
+    },
+    {
+      "check_id": "resolved_candidates_have_source_bound_resolution_signal",
+      "status": "passed",
+      "message": "Resolved candidates include source-bound sender/request resolution signals.",
+      "evidence_refs": [
+        "cluster.case-a",
+        "cluster.case-b"
+      ],
+      "blocking_refs": []
+    },
+    {
+      "check_id": "clusters_have_negative_split_evidence",
+      "status": "passed",
+      "message": "Every cluster has strong negative split evidence against the other candidate matter.",
+      "evidence_refs": [
+        "cluster.case-a",
+        "cluster.case-b"
+      ],
+      "blocking_refs": []
+    },
+    {
+      "check_id": "candidate_exception_labels_include_matter_linking",
+      "status": "passed",
+      "message": "Candidate Exception Lake labels preserve the matter-linking ambiguity class.",
+      "evidence_refs": [
+        "document_cluster_split_resolved_candidate",
+        "human_matter_linking_confirmation_required",
+        "missing_official_matter_number",
+        "source_matter_link_resolved_candidate"
+      ],
+      "blocking_refs": []
+    },
+    {
+      "check_id": "required_gates_block_budget_and_matter_opening",
+      "status": "passed",
+      "message": "Next gates block budget output and matter opening until linking and roles are confirmed.",
+      "evidence_refs": [
+        "human_matter_linking_review",
+        "conflict_seed_review",
+        "no_budget_amount_until_cluster_and_roles_confirmed",
+        "no_matter_opening_without_official_authority",
+        "no_lake_or_sqlite_write_from_matter_linking_preflight"
+      ],
+      "blocking_refs": []
     }
   ],
   "required_next_gates": [

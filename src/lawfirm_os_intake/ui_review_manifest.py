@@ -102,6 +102,13 @@ ARTIFACT_SPECS = [
         "pending_review",
     ),
     ArtifactSpec(
+        "synthetic-confidence-summary",
+        "Synthetic Confidence Summary",
+        "synthetic_confidence_summary_report.json",
+        "qa-reference",
+        "pending_review",
+    ),
+    ArtifactSpec(
         "matter-linking-preflight",
         "Matter-Linking Preflight",
         "matter_linking_preflight_report.json",
@@ -264,6 +271,13 @@ QUALITY_GATE_SPECS = {
         "synthetic_qa_review_run_report.json",
         "qa-reference",
         "The one-command synthetic QA recipe must prove each generated QA/UI artifact step before the frontend treats the run as review-ready.",
+        "pending_review",
+    ),
+    "synthetic_confidence_summary": (
+        "Synthetic Confidence Summary",
+        "synthetic_confidence_summary_report.json",
+        "qa-reference",
+        "The aggregate synthetic QA confidence banner must make review readiness, blockers, and no-production-authority boundaries visible.",
         "pending_review",
     ),
     "matter_linking_preflight": (

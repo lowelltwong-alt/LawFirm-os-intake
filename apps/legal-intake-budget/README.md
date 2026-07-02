@@ -24,6 +24,8 @@ The expected local artifact list and matrix guardrails live in
 `src/data-contract.ts`. Demo review data lives in
 `src/fixtures/demo-ui-review-data-bundle.json`,
 `src/fixtures/demo-run-manifest.json`,
+`src/fixtures/demo-synthetic-confidence-summary-report.json`,
+`src/fixtures/demo-synthetic-qa-review-run-report.json`,
 `src/fixtures/demo-labor-employment-qa-matrix-report.json`, and
 `src/fixtures/demo-labor-employment-blocked-driver-impact-review-report.json`.
 
@@ -38,9 +40,10 @@ python -m lawfirm_os_intake build-synthetic-qa-review-run \
 That command builds the deterministic synthetic demo budget coherence report,
 the L&E QA matrix, fixture-family reports, executable L&E driver reports,
 blocked-driver review, reviewed gold, the synthetic QA bundle, the UI manifest,
-`synthetic_qa_review_run_report.json`, and `ui_review_data_bundle.json`. The
-demo UI renders that review-run report as the top-level QA recipe panel when it
-is present.
+`synthetic_qa_review_run_report.json`, `synthetic_confidence_summary_report.json`,
+and `ui_review_data_bundle.json`. The demo UI renders the confidence summary
+as the top-level synthetic QA posture panel and the review-run report as the
+recipe panel when they are present.
 
 Regenerate only the synthetic QA bundle and UI wrappers with:
 

@@ -7,6 +7,7 @@ import type {
   QualityGate,
   ReviewArtifact,
   ReviewManifest,
+  SyntheticConfidenceSummaryReport,
   SyntheticQAReviewRunReport,
   UIReviewDataBundle,
 } from "./types";
@@ -23,6 +24,7 @@ export const REQUIRED_ARTIFACT_FILES = [
   "budget_coherence_report.json",
   "synthetic_qa_bundle_report.json",
   "synthetic_qa_review_run_report.json",
+  "synthetic_confidence_summary_report.json",
   "matter_linking_preflight_report.json",
   "synthetic_fixture_depth_audit_report.json",
   "budget_calibration_readiness_report.json",
@@ -60,6 +62,7 @@ export const REQUIRED_BOUNDARY_FLAGS: BoundaryFlags = {
 export const REQUIRED_DETAIL_REPORT_FILES = [
   "ui_review_manifest.json",
   "matter_linking_preflight_report.json",
+  "synthetic_confidence_summary_report.json",
   "labor_employment_qa_matrix_report.json",
   "labor_employment_blocked_driver_impact_review_report.json",
   "labor_employment_budget_output_expectations_report.json",
@@ -211,6 +214,93 @@ export function assertSyntheticQAReviewRunReport(
     if (!step.artifact_ref || step.notes.length === 0) {
       failures.push(`synthetic_qa_review_run_step_not_actionable:${step.step_id}`);
     }
+  }
+  return failures;
+}
+
+export function assertSyntheticConfidenceSummaryReport(
+  report: SyntheticConfidenceSummaryReport,
+): string[] {
+  const failures: string[] = [];
+  if (!report.candidate_only || !report.synthetic_only || !report.non_authoritative) {
+    failures.push("synthetic_confidence_summary_authority_boundary_failed");
+  }
+  if (!report.local_json_only || !report.human_review_required) {
+    failures.push("synthetic_confidence_summary_review_boundary_failed");
+  }
+  if (
+    report.budget_amount_output_authorized ||
+    report.budget_submission_authorized ||
+    report.conflict_conclusion_emitted ||
+    report.matter_opening_authorized ||
+    report.training_pipeline_created ||
+    report.lake_write_performed ||
+    report.sqlite_write_performed ||
+    report.external_writes_performed ||
+    report.silent_learning_performed
+  ) {
+    failures.push("synthetic_confidence_summary_side_effect_boundary_failed");
+  }
+  if (
+    !report.display_banner.candidate_only ||
+    !report.display_banner.synthetic_only ||
+    !report.display_banner.local_json_only ||
+    !report.display_banner.not_production_ready ||
+    !report.display_banner.human_review_required ||
+    report.display_banner.budget_submission_authorized ||
+    report.display_banner.matter_opening_authorized ||
+    report.display_banner.lake_write_performed ||
+    report.display_banner.sqlite_write_performed ||
+    report.display_banner.external_writes_performed
+  ) {
+    failures.push("synthetic_confidence_summary_display_banner_boundary_failed");
+  }
+  if (report.qa_step_count !== report.qa_passed_step_count + report.qa_failed_step_count) {
+    failures.push("synthetic_confidence_summary_step_count_mismatch");
+  }
+  if (report.readiness_item_count !== report.readiness_items.length) {
+    failures.push("synthetic_confidence_summary_item_count_mismatch");
+  }
+  if (
+    report.quality_gate_count !==
+    report.quality_gate_passed_count +
+      report.quality_gate_pending_count +
+      report.quality_gate_blocked_count +
+      report.quality_gate_failed_count
+  ) {
+    failures.push("synthetic_confidence_summary_gate_count_mismatch");
+  }
+  if (
+    report.status === "synthetic_confidence_summary_ready_for_review" &&
+    (report.qa_failed_step_count > 0 ||
+      report.qa_missing_required_artifact_count > 0 ||
+      report.qa_blocked_artifact_count > 0 ||
+      report.qa_failed_artifact_count > 0 ||
+      report.ui_missing_required_detail_report_count > 0 ||
+      report.ui_external_write_report_count > 0 ||
+      report.quality_gate_blocked_count > 0 ||
+      report.quality_gate_failed_count > 0 ||
+      report.top_blockers.length > 0)
+  ) {
+    failures.push("synthetic_confidence_summary_ready_with_blockers");
+  }
+  if (
+    report.status !== "synthetic_confidence_summary_ready_for_review" &&
+    report.top_blockers.length === 0
+  ) {
+    failures.push("synthetic_confidence_summary_blocked_without_blockers");
+  }
+  for (const item of report.readiness_items) {
+    if (
+      item.evidence_refs.length === 0 ||
+      item.notes.length === 0 ||
+      !item.no_write_boundary_confirmed
+    ) {
+      failures.push(`synthetic_confidence_summary_item_not_actionable:${item.item_id}`);
+    }
+  }
+  if (!report.required_next_actions.length) {
+    failures.push("synthetic_confidence_summary_missing_next_actions");
   }
   return failures;
 }

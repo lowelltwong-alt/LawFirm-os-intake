@@ -121,6 +121,7 @@ from .remaining_roadmap import run_remaining_roadmap_plan
 from .reviewed_learning_gate import run_reviewed_learning_gate
 from .synthetic_fixture_depth_audit import run_synthetic_fixture_depth_audit
 from .synthetic_fixture_expansion import run_synthetic_fixture_expansion_audit
+from .synthetic_confidence_summary import run_synthetic_confidence_summary
 from .synthetic_qa_bundle import run_synthetic_qa_bundle
 from .synthetic_qa_review_run import run_synthetic_qa_review_run
 from .ui_review_data_bundle import build_ui_review_data_bundle
@@ -230,6 +231,23 @@ def _parser() -> argparse.ArgumentParser:
     ui_review_data_bundle.add_argument(
         "--generated-at",
         help="Optional fixed timestamp for deterministic tests and replayed bundles.",
+    )
+
+    synthetic_confidence_summary = sub.add_parser(
+        "build-synthetic-confidence-summary",
+        help=(
+            "Build a candidate-only synthetic QA readiness summary from local QA "
+            "and read-only UI artifacts."
+        ),
+    )
+    synthetic_confidence_summary.add_argument("--synthetic-qa-review-run-report", required=True)
+    synthetic_confidence_summary.add_argument("--synthetic-qa-bundle-report", required=True)
+    synthetic_confidence_summary.add_argument("--ui-manifest", required=True)
+    synthetic_confidence_summary.add_argument("--ui-review-data-bundle", required=True)
+    synthetic_confidence_summary.add_argument("--out-dir", required=True)
+    synthetic_confidence_summary.add_argument(
+        "--generated-at",
+        help="Optional fixed timestamp for deterministic tests and replayed reports.",
     )
 
     synthetic_qa_bundle = sub.add_parser(
@@ -1615,6 +1633,42 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 0 if bundle.status == "ready_for_review" else 2
+
+        if args.command == "build-synthetic-confidence-summary":
+            report, run_dir = run_synthetic_confidence_summary(
+                synthetic_qa_review_run_report_path=args.synthetic_qa_review_run_report,
+                synthetic_qa_bundle_report_path=args.synthetic_qa_bundle_report,
+                ui_manifest_path=args.ui_manifest,
+                ui_review_data_bundle_path=args.ui_review_data_bundle,
+                out_dir=args.out_dir,
+                generated_at=args.generated_at,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "testing_readiness_state": report.testing_readiness_state,
+                    "synthetic_confidence_summary_report_id": (
+                        report.synthetic_confidence_summary_report_id
+                    ),
+                    "run_dir": str(run_dir),
+                    "qa_step_count": report.qa_step_count,
+                    "qa_failed_step_count": report.qa_failed_step_count,
+                    "qa_missing_required_artifact_count": (
+                        report.qa_missing_required_artifact_count
+                    ),
+                    "ui_missing_required_detail_report_count": (
+                        report.ui_missing_required_detail_report_count
+                    ),
+                    "quality_gate_blocked_count": report.quality_gate_blocked_count,
+                    "top_blockers": report.top_blockers,
+                    "budget_submission_authorized": report.budget_submission_authorized,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                }
+            )
+            return 0 if report.status == "synthetic_confidence_summary_ready_for_review" else 2
 
         if args.command == "build-synthetic-qa-bundle":
             report, run_dir, ui_manifest = run_synthetic_qa_bundle(

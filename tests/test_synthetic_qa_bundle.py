@@ -250,7 +250,7 @@ def test_synthetic_qa_bundle_blocks_missing_calibration_and_builds_ui(tmp_path):
     assert persisted["sqlite_write_performed"] is False
     assert persisted["budget_submission_performed"] is False
     assert (run_dir / "synthetic_fixture_depth_audit_report.json").is_file()
-    assert ui_data_bundle["status"] == "ready_for_review"
+    assert ui_data_bundle["status"] == "blocked_missing_required_reports"
     assert ui_data_bundle["local_json_only"] is True
     assert ui_data_bundle["external_writes_performed"] is False
     assert ui_data_bundle["lake_write_performed"] is False
@@ -391,6 +391,6 @@ def test_synthetic_qa_bundle_cli_writes_bundle_and_manifest(tmp_path):
     assert report["status"] == "pending_review"
     assert report["ui_data_bundle_ref"] == str(run_root / "ui_review_data_bundle.json")
     assert manifest["overallStatus"] in {"passed", "blocked"}
-    assert ui_data_bundle["status"] == "ready_for_review"
+    assert ui_data_bundle["status"] == "blocked_missing_required_reports"
     assert ui_data_bundle["external_writes_performed"] is False
     assert any(gate["gateId"] == "synthetic_qa_bundle" for gate in manifest["qualityGates"])

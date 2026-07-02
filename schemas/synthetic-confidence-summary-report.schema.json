@@ -1,0 +1,420 @@
+{
+  "$defs": {
+    "SyntheticConfidenceSummaryItem": {
+      "additionalProperties": false,
+      "properties": {
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "owner": {
+          "title": "Owner",
+          "type": "string"
+        },
+        "state": {
+          "enum": [
+            "ready_for_review",
+            "pending_review",
+            "blocked",
+            "failed"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "notes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Notes",
+          "type": "array"
+        },
+        "no_write_boundary_confirmed": {
+          "const": true,
+          "default": true,
+          "title": "No Write Boundary Confirmed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "item_id",
+        "label",
+        "owner",
+        "state",
+        "evidence_refs",
+        "notes"
+      ],
+      "title": "SyntheticConfidenceSummaryItem",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "synthetic_confidence_summary_report_id": {
+      "title": "Synthetic Confidence Summary Report Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "synthetic_confidence_summary_ready_for_review",
+        "blocked_by_synthetic_confidence_summary",
+        "failed_synthetic_confidence_summary_boundary"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "testing_readiness_state": {
+      "enum": [
+        "synthetic_qa_ready_pending_review",
+        "blocked_missing_or_failed_evidence",
+        "failed_side_effect_boundary"
+      ],
+      "title": "Testing Readiness State",
+      "type": "string"
+    },
+    "source_synthetic_qa_review_run_ref": {
+      "title": "Source Synthetic Qa Review Run Ref",
+      "type": "string"
+    },
+    "source_synthetic_qa_review_run_report_id": {
+      "title": "Source Synthetic Qa Review Run Report Id",
+      "type": "string"
+    },
+    "source_synthetic_qa_review_run_status": {
+      "title": "Source Synthetic Qa Review Run Status",
+      "type": "string"
+    },
+    "source_synthetic_qa_bundle_ref": {
+      "title": "Source Synthetic Qa Bundle Ref",
+      "type": "string"
+    },
+    "source_synthetic_qa_bundle_report_id": {
+      "title": "Source Synthetic Qa Bundle Report Id",
+      "type": "string"
+    },
+    "source_synthetic_qa_bundle_status": {
+      "title": "Source Synthetic Qa Bundle Status",
+      "type": "string"
+    },
+    "source_ui_manifest_ref": {
+      "title": "Source Ui Manifest Ref",
+      "type": "string"
+    },
+    "source_ui_manifest_id": {
+      "title": "Source Ui Manifest Id",
+      "type": "string"
+    },
+    "source_ui_manifest_overall_status": {
+      "title": "Source Ui Manifest Overall Status",
+      "type": "string"
+    },
+    "source_ui_review_data_bundle_ref": {
+      "title": "Source Ui Review Data Bundle Ref",
+      "type": "string"
+    },
+    "source_ui_review_data_bundle_id": {
+      "title": "Source Ui Review Data Bundle Id",
+      "type": "string"
+    },
+    "source_ui_review_data_bundle_status": {
+      "title": "Source Ui Review Data Bundle Status",
+      "type": "string"
+    },
+    "qa_step_count": {
+      "minimum": 0,
+      "title": "Qa Step Count",
+      "type": "integer"
+    },
+    "qa_passed_step_count": {
+      "minimum": 0,
+      "title": "Qa Passed Step Count",
+      "type": "integer"
+    },
+    "qa_failed_step_count": {
+      "minimum": 0,
+      "title": "Qa Failed Step Count",
+      "type": "integer"
+    },
+    "qa_artifact_count": {
+      "minimum": 0,
+      "title": "Qa Artifact Count",
+      "type": "integer"
+    },
+    "qa_missing_required_artifact_count": {
+      "minimum": 0,
+      "title": "Qa Missing Required Artifact Count",
+      "type": "integer"
+    },
+    "qa_blocked_artifact_count": {
+      "minimum": 0,
+      "title": "Qa Blocked Artifact Count",
+      "type": "integer"
+    },
+    "qa_pending_artifact_count": {
+      "minimum": 0,
+      "title": "Qa Pending Artifact Count",
+      "type": "integer"
+    },
+    "qa_failed_artifact_count": {
+      "minimum": 0,
+      "title": "Qa Failed Artifact Count",
+      "type": "integer"
+    },
+    "ui_detail_report_count": {
+      "minimum": 0,
+      "title": "Ui Detail Report Count",
+      "type": "integer"
+    },
+    "ui_present_detail_report_count": {
+      "minimum": 0,
+      "title": "Ui Present Detail Report Count",
+      "type": "integer"
+    },
+    "ui_missing_required_detail_report_count": {
+      "minimum": 0,
+      "title": "Ui Missing Required Detail Report Count",
+      "type": "integer"
+    },
+    "ui_external_write_report_count": {
+      "minimum": 0,
+      "title": "Ui External Write Report Count",
+      "type": "integer"
+    },
+    "quality_gate_count": {
+      "minimum": 0,
+      "title": "Quality Gate Count",
+      "type": "integer"
+    },
+    "quality_gate_passed_count": {
+      "minimum": 0,
+      "title": "Quality Gate Passed Count",
+      "type": "integer"
+    },
+    "quality_gate_pending_count": {
+      "minimum": 0,
+      "title": "Quality Gate Pending Count",
+      "type": "integer"
+    },
+    "quality_gate_blocked_count": {
+      "minimum": 0,
+      "title": "Quality Gate Blocked Count",
+      "type": "integer"
+    },
+    "quality_gate_failed_count": {
+      "minimum": 0,
+      "title": "Quality Gate Failed Count",
+      "type": "integer"
+    },
+    "readiness_item_count": {
+      "minimum": 0,
+      "title": "Readiness Item Count",
+      "type": "integer"
+    },
+    "readiness_items": {
+      "items": {
+        "$ref": "#/$defs/SyntheticConfidenceSummaryItem"
+      },
+      "title": "Readiness Items",
+      "type": "array"
+    },
+    "top_blockers": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Top Blockers",
+      "type": "array"
+    },
+    "display_banner": {
+      "additionalProperties": true,
+      "title": "Display Banner",
+      "type": "object"
+    },
+    "required_next_actions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Actions",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "local_json_only": {
+      "const": true,
+      "default": true,
+      "title": "Local Json Only",
+      "type": "boolean"
+    },
+    "human_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Human Review Required",
+      "type": "boolean"
+    },
+    "not_authorized_for_external_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For External Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_lake_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Lake Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_sqlite_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Sqlite Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_budget_submission": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Budget Submission",
+      "type": "boolean"
+    },
+    "not_authorized_for_matter_opening": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Matter Opening",
+      "type": "boolean"
+    },
+    "not_authorized_for_calibration": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Calibration",
+      "type": "boolean"
+    },
+    "budget_amount_output_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Amount Output Authorized",
+      "type": "boolean"
+    },
+    "budget_submission_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Submission Authorized",
+      "type": "boolean"
+    },
+    "conflict_conclusion_emitted": {
+      "const": false,
+      "default": false,
+      "title": "Conflict Conclusion Emitted",
+      "type": "boolean"
+    },
+    "matter_opening_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Matter Opening Authorized",
+      "type": "boolean"
+    },
+    "training_pipeline_created": {
+      "const": false,
+      "default": false,
+      "title": "Training Pipeline Created",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "synthetic_confidence_summary_report_id",
+    "status",
+    "testing_readiness_state",
+    "source_synthetic_qa_review_run_ref",
+    "source_synthetic_qa_review_run_report_id",
+    "source_synthetic_qa_review_run_status",
+    "source_synthetic_qa_bundle_ref",
+    "source_synthetic_qa_bundle_report_id",
+    "source_synthetic_qa_bundle_status",
+    "source_ui_manifest_ref",
+    "source_ui_manifest_id",
+    "source_ui_manifest_overall_status",
+    "source_ui_review_data_bundle_ref",
+    "source_ui_review_data_bundle_id",
+    "source_ui_review_data_bundle_status",
+    "qa_step_count",
+    "qa_passed_step_count",
+    "qa_failed_step_count",
+    "qa_artifact_count",
+    "qa_missing_required_artifact_count",
+    "qa_blocked_artifact_count",
+    "qa_pending_artifact_count",
+    "qa_failed_artifact_count",
+    "ui_detail_report_count",
+    "ui_present_detail_report_count",
+    "ui_missing_required_detail_report_count",
+    "ui_external_write_report_count",
+    "quality_gate_count",
+    "quality_gate_passed_count",
+    "quality_gate_pending_count",
+    "quality_gate_blocked_count",
+    "quality_gate_failed_count",
+    "readiness_item_count",
+    "readiness_items",
+    "display_banner",
+    "required_next_actions",
+    "generated_at"
+  ],
+  "title": "SyntheticConfidenceSummaryReport",
+  "type": "object"
+}

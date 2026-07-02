@@ -1,0 +1,111 @@
+{
+  "schema_version": "0.1",
+  "issue_id": "synthetic-confidence-summary-false-readiness-001",
+  "issue_version": "0.1.0",
+  "observed_at": "2026-07-02T18:25:00Z",
+  "source_repo_id": "LawFirm-os-intake",
+  "source_repo_path": "LawFirm-os-intake",
+  "originating_agent": "codex",
+  "review_context": "Codex implementation of the synthetic confidence summary during the intake QA and read-only frontend buildout.",
+  "finding_title": "Detailed QA panels need an aggregate synthetic confidence summary to prevent false readiness.",
+  "severity": "P1",
+  "issue_classes": [
+    "ui_authority_risk",
+    "synthetic_data_gap",
+    "evidence_gap",
+    "governance_drift_risk",
+    "learning_loop_gap",
+    "test_gap"
+  ],
+  "finding_summary": "The read-only intake UI had many detailed QA panels but no single deterministic artifact that summarized whether the run was ready for synthetic QA review, which could make missing evidence or pending gates harder for a reviewer to see.",
+  "observable_context": [
+    "The repo already generated a synthetic QA review run, synthetic QA bundle, UI review manifest, UI review data bundle, L&E QA matrix, blocked-driver review, and budget-output expectation report.",
+    "The UI rendered detail panels, but a reviewer still had to infer the top-level testing posture from several lower-level reports.",
+    "The new synthetic_confidence_summary_report.json aggregates QA steps, required artifacts, UI detail reports, quality gates, top blockers, readiness items, and a display banner.",
+    "The summary explicitly states candidate-only, synthetic-only, local-JSON-only, not production ready, no budget submission, no matter opening, no Lake write, and no SQLite write."
+  ],
+  "observable_decision_logic": [
+    "If individual QA artifacts are present but no aggregate readiness banner exists, the UI can create false confidence by detail overload.",
+    "If the summary sees failed steps, missing required artifacts, blocked artifacts, failed artifacts, missing UI details, or blocked/failed quality gates, it must block the confidence summary.",
+    "If only review-ready or pending-review evidence remains, the summary can say synthetic QA is ready for review but still not production ready.",
+    "The summary must ignore exactly its own pre-generation UI-bundle self-reference while still blocking other missing required UI reports."
+  ],
+  "solution_path": [
+    "Add SyntheticConfidenceSummaryItem and SyntheticConfidenceSummaryReport models with validators.",
+    "Add a deterministic synthetic_confidence_summary builder and CLI command.",
+    "Wire the summary into the synthetic QA review run after the base QA bundle and before final UI data-bundle generation.",
+    "Render the summary as a top-level read-only frontend panel with a candidate-only display banner.",
+    "Export schemas, regenerate demo fixtures, and validate with focused and full test suites."
+  ],
+  "fix_status": "fixed_validated",
+  "fix_refs": [
+    "src/lawfirm_os_intake/synthetic_confidence_summary.py",
+    "src/lawfirm_os_intake/models.py",
+    "src/lawfirm_os_intake/synthetic_qa_review_run.py",
+    "src/lawfirm_os_intake/ui_review_data_bundle.py",
+    "src/lawfirm_os_intake/ui_review_manifest.py",
+    "apps/legal-intake-budget/src/App.tsx",
+    "apps/legal-intake-budget/src/data-contract.ts",
+    "apps/legal-intake-budget/src/types.ts",
+    "docs/decisions/TRACE-2026-07-02-synthetic-confidence-summary.md"
+  ],
+  "test_refs": [
+    "tests/test_synthetic_confidence_summary.py",
+    "tests/test_synthetic_qa_review_run.py",
+    "tests/test_ui_review_data_bundle.py",
+    "tests/test_synthetic_qa_bundle.py",
+    "tests/test_ui_foundation_contract.py",
+    "python scripts/run_validation_suite.py",
+    "npm run build"
+  ],
+  "artifact_refs": [
+    "schemas/synthetic-confidence-summary-report.schema.json",
+    "schemas/synthetic-confidence-summary-item.schema.json",
+    "apps/legal-intake-budget/src/fixtures/demo-synthetic-confidence-summary-report.json",
+    "apps/legal-intake-budget/src/fixtures/demo-ui-review-data-bundle.json",
+    "apps/legal-intake-budget/src/fixtures/demo-run-manifest.json"
+  ],
+  "candidate_exception_labels": [
+    "synthetic_confidence_summary_required",
+    "false_readiness_guard",
+    "ui_readiness_banner_required",
+    "candidate_only_review_surface",
+    "blocked_evidence_must_remain_visible",
+    "dad_learning_loop_candidate"
+  ],
+  "applies_when": [
+    "A review UI or QA cockpit has many detailed reports but no aggregate artifact that states review readiness and blockers.",
+    "A synthetic QA pipeline could be mistaken for production readiness.",
+    "A frontend displays legal budget QA evidence and must keep blocked actions and authority boundaries visible."
+  ],
+  "does_not_apply_when": [
+    "The UI is a temporary debug view that is not used for review decisions.",
+    "A stronger owner-approved production readiness contract already exists.",
+    "The summary would be treated as a probability, calibration score, budget approval, or Lake admission."
+  ],
+  "danger_if_misapplied": "If the summary is treated as production confidence instead of candidate synthetic QA posture, reviewers may overtrust uncalibrated budget outputs or bypass required owner review.",
+  "suggested_actions": [
+    "DAD should classify this as a false-readiness and UI authority-risk pattern.",
+    "DAD should consider this report shape as candidate exception-lake evidence for future QA cockpit readiness events.",
+    "DAD should require similar aggregate banners when repos expose many detailed QA artifacts that can hide missing evidence."
+  ],
+  "reviewer_notes": [
+    "This record is synthetic and metadata-only.",
+    "It summarizes observable design and validation evidence from the current implementation.",
+    "It intentionally excludes hidden chain-of-thought."
+  ],
+  "red_team_notes": [
+    "Do not let the confidence summary display without candidate-only and not-production-ready fields.",
+    "Do not use the summary to authorize budget submission, matter opening, Lake writes, or learning.",
+    "Do not hide pending review gates behind a green-looking top-level status."
+  ],
+  "raw_private_payload_included": false,
+  "hidden_chain_of_thought_included": false,
+  "candidate_only": true,
+  "dad_outbox_required": true,
+  "dad_review_required_before_promotion": true,
+  "lake_write_performed": false,
+  "sqlite_write_performed": false,
+  "external_writes_performed": false,
+  "silent_learning_performed": false
+}

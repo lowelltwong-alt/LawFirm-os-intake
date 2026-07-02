@@ -6,6 +6,7 @@ import demoLaborEmploymentBudgetOutputExpectations from "./fixtures/demo-labor-e
 import demoLaborEmploymentQAMatrix from "./fixtures/demo-labor-employment-qa-matrix-report.json";
 import demoManifest from "./fixtures/demo-run-manifest.json";
 import demoMatterLinkingPreflight from "./fixtures/demo-matter-linking-preflight-report.json";
+import demoSyntheticConfidenceSummary from "./fixtures/demo-synthetic-confidence-summary-report.json";
 import demoSyntheticQAReviewRun from "./fixtures/demo-synthetic-qa-review-run-report.json";
 import demoReviewDataBundle from "./fixtures/demo-ui-review-data-bundle.json";
 import {
@@ -14,6 +15,7 @@ import {
   assertLaborEmploymentBlockedDriverImpactReviewReport,
   assertLaborEmploymentQAMatrixReport,
   assertReadOnlyManifest,
+  assertSyntheticConfidenceSummaryReport,
   assertSyntheticQAReviewRunReport,
   assertUIReviewDataBundle,
   failingQualityGates,
@@ -32,6 +34,8 @@ import type {
   QualityGateStatus,
   ReviewArtifact,
   ReviewManifest,
+  SyntheticConfidenceSummaryReport,
+  SyntheticConfidenceSummaryItemState,
   SyntheticQAReviewRunReport,
   UIReviewDataBundle,
 } from "./types";
@@ -40,6 +44,8 @@ import "./styles.css";
 const reviewDataBundle = demoReviewDataBundle as UIReviewDataBundle;
 const manifest = demoManifest as ReviewManifest;
 const syntheticQAReviewRun = demoSyntheticQAReviewRun as SyntheticQAReviewRunReport;
+const syntheticConfidenceSummary =
+  demoSyntheticConfidenceSummary as SyntheticConfidenceSummaryReport;
 const matterLinkingPreflight = demoMatterLinkingPreflight as MatterLinkingPreflightReport;
 const laborEmploymentQAMatrix = demoLaborEmploymentQAMatrix as LaborEmploymentQAMatrixReport;
 const laborEmploymentBlockedDriverReview =
@@ -49,6 +55,8 @@ const laborEmploymentBudgetOutputExpectations =
 const bundleContractFailures = assertUIReviewDataBundle(reviewDataBundle);
 const manifestContractFailures = assertReadOnlyManifest(manifest);
 const syntheticQAReviewRunFailures = assertSyntheticQAReviewRunReport(syntheticQAReviewRun);
+const syntheticConfidenceSummaryFailures =
+  assertSyntheticConfidenceSummaryReport(syntheticConfidenceSummary);
 const matterLinkingFailures = assertMatterLinkingPreflightReport(matterLinkingPreflight);
 const matrixContractFailures = assertLaborEmploymentQAMatrixReport(laborEmploymentQAMatrix);
 const blockedDriverContractFailures =
@@ -60,6 +68,7 @@ const contractFailures = [
   ...bundleContractFailures,
   ...manifestContractFailures,
   ...syntheticQAReviewRunFailures,
+  ...syntheticConfidenceSummaryFailures,
   ...matterLinkingFailures,
   ...matrixContractFailures,
   ...blockedDriverContractFailures,
@@ -88,6 +97,16 @@ function readinessClass(state: LaborEmploymentBudgetReadinessState) {
     return "state state-pending";
   }
   return "state state-passed";
+}
+
+function summaryItemClass(state: SyntheticConfidenceSummaryItemState) {
+  if (state === "ready_for_review") {
+    return "state state-passed";
+  }
+  if (state === "pending_review") {
+    return "state state-pending";
+  }
+  return "state state-blocked";
 }
 
 function BoundaryGrid({ manifest }: { manifest: ReviewManifest }) {
@@ -289,6 +308,89 @@ function SyntheticQAReviewRunPanel({ report }: { report: SyntheticQAReviewRunRep
             </p>
           </article>
         ))}
+      </div>
+    </section>
+  );
+}
+
+function SyntheticConfidenceSummaryPanel({
+  report,
+}: {
+  report: SyntheticConfidenceSummaryReport;
+}) {
+  const statusClass =
+    report.status === "synthetic_confidence_summary_ready_for_review" &&
+    syntheticConfidenceSummaryFailures.length === 0
+      ? "state state-passed"
+      : "state state-blocked";
+
+  return (
+    <section className="panel confidence-panel" aria-labelledby="confidence-title">
+      <div className="panel-heading">
+        <div>
+          <p className="eyebrow">Synthetic QA posture</p>
+          <h2 id="confidence-title">Confidence Summary</h2>
+          <code>{report.synthetic_confidence_summary_report_id}</code>
+        </div>
+        <span className={statusClass}>
+          {report.status === "synthetic_confidence_summary_ready_for_review"
+            ? "review ready"
+            : "blocked"}
+        </span>
+      </div>
+
+      <div className="confidence-banner">
+        <strong>{report.display_banner.summary}</strong>
+        <div>
+          <span>Testing state</span>
+          <code>{report.testing_readiness_state}</code>
+        </div>
+      </div>
+
+      <div className="matrix-summary" aria-label="Synthetic confidence summary counts">
+        <div>
+          <span>QA Steps</span>
+          <strong>
+            {report.qa_passed_step_count}/{report.qa_step_count}
+          </strong>
+        </div>
+        <div>
+          <span>Pending Gates</span>
+          <strong>{report.quality_gate_pending_count}</strong>
+        </div>
+        <div>
+          <span>UI Reports</span>
+          <strong>
+            {report.ui_present_detail_report_count}/{report.ui_detail_report_count}
+          </strong>
+        </div>
+        <div>
+          <span>Top Blockers</span>
+          <strong>{report.top_blockers.length}</strong>
+        </div>
+      </div>
+
+      <div className="confidence-item-grid">
+        {report.readiness_items.map((item) => (
+          <article className="confidence-item" key={item.item_id}>
+            <div>
+              <strong>{item.label}</strong>
+              <code>{item.owner}</code>
+            </div>
+            <span className={summaryItemClass(item.state)}>{item.state}</span>
+            <p>{item.notes.join(" ")}</p>
+            <TokenList items={item.evidence_refs} limit={2} />
+          </article>
+        ))}
+      </div>
+
+      <div className="next-gates">
+        <h3>Required Next Actions</h3>
+        <div>
+          {report.required_next_actions.map((action) => (
+            <code key={action}>{action}</code>
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -757,6 +859,7 @@ function App() {
       </section>
 
       <BundlePanel bundle={reviewDataBundle} />
+      <SyntheticConfidenceSummaryPanel report={syntheticConfidenceSummary} />
       <SyntheticQAReviewRunPanel report={syntheticQAReviewRun} />
       <div className="grid-layout">
         <BoundaryGrid manifest={manifest} />

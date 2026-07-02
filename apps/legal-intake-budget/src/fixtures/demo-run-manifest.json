@@ -1,7 +1,7 @@
 {
-  "manifestId": "ui_review_manifest_51f7c7b24063",
+  "manifestId": "ui_review_manifest_fafd8b50a93b",
   "generatedAt": "2026-07-02T00:00:00Z",
-  "runLabel": "Local intake QA review: ui-fixture-refresh",
+  "runLabel": "Local intake QA review: ui-fixture-refresh-confidence",
   "practiceArea": "synthetic_intake",
   "matterFamily": "medical_malpractice_defense",
   "overallStatus": "blocked",
@@ -27,7 +27,7 @@
       "candidateOnly": true,
       "externalWritesPerformed": false,
       "notes": [
-        "Found preflight\\run_8c8e8839406643148625d187c95d0afe\\intake_preflight_packet.json; status=human_intake_review_required."
+        "Found preflight\\run_82ffc6ffea1c452aa46f0644dcce3c17\\intake_preflight_packet.json; status=human_intake_review_required."
       ]
     },
     {
@@ -158,6 +158,19 @@
       "externalWritesPerformed": false,
       "notes": [
         "Found synthetic_qa_review_run_report.json; status=synthetic_qa_review_run_ready."
+      ]
+    },
+    {
+      "artifactId": "synthetic-confidence-summary",
+      "label": "Synthetic Confidence Summary",
+      "fileName": "synthetic_confidence_summary_report.json",
+      "status": "pending_review",
+      "owner": "qa-reference",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": [
+        "Found quality\\synthetic_confidence_summary_report.json; status=synthetic_confidence_summary_ready_for_review."
       ]
     },
     {
@@ -450,6 +463,16 @@
       "owner": "qa-reference",
       "notes": [
         "The one-command synthetic QA recipe must prove each generated QA/UI artifact step before the frontend treats the run as review-ready."
+      ]
+    },
+    {
+      "gateId": "synthetic_confidence_summary",
+      "label": "Synthetic Confidence Summary",
+      "status": "pending_review",
+      "evidenceFile": "synthetic_confidence_summary_report.json",
+      "owner": "qa-reference",
+      "notes": [
+        "The aggregate synthetic QA confidence banner must make review readiness, blockers, and no-production-authority boundaries visible."
       ]
     },
     {
