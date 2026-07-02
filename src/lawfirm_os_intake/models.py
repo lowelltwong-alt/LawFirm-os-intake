@@ -2722,6 +2722,187 @@ class LaborEmploymentExecutableDriverImpactReport(StrictModel):
         return self
 
 
+class LaborEmploymentDriverImpactReviewCaseSpec(StrictModel):
+    executable_fixture_id: str
+    review_outcome: Literal["approved_for_nonblocking_budget_gate_replay"]
+    expected_allowed_budget_output: LaborEmploymentExecutableDriverAllowedBudgetOutput
+    expected_block_amount_budget_impact_count: int = Field(ge=0)
+    minimum_range_widening_impact_count: int = Field(ge=0)
+    minimum_scenario_fork_impact_count: int = Field(ge=0)
+    minimum_rate_guideline_review_impact_count: int = Field(ge=0)
+    review_notes: list[str]
+    evidence_refs: list[str]
+    candidate_only: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+
+    @model_validator(mode="after")
+    def le_driver_impact_review_case_spec_is_reviewed(
+        self,
+    ) -> "LaborEmploymentDriverImpactReviewCaseSpec":
+        if not self.review_notes:
+            raise ValueError("driver impact review case requires review notes")
+        if not self.evidence_refs:
+            raise ValueError("driver impact review case requires evidence refs")
+        if self.expected_block_amount_budget_impact_count != 0:
+            raise ValueError("reviewed nonblocking budget-gate replay slice cannot expect blocks")
+        return self
+
+
+class LaborEmploymentDriverImpactReviewSpec(StrictModel):
+    schema_version: str = "0.1"
+    review_spec_id: str
+    data_origin: Literal["synthetic"]
+    review_scope: Literal["nonblocking_driver_impact_budget_gate_replay"]
+    description: str
+    source_driver_impact_report_expected_status: Literal[
+        "labor_employment_executable_driver_impacts_ready_for_review"
+    ]
+    required_selected_case_count: int = Field(ge=1)
+    cases: list[LaborEmploymentDriverImpactReviewCaseSpec]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    no_external_writes_allowed: Literal[True] = True
+    no_lake_or_sqlite_writes_allowed: Literal[True] = True
+    no_budget_submission_allowed: Literal[True] = True
+    no_matter_opening_allowed: Literal[True] = True
+    calibration_authorized: Literal[False] = False
+
+    @model_validator(mode="after")
+    def le_driver_impact_review_spec_counts_match(
+        self,
+    ) -> "LaborEmploymentDriverImpactReviewSpec":
+        if self.required_selected_case_count != len(self.cases):
+            raise ValueError("driver impact review required selected case count mismatch")
+        if len({case.executable_fixture_id for case in self.cases}) != len(self.cases):
+            raise ValueError("driver impact review cases must be unique")
+        return self
+
+
+class LaborEmploymentDriverImpactReviewCaseResult(StrictModel):
+    executable_fixture_id: str
+    status: Literal["passed", "failed"]
+    review_outcome: Literal["approved_for_nonblocking_budget_gate_replay"]
+    selected_for_reviewed_slice: bool
+    allowed_budget_output: LaborEmploymentExecutableDriverAllowedBudgetOutput | None = None
+    block_amount_budget_impact_count: int = Field(ge=0)
+    range_widening_impact_count: int = Field(ge=0)
+    scenario_fork_impact_count: int = Field(ge=0)
+    rate_guideline_review_impact_count: int = Field(ge=0)
+    failure_ids: list[str] = Field(default_factory=list)
+    evidence_refs: list[str] = Field(default_factory=list)
+    candidate_only: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    budget_amount_output_authorized: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def le_driver_impact_review_case_result_is_coherent(
+        self,
+    ) -> "LaborEmploymentDriverImpactReviewCaseResult":
+        if self.status == "passed" and self.failure_ids:
+            raise ValueError("passed driver impact review case cannot carry failures")
+        if self.status == "failed" and not self.failure_ids:
+            raise ValueError("failed driver impact review case requires failures")
+        if self.selected_for_reviewed_slice and self.status != "passed":
+            raise ValueError("only passed review cases can be selected")
+        if self.selected_for_reviewed_slice and self.block_amount_budget_impact_count != 0:
+            raise ValueError("reviewed nonblocking slice cannot select block impacts")
+        return self
+
+
+class LaborEmploymentDriverImpactReviewReport(StrictModel):
+    schema_version: str = "0.1"
+    driver_impact_review_report_id: str
+    status: Literal[
+        "labor_employment_driver_impact_review_ready_for_budget_gate_replay",
+        "blocked_by_labor_employment_driver_impact_review",
+    ]
+    review_spec_ref: str
+    source_driver_impact_report_ref: str
+    source_driver_impact_report_id: str
+    reviewed_slice_report_ref: str | None = None
+    case_count: int = Field(ge=0)
+    selected_case_count: int = Field(ge=0)
+    failed_case_count: int = Field(ge=0)
+    block_amount_budget_impact_count: int = Field(ge=0)
+    range_widening_impact_count: int = Field(ge=0)
+    scenario_fork_impact_count: int = Field(ge=0)
+    rate_guideline_review_impact_count: int = Field(ge=0)
+    max_range_widening_factor: float = Field(ge=1.0)
+    case_results: list[LaborEmploymentDriverImpactReviewCaseResult]
+    checks: list[LaborEmploymentExecutableDriverImpactCheck]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    not_authorized_for_matter_opening: Literal[True] = True
+    not_authorized_for_calibration: Literal[True] = True
+    budget_amount_output_authorized: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    conflict_conclusion_emitted: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    training_pipeline_created: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def le_driver_impact_review_report_counts_match(
+        self,
+    ) -> "LaborEmploymentDriverImpactReviewReport":
+        failed_cases = [case for case in self.case_results if case.status == "failed"]
+        selected_cases = [case for case in self.case_results if case.selected_for_reviewed_slice]
+        failed_checks = [check for check in self.checks if check.status == "failed"]
+        if self.case_count != len(self.case_results):
+            raise ValueError("driver impact review case count mismatch")
+        if self.selected_case_count != len(selected_cases):
+            raise ValueError("driver impact review selected case count mismatch")
+        if self.failed_case_count != len(failed_cases):
+            raise ValueError("driver impact review failed case count mismatch")
+        if self.block_amount_budget_impact_count != sum(
+            case.block_amount_budget_impact_count for case in selected_cases
+        ):
+            raise ValueError("driver impact review block impact count mismatch")
+        if self.range_widening_impact_count != sum(
+            case.range_widening_impact_count for case in selected_cases
+        ):
+            raise ValueError("driver impact review range impact count mismatch")
+        if self.scenario_fork_impact_count != sum(
+            case.scenario_fork_impact_count for case in selected_cases
+        ):
+            raise ValueError("driver impact review scenario impact count mismatch")
+        if self.rate_guideline_review_impact_count != sum(
+            case.rate_guideline_review_impact_count for case in selected_cases
+        ):
+            raise ValueError("driver impact review rate review impact count mismatch")
+        if self.status == "labor_employment_driver_impact_review_ready_for_budget_gate_replay" and (
+            failed_cases or failed_checks or self.reviewed_slice_report_ref is None
+        ):
+            raise ValueError("ready driver impact review requires passed cases and slice ref")
+        if self.status == "blocked_by_labor_employment_driver_impact_review" and not (
+            failed_cases or failed_checks
+        ):
+            raise ValueError("blocked driver impact review requires failures")
+        if self.status == "blocked_by_labor_employment_driver_impact_review":
+            if self.reviewed_slice_report_ref is not None:
+                raise ValueError("blocked driver impact review cannot emit reviewed slice ref")
+        return self
+
+
 class PublicSourceMethodologySource(StrictModel):
     source_id: str
     url: str

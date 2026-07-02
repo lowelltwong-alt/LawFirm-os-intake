@@ -16,7 +16,11 @@ from lawfirm_os_intake.labor_employment_executable_driver_binding import (
     run_labor_employment_executable_driver_binding_audit,
 )
 from lawfirm_os_intake.labor_employment_executable_driver_impact import (
+    LABOR_EMPLOYMENT_EXECUTABLE_DRIVER_IMPACT_REPORT_FILENAME,
     run_labor_employment_executable_driver_impact_audit,
+)
+from lawfirm_os_intake.labor_employment_driver_impact_review import (
+    run_labor_employment_driver_impact_review,
 )
 from lawfirm_os_intake.labor_employment_budget_fact_gold import (
     run_labor_employment_budget_fact_gold_validation,
@@ -164,12 +168,22 @@ def test_starter_pack_allows_synthetic_qa_bundle_to_reach_pending_review(
         repo_root=repo_root,
         out_dir=run_root / "quality" / "le-executable-driver-binding",
     )
-    run_labor_employment_executable_driver_impact_audit(
+    _, executable_driver_impact_run_dir = run_labor_employment_executable_driver_impact_audit(
         executable_driver_binding_report_path=(
             executable_driver_binding_run_dir
             / LABOR_EMPLOYMENT_EXECUTABLE_DRIVER_BINDING_REPORT_FILENAME
         ),
         out_dir=run_root / "quality" / "le-executable-driver-impact",
+    )
+    run_labor_employment_driver_impact_review(
+        review_spec_path=(
+            repo_root / "examples/synthetic/gold/labor-employment-driver-impact-review.json"
+        ),
+        driver_impact_report_path=(
+            executable_driver_impact_run_dir
+            / LABOR_EMPLOYMENT_EXECUTABLE_DRIVER_IMPACT_REPORT_FILENAME
+        ),
+        out_dir=run_root / "quality" / "le-driver-impact-review",
     )
     run_labor_employment_budget_fact_gold_validation(
         gold_path=repo_root / "examples/synthetic/gold/labor-employment-budget-fact-gold.json",
@@ -201,5 +215,6 @@ def test_starter_pack_allows_synthetic_qa_bundle_to_reach_pending_review(
     assert gates["labor_employment_executable_fact_binding"]["status"] == "pending_review"
     assert gates["labor_employment_executable_driver_binding"]["status"] == "pending_review"
     assert gates["labor_employment_executable_driver_impact"]["status"] == "pending_review"
+    assert gates["labor_employment_driver_impact_review"]["status"] == "pending_review"
     assert gates["labor_employment_budget_fact_gold"]["status"] == "passed"
     assert ui_manifest["overallStatus"] == "blocked"

@@ -42,6 +42,7 @@ def _write_quality_evidence(run_root):
         "labor_employment_executable_fact_binding_report.json",
         "labor_employment_executable_driver_binding_report.json",
         "labor_employment_executable_driver_impact_report.json",
+        "labor_employment_driver_impact_review_report.json",
         "labor_employment_budget_fact_gold_report.json",
     ]:
         write_json(

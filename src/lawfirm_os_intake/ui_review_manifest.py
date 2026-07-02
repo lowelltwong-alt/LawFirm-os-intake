@@ -165,6 +165,13 @@ ARTIFACT_SPECS = [
         "blocked",
     ),
     ArtifactSpec(
+        "labor-employment-driver-impact-review",
+        "L&E Driver Impact Review",
+        "labor_employment_driver_impact_review_report.json",
+        "qa-reference",
+        "blocked",
+    ),
+    ArtifactSpec(
         "labor-employment-budget-fact-gold",
         "L&E Budget Fact Gold",
         "labor_employment_budget_fact_gold_report.json",
@@ -285,6 +292,13 @@ QUALITY_GATE_SPECS = {
         "labor_employment_executable_driver_impact_report.json",
         "qa-reference",
         "Executable L&E driver bindings must declare candidate budget blockers, range widening, scenario forks, and rate/guideline review effects before budget math can consume them.",
+        "blocked",
+    ),
+    "labor_employment_driver_impact_review": (
+        "L&E Driver Impact Review",
+        "labor_employment_driver_impact_review_report.json",
+        "qa-reference",
+        "Nonblocking L&E driver-impact budget-gate replay must be backed by reviewed synthetic evidence, not hand-filtered test data.",
         "blocked",
     ),
     "labor_employment_budget_fact_gold": (

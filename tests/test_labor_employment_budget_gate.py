@@ -12,6 +12,10 @@ from lawfirm_os_intake.labor_employment_executable_driver_impact import (
     LABOR_EMPLOYMENT_EXECUTABLE_DRIVER_IMPACT_REPORT_FILENAME,
     run_labor_employment_executable_driver_impact_audit,
 )
+from lawfirm_os_intake.labor_employment_driver_impact_review import (
+    LABOR_EMPLOYMENT_DRIVER_IMPACT_REVIEWED_SLICE_REPORT_FILENAME,
+    run_labor_employment_driver_impact_review,
+)
 from lawfirm_os_intake.labor_employment_executable_fact_binding import (
     LABOR_EMPLOYMENT_EXECUTABLE_FACT_BINDING_REPORT_FILENAME,
     run_labor_employment_executable_fact_binding_audit,
@@ -26,7 +30,6 @@ from lawfirm_os_intake.models import (
     HumanConfirmation,
     IntakePreflightPacket,
     LaborEmploymentBudgetFactAuditReport,
-    LaborEmploymentExecutableDriverImpactReport,
 )
 from lawfirm_os_intake.preconditions import build_budget_precondition_report
 from lawfirm_os_intake.util import load_json, load_jsonl, write_json
@@ -117,40 +120,16 @@ def _labor_employment_driver_impact_report(tmp_path, repo_root):
     return impact_run_dir / LABOR_EMPLOYMENT_EXECUTABLE_DRIVER_IMPACT_REPORT_FILENAME
 
 
-def _nonblocking_driver_impact_report(tmp_path, impact_report_path):
-    report = LaborEmploymentExecutableDriverImpactReport.model_validate(
-        load_json(impact_report_path)
+def _reviewed_nonblocking_driver_impact_report(tmp_path, repo_root, impact_report_path):
+    report, review_run_dir = run_labor_employment_driver_impact_review(
+        review_spec_path=(
+            repo_root / "examples/synthetic/gold/labor-employment-driver-impact-review.json"
+        ),
+        driver_impact_report_path=impact_report_path,
+        out_dir=tmp_path / "le-driver-impact-review",
     )
-    selected = next(
-        case
-        for case in report.cases
-        if case.executable_fixture_id == "le-admin-exhaustion-clean.executable.v0_1"
-    )
-    filtered = LaborEmploymentExecutableDriverImpactReport(
-        executable_driver_impact_report_id=f"{report.executable_driver_impact_report_id}_admin",
-        status="labor_employment_executable_driver_impacts_ready_for_review",
-        executable_driver_binding_report_ref=report.executable_driver_binding_report_ref,
-        case_count=1,
-        failed_case_count=0,
-        impact_item_count=selected.impact_item_count,
-        source_bound_impact_count=selected.source_bound_impact_count,
-        block_amount_budget_impact_count=selected.block_amount_budget_impact_count,
-        range_widening_impact_count=selected.range_widening_impact_count,
-        scenario_fork_impact_count=selected.scenario_fork_impact_count,
-        rate_guideline_review_impact_count=selected.rate_guideline_review_impact_count,
-        human_review_impact_count=selected.human_review_impact_count,
-        max_range_widening_factor=selected.max_range_widening_factor,
-        impact_policy_dimensions=report.impact_policy_dimensions,
-        missing_impact_policy_dimensions=[],
-        cases=[selected],
-        checks=report.checks,
-        required_next_gates=report.required_next_gates,
-        generated_at=report.generated_at,
-    )
-    return write_json(
-        tmp_path / "le-driver-impact-nonblocking.json",
-        filtered.model_dump(mode="json"),
-    )
+    assert report.status == "labor_employment_driver_impact_review_ready_for_budget_gate_replay"
+    return review_run_dir / LABOR_EMPLOYMENT_DRIVER_IMPACT_REVIEWED_SLICE_REPORT_FILENAME
 
 
 def test_critical_le_budget_fact_gaps_block_budget_before_proposal(tmp_path, repo_root):
@@ -280,8 +259,9 @@ def test_nonblocking_le_driver_impact_surfaces_range_scenario_and_rate_review(
     repo_root,
 ):
     preflight_packet_path, confirmation_path = _confirmed_budget_inputs(tmp_path, repo_root)
-    impact_report_path = _nonblocking_driver_impact_report(
+    impact_report_path = _reviewed_nonblocking_driver_impact_report(
         tmp_path,
+        repo_root,
         _labor_employment_driver_impact_report(tmp_path, repo_root),
     )
 

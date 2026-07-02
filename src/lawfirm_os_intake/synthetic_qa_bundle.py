@@ -128,6 +128,16 @@ QA_BUNDLE_ARTIFACTS = [
         ),
     ),
     QABundleArtifactSpec(
+        artifact_id="labor_employment_driver_impact_review",
+        label="Labor/Employment Driver Impact Review",
+        file_name="labor_employment_driver_impact_review_report.json",
+        required=True,
+        missing_note=(
+            "Run review-labor-employment-driver-impact-slice so nonblocking "
+            "driver-impact budget-gate replay is backed by reviewed synthetic evidence."
+        ),
+    ),
+    QABundleArtifactSpec(
         artifact_id="labor_employment_budget_fact_gold",
         label="Labor/Employment Budget Fact Gold",
         file_name="labor_employment_budget_fact_gold_report.json",
@@ -221,6 +231,11 @@ def run_synthetic_qa_bundle(
             root=root,
             explicit_path=None,
             file_name="labor_employment_executable_driver_impact_report.json",
+        ),
+        "labor_employment_driver_impact_review": _resolve_artifact_source(
+            root=root,
+            explicit_path=None,
+            file_name="labor_employment_driver_impact_review_report.json",
         ),
         "labor_employment_budget_fact_gold": _resolve_artifact_source(
             root=root,

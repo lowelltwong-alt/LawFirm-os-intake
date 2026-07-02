@@ -510,6 +510,44 @@ from pathlib import Path
 import sys
 
 sys.path.insert(0, str(Path.cwd() / "src"))
+from lawfirm_os_intake.labor_employment_driver_impact_review import (
+    run_labor_employment_driver_impact_review,
+)
+
+report, _ = run_labor_employment_driver_impact_review(
+    review_spec_path=(
+        "examples/synthetic/gold/labor-employment-driver-impact-review.json"
+    ),
+    driver_impact_report_path=(
+        ".lawfirm-os-intake/smoke/quality/le-executable-driver-impact/"
+        "labor_employment_executable_driver_impact_report.json"
+    ),
+    out_dir=".lawfirm-os-intake/smoke/quality/le-driver-impact-review",
+)
+raise SystemExit(
+    0
+    if report.status
+    == "labor_employment_driver_impact_review_ready_for_budget_gate_replay"
+    else 1
+)
+PY
+test -s ".lawfirm-os-intake/smoke/quality/le-driver-impact-review/labor_employment_driver_impact_review_report.json"
+test -s ".lawfirm-os-intake/smoke/quality/le-driver-impact-review/labor_employment_driver_impact_reviewed_slice_report.json"
+grep -q '"status": "labor_employment_driver_impact_review_ready_for_budget_gate_replay"' \
+  ".lawfirm-os-intake/smoke/quality/le-driver-impact-review/labor_employment_driver_impact_review_report.json"
+grep -q '"selected_case_count": 1' \
+  ".lawfirm-os-intake/smoke/quality/le-driver-impact-review/labor_employment_driver_impact_review_report.json"
+grep -q '"block_amount_budget_impact_count": 0' \
+  ".lawfirm-os-intake/smoke/quality/le-driver-impact-review/labor_employment_driver_impact_review_report.json"
+grep -q '"budget_amount_output_authorized": false' \
+  ".lawfirm-os-intake/smoke/quality/le-driver-impact-review/labor_employment_driver_impact_review_report.json"
+grep -q '"sqlite_write_performed": false' \
+  ".lawfirm-os-intake/smoke/quality/le-driver-impact-review/labor_employment_driver_impact_review_report.json"
+"$PYTHON_BIN" -B - <<'PY'
+from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path.cwd() / "src"))
 from lawfirm_os_intake.labor_employment_budget_fact_gold import (
     run_labor_employment_budget_fact_gold_validation,
 )
@@ -562,6 +600,7 @@ grep -q '"labor_employment_executable_coverage"' ".lawfirm-os-intake/smoke/quali
 grep -q '"labor_employment_executable_fact_binding"' ".lawfirm-os-intake/smoke/quality/synthetic_qa_bundle_report.json"
 grep -q '"labor_employment_executable_driver_binding"' ".lawfirm-os-intake/smoke/quality/synthetic_qa_bundle_report.json"
 grep -q '"labor_employment_executable_driver_impact"' ".lawfirm-os-intake/smoke/quality/synthetic_qa_bundle_report.json"
+grep -q '"labor_employment_driver_impact_review"' ".lawfirm-os-intake/smoke/quality/synthetic_qa_bundle_report.json"
 grep -q '"labor_employment_budget_fact_gold"' ".lawfirm-os-intake/smoke/quality/synthetic_qa_bundle_report.json"
 test -s ".lawfirm-os-intake/smoke/ui_review_manifest.json"
 grep -q '"synthetic_qa_bundle"' ".lawfirm-os-intake/smoke/ui_review_manifest.json"
@@ -574,6 +613,7 @@ grep -q '"labor_employment_executable_coverage"' ".lawfirm-os-intake/smoke/ui_re
 grep -q '"labor_employment_executable_fact_binding"' ".lawfirm-os-intake/smoke/ui_review_manifest.json"
 grep -q '"labor_employment_executable_driver_binding"' ".lawfirm-os-intake/smoke/ui_review_manifest.json"
 grep -q '"labor_employment_executable_driver_impact"' ".lawfirm-os-intake/smoke/ui_review_manifest.json"
+grep -q '"labor_employment_driver_impact_review"' ".lawfirm-os-intake/smoke/ui_review_manifest.json"
 grep -q '"labor_employment_budget_fact_gold"' ".lawfirm-os-intake/smoke/ui_review_manifest.json"
 grep -q '"status": "pending_review"' ".lawfirm-os-intake/smoke/ui_review_manifest.json"
 grep -q '"networkCallsAllowed": false' ".lawfirm-os-intake/smoke/ui_review_manifest.json"

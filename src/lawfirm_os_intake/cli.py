@@ -80,6 +80,10 @@ from .labor_employment_executable_driver_binding import (
 from .labor_employment_executable_driver_impact import (
     run_labor_employment_executable_driver_impact_audit,
 )
+from .labor_employment_driver_impact_review import (
+    DEFAULT_LABOR_EMPLOYMENT_DRIVER_IMPACT_REVIEW_SPEC,
+    run_labor_employment_driver_impact_review,
+)
 from .labor_employment_executable_fixtures import (
     run_labor_employment_executable_fixture_audit,
 )
@@ -424,6 +428,25 @@ def _parser() -> argparse.ArgumentParser:
         help="Path to labor_employment_executable_driver_binding_report.json.",
     )
     le_executable_driver_impact.add_argument("--out-dir", required=True)
+
+    le_driver_impact_review = sub.add_parser(
+        "review-labor-employment-driver-impact-slice",
+        help=(
+            "Materialize a reviewed nonblocking synthetic L&E driver-impact slice "
+            "for local budget-gate replay."
+        ),
+    )
+    le_driver_impact_review.add_argument(
+        "--review-spec",
+        default=DEFAULT_LABOR_EMPLOYMENT_DRIVER_IMPACT_REVIEW_SPEC,
+        help="Path to labor-employment-driver-impact-review.json.",
+    )
+    le_driver_impact_review.add_argument(
+        "--driver-impact-report",
+        required=True,
+        help="Path to labor_employment_executable_driver_impact_report.json.",
+    )
+    le_driver_impact_review.add_argument("--out-dir", required=True)
 
     budget_review = sub.add_parser(
         "record-budget-review",
@@ -1749,6 +1772,51 @@ def main(argv: list[str] | None = None) -> int:
             return (
                 0
                 if report.status == "labor_employment_executable_driver_impacts_ready_for_review"
+                else 2
+            )
+
+        if args.command == "review-labor-employment-driver-impact-slice":
+            report, run_dir = run_labor_employment_driver_impact_review(
+                review_spec_path=args.review_spec,
+                driver_impact_report_path=args.driver_impact_report,
+                out_dir=args.out_dir,
+            )
+            failed_checks = [check.check_id for check in report.checks if check.status == "failed"]
+            failed_cases = [
+                result.executable_fixture_id
+                for result in report.case_results
+                if result.status == "failed"
+            ]
+            _print(
+                {
+                    "status": report.status,
+                    "driver_impact_review_report_id": report.driver_impact_review_report_id,
+                    "source_driver_impact_report_id": report.source_driver_impact_report_id,
+                    "case_count": report.case_count,
+                    "selected_case_count": report.selected_case_count,
+                    "failed_case_count": report.failed_case_count,
+                    "block_amount_budget_impact_count": (report.block_amount_budget_impact_count),
+                    "range_widening_impact_count": report.range_widening_impact_count,
+                    "scenario_fork_impact_count": report.scenario_fork_impact_count,
+                    "rate_guideline_review_impact_count": (
+                        report.rate_guideline_review_impact_count
+                    ),
+                    "reviewed_slice_report": report.reviewed_slice_report_ref,
+                    "failed_cases": failed_cases,
+                    "failed_checks": failed_checks,
+                    "budget_amount_output_authorized": (report.budget_amount_output_authorized),
+                    "budget_submission_authorized": report.budget_submission_authorized,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return (
+                0
+                if report.status
+                == "labor_employment_driver_impact_review_ready_for_budget_gate_replay"
                 else 2
             )
 
