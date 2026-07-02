@@ -1,0 +1,62 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "fact_id": {
+      "title": "Fact Id",
+      "type": "string"
+    },
+    "expected_gap_type": {
+      "enum": [
+        "missing_evidence",
+        "human_confirmation_required",
+        "uncertain_candidate"
+      ],
+      "title": "Expected Gap Type",
+      "type": "string"
+    },
+    "source_signal_terms": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Source Signal Terms",
+      "type": "array"
+    },
+    "expected_exception_labels": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Expected Exception Labels",
+      "type": "array"
+    },
+    "expected_source_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Expected Source Ids",
+      "type": "array"
+    },
+    "reason": {
+      "title": "Reason",
+      "type": "string"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "fact_id",
+    "expected_gap_type",
+    "reason"
+  ],
+  "title": "LaborEmploymentExecutableBudgetFactBindingItemSpec",
+  "type": "object"
+}

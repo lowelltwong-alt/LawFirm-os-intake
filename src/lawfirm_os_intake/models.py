@@ -1565,6 +1565,374 @@ class LaborEmploymentExecutableFixtureAuditReport(StrictModel):
         return self
 
 
+class LaborEmploymentExecutableBudgetFactBindingItemSpec(StrictModel):
+    fact_id: str
+    expected_gap_type: Literal[
+        "missing_evidence",
+        "human_confirmation_required",
+        "uncertain_candidate",
+    ]
+    source_signal_terms: list[str] = Field(default_factory=list)
+    expected_exception_labels: list[str] = Field(default_factory=list)
+    expected_source_ids: list[str] = Field(default_factory=list)
+    reason: str
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+
+    @model_validator(mode="after")
+    def le_executable_budget_fact_binding_has_anchor(
+        self,
+    ) -> "LaborEmploymentExecutableBudgetFactBindingItemSpec":
+        if not (
+            self.source_signal_terms or self.expected_exception_labels or self.expected_source_ids
+        ):
+            raise ValueError("executable L&E budget fact binding requires an evidence anchor")
+        return self
+
+
+class LaborEmploymentExecutableBudgetFactBindingCaseSpec(StrictModel):
+    binding_case_id: str
+    executable_fixture_id: str
+    expected_budget_readiness_state: Literal[
+        "blocked_missing_critical_facts",
+        "range_only_pending_human_review",
+        "candidate_ready_for_budget_review",
+    ]
+    expected_budget_gate_effect: LaborEmploymentQAMatrixBudgetGateEffect
+    expected_budget_treatment: Literal[
+        "block_amount_budget",
+        "hours_only_or_broad_range",
+        "candidate_range_budget_after_review",
+    ]
+    fact_bindings: list[LaborEmploymentExecutableBudgetFactBindingItemSpec]
+    red_team_notes: list[str] = Field(default_factory=list)
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    budget_amount_output_authorized: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    conflict_conclusion_emitted: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    training_pipeline_created: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def le_executable_budget_fact_binding_case_is_unique(
+        self,
+    ) -> "LaborEmploymentExecutableBudgetFactBindingCaseSpec":
+        fact_ids = [binding.fact_id for binding in self.fact_bindings]
+        if not fact_ids:
+            raise ValueError("executable L&E budget fact binding case requires fact bindings")
+        if len(fact_ids) != len(set(fact_ids)):
+            raise ValueError("executable L&E budget fact binding IDs must be unique per case")
+        return self
+
+
+class LaborEmploymentExecutableBudgetFactBindingManifest(StrictModel):
+    schema_version: str = "0.1"
+    manifest_id: str
+    status: Literal["candidate_executable_budget_fact_binding_manifest"]
+    practice_area: Literal["labor_employment"] = "labor_employment"
+    executable_fixture_manifest_ref: str
+    fact_policy_ref: str
+    bindings: list[LaborEmploymentExecutableBudgetFactBindingCaseSpec]
+    human_review_required: Literal[True] = True
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    not_authorized_for_matter_opening: Literal[True] = True
+    not_authorized_for_calibration: Literal[True] = True
+    budget_amount_output_authorized: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    conflict_conclusion_emitted: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    training_pipeline_created: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def le_executable_budget_fact_binding_manifest_is_unique(
+        self,
+    ) -> "LaborEmploymentExecutableBudgetFactBindingManifest":
+        case_ids = [case.binding_case_id for case in self.bindings]
+        fixture_ids = [case.executable_fixture_id for case in self.bindings]
+        if not self.bindings:
+            raise ValueError("executable L&E budget fact binding manifest requires bindings")
+        if len(case_ids) != len(set(case_ids)):
+            raise ValueError("executable L&E budget fact binding case IDs must be unique")
+        if len(fixture_ids) != len(set(fixture_ids)):
+            raise ValueError("executable L&E budget fact binding fixture IDs must be unique")
+        return self
+
+
+class LaborEmploymentExecutableBudgetFactBindingItem(StrictModel):
+    fact_id: str
+    fact_category: LaborEmploymentBudgetFactCategory
+    required_level: Literal["critical", "important", "context"]
+    question: str
+    expected_gap_type: Literal[
+        "missing_evidence",
+        "human_confirmation_required",
+        "uncertain_candidate",
+    ]
+    binding_state: Literal[
+        "source_bound_gap_candidate",
+        "exception_bound_gap_candidate",
+        "source_and_exception_bound_gap_candidate",
+        "inventory_bound_gap_candidate",
+        "unbound_gap_candidate",
+    ]
+    recommended_budget_treatment: Literal[
+        "block_amount_budget",
+        "hours_only_or_broad_range",
+        "candidate_range_budget_after_review",
+    ]
+    budget_effects: list[str]
+    source_signal_terms: list[str]
+    matched_source_signal_terms: list[str]
+    missing_source_signal_terms: list[str]
+    expected_exception_labels: list[str]
+    matched_exception_labels: list[str]
+    missing_exception_labels: list[str]
+    expected_source_ids: list[str]
+    matched_source_ids: list[str]
+    missing_source_ids: list[str]
+    evidence_refs: list[EvidenceRef] = Field(default_factory=list)
+    source_inventory_refs: list[str] = Field(default_factory=list)
+    blocks_precise_budget: bool
+    human_confirmation_required: bool
+    reason: str
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+
+    @model_validator(mode="after")
+    def le_executable_budget_fact_binding_item_state_matches_refs(
+        self,
+    ) -> "LaborEmploymentExecutableBudgetFactBindingItem":
+        if self.binding_state == "source_bound_gap_candidate" and not self.evidence_refs:
+            raise ValueError("source-bound gap binding requires evidence refs")
+        if (
+            self.binding_state == "exception_bound_gap_candidate"
+            and not self.matched_exception_labels
+        ):
+            raise ValueError("exception-bound gap binding requires matched exception labels")
+        if self.binding_state == "source_and_exception_bound_gap_candidate" and (
+            not self.evidence_refs or not self.matched_exception_labels
+        ):
+            raise ValueError("source+exception gap binding requires both anchor types")
+        if self.binding_state == "inventory_bound_gap_candidate" and not self.source_inventory_refs:
+            raise ValueError("inventory-bound gap binding requires source inventory refs")
+        return self
+
+
+class LaborEmploymentExecutableBudgetFactBindingCase(StrictModel):
+    binding_case_id: str
+    executable_fixture_id: str
+    status: Literal["passed", "failed"]
+    preflight_packet_ref: str | None = None
+    executable_fixture_report_case_status: Literal["passed", "failed"] | None = None
+    expected_budget_readiness_state: Literal[
+        "blocked_missing_critical_facts",
+        "range_only_pending_human_review",
+        "candidate_ready_for_budget_review",
+    ]
+    executable_expected_budget_readiness_state: (
+        Literal[
+            "blocked_missing_critical_facts",
+            "range_only_pending_human_review",
+            "candidate_ready_for_budget_review",
+        ]
+        | None
+    ) = None
+    expected_budget_gate_effect: LaborEmploymentQAMatrixBudgetGateEffect
+    executable_expected_budget_gate_effect: LaborEmploymentQAMatrixBudgetGateEffect | None = None
+    expected_budget_treatment: Literal[
+        "block_amount_budget",
+        "hours_only_or_broad_range",
+        "candidate_range_budget_after_review",
+    ]
+    executable_expected_budget_treatment: (
+        Literal[
+            "block_amount_budget",
+            "hours_only_or_broad_range",
+            "candidate_range_budget_after_review",
+        ]
+        | None
+    ) = None
+    fact_binding_count: int = Field(ge=0)
+    critical_fact_binding_count: int = Field(ge=0)
+    evidence_bound_fact_count: int = Field(ge=0)
+    exception_bound_fact_count: int = Field(ge=0)
+    missing_policy_fact_ids: list[str]
+    failed_expectation_ids: list[str]
+    fact_bindings: list[LaborEmploymentExecutableBudgetFactBindingItem]
+    notes: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    budget_amount_output_authorized: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    conflict_conclusion_emitted: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    training_pipeline_created: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def le_executable_budget_fact_binding_case_counts_match(
+        self,
+    ) -> "LaborEmploymentExecutableBudgetFactBindingCase":
+        failed = bool(self.missing_policy_fact_ids or self.failed_expectation_ids)
+        if self.fact_binding_count != len(self.fact_bindings):
+            raise ValueError("executable L&E budget fact binding count mismatch")
+        if self.critical_fact_binding_count != sum(
+            1 for binding in self.fact_bindings if binding.required_level == "critical"
+        ):
+            raise ValueError("executable L&E critical fact binding count mismatch")
+        if self.evidence_bound_fact_count != sum(
+            1 for binding in self.fact_bindings if binding.evidence_refs
+        ):
+            raise ValueError("executable L&E evidence-bound fact count mismatch")
+        if self.exception_bound_fact_count != sum(
+            1 for binding in self.fact_bindings if binding.matched_exception_labels
+        ):
+            raise ValueError("executable L&E exception-bound fact count mismatch")
+        if self.status == "passed" and failed:
+            raise ValueError("passed executable L&E budget fact binding case has failures")
+        if self.status == "failed" and not failed:
+            raise ValueError("failed executable L&E budget fact binding case requires failures")
+        return self
+
+
+class LaborEmploymentExecutableBudgetFactBindingCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    evidence_refs: list[str] = Field(default_factory=list)
+    blocking_refs: list[str] = Field(default_factory=list)
+
+
+class LaborEmploymentExecutableBudgetFactBindingReport(StrictModel):
+    schema_version: str = "0.1"
+    executable_budget_fact_binding_report_id: str
+    status: Literal[
+        "labor_employment_executable_budget_fact_bindings_ready_for_review",
+        "blocked_by_labor_employment_executable_budget_fact_bindings",
+    ]
+    binding_manifest_id: str
+    binding_manifest_ref: str
+    executable_fixture_report_ref: str
+    fact_policy_ref: str
+    case_count: int = Field(ge=0)
+    failed_case_count: int = Field(ge=0)
+    fact_binding_count: int = Field(ge=0)
+    critical_fact_binding_count: int = Field(ge=0)
+    evidence_bound_fact_count: int = Field(ge=0)
+    exception_bound_fact_count: int = Field(ge=0)
+    missing_policy_fact_count: int = Field(ge=0)
+    missing_source_signal_count: int = Field(ge=0)
+    missing_exception_label_count: int = Field(ge=0)
+    missing_source_id_count: int = Field(ge=0)
+    cases: list[LaborEmploymentExecutableBudgetFactBindingCase]
+    checks: list[LaborEmploymentExecutableBudgetFactBindingCheck]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    not_authorized_for_matter_opening: Literal[True] = True
+    not_authorized_for_calibration: Literal[True] = True
+    budget_amount_output_authorized: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    conflict_conclusion_emitted: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    training_pipeline_created: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def le_executable_budget_fact_binding_report_counts_match(
+        self,
+    ) -> "LaborEmploymentExecutableBudgetFactBindingReport":
+        failed_cases = [case for case in self.cases if case.status == "failed"]
+        failed_checks = [check for check in self.checks if check.status == "failed"]
+        if self.case_count != len(self.cases):
+            raise ValueError("executable L&E budget fact binding case count mismatch")
+        if self.failed_case_count != len(failed_cases):
+            raise ValueError("executable L&E budget fact binding failed case count mismatch")
+        if self.fact_binding_count != sum(case.fact_binding_count for case in self.cases):
+            raise ValueError("executable L&E budget fact binding aggregate count mismatch")
+        if self.critical_fact_binding_count != sum(
+            case.critical_fact_binding_count for case in self.cases
+        ):
+            raise ValueError("executable L&E critical fact binding aggregate count mismatch")
+        if self.evidence_bound_fact_count != sum(
+            case.evidence_bound_fact_count for case in self.cases
+        ):
+            raise ValueError("executable L&E evidence-bound aggregate count mismatch")
+        if self.exception_bound_fact_count != sum(
+            case.exception_bound_fact_count for case in self.cases
+        ):
+            raise ValueError("executable L&E exception-bound aggregate count mismatch")
+        if self.missing_policy_fact_count != sum(
+            len(case.missing_policy_fact_ids) for case in self.cases
+        ):
+            raise ValueError("executable L&E missing policy fact count mismatch")
+        if self.missing_source_signal_count != sum(
+            len(binding.missing_source_signal_terms)
+            for case in self.cases
+            for binding in case.fact_bindings
+        ):
+            raise ValueError("executable L&E missing source signal count mismatch")
+        if self.missing_exception_label_count != sum(
+            len(binding.missing_exception_labels)
+            for case in self.cases
+            for binding in case.fact_bindings
+        ):
+            raise ValueError("executable L&E missing exception label count mismatch")
+        if self.missing_source_id_count != sum(
+            len(binding.missing_source_ids) for case in self.cases for binding in case.fact_bindings
+        ):
+            raise ValueError("executable L&E missing source id count mismatch")
+        has_gap = bool(failed_cases or failed_checks)
+        if (
+            self.status == "labor_employment_executable_budget_fact_bindings_ready_for_review"
+            and has_gap
+        ):
+            raise ValueError("ready executable L&E budget fact binding report has failures")
+        if (
+            self.status == "blocked_by_labor_employment_executable_budget_fact_bindings"
+            and not has_gap
+        ):
+            raise ValueError("blocked executable L&E budget fact binding report requires failures")
+        required = {
+            "human_labor_employment_budget_fact_review",
+            "build_labor_employment_budget_fact_audit_before_budget_precondition",
+            "no_amount_budget_from_binding_report",
+            "no_lake_or_sqlite_write_from_binding_report",
+            "no_role_taxonomy_promotion_from_binding_report",
+        }
+        if not required.issubset(set(self.required_next_gates)):
+            raise ValueError("executable L&E budget fact binding report missing required gates")
+        return self
+
+
 class PublicSourceMethodologySource(StrictModel):
     source_id: str
     url: str

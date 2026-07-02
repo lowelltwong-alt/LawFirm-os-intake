@@ -1,0 +1,125 @@
+{
+  "schema_version": "0.1",
+  "manifest_id": "le-executable-budget-fact-bindings.v0_1",
+  "status": "candidate_executable_budget_fact_binding_manifest",
+  "practice_area": "labor_employment",
+  "executable_fixture_manifest_ref": "examples/synthetic/labor-employment/labor-employment-executable-fixtures-manifest.json",
+  "fact_policy_ref": "config/labor-employment-budget-fact-needs.yaml",
+  "bindings": [
+    {
+      "binding_case_id": "le-wage-hour-missing-attachment.fact-binding.v0_1",
+      "executable_fixture_id": "le-wage-hour-missing-attachment.executable.v0_1",
+      "expected_budget_readiness_state": "blocked_missing_critical_facts",
+      "expected_budget_gate_effect": "block_amount_budget_before_proposal",
+      "expected_budget_treatment": "block_amount_budget",
+      "fact_bindings": [
+        {
+          "fact_id": "class_collective_or_group_scope",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": ["class or collective", "more than one worksite"],
+          "reason": "The source raises possible group scope, but does not confirm single-plaintiff, class, collective, representative, or agency-wide posture."
+        },
+        {
+          "fact_id": "wage_hour_pay_period_and_employee_volume",
+          "expected_gap_type": "missing_evidence",
+          "source_signal_terms": ["payroll export", "timekeeping export", "pay periods", "employee counts"],
+          "expected_exception_labels": ["source_missing"],
+          "expected_source_ids": [
+            "syn-le-wage-hour-payroll-export-missing-001",
+            "syn-le-wage-hour-timekeeping-export-missing-001"
+          ],
+          "reason": "Payroll and timekeeping exports are referenced but missing, so employee/pay-period volume cannot be used as budget math."
+        }
+      ],
+      "red_team_notes": [
+        "The bridge must not convert missing payroll exports into average employee counts or budget amounts."
+      ]
+    },
+    {
+      "binding_case_id": "le-epli-carrier-missing-attachment.fact-binding.v0_1",
+      "executable_fixture_id": "le-epli-carrier-missing-attachment.executable.v0_1",
+      "expected_budget_readiness_state": "blocked_missing_critical_facts",
+      "expected_budget_gate_effect": "block_amount_budget_before_proposal",
+      "expected_budget_treatment": "block_amount_budget",
+      "fact_bindings": [
+        {
+          "fact_id": "prospective_client_payer_carrier_posture",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": ["insured", "payer", "instructing source", "represented client"],
+          "reason": "Carrier, TPA, insured, payer, instructing source, and represented client posture are all present as candidate roles requiring confirmation."
+        },
+        {
+          "fact_id": "carrier_guideline_and_rate_source",
+          "expected_gap_type": "missing_evidence",
+          "source_signal_terms": ["carrier guideline", "approved rate schedule"],
+          "expected_exception_labels": ["source_missing"],
+          "expected_source_ids": [
+            "syn-le-epli-guidelines-missing-001",
+            "syn-le-epli-rate-schedule-missing-001"
+          ],
+          "reason": "The carrier guideline and approved rate schedule are referenced but not included, so proposed-vs-compliant pricing cannot be narrowed."
+        }
+      ],
+      "red_team_notes": [
+        "The bridge must separate carrier/payer/instructing-source posture from represented-client confirmation."
+      ]
+    },
+    {
+      "binding_case_id": "le-class-collective-adversarial.fact-binding.v0_1",
+      "executable_fixture_id": "le-class-collective-adversarial.executable.v0_1",
+      "expected_budget_readiness_state": "blocked_missing_critical_facts",
+      "expected_budget_gate_effect": "block_amount_budget_before_proposal",
+      "expected_budget_treatment": "block_amount_budget",
+      "fact_bindings": [
+        {
+          "fact_id": "forum_removed_and_arbitration_posture",
+          "expected_gap_type": "missing_evidence",
+          "source_signal_terms": ["arbitration agreements exist"],
+          "reason": "The source says arbitration posture is unidentified, so forum/removal/arbitration budget drivers remain unbound."
+        },
+        {
+          "fact_id": "joint_employer_or_affiliate_structure",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": ["jointly controlled", "Orchard Parent Holdings", "joint employer"],
+          "reason": "Parent and joint-employer facts are candidate-only and must not become resolved party topology."
+        },
+        {
+          "fact_id": "carrier_guideline_and_rate_source",
+          "expected_gap_type": "missing_evidence",
+          "source_signal_terms": ["whether an EPLI carrier is involved"],
+          "expected_exception_labels": ["prompt_injection_source_content"],
+          "reason": "The source asks whether carrier coverage exists and also includes prompt injection, so guideline/rate source remains blocked."
+        }
+      ],
+      "red_team_notes": [
+        "Injected instructions must stay source-text risk and must not trigger conflict clearance, matter opening, docketing, or budget submission."
+      ]
+    },
+    {
+      "binding_case_id": "le-ada-fmla-missing-thread.fact-binding.v0_1",
+      "executable_fixture_id": "le-ada-fmla-missing-thread.executable.v0_1",
+      "expected_budget_readiness_state": "blocked_missing_critical_facts",
+      "expected_budget_gate_effect": "block_amount_budget_before_proposal",
+      "expected_budget_treatment": "block_amount_budget",
+      "fact_bindings": [
+        {
+          "fact_id": "policy_handbook_contract_documents",
+          "expected_gap_type": "missing_evidence",
+          "source_signal_terms": ["employee handbook", "leave request packet", "interactive-process notes"],
+          "expected_exception_labels": ["source_missing"],
+          "expected_source_ids": ["syn-le-ada-fmla-handbook-missing-001"],
+          "reason": "Policy, handbook, leave, and interactive-process documents are referenced but not fully included."
+        },
+        {
+          "fact_id": "individual_supervisor_or_manager_defendants",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": ["store manager", "regional HR lead", "benefits administrator"],
+          "reason": "The source identifies potential individual actors but not whether they are witnesses, defendants, or separate role candidates."
+        }
+      ],
+      "red_team_notes": [
+        "Quoted and duplicate HR correspondence must not double-count timeline or witness complexity."
+      ]
+    }
+  ]
+}

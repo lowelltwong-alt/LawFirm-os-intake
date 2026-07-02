@@ -23,6 +23,7 @@ export const REQUIRED_ARTIFACT_FILES = [
   "labor_employment_qa_matrix_report.json",
   "labor_employment_fixture_family_pack_report.json",
   "labor_employment_executable_fixtures_report.json",
+  "labor_employment_executable_fact_binding_report.json",
   "budget_human_review_packet.json",
   "carrier_rejection_decision_ledger_report.json",
   "budget_actual_variance_ledger_report.json",

@@ -366,6 +366,43 @@ from pathlib import Path
 import sys
 
 sys.path.insert(0, str(Path.cwd() / "src"))
+from lawfirm_os_intake.labor_employment_executable_fact_binding import (
+    run_labor_employment_executable_fact_binding_audit,
+)
+
+report, _ = run_labor_employment_executable_fact_binding_audit(
+    binding_manifest_path=(
+        "examples/synthetic/labor-employment/"
+        "labor-employment-executable-budget-fact-bindings.json"
+    ),
+    executable_fixture_report_path=(
+        ".lawfirm-os-intake/smoke/quality/le-executable-fixtures/"
+        "labor_employment_executable_fixtures_report.json"
+    ),
+    repo_root=".",
+    out_dir=".lawfirm-os-intake/smoke/quality/le-executable-fact-binding",
+)
+raise SystemExit(
+    0
+    if report.status
+    == "labor_employment_executable_budget_fact_bindings_ready_for_review"
+    else 1
+)
+PY
+test -s ".lawfirm-os-intake/smoke/quality/le-executable-fact-binding/labor_employment_executable_fact_binding_report.json"
+grep -q '"status": "labor_employment_executable_budget_fact_bindings_ready_for_review"' \
+  ".lawfirm-os-intake/smoke/quality/le-executable-fact-binding/labor_employment_executable_fact_binding_report.json"
+grep -q '"fact_binding_count": 9' \
+  ".lawfirm-os-intake/smoke/quality/le-executable-fact-binding/labor_employment_executable_fact_binding_report.json"
+grep -q '"budget_amount_output_authorized": false' \
+  ".lawfirm-os-intake/smoke/quality/le-executable-fact-binding/labor_employment_executable_fact_binding_report.json"
+grep -q '"sqlite_write_performed": false' \
+  ".lawfirm-os-intake/smoke/quality/le-executable-fact-binding/labor_employment_executable_fact_binding_report.json"
+"$PYTHON_BIN" -B - <<'PY'
+from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path.cwd() / "src"))
 from lawfirm_os_intake.synthetic_qa_bundle import run_synthetic_qa_bundle
 
 report, _, manifest = run_synthetic_qa_bundle(
@@ -389,6 +426,7 @@ grep -q '"budget_calibration_readiness"' ".lawfirm-os-intake/smoke/quality/synth
 grep -q '"labor_employment_qa_matrix"' ".lawfirm-os-intake/smoke/quality/synthetic_qa_bundle_report.json"
 grep -q '"labor_employment_fixture_family_pack"' ".lawfirm-os-intake/smoke/quality/synthetic_qa_bundle_report.json"
 grep -q '"labor_employment_executable_fixtures"' ".lawfirm-os-intake/smoke/quality/synthetic_qa_bundle_report.json"
+grep -q '"labor_employment_executable_fact_binding"' ".lawfirm-os-intake/smoke/quality/synthetic_qa_bundle_report.json"
 test -s ".lawfirm-os-intake/smoke/ui_review_manifest.json"
 grep -q '"synthetic_qa_bundle"' ".lawfirm-os-intake/smoke/ui_review_manifest.json"
 grep -q '"budget_coherence"' ".lawfirm-os-intake/smoke/ui_review_manifest.json"
@@ -396,5 +434,6 @@ grep -q '"budget_calibration_readiness"' ".lawfirm-os-intake/smoke/ui_review_man
 grep -q '"labor_employment_qa_matrix"' ".lawfirm-os-intake/smoke/ui_review_manifest.json"
 grep -q '"labor_employment_fixture_family_pack"' ".lawfirm-os-intake/smoke/ui_review_manifest.json"
 grep -q '"labor_employment_executable_fixtures"' ".lawfirm-os-intake/smoke/ui_review_manifest.json"
+grep -q '"labor_employment_executable_fact_binding"' ".lawfirm-os-intake/smoke/ui_review_manifest.json"
 grep -q '"status": "pending_review"' ".lawfirm-os-intake/smoke/ui_review_manifest.json"
 grep -q '"networkCallsAllowed": false' ".lawfirm-os-intake/smoke/ui_review_manifest.json"

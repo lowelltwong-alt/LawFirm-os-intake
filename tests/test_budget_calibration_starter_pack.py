@@ -4,7 +4,11 @@ from lawfirm_os_intake.budget_calibration_starter_pack import (
 )
 from lawfirm_os_intake.cli import main
 from lawfirm_os_intake.labor_employment_executable_fixtures import (
+    LABOR_EMPLOYMENT_EXECUTABLE_FIXTURE_AUDIT_REPORT_FILENAME,
     run_labor_employment_executable_fixture_audit,
+)
+from lawfirm_os_intake.labor_employment_executable_fact_binding import (
+    run_labor_employment_executable_fact_binding_audit,
 )
 from lawfirm_os_intake.labor_employment_fixture_family_pack import (
     run_labor_employment_fixture_family_pack_audit,
@@ -105,7 +109,7 @@ def test_starter_pack_allows_synthetic_qa_bundle_to_reach_pending_review(
         fact_needs_path=repo_root / "config/labor-employment-budget-fact-needs.yaml",
         out_dir=run_root / "quality" / "le-fixture-family-pack",
     )
-    run_labor_employment_executable_fixture_audit(
+    _, executable_fixture_run_dir = run_labor_employment_executable_fixture_audit(
         manifest_path=(
             repo_root
             / "examples/synthetic/labor-employment/"
@@ -113,6 +117,18 @@ def test_starter_pack_allows_synthetic_qa_bundle_to_reach_pending_review(
         ),
         repo_root=repo_root,
         out_dir=run_root / "quality" / "le-executable-fixtures",
+    )
+    run_labor_employment_executable_fact_binding_audit(
+        binding_manifest_path=(
+            repo_root
+            / "examples/synthetic/labor-employment/"
+            / "labor-employment-executable-budget-fact-bindings.json"
+        ),
+        executable_fixture_report_path=(
+            executable_fixture_run_dir / LABOR_EMPLOYMENT_EXECUTABLE_FIXTURE_AUDIT_REPORT_FILENAME
+        ),
+        repo_root=repo_root,
+        out_dir=run_root / "quality" / "le-executable-fact-binding",
     )
 
     bundle, _, ui_manifest = run_synthetic_qa_bundle(
@@ -135,4 +151,5 @@ def test_starter_pack_allows_synthetic_qa_bundle_to_reach_pending_review(
     assert gates["labor_employment_qa_matrix"]["status"] == "pending_review"
     assert gates["labor_employment_fixture_family_pack"]["status"] == "pending_review"
     assert gates["labor_employment_executable_fixtures"]["status"] == "pending_review"
+    assert gates["labor_employment_executable_fact_binding"]["status"] == "pending_review"
     assert ui_manifest["overallStatus"] == "blocked"

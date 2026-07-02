@@ -216,6 +216,13 @@ from lawfirm_os_intake.models import (  # noqa: E402
     LaborEmploymentBudgetFactFinding,
     LaborEmploymentBudgetFactGap,
     LaborEmploymentBudgetFactSource,
+    LaborEmploymentExecutableBudgetFactBindingCase,
+    LaborEmploymentExecutableBudgetFactBindingCaseSpec,
+    LaborEmploymentExecutableBudgetFactBindingCheck,
+    LaborEmploymentExecutableBudgetFactBindingItem,
+    LaborEmploymentExecutableBudgetFactBindingItemSpec,
+    LaborEmploymentExecutableBudgetFactBindingManifest,
+    LaborEmploymentExecutableBudgetFactBindingReport,
     LaborEmploymentExecutableFixtureAuditCase,
     LaborEmploymentExecutableFixtureAuditCheck,
     LaborEmploymentExecutableFixtureAuditReport,
@@ -340,6 +347,27 @@ MODELS = {
     "labor-employment-budget-fact-gap.schema.json": LaborEmploymentBudgetFactGap,
     "labor-employment-budget-fact-audit-check.schema.json": (LaborEmploymentBudgetFactAuditCheck),
     "labor-employment-budget-fact-audit-report.schema.json": (LaborEmploymentBudgetFactAuditReport),
+    "labor-employment-executable-budget-fact-binding-item-spec.schema.json": (
+        LaborEmploymentExecutableBudgetFactBindingItemSpec
+    ),
+    "labor-employment-executable-budget-fact-binding-case-spec.schema.json": (
+        LaborEmploymentExecutableBudgetFactBindingCaseSpec
+    ),
+    "labor-employment-executable-budget-fact-binding-manifest.schema.json": (
+        LaborEmploymentExecutableBudgetFactBindingManifest
+    ),
+    "labor-employment-executable-budget-fact-binding-item.schema.json": (
+        LaborEmploymentExecutableBudgetFactBindingItem
+    ),
+    "labor-employment-executable-budget-fact-binding-case.schema.json": (
+        LaborEmploymentExecutableBudgetFactBindingCase
+    ),
+    "labor-employment-executable-budget-fact-binding-check.schema.json": (
+        LaborEmploymentExecutableBudgetFactBindingCheck
+    ),
+    "labor-employment-executable-budget-fact-binding-report.schema.json": (
+        LaborEmploymentExecutableBudgetFactBindingReport
+    ),
     "labor-employment-executable-fixture-spec.schema.json": (LaborEmploymentExecutableFixtureSpec),
     "labor-employment-executable-fixture-manifest.schema.json": (
         LaborEmploymentExecutableFixtureManifest

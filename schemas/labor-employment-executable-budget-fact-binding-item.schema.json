@@ -1,0 +1,231 @@
+{
+  "$defs": {
+    "EvidenceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "segment_id": {
+          "title": "Segment Id",
+          "type": "string"
+        },
+        "start_offset": {
+          "title": "Start Offset",
+          "type": "integer"
+        },
+        "end_offset": {
+          "title": "End Offset",
+          "type": "integer"
+        },
+        "sha256": {
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "segment_id",
+        "start_offset",
+        "end_offset",
+        "sha256"
+      ],
+      "title": "EvidenceRef",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "fact_id": {
+      "title": "Fact Id",
+      "type": "string"
+    },
+    "fact_category": {
+      "enum": [
+        "entity_relationship",
+        "claims_and_posture",
+        "damages_and_exposure",
+        "discovery_and_evidence",
+        "timeline_and_stage",
+        "guideline_and_rate_context"
+      ],
+      "title": "Fact Category",
+      "type": "string"
+    },
+    "required_level": {
+      "enum": [
+        "critical",
+        "important",
+        "context"
+      ],
+      "title": "Required Level",
+      "type": "string"
+    },
+    "question": {
+      "title": "Question",
+      "type": "string"
+    },
+    "expected_gap_type": {
+      "enum": [
+        "missing_evidence",
+        "human_confirmation_required",
+        "uncertain_candidate"
+      ],
+      "title": "Expected Gap Type",
+      "type": "string"
+    },
+    "binding_state": {
+      "enum": [
+        "source_bound_gap_candidate",
+        "exception_bound_gap_candidate",
+        "source_and_exception_bound_gap_candidate",
+        "inventory_bound_gap_candidate",
+        "unbound_gap_candidate"
+      ],
+      "title": "Binding State",
+      "type": "string"
+    },
+    "recommended_budget_treatment": {
+      "enum": [
+        "block_amount_budget",
+        "hours_only_or_broad_range",
+        "candidate_range_budget_after_review"
+      ],
+      "title": "Recommended Budget Treatment",
+      "type": "string"
+    },
+    "budget_effects": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Budget Effects",
+      "type": "array"
+    },
+    "source_signal_terms": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Source Signal Terms",
+      "type": "array"
+    },
+    "matched_source_signal_terms": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Matched Source Signal Terms",
+      "type": "array"
+    },
+    "missing_source_signal_terms": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Missing Source Signal Terms",
+      "type": "array"
+    },
+    "expected_exception_labels": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Expected Exception Labels",
+      "type": "array"
+    },
+    "matched_exception_labels": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Matched Exception Labels",
+      "type": "array"
+    },
+    "missing_exception_labels": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Missing Exception Labels",
+      "type": "array"
+    },
+    "expected_source_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Expected Source Ids",
+      "type": "array"
+    },
+    "matched_source_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Matched Source Ids",
+      "type": "array"
+    },
+    "missing_source_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Missing Source Ids",
+      "type": "array"
+    },
+    "evidence_refs": {
+      "items": {
+        "$ref": "#/$defs/EvidenceRef"
+      },
+      "title": "Evidence Refs",
+      "type": "array"
+    },
+    "source_inventory_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Source Inventory Refs",
+      "type": "array"
+    },
+    "blocks_precise_budget": {
+      "title": "Blocks Precise Budget",
+      "type": "boolean"
+    },
+    "human_confirmation_required": {
+      "title": "Human Confirmation Required",
+      "type": "boolean"
+    },
+    "reason": {
+      "title": "Reason",
+      "type": "string"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "fact_id",
+    "fact_category",
+    "required_level",
+    "question",
+    "expected_gap_type",
+    "binding_state",
+    "recommended_budget_treatment",
+    "budget_effects",
+    "source_signal_terms",
+    "matched_source_signal_terms",
+    "missing_source_signal_terms",
+    "expected_exception_labels",
+    "matched_exception_labels",
+    "missing_exception_labels",
+    "expected_source_ids",
+    "matched_source_ids",
+    "missing_source_ids",
+    "blocks_precise_budget",
+    "human_confirmation_required",
+    "reason"
+  ],
+  "title": "LaborEmploymentExecutableBudgetFactBindingItem",
+  "type": "object"
+}

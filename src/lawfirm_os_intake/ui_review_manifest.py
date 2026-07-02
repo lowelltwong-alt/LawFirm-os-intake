@@ -137,6 +137,13 @@ ARTIFACT_SPECS = [
         "blocked",
     ),
     ArtifactSpec(
+        "labor-employment-executable-fact-binding",
+        "L&E Executable Fact Binding",
+        "labor_employment_executable_fact_binding_report.json",
+        "qa-reference",
+        "blocked",
+    ),
+    ArtifactSpec(
         "budget-human-review",
         "Budget Human Review",
         "budget_human_review_packet.json",
@@ -222,6 +229,13 @@ QUALITY_GATE_SPECS = {
         "labor_employment_executable_fixtures_report.json",
         "qa-reference",
         "Selected L&E source bundles must execute through deterministic preflight before fixture generation is trusted.",
+        "blocked",
+    ),
+    "labor_employment_executable_fact_binding": (
+        "L&E Executable Fact Binding",
+        "labor_employment_executable_fact_binding_report.json",
+        "qa-reference",
+        "Executable L&E preflight packets must bind expected budget-fact gaps to source evidence, source inventory, or dry-run exception labels.",
         "blocked",
     ),
     "full_pytest": (

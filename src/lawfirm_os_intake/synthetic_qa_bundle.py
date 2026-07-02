@@ -86,6 +86,16 @@ QA_BUNDLE_ARTIFACTS = [
             "source bundles prove they execute through deterministic preflight."
         ),
     ),
+    QABundleArtifactSpec(
+        artifact_id="labor_employment_executable_fact_binding",
+        label="Labor/Employment Executable Fact Binding",
+        file_name="labor_employment_executable_fact_binding_report.json",
+        required=True,
+        missing_note=(
+            "Run audit-labor-employment-executable-fact-binding so executable "
+            "preflight evidence is bound to expected L&E budget-fact gaps."
+        ),
+    ),
 ]
 
 
@@ -150,6 +160,11 @@ def run_synthetic_qa_bundle(
             root=root,
             explicit_path=None,
             file_name="labor_employment_executable_fixtures_report.json",
+        ),
+        "labor_employment_executable_fact_binding": _resolve_artifact_source(
+            root=root,
+            explicit_path=None,
+            file_name="labor_employment_executable_fact_binding_report.json",
         ),
     }
     artifacts = [

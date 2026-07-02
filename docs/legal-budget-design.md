@@ -40,6 +40,8 @@ Critical missing or review-only facts set `budget_readiness_state=blocked_missin
 
 The local `audit-labor-employment-executable-fixtures` command is a narrower preflight proof. It reads `labor-employment-executable-fixtures-manifest.json`, executes selected synthetic L&E source bundles through `run_preflight`, and emits `labor_employment_executable_fixtures_report.json` with packet refs, source counts, segment counts, hashes, missing/duplicate source counts, observed dry-run exception labels, and expected budget fact gaps. The command intentionally stops short of amount budgeting and marks `budget_fact_audit_required=true` for every case because preflight source mechanics are not enough to price L&E matters.
 
+The local `audit-labor-employment-executable-fact-binding` command reads `labor-employment-executable-budget-fact-bindings.json` plus the executable fixture report and emits `labor_employment_executable_fact_binding_report.json`. It checks that expected L&E budget-fact gaps from executable preflight cases are anchored to source-signal terms, source inventory refs, or dry-run exception labels. It is a bridge proof only: it does not replace `labor_employment_budget_fact_audit_report.json`, does not mark any fact resolved, and cannot satisfy the budget precondition by itself.
+
 When a human or harness supplies `labor_employment_budget_fact_audit_report.json`
 to `build-budget`, the budget precondition gate consumes it explicitly. Critical
 L&E gaps set `blocked_state=labor_employment_budget_facts_blocked` and stop

@@ -194,6 +194,17 @@
       "notes": ["Selected L&E source bundles execute through deterministic preflight before fixture generation is trusted."]
     },
     {
+      "artifactId": "labor-employment-executable-fact-binding",
+      "label": "L&E Executable Fact Binding",
+      "fileName": "labor_employment_executable_fact_binding_report.json",
+      "status": "pending_review",
+      "owner": "qa-reference",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": ["Executable preflight evidence is bound to expected L&E budget-fact gaps without resolving facts or producing an amount budget."]
+    },
+    {
       "artifactId": "budget-human-review",
       "label": "Budget Human Review",
       "fileName": "budget_human_review_packet.json",
@@ -305,6 +316,14 @@
       "evidenceFile": "labor_employment_executable_fixtures_report.json",
       "owner": "qa-reference",
       "notes": ["Selected L&E source bundles must execute through deterministic preflight before fixture generation is trusted."]
+    },
+    {
+      "gateId": "labor_employment_executable_fact_binding",
+      "label": "L&E Executable Fact Binding",
+      "status": "pending_review",
+      "evidenceFile": "labor_employment_executable_fact_binding_report.json",
+      "owner": "qa-reference",
+      "notes": ["Executable L&E preflight packets must bind expected budget-fact gaps to source evidence, source inventory, or dry-run exception labels."]
     },
     {
       "gateId": "full_pytest",

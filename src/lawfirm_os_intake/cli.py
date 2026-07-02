@@ -65,6 +65,9 @@ from .learning_shadow_eval_fixture_results import (
 )
 from .learning_shadow_eval_results import run_learning_shadow_eval_results
 from .labor_employment_budget_facts import run_labor_employment_budget_fact_audit
+from .labor_employment_executable_fact_binding import (
+    run_labor_employment_executable_fact_binding_audit,
+)
 from .labor_employment_executable_fixtures import (
     run_labor_employment_executable_fixture_audit,
 )
@@ -304,6 +307,37 @@ def _parser() -> argparse.ArgumentParser:
         help="Repository root for relative synthetic L&E executable fixture refs.",
     )
     le_executable_fixtures.add_argument("--out-dir", required=True)
+
+    le_executable_fact_binding = sub.add_parser(
+        "audit-labor-employment-executable-fact-binding",
+        help=(
+            "Bind executable synthetic L&E preflight evidence to candidate "
+            "budget-fact gaps without producing an amount budget."
+        ),
+    )
+    le_executable_fact_binding.add_argument(
+        "--binding-manifest",
+        default=(
+            "examples/synthetic/labor-employment/"
+            "labor-employment-executable-budget-fact-bindings.json"
+        ),
+        help="Path to labor-employment-executable-budget-fact-bindings.json.",
+    )
+    le_executable_fact_binding.add_argument(
+        "--executable-fixture-report",
+        required=True,
+        help="Path to labor_employment_executable_fixtures_report.json.",
+    )
+    le_executable_fact_binding.add_argument(
+        "--fact-policy",
+        help="Optional override path to config/labor-employment-budget-fact-needs.yaml.",
+    )
+    le_executable_fact_binding.add_argument(
+        "--repo-root",
+        default=".",
+        help="Repository root for relative synthetic L&E binding refs.",
+    )
+    le_executable_fact_binding.add_argument("--out-dir", required=True)
 
     budget_review = sub.add_parser(
         "record-budget-review",
@@ -1447,6 +1481,49 @@ def main(argv: list[str] | None = None) -> int:
             )
             return (
                 0 if report.status == "labor_employment_executable_fixtures_ready_for_review" else 2
+            )
+
+        if args.command == "audit-labor-employment-executable-fact-binding":
+            report, run_dir = run_labor_employment_executable_fact_binding_audit(
+                binding_manifest_path=args.binding_manifest,
+                executable_fixture_report_path=args.executable_fixture_report,
+                fact_policy_path=args.fact_policy,
+                repo_root=args.repo_root,
+                out_dir=args.out_dir,
+            )
+            failed_checks = [check.check_id for check in report.checks if check.status == "failed"]
+            _print(
+                {
+                    "status": report.status,
+                    "executable_budget_fact_binding_report_id": (
+                        report.executable_budget_fact_binding_report_id
+                    ),
+                    "binding_manifest_id": report.binding_manifest_id,
+                    "case_count": report.case_count,
+                    "failed_case_count": report.failed_case_count,
+                    "fact_binding_count": report.fact_binding_count,
+                    "critical_fact_binding_count": report.critical_fact_binding_count,
+                    "evidence_bound_fact_count": report.evidence_bound_fact_count,
+                    "exception_bound_fact_count": report.exception_bound_fact_count,
+                    "missing_policy_fact_count": report.missing_policy_fact_count,
+                    "missing_source_signal_count": report.missing_source_signal_count,
+                    "missing_exception_label_count": report.missing_exception_label_count,
+                    "missing_source_id_count": report.missing_source_id_count,
+                    "failed_checks": failed_checks,
+                    "budget_amount_output_authorized": (report.budget_amount_output_authorized),
+                    "budget_submission_authorized": report.budget_submission_authorized,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return (
+                0
+                if report.status
+                == "labor_employment_executable_budget_fact_bindings_ready_for_review"
+                else 2
             )
 
         if args.command == "record-budget-review":
