@@ -256,6 +256,8 @@ from lawfirm_os_intake.models import (  # noqa: E402
     SyntheticFixtureExpansionHoldoutSpec,
     SyntheticFixtureExpansionManifest,
     SyntheticFixtureExpansionReport,
+    SyntheticQABundleArtifact,
+    SyntheticQABundleReport,
 )
 
 MODELS = {
@@ -297,6 +299,8 @@ MODELS = {
     "synthetic-fixture-depth-dimension.schema.json": SyntheticFixtureDepthDimension,
     "synthetic-fixture-depth-family-summary.schema.json": SyntheticFixtureDepthFamilySummary,
     "synthetic-fixture-depth-audit-report.schema.json": SyntheticFixtureDepthAuditReport,
+    "synthetic-qa-bundle-artifact.schema.json": SyntheticQABundleArtifact,
+    "synthetic-qa-bundle-report.schema.json": SyntheticQABundleReport,
     "rust-ingestion-readiness-report.schema.json": RustIngestionReadinessReport,
     "rust-transition-policy.schema.json": RustTransitionPolicy,
     "segment.schema.json": Segment,

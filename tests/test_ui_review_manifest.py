@@ -31,6 +31,7 @@ def _write_quality_evidence(run_root):
     quality_dir.mkdir()
     for file_name in [
         "budget_coherence_report.json",
+        "synthetic_qa_bundle_report.json",
         "synthetic_fixture_depth_audit_report.json",
         "budget_calibration_readiness_report.json",
     ]:

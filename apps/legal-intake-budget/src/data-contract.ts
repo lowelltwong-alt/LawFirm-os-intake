@@ -10,6 +10,7 @@ export const REQUIRED_ARTIFACT_FILES = [
   "exception_lake_handoff_manifest.json",
   "run_ledger_integrity_report.json",
   "budget_coherence_report.json",
+  "synthetic_qa_bundle_report.json",
   "synthetic_fixture_depth_audit_report.json",
   "budget_calibration_readiness_report.json",
   "budget_human_review_packet.json",

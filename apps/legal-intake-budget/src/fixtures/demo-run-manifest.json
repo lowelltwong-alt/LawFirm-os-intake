@@ -117,6 +117,17 @@
       "notes": ["Serialized budget totals, headline scenario, estimate basis, and display boundary validated."]
     },
     {
+      "artifactId": "synthetic-qa-bundle",
+      "label": "Synthetic QA Bundle",
+      "fileName": "synthetic_qa_bundle_report.json",
+      "status": "pending_review",
+      "owner": "qa-reference",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": ["Local QA evidence is bundled for review; calibration remains blocked until replay and reviewed-gold evidence mature."]
+    },
+    {
       "artifactId": "fixture-depth",
       "label": "Synthetic Fixture Depth",
       "fileName": "synthetic_fixture_depth_audit_report.json",
@@ -202,6 +213,14 @@
       "evidenceFile": "budget_coherence_report.json",
       "owner": "qa-reference",
       "notes": ["Serialized artifact math and no-submission display banner are checked before demo acceptance."]
+    },
+    {
+      "gateId": "synthetic_qa_bundle",
+      "label": "Synthetic QA Bundle",
+      "status": "pending_review",
+      "evidenceFile": "synthetic_qa_bundle_report.json",
+      "owner": "qa-reference",
+      "notes": ["Budget coherence, fixture depth, calibration readiness, and UI evidence are bundled for QA review."]
     },
     {
       "gateId": "synthetic_fixture_depth",

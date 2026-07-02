@@ -84,6 +84,7 @@ from .remaining_roadmap import run_remaining_roadmap_plan
 from .reviewed_learning_gate import run_reviewed_learning_gate
 from .synthetic_fixture_depth_audit import run_synthetic_fixture_depth_audit
 from .synthetic_fixture_expansion import run_synthetic_fixture_expansion_audit
+from .synthetic_qa_bundle import run_synthetic_qa_bundle
 from .ui_review_manifest import build_ui_review_manifest
 from .util import load_json, write_json
 from .workflow import run_budget, run_preflight
@@ -170,6 +171,33 @@ def _parser() -> argparse.ArgumentParser:
     ui_review_manifest.add_argument("--run-root", required=True)
     ui_review_manifest.add_argument("--out", required=True)
     ui_review_manifest.add_argument(
+        "--generated-at",
+        help="Optional fixed timestamp for deterministic tests and replayed manifests.",
+    )
+
+    synthetic_qa_bundle = sub.add_parser(
+        "build-synthetic-qa-bundle",
+        help="Bundle local synthetic QA evidence and refresh the read-only review UI manifest.",
+    )
+    synthetic_qa_bundle.add_argument("--run-root", required=True)
+    synthetic_qa_bundle.add_argument("--out-dir", required=True)
+    synthetic_qa_bundle.add_argument("--budget-coherence-report")
+    synthetic_qa_bundle.add_argument("--fixture-depth-report")
+    synthetic_qa_bundle.add_argument(
+        "--fixture-depth-manifest",
+        help="Optional synthetic fixture expansion manifest; generates a depth audit into out-dir.",
+    )
+    synthetic_qa_bundle.add_argument(
+        "--repo-root",
+        default=".",
+        help="Repository root for fixture-depth generation when --fixture-depth-manifest is used.",
+    )
+    synthetic_qa_bundle.add_argument("--budget-calibration-readiness-report")
+    synthetic_qa_bundle.add_argument(
+        "--ui-manifest-out",
+        help="Optional ui_review_manifest.json path to refresh after bundling QA artifacts.",
+    )
+    synthetic_qa_bundle.add_argument(
         "--generated-at",
         help="Optional fixed timestamp for deterministic tests and replayed manifests.",
     )
@@ -1160,6 +1188,36 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 0 if manifest["overallStatus"] != "failed" else 1
+
+        if args.command == "build-synthetic-qa-bundle":
+            report, run_dir, ui_manifest = run_synthetic_qa_bundle(
+                run_root=args.run_root,
+                out_dir=args.out_dir,
+                budget_coherence_report_path=args.budget_coherence_report,
+                fixture_depth_report_path=args.fixture_depth_report,
+                fixture_depth_manifest_path=args.fixture_depth_manifest,
+                repo_root=args.repo_root,
+                budget_calibration_readiness_report_path=(args.budget_calibration_readiness_report),
+                ui_manifest_out=args.ui_manifest_out,
+                generated_at=args.generated_at,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "synthetic_qa_bundle_report_id": (report.synthetic_qa_bundle_report_id),
+                    "run_dir": str(run_dir),
+                    "artifact_count": report.artifact_count,
+                    "missing_required_artifact_count": (report.missing_required_artifact_count),
+                    "blocked_artifact_count": report.blocked_artifact_count,
+                    "pending_artifact_count": report.pending_artifact_count,
+                    "ui_manifest_ref": report.ui_manifest_ref,
+                    "ui_manifest_status": (ui_manifest["overallStatus"] if ui_manifest else None),
+                    "external_writes_performed": False,
+                    "lake_write_performed": False,
+                    "sqlite_write_performed": False,
+                }
+            )
+            return 0 if report.status in {"passed", "pending_review"} else 2
 
         if args.command == "record-budget-review":
             report, run_dir = run_budget_review_record(

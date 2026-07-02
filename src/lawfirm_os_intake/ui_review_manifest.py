@@ -88,6 +88,13 @@ ARTIFACT_SPECS = [
         "blocked",
     ),
     ArtifactSpec(
+        "synthetic-qa-bundle",
+        "Synthetic QA Bundle",
+        "synthetic_qa_bundle_report.json",
+        "qa-reference",
+        "blocked",
+    ),
+    ArtifactSpec(
         "fixture-depth",
         "Synthetic Fixture Depth",
         "synthetic_fixture_depth_audit_report.json",
@@ -145,6 +152,13 @@ QUALITY_GATE_SPECS = {
         "budget_coherence_report.json",
         "qa-reference",
         "Serialized artifact math and no-submission display boundary are checked before demo acceptance.",
+        "blocked",
+    ),
+    "synthetic_qa_bundle": (
+        "Synthetic QA Bundle",
+        "synthetic_qa_bundle_report.json",
+        "qa-reference",
+        "Budget coherence, fixture depth, calibration readiness, and UI evidence are bundled for QA review.",
         "blocked",
     ),
     "synthetic_fixture_depth": (

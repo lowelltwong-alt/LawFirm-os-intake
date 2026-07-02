@@ -7443,6 +7443,116 @@ class SyntheticFixtureDepthAuditReport(StrictModel):
         return self
 
 
+SyntheticQABundleArtifactStatus = Literal[
+    "passed",
+    "pending_review",
+    "blocked",
+    "failed",
+    "missing",
+]
+
+
+class SyntheticQABundleArtifact(StrictModel):
+    artifact_id: str
+    label: str
+    file_name: str
+    required: bool
+    present: bool
+    status: SyntheticQABundleArtifactStatus
+    gate_state: SyntheticQABundleArtifactStatus
+    artifact_ref: str | None = None
+    copied_to_ref: str | None = None
+    source_sha256: str | None = None
+    notes: list[str] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def synthetic_qa_bundle_artifact_status_matches_presence(
+        self,
+    ) -> "SyntheticQABundleArtifact":
+        if self.present and not self.artifact_ref:
+            raise ValueError("present synthetic QA artifact requires artifact_ref")
+        if self.present and not self.source_sha256:
+            raise ValueError("present synthetic QA artifact requires source_sha256")
+        if not self.present and self.status != "missing":
+            raise ValueError("missing synthetic QA artifact must have missing status")
+        if not self.present and self.gate_state != "missing":
+            raise ValueError("missing synthetic QA artifact must have missing gate state")
+        if self.copied_to_ref and not self.present:
+            raise ValueError("missing synthetic QA artifact cannot have copied_to_ref")
+        return self
+
+
+class SyntheticQABundleReport(StrictModel):
+    schema_version: str = "0.1"
+    synthetic_qa_bundle_report_id: str
+    status: Literal["passed", "pending_review", "blocked", "failed"]
+    run_root_ref: str
+    out_dir_ref: str
+    artifact_count: int = Field(ge=0)
+    required_artifact_count: int = Field(ge=0)
+    missing_required_artifact_count: int = Field(ge=0)
+    blocked_artifact_count: int = Field(ge=0)
+    pending_artifact_count: int = Field(ge=0)
+    failed_artifact_count: int = Field(ge=0)
+    artifacts: list[SyntheticQABundleArtifact]
+    ui_manifest_ref: str | None = None
+    required_next_actions: list[str]
+    candidate_only: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    not_authorized_for_matter_opening: Literal[True] = True
+    fixture_files_mutated: Literal[False] = False
+    calibration_applied: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    budget_submission_performed: Literal[False] = False
+    matter_opening_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def synthetic_qa_bundle_counts_and_status_match(self) -> "SyntheticQABundleReport":
+        if self.artifact_count != len(self.artifacts):
+            raise ValueError("synthetic QA bundle artifact count does not match")
+        required = [artifact for artifact in self.artifacts if artifact.required]
+        missing_required = [
+            artifact
+            for artifact in required
+            if not artifact.present or artifact.status == "missing"
+        ]
+        blocked = [artifact for artifact in self.artifacts if artifact.status == "blocked"]
+        pending = [artifact for artifact in self.artifacts if artifact.status == "pending_review"]
+        failed = [artifact for artifact in self.artifacts if artifact.status == "failed"]
+        if self.required_artifact_count != len(required):
+            raise ValueError("synthetic QA bundle required artifact count does not match")
+        if self.missing_required_artifact_count != len(missing_required):
+            raise ValueError("synthetic QA bundle missing required artifact count does not match")
+        if self.blocked_artifact_count != len(blocked):
+            raise ValueError("synthetic QA bundle blocked artifact count does not match")
+        if self.pending_artifact_count != len(pending):
+            raise ValueError("synthetic QA bundle pending artifact count does not match")
+        if self.failed_artifact_count != len(failed):
+            raise ValueError("synthetic QA bundle failed artifact count does not match")
+        if self.status == "passed" and (missing_required or blocked or pending or failed):
+            raise ValueError("passed synthetic QA bundle cannot include blockers or pending review")
+        if self.status == "failed" and not failed:
+            raise ValueError("failed synthetic QA bundle requires failed artifacts")
+        if self.status == "blocked" and not (missing_required or blocked):
+            raise ValueError("blocked synthetic QA bundle requires missing or blocked artifacts")
+        if self.status == "pending_review" and (
+            missing_required or blocked or failed or not pending
+        ):
+            raise ValueError("pending synthetic QA bundle requires only pending review artifacts")
+        if not self.required_next_actions:
+            raise ValueError("synthetic QA bundle requires next actions")
+        return self
+
+
 class CarrierRejectionOrchestratorConnectorChannel(StrictModel):
     channel_id: Literal[
         "carrier_portal_notice",

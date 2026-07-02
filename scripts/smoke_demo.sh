@@ -255,15 +255,28 @@ from pathlib import Path
 import sys
 
 sys.path.insert(0, str(Path.cwd() / "src"))
-from lawfirm_os_intake.ui_review_manifest import build_ui_review_manifest
+from lawfirm_os_intake.synthetic_qa_bundle import run_synthetic_qa_bundle
 
-manifest = build_ui_review_manifest(
+report, _, manifest = run_synthetic_qa_bundle(
     run_root=".lawfirm-os-intake/smoke",
-    out_path=".lawfirm-os-intake/smoke/ui_review_manifest.json",
+    out_dir=".lawfirm-os-intake/smoke/quality",
+    fixture_depth_manifest_path=(
+        "examples/synthetic/fixture-expansion/remaining-roadmap-holdouts.json"
+    ),
+    repo_root=".",
+    ui_manifest_out=".lawfirm-os-intake/smoke/ui_review_manifest.json",
 )
-raise SystemExit(0 if manifest["overallStatus"] in {"blocked", "pending", "passed"} else 1)
+if report.status not in {"blocked", "pending_review", "passed"}:
+    raise SystemExit(1)
+if manifest is None or manifest["overallStatus"] not in {"blocked", "pending", "passed"}:
+    raise SystemExit(1)
 PY
+test -s ".lawfirm-os-intake/smoke/quality/synthetic_qa_bundle_report.json"
+grep -q '"status": "blocked"' ".lawfirm-os-intake/smoke/quality/synthetic_qa_bundle_report.json"
+grep -q '"synthetic_fixture_depth"' ".lawfirm-os-intake/smoke/quality/synthetic_qa_bundle_report.json"
+grep -q '"budget_calibration_readiness"' ".lawfirm-os-intake/smoke/quality/synthetic_qa_bundle_report.json"
 test -s ".lawfirm-os-intake/smoke/ui_review_manifest.json"
+grep -q '"synthetic_qa_bundle"' ".lawfirm-os-intake/smoke/ui_review_manifest.json"
 grep -q '"budget_coherence"' ".lawfirm-os-intake/smoke/ui_review_manifest.json"
 grep -q '"budget_calibration_readiness"' ".lawfirm-os-intake/smoke/ui_review_manifest.json"
 grep -q '"networkCallsAllowed": false' ".lawfirm-os-intake/smoke/ui_review_manifest.json"

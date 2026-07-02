@@ -50,6 +50,24 @@ remains visible as blocked or pending review. The command does not run a server,
 call connectors, mutate fixtures, write Lake/SQLite records, submit budgets, or
 open matters.
 
+### Build synthetic QA bundle
+
+```bash
+python -m lawfirm_os_intake build-synthetic-qa-bundle \
+  --run-root .lawfirm-os-intake/smoke \
+  --out-dir .lawfirm-os-intake/smoke/quality \
+  --fixture-depth-manifest examples/synthetic/fixture-expansion/remaining-roadmap-holdouts.json \
+  --repo-root . \
+  --ui-manifest-out .lawfirm-os-intake/smoke/ui_review_manifest.json
+```
+
+This writes `synthetic_qa_bundle_report.json` plus Markdown notes under the run
+quality directory, copies or generates the fixture-depth report when requested,
+and refreshes the read-only UI manifest. A blocked bundle is valid QA evidence
+when calibration readiness is missing or blocked; it is not authorization to
+mutate fixtures, apply calibration, write Lake/SQLite records, submit budgets,
+open matters, or create external writes.
+
 ### Validation runtime policy
 
 ```bash

@@ -100,6 +100,15 @@ command writes only the manifest JSON. The north-star smoke also writes
 `.lawfirm-os-intake/smoke/ui_review_manifest.json` after the starter,
 blocked-budget, and counterfactual audits complete.
 
+Use `python -m lawfirm_os_intake build-synthetic-qa-bundle --run-root PATH
+--out-dir PATH/quality --ui-manifest-out PATH/ui_review_manifest.json` to gather
+budget coherence, synthetic fixture depth, and budget calibration readiness
+evidence into `synthetic_qa_bundle_report.json` before refreshing the UI
+manifest. The bundle may be honestly `blocked` when calibration evidence has
+not been generated yet; it still writes local candidate-only review evidence and
+does not mutate fixtures, write Lake/SQLite records, submit budgets, open
+matters, or apply learning.
+
 The demo emits:
 
 ```text

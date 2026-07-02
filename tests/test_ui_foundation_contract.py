@@ -44,6 +44,7 @@ def test_legal_intake_budget_ui_data_contract_lists_required_artifacts(repo_root
         "exception_lake_handoff_manifest.json",
         "run_ledger_integrity_report.json",
         "budget_coherence_report.json",
+        "synthetic_qa_bundle_report.json",
         "synthetic_fixture_depth_audit_report.json",
         "budget_calibration_readiness_report.json",
         "budget_human_review_packet.json",
@@ -83,6 +84,7 @@ def test_legal_intake_budget_demo_manifest_is_read_only_and_candidate_only(repo_
     assert manifest["qualityGates"]
     assert {
         "budget_coherence",
+        "synthetic_qa_bundle",
         "synthetic_fixture_depth",
         "budget_calibration_readiness",
         "full_pytest",
