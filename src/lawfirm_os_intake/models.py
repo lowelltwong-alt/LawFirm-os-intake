@@ -10474,6 +10474,7 @@ SyntheticQABlockerRowSource = Literal[
     "top_blocker",
 ]
 SyntheticQABlockerRowState = Literal["failed", "blocked", "pending_review"]
+SyntheticQABlockerActionState = Literal["blocked", "needs_review", "fixed", "ready"]
 
 
 class SyntheticQABlockerRow(StrictModel):
@@ -10481,8 +10482,11 @@ class SyntheticQABlockerRow(StrictModel):
     source: SyntheticQABlockerRowSource
     label: str
     state: SyntheticQABlockerRowState
+    action_state: SyntheticQABlockerActionState
     owner: str
     evidence_refs: list[str]
+    recommended_next_action: str
+    candidate_exception_lake_labels: list[str]
     notes: list[str]
 
     @model_validator(mode="after")
@@ -10495,8 +10499,18 @@ class SyntheticQABlockerRow(StrictModel):
             raise ValueError("synthetic QA blocker row requires owner")
         if not self.evidence_refs or any(not ref.strip() for ref in self.evidence_refs):
             raise ValueError("synthetic QA blocker row requires evidence refs")
+        if not self.recommended_next_action.strip():
+            raise ValueError("synthetic QA blocker row requires recommended next action")
+        if not self.candidate_exception_lake_labels or any(
+            not label.strip() for label in self.candidate_exception_lake_labels
+        ):
+            raise ValueError("synthetic QA blocker row requires candidate exception labels")
         if not self.notes or any(not note.strip() for note in self.notes):
             raise ValueError("synthetic QA blocker row requires notes")
+        if self.state in {"failed", "blocked"} and self.action_state != "blocked":
+            raise ValueError("failed or blocked synthetic QA blocker row must block action")
+        if self.state == "pending_review" and self.action_state != "needs_review":
+            raise ValueError("pending synthetic QA blocker row must require review")
         return self
 
 
@@ -10521,6 +10535,11 @@ class SyntheticQABlockerReport(StrictModel):
     failed_row_count: int = Field(ge=0)
     blocked_row_count: int = Field(ge=0)
     pending_review_row_count: int = Field(ge=0)
+    blocked_action_count: int = Field(ge=0)
+    needs_review_action_count: int = Field(ge=0)
+    fixed_action_count: int = Field(ge=0)
+    ready_action_count: int = Field(ge=0)
+    review_queue_state: Literal["blocked", "needs_review", "ready"]
     rows: list[SyntheticQABlockerRow]
     required_next_actions: list[str]
     candidate_only: Literal[True] = True
@@ -10552,6 +10571,10 @@ class SyntheticQABlockerReport(StrictModel):
         failed = [row for row in self.rows if row.state == "failed"]
         blocked = [row for row in self.rows if row.state == "blocked"]
         pending = [row for row in self.rows if row.state == "pending_review"]
+        blocked_actions = [row for row in self.rows if row.action_state == "blocked"]
+        needs_review_actions = [row for row in self.rows if row.action_state == "needs_review"]
+        fixed_actions = [row for row in self.rows if row.action_state == "fixed"]
+        ready_actions = [row for row in self.rows if row.action_state == "ready"]
         if self.row_count != len(self.rows):
             raise ValueError("synthetic QA blocker row count mismatch")
         if self.failed_row_count != len(failed):
@@ -10560,6 +10583,19 @@ class SyntheticQABlockerReport(StrictModel):
             raise ValueError("synthetic QA blocker blocked row count mismatch")
         if self.pending_review_row_count != len(pending):
             raise ValueError("synthetic QA blocker pending row count mismatch")
+        if self.blocked_action_count != len(blocked_actions):
+            raise ValueError("synthetic QA blocker blocked action count mismatch")
+        if self.needs_review_action_count != len(needs_review_actions):
+            raise ValueError("synthetic QA blocker needs-review action count mismatch")
+        if self.fixed_action_count != len(fixed_actions):
+            raise ValueError("synthetic QA blocker fixed action count mismatch")
+        if self.ready_action_count != len(ready_actions):
+            raise ValueError("synthetic QA blocker ready action count mismatch")
+        expected_queue_state = (
+            "blocked" if blocked_actions else "needs_review" if needs_review_actions else "ready"
+        )
+        if self.review_queue_state != expected_queue_state:
+            raise ValueError("synthetic QA blocker review queue state mismatch")
         if self.status == "synthetic_qa_blocker_report_ready_for_review" and (failed or blocked):
             raise ValueError("ready synthetic QA blocker report cannot contain failed blockers")
         if self.status == "blocked_by_synthetic_qa_blocker_report" and not (failed or blocked):

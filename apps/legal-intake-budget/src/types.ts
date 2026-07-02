@@ -291,6 +291,8 @@ export type SyntheticConfidenceSummaryReport = {
 
 export type SyntheticQABlockerRowState = "failed" | "blocked" | "pending_review";
 
+export type SyntheticQABlockerActionState = "blocked" | "needs_review" | "fixed" | "ready";
+
 export type SyntheticQABlockerRowSource =
   | "quality_gate"
   | "qa_step"
@@ -302,8 +304,11 @@ export type SyntheticQABlockerRow = {
   source: SyntheticQABlockerRowSource;
   label: string;
   state: SyntheticQABlockerRowState;
+  action_state: SyntheticQABlockerActionState;
   owner: string;
   evidence_refs: string[];
+  recommended_next_action: string;
+  candidate_exception_lake_labels: string[];
   notes: string[];
 };
 
@@ -327,6 +332,11 @@ export type SyntheticQABlockerReport = {
   failed_row_count: number;
   blocked_row_count: number;
   pending_review_row_count: number;
+  blocked_action_count: number;
+  needs_review_action_count: number;
+  fixed_action_count: number;
+  ready_action_count: number;
+  review_queue_state: "blocked" | "needs_review" | "ready";
   rows: SyntheticQABlockerRow[];
   required_next_actions: string[];
   candidate_only: boolean;

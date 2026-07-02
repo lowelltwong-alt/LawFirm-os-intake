@@ -337,6 +337,11 @@ def test_legal_intake_budget_demo_synthetic_qa_blocker_report_is_no_write(repo_r
     assert report["failed_row_count"] == 0
     assert report["blocked_row_count"] == 0
     assert report["pending_review_row_count"] == 19
+    assert report["blocked_action_count"] == 0
+    assert report["needs_review_action_count"] == 19
+    assert report["fixed_action_count"] == 0
+    assert report["ready_action_count"] == 0
+    assert report["review_queue_state"] == "needs_review"
     assert report["candidate_only"] is True
     assert report["synthetic_only"] is True
     assert report["non_authoritative"] is True
@@ -350,6 +355,9 @@ def test_legal_intake_budget_demo_synthetic_qa_blocker_report_is_no_write(repo_r
     assert report["silent_learning_performed"] is False
     assert {row["source"] for row in report["rows"]} == {"quality_gate", "readiness_item"}
     assert all(row["evidence_refs"] for row in report["rows"])
+    assert all(row["action_state"] == "needs_review" for row in report["rows"])
+    assert all(row["recommended_next_action"] for row in report["rows"])
+    assert all(row["candidate_exception_lake_labels"] for row in report["rows"])
     assert all(row["notes"] for row in report["rows"])
 
 
@@ -448,10 +456,16 @@ def test_legal_intake_budget_qa_blocker_drilldown_tracks_review_queue(repo_root)
     assert "SyntheticQABlockerDrilldownPanel report={syntheticQABlockerReport}" in app
     assert "report.rows.map" in app
     assert "report.required_next_actions.map" in app
+    assert "report.review_queue_state" in app
+    assert "row.recommended_next_action" in app
+    assert "row.candidate_exception_lake_labels" in app
+    assert "qaActionClass" in app
     assert "No failed or blocked synthetic QA rows" in app
     assert "review, not calibration, submission, or" in app
     assert "Lake write" in app
     assert blocker_report["pending_review_row_count"] > 0
+    assert blocker_report["needs_review_action_count"] == blocker_report["pending_review_row_count"]
+    assert blocker_report["review_queue_state"] == "needs_review"
     assert blocker_report["failed_row_count"] == 0
     assert blocker_report["blocked_row_count"] == 0
     assert blocker_report["budget_submission_authorized"] is False

@@ -38,6 +38,7 @@ import type {
   QualityGateStatus,
   ReviewArtifact,
   ReviewManifest,
+  SyntheticQABlockerActionState,
   SyntheticQABlockerReport,
   SyntheticQABlockerRowState,
   SyntheticConfidenceSummaryReport,
@@ -103,6 +104,16 @@ function readinessClass(state: LaborEmploymentBudgetReadinessState) {
     return "state state-blocked";
   }
   if (state === "range_only_pending_human_review") {
+    return "state state-pending";
+  }
+  return "state state-passed";
+}
+
+function qaActionClass(actionState: SyntheticQABlockerActionState) {
+  if (actionState === "blocked") {
+    return "state state-blocked";
+  }
+  if (actionState === "needs_review") {
     return "state state-pending";
   }
   return "state state-passed";
@@ -294,17 +305,17 @@ function SyntheticQABlockerDrilldownPanel({ report }: { report: SyntheticQABlock
   const blockedCount = report.blocked_row_count;
   const pendingCount = report.pending_review_row_count;
   const queueStateClass =
-    failedCount + blockedCount > 0
+    report.review_queue_state === "blocked"
       ? "state state-blocked"
-      : pendingCount > 0
+      : report.review_queue_state === "needs_review"
         ? "state state-pending"
         : "state state-passed";
   const queueStateLabel =
-    failedCount + blockedCount > 0
-      ? `${failedCount + blockedCount} blocked`
-      : pendingCount > 0
-        ? `${pendingCount} pending`
-        : "no active blockers";
+    report.review_queue_state === "blocked"
+      ? `${report.blocked_action_count} repair required`
+      : report.review_queue_state === "needs_review"
+        ? `${report.needs_review_action_count} need review`
+        : "review queue ready";
 
   return (
     <section className="panel qa-blocker-panel" aria-labelledby="qa-blocker-title">
@@ -331,6 +342,18 @@ function SyntheticQABlockerDrilldownPanel({ report }: { report: SyntheticQABlock
           <strong>{pendingCount}</strong>
         </div>
         <div>
+          <span>Repair Required</span>
+          <strong>{report.blocked_action_count}</strong>
+        </div>
+        <div>
+          <span>Needs Review</span>
+          <strong>{report.needs_review_action_count}</strong>
+        </div>
+        <div>
+          <span>Fixed / Ready</span>
+          <strong>{report.fixed_action_count + report.ready_action_count}</strong>
+        </div>
+        <div>
           <span>Next Actions</span>
           <strong>{report.required_next_actions.length}</strong>
         </div>
@@ -351,6 +374,7 @@ function SyntheticQABlockerDrilldownPanel({ report }: { report: SyntheticQABlock
               <tr>
                 <th>Source</th>
                 <th>State</th>
+                <th>Action</th>
                 <th>Owner</th>
                 <th>Evidence</th>
                 <th>Notes</th>
@@ -365,6 +389,11 @@ function SyntheticQABlockerDrilldownPanel({ report }: { report: SyntheticQABlock
                   </td>
                   <td>
                     <span className={gateClass(row.state)}>{row.state}</span>
+                  </td>
+                  <td>
+                    <span className={qaActionClass(row.action_state)}>{row.action_state}</span>
+                    <p>{row.recommended_next_action}</p>
+                    <TokenList items={row.candidate_exception_lake_labels} limit={3} />
                   </td>
                   <td>{row.owner}</td>
                   <td>

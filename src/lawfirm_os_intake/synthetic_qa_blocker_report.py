@@ -38,6 +38,10 @@ def run_synthetic_qa_blocker_report(
     failed_count = sum(1 for row in rows if row.state == "failed")
     blocked_count = sum(1 for row in rows if row.state == "blocked")
     pending_count = sum(1 for row in rows if row.state == "pending_review")
+    blocked_action_count = sum(1 for row in rows if row.action_state == "blocked")
+    needs_review_action_count = sum(1 for row in rows if row.action_state == "needs_review")
+    fixed_action_count = sum(1 for row in rows if row.action_state == "fixed")
+    ready_action_count = sum(1 for row in rows if row.action_state == "ready")
     status = _status(
         failed_count=failed_count,
         blocked_count=blocked_count,
@@ -76,6 +80,14 @@ def run_synthetic_qa_blocker_report(
         failed_row_count=failed_count,
         blocked_row_count=blocked_count,
         pending_review_row_count=pending_count,
+        blocked_action_count=blocked_action_count,
+        needs_review_action_count=needs_review_action_count,
+        fixed_action_count=fixed_action_count,
+        ready_action_count=ready_action_count,
+        review_queue_state=_review_queue_state(
+            blocked_action_count=blocked_action_count,
+            needs_review_action_count=needs_review_action_count,
+        ),
         rows=rows,
         required_next_actions=_required_next_actions(
             status=status,
@@ -106,8 +118,19 @@ def _build_rows(
                 source="quality_gate",
                 label=str(gate.get("label") or gate_id),
                 state=_gate_state(status),
+                action_state=_action_state(_gate_state(status)),
                 owner=str(gate.get("owner") or "qa-reference"),
                 evidence_refs=[str(gate.get("evidenceFile") or "missing evidence file")],
+                recommended_next_action=_recommended_next_action(
+                    source="quality_gate",
+                    label=str(gate.get("label") or gate_id),
+                    state=_gate_state(status),
+                ),
+                candidate_exception_lake_labels=_candidate_exception_labels(
+                    source="quality_gate",
+                    source_id=gate_id,
+                    state=_gate_state(status),
+                ),
                 notes=_notes(gate.get("notes")),
             )
         )
@@ -123,8 +146,19 @@ def _build_rows(
                 source="qa_step",
                 label=str(step.get("label") or step_id),
                 state="failed",
+                action_state="blocked",
                 owner="synthetic_qa_review_run",
                 evidence_refs=[str(step.get("artifact_ref") or "missing artifact ref")],
+                recommended_next_action=_recommended_next_action(
+                    source="qa_step",
+                    label=str(step.get("label") or step_id),
+                    state="failed",
+                ),
+                candidate_exception_lake_labels=_candidate_exception_labels(
+                    source="qa_step",
+                    source_id=step_id,
+                    state="failed",
+                ),
                 notes=_dedupe(
                     [
                         str(step.get("observed_status") or "missing observed status"),
@@ -145,8 +179,19 @@ def _build_rows(
                 source="readiness_item",
                 label=str(item.get("label") or item_id),
                 state=_readiness_state(state),
+                action_state=_action_state(_readiness_state(state)),
                 owner=str(item.get("owner") or "qa-reference"),
                 evidence_refs=_refs(item.get("evidence_refs")),
+                recommended_next_action=_recommended_next_action(
+                    source="readiness_item",
+                    label=str(item.get("label") or item_id),
+                    state=_readiness_state(state),
+                ),
+                candidate_exception_lake_labels=_candidate_exception_labels(
+                    source="readiness_item",
+                    source_id=item_id,
+                    state=_readiness_state(state),
+                ),
                 notes=_notes(item.get("notes")),
             )
         )
@@ -158,10 +203,21 @@ def _build_rows(
                 source="top_blocker",
                 label=blocker,
                 state="blocked",
+                action_state="blocked",
                 owner="synthetic_confidence_summary",
                 evidence_refs=[
                     str(confidence.get("synthetic_confidence_summary_report_id") or "missing")
                 ],
+                recommended_next_action=_recommended_next_action(
+                    source="top_blocker",
+                    label=blocker,
+                    state="blocked",
+                ),
+                candidate_exception_lake_labels=_candidate_exception_labels(
+                    source="top_blocker",
+                    source_id=f"top_blocker_{index}",
+                    state="blocked",
+                ),
                 notes=["Reported as a top blocker in the synthetic confidence summary."],
             )
         )
@@ -196,7 +252,7 @@ def _required_next_actions(
         ]
     failed_or_blocked = [row for row in rows if row.state in {"failed", "blocked"}]
     if failed_or_blocked:
-        return [f"Resolve {row.source}: {row.label}" for row in failed_or_blocked]
+        return [row.recommended_next_action for row in failed_or_blocked]
     actions = _text_list(confidence.get("required_next_actions"))
     if actions:
         return actions
@@ -220,6 +276,58 @@ def _readiness_state(state: str) -> str:
     if state == "blocked":
         return "blocked"
     return "pending_review"
+
+
+def _action_state(state: str) -> str:
+    if state in {"failed", "blocked"}:
+        return "blocked"
+    return "needs_review"
+
+
+def _review_queue_state(
+    *,
+    blocked_action_count: int,
+    needs_review_action_count: int,
+) -> str:
+    if blocked_action_count:
+        return "blocked"
+    if needs_review_action_count:
+        return "needs_review"
+    return "ready"
+
+
+def _recommended_next_action(*, source: str, label: str, state: str) -> str:
+    if source == "qa_step":
+        return f"Repair failed synthetic QA step: {label}."
+    if source == "top_blocker":
+        return f"Resolve top synthetic confidence blocker: {label}."
+    if state in {"failed", "blocked"}:
+        return f"Resolve {source.replace('_', ' ')} blocker: {label}."
+    return f"Review {source.replace('_', ' ')} evidence and record an outcome: {label}."
+
+
+def _candidate_exception_labels(*, source: str, source_id: str, state: str) -> list[str]:
+    source_slug = _label_slug(source)
+    source_id_slug = _label_slug(source_id)
+    state_slug = _label_slug(state)
+    labels = [
+        "synthetic_qa_blocker_queue_candidate",
+        f"{source_slug}_{state_slug}_candidate",
+    ]
+    if source_id_slug:
+        labels.append(f"{source_slug}_{source_id_slug}_candidate")
+    if state in {"failed", "blocked"}:
+        labels.append("synthetic_qa_blocker_requires_repair")
+    else:
+        labels.append("synthetic_qa_blocker_requires_review")
+    return _dedupe(labels)
+
+
+def _label_slug(value: str) -> str:
+    slug = "".join(char.lower() if char.isalnum() else "_" for char in value).strip("_")
+    while "__" in slug:
+        slug = slug.replace("__", "_")
+    return slug
 
 
 def _refs(value: object) -> list[str]:

@@ -134,8 +134,16 @@ def test_synthetic_qa_blocker_report_ready_pending_queue(tmp_path):
     assert report.failed_row_count == 0
     assert report.blocked_row_count == 0
     assert report.pending_review_row_count == 2
+    assert report.blocked_action_count == 0
+    assert report.needs_review_action_count == 2
+    assert report.fixed_action_count == 0
+    assert report.ready_action_count == 0
+    assert report.review_queue_state == "needs_review"
     assert {row.source for row in report.rows} == {"quality_gate", "readiness_item"}
     assert all(row.state == "pending_review" for row in report.rows)
+    assert all(row.action_state == "needs_review" for row in report.rows)
+    assert all(row.recommended_next_action for row in report.rows)
+    assert all(row.candidate_exception_lake_labels for row in report.rows)
     assert report.budget_submission_authorized is False
     assert report.lake_write_performed is False
     assert report.sqlite_write_performed is False
@@ -156,8 +164,12 @@ def test_synthetic_qa_blocker_report_blocks_failed_evidence(tmp_path):
     assert report.status == "blocked_by_synthetic_qa_blocker_report"
     assert report.failed_row_count == 1
     assert report.blocked_row_count == 3
+    assert report.blocked_action_count == 4
+    assert report.needs_review_action_count == 0
+    assert report.review_queue_state == "blocked"
     assert any(row.source == "qa_step" and row.state == "failed" for row in report.rows)
     assert any(row.source == "top_blocker" for row in report.rows)
+    assert all(row.action_state == "blocked" for row in report.rows)
     assert report.required_next_actions[0].startswith("Resolve")
 
 
@@ -198,6 +210,7 @@ def test_synthetic_qa_blocker_report_cli(tmp_path, capsys):
     assert code == 0
     assert '"status": "synthetic_qa_blocker_report_ready_for_review"' in captured.out
     assert '"pending_review_row_count": 2' in captured.out
+    assert '"review_queue_state": "needs_review"' in captured.out
     assert '"budget_submission_authorized": false' in captured.out
     assert '"lake_write_performed": false' in captured.out
     assert (tmp_path / "blockers" / SYNTHETIC_QA_BLOCKER_REPORT_FILENAME).is_file()

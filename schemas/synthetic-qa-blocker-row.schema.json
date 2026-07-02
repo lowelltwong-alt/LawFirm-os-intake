@@ -28,6 +28,16 @@
       "title": "State",
       "type": "string"
     },
+    "action_state": {
+      "enum": [
+        "blocked",
+        "needs_review",
+        "fixed",
+        "ready"
+      ],
+      "title": "Action State",
+      "type": "string"
+    },
     "owner": {
       "title": "Owner",
       "type": "string"
@@ -37,6 +47,17 @@
         "type": "string"
       },
       "title": "Evidence Refs",
+      "type": "array"
+    },
+    "recommended_next_action": {
+      "title": "Recommended Next Action",
+      "type": "string"
+    },
+    "candidate_exception_lake_labels": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Candidate Exception Lake Labels",
       "type": "array"
     },
     "notes": {
@@ -52,8 +73,11 @@
     "source",
     "label",
     "state",
+    "action_state",
     "owner",
     "evidence_refs",
+    "recommended_next_action",
+    "candidate_exception_lake_labels",
     "notes"
   ],
   "title": "SyntheticQABlockerRow",

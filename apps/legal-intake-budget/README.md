@@ -45,7 +45,10 @@ blocked-driver review, reviewed gold, the synthetic QA bundle, the UI manifest,
 `synthetic_qa_blocker_report.json`, and `ui_review_data_bundle.json`. The demo UI
 renders the confidence summary as the top-level synthetic QA posture panel, the
 blocker report as the review queue, and the review-run report as the recipe
-panel when they are present.
+panel when they are present. The blocker report is the authority for row-level
+`action_state`, `recommended_next_action`, candidate Lake labels, and queue
+counts; the frontend must display those fields rather than re-deriving review
+outcomes.
 
 Regenerate only the synthetic QA bundle and UI wrappers with:
 

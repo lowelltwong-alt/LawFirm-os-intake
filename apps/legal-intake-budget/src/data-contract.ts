@@ -337,6 +337,10 @@ export function assertSyntheticQABlockerReport(report: SyntheticQABlockerReport)
   const failedRows = report.rows.filter((row) => row.state === "failed");
   const blockedRows = report.rows.filter((row) => row.state === "blocked");
   const pendingRows = report.rows.filter((row) => row.state === "pending_review");
+  const blockedActions = report.rows.filter((row) => row.action_state === "blocked");
+  const needsReviewActions = report.rows.filter((row) => row.action_state === "needs_review");
+  const fixedActions = report.rows.filter((row) => row.action_state === "fixed");
+  const readyActions = report.rows.filter((row) => row.action_state === "ready");
   if (report.failed_row_count !== failedRows.length) {
     failures.push("synthetic_qa_blocker_report_failed_count_mismatch");
   }
@@ -345,6 +349,23 @@ export function assertSyntheticQABlockerReport(report: SyntheticQABlockerReport)
   }
   if (report.pending_review_row_count !== pendingRows.length) {
     failures.push("synthetic_qa_blocker_report_pending_count_mismatch");
+  }
+  if (report.blocked_action_count !== blockedActions.length) {
+    failures.push("synthetic_qa_blocker_report_blocked_action_count_mismatch");
+  }
+  if (report.needs_review_action_count !== needsReviewActions.length) {
+    failures.push("synthetic_qa_blocker_report_needs_review_action_count_mismatch");
+  }
+  if (report.fixed_action_count !== fixedActions.length) {
+    failures.push("synthetic_qa_blocker_report_fixed_action_count_mismatch");
+  }
+  if (report.ready_action_count !== readyActions.length) {
+    failures.push("synthetic_qa_blocker_report_ready_action_count_mismatch");
+  }
+  const expectedQueueState =
+    blockedActions.length > 0 ? "blocked" : needsReviewActions.length > 0 ? "needs_review" : "ready";
+  if (report.review_queue_state !== expectedQueueState) {
+    failures.push("synthetic_qa_blocker_report_queue_state_mismatch");
   }
   if (
     report.status === "synthetic_qa_blocker_report_ready_for_review" &&
@@ -359,8 +380,21 @@ export function assertSyntheticQABlockerReport(report: SyntheticQABlockerReport)
     failures.push("synthetic_qa_blocker_report_blocked_without_failed_blockers");
   }
   for (const row of report.rows) {
-    if (!row.row_id || !row.label || !row.owner || row.evidence_refs.length === 0) {
+    if (
+      !row.row_id ||
+      !row.label ||
+      !row.owner ||
+      row.evidence_refs.length === 0 ||
+      !row.recommended_next_action ||
+      row.candidate_exception_lake_labels.length === 0
+    ) {
       failures.push(`synthetic_qa_blocker_report_row_not_actionable:${row.row_id}`);
+    }
+    if ((row.state === "failed" || row.state === "blocked") && row.action_state !== "blocked") {
+      failures.push(`synthetic_qa_blocker_report_row_action_mismatch:${row.row_id}`);
+    }
+    if (row.state === "pending_review" && row.action_state !== "needs_review") {
+      failures.push(`synthetic_qa_blocker_report_row_action_mismatch:${row.row_id}`);
     }
   }
   if (!report.required_next_actions.length) {

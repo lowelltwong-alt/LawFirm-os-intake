@@ -30,6 +30,16 @@
           "title": "State",
           "type": "string"
         },
+        "action_state": {
+          "enum": [
+            "blocked",
+            "needs_review",
+            "fixed",
+            "ready"
+          ],
+          "title": "Action State",
+          "type": "string"
+        },
         "owner": {
           "title": "Owner",
           "type": "string"
@@ -39,6 +49,17 @@
             "type": "string"
           },
           "title": "Evidence Refs",
+          "type": "array"
+        },
+        "recommended_next_action": {
+          "title": "Recommended Next Action",
+          "type": "string"
+        },
+        "candidate_exception_lake_labels": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Candidate Exception Lake Labels",
           "type": "array"
         },
         "notes": {
@@ -54,8 +75,11 @@
         "source",
         "label",
         "state",
+        "action_state",
         "owner",
         "evidence_refs",
+        "recommended_next_action",
+        "candidate_exception_lake_labels",
         "notes"
       ],
       "title": "SyntheticQABlockerRow",
@@ -137,6 +161,35 @@
       "minimum": 0,
       "title": "Pending Review Row Count",
       "type": "integer"
+    },
+    "blocked_action_count": {
+      "minimum": 0,
+      "title": "Blocked Action Count",
+      "type": "integer"
+    },
+    "needs_review_action_count": {
+      "minimum": 0,
+      "title": "Needs Review Action Count",
+      "type": "integer"
+    },
+    "fixed_action_count": {
+      "minimum": 0,
+      "title": "Fixed Action Count",
+      "type": "integer"
+    },
+    "ready_action_count": {
+      "minimum": 0,
+      "title": "Ready Action Count",
+      "type": "integer"
+    },
+    "review_queue_state": {
+      "enum": [
+        "blocked",
+        "needs_review",
+        "ready"
+      ],
+      "title": "Review Queue State",
+      "type": "string"
     },
     "rows": {
       "items": {
@@ -293,6 +346,11 @@
     "failed_row_count",
     "blocked_row_count",
     "pending_review_row_count",
+    "blocked_action_count",
+    "needs_review_action_count",
+    "fixed_action_count",
+    "ready_action_count",
+    "review_queue_state",
     "rows",
     "required_next_actions",
     "generated_at"

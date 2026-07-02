@@ -1,29 +1,42 @@
 {
   "schema_version": "0.1",
-  "synthetic_qa_blocker_report_id": "synthetic_qa_blocker_report_aa9969303979a0f9",
+  "synthetic_qa_blocker_report_id": "synthetic_qa_blocker_report_c076b2ff509772ab",
   "status": "synthetic_qa_blocker_report_ready_for_review",
-  "source_ui_manifest_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-os-intake-merge-20260702-011307\\.lawfirm-os-intake\\ui-fixture-refresh-blocker-report\\ui_review_manifest.json",
-  "source_ui_manifest_id": "ui_review_manifest_4a2ec3080304",
+  "source_ui_manifest_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-os-intake-merge-20260702-011307\\.lawfirm-os-intake\\ui-fixture-refresh-action-queue\\ui_review_manifest.json",
+  "source_ui_manifest_id": "ui_review_manifest_00aeff08b022",
   "source_ui_manifest_overall_status": "blocked",
-  "source_synthetic_confidence_summary_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-os-intake-merge-20260702-011307\\.lawfirm-os-intake\\ui-fixture-refresh-blocker-report\\quality\\synthetic_confidence_summary_report.json",
-  "source_synthetic_confidence_summary_report_id": "synthetic_confidence_summary_ed0476ca334d9f36",
+  "source_synthetic_confidence_summary_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-os-intake-merge-20260702-011307\\.lawfirm-os-intake\\ui-fixture-refresh-action-queue\\quality\\synthetic_confidence_summary_report.json",
+  "source_synthetic_confidence_summary_report_id": "synthetic_confidence_summary_c69d8bd81fcd82a9",
   "source_synthetic_confidence_summary_status": "synthetic_confidence_summary_ready_for_review",
-  "source_synthetic_qa_review_run_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-os-intake-merge-20260702-011307\\.lawfirm-os-intake\\ui-fixture-refresh-blocker-report\\synthetic_qa_review_run_report.json",
-  "source_synthetic_qa_review_run_report_id": "syntheticqareviewrun_140008234a061488",
+  "source_synthetic_qa_review_run_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-os-intake-merge-20260702-011307\\.lawfirm-os-intake\\ui-fixture-refresh-action-queue\\synthetic_qa_review_run_report.json",
+  "source_synthetic_qa_review_run_report_id": "syntheticqareviewrun_44a0e1d825bac1db",
   "source_synthetic_qa_review_run_status": "synthetic_qa_review_run_ready",
   "row_count": 19,
   "failed_row_count": 0,
   "blocked_row_count": 0,
   "pending_review_row_count": 19,
+  "blocked_action_count": 0,
+  "needs_review_action_count": 19,
+  "fixed_action_count": 0,
+  "ready_action_count": 0,
+  "review_queue_state": "needs_review",
   "rows": [
     {
       "row_id": "quality_gate:synthetic_qa_bundle",
       "source": "quality_gate",
       "label": "Synthetic QA Bundle",
       "state": "pending_review",
+      "action_state": "needs_review",
       "owner": "qa-reference",
       "evidence_refs": [
         "synthetic_qa_bundle_report.json"
+      ],
+      "recommended_next_action": "Review quality gate evidence and record an outcome: Synthetic QA Bundle.",
+      "candidate_exception_lake_labels": [
+        "synthetic_qa_blocker_queue_candidate",
+        "quality_gate_pending_review_candidate",
+        "quality_gate_synthetic_qa_bundle_candidate",
+        "synthetic_qa_blocker_requires_review"
       ],
       "notes": [
         "Budget coherence, fixture depth, calibration readiness, and UI evidence are bundled for QA review."
@@ -34,9 +47,17 @@
       "source": "quality_gate",
       "label": "Synthetic Confidence Summary",
       "state": "pending_review",
+      "action_state": "needs_review",
       "owner": "qa-reference",
       "evidence_refs": [
         "synthetic_confidence_summary_report.json"
+      ],
+      "recommended_next_action": "Review quality gate evidence and record an outcome: Synthetic Confidence Summary.",
+      "candidate_exception_lake_labels": [
+        "synthetic_qa_blocker_queue_candidate",
+        "quality_gate_pending_review_candidate",
+        "quality_gate_synthetic_confidence_summary_candidate",
+        "synthetic_qa_blocker_requires_review"
       ],
       "notes": [
         "The aggregate synthetic QA confidence banner must make review readiness, blockers, and no-production-authority boundaries visible."
@@ -47,9 +68,17 @@
       "source": "quality_gate",
       "label": "Matter-Linking Preflight",
       "state": "pending_review",
+      "action_state": "needs_review",
       "owner": "qa-reference",
       "evidence_refs": [
         "matter_linking_preflight_report.json"
+      ],
+      "recommended_next_action": "Review quality gate evidence and record an outcome: Matter-Linking Preflight.",
+      "candidate_exception_lake_labels": [
+        "synthetic_qa_blocker_queue_candidate",
+        "quality_gate_pending_review_candidate",
+        "quality_gate_matter_linking_preflight_candidate",
+        "synthetic_qa_blocker_requires_review"
       ],
       "notes": [
         "Upfront-like document clusters must stay human-gated and no-write before budget or matter-opening workflows rely on them."
@@ -60,9 +89,17 @@
       "source": "quality_gate",
       "label": "Synthetic Fixture Depth",
       "state": "pending_review",
+      "action_state": "needs_review",
       "owner": "qa-reference",
       "evidence_refs": [
         "synthetic_fixture_depth_audit_report.json"
+      ],
+      "recommended_next_action": "Review quality gate evidence and record an outcome: Synthetic Fixture Depth.",
+      "candidate_exception_lake_labels": [
+        "synthetic_qa_blocker_queue_candidate",
+        "quality_gate_pending_review_candidate",
+        "quality_gate_synthetic_fixture_depth_candidate",
+        "synthetic_qa_blocker_requires_review"
       ],
       "notes": [
         "Fixture-family depth remains visible before synthetic QA coverage is trusted."
@@ -73,9 +110,17 @@
       "source": "quality_gate",
       "label": "Calibration Readiness",
       "state": "pending_review",
+      "action_state": "needs_review",
       "owner": "pricing-review",
       "evidence_refs": [
         "budget_calibration_readiness_report.json"
+      ],
+      "recommended_next_action": "Review quality gate evidence and record an outcome: Calibration Readiness.",
+      "candidate_exception_lake_labels": [
+        "synthetic_qa_blocker_queue_candidate",
+        "quality_gate_pending_review_candidate",
+        "quality_gate_budget_calibration_readiness_candidate",
+        "synthetic_qa_blocker_requires_review"
       ],
       "notes": [
         "Budget calibration stays blocked until reviewed gold, replay outputs, and variance evidence exist."
@@ -86,9 +131,17 @@
       "source": "quality_gate",
       "label": "L&E QA Matrix",
       "state": "pending_review",
+      "action_state": "needs_review",
       "owner": "qa-reference",
       "evidence_refs": [
         "labor_employment_qa_matrix_report.json"
+      ],
+      "recommended_next_action": "Review quality gate evidence and record an outcome: L&E QA Matrix.",
+      "candidate_exception_lake_labels": [
+        "synthetic_qa_blocker_queue_candidate",
+        "quality_gate_pending_review_candidate",
+        "quality_gate_labor_employment_qa_matrix_candidate",
+        "synthetic_qa_blocker_requires_review"
       ],
       "notes": [
         "L&E synthetic fact fixtures must prove critical blockers and range-only review posture."
@@ -99,9 +152,17 @@
       "source": "quality_gate",
       "label": "L&E Fixture Family Pack",
       "state": "pending_review",
+      "action_state": "needs_review",
       "owner": "qa-reference",
       "evidence_refs": [
         "labor_employment_fixture_family_pack_report.json"
+      ],
+      "recommended_next_action": "Review quality gate evidence and record an outcome: L&E Fixture Family Pack.",
+      "candidate_exception_lake_labels": [
+        "synthetic_qa_blocker_queue_candidate",
+        "quality_gate_pending_review_candidate",
+        "quality_gate_labor_employment_fixture_family_pack_candidate",
+        "synthetic_qa_blocker_requires_review"
       ],
       "notes": [
         "L&E synthetic fixtures must cover required families, variants, fact needs, and budget-driver dimensions."
@@ -112,9 +173,17 @@
       "source": "quality_gate",
       "label": "L&E Executable Fixtures",
       "state": "pending_review",
+      "action_state": "needs_review",
       "owner": "qa-reference",
       "evidence_refs": [
         "labor_employment_executable_fixtures_report.json"
+      ],
+      "recommended_next_action": "Review quality gate evidence and record an outcome: L&E Executable Fixtures.",
+      "candidate_exception_lake_labels": [
+        "synthetic_qa_blocker_queue_candidate",
+        "quality_gate_pending_review_candidate",
+        "quality_gate_labor_employment_executable_fixtures_candidate",
+        "synthetic_qa_blocker_requires_review"
       ],
       "notes": [
         "Selected L&E source bundles must execute through deterministic preflight before fixture generation is trusted."
@@ -125,9 +194,17 @@
       "source": "quality_gate",
       "label": "L&E Executable Coverage",
       "state": "pending_review",
+      "action_state": "needs_review",
       "owner": "qa-reference",
       "evidence_refs": [
         "labor_employment_executable_coverage_report.json"
+      ],
+      "recommended_next_action": "Review quality gate evidence and record an outcome: L&E Executable Coverage.",
+      "candidate_exception_lake_labels": [
+        "synthetic_qa_blocker_queue_candidate",
+        "quality_gate_pending_review_candidate",
+        "quality_gate_labor_employment_executable_coverage_candidate",
+        "synthetic_qa_blocker_requires_review"
       ],
       "notes": [
         "QA must show which L&E fixture-family pack cases are executable today and which remain planned coverage gaps."
@@ -138,9 +215,17 @@
       "source": "quality_gate",
       "label": "L&E Executable Fact Binding",
       "state": "pending_review",
+      "action_state": "needs_review",
       "owner": "qa-reference",
       "evidence_refs": [
         "labor_employment_executable_fact_binding_report.json"
+      ],
+      "recommended_next_action": "Review quality gate evidence and record an outcome: L&E Executable Fact Binding.",
+      "candidate_exception_lake_labels": [
+        "synthetic_qa_blocker_queue_candidate",
+        "quality_gate_pending_review_candidate",
+        "quality_gate_labor_employment_executable_fact_binding_candidate",
+        "synthetic_qa_blocker_requires_review"
       ],
       "notes": [
         "Executable L&E preflight packets must bind expected budget-fact gaps to source evidence, source inventory, or dry-run exception labels."
@@ -151,9 +236,17 @@
       "source": "quality_gate",
       "label": "L&E Executable Driver Binding",
       "state": "pending_review",
+      "action_state": "needs_review",
       "owner": "qa-reference",
       "evidence_refs": [
         "labor_employment_executable_driver_binding_report.json"
+      ],
+      "recommended_next_action": "Review quality gate evidence and record an outcome: L&E Executable Driver Binding.",
+      "candidate_exception_lake_labels": [
+        "synthetic_qa_blocker_queue_candidate",
+        "quality_gate_pending_review_candidate",
+        "quality_gate_labor_employment_executable_driver_binding_candidate",
+        "synthetic_qa_blocker_requires_review"
       ],
       "notes": [
         "Executable L&E fact-gap evidence must map to budget-driver focus dimensions before budget-driver QA is trusted."
@@ -164,9 +257,17 @@
       "source": "quality_gate",
       "label": "L&E Executable Driver Impact",
       "state": "pending_review",
+      "action_state": "needs_review",
       "owner": "qa-reference",
       "evidence_refs": [
         "labor_employment_executable_driver_impact_report.json"
+      ],
+      "recommended_next_action": "Review quality gate evidence and record an outcome: L&E Executable Driver Impact.",
+      "candidate_exception_lake_labels": [
+        "synthetic_qa_blocker_queue_candidate",
+        "quality_gate_pending_review_candidate",
+        "quality_gate_labor_employment_executable_driver_impact_candidate",
+        "synthetic_qa_blocker_requires_review"
       ],
       "notes": [
         "Executable L&E driver bindings must declare candidate budget blockers, range widening, scenario forks, and rate/guideline review effects before budget math can consume them."
@@ -177,9 +278,17 @@
       "source": "quality_gate",
       "label": "L&E Driver Impact Review",
       "state": "pending_review",
+      "action_state": "needs_review",
       "owner": "qa-reference",
       "evidence_refs": [
         "labor_employment_driver_impact_review_report.json"
+      ],
+      "recommended_next_action": "Review quality gate evidence and record an outcome: L&E Driver Impact Review.",
+      "candidate_exception_lake_labels": [
+        "synthetic_qa_blocker_queue_candidate",
+        "quality_gate_pending_review_candidate",
+        "quality_gate_labor_employment_driver_impact_review_candidate",
+        "synthetic_qa_blocker_requires_review"
       ],
       "notes": [
         "Nonblocking L&E driver-impact budget-gate replay must be backed by reviewed synthetic evidence, not hand-filtered test data."
@@ -190,9 +299,17 @@
       "source": "quality_gate",
       "label": "L&E Blocked Driver Impact Review",
       "state": "pending_review",
+      "action_state": "needs_review",
       "owner": "qa-reference",
       "evidence_refs": [
         "labor_employment_blocked_driver_impact_review_report.json"
+      ],
+      "recommended_next_action": "Review quality gate evidence and record an outcome: L&E Blocked Driver Impact Review.",
+      "candidate_exception_lake_labels": [
+        "synthetic_qa_blocker_queue_candidate",
+        "quality_gate_pending_review_candidate",
+        "quality_gate_labor_employment_blocked_driver_impact_review_candidate",
+        "synthetic_qa_blocker_requires_review"
       ],
       "notes": [
         "Blocked L&E amount-budget cases must explain blocker facts, follow-up actions, and candidate Lake labels before QA trusts budget gating."
@@ -203,9 +320,17 @@
       "source": "quality_gate",
       "label": "L&E Budget Output Expectations",
       "state": "pending_review",
+      "action_state": "needs_review",
       "owner": "qa-reference",
       "evidence_refs": [
         "labor_employment_budget_output_expectations_report.json"
+      ],
+      "recommended_next_action": "Review quality gate evidence and record an outcome: L&E Budget Output Expectations.",
+      "candidate_exception_lake_labels": [
+        "synthetic_qa_blocker_queue_candidate",
+        "quality_gate_pending_review_candidate",
+        "quality_gate_labor_employment_budget_output_expectations_candidate",
+        "synthetic_qa_blocker_requires_review"
       ],
       "notes": [
         "Every executable L&E case must have one allowed budget-output state, next gates, and candidate Lake labels before budget QA can rely on it."
@@ -216,9 +341,17 @@
       "source": "quality_gate",
       "label": "Full Pytest",
       "state": "pending_review",
+      "action_state": "needs_review",
       "owner": "qa-reference",
       "evidence_refs": [
         "scripts/run_full_pytest.py"
+      ],
+      "recommended_next_action": "Review quality gate evidence and record an outcome: Full Pytest.",
+      "candidate_exception_lake_labels": [
+        "synthetic_qa_blocker_queue_candidate",
+        "quality_gate_pending_review_candidate",
+        "quality_gate_full_pytest_candidate",
+        "synthetic_qa_blocker_requires_review"
       ],
       "notes": [
         "scripts/run_full_pytest.py is missing; Use the repo wrapper so tests receive the configured long timeout ceiling."
@@ -229,9 +362,17 @@
       "source": "quality_gate",
       "label": "North-Star Smoke",
       "state": "pending_review",
+      "action_state": "needs_review",
       "owner": "qa-reference",
       "evidence_refs": [
         "scripts/smoke_demo.sh"
+      ],
+      "recommended_next_action": "Review quality gate evidence and record an outcome: North-Star Smoke.",
+      "candidate_exception_lake_labels": [
+        "synthetic_qa_blocker_queue_candidate",
+        "quality_gate_pending_review_candidate",
+        "quality_gate_smoke_demo_candidate",
+        "synthetic_qa_blocker_requires_review"
       ],
       "notes": [
         "scripts/smoke_demo.sh is missing; Smoke should prove the checkout demo, budget coherence, starter audit, blocked-budget audit, and counterfactual audit."
@@ -242,9 +383,17 @@
       "source": "readiness_item",
       "label": "Required QA Artifacts",
       "state": "pending_review",
+      "action_state": "needs_review",
       "owner": "qa-reference",
       "evidence_refs": [
-        "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-os-intake-merge-20260702-011307\\.lawfirm-os-intake\\ui-fixture-refresh-blocker-report\\quality\\synthetic_qa_bundle_report.json"
+        "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-os-intake-merge-20260702-011307\\.lawfirm-os-intake\\ui-fixture-refresh-action-queue\\quality\\synthetic_qa_bundle_report.json"
+      ],
+      "recommended_next_action": "Review readiness item evidence and record an outcome: Required QA Artifacts.",
+      "candidate_exception_lake_labels": [
+        "synthetic_qa_blocker_queue_candidate",
+        "readiness_item_pending_review_candidate",
+        "readiness_item_required_qa_artifacts_candidate",
+        "synthetic_qa_blocker_requires_review"
       ],
       "notes": [
         "0 missing required, 0 blocked, 12 pending review."
@@ -255,9 +404,17 @@
       "source": "readiness_item",
       "label": "Owner Review Backlog",
       "state": "pending_review",
+      "action_state": "needs_review",
       "owner": "human-or-owner-review",
       "evidence_refs": [
-        "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-os-intake-merge-20260702-011307\\.lawfirm-os-intake\\ui-fixture-refresh-blocker-report\\ui_review_manifest.json"
+        "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-os-intake-merge-20260702-011307\\.lawfirm-os-intake\\ui-fixture-refresh-action-queue\\ui_review_manifest.json"
+      ],
+      "recommended_next_action": "Review readiness item evidence and record an outcome: Owner Review Backlog.",
+      "candidate_exception_lake_labels": [
+        "synthetic_qa_blocker_queue_candidate",
+        "readiness_item_pending_review_candidate",
+        "readiness_item_owner_review_backlog_candidate",
+        "synthetic_qa_blocker_requires_review"
       ],
       "notes": [
         "18 pending gates remain; pending is expected until human/owner review accepts candidate QA evidence."
