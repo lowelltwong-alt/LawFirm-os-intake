@@ -117,6 +117,17 @@ QA_BUNDLE_ARTIFACTS = [
         ),
     ),
     QABundleArtifactSpec(
+        artifact_id="labor_employment_executable_driver_impact",
+        label="Labor/Employment Executable Driver Impact",
+        file_name="labor_employment_executable_driver_impact_report.json",
+        required=True,
+        missing_note=(
+            "Run audit-labor-employment-executable-driver-impact so executable "
+            "driver bindings declare candidate budget blockers, range widening, "
+            "scenario forks, and rate/guideline review effects."
+        ),
+    ),
+    QABundleArtifactSpec(
         artifact_id="labor_employment_budget_fact_gold",
         label="Labor/Employment Budget Fact Gold",
         file_name="labor_employment_budget_fact_gold_report.json",
@@ -205,6 +216,11 @@ def run_synthetic_qa_bundle(
             root=root,
             explicit_path=None,
             file_name="labor_employment_executable_driver_binding_report.json",
+        ),
+        "labor_employment_executable_driver_impact": _resolve_artifact_source(
+            root=root,
+            explicit_path=None,
+            file_name="labor_employment_executable_driver_impact_report.json",
         ),
         "labor_employment_budget_fact_gold": _resolve_artifact_source(
             root=root,

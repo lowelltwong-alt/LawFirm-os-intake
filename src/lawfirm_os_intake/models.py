@@ -2276,6 +2276,7 @@ class LaborEmploymentExecutableDriverBindingItem(StrictModel):
     evidence_ref_count: int = Field(ge=0)
     exception_label_count: int = Field(ge=0)
     source_inventory_ref_count: int = Field(ge=0)
+    critical_driver_block: bool = False
     matched_fact_ids: list[str]
     missing_fact_ids: list[str]
     notes: list[str] = Field(default_factory=list)
@@ -2441,6 +2442,283 @@ class LaborEmploymentExecutableDriverBindingReport(StrictModel):
             failed_cases or failed_checks or self.missing_driver_dimensions
         ):
             raise ValueError("blocked executable L&E driver binding requires gaps")
+        return self
+
+
+LaborEmploymentExecutableDriverImpactAction = Literal[
+    "block_amount_budget",
+    "widen_budget_range",
+    "add_scenario_fork",
+    "require_rate_guideline_review",
+    "hold_for_human_driver_review",
+]
+
+LaborEmploymentExecutableDriverPricingEffect = Literal[
+    "amount_budget_blocked",
+    "range_width_required",
+    "scenario_set_required",
+    "hours_or_rate_review_required",
+    "human_review_required",
+]
+
+LaborEmploymentExecutableDriverAllowedBudgetOutput = Literal[
+    "blocked_amount_budget",
+    "range_or_hours_only_pending_review",
+    "candidate_range_after_review_pending_human_review",
+]
+
+
+class LaborEmploymentExecutableDriverImpactItem(StrictModel):
+    driver_dimension: LaborEmploymentBudgetDriverDimension
+    impact_state: Literal[
+        "source_bound_impact_candidate",
+        "blocked_missing_impact_policy",
+        "blocked_unbound_driver_candidate",
+    ]
+    source_binding_state: Literal["source_bound_driver_candidate", "unbound_driver_candidate"]
+    source_bound: bool
+    critical_driver_block: bool
+    impact_actions: list[LaborEmploymentExecutableDriverImpactAction]
+    pricing_effect: LaborEmploymentExecutableDriverPricingEffect
+    range_widening_factor: float = Field(ge=1.0)
+    scenario_fork_required: bool
+    rate_guideline_review_required: bool
+    human_review_required: Literal[True] = True
+    matched_fact_ids: list[str]
+    evidence_ref_count: int = Field(ge=0)
+    exception_label_count: int = Field(ge=0)
+    source_inventory_ref_count: int = Field(ge=0)
+    policy_reason: str
+    notes: list[str] = Field(default_factory=list)
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    budget_amount_output_authorized: Literal[False] = False
+
+    @model_validator(mode="after")
+    def le_executable_driver_impact_item_is_coherent(
+        self,
+    ) -> "LaborEmploymentExecutableDriverImpactItem":
+        if self.impact_state == "source_bound_impact_candidate":
+            if (
+                self.source_binding_state != "source_bound_driver_candidate"
+                or not self.source_bound
+            ):
+                raise ValueError("source-bound impact candidate requires source-bound driver")
+            if not self.matched_fact_ids:
+                raise ValueError("source-bound impact candidate requires matched facts")
+        if self.impact_state != "source_bound_impact_candidate" and self.source_bound:
+            raise ValueError("blocked impact candidates cannot be marked source-bound")
+        if self.critical_driver_block:
+            if "block_amount_budget" not in self.impact_actions:
+                raise ValueError("critical driver block requires amount-budget block action")
+            if self.pricing_effect != "amount_budget_blocked":
+                raise ValueError("critical driver block requires amount-budget blocked effect")
+        if self.range_widening_factor > 1.0 and "widen_budget_range" not in self.impact_actions:
+            raise ValueError("range widening factor requires widen_budget_range action")
+        if self.scenario_fork_required and "add_scenario_fork" not in self.impact_actions:
+            raise ValueError("scenario fork flag requires add_scenario_fork action")
+        if (
+            self.rate_guideline_review_required
+            and "require_rate_guideline_review" not in self.impact_actions
+        ):
+            raise ValueError("rate review flag requires require_rate_guideline_review action")
+        return self
+
+
+class LaborEmploymentExecutableDriverImpactCase(StrictModel):
+    executable_fixture_id: str
+    linked_pack_case_ids: list[str]
+    family: LaborEmploymentSyntheticFixtureFamily
+    variant: LaborEmploymentSyntheticFixtureVariant
+    status: Literal["passed", "failed"]
+    expected_budget_readiness_state: Literal[
+        "blocked_missing_critical_facts",
+        "range_only_pending_human_review",
+        "candidate_ready_for_budget_review",
+    ]
+    expected_budget_treatment: Literal[
+        "block_amount_budget",
+        "hours_only_or_broad_range",
+        "candidate_range_budget_after_review",
+    ]
+    allowed_budget_output: LaborEmploymentExecutableDriverAllowedBudgetOutput
+    impact_item_count: int = Field(ge=0)
+    source_bound_impact_count: int = Field(ge=0)
+    block_amount_budget_impact_count: int = Field(ge=0)
+    range_widening_impact_count: int = Field(ge=0)
+    scenario_fork_impact_count: int = Field(ge=0)
+    rate_guideline_review_impact_count: int = Field(ge=0)
+    human_review_impact_count: int = Field(ge=0)
+    max_range_widening_factor: float = Field(ge=1.0)
+    impact_items: list[LaborEmploymentExecutableDriverImpactItem]
+    failed_expectation_ids: list[str] = Field(default_factory=list)
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    budget_amount_output_authorized: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    conflict_conclusion_emitted: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    training_pipeline_created: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def le_executable_driver_impact_case_counts_match(
+        self,
+    ) -> "LaborEmploymentExecutableDriverImpactCase":
+        if self.impact_item_count != len(self.impact_items):
+            raise ValueError("executable L&E driver impact count mismatch")
+        if self.source_bound_impact_count != sum(
+            1 for item in self.impact_items if item.impact_state == "source_bound_impact_candidate"
+        ):
+            raise ValueError("executable L&E source-bound impact count mismatch")
+        if self.block_amount_budget_impact_count != sum(
+            1 for item in self.impact_items if "block_amount_budget" in item.impact_actions
+        ):
+            raise ValueError("executable L&E amount-budget block impact count mismatch")
+        if self.range_widening_impact_count != sum(
+            1 for item in self.impact_items if "widen_budget_range" in item.impact_actions
+        ):
+            raise ValueError("executable L&E range-widening impact count mismatch")
+        if self.scenario_fork_impact_count != sum(
+            1 for item in self.impact_items if item.scenario_fork_required
+        ):
+            raise ValueError("executable L&E scenario-fork impact count mismatch")
+        if self.rate_guideline_review_impact_count != sum(
+            1 for item in self.impact_items if item.rate_guideline_review_required
+        ):
+            raise ValueError("executable L&E rate-guideline impact count mismatch")
+        if self.human_review_impact_count != sum(
+            1 for item in self.impact_items if item.human_review_required
+        ):
+            raise ValueError("executable L&E human-review impact count mismatch")
+        expected_max = max(
+            [item.range_widening_factor for item in self.impact_items],
+            default=1.0,
+        )
+        if self.max_range_widening_factor != expected_max:
+            raise ValueError("executable L&E max range-widening factor mismatch")
+        if self.status == "passed" and self.failed_expectation_ids:
+            raise ValueError("passed executable L&E driver impact case has failures")
+        if self.status == "failed" and not self.failed_expectation_ids:
+            raise ValueError("failed executable L&E driver impact case requires failures")
+        if (
+            self.expected_budget_treatment == "block_amount_budget"
+            and self.allowed_budget_output != "blocked_amount_budget"
+        ):
+            raise ValueError("blocked treatment must keep amount budget blocked")
+        if (
+            self.allowed_budget_output == "blocked_amount_budget"
+            and self.block_amount_budget_impact_count == 0
+        ):
+            raise ValueError("blocked output requires at least one block impact")
+        return self
+
+
+class LaborEmploymentExecutableDriverImpactCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    evidence_refs: list[str] = Field(default_factory=list)
+    blocking_refs: list[str] = Field(default_factory=list)
+
+
+class LaborEmploymentExecutableDriverImpactReport(StrictModel):
+    schema_version: str = "0.1"
+    executable_driver_impact_report_id: str
+    status: Literal[
+        "labor_employment_executable_driver_impacts_ready_for_review",
+        "blocked_by_labor_employment_executable_driver_impacts",
+    ]
+    executable_driver_binding_report_ref: str
+    case_count: int = Field(ge=0)
+    failed_case_count: int = Field(ge=0)
+    impact_item_count: int = Field(ge=0)
+    source_bound_impact_count: int = Field(ge=0)
+    block_amount_budget_impact_count: int = Field(ge=0)
+    range_widening_impact_count: int = Field(ge=0)
+    scenario_fork_impact_count: int = Field(ge=0)
+    rate_guideline_review_impact_count: int = Field(ge=0)
+    human_review_impact_count: int = Field(ge=0)
+    max_range_widening_factor: float = Field(ge=1.0)
+    impact_policy_dimensions: list[LaborEmploymentBudgetDriverDimension]
+    missing_impact_policy_dimensions: list[LaborEmploymentBudgetDriverDimension]
+    cases: list[LaborEmploymentExecutableDriverImpactCase]
+    checks: list[LaborEmploymentExecutableDriverImpactCheck]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    not_authorized_for_matter_opening: Literal[True] = True
+    not_authorized_for_calibration: Literal[True] = True
+    budget_amount_output_authorized: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    conflict_conclusion_emitted: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    training_pipeline_created: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def le_executable_driver_impact_report_counts_match(
+        self,
+    ) -> "LaborEmploymentExecutableDriverImpactReport":
+        failed_cases = [case for case in self.cases if case.status == "failed"]
+        failed_checks = [check for check in self.checks if check.status == "failed"]
+        if self.case_count != len(self.cases):
+            raise ValueError("executable L&E driver impact case count mismatch")
+        if self.failed_case_count != len(failed_cases):
+            raise ValueError("executable L&E driver impact failed case count mismatch")
+        if self.impact_item_count != sum(case.impact_item_count for case in self.cases):
+            raise ValueError("executable L&E driver impact aggregate count mismatch")
+        if self.source_bound_impact_count != sum(
+            case.source_bound_impact_count for case in self.cases
+        ):
+            raise ValueError("executable L&E source-bound impact aggregate count mismatch")
+        if self.block_amount_budget_impact_count != sum(
+            case.block_amount_budget_impact_count for case in self.cases
+        ):
+            raise ValueError("executable L&E block impact aggregate count mismatch")
+        if self.range_widening_impact_count != sum(
+            case.range_widening_impact_count for case in self.cases
+        ):
+            raise ValueError("executable L&E range impact aggregate count mismatch")
+        if self.scenario_fork_impact_count != sum(
+            case.scenario_fork_impact_count for case in self.cases
+        ):
+            raise ValueError("executable L&E scenario impact aggregate count mismatch")
+        if self.rate_guideline_review_impact_count != sum(
+            case.rate_guideline_review_impact_count for case in self.cases
+        ):
+            raise ValueError("executable L&E rate-guideline impact aggregate count mismatch")
+        if self.human_review_impact_count != sum(
+            case.human_review_impact_count for case in self.cases
+        ):
+            raise ValueError("executable L&E human-review impact aggregate count mismatch")
+        expected_max = max(
+            [case.max_range_widening_factor for case in self.cases],
+            default=1.0,
+        )
+        if self.max_range_widening_factor != expected_max:
+            raise ValueError("executable L&E max range impact aggregate mismatch")
+        if self.status == "labor_employment_executable_driver_impacts_ready_for_review" and (
+            failed_cases or failed_checks or self.missing_impact_policy_dimensions
+        ):
+            raise ValueError("ready executable L&E driver impact cannot include blockers")
+        if self.status == "blocked_by_labor_employment_executable_driver_impacts" and not (
+            failed_cases or failed_checks or self.missing_impact_policy_dimensions
+        ):
+            raise ValueError("blocked executable L&E driver impact report requires blockers")
         return self
 
 

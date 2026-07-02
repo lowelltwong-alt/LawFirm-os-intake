@@ -77,6 +77,9 @@ from .labor_employment_executable_fact_binding import (
 from .labor_employment_executable_driver_binding import (
     run_labor_employment_executable_driver_binding_audit,
 )
+from .labor_employment_executable_driver_impact import (
+    run_labor_employment_executable_driver_impact_audit,
+)
 from .labor_employment_executable_fixtures import (
     run_labor_employment_executable_fixture_audit,
 )
@@ -400,6 +403,20 @@ def _parser() -> argparse.ArgumentParser:
         help="Repository root for relative synthetic L&E driver-binding refs.",
     )
     le_executable_driver_binding.add_argument("--out-dir", required=True)
+
+    le_executable_driver_impact = sub.add_parser(
+        "audit-labor-employment-executable-driver-impact",
+        help=(
+            "Map executable synthetic L&E driver bindings to candidate budget-impact "
+            "policy without producing dollar amounts."
+        ),
+    )
+    le_executable_driver_impact.add_argument(
+        "--executable-driver-binding-report",
+        required=True,
+        help="Path to labor_employment_executable_driver_binding_report.json.",
+    )
+    le_executable_driver_impact.add_argument("--out-dir", required=True)
 
     budget_review = sub.add_parser(
         "record-budget-review",
@@ -1682,6 +1699,45 @@ def main(argv: list[str] | None = None) -> int:
             return (
                 0
                 if report.status == "labor_employment_executable_driver_bindings_ready_for_review"
+                else 2
+            )
+
+        if args.command == "audit-labor-employment-executable-driver-impact":
+            report, run_dir = run_labor_employment_executable_driver_impact_audit(
+                executable_driver_binding_report_path=args.executable_driver_binding_report,
+                out_dir=args.out_dir,
+            )
+            failed_checks = [check.check_id for check in report.checks if check.status == "failed"]
+            _print(
+                {
+                    "status": report.status,
+                    "executable_driver_impact_report_id": (
+                        report.executable_driver_impact_report_id
+                    ),
+                    "case_count": report.case_count,
+                    "failed_case_count": report.failed_case_count,
+                    "impact_item_count": report.impact_item_count,
+                    "source_bound_impact_count": report.source_bound_impact_count,
+                    "block_amount_budget_impact_count": (report.block_amount_budget_impact_count),
+                    "range_widening_impact_count": report.range_widening_impact_count,
+                    "scenario_fork_impact_count": report.scenario_fork_impact_count,
+                    "rate_guideline_review_impact_count": (
+                        report.rate_guideline_review_impact_count
+                    ),
+                    "missing_impact_policy_dimensions": (report.missing_impact_policy_dimensions),
+                    "failed_checks": failed_checks,
+                    "budget_amount_output_authorized": (report.budget_amount_output_authorized),
+                    "budget_submission_authorized": report.budget_submission_authorized,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return (
+                0
+                if report.status == "labor_employment_executable_driver_impacts_ready_for_review"
                 else 2
             )
 

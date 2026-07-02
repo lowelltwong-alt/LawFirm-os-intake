@@ -328,6 +328,7 @@ def _driver_bindings_from_facts(
                 source_inventory_ref_count=sum(
                     len(binding.source_inventory_refs) for binding in matching
                 ),
+                critical_driver_block=any(binding.blocks_precise_budget for binding in matching),
                 matched_fact_ids=matched_fact_ids,
                 missing_fact_ids=[],
                 notes=[

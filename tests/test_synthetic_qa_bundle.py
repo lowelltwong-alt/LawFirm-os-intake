@@ -97,6 +97,22 @@ def _write_ready_labor_employment_executable_driver_binding(path):
     )
 
 
+def _write_ready_labor_employment_executable_driver_impact(path):
+    write_json(
+        path,
+        {
+            "status": "labor_employment_executable_driver_impacts_ready_for_review",
+            "external_writes_performed": False,
+            "lake_write_performed": False,
+            "sqlite_write_performed": False,
+            "budget_amount_output_authorized": False,
+            "budget_submission_authorized": False,
+            "matter_opening_authorized": False,
+            "silent_learning_performed": False,
+        },
+    )
+
+
 def _write_ready_labor_employment_budget_fact_gold(path):
     write_json(
         path,
@@ -148,6 +164,9 @@ def test_synthetic_qa_bundle_blocks_missing_calibration_and_builds_ui(tmp_path):
     )
     _write_ready_labor_employment_executable_driver_binding(
         quality_dir / "labor_employment_executable_driver_binding_report.json"
+    )
+    _write_ready_labor_employment_executable_driver_impact(
+        quality_dir / "labor_employment_executable_driver_impact_report.json"
     )
     _write_ready_labor_employment_budget_fact_gold(
         quality_dir / "labor_employment_budget_fact_gold_report.json"
@@ -202,6 +221,9 @@ def test_synthetic_qa_bundle_can_generate_fixture_depth_from_manifest(tmp_path, 
     _write_ready_labor_employment_executable_driver_binding(
         quality_dir / "labor_employment_executable_driver_binding_report.json"
     )
+    _write_ready_labor_employment_executable_driver_impact(
+        quality_dir / "labor_employment_executable_driver_impact_report.json"
+    )
     _write_ready_labor_employment_budget_fact_gold(
         quality_dir / "labor_employment_budget_fact_gold_report.json"
     )
@@ -238,6 +260,7 @@ def test_synthetic_qa_bundle_cli_writes_bundle_and_manifest(tmp_path):
         "labor_employment_executable_coverage_report.json",
         "labor_employment_executable_fact_binding_report.json",
         "labor_employment_executable_driver_binding_report.json",
+        "labor_employment_executable_driver_impact_report.json",
         "labor_employment_budget_fact_gold_report.json",
     ]:
         write_json(
@@ -254,6 +277,8 @@ def test_synthetic_qa_bundle_cli_writes_bundle_and_manifest(tmp_path):
                     if file_name == "labor_employment_executable_coverage_report.json"
                     else "labor_employment_executable_driver_bindings_ready_for_review"
                     if file_name == "labor_employment_executable_driver_binding_report.json"
+                    else "labor_employment_executable_driver_impacts_ready_for_review"
+                    if file_name == "labor_employment_executable_driver_impact_report.json"
                     else "passed"
                     if file_name != "labor_employment_executable_fact_binding_report.json"
                     else "labor_employment_executable_budget_fact_bindings_ready_for_review"

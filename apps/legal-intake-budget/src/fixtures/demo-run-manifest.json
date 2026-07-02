@@ -227,6 +227,17 @@
       "notes": ["Executable fact-gap evidence is mapped to L&E budget-driver focus dimensions without resolving driver values or producing an amount budget."]
     },
     {
+      "artifactId": "labor-employment-executable-driver-impact",
+      "label": "L&E Executable Driver Impact",
+      "fileName": "labor_employment_executable_driver_impact_report.json",
+      "status": "pending_review",
+      "owner": "qa-reference",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": ["Executable driver bindings declare candidate budget blockers, range widening, scenario forks, and rate/guideline review effects before budget math can consume them."]
+    },
+    {
       "artifactId": "labor-employment-budget-fact-gold",
       "label": "L&E Budget Fact Gold",
       "fileName": "labor_employment_budget_fact_gold_report.json",
@@ -373,6 +384,14 @@
       "evidenceFile": "labor_employment_executable_driver_binding_report.json",
       "owner": "qa-reference",
       "notes": ["Executable L&E fact-gap evidence must map to budget-driver focus dimensions before budget-driver QA is trusted."]
+    },
+    {
+      "gateId": "labor_employment_executable_driver_impact",
+      "label": "L&E Executable Driver Impact",
+      "status": "pending_review",
+      "evidenceFile": "labor_employment_executable_driver_impact_report.json",
+      "owner": "qa-reference",
+      "notes": ["Executable L&E driver bindings must declare candidate budget blockers, range widening, scenario forks, and rate/guideline review effects before budget math can consume them."]
     },
     {
       "gateId": "labor_employment_budget_fact_gold",
