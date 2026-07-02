@@ -535,7 +535,7 @@ test -s ".lawfirm-os-intake/smoke/quality/le-driver-impact-review/labor_employme
 test -s ".lawfirm-os-intake/smoke/quality/le-driver-impact-review/labor_employment_driver_impact_reviewed_slice_report.json"
 grep -q '"status": "labor_employment_driver_impact_review_ready_for_budget_gate_replay"' \
   ".lawfirm-os-intake/smoke/quality/le-driver-impact-review/labor_employment_driver_impact_review_report.json"
-grep -q '"selected_case_count": 1' \
+grep -q '"selected_case_count": 2' \
   ".lawfirm-os-intake/smoke/quality/le-driver-impact-review/labor_employment_driver_impact_review_report.json"
 grep -q '"block_amount_budget_impact_count": 0' \
   ".lawfirm-os-intake/smoke/quality/le-driver-impact-review/labor_employment_driver_impact_review_report.json"

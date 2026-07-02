@@ -230,6 +230,14 @@ def _checks(
         result.executable_fixture_id for result in case_results if result.status == "failed"
     ]
     selected_results = [result for result in case_results if result.selected_for_reviewed_slice]
+    selected_ids = sorted(result.executable_fixture_id for result in selected_results)
+    nonblocking_source_ids = _nonblocking_source_case_ids(source_report)
+    missing_nonblocking_review_ids = [
+        case_id for case_id in nonblocking_source_ids if case_id not in selected_ids
+    ]
+    unexpected_selected_ids = [
+        case_id for case_id in selected_ids if case_id not in nonblocking_source_ids
+    ]
     side_effects = [
         flag
         for flag in [
@@ -283,6 +291,13 @@ def _checks(
             ],
         ),
         _check(
+            "reviewed_slice_covers_all_nonblocking_source_cases",
+            not missing_nonblocking_review_ids and not unexpected_selected_ids,
+            "Reviewed slice covers every source case eligible for nonblocking budget-gate replay.",
+            evidence_refs=nonblocking_source_ids,
+            blocking_refs=missing_nonblocking_review_ids + unexpected_selected_ids,
+        ),
+        _check(
             "review_side_effect_boundaries_hold",
             not side_effects,
             "Review did not authorize budget, matter, Lake, SQLite, external, or learning actions.",
@@ -290,6 +305,17 @@ def _checks(
             blocking_refs=side_effects,
         ),
     ]
+
+
+def _nonblocking_source_case_ids(
+    source_report: LaborEmploymentExecutableDriverImpactReport,
+) -> list[str]:
+    return sorted(
+        case.executable_fixture_id
+        for case in source_report.cases
+        if case.allowed_budget_output != "blocked_amount_budget"
+        and case.block_amount_budget_impact_count == 0
+    )
 
 
 def _reviewed_slice_report(

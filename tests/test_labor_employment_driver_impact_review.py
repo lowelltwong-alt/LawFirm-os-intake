@@ -87,17 +87,18 @@ def test_labor_employment_driver_impact_review_materializes_nonblocking_slice(
     )
 
     assert report.status == "labor_employment_driver_impact_review_ready_for_budget_gate_replay"
-    assert persisted.selected_case_count == 1
+    assert persisted.selected_case_count == 2
     assert persisted.failed_case_count == 0
     assert persisted.block_amount_budget_impact_count == 0
     assert persisted.range_widening_impact_count > 0
     assert persisted.scenario_fork_impact_count > 0
     assert persisted.reviewed_slice_report_ref
-    assert slice_report.case_count == 1
+    assert slice_report.case_count == 2
     assert slice_report.block_amount_budget_impact_count == 0
-    assert slice_report.cases[0].executable_fixture_id == (
-        "le-admin-exhaustion-clean.executable.v0_1"
-    )
+    assert {case.executable_fixture_id for case in slice_report.cases} == {
+        "le-admin-exhaustion-clean.executable.v0_1",
+        "le-retaliation-wrongful-termination-messy-thread.executable.v0_1",
+    }
     assert slice_report.status == "labor_employment_executable_driver_impacts_ready_for_review"
     assert all(check.status == "passed" for check in persisted.checks)
     assert persisted.budget_amount_output_authorized is False
@@ -135,10 +136,43 @@ def test_labor_employment_driver_impact_review_blocks_blocking_case(
     )
 
     assert report.status == "blocked_by_labor_employment_driver_impact_review"
-    assert report.selected_case_count == 0
+    assert report.selected_case_count == 1
     assert report.failed_case_count == 1
     assert report.reviewed_slice_report_ref is None
     assert "amount_budget_block_present" in report.case_results[0].failure_ids
+    assert not (run_dir / LABOR_EMPLOYMENT_DRIVER_IMPACT_REVIEWED_SLICE_REPORT_FILENAME).exists()
+
+
+def test_labor_employment_driver_impact_review_blocks_missing_nonblocking_case(
+    repo_root,
+    tmp_path,
+):
+    review_spec = load_json(repo_root / REVIEW_SPEC_PATH)
+    review_spec["review_spec_id"] = "le_driver_impact_missing_nonblocking_case_review.v0_1"
+    review_spec["required_selected_case_count"] = 1
+    review_spec["cases"] = [
+        case
+        for case in review_spec["cases"]
+        if case["executable_fixture_id"] == "le-admin-exhaustion-clean.executable.v0_1"
+    ]
+    partial_spec_path = write_json(tmp_path / "partial-review-spec.json", review_spec)
+
+    report, run_dir = run_labor_employment_driver_impact_review(
+        review_spec_path=partial_spec_path,
+        driver_impact_report_path=_driver_impact_report(repo_root, tmp_path),
+        out_dir=tmp_path / "partial-driver-impact-review",
+    )
+    failed_checks = {check.check_id: check for check in report.checks if check.status == "failed"}
+
+    assert report.status == "blocked_by_labor_employment_driver_impact_review"
+    assert report.selected_case_count == 1
+    assert report.failed_case_count == 0
+    assert "reviewed_slice_covers_all_nonblocking_source_cases" in failed_checks
+    assert (
+        "le-retaliation-wrongful-termination-messy-thread.executable.v0_1"
+        in failed_checks["reviewed_slice_covers_all_nonblocking_source_cases"].blocking_refs
+    )
+    assert report.reviewed_slice_report_ref is None
     assert not (run_dir / LABOR_EMPLOYMENT_DRIVER_IMPACT_REVIEWED_SLICE_REPORT_FILENAME).exists()
 
 
@@ -167,7 +201,7 @@ def test_labor_employment_driver_impact_review_cli_writes_review_and_slice(
 
     assert exit_code == 0
     assert report["status"] == "labor_employment_driver_impact_review_ready_for_budget_gate_replay"
-    assert report["selected_case_count"] == 1
+    assert report["selected_case_count"] == 2
     assert report["block_amount_budget_impact_count"] == 0
     assert (
         (tmp_path / "le-driver-impact-review-cli")
