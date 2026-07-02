@@ -45,10 +45,10 @@ python -m lawfirm_os_intake build-ui-review-manifest \
 
 This writes a local manifest for `apps/legal-intake-budget/` from existing run
 and QA artifacts, including budget coherence, fixture-depth, calibration,
-pytest, and smoke evidence. Missing calibration or other required QA evidence
-remains visible as blocked or pending review. The command does not run a server,
-call connectors, mutate fixtures, write Lake/SQLite records, submit budgets, or
-open matters.
+labor/employment QA matrix, pytest, and smoke evidence. Missing calibration,
+L&E matrix, or other required QA evidence remains visible as blocked or pending
+review. The command does not run a server, call connectors, mutate fixtures,
+write Lake/SQLite records, submit budgets, or open matters.
 
 ### Build synthetic QA bundle
 
@@ -63,10 +63,12 @@ python -m lawfirm_os_intake build-synthetic-qa-bundle \
 
 This writes `synthetic_qa_bundle_report.json` plus Markdown notes under the run
 quality directory, copies or generates the fixture-depth report when requested,
-and refreshes the read-only UI manifest. A blocked bundle is valid QA evidence
-when calibration readiness is missing or blocked; it is not authorization to
-mutate fixtures, apply calibration, write Lake/SQLite records, submit budgets,
-open matters, or create external writes.
+and refreshes the read-only UI manifest. Required artifacts include budget
+coherence, synthetic fixture depth, budget calibration readiness, and the
+labor/employment QA matrix. A blocked bundle is valid QA evidence when
+calibration readiness or L&E matrix evidence is missing or blocked; it is not
+authorization to mutate fixtures, apply calibration, write Lake/SQLite records,
+submit budgets, open matters, or create external writes.
 
 ### Build budget calibration starter pack
 
@@ -86,6 +88,23 @@ readiness. It writes `budget_calibration_starter_pack_report.json` and
 fixture for exercising the chain, not production human approval, and the command
 does not apply calibration, mutate fixtures, write Lake/SQLite records, submit
 budgets, open matters, or perform external writes.
+
+### Build labor/employment QA matrix
+
+```bash
+python -m lawfirm_os_intake build-labor-employment-qa-matrix \
+  --repo-root . \
+  --out-dir .lawfirm-os-intake/smoke/quality/le-qa-matrix
+```
+
+This runs the synthetic L&E budget fact audit against the starter
+critical-fact-gap manifest and the ready-critical-facts manifest, then writes
+`labor_employment_qa_matrix_report.json` and Markdown notes. The matrix proves
+two budget gates deterministically: critical fact gaps block amount-budget
+output before proposal generation, and source-bound critical facts still remain
+range/hours-only until human review. It is candidate-only QA evidence for the
+synthetic bundle and read-only UI. It does not promote role taxonomies, write
+Lake/SQLite records, submit budgets, open matters, or authorize learning.
 
 ### Validation runtime policy
 

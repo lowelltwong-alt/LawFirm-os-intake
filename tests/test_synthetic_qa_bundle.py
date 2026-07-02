@@ -6,11 +6,26 @@ from lawfirm_os_intake.synthetic_qa_bundle import (
 from lawfirm_os_intake.util import load_json, write_json
 
 
+def _write_ready_labor_employment_qa_matrix(path):
+    write_json(
+        path,
+        {
+            "status": "labor_employment_qa_matrix_ready_for_review",
+            "external_writes_performed": False,
+            "lake_write_performed": False,
+            "sqlite_write_performed": False,
+            "budget_submission_authorized": False,
+        },
+    )
+
+
 def test_synthetic_qa_bundle_blocks_missing_calibration_and_builds_ui(tmp_path):
     run_root = tmp_path / "demo"
     budget_dir = run_root / "budget"
+    quality_dir = run_root / "quality"
     external_depth_dir = tmp_path / "fixture-depth"
     budget_dir.mkdir(parents=True)
+    quality_dir.mkdir()
     external_depth_dir.mkdir()
     write_json(
         budget_dir / "budget_coherence_report.json",
@@ -23,10 +38,11 @@ def test_synthetic_qa_bundle_blocks_missing_calibration_and_builds_ui(tmp_path):
             "external_writes_performed": False,
         },
     )
+    _write_ready_labor_employment_qa_matrix(quality_dir / "labor_employment_qa_matrix_report.json")
 
     report, run_dir, ui_manifest = run_synthetic_qa_bundle(
         run_root=run_root,
-        out_dir=run_root / "quality",
+        out_dir=quality_dir,
         fixture_depth_report_path=(
             external_depth_dir / "synthetic_fixture_depth_audit_report.json"
         ),
@@ -49,15 +65,19 @@ def test_synthetic_qa_bundle_blocks_missing_calibration_and_builds_ui(tmp_path):
 
 def test_synthetic_qa_bundle_can_generate_fixture_depth_from_manifest(tmp_path, repo_root):
     run_root = tmp_path / "demo"
-    (run_root / "budget").mkdir(parents=True)
+    budget_dir = run_root / "budget"
+    quality_dir = run_root / "quality"
+    budget_dir.mkdir(parents=True)
+    quality_dir.mkdir(parents=True)
     write_json(
-        run_root / "budget" / "budget_coherence_report.json",
+        budget_dir / "budget_coherence_report.json",
         {"status": "passed", "external_writes_performed": False},
     )
+    _write_ready_labor_employment_qa_matrix(quality_dir / "labor_employment_qa_matrix_report.json")
 
     report, run_dir, _ = run_synthetic_qa_bundle(
         run_root=run_root,
-        out_dir=run_root / "quality",
+        out_dir=quality_dir,
         fixture_depth_manifest_path=(
             repo_root / "examples/synthetic/fixture-expansion/remaining-roadmap-holdouts.json"
         ),
@@ -81,10 +101,18 @@ def test_synthetic_qa_bundle_cli_writes_bundle_and_manifest(tmp_path):
         "budget_coherence_report.json",
         "synthetic_fixture_depth_audit_report.json",
         "budget_calibration_readiness_report.json",
+        "labor_employment_qa_matrix_report.json",
     ]:
         write_json(
             quality_dir / file_name,
-            {"status": "passed", "external_writes_performed": False},
+            {
+                "status": (
+                    "labor_employment_qa_matrix_ready_for_review"
+                    if file_name == "labor_employment_qa_matrix_report.json"
+                    else "passed"
+                ),
+                "external_writes_performed": False,
+            },
         )
 
     code = main(
@@ -104,6 +132,6 @@ def test_synthetic_qa_bundle_cli_writes_bundle_and_manifest(tmp_path):
     report = load_json(quality_dir / SYNTHETIC_QA_BUNDLE_REPORT_FILENAME)
     manifest = load_json(run_root / "ui_review_manifest.json")
     assert code == 0
-    assert report["status"] == "passed"
+    assert report["status"] == "pending_review"
     assert manifest["overallStatus"] in {"passed", "blocked"}
     assert any(gate["gateId"] == "synthetic_qa_bundle" for gate in manifest["qualityGates"])

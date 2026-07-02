@@ -65,6 +65,7 @@ from .learning_shadow_eval_fixture_results import (
 )
 from .learning_shadow_eval_results import run_learning_shadow_eval_results
 from .labor_employment_budget_facts import run_labor_employment_budget_fact_audit
+from .labor_employment_qa_matrix import run_labor_employment_qa_matrix
 from .models import BudgetProposal, HumanConfirmation
 from .orchestrator_owner_review_request import run_orchestrator_owner_review_request
 from .pr_readiness_decision import run_pr_readiness_decision_record
@@ -237,6 +238,20 @@ def _parser() -> argparse.ArgumentParser:
         "--reviewed-at",
         help="Optional fixed timestamp for the synthetic QA review outcome.",
     )
+
+    le_qa_matrix = sub.add_parser(
+        "build-labor-employment-qa-matrix",
+        help=(
+            "Build a deterministic synthetic L&E QA matrix for critical fact blockers "
+            "and range-only review posture."
+        ),
+    )
+    le_qa_matrix.add_argument(
+        "--repo-root",
+        default=".",
+        help="Repository root for relative synthetic L&E manifest refs.",
+    )
+    le_qa_matrix.add_argument("--out-dir", required=True)
 
     budget_review = sub.add_parser(
         "record-budget-review",
@@ -1288,6 +1303,30 @@ def main(argv: list[str] | None = None) -> int:
             return (
                 0 if report.status == "starter_pack_ready_for_manual_fixture_update_review" else 2
             )
+
+        if args.command == "build-labor-employment-qa-matrix":
+            report, run_dir = run_labor_employment_qa_matrix(
+                repo_root=args.repo_root,
+                out_dir=args.out_dir,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "labor_employment_qa_matrix_report_id": (
+                        report.labor_employment_qa_matrix_report_id
+                    ),
+                    "case_count": report.case_count,
+                    "failed_case_count": report.failed_case_count,
+                    "run_dir": str(run_dir),
+                    "budget_amount_output_authorized": (report.budget_amount_output_authorized),
+                    "budget_submission_authorized": report.budget_submission_authorized,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                }
+            )
+            return 0 if report.status == "labor_employment_qa_matrix_ready_for_review" else 2
 
         if args.command == "record-budget-review":
             report, run_dir = run_budget_review_record(

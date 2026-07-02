@@ -116,6 +116,13 @@ ARTIFACT_SPECS = [
         "pending_review",
     ),
     ArtifactSpec(
+        "labor-employment-qa-matrix",
+        "L&E QA Matrix",
+        "labor_employment_qa_matrix_report.json",
+        "qa-reference",
+        "blocked",
+    ),
+    ArtifactSpec(
         "budget-human-review",
         "Budget Human Review",
         "budget_human_review_packet.json",
@@ -180,6 +187,13 @@ QUALITY_GATE_SPECS = {
         "budget_calibration_readiness_report.json",
         "pricing-review",
         "Budget calibration stays blocked until reviewed gold, replay outputs, and variance evidence exist.",
+        "blocked",
+    ),
+    "labor_employment_qa_matrix": (
+        "L&E QA Matrix",
+        "labor_employment_qa_matrix_report.json",
+        "qa-reference",
+        "L&E synthetic fact fixtures must prove critical blockers and range-only review posture.",
         "blocked",
     ),
     "full_pytest": (

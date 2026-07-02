@@ -3,6 +3,7 @@ from lawfirm_os_intake.budget_calibration_starter_pack import (
     run_budget_calibration_starter_pack,
 )
 from lawfirm_os_intake.cli import main
+from lawfirm_os_intake.labor_employment_qa_matrix import run_labor_employment_qa_matrix
 from lawfirm_os_intake.models import BudgetCalibrationStarterPackReport
 from lawfirm_os_intake.synthetic_qa_bundle import run_synthetic_qa_bundle
 from lawfirm_os_intake.util import load_json, write_json
@@ -86,6 +87,10 @@ def test_starter_pack_allows_synthetic_qa_bundle_to_reach_pending_review(
         out_dir=run_root / "quality" / "calibration-starter",
         reviewed_at="2026-07-02T00:00:00Z",
     )
+    run_labor_employment_qa_matrix(
+        repo_root=repo_root,
+        out_dir=run_root / "quality" / "le-qa-matrix",
+    )
 
     bundle, _, ui_manifest = run_synthetic_qa_bundle(
         run_root=run_root,
@@ -104,4 +109,5 @@ def test_starter_pack_allows_synthetic_qa_bundle_to_reach_pending_review(
     assert bundle.blocked_artifact_count == 0
     assert gates["synthetic_qa_bundle"]["status"] == "pending_review"
     assert gates["budget_calibration_readiness"]["status"] == "pending_review"
+    assert gates["labor_employment_qa_matrix"]["status"] == "pending_review"
     assert ui_manifest["overallStatus"] == "blocked"

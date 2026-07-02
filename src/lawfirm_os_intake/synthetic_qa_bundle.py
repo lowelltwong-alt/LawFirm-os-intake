@@ -56,6 +56,16 @@ QA_BUNDLE_ARTIFACTS = [
             "budget calibration as ready."
         ),
     ),
+    QABundleArtifactSpec(
+        artifact_id="labor_employment_qa_matrix",
+        label="Labor/Employment QA Matrix",
+        file_name="labor_employment_qa_matrix_report.json",
+        required=True,
+        missing_note=(
+            "Run build-labor-employment-qa-matrix so L&E critical-fact blockers and "
+            "range-only review posture are visible."
+        ),
+    ),
 ]
 
 
@@ -105,6 +115,11 @@ def run_synthetic_qa_bundle(
             root=root,
             explicit_path=budget_calibration_readiness_report_path,
             file_name="budget_calibration_readiness_report.json",
+        ),
+        "labor_employment_qa_matrix": _resolve_artifact_source(
+            root=root,
+            explicit_path=None,
+            file_name="labor_employment_qa_matrix_report.json",
         ),
     }
     artifacts = [

@@ -988,6 +988,110 @@ class LaborEmploymentBudgetFactAuditReport(StrictModel):
         return self
 
 
+LaborEmploymentQAMatrixBudgetGateEffect = Literal[
+    "block_amount_budget_before_proposal",
+    "allow_range_or_hours_only_pending_review",
+    "candidate_ready_for_budget_review_after_review",
+]
+
+
+class LaborEmploymentQAMatrixCase(StrictModel):
+    case_id: str
+    label: str
+    status: Literal["passed", "failed"]
+    manifest_ref: str
+    fact_report_ref: str
+    expected_budget_readiness_state: Literal[
+        "blocked_missing_critical_facts",
+        "range_only_pending_human_review",
+        "candidate_ready_for_budget_review",
+    ]
+    actual_budget_readiness_state: Literal[
+        "blocked_missing_critical_facts",
+        "range_only_pending_human_review",
+        "candidate_ready_for_budget_review",
+    ]
+    expected_budget_gate_effect: LaborEmploymentQAMatrixBudgetGateEffect
+    actual_budget_gate_effect: LaborEmploymentQAMatrixBudgetGateEffect
+    critical_gap_count: int = Field(ge=0)
+    gap_count: int = Field(ge=0)
+    source_bound_finding_count: int = Field(ge=0)
+    unknown_finding_count: int = Field(ge=0)
+    needs_review_finding_count: int = Field(ge=0)
+    relationship_budget_treatment: Literal[
+        "block_amount_budget",
+        "hours_only_or_broad_range",
+        "candidate_range_budget_after_review",
+    ]
+    critical_relationship_gap_count: int = Field(ge=0)
+    required_human_question_count: int = Field(ge=0)
+    notes: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+
+    @model_validator(mode="after")
+    def le_qa_matrix_case_status_matches_expectations(self) -> "LaborEmploymentQAMatrixCase":
+        expected_match = (
+            self.expected_budget_readiness_state == self.actual_budget_readiness_state
+            and self.expected_budget_gate_effect == self.actual_budget_gate_effect
+        )
+        if self.status == "passed" and not expected_match:
+            raise ValueError("passed L&E QA matrix case must match expected state and gate effect")
+        return self
+
+
+class LaborEmploymentQAMatrixReport(StrictModel):
+    schema_version: str = "0.1"
+    labor_employment_qa_matrix_report_id: str
+    status: Literal[
+        "labor_employment_qa_matrix_ready_for_review",
+        "blocked_by_labor_employment_qa_matrix",
+    ]
+    case_count: int = Field(ge=0)
+    failed_case_count: int = Field(ge=0)
+    cases: list[LaborEmploymentQAMatrixCase]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    not_authorized_for_matter_opening: Literal[True] = True
+    budget_amount_output_authorized: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    conflict_conclusion_emitted: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    training_pipeline_created: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def le_qa_matrix_counts_and_status_match(self) -> "LaborEmploymentQAMatrixReport":
+        failed = [case for case in self.cases if case.status == "failed"]
+        if self.case_count != len(self.cases):
+            raise ValueError("L&E QA matrix case count does not match")
+        if self.failed_case_count != len(failed):
+            raise ValueError("L&E QA matrix failed case count does not match")
+        if self.status == "labor_employment_qa_matrix_ready_for_review" and failed:
+            raise ValueError("ready L&E QA matrix cannot include failed cases")
+        if self.status == "blocked_by_labor_employment_qa_matrix" and not failed:
+            raise ValueError("blocked L&E QA matrix requires failed cases")
+        required = {
+            "human_labor_employment_budget_fact_review",
+            "no_amount_budget_when_critical_facts_missing",
+            "range_or_hours_only_until_review",
+            "no_role_taxonomy_promotion_from_matrix",
+        }
+        if not required.issubset(set(self.required_next_gates)):
+            raise ValueError("L&E QA matrix missing required next gates")
+        return self
+
+
 class PublicSourceMethodologySource(StrictModel):
     source_id: str
     url: str

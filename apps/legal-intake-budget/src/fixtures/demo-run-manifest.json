@@ -161,6 +161,17 @@
       "notes": ["Synthetic QA starter evidence can exercise the calibration chain but does not replace real human fixture-update review."]
     },
     {
+      "artifactId": "labor-employment-qa-matrix",
+      "label": "L&E QA Matrix",
+      "fileName": "labor_employment_qa_matrix_report.json",
+      "status": "pending_review",
+      "owner": "qa-reference",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": ["L&E synthetic fact fixtures prove critical blockers and range-only review posture before budget QA is trusted."]
+    },
+    {
       "artifactId": "budget-human-review",
       "label": "Budget Human Review",
       "fileName": "budget_human_review_packet.json",
@@ -248,6 +259,14 @@
       "evidenceFile": "budget_calibration_readiness_report.json",
       "owner": "pricing-review",
       "notes": ["Budget calibration is blocked until reviewed gold, replay outcomes, and variance evidence exist."]
+    },
+    {
+      "gateId": "labor_employment_qa_matrix",
+      "label": "L&E QA Matrix",
+      "status": "pending_review",
+      "evidenceFile": "labor_employment_qa_matrix_report.json",
+      "owner": "qa-reference",
+      "notes": ["L&E synthetic fact fixtures must prove critical blockers and range-only review posture."]
     },
     {
       "gateId": "full_pytest",

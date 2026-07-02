@@ -14,6 +14,7 @@ export const REQUIRED_ARTIFACT_FILES = [
   "synthetic_fixture_depth_audit_report.json",
   "budget_calibration_readiness_report.json",
   "budget_calibration_starter_pack_report.json",
+  "labor_employment_qa_matrix_report.json",
   "budget_human_review_packet.json",
   "carrier_rejection_decision_ledger_report.json",
   "budget_actual_variance_ledger_report.json",

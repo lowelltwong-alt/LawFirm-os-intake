@@ -284,6 +284,30 @@ from pathlib import Path
 import sys
 
 sys.path.insert(0, str(Path.cwd() / "src"))
+from lawfirm_os_intake.labor_employment_qa_matrix import (
+    run_labor_employment_qa_matrix,
+)
+
+report, _ = run_labor_employment_qa_matrix(
+    repo_root=".",
+    out_dir=".lawfirm-os-intake/smoke/quality/le-qa-matrix",
+)
+raise SystemExit(
+    0 if report.status == "labor_employment_qa_matrix_ready_for_review" else 1
+)
+PY
+test -s ".lawfirm-os-intake/smoke/quality/le-qa-matrix/labor_employment_qa_matrix_report.json"
+grep -q '"status": "labor_employment_qa_matrix_ready_for_review"' \
+  ".lawfirm-os-intake/smoke/quality/le-qa-matrix/labor_employment_qa_matrix_report.json"
+grep -q '"case_id": "critical_fact_gaps_block_amount_budget"' \
+  ".lawfirm-os-intake/smoke/quality/le-qa-matrix/labor_employment_qa_matrix_report.json"
+grep -q '"case_id": "ready_critical_facts_still_range_only"' \
+  ".lawfirm-os-intake/smoke/quality/le-qa-matrix/labor_employment_qa_matrix_report.json"
+"$PYTHON_BIN" -B - <<'PY'
+from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path.cwd() / "src"))
 from lawfirm_os_intake.synthetic_qa_bundle import run_synthetic_qa_bundle
 
 report, _, manifest = run_synthetic_qa_bundle(
@@ -304,9 +328,11 @@ test -s ".lawfirm-os-intake/smoke/quality/synthetic_qa_bundle_report.json"
 grep -q '"status": "pending_review"' ".lawfirm-os-intake/smoke/quality/synthetic_qa_bundle_report.json"
 grep -q '"synthetic_fixture_depth"' ".lawfirm-os-intake/smoke/quality/synthetic_qa_bundle_report.json"
 grep -q '"budget_calibration_readiness"' ".lawfirm-os-intake/smoke/quality/synthetic_qa_bundle_report.json"
+grep -q '"labor_employment_qa_matrix"' ".lawfirm-os-intake/smoke/quality/synthetic_qa_bundle_report.json"
 test -s ".lawfirm-os-intake/smoke/ui_review_manifest.json"
 grep -q '"synthetic_qa_bundle"' ".lawfirm-os-intake/smoke/ui_review_manifest.json"
 grep -q '"budget_coherence"' ".lawfirm-os-intake/smoke/ui_review_manifest.json"
 grep -q '"budget_calibration_readiness"' ".lawfirm-os-intake/smoke/ui_review_manifest.json"
+grep -q '"labor_employment_qa_matrix"' ".lawfirm-os-intake/smoke/ui_review_manifest.json"
 grep -q '"status": "pending_review"' ".lawfirm-os-intake/smoke/ui_review_manifest.json"
 grep -q '"networkCallsAllowed": false' ".lawfirm-os-intake/smoke/ui_review_manifest.json"

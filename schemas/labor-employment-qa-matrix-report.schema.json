@@ -1,0 +1,315 @@
+{
+  "$defs": {
+    "LaborEmploymentQAMatrixCase": {
+      "additionalProperties": false,
+      "properties": {
+        "case_id": {
+          "title": "Case Id",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "manifest_ref": {
+          "title": "Manifest Ref",
+          "type": "string"
+        },
+        "fact_report_ref": {
+          "title": "Fact Report Ref",
+          "type": "string"
+        },
+        "expected_budget_readiness_state": {
+          "enum": [
+            "blocked_missing_critical_facts",
+            "range_only_pending_human_review",
+            "candidate_ready_for_budget_review"
+          ],
+          "title": "Expected Budget Readiness State",
+          "type": "string"
+        },
+        "actual_budget_readiness_state": {
+          "enum": [
+            "blocked_missing_critical_facts",
+            "range_only_pending_human_review",
+            "candidate_ready_for_budget_review"
+          ],
+          "title": "Actual Budget Readiness State",
+          "type": "string"
+        },
+        "expected_budget_gate_effect": {
+          "enum": [
+            "block_amount_budget_before_proposal",
+            "allow_range_or_hours_only_pending_review",
+            "candidate_ready_for_budget_review_after_review"
+          ],
+          "title": "Expected Budget Gate Effect",
+          "type": "string"
+        },
+        "actual_budget_gate_effect": {
+          "enum": [
+            "block_amount_budget_before_proposal",
+            "allow_range_or_hours_only_pending_review",
+            "candidate_ready_for_budget_review_after_review"
+          ],
+          "title": "Actual Budget Gate Effect",
+          "type": "string"
+        },
+        "critical_gap_count": {
+          "minimum": 0,
+          "title": "Critical Gap Count",
+          "type": "integer"
+        },
+        "gap_count": {
+          "minimum": 0,
+          "title": "Gap Count",
+          "type": "integer"
+        },
+        "source_bound_finding_count": {
+          "minimum": 0,
+          "title": "Source Bound Finding Count",
+          "type": "integer"
+        },
+        "unknown_finding_count": {
+          "minimum": 0,
+          "title": "Unknown Finding Count",
+          "type": "integer"
+        },
+        "needs_review_finding_count": {
+          "minimum": 0,
+          "title": "Needs Review Finding Count",
+          "type": "integer"
+        },
+        "relationship_budget_treatment": {
+          "enum": [
+            "block_amount_budget",
+            "hours_only_or_broad_range",
+            "candidate_range_budget_after_review"
+          ],
+          "title": "Relationship Budget Treatment",
+          "type": "string"
+        },
+        "critical_relationship_gap_count": {
+          "minimum": 0,
+          "title": "Critical Relationship Gap Count",
+          "type": "integer"
+        },
+        "required_human_question_count": {
+          "minimum": 0,
+          "title": "Required Human Question Count",
+          "type": "integer"
+        },
+        "notes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Notes",
+          "type": "array"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "case_id",
+        "label",
+        "status",
+        "manifest_ref",
+        "fact_report_ref",
+        "expected_budget_readiness_state",
+        "actual_budget_readiness_state",
+        "expected_budget_gate_effect",
+        "actual_budget_gate_effect",
+        "critical_gap_count",
+        "gap_count",
+        "source_bound_finding_count",
+        "unknown_finding_count",
+        "needs_review_finding_count",
+        "relationship_budget_treatment",
+        "critical_relationship_gap_count",
+        "required_human_question_count",
+        "notes"
+      ],
+      "title": "LaborEmploymentQAMatrixCase",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "labor_employment_qa_matrix_report_id": {
+      "title": "Labor Employment Qa Matrix Report Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "labor_employment_qa_matrix_ready_for_review",
+        "blocked_by_labor_employment_qa_matrix"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "case_count": {
+      "minimum": 0,
+      "title": "Case Count",
+      "type": "integer"
+    },
+    "failed_case_count": {
+      "minimum": 0,
+      "title": "Failed Case Count",
+      "type": "integer"
+    },
+    "cases": {
+      "items": {
+        "$ref": "#/$defs/LaborEmploymentQAMatrixCase"
+      },
+      "title": "Cases",
+      "type": "array"
+    },
+    "required_next_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Gates",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "not_authorized_for_external_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For External Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_lake_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Lake Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_sqlite_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Sqlite Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_budget_submission": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Budget Submission",
+      "type": "boolean"
+    },
+    "not_authorized_for_matter_opening": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Matter Opening",
+      "type": "boolean"
+    },
+    "budget_amount_output_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Amount Output Authorized",
+      "type": "boolean"
+    },
+    "budget_submission_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Submission Authorized",
+      "type": "boolean"
+    },
+    "conflict_conclusion_emitted": {
+      "const": false,
+      "default": false,
+      "title": "Conflict Conclusion Emitted",
+      "type": "boolean"
+    },
+    "matter_opening_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Matter Opening Authorized",
+      "type": "boolean"
+    },
+    "training_pipeline_created": {
+      "const": false,
+      "default": false,
+      "title": "Training Pipeline Created",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "labor_employment_qa_matrix_report_id",
+    "status",
+    "case_count",
+    "failed_case_count",
+    "cases",
+    "required_next_gates",
+    "generated_at"
+  ],
+  "title": "LaborEmploymentQAMatrixReport",
+  "type": "object"
+}

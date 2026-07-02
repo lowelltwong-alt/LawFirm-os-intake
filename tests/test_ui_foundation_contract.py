@@ -48,6 +48,7 @@ def test_legal_intake_budget_ui_data_contract_lists_required_artifacts(repo_root
         "synthetic_fixture_depth_audit_report.json",
         "budget_calibration_readiness_report.json",
         "budget_calibration_starter_pack_report.json",
+        "labor_employment_qa_matrix_report.json",
         "budget_human_review_packet.json",
         "carrier_rejection_decision_ledger_report.json",
         "budget_actual_variance_ledger_report.json",
@@ -88,6 +89,7 @@ def test_legal_intake_budget_demo_manifest_is_read_only_and_candidate_only(repo_
         "synthetic_qa_bundle",
         "synthetic_fixture_depth",
         "budget_calibration_readiness",
+        "labor_employment_qa_matrix",
         "full_pytest",
         "smoke_demo",
     } <= {gate["gateId"] for gate in manifest["qualityGates"]}
