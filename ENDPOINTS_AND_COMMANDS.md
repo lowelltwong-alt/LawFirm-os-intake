@@ -45,10 +45,11 @@ python -m lawfirm_os_intake build-ui-review-manifest \
 
 This writes a local manifest for `apps/legal-intake-budget/` from existing run
 and QA artifacts, including budget coherence, fixture-depth, calibration,
-labor/employment QA matrix, pytest, and smoke evidence. Missing calibration,
-L&E matrix, or other required QA evidence remains visible as blocked or pending
-review. The command does not run a server, call connectors, mutate fixtures,
-write Lake/SQLite records, submit budgets, or open matters.
+labor/employment QA matrix, L&E fixture family pack, pytest, and smoke evidence.
+Missing calibration, L&E matrix, L&E pack, or other required QA evidence remains
+visible as blocked or pending review. The command does not run a server, call
+connectors, mutate fixtures, write Lake/SQLite records, submit budgets, or open
+matters.
 
 ### Build synthetic QA bundle
 
@@ -64,11 +65,12 @@ python -m lawfirm_os_intake build-synthetic-qa-bundle \
 This writes `synthetic_qa_bundle_report.json` plus Markdown notes under the run
 quality directory, copies or generates the fixture-depth report when requested,
 and refreshes the read-only UI manifest. Required artifacts include budget
-coherence, synthetic fixture depth, budget calibration readiness, and the
-labor/employment QA matrix. A blocked bundle is valid QA evidence when
-calibration readiness or L&E matrix evidence is missing or blocked; it is not
-authorization to mutate fixtures, apply calibration, write Lake/SQLite records,
-submit budgets, open matters, or create external writes.
+coherence, synthetic fixture depth, budget calibration readiness, the
+labor/employment QA matrix, and the L&E fixture family pack. A blocked bundle is
+valid QA evidence when calibration readiness, L&E matrix, or L&E pack evidence is
+missing or blocked; it is not authorization to mutate fixtures, apply
+calibration, write Lake/SQLite records, submit budgets, open matters, or create
+external writes.
 
 ### Build budget calibration starter pack
 
@@ -105,6 +107,23 @@ output before proposal generation, and source-bound critical facts still remain
 range/hours-only until human review. It is candidate-only QA evidence for the
 synthetic bundle and read-only UI. It does not promote role taxonomies, write
 Lake/SQLite records, submit budgets, open matters, or authorize learning.
+
+### Audit labor/employment fixture family pack
+
+```bash
+python -m lawfirm_os_intake audit-labor-employment-fixture-family-pack \
+  --pack examples/synthetic/labor-employment/labor-employment-budget-fixture-family-pack.json \
+  --fact-needs config/labor-employment-budget-fact-needs.yaml \
+  --out-dir .lawfirm-os-intake/smoke/quality/le-fixture-family-pack
+```
+
+This writes `labor_employment_fixture_family_pack_report.json` and Markdown
+notes. The audit validates the spec-only synthetic L&E fixture family pack:
+eight families, four variants per family, configured fact-needs coverage,
+budget-driver dimension coverage, blocked critical-fact cases, range-only cases,
+adversarial holdout exclusion, and no-write/no-calibration boundaries. It does
+not generate runtime fixtures, ingest public records, mutate fixture files,
+write Lake/SQLite records, submit budgets, open matters, or authorize learning.
 
 ### Validation runtime policy
 

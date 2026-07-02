@@ -36,6 +36,7 @@ def _write_quality_evidence(run_root):
         "budget_calibration_readiness_report.json",
         "budget_calibration_starter_pack_report.json",
         "labor_employment_qa_matrix_report.json",
+        "labor_employment_fixture_family_pack_report.json",
     ]:
         write_json(
             quality_dir / file_name, {"status": "passed", "external_writes_performed": False}

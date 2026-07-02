@@ -218,6 +218,11 @@ from lawfirm_os_intake.models import (  # noqa: E402
     LaborEmploymentBudgetFactSource,
     LaborEmploymentQAMatrixCase,
     LaborEmploymentQAMatrixReport,
+    LaborEmploymentSyntheticFixtureCase,
+    LaborEmploymentSyntheticFixtureFamilyCoverage,
+    LaborEmploymentSyntheticFixtureFamilyPack,
+    LaborEmploymentSyntheticFixtureFamilyPackCheck,
+    LaborEmploymentSyntheticFixtureFamilyPackReport,
     MatterOpeningReadiness,
     ModelAdapterReport,
     NamedTimekeeperRate,
@@ -332,6 +337,19 @@ MODELS = {
     "labor-employment-budget-fact-audit-report.schema.json": (LaborEmploymentBudgetFactAuditReport),
     "labor-employment-qa-matrix-case.schema.json": LaborEmploymentQAMatrixCase,
     "labor-employment-qa-matrix-report.schema.json": LaborEmploymentQAMatrixReport,
+    "labor-employment-synthetic-fixture-case.schema.json": (LaborEmploymentSyntheticFixtureCase),
+    "labor-employment-synthetic-fixture-family-pack.schema.json": (
+        LaborEmploymentSyntheticFixtureFamilyPack
+    ),
+    "labor-employment-synthetic-fixture-family-coverage.schema.json": (
+        LaborEmploymentSyntheticFixtureFamilyCoverage
+    ),
+    "labor-employment-synthetic-fixture-family-pack-check.schema.json": (
+        LaborEmploymentSyntheticFixtureFamilyPackCheck
+    ),
+    "labor-employment-synthetic-fixture-family-pack-report.schema.json": (
+        LaborEmploymentSyntheticFixtureFamilyPackReport
+    ),
     "data-scope-gate-report.schema.json": DataScopeGateReport,
     "public-data-cache-source-manifest.schema.json": PublicDataCacheSourceManifest,
     "public-data-cache-audit-check.schema.json": PublicDataCacheAuditCheck,

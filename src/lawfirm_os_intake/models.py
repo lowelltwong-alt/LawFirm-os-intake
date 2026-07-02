@@ -1092,6 +1092,213 @@ class LaborEmploymentQAMatrixReport(StrictModel):
         return self
 
 
+LaborEmploymentSyntheticFixtureFamily = Literal[
+    "discrimination_harassment",
+    "retaliation_wrongful_termination",
+    "wage_hour_flsa_state",
+    "ada_fmla_accommodation_leave",
+    "restrictive_covenant_trade_secret",
+    "epli_carrier_assignment",
+    "class_collective_paga_representative",
+    "administrative_exhaustion_agency_record",
+]
+
+
+LaborEmploymentSyntheticFixtureVariant = Literal[
+    "clean",
+    "messy_thread",
+    "missing_attachment",
+    "adversarial",
+]
+
+
+class LaborEmploymentSyntheticFixtureCase(StrictModel):
+    case_id: str
+    family: LaborEmploymentSyntheticFixtureFamily
+    variant: LaborEmploymentSyntheticFixtureVariant
+    label: str
+    data_origin: Literal["synthetic"] = "synthetic"
+    source_shape: Literal["spec_only"] = "spec_only"
+    public_structure_only: Literal[True] = True
+    contains_real_client_data: Literal[False] = False
+    contains_real_matter_data: Literal[False] = False
+    contains_privileged_data: Literal[False] = False
+    fact_need_ids: list[str]
+    missing_critical_fact_ids: list[str] = Field(default_factory=list)
+    missing_important_fact_ids: list[str] = Field(default_factory=list)
+    budget_driver_dimensions: list[str]
+    expected_budget_readiness_state: Literal[
+        "blocked_missing_critical_facts",
+        "range_only_pending_human_review",
+        "candidate_ready_for_budget_review",
+    ]
+    expected_budget_gate_effect: LaborEmploymentQAMatrixBudgetGateEffect
+    expected_budget_treatment: Literal[
+        "block_amount_budget",
+        "hours_only_or_broad_range",
+        "candidate_range_budget_after_review",
+    ]
+    expected_exception_labels: list[str]
+    red_team_notes: list[str]
+    holdout_excluded_from_prompt_assembly: Literal[True] = True
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    calibration_approved: Literal[False] = False
+    fixture_files_mutated: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def le_fixture_case_budget_gate_matches_missing_facts(
+        self,
+    ) -> "LaborEmploymentSyntheticFixtureCase":
+        if self.missing_critical_fact_ids:
+            if self.expected_budget_readiness_state != "blocked_missing_critical_facts":
+                raise ValueError("missing critical L&E facts require blocked readiness")
+            if self.expected_budget_gate_effect != "block_amount_budget_before_proposal":
+                raise ValueError("missing critical L&E facts require amount-budget block")
+        elif self.missing_important_fact_ids:
+            if self.expected_budget_readiness_state != "range_only_pending_human_review":
+                raise ValueError("missing important L&E facts require range-only review")
+            if self.expected_budget_gate_effect != "allow_range_or_hours_only_pending_review":
+                raise ValueError("missing important L&E facts require range-only gate")
+        return self
+
+
+class LaborEmploymentSyntheticFixtureFamilyPack(StrictModel):
+    schema_version: str = "0.1"
+    pack_id: str
+    status: Literal["candidate_fixture_family_pack"]
+    practice_area: Literal["labor_employment"] = "labor_employment"
+    source_methodology_refs: list[str]
+    required_families: list[LaborEmploymentSyntheticFixtureFamily]
+    required_variants: list[LaborEmploymentSyntheticFixtureVariant]
+    required_fact_need_ids: list[str]
+    required_budget_driver_dimensions: list[str]
+    cases: list[LaborEmploymentSyntheticFixtureCase]
+    human_review_required: Literal[True] = True
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    not_authorized_for_matter_opening: Literal[True] = True
+    not_authorized_for_calibration: Literal[True] = True
+    fixture_generation_authorized: Literal[False] = False
+    calibration_approved: Literal[False] = False
+    fixture_files_mutated: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def le_fixture_family_pack_counts_are_consistent(
+        self,
+    ) -> "LaborEmploymentSyntheticFixtureFamilyPack":
+        case_ids = [case.case_id for case in self.cases]
+        if len(case_ids) != len(set(case_ids)):
+            raise ValueError("L&E fixture family pack case IDs must be unique")
+        required_families = set(self.required_families)
+        required_variants = set(self.required_variants)
+        for case in self.cases:
+            if case.family not in required_families:
+                raise ValueError("L&E fixture case family is not declared as required")
+            if case.variant not in required_variants:
+                raise ValueError("L&E fixture case variant is not declared as required")
+        return self
+
+
+class LaborEmploymentSyntheticFixtureFamilyCoverage(StrictModel):
+    family: LaborEmploymentSyntheticFixtureFamily
+    case_count: int = Field(ge=0)
+    covered_variants: list[LaborEmploymentSyntheticFixtureVariant]
+    missing_variants: list[LaborEmploymentSyntheticFixtureVariant]
+
+
+class LaborEmploymentSyntheticFixtureFamilyPackCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    evidence_refs: list[str] = Field(default_factory=list)
+    blocking_refs: list[str] = Field(default_factory=list)
+
+
+class LaborEmploymentSyntheticFixtureFamilyPackReport(StrictModel):
+    schema_version: str = "0.1"
+    fixture_family_pack_report_id: str
+    status: Literal[
+        "labor_employment_fixture_family_pack_ready_for_review",
+        "blocked_by_labor_employment_fixture_family_pack",
+    ]
+    pack_id: str
+    pack_ref: str
+    case_count: int = Field(ge=0)
+    required_family_count: int = Field(ge=0)
+    required_variant_count: int = Field(ge=0)
+    complete_family_variant_count: int = Field(ge=0)
+    missing_family_variant_count: int = Field(ge=0)
+    blocked_case_count: int = Field(ge=0)
+    range_only_case_count: int = Field(ge=0)
+    ready_case_count: int = Field(ge=0)
+    missing_fact_need_ids: list[str]
+    missing_critical_fact_need_ids: list[str]
+    missing_budget_driver_dimensions: list[str]
+    family_coverage: list[LaborEmploymentSyntheticFixtureFamilyCoverage]
+    checks: list[LaborEmploymentSyntheticFixtureFamilyPackCheck]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    not_authorized_for_matter_opening: Literal[True] = True
+    not_authorized_for_calibration: Literal[True] = True
+    fixture_generation_authorized: Literal[False] = False
+    calibration_approved: Literal[False] = False
+    fixture_files_mutated: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def le_fixture_family_pack_report_status_matches_checks(
+        self,
+    ) -> "LaborEmploymentSyntheticFixtureFamilyPackReport":
+        failed = [check for check in self.checks if check.status == "failed"]
+        if self.required_family_count != len(self.family_coverage):
+            raise ValueError("L&E fixture family coverage count does not match")
+        has_gap = bool(
+            failed
+            or self.missing_family_variant_count
+            or self.missing_fact_need_ids
+            or self.missing_budget_driver_dimensions
+        )
+        if self.status == "labor_employment_fixture_family_pack_ready_for_review" and has_gap:
+            raise ValueError("ready L&E fixture family pack cannot have coverage gaps")
+        if self.status == "blocked_by_labor_employment_fixture_family_pack" and not has_gap:
+            raise ValueError("blocked L&E fixture family pack requires a gap")
+        required = {
+            "synthetic_fixture_generation_review",
+            "reviewed_gold_before_calibration",
+            "no_real_public_payload_or_identity_reconstruction",
+            "range_or_block_until_human_fact_review",
+            "no_lake_or_sqlite_write_from_fixture_pack",
+        }
+        if not required.issubset(set(self.required_next_gates)):
+            raise ValueError("L&E fixture family pack report missing required next gates")
+        return self
+
+
 class PublicSourceMethodologySource(StrictModel):
     source_id: str
     url: str

@@ -65,6 +65,9 @@ from .learning_shadow_eval_fixture_results import (
 )
 from .learning_shadow_eval_results import run_learning_shadow_eval_results
 from .labor_employment_budget_facts import run_labor_employment_budget_fact_audit
+from .labor_employment_fixture_family_pack import (
+    run_labor_employment_fixture_family_pack_audit,
+)
 from .labor_employment_qa_matrix import run_labor_employment_qa_matrix
 from .models import BudgetProposal, HumanConfirmation
 from .orchestrator_owner_review_request import run_orchestrator_owner_review_request
@@ -252,6 +255,27 @@ def _parser() -> argparse.ArgumentParser:
         help="Repository root for relative synthetic L&E manifest refs.",
     )
     le_qa_matrix.add_argument("--out-dir", required=True)
+
+    le_fixture_family_pack = sub.add_parser(
+        "audit-labor-employment-fixture-family-pack",
+        help=(
+            "Audit the synthetic L&E budget fixture-family pack for family, "
+            "variant, fact-need, driver, and no-write coverage."
+        ),
+    )
+    le_fixture_family_pack.add_argument(
+        "--pack",
+        default=(
+            "examples/synthetic/labor-employment/labor-employment-budget-fixture-family-pack.json"
+        ),
+        help="Path to labor-employment-budget-fixture-family-pack.json.",
+    )
+    le_fixture_family_pack.add_argument(
+        "--fact-needs",
+        default="config/labor-employment-budget-fact-needs.yaml",
+        help="Path to the candidate L&E budget fact-needs policy.",
+    )
+    le_fixture_family_pack.add_argument("--out-dir", required=True)
 
     budget_review = sub.add_parser(
         "record-budget-review",
@@ -1327,6 +1351,36 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 0 if report.status == "labor_employment_qa_matrix_ready_for_review" else 2
+
+        if args.command == "audit-labor-employment-fixture-family-pack":
+            report, run_dir = run_labor_employment_fixture_family_pack_audit(
+                pack_path=args.pack,
+                fact_needs_path=args.fact_needs,
+                out_dir=args.out_dir,
+            )
+            failed_checks = [check.check_id for check in report.checks if check.status == "failed"]
+            _print(
+                {
+                    "status": report.status,
+                    "fixture_family_pack_report_id": (report.fixture_family_pack_report_id),
+                    "pack_id": report.pack_id,
+                    "case_count": report.case_count,
+                    "missing_family_variant_count": report.missing_family_variant_count,
+                    "missing_fact_need_ids": report.missing_fact_need_ids,
+                    "missing_budget_driver_dimensions": (report.missing_budget_driver_dimensions),
+                    "failed_checks": failed_checks,
+                    "fixture_generation_authorized": report.fixture_generation_authorized,
+                    "calibration_approved": report.calibration_approved,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return (
+                0 if report.status == "labor_employment_fixture_family_pack_ready_for_review" else 2
+            )
 
         if args.command == "record-budget-review":
             report, run_dir = run_budget_review_record(

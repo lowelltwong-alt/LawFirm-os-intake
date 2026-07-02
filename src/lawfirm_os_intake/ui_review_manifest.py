@@ -123,6 +123,13 @@ ARTIFACT_SPECS = [
         "blocked",
     ),
     ArtifactSpec(
+        "labor-employment-fixture-family-pack",
+        "L&E Fixture Family Pack",
+        "labor_employment_fixture_family_pack_report.json",
+        "qa-reference",
+        "blocked",
+    ),
+    ArtifactSpec(
         "budget-human-review",
         "Budget Human Review",
         "budget_human_review_packet.json",
@@ -194,6 +201,13 @@ QUALITY_GATE_SPECS = {
         "labor_employment_qa_matrix_report.json",
         "qa-reference",
         "L&E synthetic fact fixtures must prove critical blockers and range-only review posture.",
+        "blocked",
+    ),
+    "labor_employment_fixture_family_pack": (
+        "L&E Fixture Family Pack",
+        "labor_employment_fixture_family_pack_report.json",
+        "qa-reference",
+        "L&E synthetic fixtures must cover required families, variants, fact needs, and budget-driver dimensions.",
         "blocked",
     ),
     "full_pytest": (

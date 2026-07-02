@@ -1,0 +1,343 @@
+{
+  "$defs": {
+    "LaborEmploymentSyntheticFixtureFamilyCoverage": {
+      "additionalProperties": false,
+      "properties": {
+        "family": {
+          "enum": [
+            "discrimination_harassment",
+            "retaliation_wrongful_termination",
+            "wage_hour_flsa_state",
+            "ada_fmla_accommodation_leave",
+            "restrictive_covenant_trade_secret",
+            "epli_carrier_assignment",
+            "class_collective_paga_representative",
+            "administrative_exhaustion_agency_record"
+          ],
+          "title": "Family",
+          "type": "string"
+        },
+        "case_count": {
+          "minimum": 0,
+          "title": "Case Count",
+          "type": "integer"
+        },
+        "covered_variants": {
+          "items": {
+            "enum": [
+              "clean",
+              "messy_thread",
+              "missing_attachment",
+              "adversarial"
+            ],
+            "type": "string"
+          },
+          "title": "Covered Variants",
+          "type": "array"
+        },
+        "missing_variants": {
+          "items": {
+            "enum": [
+              "clean",
+              "messy_thread",
+              "missing_attachment",
+              "adversarial"
+            ],
+            "type": "string"
+          },
+          "title": "Missing Variants",
+          "type": "array"
+        }
+      },
+      "required": [
+        "family",
+        "case_count",
+        "covered_variants",
+        "missing_variants"
+      ],
+      "title": "LaborEmploymentSyntheticFixtureFamilyCoverage",
+      "type": "object"
+    },
+    "LaborEmploymentSyntheticFixtureFamilyPackCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "blocking_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Blocking Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "LaborEmploymentSyntheticFixtureFamilyPackCheck",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "fixture_family_pack_report_id": {
+      "title": "Fixture Family Pack Report Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "labor_employment_fixture_family_pack_ready_for_review",
+        "blocked_by_labor_employment_fixture_family_pack"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "pack_id": {
+      "title": "Pack Id",
+      "type": "string"
+    },
+    "pack_ref": {
+      "title": "Pack Ref",
+      "type": "string"
+    },
+    "case_count": {
+      "minimum": 0,
+      "title": "Case Count",
+      "type": "integer"
+    },
+    "required_family_count": {
+      "minimum": 0,
+      "title": "Required Family Count",
+      "type": "integer"
+    },
+    "required_variant_count": {
+      "minimum": 0,
+      "title": "Required Variant Count",
+      "type": "integer"
+    },
+    "complete_family_variant_count": {
+      "minimum": 0,
+      "title": "Complete Family Variant Count",
+      "type": "integer"
+    },
+    "missing_family_variant_count": {
+      "minimum": 0,
+      "title": "Missing Family Variant Count",
+      "type": "integer"
+    },
+    "blocked_case_count": {
+      "minimum": 0,
+      "title": "Blocked Case Count",
+      "type": "integer"
+    },
+    "range_only_case_count": {
+      "minimum": 0,
+      "title": "Range Only Case Count",
+      "type": "integer"
+    },
+    "ready_case_count": {
+      "minimum": 0,
+      "title": "Ready Case Count",
+      "type": "integer"
+    },
+    "missing_fact_need_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Missing Fact Need Ids",
+      "type": "array"
+    },
+    "missing_critical_fact_need_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Missing Critical Fact Need Ids",
+      "type": "array"
+    },
+    "missing_budget_driver_dimensions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Missing Budget Driver Dimensions",
+      "type": "array"
+    },
+    "family_coverage": {
+      "items": {
+        "$ref": "#/$defs/LaborEmploymentSyntheticFixtureFamilyCoverage"
+      },
+      "title": "Family Coverage",
+      "type": "array"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/LaborEmploymentSyntheticFixtureFamilyPackCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "required_next_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Gates",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "human_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Human Review Required",
+      "type": "boolean"
+    },
+    "not_authorized_for_external_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For External Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_lake_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Lake Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_sqlite_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Sqlite Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_budget_submission": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Budget Submission",
+      "type": "boolean"
+    },
+    "not_authorized_for_matter_opening": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Matter Opening",
+      "type": "boolean"
+    },
+    "not_authorized_for_calibration": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Calibration",
+      "type": "boolean"
+    },
+    "fixture_generation_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Fixture Generation Authorized",
+      "type": "boolean"
+    },
+    "calibration_approved": {
+      "const": false,
+      "default": false,
+      "title": "Calibration Approved",
+      "type": "boolean"
+    },
+    "fixture_files_mutated": {
+      "const": false,
+      "default": false,
+      "title": "Fixture Files Mutated",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "fixture_family_pack_report_id",
+    "status",
+    "pack_id",
+    "pack_ref",
+    "case_count",
+    "required_family_count",
+    "required_variant_count",
+    "complete_family_variant_count",
+    "missing_family_variant_count",
+    "blocked_case_count",
+    "range_only_case_count",
+    "ready_case_count",
+    "missing_fact_need_ids",
+    "missing_critical_fact_need_ids",
+    "missing_budget_driver_dimensions",
+    "family_coverage",
+    "checks",
+    "required_next_gates",
+    "generated_at"
+  ],
+  "title": "LaborEmploymentSyntheticFixtureFamilyPackReport",
+  "type": "object"
+}

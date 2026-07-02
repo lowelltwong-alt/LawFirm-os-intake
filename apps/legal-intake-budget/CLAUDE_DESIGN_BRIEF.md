@@ -20,5 +20,5 @@ Useful views:
 - carrier rejection, appeal outcome, and learning-loop blockers;
 - public-data cache and public-source methodology reports;
 - reviewed gold and synthetic fixture status.
-- QA gate strip for budget coherence, the synthetic QA bundle, fixture depth, calibration readiness, the labor/employment QA matrix, the calibration starter pack, smoke, and full pytest evidence.
+- QA gate strip for budget coherence, the synthetic QA bundle, fixture depth, calibration readiness, the labor/employment QA matrix, the L&E fixture family pack, the calibration starter pack, smoke, and full pytest evidence.
 - L&E QA matrix detail panel from `src/fixtures/demo-labor-employment-qa-matrix-report.json`, showing the blocked critical-fact case and the range-only pending-review case without adding mutation controls.

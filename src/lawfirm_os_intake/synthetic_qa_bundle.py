@@ -66,6 +66,16 @@ QA_BUNDLE_ARTIFACTS = [
             "range-only review posture are visible."
         ),
     ),
+    QABundleArtifactSpec(
+        artifact_id="labor_employment_fixture_family_pack",
+        label="Labor/Employment Fixture Family Pack",
+        file_name="labor_employment_fixture_family_pack_report.json",
+        required=True,
+        missing_note=(
+            "Run audit-labor-employment-fixture-family-pack so L&E synthetic "
+            "family/variant/fact-need coverage is visible."
+        ),
+    ),
 ]
 
 
@@ -120,6 +130,11 @@ def run_synthetic_qa_bundle(
             root=root,
             explicit_path=None,
             file_name="labor_employment_qa_matrix_report.json",
+        ),
+        "labor_employment_fixture_family_pack": _resolve_artifact_source(
+            root=root,
+            explicit_path=None,
+            file_name="labor_employment_fixture_family_pack_report.json",
         ),
     }
     artifacts = [

@@ -172,6 +172,17 @@
       "notes": ["L&E synthetic fact fixtures prove critical blockers and range-only review posture before budget QA is trusted."]
     },
     {
+      "artifactId": "labor-employment-fixture-family-pack",
+      "label": "L&E Fixture Family Pack",
+      "fileName": "labor_employment_fixture_family_pack_report.json",
+      "status": "pending_review",
+      "owner": "qa-reference",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": ["L&E fixture coverage includes required families, clean/messy/missing/adversarial variants, fact needs, and budget-driver dimensions."]
+    },
+    {
       "artifactId": "budget-human-review",
       "label": "Budget Human Review",
       "fileName": "budget_human_review_packet.json",
@@ -267,6 +278,14 @@
       "evidenceFile": "labor_employment_qa_matrix_report.json",
       "owner": "qa-reference",
       "notes": ["L&E synthetic fact fixtures must prove critical blockers and range-only review posture."]
+    },
+    {
+      "gateId": "labor_employment_fixture_family_pack",
+      "label": "L&E Fixture Family Pack",
+      "status": "pending_review",
+      "evidenceFile": "labor_employment_fixture_family_pack_report.json",
+      "owner": "qa-reference",
+      "notes": ["L&E synthetic fixtures must cover required families, variants, fact needs, and budget-driver dimensions."]
     },
     {
       "gateId": "full_pytest",

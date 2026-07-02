@@ -1,0 +1,410 @@
+{
+  "$defs": {
+    "LaborEmploymentSyntheticFixtureCase": {
+      "additionalProperties": false,
+      "properties": {
+        "case_id": {
+          "title": "Case Id",
+          "type": "string"
+        },
+        "family": {
+          "enum": [
+            "discrimination_harassment",
+            "retaliation_wrongful_termination",
+            "wage_hour_flsa_state",
+            "ada_fmla_accommodation_leave",
+            "restrictive_covenant_trade_secret",
+            "epli_carrier_assignment",
+            "class_collective_paga_representative",
+            "administrative_exhaustion_agency_record"
+          ],
+          "title": "Family",
+          "type": "string"
+        },
+        "variant": {
+          "enum": [
+            "clean",
+            "messy_thread",
+            "missing_attachment",
+            "adversarial"
+          ],
+          "title": "Variant",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "data_origin": {
+          "const": "synthetic",
+          "default": "synthetic",
+          "title": "Data Origin",
+          "type": "string"
+        },
+        "source_shape": {
+          "const": "spec_only",
+          "default": "spec_only",
+          "title": "Source Shape",
+          "type": "string"
+        },
+        "public_structure_only": {
+          "const": true,
+          "default": true,
+          "title": "Public Structure Only",
+          "type": "boolean"
+        },
+        "contains_real_client_data": {
+          "const": false,
+          "default": false,
+          "title": "Contains Real Client Data",
+          "type": "boolean"
+        },
+        "contains_real_matter_data": {
+          "const": false,
+          "default": false,
+          "title": "Contains Real Matter Data",
+          "type": "boolean"
+        },
+        "contains_privileged_data": {
+          "const": false,
+          "default": false,
+          "title": "Contains Privileged Data",
+          "type": "boolean"
+        },
+        "fact_need_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Fact Need Ids",
+          "type": "array"
+        },
+        "missing_critical_fact_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Missing Critical Fact Ids",
+          "type": "array"
+        },
+        "missing_important_fact_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Missing Important Fact Ids",
+          "type": "array"
+        },
+        "budget_driver_dimensions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Budget Driver Dimensions",
+          "type": "array"
+        },
+        "expected_budget_readiness_state": {
+          "enum": [
+            "blocked_missing_critical_facts",
+            "range_only_pending_human_review",
+            "candidate_ready_for_budget_review"
+          ],
+          "title": "Expected Budget Readiness State",
+          "type": "string"
+        },
+        "expected_budget_gate_effect": {
+          "enum": [
+            "block_amount_budget_before_proposal",
+            "allow_range_or_hours_only_pending_review",
+            "candidate_ready_for_budget_review_after_review"
+          ],
+          "title": "Expected Budget Gate Effect",
+          "type": "string"
+        },
+        "expected_budget_treatment": {
+          "enum": [
+            "block_amount_budget",
+            "hours_only_or_broad_range",
+            "candidate_range_budget_after_review"
+          ],
+          "title": "Expected Budget Treatment",
+          "type": "string"
+        },
+        "expected_exception_labels": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Expected Exception Labels",
+          "type": "array"
+        },
+        "red_team_notes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Red Team Notes",
+          "type": "array"
+        },
+        "holdout_excluded_from_prompt_assembly": {
+          "const": true,
+          "default": true,
+          "title": "Holdout Excluded From Prompt Assembly",
+          "type": "boolean"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        },
+        "calibration_approved": {
+          "const": false,
+          "default": false,
+          "title": "Calibration Approved",
+          "type": "boolean"
+        },
+        "fixture_files_mutated": {
+          "const": false,
+          "default": false,
+          "title": "Fixture Files Mutated",
+          "type": "boolean"
+        },
+        "lake_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Lake Write Performed",
+          "type": "boolean"
+        },
+        "sqlite_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Sqlite Write Performed",
+          "type": "boolean"
+        },
+        "external_writes_performed": {
+          "const": false,
+          "default": false,
+          "title": "External Writes Performed",
+          "type": "boolean"
+        },
+        "silent_learning_performed": {
+          "const": false,
+          "default": false,
+          "title": "Silent Learning Performed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "case_id",
+        "family",
+        "variant",
+        "label",
+        "fact_need_ids",
+        "budget_driver_dimensions",
+        "expected_budget_readiness_state",
+        "expected_budget_gate_effect",
+        "expected_budget_treatment",
+        "expected_exception_labels",
+        "red_team_notes"
+      ],
+      "title": "LaborEmploymentSyntheticFixtureCase",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "pack_id": {
+      "title": "Pack Id",
+      "type": "string"
+    },
+    "status": {
+      "const": "candidate_fixture_family_pack",
+      "title": "Status",
+      "type": "string"
+    },
+    "practice_area": {
+      "const": "labor_employment",
+      "default": "labor_employment",
+      "title": "Practice Area",
+      "type": "string"
+    },
+    "source_methodology_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Source Methodology Refs",
+      "type": "array"
+    },
+    "required_families": {
+      "items": {
+        "enum": [
+          "discrimination_harassment",
+          "retaliation_wrongful_termination",
+          "wage_hour_flsa_state",
+          "ada_fmla_accommodation_leave",
+          "restrictive_covenant_trade_secret",
+          "epli_carrier_assignment",
+          "class_collective_paga_representative",
+          "administrative_exhaustion_agency_record"
+        ],
+        "type": "string"
+      },
+      "title": "Required Families",
+      "type": "array"
+    },
+    "required_variants": {
+      "items": {
+        "enum": [
+          "clean",
+          "messy_thread",
+          "missing_attachment",
+          "adversarial"
+        ],
+        "type": "string"
+      },
+      "title": "Required Variants",
+      "type": "array"
+    },
+    "required_fact_need_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Fact Need Ids",
+      "type": "array"
+    },
+    "required_budget_driver_dimensions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Budget Driver Dimensions",
+      "type": "array"
+    },
+    "cases": {
+      "items": {
+        "$ref": "#/$defs/LaborEmploymentSyntheticFixtureCase"
+      },
+      "title": "Cases",
+      "type": "array"
+    },
+    "human_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Human Review Required",
+      "type": "boolean"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "not_authorized_for_external_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For External Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_lake_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Lake Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_sqlite_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Sqlite Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_budget_submission": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Budget Submission",
+      "type": "boolean"
+    },
+    "not_authorized_for_matter_opening": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Matter Opening",
+      "type": "boolean"
+    },
+    "not_authorized_for_calibration": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Calibration",
+      "type": "boolean"
+    },
+    "fixture_generation_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Fixture Generation Authorized",
+      "type": "boolean"
+    },
+    "calibration_approved": {
+      "const": false,
+      "default": false,
+      "title": "Calibration Approved",
+      "type": "boolean"
+    },
+    "fixture_files_mutated": {
+      "const": false,
+      "default": false,
+      "title": "Fixture Files Mutated",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "pack_id",
+    "status",
+    "source_methodology_refs",
+    "required_families",
+    "required_variants",
+    "required_fact_need_ids",
+    "required_budget_driver_dimensions",
+    "cases"
+  ],
+  "title": "LaborEmploymentSyntheticFixtureFamilyPack",
+  "type": "object"
+}

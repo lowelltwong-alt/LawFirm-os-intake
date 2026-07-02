@@ -26,6 +26,7 @@ Synthetic data tests full legal workflow behavior that public data cannot safely
 - client/carrier guideline conflicts;
 - matter type not supported by a budget template.
 - north-star messy bundle combining duplicate text, missing attachment, role ambiguity, prompt injection, missing fields, deadline candidates, conflict seed, budget proposal, safety gate, and final blockers.
+- labor/employment budget fixture-family pack covering discrimination/harassment, retaliation/wrongful termination, wage-hour, ADA/FMLA, restrictive covenant, EPLI carrier assignment, class/collective/PAGA-style, and administrative-exhaustion families across clean, messy-thread, missing-attachment, and adversarial variants.
 
 ## Gold labels
 
@@ -44,6 +45,8 @@ Gold should be reviewed and versioned for:
 - north-star review package completeness.
 
 Reviewed synthetic gold files live under `examples/synthetic/gold/`. They are local evaluation gates only. `fixture_gold_report.json` proves whether a specific run matched reviewed expectations; it does not promote labels, roles, event classes, or budgets into canon. The current reviewed gold set includes the north-star priced demo and a carrier-assignment hours-only budget-mode fixture.
+
+The L&E fixture-family pack lives at `examples/synthetic/labor-employment/labor-employment-budget-fixture-family-pack.json`. Run `lawfirm-os-intake audit-labor-employment-fixture-family-pack --out-dir <dir>` to write `labor_employment_fixture_family_pack_report.json`. That report checks family/variant coverage, configured fact needs, budget-driver dimensions, blocked/range-only expectations, adversarial holdout exclusion, and no-write/no-calibration boundaries.
 
 ## Data generation rules
 

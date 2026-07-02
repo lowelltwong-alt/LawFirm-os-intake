@@ -103,12 +103,13 @@ blocked-budget, and counterfactual audits complete.
 
 Use `python -m lawfirm_os_intake build-synthetic-qa-bundle --run-root PATH
 --out-dir PATH/quality --ui-manifest-out PATH/ui_review_manifest.json` to gather
-budget coherence, synthetic fixture depth, budget calibration readiness, and the
-labor/employment QA matrix into `synthetic_qa_bundle_report.json` before
-refreshing the UI manifest. The bundle may be honestly `blocked` when
-calibration or L&E matrix evidence has not been generated yet; it still writes
-local candidate-only review evidence and does not mutate fixtures, write
-Lake/SQLite records, submit budgets, open matters, or apply learning.
+budget coherence, synthetic fixture depth, budget calibration readiness, the
+labor/employment QA matrix, and the L&E fixture family pack into
+`synthetic_qa_bundle_report.json` before refreshing the UI manifest. The bundle
+may be honestly `blocked` when calibration, L&E matrix, or L&E pack evidence has
+not been generated yet; it still writes local candidate-only review evidence and
+does not mutate fixtures, write Lake/SQLite records, submit budgets, open
+matters, or apply learning.
 
 Use `python -m lawfirm_os_intake build-budget-calibration-starter-pack --corpus-root
 examples/synthetic --repo-root . --out-dir PATH/calibration-starter` to generate
@@ -127,6 +128,18 @@ block amount budgets and that source-bound critical facts still remain
 range/hours-only pending human review. The report is local candidate QA evidence
 only and does not promote role taxonomies, write Lake/SQLite records, submit
 budgets, open matters, or authorize learning.
+
+Use `python -m lawfirm_os_intake audit-labor-employment-fixture-family-pack
+--out-dir PATH/le-fixture-family-pack` to audit
+`examples/synthetic/labor-employment/labor-employment-budget-fixture-family-pack.json`.
+The pack is spec-only synthetic data with 32 candidate cases across eight L&E
+budget families and four variants per family: clean, messy-thread,
+missing-attachment, and adversarial. The audit writes
+`labor_employment_fixture_family_pack_report.json`, checking family/variant
+coverage, configured fact-needs coverage, budget-driver dimensions, blocked and
+range-only cases, adversarial holdout posture, and no-write/no-calibration
+boundaries. It does not generate runtime fixtures, ingest public records, write
+Lake/SQLite records, submit budgets, open matters, or authorize learning.
 
 The demo emits:
 
@@ -295,7 +308,7 @@ The CourtListener early-case corpus strategy is also planning-only. `config/cour
 
 The offline CourtListener-style fixtures are synthetic and live under `examples/synthetic/courtlistener-derived/`. Run `lawfirm-os-intake audit-courtlistener-fixture --repo-root . --manifest examples/synthetic/courtlistener-derived/labor-employment-dataset-manifest.json --out-dir <dir>` to prove the first manifest labels resolve to exact synthetic snapshot segments, offsets, and hashes while keeping later discovery material as negative/routing examples only. The companion `labor-employment-ready-critical-facts-manifest.json` uses the same synthetic snapshot to prove the opposite edge: critical L&E budget facts can be source-bound while the packet remains review-gated. The audit records no live calls, no public-record ingestion, no purchases, no training, no budget accuracy claim, and no external writes.
 
-Labor/employment budget readiness now has its own source-bound fact-gap audit. Run `lawfirm-os-intake audit-labor-employment-budget-facts --repo-root . --manifest examples/synthetic/courtlistener-derived/labor-employment-dataset-manifest.json --out-dir <dir>` to write `labor_employment_budget_fact_audit_report.json` and `.md`. The audit checks whether the fixture has enough candidate evidence for L&E budget drivers such as employee/employer identity, payer/client posture, individual supervisors, joint-employer structure, claims, class/collective scope, timeline, damages, ESI/custodians, depositions, experts/vendors, policy documents, and carrier/rate guideline context. The starter manifest intentionally remains `blocked_missing_critical_facts`; the ready-critical-facts manifest resolves critical gaps but still lands at `range_only_pending_human_review` because important expert/vendor and policy-document facts need review. Passing a report to `build-budget --labor-employment-budget-fact-report <path>` makes critical gaps fail the budget precondition gate before proposal output; non-critical gaps become supported budget unknowns for human review. Run `lawfirm-os-intake build-labor-employment-qa-matrix --repo-root . --out-dir <dir>` to package both L&E fact-audit edges into `labor_employment_qa_matrix_report.json` for the synthetic QA bundle and read-only UI. No budget amount, submission, conflict conclusion, matter opening, Lake/SQLite write, role-taxonomy promotion, or learning update is authorized by either audit.
+Labor/employment budget readiness now has its own source-bound fact-gap audit. Run `lawfirm-os-intake audit-labor-employment-budget-facts --repo-root . --manifest examples/synthetic/courtlistener-derived/labor-employment-dataset-manifest.json --out-dir <dir>` to write `labor_employment_budget_fact_audit_report.json` and `.md`. The audit checks whether the fixture has enough candidate evidence for L&E budget drivers such as employee/employer identity, payer/client posture, individual supervisors, joint-employer structure, claims, class/collective scope, timeline, damages, ESI/custodians, depositions, experts/vendors, policy documents, and carrier/rate guideline context. The starter manifest intentionally remains `blocked_missing_critical_facts`; the ready-critical-facts manifest resolves critical gaps but still lands at `range_only_pending_human_review` because important expert/vendor and policy-document facts need review. Passing a report to `build-budget --labor-employment-budget-fact-report <path>` makes critical gaps fail the budget precondition gate before proposal output; non-critical gaps become supported budget unknowns for human review. Run `lawfirm-os-intake build-labor-employment-qa-matrix --repo-root . --out-dir <dir>` to package both L&E fact-audit edges into `labor_employment_qa_matrix_report.json` for the synthetic QA bundle and read-only UI. Run `lawfirm-os-intake audit-labor-employment-fixture-family-pack --out-dir <dir>` to verify the broader 32-case L&E synthetic pack before relying on family/variant coverage. No budget amount, submission, conflict conclusion, matter opening, Lake/SQLite write, role-taxonomy promotion, fixture generation, calibration, or learning update is authorized by these audits.
 
 The preflight `intake_review_form.md` is the first human pause. It shows detailed source inventory rows, including duplicate links, attachment refs, filenames, metadata keys, hashes, candidate alternatives, deadline and missing-information evidence, and review outcome handling. Only `confirmed` can proceed toward the budget precondition gate, and even then only after exact packet binding and evidence checks; all other outcomes remain blocked or human-only.
 

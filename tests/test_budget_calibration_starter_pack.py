@@ -3,6 +3,9 @@ from lawfirm_os_intake.budget_calibration_starter_pack import (
     run_budget_calibration_starter_pack,
 )
 from lawfirm_os_intake.cli import main
+from lawfirm_os_intake.labor_employment_fixture_family_pack import (
+    run_labor_employment_fixture_family_pack_audit,
+)
 from lawfirm_os_intake.labor_employment_qa_matrix import run_labor_employment_qa_matrix
 from lawfirm_os_intake.models import BudgetCalibrationStarterPackReport
 from lawfirm_os_intake.synthetic_qa_bundle import run_synthetic_qa_bundle
@@ -91,6 +94,14 @@ def test_starter_pack_allows_synthetic_qa_bundle_to_reach_pending_review(
         repo_root=repo_root,
         out_dir=run_root / "quality" / "le-qa-matrix",
     )
+    run_labor_employment_fixture_family_pack_audit(
+        pack_path=(
+            repo_root
+            / "examples/synthetic/labor-employment/labor-employment-budget-fixture-family-pack.json"
+        ),
+        fact_needs_path=repo_root / "config/labor-employment-budget-fact-needs.yaml",
+        out_dir=run_root / "quality" / "le-fixture-family-pack",
+    )
 
     bundle, _, ui_manifest = run_synthetic_qa_bundle(
         run_root=run_root,
@@ -110,4 +121,5 @@ def test_starter_pack_allows_synthetic_qa_bundle_to_reach_pending_review(
     assert gates["synthetic_qa_bundle"]["status"] == "pending_review"
     assert gates["budget_calibration_readiness"]["status"] == "pending_review"
     assert gates["labor_employment_qa_matrix"]["status"] == "pending_review"
+    assert gates["labor_employment_fixture_family_pack"]["status"] == "pending_review"
     assert ui_manifest["overallStatus"] == "blocked"

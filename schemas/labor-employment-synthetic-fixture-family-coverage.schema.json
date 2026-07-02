@@ -1,0 +1,58 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "family": {
+      "enum": [
+        "discrimination_harassment",
+        "retaliation_wrongful_termination",
+        "wage_hour_flsa_state",
+        "ada_fmla_accommodation_leave",
+        "restrictive_covenant_trade_secret",
+        "epli_carrier_assignment",
+        "class_collective_paga_representative",
+        "administrative_exhaustion_agency_record"
+      ],
+      "title": "Family",
+      "type": "string"
+    },
+    "case_count": {
+      "minimum": 0,
+      "title": "Case Count",
+      "type": "integer"
+    },
+    "covered_variants": {
+      "items": {
+        "enum": [
+          "clean",
+          "messy_thread",
+          "missing_attachment",
+          "adversarial"
+        ],
+        "type": "string"
+      },
+      "title": "Covered Variants",
+      "type": "array"
+    },
+    "missing_variants": {
+      "items": {
+        "enum": [
+          "clean",
+          "messy_thread",
+          "missing_attachment",
+          "adversarial"
+        ],
+        "type": "string"
+      },
+      "title": "Missing Variants",
+      "type": "array"
+    }
+  },
+  "required": [
+    "family",
+    "case_count",
+    "covered_variants",
+    "missing_variants"
+  ],
+  "title": "LaborEmploymentSyntheticFixtureFamilyCoverage",
+  "type": "object"
+}

@@ -308,6 +308,34 @@ from pathlib import Path
 import sys
 
 sys.path.insert(0, str(Path.cwd() / "src"))
+from lawfirm_os_intake.labor_employment_fixture_family_pack import (
+    run_labor_employment_fixture_family_pack_audit,
+)
+
+report, _ = run_labor_employment_fixture_family_pack_audit(
+    pack_path=(
+        "examples/synthetic/labor-employment/"
+        "labor-employment-budget-fixture-family-pack.json"
+    ),
+    fact_needs_path="config/labor-employment-budget-fact-needs.yaml",
+    out_dir=".lawfirm-os-intake/smoke/quality/le-fixture-family-pack",
+)
+raise SystemExit(
+    0
+    if report.status == "labor_employment_fixture_family_pack_ready_for_review"
+    else 1
+)
+PY
+test -s ".lawfirm-os-intake/smoke/quality/le-fixture-family-pack/labor_employment_fixture_family_pack_report.json"
+grep -q '"status": "labor_employment_fixture_family_pack_ready_for_review"' \
+  ".lawfirm-os-intake/smoke/quality/le-fixture-family-pack/labor_employment_fixture_family_pack_report.json"
+grep -q '"case_count": 32' \
+  ".lawfirm-os-intake/smoke/quality/le-fixture-family-pack/labor_employment_fixture_family_pack_report.json"
+"$PYTHON_BIN" -B - <<'PY'
+from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path.cwd() / "src"))
 from lawfirm_os_intake.synthetic_qa_bundle import run_synthetic_qa_bundle
 
 report, _, manifest = run_synthetic_qa_bundle(
@@ -329,10 +357,12 @@ grep -q '"status": "pending_review"' ".lawfirm-os-intake/smoke/quality/synthetic
 grep -q '"synthetic_fixture_depth"' ".lawfirm-os-intake/smoke/quality/synthetic_qa_bundle_report.json"
 grep -q '"budget_calibration_readiness"' ".lawfirm-os-intake/smoke/quality/synthetic_qa_bundle_report.json"
 grep -q '"labor_employment_qa_matrix"' ".lawfirm-os-intake/smoke/quality/synthetic_qa_bundle_report.json"
+grep -q '"labor_employment_fixture_family_pack"' ".lawfirm-os-intake/smoke/quality/synthetic_qa_bundle_report.json"
 test -s ".lawfirm-os-intake/smoke/ui_review_manifest.json"
 grep -q '"synthetic_qa_bundle"' ".lawfirm-os-intake/smoke/ui_review_manifest.json"
 grep -q '"budget_coherence"' ".lawfirm-os-intake/smoke/ui_review_manifest.json"
 grep -q '"budget_calibration_readiness"' ".lawfirm-os-intake/smoke/ui_review_manifest.json"
 grep -q '"labor_employment_qa_matrix"' ".lawfirm-os-intake/smoke/ui_review_manifest.json"
+grep -q '"labor_employment_fixture_family_pack"' ".lawfirm-os-intake/smoke/ui_review_manifest.json"
 grep -q '"status": "pending_review"' ".lawfirm-os-intake/smoke/ui_review_manifest.json"
 grep -q '"networkCallsAllowed": false' ".lawfirm-os-intake/smoke/ui_review_manifest.json"
