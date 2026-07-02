@@ -60,6 +60,13 @@ DETAIL_REPORT_SPECS = [
         file_name="labor_employment_blocked_driver_impact_review_report.json",
         renderer="LaborEmploymentBlockedDriverPanel",
     ),
+    UIReviewDetailSpec(
+        detail_report_id="labor-employment-budget-output-expectations",
+        label="L&E Budget Output Expectations",
+        report_kind="labor_employment_budget_output_expectations",
+        file_name="labor_employment_budget_output_expectations_report.json",
+        renderer="LaborEmploymentBudgetOutputExpectationsPanel",
+    ),
 ]
 
 

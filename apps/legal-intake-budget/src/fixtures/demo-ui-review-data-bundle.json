@@ -1,11 +1,11 @@
 {
   "schema_version": "0.1",
-  "ui_review_data_bundle_id": "ui_review_data_bundle_demo_001",
+  "ui_review_data_bundle_id": "ui_review_data_bundle_c6abc2ec697f",
   "status": "ready_for_review",
-  "run_root_ref": "apps/legal-intake-budget/src/fixtures",
-  "detail_report_count": 5,
-  "required_detail_report_count": 3,
-  "present_detail_report_count": 5,
+  "run_root_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-os-intake-merge-20260702-011307\\.lawfirm-os-intake\\ui-fixture-refresh",
+  "detail_report_count": 6,
+  "required_detail_report_count": 4,
+  "present_detail_report_count": 6,
   "missing_required_detail_report_count": 0,
   "external_write_report_count": 0,
   "detail_reports": [
@@ -18,13 +18,13 @@
       "present": true,
       "status": "blocked",
       "renderer": "RunOverviewPanels",
-      "artifact_ref": "apps/legal-intake-budget/src/fixtures/demo-run-manifest.json",
-      "source_sha256": "sha256:87c39e57a6d399034d6ba42f7572b2309eded9d0786495d0e74ddad303b4281b",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-os-intake-merge-20260702-011307\\.lawfirm-os-intake\\ui-fixture-refresh\\ui_review_manifest.json",
+      "source_sha256": "sha256:2a9dc701813f28a94641fbbb1b84df752c6712fa5fa5424a597e07c86c793094",
       "candidate_only": true,
       "synthetic_only": true,
       "external_writes_performed": false,
       "notes": [
-        "Demo fixture mirrors the generated ui_review_manifest.json shape for local review."
+        "Found ui_review_manifest.json; status=blocked."
       ]
     },
     {
@@ -36,13 +36,13 @@
       "present": true,
       "status": "synthetic_qa_review_run_ready",
       "renderer": "SyntheticQAReviewRunPanel",
-      "artifact_ref": "apps/legal-intake-budget/src/fixtures/demo-synthetic-qa-review-run-report.json",
-      "source_sha256": "sha256:9f244a7fd8c3f6f9ff0a8c062513a0ad96d45785479ea17ee7b0e132064e48a1",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-os-intake-merge-20260702-011307\\.lawfirm-os-intake\\ui-fixture-refresh\\synthetic_qa_review_run_report.json",
+      "source_sha256": "sha256:12e5ab4155e482ba0f1a2a8362d1014fa833786f53cb6b19a351e431fac9f969",
       "candidate_only": true,
       "synthetic_only": true,
       "external_writes_performed": false,
       "notes": [
-        "Demo fixture renders the deterministic synthetic QA recipe steps and no-write boundaries."
+        "Found synthetic_qa_review_run_report.json; status=synthetic_qa_review_run_ready."
       ]
     },
     {
@@ -54,13 +54,13 @@
       "present": true,
       "status": "matter_linking_preflight_resolved_candidate_requires_review",
       "renderer": "MatterLinkingPreflightPanel",
-      "artifact_ref": "apps/legal-intake-budget/src/fixtures/demo-matter-linking-preflight-report.json",
-      "source_sha256": "sha256:b98c3fbe18a9f26b420b8cc00bf4a340e1f4de979c71b57286c8b22e553a2f14",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-os-intake-merge-20260702-011307\\.lawfirm-os-intake\\ui-fixture-refresh\\quality\\matter_linking_preflight_report.json",
+      "source_sha256": "sha256:fe25af1df43ee8adb7ba2b37c302e574e44d34232162bbb02e5c37f173475182",
       "candidate_only": true,
       "synthetic_only": true,
       "external_writes_performed": false,
       "notes": [
-        "Demo fixture renders Upfront-like cluster resolution, weak merge signals, and no-write gates."
+        "Found quality\\matter_linking_preflight_report.json; status=matter_linking_preflight_resolved_candidate_requires_review."
       ]
     },
     {
@@ -72,13 +72,13 @@
       "present": true,
       "status": "labor_employment_qa_matrix_ready_for_review",
       "renderer": "LaborEmploymentMatrixPanel",
-      "artifact_ref": "apps/legal-intake-budget/src/fixtures/demo-labor-employment-qa-matrix-report.json",
-      "source_sha256": "sha256:1cea2623d0d2e37fdfd9816d455efbcdd51cb082beba613fcf9923d1122ac98a",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-os-intake-merge-20260702-011307\\.lawfirm-os-intake\\ui-fixture-refresh\\quality\\labor_employment_qa_matrix_report.json",
+      "source_sha256": "sha256:faf0c57b1f9a237f0b18cea956fde329732a5d9e767d32d2f2224ec318834f32",
       "candidate_only": true,
       "synthetic_only": true,
       "external_writes_performed": false,
       "notes": [
-        "Demo fixture renders critical L&E fact gaps and range-only review posture."
+        "Found quality\\labor_employment_qa_matrix_report.json; status=labor_employment_qa_matrix_ready_for_review."
       ]
     },
     {
@@ -90,17 +90,37 @@
       "present": true,
       "status": "labor_employment_blocked_driver_impacts_ready_for_review",
       "renderer": "LaborEmploymentBlockedDriverPanel",
-      "artifact_ref": "apps/legal-intake-budget/src/fixtures/demo-labor-employment-blocked-driver-impact-review-report.json",
-      "source_sha256": "sha256:b2cb30640627d7c4e6bd4629214120856b67fc37d41772365d460de88bb7bcb7",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-os-intake-merge-20260702-011307\\.lawfirm-os-intake\\ui-fixture-refresh\\quality\\labor_employment_blocked_driver_impact_review_report.json",
+      "source_sha256": "sha256:b6f5b0a0287fdc1bfbfa8a630362dbb6f42772d2857f8318cb734b037609b5b6",
       "candidate_only": true,
       "synthetic_only": true,
       "external_writes_performed": false,
       "notes": [
-        "Demo fixture renders blocker facts, deterministic follow-up actions, and candidate Lake labels."
+        "Found quality\\labor_employment_blocked_driver_impact_review_report.json; status=labor_employment_blocked_driver_impacts_ready_for_review."
+      ]
+    },
+    {
+      "detail_report_id": "labor-employment-budget-output-expectations",
+      "label": "L&E Budget Output Expectations",
+      "report_kind": "labor_employment_budget_output_expectations",
+      "file_name": "labor_employment_budget_output_expectations_report.json",
+      "required": true,
+      "present": true,
+      "status": "labor_employment_budget_output_expectations_ready_for_review",
+      "renderer": "LaborEmploymentBudgetOutputExpectationsPanel",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-os-intake-merge-20260702-011307\\.lawfirm-os-intake\\ui-fixture-refresh\\quality\\labor_employment_budget_output_expectations_report.json",
+      "source_sha256": "sha256:0579a02a8cb4abe9826931d631ed0497e9e0356da25f3a7c0752a89f8393453d",
+      "candidate_only": true,
+      "synthetic_only": true,
+      "external_writes_performed": false,
+      "notes": [
+        "Found quality\\labor_employment_budget_output_expectations_report.json; status=labor_employment_budget_output_expectations_ready_for_review."
       ]
     }
   ],
-  "required_next_actions": ["UI review data bundle is ready for read-only local review."],
+  "required_next_actions": [
+    "UI review data bundle is ready for read-only local review."
+  ],
   "candidate_only": true,
   "synthetic_only": true,
   "non_authoritative": true,

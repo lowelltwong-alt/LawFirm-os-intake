@@ -153,6 +153,17 @@ QA_BUNDLE_ARTIFACTS = [
         ),
     ),
     QABundleArtifactSpec(
+        artifact_id="labor_employment_budget_output_expectations",
+        label="Labor/Employment Budget Output Expectations",
+        file_name="labor_employment_budget_output_expectations_report.json",
+        required=True,
+        missing_note=(
+            "Run audit-labor-employment-budget-output-expectations so every "
+            "executable L&E case has one allowed budget-output state, candidate "
+            "Lake labels, and next gates before the UI treats QA as complete."
+        ),
+    ),
+    QABundleArtifactSpec(
         artifact_id="labor_employment_budget_fact_gold",
         label="Labor/Employment Budget Fact Gold",
         file_name="labor_employment_budget_fact_gold_report.json",
@@ -256,6 +267,11 @@ def run_synthetic_qa_bundle(
             root=root,
             explicit_path=None,
             file_name="labor_employment_blocked_driver_impact_review_report.json",
+        ),
+        "labor_employment_budget_output_expectations": _resolve_artifact_source(
+            root=root,
+            explicit_path=None,
+            file_name="labor_employment_budget_output_expectations_report.json",
         ),
         "labor_employment_budget_fact_gold": _resolve_artifact_source(
             root=root,

@@ -2,6 +2,7 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 
 import demoLaborEmploymentBlockedDriverReview from "./fixtures/demo-labor-employment-blocked-driver-impact-review-report.json";
+import demoLaborEmploymentBudgetOutputExpectations from "./fixtures/demo-labor-employment-budget-output-expectations-report.json";
 import demoLaborEmploymentQAMatrix from "./fixtures/demo-labor-employment-qa-matrix-report.json";
 import demoManifest from "./fixtures/demo-run-manifest.json";
 import demoMatterLinkingPreflight from "./fixtures/demo-matter-linking-preflight-report.json";
@@ -9,6 +10,7 @@ import demoSyntheticQAReviewRun from "./fixtures/demo-synthetic-qa-review-run-re
 import demoReviewDataBundle from "./fixtures/demo-ui-review-data-bundle.json";
 import {
   assertMatterLinkingPreflightReport,
+  assertLaborEmploymentBudgetOutputExpectationReport,
   assertLaborEmploymentBlockedDriverImpactReviewReport,
   assertLaborEmploymentQAMatrixReport,
   assertReadOnlyManifest,
@@ -19,6 +21,7 @@ import {
 import type {
   ArtifactStatus,
   GateState,
+  LaborEmploymentBudgetOutputExpectationReport,
   LaborEmploymentBlockedDriverImpactCaseReview,
   LaborEmploymentBlockedDriverImpactReviewReport,
   LaborEmploymentBudgetGateEffect,
@@ -41,6 +44,8 @@ const matterLinkingPreflight = demoMatterLinkingPreflight as MatterLinkingPrefli
 const laborEmploymentQAMatrix = demoLaborEmploymentQAMatrix as LaborEmploymentQAMatrixReport;
 const laborEmploymentBlockedDriverReview =
   demoLaborEmploymentBlockedDriverReview as LaborEmploymentBlockedDriverImpactReviewReport;
+const laborEmploymentBudgetOutputExpectations =
+  demoLaborEmploymentBudgetOutputExpectations as LaborEmploymentBudgetOutputExpectationReport;
 const bundleContractFailures = assertUIReviewDataBundle(reviewDataBundle);
 const manifestContractFailures = assertReadOnlyManifest(manifest);
 const syntheticQAReviewRunFailures = assertSyntheticQAReviewRunReport(syntheticQAReviewRun);
@@ -48,6 +53,9 @@ const matterLinkingFailures = assertMatterLinkingPreflightReport(matterLinkingPr
 const matrixContractFailures = assertLaborEmploymentQAMatrixReport(laborEmploymentQAMatrix);
 const blockedDriverContractFailures =
   assertLaborEmploymentBlockedDriverImpactReviewReport(laborEmploymentBlockedDriverReview);
+const budgetOutputExpectationFailures = assertLaborEmploymentBudgetOutputExpectationReport(
+  laborEmploymentBudgetOutputExpectations,
+);
 const contractFailures = [
   ...bundleContractFailures,
   ...manifestContractFailures,
@@ -55,6 +63,7 @@ const contractFailures = [
   ...matterLinkingFailures,
   ...matrixContractFailures,
   ...blockedDriverContractFailures,
+  ...budgetOutputExpectationFailures,
 ];
 
 function gateClass(state: GateState | ArtifactStatus | QualityGateStatus) {
@@ -599,6 +608,110 @@ function LaborEmploymentBlockedDriverPanel({
   );
 }
 
+function LaborEmploymentBudgetOutputExpectationsPanel({
+  report,
+}: {
+  report: LaborEmploymentBudgetOutputExpectationReport;
+}) {
+  return (
+    <section className="panel blocked-review-panel" aria-labelledby="le-output-title">
+      <div className="panel-heading">
+        <div>
+          <h2 id="le-output-title">L&amp;E Budget Output Expectations</h2>
+          <code>{report.budget_output_expectation_report_id}</code>
+        </div>
+        <span
+          className={
+            budgetOutputExpectationFailures.length === 0
+              ? "state state-passed"
+              : "state state-failed"
+          }
+        >
+          {budgetOutputExpectationFailures.length === 0 ? "expectations held" : "expectations failed"}
+        </span>
+      </div>
+
+      <div className="matrix-summary" aria-label="L&E budget output expectation summary">
+        <div>
+          <span>Cases</span>
+          <strong>{report.case_count}</strong>
+        </div>
+        <div>
+          <span>Amount Blocked</span>
+          <strong>{report.blocked_amount_budget_case_count}</strong>
+        </div>
+        <div>
+          <span>Reviewed Ranges</span>
+          <strong>{report.candidate_range_after_review_case_count}</strong>
+        </div>
+        <div>
+          <span>Replay Slice</span>
+          <strong>{report.reviewed_nonblocking_case_count}</strong>
+        </div>
+      </div>
+
+      <div className="lake-label-strip" aria-label="Budget output candidate exception lake labels">
+        <span>Candidate Lake labels</span>
+        <TokenList items={report.candidate_exception_lake_labels} />
+      </div>
+
+      <div className="table-wrap">
+        <table className="blocked-review-table">
+          <thead>
+            <tr>
+              <th>Executable Case</th>
+              <th>Allowed Output</th>
+              <th>Evidence State</th>
+              <th>Next Gates</th>
+            </tr>
+          </thead>
+          <tbody>
+            {report.cases.map((testCase) => (
+              <tr key={testCase.executable_fixture_id}>
+                <td>
+                  <div className="artifact-title">{testCase.family}</div>
+                  <code>{testCase.executable_fixture_id}</code>
+                </td>
+                <td>
+                  <span
+                    className={
+                      testCase.final_allowed_budget_output === "blocked_amount_budget"
+                        ? "state state-blocked"
+                        : "state state-pending"
+                    }
+                  >
+                    {testCase.final_allowed_budget_output}
+                  </span>
+                </td>
+                <td>
+                  <div className="impact-counts">
+                    <span>{testCase.expectation_state}</span>
+                    <span>{testCase.block_amount_budget_impact_count} amount blocks</span>
+                    <span>{testCase.range_widening_impact_count} range impacts</span>
+                    <span>{testCase.scenario_fork_impact_count} scenario forks</span>
+                  </div>
+                </td>
+                <td>
+                  <TokenList items={testCase.required_next_gates} limit={4} />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="next-gates">
+        <h3>Required Next Gates</h3>
+        <div>
+          {report.required_next_gates.map((gate) => (
+            <code key={gate}>{gate}</code>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function App() {
   const blockedCount = manifest.artifacts.filter(
     (artifact) => artifact.status === "blocked" || artifact.gateState === "blocked",
@@ -655,6 +768,9 @@ function App() {
       <MatterLinkingPreflightPanel report={matterLinkingPreflight} />
       <LaborEmploymentMatrixPanel report={laborEmploymentQAMatrix} />
       <LaborEmploymentBlockedDriverPanel report={laborEmploymentBlockedDriverReview} />
+      <LaborEmploymentBudgetOutputExpectationsPanel
+        report={laborEmploymentBudgetOutputExpectations}
+      />
       <ArtifactTable artifacts={manifest.artifacts} />
     </main>
   );

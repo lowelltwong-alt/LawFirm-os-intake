@@ -14,6 +14,10 @@ from .labor_employment_budget_fact_gold import (
     LABOR_EMPLOYMENT_BUDGET_FACT_GOLD_REPORT_FILENAME,
     run_labor_employment_budget_fact_gold_validation,
 )
+from .labor_employment_budget_output_expectations import (
+    LABOR_EMPLOYMENT_BUDGET_OUTPUT_EXPECTATION_REPORT_FILENAME,
+    run_labor_employment_budget_output_expectations_audit,
+)
 from .labor_employment_driver_impact_review import (
     LABOR_EMPLOYMENT_DRIVER_IMPACT_REVIEW_REPORT_FILENAME,
     run_labor_employment_driver_impact_review,
@@ -308,6 +312,33 @@ def run_synthetic_qa_review_run(
         )
     )
 
+    output_expectations, output_expectations_dir = (
+        run_labor_employment_budget_output_expectations_audit(
+            driver_impact_report_path=driver_impact_ref,
+            driver_impact_review_report_path=(
+                driver_review_dir / LABOR_EMPLOYMENT_DRIVER_IMPACT_REVIEW_REPORT_FILENAME
+            ),
+            blocked_driver_impact_review_report_path=(
+                blocked_review_dir / LABOR_EMPLOYMENT_BLOCKED_DRIVER_IMPACT_REVIEW_REPORT_FILENAME
+            ),
+            out_dir=quality_dir / "le-budget-output-expectations",
+        )
+    )
+    output_expectations_ref = (
+        output_expectations_dir / LABOR_EMPLOYMENT_BUDGET_OUTPUT_EXPECTATION_REPORT_FILENAME
+    )
+    steps.append(
+        _step(
+            "labor_employment_budget_output_expectations",
+            "L&E Budget Output Expectations",
+            output_expectations.status,
+            output_expectations_ref,
+            output_expectations.status
+            == "labor_employment_budget_output_expectations_ready_for_review",
+            "Every executable L&E case has one allowed budget-output state and next gate.",
+        )
+    )
+
     gold, gold_dir = run_labor_employment_budget_fact_gold_validation(
         gold_path=root / LE_BUDGET_FACT_GOLD_REF,
         repo_root=root,
@@ -336,6 +367,7 @@ def run_synthetic_qa_review_run(
         driver_impact_ref,
         driver_review_dir / LABOR_EMPLOYMENT_DRIVER_IMPACT_REVIEW_REPORT_FILENAME,
         blocked_review_dir / LABOR_EMPLOYMENT_BLOCKED_DRIVER_IMPACT_REVIEW_REPORT_FILENAME,
+        output_expectations_ref,
         gold_dir / LABOR_EMPLOYMENT_BUDGET_FACT_GOLD_REPORT_FILENAME,
     ]:
         _stage_for_bundle(source_path, quality_dir)

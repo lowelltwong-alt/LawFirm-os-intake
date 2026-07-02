@@ -3058,6 +3058,204 @@ class LaborEmploymentBlockedDriverImpactReviewReport(StrictModel):
         return self
 
 
+LaborEmploymentBudgetOutputExpectationState = Literal[
+    "blocked_amount_budget_pending_driver_review",
+    "range_or_hours_only_pending_human_review",
+    "candidate_range_after_review_pending_human_review",
+]
+
+
+class LaborEmploymentBudgetOutputExpectationCase(StrictModel):
+    executable_fixture_id: str
+    family: LaborEmploymentSyntheticFixtureFamily
+    variant: LaborEmploymentSyntheticFixtureVariant
+    status: Literal["passed", "failed"]
+    expected_budget_readiness_state: Literal[
+        "blocked_missing_critical_facts",
+        "range_only_pending_human_review",
+        "candidate_ready_for_budget_review",
+    ]
+    expected_budget_treatment: Literal[
+        "block_amount_budget",
+        "hours_only_or_broad_range",
+        "candidate_range_budget_after_review",
+    ]
+    source_allowed_budget_output: LaborEmploymentExecutableDriverAllowedBudgetOutput
+    final_allowed_budget_output: LaborEmploymentExecutableDriverAllowedBudgetOutput
+    expectation_state: LaborEmploymentBudgetOutputExpectationState
+    selected_for_reviewed_nonblocking_slice: bool
+    blocked_case_review_present: bool
+    amount_budget_blocked: bool
+    block_amount_budget_impact_count: int = Field(ge=0)
+    range_widening_impact_count: int = Field(ge=0)
+    scenario_fork_impact_count: int = Field(ge=0)
+    rate_guideline_review_impact_count: int = Field(ge=0)
+    candidate_exception_lake_labels: list[str]
+    required_next_gates: list[str]
+    evidence_refs: list[str]
+    failure_ids: list[str] = Field(default_factory=list)
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    budget_amount_output_authorized: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    conflict_conclusion_emitted: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    training_pipeline_created: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def le_budget_output_expectation_case_is_coherent(
+        self,
+    ) -> "LaborEmploymentBudgetOutputExpectationCase":
+        if self.status == "passed" and self.failure_ids:
+            raise ValueError("passed budget-output expectation case cannot carry failures")
+        if self.status == "failed" and not self.failure_ids:
+            raise ValueError("failed budget-output expectation case requires failures")
+        if self.final_allowed_budget_output != self.source_allowed_budget_output:
+            raise ValueError("budget-output expectation cannot change source output class")
+        if not self.candidate_exception_lake_labels:
+            raise ValueError("budget-output expectation case requires candidate labels")
+        if not self.required_next_gates:
+            raise ValueError("budget-output expectation case requires next gates")
+        if not self.evidence_refs:
+            raise ValueError("budget-output expectation case requires evidence refs")
+        if self.final_allowed_budget_output == "blocked_amount_budget":
+            if self.expectation_state != "blocked_amount_budget_pending_driver_review":
+                raise ValueError("blocked output requires blocked expectation state")
+            if self.status == "passed" and (
+                not self.amount_budget_blocked or not self.blocked_case_review_present
+            ):
+                raise ValueError("blocked output requires blocked-review evidence")
+            if self.status == "passed" and self.selected_for_reviewed_nonblocking_slice:
+                raise ValueError("blocked output cannot be selected for nonblocking replay")
+            if self.status == "passed" and self.block_amount_budget_impact_count == 0:
+                raise ValueError("blocked output requires amount-budget block impacts")
+        else:
+            if self.status == "passed" and (
+                self.amount_budget_blocked or self.blocked_case_review_present
+            ):
+                raise ValueError("nonblocking output cannot carry blocked-review state")
+            if self.status == "passed" and not self.selected_for_reviewed_nonblocking_slice:
+                raise ValueError("nonblocking output requires reviewed slice selection")
+            if self.status == "passed" and self.block_amount_budget_impact_count != 0:
+                raise ValueError("nonblocking output cannot carry amount-budget block impacts")
+            if (
+                self.final_allowed_budget_output == "range_or_hours_only_pending_review"
+                and self.expectation_state != "range_or_hours_only_pending_human_review"
+            ):
+                raise ValueError("range/hours-only output requires range expectation state")
+            if (
+                self.final_allowed_budget_output
+                == "candidate_range_after_review_pending_human_review"
+                and self.expectation_state != "candidate_range_after_review_pending_human_review"
+            ):
+                raise ValueError("candidate range output requires candidate range state")
+        return self
+
+
+class LaborEmploymentBudgetOutputExpectationReport(StrictModel):
+    schema_version: str = "0.1"
+    budget_output_expectation_report_id: str
+    status: Literal[
+        "labor_employment_budget_output_expectations_ready_for_review",
+        "blocked_by_labor_employment_budget_output_expectations",
+    ]
+    source_driver_impact_report_ref: str
+    source_driver_impact_report_id: str
+    source_driver_impact_review_report_ref: str
+    source_driver_impact_review_report_id: str
+    source_blocked_driver_impact_review_report_ref: str
+    source_blocked_driver_impact_review_report_id: str
+    case_count: int = Field(ge=0)
+    failed_case_count: int = Field(ge=0)
+    blocked_amount_budget_case_count: int = Field(ge=0)
+    range_or_hours_only_case_count: int = Field(ge=0)
+    candidate_range_after_review_case_count: int = Field(ge=0)
+    reviewed_nonblocking_case_count: int = Field(ge=0)
+    blocked_review_case_count: int = Field(ge=0)
+    candidate_exception_lake_labels: list[str]
+    cases: list[LaborEmploymentBudgetOutputExpectationCase]
+    checks: list[LaborEmploymentExecutableDriverImpactCheck]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    not_authorized_for_matter_opening: Literal[True] = True
+    not_authorized_for_calibration: Literal[True] = True
+    budget_amount_output_authorized: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    conflict_conclusion_emitted: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    training_pipeline_created: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def le_budget_output_expectation_report_counts_match(
+        self,
+    ) -> "LaborEmploymentBudgetOutputExpectationReport":
+        failed_cases = [case for case in self.cases if case.status == "failed"]
+        failed_checks = [check for check in self.checks if check.status == "failed"]
+        if self.case_count != len(self.cases):
+            raise ValueError("budget-output expectation case count mismatch")
+        if self.failed_case_count != len(failed_cases):
+            raise ValueError("budget-output expectation failed case count mismatch")
+        if self.blocked_amount_budget_case_count != sum(
+            1 for case in self.cases if case.final_allowed_budget_output == "blocked_amount_budget"
+        ):
+            raise ValueError("budget-output expectation blocked case count mismatch")
+        if self.range_or_hours_only_case_count != sum(
+            1
+            for case in self.cases
+            if case.final_allowed_budget_output == "range_or_hours_only_pending_review"
+        ):
+            raise ValueError("budget-output expectation range/hours-only count mismatch")
+        if self.candidate_range_after_review_case_count != sum(
+            1
+            for case in self.cases
+            if case.final_allowed_budget_output
+            == "candidate_range_after_review_pending_human_review"
+        ):
+            raise ValueError("budget-output expectation candidate range count mismatch")
+        if self.reviewed_nonblocking_case_count != sum(
+            1 for case in self.cases if case.selected_for_reviewed_nonblocking_slice
+        ):
+            raise ValueError("budget-output expectation reviewed nonblocking count mismatch")
+        if self.blocked_review_case_count != sum(
+            1 for case in self.cases if case.blocked_case_review_present
+        ):
+            raise ValueError("budget-output expectation blocked review count mismatch")
+        labels = sorted(
+            {label for case in self.cases for label in case.candidate_exception_lake_labels}
+        )
+        if self.candidate_exception_lake_labels != labels:
+            raise ValueError("budget-output expectation candidate labels mismatch")
+        if not self.required_next_gates:
+            raise ValueError("budget-output expectation report requires next gates")
+        if self.status == "labor_employment_budget_output_expectations_ready_for_review" and (
+            failed_cases or failed_checks
+        ):
+            raise ValueError("ready budget-output expectation report cannot include failures")
+        if self.status == "blocked_by_labor_employment_budget_output_expectations" and not (
+            failed_cases or failed_checks
+        ):
+            raise ValueError("blocked budget-output expectation report requires failures")
+        return self
+
+
 class PublicSourceMethodologySource(StrictModel):
     source_id: str
     url: str
@@ -10112,6 +10310,7 @@ UIReviewDataBundleReportKind = Literal[
     "matter_linking_preflight",
     "labor_employment_qa_matrix",
     "labor_employment_blocked_driver_impact_review",
+    "labor_employment_budget_output_expectations",
 ]
 
 

@@ -20,6 +20,7 @@ def test_legal_intake_budget_ui_required_files_exist(repo_root):
         "src/fixtures/demo-matter-linking-preflight-report.json",
         "src/fixtures/demo-labor-employment-qa-matrix-report.json",
         "src/fixtures/demo-labor-employment-blocked-driver-impact-review-report.json",
+        "src/fixtures/demo-labor-employment-budget-output-expectations-report.json",
     ]
 
     for relative_path in required:
@@ -64,6 +65,7 @@ def test_legal_intake_budget_ui_data_contract_lists_required_artifacts(repo_root
         "labor_employment_executable_driver_impact_report.json",
         "labor_employment_driver_impact_review_report.json",
         "labor_employment_blocked_driver_impact_review_report.json",
+        "labor_employment_budget_output_expectations_report.json",
         "labor_employment_budget_fact_gold_report.json",
         "budget_human_review_packet.json",
         "carrier_rejection_decision_ledger_report.json",
@@ -116,6 +118,7 @@ def test_legal_intake_budget_demo_manifest_is_read_only_and_candidate_only(repo_
         "labor_employment_executable_driver_impact",
         "labor_employment_driver_impact_review",
         "labor_employment_blocked_driver_impact_review",
+        "labor_employment_budget_output_expectations",
         "labor_employment_budget_fact_gold",
         "full_pytest",
         "smoke_demo",
@@ -132,9 +135,9 @@ def test_legal_intake_budget_demo_ui_review_data_bundle_is_local_and_no_write(re
     detail_reports = {report["file_name"]: report for report in bundle["detail_reports"]}
 
     assert bundle["status"] == "ready_for_review"
-    assert bundle["detail_report_count"] == len(bundle["detail_reports"]) == 5
-    assert bundle["required_detail_report_count"] == 3
-    assert bundle["present_detail_report_count"] == 5
+    assert bundle["detail_report_count"] == len(bundle["detail_reports"]) == 6
+    assert bundle["required_detail_report_count"] == 4
+    assert bundle["present_detail_report_count"] == 6
     assert bundle["missing_required_detail_report_count"] == 0
     assert bundle["external_write_report_count"] == 0
     assert bundle["candidate_only"] is True
@@ -153,6 +156,7 @@ def test_legal_intake_budget_demo_ui_review_data_bundle_is_local_and_no_write(re
         "matter_linking_preflight_report.json",
         "labor_employment_qa_matrix_report.json",
         "labor_employment_blocked_driver_impact_review_report.json",
+        "labor_employment_budget_output_expectations_report.json",
     } <= set(detail_reports)
     assert all(report["present"] is True for report in bundle["detail_reports"])
     assert all(report["source_sha256"].startswith("sha256:") for report in bundle["detail_reports"])
@@ -167,7 +171,7 @@ def test_legal_intake_budget_demo_synthetic_qa_review_run_is_no_write(repo_root)
     )
 
     assert report["status"] == "synthetic_qa_review_run_ready"
-    assert report["step_count"] == len(report["steps"]) == 16
+    assert report["step_count"] == len(report["steps"]) == 17
     assert report["failed_step_count"] == 0
     assert report["candidate_only"] is True
     assert report["synthetic_only"] is True
@@ -187,6 +191,7 @@ def test_legal_intake_budget_demo_synthetic_qa_review_run_is_no_write(repo_root)
         "ui_review_manifest",
         "ui_review_data_bundle",
         "labor_employment_blocked_driver_impact_review",
+        "labor_employment_budget_output_expectations",
     } <= {step["step_id"] for step in report["steps"]}
 
 
@@ -282,6 +287,51 @@ def test_legal_intake_budget_demo_blocked_driver_review_is_synthetic_and_no_writ
     assert not list((repo_root / UI_ROOT / "src/fixtures").glob("*.db"))
 
 
+def test_legal_intake_budget_demo_budget_output_expectations_are_no_write(repo_root):
+    report = json.loads(
+        (
+            repo_root
+            / UI_ROOT
+            / "src/fixtures/demo-labor-employment-budget-output-expectations-report.json"
+        ).read_text(encoding="utf-8")
+    )
+    cases = {case["executable_fixture_id"]: case for case in report["cases"]}
+
+    assert report["status"] == "labor_employment_budget_output_expectations_ready_for_review"
+    assert report["case_count"] == len(report["cases"]) == 8
+    assert report["failed_case_count"] == 0
+    assert report["blocked_amount_budget_case_count"] == 6
+    assert report["candidate_range_after_review_case_count"] == 2
+    assert report["reviewed_nonblocking_case_count"] == 2
+    assert report["blocked_review_case_count"] == 6
+    assert report["candidate_only"] is True
+    assert report["non_authoritative"] is True
+    assert report["synthetic_only"] is True
+    assert report["human_review_required"] is True
+    assert report["budget_amount_output_authorized"] is False
+    assert report["budget_submission_authorized"] is False
+    assert report["lake_write_performed"] is False
+    assert report["sqlite_write_performed"] is False
+    assert report["external_writes_performed"] is False
+    assert report["silent_learning_performed"] is False
+    assert "candidate_only_budget_review_required" in report["candidate_exception_lake_labels"]
+    assert (
+        cases["le-epli-carrier-missing-attachment.executable.v0_1"]["final_allowed_budget_output"]
+        == "blocked_amount_budget"
+    )
+    assert (
+        cases["le-epli-carrier-missing-attachment.executable.v0_1"]["blocked_case_review_present"]
+        is True
+    )
+    assert (
+        cases["le-admin-exhaustion-clean.executable.v0_1"][
+            "selected_for_reviewed_nonblocking_slice"
+        ]
+        is True
+    )
+    assert all(check["status"] == "passed" for check in report["checks"])
+
+
 def test_legal_intake_budget_ui_disclaims_mutating_authority(repo_root):
     readme = (repo_root / UI_ROOT / "README.md").read_text(encoding="utf-8")
     app = (repo_root / UI_ROOT / "src/App.tsx").read_text(encoding="utf-8")
@@ -297,10 +347,12 @@ def test_legal_intake_budget_ui_disclaims_mutating_authority(repo_root):
     assert "QA Gates" in app
     assert "L&amp;E Budget Fact QA" in app
     assert "L&amp;E Blocked Driver Review" in app
+    assert "L&amp;E Budget Output Expectations" in app
     assert "assertUIReviewDataBundle" in app
     assert "assertSyntheticQAReviewRunReport" in app
     assert "assertMatterLinkingPreflightReport" in app
     assert "assertLaborEmploymentQAMatrixReport" in app
     assert "assertLaborEmploymentBlockedDriverImpactReviewReport" in app
+    assert "assertLaborEmploymentBudgetOutputExpectationReport" in app
     assert "failingQualityGates" in app
     assert "grid-template-columns" in styles

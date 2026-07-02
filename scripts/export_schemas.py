@@ -226,6 +226,8 @@ from lawfirm_os_intake.models import (  # noqa: E402
     LaborEmploymentBudgetFactGoldReport,
     LaborEmploymentBudgetFactGoldSpec,
     LaborEmploymentBudgetFactSource,
+    LaborEmploymentBudgetOutputExpectationCase,
+    LaborEmploymentBudgetOutputExpectationReport,
     LaborEmploymentExecutableCoverageCase,
     LaborEmploymentExecutableCoverageCheck,
     LaborEmploymentExecutableCoverageFamily,
@@ -384,6 +386,12 @@ MODELS = {
     ),
     "labor-employment-budget-fact-gold-check.schema.json": (LaborEmploymentBudgetFactGoldCheck),
     "labor-employment-budget-fact-gold-report.schema.json": (LaborEmploymentBudgetFactGoldReport),
+    "labor-employment-budget-output-expectation-case.schema.json": (
+        LaborEmploymentBudgetOutputExpectationCase
+    ),
+    "labor-employment-budget-output-expectation-report.schema.json": (
+        LaborEmploymentBudgetOutputExpectationReport
+    ),
     "labor-employment-executable-coverage-case.schema.json": (
         LaborEmploymentExecutableCoverageCase
     ),

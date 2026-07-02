@@ -90,6 +90,9 @@ from .labor_employment_driver_impact_review import (
 from .labor_employment_blocked_driver_impact_review import (
     run_labor_employment_blocked_driver_impact_review,
 )
+from .labor_employment_budget_output_expectations import (
+    run_labor_employment_budget_output_expectations_audit,
+)
 from .labor_employment_executable_fixtures import (
     run_labor_employment_executable_fixture_audit,
 )
@@ -509,6 +512,30 @@ def _parser() -> argparse.ArgumentParser:
         help="Path to labor_employment_executable_driver_impact_report.json.",
     )
     le_blocked_driver_impact_review.add_argument("--out-dir", required=True)
+
+    le_budget_output_expectations = sub.add_parser(
+        "audit-labor-employment-budget-output-expectations",
+        help=(
+            "Aggregate reviewed and blocked synthetic L&E driver impacts into "
+            "candidate allowed budget-output expectations."
+        ),
+    )
+    le_budget_output_expectations.add_argument(
+        "--driver-impact-report",
+        required=True,
+        help="Path to labor_employment_executable_driver_impact_report.json.",
+    )
+    le_budget_output_expectations.add_argument(
+        "--driver-impact-review-report",
+        required=True,
+        help="Path to labor_employment_driver_impact_review_report.json.",
+    )
+    le_budget_output_expectations.add_argument(
+        "--blocked-driver-impact-review-report",
+        required=True,
+        help="Path to labor_employment_blocked_driver_impact_review_report.json.",
+    )
+    le_budget_output_expectations.add_argument("--out-dir", required=True)
 
     budget_review = sub.add_parser(
         "record-budget-review",
@@ -2015,6 +2042,57 @@ def main(argv: list[str] | None = None) -> int:
             return (
                 0
                 if report.status == "labor_employment_blocked_driver_impacts_ready_for_review"
+                else 2
+            )
+
+        if args.command == "audit-labor-employment-budget-output-expectations":
+            report, run_dir = run_labor_employment_budget_output_expectations_audit(
+                driver_impact_report_path=args.driver_impact_report,
+                driver_impact_review_report_path=args.driver_impact_review_report,
+                blocked_driver_impact_review_report_path=(args.blocked_driver_impact_review_report),
+                out_dir=args.out_dir,
+            )
+            failed_checks = [check.check_id for check in report.checks if check.status == "failed"]
+            failed_cases = [
+                case.executable_fixture_id for case in report.cases if case.status == "failed"
+            ]
+            _print(
+                {
+                    "status": report.status,
+                    "budget_output_expectation_report_id": (
+                        report.budget_output_expectation_report_id
+                    ),
+                    "source_driver_impact_report_id": report.source_driver_impact_report_id,
+                    "source_driver_impact_review_report_id": (
+                        report.source_driver_impact_review_report_id
+                    ),
+                    "source_blocked_driver_impact_review_report_id": (
+                        report.source_blocked_driver_impact_review_report_id
+                    ),
+                    "case_count": report.case_count,
+                    "failed_case_count": report.failed_case_count,
+                    "blocked_amount_budget_case_count": (report.blocked_amount_budget_case_count),
+                    "range_or_hours_only_case_count": report.range_or_hours_only_case_count,
+                    "candidate_range_after_review_case_count": (
+                        report.candidate_range_after_review_case_count
+                    ),
+                    "reviewed_nonblocking_case_count": (report.reviewed_nonblocking_case_count),
+                    "blocked_review_case_count": report.blocked_review_case_count,
+                    "candidate_exception_lake_labels": (report.candidate_exception_lake_labels),
+                    "failed_cases": failed_cases,
+                    "failed_checks": failed_checks,
+                    "budget_amount_output_authorized": report.budget_amount_output_authorized,
+                    "budget_submission_authorized": report.budget_submission_authorized,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return (
+                0
+                if report.status == "labor_employment_budget_output_expectations_ready_for_review"
                 else 2
             )
 

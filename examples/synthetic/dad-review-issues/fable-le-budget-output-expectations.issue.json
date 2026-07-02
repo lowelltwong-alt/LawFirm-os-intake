@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1",
   "issue_id": "fable-le-budget-output-expectations-001",
-  "issue_version": "0.1.0",
+  "issue_version": "0.1.1",
   "observed_at": "2026-07-02T17:25:00Z",
   "source_repo_id": "LawFirm-os-intake",
   "source_repo_path": "LawFirm-os-intake",
@@ -35,12 +35,22 @@
     "Emit allowed output state, blocker reasons, candidate exception labels, next gates, and no-write proof per case.",
     "Wire the report into synthetic QA review and read-only UI data after tests are green."
   ],
-  "fix_status": "planned",
+  "fix_status": "fixed_validated",
   "fix_refs": [
-    "planned:src/lawfirm_os_intake/labor_employment_budget_output_expectations.py"
+    "src/lawfirm_os_intake/labor_employment_budget_output_expectations.py",
+    "src/lawfirm_os_intake/models.py",
+    "src/lawfirm_os_intake/synthetic_qa_review_run.py",
+    "src/lawfirm_os_intake/ui_review_data_bundle.py",
+    "apps/legal-intake-budget/src/App.tsx"
   ],
   "test_refs": [
-    "planned:tests/test_labor_employment_budget_output_expectations.py"
+    "tests/test_labor_employment_budget_output_expectations.py",
+    "tests/test_synthetic_qa_review_run.py",
+    "tests/test_synthetic_qa_bundle.py",
+    "tests/test_ui_review_data_bundle.py",
+    "tests/test_ui_foundation_contract.py",
+    "python scripts/run_validation_suite.py",
+    "npm run build"
   ],
   "artifact_refs": [
     "docs/roadmap.md",
@@ -65,7 +75,7 @@
   "danger_if_misapplied": "If this is treated as approved learning instead of candidate mail, DAD may promote unreviewed Fable advice across repos or create false confidence in budget outputs.",
   "suggested_actions": [
     "DAD should classify this as a candidate red-team review issue and map it to exception-lake event classes.",
-    "Codex should implement the deterministic budget-output expectation audit with fixture and UI tests.",
+    "DAD should review the fixed/validated implementation as a candidate learning-loop and exception-lake event-shape sample.",
     "A human/DAD review gate should decide whether the pattern becomes a reusable learning rule."
   ],
   "reviewer_notes": [

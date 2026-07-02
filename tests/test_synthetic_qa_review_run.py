@@ -42,7 +42,7 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
 
     assert code == 0
     assert report["status"] == "synthetic_qa_review_run_ready"
-    assert report["step_count"] == len(report["steps"]) == 16
+    assert report["step_count"] == len(report["steps"]) == 17
     assert report["failed_step_count"] == 0
     assert report["candidate_only"] is True
     assert report["synthetic_only"] is True
@@ -64,6 +64,7 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
         "labor_employment_executable_driver_impact",
         "labor_employment_driver_impact_review",
         "labor_employment_blocked_driver_impact_review",
+        "labor_employment_budget_output_expectations",
         "labor_employment_budget_fact_gold",
         "synthetic_qa_bundle",
         "ui_review_manifest",
@@ -85,13 +86,14 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
         "synthetic_qa_bundle",
         "matter_linking_preflight",
         "labor_employment_blocked_driver_impact_review",
+        "labor_employment_budget_output_expectations",
     } <= {gate["gateId"] for gate in ui_manifest["qualityGates"]}
     assert ui_data_bundle["status"] == "ready_for_review"
     ui_detail_reports = {
         report["report_kind"]: report for report in ui_data_bundle["detail_reports"]
     }
-    assert ui_data_bundle["detail_report_count"] == 5
-    assert ui_data_bundle["present_detail_report_count"] == 5
+    assert ui_data_bundle["detail_report_count"] == 6
+    assert ui_data_bundle["present_detail_report_count"] == 6
     assert ui_detail_reports["synthetic_qa_review_run"]["present"] is True
     assert ui_detail_reports["synthetic_qa_review_run"]["artifact_ref"] == str(
         run_root / SYNTHETIC_QA_REVIEW_RUN_REPORT_FILENAME

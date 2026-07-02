@@ -17,7 +17,8 @@
             "synthetic_qa_review_run",
             "matter_linking_preflight",
             "labor_employment_qa_matrix",
-            "labor_employment_blocked_driver_impact_review"
+            "labor_employment_blocked_driver_impact_review",
+            "labor_employment_budget_output_expectations"
           ],
           "title": "Report Kind",
           "type": "string"

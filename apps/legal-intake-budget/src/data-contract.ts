@@ -1,5 +1,6 @@
 import type {
   BoundaryFlags,
+  LaborEmploymentBudgetOutputExpectationReport,
   LaborEmploymentBlockedDriverImpactReviewReport,
   LaborEmploymentQAMatrixReport,
   MatterLinkingPreflightReport,
@@ -35,6 +36,7 @@ export const REQUIRED_ARTIFACT_FILES = [
   "labor_employment_executable_driver_impact_report.json",
   "labor_employment_driver_impact_review_report.json",
   "labor_employment_blocked_driver_impact_review_report.json",
+  "labor_employment_budget_output_expectations_report.json",
   "labor_employment_budget_fact_gold_report.json",
   "budget_human_review_packet.json",
   "carrier_rejection_decision_ledger_report.json",
@@ -60,6 +62,7 @@ export const REQUIRED_DETAIL_REPORT_FILES = [
   "matter_linking_preflight_report.json",
   "labor_employment_qa_matrix_report.json",
   "labor_employment_blocked_driver_impact_review_report.json",
+  "labor_employment_budget_output_expectations_report.json",
 ] as const;
 
 export function missingRequiredArtifacts(artifacts: ReviewArtifact[]): string[] {
@@ -399,6 +402,123 @@ export function assertLaborEmploymentBlockedDriverImpactReviewReport(
   }
   if (report.checks.some((check) => check.status === "failed")) {
     failures.push("le_blocked_driver_review_failed_check");
+  }
+  return failures;
+}
+
+export function assertLaborEmploymentBudgetOutputExpectationReport(
+  report: LaborEmploymentBudgetOutputExpectationReport,
+): string[] {
+  const failures: string[] = [];
+  if (!report.candidate_only || !report.non_authoritative || !report.synthetic_only) {
+    failures.push("le_budget_output_expectation_authority_boundary_failed");
+  }
+  if (!report.human_review_required) {
+    failures.push("le_budget_output_expectation_missing_human_review_gate");
+  }
+  if (
+    report.budget_amount_output_authorized ||
+    report.budget_submission_authorized ||
+    report.conflict_conclusion_emitted ||
+    report.matter_opening_authorized ||
+    report.training_pipeline_created ||
+    report.lake_write_performed ||
+    report.sqlite_write_performed ||
+    report.external_writes_performed ||
+    report.silent_learning_performed
+  ) {
+    failures.push("le_budget_output_expectation_side_effect_boundary_failed");
+  }
+  if (report.case_count !== report.cases.length) {
+    failures.push("le_budget_output_expectation_case_count_mismatch");
+  }
+  const failedCases = report.cases.filter((testCase) => testCase.status === "failed");
+  if (report.failed_case_count !== failedCases.length) {
+    failures.push("le_budget_output_expectation_failed_case_count_mismatch");
+  }
+  const blockedCases = report.cases.filter(
+    (testCase) => testCase.final_allowed_budget_output === "blocked_amount_budget",
+  );
+  const rangeCases = report.cases.filter(
+    (testCase) => testCase.final_allowed_budget_output === "range_or_hours_only_pending_review",
+  );
+  const candidateRangeCases = report.cases.filter(
+    (testCase) =>
+      testCase.final_allowed_budget_output === "candidate_range_after_review_pending_human_review",
+  );
+  const reviewedNonblockingCases = report.cases.filter(
+    (testCase) => testCase.selected_for_reviewed_nonblocking_slice,
+  );
+  const blockedReviewCases = report.cases.filter((testCase) => testCase.blocked_case_review_present);
+  if (report.blocked_amount_budget_case_count !== blockedCases.length) {
+    failures.push("le_budget_output_expectation_blocked_case_count_mismatch");
+  }
+  if (report.range_or_hours_only_case_count !== rangeCases.length) {
+    failures.push("le_budget_output_expectation_range_case_count_mismatch");
+  }
+  if (report.candidate_range_after_review_case_count !== candidateRangeCases.length) {
+    failures.push("le_budget_output_expectation_candidate_range_count_mismatch");
+  }
+  if (report.reviewed_nonblocking_case_count !== reviewedNonblockingCases.length) {
+    failures.push("le_budget_output_expectation_reviewed_nonblocking_count_mismatch");
+  }
+  if (report.blocked_review_case_count !== blockedReviewCases.length) {
+    failures.push("le_budget_output_expectation_blocked_review_count_mismatch");
+  }
+  if (!report.required_next_gates.includes("no_budget_submission_from_budget_output_expectations_report")) {
+    failures.push("le_budget_output_expectation_missing_no_submission_gate");
+  }
+  for (const testCase of report.cases) {
+    if (
+      !testCase.candidate_only ||
+      !testCase.non_authoritative ||
+      !testCase.synthetic_only ||
+      !testCase.human_review_required
+    ) {
+      failures.push(`le_budget_output_expectation_case_boundary_failed:${testCase.executable_fixture_id}`);
+    }
+    if (
+      testCase.budget_amount_output_authorized ||
+      testCase.budget_submission_authorized ||
+      testCase.conflict_conclusion_emitted ||
+      testCase.matter_opening_authorized ||
+      testCase.training_pipeline_created ||
+      testCase.lake_write_performed ||
+      testCase.sqlite_write_performed ||
+      testCase.external_writes_performed ||
+      testCase.silent_learning_performed
+    ) {
+      failures.push(`le_budget_output_expectation_case_side_effect_failed:${testCase.executable_fixture_id}`);
+    }
+    if (
+      testCase.source_allowed_budget_output !== testCase.final_allowed_budget_output ||
+      testCase.candidate_exception_lake_labels.length === 0 ||
+      testCase.required_next_gates.length === 0 ||
+      testCase.evidence_refs.length === 0
+    ) {
+      failures.push(`le_budget_output_expectation_case_not_actionable:${testCase.executable_fixture_id}`);
+    }
+    if (
+      testCase.final_allowed_budget_output === "blocked_amount_budget" &&
+      (!testCase.amount_budget_blocked ||
+        !testCase.blocked_case_review_present ||
+        testCase.selected_for_reviewed_nonblocking_slice ||
+        testCase.block_amount_budget_impact_count === 0)
+    ) {
+      failures.push(`le_budget_output_expectation_blocked_case_invalid:${testCase.executable_fixture_id}`);
+    }
+    if (
+      testCase.final_allowed_budget_output !== "blocked_amount_budget" &&
+      (testCase.amount_budget_blocked ||
+        testCase.blocked_case_review_present ||
+        !testCase.selected_for_reviewed_nonblocking_slice ||
+        testCase.block_amount_budget_impact_count !== 0)
+    ) {
+      failures.push(`le_budget_output_expectation_nonblocking_case_invalid:${testCase.executable_fixture_id}`);
+    }
+  }
+  if (report.checks.some((check) => check.status === "failed")) {
+    failures.push("le_budget_output_expectation_failed_check");
   }
   return failures;
 }

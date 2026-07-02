@@ -23,7 +23,8 @@ export type UIReviewDataBundleReportKind =
   | "synthetic_qa_review_run"
   | "matter_linking_preflight"
   | "labor_employment_qa_matrix"
-  | "labor_employment_blocked_driver_impact_review";
+  | "labor_employment_blocked_driver_impact_review"
+  | "labor_employment_budget_output_expectations";
 
 export type MatterLinkingPreflightCluster = {
   cluster_id: string;
@@ -318,6 +319,100 @@ export type LaborEmploymentBlockedDriverImpactReviewReport = {
   block_amount_budget_impact_count: number;
   candidate_exception_lake_labels: string[];
   case_reviews: LaborEmploymentBlockedDriverImpactCaseReview[];
+  checks: LaborEmploymentBlockedDriverImpactCheck[];
+  required_next_gates: string[];
+  candidate_only: boolean;
+  non_authoritative: boolean;
+  synthetic_only: boolean;
+  human_review_required: boolean;
+  not_authorized_for_external_write: boolean;
+  not_authorized_for_lake_write: boolean;
+  not_authorized_for_sqlite_write: boolean;
+  not_authorized_for_budget_submission: boolean;
+  not_authorized_for_matter_opening: boolean;
+  not_authorized_for_calibration: boolean;
+  budget_amount_output_authorized: boolean;
+  budget_submission_authorized: boolean;
+  conflict_conclusion_emitted: boolean;
+  matter_opening_authorized: boolean;
+  training_pipeline_created: boolean;
+  lake_write_performed: boolean;
+  sqlite_write_performed: boolean;
+  external_writes_performed: boolean;
+  silent_learning_performed: boolean;
+  generated_at: string;
+};
+
+export type LaborEmploymentAllowedBudgetOutput =
+  | "blocked_amount_budget"
+  | "range_or_hours_only_pending_review"
+  | "candidate_range_after_review_pending_human_review";
+
+export type LaborEmploymentBudgetOutputExpectationState =
+  | "blocked_amount_budget_pending_driver_review"
+  | "range_or_hours_only_pending_human_review"
+  | "candidate_range_after_review_pending_human_review";
+
+export type LaborEmploymentBudgetOutputExpectationCase = {
+  executable_fixture_id: string;
+  family: string;
+  variant: string;
+  status: "passed" | "failed";
+  expected_budget_readiness_state: LaborEmploymentBudgetReadinessState;
+  expected_budget_treatment:
+    | "block_amount_budget"
+    | "hours_only_or_broad_range"
+    | "candidate_range_budget_after_review";
+  source_allowed_budget_output: LaborEmploymentAllowedBudgetOutput;
+  final_allowed_budget_output: LaborEmploymentAllowedBudgetOutput;
+  expectation_state: LaborEmploymentBudgetOutputExpectationState;
+  selected_for_reviewed_nonblocking_slice: boolean;
+  blocked_case_review_present: boolean;
+  amount_budget_blocked: boolean;
+  block_amount_budget_impact_count: number;
+  range_widening_impact_count: number;
+  scenario_fork_impact_count: number;
+  rate_guideline_review_impact_count: number;
+  candidate_exception_lake_labels: string[];
+  required_next_gates: string[];
+  evidence_refs: string[];
+  failure_ids: string[];
+  candidate_only: boolean;
+  non_authoritative: boolean;
+  synthetic_only: boolean;
+  human_review_required: boolean;
+  budget_amount_output_authorized: boolean;
+  budget_submission_authorized: boolean;
+  conflict_conclusion_emitted: boolean;
+  matter_opening_authorized: boolean;
+  training_pipeline_created: boolean;
+  lake_write_performed: boolean;
+  sqlite_write_performed: boolean;
+  external_writes_performed: boolean;
+  silent_learning_performed: boolean;
+};
+
+export type LaborEmploymentBudgetOutputExpectationReport = {
+  schema_version: string;
+  budget_output_expectation_report_id: string;
+  status:
+    | "labor_employment_budget_output_expectations_ready_for_review"
+    | "blocked_by_labor_employment_budget_output_expectations";
+  source_driver_impact_report_ref: string;
+  source_driver_impact_report_id: string;
+  source_driver_impact_review_report_ref: string;
+  source_driver_impact_review_report_id: string;
+  source_blocked_driver_impact_review_report_ref: string;
+  source_blocked_driver_impact_review_report_id: string;
+  case_count: number;
+  failed_case_count: number;
+  blocked_amount_budget_case_count: number;
+  range_or_hours_only_case_count: number;
+  candidate_range_after_review_case_count: number;
+  reviewed_nonblocking_case_count: number;
+  blocked_review_case_count: number;
+  candidate_exception_lake_labels: string[];
+  cases: LaborEmploymentBudgetOutputExpectationCase[];
   checks: LaborEmploymentBlockedDriverImpactCheck[];
   required_next_gates: string[];
   candidate_only: boolean;

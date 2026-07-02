@@ -1,0 +1,542 @@
+{
+  "$defs": {
+    "LaborEmploymentBudgetOutputExpectationCase": {
+      "additionalProperties": false,
+      "properties": {
+        "executable_fixture_id": {
+          "title": "Executable Fixture Id",
+          "type": "string"
+        },
+        "family": {
+          "enum": [
+            "discrimination_harassment",
+            "retaliation_wrongful_termination",
+            "wage_hour_flsa_state",
+            "ada_fmla_accommodation_leave",
+            "restrictive_covenant_trade_secret",
+            "epli_carrier_assignment",
+            "class_collective_paga_representative",
+            "administrative_exhaustion_agency_record"
+          ],
+          "title": "Family",
+          "type": "string"
+        },
+        "variant": {
+          "enum": [
+            "clean",
+            "messy_thread",
+            "missing_attachment",
+            "adversarial"
+          ],
+          "title": "Variant",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "expected_budget_readiness_state": {
+          "enum": [
+            "blocked_missing_critical_facts",
+            "range_only_pending_human_review",
+            "candidate_ready_for_budget_review"
+          ],
+          "title": "Expected Budget Readiness State",
+          "type": "string"
+        },
+        "expected_budget_treatment": {
+          "enum": [
+            "block_amount_budget",
+            "hours_only_or_broad_range",
+            "candidate_range_budget_after_review"
+          ],
+          "title": "Expected Budget Treatment",
+          "type": "string"
+        },
+        "source_allowed_budget_output": {
+          "enum": [
+            "blocked_amount_budget",
+            "range_or_hours_only_pending_review",
+            "candidate_range_after_review_pending_human_review"
+          ],
+          "title": "Source Allowed Budget Output",
+          "type": "string"
+        },
+        "final_allowed_budget_output": {
+          "enum": [
+            "blocked_amount_budget",
+            "range_or_hours_only_pending_review",
+            "candidate_range_after_review_pending_human_review"
+          ],
+          "title": "Final Allowed Budget Output",
+          "type": "string"
+        },
+        "expectation_state": {
+          "enum": [
+            "blocked_amount_budget_pending_driver_review",
+            "range_or_hours_only_pending_human_review",
+            "candidate_range_after_review_pending_human_review"
+          ],
+          "title": "Expectation State",
+          "type": "string"
+        },
+        "selected_for_reviewed_nonblocking_slice": {
+          "title": "Selected For Reviewed Nonblocking Slice",
+          "type": "boolean"
+        },
+        "blocked_case_review_present": {
+          "title": "Blocked Case Review Present",
+          "type": "boolean"
+        },
+        "amount_budget_blocked": {
+          "title": "Amount Budget Blocked",
+          "type": "boolean"
+        },
+        "block_amount_budget_impact_count": {
+          "minimum": 0,
+          "title": "Block Amount Budget Impact Count",
+          "type": "integer"
+        },
+        "range_widening_impact_count": {
+          "minimum": 0,
+          "title": "Range Widening Impact Count",
+          "type": "integer"
+        },
+        "scenario_fork_impact_count": {
+          "minimum": 0,
+          "title": "Scenario Fork Impact Count",
+          "type": "integer"
+        },
+        "rate_guideline_review_impact_count": {
+          "minimum": 0,
+          "title": "Rate Guideline Review Impact Count",
+          "type": "integer"
+        },
+        "candidate_exception_lake_labels": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Candidate Exception Lake Labels",
+          "type": "array"
+        },
+        "required_next_gates": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Required Next Gates",
+          "type": "array"
+        },
+        "evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "failure_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Failure Ids",
+          "type": "array"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        },
+        "synthetic_only": {
+          "const": true,
+          "default": true,
+          "title": "Synthetic Only",
+          "type": "boolean"
+        },
+        "human_review_required": {
+          "const": true,
+          "default": true,
+          "title": "Human Review Required",
+          "type": "boolean"
+        },
+        "budget_amount_output_authorized": {
+          "const": false,
+          "default": false,
+          "title": "Budget Amount Output Authorized",
+          "type": "boolean"
+        },
+        "budget_submission_authorized": {
+          "const": false,
+          "default": false,
+          "title": "Budget Submission Authorized",
+          "type": "boolean"
+        },
+        "conflict_conclusion_emitted": {
+          "const": false,
+          "default": false,
+          "title": "Conflict Conclusion Emitted",
+          "type": "boolean"
+        },
+        "matter_opening_authorized": {
+          "const": false,
+          "default": false,
+          "title": "Matter Opening Authorized",
+          "type": "boolean"
+        },
+        "training_pipeline_created": {
+          "const": false,
+          "default": false,
+          "title": "Training Pipeline Created",
+          "type": "boolean"
+        },
+        "lake_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Lake Write Performed",
+          "type": "boolean"
+        },
+        "sqlite_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Sqlite Write Performed",
+          "type": "boolean"
+        },
+        "external_writes_performed": {
+          "const": false,
+          "default": false,
+          "title": "External Writes Performed",
+          "type": "boolean"
+        },
+        "silent_learning_performed": {
+          "const": false,
+          "default": false,
+          "title": "Silent Learning Performed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "executable_fixture_id",
+        "family",
+        "variant",
+        "status",
+        "expected_budget_readiness_state",
+        "expected_budget_treatment",
+        "source_allowed_budget_output",
+        "final_allowed_budget_output",
+        "expectation_state",
+        "selected_for_reviewed_nonblocking_slice",
+        "blocked_case_review_present",
+        "amount_budget_blocked",
+        "block_amount_budget_impact_count",
+        "range_widening_impact_count",
+        "scenario_fork_impact_count",
+        "rate_guideline_review_impact_count",
+        "candidate_exception_lake_labels",
+        "required_next_gates",
+        "evidence_refs"
+      ],
+      "title": "LaborEmploymentBudgetOutputExpectationCase",
+      "type": "object"
+    },
+    "LaborEmploymentExecutableDriverImpactCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "blocking_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Blocking Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "LaborEmploymentExecutableDriverImpactCheck",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "budget_output_expectation_report_id": {
+      "title": "Budget Output Expectation Report Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "labor_employment_budget_output_expectations_ready_for_review",
+        "blocked_by_labor_employment_budget_output_expectations"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "source_driver_impact_report_ref": {
+      "title": "Source Driver Impact Report Ref",
+      "type": "string"
+    },
+    "source_driver_impact_report_id": {
+      "title": "Source Driver Impact Report Id",
+      "type": "string"
+    },
+    "source_driver_impact_review_report_ref": {
+      "title": "Source Driver Impact Review Report Ref",
+      "type": "string"
+    },
+    "source_driver_impact_review_report_id": {
+      "title": "Source Driver Impact Review Report Id",
+      "type": "string"
+    },
+    "source_blocked_driver_impact_review_report_ref": {
+      "title": "Source Blocked Driver Impact Review Report Ref",
+      "type": "string"
+    },
+    "source_blocked_driver_impact_review_report_id": {
+      "title": "Source Blocked Driver Impact Review Report Id",
+      "type": "string"
+    },
+    "case_count": {
+      "minimum": 0,
+      "title": "Case Count",
+      "type": "integer"
+    },
+    "failed_case_count": {
+      "minimum": 0,
+      "title": "Failed Case Count",
+      "type": "integer"
+    },
+    "blocked_amount_budget_case_count": {
+      "minimum": 0,
+      "title": "Blocked Amount Budget Case Count",
+      "type": "integer"
+    },
+    "range_or_hours_only_case_count": {
+      "minimum": 0,
+      "title": "Range Or Hours Only Case Count",
+      "type": "integer"
+    },
+    "candidate_range_after_review_case_count": {
+      "minimum": 0,
+      "title": "Candidate Range After Review Case Count",
+      "type": "integer"
+    },
+    "reviewed_nonblocking_case_count": {
+      "minimum": 0,
+      "title": "Reviewed Nonblocking Case Count",
+      "type": "integer"
+    },
+    "blocked_review_case_count": {
+      "minimum": 0,
+      "title": "Blocked Review Case Count",
+      "type": "integer"
+    },
+    "candidate_exception_lake_labels": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Candidate Exception Lake Labels",
+      "type": "array"
+    },
+    "cases": {
+      "items": {
+        "$ref": "#/$defs/LaborEmploymentBudgetOutputExpectationCase"
+      },
+      "title": "Cases",
+      "type": "array"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/LaborEmploymentExecutableDriverImpactCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "required_next_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Gates",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "human_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Human Review Required",
+      "type": "boolean"
+    },
+    "not_authorized_for_external_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For External Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_lake_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Lake Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_sqlite_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Sqlite Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_budget_submission": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Budget Submission",
+      "type": "boolean"
+    },
+    "not_authorized_for_matter_opening": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Matter Opening",
+      "type": "boolean"
+    },
+    "not_authorized_for_calibration": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Calibration",
+      "type": "boolean"
+    },
+    "budget_amount_output_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Amount Output Authorized",
+      "type": "boolean"
+    },
+    "budget_submission_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Submission Authorized",
+      "type": "boolean"
+    },
+    "conflict_conclusion_emitted": {
+      "const": false,
+      "default": false,
+      "title": "Conflict Conclusion Emitted",
+      "type": "boolean"
+    },
+    "matter_opening_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Matter Opening Authorized",
+      "type": "boolean"
+    },
+    "training_pipeline_created": {
+      "const": false,
+      "default": false,
+      "title": "Training Pipeline Created",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "budget_output_expectation_report_id",
+    "status",
+    "source_driver_impact_report_ref",
+    "source_driver_impact_report_id",
+    "source_driver_impact_review_report_ref",
+    "source_driver_impact_review_report_id",
+    "source_blocked_driver_impact_review_report_ref",
+    "source_blocked_driver_impact_review_report_id",
+    "case_count",
+    "failed_case_count",
+    "blocked_amount_budget_case_count",
+    "range_or_hours_only_case_count",
+    "candidate_range_after_review_case_count",
+    "reviewed_nonblocking_case_count",
+    "blocked_review_case_count",
+    "candidate_exception_lake_labels",
+    "cases",
+    "checks",
+    "required_next_gates",
+    "generated_at"
+  ],
+  "title": "LaborEmploymentBudgetOutputExpectationReport",
+  "type": "object"
+}
