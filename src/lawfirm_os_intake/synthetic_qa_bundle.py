@@ -96,6 +96,16 @@ QA_BUNDLE_ARTIFACTS = [
             "preflight evidence is bound to expected L&E budget-fact gaps."
         ),
     ),
+    QABundleArtifactSpec(
+        artifact_id="labor_employment_budget_fact_gold",
+        label="Labor/Employment Budget Fact Gold",
+        file_name="labor_employment_budget_fact_gold_report.json",
+        required=True,
+        missing_note=(
+            "Run validate-labor-employment-budget-fact-gold so L&E budget fact "
+            "audit outputs are checked against reviewed synthetic gold."
+        ),
+    ),
 ]
 
 
@@ -165,6 +175,11 @@ def run_synthetic_qa_bundle(
             root=root,
             explicit_path=None,
             file_name="labor_employment_executable_fact_binding_report.json",
+        ),
+        "labor_employment_budget_fact_gold": _resolve_artifact_source(
+            root=root,
+            explicit_path=None,
+            file_name="labor_employment_budget_fact_gold_report.json",
         ),
     }
     artifacts = [

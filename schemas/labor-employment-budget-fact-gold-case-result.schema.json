@@ -1,0 +1,101 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "case_id": {
+      "title": "Case Id",
+      "type": "string"
+    },
+    "label": {
+      "title": "Label",
+      "type": "string"
+    },
+    "manifest_ref": {
+      "title": "Manifest Ref",
+      "type": "string"
+    },
+    "manifest_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Manifest Id"
+    },
+    "status": {
+      "enum": [
+        "passed",
+        "failed"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "audit_report_status": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Audit Report Status"
+    },
+    "audit_budget_readiness_state": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Audit Budget Readiness State"
+    },
+    "failed_expectation_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Failed Expectation Ids",
+      "type": "array"
+    },
+    "report_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Report Ref"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "case_id",
+    "label",
+    "manifest_ref",
+    "status",
+    "failed_expectation_ids"
+  ],
+  "title": "LaborEmploymentBudgetFactGoldCaseResult",
+  "type": "object"
+}

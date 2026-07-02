@@ -65,6 +65,9 @@ from .learning_shadow_eval_fixture_results import (
 )
 from .learning_shadow_eval_results import run_learning_shadow_eval_results
 from .labor_employment_budget_facts import run_labor_employment_budget_fact_audit
+from .labor_employment_budget_fact_gold import (
+    run_labor_employment_budget_fact_gold_validation,
+)
 from .labor_employment_executable_fact_binding import (
     run_labor_employment_executable_fact_binding_audit,
 )
@@ -587,6 +590,26 @@ def _parser() -> argparse.ArgumentParser:
         help="Repository root for relative fixture refs; defaults to current directory.",
     )
     labor_employment_budget_facts.add_argument(
+        "--fact-policy",
+        help="Optional L&E budget fact needs YAML path.",
+    )
+
+    labor_employment_budget_fact_gold = sub.add_parser(
+        "validate-labor-employment-budget-fact-gold",
+        help=("Replay L&E budget fact audits against reviewed synthetic gold expectations."),
+    )
+    labor_employment_budget_fact_gold.add_argument(
+        "--gold",
+        default="examples/synthetic/gold/labor-employment-budget-fact-gold.json",
+        help="Path to labor-employment-budget-fact-gold.json.",
+    )
+    labor_employment_budget_fact_gold.add_argument("--out-dir", required=True)
+    labor_employment_budget_fact_gold.add_argument(
+        "--repo-root",
+        default=".",
+        help="Repository root for relative fixture refs; defaults to current directory.",
+    )
+    labor_employment_budget_fact_gold.add_argument(
         "--fact-policy",
         help="Optional L&E budget fact needs YAML path.",
     )
@@ -2172,6 +2195,38 @@ def main(argv: list[str] | None = None) -> int:
             if report.status == "blocked_labor_employment_budget_fact_audit":
                 return 2
             return 0
+
+        if args.command == "validate-labor-employment-budget-fact-gold":
+            report, run_dir = run_labor_employment_budget_fact_gold_validation(
+                gold_path=args.gold,
+                repo_root=args.repo_root,
+                policy_path=args.fact_policy,
+                out_dir=args.out_dir,
+            )
+            failed_checks = [check.check_id for check in report.checks if check.status != "passed"]
+            _print(
+                {
+                    "status": report.status,
+                    "labor_employment_budget_fact_gold_report_id": (
+                        report.labor_employment_budget_fact_gold_report_id
+                    ),
+                    "gold_id": report.gold_id,
+                    "case_count": report.case_count,
+                    "failed_case_count": report.failed_case_count,
+                    "failed_check_count": report.failed_check_count,
+                    "failed_checks": failed_checks,
+                    "reviewed_gold": report.reviewed_gold,
+                    "data_scope": report.data_scope,
+                    "budget_amount_output_authorized": (report.budget_amount_output_authorized),
+                    "budget_submission_authorized": report.budget_submission_authorized,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0 if report.status == "passed" else 2
 
         if args.command == "plan-public-synthetic-fixture-conversion":
             plan, run_dir = run_public_synthetic_fixture_conversion_plan(

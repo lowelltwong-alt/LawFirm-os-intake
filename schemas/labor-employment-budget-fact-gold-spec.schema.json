@@ -1,0 +1,365 @@
+{
+  "$defs": {
+    "LaborEmploymentBudgetFactGoldCaseSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "case_id": {
+          "title": "Case Id",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "manifest_ref": {
+          "title": "Manifest Ref",
+          "type": "string"
+        },
+        "expected_manifest_id": {
+          "title": "Expected Manifest Id",
+          "type": "string"
+        },
+        "expected_status": {
+          "enum": [
+            "labor_employment_budget_facts_ready_for_review",
+            "blocked_labor_employment_budget_fact_audit"
+          ],
+          "title": "Expected Status",
+          "type": "string"
+        },
+        "expected_budget_readiness_state": {
+          "enum": [
+            "blocked_missing_critical_facts",
+            "range_only_pending_human_review",
+            "candidate_ready_for_budget_review"
+          ],
+          "title": "Expected Budget Readiness State",
+          "type": "string"
+        },
+        "expected_finding_count": {
+          "minimum": 0,
+          "title": "Expected Finding Count",
+          "type": "integer"
+        },
+        "expected_source_bound_finding_count": {
+          "minimum": 0,
+          "title": "Expected Source Bound Finding Count",
+          "type": "integer"
+        },
+        "expected_needs_review_finding_count": {
+          "minimum": 0,
+          "title": "Expected Needs Review Finding Count",
+          "type": "integer"
+        },
+        "expected_unknown_finding_count": {
+          "minimum": 0,
+          "title": "Expected Unknown Finding Count",
+          "type": "integer"
+        },
+        "expected_gap_count": {
+          "minimum": 0,
+          "title": "Expected Gap Count",
+          "type": "integer"
+        },
+        "expected_critical_gap_count": {
+          "minimum": 0,
+          "title": "Expected Critical Gap Count",
+          "type": "integer"
+        },
+        "expected_critical_gap_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Expected Critical Gap Ids",
+          "type": "array"
+        },
+        "expected_warning_gap_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Expected Warning Gap Ids",
+          "type": "array"
+        },
+        "expected_relationship_budget_treatment": {
+          "enum": [
+            "block_amount_budget",
+            "hours_only_or_broad_range",
+            "candidate_range_budget_after_review"
+          ],
+          "title": "Expected Relationship Budget Treatment",
+          "type": "string"
+        },
+        "expected_relationship_unresolved_fact_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Expected Relationship Unresolved Fact Ids",
+          "type": "array"
+        },
+        "expected_person_candidate_count": {
+          "minimum": 0,
+          "title": "Expected Person Candidate Count",
+          "type": "integer"
+        },
+        "expected_organization_candidate_count": {
+          "minimum": 0,
+          "title": "Expected Organization Candidate Count",
+          "type": "integer"
+        },
+        "expected_source_bound_relationship_count": {
+          "minimum": 0,
+          "title": "Expected Source Bound Relationship Count",
+          "type": "integer"
+        },
+        "expected_critical_relationship_gap_count": {
+          "minimum": 0,
+          "title": "Expected Critical Relationship Gap Count",
+          "type": "integer"
+        },
+        "expected_findings": {
+          "items": {
+            "$ref": "#/$defs/LaborEmploymentBudgetFactGoldFindingExpectation"
+          },
+          "title": "Expected Findings",
+          "type": "array"
+        },
+        "red_team_notes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Red Team Notes",
+          "type": "array"
+        },
+        "require_no_side_effects": {
+          "const": true,
+          "default": true,
+          "title": "Require No Side Effects",
+          "type": "boolean"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        },
+        "reviewed": {
+          "const": true,
+          "default": true,
+          "title": "Reviewed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "case_id",
+        "label",
+        "manifest_ref",
+        "expected_manifest_id",
+        "expected_status",
+        "expected_budget_readiness_state",
+        "expected_finding_count",
+        "expected_source_bound_finding_count",
+        "expected_needs_review_finding_count",
+        "expected_unknown_finding_count",
+        "expected_gap_count",
+        "expected_critical_gap_count",
+        "expected_relationship_budget_treatment",
+        "expected_person_candidate_count",
+        "expected_organization_candidate_count",
+        "expected_source_bound_relationship_count",
+        "expected_critical_relationship_gap_count",
+        "expected_findings"
+      ],
+      "title": "LaborEmploymentBudgetFactGoldCaseSpec",
+      "type": "object"
+    },
+    "LaborEmploymentBudgetFactGoldFindingExpectation": {
+      "additionalProperties": false,
+      "properties": {
+        "fact_id": {
+          "title": "Fact Id",
+          "type": "string"
+        },
+        "expected_state": {
+          "enum": [
+            "source_bound_observed_candidate",
+            "source_bound_needs_review",
+            "synthetic_context_requires_confirmation",
+            "unknown_missing"
+          ],
+          "title": "Expected State",
+          "type": "string"
+        },
+        "expected_source_bound": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Source Bound"
+        },
+        "expected_source_label_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Expected Source Label Ids",
+          "type": "array"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "fact_id",
+        "expected_state"
+      ],
+      "title": "LaborEmploymentBudgetFactGoldFindingExpectation",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "gold_id": {
+      "title": "Gold Id",
+      "type": "string"
+    },
+    "status": {
+      "const": "reviewed_labor_employment_budget_fact_gold",
+      "title": "Status",
+      "type": "string"
+    },
+    "reviewed": {
+      "const": true,
+      "default": true,
+      "title": "Reviewed",
+      "type": "boolean"
+    },
+    "data_scope": {
+      "const": "synthetic",
+      "default": "synthetic",
+      "title": "Data Scope",
+      "type": "string"
+    },
+    "practice_area": {
+      "const": "labor_employment",
+      "default": "labor_employment",
+      "title": "Practice Area",
+      "type": "string"
+    },
+    "policy_ref": {
+      "default": "config/labor-employment-budget-fact-needs.yaml",
+      "title": "Policy Ref",
+      "type": "string"
+    },
+    "cases": {
+      "items": {
+        "$ref": "#/$defs/LaborEmploymentBudgetFactGoldCaseSpec"
+      },
+      "title": "Cases",
+      "type": "array"
+    },
+    "required_next_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Gates",
+      "type": "array"
+    },
+    "budget_amount_output_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Amount Output Authorized",
+      "type": "boolean"
+    },
+    "budget_submission_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Submission Authorized",
+      "type": "boolean"
+    },
+    "conflict_conclusion_emitted": {
+      "const": false,
+      "default": false,
+      "title": "Conflict Conclusion Emitted",
+      "type": "boolean"
+    },
+    "matter_opening_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Matter Opening Authorized",
+      "type": "boolean"
+    },
+    "training_pipeline_created": {
+      "const": false,
+      "default": false,
+      "title": "Training Pipeline Created",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "gold_id",
+    "status",
+    "cases"
+  ],
+  "title": "LaborEmploymentBudgetFactGoldSpec",
+  "type": "object"
+}

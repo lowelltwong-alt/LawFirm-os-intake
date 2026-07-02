@@ -988,6 +988,189 @@ class LaborEmploymentBudgetFactAuditReport(StrictModel):
         return self
 
 
+class LaborEmploymentBudgetFactGoldFindingExpectation(StrictModel):
+    fact_id: str
+    expected_state: LaborEmploymentBudgetFactState
+    expected_source_bound: bool | None = None
+    expected_source_label_ids: list[str] = Field(default_factory=list)
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+
+
+class LaborEmploymentBudgetFactGoldCaseSpec(StrictModel):
+    case_id: str
+    label: str
+    manifest_ref: str
+    expected_manifest_id: str
+    expected_status: Literal[
+        "labor_employment_budget_facts_ready_for_review",
+        "blocked_labor_employment_budget_fact_audit",
+    ]
+    expected_budget_readiness_state: Literal[
+        "blocked_missing_critical_facts",
+        "range_only_pending_human_review",
+        "candidate_ready_for_budget_review",
+    ]
+    expected_finding_count: int = Field(ge=0)
+    expected_source_bound_finding_count: int = Field(ge=0)
+    expected_needs_review_finding_count: int = Field(ge=0)
+    expected_unknown_finding_count: int = Field(ge=0)
+    expected_gap_count: int = Field(ge=0)
+    expected_critical_gap_count: int = Field(ge=0)
+    expected_critical_gap_ids: list[str] = Field(default_factory=list)
+    expected_warning_gap_ids: list[str] = Field(default_factory=list)
+    expected_relationship_budget_treatment: Literal[
+        "block_amount_budget",
+        "hours_only_or_broad_range",
+        "candidate_range_budget_after_review",
+    ]
+    expected_relationship_unresolved_fact_ids: list[str] = Field(default_factory=list)
+    expected_person_candidate_count: int = Field(ge=0)
+    expected_organization_candidate_count: int = Field(ge=0)
+    expected_source_bound_relationship_count: int = Field(ge=0)
+    expected_critical_relationship_gap_count: int = Field(ge=0)
+    expected_findings: list[LaborEmploymentBudgetFactGoldFindingExpectation]
+    red_team_notes: list[str] = Field(default_factory=list)
+    require_no_side_effects: Literal[True] = True
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    reviewed: Literal[True] = True
+
+    @model_validator(mode="after")
+    def le_budget_fact_gold_case_expectations_are_unique(
+        self,
+    ) -> "LaborEmploymentBudgetFactGoldCaseSpec":
+        fact_ids = [finding.fact_id for finding in self.expected_findings]
+        if len(fact_ids) != len(set(fact_ids)):
+            raise ValueError("L&E budget fact gold finding expectations must be unique")
+        return self
+
+
+class LaborEmploymentBudgetFactGoldSpec(StrictModel):
+    schema_version: str = "0.1"
+    gold_id: str
+    status: Literal["reviewed_labor_employment_budget_fact_gold"]
+    reviewed: Literal[True] = True
+    data_scope: Literal["synthetic"] = "synthetic"
+    practice_area: Literal["labor_employment"] = "labor_employment"
+    policy_ref: str = "config/labor-employment-budget-fact-needs.yaml"
+    cases: list[LaborEmploymentBudgetFactGoldCaseSpec]
+    required_next_gates: list[str] = Field(
+        default_factory=lambda: [
+            "human_labor_employment_budget_fact_review",
+            "budget_fact_gold_before_calibration_or_model_comparison",
+            "no_amount_budget_from_gold_report",
+        ]
+    )
+    budget_amount_output_authorized: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    conflict_conclusion_emitted: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    training_pipeline_created: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+
+    @model_validator(mode="after")
+    def le_budget_fact_gold_spec_cases_are_unique(
+        self,
+    ) -> "LaborEmploymentBudgetFactGoldSpec":
+        case_ids = [case.case_id for case in self.cases]
+        manifest_refs = [case.manifest_ref for case in self.cases]
+        if not self.cases:
+            raise ValueError("L&E budget fact gold requires at least one case")
+        if len(case_ids) != len(set(case_ids)):
+            raise ValueError("L&E budget fact gold case IDs must be unique")
+        if len(manifest_refs) != len(set(manifest_refs)):
+            raise ValueError("L&E budget fact gold manifest refs must be unique")
+        return self
+
+
+class LaborEmploymentBudgetFactGoldCaseResult(StrictModel):
+    case_id: str
+    label: str
+    manifest_ref: str
+    manifest_id: str | None = None
+    status: Literal["passed", "failed"]
+    audit_report_status: str | None = None
+    audit_budget_readiness_state: str | None = None
+    failed_expectation_ids: list[str]
+    report_ref: str | None = None
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+
+    @model_validator(mode="after")
+    def le_budget_fact_gold_case_result_status_matches_failures(
+        self,
+    ) -> "LaborEmploymentBudgetFactGoldCaseResult":
+        if self.status == "passed" and self.failed_expectation_ids:
+            raise ValueError("passed L&E budget fact gold case cannot include failures")
+        if self.status == "failed" and not self.failed_expectation_ids:
+            raise ValueError("failed L&E budget fact gold case requires failures")
+        return self
+
+
+class LaborEmploymentBudgetFactGoldCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    case_id: str | None = None
+    details: dict[str, Any] = Field(default_factory=dict)
+
+
+class LaborEmploymentBudgetFactGoldReport(StrictModel):
+    schema_version: str = "0.1"
+    labor_employment_budget_fact_gold_report_id: str
+    status: Literal["passed", "failed"]
+    gold_id: str
+    gold_ref: str
+    reviewed_gold: bool
+    data_scope: Literal["synthetic"]
+    policy_ref: str
+    case_count: int = Field(ge=0)
+    failed_case_count: int = Field(ge=0)
+    check_count: int = Field(ge=0)
+    failed_check_count: int = Field(ge=0)
+    cases: list[LaborEmploymentBudgetFactGoldCaseResult]
+    checks: list[LaborEmploymentBudgetFactGoldCheck]
+    required_next_gates: list[str]
+    budget_amount_output_authorized: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    conflict_conclusion_emitted: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    training_pipeline_created: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    generated_at: str
+
+    @model_validator(mode="after")
+    def le_budget_fact_gold_report_counts_match(
+        self,
+    ) -> "LaborEmploymentBudgetFactGoldReport":
+        failed_cases = [case for case in self.cases if case.status == "failed"]
+        failed_checks = [check for check in self.checks if check.status == "failed"]
+        if self.case_count != len(self.cases):
+            raise ValueError("L&E budget fact gold case count mismatch")
+        if self.failed_case_count != len(failed_cases):
+            raise ValueError("L&E budget fact gold failed case count mismatch")
+        if self.check_count != len(self.checks):
+            raise ValueError("L&E budget fact gold check count mismatch")
+        if self.failed_check_count != len(failed_checks):
+            raise ValueError("L&E budget fact gold failed check count mismatch")
+        if self.status == "passed" and (failed_cases or failed_checks):
+            raise ValueError("passed L&E budget fact gold report cannot include failures")
+        if self.status == "failed" and not (failed_cases or failed_checks):
+            raise ValueError("failed L&E budget fact gold report requires failures")
+        return self
+
+
 LaborEmploymentQAMatrixBudgetGateEffect = Literal[
     "block_amount_budget_before_proposal",
     "allow_range_or_hours_only_pending_review",

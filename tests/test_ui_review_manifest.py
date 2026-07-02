@@ -39,6 +39,7 @@ def _write_quality_evidence(run_root):
         "labor_employment_fixture_family_pack_report.json",
         "labor_employment_executable_fixtures_report.json",
         "labor_employment_executable_fact_binding_report.json",
+        "labor_employment_budget_fact_gold_report.json",
     ]:
         write_json(
             quality_dir / file_name, {"status": "passed", "external_writes_performed": False}

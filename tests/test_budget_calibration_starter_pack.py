@@ -10,6 +10,9 @@ from lawfirm_os_intake.labor_employment_executable_fixtures import (
 from lawfirm_os_intake.labor_employment_executable_fact_binding import (
     run_labor_employment_executable_fact_binding_audit,
 )
+from lawfirm_os_intake.labor_employment_budget_fact_gold import (
+    run_labor_employment_budget_fact_gold_validation,
+)
 from lawfirm_os_intake.labor_employment_fixture_family_pack import (
     run_labor_employment_fixture_family_pack_audit,
 )
@@ -130,6 +133,11 @@ def test_starter_pack_allows_synthetic_qa_bundle_to_reach_pending_review(
         repo_root=repo_root,
         out_dir=run_root / "quality" / "le-executable-fact-binding",
     )
+    run_labor_employment_budget_fact_gold_validation(
+        gold_path=repo_root / "examples/synthetic/gold/labor-employment-budget-fact-gold.json",
+        repo_root=repo_root,
+        out_dir=run_root / "quality" / "le-budget-fact-gold",
+    )
 
     bundle, _, ui_manifest = run_synthetic_qa_bundle(
         run_root=run_root,
@@ -152,4 +160,5 @@ def test_starter_pack_allows_synthetic_qa_bundle_to_reach_pending_review(
     assert gates["labor_employment_fixture_family_pack"]["status"] == "pending_review"
     assert gates["labor_employment_executable_fixtures"]["status"] == "pending_review"
     assert gates["labor_employment_executable_fact_binding"]["status"] == "pending_review"
+    assert gates["labor_employment_budget_fact_gold"]["status"] == "passed"
     assert ui_manifest["overallStatus"] == "blocked"

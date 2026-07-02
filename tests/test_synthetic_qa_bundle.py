@@ -64,6 +64,23 @@ def _write_ready_labor_employment_executable_fact_binding(path):
     )
 
 
+def _write_ready_labor_employment_budget_fact_gold(path):
+    write_json(
+        path,
+        {
+            "status": "passed",
+            "reviewed_gold": True,
+            "data_scope": "synthetic",
+            "external_writes_performed": False,
+            "lake_write_performed": False,
+            "sqlite_write_performed": False,
+            "budget_amount_output_authorized": False,
+            "budget_submission_authorized": False,
+            "silent_learning_performed": False,
+        },
+    )
+
+
 def test_synthetic_qa_bundle_blocks_missing_calibration_and_builds_ui(tmp_path):
     run_root = tmp_path / "demo"
     budget_dir = run_root / "budget"
@@ -92,6 +109,9 @@ def test_synthetic_qa_bundle_blocks_missing_calibration_and_builds_ui(tmp_path):
     )
     _write_ready_labor_employment_executable_fact_binding(
         quality_dir / "labor_employment_executable_fact_binding_report.json"
+    )
+    _write_ready_labor_employment_budget_fact_gold(
+        quality_dir / "labor_employment_budget_fact_gold_report.json"
     )
 
     report, run_dir, ui_manifest = run_synthetic_qa_bundle(
@@ -137,6 +157,9 @@ def test_synthetic_qa_bundle_can_generate_fixture_depth_from_manifest(tmp_path, 
     _write_ready_labor_employment_executable_fact_binding(
         quality_dir / "labor_employment_executable_fact_binding_report.json"
     )
+    _write_ready_labor_employment_budget_fact_gold(
+        quality_dir / "labor_employment_budget_fact_gold_report.json"
+    )
 
     report, run_dir, _ = run_synthetic_qa_bundle(
         run_root=run_root,
@@ -168,6 +191,7 @@ def test_synthetic_qa_bundle_cli_writes_bundle_and_manifest(tmp_path):
         "labor_employment_fixture_family_pack_report.json",
         "labor_employment_executable_fixtures_report.json",
         "labor_employment_executable_fact_binding_report.json",
+        "labor_employment_budget_fact_gold_report.json",
     ]:
         write_json(
             quality_dir / file_name,

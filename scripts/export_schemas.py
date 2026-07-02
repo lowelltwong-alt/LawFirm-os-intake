@@ -215,6 +215,12 @@ from lawfirm_os_intake.models import (  # noqa: E402
     LaborEmploymentBudgetFactAuditReport,
     LaborEmploymentBudgetFactFinding,
     LaborEmploymentBudgetFactGap,
+    LaborEmploymentBudgetFactGoldCaseResult,
+    LaborEmploymentBudgetFactGoldCaseSpec,
+    LaborEmploymentBudgetFactGoldCheck,
+    LaborEmploymentBudgetFactGoldFindingExpectation,
+    LaborEmploymentBudgetFactGoldReport,
+    LaborEmploymentBudgetFactGoldSpec,
     LaborEmploymentBudgetFactSource,
     LaborEmploymentExecutableBudgetFactBindingCase,
     LaborEmploymentExecutableBudgetFactBindingCaseSpec,
@@ -347,6 +353,18 @@ MODELS = {
     "labor-employment-budget-fact-gap.schema.json": LaborEmploymentBudgetFactGap,
     "labor-employment-budget-fact-audit-check.schema.json": (LaborEmploymentBudgetFactAuditCheck),
     "labor-employment-budget-fact-audit-report.schema.json": (LaborEmploymentBudgetFactAuditReport),
+    "labor-employment-budget-fact-gold-finding-expectation.schema.json": (
+        LaborEmploymentBudgetFactGoldFindingExpectation
+    ),
+    "labor-employment-budget-fact-gold-case-spec.schema.json": (
+        LaborEmploymentBudgetFactGoldCaseSpec
+    ),
+    "labor-employment-budget-fact-gold-spec.schema.json": (LaborEmploymentBudgetFactGoldSpec),
+    "labor-employment-budget-fact-gold-case-result.schema.json": (
+        LaborEmploymentBudgetFactGoldCaseResult
+    ),
+    "labor-employment-budget-fact-gold-check.schema.json": (LaborEmploymentBudgetFactGoldCheck),
+    "labor-employment-budget-fact-gold-report.schema.json": (LaborEmploymentBudgetFactGoldReport),
     "labor-employment-executable-budget-fact-binding-item-spec.schema.json": (
         LaborEmploymentExecutableBudgetFactBindingItemSpec
     ),

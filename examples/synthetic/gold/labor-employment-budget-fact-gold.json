@@ -1,0 +1,171 @@
+{
+  "schema_version": "0.1",
+  "gold_id": "labor-employment-budget-fact-gold.v0_1",
+  "status": "reviewed_labor_employment_budget_fact_gold",
+  "reviewed": true,
+  "data_scope": "synthetic",
+  "practice_area": "labor_employment",
+  "policy_ref": "config/labor-employment-budget-fact-needs.yaml",
+  "cases": [
+    {
+      "case_id": "le-fact-audit-blocked-critical-gaps.v0_1",
+      "label": "Baseline L&E synthetic manifest blocks amount budgeting when critical relationship, discovery, damages, and carrier facts are missing or review-only.",
+      "manifest_ref": "examples/synthetic/courtlistener-derived/labor-employment-dataset-manifest.json",
+      "expected_manifest_id": "synthetic-courtlistener-le-dataset-manifest.v0_1",
+      "expected_status": "labor_employment_budget_facts_ready_for_review",
+      "expected_budget_readiness_state": "blocked_missing_critical_facts",
+      "expected_finding_count": 17,
+      "expected_source_bound_finding_count": 8,
+      "expected_needs_review_finding_count": 5,
+      "expected_unknown_finding_count": 9,
+      "expected_gap_count": 14,
+      "expected_critical_gap_count": 10,
+      "expected_critical_gap_ids": [
+        "prospective_client_payer_carrier_posture",
+        "individual_supervisor_or_manager_defendants",
+        "joint_employer_or_affiliate_structure",
+        "claims_and_causes_of_action",
+        "class_collective_or_group_scope",
+        "relevant_employment_timeline",
+        "damages_categories_and_exposure",
+        "esi_custodians_and_sources",
+        "anticipated_depositions",
+        "carrier_guideline_and_rate_source"
+      ],
+      "expected_warning_gap_ids": [
+        "administrative_exhaustion_and_agency_record",
+        "wage_hour_pay_period_and_employee_volume",
+        "expert_and_vendor_needs",
+        "policy_handbook_contract_documents"
+      ],
+      "expected_relationship_budget_treatment": "block_amount_budget",
+      "expected_relationship_unresolved_fact_ids": [
+        "prospective_client_payer_carrier_posture",
+        "individual_supervisor_or_manager_defendants",
+        "joint_employer_or_affiliate_structure"
+      ],
+      "expected_person_candidate_count": 1,
+      "expected_organization_candidate_count": 1,
+      "expected_source_bound_relationship_count": 3,
+      "expected_critical_relationship_gap_count": 3,
+      "expected_findings": [
+        {
+          "fact_id": "employee_claimant_identity",
+          "expected_state": "source_bound_observed_candidate",
+          "expected_source_bound": true,
+          "expected_source_label_ids": ["label-conflict-employee"]
+        },
+        {
+          "fact_id": "employer_or_defendant_identity",
+          "expected_state": "source_bound_observed_candidate",
+          "expected_source_bound": true,
+          "expected_source_label_ids": ["label-conflict-employer"]
+        },
+        {
+          "fact_id": "prospective_client_payer_carrier_posture",
+          "expected_state": "synthetic_context_requires_confirmation",
+          "expected_source_bound": true,
+          "expected_source_label_ids": ["label-budget-representation-posture"]
+        },
+        {
+          "fact_id": "individual_supervisor_or_manager_defendants",
+          "expected_state": "unknown_missing",
+          "expected_source_bound": false
+        },
+        {
+          "fact_id": "joint_employer_or_affiliate_structure",
+          "expected_state": "unknown_missing",
+          "expected_source_bound": false
+        },
+        {
+          "fact_id": "carrier_guideline_and_rate_source",
+          "expected_state": "unknown_missing",
+          "expected_source_bound": false
+        }
+      ],
+      "red_team_notes": [
+        "The blocked state is the expected safe outcome; a green audit does not mean the budget is ready.",
+        "Synthetic context wrapper labels must not become observed representation posture facts."
+      ]
+    },
+    {
+      "case_id": "le-fact-audit-range-only-critical-ready.v0_1",
+      "label": "Ready-critical L&E synthetic manifest has all critical facts source-bound but remains range-only because important facts need review.",
+      "manifest_ref": "examples/synthetic/courtlistener-derived/labor-employment-ready-critical-facts-manifest.json",
+      "expected_manifest_id": "synthetic-courtlistener-le-ready-critical-facts-manifest.v0_1",
+      "expected_status": "labor_employment_budget_facts_ready_for_review",
+      "expected_budget_readiness_state": "range_only_pending_human_review",
+      "expected_finding_count": 17,
+      "expected_source_bound_finding_count": 16,
+      "expected_needs_review_finding_count": 2,
+      "expected_unknown_finding_count": 1,
+      "expected_gap_count": 3,
+      "expected_critical_gap_count": 0,
+      "expected_critical_gap_ids": [],
+      "expected_warning_gap_ids": [
+        "wage_hour_pay_period_and_employee_volume",
+        "expert_and_vendor_needs",
+        "policy_handbook_contract_documents"
+      ],
+      "expected_relationship_budget_treatment": "candidate_range_budget_after_review",
+      "expected_relationship_unresolved_fact_ids": [],
+      "expected_person_candidate_count": 2,
+      "expected_organization_candidate_count": 2,
+      "expected_source_bound_relationship_count": 5,
+      "expected_critical_relationship_gap_count": 0,
+      "expected_findings": [
+        {
+          "fact_id": "employee_claimant_identity",
+          "expected_state": "source_bound_observed_candidate",
+          "expected_source_bound": true,
+          "expected_source_label_ids": ["label-ready-conflict-employee"]
+        },
+        {
+          "fact_id": "employer_or_defendant_identity",
+          "expected_state": "source_bound_observed_candidate",
+          "expected_source_bound": true,
+          "expected_source_label_ids": ["label-ready-conflict-employer"]
+        },
+        {
+          "fact_id": "prospective_client_payer_carrier_posture",
+          "expected_state": "source_bound_observed_candidate",
+          "expected_source_bound": true,
+          "expected_source_label_ids": ["label-ready-budget-representation-posture"]
+        },
+        {
+          "fact_id": "individual_supervisor_or_manager_defendants",
+          "expected_state": "source_bound_observed_candidate",
+          "expected_source_bound": true,
+          "expected_source_label_ids": ["label-ready-conflict-supervisor"]
+        },
+        {
+          "fact_id": "joint_employer_or_affiliate_structure",
+          "expected_state": "source_bound_observed_candidate",
+          "expected_source_bound": true,
+          "expected_source_label_ids": ["label-ready-conflict-affiliate"]
+        },
+        {
+          "fact_id": "expert_and_vendor_needs",
+          "expected_state": "source_bound_needs_review",
+          "expected_source_bound": true,
+          "expected_source_label_ids": ["label-ready-budget-expert-count-needs-review"]
+        },
+        {
+          "fact_id": "policy_handbook_contract_documents",
+          "expected_state": "source_bound_needs_review",
+          "expected_source_bound": true,
+          "expected_source_label_ids": ["label-ready-doc-type-policy-needs-review"]
+        }
+      ],
+      "red_team_notes": [
+        "Zero critical gaps must still not become a final or submitted budget.",
+        "Important facts needing review keep the case at range-only pending human budget-fact review."
+      ]
+    }
+  ],
+  "required_next_gates": [
+    "human_labor_employment_budget_fact_review",
+    "budget_fact_gold_before_calibration_or_model_comparison",
+    "no_amount_budget_from_gold_report"
+  ]
+}

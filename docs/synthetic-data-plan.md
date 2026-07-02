@@ -52,6 +52,8 @@ The first executable L&E fixture manifest lives at `examples/synthetic/labor-emp
 
 The executable budget-fact binding manifest lives at `examples/synthetic/labor-employment/labor-employment-executable-budget-fact-bindings.json`. After the executable fixture audit, run `lawfirm-os-intake audit-labor-employment-executable-fact-binding --executable-fixture-report <labor_employment_executable_fixtures_report.json> --repo-root . --out-dir <dir>` to write `labor_employment_executable_fact_binding_report.json`. That report binds expected L&E budget-fact gaps to preflight source text, source inventory refs, and dry-run exception labels. It remains candidate-only evidence: it does not resolve facts, create an amount budget, train a model, or write Lake/SQLite records.
 
+The L&E budget fact reviewed-gold spec lives at `examples/synthetic/gold/labor-employment-budget-fact-gold.json`. Run `lawfirm-os-intake validate-labor-employment-budget-fact-gold --repo-root . --out-dir <dir>` to write `labor_employment_budget_fact_gold_report.json`. That report replays the deterministic L&E budget fact audit against reviewed synthetic expectations for both blocked-critical-gaps and range-only-critical-ready cases. It is a QA gate for audit behavior only; it does not approve facts, rates, budgets, calibration, or production learning.
+
 ## Data generation rules
 
 - clearly label all names/domains/claims as synthetic;

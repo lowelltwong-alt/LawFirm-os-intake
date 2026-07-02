@@ -42,6 +42,8 @@ The local `audit-labor-employment-executable-fixtures` command is a narrower pre
 
 The local `audit-labor-employment-executable-fact-binding` command reads `labor-employment-executable-budget-fact-bindings.json` plus the executable fixture report and emits `labor_employment_executable_fact_binding_report.json`. It checks that expected L&E budget-fact gaps from executable preflight cases are anchored to source-signal terms, source inventory refs, or dry-run exception labels. It is a bridge proof only: it does not replace `labor_employment_budget_fact_audit_report.json`, does not mark any fact resolved, and cannot satisfy the budget precondition by itself.
 
+The local `validate-labor-employment-budget-fact-gold` command reads `examples/synthetic/gold/labor-employment-budget-fact-gold.json`, replays the deterministic L&E budget fact audit, and emits `labor_employment_budget_fact_gold_report.json`. The gold report checks exact readiness states, counts, critical/warning gap IDs, relationship topology, finding states, source label refs, and no-write/no-budget boundaries. It is a QA gate before calibration or model comparison, not a budget approval or production-learning signal.
+
 When a human or harness supplies `labor_employment_budget_fact_audit_report.json`
 to `build-budget`, the budget precondition gate consumes it explicitly. Critical
 L&E gaps set `blocked_state=labor_employment_budget_facts_blocked` and stop

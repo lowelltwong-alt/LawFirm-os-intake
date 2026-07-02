@@ -144,6 +144,13 @@ ARTIFACT_SPECS = [
         "blocked",
     ),
     ArtifactSpec(
+        "labor-employment-budget-fact-gold",
+        "L&E Budget Fact Gold",
+        "labor_employment_budget_fact_gold_report.json",
+        "qa-reference",
+        "blocked",
+    ),
+    ArtifactSpec(
         "budget-human-review",
         "Budget Human Review",
         "budget_human_review_packet.json",
@@ -236,6 +243,13 @@ QUALITY_GATE_SPECS = {
         "labor_employment_executable_fact_binding_report.json",
         "qa-reference",
         "Executable L&E preflight packets must bind expected budget-fact gaps to source evidence, source inventory, or dry-run exception labels.",
+        "blocked",
+    ),
+    "labor_employment_budget_fact_gold": (
+        "L&E Budget Fact Gold",
+        "labor_employment_budget_fact_gold_report.json",
+        "qa-reference",
+        "L&E budget fact audit outputs must match reviewed synthetic gold before calibration or model comparison.",
         "blocked",
     ),
     "full_pytest": (
