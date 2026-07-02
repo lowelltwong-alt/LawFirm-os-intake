@@ -159,6 +159,81 @@
       "title": "Labor Employment Required Human Questions",
       "type": "array"
     },
+    "labor_employment_driver_impact_report_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Labor Employment Driver Impact Report Ref"
+    },
+    "labor_employment_driver_impact_status": {
+      "anyOf": [
+        {
+          "enum": [
+            "labor_employment_executable_driver_impacts_ready_for_review",
+            "blocked_by_labor_employment_executable_driver_impacts"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Labor Employment Driver Impact Status"
+    },
+    "labor_employment_driver_allowed_budget_output": {
+      "anyOf": [
+        {
+          "enum": [
+            "blocked_amount_budget",
+            "range_or_hours_only_pending_review",
+            "candidate_range_after_review_pending_human_review"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Labor Employment Driver Allowed Budget Output"
+    },
+    "labor_employment_driver_block_amount_budget_impact_count": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Labor Employment Driver Block Amount Budget Impact Count",
+      "type": "integer"
+    },
+    "labor_employment_driver_range_widening_impact_count": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Labor Employment Driver Range Widening Impact Count",
+      "type": "integer"
+    },
+    "labor_employment_driver_scenario_fork_impact_count": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Labor Employment Driver Scenario Fork Impact Count",
+      "type": "integer"
+    },
+    "labor_employment_driver_rate_guideline_review_impact_count": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Labor Employment Driver Rate Guideline Review Impact Count",
+      "type": "integer"
+    },
+    "labor_employment_driver_max_range_widening_factor": {
+      "default": 1.0,
+      "minimum": 1.0,
+      "title": "Labor Employment Driver Max Range Widening Factor",
+      "type": "number"
+    },
     "prohibited_outputs": {
       "items": {
         "type": "string"

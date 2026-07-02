@@ -146,6 +146,13 @@ def _parser() -> argparse.ArgumentParser:
             "budget precondition gate."
         ),
     )
+    budget.add_argument(
+        "--labor-employment-driver-impact-report",
+        help=(
+            "Optional labor_employment_executable_driver_impact_report.json used as "
+            "a candidate budget-impact precondition and range/scenario review input."
+        ),
+    )
 
     demo = sub.add_parser("demo", help="Run the complete synthetic intake-to-budget demonstration.")
     demo.add_argument("--input", required=True)
@@ -1253,6 +1260,7 @@ def main(argv: list[str] | None = None) -> int:
                 args.out_dir,
                 fixture_gold=args.fixture_gold,
                 labor_employment_budget_fact_report=args.labor_employment_budget_fact_report,
+                labor_employment_driver_impact_report=(args.labor_employment_driver_impact_report),
             )
             _print(
                 {
@@ -1272,6 +1280,9 @@ def main(argv: list[str] | None = None) -> int:
                     ),
                     "budget_precondition_report": str(run_dir / "budget_precondition_report.json"),
                     "labor_employment_budget_fact_report": args.labor_employment_budget_fact_report,
+                    "labor_employment_driver_impact_report": (
+                        args.labor_employment_driver_impact_report
+                    ),
                     "safety_gate_report": str(run_dir / "safety_gate_report.json"),
                     "exception_lake_handoff_manifest": str(
                         run_dir / "exception_lake_handoff_manifest.json"

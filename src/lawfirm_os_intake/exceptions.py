@@ -568,6 +568,8 @@ def build_budget_precondition_exception_candidates(
     structured_refs = []
     if report.labor_employment_budget_fact_report_ref:
         structured_refs.append(report.labor_employment_budget_fact_report_ref)
+    if report.labor_employment_driver_impact_report_ref:
+        structured_refs.append(report.labor_employment_driver_impact_report_ref)
     return [
         ExceptionLakeCandidate(
             candidate_id=new_id("exc"),

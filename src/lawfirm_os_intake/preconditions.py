@@ -7,6 +7,7 @@ from .models import (
     HumanConfirmation,
     IntakePreflightPacket,
     LaborEmploymentBudgetFactAuditReport,
+    LaborEmploymentExecutableDriverImpactReport,
 )
 from .util import new_id, now_iso
 
@@ -43,6 +44,10 @@ def build_budget_precondition_report(
     human_review_outcome_ref: str | None = None,
     labor_employment_budget_fact_report: LaborEmploymentBudgetFactAuditReport | None = None,
     labor_employment_budget_fact_report_ref: str | None = None,
+    labor_employment_driver_impact_report: (
+        LaborEmploymentExecutableDriverImpactReport | None
+    ) = None,
+    labor_employment_driver_impact_report_ref: str | None = None,
 ) -> BudgetPreconditionReport:
     confirmation_ref = f"human-confirmation://{confirmation.confirmation_id}"
     packet_ref = f"intake-preflight-packet://{packet.packet_id}"
@@ -145,11 +150,47 @@ def build_budget_precondition_report(
                 ),
             ]
         )
+    resolved_labor_employment_driver_impact_report_ref = None
+    if labor_employment_driver_impact_report is not None:
+        resolved_labor_employment_driver_impact_report_ref = (
+            labor_employment_driver_impact_report_ref
+            or (
+                "labor-employment-driver-impact-report://"
+                f"{labor_employment_driver_impact_report.executable_driver_impact_report_id}"
+            )
+        )
+        checks.extend(
+            [
+                _check(
+                    "labor_employment_driver_impact_report_ready",
+                    labor_employment_driver_impact_report.status
+                    == "labor_employment_executable_driver_impacts_ready_for_review",
+                    "L&E driver impact report must be ready for candidate driver-impact review.",
+                    [resolved_labor_employment_driver_impact_report_ref],
+                ),
+                _check(
+                    "labor_employment_driver_impact_no_amount_budget_blocks",
+                    labor_employment_driver_impact_report.block_amount_budget_impact_count == 0,
+                    "Source-bound L&E driver impacts with amount-budget blockers must block amount budget generation.",
+                    [resolved_labor_employment_driver_impact_report_ref],
+                ),
+                _check(
+                    "labor_employment_driver_impact_report_no_side_effects",
+                    _labor_employment_driver_impact_report_has_no_side_effects(
+                        labor_employment_driver_impact_report
+                    ),
+                    "L&E driver impact report must be candidate-only and must not claim Lake, SQLite, training, matter-opening, conflict, or submission side effects.",
+                    [resolved_labor_employment_driver_impact_report_ref],
+                ),
+            ]
+        )
     failed = [check.check_id for check in checks if check.status == "failed"]
     status = "passed" if not failed else "failed"
     blocked_state = None
     if failed:
-        if "labor_employment_budget_fact_no_critical_gaps" in failed:
+        if "labor_employment_driver_impact_no_amount_budget_blocks" in failed:
+            blocked_state = "labor_employment_driver_impacts_blocked"
+        elif "labor_employment_budget_fact_no_critical_gaps" in failed:
             blocked_state = "labor_employment_budget_facts_blocked"
         elif "confirmation_status_confirmed" in failed:
             blocked_state = "budget_blocked_before_human_confirmation"
@@ -188,6 +229,42 @@ def build_budget_precondition_report(
             if labor_employment_budget_fact_report is not None
             else []
         ),
+        labor_employment_driver_impact_report_ref=(
+            resolved_labor_employment_driver_impact_report_ref
+        ),
+        labor_employment_driver_impact_status=(
+            labor_employment_driver_impact_report.status
+            if labor_employment_driver_impact_report is not None
+            else None
+        ),
+        labor_employment_driver_allowed_budget_output=(
+            _labor_employment_driver_allowed_budget_output(labor_employment_driver_impact_report)
+        ),
+        labor_employment_driver_block_amount_budget_impact_count=(
+            labor_employment_driver_impact_report.block_amount_budget_impact_count
+            if labor_employment_driver_impact_report is not None
+            else 0
+        ),
+        labor_employment_driver_range_widening_impact_count=(
+            labor_employment_driver_impact_report.range_widening_impact_count
+            if labor_employment_driver_impact_report is not None
+            else 0
+        ),
+        labor_employment_driver_scenario_fork_impact_count=(
+            labor_employment_driver_impact_report.scenario_fork_impact_count
+            if labor_employment_driver_impact_report is not None
+            else 0
+        ),
+        labor_employment_driver_rate_guideline_review_impact_count=(
+            labor_employment_driver_impact_report.rate_guideline_review_impact_count
+            if labor_employment_driver_impact_report is not None
+            else 0
+        ),
+        labor_employment_driver_max_range_widening_factor=(
+            labor_employment_driver_impact_report.max_range_widening_factor
+            if labor_employment_driver_impact_report is not None
+            else 1.0
+        ),
         prohibited_outputs=PROHIBITED_PRECONDITION_FAILURE_OUTPUTS,
         generated_at=now_iso(),
     )
@@ -208,6 +285,37 @@ def _labor_employment_fact_report_has_no_side_effects(
         and report.candidate_only is True
         and report.non_authoritative is True
     )
+
+
+def _labor_employment_driver_impact_report_has_no_side_effects(
+    report: LaborEmploymentExecutableDriverImpactReport,
+) -> bool:
+    return (
+        report.budget_amount_output_authorized is False
+        and report.budget_submission_authorized is False
+        and report.conflict_conclusion_emitted is False
+        and report.matter_opening_authorized is False
+        and report.training_pipeline_created is False
+        and report.lake_write_performed is False
+        and report.sqlite_write_performed is False
+        and report.external_writes_performed is False
+        and report.candidate_only is True
+        and report.non_authoritative is True
+    )
+
+
+def _labor_employment_driver_allowed_budget_output(
+    report: LaborEmploymentExecutableDriverImpactReport | None,
+) -> str | None:
+    if report is None:
+        return None
+    if report.block_amount_budget_impact_count > 0:
+        return "blocked_amount_budget"
+    if report.range_widening_impact_count or report.scenario_fork_impact_count:
+        return "range_or_hours_only_pending_review"
+    if report.rate_guideline_review_impact_count:
+        return "candidate_range_after_review_pending_human_review"
+    return "candidate_range_after_review_pending_human_review"
 
 
 def _labor_employment_budget_treatment(

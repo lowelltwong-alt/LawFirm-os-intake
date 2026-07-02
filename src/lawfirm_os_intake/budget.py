@@ -18,6 +18,7 @@ from .models import (
     HumanConfirmation,
     IntakePreflightPacket,
     LaborEmploymentBudgetFactAuditReport,
+    LaborEmploymentExecutableDriverImpactReport,
 )
 from .rates import RoleRateResolution
 from .util import new_id
@@ -172,6 +173,97 @@ def apply_labor_employment_budget_fact_constraints(
         )
 
     return budget.model_copy(update={"unknowns": unknowns, "budget_support_items": support_items})
+
+
+def apply_labor_employment_driver_impact_constraints(
+    budget: BudgetProposal,
+    report: LaborEmploymentExecutableDriverImpactReport | None,
+    report_ref: str | None,
+) -> BudgetProposal:
+    if report is None:
+        return budget
+    if report.block_amount_budget_impact_count > 0:
+        return budget
+
+    unknowns = list(budget.unknowns)
+    support_items = list(budget.budget_support_items)
+    display_banner = dict(budget.display_banner)
+    seen_unknowns = set(unknowns)
+    seen_structured_refs = {
+        item.structured_ref for item in support_items if item.structured_ref is not None
+    }
+    base_ref = (
+        f"labor-employment-driver-impact-report://{report.executable_driver_impact_report_id}"
+    )
+    ref_root = report_ref or base_ref
+
+    def add_unknown(text: str, structured_ref: str) -> None:
+        if text not in seen_unknowns:
+            unknowns.append(text)
+            seen_unknowns.add(text)
+        if structured_ref not in seen_structured_refs:
+            support_items.append(
+                _support_item(
+                    "unknown",
+                    text,
+                    "labor_employment_driver_impact_report",
+                    structured_ref=structured_ref,
+                )
+            )
+            seen_structured_refs.add(structured_ref)
+
+    if report.range_widening_impact_count:
+        add_unknown(
+            "L&E driver impact report requires budget range review before relying on point estimates.",
+            f"{base_ref}/range_widening_impact_count",
+        )
+    if report.scenario_fork_impact_count:
+        add_unknown(
+            "L&E driver impact report requires scenario-fork review before choosing a budget path.",
+            f"{base_ref}/scenario_fork_impact_count",
+        )
+    if report.rate_guideline_review_impact_count:
+        add_unknown(
+            "L&E driver impact report requires carrier/rate guideline review before compliant projection or submission.",
+            f"{base_ref}/rate_guideline_review_impact_count",
+        )
+
+    for case in report.cases:
+        for item in case.impact_items:
+            if item.impact_state != "source_bound_impact_candidate":
+                continue
+            if not (
+                item.range_widening_factor > 1.0
+                or item.scenario_fork_required
+                or item.rate_guideline_review_required
+            ):
+                continue
+            actions = ", ".join(item.impact_actions)
+            add_unknown(
+                "L&E budget driver impact needs review: "
+                f"{item.driver_dimension} ({actions}); "
+                f"range factor {item.range_widening_factor}.",
+                f"{base_ref}/case/{case.executable_fixture_id}/driver/{item.driver_dimension}",
+            )
+
+    display_banner["labor_employment_driver_impact_status"] = report.status
+    display_banner["labor_employment_driver_impact_report_ref"] = ref_root
+    display_banner["labor_employment_driver_max_range_widening_factor"] = (
+        report.max_range_widening_factor
+    )
+    display_banner["labor_employment_driver_scenario_fork_review_required"] = (
+        report.scenario_fork_impact_count > 0
+    )
+    display_banner["labor_employment_driver_rate_guideline_review_required"] = (
+        report.rate_guideline_review_impact_count > 0
+    )
+    return budget.model_copy(
+        update={
+            "unknowns": unknowns,
+            "budget_support_items": support_items,
+            "display_banner": display_banner,
+        }
+    )
 
 
 def _template_support_items(

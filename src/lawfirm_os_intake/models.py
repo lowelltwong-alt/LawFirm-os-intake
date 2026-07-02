@@ -3975,6 +3975,7 @@ class BudgetSupportItem(StrictModel):
         "workflow_policy",
         "missing_template",
         "labor_employment_budget_fact_report",
+        "labor_employment_driver_impact_report",
     ]
     evidence_refs: list[EvidenceRef] = Field(default_factory=list)
     structured_ref: str | None = None
@@ -6873,6 +6874,22 @@ class BudgetPreconditionReport(StrictModel):
     ] = "not_applicable"
     labor_employment_critical_gap_count: int = Field(default=0, ge=0)
     labor_employment_required_human_questions: list[str] = Field(default_factory=list)
+    labor_employment_driver_impact_report_ref: str | None = None
+    labor_employment_driver_impact_status: (
+        Literal[
+            "labor_employment_executable_driver_impacts_ready_for_review",
+            "blocked_by_labor_employment_executable_driver_impacts",
+        ]
+        | None
+    ) = None
+    labor_employment_driver_allowed_budget_output: (
+        LaborEmploymentExecutableDriverAllowedBudgetOutput | None
+    ) = None
+    labor_employment_driver_block_amount_budget_impact_count: int = Field(default=0, ge=0)
+    labor_employment_driver_range_widening_impact_count: int = Field(default=0, ge=0)
+    labor_employment_driver_scenario_fork_impact_count: int = Field(default=0, ge=0)
+    labor_employment_driver_rate_guideline_review_impact_count: int = Field(default=0, ge=0)
+    labor_employment_driver_max_range_widening_factor: float = Field(default=1.0, ge=1.0)
     prohibited_outputs: list[str]
     external_writes_performed: Literal[False] = False
     generated_at: str
@@ -6901,6 +6918,26 @@ class BudgetPreconditionReport(StrictModel):
                 raise ValueError("L&E blocked state requires a fact report ref")
             if self.labor_employment_critical_gap_count == 0:
                 raise ValueError("L&E blocked state requires at least one critical gap")
+        if self.labor_employment_driver_impact_status and (
+            not self.labor_employment_driver_impact_report_ref
+        ):
+            raise ValueError("L&E driver impact status requires a driver impact report ref")
+        if self.labor_employment_driver_block_amount_budget_impact_count > 0:
+            if self.status != "failed":
+                raise ValueError(
+                    "L&E driver amount-budget block impacts must fail the budget precondition gate"
+                )
+            if self.blocked_state != "labor_employment_driver_impacts_blocked":
+                raise ValueError("L&E driver amount-budget blocks require driver blocked state")
+            if self.labor_employment_driver_allowed_budget_output != "blocked_amount_budget":
+                raise ValueError(
+                    "L&E driver amount-budget blocks require blocked amount-budget output"
+                )
+        if self.blocked_state == "labor_employment_driver_impacts_blocked":
+            if not self.labor_employment_driver_impact_report_ref:
+                raise ValueError("L&E driver blocked state requires a driver impact report ref")
+            if self.labor_employment_driver_block_amount_budget_impact_count == 0:
+                raise ValueError("L&E driver blocked state requires at least one block impact")
         return self
 
 

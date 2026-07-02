@@ -9,7 +9,11 @@ from .adapters import (
     finalize_model_adapter_report,
     resolve_adapter,
 )
-from .budget import apply_labor_employment_budget_fact_constraints, build_budget_proposal
+from .budget import (
+    apply_labor_employment_budget_fact_constraints,
+    apply_labor_employment_driver_impact_constraints,
+    build_budget_proposal,
+)
 from .budget_actuals import build_budget_actual_comparison_report
 from .budget_submission_guard import (
     build_budget_submission_guard_report,
@@ -67,6 +71,7 @@ from .models import (
     HumanConfirmation,
     IntakePreflightPacket,
     LaborEmploymentBudgetFactAuditReport,
+    LaborEmploymentExecutableDriverImpactReport,
     MatterOpeningBlocker,
     MatterOpeningReadiness,
     ModelAdapterReport,
@@ -777,12 +782,18 @@ def run_budget(
     *,
     fixture_gold: str | Path | None = None,
     labor_employment_budget_fact_report: str | Path | None = None,
+    labor_employment_driver_impact_report: str | Path | None = None,
 ) -> tuple[Any, Path]:
     preflight_packet_path = Path(preflight_packet_path)
     confirmation_path = Path(confirmation_path)
     labor_employment_budget_fact_report_path = (
         Path(labor_employment_budget_fact_report)
         if labor_employment_budget_fact_report is not None
+        else None
+    )
+    labor_employment_driver_impact_report_path = (
+        Path(labor_employment_driver_impact_report)
+        if labor_employment_driver_impact_report is not None
         else None
     )
     packet = IntakePreflightPacket.model_validate(load_json(preflight_packet_path))
@@ -792,6 +803,13 @@ def run_budget(
             load_json(labor_employment_budget_fact_report_path)
         )
         if labor_employment_budget_fact_report_path is not None
+        else None
+    )
+    loaded_labor_employment_driver_impact_report = (
+        LaborEmploymentExecutableDriverImpactReport.model_validate(
+            load_json(labor_employment_driver_impact_report_path)
+        )
+        if labor_employment_driver_impact_report_path is not None
         else None
     )
     run_dir = Path(out_dir)
@@ -811,6 +829,9 @@ def run_budget(
                     str(confirmation_path),
                     str(labor_employment_budget_fact_report_path)
                     if labor_employment_budget_fact_report_path is not None
+                    else None,
+                    str(labor_employment_driver_impact_report_path)
+                    if labor_employment_driver_impact_report_path is not None
                     else None,
                 ]
                 if ref
@@ -847,6 +868,8 @@ def run_budget(
     ]
     if labor_employment_budget_fact_report_path is not None:
         budget_input_refs.append(str(labor_employment_budget_fact_report_path))
+    if labor_employment_driver_impact_report_path is not None:
+        budget_input_refs.append(str(labor_employment_driver_impact_report_path))
     budget_precondition_report = build_budget_precondition_report(
         packet,
         confirmation,
@@ -855,6 +878,10 @@ def run_budget(
         loaded_labor_employment_budget_fact_report,
         str(labor_employment_budget_fact_report_path)
         if labor_employment_budget_fact_report_path is not None
+        else None,
+        loaded_labor_employment_driver_impact_report,
+        str(labor_employment_driver_impact_report_path)
+        if labor_employment_driver_impact_report_path is not None
         else None,
     )
     write_json(
@@ -964,6 +991,13 @@ def run_budget(
         loaded_labor_employment_budget_fact_report,
         str(labor_employment_budget_fact_report_path)
         if labor_employment_budget_fact_report_path is not None
+        else None,
+    )
+    budget = apply_labor_employment_driver_impact_constraints(
+        budget,
+        loaded_labor_employment_driver_impact_report,
+        str(labor_employment_driver_impact_report_path)
+        if labor_employment_driver_impact_report_path is not None
         else None,
     )
     readiness = MatterOpeningReadiness(
@@ -1107,6 +1141,10 @@ def run_budget(
     if labor_employment_budget_fact_report_path is not None:
         artifact_refs["labor_employment_budget_fact_report"] = str(
             labor_employment_budget_fact_report_path
+        )
+    if labor_employment_driver_impact_report_path is not None:
+        artifact_refs["labor_employment_driver_impact_report"] = str(
+            labor_employment_driver_impact_report_path
         )
     if fixture_gold_report_path:
         artifact_refs["fixture_gold_report"] = str(fixture_gold_report_path)
