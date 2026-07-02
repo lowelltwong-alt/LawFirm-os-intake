@@ -249,6 +249,17 @@
       "notes": ["Reviewed synthetic evidence selects the nonblocking driver-impact slice used for budget-gate replay."]
     },
     {
+      "artifactId": "labor-employment-blocked-driver-impact-review",
+      "label": "L&E Blocked Driver Impact Review",
+      "fileName": "labor_employment_blocked_driver_impact_review_report.json",
+      "status": "pending_review",
+      "owner": "qa-reference",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": ["Blocked amount-budget driver impacts list critical fact blockers, follow-up actions, and candidate Lake labels."]
+    },
+    {
       "artifactId": "labor-employment-budget-fact-gold",
       "label": "L&E Budget Fact Gold",
       "fileName": "labor_employment_budget_fact_gold_report.json",
@@ -411,6 +422,14 @@
       "evidenceFile": "labor_employment_driver_impact_review_report.json",
       "owner": "qa-reference",
       "notes": ["Nonblocking L&E driver-impact budget-gate replay must be backed by reviewed synthetic evidence, not hand-filtered test data."]
+    },
+    {
+      "gateId": "labor_employment_blocked_driver_impact_review",
+      "label": "L&E Blocked Driver Impact Review",
+      "status": "pending_review",
+      "evidenceFile": "labor_employment_blocked_driver_impact_review_report.json",
+      "owner": "qa-reference",
+      "notes": ["Blocked L&E amount-budget cases must explain blocker facts, follow-up actions, and candidate Lake labels before QA trusts budget gating."]
     },
     {
       "gateId": "labor_employment_budget_fact_gold",

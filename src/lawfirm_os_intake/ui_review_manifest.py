@@ -172,6 +172,13 @@ ARTIFACT_SPECS = [
         "blocked",
     ),
     ArtifactSpec(
+        "labor-employment-blocked-driver-impact-review",
+        "L&E Blocked Driver Impact Review",
+        "labor_employment_blocked_driver_impact_review_report.json",
+        "qa-reference",
+        "blocked",
+    ),
+    ArtifactSpec(
         "labor-employment-budget-fact-gold",
         "L&E Budget Fact Gold",
         "labor_employment_budget_fact_gold_report.json",
@@ -299,6 +306,13 @@ QUALITY_GATE_SPECS = {
         "labor_employment_driver_impact_review_report.json",
         "qa-reference",
         "Nonblocking L&E driver-impact budget-gate replay must be backed by reviewed synthetic evidence, not hand-filtered test data.",
+        "blocked",
+    ),
+    "labor_employment_blocked_driver_impact_review": (
+        "L&E Blocked Driver Impact Review",
+        "labor_employment_blocked_driver_impact_review_report.json",
+        "qa-reference",
+        "Blocked L&E amount-budget cases must explain blocker facts, follow-up actions, and candidate Lake labels before QA trusts budget gating.",
         "blocked",
     ),
     "labor_employment_budget_fact_gold": (
@@ -434,10 +448,14 @@ def _gate_state_from_payload(payload: dict[str, Any]) -> str:
     status = str(payload.get("status") or payload.get("overallStatus") or "").casefold()
     if "failed" in status:
         return "failed"
-    if "blocked" in status or payload.get("client_submission_performed") is True:
+    if status.startswith("blocked") or payload.get("client_submission_performed") is True:
         return "blocked"
+    if "ready_for_review" in status or "ready_for_budget_gate_replay" in status:
+        return "pending"
     if "pending" in status or "review" in status:
         return "pending"
+    if "blocked" in status:
+        return "blocked"
     return "passed"
 
 

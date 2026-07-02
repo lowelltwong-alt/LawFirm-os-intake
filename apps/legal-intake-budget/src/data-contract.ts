@@ -28,6 +28,7 @@ export const REQUIRED_ARTIFACT_FILES = [
   "labor_employment_executable_driver_binding_report.json",
   "labor_employment_executable_driver_impact_report.json",
   "labor_employment_driver_impact_review_report.json",
+  "labor_employment_blocked_driver_impact_review_report.json",
   "labor_employment_budget_fact_gold_report.json",
   "budget_human_review_packet.json",
   "carrier_rejection_decision_ledger_report.json",

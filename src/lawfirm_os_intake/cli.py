@@ -84,6 +84,9 @@ from .labor_employment_driver_impact_review import (
     DEFAULT_LABOR_EMPLOYMENT_DRIVER_IMPACT_REVIEW_SPEC,
     run_labor_employment_driver_impact_review,
 )
+from .labor_employment_blocked_driver_impact_review import (
+    run_labor_employment_blocked_driver_impact_review,
+)
 from .labor_employment_executable_fixtures import (
     run_labor_employment_executable_fixture_audit,
 )
@@ -447,6 +450,30 @@ def _parser() -> argparse.ArgumentParser:
         help="Path to labor_employment_executable_driver_impact_report.json.",
     )
     le_driver_impact_review.add_argument("--out-dir", required=True)
+
+    le_blocked_driver_impact_review = sub.add_parser(
+        "review-labor-employment-blocked-driver-impacts",
+        help=(
+            "Build a synthetic review packet for L&E driver impacts that block "
+            "amount-budget output."
+        ),
+    )
+    le_blocked_driver_impact_review.add_argument(
+        "--fact-binding-report",
+        required=True,
+        help="Path to labor_employment_executable_fact_binding_report.json.",
+    )
+    le_blocked_driver_impact_review.add_argument(
+        "--driver-binding-report",
+        required=True,
+        help="Path to labor_employment_executable_driver_binding_report.json.",
+    )
+    le_blocked_driver_impact_review.add_argument(
+        "--driver-impact-report",
+        required=True,
+        help="Path to labor_employment_executable_driver_impact_report.json.",
+    )
+    le_blocked_driver_impact_review.add_argument("--out-dir", required=True)
 
     budget_review = sub.add_parser(
         "record-budget-review",
@@ -1817,6 +1844,43 @@ def main(argv: list[str] | None = None) -> int:
                 0
                 if report.status
                 == "labor_employment_driver_impact_review_ready_for_budget_gate_replay"
+                else 2
+            )
+
+        if args.command == "review-labor-employment-blocked-driver-impacts":
+            report, run_dir = run_labor_employment_blocked_driver_impact_review(
+                fact_binding_report_path=args.fact_binding_report,
+                driver_binding_report_path=args.driver_binding_report,
+                driver_impact_report_path=args.driver_impact_report,
+                out_dir=args.out_dir,
+            )
+            failed_checks = [check.check_id for check in report.checks if check.status == "failed"]
+            _print(
+                {
+                    "status": report.status,
+                    "blocked_driver_impact_review_report_id": (
+                        report.blocked_driver_impact_review_report_id
+                    ),
+                    "source_driver_impact_report_id": report.source_driver_impact_report_id,
+                    "case_count": report.case_count,
+                    "blocked_case_count": report.blocked_case_count,
+                    "nonblocking_case_count": report.nonblocking_case_count,
+                    "blocker_fact_count": report.blocker_fact_count,
+                    "block_amount_budget_impact_count": (report.block_amount_budget_impact_count),
+                    "candidate_exception_lake_labels": (report.candidate_exception_lake_labels),
+                    "failed_checks": failed_checks,
+                    "budget_amount_output_authorized": report.budget_amount_output_authorized,
+                    "budget_submission_authorized": report.budget_submission_authorized,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return (
+                0
+                if report.status == "labor_employment_blocked_driver_impacts_ready_for_review"
                 else 2
             )
 

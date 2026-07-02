@@ -2903,6 +2903,161 @@ class LaborEmploymentDriverImpactReviewReport(StrictModel):
         return self
 
 
+class LaborEmploymentBlockedDriverImpactFactReview(StrictModel):
+    fact_id: str
+    required_level: str
+    binding_state: Literal[
+        "source_bound_gap_candidate",
+        "exception_bound_gap_candidate",
+        "source_and_exception_bound_gap_candidate",
+        "inventory_bound_gap_candidate",
+        "unbound_gap_candidate",
+    ]
+    blocks_precise_budget: bool
+    reason: str
+    budget_effects: list[str]
+    evidence_ref_count: int = Field(ge=0)
+    source_inventory_ref_count: int = Field(ge=0)
+    matched_source_signal_terms: list[str] = Field(default_factory=list)
+    missing_source_signal_terms: list[str] = Field(default_factory=list)
+    matched_exception_labels: list[str] = Field(default_factory=list)
+    missing_exception_labels: list[str] = Field(default_factory=list)
+    matched_source_ids: list[str] = Field(default_factory=list)
+    missing_source_ids: list[str] = Field(default_factory=list)
+    unblock_actions: list[str]
+    candidate_exception_lake_labels: list[str]
+    candidate_only: Literal[True] = True
+    synthetic_only: Literal[True] = True
+
+    @model_validator(mode="after")
+    def le_blocked_driver_impact_fact_review_is_actionable(
+        self,
+    ) -> "LaborEmploymentBlockedDriverImpactFactReview":
+        if not self.blocks_precise_budget:
+            raise ValueError("blocked driver impact fact review requires precise-budget blocker")
+        if self.required_level != "critical":
+            raise ValueError("blocked driver impact fact review requires critical fact")
+        if not self.unblock_actions:
+            raise ValueError("blocked driver impact fact review requires unblock actions")
+        if not self.candidate_exception_lake_labels:
+            raise ValueError("blocked driver impact fact review requires candidate lake labels")
+        return self
+
+
+class LaborEmploymentBlockedDriverImpactCaseReview(StrictModel):
+    executable_fixture_id: str
+    family: LaborEmploymentSyntheticFixtureFamily
+    variant: LaborEmploymentSyntheticFixtureVariant
+    allowed_budget_output: Literal["blocked_amount_budget"]
+    block_reason: str
+    block_amount_budget_impact_count: int = Field(ge=1)
+    range_widening_impact_count: int = Field(ge=0)
+    scenario_fork_impact_count: int = Field(ge=0)
+    rate_guideline_review_impact_count: int = Field(ge=0)
+    critical_driver_dimensions: list[LaborEmploymentBudgetDriverDimension]
+    blocker_fact_count: int = Field(ge=1)
+    blocker_facts: list[LaborEmploymentBlockedDriverImpactFactReview]
+    candidate_exception_lake_labels: list[str]
+    unblock_actions: list[str]
+    next_review_gates: list[str]
+    candidate_only: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    amount_budget_blocked: Literal[True] = True
+    budget_amount_output_authorized: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def le_blocked_driver_impact_case_review_counts_match(
+        self,
+    ) -> "LaborEmploymentBlockedDriverImpactCaseReview":
+        if self.blocker_fact_count != len(self.blocker_facts):
+            raise ValueError("blocked driver impact blocker fact count mismatch")
+        if not self.critical_driver_dimensions:
+            raise ValueError("blocked driver impact case requires critical driver dimensions")
+        if not self.candidate_exception_lake_labels:
+            raise ValueError("blocked driver impact case requires candidate lake labels")
+        if not self.unblock_actions:
+            raise ValueError("blocked driver impact case requires unblock actions")
+        return self
+
+
+class LaborEmploymentBlockedDriverImpactReviewReport(StrictModel):
+    schema_version: str = "0.1"
+    blocked_driver_impact_review_report_id: str
+    status: Literal[
+        "labor_employment_blocked_driver_impacts_ready_for_review",
+        "blocked_by_labor_employment_blocked_driver_impact_review",
+    ]
+    source_fact_binding_report_ref: str
+    source_driver_binding_report_ref: str
+    source_driver_impact_report_ref: str
+    source_driver_impact_report_id: str
+    case_count: int = Field(ge=0)
+    blocked_case_count: int = Field(ge=0)
+    nonblocking_case_count: int = Field(ge=0)
+    blocker_fact_count: int = Field(ge=0)
+    block_amount_budget_impact_count: int = Field(ge=0)
+    candidate_exception_lake_labels: list[str]
+    case_reviews: list[LaborEmploymentBlockedDriverImpactCaseReview]
+    checks: list[LaborEmploymentExecutableDriverImpactCheck]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    not_authorized_for_matter_opening: Literal[True] = True
+    not_authorized_for_calibration: Literal[True] = True
+    budget_amount_output_authorized: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    conflict_conclusion_emitted: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    training_pipeline_created: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def le_blocked_driver_impact_review_report_counts_match(
+        self,
+    ) -> "LaborEmploymentBlockedDriverImpactReviewReport":
+        failed_checks = [check for check in self.checks if check.status == "failed"]
+        if self.case_count != self.blocked_case_count + self.nonblocking_case_count:
+            raise ValueError("blocked driver impact reviewed case partition mismatch")
+        if self.blocked_case_count != len(self.case_reviews):
+            raise ValueError("blocked driver impact case review count mismatch")
+        if self.blocker_fact_count != sum(case.blocker_fact_count for case in self.case_reviews):
+            raise ValueError("blocked driver impact blocker fact aggregate mismatch")
+        if self.block_amount_budget_impact_count != sum(
+            case.block_amount_budget_impact_count for case in self.case_reviews
+        ):
+            raise ValueError("blocked driver impact aggregate block count mismatch")
+        labels = sorted(
+            {label for case in self.case_reviews for label in case.candidate_exception_lake_labels}
+        )
+        if self.candidate_exception_lake_labels != labels:
+            raise ValueError("blocked driver impact candidate lake labels mismatch")
+        if (
+            self.status == "labor_employment_blocked_driver_impacts_ready_for_review"
+            and failed_checks
+        ):
+            raise ValueError("ready blocked driver impact review cannot include failed checks")
+        if (
+            self.status == "blocked_by_labor_employment_blocked_driver_impact_review"
+            and not failed_checks
+        ):
+            raise ValueError("blocked driver impact review requires failed checks")
+        return self
+
+
 class PublicSourceMethodologySource(StrictModel):
     source_id: str
     url: str

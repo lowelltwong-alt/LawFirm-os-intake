@@ -138,6 +138,17 @@ QA_BUNDLE_ARTIFACTS = [
         ),
     ),
     QABundleArtifactSpec(
+        artifact_id="labor_employment_blocked_driver_impact_review",
+        label="Labor/Employment Blocked Driver Impact Review",
+        file_name="labor_employment_blocked_driver_impact_review_report.json",
+        required=True,
+        missing_note=(
+            "Run review-labor-employment-blocked-driver-impacts so blocked L&E "
+            "amount-budget cases have deterministic blocker facts, follow-up actions, "
+            "and candidate Lake labels."
+        ),
+    ),
+    QABundleArtifactSpec(
         artifact_id="labor_employment_budget_fact_gold",
         label="Labor/Employment Budget Fact Gold",
         file_name="labor_employment_budget_fact_gold_report.json",
@@ -236,6 +247,11 @@ def run_synthetic_qa_bundle(
             root=root,
             explicit_path=None,
             file_name="labor_employment_driver_impact_review_report.json",
+        ),
+        "labor_employment_blocked_driver_impact_review": _resolve_artifact_source(
+            root=root,
+            explicit_path=None,
+            file_name="labor_employment_blocked_driver_impact_review_report.json",
         ),
         "labor_employment_budget_fact_gold": _resolve_artifact_source(
             root=root,
@@ -415,10 +431,14 @@ def _status_from_payload(payload: dict[str, Any]) -> str:
     status = str(payload.get("status") or payload.get("overallStatus") or "").casefold()
     if "failed" in status:
         return "failed"
-    if "blocked" in status or "gaps" in status:
+    if status.startswith("blocked"):
         return "blocked"
+    if "ready_for_review" in status or "ready_for_budget_gate_replay" in status:
+        return "pending_review"
     if "pending" in status or "review" in status:
         return "pending_review"
+    if "blocked" in status or "gaps" in status:
+        return "blocked"
     if status == "passed" or "passed" in status:
         return "passed"
     return "pending_review"

@@ -22,6 +22,9 @@ from lawfirm_os_intake.labor_employment_executable_driver_impact import (
 from lawfirm_os_intake.labor_employment_driver_impact_review import (
     run_labor_employment_driver_impact_review,
 )
+from lawfirm_os_intake.labor_employment_blocked_driver_impact_review import (
+    run_labor_employment_blocked_driver_impact_review,
+)
 from lawfirm_os_intake.labor_employment_budget_fact_gold import (
     run_labor_employment_budget_fact_gold_validation,
 )
@@ -185,6 +188,21 @@ def test_starter_pack_allows_synthetic_qa_bundle_to_reach_pending_review(
         ),
         out_dir=run_root / "quality" / "le-driver-impact-review",
     )
+    run_labor_employment_blocked_driver_impact_review(
+        fact_binding_report_path=(
+            executable_fact_binding_run_dir
+            / LABOR_EMPLOYMENT_EXECUTABLE_FACT_BINDING_REPORT_FILENAME
+        ),
+        driver_binding_report_path=(
+            executable_driver_binding_run_dir
+            / LABOR_EMPLOYMENT_EXECUTABLE_DRIVER_BINDING_REPORT_FILENAME
+        ),
+        driver_impact_report_path=(
+            executable_driver_impact_run_dir
+            / LABOR_EMPLOYMENT_EXECUTABLE_DRIVER_IMPACT_REPORT_FILENAME
+        ),
+        out_dir=run_root / "quality" / "le-blocked-driver-impact-review",
+    )
     run_labor_employment_budget_fact_gold_validation(
         gold_path=repo_root / "examples/synthetic/gold/labor-employment-budget-fact-gold.json",
         repo_root=repo_root,
@@ -216,5 +234,6 @@ def test_starter_pack_allows_synthetic_qa_bundle_to_reach_pending_review(
     assert gates["labor_employment_executable_driver_binding"]["status"] == "pending_review"
     assert gates["labor_employment_executable_driver_impact"]["status"] == "pending_review"
     assert gates["labor_employment_driver_impact_review"]["status"] == "pending_review"
+    assert gates["labor_employment_blocked_driver_impact_review"]["status"] == "pending_review"
     assert gates["labor_employment_budget_fact_gold"]["status"] == "passed"
     assert ui_manifest["overallStatus"] == "blocked"
