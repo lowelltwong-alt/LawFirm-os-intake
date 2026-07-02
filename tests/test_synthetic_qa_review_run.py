@@ -79,7 +79,21 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
     assert staged_matrix["status"] == "labor_employment_qa_matrix_ready_for_review"
     assert ui_manifest["boundaryFlags"]["readOnly"] is True
     assert ui_manifest["boundaryFlags"]["networkCallsAllowed"] is False
+    assert {
+        "synthetic_qa_review_run",
+        "synthetic_qa_bundle",
+        "labor_employment_blocked_driver_impact_review",
+    } <= {gate["gateId"] for gate in ui_manifest["qualityGates"]}
     assert ui_data_bundle["status"] == "ready_for_review"
+    ui_detail_reports = {
+        report["report_kind"]: report for report in ui_data_bundle["detail_reports"]
+    }
+    assert ui_data_bundle["detail_report_count"] == 4
+    assert ui_data_bundle["present_detail_report_count"] == 4
+    assert ui_detail_reports["synthetic_qa_review_run"]["present"] is True
+    assert ui_detail_reports["synthetic_qa_review_run"]["artifact_ref"] == str(
+        run_root / SYNTHETIC_QA_REVIEW_RUN_REPORT_FILENAME
+    )
     assert ui_data_bundle["external_writes_performed"] is False
     assert ui_data_bundle["lake_write_performed"] is False
     assert ui_data_bundle["sqlite_write_performed"] is False

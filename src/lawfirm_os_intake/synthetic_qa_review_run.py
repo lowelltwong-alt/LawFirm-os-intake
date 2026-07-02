@@ -52,7 +52,8 @@ from .models import (
     SyntheticQAReviewRunStep,
 )
 from .synthetic_qa_bundle import SYNTHETIC_QA_BUNDLE_REPORT_FILENAME, run_synthetic_qa_bundle
-from .ui_review_data_bundle import UI_REVIEW_DATA_BUNDLE_FILENAME
+from .ui_review_data_bundle import UI_REVIEW_DATA_BUNDLE_FILENAME, build_ui_review_data_bundle
+from .ui_review_manifest import build_ui_review_manifest
 from .util import digest_json, load_json, now_iso, write_json
 from .workflow import run_budget, run_preflight
 
@@ -389,6 +390,16 @@ def run_synthetic_qa_review_run(
         generated_at=generated_at or now_iso(),
     )
     write_json(run_dir / SYNTHETIC_QA_REVIEW_RUN_REPORT_FILENAME, report.model_dump(mode="json"))
+    build_ui_review_manifest(
+        run_root=run_dir,
+        out_path=ui_manifest_ref,
+        generated_at=generated_at,
+    )
+    build_ui_review_data_bundle(
+        run_root=run_dir,
+        out_path=ui_data_bundle_ref,
+        generated_at=generated_at,
+    )
     return report, run_dir
 
 

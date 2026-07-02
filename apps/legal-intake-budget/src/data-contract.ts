@@ -5,6 +5,7 @@ import type {
   QualityGate,
   ReviewArtifact,
   ReviewManifest,
+  SyntheticQAReviewRunReport,
   UIReviewDataBundle,
 } from "./types";
 
@@ -19,6 +20,7 @@ export const REQUIRED_ARTIFACT_FILES = [
   "run_ledger_integrity_report.json",
   "budget_coherence_report.json",
   "synthetic_qa_bundle_report.json",
+  "synthetic_qa_review_run_report.json",
   "synthetic_fixture_depth_audit_report.json",
   "budget_calibration_readiness_report.json",
   "budget_calibration_starter_pack_report.json",
@@ -157,6 +159,52 @@ export function assertUIReviewDataBundle(bundle: UIReviewDataBundle): string[] {
   }
   if (bundle.status !== "ready_for_review") {
     failures.push(`ui_review_bundle_not_ready:${bundle.status}`);
+  }
+  return failures;
+}
+
+export function assertSyntheticQAReviewRunReport(
+  report: SyntheticQAReviewRunReport,
+): string[] {
+  const failures: string[] = [];
+  if (!report.candidate_only || !report.synthetic_only || !report.non_authoritative) {
+    failures.push("synthetic_qa_review_run_authority_boundary_failed");
+  }
+  if (!report.local_json_only) {
+    failures.push("synthetic_qa_review_run_not_local_json_only");
+  }
+  if (
+    report.budget_amount_output_authorized ||
+    report.budget_submission_authorized ||
+    report.conflict_conclusion_emitted ||
+    report.matter_opening_authorized ||
+    report.training_pipeline_created ||
+    report.calibration_applied ||
+    report.fixture_files_mutated ||
+    report.lake_write_performed ||
+    report.sqlite_write_performed ||
+    report.external_writes_performed ||
+    report.silent_learning_performed
+  ) {
+    failures.push("synthetic_qa_review_run_side_effect_boundary_failed");
+  }
+  if (report.step_count !== report.steps.length) {
+    failures.push("synthetic_qa_review_run_step_count_mismatch");
+  }
+  const failedSteps = report.steps.filter((step) => step.status === "failed");
+  if (report.failed_step_count !== failedSteps.length) {
+    failures.push("synthetic_qa_review_run_failed_step_count_mismatch");
+  }
+  if (report.status === "synthetic_qa_review_run_ready" && failedSteps.length > 0) {
+    failures.push("synthetic_qa_review_run_ready_with_failed_steps");
+  }
+  if (report.status === "blocked_by_synthetic_qa_review_run" && failedSteps.length === 0) {
+    failures.push("synthetic_qa_review_run_blocked_without_failed_steps");
+  }
+  for (const step of report.steps) {
+    if (!step.artifact_ref || step.notes.length === 0) {
+      failures.push(`synthetic_qa_review_run_step_not_actionable:${step.step_id}`);
+    }
   }
   return failures;
 }

@@ -20,6 +20,7 @@ export type UIReviewDataBundleStatus =
 
 export type UIReviewDataBundleReportKind =
   | "ui_review_manifest"
+  | "synthetic_qa_review_run"
   | "labor_employment_qa_matrix"
   | "labor_employment_blocked_driver_impact_review";
 
@@ -83,6 +84,46 @@ export type LaborEmploymentBudgetGateEffect =
   | "block_amount_budget_before_proposal"
   | "allow_range_or_hours_only_pending_review"
   | "candidate_ready_for_budget_review_after_review";
+
+export type SyntheticQAReviewRunStep = {
+  step_id: string;
+  label: string;
+  status: "passed" | "failed";
+  observed_status: string;
+  artifact_ref: string;
+  notes: string[];
+};
+
+export type SyntheticQAReviewRunReport = {
+  schema_version: string;
+  synthetic_qa_review_run_report_id: string;
+  status: "synthetic_qa_review_run_ready" | "blocked_by_synthetic_qa_review_run";
+  run_root_ref: string;
+  quality_dir_ref: string;
+  step_count: number;
+  failed_step_count: number;
+  steps: SyntheticQAReviewRunStep[];
+  synthetic_qa_bundle_ref: string;
+  ui_manifest_ref: string;
+  ui_data_bundle_ref: string;
+  required_next_actions: string[];
+  candidate_only: boolean;
+  synthetic_only: boolean;
+  non_authoritative: boolean;
+  local_json_only: boolean;
+  budget_amount_output_authorized: boolean;
+  budget_submission_authorized: boolean;
+  conflict_conclusion_emitted: boolean;
+  matter_opening_authorized: boolean;
+  training_pipeline_created: boolean;
+  calibration_applied: boolean;
+  fixture_files_mutated: boolean;
+  lake_write_performed: boolean;
+  sqlite_write_performed: boolean;
+  external_writes_performed: boolean;
+  silent_learning_performed: boolean;
+  generated_at: string;
+};
 
 export type LaborEmploymentQAMatrixCase = {
   case_id: string;

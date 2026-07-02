@@ -95,6 +95,13 @@ ARTIFACT_SPECS = [
         "blocked",
     ),
     ArtifactSpec(
+        "synthetic-qa-review-run",
+        "Synthetic QA Review Run",
+        "synthetic_qa_review_run_report.json",
+        "qa-reference",
+        "pending_review",
+    ),
+    ArtifactSpec(
         "fixture-depth",
         "Synthetic Fixture Depth",
         "synthetic_fixture_depth_audit_report.json",
@@ -237,6 +244,13 @@ QUALITY_GATE_SPECS = {
         "qa-reference",
         "Budget coherence, fixture depth, calibration readiness, and UI evidence are bundled for QA review.",
         "blocked",
+    ),
+    "synthetic_qa_review_run": (
+        "Synthetic QA Review Run",
+        "synthetic_qa_review_run_report.json",
+        "qa-reference",
+        "The one-command synthetic QA recipe must prove each generated QA/UI artifact step before the frontend treats the run as review-ready.",
+        "pending_review",
     ),
     "synthetic_fixture_depth": (
         "Synthetic Fixture Depth",
@@ -450,6 +464,8 @@ def _gate_state_from_payload(payload: dict[str, Any]) -> str:
         return "failed"
     if status.startswith("blocked") or payload.get("client_submission_performed") is True:
         return "blocked"
+    if status == "synthetic_qa_review_run_ready":
+        return "passed"
     if "ready_for_review" in status or "ready_for_budget_gate_replay" in status:
         return "pending"
     if "pending" in status or "review" in status:

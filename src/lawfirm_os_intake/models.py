@@ -9810,6 +9810,7 @@ UIReviewDataBundleStatus = Literal[
 
 UIReviewDataBundleReportKind = Literal[
     "ui_review_manifest",
+    "synthetic_qa_review_run",
     "labor_employment_qa_matrix",
     "labor_employment_blocked_driver_impact_review",
 ]

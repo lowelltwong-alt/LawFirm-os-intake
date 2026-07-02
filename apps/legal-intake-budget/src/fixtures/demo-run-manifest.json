@@ -128,6 +128,17 @@
       "notes": ["Local QA evidence is bundled for review; calibration remains blocked until replay and reviewed-gold evidence mature."]
     },
     {
+      "artifactId": "synthetic-qa-review-run",
+      "label": "Synthetic QA Review Run",
+      "fileName": "synthetic_qa_review_run_report.json",
+      "status": "present",
+      "owner": "qa-reference",
+      "gateState": "passed",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": ["The one-command synthetic QA recipe generated all local QA and UI review artifacts."]
+    },
+    {
       "artifactId": "fixture-depth",
       "label": "Synthetic Fixture Depth",
       "fileName": "synthetic_fixture_depth_audit_report.json",
@@ -342,6 +353,14 @@
       "evidenceFile": "synthetic_qa_bundle_report.json",
       "owner": "qa-reference",
       "notes": ["Budget coherence, fixture depth, calibration readiness, and UI evidence are bundled for QA review."]
+    },
+    {
+      "gateId": "synthetic_qa_review_run",
+      "label": "Synthetic QA Review Run",
+      "status": "passed",
+      "evidenceFile": "synthetic_qa_review_run_report.json",
+      "owner": "qa-reference",
+      "notes": ["The one-command synthetic QA recipe proves each generated QA/UI artifact step before frontend review."]
     },
     {
       "gateId": "synthetic_fixture_depth",

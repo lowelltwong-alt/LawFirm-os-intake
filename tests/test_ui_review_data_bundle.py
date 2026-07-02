@@ -37,6 +37,21 @@ def _write_ui_detail_reports(run_root, *, include_blocked_review=True, external_
         )
 
 
+def _write_synthetic_qa_review_run_report(run_root):
+    write_json(
+        run_root / "synthetic_qa_review_run_report.json",
+        {
+            "status": "synthetic_qa_review_run_ready",
+            "candidate_only": True,
+            "synthetic_only": True,
+            "external_writes_performed": False,
+            "lake_write_performed": False,
+            "sqlite_write_performed": False,
+            "silent_learning_performed": False,
+        },
+    )
+
+
 def test_build_ui_review_data_bundle_tracks_renderable_local_json(tmp_path):
     run_root = tmp_path / "demo"
     run_root.mkdir()
@@ -51,7 +66,7 @@ def test_build_ui_review_data_bundle_tracks_renderable_local_json(tmp_path):
 
     assert out.is_file()
     assert bundle.status == "ready_for_review"
-    assert bundle.detail_report_count == 3
+    assert bundle.detail_report_count == 4
     assert bundle.required_detail_report_count == 3
     assert bundle.present_detail_report_count == 3
     assert bundle.missing_required_detail_report_count == 0
@@ -62,10 +77,41 @@ def test_build_ui_review_data_bundle_tracks_renderable_local_json(tmp_path):
     assert bundle.external_writes_performed is False
     assert {report.report_kind for report in bundle.detail_reports} == {
         "ui_review_manifest",
+        "synthetic_qa_review_run",
         "labor_employment_qa_matrix",
         "labor_employment_blocked_driver_impact_review",
     }
-    assert all(report.source_sha256.startswith("sha256:") for report in bundle.detail_reports)
+    present = [report for report in bundle.detail_reports if report.present]
+    optional = [
+        report
+        for report in bundle.detail_reports
+        if report.report_kind == "synthetic_qa_review_run"
+    ][0]
+    assert optional.required is False
+    assert optional.present is False
+    assert all(report.source_sha256.startswith("sha256:") for report in present)
+
+
+def test_build_ui_review_data_bundle_includes_optional_synthetic_qa_review_run(tmp_path):
+    run_root = tmp_path / "demo"
+    run_root.mkdir()
+    _write_ui_detail_reports(run_root)
+    _write_synthetic_qa_review_run_report(run_root)
+
+    bundle = build_ui_review_data_bundle(
+        run_root=run_root,
+        out_path=run_root / "ui_review_data_bundle.json",
+        generated_at="2026-07-02T00:00:00Z",
+    )
+
+    details = {report.report_kind: report for report in bundle.detail_reports}
+    assert bundle.status == "ready_for_review"
+    assert bundle.detail_report_count == 4
+    assert bundle.present_detail_report_count == 4
+    assert details["synthetic_qa_review_run"].present is True
+    assert details["synthetic_qa_review_run"].required is False
+    assert details["synthetic_qa_review_run"].renderer == "SyntheticQAReviewRunPanel"
+    assert details["synthetic_qa_review_run"].source_sha256.startswith("sha256:")
 
 
 def test_build_ui_review_data_bundle_blocks_missing_required_report(tmp_path):
@@ -81,7 +127,7 @@ def test_build_ui_review_data_bundle_blocks_missing_required_report(tmp_path):
 
     assert bundle.status == "blocked_missing_required_reports"
     assert bundle.missing_required_detail_report_count == 1
-    missing = [report for report in bundle.detail_reports if not report.present]
+    missing = [report for report in bundle.detail_reports if report.required and not report.present]
     assert missing[0].file_name == "labor_employment_blocked_driver_impact_review_report.json"
     assert bundle.external_writes_performed is False
 

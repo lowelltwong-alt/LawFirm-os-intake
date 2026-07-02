@@ -38,7 +38,9 @@ python -m lawfirm_os_intake build-synthetic-qa-review-run \
 That command builds the deterministic synthetic demo budget coherence report,
 the L&E QA matrix, fixture-family reports, executable L&E driver reports,
 blocked-driver review, reviewed gold, the synthetic QA bundle, the UI manifest,
-and `ui_review_data_bundle.json`.
+`synthetic_qa_review_run_report.json`, and `ui_review_data_bundle.json`. The
+demo UI renders that review-run report as the top-level QA recipe panel when it
+is present.
 
 Regenerate only the synthetic QA bundle and UI wrappers with:
 

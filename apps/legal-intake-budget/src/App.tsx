@@ -4,11 +4,13 @@ import { createRoot } from "react-dom/client";
 import demoLaborEmploymentBlockedDriverReview from "./fixtures/demo-labor-employment-blocked-driver-impact-review-report.json";
 import demoLaborEmploymentQAMatrix from "./fixtures/demo-labor-employment-qa-matrix-report.json";
 import demoManifest from "./fixtures/demo-run-manifest.json";
+import demoSyntheticQAReviewRun from "./fixtures/demo-synthetic-qa-review-run-report.json";
 import demoReviewDataBundle from "./fixtures/demo-ui-review-data-bundle.json";
 import {
   assertLaborEmploymentBlockedDriverImpactReviewReport,
   assertLaborEmploymentQAMatrixReport,
   assertReadOnlyManifest,
+  assertSyntheticQAReviewRunReport,
   assertUIReviewDataBundle,
   failingQualityGates,
 } from "./data-contract";
@@ -24,23 +26,27 @@ import type {
   QualityGateStatus,
   ReviewArtifact,
   ReviewManifest,
+  SyntheticQAReviewRunReport,
   UIReviewDataBundle,
 } from "./types";
 import "./styles.css";
 
 const reviewDataBundle = demoReviewDataBundle as UIReviewDataBundle;
 const manifest = demoManifest as ReviewManifest;
+const syntheticQAReviewRun = demoSyntheticQAReviewRun as SyntheticQAReviewRunReport;
 const laborEmploymentQAMatrix = demoLaborEmploymentQAMatrix as LaborEmploymentQAMatrixReport;
 const laborEmploymentBlockedDriverReview =
   demoLaborEmploymentBlockedDriverReview as LaborEmploymentBlockedDriverImpactReviewReport;
 const bundleContractFailures = assertUIReviewDataBundle(reviewDataBundle);
 const manifestContractFailures = assertReadOnlyManifest(manifest);
+const syntheticQAReviewRunFailures = assertSyntheticQAReviewRunReport(syntheticQAReviewRun);
 const matrixContractFailures = assertLaborEmploymentQAMatrixReport(laborEmploymentQAMatrix);
 const blockedDriverContractFailures =
   assertLaborEmploymentBlockedDriverImpactReviewReport(laborEmploymentBlockedDriverReview);
 const contractFailures = [
   ...bundleContractFailures,
   ...manifestContractFailures,
+  ...syntheticQAReviewRunFailures,
   ...matrixContractFailures,
   ...blockedDriverContractFailures,
 ];
@@ -210,6 +216,62 @@ function QualityGatePanel({ gates }: { gates: QualityGate[] }) {
             </div>
             <span className={gateClass(gate.status)}>{gate.status}</span>
             <p>{gate.notes.join(" ")}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function SyntheticQAReviewRunPanel({ report }: { report: SyntheticQAReviewRunReport }) {
+  const passedSteps = report.steps.filter((step) => step.status === "passed").length;
+  const statusClass =
+    report.status === "synthetic_qa_review_run_ready" && syntheticQAReviewRunFailures.length === 0
+      ? "state state-passed"
+      : "state state-failed";
+
+  return (
+    <section className="panel recipe-panel" aria-labelledby="recipe-title">
+      <div className="panel-heading">
+        <div>
+          <h2 id="recipe-title">Synthetic QA Review Run</h2>
+          <code>{report.synthetic_qa_review_run_report_id}</code>
+        </div>
+        <span className={statusClass}>
+          {report.status === "synthetic_qa_review_run_ready" ? "ready" : "blocked"}
+        </span>
+      </div>
+
+      <div className="recipe-summary" aria-label="Synthetic QA review run summary">
+        <div>
+          <span>Steps</span>
+          <strong>{report.step_count}</strong>
+        </div>
+        <div>
+          <span>Passed</span>
+          <strong>{passedSteps}</strong>
+        </div>
+        <div>
+          <span>Failed</span>
+          <strong>{report.failed_step_count}</strong>
+        </div>
+        <div>
+          <span>Local Only</span>
+          <strong>{report.local_json_only ? "yes" : "no"}</strong>
+        </div>
+      </div>
+
+      <div className="recipe-step-grid">
+        {report.steps.map((step) => (
+          <article className="recipe-step" key={step.step_id}>
+            <div>
+              <strong>{step.label}</strong>
+              <code>{step.artifact_ref}</code>
+            </div>
+            <span className={gateClass(step.status)}>{step.status}</span>
+            <p>
+              {step.observed_status} - {step.notes.join(" ")}
+            </p>
           </article>
         ))}
       </div>
@@ -492,6 +554,7 @@ function App() {
       </section>
 
       <BundlePanel bundle={reviewDataBundle} />
+      <SyntheticQAReviewRunPanel report={syntheticQAReviewRun} />
       <div className="grid-layout">
         <BoundaryGrid manifest={manifest} />
         <NotesPanel title="Blockers" items={manifest.blockerSummary} />

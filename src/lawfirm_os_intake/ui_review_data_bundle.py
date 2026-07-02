@@ -31,6 +31,14 @@ DETAIL_REPORT_SPECS = [
         renderer="RunOverviewPanels",
     ),
     UIReviewDetailSpec(
+        detail_report_id="synthetic-qa-review-run",
+        label="Synthetic QA Review Run",
+        report_kind="synthetic_qa_review_run",
+        file_name="synthetic_qa_review_run_report.json",
+        renderer="SyntheticQAReviewRunPanel",
+        required=False,
+    ),
+    UIReviewDetailSpec(
         detail_report_id="labor-employment-qa-matrix",
         label="L&E Budget Fact QA",
         report_kind="labor_employment_qa_matrix",

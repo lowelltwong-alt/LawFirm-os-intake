@@ -3,9 +3,9 @@
   "ui_review_data_bundle_id": "ui_review_data_bundle_demo_001",
   "status": "ready_for_review",
   "run_root_ref": "apps/legal-intake-budget/src/fixtures",
-  "detail_report_count": 3,
+  "detail_report_count": 4,
   "required_detail_report_count": 3,
-  "present_detail_report_count": 3,
+  "present_detail_report_count": 4,
   "missing_required_detail_report_count": 0,
   "external_write_report_count": 0,
   "detail_reports": [
@@ -25,6 +25,24 @@
       "external_writes_performed": false,
       "notes": [
         "Demo fixture mirrors the generated ui_review_manifest.json shape for local review."
+      ]
+    },
+    {
+      "detail_report_id": "synthetic-qa-review-run",
+      "label": "Synthetic QA Review Run",
+      "report_kind": "synthetic_qa_review_run",
+      "file_name": "synthetic_qa_review_run_report.json",
+      "required": false,
+      "present": true,
+      "status": "synthetic_qa_review_run_ready",
+      "renderer": "SyntheticQAReviewRunPanel",
+      "artifact_ref": "apps/legal-intake-budget/src/fixtures/demo-synthetic-qa-review-run-report.json",
+      "source_sha256": "sha256:9f244a7fd8c3f6f9ff0a8c062513a0ad96d45785479ea17ee7b0e132064e48a1",
+      "candidate_only": true,
+      "synthetic_only": true,
+      "external_writes_performed": false,
+      "notes": [
+        "Demo fixture renders the deterministic synthetic QA recipe steps and no-write boundaries."
       ]
     },
     {
