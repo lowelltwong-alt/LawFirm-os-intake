@@ -14,6 +14,7 @@ from .models import (
     SyntheticQABlockerReport,
     SyntheticQAReviewRunReport,
     UIReviewDataBundle,
+    ValidationSuiteEvidenceReport,
 )
 from .util import digest_json, load_json, now_iso, write_json
 
@@ -60,6 +61,16 @@ def _all_no_write(*reports: Any) -> bool:
     )
 
 
+def _validation_step_passed(
+    validation_evidence: ValidationSuiteEvidenceReport | None, step_id: str
+) -> bool:
+    if validation_evidence is None or validation_evidence.status != "validation_suite_passed":
+        return False
+    return any(
+        step.step_id == step_id and step.status == "passed" for step in validation_evidence.steps
+    )
+
+
 def _item(
     *,
     item_id: str,
@@ -94,6 +105,7 @@ def build_poc_qa_triage_report(
     labor_employment_qa_matrix_path: str | Path,
     blocked_driver_impact_review_path: str | Path,
     budget_output_expectations_path: str | Path,
+    validation_suite_evidence_path: str | Path | None = None,
     repo_root: str | Path | None = None,
     generated_at: str | None = None,
 ) -> POCQATriageReport:
@@ -109,6 +121,8 @@ def build_poc_qa_triage_report(
         "blocked_driver": Path(blocked_driver_impact_review_path),
         "budget_output": Path(budget_output_expectations_path),
     }
+    if validation_suite_evidence_path is not None:
+        paths["validation"] = Path(validation_suite_evidence_path)
     refs = {key: _relative(path, root) for key, path in paths.items()}
 
     manifest = load_json(paths["ui_manifest"])
@@ -126,6 +140,11 @@ def build_poc_qa_triage_report(
     budget_output = LaborEmploymentBudgetOutputExpectationReport.model_validate(
         load_json(paths["budget_output"])
     )
+    validation_evidence = (
+        ValidationSuiteEvidenceReport.model_validate(load_json(paths["validation"]))
+        if "validation" in paths
+        else None
+    )
 
     boundary_flags = manifest.get("boundaryFlags", {})
     if not isinstance(boundary_flags, dict):
@@ -133,6 +152,7 @@ def build_poc_qa_triage_report(
     matter_opening_artifact = _manifest_artifact(manifest, "matter_opening_readiness.json")
     full_pytest_gate = _manifest_gate(manifest, "full_pytest")
     smoke_demo_gate = _manifest_gate(manifest, "smoke_demo")
+    validation_evidence_gate = _manifest_gate(manifest, "validation_suite_evidence")
     public_cache_artifact = _manifest_artifact(manifest, "public_data_cache_audit_report.json")
 
     blocked_budget_cases = [
@@ -152,6 +172,20 @@ def build_poc_qa_triage_report(
     matrix_has_range_case = any(
         case.actual_budget_gate_effect == "allow_range_or_hours_only_pending_review"
         for case in matrix.cases
+    )
+    validation_evidence_ready = (
+        full_pytest_gate is not None
+        and full_pytest_gate.get("status") == "passed"
+        and smoke_demo_gate is not None
+        and smoke_demo_gate.get("status") == "passed"
+        and validation_evidence_gate is not None
+        and validation_evidence_gate.get("status") == "passed"
+        and _validation_step_passed(validation_evidence, "full_pytest")
+        and _validation_step_passed(validation_evidence, "smoke_demo")
+        and validation_evidence is not None
+        and validation_evidence.failed_step_count == 0
+        and validation_evidence.timed_out_step_count == 0
+        and _all_no_write(validation_evidence)
     )
 
     items = [
@@ -323,29 +357,31 @@ def build_poc_qa_triage_report(
             item_id="validation_evidence_not_fresh_in_ui_bundle",
             category="review_queue",
             priority="p0",
-            status=(
-                "passed"
-                if full_pytest_gate is not None
-                and full_pytest_gate.get("status") == "passed"
-                and smoke_demo_gate is not None
-                and smoke_demo_gate.get("status") == "passed"
-                else "blocked"
-            ),
+            status="passed" if validation_evidence_ready else "blocked",
             summary=(
-                "The UI manifest does not yet prove fresh full-pytest and smoke-demo validation evidence."
+                "Fresh wrapper-based validation evidence is attached to the UI manifest."
+                if validation_evidence_ready
+                else "The UI manifest does not yet prove fresh full-pytest and smoke-demo validation evidence."
             ),
             recommended_next_action=(
-                "Run the wrapper-based validation suite with the long timeout ceiling and regenerate UI/triage fixtures from that run."
+                "Keep regenerating validation_suite_evidence_report.json after substantial QA, schema, or UI changes."
+                if validation_evidence_ready
+                else "Run the wrapper-based validation suite with the long timeout ceiling and regenerate UI/triage fixtures from that run."
             ),
             evidence_refs=[
                 refs["ui_manifest"],
+                *([refs["validation"]] if "validation" in refs else []),
                 "scripts/run_full_pytest.py",
                 "scripts/smoke_demo.sh",
             ],
-            candidate_exception_lake_labels=[
-                "qa_validation_evidence_stale_or_missing",
-                "ui_manifest_validation_gap",
-            ],
+            candidate_exception_lake_labels=(
+                []
+                if validation_evidence_ready
+                else [
+                    "qa_validation_evidence_stale_or_missing",
+                    "ui_manifest_validation_gap",
+                ]
+            ),
         ),
         _item(
             item_id="production_actions_stay_blocked",
@@ -398,6 +434,11 @@ def build_poc_qa_triage_report(
     )
     status = "blocked_by_poc_qa_triage" if blocked_count else "poc_qa_ready_for_review"
     generated = generated_at or now_iso()
+    blocked_action = (
+        "Resolve blocked triage items before calling this POC QA-ready."
+        if blocked_count
+        else "No blocked POC QA triage items remain; review needs-review items as candidate QA decisions."
+    )
     report_basis = {
         "generated_at": generated,
         "status": status,
@@ -422,6 +463,11 @@ def build_poc_qa_triage_report(
         source_budget_output_expectation_report_id=(
             budget_output.budget_output_expectation_report_id
         ),
+        source_validation_suite_evidence_report_id=(
+            validation_evidence.validation_suite_evidence_report_id
+            if validation_evidence is not None
+            else None
+        ),
         item_count=len(items),
         passed_item_count=passed_count,
         needs_review_item_count=needs_review_count,
@@ -430,7 +476,7 @@ def build_poc_qa_triage_report(
         p0_blocked_item_count=p0_blocked_count,
         items=items,
         required_next_actions=[
-            "Resolve blocked triage items before calling this POC QA-ready.",
+            blocked_action,
             "Review needs-review items as candidate QA decisions, not production approval.",
             "Keep watch items on the roadmap for real-data, owner-adoption, and production gates.",
             "Regenerate this report whenever synthetic QA, UI, or validation evidence changes.",
@@ -467,6 +513,7 @@ def run_poc_qa_triage_report(
     labor_employment_qa_matrix_path: str | Path,
     blocked_driver_impact_review_path: str | Path,
     budget_output_expectations_path: str | Path,
+    validation_suite_evidence_path: str | Path | None = None,
     repo_root: str | Path | None = None,
     generated_at: str | None = None,
 ) -> tuple[POCQATriageReport, Path]:
@@ -480,6 +527,7 @@ def run_poc_qa_triage_report(
         labor_employment_qa_matrix_path=labor_employment_qa_matrix_path,
         blocked_driver_impact_review_path=blocked_driver_impact_review_path,
         budget_output_expectations_path=budget_output_expectations_path,
+        validation_suite_evidence_path=validation_suite_evidence_path,
         repo_root=repo_root,
         generated_at=generated_at,
     )

@@ -1,0 +1,186 @@
+{
+  "schema_version": "0.1",
+  "validation_suite_evidence_report_id": "validation_suite_evidence_554cf60bc6a90268",
+  "status": "validation_suite_passed",
+  "policy_id": "intake-validation-runtime-policy",
+  "policy_version": "0.1",
+  "policy_ref": "config/validation-runtime-policy.yaml",
+  "repo_root_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync",
+  "git_commit": "38972aa450052229a3906389e8d8126bed4f3edc",
+  "working_tree_dirty": false,
+  "step_count": 7,
+  "passed_step_count": 7,
+  "failed_step_count": 0,
+  "timed_out_step_count": 0,
+  "steps": [
+    {
+      "step_id": "validate_repo",
+      "command_key": "validate_repo",
+      "command": [
+        "C:\\Users\\lowel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "scripts/validate_repo.py"
+      ],
+      "command_display": "C:\\Users\\lowel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe scripts/validate_repo.py",
+      "status": "passed",
+      "return_code": 0,
+      "timeout_seconds": 180,
+      "duration_seconds": 1.42,
+      "started_at": "2026-07-03T22:24:00Z",
+      "completed_at": "2026-07-03T22:24:01Z",
+      "evidence_refs": [
+        "scripts/validate_repo.py"
+      ]
+    },
+    {
+      "step_id": "export_schemas",
+      "command_key": "export_schemas",
+      "command": [
+        "C:\\Users\\lowel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "scripts/export_schemas.py"
+      ],
+      "command_display": "C:\\Users\\lowel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe scripts/export_schemas.py",
+      "status": "passed",
+      "return_code": 0,
+      "timeout_seconds": 180,
+      "duration_seconds": 2.86,
+      "started_at": "2026-07-03T22:24:01Z",
+      "completed_at": "2026-07-03T22:24:04Z",
+      "evidence_refs": [
+        "scripts/export_schemas.py",
+        "schemas/"
+      ]
+    },
+    {
+      "step_id": "ruff_check",
+      "command_key": "ruff_check",
+      "command": [
+        "C:\\Users\\lowel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "-m",
+        "ruff",
+        "check",
+        "--no-cache",
+        "src",
+        "tests",
+        "scripts"
+      ],
+      "command_display": "C:\\Users\\lowel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe -m ruff check --no-cache src tests scripts",
+      "status": "passed",
+      "return_code": 0,
+      "timeout_seconds": 180,
+      "duration_seconds": 0.91,
+      "started_at": "2026-07-03T22:24:04Z",
+      "completed_at": "2026-07-03T22:24:05Z",
+      "evidence_refs": [
+        "src/",
+        "tests/",
+        "scripts/"
+      ]
+    },
+    {
+      "step_id": "ruff_format_check",
+      "command_key": "ruff_format_check",
+      "command": [
+        "C:\\Users\\lowel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "-m",
+        "ruff",
+        "format",
+        "--check",
+        "--no-cache",
+        "src",
+        "tests",
+        "scripts"
+      ],
+      "command_display": "C:\\Users\\lowel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe -m ruff format --check --no-cache src tests scripts",
+      "status": "passed",
+      "return_code": 0,
+      "timeout_seconds": 180,
+      "duration_seconds": 0.88,
+      "started_at": "2026-07-03T22:24:05Z",
+      "completed_at": "2026-07-03T22:24:06Z",
+      "evidence_refs": [
+        "src/",
+        "tests/",
+        "scripts/"
+      ]
+    },
+    {
+      "step_id": "full_pytest",
+      "command_key": "full_pytest",
+      "command": [
+        "C:\\Users\\lowel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "scripts/run_full_pytest.py"
+      ],
+      "command_display": "C:\\Users\\lowel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe scripts/run_full_pytest.py",
+      "status": "passed",
+      "return_code": 0,
+      "timeout_seconds": 3600,
+      "duration_seconds": 249.27,
+      "started_at": "2026-07-03T22:24:06Z",
+      "completed_at": "2026-07-03T22:28:15Z",
+      "evidence_refs": [
+        "scripts/run_full_pytest.py",
+        "tests/"
+      ]
+    },
+    {
+      "step_id": "smoke_demo",
+      "command_key": "smoke_demo",
+      "command": [
+        "bash",
+        "scripts/smoke_demo.sh"
+      ],
+      "command_display": "bash scripts/smoke_demo.sh",
+      "status": "passed",
+      "return_code": 0,
+      "timeout_seconds": 3600,
+      "duration_seconds": 70.9,
+      "started_at": "2026-07-03T22:28:15Z",
+      "completed_at": "2026-07-03T22:29:26Z",
+      "evidence_refs": [
+        "scripts/smoke_demo.sh"
+      ]
+    },
+    {
+      "step_id": "validate_repo_final",
+      "command_key": "validate_repo",
+      "command": [
+        "C:\\Users\\lowel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "scripts/validate_repo.py"
+      ],
+      "command_display": "C:\\Users\\lowel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe scripts/validate_repo.py",
+      "status": "passed",
+      "return_code": 0,
+      "timeout_seconds": 180,
+      "duration_seconds": 1.33,
+      "started_at": "2026-07-03T22:29:26Z",
+      "completed_at": "2026-07-03T22:29:27Z",
+      "evidence_refs": [
+        "scripts/validate_repo.py",
+        "scripts/run_validation_suite.py"
+      ]
+    }
+  ],
+  "required_next_actions": [
+    "Validation suite passed; attach this local JSON as QA evidence for the read-only UI."
+  ],
+  "candidate_only": true,
+  "synthetic_only": true,
+  "non_authoritative": true,
+  "local_json_only": true,
+  "human_review_required": true,
+  "not_authorized_for_external_write": true,
+  "not_authorized_for_lake_write": true,
+  "not_authorized_for_sqlite_write": true,
+  "not_authorized_for_budget_submission": true,
+  "not_authorized_for_matter_opening": true,
+  "budget_amount_output_authorized": false,
+  "budget_submission_authorized": false,
+  "conflict_conclusion_emitted": false,
+  "matter_opening_authorized": false,
+  "training_pipeline_created": false,
+  "lake_write_performed": false,
+  "sqlite_write_performed": false,
+  "external_writes_performed": false,
+  "silent_learning_performed": false,
+  "generated_at": "2026-07-03T22:29:27Z"
+}

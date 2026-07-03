@@ -11,6 +11,7 @@ import demoSyntheticQABlockerReport from "./fixtures/demo-synthetic-qa-blocker-r
 import demoSyntheticConfidenceSummary from "./fixtures/demo-synthetic-confidence-summary-report.json";
 import demoSyntheticQAReviewRun from "./fixtures/demo-synthetic-qa-review-run-report.json";
 import demoReviewDataBundle from "./fixtures/demo-ui-review-data-bundle.json";
+import demoValidationSuiteEvidence from "./fixtures/demo-validation-suite-evidence-report.json";
 import {
   assertMatterLinkingPreflightReport,
   assertLaborEmploymentBudgetOutputExpectationReport,
@@ -22,6 +23,7 @@ import {
   assertSyntheticConfidenceSummaryReport,
   assertSyntheticQAReviewRunReport,
   assertUIReviewDataBundle,
+  assertValidationSuiteEvidenceReport,
   failingQualityGates,
 } from "./data-contract";
 import type {
@@ -49,6 +51,8 @@ import type {
   SyntheticConfidenceSummaryItemState,
   SyntheticQAReviewRunReport,
   UIReviewDataBundle,
+  ValidationSuiteEvidenceReport,
+  ValidationSuiteStepStatus,
 } from "./types";
 import "./styles.css";
 
@@ -59,6 +63,8 @@ const syntheticQABlockerReport = demoSyntheticQABlockerReport as SyntheticQABloc
 const syntheticConfidenceSummary =
   demoSyntheticConfidenceSummary as SyntheticConfidenceSummaryReport;
 const pocQATriage = demoPocQATriage as POCQATriageReport;
+const validationSuiteEvidence =
+  demoValidationSuiteEvidence as ValidationSuiteEvidenceReport;
 const matterLinkingPreflight = demoMatterLinkingPreflight as MatterLinkingPreflightReport;
 const laborEmploymentQAMatrix = demoLaborEmploymentQAMatrix as LaborEmploymentQAMatrixReport;
 const laborEmploymentBlockedDriverReview =
@@ -72,6 +78,8 @@ const syntheticQABlockerFailures = assertSyntheticQABlockerReport(syntheticQABlo
 const syntheticConfidenceSummaryFailures =
   assertSyntheticConfidenceSummaryReport(syntheticConfidenceSummary);
 const pocQATriageFailures = assertPOCQATriageReport(pocQATriage);
+const validationSuiteEvidenceFailures =
+  assertValidationSuiteEvidenceReport(validationSuiteEvidence);
 const matterLinkingFailures = assertMatterLinkingPreflightReport(matterLinkingPreflight);
 const matrixContractFailures = assertLaborEmploymentQAMatrixReport(laborEmploymentQAMatrix);
 const blockedDriverContractFailures =
@@ -86,6 +94,7 @@ const contractFailures = [
   ...syntheticQABlockerFailures,
   ...syntheticConfidenceSummaryFailures,
   ...pocQATriageFailures,
+  ...validationSuiteEvidenceFailures,
   ...matterLinkingFailures,
   ...matrixContractFailures,
   ...blockedDriverContractFailures,
@@ -98,7 +107,8 @@ function gateClass(
     | ArtifactStatus
     | QualityGateStatus
     | SyntheticQABlockerRowState
-    | POCQATriageItemStatus,
+    | POCQATriageItemStatus
+    | ValidationSuiteStepStatus,
 ) {
   return `state state-${state.replace("_", "-")}`;
 }
@@ -644,6 +654,77 @@ function POCQATriagePanel({ report }: { report: POCQATriageReport }) {
         {report.lake_write_performed ? "not blocked" : "blocked"}. Budget submission:{" "}
         {report.budget_submission_authorized ? "not blocked" : "blocked"}. Matter opening:{" "}
         {report.matter_opening_authorized ? "not blocked" : "blocked"}.
+      </p>
+    </section>
+  );
+}
+
+function ValidationSuiteEvidencePanel({
+  report,
+}: {
+  report: ValidationSuiteEvidenceReport;
+}) {
+  const statusClass =
+    report.status === "validation_suite_passed" &&
+    validationSuiteEvidenceFailures.length === 0
+      ? "state state-passed"
+      : "state state-blocked";
+
+  return (
+    <section className="panel validation-panel" aria-labelledby="validation-suite-title">
+      <div className="panel-heading">
+        <div>
+          <p className="eyebrow">QA proof</p>
+          <h2 id="validation-suite-title">Validation Suite Evidence</h2>
+          <code>{report.validation_suite_evidence_report_id}</code>
+        </div>
+        <span className={statusClass}>
+          {report.status === "validation_suite_passed" ? "passed" : "blocked"}
+        </span>
+      </div>
+
+      <div className="matrix-summary" aria-label="Validation suite summary">
+        <div>
+          <span>Passed</span>
+          <strong>
+            {report.passed_step_count}/{report.step_count}
+          </strong>
+        </div>
+        <div>
+          <span>Failed</span>
+          <strong>{report.failed_step_count}</strong>
+        </div>
+        <div>
+          <span>Timed Out</span>
+          <strong>{report.timed_out_step_count}</strong>
+        </div>
+        <div>
+          <span>Policy</span>
+          <strong>{report.policy_version}</strong>
+        </div>
+      </div>
+
+      <div className="validation-step-grid">
+        {report.steps.map((step) => (
+          <article className="validation-step" key={step.step_id}>
+            <div>
+              <strong>{step.step_id.replaceAll("_", " ")}</strong>
+              <code>{step.command_key}</code>
+            </div>
+            <span className={gateClass(step.status)}>{step.status}</span>
+            <p>
+              Timeout {step.timeout_seconds}s / duration {step.duration_seconds}s / return{" "}
+              {step.return_code}
+            </p>
+            <TokenList items={step.evidence_refs} limit={3} />
+          </article>
+        ))}
+      </div>
+
+      <p className="boundary">
+        Evidence is local JSON only. Lake writes:{" "}
+        {report.lake_write_performed ? "not blocked" : "blocked"}. Budget submission:{" "}
+        {report.budget_submission_authorized ? "not blocked" : "blocked"}.
       </p>
     </section>
   );
@@ -1270,6 +1351,7 @@ function App() {
       <BundlePanel bundle={reviewDataBundle} />
       <SyntheticConfidenceSummaryPanel report={syntheticConfidenceSummary} />
       <POCQATriagePanel report={pocQATriage} />
+      <ValidationSuiteEvidencePanel report={validationSuiteEvidence} />
       <SyntheticQABlockerDrilldownPanel report={syntheticQABlockerReport} />
       <SyntheticQAReviewRunPanel report={syntheticQAReviewRun} />
       <div className="grid-layout">

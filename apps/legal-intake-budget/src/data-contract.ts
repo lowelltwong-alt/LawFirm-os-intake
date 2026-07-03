@@ -12,6 +12,7 @@ import type {
   SyntheticConfidenceSummaryReport,
   SyntheticQAReviewRunReport,
   UIReviewDataBundle,
+  ValidationSuiteEvidenceReport,
 } from "./types";
 
 export const REQUIRED_ARTIFACT_FILES = [
@@ -44,6 +45,7 @@ export const REQUIRED_ARTIFACT_FILES = [
   "labor_employment_blocked_driver_impact_review_report.json",
   "labor_employment_budget_output_expectations_report.json",
   "labor_employment_budget_fact_gold_report.json",
+  "validation_suite_evidence_report.json",
   "budget_human_review_packet.json",
   "carrier_rejection_decision_ledger_report.json",
   "budget_actual_variance_ledger_report.json",
@@ -381,6 +383,90 @@ export function assertPOCQATriageReport(report: POCQATriageReport): string[] {
   }
   if (!report.required_next_actions.length) {
     failures.push("poc_qa_triage_missing_next_actions");
+  }
+  return failures;
+}
+
+export function assertValidationSuiteEvidenceReport(
+  report: ValidationSuiteEvidenceReport,
+): string[] {
+  const failures: string[] = [];
+  if (!report.candidate_only || !report.synthetic_only || !report.non_authoritative) {
+    failures.push("validation_suite_evidence_authority_boundary_failed");
+  }
+  if (!report.local_json_only || !report.human_review_required) {
+    failures.push("validation_suite_evidence_review_boundary_failed");
+  }
+  if (
+    !report.not_authorized_for_lake_write ||
+    !report.not_authorized_for_sqlite_write ||
+    !report.not_authorized_for_budget_submission ||
+    !report.not_authorized_for_matter_opening ||
+    report.budget_amount_output_authorized ||
+    report.budget_submission_authorized ||
+    report.conflict_conclusion_emitted ||
+    report.matter_opening_authorized ||
+    report.training_pipeline_created ||
+    report.lake_write_performed ||
+    report.sqlite_write_performed ||
+    report.external_writes_performed ||
+    report.silent_learning_performed
+  ) {
+    failures.push("validation_suite_evidence_side_effect_boundary_failed");
+  }
+  const passed = report.steps.filter((step) => step.status === "passed");
+  const failed = report.steps.filter((step) => step.status === "failed");
+  const timedOut = report.steps.filter((step) => step.status === "timed_out");
+  if (report.step_count !== report.steps.length) {
+    failures.push("validation_suite_evidence_step_count_mismatch");
+  }
+  if (report.passed_step_count !== passed.length) {
+    failures.push("validation_suite_evidence_passed_count_mismatch");
+  }
+  if (report.failed_step_count !== failed.length) {
+    failures.push("validation_suite_evidence_failed_count_mismatch");
+  }
+  if (report.timed_out_step_count !== timedOut.length) {
+    failures.push("validation_suite_evidence_timed_out_count_mismatch");
+  }
+  const passedStepIds = new Set(passed.map((step) => step.step_id));
+  for (const requiredStep of [
+    "validate_repo",
+    "export_schemas",
+    "ruff_check",
+    "ruff_format_check",
+    "full_pytest",
+    "smoke_demo",
+    "validate_repo_final",
+  ]) {
+    if (!passedStepIds.has(requiredStep)) {
+      failures.push(`validation_suite_evidence_missing_passed_step:${requiredStep}`);
+    }
+  }
+  if (report.status === "validation_suite_passed" && (failed.length > 0 || timedOut.length > 0)) {
+    failures.push("validation_suite_evidence_passed_with_failed_steps");
+  }
+  if (report.status === "blocked_by_validation_suite" && failed.length + timedOut.length === 0) {
+    failures.push("validation_suite_evidence_blocked_without_failed_steps");
+  }
+  for (const step of report.steps) {
+    if (
+      !step.step_id ||
+      !step.command_key ||
+      step.command.length === 0 ||
+      !step.command_display ||
+      step.timeout_seconds < 1 ||
+      step.duration_seconds < 0 ||
+      step.evidence_refs.length === 0
+    ) {
+      failures.push(`validation_suite_evidence_step_not_actionable:${step.step_id}`);
+    }
+    if (step.status === "passed" && step.return_code !== 0) {
+      failures.push(`validation_suite_evidence_passed_return_code:${step.step_id}`);
+    }
+  }
+  if (!report.required_next_actions.length) {
+    failures.push("validation_suite_evidence_missing_next_actions");
   }
   return failures;
 }

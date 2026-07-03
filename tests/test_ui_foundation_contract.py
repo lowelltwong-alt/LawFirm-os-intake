@@ -18,8 +18,10 @@ def test_legal_intake_budget_ui_required_files_exist(repo_root):
         "src/fixtures/demo-synthetic-confidence-summary-report.json",
         "src/fixtures/demo-poc-qa-triage-report.json",
         "src/fixtures/demo-synthetic-qa-blocker-report.json",
+        "src/fixtures/demo-synthetic-qa-bundle-report.json",
         "src/fixtures/demo-synthetic-qa-review-run-report.json",
         "src/fixtures/demo-ui-review-data-bundle.json",
+        "src/fixtures/demo-validation-suite-evidence-report.json",
         "src/fixtures/demo-matter-linking-preflight-report.json",
         "src/fixtures/demo-labor-employment-qa-matrix-report.json",
         "src/fixtures/demo-labor-employment-blocked-driver-impact-review-report.json",
@@ -73,6 +75,7 @@ def test_legal_intake_budget_ui_data_contract_lists_required_artifacts(repo_root
         "labor_employment_blocked_driver_impact_review_report.json",
         "labor_employment_budget_output_expectations_report.json",
         "labor_employment_budget_fact_gold_report.json",
+        "validation_suite_evidence_report.json",
         "budget_human_review_packet.json",
         "carrier_rejection_decision_ledger_report.json",
         "budget_actual_variance_ledger_report.json",
@@ -129,6 +132,7 @@ def test_legal_intake_budget_demo_manifest_is_read_only_and_candidate_only(repo_
         "labor_employment_blocked_driver_impact_review",
         "labor_employment_budget_output_expectations",
         "labor_employment_budget_fact_gold",
+        "validation_suite_evidence",
         "full_pytest",
         "smoke_demo",
     } <= {gate["gateId"] for gate in manifest["qualityGates"]}
@@ -336,20 +340,55 @@ def test_legal_intake_budget_demo_poc_qa_triage_is_actionable_and_no_write(repo_
     )
     items = {item["item_id"]: item for item in report["items"]}
 
-    assert report["status"] == "blocked_by_poc_qa_triage"
+    assert report["status"] == "poc_qa_ready_for_review"
     assert report["item_count"] == len(report["items"]) == 10
-    assert report["blocked_item_count"] == 1
-    assert report["p0_blocked_item_count"] == 1
+    assert report["blocked_item_count"] == 0
+    assert report["p0_blocked_item_count"] == 0
     assert report["needs_review_item_count"] == 5
     assert report["watch_item_count"] == 2
-    assert report["passed_item_count"] == 2
-    assert items["validation_evidence_not_fresh_in_ui_bundle"]["status"] == "blocked"
+    assert report["passed_item_count"] == 3
+    assert report["source_validation_suite_evidence_report_id"].startswith(
+        "validation_suite_evidence_"
+    )
+    assert items["validation_evidence_not_fresh_in_ui_bundle"]["status"] == "passed"
     assert (
-        "scripts/run_full_pytest.py"
+        "apps/legal-intake-budget/src/fixtures/demo-validation-suite-evidence-report.json"
         in (items["validation_evidence_not_fresh_in_ui_bundle"]["evidence_refs"])
     )
     assert items["matter_linking_requires_human_confirmation"]["status"] == "needs_review"
     assert items["budget_output_partition_visible"]["status"] == "needs_review"
+    assert report["candidate_only"] is True
+    assert report["synthetic_only"] is True
+    assert report["non_authoritative"] is True
+    assert report["local_json_only"] is True
+    assert report["human_review_required"] is True
+    assert report["budget_submission_authorized"] is False
+    assert report["matter_opening_authorized"] is False
+    assert report["lake_write_performed"] is False
+    assert report["sqlite_write_performed"] is False
+    assert report["external_writes_performed"] is False
+    assert report["silent_learning_performed"] is False
+
+
+def test_legal_intake_budget_demo_validation_suite_evidence_is_no_write(repo_root):
+    report = json.loads(
+        (repo_root / UI_ROOT / "src/fixtures/demo-validation-suite-evidence-report.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    steps = {step["step_id"]: step for step in report["steps"]}
+
+    assert report["status"] == "validation_suite_passed"
+    assert report["step_count"] == len(report["steps"]) == 7
+    assert report["passed_step_count"] == 7
+    assert report["failed_step_count"] == 0
+    assert report["timed_out_step_count"] == 0
+    assert report["policy_ref"] == "config/validation-runtime-policy.yaml"
+    assert steps["full_pytest"]["status"] == "passed"
+    assert steps["full_pytest"]["timeout_seconds"] >= 3600
+    assert "scripts/run_full_pytest.py" in steps["full_pytest"]["evidence_refs"]
+    assert steps["smoke_demo"]["status"] == "passed"
+    assert "scripts/smoke_demo.sh" in steps["smoke_demo"]["evidence_refs"]
     assert report["candidate_only"] is True
     assert report["synthetic_only"] is True
     assert report["non_authoritative"] is True
@@ -371,12 +410,12 @@ def test_legal_intake_budget_demo_synthetic_qa_blocker_report_is_no_write(repo_r
     )
 
     assert report["status"] == "synthetic_qa_blocker_report_ready_for_review"
-    assert report["row_count"] == len(report["rows"]) == 19
+    assert report["row_count"] == len(report["rows"]) == 17
     assert report["failed_row_count"] == 0
     assert report["blocked_row_count"] == 0
-    assert report["pending_review_row_count"] == 19
+    assert report["pending_review_row_count"] == 17
     assert report["blocked_action_count"] == 0
-    assert report["needs_review_action_count"] == 19
+    assert report["needs_review_action_count"] == 17
     assert report["fixed_action_count"] == 0
     assert report["ready_action_count"] == 0
     assert report["review_queue_state"] == "needs_review"
@@ -456,6 +495,7 @@ def test_legal_intake_budget_ui_disclaims_mutating_authority(repo_root):
     assert "UI Review Data Bundle" in app
     assert "Confidence Summary" in app
     assert "POC QA Triage" in app
+    assert "Validation Suite Evidence" in app
     assert "Synthetic QA Blocker Drilldown" in app
     assert "Synthetic QA Review Run" in app
     assert "Matter-Linking Preflight" in app
@@ -468,6 +508,7 @@ def test_legal_intake_budget_ui_disclaims_mutating_authority(repo_root):
     assert "assertUIReviewDataBundle" in app
     assert "assertSyntheticConfidenceSummaryReport" in app
     assert "assertPOCQATriageReport" in app
+    assert "assertValidationSuiteEvidenceReport" in app
     assert "assertSyntheticQABlockerReport" in app
     assert "assertSyntheticQAReviewRunReport" in app
     assert "assertMatterLinkingPreflightReport" in app
@@ -477,7 +518,9 @@ def test_legal_intake_budget_ui_disclaims_mutating_authority(repo_root):
     assert "failingQualityGates" in app
     assert "qa-blocker-panel" in styles
     assert "poc-triage-panel" in styles
+    assert "validation-panel" in styles
     assert "triage-stack" in styles
+    assert "validation-step-grid" in styles
     assert "qa-blocker-table" in styles
     assert "empty-state" in styles
     assert "fixture-drilldown-panel" in styles

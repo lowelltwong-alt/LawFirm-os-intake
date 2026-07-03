@@ -1,0 +1,247 @@
+{
+  "schema_version": "0.1",
+  "synthetic_qa_bundle_report_id": "synthetic_qa_bundle_8cd0af98a58f",
+  "status": "pending_review",
+  "run_root_ref": "apps/legal-intake-budget/src/fixtures",
+  "out_dir_ref": "apps/legal-intake-budget/src/fixtures",
+  "artifact_count": 14,
+  "required_artifact_count": 14,
+  "missing_required_artifact_count": 0,
+  "blocked_artifact_count": 0,
+  "pending_artifact_count": 12,
+  "failed_artifact_count": 0,
+  "artifacts": [
+    {
+      "artifact_id": "budget_coherence",
+      "label": "Budget Coherence",
+      "file_name": "budget_coherence_report.json",
+      "required": true,
+      "present": true,
+      "status": "passed",
+      "gate_state": "passed",
+      "artifact_ref": "apps/legal-intake-budget/src/fixtures/budget_coherence_report.json",
+      "copied_to_ref": "apps/legal-intake-budget/src/fixtures/budget_coherence_report.json",
+      "source_sha256": "sha256:19fbe44be367c3fa76cb5a558463a96857aa85d05c33ea9a68e1c086247927ab",
+      "notes": [
+        "Demo fixture row for Budget Coherence; bundle status=passed."
+      ]
+    },
+    {
+      "artifact_id": "synthetic_fixture_depth",
+      "label": "Synthetic Fixture Depth",
+      "file_name": "synthetic_fixture_depth_audit_report.json",
+      "required": true,
+      "present": true,
+      "status": "pending_review",
+      "gate_state": "pending_review",
+      "artifact_ref": "apps/legal-intake-budget/src/fixtures/synthetic_fixture_depth_audit_report.json",
+      "copied_to_ref": "apps/legal-intake-budget/src/fixtures/synthetic_fixture_depth_audit_report.json",
+      "source_sha256": "sha256:4597313501e66da7f6edffa02360b449c948d9d2ee43b2a00246608877f656bb",
+      "notes": [
+        "Demo fixture row for Synthetic Fixture Depth; bundle status=pending_review."
+      ]
+    },
+    {
+      "artifact_id": "budget_calibration_readiness",
+      "label": "Budget Calibration Readiness",
+      "file_name": "budget_calibration_readiness_report.json",
+      "required": true,
+      "present": true,
+      "status": "pending_review",
+      "gate_state": "pending_review",
+      "artifact_ref": "apps/legal-intake-budget/src/fixtures/budget_calibration_readiness_report.json",
+      "copied_to_ref": "apps/legal-intake-budget/src/fixtures/budget_calibration_readiness_report.json",
+      "source_sha256": "sha256:b5e4d93f69cca37157c0acc5809442c40e38fc15b80cbcb072f10f752c91e744",
+      "notes": [
+        "Demo fixture row for Budget Calibration Readiness; bundle status=pending_review."
+      ]
+    },
+    {
+      "artifact_id": "labor_employment_qa_matrix",
+      "label": "Labor/Employment QA Matrix",
+      "file_name": "labor_employment_qa_matrix_report.json",
+      "required": true,
+      "present": true,
+      "status": "pending_review",
+      "gate_state": "pending_review",
+      "artifact_ref": "apps/legal-intake-budget/src/fixtures/labor_employment_qa_matrix_report.json",
+      "copied_to_ref": "apps/legal-intake-budget/src/fixtures/labor_employment_qa_matrix_report.json",
+      "source_sha256": "sha256:9fdff78894319b2cbb57aa10baa05add40284897508c1c41bd9aad8548ead1e6",
+      "notes": [
+        "Demo fixture row for Labor/Employment QA Matrix; bundle status=pending_review."
+      ]
+    },
+    {
+      "artifact_id": "labor_employment_fixture_family_pack",
+      "label": "Labor/Employment Fixture Family Pack",
+      "file_name": "labor_employment_fixture_family_pack_report.json",
+      "required": true,
+      "present": true,
+      "status": "pending_review",
+      "gate_state": "pending_review",
+      "artifact_ref": "apps/legal-intake-budget/src/fixtures/labor_employment_fixture_family_pack_report.json",
+      "copied_to_ref": "apps/legal-intake-budget/src/fixtures/labor_employment_fixture_family_pack_report.json",
+      "source_sha256": "sha256:110d623f53dcc6a0e723b580456ee151328ab2723d6b83d9c121670509b0f4e4",
+      "notes": [
+        "Demo fixture row for Labor/Employment Fixture Family Pack; bundle status=pending_review."
+      ]
+    },
+    {
+      "artifact_id": "labor_employment_executable_fixtures",
+      "label": "Labor/Employment Executable Fixtures",
+      "file_name": "labor_employment_executable_fixtures_report.json",
+      "required": true,
+      "present": true,
+      "status": "pending_review",
+      "gate_state": "pending_review",
+      "artifact_ref": "apps/legal-intake-budget/src/fixtures/labor_employment_executable_fixtures_report.json",
+      "copied_to_ref": "apps/legal-intake-budget/src/fixtures/labor_employment_executable_fixtures_report.json",
+      "source_sha256": "sha256:934e499b21fb3d8a215fa9cdb37e76f4792569e2df43f9d35be4183a9ea00b04",
+      "notes": [
+        "Demo fixture row for Labor/Employment Executable Fixtures; bundle status=pending_review."
+      ]
+    },
+    {
+      "artifact_id": "labor_employment_executable_coverage",
+      "label": "Labor/Employment Executable Coverage",
+      "file_name": "labor_employment_executable_coverage_report.json",
+      "required": true,
+      "present": true,
+      "status": "pending_review",
+      "gate_state": "pending_review",
+      "artifact_ref": "apps/legal-intake-budget/src/fixtures/labor_employment_executable_coverage_report.json",
+      "copied_to_ref": "apps/legal-intake-budget/src/fixtures/labor_employment_executable_coverage_report.json",
+      "source_sha256": "sha256:48d0816ec4bf9a279bcd1ce9e2f088663fa97663c6b4b31ede28f9276e8f3bb7",
+      "notes": [
+        "Demo fixture row for Labor/Employment Executable Coverage; bundle status=pending_review."
+      ]
+    },
+    {
+      "artifact_id": "labor_employment_executable_fact_binding",
+      "label": "Labor/Employment Executable Fact Binding",
+      "file_name": "labor_employment_executable_fact_binding_report.json",
+      "required": true,
+      "present": true,
+      "status": "pending_review",
+      "gate_state": "pending_review",
+      "artifact_ref": "apps/legal-intake-budget/src/fixtures/labor_employment_executable_fact_binding_report.json",
+      "copied_to_ref": "apps/legal-intake-budget/src/fixtures/labor_employment_executable_fact_binding_report.json",
+      "source_sha256": "sha256:6cb2c34f4575540dcf2a6b4f6e611a8ca3636c1b752cf5632fc1519a1644b5b3",
+      "notes": [
+        "Demo fixture row for Labor/Employment Executable Fact Binding; bundle status=pending_review."
+      ]
+    },
+    {
+      "artifact_id": "labor_employment_executable_driver_binding",
+      "label": "Labor/Employment Executable Driver Binding",
+      "file_name": "labor_employment_executable_driver_binding_report.json",
+      "required": true,
+      "present": true,
+      "status": "pending_review",
+      "gate_state": "pending_review",
+      "artifact_ref": "apps/legal-intake-budget/src/fixtures/labor_employment_executable_driver_binding_report.json",
+      "copied_to_ref": "apps/legal-intake-budget/src/fixtures/labor_employment_executable_driver_binding_report.json",
+      "source_sha256": "sha256:d40e4b7361dc95ea80771fc187eef0e904b0cee2218e4377e61b86bcd4216dd5",
+      "notes": [
+        "Demo fixture row for Labor/Employment Executable Driver Binding; bundle status=pending_review."
+      ]
+    },
+    {
+      "artifact_id": "labor_employment_executable_driver_impact",
+      "label": "Labor/Employment Executable Driver Impact",
+      "file_name": "labor_employment_executable_driver_impact_report.json",
+      "required": true,
+      "present": true,
+      "status": "pending_review",
+      "gate_state": "pending_review",
+      "artifact_ref": "apps/legal-intake-budget/src/fixtures/labor_employment_executable_driver_impact_report.json",
+      "copied_to_ref": "apps/legal-intake-budget/src/fixtures/labor_employment_executable_driver_impact_report.json",
+      "source_sha256": "sha256:b6afed68096ddfe69831dab870615348a16a31288479b1f77e53b9011737b190",
+      "notes": [
+        "Demo fixture row for Labor/Employment Executable Driver Impact; bundle status=pending_review."
+      ]
+    },
+    {
+      "artifact_id": "labor_employment_driver_impact_review",
+      "label": "Labor/Employment Driver Impact Review",
+      "file_name": "labor_employment_driver_impact_review_report.json",
+      "required": true,
+      "present": true,
+      "status": "pending_review",
+      "gate_state": "pending_review",
+      "artifact_ref": "apps/legal-intake-budget/src/fixtures/labor_employment_driver_impact_review_report.json",
+      "copied_to_ref": "apps/legal-intake-budget/src/fixtures/labor_employment_driver_impact_review_report.json",
+      "source_sha256": "sha256:aecee2aaa1a9b869bf52f40bb61f79dbf773bafe22e8fb8b65488c4933a5cbf7",
+      "notes": [
+        "Demo fixture row for Labor/Employment Driver Impact Review; bundle status=pending_review."
+      ]
+    },
+    {
+      "artifact_id": "labor_employment_blocked_driver_impact_review",
+      "label": "Labor/Employment Blocked Driver Impact Review",
+      "file_name": "labor_employment_blocked_driver_impact_review_report.json",
+      "required": true,
+      "present": true,
+      "status": "pending_review",
+      "gate_state": "pending_review",
+      "artifact_ref": "apps/legal-intake-budget/src/fixtures/labor_employment_blocked_driver_impact_review_report.json",
+      "copied_to_ref": "apps/legal-intake-budget/src/fixtures/labor_employment_blocked_driver_impact_review_report.json",
+      "source_sha256": "sha256:4f3534346e8ad20031d3af90d2dbdeaf1cf3356fae64b8d81297934d142c44fc",
+      "notes": [
+        "Demo fixture row for Labor/Employment Blocked Driver Impact Review; bundle status=pending_review."
+      ]
+    },
+    {
+      "artifact_id": "labor_employment_budget_output_expectations",
+      "label": "Labor/Employment Budget Output Expectations",
+      "file_name": "labor_employment_budget_output_expectations_report.json",
+      "required": true,
+      "present": true,
+      "status": "pending_review",
+      "gate_state": "pending_review",
+      "artifact_ref": "apps/legal-intake-budget/src/fixtures/labor_employment_budget_output_expectations_report.json",
+      "copied_to_ref": "apps/legal-intake-budget/src/fixtures/labor_employment_budget_output_expectations_report.json",
+      "source_sha256": "sha256:8da11c96d1e3954019ba0545e843a4a2813d4f29abd223e6f74cdde39e689391",
+      "notes": [
+        "Demo fixture row for Labor/Employment Budget Output Expectations; bundle status=pending_review."
+      ]
+    },
+    {
+      "artifact_id": "labor_employment_budget_fact_gold",
+      "label": "Labor/Employment Budget Fact Gold",
+      "file_name": "labor_employment_budget_fact_gold_report.json",
+      "required": true,
+      "present": true,
+      "status": "passed",
+      "gate_state": "passed",
+      "artifact_ref": "apps/legal-intake-budget/src/fixtures/labor_employment_budget_fact_gold_report.json",
+      "copied_to_ref": "apps/legal-intake-budget/src/fixtures/labor_employment_budget_fact_gold_report.json",
+      "source_sha256": "sha256:f3b7283d25c7bd12a474546aeb733d9338a7fb306d5c030281018815288c87ad",
+      "notes": [
+        "Demo fixture row for Labor/Employment Budget Fact Gold; bundle status=passed."
+      ]
+    }
+  ],
+  "ui_manifest_ref": "apps/legal-intake-budget/src/fixtures/demo-run-manifest.json",
+  "ui_data_bundle_ref": "apps/legal-intake-budget/src/fixtures/demo-ui-review-data-bundle.json",
+  "required_next_actions": [
+    "Route pending QA artifacts for human/owner review; do not treat review-ready as calibrated."
+  ],
+  "candidate_only": true,
+  "synthetic_only": true,
+  "non_authoritative": true,
+  "not_authorized_for_external_write": true,
+  "not_authorized_for_lake_write": true,
+  "not_authorized_for_sqlite_write": true,
+  "not_authorized_for_budget_submission": true,
+  "not_authorized_for_matter_opening": true,
+  "fixture_files_mutated": false,
+  "calibration_applied": false,
+  "lake_write_performed": false,
+  "sqlite_write_performed": false,
+  "external_writes_performed": false,
+  "budget_submission_performed": false,
+  "matter_opening_performed": false,
+  "silent_learning_performed": false,
+  "generated_at": "2026-07-03T22:29:27Z"
+}

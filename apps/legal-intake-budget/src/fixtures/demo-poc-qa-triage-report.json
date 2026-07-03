@@ -1,21 +1,22 @@
 {
   "schema_version": "0.1",
-  "poc_qa_triage_report_id": "poc_qa_triage_2778742d90b12fed",
-  "status": "blocked_by_poc_qa_triage",
+  "poc_qa_triage_report_id": "poc_qa_triage_f0b42e6adad8bae0",
+  "status": "poc_qa_ready_for_review",
   "source_ui_manifest_id": "ui_review_manifest_00aeff08b022",
-  "source_synthetic_confidence_summary_report_id": "synthetic_confidence_summary_c69d8bd81fcd82a9",
+  "source_synthetic_confidence_summary_report_id": "synthetic_confidence_summary_776a97d0ece2d74d",
   "source_synthetic_qa_review_run_report_id": "syntheticqareviewrun_44a0e1d825bac1db",
-  "source_synthetic_qa_blocker_report_id": "synthetic_qa_blocker_report_c076b2ff509772ab",
+  "source_synthetic_qa_blocker_report_id": "synthetic_qa_blocker_report_e2d538a763d6c169",
   "source_matter_linking_preflight_report_id": "matterlinkpreflight_b6256d36c7d774ea7124",
   "source_labor_employment_qa_matrix_report_id": "leqamat_dc66065a353db4503c28",
   "source_blocked_driver_impact_review_report_id": "leblockeddriverimpactreview_0637d73d5d44edda",
   "source_budget_output_expectation_report_id": "lebudgetoutputexpect_2a6a3eb26cceb4cc",
+  "source_validation_suite_evidence_report_id": "validation_suite_evidence_554cf60bc6a90268",
   "item_count": 10,
-  "passed_item_count": 2,
+  "passed_item_count": 3,
   "needs_review_item_count": 5,
   "watch_item_count": 2,
-  "blocked_item_count": 1,
-  "p0_blocked_item_count": 1,
+  "blocked_item_count": 0,
+  "p0_blocked_item_count": 0,
   "items": [
     {
       "item_id": "synthetic_qa_recipe_green",
@@ -37,7 +38,7 @@
       "category": "review_queue",
       "priority": "p0",
       "status": "needs_review",
-      "summary": "19 synthetic QA rows are queued for review.",
+      "summary": "17 synthetic QA rows are queued for review.",
       "recommended_next_action": "Review pending rows as candidate QA decisions; do not treat them as calibration or production approval.",
       "evidence_refs": [
         "apps/legal-intake-budget/src/fixtures/demo-synthetic-qa-blocker-report.json"
@@ -157,18 +158,16 @@
       "item_id": "validation_evidence_not_fresh_in_ui_bundle",
       "category": "review_queue",
       "priority": "p0",
-      "status": "blocked",
-      "summary": "The UI manifest does not yet prove fresh full-pytest and smoke-demo validation evidence.",
-      "recommended_next_action": "Run the wrapper-based validation suite with the long timeout ceiling and regenerate UI/triage fixtures from that run.",
+      "status": "passed",
+      "summary": "Fresh wrapper-based validation evidence is attached to the UI manifest.",
+      "recommended_next_action": "Keep regenerating validation_suite_evidence_report.json after substantial QA, schema, or UI changes.",
       "evidence_refs": [
         "apps/legal-intake-budget/src/fixtures/demo-run-manifest.json",
+        "apps/legal-intake-budget/src/fixtures/demo-validation-suite-evidence-report.json",
         "scripts/run_full_pytest.py",
         "scripts/smoke_demo.sh"
       ],
-      "candidate_exception_lake_labels": [
-        "qa_validation_evidence_stale_or_missing",
-        "ui_manifest_validation_gap"
-      ]
+      "candidate_exception_lake_labels": []
     },
     {
       "item_id": "production_actions_stay_blocked",
@@ -188,14 +187,14 @@
     }
   ],
   "required_next_actions": [
-    "Resolve blocked triage items before calling this POC QA-ready.",
+    "No blocked POC QA triage items remain; review needs-review items as candidate QA decisions.",
     "Review needs-review items as candidate QA decisions, not production approval.",
     "Keep watch items on the roadmap for real-data, owner-adoption, and production gates.",
     "Regenerate this report whenever synthetic QA, UI, or validation evidence changes."
   ],
   "display_banner": {
     "summary": "POC QA triage over local synthetic evidence.",
-    "status": "blocked_by_poc_qa_triage",
+    "status": "poc_qa_ready_for_review",
     "candidate_only": true,
     "synthetic_only": true,
     "not_production_ready": true,
@@ -229,5 +228,5 @@
   "sqlite_write_performed": false,
   "external_writes_performed": false,
   "silent_learning_performed": false,
-  "generated_at": "2026-07-03T00:00:00Z"
+  "generated_at": "2026-07-03T22:29:27Z"
 }
