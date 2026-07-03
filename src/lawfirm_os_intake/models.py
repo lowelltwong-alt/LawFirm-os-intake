@@ -10828,6 +10828,192 @@ class SyntheticQABlockerReport(StrictModel):
         return self
 
 
+SyntheticQABlockerReviewDecisionOutcome = Literal[
+    "accepted_for_poc_review",
+    "needs_fix",
+    "defer_to_roadmap",
+    "not_applicable",
+]
+
+
+class SyntheticQABlockerReviewDecision(StrictModel):
+    schema_version: str = "0.1"
+    decision_id: str
+    row_id: str
+    outcome: SyntheticQABlockerReviewDecisionOutcome
+    decision_reason: str
+    evidence_refs: list[str]
+    required_followups: list[str] = Field(default_factory=list)
+    red_team_notes: list[str]
+    candidate_exception_lake_labels: list[str]
+
+    @model_validator(mode="after")
+    def synthetic_qa_review_decision_is_actionable(
+        self,
+    ) -> "SyntheticQABlockerReviewDecision":
+        if not self.decision_id.strip():
+            raise ValueError("synthetic QA review decision requires decision_id")
+        if not self.row_id.strip():
+            raise ValueError("synthetic QA review decision requires row_id")
+        if not self.decision_reason.strip():
+            raise ValueError("synthetic QA review decision requires decision reason")
+        if not self.evidence_refs or any(not ref.strip() for ref in self.evidence_refs):
+            raise ValueError("synthetic QA review decision requires evidence refs")
+        if not self.red_team_notes or any(not note.strip() for note in self.red_team_notes):
+            raise ValueError("synthetic QA review decision requires red-team notes")
+        if not self.candidate_exception_lake_labels or any(
+            not label.strip() for label in self.candidate_exception_lake_labels
+        ):
+            raise ValueError("synthetic QA review decision requires candidate labels")
+        if self.outcome in {"needs_fix", "defer_to_roadmap"} and not self.required_followups:
+            raise ValueError("fix/defer QA review decisions require followups")
+        return self
+
+
+class SyntheticQABlockerReviewOutcomeRecord(StrictModel):
+    schema_version: str = "0.1"
+    synthetic_qa_review_outcome_record_id: str
+    synthetic_qa_blocker_report_id: str
+    reviewer_id: str
+    reviewed_at: str
+    decision_reason: str
+    decisions: list[SyntheticQABlockerReviewDecision]
+    append_only: Literal[True] = True
+    candidate_only: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    local_json_only: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    not_authorized_for_matter_opening: Literal[True] = True
+    not_authorized_for_calibration: Literal[True] = True
+    budget_amount_output_authorized: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    conflict_conclusion_emitted: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    training_pipeline_created: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def synthetic_qa_review_outcome_record_is_complete(
+        self,
+    ) -> "SyntheticQABlockerReviewOutcomeRecord":
+        if not self.synthetic_qa_review_outcome_record_id.strip():
+            raise ValueError("synthetic QA review outcome record requires id")
+        if not self.synthetic_qa_blocker_report_id.strip():
+            raise ValueError("synthetic QA review outcome record requires source report id")
+        if not self.reviewer_id.strip():
+            raise ValueError("synthetic QA review outcome record requires reviewer")
+        if not self.reviewed_at.strip():
+            raise ValueError("synthetic QA review outcome record requires reviewed_at")
+        if not self.decision_reason.strip():
+            raise ValueError("synthetic QA review outcome record requires decision reason")
+        if not self.decisions:
+            raise ValueError("synthetic QA review outcome record requires decisions")
+        row_ids = [decision.row_id for decision in self.decisions]
+        if len(row_ids) != len(set(row_ids)):
+            raise ValueError("synthetic QA review outcome record has duplicate row decisions")
+        return self
+
+
+class SyntheticQABlockerReviewOutcomeReport(StrictModel):
+    schema_version: str = "0.1"
+    synthetic_qa_review_outcome_report_id: str
+    status: Literal[
+        "synthetic_qa_review_outcome_recorded",
+        "synthetic_qa_review_outcome_recorded_pending_followup",
+        "blocked_by_synthetic_qa_review_outcome",
+    ]
+    source_synthetic_qa_blocker_report_ref: str
+    source_synthetic_qa_blocker_report_id: str
+    source_synthetic_qa_blocker_report_status: str
+    synthetic_qa_review_outcome_record_id: str
+    reviewer_id: str
+    reviewed_at: str
+    decision_reason: str
+    source_row_count: int = Field(ge=0)
+    decision_count: int = Field(ge=0)
+    accepted_decision_count: int = Field(ge=0)
+    needs_fix_decision_count: int = Field(ge=0)
+    deferred_decision_count: int = Field(ge=0)
+    not_applicable_decision_count: int = Field(ge=0)
+    reviewed_row_count: int = Field(ge=0)
+    unreviewed_row_count: int = Field(ge=0)
+    unknown_row_count: int = Field(ge=0)
+    unresolved_followup_count: int = Field(ge=0)
+    reviewed_row_ids: list[str]
+    unreviewed_row_ids: list[str]
+    unknown_row_ids: list[str]
+    required_followups: list[str]
+    candidate_lake_event_labels: list[str]
+    append_only_history_ref: str
+    required_next_actions: list[str]
+    append_only: Literal[True] = True
+    candidate_only: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    local_json_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    not_authorized_for_matter_opening: Literal[True] = True
+    not_authorized_for_calibration: Literal[True] = True
+    budget_amount_output_authorized: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    conflict_conclusion_emitted: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    training_pipeline_created: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def synthetic_qa_review_outcome_report_counts_match(
+        self,
+    ) -> "SyntheticQABlockerReviewOutcomeReport":
+        if self.decision_count != (
+            self.accepted_decision_count
+            + self.needs_fix_decision_count
+            + self.deferred_decision_count
+            + self.not_applicable_decision_count
+        ):
+            raise ValueError("synthetic QA review decision outcome counts mismatch")
+        if self.reviewed_row_count != len(self.reviewed_row_ids):
+            raise ValueError("synthetic QA review reviewed row count mismatch")
+        if self.unreviewed_row_count != len(self.unreviewed_row_ids):
+            raise ValueError("synthetic QA review unreviewed row count mismatch")
+        if self.unknown_row_count != len(self.unknown_row_ids):
+            raise ValueError("synthetic QA review unknown row count mismatch")
+        if self.reviewed_row_count + self.unreviewed_row_count != self.source_row_count:
+            raise ValueError("synthetic QA review source row coverage mismatch")
+        if self.unresolved_followup_count != len(self.required_followups):
+            raise ValueError("synthetic QA review followup count mismatch")
+        if self.unknown_row_count and self.status != "blocked_by_synthetic_qa_review_outcome":
+            raise ValueError("synthetic QA review report with unknown rows must block")
+        if self.status == "synthetic_qa_review_outcome_recorded" and (
+            self.unreviewed_row_count or self.unresolved_followup_count
+        ):
+            raise ValueError("recorded synthetic QA review outcome cannot have open followups")
+        if self.status == "synthetic_qa_review_outcome_recorded_pending_followup" and not (
+            self.unreviewed_row_count or self.unresolved_followup_count
+        ):
+            raise ValueError("pending synthetic QA review outcome requires open followups")
+        if not self.candidate_lake_event_labels:
+            raise ValueError("synthetic QA review outcome report requires candidate labels")
+        if not self.required_next_actions:
+            raise ValueError("synthetic QA review outcome report requires next actions")
+        return self
+
+
 UIReviewDataBundleStatus = Literal[
     "ready_for_review",
     "blocked_missing_required_reports",

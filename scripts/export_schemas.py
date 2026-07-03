@@ -304,6 +304,9 @@ from lawfirm_os_intake.models import (  # noqa: E402
     POCQATriageReport,
     SyntheticQABlockerReport,
     SyntheticQABlockerRow,
+    SyntheticQABlockerReviewDecision,
+    SyntheticQABlockerReviewOutcomeRecord,
+    SyntheticQABlockerReviewOutcomeReport,
     SyntheticQABundleArtifact,
     SyntheticQABundleReport,
     SyntheticQAReviewRunReport,
@@ -359,6 +362,13 @@ MODELS = {
     "poc-qa-triage-report.schema.json": POCQATriageReport,
     "synthetic-qa-blocker-row.schema.json": SyntheticQABlockerRow,
     "synthetic-qa-blocker-report.schema.json": SyntheticQABlockerReport,
+    "synthetic-qa-blocker-review-decision.schema.json": SyntheticQABlockerReviewDecision,
+    "synthetic-qa-blocker-review-outcome-record.schema.json": (
+        SyntheticQABlockerReviewOutcomeRecord
+    ),
+    "synthetic-qa-blocker-review-outcome-report.schema.json": (
+        SyntheticQABlockerReviewOutcomeReport
+    ),
     "synthetic-qa-bundle-artifact.schema.json": SyntheticQABundleArtifact,
     "synthetic-qa-bundle-report.schema.json": SyntheticQABundleReport,
     "synthetic-qa-review-run-step.schema.json": SyntheticQAReviewRunStep,

@@ -1,0 +1,308 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "synthetic_qa_review_outcome_report_id": {
+      "title": "Synthetic Qa Review Outcome Report Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "synthetic_qa_review_outcome_recorded",
+        "synthetic_qa_review_outcome_recorded_pending_followup",
+        "blocked_by_synthetic_qa_review_outcome"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "source_synthetic_qa_blocker_report_ref": {
+      "title": "Source Synthetic Qa Blocker Report Ref",
+      "type": "string"
+    },
+    "source_synthetic_qa_blocker_report_id": {
+      "title": "Source Synthetic Qa Blocker Report Id",
+      "type": "string"
+    },
+    "source_synthetic_qa_blocker_report_status": {
+      "title": "Source Synthetic Qa Blocker Report Status",
+      "type": "string"
+    },
+    "synthetic_qa_review_outcome_record_id": {
+      "title": "Synthetic Qa Review Outcome Record Id",
+      "type": "string"
+    },
+    "reviewer_id": {
+      "title": "Reviewer Id",
+      "type": "string"
+    },
+    "reviewed_at": {
+      "title": "Reviewed At",
+      "type": "string"
+    },
+    "decision_reason": {
+      "title": "Decision Reason",
+      "type": "string"
+    },
+    "source_row_count": {
+      "minimum": 0,
+      "title": "Source Row Count",
+      "type": "integer"
+    },
+    "decision_count": {
+      "minimum": 0,
+      "title": "Decision Count",
+      "type": "integer"
+    },
+    "accepted_decision_count": {
+      "minimum": 0,
+      "title": "Accepted Decision Count",
+      "type": "integer"
+    },
+    "needs_fix_decision_count": {
+      "minimum": 0,
+      "title": "Needs Fix Decision Count",
+      "type": "integer"
+    },
+    "deferred_decision_count": {
+      "minimum": 0,
+      "title": "Deferred Decision Count",
+      "type": "integer"
+    },
+    "not_applicable_decision_count": {
+      "minimum": 0,
+      "title": "Not Applicable Decision Count",
+      "type": "integer"
+    },
+    "reviewed_row_count": {
+      "minimum": 0,
+      "title": "Reviewed Row Count",
+      "type": "integer"
+    },
+    "unreviewed_row_count": {
+      "minimum": 0,
+      "title": "Unreviewed Row Count",
+      "type": "integer"
+    },
+    "unknown_row_count": {
+      "minimum": 0,
+      "title": "Unknown Row Count",
+      "type": "integer"
+    },
+    "unresolved_followup_count": {
+      "minimum": 0,
+      "title": "Unresolved Followup Count",
+      "type": "integer"
+    },
+    "reviewed_row_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Reviewed Row Ids",
+      "type": "array"
+    },
+    "unreviewed_row_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Unreviewed Row Ids",
+      "type": "array"
+    },
+    "unknown_row_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Unknown Row Ids",
+      "type": "array"
+    },
+    "required_followups": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Followups",
+      "type": "array"
+    },
+    "candidate_lake_event_labels": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Candidate Lake Event Labels",
+      "type": "array"
+    },
+    "append_only_history_ref": {
+      "title": "Append Only History Ref",
+      "type": "string"
+    },
+    "required_next_actions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Actions",
+      "type": "array"
+    },
+    "append_only": {
+      "const": true,
+      "default": true,
+      "title": "Append Only",
+      "type": "boolean"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "local_json_only": {
+      "const": true,
+      "default": true,
+      "title": "Local Json Only",
+      "type": "boolean"
+    },
+    "human_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Human Review Required",
+      "type": "boolean"
+    },
+    "not_authorized_for_external_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For External Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_lake_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Lake Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_sqlite_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Sqlite Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_budget_submission": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Budget Submission",
+      "type": "boolean"
+    },
+    "not_authorized_for_matter_opening": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Matter Opening",
+      "type": "boolean"
+    },
+    "not_authorized_for_calibration": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Calibration",
+      "type": "boolean"
+    },
+    "budget_amount_output_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Amount Output Authorized",
+      "type": "boolean"
+    },
+    "budget_submission_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Submission Authorized",
+      "type": "boolean"
+    },
+    "conflict_conclusion_emitted": {
+      "const": false,
+      "default": false,
+      "title": "Conflict Conclusion Emitted",
+      "type": "boolean"
+    },
+    "matter_opening_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Matter Opening Authorized",
+      "type": "boolean"
+    },
+    "training_pipeline_created": {
+      "const": false,
+      "default": false,
+      "title": "Training Pipeline Created",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "synthetic_qa_review_outcome_report_id",
+    "status",
+    "source_synthetic_qa_blocker_report_ref",
+    "source_synthetic_qa_blocker_report_id",
+    "source_synthetic_qa_blocker_report_status",
+    "synthetic_qa_review_outcome_record_id",
+    "reviewer_id",
+    "reviewed_at",
+    "decision_reason",
+    "source_row_count",
+    "decision_count",
+    "accepted_decision_count",
+    "needs_fix_decision_count",
+    "deferred_decision_count",
+    "not_applicable_decision_count",
+    "reviewed_row_count",
+    "unreviewed_row_count",
+    "unknown_row_count",
+    "unresolved_followup_count",
+    "reviewed_row_ids",
+    "unreviewed_row_ids",
+    "unknown_row_ids",
+    "required_followups",
+    "candidate_lake_event_labels",
+    "append_only_history_ref",
+    "required_next_actions",
+    "generated_at"
+  ],
+  "title": "SyntheticQABlockerReviewOutcomeReport",
+  "type": "object"
+}
