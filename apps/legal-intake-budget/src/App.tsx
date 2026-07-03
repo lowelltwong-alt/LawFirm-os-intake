@@ -8,6 +8,7 @@ import demoManifest from "./fixtures/demo-run-manifest.json";
 import demoMatterLinkingPreflight from "./fixtures/demo-matter-linking-preflight-report.json";
 import demoPocQATriage from "./fixtures/demo-poc-qa-triage-report.json";
 import demoSyntheticQABlockerReport from "./fixtures/demo-synthetic-qa-blocker-report.json";
+import demoSyntheticQAReviewOutcome from "./fixtures/demo-synthetic-qa-review-outcome-report.json";
 import demoSyntheticConfidenceSummary from "./fixtures/demo-synthetic-confidence-summary-report.json";
 import demoSyntheticQAReviewRun from "./fixtures/demo-synthetic-qa-review-run-report.json";
 import demoReviewDataBundle from "./fixtures/demo-ui-review-data-bundle.json";
@@ -20,6 +21,7 @@ import {
   assertPOCQATriageReport,
   assertReadOnlyManifest,
   assertSyntheticQABlockerReport,
+  assertSyntheticQAReviewOutcomeReport,
   assertSyntheticConfidenceSummaryReport,
   assertSyntheticQAReviewRunReport,
   assertUIReviewDataBundle,
@@ -47,6 +49,8 @@ import type {
   SyntheticQABlockerActionState,
   SyntheticQABlockerReport,
   SyntheticQABlockerRowState,
+  SyntheticQAReviewOutcomeReport,
+  SyntheticQAReviewOutcomeStatus,
   SyntheticConfidenceSummaryReport,
   SyntheticConfidenceSummaryItemState,
   SyntheticQAReviewRunReport,
@@ -60,6 +64,8 @@ const reviewDataBundle = demoReviewDataBundle as UIReviewDataBundle;
 const manifest = demoManifest as ReviewManifest;
 const syntheticQAReviewRun = demoSyntheticQAReviewRun as SyntheticQAReviewRunReport;
 const syntheticQABlockerReport = demoSyntheticQABlockerReport as SyntheticQABlockerReport;
+const syntheticQAReviewOutcome =
+  demoSyntheticQAReviewOutcome as SyntheticQAReviewOutcomeReport;
 const syntheticConfidenceSummary =
   demoSyntheticConfidenceSummary as SyntheticConfidenceSummaryReport;
 const pocQATriage = demoPocQATriage as POCQATriageReport;
@@ -75,6 +81,8 @@ const bundleContractFailures = assertUIReviewDataBundle(reviewDataBundle);
 const manifestContractFailures = assertReadOnlyManifest(manifest);
 const syntheticQAReviewRunFailures = assertSyntheticQAReviewRunReport(syntheticQAReviewRun);
 const syntheticQABlockerFailures = assertSyntheticQABlockerReport(syntheticQABlockerReport);
+const syntheticQAReviewOutcomeFailures =
+  assertSyntheticQAReviewOutcomeReport(syntheticQAReviewOutcome);
 const syntheticConfidenceSummaryFailures =
   assertSyntheticConfidenceSummaryReport(syntheticConfidenceSummary);
 const pocQATriageFailures = assertPOCQATriageReport(pocQATriage);
@@ -92,6 +100,7 @@ const contractFailures = [
   ...manifestContractFailures,
   ...syntheticQAReviewRunFailures,
   ...syntheticQABlockerFailures,
+  ...syntheticQAReviewOutcomeFailures,
   ...syntheticConfidenceSummaryFailures,
   ...pocQATriageFailures,
   ...validationSuiteEvidenceFailures,
@@ -108,6 +117,7 @@ function gateClass(
     | QualityGateStatus
     | SyntheticQABlockerRowState
     | POCQATriageItemStatus
+    | SyntheticQAReviewOutcomeStatus
     | ValidationSuiteStepStatus,
 ) {
   return `state state-${state.replace("_", "-")}`;
@@ -138,6 +148,16 @@ function qaActionClass(actionState: SyntheticQABlockerActionState) {
     return "state state-blocked";
   }
   if (actionState === "needs_review") {
+    return "state state-pending";
+  }
+  return "state state-passed";
+}
+
+function qaReviewOutcomeClass(status: SyntheticQAReviewOutcomeStatus) {
+  if (status === "blocked_by_synthetic_qa_review_outcome") {
+    return "state state-blocked";
+  }
+  if (status === "synthetic_qa_review_outcome_recorded_pending_followup") {
     return "state state-pending";
   }
   return "state state-passed";
@@ -439,6 +459,107 @@ function SyntheticQABlockerDrilldownPanel({ report }: { report: SyntheticQABlock
           ))}
         </div>
       </div>
+    </section>
+  );
+}
+
+function SyntheticQAReviewOutcomePanel({
+  report,
+}: {
+  report: SyntheticQAReviewOutcomeReport;
+}) {
+  const statusClass =
+    syntheticQAReviewOutcomeFailures.length === 0
+      ? qaReviewOutcomeClass(report.status)
+      : "state state-failed";
+
+  return (
+    <section className="panel qa-review-outcome-panel" aria-labelledby="qa-review-outcome-title">
+      <div className="panel-heading">
+        <div>
+          <p className="eyebrow">Append-only QA review</p>
+          <h2 id="qa-review-outcome-title">Synthetic QA Review Outcome</h2>
+          <code>{report.synthetic_qa_review_outcome_report_id}</code>
+        </div>
+        <span className={statusClass}>
+          {report.status === "synthetic_qa_review_outcome_recorded"
+            ? "recorded"
+            : report.status === "synthetic_qa_review_outcome_recorded_pending_followup"
+              ? "pending followup"
+              : "blocked"}
+        </span>
+      </div>
+
+      <div className="outcome-source">
+        <span>Source Queue</span>
+        <code>{report.source_synthetic_qa_blocker_report_id}</code>
+        <span>Reviewer</span>
+        <code>{report.reviewer_id}</code>
+      </div>
+
+      <div className="matrix-summary" aria-label="Synthetic QA review outcome summary">
+        <div>
+          <span>Reviewed Rows</span>
+          <strong>
+            {report.reviewed_row_count}/{report.source_row_count}
+          </strong>
+        </div>
+        <div>
+          <span>Unreviewed</span>
+          <strong>{report.unreviewed_row_count}</strong>
+        </div>
+        <div>
+          <span>Needs Fix</span>
+          <strong>{report.needs_fix_decision_count}</strong>
+        </div>
+        <div>
+          <span>Deferred</span>
+          <strong>{report.deferred_decision_count}</strong>
+        </div>
+        <div>
+          <span>Accepted</span>
+          <strong>{report.accepted_decision_count}</strong>
+        </div>
+        <div>
+          <span>Followups</span>
+          <strong>{report.unresolved_followup_count}</strong>
+        </div>
+      </div>
+
+      <div className="outcome-grid">
+        <article>
+          <strong>Reviewed Rows</strong>
+          <TokenList items={report.reviewed_row_ids} limit={6} />
+        </article>
+        <article>
+          <strong>Open Rows</strong>
+          <TokenList items={report.unreviewed_row_ids} limit={6} />
+        </article>
+        <article>
+          <strong>Required Followups</strong>
+          <TokenList items={report.required_followups} limit={4} />
+        </article>
+        <article>
+          <strong>Candidate Lake Labels</strong>
+          <TokenList items={report.candidate_lake_event_labels} limit={5} />
+        </article>
+      </div>
+
+      <div className="next-gates">
+        <h3>Outcome Next Actions</h3>
+        <div>
+          {report.required_next_actions.map((action) => (
+            <code key={action}>{action}</code>
+          ))}
+        </div>
+      </div>
+
+      <p className="boundary">
+        Append-only local QA evidence. Calibration:{" "}
+        {report.not_authorized_for_calibration ? "blocked" : "not blocked"}. Lake writes:{" "}
+        {report.lake_write_performed ? "not blocked" : "blocked"}. Silent learning:{" "}
+        {report.silent_learning_performed ? "not blocked" : "blocked"}.
+      </p>
     </section>
   );
 }
@@ -1353,6 +1474,7 @@ function App() {
       <POCQATriagePanel report={pocQATriage} />
       <ValidationSuiteEvidencePanel report={validationSuiteEvidence} />
       <SyntheticQABlockerDrilldownPanel report={syntheticQABlockerReport} />
+      <SyntheticQAReviewOutcomePanel report={syntheticQAReviewOutcome} />
       <SyntheticQAReviewRunPanel report={syntheticQAReviewRun} />
       <div className="grid-layout">
         <BoundaryGrid manifest={manifest} />
