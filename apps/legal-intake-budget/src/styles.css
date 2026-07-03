@@ -121,10 +121,17 @@ code {
 }
 
 .state-pending,
-.state-pending-review {
+.state-pending-review,
+.state-needs-review {
   border-color: #c2a04b;
   background: #fff5cf;
   color: #70561a;
+}
+
+.state-watch {
+  border-color: #7ea4b3;
+  background: #eef8fb;
+  color: #245166;
 }
 
 .metric-strip {
@@ -332,6 +339,10 @@ code {
   margin-bottom: 14px;
 }
 
+.poc-triage-panel {
+  margin-bottom: 14px;
+}
+
 .qa-blocker-panel {
   margin-bottom: 14px;
 }
@@ -417,6 +428,55 @@ code {
   color: #2f3932;
   font-size: 0.86rem;
   line-height: 1.42;
+}
+
+.triage-stack {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.triage-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  min-height: 154px;
+  padding: 12px;
+  border: 1px solid #dde4d8;
+  border-radius: 8px;
+  background: #fbfcfa;
+}
+
+.triage-item strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.triage-item p,
+.triage-item .token-list {
+  grid-column: 1 / -1;
+}
+
+.triage-item p {
+  margin: 0;
+  color: #2f3932;
+  font-size: 0.88rem;
+  line-height: 1.42;
+}
+
+.triage-blocked {
+  border-color: #d9a09a;
+  background: #fff8f7;
+}
+
+.triage-needs_review {
+  border-color: #dcc67e;
+  background: #fffbec;
+}
+
+.triage-watch {
+  border-color: #a8c9d6;
+  background: #f4fbfd;
 }
 
 .recipe-summary {
@@ -760,6 +820,10 @@ td:nth-child(4) {
   }
 
   .confidence-item-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .triage-stack {
     grid-template-columns: 1fr;
   }
 

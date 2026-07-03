@@ -174,6 +174,19 @@
       ]
     },
     {
+      "artifactId": "poc-qa-triage",
+      "label": "POC QA Triage",
+      "fileName": "poc_qa_triage_report.json",
+      "status": "blocked",
+      "owner": "qa-reference",
+      "gateState": "blocked",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": [
+        "Found quality\\poc_qa_triage_report.json; status=blocked_by_poc_qa_triage because fresh wrapper-based validation evidence is not attached."
+      ]
+    },
+    {
       "artifactId": "synthetic-qa-blocker-report",
       "label": "Synthetic QA Blocker Report",
       "fileName": "synthetic_qa_blocker_report.json",
@@ -486,6 +499,16 @@
       "owner": "qa-reference",
       "notes": [
         "The aggregate synthetic QA confidence banner must make review readiness, blockers, and no-production-authority boundaries visible."
+      ]
+    },
+    {
+      "gateId": "poc_qa_triage",
+      "label": "POC QA Triage",
+      "status": "blocked",
+      "evidenceFile": "poc_qa_triage_report.json",
+      "owner": "qa-reference",
+      "notes": [
+        "The POC QA triage queue must convert synthetic QA, matter-linking, L&E budget facts, and validation evidence into review actions before QA can call the POC ready."
       ]
     },
     {

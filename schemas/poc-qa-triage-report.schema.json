@@ -1,0 +1,327 @@
+{
+  "$defs": {
+    "POCQATriageItem": {
+      "additionalProperties": false,
+      "properties": {
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "category": {
+          "enum": [
+            "synthetic_qa",
+            "review_queue",
+            "matter_linking",
+            "labor_employment_budget_facts",
+            "budget_output",
+            "public_data_boundary",
+            "production_boundary"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "priority": {
+          "enum": [
+            "p0",
+            "p1",
+            "p2",
+            "watch"
+          ],
+          "title": "Priority",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "needs_review",
+            "watch",
+            "blocked"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "summary": {
+          "title": "Summary",
+          "type": "string"
+        },
+        "recommended_next_action": {
+          "title": "Recommended Next Action",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "candidate_exception_lake_labels": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Candidate Exception Lake Labels",
+          "type": "array"
+        }
+      },
+      "required": [
+        "item_id",
+        "category",
+        "priority",
+        "status",
+        "summary",
+        "recommended_next_action"
+      ],
+      "title": "POCQATriageItem",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "poc_qa_triage_report_id": {
+      "title": "Poc Qa Triage Report Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "poc_qa_ready_for_review",
+        "blocked_by_poc_qa_triage"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "source_ui_manifest_id": {
+      "title": "Source Ui Manifest Id",
+      "type": "string"
+    },
+    "source_synthetic_confidence_summary_report_id": {
+      "title": "Source Synthetic Confidence Summary Report Id",
+      "type": "string"
+    },
+    "source_synthetic_qa_review_run_report_id": {
+      "title": "Source Synthetic Qa Review Run Report Id",
+      "type": "string"
+    },
+    "source_synthetic_qa_blocker_report_id": {
+      "title": "Source Synthetic Qa Blocker Report Id",
+      "type": "string"
+    },
+    "source_matter_linking_preflight_report_id": {
+      "title": "Source Matter Linking Preflight Report Id",
+      "type": "string"
+    },
+    "source_labor_employment_qa_matrix_report_id": {
+      "title": "Source Labor Employment Qa Matrix Report Id",
+      "type": "string"
+    },
+    "source_blocked_driver_impact_review_report_id": {
+      "title": "Source Blocked Driver Impact Review Report Id",
+      "type": "string"
+    },
+    "source_budget_output_expectation_report_id": {
+      "title": "Source Budget Output Expectation Report Id",
+      "type": "string"
+    },
+    "item_count": {
+      "minimum": 0,
+      "title": "Item Count",
+      "type": "integer"
+    },
+    "passed_item_count": {
+      "minimum": 0,
+      "title": "Passed Item Count",
+      "type": "integer"
+    },
+    "needs_review_item_count": {
+      "minimum": 0,
+      "title": "Needs Review Item Count",
+      "type": "integer"
+    },
+    "watch_item_count": {
+      "minimum": 0,
+      "title": "Watch Item Count",
+      "type": "integer"
+    },
+    "blocked_item_count": {
+      "minimum": 0,
+      "title": "Blocked Item Count",
+      "type": "integer"
+    },
+    "p0_blocked_item_count": {
+      "minimum": 0,
+      "title": "P0 Blocked Item Count",
+      "type": "integer"
+    },
+    "items": {
+      "items": {
+        "$ref": "#/$defs/POCQATriageItem"
+      },
+      "title": "Items",
+      "type": "array"
+    },
+    "required_next_actions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Actions",
+      "type": "array"
+    },
+    "display_banner": {
+      "additionalProperties": true,
+      "title": "Display Banner",
+      "type": "object"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "local_json_only": {
+      "const": true,
+      "default": true,
+      "title": "Local Json Only",
+      "type": "boolean"
+    },
+    "human_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Human Review Required",
+      "type": "boolean"
+    },
+    "not_authorized_for_external_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For External Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_lake_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Lake Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_sqlite_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Sqlite Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_budget_submission": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Budget Submission",
+      "type": "boolean"
+    },
+    "not_authorized_for_matter_opening": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Matter Opening",
+      "type": "boolean"
+    },
+    "not_authorized_for_calibration": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Calibration",
+      "type": "boolean"
+    },
+    "budget_amount_output_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Amount Output Authorized",
+      "type": "boolean"
+    },
+    "budget_submission_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Submission Authorized",
+      "type": "boolean"
+    },
+    "conflict_conclusion_emitted": {
+      "const": false,
+      "default": false,
+      "title": "Conflict Conclusion Emitted",
+      "type": "boolean"
+    },
+    "matter_opening_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Matter Opening Authorized",
+      "type": "boolean"
+    },
+    "training_pipeline_created": {
+      "const": false,
+      "default": false,
+      "title": "Training Pipeline Created",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "poc_qa_triage_report_id",
+    "status",
+    "source_ui_manifest_id",
+    "source_synthetic_confidence_summary_report_id",
+    "source_synthetic_qa_review_run_report_id",
+    "source_synthetic_qa_blocker_report_id",
+    "source_matter_linking_preflight_report_id",
+    "source_labor_employment_qa_matrix_report_id",
+    "source_blocked_driver_impact_review_report_id",
+    "source_budget_output_expectation_report_id",
+    "item_count",
+    "passed_item_count",
+    "needs_review_item_count",
+    "watch_item_count",
+    "blocked_item_count",
+    "p0_blocked_item_count",
+    "items",
+    "required_next_actions",
+    "display_banner",
+    "generated_at"
+  ],
+  "title": "POCQATriageReport",
+  "type": "object"
+}

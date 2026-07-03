@@ -4,6 +4,7 @@ import type {
   LaborEmploymentBlockedDriverImpactReviewReport,
   LaborEmploymentQAMatrixReport,
   MatterLinkingPreflightReport,
+  POCQATriageReport,
   QualityGate,
   ReviewArtifact,
   ReviewManifest,
@@ -26,6 +27,7 @@ export const REQUIRED_ARTIFACT_FILES = [
   "synthetic_qa_bundle_report.json",
   "synthetic_qa_review_run_report.json",
   "synthetic_confidence_summary_report.json",
+  "poc_qa_triage_report.json",
   "synthetic_qa_blocker_report.json",
   "matter_linking_preflight_report.json",
   "synthetic_fixture_depth_audit_report.json",
@@ -303,6 +305,82 @@ export function assertSyntheticConfidenceSummaryReport(
   }
   if (!report.required_next_actions.length) {
     failures.push("synthetic_confidence_summary_missing_next_actions");
+  }
+  return failures;
+}
+
+export function assertPOCQATriageReport(report: POCQATriageReport): string[] {
+  const failures: string[] = [];
+  if (!report.candidate_only || !report.synthetic_only || !report.non_authoritative) {
+    failures.push("poc_qa_triage_authority_boundary_failed");
+  }
+  if (!report.local_json_only || !report.human_review_required) {
+    failures.push("poc_qa_triage_review_boundary_failed");
+  }
+  if (
+    !report.not_authorized_for_lake_write ||
+    !report.not_authorized_for_sqlite_write ||
+    !report.not_authorized_for_budget_submission ||
+    !report.not_authorized_for_matter_opening ||
+    report.budget_amount_output_authorized ||
+    report.budget_submission_authorized ||
+    report.conflict_conclusion_emitted ||
+    report.matter_opening_authorized ||
+    report.training_pipeline_created ||
+    report.lake_write_performed ||
+    report.sqlite_write_performed ||
+    report.external_writes_performed ||
+    report.silent_learning_performed
+  ) {
+    failures.push("poc_qa_triage_side_effect_boundary_failed");
+  }
+  const passed = report.items.filter((item) => item.status === "passed");
+  const needsReview = report.items.filter((item) => item.status === "needs_review");
+  const watch = report.items.filter((item) => item.status === "watch");
+  const blocked = report.items.filter((item) => item.status === "blocked");
+  const p0Blocked = blocked.filter((item) => item.priority === "p0");
+  if (report.item_count !== report.items.length) {
+    failures.push("poc_qa_triage_item_count_mismatch");
+  }
+  if (report.passed_item_count !== passed.length) {
+    failures.push("poc_qa_triage_passed_count_mismatch");
+  }
+  if (report.needs_review_item_count !== needsReview.length) {
+    failures.push("poc_qa_triage_needs_review_count_mismatch");
+  }
+  if (report.watch_item_count !== watch.length) {
+    failures.push("poc_qa_triage_watch_count_mismatch");
+  }
+  if (report.blocked_item_count !== blocked.length) {
+    failures.push("poc_qa_triage_blocked_count_mismatch");
+  }
+  if (report.p0_blocked_item_count !== p0Blocked.length) {
+    failures.push("poc_qa_triage_p0_blocked_count_mismatch");
+  }
+  if (report.status === "poc_qa_ready_for_review" && blocked.length > 0) {
+    failures.push("poc_qa_triage_ready_with_blockers");
+  }
+  if (report.status === "blocked_by_poc_qa_triage" && blocked.length === 0) {
+    failures.push("poc_qa_triage_blocked_without_blockers");
+  }
+  for (const item of report.items) {
+    if (
+      !item.item_id ||
+      !item.summary ||
+      !item.recommended_next_action ||
+      item.evidence_refs.length === 0
+    ) {
+      failures.push(`poc_qa_triage_item_not_actionable:${item.item_id}`);
+    }
+    if (
+      (item.status === "needs_review" || item.status === "blocked") &&
+      item.candidate_exception_lake_labels.length === 0
+    ) {
+      failures.push(`poc_qa_triage_item_missing_labels:${item.item_id}`);
+    }
+  }
+  if (!report.required_next_actions.length) {
+    failures.push("poc_qa_triage_missing_next_actions");
   }
   return failures;
 }

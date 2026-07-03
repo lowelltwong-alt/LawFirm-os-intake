@@ -1,0 +1,74 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "item_id": {
+      "title": "Item Id",
+      "type": "string"
+    },
+    "category": {
+      "enum": [
+        "synthetic_qa",
+        "review_queue",
+        "matter_linking",
+        "labor_employment_budget_facts",
+        "budget_output",
+        "public_data_boundary",
+        "production_boundary"
+      ],
+      "title": "Category",
+      "type": "string"
+    },
+    "priority": {
+      "enum": [
+        "p0",
+        "p1",
+        "p2",
+        "watch"
+      ],
+      "title": "Priority",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "passed",
+        "needs_review",
+        "watch",
+        "blocked"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "summary": {
+      "title": "Summary",
+      "type": "string"
+    },
+    "recommended_next_action": {
+      "title": "Recommended Next Action",
+      "type": "string"
+    },
+    "evidence_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Evidence Refs",
+      "type": "array"
+    },
+    "candidate_exception_lake_labels": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Candidate Exception Lake Labels",
+      "type": "array"
+    }
+  },
+  "required": [
+    "item_id",
+    "category",
+    "priority",
+    "status",
+    "summary",
+    "recommended_next_action"
+  ],
+  "title": "POCQATriageItem",
+  "type": "object"
+}

@@ -105,6 +105,7 @@ from .models import BudgetProposal, HumanConfirmation
 from .orchestrator_owner_review_request import run_orchestrator_owner_review_request
 from .pr_readiness_decision import run_pr_readiness_decision_record
 from .pr_review_checklist import run_pr_review_checklist
+from .poc_qa_triage import run_poc_qa_triage_report
 from .public_data_cache import run_public_data_cache_audit
 from .public_source_methodology import run_public_source_methodology_audit
 from .public_synthetic_fixture_pr_package import run_public_synthetic_fixture_pr_package
@@ -263,6 +264,29 @@ def _parser() -> argparse.ArgumentParser:
     synthetic_qa_blocker_report.add_argument("--synthetic-qa-review-run-report", required=True)
     synthetic_qa_blocker_report.add_argument("--out-dir", required=True)
     synthetic_qa_blocker_report.add_argument(
+        "--generated-at",
+        help="Optional fixed timestamp for deterministic tests and replayed reports.",
+    )
+
+    poc_qa_triage = sub.add_parser(
+        "build-poc-qa-triage-report",
+        help=(
+            "Build an actionable POC QA triage queue from the local synthetic QA "
+            "and read-only UI evidence artifacts."
+        ),
+    )
+    poc_qa_triage.add_argument("--ui-manifest", required=True)
+    poc_qa_triage.add_argument("--synthetic-confidence-summary", required=True)
+    poc_qa_triage.add_argument("--synthetic-qa-review-run-report", required=True)
+    poc_qa_triage.add_argument("--synthetic-qa-blocker-report", required=True)
+    poc_qa_triage.add_argument("--ui-review-data-bundle", required=True)
+    poc_qa_triage.add_argument("--matter-linking-preflight", required=True)
+    poc_qa_triage.add_argument("--labor-employment-qa-matrix", required=True)
+    poc_qa_triage.add_argument("--blocked-driver-impact-review", required=True)
+    poc_qa_triage.add_argument("--budget-output-expectations", required=True)
+    poc_qa_triage.add_argument("--out-dir", required=True)
+    poc_qa_triage.add_argument("--repo-root", default=".")
+    poc_qa_triage.add_argument(
         "--generated-at",
         help="Optional fixed timestamp for deterministic tests and replayed reports.",
     )
@@ -1717,6 +1741,41 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 0 if report.status == "synthetic_qa_blocker_report_ready_for_review" else 2
+
+        if args.command == "build-poc-qa-triage-report":
+            report, run_dir = run_poc_qa_triage_report(
+                ui_manifest_path=args.ui_manifest,
+                synthetic_confidence_summary_path=args.synthetic_confidence_summary,
+                synthetic_qa_review_run_path=args.synthetic_qa_review_run_report,
+                synthetic_qa_blocker_report_path=args.synthetic_qa_blocker_report,
+                ui_review_data_bundle_path=args.ui_review_data_bundle,
+                matter_linking_preflight_path=args.matter_linking_preflight,
+                labor_employment_qa_matrix_path=args.labor_employment_qa_matrix,
+                blocked_driver_impact_review_path=args.blocked_driver_impact_review,
+                budget_output_expectations_path=args.budget_output_expectations,
+                out_dir=args.out_dir,
+                repo_root=args.repo_root,
+                generated_at=args.generated_at,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "poc_qa_triage_report_id": report.poc_qa_triage_report_id,
+                    "run_dir": str(run_dir),
+                    "item_count": report.item_count,
+                    "passed_item_count": report.passed_item_count,
+                    "needs_review_item_count": report.needs_review_item_count,
+                    "watch_item_count": report.watch_item_count,
+                    "blocked_item_count": report.blocked_item_count,
+                    "p0_blocked_item_count": report.p0_blocked_item_count,
+                    "budget_submission_authorized": report.budget_submission_authorized,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                }
+            )
+            return 0 if report.status == "poc_qa_ready_for_review" else 2
 
         if args.command == "build-synthetic-qa-bundle":
             report, run_dir, ui_manifest = run_synthetic_qa_bundle(
