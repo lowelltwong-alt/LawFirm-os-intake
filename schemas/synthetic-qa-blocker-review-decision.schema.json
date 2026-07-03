@@ -1,0 +1,71 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "decision_id": {
+      "title": "Decision Id",
+      "type": "string"
+    },
+    "row_id": {
+      "title": "Row Id",
+      "type": "string"
+    },
+    "outcome": {
+      "enum": [
+        "accepted_for_poc_review",
+        "needs_fix",
+        "defer_to_roadmap",
+        "not_applicable"
+      ],
+      "title": "Outcome",
+      "type": "string"
+    },
+    "decision_reason": {
+      "title": "Decision Reason",
+      "type": "string"
+    },
+    "evidence_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Evidence Refs",
+      "type": "array"
+    },
+    "required_followups": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Followups",
+      "type": "array"
+    },
+    "red_team_notes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Red Team Notes",
+      "type": "array"
+    },
+    "candidate_exception_lake_labels": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Candidate Exception Lake Labels",
+      "type": "array"
+    }
+  },
+  "required": [
+    "decision_id",
+    "row_id",
+    "outcome",
+    "decision_reason",
+    "evidence_refs",
+    "red_team_notes",
+    "candidate_exception_lake_labels"
+  ],
+  "title": "SyntheticQABlockerReviewDecision",
+  "type": "object"
+}

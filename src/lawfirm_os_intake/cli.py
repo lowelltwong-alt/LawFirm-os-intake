@@ -125,6 +125,7 @@ from .synthetic_fixture_expansion import run_synthetic_fixture_expansion_audit
 from .synthetic_confidence_summary import run_synthetic_confidence_summary
 from .synthetic_qa_blocker_report import run_synthetic_qa_blocker_report
 from .synthetic_qa_bundle import run_synthetic_qa_bundle
+from .synthetic_qa_review_outcomes import run_synthetic_qa_review_outcome_record
 from .synthetic_qa_review_run import run_synthetic_qa_review_run
 from .ui_review_data_bundle import build_ui_review_data_bundle
 from .ui_review_manifest import build_ui_review_manifest
@@ -264,6 +265,21 @@ def _parser() -> argparse.ArgumentParser:
     synthetic_qa_blocker_report.add_argument("--synthetic-qa-review-run-report", required=True)
     synthetic_qa_blocker_report.add_argument("--out-dir", required=True)
     synthetic_qa_blocker_report.add_argument(
+        "--generated-at",
+        help="Optional fixed timestamp for deterministic tests and replayed reports.",
+    )
+
+    synthetic_qa_review_outcome = sub.add_parser(
+        "record-synthetic-qa-review-outcome",
+        help=(
+            "Record append-only candidate review decisions for a synthetic QA "
+            "blocker queue without applying learning or writes."
+        ),
+    )
+    synthetic_qa_review_outcome.add_argument("--synthetic-qa-blocker-report", required=True)
+    synthetic_qa_review_outcome.add_argument("--outcome", required=True)
+    synthetic_qa_review_outcome.add_argument("--out-dir", required=True)
+    synthetic_qa_review_outcome.add_argument(
         "--generated-at",
         help="Optional fixed timestamp for deterministic tests and replayed reports.",
     )
@@ -1742,6 +1758,34 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 0 if report.status == "synthetic_qa_blocker_report_ready_for_review" else 2
+
+        if args.command == "record-synthetic-qa-review-outcome":
+            report, run_dir = run_synthetic_qa_review_outcome_record(
+                synthetic_qa_blocker_report_path=args.synthetic_qa_blocker_report,
+                outcome_path=args.outcome,
+                out_dir=args.out_dir,
+                generated_at=args.generated_at,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "synthetic_qa_review_outcome_report_id": (
+                        report.synthetic_qa_review_outcome_report_id
+                    ),
+                    "run_dir": str(run_dir),
+                    "decision_count": report.decision_count,
+                    "reviewed_row_count": report.reviewed_row_count,
+                    "unreviewed_row_count": report.unreviewed_row_count,
+                    "unresolved_followup_count": report.unresolved_followup_count,
+                    "append_only_history_ref": report.append_only_history_ref,
+                    "budget_submission_authorized": report.budget_submission_authorized,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                }
+            )
+            return 2 if report.status == "blocked_by_synthetic_qa_review_outcome" else 0
 
         if args.command == "build-poc-qa-triage-report":
             report, run_dir = run_poc_qa_triage_report(
