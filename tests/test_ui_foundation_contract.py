@@ -19,6 +19,7 @@ def test_legal_intake_budget_ui_required_files_exist(repo_root):
         "src/fixtures/demo-poc-qa-triage-report.json",
         "src/fixtures/demo-synthetic-qa-blocker-report.json",
         "src/fixtures/demo-synthetic-qa-bundle-report.json",
+        "src/fixtures/demo-synthetic-qa-review-outcome-report.json",
         "src/fixtures/demo-synthetic-qa-review-run-report.json",
         "src/fixtures/demo-ui-review-data-bundle.json",
         "src/fixtures/demo-validation-suite-evidence-report.json",
@@ -148,9 +149,9 @@ def test_legal_intake_budget_demo_ui_review_data_bundle_is_local_and_no_write(re
     detail_reports = {report["file_name"]: report for report in bundle["detail_reports"]}
 
     assert bundle["status"] == "ready_for_review"
-    assert bundle["detail_report_count"] == len(bundle["detail_reports"]) == 8
+    assert bundle["detail_report_count"] == len(bundle["detail_reports"]) == 9
     assert bundle["required_detail_report_count"] == 5
-    assert bundle["present_detail_report_count"] == 8
+    assert bundle["present_detail_report_count"] == 9
     assert bundle["missing_required_detail_report_count"] == 0
     assert bundle["external_write_report_count"] == 0
     assert bundle["candidate_only"] is True
@@ -167,6 +168,7 @@ def test_legal_intake_budget_demo_ui_review_data_bundle_is_local_and_no_write(re
         "ui_review_manifest.json",
         "synthetic_confidence_summary_report.json",
         "synthetic_qa_blocker_report.json",
+        "synthetic_qa_review_outcome_report.json",
         "synthetic_qa_review_run_report.json",
         "matter_linking_preflight_report.json",
         "labor_employment_qa_matrix_report.json",
@@ -313,6 +315,8 @@ def test_legal_intake_budget_demo_synthetic_confidence_summary_is_no_write(repo_
     assert report["top_blockers"] == []
     assert report["qa_failed_step_count"] == 0
     assert report["qa_missing_required_artifact_count"] == 0
+    assert report["ui_detail_report_count"] == 9
+    assert report["ui_present_detail_report_count"] == 9
     assert report["ui_missing_required_detail_report_count"] == 0
     assert report["display_banner"]["candidate_only"] is True
     assert report["display_banner"]["synthetic_only"] is True
@@ -438,6 +442,41 @@ def test_legal_intake_budget_demo_synthetic_qa_blocker_report_is_no_write(repo_r
     assert all(row["notes"] for row in report["rows"])
 
 
+def test_legal_intake_budget_demo_synthetic_qa_review_outcome_is_no_write(repo_root):
+    report = json.loads(
+        (
+            repo_root / UI_ROOT / "src/fixtures/demo-synthetic-qa-review-outcome-report.json"
+        ).read_text(encoding="utf-8")
+    )
+
+    assert report["status"] == "synthetic_qa_review_outcome_recorded_pending_followup"
+    assert report["source_row_count"] == 17
+    assert report["reviewed_row_count"] == len(report["reviewed_row_ids"]) == 3
+    assert report["unreviewed_row_count"] == len(report["unreviewed_row_ids"]) == 14
+    assert report["decision_count"] == 3
+    assert report["accepted_decision_count"] == 1
+    assert report["needs_fix_decision_count"] == 1
+    assert report["deferred_decision_count"] == 1
+    assert report["unresolved_followup_count"] == len(report["required_followups"]) == 2
+    assert report["append_only"] is True
+    assert report["candidate_only"] is True
+    assert report["synthetic_only"] is True
+    assert report["non_authoritative"] is True
+    assert report["local_json_only"] is True
+    assert report["human_review_required"] is True
+    assert report["not_authorized_for_calibration"] is True
+    assert report["budget_submission_authorized"] is False
+    assert report["matter_opening_authorized"] is False
+    assert report["lake_write_performed"] is False
+    assert report["sqlite_write_performed"] is False
+    assert report["external_writes_performed"] is False
+    assert report["silent_learning_performed"] is False
+    assert (
+        "synthetic_qa_review_outcome_recorded_candidate" in (report["candidate_lake_event_labels"])
+    )
+    assert all(report["required_next_actions"])
+
+
 def test_legal_intake_budget_demo_budget_output_expectations_are_no_write(repo_root):
     report = json.loads(
         (
@@ -497,6 +536,7 @@ def test_legal_intake_budget_ui_disclaims_mutating_authority(repo_root):
     assert "POC QA Triage" in app
     assert "Validation Suite Evidence" in app
     assert "Synthetic QA Blocker Drilldown" in app
+    assert "Synthetic QA Review Outcome" in app
     assert "Synthetic QA Review Run" in app
     assert "Matter-Linking Preflight" in app
     assert "QA Gates" in app
@@ -510,6 +550,7 @@ def test_legal_intake_budget_ui_disclaims_mutating_authority(repo_root):
     assert "assertPOCQATriageReport" in app
     assert "assertValidationSuiteEvidenceReport" in app
     assert "assertSyntheticQABlockerReport" in app
+    assert "assertSyntheticQAReviewOutcomeReport" in app
     assert "assertSyntheticQAReviewRunReport" in app
     assert "assertMatterLinkingPreflightReport" in app
     assert "assertLaborEmploymentQAMatrixReport" in app
@@ -517,10 +558,12 @@ def test_legal_intake_budget_ui_disclaims_mutating_authority(repo_root):
     assert "assertLaborEmploymentBudgetOutputExpectationReport" in app
     assert "failingQualityGates" in app
     assert "qa-blocker-panel" in styles
+    assert "qa-review-outcome-panel" in styles
     assert "poc-triage-panel" in styles
     assert "validation-panel" in styles
     assert "triage-stack" in styles
     assert "validation-step-grid" in styles
+    assert "outcome-grid" in styles
     assert "qa-blocker-table" in styles
     assert "empty-state" in styles
     assert "fixture-drilldown-panel" in styles
@@ -556,6 +599,38 @@ def test_legal_intake_budget_qa_blocker_drilldown_tracks_review_queue(repo_root)
     assert blocker_report["budget_submission_authorized"] is False
     assert blocker_report["lake_write_performed"] is False
     assert blocker_report["silent_learning_performed"] is False
+
+
+def test_legal_intake_budget_qa_review_outcome_tracks_partial_review(repo_root):
+    app = (repo_root / UI_ROOT / "src/App.tsx").read_text(encoding="utf-8")
+    outcome_report = json.loads(
+        (
+            repo_root / UI_ROOT / "src/fixtures/demo-synthetic-qa-review-outcome-report.json"
+        ).read_text(encoding="utf-8")
+    )
+    bundle = json.loads(
+        (repo_root / UI_ROOT / "src/fixtures/demo-ui-review-data-bundle.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    detail_reports = {report["report_kind"]: report for report in bundle["detail_reports"]}
+
+    assert "demoSyntheticQAReviewOutcome" in app
+    assert "const syntheticQAReviewOutcome" in app
+    assert "SyntheticQAReviewOutcomePanel report={syntheticQAReviewOutcome}" in app
+    assert "qaReviewOutcomeClass" in app
+    assert "Calibration:" in app
+    assert outcome_report["reviewed_row_count"] == 3
+    assert outcome_report["unreviewed_row_count"] > 0
+    assert outcome_report["unresolved_followup_count"] > 0
+    assert outcome_report["not_authorized_for_calibration"] is True
+    assert outcome_report["lake_write_performed"] is False
+    assert outcome_report["silent_learning_performed"] is False
+    assert detail_reports["synthetic_qa_review_outcome"]["present"] is True
+    assert detail_reports["synthetic_qa_review_outcome"]["required"] is False
+    assert detail_reports["synthetic_qa_review_outcome"]["renderer"] == (
+        "SyntheticQAReviewOutcomePanel"
+    )
 
 
 def test_legal_intake_budget_fixture_drilldown_joins_existing_le_reports(repo_root):

@@ -26,6 +26,7 @@ The expected local artifact list and matrix guardrails live in
 `src/fixtures/demo-run-manifest.json`,
 `src/fixtures/demo-synthetic-confidence-summary-report.json`,
 `src/fixtures/demo-synthetic-qa-blocker-report.json`,
+`src/fixtures/demo-synthetic-qa-review-outcome-report.json`,
 `src/fixtures/demo-synthetic-qa-review-run-report.json`,
 `src/fixtures/demo-labor-employment-qa-matrix-report.json`, and
 `src/fixtures/demo-labor-employment-blocked-driver-impact-review-report.json`.
@@ -45,10 +46,13 @@ blocked-driver review, reviewed gold, the synthetic QA bundle, the UI manifest,
 `synthetic_qa_blocker_report.json`, and `ui_review_data_bundle.json`. The demo UI
 renders the confidence summary as the top-level synthetic QA posture panel, the
 blocker report as the review queue, and the review-run report as the recipe
-panel when they are present. The blocker report is the authority for row-level
+panel when they are present. A separately recorded
+`synthetic_qa_review_outcome_report.json` may be rendered as append-only QA
+review evidence. The blocker report remains the authority for row-level
 `action_state`, `recommended_next_action`, candidate Lake labels, and queue
 counts; the frontend must display those fields rather than re-deriving review
-outcomes.
+outcomes or treating outcome evidence as calibration, learning, Lake admission,
+budget approval, or production readiness.
 
 Regenerate only the synthetic QA bundle and UI wrappers with:
 

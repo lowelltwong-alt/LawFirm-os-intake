@@ -54,6 +54,14 @@ DETAIL_REPORT_SPECS = [
         required=False,
     ),
     UIReviewDetailSpec(
+        detail_report_id="synthetic-qa-review-outcome",
+        label="Synthetic QA Review Outcome",
+        report_kind="synthetic_qa_review_outcome",
+        file_name="synthetic_qa_review_outcome_report.json",
+        renderer="SyntheticQAReviewOutcomePanel",
+        required=False,
+    ),
+    UIReviewDetailSpec(
         detail_report_id="matter-linking-preflight",
         label="Matter-Linking Preflight",
         report_kind="matter_linking_preflight",

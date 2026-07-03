@@ -9,6 +9,7 @@ import type {
   ReviewArtifact,
   ReviewManifest,
   SyntheticQABlockerReport,
+  SyntheticQAReviewOutcomeReport,
   SyntheticConfidenceSummaryReport,
   SyntheticQAReviewRunReport,
   UIReviewDataBundle,
@@ -563,6 +564,87 @@ export function assertSyntheticQABlockerReport(report: SyntheticQABlockerReport)
   }
   if (!report.required_next_actions.length) {
     failures.push("synthetic_qa_blocker_report_missing_next_actions");
+  }
+  return failures;
+}
+
+export function assertSyntheticQAReviewOutcomeReport(
+  report: SyntheticQAReviewOutcomeReport,
+): string[] {
+  const failures: string[] = [];
+  if (
+    !report.append_only ||
+    !report.candidate_only ||
+    !report.synthetic_only ||
+    !report.non_authoritative ||
+    !report.local_json_only ||
+    !report.human_review_required
+  ) {
+    failures.push("synthetic_qa_review_outcome_authority_boundary_failed");
+  }
+  if (
+    !report.not_authorized_for_lake_write ||
+    !report.not_authorized_for_sqlite_write ||
+    !report.not_authorized_for_budget_submission ||
+    !report.not_authorized_for_matter_opening ||
+    !report.not_authorized_for_calibration ||
+    report.budget_amount_output_authorized ||
+    report.budget_submission_authorized ||
+    report.conflict_conclusion_emitted ||
+    report.matter_opening_authorized ||
+    report.training_pipeline_created ||
+    report.lake_write_performed ||
+    report.sqlite_write_performed ||
+    report.external_writes_performed ||
+    report.silent_learning_performed
+  ) {
+    failures.push("synthetic_qa_review_outcome_side_effect_boundary_failed");
+  }
+  if (
+    report.decision_count !==
+    report.accepted_decision_count +
+      report.needs_fix_decision_count +
+      report.deferred_decision_count +
+      report.not_applicable_decision_count
+  ) {
+    failures.push("synthetic_qa_review_outcome_decision_count_mismatch");
+  }
+  if (report.reviewed_row_count !== report.reviewed_row_ids.length) {
+    failures.push("synthetic_qa_review_outcome_reviewed_row_count_mismatch");
+  }
+  if (report.unreviewed_row_count !== report.unreviewed_row_ids.length) {
+    failures.push("synthetic_qa_review_outcome_unreviewed_row_count_mismatch");
+  }
+  if (report.unknown_row_count !== report.unknown_row_ids.length) {
+    failures.push("synthetic_qa_review_outcome_unknown_row_count_mismatch");
+  }
+  if (report.reviewed_row_count + report.unreviewed_row_count !== report.source_row_count) {
+    failures.push("synthetic_qa_review_outcome_source_coverage_mismatch");
+  }
+  if (report.unresolved_followup_count !== report.required_followups.length) {
+    failures.push("synthetic_qa_review_outcome_followup_count_mismatch");
+  }
+  if (
+    report.status === "synthetic_qa_review_outcome_recorded" &&
+    (report.unreviewed_row_count > 0 || report.unresolved_followup_count > 0)
+  ) {
+    failures.push("synthetic_qa_review_outcome_recorded_with_open_work");
+  }
+  if (
+    report.status === "synthetic_qa_review_outcome_recorded_pending_followup" &&
+    report.unreviewed_row_count + report.unresolved_followup_count === 0
+  ) {
+    failures.push("synthetic_qa_review_outcome_pending_without_open_work");
+  }
+  if (
+    report.status === "blocked_by_synthetic_qa_review_outcome" &&
+    report.unknown_row_count === 0 &&
+    report.source_synthetic_qa_blocker_report_status !== "failed_synthetic_qa_blocker_boundary"
+  ) {
+    failures.push("synthetic_qa_review_outcome_blocked_without_unknown_rows");
+  }
+  if (!report.required_next_actions.length || !report.candidate_lake_event_labels.length) {
+    failures.push("synthetic_qa_review_outcome_not_actionable");
   }
   return failures;
 }

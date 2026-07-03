@@ -95,7 +95,7 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
     ui_detail_reports = {
         report["report_kind"]: report for report in ui_data_bundle["detail_reports"]
     }
-    assert ui_data_bundle["detail_report_count"] == 8
+    assert ui_data_bundle["detail_report_count"] == 9
     assert ui_data_bundle["present_detail_report_count"] == 8
     assert ui_detail_reports["synthetic_qa_review_run"]["present"] is True
     assert ui_detail_reports["synthetic_qa_review_run"]["artifact_ref"] == str(
@@ -104,6 +104,8 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
     assert ui_detail_reports["matter_linking_preflight"]["present"] is True
     assert ui_detail_reports["synthetic_confidence_summary"]["present"] is True
     assert ui_detail_reports["synthetic_qa_blocker_report"]["present"] is True
+    assert ui_detail_reports["synthetic_qa_review_outcome"]["present"] is False
+    assert ui_detail_reports["synthetic_qa_review_outcome"]["required"] is False
     assert ui_detail_reports["synthetic_qa_blocker_report"]["status"] == (
         "synthetic_qa_blocker_report_ready_for_review"
     )

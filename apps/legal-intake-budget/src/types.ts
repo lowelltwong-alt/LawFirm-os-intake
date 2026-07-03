@@ -23,6 +23,7 @@ export type UIReviewDataBundleReportKind =
   | "synthetic_qa_review_run"
   | "synthetic_confidence_summary"
   | "synthetic_qa_blocker_report"
+  | "synthetic_qa_review_outcome"
   | "matter_linking_preflight"
   | "labor_employment_qa_matrix"
   | "labor_employment_blocked_driver_impact_review"
@@ -467,6 +468,63 @@ export type SyntheticQABlockerReport = {
   review_queue_state: "blocked" | "needs_review" | "ready";
   rows: SyntheticQABlockerRow[];
   required_next_actions: string[];
+  candidate_only: boolean;
+  synthetic_only: boolean;
+  non_authoritative: boolean;
+  local_json_only: boolean;
+  human_review_required: boolean;
+  not_authorized_for_external_write: boolean;
+  not_authorized_for_lake_write: boolean;
+  not_authorized_for_sqlite_write: boolean;
+  not_authorized_for_budget_submission: boolean;
+  not_authorized_for_matter_opening: boolean;
+  not_authorized_for_calibration: boolean;
+  budget_amount_output_authorized: boolean;
+  budget_submission_authorized: boolean;
+  conflict_conclusion_emitted: boolean;
+  matter_opening_authorized: boolean;
+  training_pipeline_created: boolean;
+  lake_write_performed: boolean;
+  sqlite_write_performed: boolean;
+  external_writes_performed: boolean;
+  silent_learning_performed: boolean;
+  generated_at: string;
+};
+
+export type SyntheticQAReviewOutcomeStatus =
+  | "synthetic_qa_review_outcome_recorded"
+  | "synthetic_qa_review_outcome_recorded_pending_followup"
+  | "blocked_by_synthetic_qa_review_outcome";
+
+export type SyntheticQAReviewOutcomeReport = {
+  schema_version: string;
+  synthetic_qa_review_outcome_report_id: string;
+  status: SyntheticQAReviewOutcomeStatus;
+  source_synthetic_qa_blocker_report_ref: string;
+  source_synthetic_qa_blocker_report_id: string;
+  source_synthetic_qa_blocker_report_status: string;
+  synthetic_qa_review_outcome_record_id: string;
+  reviewer_id: string;
+  reviewed_at: string;
+  decision_reason: string;
+  source_row_count: number;
+  decision_count: number;
+  accepted_decision_count: number;
+  needs_fix_decision_count: number;
+  deferred_decision_count: number;
+  not_applicable_decision_count: number;
+  reviewed_row_count: number;
+  unreviewed_row_count: number;
+  unknown_row_count: number;
+  unresolved_followup_count: number;
+  reviewed_row_ids: string[];
+  unreviewed_row_ids: string[];
+  unknown_row_ids: string[];
+  required_followups: string[];
+  candidate_lake_event_labels: string[];
+  append_only_history_ref: string;
+  required_next_actions: string[];
+  append_only: boolean;
   candidate_only: boolean;
   synthetic_only: boolean;
   non_authoritative: boolean;
