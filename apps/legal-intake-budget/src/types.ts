@@ -289,6 +289,79 @@ export type SyntheticConfidenceSummaryReport = {
   generated_at: string;
 };
 
+export type POCQATriageStatus = "poc_qa_ready_for_review" | "blocked_by_poc_qa_triage";
+
+export type POCQATriageItemStatus = "passed" | "needs_review" | "watch" | "blocked";
+
+export type POCQATriageItem = {
+  item_id: string;
+  category:
+    | "synthetic_qa"
+    | "review_queue"
+    | "matter_linking"
+    | "labor_employment_budget_facts"
+    | "budget_output"
+    | "public_data_boundary"
+    | "production_boundary";
+  priority: "p0" | "p1" | "p2" | "watch";
+  status: POCQATriageItemStatus;
+  summary: string;
+  recommended_next_action: string;
+  evidence_refs: string[];
+  candidate_exception_lake_labels: string[];
+};
+
+export type POCQATriageReport = {
+  schema_version: string;
+  poc_qa_triage_report_id: string;
+  status: POCQATriageStatus;
+  source_ui_manifest_id: string;
+  source_synthetic_confidence_summary_report_id: string;
+  source_synthetic_qa_review_run_report_id: string;
+  source_synthetic_qa_blocker_report_id: string;
+  source_matter_linking_preflight_report_id: string;
+  source_labor_employment_qa_matrix_report_id: string;
+  source_blocked_driver_impact_review_report_id: string;
+  source_budget_output_expectation_report_id: string;
+  item_count: number;
+  passed_item_count: number;
+  needs_review_item_count: number;
+  watch_item_count: number;
+  blocked_item_count: number;
+  p0_blocked_item_count: number;
+  items: POCQATriageItem[];
+  required_next_actions: string[];
+  display_banner: {
+    summary: string;
+    status: POCQATriageStatus;
+    candidate_only: boolean;
+    synthetic_only: boolean;
+    not_production_ready: boolean;
+    blocked_actions: string[];
+  };
+  candidate_only: boolean;
+  synthetic_only: boolean;
+  non_authoritative: boolean;
+  local_json_only: boolean;
+  human_review_required: boolean;
+  not_authorized_for_external_write: boolean;
+  not_authorized_for_lake_write: boolean;
+  not_authorized_for_sqlite_write: boolean;
+  not_authorized_for_budget_submission: boolean;
+  not_authorized_for_matter_opening: boolean;
+  not_authorized_for_calibration: boolean;
+  budget_amount_output_authorized: boolean;
+  budget_submission_authorized: boolean;
+  conflict_conclusion_emitted: boolean;
+  matter_opening_authorized: boolean;
+  training_pipeline_created: boolean;
+  lake_write_performed: boolean;
+  sqlite_write_performed: boolean;
+  external_writes_performed: boolean;
+  silent_learning_performed: boolean;
+  generated_at: string;
+};
+
 export type SyntheticQABlockerRowState = "failed" | "blocked" | "pending_review";
 
 export type SyntheticQABlockerActionState = "blocked" | "needs_review" | "fixed" | "ready";

@@ -16,6 +16,7 @@ def test_legal_intake_budget_ui_required_files_exist(repo_root):
         "src/data-contract.ts",
         "src/fixtures/demo-run-manifest.json",
         "src/fixtures/demo-synthetic-confidence-summary-report.json",
+        "src/fixtures/demo-poc-qa-triage-report.json",
         "src/fixtures/demo-synthetic-qa-blocker-report.json",
         "src/fixtures/demo-synthetic-qa-review-run-report.json",
         "src/fixtures/demo-ui-review-data-bundle.json",
@@ -55,6 +56,7 @@ def test_legal_intake_budget_ui_data_contract_lists_required_artifacts(repo_root
         "synthetic_qa_bundle_report.json",
         "synthetic_qa_review_run_report.json",
         "synthetic_confidence_summary_report.json",
+        "poc_qa_triage_report.json",
         "synthetic_qa_blocker_report.json",
         "matter_linking_preflight_report.json",
         "synthetic_fixture_depth_audit_report.json",
@@ -111,6 +113,7 @@ def test_legal_intake_budget_demo_manifest_is_read_only_and_candidate_only(repo_
         "synthetic_qa_bundle",
         "synthetic_qa_review_run",
         "synthetic_confidence_summary",
+        "poc_qa_triage",
         "synthetic_qa_blocker_report",
         "matter_linking_preflight",
         "synthetic_fixture_depth",
@@ -325,6 +328,41 @@ def test_legal_intake_budget_demo_synthetic_confidence_summary_is_no_write(repo_
     assert not list((repo_root / UI_ROOT / "src/fixtures").glob("*.db"))
 
 
+def test_legal_intake_budget_demo_poc_qa_triage_is_actionable_and_no_write(repo_root):
+    report = json.loads(
+        (repo_root / UI_ROOT / "src/fixtures/demo-poc-qa-triage-report.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    items = {item["item_id"]: item for item in report["items"]}
+
+    assert report["status"] == "blocked_by_poc_qa_triage"
+    assert report["item_count"] == len(report["items"]) == 10
+    assert report["blocked_item_count"] == 1
+    assert report["p0_blocked_item_count"] == 1
+    assert report["needs_review_item_count"] == 5
+    assert report["watch_item_count"] == 2
+    assert report["passed_item_count"] == 2
+    assert items["validation_evidence_not_fresh_in_ui_bundle"]["status"] == "blocked"
+    assert (
+        "scripts/run_full_pytest.py"
+        in (items["validation_evidence_not_fresh_in_ui_bundle"]["evidence_refs"])
+    )
+    assert items["matter_linking_requires_human_confirmation"]["status"] == "needs_review"
+    assert items["budget_output_partition_visible"]["status"] == "needs_review"
+    assert report["candidate_only"] is True
+    assert report["synthetic_only"] is True
+    assert report["non_authoritative"] is True
+    assert report["local_json_only"] is True
+    assert report["human_review_required"] is True
+    assert report["budget_submission_authorized"] is False
+    assert report["matter_opening_authorized"] is False
+    assert report["lake_write_performed"] is False
+    assert report["sqlite_write_performed"] is False
+    assert report["external_writes_performed"] is False
+    assert report["silent_learning_performed"] is False
+
+
 def test_legal_intake_budget_demo_synthetic_qa_blocker_report_is_no_write(repo_root):
     report = json.loads(
         (repo_root / UI_ROOT / "src/fixtures/demo-synthetic-qa-blocker-report.json").read_text(
@@ -417,6 +455,7 @@ def test_legal_intake_budget_ui_disclaims_mutating_authority(repo_root):
     assert "Local JSON only" in app
     assert "UI Review Data Bundle" in app
     assert "Confidence Summary" in app
+    assert "POC QA Triage" in app
     assert "Synthetic QA Blocker Drilldown" in app
     assert "Synthetic QA Review Run" in app
     assert "Matter-Linking Preflight" in app
@@ -428,6 +467,7 @@ def test_legal_intake_budget_ui_disclaims_mutating_authority(repo_root):
     assert "buildFixtureDrilldownRows" in app
     assert "assertUIReviewDataBundle" in app
     assert "assertSyntheticConfidenceSummaryReport" in app
+    assert "assertPOCQATriageReport" in app
     assert "assertSyntheticQABlockerReport" in app
     assert "assertSyntheticQAReviewRunReport" in app
     assert "assertMatterLinkingPreflightReport" in app
@@ -436,6 +476,8 @@ def test_legal_intake_budget_ui_disclaims_mutating_authority(repo_root):
     assert "assertLaborEmploymentBudgetOutputExpectationReport" in app
     assert "failingQualityGates" in app
     assert "qa-blocker-panel" in styles
+    assert "poc-triage-panel" in styles
+    assert "triage-stack" in styles
     assert "qa-blocker-table" in styles
     assert "empty-state" in styles
     assert "fixture-drilldown-panel" in styles

@@ -52,6 +52,11 @@ def validation_environment(base_env: Mapping[str, str] | None = None) -> dict[st
     env = dict(base_env) if base_env is not None else dict(os.environ)
     env[POLICY_MARKER_ENV_VAR] = POLICY_MARKER_VALUE
     env["PYTHONDONTWRITEBYTECODE"] = "1"
+    existing_pythonpath = env.get("PYTHONPATH")
+    src_path = str(REPO_ROOT / "src")
+    env["PYTHONPATH"] = (
+        src_path if not existing_pythonpath else os.pathsep.join([src_path, existing_pythonpath])
+    )
     return env
 
 

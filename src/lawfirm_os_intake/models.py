@@ -10467,6 +10467,114 @@ class SyntheticConfidenceSummaryReport(StrictModel):
         return self
 
 
+POCQATriageCategory = Literal[
+    "synthetic_qa",
+    "review_queue",
+    "matter_linking",
+    "labor_employment_budget_facts",
+    "budget_output",
+    "public_data_boundary",
+    "production_boundary",
+]
+
+POCQATriagePriority = Literal["p0", "p1", "p2", "watch"]
+POCQATriageItemStatus = Literal["passed", "needs_review", "watch", "blocked"]
+
+
+class POCQATriageItem(StrictModel):
+    item_id: str
+    category: POCQATriageCategory
+    priority: POCQATriagePriority
+    status: POCQATriageItemStatus
+    summary: str
+    recommended_next_action: str
+    evidence_refs: list[str] = Field(default_factory=list)
+    candidate_exception_lake_labels: list[str] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def poc_qa_triage_item_is_actionable(self) -> "POCQATriageItem":
+        if not self.summary.strip():
+            raise ValueError("POC QA triage item requires a summary")
+        if not self.recommended_next_action.strip():
+            raise ValueError("POC QA triage item requires a recommended next action")
+        if not self.evidence_refs:
+            raise ValueError("POC QA triage item requires evidence refs")
+        if self.status in {"needs_review", "blocked"} and not self.candidate_exception_lake_labels:
+            raise ValueError("actionable POC QA triage items require candidate Lake labels")
+        return self
+
+
+class POCQATriageReport(StrictModel):
+    schema_version: str = "0.1"
+    poc_qa_triage_report_id: str
+    status: Literal["poc_qa_ready_for_review", "blocked_by_poc_qa_triage"]
+    source_ui_manifest_id: str
+    source_synthetic_confidence_summary_report_id: str
+    source_synthetic_qa_review_run_report_id: str
+    source_synthetic_qa_blocker_report_id: str
+    source_matter_linking_preflight_report_id: str
+    source_labor_employment_qa_matrix_report_id: str
+    source_blocked_driver_impact_review_report_id: str
+    source_budget_output_expectation_report_id: str
+    item_count: int = Field(ge=0)
+    passed_item_count: int = Field(ge=0)
+    needs_review_item_count: int = Field(ge=0)
+    watch_item_count: int = Field(ge=0)
+    blocked_item_count: int = Field(ge=0)
+    p0_blocked_item_count: int = Field(ge=0)
+    items: list[POCQATriageItem]
+    required_next_actions: list[str]
+    display_banner: dict[str, Any]
+    candidate_only: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    local_json_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    not_authorized_for_matter_opening: Literal[True] = True
+    not_authorized_for_calibration: Literal[True] = True
+    budget_amount_output_authorized: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    conflict_conclusion_emitted: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    training_pipeline_created: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def poc_qa_triage_counts_and_status_match(self) -> "POCQATriageReport":
+        passed = [item for item in self.items if item.status == "passed"]
+        needs_review = [item for item in self.items if item.status == "needs_review"]
+        watch = [item for item in self.items if item.status == "watch"]
+        blocked = [item for item in self.items if item.status == "blocked"]
+        p0_blocked = [item for item in blocked if item.priority == "p0"]
+        if self.item_count != len(self.items):
+            raise ValueError("POC QA triage item count mismatch")
+        if self.passed_item_count != len(passed):
+            raise ValueError("POC QA triage passed count mismatch")
+        if self.needs_review_item_count != len(needs_review):
+            raise ValueError("POC QA triage needs-review count mismatch")
+        if self.watch_item_count != len(watch):
+            raise ValueError("POC QA triage watch count mismatch")
+        if self.blocked_item_count != len(blocked):
+            raise ValueError("POC QA triage blocked count mismatch")
+        if self.p0_blocked_item_count != len(p0_blocked):
+            raise ValueError("POC QA triage p0 blocked count mismatch")
+        if self.status == "poc_qa_ready_for_review" and blocked:
+            raise ValueError("ready POC QA triage cannot contain blocked items")
+        if self.status == "blocked_by_poc_qa_triage" and not blocked:
+            raise ValueError("blocked POC QA triage requires blocked items")
+        if not self.required_next_actions:
+            raise ValueError("POC QA triage requires next actions")
+        return self
+
+
 SyntheticQABlockerRowSource = Literal[
     "quality_gate",
     "qa_step",

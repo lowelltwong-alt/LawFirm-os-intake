@@ -6,6 +6,7 @@ import demoLaborEmploymentBudgetOutputExpectations from "./fixtures/demo-labor-e
 import demoLaborEmploymentQAMatrix from "./fixtures/demo-labor-employment-qa-matrix-report.json";
 import demoManifest from "./fixtures/demo-run-manifest.json";
 import demoMatterLinkingPreflight from "./fixtures/demo-matter-linking-preflight-report.json";
+import demoPocQATriage from "./fixtures/demo-poc-qa-triage-report.json";
 import demoSyntheticQABlockerReport from "./fixtures/demo-synthetic-qa-blocker-report.json";
 import demoSyntheticConfidenceSummary from "./fixtures/demo-synthetic-confidence-summary-report.json";
 import demoSyntheticQAReviewRun from "./fixtures/demo-synthetic-qa-review-run-report.json";
@@ -15,6 +16,7 @@ import {
   assertLaborEmploymentBudgetOutputExpectationReport,
   assertLaborEmploymentBlockedDriverImpactReviewReport,
   assertLaborEmploymentQAMatrixReport,
+  assertPOCQATriageReport,
   assertReadOnlyManifest,
   assertSyntheticQABlockerReport,
   assertSyntheticConfidenceSummaryReport,
@@ -34,6 +36,8 @@ import type {
   LaborEmploymentBudgetReadinessState,
   LaborEmploymentQAMatrixReport,
   MatterLinkingPreflightReport,
+  POCQATriageItemStatus,
+  POCQATriageReport,
   QualityGate,
   QualityGateStatus,
   ReviewArtifact,
@@ -54,6 +58,7 @@ const syntheticQAReviewRun = demoSyntheticQAReviewRun as SyntheticQAReviewRunRep
 const syntheticQABlockerReport = demoSyntheticQABlockerReport as SyntheticQABlockerReport;
 const syntheticConfidenceSummary =
   demoSyntheticConfidenceSummary as SyntheticConfidenceSummaryReport;
+const pocQATriage = demoPocQATriage as POCQATriageReport;
 const matterLinkingPreflight = demoMatterLinkingPreflight as MatterLinkingPreflightReport;
 const laborEmploymentQAMatrix = demoLaborEmploymentQAMatrix as LaborEmploymentQAMatrixReport;
 const laborEmploymentBlockedDriverReview =
@@ -66,6 +71,7 @@ const syntheticQAReviewRunFailures = assertSyntheticQAReviewRunReport(syntheticQ
 const syntheticQABlockerFailures = assertSyntheticQABlockerReport(syntheticQABlockerReport);
 const syntheticConfidenceSummaryFailures =
   assertSyntheticConfidenceSummaryReport(syntheticConfidenceSummary);
+const pocQATriageFailures = assertPOCQATriageReport(pocQATriage);
 const matterLinkingFailures = assertMatterLinkingPreflightReport(matterLinkingPreflight);
 const matrixContractFailures = assertLaborEmploymentQAMatrixReport(laborEmploymentQAMatrix);
 const blockedDriverContractFailures =
@@ -79,13 +85,21 @@ const contractFailures = [
   ...syntheticQAReviewRunFailures,
   ...syntheticQABlockerFailures,
   ...syntheticConfidenceSummaryFailures,
+  ...pocQATriageFailures,
   ...matterLinkingFailures,
   ...matrixContractFailures,
   ...blockedDriverContractFailures,
   ...budgetOutputExpectationFailures,
 ];
 
-function gateClass(state: GateState | ArtifactStatus | QualityGateStatus | SyntheticQABlockerRowState) {
+function gateClass(
+  state:
+    | GateState
+    | ArtifactStatus
+    | QualityGateStatus
+    | SyntheticQABlockerRowState
+    | POCQATriageItemStatus,
+) {
   return `state state-${state.replace("_", "-")}`;
 }
 
@@ -554,6 +568,83 @@ function SyntheticConfidenceSummaryPanel({
           ))}
         </div>
       </div>
+    </section>
+  );
+}
+
+function POCQATriagePanel({ report }: { report: POCQATriageReport }) {
+  const blockerItems = report.items.filter((item) => item.status === "blocked");
+  const reviewItems = report.items.filter((item) => item.status === "needs_review");
+  const watchItems = report.items.filter((item) => item.status === "watch");
+  const statusClass =
+    report.status === "poc_qa_ready_for_review" && pocQATriageFailures.length === 0
+      ? "state state-passed"
+      : "state state-blocked";
+
+  return (
+    <section className="panel poc-triage-panel" aria-labelledby="poc-triage-title">
+      <div className="panel-heading">
+        <div>
+          <p className="eyebrow">QA action queue</p>
+          <h2 id="poc-triage-title">POC QA Triage</h2>
+          <code>{report.poc_qa_triage_report_id}</code>
+        </div>
+        <span className={statusClass}>
+          {report.status === "poc_qa_ready_for_review" ? "ready for review" : "blocked"}
+        </span>
+      </div>
+
+      <div className="matrix-summary" aria-label="POC QA triage summary">
+        <div>
+          <span>Passed</span>
+          <strong>{report.passed_item_count}</strong>
+        </div>
+        <div>
+          <span>Needs Review</span>
+          <strong>{report.needs_review_item_count}</strong>
+        </div>
+        <div>
+          <span>Watch</span>
+          <strong>{report.watch_item_count}</strong>
+        </div>
+        <div>
+          <span>P0 Blockers</span>
+          <strong>{report.p0_blocked_item_count}</strong>
+        </div>
+      </div>
+
+      <div className="triage-stack" aria-label="POC QA triage items">
+        {[...blockerItems, ...reviewItems, ...watchItems].map((item) => (
+          <article className={`triage-item triage-${item.status}`} key={item.item_id}>
+            <div>
+              <strong>{item.item_id.replaceAll("_", " ")}</strong>
+              <code>
+                {item.priority} / {item.category}
+              </code>
+            </div>
+            <span className={gateClass(item.status)}>{item.status}</span>
+            <p>{item.summary}</p>
+            <p>{item.recommended_next_action}</p>
+            <TokenList items={item.candidate_exception_lake_labels} limit={4} />
+          </article>
+        ))}
+      </div>
+
+      <div className="next-gates">
+        <h3>Required Next Actions</h3>
+        <div>
+          {report.required_next_actions.map((action) => (
+            <code key={action}>{action}</code>
+          ))}
+        </div>
+      </div>
+
+      <p className="boundary">
+        POC triage is candidate-only. Lake writes:{" "}
+        {report.lake_write_performed ? "not blocked" : "blocked"}. Budget submission:{" "}
+        {report.budget_submission_authorized ? "not blocked" : "blocked"}. Matter opening:{" "}
+        {report.matter_opening_authorized ? "not blocked" : "blocked"}.
+      </p>
     </section>
   );
 }
@@ -1178,6 +1269,7 @@ function App() {
 
       <BundlePanel bundle={reviewDataBundle} />
       <SyntheticConfidenceSummaryPanel report={syntheticConfidenceSummary} />
+      <POCQATriagePanel report={pocQATriage} />
       <SyntheticQABlockerDrilldownPanel report={syntheticQABlockerReport} />
       <SyntheticQAReviewRunPanel report={syntheticQAReviewRun} />
       <div className="grid-layout">
