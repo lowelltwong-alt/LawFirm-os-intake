@@ -1,0 +1,83 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "step_id": {
+      "title": "Step Id",
+      "type": "string"
+    },
+    "command_key": {
+      "title": "Command Key",
+      "type": "string"
+    },
+    "command": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Command",
+      "type": "array"
+    },
+    "command_display": {
+      "title": "Command Display",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "passed",
+        "failed",
+        "timed_out"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "return_code": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Return Code"
+    },
+    "timeout_seconds": {
+      "minimum": 1,
+      "title": "Timeout Seconds",
+      "type": "integer"
+    },
+    "duration_seconds": {
+      "minimum": 0,
+      "title": "Duration Seconds",
+      "type": "number"
+    },
+    "started_at": {
+      "title": "Started At",
+      "type": "string"
+    },
+    "completed_at": {
+      "title": "Completed At",
+      "type": "string"
+    },
+    "evidence_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Evidence Refs",
+      "type": "array"
+    }
+  },
+  "required": [
+    "step_id",
+    "command_key",
+    "command",
+    "command_display",
+    "status",
+    "timeout_seconds",
+    "duration_seconds",
+    "started_at",
+    "completed_at"
+  ],
+  "title": "ValidationSuiteStepEvidence",
+  "type": "object"
+}

@@ -10467,6 +10467,118 @@ class SyntheticConfidenceSummaryReport(StrictModel):
         return self
 
 
+ValidationSuiteStepStatus = Literal["passed", "failed", "timed_out"]
+
+
+class ValidationSuiteStepEvidence(StrictModel):
+    step_id: str
+    command_key: str
+    command: list[str]
+    command_display: str
+    status: ValidationSuiteStepStatus
+    return_code: int | None = None
+    timeout_seconds: int = Field(ge=1)
+    duration_seconds: float = Field(ge=0)
+    started_at: str
+    completed_at: str
+    evidence_refs: list[str] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def validation_step_status_is_coherent(self) -> "ValidationSuiteStepEvidence":
+        if not self.step_id.strip():
+            raise ValueError("validation suite step requires step_id")
+        if not self.command_key.strip():
+            raise ValueError("validation suite step requires command_key")
+        if not self.command:
+            raise ValueError("validation suite step requires command")
+        if not self.command_display.strip():
+            raise ValueError("validation suite step requires command_display")
+        if not self.evidence_refs:
+            raise ValueError("validation suite step requires evidence refs")
+        if self.status == "passed" and self.return_code != 0:
+            raise ValueError("passed validation suite step must have return_code 0")
+        if self.status == "failed" and (self.return_code is None or self.return_code == 0):
+            raise ValueError("failed validation suite step must have nonzero return_code")
+        if self.status == "timed_out" and self.return_code != 124:
+            raise ValueError("timed-out validation suite step must use return_code 124")
+        return self
+
+
+class ValidationSuiteEvidenceReport(StrictModel):
+    schema_version: str = "0.1"
+    validation_suite_evidence_report_id: str
+    status: Literal["validation_suite_passed", "blocked_by_validation_suite"]
+    policy_id: str
+    policy_version: str
+    policy_ref: str
+    repo_root_ref: str
+    git_commit: str | None = None
+    working_tree_dirty: bool
+    step_count: int = Field(ge=0)
+    passed_step_count: int = Field(ge=0)
+    failed_step_count: int = Field(ge=0)
+    timed_out_step_count: int = Field(ge=0)
+    steps: list[ValidationSuiteStepEvidence]
+    required_next_actions: list[str]
+    candidate_only: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    local_json_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    not_authorized_for_matter_opening: Literal[True] = True
+    budget_amount_output_authorized: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    conflict_conclusion_emitted: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    training_pipeline_created: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def validation_suite_counts_and_status_match(self) -> "ValidationSuiteEvidenceReport":
+        passed = [step for step in self.steps if step.status == "passed"]
+        failed = [step for step in self.steps if step.status == "failed"]
+        timed_out = [step for step in self.steps if step.status == "timed_out"]
+        if self.step_count != len(self.steps):
+            raise ValueError("validation suite step count mismatch")
+        if not self.steps:
+            raise ValueError("validation suite evidence report requires steps")
+        if self.passed_step_count != len(passed):
+            raise ValueError("validation suite passed count mismatch")
+        if self.failed_step_count != len(failed):
+            raise ValueError("validation suite failed count mismatch")
+        if self.timed_out_step_count != len(timed_out):
+            raise ValueError("validation suite timed-out count mismatch")
+        if self.status == "validation_suite_passed" and (failed or timed_out):
+            raise ValueError("passed validation suite report cannot include failed steps")
+        if self.status == "blocked_by_validation_suite" and not (failed or timed_out):
+            raise ValueError("blocked validation suite report requires failed or timed-out steps")
+        if self.status == "validation_suite_passed":
+            required_step_ids = {
+                "validate_repo",
+                "export_schemas",
+                "ruff_check",
+                "ruff_format_check",
+                "full_pytest",
+                "smoke_demo",
+                "validate_repo_final",
+            }
+            passed_step_ids = {step.step_id for step in passed}
+            missing = sorted(required_step_ids - passed_step_ids)
+            if missing:
+                raise ValueError(f"passed validation suite report missing steps: {missing}")
+        if not self.required_next_actions:
+            raise ValueError("validation suite evidence report requires next actions")
+        return self
+
+
 POCQATriageCategory = Literal[
     "synthetic_qa",
     "review_queue",
@@ -10516,6 +10628,7 @@ class POCQATriageReport(StrictModel):
     source_labor_employment_qa_matrix_report_id: str
     source_blocked_driver_impact_review_report_id: str
     source_budget_output_expectation_report_id: str
+    source_validation_suite_evidence_report_id: str | None = None
     item_count: int = Field(ge=0)
     passed_item_count: int = Field(ge=0)
     needs_review_item_count: int = Field(ge=0)

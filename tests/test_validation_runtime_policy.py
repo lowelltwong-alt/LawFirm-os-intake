@@ -141,3 +141,36 @@ def test_validation_suite_runs_every_heavy_step_under_policy_timeout() -> None:
 
     assert "scripts/run_full_pytest.py" in steps_by_name["full_pytest"].command
     assert steps_by_name["smoke_demo"].command == ("bash", "scripts/smoke_demo.sh")
+
+
+def test_validation_suite_can_emit_structured_evidence_report() -> None:
+    steps = [
+        run_validation_suite.ValidationSuiteStepEvidence(
+            step_id=step.name,
+            command_key=step.command_key,
+            command=list(step.command),
+            command_display=" ".join(step.command),
+            status="passed",
+            return_code=0,
+            timeout_seconds=step.timeout_seconds,
+            duration_seconds=0.1,
+            started_at="2026-07-03T00:00:00Z",
+            completed_at="2026-07-03T00:00:01Z",
+            evidence_refs=["scripts/run_validation_suite.py"],
+        )
+        for step in run_validation_suite.validation_steps()
+    ]
+
+    report = run_validation_suite.build_validation_suite_evidence_report(
+        steps=steps,
+        generated_at="2026-07-03T00:00:00Z",
+        working_tree_dirty=False,
+    )
+
+    assert report.status == "validation_suite_passed"
+    assert report.step_count == 7
+    assert report.failed_step_count == 0
+    assert report.timed_out_step_count == 0
+    assert report.policy_ref == "config/validation-runtime-policy.yaml"
+    assert report.budget_submission_authorized is False
+    assert report.lake_write_performed is False

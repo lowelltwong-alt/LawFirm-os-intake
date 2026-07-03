@@ -177,13 +177,26 @@
       "artifactId": "poc-qa-triage",
       "label": "POC QA Triage",
       "fileName": "poc_qa_triage_report.json",
-      "status": "blocked",
+      "status": "present",
       "owner": "qa-reference",
-      "gateState": "blocked",
+      "gateState": "passed",
       "candidateOnly": true,
       "externalWritesPerformed": false,
       "notes": [
-        "Found quality\\poc_qa_triage_report.json; status=blocked_by_poc_qa_triage because fresh wrapper-based validation evidence is not attached."
+        "Found quality\\poc_qa_triage_report.json; status=poc_qa_ready_for_review with validation_suite_evidence_report.json attached."
+      ]
+    },
+    {
+      "artifactId": "validation-suite-evidence",
+      "label": "Validation Suite Evidence",
+      "fileName": "validation_suite_evidence_report.json",
+      "status": "present",
+      "owner": "qa-reference",
+      "gateState": "passed",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": [
+        "Found quality\\validation_suite_evidence_report.json; status=validation_suite_passed."
       ]
     },
     {
@@ -504,11 +517,21 @@
     {
       "gateId": "poc_qa_triage",
       "label": "POC QA Triage",
-      "status": "blocked",
+      "status": "passed",
       "evidenceFile": "poc_qa_triage_report.json",
       "owner": "qa-reference",
       "notes": [
-        "The POC QA triage queue must convert synthetic QA, matter-linking, L&E budget facts, and validation evidence into review actions before QA can call the POC ready."
+        "The POC QA triage queue converts synthetic QA, matter-linking, L&E budget facts, and validation evidence into review actions."
+      ]
+    },
+    {
+      "gateId": "validation_suite_evidence",
+      "label": "Validation Suite Evidence",
+      "status": "passed",
+      "evidenceFile": "validation_suite_evidence_report.json",
+      "owner": "qa-reference",
+      "notes": [
+        "Wrapper-based validation suite evidence proves full pytest, smoke demo, lint, schema export, and repo validation for this demo snapshot."
       ]
     },
     {
@@ -664,21 +687,21 @@
     {
       "gateId": "full_pytest",
       "label": "Full Pytest",
-      "status": "pending_review",
-      "evidenceFile": "scripts/run_full_pytest.py",
+      "status": "passed",
+      "evidenceFile": "validation_suite_evidence_report.json",
       "owner": "qa-reference",
       "notes": [
-        "scripts/run_full_pytest.py is missing; Use the repo wrapper so tests receive the configured long timeout ceiling."
+        "validation_suite_evidence_report.json includes a passed full_pytest step from scripts/run_full_pytest.py with the configured long timeout ceiling."
       ]
     },
     {
       "gateId": "smoke_demo",
       "label": "North-Star Smoke",
-      "status": "pending_review",
-      "evidenceFile": "scripts/smoke_demo.sh",
+      "status": "passed",
+      "evidenceFile": "validation_suite_evidence_report.json",
       "owner": "qa-reference",
       "notes": [
-        "scripts/smoke_demo.sh is missing; Smoke should prove the checkout demo, budget coherence, starter audit, blocked-budget audit, and counterfactual audit."
+        "validation_suite_evidence_report.json includes a passed smoke_demo step from scripts/smoke_demo.sh."
       ]
     }
   ],

@@ -343,6 +343,10 @@ code {
   margin-bottom: 14px;
 }
 
+.validation-panel {
+  margin-bottom: 14px;
+}
+
 .qa-blocker-panel {
   margin-bottom: 14px;
 }
@@ -477,6 +481,40 @@ code {
 .triage-watch {
   border-color: #a8c9d6;
   background: #f4fbfd;
+}
+
+.validation-step-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.validation-step {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  min-height: 142px;
+  padding: 12px;
+  border: 1px solid #dde4d8;
+  border-radius: 8px;
+  background: #fbfcfa;
+}
+
+.validation-step strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.validation-step p,
+.validation-step .token-list {
+  grid-column: 1 / -1;
+}
+
+.validation-step p {
+  margin: 0;
+  color: #2f3932;
+  font-size: 0.86rem;
+  line-height: 1.42;
 }
 
 .recipe-summary {
@@ -824,6 +862,10 @@ td:nth-child(4) {
   }
 
   .triage-stack {
+    grid-template-columns: 1fr;
+  }
+
+  .validation-step-grid {
     grid-template-columns: 1fr;
   }
 

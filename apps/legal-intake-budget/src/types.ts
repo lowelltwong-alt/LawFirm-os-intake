@@ -289,6 +289,60 @@ export type SyntheticConfidenceSummaryReport = {
   generated_at: string;
 };
 
+export type ValidationSuiteStepStatus = "passed" | "failed" | "timed_out";
+
+export type ValidationSuiteStepEvidence = {
+  step_id: string;
+  command_key: string;
+  command: string[];
+  command_display: string;
+  status: ValidationSuiteStepStatus;
+  return_code: number | null;
+  timeout_seconds: number;
+  duration_seconds: number;
+  started_at: string;
+  completed_at: string;
+  evidence_refs: string[];
+};
+
+export type ValidationSuiteEvidenceReport = {
+  schema_version: string;
+  validation_suite_evidence_report_id: string;
+  status: "validation_suite_passed" | "blocked_by_validation_suite";
+  policy_id: string;
+  policy_version: string;
+  policy_ref: string;
+  repo_root_ref: string;
+  git_commit?: string | null;
+  working_tree_dirty: boolean;
+  step_count: number;
+  passed_step_count: number;
+  failed_step_count: number;
+  timed_out_step_count: number;
+  steps: ValidationSuiteStepEvidence[];
+  required_next_actions: string[];
+  candidate_only: boolean;
+  synthetic_only: boolean;
+  non_authoritative: boolean;
+  local_json_only: boolean;
+  human_review_required: boolean;
+  not_authorized_for_external_write: boolean;
+  not_authorized_for_lake_write: boolean;
+  not_authorized_for_sqlite_write: boolean;
+  not_authorized_for_budget_submission: boolean;
+  not_authorized_for_matter_opening: boolean;
+  budget_amount_output_authorized: boolean;
+  budget_submission_authorized: boolean;
+  conflict_conclusion_emitted: boolean;
+  matter_opening_authorized: boolean;
+  training_pipeline_created: boolean;
+  lake_write_performed: boolean;
+  sqlite_write_performed: boolean;
+  external_writes_performed: boolean;
+  silent_learning_performed: boolean;
+  generated_at: string;
+};
+
 export type POCQATriageStatus = "poc_qa_ready_for_review" | "blocked_by_poc_qa_triage";
 
 export type POCQATriageItemStatus = "passed" | "needs_review" | "watch" | "blocked";
@@ -323,6 +377,7 @@ export type POCQATriageReport = {
   source_labor_employment_qa_matrix_report_id: string;
   source_blocked_driver_impact_review_report_id: string;
   source_budget_output_expectation_report_id: string;
+  source_validation_suite_evidence_report_id?: string | null;
   item_count: number;
   passed_item_count: number;
   needs_review_item_count: number;

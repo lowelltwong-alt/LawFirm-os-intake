@@ -1,51 +1,64 @@
 {
   "$defs": {
-    "POCQATriageItem": {
+    "ValidationSuiteStepEvidence": {
       "additionalProperties": false,
       "properties": {
-        "item_id": {
-          "title": "Item Id",
+        "step_id": {
+          "title": "Step Id",
           "type": "string"
         },
-        "category": {
-          "enum": [
-            "synthetic_qa",
-            "review_queue",
-            "matter_linking",
-            "labor_employment_budget_facts",
-            "budget_output",
-            "public_data_boundary",
-            "production_boundary"
-          ],
-          "title": "Category",
+        "command_key": {
+          "title": "Command Key",
           "type": "string"
         },
-        "priority": {
-          "enum": [
-            "p0",
-            "p1",
-            "p2",
-            "watch"
-          ],
-          "title": "Priority",
+        "command": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Command",
+          "type": "array"
+        },
+        "command_display": {
+          "title": "Command Display",
           "type": "string"
         },
         "status": {
           "enum": [
             "passed",
-            "needs_review",
-            "watch",
-            "blocked"
+            "failed",
+            "timed_out"
           ],
           "title": "Status",
           "type": "string"
         },
-        "summary": {
-          "title": "Summary",
+        "return_code": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Return Code"
+        },
+        "timeout_seconds": {
+          "minimum": 1,
+          "title": "Timeout Seconds",
+          "type": "integer"
+        },
+        "duration_seconds": {
+          "minimum": 0,
+          "title": "Duration Seconds",
+          "type": "number"
+        },
+        "started_at": {
+          "title": "Started At",
           "type": "string"
         },
-        "recommended_next_action": {
-          "title": "Recommended Next Action",
+        "completed_at": {
+          "title": "Completed At",
           "type": "string"
         },
         "evidence_refs": {
@@ -54,24 +67,20 @@
           },
           "title": "Evidence Refs",
           "type": "array"
-        },
-        "candidate_exception_lake_labels": {
-          "items": {
-            "type": "string"
-          },
-          "title": "Candidate Exception Lake Labels",
-          "type": "array"
         }
       },
       "required": [
-        "item_id",
-        "category",
-        "priority",
+        "step_id",
+        "command_key",
+        "command",
+        "command_display",
         "status",
-        "summary",
-        "recommended_next_action"
+        "timeout_seconds",
+        "duration_seconds",
+        "started_at",
+        "completed_at"
       ],
-      "title": "POCQATriageItem",
+      "title": "ValidationSuiteStepEvidence",
       "type": "object"
     }
   },
@@ -82,51 +91,35 @@
       "title": "Schema Version",
       "type": "string"
     },
-    "poc_qa_triage_report_id": {
-      "title": "Poc Qa Triage Report Id",
+    "validation_suite_evidence_report_id": {
+      "title": "Validation Suite Evidence Report Id",
       "type": "string"
     },
     "status": {
       "enum": [
-        "poc_qa_ready_for_review",
-        "blocked_by_poc_qa_triage"
+        "validation_suite_passed",
+        "blocked_by_validation_suite"
       ],
       "title": "Status",
       "type": "string"
     },
-    "source_ui_manifest_id": {
-      "title": "Source Ui Manifest Id",
+    "policy_id": {
+      "title": "Policy Id",
       "type": "string"
     },
-    "source_synthetic_confidence_summary_report_id": {
-      "title": "Source Synthetic Confidence Summary Report Id",
+    "policy_version": {
+      "title": "Policy Version",
       "type": "string"
     },
-    "source_synthetic_qa_review_run_report_id": {
-      "title": "Source Synthetic Qa Review Run Report Id",
+    "policy_ref": {
+      "title": "Policy Ref",
       "type": "string"
     },
-    "source_synthetic_qa_blocker_report_id": {
-      "title": "Source Synthetic Qa Blocker Report Id",
+    "repo_root_ref": {
+      "title": "Repo Root Ref",
       "type": "string"
     },
-    "source_matter_linking_preflight_report_id": {
-      "title": "Source Matter Linking Preflight Report Id",
-      "type": "string"
-    },
-    "source_labor_employment_qa_matrix_report_id": {
-      "title": "Source Labor Employment Qa Matrix Report Id",
-      "type": "string"
-    },
-    "source_blocked_driver_impact_review_report_id": {
-      "title": "Source Blocked Driver Impact Review Report Id",
-      "type": "string"
-    },
-    "source_budget_output_expectation_report_id": {
-      "title": "Source Budget Output Expectation Report Id",
-      "type": "string"
-    },
-    "source_validation_suite_evidence_report_id": {
+    "git_commit": {
       "anyOf": [
         {
           "type": "string"
@@ -136,43 +129,37 @@
         }
       ],
       "default": null,
-      "title": "Source Validation Suite Evidence Report Id"
+      "title": "Git Commit"
     },
-    "item_count": {
+    "working_tree_dirty": {
+      "title": "Working Tree Dirty",
+      "type": "boolean"
+    },
+    "step_count": {
       "minimum": 0,
-      "title": "Item Count",
+      "title": "Step Count",
       "type": "integer"
     },
-    "passed_item_count": {
+    "passed_step_count": {
       "minimum": 0,
-      "title": "Passed Item Count",
+      "title": "Passed Step Count",
       "type": "integer"
     },
-    "needs_review_item_count": {
+    "failed_step_count": {
       "minimum": 0,
-      "title": "Needs Review Item Count",
+      "title": "Failed Step Count",
       "type": "integer"
     },
-    "watch_item_count": {
+    "timed_out_step_count": {
       "minimum": 0,
-      "title": "Watch Item Count",
+      "title": "Timed Out Step Count",
       "type": "integer"
     },
-    "blocked_item_count": {
-      "minimum": 0,
-      "title": "Blocked Item Count",
-      "type": "integer"
-    },
-    "p0_blocked_item_count": {
-      "minimum": 0,
-      "title": "P0 Blocked Item Count",
-      "type": "integer"
-    },
-    "items": {
+    "steps": {
       "items": {
-        "$ref": "#/$defs/POCQATriageItem"
+        "$ref": "#/$defs/ValidationSuiteStepEvidence"
       },
-      "title": "Items",
+      "title": "Steps",
       "type": "array"
     },
     "required_next_actions": {
@@ -181,11 +168,6 @@
       },
       "title": "Required Next Actions",
       "type": "array"
-    },
-    "display_banner": {
-      "additionalProperties": true,
-      "title": "Display Banner",
-      "type": "object"
     },
     "candidate_only": {
       "const": true,
@@ -245,12 +227,6 @@
       "const": true,
       "default": true,
       "title": "Not Authorized For Matter Opening",
-      "type": "boolean"
-    },
-    "not_authorized_for_calibration": {
-      "const": true,
-      "default": true,
-      "title": "Not Authorized For Calibration",
       "type": "boolean"
     },
     "budget_amount_output_authorized": {
@@ -313,27 +289,21 @@
     }
   },
   "required": [
-    "poc_qa_triage_report_id",
+    "validation_suite_evidence_report_id",
     "status",
-    "source_ui_manifest_id",
-    "source_synthetic_confidence_summary_report_id",
-    "source_synthetic_qa_review_run_report_id",
-    "source_synthetic_qa_blocker_report_id",
-    "source_matter_linking_preflight_report_id",
-    "source_labor_employment_qa_matrix_report_id",
-    "source_blocked_driver_impact_review_report_id",
-    "source_budget_output_expectation_report_id",
-    "item_count",
-    "passed_item_count",
-    "needs_review_item_count",
-    "watch_item_count",
-    "blocked_item_count",
-    "p0_blocked_item_count",
-    "items",
+    "policy_id",
+    "policy_version",
+    "policy_ref",
+    "repo_root_ref",
+    "working_tree_dirty",
+    "step_count",
+    "passed_step_count",
+    "failed_step_count",
+    "timed_out_step_count",
+    "steps",
     "required_next_actions",
-    "display_banner",
     "generated_at"
   ],
-  "title": "POCQATriageReport",
+  "title": "ValidationSuiteEvidenceReport",
   "type": "object"
 }

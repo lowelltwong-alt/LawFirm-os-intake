@@ -1,22 +1,22 @@
 {
   "schema_version": "0.1",
-  "synthetic_qa_blocker_report_id": "synthetic_qa_blocker_report_c076b2ff509772ab",
+  "synthetic_qa_blocker_report_id": "synthetic_qa_blocker_report_e2d538a763d6c169",
   "status": "synthetic_qa_blocker_report_ready_for_review",
-  "source_ui_manifest_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-os-intake-merge-20260702-011307\\.lawfirm-os-intake\\ui-fixture-refresh-action-queue\\ui_review_manifest.json",
+  "source_ui_manifest_ref": "apps\\legal-intake-budget\\src\\fixtures\\demo-run-manifest.json",
   "source_ui_manifest_id": "ui_review_manifest_00aeff08b022",
   "source_ui_manifest_overall_status": "blocked",
-  "source_synthetic_confidence_summary_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-os-intake-merge-20260702-011307\\.lawfirm-os-intake\\ui-fixture-refresh-action-queue\\quality\\synthetic_confidence_summary_report.json",
-  "source_synthetic_confidence_summary_report_id": "synthetic_confidence_summary_c69d8bd81fcd82a9",
+  "source_synthetic_confidence_summary_ref": "apps\\legal-intake-budget\\src\\fixtures\\demo-synthetic-confidence-summary-report.json",
+  "source_synthetic_confidence_summary_report_id": "synthetic_confidence_summary_776a97d0ece2d74d",
   "source_synthetic_confidence_summary_status": "synthetic_confidence_summary_ready_for_review",
-  "source_synthetic_qa_review_run_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-os-intake-merge-20260702-011307\\.lawfirm-os-intake\\ui-fixture-refresh-action-queue\\synthetic_qa_review_run_report.json",
+  "source_synthetic_qa_review_run_ref": "apps\\legal-intake-budget\\src\\fixtures\\demo-synthetic-qa-review-run-report.json",
   "source_synthetic_qa_review_run_report_id": "syntheticqareviewrun_44a0e1d825bac1db",
   "source_synthetic_qa_review_run_status": "synthetic_qa_review_run_ready",
-  "row_count": 19,
+  "row_count": 17,
   "failed_row_count": 0,
   "blocked_row_count": 0,
-  "pending_review_row_count": 19,
+  "pending_review_row_count": 17,
   "blocked_action_count": 0,
-  "needs_review_action_count": 19,
+  "needs_review_action_count": 17,
   "fixed_action_count": 0,
   "ready_action_count": 0,
   "review_queue_state": "needs_review",
@@ -337,48 +337,6 @@
       ]
     },
     {
-      "row_id": "quality_gate:full_pytest",
-      "source": "quality_gate",
-      "label": "Full Pytest",
-      "state": "pending_review",
-      "action_state": "needs_review",
-      "owner": "qa-reference",
-      "evidence_refs": [
-        "scripts/run_full_pytest.py"
-      ],
-      "recommended_next_action": "Review quality gate evidence and record an outcome: Full Pytest.",
-      "candidate_exception_lake_labels": [
-        "synthetic_qa_blocker_queue_candidate",
-        "quality_gate_pending_review_candidate",
-        "quality_gate_full_pytest_candidate",
-        "synthetic_qa_blocker_requires_review"
-      ],
-      "notes": [
-        "scripts/run_full_pytest.py is missing; Use the repo wrapper so tests receive the configured long timeout ceiling."
-      ]
-    },
-    {
-      "row_id": "quality_gate:smoke_demo",
-      "source": "quality_gate",
-      "label": "North-Star Smoke",
-      "state": "pending_review",
-      "action_state": "needs_review",
-      "owner": "qa-reference",
-      "evidence_refs": [
-        "scripts/smoke_demo.sh"
-      ],
-      "recommended_next_action": "Review quality gate evidence and record an outcome: North-Star Smoke.",
-      "candidate_exception_lake_labels": [
-        "synthetic_qa_blocker_queue_candidate",
-        "quality_gate_pending_review_candidate",
-        "quality_gate_smoke_demo_candidate",
-        "synthetic_qa_blocker_requires_review"
-      ],
-      "notes": [
-        "scripts/smoke_demo.sh is missing; Smoke should prove the checkout demo, budget coherence, starter audit, blocked-budget audit, and counterfactual audit."
-      ]
-    },
-    {
       "row_id": "readiness_item:required_qa_artifacts",
       "source": "readiness_item",
       "label": "Required QA Artifacts",
@@ -386,7 +344,7 @@
       "action_state": "needs_review",
       "owner": "qa-reference",
       "evidence_refs": [
-        "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-os-intake-merge-20260702-011307\\.lawfirm-os-intake\\ui-fixture-refresh-action-queue\\quality\\synthetic_qa_bundle_report.json"
+        "apps\\legal-intake-budget\\src\\fixtures\\demo-synthetic-qa-bundle-report.json"
       ],
       "recommended_next_action": "Review readiness item evidence and record an outcome: Required QA Artifacts.",
       "candidate_exception_lake_labels": [
@@ -407,7 +365,7 @@
       "action_state": "needs_review",
       "owner": "human-or-owner-review",
       "evidence_refs": [
-        "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-os-intake-merge-20260702-011307\\.lawfirm-os-intake\\ui-fixture-refresh-action-queue\\ui_review_manifest.json"
+        "apps\\legal-intake-budget\\src\\fixtures\\demo-run-manifest.json"
       ],
       "recommended_next_action": "Review readiness item evidence and record an outcome: Owner Review Backlog.",
       "candidate_exception_lake_labels": [
@@ -417,7 +375,7 @@
         "synthetic_qa_blocker_requires_review"
       ],
       "notes": [
-        "18 pending gates remain; pending is expected until human/owner review accepts candidate QA evidence."
+        "16 pending gates remain; pending is expected until human/owner review accepts candidate QA evidence."
       ]
     }
   ],
@@ -446,5 +404,5 @@
   "sqlite_write_performed": false,
   "external_writes_performed": false,
   "silent_learning_performed": false,
-  "generated_at": "2026-07-02T00:00:00Z"
+  "generated_at": "2026-07-03T22:29:27Z"
 }

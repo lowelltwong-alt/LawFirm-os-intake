@@ -284,6 +284,7 @@ def _parser() -> argparse.ArgumentParser:
     poc_qa_triage.add_argument("--labor-employment-qa-matrix", required=True)
     poc_qa_triage.add_argument("--blocked-driver-impact-review", required=True)
     poc_qa_triage.add_argument("--budget-output-expectations", required=True)
+    poc_qa_triage.add_argument("--validation-suite-evidence")
     poc_qa_triage.add_argument("--out-dir", required=True)
     poc_qa_triage.add_argument("--repo-root", default=".")
     poc_qa_triage.add_argument(
@@ -1753,6 +1754,7 @@ def main(argv: list[str] | None = None) -> int:
                 labor_employment_qa_matrix_path=args.labor_employment_qa_matrix,
                 blocked_driver_impact_review_path=args.blocked_driver_impact_review,
                 budget_output_expectations_path=args.budget_output_expectations,
+                validation_suite_evidence_path=args.validation_suite_evidence,
                 out_dir=args.out_dir,
                 repo_root=args.repo_root,
                 generated_at=args.generated_at,

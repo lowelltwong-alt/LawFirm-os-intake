@@ -221,6 +221,13 @@ ARTIFACT_SPECS = [
         "blocked",
     ),
     ArtifactSpec(
+        "validation-suite-evidence",
+        "Validation Suite Evidence",
+        "validation_suite_evidence_report.json",
+        "qa-reference",
+        "pending_review",
+    ),
+    ArtifactSpec(
         "budget-human-review",
         "Budget Human Review",
         "budget_human_review_packet.json",
@@ -392,18 +399,25 @@ QUALITY_GATE_SPECS = {
         "L&E budget fact audit outputs must match reviewed synthetic gold before calibration or model comparison.",
         "blocked",
     ),
+    "validation_suite_evidence": (
+        "Validation Suite Evidence",
+        "validation_suite_evidence_report.json",
+        "qa-reference",
+        "Wrapper-based validation suite evidence must prove the current QA checks before the frontend treats the run as POC QA-ready.",
+        "pending_review",
+    ),
     "full_pytest": (
         "Full Pytest",
-        "scripts/run_full_pytest.py",
+        "validation_suite_evidence_report.json",
         "qa-reference",
-        "Use the repo wrapper so tests receive the configured long timeout ceiling.",
+        "Validation evidence must include a passed full_pytest step from scripts/run_full_pytest.py.",
         "pending_review",
     ),
     "smoke_demo": (
         "North-Star Smoke",
-        "scripts/smoke_demo.sh",
+        "validation_suite_evidence_report.json",
         "qa-reference",
-        "Smoke should prove the checkout demo, budget coherence, starter audit, blocked-budget audit, and counterfactual audit.",
+        "Validation evidence must include a passed smoke_demo step from scripts/smoke_demo.sh.",
         "pending_review",
     ),
 }
