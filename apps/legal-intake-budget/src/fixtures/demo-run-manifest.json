@@ -1,785 +1,785 @@
 {
-    "manifestId":  "ui_review_manifest_90f8685c7d39",
-    "generatedAt":  "2026-07-04T00:00:00Z",
-    "runLabel":  "Local intake QA review: generated-demo-run",
-    "practiceArea":  "synthetic_intake",
-    "matterFamily":  "medical_malpractice_defense",
-    "overallStatus":  "blocked",
-    "boundaryFlags":  {
-                          "readOnly":  true,
-                          "localJsonOnly":  true,
-                          "networkCallsAllowed":  false,
-                          "mutationCommandsAllowed":  false,
-                          "exceptionLakeWritesAllowed":  false,
-                          "sqliteWritesAllowed":  false,
-                          "publicRuntimeIngestionAllowed":  false,
-                          "budgetSubmissionAllowed":  false,
-                          "matterOpeningAllowed":  false
-                      },
-    "artifacts":  [
-                      {
-                          "artifactId":  "preflight",
-                          "label":  "Intake Preflight",
-                          "fileName":  "intake_preflight_packet.json",
-                          "status":  "pending_review",
-                          "owner":  "intake-reference",
-                          "gateState":  "pending",
-                          "candidateOnly":  true,
-                          "externalWritesPerformed":  false,
-                          "notes":  [
-                                        "Found preflight\\run_a4a15dcdef2a47b4addeff450ba3960e\\intake_preflight_packet.json; status=human_intake_review_required."
-                                    ]
-                      },
-                      {
-                          "artifactId":  "human-gate",
-                          "label":  "Human Gate",
-                          "fileName":  "human_gate_status_report.json",
-                          "status":  "pending_review",
-                          "owner":  "human-reviewer",
-                          "gateState":  "pending",
-                          "candidateOnly":  true,
-                          "externalWritesPerformed":  false,
-                          "notes":  [
-                                        "Found budget\\human_gate_status_report.json; status=pending_human_gates."
-                                    ]
-                      },
-                      {
-                          "artifactId":  "conflict-seed",
-                          "label":  "Conflict Seed",
-                          "fileName":  "conflict_search_seed_packet.json",
-                          "status":  "present",
-                          "owner":  "intake-reference",
-                          "gateState":  "passed",
-                          "candidateOnly":  true,
-                          "externalWritesPerformed":  false,
-                          "notes":  [
-                                        "Found budget\\conflict_search_seed_packet.json; status=seed_ready_for_conflicts_team."
-                                    ]
-                      },
-                      {
-                          "artifactId":  "budget-proposal",
-                          "label":  "Budget Proposal",
-                          "fileName":  "legal_budget_proposal.json",
-                          "status":  "present",
-                          "owner":  "pricing-review",
-                          "gateState":  "passed",
-                          "candidateOnly":  true,
-                          "externalWritesPerformed":  false,
-                          "notes":  [
-                                        "Found budget\\legal_budget_proposal.json; local artifact present."
-                                    ]
-                      },
-                      {
-                          "artifactId":  "matter-opening",
-                          "label":  "Matter Opening",
-                          "fileName":  "matter_opening_readiness.json",
-                          "status":  "blocked",
-                          "owner":  "orchestrator-future-owner",
-                          "gateState":  "blocked",
-                          "candidateOnly":  true,
-                          "externalWritesPerformed":  false,
-                          "notes":  [
-                                        "Found budget\\matter_opening_readiness.json; status=blocked_pending_conflicts_and_engagement."
-                                    ]
-                      },
-                      {
-                          "artifactId":  "submission-guard",
-                          "label":  "Budget Submission Guard",
-                          "fileName":  "budget_submission_guard_report.json",
-                          "status":  "present",
-                          "owner":  "intake-reference",
-                          "gateState":  "passed",
-                          "candidateOnly":  true,
-                          "externalWritesPerformed":  false,
-                          "notes":  [
-                                        "Found budget\\budget_submission_guard_report.json; status=passed."
-                                    ]
-                      },
-                      {
-                          "artifactId":  "lake-handoff",
-                          "label":  "Lake Handoff",
-                          "fileName":  "exception_lake_handoff_manifest.json",
-                          "status":  "present",
-                          "owner":  "exception-lake-future-owner",
-                          "gateState":  "passed",
-                          "candidateOnly":  true,
-                          "externalWritesPerformed":  false,
-                          "notes":  [
-                                        "Found budget\\exception_lake_handoff_manifest.json; status=dry_run_ready_not_admitted."
-                                    ]
-                      },
-                      {
-                          "artifactId":  "run-ledger",
-                          "label":  "Run Ledger Integrity",
-                          "fileName":  "run_ledger_integrity_report.json",
-                          "status":  "present",
-                          "owner":  "intake-reference",
-                          "gateState":  "passed",
-                          "candidateOnly":  true,
-                          "externalWritesPerformed":  false,
-                          "notes":  [
-                                        "Found budget\\run_ledger_integrity_report.json; status=passed."
-                                    ]
-                      },
-                      {
-                          "artifactId":  "budget-coherence",
-                          "label":  "Budget Coherence",
-                          "fileName":  "budget_coherence_report.json",
-                          "status":  "present",
-                          "owner":  "qa-reference",
-                          "gateState":  "passed",
-                          "candidateOnly":  true,
-                          "externalWritesPerformed":  false,
-                          "notes":  [
-                                        "Found budget\\budget_coherence_report.json; status=passed."
-                                    ]
-                      },
-                      {
-                          "artifactId":  "synthetic-qa-bundle",
-                          "label":  "Synthetic QA Bundle",
-                          "fileName":  "synthetic_qa_bundle_report.json",
-                          "status":  "pending_review",
-                          "owner":  "qa-reference",
-                          "gateState":  "pending",
-                          "candidateOnly":  true,
-                          "externalWritesPerformed":  false,
-                          "notes":  [
-                                        "Found quality\\synthetic_qa_bundle_report.json; status=pending_review."
-                                    ]
-                      },
-                      {
-                          "artifactId":  "synthetic-qa-review-run",
-                          "label":  "Synthetic QA Review Run",
-                          "fileName":  "synthetic_qa_review_run_report.json",
-                          "status":  "present",
-                          "owner":  "qa-reference",
-                          "gateState":  "passed",
-                          "candidateOnly":  true,
-                          "externalWritesPerformed":  false,
-                          "notes":  [
-                                        "Found synthetic_qa_review_run_report.json; status=synthetic_qa_review_run_ready."
-                                    ]
-                      },
-                      {
-                          "artifactId":  "synthetic-confidence-summary",
-                          "label":  "Synthetic Confidence Summary",
-                          "fileName":  "synthetic_confidence_summary_report.json",
-                          "status":  "pending_review",
-                          "owner":  "qa-reference",
-                          "gateState":  "pending",
-                          "candidateOnly":  true,
-                          "externalWritesPerformed":  false,
-                          "notes":  [
-                                        "Found quality\\synthetic_confidence_summary_report.json; status=synthetic_confidence_summary_ready_for_review."
-                                    ]
-                      },
-                      {
-                          "artifactId":  "synthetic-qa-blocker-report",
-                          "label":  "Synthetic QA Blocker Report",
-                          "fileName":  "synthetic_qa_blocker_report.json",
-                          "status":  "pending_review",
-                          "owner":  "qa-reference",
-                          "gateState":  "pending",
-                          "candidateOnly":  true,
-                          "externalWritesPerformed":  false,
-                          "notes":  [
-                                        "Found quality\\synthetic_qa_blocker_report.json; status=synthetic_qa_blocker_report_ready_for_review."
-                                    ]
-                      },
-                      {
-                          "artifactId":  "poc-qa-triage",
-                          "label":  "POC QA Triage",
-                          "fileName":  "poc_qa_triage_report.json",
-                          "status":  "pending_review",
-                          "owner":  "qa-reference",
-                          "gateState":  "pending",
-                          "candidateOnly":  true,
-                          "externalWritesPerformed":  false,
-                          "notes":  [
-                                        "poc_qa_triage_report.json was not found under the local run root."
-                                    ]
-                      },
-                      {
-                          "artifactId":  "matter-linking-preflight",
-                          "label":  "Matter-Linking Preflight",
-                          "fileName":  "matter_linking_preflight_report.json",
-                          "status":  "pending_review",
-                          "owner":  "qa-reference",
-                          "gateState":  "pending",
-                          "candidateOnly":  true,
-                          "externalWritesPerformed":  false,
-                          "notes":  [
-                                        "Found quality\\matter_linking_preflight_report.json; status=matter_linking_preflight_resolved_candidate_requires_review."
-                                    ]
-                      },
-                      {
-                          "artifactId":  "matter-linking-review-outcome",
-                          "label":  "Matter-Linking Review Outcome",
-                          "fileName":  "matter_linking_review_outcome_report.json",
-                          "status":  "pending_review",
-                          "owner":  "qa-reference",
-                          "gateState":  "pending",
-                          "candidateOnly":  true,
-                          "externalWritesPerformed":  false,
-                          "notes":  [
-                                        "Found quality\\matter_linking_review_outcome_report.json; status=matter_linking_review_outcome_recorded."
-                                    ]
-                      },
-                      {
-                          "artifactId":  "matter-linking-qa-gate",
-                          "label":  "Matter-Linking QA Gate",
-                          "fileName":  "matter_linking_qa_gate_report.json",
-                          "status":  "pending_review",
-                          "owner":  "qa-reference",
-                          "gateState":  "pending",
-                          "candidateOnly":  true,
-                          "externalWritesPerformed":  false,
-                          "notes":  [
-                                        "Found quality\\matter_linking_qa_gate_report.json; status=matter_linking_qa_gate_ready_for_review."
-                                    ]
-                      },
-                      {
-                          "artifactId":  "fixture-depth",
-                          "label":  "Synthetic Fixture Depth",
-                          "fileName":  "synthetic_fixture_depth_audit_report.json",
-                          "status":  "pending_review",
-                          "owner":  "qa-reference",
-                          "gateState":  "pending",
-                          "candidateOnly":  true,
-                          "externalWritesPerformed":  false,
-                          "notes":  [
-                                        "Found quality\\synthetic_fixture_depth_audit_report.json; status=synthetic_fixture_depth_ready_for_review."
-                                    ]
-                      },
-                      {
-                          "artifactId":  "calibration-readiness",
-                          "label":  "Calibration Readiness",
-                          "fileName":  "budget_calibration_readiness_report.json",
-                          "status":  "pending_review",
-                          "owner":  "pricing-review",
-                          "gateState":  "pending",
-                          "candidateOnly":  true,
-                          "externalWritesPerformed":  false,
-                          "notes":  [
-                                        "Found quality\\budget_calibration_readiness_report.json; status=ready_for_manual_fixture_update_review."
-                                    ]
-                      },
-                      {
-                          "artifactId":  "calibration-starter-pack",
-                          "label":  "Calibration Starter Pack",
-                          "fileName":  "budget_calibration_starter_pack_report.json",
-                          "status":  "pending_review",
-                          "owner":  "pricing-review",
-                          "gateState":  "pending",
-                          "candidateOnly":  true,
-                          "externalWritesPerformed":  false,
-                          "notes":  [
-                                        "Found quality\\calibration-starter\\budget_calibration_starter_pack_report.json; status=starter_pack_ready_for_manual_fixture_update_review."
-                                    ]
-                      },
-                      {
-                          "artifactId":  "labor-employment-qa-matrix",
-                          "label":  "L\u0026E QA Matrix",
-                          "fileName":  "labor_employment_qa_matrix_report.json",
-                          "status":  "pending_review",
-                          "owner":  "qa-reference",
-                          "gateState":  "pending",
-                          "candidateOnly":  true,
-                          "externalWritesPerformed":  false,
-                          "notes":  [
-                                        "Found quality\\labor_employment_qa_matrix_report.json; status=labor_employment_qa_matrix_ready_for_review."
-                                    ]
-                      },
-                      {
-                          "artifactId":  "labor-employment-fixture-family-pack",
-                          "label":  "L\u0026E Fixture Family Pack",
-                          "fileName":  "labor_employment_fixture_family_pack_report.json",
-                          "status":  "pending_review",
-                          "owner":  "qa-reference",
-                          "gateState":  "pending",
-                          "candidateOnly":  true,
-                          "externalWritesPerformed":  false,
-                          "notes":  [
-                                        "Found quality\\labor_employment_fixture_family_pack_report.json; status=labor_employment_fixture_family_pack_ready_for_review."
-                                    ]
-                      },
-                      {
-                          "artifactId":  "labor-employment-executable-fixtures",
-                          "label":  "L\u0026E Executable Fixtures",
-                          "fileName":  "labor_employment_executable_fixtures_report.json",
-                          "status":  "pending_review",
-                          "owner":  "qa-reference",
-                          "gateState":  "pending",
-                          "candidateOnly":  true,
-                          "externalWritesPerformed":  false,
-                          "notes":  [
-                                        "Found quality\\labor_employment_executable_fixtures_report.json; status=labor_employment_executable_fixtures_ready_for_review."
-                                    ]
-                      },
-                      {
-                          "artifactId":  "labor-employment-executable-coverage",
-                          "label":  "L\u0026E Executable Coverage",
-                          "fileName":  "labor_employment_executable_coverage_report.json",
-                          "status":  "pending_review",
-                          "owner":  "qa-reference",
-                          "gateState":  "pending",
-                          "candidateOnly":  true,
-                          "externalWritesPerformed":  false,
-                          "notes":  [
-                                        "Found quality\\labor_employment_executable_coverage_report.json; status=labor_employment_executable_coverage_ready_for_review."
-                                    ]
-                      },
-                      {
-                          "artifactId":  "labor-employment-executable-fact-binding",
-                          "label":  "L\u0026E Executable Fact Binding",
-                          "fileName":  "labor_employment_executable_fact_binding_report.json",
-                          "status":  "pending_review",
-                          "owner":  "qa-reference",
-                          "gateState":  "pending",
-                          "candidateOnly":  true,
-                          "externalWritesPerformed":  false,
-                          "notes":  [
-                                        "Found quality\\labor_employment_executable_fact_binding_report.json; status=labor_employment_executable_budget_fact_bindings_ready_for_review."
-                                    ]
-                      },
-                      {
-                          "artifactId":  "labor-employment-executable-driver-binding",
-                          "label":  "L\u0026E Executable Driver Binding",
-                          "fileName":  "labor_employment_executable_driver_binding_report.json",
-                          "status":  "pending_review",
-                          "owner":  "qa-reference",
-                          "gateState":  "pending",
-                          "candidateOnly":  true,
-                          "externalWritesPerformed":  false,
-                          "notes":  [
-                                        "Found quality\\labor_employment_executable_driver_binding_report.json; status=labor_employment_executable_driver_bindings_ready_for_review."
-                                    ]
-                      },
-                      {
-                          "artifactId":  "labor-employment-executable-driver-impact",
-                          "label":  "L\u0026E Executable Driver Impact",
-                          "fileName":  "labor_employment_executable_driver_impact_report.json",
-                          "status":  "pending_review",
-                          "owner":  "qa-reference",
-                          "gateState":  "pending",
-                          "candidateOnly":  true,
-                          "externalWritesPerformed":  false,
-                          "notes":  [
-                                        "Found quality\\labor_employment_executable_driver_impact_report.json; status=labor_employment_executable_driver_impacts_ready_for_review."
-                                    ]
-                      },
-                      {
-                          "artifactId":  "labor-employment-driver-impact-review",
-                          "label":  "L\u0026E Driver Impact Review",
-                          "fileName":  "labor_employment_driver_impact_review_report.json",
-                          "status":  "pending_review",
-                          "owner":  "qa-reference",
-                          "gateState":  "pending",
-                          "candidateOnly":  true,
-                          "externalWritesPerformed":  false,
-                          "notes":  [
-                                        "Found quality\\labor_employment_driver_impact_review_report.json; status=labor_employment_driver_impact_review_ready_for_budget_gate_replay."
-                                    ]
-                      },
-                      {
-                          "artifactId":  "labor-employment-blocked-driver-impact-review",
-                          "label":  "L\u0026E Blocked Driver Impact Review",
-                          "fileName":  "labor_employment_blocked_driver_impact_review_report.json",
-                          "status":  "pending_review",
-                          "owner":  "qa-reference",
-                          "gateState":  "pending",
-                          "candidateOnly":  true,
-                          "externalWritesPerformed":  false,
-                          "notes":  [
-                                        "Found quality\\labor_employment_blocked_driver_impact_review_report.json; status=labor_employment_blocked_driver_impacts_ready_for_review."
-                                    ]
-                      },
-                      {
-                          "artifactId":  "labor-employment-budget-output-expectations",
-                          "label":  "L\u0026E Budget Output Expectations",
-                          "fileName":  "labor_employment_budget_output_expectations_report.json",
-                          "status":  "pending_review",
-                          "owner":  "qa-reference",
-                          "gateState":  "pending",
-                          "candidateOnly":  true,
-                          "externalWritesPerformed":  false,
-                          "notes":  [
-                                        "Found quality\\labor_employment_budget_output_expectations_report.json; status=labor_employment_budget_output_expectations_ready_for_review."
-                                    ]
-                      },
-                      {
-                          "artifactId":  "labor-employment-budget-qa-gate",
-                          "label":  "L\u0026E Budget QA Gate",
-                          "fileName":  "labor_employment_budget_qa_gate_report.json",
-                          "status":  "pending_review",
-                          "owner":  "qa-reference",
-                          "gateState":  "pending",
-                          "candidateOnly":  true,
-                          "externalWritesPerformed":  false,
-                          "notes":  [
-                                        "Found quality\\labor_employment_budget_qa_gate_report.json; status=labor_employment_budget_qa_gate_ready_for_review."
-                                    ]
-                      },
-                      {
-                          "artifactId":  "labor-employment-budget-fact-gold",
-                          "label":  "L\u0026E Budget Fact Gold",
-                          "fileName":  "labor_employment_budget_fact_gold_report.json",
-                          "status":  "present",
-                          "owner":  "qa-reference",
-                          "gateState":  "passed",
-                          "candidateOnly":  true,
-                          "externalWritesPerformed":  false,
-                          "notes":  [
-                                        "Found quality\\labor_employment_budget_fact_gold_report.json; status=passed."
-                                    ]
-                      },
-                      {
-                          "artifactId":  "validation-suite-evidence",
-                          "label":  "Validation Suite Evidence",
-                          "fileName":  "validation_suite_evidence_report.json",
-                          "status":  "passed",
-                          "owner":  "qa-reference",
-                          "gateState":  "passed",
-                          "candidateOnly":  true,
-                          "externalWritesPerformed":  false,
-                          "notes":  [
-                                        "Validation evidence fixture is present for the demo review surface; generated run artifacts remain candidate-only and local."
-                                    ]
-                      },
-                      {
-                          "artifactId":  "budget-human-review",
-                          "label":  "Budget Human Review",
-                          "fileName":  "budget_human_review_packet.json",
-                          "status":  "pending_review",
-                          "owner":  "pricing-review",
-                          "gateState":  "pending",
-                          "candidateOnly":  true,
-                          "externalWritesPerformed":  false,
-                          "notes":  [
-                                        "budget_human_review_packet.json was not found under the local run root."
-                                    ]
-                      },
-                      {
-                          "artifactId":  "carrier-rejection-ledger",
-                          "label":  "Carrier Rejection Ledger",
-                          "fileName":  "carrier_rejection_decision_ledger_report.json",
-                          "status":  "pending_review",
-                          "owner":  "carrier-response-review",
-                          "gateState":  "pending",
-                          "candidateOnly":  true,
-                          "externalWritesPerformed":  false,
-                          "notes":  [
-                                        "carrier_rejection_decision_ledger_report.json was not found under the local run root."
-                                    ]
-                      },
-                      {
-                          "artifactId":  "actual-variance",
-                          "label":  "Actual Variance Ledger",
-                          "fileName":  "budget_actual_variance_ledger_report.json",
-                          "status":  "pending_review",
-                          "owner":  "pricing-review",
-                          "gateState":  "pending",
-                          "candidateOnly":  true,
-                          "externalWritesPerformed":  false,
-                          "notes":  [
-                                        "budget_actual_variance_ledger_report.json was not found under the local run root."
-                                    ]
-                      },
-                      {
-                          "artifactId":  "public-methodology",
-                          "label":  "Public Methodology",
-                          "fileName":  "public_source_methodology_report.json",
-                          "status":  "pending_review",
-                          "owner":  "methodology-review",
-                          "gateState":  "pending",
-                          "candidateOnly":  true,
-                          "externalWritesPerformed":  false,
-                          "notes":  [
-                                        "public_source_methodology_report.json was not found under the local run root."
-                                    ]
-                      },
-                      {
-                          "artifactId":  "public-cache",
-                          "label":  "Public Data Cache",
-                          "fileName":  "public_data_cache_audit_report.json",
-                          "status":  "pending_review",
-                          "owner":  "methodology-review",
-                          "gateState":  "pending",
-                          "candidateOnly":  true,
-                          "externalWritesPerformed":  false,
-                          "notes":  [
-                                        "public_data_cache_audit_report.json was not found under the local run root."
-                                    ]
-                      }
-                  ],
-    "qualityGates":  [
-                         {
-                             "gateId":  "budget_coherence",
-                             "label":  "Budget Coherence",
-                             "status":  "passed",
-                             "evidenceFile":  "budget_coherence_report.json",
-                             "owner":  "qa-reference",
-                             "notes":  [
-                                           "Serialized artifact math and no-submission display boundary are checked before demo acceptance."
-                                       ]
-                         },
-                         {
-                             "gateId":  "synthetic_qa_bundle",
-                             "label":  "Synthetic QA Bundle",
-                             "status":  "pending_review",
-                             "evidenceFile":  "synthetic_qa_bundle_report.json",
-                             "owner":  "qa-reference",
-                             "notes":  [
-                                           "Budget coherence, fixture depth, calibration readiness, and UI evidence are bundled for QA review."
-                                       ]
-                         },
-                         {
-                             "gateId":  "synthetic_qa_review_run",
-                             "label":  "Synthetic QA Review Run",
-                             "status":  "passed",
-                             "evidenceFile":  "synthetic_qa_review_run_report.json",
-                             "owner":  "qa-reference",
-                             "notes":  [
-                                           "The one-command synthetic QA recipe must prove each generated QA/UI artifact step before the frontend treats the run as review-ready."
-                                       ]
-                         },
-                         {
-                             "gateId":  "synthetic_confidence_summary",
-                             "label":  "Synthetic Confidence Summary",
-                             "status":  "pending_review",
-                             "evidenceFile":  "synthetic_confidence_summary_report.json",
-                             "owner":  "qa-reference",
-                             "notes":  [
-                                           "The aggregate synthetic QA confidence banner must make review readiness, blockers, and no-production-authority boundaries visible."
-                                       ]
-                         },
-                         {
-                             "gateId":  "synthetic_qa_blocker_report",
-                             "label":  "Synthetic QA Blocker Report",
-                             "status":  "pending_review",
-                             "evidenceFile":  "synthetic_qa_blocker_report.json",
-                             "owner":  "qa-reference",
-                             "notes":  [
-                                           "The synthetic QA blocker queue must be emitted as deterministic local JSON before the review UI relies on it."
-                                       ]
-                         },
-                         {
-                             "gateId":  "poc_qa_triage",
-                             "label":  "POC QA Triage",
-                             "status":  "pending_review",
-                             "evidenceFile":  "poc_qa_triage_report.json",
-                             "owner":  "qa-reference",
-                             "notes":  [
-                                           "poc_qa_triage_report.json is missing; The POC QA triage queue must reconcile validation, synthetic QA, L\u0026E budget gates, and UI evidence before readiness is claimed."
-                                       ]
-                         },
-                         {
-                             "gateId":  "matter_linking_preflight",
-                             "label":  "Matter-Linking Preflight",
-                             "status":  "pending_review",
-                             "evidenceFile":  "matter_linking_preflight_report.json",
-                             "owner":  "qa-reference",
-                             "notes":  [
-                                           "Upfront-like document clusters must stay human-gated and no-write before budget or matter-opening workflows rely on them."
-                                       ]
-                         },
-                         {
-                             "gateId":  "matter_linking_review_outcome",
-                             "label":  "Matter-Linking Review Outcome",
-                             "status":  "pending_review",
-                             "evidenceFile":  "matter_linking_review_outcome_report.json",
-                             "owner":  "qa-reference",
-                             "notes":  [
-                                           "Human matter-linking decisions must be append-only local evidence and cannot authorize budgets, matter opening, Lake admission, or learning."
-                                       ]
-                         },
-                         {
-                             "gateId":  "matter_linking_qa_gate",
-                             "label":  "Matter-Linking QA Gate",
-                             "status":  "pending_review",
-                             "evidenceFile":  "matter_linking_qa_gate_report.json",
-                             "owner":  "qa-reference",
-                             "notes":  [
-                                           "Upfront-like matter-linking fixtures must cover ambiguous multi-case sender risk, resolved follow-up, weak-only blocking, conflicting identifiers, and no-write boundaries."
-                                       ]
-                         },
-                         {
-                             "gateId":  "synthetic_fixture_depth",
-                             "label":  "Synthetic Fixture Depth",
-                             "status":  "pending_review",
-                             "evidenceFile":  "synthetic_fixture_depth_audit_report.json",
-                             "owner":  "qa-reference",
-                             "notes":  [
-                                           "Fixture-family depth remains visible before synthetic QA coverage is trusted."
-                                       ]
-                         },
-                         {
-                             "gateId":  "budget_calibration_readiness",
-                             "label":  "Calibration Readiness",
-                             "status":  "pending_review",
-                             "evidenceFile":  "budget_calibration_readiness_report.json",
-                             "owner":  "pricing-review",
-                             "notes":  [
-                                           "Budget calibration stays blocked until reviewed gold, replay outputs, and variance evidence exist."
-                                       ]
-                         },
-                         {
-                             "gateId":  "labor_employment_qa_matrix",
-                             "label":  "L\u0026E QA Matrix",
-                             "status":  "pending_review",
-                             "evidenceFile":  "labor_employment_qa_matrix_report.json",
-                             "owner":  "qa-reference",
-                             "notes":  [
-                                           "L\u0026E synthetic fact fixtures must prove critical blockers and range-only review posture."
-                                       ]
-                         },
-                         {
-                             "gateId":  "labor_employment_fixture_family_pack",
-                             "label":  "L\u0026E Fixture Family Pack",
-                             "status":  "pending_review",
-                             "evidenceFile":  "labor_employment_fixture_family_pack_report.json",
-                             "owner":  "qa-reference",
-                             "notes":  [
-                                           "L\u0026E synthetic fixtures must cover required families, variants, fact needs, and budget-driver dimensions."
-                                       ]
-                         },
-                         {
-                             "gateId":  "labor_employment_executable_fixtures",
-                             "label":  "L\u0026E Executable Fixtures",
-                             "status":  "pending_review",
-                             "evidenceFile":  "labor_employment_executable_fixtures_report.json",
-                             "owner":  "qa-reference",
-                             "notes":  [
-                                           "Selected L\u0026E source bundles must execute through deterministic preflight before fixture generation is trusted."
-                                       ]
-                         },
-                         {
-                             "gateId":  "labor_employment_executable_coverage",
-                             "label":  "L\u0026E Executable Coverage",
-                             "status":  "pending_review",
-                             "evidenceFile":  "labor_employment_executable_coverage_report.json",
-                             "owner":  "qa-reference",
-                             "notes":  [
-                                           "QA must show which L\u0026E fixture-family pack cases are executable today and which remain planned coverage gaps."
-                                       ]
-                         },
-                         {
-                             "gateId":  "labor_employment_executable_fact_binding",
-                             "label":  "L\u0026E Executable Fact Binding",
-                             "status":  "pending_review",
-                             "evidenceFile":  "labor_employment_executable_fact_binding_report.json",
-                             "owner":  "qa-reference",
-                             "notes":  [
-                                           "Executable L\u0026E preflight packets must bind expected budget-fact gaps to source evidence, source inventory, or dry-run exception labels."
-                                       ]
-                         },
-                         {
-                             "gateId":  "labor_employment_executable_driver_binding",
-                             "label":  "L\u0026E Executable Driver Binding",
-                             "status":  "pending_review",
-                             "evidenceFile":  "labor_employment_executable_driver_binding_report.json",
-                             "owner":  "qa-reference",
-                             "notes":  [
-                                           "Executable L\u0026E fact-gap evidence must map to budget-driver focus dimensions before budget-driver QA is trusted."
-                                       ]
-                         },
-                         {
-                             "gateId":  "labor_employment_executable_driver_impact",
-                             "label":  "L\u0026E Executable Driver Impact",
-                             "status":  "pending_review",
-                             "evidenceFile":  "labor_employment_executable_driver_impact_report.json",
-                             "owner":  "qa-reference",
-                             "notes":  [
-                                           "Executable L\u0026E driver bindings must declare candidate budget blockers, range widening, scenario forks, and rate/guideline review effects before budget math can consume them."
-                                       ]
-                         },
-                         {
-                             "gateId":  "labor_employment_driver_impact_review",
-                             "label":  "L\u0026E Driver Impact Review",
-                             "status":  "pending_review",
-                             "evidenceFile":  "labor_employment_driver_impact_review_report.json",
-                             "owner":  "qa-reference",
-                             "notes":  [
-                                           "Nonblocking L\u0026E driver-impact budget-gate replay must be backed by reviewed synthetic evidence, not hand-filtered test data."
-                                       ]
-                         },
-                         {
-                             "gateId":  "labor_employment_blocked_driver_impact_review",
-                             "label":  "L\u0026E Blocked Driver Impact Review",
-                             "status":  "pending_review",
-                             "evidenceFile":  "labor_employment_blocked_driver_impact_review_report.json",
-                             "owner":  "qa-reference",
-                             "notes":  [
-                                           "Blocked L\u0026E amount-budget cases must explain blocker facts, follow-up actions, and candidate Lake labels before QA trusts budget gating."
-                                       ]
-                         },
-                         {
-                             "gateId":  "labor_employment_budget_output_expectations",
-                             "label":  "L\u0026E Budget Output Expectations",
-                             "status":  "pending_review",
-                             "evidenceFile":  "labor_employment_budget_output_expectations_report.json",
-                             "owner":  "qa-reference",
-                             "notes":  [
-                                           "Every executable L\u0026E case must have one allowed budget-output state, next gates, and candidate Lake labels before budget QA can rely on it."
-                                       ]
-                         },
-                         {
-                             "gateId":  "labor_employment_budget_qa_gate",
-                             "label":  "L\u0026E Budget QA Gate",
-                             "status":  "pending_review",
-                             "evidenceFile":  "labor_employment_budget_qa_gate_report.json",
-                             "owner":  "qa-reference",
-                             "notes":  [
-                                           "L\u0026E budget-output, blocked-driver-review, and executable-coverage evidence must be aggregated before the UI treats budget QA as review-ready."
-                                       ]
-                         },
-                         {
-                             "gateId":  "labor_employment_budget_fact_gold",
-                             "label":  "L\u0026E Budget Fact Gold",
-                             "status":  "passed",
-                             "evidenceFile":  "labor_employment_budget_fact_gold_report.json",
-                             "owner":  "qa-reference",
-                             "notes":  [
-                                           "L\u0026E budget fact audit outputs must match reviewed synthetic gold before calibration or model comparison."
-                                       ]
-                         },
-                         {
-                             "gateId":  "validation_suite_evidence",
-                             "label":  "Validation Suite Evidence",
-                             "status":  "passed",
-                             "evidenceFile":  "validation_suite_evidence_report.json",
-                             "owner":  "qa-reference",
-                             "notes":  [
-                                           "Validation suite evidence fixture is present for the demo review surface."
-                                       ]
-                         },
-                         {
-                             "gateId":  "full_pytest",
-                             "label":  "Full Pytest",
-                             "status":  "passed",
-                             "evidenceFile":  "validation_suite_evidence_report.json",
-                             "owner":  "qa-reference",
-                             "notes":  [
-                                           "Demo validation evidence records a passed full_pytest step from scripts/run_full_pytest.py."
-                                       ]
-                         },
-                         {
-                             "gateId":  "smoke_demo",
-                             "label":  "North-Star Smoke",
-                             "status":  "passed",
-                             "evidenceFile":  "validation_suite_evidence_report.json",
-                             "owner":  "qa-reference",
-                             "notes":  [
-                                           "Demo validation evidence records a passed smoke_demo step from scripts/smoke_demo.sh."
-                                       ]
-                         }
-                     ],
-    "blockerSummary":  [
-                           "Matter Opening: Found budget\\matter_opening_readiness.json; status=blocked_pending_conflicts_and_engagement."
-                       ],
-    "redTeamNotes":  [
-                         "Generated from local artifacts only; missing QA evidence is not treated as passing.",
-                         "The UI manifest is display evidence only and cannot submit budgets, open matters, or write Lake records.",
-                         "Synthetic QA gates remain candidate-only until reviewed by the appropriate owner."
-                     ]
+  "manifestId": "ui_review_manifest_82c6f5b68fd9",
+  "generatedAt": "2026-07-04T00:00:00Z",
+  "runLabel": "Local intake QA review: synthetic-qa-review",
+  "practiceArea": "synthetic_intake",
+  "matterFamily": "medical_malpractice_defense",
+  "overallStatus": "blocked",
+  "boundaryFlags": {
+    "readOnly": true,
+    "localJsonOnly": true,
+    "networkCallsAllowed": false,
+    "mutationCommandsAllowed": false,
+    "exceptionLakeWritesAllowed": false,
+    "sqliteWritesAllowed": false,
+    "publicRuntimeIngestionAllowed": false,
+    "budgetSubmissionAllowed": false,
+    "matterOpeningAllowed": false
+  },
+  "artifacts": [
+    {
+      "artifactId": "preflight",
+      "label": "Intake Preflight",
+      "fileName": "intake_preflight_packet.json",
+      "status": "pending_review",
+      "owner": "intake-reference",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": [
+        "Found preflight\\run_028b6e71867a4e0dbb86d689dff16820\\intake_preflight_packet.json; status=human_intake_review_required."
+      ]
+    },
+    {
+      "artifactId": "human-gate",
+      "label": "Human Gate",
+      "fileName": "human_gate_status_report.json",
+      "status": "pending_review",
+      "owner": "human-reviewer",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": [
+        "Found budget\\human_gate_status_report.json; status=pending_human_gates."
+      ]
+    },
+    {
+      "artifactId": "conflict-seed",
+      "label": "Conflict Seed",
+      "fileName": "conflict_search_seed_packet.json",
+      "status": "present",
+      "owner": "intake-reference",
+      "gateState": "passed",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": [
+        "Found budget\\conflict_search_seed_packet.json; status=seed_ready_for_conflicts_team."
+      ]
+    },
+    {
+      "artifactId": "budget-proposal",
+      "label": "Budget Proposal",
+      "fileName": "legal_budget_proposal.json",
+      "status": "present",
+      "owner": "pricing-review",
+      "gateState": "passed",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": [
+        "Found budget\\legal_budget_proposal.json; local artifact present."
+      ]
+    },
+    {
+      "artifactId": "matter-opening",
+      "label": "Matter Opening",
+      "fileName": "matter_opening_readiness.json",
+      "status": "blocked",
+      "owner": "orchestrator-future-owner",
+      "gateState": "blocked",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": [
+        "Found budget\\matter_opening_readiness.json; status=blocked_pending_conflicts_and_engagement."
+      ]
+    },
+    {
+      "artifactId": "submission-guard",
+      "label": "Budget Submission Guard",
+      "fileName": "budget_submission_guard_report.json",
+      "status": "present",
+      "owner": "intake-reference",
+      "gateState": "passed",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": [
+        "Found budget\\budget_submission_guard_report.json; status=passed."
+      ]
+    },
+    {
+      "artifactId": "lake-handoff",
+      "label": "Lake Handoff",
+      "fileName": "exception_lake_handoff_manifest.json",
+      "status": "present",
+      "owner": "exception-lake-future-owner",
+      "gateState": "passed",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": [
+        "Found budget\\exception_lake_handoff_manifest.json; status=dry_run_ready_not_admitted."
+      ]
+    },
+    {
+      "artifactId": "run-ledger",
+      "label": "Run Ledger Integrity",
+      "fileName": "run_ledger_integrity_report.json",
+      "status": "present",
+      "owner": "intake-reference",
+      "gateState": "passed",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": [
+        "Found budget\\run_ledger_integrity_report.json; status=passed."
+      ]
+    },
+    {
+      "artifactId": "budget-coherence",
+      "label": "Budget Coherence",
+      "fileName": "budget_coherence_report.json",
+      "status": "present",
+      "owner": "qa-reference",
+      "gateState": "passed",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": [
+        "Found budget\\budget_coherence_report.json; status=passed."
+      ]
+    },
+    {
+      "artifactId": "synthetic-qa-bundle",
+      "label": "Synthetic QA Bundle",
+      "fileName": "synthetic_qa_bundle_report.json",
+      "status": "pending_review",
+      "owner": "qa-reference",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": [
+        "Found quality\\synthetic_qa_bundle_report.json; status=pending_review."
+      ]
+    },
+    {
+      "artifactId": "synthetic-qa-review-run",
+      "label": "Synthetic QA Review Run",
+      "fileName": "synthetic_qa_review_run_report.json",
+      "status": "present",
+      "owner": "qa-reference",
+      "gateState": "passed",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": [
+        "Found synthetic_qa_review_run_report.json; status=synthetic_qa_review_run_ready."
+      ]
+    },
+    {
+      "artifactId": "synthetic-confidence-summary",
+      "label": "Synthetic Confidence Summary",
+      "fileName": "synthetic_confidence_summary_report.json",
+      "status": "pending_review",
+      "owner": "qa-reference",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": [
+        "Found quality\\synthetic_confidence_summary_report.json; status=synthetic_confidence_summary_ready_for_review."
+      ]
+    },
+    {
+      "artifactId": "synthetic-qa-blocker-report",
+      "label": "Synthetic QA Blocker Report",
+      "fileName": "synthetic_qa_blocker_report.json",
+      "status": "pending_review",
+      "owner": "qa-reference",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": [
+        "Found quality\\synthetic_qa_blocker_report.json; status=synthetic_qa_blocker_report_ready_for_review."
+      ]
+    },
+    {
+      "artifactId": "poc-qa-triage",
+      "label": "POC QA Triage",
+      "fileName": "poc_qa_triage_report.json",
+      "status": "pending_review",
+      "owner": "qa-reference",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": [
+        "Found quality\\poc_qa_triage_report.json; status=poc_qa_ready_for_review."
+      ]
+    },
+    {
+      "artifactId": "matter-linking-preflight",
+      "label": "Matter-Linking Preflight",
+      "fileName": "matter_linking_preflight_report.json",
+      "status": "pending_review",
+      "owner": "qa-reference",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": [
+        "Found quality\\matter_linking_preflight_report.json; status=matter_linking_preflight_resolved_candidate_requires_review."
+      ]
+    },
+    {
+      "artifactId": "matter-linking-review-outcome",
+      "label": "Matter-Linking Review Outcome",
+      "fileName": "matter_linking_review_outcome_report.json",
+      "status": "pending_review",
+      "owner": "qa-reference",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": [
+        "Found quality\\matter_linking_review_outcome_report.json; status=matter_linking_review_outcome_recorded."
+      ]
+    },
+    {
+      "artifactId": "matter-linking-qa-gate",
+      "label": "Matter-Linking QA Gate",
+      "fileName": "matter_linking_qa_gate_report.json",
+      "status": "pending_review",
+      "owner": "qa-reference",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": [
+        "Found quality\\matter_linking_qa_gate_report.json; status=matter_linking_qa_gate_ready_for_review."
+      ]
+    },
+    {
+      "artifactId": "fixture-depth",
+      "label": "Synthetic Fixture Depth",
+      "fileName": "synthetic_fixture_depth_audit_report.json",
+      "status": "pending_review",
+      "owner": "qa-reference",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": [
+        "Found quality\\synthetic_fixture_depth_audit_report.json; status=synthetic_fixture_depth_ready_for_review."
+      ]
+    },
+    {
+      "artifactId": "calibration-readiness",
+      "label": "Calibration Readiness",
+      "fileName": "budget_calibration_readiness_report.json",
+      "status": "pending_review",
+      "owner": "pricing-review",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": [
+        "Found quality\\budget_calibration_readiness_report.json; status=ready_for_manual_fixture_update_review."
+      ]
+    },
+    {
+      "artifactId": "calibration-starter-pack",
+      "label": "Calibration Starter Pack",
+      "fileName": "budget_calibration_starter_pack_report.json",
+      "status": "pending_review",
+      "owner": "pricing-review",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": [
+        "Found quality\\calibration-starter\\budget_calibration_starter_pack_report.json; status=starter_pack_ready_for_manual_fixture_update_review."
+      ]
+    },
+    {
+      "artifactId": "labor-employment-qa-matrix",
+      "label": "L&E QA Matrix",
+      "fileName": "labor_employment_qa_matrix_report.json",
+      "status": "pending_review",
+      "owner": "qa-reference",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": [
+        "Found quality\\labor_employment_qa_matrix_report.json; status=labor_employment_qa_matrix_ready_for_review."
+      ]
+    },
+    {
+      "artifactId": "labor-employment-fixture-family-pack",
+      "label": "L&E Fixture Family Pack",
+      "fileName": "labor_employment_fixture_family_pack_report.json",
+      "status": "pending_review",
+      "owner": "qa-reference",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": [
+        "Found quality\\labor_employment_fixture_family_pack_report.json; status=labor_employment_fixture_family_pack_ready_for_review."
+      ]
+    },
+    {
+      "artifactId": "labor-employment-executable-fixtures",
+      "label": "L&E Executable Fixtures",
+      "fileName": "labor_employment_executable_fixtures_report.json",
+      "status": "pending_review",
+      "owner": "qa-reference",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": [
+        "Found quality\\labor_employment_executable_fixtures_report.json; status=labor_employment_executable_fixtures_ready_for_review."
+      ]
+    },
+    {
+      "artifactId": "labor-employment-executable-coverage",
+      "label": "L&E Executable Coverage",
+      "fileName": "labor_employment_executable_coverage_report.json",
+      "status": "pending_review",
+      "owner": "qa-reference",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": [
+        "Found quality\\labor_employment_executable_coverage_report.json; status=labor_employment_executable_coverage_ready_for_review."
+      ]
+    },
+    {
+      "artifactId": "labor-employment-executable-fact-binding",
+      "label": "L&E Executable Fact Binding",
+      "fileName": "labor_employment_executable_fact_binding_report.json",
+      "status": "pending_review",
+      "owner": "qa-reference",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": [
+        "Found quality\\labor_employment_executable_fact_binding_report.json; status=labor_employment_executable_budget_fact_bindings_ready_for_review."
+      ]
+    },
+    {
+      "artifactId": "labor-employment-executable-driver-binding",
+      "label": "L&E Executable Driver Binding",
+      "fileName": "labor_employment_executable_driver_binding_report.json",
+      "status": "pending_review",
+      "owner": "qa-reference",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": [
+        "Found quality\\labor_employment_executable_driver_binding_report.json; status=labor_employment_executable_driver_bindings_ready_for_review."
+      ]
+    },
+    {
+      "artifactId": "labor-employment-executable-driver-impact",
+      "label": "L&E Executable Driver Impact",
+      "fileName": "labor_employment_executable_driver_impact_report.json",
+      "status": "pending_review",
+      "owner": "qa-reference",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": [
+        "Found quality\\labor_employment_executable_driver_impact_report.json; status=labor_employment_executable_driver_impacts_ready_for_review."
+      ]
+    },
+    {
+      "artifactId": "labor-employment-driver-impact-review",
+      "label": "L&E Driver Impact Review",
+      "fileName": "labor_employment_driver_impact_review_report.json",
+      "status": "pending_review",
+      "owner": "qa-reference",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": [
+        "Found quality\\labor_employment_driver_impact_review_report.json; status=labor_employment_driver_impact_review_ready_for_budget_gate_replay."
+      ]
+    },
+    {
+      "artifactId": "labor-employment-blocked-driver-impact-review",
+      "label": "L&E Blocked Driver Impact Review",
+      "fileName": "labor_employment_blocked_driver_impact_review_report.json",
+      "status": "pending_review",
+      "owner": "qa-reference",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": [
+        "Found quality\\labor_employment_blocked_driver_impact_review_report.json; status=labor_employment_blocked_driver_impacts_ready_for_review."
+      ]
+    },
+    {
+      "artifactId": "labor-employment-budget-output-expectations",
+      "label": "L&E Budget Output Expectations",
+      "fileName": "labor_employment_budget_output_expectations_report.json",
+      "status": "pending_review",
+      "owner": "qa-reference",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": [
+        "Found quality\\labor_employment_budget_output_expectations_report.json; status=labor_employment_budget_output_expectations_ready_for_review."
+      ]
+    },
+    {
+      "artifactId": "labor-employment-budget-qa-gate",
+      "label": "L&E Budget QA Gate",
+      "fileName": "labor_employment_budget_qa_gate_report.json",
+      "status": "pending_review",
+      "owner": "qa-reference",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": [
+        "Found quality\\labor_employment_budget_qa_gate_report.json; status=labor_employment_budget_qa_gate_ready_for_review."
+      ]
+    },
+    {
+      "artifactId": "labor-employment-budget-fact-gold",
+      "label": "L&E Budget Fact Gold",
+      "fileName": "labor_employment_budget_fact_gold_report.json",
+      "status": "present",
+      "owner": "qa-reference",
+      "gateState": "passed",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": [
+        "Found quality\\labor_employment_budget_fact_gold_report.json; status=passed."
+      ]
+    },
+    {
+      "artifactId": "validation-suite-evidence",
+      "label": "Validation Suite Evidence",
+      "fileName": "validation_suite_evidence_report.json",
+      "status": "present",
+      "owner": "qa-reference",
+      "gateState": "passed",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": [
+        "Found quality\\validation_suite_evidence_report.json; status=validation_suite_passed."
+      ]
+    },
+    {
+      "artifactId": "budget-human-review",
+      "label": "Budget Human Review",
+      "fileName": "budget_human_review_packet.json",
+      "status": "pending_review",
+      "owner": "pricing-review",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": [
+        "budget_human_review_packet.json was not found under the local run root."
+      ]
+    },
+    {
+      "artifactId": "carrier-rejection-ledger",
+      "label": "Carrier Rejection Ledger",
+      "fileName": "carrier_rejection_decision_ledger_report.json",
+      "status": "pending_review",
+      "owner": "carrier-response-review",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": [
+        "carrier_rejection_decision_ledger_report.json was not found under the local run root."
+      ]
+    },
+    {
+      "artifactId": "actual-variance",
+      "label": "Actual Variance Ledger",
+      "fileName": "budget_actual_variance_ledger_report.json",
+      "status": "pending_review",
+      "owner": "pricing-review",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": [
+        "budget_actual_variance_ledger_report.json was not found under the local run root."
+      ]
+    },
+    {
+      "artifactId": "public-methodology",
+      "label": "Public Methodology",
+      "fileName": "public_source_methodology_report.json",
+      "status": "pending_review",
+      "owner": "methodology-review",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": [
+        "public_source_methodology_report.json was not found under the local run root."
+      ]
+    },
+    {
+      "artifactId": "public-cache",
+      "label": "Public Data Cache",
+      "fileName": "public_data_cache_audit_report.json",
+      "status": "pending_review",
+      "owner": "methodology-review",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": [
+        "public_data_cache_audit_report.json was not found under the local run root."
+      ]
+    }
+  ],
+  "qualityGates": [
+    {
+      "gateId": "budget_coherence",
+      "label": "Budget Coherence",
+      "status": "passed",
+      "evidenceFile": "budget_coherence_report.json",
+      "owner": "qa-reference",
+      "notes": [
+        "Serialized artifact math and no-submission display boundary are checked before demo acceptance."
+      ]
+    },
+    {
+      "gateId": "synthetic_qa_bundle",
+      "label": "Synthetic QA Bundle",
+      "status": "pending_review",
+      "evidenceFile": "synthetic_qa_bundle_report.json",
+      "owner": "qa-reference",
+      "notes": [
+        "Budget coherence, fixture depth, calibration readiness, and UI evidence are bundled for QA review."
+      ]
+    },
+    {
+      "gateId": "synthetic_qa_review_run",
+      "label": "Synthetic QA Review Run",
+      "status": "passed",
+      "evidenceFile": "synthetic_qa_review_run_report.json",
+      "owner": "qa-reference",
+      "notes": [
+        "The one-command synthetic QA recipe must prove each generated QA/UI artifact step before the frontend treats the run as review-ready."
+      ]
+    },
+    {
+      "gateId": "synthetic_confidence_summary",
+      "label": "Synthetic Confidence Summary",
+      "status": "pending_review",
+      "evidenceFile": "synthetic_confidence_summary_report.json",
+      "owner": "qa-reference",
+      "notes": [
+        "The aggregate synthetic QA confidence banner must make review readiness, blockers, and no-production-authority boundaries visible."
+      ]
+    },
+    {
+      "gateId": "synthetic_qa_blocker_report",
+      "label": "Synthetic QA Blocker Report",
+      "status": "pending_review",
+      "evidenceFile": "synthetic_qa_blocker_report.json",
+      "owner": "qa-reference",
+      "notes": [
+        "The synthetic QA blocker queue must be emitted as deterministic local JSON before the review UI relies on it."
+      ]
+    },
+    {
+      "gateId": "poc_qa_triage",
+      "label": "POC QA Triage",
+      "status": "pending_review",
+      "evidenceFile": "poc_qa_triage_report.json",
+      "owner": "qa-reference",
+      "notes": [
+        "The POC QA triage queue must reconcile validation, synthetic QA, L&E budget gates, and UI evidence before readiness is claimed."
+      ]
+    },
+    {
+      "gateId": "matter_linking_preflight",
+      "label": "Matter-Linking Preflight",
+      "status": "pending_review",
+      "evidenceFile": "matter_linking_preflight_report.json",
+      "owner": "qa-reference",
+      "notes": [
+        "Upfront-like document clusters must stay human-gated and no-write before budget or matter-opening workflows rely on them."
+      ]
+    },
+    {
+      "gateId": "matter_linking_review_outcome",
+      "label": "Matter-Linking Review Outcome",
+      "status": "pending_review",
+      "evidenceFile": "matter_linking_review_outcome_report.json",
+      "owner": "qa-reference",
+      "notes": [
+        "Human matter-linking decisions must be append-only local evidence and cannot authorize budgets, matter opening, Lake admission, or learning."
+      ]
+    },
+    {
+      "gateId": "matter_linking_qa_gate",
+      "label": "Matter-Linking QA Gate",
+      "status": "pending_review",
+      "evidenceFile": "matter_linking_qa_gate_report.json",
+      "owner": "qa-reference",
+      "notes": [
+        "Upfront-like matter-linking fixtures must cover ambiguous multi-case sender risk, resolved follow-up, weak-only blocking, conflicting identifiers, and no-write boundaries."
+      ]
+    },
+    {
+      "gateId": "synthetic_fixture_depth",
+      "label": "Synthetic Fixture Depth",
+      "status": "pending_review",
+      "evidenceFile": "synthetic_fixture_depth_audit_report.json",
+      "owner": "qa-reference",
+      "notes": [
+        "Fixture-family depth remains visible before synthetic QA coverage is trusted."
+      ]
+    },
+    {
+      "gateId": "budget_calibration_readiness",
+      "label": "Calibration Readiness",
+      "status": "pending_review",
+      "evidenceFile": "budget_calibration_readiness_report.json",
+      "owner": "pricing-review",
+      "notes": [
+        "Budget calibration stays blocked until reviewed gold, replay outputs, and variance evidence exist."
+      ]
+    },
+    {
+      "gateId": "labor_employment_qa_matrix",
+      "label": "L&E QA Matrix",
+      "status": "pending_review",
+      "evidenceFile": "labor_employment_qa_matrix_report.json",
+      "owner": "qa-reference",
+      "notes": [
+        "L&E synthetic fact fixtures must prove critical blockers and range-only review posture."
+      ]
+    },
+    {
+      "gateId": "labor_employment_fixture_family_pack",
+      "label": "L&E Fixture Family Pack",
+      "status": "pending_review",
+      "evidenceFile": "labor_employment_fixture_family_pack_report.json",
+      "owner": "qa-reference",
+      "notes": [
+        "L&E synthetic fixtures must cover required families, variants, fact needs, and budget-driver dimensions."
+      ]
+    },
+    {
+      "gateId": "labor_employment_executable_fixtures",
+      "label": "L&E Executable Fixtures",
+      "status": "pending_review",
+      "evidenceFile": "labor_employment_executable_fixtures_report.json",
+      "owner": "qa-reference",
+      "notes": [
+        "Selected L&E source bundles must execute through deterministic preflight before fixture generation is trusted."
+      ]
+    },
+    {
+      "gateId": "labor_employment_executable_coverage",
+      "label": "L&E Executable Coverage",
+      "status": "pending_review",
+      "evidenceFile": "labor_employment_executable_coverage_report.json",
+      "owner": "qa-reference",
+      "notes": [
+        "QA must show which L&E fixture-family pack cases are executable today and which remain planned coverage gaps."
+      ]
+    },
+    {
+      "gateId": "labor_employment_executable_fact_binding",
+      "label": "L&E Executable Fact Binding",
+      "status": "pending_review",
+      "evidenceFile": "labor_employment_executable_fact_binding_report.json",
+      "owner": "qa-reference",
+      "notes": [
+        "Executable L&E preflight packets must bind expected budget-fact gaps to source evidence, source inventory, or dry-run exception labels."
+      ]
+    },
+    {
+      "gateId": "labor_employment_executable_driver_binding",
+      "label": "L&E Executable Driver Binding",
+      "status": "pending_review",
+      "evidenceFile": "labor_employment_executable_driver_binding_report.json",
+      "owner": "qa-reference",
+      "notes": [
+        "Executable L&E fact-gap evidence must map to budget-driver focus dimensions before budget-driver QA is trusted."
+      ]
+    },
+    {
+      "gateId": "labor_employment_executable_driver_impact",
+      "label": "L&E Executable Driver Impact",
+      "status": "pending_review",
+      "evidenceFile": "labor_employment_executable_driver_impact_report.json",
+      "owner": "qa-reference",
+      "notes": [
+        "Executable L&E driver bindings must declare candidate budget blockers, range widening, scenario forks, and rate/guideline review effects before budget math can consume them."
+      ]
+    },
+    {
+      "gateId": "labor_employment_driver_impact_review",
+      "label": "L&E Driver Impact Review",
+      "status": "pending_review",
+      "evidenceFile": "labor_employment_driver_impact_review_report.json",
+      "owner": "qa-reference",
+      "notes": [
+        "Nonblocking L&E driver-impact budget-gate replay must be backed by reviewed synthetic evidence, not hand-filtered test data."
+      ]
+    },
+    {
+      "gateId": "labor_employment_blocked_driver_impact_review",
+      "label": "L&E Blocked Driver Impact Review",
+      "status": "pending_review",
+      "evidenceFile": "labor_employment_blocked_driver_impact_review_report.json",
+      "owner": "qa-reference",
+      "notes": [
+        "Blocked L&E amount-budget cases must explain blocker facts, follow-up actions, and candidate Lake labels before QA trusts budget gating."
+      ]
+    },
+    {
+      "gateId": "labor_employment_budget_output_expectations",
+      "label": "L&E Budget Output Expectations",
+      "status": "pending_review",
+      "evidenceFile": "labor_employment_budget_output_expectations_report.json",
+      "owner": "qa-reference",
+      "notes": [
+        "Every executable L&E case must have one allowed budget-output state, next gates, and candidate Lake labels before budget QA can rely on it."
+      ]
+    },
+    {
+      "gateId": "labor_employment_budget_qa_gate",
+      "label": "L&E Budget QA Gate",
+      "status": "pending_review",
+      "evidenceFile": "labor_employment_budget_qa_gate_report.json",
+      "owner": "qa-reference",
+      "notes": [
+        "L&E budget-output, blocked-driver-review, and executable-coverage evidence must be aggregated before the UI treats budget QA as review-ready."
+      ]
+    },
+    {
+      "gateId": "labor_employment_budget_fact_gold",
+      "label": "L&E Budget Fact Gold",
+      "status": "passed",
+      "evidenceFile": "labor_employment_budget_fact_gold_report.json",
+      "owner": "qa-reference",
+      "notes": [
+        "L&E budget fact audit outputs must match reviewed synthetic gold before calibration or model comparison."
+      ]
+    },
+    {
+      "gateId": "validation_suite_evidence",
+      "label": "Validation Suite Evidence",
+      "status": "passed",
+      "evidenceFile": "validation_suite_evidence_report.json",
+      "owner": "qa-reference",
+      "notes": [
+        "Wrapper-based validation suite evidence must prove the current QA checks before the frontend treats the run as POC QA-ready."
+      ]
+    },
+    {
+      "gateId": "full_pytest",
+      "label": "Full Pytest",
+      "status": "passed",
+      "evidenceFile": "validation_suite_evidence_report.json",
+      "owner": "qa-reference",
+      "notes": [
+        "Validation evidence must include a passed full_pytest step from scripts/run_full_pytest.py."
+      ]
+    },
+    {
+      "gateId": "smoke_demo",
+      "label": "North-Star Smoke",
+      "status": "passed",
+      "evidenceFile": "validation_suite_evidence_report.json",
+      "owner": "qa-reference",
+      "notes": [
+        "Validation evidence must include a passed smoke_demo step from scripts/smoke_demo.sh."
+      ]
+    }
+  ],
+  "blockerSummary": [
+    "Matter Opening: Found budget\\matter_opening_readiness.json; status=blocked_pending_conflicts_and_engagement."
+  ],
+  "redTeamNotes": [
+    "Generated from local artifacts only; missing QA evidence is not treated as passing.",
+    "The UI manifest is display evidence only and cannot submit budgets, open matters, or write Lake records.",
+    "Synthetic QA gates remain candidate-only until reviewed by the appropriate owner."
+  ]
 }

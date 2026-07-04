@@ -428,6 +428,42 @@
       ]
     },
     {
+      "binding_case_id": "le-ada-fmla-clean.fact-binding.v0_1",
+      "executable_fixture_id": "le-ada-fmla-clean.executable.v0_1",
+      "expected_budget_readiness_state": "range_only_pending_human_review",
+      "expected_budget_gate_effect": "allow_range_or_hours_only_pending_review",
+      "expected_budget_treatment": "candidate_range_budget_after_review",
+      "fact_bindings": [
+        {
+          "fact_id": "relevant_employment_timeline",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": ["leave timeline", "interactive process", "accommodation request", "FMLA leave"],
+          "reason": "Leave, accommodation, interactive-process, discipline, and return-to-work timeline facts are source-present synthetic summaries but remain human-confirmed budget drivers."
+        },
+        {
+          "fact_id": "policy_handbook_contract_documents",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": ["employee handbook", "ADA accommodation policy", "FMLA leave policy", "policy excerpts"],
+          "reason": "Handbook, accommodation, and leave-policy excerpts are included as synthetic source evidence, but they do not authorize budget narrowing without review."
+        },
+        {
+          "fact_id": "anticipated_depositions",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": ["anticipated depositions", "store manager Daniel Cho", "regional HR lead", "benefits administrator"],
+          "reason": "The packet identifies likely deposition targets, but manager, HR, benefits, and corporate representative deposition assumptions remain review-only."
+        },
+        {
+          "fact_id": "expert_and_vendor_needs",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": ["expert and vendor needs are not identified"],
+          "reason": "The clean packet expressly leaves medical, vocational, damages, and vendor assumptions unresolved, so expense-sensitive projections remain range-only."
+        }
+      ],
+      "red_team_notes": [
+        "The bridge must not treat a clean ADA/FMLA packet as authority to price medical/vocational experts, confirm manager roles, submit a budget, or open a matter."
+      ]
+    },
+    {
       "binding_case_id": "le-ada-fmla-missing-thread.fact-binding.v0_1",
       "executable_fixture_id": "le-ada-fmla-missing-thread.executable.v0_1",
       "expected_budget_readiness_state": "blocked_missing_critical_facts",

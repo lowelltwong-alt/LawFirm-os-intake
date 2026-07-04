@@ -61,13 +61,13 @@ def test_labor_employment_executable_driver_binding_maps_fact_gaps_to_budget_dri
     )
 
     assert report.status == "labor_employment_executable_driver_bindings_ready_for_review"
-    assert persisted.case_count == 14
+    assert persisted.case_count == 15
     assert persisted.failed_case_count == 0
-    assert persisted.driver_binding_count == 61
-    assert persisted.source_bound_driver_count == 61
+    assert persisted.driver_binding_count == 66
+    assert persisted.source_bound_driver_count == 66
     assert persisted.unbound_driver_count == 0
     assert persisted.critical_driver_block_count == 7
-    assert persisted.critical_driver_review_only_count == 19
+    assert persisted.critical_driver_review_only_count == 21
     assert persisted.missing_driver_dimensions == []
     assert set(persisted.covered_driver_dimensions) == set(persisted.required_driver_dimensions)
     assert all(check.status == "passed" for check in persisted.checks)
@@ -113,6 +113,17 @@ def test_labor_employment_executable_driver_binding_maps_fact_gaps_to_budget_dri
         "administrative_exhaustion_and_agency_record"
     ]
     assert cases["le-admin-exhaustion-clean.executable.v0_1"].critical_driver_block_count == 0
+    ada_clean = {
+        binding.driver_dimension: binding
+        for binding in cases["le-ada-fmla-clean.executable.v0_1"].driver_bindings
+    }
+    assert ada_clean["employment_timeline"].critical_driver_review_only is True
+    assert ada_clean["deposition_plan"].critical_driver_review_only is True
+    assert ada_clean["expert_vendor_needs"].matched_fact_ids == ["expert_and_vendor_needs"]
+    assert ada_clean["policy_contract_documents"].matched_fact_ids == [
+        "policy_handbook_contract_documents"
+    ]
+    assert cases["le-ada-fmla-clean.executable.v0_1"].critical_driver_block_count == 0
     epli_clean = {
         binding.driver_dimension: binding
         for binding in cases["le-epli-carrier-clean.executable.v0_1"].driver_bindings
@@ -233,7 +244,7 @@ def test_labor_employment_executable_driver_binding_cli_writes_candidate_report(
 
     assert exit_code == 0
     assert report["status"] == "labor_employment_executable_driver_bindings_ready_for_review"
-    assert report["case_count"] == 14
+    assert report["case_count"] == 15
     assert report["missing_driver_dimensions"] == []
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out

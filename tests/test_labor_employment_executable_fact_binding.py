@@ -49,14 +49,14 @@ def test_labor_employment_executable_fact_binding_binds_gaps_without_side_effect
     )
 
     assert report.status == "labor_employment_executable_budget_fact_bindings_ready_for_review"
-    assert persisted.case_count == 14
+    assert persisted.case_count == 15
     assert persisted.failed_case_count == 0
-    assert persisted.fact_binding_count == 42
-    assert persisted.critical_fact_binding_count == 18
+    assert persisted.fact_binding_count == 46
+    assert persisted.critical_fact_binding_count == 20
     assert persisted.missing_critical_fact_count == 5
-    assert persisted.source_present_confirmation_fact_count == 29
+    assert persisted.source_present_confirmation_fact_count == 33
     assert persisted.source_present_unresolved_critical_driver_count == 1
-    assert persisted.evidence_bound_fact_count == 42
+    assert persisted.evidence_bound_fact_count == 46
     assert persisted.exception_bound_fact_count == 11
     assert persisted.missing_policy_fact_count == 0
     assert persisted.missing_source_signal_count == 0
@@ -214,6 +214,23 @@ def test_labor_employment_executable_fact_binding_binds_gaps_without_side_effect
     assert admin_bindings["forum_removed_and_arbitration_posture"].binding_state == (
         "source_bound_gap_candidate"
     )
+    ada_clean_bindings = {
+        binding.fact_id: binding
+        for binding in cases["le-ada-fmla-clean.executable.v0_1"].fact_bindings
+    }
+    assert ada_clean_bindings["relevant_employment_timeline"].required_level == "critical"
+    assert (
+        ada_clean_bindings["relevant_employment_timeline"].fact_resolution_state
+        == "source_present_needs_confirmation"
+    )
+    assert ada_clean_bindings["anticipated_depositions"].required_level == "critical"
+    assert ada_clean_bindings["anticipated_depositions"].blocks_precise_budget is False
+    assert ada_clean_bindings["policy_handbook_contract_documents"].binding_state == (
+        "source_bound_gap_candidate"
+    )
+    assert ada_clean_bindings["expert_and_vendor_needs"].binding_state == (
+        "source_bound_gap_candidate"
+    )
     class_clean_bindings = {
         binding.fact_id: binding
         for binding in cases["le-class-collective-clean.executable.v0_1"].fact_bindings
@@ -263,7 +280,7 @@ def test_labor_employment_executable_fact_binding_manifest_is_candidate_only(rep
     assert manifest.lake_write_performed is False
     assert manifest.sqlite_write_performed is False
     assert manifest.external_writes_performed is False
-    assert len(manifest.bindings) == 14
+    assert len(manifest.bindings) == 15
 
 
 def test_labor_employment_executable_fact_binding_blocks_missing_policy_fact(
@@ -350,9 +367,9 @@ def test_labor_employment_executable_fact_binding_cli_writes_report(
 
     assert exit_code == 0
     assert report["status"] == ("labor_employment_executable_budget_fact_bindings_ready_for_review")
-    assert report["case_count"] == 14
-    assert report["fact_binding_count"] == 42
+    assert report["case_count"] == 15
+    assert report["fact_binding_count"] == 46
     assert report["missing_critical_fact_count"] == 5
-    assert report["source_present_confirmation_fact_count"] == 29
+    assert report["source_present_confirmation_fact_count"] == 33
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out

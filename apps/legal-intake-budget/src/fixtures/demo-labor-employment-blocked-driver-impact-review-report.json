@@ -1,14 +1,14 @@
 {
   "schema_version": "0.1",
-  "blocked_driver_impact_review_report_id": "leblockeddriverimpactreview_c5d502f197d3c5c9",
+  "blocked_driver_impact_review_report_id": "leblockeddriverimpactreview_72f806de98e6d126",
   "status": "labor_employment_blocked_driver_impacts_ready_for_review",
-  "source_fact_binding_report_ref": "generated-demo-run/quality\\le-executable-fact-binding\\labor_employment_executable_fact_binding_report.json",
-  "source_driver_binding_report_ref": "generated-demo-run/quality\\le-executable-driver-binding\\labor_employment_executable_driver_binding_report.json",
-  "source_driver_impact_report_ref": "generated-demo-run/quality\\le-executable-driver-impact\\labor_employment_executable_driver_impact_report.json",
-  "source_driver_impact_report_id": "leexecdriverimpact_a0cc469f1d398987921c",
-  "case_count": 14,
+  "source_fact_binding_report_ref": "generated-demo-run\\quality\\le-executable-fact-binding\\labor_employment_executable_fact_binding_report.json",
+  "source_driver_binding_report_ref": "generated-demo-run\\quality\\le-executable-driver-binding\\labor_employment_executable_driver_binding_report.json",
+  "source_driver_impact_report_ref": "generated-demo-run\\quality\\le-executable-driver-impact\\labor_employment_executable_driver_impact_report.json",
+  "source_driver_impact_report_id": "leexecdriverimpact_adce760ffb90e5fc23a0",
+  "case_count": 15,
   "blocked_case_count": 6,
-  "nonblocking_case_count": 8,
+  "nonblocking_case_count": 9,
   "blocker_fact_count": 6,
   "block_amount_budget_impact_count": 7,
   "candidate_exception_lake_labels": [
@@ -560,9 +560,9 @@
       "status": "passed",
       "message": "Fact, driver-binding, and driver-impact reports are ready for blocked review.",
       "evidence_refs": [
-        "leexecfactbinding_331b9f88e1b0924525a1",
-        "leexecdriverbinding_557bccd6c671583e0717",
-        "leexecdriverimpact_a0cc469f1d398987921c"
+        "leexecfactbinding_daae05392b390aeba8cc",
+        "leexecdriverbinding_e7f07f9b09410b44883a",
+        "leexecdriverimpact_adce760ffb90e5fc23a0"
       ],
       "blocking_refs": []
     },
@@ -627,9 +627,9 @@
       "status": "passed",
       "message": "Blocked review did not authorize budget, matter, Lake, SQLite, external, or learning actions.",
       "evidence_refs": [
-        "leexecfactbinding_331b9f88e1b0924525a1",
-        "leexecdriverbinding_557bccd6c671583e0717",
-        "leexecdriverimpact_a0cc469f1d398987921c"
+        "leexecfactbinding_daae05392b390aeba8cc",
+        "leexecdriverbinding_e7f07f9b09410b44883a",
+        "leexecdriverimpact_adce760ffb90e5fc23a0"
       ],
       "blocking_refs": []
     }
@@ -660,5 +660,5 @@
   "sqlite_write_performed": false,
   "external_writes_performed": false,
   "silent_learning_performed": false,
-  "generated_at": "2026-07-04T06:56:22.261721Z"
+  "generated_at": "2026-07-04T07:29:10.318996Z"
 }

@@ -71,12 +71,12 @@ def test_labor_employment_executable_driver_impact_maps_drivers_to_budget_effect
     )
 
     assert report.status == "labor_employment_executable_driver_impacts_ready_for_review"
-    assert persisted.case_count == 14
+    assert persisted.case_count == 15
     assert persisted.failed_case_count == 0
-    assert persisted.impact_item_count == 61
-    assert persisted.source_bound_impact_count == 61
+    assert persisted.impact_item_count == 66
+    assert persisted.source_bound_impact_count == 66
     assert persisted.block_amount_budget_impact_count == 7
-    assert persisted.critical_review_only_impact_count == 19
+    assert persisted.critical_review_only_impact_count == 21
     assert persisted.range_widening_impact_count > 0
     assert persisted.scenario_fork_impact_count > 0
     assert persisted.rate_guideline_review_impact_count > 0
@@ -113,6 +113,12 @@ def test_labor_employment_executable_driver_impact_maps_drivers_to_budget_effect
     assert admin_case.block_amount_budget_impact_count == 0
     admin_impacts = {item.driver_dimension: item for item in admin_case.impact_items}
     assert "add_scenario_fork" in admin_impacts["administrative_exhaustion"].impact_actions
+    ada_clean = cases["le-ada-fmla-clean.executable.v0_1"]
+    assert ada_clean.allowed_budget_output == "candidate_range_after_review_pending_human_review"
+    assert ada_clean.block_amount_budget_impact_count == 0
+    assert ada_clean.critical_review_only_impact_count == 2
+    assert ada_clean.range_widening_impact_count == 5
+    assert ada_clean.scenario_fork_impact_count == 1
     epli_clean = cases["le-epli-carrier-clean.executable.v0_1"]
     assert epli_clean.allowed_budget_output == "candidate_range_after_review_pending_human_review"
     assert epli_clean.block_amount_budget_impact_count == 0
@@ -199,9 +205,9 @@ def test_labor_employment_executable_driver_impact_cli_writes_candidate_report(
 
     assert exit_code == 0
     assert report["status"] == "labor_employment_executable_driver_impacts_ready_for_review"
-    assert report["case_count"] == 14
-    assert report["impact_item_count"] == 61
-    assert report["critical_review_only_impact_count"] == 19
+    assert report["case_count"] == 15
+    assert report["impact_item_count"] == 66
+    assert report["critical_review_only_impact_count"] == 21
     assert report["missing_impact_policy_dimensions"] == []
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out

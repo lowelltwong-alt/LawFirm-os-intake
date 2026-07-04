@@ -1,19 +1,19 @@
 {
   "schema_version": "0.1",
-  "budget_output_expectation_report_id": "lebudgetoutputexpect_5a1854fcd964316d",
+  "budget_output_expectation_report_id": "lebudgetoutputexpect_624dbb08ff6cb7ac",
   "status": "labor_employment_budget_output_expectations_ready_for_review",
-  "source_driver_impact_report_ref": "generated-demo-run/quality\\le-executable-driver-impact\\labor_employment_executable_driver_impact_report.json",
-  "source_driver_impact_report_id": "leexecdriverimpact_a0cc469f1d398987921c",
-  "source_driver_impact_review_report_ref": "generated-demo-run/quality\\le-driver-impact-review\\labor_employment_driver_impact_review_report.json",
-  "source_driver_impact_review_report_id": "ledriverimpactreview_2f3cf3bd1cd33c6b",
-  "source_blocked_driver_impact_review_report_ref": "generated-demo-run/quality\\le-blocked-driver-impact-review\\labor_employment_blocked_driver_impact_review_report.json",
-  "source_blocked_driver_impact_review_report_id": "leblockeddriverimpactreview_c5d502f197d3c5c9",
-  "case_count": 14,
+  "source_driver_impact_report_ref": "generated-demo-run\\quality\\le-executable-driver-impact\\labor_employment_executable_driver_impact_report.json",
+  "source_driver_impact_report_id": "leexecdriverimpact_adce760ffb90e5fc23a0",
+  "source_driver_impact_review_report_ref": "generated-demo-run\\quality\\le-driver-impact-review\\labor_employment_driver_impact_review_report.json",
+  "source_driver_impact_review_report_id": "ledriverimpactreview_0ec48f3def6862dd",
+  "source_blocked_driver_impact_review_report_ref": "generated-demo-run\\quality\\le-blocked-driver-impact-review\\labor_employment_blocked_driver_impact_review_report.json",
+  "source_blocked_driver_impact_review_report_id": "leblockeddriverimpactreview_72f806de98e6d126",
+  "case_count": 15,
   "failed_case_count": 0,
   "blocked_amount_budget_case_count": 6,
   "range_or_hours_only_case_count": 3,
-  "candidate_range_after_review_case_count": 5,
-  "reviewed_nonblocking_case_count": 8,
+  "candidate_range_after_review_case_count": 6,
+  "reviewed_nonblocking_case_count": 9,
   "blocked_review_case_count": 6,
   "candidate_exception_lake_labels": [
     "budget_amount_blocked_pending_labor_employment_driver_review",
@@ -71,8 +71,8 @@
         "examples/synthetic/labor-employment/labor-employment-executable-budget-fact-bindings.json#le-discrimination-harassment-clean.executable.v0_1",
         "examples/synthetic/labor-employment/labor-employment-executable-fixtures-manifest.json#le-discrimination-harassment-clean.executable.v0_1",
         "le-discrimination-harassment-clean.executable.v0_1",
-        "ledriverimpactreview_2f3cf3bd1cd33c6b",
-        "leexecdriverimpact_a0cc469f1d398987921c"
+        "ledriverimpactreview_0ec48f3def6862dd",
+        "leexecdriverimpact_adce760ffb90e5fc23a0"
       ],
       "failure_ids": [],
       "candidate_only": true,
@@ -124,8 +124,8 @@
         "examples/synthetic/labor-employment/labor-employment-executable-budget-fact-bindings.json#le-wage-hour-clean.executable.v0_1",
         "examples/synthetic/labor-employment/labor-employment-executable-fixtures-manifest.json#le-wage-hour-clean.executable.v0_1",
         "le-wage-hour-clean.executable.v0_1",
-        "ledriverimpactreview_2f3cf3bd1cd33c6b",
-        "leexecdriverimpact_a0cc469f1d398987921c"
+        "ledriverimpactreview_0ec48f3def6862dd",
+        "leexecdriverimpact_adce760ffb90e5fc23a0"
       ],
       "failure_ids": [],
       "candidate_only": true,
@@ -181,8 +181,8 @@
         "class_collective_or_group_scope",
         "le-wage-hour-missing-attachment.executable.v0_1",
         "le-wage-hour-missing-attachment.executable.v0_1:blocked-review",
-        "leblockeddriverimpactreview_c5d502f197d3c5c9",
-        "leexecdriverimpact_a0cc469f1d398987921c"
+        "leblockeddriverimpactreview_72f806de98e6d126",
+        "leexecdriverimpact_adce760ffb90e5fc23a0"
       ],
       "failure_ids": [],
       "candidate_only": true,
@@ -242,8 +242,8 @@
         "carrier_guideline_and_rate_source",
         "le-epli-carrier-missing-attachment.executable.v0_1",
         "le-epli-carrier-missing-attachment.executable.v0_1:blocked-review",
-        "leblockeddriverimpactreview_c5d502f197d3c5c9",
-        "leexecdriverimpact_a0cc469f1d398987921c"
+        "leblockeddriverimpactreview_72f806de98e6d126",
+        "leexecdriverimpact_adce760ffb90e5fc23a0"
       ],
       "failure_ids": [],
       "candidate_only": true,
@@ -297,8 +297,8 @@
         "examples/synthetic/labor-employment/labor-employment-executable-budget-fact-bindings.json#le-epli-carrier-clean.executable.v0_1",
         "examples/synthetic/labor-employment/labor-employment-executable-fixtures-manifest.json#le-epli-carrier-clean.executable.v0_1",
         "le-epli-carrier-clean.executable.v0_1",
-        "ledriverimpactreview_2f3cf3bd1cd33c6b",
-        "leexecdriverimpact_a0cc469f1d398987921c"
+        "ledriverimpactreview_0ec48f3def6862dd",
+        "leexecdriverimpact_adce760ffb90e5fc23a0"
       ],
       "failure_ids": [],
       "candidate_only": true,
@@ -352,8 +352,8 @@
         "examples/synthetic/labor-employment/labor-employment-executable-budget-fact-bindings.json#le-epli-carrier-messy-thread.executable.v0_1",
         "examples/synthetic/labor-employment/labor-employment-executable-fixtures-manifest.json#le-epli-carrier-messy-thread.executable.v0_1",
         "le-epli-carrier-messy-thread.executable.v0_1",
-        "ledriverimpactreview_2f3cf3bd1cd33c6b",
-        "leexecdriverimpact_a0cc469f1d398987921c"
+        "ledriverimpactreview_0ec48f3def6862dd",
+        "leexecdriverimpact_adce760ffb90e5fc23a0"
       ],
       "failure_ids": [],
       "candidate_only": true,
@@ -411,8 +411,8 @@
         "carrier_guideline_and_rate_source",
         "le-discrimination-harassment-missing-attachment.executable.v0_1",
         "le-discrimination-harassment-missing-attachment.executable.v0_1:blocked-review",
-        "leblockeddriverimpactreview_c5d502f197d3c5c9",
-        "leexecdriverimpact_a0cc469f1d398987921c"
+        "leblockeddriverimpactreview_72f806de98e6d126",
+        "leexecdriverimpact_adce760ffb90e5fc23a0"
       ],
       "failure_ids": [],
       "candidate_only": true,
@@ -466,8 +466,8 @@
         "examples/synthetic/labor-employment/labor-employment-executable-budget-fact-bindings.json#le-class-collective-clean.executable.v0_1",
         "examples/synthetic/labor-employment/labor-employment-executable-fixtures-manifest.json#le-class-collective-clean.executable.v0_1",
         "le-class-collective-clean.executable.v0_1",
-        "ledriverimpactreview_2f3cf3bd1cd33c6b",
-        "leexecdriverimpact_a0cc469f1d398987921c"
+        "ledriverimpactreview_0ec48f3def6862dd",
+        "leexecdriverimpact_adce760ffb90e5fc23a0"
       ],
       "failure_ids": [],
       "candidate_only": true,
@@ -521,8 +521,8 @@
         "examples/synthetic/labor-employment/labor-employment-executable-budget-fact-bindings.json#le-class-collective-messy-thread.executable.v0_1",
         "examples/synthetic/labor-employment/labor-employment-executable-fixtures-manifest.json#le-class-collective-messy-thread.executable.v0_1",
         "le-class-collective-messy-thread.executable.v0_1",
-        "ledriverimpactreview_2f3cf3bd1cd33c6b",
-        "leexecdriverimpact_a0cc469f1d398987921c"
+        "ledriverimpactreview_0ec48f3def6862dd",
+        "leexecdriverimpact_adce760ffb90e5fc23a0"
       ],
       "failure_ids": [],
       "candidate_only": true,
@@ -581,8 +581,8 @@
         "carrier_guideline_and_rate_source",
         "le-class-collective-adversarial.executable.v0_1",
         "le-class-collective-adversarial.executable.v0_1:blocked-review",
-        "leblockeddriverimpactreview_c5d502f197d3c5c9",
-        "leexecdriverimpact_a0cc469f1d398987921c"
+        "leblockeddriverimpactreview_72f806de98e6d126",
+        "leexecdriverimpact_adce760ffb90e5fc23a0"
       ],
       "failure_ids": [],
       "candidate_only": true,
@@ -634,8 +634,8 @@
         "examples/synthetic/labor-employment/labor-employment-executable-budget-fact-bindings.json#le-retaliation-wrongful-termination-messy-thread.executable.v0_1",
         "examples/synthetic/labor-employment/labor-employment-executable-fixtures-manifest.json#le-retaliation-wrongful-termination-messy-thread.executable.v0_1",
         "le-retaliation-wrongful-termination-messy-thread.executable.v0_1",
-        "ledriverimpactreview_2f3cf3bd1cd33c6b",
-        "leexecdriverimpact_a0cc469f1d398987921c"
+        "ledriverimpactreview_0ec48f3def6862dd",
+        "leexecdriverimpact_adce760ffb90e5fc23a0"
       ],
       "failure_ids": [],
       "candidate_only": true,
@@ -693,8 +693,8 @@
         "esi_custodians_and_sources",
         "le-restrictive-covenant-missing-attachment.executable.v0_1",
         "le-restrictive-covenant-missing-attachment.executable.v0_1:blocked-review",
-        "leblockeddriverimpactreview_c5d502f197d3c5c9",
-        "leexecdriverimpact_a0cc469f1d398987921c"
+        "leblockeddriverimpactreview_72f806de98e6d126",
+        "leexecdriverimpact_adce760ffb90e5fc23a0"
       ],
       "failure_ids": [],
       "candidate_only": true,
@@ -746,8 +746,63 @@
         "examples/synthetic/labor-employment/labor-employment-executable-budget-fact-bindings.json#le-admin-exhaustion-clean.executable.v0_1",
         "examples/synthetic/labor-employment/labor-employment-executable-fixtures-manifest.json#le-admin-exhaustion-clean.executable.v0_1",
         "le-admin-exhaustion-clean.executable.v0_1",
-        "ledriverimpactreview_2f3cf3bd1cd33c6b",
-        "leexecdriverimpact_a0cc469f1d398987921c"
+        "ledriverimpactreview_0ec48f3def6862dd",
+        "leexecdriverimpact_adce760ffb90e5fc23a0"
+      ],
+      "failure_ids": [],
+      "candidate_only": true,
+      "non_authoritative": true,
+      "synthetic_only": true,
+      "human_review_required": true,
+      "budget_amount_output_authorized": false,
+      "budget_submission_authorized": false,
+      "conflict_conclusion_emitted": false,
+      "matter_opening_authorized": false,
+      "training_pipeline_created": false,
+      "lake_write_performed": false,
+      "sqlite_write_performed": false,
+      "external_writes_performed": false,
+      "silent_learning_performed": false
+    },
+    {
+      "executable_fixture_id": "le-ada-fmla-clean.executable.v0_1",
+      "family": "ada_fmla_accommodation_leave",
+      "variant": "clean",
+      "status": "passed",
+      "expected_budget_readiness_state": "range_only_pending_human_review",
+      "expected_budget_treatment": "candidate_range_budget_after_review",
+      "source_allowed_budget_output": "candidate_range_after_review_pending_human_review",
+      "final_allowed_budget_output": "candidate_range_after_review_pending_human_review",
+      "expectation_state": "candidate_range_after_review_pending_human_review",
+      "selected_for_reviewed_nonblocking_slice": true,
+      "blocked_case_review_present": false,
+      "amount_budget_blocked": false,
+      "block_amount_budget_impact_count": 0,
+      "critical_review_only_impact_count": 2,
+      "range_widening_impact_count": 5,
+      "scenario_fork_impact_count": 1,
+      "rate_guideline_review_impact_count": 0,
+      "candidate_exception_lake_labels": [
+        "budget_output_pending_human_review",
+        "candidate_only_budget_review_required",
+        "labor_employment_budget_output_candidate_range_after_review",
+        "labor_employment_budget_output_expectation",
+        "labor_employment_critical_fact_review_only",
+        "labor_employment_reviewed_nonblocking_budget_gate_replay",
+        "source_present_critical_fact_requires_confirmation"
+      ],
+      "required_next_gates": [
+        "budget_generator_may_consume_only_reviewed_nonblocking_slice",
+        "human_labor_employment_budget_driver_review",
+        "no_budget_submission_from_budget_output_expectations_report",
+        "preserve_candidate_only_budget_output_context"
+      ],
+      "evidence_refs": [
+        "examples/synthetic/labor-employment/labor-employment-executable-budget-fact-bindings.json#le-ada-fmla-clean.executable.v0_1",
+        "examples/synthetic/labor-employment/labor-employment-executable-fixtures-manifest.json#le-ada-fmla-clean.executable.v0_1",
+        "le-ada-fmla-clean.executable.v0_1",
+        "ledriverimpactreview_0ec48f3def6862dd",
+        "leexecdriverimpact_adce760ffb90e5fc23a0"
       ],
       "failure_ids": [],
       "candidate_only": true,
@@ -805,8 +860,8 @@
       "evidence_refs": [
         "le-ada-fmla-missing-thread.executable.v0_1",
         "le-ada-fmla-missing-thread.executable.v0_1:blocked-review",
-        "leblockeddriverimpactreview_c5d502f197d3c5c9",
-        "leexecdriverimpact_a0cc469f1d398987921c",
+        "leblockeddriverimpactreview_72f806de98e6d126",
+        "leexecdriverimpact_adce760ffb90e5fc23a0",
         "relevant_employment_timeline"
       ],
       "failure_ids": [],
@@ -831,9 +886,9 @@
       "status": "passed",
       "message": "Driver impact, reviewed nonblocking slice, and blocked-driver review reports are ready.",
       "evidence_refs": [
-        "leexecdriverimpact_a0cc469f1d398987921c",
-        "ledriverimpactreview_2f3cf3bd1cd33c6b",
-        "leblockeddriverimpactreview_c5d502f197d3c5c9"
+        "leexecdriverimpact_adce760ffb90e5fc23a0",
+        "ledriverimpactreview_0ec48f3def6862dd",
+        "leblockeddriverimpactreview_72f806de98e6d126"
       ],
       "blocking_refs": []
     },
@@ -842,6 +897,7 @@
       "status": "passed",
       "message": "Every source driver-impact case has exactly one budget-output expectation.",
       "evidence_refs": [
+        "le-ada-fmla-clean.executable.v0_1",
         "le-ada-fmla-missing-thread.executable.v0_1",
         "le-admin-exhaustion-clean.executable.v0_1",
         "le-class-collective-adversarial.executable.v0_1",
@@ -885,7 +941,8 @@
         "le-class-collective-clean.executable.v0_1",
         "le-class-collective-messy-thread.executable.v0_1",
         "le-retaliation-wrongful-termination-messy-thread.executable.v0_1",
-        "le-admin-exhaustion-clean.executable.v0_1"
+        "le-admin-exhaustion-clean.executable.v0_1",
+        "le-ada-fmla-clean.executable.v0_1"
       ],
       "blocking_refs": []
     },
@@ -907,6 +964,7 @@
         "le-retaliation-wrongful-termination-messy-thread.executable.v0_1",
         "le-restrictive-covenant-missing-attachment.executable.v0_1",
         "le-admin-exhaustion-clean.executable.v0_1",
+        "le-ada-fmla-clean.executable.v0_1",
         "le-ada-fmla-missing-thread.executable.v0_1"
       ],
       "blocking_refs": []
@@ -929,6 +987,7 @@
         "le-retaliation-wrongful-termination-messy-thread.executable.v0_1",
         "le-restrictive-covenant-missing-attachment.executable.v0_1",
         "le-admin-exhaustion-clean.executable.v0_1",
+        "le-ada-fmla-clean.executable.v0_1",
         "le-ada-fmla-missing-thread.executable.v0_1"
       ],
       "blocking_refs": []
@@ -938,9 +997,9 @@
       "status": "passed",
       "message": "Budget-output expectation audit did not authorize budget, matter, Lake, SQLite, external, or learning actions.",
       "evidence_refs": [
-        "leexecdriverimpact_a0cc469f1d398987921c",
-        "ledriverimpactreview_2f3cf3bd1cd33c6b",
-        "leblockeddriverimpactreview_c5d502f197d3c5c9"
+        "leexecdriverimpact_adce760ffb90e5fc23a0",
+        "ledriverimpactreview_0ec48f3def6862dd",
+        "leblockeddriverimpactreview_72f806de98e6d126"
       ],
       "blocking_refs": []
     }
@@ -972,5 +1031,5 @@
   "sqlite_write_performed": false,
   "external_writes_performed": false,
   "silent_learning_performed": false,
-  "generated_at": "2026-07-04T06:56:22.305613Z"
+  "generated_at": "2026-07-04T07:29:10.376458Z"
 }

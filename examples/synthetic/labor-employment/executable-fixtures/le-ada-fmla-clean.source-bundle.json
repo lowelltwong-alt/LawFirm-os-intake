@@ -1,0 +1,117 @@
+{
+  "schema_version": "0.1",
+  "bundle_id": "syn-le-ada-fmla-clean-001",
+  "data_origin": "synthetic",
+  "contains_real_client_data": false,
+  "contains_real_matter_data": false,
+  "contains_privileged_data": false,
+  "sources": [
+    {
+      "source_id": "syn-le-ada-fmla-clean-cover-email-001",
+      "source_type": "email",
+      "filename": "synthetic_ada_fmla_clean_cover_email.txt",
+      "text": "From: hr@northbank-retail.example\nTo: intake@synthetic-law.example\nDate: July 2, 2026\nSubject: ADA/FMLA accommodation and leave packet for review\n\nThe attached synthetic ADA and FMLA accommodation packet concerns Priya Shah and Northbank Retail Group. The referral describes a leave timeline, accommodation request, interactive process meetings, employee handbook excerpts, leave policy excerpts, damages categories, and anticipated depositions. The sender notes that expert and vendor needs are not identified and asks for a range-only budget posture pending human confirmation.",
+      "metadata": {
+        "synthetic": true,
+        "attachment_refs": [
+          "ada-fmla-demand-summary.txt",
+          "leave-timeline.txt",
+          "policy-excerpts.txt",
+          "witness-plan.txt"
+        ]
+      }
+    },
+    {
+      "source_id": "syn-le-ada-fmla-clean-demand-001",
+      "source_type": "attachment_text",
+      "filename": "ada-fmla-demand-summary.txt",
+      "text": "Synthetic ADA/FMLA demand summary: Priya Shah alleges failure to accommodate, FMLA interference, retaliation, lost wages, emotional distress, and attorney-fee exposure against Northbank Retail Group. The demand describes an accommodation request, protected leave, a return-to-work dispute, and discipline after leave. The claimant is Priya Shah and the employer or defendant is Northbank Retail Group.",
+      "metadata": {
+        "synthetic": true,
+        "document_type": "demand_summary"
+      }
+    },
+    {
+      "source_id": "syn-le-ada-fmla-clean-timeline-001",
+      "source_type": "attachment_text",
+      "filename": "leave-timeline.txt",
+      "text": "Synthetic leave timeline: Priya Shah requested intermittent FMLA leave and an ADA accommodation for a lifting restriction after a medical certification. HR recorded interactive process meetings with the store manager, regional HR lead, and benefits administrator. The timeline identifies leave start, modified-duty discussions, return-to-work communications, and discipline events as budget-driver facts for human review only.",
+      "metadata": {
+        "synthetic": true,
+        "document_type": "leave_timeline_summary"
+      }
+    },
+    {
+      "source_id": "syn-le-ada-fmla-clean-policy-001",
+      "source_type": "attachment_text",
+      "filename": "policy-excerpts.txt",
+      "text": "Synthetic employee handbook and policy excerpts: Northbank Retail Group maintains an ADA accommodation policy, FMLA leave policy, interactive process checklist, return-to-work policy, and manager escalation instruction. The policy excerpts support handbook and leave-document review but do not identify expert and vendor needs.",
+      "metadata": {
+        "synthetic": true,
+        "document_type": "handbook_policy_excerpts"
+      }
+    },
+    {
+      "source_id": "syn-le-ada-fmla-clean-witness-plan-001",
+      "source_type": "attachment_text",
+      "filename": "witness-plan.txt",
+      "text": "Synthetic witness and deposition planning summary: anticipated depositions include Priya Shah, the store manager Daniel Cho, the regional HR lead, the benefits administrator, and a Rule 30(b)(6)-style corporate representative on leave administration. The packet does not confirm whether any manager is an individual defendant or separate represented party.",
+      "metadata": {
+        "synthetic": true,
+        "document_type": "witness_plan_summary"
+      }
+    }
+  ],
+  "fixture_hints": {
+    "provided_fields": [
+      "employee_claimant_identity",
+      "employer_or_defendant_identity",
+      "claims_and_causes_of_action",
+      "relevant_employment_timeline",
+      "policy_handbook_contract_documents",
+      "damages_categories_and_exposure",
+      "anticipated_depositions"
+    ],
+    "entities": [
+      {
+        "name": "Priya Shah",
+        "role_candidates": [
+          {
+            "role": "claimant",
+            "confidence": 0.78
+          },
+          {
+            "role": "adverse_party",
+            "confidence": 0.58
+          }
+        ]
+      },
+      {
+        "name": "Northbank Retail Group",
+        "role_candidates": [
+          {
+            "role": "employer_or_defendant",
+            "confidence": 0.78
+          },
+          {
+            "role": "prospective_represented_client",
+            "confidence": 0.62
+          }
+        ]
+      },
+      {
+        "name": "Daniel Cho",
+        "role_candidates": [
+          {
+            "role": "manager",
+            "confidence": 0.62
+          },
+          {
+            "role": "witness",
+            "confidence": 0.54
+          }
+        ]
+      }
+    ]
+  }
+}
