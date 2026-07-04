@@ -141,6 +141,24 @@ def _write_matter_linking_preflight_report(run_root):
     )
 
 
+def _write_matter_linking_review_outcome_report(run_root):
+    write_json(
+        run_root / "quality" / "matter_linking_review_outcome_report.json",
+        {
+            "status": "matter_linking_review_outcome_recorded",
+            "candidate_only": True,
+            "synthetic_only": True,
+            "external_writes_performed": False,
+            "lake_write_performed": False,
+            "sqlite_write_performed": False,
+            "matter_opening_authorized": False,
+            "budget_amount_output_authorized": False,
+            "conflict_conclusion_emitted": False,
+            "silent_learning_performed": False,
+        },
+    )
+
+
 def test_build_ui_review_data_bundle_tracks_renderable_local_json(tmp_path):
     run_root = tmp_path / "demo"
     run_root.mkdir()
@@ -155,7 +173,7 @@ def test_build_ui_review_data_bundle_tracks_renderable_local_json(tmp_path):
 
     assert out.is_file()
     assert bundle.status == "ready_for_review"
-    assert bundle.detail_report_count == 10
+    assert bundle.detail_report_count == 11
     assert bundle.required_detail_report_count == 6
     assert bundle.present_detail_report_count == 6
     assert bundle.missing_required_detail_report_count == 0
@@ -171,6 +189,7 @@ def test_build_ui_review_data_bundle_tracks_renderable_local_json(tmp_path):
         "synthetic_qa_blocker_report",
         "synthetic_qa_review_outcome",
         "matter_linking_preflight",
+        "matter_linking_review_outcome",
         "labor_employment_qa_matrix",
         "labor_employment_executable_coverage",
         "labor_employment_blocked_driver_impact_review",
@@ -201,7 +220,7 @@ def test_build_ui_review_data_bundle_includes_optional_synthetic_qa_review_run(t
 
     details = {report.report_kind: report for report in bundle.detail_reports}
     assert bundle.status == "ready_for_review"
-    assert bundle.detail_report_count == 10
+    assert bundle.detail_report_count == 11
     assert bundle.present_detail_report_count == 7
     assert details["synthetic_qa_review_run"].present is True
     assert details["synthetic_qa_review_run"].required is False
@@ -227,7 +246,7 @@ def test_build_ui_review_data_bundle_includes_optional_synthetic_qa_blocker_repo
 
     details = {report.report_kind: report for report in bundle.detail_reports}
     assert bundle.status == "ready_for_review"
-    assert bundle.detail_report_count == 10
+    assert bundle.detail_report_count == 11
     assert bundle.present_detail_report_count == 8
     assert details["synthetic_qa_blocker_report"].present is True
     assert details["synthetic_qa_blocker_report"].required is False
@@ -249,7 +268,7 @@ def test_build_ui_review_data_bundle_includes_optional_synthetic_qa_review_outco
 
     details = {report.report_kind: report for report in bundle.detail_reports}
     assert bundle.status == "ready_for_review"
-    assert bundle.detail_report_count == 10
+    assert bundle.detail_report_count == 11
     assert bundle.present_detail_report_count == 7
     assert details["synthetic_qa_review_outcome"].present is True
     assert details["synthetic_qa_review_outcome"].required is False
@@ -273,12 +292,36 @@ def test_build_ui_review_data_bundle_includes_optional_matter_linking_preflight(
 
     details = {report.report_kind: report for report in bundle.detail_reports}
     assert bundle.status == "ready_for_review"
-    assert bundle.detail_report_count == 10
+    assert bundle.detail_report_count == 11
     assert bundle.present_detail_report_count == 8
     assert details["matter_linking_preflight"].present is True
     assert details["matter_linking_preflight"].required is False
     assert details["matter_linking_preflight"].renderer == "MatterLinkingPreflightPanel"
     assert details["matter_linking_preflight"].external_writes_performed is False
+
+
+def test_build_ui_review_data_bundle_includes_optional_matter_linking_review_outcome(tmp_path):
+    run_root = tmp_path / "demo"
+    run_root.mkdir()
+    _write_ui_detail_reports(run_root)
+    _write_synthetic_qa_review_run_report(run_root)
+    _write_matter_linking_preflight_report(run_root)
+    _write_matter_linking_review_outcome_report(run_root)
+
+    bundle = build_ui_review_data_bundle(
+        run_root=run_root,
+        out_path=run_root / "ui_review_data_bundle.json",
+        generated_at="2026-07-02T00:00:00Z",
+    )
+
+    details = {report.report_kind: report for report in bundle.detail_reports}
+    assert bundle.status == "ready_for_review"
+    assert bundle.detail_report_count == 11
+    assert bundle.present_detail_report_count == 9
+    assert details["matter_linking_review_outcome"].present is True
+    assert details["matter_linking_review_outcome"].required is False
+    assert details["matter_linking_review_outcome"].renderer == "MatterLinkingReviewOutcomePanel"
+    assert details["matter_linking_review_outcome"].external_writes_performed is False
 
 
 def test_build_ui_review_data_bundle_requires_labor_employment_executable_coverage(tmp_path):
@@ -294,7 +337,7 @@ def test_build_ui_review_data_bundle_requires_labor_employment_executable_covera
 
     details = {report.report_kind: report for report in bundle.detail_reports}
     assert bundle.status == "blocked_missing_required_reports"
-    assert bundle.detail_report_count == 10
+    assert bundle.detail_report_count == 11
     assert bundle.required_detail_report_count == 6
     assert bundle.present_detail_report_count == 5
     assert bundle.missing_required_detail_report_count == 1

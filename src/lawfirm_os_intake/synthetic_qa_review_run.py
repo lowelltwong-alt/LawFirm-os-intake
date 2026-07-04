@@ -59,6 +59,10 @@ from .matter_linking_preflight import (
     MATTER_LINKING_PREFLIGHT_REPORT_FILENAME,
     run_matter_linking_preflight,
 )
+from .matter_linking_review_outcomes import (
+    MATTER_LINKING_REVIEW_OUTCOME_REPORT_FILENAME,
+    run_matter_linking_review_outcome_record,
+)
 from .synthetic_confidence_summary import (
     SYNTHETIC_CONFIDENCE_SUMMARY_REPORT_FILENAME,
     run_synthetic_confidence_summary,
@@ -66,6 +70,10 @@ from .synthetic_confidence_summary import (
 from .synthetic_qa_blocker_report import (
     SYNTHETIC_QA_BLOCKER_REPORT_FILENAME,
     run_synthetic_qa_blocker_report,
+)
+from .synthetic_qa_review_outcomes import (
+    SYNTHETIC_QA_REVIEW_OUTCOME_REPORT_FILENAME,
+    run_synthetic_qa_review_outcome_record,
 )
 from .synthetic_qa_bundle import SYNTHETIC_QA_BUNDLE_REPORT_FILENAME, run_synthetic_qa_bundle
 from .ui_review_data_bundle import UI_REVIEW_DATA_BUNDLE_FILENAME, build_ui_review_data_bundle
@@ -97,6 +105,9 @@ UPFRONT_RESOLVED_FOLLOWUP_REF = (
 )
 UPFRONT_WEAK_SINGLE_CANDIDATE_REF = (
     "examples/synthetic/upfront/upfront-like-intake-output.weak-single-candidate.example.json"
+)
+UPFRONT_MATTER_LINKING_CONFIRM_SPLIT_REF = (
+    "examples/synthetic/upfront/matter-linking-review-confirm-split.outcome.json"
 )
 
 
@@ -146,6 +157,30 @@ def run_synthetic_qa_review_run(
             matter_linking_ref,
             matter_linking.status == "matter_linking_preflight_resolved_candidate_requires_review",
             "Resolved Upfront-like document clusters remain human-gated and no-write.",
+        )
+    )
+
+    matter_linking_review_outcome, matter_linking_review_outcome_dir = (
+        run_matter_linking_review_outcome_record(
+            matter_linking_preflight_report_path=matter_linking_ref,
+            outcome_path=root / UPFRONT_MATTER_LINKING_CONFIRM_SPLIT_REF,
+            out_dir=quality_dir / "matter-linking-review-outcome",
+            generated_at=generated_at,
+        )
+    )
+    matter_linking_review_outcome_ref = (
+        matter_linking_review_outcome_dir / MATTER_LINKING_REVIEW_OUTCOME_REPORT_FILENAME
+    )
+    steps.append(
+        _step(
+            "matter_linking_review_outcome",
+            "Matter-Linking Review Outcome",
+            matter_linking_review_outcome.status,
+            matter_linking_review_outcome_ref,
+            matter_linking_review_outcome.status == "matter_linking_review_outcome_recorded"
+            and matter_linking_review_outcome.budget_amount_output_authorized is False
+            and matter_linking_review_outcome.matter_opening_authorized is False,
+            "Human split confirmation is recorded append-only without authorizing budgets, matters, Lake writes, or learning.",
         )
     )
 
@@ -388,6 +423,7 @@ def run_synthetic_qa_review_run(
     for source_path in [
         starter_dir / "budget-calibration-readiness" / "budget_calibration_readiness_report.json",
         matter_linking_ref,
+        matter_linking_review_outcome_ref,
         le_matrix_dir / LABOR_EMPLOYMENT_QA_MATRIX_REPORT_FILENAME,
         family_pack_dir / LABOR_EMPLOYMENT_FIXTURE_FAMILY_PACK_REPORT_FILENAME,
         executable_report_ref,
@@ -526,6 +562,25 @@ def run_synthetic_qa_review_run(
         blocker_report_dir / SYNTHETIC_QA_BLOCKER_REPORT_FILENAME,
         quality_dir,
     )
+    synthetic_qa_outcome_path = write_json(
+        quality_dir / "synthetic_qa_review_outcome_record.seed.json",
+        _synthetic_qa_review_outcome_payload(
+            blocker_report=load_json(quality_dir / SYNTHETIC_QA_BLOCKER_REPORT_FILENAME),
+            generated_at=generated_at,
+        ),
+    )
+    _synthetic_qa_review_outcome, synthetic_qa_review_outcome_dir = (
+        run_synthetic_qa_review_outcome_record(
+            synthetic_qa_blocker_report_path=quality_dir / SYNTHETIC_QA_BLOCKER_REPORT_FILENAME,
+            outcome_path=synthetic_qa_outcome_path,
+            out_dir=quality_dir / "synthetic-qa-review-outcome",
+            generated_at=generated_at,
+        )
+    )
+    _stage_for_bundle(
+        synthetic_qa_review_outcome_dir / SYNTHETIC_QA_REVIEW_OUTCOME_REPORT_FILENAME,
+        quality_dir,
+    )
     build_ui_review_manifest(
         run_root=run_dir,
         out_path=ui_manifest_ref,
@@ -554,7 +609,94 @@ def run_synthetic_qa_review_run(
         out_path=ui_data_bundle_ref,
         generated_at=generated_at,
     )
+    final_confidence_summary, final_confidence_summary_dir = run_synthetic_confidence_summary(
+        synthetic_qa_review_run_report_path=run_dir / SYNTHETIC_QA_REVIEW_RUN_REPORT_FILENAME,
+        synthetic_qa_bundle_report_path=synthetic_qa_bundle_ref,
+        ui_manifest_path=ui_manifest_ref,
+        ui_review_data_bundle_path=ui_data_bundle_ref,
+        out_dir=quality_dir / "synthetic-confidence-summary",
+        generated_at=generated_at,
+    )
+    _stage_for_bundle(
+        final_confidence_summary_dir / SYNTHETIC_CONFIDENCE_SUMMARY_REPORT_FILENAME,
+        quality_dir,
+    )
+    steps[-1] = _step(
+        "ui_review_data_bundle",
+        "UI Review Data Bundle",
+        "ready_for_review",
+        ui_data_bundle_ref,
+        final_confidence_summary.status == "synthetic_confidence_summary_ready_for_review",
+        "UI-renderable detail reports are hash-bound for local review.",
+    )
+    report = _build_review_run_report(
+        run_dir=run_dir,
+        quality_dir=quality_dir,
+        steps=steps,
+        synthetic_qa_bundle_ref=synthetic_qa_bundle_ref,
+        ui_manifest_ref=ui_manifest_ref,
+        ui_data_bundle_ref=ui_data_bundle_ref,
+        generated_at=generated_at,
+    )
+    write_json(run_dir / SYNTHETIC_QA_REVIEW_RUN_REPORT_FILENAME, report.model_dump(mode="json"))
+    build_ui_review_manifest(
+        run_root=run_dir,
+        out_path=ui_manifest_ref,
+        generated_at=generated_at,
+    )
+    build_ui_review_data_bundle(
+        run_root=run_dir,
+        out_path=ui_data_bundle_ref,
+        generated_at=generated_at,
+    )
     return report, run_dir
+
+
+def _synthetic_qa_review_outcome_payload(
+    *,
+    blocker_report: dict,
+    generated_at: str | None,
+) -> dict:
+    rows = blocker_report.get("rows", [])
+    if len(rows) < 3:
+        raise ValueError("synthetic QA review outcome seed requires at least three blocker rows")
+    outcomes = ["accepted_for_poc_review", "needs_fix", "defer_to_roadmap"]
+    decisions = [
+        _synthetic_qa_review_decision(row=row, index=index, outcome=outcome)
+        for index, (row, outcome) in enumerate(zip(rows[:3], outcomes), start=1)
+    ]
+    return {
+        "schema_version": "0.1",
+        "synthetic_qa_review_outcome_record_id": (
+            "synthetic-qa-review-outcome-record.generated-review-run.v0_1"
+        ),
+        "synthetic_qa_blocker_report_id": blocker_report["synthetic_qa_blocker_report_id"],
+        "reviewer_id": "synthetic-qa-reviewer",
+        "reviewed_at": generated_at or now_iso(),
+        "decision_reason": "Generated partial synthetic QA review outcome for local UI evidence.",
+        "decisions": decisions,
+    }
+
+
+def _synthetic_qa_review_decision(*, row: dict, index: int, outcome: str) -> dict:
+    followups: list[str] = []
+    if outcome == "needs_fix":
+        followups = [f"Fix or re-run QA evidence for {row['row_id']}."]
+    if outcome == "defer_to_roadmap":
+        followups = [f"Carry {row['row_id']} into the remaining roadmap."]
+    return {
+        "decision_id": f"synthetic-qa-review-decision-{index}",
+        "row_id": row["row_id"],
+        "outcome": outcome,
+        "decision_reason": f"Synthetic QA reviewer decision for {row['label']}.",
+        "evidence_refs": [row["row_id"], *row.get("evidence_refs", [])],
+        "required_followups": followups,
+        "red_team_notes": ["This is POC QA evidence only and does not prove production readiness."],
+        "candidate_exception_lake_labels": [
+            "synthetic_qa_review_decision_candidate",
+            *row.get("candidate_exception_lake_labels", []),
+        ],
+    }
 
 
 def _build_budget_coherence(*, repo_root: Path, run_root: Path, budget_dir: Path) -> Path:

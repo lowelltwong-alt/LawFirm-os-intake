@@ -57,6 +57,17 @@ Candidate lines must distinguish direct evidence from packet anchors. `observed_
 
 The starter budget path writes `human_review_outcome.<confirmation_id>.json` and appends the same record to `human_confirmation_history.jsonl` before the budget precondition gate runs. The record preserves reviewer identity, status, supersession ID, evidence refs, required next gate, and whether budget-stage output is allowed. Only a `confirmed` outcome bound to the same preflight packet may be marked budget-stage eligible; every other review outcome remains blocked and inspectable.
 
+The matter-linking path writes `matter_linking_review_outcome_record.json`,
+appends the same record to `matter_linking_review_outcome_history.jsonl`, and
+writes `matter_linking_review_outcome_report.json` plus `.md`. The record can
+confirm split, confirm merge, confirm a single candidate, mark unknown, request
+more information, or decline/refer. It must bind to a source
+`matter_linking_preflight_report.json`, cite selected cluster IDs and evidence
+refs, carry reviewer identity and timestamp, preserve candidate Lake labels, and
+remain append-only. It is not authority to call Upfront, create a screen, clear
+conflicts, output or submit a budget, open a matter, write Lake/SQLite records,
+promote canon, or learn from reviewer corrections.
+
 The budget lifecycle path writes `budget_human_review_packet.json` so reviewers
 can see budget revision, actual-variance, carrier-rejection, appeal-result,
 Lake-handoff, and learning-loop pressure in one place. The packet must show

@@ -1,22 +1,22 @@
 {
   "schema_version": "0.1",
-  "synthetic_qa_blocker_report_id": "synthetic_qa_blocker_report_5e2f836b5677a2c7",
+  "synthetic_qa_blocker_report_id": "synthetic_qa_blocker_report_c74778ec1af15ade",
   "status": "synthetic_qa_blocker_report_ready_for_review",
-  "source_ui_manifest_ref": ".lawfirm-os-intake\\matter-linking-hardening-current\\ui-review\\ui_review_manifest.json",
-  "source_ui_manifest_id": "ui_review_manifest_5658db8a9eb7",
+  "source_ui_manifest_ref": "generated-demo-run/ui_review_manifest.json",
+  "source_ui_manifest_id": "ui_review_manifest_9bf517c746eb",
   "source_ui_manifest_overall_status": "blocked",
-  "source_synthetic_confidence_summary_ref": ".lawfirm-os-intake\\matter-linking-hardening-current\\ui-review\\quality\\synthetic_confidence_summary_report.json",
-  "source_synthetic_confidence_summary_report_id": "synthetic_confidence_summary_437e6c8813109ce5",
+  "source_synthetic_confidence_summary_ref": "generated-demo-run/quality\\synthetic_confidence_summary_report.json",
+  "source_synthetic_confidence_summary_report_id": "synthetic_confidence_summary_b36a7a292cdeb180",
   "source_synthetic_confidence_summary_status": "synthetic_confidence_summary_ready_for_review",
-  "source_synthetic_qa_review_run_ref": ".lawfirm-os-intake\\matter-linking-hardening-current\\ui-review\\synthetic_qa_review_run_report.json",
-  "source_synthetic_qa_review_run_report_id": "syntheticqareviewrun_0789ab038884add2",
+  "source_synthetic_qa_review_run_ref": "generated-demo-run/synthetic_qa_review_run_report.json",
+  "source_synthetic_qa_review_run_report_id": "syntheticqareviewrun_10240eb537b1e647",
   "source_synthetic_qa_review_run_status": "synthetic_qa_review_run_ready",
-  "row_count": 21,
+  "row_count": 19,
   "failed_row_count": 0,
   "blocked_row_count": 0,
-  "pending_review_row_count": 21,
+  "pending_review_row_count": 19,
   "blocked_action_count": 0,
-  "needs_review_action_count": 21,
+  "needs_review_action_count": 19,
   "fixed_action_count": 0,
   "ready_action_count": 0,
   "review_queue_state": "needs_review",
@@ -103,6 +103,27 @@
       ],
       "notes": [
         "Upfront-like document clusters must stay human-gated and no-write before budget or matter-opening workflows rely on them."
+      ]
+    },
+    {
+      "row_id": "quality_gate:matter_linking_review_outcome",
+      "source": "quality_gate",
+      "label": "Matter-Linking Review Outcome",
+      "state": "pending_review",
+      "action_state": "needs_review",
+      "owner": "qa-reference",
+      "evidence_refs": [
+        "matter_linking_review_outcome_report.json"
+      ],
+      "recommended_next_action": "Review quality gate evidence and record an outcome: Matter-Linking Review Outcome.",
+      "candidate_exception_lake_labels": [
+        "synthetic_qa_blocker_queue_candidate",
+        "quality_gate_pending_review_candidate",
+        "quality_gate_matter_linking_review_outcome_candidate",
+        "synthetic_qa_blocker_requires_review"
+      ],
+      "notes": [
+        "Human matter-linking decisions must be append-only local evidence and cannot authorize budgets, matter opening, Lake admission, or learning."
       ]
     },
     {
@@ -358,69 +379,6 @@
       ]
     },
     {
-      "row_id": "quality_gate:validation_suite_evidence",
-      "source": "quality_gate",
-      "label": "Validation Suite Evidence",
-      "state": "pending_review",
-      "action_state": "needs_review",
-      "owner": "qa-reference",
-      "evidence_refs": [
-        "validation_suite_evidence_report.json"
-      ],
-      "recommended_next_action": "Review quality gate evidence and record an outcome: Validation Suite Evidence.",
-      "candidate_exception_lake_labels": [
-        "synthetic_qa_blocker_queue_candidate",
-        "quality_gate_pending_review_candidate",
-        "quality_gate_validation_suite_evidence_candidate",
-        "synthetic_qa_blocker_requires_review"
-      ],
-      "notes": [
-        "validation_suite_evidence_report.json is missing; Wrapper-based validation suite evidence must prove the current QA checks before the frontend treats the run as POC QA-ready."
-      ]
-    },
-    {
-      "row_id": "quality_gate:full_pytest",
-      "source": "quality_gate",
-      "label": "Full Pytest",
-      "state": "pending_review",
-      "action_state": "needs_review",
-      "owner": "qa-reference",
-      "evidence_refs": [
-        "validation_suite_evidence_report.json"
-      ],
-      "recommended_next_action": "Review quality gate evidence and record an outcome: Full Pytest.",
-      "candidate_exception_lake_labels": [
-        "synthetic_qa_blocker_queue_candidate",
-        "quality_gate_pending_review_candidate",
-        "quality_gate_full_pytest_candidate",
-        "synthetic_qa_blocker_requires_review"
-      ],
-      "notes": [
-        "validation_suite_evidence_report.json is missing; Validation evidence must include a passed full_pytest step from scripts/run_full_pytest.py."
-      ]
-    },
-    {
-      "row_id": "quality_gate:smoke_demo",
-      "source": "quality_gate",
-      "label": "North-Star Smoke",
-      "state": "pending_review",
-      "action_state": "needs_review",
-      "owner": "qa-reference",
-      "evidence_refs": [
-        "validation_suite_evidence_report.json"
-      ],
-      "recommended_next_action": "Review quality gate evidence and record an outcome: North-Star Smoke.",
-      "candidate_exception_lake_labels": [
-        "synthetic_qa_blocker_queue_candidate",
-        "quality_gate_pending_review_candidate",
-        "quality_gate_smoke_demo_candidate",
-        "synthetic_qa_blocker_requires_review"
-      ],
-      "notes": [
-        "validation_suite_evidence_report.json is missing; Validation evidence must include a passed smoke_demo step from scripts/smoke_demo.sh."
-      ]
-    },
-    {
       "row_id": "readiness_item:required_qa_artifacts",
       "source": "readiness_item",
       "label": "Required QA Artifacts",
@@ -428,7 +386,7 @@
       "action_state": "needs_review",
       "owner": "qa-reference",
       "evidence_refs": [
-        ".lawfirm-os-intake\\matter-linking-hardening-current\\ui-review\\quality\\synthetic_qa_bundle_report.json"
+        "generated-demo-run/quality\\synthetic_qa_bundle_report.json"
       ],
       "recommended_next_action": "Review readiness item evidence and record an outcome: Required QA Artifacts.",
       "candidate_exception_lake_labels": [
@@ -449,7 +407,7 @@
       "action_state": "needs_review",
       "owner": "human-or-owner-review",
       "evidence_refs": [
-        ".lawfirm-os-intake\\matter-linking-hardening-current\\ui-review\\ui_review_manifest.json"
+        "generated-demo-run/ui_review_manifest.json"
       ],
       "recommended_next_action": "Review readiness item evidence and record an outcome: Owner Review Backlog.",
       "candidate_exception_lake_labels": [
@@ -459,7 +417,7 @@
         "synthetic_qa_blocker_requires_review"
       ],
       "notes": [
-        "20 pending gates remain; pending is expected until human/owner review accepts candidate QA evidence."
+        "18 pending gates remain; pending is expected until human/owner review accepts candidate QA evidence."
       ]
     }
   ],

@@ -190,9 +190,14 @@ Implement `matter-linking-preflight` before any real Upfront connector:
 3. Add deterministic matching candidate contracts with source-bound signal
    evidence, negative evidence, and explicit uncertainty state.
 4. Add human review artifact to confirm, split, merge, mark unknown, or request
-   more information.
+   more information. Local candidate command added:
+   `lawfirm-os-intake record-matter-linking-review-outcome
+   --matter-linking-preflight-report <dir>/matter_linking_preflight_report.json
+   --outcome examples/synthetic/upfront/matter-linking-review-confirm-split.outcome.json
+   --out-dir <dir>`.
 5. Add dry-run Lake mapping candidates for unresolved matching and follow-up.
-6. Add UI panels for unmatched/ambiguous/conflicting clusters.
+6. Add UI panels for unmatched/ambiguous/conflicting clusters and the recorded
+   matter-linking review outcome.
 7. Keep all real Upfront API work out of intake until Orchestrator receives a
    reviewed vendor contract.
 

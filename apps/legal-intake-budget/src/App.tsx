@@ -7,6 +7,7 @@ import demoLaborEmploymentExecutableCoverage from "./fixtures/demo-labor-employm
 import demoLaborEmploymentQAMatrix from "./fixtures/demo-labor-employment-qa-matrix-report.json";
 import demoManifest from "./fixtures/demo-run-manifest.json";
 import demoMatterLinkingPreflight from "./fixtures/demo-matter-linking-preflight-report.json";
+import demoMatterLinkingReviewOutcome from "./fixtures/demo-matter-linking-review-outcome-report.json";
 import demoPocQATriage from "./fixtures/demo-poc-qa-triage-report.json";
 import demoSyntheticQABlockerReport from "./fixtures/demo-synthetic-qa-blocker-report.json";
 import demoSyntheticQAReviewOutcome from "./fixtures/demo-synthetic-qa-review-outcome-report.json";
@@ -16,6 +17,7 @@ import demoReviewDataBundle from "./fixtures/demo-ui-review-data-bundle.json";
 import demoValidationSuiteEvidence from "./fixtures/demo-validation-suite-evidence-report.json";
 import {
   assertMatterLinkingPreflightReport,
+  assertMatterLinkingReviewOutcomeReport,
   assertLaborEmploymentBudgetOutputExpectationReport,
   assertLaborEmploymentBlockedDriverImpactReviewReport,
   assertLaborEmploymentExecutableCoverageReport,
@@ -44,6 +46,8 @@ import type {
   LaborEmploymentBudgetReadinessState,
   LaborEmploymentQAMatrixReport,
   MatterLinkingPreflightReport,
+  MatterLinkingReviewOutcomeReport,
+  MatterLinkingReviewOutcomeStatus,
   POCQATriageItemStatus,
   POCQATriageReport,
   QualityGate,
@@ -76,6 +80,8 @@ const pocQATriage = demoPocQATriage as POCQATriageReport;
 const validationSuiteEvidence =
   demoValidationSuiteEvidence as ValidationSuiteEvidenceReport;
 const matterLinkingPreflight = demoMatterLinkingPreflight as MatterLinkingPreflightReport;
+const matterLinkingReviewOutcome =
+  demoMatterLinkingReviewOutcome as MatterLinkingReviewOutcomeReport;
 const laborEmploymentQAMatrix = demoLaborEmploymentQAMatrix as LaborEmploymentQAMatrixReport;
 const laborEmploymentExecutableCoverage =
   demoLaborEmploymentExecutableCoverage as LaborEmploymentExecutableCoverageReport;
@@ -95,6 +101,8 @@ const pocQATriageFailures = assertPOCQATriageReport(pocQATriage);
 const validationSuiteEvidenceFailures =
   assertValidationSuiteEvidenceReport(validationSuiteEvidence);
 const matterLinkingFailures = assertMatterLinkingPreflightReport(matterLinkingPreflight);
+const matterLinkingReviewOutcomeFailures =
+  assertMatterLinkingReviewOutcomeReport(matterLinkingReviewOutcome);
 const matrixContractFailures = assertLaborEmploymentQAMatrixReport(laborEmploymentQAMatrix);
 const executableCoverageFailures =
   assertLaborEmploymentExecutableCoverageReport(laborEmploymentExecutableCoverage);
@@ -113,6 +121,7 @@ const contractFailures = [
   ...pocQATriageFailures,
   ...validationSuiteEvidenceFailures,
   ...matterLinkingFailures,
+  ...matterLinkingReviewOutcomeFailures,
   ...matrixContractFailures,
   ...executableCoverageFailures,
   ...blockedDriverContractFailures,
@@ -127,6 +136,7 @@ function gateClass(
     | SyntheticQABlockerRowState
     | POCQATriageItemStatus
     | SyntheticQAReviewOutcomeStatus
+    | MatterLinkingReviewOutcomeStatus
     | ValidationSuiteStepStatus,
 ) {
   return `state state-${state.replace("_", "-")}`;
@@ -968,6 +978,94 @@ function MatterLinkingPreflightPanel({ report }: { report: MatterLinkingPrefligh
   );
 }
 
+function MatterLinkingReviewOutcomePanel({
+  report,
+}: {
+  report: MatterLinkingReviewOutcomeReport;
+}) {
+  const statusClass =
+    report.status === "blocked_by_matter_linking_review_outcome" ||
+    matterLinkingReviewOutcomeFailures.length > 0
+      ? "state state-blocked"
+      : report.status === "matter_linking_review_outcome_recorded_pending_followup"
+        ? "state state-pending"
+        : "state state-passed";
+
+  return (
+    <section className="panel matrix-panel" aria-labelledby="matter-linking-outcome-title">
+      <div className="panel-heading">
+        <div>
+          <h2 id="matter-linking-outcome-title">Matter-Linking Review Outcome</h2>
+          <code>{report.matter_linking_review_outcome_report_id}</code>
+        </div>
+        <span className={statusClass}>{report.status}</span>
+      </div>
+
+      <div className="matrix-summary" aria-label="Matter-linking review outcome summary">
+        <div>
+          <span>Outcome</span>
+          <strong>{report.overall_outcome.replaceAll("_", " ")}</strong>
+        </div>
+        <div>
+          <span>Reviewed Clusters</span>
+          <strong>{report.reviewed_cluster_count}</strong>
+        </div>
+        <div>
+          <span>Unreviewed</span>
+          <strong>{report.unreviewed_cluster_count}</strong>
+        </div>
+        <div>
+          <span>Followups</span>
+          <strong>{report.required_followups.length}</strong>
+        </div>
+        <div>
+          <span>Lake Write</span>
+          <strong>{report.lake_write_performed ? "Yes" : "No"}</strong>
+        </div>
+        <div>
+          <span>Matter Opening</span>
+          <strong>{report.matter_opening_authorized ? "Yes" : "No"}</strong>
+        </div>
+      </div>
+
+      <div className="triage-stack">
+        <article>
+          <span>Decision Reason</span>
+          <p>{report.decision_reason}</p>
+        </article>
+        <article>
+          <span>Reviewed Cluster IDs</span>
+          <TokenList items={report.reviewed_cluster_ids} />
+        </article>
+        <article>
+          <span>Required Followups</span>
+          {report.required_followups.length > 0 ? (
+            <ul>
+              {report.required_followups.map((followup) => (
+                <li key={followup}>{followup}</li>
+              ))}
+            </ul>
+          ) : (
+            <p className="empty-state">No followups recorded.</p>
+          )}
+        </article>
+      </div>
+
+      <div className="lake-label-strip" aria-label="Matter-linking candidate Lake labels">
+        <span>Candidate Lake labels</span>
+        <TokenList items={report.candidate_lake_event_labels} limit={8} />
+      </div>
+
+      <p className="boundary">
+        Append-only local review evidence. Budget amount:{" "}
+        {report.budget_amount_output_authorized ? "not blocked" : "blocked"}. Conflict
+        conclusion: {report.conflict_conclusion_emitted ? "not blocked" : "blocked"}. Learning:{" "}
+        {report.silent_learning_performed ? "not blocked" : "blocked"}.
+      </p>
+    </section>
+  );
+}
+
 function LaborEmploymentMatrixPanel({ report }: { report: LaborEmploymentQAMatrixReport }) {
   const criticalGaps = report.cases.reduce(
     (total, testCase) => total + testCase.critical_gap_count,
@@ -1654,6 +1752,7 @@ function App() {
 
       <QualityGatePanel gates={manifest.qualityGates} />
       <MatterLinkingPreflightPanel report={matterLinkingPreflight} />
+      <MatterLinkingReviewOutcomePanel report={matterLinkingReviewOutcome} />
       <LaborEmploymentMatrixPanel report={laborEmploymentQAMatrix} />
       <LaborEmploymentExecutableCoveragePanel report={laborEmploymentExecutableCoverage} />
       <LaborEmploymentBlockedDriverPanel report={laborEmploymentBlockedDriverReview} />

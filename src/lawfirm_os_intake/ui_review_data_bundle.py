@@ -70,6 +70,14 @@ DETAIL_REPORT_SPECS = [
         required=False,
     ),
     UIReviewDetailSpec(
+        detail_report_id="matter-linking-review-outcome",
+        label="Matter-Linking Review Outcome",
+        report_kind="matter_linking_review_outcome",
+        file_name="matter_linking_review_outcome_report.json",
+        renderer="MatterLinkingReviewOutcomePanel",
+        required=False,
+    ),
+    UIReviewDetailSpec(
         detail_report_id="labor-employment-qa-matrix",
         label="L&E Budget Fact QA",
         report_kind="labor_employment_qa_matrix",

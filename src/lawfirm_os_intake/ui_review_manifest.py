@@ -130,6 +130,13 @@ ARTIFACT_SPECS = [
         "pending_review",
     ),
     ArtifactSpec(
+        "matter-linking-review-outcome",
+        "Matter-Linking Review Outcome",
+        "matter_linking_review_outcome_report.json",
+        "qa-reference",
+        "pending_review",
+    ),
+    ArtifactSpec(
         "fixture-depth",
         "Synthetic Fixture Depth",
         "synthetic_fixture_depth_audit_report.json",
@@ -320,6 +327,13 @@ QUALITY_GATE_SPECS = {
         "matter_linking_preflight_report.json",
         "qa-reference",
         "Upfront-like document clusters must stay human-gated and no-write before budget or matter-opening workflows rely on them.",
+        "pending_review",
+    ),
+    "matter_linking_review_outcome": (
+        "Matter-Linking Review Outcome",
+        "matter_linking_review_outcome_report.json",
+        "qa-reference",
+        "Human matter-linking decisions must be append-only local evidence and cannot authorize budgets, matter opening, Lake admission, or learning.",
         "pending_review",
     ),
     "synthetic_fixture_depth": (

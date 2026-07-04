@@ -145,6 +145,19 @@ it can clear sender-follow-up need while still requiring human matter-linking
 confirmation and blocking budget output, matter opening, Lake/SQLite writes, and
 silent learning.
 
+Use `python -m lawfirm_os_intake record-matter-linking-review-outcome
+--matter-linking-preflight-report PATH/matter_linking_preflight_report.json
+--outcome examples/synthetic/upfront/matter-linking-review-confirm-split.outcome.json
+--out-dir PATH/matter-linking-review-outcome` to record append-only human
+matter-linking review evidence. It emits
+`matter_linking_review_outcome_record.json`,
+`matter_linking_review_outcome_history.jsonl`,
+`matter_linking_review_outcome_report.json`, and `.md`, supports split, merge,
+single-candidate, unknown, request-more-info, and declined/referred outcomes,
+and keeps the result candidate-only. It does not call Upfront, create a screen,
+clear conflicts, output or submit a budget, open a matter, write Lake/SQLite
+records, mutate sibling repos, promote canon, or learn from the review.
+
 Use `python -m lawfirm_os_intake audit-labor-employment-fixture-family-pack
 --out-dir PATH/le-fixture-family-pack` to audit
 `examples/synthetic/labor-employment/labor-employment-budget-fixture-family-pack.json`.

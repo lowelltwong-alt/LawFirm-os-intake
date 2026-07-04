@@ -1,0 +1,423 @@
+{
+  "$defs": {
+    "MatterLinkingReviewOutcomeCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "artifact_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Artifact Refs",
+          "type": "array"
+        },
+        "decision_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Decision Ids",
+          "type": "array"
+        },
+        "cluster_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Cluster Ids",
+          "type": "array"
+        },
+        "blocking_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Blocking Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "MatterLinkingReviewOutcomeCheck",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "matter_linking_review_outcome_report_id": {
+      "title": "Matter Linking Review Outcome Report Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "matter_linking_review_outcome_recorded",
+        "matter_linking_review_outcome_recorded_pending_followup",
+        "blocked_by_matter_linking_review_outcome"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "source_matter_linking_preflight_report_ref": {
+      "title": "Source Matter Linking Preflight Report Ref",
+      "type": "string"
+    },
+    "matter_linking_preflight_report_id": {
+      "title": "Matter Linking Preflight Report Id",
+      "type": "string"
+    },
+    "source_matter_linking_preflight_status": {
+      "title": "Source Matter Linking Preflight Status",
+      "type": "string"
+    },
+    "matter_linking_review_outcome_record_id": {
+      "title": "Matter Linking Review Outcome Record Id",
+      "type": "string"
+    },
+    "reviewer_id": {
+      "title": "Reviewer Id",
+      "type": "string"
+    },
+    "reviewed_at": {
+      "title": "Reviewed At",
+      "type": "string"
+    },
+    "overall_outcome": {
+      "enum": [
+        "confirm_split",
+        "confirm_merge",
+        "confirm_single_candidate",
+        "unknown",
+        "request_more_info",
+        "declined_or_referred"
+      ],
+      "title": "Overall Outcome",
+      "type": "string"
+    },
+    "decision_reason": {
+      "title": "Decision Reason",
+      "type": "string"
+    },
+    "source_cluster_count": {
+      "minimum": 0,
+      "title": "Source Cluster Count",
+      "type": "integer"
+    },
+    "decision_count": {
+      "minimum": 0,
+      "title": "Decision Count",
+      "type": "integer"
+    },
+    "split_decision_count": {
+      "minimum": 0,
+      "title": "Split Decision Count",
+      "type": "integer"
+    },
+    "merge_decision_count": {
+      "minimum": 0,
+      "title": "Merge Decision Count",
+      "type": "integer"
+    },
+    "single_candidate_decision_count": {
+      "minimum": 0,
+      "title": "Single Candidate Decision Count",
+      "type": "integer"
+    },
+    "unknown_decision_count": {
+      "minimum": 0,
+      "title": "Unknown Decision Count",
+      "type": "integer"
+    },
+    "request_more_info_decision_count": {
+      "minimum": 0,
+      "title": "Request More Info Decision Count",
+      "type": "integer"
+    },
+    "declined_or_referred_decision_count": {
+      "minimum": 0,
+      "title": "Declined Or Referred Decision Count",
+      "type": "integer"
+    },
+    "reviewed_cluster_count": {
+      "minimum": 0,
+      "title": "Reviewed Cluster Count",
+      "type": "integer"
+    },
+    "unreviewed_cluster_count": {
+      "minimum": 0,
+      "title": "Unreviewed Cluster Count",
+      "type": "integer"
+    },
+    "unknown_cluster_count": {
+      "minimum": 0,
+      "title": "Unknown Cluster Count",
+      "type": "integer"
+    },
+    "reviewed_cluster_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Reviewed Cluster Ids",
+      "type": "array"
+    },
+    "unreviewed_cluster_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Unreviewed Cluster Ids",
+      "type": "array"
+    },
+    "unknown_cluster_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Unknown Cluster Ids",
+      "type": "array"
+    },
+    "required_followups": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Followups",
+      "type": "array"
+    },
+    "candidate_lake_event_labels": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Candidate Lake Event Labels",
+      "type": "array"
+    },
+    "append_only_history_ref": {
+      "title": "Append Only History Ref",
+      "type": "string"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/MatterLinkingReviewOutcomeCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "required_next_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Gates",
+      "type": "array"
+    },
+    "append_only": {
+      "const": true,
+      "default": true,
+      "title": "Append Only",
+      "type": "boolean"
+    },
+    "mutation_policy": {
+      "const": "append_only_supersession",
+      "default": "append_only_supersession",
+      "title": "Mutation Policy",
+      "type": "string"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "local_json_only": {
+      "const": true,
+      "default": true,
+      "title": "Local Json Only",
+      "type": "boolean"
+    },
+    "human_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Human Review Required",
+      "type": "boolean"
+    },
+    "not_authorized_for_external_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For External Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_lake_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Lake Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_sqlite_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Sqlite Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_budget_submission": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Budget Submission",
+      "type": "boolean"
+    },
+    "not_authorized_for_matter_opening": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Matter Opening",
+      "type": "boolean"
+    },
+    "not_authorized_for_conflict_conclusion": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Conflict Conclusion",
+      "type": "boolean"
+    },
+    "no_connector_implemented": {
+      "const": true,
+      "default": true,
+      "title": "No Connector Implemented",
+      "type": "boolean"
+    },
+    "no_lake_admission_performed": {
+      "const": true,
+      "default": true,
+      "title": "No Lake Admission Performed",
+      "type": "boolean"
+    },
+    "no_sibling_repo_writes": {
+      "const": true,
+      "default": true,
+      "title": "No Sibling Repo Writes",
+      "type": "boolean"
+    },
+    "no_canonical_mutation": {
+      "const": true,
+      "default": true,
+      "title": "No Canonical Mutation",
+      "type": "boolean"
+    },
+    "budget_amount_output_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Amount Output Authorized",
+      "type": "boolean"
+    },
+    "budget_submission_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Submission Authorized",
+      "type": "boolean"
+    },
+    "conflict_conclusion_emitted": {
+      "const": false,
+      "default": false,
+      "title": "Conflict Conclusion Emitted",
+      "type": "boolean"
+    },
+    "matter_opening_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Matter Opening Authorized",
+      "type": "boolean"
+    },
+    "screen_created": {
+      "const": false,
+      "default": false,
+      "title": "Screen Created",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "matter_linking_review_outcome_report_id",
+    "status",
+    "source_matter_linking_preflight_report_ref",
+    "matter_linking_preflight_report_id",
+    "source_matter_linking_preflight_status",
+    "matter_linking_review_outcome_record_id",
+    "reviewer_id",
+    "reviewed_at",
+    "overall_outcome",
+    "decision_reason",
+    "source_cluster_count",
+    "decision_count",
+    "split_decision_count",
+    "merge_decision_count",
+    "single_candidate_decision_count",
+    "unknown_decision_count",
+    "request_more_info_decision_count",
+    "declined_or_referred_decision_count",
+    "reviewed_cluster_count",
+    "unreviewed_cluster_count",
+    "unknown_cluster_count",
+    "reviewed_cluster_ids",
+    "unreviewed_cluster_ids",
+    "unknown_cluster_ids",
+    "required_followups",
+    "candidate_lake_event_labels",
+    "append_only_history_ref",
+    "checks",
+    "required_next_gates",
+    "generated_at"
+  ],
+  "title": "MatterLinkingReviewOutcomeReport",
+  "type": "object"
+}
