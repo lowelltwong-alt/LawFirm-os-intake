@@ -1,0 +1,41 @@
+{
+  "schema_version": "0.1",
+  "matter_linking_review_outcome_record_id": "matter-linking-review-outcome.synthetic-confirm-split.v0_1",
+  "matter_linking_preflight_report_id": "matterlinkpreflight_b6256d36c7d774ea7124",
+  "source_matter_linking_preflight_report_ref": "matter_linking_preflight_report.json",
+  "reviewer_id": "synthetic-intake-reviewer",
+  "reviewer_role": "intake_quality_reviewer",
+  "reviewed_at": "2026-07-04T00:00:00Z",
+  "overall_outcome": "confirm_split",
+  "decision_reason": "Synthetic reviewer confirms the two source-supported clusters should remain separate prospective matter candidates.",
+  "decisions": [
+    {
+      "schema_version": "0.1",
+      "decision_id": "matter-linking-review-decision.synthetic-confirm-split.v0_1",
+      "outcome": "confirm_split",
+      "selected_cluster_ids": [
+        "cluster.case-a",
+        "cluster.case-b"
+      ],
+      "decision_reason": "Follow-up request IDs, claim numbers, party pairs, and negative split evidence support two separate candidate matters, still pending role confirmation and official matter authority.",
+      "evidence_refs": [
+        "matterlinkpreflight_b6256d36c7d774ea7124",
+        "cluster.case-a",
+        "cluster.case-b",
+        "source.email.002:body:42-54",
+        "source.email.002:body:116-128",
+        "source.attachment.001:page1:44-55",
+        "source.attachment.003:page1:41-52"
+      ],
+      "required_followups": [],
+      "red_team_notes": [
+        "The split decision is not matter-opening authority and cannot replace conflict review.",
+        "The same sender and same carrier remain weak context only, not merge authority."
+      ],
+      "candidate_exception_lake_labels": [
+        "matter_linking_confirmed_split_candidate",
+        "principal_party_roles_still_require_confirmation"
+      ]
+    }
+  ]
+}

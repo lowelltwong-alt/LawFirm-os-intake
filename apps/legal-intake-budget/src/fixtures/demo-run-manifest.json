@@ -1,7 +1,7 @@
 {
-  "manifestId": "ui_review_manifest_0320af407314",
+  "manifestId": "ui_review_manifest_9bf517c746eb",
   "generatedAt": "2026-07-04T00:00:00Z",
-  "runLabel": "Local intake QA review: ui-fixture-refresh-le-epli-current",
+  "runLabel": "Local intake QA review: generated-demo-run",
   "practiceArea": "synthetic_intake",
   "matterFamily": "medical_malpractice_defense",
   "overallStatus": "blocked",
@@ -27,7 +27,7 @@
       "candidateOnly": true,
       "externalWritesPerformed": false,
       "notes": [
-        "Found preflight\\run_68849dab15ed4fc387cda423488f2f9e\\intake_preflight_packet.json; status=human_intake_review_required."
+        "Found preflight\\run_74827a2988004fc580b423e3551b7776\\intake_preflight_packet.json; status=human_intake_review_required."
       ]
     },
     {
@@ -196,7 +196,7 @@
       "candidateOnly": true,
       "externalWritesPerformed": false,
       "notes": [
-        "Found quality\\poc_qa_triage_report.json; status=poc_qa_ready_for_review."
+        "poc_qa_triage_report.json was not found under the local run root."
       ]
     },
     {
@@ -210,6 +210,19 @@
       "externalWritesPerformed": false,
       "notes": [
         "Found quality\\matter_linking_preflight_report.json; status=matter_linking_preflight_resolved_candidate_requires_review."
+      ]
+    },
+    {
+      "artifactId": "matter-linking-review-outcome",
+      "label": "Matter-Linking Review Outcome",
+      "fileName": "matter_linking_review_outcome_report.json",
+      "status": "pending_review",
+      "owner": "qa-reference",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": [
+        "Found quality\\matter_linking_review_outcome_report.json; status=matter_linking_review_outcome_recorded."
       ]
     },
     {
@@ -404,7 +417,7 @@
       "candidateOnly": true,
       "externalWritesPerformed": false,
       "notes": [
-        "Found quality\\validation_suite_evidence_report.json; status=validation_suite_passed."
+        "Found validation_suite_evidence_report.json; status=validation_suite_passed."
       ]
     },
     {
@@ -531,7 +544,7 @@
       "evidenceFile": "poc_qa_triage_report.json",
       "owner": "qa-reference",
       "notes": [
-        "The POC QA triage queue must reconcile validation, synthetic QA, L&E budget gates, and UI evidence before readiness is claimed."
+        "poc_qa_triage_report.json is missing; The POC QA triage queue must reconcile validation, synthetic QA, L&E budget gates, and UI evidence before readiness is claimed."
       ]
     },
     {
@@ -542,6 +555,16 @@
       "owner": "qa-reference",
       "notes": [
         "Upfront-like document clusters must stay human-gated and no-write before budget or matter-opening workflows rely on them."
+      ]
+    },
+    {
+      "gateId": "matter_linking_review_outcome",
+      "label": "Matter-Linking Review Outcome",
+      "status": "pending_review",
+      "evidenceFile": "matter_linking_review_outcome_report.json",
+      "owner": "qa-reference",
+      "notes": [
+        "Human matter-linking decisions must be append-only local evidence and cannot authorize budgets, matter opening, Lake admission, or learning."
       ]
     },
     {

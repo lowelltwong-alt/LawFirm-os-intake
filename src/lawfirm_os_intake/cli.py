@@ -101,6 +101,7 @@ from .labor_employment_fixture_family_pack import (
 )
 from .labor_employment_qa_matrix import run_labor_employment_qa_matrix
 from .matter_linking_preflight import run_matter_linking_preflight
+from .matter_linking_review_outcomes import run_matter_linking_review_outcome_record
 from .models import BudgetProposal, HumanConfirmation
 from .orchestrator_owner_review_request import run_orchestrator_owner_review_request
 from .pr_readiness_decision import run_pr_readiness_decision_record
@@ -812,6 +813,29 @@ def _parser() -> argparse.ArgumentParser:
     )
     matter_linking_preflight.add_argument("--out-dir", required=True)
     matter_linking_preflight.add_argument(
+        "--generated-at",
+        help="Optional fixed timestamp for deterministic tests and replayed reports.",
+    )
+
+    matter_linking_review_outcome = sub.add_parser(
+        "record-matter-linking-review-outcome",
+        help=(
+            "Record append-only human matter-linking decisions without connector, "
+            "Lake, budget, matter-opening, conflict, or learning writes."
+        ),
+    )
+    matter_linking_review_outcome.add_argument(
+        "--matter-linking-preflight-report",
+        required=True,
+        help="Path to matter_linking_preflight_report.json.",
+    )
+    matter_linking_review_outcome.add_argument(
+        "--outcome",
+        required=True,
+        help="Path to matter_linking_review_outcome_record JSON.",
+    )
+    matter_linking_review_outcome.add_argument("--out-dir", required=True)
+    matter_linking_review_outcome.add_argument(
         "--generated-at",
         help="Optional fixed timestamp for deterministic tests and replayed reports.",
     )
@@ -2843,6 +2867,47 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             if report.status == "blocked_matter_linking_preflight":
+                return 2
+            return 0
+
+        if args.command == "record-matter-linking-review-outcome":
+            report, run_dir = run_matter_linking_review_outcome_record(
+                matter_linking_preflight_report_path=args.matter_linking_preflight_report,
+                outcome_path=args.outcome,
+                out_dir=args.out_dir,
+                generated_at=args.generated_at,
+            )
+            failed_checks = [check.check_id for check in report.checks if check.status == "failed"]
+            _print(
+                {
+                    "status": report.status,
+                    "matter_linking_review_outcome_report_id": (
+                        report.matter_linking_review_outcome_report_id
+                    ),
+                    "matter_linking_review_outcome_record_id": (
+                        report.matter_linking_review_outcome_record_id
+                    ),
+                    "matter_linking_preflight_report_id": (
+                        report.matter_linking_preflight_report_id
+                    ),
+                    "overall_outcome": report.overall_outcome,
+                    "reviewed_cluster_count": report.reviewed_cluster_count,
+                    "unreviewed_cluster_count": report.unreviewed_cluster_count,
+                    "unknown_cluster_count": report.unknown_cluster_count,
+                    "required_followups": report.required_followups,
+                    "candidate_lake_event_labels": report.candidate_lake_event_labels,
+                    "failed_checks": failed_checks,
+                    "budget_amount_output_authorized": report.budget_amount_output_authorized,
+                    "matter_opening_authorized": report.matter_opening_authorized,
+                    "conflict_conclusion_emitted": report.conflict_conclusion_emitted,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            if report.status == "blocked_by_matter_linking_review_outcome":
                 return 2
             return 0
 

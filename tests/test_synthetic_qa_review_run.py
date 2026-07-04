@@ -42,7 +42,7 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
 
     assert code == 0
     assert report["status"] == "synthetic_qa_review_run_ready"
-    assert report["step_count"] == len(report["steps"]) == 19
+    assert report["step_count"] == len(report["steps"]) == 20
     assert report["failed_step_count"] == 0
     assert report["candidate_only"] is True
     assert report["synthetic_only"] is True
@@ -54,6 +54,7 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
     assert {
         "budget_coherence",
         "matter_linking_preflight",
+        "matter_linking_review_outcome",
         "matter_linking_weak_only_holdout",
         "budget_calibration_starter_pack",
         "labor_employment_qa_matrix",
@@ -89,6 +90,7 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
         "synthetic_qa_blocker_report",
         "synthetic_qa_bundle",
         "matter_linking_preflight",
+        "matter_linking_review_outcome",
         "labor_employment_blocked_driver_impact_review",
         "labor_employment_budget_output_expectations",
     } <= {gate["gateId"] for gate in ui_manifest["qualityGates"]}
@@ -96,17 +98,18 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
     ui_detail_reports = {
         report["report_kind"]: report for report in ui_data_bundle["detail_reports"]
     }
-    assert ui_data_bundle["detail_report_count"] == 10
-    assert ui_data_bundle["present_detail_report_count"] == 9
+    assert ui_data_bundle["detail_report_count"] == 11
+    assert ui_data_bundle["present_detail_report_count"] == 11
     assert ui_detail_reports["synthetic_qa_review_run"]["present"] is True
     assert ui_detail_reports["synthetic_qa_review_run"]["artifact_ref"] == str(
         run_root / SYNTHETIC_QA_REVIEW_RUN_REPORT_FILENAME
     )
     assert ui_detail_reports["matter_linking_preflight"]["present"] is True
+    assert ui_detail_reports["matter_linking_review_outcome"]["present"] is True
     assert ui_detail_reports["labor_employment_executable_coverage"]["present"] is True
     assert ui_detail_reports["synthetic_confidence_summary"]["present"] is True
     assert ui_detail_reports["synthetic_qa_blocker_report"]["present"] is True
-    assert ui_detail_reports["synthetic_qa_review_outcome"]["present"] is False
+    assert ui_detail_reports["synthetic_qa_review_outcome"]["present"] is True
     assert ui_detail_reports["synthetic_qa_review_outcome"]["required"] is False
     assert ui_detail_reports["synthetic_qa_blocker_report"]["status"] == (
         "synthetic_qa_blocker_report_ready_for_review"

@@ -2,7 +2,7 @@
   "schema_version": "0.1",
   "matter_linking_preflight_report_id": "matterlinkpreflight_b6256d36c7d774ea7124",
   "status": "matter_linking_preflight_resolved_candidate_requires_review",
-  "source_artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\examples\\synthetic\\upfront\\upfront-like-intake-output.resolved-followup.example.json",
+  "source_artifact_ref": "examples\\synthetic\\upfront\\upfront-like-intake-output.resolved-followup.example.json",
   "source_artifact_id": "upfront_like_intake_output.synthetic.resolved_followup.v0_1",
   "source_artifact_type": "upfront_like_intake_output_candidate",
   "source_artifact_status": "resolved_candidate_requires_human_confirmation",
@@ -137,6 +137,15 @@
       "blocking_refs": []
     },
     {
+      "check_id": "link_state_cluster_cardinality_valid",
+      "status": "passed",
+      "message": "Split states require at least two candidate clusters; single-candidate states require exactly one cluster.",
+      "evidence_refs": [
+        "resolved_split_candidates_pending_human_confirmation"
+      ],
+      "blocking_refs": []
+    },
+    {
       "check_id": "official_matter_number_missing_is_explicit",
       "status": "passed",
       "message": "Missing official firm matter number is explicit.",
@@ -169,6 +178,16 @@
       "check_id": "weak_only_candidates_block_matter_linking",
       "status": "passed",
       "message": "A candidate matter link needs source-bound matter-specific strong support; same sender, same carrier, or sender references alone are not enough.",
+      "evidence_refs": [
+        "cluster.case-a",
+        "cluster.case-b"
+      ],
+      "blocking_refs": []
+    },
+    {
+      "check_id": "weak_signals_cannot_be_promoted_to_strong_support",
+      "status": "passed",
+      "message": "Same sender, same carrier, and sender internal references cannot become strong matter-linking support.",
       "evidence_refs": [
         "cluster.case-a",
         "cluster.case-b"

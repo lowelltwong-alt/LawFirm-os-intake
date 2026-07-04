@@ -1,35 +1,35 @@
 {
   "schema_version": "0.1",
-  "synthetic_confidence_summary_report_id": "synthetic_confidence_summary_437e6c8813109ce5",
+  "synthetic_confidence_summary_report_id": "synthetic_confidence_summary_f9ce86529f0bb158",
   "status": "synthetic_confidence_summary_ready_for_review",
   "testing_readiness_state": "synthetic_qa_ready_pending_review",
-  "source_synthetic_qa_review_run_ref": ".lawfirm-os-intake\\matter-linking-hardening-current\\ui-review\\synthetic_qa_review_run_report.json",
-  "source_synthetic_qa_review_run_report_id": "syntheticqareviewrun_0789ab038884add2",
+  "source_synthetic_qa_review_run_ref": "generated-demo-run/synthetic_qa_review_run_report.json",
+  "source_synthetic_qa_review_run_report_id": "syntheticqareviewrun_10240eb537b1e647",
   "source_synthetic_qa_review_run_status": "synthetic_qa_review_run_ready",
-  "source_synthetic_qa_bundle_ref": ".lawfirm-os-intake\\matter-linking-hardening-current\\ui-review\\quality\\synthetic_qa_bundle_report.json",
-  "source_synthetic_qa_bundle_report_id": "synthetic_qa_bundle_7b2d1d6f795a",
+  "source_synthetic_qa_bundle_ref": "generated-demo-run/quality\\synthetic_qa_bundle_report.json",
+  "source_synthetic_qa_bundle_report_id": "synthetic_qa_bundle_d522f5b27b6f",
   "source_synthetic_qa_bundle_status": "pending_review",
-  "source_ui_manifest_ref": ".lawfirm-os-intake\\matter-linking-hardening-current\\ui-review\\ui_review_manifest.json",
-  "source_ui_manifest_id": "ui_review_manifest_5658db8a9eb7",
+  "source_ui_manifest_ref": "generated-demo-run/ui_review_manifest.json",
+  "source_ui_manifest_id": "ui_review_manifest_9bf517c746eb",
   "source_ui_manifest_overall_status": "blocked",
-  "source_ui_review_data_bundle_ref": ".lawfirm-os-intake\\matter-linking-hardening-current\\ui-review\\ui_review_data_bundle.json",
-  "source_ui_review_data_bundle_id": "ui_review_data_bundle_fab0a675d6af",
+  "source_ui_review_data_bundle_ref": "generated-demo-run/ui_review_data_bundle.json",
+  "source_ui_review_data_bundle_id": "ui_review_data_bundle_50ace905b6e9",
   "source_ui_review_data_bundle_status": "ready_for_review",
-  "qa_step_count": 19,
-  "qa_passed_step_count": 19,
+  "qa_step_count": 20,
+  "qa_passed_step_count": 20,
   "qa_failed_step_count": 0,
   "qa_artifact_count": 14,
   "qa_missing_required_artifact_count": 0,
   "qa_blocked_artifact_count": 0,
   "qa_pending_artifact_count": 12,
   "qa_failed_artifact_count": 0,
-  "ui_detail_report_count": 10,
-  "ui_present_detail_report_count": 10,
+  "ui_detail_report_count": 11,
+  "ui_present_detail_report_count": 11,
   "ui_missing_required_detail_report_count": 0,
   "ui_external_write_report_count": 0,
-  "quality_gate_count": 23,
-  "quality_gate_passed_count": 3,
-  "quality_gate_pending_count": 20,
+  "quality_gate_count": 24,
+  "quality_gate_passed_count": 6,
+  "quality_gate_pending_count": 18,
   "quality_gate_blocked_count": 0,
   "quality_gate_failed_count": 0,
   "readiness_item_count": 5,
@@ -40,10 +40,10 @@
       "owner": "qa-reference",
       "state": "ready_for_review",
       "evidence_refs": [
-        ".lawfirm-os-intake\\matter-linking-hardening-current\\ui-review\\synthetic_qa_review_run_report.json"
+        "generated-demo-run/synthetic_qa_review_run_report.json"
       ],
       "notes": [
-        "0 failed steps out of 19."
+        "0 failed steps out of 20."
       ],
       "no_write_boundary_confirmed": true
     },
@@ -53,7 +53,7 @@
       "owner": "qa-reference",
       "state": "pending_review",
       "evidence_refs": [
-        ".lawfirm-os-intake\\matter-linking-hardening-current\\ui-review\\quality\\synthetic_qa_bundle_report.json"
+        "generated-demo-run/quality\\synthetic_qa_bundle_report.json"
       ],
       "notes": [
         "0 missing required, 0 blocked, 12 pending review."
@@ -66,11 +66,11 @@
       "owner": "frontend-review",
       "state": "ready_for_review",
       "evidence_refs": [
-        ".lawfirm-os-intake\\matter-linking-hardening-current\\ui-review\\ui_review_data_bundle.json",
-        ".lawfirm-os-intake\\matter-linking-hardening-current\\ui-review\\ui_review_manifest.json"
+        "generated-demo-run/ui_review_data_bundle.json",
+        "generated-demo-run/ui_review_manifest.json"
       ],
       "notes": [
-        "10 detail reports present; 0 write-boundary failures."
+        "11 detail reports present; 0 write-boundary failures."
       ],
       "no_write_boundary_confirmed": true
     },
@@ -80,9 +80,9 @@
       "owner": "governance-review",
       "state": "ready_for_review",
       "evidence_refs": [
-        ".lawfirm-os-intake\\matter-linking-hardening-current\\ui-review\\synthetic_qa_review_run_report.json",
-        ".lawfirm-os-intake\\matter-linking-hardening-current\\ui-review\\quality\\synthetic_qa_bundle_report.json",
-        ".lawfirm-os-intake\\matter-linking-hardening-current\\ui-review\\ui_review_data_bundle.json"
+        "generated-demo-run/synthetic_qa_review_run_report.json",
+        "generated-demo-run/quality\\synthetic_qa_bundle_report.json",
+        "generated-demo-run/ui_review_data_bundle.json"
       ],
       "notes": [
         "No budget submission, matter opening, Lake/SQLite write, external write, or silent learning is authorized by these artifacts."
@@ -95,10 +95,10 @@
       "owner": "human-or-owner-review",
       "state": "pending_review",
       "evidence_refs": [
-        ".lawfirm-os-intake\\matter-linking-hardening-current\\ui-review\\ui_review_manifest.json"
+        "generated-demo-run/ui_review_manifest.json"
       ],
       "notes": [
-        "20 pending gates remain; pending is expected until human/owner review accepts candidate QA evidence."
+        "18 pending gates remain; pending is expected until human/owner review accepts candidate QA evidence."
       ],
       "no_write_boundary_confirmed": true
     }

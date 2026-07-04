@@ -1,0 +1,43 @@
+{
+  "schema_version": "0.1",
+  "matter_linking_review_outcome_record_id": "matter-linking-review-outcome.synthetic-request-more-info.v0_1",
+  "matter_linking_preflight_report_id": "matterlinkpreflight_b840afd16fe9592089b8",
+  "source_matter_linking_preflight_report_ref": "matter_linking_preflight_report.json",
+  "reviewer_id": "synthetic-intake-reviewer",
+  "reviewer_role": "intake_quality_reviewer",
+  "reviewed_at": "2026-07-04T00:00:00Z",
+  "overall_outcome": "request_more_info",
+  "decision_reason": "Synthetic reviewer needs sender follow-up before any cluster can be relied on for budget or matter-opening workflows.",
+  "decisions": [
+    {
+      "schema_version": "0.1",
+      "decision_id": "matter-linking-review-decision.synthetic-request-more-info.v0_1",
+      "outcome": "request_more_info",
+      "selected_cluster_ids": [
+        "cluster.case-a",
+        "cluster.case-b"
+      ],
+      "decision_reason": "The sender provided two possible clusters but no official firm matter number or reliable request split confirmation in the first message.",
+      "evidence_refs": [
+        "matterlinkpreflight_b840afd16fe9592089b8",
+        "cluster.case-a",
+        "cluster.case-b",
+        "source.email.001:body:120-132"
+      ],
+      "required_followups": [
+        "Ask sender to confirm whether cluster.case-a and cluster.case-b are separate prospective matters and provide any carrier/request references.",
+        "Keep budget amount and matter-opening workflows blocked until the reply is source-bound and reviewed."
+      ],
+      "followup_owner": "synthetic-intake-reviewer",
+      "followup_due_at": "2026-07-05T00:00:00Z",
+      "red_team_notes": [
+        "A same-sender same-carrier bundle is not enough to merge documents.",
+        "A request-more-info outcome must not silently train the matcher or mutate future profiles."
+      ],
+      "candidate_exception_lake_labels": [
+        "matter_linking_followup_required_candidate",
+        "sender_reference_followup_required"
+      ]
+    }
+  ]
+}

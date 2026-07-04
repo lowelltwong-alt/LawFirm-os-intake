@@ -3751,6 +3751,245 @@ class MatterLinkingPreflightReport(StrictModel):
         return self
 
 
+MatterLinkingReviewOutcome = Literal[
+    "confirm_split",
+    "confirm_merge",
+    "confirm_single_candidate",
+    "unknown",
+    "request_more_info",
+    "declined_or_referred",
+]
+
+
+class MatterLinkingReviewDecision(StrictModel):
+    schema_version: str = "0.1"
+    decision_id: str
+    outcome: MatterLinkingReviewOutcome
+    selected_cluster_ids: list[str]
+    decision_reason: str
+    evidence_refs: list[str]
+    required_followups: list[str] = Field(default_factory=list)
+    followup_owner: str | None = None
+    followup_due_at: str | None = None
+    red_team_notes: list[str]
+    candidate_exception_lake_labels: list[str]
+
+    @model_validator(mode="after")
+    def matter_linking_review_decision_is_complete(
+        self,
+    ) -> "MatterLinkingReviewDecision":
+        if not self.decision_id.strip():
+            raise ValueError("matter-linking review decision requires decision_id")
+        if not self.selected_cluster_ids:
+            raise ValueError("matter-linking review decision requires selected clusters")
+        if len(set(self.selected_cluster_ids)) != len(self.selected_cluster_ids):
+            raise ValueError("matter-linking review decision cluster IDs must be unique")
+        if not self.decision_reason.strip():
+            raise ValueError("matter-linking review decision requires decision_reason")
+        if not self.evidence_refs or any(not ref.strip() for ref in self.evidence_refs):
+            raise ValueError("matter-linking review decision requires evidence refs")
+        if not self.red_team_notes or any(not note.strip() for note in self.red_team_notes):
+            raise ValueError("matter-linking review decision requires red-team notes")
+        if not self.candidate_exception_lake_labels or any(
+            not label.strip() for label in self.candidate_exception_lake_labels
+        ):
+            raise ValueError("matter-linking review decision requires candidate labels")
+        if (
+            self.outcome in {"confirm_split", "confirm_merge"}
+            and len(self.selected_cluster_ids) < 2
+        ):
+            raise ValueError(f"{self.outcome} decisions require at least two clusters")
+        if self.outcome == "confirm_single_candidate" and len(self.selected_cluster_ids) != 1:
+            raise ValueError("confirm_single_candidate decisions require exactly one cluster")
+        if self.outcome in {"unknown", "request_more_info", "declined_or_referred"}:
+            if not (self.followup_owner and self.followup_owner.strip()):
+                raise ValueError(f"{self.outcome} decisions require followup_owner")
+            if not (self.followup_due_at and self.followup_due_at.strip()):
+                raise ValueError(f"{self.outcome} decisions require followup_due_at")
+            if not self.required_followups:
+                raise ValueError(f"{self.outcome} decisions require required_followups")
+        return self
+
+
+class MatterLinkingReviewOutcomeRecord(StrictModel):
+    schema_version: str = "0.1"
+    matter_linking_review_outcome_record_id: str
+    matter_linking_preflight_report_id: str
+    source_matter_linking_preflight_report_ref: str | None = None
+    reviewer_id: str
+    reviewer_role: str | None = None
+    reviewed_at: str
+    overall_outcome: MatterLinkingReviewOutcome
+    decision_reason: str
+    decisions: list[MatterLinkingReviewDecision]
+    supersedes_matter_linking_review_outcome_record_id: str | None = None
+    append_only: Literal[True] = True
+    mutation_policy: Literal["append_only_supersession"] = "append_only_supersession"
+    candidate_only: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    local_json_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    not_authorized_for_matter_opening: Literal[True] = True
+    not_authorized_for_conflict_conclusion: Literal[True] = True
+    no_connector_implemented: Literal[True] = True
+    no_lake_admission_performed: Literal[True] = True
+    no_sibling_repo_writes: Literal[True] = True
+    no_canonical_mutation: Literal[True] = True
+    budget_amount_output_authorized: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    conflict_conclusion_emitted: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    screen_created: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def matter_linking_review_outcome_record_is_complete(
+        self,
+    ) -> "MatterLinkingReviewOutcomeRecord":
+        if not self.matter_linking_review_outcome_record_id.strip():
+            raise ValueError("matter-linking review outcome record requires id")
+        if not self.matter_linking_preflight_report_id.strip():
+            raise ValueError("matter-linking review outcome record requires source report id")
+        if not self.reviewer_id.strip():
+            raise ValueError("matter-linking review outcome record requires reviewer_id")
+        if not self.reviewed_at.strip():
+            raise ValueError("matter-linking review outcome record requires reviewed_at")
+        if not self.decision_reason.strip():
+            raise ValueError("matter-linking review outcome record requires decision_reason")
+        if not self.decisions:
+            raise ValueError("matter-linking review outcome record requires decisions")
+        decision_ids = [decision.decision_id for decision in self.decisions]
+        if len(set(decision_ids)) != len(decision_ids):
+            raise ValueError("matter-linking review outcome decision IDs must be unique")
+        if self.overall_outcome not in {decision.outcome for decision in self.decisions}:
+            raise ValueError("matter-linking review overall outcome must match a decision")
+        return self
+
+
+class MatterLinkingReviewOutcomeCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    artifact_refs: list[str] = Field(default_factory=list)
+    decision_ids: list[str] = Field(default_factory=list)
+    cluster_ids: list[str] = Field(default_factory=list)
+    blocking_refs: list[str] = Field(default_factory=list)
+
+
+class MatterLinkingReviewOutcomeReport(StrictModel):
+    schema_version: str = "0.1"
+    matter_linking_review_outcome_report_id: str
+    status: Literal[
+        "matter_linking_review_outcome_recorded",
+        "matter_linking_review_outcome_recorded_pending_followup",
+        "blocked_by_matter_linking_review_outcome",
+    ]
+    source_matter_linking_preflight_report_ref: str
+    matter_linking_preflight_report_id: str
+    source_matter_linking_preflight_status: str
+    matter_linking_review_outcome_record_id: str
+    reviewer_id: str
+    reviewed_at: str
+    overall_outcome: MatterLinkingReviewOutcome
+    decision_reason: str
+    source_cluster_count: int = Field(ge=0)
+    decision_count: int = Field(ge=0)
+    split_decision_count: int = Field(ge=0)
+    merge_decision_count: int = Field(ge=0)
+    single_candidate_decision_count: int = Field(ge=0)
+    unknown_decision_count: int = Field(ge=0)
+    request_more_info_decision_count: int = Field(ge=0)
+    declined_or_referred_decision_count: int = Field(ge=0)
+    reviewed_cluster_count: int = Field(ge=0)
+    unreviewed_cluster_count: int = Field(ge=0)
+    unknown_cluster_count: int = Field(ge=0)
+    reviewed_cluster_ids: list[str]
+    unreviewed_cluster_ids: list[str]
+    unknown_cluster_ids: list[str]
+    required_followups: list[str]
+    candidate_lake_event_labels: list[str]
+    append_only_history_ref: str
+    checks: list[MatterLinkingReviewOutcomeCheck]
+    required_next_gates: list[str]
+    append_only: Literal[True] = True
+    mutation_policy: Literal["append_only_supersession"] = "append_only_supersession"
+    candidate_only: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    local_json_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    not_authorized_for_matter_opening: Literal[True] = True
+    not_authorized_for_conflict_conclusion: Literal[True] = True
+    no_connector_implemented: Literal[True] = True
+    no_lake_admission_performed: Literal[True] = True
+    no_sibling_repo_writes: Literal[True] = True
+    no_canonical_mutation: Literal[True] = True
+    budget_amount_output_authorized: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    conflict_conclusion_emitted: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    screen_created: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def matter_linking_review_outcome_report_counts_match(
+        self,
+    ) -> "MatterLinkingReviewOutcomeReport":
+        if self.decision_count != (
+            self.split_decision_count
+            + self.merge_decision_count
+            + self.single_candidate_decision_count
+            + self.unknown_decision_count
+            + self.request_more_info_decision_count
+            + self.declined_or_referred_decision_count
+        ):
+            raise ValueError("matter-linking review decision outcome counts mismatch")
+        if self.reviewed_cluster_count != len(self.reviewed_cluster_ids):
+            raise ValueError("matter-linking review reviewed cluster count mismatch")
+        if self.unreviewed_cluster_count != len(self.unreviewed_cluster_ids):
+            raise ValueError("matter-linking review unreviewed cluster count mismatch")
+        if self.unknown_cluster_count != len(self.unknown_cluster_ids):
+            raise ValueError("matter-linking review unknown cluster count mismatch")
+        failed = [check for check in self.checks if check.status == "failed"]
+        if self.status == "matter_linking_review_outcome_recorded" and (
+            failed or self.unreviewed_cluster_count or self.unknown_cluster_count
+        ):
+            raise ValueError("recorded matter-linking review outcome cannot have blockers")
+        if self.status == "matter_linking_review_outcome_recorded_pending_followup" and failed:
+            raise ValueError("pending matter-linking review outcome cannot include failed checks")
+        if self.status == "blocked_by_matter_linking_review_outcome" and not failed:
+            raise ValueError("blocked matter-linking review outcome requires failed checks")
+        if not self.candidate_lake_event_labels:
+            raise ValueError("matter-linking review outcome report requires candidate labels")
+        required_gates = {
+            "append_only_matter_linking_review_outcome",
+            "exception_lake_owner_review_before_admission",
+            "no_budget_amount_until_cluster_and_roles_confirmed",
+            "no_matter_opening_without_official_authority",
+            "no_lake_or_sqlite_write_from_intake",
+            "no_silent_learning_from_matter_linking_review",
+        }
+        if not required_gates.issubset(set(self.required_next_gates)):
+            raise ValueError("matter-linking review outcome is missing required next gates")
+        return self
+
+
 PublicSyntheticFixtureFamily = Literal[
     "docket_structure",
     "aggregate_case_metadata",
@@ -11177,6 +11416,7 @@ UIReviewDataBundleReportKind = Literal[
     "synthetic_qa_blocker_report",
     "synthetic_qa_review_outcome",
     "matter_linking_preflight",
+    "matter_linking_review_outcome",
     "labor_employment_qa_matrix",
     "labor_employment_executable_coverage",
     "labor_employment_blocked_driver_impact_review",

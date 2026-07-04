@@ -1,0 +1,130 @@
+{
+  "schema_version": "0.1",
+  "matter_linking_review_outcome_report_id": "matterlinkreviewoutcome_e252ae71c86c01e161d3",
+  "status": "matter_linking_review_outcome_recorded",
+  "source_matter_linking_preflight_report_ref": "generated-demo-run/quality\\matter-linking-preflight\\matter_linking_preflight_report.json",
+  "matter_linking_preflight_report_id": "matterlinkpreflight_b6256d36c7d774ea7124",
+  "source_matter_linking_preflight_status": "matter_linking_preflight_resolved_candidate_requires_review",
+  "matter_linking_review_outcome_record_id": "matter-linking-review-outcome.synthetic-confirm-split.v0_1",
+  "reviewer_id": "synthetic-intake-reviewer",
+  "reviewed_at": "2026-07-04T00:00:00Z",
+  "overall_outcome": "confirm_split",
+  "decision_reason": "Synthetic reviewer confirms the two source-supported clusters should remain separate prospective matter candidates.",
+  "source_cluster_count": 2,
+  "decision_count": 1,
+  "split_decision_count": 1,
+  "merge_decision_count": 0,
+  "single_candidate_decision_count": 0,
+  "unknown_decision_count": 0,
+  "request_more_info_decision_count": 0,
+  "declined_or_referred_decision_count": 0,
+  "reviewed_cluster_count": 2,
+  "unreviewed_cluster_count": 0,
+  "unknown_cluster_count": 0,
+  "reviewed_cluster_ids": [
+    "cluster.case-a",
+    "cluster.case-b"
+  ],
+  "unreviewed_cluster_ids": [],
+  "unknown_cluster_ids": [],
+  "required_followups": [],
+  "candidate_lake_event_labels": [
+    "document_cluster_split_resolved_candidate",
+    "human_matter_linking_confirmation_required",
+    "matter_linking_confirmed_split_candidate",
+    "matter_linking_review_outcome_recorded_candidate",
+    "missing_official_matter_number",
+    "principal_party_roles_still_require_confirmation",
+    "source_matter_link_resolved_candidate"
+  ],
+  "append_only_history_ref": "generated-demo-run/quality\\matter-linking-review-outcome\\matter_linking_review_outcome_history.jsonl",
+  "checks": [
+    {
+      "check_id": "matter_linking_preflight_ready_without_writes",
+      "status": "passed",
+      "message": "Source matter-linking preflight is reviewable and has no connector, Lake, SQLite, budget, matter-opening, conflict, screen, or learning side effects.",
+      "artifact_refs": [
+        "generated-demo-run/quality\\matter-linking-preflight\\matter_linking_preflight_report.json"
+      ],
+      "decision_ids": [],
+      "cluster_ids": [],
+      "blocking_refs": []
+    },
+    {
+      "check_id": "outcome_record_matches_preflight",
+      "status": "passed",
+      "message": "Outcome record is bound to the supplied matter-linking preflight report.",
+      "artifact_refs": [
+        "generated-demo-run/quality\\matter-linking-preflight\\matter_linking_preflight_report.json"
+      ],
+      "decision_ids": [],
+      "cluster_ids": [],
+      "blocking_refs": []
+    },
+    {
+      "check_id": "outcome_decisions_target_known_clusters",
+      "status": "passed",
+      "message": "Every selected cluster exists in the source matter-linking preflight report.",
+      "artifact_refs": [],
+      "decision_ids": [],
+      "cluster_ids": [],
+      "blocking_refs": []
+    },
+    {
+      "check_id": "outcome_record_preserves_no_write_boundary",
+      "status": "passed",
+      "message": "Recording the matter-linking review outcome did not authorize budgets, matters, conflicts, screens, Lake/SQLite records, external writes, or learning.",
+      "artifact_refs": [],
+      "decision_ids": [],
+      "cluster_ids": [],
+      "blocking_refs": []
+    },
+    {
+      "check_id": "human_outcome_record_complete",
+      "status": "passed",
+      "message": "Matter-linking review outcome includes reviewer, timestamp, reason, and decisions.",
+      "artifact_refs": [],
+      "decision_ids": [],
+      "cluster_ids": [],
+      "blocking_refs": []
+    }
+  ],
+  "required_next_gates": [
+    "append_only_matter_linking_review_outcome",
+    "confirm_principal_party_roles_per_cluster_before_budget",
+    "conflict_seed_review_after_role_confirmation",
+    "exception_lake_owner_review_before_admission",
+    "intake_preflight_orchestrator_owner_adoption_before_runtime_use",
+    "no_budget_amount_until_cluster_and_roles_confirmed",
+    "no_lake_or_sqlite_write_from_intake",
+    "no_matter_opening_without_official_authority",
+    "no_silent_learning_from_matter_linking_review"
+  ],
+  "append_only": true,
+  "mutation_policy": "append_only_supersession",
+  "candidate_only": true,
+  "synthetic_only": true,
+  "non_authoritative": true,
+  "local_json_only": true,
+  "human_review_required": true,
+  "not_authorized_for_external_write": true,
+  "not_authorized_for_lake_write": true,
+  "not_authorized_for_sqlite_write": true,
+  "not_authorized_for_budget_submission": true,
+  "not_authorized_for_matter_opening": true,
+  "not_authorized_for_conflict_conclusion": true,
+  "no_connector_implemented": true,
+  "no_lake_admission_performed": true,
+  "no_sibling_repo_writes": true,
+  "no_canonical_mutation": true,
+  "budget_amount_output_authorized": false,
+  "budget_submission_authorized": false,
+  "conflict_conclusion_emitted": false,
+  "matter_opening_authorized": false,
+  "screen_created": false,
+  "lake_write_performed": false,
+  "sqlite_write_performed": false,
+  "external_writes_performed": false,
+  "silent_learning_performed": false,
+  "generated_at": "2026-07-04T00:00:00Z"
+}

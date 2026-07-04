@@ -1,0 +1,100 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "decision_id": {
+      "title": "Decision Id",
+      "type": "string"
+    },
+    "outcome": {
+      "enum": [
+        "confirm_split",
+        "confirm_merge",
+        "confirm_single_candidate",
+        "unknown",
+        "request_more_info",
+        "declined_or_referred"
+      ],
+      "title": "Outcome",
+      "type": "string"
+    },
+    "selected_cluster_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Selected Cluster Ids",
+      "type": "array"
+    },
+    "decision_reason": {
+      "title": "Decision Reason",
+      "type": "string"
+    },
+    "evidence_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Evidence Refs",
+      "type": "array"
+    },
+    "required_followups": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Followups",
+      "type": "array"
+    },
+    "followup_owner": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Followup Owner"
+    },
+    "followup_due_at": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Followup Due At"
+    },
+    "red_team_notes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Red Team Notes",
+      "type": "array"
+    },
+    "candidate_exception_lake_labels": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Candidate Exception Lake Labels",
+      "type": "array"
+    }
+  },
+  "required": [
+    "decision_id",
+    "outcome",
+    "selected_cluster_ids",
+    "decision_reason",
+    "evidence_refs",
+    "red_team_notes",
+    "candidate_exception_lake_labels"
+  ],
+  "title": "MatterLinkingReviewDecision",
+  "type": "object"
+}

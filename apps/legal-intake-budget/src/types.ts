@@ -25,6 +25,7 @@ export type UIReviewDataBundleReportKind =
   | "synthetic_qa_blocker_report"
   | "synthetic_qa_review_outcome"
   | "matter_linking_preflight"
+  | "matter_linking_review_outcome"
   | "labor_employment_qa_matrix"
   | "labor_employment_executable_coverage"
   | "labor_employment_blocked_driver_impact_review"
@@ -94,6 +95,71 @@ export type MatterLinkingPreflightReport = {
   budget_submission_authorized: boolean;
   conflict_conclusion_emitted: boolean;
   screen_created: boolean;
+  silent_learning_performed: boolean;
+  generated_at: string;
+};
+
+export type MatterLinkingReviewOutcomeStatus =
+  | "matter_linking_review_outcome_recorded"
+  | "matter_linking_review_outcome_recorded_pending_followup"
+  | "blocked_by_matter_linking_review_outcome";
+
+export type MatterLinkingReviewOutcomeReport = {
+  schema_version: string;
+  matter_linking_review_outcome_report_id: string;
+  status: MatterLinkingReviewOutcomeStatus;
+  source_matter_linking_preflight_report_ref: string;
+  matter_linking_preflight_report_id: string;
+  source_matter_linking_preflight_status: string;
+  matter_linking_review_outcome_record_id: string;
+  reviewer_id: string;
+  reviewed_at: string;
+  overall_outcome:
+    | "confirm_split"
+    | "confirm_merge"
+    | "confirm_single_candidate"
+    | "unknown"
+    | "request_more_info"
+    | "declined_or_referred";
+  decision_reason: string;
+  source_cluster_count: number;
+  decision_count: number;
+  split_decision_count: number;
+  merge_decision_count: number;
+  single_candidate_decision_count: number;
+  unknown_decision_count: number;
+  request_more_info_decision_count: number;
+  declined_or_referred_decision_count: number;
+  reviewed_cluster_count: number;
+  unreviewed_cluster_count: number;
+  unknown_cluster_count: number;
+  reviewed_cluster_ids: string[];
+  unreviewed_cluster_ids: string[];
+  unknown_cluster_ids: string[];
+  required_followups: string[];
+  candidate_lake_event_labels: string[];
+  append_only_history_ref: string;
+  required_next_gates: string[];
+  append_only: boolean;
+  candidate_only: boolean;
+  synthetic_only: boolean;
+  non_authoritative: boolean;
+  local_json_only: boolean;
+  human_review_required: boolean;
+  not_authorized_for_external_write: boolean;
+  not_authorized_for_lake_write: boolean;
+  not_authorized_for_sqlite_write: boolean;
+  not_authorized_for_budget_submission: boolean;
+  not_authorized_for_matter_opening: boolean;
+  not_authorized_for_conflict_conclusion: boolean;
+  budget_amount_output_authorized: boolean;
+  budget_submission_authorized: boolean;
+  conflict_conclusion_emitted: boolean;
+  matter_opening_authorized: boolean;
+  screen_created: boolean;
+  lake_write_performed: boolean;
+  sqlite_write_performed: boolean;
+  external_writes_performed: boolean;
   silent_learning_performed: boolean;
   generated_at: string;
 };

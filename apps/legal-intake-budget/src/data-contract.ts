@@ -5,6 +5,7 @@ import type {
   LaborEmploymentExecutableCoverageReport,
   LaborEmploymentQAMatrixReport,
   MatterLinkingPreflightReport,
+  MatterLinkingReviewOutcomeReport,
   POCQATriageReport,
   QualityGate,
   ReviewArtifact,
@@ -33,6 +34,7 @@ export const REQUIRED_ARTIFACT_FILES = [
   "poc_qa_triage_report.json",
   "synthetic_qa_blocker_report.json",
   "matter_linking_preflight_report.json",
+  "matter_linking_review_outcome_report.json",
   "synthetic_fixture_depth_audit_report.json",
   "budget_calibration_readiness_report.json",
   "budget_calibration_starter_pack_report.json",
@@ -70,6 +72,7 @@ export const REQUIRED_BOUNDARY_FLAGS: BoundaryFlags = {
 export const REQUIRED_DETAIL_REPORT_FILES = [
   "ui_review_manifest.json",
   "matter_linking_preflight_report.json",
+  "matter_linking_review_outcome_report.json",
   "synthetic_confidence_summary_report.json",
   "labor_employment_qa_matrix_report.json",
   "labor_employment_executable_coverage_report.json",
@@ -724,6 +727,64 @@ export function assertMatterLinkingPreflightReport(
     if (cluster.weak_only_candidate && cluster.source_bound_strong_support_present) {
       failures.push(`matter_linking_weak_only_has_strong_support:${cluster.cluster_id}`);
     }
+  }
+  return failures;
+}
+
+export function assertMatterLinkingReviewOutcomeReport(
+  report: MatterLinkingReviewOutcomeReport,
+): string[] {
+  const failures: string[] = [];
+  if (!report.candidate_only || !report.synthetic_only || !report.non_authoritative) {
+    failures.push("matter_linking_review_authority_boundary_failed");
+  }
+  if (!report.local_json_only || !report.human_review_required || !report.append_only) {
+    failures.push("matter_linking_review_append_only_boundary_failed");
+  }
+  if (
+    report.external_writes_performed ||
+    report.lake_write_performed ||
+    report.sqlite_write_performed ||
+    report.budget_amount_output_authorized ||
+    report.budget_submission_authorized ||
+    report.matter_opening_authorized ||
+    report.conflict_conclusion_emitted ||
+    report.screen_created ||
+    report.silent_learning_performed
+  ) {
+    failures.push("matter_linking_review_side_effect_boundary_failed");
+  }
+  if (report.decision_count !== report.split_decision_count + report.merge_decision_count +
+    report.single_candidate_decision_count + report.unknown_decision_count +
+    report.request_more_info_decision_count + report.declined_or_referred_decision_count) {
+    failures.push("matter_linking_review_decision_count_mismatch");
+  }
+  if (report.reviewed_cluster_count !== report.reviewed_cluster_ids.length) {
+    failures.push("matter_linking_review_reviewed_cluster_count_mismatch");
+  }
+  if (report.unreviewed_cluster_count !== report.unreviewed_cluster_ids.length) {
+    failures.push("matter_linking_review_unreviewed_cluster_count_mismatch");
+  }
+  if (report.unknown_cluster_count !== report.unknown_cluster_ids.length) {
+    failures.push("matter_linking_review_unknown_cluster_count_mismatch");
+  }
+  if (
+    report.status === "matter_linking_review_outcome_recorded" &&
+    (report.unreviewed_cluster_count > 0 || report.unknown_cluster_count > 0)
+  ) {
+    failures.push("matter_linking_review_recorded_with_unresolved_clusters");
+  }
+  if (!report.required_next_gates.includes("append_only_matter_linking_review_outcome")) {
+    failures.push("matter_linking_review_missing_append_only_gate");
+  }
+  if (!report.required_next_gates.includes("no_budget_amount_until_cluster_and_roles_confirmed")) {
+    failures.push("matter_linking_review_missing_budget_block_gate");
+  }
+  if (!report.required_next_gates.includes("no_matter_opening_without_official_authority")) {
+    failures.push("matter_linking_review_missing_matter_opening_block_gate");
+  }
+  if (!report.candidate_lake_event_labels.length) {
+    failures.push("matter_linking_review_missing_candidate_lake_labels");
   }
   return failures;
 }
