@@ -61,13 +61,13 @@ def test_labor_employment_executable_driver_binding_maps_fact_gaps_to_budget_dri
     )
 
     assert report.status == "labor_employment_executable_driver_bindings_ready_for_review"
-    assert persisted.case_count == 22
+    assert persisted.case_count == 23
     assert persisted.failed_case_count == 0
-    assert persisted.driver_binding_count == 104
-    assert persisted.source_bound_driver_count == 104
+    assert persisted.driver_binding_count == 110
+    assert persisted.source_bound_driver_count == 110
     assert persisted.unbound_driver_count == 0
-    assert persisted.critical_driver_block_count == 19
-    assert persisted.critical_driver_review_only_count == 30
+    assert persisted.critical_driver_block_count == 21
+    assert persisted.critical_driver_review_only_count == 31
     assert persisted.missing_driver_dimensions == []
     assert set(persisted.covered_driver_dimensions) == set(persisted.required_driver_dimensions)
     assert all(check.status == "passed" for check in persisted.checks)
@@ -113,6 +113,26 @@ def test_labor_employment_executable_driver_binding_maps_fact_gaps_to_budget_dri
     assert wage_messy["expert_vendor_needs"].critical_driver_review_only is False
     assert wage_messy["wage_hour_volume"].critical_driver_block is False
     assert cases["le-wage-hour-messy-thread.executable.v0_1"].critical_driver_block_count == 0
+    wage_adversarial = {
+        binding.driver_dimension: binding
+        for binding in cases["le-wage-hour-adversarial.executable.v0_1"].driver_bindings
+    }
+    assert set(wage_adversarial) == {
+        "party_topology",
+        "claim_family",
+        "damages_exposure",
+        "wage_hour_volume",
+        "expert_vendor_needs",
+        "carrier_guideline_rate_context",
+    }
+    assert wage_adversarial["party_topology"].critical_driver_block is True
+    assert wage_adversarial["carrier_guideline_rate_context"].critical_driver_block is True
+    assert wage_adversarial["claim_family"].critical_driver_review_only is True
+    assert wage_adversarial["wage_hour_volume"].critical_driver_block is False
+    assert wage_adversarial["wage_hour_volume"].matched_fact_ids == [
+        "wage_hour_pay_period_and_employee_volume"
+    ]
+    assert cases["le-wage-hour-adversarial.executable.v0_1"].critical_driver_block_count == 2
     restrictive = {
         binding.driver_dimension: binding
         for binding in cases[
@@ -389,7 +409,7 @@ def test_labor_employment_executable_driver_binding_cli_writes_candidate_report(
 
     assert exit_code == 0
     assert report["status"] == "labor_employment_executable_driver_bindings_ready_for_review"
-    assert report["case_count"] == 22
+    assert report["case_count"] == 23
     assert report["missing_driver_dimensions"] == []
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out

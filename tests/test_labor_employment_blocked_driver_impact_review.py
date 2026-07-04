@@ -87,11 +87,11 @@ def test_labor_employment_blocked_driver_impact_review_explains_blockers(
     cases = {case.executable_fixture_id: case for case in persisted.case_reviews}
 
     assert report.status == "labor_employment_blocked_driver_impacts_ready_for_review"
-    assert persisted.case_count == 22
-    assert persisted.blocked_case_count == 11
+    assert persisted.case_count == 23
+    assert persisted.blocked_case_count == 12
     assert persisted.nonblocking_case_count == 11
-    assert persisted.blocker_fact_count == 17
-    assert persisted.block_amount_budget_impact_count == 19
+    assert persisted.blocker_fact_count == 20
+    assert persisted.block_amount_budget_impact_count == 21
     assert "source_missing" in persisted.candidate_exception_lake_labels
     assert "prompt_injection_source_content" in persisted.candidate_exception_lake_labels
     assert "labor_employment_missing_critical_budget_fact" in (
@@ -200,6 +200,17 @@ def test_labor_employment_blocked_driver_impact_review_explains_blockers(
         in fact.candidate_exception_lake_labels
         for fact in wage.blocker_facts
     )
+    wage_adversarial = cases["le-wage-hour-adversarial.executable.v0_1"]
+    assert "prompt_injection_source_content" in (wage_adversarial.candidate_exception_lake_labels)
+    assert {"party_topology", "carrier_guideline_rate_context"} <= set(
+        wage_adversarial.critical_driver_dimensions
+    )
+    assert {
+        "employee_claimant_identity",
+        "employer_or_defendant_identity",
+        "carrier_guideline_and_rate_source",
+    } <= {fact.fact_id for fact in wage_adversarial.blocker_facts}
+    assert wage_adversarial.block_amount_budget_impact_count == 2
     assert all(check.status == "passed" for check in persisted.checks)
     assert persisted.budget_amount_output_authorized is False
     assert persisted.budget_submission_authorized is False
@@ -246,9 +257,9 @@ def test_labor_employment_blocked_driver_impact_review_cli_writes_packet(
 
     assert exit_code == 0
     assert report["status"] == "labor_employment_blocked_driver_impacts_ready_for_review"
-    assert report["blocked_case_count"] == 11
+    assert report["blocked_case_count"] == 12
     assert report["nonblocking_case_count"] == 11
-    assert report["blocker_fact_count"] == 17
-    assert report["block_amount_budget_impact_count"] == 19
+    assert report["blocker_fact_count"] == 20
+    assert report["block_amount_budget_impact_count"] == 21
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out

@@ -31,8 +31,8 @@ def test_labor_employment_executable_fixtures_run_preflight_and_preserve_boundar
     )
 
     assert report.status == "labor_employment_executable_fixtures_ready_for_review"
-    assert persisted.fixture_count == 22
-    assert persisted.preflight_executed_count == 22
+    assert persisted.fixture_count == 23
+    assert persisted.preflight_executed_count == 23
     assert persisted.failed_case_count == 0
     assert persisted.missing_pack_link_count == 0
     assert persisted.missing_source_signal_count == 0
@@ -55,6 +55,19 @@ def test_labor_employment_executable_fixtures_run_preflight_and_preserve_boundar
     cases = {case.executable_fixture_id: case for case in persisted.cases}
     assert cases["le-wage-hour-missing-attachment.executable.v0_1"].missing_source_count == 2
     assert cases["le-wage-hour-clean.executable.v0_1"].missing_source_count == 0
+    wage_adversarial = cases["le-wage-hour-adversarial.executable.v0_1"]
+    assert wage_adversarial.source_count == 1
+    assert wage_adversarial.missing_source_count == 0
+    assert wage_adversarial.expected_budget_treatment == "block_amount_budget"
+    assert "prompt_injection_source_content" in wage_adversarial.exception_labels
+    assert "prohibited_transition_attempted_budget_submitted" in (wage_adversarial.exception_labels)
+    assert set(wage_adversarial.expected_budget_fact_gap_ids) == {
+        "employee_claimant_identity",
+        "employer_or_defendant_identity",
+        "claims_and_causes_of_action",
+        "wage_hour_pay_period_and_employee_volume",
+        "carrier_guideline_and_rate_source",
+    }
     wage_messy = cases["le-wage-hour-messy-thread.executable.v0_1"]
     assert wage_messy.source_count == 2
     assert wage_messy.duplicate_source_count == 1
@@ -320,7 +333,7 @@ def test_labor_employment_executable_fixtures_cli_writes_candidate_report(
 
     assert exit_code == 0
     assert report["status"] == "labor_employment_executable_fixtures_ready_for_review"
-    assert report["fixture_count"] == 22
-    assert report["preflight_executed_count"] == 22
+    assert report["fixture_count"] == 23
+    assert report["preflight_executed_count"] == 23
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out

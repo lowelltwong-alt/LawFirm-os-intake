@@ -71,12 +71,12 @@ def test_labor_employment_executable_driver_impact_maps_drivers_to_budget_effect
     )
 
     assert report.status == "labor_employment_executable_driver_impacts_ready_for_review"
-    assert persisted.case_count == 22
+    assert persisted.case_count == 23
     assert persisted.failed_case_count == 0
-    assert persisted.impact_item_count == 104
-    assert persisted.source_bound_impact_count == 104
-    assert persisted.block_amount_budget_impact_count == 19
-    assert persisted.critical_review_only_impact_count == 30
+    assert persisted.impact_item_count == 110
+    assert persisted.source_bound_impact_count == 110
+    assert persisted.block_amount_budget_impact_count == 21
+    assert persisted.critical_review_only_impact_count == 31
     assert persisted.range_widening_impact_count > 0
     assert persisted.scenario_fork_impact_count > 0
     assert persisted.rate_guideline_review_impact_count > 0
@@ -107,6 +107,24 @@ def test_labor_employment_executable_driver_impact_maps_drivers_to_budget_effect
     assert "add_scenario_fork" in wage_messy_impacts["class_collective_scope"].impact_actions
     assert wage_messy_impacts["class_collective_scope"].range_widening_factor == 2.5
     assert wage_messy_impacts["wage_hour_volume"].range_widening_factor == 2.2
+    wage_adversarial = cases["le-wage-hour-adversarial.executable.v0_1"]
+    assert wage_adversarial.allowed_budget_output == "blocked_amount_budget"
+    assert wage_adversarial.impact_item_count == 6
+    assert wage_adversarial.block_amount_budget_impact_count == 2
+    assert wage_adversarial.critical_review_only_impact_count == 1
+    assert wage_adversarial.rate_guideline_review_impact_count == 1
+    assert wage_adversarial.scenario_fork_impact_count == 3
+    wage_adversarial_impacts = {
+        item.driver_dimension: item for item in wage_adversarial.impact_items
+    }
+    assert "block_amount_budget" in wage_adversarial_impacts["party_topology"].impact_actions
+    assert "block_amount_budget" in (
+        wage_adversarial_impacts["carrier_guideline_rate_context"].impact_actions
+    )
+    assert "require_rate_guideline_review" in (
+        wage_adversarial_impacts["carrier_guideline_rate_context"].impact_actions
+    )
+    assert wage_adversarial_impacts["wage_hour_volume"].range_widening_factor == 2.2
     discrimination_clean = cases["le-discrimination-harassment-clean.executable.v0_1"]
     assert discrimination_clean.allowed_budget_output == (
         "candidate_range_after_review_pending_human_review"
@@ -288,9 +306,9 @@ def test_labor_employment_executable_driver_impact_cli_writes_candidate_report(
 
     assert exit_code == 0
     assert report["status"] == "labor_employment_executable_driver_impacts_ready_for_review"
-    assert report["case_count"] == 22
-    assert report["impact_item_count"] == 104
-    assert report["critical_review_only_impact_count"] == 30
+    assert report["case_count"] == 23
+    assert report["impact_item_count"] == 110
+    assert report["critical_review_only_impact_count"] == 31
     assert report["missing_impact_policy_dimensions"] == []
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out
