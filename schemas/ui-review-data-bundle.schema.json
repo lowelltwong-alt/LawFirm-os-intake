@@ -20,6 +20,7 @@
             "synthetic_qa_review_outcome",
             "matter_linking_preflight",
             "labor_employment_qa_matrix",
+            "labor_employment_executable_coverage",
             "labor_employment_blocked_driver_impact_review",
             "labor_employment_budget_output_expectations"
           ],

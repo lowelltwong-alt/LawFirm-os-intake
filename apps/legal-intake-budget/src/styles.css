@@ -249,6 +249,77 @@ code {
   margin-top: 14px;
 }
 
+.executable-coverage-panel {
+  margin-top: 14px;
+}
+
+.coverage-meter {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 14px;
+  padding: 12px;
+  border: 1px solid #dde4d8;
+  border-radius: 6px;
+  background: #fbfcfa;
+}
+
+.coverage-meter strong {
+  display: block;
+  color: #17201b;
+  font-size: 1.5rem;
+}
+
+.coverage-meter span {
+  color: #536056;
+  font-size: 0.88rem;
+}
+
+.coverage-bar {
+  height: 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e5ebe1;
+}
+
+.coverage-bar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #2f6f57;
+}
+
+.coverage-family-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin: 12px 0;
+}
+
+.coverage-family-item {
+  min-height: 104px;
+  padding: 10px;
+  border: 1px solid #dde4d8;
+  border-radius: 6px;
+  background: #fbfcfa;
+}
+
+.coverage-family-item strong,
+.coverage-family-item span {
+  display: block;
+}
+
+.coverage-family-item span {
+  margin-top: 6px;
+  margin-bottom: 8px;
+  color: #536056;
+  font-size: 0.82rem;
+}
+
+.executable-coverage-table th:first-child,
+.executable-coverage-table td:first-child {
+  min-width: 260px;
+}
+
 .fixture-family-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -937,6 +1008,7 @@ td:nth-child(4) {
 
   .metric-strip,
   .boundary-grid,
+  .coverage-family-grid,
   .fixture-family-grid {
     grid-template-columns: 1fr;
   }

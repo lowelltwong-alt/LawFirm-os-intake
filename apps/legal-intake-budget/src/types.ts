@@ -26,6 +26,7 @@ export type UIReviewDataBundleReportKind =
   | "synthetic_qa_review_outcome"
   | "matter_linking_preflight"
   | "labor_employment_qa_matrix"
+  | "labor_employment_executable_coverage"
   | "labor_employment_blocked_driver_impact_review"
   | "labor_employment_budget_output_expectations";
 
@@ -590,6 +591,92 @@ export type LaborEmploymentQAMatrixReport = {
   not_authorized_for_sqlite_write: boolean;
   not_authorized_for_budget_submission: boolean;
   not_authorized_for_matter_opening: boolean;
+  budget_amount_output_authorized: boolean;
+  budget_submission_authorized: boolean;
+  conflict_conclusion_emitted: boolean;
+  matter_opening_authorized: boolean;
+  training_pipeline_created: boolean;
+  lake_write_performed: boolean;
+  sqlite_write_performed: boolean;
+  external_writes_performed: boolean;
+  silent_learning_performed: boolean;
+  generated_at: string;
+};
+
+export type LaborEmploymentExecutableCoverageState =
+  | "partial_executable_coverage"
+  | "complete_executable_coverage";
+
+export type LaborEmploymentExecutableCoverageStatus =
+  | "labor_employment_executable_coverage_ready_for_review"
+  | "blocked_labor_employment_executable_coverage";
+
+export type LaborEmploymentExecutableCoverageCase = {
+  pack_case_id: string;
+  family: string;
+  variant: string;
+  coverage_state: "covered_executable" | "missing_executable";
+  executable_fixture_ids: string[];
+  expected_budget_readiness_state: LaborEmploymentBudgetReadinessState;
+  expected_budget_treatment:
+    | "block_amount_budget"
+    | "hours_only_or_broad_range"
+    | "candidate_range_budget_after_review";
+  missing_critical_fact_ids: string[];
+  missing_important_fact_ids: string[];
+  candidate_only: boolean;
+  non_authoritative: boolean;
+};
+
+export type LaborEmploymentExecutableCoverageFamily = {
+  family: string;
+  pack_case_count: number;
+  covered_case_count: number;
+  missing_case_count: number;
+  covered_variants: string[];
+  missing_variants: string[];
+  executable_fixture_ids: string[];
+};
+
+export type LaborEmploymentExecutableCoverageCheck = {
+  check_id: string;
+  status: "passed" | "failed";
+  message: string;
+  evidence_refs: string[];
+  blocking_refs: string[];
+};
+
+export type LaborEmploymentExecutableCoverageReport = {
+  schema_version: string;
+  executable_coverage_report_id: string;
+  status: LaborEmploymentExecutableCoverageStatus;
+  coverage_state: LaborEmploymentExecutableCoverageState;
+  pack_id: string;
+  pack_ref: string;
+  executable_manifest_id: string;
+  executable_manifest_ref: string;
+  pack_case_count: number;
+  executable_fixture_count: number;
+  executable_pack_case_link_count: number;
+  covered_pack_case_count: number;
+  missing_executable_pack_case_count: number;
+  covered_family_count: number;
+  missing_family_count: number;
+  covered_family_variant_count: number;
+  missing_family_variant_count: number;
+  covered_pack_case_ids: string[];
+  missing_executable_pack_case_ids: string[];
+  missing_family_variant_refs: string[];
+  family_coverage: LaborEmploymentExecutableCoverageFamily[];
+  case_coverage: LaborEmploymentExecutableCoverageCase[];
+  checks: LaborEmploymentExecutableCoverageCheck[];
+  required_next_gates: string[];
+  candidate_only: boolean;
+  non_authoritative: boolean;
+  synthetic_only: boolean;
+  human_review_required: boolean;
+  fixture_generation_authorized: boolean;
+  calibration_approved: boolean;
   budget_amount_output_authorized: boolean;
   budget_submission_authorized: boolean;
   conflict_conclusion_emitted: boolean;

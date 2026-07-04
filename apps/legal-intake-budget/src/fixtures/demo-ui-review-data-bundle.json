@@ -1,11 +1,11 @@
 {
   "schema_version": "0.1",
-  "ui_review_data_bundle_id": "ui_review_data_bundle_with_qa_outcome_demo",
+  "ui_review_data_bundle_id": "ui_review_data_bundle_with_le_executable_coverage_demo",
   "status": "ready_for_review",
   "run_root_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-os-intake-merge-20260702-011307\\.lawfirm-os-intake\\ui-fixture-refresh-action-queue",
-  "detail_report_count": 9,
-  "required_detail_report_count": 5,
-  "present_detail_report_count": 9,
+  "detail_report_count": 10,
+  "required_detail_report_count": 6,
+  "present_detail_report_count": 10,
   "missing_required_detail_report_count": 0,
   "external_write_report_count": 0,
   "detail_reports": [
@@ -133,6 +133,24 @@
       "external_writes_performed": false,
       "notes": [
         "Found quality\\labor_employment_qa_matrix_report.json; status=labor_employment_qa_matrix_ready_for_review."
+      ]
+    },
+    {
+      "detail_report_id": "labor-employment-executable-coverage",
+      "label": "L&E Executable Coverage",
+      "report_kind": "labor_employment_executable_coverage",
+      "file_name": "labor_employment_executable_coverage_report.json",
+      "required": true,
+      "present": true,
+      "status": "labor_employment_executable_coverage_ready_for_review",
+      "renderer": "LaborEmploymentExecutableCoveragePanel",
+      "artifact_ref": "apps/legal-intake-budget/src/fixtures/demo-labor-employment-executable-coverage-report.json",
+      "source_sha256": "sha256:a1ddcf3411576b251ce18d89f106468f76ead369d5ff0a6d292a328179a8a203",
+      "candidate_only": true,
+      "synthetic_only": true,
+      "external_writes_performed": false,
+      "notes": [
+        "Found quality\\labor_employment_executable_coverage_report.json; status=labor_employment_executable_coverage_ready_for_review."
       ]
     },
     {

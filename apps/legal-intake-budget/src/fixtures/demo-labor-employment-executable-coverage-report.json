@@ -1,0 +1,820 @@
+{
+  "schema_version": "0.1",
+  "executable_coverage_report_id": "leexeccoverage_002623ec98bb1313d695",
+  "status": "labor_employment_executable_coverage_ready_for_review",
+  "coverage_state": "partial_executable_coverage",
+  "pack_id": "le-budget-fixture-family-pack.v0_1",
+  "pack_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\examples\\synthetic\\labor-employment\\labor-employment-budget-fixture-family-pack.json",
+  "executable_manifest_id": "le-executable-fixtures-manifest.v0_1",
+  "executable_manifest_ref": "examples/synthetic/labor-employment/labor-employment-executable-fixtures-manifest.json",
+  "pack_case_count": 32,
+  "executable_fixture_count": 8,
+  "executable_pack_case_link_count": 9,
+  "covered_pack_case_count": 9,
+  "missing_executable_pack_case_count": 23,
+  "covered_family_count": 8,
+  "missing_family_count": 0,
+  "covered_family_variant_count": 9,
+  "missing_family_variant_count": 23,
+  "covered_pack_case_ids": [
+    "le-discrimination-harassment-missing-attachment.v0_1",
+    "le-retaliation-wrongful-termination-messy-thread.v0_1",
+    "le-wage-hour-missing-attachment.v0_1",
+    "le-ada-fmla-messy-thread.v0_1",
+    "le-ada-fmla-missing-attachment.v0_1",
+    "le-restrictive-covenant-missing-attachment.v0_1",
+    "le-epli-carrier-missing-attachment.v0_1",
+    "le-class-collective-adversarial.v0_1",
+    "le-admin-exhaustion-clean.v0_1"
+  ],
+  "missing_executable_pack_case_ids": [
+    "le-discrimination-harassment-clean.v0_1",
+    "le-discrimination-harassment-messy-thread.v0_1",
+    "le-discrimination-harassment-adversarial.v0_1",
+    "le-retaliation-wrongful-termination-clean.v0_1",
+    "le-retaliation-wrongful-termination-missing-attachment.v0_1",
+    "le-retaliation-wrongful-termination-adversarial.v0_1",
+    "le-wage-hour-clean.v0_1",
+    "le-wage-hour-messy-thread.v0_1",
+    "le-wage-hour-adversarial.v0_1",
+    "le-ada-fmla-clean.v0_1",
+    "le-ada-fmla-adversarial.v0_1",
+    "le-restrictive-covenant-clean.v0_1",
+    "le-restrictive-covenant-messy-thread.v0_1",
+    "le-restrictive-covenant-adversarial.v0_1",
+    "le-epli-carrier-clean.v0_1",
+    "le-epli-carrier-messy-thread.v0_1",
+    "le-epli-carrier-adversarial.v0_1",
+    "le-class-collective-clean.v0_1",
+    "le-class-collective-messy-thread.v0_1",
+    "le-class-collective-missing-attachment.v0_1",
+    "le-admin-exhaustion-messy-thread.v0_1",
+    "le-admin-exhaustion-missing-attachment.v0_1",
+    "le-admin-exhaustion-adversarial.v0_1"
+  ],
+  "missing_family_variant_refs": [
+    "discrimination_harassment:clean",
+    "discrimination_harassment:messy_thread",
+    "discrimination_harassment:adversarial",
+    "retaliation_wrongful_termination:clean",
+    "retaliation_wrongful_termination:missing_attachment",
+    "retaliation_wrongful_termination:adversarial",
+    "wage_hour_flsa_state:clean",
+    "wage_hour_flsa_state:messy_thread",
+    "wage_hour_flsa_state:adversarial",
+    "ada_fmla_accommodation_leave:clean",
+    "ada_fmla_accommodation_leave:adversarial",
+    "restrictive_covenant_trade_secret:clean",
+    "restrictive_covenant_trade_secret:messy_thread",
+    "restrictive_covenant_trade_secret:adversarial",
+    "epli_carrier_assignment:clean",
+    "epli_carrier_assignment:messy_thread",
+    "epli_carrier_assignment:adversarial",
+    "class_collective_paga_representative:clean",
+    "class_collective_paga_representative:messy_thread",
+    "class_collective_paga_representative:missing_attachment",
+    "administrative_exhaustion_agency_record:messy_thread",
+    "administrative_exhaustion_agency_record:missing_attachment",
+    "administrative_exhaustion_agency_record:adversarial"
+  ],
+  "family_coverage": [
+    {
+      "family": "discrimination_harassment",
+      "pack_case_count": 4,
+      "covered_case_count": 1,
+      "missing_case_count": 3,
+      "covered_variants": [
+        "missing_attachment"
+      ],
+      "missing_variants": [
+        "clean",
+        "messy_thread",
+        "adversarial"
+      ],
+      "executable_fixture_ids": [
+        "le-discrimination-harassment-missing-attachment.executable.v0_1"
+      ]
+    },
+    {
+      "family": "retaliation_wrongful_termination",
+      "pack_case_count": 4,
+      "covered_case_count": 1,
+      "missing_case_count": 3,
+      "covered_variants": [
+        "messy_thread"
+      ],
+      "missing_variants": [
+        "clean",
+        "missing_attachment",
+        "adversarial"
+      ],
+      "executable_fixture_ids": [
+        "le-retaliation-wrongful-termination-messy-thread.executable.v0_1"
+      ]
+    },
+    {
+      "family": "wage_hour_flsa_state",
+      "pack_case_count": 4,
+      "covered_case_count": 1,
+      "missing_case_count": 3,
+      "covered_variants": [
+        "missing_attachment"
+      ],
+      "missing_variants": [
+        "clean",
+        "messy_thread",
+        "adversarial"
+      ],
+      "executable_fixture_ids": [
+        "le-wage-hour-missing-attachment.executable.v0_1"
+      ]
+    },
+    {
+      "family": "ada_fmla_accommodation_leave",
+      "pack_case_count": 4,
+      "covered_case_count": 2,
+      "missing_case_count": 2,
+      "covered_variants": [
+        "messy_thread",
+        "missing_attachment"
+      ],
+      "missing_variants": [
+        "clean",
+        "adversarial"
+      ],
+      "executable_fixture_ids": [
+        "le-ada-fmla-missing-thread.executable.v0_1"
+      ]
+    },
+    {
+      "family": "restrictive_covenant_trade_secret",
+      "pack_case_count": 4,
+      "covered_case_count": 1,
+      "missing_case_count": 3,
+      "covered_variants": [
+        "missing_attachment"
+      ],
+      "missing_variants": [
+        "clean",
+        "messy_thread",
+        "adversarial"
+      ],
+      "executable_fixture_ids": [
+        "le-restrictive-covenant-missing-attachment.executable.v0_1"
+      ]
+    },
+    {
+      "family": "epli_carrier_assignment",
+      "pack_case_count": 4,
+      "covered_case_count": 1,
+      "missing_case_count": 3,
+      "covered_variants": [
+        "missing_attachment"
+      ],
+      "missing_variants": [
+        "clean",
+        "messy_thread",
+        "adversarial"
+      ],
+      "executable_fixture_ids": [
+        "le-epli-carrier-missing-attachment.executable.v0_1"
+      ]
+    },
+    {
+      "family": "class_collective_paga_representative",
+      "pack_case_count": 4,
+      "covered_case_count": 1,
+      "missing_case_count": 3,
+      "covered_variants": [
+        "adversarial"
+      ],
+      "missing_variants": [
+        "clean",
+        "messy_thread",
+        "missing_attachment"
+      ],
+      "executable_fixture_ids": [
+        "le-class-collective-adversarial.executable.v0_1"
+      ]
+    },
+    {
+      "family": "administrative_exhaustion_agency_record",
+      "pack_case_count": 4,
+      "covered_case_count": 1,
+      "missing_case_count": 3,
+      "covered_variants": [
+        "clean"
+      ],
+      "missing_variants": [
+        "messy_thread",
+        "missing_attachment",
+        "adversarial"
+      ],
+      "executable_fixture_ids": [
+        "le-admin-exhaustion-clean.executable.v0_1"
+      ]
+    }
+  ],
+  "case_coverage": [
+    {
+      "pack_case_id": "le-discrimination-harassment-clean.v0_1",
+      "family": "discrimination_harassment",
+      "variant": "clean",
+      "coverage_state": "missing_executable",
+      "executable_fixture_ids": [],
+      "expected_budget_readiness_state": "range_only_pending_human_review",
+      "expected_budget_treatment": "candidate_range_budget_after_review",
+      "missing_critical_fact_ids": [],
+      "missing_important_fact_ids": [
+        "expert_and_vendor_needs"
+      ],
+      "candidate_only": true,
+      "non_authoritative": true
+    },
+    {
+      "pack_case_id": "le-discrimination-harassment-messy-thread.v0_1",
+      "family": "discrimination_harassment",
+      "variant": "messy_thread",
+      "coverage_state": "missing_executable",
+      "executable_fixture_ids": [],
+      "expected_budget_readiness_state": "range_only_pending_human_review",
+      "expected_budget_treatment": "candidate_range_budget_after_review",
+      "missing_critical_fact_ids": [],
+      "missing_important_fact_ids": [
+        "forum_removed_and_arbitration_posture",
+        "policy_handbook_contract_documents"
+      ],
+      "candidate_only": true,
+      "non_authoritative": true
+    },
+    {
+      "pack_case_id": "le-discrimination-harassment-missing-attachment.v0_1",
+      "family": "discrimination_harassment",
+      "variant": "missing_attachment",
+      "coverage_state": "covered_executable",
+      "executable_fixture_ids": [
+        "le-discrimination-harassment-missing-attachment.executable.v0_1"
+      ],
+      "expected_budget_readiness_state": "blocked_missing_critical_facts",
+      "expected_budget_treatment": "block_amount_budget",
+      "missing_critical_fact_ids": [
+        "administrative_exhaustion_and_agency_record",
+        "carrier_guideline_and_rate_source"
+      ],
+      "missing_important_fact_ids": [
+        "policy_handbook_contract_documents"
+      ],
+      "candidate_only": true,
+      "non_authoritative": true
+    },
+    {
+      "pack_case_id": "le-discrimination-harassment-adversarial.v0_1",
+      "family": "discrimination_harassment",
+      "variant": "adversarial",
+      "coverage_state": "missing_executable",
+      "executable_fixture_ids": [],
+      "expected_budget_readiness_state": "blocked_missing_critical_facts",
+      "expected_budget_treatment": "block_amount_budget",
+      "missing_critical_fact_ids": [
+        "employee_claimant_identity",
+        "employer_or_defendant_identity",
+        "prospective_client_payer_carrier_posture"
+      ],
+      "missing_important_fact_ids": [],
+      "candidate_only": true,
+      "non_authoritative": true
+    },
+    {
+      "pack_case_id": "le-retaliation-wrongful-termination-clean.v0_1",
+      "family": "retaliation_wrongful_termination",
+      "variant": "clean",
+      "coverage_state": "missing_executable",
+      "executable_fixture_ids": [],
+      "expected_budget_readiness_state": "range_only_pending_human_review",
+      "expected_budget_treatment": "candidate_range_budget_after_review",
+      "missing_critical_fact_ids": [],
+      "missing_important_fact_ids": [
+        "expert_and_vendor_needs"
+      ],
+      "candidate_only": true,
+      "non_authoritative": true
+    },
+    {
+      "pack_case_id": "le-retaliation-wrongful-termination-messy-thread.v0_1",
+      "family": "retaliation_wrongful_termination",
+      "variant": "messy_thread",
+      "coverage_state": "covered_executable",
+      "executable_fixture_ids": [
+        "le-retaliation-wrongful-termination-messy-thread.executable.v0_1"
+      ],
+      "expected_budget_readiness_state": "range_only_pending_human_review",
+      "expected_budget_treatment": "candidate_range_budget_after_review",
+      "missing_critical_fact_ids": [],
+      "missing_important_fact_ids": [
+        "forum_removed_and_arbitration_posture"
+      ],
+      "candidate_only": true,
+      "non_authoritative": true
+    },
+    {
+      "pack_case_id": "le-retaliation-wrongful-termination-missing-attachment.v0_1",
+      "family": "retaliation_wrongful_termination",
+      "variant": "missing_attachment",
+      "coverage_state": "missing_executable",
+      "executable_fixture_ids": [],
+      "expected_budget_readiness_state": "blocked_missing_critical_facts",
+      "expected_budget_treatment": "block_amount_budget",
+      "missing_critical_fact_ids": [
+        "prospective_client_payer_carrier_posture",
+        "carrier_guideline_and_rate_source"
+      ],
+      "missing_important_fact_ids": [
+        "policy_handbook_contract_documents"
+      ],
+      "candidate_only": true,
+      "non_authoritative": true
+    },
+    {
+      "pack_case_id": "le-retaliation-wrongful-termination-adversarial.v0_1",
+      "family": "retaliation_wrongful_termination",
+      "variant": "adversarial",
+      "coverage_state": "missing_executable",
+      "executable_fixture_ids": [],
+      "expected_budget_readiness_state": "blocked_missing_critical_facts",
+      "expected_budget_treatment": "block_amount_budget",
+      "missing_critical_fact_ids": [
+        "employer_or_defendant_identity",
+        "prospective_client_payer_carrier_posture"
+      ],
+      "missing_important_fact_ids": [],
+      "candidate_only": true,
+      "non_authoritative": true
+    },
+    {
+      "pack_case_id": "le-wage-hour-clean.v0_1",
+      "family": "wage_hour_flsa_state",
+      "variant": "clean",
+      "coverage_state": "missing_executable",
+      "executable_fixture_ids": [],
+      "expected_budget_readiness_state": "range_only_pending_human_review",
+      "expected_budget_treatment": "candidate_range_budget_after_review",
+      "missing_critical_fact_ids": [],
+      "missing_important_fact_ids": [
+        "expert_and_vendor_needs"
+      ],
+      "candidate_only": true,
+      "non_authoritative": true
+    },
+    {
+      "pack_case_id": "le-wage-hour-messy-thread.v0_1",
+      "family": "wage_hour_flsa_state",
+      "variant": "messy_thread",
+      "coverage_state": "missing_executable",
+      "executable_fixture_ids": [],
+      "expected_budget_readiness_state": "range_only_pending_human_review",
+      "expected_budget_treatment": "hours_only_or_broad_range",
+      "missing_critical_fact_ids": [],
+      "missing_important_fact_ids": [
+        "forum_removed_and_arbitration_posture"
+      ],
+      "candidate_only": true,
+      "non_authoritative": true
+    },
+    {
+      "pack_case_id": "le-wage-hour-missing-attachment.v0_1",
+      "family": "wage_hour_flsa_state",
+      "variant": "missing_attachment",
+      "coverage_state": "covered_executable",
+      "executable_fixture_ids": [
+        "le-wage-hour-missing-attachment.executable.v0_1"
+      ],
+      "expected_budget_readiness_state": "blocked_missing_critical_facts",
+      "expected_budget_treatment": "block_amount_budget",
+      "missing_critical_fact_ids": [
+        "class_collective_or_group_scope",
+        "wage_hour_pay_period_and_employee_volume"
+      ],
+      "missing_important_fact_ids": [
+        "expert_and_vendor_needs"
+      ],
+      "candidate_only": true,
+      "non_authoritative": true
+    },
+    {
+      "pack_case_id": "le-wage-hour-adversarial.v0_1",
+      "family": "wage_hour_flsa_state",
+      "variant": "adversarial",
+      "coverage_state": "missing_executable",
+      "executable_fixture_ids": [],
+      "expected_budget_readiness_state": "blocked_missing_critical_facts",
+      "expected_budget_treatment": "block_amount_budget",
+      "missing_critical_fact_ids": [
+        "employee_claimant_identity",
+        "employer_or_defendant_identity",
+        "carrier_guideline_and_rate_source"
+      ],
+      "missing_important_fact_ids": [],
+      "candidate_only": true,
+      "non_authoritative": true
+    },
+    {
+      "pack_case_id": "le-ada-fmla-clean.v0_1",
+      "family": "ada_fmla_accommodation_leave",
+      "variant": "clean",
+      "coverage_state": "missing_executable",
+      "executable_fixture_ids": [],
+      "expected_budget_readiness_state": "range_only_pending_human_review",
+      "expected_budget_treatment": "candidate_range_budget_after_review",
+      "missing_critical_fact_ids": [],
+      "missing_important_fact_ids": [
+        "expert_and_vendor_needs"
+      ],
+      "candidate_only": true,
+      "non_authoritative": true
+    },
+    {
+      "pack_case_id": "le-ada-fmla-messy-thread.v0_1",
+      "family": "ada_fmla_accommodation_leave",
+      "variant": "messy_thread",
+      "coverage_state": "covered_executable",
+      "executable_fixture_ids": [
+        "le-ada-fmla-missing-thread.executable.v0_1"
+      ],
+      "expected_budget_readiness_state": "range_only_pending_human_review",
+      "expected_budget_treatment": "hours_only_or_broad_range",
+      "missing_critical_fact_ids": [],
+      "missing_important_fact_ids": [
+        "expert_and_vendor_needs"
+      ],
+      "candidate_only": true,
+      "non_authoritative": true
+    },
+    {
+      "pack_case_id": "le-ada-fmla-missing-attachment.v0_1",
+      "family": "ada_fmla_accommodation_leave",
+      "variant": "missing_attachment",
+      "coverage_state": "covered_executable",
+      "executable_fixture_ids": [
+        "le-ada-fmla-missing-thread.executable.v0_1"
+      ],
+      "expected_budget_readiness_state": "blocked_missing_critical_facts",
+      "expected_budget_treatment": "block_amount_budget",
+      "missing_critical_fact_ids": [
+        "relevant_employment_timeline",
+        "policy_handbook_contract_documents"
+      ],
+      "missing_important_fact_ids": [
+        "expert_and_vendor_needs"
+      ],
+      "candidate_only": true,
+      "non_authoritative": true
+    },
+    {
+      "pack_case_id": "le-ada-fmla-adversarial.v0_1",
+      "family": "ada_fmla_accommodation_leave",
+      "variant": "adversarial",
+      "coverage_state": "missing_executable",
+      "executable_fixture_ids": [],
+      "expected_budget_readiness_state": "blocked_missing_critical_facts",
+      "expected_budget_treatment": "block_amount_budget",
+      "missing_critical_fact_ids": [
+        "employee_claimant_identity",
+        "employer_or_defendant_identity",
+        "prospective_client_payer_carrier_posture"
+      ],
+      "missing_important_fact_ids": [],
+      "candidate_only": true,
+      "non_authoritative": true
+    },
+    {
+      "pack_case_id": "le-restrictive-covenant-clean.v0_1",
+      "family": "restrictive_covenant_trade_secret",
+      "variant": "clean",
+      "coverage_state": "missing_executable",
+      "executable_fixture_ids": [],
+      "expected_budget_readiness_state": "range_only_pending_human_review",
+      "expected_budget_treatment": "candidate_range_budget_after_review",
+      "missing_critical_fact_ids": [],
+      "missing_important_fact_ids": [
+        "expert_and_vendor_needs"
+      ],
+      "candidate_only": true,
+      "non_authoritative": true
+    },
+    {
+      "pack_case_id": "le-restrictive-covenant-messy-thread.v0_1",
+      "family": "restrictive_covenant_trade_secret",
+      "variant": "messy_thread",
+      "coverage_state": "missing_executable",
+      "executable_fixture_ids": [],
+      "expected_budget_readiness_state": "range_only_pending_human_review",
+      "expected_budget_treatment": "hours_only_or_broad_range",
+      "missing_critical_fact_ids": [],
+      "missing_important_fact_ids": [
+        "policy_handbook_contract_documents"
+      ],
+      "candidate_only": true,
+      "non_authoritative": true
+    },
+    {
+      "pack_case_id": "le-restrictive-covenant-missing-attachment.v0_1",
+      "family": "restrictive_covenant_trade_secret",
+      "variant": "missing_attachment",
+      "coverage_state": "covered_executable",
+      "executable_fixture_ids": [
+        "le-restrictive-covenant-missing-attachment.executable.v0_1"
+      ],
+      "expected_budget_readiness_state": "blocked_missing_critical_facts",
+      "expected_budget_treatment": "block_amount_budget",
+      "missing_critical_fact_ids": [
+        "policy_handbook_contract_documents",
+        "esi_custodians_and_sources"
+      ],
+      "missing_important_fact_ids": [
+        "expert_and_vendor_needs"
+      ],
+      "candidate_only": true,
+      "non_authoritative": true
+    },
+    {
+      "pack_case_id": "le-restrictive-covenant-adversarial.v0_1",
+      "family": "restrictive_covenant_trade_secret",
+      "variant": "adversarial",
+      "coverage_state": "missing_executable",
+      "executable_fixture_ids": [],
+      "expected_budget_readiness_state": "blocked_missing_critical_facts",
+      "expected_budget_treatment": "block_amount_budget",
+      "missing_critical_fact_ids": [
+        "employee_claimant_identity",
+        "employer_or_defendant_identity",
+        "policy_handbook_contract_documents"
+      ],
+      "missing_important_fact_ids": [],
+      "candidate_only": true,
+      "non_authoritative": true
+    },
+    {
+      "pack_case_id": "le-epli-carrier-clean.v0_1",
+      "family": "epli_carrier_assignment",
+      "variant": "clean",
+      "coverage_state": "missing_executable",
+      "executable_fixture_ids": [],
+      "expected_budget_readiness_state": "range_only_pending_human_review",
+      "expected_budget_treatment": "candidate_range_budget_after_review",
+      "missing_critical_fact_ids": [],
+      "missing_important_fact_ids": [
+        "expert_and_vendor_needs"
+      ],
+      "candidate_only": true,
+      "non_authoritative": true
+    },
+    {
+      "pack_case_id": "le-epli-carrier-messy-thread.v0_1",
+      "family": "epli_carrier_assignment",
+      "variant": "messy_thread",
+      "coverage_state": "missing_executable",
+      "executable_fixture_ids": [],
+      "expected_budget_readiness_state": "range_only_pending_human_review",
+      "expected_budget_treatment": "hours_only_or_broad_range",
+      "missing_critical_fact_ids": [],
+      "missing_important_fact_ids": [
+        "forum_removed_and_arbitration_posture"
+      ],
+      "candidate_only": true,
+      "non_authoritative": true
+    },
+    {
+      "pack_case_id": "le-epli-carrier-missing-attachment.v0_1",
+      "family": "epli_carrier_assignment",
+      "variant": "missing_attachment",
+      "coverage_state": "covered_executable",
+      "executable_fixture_ids": [
+        "le-epli-carrier-missing-attachment.executable.v0_1"
+      ],
+      "expected_budget_readiness_state": "blocked_missing_critical_facts",
+      "expected_budget_treatment": "block_amount_budget",
+      "missing_critical_fact_ids": [
+        "carrier_guideline_and_rate_source"
+      ],
+      "missing_important_fact_ids": [
+        "policy_handbook_contract_documents"
+      ],
+      "candidate_only": true,
+      "non_authoritative": true
+    },
+    {
+      "pack_case_id": "le-epli-carrier-adversarial.v0_1",
+      "family": "epli_carrier_assignment",
+      "variant": "adversarial",
+      "coverage_state": "missing_executable",
+      "executable_fixture_ids": [],
+      "expected_budget_readiness_state": "blocked_missing_critical_facts",
+      "expected_budget_treatment": "block_amount_budget",
+      "missing_critical_fact_ids": [
+        "employee_claimant_identity",
+        "employer_or_defendant_identity"
+      ],
+      "missing_important_fact_ids": [],
+      "candidate_only": true,
+      "non_authoritative": true
+    },
+    {
+      "pack_case_id": "le-class-collective-clean.v0_1",
+      "family": "class_collective_paga_representative",
+      "variant": "clean",
+      "coverage_state": "missing_executable",
+      "executable_fixture_ids": [],
+      "expected_budget_readiness_state": "range_only_pending_human_review",
+      "expected_budget_treatment": "hours_only_or_broad_range",
+      "missing_critical_fact_ids": [],
+      "missing_important_fact_ids": [
+        "expert_and_vendor_needs"
+      ],
+      "candidate_only": true,
+      "non_authoritative": true
+    },
+    {
+      "pack_case_id": "le-class-collective-messy-thread.v0_1",
+      "family": "class_collective_paga_representative",
+      "variant": "messy_thread",
+      "coverage_state": "missing_executable",
+      "executable_fixture_ids": [],
+      "expected_budget_readiness_state": "range_only_pending_human_review",
+      "expected_budget_treatment": "hours_only_or_broad_range",
+      "missing_critical_fact_ids": [],
+      "missing_important_fact_ids": [
+        "forum_removed_and_arbitration_posture"
+      ],
+      "candidate_only": true,
+      "non_authoritative": true
+    },
+    {
+      "pack_case_id": "le-class-collective-missing-attachment.v0_1",
+      "family": "class_collective_paga_representative",
+      "variant": "missing_attachment",
+      "coverage_state": "missing_executable",
+      "executable_fixture_ids": [],
+      "expected_budget_readiness_state": "blocked_missing_critical_facts",
+      "expected_budget_treatment": "block_amount_budget",
+      "missing_critical_fact_ids": [
+        "class_collective_or_group_scope",
+        "wage_hour_pay_period_and_employee_volume"
+      ],
+      "missing_important_fact_ids": [
+        "forum_removed_and_arbitration_posture",
+        "policy_handbook_contract_documents"
+      ],
+      "candidate_only": true,
+      "non_authoritative": true
+    },
+    {
+      "pack_case_id": "le-class-collective-adversarial.v0_1",
+      "family": "class_collective_paga_representative",
+      "variant": "adversarial",
+      "coverage_state": "covered_executable",
+      "executable_fixture_ids": [
+        "le-class-collective-adversarial.executable.v0_1"
+      ],
+      "expected_budget_readiness_state": "blocked_missing_critical_facts",
+      "expected_budget_treatment": "block_amount_budget",
+      "missing_critical_fact_ids": [
+        "employee_claimant_identity",
+        "employer_or_defendant_identity",
+        "prospective_client_payer_carrier_posture"
+      ],
+      "missing_important_fact_ids": [],
+      "candidate_only": true,
+      "non_authoritative": true
+    },
+    {
+      "pack_case_id": "le-admin-exhaustion-clean.v0_1",
+      "family": "administrative_exhaustion_agency_record",
+      "variant": "clean",
+      "coverage_state": "covered_executable",
+      "executable_fixture_ids": [
+        "le-admin-exhaustion-clean.executable.v0_1"
+      ],
+      "expected_budget_readiness_state": "range_only_pending_human_review",
+      "expected_budget_treatment": "candidate_range_budget_after_review",
+      "missing_critical_fact_ids": [],
+      "missing_important_fact_ids": [
+        "policy_handbook_contract_documents"
+      ],
+      "candidate_only": true,
+      "non_authoritative": true
+    },
+    {
+      "pack_case_id": "le-admin-exhaustion-messy-thread.v0_1",
+      "family": "administrative_exhaustion_agency_record",
+      "variant": "messy_thread",
+      "coverage_state": "missing_executable",
+      "executable_fixture_ids": [],
+      "expected_budget_readiness_state": "range_only_pending_human_review",
+      "expected_budget_treatment": "candidate_range_budget_after_review",
+      "missing_critical_fact_ids": [],
+      "missing_important_fact_ids": [
+        "policy_handbook_contract_documents"
+      ],
+      "candidate_only": true,
+      "non_authoritative": true
+    },
+    {
+      "pack_case_id": "le-admin-exhaustion-missing-attachment.v0_1",
+      "family": "administrative_exhaustion_agency_record",
+      "variant": "missing_attachment",
+      "coverage_state": "missing_executable",
+      "executable_fixture_ids": [],
+      "expected_budget_readiness_state": "blocked_missing_critical_facts",
+      "expected_budget_treatment": "block_amount_budget",
+      "missing_critical_fact_ids": [
+        "administrative_exhaustion_and_agency_record",
+        "relevant_employment_timeline"
+      ],
+      "missing_important_fact_ids": [
+        "forum_removed_and_arbitration_posture"
+      ],
+      "candidate_only": true,
+      "non_authoritative": true
+    },
+    {
+      "pack_case_id": "le-admin-exhaustion-adversarial.v0_1",
+      "family": "administrative_exhaustion_agency_record",
+      "variant": "adversarial",
+      "coverage_state": "missing_executable",
+      "executable_fixture_ids": [],
+      "expected_budget_readiness_state": "blocked_missing_critical_facts",
+      "expected_budget_treatment": "block_amount_budget",
+      "missing_critical_fact_ids": [
+        "employee_claimant_identity",
+        "employer_or_defendant_identity",
+        "relevant_employment_timeline"
+      ],
+      "missing_important_fact_ids": [],
+      "candidate_only": true,
+      "non_authoritative": true
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "coverage_inputs_are_synthetic_candidate_only",
+      "status": "passed",
+      "message": "Executable manifest and fixture family pack remain synthetic/candidate-only.",
+      "evidence_refs": [
+        "le-executable-fixtures-manifest.v0_1",
+        "le-budget-fixture-family-pack.v0_1"
+      ],
+      "blocking_refs": []
+    },
+    {
+      "check_id": "executable_pack_links_exist",
+      "status": "passed",
+      "message": "Every executable fixture pack-case link exists in the fixture family pack.",
+      "evidence_refs": [
+        "le-executable-fixtures-manifest.v0_1"
+      ],
+      "blocking_refs": []
+    },
+    {
+      "check_id": "executable_pack_links_match_family_variant",
+      "status": "passed",
+      "message": "Every executable fixture link matches the linked pack case family and variant.",
+      "evidence_refs": [
+        "le-executable-fixtures-manifest.v0_1"
+      ],
+      "blocking_refs": []
+    },
+    {
+      "check_id": "no_side_effect_boundaries_crossed",
+      "status": "passed",
+      "message": "Coverage audit did not authorize generation, calibration, Lake/SQLite writes, external writes, or silent learning.",
+      "evidence_refs": [
+        "le-executable-fixtures-manifest.v0_1",
+        "le-budget-fixture-family-pack.v0_1"
+      ],
+      "blocking_refs": []
+    }
+  ],
+  "required_next_gates": [
+    "expand_labor_employment_executable_fixture_families",
+    "review_missing_executable_family_variant_cases",
+    "no_fixture_generation_without_review",
+    "no_amount_budget_from_coverage_report",
+    "no_lake_or_sqlite_write_from_coverage_report"
+  ],
+  "candidate_only": true,
+  "non_authoritative": true,
+  "synthetic_only": true,
+  "human_review_required": true,
+  "fixture_generation_authorized": false,
+  "calibration_approved": false,
+  "budget_amount_output_authorized": false,
+  "budget_submission_authorized": false,
+  "conflict_conclusion_emitted": false,
+  "matter_opening_authorized": false,
+  "training_pipeline_created": false,
+  "lake_write_performed": false,
+  "sqlite_write_performed": false,
+  "external_writes_performed": false,
+  "silent_learning_performed": false,
+  "generated_at": "2026-07-03T23:55:29.433444Z"
+}
