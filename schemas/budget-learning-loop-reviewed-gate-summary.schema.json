@@ -1,0 +1,64 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "status": {
+      "title": "Status",
+      "type": "string"
+    },
+    "candidate_count": {
+      "minimum": 0,
+      "title": "Candidate Count",
+      "type": "integer"
+    },
+    "carrier_learning_candidate_count": {
+      "minimum": 0,
+      "title": "Carrier Learning Candidate Count",
+      "type": "integer"
+    },
+    "budget_revision_candidate_count": {
+      "minimum": 0,
+      "title": "Budget Revision Candidate Count",
+      "type": "integer"
+    },
+    "budget_actual_variance_candidate_count": {
+      "minimum": 0,
+      "title": "Budget Actual Variance Candidate Count",
+      "type": "integer"
+    },
+    "target_learning_loops": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Target Learning Loops",
+      "type": "array"
+    },
+    "target_owners": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Target Owners",
+      "type": "array"
+    },
+    "reviewed_outcome_required": {
+      "const": true,
+      "default": true,
+      "title": "Reviewed Outcome Required",
+      "type": "boolean"
+    },
+    "shadow_eval_required": {
+      "const": true,
+      "default": true,
+      "title": "Shadow Eval Required",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "status",
+    "candidate_count",
+    "carrier_learning_candidate_count",
+    "budget_revision_candidate_count",
+    "budget_actual_variance_candidate_count"
+  ],
+  "title": "BudgetLearningLoopReviewedGateSummary",
+  "type": "object"
+}

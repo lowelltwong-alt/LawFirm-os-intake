@@ -253,7 +253,7 @@
       "status": "budget_learning_loop_ready_for_review",
       "renderer": "BudgetLearningLoopPanel",
       "artifact_ref": "apps\\legal-intake-budget\\src\\fixtures\\demo-budget-learning-loop-report.json",
-      "source_sha256": "sha256:6de3fe568bcdcbcf1a4d999202124a3dbc34ce2cfbe632f815ebfb568ee327f8",
+      "source_sha256": "sha256:96d75a7427fc1b2c02915041884dadb131d8abded1631ab1093c61f7888f037b",
       "candidate_only": true,
       "synthetic_only": true,
       "external_writes_performed": false,

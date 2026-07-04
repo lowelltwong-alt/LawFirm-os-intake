@@ -9186,6 +9186,171 @@ class ReviewedLearningGateReport(StrictModel):
     generated_at: str
 
 
+BudgetLearningLoopStatus = Literal[
+    "budget_learning_loop_ready_for_review",
+    "blocked_by_budget_learning_loop",
+]
+
+BudgetLearningLoopLaneState = Literal["passed", "pending", "blocked", "failed"]
+
+
+class BudgetLearningLoopActualsSummary(StrictModel):
+    status: Literal["actuals_not_available", "passed", "variance_review_required"]
+    comparison_scope: Literal["phase", "phase_and_code"]
+    total_budgeted: float | None = None
+    total_actual: float | None = None
+    total_variance_amount: float | None = None
+    total_variance_percent: float | None = None
+    phase_event_count: int = Field(ge=0)
+    code_event_count: int = Field(ge=0)
+    revision_context_event_count: int = Field(ge=0)
+    variance_review_event_count: int = Field(ge=0)
+    actuals_without_budget_event_count: int = Field(ge=0)
+    missing_actuals_event_count: int = Field(ge=0)
+    ledger_entry_count: int = Field(ge=0)
+    learning_disposition_candidates: list[str] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def actuals_count_partition_matches(self) -> "BudgetLearningLoopActualsSummary":
+        if (
+            self.ledger_entry_count
+            != self.phase_event_count + self.code_event_count + self.revision_context_event_count
+        ):
+            raise ValueError("budget learning loop actuals ledger count mismatch")
+        return self
+
+
+class BudgetLearningLoopCarrierRejectionSummary(StrictModel):
+    reconciliation_status: str
+    decision_ledger_status: str
+    expected_response_count: int = Field(ge=0)
+    reconciled_response_count: int = Field(ge=0)
+    missing_response_count: int = Field(ge=0)
+    unlinked_notice_count: int = Field(ge=0)
+    duplicate_notice_count: int = Field(ge=0)
+    parser_failure_count: int = Field(ge=0)
+    appeal_result_count: int = Field(ge=0)
+    remediation_case_count: int = Field(ge=0)
+    decision_ledger_entry_count: int = Field(ge=0)
+    pending_decision_event_count: int = Field(ge=0)
+    total_disputed_amount: float = Field(ge=0)
+    total_recovered_amount: float = Field(ge=0)
+    total_write_down_amount: float = Field(ge=0)
+    candidate_event_labels: list[str] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def carrier_response_partition_matches(self) -> "BudgetLearningLoopCarrierRejectionSummary":
+        if (
+            self.expected_response_count
+            != self.reconciled_response_count + self.missing_response_count
+        ):
+            raise ValueError("budget learning loop carrier response partition mismatch")
+        return self
+
+
+class BudgetLearningLoopReviewedGateSummary(StrictModel):
+    status: str
+    candidate_count: int = Field(ge=0)
+    carrier_learning_candidate_count: int = Field(ge=0)
+    budget_revision_candidate_count: int = Field(ge=0)
+    budget_actual_variance_candidate_count: int = Field(ge=0)
+    target_learning_loops: list[str] = Field(default_factory=list)
+    target_owners: list[str] = Field(default_factory=list)
+    reviewed_outcome_required: Literal[True] = True
+    shadow_eval_required: Literal[True] = True
+
+    @model_validator(mode="after")
+    def learning_candidate_partition_matches(self) -> "BudgetLearningLoopReviewedGateSummary":
+        if (
+            self.candidate_count
+            != self.carrier_learning_candidate_count
+            + self.budget_revision_candidate_count
+            + self.budget_actual_variance_candidate_count
+        ):
+            raise ValueError("budget learning loop learning candidate count mismatch")
+        return self
+
+
+class BudgetLearningLoopLane(StrictModel):
+    lane_id: str
+    label: str
+    state: BudgetLearningLoopLaneState
+    metric: str
+    why: str
+    next_action: str
+    evidence_refs: list[str]
+    candidate_exception_lake_labels: list[str]
+
+    @model_validator(mode="after")
+    def lane_is_actionable(self) -> "BudgetLearningLoopLane":
+        if not self.evidence_refs:
+            raise ValueError("budget learning loop lane requires evidence refs")
+        if not self.candidate_exception_lake_labels:
+            raise ValueError("budget learning loop lane requires candidate labels")
+        if not self.metric.strip() or not self.why.strip() or not self.next_action.strip():
+            raise ValueError("budget learning loop lane requires metric, why, and next action")
+        return self
+
+
+class BudgetLearningLoopReport(StrictModel):
+    schema_version: str = "0.1"
+    budget_learning_loop_report_id: str
+    status: BudgetLearningLoopStatus
+    run_id: str
+    preflight_packet_id: str
+    source_budget_actual_comparison_report_ref: str
+    source_budget_actual_variance_ledger_report_ref: str
+    source_carrier_rejection_reconciliation_report_ref: str
+    source_carrier_rejection_decision_ledger_report_ref: str
+    source_carrier_rejection_review_packet_ref: str
+    source_carrier_rejection_learning_report_ref: str
+    source_reviewed_learning_gate_report_ref: str
+    budget_proposal_id: str
+    comparison_budget_state: Literal["original_proposal", "human_revised_candidate"]
+    actuals: BudgetLearningLoopActualsSummary
+    carrier_rejections: BudgetLearningLoopCarrierRejectionSummary
+    reviewed_learning_gate: BudgetLearningLoopReviewedGateSummary
+    lifecycle_lanes: list[BudgetLearningLoopLane]
+    red_team_notes: list[str]
+    required_next_actions: list[str]
+    candidate_only: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    local_json_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    not_authorized_for_matter_opening: Literal[True] = True
+    not_authorized_for_calibration: Literal[True] = True
+    budget_amount_output_authorized: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    conflict_conclusion_emitted: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    training_pipeline_created: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    appeal_submission_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def learning_loop_report_is_actionable(self) -> "BudgetLearningLoopReport":
+        if len(self.lifecycle_lanes) < 4:
+            raise ValueError("budget learning loop requires lifecycle lanes")
+        if not self.red_team_notes:
+            raise ValueError("budget learning loop requires red team notes")
+        if not self.required_next_actions:
+            raise ValueError("budget learning loop requires next actions")
+        if self.status == "budget_learning_loop_ready_for_review" and (
+            self.reviewed_learning_gate.status == "failed"
+        ):
+            raise ValueError("budget learning loop cannot be ready with failed learning gate")
+        return self
+
+
 class LearningShadowEvalCase(StrictModel):
     shadow_eval_case_id: str
     candidate_id: str

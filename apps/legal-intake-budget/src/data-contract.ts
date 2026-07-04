@@ -445,9 +445,14 @@ export function assertBudgetLearningLoopReport(report: BudgetLearningLoopReport)
   if (report.status !== "budget_learning_loop_ready_for_review") {
     failures.push(`budget_learning_loop_not_ready:${report.status}`);
   }
+  if (!report.run_id || !report.preflight_packet_id || !report.budget_proposal_id) {
+    failures.push("budget_learning_loop_missing_identity");
+  }
   if (
     report.actuals.ledger_entry_count !==
-    report.actuals.phase_event_count + report.actuals.code_event_count + 1
+    report.actuals.phase_event_count +
+      report.actuals.code_event_count +
+      report.actuals.revision_context_event_count
   ) {
     failures.push("budget_learning_loop_actuals_ledger_count_mismatch");
   }

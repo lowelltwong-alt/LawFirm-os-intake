@@ -604,6 +604,7 @@ export type BudgetLearningLoopActualsSummary = {
   total_variance_percent: number | null;
   phase_event_count: number;
   code_event_count: number;
+  revision_context_event_count: number;
   variance_review_event_count: number;
   actuals_without_budget_event_count: number;
   missing_actuals_event_count: number;
@@ -649,6 +650,8 @@ export type BudgetLearningLoopReport = {
     | "budget_learning_loop_ready_for_review"
     | "blocked_by_budget_learning_loop"
     | "failed_budget_learning_loop_boundary";
+  run_id: string;
+  preflight_packet_id: string;
   source_budget_actual_comparison_report_ref: string;
   source_budget_actual_variance_ledger_report_ref: string;
   source_carrier_rejection_reconciliation_report_ref: string;

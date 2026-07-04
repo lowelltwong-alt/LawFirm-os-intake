@@ -34,6 +34,7 @@ from .budget_human_review_outcome_owner_adoption import (
 from .budget_human_review_packet import run_budget_human_review_packet
 from .budget_human_review_outcomes import run_budget_human_review_outcome_record
 from .budget_lake_admission_bundle import run_budget_event_lake_admission_bundle
+from .budget_learning_loop import run_budget_learning_loop_report
 from .budget_lifecycle_audit import run_budget_lifecycle_audit
 from .budget_lifecycle_owner_adoption import run_budget_lifecycle_owner_adoption
 from .budget_revisions import run_budget_review_record
@@ -1069,6 +1070,26 @@ def _parser() -> argparse.ArgumentParser:
     reviewed_learning_gate.add_argument(
         "--budget-actual-comparison-report",
         help="Optional budget_actual_comparison_report.json from compare-budget-actuals.",
+    )
+
+    budget_learning_loop = sub.add_parser(
+        "build-budget-learning-loop-report",
+        help=(
+            "Build a read-only budget learning-loop report from actuals, carrier "
+            "rejection, appeal, and reviewed-learning artifacts."
+        ),
+    )
+    budget_learning_loop.add_argument("--budget-actual-comparison-report", required=True)
+    budget_learning_loop.add_argument("--budget-actual-variance-ledger-report", required=True)
+    budget_learning_loop.add_argument("--carrier-rejection-reconciliation-report", required=True)
+    budget_learning_loop.add_argument("--carrier-rejection-decision-ledger-report", required=True)
+    budget_learning_loop.add_argument("--carrier-rejection-review-packet", required=True)
+    budget_learning_loop.add_argument("--carrier-rejection-learning-report", required=True)
+    budget_learning_loop.add_argument("--reviewed-learning-gate-report", required=True)
+    budget_learning_loop.add_argument("--out-dir", required=True)
+    budget_learning_loop.add_argument(
+        "--generated-at",
+        help="Optional fixed timestamp for deterministic tests and replayed reports.",
     )
 
     learning_promotion_readiness = sub.add_parser(
@@ -3470,6 +3491,52 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 0
+
+        if args.command == "build-budget-learning-loop-report":
+            report, run_dir = run_budget_learning_loop_report(
+                budget_actual_comparison_report_path=args.budget_actual_comparison_report,
+                budget_actual_variance_ledger_report_path=(
+                    args.budget_actual_variance_ledger_report
+                ),
+                carrier_rejection_reconciliation_report_path=(
+                    args.carrier_rejection_reconciliation_report
+                ),
+                carrier_rejection_decision_ledger_report_path=(
+                    args.carrier_rejection_decision_ledger_report
+                ),
+                carrier_rejection_review_packet_path=args.carrier_rejection_review_packet,
+                carrier_rejection_learning_report_path=args.carrier_rejection_learning_report,
+                reviewed_learning_gate_report_path=args.reviewed_learning_gate_report,
+                out_dir=args.out_dir,
+                generated_at=args.generated_at,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "budget_learning_loop_report_id": report.budget_learning_loop_report_id,
+                    "budget_proposal_id": report.budget_proposal_id,
+                    "actual_variance_review_event_count": (
+                        report.actuals.variance_review_event_count
+                    ),
+                    "carrier_decision_ledger_entry_count": (
+                        report.carrier_rejections.decision_ledger_entry_count
+                    ),
+                    "total_disputed_amount": report.carrier_rejections.total_disputed_amount,
+                    "total_recovered_amount": report.carrier_rejections.total_recovered_amount,
+                    "learning_candidate_count": report.reviewed_learning_gate.candidate_count,
+                    "reviewed_outcome_required": (
+                        report.reviewed_learning_gate.reviewed_outcome_required
+                    ),
+                    "shadow_eval_required": report.reviewed_learning_gate.shadow_eval_required,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "appeal_submission_performed": report.appeal_submission_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0 if report.status == "budget_learning_loop_ready_for_review" else 2
 
         if args.command == "audit-learning-promotion-readiness":
             plan, report, run_dir = run_learning_promotion_readiness(

@@ -1,0 +1,61 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "lane_id": {
+      "title": "Lane Id",
+      "type": "string"
+    },
+    "label": {
+      "title": "Label",
+      "type": "string"
+    },
+    "state": {
+      "enum": [
+        "passed",
+        "pending",
+        "blocked",
+        "failed"
+      ],
+      "title": "State",
+      "type": "string"
+    },
+    "metric": {
+      "title": "Metric",
+      "type": "string"
+    },
+    "why": {
+      "title": "Why",
+      "type": "string"
+    },
+    "next_action": {
+      "title": "Next Action",
+      "type": "string"
+    },
+    "evidence_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Evidence Refs",
+      "type": "array"
+    },
+    "candidate_exception_lake_labels": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Candidate Exception Lake Labels",
+      "type": "array"
+    }
+  },
+  "required": [
+    "lane_id",
+    "label",
+    "state",
+    "metric",
+    "why",
+    "next_action",
+    "evidence_refs",
+    "candidate_exception_lake_labels"
+  ],
+  "title": "BudgetLearningLoopLane",
+  "type": "object"
+}

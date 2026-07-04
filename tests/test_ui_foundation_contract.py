@@ -208,6 +208,9 @@ def test_legal_intake_budget_budget_learning_loop_fixture_is_review_only(repo_ro
     learning_gate = report["reviewed_learning_gate"]
 
     assert report["status"] == "budget_learning_loop_ready_for_review"
+    assert report["run_id"]
+    assert report["preflight_packet_id"]
+    assert report["budget_proposal_id"]
     assert report["candidate_only"] is True
     assert report["synthetic_only"] is True
     assert report["non_authoritative"] is True
@@ -226,7 +229,9 @@ def test_legal_intake_budget_budget_learning_loop_fixture_is_review_only(repo_ro
     assert report["silent_learning_performed"] is False
     assert (
         actuals["ledger_entry_count"]
-        == actuals["phase_event_count"] + actuals["code_event_count"] + 1
+        == actuals["phase_event_count"]
+        + actuals["code_event_count"]
+        + actuals["revision_context_event_count"]
     )
     assert (
         carrier["expected_response_count"]

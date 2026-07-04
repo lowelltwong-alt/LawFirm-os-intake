@@ -78,6 +78,11 @@ from lawfirm_os_intake.models import (  # noqa: E402
     BudgetLakeAdmissionBundleCheck,
     BudgetLakeAdmissionBundleReport,
     BudgetLakeEvidenceArtifact,
+    BudgetLearningLoopActualsSummary,
+    BudgetLearningLoopCarrierRejectionSummary,
+    BudgetLearningLoopLane,
+    BudgetLearningLoopReport,
+    BudgetLearningLoopReviewedGateSummary,
     BudgetLifecycleAuditCheck,
     BudgetLifecycleAuditReport,
     BudgetLifecycleFinancialSummary,
@@ -634,6 +639,15 @@ MODELS = {
     "budget-lake-evidence-artifact.schema.json": BudgetLakeEvidenceArtifact,
     "budget-lake-admission-bundle-check.schema.json": BudgetLakeAdmissionBundleCheck,
     "budget-lake-admission-bundle-report.schema.json": BudgetLakeAdmissionBundleReport,
+    "budget-learning-loop-actuals-summary.schema.json": BudgetLearningLoopActualsSummary,
+    "budget-learning-loop-carrier-rejection-summary.schema.json": (
+        BudgetLearningLoopCarrierRejectionSummary
+    ),
+    "budget-learning-loop-reviewed-gate-summary.schema.json": (
+        BudgetLearningLoopReviewedGateSummary
+    ),
+    "budget-learning-loop-lane.schema.json": BudgetLearningLoopLane,
+    "budget-learning-loop-report.schema.json": BudgetLearningLoopReport,
     "budget-lifecycle-audit-check.schema.json": BudgetLifecycleAuditCheck,
     "budget-lifecycle-financial-summary.schema.json": BudgetLifecycleFinancialSummary,
     "budget-lifecycle-audit-report.schema.json": BudgetLifecycleAuditReport,

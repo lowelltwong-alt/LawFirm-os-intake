@@ -1,0 +1,610 @@
+{
+  "$defs": {
+    "BudgetLearningLoopActualsSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "enum": [
+            "actuals_not_available",
+            "passed",
+            "variance_review_required"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "comparison_scope": {
+          "enum": [
+            "phase",
+            "phase_and_code"
+          ],
+          "title": "Comparison Scope",
+          "type": "string"
+        },
+        "total_budgeted": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Total Budgeted"
+        },
+        "total_actual": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Total Actual"
+        },
+        "total_variance_amount": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Total Variance Amount"
+        },
+        "total_variance_percent": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Total Variance Percent"
+        },
+        "phase_event_count": {
+          "minimum": 0,
+          "title": "Phase Event Count",
+          "type": "integer"
+        },
+        "code_event_count": {
+          "minimum": 0,
+          "title": "Code Event Count",
+          "type": "integer"
+        },
+        "revision_context_event_count": {
+          "minimum": 0,
+          "title": "Revision Context Event Count",
+          "type": "integer"
+        },
+        "variance_review_event_count": {
+          "minimum": 0,
+          "title": "Variance Review Event Count",
+          "type": "integer"
+        },
+        "actuals_without_budget_event_count": {
+          "minimum": 0,
+          "title": "Actuals Without Budget Event Count",
+          "type": "integer"
+        },
+        "missing_actuals_event_count": {
+          "minimum": 0,
+          "title": "Missing Actuals Event Count",
+          "type": "integer"
+        },
+        "ledger_entry_count": {
+          "minimum": 0,
+          "title": "Ledger Entry Count",
+          "type": "integer"
+        },
+        "learning_disposition_candidates": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Learning Disposition Candidates",
+          "type": "array"
+        }
+      },
+      "required": [
+        "status",
+        "comparison_scope",
+        "phase_event_count",
+        "code_event_count",
+        "revision_context_event_count",
+        "variance_review_event_count",
+        "actuals_without_budget_event_count",
+        "missing_actuals_event_count",
+        "ledger_entry_count"
+      ],
+      "title": "BudgetLearningLoopActualsSummary",
+      "type": "object"
+    },
+    "BudgetLearningLoopCarrierRejectionSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "reconciliation_status": {
+          "title": "Reconciliation Status",
+          "type": "string"
+        },
+        "decision_ledger_status": {
+          "title": "Decision Ledger Status",
+          "type": "string"
+        },
+        "expected_response_count": {
+          "minimum": 0,
+          "title": "Expected Response Count",
+          "type": "integer"
+        },
+        "reconciled_response_count": {
+          "minimum": 0,
+          "title": "Reconciled Response Count",
+          "type": "integer"
+        },
+        "missing_response_count": {
+          "minimum": 0,
+          "title": "Missing Response Count",
+          "type": "integer"
+        },
+        "unlinked_notice_count": {
+          "minimum": 0,
+          "title": "Unlinked Notice Count",
+          "type": "integer"
+        },
+        "duplicate_notice_count": {
+          "minimum": 0,
+          "title": "Duplicate Notice Count",
+          "type": "integer"
+        },
+        "parser_failure_count": {
+          "minimum": 0,
+          "title": "Parser Failure Count",
+          "type": "integer"
+        },
+        "appeal_result_count": {
+          "minimum": 0,
+          "title": "Appeal Result Count",
+          "type": "integer"
+        },
+        "remediation_case_count": {
+          "minimum": 0,
+          "title": "Remediation Case Count",
+          "type": "integer"
+        },
+        "decision_ledger_entry_count": {
+          "minimum": 0,
+          "title": "Decision Ledger Entry Count",
+          "type": "integer"
+        },
+        "pending_decision_event_count": {
+          "minimum": 0,
+          "title": "Pending Decision Event Count",
+          "type": "integer"
+        },
+        "total_disputed_amount": {
+          "minimum": 0,
+          "title": "Total Disputed Amount",
+          "type": "number"
+        },
+        "total_recovered_amount": {
+          "minimum": 0,
+          "title": "Total Recovered Amount",
+          "type": "number"
+        },
+        "total_write_down_amount": {
+          "minimum": 0,
+          "title": "Total Write Down Amount",
+          "type": "number"
+        },
+        "candidate_event_labels": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Candidate Event Labels",
+          "type": "array"
+        }
+      },
+      "required": [
+        "reconciliation_status",
+        "decision_ledger_status",
+        "expected_response_count",
+        "reconciled_response_count",
+        "missing_response_count",
+        "unlinked_notice_count",
+        "duplicate_notice_count",
+        "parser_failure_count",
+        "appeal_result_count",
+        "remediation_case_count",
+        "decision_ledger_entry_count",
+        "pending_decision_event_count",
+        "total_disputed_amount",
+        "total_recovered_amount",
+        "total_write_down_amount"
+      ],
+      "title": "BudgetLearningLoopCarrierRejectionSummary",
+      "type": "object"
+    },
+    "BudgetLearningLoopLane": {
+      "additionalProperties": false,
+      "properties": {
+        "lane_id": {
+          "title": "Lane Id",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "state": {
+          "enum": [
+            "passed",
+            "pending",
+            "blocked",
+            "failed"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "metric": {
+          "title": "Metric",
+          "type": "string"
+        },
+        "why": {
+          "title": "Why",
+          "type": "string"
+        },
+        "next_action": {
+          "title": "Next Action",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "candidate_exception_lake_labels": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Candidate Exception Lake Labels",
+          "type": "array"
+        }
+      },
+      "required": [
+        "lane_id",
+        "label",
+        "state",
+        "metric",
+        "why",
+        "next_action",
+        "evidence_refs",
+        "candidate_exception_lake_labels"
+      ],
+      "title": "BudgetLearningLoopLane",
+      "type": "object"
+    },
+    "BudgetLearningLoopReviewedGateSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "title": "Status",
+          "type": "string"
+        },
+        "candidate_count": {
+          "minimum": 0,
+          "title": "Candidate Count",
+          "type": "integer"
+        },
+        "carrier_learning_candidate_count": {
+          "minimum": 0,
+          "title": "Carrier Learning Candidate Count",
+          "type": "integer"
+        },
+        "budget_revision_candidate_count": {
+          "minimum": 0,
+          "title": "Budget Revision Candidate Count",
+          "type": "integer"
+        },
+        "budget_actual_variance_candidate_count": {
+          "minimum": 0,
+          "title": "Budget Actual Variance Candidate Count",
+          "type": "integer"
+        },
+        "target_learning_loops": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Target Learning Loops",
+          "type": "array"
+        },
+        "target_owners": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Target Owners",
+          "type": "array"
+        },
+        "reviewed_outcome_required": {
+          "const": true,
+          "default": true,
+          "title": "Reviewed Outcome Required",
+          "type": "boolean"
+        },
+        "shadow_eval_required": {
+          "const": true,
+          "default": true,
+          "title": "Shadow Eval Required",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "status",
+        "candidate_count",
+        "carrier_learning_candidate_count",
+        "budget_revision_candidate_count",
+        "budget_actual_variance_candidate_count"
+      ],
+      "title": "BudgetLearningLoopReviewedGateSummary",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "budget_learning_loop_report_id": {
+      "title": "Budget Learning Loop Report Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "budget_learning_loop_ready_for_review",
+        "blocked_by_budget_learning_loop"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "preflight_packet_id": {
+      "title": "Preflight Packet Id",
+      "type": "string"
+    },
+    "source_budget_actual_comparison_report_ref": {
+      "title": "Source Budget Actual Comparison Report Ref",
+      "type": "string"
+    },
+    "source_budget_actual_variance_ledger_report_ref": {
+      "title": "Source Budget Actual Variance Ledger Report Ref",
+      "type": "string"
+    },
+    "source_carrier_rejection_reconciliation_report_ref": {
+      "title": "Source Carrier Rejection Reconciliation Report Ref",
+      "type": "string"
+    },
+    "source_carrier_rejection_decision_ledger_report_ref": {
+      "title": "Source Carrier Rejection Decision Ledger Report Ref",
+      "type": "string"
+    },
+    "source_carrier_rejection_review_packet_ref": {
+      "title": "Source Carrier Rejection Review Packet Ref",
+      "type": "string"
+    },
+    "source_carrier_rejection_learning_report_ref": {
+      "title": "Source Carrier Rejection Learning Report Ref",
+      "type": "string"
+    },
+    "source_reviewed_learning_gate_report_ref": {
+      "title": "Source Reviewed Learning Gate Report Ref",
+      "type": "string"
+    },
+    "budget_proposal_id": {
+      "title": "Budget Proposal Id",
+      "type": "string"
+    },
+    "comparison_budget_state": {
+      "enum": [
+        "original_proposal",
+        "human_revised_candidate"
+      ],
+      "title": "Comparison Budget State",
+      "type": "string"
+    },
+    "actuals": {
+      "$ref": "#/$defs/BudgetLearningLoopActualsSummary"
+    },
+    "carrier_rejections": {
+      "$ref": "#/$defs/BudgetLearningLoopCarrierRejectionSummary"
+    },
+    "reviewed_learning_gate": {
+      "$ref": "#/$defs/BudgetLearningLoopReviewedGateSummary"
+    },
+    "lifecycle_lanes": {
+      "items": {
+        "$ref": "#/$defs/BudgetLearningLoopLane"
+      },
+      "title": "Lifecycle Lanes",
+      "type": "array"
+    },
+    "red_team_notes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Red Team Notes",
+      "type": "array"
+    },
+    "required_next_actions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Actions",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "local_json_only": {
+      "const": true,
+      "default": true,
+      "title": "Local Json Only",
+      "type": "boolean"
+    },
+    "human_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Human Review Required",
+      "type": "boolean"
+    },
+    "not_authorized_for_external_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For External Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_lake_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Lake Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_sqlite_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Sqlite Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_budget_submission": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Budget Submission",
+      "type": "boolean"
+    },
+    "not_authorized_for_matter_opening": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Matter Opening",
+      "type": "boolean"
+    },
+    "not_authorized_for_calibration": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Calibration",
+      "type": "boolean"
+    },
+    "budget_amount_output_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Amount Output Authorized",
+      "type": "boolean"
+    },
+    "budget_submission_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Submission Authorized",
+      "type": "boolean"
+    },
+    "conflict_conclusion_emitted": {
+      "const": false,
+      "default": false,
+      "title": "Conflict Conclusion Emitted",
+      "type": "boolean"
+    },
+    "matter_opening_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Matter Opening Authorized",
+      "type": "boolean"
+    },
+    "training_pipeline_created": {
+      "const": false,
+      "default": false,
+      "title": "Training Pipeline Created",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "appeal_submission_performed": {
+      "const": false,
+      "default": false,
+      "title": "Appeal Submission Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "budget_learning_loop_report_id",
+    "status",
+    "run_id",
+    "preflight_packet_id",
+    "source_budget_actual_comparison_report_ref",
+    "source_budget_actual_variance_ledger_report_ref",
+    "source_carrier_rejection_reconciliation_report_ref",
+    "source_carrier_rejection_decision_ledger_report_ref",
+    "source_carrier_rejection_review_packet_ref",
+    "source_carrier_rejection_learning_report_ref",
+    "source_reviewed_learning_gate_report_ref",
+    "budget_proposal_id",
+    "comparison_budget_state",
+    "actuals",
+    "carrier_rejections",
+    "reviewed_learning_gate",
+    "lifecycle_lanes",
+    "red_team_notes",
+    "required_next_actions",
+    "generated_at"
+  ],
+  "title": "BudgetLearningLoopReport",
+  "type": "object"
+}

@@ -1,0 +1,125 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "status": {
+      "enum": [
+        "actuals_not_available",
+        "passed",
+        "variance_review_required"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "comparison_scope": {
+      "enum": [
+        "phase",
+        "phase_and_code"
+      ],
+      "title": "Comparison Scope",
+      "type": "string"
+    },
+    "total_budgeted": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Total Budgeted"
+    },
+    "total_actual": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Total Actual"
+    },
+    "total_variance_amount": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Total Variance Amount"
+    },
+    "total_variance_percent": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Total Variance Percent"
+    },
+    "phase_event_count": {
+      "minimum": 0,
+      "title": "Phase Event Count",
+      "type": "integer"
+    },
+    "code_event_count": {
+      "minimum": 0,
+      "title": "Code Event Count",
+      "type": "integer"
+    },
+    "revision_context_event_count": {
+      "minimum": 0,
+      "title": "Revision Context Event Count",
+      "type": "integer"
+    },
+    "variance_review_event_count": {
+      "minimum": 0,
+      "title": "Variance Review Event Count",
+      "type": "integer"
+    },
+    "actuals_without_budget_event_count": {
+      "minimum": 0,
+      "title": "Actuals Without Budget Event Count",
+      "type": "integer"
+    },
+    "missing_actuals_event_count": {
+      "minimum": 0,
+      "title": "Missing Actuals Event Count",
+      "type": "integer"
+    },
+    "ledger_entry_count": {
+      "minimum": 0,
+      "title": "Ledger Entry Count",
+      "type": "integer"
+    },
+    "learning_disposition_candidates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Learning Disposition Candidates",
+      "type": "array"
+    }
+  },
+  "required": [
+    "status",
+    "comparison_scope",
+    "phase_event_count",
+    "code_event_count",
+    "revision_context_event_count",
+    "variance_review_event_count",
+    "actuals_without_budget_event_count",
+    "missing_actuals_event_count",
+    "ledger_entry_count"
+  ],
+  "title": "BudgetLearningLoopActualsSummary",
+  "type": "object"
+}

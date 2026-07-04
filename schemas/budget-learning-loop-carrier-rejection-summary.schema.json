@@ -1,0 +1,104 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "reconciliation_status": {
+      "title": "Reconciliation Status",
+      "type": "string"
+    },
+    "decision_ledger_status": {
+      "title": "Decision Ledger Status",
+      "type": "string"
+    },
+    "expected_response_count": {
+      "minimum": 0,
+      "title": "Expected Response Count",
+      "type": "integer"
+    },
+    "reconciled_response_count": {
+      "minimum": 0,
+      "title": "Reconciled Response Count",
+      "type": "integer"
+    },
+    "missing_response_count": {
+      "minimum": 0,
+      "title": "Missing Response Count",
+      "type": "integer"
+    },
+    "unlinked_notice_count": {
+      "minimum": 0,
+      "title": "Unlinked Notice Count",
+      "type": "integer"
+    },
+    "duplicate_notice_count": {
+      "minimum": 0,
+      "title": "Duplicate Notice Count",
+      "type": "integer"
+    },
+    "parser_failure_count": {
+      "minimum": 0,
+      "title": "Parser Failure Count",
+      "type": "integer"
+    },
+    "appeal_result_count": {
+      "minimum": 0,
+      "title": "Appeal Result Count",
+      "type": "integer"
+    },
+    "remediation_case_count": {
+      "minimum": 0,
+      "title": "Remediation Case Count",
+      "type": "integer"
+    },
+    "decision_ledger_entry_count": {
+      "minimum": 0,
+      "title": "Decision Ledger Entry Count",
+      "type": "integer"
+    },
+    "pending_decision_event_count": {
+      "minimum": 0,
+      "title": "Pending Decision Event Count",
+      "type": "integer"
+    },
+    "total_disputed_amount": {
+      "minimum": 0,
+      "title": "Total Disputed Amount",
+      "type": "number"
+    },
+    "total_recovered_amount": {
+      "minimum": 0,
+      "title": "Total Recovered Amount",
+      "type": "number"
+    },
+    "total_write_down_amount": {
+      "minimum": 0,
+      "title": "Total Write Down Amount",
+      "type": "number"
+    },
+    "candidate_event_labels": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Candidate Event Labels",
+      "type": "array"
+    }
+  },
+  "required": [
+    "reconciliation_status",
+    "decision_ledger_status",
+    "expected_response_count",
+    "reconciled_response_count",
+    "missing_response_count",
+    "unlinked_notice_count",
+    "duplicate_notice_count",
+    "parser_failure_count",
+    "appeal_result_count",
+    "remediation_case_count",
+    "decision_ledger_entry_count",
+    "pending_decision_event_count",
+    "total_disputed_amount",
+    "total_recovered_amount",
+    "total_write_down_amount"
+  ],
+  "title": "BudgetLearningLoopCarrierRejectionSummary",
+  "type": "object"
+}
