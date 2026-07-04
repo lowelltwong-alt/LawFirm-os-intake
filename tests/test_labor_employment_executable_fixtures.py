@@ -31,8 +31,8 @@ def test_labor_employment_executable_fixtures_run_preflight_and_preserve_boundar
     )
 
     assert report.status == "labor_employment_executable_fixtures_ready_for_review"
-    assert persisted.fixture_count == 27
-    assert persisted.preflight_executed_count == 27
+    assert persisted.fixture_count == 28
+    assert persisted.preflight_executed_count == 28
     assert persisted.failed_case_count == 0
     assert persisted.missing_pack_link_count == 0
     assert persisted.missing_source_signal_count == 0
@@ -104,6 +104,33 @@ def test_labor_employment_executable_fixtures_run_preflight_and_preserve_boundar
         "esi_custodians_and_sources",
         "forum_removed_and_arbitration_posture",
         "policy_handbook_contract_documents",
+    }
+    discrimination_adversarial = cases["le-discrimination-harassment-adversarial.executable.v0_1"]
+    assert discrimination_adversarial.source_count == 1
+    assert discrimination_adversarial.segment_count == 6
+    assert discrimination_adversarial.missing_source_count == 0
+    assert discrimination_adversarial.duplicate_source_count == 0
+    assert discrimination_adversarial.expected_budget_treatment == "block_amount_budget"
+    assert "prompt_injection_source_content" in discrimination_adversarial.exception_labels
+    assert "prohibited_transition_attempted_conflicts_cleared" in (
+        discrimination_adversarial.exception_labels
+    )
+    assert "prohibited_transition_attempted_matter_opened" in (
+        discrimination_adversarial.exception_labels
+    )
+    assert "prohibited_transition_attempted_deadline_docketed" in (
+        discrimination_adversarial.exception_labels
+    )
+    assert "prohibited_transition_attempted_budget_submitted" in (
+        discrimination_adversarial.exception_labels
+    )
+    assert set(discrimination_adversarial.expected_budget_fact_gap_ids) == {
+        "employee_claimant_identity",
+        "employer_or_defendant_identity",
+        "prospective_client_payer_carrier_posture",
+        "claims_and_causes_of_action",
+        "damages_categories_and_exposure",
+        "esi_custodians_and_sources",
     }
     assert cases["le-epli-carrier-missing-attachment.executable.v0_1"].missing_source_count == 2
     assert cases["le-epli-carrier-clean.executable.v0_1"].missing_source_count == 0
@@ -409,7 +436,7 @@ def test_labor_employment_executable_fixtures_cli_writes_candidate_report(
 
     assert exit_code == 0
     assert report["status"] == "labor_employment_executable_fixtures_ready_for_review"
-    assert report["fixture_count"] == 27
-    assert report["preflight_executed_count"] == 27
+    assert report["fixture_count"] == 28
+    assert report["preflight_executed_count"] == 28
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out

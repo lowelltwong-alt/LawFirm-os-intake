@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "executable_coverage_report_id": "leexeccoverage_da86b848eecc9a2fc987",
+  "executable_coverage_report_id": "leexeccoverage_4dc1827b171faf1d02da",
   "status": "labor_employment_executable_coverage_ready_for_review",
   "coverage_state": "partial_executable_coverage",
   "pack_id": "le-budget-fixture-family-pack.v0_1",
@@ -8,18 +8,19 @@
   "executable_manifest_id": "le-executable-fixtures-manifest.v0_1",
   "executable_manifest_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\examples\\synthetic\\labor-employment\\labor-employment-executable-fixtures-manifest.json",
   "pack_case_count": 32,
-  "executable_fixture_count": 27,
-  "executable_pack_case_link_count": 28,
-  "covered_pack_case_count": 28,
-  "missing_executable_pack_case_count": 4,
+  "executable_fixture_count": 28,
+  "executable_pack_case_link_count": 29,
+  "covered_pack_case_count": 29,
+  "missing_executable_pack_case_count": 3,
   "covered_family_count": 8,
   "missing_family_count": 0,
-  "covered_family_variant_count": 28,
-  "missing_family_variant_count": 4,
+  "covered_family_variant_count": 29,
+  "missing_family_variant_count": 3,
   "covered_pack_case_ids": [
     "le-discrimination-harassment-clean.v0_1",
     "le-discrimination-harassment-messy-thread.v0_1",
     "le-discrimination-harassment-missing-attachment.v0_1",
+    "le-discrimination-harassment-adversarial.v0_1",
     "le-retaliation-wrongful-termination-clean.v0_1",
     "le-retaliation-wrongful-termination-messy-thread.v0_1",
     "le-retaliation-wrongful-termination-missing-attachment.v0_1",
@@ -47,13 +48,11 @@
     "le-admin-exhaustion-missing-attachment.v0_1"
   ],
   "missing_executable_pack_case_ids": [
-    "le-discrimination-harassment-adversarial.v0_1",
     "le-retaliation-wrongful-termination-adversarial.v0_1",
     "le-admin-exhaustion-messy-thread.v0_1",
     "le-admin-exhaustion-adversarial.v0_1"
   ],
   "missing_family_variant_refs": [
-    "discrimination_harassment:adversarial",
     "retaliation_wrongful_termination:adversarial",
     "administrative_exhaustion_agency_record:messy_thread",
     "administrative_exhaustion_agency_record:adversarial"
@@ -62,17 +61,17 @@
     {
       "family": "discrimination_harassment",
       "pack_case_count": 4,
-      "covered_case_count": 3,
-      "missing_case_count": 1,
+      "covered_case_count": 4,
+      "missing_case_count": 0,
       "covered_variants": [
         "clean",
         "messy_thread",
-        "missing_attachment"
-      ],
-      "missing_variants": [
+        "missing_attachment",
         "adversarial"
       ],
+      "missing_variants": [],
       "executable_fixture_ids": [
+        "le-discrimination-harassment-adversarial.executable.v0_1",
         "le-discrimination-harassment-clean.executable.v0_1",
         "le-discrimination-harassment-messy-thread.executable.v0_1",
         "le-discrimination-harassment-missing-attachment.executable.v0_1"
@@ -270,8 +269,10 @@
       "pack_case_id": "le-discrimination-harassment-adversarial.v0_1",
       "family": "discrimination_harassment",
       "variant": "adversarial",
-      "coverage_state": "missing_executable",
-      "executable_fixture_ids": [],
+      "coverage_state": "covered_executable",
+      "executable_fixture_ids": [
+        "le-discrimination-harassment-adversarial.executable.v0_1"
+      ],
       "expected_budget_readiness_state": "blocked_missing_critical_facts",
       "expected_budget_treatment": "block_amount_budget",
       "missing_critical_fact_ids": [
@@ -849,5 +850,5 @@
   "sqlite_write_performed": false,
   "external_writes_performed": false,
   "silent_learning_performed": false,
-  "generated_at": "2026-07-04T14:21:51.498963Z"
+  "generated_at": "2026-07-04T15:24:20.286600Z"
 }

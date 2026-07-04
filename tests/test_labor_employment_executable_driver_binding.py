@@ -61,13 +61,13 @@ def test_labor_employment_executable_driver_binding_maps_fact_gaps_to_budget_dri
     )
 
     assert report.status == "labor_employment_executable_driver_bindings_ready_for_review"
-    assert persisted.case_count == 27
+    assert persisted.case_count == 28
     assert persisted.failed_case_count == 0
-    assert persisted.driver_binding_count == 135
-    assert persisted.source_bound_driver_count == 135
+    assert persisted.driver_binding_count == 141
+    assert persisted.source_bound_driver_count == 141
     assert persisted.unbound_driver_count == 0
-    assert persisted.critical_driver_block_count == 22
-    assert persisted.critical_driver_review_only_count == 43
+    assert persisted.critical_driver_block_count == 25
+    assert persisted.critical_driver_review_only_count == 46
     assert persisted.missing_driver_dimensions == []
     assert set(persisted.covered_driver_dimensions) == set(persisted.required_driver_dimensions)
     assert all(check.status == "passed" for check in persisted.checks)
@@ -120,6 +120,48 @@ def test_labor_employment_executable_driver_binding_maps_fact_gaps_to_budget_dri
             "le-discrimination-harassment-messy-thread.executable.v0_1"
         ].critical_driver_block_count
         == 0
+    )
+    discrimination_adversarial = {
+        binding.driver_dimension: binding
+        for binding in cases[
+            "le-discrimination-harassment-adversarial.executable.v0_1"
+        ].driver_bindings
+    }
+    assert set(discrimination_adversarial) == {
+        "party_topology",
+        "representation_posture",
+        "claim_family",
+        "damages_exposure",
+        "esi_discovery",
+        "carrier_guideline_rate_context",
+    }
+    assert discrimination_adversarial["party_topology"].critical_driver_block is True
+    assert discrimination_adversarial["representation_posture"].critical_driver_block is True
+    assert discrimination_adversarial["carrier_guideline_rate_context"].critical_driver_block is (
+        True
+    )
+    assert discrimination_adversarial["claim_family"].critical_driver_review_only is True
+    assert discrimination_adversarial["damages_exposure"].critical_driver_review_only is True
+    assert discrimination_adversarial["esi_discovery"].critical_driver_review_only is True
+    assert set(discrimination_adversarial["party_topology"].matched_fact_ids) == {
+        "employee_claimant_identity",
+        "employer_or_defendant_identity",
+        "prospective_client_payer_carrier_posture",
+    }
+    assert discrimination_adversarial["carrier_guideline_rate_context"].matched_fact_ids == [
+        "prospective_client_payer_carrier_posture"
+    ]
+    assert (
+        cases[
+            "le-discrimination-harassment-adversarial.executable.v0_1"
+        ].critical_driver_block_count
+        == 3
+    )
+    assert (
+        cases[
+            "le-discrimination-harassment-adversarial.executable.v0_1"
+        ].critical_driver_review_only_count
+        == 3
     )
     wage_messy = {
         binding.driver_dimension: binding
@@ -501,7 +543,7 @@ def test_labor_employment_executable_driver_binding_cli_writes_candidate_report(
 
     assert exit_code == 0
     assert report["status"] == "labor_employment_executable_driver_bindings_ready_for_review"
-    assert report["case_count"] == 27
+    assert report["case_count"] == 28
     assert report["missing_driver_dimensions"] == []
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out

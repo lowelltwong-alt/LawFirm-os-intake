@@ -6,7 +6,7 @@
   "policy_version": "0.1",
   "policy_ref": "config/validation-runtime-policy.yaml",
   "repo_root_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync",
-  "git_commit": "1359903a3623907bfdd19184f8043083e00d7bce",
+  "git_commit": "b4f143ace303033bdb90ffc94f095e2feaaef7a3",
   "working_tree_dirty": true,
   "step_count": 7,
   "passed_step_count": 7,
@@ -24,9 +24,9 @@
       "status": "passed",
       "return_code": 0,
       "timeout_seconds": 180,
-      "duration_seconds": 6.371,
-      "started_at": "2026-07-04T14:34:10.945841Z",
-      "completed_at": "2026-07-04T14:34:17.315891Z",
+      "duration_seconds": 1.328,
+      "started_at": "2026-07-04T15:15:56.900363Z",
+      "completed_at": "2026-07-04T15:15:58.228151Z",
       "evidence_refs": [
         "scripts/validate_repo.py"
       ]
@@ -42,9 +42,9 @@
       "status": "passed",
       "return_code": 0,
       "timeout_seconds": 180,
-      "duration_seconds": 3.345,
-      "started_at": "2026-07-04T14:34:17.316903Z",
-      "completed_at": "2026-07-04T14:34:20.661562Z",
+      "duration_seconds": 2.883,
+      "started_at": "2026-07-04T15:15:58.229158Z",
+      "completed_at": "2026-07-04T15:16:01.111500Z",
       "evidence_refs": [
         "scripts/export_schemas.py",
         "schemas/"
@@ -67,9 +67,9 @@
       "status": "passed",
       "return_code": 0,
       "timeout_seconds": 180,
-      "duration_seconds": 0.299,
-      "started_at": "2026-07-04T14:34:20.661562Z",
-      "completed_at": "2026-07-04T14:34:20.960769Z",
+      "duration_seconds": 0.233,
+      "started_at": "2026-07-04T15:16:01.111500Z",
+      "completed_at": "2026-07-04T15:16:01.345765Z",
       "evidence_refs": [
         "src/",
         "tests/",
@@ -94,9 +94,9 @@
       "status": "passed",
       "return_code": 0,
       "timeout_seconds": 180,
-      "duration_seconds": 0.267,
-      "started_at": "2026-07-04T14:34:20.960769Z",
-      "completed_at": "2026-07-04T14:34:21.227120Z",
+      "duration_seconds": 0.244,
+      "started_at": "2026-07-04T15:16:01.345765Z",
+      "completed_at": "2026-07-04T15:16:01.589023Z",
       "evidence_refs": [
         "src/",
         "tests/",
@@ -114,9 +114,9 @@
       "status": "passed",
       "return_code": 0,
       "timeout_seconds": 3600,
-      "duration_seconds": 365.594,
-      "started_at": "2026-07-04T14:34:21.227120Z",
-      "completed_at": "2026-07-04T14:40:26.828952Z",
+      "duration_seconds": 361.847,
+      "started_at": "2026-07-04T15:16:01.589023Z",
+      "completed_at": "2026-07-04T15:22:03.442454Z",
       "evidence_refs": [
         "scripts/run_full_pytest.py",
         "tests/"
@@ -133,9 +133,9 @@
       "status": "passed",
       "return_code": 0,
       "timeout_seconds": 3600,
-      "duration_seconds": 57.295,
-      "started_at": "2026-07-04T14:40:26.828952Z",
-      "completed_at": "2026-07-04T14:41:24.124883Z",
+      "duration_seconds": 61.862,
+      "started_at": "2026-07-04T15:22:03.442454Z",
+      "completed_at": "2026-07-04T15:23:05.305347Z",
       "evidence_refs": [
         "scripts/smoke_demo.sh"
       ]
@@ -151,9 +151,9 @@
       "status": "passed",
       "return_code": 0,
       "timeout_seconds": 180,
-      "duration_seconds": 131.369,
-      "started_at": "2026-07-04T14:41:24.124883Z",
-      "completed_at": "2026-07-04T14:43:35.496728Z",
+      "duration_seconds": 24.223,
+      "started_at": "2026-07-04T15:23:05.305347Z",
+      "completed_at": "2026-07-04T15:23:29.528585Z",
       "evidence_refs": [
         "scripts/validate_repo.py",
         "scripts/run_validation_suite.py"
