@@ -43,6 +43,9 @@ export type MatterLinkingPreflightCluster = {
   strong_negative_signal_count: number;
   supporting_signal_types: string[];
   negative_signal_types: string[];
+  source_bound_strong_support_present: boolean;
+  weak_only_candidate: boolean;
+  negative_split_evidence_required: boolean;
   requires_human_confirmation: boolean;
   matter_link_finalized: boolean;
 };
@@ -65,8 +68,12 @@ export type MatterLinkingPreflightReport = {
   requires_sender_followup: boolean;
   cluster_count: number;
   high_evidence_candidate_count: number;
+  weak_only_candidate_count: number;
+  negative_split_evidence_required: boolean;
   weak_signal_count: number;
   strong_negative_signal_count: number;
+  source_count: number;
+  source_hashes_by_id: Record<string, string>;
   weak_merge_signal_types: string[];
   candidate_exception_lake_labels: string[];
   clusters: MatterLinkingPreflightCluster[];

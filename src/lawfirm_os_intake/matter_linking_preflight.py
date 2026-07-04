@@ -21,10 +21,23 @@ AMBIGUOUS_REQUIRED_EXCEPTION_LABELS = {
     "document_cluster_split_required",
 }
 
-RESOLVED_REQUIRED_EXCEPTION_LABELS = {
+RESOLVED_SPLIT_REQUIRED_EXCEPTION_LABELS = {
     "source_matter_link_resolved_candidate",
     "missing_official_matter_number",
     "document_cluster_split_resolved_candidate",
+    "human_matter_linking_confirmation_required",
+}
+
+RESOLVED_SINGLE_REQUIRED_EXCEPTION_LABELS = {
+    "source_matter_link_resolved_candidate",
+    "missing_official_matter_number",
+    "human_matter_linking_confirmation_required",
+}
+
+WEAK_ONLY_REQUIRED_EXCEPTION_LABELS = {
+    "source_matter_link_weak_only_candidate",
+    "missing_official_matter_number",
+    "sender_reference_followup_required",
     "human_matter_linking_confirmation_required",
 }
 
@@ -41,6 +54,11 @@ REQUIRED_NEXT_GATES = [*BASE_REQUIRED_NEXT_GATES, SENDER_REFERENCE_FOLLOWUP_GATE
 RESOLVED_LINK_STATES = {
     "resolved_split_candidates_pending_human_confirmation",
     "resolved_single_candidate_pending_human_confirmation",
+}
+
+WEAK_ONLY_LINK_STATES = {
+    "weak_single_candidate_requires_followup",
+    "weak_cluster_candidate_requires_followup",
 }
 
 RESOLUTION_SIGNAL_TYPES = {
@@ -62,6 +80,12 @@ PROHIBITED_BOUNDARY_FLAGS = [
     "screen_created",
     "silent_learning_performed",
 ]
+
+WEAK_OR_NON_UNIQUE_SIGNAL_TYPES = {
+    "same_sender",
+    "same_carrier",
+    "sender_internal_reference",
+}
 
 
 def run_matter_linking_preflight(
@@ -101,6 +125,10 @@ def build_matter_linking_preflight_report(
     boundaries = _mapping(payload.get("output_boundaries"))
     source_hashes_by_id = _source_hashes_by_id(payload)
     clusters = _clusters(linking, source_hashes_by_id)
+    negative_split_required = _negative_split_evidence_required(
+        linking=linking,
+        cluster_count=len(clusters),
+    )
     weak_signals = _list_of_mappings(linking.get("weak_signals_not_sufficient_for_merge"))
     weak_signal_types = sorted(
         {
@@ -121,6 +149,7 @@ def build_matter_linking_preflight_report(
         weak_signal_types=weak_signal_types,
         labels=labels,
         source_hashes_by_id=source_hashes_by_id,
+        negative_split_required=negative_split_required,
     )
     if any(check.status == "failed" for check in checks):
         status = "blocked_matter_linking_preflight"
@@ -159,6 +188,8 @@ def build_matter_linking_preflight_report(
             1 for cluster in clusters if "high_evidence" in cluster.match_strength
         ),
         weak_signal_count=len(weak_signals),
+        weak_only_candidate_count=sum(1 for cluster in clusters if cluster.weak_only_candidate),
+        negative_split_evidence_required=negative_split_required,
         strong_negative_signal_count=sum(
             cluster.strong_negative_signal_count for cluster in clusters
         ),
@@ -200,7 +231,9 @@ def render_matter_linking_preflight_report(report: MatterLinkingPreflightReport)
         "",
         f"- Candidate clusters: {report.cluster_count}",
         f"- High-evidence candidates, not authorized: {report.high_evidence_candidate_count}",
+        f"- Weak-only candidates blocked: {report.weak_only_candidate_count}",
         f"- Weak merge signals rejected: {report.weak_signal_count}",
+        f"- Negative split evidence required: {report.negative_split_evidence_required}",
         f"- Strong negative split signals: {report.strong_negative_signal_count}",
         f"- Requires human confirmation: {report.requires_human_confirmation}",
         f"- Requires sender follow-up: {report.requires_sender_followup}",
@@ -215,6 +248,9 @@ def render_matter_linking_preflight_report(report: MatterLinkingPreflightReport)
                 f"- `{cluster.cluster_id}`: {cluster.match_strength}",
                 f"  Label: {cluster.proposed_short_label or 'unknown'}",
                 f"  Sources: {', '.join(f'`{source_id}`' for source_id in cluster.source_ids)}",
+                f"  Source-bound strong support: {cluster.source_bound_strong_support_present}",
+                f"  Weak-only candidate: {cluster.weak_only_candidate}",
+                f"  Negative split evidence required: {cluster.negative_split_evidence_required}",
                 f"  Supporting signal types: {', '.join(cluster.supporting_signal_types)}",
                 f"  Negative signal types: {', '.join(cluster.negative_signal_types)}",
             ]
@@ -251,9 +287,24 @@ def _clusters(
     source_hashes_by_id: dict[str, str],
 ) -> list[MatterLinkingPreflightCluster]:
     clusters: list[MatterLinkingPreflightCluster] = []
-    for raw_cluster in _list_of_mappings(linking.get("candidate_clusters")):
+    raw_clusters = _list_of_mappings(linking.get("candidate_clusters"))
+    negative_split_required = _negative_split_evidence_required(
+        linking=linking,
+        cluster_count=len(raw_clusters),
+    )
+    for raw_cluster in raw_clusters:
         supporting = _list_of_mappings(raw_cluster.get("supporting_signals"))
         negative = _list_of_mappings(raw_cluster.get("negative_signals"))
+        strong_supporting = [
+            signal
+            for signal in supporting
+            if signal.get("weight_class") == "strong"
+            and signal.get("signal_type") not in WEAK_OR_NON_UNIQUE_SIGNAL_TYPES
+        ]
+        source_bound_strong_support_present = bool(strong_supporting) and all(
+            _signal_has_known_source_ref(signal, source_hashes_by_id)
+            for signal in strong_supporting
+        )
         source_ids = [str(source_id) for source_id in raw_cluster.get("source_ids", [])]
         unique_source_ids = sorted(set(source_ids))
         clusters.append(
@@ -269,9 +320,7 @@ def _clusters(
                     if source_id in source_hashes_by_id
                 ],
                 supporting_signal_count=len(supporting),
-                strong_supporting_signal_count=sum(
-                    1 for signal in supporting if signal.get("weight_class") == "strong"
-                ),
+                strong_supporting_signal_count=len(strong_supporting),
                 negative_signal_count=len(negative),
                 strong_negative_signal_count=sum(
                     1 for signal in negative if signal.get("weight_class") == "strong"
@@ -290,6 +339,9 @@ def _clusters(
                         if isinstance(signal.get("signal_type"), str)
                     }
                 ),
+                source_bound_strong_support_present=source_bound_strong_support_present,
+                weak_only_candidate=not source_bound_strong_support_present,
+                negative_split_evidence_required=negative_split_required,
             )
         )
     return clusters
@@ -305,14 +357,26 @@ def _checks(
     weak_signal_types: list[str],
     labels: list[str],
     source_hashes_by_id: dict[str, str],
+    negative_split_required: bool,
 ) -> list[MatterLinkingPreflightCheck]:
+    missing_boundary_flags = [flag for flag in PROHIBITED_BOUNDARY_FLAGS if flag not in boundaries]
     boundary_violations = [
-        flag for flag in PROHIBITED_BOUNDARY_FLAGS if bool(boundaries.get(flag)) is not False
+        flag
+        for flag in PROHIBITED_BOUNDARY_FLAGS
+        if flag in boundaries and bool(boundaries.get(flag)) is not False
     ]
     cluster_refs_missing = _clusters_missing_source_bound_support(linking, source_hashes_by_id)
-    negative_missing = [
-        cluster.cluster_id for cluster in clusters if cluster.strong_negative_signal_count == 0
-    ]
+    weak_only_missing = [cluster.cluster_id for cluster in clusters if cluster.weak_only_candidate]
+    weak_promoted = _clusters_with_promoted_weak_support(linking)
+    negative_missing = (
+        _clusters_missing_negative_split_support(linking, source_hashes_by_id)
+        if negative_split_required
+        else []
+    )
+    split_cardinality_failure = _split_cardinality_failure(
+        linking=linking,
+        cluster_count=len(clusters),
+    )
     resolution_missing = (
         _clusters_missing_resolution_support(linking, source_hashes_by_id)
         if _is_resolved_link_state(linking)
@@ -338,9 +402,16 @@ def _checks(
         ),
         _check(
             "no_connector_or_external_write",
-            not boundary_violations,
+            not boundary_violations and not missing_boundary_flags,
             "No connector, vendor API call, external write, Lake/SQLite write, screen, matter opening, budget authorization, conflict conclusion, or silent learning is present.",
-            blocking_refs=boundary_violations,
+            blocking_refs=[*missing_boundary_flags, *boundary_violations],
+        ),
+        _check(
+            "link_state_cluster_cardinality_valid",
+            not split_cardinality_failure,
+            "Split states require at least two candidate clusters; single-candidate states require exactly one cluster.",
+            evidence_refs=[str(linking.get("overall_link_state", "unknown"))],
+            blocking_refs=split_cardinality_failure,
         ),
         _check(
             "official_matter_number_missing_is_explicit",
@@ -367,6 +438,20 @@ def _checks(
             evidence_refs=weak_signal_types,
         ),
         _check(
+            "weak_only_candidates_block_matter_linking",
+            not weak_only_missing,
+            "A candidate matter link needs source-bound matter-specific strong support; same sender, same carrier, or sender references alone are not enough.",
+            evidence_refs=[cluster.cluster_id for cluster in clusters],
+            blocking_refs=weak_only_missing,
+        ),
+        _check(
+            "weak_signals_cannot_be_promoted_to_strong_support",
+            not weak_promoted,
+            "Same sender, same carrier, and sender internal references cannot become strong matter-linking support.",
+            evidence_refs=[cluster.cluster_id for cluster in clusters],
+            blocking_refs=weak_promoted,
+        ),
+        _check(
             "clusters_have_source_bound_strong_support",
             not cluster_refs_missing,
             "Every cluster has source-bound strong support mapped to known source hashes.",
@@ -383,7 +468,11 @@ def _checks(
         _check(
             "clusters_have_negative_split_evidence",
             not negative_missing,
-            "Every cluster has strong negative split evidence against the other candidate matter.",
+            (
+                "Competing clusters have strong negative split evidence against the other candidate matter."
+                if negative_split_required
+                else "Single-candidate matter-linking inputs do not require negative split evidence."
+            ),
             evidence_refs=[cluster.cluster_id for cluster in clusters],
             blocking_refs=negative_missing,
         ),
@@ -416,6 +505,7 @@ def _clusters_missing_source_bound_support(
             signal
             for signal in _list_of_mappings(raw_cluster.get("supporting_signals"))
             if signal.get("weight_class") == "strong"
+            and signal.get("signal_type") not in WEAK_OR_NON_UNIQUE_SIGNAL_TYPES
         ]
         if not strong_signals:
             missing.append(cluster_id)
@@ -423,6 +513,42 @@ def _clusters_missing_source_bound_support(
         if any(
             not _signal_has_known_source_ref(signal, source_hashes_by_id)
             for signal in strong_signals
+        ):
+            missing.append(cluster_id)
+    return sorted(set(missing))
+
+
+def _clusters_with_promoted_weak_support(linking: dict[str, Any]) -> list[str]:
+    promoted: list[str] = []
+    for raw_cluster in _list_of_mappings(linking.get("candidate_clusters")):
+        cluster_id = str(raw_cluster.get("cluster_id", "unknown"))
+        if any(
+            signal.get("weight_class") == "strong"
+            and signal.get("signal_type") in WEAK_OR_NON_UNIQUE_SIGNAL_TYPES
+            for signal in _list_of_mappings(raw_cluster.get("supporting_signals"))
+        ):
+            promoted.append(cluster_id)
+    return sorted(set(promoted))
+
+
+def _clusters_missing_negative_split_support(
+    linking: dict[str, Any],
+    source_hashes_by_id: dict[str, str],
+) -> list[str]:
+    missing: list[str] = []
+    for raw_cluster in _list_of_mappings(linking.get("candidate_clusters")):
+        cluster_id = str(raw_cluster.get("cluster_id", "unknown"))
+        strong_negative = [
+            signal
+            for signal in _list_of_mappings(raw_cluster.get("negative_signals"))
+            if signal.get("weight_class") == "strong"
+        ]
+        if not strong_negative:
+            missing.append(cluster_id)
+            continue
+        if any(
+            not _signal_has_known_source_ref(signal, source_hashes_by_id)
+            for signal in strong_negative
         ):
             missing.append(cluster_id)
     return sorted(set(missing))
@@ -450,8 +576,12 @@ def _clusters_missing_resolution_support(
 
 
 def _required_exception_labels(linking: dict[str, Any]) -> set[str]:
+    if _is_weak_only_link_state(linking):
+        return WEAK_ONLY_REQUIRED_EXCEPTION_LABELS
+    if _is_resolved_single_link_state(linking):
+        return RESOLVED_SINGLE_REQUIRED_EXCEPTION_LABELS
     if _is_resolved_link_state(linking):
-        return RESOLVED_REQUIRED_EXCEPTION_LABELS
+        return RESOLVED_SPLIT_REQUIRED_EXCEPTION_LABELS
     return AMBIGUOUS_REQUIRED_EXCEPTION_LABELS
 
 
@@ -467,6 +597,46 @@ def _is_resolved_link_state(linking: dict[str, Any]) -> bool:
     return str(linking.get("overall_link_state")) in RESOLVED_LINK_STATES
 
 
+def _is_resolved_single_link_state(linking: dict[str, Any]) -> bool:
+    return str(linking.get("overall_link_state")) == (
+        "resolved_single_candidate_pending_human_confirmation"
+    )
+
+
+def _is_weak_only_link_state(linking: dict[str, Any]) -> bool:
+    return str(linking.get("overall_link_state")) in WEAK_ONLY_LINK_STATES
+
+
+def _negative_split_evidence_required(*, linking: dict[str, Any], cluster_count: int) -> bool:
+    return cluster_count > 1 or str(linking.get("overall_link_state")) in {
+        "ambiguous_multiple_candidates",
+        "resolved_split_candidates_pending_human_confirmation",
+    }
+
+
+def _split_cardinality_failure(*, linking: dict[str, Any], cluster_count: int) -> list[str]:
+    state = str(linking.get("overall_link_state", "unknown"))
+    if (
+        state
+        in {
+            "ambiguous_multiple_candidates",
+            "resolved_split_candidates_pending_human_confirmation",
+        }
+        and cluster_count < 2
+    ):
+        return [f"{state}:requires_at_least_two_clusters"]
+    if (
+        state
+        in {
+            "resolved_single_candidate_pending_human_confirmation",
+            *WEAK_ONLY_LINK_STATES,
+        }
+        and cluster_count != 1
+    ):
+        return [f"{state}:requires_exactly_one_cluster"]
+    return []
+
+
 def _signal_has_known_source_ref(
     signal: dict[str, Any],
     source_hashes_by_id: dict[str, str],
@@ -474,7 +644,15 @@ def _signal_has_known_source_ref(
     refs = [str(ref) for ref in signal.get("source_refs", [])]
     if not refs:
         return False
-    return all(_source_id_from_ref(ref) in source_hashes_by_id for ref in refs)
+    return all(_source_ref_is_known_and_located(ref, source_hashes_by_id) for ref in refs)
+
+
+def _source_ref_is_known_and_located(
+    ref: str,
+    source_hashes_by_id: dict[str, str],
+) -> bool:
+    source_id, separator, locator = ref.partition(":")
+    return bool(separator and locator and source_id in source_hashes_by_id)
 
 
 def _source_id_from_ref(ref: str) -> str:

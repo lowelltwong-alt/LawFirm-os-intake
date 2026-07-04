@@ -42,7 +42,7 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
 
     assert code == 0
     assert report["status"] == "synthetic_qa_review_run_ready"
-    assert report["step_count"] == len(report["steps"]) == 18
+    assert report["step_count"] == len(report["steps"]) == 19
     assert report["failed_step_count"] == 0
     assert report["candidate_only"] is True
     assert report["synthetic_only"] is True
@@ -54,6 +54,7 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
     assert {
         "budget_coherence",
         "matter_linking_preflight",
+        "matter_linking_weak_only_holdout",
         "budget_calibration_starter_pack",
         "labor_employment_qa_matrix",
         "labor_employment_fixture_family_pack",

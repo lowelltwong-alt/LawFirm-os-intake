@@ -1,22 +1,22 @@
 {
   "schema_version": "0.1",
-  "synthetic_confidence_summary_report_id": "synthetic_confidence_summary_5776db5b79a20290",
+  "synthetic_confidence_summary_report_id": "synthetic_confidence_summary_437e6c8813109ce5",
   "status": "synthetic_confidence_summary_ready_for_review",
   "testing_readiness_state": "synthetic_qa_ready_pending_review",
-  "source_synthetic_qa_review_run_ref": ".lawfirm-os-intake\\le-class-collective-executable-current\\ui-review\\synthetic_qa_review_run_report.json",
-  "source_synthetic_qa_review_run_report_id": "syntheticqareviewrun_c9e2b41454c089de",
+  "source_synthetic_qa_review_run_ref": ".lawfirm-os-intake\\matter-linking-hardening-current\\ui-review\\synthetic_qa_review_run_report.json",
+  "source_synthetic_qa_review_run_report_id": "syntheticqareviewrun_0789ab038884add2",
   "source_synthetic_qa_review_run_status": "synthetic_qa_review_run_ready",
-  "source_synthetic_qa_bundle_ref": ".lawfirm-os-intake\\le-class-collective-executable-current\\ui-review\\quality\\synthetic_qa_bundle_report.json",
-  "source_synthetic_qa_bundle_report_id": "synthetic_qa_bundle_aef585d3f784",
+  "source_synthetic_qa_bundle_ref": ".lawfirm-os-intake\\matter-linking-hardening-current\\ui-review\\quality\\synthetic_qa_bundle_report.json",
+  "source_synthetic_qa_bundle_report_id": "synthetic_qa_bundle_7b2d1d6f795a",
   "source_synthetic_qa_bundle_status": "pending_review",
-  "source_ui_manifest_ref": ".lawfirm-os-intake\\le-class-collective-executable-current\\ui-review\\ui_review_manifest.json",
-  "source_ui_manifest_id": "ui_review_manifest_c32dca9971c5",
+  "source_ui_manifest_ref": ".lawfirm-os-intake\\matter-linking-hardening-current\\ui-review\\ui_review_manifest.json",
+  "source_ui_manifest_id": "ui_review_manifest_5658db8a9eb7",
   "source_ui_manifest_overall_status": "blocked",
-  "source_ui_review_data_bundle_ref": ".lawfirm-os-intake\\le-class-collective-executable-current\\ui-review\\ui_review_data_bundle.json",
-  "source_ui_review_data_bundle_id": "ui_review_data_bundle_ab5d695a0808",
+  "source_ui_review_data_bundle_ref": ".lawfirm-os-intake\\matter-linking-hardening-current\\ui-review\\ui_review_data_bundle.json",
+  "source_ui_review_data_bundle_id": "ui_review_data_bundle_fab0a675d6af",
   "source_ui_review_data_bundle_status": "ready_for_review",
-  "qa_step_count": 18,
-  "qa_passed_step_count": 18,
+  "qa_step_count": 19,
+  "qa_passed_step_count": 19,
   "qa_failed_step_count": 0,
   "qa_artifact_count": 14,
   "qa_missing_required_artifact_count": 0,
@@ -40,10 +40,10 @@
       "owner": "qa-reference",
       "state": "ready_for_review",
       "evidence_refs": [
-        ".lawfirm-os-intake\\le-class-collective-executable-current\\ui-review\\synthetic_qa_review_run_report.json"
+        ".lawfirm-os-intake\\matter-linking-hardening-current\\ui-review\\synthetic_qa_review_run_report.json"
       ],
       "notes": [
-        "0 failed steps out of 18."
+        "0 failed steps out of 19."
       ],
       "no_write_boundary_confirmed": true
     },
@@ -53,7 +53,7 @@
       "owner": "qa-reference",
       "state": "pending_review",
       "evidence_refs": [
-        ".lawfirm-os-intake\\le-class-collective-executable-current\\ui-review\\quality\\synthetic_qa_bundle_report.json"
+        ".lawfirm-os-intake\\matter-linking-hardening-current\\ui-review\\quality\\synthetic_qa_bundle_report.json"
       ],
       "notes": [
         "0 missing required, 0 blocked, 12 pending review."
@@ -66,8 +66,8 @@
       "owner": "frontend-review",
       "state": "ready_for_review",
       "evidence_refs": [
-        ".lawfirm-os-intake\\le-class-collective-executable-current\\ui-review\\ui_review_data_bundle.json",
-        ".lawfirm-os-intake\\le-class-collective-executable-current\\ui-review\\ui_review_manifest.json"
+        ".lawfirm-os-intake\\matter-linking-hardening-current\\ui-review\\ui_review_data_bundle.json",
+        ".lawfirm-os-intake\\matter-linking-hardening-current\\ui-review\\ui_review_manifest.json"
       ],
       "notes": [
         "10 detail reports present; 0 write-boundary failures."
@@ -80,9 +80,9 @@
       "owner": "governance-review",
       "state": "ready_for_review",
       "evidence_refs": [
-        ".lawfirm-os-intake\\le-class-collective-executable-current\\ui-review\\synthetic_qa_review_run_report.json",
-        ".lawfirm-os-intake\\le-class-collective-executable-current\\ui-review\\quality\\synthetic_qa_bundle_report.json",
-        ".lawfirm-os-intake\\le-class-collective-executable-current\\ui-review\\ui_review_data_bundle.json"
+        ".lawfirm-os-intake\\matter-linking-hardening-current\\ui-review\\synthetic_qa_review_run_report.json",
+        ".lawfirm-os-intake\\matter-linking-hardening-current\\ui-review\\quality\\synthetic_qa_bundle_report.json",
+        ".lawfirm-os-intake\\matter-linking-hardening-current\\ui-review\\ui_review_data_bundle.json"
       ],
       "notes": [
         "No budget submission, matter opening, Lake/SQLite write, external write, or silent learning is authorized by these artifacts."
@@ -95,7 +95,7 @@
       "owner": "human-or-owner-review",
       "state": "pending_review",
       "evidence_refs": [
-        ".lawfirm-os-intake\\le-class-collective-executable-current\\ui-review\\ui_review_manifest.json"
+        ".lawfirm-os-intake\\matter-linking-hardening-current\\ui-review\\ui_review_manifest.json"
       ],
       "notes": [
         "20 pending gates remain; pending is expected until human/owner review accepts candidate QA evidence."

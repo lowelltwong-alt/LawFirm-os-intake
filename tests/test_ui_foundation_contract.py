@@ -190,7 +190,7 @@ def test_legal_intake_budget_demo_synthetic_qa_review_run_is_no_write(repo_root)
     )
 
     assert report["status"] == "synthetic_qa_review_run_ready"
-    assert report["step_count"] == len(report["steps"]) == 18
+    assert report["step_count"] == len(report["steps"]) == 19
     assert report["failed_step_count"] == 0
     assert report["candidate_only"] is True
     assert report["synthetic_only"] is True
@@ -206,6 +206,7 @@ def test_legal_intake_budget_demo_synthetic_qa_review_run_is_no_write(repo_root)
     assert {
         "budget_coherence",
         "matter_linking_preflight",
+        "matter_linking_weak_only_holdout",
         "synthetic_qa_bundle",
         "ui_review_manifest",
         "ui_review_data_bundle",
@@ -385,6 +386,7 @@ def test_legal_intake_budget_demo_synthetic_confidence_summary_is_no_write(repo_
     assert report["status"] == "synthetic_confidence_summary_ready_for_review"
     assert report["testing_readiness_state"] == "synthetic_qa_ready_pending_review"
     assert report["top_blockers"] == []
+    assert report["qa_step_count"] == 19
     assert report["qa_failed_step_count"] == 0
     assert report["qa_missing_required_artifact_count"] == 0
     assert report["ui_detail_report_count"] == 10
@@ -445,6 +447,35 @@ def test_legal_intake_budget_demo_poc_qa_triage_is_actionable_and_no_write(repo_
     assert report["sqlite_write_performed"] is False
     assert report["external_writes_performed"] is False
     assert report["silent_learning_performed"] is False
+
+
+def test_legal_intake_budget_demo_matter_linking_exposes_weak_and_split_signals(repo_root):
+    report = json.loads(
+        (repo_root / UI_ROOT / "src/fixtures/demo-matter-linking-preflight-report.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    assert report["status"] == "matter_linking_preflight_resolved_candidate_requires_review"
+    assert report["official_matter_number_status"] == "not_available"
+    assert report["cluster_count"] == len(report["clusters"]) == 2
+    assert report["high_evidence_candidate_count"] == 2
+    assert report["weak_only_candidate_count"] == 0
+    assert report["negative_split_evidence_required"] is True
+    assert report["strong_negative_signal_count"] == 2
+    assert report["source_count"] == len(report["source_hashes_by_id"]) == 6
+    assert "same_sender" in report["weak_merge_signal_types"]
+    assert "same_carrier" in report["weak_merge_signal_types"]
+    assert all(
+        cluster["source_bound_strong_support_present"] is True
+        and cluster["weak_only_candidate"] is False
+        and cluster["negative_split_evidence_required"] is True
+        for cluster in report["clusters"]
+    )
+    assert report["budget_amount_output_authorized"] is False
+    assert report["matter_opening_authorized"] is False
+    assert report["lake_write_performed"] is False
+    assert report["sqlite_write_performed"] is False
 
 
 def test_legal_intake_budget_demo_validation_suite_evidence_is_no_write(repo_root):
@@ -641,6 +672,8 @@ def test_legal_intake_budget_ui_disclaims_mutating_authority(repo_root):
     assert "Synthetic QA Review Outcome" in app
     assert "Synthetic QA Review Run" in app
     assert "Matter-Linking Preflight" in app
+    assert "Weak Only" in app
+    assert "Split Required" in app
     assert "QA Gates" in app
     assert "L&amp;E Budget Fact QA" in app
     assert "L&amp;E Executable Coverage" in app
