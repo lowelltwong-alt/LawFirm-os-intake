@@ -61,13 +61,13 @@ def test_labor_employment_executable_driver_binding_maps_fact_gaps_to_budget_dri
     )
 
     assert report.status == "labor_employment_executable_driver_bindings_ready_for_review"
-    assert persisted.case_count == 21
+    assert persisted.case_count == 22
     assert persisted.failed_case_count == 0
-    assert persisted.driver_binding_count == 98
-    assert persisted.source_bound_driver_count == 98
+    assert persisted.driver_binding_count == 104
+    assert persisted.source_bound_driver_count == 104
     assert persisted.unbound_driver_count == 0
     assert persisted.critical_driver_block_count == 19
-    assert persisted.critical_driver_review_only_count == 27
+    assert persisted.critical_driver_review_only_count == 30
     assert persisted.missing_driver_dimensions == []
     assert set(persisted.covered_driver_dimensions) == set(persisted.required_driver_dimensions)
     assert all(check.status == "passed" for check in persisted.checks)
@@ -94,6 +94,25 @@ def test_labor_employment_executable_driver_binding_maps_fact_gaps_to_budget_dri
     assert discrimination_clean["expert_vendor_needs"].matched_fact_ids == [
         "expert_and_vendor_needs"
     ]
+    wage_messy = {
+        binding.driver_dimension: binding
+        for binding in cases["le-wage-hour-messy-thread.executable.v0_1"].driver_bindings
+    }
+    assert set(wage_messy) == {
+        "party_topology",
+        "class_collective_scope",
+        "damages_exposure",
+        "wage_hour_volume",
+        "esi_discovery",
+        "expert_vendor_needs",
+    }
+    assert wage_messy["party_topology"].critical_driver_review_only is True
+    assert wage_messy["class_collective_scope"].critical_driver_review_only is True
+    assert wage_messy["esi_discovery"].critical_driver_review_only is True
+    assert wage_messy["wage_hour_volume"].critical_driver_review_only is False
+    assert wage_messy["expert_vendor_needs"].critical_driver_review_only is False
+    assert wage_messy["wage_hour_volume"].critical_driver_block is False
+    assert cases["le-wage-hour-messy-thread.executable.v0_1"].critical_driver_block_count == 0
     restrictive = {
         binding.driver_dimension: binding
         for binding in cases[
@@ -370,7 +389,7 @@ def test_labor_employment_executable_driver_binding_cli_writes_candidate_report(
 
     assert exit_code == 0
     assert report["status"] == "labor_employment_executable_driver_bindings_ready_for_review"
-    assert report["case_count"] == 21
+    assert report["case_count"] == 22
     assert report["missing_driver_dimensions"] == []
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out

@@ -61,6 +61,42 @@
       ]
     },
     {
+      "binding_case_id": "le-wage-hour-messy-thread.fact-binding.v0_1",
+      "executable_fixture_id": "le-wage-hour-messy-thread.executable.v0_1",
+      "expected_budget_readiness_state": "range_only_pending_human_review",
+      "expected_budget_gate_effect": "allow_range_or_hours_only_pending_review",
+      "expected_budget_treatment": "hours_only_or_broad_range",
+      "fact_bindings": [
+        {
+          "fact_id": "class_collective_or_group_scope",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": ["class or collective scope", "opt-in", "current opt-in"],
+          "reason": "The thread raises class, collective, or opt-in posture but does not confirm the procedural scope."
+        },
+        {
+          "fact_id": "wage_hour_pay_period_and_employee_volume",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": ["18 hourly employees", "42 hourly employees", "52 pay periods", "78 pay periods"],
+          "reason": "The thread contains competing employee and pay-period counts; the bridge must keep them as alternatives for review and not average them."
+        },
+        {
+          "fact_id": "esi_custodians_and_sources",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": ["PrismPay", "ShiftTrack", "HRIS", "payroll custodian"],
+          "reason": "Payroll, timekeeping, HRIS, and custodian sources are identified but remain source-bound review candidates."
+        },
+        {
+          "fact_id": "expert_and_vendor_needs",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": ["payroll damages expert", "timekeeping data vendor"],
+          "reason": "Expert and vendor needs are mentioned as possible, not approved, so expense-sensitive projections remain review-only."
+        }
+      ],
+      "red_team_notes": [
+        "The bridge must not turn conflicting employee counts into a single averaged volume driver, double count duplicate thread text, or approve expert/vendor expenses from source mentions."
+      ]
+    },
+    {
       "binding_case_id": "le-wage-hour-missing-attachment.fact-binding.v0_1",
       "executable_fixture_id": "le-wage-hour-missing-attachment.executable.v0_1",
       "expected_budget_readiness_state": "blocked_missing_critical_facts",

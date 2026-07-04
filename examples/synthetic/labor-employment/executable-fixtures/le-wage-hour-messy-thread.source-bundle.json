@@ -1,0 +1,82 @@
+{
+  "schema_version": "0.1",
+  "bundle_id": "syn-le-wage-hour-messy-thread-001",
+  "data_origin": "synthetic",
+  "contains_real_client_data": false,
+  "contains_real_matter_data": false,
+  "contains_privileged_data": false,
+  "sources": [
+    {
+      "source_id": "syn-le-wage-hour-messy-thread-001",
+      "source_type": "correspondence_dump",
+      "filename": "synthetic_wage_hour_messy_thread.txt",
+      "text": "From: payroll-director@riverbend.example\nTo: intake@synthetic-law.example\nDate: July 4, 2026\nSubject: Wage/hour correspondence dump - conflicting payroll volume\n\nThe current synthetic matter concerns Nora Alvarez and Riverbend Packaging LLC. The current sender says this is a wage/hour matter involving unpaid overtime, meal-period premium issues, waiting-time penalties, and wage-statement violations. Current payroll notes say there are 18 hourly employees at one worksite over 52 pay periods. The quoted operations thread says there may be 42 hourly employees across three worksites over 78 pay periods if temporary packers are included. The class or collective scope is not confirmed. Payroll data is split across PrismPay and ShiftTrack exports, and HRIS and timekeeping custodians may need collection. A payroll damages expert and possible timekeeping data vendor are under consideration but not approved. Treat 18 employees and 42 employees as alternatives for human review; do not average them into one budget driver.\n\n-----Original Message-----\nFrom: operations@riverbend.example\nTo: payroll-director@riverbend.example\nSubject: RE: Alvarez wage/hour numbers\n\nOperations believes the broader group could include 42 hourly employees across three worksites and 78 pay periods if temporary packers are included. The current opt-in or class scope is not confirmed.\n\n-----Original Message-----\nFrom: payroll-custodian@riverbend.example\nTo: operations@riverbend.example\nSubject: RE: Exports and custodians\n\nPlease preserve PrismPay payroll exports, ShiftTrack timekeeping exports, HRIS job-code tables, payroll custodian email, operations manager files, and scheduling exports.",
+      "metadata": {
+        "synthetic": true,
+        "thread_state": "messy_quoted_history"
+      }
+    },
+    {
+      "source_id": "syn-le-wage-hour-messy-thread-duplicate-001",
+      "source_type": "correspondence_dump",
+      "filename": "synthetic_wage_hour_messy_thread_duplicate.txt",
+      "text": "From: payroll-director@riverbend.example\nTo: intake@synthetic-law.example\nDate: July 4, 2026\nSubject: Wage/hour correspondence dump - conflicting payroll volume\n\nThe current synthetic matter concerns Nora Alvarez and Riverbend Packaging LLC. The current sender says this is a wage/hour matter involving unpaid overtime, meal-period premium issues, waiting-time penalties, and wage-statement violations. Current payroll notes say there are 18 hourly employees at one worksite over 52 pay periods. The quoted operations thread says there may be 42 hourly employees across three worksites over 78 pay periods if temporary packers are included. The class or collective scope is not confirmed. Payroll data is split across PrismPay and ShiftTrack exports, and HRIS and timekeeping custodians may need collection. A payroll damages expert and possible timekeeping data vendor are under consideration but not approved. Treat 18 employees and 42 employees as alternatives for human review; do not average them into one budget driver.\n\n-----Original Message-----\nFrom: operations@riverbend.example\nTo: payroll-director@riverbend.example\nSubject: RE: Alvarez wage/hour numbers\n\nOperations believes the broader group could include 42 hourly employees across three worksites and 78 pay periods if temporary packers are included. The current opt-in or class scope is not confirmed.\n\n-----Original Message-----\nFrom: payroll-custodian@riverbend.example\nTo: operations@riverbend.example\nSubject: RE: Exports and custodians\n\nPlease preserve PrismPay payroll exports, ShiftTrack timekeeping exports, HRIS job-code tables, payroll custodian email, operations manager files, and scheduling exports.",
+      "metadata": {
+        "synthetic": true,
+        "thread_state": "duplicate_messy_quoted_history"
+      }
+    }
+  ],
+  "fixture_hints": {
+    "provided_fields": [
+      "employee_claimant_identity",
+      "employer_or_defendant_identity",
+      "claims_and_causes_of_action",
+      "class_collective_or_group_scope",
+      "wage_hour_pay_period_and_employee_volume",
+      "esi_custodians_and_sources",
+      "expert_and_vendor_needs"
+    ],
+    "entities": [
+      {
+        "name": "Nora Alvarez",
+        "role_candidates": [
+          {
+            "role": "claimant",
+            "confidence": 0.78
+          },
+          {
+            "role": "adverse_party",
+            "confidence": 0.58
+          }
+        ]
+      },
+      {
+        "name": "Riverbend Packaging LLC",
+        "role_candidates": [
+          {
+            "role": "employer_or_defendant",
+            "confidence": 0.78
+          },
+          {
+            "role": "prospective_represented_client",
+            "confidence": 0.62
+          }
+        ]
+      },
+      {
+        "name": "payroll director",
+        "role_candidates": [
+          {
+            "role": "payroll_custodian",
+            "confidence": 0.58
+          },
+          {
+            "role": "witness",
+            "confidence": 0.49
+          }
+        ]
+      }
+    ]
+  }
+}

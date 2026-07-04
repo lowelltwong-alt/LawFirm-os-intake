@@ -49,14 +49,14 @@ def test_labor_employment_executable_fact_binding_binds_gaps_without_side_effect
     )
 
     assert report.status == "labor_employment_executable_budget_fact_bindings_ready_for_review"
-    assert persisted.case_count == 21
+    assert persisted.case_count == 22
     assert persisted.failed_case_count == 0
-    assert persisted.fact_binding_count == 72
-    assert persisted.critical_fact_binding_count == 37
+    assert persisted.fact_binding_count == 76
+    assert persisted.critical_fact_binding_count == 39
     assert persisted.missing_critical_fact_count == 15
-    assert persisted.source_present_confirmation_fact_count == 42
+    assert persisted.source_present_confirmation_fact_count == 46
     assert persisted.source_present_unresolved_critical_driver_count == 2
-    assert persisted.evidence_bound_fact_count == 72
+    assert persisted.evidence_bound_fact_count == 76
     assert persisted.exception_bound_fact_count == 24
     assert persisted.missing_policy_fact_count == 0
     assert persisted.missing_source_signal_count == 0
@@ -103,6 +103,31 @@ def test_labor_employment_executable_fact_binding_binds_gaps_without_side_effect
     assert wage_bindings["class_collective_or_group_scope"].binding_state == (
         "source_bound_gap_candidate"
     )
+    wage_messy_bindings = {
+        binding.fact_id: binding
+        for binding in cases["le-wage-hour-messy-thread.executable.v0_1"].fact_bindings
+    }
+    assert set(wage_messy_bindings) == {
+        "class_collective_or_group_scope",
+        "wage_hour_pay_period_and_employee_volume",
+        "esi_custodians_and_sources",
+        "expert_and_vendor_needs",
+    }
+    assert (
+        wage_messy_bindings["class_collective_or_group_scope"].fact_resolution_state
+        == "source_present_needs_confirmation"
+    )
+    assert (
+        wage_messy_bindings["wage_hour_pay_period_and_employee_volume"].fact_resolution_state
+        == "source_present_needs_confirmation"
+    )
+    assert "18 hourly employees" in (
+        wage_messy_bindings["wage_hour_pay_period_and_employee_volume"].matched_source_signal_terms
+    )
+    assert "42 hourly employees" in (
+        wage_messy_bindings["wage_hour_pay_period_and_employee_volume"].matched_source_signal_terms
+    )
+    assert all(binding.blocks_precise_budget is False for binding in wage_messy_bindings.values())
     discrimination_bindings = {
         binding.fact_id: binding
         for binding in cases[
@@ -465,7 +490,7 @@ def test_labor_employment_executable_fact_binding_manifest_is_candidate_only(rep
     assert manifest.lake_write_performed is False
     assert manifest.sqlite_write_performed is False
     assert manifest.external_writes_performed is False
-    assert len(manifest.bindings) == 21
+    assert len(manifest.bindings) == 22
 
 
 def test_labor_employment_executable_fact_binding_blocks_missing_policy_fact(
@@ -552,9 +577,9 @@ def test_labor_employment_executable_fact_binding_cli_writes_report(
 
     assert exit_code == 0
     assert report["status"] == ("labor_employment_executable_budget_fact_bindings_ready_for_review")
-    assert report["case_count"] == 21
-    assert report["fact_binding_count"] == 72
+    assert report["case_count"] == 22
+    assert report["fact_binding_count"] == 76
     assert report["missing_critical_fact_count"] == 15
-    assert report["source_present_confirmation_fact_count"] == 42
+    assert report["source_present_confirmation_fact_count"] == 46
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out

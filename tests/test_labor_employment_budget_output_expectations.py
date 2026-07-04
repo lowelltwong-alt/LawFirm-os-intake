@@ -116,12 +116,12 @@ def test_labor_employment_budget_output_expectations_classifies_every_case(
     cases = {case.executable_fixture_id: case for case in persisted.cases}
 
     assert report.status == "labor_employment_budget_output_expectations_ready_for_review"
-    assert persisted.case_count == 21
+    assert persisted.case_count == 22
     assert persisted.failed_case_count == 0
     assert persisted.blocked_amount_budget_case_count == 11
-    assert persisted.range_or_hours_only_case_count == 3
+    assert persisted.range_or_hours_only_case_count == 4
     assert persisted.candidate_range_after_review_case_count == 7
-    assert persisted.reviewed_nonblocking_case_count == 10
+    assert persisted.reviewed_nonblocking_case_count == 11
     assert persisted.blocked_review_case_count == 11
     assert all(check.status == "passed" for check in persisted.checks)
     assert "candidate_only_budget_review_required" in persisted.candidate_exception_lake_labels
@@ -199,6 +199,15 @@ def test_labor_employment_budget_output_expectations_classifies_every_case(
         cases["le-wage-hour-clean.executable.v0_1"].final_allowed_budget_output
         == "candidate_range_after_review_pending_human_review"
     )
+    assert (
+        cases["le-wage-hour-messy-thread.executable.v0_1"].final_allowed_budget_output
+        == "range_or_hours_only_pending_review"
+    )
+    assert cases[
+        "le-wage-hour-messy-thread.executable.v0_1"
+    ].selected_for_reviewed_nonblocking_slice
+    assert cases["le-wage-hour-messy-thread.executable.v0_1"].block_amount_budget_impact_count == 0
+    assert cases["le-wage-hour-messy-thread.executable.v0_1"].critical_review_only_impact_count == 3
     assert (
         cases["le-epli-carrier-clean.executable.v0_1"].final_allowed_budget_output
         == "candidate_range_after_review_pending_human_review"
@@ -293,11 +302,12 @@ def test_labor_employment_budget_output_expectations_blocks_missing_reviewed_sli
     }
 
     assert report.status == "blocked_by_labor_employment_budget_output_expectations"
-    assert report.failed_case_count == 9
+    assert report.failed_case_count == 10
     assert "source_reports_ready" in failed_checks
     assert "nonblocking_cases_are_reviewed_for_replay" in failed_checks
     assert "le-retaliation-wrongful-termination-messy-thread.executable.v0_1" in failed_cases
     assert "le-retaliation-wrongful-termination-clean.executable.v0_1" in failed_cases
+    assert "le-wage-hour-messy-thread.executable.v0_1" in failed_cases
     assert "review_result_missing" in (
         failed_cases["le-retaliation-wrongful-termination-messy-thread.executable.v0_1"].failure_ids
     )
@@ -335,7 +345,7 @@ def test_labor_employment_budget_output_expectations_cli_writes_report(
 
     assert exit_code == 0
     assert report["status"] == "labor_employment_budget_output_expectations_ready_for_review"
-    assert report["case_count"] == 21
+    assert report["case_count"] == 22
     assert report["blocked_amount_budget_case_count"] == 11
     assert report["candidate_range_after_review_case_count"] == 7
     assert '"budget_amount_output_authorized": false' in captured.out

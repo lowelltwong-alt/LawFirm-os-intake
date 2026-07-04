@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "executable_coverage_report_id": "leexeccoverage_b651c4901d2f00ed4748",
+  "executable_coverage_report_id": "leexeccoverage_974d289e3fe130288302",
   "status": "labor_employment_executable_coverage_ready_for_review",
   "coverage_state": "partial_executable_coverage",
   "pack_id": "le-budget-fixture-family-pack.v0_1",
@@ -8,14 +8,14 @@
   "executable_manifest_id": "le-executable-fixtures-manifest.v0_1",
   "executable_manifest_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\examples\\synthetic\\labor-employment\\labor-employment-executable-fixtures-manifest.json",
   "pack_case_count": 32,
-  "executable_fixture_count": 21,
-  "executable_pack_case_link_count": 22,
-  "covered_pack_case_count": 22,
-  "missing_executable_pack_case_count": 10,
+  "executable_fixture_count": 22,
+  "executable_pack_case_link_count": 23,
+  "covered_pack_case_count": 23,
+  "missing_executable_pack_case_count": 9,
   "covered_family_count": 8,
   "missing_family_count": 0,
-  "covered_family_variant_count": 22,
-  "missing_family_variant_count": 10,
+  "covered_family_variant_count": 23,
+  "missing_family_variant_count": 9,
   "covered_pack_case_ids": [
     "le-discrimination-harassment-clean.v0_1",
     "le-discrimination-harassment-missing-attachment.v0_1",
@@ -23,6 +23,7 @@
     "le-retaliation-wrongful-termination-messy-thread.v0_1",
     "le-retaliation-wrongful-termination-missing-attachment.v0_1",
     "le-wage-hour-clean.v0_1",
+    "le-wage-hour-messy-thread.v0_1",
     "le-wage-hour-missing-attachment.v0_1",
     "le-ada-fmla-clean.v0_1",
     "le-ada-fmla-messy-thread.v0_1",
@@ -44,7 +45,6 @@
     "le-discrimination-harassment-messy-thread.v0_1",
     "le-discrimination-harassment-adversarial.v0_1",
     "le-retaliation-wrongful-termination-adversarial.v0_1",
-    "le-wage-hour-messy-thread.v0_1",
     "le-wage-hour-adversarial.v0_1",
     "le-restrictive-covenant-clean.v0_1",
     "le-restrictive-covenant-messy-thread.v0_1",
@@ -56,7 +56,6 @@
     "discrimination_harassment:messy_thread",
     "discrimination_harassment:adversarial",
     "retaliation_wrongful_termination:adversarial",
-    "wage_hour_flsa_state:messy_thread",
     "wage_hour_flsa_state:adversarial",
     "restrictive_covenant_trade_secret:clean",
     "restrictive_covenant_trade_secret:messy_thread",
@@ -105,18 +104,19 @@
     {
       "family": "wage_hour_flsa_state",
       "pack_case_count": 4,
-      "covered_case_count": 2,
-      "missing_case_count": 2,
+      "covered_case_count": 3,
+      "missing_case_count": 1,
       "covered_variants": [
         "clean",
+        "messy_thread",
         "missing_attachment"
       ],
       "missing_variants": [
-        "messy_thread",
         "adversarial"
       ],
       "executable_fixture_ids": [
         "le-wage-hour-clean.executable.v0_1",
+        "le-wage-hour-messy-thread.executable.v0_1",
         "le-wage-hour-missing-attachment.executable.v0_1"
       ]
     },
@@ -374,8 +374,10 @@
       "pack_case_id": "le-wage-hour-messy-thread.v0_1",
       "family": "wage_hour_flsa_state",
       "variant": "messy_thread",
-      "coverage_state": "missing_executable",
-      "executable_fixture_ids": [],
+      "coverage_state": "covered_executable",
+      "executable_fixture_ids": [
+        "le-wage-hour-messy-thread.executable.v0_1"
+      ],
       "expected_budget_readiness_state": "range_only_pending_human_review",
       "expected_budget_treatment": "hours_only_or_broad_range",
       "missing_critical_fact_ids": [],
@@ -839,5 +841,5 @@
   "sqlite_write_performed": false,
   "external_writes_performed": false,
   "silent_learning_performed": false,
-  "generated_at": "2026-07-04T11:00:57.554574Z"
+  "generated_at": "2026-07-04T11:24:49.682758Z"
 }
