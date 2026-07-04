@@ -87,9 +87,9 @@ def test_labor_employment_blocked_driver_impact_review_explains_blockers(
     cases = {case.executable_fixture_id: case for case in persisted.case_reviews}
 
     assert report.status == "labor_employment_blocked_driver_impacts_ready_for_review"
-    assert persisted.case_count == 26
+    assert persisted.case_count == 27
     assert persisted.blocked_case_count == 13
-    assert persisted.nonblocking_case_count == 13
+    assert persisted.nonblocking_case_count == 14
     assert persisted.blocker_fact_count == 22
     assert persisted.block_amount_budget_impact_count == 22
     assert "source_missing" in persisted.candidate_exception_lake_labels
@@ -268,7 +268,7 @@ def test_labor_employment_blocked_driver_impact_review_cli_writes_packet(
     assert exit_code == 0
     assert report["status"] == "labor_employment_blocked_driver_impacts_ready_for_review"
     assert report["blocked_case_count"] == 13
-    assert report["nonblocking_case_count"] == 13
+    assert report["nonblocking_case_count"] == 14
     assert report["blocker_fact_count"] == 22
     assert report["block_amount_budget_impact_count"] == 22
     assert '"budget_amount_output_authorized": false' in captured.out

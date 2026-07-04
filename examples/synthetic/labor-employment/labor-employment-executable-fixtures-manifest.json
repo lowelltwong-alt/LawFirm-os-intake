@@ -49,6 +49,52 @@
       ]
     },
     {
+      "executable_fixture_id": "le-discrimination-harassment-messy-thread.executable.v0_1",
+      "source_bundle_ref": "examples/synthetic/labor-employment/executable-fixtures/le-discrimination-harassment-messy-thread.source-bundle.json",
+      "linked_pack_case_ids": [
+        "le-discrimination-harassment-messy-thread.v0_1"
+      ],
+      "family": "discrimination_harassment",
+      "variant": "messy_thread",
+      "expected_budget_readiness_state": "range_only_pending_human_review",
+      "expected_budget_gate_effect": "allow_range_or_hours_only_pending_review",
+      "expected_budget_treatment": "candidate_range_budget_after_review",
+      "expected_min_sources": 2,
+      "expected_min_segments": 6,
+      "expected_min_missing_sources": 0,
+      "expected_min_duplicate_sources": 1,
+      "expected_source_signal_terms": [
+        "discrimination",
+        "harassment",
+        "retaliation",
+        "state civil rights agency charge",
+        "right-to-sue deadline candidate",
+        "August 17, 2026",
+        "production supervisor Evan Park",
+        "HR manager Priya Shah",
+        "HR inbox",
+        "Teams chat",
+        "shift schedule export",
+        "Forum and arbitration posture are not provided",
+        "employee handbook and anti-harassment policy file are not provided"
+      ],
+      "expected_preflight_exception_labels": [
+        "duplicate_source_detected",
+        "critic_date_or_deadline_requires_review"
+      ],
+      "expected_budget_fact_gap_ids": [
+        "individual_supervisor_or_manager_defendants",
+        "administrative_exhaustion_and_agency_record",
+        "relevant_employment_timeline",
+        "esi_custodians_and_sources",
+        "forum_removed_and_arbitration_posture",
+        "policy_handbook_contract_documents"
+      ],
+      "red_team_notes": [
+        "Quoted thread history and duplicate correspondence must not inflate witness, ESI, or deadline scope; missing forum and policy facts keep the output candidate-only and review-bound."
+      ]
+    },
+    {
       "executable_fixture_id": "le-wage-hour-clean.executable.v0_1",
       "source_bundle_ref": "examples/synthetic/labor-employment/executable-fixtures/le-wage-hour-clean.source-bundle.json",
       "linked_pack_case_ids": [

@@ -37,6 +37,70 @@
       ]
     },
     {
+      "binding_case_id": "le-discrimination-harassment-messy-thread.fact-binding.v0_1",
+      "executable_fixture_id": "le-discrimination-harassment-messy-thread.executable.v0_1",
+      "expected_budget_readiness_state": "range_only_pending_human_review",
+      "expected_budget_gate_effect": "allow_range_or_hours_only_pending_review",
+      "expected_budget_treatment": "candidate_range_budget_after_review",
+      "fact_bindings": [
+        {
+          "fact_id": "individual_supervisor_or_manager_defendants",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": [
+            "production supervisor Evan Park",
+            "HR manager Priya Shah"
+          ],
+          "reason": "Supervisor and HR manager references are source-present role candidates, but they are not confirmed individual defendants or separate-counsel triggers."
+        },
+        {
+          "fact_id": "administrative_exhaustion_and_agency_record",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": [
+            "state civil rights agency charge",
+            "right-to-sue deadline candidate"
+          ],
+          "reason": "Agency and right-to-sue references are source-bound review facts and deadline candidates, not docketing authority."
+        },
+        {
+          "fact_id": "relevant_employment_timeline",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": [
+            "complained about harassment on March 2, 2026",
+            "right-to-sue deadline candidate may fall on August 17, 2026"
+          ],
+          "reason": "Complaint and deadline dates are timeline candidates that require human review before budget narrowing or docketing."
+        },
+        {
+          "fact_id": "esi_custodians_and_sources",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": [
+            "HR inbox",
+            "Teams chat",
+            "shift schedule export",
+            "supervisor mailbox"
+          ],
+          "reason": "ESI sources are named, but custodian scope and collection volume remain source-bound candidates."
+        },
+        {
+          "fact_id": "forum_removed_and_arbitration_posture",
+          "expected_gap_type": "missing_evidence",
+          "source_signal_terms": ["Forum and arbitration posture are not provided"],
+          "reason": "The thread explicitly says forum and arbitration posture are absent, so this remains a noncritical missing fact for review."
+        },
+        {
+          "fact_id": "policy_handbook_contract_documents",
+          "expected_gap_type": "missing_evidence",
+          "source_signal_terms": [
+            "employee handbook and anti-harassment policy file are not provided"
+          ],
+          "reason": "The source states the handbook and policy file are missing, so policy review cannot narrow the budget."
+        }
+      ],
+      "red_team_notes": [
+        "The bridge must not turn duplicate quoted-history text into extra witnesses, confirmed defendants, docketed deadlines, or policy/arbitration facts."
+      ]
+    },
+    {
       "binding_case_id": "le-wage-hour-clean.fact-binding.v0_1",
       "executable_fixture_id": "le-wage-hour-clean.executable.v0_1",
       "expected_budget_readiness_state": "range_only_pending_human_review",

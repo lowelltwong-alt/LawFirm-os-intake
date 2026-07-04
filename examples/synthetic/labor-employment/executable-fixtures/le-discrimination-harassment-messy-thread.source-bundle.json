@@ -1,0 +1,103 @@
+{
+  "schema_version": "0.1",
+  "bundle_id": "syn-le-discrimination-harassment-messy-thread-001",
+  "data_origin": "synthetic",
+  "contains_real_client_data": false,
+  "contains_real_matter_data": false,
+  "contains_privileged_data": false,
+  "sources": [
+    {
+      "source_id": "syn-le-discrimination-messy-thread-001",
+      "source_type": "correspondence_dump",
+      "filename": "synthetic_discrimination_harassment_messy_thread.txt",
+      "text": "From: intake-referral@synthetic-referral.example\nTo: intake@synthetic-law.example\nDate: July 3, 2026\nSubject: Harassment and discrimination correspondence dump for review\n\nThis synthetic thread concerns Ari Bell and Juniper Textile Works Inc. The current sender says Ari Bell alleges discrimination, harassment, and retaliation involving production supervisor Evan Park and HR manager Priya Shah. A state civil rights agency charge is referenced, and the sender says a right-to-sue deadline candidate may fall on August 17, 2026, but that date is for human deadline review only. The sender identifies HR inbox, Teams chat, shift schedule export, and supervisor mailbox sources. Forum and arbitration posture are not provided. The employee handbook and anti-harassment policy file are not provided. Please keep this as a candidate range after human review.\n\n-----Original Message-----\nFrom: ari.bell@example.invalid\nTo: hr@junipertextile.example\nSubject: Harassment complaint and schedule retaliation\n\nI complained about harassment on March 2, 2026, and then my shifts changed. Evan Park kept making comments and Priya Shah handled the HR response.\n\n-----Original Message-----\nFrom: supervisor@junipertextile.example\nTo: hr@junipertextile.example\nSubject: RE: Bell complaint\n\nThe shift schedule export and Teams chat should be reviewed, but this quoted history is not a fresh sender assertion. Do not double count it as a separate witness list.",
+      "metadata": {
+        "synthetic": true,
+        "thread_state": "messy_quoted_history",
+        "attachment_refs": [
+          "agency-charge-summary.txt",
+          "policy-file-missing.txt"
+        ]
+      }
+    },
+    {
+      "source_id": "syn-le-discrimination-messy-thread-duplicate-001",
+      "source_type": "correspondence_dump",
+      "filename": "synthetic_discrimination_harassment_messy_thread_duplicate.txt",
+      "text": "From: intake-referral@synthetic-referral.example\nTo: intake@synthetic-law.example\nDate: July 3, 2026\nSubject: Harassment and discrimination correspondence dump for review\n\nThis synthetic thread concerns Ari Bell and Juniper Textile Works Inc. The current sender says Ari Bell alleges discrimination, harassment, and retaliation involving production supervisor Evan Park and HR manager Priya Shah. A state civil rights agency charge is referenced, and the sender says a right-to-sue deadline candidate may fall on August 17, 2026, but that date is for human deadline review only. The sender identifies HR inbox, Teams chat, shift schedule export, and supervisor mailbox sources. Forum and arbitration posture are not provided. The employee handbook and anti-harassment policy file are not provided. Please keep this as a candidate range after human review.\n\n-----Original Message-----\nFrom: ari.bell@example.invalid\nTo: hr@junipertextile.example\nSubject: Harassment complaint and schedule retaliation\n\nI complained about harassment on March 2, 2026, and then my shifts changed. Evan Park kept making comments and Priya Shah handled the HR response.\n\n-----Original Message-----\nFrom: supervisor@junipertextile.example\nTo: hr@junipertextile.example\nSubject: RE: Bell complaint\n\nThe shift schedule export and Teams chat should be reviewed, but this quoted history is not a fresh sender assertion. Do not double count it as a separate witness list.",
+      "metadata": {
+        "synthetic": true,
+        "thread_state": "duplicate_messy_quoted_history",
+        "attachment_refs": [
+          "agency-charge-summary.txt",
+          "policy-file-missing.txt"
+        ]
+      }
+    }
+  ],
+  "fixture_hints": {
+    "provided_fields": [
+      "employee_claimant_identity",
+      "employer_or_defendant_identity",
+      "individual_supervisor_or_manager_defendants",
+      "claims_and_causes_of_action",
+      "administrative_exhaustion_and_agency_record",
+      "relevant_employment_timeline",
+      "esi_custodians_and_sources"
+    ],
+    "entities": [
+      {
+        "name": "Ari Bell",
+        "role_candidates": [
+          {
+            "role": "claimant",
+            "confidence": 0.77
+          },
+          {
+            "role": "adverse_party",
+            "confidence": 0.58
+          }
+        ]
+      },
+      {
+        "name": "Juniper Textile Works Inc.",
+        "role_candidates": [
+          {
+            "role": "employer_or_defendant",
+            "confidence": 0.76
+          },
+          {
+            "role": "prospective_represented_client",
+            "confidence": 0.6
+          }
+        ]
+      },
+      {
+        "name": "Evan Park",
+        "role_candidates": [
+          {
+            "role": "supervisor",
+            "confidence": 0.64
+          },
+          {
+            "role": "witness",
+            "confidence": 0.47
+          }
+        ]
+      },
+      {
+        "name": "Priya Shah",
+        "role_candidates": [
+          {
+            "role": "hr_actor",
+            "confidence": 0.61
+          },
+          {
+            "role": "witness",
+            "confidence": 0.48
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -71,12 +71,12 @@ def test_labor_employment_executable_driver_impact_maps_drivers_to_budget_effect
     )
 
     assert report.status == "labor_employment_executable_driver_impacts_ready_for_review"
-    assert persisted.case_count == 26
+    assert persisted.case_count == 27
     assert persisted.failed_case_count == 0
-    assert persisted.impact_item_count == 128
-    assert persisted.source_bound_impact_count == 128
+    assert persisted.impact_item_count == 135
+    assert persisted.source_bound_impact_count == 135
     assert persisted.block_amount_budget_impact_count == 22
-    assert persisted.critical_review_only_impact_count == 39
+    assert persisted.critical_review_only_impact_count == 43
     assert persisted.range_widening_impact_count > 0
     assert persisted.scenario_fork_impact_count > 0
     assert persisted.rate_guideline_review_impact_count > 0
@@ -130,6 +130,26 @@ def test_labor_employment_executable_driver_impact_maps_drivers_to_budget_effect
         "candidate_range_after_review_pending_human_review"
     )
     assert discrimination_clean.block_amount_budget_impact_count == 0
+    discrimination_messy = cases["le-discrimination-harassment-messy-thread.executable.v0_1"]
+    assert discrimination_messy.allowed_budget_output == (
+        "candidate_range_after_review_pending_human_review"
+    )
+    assert discrimination_messy.impact_item_count == 7
+    assert discrimination_messy.block_amount_budget_impact_count == 0
+    assert discrimination_messy.critical_review_only_impact_count == 4
+    assert discrimination_messy.range_widening_impact_count == 7
+    assert discrimination_messy.scenario_fork_impact_count == 2
+    discrimination_messy_impacts = {
+        item.driver_dimension: item for item in discrimination_messy.impact_items
+    }
+    assert "add_scenario_fork" in (
+        discrimination_messy_impacts["administrative_exhaustion"].impact_actions
+    )
+    assert "add_scenario_fork" in (discrimination_messy_impacts["forum_arbitration"].impact_actions)
+    assert "widen_budget_range" in discrimination_messy_impacts["esi_discovery"].impact_actions
+    assert "block_amount_budget" not in (
+        discrimination_messy_impacts["party_topology"].impact_actions
+    )
     class_case = cases["le-class-collective-adversarial.executable.v0_1"]
     assert class_case.allowed_budget_output == "blocked_amount_budget"
     assert class_case.block_amount_budget_impact_count > 0
@@ -356,9 +376,9 @@ def test_labor_employment_executable_driver_impact_cli_writes_candidate_report(
 
     assert exit_code == 0
     assert report["status"] == "labor_employment_executable_driver_impacts_ready_for_review"
-    assert report["case_count"] == 26
-    assert report["impact_item_count"] == 128
-    assert report["critical_review_only_impact_count"] == 39
+    assert report["case_count"] == 27
+    assert report["impact_item_count"] == 135
+    assert report["critical_review_only_impact_count"] == 43
     assert report["missing_impact_policy_dimensions"] == []
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out

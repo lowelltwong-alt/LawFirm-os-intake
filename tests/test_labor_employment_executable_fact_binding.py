@@ -49,14 +49,14 @@ def test_labor_employment_executable_fact_binding_binds_gaps_without_side_effect
     )
 
     assert report.status == "labor_employment_executable_budget_fact_bindings_ready_for_review"
-    assert persisted.case_count == 26
+    assert persisted.case_count == 27
     assert persisted.failed_case_count == 0
-    assert persisted.fact_binding_count == 98
-    assert persisted.critical_fact_binding_count == 52
+    assert persisted.fact_binding_count == 104
+    assert persisted.critical_fact_binding_count == 55
     assert persisted.missing_critical_fact_count == 20
-    assert persisted.source_present_confirmation_fact_count == 61
+    assert persisted.source_present_confirmation_fact_count == 65
     assert persisted.source_present_unresolved_critical_driver_count == 2
-    assert persisted.evidence_bound_fact_count == 98
+    assert persisted.evidence_bound_fact_count == 104
     assert persisted.exception_bound_fact_count == 26
     assert persisted.missing_policy_fact_count == 0
     assert persisted.missing_source_signal_count == 0
@@ -88,6 +88,45 @@ def test_labor_employment_executable_fact_binding_binds_gaps_without_side_effect
     }
     assert discrimination_clean_bindings["expert_and_vendor_needs"].binding_state == (
         "source_bound_gap_candidate"
+    )
+    discrimination_messy_bindings = {
+        binding.fact_id: binding
+        for binding in cases[
+            "le-discrimination-harassment-messy-thread.executable.v0_1"
+        ].fact_bindings
+    }
+    assert set(discrimination_messy_bindings) == {
+        "individual_supervisor_or_manager_defendants",
+        "administrative_exhaustion_and_agency_record",
+        "relevant_employment_timeline",
+        "esi_custodians_and_sources",
+        "forum_removed_and_arbitration_posture",
+        "policy_handbook_contract_documents",
+    }
+    assert (
+        discrimination_messy_bindings[
+            "individual_supervisor_or_manager_defendants"
+        ].fact_resolution_state
+        == "source_present_needs_confirmation"
+    )
+    assert (
+        discrimination_messy_bindings["relevant_employment_timeline"].fact_resolution_state
+        == "source_present_needs_confirmation"
+    )
+    assert (
+        discrimination_messy_bindings["esi_custodians_and_sources"].fact_resolution_state
+        == "source_present_needs_confirmation"
+    )
+    assert (
+        discrimination_messy_bindings["forum_removed_and_arbitration_posture"].fact_resolution_state
+        == "missing_noncritical_fact"
+    )
+    assert (
+        discrimination_messy_bindings["policy_handbook_contract_documents"].fact_resolution_state
+        == "missing_noncritical_fact"
+    )
+    assert all(
+        binding.blocks_precise_budget is False for binding in discrimination_messy_bindings.values()
     )
     wage_bindings = {
         binding.fact_id: binding
@@ -622,7 +661,7 @@ def test_labor_employment_executable_fact_binding_manifest_is_candidate_only(rep
     assert manifest.lake_write_performed is False
     assert manifest.sqlite_write_performed is False
     assert manifest.external_writes_performed is False
-    assert len(manifest.bindings) == 26
+    assert len(manifest.bindings) == 27
 
 
 def test_labor_employment_executable_fact_binding_blocks_missing_policy_fact(
@@ -709,9 +748,9 @@ def test_labor_employment_executable_fact_binding_cli_writes_report(
 
     assert exit_code == 0
     assert report["status"] == ("labor_employment_executable_budget_fact_bindings_ready_for_review")
-    assert report["case_count"] == 26
-    assert report["fact_binding_count"] == 98
+    assert report["case_count"] == 27
+    assert report["fact_binding_count"] == 104
     assert report["missing_critical_fact_count"] == 20
-    assert report["source_present_confirmation_fact_count"] == 61
+    assert report["source_present_confirmation_fact_count"] == 65
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out

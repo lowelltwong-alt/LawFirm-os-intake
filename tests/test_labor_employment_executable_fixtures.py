@@ -31,8 +31,8 @@ def test_labor_employment_executable_fixtures_run_preflight_and_preserve_boundar
     )
 
     assert report.status == "labor_employment_executable_fixtures_ready_for_review"
-    assert persisted.fixture_count == 26
-    assert persisted.preflight_executed_count == 26
+    assert persisted.fixture_count == 27
+    assert persisted.preflight_executed_count == 27
     assert persisted.failed_case_count == 0
     assert persisted.missing_pack_link_count == 0
     assert persisted.missing_source_signal_count == 0
@@ -88,6 +88,23 @@ def test_labor_employment_executable_fixtures_run_preflight_and_preserve_boundar
     assert "critic_date_or_deadline_requires_review" in (
         cases["le-discrimination-harassment-clean.executable.v0_1"].exception_labels
     )
+    discrimination_messy = cases["le-discrimination-harassment-messy-thread.executable.v0_1"]
+    assert discrimination_messy.source_count == 2
+    assert discrimination_messy.segment_count == 30
+    assert discrimination_messy.missing_source_count == 0
+    assert discrimination_messy.duplicate_source_count == 1
+    assert discrimination_messy.expected_budget_treatment == "candidate_range_budget_after_review"
+    assert "duplicate_source_detected" in discrimination_messy.exception_labels
+    assert "critic_date_or_deadline_requires_review" in discrimination_messy.exception_labels
+    assert "critic_role_candidates_ambiguous" in discrimination_messy.exception_labels
+    assert set(discrimination_messy.expected_budget_fact_gap_ids) == {
+        "individual_supervisor_or_manager_defendants",
+        "administrative_exhaustion_and_agency_record",
+        "relevant_employment_timeline",
+        "esi_custodians_and_sources",
+        "forum_removed_and_arbitration_posture",
+        "policy_handbook_contract_documents",
+    }
     assert cases["le-epli-carrier-missing-attachment.executable.v0_1"].missing_source_count == 2
     assert cases["le-epli-carrier-clean.executable.v0_1"].missing_source_count == 0
     assert "critic_role_candidates_ambiguous" in (
@@ -392,7 +409,7 @@ def test_labor_employment_executable_fixtures_cli_writes_candidate_report(
 
     assert exit_code == 0
     assert report["status"] == "labor_employment_executable_fixtures_ready_for_review"
-    assert report["fixture_count"] == 26
-    assert report["preflight_executed_count"] == 26
+    assert report["fixture_count"] == 27
+    assert report["preflight_executed_count"] == 27
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out
