@@ -501,6 +501,46 @@
       ]
     },
     {
+      "executable_fixture_id": "le-retaliation-wrongful-termination-missing-attachment.executable.v0_1",
+      "source_bundle_ref": "examples/synthetic/labor-employment/executable-fixtures/le-retaliation-wrongful-termination-missing-attachment.source-bundle.json",
+      "linked_pack_case_ids": [
+        "le-retaliation-wrongful-termination-missing-attachment.v0_1"
+      ],
+      "family": "retaliation_wrongful_termination",
+      "variant": "missing_attachment",
+      "expected_budget_readiness_state": "blocked_missing_critical_facts",
+      "expected_budget_gate_effect": "block_amount_budget_before_proposal",
+      "expected_budget_treatment": "block_amount_budget",
+      "expected_min_sources": 4,
+      "expected_min_segments": 4,
+      "expected_min_missing_sources": 3,
+      "expected_min_duplicate_sources": 0,
+      "expected_source_signal_terms": [
+        "retaliation",
+        "wrongful termination",
+        "protected activity",
+        "discipline file",
+        "termination letter",
+        "employee handbook",
+        "carrier assignment sheet",
+        "carrier guideline",
+        "approved rate schedule",
+        "insurance-notice mailbox"
+      ],
+      "expected_preflight_exception_labels": [
+        "source_missing"
+      ],
+      "expected_budget_fact_gap_ids": [
+        "prospective_client_payer_carrier_posture",
+        "carrier_guideline_and_rate_source",
+        "policy_handbook_contract_documents",
+        "relevant_employment_timeline"
+      ],
+      "red_team_notes": [
+        "The presence of an insurance-notice mailbox must not confirm insurer, payer, instructing source, represented client, carrier guideline, approved rates, or policy-document contents."
+      ]
+    },
+    {
       "executable_fixture_id": "le-retaliation-wrongful-termination-messy-thread.executable.v0_1",
       "source_bundle_ref": "examples/synthetic/labor-employment/executable-fixtures/le-retaliation-wrongful-termination-messy-thread.source-bundle.json",
       "linked_pack_case_ids": [

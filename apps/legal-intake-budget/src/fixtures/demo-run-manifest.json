@@ -1,5 +1,5 @@
 {
-  "manifestId": "ui_review_manifest_663d697a87db",
+  "manifestId": "ui_review_manifest_55dd0de85b66",
   "generatedAt": "2026-07-04T00:00:00Z",
   "runLabel": "Local intake QA review: full-run",
   "practiceArea": "synthetic_intake",
@@ -27,7 +27,7 @@
       "candidateOnly": true,
       "externalWritesPerformed": false,
       "notes": [
-        "Found preflight\\run_16835cd9f5b64679b8ce131aab46efce\\intake_preflight_packet.json; status=human_intake_review_required."
+        "Found preflight\\run_d68a80b81e6c4db7acec7ccc65d78d07\\intake_preflight_packet.json; status=human_intake_review_required."
       ]
     },
     {

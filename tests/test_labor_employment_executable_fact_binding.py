@@ -49,15 +49,15 @@ def test_labor_employment_executable_fact_binding_binds_gaps_without_side_effect
     )
 
     assert report.status == "labor_employment_executable_budget_fact_bindings_ready_for_review"
-    assert persisted.case_count == 19
+    assert persisted.case_count == 20
     assert persisted.failed_case_count == 0
-    assert persisted.fact_binding_count == 65
-    assert persisted.critical_fact_binding_count == 33
-    assert persisted.missing_critical_fact_count == 12
-    assert persisted.source_present_confirmation_fact_count == 41
+    assert persisted.fact_binding_count == 69
+    assert persisted.critical_fact_binding_count == 36
+    assert persisted.missing_critical_fact_count == 14
+    assert persisted.source_present_confirmation_fact_count == 42
     assert persisted.source_present_unresolved_critical_driver_count == 2
-    assert persisted.evidence_bound_fact_count == 65
-    assert persisted.exception_bound_fact_count == 18
+    assert persisted.evidence_bound_fact_count == 69
+    assert persisted.exception_bound_fact_count == 21
     assert persisted.missing_policy_fact_count == 0
     assert persisted.missing_source_signal_count == 0
     assert persisted.missing_exception_label_count == 0
@@ -233,6 +233,50 @@ def test_labor_employment_executable_fact_binding_binds_gaps_without_side_effect
     assert retaliation_bindings["damages_categories_and_exposure"].required_level == "critical"
     assert retaliation_bindings["anticipated_depositions"].required_level == "critical"
     assert all(binding.blocks_precise_budget is False for binding in retaliation_bindings.values())
+    retaliation_missing_bindings = {
+        binding.fact_id: binding
+        for binding in cases[
+            "le-retaliation-wrongful-termination-missing-attachment.executable.v0_1"
+        ].fact_bindings
+    }
+    assert set(retaliation_missing_bindings) == {
+        "prospective_client_payer_carrier_posture",
+        "carrier_guideline_and_rate_source",
+        "policy_handbook_contract_documents",
+        "relevant_employment_timeline",
+    }
+    assert (
+        retaliation_missing_bindings[
+            "prospective_client_payer_carrier_posture"
+        ].fact_resolution_state
+        == "missing_critical_fact"
+    )
+    assert (
+        retaliation_missing_bindings["carrier_guideline_and_rate_source"].fact_resolution_state
+        == "missing_critical_fact"
+    )
+    assert (
+        retaliation_missing_bindings["policy_handbook_contract_documents"].fact_resolution_state
+        == "missing_noncritical_fact"
+    )
+    assert (
+        retaliation_missing_bindings["relevant_employment_timeline"].fact_resolution_state
+        == "source_present_needs_confirmation"
+    )
+    assert retaliation_missing_bindings[
+        "prospective_client_payer_carrier_posture"
+    ].matched_source_ids == ["syn-le-retaliation-carrier-assignment-missing-001"]
+    assert retaliation_missing_bindings["carrier_guideline_and_rate_source"].matched_source_ids == [
+        "syn-le-retaliation-guideline-rate-missing-001"
+    ]
+    assert retaliation_missing_bindings[
+        "policy_handbook_contract_documents"
+    ].matched_source_ids == ["syn-le-retaliation-discipline-policy-missing-001"]
+    assert all(
+        "source_missing" in binding.matched_exception_labels
+        for fact_id, binding in retaliation_missing_bindings.items()
+        if fact_id != "relevant_employment_timeline"
+    )
     retaliation_messy_bindings = {
         binding.fact_id: binding
         for binding in cases[
@@ -387,7 +431,7 @@ def test_labor_employment_executable_fact_binding_manifest_is_candidate_only(rep
     assert manifest.lake_write_performed is False
     assert manifest.sqlite_write_performed is False
     assert manifest.external_writes_performed is False
-    assert len(manifest.bindings) == 19
+    assert len(manifest.bindings) == 20
 
 
 def test_labor_employment_executable_fact_binding_blocks_missing_policy_fact(
@@ -474,9 +518,9 @@ def test_labor_employment_executable_fact_binding_cli_writes_report(
 
     assert exit_code == 0
     assert report["status"] == ("labor_employment_executable_budget_fact_bindings_ready_for_review")
-    assert report["case_count"] == 19
-    assert report["fact_binding_count"] == 65
-    assert report["missing_critical_fact_count"] == 12
-    assert report["source_present_confirmation_fact_count"] == 41
+    assert report["case_count"] == 20
+    assert report["fact_binding_count"] == 69
+    assert report["missing_critical_fact_count"] == 14
+    assert report["source_present_confirmation_fact_count"] == 42
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out

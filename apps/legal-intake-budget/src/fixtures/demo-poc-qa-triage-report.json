@@ -1,16 +1,16 @@
 {
   "schema_version": "0.1",
-  "poc_qa_triage_report_id": "poc_qa_triage_56707ea3281cc47c",
+  "poc_qa_triage_report_id": "poc_qa_triage_6776af4e1b8a410d",
   "status": "poc_qa_ready_for_review",
-  "source_ui_manifest_id": "ui_review_manifest_26f01d0fc6cd",
-  "source_synthetic_confidence_summary_report_id": "synthetic_confidence_summary_f60eb8f234bd983e",
-  "source_synthetic_qa_review_run_report_id": "syntheticqareviewrun_b1243ae68bb25797",
-  "source_synthetic_qa_blocker_report_id": "synthetic_qa_blocker_report_b31887d4fee62a99",
+  "source_ui_manifest_id": "ui_review_manifest_55dd0de85b66",
+  "source_synthetic_confidence_summary_report_id": "synthetic_confidence_summary_52fe8ba61e3bb0fc",
+  "source_synthetic_qa_review_run_report_id": "syntheticqareviewrun_21fced63d5607c81",
+  "source_synthetic_qa_blocker_report_id": "synthetic_qa_blocker_report_ad0bff1fe68f34ad",
   "source_matter_linking_preflight_report_id": "matterlinkpreflight_b6256d36c7d774ea7124",
   "source_labor_employment_qa_matrix_report_id": "leqamat_dc66065a353db4503c28",
-  "source_blocked_driver_impact_review_report_id": "leblockeddriverimpactreview_1c54e8ddc6aee4a5",
-  "source_budget_output_expectation_report_id": "lebudgetoutputexpect_b65f52495ba484ab",
-  "source_budget_qa_gate_report_id": "lebudgetqagate_9fb19da37ae563d0",
+  "source_blocked_driver_impact_review_report_id": "leblockeddriverimpactreview_9cbfc58d4f7989d6",
+  "source_budget_output_expectation_report_id": "lebudgetoutputexpect_fc446e74653f9968",
+  "source_budget_qa_gate_report_id": "lebudgetqagate_d651b3856aca6b60",
   "source_validation_suite_evidence_report_id": "validation_suite_evidence_15aae7dda9ec0673",
   "item_count": 11,
   "passed_item_count": 3,
@@ -100,7 +100,7 @@
       "category": "labor_employment_budget_facts",
       "priority": "p0",
       "status": "needs_review",
-      "summary": "9 L&E cases block amount budgets until driver facts are resolved.",
+      "summary": "10 L&E cases block amount budgets until driver facts are resolved.",
       "recommended_next_action": "Treat these as the first budget-driver review queue and follow-up action seeds.",
       "evidence_refs": [
         "apps/legal-intake-budget/src/fixtures/demo-labor-employment-blocked-driver-impact-review-report.json"
@@ -122,7 +122,7 @@
       "category": "budget_output",
       "priority": "p0",
       "status": "needs_review",
-      "summary": "9 cases block amount budgets; 7 cases allow candidate ranges after review.",
+      "summary": "10 cases block amount budgets; 7 cases allow candidate ranges after review.",
       "recommended_next_action": "Only consume reviewed nonblocking slices for budget generation; keep blocked cases as follow-up queues.",
       "evidence_refs": [
         "apps/legal-intake-budget/src/fixtures/demo-labor-employment-budget-output-expectations-report.json"
@@ -269,5 +269,5 @@
   "sqlite_write_performed": false,
   "external_writes_performed": false,
   "silent_learning_performed": false,
-  "generated_at": "2026-07-03T00:00:00Z"
+  "generated_at": "2026-07-04T00:00:00Z"
 }

@@ -1,9 +1,9 @@
 {
   "schema_version": "0.1",
-  "synthetic_qa_bundle_report_id": "synthetic_qa_bundle_6d3168889de5",
+  "synthetic_qa_bundle_report_id": "synthetic_qa_bundle_c253f906d2a0",
   "status": "pending_review",
-  "run_root_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run",
-  "out_dir_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality",
+  "run_root_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-missing\\full-run",
+  "out_dir_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-missing\\full-run\\quality",
   "artifact_count": 16,
   "required_artifact_count": 16,
   "missing_required_artifact_count": 0,
@@ -19,8 +19,8 @@
       "present": true,
       "status": "passed",
       "gate_state": "passed",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\budget\\budget_coherence_report.json",
-      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\budget_coherence_report.json",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-missing\\full-run\\budget\\budget_coherence_report.json",
+      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-missing\\full-run\\quality\\budget_coherence_report.json",
       "source_sha256": "sha256:53e9a30bdfd91107d688ddef87079650451aab34d2ece786cab7b9fa4695659f",
       "notes": [
         "Found budget_coherence_report.json; source status=passed; bundle status=passed."
@@ -34,9 +34,9 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\synthetic_fixture_depth_audit_report.json",
-      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\synthetic_fixture_depth_audit_report.json",
-      "source_sha256": "sha256:73e3a7a706d9a47f413d859637dc637b9a092c4ee51bb4039fae70b3fee8fdd7",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-missing\\full-run\\quality\\synthetic_fixture_depth_audit_report.json",
+      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-missing\\full-run\\quality\\synthetic_fixture_depth_audit_report.json",
+      "source_sha256": "sha256:3d0d313feccff5446511541dc05a58ba0dffac4fc16e55a97013b4ea78527943",
       "notes": [
         "Found synthetic_fixture_depth_audit_report.json; source status=synthetic_fixture_depth_ready_for_review; bundle status=pending_review."
       ]
@@ -49,9 +49,9 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\budget_calibration_readiness_report.json",
-      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\budget_calibration_readiness_report.json",
-      "source_sha256": "sha256:078052ad03edb498a04334b8e9cf00fdb05a2d67013797f12d3ebd2ba132fb9b",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-missing\\full-run\\quality\\budget_calibration_readiness_report.json",
+      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-missing\\full-run\\quality\\budget_calibration_readiness_report.json",
+      "source_sha256": "sha256:c0c086acc29e456c08a4845d947da09c5a837af34642dc202f97b28472725152",
       "notes": [
         "Found budget_calibration_readiness_report.json; source status=ready_for_manual_fixture_update_review; bundle status=pending_review."
       ]
@@ -64,9 +64,9 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\labor_employment_qa_matrix_report.json",
-      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\labor_employment_qa_matrix_report.json",
-      "source_sha256": "sha256:e9ff01cc149d181fe324c08df71a9c0f145f45484b5863fd7d92525931439f4e",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-missing\\full-run\\quality\\labor_employment_qa_matrix_report.json",
+      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-missing\\full-run\\quality\\labor_employment_qa_matrix_report.json",
+      "source_sha256": "sha256:1052def5b6b9fb8b1b55d1ca83294b4090df741474b26151bf4672e62aa65dd7",
       "notes": [
         "Found labor_employment_qa_matrix_report.json; source status=labor_employment_qa_matrix_ready_for_review; bundle status=pending_review."
       ]
@@ -79,9 +79,9 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\labor_employment_fixture_family_pack_report.json",
-      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\labor_employment_fixture_family_pack_report.json",
-      "source_sha256": "sha256:220713f350c4c655630c1b546d9961e12a8c02a2b413208e4dfa2c7843f49dc1",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-missing\\full-run\\quality\\labor_employment_fixture_family_pack_report.json",
+      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-missing\\full-run\\quality\\labor_employment_fixture_family_pack_report.json",
+      "source_sha256": "sha256:d1f072a87fe15879ece21dfceadedc83085df8ec310000c88a2e91c8e7c704d0",
       "notes": [
         "Found labor_employment_fixture_family_pack_report.json; source status=labor_employment_fixture_family_pack_ready_for_review; bundle status=pending_review."
       ]
@@ -94,9 +94,9 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\labor_employment_executable_fixtures_report.json",
-      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\labor_employment_executable_fixtures_report.json",
-      "source_sha256": "sha256:9311be0fb757dc95198320ce883296dfcc9ac867aae9b14dff3dd2711c5bb078",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-missing\\full-run\\quality\\labor_employment_executable_fixtures_report.json",
+      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-missing\\full-run\\quality\\labor_employment_executable_fixtures_report.json",
+      "source_sha256": "sha256:5e3e3c4ea76d13f5a3225ee7e63b9eda852d635aa0539d5caee04e6a89a27e8d",
       "notes": [
         "Found labor_employment_executable_fixtures_report.json; source status=labor_employment_executable_fixtures_ready_for_review; bundle status=pending_review."
       ]
@@ -109,9 +109,9 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\labor_employment_executable_coverage_report.json",
-      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\labor_employment_executable_coverage_report.json",
-      "source_sha256": "sha256:df36ec2b7574730b8221acf4f749d53503fc56ede09dd3859b5efaad2f3f5c66",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-missing\\full-run\\quality\\labor_employment_executable_coverage_report.json",
+      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-missing\\full-run\\quality\\labor_employment_executable_coverage_report.json",
+      "source_sha256": "sha256:4644082cfac994cacc8be329cacb09871deb0c6fade86ed8961f003b54d5d45e",
       "notes": [
         "Found labor_employment_executable_coverage_report.json; source status=labor_employment_executable_coverage_ready_for_review; bundle status=pending_review."
       ]
@@ -124,9 +124,9 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\labor_employment_executable_fact_binding_report.json",
-      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\labor_employment_executable_fact_binding_report.json",
-      "source_sha256": "sha256:420dc535bba51df948a04d4c577329b6c1180f6359e69b056694707be7619275",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-missing\\full-run\\quality\\labor_employment_executable_fact_binding_report.json",
+      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-missing\\full-run\\quality\\labor_employment_executable_fact_binding_report.json",
+      "source_sha256": "sha256:d6b461e8aeeb63cb3bb4575b2c22926f02ed5e5af983dbbe15c69a5c1dfbd9af",
       "notes": [
         "Found labor_employment_executable_fact_binding_report.json; source status=labor_employment_executable_budget_fact_bindings_ready_for_review; bundle status=pending_review."
       ]
@@ -139,9 +139,9 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\labor_employment_executable_driver_binding_report.json",
-      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\labor_employment_executable_driver_binding_report.json",
-      "source_sha256": "sha256:444a0936da42f8ae0bb4d330ba3b4c21ae1e73160b08a6b39abb0eabaa688f96",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-missing\\full-run\\quality\\labor_employment_executable_driver_binding_report.json",
+      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-missing\\full-run\\quality\\labor_employment_executable_driver_binding_report.json",
+      "source_sha256": "sha256:2c8275fc6ee8a00607b8a815223ae1f3a5837ffe85b5cabd7607ccf2ae34b716",
       "notes": [
         "Found labor_employment_executable_driver_binding_report.json; source status=labor_employment_executable_driver_bindings_ready_for_review; bundle status=pending_review."
       ]
@@ -154,9 +154,9 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\labor_employment_executable_driver_impact_report.json",
-      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\labor_employment_executable_driver_impact_report.json",
-      "source_sha256": "sha256:bda04c432b9003a8d9785151da52de4c24192f2699db96a3f9630a42118276d8",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-missing\\full-run\\quality\\labor_employment_executable_driver_impact_report.json",
+      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-missing\\full-run\\quality\\labor_employment_executable_driver_impact_report.json",
+      "source_sha256": "sha256:927412dca2ecc15c5175aff1e9f412c9a3ad8ff79b4739eda00504651e164ad7",
       "notes": [
         "Found labor_employment_executable_driver_impact_report.json; source status=labor_employment_executable_driver_impacts_ready_for_review; bundle status=pending_review."
       ]
@@ -169,9 +169,9 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\labor_employment_driver_impact_review_report.json",
-      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\labor_employment_driver_impact_review_report.json",
-      "source_sha256": "sha256:aada4ccdcd91982583abbc2261ed1e9b4c67694ade9cbbfbdf18032047711fa0",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-missing\\full-run\\quality\\labor_employment_driver_impact_review_report.json",
+      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-missing\\full-run\\quality\\labor_employment_driver_impact_review_report.json",
+      "source_sha256": "sha256:4f3e7fbaf13ca19426fdd0c1eeb53abc258d54ff4b2f1de451617a26a7954aa9",
       "notes": [
         "Found labor_employment_driver_impact_review_report.json; source status=labor_employment_driver_impact_review_ready_for_budget_gate_replay; bundle status=pending_review."
       ]
@@ -184,9 +184,9 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\labor_employment_blocked_driver_impact_review_report.json",
-      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\labor_employment_blocked_driver_impact_review_report.json",
-      "source_sha256": "sha256:b8a88abd350262fa2e6c76d49476e6afe9345a9749be9433e849c975866f6e9c",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-missing\\full-run\\quality\\labor_employment_blocked_driver_impact_review_report.json",
+      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-missing\\full-run\\quality\\labor_employment_blocked_driver_impact_review_report.json",
+      "source_sha256": "sha256:218eb3d67f7c6b96c8157407520bb670ff7b60f398654f9be48f572573ccb02c",
       "notes": [
         "Found labor_employment_blocked_driver_impact_review_report.json; source status=labor_employment_blocked_driver_impacts_ready_for_review; bundle status=pending_review."
       ]
@@ -199,9 +199,9 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\labor_employment_budget_output_expectations_report.json",
-      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\labor_employment_budget_output_expectations_report.json",
-      "source_sha256": "sha256:ce9ec76df28396ffe68ccff0e0e7d690dee06f20dee3fc95ec578a7524e91550",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-missing\\full-run\\quality\\labor_employment_budget_output_expectations_report.json",
+      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-missing\\full-run\\quality\\labor_employment_budget_output_expectations_report.json",
+      "source_sha256": "sha256:8322ac571ee2eef572c90015c4ecdefc3ad4aaca9fc0a6e7f3c7fa6678b0c1ac",
       "notes": [
         "Found labor_employment_budget_output_expectations_report.json; source status=labor_employment_budget_output_expectations_ready_for_review; bundle status=pending_review."
       ]
@@ -214,9 +214,9 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\labor_employment_budget_qa_gate_report.json",
-      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\labor_employment_budget_qa_gate_report.json",
-      "source_sha256": "sha256:289b0b699d0d02e36f755b741b876f1dba12964d1b6b1d8c5eeb7257a9ef0626",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-missing\\full-run\\quality\\labor_employment_budget_qa_gate_report.json",
+      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-missing\\full-run\\quality\\labor_employment_budget_qa_gate_report.json",
+      "source_sha256": "sha256:93ee41cc26edc9e44dad27a59f287b60a860951acbc83b273e5b02f94a48a1e4",
       "notes": [
         "Found labor_employment_budget_qa_gate_report.json; source status=labor_employment_budget_qa_gate_ready_for_review; bundle status=pending_review."
       ]
@@ -229,9 +229,9 @@
       "present": true,
       "status": "passed",
       "gate_state": "passed",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\labor_employment_budget_fact_gold_report.json",
-      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\labor_employment_budget_fact_gold_report.json",
-      "source_sha256": "sha256:f506ec32eb4017ae0468025b3ae0173ca19aac4eeb14fbc4ccf6a89d88924229",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-missing\\full-run\\quality\\labor_employment_budget_fact_gold_report.json",
+      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-missing\\full-run\\quality\\labor_employment_budget_fact_gold_report.json",
+      "source_sha256": "sha256:ded6da55d36386f95418878a3f9cf8191335e09409b735009822790fe5c6ec5f",
       "notes": [
         "Found labor_employment_budget_fact_gold_report.json; source status=passed; bundle status=passed."
       ]
@@ -244,16 +244,16 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\matter_linking_qa_gate_report.json",
-      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\matter_linking_qa_gate_report.json",
-      "source_sha256": "sha256:d99665d391dce70580eba53dc2d0c7349f37f49ad46d90dea543cdddd33b6b1d",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-missing\\full-run\\quality\\matter_linking_qa_gate_report.json",
+      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-missing\\full-run\\quality\\matter_linking_qa_gate_report.json",
+      "source_sha256": "sha256:29641e519be758efa617985d358a2f487b3a27324c666a19006dee27e2ad8808",
       "notes": [
         "Found matter_linking_qa_gate_report.json; source status=matter_linking_qa_gate_ready_for_review; bundle status=pending_review."
       ]
     }
   ],
-  "ui_manifest_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\ui_review_manifest.json",
-  "ui_data_bundle_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\ui_review_data_bundle.json",
+  "ui_manifest_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-missing\\full-run\\ui_review_manifest.json",
+  "ui_data_bundle_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-missing\\full-run\\ui_review_data_bundle.json",
   "required_next_actions": [
     "Route pending QA artifacts for human/owner review; do not treat review-ready as calibrated."
   ],

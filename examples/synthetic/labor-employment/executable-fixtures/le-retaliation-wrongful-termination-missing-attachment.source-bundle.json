@@ -1,0 +1,125 @@
+{
+  "schema_version": "0.1",
+  "bundle_id": "syn-le-retaliation-wrongful-termination-missing-attachment-001",
+  "data_origin": "synthetic",
+  "contains_real_client_data": false,
+  "contains_real_matter_data": false,
+  "contains_privileged_data": false,
+  "sources": [
+    {
+      "source_id": "syn-le-retaliation-missing-cover-email-001",
+      "source_type": "email",
+      "filename": "synthetic_retaliation_wrongful_termination_missing_attachments.txt",
+      "text": "From: insurance-notice@synthetic-mailbox.example\nTo: intake@synthetic-law.example\nDate: July 4, 2026\nSubject: Retaliation and wrongful termination packet - missing discipline and carrier files\n\nThe synthetic packet concerns Jordan Lee and Maple Forge Logistics. The cover email says Jordan Lee alleges retaliation and wrongful termination after protected activity about safety complaints. It identifies a safety complaint on May 12, 2026, a discipline meeting on June 2, 2026, and termination on June 10, 2026. The sender says the discipline file, termination letter, employee handbook, carrier assignment sheet, carrier guideline, and approved rate schedule were attached, but the received packet includes only this message and missing-file placeholders. Do not infer the represented client, insurer, payer, instructing source, carrier guideline, approved rates, or policy-document contents from the insurance-notice mailbox alone.",
+      "metadata": {
+        "synthetic": true,
+        "attachment_refs": [
+          "discipline-file.pdf",
+          "termination-letter.pdf",
+          "employee-handbook.pdf",
+          "carrier-assignment-sheet.pdf",
+          "carrier-guideline.pdf",
+          "approved-rate-schedule.pdf"
+        ]
+      }
+    },
+    {
+      "source_id": "syn-le-retaliation-discipline-policy-missing-001",
+      "source_type": "attachment_text",
+      "filename": "discipline-file.pdf",
+      "text": "Synthetic placeholder only: referenced discipline file, termination letter, and employee handbook were not included in the inbound packet.",
+      "metadata": {
+        "synthetic": true,
+        "missing": true,
+        "read_state": "missing",
+        "attachment_refs": [
+          "discipline-file.pdf",
+          "termination-letter.pdf",
+          "employee-handbook.pdf"
+        ]
+      }
+    },
+    {
+      "source_id": "syn-le-retaliation-carrier-assignment-missing-001",
+      "source_type": "attachment_text",
+      "filename": "carrier-assignment-sheet.pdf",
+      "text": "Synthetic placeholder only: referenced carrier assignment sheet was not included in the inbound packet, so insurer, payer, instructing source, represented client, and coverage posture remain unresolved.",
+      "metadata": {
+        "synthetic": true,
+        "missing": true,
+        "read_state": "missing",
+        "attachment_refs": [
+          "carrier-assignment-sheet.pdf"
+        ]
+      }
+    },
+    {
+      "source_id": "syn-le-retaliation-guideline-rate-missing-001",
+      "source_type": "attachment_text",
+      "filename": "carrier-guideline.pdf",
+      "text": "Synthetic placeholder only: referenced carrier guideline and approved rate schedule were not included in the inbound packet.",
+      "metadata": {
+        "synthetic": true,
+        "missing": true,
+        "read_state": "missing",
+        "attachment_refs": [
+          "carrier-guideline.pdf",
+          "approved-rate-schedule.pdf"
+        ]
+      }
+    }
+  ],
+  "fixture_hints": {
+    "provided_fields": [
+      "employee_claimant_identity",
+      "employer_or_defendant_identity",
+      "claims_and_causes_of_action",
+      "relevant_employment_timeline"
+    ],
+    "entities": [
+      {
+        "name": "Jordan Lee",
+        "role_candidates": [
+          {
+            "role": "claimant",
+            "confidence": 0.78
+          },
+          {
+            "role": "adverse_party",
+            "confidence": 0.58
+          },
+          {
+            "role": "former_employee",
+            "confidence": 0.7
+          }
+        ]
+      },
+      {
+        "name": "Maple Forge Logistics",
+        "role_candidates": [
+          {
+            "role": "employer_or_defendant",
+            "confidence": 0.76
+          },
+          {
+            "role": "prospective_represented_client",
+            "confidence": 0.52
+          }
+        ]
+      },
+      {
+        "name": "insurance-notice mailbox",
+        "role_candidates": [
+          {
+            "role": "unresolved_instructing_source_candidate",
+            "confidence": 0.45
+          },
+          {
+            "role": "unknown",
+            "confidence": 0.42
+          }
+        ]
+      }
+    ]
+  }
+}

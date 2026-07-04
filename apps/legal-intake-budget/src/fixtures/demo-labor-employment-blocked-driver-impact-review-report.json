@@ -1,16 +1,16 @@
 {
   "schema_version": "0.1",
-  "blocked_driver_impact_review_report_id": "leblockeddriverimpactreview_1c54e8ddc6aee4a5",
+  "blocked_driver_impact_review_report_id": "leblockeddriverimpactreview_9cbfc58d4f7989d6",
   "status": "labor_employment_blocked_driver_impacts_ready_for_review",
-  "source_fact_binding_report_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\le-executable-fact-binding\\labor_employment_executable_fact_binding_report.json",
-  "source_driver_binding_report_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\le-executable-driver-binding\\labor_employment_executable_driver_binding_report.json",
-  "source_driver_impact_report_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\le-executable-driver-impact\\labor_employment_executable_driver_impact_report.json",
-  "source_driver_impact_report_id": "leexecdriverimpact_aa83e31fdd60b7c30bca",
-  "case_count": 19,
-  "blocked_case_count": 9,
+  "source_fact_binding_report_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-missing\\full-run\\quality\\le-executable-fact-binding\\labor_employment_executable_fact_binding_report.json",
+  "source_driver_binding_report_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-missing\\full-run\\quality\\le-executable-driver-binding\\labor_employment_executable_driver_binding_report.json",
+  "source_driver_impact_report_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-missing\\full-run\\quality\\le-executable-driver-impact\\labor_employment_executable_driver_impact_report.json",
+  "source_driver_impact_report_id": "leexecdriverimpact_39550697238526f6d7a1",
+  "case_count": 20,
+  "blocked_case_count": 10,
   "nonblocking_case_count": 10,
-  "blocker_fact_count": 14,
-  "block_amount_budget_impact_count": 15,
+  "blocker_fact_count": 16,
+  "block_amount_budget_impact_count": 18,
   "candidate_exception_lake_labels": [
     "budget_amount_blocked_pending_labor_employment_driver_review",
     "labor_employment_budget_driver_requires_human_confirmation",
@@ -676,6 +676,150 @@
       "external_writes_performed": false
     },
     {
+      "executable_fixture_id": "le-retaliation-wrongful-termination-missing-attachment.executable.v0_1",
+      "family": "retaliation_wrongful_termination",
+      "variant": "missing_attachment",
+      "allowed_budget_output": "blocked_amount_budget",
+      "block_reason": "Amount-budget output is blocked because one or more critical L&E budget facts remain unresolved or exception-bound.",
+      "block_amount_budget_impact_count": 3,
+      "range_widening_impact_count": 4,
+      "scenario_fork_impact_count": 0,
+      "rate_guideline_review_impact_count": 2,
+      "critical_driver_dimensions": [
+        "carrier_guideline_rate_context",
+        "party_topology",
+        "representation_posture"
+      ],
+      "blocker_fact_count": 2,
+      "blocker_facts": [
+        {
+          "fact_id": "prospective_client_payer_carrier_posture",
+          "required_level": "critical",
+          "binding_state": "source_and_exception_bound_gap_candidate",
+          "fact_resolution_state": "missing_critical_fact",
+          "blocks_precise_budget": true,
+          "reason": "The packet references a carrier assignment sheet but does not include it, so insurance sender identity must not resolve client, payer, carrier, or instructing-source posture.",
+          "budget_effects": [
+            "conflict_seed",
+            "rate_guideline_source",
+            "appeal_path"
+          ],
+          "evidence_ref_count": 2,
+          "source_inventory_ref_count": 1,
+          "matched_source_signal_terms": [
+            "carrier assignment sheet",
+            "represented client",
+            "insurer",
+            "payer",
+            "instructing source"
+          ],
+          "missing_source_signal_terms": [],
+          "matched_exception_labels": [
+            "source_missing"
+          ],
+          "missing_exception_labels": [],
+          "matched_source_ids": [
+            "syn-le-retaliation-carrier-assignment-missing-001"
+          ],
+          "missing_source_ids": [],
+          "unblock_actions": [
+            "collect_or_confirm_unavailable_source:syn-le-retaliation-carrier-assignment-missing-001",
+            "human_confirm_labor_employment_budget_fact:prospective_client_payer_carrier_posture",
+            "human_review_source_bound_fact:prospective_client_payer_carrier_posture",
+            "resolve_exception_label:source_missing"
+          ],
+          "candidate_exception_lake_labels": [
+            "budget_amount_blocked_pending_labor_employment_driver_review",
+            "labor_employment_budget_driver_requires_human_confirmation",
+            "labor_employment_critical_budget_fact_block",
+            "labor_employment_driver_impacts_blocked",
+            "labor_employment_missing_critical_budget_fact",
+            "missing_budget_driver_source_requires_follow_up",
+            "source_missing"
+          ],
+          "candidate_only": true,
+          "synthetic_only": true
+        },
+        {
+          "fact_id": "carrier_guideline_and_rate_source",
+          "required_level": "critical",
+          "binding_state": "source_and_exception_bound_gap_candidate",
+          "fact_resolution_state": "missing_critical_fact",
+          "blocks_precise_budget": true,
+          "reason": "The carrier guideline and approved rate schedule are referenced but missing, so carrier-compliant pricing and rate assumptions remain blocked.",
+          "budget_effects": [
+            "proposed_vs_compliant_projection",
+            "preapproval_exceptions",
+            "appeal_path"
+          ],
+          "evidence_ref_count": 2,
+          "source_inventory_ref_count": 1,
+          "matched_source_signal_terms": [
+            "carrier guideline",
+            "approved rate schedule"
+          ],
+          "missing_source_signal_terms": [],
+          "matched_exception_labels": [
+            "source_missing"
+          ],
+          "missing_exception_labels": [],
+          "matched_source_ids": [
+            "syn-le-retaliation-guideline-rate-missing-001"
+          ],
+          "missing_source_ids": [],
+          "unblock_actions": [
+            "collect_or_confirm_unavailable_source:syn-le-retaliation-guideline-rate-missing-001",
+            "human_confirm_labor_employment_budget_fact:carrier_guideline_and_rate_source",
+            "human_review_source_bound_fact:carrier_guideline_and_rate_source",
+            "resolve_exception_label:source_missing"
+          ],
+          "candidate_exception_lake_labels": [
+            "budget_amount_blocked_pending_labor_employment_driver_review",
+            "labor_employment_budget_driver_requires_human_confirmation",
+            "labor_employment_critical_budget_fact_block",
+            "labor_employment_driver_impacts_blocked",
+            "labor_employment_missing_critical_budget_fact",
+            "missing_budget_driver_source_requires_follow_up",
+            "source_missing"
+          ],
+          "candidate_only": true,
+          "synthetic_only": true
+        }
+      ],
+      "candidate_exception_lake_labels": [
+        "budget_amount_blocked_pending_labor_employment_driver_review",
+        "labor_employment_budget_driver_requires_human_confirmation",
+        "labor_employment_critical_budget_fact_block",
+        "labor_employment_driver_impacts_blocked",
+        "labor_employment_missing_critical_budget_fact",
+        "missing_budget_driver_source_requires_follow_up",
+        "source_missing"
+      ],
+      "unblock_actions": [
+        "collect_or_confirm_unavailable_source:syn-le-retaliation-carrier-assignment-missing-001",
+        "collect_or_confirm_unavailable_source:syn-le-retaliation-guideline-rate-missing-001",
+        "human_confirm_labor_employment_budget_fact:carrier_guideline_and_rate_source",
+        "human_confirm_labor_employment_budget_fact:prospective_client_payer_carrier_posture",
+        "human_review_source_bound_fact:carrier_guideline_and_rate_source",
+        "human_review_source_bound_fact:prospective_client_payer_carrier_posture",
+        "rerun_labor_employment_driver_impact_review_after_corrections",
+        "resolve_exception_label:source_missing"
+      ],
+      "next_review_gates": [
+        "human_labor_employment_budget_driver_review",
+        "append_or_supersede_missing_source_corrections",
+        "rerun_budget_precondition_after_review"
+      ],
+      "candidate_only": true,
+      "synthetic_only": true,
+      "amount_budget_blocked": true,
+      "budget_amount_output_authorized": false,
+      "budget_submission_authorized": false,
+      "lake_write_performed": false,
+      "sqlite_write_performed": false,
+      "external_writes_performed": false
+    },
+    {
       "executable_fixture_id": "le-restrictive-covenant-missing-attachment.executable.v0_1",
       "family": "restrictive_covenant_trade_secret",
       "variant": "missing_attachment",
@@ -1025,9 +1169,9 @@
       "status": "passed",
       "message": "Fact, driver-binding, and driver-impact reports are ready for blocked review.",
       "evidence_refs": [
-        "leexecfactbinding_e65d95ad28e56f7a4349",
-        "leexecdriverbinding_a88571fd7f72f334630b",
-        "leexecdriverimpact_aa83e31fdd60b7c30bca"
+        "leexecfactbinding_9dc0aa4345109e3d4a07",
+        "leexecdriverbinding_63f9af760d715875f9e6",
+        "leexecdriverimpact_39550697238526f6d7a1"
       ],
       "blocking_refs": []
     },
@@ -1042,6 +1186,7 @@
         "le-discrimination-harassment-missing-attachment.executable.v0_1",
         "le-class-collective-missing-attachment.executable.v0_1",
         "le-class-collective-adversarial.executable.v0_1",
+        "le-retaliation-wrongful-termination-missing-attachment.executable.v0_1",
         "le-restrictive-covenant-missing-attachment.executable.v0_1",
         "le-ada-fmla-missing-thread.executable.v0_1",
         "le-ada-fmla-adversarial.executable.v0_1"
@@ -1059,6 +1204,7 @@
         "le-discrimination-harassment-missing-attachment.executable.v0_1",
         "le-class-collective-missing-attachment.executable.v0_1",
         "le-class-collective-adversarial.executable.v0_1",
+        "le-retaliation-wrongful-termination-missing-attachment.executable.v0_1",
         "le-restrictive-covenant-missing-attachment.executable.v0_1",
         "le-ada-fmla-missing-thread.executable.v0_1",
         "le-ada-fmla-adversarial.executable.v0_1"
@@ -1076,6 +1222,7 @@
         "le-discrimination-harassment-missing-attachment.executable.v0_1",
         "le-class-collective-missing-attachment.executable.v0_1",
         "le-class-collective-adversarial.executable.v0_1",
+        "le-retaliation-wrongful-termination-missing-attachment.executable.v0_1",
         "le-restrictive-covenant-missing-attachment.executable.v0_1",
         "le-ada-fmla-missing-thread.executable.v0_1",
         "le-ada-fmla-adversarial.executable.v0_1"
@@ -1093,6 +1240,7 @@
         "le-discrimination-harassment-missing-attachment.executable.v0_1",
         "le-class-collective-missing-attachment.executable.v0_1",
         "le-class-collective-adversarial.executable.v0_1",
+        "le-retaliation-wrongful-termination-missing-attachment.executable.v0_1",
         "le-restrictive-covenant-missing-attachment.executable.v0_1",
         "le-ada-fmla-missing-thread.executable.v0_1",
         "le-ada-fmla-adversarial.executable.v0_1"
@@ -1104,9 +1252,9 @@
       "status": "passed",
       "message": "Blocked review did not authorize budget, matter, Lake, SQLite, external, or learning actions.",
       "evidence_refs": [
-        "leexecfactbinding_e65d95ad28e56f7a4349",
-        "leexecdriverbinding_a88571fd7f72f334630b",
-        "leexecdriverimpact_aa83e31fdd60b7c30bca"
+        "leexecfactbinding_9dc0aa4345109e3d4a07",
+        "leexecdriverbinding_63f9af760d715875f9e6",
+        "leexecdriverimpact_39550697238526f6d7a1"
       ],
       "blocking_refs": []
     }
@@ -1137,5 +1285,5 @@
   "sqlite_write_performed": false,
   "external_writes_performed": false,
   "silent_learning_performed": false,
-  "generated_at": "2026-07-04T10:01:51.116817Z"
+  "generated_at": "2026-07-04T10:33:36.904364Z"
 }

@@ -116,13 +116,13 @@ def test_labor_employment_budget_output_expectations_classifies_every_case(
     cases = {case.executable_fixture_id: case for case in persisted.cases}
 
     assert report.status == "labor_employment_budget_output_expectations_ready_for_review"
-    assert persisted.case_count == 19
+    assert persisted.case_count == 20
     assert persisted.failed_case_count == 0
-    assert persisted.blocked_amount_budget_case_count == 9
+    assert persisted.blocked_amount_budget_case_count == 10
     assert persisted.range_or_hours_only_case_count == 3
     assert persisted.candidate_range_after_review_case_count == 7
     assert persisted.reviewed_nonblocking_case_count == 10
-    assert persisted.blocked_review_case_count == 9
+    assert persisted.blocked_review_case_count == 10
     assert all(check.status == "passed" for check in persisted.checks)
     assert "candidate_only_budget_review_required" in persisted.candidate_exception_lake_labels
     assert "budget_amount_blocked_pending_labor_employment_driver_review" in (
@@ -159,6 +159,14 @@ def test_labor_employment_budget_output_expectations_classifies_every_case(
     assert class_missing.blocked_case_review_present is True
     assert class_missing.block_amount_budget_impact_count == 2
     assert "source_missing" in class_missing.candidate_exception_lake_labels
+    retaliation_missing = cases[
+        "le-retaliation-wrongful-termination-missing-attachment.executable.v0_1"
+    ]
+    assert retaliation_missing.final_allowed_budget_output == "blocked_amount_budget"
+    assert retaliation_missing.amount_budget_blocked is True
+    assert retaliation_missing.blocked_case_review_present is True
+    assert retaliation_missing.block_amount_budget_impact_count == 3
+    assert "source_missing" in retaliation_missing.candidate_exception_lake_labels
 
     nonblocking = cases["le-admin-exhaustion-clean.executable.v0_1"]
     assert (
@@ -321,8 +329,8 @@ def test_labor_employment_budget_output_expectations_cli_writes_report(
 
     assert exit_code == 0
     assert report["status"] == "labor_employment_budget_output_expectations_ready_for_review"
-    assert report["case_count"] == 19
-    assert report["blocked_amount_budget_case_count"] == 9
+    assert report["case_count"] == 20
+    assert report["blocked_amount_budget_case_count"] == 10
     assert report["candidate_range_after_review_case_count"] == 7
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out

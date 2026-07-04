@@ -31,8 +31,8 @@ def test_labor_employment_executable_fixtures_run_preflight_and_preserve_boundar
     )
 
     assert report.status == "labor_employment_executable_fixtures_ready_for_review"
-    assert persisted.fixture_count == 19
-    assert persisted.preflight_executed_count == 19
+    assert persisted.fixture_count == 20
+    assert persisted.preflight_executed_count == 20
     assert persisted.failed_case_count == 0
     assert persisted.missing_pack_link_count == 0
     assert persisted.missing_source_signal_count == 0
@@ -114,6 +114,19 @@ def test_labor_employment_executable_fixtures_run_preflight_and_preserve_boundar
     assert "critic_date_or_deadline_requires_review" in (
         cases["le-retaliation-wrongful-termination-clean.executable.v0_1"].exception_labels
     )
+    retaliation_missing = cases[
+        "le-retaliation-wrongful-termination-missing-attachment.executable.v0_1"
+    ]
+    assert retaliation_missing.source_count == 4
+    assert retaliation_missing.missing_source_count == 3
+    assert retaliation_missing.expected_budget_treatment == "block_amount_budget"
+    assert "source_missing" in retaliation_missing.exception_labels
+    assert set(retaliation_missing.expected_budget_fact_gap_ids) == {
+        "prospective_client_payer_carrier_posture",
+        "carrier_guideline_and_rate_source",
+        "policy_handbook_contract_documents",
+        "relevant_employment_timeline",
+    }
     assert (
         cases[
             "le-retaliation-wrongful-termination-messy-thread.executable.v0_1"
@@ -284,7 +297,7 @@ def test_labor_employment_executable_fixtures_cli_writes_candidate_report(
 
     assert exit_code == 0
     assert report["status"] == "labor_employment_executable_fixtures_ready_for_review"
-    assert report["fixture_count"] == 19
-    assert report["preflight_executed_count"] == 19
+    assert report["fixture_count"] == 20
+    assert report["preflight_executed_count"] == 20
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out
