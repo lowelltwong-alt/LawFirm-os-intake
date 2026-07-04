@@ -129,6 +129,18 @@ range/hours-only pending human review. The report is local candidate QA evidence
 only and does not promote role taxonomies, write Lake/SQLite records, submit
 budgets, open matters, or authorize learning.
 
+Use `python -m lawfirm_os_intake audit-labor-employment-budget-qa-gate
+--budget-output-expectations-report PATH/labor_employment_budget_output_expectations_report.json
+--blocked-driver-impact-review-report PATH/labor_employment_blocked_driver_impact_review_report.json
+--executable-coverage-report PATH/labor_employment_executable_coverage_report.json
+--out-dir PATH/le-budget-qa-gate` to aggregate the L&E budget-output,
+blocked-driver-review, and executable-coverage evidence into
+`labor_employment_budget_qa_gate_report.json`. The gate proves that blocked,
+range/hours-only, and candidate-range budget states are all represented, that
+reviewed nonblocking slices are visible, that all required L&E families are
+covered, and that no budget submission, matter opening, Lake/SQLite write,
+external write, or silent learning occurred.
+
 Use `python -m lawfirm_os_intake audit-matter-linking-preflight --input
 examples/synthetic/upfront/upfront-like-intake-output.example.json --out-dir
 PATH/matter-linking-preflight` to audit an Upfront-like synthetic output before

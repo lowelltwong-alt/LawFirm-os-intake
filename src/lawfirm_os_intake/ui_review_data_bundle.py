@@ -113,6 +113,13 @@ DETAIL_REPORT_SPECS = [
         file_name="labor_employment_budget_output_expectations_report.json",
         renderer="LaborEmploymentBudgetOutputExpectationsPanel",
     ),
+    UIReviewDetailSpec(
+        detail_report_id="labor-employment-budget-qa-gate",
+        label="L&E Budget QA Gate",
+        report_kind="labor_employment_budget_qa_gate",
+        file_name="labor_employment_budget_qa_gate_report.json",
+        renderer="LaborEmploymentBudgetQAGatePanel",
+    ),
 ]
 
 

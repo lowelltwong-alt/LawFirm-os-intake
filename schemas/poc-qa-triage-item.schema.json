@@ -12,6 +12,7 @@
         "matter_linking",
         "labor_employment_budget_facts",
         "budget_output",
+        "budget_qa_gate",
         "public_data_boundary",
         "production_boundary"
       ],

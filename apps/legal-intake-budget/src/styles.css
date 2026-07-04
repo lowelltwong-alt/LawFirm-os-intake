@@ -346,6 +346,29 @@ code {
   font-size: 0.82rem;
 }
 
+.budget-bucket-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 14px 0;
+}
+
+.budget-bucket {
+  display: grid;
+  gap: 10px;
+  min-height: 112px;
+  padding: 12px;
+  border: 1px solid #dde4d8;
+  border-radius: 6px;
+  background: #fbfcfa;
+}
+
+.budget-bucket > strong {
+  color: #1f2a22;
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
 .fixture-evidence-stack {
   display: grid;
   gap: 8px;
@@ -1008,6 +1031,10 @@ td:nth-child(4) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .budget-bucket-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .matrix-summary {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1027,6 +1054,10 @@ td:nth-child(4) {
   .boundary-grid,
   .coverage-family-grid,
   .fixture-family-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .budget-bucket-grid {
     grid-template-columns: 1fr;
   }
 

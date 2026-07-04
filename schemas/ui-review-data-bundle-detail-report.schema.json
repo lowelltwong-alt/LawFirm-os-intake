@@ -22,7 +22,8 @@
         "labor_employment_qa_matrix",
         "labor_employment_executable_coverage",
         "labor_employment_blocked_driver_impact_review",
-        "labor_employment_budget_output_expectations"
+        "labor_employment_budget_output_expectations",
+        "labor_employment_budget_qa_gate"
       ],
       "title": "Report Kind",
       "type": "string"

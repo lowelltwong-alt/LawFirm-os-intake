@@ -235,6 +235,13 @@ ARTIFACT_SPECS = [
         "blocked",
     ),
     ArtifactSpec(
+        "labor-employment-budget-qa-gate",
+        "L&E Budget QA Gate",
+        "labor_employment_budget_qa_gate_report.json",
+        "qa-reference",
+        "blocked",
+    ),
+    ArtifactSpec(
         "labor-employment-budget-fact-gold",
         "L&E Budget Fact Gold",
         "labor_employment_budget_fact_gold_report.json",
@@ -432,6 +439,13 @@ QUALITY_GATE_SPECS = {
         "labor_employment_budget_output_expectations_report.json",
         "qa-reference",
         "Every executable L&E case must have one allowed budget-output state, next gates, and candidate Lake labels before budget QA can rely on it.",
+        "blocked",
+    ),
+    "labor_employment_budget_qa_gate": (
+        "L&E Budget QA Gate",
+        "labor_employment_budget_qa_gate_report.json",
+        "qa-reference",
+        "L&E budget-output, blocked-driver-review, and executable-coverage evidence must be aggregated before the UI treats budget QA as review-ready.",
         "blocked",
     ),
     "labor_employment_budget_fact_gold": (

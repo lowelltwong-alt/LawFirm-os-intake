@@ -1,0 +1,33 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "output_state": {
+      "enum": [
+        "blocked_amount_budget",
+        "range_or_hours_only_pending_review",
+        "candidate_range_after_review_pending_human_review"
+      ],
+      "title": "Output State",
+      "type": "string"
+    },
+    "case_count": {
+      "minimum": 0,
+      "title": "Case Count",
+      "type": "integer"
+    },
+    "executable_fixture_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Executable Fixture Ids",
+      "type": "array"
+    }
+  },
+  "required": [
+    "output_state",
+    "case_count",
+    "executable_fixture_ids"
+  ],
+  "title": "LaborEmploymentBudgetQAGateBucket",
+  "type": "object"
+}

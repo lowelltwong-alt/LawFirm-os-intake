@@ -18,6 +18,10 @@ from .labor_employment_budget_output_expectations import (
     LABOR_EMPLOYMENT_BUDGET_OUTPUT_EXPECTATION_REPORT_FILENAME,
     run_labor_employment_budget_output_expectations_audit,
 )
+from .labor_employment_budget_qa_gate import (
+    LABOR_EMPLOYMENT_BUDGET_QA_GATE_REPORT_FILENAME,
+    run_labor_employment_budget_qa_gate,
+)
 from .labor_employment_driver_impact_review import (
     LABOR_EMPLOYMENT_DRIVER_IMPACT_REVIEW_REPORT_FILENAME,
     run_labor_employment_driver_impact_review,
@@ -425,6 +429,29 @@ def run_synthetic_qa_review_run(
         )
     )
 
+    budget_qa_gate, budget_qa_gate_dir = run_labor_employment_budget_qa_gate(
+        budget_output_expectations_report_path=output_expectations_ref,
+        blocked_driver_impact_review_report_path=(
+            blocked_review_dir / LABOR_EMPLOYMENT_BLOCKED_DRIVER_IMPACT_REVIEW_REPORT_FILENAME
+        ),
+        executable_coverage_report_path=(
+            coverage_dir / LABOR_EMPLOYMENT_EXECUTABLE_COVERAGE_REPORT_FILENAME
+        ),
+        out_dir=quality_dir / "le-budget-qa-gate",
+        generated_at=generated_at,
+    )
+    budget_qa_gate_ref = budget_qa_gate_dir / LABOR_EMPLOYMENT_BUDGET_QA_GATE_REPORT_FILENAME
+    steps.append(
+        _step(
+            "labor_employment_budget_qa_gate",
+            "L&E Budget QA Gate",
+            budget_qa_gate.status,
+            budget_qa_gate_ref,
+            budget_qa_gate.status == "labor_employment_budget_qa_gate_ready_for_review",
+            "L&E budget-output states are aggregated into a candidate-only QA gate.",
+        )
+    )
+
     gold, gold_dir = run_labor_employment_budget_fact_gold_validation(
         gold_path=root / LE_BUDGET_FACT_GOLD_REF,
         repo_root=root,
@@ -456,6 +483,7 @@ def run_synthetic_qa_review_run(
         driver_review_dir / LABOR_EMPLOYMENT_DRIVER_IMPACT_REVIEW_REPORT_FILENAME,
         blocked_review_dir / LABOR_EMPLOYMENT_BLOCKED_DRIVER_IMPACT_REVIEW_REPORT_FILENAME,
         output_expectations_ref,
+        budget_qa_gate_ref,
         gold_dir / LABOR_EMPLOYMENT_BUDGET_FACT_GOLD_REPORT_FILENAME,
     ]:
         _stage_for_bundle(source_path, quality_dir)

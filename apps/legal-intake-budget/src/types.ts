@@ -30,7 +30,8 @@ export type UIReviewDataBundleReportKind =
   | "labor_employment_qa_matrix"
   | "labor_employment_executable_coverage"
   | "labor_employment_blocked_driver_impact_review"
-  | "labor_employment_budget_output_expectations";
+  | "labor_employment_budget_output_expectations"
+  | "labor_employment_budget_qa_gate";
 
 export type MatterLinkingPreflightCluster = {
   cluster_id: string;
@@ -518,6 +519,7 @@ export type POCQATriageItem = {
     | "matter_linking"
     | "labor_employment_budget_facts"
     | "budget_output"
+    | "budget_qa_gate"
     | "public_data_boundary"
     | "production_boundary";
   priority: "p0" | "p1" | "p2" | "watch";
@@ -540,6 +542,7 @@ export type POCQATriageReport = {
   source_labor_employment_qa_matrix_report_id: string;
   source_blocked_driver_impact_review_report_id: string;
   source_budget_output_expectation_report_id: string;
+  source_budget_qa_gate_report_id: string;
   source_validation_suite_evidence_report_id?: string | null;
   item_count: number;
   passed_item_count: number;
@@ -1033,6 +1036,81 @@ export type LaborEmploymentBudgetOutputExpectationReport = {
   candidate_exception_lake_labels: string[];
   cases: LaborEmploymentBudgetOutputExpectationCase[];
   checks: LaborEmploymentBlockedDriverImpactCheck[];
+  required_next_gates: string[];
+  candidate_only: boolean;
+  non_authoritative: boolean;
+  synthetic_only: boolean;
+  human_review_required: boolean;
+  not_authorized_for_external_write: boolean;
+  not_authorized_for_lake_write: boolean;
+  not_authorized_for_sqlite_write: boolean;
+  not_authorized_for_budget_submission: boolean;
+  not_authorized_for_matter_opening: boolean;
+  not_authorized_for_calibration: boolean;
+  budget_amount_output_authorized: boolean;
+  budget_submission_authorized: boolean;
+  conflict_conclusion_emitted: boolean;
+  matter_opening_authorized: boolean;
+  training_pipeline_created: boolean;
+  lake_write_performed: boolean;
+  sqlite_write_performed: boolean;
+  external_writes_performed: boolean;
+  silent_learning_performed: boolean;
+  generated_at: string;
+};
+
+export type LaborEmploymentBudgetQAGateBucket = {
+  output_state: LaborEmploymentAllowedBudgetOutput;
+  case_count: number;
+  executable_fixture_ids: string[];
+};
+
+export type LaborEmploymentBudgetQAGateCheck = {
+  check_id: string;
+  status: "passed" | "failed";
+  message: string;
+  evidence_refs: string[];
+  blocking_refs: string[];
+};
+
+export type LaborEmploymentBudgetQAGateReport = {
+  schema_version: string;
+  budget_qa_gate_report_id: string;
+  status:
+    | "labor_employment_budget_qa_gate_ready_for_review"
+    | "blocked_by_labor_employment_budget_qa_gate";
+  source_budget_output_expectations_report_ref: string;
+  source_budget_output_expectations_report_id: string;
+  source_budget_output_expectations_report_status: string;
+  source_blocked_driver_impact_review_report_ref: string;
+  source_blocked_driver_impact_review_report_id: string;
+  source_blocked_driver_impact_review_report_status: string;
+  source_executable_coverage_report_ref: string;
+  source_executable_coverage_report_id: string;
+  source_executable_coverage_report_status: string;
+  source_executable_coverage_state: string;
+  case_count: number;
+  executable_fixture_count: number;
+  covered_pack_case_count: number;
+  missing_executable_pack_case_count: number;
+  blocked_amount_budget_case_count: number;
+  range_or_hours_only_case_count: number;
+  candidate_range_after_review_case_count: number;
+  reviewed_nonblocking_case_count: number;
+  blocked_review_case_count: number;
+  required_family_count: number;
+  covered_required_family_count: number;
+  blocked_case_ids: string[];
+  range_or_hours_only_case_ids: string[];
+  candidate_range_after_review_case_ids: string[];
+  reviewed_nonblocking_case_ids: string[];
+  missing_blocked_review_case_ids: string[];
+  missing_nonblocking_review_case_ids: string[];
+  required_families_present: string[];
+  required_families_missing: string[];
+  output_state_buckets: LaborEmploymentBudgetQAGateBucket[];
+  checks: LaborEmploymentBudgetQAGateCheck[];
+  candidate_exception_lake_labels: string[];
   required_next_gates: string[];
   candidate_only: boolean;
   non_authoritative: boolean;

@@ -28,12 +28,17 @@ from lawfirm_os_intake.labor_employment_blocked_driver_impact_review import (
     run_labor_employment_blocked_driver_impact_review,
 )
 from lawfirm_os_intake.labor_employment_budget_output_expectations import (
+    LABOR_EMPLOYMENT_BUDGET_OUTPUT_EXPECTATION_REPORT_FILENAME,
     run_labor_employment_budget_output_expectations_audit,
+)
+from lawfirm_os_intake.labor_employment_budget_qa_gate import (
+    run_labor_employment_budget_qa_gate,
 )
 from lawfirm_os_intake.labor_employment_budget_fact_gold import (
     run_labor_employment_budget_fact_gold_validation,
 )
 from lawfirm_os_intake.labor_employment_executable_coverage import (
+    LABOR_EMPLOYMENT_EXECUTABLE_COVERAGE_REPORT_FILENAME,
     run_labor_employment_executable_coverage_audit,
 )
 from lawfirm_os_intake.labor_employment_fixture_family_pack import (
@@ -209,7 +214,7 @@ def test_starter_pack_allows_synthetic_qa_bundle_to_reach_pending_review(
         ),
         out_dir=run_root / "quality" / "le-blocked-driver-impact-review",
     )
-    run_labor_employment_budget_output_expectations_audit(
+    _, output_expectations_run_dir = run_labor_employment_budget_output_expectations_audit(
         driver_impact_report_path=(
             executable_driver_impact_run_dir
             / LABOR_EMPLOYMENT_EXECUTABLE_DRIVER_IMPACT_REPORT_FILENAME
@@ -222,6 +227,23 @@ def test_starter_pack_allows_synthetic_qa_bundle_to_reach_pending_review(
             / LABOR_EMPLOYMENT_BLOCKED_DRIVER_IMPACT_REVIEW_REPORT_FILENAME
         ),
         out_dir=run_root / "quality" / "le-budget-output-expectations",
+    )
+    run_labor_employment_budget_qa_gate(
+        budget_output_expectations_report_path=(
+            output_expectations_run_dir / LABOR_EMPLOYMENT_BUDGET_OUTPUT_EXPECTATION_REPORT_FILENAME
+        ),
+        blocked_driver_impact_review_report_path=(
+            blocked_driver_impact_review_run_dir
+            / LABOR_EMPLOYMENT_BLOCKED_DRIVER_IMPACT_REVIEW_REPORT_FILENAME
+        ),
+        executable_coverage_report_path=(
+            run_root
+            / "quality"
+            / "le-executable-coverage"
+            / LABOR_EMPLOYMENT_EXECUTABLE_COVERAGE_REPORT_FILENAME
+        ),
+        out_dir=run_root / "quality" / "le-budget-qa-gate",
+        generated_at="2026-07-02T00:00:00Z",
     )
     run_labor_employment_budget_fact_gold_validation(
         gold_path=repo_root / "examples/synthetic/gold/labor-employment-budget-fact-gold.json",
@@ -261,5 +283,6 @@ def test_starter_pack_allows_synthetic_qa_bundle_to_reach_pending_review(
     assert gates["labor_employment_driver_impact_review"]["status"] == "pending_review"
     assert gates["labor_employment_blocked_driver_impact_review"]["status"] == "pending_review"
     assert gates["labor_employment_budget_output_expectations"]["status"] == "pending_review"
+    assert gates["labor_employment_budget_qa_gate"]["status"] == "pending_review"
     assert gates["labor_employment_budget_fact_gold"]["status"] == "passed"
     assert ui_manifest["overallStatus"] == "blocked"

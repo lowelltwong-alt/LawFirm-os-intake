@@ -14,6 +14,7 @@
             "matter_linking",
             "labor_employment_budget_facts",
             "budget_output",
+            "budget_qa_gate",
             "public_data_boundary",
             "production_boundary"
           ],
@@ -124,6 +125,10 @@
     },
     "source_budget_output_expectation_report_id": {
       "title": "Source Budget Output Expectation Report Id",
+      "type": "string"
+    },
+    "source_budget_qa_gate_report_id": {
+      "title": "Source Budget Qa Gate Report Id",
       "type": "string"
     },
     "source_validation_suite_evidence_report_id": {
@@ -323,6 +328,7 @@
     "source_labor_employment_qa_matrix_report_id",
     "source_blocked_driver_impact_review_report_id",
     "source_budget_output_expectation_report_id",
+    "source_budget_qa_gate_report_id",
     "item_count",
     "passed_item_count",
     "needs_review_item_count",

@@ -6,6 +6,7 @@ from typing import Any
 from .models import (
     LaborEmploymentBlockedDriverImpactReviewReport,
     LaborEmploymentBudgetOutputExpectationReport,
+    LaborEmploymentBudgetQAGateReport,
     LaborEmploymentQAMatrixReport,
     MatterLinkingPreflightReport,
     POCQATriageItem,
@@ -105,6 +106,7 @@ def build_poc_qa_triage_report(
     labor_employment_qa_matrix_path: str | Path,
     blocked_driver_impact_review_path: str | Path,
     budget_output_expectations_path: str | Path,
+    budget_qa_gate_path: str | Path,
     validation_suite_evidence_path: str | Path | None = None,
     repo_root: str | Path | None = None,
     generated_at: str | None = None,
@@ -120,6 +122,7 @@ def build_poc_qa_triage_report(
         "matrix": Path(labor_employment_qa_matrix_path),
         "blocked_driver": Path(blocked_driver_impact_review_path),
         "budget_output": Path(budget_output_expectations_path),
+        "budget_qa_gate": Path(budget_qa_gate_path),
     }
     if validation_suite_evidence_path is not None:
         paths["validation"] = Path(validation_suite_evidence_path)
@@ -139,6 +142,9 @@ def build_poc_qa_triage_report(
     )
     budget_output = LaborEmploymentBudgetOutputExpectationReport.model_validate(
         load_json(paths["budget_output"])
+    )
+    budget_qa_gate = LaborEmploymentBudgetQAGateReport.model_validate(
+        load_json(paths["budget_qa_gate"])
     )
     validation_evidence = (
         ValidationSuiteEvidenceReport.model_validate(load_json(paths["validation"]))
@@ -337,6 +343,36 @@ def build_poc_qa_triage_report(
             candidate_exception_lake_labels=list(budget_output.candidate_exception_lake_labels),
         ),
         _item(
+            item_id="labor_employment_budget_qa_gate_ready",
+            category="budget_qa_gate",
+            priority="p0",
+            status=(
+                "needs_review"
+                if budget_qa_gate.status == "labor_employment_budget_qa_gate_ready_for_review"
+                and all(check.status == "passed" for check in budget_qa_gate.checks)
+                and budget_qa_gate.source_budget_output_expectations_report_id
+                == budget_output.budget_output_expectation_report_id
+                and budget_qa_gate.source_blocked_driver_impact_review_report_id
+                == blocked_driver.blocked_driver_impact_review_report_id
+                and budget_qa_gate.blocked_amount_budget_case_count
+                == budget_output.blocked_amount_budget_case_count
+                and budget_qa_gate.range_or_hours_only_case_count
+                == budget_output.range_or_hours_only_case_count
+                and budget_qa_gate.candidate_range_after_review_case_count
+                == budget_output.candidate_range_after_review_case_count
+                and _all_no_write(budget_qa_gate)
+                else "blocked"
+            ),
+            summary=(
+                "Aggregate L&E budget QA gate is ready and directly ties output, blocked-driver, and coverage evidence."
+            ),
+            recommended_next_action=(
+                "Use this aggregate gate as the top-level budget QA checkpoint before fixture expansion, benchmark replay, or UI review."
+            ),
+            evidence_refs=[refs["budget_qa_gate"]],
+            candidate_exception_lake_labels=list(budget_qa_gate.candidate_exception_lake_labels),
+        ),
+        _item(
             item_id="public_data_boundary_not_runtime",
             category="public_data_boundary",
             priority="watch",
@@ -463,6 +499,7 @@ def build_poc_qa_triage_report(
         source_budget_output_expectation_report_id=(
             budget_output.budget_output_expectation_report_id
         ),
+        source_budget_qa_gate_report_id=budget_qa_gate.budget_qa_gate_report_id,
         source_validation_suite_evidence_report_id=(
             validation_evidence.validation_suite_evidence_report_id
             if validation_evidence is not None
@@ -513,6 +550,7 @@ def run_poc_qa_triage_report(
     labor_employment_qa_matrix_path: str | Path,
     blocked_driver_impact_review_path: str | Path,
     budget_output_expectations_path: str | Path,
+    budget_qa_gate_path: str | Path,
     validation_suite_evidence_path: str | Path | None = None,
     repo_root: str | Path | None = None,
     generated_at: str | None = None,
@@ -527,6 +565,7 @@ def run_poc_qa_triage_report(
         labor_employment_qa_matrix_path=labor_employment_qa_matrix_path,
         blocked_driver_impact_review_path=blocked_driver_impact_review_path,
         budget_output_expectations_path=budget_output_expectations_path,
+        budget_qa_gate_path=budget_qa_gate_path,
         validation_suite_evidence_path=validation_suite_evidence_path,
         repo_root=repo_root,
         generated_at=generated_at,

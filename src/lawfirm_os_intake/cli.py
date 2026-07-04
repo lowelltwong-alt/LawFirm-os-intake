@@ -93,6 +93,7 @@ from .labor_employment_blocked_driver_impact_review import (
 from .labor_employment_budget_output_expectations import (
     run_labor_employment_budget_output_expectations_audit,
 )
+from .labor_employment_budget_qa_gate import run_labor_employment_budget_qa_gate
 from .labor_employment_executable_fixtures import (
     run_labor_employment_executable_fixture_audit,
 )
@@ -302,6 +303,7 @@ def _parser() -> argparse.ArgumentParser:
     poc_qa_triage.add_argument("--labor-employment-qa-matrix", required=True)
     poc_qa_triage.add_argument("--blocked-driver-impact-review", required=True)
     poc_qa_triage.add_argument("--budget-output-expectations", required=True)
+    poc_qa_triage.add_argument("--budget-qa-gate", required=True)
     poc_qa_triage.add_argument("--validation-suite-evidence")
     poc_qa_triage.add_argument("--out-dir", required=True)
     poc_qa_triage.add_argument("--repo-root", default=".")
@@ -614,6 +616,34 @@ def _parser() -> argparse.ArgumentParser:
         help="Path to labor_employment_blocked_driver_impact_review_report.json.",
     )
     le_budget_output_expectations.add_argument("--out-dir", required=True)
+
+    le_budget_qa_gate = sub.add_parser(
+        "audit-labor-employment-budget-qa-gate",
+        help=(
+            "Aggregate L&E budget-output, blocked-driver-review, and executable "
+            "coverage evidence into one candidate-only budget QA gate."
+        ),
+    )
+    le_budget_qa_gate.add_argument(
+        "--budget-output-expectations-report",
+        required=True,
+        help="Path to labor_employment_budget_output_expectations_report.json.",
+    )
+    le_budget_qa_gate.add_argument(
+        "--blocked-driver-impact-review-report",
+        required=True,
+        help="Path to labor_employment_blocked_driver_impact_review_report.json.",
+    )
+    le_budget_qa_gate.add_argument(
+        "--executable-coverage-report",
+        required=True,
+        help="Path to labor_employment_executable_coverage_report.json.",
+    )
+    le_budget_qa_gate.add_argument("--out-dir", required=True)
+    le_budget_qa_gate.add_argument(
+        "--generated-at",
+        help="Optional fixed timestamp for deterministic tests and replayed reports.",
+    )
 
     budget_review = sub.add_parser(
         "record-budget-review",
@@ -1842,6 +1872,7 @@ def main(argv: list[str] | None = None) -> int:
                 labor_employment_qa_matrix_path=args.labor_employment_qa_matrix,
                 blocked_driver_impact_review_path=args.blocked_driver_impact_review,
                 budget_output_expectations_path=args.budget_output_expectations,
+                budget_qa_gate_path=args.budget_qa_gate,
                 validation_suite_evidence_path=args.validation_suite_evidence,
                 out_dir=args.out_dir,
                 repo_root=args.repo_root,
@@ -2346,6 +2377,51 @@ def main(argv: list[str] | None = None) -> int:
                 if report.status == "labor_employment_budget_output_expectations_ready_for_review"
                 else 2
             )
+
+        if args.command == "audit-labor-employment-budget-qa-gate":
+            report, run_dir = run_labor_employment_budget_qa_gate(
+                budget_output_expectations_report_path=args.budget_output_expectations_report,
+                blocked_driver_impact_review_report_path=args.blocked_driver_impact_review_report,
+                executable_coverage_report_path=args.executable_coverage_report,
+                out_dir=args.out_dir,
+                generated_at=args.generated_at,
+            )
+            failed_checks = [check.check_id for check in report.checks if check.status == "failed"]
+            _print(
+                {
+                    "status": report.status,
+                    "budget_qa_gate_report_id": report.budget_qa_gate_report_id,
+                    "source_budget_output_expectations_report_id": (
+                        report.source_budget_output_expectations_report_id
+                    ),
+                    "source_blocked_driver_impact_review_report_id": (
+                        report.source_blocked_driver_impact_review_report_id
+                    ),
+                    "source_executable_coverage_report_id": (
+                        report.source_executable_coverage_report_id
+                    ),
+                    "case_count": report.case_count,
+                    "blocked_amount_budget_case_count": (report.blocked_amount_budget_case_count),
+                    "range_or_hours_only_case_count": report.range_or_hours_only_case_count,
+                    "candidate_range_after_review_case_count": (
+                        report.candidate_range_after_review_case_count
+                    ),
+                    "reviewed_nonblocking_case_count": report.reviewed_nonblocking_case_count,
+                    "missing_blocked_review_case_ids": report.missing_blocked_review_case_ids,
+                    "missing_nonblocking_review_case_ids": (
+                        report.missing_nonblocking_review_case_ids
+                    ),
+                    "failed_checks": failed_checks,
+                    "budget_amount_output_authorized": report.budget_amount_output_authorized,
+                    "budget_submission_authorized": report.budget_submission_authorized,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0 if report.status == "labor_employment_budget_qa_gate_ready_for_review" else 2
 
         if args.command == "record-budget-review":
             report, run_dir = run_budget_review_record(

@@ -1,10 +1,10 @@
 {
   "schema_version": "0.1",
-  "synthetic_qa_review_run_report_id": "syntheticqareviewrun_98151c2c474a5349",
+  "synthetic_qa_review_run_report_id": "syntheticqareviewrun_407bc7e008454479",
   "status": "synthetic_qa_review_run_ready",
   "run_root_ref": "generated-demo-run",
   "quality_dir_ref": "generated-demo-run/quality",
-  "step_count": 21,
+  "step_count": 22,
   "failed_step_count": 0,
   "steps": [
     {
@@ -165,6 +165,16 @@
       "artifact_ref": "generated-demo-run/quality\\le-budget-output-expectations\\labor_employment_budget_output_expectations_report.json",
       "notes": [
         "Every executable L&E case has one allowed budget-output state and next gate."
+      ]
+    },
+    {
+      "step_id": "labor_employment_budget_qa_gate",
+      "label": "L&E Budget QA Gate",
+      "status": "passed",
+      "observed_status": "labor_employment_budget_qa_gate_ready_for_review",
+      "artifact_ref": "generated-demo-run/quality\\le-budget-qa-gate\\labor_employment_budget_qa_gate_report.json",
+      "notes": [
+        "L&E budget-output states are aggregated into a candidate-only QA gate."
       ]
     },
     {

@@ -3386,6 +3386,127 @@ class LaborEmploymentBudgetOutputExpectationReport(StrictModel):
         return self
 
 
+class LaborEmploymentBudgetQAGateBucket(StrictModel):
+    output_state: LaborEmploymentExecutableDriverAllowedBudgetOutput
+    case_count: int = Field(ge=0)
+    executable_fixture_ids: list[str]
+
+    @model_validator(mode="after")
+    def le_budget_qa_bucket_count_matches_ids(self) -> "LaborEmploymentBudgetQAGateBucket":
+        if self.case_count != len(self.executable_fixture_ids):
+            raise ValueError("L&E budget QA bucket count mismatch")
+        return self
+
+
+class LaborEmploymentBudgetQAGateCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    evidence_refs: list[str] = Field(default_factory=list)
+    blocking_refs: list[str] = Field(default_factory=list)
+
+
+class LaborEmploymentBudgetQAGateReport(StrictModel):
+    schema_version: str = "0.1"
+    budget_qa_gate_report_id: str
+    status: Literal[
+        "labor_employment_budget_qa_gate_ready_for_review",
+        "blocked_by_labor_employment_budget_qa_gate",
+    ]
+    source_budget_output_expectations_report_ref: str
+    source_budget_output_expectations_report_id: str
+    source_budget_output_expectations_report_status: str
+    source_blocked_driver_impact_review_report_ref: str
+    source_blocked_driver_impact_review_report_id: str
+    source_blocked_driver_impact_review_report_status: str
+    source_executable_coverage_report_ref: str
+    source_executable_coverage_report_id: str
+    source_executable_coverage_report_status: str
+    source_executable_coverage_state: str
+    case_count: int = Field(ge=0)
+    executable_fixture_count: int = Field(ge=0)
+    covered_pack_case_count: int = Field(ge=0)
+    missing_executable_pack_case_count: int = Field(ge=0)
+    blocked_amount_budget_case_count: int = Field(ge=0)
+    range_or_hours_only_case_count: int = Field(ge=0)
+    candidate_range_after_review_case_count: int = Field(ge=0)
+    reviewed_nonblocking_case_count: int = Field(ge=0)
+    blocked_review_case_count: int = Field(ge=0)
+    required_family_count: int = Field(ge=0)
+    covered_required_family_count: int = Field(ge=0)
+    blocked_case_ids: list[str]
+    range_or_hours_only_case_ids: list[str]
+    candidate_range_after_review_case_ids: list[str]
+    reviewed_nonblocking_case_ids: list[str]
+    missing_blocked_review_case_ids: list[str] = Field(default_factory=list)
+    missing_nonblocking_review_case_ids: list[str] = Field(default_factory=list)
+    required_families_present: list[LaborEmploymentSyntheticFixtureFamily]
+    required_families_missing: list[LaborEmploymentSyntheticFixtureFamily] = Field(
+        default_factory=list
+    )
+    output_state_buckets: list[LaborEmploymentBudgetQAGateBucket]
+    checks: list[LaborEmploymentBudgetQAGateCheck]
+    candidate_exception_lake_labels: list[str]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    not_authorized_for_matter_opening: Literal[True] = True
+    not_authorized_for_calibration: Literal[True] = True
+    budget_amount_output_authorized: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    conflict_conclusion_emitted: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    training_pipeline_created: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def le_budget_qa_gate_report_is_coherent(self) -> "LaborEmploymentBudgetQAGateReport":
+        failed_checks = [check for check in self.checks if check.status == "failed"]
+        if self.case_count != (
+            self.blocked_amount_budget_case_count
+            + self.range_or_hours_only_case_count
+            + self.candidate_range_after_review_case_count
+        ):
+            raise ValueError("L&E budget QA gate output partition mismatch")
+        if self.blocked_amount_budget_case_count != len(self.blocked_case_ids):
+            raise ValueError("L&E budget QA gate blocked case count mismatch")
+        if self.range_or_hours_only_case_count != len(self.range_or_hours_only_case_ids):
+            raise ValueError("L&E budget QA gate range/hours-only case count mismatch")
+        if self.candidate_range_after_review_case_count != len(
+            self.candidate_range_after_review_case_ids
+        ):
+            raise ValueError("L&E budget QA gate candidate range case count mismatch")
+        if self.reviewed_nonblocking_case_count != len(self.reviewed_nonblocking_case_ids):
+            raise ValueError("L&E budget QA gate reviewed nonblocking case count mismatch")
+        if self.covered_required_family_count != len(self.required_families_present):
+            raise ValueError("L&E budget QA gate required family present count mismatch")
+        if self.required_family_count != (
+            len(self.required_families_present) + len(self.required_families_missing)
+        ):
+            raise ValueError("L&E budget QA gate required family partition mismatch")
+        if sum(bucket.case_count for bucket in self.output_state_buckets) != self.case_count:
+            raise ValueError("L&E budget QA gate bucket aggregate mismatch")
+        if not self.candidate_exception_lake_labels:
+            raise ValueError("L&E budget QA gate requires candidate labels")
+        if not self.required_next_gates:
+            raise ValueError("L&E budget QA gate requires next gates")
+        if self.status == "labor_employment_budget_qa_gate_ready_for_review" and failed_checks:
+            raise ValueError("ready L&E budget QA gate cannot include failed checks")
+        if self.status == "blocked_by_labor_employment_budget_qa_gate" and not failed_checks:
+            raise ValueError("blocked L&E budget QA gate requires failed checks")
+        return self
+
+
 class PublicSourceMethodologySource(StrictModel):
     source_id: str
     url: str
@@ -11112,6 +11233,7 @@ POCQATriageCategory = Literal[
     "matter_linking",
     "labor_employment_budget_facts",
     "budget_output",
+    "budget_qa_gate",
     "public_data_boundary",
     "production_boundary",
 ]
@@ -11155,6 +11277,7 @@ class POCQATriageReport(StrictModel):
     source_labor_employment_qa_matrix_report_id: str
     source_blocked_driver_impact_review_report_id: str
     source_budget_output_expectation_report_id: str
+    source_budget_qa_gate_report_id: str
     source_validation_suite_evidence_report_id: str | None = None
     item_count: int = Field(ge=0)
     passed_item_count: int = Field(ge=0)
@@ -11560,6 +11683,7 @@ UIReviewDataBundleReportKind = Literal[
     "labor_employment_executable_coverage",
     "labor_employment_blocked_driver_impact_review",
     "labor_employment_budget_output_expectations",
+    "labor_employment_budget_qa_gate",
 ]
 
 

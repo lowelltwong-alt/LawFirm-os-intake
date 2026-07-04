@@ -1,6 +1,7 @@
 import type {
   BoundaryFlags,
   LaborEmploymentBudgetOutputExpectationReport,
+  LaborEmploymentBudgetQAGateReport,
   LaborEmploymentBlockedDriverImpactReviewReport,
   LaborEmploymentExecutableCoverageReport,
   LaborEmploymentQAMatrixReport,
@@ -50,6 +51,7 @@ export const REQUIRED_ARTIFACT_FILES = [
   "labor_employment_driver_impact_review_report.json",
   "labor_employment_blocked_driver_impact_review_report.json",
   "labor_employment_budget_output_expectations_report.json",
+  "labor_employment_budget_qa_gate_report.json",
   "labor_employment_budget_fact_gold_report.json",
   "validation_suite_evidence_report.json",
   "budget_human_review_packet.json",
@@ -81,6 +83,7 @@ export const REQUIRED_DETAIL_REPORT_FILES = [
   "labor_employment_executable_coverage_report.json",
   "labor_employment_blocked_driver_impact_review_report.json",
   "labor_employment_budget_output_expectations_report.json",
+  "labor_employment_budget_qa_gate_report.json",
 ] as const;
 
 export function missingRequiredArtifacts(artifacts: ReviewArtifact[]): string[] {
@@ -329,10 +332,12 @@ export function assertPOCQATriageReport(report: POCQATriageReport): string[] {
     failures.push("poc_qa_triage_review_boundary_failed");
   }
   if (
+    !report.not_authorized_for_external_write ||
     !report.not_authorized_for_lake_write ||
     !report.not_authorized_for_sqlite_write ||
     !report.not_authorized_for_budget_submission ||
     !report.not_authorized_for_matter_opening ||
+    !report.not_authorized_for_calibration ||
     report.budget_amount_output_authorized ||
     report.budget_submission_authorized ||
     report.conflict_conclusion_emitted ||
@@ -344,6 +349,9 @@ export function assertPOCQATriageReport(report: POCQATriageReport): string[] {
     report.silent_learning_performed
   ) {
     failures.push("poc_qa_triage_side_effect_boundary_failed");
+  }
+  if (!report.source_budget_qa_gate_report_id) {
+    failures.push("poc_qa_triage_missing_budget_qa_gate_source");
   }
   const passed = report.items.filter((item) => item.status === "passed");
   const needsReview = report.items.filter((item) => item.status === "needs_review");
@@ -389,6 +397,9 @@ export function assertPOCQATriageReport(report: POCQATriageReport): string[] {
     ) {
       failures.push(`poc_qa_triage_item_missing_labels:${item.item_id}`);
     }
+  }
+  if (!report.items.some((item) => item.item_id === "labor_employment_budget_qa_gate_ready")) {
+    failures.push("poc_qa_triage_missing_budget_qa_gate_item");
   }
   if (!report.required_next_actions.length) {
     failures.push("poc_qa_triage_missing_next_actions");
@@ -1219,6 +1230,110 @@ export function assertLaborEmploymentBudgetOutputExpectationReport(
   }
   if (report.checks.some((check) => check.status === "failed")) {
     failures.push("le_budget_output_expectation_failed_check");
+  }
+  return failures;
+}
+
+export function assertLaborEmploymentBudgetQAGateReport(
+  report: LaborEmploymentBudgetQAGateReport,
+): string[] {
+  const failures: string[] = [];
+  if (!report.candidate_only || !report.non_authoritative || !report.synthetic_only) {
+    failures.push("le_budget_qa_gate_authority_boundary_failed");
+  }
+  if (!report.human_review_required) {
+    failures.push("le_budget_qa_gate_missing_human_review_gate");
+  }
+  if (
+    !report.not_authorized_for_external_write ||
+    !report.not_authorized_for_lake_write ||
+    !report.not_authorized_for_sqlite_write ||
+    !report.not_authorized_for_budget_submission ||
+    !report.not_authorized_for_matter_opening ||
+    !report.not_authorized_for_calibration
+  ) {
+    failures.push("le_budget_qa_gate_missing_explicit_non_authorization");
+  }
+  if (
+    report.budget_amount_output_authorized ||
+    report.budget_submission_authorized ||
+    report.conflict_conclusion_emitted ||
+    report.matter_opening_authorized ||
+    report.training_pipeline_created ||
+    report.lake_write_performed ||
+    report.sqlite_write_performed ||
+    report.external_writes_performed ||
+    report.silent_learning_performed
+  ) {
+    failures.push("le_budget_qa_gate_side_effect_boundary_failed");
+  }
+  if (
+    report.case_count !==
+    report.blocked_amount_budget_case_count +
+      report.range_or_hours_only_case_count +
+      report.candidate_range_after_review_case_count
+  ) {
+    failures.push("le_budget_qa_gate_output_partition_mismatch");
+  }
+  if (report.blocked_amount_budget_case_count !== report.blocked_case_ids.length) {
+    failures.push("le_budget_qa_gate_blocked_case_count_mismatch");
+  }
+  if (report.range_or_hours_only_case_count !== report.range_or_hours_only_case_ids.length) {
+    failures.push("le_budget_qa_gate_range_case_count_mismatch");
+  }
+  if (
+    report.candidate_range_after_review_case_count !==
+    report.candidate_range_after_review_case_ids.length
+  ) {
+    failures.push("le_budget_qa_gate_candidate_range_count_mismatch");
+  }
+  if (report.reviewed_nonblocking_case_count !== report.reviewed_nonblocking_case_ids.length) {
+    failures.push("le_budget_qa_gate_reviewed_nonblocking_count_mismatch");
+  }
+  if (
+    report.required_family_count !==
+    report.required_families_present.length + report.required_families_missing.length
+  ) {
+    failures.push("le_budget_qa_gate_required_family_partition_mismatch");
+  }
+  if (report.covered_required_family_count !== report.required_families_present.length) {
+    failures.push("le_budget_qa_gate_required_family_count_mismatch");
+  }
+  if (
+    report.output_state_buckets.reduce((total, bucket) => total + bucket.case_count, 0) !==
+    report.case_count
+  ) {
+    failures.push("le_budget_qa_gate_bucket_count_mismatch");
+  }
+  for (const bucket of report.output_state_buckets) {
+    if (bucket.case_count !== bucket.executable_fixture_ids.length) {
+      failures.push(`le_budget_qa_gate_bucket_case_count_mismatch:${bucket.output_state}`);
+    }
+  }
+  if (
+    !report.required_next_gates.includes("no_budget_submission_from_labor_employment_budget_qa_gate")
+  ) {
+    failures.push("le_budget_qa_gate_missing_no_submission_gate");
+  }
+  if (
+    !report.required_next_gates.includes("no_lake_or_sqlite_write_from_labor_employment_budget_qa_gate")
+  ) {
+    failures.push("le_budget_qa_gate_missing_no_lake_gate");
+  }
+  if (
+    report.status === "labor_employment_budget_qa_gate_ready_for_review" &&
+    report.checks.some((check) => check.status === "failed")
+  ) {
+    failures.push("le_budget_qa_gate_ready_with_failed_check");
+  }
+  if (report.required_families_missing.length > 0) {
+    failures.push("le_budget_qa_gate_missing_required_families");
+  }
+  if (
+    report.missing_blocked_review_case_ids.length > 0 ||
+    report.missing_nonblocking_review_case_ids.length > 0
+  ) {
+    failures.push("le_budget_qa_gate_missing_review_coverage");
   }
   return failures;
 }

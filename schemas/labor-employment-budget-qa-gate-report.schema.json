@@ -1,0 +1,453 @@
+{
+  "$defs": {
+    "LaborEmploymentBudgetQAGateBucket": {
+      "additionalProperties": false,
+      "properties": {
+        "output_state": {
+          "enum": [
+            "blocked_amount_budget",
+            "range_or_hours_only_pending_review",
+            "candidate_range_after_review_pending_human_review"
+          ],
+          "title": "Output State",
+          "type": "string"
+        },
+        "case_count": {
+          "minimum": 0,
+          "title": "Case Count",
+          "type": "integer"
+        },
+        "executable_fixture_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Executable Fixture Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "output_state",
+        "case_count",
+        "executable_fixture_ids"
+      ],
+      "title": "LaborEmploymentBudgetQAGateBucket",
+      "type": "object"
+    },
+    "LaborEmploymentBudgetQAGateCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "blocking_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Blocking Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "LaborEmploymentBudgetQAGateCheck",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "budget_qa_gate_report_id": {
+      "title": "Budget Qa Gate Report Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "labor_employment_budget_qa_gate_ready_for_review",
+        "blocked_by_labor_employment_budget_qa_gate"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "source_budget_output_expectations_report_ref": {
+      "title": "Source Budget Output Expectations Report Ref",
+      "type": "string"
+    },
+    "source_budget_output_expectations_report_id": {
+      "title": "Source Budget Output Expectations Report Id",
+      "type": "string"
+    },
+    "source_budget_output_expectations_report_status": {
+      "title": "Source Budget Output Expectations Report Status",
+      "type": "string"
+    },
+    "source_blocked_driver_impact_review_report_ref": {
+      "title": "Source Blocked Driver Impact Review Report Ref",
+      "type": "string"
+    },
+    "source_blocked_driver_impact_review_report_id": {
+      "title": "Source Blocked Driver Impact Review Report Id",
+      "type": "string"
+    },
+    "source_blocked_driver_impact_review_report_status": {
+      "title": "Source Blocked Driver Impact Review Report Status",
+      "type": "string"
+    },
+    "source_executable_coverage_report_ref": {
+      "title": "Source Executable Coverage Report Ref",
+      "type": "string"
+    },
+    "source_executable_coverage_report_id": {
+      "title": "Source Executable Coverage Report Id",
+      "type": "string"
+    },
+    "source_executable_coverage_report_status": {
+      "title": "Source Executable Coverage Report Status",
+      "type": "string"
+    },
+    "source_executable_coverage_state": {
+      "title": "Source Executable Coverage State",
+      "type": "string"
+    },
+    "case_count": {
+      "minimum": 0,
+      "title": "Case Count",
+      "type": "integer"
+    },
+    "executable_fixture_count": {
+      "minimum": 0,
+      "title": "Executable Fixture Count",
+      "type": "integer"
+    },
+    "covered_pack_case_count": {
+      "minimum": 0,
+      "title": "Covered Pack Case Count",
+      "type": "integer"
+    },
+    "missing_executable_pack_case_count": {
+      "minimum": 0,
+      "title": "Missing Executable Pack Case Count",
+      "type": "integer"
+    },
+    "blocked_amount_budget_case_count": {
+      "minimum": 0,
+      "title": "Blocked Amount Budget Case Count",
+      "type": "integer"
+    },
+    "range_or_hours_only_case_count": {
+      "minimum": 0,
+      "title": "Range Or Hours Only Case Count",
+      "type": "integer"
+    },
+    "candidate_range_after_review_case_count": {
+      "minimum": 0,
+      "title": "Candidate Range After Review Case Count",
+      "type": "integer"
+    },
+    "reviewed_nonblocking_case_count": {
+      "minimum": 0,
+      "title": "Reviewed Nonblocking Case Count",
+      "type": "integer"
+    },
+    "blocked_review_case_count": {
+      "minimum": 0,
+      "title": "Blocked Review Case Count",
+      "type": "integer"
+    },
+    "required_family_count": {
+      "minimum": 0,
+      "title": "Required Family Count",
+      "type": "integer"
+    },
+    "covered_required_family_count": {
+      "minimum": 0,
+      "title": "Covered Required Family Count",
+      "type": "integer"
+    },
+    "blocked_case_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Blocked Case Ids",
+      "type": "array"
+    },
+    "range_or_hours_only_case_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Range Or Hours Only Case Ids",
+      "type": "array"
+    },
+    "candidate_range_after_review_case_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Candidate Range After Review Case Ids",
+      "type": "array"
+    },
+    "reviewed_nonblocking_case_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Reviewed Nonblocking Case Ids",
+      "type": "array"
+    },
+    "missing_blocked_review_case_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Missing Blocked Review Case Ids",
+      "type": "array"
+    },
+    "missing_nonblocking_review_case_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Missing Nonblocking Review Case Ids",
+      "type": "array"
+    },
+    "required_families_present": {
+      "items": {
+        "enum": [
+          "discrimination_harassment",
+          "retaliation_wrongful_termination",
+          "wage_hour_flsa_state",
+          "ada_fmla_accommodation_leave",
+          "restrictive_covenant_trade_secret",
+          "epli_carrier_assignment",
+          "class_collective_paga_representative",
+          "administrative_exhaustion_agency_record"
+        ],
+        "type": "string"
+      },
+      "title": "Required Families Present",
+      "type": "array"
+    },
+    "required_families_missing": {
+      "items": {
+        "enum": [
+          "discrimination_harassment",
+          "retaliation_wrongful_termination",
+          "wage_hour_flsa_state",
+          "ada_fmla_accommodation_leave",
+          "restrictive_covenant_trade_secret",
+          "epli_carrier_assignment",
+          "class_collective_paga_representative",
+          "administrative_exhaustion_agency_record"
+        ],
+        "type": "string"
+      },
+      "title": "Required Families Missing",
+      "type": "array"
+    },
+    "output_state_buckets": {
+      "items": {
+        "$ref": "#/$defs/LaborEmploymentBudgetQAGateBucket"
+      },
+      "title": "Output State Buckets",
+      "type": "array"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/LaborEmploymentBudgetQAGateCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "candidate_exception_lake_labels": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Candidate Exception Lake Labels",
+      "type": "array"
+    },
+    "required_next_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Gates",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "human_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Human Review Required",
+      "type": "boolean"
+    },
+    "not_authorized_for_external_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For External Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_lake_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Lake Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_sqlite_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Sqlite Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_budget_submission": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Budget Submission",
+      "type": "boolean"
+    },
+    "not_authorized_for_matter_opening": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Matter Opening",
+      "type": "boolean"
+    },
+    "not_authorized_for_calibration": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Calibration",
+      "type": "boolean"
+    },
+    "budget_amount_output_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Amount Output Authorized",
+      "type": "boolean"
+    },
+    "budget_submission_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Submission Authorized",
+      "type": "boolean"
+    },
+    "conflict_conclusion_emitted": {
+      "const": false,
+      "default": false,
+      "title": "Conflict Conclusion Emitted",
+      "type": "boolean"
+    },
+    "matter_opening_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Matter Opening Authorized",
+      "type": "boolean"
+    },
+    "training_pipeline_created": {
+      "const": false,
+      "default": false,
+      "title": "Training Pipeline Created",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "budget_qa_gate_report_id",
+    "status",
+    "source_budget_output_expectations_report_ref",
+    "source_budget_output_expectations_report_id",
+    "source_budget_output_expectations_report_status",
+    "source_blocked_driver_impact_review_report_ref",
+    "source_blocked_driver_impact_review_report_id",
+    "source_blocked_driver_impact_review_report_status",
+    "source_executable_coverage_report_ref",
+    "source_executable_coverage_report_id",
+    "source_executable_coverage_report_status",
+    "source_executable_coverage_state",
+    "case_count",
+    "executable_fixture_count",
+    "covered_pack_case_count",
+    "missing_executable_pack_case_count",
+    "blocked_amount_budget_case_count",
+    "range_or_hours_only_case_count",
+    "candidate_range_after_review_case_count",
+    "reviewed_nonblocking_case_count",
+    "blocked_review_case_count",
+    "required_family_count",
+    "covered_required_family_count",
+    "blocked_case_ids",
+    "range_or_hours_only_case_ids",
+    "candidate_range_after_review_case_ids",
+    "reviewed_nonblocking_case_ids",
+    "required_families_present",
+    "output_state_buckets",
+    "checks",
+    "candidate_exception_lake_labels",
+    "required_next_gates",
+    "generated_at"
+  ],
+  "title": "LaborEmploymentBudgetQAGateReport",
+  "type": "object"
+}

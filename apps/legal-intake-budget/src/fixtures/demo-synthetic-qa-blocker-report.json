@@ -1,22 +1,22 @@
 {
   "schema_version": "0.1",
-  "synthetic_qa_blocker_report_id": "synthetic_qa_blocker_report_29487b7da9156018",
+  "synthetic_qa_blocker_report_id": "synthetic_qa_blocker_report_a5d6e212cbae1e49",
   "status": "synthetic_qa_blocker_report_ready_for_review",
   "source_ui_manifest_ref": "generated-demo-run/ui_review_manifest.json",
-  "source_ui_manifest_id": "ui_review_manifest_7a9855d764e7",
+  "source_ui_manifest_id": "ui_review_manifest_90f8685c7d39",
   "source_ui_manifest_overall_status": "blocked",
   "source_synthetic_confidence_summary_ref": "generated-demo-run/quality\\synthetic_confidence_summary_report.json",
-  "source_synthetic_confidence_summary_report_id": "synthetic_confidence_summary_201523df8233bce3",
+  "source_synthetic_confidence_summary_report_id": "synthetic_confidence_summary_1ee56761e26dfcae",
   "source_synthetic_confidence_summary_status": "synthetic_confidence_summary_ready_for_review",
   "source_synthetic_qa_review_run_ref": "generated-demo-run/synthetic_qa_review_run_report.json",
-  "source_synthetic_qa_review_run_report_id": "syntheticqareviewrun_98151c2c474a5349",
+  "source_synthetic_qa_review_run_report_id": "syntheticqareviewrun_407bc7e008454479",
   "source_synthetic_qa_review_run_status": "synthetic_qa_review_run_ready",
-  "row_count": 23,
+  "row_count": 24,
   "failed_row_count": 0,
   "blocked_row_count": 0,
-  "pending_review_row_count": 23,
+  "pending_review_row_count": 24,
   "blocked_action_count": 0,
-  "needs_review_action_count": 23,
+  "needs_review_action_count": 24,
   "fixed_action_count": 0,
   "ready_action_count": 0,
   "review_queue_state": "needs_review",
@@ -400,6 +400,27 @@
       ]
     },
     {
+      "row_id": "quality_gate:labor_employment_budget_qa_gate",
+      "source": "quality_gate",
+      "label": "L&E Budget QA Gate",
+      "state": "pending_review",
+      "action_state": "needs_review",
+      "owner": "qa-reference",
+      "evidence_refs": [
+        "labor_employment_budget_qa_gate_report.json"
+      ],
+      "recommended_next_action": "Review quality gate evidence and record an outcome: L&E Budget QA Gate.",
+      "candidate_exception_lake_labels": [
+        "synthetic_qa_blocker_queue_candidate",
+        "quality_gate_pending_review_candidate",
+        "quality_gate_labor_employment_budget_qa_gate_candidate",
+        "synthetic_qa_blocker_requires_review"
+      ],
+      "notes": [
+        "L&E budget-output, blocked-driver-review, and executable-coverage evidence must be aggregated before the UI treats budget QA as review-ready."
+      ]
+    },
+    {
       "row_id": "quality_gate:validation_suite_evidence",
       "source": "quality_gate",
       "label": "Validation Suite Evidence",
@@ -480,7 +501,7 @@
         "synthetic_qa_blocker_requires_review"
       ],
       "notes": [
-        "0 missing required, 0 blocked, 13 pending review."
+        "0 missing required, 0 blocked, 14 pending review."
       ]
     },
     {
@@ -501,7 +522,7 @@
         "synthetic_qa_blocker_requires_review"
       ],
       "notes": [
-        "22 pending gates remain; pending is expected until human/owner review accepts candidate QA evidence."
+        "23 pending gates remain; pending is expected until human/owner review accepts candidate QA evidence."
       ]
     }
   ],

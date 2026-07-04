@@ -228,6 +228,9 @@ from lawfirm_os_intake.models import (  # noqa: E402
     LaborEmploymentBudgetFactSource,
     LaborEmploymentBudgetOutputExpectationCase,
     LaborEmploymentBudgetOutputExpectationReport,
+    LaborEmploymentBudgetQAGateBucket,
+    LaborEmploymentBudgetQAGateCheck,
+    LaborEmploymentBudgetQAGateReport,
     LaborEmploymentExecutableCoverageCase,
     LaborEmploymentExecutableCoverageCheck,
     LaborEmploymentExecutableCoverageFamily,
@@ -425,6 +428,9 @@ MODELS = {
     "labor-employment-budget-output-expectation-report.schema.json": (
         LaborEmploymentBudgetOutputExpectationReport
     ),
+    "labor-employment-budget-qa-gate-bucket.schema.json": LaborEmploymentBudgetQAGateBucket,
+    "labor-employment-budget-qa-gate-check.schema.json": LaborEmploymentBudgetQAGateCheck,
+    "labor-employment-budget-qa-gate-report.schema.json": LaborEmploymentBudgetQAGateReport,
     "labor-employment-executable-coverage-case.schema.json": (
         LaborEmploymentExecutableCoverageCase
     ),

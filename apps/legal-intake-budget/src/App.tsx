@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 
 import demoLaborEmploymentBlockedDriverReview from "./fixtures/demo-labor-employment-blocked-driver-impact-review-report.json";
 import demoLaborEmploymentBudgetOutputExpectations from "./fixtures/demo-labor-employment-budget-output-expectations-report.json";
+import demoLaborEmploymentBudgetQAGate from "./fixtures/demo-labor-employment-budget-qa-gate-report.json";
 import demoLaborEmploymentExecutableCoverage from "./fixtures/demo-labor-employment-executable-coverage-report.json";
 import demoLaborEmploymentQAMatrix from "./fixtures/demo-labor-employment-qa-matrix-report.json";
 import demoManifest from "./fixtures/demo-run-manifest.json";
@@ -21,6 +22,7 @@ import {
   assertMatterLinkingQAGateReport,
   assertMatterLinkingReviewOutcomeReport,
   assertLaborEmploymentBudgetOutputExpectationReport,
+  assertLaborEmploymentBudgetQAGateReport,
   assertLaborEmploymentBlockedDriverImpactReviewReport,
   assertLaborEmploymentExecutableCoverageReport,
   assertLaborEmploymentQAMatrixReport,
@@ -40,6 +42,7 @@ import type {
   LaborEmploymentAllowedBudgetOutput,
   LaborEmploymentBudgetOutputExpectationCase,
   LaborEmploymentBudgetOutputExpectationReport,
+  LaborEmploymentBudgetQAGateReport,
   LaborEmploymentBlockedDriverImpactCaseReview,
   LaborEmploymentBlockedDriverImpactReviewReport,
   LaborEmploymentExecutableCoverageReport,
@@ -93,6 +96,8 @@ const laborEmploymentBlockedDriverReview =
   demoLaborEmploymentBlockedDriverReview as LaborEmploymentBlockedDriverImpactReviewReport;
 const laborEmploymentBudgetOutputExpectations =
   demoLaborEmploymentBudgetOutputExpectations as LaborEmploymentBudgetOutputExpectationReport;
+const laborEmploymentBudgetQAGate =
+  demoLaborEmploymentBudgetQAGate as LaborEmploymentBudgetQAGateReport;
 const bundleContractFailures = assertUIReviewDataBundle(reviewDataBundle);
 const manifestContractFailures = assertReadOnlyManifest(manifest);
 const syntheticQAReviewRunFailures = assertSyntheticQAReviewRunReport(syntheticQAReviewRun);
@@ -116,6 +121,7 @@ const blockedDriverContractFailures =
 const budgetOutputExpectationFailures = assertLaborEmploymentBudgetOutputExpectationReport(
   laborEmploymentBudgetOutputExpectations,
 );
+const budgetQAGateFailures = assertLaborEmploymentBudgetQAGateReport(laborEmploymentBudgetQAGate);
 const contractFailures = [
   ...bundleContractFailures,
   ...manifestContractFailures,
@@ -132,6 +138,7 @@ const contractFailures = [
   ...executableCoverageFailures,
   ...blockedDriverContractFailures,
   ...budgetOutputExpectationFailures,
+  ...budgetQAGateFailures,
 ];
 
 function gateClass(
@@ -1644,6 +1651,97 @@ function LaborEmploymentBudgetOutputExpectationsPanel({
   );
 }
 
+function LaborEmploymentBudgetQAGatePanel({
+  report,
+}: {
+  report: LaborEmploymentBudgetQAGateReport;
+}) {
+  const passedChecks = report.checks.filter((check) => check.status === "passed").length;
+
+  return (
+    <section className="panel budget-qa-gate-panel" aria-labelledby="le-budget-qa-gate-title">
+      <div className="panel-heading">
+        <div>
+          <h2 id="le-budget-qa-gate-title">L&amp;E Budget QA Gate</h2>
+          <code>{report.budget_qa_gate_report_id}</code>
+        </div>
+        <span
+          className={budgetQAGateFailures.length === 0 ? "state state-passed" : "state state-failed"}
+        >
+          {budgetQAGateFailures.length === 0 ? "budget QA held" : "budget QA failed"}
+        </span>
+      </div>
+
+      <div className="matrix-summary" aria-label="L&E budget QA gate summary">
+        <div>
+          <span>Blocked</span>
+          <strong>{report.blocked_amount_budget_case_count}</strong>
+        </div>
+        <div>
+          <span>Range Only</span>
+          <strong>{report.range_or_hours_only_case_count}</strong>
+        </div>
+        <div>
+          <span>Candidate Range</span>
+          <strong>{report.candidate_range_after_review_case_count}</strong>
+        </div>
+        <div>
+          <span>Families Covered</span>
+          <strong>
+            {report.covered_required_family_count}/{report.required_family_count}
+          </strong>
+        </div>
+      </div>
+
+      <div className="warning-strip">
+        <strong>Budget output remains review-only.</strong>
+        <span>
+          This gate proves distribution and blockers, not budget correctness, approval, submission,
+          matter opening, or Lake admission.
+        </span>
+      </div>
+
+      <div className="budget-bucket-grid" aria-label="Budget output state buckets">
+        {report.output_state_buckets.map((bucket) => (
+          <div className="budget-bucket" key={bucket.output_state}>
+            <span className={allowedBudgetOutputClass(bucket.output_state)}>
+              {bucket.output_state}
+            </span>
+            <strong>{bucket.case_count}</strong>
+            <TokenList items={bucket.executable_fixture_ids} limit={3} />
+          </div>
+        ))}
+      </div>
+
+      <div className="matrix-summary" aria-label="L&E budget QA gate checks">
+        <div>
+          <span>Checks Passed</span>
+          <strong>
+            {passedChecks}/{report.checks.length}
+          </strong>
+        </div>
+        <div>
+          <span>Reviewed Nonblocking</span>
+          <strong>{report.reviewed_nonblocking_case_count}</strong>
+        </div>
+        <div>
+          <span>Missing Blocked Reviews</span>
+          <strong>{report.missing_blocked_review_case_ids.length}</strong>
+        </div>
+        <div>
+          <span>Missing Replay Reviews</span>
+          <strong>{report.missing_nonblocking_review_case_ids.length}</strong>
+        </div>
+      </div>
+
+      <div className="lake-label-strip" aria-label="L&E budget QA candidate exception lake labels">
+        <span>Candidate Lake labels</span>
+        <TokenList items={report.candidate_exception_lake_labels} />
+      </div>
+    </section>
+  );
+}
+
 function LaborEmploymentFixtureDrilldownPanel({
   outputReport,
   blockedReviewReport,
@@ -1874,6 +1972,7 @@ function App() {
       <LaborEmploymentBudgetOutputExpectationsPanel
         report={laborEmploymentBudgetOutputExpectations}
       />
+      <LaborEmploymentBudgetQAGatePanel report={laborEmploymentBudgetQAGate} />
       <LaborEmploymentFixtureDrilldownPanel
         outputReport={laborEmploymentBudgetOutputExpectations}
         blockedReviewReport={laborEmploymentBlockedDriverReview}

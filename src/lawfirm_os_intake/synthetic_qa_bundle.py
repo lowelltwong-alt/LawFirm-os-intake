@@ -164,6 +164,17 @@ QA_BUNDLE_ARTIFACTS = [
         ),
     ),
     QABundleArtifactSpec(
+        artifact_id="labor_employment_budget_qa_gate",
+        label="Labor/Employment Budget QA Gate",
+        file_name="labor_employment_budget_qa_gate_report.json",
+        required=True,
+        missing_note=(
+            "Run audit-labor-employment-budget-qa-gate so L&E blocked, "
+            "range-only, candidate-range, coverage, and no-write states are "
+            "aggregated before budget QA is trusted."
+        ),
+    ),
+    QABundleArtifactSpec(
         artifact_id="labor_employment_budget_fact_gold",
         label="Labor/Employment Budget Fact Gold",
         file_name="labor_employment_budget_fact_gold_report.json",
@@ -282,6 +293,11 @@ def run_synthetic_qa_bundle(
             root=root,
             explicit_path=None,
             file_name="labor_employment_budget_output_expectations_report.json",
+        ),
+        "labor_employment_budget_qa_gate": _resolve_artifact_source(
+            root=root,
+            explicit_path=None,
+            file_name="labor_employment_budget_qa_gate_report.json",
         ),
         "labor_employment_budget_fact_gold": _resolve_artifact_source(
             root=root,

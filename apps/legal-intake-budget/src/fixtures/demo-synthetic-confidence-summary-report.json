@@ -1,35 +1,35 @@
 {
   "schema_version": "0.1",
-  "synthetic_confidence_summary_report_id": "synthetic_confidence_summary_709d39a406a85acd",
+  "synthetic_confidence_summary_report_id": "synthetic_confidence_summary_d9d46f3410f7e8b7",
   "status": "synthetic_confidence_summary_ready_for_review",
   "testing_readiness_state": "synthetic_qa_ready_pending_review",
   "source_synthetic_qa_review_run_ref": "generated-demo-run/synthetic_qa_review_run_report.json",
-  "source_synthetic_qa_review_run_report_id": "syntheticqareviewrun_98151c2c474a5349",
+  "source_synthetic_qa_review_run_report_id": "syntheticqareviewrun_407bc7e008454479",
   "source_synthetic_qa_review_run_status": "synthetic_qa_review_run_ready",
   "source_synthetic_qa_bundle_ref": "generated-demo-run/quality\\synthetic_qa_bundle_report.json",
-  "source_synthetic_qa_bundle_report_id": "synthetic_qa_bundle_c9a0286b305a",
+  "source_synthetic_qa_bundle_report_id": "synthetic_qa_bundle_463990866534",
   "source_synthetic_qa_bundle_status": "pending_review",
   "source_ui_manifest_ref": "generated-demo-run/ui_review_manifest.json",
-  "source_ui_manifest_id": "ui_review_manifest_7a9855d764e7",
+  "source_ui_manifest_id": "ui_review_manifest_90f8685c7d39",
   "source_ui_manifest_overall_status": "blocked",
   "source_ui_review_data_bundle_ref": "generated-demo-run/ui_review_data_bundle.json",
-  "source_ui_review_data_bundle_id": "ui_review_data_bundle_035c49f70187",
+  "source_ui_review_data_bundle_id": "ui_review_data_bundle_3016cb6a0795",
   "source_ui_review_data_bundle_status": "ready_for_review",
-  "qa_step_count": 21,
-  "qa_passed_step_count": 21,
+  "qa_step_count": 22,
+  "qa_passed_step_count": 22,
   "qa_failed_step_count": 0,
-  "qa_artifact_count": 15,
+  "qa_artifact_count": 16,
   "qa_missing_required_artifact_count": 0,
   "qa_blocked_artifact_count": 0,
-  "qa_pending_artifact_count": 13,
+  "qa_pending_artifact_count": 14,
   "qa_failed_artifact_count": 0,
-  "ui_detail_report_count": 12,
-  "ui_present_detail_report_count": 12,
+  "ui_detail_report_count": 13,
+  "ui_present_detail_report_count": 13,
   "ui_missing_required_detail_report_count": 0,
   "ui_external_write_report_count": 0,
-  "quality_gate_count": 25,
+  "quality_gate_count": 26,
   "quality_gate_passed_count": 3,
-  "quality_gate_pending_count": 22,
+  "quality_gate_pending_count": 23,
   "quality_gate_blocked_count": 0,
   "quality_gate_failed_count": 0,
   "readiness_item_count": 5,
@@ -43,7 +43,7 @@
         "generated-demo-run/synthetic_qa_review_run_report.json"
       ],
       "notes": [
-        "0 failed steps out of 21."
+        "0 failed steps out of 22."
       ],
       "no_write_boundary_confirmed": true
     },
@@ -56,7 +56,7 @@
         "generated-demo-run/quality\\synthetic_qa_bundle_report.json"
       ],
       "notes": [
-        "0 missing required, 0 blocked, 13 pending review."
+        "0 missing required, 0 blocked, 14 pending review."
       ],
       "no_write_boundary_confirmed": true
     },
@@ -70,7 +70,7 @@
         "generated-demo-run/ui_review_manifest.json"
       ],
       "notes": [
-        "12 detail reports present; 0 write-boundary failures."
+        "13 detail reports present; 0 write-boundary failures."
       ],
       "no_write_boundary_confirmed": true
     },
@@ -98,7 +98,7 @@
         "generated-demo-run/ui_review_manifest.json"
       ],
       "notes": [
-        "22 pending gates remain; pending is expected until human/owner review accepts candidate QA evidence."
+        "23 pending gates remain; pending is expected until human/owner review accepts candidate QA evidence."
       ],
       "no_write_boundary_confirmed": true
     }

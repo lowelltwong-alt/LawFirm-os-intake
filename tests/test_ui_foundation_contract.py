@@ -30,6 +30,7 @@ def test_legal_intake_budget_ui_required_files_exist(repo_root):
         "src/fixtures/demo-labor-employment-executable-coverage-report.json",
         "src/fixtures/demo-labor-employment-blocked-driver-impact-review-report.json",
         "src/fixtures/demo-labor-employment-budget-output-expectations-report.json",
+        "src/fixtures/demo-labor-employment-budget-qa-gate-report.json",
     ]
 
     for relative_path in required:
@@ -80,6 +81,7 @@ def test_legal_intake_budget_ui_data_contract_lists_required_artifacts(repo_root
         "labor_employment_driver_impact_review_report.json",
         "labor_employment_blocked_driver_impact_review_report.json",
         "labor_employment_budget_output_expectations_report.json",
+        "labor_employment_budget_qa_gate_report.json",
         "labor_employment_budget_fact_gold_report.json",
         "validation_suite_evidence_report.json",
         "budget_human_review_packet.json",
@@ -138,6 +140,7 @@ def test_legal_intake_budget_demo_manifest_is_read_only_and_candidate_only(repo_
         "labor_employment_driver_impact_review",
         "labor_employment_blocked_driver_impact_review",
         "labor_employment_budget_output_expectations",
+        "labor_employment_budget_qa_gate",
         "labor_employment_budget_fact_gold",
         "validation_suite_evidence",
         "full_pytest",
@@ -155,9 +158,9 @@ def test_legal_intake_budget_demo_ui_review_data_bundle_is_local_and_no_write(re
     detail_reports = {report["file_name"]: report for report in bundle["detail_reports"]}
 
     assert bundle["status"] == "ready_for_review"
-    assert bundle["detail_report_count"] == len(bundle["detail_reports"]) == 12
-    assert bundle["required_detail_report_count"] == 6
-    assert bundle["present_detail_report_count"] == 12
+    assert bundle["detail_report_count"] == len(bundle["detail_reports"]) == 13
+    assert bundle["required_detail_report_count"] == 7
+    assert bundle["present_detail_report_count"] == 13
     assert bundle["missing_required_detail_report_count"] == 0
     assert bundle["external_write_report_count"] == 0
     assert bundle["candidate_only"] is True
@@ -183,6 +186,7 @@ def test_legal_intake_budget_demo_ui_review_data_bundle_is_local_and_no_write(re
         "labor_employment_executable_coverage_report.json",
         "labor_employment_blocked_driver_impact_review_report.json",
         "labor_employment_budget_output_expectations_report.json",
+        "labor_employment_budget_qa_gate_report.json",
     } <= set(detail_reports)
     assert all(report["present"] is True for report in bundle["detail_reports"])
     assert all(report["source_sha256"].startswith("sha256:") for report in bundle["detail_reports"])
@@ -197,7 +201,7 @@ def test_legal_intake_budget_demo_synthetic_qa_review_run_is_no_write(repo_root)
     )
 
     assert report["status"] == "synthetic_qa_review_run_ready"
-    assert report["step_count"] == len(report["steps"]) == 21
+    assert report["step_count"] == len(report["steps"]) == 22
     assert report["failed_step_count"] == 0
     assert report["candidate_only"] is True
     assert report["synthetic_only"] is True
@@ -222,6 +226,7 @@ def test_legal_intake_budget_demo_synthetic_qa_review_run_is_no_write(repo_root)
         "synthetic_confidence_summary",
         "labor_employment_blocked_driver_impact_review",
         "labor_employment_budget_output_expectations",
+        "labor_employment_budget_qa_gate",
     } <= {step["step_id"] for step in report["steps"]}
 
 
@@ -395,11 +400,11 @@ def test_legal_intake_budget_demo_synthetic_confidence_summary_is_no_write(repo_
     assert report["status"] == "synthetic_confidence_summary_ready_for_review"
     assert report["testing_readiness_state"] == "synthetic_qa_ready_pending_review"
     assert report["top_blockers"] == []
-    assert report["qa_step_count"] == 21
+    assert report["qa_step_count"] == 22
     assert report["qa_failed_step_count"] == 0
     assert report["qa_missing_required_artifact_count"] == 0
-    assert report["ui_detail_report_count"] == 12
-    assert report["ui_present_detail_report_count"] == 12
+    assert report["ui_detail_report_count"] == 13
+    assert report["ui_present_detail_report_count"] == 13
     assert report["ui_missing_required_detail_report_count"] == 0
     assert report["display_banner"]["candidate_only"] is True
     assert report["display_banner"]["synthetic_only"] is True
@@ -428,10 +433,10 @@ def test_legal_intake_budget_demo_poc_qa_triage_is_actionable_and_no_write(repo_
     items = {item["item_id"]: item for item in report["items"]}
 
     assert report["status"] == "poc_qa_ready_for_review"
-    assert report["item_count"] == len(report["items"]) == 10
+    assert report["item_count"] == len(report["items"]) == 11
     assert report["blocked_item_count"] == 0
     assert report["p0_blocked_item_count"] == 0
-    assert report["needs_review_item_count"] == 5
+    assert report["needs_review_item_count"] == 6
     assert report["watch_item_count"] == 2
     assert report["passed_item_count"] == 3
     assert report["source_validation_suite_evidence_report_id"].startswith(
@@ -445,6 +450,8 @@ def test_legal_intake_budget_demo_poc_qa_triage_is_actionable_and_no_write(repo_
     )
     assert items["matter_linking_requires_human_confirmation"]["status"] == "needs_review"
     assert items["budget_output_partition_visible"]["status"] == "needs_review"
+    assert items["labor_employment_budget_qa_gate_ready"]["status"] == "needs_review"
+    assert report["source_budget_qa_gate_report_id"].startswith("lebudgetqagate_")
     assert report["candidate_only"] is True
     assert report["synthetic_only"] is True
     assert report["non_authoritative"] is True
@@ -606,12 +613,12 @@ def test_legal_intake_budget_demo_synthetic_qa_blocker_report_is_no_write(repo_r
     )
 
     assert report["status"] == "synthetic_qa_blocker_report_ready_for_review"
-    assert report["row_count"] == len(report["rows"]) == 23
+    assert report["row_count"] == len(report["rows"]) == 24
     assert report["failed_row_count"] == 0
     assert report["blocked_row_count"] == 0
-    assert report["pending_review_row_count"] == 23
+    assert report["pending_review_row_count"] == 24
     assert report["blocked_action_count"] == 0
-    assert report["needs_review_action_count"] == 23
+    assert report["needs_review_action_count"] == 24
     assert report["fixed_action_count"] == 0
     assert report["ready_action_count"] == 0
     assert report["review_queue_state"] == "needs_review"
@@ -642,9 +649,9 @@ def test_legal_intake_budget_demo_synthetic_qa_review_outcome_is_no_write(repo_r
     )
 
     assert report["status"] == "synthetic_qa_review_outcome_recorded_pending_followup"
-    assert report["source_row_count"] == 23
+    assert report["source_row_count"] == 24
     assert report["reviewed_row_count"] == len(report["reviewed_row_ids"]) == 3
-    assert report["unreviewed_row_count"] == len(report["unreviewed_row_ids"]) == 20
+    assert report["unreviewed_row_count"] == len(report["unreviewed_row_ids"]) == 21
     assert report["decision_count"] == 3
     assert report["accepted_decision_count"] == 1
     assert report["needs_fix_decision_count"] == 1
@@ -743,6 +750,53 @@ def test_legal_intake_budget_demo_budget_output_expectations_are_no_write(repo_r
     assert all(check["status"] == "passed" for check in report["checks"])
 
 
+def test_legal_intake_budget_demo_labor_employment_budget_qa_gate_is_no_write(repo_root):
+    report = json.loads(
+        (
+            repo_root / UI_ROOT / "src/fixtures/demo-labor-employment-budget-qa-gate-report.json"
+        ).read_text(encoding="utf-8")
+    )
+    buckets = {bucket["output_state"]: bucket for bucket in report["output_state_buckets"]}
+
+    assert report["status"] == "labor_employment_budget_qa_gate_ready_for_review"
+    assert report["case_count"] == 14
+    assert report["blocked_amount_budget_case_count"] == 6
+    assert report["range_or_hours_only_case_count"] == 3
+    assert report["candidate_range_after_review_case_count"] == 5
+    assert report["reviewed_nonblocking_case_count"] == 8
+    assert report["covered_required_family_count"] == report["required_family_count"] == 8
+    assert report["required_families_missing"] == []
+    assert report["missing_blocked_review_case_ids"] == []
+    assert report["missing_nonblocking_review_case_ids"] == []
+    assert buckets["blocked_amount_budget"]["case_count"] == 6
+    assert buckets["range_or_hours_only_pending_review"]["case_count"] == 3
+    assert buckets["candidate_range_after_review_pending_human_review"]["case_count"] == 5
+    assert all(check["status"] == "passed" for check in report["checks"])
+    assert report["candidate_only"] is True
+    assert report["synthetic_only"] is True
+    assert report["non_authoritative"] is True
+    assert report["not_authorized_for_external_write"] is True
+    assert report["not_authorized_for_lake_write"] is True
+    assert report["not_authorized_for_sqlite_write"] is True
+    assert report["not_authorized_for_budget_submission"] is True
+    assert report["not_authorized_for_matter_opening"] is True
+    assert report["not_authorized_for_calibration"] is True
+    assert report["budget_amount_output_authorized"] is False
+    assert report["budget_submission_authorized"] is False
+    assert report["matter_opening_authorized"] is False
+    assert report["lake_write_performed"] is False
+    assert report["sqlite_write_performed"] is False
+    assert report["external_writes_performed"] is False
+    assert report["silent_learning_performed"] is False
+    assert (
+        "labor_employment_budget_qa_gate_candidate" in (report["candidate_exception_lake_labels"])
+    )
+    assert (
+        "no_lake_or_sqlite_write_from_labor_employment_budget_qa_gate"
+        in (report["required_next_gates"])
+    )
+
+
 def test_legal_intake_budget_ui_disclaims_mutating_authority(repo_root):
     readme = (repo_root / UI_ROOT / "README.md").read_text(encoding="utf-8")
     app = (repo_root / UI_ROOT / "src/App.tsx").read_text(encoding="utf-8")
@@ -769,6 +823,7 @@ def test_legal_intake_budget_ui_disclaims_mutating_authority(repo_root):
     assert "L&amp;E Executable Coverage" in app
     assert "L&amp;E Blocked Driver Review" in app
     assert "L&amp;E Budget Output Expectations" in app
+    assert "L&amp;E Budget QA Gate" in app
     assert "L&amp;E Fixture Drilldown" in app
     assert "buildFixtureDrilldownRows" in app
     assert "assertUIReviewDataBundle" in app
@@ -785,6 +840,7 @@ def test_legal_intake_budget_ui_disclaims_mutating_authority(repo_root):
     assert "assertLaborEmploymentExecutableCoverageReport" in app
     assert "assertLaborEmploymentBlockedDriverImpactReviewReport" in app
     assert "assertLaborEmploymentBudgetOutputExpectationReport" in app
+    assert "assertLaborEmploymentBudgetQAGateReport" in app
     assert "failingQualityGates" in app
     assert "qa-blocker-panel" in styles
     assert "qa-review-outcome-panel" in styles
@@ -800,6 +856,7 @@ def test_legal_intake_budget_ui_disclaims_mutating_authority(repo_root):
     assert "coverage-family-grid" in styles
     assert "fixture-drilldown-panel" in styles
     assert "fixture-family-grid" in styles
+    assert "budget-bucket-grid" in styles
     assert "grid-template-columns" in styles
 
 

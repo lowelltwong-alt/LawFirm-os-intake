@@ -52,6 +52,10 @@ def _run(repo_root, out_dir, *, include_validation=True):
             repo_root,
             "demo-labor-employment-budget-output-expectations-report.json",
         ),
+        budget_qa_gate_path=_fixture(
+            repo_root,
+            "demo-labor-employment-budget-qa-gate-report.json",
+        ),
         out_dir=out_dir,
         repo_root=repo_root,
         generated_at="2026-07-03T00:00:00Z",
@@ -65,10 +69,10 @@ def test_poc_qa_triage_report_clears_validation_blocker_with_evidence(repo_root,
 
     assert persisted.poc_qa_triage_report_id == report.poc_qa_triage_report_id
     assert report.status == "poc_qa_ready_for_review"
-    assert report.item_count == len(report.items) == 10
+    assert report.item_count == len(report.items) == 11
     assert report.blocked_item_count == 0
     assert report.p0_blocked_item_count == 0
-    assert report.needs_review_item_count == 5
+    assert report.needs_review_item_count == 6
     assert report.watch_item_count == 2
     assert report.passed_item_count == 3
     assert report.source_validation_suite_evidence_report_id
@@ -79,6 +83,7 @@ def test_poc_qa_triage_report_clears_validation_blocker_with_evidence(repo_root,
         "labor_employment_fact_gates_visible",
         "blocked_driver_review_queue_visible",
         "budget_output_partition_visible",
+        "labor_employment_budget_qa_gate_ready",
         "validation_evidence_not_fresh_in_ui_bundle",
         "production_actions_stay_blocked",
     }
@@ -147,6 +152,8 @@ def test_poc_qa_triage_cli_writes_candidate_report(repo_root, tmp_path, capsys):
             str(
                 _fixture(repo_root, "demo-labor-employment-budget-output-expectations-report.json")
             ),
+            "--budget-qa-gate",
+            str(_fixture(repo_root, "demo-labor-employment-budget-qa-gate-report.json")),
             "--validation-suite-evidence",
             str(_fixture(repo_root, "demo-validation-suite-evidence-report.json")),
             "--out-dir",
