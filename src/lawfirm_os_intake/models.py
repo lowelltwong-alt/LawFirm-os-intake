@@ -1883,6 +1883,17 @@ class LaborEmploymentExecutableCoverageReport(StrictModel):
         return self
 
 
+LaborEmploymentBudgetFactResolutionState = Literal[
+    "missing_critical_fact",
+    "missing_noncritical_fact",
+    "source_present_needs_confirmation",
+    "source_present_unresolved_critical_driver",
+    "source_present_unresolved_driver",
+    "inventory_present_needs_confirmation",
+    "unbound_fact_gap",
+]
+
+
 class LaborEmploymentExecutableBudgetFactBindingItemSpec(StrictModel):
     fact_id: str
     expected_gap_type: Literal[
@@ -2008,6 +2019,7 @@ class LaborEmploymentExecutableBudgetFactBindingItem(StrictModel):
         "inventory_bound_gap_candidate",
         "unbound_gap_candidate",
     ]
+    fact_resolution_state: LaborEmploymentBudgetFactResolutionState
     recommended_budget_treatment: Literal[
         "block_amount_budget",
         "hours_only_or_broad_range",
@@ -2048,6 +2060,42 @@ class LaborEmploymentExecutableBudgetFactBindingItem(StrictModel):
             raise ValueError("source+exception gap binding requires both anchor types")
         if self.binding_state == "inventory_bound_gap_candidate" and not self.source_inventory_refs:
             raise ValueError("inventory-bound gap binding requires source inventory refs")
+        if self.fact_resolution_state == "missing_critical_fact":
+            if self.required_level != "critical":
+                raise ValueError("missing critical fact state requires critical level")
+            if not self.blocks_precise_budget:
+                raise ValueError("missing critical fact must block precise budget")
+        if self.fact_resolution_state == "missing_noncritical_fact":
+            if self.required_level == "critical":
+                raise ValueError("missing noncritical fact state cannot use critical level")
+            if self.blocks_precise_budget:
+                raise ValueError("missing noncritical fact cannot block precise budget")
+        if self.fact_resolution_state == "source_present_needs_confirmation":
+            if not (self.evidence_refs or self.source_inventory_refs):
+                raise ValueError("source-present confirmation state requires source anchors")
+            if self.blocks_precise_budget:
+                raise ValueError("source-present confirmation state is review-only")
+        if self.fact_resolution_state == "source_present_unresolved_critical_driver":
+            if self.required_level != "critical":
+                raise ValueError("unresolved critical driver state requires critical level")
+            if not self.evidence_refs:
+                raise ValueError("unresolved critical driver state requires evidence refs")
+            if not self.blocks_precise_budget:
+                raise ValueError("unresolved critical driver must block precise budget")
+        if self.fact_resolution_state == "source_present_unresolved_driver":
+            if not (self.evidence_refs or self.source_inventory_refs):
+                raise ValueError("unresolved driver state requires source anchors")
+            if self.blocks_precise_budget:
+                raise ValueError("noncritical unresolved driver cannot block precise budget")
+        if self.fact_resolution_state == "inventory_present_needs_confirmation":
+            if not self.source_inventory_refs:
+                raise ValueError("inventory-present state requires source inventory refs")
+            if self.blocks_precise_budget:
+                raise ValueError("inventory-present state is review-only")
+        if self.fact_resolution_state == "unbound_fact_gap" and (
+            self.evidence_refs or self.source_inventory_refs or self.matched_exception_labels
+        ):
+            raise ValueError("unbound fact gap cannot carry anchors")
         return self
 
 
@@ -2087,6 +2135,9 @@ class LaborEmploymentExecutableBudgetFactBindingCase(StrictModel):
     ) = None
     fact_binding_count: int = Field(ge=0)
     critical_fact_binding_count: int = Field(ge=0)
+    missing_critical_fact_count: int = Field(ge=0)
+    source_present_confirmation_fact_count: int = Field(ge=0)
+    source_present_unresolved_critical_driver_count: int = Field(ge=0)
     evidence_bound_fact_count: int = Field(ge=0)
     exception_bound_fact_count: int = Field(ge=0)
     missing_policy_fact_ids: list[str]
@@ -2116,6 +2167,26 @@ class LaborEmploymentExecutableBudgetFactBindingCase(StrictModel):
             1 for binding in self.fact_bindings if binding.required_level == "critical"
         ):
             raise ValueError("executable L&E critical fact binding count mismatch")
+        if self.missing_critical_fact_count != sum(
+            1
+            for binding in self.fact_bindings
+            if binding.fact_resolution_state == "missing_critical_fact"
+        ):
+            raise ValueError("executable L&E missing critical fact count mismatch")
+        if self.source_present_confirmation_fact_count != sum(
+            1
+            for binding in self.fact_bindings
+            if binding.fact_resolution_state == "source_present_needs_confirmation"
+        ):
+            raise ValueError("executable L&E source-present confirmation count mismatch")
+        if self.source_present_unresolved_critical_driver_count != sum(
+            1
+            for binding in self.fact_bindings
+            if binding.fact_resolution_state == "source_present_unresolved_critical_driver"
+        ):
+            raise ValueError(
+                "executable L&E source-present unresolved critical driver count mismatch"
+            )
         if self.evidence_bound_fact_count != sum(
             1 for binding in self.fact_bindings if binding.evidence_refs
         ):
@@ -2154,6 +2225,9 @@ class LaborEmploymentExecutableBudgetFactBindingReport(StrictModel):
     failed_case_count: int = Field(ge=0)
     fact_binding_count: int = Field(ge=0)
     critical_fact_binding_count: int = Field(ge=0)
+    missing_critical_fact_count: int = Field(ge=0)
+    source_present_confirmation_fact_count: int = Field(ge=0)
+    source_present_unresolved_critical_driver_count: int = Field(ge=0)
     evidence_bound_fact_count: int = Field(ge=0)
     exception_bound_fact_count: int = Field(ge=0)
     missing_policy_fact_count: int = Field(ge=0)
@@ -2200,6 +2274,20 @@ class LaborEmploymentExecutableBudgetFactBindingReport(StrictModel):
             case.critical_fact_binding_count for case in self.cases
         ):
             raise ValueError("executable L&E critical fact binding aggregate count mismatch")
+        if self.missing_critical_fact_count != sum(
+            case.missing_critical_fact_count for case in self.cases
+        ):
+            raise ValueError("executable L&E missing critical fact aggregate count mismatch")
+        if self.source_present_confirmation_fact_count != sum(
+            case.source_present_confirmation_fact_count for case in self.cases
+        ):
+            raise ValueError("executable L&E source-present confirmation aggregate mismatch")
+        if self.source_present_unresolved_critical_driver_count != sum(
+            case.source_present_unresolved_critical_driver_count for case in self.cases
+        ):
+            raise ValueError(
+                "executable L&E source-present unresolved critical driver aggregate mismatch"
+            )
         if self.evidence_bound_fact_count != sum(
             case.evidence_bound_fact_count for case in self.cases
         ):
@@ -2277,6 +2365,10 @@ class LaborEmploymentExecutableDriverBindingItem(StrictModel):
     exception_label_count: int = Field(ge=0)
     source_inventory_ref_count: int = Field(ge=0)
     critical_driver_block: bool = False
+    critical_driver_review_only: bool = False
+    missing_critical_fact_count: int = Field(default=0, ge=0)
+    source_present_confirmation_fact_count: int = Field(default=0, ge=0)
+    source_present_unresolved_critical_driver_count: int = Field(default=0, ge=0)
     matched_fact_ids: list[str]
     missing_fact_ids: list[str]
     notes: list[str] = Field(default_factory=list)
@@ -2293,6 +2385,10 @@ class LaborEmploymentExecutableDriverBindingItem(StrictModel):
             raise ValueError("unbound driver candidate requires missing facts")
         if sorted(set(self.matched_fact_ids + self.missing_fact_ids)) != sorted(set(self.fact_ids)):
             raise ValueError("driver binding fact coverage mismatch")
+        if self.critical_driver_review_only and self.critical_driver_block:
+            raise ValueError("driver binding cannot be both review-only and amount-blocking")
+        if self.critical_driver_review_only and not self.source_present_confirmation_fact_count:
+            raise ValueError("review-only critical driver requires source-present facts")
         return self
 
 
@@ -2316,6 +2412,7 @@ class LaborEmploymentExecutableDriverBindingCase(StrictModel):
     source_bound_driver_count: int = Field(ge=0)
     unbound_driver_count: int = Field(ge=0)
     critical_driver_block_count: int = Field(ge=0)
+    critical_driver_review_only_count: int = Field(ge=0)
     budget_driver_dimensions: list[LaborEmploymentBudgetDriverDimension]
     driver_bindings: list[LaborEmploymentExecutableDriverBindingItem]
     failed_expectation_ids: list[str] = Field(default_factory=list)
@@ -2350,6 +2447,14 @@ class LaborEmploymentExecutableDriverBindingCase(StrictModel):
             raise ValueError("executable L&E source-bound driver count mismatch")
         if self.unbound_driver_count != len(unbound):
             raise ValueError("executable L&E unbound driver count mismatch")
+        if self.critical_driver_block_count != sum(
+            1 for item in self.driver_bindings if item.critical_driver_block
+        ):
+            raise ValueError("executable L&E critical driver block count mismatch")
+        if self.critical_driver_review_only_count != sum(
+            1 for item in self.driver_bindings if item.critical_driver_review_only
+        ):
+            raise ValueError("executable L&E critical driver review-only count mismatch")
         if self.status == "passed" and (self.failed_expectation_ids or unbound):
             raise ValueError("passed executable L&E driver binding case has failures")
         if self.status == "failed" and not (self.failed_expectation_ids or unbound):
@@ -2381,6 +2486,7 @@ class LaborEmploymentExecutableDriverBindingReport(StrictModel):
     source_bound_driver_count: int = Field(ge=0)
     unbound_driver_count: int = Field(ge=0)
     critical_driver_block_count: int = Field(ge=0)
+    critical_driver_review_only_count: int = Field(ge=0)
     required_driver_dimensions: list[LaborEmploymentBudgetDriverDimension]
     covered_driver_dimensions: list[LaborEmploymentBudgetDriverDimension]
     missing_driver_dimensions: list[LaborEmploymentBudgetDriverDimension]
@@ -2430,6 +2536,10 @@ class LaborEmploymentExecutableDriverBindingReport(StrictModel):
             case.critical_driver_block_count for case in self.cases
         ):
             raise ValueError("executable L&E critical driver block aggregate count mismatch")
+        if self.critical_driver_review_only_count != sum(
+            case.critical_driver_review_only_count for case in self.cases
+        ):
+            raise ValueError("executable L&E critical driver review-only aggregate mismatch")
         if sorted(set(self.covered_driver_dimensions + self.missing_driver_dimensions)) != sorted(
             set(self.required_driver_dimensions)
         ):
@@ -2478,6 +2588,7 @@ class LaborEmploymentExecutableDriverImpactItem(StrictModel):
     source_binding_state: Literal["source_bound_driver_candidate", "unbound_driver_candidate"]
     source_bound: bool
     critical_driver_block: bool
+    critical_driver_review_only: bool = False
     impact_actions: list[LaborEmploymentExecutableDriverImpactAction]
     pricing_effect: LaborEmploymentExecutableDriverPricingEffect
     range_widening_factor: float = Field(ge=1.0)
@@ -2513,6 +2624,13 @@ class LaborEmploymentExecutableDriverImpactItem(StrictModel):
                 raise ValueError("critical driver block requires amount-budget block action")
             if self.pricing_effect != "amount_budget_blocked":
                 raise ValueError("critical driver block requires amount-budget blocked effect")
+        if self.critical_driver_review_only and self.critical_driver_block:
+            raise ValueError("impact cannot be both review-only and amount-blocking")
+        if (
+            self.critical_driver_review_only
+            and "hold_for_human_driver_review" not in self.impact_actions
+        ):
+            raise ValueError("review-only critical impact requires human review hold")
         if self.range_widening_factor > 1.0 and "widen_budget_range" not in self.impact_actions:
             raise ValueError("range widening factor requires widen_budget_range action")
         if self.scenario_fork_required and "add_scenario_fork" not in self.impact_actions:
@@ -2545,6 +2663,7 @@ class LaborEmploymentExecutableDriverImpactCase(StrictModel):
     impact_item_count: int = Field(ge=0)
     source_bound_impact_count: int = Field(ge=0)
     block_amount_budget_impact_count: int = Field(ge=0)
+    critical_review_only_impact_count: int = Field(ge=0)
     range_widening_impact_count: int = Field(ge=0)
     scenario_fork_impact_count: int = Field(ge=0)
     rate_guideline_review_impact_count: int = Field(ge=0)
@@ -2578,6 +2697,10 @@ class LaborEmploymentExecutableDriverImpactCase(StrictModel):
             1 for item in self.impact_items if "block_amount_budget" in item.impact_actions
         ):
             raise ValueError("executable L&E amount-budget block impact count mismatch")
+        if self.critical_review_only_impact_count != sum(
+            1 for item in self.impact_items if item.critical_driver_review_only
+        ):
+            raise ValueError("executable L&E critical review-only impact count mismatch")
         if self.range_widening_impact_count != sum(
             1 for item in self.impact_items if "widen_budget_range" in item.impact_actions
         ):
@@ -2638,6 +2761,7 @@ class LaborEmploymentExecutableDriverImpactReport(StrictModel):
     impact_item_count: int = Field(ge=0)
     source_bound_impact_count: int = Field(ge=0)
     block_amount_budget_impact_count: int = Field(ge=0)
+    critical_review_only_impact_count: int = Field(ge=0)
     range_widening_impact_count: int = Field(ge=0)
     scenario_fork_impact_count: int = Field(ge=0)
     rate_guideline_review_impact_count: int = Field(ge=0)
@@ -2689,6 +2813,10 @@ class LaborEmploymentExecutableDriverImpactReport(StrictModel):
             case.block_amount_budget_impact_count for case in self.cases
         ):
             raise ValueError("executable L&E block impact aggregate count mismatch")
+        if self.critical_review_only_impact_count != sum(
+            case.critical_review_only_impact_count for case in self.cases
+        ):
+            raise ValueError("executable L&E critical review-only impact aggregate mismatch")
         if self.range_widening_impact_count != sum(
             case.range_widening_impact_count for case in self.cases
         ):
@@ -2913,6 +3041,7 @@ class LaborEmploymentBlockedDriverImpactFactReview(StrictModel):
         "inventory_bound_gap_candidate",
         "unbound_gap_candidate",
     ]
+    fact_resolution_state: LaborEmploymentBudgetFactResolutionState
     blocks_precise_budget: bool
     reason: str
     budget_effects: list[str]
@@ -3087,6 +3216,7 @@ class LaborEmploymentBudgetOutputExpectationCase(StrictModel):
     blocked_case_review_present: bool
     amount_budget_blocked: bool
     block_amount_budget_impact_count: int = Field(ge=0)
+    critical_review_only_impact_count: int = Field(default=0, ge=0)
     range_widening_impact_count: int = Field(ge=0)
     scenario_fork_impact_count: int = Field(ge=0)
     rate_guideline_review_impact_count: int = Field(ge=0)

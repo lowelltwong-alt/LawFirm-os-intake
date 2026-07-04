@@ -86,6 +86,19 @@
       "title": "Binding State",
       "type": "string"
     },
+    "fact_resolution_state": {
+      "enum": [
+        "missing_critical_fact",
+        "missing_noncritical_fact",
+        "source_present_needs_confirmation",
+        "source_present_unresolved_critical_driver",
+        "source_present_unresolved_driver",
+        "inventory_present_needs_confirmation",
+        "unbound_fact_gap"
+      ],
+      "title": "Fact Resolution State",
+      "type": "string"
+    },
     "recommended_budget_treatment": {
       "enum": [
         "block_amount_budget",
@@ -211,6 +224,7 @@
     "question",
     "expected_gap_type",
     "binding_state",
+    "fact_resolution_state",
     "recommended_budget_treatment",
     "budget_effects",
     "source_signal_terms",

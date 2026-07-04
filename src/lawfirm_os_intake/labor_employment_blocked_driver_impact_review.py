@@ -183,7 +183,7 @@ def render_labor_employment_blocked_driver_impact_review_report(
         for fact in case.blocker_facts:
             lines.extend(
                 [
-                    f"- `{fact.fact_id}`: {fact.reason}",
+                    f"- `{fact.fact_id}`: {fact.fact_resolution_state}; {fact.reason}",
                     f"  - Budget effects: {', '.join(fact.budget_effects) or 'none'}",
                     "  - Matched exception labels: "
                     + (", ".join(fact.matched_exception_labels) or "none"),
@@ -267,6 +267,7 @@ def _fact_review(
         fact_id=binding.fact_id,
         required_level=binding.required_level,
         binding_state=binding.binding_state,
+        fact_resolution_state=binding.fact_resolution_state,
         blocks_precise_budget=binding.blocks_precise_budget,
         reason=binding.reason,
         budget_effects=binding.budget_effects,
@@ -313,6 +314,10 @@ def _fact_unblock_actions(binding: LaborEmploymentExecutableBudgetFactBindingIte
 def _fact_labels(binding: LaborEmploymentExecutableBudgetFactBindingItem) -> list[str]:
     labels = set(BASE_CANDIDATE_LAKE_LABELS)
     labels.add("labor_employment_critical_budget_fact_block")
+    if binding.fact_resolution_state == "missing_critical_fact":
+        labels.add("labor_employment_missing_critical_budget_fact")
+    if binding.fact_resolution_state == "source_present_unresolved_critical_driver":
+        labels.add("source_present_critical_budget_driver_unresolved")
     labels.update(binding.matched_exception_labels)
     labels.update(binding.missing_exception_labels)
     if binding.matched_source_ids or binding.missing_source_ids:

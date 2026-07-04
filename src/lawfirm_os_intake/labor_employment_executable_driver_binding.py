@@ -160,6 +160,9 @@ def run_labor_employment_executable_driver_binding_audit(
         source_bound_driver_count=sum(case.source_bound_driver_count for case in cases),
         unbound_driver_count=sum(case.unbound_driver_count for case in cases),
         critical_driver_block_count=sum(case.critical_driver_block_count for case in cases),
+        critical_driver_review_only_count=sum(
+            case.critical_driver_review_only_count for case in cases
+        ),
         required_driver_dimensions=REQUIRED_DRIVER_DIMENSIONS,
         covered_driver_dimensions=covered_dimensions,
         missing_driver_dimensions=missing_dimensions,
@@ -201,6 +204,7 @@ def render_labor_employment_executable_driver_binding_report(
         f"- Source-bound drivers: {report.source_bound_driver_count}",
         f"- Unbound drivers: {report.unbound_driver_count}",
         f"- Critical driver blocks: {report.critical_driver_block_count}",
+        f"- Critical driver review-only signals: {report.critical_driver_review_only_count}",
         "- Covered focus dimensions: "
         + ", ".join(f"`{dimension}`" for dimension in report.covered_driver_dimensions),
         "- Missing focus dimensions: "
@@ -221,6 +225,7 @@ def render_labor_employment_executable_driver_binding_report(
                 f"- Driver bindings: {case.driver_binding_count}",
                 f"- Source-bound drivers: {case.source_bound_driver_count}",
                 f"- Critical driver blocks: {case.critical_driver_block_count}",
+                f"- Critical driver review-only signals: {case.critical_driver_review_only_count}",
             ]
         )
         for binding in case.driver_bindings:
@@ -228,7 +233,8 @@ def render_labor_employment_executable_driver_binding_report(
                 f"- `{binding.driver_dimension}`: {binding.binding_state}; "
                 f"facts={', '.join(binding.matched_fact_ids) or 'none'}; "
                 f"evidence_refs={binding.evidence_ref_count}; "
-                f"exception_labels={binding.exception_label_count}"
+                f"exception_labels={binding.exception_label_count}; "
+                f"critical_review_only={binding.critical_driver_review_only}"
             )
         if case.failed_expectation_ids:
             lines.append(
@@ -297,6 +303,9 @@ def _case_from_fact_binding(
         critical_driver_block_count=sum(
             1 for item in driver_bindings if _driver_has_critical_block(item, binding_case)
         ),
+        critical_driver_review_only_count=sum(
+            1 for item in driver_bindings if item.critical_driver_review_only
+        ),
         budget_driver_dimensions=[item.driver_dimension for item in driver_bindings],
         driver_bindings=driver_bindings,
         failed_expectation_ids=sorted(set(failed_expectation_ids)),
@@ -316,6 +325,21 @@ def _driver_bindings_from_facts(
         if not matching:
             continue
         matched_fact_ids = sorted({binding.fact_id for binding in matching})
+        missing_critical_fact_count = sum(
+            1 for binding in matching if binding.fact_resolution_state == "missing_critical_fact"
+        )
+        source_present_confirmation_fact_count = sum(
+            1
+            for binding in matching
+            if binding.fact_resolution_state == "source_present_needs_confirmation"
+            and binding.required_level == "critical"
+        )
+        source_present_unresolved_critical_driver_count = sum(
+            1
+            for binding in matching
+            if binding.fact_resolution_state == "source_present_unresolved_critical_driver"
+        )
+        critical_driver_block = any(binding.blocks_precise_budget for binding in matching)
         items.append(
             LaborEmploymentExecutableDriverBindingItem(
                 driver_dimension=dimension,
@@ -328,7 +352,15 @@ def _driver_bindings_from_facts(
                 source_inventory_ref_count=sum(
                     len(binding.source_inventory_refs) for binding in matching
                 ),
-                critical_driver_block=any(binding.blocks_precise_budget for binding in matching),
+                critical_driver_block=critical_driver_block,
+                critical_driver_review_only=(
+                    source_present_confirmation_fact_count > 0 and not critical_driver_block
+                ),
+                missing_critical_fact_count=missing_critical_fact_count,
+                source_present_confirmation_fact_count=source_present_confirmation_fact_count,
+                source_present_unresolved_critical_driver_count=(
+                    source_present_unresolved_critical_driver_count
+                ),
                 matched_fact_ids=matched_fact_ids,
                 missing_fact_ids=[],
                 notes=[

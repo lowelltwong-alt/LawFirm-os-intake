@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1",
   "issue_id": "le-critical-fact-state-conflation-001",
-  "issue_version": "0.1.0",
+  "issue_version": "0.1.1",
   "observed_at": "2026-07-04T00:00:00Z",
   "source_repo_id": "LawFirm-os-intake",
   "source_repo_path": "LawFirm-os-intake",
@@ -36,18 +36,30 @@
     "Add synthetic tests where role evidence is present but unconfirmed and the allowed budget output is range-only or candidate-range pending review.",
     "Map the states to separate candidate Exception Lake labels so DAD can distinguish missing intake evidence from human-confirmation pressure."
   ],
-  "fix_status": "planned",
+  "fix_status": "fixed_validated",
   "fix_refs": [
+    "src/lawfirm_os_intake/models.py",
+    "src/lawfirm_os_intake/labor_employment_executable_fact_binding.py",
+    "src/lawfirm_os_intake/labor_employment_executable_driver_binding.py",
+    "src/lawfirm_os_intake/labor_employment_executable_driver_impact.py",
+    "src/lawfirm_os_intake/labor_employment_blocked_driver_impact_review.py",
+    "src/lawfirm_os_intake/labor_employment_budget_output_expectations.py",
     "examples/synthetic/labor-employment/labor-employment-executable-budget-fact-bindings.json",
     "examples/synthetic/labor-employment/labor-employment-executable-fixtures-manifest.json",
     "examples/synthetic/labor-employment/executable-fixtures/le-epli-carrier-clean.source-bundle.json",
-    "examples/synthetic/labor-employment/executable-fixtures/le-epli-carrier-messy-thread.source-bundle.json"
+    "examples/synthetic/labor-employment/executable-fixtures/le-epli-carrier-messy-thread.source-bundle.json",
+    "apps/legal-intake-budget/src/fixtures/demo-labor-employment-blocked-driver-impact-review-report.json",
+    "apps/legal-intake-budget/src/fixtures/demo-labor-employment-budget-output-expectations-report.json",
+    "docs/decisions/TRACE-2026-07-04-le-critical-fact-state-split.md"
   ],
   "test_refs": [
     "tests/test_labor_employment_executable_fact_binding.py",
     "tests/test_labor_employment_executable_driver_binding.py",
+    "tests/test_labor_employment_executable_driver_impact.py",
     "tests/test_labor_employment_blocked_driver_impact_review.py",
-    "tests/test_labor_employment_budget_output_expectations.py"
+    "tests/test_labor_employment_budget_output_expectations.py",
+    "tests/test_ui_foundation_contract.py",
+    "tests/test_poc_qa_triage.py"
   ],
   "artifact_refs": [
     "apps/legal-intake-budget/src/fixtures/demo-labor-employment-budget-output-expectations-report.json",

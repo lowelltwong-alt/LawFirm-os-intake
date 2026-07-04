@@ -51,10 +51,13 @@ def test_labor_employment_executable_fact_binding_binds_gaps_without_side_effect
     assert report.status == "labor_employment_executable_budget_fact_bindings_ready_for_review"
     assert persisted.case_count == 12
     assert persisted.failed_case_count == 0
-    assert persisted.fact_binding_count == 26
-    assert persisted.critical_fact_binding_count == 8
-    assert persisted.evidence_bound_fact_count == 26
-    assert persisted.exception_bound_fact_count == 10
+    assert persisted.fact_binding_count == 32
+    assert persisted.critical_fact_binding_count == 14
+    assert persisted.missing_critical_fact_count == 5
+    assert persisted.source_present_confirmation_fact_count == 19
+    assert persisted.source_present_unresolved_critical_driver_count == 1
+    assert persisted.evidence_bound_fact_count == 32
+    assert persisted.exception_bound_fact_count == 11
     assert persisted.missing_policy_fact_count == 0
     assert persisted.missing_source_signal_count == 0
     assert persisted.missing_exception_label_count == 0
@@ -109,6 +112,12 @@ def test_labor_employment_executable_fact_binding_binds_gaps_without_side_effect
     assert discrimination_bindings["carrier_guideline_and_rate_source"].binding_state == (
         "source_and_exception_bound_gap_candidate"
     )
+    assert discrimination_bindings["carrier_guideline_and_rate_source"].fact_resolution_state == (
+        "missing_critical_fact"
+    )
+    assert (
+        discrimination_bindings["carrier_guideline_and_rate_source"].blocks_precise_budget is True
+    )
     assert discrimination_bindings["carrier_guideline_and_rate_source"].matched_source_ids == [
         "syn-le-discrimination-guidelines-missing-001"
     ]
@@ -120,6 +129,21 @@ def test_labor_employment_executable_fact_binding_binds_gaps_without_side_effect
         binding.fact_id: binding
         for binding in cases["le-epli-carrier-clean.executable.v0_1"].fact_bindings
     }
+    assert epli_clean_bindings["prospective_client_payer_carrier_posture"].required_level == (
+        "critical"
+    )
+    assert (
+        epli_clean_bindings["prospective_client_payer_carrier_posture"].fact_resolution_state
+        == "source_present_needs_confirmation"
+    )
+    assert (
+        epli_clean_bindings["prospective_client_payer_carrier_posture"].blocks_precise_budget
+        is False
+    )
+    assert epli_clean_bindings["carrier_guideline_and_rate_source"].fact_resolution_state == (
+        "source_present_needs_confirmation"
+    )
+    assert epli_clean_bindings["carrier_guideline_and_rate_source"].blocks_precise_budget is False
     assert epli_clean_bindings["expert_and_vendor_needs"].binding_state == (
         "source_bound_gap_candidate"
     )
@@ -127,6 +151,25 @@ def test_labor_employment_executable_fact_binding_binds_gaps_without_side_effect
         binding.fact_id: binding
         for binding in cases["le-epli-carrier-messy-thread.executable.v0_1"].fact_bindings
     }
+    assert (
+        epli_messy_bindings["prospective_client_payer_carrier_posture"].fact_resolution_state
+        == "source_present_needs_confirmation"
+    )
+    assert (
+        epli_messy_bindings["joint_employer_or_affiliate_structure"].fact_resolution_state
+        == "source_present_needs_confirmation"
+    )
+    assert epli_messy_bindings["carrier_guideline_and_rate_source"].fact_resolution_state == (
+        "source_present_needs_confirmation"
+    )
+    assert all(
+        epli_messy_bindings[fact_id].blocks_precise_budget is False
+        for fact_id in [
+            "prospective_client_payer_carrier_posture",
+            "joint_employer_or_affiliate_structure",
+            "carrier_guideline_and_rate_source",
+        ]
+    )
     assert epli_messy_bindings["forum_removed_and_arbitration_posture"].binding_state == (
         "source_bound_gap_candidate"
     )
@@ -155,6 +198,9 @@ def test_labor_employment_executable_fact_binding_binds_gaps_without_side_effect
         "source_and_exception_bound_gap_candidate"
     )
     assert restrictive_bindings["esi_custodians_and_sources"].required_level == "critical"
+    assert restrictive_bindings["esi_custodians_and_sources"].fact_resolution_state == (
+        "missing_critical_fact"
+    )
     assert restrictive_bindings["esi_custodians_and_sources"].matched_source_ids == [
         "syn-le-restrictive-covenant-device-scope-missing-001"
     ]
@@ -279,6 +325,8 @@ def test_labor_employment_executable_fact_binding_cli_writes_report(
     assert exit_code == 0
     assert report["status"] == ("labor_employment_executable_budget_fact_bindings_ready_for_review")
     assert report["case_count"] == 12
-    assert report["fact_binding_count"] == 26
+    assert report["fact_binding_count"] == 32
+    assert report["missing_critical_fact_count"] == 5
+    assert report["source_present_confirmation_fact_count"] == 19
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out

@@ -73,9 +73,10 @@ def test_labor_employment_executable_driver_impact_maps_drivers_to_budget_effect
     assert report.status == "labor_employment_executable_driver_impacts_ready_for_review"
     assert persisted.case_count == 12
     assert persisted.failed_case_count == 0
-    assert persisted.impact_item_count == 40
-    assert persisted.source_bound_impact_count == 40
-    assert persisted.block_amount_budget_impact_count == 12
+    assert persisted.impact_item_count == 48
+    assert persisted.source_bound_impact_count == 48
+    assert persisted.block_amount_budget_impact_count == 7
+    assert persisted.critical_review_only_impact_count == 13
     assert persisted.range_widening_impact_count > 0
     assert persisted.scenario_fork_impact_count > 0
     assert persisted.rate_guideline_review_impact_count > 0
@@ -115,11 +116,15 @@ def test_labor_employment_executable_driver_impact_maps_drivers_to_budget_effect
     epli_clean = cases["le-epli-carrier-clean.executable.v0_1"]
     assert epli_clean.allowed_budget_output == "candidate_range_after_review_pending_human_review"
     assert epli_clean.block_amount_budget_impact_count == 0
+    assert epli_clean.critical_review_only_impact_count == 3
     assert epli_clean.scenario_fork_impact_count == 1
+    assert epli_clean.rate_guideline_review_impact_count == 2
     epli_messy = cases["le-epli-carrier-messy-thread.executable.v0_1"]
     assert epli_messy.allowed_budget_output == "range_or_hours_only_pending_review"
     assert epli_messy.block_amount_budget_impact_count == 0
+    assert epli_messy.critical_review_only_impact_count == 4
     assert epli_messy.scenario_fork_impact_count == 1
+    assert epli_messy.rate_guideline_review_impact_count == 2
 
     notes = (run_dir / "labor_employment_executable_driver_impact_report.md").read_text(
         encoding="utf-8"
@@ -185,7 +190,8 @@ def test_labor_employment_executable_driver_impact_cli_writes_candidate_report(
     assert exit_code == 0
     assert report["status"] == "labor_employment_executable_driver_impacts_ready_for_review"
     assert report["case_count"] == 12
-    assert report["impact_item_count"] == 40
+    assert report["impact_item_count"] == 48
+    assert report["critical_review_only_impact_count"] == 13
     assert report["missing_impact_policy_dimensions"] == []
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out

@@ -108,6 +108,13 @@ def run_labor_employment_executable_fact_binding_audit(
         failed_case_count=len(failed_cases),
         fact_binding_count=sum(case.fact_binding_count for case in cases),
         critical_fact_binding_count=sum(case.critical_fact_binding_count for case in cases),
+        missing_critical_fact_count=sum(case.missing_critical_fact_count for case in cases),
+        source_present_confirmation_fact_count=sum(
+            case.source_present_confirmation_fact_count for case in cases
+        ),
+        source_present_unresolved_critical_driver_count=sum(
+            case.source_present_unresolved_critical_driver_count for case in cases
+        ),
         evidence_bound_fact_count=sum(case.evidence_bound_fact_count for case in cases),
         exception_bound_fact_count=sum(case.exception_bound_fact_count for case in cases),
         missing_policy_fact_count=sum(len(case.missing_policy_fact_ids) for case in cases),
@@ -160,6 +167,10 @@ def render_labor_employment_executable_fact_binding_report(
         f"- Failed cases: {report.failed_case_count}",
         f"- Fact bindings: {report.fact_binding_count}",
         f"- Critical fact bindings: {report.critical_fact_binding_count}",
+        f"- Missing critical facts: {report.missing_critical_fact_count}",
+        f"- Source-present confirmation facts: {report.source_present_confirmation_fact_count}",
+        "- Source-present unresolved critical drivers: "
+        f"{report.source_present_unresolved_critical_driver_count}",
         f"- Evidence-bound facts: {report.evidence_bound_fact_count}",
         f"- Exception-bound facts: {report.exception_bound_fact_count}",
         f"- Missing source signals: {report.missing_source_signal_count}",
@@ -180,6 +191,11 @@ def render_labor_employment_executable_fact_binding_report(
                 f"- Expected treatment: {case.expected_budget_treatment}",
                 f"- Fact bindings: {case.fact_binding_count}",
                 f"- Critical bindings: {case.critical_fact_binding_count}",
+                f"- Missing critical facts: {case.missing_critical_fact_count}",
+                "- Source-present confirmation facts: "
+                f"{case.source_present_confirmation_fact_count}",
+                "- Source-present unresolved critical drivers: "
+                f"{case.source_present_unresolved_critical_driver_count}",
                 f"- Evidence-bound facts: {case.evidence_bound_fact_count}",
                 f"- Exception-bound facts: {case.exception_bound_fact_count}",
             ]
@@ -192,6 +208,7 @@ def render_labor_employment_executable_fact_binding_report(
         for binding in case.fact_bindings:
             lines.append(
                 f"- `{binding.fact_id}`: {binding.binding_state}; "
+                f"state={binding.fact_resolution_state}; "
                 f"level={binding.required_level}; "
                 f"missing_terms={', '.join(binding.missing_source_signal_terms) or 'none'}; "
                 f"missing_labels={', '.join(binding.missing_exception_labels) or 'none'}"
@@ -269,20 +286,42 @@ def _case_from_spec(
     critical_fact_count = sum(
         1 for binding in fact_bindings if binding.required_level == "critical"
     )
+    missing_critical_fact_count = sum(
+        1 for binding in fact_bindings if binding.fact_resolution_state == "missing_critical_fact"
+    )
+    source_present_confirmation_fact_count = sum(
+        1
+        for binding in fact_bindings
+        if binding.fact_resolution_state == "source_present_needs_confirmation"
+    )
+    source_present_unresolved_critical_driver_count = sum(
+        1
+        for binding in fact_bindings
+        if binding.fact_resolution_state == "source_present_unresolved_critical_driver"
+    )
+    precise_budget_block_count = sum(
+        1 for binding in fact_bindings if binding.blocks_precise_budget
+    )
     if (
-        critical_fact_count
+        precise_budget_block_count
         and spec.expected_budget_readiness_state != "blocked_missing_critical_facts"
     ):
-        failed_expectation_ids.append("critical_gap_without_blocked_readiness")
+        failed_expectation_ids.append("precise_budget_block_without_blocked_readiness")
     if (
-        critical_fact_count
+        precise_budget_block_count
         and spec.expected_budget_gate_effect != "block_amount_budget_before_proposal"
     ):
-        failed_expectation_ids.append("critical_gap_without_amount_budget_block")
+        failed_expectation_ids.append("precise_budget_block_without_amount_budget_block")
+    if spec.expected_budget_treatment == "block_amount_budget" and not precise_budget_block_count:
+        failed_expectation_ids.append("blocked_budget_without_missing_or_unresolved_blocker")
     status = "failed" if failed_expectation_ids or missing_policy_fact_ids else "passed"
-    if critical_fact_count:
+    if precise_budget_block_count:
         notes.append(
-            "At least one critical L&E budget fact is bound as a gap; amount budget stays blocked."
+            "At least one missing or unresolved critical L&E budget fact blocks amount-budget output."
+        )
+    if source_present_confirmation_fact_count:
+        notes.append(
+            "At least one critical L&E budget fact is source-present but remains review-only."
         )
     return LaborEmploymentExecutableBudgetFactBindingCase(
         binding_case_id=spec.binding_case_id,
@@ -304,6 +343,11 @@ def _case_from_spec(
         ),
         fact_binding_count=len(fact_bindings),
         critical_fact_binding_count=critical_fact_count,
+        missing_critical_fact_count=missing_critical_fact_count,
+        source_present_confirmation_fact_count=source_present_confirmation_fact_count,
+        source_present_unresolved_critical_driver_count=(
+            source_present_unresolved_critical_driver_count
+        ),
         evidence_bound_fact_count=sum(1 for binding in fact_bindings if binding.evidence_refs),
         exception_bound_fact_count=sum(
             1 for binding in fact_bindings if binding.matched_exception_labels
@@ -351,6 +395,21 @@ def _binding_item(
         source_inventory_refs=source_inventory_refs,
     )
     required_level = str(fact_need.get("required_level", "context"))
+    recommended_budget_treatment = str(
+        fact_need.get(
+            "recommended_budget_treatment",
+            "hours_only_or_broad_range",
+        )
+    )
+    fact_resolution_state = _fact_resolution_state(
+        expected_gap_type=binding_spec.expected_gap_type,
+        binding_state=binding_state,
+        required_level=required_level,
+        recommended_budget_treatment=recommended_budget_treatment,
+        evidence_refs=evidence_refs,
+        matched_exception_labels=matched_exception_labels,
+        source_inventory_refs=source_inventory_refs,
+    )
     return LaborEmploymentExecutableBudgetFactBindingItem(
         fact_id=binding_spec.fact_id,
         fact_category=fact_need["fact_category"],
@@ -358,10 +417,8 @@ def _binding_item(
         question=str(fact_need["question"]),
         expected_gap_type=binding_spec.expected_gap_type,
         binding_state=binding_state,
-        recommended_budget_treatment=fact_need.get(
-            "recommended_budget_treatment",
-            "hours_only_or_broad_range",
-        ),
+        fact_resolution_state=fact_resolution_state,
+        recommended_budget_treatment=recommended_budget_treatment,  # type: ignore[arg-type]
         budget_effects=[str(effect) for effect in fact_need.get("budget_effects", [])],
         source_signal_terms=binding_spec.source_signal_terms,
         matched_source_signal_terms=matched_terms,
@@ -374,7 +431,10 @@ def _binding_item(
         missing_source_ids=missing_source_ids,
         evidence_refs=evidence_refs,
         source_inventory_refs=source_inventory_refs,
-        blocks_precise_budget=required_level == "critical",
+        blocks_precise_budget=_blocks_precise_budget(
+            fact_resolution_state=fact_resolution_state,
+            required_level=required_level,
+        ),
         human_confirmation_required=bool(fact_need.get("human_confirmation_required", True)),
         reason=binding_spec.reason,
     )
@@ -546,6 +606,45 @@ def _binding_state(
     if source_inventory_refs:
         return "inventory_bound_gap_candidate"
     return "unbound_gap_candidate"
+
+
+def _fact_resolution_state(
+    *,
+    expected_gap_type: str,
+    binding_state: str,
+    required_level: str,
+    recommended_budget_treatment: str,
+    evidence_refs: list[EvidenceRef],
+    matched_exception_labels: list[str],
+    source_inventory_refs: list[str],
+) -> str:
+    if binding_state == "unbound_gap_candidate":
+        return "unbound_fact_gap"
+    if expected_gap_type == "missing_evidence":
+        return (
+            "missing_critical_fact" if required_level == "critical" else "missing_noncritical_fact"
+        )
+    if expected_gap_type == "uncertain_candidate":
+        if required_level == "critical" and recommended_budget_treatment == "block_amount_budget":
+            return "source_present_unresolved_critical_driver"
+        return "source_present_unresolved_driver"
+    if evidence_refs or matched_exception_labels:
+        return "source_present_needs_confirmation"
+    if source_inventory_refs:
+        return "inventory_present_needs_confirmation"
+    return "unbound_fact_gap"
+
+
+def _blocks_precise_budget(
+    *,
+    fact_resolution_state: str,
+    required_level: str,
+) -> bool:
+    return required_level == "critical" and fact_resolution_state in {
+        "missing_critical_fact",
+        "source_present_unresolved_critical_driver",
+        "unbound_fact_gap",
+    }
 
 
 def _resolve_repo_ref(root: Path, ref: str | Path) -> Path:

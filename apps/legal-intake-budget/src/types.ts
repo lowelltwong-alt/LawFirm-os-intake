@@ -697,6 +697,15 @@ export type LaborEmploymentBlockedDriverImpactCheck = {
   blocking_refs: string[];
 };
 
+export type LaborEmploymentFactResolutionState =
+  | "missing_critical_fact"
+  | "missing_noncritical_fact"
+  | "source_present_needs_confirmation"
+  | "source_present_unresolved_critical_driver"
+  | "source_present_unresolved_driver"
+  | "inventory_present_needs_confirmation"
+  | "unbound_fact_gap";
+
 export type LaborEmploymentBlockedDriverImpactFactReview = {
   fact_id: string;
   required_level: "critical";
@@ -706,6 +715,7 @@ export type LaborEmploymentBlockedDriverImpactFactReview = {
     | "source_and_exception_bound_gap_candidate"
     | "inventory_bound_gap_candidate"
     | "unbound_gap_candidate";
+  fact_resolution_state: LaborEmploymentFactResolutionState;
   blocks_precise_budget: boolean;
   reason: string;
   budget_effects: string[];
@@ -817,6 +827,7 @@ export type LaborEmploymentBudgetOutputExpectationCase = {
   blocked_case_review_present: boolean;
   amount_budget_blocked: boolean;
   block_amount_budget_impact_count: number;
+  critical_review_only_impact_count: number;
   range_widening_impact_count: number;
   scenario_fork_impact_count: number;
   rate_guideline_review_impact_count: number;

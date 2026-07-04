@@ -175,6 +175,8 @@
         "critic_role_candidates_ambiguous"
       ],
       "expected_budget_fact_gap_ids": [
+        "prospective_client_payer_carrier_posture",
+        "carrier_guideline_and_rate_source",
         "expert_and_vendor_needs"
       ],
       "red_team_notes": [
@@ -211,6 +213,9 @@
         "critic_role_candidates_ambiguous"
       ],
       "expected_budget_fact_gap_ids": [
+        "prospective_client_payer_carrier_posture",
+        "joint_employer_or_affiliate_structure",
+        "carrier_guideline_and_rate_source",
         "forum_removed_and_arbitration_posture"
       ],
       "red_team_notes": [
@@ -421,6 +426,7 @@
         "duplicate_source_detected"
       ],
       "expected_budget_fact_gap_ids": [
+        "relevant_employment_timeline",
         "policy_handbook_contract_documents",
         "individual_supervisor_or_manager_defendants"
       ],
