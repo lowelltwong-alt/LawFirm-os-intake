@@ -31,6 +31,7 @@ def test_legal_intake_budget_ui_required_files_exist(repo_root):
         "src/fixtures/demo-labor-employment-blocked-driver-impact-review-report.json",
         "src/fixtures/demo-labor-employment-budget-output-expectations-report.json",
         "src/fixtures/demo-labor-employment-budget-qa-gate-report.json",
+        "src/fixtures/demo-budget-learning-loop-report.json",
     ]
 
     for relative_path in required:
@@ -87,6 +88,7 @@ def test_legal_intake_budget_ui_data_contract_lists_required_artifacts(repo_root
         "budget_human_review_packet.json",
         "carrier_rejection_decision_ledger_report.json",
         "budget_actual_variance_ledger_report.json",
+        "budget_learning_loop_report.json",
         "public_source_methodology_report.json",
         "public_data_cache_audit_report.json",
     ]
@@ -141,6 +143,7 @@ def test_legal_intake_budget_demo_manifest_is_read_only_and_candidate_only(repo_
         "labor_employment_blocked_driver_impact_review",
         "labor_employment_budget_output_expectations",
         "labor_employment_budget_qa_gate",
+        "budget_learning_loop",
         "labor_employment_budget_fact_gold",
         "validation_suite_evidence",
         "full_pytest",
@@ -158,9 +161,9 @@ def test_legal_intake_budget_demo_ui_review_data_bundle_is_local_and_no_write(re
     detail_reports = {report["file_name"]: report for report in bundle["detail_reports"]}
 
     assert bundle["status"] == "ready_for_review"
-    assert bundle["detail_report_count"] == len(bundle["detail_reports"]) == 13
-    assert bundle["required_detail_report_count"] == 7
-    assert bundle["present_detail_report_count"] == 13
+    assert bundle["detail_report_count"] == len(bundle["detail_reports"]) == 14
+    assert bundle["required_detail_report_count"] == 8
+    assert bundle["present_detail_report_count"] == 14
     assert bundle["missing_required_detail_report_count"] == 0
     assert bundle["external_write_report_count"] == 0
     assert bundle["candidate_only"] is True
@@ -187,10 +190,59 @@ def test_legal_intake_budget_demo_ui_review_data_bundle_is_local_and_no_write(re
         "labor_employment_blocked_driver_impact_review_report.json",
         "labor_employment_budget_output_expectations_report.json",
         "labor_employment_budget_qa_gate_report.json",
+        "budget_learning_loop_report.json",
     } <= set(detail_reports)
     assert all(report["present"] is True for report in bundle["detail_reports"])
     assert all(report["source_sha256"].startswith("sha256:") for report in bundle["detail_reports"])
     assert all(report["external_writes_performed"] is False for report in bundle["detail_reports"])
+
+
+def test_legal_intake_budget_budget_learning_loop_fixture_is_review_only(repo_root):
+    report = json.loads(
+        (repo_root / UI_ROOT / "src/fixtures/demo-budget-learning-loop-report.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    actuals = report["actuals"]
+    carrier = report["carrier_rejections"]
+    learning_gate = report["reviewed_learning_gate"]
+
+    assert report["status"] == "budget_learning_loop_ready_for_review"
+    assert report["candidate_only"] is True
+    assert report["synthetic_only"] is True
+    assert report["non_authoritative"] is True
+    assert report["local_json_only"] is True
+    assert report["human_review_required"] is True
+    assert report["not_authorized_for_lake_write"] is True
+    assert report["not_authorized_for_sqlite_write"] is True
+    assert report["not_authorized_for_budget_submission"] is True
+    assert report["not_authorized_for_matter_opening"] is True
+    assert report["budget_submission_authorized"] is False
+    assert report["matter_opening_authorized"] is False
+    assert report["lake_write_performed"] is False
+    assert report["sqlite_write_performed"] is False
+    assert report["external_writes_performed"] is False
+    assert report["appeal_submission_performed"] is False
+    assert report["silent_learning_performed"] is False
+    assert (
+        actuals["ledger_entry_count"]
+        == actuals["phase_event_count"] + actuals["code_event_count"] + 1
+    )
+    assert (
+        carrier["expected_response_count"]
+        == carrier["reconciled_response_count"] + carrier["missing_response_count"]
+    )
+    assert (
+        learning_gate["candidate_count"]
+        == learning_gate["carrier_learning_candidate_count"]
+        + learning_gate["budget_revision_candidate_count"]
+        + learning_gate["budget_actual_variance_candidate_count"]
+    )
+    assert learning_gate["reviewed_outcome_required"] is True
+    assert learning_gate["shadow_eval_required"] is True
+    assert len(report["lifecycle_lanes"]) >= 4
+    assert all(lane["evidence_refs"] for lane in report["lifecycle_lanes"])
+    assert all(lane["candidate_exception_lake_labels"] for lane in report["lifecycle_lanes"])
 
 
 def test_legal_intake_budget_demo_synthetic_qa_review_run_is_no_write(repo_root):
@@ -544,8 +596,8 @@ def test_legal_intake_budget_demo_synthetic_confidence_summary_is_no_write(repo_
     assert report["qa_step_count"] == 22
     assert report["qa_failed_step_count"] == 0
     assert report["qa_missing_required_artifact_count"] == 0
-    assert report["ui_detail_report_count"] == 13
-    assert report["ui_present_detail_report_count"] == 13
+    assert report["ui_detail_report_count"] == 14
+    assert report["ui_present_detail_report_count"] == 14
     assert report["ui_missing_required_detail_report_count"] == 0
     assert report["display_banner"]["candidate_only"] is True
     assert report["display_banner"]["synthetic_only"] is True

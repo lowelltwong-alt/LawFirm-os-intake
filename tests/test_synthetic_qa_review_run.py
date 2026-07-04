@@ -102,7 +102,7 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
     ui_detail_reports = {
         report["report_kind"]: report for report in ui_data_bundle["detail_reports"]
     }
-    assert ui_data_bundle["detail_report_count"] == 13
+    assert ui_data_bundle["detail_report_count"] == 14
     assert ui_data_bundle["present_detail_report_count"] == 13
     assert ui_detail_reports["synthetic_qa_review_run"]["present"] is True
     assert ui_detail_reports["synthetic_qa_review_run"]["artifact_ref"] == str(
@@ -113,6 +113,8 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
     assert ui_detail_reports["matter_linking_qa_gate"]["present"] is True
     assert ui_detail_reports["labor_employment_executable_coverage"]["present"] is True
     assert ui_detail_reports["labor_employment_budget_qa_gate"]["present"] is True
+    assert ui_detail_reports["budget_learning_loop"]["present"] is False
+    assert ui_detail_reports["budget_learning_loop"]["required"] is False
     assert ui_detail_reports["synthetic_confidence_summary"]["present"] is True
     assert ui_detail_reports["synthetic_qa_blocker_report"]["present"] is True
     assert ui_detail_reports["synthetic_qa_review_outcome"]["present"] is True

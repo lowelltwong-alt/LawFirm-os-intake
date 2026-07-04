@@ -486,6 +486,19 @@
       ]
     },
     {
+      "artifactId": "budget-learning-loop",
+      "label": "Budget Learning Loop",
+      "fileName": "budget_learning_loop_report.json",
+      "status": "pending_review",
+      "owner": "pricing-review",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": [
+        "Found apps\\legal-intake-budget\\src\\fixtures\\demo-budget-learning-loop-report.json; status=budget_learning_loop_ready_for_review."
+      ]
+    },
+    {
       "artifactId": "public-methodology",
       "label": "Public Methodology",
       "fileName": "public_source_methodology_report.json",
@@ -731,6 +744,16 @@
       "owner": "qa-reference",
       "notes": [
         "L&E budget-output, blocked-driver-review, and executable-coverage evidence must be aggregated before the UI treats budget QA as review-ready."
+      ]
+    },
+    {
+      "gateId": "budget_learning_loop",
+      "label": "Budget Learning Loop",
+      "status": "pending_review",
+      "evidenceFile": "budget_learning_loop_report.json",
+      "owner": "pricing-review",
+      "notes": [
+        "Budget actuals, carrier rejection outcomes, appeal results, and reviewed-learning candidates must be visible before QA treats budget improvement loops as covered."
       ]
     },
     {

@@ -11684,6 +11684,7 @@ UIReviewDataBundleReportKind = Literal[
     "labor_employment_blocked_driver_impact_review",
     "labor_employment_budget_output_expectations",
     "labor_employment_budget_qa_gate",
+    "budget_learning_loop",
 ]
 
 

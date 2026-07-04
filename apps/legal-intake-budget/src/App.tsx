@@ -1,6 +1,7 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 
+import demoBudgetLearningLoop from "./fixtures/demo-budget-learning-loop-report.json";
 import demoLaborEmploymentBlockedDriverReview from "./fixtures/demo-labor-employment-blocked-driver-impact-review-report.json";
 import demoLaborEmploymentBudgetOutputExpectations from "./fixtures/demo-labor-employment-budget-output-expectations-report.json";
 import demoLaborEmploymentBudgetQAGate from "./fixtures/demo-labor-employment-budget-qa-gate-report.json";
@@ -21,6 +22,7 @@ import {
   assertMatterLinkingPreflightReport,
   assertMatterLinkingQAGateReport,
   assertMatterLinkingReviewOutcomeReport,
+  assertBudgetLearningLoopReport,
   assertLaborEmploymentBudgetOutputExpectationReport,
   assertLaborEmploymentBudgetQAGateReport,
   assertLaborEmploymentBlockedDriverImpactReviewReport,
@@ -38,6 +40,7 @@ import {
 } from "./data-contract";
 import type {
   ArtifactStatus,
+  BudgetLearningLoopReport,
   GateState,
   LaborEmploymentAllowedBudgetOutput,
   LaborEmploymentBudgetOutputExpectationCase,
@@ -98,6 +101,7 @@ const laborEmploymentBudgetOutputExpectations =
   demoLaborEmploymentBudgetOutputExpectations as LaborEmploymentBudgetOutputExpectationReport;
 const laborEmploymentBudgetQAGate =
   demoLaborEmploymentBudgetQAGate as LaborEmploymentBudgetQAGateReport;
+const budgetLearningLoop = demoBudgetLearningLoop as BudgetLearningLoopReport;
 const bundleContractFailures = assertUIReviewDataBundle(reviewDataBundle);
 const manifestContractFailures = assertReadOnlyManifest(manifest);
 const syntheticQAReviewRunFailures = assertSyntheticQAReviewRunReport(syntheticQAReviewRun);
@@ -122,6 +126,7 @@ const budgetOutputExpectationFailures = assertLaborEmploymentBudgetOutputExpecta
   laborEmploymentBudgetOutputExpectations,
 );
 const budgetQAGateFailures = assertLaborEmploymentBudgetQAGateReport(laborEmploymentBudgetQAGate);
+const budgetLearningLoopFailures = assertBudgetLearningLoopReport(budgetLearningLoop);
 const contractFailures = [
   ...bundleContractFailures,
   ...manifestContractFailures,
@@ -139,6 +144,7 @@ const contractFailures = [
   ...blockedDriverContractFailures,
   ...budgetOutputExpectationFailures,
   ...budgetQAGateFailures,
+  ...budgetLearningLoopFailures,
 ];
 
 function gateClass(
@@ -211,6 +217,17 @@ function allowedBudgetOutputClass(output: LaborEmploymentAllowedBudgetOutput) {
 
 function executableCoverageClass(state: LaborEmploymentExecutableCoverageState) {
   return state === "complete_executable_coverage" ? "state state-passed" : "state state-pending";
+}
+
+function formatMoney(amount: number | null) {
+  if (amount === null) {
+    return "unknown";
+  }
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0,
+  }).format(amount);
 }
 
 type FixtureDrilldownRow = {
@@ -455,6 +472,87 @@ function QAWorkbenchPanel({
               </article>
             ))}
           </div>
+        </section>
+      </div>
+    </section>
+  );
+}
+
+function BudgetLearningLoopPanel({ report }: { report: BudgetLearningLoopReport }) {
+  const actuals = report.actuals;
+  const carrier = report.carrier_rejections;
+  const gate = report.reviewed_learning_gate;
+
+  return (
+    <section className="panel budget-learning-panel" aria-labelledby="budget-learning-title">
+      <div className="panel-heading">
+        <div>
+          <p className="eyebrow">Budget learning loop</p>
+          <h2 id="budget-learning-title">Actuals, Rejections, Appeals, And Candidate Learning</h2>
+        </div>
+        <span className="state state-pending">review required</span>
+      </div>
+
+      <div className="budget-learning-summary" aria-label="Budget learning loop metrics">
+        <article>
+          <span>Budgeted</span>
+          <strong>{formatMoney(actuals.total_budgeted)}</strong>
+          <p>{report.comparison_budget_state.replaceAll("_", " ")}</p>
+        </article>
+        <article>
+          <span>Actual</span>
+          <strong>{formatMoney(actuals.total_actual)}</strong>
+          <p>
+            {actuals.total_variance_percent}% variance, {actuals.variance_review_event_count}{" "}
+            review events
+          </p>
+        </article>
+        <article>
+          <span>Disputed</span>
+          <strong>{formatMoney(carrier.total_disputed_amount)}</strong>
+          <p>
+            {carrier.missing_response_count} missing, {carrier.unlinked_notice_count} unlinked,{" "}
+            {carrier.parser_failure_count} parser failure
+          </p>
+        </article>
+        <article>
+          <span>Recovered</span>
+          <strong>{formatMoney(carrier.total_recovered_amount)}</strong>
+          <p>{formatMoney(carrier.total_write_down_amount)} write-down recorded</p>
+        </article>
+      </div>
+
+      <div className="budget-learning-grid" aria-label="Lifecycle learning lanes">
+        {report.lifecycle_lanes.map((lane) => (
+          <article key={lane.lane_id}>
+            <div>
+              <strong>{lane.label}</strong>
+              <span className={gateClass(lane.state)}>{lane.state}</span>
+            </div>
+            <b>{lane.metric}</b>
+            <p>{lane.why}</p>
+            <p>{lane.next_action}</p>
+            <TokenList items={lane.candidate_exception_lake_labels} limit={3} />
+          </article>
+        ))}
+      </div>
+
+      <div className="budget-learning-columns">
+        <section aria-labelledby="budget-learning-gates-title">
+          <h3 id="budget-learning-gates-title">Learning Gate</h3>
+          <p>
+            {gate.candidate_count} candidates across {gate.target_learning_loops.length} loops;{" "}
+            reviewed outcomes and shadow eval are required before candidate changes.
+          </p>
+          <TokenList items={gate.target_learning_loops} limit={7} />
+        </section>
+        <section aria-labelledby="budget-learning-red-team-title">
+          <h3 id="budget-learning-red-team-title">Red Team</h3>
+          <ul>
+            {report.red_team_notes.map((note) => (
+              <li key={note}>{note}</li>
+            ))}
+          </ul>
         </section>
       </div>
     </section>
@@ -2130,6 +2228,7 @@ function App() {
         budgetOutputReport={laborEmploymentBudgetOutputExpectations}
         pocReport={pocQATriage}
       />
+      <BudgetLearningLoopPanel report={budgetLearningLoop} />
       <SyntheticConfidenceSummaryPanel report={syntheticConfidenceSummary} />
       <POCQATriagePanel report={pocQATriage} />
       <ValidationSuiteEvidencePanel report={validationSuiteEvidence} />

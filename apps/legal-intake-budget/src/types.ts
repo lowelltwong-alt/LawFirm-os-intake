@@ -31,7 +31,8 @@ export type UIReviewDataBundleReportKind =
   | "labor_employment_executable_coverage"
   | "labor_employment_blocked_driver_impact_review"
   | "labor_employment_budget_output_expectations"
-  | "labor_employment_budget_qa_gate";
+  | "labor_employment_budget_qa_gate"
+  | "budget_learning_loop";
 
 export type MatterLinkingPreflightCluster = {
   cluster_id: string;
@@ -579,6 +580,110 @@ export type POCQATriageReport = {
   lake_write_performed: boolean;
   sqlite_write_performed: boolean;
   external_writes_performed: boolean;
+  silent_learning_performed: boolean;
+  generated_at: string;
+};
+
+export type BudgetLearningLoopLane = {
+  lane_id: string;
+  label: string;
+  state: GateState;
+  metric: string;
+  why: string;
+  next_action: string;
+  evidence_refs: string[];
+  candidate_exception_lake_labels: string[];
+};
+
+export type BudgetLearningLoopActualsSummary = {
+  status: "variance_review_required" | "actuals_not_available" | "actuals_within_threshold";
+  comparison_scope: string;
+  total_budgeted: number | null;
+  total_actual: number | null;
+  total_variance_amount: number | null;
+  total_variance_percent: number | null;
+  phase_event_count: number;
+  code_event_count: number;
+  variance_review_event_count: number;
+  actuals_without_budget_event_count: number;
+  missing_actuals_event_count: number;
+  ledger_entry_count: number;
+  learning_disposition_candidates: string[];
+};
+
+export type BudgetLearningLoopCarrierRejectionSummary = {
+  reconciliation_status: string;
+  decision_ledger_status: string;
+  expected_response_count: number;
+  reconciled_response_count: number;
+  missing_response_count: number;
+  unlinked_notice_count: number;
+  duplicate_notice_count: number;
+  parser_failure_count: number;
+  appeal_result_count: number;
+  remediation_case_count: number;
+  decision_ledger_entry_count: number;
+  pending_decision_event_count: number;
+  total_disputed_amount: number;
+  total_recovered_amount: number;
+  total_write_down_amount: number;
+  candidate_event_labels: string[];
+};
+
+export type BudgetLearningLoopReviewedGateSummary = {
+  status: string;
+  candidate_count: number;
+  carrier_learning_candidate_count: number;
+  budget_revision_candidate_count: number;
+  budget_actual_variance_candidate_count: number;
+  target_learning_loops: string[];
+  target_owners: string[];
+  reviewed_outcome_required: boolean;
+  shadow_eval_required: boolean;
+};
+
+export type BudgetLearningLoopReport = {
+  schema_version: string;
+  budget_learning_loop_report_id: string;
+  status:
+    | "budget_learning_loop_ready_for_review"
+    | "blocked_by_budget_learning_loop"
+    | "failed_budget_learning_loop_boundary";
+  source_budget_actual_comparison_report_ref: string;
+  source_budget_actual_variance_ledger_report_ref: string;
+  source_carrier_rejection_reconciliation_report_ref: string;
+  source_carrier_rejection_decision_ledger_report_ref: string;
+  source_carrier_rejection_review_packet_ref: string;
+  source_carrier_rejection_learning_report_ref: string;
+  source_reviewed_learning_gate_report_ref: string;
+  budget_proposal_id: string;
+  comparison_budget_state: string;
+  actuals: BudgetLearningLoopActualsSummary;
+  carrier_rejections: BudgetLearningLoopCarrierRejectionSummary;
+  reviewed_learning_gate: BudgetLearningLoopReviewedGateSummary;
+  lifecycle_lanes: BudgetLearningLoopLane[];
+  red_team_notes: string[];
+  required_next_actions: string[];
+  candidate_only: boolean;
+  synthetic_only: boolean;
+  non_authoritative: boolean;
+  local_json_only: boolean;
+  human_review_required: boolean;
+  not_authorized_for_external_write: boolean;
+  not_authorized_for_lake_write: boolean;
+  not_authorized_for_sqlite_write: boolean;
+  not_authorized_for_budget_submission: boolean;
+  not_authorized_for_matter_opening: boolean;
+  not_authorized_for_calibration: boolean;
+  budget_amount_output_authorized: boolean;
+  budget_submission_authorized: boolean;
+  conflict_conclusion_emitted: boolean;
+  matter_opening_authorized: boolean;
+  training_pipeline_created: boolean;
+  lake_write_performed: boolean;
+  sqlite_write_performed: boolean;
+  external_writes_performed: boolean;
+  appeal_submission_performed: boolean;
   silent_learning_performed: boolean;
   generated_at: string;
 };

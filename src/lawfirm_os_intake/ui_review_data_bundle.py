@@ -120,6 +120,14 @@ DETAIL_REPORT_SPECS = [
         file_name="labor_employment_budget_qa_gate_report.json",
         renderer="LaborEmploymentBudgetQAGatePanel",
     ),
+    UIReviewDetailSpec(
+        detail_report_id="budget-learning-loop",
+        label="Budget Learning Loop",
+        report_kind="budget_learning_loop",
+        file_name="budget_learning_loop_report.json",
+        renderer="BudgetLearningLoopPanel",
+        required=False,
+    ),
 ]
 
 

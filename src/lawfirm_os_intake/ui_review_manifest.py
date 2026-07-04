@@ -277,6 +277,13 @@ ARTIFACT_SPECS = [
         "pending_review",
     ),
     ArtifactSpec(
+        "budget-learning-loop",
+        "Budget Learning Loop",
+        "budget_learning_loop_report.json",
+        "pricing-review",
+        "pending_review",
+    ),
+    ArtifactSpec(
         "public-methodology",
         "Public Methodology",
         "public_source_methodology_report.json",
@@ -447,6 +454,13 @@ QUALITY_GATE_SPECS = {
         "qa-reference",
         "L&E budget-output, blocked-driver-review, and executable-coverage evidence must be aggregated before the UI treats budget QA as review-ready.",
         "blocked",
+    ),
+    "budget_learning_loop": (
+        "Budget Learning Loop",
+        "budget_learning_loop_report.json",
+        "pricing-review",
+        "Budget actuals, carrier rejection outcomes, appeal results, and reviewed-learning candidates must be visible before QA treats budget improvement loops as covered.",
+        "pending_review",
     ),
     "labor_employment_budget_fact_gold": (
         "L&E Budget Fact Gold",

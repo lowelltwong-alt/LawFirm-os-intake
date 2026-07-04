@@ -1,0 +1,178 @@
+{
+  "schema_version": "0.1",
+  "budget_learning_loop_report_id": "budget_learning_loop_demo_20260704",
+  "status": "budget_learning_loop_ready_for_review",
+  "source_budget_actual_comparison_report_ref": ".lawfirm-os-intake/tmp/budget-learning-loop-demo/actuals/budget_actual_comparison_report.json",
+  "source_budget_actual_variance_ledger_report_ref": ".lawfirm-os-intake/tmp/budget-learning-loop-demo/actuals/budget_actual_variance_ledger_report.json",
+  "source_carrier_rejection_reconciliation_report_ref": ".lawfirm-os-intake/tmp/budget-learning-loop-demo/carrier-rejections/carrier_rejection_reconciliation_report.json",
+  "source_carrier_rejection_decision_ledger_report_ref": ".lawfirm-os-intake/tmp/budget-learning-loop-demo/carrier-rejections/carrier_rejection_decision_ledger_report.json",
+  "source_carrier_rejection_review_packet_ref": ".lawfirm-os-intake/tmp/budget-learning-loop-demo/carrier-rejection-review/carrier_rejection_review_packet.json",
+  "source_carrier_rejection_learning_report_ref": ".lawfirm-os-intake/tmp/budget-learning-loop-demo/carrier-rejection-learning/carrier_rejection_learning_report.json",
+  "source_reviewed_learning_gate_report_ref": ".lawfirm-os-intake/tmp/budget-learning-loop-demo/learning-gate/reviewed_learning_gate_report.json",
+  "budget_proposal_id": "budget_3753049d5db642e8ba64bc22a81e7c88",
+  "comparison_budget_state": "human_revised_candidate",
+  "actuals": {
+    "status": "variance_review_required",
+    "comparison_scope": "phase_and_code",
+    "total_budgeted": 151146.3,
+    "total_actual": 145400.0,
+    "total_variance_amount": -5746.3,
+    "total_variance_percent": -3.8,
+    "phase_event_count": 4,
+    "code_event_count": 21,
+    "variance_review_event_count": 5,
+    "actuals_without_budget_event_count": 2,
+    "missing_actuals_event_count": 19,
+    "ledger_entry_count": 26,
+    "learning_disposition_candidates": [
+      "budget_driver",
+      "template_mapping"
+    ]
+  },
+  "carrier_rejections": {
+    "reconciliation_status": "dry_run_ready_for_review",
+    "decision_ledger_status": "decision_ledger_ready_for_review",
+    "expected_response_count": 3,
+    "reconciled_response_count": 2,
+    "missing_response_count": 1,
+    "unlinked_notice_count": 1,
+    "duplicate_notice_count": 1,
+    "parser_failure_count": 1,
+    "appeal_result_count": 1,
+    "remediation_case_count": 4,
+    "decision_ledger_entry_count": 10,
+    "pending_decision_event_count": 3,
+    "total_disputed_amount": 21950.0,
+    "total_recovered_amount": 8000.0,
+    "total_write_down_amount": 7000.0,
+    "candidate_event_labels": [
+      "carrier_preapproval_missing",
+      "carrier_rejection_parse_failed",
+      "carrier_rejection_unlinked",
+      "carrier_response_missing_after_sla"
+    ]
+  },
+  "reviewed_learning_gate": {
+    "status": "candidate_learning_gate_ready",
+    "candidate_count": 13,
+    "carrier_learning_candidate_count": 6,
+    "budget_revision_candidate_count": 2,
+    "budget_actual_variance_candidate_count": 5,
+    "target_learning_loops": [
+      "appeal_success_or_failure",
+      "budget_model",
+      "capture_completeness",
+      "parser_rule",
+      "preapproval_gate",
+      "template_mapping",
+      "validation_rule"
+    ],
+    "target_owners": [
+      "LawFirm-os-intake",
+      "LawFirm-os-orchestrator"
+    ],
+    "reviewed_outcome_required": true,
+    "shadow_eval_required": true
+  },
+  "lifecycle_lanes": [
+    {
+      "lane_id": "actuals_variance_review",
+      "label": "Actuals Variance",
+      "state": "pending",
+      "metric": "5 review events",
+      "why": "Synthetic actuals are under the revised candidate budget overall, but code and phase comparisons still produce reviewable variance signals.",
+      "next_action": "Review budget-driver and template-mapping candidates before any calibration or fixture update.",
+      "evidence_refs": [
+        "budget_actual_comparison_report.json",
+        "budget_actual_variance_ledger_report.json"
+      ],
+      "candidate_exception_lake_labels": [
+        "budget_actual_cost_variance_requires_review",
+        "budget_actual_without_budget_recorded"
+      ]
+    },
+    {
+      "lane_id": "carrier_rejection_capture",
+      "label": "Carrier Rejections",
+      "state": "pending",
+      "metric": "$21,950 disputed",
+      "why": "The synthetic capture chain reconciles duplicates, missing responses, unlinked notices, parser failures, and one appeal result without submitting anything.",
+      "next_action": "Use the review packet to decide fix versus appeal steps and keep all outcomes append-only.",
+      "evidence_refs": [
+        "carrier_rejection_reconciliation_report.json",
+        "carrier_rejection_decision_ledger_report.json"
+      ],
+      "candidate_exception_lake_labels": [
+        "carrier_preapproval_missing",
+        "carrier_rejection_duplicate_notice",
+        "carrier_response_missing_after_sla",
+        "carrier_rejection_unlinked",
+        "carrier_rejection_parse_failed",
+        "carrier_appeal_result_received"
+      ]
+    },
+    {
+      "lane_id": "appeal_financial_outcome",
+      "label": "Appeal Outcome",
+      "state": "pending",
+      "metric": "$8,000 recovered",
+      "why": "Appeal result evidence is captured as financial outcome telemetry, not as a silent guideline or rate update.",
+      "next_action": "Require reviewed outcome evidence and shadow eval before using recovered/write-down signals to change budget assumptions.",
+      "evidence_refs": [
+        "carrier_rejection_decision_ledger_report.json",
+        "carrier_rejection_learning_report.json"
+      ],
+      "candidate_exception_lake_labels": [
+        "carrier_appeal_result_received",
+        "carrier_rejection_learning_candidate"
+      ]
+    },
+    {
+      "lane_id": "reviewed_learning_gate",
+      "label": "Reviewed Learning Gate",
+      "state": "pending",
+      "metric": "13 candidates",
+      "why": "Budget revisions, actual variance, and carrier rejection learning pressure are aggregated but blocked from profile/template mutation.",
+      "next_action": "Send only reviewed, shadow-evaluated proposed changes to owner repos; do not silently learn from this run.",
+      "evidence_refs": [
+        "reviewed_learning_gate_report.json"
+      ],
+      "candidate_exception_lake_labels": [
+        "reviewed_learning_gate_before_candidate_changes",
+        "shadow_eval_required"
+      ]
+    }
+  ],
+  "red_team_notes": [
+    "This display is a compact projection of generated synthetic artifacts; it is not a ledger, Lake write, billing connector, appeal submission, or production learning signal.",
+    "Negative total variance does not mean the budget model is accepted; code-level over-threshold and actuals-without-budget events still require review.",
+    "Recovered appeal amounts are outcome evidence only and cannot update rates, guidelines, templates, or profiles without reviewed outcome evidence and shadow evaluation."
+  ],
+  "required_next_actions": [
+    "Add L&E-specific actuals and carrier rejection fixtures after the medmal synthetic loop is visible.",
+    "Add state/rate benchmark replay only from pinned candidate benchmark cells.",
+    "Keep all learning candidates blocked until reviewed-learning and owner-adoption gates are satisfied."
+  ],
+  "candidate_only": true,
+  "synthetic_only": true,
+  "non_authoritative": true,
+  "local_json_only": true,
+  "human_review_required": true,
+  "not_authorized_for_external_write": true,
+  "not_authorized_for_lake_write": true,
+  "not_authorized_for_sqlite_write": true,
+  "not_authorized_for_budget_submission": true,
+  "not_authorized_for_matter_opening": true,
+  "not_authorized_for_calibration": true,
+  "budget_amount_output_authorized": false,
+  "budget_submission_authorized": false,
+  "conflict_conclusion_emitted": false,
+  "matter_opening_authorized": false,
+  "training_pipeline_created": false,
+  "lake_write_performed": false,
+  "sqlite_write_performed": false,
+  "external_writes_performed": false,
+  "appeal_submission_performed": false,
+  "silent_learning_performed": false,
+  "generated_at": "2026-07-04T00:00:00Z"
+}

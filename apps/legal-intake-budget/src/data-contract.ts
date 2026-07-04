@@ -1,5 +1,6 @@
 import type {
   BoundaryFlags,
+  BudgetLearningLoopReport,
   LaborEmploymentBudgetOutputExpectationReport,
   LaborEmploymentBudgetQAGateReport,
   LaborEmploymentBlockedDriverImpactReviewReport,
@@ -57,6 +58,7 @@ export const REQUIRED_ARTIFACT_FILES = [
   "budget_human_review_packet.json",
   "carrier_rejection_decision_ledger_report.json",
   "budget_actual_variance_ledger_report.json",
+  "budget_learning_loop_report.json",
   "public_source_methodology_report.json",
   "public_data_cache_audit_report.json",
 ] as const;
@@ -84,6 +86,7 @@ export const REQUIRED_DETAIL_REPORT_FILES = [
   "labor_employment_blocked_driver_impact_review_report.json",
   "labor_employment_budget_output_expectations_report.json",
   "labor_employment_budget_qa_gate_report.json",
+  "budget_learning_loop_report.json",
 ] as const;
 
 export function missingRequiredArtifacts(artifacts: ReviewArtifact[]): string[] {
@@ -403,6 +406,90 @@ export function assertPOCQATriageReport(report: POCQATriageReport): string[] {
   }
   if (!report.required_next_actions.length) {
     failures.push("poc_qa_triage_missing_next_actions");
+  }
+  return failures;
+}
+
+export function assertBudgetLearningLoopReport(report: BudgetLearningLoopReport): string[] {
+  const failures: string[] = [];
+  if (!report.candidate_only || !report.synthetic_only || !report.non_authoritative) {
+    failures.push("budget_learning_loop_authority_boundary_failed");
+  }
+  if (!report.local_json_only || !report.human_review_required) {
+    failures.push("budget_learning_loop_review_boundary_failed");
+  }
+  if (
+    !report.not_authorized_for_external_write ||
+    !report.not_authorized_for_lake_write ||
+    !report.not_authorized_for_sqlite_write ||
+    !report.not_authorized_for_budget_submission ||
+    !report.not_authorized_for_matter_opening ||
+    !report.not_authorized_for_calibration
+  ) {
+    failures.push("budget_learning_loop_missing_explicit_non_authorization");
+  }
+  if (
+    report.budget_amount_output_authorized ||
+    report.budget_submission_authorized ||
+    report.conflict_conclusion_emitted ||
+    report.matter_opening_authorized ||
+    report.training_pipeline_created ||
+    report.lake_write_performed ||
+    report.sqlite_write_performed ||
+    report.external_writes_performed ||
+    report.appeal_submission_performed ||
+    report.silent_learning_performed
+  ) {
+    failures.push("budget_learning_loop_side_effect_boundary_failed");
+  }
+  if (report.status !== "budget_learning_loop_ready_for_review") {
+    failures.push(`budget_learning_loop_not_ready:${report.status}`);
+  }
+  if (
+    report.actuals.ledger_entry_count !==
+    report.actuals.phase_event_count + report.actuals.code_event_count + 1
+  ) {
+    failures.push("budget_learning_loop_actuals_ledger_count_mismatch");
+  }
+  if (
+    report.carrier_rejections.expected_response_count !==
+    report.carrier_rejections.reconciled_response_count +
+      report.carrier_rejections.missing_response_count
+  ) {
+    failures.push("budget_learning_loop_rejection_response_partition_mismatch");
+  }
+  if (
+    report.reviewed_learning_gate.candidate_count !==
+    report.reviewed_learning_gate.carrier_learning_candidate_count +
+      report.reviewed_learning_gate.budget_revision_candidate_count +
+      report.reviewed_learning_gate.budget_actual_variance_candidate_count
+  ) {
+    failures.push("budget_learning_loop_learning_candidate_count_mismatch");
+  }
+  if (
+    !report.reviewed_learning_gate.reviewed_outcome_required ||
+    !report.reviewed_learning_gate.shadow_eval_required
+  ) {
+    failures.push("budget_learning_loop_missing_learning_gates");
+  }
+  if (report.lifecycle_lanes.length < 4) {
+    failures.push("budget_learning_loop_missing_lifecycle_lanes");
+  }
+  for (const lane of report.lifecycle_lanes) {
+    if (
+      !lane.lane_id ||
+      !lane.label ||
+      !lane.metric ||
+      !lane.why ||
+      !lane.next_action ||
+      lane.evidence_refs.length === 0 ||
+      lane.candidate_exception_lake_labels.length === 0
+    ) {
+      failures.push(`budget_learning_loop_lane_not_actionable:${lane.lane_id}`);
+    }
+  }
+  if (!report.red_team_notes.length || !report.required_next_actions.length) {
+    failures.push("budget_learning_loop_missing_review_guidance");
   }
   return failures;
 }

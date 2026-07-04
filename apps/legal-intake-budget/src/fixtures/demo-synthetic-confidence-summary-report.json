@@ -23,8 +23,8 @@
   "qa_blocked_artifact_count": 0,
   "qa_pending_artifact_count": 14,
   "qa_failed_artifact_count": 0,
-  "ui_detail_report_count": 13,
-  "ui_present_detail_report_count": 13,
+  "ui_detail_report_count": 14,
+  "ui_present_detail_report_count": 14,
   "ui_missing_required_detail_report_count": 0,
   "ui_external_write_report_count": 0,
   "quality_gate_count": 26,
@@ -70,7 +70,7 @@
         ".lawfirm-os-intake\\tmp\\complete-le-fixture-gaps\\full-run-final\\ui_review_manifest.json"
       ],
       "notes": [
-        "13 detail reports present; 0 write-boundary failures."
+        "14 detail reports present; 0 write-boundary failures."
       ],
       "no_write_boundary_confirmed": true
     },

@@ -3,9 +3,9 @@
   "ui_review_data_bundle_id": "ui_review_data_bundle_fee49c960129",
   "status": "ready_for_review",
   "run_root_ref": ".lawfirm-os-intake\\tmp\\complete-le-fixture-gaps\\full-run-final",
-  "detail_report_count": 13,
-  "required_detail_report_count": 7,
-  "present_detail_report_count": 13,
+  "detail_report_count": 14,
+  "required_detail_report_count": 8,
+  "present_detail_report_count": 14,
   "missing_required_detail_report_count": 0,
   "external_write_report_count": 0,
   "detail_reports": [
@@ -241,6 +241,24 @@
       "external_writes_performed": false,
       "notes": [
         "Found quality\\labor_employment_budget_qa_gate_report.json; status=labor_employment_budget_qa_gate_ready_for_review."
+      ]
+    },
+    {
+      "detail_report_id": "budget-learning-loop",
+      "label": "Budget Learning Loop",
+      "report_kind": "budget_learning_loop",
+      "file_name": "budget_learning_loop_report.json",
+      "required": true,
+      "present": true,
+      "status": "budget_learning_loop_ready_for_review",
+      "renderer": "BudgetLearningLoopPanel",
+      "artifact_ref": "apps\\legal-intake-budget\\src\\fixtures\\demo-budget-learning-loop-report.json",
+      "source_sha256": "sha256:6de3fe568bcdcbcf1a4d999202124a3dbc34ce2cfbe632f815ebfb568ee327f8",
+      "candidate_only": true,
+      "synthetic_only": true,
+      "external_writes_performed": false,
+      "notes": [
+        "Found demo-budget-learning-loop-report.json; status=budget_learning_loop_ready_for_review."
       ]
     }
   ],
