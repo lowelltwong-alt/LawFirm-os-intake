@@ -1,15 +1,15 @@
 {
   "schema_version": "0.1",
-  "synthetic_qa_blocker_report_id": "synthetic_qa_blocker_report_1df344448e1bda1f",
+  "synthetic_qa_blocker_report_id": "synthetic_qa_blocker_report_042611473af1abe6",
   "status": "synthetic_qa_blocker_report_ready_for_review",
-  "source_ui_manifest_ref": ".lawfirm-os-intake\\synthetic-qa-review\\ui_review_manifest.json",
-  "source_ui_manifest_id": "ui_review_manifest_ccc757a844be",
+  "source_ui_manifest_ref": "generated-demo-run\\ui_review_manifest.json",
+  "source_ui_manifest_id": "ui_review_manifest_661830be5e79",
   "source_ui_manifest_overall_status": "blocked",
-  "source_synthetic_confidence_summary_ref": ".lawfirm-os-intake\\synthetic-qa-review\\quality\\synthetic_confidence_summary_report.json",
-  "source_synthetic_confidence_summary_report_id": "synthetic_confidence_summary_ce3d04dc4e9914d5",
+  "source_synthetic_confidence_summary_ref": "generated-demo-run\\quality\\synthetic_confidence_summary_report.json",
+  "source_synthetic_confidence_summary_report_id": "synthetic_confidence_summary_b5ab4b7ae7a2936b",
   "source_synthetic_confidence_summary_status": "synthetic_confidence_summary_ready_for_review",
-  "source_synthetic_qa_review_run_ref": ".lawfirm-os-intake\\synthetic-qa-review\\synthetic_qa_review_run_report.json",
-  "source_synthetic_qa_review_run_report_id": "syntheticqareviewrun_806dd93bcd657ef1",
+  "source_synthetic_qa_review_run_ref": "generated-demo-run\\synthetic_qa_review_run_report.json",
+  "source_synthetic_qa_review_run_report_id": "syntheticqareviewrun_4a3bfd51a15f5e67",
   "source_synthetic_qa_review_run_status": "synthetic_qa_review_run_ready",
   "row_count": 21,
   "failed_row_count": 0,
@@ -81,7 +81,7 @@
         "synthetic_qa_blocker_requires_review"
       ],
       "notes": [
-        "The POC QA triage queue must reconcile validation, synthetic QA, L&E budget gates, and UI evidence before readiness is claimed."
+        "poc_qa_triage_report.json is missing; The POC QA triage queue must reconcile validation, synthetic QA, L&E budget gates, and UI evidence before readiness is claimed."
       ]
     },
     {
@@ -428,7 +428,7 @@
       "action_state": "needs_review",
       "owner": "qa-reference",
       "evidence_refs": [
-        ".lawfirm-os-intake\\synthetic-qa-review\\quality\\synthetic_qa_bundle_report.json"
+        "generated-demo-run\\quality\\synthetic_qa_bundle_report.json"
       ],
       "recommended_next_action": "Review readiness item evidence and record an outcome: Required QA Artifacts.",
       "candidate_exception_lake_labels": [
@@ -449,7 +449,7 @@
       "action_state": "needs_review",
       "owner": "human-or-owner-review",
       "evidence_refs": [
-        ".lawfirm-os-intake\\synthetic-qa-review\\ui_review_manifest.json"
+        "generated-demo-run\\ui_review_manifest.json"
       ],
       "recommended_next_action": "Review readiness item evidence and record an outcome: Owner Review Backlog.",
       "candidate_exception_lake_labels": [

@@ -6,7 +6,7 @@
   "policy_version": "0.1",
   "policy_ref": "config/validation-runtime-policy.yaml",
   "repo_root_ref": "repo-root",
-  "git_commit": "dceaa6a23ecacb1776907195d4118e5bf2a50fd1",
+  "git_commit": "1e7249c31dd184668b7846eb44d328322b809a6a",
   "working_tree_dirty": true,
   "step_count": 7,
   "passed_step_count": 7,
@@ -24,9 +24,9 @@
       "status": "passed",
       "return_code": 0,
       "timeout_seconds": 180,
-      "duration_seconds": 2.348,
-      "started_at": "2026-07-04T07:51:18.717987Z",
-      "completed_at": "2026-07-04T07:51:21.066076Z",
+      "duration_seconds": 7.021,
+      "started_at": "2026-07-04T08:31:09.649641Z",
+      "completed_at": "2026-07-04T08:31:16.671576Z",
       "evidence_refs": [
         "scripts/validate_repo.py"
       ]
@@ -42,9 +42,9 @@
       "status": "passed",
       "return_code": 0,
       "timeout_seconds": 180,
-      "duration_seconds": 3.012,
-      "started_at": "2026-07-04T07:51:21.066076Z",
-      "completed_at": "2026-07-04T07:51:24.078048Z",
+      "duration_seconds": 2.912,
+      "started_at": "2026-07-04T08:31:16.671576Z",
+      "completed_at": "2026-07-04T08:31:19.584046Z",
       "evidence_refs": [
         "scripts/export_schemas.py",
         "schemas/"
@@ -67,9 +67,9 @@
       "status": "passed",
       "return_code": 0,
       "timeout_seconds": 180,
-      "duration_seconds": 0.261,
-      "started_at": "2026-07-04T07:51:24.078048Z",
-      "completed_at": "2026-07-04T07:51:24.339051Z",
+      "duration_seconds": 0.219,
+      "started_at": "2026-07-04T08:31:19.584046Z",
+      "completed_at": "2026-07-04T08:31:19.803422Z",
       "evidence_refs": [
         "src/",
         "tests/",
@@ -94,9 +94,9 @@
       "status": "passed",
       "return_code": 0,
       "timeout_seconds": 180,
-      "duration_seconds": 0.26,
-      "started_at": "2026-07-04T07:51:24.339051Z",
-      "completed_at": "2026-07-04T07:51:24.599440Z",
+      "duration_seconds": 0.217,
+      "started_at": "2026-07-04T08:31:19.803422Z",
+      "completed_at": "2026-07-04T08:31:20.020733Z",
       "evidence_refs": [
         "src/",
         "tests/",
@@ -114,9 +114,9 @@
       "status": "passed",
       "return_code": 0,
       "timeout_seconds": 3600,
-      "duration_seconds": 305.802,
-      "started_at": "2026-07-04T07:51:24.599440Z",
-      "completed_at": "2026-07-04T07:56:30.406051Z",
+      "duration_seconds": 303.873,
+      "started_at": "2026-07-04T08:31:20.020733Z",
+      "completed_at": "2026-07-04T08:36:23.898578Z",
       "evidence_refs": [
         "scripts/run_full_pytest.py",
         "tests/"
@@ -133,9 +133,9 @@
       "status": "passed",
       "return_code": 0,
       "timeout_seconds": 3600,
-      "duration_seconds": 56.099,
-      "started_at": "2026-07-04T07:56:30.406051Z",
-      "completed_at": "2026-07-04T07:57:26.505497Z",
+      "duration_seconds": 54.963,
+      "started_at": "2026-07-04T08:36:23.898578Z",
+      "completed_at": "2026-07-04T08:37:18.862970Z",
       "evidence_refs": [
         "scripts/smoke_demo.sh"
       ]
@@ -151,9 +151,9 @@
       "status": "passed",
       "return_code": 0,
       "timeout_seconds": 180,
-      "duration_seconds": 18.845,
-      "started_at": "2026-07-04T07:57:26.505497Z",
-      "completed_at": "2026-07-04T07:57:45.351589Z",
+      "duration_seconds": 17.116,
+      "started_at": "2026-07-04T08:37:18.862970Z",
+      "completed_at": "2026-07-04T08:37:35.978775Z",
       "evidence_refs": [
         "scripts/validate_repo.py",
         "scripts/run_validation_suite.py"

@@ -1,26 +1,26 @@
 {
   "schema_version": "0.1",
-  "budget_qa_gate_report_id": "lebudgetqagate_57a37af5be63359c",
+  "budget_qa_gate_report_id": "lebudgetqagate_ed1fcaed84b47f5f",
   "status": "labor_employment_budget_qa_gate_ready_for_review",
   "source_budget_output_expectations_report_ref": "generated-demo-run\\quality\\le-budget-output-expectations\\labor_employment_budget_output_expectations_report.json",
-  "source_budget_output_expectations_report_id": "lebudgetoutputexpect_624dbb08ff6cb7ac",
+  "source_budget_output_expectations_report_id": "lebudgetoutputexpect_40a6e8e6edb27b12",
   "source_budget_output_expectations_report_status": "labor_employment_budget_output_expectations_ready_for_review",
   "source_blocked_driver_impact_review_report_ref": "generated-demo-run\\quality\\le-blocked-driver-impact-review\\labor_employment_blocked_driver_impact_review_report.json",
-  "source_blocked_driver_impact_review_report_id": "leblockeddriverimpactreview_72f806de98e6d126",
+  "source_blocked_driver_impact_review_report_id": "leblockeddriverimpactreview_81b9f1dabd0778c2",
   "source_blocked_driver_impact_review_report_status": "labor_employment_blocked_driver_impacts_ready_for_review",
   "source_executable_coverage_report_ref": "generated-demo-run\\quality\\le-executable-coverage\\labor_employment_executable_coverage_report.json",
-  "source_executable_coverage_report_id": "leexeccoverage_8a040bfcd834eed23e91",
+  "source_executable_coverage_report_id": "leexeccoverage_e178d75ebba657f633f2",
   "source_executable_coverage_report_status": "labor_employment_executable_coverage_ready_for_review",
   "source_executable_coverage_state": "partial_executable_coverage",
-  "case_count": 15,
-  "executable_fixture_count": 15,
-  "covered_pack_case_count": 16,
-  "missing_executable_pack_case_count": 16,
-  "blocked_amount_budget_case_count": 6,
+  "case_count": 16,
+  "executable_fixture_count": 16,
+  "covered_pack_case_count": 17,
+  "missing_executable_pack_case_count": 15,
+  "blocked_amount_budget_case_count": 7,
   "range_or_hours_only_case_count": 3,
   "candidate_range_after_review_case_count": 6,
   "reviewed_nonblocking_case_count": 9,
-  "blocked_review_case_count": 6,
+  "blocked_review_case_count": 7,
   "required_family_count": 8,
   "covered_required_family_count": 8,
   "blocked_case_ids": [
@@ -29,7 +29,8 @@
     "le-discrimination-harassment-missing-attachment.executable.v0_1",
     "le-class-collective-adversarial.executable.v0_1",
     "le-restrictive-covenant-missing-attachment.executable.v0_1",
-    "le-ada-fmla-missing-thread.executable.v0_1"
+    "le-ada-fmla-missing-thread.executable.v0_1",
+    "le-ada-fmla-adversarial.executable.v0_1"
   ],
   "range_or_hours_only_case_ids": [
     "le-epli-carrier-messy-thread.executable.v0_1",
@@ -71,14 +72,15 @@
   "output_state_buckets": [
     {
       "output_state": "blocked_amount_budget",
-      "case_count": 6,
+      "case_count": 7,
       "executable_fixture_ids": [
         "le-wage-hour-missing-attachment.executable.v0_1",
         "le-epli-carrier-missing-attachment.executable.v0_1",
         "le-discrimination-harassment-missing-attachment.executable.v0_1",
         "le-class-collective-adversarial.executable.v0_1",
         "le-restrictive-covenant-missing-attachment.executable.v0_1",
-        "le-ada-fmla-missing-thread.executable.v0_1"
+        "le-ada-fmla-missing-thread.executable.v0_1",
+        "le-ada-fmla-adversarial.executable.v0_1"
       ]
     },
     {
@@ -109,9 +111,9 @@
       "status": "passed",
       "message": "Source L&E budget QA reports are ready for review.",
       "evidence_refs": [
-        "lebudgetoutputexpect_624dbb08ff6cb7ac",
-        "leblockeddriverimpactreview_72f806de98e6d126",
-        "leexeccoverage_8a040bfcd834eed23e91"
+        "lebudgetoutputexpect_40a6e8e6edb27b12",
+        "leblockeddriverimpactreview_81b9f1dabd0778c2",
+        "leexeccoverage_e178d75ebba657f633f2"
       ],
       "blocking_refs": []
     },
@@ -120,10 +122,10 @@
       "status": "passed",
       "message": "Source reports belong to the same L&E driver-impact and blocked-review lineage.",
       "evidence_refs": [
-        "leexecdriverimpact_adce760ffb90e5fc23a0",
-        "leblockeddriverimpactreview_72f806de98e6d126",
-        "leexecdriverimpact_adce760ffb90e5fc23a0",
-        "leblockeddriverimpactreview_72f806de98e6d126"
+        "leexecdriverimpact_0b7ddf61b6c50ad424e6",
+        "leblockeddriverimpactreview_81b9f1dabd0778c2",
+        "leexecdriverimpact_0b7ddf61b6c50ad424e6",
+        "leblockeddriverimpactreview_81b9f1dabd0778c2"
       ],
       "blocking_refs": []
     },
@@ -132,6 +134,7 @@
       "status": "passed",
       "message": "Executable coverage fixture IDs match the budget-output expectation case IDs.",
       "evidence_refs": [
+        "le-ada-fmla-adversarial.executable.v0_1",
         "le-ada-fmla-clean.executable.v0_1",
         "le-ada-fmla-missing-thread.executable.v0_1",
         "le-admin-exhaustion-clean.executable.v0_1",
@@ -169,7 +172,8 @@
         "le-restrictive-covenant-missing-attachment.executable.v0_1",
         "le-admin-exhaustion-clean.executable.v0_1",
         "le-ada-fmla-clean.executable.v0_1",
-        "le-ada-fmla-missing-thread.executable.v0_1"
+        "le-ada-fmla-missing-thread.executable.v0_1",
+        "le-ada-fmla-adversarial.executable.v0_1"
       ],
       "blocking_refs": []
     },
@@ -183,7 +187,8 @@
         "le-discrimination-harassment-missing-attachment.executable.v0_1",
         "le-class-collective-adversarial.executable.v0_1",
         "le-restrictive-covenant-missing-attachment.executable.v0_1",
-        "le-ada-fmla-missing-thread.executable.v0_1"
+        "le-ada-fmla-missing-thread.executable.v0_1",
+        "le-ada-fmla-adversarial.executable.v0_1"
       ],
       "blocking_refs": []
     },
@@ -225,9 +230,9 @@
       "status": "passed",
       "message": "No source report performed external, Lake, or SQLite writes.",
       "evidence_refs": [
-        "lebudgetoutputexpect_624dbb08ff6cb7ac",
-        "leblockeddriverimpactreview_72f806de98e6d126",
-        "leexeccoverage_8a040bfcd834eed23e91"
+        "lebudgetoutputexpect_40a6e8e6edb27b12",
+        "leblockeddriverimpactreview_81b9f1dabd0778c2",
+        "leexeccoverage_e178d75ebba657f633f2"
       ],
       "blocking_refs": []
     }

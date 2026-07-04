@@ -31,8 +31,8 @@ def test_labor_employment_executable_fixtures_run_preflight_and_preserve_boundar
     )
 
     assert report.status == "labor_employment_executable_fixtures_ready_for_review"
-    assert persisted.fixture_count == 15
-    assert persisted.preflight_executed_count == 15
+    assert persisted.fixture_count == 16
+    assert persisted.preflight_executed_count == 16
     assert persisted.failed_case_count == 0
     assert persisted.missing_pack_link_count == 0
     assert persisted.missing_source_signal_count == 0
@@ -129,6 +129,19 @@ def test_labor_employment_executable_fixtures_run_preflight_and_preserve_boundar
     )
     assert "prompt_injection_source_content" not in (
         cases["le-ada-fmla-clean.executable.v0_1"].exception_labels
+    )
+    assert cases["le-ada-fmla-adversarial.executable.v0_1"].missing_source_count == 0
+    assert cases["le-ada-fmla-adversarial.executable.v0_1"].expected_budget_treatment == (
+        "block_amount_budget"
+    )
+    assert "prompt_injection_source_content" in (
+        cases["le-ada-fmla-adversarial.executable.v0_1"].exception_labels
+    )
+    assert "critic_role_candidates_ambiguous" in (
+        cases["le-ada-fmla-adversarial.executable.v0_1"].exception_labels
+    )
+    assert "prohibited_transition_attempted_budget_submitted" in (
+        cases["le-ada-fmla-adversarial.executable.v0_1"].exception_labels
     )
     assert cases["le-class-collective-clean.executable.v0_1"].missing_source_count == 0
     assert (
@@ -239,7 +252,7 @@ def test_labor_employment_executable_fixtures_cli_writes_candidate_report(
 
     assert exit_code == 0
     assert report["status"] == "labor_employment_executable_fixtures_ready_for_review"
-    assert report["fixture_count"] == 15
-    assert report["preflight_executed_count"] == 15
+    assert report["fixture_count"] == 16
+    assert report["preflight_executed_count"] == 16
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out

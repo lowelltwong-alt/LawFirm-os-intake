@@ -1,21 +1,21 @@
 {
   "schema_version": "0.1",
-  "executable_coverage_report_id": "leexeccoverage_8a040bfcd834eed23e91",
+  "executable_coverage_report_id": "leexeccoverage_e178d75ebba657f633f2",
   "status": "labor_employment_executable_coverage_ready_for_review",
   "coverage_state": "partial_executable_coverage",
   "pack_id": "le-budget-fixture-family-pack.v0_1",
-  "pack_ref": "examples/synthetic/labor-employment/labor-employment-budget-fixture-family-pack.json",
+  "pack_ref": "examples\\synthetic\\labor-employment\\labor-employment-budget-fixture-family-pack.json",
   "executable_manifest_id": "le-executable-fixtures-manifest.v0_1",
-  "executable_manifest_ref": "examples/synthetic/labor-employment/labor-employment-executable-fixtures-manifest.json",
+  "executable_manifest_ref": "examples\\synthetic\\labor-employment\\labor-employment-executable-fixtures-manifest.json",
   "pack_case_count": 32,
-  "executable_fixture_count": 15,
-  "executable_pack_case_link_count": 16,
-  "covered_pack_case_count": 16,
-  "missing_executable_pack_case_count": 16,
+  "executable_fixture_count": 16,
+  "executable_pack_case_link_count": 17,
+  "covered_pack_case_count": 17,
+  "missing_executable_pack_case_count": 15,
   "covered_family_count": 8,
   "missing_family_count": 0,
-  "covered_family_variant_count": 16,
-  "missing_family_variant_count": 16,
+  "covered_family_variant_count": 17,
+  "missing_family_variant_count": 15,
   "covered_pack_case_ids": [
     "le-discrimination-harassment-clean.v0_1",
     "le-discrimination-harassment-missing-attachment.v0_1",
@@ -25,6 +25,7 @@
     "le-ada-fmla-clean.v0_1",
     "le-ada-fmla-messy-thread.v0_1",
     "le-ada-fmla-missing-attachment.v0_1",
+    "le-ada-fmla-adversarial.v0_1",
     "le-restrictive-covenant-missing-attachment.v0_1",
     "le-epli-carrier-clean.v0_1",
     "le-epli-carrier-messy-thread.v0_1",
@@ -42,7 +43,6 @@
     "le-retaliation-wrongful-termination-adversarial.v0_1",
     "le-wage-hour-messy-thread.v0_1",
     "le-wage-hour-adversarial.v0_1",
-    "le-ada-fmla-adversarial.v0_1",
     "le-restrictive-covenant-clean.v0_1",
     "le-restrictive-covenant-messy-thread.v0_1",
     "le-restrictive-covenant-adversarial.v0_1",
@@ -60,7 +60,6 @@
     "retaliation_wrongful_termination:adversarial",
     "wage_hour_flsa_state:messy_thread",
     "wage_hour_flsa_state:adversarial",
-    "ada_fmla_accommodation_leave:adversarial",
     "restrictive_covenant_trade_secret:clean",
     "restrictive_covenant_trade_secret:messy_thread",
     "restrictive_covenant_trade_secret:adversarial",
@@ -127,17 +126,17 @@
     {
       "family": "ada_fmla_accommodation_leave",
       "pack_case_count": 4,
-      "covered_case_count": 3,
-      "missing_case_count": 1,
+      "covered_case_count": 4,
+      "missing_case_count": 0,
       "covered_variants": [
         "clean",
         "messy_thread",
-        "missing_attachment"
-      ],
-      "missing_variants": [
+        "missing_attachment",
         "adversarial"
       ],
+      "missing_variants": [],
       "executable_fixture_ids": [
+        "le-ada-fmla-adversarial.executable.v0_1",
         "le-ada-fmla-clean.executable.v0_1",
         "le-ada-fmla-missing-thread.executable.v0_1"
       ]
@@ -479,8 +478,10 @@
       "pack_case_id": "le-ada-fmla-adversarial.v0_1",
       "family": "ada_fmla_accommodation_leave",
       "variant": "adversarial",
-      "coverage_state": "missing_executable",
-      "executable_fixture_ids": [],
+      "coverage_state": "covered_executable",
+      "executable_fixture_ids": [
+        "le-ada-fmla-adversarial.executable.v0_1"
+      ],
       "expected_budget_readiness_state": "blocked_missing_critical_facts",
       "expected_budget_treatment": "block_amount_budget",
       "missing_critical_fact_ids": [
@@ -830,5 +831,5 @@
   "sqlite_write_performed": false,
   "external_writes_performed": false,
   "silent_learning_performed": false,
-  "generated_at": "2026-07-04T07:29:09.651619Z"
+  "generated_at": "2026-07-04T08:09:25.838582Z"
 }

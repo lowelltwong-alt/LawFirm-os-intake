@@ -71,11 +71,11 @@ def test_labor_employment_executable_driver_impact_maps_drivers_to_budget_effect
     )
 
     assert report.status == "labor_employment_executable_driver_impacts_ready_for_review"
-    assert persisted.case_count == 15
+    assert persisted.case_count == 16
     assert persisted.failed_case_count == 0
-    assert persisted.impact_item_count == 66
-    assert persisted.source_bound_impact_count == 66
-    assert persisted.block_amount_budget_impact_count == 7
+    assert persisted.impact_item_count == 69
+    assert persisted.source_bound_impact_count == 69
+    assert persisted.block_amount_budget_impact_count == 10
     assert persisted.critical_review_only_impact_count == 21
     assert persisted.range_widening_impact_count > 0
     assert persisted.scenario_fork_impact_count > 0
@@ -119,6 +119,14 @@ def test_labor_employment_executable_driver_impact_maps_drivers_to_budget_effect
     assert ada_clean.critical_review_only_impact_count == 2
     assert ada_clean.range_widening_impact_count == 5
     assert ada_clean.scenario_fork_impact_count == 1
+    ada_adversarial = cases["le-ada-fmla-adversarial.executable.v0_1"]
+    assert ada_adversarial.allowed_budget_output == "blocked_amount_budget"
+    assert ada_adversarial.block_amount_budget_impact_count == 3
+    ada_adversarial_impacts = {item.driver_dimension: item for item in ada_adversarial.impact_items}
+    assert "block_amount_budget" in ada_adversarial_impacts["party_topology"].impact_actions
+    assert "block_amount_budget" in (
+        ada_adversarial_impacts["representation_posture"].impact_actions
+    )
     epli_clean = cases["le-epli-carrier-clean.executable.v0_1"]
     assert epli_clean.allowed_budget_output == "candidate_range_after_review_pending_human_review"
     assert epli_clean.block_amount_budget_impact_count == 0
@@ -205,8 +213,8 @@ def test_labor_employment_executable_driver_impact_cli_writes_candidate_report(
 
     assert exit_code == 0
     assert report["status"] == "labor_employment_executable_driver_impacts_ready_for_review"
-    assert report["case_count"] == 15
-    assert report["impact_item_count"] == 66
+    assert report["case_count"] == 16
+    assert report["impact_item_count"] == 69
     assert report["critical_review_only_impact_count"] == 21
     assert report["missing_impact_policy_dimensions"] == []
     assert '"budget_amount_output_authorized": false' in captured.out

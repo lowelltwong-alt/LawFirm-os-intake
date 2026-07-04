@@ -61,12 +61,12 @@ def test_labor_employment_executable_driver_binding_maps_fact_gaps_to_budget_dri
     )
 
     assert report.status == "labor_employment_executable_driver_bindings_ready_for_review"
-    assert persisted.case_count == 15
+    assert persisted.case_count == 16
     assert persisted.failed_case_count == 0
-    assert persisted.driver_binding_count == 66
-    assert persisted.source_bound_driver_count == 66
+    assert persisted.driver_binding_count == 69
+    assert persisted.source_bound_driver_count == 69
     assert persisted.unbound_driver_count == 0
-    assert persisted.critical_driver_block_count == 7
+    assert persisted.critical_driver_block_count == 10
     assert persisted.critical_driver_review_only_count == 21
     assert persisted.missing_driver_dimensions == []
     assert set(persisted.covered_driver_dimensions) == set(persisted.required_driver_dimensions)
@@ -124,6 +124,17 @@ def test_labor_employment_executable_driver_binding_maps_fact_gaps_to_budget_dri
         "policy_handbook_contract_documents"
     ]
     assert cases["le-ada-fmla-clean.executable.v0_1"].critical_driver_block_count == 0
+    ada_adversarial = {
+        binding.driver_dimension: binding
+        for binding in cases["le-ada-fmla-adversarial.executable.v0_1"].driver_bindings
+    }
+    assert ada_adversarial["party_topology"].critical_driver_block is True
+    assert ada_adversarial["representation_posture"].critical_driver_block is True
+    assert set(ada_adversarial["party_topology"].matched_fact_ids) == {
+        "employee_claimant_identity",
+        "employer_or_defendant_identity",
+        "prospective_client_payer_carrier_posture",
+    }
     epli_clean = {
         binding.driver_dimension: binding
         for binding in cases["le-epli-carrier-clean.executable.v0_1"].driver_bindings
@@ -244,7 +255,7 @@ def test_labor_employment_executable_driver_binding_cli_writes_candidate_report(
 
     assert exit_code == 0
     assert report["status"] == "labor_employment_executable_driver_bindings_ready_for_review"
-    assert report["case_count"] == 15
+    assert report["case_count"] == 16
     assert report["missing_driver_dimensions"] == []
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out

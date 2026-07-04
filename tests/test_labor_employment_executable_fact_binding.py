@@ -49,15 +49,15 @@ def test_labor_employment_executable_fact_binding_binds_gaps_without_side_effect
     )
 
     assert report.status == "labor_employment_executable_budget_fact_bindings_ready_for_review"
-    assert persisted.case_count == 15
+    assert persisted.case_count == 16
     assert persisted.failed_case_count == 0
-    assert persisted.fact_binding_count == 46
-    assert persisted.critical_fact_binding_count == 20
-    assert persisted.missing_critical_fact_count == 5
+    assert persisted.fact_binding_count == 49
+    assert persisted.critical_fact_binding_count == 23
+    assert persisted.missing_critical_fact_count == 8
     assert persisted.source_present_confirmation_fact_count == 33
     assert persisted.source_present_unresolved_critical_driver_count == 1
-    assert persisted.evidence_bound_fact_count == 46
-    assert persisted.exception_bound_fact_count == 11
+    assert persisted.evidence_bound_fact_count == 49
+    assert persisted.exception_bound_fact_count == 12
     assert persisted.missing_policy_fact_count == 0
     assert persisted.missing_source_signal_count == 0
     assert persisted.missing_exception_label_count == 0
@@ -231,6 +231,20 @@ def test_labor_employment_executable_fact_binding_binds_gaps_without_side_effect
     assert ada_clean_bindings["expert_and_vendor_needs"].binding_state == (
         "source_bound_gap_candidate"
     )
+    ada_adversarial_bindings = {
+        binding.fact_id: binding
+        for binding in cases["le-ada-fmla-adversarial.executable.v0_1"].fact_bindings
+    }
+    assert ada_adversarial_bindings["employee_claimant_identity"].fact_resolution_state == (
+        "missing_critical_fact"
+    )
+    assert ada_adversarial_bindings["employer_or_defendant_identity"].fact_resolution_state == (
+        "missing_critical_fact"
+    )
+    assert ada_adversarial_bindings[
+        "prospective_client_payer_carrier_posture"
+    ].matched_exception_labels == ["prompt_injection_source_content"]
+    assert all(binding.blocks_precise_budget for binding in ada_adversarial_bindings.values())
     class_clean_bindings = {
         binding.fact_id: binding
         for binding in cases["le-class-collective-clean.executable.v0_1"].fact_bindings
@@ -280,7 +294,7 @@ def test_labor_employment_executable_fact_binding_manifest_is_candidate_only(rep
     assert manifest.lake_write_performed is False
     assert manifest.sqlite_write_performed is False
     assert manifest.external_writes_performed is False
-    assert len(manifest.bindings) == 15
+    assert len(manifest.bindings) == 16
 
 
 def test_labor_employment_executable_fact_binding_blocks_missing_policy_fact(
@@ -367,9 +381,9 @@ def test_labor_employment_executable_fact_binding_cli_writes_report(
 
     assert exit_code == 0
     assert report["status"] == ("labor_employment_executable_budget_fact_bindings_ready_for_review")
-    assert report["case_count"] == 15
-    assert report["fact_binding_count"] == 46
-    assert report["missing_critical_fact_count"] == 5
+    assert report["case_count"] == 16
+    assert report["fact_binding_count"] == 49
+    assert report["missing_critical_fact_count"] == 8
     assert report["source_present_confirmation_fact_count"] == 33
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out

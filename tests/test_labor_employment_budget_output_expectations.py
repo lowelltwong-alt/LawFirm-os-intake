@@ -116,13 +116,13 @@ def test_labor_employment_budget_output_expectations_classifies_every_case(
     cases = {case.executable_fixture_id: case for case in persisted.cases}
 
     assert report.status == "labor_employment_budget_output_expectations_ready_for_review"
-    assert persisted.case_count == 15
+    assert persisted.case_count == 16
     assert persisted.failed_case_count == 0
-    assert persisted.blocked_amount_budget_case_count == 6
+    assert persisted.blocked_amount_budget_case_count == 7
     assert persisted.range_or_hours_only_case_count == 3
     assert persisted.candidate_range_after_review_case_count == 6
     assert persisted.reviewed_nonblocking_case_count == 9
-    assert persisted.blocked_review_case_count == 6
+    assert persisted.blocked_review_case_count == 7
     assert all(check.status == "passed" for check in persisted.checks)
     assert "candidate_only_budget_review_required" in persisted.candidate_exception_lake_labels
     assert "budget_amount_blocked_pending_labor_employment_driver_review" in (
@@ -140,6 +140,13 @@ def test_labor_employment_budget_output_expectations_classifies_every_case(
     assert blocked.selected_for_reviewed_nonblocking_slice is False
     assert blocked.candidate_exception_lake_labels
     assert blocked.required_next_gates
+    ada_blocked = cases["le-ada-fmla-adversarial.executable.v0_1"]
+    assert ada_blocked.final_allowed_budget_output == "blocked_amount_budget"
+    assert ada_blocked.amount_budget_blocked is True
+    assert ada_blocked.blocked_case_review_present is True
+    assert "budget_amount_blocked_pending_labor_employment_driver_review" in (
+        ada_blocked.candidate_exception_lake_labels
+    )
 
     nonblocking = cases["le-admin-exhaustion-clean.executable.v0_1"]
     assert (
@@ -289,8 +296,8 @@ def test_labor_employment_budget_output_expectations_cli_writes_report(
 
     assert exit_code == 0
     assert report["status"] == "labor_employment_budget_output_expectations_ready_for_review"
-    assert report["case_count"] == 15
-    assert report["blocked_amount_budget_case_count"] == 6
+    assert report["case_count"] == 16
+    assert report["blocked_amount_budget_case_count"] == 7
     assert report["candidate_range_after_review_case_count"] == 6
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out
