@@ -61,10 +61,10 @@ def test_labor_employment_executable_driver_binding_maps_fact_gaps_to_budget_dri
     )
 
     assert report.status == "labor_employment_executable_driver_bindings_ready_for_review"
-    assert persisted.case_count == 10
+    assert persisted.case_count == 12
     assert persisted.failed_case_count == 0
-    assert persisted.driver_binding_count == 38
-    assert persisted.source_bound_driver_count == 38
+    assert persisted.driver_binding_count == 40
+    assert persisted.source_bound_driver_count == 40
     assert persisted.unbound_driver_count == 0
     assert persisted.critical_driver_block_count == 12
     assert persisted.missing_driver_dimensions == []
@@ -112,6 +112,18 @@ def test_labor_employment_executable_driver_binding_maps_fact_gaps_to_budget_dri
         "administrative_exhaustion_and_agency_record"
     ]
     assert cases["le-admin-exhaustion-clean.executable.v0_1"].critical_driver_block_count == 0
+    epli_clean = {
+        binding.driver_dimension: binding
+        for binding in cases["le-epli-carrier-clean.executable.v0_1"].driver_bindings
+    }
+    assert epli_clean["expert_vendor_needs"].matched_fact_ids == ["expert_and_vendor_needs"]
+    epli_messy = {
+        binding.driver_dimension: binding
+        for binding in cases["le-epli-carrier-messy-thread.executable.v0_1"].driver_bindings
+    }
+    assert epli_messy["forum_arbitration"].matched_fact_ids == [
+        "forum_removed_and_arbitration_posture"
+    ]
 
     notes = (run_dir / "labor_employment_executable_driver_binding_report.md").read_text(
         encoding="utf-8"
@@ -184,7 +196,7 @@ def test_labor_employment_executable_driver_binding_cli_writes_candidate_report(
 
     assert exit_code == 0
     assert report["status"] == "labor_employment_executable_driver_bindings_ready_for_review"
-    assert report["case_count"] == 10
+    assert report["case_count"] == 12
     assert report["missing_driver_dimensions"] == []
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out

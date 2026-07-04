@@ -1,15 +1,15 @@
 {
   "schema_version": "0.1",
-  "synthetic_qa_blocker_report_id": "synthetic_qa_blocker_report_326ebc2bb261a590",
+  "synthetic_qa_blocker_report_id": "synthetic_qa_blocker_report_9c61e7930f414ebd",
   "status": "synthetic_qa_blocker_report_ready_for_review",
-  "source_ui_manifest_ref": ".lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\ui_review_manifest.json",
-  "source_ui_manifest_id": "ui_review_manifest_68f335189cfc",
+  "source_ui_manifest_ref": ".lawfirm-os-intake\\ui-fixture-refresh-le-epli-current\\ui_review_manifest.json",
+  "source_ui_manifest_id": "ui_review_manifest_0320af407314",
   "source_ui_manifest_overall_status": "blocked",
-  "source_synthetic_confidence_summary_ref": ".lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\synthetic_confidence_summary_report.json",
-  "source_synthetic_confidence_summary_report_id": "synthetic_confidence_summary_88298b74f0ded8ba",
+  "source_synthetic_confidence_summary_ref": ".lawfirm-os-intake\\ui-fixture-refresh-le-epli-current\\quality\\synthetic_confidence_summary_report.json",
+  "source_synthetic_confidence_summary_report_id": "synthetic_confidence_summary_946839771987a617",
   "source_synthetic_confidence_summary_status": "synthetic_confidence_summary_ready_for_review",
-  "source_synthetic_qa_review_run_ref": ".lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\synthetic_qa_review_run_report.json",
-  "source_synthetic_qa_review_run_report_id": "syntheticqareviewrun_994fbc495d7ea2f2",
+  "source_synthetic_qa_review_run_ref": ".lawfirm-os-intake\\ui-fixture-refresh-le-epli-current\\synthetic_qa_review_run_report.json",
+  "source_synthetic_qa_review_run_report_id": "syntheticqareviewrun_201e123136dcbc13",
   "source_synthetic_qa_review_run_status": "synthetic_qa_review_run_ready",
   "row_count": 18,
   "failed_row_count": 0,
@@ -365,7 +365,7 @@
       "action_state": "needs_review",
       "owner": "qa-reference",
       "evidence_refs": [
-        ".lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\synthetic_qa_bundle_report.json"
+        ".lawfirm-os-intake\\ui-fixture-refresh-le-epli-current\\quality\\synthetic_qa_bundle_report.json"
       ],
       "recommended_next_action": "Review readiness item evidence and record an outcome: Required QA Artifacts.",
       "candidate_exception_lake_labels": [
@@ -386,7 +386,7 @@
       "action_state": "needs_review",
       "owner": "human-or-owner-review",
       "evidence_refs": [
-        ".lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\ui_review_manifest.json"
+        ".lawfirm-os-intake\\ui-fixture-refresh-le-epli-current\\ui_review_manifest.json"
       ],
       "recommended_next_action": "Review readiness item evidence and record an outcome: Owner Review Backlog.",
       "candidate_exception_lake_labels": [

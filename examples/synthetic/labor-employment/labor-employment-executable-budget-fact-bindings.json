@@ -119,6 +119,42 @@
       ]
     },
     {
+      "binding_case_id": "le-epli-carrier-clean.fact-binding.v0_1",
+      "executable_fixture_id": "le-epli-carrier-clean.executable.v0_1",
+      "expected_budget_readiness_state": "range_only_pending_human_review",
+      "expected_budget_gate_effect": "allow_range_or_hours_only_pending_review",
+      "expected_budget_treatment": "candidate_range_budget_after_review",
+      "fact_bindings": [
+        {
+          "fact_id": "expert_and_vendor_needs",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": ["expert and vendor needs are not identified"],
+          "reason": "The clean EPLI assignment identifies guideline and rate-schedule sources but says expert and vendor needs are not identified, so expense-sensitive projections remain review-gated."
+        }
+      ],
+      "red_team_notes": [
+        "The bridge must not treat a synthetic guideline excerpt or rate-schedule placeholder as approval to submit or narrow a carrier budget."
+      ]
+    },
+    {
+      "binding_case_id": "le-epli-carrier-messy-thread.fact-binding.v0_1",
+      "executable_fixture_id": "le-epli-carrier-messy-thread.executable.v0_1",
+      "expected_budget_readiness_state": "range_only_pending_human_review",
+      "expected_budget_gate_effect": "allow_range_or_hours_only_pending_review",
+      "expected_budget_treatment": "hours_only_or_broad_range",
+      "fact_bindings": [
+        {
+          "fact_id": "forum_removed_and_arbitration_posture",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": ["forum", "arbitration posture is unknown"],
+          "reason": "The messy EPLI thread leaves forum and arbitration posture unknown, so budget output should remain hours-only or broad-range pending review."
+        }
+      ],
+      "red_team_notes": [
+        "The bridge must not merge the unrelated Ochoa matter into the Nguyen assignment or treat same-adjuster correspondence as a confident matter link."
+      ]
+    },
+    {
       "binding_case_id": "le-discrimination-harassment-missing-attachment.fact-binding.v0_1",
       "executable_fixture_id": "le-discrimination-harassment-missing-attachment.executable.v0_1",
       "expected_budget_readiness_state": "blocked_missing_critical_facts",

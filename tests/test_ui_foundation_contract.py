@@ -266,16 +266,16 @@ def test_legal_intake_budget_demo_executable_coverage_is_partial_and_no_write(re
     assert report["status"] == "labor_employment_executable_coverage_ready_for_review"
     assert report["coverage_state"] == "partial_executable_coverage"
     assert report["pack_case_count"] == 32
-    assert report["executable_fixture_count"] == 10
-    assert report["covered_pack_case_count"] == 11
-    assert report["missing_executable_pack_case_count"] == 21
+    assert report["executable_fixture_count"] == 12
+    assert report["covered_pack_case_count"] == 13
+    assert report["missing_executable_pack_case_count"] == 19
     assert report["covered_family_count"] == 8
     assert report["missing_family_count"] == 0
-    assert report["covered_family_variant_count"] == len(report["covered_pack_case_ids"]) == 11
+    assert report["covered_family_variant_count"] == len(report["covered_pack_case_ids"]) == 13
     assert (
         report["missing_family_variant_count"]
         == len(report["missing_executable_pack_case_ids"])
-        == 21
+        == 19
     )
     assert "discrimination_harassment:clean" not in report["missing_family_variant_refs"]
     assert "wage_hour_flsa_state:clean" not in report["missing_family_variant_refs"]
@@ -284,6 +284,8 @@ def test_legal_intake_budget_demo_executable_coverage_is_partial_and_no_write(re
         "clean",
         "adversarial",
     ]
+    assert families["epli_carrier_assignment"]["covered_case_count"] == 3
+    assert families["epli_carrier_assignment"]["missing_variants"] == ["adversarial"]
     assert all(check["status"] == "passed" for check in report["checks"])
     assert report["candidate_only"] is True
     assert report["non_authoritative"] is True
@@ -315,9 +317,9 @@ def test_legal_intake_budget_demo_blocked_driver_review_is_synthetic_and_no_writ
     cases = {case["executable_fixture_id"]: case for case in report["case_reviews"]}
 
     assert report["status"] == "labor_employment_blocked_driver_impacts_ready_for_review"
-    assert report["case_count"] == 10
+    assert report["case_count"] == 12
     assert report["blocked_case_count"] == len(report["case_reviews"]) == 6
-    assert report["nonblocking_case_count"] == 4
+    assert report["nonblocking_case_count"] == 6
     assert report["blocker_fact_count"] == sum(
         case["blocker_fact_count"] for case in report["case_reviews"]
     )
@@ -414,9 +416,10 @@ def test_legal_intake_budget_demo_poc_qa_triage_is_actionable_and_no_write(repo_
         "validation_suite_evidence_"
     )
     assert items["validation_evidence_not_fresh_in_ui_bundle"]["status"] == "passed"
-    assert (
-        "apps/legal-intake-budget/src/fixtures/demo-validation-suite-evidence-report.json"
-        in (items["validation_evidence_not_fresh_in_ui_bundle"]["evidence_refs"])
+    assert any(
+        ref.endswith("validation_suite_evidence_report.json")
+        or ref.endswith("demo-validation-suite-evidence-report.json")
+        for ref in items["validation_evidence_not_fresh_in_ui_bundle"]["evidence_refs"]
     )
     assert items["matter_linking_requires_human_confirmation"]["status"] == "needs_review"
     assert items["budget_output_partition_visible"]["status"] == "needs_review"
@@ -509,9 +512,9 @@ def test_legal_intake_budget_demo_synthetic_qa_review_outcome_is_no_write(repo_r
     )
 
     assert report["status"] == "synthetic_qa_review_outcome_recorded_pending_followup"
-    assert report["source_row_count"] == 17
+    assert report["source_row_count"] == 18
     assert report["reviewed_row_count"] == len(report["reviewed_row_ids"]) == 3
-    assert report["unreviewed_row_count"] == len(report["unreviewed_row_ids"]) == 14
+    assert report["unreviewed_row_count"] == len(report["unreviewed_row_ids"]) == 15
     assert report["decision_count"] == 3
     assert report["accepted_decision_count"] == 1
     assert report["needs_fix_decision_count"] == 1
@@ -547,11 +550,12 @@ def test_legal_intake_budget_demo_budget_output_expectations_are_no_write(repo_r
     cases = {case["executable_fixture_id"]: case for case in report["cases"]}
 
     assert report["status"] == "labor_employment_budget_output_expectations_ready_for_review"
-    assert report["case_count"] == len(report["cases"]) == 10
+    assert report["case_count"] == len(report["cases"]) == 12
     assert report["failed_case_count"] == 0
     assert report["blocked_amount_budget_case_count"] == 6
-    assert report["candidate_range_after_review_case_count"] == 4
-    assert report["reviewed_nonblocking_case_count"] == 4
+    assert report["range_or_hours_only_case_count"] == 1
+    assert report["candidate_range_after_review_case_count"] == 5
+    assert report["reviewed_nonblocking_case_count"] == 6
     assert report["blocked_review_case_count"] == 6
     assert report["candidate_only"] is True
     assert report["non_authoritative"] is True
@@ -571,6 +575,14 @@ def test_legal_intake_budget_demo_budget_output_expectations_are_no_write(repo_r
     assert (
         cases["le-epli-carrier-missing-attachment.executable.v0_1"]["blocked_case_review_present"]
         is True
+    )
+    assert (
+        cases["le-epli-carrier-clean.executable.v0_1"]["final_allowed_budget_output"]
+        == "candidate_range_after_review_pending_human_review"
+    )
+    assert (
+        cases["le-epli-carrier-messy-thread.executable.v0_1"]["final_allowed_budget_output"]
+        == "range_or_hours_only_pending_review"
     )
     assert (
         cases["le-admin-exhaustion-clean.executable.v0_1"][
@@ -721,6 +733,9 @@ def test_legal_intake_budget_fixture_drilldown_joins_existing_le_reports(repo_ro
     assert "blockedReviewReport={laborEmploymentBlockedDriverReview}" in app
     assert "outputReport={laborEmploymentBudgetOutputExpectations}" in app
     assert blocked_ids <= output_ids
-    assert len(output_ids - blocked_ids) == output_report["candidate_range_after_review_case_count"]
+    assert len(output_ids - blocked_ids) == (
+        output_report["candidate_range_after_review_case_count"]
+        + output_report["range_or_hours_only_case_count"]
+    )
     assert all(case["candidate_only"] is True for case in output_report["cases"])
     assert all(case["external_writes_performed"] is False for case in output_report["cases"])
