@@ -63,10 +63,11 @@ def test_labor_employment_executable_driver_binding_maps_fact_gaps_to_budget_dri
     assert report.status == "labor_employment_executable_driver_bindings_ready_for_review"
     assert persisted.case_count == 12
     assert persisted.failed_case_count == 0
-    assert persisted.driver_binding_count == 40
-    assert persisted.source_bound_driver_count == 40
+    assert persisted.driver_binding_count == 48
+    assert persisted.source_bound_driver_count == 48
     assert persisted.unbound_driver_count == 0
-    assert persisted.critical_driver_block_count == 12
+    assert persisted.critical_driver_block_count == 7
+    assert persisted.critical_driver_review_only_count == 13
     assert persisted.missing_driver_dimensions == []
     assert set(persisted.covered_driver_dimensions) == set(persisted.required_driver_dimensions)
     assert all(check.status == "passed" for check in persisted.checks)
@@ -116,11 +117,28 @@ def test_labor_employment_executable_driver_binding_maps_fact_gaps_to_budget_dri
         binding.driver_dimension: binding
         for binding in cases["le-epli-carrier-clean.executable.v0_1"].driver_bindings
     }
+    assert epli_clean["party_topology"].critical_driver_review_only is True
+    assert epli_clean["representation_posture"].critical_driver_review_only is True
+    assert epli_clean["carrier_guideline_rate_context"].critical_driver_review_only is True
+    assert epli_clean["carrier_guideline_rate_context"].critical_driver_block is False
     assert epli_clean["expert_vendor_needs"].matched_fact_ids == ["expert_and_vendor_needs"]
     epli_messy = {
         binding.driver_dimension: binding
         for binding in cases["le-epli-carrier-messy-thread.executable.v0_1"].driver_bindings
     }
+    assert epli_messy["party_topology"].critical_driver_review_only is True
+    assert epli_messy["representation_posture"].critical_driver_review_only is True
+    assert epli_messy["deposition_plan"].critical_driver_review_only is True
+    assert epli_messy["carrier_guideline_rate_context"].critical_driver_review_only is True
+    assert all(
+        not epli_messy[dimension].critical_driver_block
+        for dimension in [
+            "party_topology",
+            "representation_posture",
+            "deposition_plan",
+            "carrier_guideline_rate_context",
+        ]
+    )
     assert epli_messy["forum_arbitration"].matched_fact_ids == [
         "forum_removed_and_arbitration_posture"
     ]

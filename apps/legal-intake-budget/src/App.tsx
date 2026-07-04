@@ -1199,6 +1199,7 @@ function BlockedDriverFacts({
       {testCase.blocker_facts.map((fact) => (
         <div className="fact-row" key={`${testCase.executable_fixture_id}-${fact.fact_id}`}>
           <strong>{fact.fact_id}</strong>
+          <code>{fact.fact_resolution_state}</code>
           <span>{fact.reason}</span>
           <TokenList items={fact.budget_effects} limit={4} />
         </div>
@@ -1383,6 +1384,9 @@ function LaborEmploymentBudgetOutputExpectationsPanel({
                   <div className="impact-counts">
                     <span>{testCase.expectation_state}</span>
                     <span>{testCase.block_amount_budget_impact_count} amount blocks</span>
+                    <span>
+                      {testCase.critical_review_only_impact_count} critical review-only
+                    </span>
                     <span>{testCase.range_widening_impact_count} range impacts</span>
                     <span>{testCase.scenario_fork_impact_count} scenario forks</span>
                   </div>
@@ -1550,6 +1554,9 @@ function LaborEmploymentFixtureDrilldownPanel({
                   <td>
                     <div className="impact-counts">
                       <span>{outputCase.block_amount_budget_impact_count} amount blocks</span>
+                      <span>
+                        {outputCase.critical_review_only_impact_count} critical review-only
+                      </span>
                       <span>{outputCase.range_widening_impact_count} range impacts</span>
                       <span>{outputCase.scenario_fork_impact_count} scenario forks</span>
                       <span>{outputCase.rate_guideline_review_impact_count} rate reviews</span>

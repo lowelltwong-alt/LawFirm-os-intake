@@ -361,6 +361,9 @@ def _reviewed_slice_report(
         block_amount_budget_impact_count=sum(
             case.block_amount_budget_impact_count for case in selected_cases
         ),
+        critical_review_only_impact_count=sum(
+            case.critical_review_only_impact_count for case in selected_cases
+        ),
         range_widening_impact_count=sum(
             case.range_widening_impact_count for case in selected_cases
         ),

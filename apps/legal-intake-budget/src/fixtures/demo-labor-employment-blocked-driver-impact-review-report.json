@@ -1,24 +1,26 @@
 {
   "schema_version": "0.1",
-  "blocked_driver_impact_review_report_id": "leblockeddriverimpactreview_607465dc195b2bd7",
+  "blocked_driver_impact_review_report_id": "leblockeddriverimpactreview_94d182a38a2ec57d",
   "status": "labor_employment_blocked_driver_impacts_ready_for_review",
-  "source_fact_binding_report_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-le-epli-current\\quality\\le-executable-fact-binding\\labor_employment_executable_fact_binding_report.json",
-  "source_driver_binding_report_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-le-epli-current\\quality\\le-executable-driver-binding\\labor_employment_executable_driver_binding_report.json",
-  "source_driver_impact_report_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-le-epli-current\\quality\\le-executable-driver-impact\\labor_employment_executable_driver_impact_report.json",
-  "source_driver_impact_report_id": "leexecdriverimpact_be3c7e4adbf3ec72ab4d",
+  "source_fact_binding_report_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\le-critical-fact-state-split-current\\quality\\le-executable-fact-binding\\labor_employment_executable_fact_binding_report.json",
+  "source_driver_binding_report_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\le-critical-fact-state-split-current\\quality\\le-executable-driver-binding\\labor_employment_executable_driver_binding_report.json",
+  "source_driver_impact_report_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\le-critical-fact-state-split-current\\quality\\le-executable-driver-impact\\labor_employment_executable_driver_impact_report.json",
+  "source_driver_impact_report_id": "leexecdriverimpact_c73563b5f1a548b0049a",
   "case_count": 12,
   "blocked_case_count": 6,
   "nonblocking_case_count": 6,
-  "blocker_fact_count": 8,
-  "block_amount_budget_impact_count": 12,
+  "blocker_fact_count": 6,
+  "block_amount_budget_impact_count": 7,
   "candidate_exception_lake_labels": [
     "budget_amount_blocked_pending_labor_employment_driver_review",
     "labor_employment_budget_driver_requires_human_confirmation",
     "labor_employment_critical_budget_fact_block",
     "labor_employment_driver_impacts_blocked",
+    "labor_employment_missing_critical_budget_fact",
     "missing_budget_driver_source_requires_follow_up",
     "prompt_injection_source_content",
-    "source_missing"
+    "source_missing",
+    "source_present_critical_budget_driver_unresolved"
   ],
   "case_reviews": [
     {
@@ -41,6 +43,7 @@
           "fact_id": "class_collective_or_group_scope",
           "required_level": "critical",
           "binding_state": "source_bound_gap_candidate",
+          "fact_resolution_state": "source_present_unresolved_critical_driver",
           "blocks_precise_budget": true,
           "reason": "The source raises possible group scope, but does not confirm single-plaintiff, class, collective, representative, or agency-wide posture.",
           "budget_effects": [
@@ -68,7 +71,8 @@
             "budget_amount_blocked_pending_labor_employment_driver_review",
             "labor_employment_budget_driver_requires_human_confirmation",
             "labor_employment_critical_budget_fact_block",
-            "labor_employment_driver_impacts_blocked"
+            "labor_employment_driver_impacts_blocked",
+            "source_present_critical_budget_driver_unresolved"
           ],
           "candidate_only": true,
           "synthetic_only": true
@@ -78,7 +82,8 @@
         "budget_amount_blocked_pending_labor_employment_driver_review",
         "labor_employment_budget_driver_requires_human_confirmation",
         "labor_employment_critical_budget_fact_block",
-        "labor_employment_driver_impacts_blocked"
+        "labor_employment_driver_impacts_blocked",
+        "source_present_critical_budget_driver_unresolved"
       ],
       "unblock_actions": [
         "human_confirm_labor_employment_budget_fact:class_collective_or_group_scope",
@@ -105,58 +110,20 @@
       "variant": "missing_attachment",
       "allowed_budget_output": "blocked_amount_budget",
       "block_reason": "Amount-budget output is blocked because one or more critical L&E budget facts remain unresolved or exception-bound.",
-      "block_amount_budget_impact_count": 3,
+      "block_amount_budget_impact_count": 1,
       "range_widening_impact_count": 1,
       "scenario_fork_impact_count": 0,
       "rate_guideline_review_impact_count": 2,
       "critical_driver_dimensions": [
-        "carrier_guideline_rate_context",
-        "party_topology",
-        "representation_posture"
+        "carrier_guideline_rate_context"
       ],
-      "blocker_fact_count": 2,
+      "blocker_fact_count": 1,
       "blocker_facts": [
-        {
-          "fact_id": "prospective_client_payer_carrier_posture",
-          "required_level": "critical",
-          "binding_state": "source_bound_gap_candidate",
-          "blocks_precise_budget": true,
-          "reason": "Carrier, TPA, insured, payer, instructing source, and represented client posture are all present as candidate roles requiring confirmation.",
-          "budget_effects": [
-            "conflict_seed",
-            "rate_guideline_source",
-            "appeal_path"
-          ],
-          "evidence_ref_count": 1,
-          "source_inventory_ref_count": 0,
-          "matched_source_signal_terms": [
-            "insured",
-            "payer",
-            "instructing source",
-            "represented client"
-          ],
-          "missing_source_signal_terms": [],
-          "matched_exception_labels": [],
-          "missing_exception_labels": [],
-          "matched_source_ids": [],
-          "missing_source_ids": [],
-          "unblock_actions": [
-            "human_confirm_labor_employment_budget_fact:prospective_client_payer_carrier_posture",
-            "human_review_source_bound_fact:prospective_client_payer_carrier_posture"
-          ],
-          "candidate_exception_lake_labels": [
-            "budget_amount_blocked_pending_labor_employment_driver_review",
-            "labor_employment_budget_driver_requires_human_confirmation",
-            "labor_employment_critical_budget_fact_block",
-            "labor_employment_driver_impacts_blocked"
-          ],
-          "candidate_only": true,
-          "synthetic_only": true
-        },
         {
           "fact_id": "carrier_guideline_and_rate_source",
           "required_level": "critical",
           "binding_state": "source_and_exception_bound_gap_candidate",
+          "fact_resolution_state": "missing_critical_fact",
           "blocks_precise_budget": true,
           "reason": "The carrier guideline and approved rate schedule are referenced but not included, so proposed-vs-compliant pricing cannot be narrowed.",
           "budget_effects": [
@@ -192,6 +159,7 @@
             "labor_employment_budget_driver_requires_human_confirmation",
             "labor_employment_critical_budget_fact_block",
             "labor_employment_driver_impacts_blocked",
+            "labor_employment_missing_critical_budget_fact",
             "missing_budget_driver_source_requires_follow_up",
             "source_missing"
           ],
@@ -204,6 +172,7 @@
         "labor_employment_budget_driver_requires_human_confirmation",
         "labor_employment_critical_budget_fact_block",
         "labor_employment_driver_impacts_blocked",
+        "labor_employment_missing_critical_budget_fact",
         "missing_budget_driver_source_requires_follow_up",
         "source_missing"
       ],
@@ -211,9 +180,7 @@
         "collect_or_confirm_unavailable_source:syn-le-epli-guidelines-missing-001",
         "collect_or_confirm_unavailable_source:syn-le-epli-rate-schedule-missing-001",
         "human_confirm_labor_employment_budget_fact:carrier_guideline_and_rate_source",
-        "human_confirm_labor_employment_budget_fact:prospective_client_payer_carrier_posture",
         "human_review_source_bound_fact:carrier_guideline_and_rate_source",
-        "human_review_source_bound_fact:prospective_client_payer_carrier_posture",
         "rerun_labor_employment_driver_impact_review_after_corrections",
         "resolve_exception_label:source_missing"
       ],
@@ -250,6 +217,7 @@
           "fact_id": "carrier_guideline_and_rate_source",
           "required_level": "critical",
           "binding_state": "source_and_exception_bound_gap_candidate",
+          "fact_resolution_state": "missing_critical_fact",
           "blocks_precise_budget": true,
           "reason": "The carrier guideline and approved rate schedule are missing, so amount budgeting remains blocked.",
           "budget_effects": [
@@ -283,6 +251,7 @@
             "labor_employment_budget_driver_requires_human_confirmation",
             "labor_employment_critical_budget_fact_block",
             "labor_employment_driver_impacts_blocked",
+            "labor_employment_missing_critical_budget_fact",
             "missing_budget_driver_source_requires_follow_up",
             "source_missing"
           ],
@@ -295,6 +264,7 @@
         "labor_employment_budget_driver_requires_human_confirmation",
         "labor_employment_critical_budget_fact_block",
         "labor_employment_driver_impacts_blocked",
+        "labor_employment_missing_critical_budget_fact",
         "missing_budget_driver_source_requires_follow_up",
         "source_missing"
       ],
@@ -325,58 +295,20 @@
       "variant": "adversarial",
       "allowed_budget_output": "blocked_amount_budget",
       "block_reason": "Amount-budget output is blocked because one or more critical L&E budget facts remain unresolved or exception-bound.",
-      "block_amount_budget_impact_count": 3,
+      "block_amount_budget_impact_count": 1,
       "range_widening_impact_count": 3,
       "scenario_fork_impact_count": 1,
       "rate_guideline_review_impact_count": 1,
       "critical_driver_dimensions": [
-        "carrier_guideline_rate_context",
-        "deposition_plan",
-        "party_topology"
+        "carrier_guideline_rate_context"
       ],
-      "blocker_fact_count": 2,
+      "blocker_fact_count": 1,
       "blocker_facts": [
-        {
-          "fact_id": "joint_employer_or_affiliate_structure",
-          "required_level": "critical",
-          "binding_state": "source_bound_gap_candidate",
-          "blocks_precise_budget": true,
-          "reason": "Parent and joint-employer facts are candidate-only and must not become resolved party topology.",
-          "budget_effects": [
-            "party_count",
-            "document_collection_scope",
-            "written_discovery_rounds",
-            "conflict_seed"
-          ],
-          "evidence_ref_count": 1,
-          "source_inventory_ref_count": 0,
-          "matched_source_signal_terms": [
-            "jointly controlled",
-            "Orchard Parent Holdings",
-            "joint employer"
-          ],
-          "missing_source_signal_terms": [],
-          "matched_exception_labels": [],
-          "missing_exception_labels": [],
-          "matched_source_ids": [],
-          "missing_source_ids": [],
-          "unblock_actions": [
-            "human_confirm_labor_employment_budget_fact:joint_employer_or_affiliate_structure",
-            "human_review_source_bound_fact:joint_employer_or_affiliate_structure"
-          ],
-          "candidate_exception_lake_labels": [
-            "budget_amount_blocked_pending_labor_employment_driver_review",
-            "labor_employment_budget_driver_requires_human_confirmation",
-            "labor_employment_critical_budget_fact_block",
-            "labor_employment_driver_impacts_blocked"
-          ],
-          "candidate_only": true,
-          "synthetic_only": true
-        },
         {
           "fact_id": "carrier_guideline_and_rate_source",
           "required_level": "critical",
           "binding_state": "source_and_exception_bound_gap_candidate",
+          "fact_resolution_state": "missing_critical_fact",
           "blocks_precise_budget": true,
           "reason": "The source asks whether carrier coverage exists and also includes prompt injection, so guideline/rate source remains blocked.",
           "budget_effects": [
@@ -406,6 +338,7 @@
             "labor_employment_budget_driver_requires_human_confirmation",
             "labor_employment_critical_budget_fact_block",
             "labor_employment_driver_impacts_blocked",
+            "labor_employment_missing_critical_budget_fact",
             "prompt_injection_source_content"
           ],
           "candidate_only": true,
@@ -417,13 +350,12 @@
         "labor_employment_budget_driver_requires_human_confirmation",
         "labor_employment_critical_budget_fact_block",
         "labor_employment_driver_impacts_blocked",
+        "labor_employment_missing_critical_budget_fact",
         "prompt_injection_source_content"
       ],
       "unblock_actions": [
         "human_confirm_labor_employment_budget_fact:carrier_guideline_and_rate_source",
-        "human_confirm_labor_employment_budget_fact:joint_employer_or_affiliate_structure",
         "human_review_source_bound_fact:carrier_guideline_and_rate_source",
-        "human_review_source_bound_fact:joint_employer_or_affiliate_structure",
         "rerun_labor_employment_driver_impact_review_after_corrections",
         "resolve_exception_label:prompt_injection_source_content"
       ],
@@ -460,6 +392,7 @@
           "fact_id": "esi_custodians_and_sources",
           "required_level": "critical",
           "binding_state": "source_and_exception_bound_gap_candidate",
+          "fact_resolution_state": "missing_critical_fact",
           "blocks_precise_budget": true,
           "reason": "Device and ESI scope are referenced but missing, so review volume and forensic work cannot be priced.",
           "budget_effects": [
@@ -495,6 +428,7 @@
             "labor_employment_budget_driver_requires_human_confirmation",
             "labor_employment_critical_budget_fact_block",
             "labor_employment_driver_impacts_blocked",
+            "labor_employment_missing_critical_budget_fact",
             "missing_budget_driver_source_requires_follow_up",
             "source_missing"
           ],
@@ -507,6 +441,7 @@
         "labor_employment_budget_driver_requires_human_confirmation",
         "labor_employment_critical_budget_fact_block",
         "labor_employment_driver_impacts_blocked",
+        "labor_employment_missing_critical_budget_fact",
         "missing_budget_driver_source_requires_follow_up",
         "source_missing"
       ],
@@ -537,49 +472,54 @@
       "variant": "missing_attachment",
       "allowed_budget_output": "blocked_amount_budget",
       "block_reason": "Amount-budget output is blocked because one or more critical L&E budget facts remain unresolved or exception-bound.",
-      "block_amount_budget_impact_count": 2,
-      "range_widening_impact_count": 4,
+      "block_amount_budget_impact_count": 1,
+      "range_widening_impact_count": 5,
       "scenario_fork_impact_count": 0,
       "rate_guideline_review_impact_count": 0,
       "critical_driver_dimensions": [
-        "deposition_plan",
-        "party_topology"
+        "employment_timeline"
       ],
       "blocker_fact_count": 1,
       "blocker_facts": [
         {
-          "fact_id": "individual_supervisor_or_manager_defendants",
+          "fact_id": "relevant_employment_timeline",
           "required_level": "critical",
-          "binding_state": "source_bound_gap_candidate",
+          "binding_state": "source_and_exception_bound_gap_candidate",
+          "fact_resolution_state": "missing_critical_fact",
           "blocks_precise_budget": true,
-          "reason": "The source identifies potential individual actors but not whether they are witnesses, defendants, or separate role candidates.",
+          "reason": "Leave, accommodation, and interactive-process timeline evidence is referenced as incomplete or missing, so the amount budget remains blocked until source evidence is collected.",
           "budget_effects": [
-            "party_count",
-            "depositions",
-            "conflict_seed",
-            "indemnity_or_separate_counsel_review"
+            "fact_investigation",
+            "damages_period",
+            "limitations_review",
+            "witness_count"
           ],
-          "evidence_ref_count": 2,
+          "evidence_ref_count": 4,
           "source_inventory_ref_count": 0,
           "matched_source_signal_terms": [
-            "store manager",
-            "regional HR lead",
-            "benefits administrator"
+            "leave request",
+            "interactive-process notes",
+            "leave file may be incomplete"
           ],
           "missing_source_signal_terms": [],
-          "matched_exception_labels": [],
+          "matched_exception_labels": [
+            "source_missing"
+          ],
           "missing_exception_labels": [],
           "matched_source_ids": [],
           "missing_source_ids": [],
           "unblock_actions": [
-            "human_confirm_labor_employment_budget_fact:individual_supervisor_or_manager_defendants",
-            "human_review_source_bound_fact:individual_supervisor_or_manager_defendants"
+            "human_confirm_labor_employment_budget_fact:relevant_employment_timeline",
+            "human_review_source_bound_fact:relevant_employment_timeline",
+            "resolve_exception_label:source_missing"
           ],
           "candidate_exception_lake_labels": [
             "budget_amount_blocked_pending_labor_employment_driver_review",
             "labor_employment_budget_driver_requires_human_confirmation",
             "labor_employment_critical_budget_fact_block",
-            "labor_employment_driver_impacts_blocked"
+            "labor_employment_driver_impacts_blocked",
+            "labor_employment_missing_critical_budget_fact",
+            "source_missing"
           ],
           "candidate_only": true,
           "synthetic_only": true
@@ -589,12 +529,15 @@
         "budget_amount_blocked_pending_labor_employment_driver_review",
         "labor_employment_budget_driver_requires_human_confirmation",
         "labor_employment_critical_budget_fact_block",
-        "labor_employment_driver_impacts_blocked"
+        "labor_employment_driver_impacts_blocked",
+        "labor_employment_missing_critical_budget_fact",
+        "source_missing"
       ],
       "unblock_actions": [
-        "human_confirm_labor_employment_budget_fact:individual_supervisor_or_manager_defendants",
-        "human_review_source_bound_fact:individual_supervisor_or_manager_defendants",
-        "rerun_labor_employment_driver_impact_review_after_corrections"
+        "human_confirm_labor_employment_budget_fact:relevant_employment_timeline",
+        "human_review_source_bound_fact:relevant_employment_timeline",
+        "rerun_labor_employment_driver_impact_review_after_corrections",
+        "resolve_exception_label:source_missing"
       ],
       "next_review_gates": [
         "human_labor_employment_budget_driver_review",
@@ -617,9 +560,9 @@
       "status": "passed",
       "message": "Fact, driver-binding, and driver-impact reports are ready for blocked review.",
       "evidence_refs": [
-        "leexecfactbinding_5cbb862858468d694571",
-        "leexecdriverbinding_8e53ef45dcbf257815f4",
-        "leexecdriverimpact_be3c7e4adbf3ec72ab4d"
+        "leexecfactbinding_04bd6a868487e1106674",
+        "leexecdriverbinding_16ba95ea89a92b037e21",
+        "leexecdriverimpact_c73563b5f1a548b0049a"
       ],
       "blocking_refs": []
     },
@@ -684,9 +627,9 @@
       "status": "passed",
       "message": "Blocked review did not authorize budget, matter, Lake, SQLite, external, or learning actions.",
       "evidence_refs": [
-        "leexecfactbinding_5cbb862858468d694571",
-        "leexecdriverbinding_8e53ef45dcbf257815f4",
-        "leexecdriverimpact_be3c7e4adbf3ec72ab4d"
+        "leexecfactbinding_04bd6a868487e1106674",
+        "leexecdriverbinding_16ba95ea89a92b037e21",
+        "leexecdriverimpact_c73563b5f1a548b0049a"
       ],
       "blocking_refs": []
     }
@@ -717,5 +660,5 @@
   "sqlite_write_performed": false,
   "external_writes_performed": false,
   "silent_learning_performed": false,
-  "generated_at": "2026-07-04T01:30:58.296163Z"
+  "generated_at": "2026-07-04T02:46:57.913092Z"
 }

@@ -69,7 +69,7 @@
       "fact_bindings": [
         {
           "fact_id": "class_collective_or_group_scope",
-          "expected_gap_type": "human_confirmation_required",
+          "expected_gap_type": "uncertain_candidate",
           "source_signal_terms": ["class or collective", "more than one worksite"],
           "reason": "The source raises possible group scope, but does not confirm single-plaintiff, class, collective, representative, or agency-wide posture."
         },
@@ -126,6 +126,18 @@
       "expected_budget_treatment": "candidate_range_budget_after_review",
       "fact_bindings": [
         {
+          "fact_id": "prospective_client_payer_carrier_posture",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": ["insured Brightline Foods Inc.", "payer", "represented client"],
+          "reason": "Carrier, payer, TPA, insured, and represented-client signals are source-present role candidates that require confirmation but are not missing evidence."
+        },
+        {
+          "fact_id": "carrier_guideline_and_rate_source",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": ["attached carrier guideline", "approved rate schedule"],
+          "reason": "Guideline and rate-schedule sources are present as synthetic placeholders, but they remain candidate-only and cannot authorize pricing or submission."
+        },
+        {
           "fact_id": "expert_and_vendor_needs",
           "expected_gap_type": "human_confirmation_required",
           "source_signal_terms": ["expert and vendor needs are not identified"],
@@ -143,6 +155,28 @@
       "expected_budget_gate_effect": "allow_range_or_hours_only_pending_review",
       "expected_budget_treatment": "hours_only_or_broad_range",
       "fact_bindings": [
+        {
+          "fact_id": "prospective_client_payer_carrier_posture",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": [
+            "Granite Shield EPLI may be payer",
+            "ClaimsBridge may be instructing source",
+            "prospective represented client"
+          ],
+          "reason": "The messy thread contains carrier, TPA, payer, insured, and represented-client role candidates, but they remain unconfirmed and candidate-only."
+        },
+        {
+          "fact_id": "joint_employer_or_affiliate_structure",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": ["insured affiliate", "joint-employer candidate"],
+          "reason": "Affiliate and joint-employer signals are source-present but unresolved; they widen party-topology review without becoming confirmed facts."
+        },
+        {
+          "fact_id": "carrier_guideline_and_rate_source",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": ["carrier guideline", "panel counsel instructions"],
+          "reason": "The guideline source is referenced in the thread, but it remains review-only and does not authorize compliant pricing or submission."
+        },
         {
           "fact_id": "forum_removed_and_arbitration_posture",
           "expected_gap_type": "human_confirmation_required",
@@ -316,6 +350,17 @@
       "expected_budget_gate_effect": "block_amount_budget_before_proposal",
       "expected_budget_treatment": "block_amount_budget",
       "fact_bindings": [
+        {
+          "fact_id": "relevant_employment_timeline",
+          "expected_gap_type": "missing_evidence",
+          "source_signal_terms": [
+            "leave request",
+            "interactive-process notes",
+            "leave file may be incomplete"
+          ],
+          "expected_exception_labels": ["source_missing"],
+          "reason": "Leave, accommodation, and interactive-process timeline evidence is referenced as incomplete or missing, so the amount budget remains blocked until source evidence is collected."
+        },
         {
           "fact_id": "policy_handbook_contract_documents",
           "expected_gap_type": "missing_evidence",

@@ -188,6 +188,7 @@ def run_labor_employment_executable_driver_impact_audit(
                 "case": case.executable_fixture_id,
                 "items": case.impact_item_count,
                 "blocks": case.block_amount_budget_impact_count,
+                "review_only": case.critical_review_only_impact_count,
                 "ranges": case.range_widening_impact_count,
                 "scenarios": case.scenario_fork_impact_count,
             }
@@ -209,6 +210,9 @@ def run_labor_employment_executable_driver_impact_audit(
         source_bound_impact_count=sum(case.source_bound_impact_count for case in cases),
         block_amount_budget_impact_count=sum(
             case.block_amount_budget_impact_count for case in cases
+        ),
+        critical_review_only_impact_count=sum(
+            case.critical_review_only_impact_count for case in cases
         ),
         range_widening_impact_count=sum(case.range_widening_impact_count for case in cases),
         scenario_fork_impact_count=sum(case.scenario_fork_impact_count for case in cases),
@@ -257,6 +261,7 @@ def render_labor_employment_executable_driver_impact_report(
         f"- Impact items: {report.impact_item_count}",
         f"- Source-bound impact candidates: {report.source_bound_impact_count}",
         f"- Amount-budget block impacts: {report.block_amount_budget_impact_count}",
+        f"- Critical review-only impacts: {report.critical_review_only_impact_count}",
         f"- Range-widening impacts: {report.range_widening_impact_count}",
         f"- Scenario-fork impacts: {report.scenario_fork_impact_count}",
         f"- Rate/guideline review impacts: {report.rate_guideline_review_impact_count}",
@@ -281,6 +286,7 @@ def render_labor_employment_executable_driver_impact_report(
                 f"- Allowed budget output: {case.allowed_budget_output}",
                 f"- Impact items: {case.impact_item_count}",
                 f"- Block impacts: {case.block_amount_budget_impact_count}",
+                f"- Critical review-only impacts: {case.critical_review_only_impact_count}",
                 f"- Range impacts: {case.range_widening_impact_count}",
                 f"- Scenario forks: {case.scenario_fork_impact_count}",
                 f"- Rate/guideline reviews: {case.rate_guideline_review_impact_count}",
@@ -291,6 +297,7 @@ def render_labor_employment_executable_driver_impact_report(
                 f"- `{item.driver_dimension}`: {item.impact_state}; "
                 f"actions={', '.join(item.impact_actions)}; "
                 f"effect={item.pricing_effect}; "
+                f"critical_review_only={item.critical_driver_review_only}; "
                 f"range_factor={item.range_widening_factor}; "
                 f"facts={', '.join(item.matched_fact_ids) or 'none'}"
             )
@@ -344,6 +351,9 @@ def _case_from_driver_binding(
         block_amount_budget_impact_count=sum(
             1 for item in items if "block_amount_budget" in item.impact_actions
         ),
+        critical_review_only_impact_count=sum(
+            1 for item in items if item.critical_driver_review_only
+        ),
         range_widening_impact_count=sum(
             1 for item in items if "widen_budget_range" in item.impact_actions
         ),
@@ -367,6 +377,7 @@ def _impact_item(
     policy = DRIVER_IMPACT_POLICY.get(binding_item.driver_dimension)
     source_bound = binding_item.binding_state == "source_bound_driver_candidate"
     critical_block = binding_item.critical_driver_block
+    critical_review_only = binding_item.critical_driver_review_only
     if policy is None:
         actions: list[LaborEmploymentExecutableDriverImpactAction] = [
             "hold_for_human_driver_review"
@@ -381,6 +392,7 @@ def _impact_item(
             source_binding_state=binding_item.binding_state,
             source_bound=False,
             critical_driver_block=critical_block,
+            critical_driver_review_only=critical_review_only,
             impact_actions=actions,
             pricing_effect=pricing_effect,
             range_widening_factor=1.0,
@@ -400,6 +412,7 @@ def _impact_item(
             source_binding_state=binding_item.binding_state,
             source_bound=False,
             critical_driver_block=critical_block,
+            critical_driver_review_only=critical_review_only,
             impact_actions=["hold_for_human_driver_review"],
             pricing_effect="human_review_required",
             range_widening_factor=1.0,
@@ -412,7 +425,12 @@ def _impact_item(
             policy_reason=policy.reason,
             notes=["Driver binding is not source-bound; impact is blocked."],
         )
-    return _source_bound_impact_item(binding_item, policy, critical_block=critical_block)
+    return _source_bound_impact_item(
+        binding_item,
+        policy,
+        critical_block=critical_block,
+        critical_review_only=critical_review_only,
+    )
 
 
 def _source_bound_impact_item(
@@ -420,6 +438,7 @@ def _source_bound_impact_item(
     policy: DriverImpactPolicy,
     *,
     critical_block: bool,
+    critical_review_only: bool,
 ) -> LaborEmploymentExecutableDriverImpactItem:
     actions = list(policy.actions)
     pricing_effect = policy.pricing_effect
@@ -432,6 +451,7 @@ def _source_bound_impact_item(
         source_binding_state=binding_item.binding_state,
         source_bound=True,
         critical_driver_block=critical_block,
+        critical_driver_review_only=critical_review_only,
         impact_actions=actions,
         pricing_effect=pricing_effect,
         range_widening_factor=policy.range_widening_factor,

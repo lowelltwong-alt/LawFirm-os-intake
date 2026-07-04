@@ -101,6 +101,12 @@
           "title": "Block Amount Budget Impact Count",
           "type": "integer"
         },
+        "critical_review_only_impact_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Critical Review Only Impact Count",
+          "type": "integer"
+        },
         "range_widening_impact_count": {
           "minimum": 0,
           "title": "Range Widening Impact Count",

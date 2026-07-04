@@ -90,10 +90,16 @@ def test_labor_employment_blocked_driver_impact_review_explains_blockers(
     assert persisted.case_count == 12
     assert persisted.blocked_case_count == 6
     assert persisted.nonblocking_case_count == 6
-    assert persisted.blocker_fact_count == 8
-    assert persisted.block_amount_budget_impact_count == 12
+    assert persisted.blocker_fact_count == 6
+    assert persisted.block_amount_budget_impact_count == 7
     assert "source_missing" in persisted.candidate_exception_lake_labels
     assert "prompt_injection_source_content" in persisted.candidate_exception_lake_labels
+    assert "labor_employment_missing_critical_budget_fact" in (
+        persisted.candidate_exception_lake_labels
+    )
+    assert "source_present_critical_budget_driver_unresolved" in (
+        persisted.candidate_exception_lake_labels
+    )
     assert "labor_employment_critical_budget_fact_block" in (
         persisted.candidate_exception_lake_labels
     )
@@ -106,6 +112,7 @@ def test_labor_employment_blocked_driver_impact_review_explains_blockers(
     assert "carrier_guideline_rate_context" in epli.critical_driver_dimensions
     assert any(
         fact.fact_id == "carrier_guideline_and_rate_source"
+        and fact.fact_resolution_state == "missing_critical_fact"
         and "source_missing" in fact.candidate_exception_lake_labels
         for fact in epli.blocker_facts
     )
@@ -115,6 +122,14 @@ def test_labor_employment_blocked_driver_impact_review_explains_blockers(
     )
     class_case = cases["le-class-collective-adversarial.executable.v0_1"]
     assert "prompt_injection_source_content" in class_case.candidate_exception_lake_labels
+    wage = cases["le-wage-hour-missing-attachment.executable.v0_1"]
+    assert any(
+        fact.fact_id == "class_collective_or_group_scope"
+        and fact.fact_resolution_state == "source_present_unresolved_critical_driver"
+        and "source_present_critical_budget_driver_unresolved"
+        in fact.candidate_exception_lake_labels
+        for fact in wage.blocker_facts
+    )
     assert all(check.status == "passed" for check in persisted.checks)
     assert persisted.budget_amount_output_authorized is False
     assert persisted.budget_submission_authorized is False
@@ -163,7 +178,7 @@ def test_labor_employment_blocked_driver_impact_review_cli_writes_packet(
     assert report["status"] == "labor_employment_blocked_driver_impacts_ready_for_review"
     assert report["blocked_case_count"] == 6
     assert report["nonblocking_case_count"] == 6
-    assert report["blocker_fact_count"] == 8
-    assert report["block_amount_budget_impact_count"] == 12
+    assert report["blocker_fact_count"] == 6
+    assert report["block_amount_budget_impact_count"] == 7
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out

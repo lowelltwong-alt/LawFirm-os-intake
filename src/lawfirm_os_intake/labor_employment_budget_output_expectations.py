@@ -188,6 +188,7 @@ def render_labor_employment_budget_output_expectations_report(
                 f"- Expectation state: {case.expectation_state}",
                 f"- Selected for nonblocking replay: {case.selected_for_reviewed_nonblocking_slice}",
                 f"- Blocked review present: {case.blocked_case_review_present}",
+                f"- Critical review-only impacts: {case.critical_review_only_impact_count}",
                 "- Candidate Lake labels: "
                 + ", ".join(f"`{label}`" for label in case.candidate_exception_lake_labels),
                 "- Required next gates: "
@@ -264,6 +265,9 @@ def _blocked_case(
     labels = set(BASE_CASE_LABELS)
     labels.add("budget_amount_blocked_pending_labor_employment_driver_review")
     labels.add("labor_employment_blocked_budget_output_expectation")
+    if impact_case.critical_review_only_impact_count:
+        labels.add("source_present_critical_fact_requires_confirmation")
+        labels.add("labor_employment_critical_fact_review_only")
     gates = {
         "human_labor_employment_budget_driver_review",
         "no_amount_budget_until_blocker_facts_are_resolved",
@@ -297,6 +301,7 @@ def _blocked_case(
         blocked_case_review_present=blocked_review is not None,
         amount_budget_blocked=True,
         block_amount_budget_impact_count=impact_case.block_amount_budget_impact_count,
+        critical_review_only_impact_count=impact_case.critical_review_only_impact_count,
         range_widening_impact_count=impact_case.range_widening_impact_count,
         scenario_fork_impact_count=impact_case.scenario_fork_impact_count,
         rate_guideline_review_impact_count=impact_case.rate_guideline_review_impact_count,
@@ -329,6 +334,9 @@ def _nonblocking_case(
     labels = set(BASE_CASE_LABELS)
     labels.add("labor_employment_reviewed_nonblocking_budget_gate_replay")
     labels.add("budget_output_pending_human_review")
+    if impact_case.critical_review_only_impact_count:
+        labels.add("source_present_critical_fact_requires_confirmation")
+        labels.add("labor_employment_critical_fact_review_only")
     if impact_case.allowed_budget_output == "range_or_hours_only_pending_review":
         expectation_state = "range_or_hours_only_pending_human_review"
         labels.add("labor_employment_budget_output_range_or_hours_only")
@@ -364,6 +372,7 @@ def _nonblocking_case(
         blocked_case_review_present=False,
         amount_budget_blocked=False,
         block_amount_budget_impact_count=impact_case.block_amount_budget_impact_count,
+        critical_review_only_impact_count=impact_case.critical_review_only_impact_count,
         range_widening_impact_count=impact_case.range_widening_impact_count,
         scenario_fork_impact_count=impact_case.scenario_fork_impact_count,
         rate_guideline_review_impact_count=impact_case.rate_guideline_review_impact_count,
