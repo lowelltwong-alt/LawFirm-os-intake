@@ -1,9 +1,9 @@
 {
   "schema_version": "0.1",
-  "synthetic_qa_review_run_report_id": "syntheticqareviewrun_a58d63a34ffcffae",
+  "synthetic_qa_review_run_report_id": "syntheticqareviewrun_b1243ae68bb25797",
   "status": "synthetic_qa_review_run_ready",
-  "run_root_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-class-missing-attachment\\full-run",
-  "quality_dir_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-class-missing-attachment\\full-run\\quality",
+  "run_root_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run",
+  "quality_dir_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality",
   "step_count": 22,
   "failed_step_count": 0,
   "steps": [
@@ -12,7 +12,7 @@
       "label": "Budget Coherence",
       "status": "passed",
       "observed_status": "passed",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-class-missing-attachment\\full-run\\budget\\budget_coherence_report.json",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\budget\\budget_coherence_report.json",
       "notes": [
         "Budget proposal coherence is generated from the synthetic demo budget."
       ]
@@ -22,7 +22,7 @@
       "label": "Matter-Linking Preflight",
       "status": "passed",
       "observed_status": "matter_linking_preflight_resolved_candidate_requires_review",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-class-missing-attachment\\full-run\\quality\\matter-linking-preflight\\matter_linking_preflight_report.json",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\matter-linking-preflight\\matter_linking_preflight_report.json",
       "notes": [
         "Resolved Upfront-like document clusters remain human-gated and no-write."
       ]
@@ -32,7 +32,7 @@
       "label": "Matter-Linking Review Outcome",
       "status": "passed",
       "observed_status": "matter_linking_review_outcome_recorded",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-class-missing-attachment\\full-run\\quality\\matter-linking-review-outcome\\matter_linking_review_outcome_report.json",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\matter-linking-review-outcome\\matter_linking_review_outcome_report.json",
       "notes": [
         "Human split confirmation is recorded append-only without authorizing budgets, matters, Lake writes, or learning."
       ]
@@ -42,7 +42,7 @@
       "label": "Matter-Linking Weak-Only Holdout",
       "status": "passed",
       "observed_status": "blocked_matter_linking_preflight",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-class-missing-attachment\\full-run\\quality\\matter-linking-weak-only-holdout\\matter_linking_preflight_report.json",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\matter-linking-weak-only-holdout\\matter_linking_preflight_report.json",
       "notes": [
         "Weak sender/carrier/reference-only candidates must block rather than merge or budget."
       ]
@@ -52,7 +52,7 @@
       "label": "Matter-Linking QA Gate",
       "status": "passed",
       "observed_status": "matter_linking_qa_gate_ready_for_review",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-class-missing-attachment\\full-run\\quality\\matter-linking-qa-gate\\matter_linking_qa_gate_report.json",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\matter-linking-qa-gate\\matter_linking_qa_gate_report.json",
       "notes": [
         "Aggregate Upfront-like fixture gate covers ambiguous, resolved, weak-only, and conflicting-identifier matter-linking states."
       ]
@@ -62,7 +62,7 @@
       "label": "Budget Calibration Starter Pack",
       "status": "passed",
       "observed_status": "starter_pack_ready_for_manual_fixture_update_review",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-class-missing-attachment\\full-run\\quality\\calibration-starter\\budget_calibration_starter_pack_report.json",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\calibration-starter\\budget_calibration_starter_pack_report.json",
       "notes": [
         "Calibration remains review-only and does not apply learning."
       ]
@@ -72,7 +72,7 @@
       "label": "L&E QA Matrix",
       "status": "passed",
       "observed_status": "labor_employment_qa_matrix_ready_for_review",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-class-missing-attachment\\full-run\\quality\\le-qa-matrix\\labor_employment_qa_matrix_report.json",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\le-qa-matrix\\labor_employment_qa_matrix_report.json",
       "notes": [
         "Critical blockers and range-only review posture are visible."
       ]
@@ -82,7 +82,7 @@
       "label": "L&E Fixture Family Pack",
       "status": "passed",
       "observed_status": "labor_employment_fixture_family_pack_ready_for_review",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-class-missing-attachment\\full-run\\quality\\le-fixture-family-pack\\labor_employment_fixture_family_pack_report.json",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\le-fixture-family-pack\\labor_employment_fixture_family_pack_report.json",
       "notes": [
         "Synthetic fixture family and variant coverage is reviewed."
       ]
@@ -92,7 +92,7 @@
       "label": "L&E Executable Fixtures",
       "status": "passed",
       "observed_status": "labor_employment_executable_fixtures_ready_for_review",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-class-missing-attachment\\full-run\\quality\\le-executable-fixtures\\labor_employment_executable_fixtures_report.json",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\le-executable-fixtures\\labor_employment_executable_fixtures_report.json",
       "notes": [
         "Selected source bundles execute through deterministic preflight."
       ]
@@ -102,7 +102,7 @@
       "label": "L&E Executable Coverage",
       "status": "passed",
       "observed_status": "labor_employment_executable_coverage_ready_for_review",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-class-missing-attachment\\full-run\\quality\\le-executable-coverage\\labor_employment_executable_coverage_report.json",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\le-executable-coverage\\labor_employment_executable_coverage_report.json",
       "notes": [
         "Executable coverage gaps stay visible for later fixture expansion."
       ]
@@ -112,7 +112,7 @@
       "label": "L&E Executable Fact Binding",
       "status": "passed",
       "observed_status": "labor_employment_executable_budget_fact_bindings_ready_for_review",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-class-missing-attachment\\full-run\\quality\\le-executable-fact-binding\\labor_employment_executable_fact_binding_report.json",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\le-executable-fact-binding\\labor_employment_executable_fact_binding_report.json",
       "notes": [
         "Executable facts bind to expected L&E budget-fact gaps."
       ]
@@ -122,7 +122,7 @@
       "label": "L&E Executable Driver Binding",
       "status": "passed",
       "observed_status": "labor_employment_executable_driver_bindings_ready_for_review",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-class-missing-attachment\\full-run\\quality\\le-executable-driver-binding\\labor_employment_executable_driver_binding_report.json",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\le-executable-driver-binding\\labor_employment_executable_driver_binding_report.json",
       "notes": [
         "Fact gaps map to budget-driver dimensions."
       ]
@@ -132,7 +132,7 @@
       "label": "L&E Executable Driver Impact",
       "status": "passed",
       "observed_status": "labor_employment_executable_driver_impacts_ready_for_review",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-class-missing-attachment\\full-run\\quality\\le-executable-driver-impact\\labor_employment_executable_driver_impact_report.json",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\le-executable-driver-impact\\labor_employment_executable_driver_impact_report.json",
       "notes": [
         "Driver bindings declare blockers, ranges, scenario forks, and rate reviews."
       ]
@@ -142,7 +142,7 @@
       "label": "L&E Driver Impact Review",
       "status": "passed",
       "observed_status": "labor_employment_driver_impact_review_ready_for_budget_gate_replay",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-class-missing-attachment\\full-run\\quality\\le-driver-impact-review\\labor_employment_driver_impact_review_report.json",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\le-driver-impact-review\\labor_employment_driver_impact_review_report.json",
       "notes": [
         "Nonblocking driver impacts are reviewed for budget-gate replay."
       ]
@@ -152,7 +152,7 @@
       "label": "L&E Blocked Driver Impact Review",
       "status": "passed",
       "observed_status": "labor_employment_blocked_driver_impacts_ready_for_review",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-class-missing-attachment\\full-run\\quality\\le-blocked-driver-impact-review\\labor_employment_blocked_driver_impact_review_report.json",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\le-blocked-driver-impact-review\\labor_employment_blocked_driver_impact_review_report.json",
       "notes": [
         "Blocked amount-budget cases explain blocker facts and follow-up actions."
       ]
@@ -162,7 +162,7 @@
       "label": "L&E Budget Output Expectations",
       "status": "passed",
       "observed_status": "labor_employment_budget_output_expectations_ready_for_review",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-class-missing-attachment\\full-run\\quality\\le-budget-output-expectations\\labor_employment_budget_output_expectations_report.json",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\le-budget-output-expectations\\labor_employment_budget_output_expectations_report.json",
       "notes": [
         "Every executable L&E case has one allowed budget-output state and next gate."
       ]
@@ -172,7 +172,7 @@
       "label": "L&E Budget QA Gate",
       "status": "passed",
       "observed_status": "labor_employment_budget_qa_gate_ready_for_review",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-class-missing-attachment\\full-run\\quality\\le-budget-qa-gate\\labor_employment_budget_qa_gate_report.json",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\le-budget-qa-gate\\labor_employment_budget_qa_gate_report.json",
       "notes": [
         "L&E budget-output states are aggregated into a candidate-only QA gate."
       ]
@@ -182,7 +182,7 @@
       "label": "L&E Budget Fact Gold",
       "status": "passed",
       "observed_status": "passed",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-class-missing-attachment\\full-run\\quality\\le-budget-fact-gold\\labor_employment_budget_fact_gold_report.json",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\le-budget-fact-gold\\labor_employment_budget_fact_gold_report.json",
       "notes": [
         "Reviewed synthetic gold validates L&E budget-fact audit outputs."
       ]
@@ -192,7 +192,7 @@
       "label": "Synthetic QA Bundle",
       "status": "passed",
       "observed_status": "pending_review",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-class-missing-attachment\\full-run\\quality\\synthetic_qa_bundle_report.json",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\synthetic_qa_bundle_report.json",
       "notes": [
         "Synthetic QA artifacts are bundled for local review."
       ]
@@ -202,7 +202,7 @@
       "label": "UI Review Manifest",
       "status": "passed",
       "observed_status": "blocked",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-class-missing-attachment\\full-run\\ui_review_manifest.json",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\ui_review_manifest.json",
       "notes": [
         "Read-only frontend manifest is generated from local artifacts."
       ]
@@ -212,7 +212,7 @@
       "label": "Synthetic Confidence Summary",
       "status": "passed",
       "observed_status": "synthetic_confidence_summary_ready_for_review",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-class-missing-attachment\\full-run\\quality\\synthetic-confidence-summary\\synthetic_confidence_summary_report.json",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\synthetic-confidence-summary\\synthetic_confidence_summary_report.json",
       "notes": [
         "Aggregate QA/UI readiness banner is generated without production authority."
       ]
@@ -222,15 +222,15 @@
       "label": "UI Review Data Bundle",
       "status": "passed",
       "observed_status": "ready_for_review",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-class-missing-attachment\\full-run\\ui_review_data_bundle.json",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\ui_review_data_bundle.json",
       "notes": [
         "UI-renderable detail reports are hash-bound for local review."
       ]
     }
   ],
-  "synthetic_qa_bundle_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-class-missing-attachment\\full-run\\quality\\synthetic_qa_bundle_report.json",
-  "ui_manifest_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-class-missing-attachment\\full-run\\ui_review_manifest.json",
-  "ui_data_bundle_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-class-missing-attachment\\full-run\\ui_review_data_bundle.json",
+  "synthetic_qa_bundle_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\synthetic_qa_bundle_report.json",
+  "ui_manifest_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\ui_review_manifest.json",
+  "ui_data_bundle_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\ui_review_data_bundle.json",
   "required_next_actions": [
     "Open the generated ui_review_data_bundle.json in the read-only review UI.",
     "Treat pending QA gates as review evidence only; do not apply calibration or learning."

@@ -31,8 +31,8 @@ def test_labor_employment_executable_fixtures_run_preflight_and_preserve_boundar
     )
 
     assert report.status == "labor_employment_executable_fixtures_ready_for_review"
-    assert persisted.fixture_count == 18
-    assert persisted.preflight_executed_count == 18
+    assert persisted.fixture_count == 19
+    assert persisted.preflight_executed_count == 19
     assert persisted.failed_case_count == 0
     assert persisted.missing_pack_link_count == 0
     assert persisted.missing_source_signal_count == 0
@@ -99,6 +99,20 @@ def test_labor_employment_executable_fixtures_run_preflight_and_preserve_boundar
     )
     assert "source_missing" in (
         cases["le-discrimination-harassment-missing-attachment.executable.v0_1"].exception_labels
+    )
+    assert (
+        cases["le-retaliation-wrongful-termination-clean.executable.v0_1"].expected_budget_treatment
+        == "candidate_range_budget_after_review"
+    )
+    assert (
+        cases["le-retaliation-wrongful-termination-clean.executable.v0_1"].missing_source_count == 0
+    )
+    assert (
+        cases["le-retaliation-wrongful-termination-clean.executable.v0_1"].duplicate_source_count
+        == 0
+    )
+    assert "critic_date_or_deadline_requires_review" in (
+        cases["le-retaliation-wrongful-termination-clean.executable.v0_1"].exception_labels
     )
     assert (
         cases[
@@ -270,7 +284,7 @@ def test_labor_employment_executable_fixtures_cli_writes_candidate_report(
 
     assert exit_code == 0
     assert report["status"] == "labor_employment_executable_fixtures_ready_for_review"
-    assert report["fixture_count"] == 18
-    assert report["preflight_executed_count"] == 18
+    assert report["fixture_count"] == 19
+    assert report["preflight_executed_count"] == 19
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out

@@ -436,6 +436,85 @@
       ]
     },
     {
+      "binding_case_id": "le-retaliation-wrongful-termination-clean.fact-binding.v0_1",
+      "executable_fixture_id": "le-retaliation-wrongful-termination-clean.executable.v0_1",
+      "expected_budget_readiness_state": "range_only_pending_human_review",
+      "expected_budget_gate_effect": "allow_range_or_hours_only_pending_review",
+      "expected_budget_treatment": "candidate_range_budget_after_review",
+      "fact_bindings": [
+        {
+          "fact_id": "individual_supervisor_or_manager_defendants",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": [
+            "individual supervisor and manager roles as candidates",
+            "does not confirm any individual supervisor or manager as a named defendant"
+          ],
+          "reason": "The sources identify supervisor and manager role candidates but do not confirm named individual defendants, so party topology remains review-only."
+        },
+        {
+          "fact_id": "relevant_employment_timeline",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": [
+            "safety complaint on May 12, 2026",
+            "performance meeting on June 2, 2026",
+            "termination on June 10, 2026"
+          ],
+          "reason": "The clean packet provides key timeline candidates, but these dates are evidence refs for review and not docketing instructions."
+        },
+        {
+          "fact_id": "damages_categories_and_exposure",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": [
+            "back pay",
+            "front pay",
+            "emotional distress",
+            "attorneys' fees"
+          ],
+          "reason": "Damages categories are source-present but still require human confirmation before any budget range narrows."
+        },
+        {
+          "fact_id": "policy_handbook_contract_documents",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": [
+            "handbook excerpt",
+            "retaliation policy",
+            "termination letter summary"
+          ],
+          "reason": "Policy and termination document references are source-bound but not confirmed as complete budget inputs."
+        },
+        {
+          "fact_id": "anticipated_depositions",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": [
+            "operations manager",
+            "HR business partner",
+            "site lead"
+          ],
+          "reason": "Potential witnesses are identified, but deposition count and witness roles remain review-only."
+        },
+        {
+          "fact_id": "forum_removed_and_arbitration_posture",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": [
+            "Forum and arbitration posture require human review",
+            "arbitration agreement status is under review"
+          ],
+          "reason": "The source explicitly says forum and arbitration posture require review, so no procedural posture may be treated as confirmed."
+        },
+        {
+          "fact_id": "expert_and_vendor_needs",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": [
+            "Expert and vendor needs are not identified"
+          ],
+          "reason": "The clean packet says expert and vendor needs are not identified, which supports range-only posture rather than a zero-expense conclusion."
+        }
+      ],
+      "red_team_notes": [
+        "The bridge must not convert a clean retaliation timeline into docketed deadlines, confirmed individual defendants, approved expert expense assumptions, or budget submission authority."
+      ]
+    },
+    {
       "binding_case_id": "le-retaliation-wrongful-termination-messy-thread.fact-binding.v0_1",
       "executable_fixture_id": "le-retaliation-wrongful-termination-messy-thread.executable.v0_1",
       "expected_budget_readiness_state": "range_only_pending_human_review",

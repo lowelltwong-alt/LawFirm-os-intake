@@ -1,5 +1,5 @@
 {
-  "manifestId": "ui_review_manifest_20426c866fe6",
+  "manifestId": "ui_review_manifest_663d697a87db",
   "generatedAt": "2026-07-04T00:00:00Z",
   "runLabel": "Local intake QA review: full-run",
   "practiceArea": "synthetic_intake",
@@ -27,7 +27,7 @@
       "candidateOnly": true,
       "externalWritesPerformed": false,
       "notes": [
-        "Found preflight\\run_dd08376ffe4d445e8c27c68405f06002\\intake_preflight_packet.json; status=human_intake_review_required."
+        "Found preflight\\run_16835cd9f5b64679b8ce131aab46efce\\intake_preflight_packet.json; status=human_intake_review_required."
       ]
     },
     {
@@ -196,7 +196,7 @@
       "candidateOnly": true,
       "externalWritesPerformed": false,
       "notes": [
-        "poc_qa_triage_report.json was not found under the local run root."
+        "Found quality\\poc_qa_triage_report.json; status=poc_qa_ready_for_review."
       ]
     },
     {
@@ -570,7 +570,7 @@
       "evidenceFile": "poc_qa_triage_report.json",
       "owner": "qa-reference",
       "notes": [
-        "poc_qa_triage_report.json is missing; The POC QA triage queue must reconcile validation, synthetic QA, L&E budget gates, and UI evidence before readiness is claimed."
+        "The POC QA triage queue must reconcile validation, synthetic QA, L&E budget gates, and UI evidence before readiness is claimed."
       ]
     },
     {

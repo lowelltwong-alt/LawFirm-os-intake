@@ -1,0 +1,127 @@
+{
+  "schema_version": "0.1",
+  "bundle_id": "syn-le-retaliation-wrongful-termination-clean-001",
+  "data_origin": "synthetic",
+  "contains_real_client_data": false,
+  "contains_real_matter_data": false,
+  "contains_privileged_data": false,
+  "sources": [
+    {
+      "source_id": "syn-le-retaliation-clean-cover-email-001",
+      "source_type": "email",
+      "filename": "synthetic_retaliation_wrongful_termination_cover_email.txt",
+      "text": "From: hr-director@mapleforge.example\nTo: intake@synthetic-law.example\nDate: July 1, 2026\nSubject: Retaliation and wrongful termination packet for review\n\nThe attached synthetic demand and termination timeline concern Jordan Lee and Maple Forge Logistics. The demand alleges retaliation and wrongful termination after protected activity about safety complaints. The packet identifies a safety complaint on May 12, 2026, a performance meeting on June 2, 2026, and termination on June 10, 2026. Claimed damages include back pay, front pay, emotional distress, and attorneys' fees. The packet includes a termination timeline, handbook excerpt, and witness note. Forum and arbitration posture require human review. Please keep individual supervisor and manager roles as candidates unless the pleadings confirm named defendants.",
+      "metadata": {
+        "synthetic": true,
+        "attachment_refs": [
+          "termination-timeline.txt",
+          "policy-and-witness-note.txt"
+        ]
+      }
+    },
+    {
+      "source_id": "syn-le-retaliation-clean-timeline-001",
+      "source_type": "attachment_text",
+      "filename": "termination-timeline.txt",
+      "text": "Synthetic termination timeline: Jordan Lee worked as a warehouse lead for Maple Forge Logistics. Jordan Lee made a safety complaint on May 12, 2026. A performance meeting occurred on June 2, 2026. Maple Forge Logistics terminated employment on June 10, 2026. The synthetic demand characterizes the termination as retaliation and wrongful termination after protected activity. These dates are timeline candidates only and are not docketing instructions.",
+      "metadata": {
+        "synthetic": true,
+        "document_type": "termination_timeline_summary"
+      }
+    },
+    {
+      "source_id": "syn-le-retaliation-clean-policy-witness-001",
+      "source_type": "attachment_text",
+      "filename": "policy-and-witness-note.txt",
+      "text": "Synthetic policy and witness note: The packet references a Maple Forge Logistics handbook excerpt, retaliation policy, and termination letter summary. Possible witnesses or role candidates include the operations manager, HR business partner, and site lead. The note does not confirm any individual supervisor or manager as a named defendant. The arbitration agreement status is under review. Expert and vendor needs are not identified.",
+      "metadata": {
+        "synthetic": true,
+        "document_type": "policy_witness_summary"
+      }
+    }
+  ],
+  "fixture_hints": {
+    "provided_fields": [
+      "employee_claimant_identity",
+      "employer_or_defendant_identity",
+      "individual_supervisor_or_manager_defendants",
+      "claims_and_causes_of_action",
+      "relevant_employment_timeline",
+      "damages_categories_and_exposure",
+      "policy_handbook_contract_documents",
+      "anticipated_depositions",
+      "forum_removed_and_arbitration_posture"
+    ],
+    "entities": [
+      {
+        "name": "Jordan Lee",
+        "role_candidates": [
+          {
+            "role": "claimant",
+            "confidence": 0.79
+          },
+          {
+            "role": "adverse_party",
+            "confidence": 0.6
+          },
+          {
+            "role": "former_employee",
+            "confidence": 0.72
+          }
+        ]
+      },
+      {
+        "name": "Maple Forge Logistics",
+        "role_candidates": [
+          {
+            "role": "employer_or_defendant",
+            "confidence": 0.78
+          },
+          {
+            "role": "prospective_represented_client",
+            "confidence": 0.62
+          }
+        ]
+      },
+      {
+        "name": "operations manager",
+        "role_candidates": [
+          {
+            "role": "manager_candidate",
+            "confidence": 0.58
+          },
+          {
+            "role": "witness",
+            "confidence": 0.51
+          }
+        ]
+      },
+      {
+        "name": "HR business partner",
+        "role_candidates": [
+          {
+            "role": "hr_actor",
+            "confidence": 0.57
+          },
+          {
+            "role": "witness",
+            "confidence": 0.5
+          }
+        ]
+      },
+      {
+        "name": "site lead",
+        "role_candidates": [
+          {
+            "role": "supervisor_candidate",
+            "confidence": 0.55
+          },
+          {
+            "role": "witness",
+            "confidence": 0.49
+          }
+        ]
+      }
+    ]
+  }
+}

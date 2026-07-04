@@ -61,13 +61,13 @@ def test_labor_employment_executable_driver_binding_maps_fact_gaps_to_budget_dri
     )
 
     assert report.status == "labor_employment_executable_driver_bindings_ready_for_review"
-    assert persisted.case_count == 18
+    assert persisted.case_count == 19
     assert persisted.failed_case_count == 0
-    assert persisted.driver_binding_count == 81
-    assert persisted.source_bound_driver_count == 81
+    assert persisted.driver_binding_count == 89
+    assert persisted.source_bound_driver_count == 89
     assert persisted.unbound_driver_count == 0
     assert persisted.critical_driver_block_count == 15
-    assert persisted.critical_driver_review_only_count == 22
+    assert persisted.critical_driver_review_only_count == 26
     assert persisted.missing_driver_dimensions == []
     assert set(persisted.covered_driver_dimensions) == set(persisted.required_driver_dimensions)
     assert all(check.status == "passed" for check in persisted.checks)
@@ -113,6 +113,32 @@ def test_labor_employment_executable_driver_binding_maps_fact_gaps_to_budget_dri
         "administrative_exhaustion_and_agency_record"
     ]
     assert cases["le-admin-exhaustion-clean.executable.v0_1"].critical_driver_block_count == 0
+    retaliation_clean = {
+        binding.driver_dimension: binding
+        for binding in cases[
+            "le-retaliation-wrongful-termination-clean.executable.v0_1"
+        ].driver_bindings
+    }
+    assert set(retaliation_clean) == {
+        "party_topology",
+        "forum_arbitration",
+        "employment_timeline",
+        "damages_exposure",
+        "esi_discovery",
+        "deposition_plan",
+        "expert_vendor_needs",
+        "policy_contract_documents",
+    }
+    assert retaliation_clean["party_topology"].critical_driver_review_only is True
+    assert retaliation_clean["employment_timeline"].critical_driver_review_only is True
+    assert retaliation_clean["damages_exposure"].critical_driver_review_only is True
+    assert retaliation_clean["deposition_plan"].critical_driver_review_only is True
+    assert (
+        cases[
+            "le-retaliation-wrongful-termination-clean.executable.v0_1"
+        ].critical_driver_block_count
+        == 0
+    )
     ada_clean = {
         binding.driver_dimension: binding
         for binding in cases["le-ada-fmla-clean.executable.v0_1"].driver_bindings
@@ -302,7 +328,7 @@ def test_labor_employment_executable_driver_binding_cli_writes_candidate_report(
 
     assert exit_code == 0
     assert report["status"] == "labor_employment_executable_driver_bindings_ready_for_review"
-    assert report["case_count"] == 18
+    assert report["case_count"] == 19
     assert report["missing_driver_dimensions"] == []
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out

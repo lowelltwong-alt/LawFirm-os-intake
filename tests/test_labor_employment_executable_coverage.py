@@ -31,17 +31,18 @@ def test_labor_employment_executable_coverage_reports_partial_pack_coverage(
     assert report.status == "labor_employment_executable_coverage_ready_for_review"
     assert persisted.coverage_state == "partial_executable_coverage"
     assert persisted.pack_case_count == 32
-    assert persisted.executable_fixture_count == 18
-    assert persisted.executable_pack_case_link_count == 19
-    assert persisted.covered_pack_case_count == 19
-    assert persisted.missing_executable_pack_case_count == 13
+    assert persisted.executable_fixture_count == 19
+    assert persisted.executable_pack_case_link_count == 20
+    assert persisted.covered_pack_case_count == 20
+    assert persisted.missing_executable_pack_case_count == 12
     assert persisted.covered_family_count == 8
     assert persisted.missing_family_count == 0
-    assert persisted.covered_family_variant_count == 19
-    assert persisted.missing_family_variant_count == 13
+    assert persisted.covered_family_variant_count == 20
+    assert persisted.missing_family_variant_count == 12
     assert set(persisted.covered_pack_case_ids) == {
         "le-discrimination-harassment-clean.v0_1",
         "le-discrimination-harassment-missing-attachment.v0_1",
+        "le-retaliation-wrongful-termination-clean.v0_1",
         "le-retaliation-wrongful-termination-messy-thread.v0_1",
         "le-restrictive-covenant-missing-attachment.v0_1",
         "le-admin-exhaustion-clean.v0_1",
@@ -64,6 +65,9 @@ def test_labor_employment_executable_coverage_reports_partial_pack_coverage(
         persisted.missing_executable_pack_case_ids
     )
     assert "le-wage-hour-clean.v0_1" not in persisted.missing_executable_pack_case_ids
+    assert "le-retaliation-wrongful-termination-clean.v0_1" not in (
+        persisted.missing_executable_pack_case_ids
+    )
     assert "le-ada-fmla-clean.v0_1" not in persisted.missing_executable_pack_case_ids
     assert "le-ada-fmla-adversarial.v0_1" not in (persisted.missing_executable_pack_case_ids)
     assert "discrimination_harassment:messy_thread" in persisted.missing_family_variant_refs
@@ -85,8 +89,8 @@ def test_labor_employment_executable_coverage_reports_partial_pack_coverage(
     assert family["wage_hour_flsa_state"].missing_case_count == 2
     assert family["epli_carrier_assignment"].covered_case_count == 4
     assert family["epli_carrier_assignment"].missing_variants == []
-    assert family["retaliation_wrongful_termination"].covered_case_count == 1
-    assert family["retaliation_wrongful_termination"].missing_case_count == 3
+    assert family["retaliation_wrongful_termination"].covered_case_count == 2
+    assert family["retaliation_wrongful_termination"].missing_case_count == 2
     assert family["restrictive_covenant_trade_secret"].covered_case_count == 1
     assert family["restrictive_covenant_trade_secret"].missing_case_count == 3
     assert family["administrative_exhaustion_agency_record"].covered_case_count == 1
@@ -95,7 +99,7 @@ def test_labor_employment_executable_coverage_reports_partial_pack_coverage(
     assert family["class_collective_paga_representative"].missing_variants == []
     assert all(item.covered_case_count > 0 for item in persisted.family_coverage)
     notes = (run_dir / "labor_employment_executable_coverage_report.md").read_text(encoding="utf-8")
-    assert "Missing executable pack cases: 13" in notes
+    assert "Missing executable pack cases: 12" in notes
     assert "does not generate fixtures" in notes
     assert not list(run_dir.rglob("*.sqlite"))
     assert not list(run_dir.rglob("*.db"))
@@ -163,6 +167,6 @@ def test_labor_employment_executable_coverage_cli_writes_candidate_report(
     assert exit_code == 0
     assert report["status"] == "labor_employment_executable_coverage_ready_for_review"
     assert report["coverage_state"] == "partial_executable_coverage"
-    assert report["missing_executable_pack_case_count"] == 13
+    assert report["missing_executable_pack_case_count"] == 12
     assert '"fixture_generation_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out

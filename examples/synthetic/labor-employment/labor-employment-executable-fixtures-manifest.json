@@ -458,6 +458,49 @@
       ]
     },
     {
+      "executable_fixture_id": "le-retaliation-wrongful-termination-clean.executable.v0_1",
+      "source_bundle_ref": "examples/synthetic/labor-employment/executable-fixtures/le-retaliation-wrongful-termination-clean.source-bundle.json",
+      "linked_pack_case_ids": [
+        "le-retaliation-wrongful-termination-clean.v0_1"
+      ],
+      "family": "retaliation_wrongful_termination",
+      "variant": "clean",
+      "expected_budget_readiness_state": "range_only_pending_human_review",
+      "expected_budget_gate_effect": "allow_range_or_hours_only_pending_review",
+      "expected_budget_treatment": "candidate_range_budget_after_review",
+      "expected_min_sources": 3,
+      "expected_min_segments": 3,
+      "expected_min_missing_sources": 0,
+      "expected_min_duplicate_sources": 0,
+      "expected_source_signal_terms": [
+        "retaliation",
+        "wrongful termination",
+        "protected activity",
+        "safety complaint",
+        "termination on June 10, 2026",
+        "back pay",
+        "front pay",
+        "operations manager",
+        "HR business partner",
+        "arbitration posture require human review"
+      ],
+      "expected_preflight_exception_labels": [
+        "critic_date_or_deadline_requires_review"
+      ],
+      "expected_budget_fact_gap_ids": [
+        "individual_supervisor_or_manager_defendants",
+        "relevant_employment_timeline",
+        "damages_categories_and_exposure",
+        "policy_handbook_contract_documents",
+        "anticipated_depositions",
+        "forum_removed_and_arbitration_posture",
+        "expert_and_vendor_needs"
+      ],
+      "red_team_notes": [
+        "A clean protected-activity timeline still requires human confirmation before narrowing the budget; supervisor and manager witnesses must not become named defendants."
+      ]
+    },
+    {
       "executable_fixture_id": "le-retaliation-wrongful-termination-messy-thread.executable.v0_1",
       "source_bundle_ref": "examples/synthetic/labor-employment/executable-fixtures/le-retaliation-wrongful-termination-messy-thread.source-bundle.json",
       "linked_pack_case_ids": [

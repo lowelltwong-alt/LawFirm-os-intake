@@ -71,12 +71,12 @@ def test_labor_employment_executable_driver_impact_maps_drivers_to_budget_effect
     )
 
     assert report.status == "labor_employment_executable_driver_impacts_ready_for_review"
-    assert persisted.case_count == 18
+    assert persisted.case_count == 19
     assert persisted.failed_case_count == 0
-    assert persisted.impact_item_count == 81
-    assert persisted.source_bound_impact_count == 81
+    assert persisted.impact_item_count == 89
+    assert persisted.source_bound_impact_count == 89
     assert persisted.block_amount_budget_impact_count == 15
-    assert persisted.critical_review_only_impact_count == 22
+    assert persisted.critical_review_only_impact_count == 26
     assert persisted.range_widening_impact_count > 0
     assert persisted.scenario_fork_impact_count > 0
     assert persisted.rate_guideline_review_impact_count > 0
@@ -113,6 +113,19 @@ def test_labor_employment_executable_driver_impact_maps_drivers_to_budget_effect
     assert admin_case.block_amount_budget_impact_count == 0
     admin_impacts = {item.driver_dimension: item for item in admin_case.impact_items}
     assert "add_scenario_fork" in admin_impacts["administrative_exhaustion"].impact_actions
+    retaliation_clean = cases["le-retaliation-wrongful-termination-clean.executable.v0_1"]
+    assert (
+        retaliation_clean.allowed_budget_output
+        == "candidate_range_after_review_pending_human_review"
+    )
+    assert retaliation_clean.block_amount_budget_impact_count == 0
+    assert retaliation_clean.critical_review_only_impact_count == 4
+    assert retaliation_clean.range_widening_impact_count == 8
+    assert retaliation_clean.scenario_fork_impact_count == 2
+    retaliation_impacts = {item.driver_dimension: item for item in retaliation_clean.impact_items}
+    assert "add_scenario_fork" in retaliation_impacts["forum_arbitration"].impact_actions
+    assert "add_scenario_fork" in retaliation_impacts["expert_vendor_needs"].impact_actions
+    assert "widen_budget_range" in retaliation_impacts["employment_timeline"].impact_actions
     ada_clean = cases["le-ada-fmla-clean.executable.v0_1"]
     assert ada_clean.allowed_budget_output == "candidate_range_after_review_pending_human_review"
     assert ada_clean.block_amount_budget_impact_count == 0
@@ -236,9 +249,9 @@ def test_labor_employment_executable_driver_impact_cli_writes_candidate_report(
 
     assert exit_code == 0
     assert report["status"] == "labor_employment_executable_driver_impacts_ready_for_review"
-    assert report["case_count"] == 18
-    assert report["impact_item_count"] == 81
-    assert report["critical_review_only_impact_count"] == 22
+    assert report["case_count"] == 19
+    assert report["impact_item_count"] == 89
+    assert report["critical_review_only_impact_count"] == 26
     assert report["missing_impact_policy_dimensions"] == []
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out

@@ -1,14 +1,14 @@
 {
   "schema_version": "0.1",
-  "blocked_driver_impact_review_report_id": "leblockeddriverimpactreview_c08094495b83ee92",
+  "blocked_driver_impact_review_report_id": "leblockeddriverimpactreview_1c54e8ddc6aee4a5",
   "status": "labor_employment_blocked_driver_impacts_ready_for_review",
-  "source_fact_binding_report_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-class-missing-attachment\\full-run\\quality\\le-executable-fact-binding\\labor_employment_executable_fact_binding_report.json",
-  "source_driver_binding_report_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-class-missing-attachment\\full-run\\quality\\le-executable-driver-binding\\labor_employment_executable_driver_binding_report.json",
-  "source_driver_impact_report_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-class-missing-attachment\\full-run\\quality\\le-executable-driver-impact\\labor_employment_executable_driver_impact_report.json",
-  "source_driver_impact_report_id": "leexecdriverimpact_c7db425bfaa26ee7d1f6",
-  "case_count": 18,
+  "source_fact_binding_report_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\le-executable-fact-binding\\labor_employment_executable_fact_binding_report.json",
+  "source_driver_binding_report_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\le-executable-driver-binding\\labor_employment_executable_driver_binding_report.json",
+  "source_driver_impact_report_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-clean\\full-run\\quality\\le-executable-driver-impact\\labor_employment_executable_driver_impact_report.json",
+  "source_driver_impact_report_id": "leexecdriverimpact_aa83e31fdd60b7c30bca",
+  "case_count": 19,
   "blocked_case_count": 9,
-  "nonblocking_case_count": 9,
+  "nonblocking_case_count": 10,
   "blocker_fact_count": 14,
   "block_amount_budget_impact_count": 15,
   "candidate_exception_lake_labels": [
@@ -1025,9 +1025,9 @@
       "status": "passed",
       "message": "Fact, driver-binding, and driver-impact reports are ready for blocked review.",
       "evidence_refs": [
-        "leexecfactbinding_8c98cb8da5f01d4dbbc0",
-        "leexecdriverbinding_2f8575a97c0935838761",
-        "leexecdriverimpact_c7db425bfaa26ee7d1f6"
+        "leexecfactbinding_e65d95ad28e56f7a4349",
+        "leexecdriverbinding_a88571fd7f72f334630b",
+        "leexecdriverimpact_aa83e31fdd60b7c30bca"
       ],
       "blocking_refs": []
     },
@@ -1104,9 +1104,9 @@
       "status": "passed",
       "message": "Blocked review did not authorize budget, matter, Lake, SQLite, external, or learning actions.",
       "evidence_refs": [
-        "leexecfactbinding_8c98cb8da5f01d4dbbc0",
-        "leexecdriverbinding_2f8575a97c0935838761",
-        "leexecdriverimpact_c7db425bfaa26ee7d1f6"
+        "leexecfactbinding_e65d95ad28e56f7a4349",
+        "leexecdriverbinding_a88571fd7f72f334630b",
+        "leexecdriverimpact_aa83e31fdd60b7c30bca"
       ],
       "blocking_refs": []
     }
@@ -1137,5 +1137,5 @@
   "sqlite_write_performed": false,
   "external_writes_performed": false,
   "silent_learning_performed": false,
-  "generated_at": "2026-07-04T09:35:23.876731Z"
+  "generated_at": "2026-07-04T10:01:51.116817Z"
 }
