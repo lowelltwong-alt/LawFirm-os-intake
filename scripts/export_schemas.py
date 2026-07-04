@@ -242,6 +242,11 @@ from lawfirm_os_intake.models import (  # noqa: E402
     LaborEmploymentBudgetOutcomeReplayExecutionCase,
     LaborEmploymentBudgetOutcomeReplayExecutionCheck,
     LaborEmploymentBudgetOutcomeReplayExecutionReport,
+    LaborEmploymentBudgetOutcomeReplayBuilderBinding,
+    LaborEmploymentBudgetOutcomeReplayBuilderBindingCase,
+    LaborEmploymentBudgetOutcomeReplayBuilderBindingCheck,
+    LaborEmploymentBudgetOutcomeReplayBuilderBindingReport,
+    LaborEmploymentBudgetOutcomeReplayBuilderContract,
     LaborEmploymentBudgetOutcomeReplayReadinessCase,
     LaborEmploymentBudgetOutcomeReplayReadinessCheck,
     LaborEmploymentBudgetOutcomeReplayReadinessReport,
@@ -491,6 +496,21 @@ MODELS = {
     ),
     "labor-employment-budget-outcome-replay-execution-report.schema.json": (
         LaborEmploymentBudgetOutcomeReplayExecutionReport
+    ),
+    "labor-employment-budget-outcome-replay-builder-contract.schema.json": (
+        LaborEmploymentBudgetOutcomeReplayBuilderContract
+    ),
+    "labor-employment-budget-outcome-replay-builder-binding.schema.json": (
+        LaborEmploymentBudgetOutcomeReplayBuilderBinding
+    ),
+    "labor-employment-budget-outcome-replay-builder-binding-case.schema.json": (
+        LaborEmploymentBudgetOutcomeReplayBuilderBindingCase
+    ),
+    "labor-employment-budget-outcome-replay-builder-binding-check.schema.json": (
+        LaborEmploymentBudgetOutcomeReplayBuilderBindingCheck
+    ),
+    "labor-employment-budget-outcome-replay-builder-binding-report.schema.json": (
+        LaborEmploymentBudgetOutcomeReplayBuilderBindingReport
     ),
     "labor-employment-executable-coverage-case.schema.json": (
         LaborEmploymentExecutableCoverageCase

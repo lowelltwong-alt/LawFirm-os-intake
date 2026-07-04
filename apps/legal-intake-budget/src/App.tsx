@@ -4,6 +4,7 @@ import { createRoot } from "react-dom/client";
 import demoBudgetLearningLoop from "./fixtures/demo-budget-learning-loop-report.json";
 import demoLaborEmploymentBlockedDriverReview from "./fixtures/demo-labor-employment-blocked-driver-impact-review-report.json";
 import demoLaborEmploymentBudgetLearningFixtures from "./fixtures/demo-labor-employment-budget-learning-fixtures-report.json";
+import demoLaborEmploymentBudgetOutcomeReplayBuilderBinding from "./fixtures/demo-labor-employment-budget-outcome-replay-builder-binding-report.json";
 import demoLaborEmploymentBudgetOutcomeReplayExecution from "./fixtures/demo-labor-employment-budget-outcome-replay-execution-report.json";
 import demoLaborEmploymentBudgetOutcomeReplayReadiness from "./fixtures/demo-labor-employment-budget-outcome-replay-readiness-report.json";
 import demoLaborEmploymentBudgetOutputExpectations from "./fixtures/demo-labor-employment-budget-output-expectations-report.json";
@@ -28,6 +29,7 @@ import {
   assertBudgetLearningLoopReport,
   assertLaborEmploymentBudgetOutputExpectationReport,
   assertLaborEmploymentBudgetLearningFixtureReport,
+  assertLaborEmploymentBudgetOutcomeReplayBuilderBindingReport,
   assertLaborEmploymentBudgetOutcomeReplayExecutionReport,
   assertLaborEmploymentBudgetOutcomeReplayReadinessReport,
   assertLaborEmploymentBudgetQAGateReport,
@@ -50,6 +52,7 @@ import type {
   GateState,
   LaborEmploymentAllowedBudgetOutput,
   LaborEmploymentBudgetLearningFixtureReport,
+  LaborEmploymentBudgetOutcomeReplayBuilderBindingReport,
   LaborEmploymentBudgetOutcomeReplayExecutionReport,
   LaborEmploymentBudgetOutcomeReplayReadinessReport,
   LaborEmploymentBudgetOutputExpectationCase,
@@ -116,6 +119,8 @@ const laborEmploymentBudgetOutcomeReplayReadiness =
   demoLaborEmploymentBudgetOutcomeReplayReadiness as LaborEmploymentBudgetOutcomeReplayReadinessReport;
 const laborEmploymentBudgetOutcomeReplayExecution =
   demoLaborEmploymentBudgetOutcomeReplayExecution as LaborEmploymentBudgetOutcomeReplayExecutionReport;
+const laborEmploymentBudgetOutcomeReplayBuilderBinding =
+  demoLaborEmploymentBudgetOutcomeReplayBuilderBinding as LaborEmploymentBudgetOutcomeReplayBuilderBindingReport;
 const budgetLearningLoop = demoBudgetLearningLoop as BudgetLearningLoopReport;
 const bundleContractFailures = assertUIReviewDataBundle(reviewDataBundle);
 const manifestContractFailures = assertReadOnlyManifest(manifest);
@@ -151,6 +156,10 @@ const budgetOutcomeReplayExecutionFailures =
   assertLaborEmploymentBudgetOutcomeReplayExecutionReport(
     laborEmploymentBudgetOutcomeReplayExecution,
   );
+const budgetOutcomeReplayBuilderBindingFailures =
+  assertLaborEmploymentBudgetOutcomeReplayBuilderBindingReport(
+    laborEmploymentBudgetOutcomeReplayBuilderBinding,
+  );
 const budgetLearningLoopFailures = assertBudgetLearningLoopReport(budgetLearningLoop);
 const contractFailures = [
   ...bundleContractFailures,
@@ -172,6 +181,7 @@ const contractFailures = [
   ...budgetLearningFixtureFailures,
   ...budgetOutcomeReplayFailures,
   ...budgetOutcomeReplayExecutionFailures,
+  ...budgetOutcomeReplayBuilderBindingFailures,
   ...budgetLearningLoopFailures,
 ];
 
@@ -2355,6 +2365,142 @@ function LaborEmploymentBudgetOutcomeReplayExecutionPanel({
   );
 }
 
+function LaborEmploymentBudgetOutcomeReplayBuilderBindingPanel({
+  report,
+}: {
+  report: LaborEmploymentBudgetOutcomeReplayBuilderBindingReport;
+}) {
+  const passedChecks = report.checks.filter((check) => check.status === "passed").length;
+  const sampleBindings = report.cases.flatMap((testCase) => testCase.bindings).slice(0, 8);
+  const replayGapIds = Array.from(
+    new Set(
+      report.cases.flatMap((testCase) =>
+        testCase.bindings.flatMap((binding) => binding.replay_input_gap_ids),
+      ),
+    ),
+  );
+  const prerequisiteGaps = Array.from(
+    new Set(
+      report.cases.flatMap((testCase) =>
+        testCase.bindings.flatMap((binding) => binding.missing_case_prerequisite_artifacts),
+      ),
+    ),
+  );
+
+  return (
+    <section
+      className="panel budget-outcome-replay-panel"
+      aria-labelledby="le-budget-outcome-replay-binding-title"
+    >
+      <div className="panel-heading">
+        <div>
+          <h2 id="le-budget-outcome-replay-binding-title">
+            L&amp;E Budget Replay Builder Binding
+          </h2>
+          <code>{report.builder_binding_report_id}</code>
+        </div>
+        <span
+          className={
+            budgetOutcomeReplayBuilderBindingFailures.length === 0
+              ? "state state-passed"
+              : "state state-failed"
+          }
+        >
+          {budgetOutcomeReplayBuilderBindingFailures.length === 0 ? "builders bound" : "binding gaps"}
+        </span>
+      </div>
+
+      <div className="matrix-summary" aria-label="L&E budget replay builder binding summary">
+        <div>
+          <span>Bound Slots</span>
+          <strong>
+            {report.bound_slot_count}/{report.slot_count}
+          </strong>
+        </div>
+        <div>
+          <span>Input Gaps</span>
+          <strong>{report.replay_input_gap_count}</strong>
+        </div>
+        <div>
+          <span>Prerequisite Gaps</span>
+          <strong>{report.missing_case_prerequisite_count}</strong>
+        </div>
+        <div>
+          <span>Checks Passed</span>
+          <strong>
+            {passedChecks}/{report.checks.length}
+          </strong>
+        </div>
+      </div>
+
+      <div className="warning-strip">
+        <strong>Binding only.</strong>
+        <span>
+          These rows map slots to deterministic builders. They do not execute builders, create
+          runtime artifacts, submit budgets, write Lake records, or learn from outcomes.
+        </span>
+      </div>
+
+      <div className="budget-bucket-grid" aria-label="L&E replay binding gaps">
+        <div className="budget-bucket">
+          <span>Builder Contracts</span>
+          <strong>{report.builder_contracts.length}</strong>
+          <TokenList
+            items={report.builder_contracts.map(
+              (contract) => `${contract.loop_type}:${contract.artifact_name}`,
+            )}
+            limit={4}
+          />
+        </div>
+        <div className="budget-bucket">
+          <span>Replay Inputs</span>
+          <strong>{replayGapIds.length}</strong>
+          <TokenList items={replayGapIds} limit={4} />
+        </div>
+        <div className="budget-bucket">
+          <span>Complement Reports</span>
+          <strong>{prerequisiteGaps.length}</strong>
+          <TokenList items={prerequisiteGaps} limit={4} />
+        </div>
+        <div className="budget-bucket">
+          <span>Next Gates</span>
+          <strong>{report.required_next_gates.length}</strong>
+          <TokenList items={report.required_next_gates} limit={3} />
+        </div>
+      </div>
+
+      <div className="fixture-table" aria-label="L&E replay builder bindings">
+        {sampleBindings.map((binding) => (
+          <div className="fixture-row" key={binding.binding_id}>
+            <div>
+              <strong>{binding.expected_artifact_name}</strong>
+              <span>
+                {binding.builder_module}.{binding.builder_function}
+              </span>
+            </div>
+            <span
+              className={
+                binding.binding_status === "bound_to_existing_builder"
+                  ? "state state-passed"
+                  : "state state-failed"
+              }
+            >
+              {binding.binding_status}
+            </span>
+            <TokenList
+              items={[
+                ...binding.replay_input_gap_ids,
+                ...binding.missing_case_prerequisite_artifacts,
+              ]}
+              limit={3}
+            />
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function LaborEmploymentFixtureDrilldownPanel({
   outputReport,
   blockedReviewReport,
@@ -2605,6 +2751,9 @@ function App() {
       />
       <LaborEmploymentBudgetOutcomeReplayExecutionPanel
         report={laborEmploymentBudgetOutcomeReplayExecution}
+      />
+      <LaborEmploymentBudgetOutcomeReplayBuilderBindingPanel
+        report={laborEmploymentBudgetOutcomeReplayBuilderBinding}
       />
       <LaborEmploymentFixtureDrilldownPanel
         outputReport={laborEmploymentBudgetOutputExpectations}

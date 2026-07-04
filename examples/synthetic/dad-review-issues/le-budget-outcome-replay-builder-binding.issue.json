@@ -1,0 +1,107 @@
+{
+  "schema_version": "0.1",
+  "issue_id": "le-budget-outcome-replay-builder-binding-001",
+  "issue_version": "0.1.0",
+  "observed_at": "2026-07-04T00:00:00Z",
+  "source_repo_id": "LawFirm-os-intake",
+  "source_repo_path": "LawFirm-os-intake",
+  "originating_agent": "codex",
+  "review_context": "L&E budget outcome replay QA hardening before synthetic replay execution, calibration, or model comparison.",
+  "finding_title": "Budget outcome replay slots need deterministic builder binding before execution.",
+  "severity": "P1",
+  "issue_classes": [
+    "architecture_risk",
+    "data_flow_gap",
+    "exception_lake_mapping_gap",
+    "learning_loop_gap",
+    "test_gap",
+    "performance_or_rust_candidate"
+  ],
+  "finding_summary": "The L&E budget learning loop can materialize candidate replay artifact slots, but those slots should be bound to explicit deterministic local builder contracts before any future replay creates actuals, rejection, appeal, or learning artifacts.",
+  "observable_context": [
+    "The repo now has synthetic L&E budget learning fixtures and an outcome replay execution report that materializes expected artifact slots without creating runtime outputs.",
+    "Replay slots cover actuals variance, carrier rejection capture, appeal outcome, reviewed learning gate, and blocked budget guard loops.",
+    "A slot can look covered while still lacking a deterministic builder, required synthetic input source, or complement report needed by aggregate learning.",
+    "The new builder-binding audit binds every materialized slot to a known local builder contract and reports replay input gaps and missing prerequisites without invoking the builder."
+  ],
+  "observable_decision_logic": [
+    "Readiness to execute a replay is different from readiness to trust replay outputs.",
+    "A deterministic binding pass should prove ownership, output filenames, required inputs, side-effect boundaries, and missing prerequisites before calibration or model comparison consumes the slot.",
+    "Missing synthetic actuals, rejection source bundles, review packets, or complement reports should be surfaced as candidate gaps, not silently filled or learned from.",
+    "This checker is a Rust candidate later because it is deterministic, schema-heavy, side-effect bounded, and may run over many replay slots as the corpus grows."
+  ],
+  "solution_path": [
+    "Add a LaborEmploymentBudgetOutcomeReplayBuilderBindingReport over the replay execution report.",
+    "Map each loop type and expected artifact name to an explicit builder module, function, emitted filenames, required inputs, and side-effect boundary.",
+    "Fail closed on unknown artifacts or prohibited side-effect signals.",
+    "Wire the report into synthetic QA review, the QA bundle, UI manifest, UI data bundle, smoke demo, schemas, tests, and read-only frontend display.",
+    "Keep actual builder execution, runtime artifacts, Lake writes, SQLite writes, budget submission, matter opening, and silent learning out of scope."
+  ],
+  "fix_status": "fixed_validated",
+  "fix_refs": [
+    "src/lawfirm_os_intake/labor_employment_budget_outcome_replay_builder_binding.py",
+    "src/lawfirm_os_intake/models.py",
+    "src/lawfirm_os_intake/synthetic_qa_review_run.py",
+    "src/lawfirm_os_intake/synthetic_qa_bundle.py",
+    "src/lawfirm_os_intake/ui_review_manifest.py",
+    "src/lawfirm_os_intake/ui_review_data_bundle.py",
+    "apps/legal-intake-budget/src/App.tsx",
+    "apps/legal-intake-budget/src/data-contract.ts",
+    "apps/legal-intake-budget/src/types.ts"
+  ],
+  "test_refs": [
+    "tests/test_labor_employment_budget_outcome_replay_builder_binding.py",
+    "tests/test_synthetic_qa_review_run.py",
+    "tests/test_synthetic_qa_bundle.py",
+    "tests/test_ui_review_data_bundle.py",
+    "tests/test_ui_foundation_contract.py",
+    "scripts/smoke_demo.sh",
+    "python scripts/run_validation_suite.py"
+  ],
+  "artifact_refs": [
+    "apps/legal-intake-budget/src/fixtures/demo-labor-employment-budget-outcome-replay-builder-binding-report.json",
+    "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json",
+    "examples/synthetic/labor-employment/labor-employment-budget-learning-fixtures.json"
+  ],
+  "candidate_exception_labels": [
+    "budget_replay_builder_binding_gap",
+    "budget_replay_input_gap",
+    "budget_learning_complement_report_missing",
+    "deterministic_replay_checker_rust_candidate",
+    "dad_learning_loop_candidate"
+  ],
+  "applies_when": [
+    "A workflow materializes expected replay, calibration, or learning-loop artifact slots before concrete outputs exist.",
+    "A downstream aggregate report needs multiple sibling outputs to be present before it can be trusted.",
+    "A checker needs to prove deterministic builder ownership and no-write boundaries across many candidate slots."
+  ],
+  "does_not_apply_when": [
+    "The workflow is only listing future roadmap ideas and has no materialized artifact slots.",
+    "A production Orchestrator owner has already executed a governed builder and persisted reviewed runtime outputs.",
+    "The issue concerns budget math correctness inside a single emitted proposal rather than replay ownership and missing inputs."
+  ],
+  "danger_if_misapplied": "If slot materialization is treated as completed replay, DAD or the UI may overstate QA coverage and learn from placeholder artifacts. If the binding audit is treated as execution, the system may appear to have produced actuals, rejection, or appeal outcomes that were never generated.",
+  "suggested_actions": [
+    "DAD should classify this as a candidate exception-pattern for replay coverage versus replay execution.",
+    "DAD should track missing replay inputs and complement reports as separate exception labels from unknown builder ownership.",
+    "Future Rust scouting should consider this class of schema-only deterministic checker as a good leaf-tool candidate once replay volume grows."
+  ],
+  "reviewer_notes": [
+    "This record contains synthetic fixture and artifact references only.",
+    "It records observable rationale and implementation boundaries, not hidden chain-of-thought."
+  ],
+  "red_team_notes": [
+    "Do not let the UI display bound slots as executed runtime artifacts.",
+    "Do not let a future model fill missing actuals, carrier responses, appeal outcomes, or review packets without explicit synthetic source fixtures.",
+    "Do not promote candidate builder contracts to Semantic Substrate canon from this repo."
+  ],
+  "raw_private_payload_included": false,
+  "hidden_chain_of_thought_included": false,
+  "candidate_only": true,
+  "dad_outbox_required": true,
+  "dad_review_required_before_promotion": true,
+  "lake_write_performed": false,
+  "sqlite_write_performed": false,
+  "external_writes_performed": false,
+  "silent_learning_performed": false
+}

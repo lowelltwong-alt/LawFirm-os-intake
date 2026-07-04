@@ -44,6 +44,10 @@ from .labor_employment_budget_outcome_replay_execution import (
     LABOR_EMPLOYMENT_BUDGET_OUTCOME_REPLAY_EXECUTION_REPORT_FILENAME,
     run_labor_employment_budget_outcome_replay_execution,
 )
+from .labor_employment_budget_outcome_replay_builder_binding import (
+    LABOR_EMPLOYMENT_BUDGET_OUTCOME_REPLAY_BUILDER_BINDING_REPORT_FILENAME,
+    run_labor_employment_budget_outcome_replay_builder_binding_audit,
+)
 from .labor_employment_budget_qa_gate import (
     LABOR_EMPLOYMENT_BUDGET_QA_GATE_REPORT_FILENAME,
     run_labor_employment_budget_qa_gate,
@@ -568,6 +572,32 @@ def run_synthetic_qa_review_run(
         )
     )
 
+    outcome_builder_binding, outcome_builder_binding_dir = (
+        run_labor_employment_budget_outcome_replay_builder_binding_audit(
+            execution_report_path=outcome_execution_ref,
+            out_dir=quality_dir / "le-budget-outcome-replay-builder-binding",
+            generated_at=generated_at,
+        )
+    )
+    outcome_builder_binding_ref = (
+        outcome_builder_binding_dir
+        / LABOR_EMPLOYMENT_BUDGET_OUTCOME_REPLAY_BUILDER_BINDING_REPORT_FILENAME
+    )
+    steps.append(
+        _step(
+            "labor_employment_budget_outcome_replay_builder_binding",
+            "L&E Budget Outcome Replay Builder Binding",
+            outcome_builder_binding.status,
+            outcome_builder_binding_ref,
+            outcome_builder_binding.status
+            == "labor_employment_budget_replay_builder_binding_ready_for_review",
+            (
+                "L&E outcome replay slots are mapped to deterministic local builders "
+                "with explicit synthetic input gaps and no runtime artifact creation."
+            ),
+        )
+    )
+
     gold, gold_dir = run_labor_employment_budget_fact_gold_validation(
         gold_path=root / LE_BUDGET_FACT_GOLD_REF,
         repo_root=root,
@@ -623,6 +653,7 @@ def run_synthetic_qa_review_run(
         budget_qa_gate_ref,
         budget_learning_fixtures_ref,
         outcome_execution_ref,
+        outcome_builder_binding_ref,
         gold_dir / LABOR_EMPLOYMENT_BUDGET_FACT_GOLD_REPORT_FILENAME,
         budget_learning_loop_ref,
     ]:

@@ -263,6 +263,13 @@ ARTIFACT_SPECS = [
         "blocked",
     ),
     ArtifactSpec(
+        "labor-employment-budget-outcome-replay-builder-binding",
+        "L&E Budget Outcome Replay Builder Binding",
+        "labor_employment_budget_outcome_replay_builder_binding_report.json",
+        "qa-reference",
+        "blocked",
+    ),
+    ArtifactSpec(
         "labor-employment-budget-fact-gold",
         "L&E Budget Fact Gold",
         "labor_employment_budget_fact_gold_report.json",
@@ -495,6 +502,13 @@ QUALITY_GATE_SPECS = {
         "labor_employment_budget_outcome_replay_execution_report.json",
         "qa-reference",
         "L&E replay seeds must materialize concrete candidate artifact slots before replay outputs, calibration, or model comparison are treated as covered.",
+        "blocked",
+    ),
+    "labor_employment_budget_outcome_replay_builder_binding": (
+        "L&E Budget Outcome Replay Builder Binding",
+        "labor_employment_budget_outcome_replay_builder_binding_report.json",
+        "qa-reference",
+        "L&E replay artifact slots must bind to deterministic local builders before replay outputs, calibration, or model comparison are trusted.",
         "blocked",
     ),
     "budget_learning_loop": (

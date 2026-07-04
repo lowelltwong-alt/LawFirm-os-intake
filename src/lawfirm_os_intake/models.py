@@ -4206,6 +4206,268 @@ class LaborEmploymentBudgetOutcomeReplayExecutionReport(StrictModel):
         return self
 
 
+class LaborEmploymentBudgetOutcomeReplayBuilderContract(StrictModel):
+    artifact_name: str
+    loop_type: LaborEmploymentBudgetLearningLoopType
+    builder_module: str
+    builder_function: str
+    emitted_output_filenames: list[str]
+    required_input_artifacts: list[str]
+    intermediate_artifacts: list[str] = Field(default_factory=list)
+    side_effect_boundary: Literal["local_candidate_files_only"] = "local_candidate_files_only"
+    authority_owner: Literal["LawFirm-os-intake"] = "LawFirm-os-intake"
+    execution_owner: Literal["LawFirm-os-orchestrator"] = "LawFirm-os-orchestrator"
+    creates_runtime_artifact: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def le_budget_replay_builder_contract_is_coherent(
+        self,
+    ) -> "LaborEmploymentBudgetOutcomeReplayBuilderContract":
+        if self.artifact_name not in self.emitted_output_filenames:
+            raise ValueError("builder contract must emit the artifact it binds")
+        if not self.builder_module or not self.builder_function:
+            raise ValueError("builder contract requires module and function")
+        if not self.required_input_artifacts:
+            raise ValueError("builder contract requires explicit input artifacts")
+        return self
+
+
+class LaborEmploymentBudgetOutcomeReplayBuilderBinding(StrictModel):
+    binding_id: str
+    execution_case_id: str
+    learning_fixture_id: str
+    executable_fixture_id: str
+    outcome_seed_id: str | None = None
+    loop_type: LaborEmploymentBudgetLearningLoopType
+    expected_artifact_name: str
+    artifact_slot_ref: str
+    artifact_slot_status: Literal["materialized_candidate_slot", "blocked_not_materialized"]
+    binding_status: Literal[
+        "bound_to_existing_builder",
+        "blocked_unknown_artifact",
+        "blocked_slot_not_materialized",
+    ]
+    builder_module: str | None = None
+    builder_function: str | None = None
+    emitted_output_filenames: list[str] = Field(default_factory=list)
+    required_input_artifacts: list[str] = Field(default_factory=list)
+    intermediate_artifacts: list[str] = Field(default_factory=list)
+    missing_case_prerequisite_artifacts: list[str] = Field(default_factory=list)
+    replay_input_gap_ids: list[str] = Field(default_factory=list)
+    side_effect_boundary: str | None = None
+    binding_notes: list[str]
+    evidence_refs: list[str]
+    runtime_artifact_created: Literal[False] = False
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    local_json_only: Literal[True] = True
+    budget_submission_authorized: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def le_budget_replay_builder_binding_is_coherent(
+        self,
+    ) -> "LaborEmploymentBudgetOutcomeReplayBuilderBinding":
+        if self.binding_status == "bound_to_existing_builder":
+            if not self.builder_module or not self.builder_function:
+                raise ValueError("bound replay slot requires builder module/function")
+            if self.expected_artifact_name not in self.emitted_output_filenames:
+                raise ValueError("bound replay slot builder does not emit expected artifact")
+        if self.binding_status != "bound_to_existing_builder" and (
+            self.builder_module or self.builder_function
+        ):
+            raise ValueError("blocked replay slot cannot claim a builder binding")
+        if not self.binding_notes:
+            raise ValueError("replay builder binding requires notes")
+        if not self.evidence_refs:
+            raise ValueError("replay builder binding requires evidence refs")
+        return self
+
+
+class LaborEmploymentBudgetOutcomeReplayBuilderBindingCase(StrictModel):
+    binding_case_id: str
+    execution_case_id: str
+    learning_fixture_id: str
+    executable_fixture_id: str
+    outcome_seed_id: str | None = None
+    family: LaborEmploymentSyntheticFixtureFamily
+    variant: LaborEmploymentSyntheticFixtureVariant
+    status: Literal["passed", "failed"]
+    expected_budget_output_state: LaborEmploymentExecutableDriverAllowedBudgetOutput
+    slot_count: int = Field(ge=0)
+    bound_slot_count: int = Field(ge=0)
+    unknown_artifact_count: int = Field(ge=0)
+    blocked_slot_count: int = Field(ge=0)
+    replay_input_gap_count: int = Field(ge=0)
+    missing_case_prerequisite_count: int = Field(ge=0)
+    bindings: list[LaborEmploymentBudgetOutcomeReplayBuilderBinding]
+    evidence_refs: list[str]
+    failure_ids: list[str] = Field(default_factory=list)
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    local_json_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    budget_submission_authorized: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def le_budget_replay_builder_binding_case_is_coherent(
+        self,
+    ) -> "LaborEmploymentBudgetOutcomeReplayBuilderBindingCase":
+        if self.slot_count != len(self.bindings):
+            raise ValueError("builder binding case slot count mismatch")
+        bound = [
+            binding
+            for binding in self.bindings
+            if binding.binding_status == "bound_to_existing_builder"
+        ]
+        unknown = [
+            binding
+            for binding in self.bindings
+            if binding.binding_status == "blocked_unknown_artifact"
+        ]
+        blocked = [
+            binding
+            for binding in self.bindings
+            if binding.binding_status == "blocked_slot_not_materialized"
+        ]
+        gaps = sum(len(binding.replay_input_gap_ids) for binding in self.bindings)
+        missing = sum(len(binding.missing_case_prerequisite_artifacts) for binding in self.bindings)
+        if self.bound_slot_count != len(bound):
+            raise ValueError("builder binding case bound slot count mismatch")
+        if self.unknown_artifact_count != len(unknown):
+            raise ValueError("builder binding case unknown artifact count mismatch")
+        if self.blocked_slot_count != len(blocked):
+            raise ValueError("builder binding case blocked slot count mismatch")
+        if self.replay_input_gap_count != gaps:
+            raise ValueError("builder binding case input gap count mismatch")
+        if self.missing_case_prerequisite_count != missing:
+            raise ValueError("builder binding case prerequisite gap count mismatch")
+        if self.status == "passed" and self.failure_ids:
+            raise ValueError("passed builder binding case cannot carry failures")
+        if self.status == "failed" and not self.failure_ids:
+            raise ValueError("failed builder binding case requires failures")
+        if not self.evidence_refs:
+            raise ValueError("builder binding case requires evidence refs")
+        return self
+
+
+class LaborEmploymentBudgetOutcomeReplayBuilderBindingCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    evidence_refs: list[str] = Field(default_factory=list)
+    blocking_refs: list[str] = Field(default_factory=list)
+
+
+class LaborEmploymentBudgetOutcomeReplayBuilderBindingReport(StrictModel):
+    schema_version: str = "0.1"
+    builder_binding_report_id: str
+    status: Literal[
+        "labor_employment_budget_replay_builder_binding_ready_for_review",
+        "blocked_by_labor_employment_budget_replay_builder_binding",
+    ]
+    source_execution_report_ref: str
+    source_execution_report_id: str
+    source_execution_report_status: str
+    fixture_count: int = Field(ge=0)
+    case_count: int = Field(ge=0)
+    passed_case_count: int = Field(ge=0)
+    failed_case_count: int = Field(ge=0)
+    slot_count: int = Field(ge=0)
+    bound_slot_count: int = Field(ge=0)
+    unknown_artifact_count: int = Field(ge=0)
+    blocked_slot_count: int = Field(ge=0)
+    replay_input_gap_count: int = Field(ge=0)
+    missing_case_prerequisite_count: int = Field(ge=0)
+    builder_contracts: list[LaborEmploymentBudgetOutcomeReplayBuilderContract]
+    cases: list[LaborEmploymentBudgetOutcomeReplayBuilderBindingCase]
+    checks: list[LaborEmploymentBudgetOutcomeReplayBuilderBindingCheck]
+    candidate_exception_lake_labels: list[str]
+    required_next_gates: list[str]
+    red_team_notes: list[str]
+    runtime_artifacts_created: Literal[False] = False
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    local_json_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    not_authorized_for_matter_opening: Literal[True] = True
+    not_authorized_for_calibration: Literal[True] = True
+    budget_submission_authorized: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    training_pipeline_created: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def le_budget_replay_builder_binding_report_is_coherent(
+        self,
+    ) -> "LaborEmploymentBudgetOutcomeReplayBuilderBindingReport":
+        failed_cases = [case for case in self.cases if case.status == "failed"]
+        failed_checks = [check for check in self.checks if check.status == "failed"]
+        if self.fixture_count != self.case_count or self.case_count != len(self.cases):
+            raise ValueError("builder binding report case count mismatch")
+        if self.passed_case_count != len([case for case in self.cases if case.status == "passed"]):
+            raise ValueError("builder binding report passed case count mismatch")
+        if self.failed_case_count != len(failed_cases):
+            raise ValueError("builder binding report failed case count mismatch")
+        if self.slot_count != sum(case.slot_count for case in self.cases):
+            raise ValueError("builder binding report slot count mismatch")
+        if self.bound_slot_count != sum(case.bound_slot_count for case in self.cases):
+            raise ValueError("builder binding report bound slot count mismatch")
+        if self.unknown_artifact_count != sum(case.unknown_artifact_count for case in self.cases):
+            raise ValueError("builder binding report unknown artifact count mismatch")
+        if self.blocked_slot_count != sum(case.blocked_slot_count for case in self.cases):
+            raise ValueError("builder binding report blocked slot count mismatch")
+        if self.replay_input_gap_count != sum(case.replay_input_gap_count for case in self.cases):
+            raise ValueError("builder binding report input gap count mismatch")
+        if self.missing_case_prerequisite_count != sum(
+            case.missing_case_prerequisite_count for case in self.cases
+        ):
+            raise ValueError("builder binding report prerequisite count mismatch")
+        if not self.builder_contracts:
+            raise ValueError("builder binding report requires builder contracts")
+        if self.runtime_artifacts_created is not False:
+            raise ValueError("builder binding report cannot create runtime artifacts")
+        if not self.candidate_exception_lake_labels:
+            raise ValueError("builder binding report requires candidate labels")
+        if not self.required_next_gates:
+            raise ValueError("builder binding report requires next gates")
+        if not self.red_team_notes:
+            raise ValueError("builder binding report requires red team notes")
+        if self.status == "labor_employment_budget_replay_builder_binding_ready_for_review" and (
+            failed_cases or failed_checks
+        ):
+            raise ValueError("ready builder binding report cannot include failures")
+        if self.status == "blocked_by_labor_employment_budget_replay_builder_binding" and not (
+            failed_cases or failed_checks
+        ):
+            raise ValueError("blocked builder binding report requires failures")
+        return self
+
+
 class PublicSourceMethodologySource(StrictModel):
     source_id: str
     url: str
@@ -12551,6 +12813,7 @@ UIReviewDataBundleReportKind = Literal[
     "labor_employment_budget_learning_fixtures",
     "labor_employment_budget_outcome_replay_readiness",
     "labor_employment_budget_outcome_replay_execution",
+    "labor_employment_budget_outcome_replay_builder_binding",
     "budget_learning_loop",
 ]
 

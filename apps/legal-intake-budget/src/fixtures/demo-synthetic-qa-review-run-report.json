@@ -1,10 +1,10 @@
 {
   "schema_version": "0.1",
-  "synthetic_qa_review_run_report_id": "syntheticqareviewrun_c3d36f37b5c03554",
+  "synthetic_qa_review_run_report_id": "syntheticqareviewrun_bfaf9ffa36331259",
   "status": "synthetic_qa_review_run_ready",
   "run_root_ref": "<demo-run-root>",
   "quality_dir_ref": "<demo-run-root>\\quality",
-  "step_count": 26,
+  "step_count": 27,
   "failed_step_count": 0,
   "steps": [
     {
@@ -205,6 +205,16 @@
       "artifact_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\labor_employment_budget_outcome_replay_execution_report.json",
       "notes": [
         "L&E outcome replay seeds are materialized as safe candidate artifact slots without runtime carrier, billing, Lake, SQLite, or learning writes."
+      ]
+    },
+    {
+      "step_id": "labor_employment_budget_outcome_replay_builder_binding",
+      "label": "L&E Budget Outcome Replay Builder Binding",
+      "status": "passed",
+      "observed_status": "labor_employment_budget_replay_builder_binding_ready_for_review",
+      "artifact_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-builder-binding\\labor_employment_budget_outcome_replay_builder_binding_report.json",
+      "notes": [
+        "L&E outcome replay slots are mapped to deterministic local builders with explicit synthetic input gaps and no runtime artifact creation."
       ]
     },
     {

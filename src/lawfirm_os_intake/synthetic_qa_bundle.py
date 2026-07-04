@@ -209,6 +209,17 @@ QA_BUNDLE_ARTIFACTS = [
         ),
     ),
     QABundleArtifactSpec(
+        artifact_id="labor_employment_budget_outcome_replay_builder_binding",
+        label="Labor/Employment Budget Outcome Replay Builder Binding",
+        file_name="labor_employment_budget_outcome_replay_builder_binding_report.json",
+        required=True,
+        missing_note=(
+            "Run audit-labor-employment-budget-outcome-replay-builder-binding so each "
+            "candidate replay artifact slot is mapped to a deterministic local builder "
+            "before replay outputs, calibration, or model comparison are trusted."
+        ),
+    ),
+    QABundleArtifactSpec(
         artifact_id="labor_employment_budget_fact_gold",
         label="Labor/Employment Budget Fact Gold",
         file_name="labor_employment_budget_fact_gold_report.json",
@@ -358,6 +369,11 @@ def run_synthetic_qa_bundle(
             root=root,
             explicit_path=None,
             file_name="labor_employment_budget_outcome_replay_execution_report.json",
+        ),
+        "labor_employment_budget_outcome_replay_builder_binding": _resolve_artifact_source(
+            root=root,
+            explicit_path=None,
+            file_name="labor_employment_budget_outcome_replay_builder_binding_report.json",
         ),
         "labor_employment_budget_fact_gold": _resolve_artifact_source(
             root=root,

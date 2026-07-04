@@ -777,6 +777,37 @@ from pathlib import Path
 import sys
 
 sys.path.insert(0, str(Path.cwd() / "src"))
+from lawfirm_os_intake.labor_employment_budget_outcome_replay_builder_binding import (
+    run_labor_employment_budget_outcome_replay_builder_binding_audit,
+)
+
+report, _ = run_labor_employment_budget_outcome_replay_builder_binding_audit(
+    execution_report_path=(
+        ".lawfirm-os-intake/smoke/quality/le-budget-outcome-replay-execution/"
+        "labor_employment_budget_outcome_replay_execution_report.json"
+    ),
+    out_dir=".lawfirm-os-intake/smoke/quality/le-budget-outcome-replay-builder-binding",
+)
+raise SystemExit(
+    0
+    if report.status == "labor_employment_budget_replay_builder_binding_ready_for_review"
+    else 1
+)
+PY
+test -s ".lawfirm-os-intake/smoke/quality/le-budget-outcome-replay-builder-binding/labor_employment_budget_outcome_replay_builder_binding_report.json"
+grep -q '"status": "labor_employment_budget_replay_builder_binding_ready_for_review"' \
+  ".lawfirm-os-intake/smoke/quality/le-budget-outcome-replay-builder-binding/labor_employment_budget_outcome_replay_builder_binding_report.json"
+grep -q '"slot_count": 38' \
+  ".lawfirm-os-intake/smoke/quality/le-budget-outcome-replay-builder-binding/labor_employment_budget_outcome_replay_builder_binding_report.json"
+grep -q '"bound_slot_count": 38' \
+  ".lawfirm-os-intake/smoke/quality/le-budget-outcome-replay-builder-binding/labor_employment_budget_outcome_replay_builder_binding_report.json"
+grep -q '"unknown_artifact_count": 0' \
+  ".lawfirm-os-intake/smoke/quality/le-budget-outcome-replay-builder-binding/labor_employment_budget_outcome_replay_builder_binding_report.json"
+"$PYTHON_BIN" -B - <<'PY'
+from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path.cwd() / "src"))
 from lawfirm_os_intake.labor_employment_budget_fact_gold import (
     run_labor_employment_budget_fact_gold_validation,
 )

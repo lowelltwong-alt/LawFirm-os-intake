@@ -27,6 +27,7 @@
         "labor_employment_budget_learning_fixtures",
         "labor_employment_budget_outcome_replay_readiness",
         "labor_employment_budget_outcome_replay_execution",
+        "labor_employment_budget_outcome_replay_builder_binding",
         "budget_learning_loop"
       ],
       "title": "Report Kind",

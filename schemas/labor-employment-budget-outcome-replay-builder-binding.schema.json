@@ -1,0 +1,235 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "binding_id": {
+      "title": "Binding Id",
+      "type": "string"
+    },
+    "execution_case_id": {
+      "title": "Execution Case Id",
+      "type": "string"
+    },
+    "learning_fixture_id": {
+      "title": "Learning Fixture Id",
+      "type": "string"
+    },
+    "executable_fixture_id": {
+      "title": "Executable Fixture Id",
+      "type": "string"
+    },
+    "outcome_seed_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Outcome Seed Id"
+    },
+    "loop_type": {
+      "enum": [
+        "actuals_variance",
+        "carrier_rejection_capture",
+        "appeal_outcome",
+        "reviewed_learning_gate",
+        "blocked_budget_guard"
+      ],
+      "title": "Loop Type",
+      "type": "string"
+    },
+    "expected_artifact_name": {
+      "title": "Expected Artifact Name",
+      "type": "string"
+    },
+    "artifact_slot_ref": {
+      "title": "Artifact Slot Ref",
+      "type": "string"
+    },
+    "artifact_slot_status": {
+      "enum": [
+        "materialized_candidate_slot",
+        "blocked_not_materialized"
+      ],
+      "title": "Artifact Slot Status",
+      "type": "string"
+    },
+    "binding_status": {
+      "enum": [
+        "bound_to_existing_builder",
+        "blocked_unknown_artifact",
+        "blocked_slot_not_materialized"
+      ],
+      "title": "Binding Status",
+      "type": "string"
+    },
+    "builder_module": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Builder Module"
+    },
+    "builder_function": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Builder Function"
+    },
+    "emitted_output_filenames": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Emitted Output Filenames",
+      "type": "array"
+    },
+    "required_input_artifacts": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Input Artifacts",
+      "type": "array"
+    },
+    "intermediate_artifacts": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Intermediate Artifacts",
+      "type": "array"
+    },
+    "missing_case_prerequisite_artifacts": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Missing Case Prerequisite Artifacts",
+      "type": "array"
+    },
+    "replay_input_gap_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Replay Input Gap Ids",
+      "type": "array"
+    },
+    "side_effect_boundary": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Side Effect Boundary"
+    },
+    "binding_notes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Binding Notes",
+      "type": "array"
+    },
+    "evidence_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Evidence Refs",
+      "type": "array"
+    },
+    "runtime_artifact_created": {
+      "const": false,
+      "default": false,
+      "title": "Runtime Artifact Created",
+      "type": "boolean"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "local_json_only": {
+      "const": true,
+      "default": true,
+      "title": "Local Json Only",
+      "type": "boolean"
+    },
+    "budget_submission_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Submission Authorized",
+      "type": "boolean"
+    },
+    "matter_opening_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Matter Opening Authorized",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "binding_id",
+    "execution_case_id",
+    "learning_fixture_id",
+    "executable_fixture_id",
+    "loop_type",
+    "expected_artifact_name",
+    "artifact_slot_ref",
+    "artifact_slot_status",
+    "binding_status",
+    "binding_notes",
+    "evidence_refs"
+  ],
+  "title": "LaborEmploymentBudgetOutcomeReplayBuilderBinding",
+  "type": "object"
+}

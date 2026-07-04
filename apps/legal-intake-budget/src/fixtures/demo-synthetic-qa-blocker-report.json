@@ -1,22 +1,22 @@
 {
   "schema_version": "0.1",
-  "synthetic_qa_blocker_report_id": "synthetic_qa_blocker_report_fe85dfae1b0e1d15",
+  "synthetic_qa_blocker_report_id": "synthetic_qa_blocker_report_6e20dfb02fce6d18",
   "status": "synthetic_qa_blocker_report_ready_for_review",
-  "source_ui_manifest_ref": ".lawfirm-os-intake\\tmp\\complete-le-fixture-gaps\\full-run-final\\ui_review_manifest.json",
-  "source_ui_manifest_id": "ui_review_manifest_1efdc431adfd",
+  "source_ui_manifest_ref": "<demo-run-root>\\ui_review_manifest.json",
+  "source_ui_manifest_id": "ui_review_manifest_24c18961f8a3",
   "source_ui_manifest_overall_status": "blocked",
-  "source_synthetic_confidence_summary_ref": ".lawfirm-os-intake\\tmp\\complete-le-fixture-gaps\\full-run-final\\quality\\synthetic-confidence-summary\\synthetic_confidence_summary_report.json",
-  "source_synthetic_confidence_summary_report_id": "synthetic_confidence_summary_f17e23e8e7c999e3",
+  "source_synthetic_confidence_summary_ref": "<demo-run-root>\\quality\\synthetic_confidence_summary_report.json",
+  "source_synthetic_confidence_summary_report_id": "synthetic_confidence_summary_5df8f48b41d752cc",
   "source_synthetic_confidence_summary_status": "synthetic_confidence_summary_ready_for_review",
-  "source_synthetic_qa_review_run_ref": ".lawfirm-os-intake\\tmp\\complete-le-fixture-gaps\\full-run-final\\synthetic_qa_review_run_report.json",
-  "source_synthetic_qa_review_run_report_id": "syntheticqareviewrun_164d20f514d5bcfb",
+  "source_synthetic_qa_review_run_ref": "<demo-run-root>\\synthetic_qa_review_run_report.json",
+  "source_synthetic_qa_review_run_report_id": "syntheticqareviewrun_bfaf9ffa36331259",
   "source_synthetic_qa_review_run_status": "synthetic_qa_review_run_ready",
-  "row_count": 21,
+  "row_count": 26,
   "failed_row_count": 0,
   "blocked_row_count": 0,
-  "pending_review_row_count": 21,
+  "pending_review_row_count": 26,
   "blocked_action_count": 0,
-  "needs_review_action_count": 21,
+  "needs_review_action_count": 26,
   "fixed_action_count": 0,
   "ready_action_count": 0,
   "review_queue_state": "needs_review",
@@ -81,7 +81,7 @@
         "synthetic_qa_blocker_requires_review"
       ],
       "notes": [
-        "The POC QA triage queue must reconcile validation, synthetic QA, L&E budget gates, and UI evidence before readiness is claimed."
+        "poc_qa_triage_report.json is missing; The POC QA triage queue must reconcile validation, synthetic QA, L&E budget gates, and UI evidence before readiness is claimed."
       ]
     },
     {
@@ -421,6 +421,111 @@
       ]
     },
     {
+      "row_id": "quality_gate:labor_employment_budget_learning_fixtures",
+      "source": "quality_gate",
+      "label": "L&E Budget Learning Fixtures",
+      "state": "pending_review",
+      "action_state": "needs_review",
+      "owner": "qa-reference",
+      "evidence_refs": [
+        "labor_employment_budget_learning_fixtures_report.json"
+      ],
+      "recommended_next_action": "Review quality gate evidence and record an outcome: L&E Budget Learning Fixtures.",
+      "candidate_exception_lake_labels": [
+        "synthetic_qa_blocker_queue_candidate",
+        "quality_gate_pending_review_candidate",
+        "quality_gate_labor_employment_budget_learning_fixtures_candidate",
+        "synthetic_qa_blocker_requires_review"
+      ],
+      "notes": [
+        "L&E actuals, carrier rejection, appeal, reviewed-learning, and blocked-budget guard fixture coverage must be visible before calibration work."
+      ]
+    },
+    {
+      "row_id": "quality_gate:labor_employment_budget_outcome_replay_readiness",
+      "source": "quality_gate",
+      "label": "L&E Budget Outcome Replay Readiness",
+      "state": "pending_review",
+      "action_state": "needs_review",
+      "owner": "qa-reference",
+      "evidence_refs": [
+        "labor_employment_budget_outcome_replay_readiness_report.json"
+      ],
+      "recommended_next_action": "Review quality gate evidence and record an outcome: L&E Budget Outcome Replay Readiness.",
+      "candidate_exception_lake_labels": [
+        "synthetic_qa_blocker_queue_candidate",
+        "quality_gate_pending_review_candidate",
+        "quality_gate_labor_employment_budget_outcome_replay_readiness_candidate",
+        "synthetic_qa_blocker_requires_review"
+      ],
+      "notes": [
+        "L&E learning fixture intents must have concrete synthetic actuals, rejection, appeal, reviewed-learning, and blocked-guard replay seeds before calibration work."
+      ]
+    },
+    {
+      "row_id": "quality_gate:labor_employment_budget_outcome_replay_execution",
+      "source": "quality_gate",
+      "label": "L&E Budget Outcome Replay Execution",
+      "state": "pending_review",
+      "action_state": "needs_review",
+      "owner": "qa-reference",
+      "evidence_refs": [
+        "labor_employment_budget_outcome_replay_execution_report.json"
+      ],
+      "recommended_next_action": "Review quality gate evidence and record an outcome: L&E Budget Outcome Replay Execution.",
+      "candidate_exception_lake_labels": [
+        "synthetic_qa_blocker_queue_candidate",
+        "quality_gate_pending_review_candidate",
+        "quality_gate_labor_employment_budget_outcome_replay_execution_candidate",
+        "synthetic_qa_blocker_requires_review"
+      ],
+      "notes": [
+        "L&E replay seeds must materialize concrete candidate artifact slots before replay outputs, calibration, or model comparison are treated as covered."
+      ]
+    },
+    {
+      "row_id": "quality_gate:labor_employment_budget_outcome_replay_builder_binding",
+      "source": "quality_gate",
+      "label": "L&E Budget Outcome Replay Builder Binding",
+      "state": "pending_review",
+      "action_state": "needs_review",
+      "owner": "qa-reference",
+      "evidence_refs": [
+        "labor_employment_budget_outcome_replay_builder_binding_report.json"
+      ],
+      "recommended_next_action": "Review quality gate evidence and record an outcome: L&E Budget Outcome Replay Builder Binding.",
+      "candidate_exception_lake_labels": [
+        "synthetic_qa_blocker_queue_candidate",
+        "quality_gate_pending_review_candidate",
+        "quality_gate_labor_employment_budget_outcome_replay_builder_binding_candidate",
+        "synthetic_qa_blocker_requires_review"
+      ],
+      "notes": [
+        "L&E replay artifact slots must bind to deterministic local builders before replay outputs, calibration, or model comparison are trusted."
+      ]
+    },
+    {
+      "row_id": "quality_gate:budget_learning_loop",
+      "source": "quality_gate",
+      "label": "Budget Learning Loop",
+      "state": "pending_review",
+      "action_state": "needs_review",
+      "owner": "pricing-review",
+      "evidence_refs": [
+        "budget_learning_loop_report.json"
+      ],
+      "recommended_next_action": "Review quality gate evidence and record an outcome: Budget Learning Loop.",
+      "candidate_exception_lake_labels": [
+        "synthetic_qa_blocker_queue_candidate",
+        "quality_gate_pending_review_candidate",
+        "quality_gate_budget_learning_loop_candidate",
+        "synthetic_qa_blocker_requires_review"
+      ],
+      "notes": [
+        "Budget actuals, carrier rejection outcomes, appeal results, and reviewed-learning candidates must be visible before QA treats budget improvement loops as covered."
+      ]
+    },
+    {
       "row_id": "readiness_item:required_qa_artifacts",
       "source": "readiness_item",
       "label": "Required QA Artifacts",
@@ -428,7 +533,7 @@
       "action_state": "needs_review",
       "owner": "qa-reference",
       "evidence_refs": [
-        ".lawfirm-os-intake\\tmp\\complete-le-fixture-gaps\\full-run-final\\quality\\synthetic_qa_bundle_report.json"
+        "<demo-run-root>\\quality\\synthetic_qa_bundle_report.json"
       ],
       "recommended_next_action": "Review readiness item evidence and record an outcome: Required QA Artifacts.",
       "candidate_exception_lake_labels": [
@@ -438,7 +543,7 @@
         "synthetic_qa_blocker_requires_review"
       ],
       "notes": [
-        "0 missing required, 0 blocked, 14 pending review."
+        "0 missing required, 0 blocked, 19 pending review."
       ]
     },
     {
@@ -449,7 +554,7 @@
       "action_state": "needs_review",
       "owner": "human-or-owner-review",
       "evidence_refs": [
-        ".lawfirm-os-intake\\tmp\\complete-le-fixture-gaps\\full-run-final\\ui_review_manifest.json"
+        "<demo-run-root>\\ui_review_manifest.json"
       ],
       "recommended_next_action": "Review readiness item evidence and record an outcome: Owner Review Backlog.",
       "candidate_exception_lake_labels": [
@@ -459,7 +564,7 @@
         "synthetic_qa_blocker_requires_review"
       ],
       "notes": [
-        "20 pending gates remain; pending is expected until human/owner review accepts candidate QA evidence."
+        "25 pending gates remain; pending is expected until human/owner review accepts candidate QA evidence."
       ]
     }
   ],

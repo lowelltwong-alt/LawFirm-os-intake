@@ -32,6 +32,7 @@ def test_legal_intake_budget_ui_required_files_exist(repo_root):
         "src/fixtures/demo-labor-employment-budget-output-expectations-report.json",
         "src/fixtures/demo-labor-employment-budget-qa-gate-report.json",
         "src/fixtures/demo-labor-employment-budget-learning-fixtures-report.json",
+        "src/fixtures/demo-labor-employment-budget-outcome-replay-builder-binding-report.json",
         "src/fixtures/demo-budget-learning-loop-report.json",
     ]
 
@@ -87,6 +88,7 @@ def test_legal_intake_budget_ui_data_contract_lists_required_artifacts(repo_root
         "labor_employment_budget_learning_fixtures_report.json",
         "labor_employment_budget_outcome_replay_readiness_report.json",
         "labor_employment_budget_outcome_replay_execution_report.json",
+        "labor_employment_budget_outcome_replay_builder_binding_report.json",
         "labor_employment_budget_fact_gold_report.json",
         "validation_suite_evidence_report.json",
         "budget_human_review_packet.json",
@@ -150,6 +152,7 @@ def test_legal_intake_budget_demo_manifest_is_read_only_and_candidate_only(repo_
         "labor_employment_budget_learning_fixtures",
         "labor_employment_budget_outcome_replay_readiness",
         "labor_employment_budget_outcome_replay_execution",
+        "labor_employment_budget_outcome_replay_builder_binding",
         "budget_learning_loop",
         "labor_employment_budget_fact_gold",
         "validation_suite_evidence",
@@ -168,9 +171,9 @@ def test_legal_intake_budget_demo_ui_review_data_bundle_is_local_and_no_write(re
     detail_reports = {report["file_name"]: report for report in bundle["detail_reports"]}
 
     assert bundle["status"] == "ready_for_review"
-    assert bundle["detail_report_count"] == len(bundle["detail_reports"]) == 17
-    assert bundle["required_detail_report_count"] == 11
-    assert bundle["present_detail_report_count"] == 17
+    assert bundle["detail_report_count"] == len(bundle["detail_reports"]) == 18
+    assert bundle["required_detail_report_count"] == 12
+    assert bundle["present_detail_report_count"] == 18
     assert bundle["missing_required_detail_report_count"] == 0
     assert bundle["external_write_report_count"] == 0
     assert bundle["candidate_only"] is True
@@ -200,6 +203,7 @@ def test_legal_intake_budget_demo_ui_review_data_bundle_is_local_and_no_write(re
         "labor_employment_budget_learning_fixtures_report.json",
         "labor_employment_budget_outcome_replay_readiness_report.json",
         "labor_employment_budget_outcome_replay_execution_report.json",
+        "labor_employment_budget_outcome_replay_builder_binding_report.json",
         "budget_learning_loop_report.json",
     } <= set(detail_reports)
     assert all(report["present"] is True for report in bundle["detail_reports"])
@@ -268,7 +272,7 @@ def test_legal_intake_budget_demo_synthetic_qa_review_run_is_no_write(repo_root)
     )
 
     assert report["status"] == "synthetic_qa_review_run_ready"
-    assert report["step_count"] == len(report["steps"]) == 26
+    assert report["step_count"] == len(report["steps"]) == 27
     assert report["failed_step_count"] == 0
     assert report["candidate_only"] is True
     assert report["synthetic_only"] is True
@@ -297,6 +301,7 @@ def test_legal_intake_budget_demo_synthetic_qa_review_run_is_no_write(repo_root)
         "labor_employment_budget_learning_fixtures",
         "labor_employment_budget_outcome_replay_readiness",
         "labor_employment_budget_outcome_replay_execution",
+        "labor_employment_budget_outcome_replay_builder_binding",
         "budget_learning_loop",
     } <= {step["step_id"] for step in report["steps"]}
 
@@ -612,11 +617,11 @@ def test_legal_intake_budget_demo_synthetic_confidence_summary_is_no_write(repo_
     assert report["status"] == "synthetic_confidence_summary_ready_for_review"
     assert report["testing_readiness_state"] == "synthetic_qa_ready_pending_review"
     assert report["top_blockers"] == []
-    assert report["qa_step_count"] == 26
+    assert report["qa_step_count"] == 27
     assert report["qa_failed_step_count"] == 0
     assert report["qa_missing_required_artifact_count"] == 0
-    assert report["ui_detail_report_count"] == 17
-    assert report["ui_present_detail_report_count"] == 17
+    assert report["ui_detail_report_count"] == 18
+    assert report["ui_present_detail_report_count"] == 18
     assert report["ui_missing_required_detail_report_count"] == 0
     assert report["display_banner"]["candidate_only"] is True
     assert report["display_banner"]["synthetic_only"] is True
@@ -825,12 +830,12 @@ def test_legal_intake_budget_demo_synthetic_qa_blocker_report_is_no_write(repo_r
     )
 
     assert report["status"] == "synthetic_qa_blocker_report_ready_for_review"
-    assert report["row_count"] == len(report["rows"]) == 21
+    assert report["row_count"] == len(report["rows"]) == 26
     assert report["failed_row_count"] == 0
     assert report["blocked_row_count"] == 0
-    assert report["pending_review_row_count"] == 21
+    assert report["pending_review_row_count"] == 26
     assert report["blocked_action_count"] == 0
-    assert report["needs_review_action_count"] == 21
+    assert report["needs_review_action_count"] == 26
     assert report["fixed_action_count"] == 0
     assert report["ready_action_count"] == 0
     assert report["review_queue_state"] == "needs_review"
@@ -1302,6 +1307,45 @@ def test_legal_intake_budget_demo_labor_employment_budget_outcome_replay_executi
     assert report["silent_learning_performed"] is False
 
 
+def test_legal_intake_budget_demo_labor_employment_budget_outcome_replay_builder_binding_is_no_write(
+    repo_root,
+):
+    report = json.loads(
+        (
+            repo_root
+            / UI_ROOT
+            / "src/fixtures/demo-labor-employment-budget-outcome-replay-builder-binding-report.json"
+        ).read_text(encoding="utf-8")
+    )
+
+    assert report["status"] == "labor_employment_budget_replay_builder_binding_ready_for_review"
+    assert report["fixture_count"] == 8
+    assert report["case_count"] == 8
+    assert report["slot_count"] == 38
+    assert report["bound_slot_count"] == 38
+    assert report["unknown_artifact_count"] == 0
+    assert report["blocked_slot_count"] == 0
+    assert report["replay_input_gap_count"] > 0
+    assert report["missing_case_prerequisite_count"] > 0
+    assert all(case["status"] == "passed" for case in report["cases"])
+    assert all(check["status"] == "passed" for check in report["checks"])
+    assert all(
+        binding["expected_artifact_name"] in binding["emitted_output_filenames"]
+        for case in report["cases"]
+        for binding in case["bindings"]
+    )
+    assert report["runtime_artifacts_created"] is False
+    assert report["candidate_only"] is True
+    assert report["synthetic_only"] is True
+    assert report["local_json_only"] is True
+    assert report["budget_submission_authorized"] is False
+    assert report["matter_opening_authorized"] is False
+    assert report["lake_write_performed"] is False
+    assert report["sqlite_write_performed"] is False
+    assert report["external_writes_performed"] is False
+    assert report["silent_learning_performed"] is False
+
+
 def test_legal_intake_budget_ui_disclaims_mutating_authority(repo_root):
     readme = (repo_root / UI_ROOT / "README.md").read_text(encoding="utf-8")
     app = (repo_root / UI_ROOT / "src/App.tsx").read_text(encoding="utf-8")
@@ -1328,6 +1372,7 @@ def test_legal_intake_budget_ui_disclaims_mutating_authority(repo_root):
     assert "L&amp;E Budget Learning Fixtures" in app
     assert "L&amp;E Budget Outcome Replay Readiness" in app
     assert "L&amp;E Budget Outcome Replay Execution" in app
+    assert "L&amp;E Budget Replay Builder Binding" in app
     assert "L&amp;E Executable Coverage" in app
     assert "L&amp;E Blocked Driver Review" in app
     assert "L&amp;E Budget Output Expectations" in app
@@ -1355,6 +1400,7 @@ def test_legal_intake_budget_ui_disclaims_mutating_authority(repo_root):
     assert "assertLaborEmploymentBudgetQAGateReport" in app
     assert "assertLaborEmploymentBudgetOutcomeReplayReadinessReport" in app
     assert "assertLaborEmploymentBudgetOutcomeReplayExecutionReport" in app
+    assert "assertLaborEmploymentBudgetOutcomeReplayBuilderBindingReport" in app
     assert "failingQualityGates" in app
     assert "qa-blocker-panel" in styles
     assert "qa-review-outcome-panel" in styles

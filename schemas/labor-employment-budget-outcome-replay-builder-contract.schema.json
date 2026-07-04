@@ -1,0 +1,107 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "artifact_name": {
+      "title": "Artifact Name",
+      "type": "string"
+    },
+    "loop_type": {
+      "enum": [
+        "actuals_variance",
+        "carrier_rejection_capture",
+        "appeal_outcome",
+        "reviewed_learning_gate",
+        "blocked_budget_guard"
+      ],
+      "title": "Loop Type",
+      "type": "string"
+    },
+    "builder_module": {
+      "title": "Builder Module",
+      "type": "string"
+    },
+    "builder_function": {
+      "title": "Builder Function",
+      "type": "string"
+    },
+    "emitted_output_filenames": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Emitted Output Filenames",
+      "type": "array"
+    },
+    "required_input_artifacts": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Input Artifacts",
+      "type": "array"
+    },
+    "intermediate_artifacts": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Intermediate Artifacts",
+      "type": "array"
+    },
+    "side_effect_boundary": {
+      "const": "local_candidate_files_only",
+      "default": "local_candidate_files_only",
+      "title": "Side Effect Boundary",
+      "type": "string"
+    },
+    "authority_owner": {
+      "const": "LawFirm-os-intake",
+      "default": "LawFirm-os-intake",
+      "title": "Authority Owner",
+      "type": "string"
+    },
+    "execution_owner": {
+      "const": "LawFirm-os-orchestrator",
+      "default": "LawFirm-os-orchestrator",
+      "title": "Execution Owner",
+      "type": "string"
+    },
+    "creates_runtime_artifact": {
+      "const": false,
+      "default": false,
+      "title": "Creates Runtime Artifact",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "artifact_name",
+    "loop_type",
+    "builder_module",
+    "builder_function",
+    "emitted_output_filenames",
+    "required_input_artifacts"
+  ],
+  "title": "LaborEmploymentBudgetOutcomeReplayBuilderContract",
+  "type": "object"
+}

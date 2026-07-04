@@ -103,6 +103,9 @@ from .labor_employment_budget_outcome_replay_readiness import (
 from .labor_employment_budget_outcome_replay_execution import (
     run_labor_employment_budget_outcome_replay_execution,
 )
+from .labor_employment_budget_outcome_replay_builder_binding import (
+    run_labor_employment_budget_outcome_replay_builder_binding_audit,
+)
 from .labor_employment_budget_qa_gate import run_labor_employment_budget_qa_gate
 from .labor_employment_executable_fixtures import (
     run_labor_employment_executable_fixture_audit,
@@ -727,6 +730,24 @@ def _parser() -> argparse.ArgumentParser:
     )
     le_budget_outcome_replay_execution.add_argument("--out-dir", required=True)
     le_budget_outcome_replay_execution.add_argument(
+        "--generated-at",
+        help="Optional fixed timestamp for deterministic tests and replayed reports.",
+    )
+
+    le_budget_outcome_replay_builder_binding = sub.add_parser(
+        "audit-labor-employment-budget-outcome-replay-builder-binding",
+        help=(
+            "Bind L&E outcome replay artifact slots to deterministic local builders "
+            "without invoking builders or creating runtime artifacts."
+        ),
+    )
+    le_budget_outcome_replay_builder_binding.add_argument(
+        "--execution-report",
+        required=True,
+        help="Path to labor_employment_budget_outcome_replay_execution_report.json.",
+    )
+    le_budget_outcome_replay_builder_binding.add_argument("--out-dir", required=True)
+    le_budget_outcome_replay_builder_binding.add_argument(
         "--generated-at",
         help="Optional fixed timestamp for deterministic tests and replayed reports.",
     )
@@ -2642,6 +2663,41 @@ def main(argv: list[str] | None = None) -> int:
                 0
                 if report.status
                 == "labor_employment_budget_outcome_replay_execution_ready_for_review"
+                else 2
+            )
+
+        if args.command == "audit-labor-employment-budget-outcome-replay-builder-binding":
+            report, run_dir = run_labor_employment_budget_outcome_replay_builder_binding_audit(
+                execution_report_path=args.execution_report,
+                out_dir=args.out_dir,
+                generated_at=args.generated_at,
+            )
+            failed_checks = [check.check_id for check in report.checks if check.status == "failed"]
+            _print(
+                {
+                    "status": report.status,
+                    "builder_binding_report_id": report.builder_binding_report_id,
+                    "source_execution_report_id": report.source_execution_report_id,
+                    "case_count": report.case_count,
+                    "slot_count": report.slot_count,
+                    "bound_slot_count": report.bound_slot_count,
+                    "unknown_artifact_count": report.unknown_artifact_count,
+                    "blocked_slot_count": report.blocked_slot_count,
+                    "replay_input_gap_count": report.replay_input_gap_count,
+                    "missing_case_prerequisite_count": (report.missing_case_prerequisite_count),
+                    "failed_checks": failed_checks,
+                    "budget_submission_authorized": report.budget_submission_authorized,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return (
+                0
+                if report.status
+                == "labor_employment_budget_replay_builder_binding_ready_for_review"
                 else 2
             )
 

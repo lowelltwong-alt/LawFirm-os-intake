@@ -3,6 +3,7 @@ import type {
   BudgetLearningLoopReport,
   LaborEmploymentBudgetLearningFixtureReport,
   LaborEmploymentBudgetLearningLoopType,
+  LaborEmploymentBudgetOutcomeReplayBuilderBindingReport,
   LaborEmploymentBudgetOutcomeReplayExecutionReport,
   LaborEmploymentBudgetOutcomeReplayReadinessReport,
   LaborEmploymentBudgetOutputExpectationReport,
@@ -60,6 +61,7 @@ export const REQUIRED_ARTIFACT_FILES = [
   "labor_employment_budget_learning_fixtures_report.json",
   "labor_employment_budget_outcome_replay_readiness_report.json",
   "labor_employment_budget_outcome_replay_execution_report.json",
+  "labor_employment_budget_outcome_replay_builder_binding_report.json",
   "labor_employment_budget_fact_gold_report.json",
   "validation_suite_evidence_report.json",
   "budget_human_review_packet.json",
@@ -96,6 +98,7 @@ export const REQUIRED_DETAIL_REPORT_FILES = [
   "labor_employment_budget_learning_fixtures_report.json",
   "labor_employment_budget_outcome_replay_readiness_report.json",
   "labor_employment_budget_outcome_replay_execution_report.json",
+  "labor_employment_budget_outcome_replay_builder_binding_report.json",
   "budget_learning_loop_report.json",
 ] as const;
 
@@ -1770,6 +1773,127 @@ export function assertLaborEmploymentBudgetOutcomeReplayExecutionReport(
     report.checks.some((check) => check.status === "failed")
   ) {
     failures.push("le_budget_outcome_execution_ready_with_failed_check");
+  }
+  return failures;
+}
+
+export function assertLaborEmploymentBudgetOutcomeReplayBuilderBindingReport(
+  report: LaborEmploymentBudgetOutcomeReplayBuilderBindingReport,
+): string[] {
+  const failures: string[] = [];
+  const passedCases = report.cases.filter((testCase) => testCase.status === "passed");
+  const failedCases = report.cases.filter((testCase) => testCase.status === "failed");
+  const slotCount = report.cases.reduce((total, testCase) => total + testCase.slot_count, 0);
+  const boundSlotCount = report.cases.reduce(
+    (total, testCase) => total + testCase.bound_slot_count,
+    0,
+  );
+  const unknownCount = report.cases.reduce(
+    (total, testCase) => total + testCase.unknown_artifact_count,
+    0,
+  );
+  const blockedCount = report.cases.reduce(
+    (total, testCase) => total + testCase.blocked_slot_count,
+    0,
+  );
+  const inputGapCount = report.cases.reduce(
+    (total, testCase) => total + testCase.replay_input_gap_count,
+    0,
+  );
+  const prerequisiteCount = report.cases.reduce(
+    (total, testCase) => total + testCase.missing_case_prerequisite_count,
+    0,
+  );
+
+  if (report.case_count !== report.cases.length || report.fixture_count !== report.case_count) {
+    failures.push("le_budget_replay_binding_case_count_mismatch");
+  }
+  if (report.passed_case_count !== passedCases.length) {
+    failures.push("le_budget_replay_binding_passed_case_count_mismatch");
+  }
+  if (report.failed_case_count !== failedCases.length) {
+    failures.push("le_budget_replay_binding_failed_case_count_mismatch");
+  }
+  if (report.slot_count !== slotCount) {
+    failures.push("le_budget_replay_binding_slot_count_mismatch");
+  }
+  if (report.bound_slot_count !== boundSlotCount) {
+    failures.push("le_budget_replay_binding_bound_slot_count_mismatch");
+  }
+  if (report.unknown_artifact_count !== unknownCount) {
+    failures.push("le_budget_replay_binding_unknown_count_mismatch");
+  }
+  if (report.blocked_slot_count !== blockedCount) {
+    failures.push("le_budget_replay_binding_blocked_count_mismatch");
+  }
+  if (report.replay_input_gap_count !== inputGapCount) {
+    failures.push("le_budget_replay_binding_input_gap_count_mismatch");
+  }
+  if (report.missing_case_prerequisite_count !== prerequisiteCount) {
+    failures.push("le_budget_replay_binding_prerequisite_count_mismatch");
+  }
+  if (report.slot_count > 0 && report.bound_slot_count !== report.slot_count) {
+    failures.push("le_budget_replay_binding_not_all_slots_bound");
+  }
+  if (report.unknown_artifact_count || report.blocked_slot_count) {
+    failures.push("le_budget_replay_binding_blocked_or_unknown_slot");
+  }
+  if (report.replay_input_gap_count === 0 || report.missing_case_prerequisite_count === 0) {
+    failures.push("le_budget_replay_binding_missing_explicit_gap_surface");
+  }
+  if (
+    !report.candidate_only ||
+    !report.synthetic_only ||
+    !report.local_json_only ||
+    !report.human_review_required ||
+    !report.not_authorized_for_external_write ||
+    !report.not_authorized_for_lake_write ||
+    !report.not_authorized_for_sqlite_write ||
+    !report.not_authorized_for_budget_submission ||
+    !report.not_authorized_for_matter_opening ||
+    !report.not_authorized_for_calibration ||
+    report.runtime_artifacts_created ||
+    report.budget_submission_authorized ||
+    report.matter_opening_authorized ||
+    report.training_pipeline_created ||
+    report.lake_write_performed ||
+    report.sqlite_write_performed ||
+    report.external_writes_performed ||
+    report.silent_learning_performed
+  ) {
+    failures.push("le_budget_replay_binding_boundary_flags");
+  }
+  for (const testCase of report.cases) {
+    if (testCase.slot_count !== testCase.bindings.length) {
+      failures.push(`le_budget_replay_binding_case_slot_count:${testCase.learning_fixture_id}`);
+    }
+    for (const binding of testCase.bindings) {
+      if (
+        binding.binding_status === "bound_to_existing_builder" &&
+        (!binding.builder_module ||
+          !binding.builder_function ||
+          !binding.emitted_output_filenames.includes(binding.expected_artifact_name))
+      ) {
+        failures.push(`le_budget_replay_binding_missing_builder:${binding.binding_id}`);
+      }
+      if (
+        binding.runtime_artifact_created ||
+        binding.budget_submission_authorized ||
+        binding.matter_opening_authorized ||
+        binding.lake_write_performed ||
+        binding.sqlite_write_performed ||
+        binding.external_writes_performed ||
+        binding.silent_learning_performed
+      ) {
+        failures.push(`le_budget_replay_binding_side_effect:${binding.binding_id}`);
+      }
+    }
+  }
+  if (
+    report.status === "labor_employment_budget_replay_builder_binding_ready_for_review" &&
+    report.checks.some((check) => check.status === "failed")
+  ) {
+    failures.push("le_budget_replay_binding_ready_with_failed_check");
   }
   return failures;
 }
