@@ -258,7 +258,7 @@ def test_legal_intake_budget_demo_synthetic_qa_review_run_is_no_write(repo_root)
     )
 
     assert report["status"] == "synthetic_qa_review_run_ready"
-    assert report["step_count"] == len(report["steps"]) == 22
+    assert report["step_count"] == len(report["steps"]) == 23
     assert report["failed_step_count"] == 0
     assert report["candidate_only"] is True
     assert report["synthetic_only"] is True
@@ -284,6 +284,7 @@ def test_legal_intake_budget_demo_synthetic_qa_review_run_is_no_write(repo_root)
         "labor_employment_blocked_driver_impact_review",
         "labor_employment_budget_output_expectations",
         "labor_employment_budget_qa_gate",
+        "budget_learning_loop",
     } <= {step["step_id"] for step in report["steps"]}
 
 
@@ -598,7 +599,7 @@ def test_legal_intake_budget_demo_synthetic_confidence_summary_is_no_write(repo_
     assert report["status"] == "synthetic_confidence_summary_ready_for_review"
     assert report["testing_readiness_state"] == "synthetic_qa_ready_pending_review"
     assert report["top_blockers"] == []
-    assert report["qa_step_count"] == 22
+    assert report["qa_step_count"] == 23
     assert report["qa_failed_step_count"] == 0
     assert report["qa_missing_required_artifact_count"] == 0
     assert report["ui_detail_report_count"] == 14

@@ -4,7 +4,7 @@
   "status": "synthetic_qa_review_run_ready",
   "run_root_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\complete-le-fixture-gaps\\full-run-final",
   "quality_dir_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\complete-le-fixture-gaps\\full-run-final\\quality",
-  "step_count": 22,
+  "step_count": 23,
   "failed_step_count": 0,
   "steps": [
     {
@@ -185,6 +185,16 @@
       "artifact_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\complete-le-fixture-gaps\\full-run-final\\quality\\le-budget-fact-gold\\labor_employment_budget_fact_gold_report.json",
       "notes": [
         "Reviewed synthetic gold validates L&E budget-fact audit outputs."
+      ]
+    },
+    {
+      "step_id": "budget_learning_loop",
+      "label": "Budget Learning Loop",
+      "status": "passed",
+      "observed_status": "budget_learning_loop_ready_for_review",
+      "artifact_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\complete-le-fixture-gaps\\full-run-final\\quality\\budget-learning-loop\\budget_learning_loop_report.json",
+      "notes": [
+        "Budget actuals, carrier rejection, appeal outcome, and reviewed-learning candidates are summarized for QA without silent learning."
       ]
     },
     {

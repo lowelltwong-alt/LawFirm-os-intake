@@ -630,6 +630,120 @@ from pathlib import Path
 import sys
 
 sys.path.insert(0, str(Path.cwd() / "src"))
+from lawfirm_os_intake.budget_actuals import run_budget_actual_comparison
+from lawfirm_os_intake.budget_learning_loop import run_budget_learning_loop_report
+from lawfirm_os_intake.budget_revisions import run_budget_review_record
+from lawfirm_os_intake.carrier_rejection_learning import run_carrier_rejection_learning
+from lawfirm_os_intake.carrier_rejection_review import run_carrier_rejection_review
+from lawfirm_os_intake.carrier_rejections import run_carrier_rejection_capture
+from lawfirm_os_intake.confirmation import bind_confirmation_to_packet_evidence
+from lawfirm_os_intake.models import HumanConfirmation
+from lawfirm_os_intake.reviewed_learning_gate import run_reviewed_learning_gate
+from lawfirm_os_intake.util import load_json, write_json
+from lawfirm_os_intake.workflow import run_budget, run_preflight
+
+root = Path.cwd()
+source_root = root / ".lawfirm-os-intake/smoke/quality/budget-learning-loop-source"
+packet, preflight_dir = run_preflight(
+    root / "examples/synthetic/inbound/carrier-assignment-medmal.json",
+    root / "context/synthetic-profiles/insurance-defense.yaml",
+    source_root / "preflight",
+)
+confirmation_payload = load_json(
+    root
+    / "examples/synthetic/confirmations/carrier-assignment-medmal.confirmation-template.json"
+)
+confirmation_payload["preflight_packet_id"] = packet.packet_id
+confirmation = bind_confirmation_to_packet_evidence(
+    packet,
+    HumanConfirmation.model_validate(confirmation_payload),
+)
+confirmation_path = write_json(
+    source_root / "human_confirmation.json",
+    confirmation.model_dump(mode="json"),
+)
+_budget, budget_dir = run_budget(
+    preflight_dir / "intake_preflight_packet.json",
+    confirmation_path,
+    root / "context/synthetic-profiles/insurance-defense.yaml",
+    source_root / "budget",
+)
+_review, review_dir = run_budget_review_record(
+    budget_path=budget_dir / "legal_budget_proposal.json",
+    review_path=(
+        root
+        / "examples/synthetic/budget-review/medmal-human-budget-review-change.json"
+    ),
+    out_dir=source_root / "budget-review",
+)
+_actuals, actuals_dir = run_budget_actual_comparison(
+    budget_path=budget_dir / "legal_budget_proposal.json",
+    actuals_path=root / "examples/synthetic/actuals/medmal-phase-code-actuals.json",
+    budget_revision_report_path=review_dir / "budget_revision_report.json",
+    out_dir=source_root / "actuals",
+)
+_carrier, carrier_dir = run_carrier_rejection_capture(
+    budget_dir / "legal_budget_proposal.json",
+    root / "examples/synthetic/carrier-rejections/duplicate-missing-unlinked-appeal.json",
+    source_root / "carrier-rejections",
+)
+_carrier_review, carrier_review_dir = run_carrier_rejection_review(
+    carrier_dir / "carrier_rejection_reconciliation_report.json",
+    source_root / "carrier-rejection-review",
+)
+_learning, learning_dir = run_carrier_rejection_learning(
+    carrier_review_dir / "carrier_rejection_review_packet.json",
+    source_root / "carrier-rejection-learning",
+)
+_gate, gate_dir = run_reviewed_learning_gate(
+    out_dir=source_root / "reviewed-learning-gate",
+    carrier_rejection_learning_report_path=(
+        learning_dir / "carrier_rejection_learning_report.json"
+    ),
+    budget_revision_report_path=review_dir / "budget_revision_report.json",
+    budget_actual_comparison_report_path=(
+        actuals_dir / "budget_actual_comparison_report.json"
+    ),
+)
+report, _ = run_budget_learning_loop_report(
+    budget_actual_comparison_report_path=(
+        actuals_dir / "budget_actual_comparison_report.json"
+    ),
+    budget_actual_variance_ledger_report_path=(
+        actuals_dir / "budget_actual_variance_ledger_report.json"
+    ),
+    carrier_rejection_reconciliation_report_path=(
+        carrier_dir / "carrier_rejection_reconciliation_report.json"
+    ),
+    carrier_rejection_decision_ledger_report_path=(
+        carrier_dir / "carrier_rejection_decision_ledger_report.json"
+    ),
+    carrier_rejection_review_packet_path=(
+        carrier_review_dir / "carrier_rejection_review_packet.json"
+    ),
+    carrier_rejection_learning_report_path=(
+        learning_dir / "carrier_rejection_learning_report.json"
+    ),
+    reviewed_learning_gate_report_path=gate_dir / "reviewed_learning_gate_report.json",
+    out_dir=root / ".lawfirm-os-intake/smoke/quality/budget-learning-loop",
+    generated_at="2026-07-04T00:00:00Z",
+)
+raise SystemExit(
+    0 if report.status == "budget_learning_loop_ready_for_review" else 1
+)
+PY
+test -s ".lawfirm-os-intake/smoke/quality/budget-learning-loop/budget_learning_loop_report.json"
+grep -q '"status": "budget_learning_loop_ready_for_review"' \
+  ".lawfirm-os-intake/smoke/quality/budget-learning-loop/budget_learning_loop_report.json"
+grep -q '"variance_review_event_count": 5' \
+  ".lawfirm-os-intake/smoke/quality/budget-learning-loop/budget_learning_loop_report.json"
+grep -q '"silent_learning_performed": false' \
+  ".lawfirm-os-intake/smoke/quality/budget-learning-loop/budget_learning_loop_report.json"
+"$PYTHON_BIN" -B - <<'PY'
+from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path.cwd() / "src"))
 from lawfirm_os_intake.synthetic_qa_bundle import run_synthetic_qa_bundle
 
 report, _, manifest = run_synthetic_qa_bundle(
@@ -660,6 +774,7 @@ grep -q '"labor_employment_executable_driver_impact"' ".lawfirm-os-intake/smoke/
 grep -q '"labor_employment_driver_impact_review"' ".lawfirm-os-intake/smoke/quality/synthetic_qa_bundle_report.json"
 grep -q '"labor_employment_blocked_driver_impact_review"' ".lawfirm-os-intake/smoke/quality/synthetic_qa_bundle_report.json"
 grep -q '"labor_employment_budget_fact_gold"' ".lawfirm-os-intake/smoke/quality/synthetic_qa_bundle_report.json"
+grep -q '"budget_learning_loop"' ".lawfirm-os-intake/smoke/quality/synthetic_qa_bundle_report.json"
 test -s ".lawfirm-os-intake/smoke/ui_review_manifest.json"
 grep -q '"synthetic_qa_bundle"' ".lawfirm-os-intake/smoke/ui_review_manifest.json"
 grep -q '"budget_coherence"' ".lawfirm-os-intake/smoke/ui_review_manifest.json"
@@ -674,5 +789,6 @@ grep -q '"labor_employment_executable_driver_impact"' ".lawfirm-os-intake/smoke/
 grep -q '"labor_employment_driver_impact_review"' ".lawfirm-os-intake/smoke/ui_review_manifest.json"
 grep -q '"labor_employment_blocked_driver_impact_review"' ".lawfirm-os-intake/smoke/ui_review_manifest.json"
 grep -q '"labor_employment_budget_fact_gold"' ".lawfirm-os-intake/smoke/ui_review_manifest.json"
+grep -q '"budget_learning_loop"' ".lawfirm-os-intake/smoke/ui_review_manifest.json"
 grep -q '"status": "pending_review"' ".lawfirm-os-intake/smoke/ui_review_manifest.json"
 grep -q '"networkCallsAllowed": false' ".lawfirm-os-intake/smoke/ui_review_manifest.json"

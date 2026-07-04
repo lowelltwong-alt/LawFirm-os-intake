@@ -250,6 +250,19 @@ def test_starter_pack_allows_synthetic_qa_bundle_to_reach_pending_review(
         repo_root=repo_root,
         out_dir=run_root / "quality" / "le-budget-fact-gold",
     )
+    write_json(
+        run_root / "quality" / "budget_learning_loop_report.json",
+        {
+            "status": "budget_learning_loop_ready_for_review",
+            "candidate_only": True,
+            "synthetic_only": True,
+            "external_writes_performed": False,
+            "lake_write_performed": False,
+            "sqlite_write_performed": False,
+            "appeal_submission_performed": False,
+            "silent_learning_performed": False,
+        },
+    )
     run_matter_linking_qa_gate(
         repo_root=repo_root,
         out_dir=run_root / "quality" / "matter-linking-qa-gate",
@@ -285,4 +298,5 @@ def test_starter_pack_allows_synthetic_qa_bundle_to_reach_pending_review(
     assert gates["labor_employment_budget_output_expectations"]["status"] == "pending_review"
     assert gates["labor_employment_budget_qa_gate"]["status"] == "pending_review"
     assert gates["labor_employment_budget_fact_gold"]["status"] == "passed"
+    assert gates["budget_learning_loop"]["status"] == "pending_review"
     assert ui_manifest["overallStatus"] == "blocked"

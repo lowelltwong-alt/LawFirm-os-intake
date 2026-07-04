@@ -15,13 +15,13 @@
   "source_ui_review_data_bundle_ref": ".lawfirm-os-intake\\tmp\\complete-le-fixture-gaps\\full-run-final\\ui_review_data_bundle.json",
   "source_ui_review_data_bundle_id": "ui_review_data_bundle_7e1e48d862b7",
   "source_ui_review_data_bundle_status": "ready_for_review",
-  "qa_step_count": 22,
-  "qa_passed_step_count": 22,
+  "qa_step_count": 23,
+  "qa_passed_step_count": 23,
   "qa_failed_step_count": 0,
-  "qa_artifact_count": 16,
+  "qa_artifact_count": 17,
   "qa_missing_required_artifact_count": 0,
   "qa_blocked_artifact_count": 0,
-  "qa_pending_artifact_count": 14,
+  "qa_pending_artifact_count": 15,
   "qa_failed_artifact_count": 0,
   "ui_detail_report_count": 14,
   "ui_present_detail_report_count": 14,
@@ -43,7 +43,7 @@
         ".lawfirm-os-intake\\tmp\\complete-le-fixture-gaps\\full-run-final\\synthetic_qa_review_run_report.json"
       ],
       "notes": [
-        "0 failed steps out of 22."
+        "0 failed steps out of 23."
       ],
       "no_write_boundary_confirmed": true
     },
@@ -56,7 +56,7 @@
         ".lawfirm-os-intake\\tmp\\complete-le-fixture-gaps\\full-run-final\\quality\\synthetic_qa_bundle_report.json"
       ],
       "notes": [
-        "0 missing required, 0 blocked, 14 pending review."
+        "0 missing required, 0 blocked, 15 pending review."
       ],
       "no_write_boundary_confirmed": true
     },

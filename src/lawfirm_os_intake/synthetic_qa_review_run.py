@@ -3,7 +3,21 @@ from __future__ import annotations
 from pathlib import Path
 from shutil import copy2
 
+from .budget_actual_variance_ledger import BUDGET_ACTUAL_VARIANCE_LEDGER_REPORT_FILENAME
+from .budget_actuals import (
+    BUDGET_ACTUAL_COMPARISON_REPORT_FILENAME,
+    run_budget_actual_comparison,
+)
 from .budget_calibration_starter_pack import run_budget_calibration_starter_pack
+from .budget_learning_loop import (
+    BUDGET_LEARNING_LOOP_REPORT_FILENAME,
+    run_budget_learning_loop_report,
+)
+from .budget_revisions import BUDGET_REVISION_REPORT_FILENAME, run_budget_review_record
+from .carrier_rejection_decision_ledger import CARRIER_REJECTION_DECISION_LEDGER_REPORT_FILENAME
+from .carrier_rejection_learning import LEARNING_REPORT_FILENAME, run_carrier_rejection_learning
+from .carrier_rejection_review import REVIEW_PACKET_FILENAME, run_carrier_rejection_review
+from .carrier_rejections import run_carrier_rejection_capture
 from .coherence import validate_budget_artifacts
 from .confirmation import bind_confirmation_to_packet_evidence
 from .labor_employment_blocked_driver_impact_review import (
@@ -55,6 +69,7 @@ from .labor_employment_qa_matrix import (
     run_labor_employment_qa_matrix,
 )
 from .models import (
+    BudgetLearningLoopReport,
     HumanConfirmation,
     SyntheticQAReviewRunReport,
     SyntheticQAReviewRunStep,
@@ -70,6 +85,10 @@ from .matter_linking_qa_gate import (
 from .matter_linking_review_outcomes import (
     MATTER_LINKING_REVIEW_OUTCOME_REPORT_FILENAME,
     run_matter_linking_review_outcome_record,
+)
+from .reviewed_learning_gate import (
+    REVIEWED_LEARNING_GATE_REPORT_FILENAME,
+    run_reviewed_learning_gate,
 )
 from .synthetic_confidence_summary import (
     SYNTHETIC_CONFIDENCE_SUMMARY_REPORT_FILENAME,
@@ -96,6 +115,11 @@ DEMO_INPUT_REF = "examples/synthetic/inbound/carrier-assignment-medmal.json"
 DEMO_PROFILE_REF = "context/synthetic-profiles/insurance-defense.yaml"
 DEMO_CONFIRMATION_REF = (
     "examples/synthetic/confirmations/carrier-assignment-medmal.confirmation-template.json"
+)
+DEMO_BUDGET_REVIEW_REF = "examples/synthetic/budget-review/medmal-human-budget-review-change.json"
+DEMO_ACTUALS_REF = "examples/synthetic/actuals/medmal-phase-code-actuals.json"
+DEMO_CARRIER_REJECTION_REF = (
+    "examples/synthetic/carrier-rejections/duplicate-missing-unlinked-appeal.json"
 )
 FIXTURE_DEPTH_MANIFEST_REF = "examples/synthetic/fixture-expansion/remaining-roadmap-holdouts.json"
 LE_PACK_REF = "examples/synthetic/labor-employment/labor-employment-budget-fixture-family-pack.json"
@@ -468,6 +492,27 @@ def run_synthetic_qa_review_run(
         )
     )
 
+    budget_learning_loop, budget_learning_loop_dir = _build_budget_learning_loop(
+        repo_root=root,
+        budget_dir=budget_dir,
+        quality_dir=quality_dir,
+        generated_at=generated_at,
+    )
+    budget_learning_loop_ref = budget_learning_loop_dir / BUDGET_LEARNING_LOOP_REPORT_FILENAME
+    steps.append(
+        _step(
+            "budget_learning_loop",
+            "Budget Learning Loop",
+            budget_learning_loop.status,
+            budget_learning_loop_ref,
+            budget_learning_loop.status == "budget_learning_loop_ready_for_review",
+            (
+                "Budget actuals, carrier rejection, appeal outcome, and reviewed-learning "
+                "candidates are summarized for QA without silent learning."
+            ),
+        )
+    )
+
     for source_path in [
         starter_dir / "budget-calibration-readiness" / "budget_calibration_readiness_report.json",
         matter_linking_ref,
@@ -485,6 +530,7 @@ def run_synthetic_qa_review_run(
         output_expectations_ref,
         budget_qa_gate_ref,
         gold_dir / LABOR_EMPLOYMENT_BUDGET_FACT_GOLD_REPORT_FILENAME,
+        budget_learning_loop_ref,
     ]:
         _stage_for_bundle(source_path, quality_dir)
 
@@ -777,6 +823,69 @@ def _build_budget_coherence(*, repo_root: Path, run_root: Path, budget_dir: Path
         report_out=report_path,
     )
     return report_path
+
+
+def _build_budget_learning_loop(
+    *,
+    repo_root: Path,
+    budget_dir: Path,
+    quality_dir: Path,
+    generated_at: str | None,
+) -> tuple[BudgetLearningLoopReport, Path]:
+    budget_path = budget_dir / "legal_budget_proposal.json"
+    _budget_review, budget_review_dir = run_budget_review_record(
+        budget_path=budget_path,
+        review_path=repo_root / DEMO_BUDGET_REVIEW_REF,
+        out_dir=quality_dir / "budget-review",
+    )
+    _actuals, actuals_dir = run_budget_actual_comparison(
+        budget_path=budget_path,
+        actuals_path=repo_root / DEMO_ACTUALS_REF,
+        budget_revision_report_path=budget_review_dir / BUDGET_REVISION_REPORT_FILENAME,
+        out_dir=quality_dir / "budget-actuals",
+    )
+    _carrier_rejections, carrier_rejections_dir = run_carrier_rejection_capture(
+        budget_path,
+        repo_root / DEMO_CARRIER_REJECTION_REF,
+        quality_dir / "carrier-rejections",
+    )
+    _carrier_review, carrier_review_dir = run_carrier_rejection_review(
+        carrier_rejections_dir / "carrier_rejection_reconciliation_report.json",
+        quality_dir / "carrier-rejection-review",
+    )
+    _carrier_learning, carrier_learning_dir = run_carrier_rejection_learning(
+        carrier_review_dir / REVIEW_PACKET_FILENAME,
+        quality_dir / "carrier-rejection-learning",
+    )
+    _reviewed_gate, reviewed_gate_dir = run_reviewed_learning_gate(
+        out_dir=quality_dir / "reviewed-learning-gate",
+        carrier_rejection_learning_report_path=(carrier_learning_dir / LEARNING_REPORT_FILENAME),
+        budget_revision_report_path=budget_review_dir / BUDGET_REVISION_REPORT_FILENAME,
+        budget_actual_comparison_report_path=(
+            actuals_dir / BUDGET_ACTUAL_COMPARISON_REPORT_FILENAME
+        ),
+    )
+    return run_budget_learning_loop_report(
+        budget_actual_comparison_report_path=(
+            actuals_dir / BUDGET_ACTUAL_COMPARISON_REPORT_FILENAME
+        ),
+        budget_actual_variance_ledger_report_path=(
+            actuals_dir / BUDGET_ACTUAL_VARIANCE_LEDGER_REPORT_FILENAME
+        ),
+        carrier_rejection_reconciliation_report_path=(
+            carrier_rejections_dir / "carrier_rejection_reconciliation_report.json"
+        ),
+        carrier_rejection_decision_ledger_report_path=(
+            carrier_rejections_dir / CARRIER_REJECTION_DECISION_LEDGER_REPORT_FILENAME
+        ),
+        carrier_rejection_review_packet_path=carrier_review_dir / REVIEW_PACKET_FILENAME,
+        carrier_rejection_learning_report_path=carrier_learning_dir / LEARNING_REPORT_FILENAME,
+        reviewed_learning_gate_report_path=(
+            reviewed_gate_dir / REVIEWED_LEARNING_GATE_REPORT_FILENAME
+        ),
+        out_dir=quality_dir / "budget-learning-loop",
+        generated_at=generated_at,
+    )
 
 
 def _stage_for_bundle(source_path: Path, quality_dir: Path) -> Path:

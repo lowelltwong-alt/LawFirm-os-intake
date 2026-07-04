@@ -185,6 +185,17 @@ QA_BUNDLE_ARTIFACTS = [
         ),
     ),
     QABundleArtifactSpec(
+        artifact_id="budget_learning_loop",
+        label="Budget Learning Loop",
+        file_name="budget_learning_loop_report.json",
+        required=True,
+        missing_note=(
+            "Run build-budget-learning-loop-report so budget actual variance, carrier "
+            "rejection, appeal outcome, and reviewed-learning gates are part of the "
+            "synthetic QA proof."
+        ),
+    ),
+    QABundleArtifactSpec(
         artifact_id="matter_linking_qa_gate",
         label="Matter-Linking QA Gate",
         file_name="matter_linking_qa_gate_report.json",
@@ -303,6 +314,11 @@ def run_synthetic_qa_bundle(
             root=root,
             explicit_path=None,
             file_name="labor_employment_budget_fact_gold_report.json",
+        ),
+        "budget_learning_loop": _resolve_artifact_source(
+            root=root,
+            explicit_path=None,
+            file_name="budget_learning_loop_report.json",
         ),
         "matter_linking_qa_gate": _resolve_artifact_source(
             root=root,

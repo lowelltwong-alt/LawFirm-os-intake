@@ -216,7 +216,7 @@ def test_build_ui_review_data_bundle_tracks_renderable_local_json(tmp_path):
     assert out.is_file()
     assert bundle.status == "ready_for_review"
     assert bundle.detail_report_count == 14
-    assert bundle.required_detail_report_count == 7
+    assert bundle.required_detail_report_count == 8
     assert bundle.present_detail_report_count == 8
     assert bundle.missing_required_detail_report_count == 0
     assert bundle.external_write_report_count == 0
@@ -408,7 +408,7 @@ def test_build_ui_review_data_bundle_requires_labor_employment_executable_covera
     details = {report.report_kind: report for report in bundle.detail_reports}
     assert bundle.status == "blocked_missing_required_reports"
     assert bundle.detail_report_count == 14
-    assert bundle.required_detail_report_count == 7
+    assert bundle.required_detail_report_count == 8
     assert bundle.present_detail_report_count == 7
     assert bundle.missing_required_detail_report_count == 1
     assert details["labor_employment_executable_coverage"].present is False
@@ -416,6 +416,27 @@ def test_build_ui_review_data_bundle_requires_labor_employment_executable_covera
     assert details["labor_employment_executable_coverage"].renderer == (
         "LaborEmploymentExecutableCoveragePanel"
     )
+
+
+def test_build_ui_review_data_bundle_requires_budget_learning_loop(tmp_path):
+    run_root = tmp_path / "demo"
+    run_root.mkdir()
+    _write_ui_detail_reports(run_root, include_budget_learning_loop=False)
+
+    bundle = build_ui_review_data_bundle(
+        run_root=run_root,
+        out_path=run_root / "ui_review_data_bundle.json",
+        generated_at="2026-07-02T00:00:00Z",
+    )
+
+    details = {report.report_kind: report for report in bundle.detail_reports}
+    assert bundle.status == "blocked_missing_required_reports"
+    assert bundle.required_detail_report_count == 8
+    assert bundle.present_detail_report_count == 7
+    assert bundle.missing_required_detail_report_count == 1
+    assert details["budget_learning_loop"].present is False
+    assert details["budget_learning_loop"].required is True
+    assert details["budget_learning_loop"].renderer == "BudgetLearningLoopPanel"
 
 
 def test_build_ui_review_data_bundle_blocks_missing_required_report(tmp_path):

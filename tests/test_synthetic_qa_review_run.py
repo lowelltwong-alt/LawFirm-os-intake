@@ -42,7 +42,7 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
 
     assert code == 0
     assert report["status"] == "synthetic_qa_review_run_ready"
-    assert report["step_count"] == len(report["steps"]) == 22
+    assert report["step_count"] == len(report["steps"]) == 23
     assert report["failed_step_count"] == 0
     assert report["candidate_only"] is True
     assert report["synthetic_only"] is True
@@ -70,6 +70,7 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
         "labor_employment_budget_output_expectations",
         "labor_employment_budget_qa_gate",
         "labor_employment_budget_fact_gold",
+        "budget_learning_loop",
         "synthetic_qa_bundle",
         "ui_review_manifest",
         "ui_review_data_bundle",
@@ -103,7 +104,7 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
         report["report_kind"]: report for report in ui_data_bundle["detail_reports"]
     }
     assert ui_data_bundle["detail_report_count"] == 14
-    assert ui_data_bundle["present_detail_report_count"] == 13
+    assert ui_data_bundle["present_detail_report_count"] == 14
     assert ui_detail_reports["synthetic_qa_review_run"]["present"] is True
     assert ui_detail_reports["synthetic_qa_review_run"]["artifact_ref"] == str(
         run_root / SYNTHETIC_QA_REVIEW_RUN_REPORT_FILENAME
@@ -113,8 +114,11 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
     assert ui_detail_reports["matter_linking_qa_gate"]["present"] is True
     assert ui_detail_reports["labor_employment_executable_coverage"]["present"] is True
     assert ui_detail_reports["labor_employment_budget_qa_gate"]["present"] is True
-    assert ui_detail_reports["budget_learning_loop"]["present"] is False
-    assert ui_detail_reports["budget_learning_loop"]["required"] is False
+    assert ui_detail_reports["budget_learning_loop"]["present"] is True
+    assert ui_detail_reports["budget_learning_loop"]["required"] is True
+    assert ui_detail_reports["budget_learning_loop"]["status"] == (
+        "budget_learning_loop_ready_for_review"
+    )
     assert ui_detail_reports["synthetic_confidence_summary"]["present"] is True
     assert ui_detail_reports["synthetic_qa_blocker_report"]["present"] is True
     assert ui_detail_reports["synthetic_qa_review_outcome"]["present"] is True

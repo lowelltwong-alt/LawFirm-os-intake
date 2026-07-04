@@ -4,11 +4,11 @@
   "status": "pending_review",
   "run_root_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\complete-le-fixture-gaps\\full-run-final",
   "out_dir_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\complete-le-fixture-gaps\\full-run-final\\quality",
-  "artifact_count": 16,
-  "required_artifact_count": 16,
+  "artifact_count": 17,
+  "required_artifact_count": 17,
   "missing_required_artifact_count": 0,
   "blocked_artifact_count": 0,
-  "pending_artifact_count": 14,
+  "pending_artifact_count": 15,
   "failed_artifact_count": 0,
   "artifacts": [
     {
@@ -234,6 +234,21 @@
       "source_sha256": "sha256:da3c58b911949bcbee6db21418437fd91c5db1880b02d2200a8e2c1941047145",
       "notes": [
         "Found labor_employment_budget_fact_gold_report.json; source status=passed; bundle status=passed."
+      ]
+    },
+    {
+      "artifact_id": "budget_learning_loop",
+      "label": "Budget Learning Loop",
+      "file_name": "budget_learning_loop_report.json",
+      "required": true,
+      "present": true,
+      "status": "pending_review",
+      "gate_state": "pending_review",
+      "artifact_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\complete-le-fixture-gaps\\full-run-final\\quality\\budget_learning_loop_report.json",
+      "copied_to_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\complete-le-fixture-gaps\\full-run-final\\quality\\budget_learning_loop_report.json",
+      "source_sha256": "sha256:96d75a7427fc1b2c02915041884dadb131d8abded1631ab1093c61f7888f037b",
+      "notes": [
+        "Found budget_learning_loop_report.json; source status=budget_learning_loop_ready_for_review; bundle status=pending_review."
       ]
     },
     {

@@ -126,7 +126,6 @@ DETAIL_REPORT_SPECS = [
         report_kind="budget_learning_loop",
         file_name="budget_learning_loop_report.json",
         renderer="BudgetLearningLoopPanel",
-        required=False,
     ),
 ]
 
