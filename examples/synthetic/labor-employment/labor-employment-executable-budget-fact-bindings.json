@@ -759,6 +759,73 @@
       ]
     },
     {
+      "binding_case_id": "le-restrictive-covenant-messy-thread.fact-binding.v0_1",
+      "executable_fixture_id": "le-restrictive-covenant-messy-thread.executable.v0_1",
+      "expected_budget_readiness_state": "range_only_pending_human_review",
+      "expected_budget_gate_effect": "allow_range_or_hours_only_pending_review",
+      "expected_budget_treatment": "hours_only_or_broad_range",
+      "fact_bindings": [
+        {
+          "fact_id": "joint_employer_or_affiliate_structure",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": [
+            "Northstar Field Systems",
+            "affiliate",
+            "joint-employer candidate"
+          ],
+          "reason": "The messy thread identifies an affiliate or joint-employer candidate, but the represented-client and entity-topology consequences remain unresolved budget drivers."
+        },
+        {
+          "fact_id": "forum_removed_and_arbitration_posture",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": [
+            "Forum and arbitration posture are not confirmed",
+            "forum-selection clause",
+            "emergency injunction"
+          ],
+          "reason": "Forum, arbitration, forum-selection, and emergency-injunction signals are source-present procedural candidates, not filing, docketing, or scenario-selection authority."
+        },
+        {
+          "fact_id": "esi_custodians_and_sources",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": [
+            "company laptop",
+            "laptop logs",
+            "email export logs",
+            "CRM access logs",
+            "cloud drive export",
+            "device inventory"
+          ],
+          "reason": "The thread identifies device, cloud, email, CRM, and inventory sources, but custodian scope and review volume remain candidate-only."
+        },
+        {
+          "fact_id": "expert_and_vendor_needs",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": [
+            "forensic vendor may be needed",
+            "no vendor estimate",
+            "preapproval",
+            "not automatic expense approval"
+          ],
+          "reason": "The source flags possible forensic vendor work and preapproval review, but it does not supply an estimate, expert budget, or authority to incur expenses."
+        },
+        {
+          "fact_id": "policy_handbook_contract_documents",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": [
+            "complete agreement and policy file are not included",
+            "confidentiality",
+            "trade secret protection language",
+            "customer non-solicitation"
+          ],
+          "reason": "Restrictive-covenant and policy terms appear only as excerpts in the messy thread, so enforceability, scope, and contract completeness remain review-only."
+        }
+      ],
+      "red_team_notes": [
+        "The bridge must not double-count duplicate quoted-thread text, treat forensic vendor mentions as approved expenses, or confirm Northstar Field Systems as a represented client."
+      ]
+    },
+    {
       "binding_case_id": "le-restrictive-covenant-missing-attachment.fact-binding.v0_1",
       "executable_fixture_id": "le-restrictive-covenant-missing-attachment.executable.v0_1",
       "expected_budget_readiness_state": "blocked_missing_critical_facts",

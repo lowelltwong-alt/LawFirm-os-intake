@@ -699,6 +699,55 @@
       ]
     },
     {
+      "executable_fixture_id": "le-restrictive-covenant-messy-thread.executable.v0_1",
+      "source_bundle_ref": "examples/synthetic/labor-employment/executable-fixtures/le-restrictive-covenant-messy-thread.source-bundle.json",
+      "linked_pack_case_ids": [
+        "le-restrictive-covenant-messy-thread.v0_1"
+      ],
+      "family": "restrictive_covenant_trade_secret",
+      "variant": "messy_thread",
+      "expected_budget_readiness_state": "range_only_pending_human_review",
+      "expected_budget_gate_effect": "allow_range_or_hours_only_pending_review",
+      "expected_budget_treatment": "hours_only_or_broad_range",
+      "expected_min_sources": 3,
+      "expected_min_segments": 6,
+      "expected_min_missing_sources": 0,
+      "expected_min_duplicate_sources": 1,
+      "expected_source_signal_terms": [
+        "restrictive covenant",
+        "trade secret",
+        "former employee",
+        "new employer",
+        "forensic vendor",
+        "preapproval review",
+        "not automatic expense approval",
+        "affiliate",
+        "joint-employer candidate",
+        "forum-selection",
+        "complete agreement and policy file are not included",
+        "laptop logs",
+        "email export logs",
+        "CRM access logs",
+        "cloud drive export",
+        "device inventory"
+      ],
+      "expected_preflight_exception_labels": [
+        "duplicate_source_detected",
+        "critic_date_or_deadline_requires_review"
+      ],
+      "expected_budget_fact_gap_ids": [
+        "joint_employer_or_affiliate_structure",
+        "forum_removed_and_arbitration_posture",
+        "esi_custodians_and_sources",
+        "expert_and_vendor_needs",
+        "policy_handbook_contract_documents"
+      ],
+      "red_team_notes": [
+        "Vendor mentions must create preapproval review and range or hours-only treatment, not expense approval.",
+        "Duplicate quoted thread text must not double-count device, custodian, vendor, or emergency-injunction scope."
+      ]
+    },
+    {
       "executable_fixture_id": "le-restrictive-covenant-missing-attachment.executable.v0_1",
       "source_bundle_ref": "examples/synthetic/labor-employment/executable-fixtures/le-restrictive-covenant-missing-attachment.source-bundle.json",
       "linked_pack_case_ids": [

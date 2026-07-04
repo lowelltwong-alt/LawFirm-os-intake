@@ -1,0 +1,126 @@
+{
+  "schema_version": "0.1",
+  "bundle_id": "syn-le-restrictive-covenant-messy-thread-001",
+  "data_origin": "synthetic",
+  "contains_real_client_data": false,
+  "contains_real_matter_data": false,
+  "contains_privileged_data": false,
+  "sources": [
+    {
+      "source_id": "syn-le-restrictive-covenant-messy-thread-001",
+      "source_type": "correspondence_dump",
+      "filename": "synthetic_restrictive_covenant_messy_thread.txt",
+      "text": "From: general-counsel@northstar-sensorworks.example\nTo: intake@synthetic-law.example\nDate: July 2, 2026\nSubject: Trade secret and restrictive covenant thread - vendor review needed\n\nThe current synthetic matter concerns Northstar SensorWorks LLC, former employee Avery Stone, and new employer HelioFab Robotics Inc. The current sender describes a restrictive covenant and trade secret dispute involving alleged customer solicitation, possible confidential design files, and a potential emergency injunction or temporary restraining order. Northstar SensorWorks LLC may be the prospective represented client, but Northstar Field Systems may be an affiliate or joint-employer candidate because some customer accounts and device inventory records sit in that affiliate's systems. Forum and arbitration posture are not confirmed; the thread says there may be a forum-selection clause but the complete agreement and policy file are not included. Device and ESI references include a company laptop, laptop logs, email export logs, CRM access logs, a cloud drive export, and a device inventory. A forensic vendor may be needed for device imaging and cloud-drive triage, but no vendor estimate, expert budget, or preapproval has been supplied. Treat the forensic vendor mention as preapproval review, not automatic expense approval.\n\n-----Original Message-----\nFrom: it-admin@northstar-sensorworks.example\nTo: general-counsel@northstar-sensorworks.example\nSubject: RE: Stone device and cloud access\n\nThe IT administrator preserved laptop logs, email export logs, CRM access logs, cloud drive export metadata, and one device inventory for Avery Stone. The sales operations manager and customer-transition lead may also be custodians. A forensic vendor could image the company laptop if legal approves the scope.\n\n-----Original Message-----\nFrom: sales-ops@northstar-fieldsystems.example\nTo: general-counsel@northstar-sensorworks.example\nSubject: RE: Field Systems customer accounts\n\nNorthstar Field Systems maintains some customer account notes and might be an affiliate or joint-employer candidate for account-transition evidence. Do not assume Field Systems is the represented client without review.\n\n-----Original Message-----\nFrom: contracts@northstar-sensorworks.example\nTo: general-counsel@northstar-sensorworks.example\nSubject: RE: Agreement excerpt\n\nThe available excerpt mentions confidentiality, trade secret protection language, customer non-solicitation, and possible forum-selection language, but the complete employment agreement and policy file are not included in this thread.",
+      "metadata": {
+        "synthetic": true,
+        "thread_state": "messy_quoted_history",
+        "vendor_preapproval_risk": true
+      }
+    },
+    {
+      "source_id": "syn-le-restrictive-covenant-messy-thread-duplicate-001",
+      "source_type": "correspondence_dump",
+      "filename": "synthetic_restrictive_covenant_messy_thread_duplicate.txt",
+      "text": "From: general-counsel@northstar-sensorworks.example\nTo: intake@synthetic-law.example\nDate: July 2, 2026\nSubject: Trade secret and restrictive covenant thread - vendor review needed\n\nThe current synthetic matter concerns Northstar SensorWorks LLC, former employee Avery Stone, and new employer HelioFab Robotics Inc. The current sender describes a restrictive covenant and trade secret dispute involving alleged customer solicitation, possible confidential design files, and a potential emergency injunction or temporary restraining order. Northstar SensorWorks LLC may be the prospective represented client, but Northstar Field Systems may be an affiliate or joint-employer candidate because some customer accounts and device inventory records sit in that affiliate's systems. Forum and arbitration posture are not confirmed; the thread says there may be a forum-selection clause but the complete agreement and policy file are not included. Device and ESI references include a company laptop, laptop logs, email export logs, CRM access logs, a cloud drive export, and a device inventory. A forensic vendor may be needed for device imaging and cloud-drive triage, but no vendor estimate, expert budget, or preapproval has been supplied. Treat the forensic vendor mention as preapproval review, not automatic expense approval.\n\n-----Original Message-----\nFrom: it-admin@northstar-sensorworks.example\nTo: general-counsel@northstar-sensorworks.example\nSubject: RE: Stone device and cloud access\n\nThe IT administrator preserved laptop logs, email export logs, CRM access logs, cloud drive export metadata, and one device inventory for Avery Stone. The sales operations manager and customer-transition lead may also be custodians. A forensic vendor could image the company laptop if legal approves the scope.\n\n-----Original Message-----\nFrom: sales-ops@northstar-fieldsystems.example\nTo: general-counsel@northstar-sensorworks.example\nSubject: RE: Field Systems customer accounts\n\nNorthstar Field Systems maintains some customer account notes and might be an affiliate or joint-employer candidate for account-transition evidence. Do not assume Field Systems is the represented client without review.\n\n-----Original Message-----\nFrom: contracts@northstar-sensorworks.example\nTo: general-counsel@northstar-sensorworks.example\nSubject: RE: Agreement excerpt\n\nThe available excerpt mentions confidentiality, trade secret protection language, customer non-solicitation, and possible forum-selection language, but the complete employment agreement and policy file are not included in this thread.",
+      "metadata": {
+        "synthetic": true,
+        "thread_state": "duplicate_messy_quoted_history",
+        "vendor_preapproval_risk": true
+      }
+    },
+    {
+      "source_id": "syn-le-restrictive-covenant-messy-vendor-note-001",
+      "source_type": "attachment_text",
+      "filename": "forensic-vendor-scope-note.txt",
+      "text": "Synthetic forensic vendor scope note: A forensic vendor may be needed for device imaging, cloud-drive triage, email export validation, and CRM access-log review. The note is not a vendor estimate, expert budget, preapproval, or authority to incur expenses. It exists only to force candidate budget paths for vendor preapproval review.",
+      "metadata": {
+        "synthetic": true,
+        "document_type": "forensic_vendor_scope_note",
+        "vendor_preapproval_risk": true
+      }
+    }
+  ],
+  "fixture_hints": {
+    "provided_fields": [
+      "employee_claimant_identity",
+      "employer_or_defendant_identity",
+      "joint_employer_or_affiliate_structure",
+      "claims_and_causes_of_action",
+      "forum_removed_and_arbitration_posture",
+      "esi_custodians_and_sources",
+      "expert_and_vendor_needs",
+      "policy_handbook_contract_documents"
+    ],
+    "entities": [
+      {
+        "name": "Northstar SensorWorks LLC",
+        "role_candidates": [
+          {
+            "role": "employer_or_defendant",
+            "confidence": 0.76
+          },
+          {
+            "role": "prospective_represented_client",
+            "confidence": 0.66
+          }
+        ]
+      },
+      {
+        "name": "Avery Stone",
+        "role_candidates": [
+          {
+            "role": "former_employee",
+            "confidence": 0.78
+          },
+          {
+            "role": "adverse_party",
+            "confidence": 0.6
+          }
+        ]
+      },
+      {
+        "name": "HelioFab Robotics Inc.",
+        "role_candidates": [
+          {
+            "role": "new_employer",
+            "confidence": 0.73
+          },
+          {
+            "role": "third_party",
+            "confidence": 0.54
+          }
+        ]
+      },
+      {
+        "name": "Northstar Field Systems",
+        "role_candidates": [
+          {
+            "role": "affiliate",
+            "confidence": 0.68
+          },
+          {
+            "role": "joint_employer_candidate",
+            "confidence": 0.58
+          },
+          {
+            "role": "unknown",
+            "confidence": 0.47
+          }
+        ]
+      },
+      {
+        "name": "forensic vendor",
+        "role_candidates": [
+          {
+            "role": "vendor_candidate",
+            "confidence": 0.66
+          },
+          {
+            "role": "requires_preapproval_review",
+            "confidence": 0.61
+          }
+        ]
+      }
+    ]
+  }
+}

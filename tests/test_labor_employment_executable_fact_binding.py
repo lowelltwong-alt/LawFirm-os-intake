@@ -49,14 +49,14 @@ def test_labor_employment_executable_fact_binding_binds_gaps_without_side_effect
     )
 
     assert report.status == "labor_employment_executable_budget_fact_bindings_ready_for_review"
-    assert persisted.case_count == 24
+    assert persisted.case_count == 25
     assert persisted.failed_case_count == 0
-    assert persisted.fact_binding_count == 87
-    assert persisted.critical_fact_binding_count == 46
+    assert persisted.fact_binding_count == 92
+    assert persisted.critical_fact_binding_count == 48
     assert persisted.missing_critical_fact_count == 18
-    assert persisted.source_present_confirmation_fact_count == 53
+    assert persisted.source_present_confirmation_fact_count == 58
     assert persisted.source_present_unresolved_critical_driver_count == 2
-    assert persisted.evidence_bound_fact_count == 87
+    assert persisted.evidence_bound_fact_count == 92
     assert persisted.exception_bound_fact_count == 26
     assert persisted.missing_policy_fact_count == 0
     assert persisted.missing_source_signal_count == 0
@@ -393,6 +393,33 @@ def test_labor_employment_executable_fact_binding_binds_gaps_without_side_effect
         == "source_present_needs_confirmation"
     )
     assert restrictive_clean_bindings["esi_custodians_and_sources"].required_level == "critical"
+    restrictive_messy_bindings = {
+        binding.fact_id: binding
+        for binding in cases["le-restrictive-covenant-messy-thread.executable.v0_1"].fact_bindings
+    }
+    assert set(restrictive_messy_bindings) == {
+        "joint_employer_or_affiliate_structure",
+        "forum_removed_and_arbitration_posture",
+        "esi_custodians_and_sources",
+        "expert_and_vendor_needs",
+        "policy_handbook_contract_documents",
+    }
+    assert all(
+        binding.binding_state == "source_bound_gap_candidate"
+        for binding in restrictive_messy_bindings.values()
+    )
+    assert all(
+        binding.fact_resolution_state == "source_present_needs_confirmation"
+        for binding in restrictive_messy_bindings.values()
+    )
+    assert restrictive_messy_bindings["joint_employer_or_affiliate_structure"].required_level == (
+        "critical"
+    )
+    assert restrictive_messy_bindings["esi_custodians_and_sources"].required_level == "critical"
+    assert (
+        restrictive_messy_bindings["expert_and_vendor_needs"].recommended_budget_treatment
+        == "candidate_range_budget_after_review"
+    )
     assert restrictive_clean_bindings["expert_and_vendor_needs"].binding_state == (
         "source_bound_gap_candidate"
     )
@@ -559,7 +586,7 @@ def test_labor_employment_executable_fact_binding_manifest_is_candidate_only(rep
     assert manifest.lake_write_performed is False
     assert manifest.sqlite_write_performed is False
     assert manifest.external_writes_performed is False
-    assert len(manifest.bindings) == 24
+    assert len(manifest.bindings) == 25
 
 
 def test_labor_employment_executable_fact_binding_blocks_missing_policy_fact(
@@ -646,9 +673,9 @@ def test_labor_employment_executable_fact_binding_cli_writes_report(
 
     assert exit_code == 0
     assert report["status"] == ("labor_employment_executable_budget_fact_bindings_ready_for_review")
-    assert report["case_count"] == 24
-    assert report["fact_binding_count"] == 87
+    assert report["case_count"] == 25
+    assert report["fact_binding_count"] == 92
     assert report["missing_critical_fact_count"] == 18
-    assert report["source_present_confirmation_fact_count"] == 53
+    assert report["source_present_confirmation_fact_count"] == 58
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out

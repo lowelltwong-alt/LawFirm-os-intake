@@ -61,13 +61,13 @@ def test_labor_employment_executable_driver_binding_maps_fact_gaps_to_budget_dri
     )
 
     assert report.status == "labor_employment_executable_driver_bindings_ready_for_review"
-    assert persisted.case_count == 24
+    assert persisted.case_count == 25
     assert persisted.failed_case_count == 0
-    assert persisted.driver_binding_count == 116
-    assert persisted.source_bound_driver_count == 116
+    assert persisted.driver_binding_count == 122
+    assert persisted.source_bound_driver_count == 122
     assert persisted.unbound_driver_count == 0
     assert persisted.critical_driver_block_count == 21
-    assert persisted.critical_driver_review_only_count == 34
+    assert persisted.critical_driver_review_only_count == 37
     assert persisted.missing_driver_dimensions == []
     assert set(persisted.covered_driver_dimensions) == set(persisted.required_driver_dimensions)
     assert all(check.status == "passed" for check in persisted.checks)
@@ -158,6 +158,30 @@ def test_labor_employment_executable_driver_binding_maps_fact_gaps_to_budget_dri
     assert restrictive_clean["esi_discovery"].critical_driver_review_only is True
     assert restrictive_clean["expert_vendor_needs"].matched_fact_ids == ["expert_and_vendor_needs"]
     assert cases["le-restrictive-covenant-clean.executable.v0_1"].critical_driver_block_count == 0
+    restrictive_messy = {
+        binding.driver_dimension: binding
+        for binding in cases["le-restrictive-covenant-messy-thread.executable.v0_1"].driver_bindings
+    }
+    assert set(restrictive_messy) == {
+        "party_topology",
+        "forum_arbitration",
+        "esi_discovery",
+        "deposition_plan",
+        "expert_vendor_needs",
+        "policy_contract_documents",
+    }
+    assert restrictive_messy["party_topology"].critical_driver_review_only is True
+    assert restrictive_messy["esi_discovery"].critical_driver_review_only is True
+    assert restrictive_messy["deposition_plan"].critical_driver_review_only is True
+    assert restrictive_messy["expert_vendor_needs"].critical_driver_block is False
+    assert restrictive_messy["policy_contract_documents"].matched_fact_ids == [
+        "policy_handbook_contract_documents"
+    ]
+    assert cases["le-restrictive-covenant-messy-thread.executable.v0_1"].driver_binding_count == 6
+    assert (
+        cases["le-restrictive-covenant-messy-thread.executable.v0_1"].critical_driver_block_count
+        == 0
+    )
     admin = {
         binding.driver_dimension: binding
         for binding in cases["le-admin-exhaustion-clean.executable.v0_1"].driver_bindings
@@ -426,7 +450,7 @@ def test_labor_employment_executable_driver_binding_cli_writes_candidate_report(
 
     assert exit_code == 0
     assert report["status"] == "labor_employment_executable_driver_bindings_ready_for_review"
-    assert report["case_count"] == 24
+    assert report["case_count"] == 25
     assert report["missing_driver_dimensions"] == []
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out
