@@ -4,6 +4,7 @@ import { createRoot } from "react-dom/client";
 import demoBudgetLearningLoop from "./fixtures/demo-budget-learning-loop-report.json";
 import demoLaborEmploymentBlockedDriverReview from "./fixtures/demo-labor-employment-blocked-driver-impact-review-report.json";
 import demoLaborEmploymentBudgetLearningFixtures from "./fixtures/demo-labor-employment-budget-learning-fixtures-report.json";
+import demoLaborEmploymentBudgetOutcomeReplayExecution from "./fixtures/demo-labor-employment-budget-outcome-replay-execution-report.json";
 import demoLaborEmploymentBudgetOutcomeReplayReadiness from "./fixtures/demo-labor-employment-budget-outcome-replay-readiness-report.json";
 import demoLaborEmploymentBudgetOutputExpectations from "./fixtures/demo-labor-employment-budget-output-expectations-report.json";
 import demoLaborEmploymentBudgetQAGate from "./fixtures/demo-labor-employment-budget-qa-gate-report.json";
@@ -27,6 +28,7 @@ import {
   assertBudgetLearningLoopReport,
   assertLaborEmploymentBudgetOutputExpectationReport,
   assertLaborEmploymentBudgetLearningFixtureReport,
+  assertLaborEmploymentBudgetOutcomeReplayExecutionReport,
   assertLaborEmploymentBudgetOutcomeReplayReadinessReport,
   assertLaborEmploymentBudgetQAGateReport,
   assertLaborEmploymentBlockedDriverImpactReviewReport,
@@ -48,6 +50,7 @@ import type {
   GateState,
   LaborEmploymentAllowedBudgetOutput,
   LaborEmploymentBudgetLearningFixtureReport,
+  LaborEmploymentBudgetOutcomeReplayExecutionReport,
   LaborEmploymentBudgetOutcomeReplayReadinessReport,
   LaborEmploymentBudgetOutputExpectationCase,
   LaborEmploymentBudgetOutputExpectationReport,
@@ -111,6 +114,8 @@ const laborEmploymentBudgetLearningFixtures =
   demoLaborEmploymentBudgetLearningFixtures as LaborEmploymentBudgetLearningFixtureReport;
 const laborEmploymentBudgetOutcomeReplayReadiness =
   demoLaborEmploymentBudgetOutcomeReplayReadiness as LaborEmploymentBudgetOutcomeReplayReadinessReport;
+const laborEmploymentBudgetOutcomeReplayExecution =
+  demoLaborEmploymentBudgetOutcomeReplayExecution as LaborEmploymentBudgetOutcomeReplayExecutionReport;
 const budgetLearningLoop = demoBudgetLearningLoop as BudgetLearningLoopReport;
 const bundleContractFailures = assertUIReviewDataBundle(reviewDataBundle);
 const manifestContractFailures = assertReadOnlyManifest(manifest);
@@ -142,6 +147,10 @@ const budgetLearningFixtureFailures = assertLaborEmploymentBudgetLearningFixture
 const budgetOutcomeReplayFailures = assertLaborEmploymentBudgetOutcomeReplayReadinessReport(
   laborEmploymentBudgetOutcomeReplayReadiness,
 );
+const budgetOutcomeReplayExecutionFailures =
+  assertLaborEmploymentBudgetOutcomeReplayExecutionReport(
+    laborEmploymentBudgetOutcomeReplayExecution,
+  );
 const budgetLearningLoopFailures = assertBudgetLearningLoopReport(budgetLearningLoop);
 const contractFailures = [
   ...bundleContractFailures,
@@ -162,6 +171,7 @@ const contractFailures = [
   ...budgetQAGateFailures,
   ...budgetLearningFixtureFailures,
   ...budgetOutcomeReplayFailures,
+  ...budgetOutcomeReplayExecutionFailures,
   ...budgetLearningLoopFailures,
 ];
 
@@ -2233,6 +2243,118 @@ function LaborEmploymentBudgetOutcomeReplayReadinessPanel({
   );
 }
 
+function LaborEmploymentBudgetOutcomeReplayExecutionPanel({
+  report,
+}: {
+  report: LaborEmploymentBudgetOutcomeReplayExecutionReport;
+}) {
+  const passedChecks = report.checks.filter((check) => check.status === "passed").length;
+  const failedCases = report.cases.filter((testCase) => testCase.status === "failed");
+  const sampleSlots = report.cases.flatMap((testCase) => testCase.artifact_slots).slice(0, 8);
+
+  return (
+    <section
+      className="panel budget-outcome-replay-panel"
+      aria-labelledby="le-budget-outcome-replay-execution-title"
+    >
+      <div className="panel-heading">
+        <div>
+          <h2 id="le-budget-outcome-replay-execution-title">
+            L&amp;E Budget Outcome Replay Execution
+          </h2>
+          <code>{report.outcome_replay_execution_report_id}</code>
+        </div>
+        <span
+          className={
+            budgetOutcomeReplayExecutionFailures.length === 0
+              ? "state state-passed"
+              : "state state-failed"
+          }
+        >
+          {budgetOutcomeReplayExecutionFailures.length === 0 ? "slots ready" : "slots blocked"}
+        </span>
+      </div>
+
+      <div className="matrix-summary" aria-label="L&E budget outcome replay execution summary">
+        <div>
+          <span>Cases</span>
+          <strong>
+            {report.materialized_case_count}/{report.fixture_count}
+          </strong>
+        </div>
+        <div>
+          <span>Artifact Slots</span>
+          <strong>
+            {report.materialized_artifact_slot_count}/{report.expected_artifact_slot_count}
+          </strong>
+        </div>
+        <div>
+          <span>Runtime Artifacts</span>
+          <strong>{report.runtime_artifact_count}</strong>
+        </div>
+        <div>
+          <span>Checks Passed</span>
+          <strong>
+            {passedChecks}/{report.checks.length}
+          </strong>
+        </div>
+      </div>
+
+      <div className="warning-strip">
+        <strong>Slots only.</strong>
+        <span>
+          These candidate files reserve deterministic replay outputs; they are not billing,
+          carrier response, Lake, SQLite, calibration, or learning artifacts.
+        </span>
+      </div>
+
+      <div className="budget-bucket-grid" aria-label="L&E outcome replay execution coverage">
+        <div className="budget-bucket">
+          <span>Loop Types</span>
+          <strong>{report.covered_learning_loop_types.length}</strong>
+          <TokenList items={report.covered_learning_loop_types} limit={5} />
+        </div>
+        <div className="budget-bucket">
+          <span>Failed Cases</span>
+          <strong>{failedCases.length}</strong>
+          <TokenList items={failedCases.map((testCase) => testCase.learning_fixture_id)} limit={3} />
+        </div>
+        <div className="budget-bucket">
+          <span>Lake Labels</span>
+          <strong>{report.candidate_exception_lake_labels.length}</strong>
+          <TokenList items={report.candidate_exception_lake_labels} limit={4} />
+        </div>
+        <div className="budget-bucket">
+          <span>Next Gates</span>
+          <strong>{report.required_next_gates.length}</strong>
+          <TokenList items={report.required_next_gates} limit={3} />
+        </div>
+      </div>
+
+      <div className="fixture-table" aria-label="L&E outcome replay execution slots">
+        {sampleSlots.map((slot) => (
+          <div className="fixture-row" key={`${slot.loop_type}-${slot.expected_artifact_name}`}>
+            <div>
+              <strong>{slot.expected_artifact_name}</strong>
+              <span>{slot.loop_type}</span>
+            </div>
+            <span
+              className={
+                slot.artifact_slot_status === "materialized_candidate_slot"
+                  ? "state state-passed"
+                  : "state state-failed"
+              }
+            >
+              {slot.artifact_slot_status}
+            </span>
+            <TokenList items={slot.evidence_refs} limit={2} />
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function LaborEmploymentFixtureDrilldownPanel({
   outputReport,
   blockedReviewReport,
@@ -2480,6 +2602,9 @@ function App() {
       <LaborEmploymentBudgetLearningFixturesPanel report={laborEmploymentBudgetLearningFixtures} />
       <LaborEmploymentBudgetOutcomeReplayReadinessPanel
         report={laborEmploymentBudgetOutcomeReplayReadiness}
+      />
+      <LaborEmploymentBudgetOutcomeReplayExecutionPanel
+        report={laborEmploymentBudgetOutcomeReplayExecution}
       />
       <LaborEmploymentFixtureDrilldownPanel
         outputReport={laborEmploymentBudgetOutputExpectations}

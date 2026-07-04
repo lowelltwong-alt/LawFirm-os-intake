@@ -744,6 +744,39 @@ from pathlib import Path
 import sys
 
 sys.path.insert(0, str(Path.cwd() / "src"))
+from lawfirm_os_intake.labor_employment_budget_outcome_replay_execution import (
+    run_labor_employment_budget_outcome_replay_execution,
+)
+
+report, _ = run_labor_employment_budget_outcome_replay_execution(
+    seed_manifest_path=(
+        "examples/synthetic/labor-employment/"
+        "labor-employment-budget-outcome-replay-seeds.json"
+    ),
+    readiness_report_path=(
+        ".lawfirm-os-intake/smoke/quality/le-budget-outcome-replay-readiness/"
+        "labor_employment_budget_outcome_replay_readiness_report.json"
+    ),
+    out_dir=".lawfirm-os-intake/smoke/quality/le-budget-outcome-replay-execution",
+)
+raise SystemExit(
+    0
+    if report.status == "labor_employment_budget_outcome_replay_execution_ready_for_review"
+    else 1
+)
+PY
+test -s ".lawfirm-os-intake/smoke/quality/le-budget-outcome-replay-execution/labor_employment_budget_outcome_replay_execution_report.json"
+grep -q '"status": "labor_employment_budget_outcome_replay_execution_ready_for_review"' \
+  ".lawfirm-os-intake/smoke/quality/le-budget-outcome-replay-execution/labor_employment_budget_outcome_replay_execution_report.json"
+grep -q '"materialized_artifact_slot_count": 38' \
+  ".lawfirm-os-intake/smoke/quality/le-budget-outcome-replay-execution/labor_employment_budget_outcome_replay_execution_report.json"
+grep -q '"runtime_artifact_count": 0' \
+  ".lawfirm-os-intake/smoke/quality/le-budget-outcome-replay-execution/labor_employment_budget_outcome_replay_execution_report.json"
+"$PYTHON_BIN" -B - <<'PY'
+from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path.cwd() / "src"))
 from lawfirm_os_intake.labor_employment_budget_fact_gold import (
     run_labor_employment_budget_fact_gold_validation,
 )

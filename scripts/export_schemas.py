@@ -238,6 +238,10 @@ from lawfirm_os_intake.models import (  # noqa: E402
     LaborEmploymentBudgetLearningFixtureManifest,
     LaborEmploymentBudgetLearningFixtureReport,
     LaborEmploymentBudgetLearningFixtureSpec,
+    LaborEmploymentBudgetOutcomeReplayExecutionArtifact,
+    LaborEmploymentBudgetOutcomeReplayExecutionCase,
+    LaborEmploymentBudgetOutcomeReplayExecutionCheck,
+    LaborEmploymentBudgetOutcomeReplayExecutionReport,
     LaborEmploymentBudgetOutcomeReplayReadinessCase,
     LaborEmploymentBudgetOutcomeReplayReadinessCheck,
     LaborEmploymentBudgetOutcomeReplayReadinessReport,
@@ -475,6 +479,18 @@ MODELS = {
     ),
     "labor-employment-budget-outcome-replay-readiness-report.schema.json": (
         LaborEmploymentBudgetOutcomeReplayReadinessReport
+    ),
+    "labor-employment-budget-outcome-replay-execution-artifact.schema.json": (
+        LaborEmploymentBudgetOutcomeReplayExecutionArtifact
+    ),
+    "labor-employment-budget-outcome-replay-execution-case.schema.json": (
+        LaborEmploymentBudgetOutcomeReplayExecutionCase
+    ),
+    "labor-employment-budget-outcome-replay-execution-check.schema.json": (
+        LaborEmploymentBudgetOutcomeReplayExecutionCheck
+    ),
+    "labor-employment-budget-outcome-replay-execution-report.schema.json": (
+        LaborEmploymentBudgetOutcomeReplayExecutionReport
     ),
     "labor-employment-executable-coverage-case.schema.json": (
         LaborEmploymentExecutableCoverageCase

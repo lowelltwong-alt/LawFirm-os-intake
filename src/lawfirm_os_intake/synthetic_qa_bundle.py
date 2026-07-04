@@ -198,6 +198,17 @@ QA_BUNDLE_ARTIFACTS = [
         ),
     ),
     QABundleArtifactSpec(
+        artifact_id="labor_employment_budget_outcome_replay_execution",
+        label="Labor/Employment Budget Outcome Replay Execution",
+        file_name="labor_employment_budget_outcome_replay_execution_report.json",
+        required=True,
+        missing_note=(
+            "Run execute-labor-employment-budget-outcome-replay so concrete candidate "
+            "artifact slots exist before replay outputs, calibration, or model comparison "
+            "are treated as covered."
+        ),
+    ),
+    QABundleArtifactSpec(
         artifact_id="labor_employment_budget_fact_gold",
         label="Labor/Employment Budget Fact Gold",
         file_name="labor_employment_budget_fact_gold_report.json",
@@ -342,6 +353,11 @@ def run_synthetic_qa_bundle(
             root=root,
             explicit_path=None,
             file_name="labor_employment_budget_outcome_replay_readiness_report.json",
+        ),
+        "labor_employment_budget_outcome_replay_execution": _resolve_artifact_source(
+            root=root,
+            explicit_path=None,
+            file_name="labor_employment_budget_outcome_replay_execution_report.json",
         ),
         "labor_employment_budget_fact_gold": _resolve_artifact_source(
             root=root,

@@ -3,6 +3,7 @@ import type {
   BudgetLearningLoopReport,
   LaborEmploymentBudgetLearningFixtureReport,
   LaborEmploymentBudgetLearningLoopType,
+  LaborEmploymentBudgetOutcomeReplayExecutionReport,
   LaborEmploymentBudgetOutcomeReplayReadinessReport,
   LaborEmploymentBudgetOutputExpectationReport,
   LaborEmploymentBudgetQAGateReport,
@@ -58,6 +59,7 @@ export const REQUIRED_ARTIFACT_FILES = [
   "labor_employment_budget_qa_gate_report.json",
   "labor_employment_budget_learning_fixtures_report.json",
   "labor_employment_budget_outcome_replay_readiness_report.json",
+  "labor_employment_budget_outcome_replay_execution_report.json",
   "labor_employment_budget_fact_gold_report.json",
   "validation_suite_evidence_report.json",
   "budget_human_review_packet.json",
@@ -92,6 +94,8 @@ export const REQUIRED_DETAIL_REPORT_FILES = [
   "labor_employment_budget_output_expectations_report.json",
   "labor_employment_budget_qa_gate_report.json",
   "labor_employment_budget_learning_fixtures_report.json",
+  "labor_employment_budget_outcome_replay_readiness_report.json",
+  "labor_employment_budget_outcome_replay_execution_report.json",
   "budget_learning_loop_report.json",
 ] as const;
 
@@ -1647,6 +1651,125 @@ export function assertLaborEmploymentBudgetOutcomeReplayReadinessReport(
     report.checks.some((check) => check.status === "failed")
   ) {
     failures.push("le_budget_outcome_replay_ready_with_failed_check");
+  }
+  return failures;
+}
+
+export function assertLaborEmploymentBudgetOutcomeReplayExecutionReport(
+  report: LaborEmploymentBudgetOutcomeReplayExecutionReport,
+): string[] {
+  const failures: string[] = [];
+  const materializedCases = report.cases.filter((testCase) => testCase.status === "passed");
+  const failedCases = report.cases.filter((testCase) => testCase.status === "failed");
+  const expectedSlots = report.cases.reduce(
+    (total, testCase) => total + testCase.expected_artifact_slot_count,
+    0,
+  );
+  const materializedSlots = report.cases.reduce(
+    (total, testCase) => total + testCase.materialized_artifact_slot_count,
+    0,
+  );
+  if (report.fixture_count !== report.cases.length) {
+    failures.push("le_budget_outcome_execution_fixture_count_mismatch");
+  }
+  if (report.materialized_case_count !== materializedCases.length) {
+    failures.push("le_budget_outcome_execution_materialized_case_count_mismatch");
+  }
+  if (report.failed_case_count !== failedCases.length) {
+    failures.push("le_budget_outcome_execution_failed_case_count_mismatch");
+  }
+  if (report.expected_artifact_slot_count !== expectedSlots) {
+    failures.push("le_budget_outcome_execution_expected_slot_count_mismatch");
+  }
+  if (report.materialized_artifact_slot_count !== materializedSlots) {
+    failures.push("le_budget_outcome_execution_materialized_slot_count_mismatch");
+  }
+  if (report.runtime_artifact_count !== 0 || report.runtime_artifacts_created) {
+    failures.push("le_budget_outcome_execution_runtime_artifacts_created");
+  }
+  if (
+    !report.candidate_only ||
+    !report.synthetic_only ||
+    !report.local_json_only ||
+    !report.human_review_required ||
+    !report.not_authorized_for_external_write ||
+    !report.not_authorized_for_lake_write ||
+    !report.not_authorized_for_sqlite_write ||
+    !report.not_authorized_for_budget_submission ||
+    !report.not_authorized_for_matter_opening ||
+    !report.not_authorized_for_calibration ||
+    report.budget_submission_authorized ||
+    report.matter_opening_authorized ||
+    report.training_pipeline_created ||
+    report.lake_write_performed ||
+    report.sqlite_write_performed ||
+    report.external_writes_performed ||
+    report.silent_learning_performed
+  ) {
+    failures.push("le_budget_outcome_execution_boundary_flags");
+  }
+  for (const testCase of report.cases) {
+    if (testCase.expected_artifact_slot_count !== testCase.artifact_slots.length) {
+      failures.push(`le_budget_outcome_execution_case_slot_count:${testCase.learning_fixture_id}`);
+    }
+    const caseMaterialized = testCase.artifact_slots.filter(
+      (slot) => slot.artifact_slot_status === "materialized_candidate_slot",
+    );
+    if (testCase.materialized_artifact_slot_count !== caseMaterialized.length) {
+      failures.push(
+        `le_budget_outcome_execution_case_materialized_count:${testCase.learning_fixture_id}`,
+      );
+    }
+    if (
+      testCase.status === "passed" &&
+      testCase.materialized_artifact_slot_count !== testCase.expected_artifact_slot_count
+    ) {
+      failures.push(`le_budget_outcome_execution_passed_missing_slot:${testCase.learning_fixture_id}`);
+    }
+    if (
+      testCase.expected_budget_output_state === "blocked_amount_budget" &&
+      testCase.required_learning_loop_types.some((loop) => loop !== "blocked_budget_guard")
+    ) {
+      failures.push(`le_budget_outcome_execution_blocked_loop_invalid:${testCase.learning_fixture_id}`);
+    }
+    if (
+      testCase.expected_budget_output_state !== "blocked_amount_budget" &&
+      testCase.required_learning_loop_types.includes("blocked_budget_guard")
+    ) {
+      failures.push(
+        `le_budget_outcome_execution_nonblocking_guard_invalid:${testCase.learning_fixture_id}`,
+      );
+    }
+    if (
+      testCase.runtime_artifacts_created ||
+      testCase.budget_submission_authorized ||
+      testCase.matter_opening_authorized ||
+      testCase.lake_write_performed ||
+      testCase.sqlite_write_performed ||
+      testCase.external_writes_performed ||
+      testCase.silent_learning_performed
+    ) {
+      failures.push(`le_budget_outcome_execution_case_side_effect:${testCase.learning_fixture_id}`);
+    }
+    for (const slot of testCase.artifact_slots) {
+      if (
+        slot.runtime_artifact_created ||
+        slot.budget_submission_authorized ||
+        slot.matter_opening_authorized ||
+        slot.lake_write_performed ||
+        slot.sqlite_write_performed ||
+        slot.external_writes_performed ||
+        slot.silent_learning_performed
+      ) {
+        failures.push(`le_budget_outcome_execution_slot_side_effect:${testCase.learning_fixture_id}`);
+      }
+    }
+  }
+  if (
+    report.status === "labor_employment_budget_outcome_replay_execution_ready_for_review" &&
+    report.checks.some((check) => check.status === "failed")
+  ) {
+    failures.push("le_budget_outcome_execution_ready_with_failed_check");
   }
   return failures;
 }

@@ -1,11 +1,11 @@
 {
   "schema_version": "0.1",
-  "outcome_replay_readiness_report_id": "lebudgetoutcomereplay_1b5070bf8f4d488a",
+  "outcome_replay_readiness_report_id": "lebudgetoutcomereplay_9fe4ac5dcf45e217",
   "status": "labor_employment_budget_outcome_replay_ready_for_review",
   "source_seed_manifest_ref": "<repo-root>\\examples\\synthetic\\labor-employment\\labor-employment-budget-outcome-replay-seeds.json",
   "source_seed_manifest_id": "labor-employment-budget-outcome-replay-seeds.v0_1",
-  "source_learning_fixture_report_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\quality\\le-budget-learning-fixtures\\labor_employment_budget_learning_fixtures_report.json",
-  "source_learning_fixture_report_id": "lebudgetlearningfixtures_8cecbbde028bee02",
+  "source_learning_fixture_report_ref": "<demo-run-root>\\quality\\le-budget-learning-fixtures\\labor_employment_budget_learning_fixtures_report.json",
+  "source_learning_fixture_report_id": "lebudgetlearningfixtures_a02e8e8b84c883b9",
   "source_learning_fixture_report_status": "labor_employment_budget_learning_fixtures_ready_for_review",
   "fixture_count": 8,
   "seed_spec_count": 8,
@@ -77,7 +77,7 @@
         "labor-employment-budget-learning-fixtures.v0_1",
         "le-discrimination-harassment-clean.executable.v0_1",
         "le-learning-discrimination-harassment-clean.v0_1",
-        "lebudgetqagate_9b38b63b6d26581e"
+        "lebudgetqagate_ba75a200f26f1b53"
       ],
       "failure_ids": [],
       "candidate_only": true,
@@ -139,7 +139,7 @@
         "labor-employment-budget-learning-fixtures.v0_1",
         "le-learning-wage-hour-clean.v0_1",
         "le-wage-hour-clean.executable.v0_1",
-        "lebudgetqagate_9b38b63b6d26581e"
+        "lebudgetqagate_ba75a200f26f1b53"
       ],
       "failure_ids": [],
       "candidate_only": true,
@@ -200,7 +200,7 @@
         "labor-employment-budget-learning-fixtures.v0_1",
         "le-epli-carrier-clean.executable.v0_1",
         "le-learning-epli-carrier-clean.v0_1",
-        "lebudgetqagate_9b38b63b6d26581e"
+        "lebudgetqagate_ba75a200f26f1b53"
       ],
       "failure_ids": [],
       "candidate_only": true,
@@ -257,7 +257,7 @@
         "labor-employment-budget-learning-fixtures.v0_1",
         "le-learning-retaliation-messy-thread.v0_1",
         "le-retaliation-wrongful-termination-messy-thread.executable.v0_1",
-        "lebudgetqagate_9b38b63b6d26581e"
+        "lebudgetqagate_ba75a200f26f1b53"
       ],
       "failure_ids": [],
       "candidate_only": true,
@@ -314,7 +314,7 @@
         "labor-employment-budget-learning-fixtures.v0_1",
         "le-class-collective-clean.executable.v0_1",
         "le-learning-class-collective-clean.v0_1",
-        "lebudgetqagate_9b38b63b6d26581e"
+        "lebudgetqagate_ba75a200f26f1b53"
       ],
       "failure_ids": [],
       "candidate_only": true,
@@ -370,7 +370,7 @@
         "labor-employment-budget-learning-fixtures.v0_1",
         "le-learning-restrictive-covenant-messy-thread.v0_1",
         "le-restrictive-covenant-messy-thread.executable.v0_1",
-        "lebudgetqagate_9b38b63b6d26581e"
+        "lebudgetqagate_ba75a200f26f1b53"
       ],
       "failure_ids": [],
       "candidate_only": true,
@@ -426,7 +426,7 @@
         "labor-employment-budget-learning-fixtures.v0_1",
         "le-admin-exhaustion-clean.executable.v0_1",
         "le-learning-admin-exhaustion-clean.v0_1",
-        "lebudgetqagate_9b38b63b6d26581e"
+        "lebudgetqagate_ba75a200f26f1b53"
       ],
       "failure_ids": [],
       "candidate_only": true,
@@ -477,7 +477,7 @@
         "labor-employment-budget-learning-fixtures.v0_1",
         "le-ada-fmla-adversarial.executable.v0_1",
         "le-learning-ada-fmla-adversarial.v0_1",
-        "lebudgetqagate_9b38b63b6d26581e"
+        "lebudgetqagate_ba75a200f26f1b53"
       ],
       "failure_ids": [],
       "candidate_only": true,
@@ -498,7 +498,7 @@
       "status": "passed",
       "message": "Source L&E budget-learning fixture report is ready for review.",
       "evidence_refs": [
-        "lebudgetlearningfixtures_8cecbbde028bee02"
+        "lebudgetlearningfixtures_a02e8e8b84c883b9"
       ],
       "blocking_refs": []
     },
@@ -605,7 +605,7 @@
         "le-restrictive-covenant-messy-thread.executable.v0_1",
         "le-retaliation-wrongful-termination-messy-thread.executable.v0_1",
         "le-wage-hour-clean.executable.v0_1",
-        "lebudgetqagate_9b38b63b6d26581e"
+        "lebudgetqagate_ba75a200f26f1b53"
       ],
       "blocking_refs": []
     },
@@ -615,7 +615,7 @@
       "message": "Seed manifest and learning report did not authorize budget, matter, Lake, SQLite, external, or learning actions.",
       "evidence_refs": [
         "labor-employment-budget-outcome-replay-seeds.v0_1",
-        "lebudgetlearningfixtures_8cecbbde028bee02"
+        "lebudgetlearningfixtures_a02e8e8b84c883b9"
       ],
       "blocking_refs": []
     }

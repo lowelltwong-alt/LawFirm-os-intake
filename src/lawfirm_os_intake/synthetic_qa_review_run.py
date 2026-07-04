@@ -40,6 +40,10 @@ from .labor_employment_budget_outcome_replay_readiness import (
     LABOR_EMPLOYMENT_BUDGET_OUTCOME_REPLAY_READINESS_REPORT_FILENAME,
     run_labor_employment_budget_outcome_replay_readiness_audit,
 )
+from .labor_employment_budget_outcome_replay_execution import (
+    LABOR_EMPLOYMENT_BUDGET_OUTCOME_REPLAY_EXECUTION_REPORT_FILENAME,
+    run_labor_employment_budget_outcome_replay_execution,
+)
 from .labor_employment_budget_qa_gate import (
     LABOR_EMPLOYMENT_BUDGET_QA_GATE_REPORT_FILENAME,
     run_labor_employment_budget_qa_gate,
@@ -540,6 +544,30 @@ def run_synthetic_qa_review_run(
         )
     )
 
+    outcome_execution, outcome_execution_dir = run_labor_employment_budget_outcome_replay_execution(
+        seed_manifest_path=root / LE_BUDGET_OUTCOME_REPLAY_SEEDS_REF,
+        readiness_report_path=outcome_replay_ref,
+        out_dir=quality_dir / "le-budget-outcome-replay-execution",
+        generated_at=generated_at,
+    )
+    outcome_execution_ref = (
+        outcome_execution_dir / LABOR_EMPLOYMENT_BUDGET_OUTCOME_REPLAY_EXECUTION_REPORT_FILENAME
+    )
+    steps.append(
+        _step(
+            "labor_employment_budget_outcome_replay_execution",
+            "L&E Budget Outcome Replay Execution",
+            outcome_execution.status,
+            outcome_execution_ref,
+            outcome_execution.status
+            == "labor_employment_budget_outcome_replay_execution_ready_for_review",
+            (
+                "L&E outcome replay seeds are materialized as safe candidate artifact "
+                "slots without runtime carrier, billing, Lake, SQLite, or learning writes."
+            ),
+        )
+    )
+
     gold, gold_dir = run_labor_employment_budget_fact_gold_validation(
         gold_path=root / LE_BUDGET_FACT_GOLD_REF,
         repo_root=root,
@@ -594,6 +622,7 @@ def run_synthetic_qa_review_run(
         output_expectations_ref,
         budget_qa_gate_ref,
         budget_learning_fixtures_ref,
+        outcome_execution_ref,
         gold_dir / LABOR_EMPLOYMENT_BUDGET_FACT_GOLD_REPORT_FILENAME,
         budget_learning_loop_ref,
     ]:

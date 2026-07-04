@@ -100,6 +100,9 @@ from .labor_employment_budget_learning_fixtures import (
 from .labor_employment_budget_outcome_replay_readiness import (
     run_labor_employment_budget_outcome_replay_readiness_audit,
 )
+from .labor_employment_budget_outcome_replay_execution import (
+    run_labor_employment_budget_outcome_replay_execution,
+)
 from .labor_employment_budget_qa_gate import run_labor_employment_budget_qa_gate
 from .labor_employment_executable_fixtures import (
     run_labor_employment_executable_fixture_audit,
@@ -699,6 +702,31 @@ def _parser() -> argparse.ArgumentParser:
     le_budget_outcome_replay.add_argument("--repo-root", default=".")
     le_budget_outcome_replay.add_argument("--out-dir", required=True)
     le_budget_outcome_replay.add_argument(
+        "--generated-at",
+        help="Optional fixed timestamp for deterministic tests and replayed reports.",
+    )
+
+    le_budget_outcome_replay_execution = sub.add_parser(
+        "execute-labor-employment-budget-outcome-replay",
+        help=(
+            "Materialize safe candidate replay artifact slots from L&E outcome "
+            "replay seeds and readiness evidence."
+        ),
+    )
+    le_budget_outcome_replay_execution.add_argument(
+        "--seed-manifest",
+        default=(
+            "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json"
+        ),
+        help="Path to labor-employment-budget-outcome-replay-seeds.json.",
+    )
+    le_budget_outcome_replay_execution.add_argument(
+        "--readiness-report",
+        required=True,
+        help="Path to labor_employment_budget_outcome_replay_readiness_report.json.",
+    )
+    le_budget_outcome_replay_execution.add_argument("--out-dir", required=True)
+    le_budget_outcome_replay_execution.add_argument(
         "--generated-at",
         help="Optional fixed timestamp for deterministic tests and replayed reports.",
     )
@@ -2575,6 +2603,45 @@ def main(argv: list[str] | None = None) -> int:
             return (
                 0
                 if report.status == "labor_employment_budget_outcome_replay_ready_for_review"
+                else 2
+            )
+
+        if args.command == "execute-labor-employment-budget-outcome-replay":
+            report, run_dir = run_labor_employment_budget_outcome_replay_execution(
+                seed_manifest_path=args.seed_manifest,
+                readiness_report_path=args.readiness_report,
+                out_dir=args.out_dir,
+                generated_at=args.generated_at,
+            )
+            failed_checks = [check.check_id for check in report.checks if check.status == "failed"]
+            _print(
+                {
+                    "status": report.status,
+                    "outcome_replay_execution_report_id": (
+                        report.outcome_replay_execution_report_id
+                    ),
+                    "source_seed_manifest_id": report.source_seed_manifest_id,
+                    "source_readiness_report_id": report.source_readiness_report_id,
+                    "fixture_count": report.fixture_count,
+                    "materialized_case_count": report.materialized_case_count,
+                    "expected_artifact_slot_count": report.expected_artifact_slot_count,
+                    "materialized_artifact_slot_count": (report.materialized_artifact_slot_count),
+                    "runtime_artifact_count": report.runtime_artifact_count,
+                    "covered_learning_loop_types": report.covered_learning_loop_types,
+                    "missing_learning_loop_types": report.missing_learning_loop_types,
+                    "failed_checks": failed_checks,
+                    "budget_submission_authorized": report.budget_submission_authorized,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return (
+                0
+                if report.status
+                == "labor_employment_budget_outcome_replay_execution_ready_for_review"
                 else 2
             )
 

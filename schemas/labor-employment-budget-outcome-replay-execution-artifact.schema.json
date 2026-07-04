@@ -1,0 +1,114 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "loop_type": {
+      "enum": [
+        "actuals_variance",
+        "carrier_rejection_capture",
+        "appeal_outcome",
+        "reviewed_learning_gate",
+        "blocked_budget_guard"
+      ],
+      "title": "Loop Type",
+      "type": "string"
+    },
+    "expected_artifact_name": {
+      "title": "Expected Artifact Name",
+      "type": "string"
+    },
+    "artifact_slot_ref": {
+      "title": "Artifact Slot Ref",
+      "type": "string"
+    },
+    "artifact_slot_status": {
+      "enum": [
+        "materialized_candidate_slot",
+        "blocked_not_materialized"
+      ],
+      "title": "Artifact Slot Status",
+      "type": "string"
+    },
+    "evidence_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Evidence Refs",
+      "type": "array"
+    },
+    "runtime_artifact_created": {
+      "const": false,
+      "default": false,
+      "title": "Runtime Artifact Created",
+      "type": "boolean"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "local_json_only": {
+      "const": true,
+      "default": true,
+      "title": "Local Json Only",
+      "type": "boolean"
+    },
+    "budget_submission_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Submission Authorized",
+      "type": "boolean"
+    },
+    "matter_opening_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Matter Opening Authorized",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "loop_type",
+    "expected_artifact_name",
+    "artifact_slot_ref",
+    "artifact_slot_status",
+    "evidence_refs"
+  ],
+  "title": "LaborEmploymentBudgetOutcomeReplayExecutionArtifact",
+  "type": "object"
+}

@@ -1,7 +1,7 @@
 {
-  "manifestId": "ui_review_manifest_1e1baf2a078d",
+  "manifestId": "ui_review_manifest_6ef6da235e85",
   "generatedAt": "2026-07-04T00:00:00Z",
-  "runLabel": "Local intake QA review: le-budget-outcome-replay-readiness-review-run",
+  "runLabel": "Local intake QA review: le-budget-outcome-execution-review-run",
   "practiceArea": "synthetic_intake",
   "matterFamily": "medical_malpractice_defense",
   "overallStatus": "blocked",
@@ -27,7 +27,7 @@
       "candidateOnly": true,
       "externalWritesPerformed": false,
       "notes": [
-        "Found preflight\\run_bf6bb8bc38444fcf82e394838796247b\\intake_preflight_packet.json; status=human_intake_review_required."
+        "Found preflight\\run_02628d0f66074794a4ad876d3564f62a\\intake_preflight_packet.json; status=human_intake_review_required."
       ]
     },
     {
@@ -447,6 +447,19 @@
       ]
     },
     {
+      "artifactId": "labor-employment-budget-outcome-replay-execution",
+      "label": "L&E Budget Outcome Replay Execution",
+      "fileName": "labor_employment_budget_outcome_replay_execution_report.json",
+      "status": "pending_review",
+      "owner": "qa-reference",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": [
+        "Found quality\\labor_employment_budget_outcome_replay_execution_report.json; status=labor_employment_budget_outcome_replay_execution_ready_for_review."
+      ]
+    },
+    {
       "artifactId": "labor-employment-budget-fact-gold",
       "label": "L&E Budget Fact Gold",
       "fileName": "labor_employment_budget_fact_gold_report.json",
@@ -790,6 +803,16 @@
       "owner": "qa-reference",
       "notes": [
         "L&E learning fixture intents must have concrete synthetic actuals, rejection, appeal, reviewed-learning, and blocked-guard replay seeds before calibration work."
+      ]
+    },
+    {
+      "gateId": "labor_employment_budget_outcome_replay_execution",
+      "label": "L&E Budget Outcome Replay Execution",
+      "status": "pending_review",
+      "evidenceFile": "labor_employment_budget_outcome_replay_execution_report.json",
+      "owner": "qa-reference",
+      "notes": [
+        "L&E replay seeds must materialize concrete candidate artifact slots before replay outputs, calibration, or model comparison are treated as covered."
       ]
     },
     {

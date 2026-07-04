@@ -4016,6 +4016,196 @@ class LaborEmploymentBudgetOutcomeReplayReadinessReport(StrictModel):
         return self
 
 
+class LaborEmploymentBudgetOutcomeReplayExecutionArtifact(StrictModel):
+    loop_type: LaborEmploymentBudgetLearningLoopType
+    expected_artifact_name: str
+    artifact_slot_ref: str
+    artifact_slot_status: Literal["materialized_candidate_slot", "blocked_not_materialized"]
+    evidence_refs: list[str]
+    runtime_artifact_created: Literal[False] = False
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    local_json_only: Literal[True] = True
+    budget_submission_authorized: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def le_budget_outcome_replay_artifact_slot_is_coherent(
+        self,
+    ) -> "LaborEmploymentBudgetOutcomeReplayExecutionArtifact":
+        if not self.expected_artifact_name:
+            raise ValueError("L&E outcome replay execution artifact requires expected name")
+        if self.artifact_slot_status == "materialized_candidate_slot" and not (
+            self.artifact_slot_ref
+        ):
+            raise ValueError("materialized L&E outcome replay artifact slot requires ref")
+        if not self.evidence_refs:
+            raise ValueError("L&E outcome replay execution artifact requires evidence refs")
+        return self
+
+
+class LaborEmploymentBudgetOutcomeReplayExecutionCase(StrictModel):
+    execution_case_id: str
+    learning_fixture_id: str
+    executable_fixture_id: str
+    outcome_seed_id: str | None = None
+    family: LaborEmploymentSyntheticFixtureFamily
+    variant: LaborEmploymentSyntheticFixtureVariant
+    status: Literal["passed", "failed"]
+    expected_budget_output_state: LaborEmploymentExecutableDriverAllowedBudgetOutput
+    replay_case_dir: str
+    required_learning_loop_types: list[LaborEmploymentBudgetLearningLoopType]
+    materialized_learning_loop_types: list[LaborEmploymentBudgetLearningLoopType]
+    blocked_learning_loop_types: list[LaborEmploymentBudgetLearningLoopType]
+    expected_artifact_slot_count: int = Field(ge=0)
+    materialized_artifact_slot_count: int = Field(ge=0)
+    artifact_slots: list[LaborEmploymentBudgetOutcomeReplayExecutionArtifact]
+    candidate_exception_lake_labels: list[str]
+    evidence_refs: list[str]
+    failure_ids: list[str] = Field(default_factory=list)
+    runtime_artifacts_created: Literal[False] = False
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    local_json_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    budget_submission_authorized: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def le_budget_outcome_replay_execution_case_is_coherent(
+        self,
+    ) -> "LaborEmploymentBudgetOutcomeReplayExecutionCase":
+        if self.status == "passed" and self.failure_ids:
+            raise ValueError("passed L&E outcome replay execution case cannot carry failures")
+        if self.status == "failed" and not self.failure_ids:
+            raise ValueError("failed L&E outcome replay execution case requires failures")
+        if self.expected_artifact_slot_count != len(self.artifact_slots):
+            raise ValueError("L&E outcome replay execution artifact slot count mismatch")
+        materialized = [
+            slot
+            for slot in self.artifact_slots
+            if slot.artifact_slot_status == "materialized_candidate_slot"
+        ]
+        if self.materialized_artifact_slot_count != len(materialized):
+            raise ValueError("L&E outcome replay execution materialized slot count mismatch")
+        if self.status == "passed" and self.materialized_artifact_slot_count != (
+            self.expected_artifact_slot_count
+        ):
+            raise ValueError("passed L&E outcome replay execution case requires all slots")
+        if not self.required_learning_loop_types:
+            raise ValueError("L&E outcome replay execution case requires loop types")
+        if not self.evidence_refs:
+            raise ValueError("L&E outcome replay execution case requires evidence refs")
+        if self.expected_budget_output_state == "blocked_amount_budget":
+            if set(self.required_learning_loop_types) != {"blocked_budget_guard"}:
+                raise ValueError("blocked execution case can only materialize guard loop")
+        elif "blocked_budget_guard" in set(self.required_learning_loop_types):
+            raise ValueError("nonblocked execution case cannot materialize guard loop")
+        return self
+
+
+class LaborEmploymentBudgetOutcomeReplayExecutionCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    evidence_refs: list[str] = Field(default_factory=list)
+    blocking_refs: list[str] = Field(default_factory=list)
+
+
+class LaborEmploymentBudgetOutcomeReplayExecutionReport(StrictModel):
+    schema_version: str = "0.1"
+    outcome_replay_execution_report_id: str
+    status: Literal[
+        "labor_employment_budget_outcome_replay_execution_ready_for_review",
+        "blocked_by_labor_employment_budget_outcome_replay_execution",
+    ]
+    source_seed_manifest_ref: str
+    source_seed_manifest_id: str
+    source_readiness_report_ref: str
+    source_readiness_report_id: str
+    source_readiness_report_status: str
+    fixture_count: int = Field(ge=0)
+    materialized_case_count: int = Field(ge=0)
+    failed_case_count: int = Field(ge=0)
+    expected_artifact_slot_count: int = Field(ge=0)
+    materialized_artifact_slot_count: int = Field(ge=0)
+    runtime_artifact_count: int = Field(ge=0)
+    covered_learning_loop_types: list[LaborEmploymentBudgetLearningLoopType]
+    missing_learning_loop_types: list[LaborEmploymentBudgetLearningLoopType]
+    cases: list[LaborEmploymentBudgetOutcomeReplayExecutionCase]
+    checks: list[LaborEmploymentBudgetOutcomeReplayExecutionCheck]
+    candidate_exception_lake_labels: list[str]
+    required_next_gates: list[str]
+    red_team_notes: list[str]
+    runtime_artifacts_created: Literal[False] = False
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    local_json_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    not_authorized_for_matter_opening: Literal[True] = True
+    not_authorized_for_calibration: Literal[True] = True
+    budget_submission_authorized: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    training_pipeline_created: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def le_budget_outcome_replay_execution_report_is_coherent(
+        self,
+    ) -> "LaborEmploymentBudgetOutcomeReplayExecutionReport":
+        failed_cases = [case for case in self.cases if case.status == "failed"]
+        failed_checks = [check for check in self.checks if check.status == "failed"]
+        materialized_cases = [case for case in self.cases if case.status == "passed"]
+        if self.fixture_count != len(self.cases):
+            raise ValueError("L&E outcome replay execution fixture count mismatch")
+        if self.materialized_case_count != len(materialized_cases):
+            raise ValueError("L&E outcome replay execution materialized case count mismatch")
+        if self.failed_case_count != len(failed_cases):
+            raise ValueError("L&E outcome replay execution failed case count mismatch")
+        expected_slots = sum(case.expected_artifact_slot_count for case in self.cases)
+        if self.expected_artifact_slot_count != expected_slots:
+            raise ValueError("L&E outcome replay execution expected slot count mismatch")
+        materialized_slots = sum(case.materialized_artifact_slot_count for case in self.cases)
+        if self.materialized_artifact_slot_count != materialized_slots:
+            raise ValueError("L&E outcome replay execution materialized slot count mismatch")
+        if self.runtime_artifact_count != 0 or self.runtime_artifacts_created is not False:
+            raise ValueError("L&E outcome replay execution cannot create runtime artifacts")
+        if not self.candidate_exception_lake_labels:
+            raise ValueError("L&E outcome replay execution report requires candidate labels")
+        if not self.required_next_gates:
+            raise ValueError("L&E outcome replay execution report requires next gates")
+        if not self.red_team_notes:
+            raise ValueError("L&E outcome replay execution report requires red team notes")
+        if self.status == "labor_employment_budget_outcome_replay_execution_ready_for_review" and (
+            failed_cases or failed_checks
+        ):
+            raise ValueError("ready L&E outcome replay execution report cannot include failures")
+        if self.status == "blocked_by_labor_employment_budget_outcome_replay_execution" and not (
+            failed_cases or failed_checks
+        ):
+            raise ValueError("blocked L&E outcome replay execution report requires failures")
+        return self
+
+
 class PublicSourceMethodologySource(StrictModel):
     source_id: str
     url: str
@@ -12360,6 +12550,7 @@ UIReviewDataBundleReportKind = Literal[
     "labor_employment_budget_qa_gate",
     "labor_employment_budget_learning_fixtures",
     "labor_employment_budget_outcome_replay_readiness",
+    "labor_employment_budget_outcome_replay_execution",
     "budget_learning_loop",
 ]
 

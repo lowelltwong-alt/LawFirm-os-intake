@@ -49,6 +49,7 @@ def _write_quality_evidence(run_root):
         "labor_employment_budget_qa_gate_report.json",
         "labor_employment_budget_learning_fixtures_report.json",
         "labor_employment_budget_outcome_replay_readiness_report.json",
+        "labor_employment_budget_outcome_replay_execution_report.json",
         "labor_employment_budget_fact_gold_report.json",
         "budget_learning_loop_report.json",
     ]:
