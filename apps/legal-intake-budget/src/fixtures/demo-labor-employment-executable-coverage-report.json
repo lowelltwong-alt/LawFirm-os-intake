@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "executable_coverage_report_id": "leexeccoverage_6bb198959a636b9e2ef2",
+  "executable_coverage_report_id": "leexeccoverage_2da9c867e155ea911eed",
   "status": "labor_employment_executable_coverage_ready_for_review",
   "coverage_state": "partial_executable_coverage",
   "pack_id": "le-budget-fixture-family-pack.v0_1",
@@ -8,14 +8,14 @@
   "executable_manifest_id": "le-executable-fixtures-manifest.v0_1",
   "executable_manifest_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\examples\\synthetic\\labor-employment\\labor-employment-executable-fixtures-manifest.json",
   "pack_case_count": 32,
-  "executable_fixture_count": 12,
-  "executable_pack_case_link_count": 13,
-  "covered_pack_case_count": 13,
-  "missing_executable_pack_case_count": 19,
+  "executable_fixture_count": 14,
+  "executable_pack_case_link_count": 15,
+  "covered_pack_case_count": 15,
+  "missing_executable_pack_case_count": 17,
   "covered_family_count": 8,
   "missing_family_count": 0,
-  "covered_family_variant_count": 13,
-  "missing_family_variant_count": 19,
+  "covered_family_variant_count": 15,
+  "missing_family_variant_count": 17,
   "covered_pack_case_ids": [
     "le-discrimination-harassment-clean.v0_1",
     "le-discrimination-harassment-missing-attachment.v0_1",
@@ -28,6 +28,8 @@
     "le-epli-carrier-clean.v0_1",
     "le-epli-carrier-messy-thread.v0_1",
     "le-epli-carrier-missing-attachment.v0_1",
+    "le-class-collective-clean.v0_1",
+    "le-class-collective-messy-thread.v0_1",
     "le-class-collective-adversarial.v0_1",
     "le-admin-exhaustion-clean.v0_1"
   ],
@@ -45,8 +47,6 @@
     "le-restrictive-covenant-messy-thread.v0_1",
     "le-restrictive-covenant-adversarial.v0_1",
     "le-epli-carrier-adversarial.v0_1",
-    "le-class-collective-clean.v0_1",
-    "le-class-collective-messy-thread.v0_1",
     "le-class-collective-missing-attachment.v0_1",
     "le-admin-exhaustion-messy-thread.v0_1",
     "le-admin-exhaustion-missing-attachment.v0_1",
@@ -66,8 +66,6 @@
     "restrictive_covenant_trade_secret:messy_thread",
     "restrictive_covenant_trade_secret:adversarial",
     "epli_carrier_assignment:adversarial",
-    "class_collective_paga_representative:clean",
-    "class_collective_paga_representative:messy_thread",
     "class_collective_paga_representative:missing_attachment",
     "administrative_exhaustion_agency_record:messy_thread",
     "administrative_exhaustion_agency_record:missing_attachment",
@@ -183,18 +181,20 @@
     {
       "family": "class_collective_paga_representative",
       "pack_case_count": 4,
-      "covered_case_count": 1,
-      "missing_case_count": 3,
+      "covered_case_count": 3,
+      "missing_case_count": 1,
       "covered_variants": [
+        "clean",
+        "messy_thread",
         "adversarial"
       ],
       "missing_variants": [
-        "clean",
-        "messy_thread",
         "missing_attachment"
       ],
       "executable_fixture_ids": [
-        "le-class-collective-adversarial.executable.v0_1"
+        "le-class-collective-adversarial.executable.v0_1",
+        "le-class-collective-clean.executable.v0_1",
+        "le-class-collective-messy-thread.executable.v0_1"
       ]
     },
     {
@@ -630,8 +630,10 @@
       "pack_case_id": "le-class-collective-clean.v0_1",
       "family": "class_collective_paga_representative",
       "variant": "clean",
-      "coverage_state": "missing_executable",
-      "executable_fixture_ids": [],
+      "coverage_state": "covered_executable",
+      "executable_fixture_ids": [
+        "le-class-collective-clean.executable.v0_1"
+      ],
       "expected_budget_readiness_state": "range_only_pending_human_review",
       "expected_budget_treatment": "hours_only_or_broad_range",
       "missing_critical_fact_ids": [],
@@ -645,8 +647,10 @@
       "pack_case_id": "le-class-collective-messy-thread.v0_1",
       "family": "class_collective_paga_representative",
       "variant": "messy_thread",
-      "coverage_state": "missing_executable",
-      "executable_fixture_ids": [],
+      "coverage_state": "covered_executable",
+      "executable_fixture_ids": [
+        "le-class-collective-messy-thread.executable.v0_1"
+      ],
       "expected_budget_readiness_state": "range_only_pending_human_review",
       "expected_budget_treatment": "hours_only_or_broad_range",
       "missing_critical_fact_ids": [],
@@ -824,5 +828,5 @@
   "sqlite_write_performed": false,
   "external_writes_performed": false,
   "silent_learning_performed": false,
-  "generated_at": "2026-07-04T02:46:54.081802Z"
+  "generated_at": "2026-07-04T03:39:48.488036Z"
 }

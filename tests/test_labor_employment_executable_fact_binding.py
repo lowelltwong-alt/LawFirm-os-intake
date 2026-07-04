@@ -49,14 +49,14 @@ def test_labor_employment_executable_fact_binding_binds_gaps_without_side_effect
     )
 
     assert report.status == "labor_employment_executable_budget_fact_bindings_ready_for_review"
-    assert persisted.case_count == 12
+    assert persisted.case_count == 14
     assert persisted.failed_case_count == 0
-    assert persisted.fact_binding_count == 32
-    assert persisted.critical_fact_binding_count == 14
+    assert persisted.fact_binding_count == 42
+    assert persisted.critical_fact_binding_count == 18
     assert persisted.missing_critical_fact_count == 5
-    assert persisted.source_present_confirmation_fact_count == 19
+    assert persisted.source_present_confirmation_fact_count == 29
     assert persisted.source_present_unresolved_critical_driver_count == 1
-    assert persisted.evidence_bound_fact_count == 32
+    assert persisted.evidence_bound_fact_count == 42
     assert persisted.exception_bound_fact_count == 11
     assert persisted.missing_policy_fact_count == 0
     assert persisted.missing_source_signal_count == 0
@@ -214,6 +214,32 @@ def test_labor_employment_executable_fact_binding_binds_gaps_without_side_effect
     assert admin_bindings["forum_removed_and_arbitration_posture"].binding_state == (
         "source_bound_gap_candidate"
     )
+    class_clean_bindings = {
+        binding.fact_id: binding
+        for binding in cases["le-class-collective-clean.executable.v0_1"].fact_bindings
+    }
+    assert class_clean_bindings["class_collective_or_group_scope"].required_level == "critical"
+    assert (
+        class_clean_bindings["class_collective_or_group_scope"].fact_resolution_state
+        == "source_present_needs_confirmation"
+    )
+    assert class_clean_bindings["class_collective_or_group_scope"].blocks_precise_budget is False
+    assert class_clean_bindings["wage_hour_pay_period_and_employee_volume"].binding_state == (
+        "source_bound_gap_candidate"
+    )
+    class_messy_bindings = {
+        binding.fact_id: binding
+        for binding in cases["le-class-collective-messy-thread.executable.v0_1"].fact_bindings
+    }
+    assert (
+        class_messy_bindings["class_collective_or_group_scope"].fact_resolution_state
+        == "source_present_needs_confirmation"
+    )
+    assert class_messy_bindings["esi_custodians_and_sources"].required_level == "critical"
+    assert (
+        class_messy_bindings["esi_custodians_and_sources"].fact_resolution_state
+        == "source_present_needs_confirmation"
+    )
 
     notes = (run_dir / "labor_employment_executable_fact_binding_report.md").read_text(
         encoding="utf-8"
@@ -237,7 +263,7 @@ def test_labor_employment_executable_fact_binding_manifest_is_candidate_only(rep
     assert manifest.lake_write_performed is False
     assert manifest.sqlite_write_performed is False
     assert manifest.external_writes_performed is False
-    assert len(manifest.bindings) == 12
+    assert len(manifest.bindings) == 14
 
 
 def test_labor_employment_executable_fact_binding_blocks_missing_policy_fact(
@@ -324,9 +350,9 @@ def test_labor_employment_executable_fact_binding_cli_writes_report(
 
     assert exit_code == 0
     assert report["status"] == ("labor_employment_executable_budget_fact_bindings_ready_for_review")
-    assert report["case_count"] == 12
-    assert report["fact_binding_count"] == 32
+    assert report["case_count"] == 14
+    assert report["fact_binding_count"] == 42
     assert report["missing_critical_fact_count"] == 5
-    assert report["source_present_confirmation_fact_count"] == 19
+    assert report["source_present_confirmation_fact_count"] == 29
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out

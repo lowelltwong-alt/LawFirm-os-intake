@@ -5,7 +5,7 @@
   "review_scope": "nonblocking_driver_impact_budget_gate_replay",
   "description": "Synthetic reviewed slice spec for replaying all currently nonblocking L&E driver impact paths through the budget gate without hand-filtering test data.",
   "source_driver_impact_report_expected_status": "labor_employment_executable_driver_impacts_ready_for_review",
-  "required_selected_case_count": 6,
+  "required_selected_case_count": 8,
   "cases": [
     {
       "executable_fixture_id": "le-discrimination-harassment-clean.executable.v0_1",
@@ -39,6 +39,40 @@
       "evidence_refs": [
         "examples/synthetic/labor-employment/labor-employment-executable-fixtures-manifest.json#le-wage-hour-clean.executable.v0_1",
         "examples/synthetic/labor-employment/labor-employment-executable-budget-fact-bindings.json#le-wage-hour-clean.executable.v0_1"
+      ]
+    },
+    {
+      "executable_fixture_id": "le-class-collective-clean.executable.v0_1",
+      "review_outcome": "approved_for_nonblocking_budget_gate_replay",
+      "expected_allowed_budget_output": "range_or_hours_only_pending_review",
+      "expected_block_amount_budget_impact_count": 0,
+      "minimum_range_widening_impact_count": 1,
+      "minimum_scenario_fork_impact_count": 1,
+      "minimum_rate_guideline_review_impact_count": 0,
+      "review_notes": [
+        "Clean class/collective/PAGA-style source coverage should widen and fork budget assumptions without becoming a calibrated amount budget.",
+        "Representative wage/hour scope must not be averaged into single-plaintiff wage/hour assumptions."
+      ],
+      "evidence_refs": [
+        "examples/synthetic/labor-employment/labor-employment-executable-fixtures-manifest.json#le-class-collective-clean.executable.v0_1",
+        "examples/synthetic/labor-employment/labor-employment-executable-budget-fact-bindings.json#le-class-collective-clean.executable.v0_1"
+      ]
+    },
+    {
+      "executable_fixture_id": "le-class-collective-messy-thread.executable.v0_1",
+      "review_outcome": "approved_for_nonblocking_budget_gate_replay",
+      "expected_allowed_budget_output": "range_or_hours_only_pending_review",
+      "expected_block_amount_budget_impact_count": 0,
+      "minimum_range_widening_impact_count": 1,
+      "minimum_scenario_fork_impact_count": 1,
+      "minimum_rate_guideline_review_impact_count": 0,
+      "review_notes": [
+        "Competing opt-in and putative-class estimates should remain alternatives until review.",
+        "Duplicate correspondence must not double-count employees, custodians, experts, or budget intensity."
+      ],
+      "evidence_refs": [
+        "examples/synthetic/labor-employment/labor-employment-executable-fixtures-manifest.json#le-class-collective-messy-thread.executable.v0_1",
+        "examples/synthetic/labor-employment/labor-employment-executable-budget-fact-bindings.json#le-class-collective-messy-thread.executable.v0_1"
       ]
     },
     {

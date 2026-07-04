@@ -87,17 +87,19 @@ def test_labor_employment_driver_impact_review_materializes_nonblocking_slice(
     )
 
     assert report.status == "labor_employment_driver_impact_review_ready_for_budget_gate_replay"
-    assert persisted.selected_case_count == 6
+    assert persisted.selected_case_count == 8
     assert persisted.failed_case_count == 0
     assert persisted.block_amount_budget_impact_count == 0
     assert persisted.range_widening_impact_count > 0
     assert persisted.scenario_fork_impact_count > 0
     assert persisted.reviewed_slice_report_ref
-    assert slice_report.case_count == 6
+    assert slice_report.case_count == 8
     assert slice_report.block_amount_budget_impact_count == 0
     assert {case.executable_fixture_id for case in slice_report.cases} == {
         "le-discrimination-harassment-clean.executable.v0_1",
         "le-wage-hour-clean.executable.v0_1",
+        "le-class-collective-clean.executable.v0_1",
+        "le-class-collective-messy-thread.executable.v0_1",
         "le-epli-carrier-clean.executable.v0_1",
         "le-epli-carrier-messy-thread.executable.v0_1",
         "le-admin-exhaustion-clean.executable.v0_1",
@@ -207,7 +209,7 @@ def test_labor_employment_driver_impact_review_cli_writes_review_and_slice(
 
     assert exit_code == 0
     assert report["status"] == "labor_employment_driver_impact_review_ready_for_budget_gate_replay"
-    assert report["selected_case_count"] == 6
+    assert report["selected_case_count"] == 8
     assert report["block_amount_budget_impact_count"] == 0
     assert (
         (tmp_path / "le-driver-impact-review-cli")

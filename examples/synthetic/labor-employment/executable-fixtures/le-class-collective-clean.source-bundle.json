@@ -1,0 +1,97 @@
+{
+  "schema_version": "0.1",
+  "bundle_id": "syn-le-class-collective-clean-001",
+  "data_origin": "synthetic",
+  "contains_real_client_data": false,
+  "contains_real_matter_data": false,
+  "contains_privileged_data": false,
+  "sources": [
+    {
+      "source_id": "syn-le-class-collective-clean-cover-email-001",
+      "source_type": "email",
+      "filename": "synthetic_class_collective_clean_cover_email.txt",
+      "text": "From: intake-referral@synthetic-referral.example\nTo: intake@synthetic-law.example\nDate: July 2, 2026\nSubject: Representative wage/hour packet with class and collective scope\n\nThe attached synthetic representative wage/hour packet concerns Maya Chen and Atlas Retail Services LLC. The referral identifies class and collective allegations, PAGA-style representative penalties, state court forum, possible removal posture, arbitration agreements for a subset of employees, and a current notice posture question. The sender asks for only a broad candidate budget range after human review because class scope materially widens discovery, notice, payroll analysis, and expert assumptions. Expert and vendor needs are not identified.",
+      "metadata": {
+        "synthetic": true,
+        "attachment_refs": [
+          "representative-complaint-summary.txt",
+          "payroll-volume-summary.txt",
+          "forum-arbitration-note.txt"
+        ]
+      }
+    },
+    {
+      "source_id": "syn-le-class-collective-clean-complaint-001",
+      "source_type": "attachment_text",
+      "filename": "representative-complaint-summary.txt",
+      "text": "Synthetic representative complaint summary: Maya Chen alleges unpaid overtime, off-the-clock work, meal-period premium violations, wage-statement violations, liquidated damages, statutory penalties, attorneys' fees, back pay, and waiting-time penalties against Atlas Retail Services LLC. The complaint summary describes a proposed class, a proposed FLSA collective, and PAGA-style representative penalties.",
+      "metadata": {
+        "synthetic": true,
+        "document_type": "representative_complaint_summary"
+      }
+    },
+    {
+      "source_id": "syn-le-class-collective-clean-payroll-001",
+      "source_type": "attachment_text",
+      "filename": "payroll-volume-summary.txt",
+      "text": "Synthetic payroll volume summary: the proposed class and collective population includes 128 hourly employees, 26 pay periods, three job categories, one payroll export, one timekeeping export, and two store locations. The summary is source text only and does not authorize calibrated budget math.",
+      "metadata": {
+        "synthetic": true,
+        "document_type": "payroll_volume_summary"
+      }
+    },
+    {
+      "source_id": "syn-le-class-collective-clean-forum-001",
+      "source_type": "attachment_text",
+      "filename": "forum-arbitration-note.txt",
+      "text": "Synthetic forum and arbitration note: the matter is filed in state court forum, removal posture is under review, and arbitration agreements exist for approximately one third of the putative group. The notice posture is not confirmed. Expert and vendor needs are not identified.",
+      "metadata": {
+        "synthetic": true,
+        "document_type": "forum_arbitration_note"
+      }
+    }
+  ],
+  "fixture_hints": {
+    "provided_fields": [
+      "employee_claimant_identity",
+      "employer_or_defendant_identity",
+      "claims_and_causes_of_action",
+      "class_collective_or_group_scope",
+      "wage_hour_pay_period_and_employee_volume",
+      "forum_removed_and_arbitration_posture",
+      "damages_categories_and_exposure"
+    ],
+    "entities": [
+      {
+        "name": "Maya Chen",
+        "role_candidates": [
+          {
+            "role": "claimant",
+            "confidence": 0.78
+          },
+          {
+            "role": "class_representative_candidate",
+            "confidence": 0.68
+          },
+          {
+            "role": "adverse_party",
+            "confidence": 0.56
+          }
+        ]
+      },
+      {
+        "name": "Atlas Retail Services LLC",
+        "role_candidates": [
+          {
+            "role": "employer_or_defendant",
+            "confidence": 0.79
+          },
+          {
+            "role": "prospective_represented_client",
+            "confidence": 0.62
+          }
+        ]
+      }
+    ]
+  }
+}

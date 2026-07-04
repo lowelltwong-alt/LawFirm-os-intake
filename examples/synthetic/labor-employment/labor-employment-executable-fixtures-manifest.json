@@ -258,6 +258,86 @@
       ]
     },
     {
+      "executable_fixture_id": "le-class-collective-clean.executable.v0_1",
+      "source_bundle_ref": "examples/synthetic/labor-employment/executable-fixtures/le-class-collective-clean.source-bundle.json",
+      "linked_pack_case_ids": [
+        "le-class-collective-clean.v0_1"
+      ],
+      "family": "class_collective_paga_representative",
+      "variant": "clean",
+      "expected_budget_readiness_state": "range_only_pending_human_review",
+      "expected_budget_gate_effect": "allow_range_or_hours_only_pending_review",
+      "expected_budget_treatment": "hours_only_or_broad_range",
+      "expected_min_sources": 4,
+      "expected_min_segments": 4,
+      "expected_min_missing_sources": 0,
+      "expected_min_duplicate_sources": 0,
+      "expected_source_signal_terms": [
+        "class",
+        "collective",
+        "PAGA-style",
+        "notice posture",
+        "128 hourly employees",
+        "26 pay periods",
+        "arbitration agreements",
+        "damages",
+        "Expert and vendor needs are not identified"
+      ],
+      "expected_preflight_exception_labels": [],
+      "expected_budget_fact_gap_ids": [
+        "class_collective_or_group_scope",
+        "wage_hour_pay_period_and_employee_volume",
+        "forum_removed_and_arbitration_posture",
+        "damages_categories_and_exposure",
+        "expert_and_vendor_needs"
+      ],
+      "red_team_notes": [
+        "Clean representative-action source coverage must widen budget assumptions and stay range-only; class scope must not be averaged into single-plaintiff wage/hour assumptions."
+      ]
+    },
+    {
+      "executable_fixture_id": "le-class-collective-messy-thread.executable.v0_1",
+      "source_bundle_ref": "examples/synthetic/labor-employment/executable-fixtures/le-class-collective-messy-thread.source-bundle.json",
+      "linked_pack_case_ids": [
+        "le-class-collective-messy-thread.v0_1"
+      ],
+      "family": "class_collective_paga_representative",
+      "variant": "messy_thread",
+      "expected_budget_readiness_state": "range_only_pending_human_review",
+      "expected_budget_gate_effect": "allow_range_or_hours_only_pending_review",
+      "expected_budget_treatment": "hours_only_or_broad_range",
+      "expected_min_sources": 3,
+      "expected_min_segments": 4,
+      "expected_min_missing_sources": 0,
+      "expected_min_duplicate_sources": 1,
+      "expected_source_signal_terms": [
+        "competing opt-in estimates",
+        "PAGA-style representative",
+        "52 current opt-in candidates",
+        "310 putative class members",
+        "three-year lookback",
+        "two timekeeping systems",
+        "ESI custodians",
+        "statistical sampling expert",
+        "payroll damages expert",
+        "e-discovery vendor",
+        "Forum and arbitration posture is unknown"
+      ],
+      "expected_preflight_exception_labels": [
+        "duplicate_source_detected"
+      ],
+      "expected_budget_fact_gap_ids": [
+        "class_collective_or_group_scope",
+        "wage_hour_pay_period_and_employee_volume",
+        "esi_custodians_and_sources",
+        "expert_and_vendor_needs",
+        "forum_removed_and_arbitration_posture"
+      ],
+      "red_team_notes": [
+        "Competing opt-in and putative-class estimates must stay alternatives until review; duplicate correspondence must not double-count employees, custodians, experts, or budget intensity."
+      ]
+    },
+    {
       "executable_fixture_id": "le-class-collective-adversarial.executable.v0_1",
       "source_bundle_ref": "examples/synthetic/labor-employment/executable-fixtures/le-class-collective-adversarial.source-bundle.json",
       "linked_pack_case_ids": [
