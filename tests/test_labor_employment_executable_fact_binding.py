@@ -49,11 +49,11 @@ def test_labor_employment_executable_fact_binding_binds_gaps_without_side_effect
     )
 
     assert report.status == "labor_employment_executable_budget_fact_bindings_ready_for_review"
-    assert persisted.case_count == 10
+    assert persisted.case_count == 12
     assert persisted.failed_case_count == 0
-    assert persisted.fact_binding_count == 24
+    assert persisted.fact_binding_count == 26
     assert persisted.critical_fact_binding_count == 8
-    assert persisted.evidence_bound_fact_count == 24
+    assert persisted.evidence_bound_fact_count == 26
     assert persisted.exception_bound_fact_count == 10
     assert persisted.missing_policy_fact_count == 0
     assert persisted.missing_source_signal_count == 0
@@ -116,6 +116,23 @@ def test_labor_employment_executable_fact_binding_binds_gaps_without_side_effect
         discrimination_bindings["administrative_exhaustion_and_agency_record"].binding_state
         == "source_and_exception_bound_gap_candidate"
     )
+    epli_clean_bindings = {
+        binding.fact_id: binding
+        for binding in cases["le-epli-carrier-clean.executable.v0_1"].fact_bindings
+    }
+    assert epli_clean_bindings["expert_and_vendor_needs"].binding_state == (
+        "source_bound_gap_candidate"
+    )
+    epli_messy_bindings = {
+        binding.fact_id: binding
+        for binding in cases["le-epli-carrier-messy-thread.executable.v0_1"].fact_bindings
+    }
+    assert epli_messy_bindings["forum_removed_and_arbitration_posture"].binding_state == (
+        "source_bound_gap_candidate"
+    )
+    assert epli_messy_bindings["forum_removed_and_arbitration_posture"].required_level == (
+        "important"
+    )
     retaliation_bindings = {
         binding.fact_id: binding
         for binding in cases[
@@ -174,7 +191,7 @@ def test_labor_employment_executable_fact_binding_manifest_is_candidate_only(rep
     assert manifest.lake_write_performed is False
     assert manifest.sqlite_write_performed is False
     assert manifest.external_writes_performed is False
-    assert len(manifest.bindings) == 10
+    assert len(manifest.bindings) == 12
 
 
 def test_labor_employment_executable_fact_binding_blocks_missing_policy_fact(
@@ -261,7 +278,7 @@ def test_labor_employment_executable_fact_binding_cli_writes_report(
 
     assert exit_code == 0
     assert report["status"] == ("labor_employment_executable_budget_fact_bindings_ready_for_review")
-    assert report["case_count"] == 10
-    assert report["fact_binding_count"] == 24
+    assert report["case_count"] == 12
+    assert report["fact_binding_count"] == 26
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out

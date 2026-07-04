@@ -1,0 +1,95 @@
+{
+  "schema_version": "0.1",
+  "issue_id": "ui-qa-snapshot-dependency-loop-001",
+  "issue_version": "0.1.0",
+  "observed_at": "2026-07-04T00:00:00Z",
+  "source_repo_id": "LawFirm-os-intake",
+  "source_repo_path": "LawFirm-os-intake",
+  "originating_agent": "codex",
+  "review_context": "Read-only UI fixture refresh after expanding executable L&E synthetic fixtures.",
+  "finding_title": "Generated QA snapshots can create stale self-dependency loops during UI fixture refresh.",
+  "severity": "P2",
+  "issue_classes": [
+    "test_gap",
+    "ui_authority_risk",
+    "synthetic_data_gap",
+    "learning_loop_gap",
+    "exception_lake_mapping_gap"
+  ],
+  "finding_summary": "The UI manifest, synthetic confidence summary, blocker queue, optional QA review outcome, and POC triage report reference each other as local review evidence. If a failed diagnostic POC or blocked confidence report remains in the run root, later manifest regeneration can preserve the failed state and make the dashboard look blocked even after the underlying L&E and validation artifacts are green.",
+  "observable_context": [
+    "The refresh generated a blocked POC triage report while validation evidence was not yet attached to the run root.",
+    "A later manifest regeneration read that blocked POC artifact and marked the POC QA gate blocked.",
+    "A confidence summary generated from that manifest then became blocked, and the blocker queue reflected the stale failed state.",
+    "The clean sequence was to attach validation evidence, seed or remove stale generated reports, rebuild the manifest, rebuild confidence and blocker reports, then regenerate the optional review outcome and POC triage report."
+  ],
+  "observable_decision_logic": [
+    "Generated reports are evidence artifacts, but they can also become inputs to higher-level evidence reports.",
+    "A failed intermediate report should not silently become durable roadmap truth if it was produced only during diagnosis.",
+    "The refresh workflow needs an explicit clean-baseline step or generation order guard for self-referential UI/QA snapshots.",
+    "DAD should track this as a workflow exception pattern because similar snapshot loops can affect other repos' review dashboards."
+  ],
+  "solution_path": [
+    "Add a deterministic UI fixture refresh command that controls artifact order and clears only generated reports that are known to be regenerated.",
+    "Mark diagnostic failed reports with a run purpose or exclude them from manifest refresh unless explicitly promoted.",
+    "Add a regression test that stale blocked POC/confidence artifacts cannot poison a clean generated QA refresh.",
+    "Keep optional review outcomes append-only, but make the UI bundle path distinguish generated source evidence from copied demo fixture evidence."
+  ],
+  "fix_status": "fixed_pending_validation",
+  "fix_refs": [
+    "apps/legal-intake-budget/src/fixtures/demo-run-manifest.json",
+    "apps/legal-intake-budget/src/fixtures/demo-synthetic-confidence-summary-report.json",
+    "apps/legal-intake-budget/src/fixtures/demo-synthetic-qa-blocker-report.json",
+    "apps/legal-intake-budget/src/fixtures/demo-poc-qa-triage-report.json"
+  ],
+  "test_refs": [
+    "tests/test_ui_foundation_contract.py",
+    "tests/test_poc_qa_triage.py",
+    "python scripts/run_full_pytest.py tests/test_labor_employment_executable_fixtures.py tests/test_labor_employment_executable_coverage.py tests/test_labor_employment_executable_fact_binding.py tests/test_labor_employment_executable_driver_binding.py tests/test_labor_employment_executable_driver_impact.py tests/test_labor_employment_driver_impact_review.py tests/test_labor_employment_blocked_driver_impact_review.py tests/test_labor_employment_budget_output_expectations.py tests/test_ui_foundation_contract.py tests/test_poc_qa_triage.py -q"
+  ],
+  "artifact_refs": [
+    ".lawfirm-os-intake/ui-fixture-refresh-le-epli-current/ui_review_manifest.json",
+    ".lawfirm-os-intake/ui-fixture-refresh-le-epli-current/quality/poc_qa_triage_report.json",
+    "apps/legal-intake-budget/src/fixtures/demo-ui-review-data-bundle.json"
+  ],
+  "candidate_exception_labels": [
+    "generated_qa_snapshot_stale_state",
+    "ui_manifest_self_dependency_loop",
+    "poc_triage_diagnostic_artifact_poisoning",
+    "candidate_review_dashboard_refresh_gap",
+    "dad_learning_loop_candidate"
+  ],
+  "applies_when": [
+    "A generated review dashboard consumes local reports that were themselves generated from the dashboard manifest or blocker queue.",
+    "A diagnostic failed report remains in a run root and is later consumed as if it were canonical review evidence.",
+    "A repo needs copied demo UI fixtures to represent the latest clean generated QA state."
+  ],
+  "does_not_apply_when": [
+    "The report is an intentional historical record and the manifest is supposed to show the failed historical state.",
+    "The generated artifact is not used as an input to later QA or UI evidence.",
+    "A fresh run root is used and all generated artifacts are created in a single controlled command."
+  ],
+  "danger_if_misapplied": "If this is ignored, stale generated failures can make readiness look worse than the source evidence supports. If it is overcorrected by deleting arbitrary artifacts, the repo can lose useful diagnostic evidence or hide real blockers.",
+  "suggested_actions": [
+    "DAD should classify this as a candidate workflow exception pattern for generated evidence refresh loops.",
+    "Codex should add a dedicated refresh command or test before the UI fixture set becomes a broader cross-repo pattern.",
+    "Exception Lake design should preserve diagnostic failed-state artifacts separately from clean-baseline review evidence."
+  ],
+  "reviewer_notes": [
+    "This issue describes generated synthetic QA artifacts only.",
+    "It avoids hidden chain-of-thought and records only observable artifact states and repair steps."
+  ],
+  "red_team_notes": [
+    "Do not let clean-baseline refresh commands erase historical evidence without an explicit retention rule.",
+    "Do not let UI snapshots imply production readiness because the POC triage report is ready for review."
+  ],
+  "raw_private_payload_included": false,
+  "hidden_chain_of_thought_included": false,
+  "candidate_only": true,
+  "dad_outbox_required": true,
+  "dad_review_required_before_promotion": true,
+  "lake_write_performed": false,
+  "sqlite_write_performed": false,
+  "external_writes_performed": false,
+  "silent_learning_performed": false
+}

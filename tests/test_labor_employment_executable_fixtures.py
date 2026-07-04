@@ -31,8 +31,8 @@ def test_labor_employment_executable_fixtures_run_preflight_and_preserve_boundar
     )
 
     assert report.status == "labor_employment_executable_fixtures_ready_for_review"
-    assert persisted.fixture_count == 10
-    assert persisted.preflight_executed_count == 10
+    assert persisted.fixture_count == 12
+    assert persisted.preflight_executed_count == 12
     assert persisted.failed_case_count == 0
     assert persisted.missing_pack_link_count == 0
     assert persisted.missing_source_signal_count == 0
@@ -64,6 +64,27 @@ def test_labor_employment_executable_fixtures_run_preflight_and_preserve_boundar
         cases["le-discrimination-harassment-clean.executable.v0_1"].exception_labels
     )
     assert cases["le-epli-carrier-missing-attachment.executable.v0_1"].missing_source_count == 2
+    assert cases["le-epli-carrier-clean.executable.v0_1"].missing_source_count == 0
+    assert "critic_role_candidates_ambiguous" in (
+        cases["le-epli-carrier-clean.executable.v0_1"].exception_labels
+    )
+    assert cases["le-epli-carrier-messy-thread.executable.v0_1"].duplicate_source_count == 1
+    assert "duplicate_source_detected" in (
+        cases["le-epli-carrier-messy-thread.executable.v0_1"].exception_labels
+    )
+    assert "critic_role_candidates_ambiguous" in (
+        cases["le-epli-carrier-messy-thread.executable.v0_1"].exception_labels
+    )
+    epli_packet = load_json(cases["le-epli-carrier-clean.executable.v0_1"].preflight_packet_ref)
+    epli_roles = {
+        party["name"]: {role["role"] for role in party["role_candidates"]}
+        for party in epli_packet["party_candidates"]
+    }
+    assert {"insurance_carrier", "payer", "instructing_source"} <= epli_roles["Granite Shield EPLI"]
+    assert {"insured", "employer_or_defendant", "prospective_represented_client"} <= epli_roles[
+        "Brightline Foods Inc."
+    ]
+    assert "claimant" in epli_roles["Talia Nguyen"]
     assert (
         cases[
             "le-discrimination-harassment-missing-attachment.executable.v0_1"
@@ -200,7 +221,7 @@ def test_labor_employment_executable_fixtures_cli_writes_candidate_report(
 
     assert exit_code == 0
     assert report["status"] == "labor_employment_executable_fixtures_ready_for_review"
-    assert report["fixture_count"] == 10
-    assert report["preflight_executed_count"] == 10
+    assert report["fixture_count"] == 12
+    assert report["preflight_executed_count"] == 12
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out

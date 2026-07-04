@@ -1,9 +1,9 @@
 {
   "schema_version": "0.1",
-  "synthetic_qa_bundle_report_id": "synthetic_qa_bundle_cb499e0c16e3",
+  "synthetic_qa_bundle_report_id": "synthetic_qa_bundle_303c8f602412",
   "status": "pending_review",
-  "run_root_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current",
-  "out_dir_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality",
+  "run_root_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-le-epli-current",
+  "out_dir_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-le-epli-current\\quality",
   "artifact_count": 14,
   "required_artifact_count": 14,
   "missing_required_artifact_count": 0,
@@ -19,8 +19,8 @@
       "present": true,
       "status": "passed",
       "gate_state": "passed",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\budget\\budget_coherence_report.json",
-      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\budget_coherence_report.json",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-le-epli-current\\budget\\budget_coherence_report.json",
+      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-le-epli-current\\quality\\budget_coherence_report.json",
       "source_sha256": "sha256:53e9a30bdfd91107d688ddef87079650451aab34d2ece786cab7b9fa4695659f",
       "notes": [
         "Found budget_coherence_report.json; source status=passed; bundle status=passed."
@@ -34,9 +34,9 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\synthetic_fixture_depth_audit_report.json",
-      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\synthetic_fixture_depth_audit_report.json",
-      "source_sha256": "sha256:c21cd28d3e8957e94f4fb524d61a2cf72747d525a01cb4ed6e260a450fd91114",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-le-epli-current\\quality\\synthetic_fixture_depth_audit_report.json",
+      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-le-epli-current\\quality\\synthetic_fixture_depth_audit_report.json",
+      "source_sha256": "sha256:3b3fe9b507493e5a80d2db691a483a4a73a180d28fd80464226c2ce92a56f92a",
       "notes": [
         "Found synthetic_fixture_depth_audit_report.json; source status=synthetic_fixture_depth_ready_for_review; bundle status=pending_review."
       ]
@@ -49,9 +49,9 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\budget_calibration_readiness_report.json",
-      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\budget_calibration_readiness_report.json",
-      "source_sha256": "sha256:308e3186288f808a719d92c75b7a864e5f096afde64b51263de61c2e136674a6",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-le-epli-current\\quality\\budget_calibration_readiness_report.json",
+      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-le-epli-current\\quality\\budget_calibration_readiness_report.json",
+      "source_sha256": "sha256:98aca73b9b4052b536413f7d44bf95e93f3fcbe0b9f300e353c328bb1da585ae",
       "notes": [
         "Found budget_calibration_readiness_report.json; source status=ready_for_manual_fixture_update_review; bundle status=pending_review."
       ]
@@ -64,9 +64,9 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\labor_employment_qa_matrix_report.json",
-      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\labor_employment_qa_matrix_report.json",
-      "source_sha256": "sha256:1f08b2ae554a47eaa013b007dab9ded6eb0d0bbfd32acf38b039e0b9da406790",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-le-epli-current\\quality\\labor_employment_qa_matrix_report.json",
+      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-le-epli-current\\quality\\labor_employment_qa_matrix_report.json",
+      "source_sha256": "sha256:de480477589eb65e3f0bf0f452cde8835efb5d15fd1a10ab738ca540b209aa13",
       "notes": [
         "Found labor_employment_qa_matrix_report.json; source status=labor_employment_qa_matrix_ready_for_review; bundle status=pending_review."
       ]
@@ -79,9 +79,9 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\labor_employment_fixture_family_pack_report.json",
-      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\labor_employment_fixture_family_pack_report.json",
-      "source_sha256": "sha256:74af9b5c543b368e89436d63fd65747a0f83de35172b65619eb772d3b7fbfcb4",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-le-epli-current\\quality\\labor_employment_fixture_family_pack_report.json",
+      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-le-epli-current\\quality\\labor_employment_fixture_family_pack_report.json",
+      "source_sha256": "sha256:57c77fc525721eea0d40fd79907ebd77e63a0b915f2d3f7acac4b7d40a6f0fa0",
       "notes": [
         "Found labor_employment_fixture_family_pack_report.json; source status=labor_employment_fixture_family_pack_ready_for_review; bundle status=pending_review."
       ]
@@ -94,9 +94,9 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\labor_employment_executable_fixtures_report.json",
-      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\labor_employment_executable_fixtures_report.json",
-      "source_sha256": "sha256:5eae702c7173e2a59bbc06d01c48df18c2bea936118f386064ef767ceb797851",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-le-epli-current\\quality\\labor_employment_executable_fixtures_report.json",
+      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-le-epli-current\\quality\\labor_employment_executable_fixtures_report.json",
+      "source_sha256": "sha256:a59ce50aea9491e4000b96c538de1d29cd4e1d13e082e98f97f71e13159f6588",
       "notes": [
         "Found labor_employment_executable_fixtures_report.json; source status=labor_employment_executable_fixtures_ready_for_review; bundle status=pending_review."
       ]
@@ -109,9 +109,9 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\labor_employment_executable_coverage_report.json",
-      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\labor_employment_executable_coverage_report.json",
-      "source_sha256": "sha256:f62ecaafc9289dd4dfbd5b9f643d725f107fe2b7afdfb31eb5bb579943b5c53b",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-le-epli-current\\quality\\labor_employment_executable_coverage_report.json",
+      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-le-epli-current\\quality\\labor_employment_executable_coverage_report.json",
+      "source_sha256": "sha256:c7ff4020f3bf8c0f4b99ccfacccfbe4f51b275d082e9753c4332d843d54861ca",
       "notes": [
         "Found labor_employment_executable_coverage_report.json; source status=labor_employment_executable_coverage_ready_for_review; bundle status=pending_review."
       ]
@@ -124,9 +124,9 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\labor_employment_executable_fact_binding_report.json",
-      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\labor_employment_executable_fact_binding_report.json",
-      "source_sha256": "sha256:42c6511eb21939e204954976758cb252deb6b3c36cf2af0449c915a8fe3362b8",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-le-epli-current\\quality\\labor_employment_executable_fact_binding_report.json",
+      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-le-epli-current\\quality\\labor_employment_executable_fact_binding_report.json",
+      "source_sha256": "sha256:2211cef8a4f75bebb5831bc14ce1f36003368cbcb35208108bfebf01e51d27da",
       "notes": [
         "Found labor_employment_executable_fact_binding_report.json; source status=labor_employment_executable_budget_fact_bindings_ready_for_review; bundle status=pending_review."
       ]
@@ -139,9 +139,9 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\labor_employment_executable_driver_binding_report.json",
-      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\labor_employment_executable_driver_binding_report.json",
-      "source_sha256": "sha256:bccff2c258296255fc33af30ab2ba23063594a125479ed17020f7b414d437871",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-le-epli-current\\quality\\labor_employment_executable_driver_binding_report.json",
+      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-le-epli-current\\quality\\labor_employment_executable_driver_binding_report.json",
+      "source_sha256": "sha256:46568af915676649cb63de5eabd615cbf7ca2eb0eb40aa99ae54792ccf576cc5",
       "notes": [
         "Found labor_employment_executable_driver_binding_report.json; source status=labor_employment_executable_driver_bindings_ready_for_review; bundle status=pending_review."
       ]
@@ -154,9 +154,9 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\labor_employment_executable_driver_impact_report.json",
-      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\labor_employment_executable_driver_impact_report.json",
-      "source_sha256": "sha256:88f98e556f62a56c49125ef45098f443d5469236b557aa1e3dba8c642d31ddd2",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-le-epli-current\\quality\\labor_employment_executable_driver_impact_report.json",
+      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-le-epli-current\\quality\\labor_employment_executable_driver_impact_report.json",
+      "source_sha256": "sha256:78b6a6af8f5e913edf1b7cbdad39473fb88bb10419b8a1b8f84bf0adeb9be5ae",
       "notes": [
         "Found labor_employment_executable_driver_impact_report.json; source status=labor_employment_executable_driver_impacts_ready_for_review; bundle status=pending_review."
       ]
@@ -169,9 +169,9 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\labor_employment_driver_impact_review_report.json",
-      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\labor_employment_driver_impact_review_report.json",
-      "source_sha256": "sha256:a53f54c7bdecca20e96d79c9ccfe75f44db94e402e40f46af3df07c43cf17dc0",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-le-epli-current\\quality\\labor_employment_driver_impact_review_report.json",
+      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-le-epli-current\\quality\\labor_employment_driver_impact_review_report.json",
+      "source_sha256": "sha256:443d9001f96889e630cdbabf8f17caf95731edde7c95dd24d5ee54ddbf7bee81",
       "notes": [
         "Found labor_employment_driver_impact_review_report.json; source status=labor_employment_driver_impact_review_ready_for_budget_gate_replay; bundle status=pending_review."
       ]
@@ -184,9 +184,9 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\labor_employment_blocked_driver_impact_review_report.json",
-      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\labor_employment_blocked_driver_impact_review_report.json",
-      "source_sha256": "sha256:571995186dc3f818f390e3e382780d08ed0d44e2526432c81c1b8198118b644f",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-le-epli-current\\quality\\labor_employment_blocked_driver_impact_review_report.json",
+      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-le-epli-current\\quality\\labor_employment_blocked_driver_impact_review_report.json",
+      "source_sha256": "sha256:092e44ca543c75b2c21eb31084e35fdbad5d1b63330acd711f53b65a8a24ebf0",
       "notes": [
         "Found labor_employment_blocked_driver_impact_review_report.json; source status=labor_employment_blocked_driver_impacts_ready_for_review; bundle status=pending_review."
       ]
@@ -199,9 +199,9 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\labor_employment_budget_output_expectations_report.json",
-      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\labor_employment_budget_output_expectations_report.json",
-      "source_sha256": "sha256:22656b4a373c43e58e5082244ae704148f2325006a13add91002b22310f37168",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-le-epli-current\\quality\\labor_employment_budget_output_expectations_report.json",
+      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-le-epli-current\\quality\\labor_employment_budget_output_expectations_report.json",
+      "source_sha256": "sha256:e261eb66f1473b063911e2db4a4572a9f5dc87f7c102f65a53709ef2a1075fc7",
       "notes": [
         "Found labor_employment_budget_output_expectations_report.json; source status=labor_employment_budget_output_expectations_ready_for_review; bundle status=pending_review."
       ]
@@ -214,16 +214,16 @@
       "present": true,
       "status": "passed",
       "gate_state": "passed",
-      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\labor_employment_budget_fact_gold_report.json",
-      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\labor_employment_budget_fact_gold_report.json",
-      "source_sha256": "sha256:228ab28071ba166681592db8cc8aefaaa1464fd144c2125d27878e605eff4793",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-le-epli-current\\quality\\labor_employment_budget_fact_gold_report.json",
+      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-le-epli-current\\quality\\labor_employment_budget_fact_gold_report.json",
+      "source_sha256": "sha256:b86d07510a034cf68cffc6dae1a3085c78850cc699a9d00c0992135b701d4f70",
       "notes": [
         "Found labor_employment_budget_fact_gold_report.json; source status=passed; bundle status=passed."
       ]
     }
   ],
-  "ui_manifest_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\ui_review_manifest.json",
-  "ui_data_bundle_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\ui_review_data_bundle.json",
+  "ui_manifest_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-le-epli-current\\ui_review_manifest.json",
+  "ui_data_bundle_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-le-epli-current\\ui_review_data_bundle.json",
   "required_next_actions": [
     "Route pending QA artifacts for human/owner review; do not treat review-ready as calibrated."
   ],
@@ -243,5 +243,5 @@
   "budget_submission_performed": false,
   "matter_opening_performed": false,
   "silent_learning_performed": false,
-  "generated_at": "2026-07-02T00:00:00Z"
+  "generated_at": "2026-07-04T00:00:00Z"
 }

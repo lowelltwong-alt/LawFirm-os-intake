@@ -1,0 +1,144 @@
+{
+  "schema_version": "0.1",
+  "bundle_id": "syn-le-epli-carrier-messy-thread-001",
+  "data_origin": "synthetic",
+  "contains_real_client_data": false,
+  "contains_real_matter_data": false,
+  "contains_privileged_data": false,
+  "sources": [
+    {
+      "source_id": "syn-le-epli-messy-thread-001",
+      "source_type": "correspondence_dump",
+      "filename": "synthetic_epli_assignment_messy_thread.txt",
+      "text": "From: adjuster@claimsbridge.example\nTo: intake@synthetic-law.example\nDate: July 1, 2026\nSubject: EPLI panel assignment - please separate the Nguyen matter from the Ochoa matter\n\nClaimsBridge Administrators is sending a synthetic EPLI carrier assignment thread from Granite Shield EPLI. The current request concerns Talia Nguyen v. Brightline Foods West LLC, not the separate Ochoa wage/hour matter referenced below. Granite Shield EPLI may be payer, ClaimsBridge may be instructing source, Brightline Foods West LLC may be insured and prospective represented client, and Brightline Foods Holdings may be an insured affiliate or joint-employer candidate. The thread asks panel counsel to follow the carrier guideline, but forum and arbitration posture is unknown. Please treat the same adjuster sending multiple matters as matter-linking ambiguity and keep carrier, TPA, insured affiliate, payer, claimant, and represented-client candidates separate.\n\n-----Original Message-----\nFrom: adjuster@claimsbridge.example\nTo: prior-panel-counsel@synthetic-law.example\nSubject: Ochoa wage/hour note\n\nDifferent synthetic matter: Ochoa alleges meal-period violations against another Brightline location. Do not merge this with the Nguyen discrimination assignment.\n\n-----Original Message-----\nFrom: coverage@granite-shield-epli.example\nTo: adjuster@claimsbridge.example\nSubject: Nguyen EPLI referral\n\nUse the carrier guideline and panel counsel instructions for Granite Shield EPLI. The insured affiliate structure remains under review.",
+      "metadata": {
+        "synthetic": true,
+        "thread_state": "messy_quoted_history",
+        "matter_linking_risk": "same_adjuster_multiple_matters"
+      }
+    },
+    {
+      "source_id": "syn-le-epli-messy-thread-duplicate-001",
+      "source_type": "correspondence_dump",
+      "filename": "synthetic_epli_assignment_messy_thread_duplicate.txt",
+      "text": "From: adjuster@claimsbridge.example\nTo: intake@synthetic-law.example\nDate: July 1, 2026\nSubject: EPLI panel assignment - please separate the Nguyen matter from the Ochoa matter\n\nClaimsBridge Administrators is sending a synthetic EPLI carrier assignment thread from Granite Shield EPLI. The current request concerns Talia Nguyen v. Brightline Foods West LLC, not the separate Ochoa wage/hour matter referenced below. Granite Shield EPLI may be payer, ClaimsBridge may be instructing source, Brightline Foods West LLC may be insured and prospective represented client, and Brightline Foods Holdings may be an insured affiliate or joint-employer candidate. The thread asks panel counsel to follow the carrier guideline, but forum and arbitration posture is unknown. Please treat the same adjuster sending multiple matters as matter-linking ambiguity and keep carrier, TPA, insured affiliate, payer, claimant, and represented-client candidates separate.\n\n-----Original Message-----\nFrom: adjuster@claimsbridge.example\nTo: prior-panel-counsel@synthetic-law.example\nSubject: Ochoa wage/hour note\n\nDifferent synthetic matter: Ochoa alleges meal-period violations against another Brightline location. Do not merge this with the Nguyen discrimination assignment.\n\n-----Original Message-----\nFrom: coverage@granite-shield-epli.example\nTo: adjuster@claimsbridge.example\nSubject: Nguyen EPLI referral\n\nUse the carrier guideline and panel counsel instructions for Granite Shield EPLI. The insured affiliate structure remains under review.",
+      "metadata": {
+        "synthetic": true,
+        "thread_state": "duplicate_messy_quoted_history",
+        "matter_linking_risk": "same_adjuster_multiple_matters"
+      }
+    },
+    {
+      "source_id": "syn-le-epli-messy-guideline-001",
+      "source_type": "attachment_text",
+      "filename": "granite-shield-panel-guideline-note.txt",
+      "text": "Synthetic carrier guideline note: Granite Shield EPLI panel counsel must preserve proposed versus carrier-compliant projection, identify preapproval thresholds, and label this as not authorized for client or carrier submission. The carrier guideline note does not resolve forum, venue, arbitration posture, insured affiliate structure, or represented-client confirmation.",
+      "metadata": {
+        "synthetic": true,
+        "document_type": "carrier_guideline_note"
+      }
+    }
+  ],
+  "fixture_hints": {
+    "provided_fields": [
+      "prospective_client_payer_carrier_posture",
+      "employee_claimant_identity",
+      "employer_or_defendant_identity",
+      "joint_employer_or_affiliate_structure",
+      "claims_and_causes_of_action",
+      "carrier_guideline_and_rate_source"
+    ],
+    "entities": [
+      {
+        "name": "Granite Shield EPLI",
+        "role_candidates": [
+          {
+            "role": "insurance_carrier",
+            "confidence": 0.81
+          },
+          {
+            "role": "payer",
+            "confidence": 0.75
+          },
+          {
+            "role": "instructing_source",
+            "confidence": 0.62
+          }
+        ]
+      },
+      {
+        "name": "ClaimsBridge Administrators",
+        "role_candidates": [
+          {
+            "role": "third_party_administrator",
+            "confidence": 0.71
+          },
+          {
+            "role": "instructing_source",
+            "confidence": 0.66
+          }
+        ]
+      },
+      {
+        "name": "Brightline Foods West LLC",
+        "role_candidates": [
+          {
+            "role": "insured",
+            "confidence": 0.76
+          },
+          {
+            "role": "prospective_represented_client",
+            "confidence": 0.71
+          },
+          {
+            "role": "employer_or_defendant",
+            "confidence": 0.69
+          }
+        ]
+      },
+      {
+        "name": "Brightline Foods Holdings",
+        "role_candidates": [
+          {
+            "role": "insured_affiliate",
+            "confidence": 0.69
+          },
+          {
+            "role": "joint_employer_candidate",
+            "confidence": 0.64
+          },
+          {
+            "role": "unknown",
+            "confidence": 0.48
+          }
+        ]
+      },
+      {
+        "name": "Talia Nguyen",
+        "role_candidates": [
+          {
+            "role": "claimant",
+            "confidence": 0.74
+          },
+          {
+            "role": "adverse_party",
+            "confidence": 0.58
+          }
+        ]
+      },
+      {
+        "name": "Ochoa",
+        "role_candidates": [
+          {
+            "role": "unrelated_matter_claimant_candidate",
+            "confidence": 0.63
+          },
+          {
+            "role": "matter_linking_ambiguity",
+            "confidence": 0.57
+          }
+        ]
+      }
+    ]
+  }
+}

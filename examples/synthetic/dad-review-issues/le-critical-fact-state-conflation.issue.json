@@ -1,0 +1,96 @@
+{
+  "schema_version": "0.1",
+  "issue_id": "le-critical-fact-state-conflation-001",
+  "issue_version": "0.1.0",
+  "observed_at": "2026-07-04T00:00:00Z",
+  "source_repo_id": "LawFirm-os-intake",
+  "source_repo_path": "LawFirm-os-intake",
+  "originating_agent": "codex",
+  "review_context": "EPLI carrier-assignment executable fixture expansion and L&E budget-driver QA refresh.",
+  "finding_title": "L&E critical budget facts need separate states for missing versus source-present but unconfirmed.",
+  "severity": "P1",
+  "issue_classes": [
+    "budget_driver_gap",
+    "matter_linking_ambiguity",
+    "synthetic_data_gap",
+    "exception_lake_mapping_gap",
+    "learning_loop_gap",
+    "test_gap"
+  ],
+  "finding_summary": "The current executable fact-binding layer treats critical facts as blockers without a first-class distinction between facts absent from source material and facts present in source material but still requiring human confirmation. That makes carrier/client/insured role evidence hard to model for nonblocking range-only or candidate-range cases.",
+  "observable_context": [
+    "New synthetic EPLI fixtures include carrier, TPA, payer, insured, represented-client, claimant, and opposing-counsel signals.",
+    "The clean EPLI fixture has source text naming the relevant role candidates but still requires human confirmation before budget use.",
+    "The current fact-binding manifest can safely bind noncritical expected gaps, but binding critical role facts would make the downstream blocked-driver review treat the case as amount-budget-blocked.",
+    "The implementation therefore left critical role facts unbound in these nonblocking fixtures and used noncritical driver facts such as expert/vendor needs and forum/arbitration posture to exercise the budget-output partition."
+  ],
+  "observable_decision_logic": [
+    "Missing critical facts should block amount-budget output before proposal.",
+    "Source-present but unconfirmed critical role facts should remain candidate-only and human-gated, but they should not be indistinguishable from missing facts.",
+    "The budget QA chain needs to know whether a blocker is absence of evidence, role ambiguity, or human-confirmation pending state.",
+    "DAD should classify this as a recurring issue pattern because legal-budget workflows will repeatedly face present-but-unconfirmed carrier, insured, employer, claimant, and affiliate relationships."
+  ],
+  "solution_path": [
+    "Add a candidate fact state such as source_present_needs_confirmation or review_only_critical_fact beside missing_critical_fact.",
+    "Update fact-binding, driver-binding, blocked-driver review, budget-output expectations, and UI labels to preserve the distinction.",
+    "Add synthetic tests where role evidence is present but unconfirmed and the allowed budget output is range-only or candidate-range pending review.",
+    "Map the states to separate candidate Exception Lake labels so DAD can distinguish missing intake evidence from human-confirmation pressure."
+  ],
+  "fix_status": "planned",
+  "fix_refs": [
+    "examples/synthetic/labor-employment/labor-employment-executable-budget-fact-bindings.json",
+    "examples/synthetic/labor-employment/labor-employment-executable-fixtures-manifest.json",
+    "examples/synthetic/labor-employment/executable-fixtures/le-epli-carrier-clean.source-bundle.json",
+    "examples/synthetic/labor-employment/executable-fixtures/le-epli-carrier-messy-thread.source-bundle.json"
+  ],
+  "test_refs": [
+    "tests/test_labor_employment_executable_fact_binding.py",
+    "tests/test_labor_employment_executable_driver_binding.py",
+    "tests/test_labor_employment_blocked_driver_impact_review.py",
+    "tests/test_labor_employment_budget_output_expectations.py"
+  ],
+  "artifact_refs": [
+    "apps/legal-intake-budget/src/fixtures/demo-labor-employment-budget-output-expectations-report.json",
+    "apps/legal-intake-budget/src/fixtures/demo-labor-employment-blocked-driver-impact-review-report.json"
+  ],
+  "candidate_exception_labels": [
+    "critical_fact_state_conflated",
+    "source_present_role_fact_requires_confirmation",
+    "labor_employment_budget_driver_state_gap",
+    "carrier_client_role_confirmation_pressure",
+    "dad_learning_loop_candidate"
+  ],
+  "applies_when": [
+    "A source packet contains role or budget-driver evidence but the workflow still requires human confirmation before pricing.",
+    "A critical fact should affect budget output posture but should not be treated the same as missing evidence.",
+    "Carrier, insured, employer, claimant, affiliate, joint-employer, or payer relationships are present in source text but unresolved for review."
+  ],
+  "does_not_apply_when": [
+    "The source packet truly lacks the critical fact.",
+    "A human confirmation artifact has already resolved the role or driver fact.",
+    "The fact is noncritical and only widens ranges or creates assumptions."
+  ],
+  "danger_if_misapplied": "If source-present critical facts are treated as resolved, the budget may overstate confidence. If they are treated as missing, the system may over-block useful range-only review packets and hide evidence that reviewers need.",
+  "suggested_actions": [
+    "DAD should classify this as a candidate exception-pattern and learning-loop issue for L&E budget-driver state modeling.",
+    "DAD should ask Exception Lake design to preserve separate labels for missing fact, ambiguous fact, and source-present pending-confirmation fact.",
+    "Codex should implement the candidate fact-state split in a future PR before expanding high-risk L&E executable fixtures."
+  ],
+  "reviewer_notes": [
+    "This record contains synthetic fixture and artifact references only.",
+    "It records observable rationale and implementation constraints, not hidden chain-of-thought."
+  ],
+  "red_team_notes": [
+    "Do not let the UI display source-present critical facts as human-confirmed facts.",
+    "Do not let a future Lake mapping merge missing evidence and confirmation-pending evidence into one undifferentiated event."
+  ],
+  "raw_private_payload_included": false,
+  "hidden_chain_of_thought_included": false,
+  "candidate_only": true,
+  "dad_outbox_required": true,
+  "dad_review_required_before_promotion": true,
+  "lake_write_performed": false,
+  "sqlite_write_performed": false,
+  "external_writes_performed": false,
+  "silent_learning_performed": false
+}

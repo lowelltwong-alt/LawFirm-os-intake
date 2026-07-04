@@ -1,7 +1,7 @@
 {
-  "manifestId": "ui_review_manifest_68f335189cfc",
+  "manifestId": "ui_review_manifest_0320af407314",
   "generatedAt": "2026-07-04T00:00:00Z",
-  "runLabel": "Local intake QA review: ui-fixture-refresh-clean-baselines-current",
+  "runLabel": "Local intake QA review: ui-fixture-refresh-le-epli-current",
   "practiceArea": "synthetic_intake",
   "matterFamily": "medical_malpractice_defense",
   "overallStatus": "blocked",
@@ -27,7 +27,7 @@
       "candidateOnly": true,
       "externalWritesPerformed": false,
       "notes": [
-        "Found preflight\\run_1684c6d3c5cd4b5898c5959541b6f7c2\\intake_preflight_packet.json; status=human_intake_review_required."
+        "Found preflight\\run_68849dab15ed4fc387cda423488f2f9e\\intake_preflight_packet.json; status=human_intake_review_required."
       ]
     },
     {
