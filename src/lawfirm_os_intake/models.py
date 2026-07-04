@@ -3990,6 +3990,144 @@ class MatterLinkingReviewOutcomeReport(StrictModel):
         return self
 
 
+class MatterLinkingQAGateCase(StrictModel):
+    schema_version: str = "0.1"
+    case_id: str
+    fixture_ref: str
+    generated_report_ref: str
+    expected_status: str
+    observed_status: str
+    expected_overall_link_state: str
+    observed_overall_link_state: str
+    expected_cluster_count: int = Field(ge=0)
+    observed_cluster_count: int = Field(ge=0)
+    expected_high_evidence_candidate_count: int = Field(ge=0)
+    observed_high_evidence_candidate_count: int = Field(ge=0)
+    expected_weak_only_candidate_count: int = Field(ge=0)
+    observed_weak_only_candidate_count: int = Field(ge=0)
+    expected_negative_split_evidence_required: bool
+    observed_negative_split_evidence_required: bool
+    expected_sender_followup_required: bool
+    observed_sender_followup_required: bool
+    expected_failed_check_ids: list[str] = Field(default_factory=list)
+    observed_failed_check_ids: list[str] = Field(default_factory=list)
+    required_coverage_tags: list[str]
+    candidate_exception_lake_labels: list[str]
+    status: Literal["passed", "failed"]
+    notes: list[str]
+    candidate_only: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    local_json_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    budget_amount_output_authorized: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    conflict_conclusion_emitted: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def matter_linking_qa_gate_case_is_complete(self) -> "MatterLinkingQAGateCase":
+        if not self.case_id.strip():
+            raise ValueError("matter-linking QA case requires case_id")
+        if not self.fixture_ref.strip() or not self.generated_report_ref.strip():
+            raise ValueError("matter-linking QA case requires fixture and report refs")
+        if not self.required_coverage_tags:
+            raise ValueError("matter-linking QA case requires coverage tags")
+        if not self.candidate_exception_lake_labels:
+            raise ValueError("matter-linking QA case requires candidate labels")
+        if not self.notes:
+            raise ValueError("matter-linking QA case requires notes")
+        return self
+
+
+class MatterLinkingQAGateCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    case_ids: list[str] = Field(default_factory=list)
+    artifact_refs: list[str] = Field(default_factory=list)
+    blocking_refs: list[str] = Field(default_factory=list)
+
+
+class MatterLinkingQAGateReport(StrictModel):
+    schema_version: str = "0.1"
+    matter_linking_qa_gate_report_id: str
+    status: Literal[
+        "matter_linking_qa_gate_ready_for_review",
+        "blocked_by_matter_linking_qa_gate",
+    ]
+    repo_root_ref: str
+    out_dir_ref: str
+    case_count: int = Field(ge=0)
+    passed_case_count: int = Field(ge=0)
+    failed_case_count: int = Field(ge=0)
+    required_coverage_tag_count: int = Field(ge=0)
+    observed_coverage_tag_count: int = Field(ge=0)
+    missing_coverage_tags: list[str]
+    cases: list[MatterLinkingQAGateCase]
+    checks: list[MatterLinkingQAGateCheck]
+    candidate_exception_lake_labels: list[str]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    local_json_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    not_authorized_for_matter_opening: Literal[True] = True
+    budget_amount_output_authorized: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    conflict_conclusion_emitted: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    training_pipeline_created: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def matter_linking_qa_gate_report_counts_match(self) -> "MatterLinkingQAGateReport":
+        failed_cases = [case for case in self.cases if case.status == "failed"]
+        failed_checks = [check for check in self.checks if check.status == "failed"]
+        observed_tags = {tag for case in self.cases for tag in case.required_coverage_tags}
+        if self.case_count != len(self.cases):
+            raise ValueError("matter-linking QA gate case count mismatch")
+        if self.failed_case_count != len(failed_cases):
+            raise ValueError("matter-linking QA gate failed case count mismatch")
+        if self.passed_case_count != self.case_count - self.failed_case_count:
+            raise ValueError("matter-linking QA gate passed case count mismatch")
+        if self.observed_coverage_tag_count != len(observed_tags):
+            raise ValueError("matter-linking QA gate coverage tag count mismatch")
+        if self.required_coverage_tag_count < self.observed_coverage_tag_count:
+            raise ValueError("observed coverage tags cannot exceed required coverage tags")
+        if self.status == "matter_linking_qa_gate_ready_for_review" and (
+            failed_cases or failed_checks or self.missing_coverage_tags
+        ):
+            raise ValueError("ready matter-linking QA gate cannot have failed evidence")
+        if self.status == "blocked_by_matter_linking_qa_gate" and not (
+            failed_cases or failed_checks or self.missing_coverage_tags
+        ):
+            raise ValueError("blocked matter-linking QA gate requires failed evidence")
+        required_gates = {
+            "human_matter_linking_review",
+            "no_budget_amount_until_cluster_and_roles_confirmed",
+            "no_matter_opening_without_official_authority",
+            "no_lake_or_sqlite_write_from_matter_linking_qa_gate",
+            "exception_lake_owner_review_before_admission",
+        }
+        if not required_gates.issubset(set(self.required_next_gates)):
+            raise ValueError("matter-linking QA gate is missing required next gates")
+        return self
+
+
 PublicSyntheticFixtureFamily = Literal[
     "docket_structure",
     "aggregate_case_metadata",
@@ -11417,6 +11555,7 @@ UIReviewDataBundleReportKind = Literal[
     "synthetic_qa_review_outcome",
     "matter_linking_preflight",
     "matter_linking_review_outcome",
+    "matter_linking_qa_gate",
     "labor_employment_qa_matrix",
     "labor_employment_executable_coverage",
     "labor_employment_blocked_driver_impact_review",

@@ -482,6 +482,23 @@ code {
   line-height: 1.42;
 }
 
+.warning-strip {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 14px;
+  padding: 12px;
+  border: 1px solid #e1c16f;
+  border-radius: 8px;
+  background: #fff9e8;
+}
+
+.warning-strip > span {
+  color: #755b14;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
 .qa-blocker-table th:first-child,
 .qa-blocker-table td:first-child {
   min-width: 230px;

@@ -5,7 +5,7 @@
   "policy_id": "intake-validation-runtime-policy",
   "policy_version": "0.1",
   "policy_ref": "config/validation-runtime-policy.yaml",
-  "repo_root_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync",
+  "repo_root_ref": "repo-root",
   "git_commit": "65c392d7b72c99a17f1c597d7bef726e422da04b",
   "working_tree_dirty": true,
   "step_count": 7,

@@ -101,6 +101,7 @@ from .labor_employment_fixture_family_pack import (
 )
 from .labor_employment_qa_matrix import run_labor_employment_qa_matrix
 from .matter_linking_preflight import run_matter_linking_preflight
+from .matter_linking_qa_gate import run_matter_linking_qa_gate
 from .matter_linking_review_outcomes import run_matter_linking_review_outcome_record
 from .models import BudgetProposal, HumanConfirmation
 from .orchestrator_owner_review_request import run_orchestrator_owner_review_request
@@ -813,6 +814,25 @@ def _parser() -> argparse.ArgumentParser:
     )
     matter_linking_preflight.add_argument("--out-dir", required=True)
     matter_linking_preflight.add_argument(
+        "--generated-at",
+        help="Optional fixed timestamp for deterministic tests and replayed reports.",
+    )
+
+    matter_linking_qa_gate = sub.add_parser(
+        "audit-matter-linking-qa-gate",
+        help=(
+            "Replay synthetic Upfront-like matter-linking fixtures as one QA "
+            "coverage gate without connector, Lake, budget, matter-opening, "
+            "conflict, or learning writes."
+        ),
+    )
+    matter_linking_qa_gate.add_argument(
+        "--repo-root",
+        default=".",
+        help="Repository root for synthetic Upfront-like fixtures.",
+    )
+    matter_linking_qa_gate.add_argument("--out-dir", required=True)
+    matter_linking_qa_gate.add_argument(
         "--generated-at",
         help="Optional fixed timestamp for deterministic tests and replayed reports.",
     )
@@ -2867,6 +2887,36 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             if report.status == "blocked_matter_linking_preflight":
+                return 2
+            return 0
+
+        if args.command == "audit-matter-linking-qa-gate":
+            report, run_dir = run_matter_linking_qa_gate(
+                repo_root=args.repo_root,
+                out_dir=args.out_dir,
+                generated_at=args.generated_at,
+            )
+            failed_checks = [check.check_id for check in report.checks if check.status == "failed"]
+            _print(
+                {
+                    "status": report.status,
+                    "matter_linking_qa_gate_report_id": (report.matter_linking_qa_gate_report_id),
+                    "case_count": report.case_count,
+                    "failed_case_count": report.failed_case_count,
+                    "missing_coverage_tags": report.missing_coverage_tags,
+                    "failed_checks": failed_checks,
+                    "required_next_gates": report.required_next_gates,
+                    "budget_amount_output_authorized": report.budget_amount_output_authorized,
+                    "matter_opening_authorized": report.matter_opening_authorized,
+                    "conflict_conclusion_emitted": report.conflict_conclusion_emitted,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            if report.status == "blocked_by_matter_linking_qa_gate":
                 return 2
             return 0
 

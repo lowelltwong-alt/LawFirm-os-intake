@@ -1,0 +1,199 @@
+{
+  "schema_version": "0.1",
+  "artifact_id": "upfront_like_intake_output.synthetic.conflicting_identifiers.v0_1",
+  "artifact_type": "upfront_like_intake_output_candidate",
+  "status": "conflicting_identifiers_require_sender_followup",
+  "data_origin": "synthetic",
+  "candidate_only": true,
+  "non_authoritative": true,
+  "synthetic_only": true,
+  "source_system": {
+    "system_name": "Upfront-like intake output",
+    "vendor": "Fulcrum GT Upfront public-research proxy",
+    "real_upfront_export": false,
+    "api_contract_verified": false,
+    "public_research_ref": "docs/integrations/upfront-intake-integration-research.md",
+    "notes": [
+      "This fixture is synthetic and models conflicting strong identifiers inside one candidate cluster.",
+      "No vendor endpoint names, tenant field names, credentials, or production object IDs are represented."
+    ]
+  },
+  "intake_request": {
+    "intake_request_id": "synthetic-upfront-request-20260704-conflict-001",
+    "request_type": "new_matter_intake",
+    "request_status": "draft_pre_clearance",
+    "practice_area_candidate": "labor_and_employment",
+    "matter_family_candidate": "employment_litigation_defense",
+    "request_channel": "email_forwarded_to_intake",
+    "requester": {
+      "person_id": "synthetic-person-requester-conflict-001",
+      "display_name": "Morgan Lee",
+      "role_candidate": "insurance_adjuster",
+      "organization": "Northstar Mutual Synthetic Claims",
+      "email": "morgan.lee@example.invalid"
+    }
+  },
+  "external_references": [
+    {
+      "reference_type": "carrier_claim_number",
+      "reference_value": "CLM-99001-X",
+      "source_ref": "source.email.001:body:48-59",
+      "strength": "strong",
+      "notes": [
+        "Email body gives one claim number."
+      ]
+    },
+    {
+      "reference_type": "carrier_claim_number",
+      "reference_value": "CLM-99002-Y",
+      "source_ref": "source.attachment.001:page1:40-51",
+      "strength": "strong",
+      "notes": [
+        "Attachment gives a different claim number for the same proposed candidate cluster."
+      ]
+    },
+    {
+      "reference_type": "official_firm_matter_number",
+      "reference_value": null,
+      "source_ref": "source.inventory.synthetic:missing",
+      "strength": "missing",
+      "notes": [
+        "No official firm matter number exists at intake time."
+      ]
+    }
+  ],
+  "source_inventory": [
+    {
+      "source_id": "source.email.001",
+      "source_kind": "email",
+      "sender": "morgan.lee@example.invalid",
+      "subject": "New employment assignment claim CLM-99001-X",
+      "received_at": "2026-07-04T15:10:00Z",
+      "source_hash": "sha256:synthetic-conflicting-email-001",
+      "coverage_state": "read",
+      "document_cluster_candidate_ids": [
+        "cluster.conflict-a"
+      ],
+      "notes": [
+        "Email and attachment disagree on the carrier claim number."
+      ]
+    },
+    {
+      "source_id": "source.attachment.001",
+      "source_kind": "pdf_assignment_letter",
+      "file_name": "Northstar_Assignment_CLM-99002-Y.pdf",
+      "source_hash": "sha256:synthetic-conflicting-attachment-001",
+      "coverage_state": "read",
+      "document_cluster_candidate_ids": [
+        "cluster.conflict-a"
+      ]
+    },
+    {
+      "source_id": "source.attachment.002",
+      "source_kind": "pdf_eeoc_charge",
+      "file_name": "Charge_Parker_Quinn.pdf",
+      "source_hash": "sha256:synthetic-conflicting-attachment-002",
+      "coverage_state": "read",
+      "document_cluster_candidate_ids": [
+        "cluster.conflict-a"
+      ]
+    }
+  ],
+  "matter_linking": {
+    "official_matter_number_status": "not_available",
+    "overall_link_state": "conflicting_identifiers",
+    "requires_human_confirmation": true,
+    "requires_sender_followup": true,
+    "candidate_clusters": [
+      {
+        "cluster_id": "cluster.conflict-a",
+        "link_state": "conflicting_identifier_candidate_needs_sender_reference",
+        "match_strength": "conflicting_identifier_candidate_blocked",
+        "proposed_short_label": "Quinn v. Synthetic Market Works",
+        "supporting_signals": [
+          {
+            "signal_type": "carrier_claim_number",
+            "signal_value": "CLM-99001-X",
+            "source_refs": [
+              "source.email.001:body:48-59"
+            ],
+            "weight_class": "strong"
+          },
+          {
+            "signal_type": "carrier_claim_number",
+            "signal_value": "CLM-99002-Y",
+            "source_refs": [
+              "source.attachment.001:page1:40-51"
+            ],
+            "weight_class": "strong"
+          },
+          {
+            "signal_type": "party_pair",
+            "signal_value": "Parker Quinn / Synthetic Market Works",
+            "source_refs": [
+              "source.attachment.001:page1:80-121",
+              "source.attachment.002:page1:12-48"
+            ],
+            "weight_class": "strong"
+          }
+        ],
+        "negative_signals": [],
+        "source_ids": [
+          "source.email.001",
+          "source.attachment.001",
+          "source.attachment.002"
+        ]
+      }
+    ],
+    "weak_signals_not_sufficient_for_merge": [
+      {
+        "signal_type": "same_sender",
+        "signal_value": "morgan.lee@example.invalid",
+        "source_refs": [
+          "source.email.001:headers"
+        ],
+        "reason": "One adjuster can send multiple unrelated assignments."
+      },
+      {
+        "signal_type": "same_carrier",
+        "signal_value": "Northstar Mutual Synthetic Claims",
+        "source_refs": [
+          "source.email.001:signature"
+        ],
+        "reason": "Carrier identity does not identify a specific matter."
+      }
+    ],
+    "required_review_actions": [
+      "ask sender whether CLM-99001-X or CLM-99002-Y is the correct claim number",
+      "do not link this packet to an existing candidate matter until the conflict is resolved",
+      "confirm prospective represented client, insured, payer, and carrier roles only after source-specific evidence is reconciled"
+    ]
+  },
+  "candidate_exception_lake_labels": [
+    "source_matter_link_conflicting_identifiers",
+    "conflicting_external_reference",
+    "missing_official_matter_number",
+    "human_matter_linking_confirmation_required"
+  ],
+  "output_boundaries": {
+    "upfront_connector_implemented": false,
+    "vendor_api_called": false,
+    "external_write_performed": false,
+    "lake_write_performed": false,
+    "sqlite_write_performed": false,
+    "matter_opening_authorized": false,
+    "budget_amount_output_authorized": false,
+    "budget_submission_authorized": false,
+    "conflict_conclusion_emitted": false,
+    "screen_created": false,
+    "silent_learning_performed": false
+  },
+  "required_next_gates": [
+    "human_matter_linking_review",
+    "sender_reference_followup",
+    "conflict_seed_review",
+    "no_budget_amount_until_cluster_and_roles_confirmed",
+    "no_matter_opening_without_official_authority",
+    "no_lake_or_sqlite_write_from_matter_linking_preflight"
+  ]
+}

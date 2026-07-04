@@ -26,6 +26,7 @@ export type UIReviewDataBundleReportKind =
   | "synthetic_qa_review_outcome"
   | "matter_linking_preflight"
   | "matter_linking_review_outcome"
+  | "matter_linking_qa_gate"
   | "labor_employment_qa_matrix"
   | "labor_employment_executable_coverage"
   | "labor_employment_blocked_driver_impact_review"
@@ -157,6 +158,93 @@ export type MatterLinkingReviewOutcomeReport = {
   conflict_conclusion_emitted: boolean;
   matter_opening_authorized: boolean;
   screen_created: boolean;
+  lake_write_performed: boolean;
+  sqlite_write_performed: boolean;
+  external_writes_performed: boolean;
+  silent_learning_performed: boolean;
+  generated_at: string;
+};
+
+export type MatterLinkingQAGateCase = {
+  schema_version: string;
+  case_id: string;
+  fixture_ref: string;
+  generated_report_ref: string;
+  expected_status: string;
+  observed_status: string;
+  expected_overall_link_state: string;
+  observed_overall_link_state: string;
+  expected_cluster_count: number;
+  observed_cluster_count: number;
+  expected_high_evidence_candidate_count: number;
+  observed_high_evidence_candidate_count: number;
+  expected_weak_only_candidate_count: number;
+  observed_weak_only_candidate_count: number;
+  expected_negative_split_evidence_required: boolean;
+  observed_negative_split_evidence_required: boolean;
+  expected_sender_followup_required: boolean;
+  observed_sender_followup_required: boolean;
+  expected_failed_check_ids: string[];
+  observed_failed_check_ids: string[];
+  required_coverage_tags: string[];
+  candidate_exception_lake_labels: string[];
+  status: "passed" | "failed";
+  notes: string[];
+  candidate_only: boolean;
+  synthetic_only: boolean;
+  non_authoritative: boolean;
+  local_json_only: boolean;
+  human_review_required: boolean;
+  budget_amount_output_authorized: boolean;
+  budget_submission_authorized: boolean;
+  conflict_conclusion_emitted: boolean;
+  matter_opening_authorized: boolean;
+  lake_write_performed: boolean;
+  sqlite_write_performed: boolean;
+  external_writes_performed: boolean;
+  silent_learning_performed: boolean;
+};
+
+export type MatterLinkingQAGateCheck = {
+  check_id: string;
+  status: "passed" | "failed";
+  message: string;
+  case_ids: string[];
+  artifact_refs: string[];
+  blocking_refs: string[];
+};
+
+export type MatterLinkingQAGateReport = {
+  schema_version: string;
+  matter_linking_qa_gate_report_id: string;
+  status: "matter_linking_qa_gate_ready_for_review" | "blocked_by_matter_linking_qa_gate";
+  repo_root_ref: string;
+  out_dir_ref: string;
+  case_count: number;
+  passed_case_count: number;
+  failed_case_count: number;
+  required_coverage_tag_count: number;
+  observed_coverage_tag_count: number;
+  missing_coverage_tags: string[];
+  cases: MatterLinkingQAGateCase[];
+  checks: MatterLinkingQAGateCheck[];
+  candidate_exception_lake_labels: string[];
+  required_next_gates: string[];
+  candidate_only: boolean;
+  synthetic_only: boolean;
+  non_authoritative: boolean;
+  local_json_only: boolean;
+  human_review_required: boolean;
+  not_authorized_for_external_write: boolean;
+  not_authorized_for_lake_write: boolean;
+  not_authorized_for_sqlite_write: boolean;
+  not_authorized_for_budget_submission: boolean;
+  not_authorized_for_matter_opening: boolean;
+  budget_amount_output_authorized: boolean;
+  budget_submission_authorized: boolean;
+  conflict_conclusion_emitted: boolean;
+  matter_opening_authorized: boolean;
+  training_pipeline_created: boolean;
   lake_write_performed: boolean;
   sqlite_write_performed: boolean;
   external_writes_performed: boolean;

@@ -5,6 +5,7 @@ import type {
   LaborEmploymentExecutableCoverageReport,
   LaborEmploymentQAMatrixReport,
   MatterLinkingPreflightReport,
+  MatterLinkingQAGateReport,
   MatterLinkingReviewOutcomeReport,
   POCQATriageReport,
   QualityGate,
@@ -35,6 +36,7 @@ export const REQUIRED_ARTIFACT_FILES = [
   "synthetic_qa_blocker_report.json",
   "matter_linking_preflight_report.json",
   "matter_linking_review_outcome_report.json",
+  "matter_linking_qa_gate_report.json",
   "synthetic_fixture_depth_audit_report.json",
   "budget_calibration_readiness_report.json",
   "budget_calibration_starter_pack_report.json",
@@ -73,6 +75,7 @@ export const REQUIRED_DETAIL_REPORT_FILES = [
   "ui_review_manifest.json",
   "matter_linking_preflight_report.json",
   "matter_linking_review_outcome_report.json",
+  "matter_linking_qa_gate_report.json",
   "synthetic_confidence_summary_report.json",
   "labor_employment_qa_matrix_report.json",
   "labor_employment_executable_coverage_report.json",
@@ -785,6 +788,81 @@ export function assertMatterLinkingReviewOutcomeReport(
   }
   if (!report.candidate_lake_event_labels.length) {
     failures.push("matter_linking_review_missing_candidate_lake_labels");
+  }
+  return failures;
+}
+
+export function assertMatterLinkingQAGateReport(report: MatterLinkingQAGateReport): string[] {
+  const failures: string[] = [];
+  if (!report.candidate_only || !report.synthetic_only || !report.non_authoritative) {
+    failures.push("matter_linking_qa_gate_authority_boundary_failed");
+  }
+  if (!report.local_json_only || !report.human_review_required) {
+    failures.push("matter_linking_qa_gate_review_boundary_failed");
+  }
+  if (
+    report.external_writes_performed ||
+    report.lake_write_performed ||
+    report.sqlite_write_performed ||
+    report.budget_amount_output_authorized ||
+    report.budget_submission_authorized ||
+    report.matter_opening_authorized ||
+    report.conflict_conclusion_emitted ||
+    report.training_pipeline_created ||
+    report.silent_learning_performed
+  ) {
+    failures.push("matter_linking_qa_gate_side_effect_boundary_failed");
+  }
+  if (report.case_count !== report.cases.length) {
+    failures.push("matter_linking_qa_gate_case_count_mismatch");
+  }
+  const failedCases = report.cases.filter((testCase) => testCase.status === "failed");
+  if (report.failed_case_count !== failedCases.length) {
+    failures.push("matter_linking_qa_gate_failed_case_count_mismatch");
+  }
+  if (report.passed_case_count !== report.case_count - report.failed_case_count) {
+    failures.push("matter_linking_qa_gate_passed_case_count_mismatch");
+  }
+  const observedTags = new Set(report.cases.flatMap((testCase) => testCase.required_coverage_tags));
+  if (report.observed_coverage_tag_count !== observedTags.size) {
+    failures.push("matter_linking_qa_gate_coverage_count_mismatch");
+  }
+  if (report.missing_coverage_tags.length > 0) {
+    failures.push("matter_linking_qa_gate_missing_coverage");
+  }
+  for (const requiredTag of [
+    "ambiguous_same_sender_multi_case",
+    "resolved_followup_split_candidate",
+    "weak_only_followup_blocked",
+    "resolved_single_candidate",
+    "conflicting_identifier_blocked",
+  ]) {
+    if (!observedTags.has(requiredTag)) {
+      failures.push(`matter_linking_qa_gate_missing_tag:${requiredTag}`);
+    }
+  }
+  for (const testCase of report.cases) {
+    if (!testCase.candidate_only || !testCase.synthetic_only || !testCase.non_authoritative) {
+      failures.push(`matter_linking_qa_gate_case_boundary_failed:${testCase.case_id}`);
+    }
+    if (
+      testCase.budget_amount_output_authorized ||
+      testCase.budget_submission_authorized ||
+      testCase.matter_opening_authorized ||
+      testCase.conflict_conclusion_emitted ||
+      testCase.lake_write_performed ||
+      testCase.sqlite_write_performed ||
+      testCase.external_writes_performed ||
+      testCase.silent_learning_performed
+    ) {
+      failures.push(`matter_linking_qa_gate_case_side_effect_failed:${testCase.case_id}`);
+    }
+    if (testCase.status === "passed" && testCase.expected_status !== testCase.observed_status) {
+      failures.push(`matter_linking_qa_gate_case_status_drift:${testCase.case_id}`);
+    }
+  }
+  if (!report.required_next_gates.includes("no_lake_or_sqlite_write_from_matter_linking_qa_gate")) {
+    failures.push("matter_linking_qa_gate_missing_no_lake_gate");
   }
   return failures;
 }

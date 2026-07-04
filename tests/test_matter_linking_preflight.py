@@ -41,6 +41,13 @@ def _resolved_single_fixture(repo_root):
     )
 
 
+def _conflicting_identifier_fixture(repo_root):
+    return load_json(
+        repo_root
+        / "examples/synthetic/upfront/upfront-like-intake-output.conflicting-identifiers.example.json"
+    )
+
+
 def test_matter_linking_preflight_reports_ambiguous_same_sender_clusters(repo_root, tmp_path):
     report, run_dir = run_matter_linking_preflight(
         input_path=repo_root / "examples/synthetic/upfront/upfront-like-intake-output.example.json",
@@ -395,6 +402,27 @@ def test_matter_linking_preflight_blocks_resolved_without_resolution_signal(repo
 
     assert report.status == "blocked_matter_linking_preflight"
     assert "resolved_candidates_have_source_bound_resolution_signal" in failed
+
+
+def test_matter_linking_preflight_blocks_conflicting_identifiers(repo_root):
+    report = build_matter_linking_preflight_report(
+        payload=_conflicting_identifier_fixture(repo_root),
+        source_artifact_ref="fixture.json",
+        generated_at=FIXED_TIME,
+    )
+    failed = {check.check_id for check in report.checks if check.status == "failed"}
+
+    assert report.status == "blocked_matter_linking_preflight"
+    assert report.overall_link_state == "conflicting_identifiers"
+    assert report.cluster_count == 1
+    assert report.weak_only_candidate_count == 0
+    assert report.sender_followup_required is True
+    assert "conflicting_identifiers_block_linking" in failed
+    assert "source_matter_link_conflicting_identifiers" in (report.candidate_exception_lake_labels)
+    assert "conflicting_external_reference" in report.candidate_exception_lake_labels
+    assert report.budget_amount_output_authorized is False
+    assert report.matter_opening_authorized is False
+    assert report.lake_write_performed is False
 
 
 def test_matter_linking_preflight_blocks_connector_and_write_boundary_violation(repo_root):

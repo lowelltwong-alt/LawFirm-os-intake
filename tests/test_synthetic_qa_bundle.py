@@ -178,6 +178,25 @@ def _write_ready_labor_employment_budget_fact_gold(path):
     )
 
 
+def _write_ready_matter_linking_qa_gate(path):
+    write_json(
+        path,
+        {
+            "status": "matter_linking_qa_gate_ready_for_review",
+            "case_count": 5,
+            "failed_case_count": 0,
+            "missing_required_coverage_tags": [],
+            "external_writes_performed": False,
+            "lake_write_performed": False,
+            "sqlite_write_performed": False,
+            "budget_amount_output_authorized": False,
+            "budget_submission_authorized": False,
+            "matter_opening_authorized": False,
+            "silent_learning_performed": False,
+        },
+    )
+
+
 def test_synthetic_qa_bundle_blocks_missing_calibration_and_builds_ui(tmp_path):
     run_root = tmp_path / "demo"
     budget_dir = run_root / "budget"
@@ -228,6 +247,7 @@ def test_synthetic_qa_bundle_blocks_missing_calibration_and_builds_ui(tmp_path):
     _write_ready_labor_employment_budget_fact_gold(
         quality_dir / "labor_employment_budget_fact_gold_report.json"
     )
+    _write_ready_matter_linking_qa_gate(quality_dir / "matter_linking_qa_gate_report.json")
 
     report, run_dir, ui_manifest = run_synthetic_qa_bundle(
         run_root=run_root,
@@ -301,6 +321,7 @@ def test_synthetic_qa_bundle_can_generate_fixture_depth_from_manifest(tmp_path, 
     _write_ready_labor_employment_budget_fact_gold(
         quality_dir / "labor_employment_budget_fact_gold_report.json"
     )
+    _write_ready_matter_linking_qa_gate(quality_dir / "matter_linking_qa_gate_report.json")
 
     report, run_dir, _ = run_synthetic_qa_bundle(
         run_root=run_root,
@@ -339,6 +360,7 @@ def test_synthetic_qa_bundle_cli_writes_bundle_and_manifest(tmp_path):
         "labor_employment_blocked_driver_impact_review_report.json",
         "labor_employment_budget_output_expectations_report.json",
         "labor_employment_budget_fact_gold_report.json",
+        "matter_linking_qa_gate_report.json",
     ]:
         write_json(
             quality_dir / file_name,
@@ -362,6 +384,8 @@ def test_synthetic_qa_bundle_cli_writes_bundle_and_manifest(tmp_path):
                     if file_name == "labor_employment_blocked_driver_impact_review_report.json"
                     else "labor_employment_budget_output_expectations_ready_for_review"
                     if file_name == "labor_employment_budget_output_expectations_report.json"
+                    else "matter_linking_qa_gate_ready_for_review"
+                    if file_name == "matter_linking_qa_gate_report.json"
                     else "passed"
                     if file_name != "labor_employment_executable_fact_binding_report.json"
                     else "labor_employment_executable_budget_fact_bindings_ready_for_review"

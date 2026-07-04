@@ -173,6 +173,16 @@ QA_BUNDLE_ARTIFACTS = [
             "audit outputs are checked against reviewed synthetic gold."
         ),
     ),
+    QABundleArtifactSpec(
+        artifact_id="matter_linking_qa_gate",
+        label="Matter-Linking QA Gate",
+        file_name="matter_linking_qa_gate_report.json",
+        required=True,
+        missing_note=(
+            "Run audit-matter-linking-qa-gate so Upfront-like matching fixtures "
+            "prove ambiguous, resolved, weak-only, and conflicting-identifier states."
+        ),
+    ),
 ]
 
 
@@ -277,6 +287,11 @@ def run_synthetic_qa_bundle(
             root=root,
             explicit_path=None,
             file_name="labor_employment_budget_fact_gold_report.json",
+        ),
+        "matter_linking_qa_gate": _resolve_artifact_source(
+            root=root,
+            explicit_path=None,
+            file_name="matter_linking_qa_gate_report.json",
         ),
     }
     artifacts = [

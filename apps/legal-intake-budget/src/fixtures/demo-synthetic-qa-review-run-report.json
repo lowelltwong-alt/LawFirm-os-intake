@@ -1,10 +1,10 @@
 {
   "schema_version": "0.1",
-  "synthetic_qa_review_run_report_id": "syntheticqareviewrun_10240eb537b1e647",
+  "synthetic_qa_review_run_report_id": "syntheticqareviewrun_98151c2c474a5349",
   "status": "synthetic_qa_review_run_ready",
   "run_root_ref": "generated-demo-run",
   "quality_dir_ref": "generated-demo-run/quality",
-  "step_count": 20,
+  "step_count": 21,
   "failed_step_count": 0,
   "steps": [
     {
@@ -45,6 +45,16 @@
       "artifact_ref": "generated-demo-run/quality\\matter-linking-weak-only-holdout\\matter_linking_preflight_report.json",
       "notes": [
         "Weak sender/carrier/reference-only candidates must block rather than merge or budget."
+      ]
+    },
+    {
+      "step_id": "matter_linking_qa_gate",
+      "label": "Matter-Linking QA Gate",
+      "status": "passed",
+      "observed_status": "matter_linking_qa_gate_ready_for_review",
+      "artifact_ref": "generated-demo-run/quality\\matter-linking-qa-gate\\matter_linking_qa_gate_report.json",
+      "notes": [
+        "Aggregate Upfront-like fixture gate covers ambiguous, resolved, weak-only, and conflicting-identifier matter-linking states."
       ]
     },
     {

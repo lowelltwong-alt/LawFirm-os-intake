@@ -7,6 +7,7 @@ import demoLaborEmploymentExecutableCoverage from "./fixtures/demo-labor-employm
 import demoLaborEmploymentQAMatrix from "./fixtures/demo-labor-employment-qa-matrix-report.json";
 import demoManifest from "./fixtures/demo-run-manifest.json";
 import demoMatterLinkingPreflight from "./fixtures/demo-matter-linking-preflight-report.json";
+import demoMatterLinkingQAGate from "./fixtures/demo-matter-linking-qa-gate-report.json";
 import demoMatterLinkingReviewOutcome from "./fixtures/demo-matter-linking-review-outcome-report.json";
 import demoPocQATriage from "./fixtures/demo-poc-qa-triage-report.json";
 import demoSyntheticQABlockerReport from "./fixtures/demo-synthetic-qa-blocker-report.json";
@@ -17,6 +18,7 @@ import demoReviewDataBundle from "./fixtures/demo-ui-review-data-bundle.json";
 import demoValidationSuiteEvidence from "./fixtures/demo-validation-suite-evidence-report.json";
 import {
   assertMatterLinkingPreflightReport,
+  assertMatterLinkingQAGateReport,
   assertMatterLinkingReviewOutcomeReport,
   assertLaborEmploymentBudgetOutputExpectationReport,
   assertLaborEmploymentBlockedDriverImpactReviewReport,
@@ -46,6 +48,7 @@ import type {
   LaborEmploymentBudgetReadinessState,
   LaborEmploymentQAMatrixReport,
   MatterLinkingPreflightReport,
+  MatterLinkingQAGateReport,
   MatterLinkingReviewOutcomeReport,
   MatterLinkingReviewOutcomeStatus,
   POCQATriageItemStatus,
@@ -80,6 +83,7 @@ const pocQATriage = demoPocQATriage as POCQATriageReport;
 const validationSuiteEvidence =
   demoValidationSuiteEvidence as ValidationSuiteEvidenceReport;
 const matterLinkingPreflight = demoMatterLinkingPreflight as MatterLinkingPreflightReport;
+const matterLinkingQAGate = demoMatterLinkingQAGate as MatterLinkingQAGateReport;
 const matterLinkingReviewOutcome =
   demoMatterLinkingReviewOutcome as MatterLinkingReviewOutcomeReport;
 const laborEmploymentQAMatrix = demoLaborEmploymentQAMatrix as LaborEmploymentQAMatrixReport;
@@ -101,6 +105,7 @@ const pocQATriageFailures = assertPOCQATriageReport(pocQATriage);
 const validationSuiteEvidenceFailures =
   assertValidationSuiteEvidenceReport(validationSuiteEvidence);
 const matterLinkingFailures = assertMatterLinkingPreflightReport(matterLinkingPreflight);
+const matterLinkingQAGateFailures = assertMatterLinkingQAGateReport(matterLinkingQAGate);
 const matterLinkingReviewOutcomeFailures =
   assertMatterLinkingReviewOutcomeReport(matterLinkingReviewOutcome);
 const matrixContractFailures = assertLaborEmploymentQAMatrixReport(laborEmploymentQAMatrix);
@@ -121,6 +126,7 @@ const contractFailures = [
   ...pocQATriageFailures,
   ...validationSuiteEvidenceFailures,
   ...matterLinkingFailures,
+  ...matterLinkingQAGateFailures,
   ...matterLinkingReviewOutcomeFailures,
   ...matrixContractFailures,
   ...executableCoverageFailures,
@@ -978,6 +984,114 @@ function MatterLinkingPreflightPanel({ report }: { report: MatterLinkingPrefligh
   );
 }
 
+function MatterLinkingQAGatePanel({ report }: { report: MatterLinkingQAGateReport }) {
+  const statusClass =
+    report.status === "blocked_by_matter_linking_qa_gate" ||
+    matterLinkingQAGateFailures.length > 0
+      ? "state state-blocked"
+      : "state state-pending";
+
+  return (
+    <section className="panel matrix-panel" aria-labelledby="matter-linking-qa-gate-title">
+      <div className="panel-heading">
+        <div>
+          <h2 id="matter-linking-qa-gate-title">Matter-Linking QA Gate</h2>
+          <code>{report.matter_linking_qa_gate_report_id}</code>
+        </div>
+        <span className={statusClass}>{report.status}</span>
+      </div>
+
+      <div className="matrix-summary" aria-label="Matter-linking QA gate summary">
+        <div>
+          <span>Cases</span>
+          <strong>{report.case_count}</strong>
+        </div>
+        <div>
+          <span>Passed</span>
+          <strong>{report.passed_case_count}</strong>
+        </div>
+        <div>
+          <span>Failed</span>
+          <strong>{report.failed_case_count}</strong>
+        </div>
+        <div>
+          <span>Coverage</span>
+          <strong>
+            {report.observed_coverage_tag_count}/{report.required_coverage_tag_count}
+          </strong>
+        </div>
+        <div>
+          <span>Lake Write</span>
+          <strong>{report.lake_write_performed ? "Yes" : "No"}</strong>
+        </div>
+        <div>
+          <span>Matter Opening</span>
+          <strong>{report.matter_opening_authorized ? "Yes" : "No"}</strong>
+        </div>
+      </div>
+
+      {report.missing_coverage_tags.length > 0 ? (
+        <div className="warning-strip">
+          <span>Missing coverage</span>
+          <TokenList items={report.missing_coverage_tags} />
+        </div>
+      ) : (
+        <p className="empty-state">Required matter-linking coverage tags are present.</p>
+      )}
+
+      <div className="table-wrap">
+        <table className="matrix-table">
+          <thead>
+            <tr>
+              <th>Fixture Case</th>
+              <th>Status</th>
+              <th>Expected</th>
+              <th>Observed</th>
+              <th>Coverage</th>
+            </tr>
+          </thead>
+          <tbody>
+            {report.cases.map((testCase) => (
+              <tr key={testCase.case_id}>
+                <td>
+                  <div className="artifact-title">{testCase.case_id.replaceAll("_", " ")}</div>
+                  <code>{testCase.fixture_ref}</code>
+                </td>
+                <td>
+                  <span className={gateClass(testCase.status)}>{testCase.status}</span>
+                </td>
+                <td>
+                  <code>{testCase.expected_status}</code>
+                  <p>{testCase.expected_overall_link_state}</p>
+                </td>
+                <td>
+                  <code>{testCase.observed_status}</code>
+                  <p>{testCase.observed_overall_link_state}</p>
+                </td>
+                <td>
+                  <TokenList items={testCase.required_coverage_tags} limit={4} />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="lake-label-strip" aria-label="Matter-linking QA candidate Lake labels">
+        <span>Candidate Lake labels</span>
+        <TokenList items={report.candidate_exception_lake_labels} limit={8} />
+      </div>
+
+      <p className="boundary">
+        Aggregate matching QA is local JSON only. Budget amount:{" "}
+        {report.budget_amount_output_authorized ? "not blocked" : "blocked"}. Matter opening:{" "}
+        {report.matter_opening_authorized ? "not blocked" : "blocked"}. Learning:{" "}
+        {report.silent_learning_performed ? "not blocked" : "blocked"}.
+      </p>
+    </section>
+  );
+}
+
 function MatterLinkingReviewOutcomePanel({
   report,
 }: {
@@ -1752,6 +1866,7 @@ function App() {
 
       <QualityGatePanel gates={manifest.qualityGates} />
       <MatterLinkingPreflightPanel report={matterLinkingPreflight} />
+      <MatterLinkingQAGatePanel report={matterLinkingQAGate} />
       <MatterLinkingReviewOutcomePanel report={matterLinkingReviewOutcome} />
       <LaborEmploymentMatrixPanel report={laborEmploymentQAMatrix} />
       <LaborEmploymentExecutableCoveragePanel report={laborEmploymentExecutableCoverage} />

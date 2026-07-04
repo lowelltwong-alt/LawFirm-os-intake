@@ -34,6 +34,13 @@ RESOLVED_SINGLE_REQUIRED_EXCEPTION_LABELS = {
     "human_matter_linking_confirmation_required",
 }
 
+CONFLICTING_REQUIRED_EXCEPTION_LABELS = {
+    "source_matter_link_conflicting_identifiers",
+    "conflicting_external_reference",
+    "missing_official_matter_number",
+    "human_matter_linking_confirmation_required",
+}
+
 WEAK_ONLY_REQUIRED_EXCEPTION_LABELS = {
     "source_matter_link_weak_only_candidate",
     "missing_official_matter_number",
@@ -64,6 +71,15 @@ WEAK_ONLY_LINK_STATES = {
 RESOLUTION_SIGNAL_TYPES = {
     "sender_followup_claim_cluster_confirmation",
     "sender_confirmed_document_cluster",
+    "upfront_like_request_id",
+}
+
+MATTER_IDENTIFIER_SIGNAL_TYPES = {
+    "agency_charge_number",
+    "carrier_claim_number",
+    "court_docket_number",
+    "official_firm_matter_number",
+    "policy_number",
     "upfront_like_request_id",
 }
 
@@ -368,6 +384,7 @@ def _checks(
     cluster_refs_missing = _clusters_missing_source_bound_support(linking, source_hashes_by_id)
     weak_only_missing = [cluster.cluster_id for cluster in clusters if cluster.weak_only_candidate]
     weak_promoted = _clusters_with_promoted_weak_support(linking)
+    conflicting_identifiers = _clusters_with_conflicting_identifiers(linking)
     negative_missing = (
         _clusters_missing_negative_split_support(linking, source_hashes_by_id)
         if negative_split_required
@@ -459,6 +476,13 @@ def _checks(
             blocking_refs=cluster_refs_missing,
         ),
         _check(
+            "conflicting_identifiers_block_linking",
+            not conflicting_identifiers,
+            "Conflicting strong matter identifiers inside one candidate cluster block matter linking until human review and sender follow-up resolve them.",
+            evidence_refs=[cluster.cluster_id for cluster in clusters],
+            blocking_refs=conflicting_identifiers,
+        ),
+        _check(
             "resolved_candidates_have_source_bound_resolution_signal",
             not resolution_missing,
             "Resolved candidates include source-bound sender/request resolution signals.",
@@ -531,6 +555,35 @@ def _clusters_with_promoted_weak_support(linking: dict[str, Any]) -> list[str]:
     return sorted(set(promoted))
 
 
+def _clusters_with_conflicting_identifiers(linking: dict[str, Any]) -> list[str]:
+    conflicts: list[str] = []
+    for raw_cluster in _list_of_mappings(linking.get("candidate_clusters")):
+        cluster_id = str(raw_cluster.get("cluster_id", "unknown"))
+        values_by_type: dict[str, set[str]] = {}
+        for signal in _list_of_mappings(raw_cluster.get("supporting_signals")):
+            signal_type = signal.get("signal_type")
+            signal_value = signal.get("signal_value")
+            if (
+                signal.get("weight_class") == "strong"
+                and isinstance(signal_type, str)
+                and signal_type in MATTER_IDENTIFIER_SIGNAL_TYPES
+                and isinstance(signal_value, str)
+                and signal_value.strip()
+            ):
+                values_by_type.setdefault(signal_type, set()).add(signal_value.strip())
+        if any(len(values) > 1 for values in values_by_type.values()):
+            conflicts.append(cluster_id)
+            continue
+        if any(
+            signal.get("weight_class") == "strong"
+            and isinstance(signal.get("signal_type"), str)
+            and "conflicting" in str(signal.get("signal_type"))
+            for signal in _list_of_mappings(raw_cluster.get("negative_signals"))
+        ):
+            conflicts.append(cluster_id)
+    return sorted(set(conflicts))
+
+
 def _clusters_missing_negative_split_support(
     linking: dict[str, Any],
     source_hashes_by_id: dict[str, str],
@@ -576,6 +629,8 @@ def _clusters_missing_resolution_support(
 
 
 def _required_exception_labels(linking: dict[str, Any]) -> set[str]:
+    if str(linking.get("overall_link_state")) == "conflicting_identifiers":
+        return CONFLICTING_REQUIRED_EXCEPTION_LABELS
     if _is_weak_only_link_state(linking):
         return WEAK_ONLY_REQUIRED_EXCEPTION_LABELS
     if _is_resolved_single_link_state(linking):

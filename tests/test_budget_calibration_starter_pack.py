@@ -40,6 +40,7 @@ from lawfirm_os_intake.labor_employment_fixture_family_pack import (
     run_labor_employment_fixture_family_pack_audit,
 )
 from lawfirm_os_intake.labor_employment_qa_matrix import run_labor_employment_qa_matrix
+from lawfirm_os_intake.matter_linking_qa_gate import run_matter_linking_qa_gate
 from lawfirm_os_intake.models import BudgetCalibrationStarterPackReport
 from lawfirm_os_intake.synthetic_qa_bundle import run_synthetic_qa_bundle
 from lawfirm_os_intake.util import load_json, write_json
@@ -226,6 +227,11 @@ def test_starter_pack_allows_synthetic_qa_bundle_to_reach_pending_review(
         gold_path=repo_root / "examples/synthetic/gold/labor-employment-budget-fact-gold.json",
         repo_root=repo_root,
         out_dir=run_root / "quality" / "le-budget-fact-gold",
+    )
+    run_matter_linking_qa_gate(
+        repo_root=repo_root,
+        out_dir=run_root / "quality" / "matter-linking-qa-gate",
+        generated_at="2026-07-02T00:00:00Z",
     )
 
     bundle, _, ui_manifest = run_synthetic_qa_bundle(

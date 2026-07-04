@@ -24,6 +24,7 @@ def test_legal_intake_budget_ui_required_files_exist(repo_root):
         "src/fixtures/demo-ui-review-data-bundle.json",
         "src/fixtures/demo-validation-suite-evidence-report.json",
         "src/fixtures/demo-matter-linking-preflight-report.json",
+        "src/fixtures/demo-matter-linking-qa-gate-report.json",
         "src/fixtures/demo-matter-linking-review-outcome-report.json",
         "src/fixtures/demo-labor-employment-qa-matrix-report.json",
         "src/fixtures/demo-labor-employment-executable-coverage-report.json",
@@ -64,6 +65,7 @@ def test_legal_intake_budget_ui_data_contract_lists_required_artifacts(repo_root
         "poc_qa_triage_report.json",
         "synthetic_qa_blocker_report.json",
         "matter_linking_preflight_report.json",
+        "matter_linking_qa_gate_report.json",
         "matter_linking_review_outcome_report.json",
         "synthetic_fixture_depth_audit_report.json",
         "budget_calibration_readiness_report.json",
@@ -123,6 +125,7 @@ def test_legal_intake_budget_demo_manifest_is_read_only_and_candidate_only(repo_
         "poc_qa_triage",
         "synthetic_qa_blocker_report",
         "matter_linking_preflight",
+        "matter_linking_qa_gate",
         "synthetic_fixture_depth",
         "budget_calibration_readiness",
         "labor_employment_qa_matrix",
@@ -152,9 +155,9 @@ def test_legal_intake_budget_demo_ui_review_data_bundle_is_local_and_no_write(re
     detail_reports = {report["file_name"]: report for report in bundle["detail_reports"]}
 
     assert bundle["status"] == "ready_for_review"
-    assert bundle["detail_report_count"] == len(bundle["detail_reports"]) == 11
+    assert bundle["detail_report_count"] == len(bundle["detail_reports"]) == 12
     assert bundle["required_detail_report_count"] == 6
-    assert bundle["present_detail_report_count"] == 11
+    assert bundle["present_detail_report_count"] == 12
     assert bundle["missing_required_detail_report_count"] == 0
     assert bundle["external_write_report_count"] == 0
     assert bundle["candidate_only"] is True
@@ -174,6 +177,7 @@ def test_legal_intake_budget_demo_ui_review_data_bundle_is_local_and_no_write(re
         "synthetic_qa_review_outcome_report.json",
         "synthetic_qa_review_run_report.json",
         "matter_linking_preflight_report.json",
+        "matter_linking_qa_gate_report.json",
         "matter_linking_review_outcome_report.json",
         "labor_employment_qa_matrix_report.json",
         "labor_employment_executable_coverage_report.json",
@@ -193,7 +197,7 @@ def test_legal_intake_budget_demo_synthetic_qa_review_run_is_no_write(repo_root)
     )
 
     assert report["status"] == "synthetic_qa_review_run_ready"
-    assert report["step_count"] == len(report["steps"]) == 20
+    assert report["step_count"] == len(report["steps"]) == 21
     assert report["failed_step_count"] == 0
     assert report["candidate_only"] is True
     assert report["synthetic_only"] is True
@@ -209,6 +213,7 @@ def test_legal_intake_budget_demo_synthetic_qa_review_run_is_no_write(repo_root)
     assert {
         "budget_coherence",
         "matter_linking_preflight",
+        "matter_linking_qa_gate",
         "matter_linking_review_outcome",
         "matter_linking_weak_only_holdout",
         "synthetic_qa_bundle",
@@ -390,11 +395,11 @@ def test_legal_intake_budget_demo_synthetic_confidence_summary_is_no_write(repo_
     assert report["status"] == "synthetic_confidence_summary_ready_for_review"
     assert report["testing_readiness_state"] == "synthetic_qa_ready_pending_review"
     assert report["top_blockers"] == []
-    assert report["qa_step_count"] == 20
+    assert report["qa_step_count"] == 21
     assert report["qa_failed_step_count"] == 0
     assert report["qa_missing_required_artifact_count"] == 0
-    assert report["ui_detail_report_count"] == 11
-    assert report["ui_present_detail_report_count"] == 11
+    assert report["ui_detail_report_count"] == 12
+    assert report["ui_present_detail_report_count"] == 12
     assert report["ui_missing_required_detail_report_count"] == 0
     assert report["display_banner"]["candidate_only"] is True
     assert report["display_banner"]["synthetic_only"] is True
@@ -482,6 +487,49 @@ def test_legal_intake_budget_demo_matter_linking_exposes_weak_and_split_signals(
     assert report["sqlite_write_performed"] is False
 
 
+def test_legal_intake_budget_demo_matter_linking_qa_gate_covers_holdouts(repo_root):
+    report = json.loads(
+        (repo_root / UI_ROOT / "src/fixtures/demo-matter-linking-qa-gate-report.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    cases = {case["case_id"]: case for case in report["cases"]}
+
+    assert report["status"] == "matter_linking_qa_gate_ready_for_review"
+    assert report["case_count"] == len(report["cases"]) == 5
+    assert report["failed_case_count"] == 0
+    assert report["missing_coverage_tags"] == []
+    assert report["observed_coverage_tag_count"] == report["required_coverage_tag_count"]
+    assert {
+        "ambiguous_same_sender_multi_case",
+        "resolved_followup_split_candidate",
+        "weak_only_followup_blocked",
+        "resolved_single_candidate",
+        "conflicting_identifier_blocked",
+    } <= set(cases)
+    assert cases["weak_only_followup_blocked"]["observed_status"] == (
+        "blocked_matter_linking_preflight"
+    )
+    assert cases["conflicting_identifier_blocked"]["observed_status"] == (
+        "blocked_matter_linking_preflight"
+    )
+    assert (
+        "conflicting_identifiers_block_linking"
+        in (cases["conflicting_identifier_blocked"]["observed_failed_check_ids"])
+    )
+    assert "matter_linking_qa_gate_candidate" in report["candidate_exception_lake_labels"]
+    assert "no_lake_or_sqlite_write_from_matter_linking_qa_gate" in (report["required_next_gates"])
+    assert report["candidate_only"] is True
+    assert report["synthetic_only"] is True
+    assert report["non_authoritative"] is True
+    assert report["budget_amount_output_authorized"] is False
+    assert report["matter_opening_authorized"] is False
+    assert report["lake_write_performed"] is False
+    assert report["sqlite_write_performed"] is False
+    assert report["external_writes_performed"] is False
+    assert report["silent_learning_performed"] is False
+
+
 def test_legal_intake_budget_demo_matter_linking_review_outcome_is_no_write(repo_root):
     report = json.loads(
         (
@@ -558,12 +606,12 @@ def test_legal_intake_budget_demo_synthetic_qa_blocker_report_is_no_write(repo_r
     )
 
     assert report["status"] == "synthetic_qa_blocker_report_ready_for_review"
-    assert report["row_count"] == len(report["rows"]) == 19
+    assert report["row_count"] == len(report["rows"]) == 23
     assert report["failed_row_count"] == 0
     assert report["blocked_row_count"] == 0
-    assert report["pending_review_row_count"] == 19
+    assert report["pending_review_row_count"] == 23
     assert report["blocked_action_count"] == 0
-    assert report["needs_review_action_count"] == 19
+    assert report["needs_review_action_count"] == 23
     assert report["fixed_action_count"] == 0
     assert report["ready_action_count"] == 0
     assert report["review_queue_state"] == "needs_review"
@@ -594,9 +642,9 @@ def test_legal_intake_budget_demo_synthetic_qa_review_outcome_is_no_write(repo_r
     )
 
     assert report["status"] == "synthetic_qa_review_outcome_recorded_pending_followup"
-    assert report["source_row_count"] == 19
+    assert report["source_row_count"] == 23
     assert report["reviewed_row_count"] == len(report["reviewed_row_ids"]) == 3
-    assert report["unreviewed_row_count"] == len(report["unreviewed_row_ids"]) == 16
+    assert report["unreviewed_row_count"] == len(report["unreviewed_row_ids"]) == 20
     assert report["decision_count"] == 3
     assert report["accepted_decision_count"] == 1
     assert report["needs_fix_decision_count"] == 1
@@ -712,6 +760,7 @@ def test_legal_intake_budget_ui_disclaims_mutating_authority(repo_root):
     assert "Synthetic QA Review Outcome" in app
     assert "Synthetic QA Review Run" in app
     assert "Matter-Linking Preflight" in app
+    assert "Matter-Linking QA Gate" in app
     assert "Matter-Linking Review Outcome" in app
     assert "Weak Only" in app
     assert "Split Required" in app
@@ -730,6 +779,7 @@ def test_legal_intake_budget_ui_disclaims_mutating_authority(repo_root):
     assert "assertSyntheticQAReviewOutcomeReport" in app
     assert "assertSyntheticQAReviewRunReport" in app
     assert "assertMatterLinkingPreflightReport" in app
+    assert "assertMatterLinkingQAGateReport" in app
     assert "assertMatterLinkingReviewOutcomeReport" in app
     assert "assertLaborEmploymentQAMatrixReport" in app
     assert "assertLaborEmploymentExecutableCoverageReport" in app
@@ -745,6 +795,7 @@ def test_legal_intake_budget_ui_disclaims_mutating_authority(repo_root):
     assert "outcome-grid" in styles
     assert "qa-blocker-table" in styles
     assert "empty-state" in styles
+    assert "warning-strip" in styles
     assert "executable-coverage-panel" in styles
     assert "coverage-family-grid" in styles
     assert "fixture-drilldown-panel" in styles
@@ -817,6 +868,9 @@ def test_legal_intake_budget_qa_review_outcome_tracks_partial_review(repo_root):
     assert detail_reports["matter_linking_review_outcome"]["renderer"] == (
         "MatterLinkingReviewOutcomePanel"
     )
+    assert detail_reports["matter_linking_qa_gate"]["present"] is True
+    assert detail_reports["matter_linking_qa_gate"]["required"] is False
+    assert detail_reports["matter_linking_qa_gate"]["renderer"] == "MatterLinkingQAGatePanel"
 
 
 def test_legal_intake_budget_fixture_drilldown_joins_existing_le_reports(repo_root):

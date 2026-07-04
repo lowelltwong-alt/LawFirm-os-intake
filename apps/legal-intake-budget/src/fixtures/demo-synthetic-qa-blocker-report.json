@@ -1,22 +1,22 @@
 {
   "schema_version": "0.1",
-  "synthetic_qa_blocker_report_id": "synthetic_qa_blocker_report_c74778ec1af15ade",
+  "synthetic_qa_blocker_report_id": "synthetic_qa_blocker_report_29487b7da9156018",
   "status": "synthetic_qa_blocker_report_ready_for_review",
   "source_ui_manifest_ref": "generated-demo-run/ui_review_manifest.json",
-  "source_ui_manifest_id": "ui_review_manifest_9bf517c746eb",
+  "source_ui_manifest_id": "ui_review_manifest_7a9855d764e7",
   "source_ui_manifest_overall_status": "blocked",
   "source_synthetic_confidence_summary_ref": "generated-demo-run/quality\\synthetic_confidence_summary_report.json",
-  "source_synthetic_confidence_summary_report_id": "synthetic_confidence_summary_b36a7a292cdeb180",
+  "source_synthetic_confidence_summary_report_id": "synthetic_confidence_summary_201523df8233bce3",
   "source_synthetic_confidence_summary_status": "synthetic_confidence_summary_ready_for_review",
   "source_synthetic_qa_review_run_ref": "generated-demo-run/synthetic_qa_review_run_report.json",
-  "source_synthetic_qa_review_run_report_id": "syntheticqareviewrun_10240eb537b1e647",
+  "source_synthetic_qa_review_run_report_id": "syntheticqareviewrun_98151c2c474a5349",
   "source_synthetic_qa_review_run_status": "synthetic_qa_review_run_ready",
-  "row_count": 19,
+  "row_count": 23,
   "failed_row_count": 0,
   "blocked_row_count": 0,
-  "pending_review_row_count": 19,
+  "pending_review_row_count": 23,
   "blocked_action_count": 0,
-  "needs_review_action_count": 19,
+  "needs_review_action_count": 23,
   "fixed_action_count": 0,
   "ready_action_count": 0,
   "review_queue_state": "needs_review",
@@ -124,6 +124,27 @@
       ],
       "notes": [
         "Human matter-linking decisions must be append-only local evidence and cannot authorize budgets, matter opening, Lake admission, or learning."
+      ]
+    },
+    {
+      "row_id": "quality_gate:matter_linking_qa_gate",
+      "source": "quality_gate",
+      "label": "Matter-Linking QA Gate",
+      "state": "pending_review",
+      "action_state": "needs_review",
+      "owner": "qa-reference",
+      "evidence_refs": [
+        "matter_linking_qa_gate_report.json"
+      ],
+      "recommended_next_action": "Review quality gate evidence and record an outcome: Matter-Linking QA Gate.",
+      "candidate_exception_lake_labels": [
+        "synthetic_qa_blocker_queue_candidate",
+        "quality_gate_pending_review_candidate",
+        "quality_gate_matter_linking_qa_gate_candidate",
+        "synthetic_qa_blocker_requires_review"
+      ],
+      "notes": [
+        "Upfront-like matter-linking fixtures must cover ambiguous multi-case sender risk, resolved follow-up, weak-only blocking, conflicting identifiers, and no-write boundaries."
       ]
     },
     {
@@ -379,6 +400,69 @@
       ]
     },
     {
+      "row_id": "quality_gate:validation_suite_evidence",
+      "source": "quality_gate",
+      "label": "Validation Suite Evidence",
+      "state": "pending_review",
+      "action_state": "needs_review",
+      "owner": "qa-reference",
+      "evidence_refs": [
+        "validation_suite_evidence_report.json"
+      ],
+      "recommended_next_action": "Review quality gate evidence and record an outcome: Validation Suite Evidence.",
+      "candidate_exception_lake_labels": [
+        "synthetic_qa_blocker_queue_candidate",
+        "quality_gate_pending_review_candidate",
+        "quality_gate_validation_suite_evidence_candidate",
+        "synthetic_qa_blocker_requires_review"
+      ],
+      "notes": [
+        "validation_suite_evidence_report.json is missing; Wrapper-based validation suite evidence must prove the current QA checks before the frontend treats the run as POC QA-ready."
+      ]
+    },
+    {
+      "row_id": "quality_gate:full_pytest",
+      "source": "quality_gate",
+      "label": "Full Pytest",
+      "state": "pending_review",
+      "action_state": "needs_review",
+      "owner": "qa-reference",
+      "evidence_refs": [
+        "validation_suite_evidence_report.json"
+      ],
+      "recommended_next_action": "Review quality gate evidence and record an outcome: Full Pytest.",
+      "candidate_exception_lake_labels": [
+        "synthetic_qa_blocker_queue_candidate",
+        "quality_gate_pending_review_candidate",
+        "quality_gate_full_pytest_candidate",
+        "synthetic_qa_blocker_requires_review"
+      ],
+      "notes": [
+        "validation_suite_evidence_report.json is missing; Validation evidence must include a passed full_pytest step from scripts/run_full_pytest.py."
+      ]
+    },
+    {
+      "row_id": "quality_gate:smoke_demo",
+      "source": "quality_gate",
+      "label": "North-Star Smoke",
+      "state": "pending_review",
+      "action_state": "needs_review",
+      "owner": "qa-reference",
+      "evidence_refs": [
+        "validation_suite_evidence_report.json"
+      ],
+      "recommended_next_action": "Review quality gate evidence and record an outcome: North-Star Smoke.",
+      "candidate_exception_lake_labels": [
+        "synthetic_qa_blocker_queue_candidate",
+        "quality_gate_pending_review_candidate",
+        "quality_gate_smoke_demo_candidate",
+        "synthetic_qa_blocker_requires_review"
+      ],
+      "notes": [
+        "validation_suite_evidence_report.json is missing; Validation evidence must include a passed smoke_demo step from scripts/smoke_demo.sh."
+      ]
+    },
+    {
       "row_id": "readiness_item:required_qa_artifacts",
       "source": "readiness_item",
       "label": "Required QA Artifacts",
@@ -396,7 +480,7 @@
         "synthetic_qa_blocker_requires_review"
       ],
       "notes": [
-        "0 missing required, 0 blocked, 12 pending review."
+        "0 missing required, 0 blocked, 13 pending review."
       ]
     },
     {
@@ -417,7 +501,7 @@
         "synthetic_qa_blocker_requires_review"
       ],
       "notes": [
-        "18 pending gates remain; pending is expected until human/owner review accepts candidate QA evidence."
+        "22 pending gates remain; pending is expected until human/owner review accepts candidate QA evidence."
       ]
     }
   ],

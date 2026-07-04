@@ -2,7 +2,7 @@
   "schema_version": "0.1",
   "matter_linking_preflight_report_id": "matterlinkpreflight_b6256d36c7d774ea7124",
   "status": "matter_linking_preflight_resolved_candidate_requires_review",
-  "source_artifact_ref": "examples\\synthetic\\upfront\\upfront-like-intake-output.resolved-followup.example.json",
+  "source_artifact_ref": "repo-root/examples\\synthetic\\upfront\\upfront-like-intake-output.resolved-followup.example.json",
   "source_artifact_id": "upfront_like_intake_output.synthetic.resolved_followup.v0_1",
   "source_artifact_type": "upfront_like_intake_output_candidate",
   "source_artifact_status": "resolved_candidate_requires_human_confirmation",
@@ -198,6 +198,16 @@
       "check_id": "clusters_have_source_bound_strong_support",
       "status": "passed",
       "message": "Every cluster has source-bound strong support mapped to known source hashes.",
+      "evidence_refs": [
+        "cluster.case-a",
+        "cluster.case-b"
+      ],
+      "blocking_refs": []
+    },
+    {
+      "check_id": "conflicting_identifiers_block_linking",
+      "status": "passed",
+      "message": "Conflicting strong matter identifiers inside one candidate cluster block matter linking until human review and sender follow-up resolve them.",
       "evidence_refs": [
         "cluster.case-a",
         "cluster.case-b"

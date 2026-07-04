@@ -137,6 +137,13 @@ ARTIFACT_SPECS = [
         "pending_review",
     ),
     ArtifactSpec(
+        "matter-linking-qa-gate",
+        "Matter-Linking QA Gate",
+        "matter_linking_qa_gate_report.json",
+        "qa-reference",
+        "pending_review",
+    ),
+    ArtifactSpec(
         "fixture-depth",
         "Synthetic Fixture Depth",
         "synthetic_fixture_depth_audit_report.json",
@@ -334,6 +341,13 @@ QUALITY_GATE_SPECS = {
         "matter_linking_review_outcome_report.json",
         "qa-reference",
         "Human matter-linking decisions must be append-only local evidence and cannot authorize budgets, matter opening, Lake admission, or learning.",
+        "pending_review",
+    ),
+    "matter_linking_qa_gate": (
+        "Matter-Linking QA Gate",
+        "matter_linking_qa_gate_report.json",
+        "qa-reference",
+        "Upfront-like matter-linking fixtures must cover ambiguous multi-case sender risk, resolved follow-up, weak-only blocking, conflicting identifiers, and no-write boundaries.",
         "pending_review",
     ),
     "synthetic_fixture_depth": (

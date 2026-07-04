@@ -145,6 +145,16 @@ it can clear sender-follow-up need while still requiring human matter-linking
 confirmation and blocking budget output, matter opening, Lake/SQLite writes, and
 silent learning.
 
+Use `python -m lawfirm_os_intake audit-matter-linking-qa-gate --repo-root .
+--out-dir PATH/matter-linking-qa-gate` to replay the matter-linking holdout
+matrix as one deterministic gate. It emits `matter_linking_qa_gate_report.json`
+and `.md`, covering ambiguous same-sender/multi-case packets, resolved
+follow-up split candidates, weak-only blocked packets, resolved single
+candidates, and conflicting external identifiers. The gate is local candidate
+QA evidence only and does not call Upfront, create a screen, write Lake/SQLite
+records, open a matter, output or submit a budget, clear conflicts, promote
+canon, or learn silently.
+
 Use `python -m lawfirm_os_intake record-matter-linking-review-outcome
 --matter-linking-preflight-report PATH/matter_linking_preflight_report.json
 --outcome examples/synthetic/upfront/matter-linking-review-confirm-split.outcome.json

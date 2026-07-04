@@ -59,6 +59,10 @@ from .matter_linking_preflight import (
     MATTER_LINKING_PREFLIGHT_REPORT_FILENAME,
     run_matter_linking_preflight,
 )
+from .matter_linking_qa_gate import (
+    MATTER_LINKING_QA_GATE_REPORT_FILENAME,
+    run_matter_linking_qa_gate,
+)
 from .matter_linking_review_outcomes import (
     MATTER_LINKING_REVIEW_OUTCOME_REPORT_FILENAME,
     run_matter_linking_review_outcome_record,
@@ -200,6 +204,23 @@ def run_synthetic_qa_review_run(
             and weak_matter_linking.weak_only_candidate_count > 0
             and weak_matter_linking.negative_split_evidence_required is False,
             "Weak sender/carrier/reference-only candidates must block rather than merge or budget.",
+        )
+    )
+
+    matter_linking_qa_gate, matter_linking_qa_gate_dir = run_matter_linking_qa_gate(
+        repo_root=root,
+        out_dir=quality_dir / "matter-linking-qa-gate",
+        generated_at=generated_at,
+    )
+    matter_linking_qa_gate_ref = matter_linking_qa_gate_dir / MATTER_LINKING_QA_GATE_REPORT_FILENAME
+    steps.append(
+        _step(
+            "matter_linking_qa_gate",
+            "Matter-Linking QA Gate",
+            matter_linking_qa_gate.status,
+            matter_linking_qa_gate_ref,
+            matter_linking_qa_gate.status == "matter_linking_qa_gate_ready_for_review",
+            "Aggregate Upfront-like fixture gate covers ambiguous, resolved, weak-only, and conflicting-identifier matter-linking states.",
         )
     )
 
@@ -424,6 +445,7 @@ def run_synthetic_qa_review_run(
         starter_dir / "budget-calibration-readiness" / "budget_calibration_readiness_report.json",
         matter_linking_ref,
         matter_linking_review_outcome_ref,
+        matter_linking_qa_gate_ref,
         le_matrix_dir / LABOR_EMPLOYMENT_QA_MATRIX_REPORT_FILENAME,
         family_pack_dir / LABOR_EMPLOYMENT_FIXTURE_FAMILY_PACK_REPORT_FILENAME,
         executable_report_ref,

@@ -1,14 +1,14 @@
 {
   "schema_version": "0.1",
-  "synthetic_qa_bundle_report_id": "synthetic_qa_bundle_d522f5b27b6f",
+  "synthetic_qa_bundle_report_id": "synthetic_qa_bundle_c9a0286b305a",
   "status": "pending_review",
   "run_root_ref": "generated-demo-run",
   "out_dir_ref": "generated-demo-run/quality",
-  "artifact_count": 14,
-  "required_artifact_count": 14,
+  "artifact_count": 15,
+  "required_artifact_count": 15,
   "missing_required_artifact_count": 0,
   "blocked_artifact_count": 0,
-  "pending_artifact_count": 12,
+  "pending_artifact_count": 13,
   "failed_artifact_count": 0,
   "artifacts": [
     {
@@ -36,7 +36,7 @@
       "gate_state": "pending_review",
       "artifact_ref": "generated-demo-run/quality\\synthetic_fixture_depth_audit_report.json",
       "copied_to_ref": "generated-demo-run/quality\\synthetic_fixture_depth_audit_report.json",
-      "source_sha256": "sha256:5b35da6eabd1c0b0cb0d46efb5560d144da33c293fed4bee5d70781ccd9384c0",
+      "source_sha256": "sha256:176f65bfa1c2d1e16d50b07fa2381167a048ae5020c9590e310e293889166efc",
       "notes": [
         "Found synthetic_fixture_depth_audit_report.json; source status=synthetic_fixture_depth_ready_for_review; bundle status=pending_review."
       ]
@@ -51,7 +51,7 @@
       "gate_state": "pending_review",
       "artifact_ref": "generated-demo-run/quality\\budget_calibration_readiness_report.json",
       "copied_to_ref": "generated-demo-run/quality\\budget_calibration_readiness_report.json",
-      "source_sha256": "sha256:050a556734b808da74d04861289eb7703ce190245be03568b5d87952627c0ada",
+      "source_sha256": "sha256:5d0b24116d1ac0ea5f9bd32636cb2bdfbe6e166ab8f38252a7fc19042cb5a176",
       "notes": [
         "Found budget_calibration_readiness_report.json; source status=ready_for_manual_fixture_update_review; bundle status=pending_review."
       ]
@@ -66,7 +66,7 @@
       "gate_state": "pending_review",
       "artifact_ref": "generated-demo-run/quality\\labor_employment_qa_matrix_report.json",
       "copied_to_ref": "generated-demo-run/quality\\labor_employment_qa_matrix_report.json",
-      "source_sha256": "sha256:6f7d26e3b8b1094131f87f47f45a72d961223d3585532a767400a82a8725a481",
+      "source_sha256": "sha256:c1232cc9b3f99508918b19d455b6dd53ba6e5d1ca1fa3e18cb456dd5a4b78695",
       "notes": [
         "Found labor_employment_qa_matrix_report.json; source status=labor_employment_qa_matrix_ready_for_review; bundle status=pending_review."
       ]
@@ -81,7 +81,7 @@
       "gate_state": "pending_review",
       "artifact_ref": "generated-demo-run/quality\\labor_employment_fixture_family_pack_report.json",
       "copied_to_ref": "generated-demo-run/quality\\labor_employment_fixture_family_pack_report.json",
-      "source_sha256": "sha256:23908ee6e8c0c796a87078441f7fb4408c5e3fc2637954aa0a33e6bca6433334",
+      "source_sha256": "sha256:bc7b1d3963daaa2cb5fa0c2a1ae20fcecb0d27ea7d7e5e88a8edec87a22c7bac",
       "notes": [
         "Found labor_employment_fixture_family_pack_report.json; source status=labor_employment_fixture_family_pack_ready_for_review; bundle status=pending_review."
       ]
@@ -96,7 +96,7 @@
       "gate_state": "pending_review",
       "artifact_ref": "generated-demo-run/quality\\labor_employment_executable_fixtures_report.json",
       "copied_to_ref": "generated-demo-run/quality\\labor_employment_executable_fixtures_report.json",
-      "source_sha256": "sha256:7767936af7c336598afea82a25bac3a53be4231dc7ec5ec52d050c40179eb16e",
+      "source_sha256": "sha256:2b22dfe29b6da7aaefb95c818db23d3f2d57d7a53a511b8ce2d21cc24f717ae4",
       "notes": [
         "Found labor_employment_executable_fixtures_report.json; source status=labor_employment_executable_fixtures_ready_for_review; bundle status=pending_review."
       ]
@@ -111,7 +111,7 @@
       "gate_state": "pending_review",
       "artifact_ref": "generated-demo-run/quality\\labor_employment_executable_coverage_report.json",
       "copied_to_ref": "generated-demo-run/quality\\labor_employment_executable_coverage_report.json",
-      "source_sha256": "sha256:8d69f00350ed18369c925496314689683cff76893d559be14350e8ff2b24e56c",
+      "source_sha256": "sha256:e80655affd20980456068765f74929b18af229a4c5ecc98fe636a0e872b077d8",
       "notes": [
         "Found labor_employment_executable_coverage_report.json; source status=labor_employment_executable_coverage_ready_for_review; bundle status=pending_review."
       ]
@@ -126,7 +126,7 @@
       "gate_state": "pending_review",
       "artifact_ref": "generated-demo-run/quality\\labor_employment_executable_fact_binding_report.json",
       "copied_to_ref": "generated-demo-run/quality\\labor_employment_executable_fact_binding_report.json",
-      "source_sha256": "sha256:27f0189a111f77a47d88962b249ca789807c5a794d4dba4ed8325fa7d7f1f9f8",
+      "source_sha256": "sha256:656047e767227b028e68e7da7bf87f66ad08a2305a3dce11cf82f40ca459818d",
       "notes": [
         "Found labor_employment_executable_fact_binding_report.json; source status=labor_employment_executable_budget_fact_bindings_ready_for_review; bundle status=pending_review."
       ]
@@ -141,7 +141,7 @@
       "gate_state": "pending_review",
       "artifact_ref": "generated-demo-run/quality\\labor_employment_executable_driver_binding_report.json",
       "copied_to_ref": "generated-demo-run/quality\\labor_employment_executable_driver_binding_report.json",
-      "source_sha256": "sha256:151757f84972e62c482947a599d16c12084207277119454d72d5c823167bacd8",
+      "source_sha256": "sha256:e9753374443bc49dd04e2d382ce6d95bab16db44a4891c50e1492afea74b78bc",
       "notes": [
         "Found labor_employment_executable_driver_binding_report.json; source status=labor_employment_executable_driver_bindings_ready_for_review; bundle status=pending_review."
       ]
@@ -156,7 +156,7 @@
       "gate_state": "pending_review",
       "artifact_ref": "generated-demo-run/quality\\labor_employment_executable_driver_impact_report.json",
       "copied_to_ref": "generated-demo-run/quality\\labor_employment_executable_driver_impact_report.json",
-      "source_sha256": "sha256:a05fedc3e76b5b57ef9c5c34dbe3404f036a71395414d26dfe9c29d6da61d370",
+      "source_sha256": "sha256:3e4b75ca9d1efb8c2cb022072190061abbce191705dbd79da6c0fa034b048aad",
       "notes": [
         "Found labor_employment_executable_driver_impact_report.json; source status=labor_employment_executable_driver_impacts_ready_for_review; bundle status=pending_review."
       ]
@@ -171,7 +171,7 @@
       "gate_state": "pending_review",
       "artifact_ref": "generated-demo-run/quality\\labor_employment_driver_impact_review_report.json",
       "copied_to_ref": "generated-demo-run/quality\\labor_employment_driver_impact_review_report.json",
-      "source_sha256": "sha256:4fa73ba3185683f9740b08237b67b4a6b750127ad775bee26b7f9a4d519769ae",
+      "source_sha256": "sha256:e3219e1158df12f5a48662c51a1c2052182550bc2b0e89eeb7625c029d0b2a1e",
       "notes": [
         "Found labor_employment_driver_impact_review_report.json; source status=labor_employment_driver_impact_review_ready_for_budget_gate_replay; bundle status=pending_review."
       ]
@@ -186,7 +186,7 @@
       "gate_state": "pending_review",
       "artifact_ref": "generated-demo-run/quality\\labor_employment_blocked_driver_impact_review_report.json",
       "copied_to_ref": "generated-demo-run/quality\\labor_employment_blocked_driver_impact_review_report.json",
-      "source_sha256": "sha256:5465f74510d2ad66516e7f1454c2c2211130ce0b51eaf418582ae24be43e1114",
+      "source_sha256": "sha256:a57d1ce30672c87578d6e72111aa700a1b10b59d81d5a5f3c665a10ec089712a",
       "notes": [
         "Found labor_employment_blocked_driver_impact_review_report.json; source status=labor_employment_blocked_driver_impacts_ready_for_review; bundle status=pending_review."
       ]
@@ -201,7 +201,7 @@
       "gate_state": "pending_review",
       "artifact_ref": "generated-demo-run/quality\\labor_employment_budget_output_expectations_report.json",
       "copied_to_ref": "generated-demo-run/quality\\labor_employment_budget_output_expectations_report.json",
-      "source_sha256": "sha256:5eda8907fa3c611607393c5037983431b0856965e1643ebf8a8fe716d881f55d",
+      "source_sha256": "sha256:45ea5d56d621ed4332f3585fd64a4fcc46c6a5731fe7ea69db35d38d9bb29513",
       "notes": [
         "Found labor_employment_budget_output_expectations_report.json; source status=labor_employment_budget_output_expectations_ready_for_review; bundle status=pending_review."
       ]
@@ -216,9 +216,24 @@
       "gate_state": "passed",
       "artifact_ref": "generated-demo-run/quality\\labor_employment_budget_fact_gold_report.json",
       "copied_to_ref": "generated-demo-run/quality\\labor_employment_budget_fact_gold_report.json",
-      "source_sha256": "sha256:18c859007e796f5f65152eec325023ab48d92e8c3e0557570a70c96abad78a83",
+      "source_sha256": "sha256:6c81afb8a1130146297782dae3f5d53bb9a17e9b8139d2e50f07e683c60c9d47",
       "notes": [
         "Found labor_employment_budget_fact_gold_report.json; source status=passed; bundle status=passed."
+      ]
+    },
+    {
+      "artifact_id": "matter_linking_qa_gate",
+      "label": "Matter-Linking QA Gate",
+      "file_name": "matter_linking_qa_gate_report.json",
+      "required": true,
+      "present": true,
+      "status": "pending_review",
+      "gate_state": "pending_review",
+      "artifact_ref": "generated-demo-run/quality\\matter_linking_qa_gate_report.json",
+      "copied_to_ref": "generated-demo-run/quality\\matter_linking_qa_gate_report.json",
+      "source_sha256": "sha256:cb18f17a7b8e678ffdb186169613e3abb18348928b81e09a2637d6101709e2bb",
+      "notes": [
+        "Found matter_linking_qa_gate_report.json; source status=matter_linking_qa_gate_ready_for_review; bundle status=pending_review."
       ]
     }
   ],

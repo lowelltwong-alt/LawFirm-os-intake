@@ -78,6 +78,14 @@ DETAIL_REPORT_SPECS = [
         required=False,
     ),
     UIReviewDetailSpec(
+        detail_report_id="matter-linking-qa-gate",
+        label="Matter-Linking QA Gate",
+        report_kind="matter_linking_qa_gate",
+        file_name="matter_linking_qa_gate_report.json",
+        renderer="MatterLinkingQAGatePanel",
+        required=False,
+    ),
+    UIReviewDetailSpec(
         detail_report_id="labor-employment-qa-matrix",
         label="L&E Budget Fact QA",
         report_kind="labor_employment_qa_matrix",

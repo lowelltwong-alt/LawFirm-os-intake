@@ -1,0 +1,508 @@
+{
+  "$defs": {
+    "MatterLinkingQAGateCase": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "default": "0.1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "case_id": {
+          "title": "Case Id",
+          "type": "string"
+        },
+        "fixture_ref": {
+          "title": "Fixture Ref",
+          "type": "string"
+        },
+        "generated_report_ref": {
+          "title": "Generated Report Ref",
+          "type": "string"
+        },
+        "expected_status": {
+          "title": "Expected Status",
+          "type": "string"
+        },
+        "observed_status": {
+          "title": "Observed Status",
+          "type": "string"
+        },
+        "expected_overall_link_state": {
+          "title": "Expected Overall Link State",
+          "type": "string"
+        },
+        "observed_overall_link_state": {
+          "title": "Observed Overall Link State",
+          "type": "string"
+        },
+        "expected_cluster_count": {
+          "minimum": 0,
+          "title": "Expected Cluster Count",
+          "type": "integer"
+        },
+        "observed_cluster_count": {
+          "minimum": 0,
+          "title": "Observed Cluster Count",
+          "type": "integer"
+        },
+        "expected_high_evidence_candidate_count": {
+          "minimum": 0,
+          "title": "Expected High Evidence Candidate Count",
+          "type": "integer"
+        },
+        "observed_high_evidence_candidate_count": {
+          "minimum": 0,
+          "title": "Observed High Evidence Candidate Count",
+          "type": "integer"
+        },
+        "expected_weak_only_candidate_count": {
+          "minimum": 0,
+          "title": "Expected Weak Only Candidate Count",
+          "type": "integer"
+        },
+        "observed_weak_only_candidate_count": {
+          "minimum": 0,
+          "title": "Observed Weak Only Candidate Count",
+          "type": "integer"
+        },
+        "expected_negative_split_evidence_required": {
+          "title": "Expected Negative Split Evidence Required",
+          "type": "boolean"
+        },
+        "observed_negative_split_evidence_required": {
+          "title": "Observed Negative Split Evidence Required",
+          "type": "boolean"
+        },
+        "expected_sender_followup_required": {
+          "title": "Expected Sender Followup Required",
+          "type": "boolean"
+        },
+        "observed_sender_followup_required": {
+          "title": "Observed Sender Followup Required",
+          "type": "boolean"
+        },
+        "expected_failed_check_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Expected Failed Check Ids",
+          "type": "array"
+        },
+        "observed_failed_check_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Observed Failed Check Ids",
+          "type": "array"
+        },
+        "required_coverage_tags": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Required Coverage Tags",
+          "type": "array"
+        },
+        "candidate_exception_lake_labels": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Candidate Exception Lake Labels",
+          "type": "array"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "notes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Notes",
+          "type": "array"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "synthetic_only": {
+          "const": true,
+          "default": true,
+          "title": "Synthetic Only",
+          "type": "boolean"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        },
+        "local_json_only": {
+          "const": true,
+          "default": true,
+          "title": "Local Json Only",
+          "type": "boolean"
+        },
+        "human_review_required": {
+          "const": true,
+          "default": true,
+          "title": "Human Review Required",
+          "type": "boolean"
+        },
+        "budget_amount_output_authorized": {
+          "const": false,
+          "default": false,
+          "title": "Budget Amount Output Authorized",
+          "type": "boolean"
+        },
+        "budget_submission_authorized": {
+          "const": false,
+          "default": false,
+          "title": "Budget Submission Authorized",
+          "type": "boolean"
+        },
+        "conflict_conclusion_emitted": {
+          "const": false,
+          "default": false,
+          "title": "Conflict Conclusion Emitted",
+          "type": "boolean"
+        },
+        "matter_opening_authorized": {
+          "const": false,
+          "default": false,
+          "title": "Matter Opening Authorized",
+          "type": "boolean"
+        },
+        "lake_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Lake Write Performed",
+          "type": "boolean"
+        },
+        "sqlite_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Sqlite Write Performed",
+          "type": "boolean"
+        },
+        "external_writes_performed": {
+          "const": false,
+          "default": false,
+          "title": "External Writes Performed",
+          "type": "boolean"
+        },
+        "silent_learning_performed": {
+          "const": false,
+          "default": false,
+          "title": "Silent Learning Performed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "case_id",
+        "fixture_ref",
+        "generated_report_ref",
+        "expected_status",
+        "observed_status",
+        "expected_overall_link_state",
+        "observed_overall_link_state",
+        "expected_cluster_count",
+        "observed_cluster_count",
+        "expected_high_evidence_candidate_count",
+        "observed_high_evidence_candidate_count",
+        "expected_weak_only_candidate_count",
+        "observed_weak_only_candidate_count",
+        "expected_negative_split_evidence_required",
+        "observed_negative_split_evidence_required",
+        "expected_sender_followup_required",
+        "observed_sender_followup_required",
+        "required_coverage_tags",
+        "candidate_exception_lake_labels",
+        "status",
+        "notes"
+      ],
+      "title": "MatterLinkingQAGateCase",
+      "type": "object"
+    },
+    "MatterLinkingQAGateCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "case_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Case Ids",
+          "type": "array"
+        },
+        "artifact_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Artifact Refs",
+          "type": "array"
+        },
+        "blocking_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Blocking Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "MatterLinkingQAGateCheck",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "matter_linking_qa_gate_report_id": {
+      "title": "Matter Linking Qa Gate Report Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "matter_linking_qa_gate_ready_for_review",
+        "blocked_by_matter_linking_qa_gate"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "repo_root_ref": {
+      "title": "Repo Root Ref",
+      "type": "string"
+    },
+    "out_dir_ref": {
+      "title": "Out Dir Ref",
+      "type": "string"
+    },
+    "case_count": {
+      "minimum": 0,
+      "title": "Case Count",
+      "type": "integer"
+    },
+    "passed_case_count": {
+      "minimum": 0,
+      "title": "Passed Case Count",
+      "type": "integer"
+    },
+    "failed_case_count": {
+      "minimum": 0,
+      "title": "Failed Case Count",
+      "type": "integer"
+    },
+    "required_coverage_tag_count": {
+      "minimum": 0,
+      "title": "Required Coverage Tag Count",
+      "type": "integer"
+    },
+    "observed_coverage_tag_count": {
+      "minimum": 0,
+      "title": "Observed Coverage Tag Count",
+      "type": "integer"
+    },
+    "missing_coverage_tags": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Missing Coverage Tags",
+      "type": "array"
+    },
+    "cases": {
+      "items": {
+        "$ref": "#/$defs/MatterLinkingQAGateCase"
+      },
+      "title": "Cases",
+      "type": "array"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/MatterLinkingQAGateCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "candidate_exception_lake_labels": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Candidate Exception Lake Labels",
+      "type": "array"
+    },
+    "required_next_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Gates",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "local_json_only": {
+      "const": true,
+      "default": true,
+      "title": "Local Json Only",
+      "type": "boolean"
+    },
+    "human_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Human Review Required",
+      "type": "boolean"
+    },
+    "not_authorized_for_external_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For External Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_lake_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Lake Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_sqlite_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Sqlite Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_budget_submission": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Budget Submission",
+      "type": "boolean"
+    },
+    "not_authorized_for_matter_opening": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Matter Opening",
+      "type": "boolean"
+    },
+    "budget_amount_output_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Amount Output Authorized",
+      "type": "boolean"
+    },
+    "budget_submission_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Submission Authorized",
+      "type": "boolean"
+    },
+    "conflict_conclusion_emitted": {
+      "const": false,
+      "default": false,
+      "title": "Conflict Conclusion Emitted",
+      "type": "boolean"
+    },
+    "matter_opening_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Matter Opening Authorized",
+      "type": "boolean"
+    },
+    "training_pipeline_created": {
+      "const": false,
+      "default": false,
+      "title": "Training Pipeline Created",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "matter_linking_qa_gate_report_id",
+    "status",
+    "repo_root_ref",
+    "out_dir_ref",
+    "case_count",
+    "passed_case_count",
+    "failed_case_count",
+    "required_coverage_tag_count",
+    "observed_coverage_tag_count",
+    "missing_coverage_tags",
+    "cases",
+    "checks",
+    "candidate_exception_lake_labels",
+    "required_next_gates",
+    "generated_at"
+  ],
+  "title": "MatterLinkingQAGateReport",
+  "type": "object"
+}

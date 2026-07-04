@@ -198,7 +198,13 @@ Implement `matter-linking-preflight` before any real Upfront connector:
 5. Add dry-run Lake mapping candidates for unresolved matching and follow-up.
 6. Add UI panels for unmatched/ambiguous/conflicting clusters and the recorded
    matter-linking review outcome.
-7. Keep all real Upfront API work out of intake until Orchestrator receives a
+7. Add an aggregate QA gate that replays the required matter-linking holdouts,
+   including ambiguous same-sender/multi-case input, resolved follow-up split
+   candidates, weak-only blocked packets, resolved single candidates, and
+   conflicting external identifiers:
+   `lawfirm-os-intake audit-matter-linking-qa-gate --repo-root . --out-dir
+   <dir>`.
+8. Keep all real Upfront API work out of intake until Orchestrator receives a
    reviewed vendor contract.
 
 ## Acceptance Tests For That Slice
