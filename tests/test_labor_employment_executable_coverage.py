@@ -31,14 +31,14 @@ def test_labor_employment_executable_coverage_reports_partial_pack_coverage(
     assert report.status == "labor_employment_executable_coverage_ready_for_review"
     assert persisted.coverage_state == "partial_executable_coverage"
     assert persisted.pack_case_count == 32
-    assert persisted.executable_fixture_count == 17
-    assert persisted.executable_pack_case_link_count == 18
-    assert persisted.covered_pack_case_count == 18
-    assert persisted.missing_executable_pack_case_count == 14
+    assert persisted.executable_fixture_count == 18
+    assert persisted.executable_pack_case_link_count == 19
+    assert persisted.covered_pack_case_count == 19
+    assert persisted.missing_executable_pack_case_count == 13
     assert persisted.covered_family_count == 8
     assert persisted.missing_family_count == 0
-    assert persisted.covered_family_variant_count == 18
-    assert persisted.missing_family_variant_count == 14
+    assert persisted.covered_family_variant_count == 19
+    assert persisted.missing_family_variant_count == 13
     assert set(persisted.covered_pack_case_ids) == {
         "le-discrimination-harassment-clean.v0_1",
         "le-discrimination-harassment-missing-attachment.v0_1",
@@ -57,6 +57,7 @@ def test_labor_employment_executable_coverage_reports_partial_pack_coverage(
         "le-epli-carrier-adversarial.v0_1",
         "le-class-collective-clean.v0_1",
         "le-class-collective-messy-thread.v0_1",
+        "le-class-collective-missing-attachment.v0_1",
         "le-class-collective-adversarial.v0_1",
     }
     assert "le-discrimination-harassment-clean.v0_1" not in (
@@ -90,11 +91,11 @@ def test_labor_employment_executable_coverage_reports_partial_pack_coverage(
     assert family["restrictive_covenant_trade_secret"].missing_case_count == 3
     assert family["administrative_exhaustion_agency_record"].covered_case_count == 1
     assert family["administrative_exhaustion_agency_record"].missing_case_count == 3
-    assert family["class_collective_paga_representative"].covered_case_count == 3
-    assert family["class_collective_paga_representative"].missing_variants == ["missing_attachment"]
+    assert family["class_collective_paga_representative"].covered_case_count == 4
+    assert family["class_collective_paga_representative"].missing_variants == []
     assert all(item.covered_case_count > 0 for item in persisted.family_coverage)
     notes = (run_dir / "labor_employment_executable_coverage_report.md").read_text(encoding="utf-8")
-    assert "Missing executable pack cases: 14" in notes
+    assert "Missing executable pack cases: 13" in notes
     assert "does not generate fixtures" in notes
     assert not list(run_dir.rglob("*.sqlite"))
     assert not list(run_dir.rglob("*.db"))
@@ -162,6 +163,6 @@ def test_labor_employment_executable_coverage_cli_writes_candidate_report(
     assert exit_code == 0
     assert report["status"] == "labor_employment_executable_coverage_ready_for_review"
     assert report["coverage_state"] == "partial_executable_coverage"
-    assert report["missing_executable_pack_case_count"] == 14
+    assert report["missing_executable_pack_case_count"] == 13
     assert '"fixture_generation_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out

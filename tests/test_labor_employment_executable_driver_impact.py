@@ -71,11 +71,11 @@ def test_labor_employment_executable_driver_impact_maps_drivers_to_budget_effect
     )
 
     assert report.status == "labor_employment_executable_driver_impacts_ready_for_review"
-    assert persisted.case_count == 17
+    assert persisted.case_count == 18
     assert persisted.failed_case_count == 0
-    assert persisted.impact_item_count == 73
-    assert persisted.source_bound_impact_count == 73
-    assert persisted.block_amount_budget_impact_count == 13
+    assert persisted.impact_item_count == 81
+    assert persisted.source_bound_impact_count == 81
+    assert persisted.block_amount_budget_impact_count == 15
     assert persisted.critical_review_only_impact_count == 22
     assert persisted.range_widening_impact_count > 0
     assert persisted.scenario_fork_impact_count > 0
@@ -161,6 +161,17 @@ def test_labor_employment_executable_driver_impact_maps_drivers_to_budget_effect
     assert class_messy.block_amount_budget_impact_count == 0
     assert class_messy.critical_review_only_impact_count == 3
     assert class_messy.scenario_fork_impact_count >= 3
+    class_missing = cases["le-class-collective-missing-attachment.executable.v0_1"]
+    assert class_missing.allowed_budget_output == "blocked_amount_budget"
+    assert class_missing.impact_item_count == 8
+    assert class_missing.block_amount_budget_impact_count == 2
+    assert class_missing.range_widening_impact_count == 8
+    assert class_missing.scenario_fork_impact_count == 4
+    class_missing_impacts = {item.driver_dimension: item for item in class_missing.impact_items}
+    assert "block_amount_budget" in class_missing_impacts["party_topology"].impact_actions
+    assert "block_amount_budget" in class_missing_impacts["class_collective_scope"].impact_actions
+    assert "add_scenario_fork" in class_missing_impacts["wage_hour_volume"].impact_actions
+    assert class_missing_impacts["class_collective_scope"].range_widening_factor == 2.5
 
     notes = (run_dir / "labor_employment_executable_driver_impact_report.md").read_text(
         encoding="utf-8"
@@ -225,8 +236,8 @@ def test_labor_employment_executable_driver_impact_cli_writes_candidate_report(
 
     assert exit_code == 0
     assert report["status"] == "labor_employment_executable_driver_impacts_ready_for_review"
-    assert report["case_count"] == 17
-    assert report["impact_item_count"] == 73
+    assert report["case_count"] == 18
+    assert report["impact_item_count"] == 81
     assert report["critical_review_only_impact_count"] == 22
     assert report["missing_impact_policy_dimensions"] == []
     assert '"budget_amount_output_authorized": false' in captured.out

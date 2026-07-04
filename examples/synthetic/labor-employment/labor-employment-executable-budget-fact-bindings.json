@@ -353,6 +353,58 @@
       ]
     },
     {
+      "binding_case_id": "le-class-collective-missing-attachment.fact-binding.v0_1",
+      "executable_fixture_id": "le-class-collective-missing-attachment.executable.v0_1",
+      "expected_budget_readiness_state": "blocked_missing_critical_facts",
+      "expected_budget_gate_effect": "block_amount_budget_before_proposal",
+      "expected_budget_treatment": "block_amount_budget",
+      "fact_bindings": [
+        {
+          "fact_id": "class_collective_or_group_scope",
+          "expected_gap_type": "missing_evidence",
+          "source_signal_terms": ["class list", "opt-in roster", "class collective scope"],
+          "expected_exception_labels": ["source_missing"],
+          "expected_source_ids": [
+            "syn-le-class-collective-class-list-missing-001"
+          ],
+          "reason": "The source says the class list and opt-in roster were referenced but missing, so class/collective scope cannot be used as budget math."
+        },
+        {
+          "fact_id": "wage_hour_pay_period_and_employee_volume",
+          "expected_gap_type": "missing_evidence",
+          "source_signal_terms": ["payroll export", "timekeeping export", "pay-period volume", "employee count"],
+          "expected_exception_labels": ["source_missing"],
+          "expected_source_ids": [
+            "syn-le-class-collective-payroll-export-missing-001"
+          ],
+          "reason": "Payroll and timekeeping exports are referenced but missing, so employee count and pay-period volume must not be invented."
+        },
+        {
+          "fact_id": "forum_removed_and_arbitration_posture",
+          "expected_gap_type": "missing_evidence",
+          "source_signal_terms": ["arbitration agreement", "arbitration posture"],
+          "expected_exception_labels": ["source_missing"],
+          "expected_source_ids": [
+            "syn-le-class-collective-arbitration-policy-missing-001"
+          ],
+          "reason": "The arbitration agreement is referenced but missing, so forum/arbitration posture stays unresolved pending review."
+        },
+        {
+          "fact_id": "policy_handbook_contract_documents",
+          "expected_gap_type": "missing_evidence",
+          "source_signal_terms": ["employee handbook", "policy documents"],
+          "expected_exception_labels": ["source_missing"],
+          "expected_source_ids": [
+            "syn-le-class-collective-arbitration-policy-missing-001"
+          ],
+          "reason": "The employee handbook and contract/policy text are referenced but missing, so policy-document assumptions cannot narrow the budget."
+        }
+      ],
+      "red_team_notes": [
+        "Missing class roster, payroll export, and arbitration or policy documents must create follow-up tasks and blocked amount-budget output, not average class-size assumptions."
+      ]
+    },
+    {
       "binding_case_id": "le-class-collective-adversarial.fact-binding.v0_1",
       "executable_fixture_id": "le-class-collective-adversarial.executable.v0_1",
       "expected_budget_readiness_state": "blocked_missing_critical_facts",

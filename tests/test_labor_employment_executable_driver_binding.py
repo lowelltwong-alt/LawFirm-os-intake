@@ -61,12 +61,12 @@ def test_labor_employment_executable_driver_binding_maps_fact_gaps_to_budget_dri
     )
 
     assert report.status == "labor_employment_executable_driver_bindings_ready_for_review"
-    assert persisted.case_count == 17
+    assert persisted.case_count == 18
     assert persisted.failed_case_count == 0
-    assert persisted.driver_binding_count == 73
-    assert persisted.source_bound_driver_count == 73
+    assert persisted.driver_binding_count == 81
+    assert persisted.source_bound_driver_count == 81
     assert persisted.unbound_driver_count == 0
-    assert persisted.critical_driver_block_count == 13
+    assert persisted.critical_driver_block_count == 15
     assert persisted.critical_driver_review_only_count == 22
     assert persisted.missing_driver_dimensions == []
     assert set(persisted.covered_driver_dimensions) == set(persisted.required_driver_dimensions)
@@ -200,6 +200,33 @@ def test_labor_employment_executable_driver_binding_maps_fact_gaps_to_budget_dri
         "expert_and_vendor_needs",
         "wage_hour_pay_period_and_employee_volume",
     ]
+    class_missing = {
+        binding.driver_dimension: binding
+        for binding in cases[
+            "le-class-collective-missing-attachment.executable.v0_1"
+        ].driver_bindings
+    }
+    assert set(class_missing) == {
+        "party_topology",
+        "class_collective_scope",
+        "forum_arbitration",
+        "damages_exposure",
+        "wage_hour_volume",
+        "esi_discovery",
+        "expert_vendor_needs",
+        "policy_contract_documents",
+    }
+    assert class_missing["party_topology"].critical_driver_block is True
+    assert class_missing["class_collective_scope"].critical_driver_block is True
+    assert class_missing["wage_hour_volume"].matched_fact_ids == [
+        "wage_hour_pay_period_and_employee_volume"
+    ]
+    assert class_missing["forum_arbitration"].matched_fact_ids == [
+        "forum_removed_and_arbitration_posture"
+    ]
+    assert class_missing["policy_contract_documents"].matched_fact_ids == [
+        "policy_handbook_contract_documents"
+    ]
 
     notes = (run_dir / "labor_employment_executable_driver_binding_report.md").read_text(
         encoding="utf-8"
@@ -275,7 +302,7 @@ def test_labor_employment_executable_driver_binding_cli_writes_candidate_report(
 
     assert exit_code == 0
     assert report["status"] == "labor_employment_executable_driver_bindings_ready_for_review"
-    assert report["case_count"] == 17
+    assert report["case_count"] == 18
     assert report["missing_driver_dimensions"] == []
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out

@@ -31,8 +31,8 @@ def test_labor_employment_executable_fixtures_run_preflight_and_preserve_boundar
     )
 
     assert report.status == "labor_employment_executable_fixtures_ready_for_review"
-    assert persisted.fixture_count == 17
-    assert persisted.preflight_executed_count == 17
+    assert persisted.fixture_count == 18
+    assert persisted.preflight_executed_count == 18
     assert persisted.failed_case_count == 0
     assert persisted.missing_pack_link_count == 0
     assert persisted.missing_source_signal_count == 0
@@ -158,6 +158,18 @@ def test_labor_employment_executable_fixtures_run_preflight_and_preserve_boundar
     assert "duplicate_source_detected" in (
         cases["le-class-collective-messy-thread.executable.v0_1"].exception_labels
     )
+    class_missing = cases["le-class-collective-missing-attachment.executable.v0_1"]
+    assert class_missing.source_count == 4
+    assert class_missing.segment_count == 8
+    assert class_missing.missing_source_count == 3
+    assert class_missing.expected_budget_treatment == "block_amount_budget"
+    assert "source_missing" in class_missing.exception_labels
+    assert set(class_missing.expected_budget_fact_gap_ids) == {
+        "class_collective_or_group_scope",
+        "wage_hour_pay_period_and_employee_volume",
+        "forum_removed_and_arbitration_posture",
+        "policy_handbook_contract_documents",
+    }
     assert "prompt_injection_source_content" in (
         cases["le-class-collective-adversarial.executable.v0_1"].exception_labels
     )
@@ -258,7 +270,7 @@ def test_labor_employment_executable_fixtures_cli_writes_candidate_report(
 
     assert exit_code == 0
     assert report["status"] == "labor_employment_executable_fixtures_ready_for_review"
-    assert report["fixture_count"] == 17
-    assert report["preflight_executed_count"] == 17
+    assert report["fixture_count"] == 18
+    assert report["preflight_executed_count"] == 18
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out

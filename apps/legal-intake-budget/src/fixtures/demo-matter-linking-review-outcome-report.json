@@ -2,7 +2,7 @@
   "schema_version": "0.1",
   "matter_linking_review_outcome_report_id": "matterlinkreviewoutcome_e252ae71c86c01e161d3",
   "status": "matter_linking_review_outcome_recorded",
-  "source_matter_linking_preflight_report_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-epli-adversarial\\full-run\\quality\\matter-linking-preflight\\matter_linking_preflight_report.json",
+  "source_matter_linking_preflight_report_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-class-missing-attachment\\full-run\\quality\\matter-linking-preflight\\matter_linking_preflight_report.json",
   "matter_linking_preflight_report_id": "matterlinkpreflight_b6256d36c7d774ea7124",
   "source_matter_linking_preflight_status": "matter_linking_preflight_resolved_candidate_requires_review",
   "matter_linking_review_outcome_record_id": "matter-linking-review-outcome.synthetic-confirm-split.v0_1",
@@ -37,14 +37,14 @@
     "principal_party_roles_still_require_confirmation",
     "source_matter_link_resolved_candidate"
   ],
-  "append_only_history_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-epli-adversarial\\full-run\\quality\\matter-linking-review-outcome\\matter_linking_review_outcome_history.jsonl",
+  "append_only_history_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-class-missing-attachment\\full-run\\quality\\matter-linking-review-outcome\\matter_linking_review_outcome_history.jsonl",
   "checks": [
     {
       "check_id": "matter_linking_preflight_ready_without_writes",
       "status": "passed",
       "message": "Source matter-linking preflight is reviewable and has no connector, Lake, SQLite, budget, matter-opening, conflict, screen, or learning side effects.",
       "artifact_refs": [
-        "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-epli-adversarial\\full-run\\quality\\matter-linking-preflight\\matter_linking_preflight_report.json"
+        "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-class-missing-attachment\\full-run\\quality\\matter-linking-preflight\\matter_linking_preflight_report.json"
       ],
       "decision_ids": [],
       "cluster_ids": [],
@@ -55,7 +55,7 @@
       "status": "passed",
       "message": "Outcome record is bound to the supplied matter-linking preflight report.",
       "artifact_refs": [
-        "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-epli-adversarial\\full-run\\quality\\matter-linking-preflight\\matter_linking_preflight_report.json"
+        "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-class-missing-attachment\\full-run\\quality\\matter-linking-preflight\\matter_linking_preflight_report.json"
       ],
       "decision_ids": [],
       "cluster_ids": [],
