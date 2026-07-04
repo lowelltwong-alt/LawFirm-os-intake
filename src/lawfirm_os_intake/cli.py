@@ -94,6 +94,9 @@ from .labor_employment_blocked_driver_impact_review import (
 from .labor_employment_budget_output_expectations import (
     run_labor_employment_budget_output_expectations_audit,
 )
+from .labor_employment_budget_learning_fixtures import (
+    run_labor_employment_budget_learning_fixture_audit,
+)
 from .labor_employment_budget_qa_gate import run_labor_employment_budget_qa_gate
 from .labor_employment_executable_fixtures import (
     run_labor_employment_executable_fixture_audit,
@@ -642,6 +645,31 @@ def _parser() -> argparse.ArgumentParser:
     )
     le_budget_qa_gate.add_argument("--out-dir", required=True)
     le_budget_qa_gate.add_argument(
+        "--generated-at",
+        help="Optional fixed timestamp for deterministic tests and replayed reports.",
+    )
+
+    le_budget_learning_fixtures = sub.add_parser(
+        "audit-labor-employment-budget-learning-fixtures",
+        help=(
+            "Audit candidate L&E budget-learning fixture coverage against the "
+            "L&E budget QA gate without creating actuals, appeals, or Lake writes."
+        ),
+    )
+    le_budget_learning_fixtures.add_argument(
+        "--manifest",
+        default=(
+            "examples/synthetic/labor-employment/labor-employment-budget-learning-fixtures.json"
+        ),
+        help="Path to labor-employment-budget-learning-fixtures.json.",
+    )
+    le_budget_learning_fixtures.add_argument(
+        "--budget-qa-gate-report",
+        required=True,
+        help="Path to labor_employment_budget_qa_gate_report.json.",
+    )
+    le_budget_learning_fixtures.add_argument("--out-dir", required=True)
+    le_budget_learning_fixtures.add_argument(
         "--generated-at",
         help="Optional fixed timestamp for deterministic tests and replayed reports.",
     )
@@ -2443,6 +2471,43 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 0 if report.status == "labor_employment_budget_qa_gate_ready_for_review" else 2
+
+        if args.command == "audit-labor-employment-budget-learning-fixtures":
+            report, run_dir = run_labor_employment_budget_learning_fixture_audit(
+                manifest_path=args.manifest,
+                budget_qa_gate_report_path=args.budget_qa_gate_report,
+                out_dir=args.out_dir,
+                generated_at=args.generated_at,
+            )
+            failed_checks = [check.check_id for check in report.checks if check.status == "failed"]
+            _print(
+                {
+                    "status": report.status,
+                    "budget_learning_fixture_report_id": (report.budget_learning_fixture_report_id),
+                    "source_manifest_id": report.source_manifest_id,
+                    "source_budget_qa_gate_report_id": report.source_budget_qa_gate_report_id,
+                    "fixture_count": report.fixture_count,
+                    "covered_required_family_count": report.covered_required_family_count,
+                    "required_family_count": report.required_family_count,
+                    "missing_required_families": report.missing_required_families,
+                    "covered_budget_output_states": report.covered_budget_output_states,
+                    "missing_budget_output_states": report.missing_budget_output_states,
+                    "covered_learning_loop_types": report.covered_learning_loop_types,
+                    "missing_learning_loop_types": report.missing_learning_loop_types,
+                    "failed_checks": failed_checks,
+                    "budget_submission_authorized": report.budget_submission_authorized,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return (
+                0
+                if report.status == "labor_employment_budget_learning_fixtures_ready_for_review"
+                else 2
+            )
 
         if args.command == "record-budget-review":
             report, run_dir = run_budget_review_record(

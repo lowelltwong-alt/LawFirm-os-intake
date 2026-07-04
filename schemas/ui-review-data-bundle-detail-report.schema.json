@@ -24,6 +24,7 @@
         "labor_employment_blocked_driver_impact_review",
         "labor_employment_budget_output_expectations",
         "labor_employment_budget_qa_gate",
+        "labor_employment_budget_learning_fixtures",
         "budget_learning_loop"
       ],
       "title": "Report Kind",

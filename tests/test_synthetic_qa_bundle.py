@@ -184,6 +184,29 @@ def _write_ready_labor_employment_budget_qa_gate(path):
     )
 
 
+def _write_ready_labor_employment_budget_learning_fixtures(path):
+    write_json(
+        path,
+        {
+            "status": "labor_employment_budget_learning_fixtures_ready_for_review",
+            "fixture_count": 8,
+            "covered_required_family_count": 8,
+            "required_family_count": 8,
+            "missing_required_families": [],
+            "missing_budget_output_states": [],
+            "missing_learning_loop_types": [],
+            "candidate_only": True,
+            "synthetic_only": True,
+            "external_writes_performed": False,
+            "lake_write_performed": False,
+            "sqlite_write_performed": False,
+            "budget_submission_authorized": False,
+            "matter_opening_authorized": False,
+            "silent_learning_performed": False,
+        },
+    )
+
+
 def _write_ready_labor_employment_budget_fact_gold(path):
     write_json(
         path,
@@ -286,6 +309,9 @@ def test_synthetic_qa_bundle_blocks_missing_calibration_and_builds_ui(tmp_path):
     _write_ready_labor_employment_budget_qa_gate(
         quality_dir / "labor_employment_budget_qa_gate_report.json"
     )
+    _write_ready_labor_employment_budget_learning_fixtures(
+        quality_dir / "labor_employment_budget_learning_fixtures_report.json"
+    )
     _write_ready_labor_employment_budget_fact_gold(
         quality_dir / "labor_employment_budget_fact_gold_report.json"
     )
@@ -310,6 +336,8 @@ def test_synthetic_qa_bundle_blocks_missing_calibration_and_builds_ui(tmp_path):
     assert persisted["missing_required_artifact_count"] == 1
     assert artifacts["budget_learning_loop"]["present"] is True
     assert artifacts["budget_learning_loop"]["status"] == "pending_review"
+    assert artifacts["labor_employment_budget_learning_fixtures"]["present"] is True
+    assert artifacts["labor_employment_budget_learning_fixtures"]["status"] == "pending_review"
     assert persisted["ui_manifest_ref"] == str(run_root / "ui_review_manifest.json")
     assert persisted["ui_data_bundle_ref"] == str(run_root / "ui_review_data_bundle.json")
     assert persisted["lake_write_performed"] is False
@@ -367,6 +395,9 @@ def test_synthetic_qa_bundle_can_generate_fixture_depth_from_manifest(tmp_path, 
     _write_ready_labor_employment_budget_qa_gate(
         quality_dir / "labor_employment_budget_qa_gate_report.json"
     )
+    _write_ready_labor_employment_budget_learning_fixtures(
+        quality_dir / "labor_employment_budget_learning_fixtures_report.json"
+    )
     _write_ready_labor_employment_budget_fact_gold(
         quality_dir / "labor_employment_budget_fact_gold_report.json"
     )
@@ -388,6 +419,7 @@ def test_synthetic_qa_bundle_can_generate_fixture_depth_from_manifest(tmp_path, 
     assert artifacts["synthetic_fixture_depth"].present is True
     assert artifacts["synthetic_fixture_depth"].status == "pending_review"
     assert artifacts["budget_calibration_readiness"].status == "missing"
+    assert artifacts["labor_employment_budget_learning_fixtures"].status == "pending_review"
     assert artifacts["budget_learning_loop"].status == "pending_review"
     assert (run_dir / "synthetic_fixture_depth_audit_report.json").is_file()
 
@@ -411,6 +443,7 @@ def test_synthetic_qa_bundle_cli_writes_bundle_and_manifest(tmp_path):
         "labor_employment_blocked_driver_impact_review_report.json",
         "labor_employment_budget_output_expectations_report.json",
         "labor_employment_budget_qa_gate_report.json",
+        "labor_employment_budget_learning_fixtures_report.json",
         "labor_employment_budget_fact_gold_report.json",
         "budget_learning_loop_report.json",
         "matter_linking_qa_gate_report.json",
@@ -439,6 +472,8 @@ def test_synthetic_qa_bundle_cli_writes_bundle_and_manifest(tmp_path):
                     if file_name == "labor_employment_budget_output_expectations_report.json"
                     else "labor_employment_budget_qa_gate_ready_for_review"
                     if file_name == "labor_employment_budget_qa_gate_report.json"
+                    else "labor_employment_budget_learning_fixtures_ready_for_review"
+                    if file_name == "labor_employment_budget_learning_fixtures_report.json"
                     else "budget_learning_loop_ready_for_review"
                     if file_name == "budget_learning_loop_report.json"
                     else "matter_linking_qa_gate_ready_for_review"
@@ -471,6 +506,7 @@ def test_synthetic_qa_bundle_cli_writes_bundle_and_manifest(tmp_path):
     assert code == 0
     assert report["status"] == "pending_review"
     artifact_ids = {artifact["artifact_id"] for artifact in report["artifacts"]}
+    assert "labor_employment_budget_learning_fixtures" in artifact_ids
     assert "budget_learning_loop" in artifact_ids
     assert report["ui_data_bundle_ref"] == str(run_root / "ui_review_data_bundle.json")
     assert manifest["overallStatus"] in {"passed", "blocked"}

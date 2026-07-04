@@ -242,6 +242,13 @@ ARTIFACT_SPECS = [
         "blocked",
     ),
     ArtifactSpec(
+        "labor-employment-budget-learning-fixtures",
+        "L&E Budget Learning Fixtures",
+        "labor_employment_budget_learning_fixtures_report.json",
+        "qa-reference",
+        "blocked",
+    ),
+    ArtifactSpec(
         "labor-employment-budget-fact-gold",
         "L&E Budget Fact Gold",
         "labor_employment_budget_fact_gold_report.json",
@@ -453,6 +460,13 @@ QUALITY_GATE_SPECS = {
         "labor_employment_budget_qa_gate_report.json",
         "qa-reference",
         "L&E budget-output, blocked-driver-review, and executable-coverage evidence must be aggregated before the UI treats budget QA as review-ready.",
+        "blocked",
+    ),
+    "labor_employment_budget_learning_fixtures": (
+        "L&E Budget Learning Fixtures",
+        "labor_employment_budget_learning_fixtures_report.json",
+        "qa-reference",
+        "L&E actuals, carrier rejection, appeal, reviewed-learning, and blocked-budget guard fixture coverage must be visible before calibration work.",
         "blocked",
     ),
     "budget_learning_loop": (

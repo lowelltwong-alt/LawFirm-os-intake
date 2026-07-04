@@ -1,0 +1,509 @@
+{
+  "schema_version": "0.1",
+  "budget_learning_fixture_report_id": "lebudgetlearningfixtures_8d536ca8c9c94ed0",
+  "status": "labor_employment_budget_learning_fixtures_ready_for_review",
+  "source_manifest_ref": "<repo-root>\\examples\\synthetic\\labor-employment\\labor-employment-budget-learning-fixtures.json",
+  "source_manifest_id": "labor-employment-budget-learning-fixtures.v0_1",
+  "source_budget_qa_gate_report_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\quality\\le-budget-qa-gate\\labor_employment_budget_qa_gate_report.json",
+  "source_budget_qa_gate_report_id": "lebudgetqagate_3f142931156a18c7",
+  "source_budget_qa_gate_report_status": "labor_employment_budget_qa_gate_ready_for_review",
+  "fixture_count": 8,
+  "failed_case_count": 0,
+  "required_family_count": 8,
+  "covered_required_family_count": 8,
+  "missing_required_families": [],
+  "covered_budget_output_states": [
+    "blocked_amount_budget",
+    "range_or_hours_only_pending_review",
+    "candidate_range_after_review_pending_human_review"
+  ],
+  "missing_budget_output_states": [],
+  "covered_learning_loop_types": [
+    "actuals_variance",
+    "carrier_rejection_capture",
+    "appeal_outcome",
+    "reviewed_learning_gate",
+    "blocked_budget_guard"
+  ],
+  "missing_learning_loop_types": [],
+  "blocked_budget_guard_fixture_count": 1,
+  "actuals_variance_fixture_count": 5,
+  "carrier_rejection_fixture_count": 4,
+  "appeal_outcome_fixture_count": 2,
+  "reviewed_learning_gate_fixture_count": 7,
+  "cases": [
+    {
+      "learning_fixture_id": "le-learning-discrimination-harassment-clean.v0_1",
+      "executable_fixture_id": "le-discrimination-harassment-clean.executable.v0_1",
+      "family": "discrimination_harassment",
+      "variant": "clean",
+      "status": "passed",
+      "expected_budget_output_state": "candidate_range_after_review_pending_human_review",
+      "observed_budget_output_state": "candidate_range_after_review_pending_human_review",
+      "learning_loop_types": [
+        "actuals_variance",
+        "carrier_rejection_capture",
+        "appeal_outcome",
+        "reviewed_learning_gate"
+      ],
+      "expected_candidate_exception_lake_labels": [
+        "labor_employment_actual_variance_candidate",
+        "labor_employment_carrier_rejection_capture_candidate",
+        "labor_employment_appeal_outcome_candidate",
+        "reviewed_learning_gate_before_candidate_changes"
+      ],
+      "expected_learning_targets": [
+        "budget_driver",
+        "template_mapping",
+        "carrier_rejection_capture_completeness"
+      ],
+      "evidence_refs": [
+        "examples/synthetic/labor-employment/executable-fixtures/le-discrimination-harassment-clean.source-bundle.json",
+        "examples/synthetic/labor-employment/labor-employment-executable-fixtures-manifest.json#le-discrimination-harassment-clean.executable.v0_1",
+        "labor-employment-budget-learning-fixtures.v0_1",
+        "le-discrimination-harassment-clean.executable.v0_1",
+        "lebudgetqagate_3f142931156a18c7"
+      ],
+      "failure_ids": [],
+      "candidate_only": true,
+      "non_authoritative": true,
+      "synthetic_only": true,
+      "human_review_required": true,
+      "budget_submission_authorized": false,
+      "matter_opening_authorized": false,
+      "lake_write_performed": false,
+      "sqlite_write_performed": false,
+      "external_writes_performed": false,
+      "silent_learning_performed": false
+    },
+    {
+      "learning_fixture_id": "le-learning-wage-hour-clean.v0_1",
+      "executable_fixture_id": "le-wage-hour-clean.executable.v0_1",
+      "family": "wage_hour_flsa_state",
+      "variant": "clean",
+      "status": "passed",
+      "expected_budget_output_state": "candidate_range_after_review_pending_human_review",
+      "observed_budget_output_state": "candidate_range_after_review_pending_human_review",
+      "learning_loop_types": [
+        "actuals_variance",
+        "carrier_rejection_capture",
+        "reviewed_learning_gate"
+      ],
+      "expected_candidate_exception_lake_labels": [
+        "labor_employment_actual_variance_candidate",
+        "labor_employment_carrier_code_mapping_candidate",
+        "reviewed_learning_gate_before_candidate_changes"
+      ],
+      "expected_learning_targets": [
+        "budget_driver",
+        "utbms_code_mapping",
+        "template_mapping"
+      ],
+      "evidence_refs": [
+        "examples/synthetic/labor-employment/executable-fixtures/le-wage-hour-clean.source-bundle.json",
+        "examples/synthetic/labor-employment/labor-employment-executable-fixtures-manifest.json#le-wage-hour-clean.executable.v0_1",
+        "labor-employment-budget-learning-fixtures.v0_1",
+        "le-wage-hour-clean.executable.v0_1",
+        "lebudgetqagate_3f142931156a18c7"
+      ],
+      "failure_ids": [],
+      "candidate_only": true,
+      "non_authoritative": true,
+      "synthetic_only": true,
+      "human_review_required": true,
+      "budget_submission_authorized": false,
+      "matter_opening_authorized": false,
+      "lake_write_performed": false,
+      "sqlite_write_performed": false,
+      "external_writes_performed": false,
+      "silent_learning_performed": false
+    },
+    {
+      "learning_fixture_id": "le-learning-epli-carrier-clean.v0_1",
+      "executable_fixture_id": "le-epli-carrier-clean.executable.v0_1",
+      "family": "epli_carrier_assignment",
+      "variant": "clean",
+      "status": "passed",
+      "expected_budget_output_state": "candidate_range_after_review_pending_human_review",
+      "observed_budget_output_state": "candidate_range_after_review_pending_human_review",
+      "learning_loop_types": [
+        "carrier_rejection_capture",
+        "appeal_outcome",
+        "reviewed_learning_gate"
+      ],
+      "expected_candidate_exception_lake_labels": [
+        "labor_employment_epli_carrier_rejection_candidate",
+        "labor_employment_appeal_outcome_candidate",
+        "reviewed_learning_gate_before_candidate_changes"
+      ],
+      "expected_learning_targets": [
+        "carrier_rejection_capture_completeness",
+        "carrier_guideline_mapping"
+      ],
+      "evidence_refs": [
+        "examples/synthetic/labor-employment/executable-fixtures/le-epli-carrier-clean.source-bundle.json",
+        "examples/synthetic/labor-employment/labor-employment-executable-fixtures-manifest.json#le-epli-carrier-clean.executable.v0_1",
+        "labor-employment-budget-learning-fixtures.v0_1",
+        "le-epli-carrier-clean.executable.v0_1",
+        "lebudgetqagate_3f142931156a18c7"
+      ],
+      "failure_ids": [],
+      "candidate_only": true,
+      "non_authoritative": true,
+      "synthetic_only": true,
+      "human_review_required": true,
+      "budget_submission_authorized": false,
+      "matter_opening_authorized": false,
+      "lake_write_performed": false,
+      "sqlite_write_performed": false,
+      "external_writes_performed": false,
+      "silent_learning_performed": false
+    },
+    {
+      "learning_fixture_id": "le-learning-retaliation-messy-thread.v0_1",
+      "executable_fixture_id": "le-retaliation-wrongful-termination-messy-thread.executable.v0_1",
+      "family": "retaliation_wrongful_termination",
+      "variant": "messy_thread",
+      "status": "passed",
+      "expected_budget_output_state": "candidate_range_after_review_pending_human_review",
+      "observed_budget_output_state": "candidate_range_after_review_pending_human_review",
+      "learning_loop_types": [
+        "actuals_variance",
+        "reviewed_learning_gate"
+      ],
+      "expected_candidate_exception_lake_labels": [
+        "labor_employment_actual_variance_candidate",
+        "quoted_thread_separation_required",
+        "reviewed_learning_gate_before_candidate_changes"
+      ],
+      "expected_learning_targets": [
+        "budget_driver",
+        "source_capture_completeness"
+      ],
+      "evidence_refs": [
+        "examples/synthetic/labor-employment/executable-fixtures/le-retaliation-wrongful-termination-messy-thread.source-bundle.json",
+        "examples/synthetic/labor-employment/labor-employment-executable-fixtures-manifest.json#le-retaliation-wrongful-termination-messy-thread.executable.v0_1",
+        "labor-employment-budget-learning-fixtures.v0_1",
+        "le-retaliation-wrongful-termination-messy-thread.executable.v0_1",
+        "lebudgetqagate_3f142931156a18c7"
+      ],
+      "failure_ids": [],
+      "candidate_only": true,
+      "non_authoritative": true,
+      "synthetic_only": true,
+      "human_review_required": true,
+      "budget_submission_authorized": false,
+      "matter_opening_authorized": false,
+      "lake_write_performed": false,
+      "sqlite_write_performed": false,
+      "external_writes_performed": false,
+      "silent_learning_performed": false
+    },
+    {
+      "learning_fixture_id": "le-learning-class-collective-clean.v0_1",
+      "executable_fixture_id": "le-class-collective-clean.executable.v0_1",
+      "family": "class_collective_paga_representative",
+      "variant": "clean",
+      "status": "passed",
+      "expected_budget_output_state": "range_or_hours_only_pending_review",
+      "observed_budget_output_state": "range_or_hours_only_pending_review",
+      "learning_loop_types": [
+        "actuals_variance",
+        "reviewed_learning_gate"
+      ],
+      "expected_candidate_exception_lake_labels": [
+        "labor_employment_range_only_pending_review",
+        "labor_employment_actual_variance_candidate",
+        "reviewed_learning_gate_before_candidate_changes"
+      ],
+      "expected_learning_targets": [
+        "budget_driver",
+        "scenario_range_width"
+      ],
+      "evidence_refs": [
+        "examples/synthetic/labor-employment/executable-fixtures/le-class-collective-clean.source-bundle.json",
+        "examples/synthetic/labor-employment/labor-employment-executable-fixtures-manifest.json#le-class-collective-clean.executable.v0_1",
+        "labor-employment-budget-learning-fixtures.v0_1",
+        "le-class-collective-clean.executable.v0_1",
+        "lebudgetqagate_3f142931156a18c7"
+      ],
+      "failure_ids": [],
+      "candidate_only": true,
+      "non_authoritative": true,
+      "synthetic_only": true,
+      "human_review_required": true,
+      "budget_submission_authorized": false,
+      "matter_opening_authorized": false,
+      "lake_write_performed": false,
+      "sqlite_write_performed": false,
+      "external_writes_performed": false,
+      "silent_learning_performed": false
+    },
+    {
+      "learning_fixture_id": "le-learning-restrictive-covenant-messy-thread.v0_1",
+      "executable_fixture_id": "le-restrictive-covenant-messy-thread.executable.v0_1",
+      "family": "restrictive_covenant_trade_secret",
+      "variant": "messy_thread",
+      "status": "passed",
+      "expected_budget_output_state": "range_or_hours_only_pending_review",
+      "observed_budget_output_state": "range_or_hours_only_pending_review",
+      "learning_loop_types": [
+        "carrier_rejection_capture",
+        "reviewed_learning_gate"
+      ],
+      "expected_candidate_exception_lake_labels": [
+        "labor_employment_range_only_pending_review",
+        "labor_employment_carrier_rejection_capture_candidate",
+        "reviewed_learning_gate_before_candidate_changes"
+      ],
+      "expected_learning_targets": [
+        "carrier_guideline_mapping",
+        "policy_contract_document_capture"
+      ],
+      "evidence_refs": [
+        "examples/synthetic/labor-employment/executable-fixtures/le-restrictive-covenant-messy-thread.source-bundle.json",
+        "examples/synthetic/labor-employment/labor-employment-executable-fixtures-manifest.json#le-restrictive-covenant-messy-thread.executable.v0_1",
+        "labor-employment-budget-learning-fixtures.v0_1",
+        "le-restrictive-covenant-messy-thread.executable.v0_1",
+        "lebudgetqagate_3f142931156a18c7"
+      ],
+      "failure_ids": [],
+      "candidate_only": true,
+      "non_authoritative": true,
+      "synthetic_only": true,
+      "human_review_required": true,
+      "budget_submission_authorized": false,
+      "matter_opening_authorized": false,
+      "lake_write_performed": false,
+      "sqlite_write_performed": false,
+      "external_writes_performed": false,
+      "silent_learning_performed": false
+    },
+    {
+      "learning_fixture_id": "le-learning-admin-exhaustion-clean.v0_1",
+      "executable_fixture_id": "le-admin-exhaustion-clean.executable.v0_1",
+      "family": "administrative_exhaustion_agency_record",
+      "variant": "clean",
+      "status": "passed",
+      "expected_budget_output_state": "candidate_range_after_review_pending_human_review",
+      "observed_budget_output_state": "candidate_range_after_review_pending_human_review",
+      "learning_loop_types": [
+        "actuals_variance",
+        "reviewed_learning_gate"
+      ],
+      "expected_candidate_exception_lake_labels": [
+        "labor_employment_admin_exhaustion_actual_variance_candidate",
+        "reviewed_learning_gate_before_candidate_changes"
+      ],
+      "expected_learning_targets": [
+        "budget_driver",
+        "administrative_exhaustion"
+      ],
+      "evidence_refs": [
+        "examples/synthetic/labor-employment/executable-fixtures/le-admin-exhaustion-clean.source-bundle.json",
+        "examples/synthetic/labor-employment/labor-employment-executable-fixtures-manifest.json#le-admin-exhaustion-clean.executable.v0_1",
+        "labor-employment-budget-learning-fixtures.v0_1",
+        "le-admin-exhaustion-clean.executable.v0_1",
+        "lebudgetqagate_3f142931156a18c7"
+      ],
+      "failure_ids": [],
+      "candidate_only": true,
+      "non_authoritative": true,
+      "synthetic_only": true,
+      "human_review_required": true,
+      "budget_submission_authorized": false,
+      "matter_opening_authorized": false,
+      "lake_write_performed": false,
+      "sqlite_write_performed": false,
+      "external_writes_performed": false,
+      "silent_learning_performed": false
+    },
+    {
+      "learning_fixture_id": "le-learning-ada-fmla-adversarial.v0_1",
+      "executable_fixture_id": "le-ada-fmla-adversarial.executable.v0_1",
+      "family": "ada_fmla_accommodation_leave",
+      "variant": "adversarial",
+      "status": "passed",
+      "expected_budget_output_state": "blocked_amount_budget",
+      "observed_budget_output_state": "blocked_amount_budget",
+      "learning_loop_types": [
+        "blocked_budget_guard"
+      ],
+      "expected_candidate_exception_lake_labels": [
+        "labor_employment_critical_fact_gap",
+        "prompt_injection_as_source_text",
+        "budget_amount_blocked_pending_labor_employment_driver_review"
+      ],
+      "expected_learning_targets": [
+        "blocked_budget_guard",
+        "source_capture_completeness"
+      ],
+      "evidence_refs": [
+        "examples/synthetic/labor-employment/executable-fixtures/le-ada-fmla-adversarial.source-bundle.json",
+        "examples/synthetic/labor-employment/labor-employment-executable-fixtures-manifest.json#le-ada-fmla-adversarial.executable.v0_1",
+        "labor-employment-budget-learning-fixtures.v0_1",
+        "le-ada-fmla-adversarial.executable.v0_1",
+        "lebudgetqagate_3f142931156a18c7"
+      ],
+      "failure_ids": [],
+      "candidate_only": true,
+      "non_authoritative": true,
+      "synthetic_only": true,
+      "human_review_required": true,
+      "budget_submission_authorized": false,
+      "matter_opening_authorized": false,
+      "lake_write_performed": false,
+      "sqlite_write_performed": false,
+      "external_writes_performed": false,
+      "silent_learning_performed": false
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "source_budget_qa_gate_ready",
+      "status": "passed",
+      "message": "Source L&E budget QA gate is ready for review.",
+      "evidence_refs": [
+        "lebudgetqagate_3f142931156a18c7"
+      ],
+      "blocking_refs": []
+    },
+    {
+      "check_id": "all_fixture_cases_pass",
+      "status": "passed",
+      "message": "Every L&E budget-learning fixture maps to the expected budget QA state.",
+      "evidence_refs": [
+        "le-learning-discrimination-harassment-clean.v0_1",
+        "le-learning-wage-hour-clean.v0_1",
+        "le-learning-epli-carrier-clean.v0_1",
+        "le-learning-retaliation-messy-thread.v0_1",
+        "le-learning-class-collective-clean.v0_1",
+        "le-learning-restrictive-covenant-messy-thread.v0_1",
+        "le-learning-admin-exhaustion-clean.v0_1",
+        "le-learning-ada-fmla-adversarial.v0_1"
+      ],
+      "blocking_refs": []
+    },
+    {
+      "check_id": "required_families_have_learning_fixtures",
+      "status": "passed",
+      "message": "Every required L&E family has at least one learning fixture.",
+      "evidence_refs": [
+        "administrative_exhaustion_agency_record",
+        "ada_fmla_accommodation_leave",
+        "class_collective_paga_representative",
+        "discrimination_harassment",
+        "epli_carrier_assignment",
+        "restrictive_covenant_trade_secret",
+        "retaliation_wrongful_termination",
+        "wage_hour_flsa_state"
+      ],
+      "blocking_refs": []
+    },
+    {
+      "check_id": "required_budget_output_states_have_learning_fixtures",
+      "status": "passed",
+      "message": "Blocked, range/hours-only, and candidate-range output states are covered.",
+      "evidence_refs": [
+        "blocked_amount_budget",
+        "range_or_hours_only_pending_review",
+        "candidate_range_after_review_pending_human_review"
+      ],
+      "blocking_refs": []
+    },
+    {
+      "check_id": "required_learning_loop_types_covered",
+      "status": "passed",
+      "message": "Actuals, carrier rejection, appeal, reviewed-learning, and blocked guard loops are covered.",
+      "evidence_refs": [
+        "actuals_variance",
+        "carrier_rejection_capture",
+        "appeal_outcome",
+        "reviewed_learning_gate",
+        "blocked_budget_guard"
+      ],
+      "blocking_refs": []
+    },
+    {
+      "check_id": "blocked_cases_do_not_claim_submitted_budget_loops",
+      "status": "passed",
+      "message": "Blocked amount-budget fixtures only exercise blocked-budget guard loops.",
+      "evidence_refs": [
+        "le-learning-ada-fmla-adversarial.v0_1"
+      ],
+      "blocking_refs": []
+    },
+    {
+      "check_id": "nonblocking_cases_have_reviewed_learning_gate",
+      "status": "passed",
+      "message": "Nonblocking L&E learning fixtures remain tied to reviewed-learning gates.",
+      "evidence_refs": [
+        "le-learning-discrimination-harassment-clean.v0_1",
+        "le-learning-wage-hour-clean.v0_1",
+        "le-learning-epli-carrier-clean.v0_1",
+        "le-learning-retaliation-messy-thread.v0_1",
+        "le-learning-class-collective-clean.v0_1",
+        "le-learning-restrictive-covenant-messy-thread.v0_1",
+        "le-learning-admin-exhaustion-clean.v0_1"
+      ],
+      "blocking_refs": []
+    },
+    {
+      "check_id": "no_side_effect_boundaries_crossed",
+      "status": "passed",
+      "message": "Manifest and QA gate did not authorize budget, matter, Lake, SQLite, external, or learning actions.",
+      "evidence_refs": [
+        "labor-employment-budget-learning-fixtures.v0_1",
+        "lebudgetqagate_3f142931156a18c7"
+      ],
+      "blocking_refs": []
+    }
+  ],
+  "candidate_exception_lake_labels": [
+    "budget_amount_blocked_pending_labor_employment_driver_review",
+    "labor_employment_actual_variance_candidate",
+    "labor_employment_admin_exhaustion_actual_variance_candidate",
+    "labor_employment_appeal_outcome_candidate",
+    "labor_employment_budget_learning_fixture_candidate",
+    "labor_employment_carrier_code_mapping_candidate",
+    "labor_employment_carrier_rejection_capture_candidate",
+    "labor_employment_critical_fact_gap",
+    "labor_employment_epli_carrier_rejection_candidate",
+    "labor_employment_range_only_pending_review",
+    "prompt_injection_as_source_text",
+    "quoted_thread_separation_required",
+    "reviewed_learning_gate_before_candidate_changes"
+  ],
+  "required_next_gates": [
+    "human_labor_employment_budget_learning_fixture_review",
+    "generate_labor_employment_actuals_and_carrier_rejection_payloads_before_calibration",
+    "reviewed_learning_gate_before_candidate_changes",
+    "shadow_eval_before_learning",
+    "no_budget_submission_from_labor_employment_budget_learning_fixtures",
+    "no_lake_or_sqlite_write_from_labor_employment_budget_learning_fixtures"
+  ],
+  "red_team_notes": [
+    "This report proves L&E learning-loop fixture coverage intent, not budget accuracy.",
+    "Fixture specs must still be converted into executable actuals, rejection, and appeal payloads before calibration.",
+    "Blocked amount-budget cases can only exercise guard and exception-classification loops, never submitted-budget rejection loops."
+  ],
+  "candidate_only": true,
+  "non_authoritative": true,
+  "synthetic_only": true,
+  "local_json_only": true,
+  "human_review_required": true,
+  "not_authorized_for_external_write": true,
+  "not_authorized_for_lake_write": true,
+  "not_authorized_for_sqlite_write": true,
+  "not_authorized_for_budget_submission": true,
+  "not_authorized_for_matter_opening": true,
+  "not_authorized_for_calibration": true,
+  "budget_submission_authorized": false,
+  "matter_opening_authorized": false,
+  "training_pipeline_created": false,
+  "lake_write_performed": false,
+  "sqlite_write_performed": false,
+  "external_writes_performed": false,
+  "silent_learning_performed": false,
+  "generated_at": "2026-07-04T00:00:00Z"
+}

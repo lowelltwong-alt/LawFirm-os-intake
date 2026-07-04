@@ -175,6 +175,17 @@ QA_BUNDLE_ARTIFACTS = [
         ),
     ),
     QABundleArtifactSpec(
+        artifact_id="labor_employment_budget_learning_fixtures",
+        label="Labor/Employment Budget Learning Fixtures",
+        file_name="labor_employment_budget_learning_fixtures_report.json",
+        required=True,
+        missing_note=(
+            "Run audit-labor-employment-budget-learning-fixtures so L&E actuals, "
+            "carrier rejection, appeal, reviewed-learning, and blocked-budget guard "
+            "fixture coverage is visible before calibration work."
+        ),
+    ),
+    QABundleArtifactSpec(
         artifact_id="labor_employment_budget_fact_gold",
         label="Labor/Employment Budget Fact Gold",
         file_name="labor_employment_budget_fact_gold_report.json",
@@ -309,6 +320,11 @@ def run_synthetic_qa_bundle(
             root=root,
             explicit_path=None,
             file_name="labor_employment_budget_qa_gate_report.json",
+        ),
+        "labor_employment_budget_learning_fixtures": _resolve_artifact_source(
+            root=root,
+            explicit_path=None,
+            file_name="labor_employment_budget_learning_fixtures_report.json",
         ),
         "labor_employment_budget_fact_gold": _resolve_artifact_source(
             root=root,

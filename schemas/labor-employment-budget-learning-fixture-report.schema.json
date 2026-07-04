@@ -1,0 +1,565 @@
+{
+  "$defs": {
+    "LaborEmploymentBudgetLearningFixtureCase": {
+      "additionalProperties": false,
+      "properties": {
+        "learning_fixture_id": {
+          "title": "Learning Fixture Id",
+          "type": "string"
+        },
+        "executable_fixture_id": {
+          "title": "Executable Fixture Id",
+          "type": "string"
+        },
+        "family": {
+          "enum": [
+            "discrimination_harassment",
+            "retaliation_wrongful_termination",
+            "wage_hour_flsa_state",
+            "ada_fmla_accommodation_leave",
+            "restrictive_covenant_trade_secret",
+            "epli_carrier_assignment",
+            "class_collective_paga_representative",
+            "administrative_exhaustion_agency_record"
+          ],
+          "title": "Family",
+          "type": "string"
+        },
+        "variant": {
+          "enum": [
+            "clean",
+            "messy_thread",
+            "missing_attachment",
+            "adversarial"
+          ],
+          "title": "Variant",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "expected_budget_output_state": {
+          "enum": [
+            "blocked_amount_budget",
+            "range_or_hours_only_pending_review",
+            "candidate_range_after_review_pending_human_review"
+          ],
+          "title": "Expected Budget Output State",
+          "type": "string"
+        },
+        "observed_budget_output_state": {
+          "anyOf": [
+            {
+              "enum": [
+                "blocked_amount_budget",
+                "range_or_hours_only_pending_review",
+                "candidate_range_after_review_pending_human_review"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Observed Budget Output State"
+        },
+        "learning_loop_types": {
+          "items": {
+            "enum": [
+              "actuals_variance",
+              "carrier_rejection_capture",
+              "appeal_outcome",
+              "reviewed_learning_gate",
+              "blocked_budget_guard"
+            ],
+            "type": "string"
+          },
+          "title": "Learning Loop Types",
+          "type": "array"
+        },
+        "expected_candidate_exception_lake_labels": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Expected Candidate Exception Lake Labels",
+          "type": "array"
+        },
+        "expected_learning_targets": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Expected Learning Targets",
+          "type": "array"
+        },
+        "evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "failure_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Failure Ids",
+          "type": "array"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        },
+        "synthetic_only": {
+          "const": true,
+          "default": true,
+          "title": "Synthetic Only",
+          "type": "boolean"
+        },
+        "human_review_required": {
+          "const": true,
+          "default": true,
+          "title": "Human Review Required",
+          "type": "boolean"
+        },
+        "budget_submission_authorized": {
+          "const": false,
+          "default": false,
+          "title": "Budget Submission Authorized",
+          "type": "boolean"
+        },
+        "matter_opening_authorized": {
+          "const": false,
+          "default": false,
+          "title": "Matter Opening Authorized",
+          "type": "boolean"
+        },
+        "lake_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Lake Write Performed",
+          "type": "boolean"
+        },
+        "sqlite_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Sqlite Write Performed",
+          "type": "boolean"
+        },
+        "external_writes_performed": {
+          "const": false,
+          "default": false,
+          "title": "External Writes Performed",
+          "type": "boolean"
+        },
+        "silent_learning_performed": {
+          "const": false,
+          "default": false,
+          "title": "Silent Learning Performed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "learning_fixture_id",
+        "executable_fixture_id",
+        "family",
+        "variant",
+        "status",
+        "expected_budget_output_state",
+        "learning_loop_types",
+        "expected_candidate_exception_lake_labels",
+        "expected_learning_targets",
+        "evidence_refs"
+      ],
+      "title": "LaborEmploymentBudgetLearningFixtureCase",
+      "type": "object"
+    },
+    "LaborEmploymentBudgetLearningFixtureCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "blocking_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Blocking Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "LaborEmploymentBudgetLearningFixtureCheck",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "budget_learning_fixture_report_id": {
+      "title": "Budget Learning Fixture Report Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "labor_employment_budget_learning_fixtures_ready_for_review",
+        "blocked_by_labor_employment_budget_learning_fixtures"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "source_manifest_ref": {
+      "title": "Source Manifest Ref",
+      "type": "string"
+    },
+    "source_manifest_id": {
+      "title": "Source Manifest Id",
+      "type": "string"
+    },
+    "source_budget_qa_gate_report_ref": {
+      "title": "Source Budget Qa Gate Report Ref",
+      "type": "string"
+    },
+    "source_budget_qa_gate_report_id": {
+      "title": "Source Budget Qa Gate Report Id",
+      "type": "string"
+    },
+    "source_budget_qa_gate_report_status": {
+      "title": "Source Budget Qa Gate Report Status",
+      "type": "string"
+    },
+    "fixture_count": {
+      "minimum": 0,
+      "title": "Fixture Count",
+      "type": "integer"
+    },
+    "failed_case_count": {
+      "minimum": 0,
+      "title": "Failed Case Count",
+      "type": "integer"
+    },
+    "required_family_count": {
+      "minimum": 0,
+      "title": "Required Family Count",
+      "type": "integer"
+    },
+    "covered_required_family_count": {
+      "minimum": 0,
+      "title": "Covered Required Family Count",
+      "type": "integer"
+    },
+    "missing_required_families": {
+      "items": {
+        "enum": [
+          "discrimination_harassment",
+          "retaliation_wrongful_termination",
+          "wage_hour_flsa_state",
+          "ada_fmla_accommodation_leave",
+          "restrictive_covenant_trade_secret",
+          "epli_carrier_assignment",
+          "class_collective_paga_representative",
+          "administrative_exhaustion_agency_record"
+        ],
+        "type": "string"
+      },
+      "title": "Missing Required Families",
+      "type": "array"
+    },
+    "covered_budget_output_states": {
+      "items": {
+        "enum": [
+          "blocked_amount_budget",
+          "range_or_hours_only_pending_review",
+          "candidate_range_after_review_pending_human_review"
+        ],
+        "type": "string"
+      },
+      "title": "Covered Budget Output States",
+      "type": "array"
+    },
+    "missing_budget_output_states": {
+      "items": {
+        "enum": [
+          "blocked_amount_budget",
+          "range_or_hours_only_pending_review",
+          "candidate_range_after_review_pending_human_review"
+        ],
+        "type": "string"
+      },
+      "title": "Missing Budget Output States",
+      "type": "array"
+    },
+    "covered_learning_loop_types": {
+      "items": {
+        "enum": [
+          "actuals_variance",
+          "carrier_rejection_capture",
+          "appeal_outcome",
+          "reviewed_learning_gate",
+          "blocked_budget_guard"
+        ],
+        "type": "string"
+      },
+      "title": "Covered Learning Loop Types",
+      "type": "array"
+    },
+    "missing_learning_loop_types": {
+      "items": {
+        "enum": [
+          "actuals_variance",
+          "carrier_rejection_capture",
+          "appeal_outcome",
+          "reviewed_learning_gate",
+          "blocked_budget_guard"
+        ],
+        "type": "string"
+      },
+      "title": "Missing Learning Loop Types",
+      "type": "array"
+    },
+    "blocked_budget_guard_fixture_count": {
+      "minimum": 0,
+      "title": "Blocked Budget Guard Fixture Count",
+      "type": "integer"
+    },
+    "actuals_variance_fixture_count": {
+      "minimum": 0,
+      "title": "Actuals Variance Fixture Count",
+      "type": "integer"
+    },
+    "carrier_rejection_fixture_count": {
+      "minimum": 0,
+      "title": "Carrier Rejection Fixture Count",
+      "type": "integer"
+    },
+    "appeal_outcome_fixture_count": {
+      "minimum": 0,
+      "title": "Appeal Outcome Fixture Count",
+      "type": "integer"
+    },
+    "reviewed_learning_gate_fixture_count": {
+      "minimum": 0,
+      "title": "Reviewed Learning Gate Fixture Count",
+      "type": "integer"
+    },
+    "cases": {
+      "items": {
+        "$ref": "#/$defs/LaborEmploymentBudgetLearningFixtureCase"
+      },
+      "title": "Cases",
+      "type": "array"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/LaborEmploymentBudgetLearningFixtureCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "candidate_exception_lake_labels": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Candidate Exception Lake Labels",
+      "type": "array"
+    },
+    "required_next_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Gates",
+      "type": "array"
+    },
+    "red_team_notes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Red Team Notes",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "local_json_only": {
+      "const": true,
+      "default": true,
+      "title": "Local Json Only",
+      "type": "boolean"
+    },
+    "human_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Human Review Required",
+      "type": "boolean"
+    },
+    "not_authorized_for_external_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For External Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_lake_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Lake Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_sqlite_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Sqlite Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_budget_submission": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Budget Submission",
+      "type": "boolean"
+    },
+    "not_authorized_for_matter_opening": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Matter Opening",
+      "type": "boolean"
+    },
+    "not_authorized_for_calibration": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Calibration",
+      "type": "boolean"
+    },
+    "budget_submission_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Submission Authorized",
+      "type": "boolean"
+    },
+    "matter_opening_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Matter Opening Authorized",
+      "type": "boolean"
+    },
+    "training_pipeline_created": {
+      "const": false,
+      "default": false,
+      "title": "Training Pipeline Created",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "budget_learning_fixture_report_id",
+    "status",
+    "source_manifest_ref",
+    "source_manifest_id",
+    "source_budget_qa_gate_report_ref",
+    "source_budget_qa_gate_report_id",
+    "source_budget_qa_gate_report_status",
+    "fixture_count",
+    "failed_case_count",
+    "required_family_count",
+    "covered_required_family_count",
+    "missing_required_families",
+    "covered_budget_output_states",
+    "missing_budget_output_states",
+    "covered_learning_loop_types",
+    "missing_learning_loop_types",
+    "blocked_budget_guard_fixture_count",
+    "actuals_variance_fixture_count",
+    "carrier_rejection_fixture_count",
+    "appeal_outcome_fixture_count",
+    "reviewed_learning_gate_fixture_count",
+    "cases",
+    "checks",
+    "candidate_exception_lake_labels",
+    "required_next_gates",
+    "red_team_notes",
+    "generated_at"
+  ],
+  "title": "LaborEmploymentBudgetLearningFixtureReport",
+  "type": "object"
+}

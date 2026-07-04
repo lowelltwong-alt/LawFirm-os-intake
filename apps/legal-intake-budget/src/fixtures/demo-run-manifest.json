@@ -1,7 +1,7 @@
 {
-  "manifestId": "ui_review_manifest_1efdc431adfd",
+  "manifestId": "ui_review_manifest_68910eb51897",
   "generatedAt": "2026-07-04T00:00:00Z",
-  "runLabel": "Local intake QA review: full-run-final",
+  "runLabel": "Local intake QA review: le-budget-learning-fixtures-review-run",
   "practiceArea": "synthetic_intake",
   "matterFamily": "medical_malpractice_defense",
   "overallStatus": "blocked",
@@ -27,7 +27,7 @@
       "candidateOnly": true,
       "externalWritesPerformed": false,
       "notes": [
-        "Found preflight\\run_581276c199a74083bd6cce928c3dff66\\intake_preflight_packet.json; status=human_intake_review_required."
+        "Found preflight\\run_ea139e8ac0be415bb8199951df525ba0\\intake_preflight_packet.json; status=human_intake_review_required."
       ]
     },
     {
@@ -196,7 +196,7 @@
       "candidateOnly": true,
       "externalWritesPerformed": false,
       "notes": [
-        "Found quality\\poc_qa_triage_report.json; status=poc_qa_ready_for_review."
+        "poc_qa_triage_report.json was not found under the local run root."
       ]
     },
     {
@@ -421,6 +421,19 @@
       ]
     },
     {
+      "artifactId": "labor-employment-budget-learning-fixtures",
+      "label": "L&E Budget Learning Fixtures",
+      "fileName": "labor_employment_budget_learning_fixtures_report.json",
+      "status": "pending_review",
+      "owner": "qa-reference",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": [
+        "Found quality\\labor_employment_budget_learning_fixtures_report.json; status=labor_employment_budget_learning_fixtures_ready_for_review."
+      ]
+    },
+    {
       "artifactId": "labor-employment-budget-fact-gold",
       "label": "L&E Budget Fact Gold",
       "fileName": "labor_employment_budget_fact_gold_report.json",
@@ -469,7 +482,7 @@
       "candidateOnly": true,
       "externalWritesPerformed": false,
       "notes": [
-        "carrier_rejection_decision_ledger_report.json was not found under the local run root."
+        "Found quality\\carrier-rejections\\carrier_rejection_decision_ledger_report.json; status=decision_ledger_ready_for_review."
       ]
     },
     {
@@ -482,7 +495,7 @@
       "candidateOnly": true,
       "externalWritesPerformed": false,
       "notes": [
-        "budget_actual_variance_ledger_report.json was not found under the local run root."
+        "Found quality\\budget-actuals\\budget_actual_variance_ledger_report.json; status=variance_ledger_ready_for_review."
       ]
     },
     {
@@ -495,7 +508,7 @@
       "candidateOnly": true,
       "externalWritesPerformed": false,
       "notes": [
-        "Found apps\\legal-intake-budget\\src\\fixtures\\demo-budget-learning-loop-report.json; status=budget_learning_loop_ready_for_review."
+        "Found quality\\budget_learning_loop_report.json; status=budget_learning_loop_ready_for_review."
       ]
     },
     {
@@ -583,7 +596,7 @@
       "evidenceFile": "poc_qa_triage_report.json",
       "owner": "qa-reference",
       "notes": [
-        "The POC QA triage queue must reconcile validation, synthetic QA, L&E budget gates, and UI evidence before readiness is claimed."
+        "poc_qa_triage_report.json is missing; The POC QA triage queue must reconcile validation, synthetic QA, L&E budget gates, and UI evidence before readiness is claimed."
       ]
     },
     {
@@ -744,6 +757,16 @@
       "owner": "qa-reference",
       "notes": [
         "L&E budget-output, blocked-driver-review, and executable-coverage evidence must be aggregated before the UI treats budget QA as review-ready."
+      ]
+    },
+    {
+      "gateId": "labor_employment_budget_learning_fixtures",
+      "label": "L&E Budget Learning Fixtures",
+      "status": "pending_review",
+      "evidenceFile": "labor_employment_budget_learning_fixtures_report.json",
+      "owner": "qa-reference",
+      "notes": [
+        "L&E actuals, carrier rejection, appeal, reviewed-learning, and blocked-budget guard fixture coverage must be visible before calibration work."
       ]
     },
     {

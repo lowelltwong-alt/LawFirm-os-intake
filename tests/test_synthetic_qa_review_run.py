@@ -42,7 +42,7 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
 
     assert code == 0
     assert report["status"] == "synthetic_qa_review_run_ready"
-    assert report["step_count"] == len(report["steps"]) == 23
+    assert report["step_count"] == len(report["steps"]) == 24
     assert report["failed_step_count"] == 0
     assert report["candidate_only"] is True
     assert report["synthetic_only"] is True
@@ -69,6 +69,7 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
         "labor_employment_blocked_driver_impact_review",
         "labor_employment_budget_output_expectations",
         "labor_employment_budget_qa_gate",
+        "labor_employment_budget_learning_fixtures",
         "labor_employment_budget_fact_gold",
         "budget_learning_loop",
         "synthetic_qa_bundle",
@@ -98,13 +99,14 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
         "labor_employment_blocked_driver_impact_review",
         "labor_employment_budget_output_expectations",
         "labor_employment_budget_qa_gate",
+        "labor_employment_budget_learning_fixtures",
     } <= {gate["gateId"] for gate in ui_manifest["qualityGates"]}
     assert ui_data_bundle["status"] == "ready_for_review"
     ui_detail_reports = {
         report["report_kind"]: report for report in ui_data_bundle["detail_reports"]
     }
-    assert ui_data_bundle["detail_report_count"] == 14
-    assert ui_data_bundle["present_detail_report_count"] == 14
+    assert ui_data_bundle["detail_report_count"] == 15
+    assert ui_data_bundle["present_detail_report_count"] == 15
     assert ui_detail_reports["synthetic_qa_review_run"]["present"] is True
     assert ui_detail_reports["synthetic_qa_review_run"]["artifact_ref"] == str(
         run_root / SYNTHETIC_QA_REVIEW_RUN_REPORT_FILENAME
@@ -114,6 +116,11 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
     assert ui_detail_reports["matter_linking_qa_gate"]["present"] is True
     assert ui_detail_reports["labor_employment_executable_coverage"]["present"] is True
     assert ui_detail_reports["labor_employment_budget_qa_gate"]["present"] is True
+    assert ui_detail_reports["labor_employment_budget_learning_fixtures"]["present"] is True
+    assert ui_detail_reports["labor_employment_budget_learning_fixtures"]["required"] is True
+    assert ui_detail_reports["labor_employment_budget_learning_fixtures"]["status"] == (
+        "labor_employment_budget_learning_fixtures_ready_for_review"
+    )
     assert ui_detail_reports["budget_learning_loop"]["present"] is True
     assert ui_detail_reports["budget_learning_loop"]["required"] is True
     assert ui_detail_reports["budget_learning_loop"]["status"] == (

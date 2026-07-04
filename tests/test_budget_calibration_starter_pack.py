@@ -251,6 +251,20 @@ def test_starter_pack_allows_synthetic_qa_bundle_to_reach_pending_review(
         out_dir=run_root / "quality" / "le-budget-fact-gold",
     )
     write_json(
+        run_root / "quality" / "labor_employment_budget_learning_fixtures_report.json",
+        {
+            "status": "labor_employment_budget_learning_fixtures_ready_for_review",
+            "candidate_only": True,
+            "synthetic_only": True,
+            "external_writes_performed": False,
+            "lake_write_performed": False,
+            "sqlite_write_performed": False,
+            "budget_submission_authorized": False,
+            "matter_opening_authorized": False,
+            "silent_learning_performed": False,
+        },
+    )
+    write_json(
         run_root / "quality" / "budget_learning_loop_report.json",
         {
             "status": "budget_learning_loop_ready_for_review",
@@ -297,6 +311,7 @@ def test_starter_pack_allows_synthetic_qa_bundle_to_reach_pending_review(
     assert gates["labor_employment_blocked_driver_impact_review"]["status"] == "pending_review"
     assert gates["labor_employment_budget_output_expectations"]["status"] == "pending_review"
     assert gates["labor_employment_budget_qa_gate"]["status"] == "pending_review"
+    assert gates["labor_employment_budget_learning_fixtures"]["status"] == "pending_review"
     assert gates["labor_employment_budget_fact_gold"]["status"] == "passed"
     assert gates["budget_learning_loop"]["status"] == "pending_review"
     assert ui_manifest["overallStatus"] == "blocked"

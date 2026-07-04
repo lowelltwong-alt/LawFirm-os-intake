@@ -121,6 +121,13 @@ DETAIL_REPORT_SPECS = [
         renderer="LaborEmploymentBudgetQAGatePanel",
     ),
     UIReviewDetailSpec(
+        detail_report_id="labor-employment-budget-learning-fixtures",
+        label="L&E Budget Learning Fixtures",
+        report_kind="labor_employment_budget_learning_fixtures",
+        file_name="labor_employment_budget_learning_fixtures_report.json",
+        renderer="LaborEmploymentBudgetLearningFixturesPanel",
+    ),
+    UIReviewDetailSpec(
         detail_report_id="budget-learning-loop",
         label="Budget Learning Loop",
         report_kind="budget_learning_loop",

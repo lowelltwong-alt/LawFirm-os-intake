@@ -32,6 +32,10 @@ from .labor_employment_budget_output_expectations import (
     LABOR_EMPLOYMENT_BUDGET_OUTPUT_EXPECTATION_REPORT_FILENAME,
     run_labor_employment_budget_output_expectations_audit,
 )
+from .labor_employment_budget_learning_fixtures import (
+    LABOR_EMPLOYMENT_BUDGET_LEARNING_FIXTURE_REPORT_FILENAME,
+    run_labor_employment_budget_learning_fixture_audit,
+)
 from .labor_employment_budget_qa_gate import (
     LABOR_EMPLOYMENT_BUDGET_QA_GATE_REPORT_FILENAME,
     run_labor_employment_budget_qa_gate,
@@ -132,6 +136,9 @@ LE_BINDING_MANIFEST_REF = (
 )
 LE_DRIVER_IMPACT_REVIEW_REF = "examples/synthetic/gold/labor-employment-driver-impact-review.json"
 LE_BUDGET_FACT_GOLD_REF = "examples/synthetic/gold/labor-employment-budget-fact-gold.json"
+LE_BUDGET_LEARNING_FIXTURES_REF = (
+    "examples/synthetic/labor-employment/labor-employment-budget-learning-fixtures.json"
+)
 UPFRONT_RESOLVED_FOLLOWUP_REF = (
     "examples/synthetic/upfront/upfront-like-intake-output.resolved-followup.example.json"
 )
@@ -476,6 +483,32 @@ def run_synthetic_qa_review_run(
         )
     )
 
+    budget_learning_fixtures, budget_learning_fixtures_dir = (
+        run_labor_employment_budget_learning_fixture_audit(
+            manifest_path=root / LE_BUDGET_LEARNING_FIXTURES_REF,
+            budget_qa_gate_report_path=budget_qa_gate_ref,
+            out_dir=quality_dir / "le-budget-learning-fixtures",
+            generated_at=generated_at,
+        )
+    )
+    budget_learning_fixtures_ref = (
+        budget_learning_fixtures_dir / LABOR_EMPLOYMENT_BUDGET_LEARNING_FIXTURE_REPORT_FILENAME
+    )
+    steps.append(
+        _step(
+            "labor_employment_budget_learning_fixtures",
+            "L&E Budget Learning Fixtures",
+            budget_learning_fixtures.status,
+            budget_learning_fixtures_ref,
+            budget_learning_fixtures.status
+            == "labor_employment_budget_learning_fixtures_ready_for_review",
+            (
+                "L&E actuals, carrier rejection, appeal, reviewed-learning, and "
+                "blocked-budget guard fixture coverage is mapped for QA."
+            ),
+        )
+    )
+
     gold, gold_dir = run_labor_employment_budget_fact_gold_validation(
         gold_path=root / LE_BUDGET_FACT_GOLD_REF,
         repo_root=root,
@@ -529,6 +562,7 @@ def run_synthetic_qa_review_run(
         blocked_review_dir / LABOR_EMPLOYMENT_BLOCKED_DRIVER_IMPACT_REVIEW_REPORT_FILENAME,
         output_expectations_ref,
         budget_qa_gate_ref,
+        budget_learning_fixtures_ref,
         gold_dir / LABOR_EMPLOYMENT_BUDGET_FACT_GOLD_REPORT_FILENAME,
         budget_learning_loop_ref,
     ]:

@@ -3507,6 +3507,265 @@ class LaborEmploymentBudgetQAGateReport(StrictModel):
         return self
 
 
+LaborEmploymentBudgetLearningLoopType = Literal[
+    "actuals_variance",
+    "carrier_rejection_capture",
+    "appeal_outcome",
+    "reviewed_learning_gate",
+    "blocked_budget_guard",
+]
+
+
+class LaborEmploymentBudgetLearningFixtureSpec(StrictModel):
+    learning_fixture_id: str
+    executable_fixture_id: str
+    family: LaborEmploymentSyntheticFixtureFamily
+    variant: LaborEmploymentSyntheticFixtureVariant
+    expected_budget_output_state: LaborEmploymentExecutableDriverAllowedBudgetOutput
+    learning_loop_types: list[LaborEmploymentBudgetLearningLoopType]
+    source_fixture_refs: list[str]
+    expected_candidate_exception_lake_labels: list[str]
+    expected_learning_targets: list[str]
+    notes: str
+    data_origin: Literal["synthetic"] = "synthetic"
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    budget_submission_authorized: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def le_budget_learning_fixture_spec_is_coherent(
+        self,
+    ) -> "LaborEmploymentBudgetLearningFixtureSpec":
+        loop_types = set(self.learning_loop_types)
+        if len(loop_types) != len(self.learning_loop_types):
+            raise ValueError("L&E budget learning fixture loop types must be unique")
+        if not self.source_fixture_refs:
+            raise ValueError("L&E budget learning fixture requires source refs")
+        if not self.expected_candidate_exception_lake_labels:
+            raise ValueError("L&E budget learning fixture requires candidate labels")
+        if not self.expected_learning_targets:
+            raise ValueError("L&E budget learning fixture requires learning targets")
+        if self.expected_budget_output_state == "blocked_amount_budget":
+            if loop_types != {"blocked_budget_guard"}:
+                raise ValueError(
+                    "blocked L&E budget learning fixture can only exercise blocked budget guard"
+                )
+        else:
+            if "blocked_budget_guard" in loop_types:
+                raise ValueError("nonblocking L&E budget learning fixture cannot use blocked guard")
+            if "reviewed_learning_gate" not in loop_types:
+                raise ValueError(
+                    "nonblocking L&E budget learning fixture requires reviewed learning gate"
+                )
+            if "appeal_outcome" in loop_types and "carrier_rejection_capture" not in loop_types:
+                raise ValueError(
+                    "appeal outcome fixture requires carrier rejection capture coverage"
+                )
+        return self
+
+
+class LaborEmploymentBudgetLearningFixtureManifest(StrictModel):
+    schema_version: str = "0.1"
+    manifest_id: str
+    status: Literal["candidate_labor_employment_budget_learning_fixture_manifest"]
+    practice_area: Literal["labor_employment"] = "labor_employment"
+    source_budget_qa_gate_ref: str
+    required_learning_loop_types: list[LaborEmploymentBudgetLearningLoopType]
+    required_budget_output_states: list[LaborEmploymentExecutableDriverAllowedBudgetOutput]
+    fixtures: list[LaborEmploymentBudgetLearningFixtureSpec]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    not_authorized_for_matter_opening: Literal[True] = True
+    not_authorized_for_calibration: Literal[True] = True
+    budget_submission_authorized: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    training_pipeline_created: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def le_budget_learning_manifest_is_coherent(
+        self,
+    ) -> "LaborEmploymentBudgetLearningFixtureManifest":
+        fixture_ids = [fixture.learning_fixture_id for fixture in self.fixtures]
+        executable_ids = [fixture.executable_fixture_id for fixture in self.fixtures]
+        if not self.fixtures:
+            raise ValueError("L&E budget learning manifest requires fixtures")
+        if len(set(fixture_ids)) != len(fixture_ids):
+            raise ValueError("L&E budget learning fixture IDs must be unique")
+        if len(set(executable_ids)) != len(executable_ids):
+            raise ValueError("L&E budget learning executable fixture IDs must be unique")
+        if not self.required_learning_loop_types:
+            raise ValueError("L&E budget learning manifest requires loop types")
+        if not self.required_budget_output_states:
+            raise ValueError("L&E budget learning manifest requires output states")
+        return self
+
+
+class LaborEmploymentBudgetLearningFixtureCase(StrictModel):
+    learning_fixture_id: str
+    executable_fixture_id: str
+    family: LaborEmploymentSyntheticFixtureFamily
+    variant: LaborEmploymentSyntheticFixtureVariant
+    status: Literal["passed", "failed"]
+    expected_budget_output_state: LaborEmploymentExecutableDriverAllowedBudgetOutput
+    observed_budget_output_state: LaborEmploymentExecutableDriverAllowedBudgetOutput | None = None
+    learning_loop_types: list[LaborEmploymentBudgetLearningLoopType]
+    expected_candidate_exception_lake_labels: list[str]
+    expected_learning_targets: list[str]
+    evidence_refs: list[str]
+    failure_ids: list[str] = Field(default_factory=list)
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    budget_submission_authorized: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def le_budget_learning_case_is_coherent(
+        self,
+    ) -> "LaborEmploymentBudgetLearningFixtureCase":
+        if self.status == "passed" and self.failure_ids:
+            raise ValueError("passed L&E budget learning case cannot carry failures")
+        if self.status == "failed" and not self.failure_ids:
+            raise ValueError("failed L&E budget learning case requires failures")
+        if not self.learning_loop_types:
+            raise ValueError("L&E budget learning case requires loop types")
+        if not self.expected_candidate_exception_lake_labels:
+            raise ValueError("L&E budget learning case requires candidate labels")
+        if not self.expected_learning_targets:
+            raise ValueError("L&E budget learning case requires learning targets")
+        if not self.evidence_refs:
+            raise ValueError("L&E budget learning case requires evidence refs")
+        if (
+            self.status == "passed"
+            and self.observed_budget_output_state != self.expected_budget_output_state
+        ):
+            raise ValueError("passed L&E budget learning case output state mismatch")
+        return self
+
+
+class LaborEmploymentBudgetLearningFixtureCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    evidence_refs: list[str] = Field(default_factory=list)
+    blocking_refs: list[str] = Field(default_factory=list)
+
+
+class LaborEmploymentBudgetLearningFixtureReport(StrictModel):
+    schema_version: str = "0.1"
+    budget_learning_fixture_report_id: str
+    status: Literal[
+        "labor_employment_budget_learning_fixtures_ready_for_review",
+        "blocked_by_labor_employment_budget_learning_fixtures",
+    ]
+    source_manifest_ref: str
+    source_manifest_id: str
+    source_budget_qa_gate_report_ref: str
+    source_budget_qa_gate_report_id: str
+    source_budget_qa_gate_report_status: str
+    fixture_count: int = Field(ge=0)
+    failed_case_count: int = Field(ge=0)
+    required_family_count: int = Field(ge=0)
+    covered_required_family_count: int = Field(ge=0)
+    missing_required_families: list[LaborEmploymentSyntheticFixtureFamily]
+    covered_budget_output_states: list[LaborEmploymentExecutableDriverAllowedBudgetOutput]
+    missing_budget_output_states: list[LaborEmploymentExecutableDriverAllowedBudgetOutput]
+    covered_learning_loop_types: list[LaborEmploymentBudgetLearningLoopType]
+    missing_learning_loop_types: list[LaborEmploymentBudgetLearningLoopType]
+    blocked_budget_guard_fixture_count: int = Field(ge=0)
+    actuals_variance_fixture_count: int = Field(ge=0)
+    carrier_rejection_fixture_count: int = Field(ge=0)
+    appeal_outcome_fixture_count: int = Field(ge=0)
+    reviewed_learning_gate_fixture_count: int = Field(ge=0)
+    cases: list[LaborEmploymentBudgetLearningFixtureCase]
+    checks: list[LaborEmploymentBudgetLearningFixtureCheck]
+    candidate_exception_lake_labels: list[str]
+    required_next_gates: list[str]
+    red_team_notes: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    local_json_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    not_authorized_for_matter_opening: Literal[True] = True
+    not_authorized_for_calibration: Literal[True] = True
+    budget_submission_authorized: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    training_pipeline_created: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def le_budget_learning_report_is_coherent(
+        self,
+    ) -> "LaborEmploymentBudgetLearningFixtureReport":
+        failed_cases = [case for case in self.cases if case.status == "failed"]
+        failed_checks = [check for check in self.checks if check.status == "failed"]
+        if self.fixture_count != len(self.cases):
+            raise ValueError("L&E budget learning fixture count mismatch")
+        if self.failed_case_count != len(failed_cases):
+            raise ValueError("L&E budget learning failed case count mismatch")
+        if self.covered_required_family_count != (
+            self.required_family_count - len(self.missing_required_families)
+        ):
+            raise ValueError("L&E budget learning family coverage count mismatch")
+        loop_counts = {
+            "blocked_budget_guard": self.blocked_budget_guard_fixture_count,
+            "actuals_variance": self.actuals_variance_fixture_count,
+            "carrier_rejection_capture": self.carrier_rejection_fixture_count,
+            "appeal_outcome": self.appeal_outcome_fixture_count,
+            "reviewed_learning_gate": self.reviewed_learning_gate_fixture_count,
+        }
+        for loop_type, count in loop_counts.items():
+            actual = sum(1 for case in self.cases if loop_type in case.learning_loop_types)
+            if count != actual:
+                raise ValueError(f"L&E budget learning {loop_type} count mismatch")
+        if not self.candidate_exception_lake_labels:
+            raise ValueError("L&E budget learning report requires candidate labels")
+        if not self.required_next_gates:
+            raise ValueError("L&E budget learning report requires next gates")
+        if not self.red_team_notes:
+            raise ValueError("L&E budget learning report requires red team notes")
+        if self.status == "labor_employment_budget_learning_fixtures_ready_for_review" and (
+            failed_cases or failed_checks
+        ):
+            raise ValueError("ready L&E budget learning report cannot include failures")
+        if self.status == "blocked_by_labor_employment_budget_learning_fixtures" and not (
+            failed_cases or failed_checks
+        ):
+            raise ValueError("blocked L&E budget learning report requires failures")
+        return self
+
+
 class PublicSourceMethodologySource(StrictModel):
     source_id: str
     url: str
@@ -11849,6 +12108,7 @@ UIReviewDataBundleReportKind = Literal[
     "labor_employment_blocked_driver_impact_review",
     "labor_employment_budget_output_expectations",
     "labor_employment_budget_qa_gate",
+    "labor_employment_budget_learning_fixtures",
     "budget_learning_loop",
 ]
 

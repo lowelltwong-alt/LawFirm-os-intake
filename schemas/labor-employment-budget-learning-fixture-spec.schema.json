@@ -1,0 +1,165 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "learning_fixture_id": {
+      "title": "Learning Fixture Id",
+      "type": "string"
+    },
+    "executable_fixture_id": {
+      "title": "Executable Fixture Id",
+      "type": "string"
+    },
+    "family": {
+      "enum": [
+        "discrimination_harassment",
+        "retaliation_wrongful_termination",
+        "wage_hour_flsa_state",
+        "ada_fmla_accommodation_leave",
+        "restrictive_covenant_trade_secret",
+        "epli_carrier_assignment",
+        "class_collective_paga_representative",
+        "administrative_exhaustion_agency_record"
+      ],
+      "title": "Family",
+      "type": "string"
+    },
+    "variant": {
+      "enum": [
+        "clean",
+        "messy_thread",
+        "missing_attachment",
+        "adversarial"
+      ],
+      "title": "Variant",
+      "type": "string"
+    },
+    "expected_budget_output_state": {
+      "enum": [
+        "blocked_amount_budget",
+        "range_or_hours_only_pending_review",
+        "candidate_range_after_review_pending_human_review"
+      ],
+      "title": "Expected Budget Output State",
+      "type": "string"
+    },
+    "learning_loop_types": {
+      "items": {
+        "enum": [
+          "actuals_variance",
+          "carrier_rejection_capture",
+          "appeal_outcome",
+          "reviewed_learning_gate",
+          "blocked_budget_guard"
+        ],
+        "type": "string"
+      },
+      "title": "Learning Loop Types",
+      "type": "array"
+    },
+    "source_fixture_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Source Fixture Refs",
+      "type": "array"
+    },
+    "expected_candidate_exception_lake_labels": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Expected Candidate Exception Lake Labels",
+      "type": "array"
+    },
+    "expected_learning_targets": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Expected Learning Targets",
+      "type": "array"
+    },
+    "notes": {
+      "title": "Notes",
+      "type": "string"
+    },
+    "data_origin": {
+      "const": "synthetic",
+      "default": "synthetic",
+      "title": "Data Origin",
+      "type": "string"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "human_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Human Review Required",
+      "type": "boolean"
+    },
+    "budget_submission_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Submission Authorized",
+      "type": "boolean"
+    },
+    "matter_opening_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Matter Opening Authorized",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "learning_fixture_id",
+    "executable_fixture_id",
+    "family",
+    "variant",
+    "expected_budget_output_state",
+    "learning_loop_types",
+    "source_fixture_refs",
+    "expected_candidate_exception_lake_labels",
+    "expected_learning_targets",
+    "notes"
+  ],
+  "title": "LaborEmploymentBudgetLearningFixtureSpec",
+  "type": "object"
+}

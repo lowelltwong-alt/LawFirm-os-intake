@@ -1242,6 +1242,97 @@ export type LaborEmploymentBudgetQAGateReport = {
   generated_at: string;
 };
 
+export type LaborEmploymentBudgetLearningLoopType =
+  | "actuals_variance"
+  | "carrier_rejection_capture"
+  | "appeal_outcome"
+  | "reviewed_learning_gate"
+  | "blocked_budget_guard";
+
+export type LaborEmploymentBudgetLearningFixtureCase = {
+  learning_fixture_id: string;
+  executable_fixture_id: string;
+  family: string;
+  variant: string;
+  status: "passed" | "failed";
+  expected_budget_output_state: LaborEmploymentAllowedBudgetOutput;
+  observed_budget_output_state: LaborEmploymentAllowedBudgetOutput | null;
+  learning_loop_types: LaborEmploymentBudgetLearningLoopType[];
+  expected_candidate_exception_lake_labels: string[];
+  expected_learning_targets: string[];
+  evidence_refs: string[];
+  failure_ids: string[];
+  candidate_only: boolean;
+  non_authoritative: boolean;
+  synthetic_only: boolean;
+  human_review_required: boolean;
+  budget_submission_authorized: boolean;
+  matter_opening_authorized: boolean;
+  lake_write_performed: boolean;
+  sqlite_write_performed: boolean;
+  external_writes_performed: boolean;
+  silent_learning_performed: boolean;
+};
+
+export type LaborEmploymentBudgetLearningFixtureCheck = {
+  check_id: string;
+  status: "passed" | "failed";
+  message: string;
+  evidence_refs: string[];
+  blocking_refs: string[];
+};
+
+export type LaborEmploymentBudgetLearningFixtureReport = {
+  schema_version: string;
+  budget_learning_fixture_report_id: string;
+  status:
+    | "labor_employment_budget_learning_fixtures_ready_for_review"
+    | "blocked_by_labor_employment_budget_learning_fixtures";
+  source_manifest_ref: string;
+  source_manifest_id: string;
+  source_budget_qa_gate_report_ref: string;
+  source_budget_qa_gate_report_id: string;
+  source_budget_qa_gate_report_status: string;
+  fixture_count: number;
+  failed_case_count: number;
+  required_family_count: number;
+  covered_required_family_count: number;
+  missing_required_families: string[];
+  covered_budget_output_states: LaborEmploymentAllowedBudgetOutput[];
+  missing_budget_output_states: LaborEmploymentAllowedBudgetOutput[];
+  covered_learning_loop_types: LaborEmploymentBudgetLearningLoopType[];
+  missing_learning_loop_types: LaborEmploymentBudgetLearningLoopType[];
+  blocked_budget_guard_fixture_count: number;
+  actuals_variance_fixture_count: number;
+  carrier_rejection_fixture_count: number;
+  appeal_outcome_fixture_count: number;
+  reviewed_learning_gate_fixture_count: number;
+  cases: LaborEmploymentBudgetLearningFixtureCase[];
+  checks: LaborEmploymentBudgetLearningFixtureCheck[];
+  candidate_exception_lake_labels: string[];
+  required_next_gates: string[];
+  red_team_notes: string[];
+  candidate_only: boolean;
+  non_authoritative: boolean;
+  synthetic_only: boolean;
+  local_json_only: boolean;
+  human_review_required: boolean;
+  not_authorized_for_external_write: boolean;
+  not_authorized_for_lake_write: boolean;
+  not_authorized_for_sqlite_write: boolean;
+  not_authorized_for_budget_submission: boolean;
+  not_authorized_for_matter_opening: boolean;
+  not_authorized_for_calibration: boolean;
+  budget_submission_authorized: boolean;
+  matter_opening_authorized: boolean;
+  training_pipeline_created: boolean;
+  lake_write_performed: boolean;
+  sqlite_write_performed: boolean;
+  external_writes_performed: boolean;
+  silent_learning_performed: boolean;
+  generated_at: string;
+};
+
 export type ReviewArtifact = {
   artifactId: string;
   label: string;

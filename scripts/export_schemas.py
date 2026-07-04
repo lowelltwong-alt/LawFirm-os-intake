@@ -233,6 +233,11 @@ from lawfirm_os_intake.models import (  # noqa: E402
     LaborEmploymentBudgetFactSource,
     LaborEmploymentBudgetOutputExpectationCase,
     LaborEmploymentBudgetOutputExpectationReport,
+    LaborEmploymentBudgetLearningFixtureCase,
+    LaborEmploymentBudgetLearningFixtureCheck,
+    LaborEmploymentBudgetLearningFixtureManifest,
+    LaborEmploymentBudgetLearningFixtureReport,
+    LaborEmploymentBudgetLearningFixtureSpec,
     LaborEmploymentBudgetQAGateBucket,
     LaborEmploymentBudgetQAGateCheck,
     LaborEmploymentBudgetQAGateReport,
@@ -436,6 +441,21 @@ MODELS = {
     "labor-employment-budget-qa-gate-bucket.schema.json": LaborEmploymentBudgetQAGateBucket,
     "labor-employment-budget-qa-gate-check.schema.json": LaborEmploymentBudgetQAGateCheck,
     "labor-employment-budget-qa-gate-report.schema.json": LaborEmploymentBudgetQAGateReport,
+    "labor-employment-budget-learning-fixture-spec.schema.json": (
+        LaborEmploymentBudgetLearningFixtureSpec
+    ),
+    "labor-employment-budget-learning-fixture-manifest.schema.json": (
+        LaborEmploymentBudgetLearningFixtureManifest
+    ),
+    "labor-employment-budget-learning-fixture-case.schema.json": (
+        LaborEmploymentBudgetLearningFixtureCase
+    ),
+    "labor-employment-budget-learning-fixture-check.schema.json": (
+        LaborEmploymentBudgetLearningFixtureCheck
+    ),
+    "labor-employment-budget-learning-fixture-report.schema.json": (
+        LaborEmploymentBudgetLearningFixtureReport
+    ),
     "labor-employment-executable-coverage-case.schema.json": (
         LaborEmploymentExecutableCoverageCase
     ),

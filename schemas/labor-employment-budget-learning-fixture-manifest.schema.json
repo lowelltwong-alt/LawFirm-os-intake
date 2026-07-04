@@ -1,0 +1,341 @@
+{
+  "$defs": {
+    "LaborEmploymentBudgetLearningFixtureSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "learning_fixture_id": {
+          "title": "Learning Fixture Id",
+          "type": "string"
+        },
+        "executable_fixture_id": {
+          "title": "Executable Fixture Id",
+          "type": "string"
+        },
+        "family": {
+          "enum": [
+            "discrimination_harassment",
+            "retaliation_wrongful_termination",
+            "wage_hour_flsa_state",
+            "ada_fmla_accommodation_leave",
+            "restrictive_covenant_trade_secret",
+            "epli_carrier_assignment",
+            "class_collective_paga_representative",
+            "administrative_exhaustion_agency_record"
+          ],
+          "title": "Family",
+          "type": "string"
+        },
+        "variant": {
+          "enum": [
+            "clean",
+            "messy_thread",
+            "missing_attachment",
+            "adversarial"
+          ],
+          "title": "Variant",
+          "type": "string"
+        },
+        "expected_budget_output_state": {
+          "enum": [
+            "blocked_amount_budget",
+            "range_or_hours_only_pending_review",
+            "candidate_range_after_review_pending_human_review"
+          ],
+          "title": "Expected Budget Output State",
+          "type": "string"
+        },
+        "learning_loop_types": {
+          "items": {
+            "enum": [
+              "actuals_variance",
+              "carrier_rejection_capture",
+              "appeal_outcome",
+              "reviewed_learning_gate",
+              "blocked_budget_guard"
+            ],
+            "type": "string"
+          },
+          "title": "Learning Loop Types",
+          "type": "array"
+        },
+        "source_fixture_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Source Fixture Refs",
+          "type": "array"
+        },
+        "expected_candidate_exception_lake_labels": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Expected Candidate Exception Lake Labels",
+          "type": "array"
+        },
+        "expected_learning_targets": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Expected Learning Targets",
+          "type": "array"
+        },
+        "notes": {
+          "title": "Notes",
+          "type": "string"
+        },
+        "data_origin": {
+          "const": "synthetic",
+          "default": "synthetic",
+          "title": "Data Origin",
+          "type": "string"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        },
+        "synthetic_only": {
+          "const": true,
+          "default": true,
+          "title": "Synthetic Only",
+          "type": "boolean"
+        },
+        "human_review_required": {
+          "const": true,
+          "default": true,
+          "title": "Human Review Required",
+          "type": "boolean"
+        },
+        "budget_submission_authorized": {
+          "const": false,
+          "default": false,
+          "title": "Budget Submission Authorized",
+          "type": "boolean"
+        },
+        "matter_opening_authorized": {
+          "const": false,
+          "default": false,
+          "title": "Matter Opening Authorized",
+          "type": "boolean"
+        },
+        "lake_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Lake Write Performed",
+          "type": "boolean"
+        },
+        "sqlite_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Sqlite Write Performed",
+          "type": "boolean"
+        },
+        "external_writes_performed": {
+          "const": false,
+          "default": false,
+          "title": "External Writes Performed",
+          "type": "boolean"
+        },
+        "silent_learning_performed": {
+          "const": false,
+          "default": false,
+          "title": "Silent Learning Performed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "learning_fixture_id",
+        "executable_fixture_id",
+        "family",
+        "variant",
+        "expected_budget_output_state",
+        "learning_loop_types",
+        "source_fixture_refs",
+        "expected_candidate_exception_lake_labels",
+        "expected_learning_targets",
+        "notes"
+      ],
+      "title": "LaborEmploymentBudgetLearningFixtureSpec",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "manifest_id": {
+      "title": "Manifest Id",
+      "type": "string"
+    },
+    "status": {
+      "const": "candidate_labor_employment_budget_learning_fixture_manifest",
+      "title": "Status",
+      "type": "string"
+    },
+    "practice_area": {
+      "const": "labor_employment",
+      "default": "labor_employment",
+      "title": "Practice Area",
+      "type": "string"
+    },
+    "source_budget_qa_gate_ref": {
+      "title": "Source Budget Qa Gate Ref",
+      "type": "string"
+    },
+    "required_learning_loop_types": {
+      "items": {
+        "enum": [
+          "actuals_variance",
+          "carrier_rejection_capture",
+          "appeal_outcome",
+          "reviewed_learning_gate",
+          "blocked_budget_guard"
+        ],
+        "type": "string"
+      },
+      "title": "Required Learning Loop Types",
+      "type": "array"
+    },
+    "required_budget_output_states": {
+      "items": {
+        "enum": [
+          "blocked_amount_budget",
+          "range_or_hours_only_pending_review",
+          "candidate_range_after_review_pending_human_review"
+        ],
+        "type": "string"
+      },
+      "title": "Required Budget Output States",
+      "type": "array"
+    },
+    "fixtures": {
+      "items": {
+        "$ref": "#/$defs/LaborEmploymentBudgetLearningFixtureSpec"
+      },
+      "title": "Fixtures",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "human_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Human Review Required",
+      "type": "boolean"
+    },
+    "not_authorized_for_external_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For External Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_lake_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Lake Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_sqlite_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Sqlite Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_budget_submission": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Budget Submission",
+      "type": "boolean"
+    },
+    "not_authorized_for_matter_opening": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Matter Opening",
+      "type": "boolean"
+    },
+    "not_authorized_for_calibration": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Calibration",
+      "type": "boolean"
+    },
+    "budget_submission_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Submission Authorized",
+      "type": "boolean"
+    },
+    "matter_opening_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Matter Opening Authorized",
+      "type": "boolean"
+    },
+    "training_pipeline_created": {
+      "const": false,
+      "default": false,
+      "title": "Training Pipeline Created",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "manifest_id",
+    "status",
+    "source_budget_qa_gate_ref",
+    "required_learning_loop_types",
+    "required_budget_output_states",
+    "fixtures"
+  ],
+  "title": "LaborEmploymentBudgetLearningFixtureManifest",
+  "type": "object"
+}

@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 
 import demoBudgetLearningLoop from "./fixtures/demo-budget-learning-loop-report.json";
 import demoLaborEmploymentBlockedDriverReview from "./fixtures/demo-labor-employment-blocked-driver-impact-review-report.json";
+import demoLaborEmploymentBudgetLearningFixtures from "./fixtures/demo-labor-employment-budget-learning-fixtures-report.json";
 import demoLaborEmploymentBudgetOutputExpectations from "./fixtures/demo-labor-employment-budget-output-expectations-report.json";
 import demoLaborEmploymentBudgetQAGate from "./fixtures/demo-labor-employment-budget-qa-gate-report.json";
 import demoLaborEmploymentExecutableCoverage from "./fixtures/demo-labor-employment-executable-coverage-report.json";
@@ -24,6 +25,7 @@ import {
   assertMatterLinkingReviewOutcomeReport,
   assertBudgetLearningLoopReport,
   assertLaborEmploymentBudgetOutputExpectationReport,
+  assertLaborEmploymentBudgetLearningFixtureReport,
   assertLaborEmploymentBudgetQAGateReport,
   assertLaborEmploymentBlockedDriverImpactReviewReport,
   assertLaborEmploymentExecutableCoverageReport,
@@ -43,6 +45,7 @@ import type {
   BudgetLearningLoopReport,
   GateState,
   LaborEmploymentAllowedBudgetOutput,
+  LaborEmploymentBudgetLearningFixtureReport,
   LaborEmploymentBudgetOutputExpectationCase,
   LaborEmploymentBudgetOutputExpectationReport,
   LaborEmploymentBudgetQAGateReport,
@@ -101,6 +104,8 @@ const laborEmploymentBudgetOutputExpectations =
   demoLaborEmploymentBudgetOutputExpectations as LaborEmploymentBudgetOutputExpectationReport;
 const laborEmploymentBudgetQAGate =
   demoLaborEmploymentBudgetQAGate as LaborEmploymentBudgetQAGateReport;
+const laborEmploymentBudgetLearningFixtures =
+  demoLaborEmploymentBudgetLearningFixtures as LaborEmploymentBudgetLearningFixtureReport;
 const budgetLearningLoop = demoBudgetLearningLoop as BudgetLearningLoopReport;
 const bundleContractFailures = assertUIReviewDataBundle(reviewDataBundle);
 const manifestContractFailures = assertReadOnlyManifest(manifest);
@@ -126,6 +131,9 @@ const budgetOutputExpectationFailures = assertLaborEmploymentBudgetOutputExpecta
   laborEmploymentBudgetOutputExpectations,
 );
 const budgetQAGateFailures = assertLaborEmploymentBudgetQAGateReport(laborEmploymentBudgetQAGate);
+const budgetLearningFixtureFailures = assertLaborEmploymentBudgetLearningFixtureReport(
+  laborEmploymentBudgetLearningFixtures,
+);
 const budgetLearningLoopFailures = assertBudgetLearningLoopReport(budgetLearningLoop);
 const contractFailures = [
   ...bundleContractFailures,
@@ -144,6 +152,7 @@ const contractFailures = [
   ...blockedDriverContractFailures,
   ...budgetOutputExpectationFailures,
   ...budgetQAGateFailures,
+  ...budgetLearningFixtureFailures,
   ...budgetLearningLoopFailures,
 ];
 
@@ -2008,6 +2017,107 @@ function LaborEmploymentBudgetQAGatePanel({
   );
 }
 
+function LaborEmploymentBudgetLearningFixturesPanel({
+  report,
+}: {
+  report: LaborEmploymentBudgetLearningFixtureReport;
+}) {
+  const passedChecks = report.checks.filter((check) => check.status === "passed").length;
+
+  return (
+    <section
+      className="panel budget-learning-fixtures-panel"
+      aria-labelledby="le-budget-learning-fixtures-title"
+    >
+      <div className="panel-heading">
+        <div>
+          <h2 id="le-budget-learning-fixtures-title">
+            L&amp;E Budget Learning Fixtures
+          </h2>
+          <code>{report.budget_learning_fixture_report_id}</code>
+        </div>
+        <span
+          className={
+            budgetLearningFixtureFailures.length === 0 ? "state state-passed" : "state state-failed"
+          }
+        >
+          {budgetLearningFixtureFailures.length === 0 ? "fixture map held" : "fixture map failed"}
+        </span>
+      </div>
+
+      <div className="matrix-summary" aria-label="L&E budget learning fixture summary">
+        <div>
+          <span>Fixtures</span>
+          <strong>{report.fixture_count}</strong>
+        </div>
+        <div>
+          <span>Families Covered</span>
+          <strong>
+            {report.covered_required_family_count}/{report.required_family_count}
+          </strong>
+        </div>
+        <div>
+          <span>Learning Loops</span>
+          <strong>{report.covered_learning_loop_types.length}</strong>
+        </div>
+        <div>
+          <span>Checks Passed</span>
+          <strong>
+            {passedChecks}/{report.checks.length}
+          </strong>
+        </div>
+      </div>
+
+      <div className="warning-strip">
+        <strong>Fixture map only.</strong>
+        <span>
+          This proves coverage intent for L&amp;E actuals, carrier rejections, appeals,
+          reviewed-learning, and blocked-budget guards; it does not create submitted budgets or
+          learning changes.
+        </span>
+      </div>
+
+      <div className="budget-bucket-grid" aria-label="L&E budget learning loop coverage">
+        <div className="budget-bucket">
+          <span>Actuals variance</span>
+          <strong>{report.actuals_variance_fixture_count}</strong>
+          <TokenList items={report.covered_budget_output_states} limit={3} />
+        </div>
+        <div className="budget-bucket">
+          <span>Carrier rejections</span>
+          <strong>{report.carrier_rejection_fixture_count}</strong>
+          <TokenList items={report.candidate_exception_lake_labels} limit={3} />
+        </div>
+        <div className="budget-bucket">
+          <span>Appeal outcomes</span>
+          <strong>{report.appeal_outcome_fixture_count}</strong>
+          <TokenList items={report.red_team_notes} limit={2} />
+        </div>
+        <div className="budget-bucket">
+          <span>Blocked guard</span>
+          <strong>{report.blocked_budget_guard_fixture_count}</strong>
+          <TokenList items={report.missing_learning_loop_types} limit={2} />
+        </div>
+      </div>
+
+      <div className="fixture-table" aria-label="L&E budget learning fixture cases">
+        {report.cases.slice(0, 6).map((testCase) => (
+          <div className="fixture-row" key={testCase.learning_fixture_id}>
+            <div>
+              <strong>{testCase.family}</strong>
+              <span>{testCase.variant}</span>
+            </div>
+            <span className={allowedBudgetOutputClass(testCase.expected_budget_output_state)}>
+              {testCase.expected_budget_output_state}
+            </span>
+            <TokenList items={testCase.learning_loop_types} limit={3} />
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function LaborEmploymentFixtureDrilldownPanel({
   outputReport,
   blockedReviewReport,
@@ -2252,6 +2362,7 @@ function App() {
         report={laborEmploymentBudgetOutputExpectations}
       />
       <LaborEmploymentBudgetQAGatePanel report={laborEmploymentBudgetQAGate} />
+      <LaborEmploymentBudgetLearningFixturesPanel report={laborEmploymentBudgetLearningFixtures} />
       <LaborEmploymentFixtureDrilldownPanel
         outputReport={laborEmploymentBudgetOutputExpectations}
         blockedReviewReport={laborEmploymentBlockedDriverReview}
