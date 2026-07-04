@@ -31,8 +31,8 @@ def test_labor_employment_executable_fixtures_run_preflight_and_preserve_boundar
     )
 
     assert report.status == "labor_employment_executable_fixtures_ready_for_review"
-    assert persisted.fixture_count == 16
-    assert persisted.preflight_executed_count == 16
+    assert persisted.fixture_count == 17
+    assert persisted.preflight_executed_count == 17
     assert persisted.failed_case_count == 0
     assert persisted.missing_pack_link_count == 0
     assert persisted.missing_source_signal_count == 0
@@ -75,6 +75,12 @@ def test_labor_employment_executable_fixtures_run_preflight_and_preserve_boundar
     assert "critic_role_candidates_ambiguous" in (
         cases["le-epli-carrier-messy-thread.executable.v0_1"].exception_labels
     )
+    epli_adversarial = cases["le-epli-carrier-adversarial.executable.v0_1"]
+    assert epli_adversarial.missing_source_count == 0
+    assert epli_adversarial.expected_budget_treatment == "block_amount_budget"
+    assert "prompt_injection_source_content" in epli_adversarial.exception_labels
+    assert "critic_role_candidates_ambiguous" in epli_adversarial.exception_labels
+    assert "prohibited_transition_attempted_budget_submitted" in (epli_adversarial.exception_labels)
     epli_packet = load_json(cases["le-epli-carrier-clean.executable.v0_1"].preflight_packet_ref)
     epli_roles = {
         party["name"]: {role["role"] for role in party["role_candidates"]}
@@ -252,7 +258,7 @@ def test_labor_employment_executable_fixtures_cli_writes_candidate_report(
 
     assert exit_code == 0
     assert report["status"] == "labor_employment_executable_fixtures_ready_for_review"
-    assert report["fixture_count"] == 16
-    assert report["preflight_executed_count"] == 16
+    assert report["fixture_count"] == 17
+    assert report["preflight_executed_count"] == 17
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out

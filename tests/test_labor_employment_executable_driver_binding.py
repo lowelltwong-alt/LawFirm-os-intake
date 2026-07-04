@@ -61,13 +61,13 @@ def test_labor_employment_executable_driver_binding_maps_fact_gaps_to_budget_dri
     )
 
     assert report.status == "labor_employment_executable_driver_bindings_ready_for_review"
-    assert persisted.case_count == 16
+    assert persisted.case_count == 17
     assert persisted.failed_case_count == 0
-    assert persisted.driver_binding_count == 69
-    assert persisted.source_bound_driver_count == 69
+    assert persisted.driver_binding_count == 73
+    assert persisted.source_bound_driver_count == 73
     assert persisted.unbound_driver_count == 0
-    assert persisted.critical_driver_block_count == 10
-    assert persisted.critical_driver_review_only_count == 21
+    assert persisted.critical_driver_block_count == 13
+    assert persisted.critical_driver_review_only_count == 22
     assert persisted.missing_driver_dimensions == []
     assert set(persisted.covered_driver_dimensions) == set(persisted.required_driver_dimensions)
     assert all(check.status == "passed" for check in persisted.checks)
@@ -164,6 +164,23 @@ def test_labor_employment_executable_driver_binding_maps_fact_gaps_to_budget_dri
     assert epli_messy["forum_arbitration"].matched_fact_ids == [
         "forum_removed_and_arbitration_posture"
     ]
+    epli_adversarial = {
+        binding.driver_dimension: binding
+        for binding in cases["le-epli-carrier-adversarial.executable.v0_1"].driver_bindings
+    }
+    assert epli_adversarial["party_topology"].critical_driver_block is True
+    assert epli_adversarial["representation_posture"].critical_driver_block is True
+    assert epli_adversarial["claim_family"].critical_driver_review_only is True
+    assert epli_adversarial["carrier_guideline_rate_context"].critical_driver_block is True
+    assert set(epli_adversarial["party_topology"].matched_fact_ids) == {
+        "employee_claimant_identity",
+        "employer_or_defendant_identity",
+        "prospective_client_payer_carrier_posture",
+    }
+    assert set(epli_adversarial["carrier_guideline_rate_context"].matched_fact_ids) == {
+        "carrier_guideline_and_rate_source",
+        "prospective_client_payer_carrier_posture",
+    }
     class_clean = {
         binding.driver_dimension: binding
         for binding in cases["le-class-collective-clean.executable.v0_1"].driver_bindings
@@ -206,6 +223,9 @@ def test_labor_employment_executable_driver_binding_blocks_missing_focus_dimensi
         "REQUIRED_DRIVER_DIMENSIONS",
         [*driver_binding.REQUIRED_DRIVER_DIMENSIONS, "claim_family"],
     )
+    patched_driver_fact_ids = dict(driver_binding.DRIVER_FACT_IDS)
+    patched_driver_fact_ids.pop("claim_family")
+    monkeypatch.setattr(driver_binding, "DRIVER_FACT_IDS", patched_driver_fact_ids)
 
     report, _ = run_labor_employment_executable_driver_binding_audit(
         executable_fixture_report_path=(
@@ -255,7 +275,7 @@ def test_labor_employment_executable_driver_binding_cli_writes_candidate_report(
 
     assert exit_code == 0
     assert report["status"] == "labor_employment_executable_driver_bindings_ready_for_review"
-    assert report["case_count"] == 16
+    assert report["case_count"] == 17
     assert report["missing_driver_dimensions"] == []
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out

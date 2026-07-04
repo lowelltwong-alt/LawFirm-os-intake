@@ -87,11 +87,11 @@ def test_labor_employment_blocked_driver_impact_review_explains_blockers(
     cases = {case.executable_fixture_id: case for case in persisted.case_reviews}
 
     assert report.status == "labor_employment_blocked_driver_impacts_ready_for_review"
-    assert persisted.case_count == 16
-    assert persisted.blocked_case_count == 7
+    assert persisted.case_count == 17
+    assert persisted.blocked_case_count == 8
     assert persisted.nonblocking_case_count == 9
-    assert persisted.blocker_fact_count == 9
-    assert persisted.block_amount_budget_impact_count == 10
+    assert persisted.blocker_fact_count == 13
+    assert persisted.block_amount_budget_impact_count == 13
     assert "source_missing" in persisted.candidate_exception_lake_labels
     assert "prompt_injection_source_content" in persisted.candidate_exception_lake_labels
     assert "labor_employment_missing_critical_budget_fact" in (
@@ -132,6 +132,17 @@ def test_labor_employment_blocked_driver_impact_review_explains_blockers(
         "employer_or_defendant_identity",
         "prospective_client_payer_carrier_posture",
     } <= {fact.fact_id for fact in ada_adversarial.blocker_facts}
+    epli_adversarial = cases["le-epli-carrier-adversarial.executable.v0_1"]
+    assert "prompt_injection_source_content" in epli_adversarial.candidate_exception_lake_labels
+    assert {"party_topology", "representation_posture", "carrier_guideline_rate_context"} <= set(
+        epli_adversarial.critical_driver_dimensions
+    )
+    assert {
+        "employee_claimant_identity",
+        "employer_or_defendant_identity",
+        "prospective_client_payer_carrier_posture",
+        "carrier_guideline_and_rate_source",
+    } <= {fact.fact_id for fact in epli_adversarial.blocker_facts}
     wage = cases["le-wage-hour-missing-attachment.executable.v0_1"]
     assert any(
         fact.fact_id == "class_collective_or_group_scope"
@@ -186,9 +197,9 @@ def test_labor_employment_blocked_driver_impact_review_cli_writes_packet(
 
     assert exit_code == 0
     assert report["status"] == "labor_employment_blocked_driver_impacts_ready_for_review"
-    assert report["blocked_case_count"] == 7
+    assert report["blocked_case_count"] == 8
     assert report["nonblocking_case_count"] == 9
-    assert report["blocker_fact_count"] == 9
-    assert report["block_amount_budget_impact_count"] == 10
+    assert report["blocker_fact_count"] == 13
+    assert report["block_amount_budget_impact_count"] == 13
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out

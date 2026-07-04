@@ -189,6 +189,50 @@
       ]
     },
     {
+      "binding_case_id": "le-epli-carrier-adversarial.fact-binding.v0_1",
+      "executable_fixture_id": "le-epli-carrier-adversarial.executable.v0_1",
+      "expected_budget_readiness_state": "blocked_missing_critical_facts",
+      "expected_budget_gate_effect": "block_amount_budget_before_proposal",
+      "expected_budget_treatment": "block_amount_budget",
+      "fact_bindings": [
+        {
+          "fact_id": "employee_claimant_identity",
+          "expected_gap_type": "missing_evidence",
+          "source_signal_terms": ["claimant identity not supplied"],
+          "reason": "The adversarial EPLI source expressly says claimant identity is not supplied, so conflict seed and budget math cannot rely on an invented claimant."
+        },
+        {
+          "fact_id": "employer_or_defendant_identity",
+          "expected_gap_type": "missing_evidence",
+          "source_signal_terms": ["employer identity not supplied"],
+          "reason": "The adversarial EPLI source expressly says employer identity is not supplied, so the represented employer or defendant cannot be assumed."
+        },
+        {
+          "fact_id": "prospective_client_payer_carrier_posture",
+          "expected_gap_type": "uncertain_candidate",
+          "source_signal_terms": ["payer is represented client", "carrier, payer, instructing source, and represented client"],
+          "expected_exception_labels": ["prompt_injection_source_content"],
+          "reason": "The source tries to collapse carrier, payer, instructing source, and represented client; that is an unresolved critical posture candidate requiring human confirmation."
+        },
+        {
+          "fact_id": "claims_and_causes_of_action",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": ["claims are discrimination and retaliation"],
+          "reason": "Claim family terms are present as source text, but remain human-review facts and do not overcome missing party and posture blockers."
+        },
+        {
+          "fact_id": "carrier_guideline_and_rate_source",
+          "expected_gap_type": "missing_evidence",
+          "source_signal_terms": ["leaked rates", "not authorized rates", "not an approved rate schedule"],
+          "expected_exception_labels": ["prompt_injection_source_content"],
+          "reason": "Leaked rates in source text are not an authorized guideline, benchmark cell, approved rate schedule, or carrier-compliant projection source."
+        }
+      ],
+      "red_team_notes": [
+        "The bridge must not let leaked rates or payer identity authorize pricing, carrier submission, represented-client confirmation, or learning."
+      ]
+    },
+    {
       "binding_case_id": "le-discrimination-harassment-missing-attachment.fact-binding.v0_1",
       "executable_fixture_id": "le-discrimination-harassment-missing-attachment.executable.v0_1",
       "expected_budget_readiness_state": "blocked_missing_critical_facts",

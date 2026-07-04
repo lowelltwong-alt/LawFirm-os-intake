@@ -71,12 +71,12 @@ def test_labor_employment_executable_driver_impact_maps_drivers_to_budget_effect
     )
 
     assert report.status == "labor_employment_executable_driver_impacts_ready_for_review"
-    assert persisted.case_count == 16
+    assert persisted.case_count == 17
     assert persisted.failed_case_count == 0
-    assert persisted.impact_item_count == 69
-    assert persisted.source_bound_impact_count == 69
-    assert persisted.block_amount_budget_impact_count == 10
-    assert persisted.critical_review_only_impact_count == 21
+    assert persisted.impact_item_count == 73
+    assert persisted.source_bound_impact_count == 73
+    assert persisted.block_amount_budget_impact_count == 13
+    assert persisted.critical_review_only_impact_count == 22
     assert persisted.range_widening_impact_count > 0
     assert persisted.scenario_fork_impact_count > 0
     assert persisted.rate_guideline_review_impact_count > 0
@@ -139,6 +139,18 @@ def test_labor_employment_executable_driver_impact_maps_drivers_to_budget_effect
     assert epli_messy.critical_review_only_impact_count == 4
     assert epli_messy.scenario_fork_impact_count == 1
     assert epli_messy.rate_guideline_review_impact_count == 2
+    epli_adversarial = cases["le-epli-carrier-adversarial.executable.v0_1"]
+    assert epli_adversarial.allowed_budget_output == "blocked_amount_budget"
+    assert epli_adversarial.block_amount_budget_impact_count == 3
+    assert epli_adversarial.critical_review_only_impact_count == 1
+    assert epli_adversarial.rate_guideline_review_impact_count == 2
+    epli_adversarial_impacts = {
+        item.driver_dimension: item for item in epli_adversarial.impact_items
+    }
+    assert "block_amount_budget" in epli_adversarial_impacts["party_topology"].impact_actions
+    assert "block_amount_budget" in (
+        epli_adversarial_impacts["carrier_guideline_rate_context"].impact_actions
+    )
     class_clean = cases["le-class-collective-clean.executable.v0_1"]
     assert class_clean.allowed_budget_output == "range_or_hours_only_pending_review"
     assert class_clean.block_amount_budget_impact_count == 0
@@ -213,9 +225,9 @@ def test_labor_employment_executable_driver_impact_cli_writes_candidate_report(
 
     assert exit_code == 0
     assert report["status"] == "labor_employment_executable_driver_impacts_ready_for_review"
-    assert report["case_count"] == 16
-    assert report["impact_item_count"] == 69
-    assert report["critical_review_only_impact_count"] == 21
+    assert report["case_count"] == 17
+    assert report["impact_item_count"] == 73
+    assert report["critical_review_only_impact_count"] == 22
     assert report["missing_impact_policy_dimensions"] == []
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out

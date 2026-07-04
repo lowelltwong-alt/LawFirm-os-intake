@@ -357,7 +357,7 @@ PY
 test -s ".lawfirm-os-intake/smoke/quality/le-executable-fixtures/labor_employment_executable_fixtures_report.json"
 grep -q '"status": "labor_employment_executable_fixtures_ready_for_review"' \
   ".lawfirm-os-intake/smoke/quality/le-executable-fixtures/labor_employment_executable_fixtures_report.json"
-grep -q '"preflight_executed_count": 16' \
+grep -q '"preflight_executed_count": 17' \
   ".lawfirm-os-intake/smoke/quality/le-executable-fixtures/labor_employment_executable_fixtures_report.json"
 grep -q '"budget_fact_audit_required": true' \
   ".lawfirm-os-intake/smoke/quality/le-executable-fixtures/labor_employment_executable_fixtures_report.json"
@@ -389,9 +389,9 @@ grep -q '"coverage_state": "partial_executable_coverage"' \
   ".lawfirm-os-intake/smoke/quality/le-executable-coverage/labor_employment_executable_coverage_report.json"
 grep -q '"pack_case_count": 32' \
   ".lawfirm-os-intake/smoke/quality/le-executable-coverage/labor_employment_executable_coverage_report.json"
-grep -q '"covered_pack_case_count": 17' \
+grep -q '"covered_pack_case_count": 18' \
   ".lawfirm-os-intake/smoke/quality/le-executable-coverage/labor_employment_executable_coverage_report.json"
-grep -q '"missing_executable_pack_case_count": 15' \
+grep -q '"missing_executable_pack_case_count": 14' \
   ".lawfirm-os-intake/smoke/quality/le-executable-coverage/labor_employment_executable_coverage_report.json"
 grep -q '"missing_family_count": 0' \
   ".lawfirm-os-intake/smoke/quality/le-executable-coverage/labor_employment_executable_coverage_report.json"
@@ -428,13 +428,13 @@ PY
 test -s ".lawfirm-os-intake/smoke/quality/le-executable-fact-binding/labor_employment_executable_fact_binding_report.json"
 grep -q '"status": "labor_employment_executable_budget_fact_bindings_ready_for_review"' \
   ".lawfirm-os-intake/smoke/quality/le-executable-fact-binding/labor_employment_executable_fact_binding_report.json"
-grep -q '"fact_binding_count": 49' \
+grep -q '"fact_binding_count": 54' \
   ".lawfirm-os-intake/smoke/quality/le-executable-fact-binding/labor_employment_executable_fact_binding_report.json"
-grep -q '"critical_fact_binding_count": 23' \
+grep -q '"critical_fact_binding_count": 28' \
   ".lawfirm-os-intake/smoke/quality/le-executable-fact-binding/labor_employment_executable_fact_binding_report.json"
-grep -q '"source_present_confirmation_fact_count": 33' \
+grep -q '"source_present_confirmation_fact_count": 34' \
   ".lawfirm-os-intake/smoke/quality/le-executable-fact-binding/labor_employment_executable_fact_binding_report.json"
-grep -q '"source_present_unresolved_critical_driver_count": 1' \
+grep -q '"source_present_unresolved_critical_driver_count": 2' \
   ".lawfirm-os-intake/smoke/quality/le-executable-fact-binding/labor_employment_executable_fact_binding_report.json"
 grep -q '"budget_amount_output_authorized": false' \
   ".lawfirm-os-intake/smoke/quality/le-executable-fact-binding/labor_employment_executable_fact_binding_report.json"
@@ -501,11 +501,11 @@ PY
 test -s ".lawfirm-os-intake/smoke/quality/le-executable-driver-impact/labor_employment_executable_driver_impact_report.json"
 grep -q '"status": "labor_employment_executable_driver_impacts_ready_for_review"' \
   ".lawfirm-os-intake/smoke/quality/le-executable-driver-impact/labor_employment_executable_driver_impact_report.json"
-grep -q '"impact_item_count": 69' \
+grep -q '"impact_item_count": 73' \
   ".lawfirm-os-intake/smoke/quality/le-executable-driver-impact/labor_employment_executable_driver_impact_report.json"
-grep -q '"block_amount_budget_impact_count": 10' \
+grep -q '"block_amount_budget_impact_count": 13' \
   ".lawfirm-os-intake/smoke/quality/le-executable-driver-impact/labor_employment_executable_driver_impact_report.json"
-grep -q '"critical_review_only_impact_count": 21' \
+grep -q '"critical_review_only_impact_count": 22' \
   ".lawfirm-os-intake/smoke/quality/le-executable-driver-impact/labor_employment_executable_driver_impact_report.json"
 grep -q '"missing_impact_policy_dimensions": \[\]' \
   ".lawfirm-os-intake/smoke/quality/le-executable-driver-impact/labor_employment_executable_driver_impact_report.json"
@@ -584,11 +584,11 @@ PY
 test -s ".lawfirm-os-intake/smoke/quality/le-blocked-driver-impact-review/labor_employment_blocked_driver_impact_review_report.json"
 grep -q '"status": "labor_employment_blocked_driver_impacts_ready_for_review"' \
   ".lawfirm-os-intake/smoke/quality/le-blocked-driver-impact-review/labor_employment_blocked_driver_impact_review_report.json"
-grep -q '"blocked_case_count": 7' \
+grep -q '"blocked_case_count": 8' \
   ".lawfirm-os-intake/smoke/quality/le-blocked-driver-impact-review/labor_employment_blocked_driver_impact_review_report.json"
-grep -q '"blocker_fact_count": 9' \
+grep -q '"blocker_fact_count": 13' \
   ".lawfirm-os-intake/smoke/quality/le-blocked-driver-impact-review/labor_employment_blocked_driver_impact_review_report.json"
-grep -q '"block_amount_budget_impact_count": 10' \
+grep -q '"block_amount_budget_impact_count": 13' \
   ".lawfirm-os-intake/smoke/quality/le-blocked-driver-impact-review/labor_employment_blocked_driver_impact_review_report.json"
 grep -q '"source_present_critical_budget_driver_unresolved"' \
   ".lawfirm-os-intake/smoke/quality/le-blocked-driver-impact-review/labor_employment_blocked_driver_impact_review_report.json"

@@ -281,16 +281,16 @@ def test_legal_intake_budget_demo_executable_coverage_is_partial_and_no_write(re
     assert report["status"] == "labor_employment_executable_coverage_ready_for_review"
     assert report["coverage_state"] == "partial_executable_coverage"
     assert report["pack_case_count"] == 32
-    assert report["executable_fixture_count"] == 16
-    assert report["covered_pack_case_count"] == 17
-    assert report["missing_executable_pack_case_count"] == 15
+    assert report["executable_fixture_count"] == 17
+    assert report["covered_pack_case_count"] == 18
+    assert report["missing_executable_pack_case_count"] == 14
     assert report["covered_family_count"] == 8
     assert report["missing_family_count"] == 0
-    assert report["covered_family_variant_count"] == len(report["covered_pack_case_ids"]) == 17
+    assert report["covered_family_variant_count"] == len(report["covered_pack_case_ids"]) == 18
     assert (
         report["missing_family_variant_count"]
         == len(report["missing_executable_pack_case_ids"])
-        == 15
+        == 14
     )
     assert "discrimination_harassment:clean" not in report["missing_family_variant_refs"]
     assert "wage_hour_flsa_state:clean" not in report["missing_family_variant_refs"]
@@ -303,8 +303,9 @@ def test_legal_intake_budget_demo_executable_coverage_is_partial_and_no_write(re
     )
     assert families["ada_fmla_accommodation_leave"]["covered_case_count"] == 4
     assert families["ada_fmla_accommodation_leave"]["missing_variants"] == []
-    assert families["epli_carrier_assignment"]["covered_case_count"] == 3
-    assert families["epli_carrier_assignment"]["missing_variants"] == ["adversarial"]
+    assert families["epli_carrier_assignment"]["covered_case_count"] == 4
+    assert families["epli_carrier_assignment"]["missing_variants"] == []
+    assert "le-epli-carrier-adversarial.v0_1" in report["covered_pack_case_ids"]
     assert families["class_collective_paga_representative"]["covered_case_count"] == 3
     assert families["class_collective_paga_representative"]["missing_variants"] == [
         "missing_attachment"
@@ -340,8 +341,8 @@ def test_legal_intake_budget_demo_blocked_driver_review_is_synthetic_and_no_writ
     cases = {case["executable_fixture_id"]: case for case in report["case_reviews"]}
 
     assert report["status"] == "labor_employment_blocked_driver_impacts_ready_for_review"
-    assert report["case_count"] == 16
-    assert report["blocked_case_count"] == len(report["case_reviews"]) == 7
+    assert report["case_count"] == 17
+    assert report["blocked_case_count"] == len(report["case_reviews"]) == 8
     assert report["nonblocking_case_count"] == 9
     assert report["blocker_fact_count"] == sum(
         case["blocker_fact_count"] for case in report["case_reviews"]
@@ -387,6 +388,13 @@ def test_legal_intake_budget_demo_blocked_driver_review_is_synthetic_and_no_writ
     assert (
         "prompt_injection_source_content"
         in (cases["le-ada-fmla-adversarial.executable.v0_1"]["candidate_exception_lake_labels"])
+    )
+    assert (
+        "prompt_injection_source_content"
+        in (cases["le-epli-carrier-adversarial.executable.v0_1"]["candidate_exception_lake_labels"])
+    )
+    assert {"party_topology", "representation_posture", "carrier_guideline_rate_context"} <= set(
+        cases["le-epli-carrier-adversarial.executable.v0_1"]["critical_driver_dimensions"]
     )
     assert {"party_topology", "representation_posture"} <= set(
         cases["le-ada-fmla-adversarial.executable.v0_1"]["critical_driver_dimensions"]
@@ -617,12 +625,12 @@ def test_legal_intake_budget_demo_synthetic_qa_blocker_report_is_no_write(repo_r
     )
 
     assert report["status"] == "synthetic_qa_blocker_report_ready_for_review"
-    assert report["row_count"] == len(report["rows"]) == 21
+    assert report["row_count"] == len(report["rows"]) == 24
     assert report["failed_row_count"] == 0
     assert report["blocked_row_count"] == 0
-    assert report["pending_review_row_count"] == 21
+    assert report["pending_review_row_count"] == 24
     assert report["blocked_action_count"] == 0
-    assert report["needs_review_action_count"] == 21
+    assert report["needs_review_action_count"] == 24
     assert report["fixed_action_count"] == 0
     assert report["ready_action_count"] == 0
     assert report["review_queue_state"] == "needs_review"
@@ -653,9 +661,9 @@ def test_legal_intake_budget_demo_synthetic_qa_review_outcome_is_no_write(repo_r
     )
 
     assert report["status"] == "synthetic_qa_review_outcome_recorded_pending_followup"
-    assert report["source_row_count"] == 21
+    assert report["source_row_count"] == 24
     assert report["reviewed_row_count"] == len(report["reviewed_row_ids"]) == 3
-    assert report["unreviewed_row_count"] == len(report["unreviewed_row_ids"]) == 18
+    assert report["unreviewed_row_count"] == len(report["unreviewed_row_ids"]) == 21
     assert report["decision_count"] == 3
     assert report["accepted_decision_count"] == 1
     assert report["needs_fix_decision_count"] == 1
@@ -691,13 +699,13 @@ def test_legal_intake_budget_demo_budget_output_expectations_are_no_write(repo_r
     cases = {case["executable_fixture_id"]: case for case in report["cases"]}
 
     assert report["status"] == "labor_employment_budget_output_expectations_ready_for_review"
-    assert report["case_count"] == len(report["cases"]) == 16
+    assert report["case_count"] == len(report["cases"]) == 17
     assert report["failed_case_count"] == 0
-    assert report["blocked_amount_budget_case_count"] == 7
+    assert report["blocked_amount_budget_case_count"] == 8
     assert report["range_or_hours_only_case_count"] == 3
     assert report["candidate_range_after_review_case_count"] == 6
     assert report["reviewed_nonblocking_case_count"] == 9
-    assert report["blocked_review_case_count"] == 7
+    assert report["blocked_review_case_count"] == 8
     assert report["candidate_only"] is True
     assert report["non_authoritative"] is True
     assert report["synthetic_only"] is True
@@ -734,6 +742,13 @@ def test_legal_intake_budget_demo_budget_output_expectations_are_no_write(repo_r
         == "blocked_amount_budget"
     )
     assert cases["le-ada-fmla-adversarial.executable.v0_1"]["blocked_case_review_present"] is True
+    assert (
+        cases["le-epli-carrier-adversarial.executable.v0_1"]["final_allowed_budget_output"]
+        == "blocked_amount_budget"
+    )
+    assert (
+        cases["le-epli-carrier-adversarial.executable.v0_1"]["blocked_case_review_present"] is True
+    )
     assert (
         cases["le-epli-carrier-messy-thread.executable.v0_1"]["final_allowed_budget_output"]
         == "range_or_hours_only_pending_review"
@@ -776,8 +791,8 @@ def test_legal_intake_budget_demo_labor_employment_budget_qa_gate_is_no_write(re
     buckets = {bucket["output_state"]: bucket for bucket in report["output_state_buckets"]}
 
     assert report["status"] == "labor_employment_budget_qa_gate_ready_for_review"
-    assert report["case_count"] == 16
-    assert report["blocked_amount_budget_case_count"] == 7
+    assert report["case_count"] == 17
+    assert report["blocked_amount_budget_case_count"] == 8
     assert report["range_or_hours_only_case_count"] == 3
     assert report["candidate_range_after_review_case_count"] == 6
     assert report["reviewed_nonblocking_case_count"] == 9
@@ -785,7 +800,7 @@ def test_legal_intake_budget_demo_labor_employment_budget_qa_gate_is_no_write(re
     assert report["required_families_missing"] == []
     assert report["missing_blocked_review_case_ids"] == []
     assert report["missing_nonblocking_review_case_ids"] == []
-    assert buckets["blocked_amount_budget"]["case_count"] == 7
+    assert buckets["blocked_amount_budget"]["case_count"] == 8
     assert buckets["range_or_hours_only_pending_review"]["case_count"] == 3
     assert buckets["candidate_range_after_review_pending_human_review"]["case_count"] == 6
     assert all(check["status"] == "passed" for check in report["checks"])
