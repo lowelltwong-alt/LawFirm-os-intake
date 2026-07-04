@@ -225,6 +225,90 @@
       ]
     },
     {
+      "binding_case_id": "le-class-collective-clean.fact-binding.v0_1",
+      "executable_fixture_id": "le-class-collective-clean.executable.v0_1",
+      "expected_budget_readiness_state": "range_only_pending_human_review",
+      "expected_budget_gate_effect": "allow_range_or_hours_only_pending_review",
+      "expected_budget_treatment": "hours_only_or_broad_range",
+      "fact_bindings": [
+        {
+          "fact_id": "class_collective_or_group_scope",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": ["class", "collective", "PAGA-style", "notice posture"],
+          "reason": "Representative-action posture is source-present, but class/collective/PAGA scope must remain human-confirmed before any budget narrowing."
+        },
+        {
+          "fact_id": "wage_hour_pay_period_and_employee_volume",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": ["128 hourly employees", "26 pay periods", "payroll export"],
+          "reason": "Employee and pay-period volume are source-present synthetic summary facts, but still review-only budget drivers."
+        },
+        {
+          "fact_id": "forum_removed_and_arbitration_posture",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": ["state court forum", "removal posture", "arbitration agreements"],
+          "reason": "Forum, removal, and arbitration signals are present, but procedural posture remains a reviewed scenario fork."
+        },
+        {
+          "fact_id": "damages_categories_and_exposure",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": ["back pay", "liquidated damages", "statutory penalties"],
+          "reason": "Damages categories are source-present but cannot become calibrated exposure or budget math without review."
+        },
+        {
+          "fact_id": "expert_and_vendor_needs",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": ["Expert and vendor needs are not identified"],
+          "reason": "The clean packet expressly does not identify expert or vendor needs, so expense-sensitive projections remain range-only."
+        }
+      ],
+      "red_team_notes": [
+        "Representative wage/hour scope must widen and fork budget assumptions without being averaged into single-plaintiff wage/hour templates."
+      ]
+    },
+    {
+      "binding_case_id": "le-class-collective-messy-thread.fact-binding.v0_1",
+      "executable_fixture_id": "le-class-collective-messy-thread.executable.v0_1",
+      "expected_budget_readiness_state": "range_only_pending_human_review",
+      "expected_budget_gate_effect": "allow_range_or_hours_only_pending_review",
+      "expected_budget_treatment": "hours_only_or_broad_range",
+      "fact_bindings": [
+        {
+          "fact_id": "class_collective_or_group_scope",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": ["competing opt-in estimates", "PAGA-style representative", "collective"],
+          "reason": "The thread includes class, collective, and PAGA-style signals with competing estimates; those alternatives require review but are source-present."
+        },
+        {
+          "fact_id": "wage_hour_pay_period_and_employee_volume",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": ["52 current opt-in candidates", "310 putative class members", "three-year lookback", "two timekeeping systems"],
+          "reason": "Competing employee-count and timekeeping-system facts are source-present alternatives that should widen budget assumptions, not silently collapse to one value."
+        },
+        {
+          "fact_id": "esi_custodians_and_sources",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": ["ESI custodians", "payroll system", "timekeeping system", "HRIS"],
+          "reason": "ESI systems and custodians are source-present, but duplicate thread text must not double-count collection or review volume."
+        },
+        {
+          "fact_id": "expert_and_vendor_needs",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": ["statistical sampling expert", "payroll damages expert", "e-discovery vendor"],
+          "reason": "Expert and vendor signals are source-present preapproval-sensitive candidates, not approved expenses."
+        },
+        {
+          "fact_id": "forum_removed_and_arbitration_posture",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": ["Forum and arbitration posture is unknown"],
+          "reason": "The thread leaves forum and arbitration posture unknown, so the budget should remain hours-only or broad-range pending review."
+        }
+      ],
+      "red_team_notes": [
+        "Competing class-size estimates and duplicate thread history must not inflate employee count, custodian count, expert count, or budget intensity."
+      ]
+    },
+    {
       "binding_case_id": "le-class-collective-adversarial.fact-binding.v0_1",
       "executable_fixture_id": "le-class-collective-adversarial.executable.v0_1",
       "expected_budget_readiness_state": "blocked_missing_critical_facts",

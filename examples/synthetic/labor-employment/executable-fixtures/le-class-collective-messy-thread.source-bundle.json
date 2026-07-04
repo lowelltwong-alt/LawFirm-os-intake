@@ -1,0 +1,98 @@
+{
+  "schema_version": "0.1",
+  "bundle_id": "syn-le-class-collective-messy-thread-001",
+  "data_origin": "synthetic",
+  "contains_real_client_data": false,
+  "contains_real_matter_data": false,
+  "contains_privileged_data": false,
+  "sources": [
+    {
+      "source_id": "syn-le-class-collective-messy-thread-001",
+      "source_type": "correspondence_dump",
+      "filename": "synthetic_class_collective_messy_thread.txt",
+      "text": "From: adjuster@synthetic-carrier.example\nTo: intake@synthetic-law.example\nDate: July 2, 2026\nSubject: Class/collective wage-hour thread with conflicting opt-in estimates\n\nThe current synthetic matter concerns Sofia Patel v. Meridian Hospitality Group LLC. The thread contains class allegations, collective allegations, PAGA-style representative allegations, and competing opt-in estimates. One sender says there are 52 current opt-in candidates; quoted payroll notes say there may be 310 putative class members over a three-year lookback. The packet references two timekeeping systems, one payroll system, HRIS, ESI custodians in payroll and operations, a statistical sampling expert, a payroll damages expert, and a possible e-discovery vendor. Forum and arbitration posture is unknown. Treat these competing opt-in estimates as alternatives until human review.\n\n-----Original Message-----\nFrom: payroll@meridian.example\nTo: adjuster@synthetic-carrier.example\nSubject: RE: Employee counts\n\nThe payroll team believes the current opt-in list has 52 people, but the broader putative class may include 310 employees if all banquet and housekeeping job codes are included.\n\n-----Original Message-----\nFrom: operations@meridian.example\nTo: payroll@meridian.example\nSubject: RE: Systems and custodians\n\nPlease preserve HRIS, payroll system, timekeeping system, payroll custodian email, operations manager files, and scheduling exports.",
+      "metadata": {
+        "synthetic": true,
+        "thread_state": "messy_quoted_history",
+        "driver_conflict": "competing_class_size_estimates"
+      }
+    },
+    {
+      "source_id": "syn-le-class-collective-messy-thread-duplicate-001",
+      "source_type": "correspondence_dump",
+      "filename": "synthetic_class_collective_messy_thread_duplicate.txt",
+      "text": "From: adjuster@synthetic-carrier.example\nTo: intake@synthetic-law.example\nDate: July 2, 2026\nSubject: Class/collective wage-hour thread with conflicting opt-in estimates\n\nThe current synthetic matter concerns Sofia Patel v. Meridian Hospitality Group LLC. The thread contains class allegations, collective allegations, PAGA-style representative allegations, and competing opt-in estimates. One sender says there are 52 current opt-in candidates; quoted payroll notes say there may be 310 putative class members over a three-year lookback. The packet references two timekeeping systems, one payroll system, HRIS, ESI custodians in payroll and operations, a statistical sampling expert, a payroll damages expert, and a possible e-discovery vendor. Forum and arbitration posture is unknown. Treat these competing opt-in estimates as alternatives until human review.\n\n-----Original Message-----\nFrom: payroll@meridian.example\nTo: adjuster@synthetic-carrier.example\nSubject: RE: Employee counts\n\nThe payroll team believes the current opt-in list has 52 people, but the broader putative class may include 310 employees if all banquet and housekeeping job codes are included.\n\n-----Original Message-----\nFrom: operations@meridian.example\nTo: payroll@meridian.example\nSubject: RE: Systems and custodians\n\nPlease preserve HRIS, payroll system, timekeeping system, payroll custodian email, operations manager files, and scheduling exports.",
+      "metadata": {
+        "synthetic": true,
+        "thread_state": "duplicate_messy_quoted_history",
+        "driver_conflict": "competing_class_size_estimates"
+      }
+    },
+    {
+      "source_id": "syn-le-class-collective-messy-expert-note-001",
+      "source_type": "attachment_text",
+      "filename": "expert-and-esi-note.txt",
+      "text": "Synthetic expert and ESI note: the budget driver review should consider a statistical sampling expert, a payroll damages expert, and a possible e-discovery vendor. ESI custodians include payroll, operations, and HRIS administrators. This note is candidate-only and does not approve expert retention, vendor expense, or a carrier-compliant budget.",
+      "metadata": {
+        "synthetic": true,
+        "document_type": "expert_esi_note"
+      }
+    }
+  ],
+  "fixture_hints": {
+    "provided_fields": [
+      "employee_claimant_identity",
+      "employer_or_defendant_identity",
+      "claims_and_causes_of_action",
+      "class_collective_or_group_scope",
+      "wage_hour_pay_period_and_employee_volume",
+      "esi_custodians_and_sources",
+      "expert_and_vendor_needs"
+    ],
+    "entities": [
+      {
+        "name": "Sofia Patel",
+        "role_candidates": [
+          {
+            "role": "claimant",
+            "confidence": 0.77
+          },
+          {
+            "role": "class_representative_candidate",
+            "confidence": 0.66
+          },
+          {
+            "role": "adverse_party",
+            "confidence": 0.57
+          }
+        ]
+      },
+      {
+        "name": "Meridian Hospitality Group LLC",
+        "role_candidates": [
+          {
+            "role": "employer_or_defendant",
+            "confidence": 0.78
+          },
+          {
+            "role": "prospective_represented_client",
+            "confidence": 0.61
+          }
+        ]
+      },
+      {
+        "name": "synthetic-carrier",
+        "role_candidates": [
+          {
+            "role": "insurance_carrier_candidate",
+            "confidence": 0.48
+          },
+          {
+            "role": "instructing_source_candidate",
+            "confidence": 0.46
+          }
+        ]
+      }
+    ]
+  }
+}
