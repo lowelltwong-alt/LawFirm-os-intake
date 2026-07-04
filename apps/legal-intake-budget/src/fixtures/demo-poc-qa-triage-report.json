@@ -1,16 +1,16 @@
 {
   "schema_version": "0.1",
-  "poc_qa_triage_report_id": "poc_qa_triage_f0b42e6adad8bae0",
+  "poc_qa_triage_report_id": "poc_qa_triage_735fc4b57e2e1926",
   "status": "poc_qa_ready_for_review",
-  "source_ui_manifest_id": "ui_review_manifest_00aeff08b022",
-  "source_synthetic_confidence_summary_report_id": "synthetic_confidence_summary_776a97d0ece2d74d",
-  "source_synthetic_qa_review_run_report_id": "syntheticqareviewrun_44a0e1d825bac1db",
-  "source_synthetic_qa_blocker_report_id": "synthetic_qa_blocker_report_e2d538a763d6c169",
+  "source_ui_manifest_id": "ui_review_manifest_68f335189cfc",
+  "source_synthetic_confidence_summary_report_id": "synthetic_confidence_summary_88298b74f0ded8ba",
+  "source_synthetic_qa_review_run_report_id": "syntheticqareviewrun_994fbc495d7ea2f2",
+  "source_synthetic_qa_blocker_report_id": "synthetic_qa_blocker_report_326ebc2bb261a590",
   "source_matter_linking_preflight_report_id": "matterlinkpreflight_b6256d36c7d774ea7124",
   "source_labor_employment_qa_matrix_report_id": "leqamat_dc66065a353db4503c28",
-  "source_blocked_driver_impact_review_report_id": "leblockeddriverimpactreview_0637d73d5d44edda",
-  "source_budget_output_expectation_report_id": "lebudgetoutputexpect_2a6a3eb26cceb4cc",
-  "source_validation_suite_evidence_report_id": "validation_suite_evidence_554cf60bc6a90268",
+  "source_blocked_driver_impact_review_report_id": "leblockeddriverimpactreview_d5544433770dda3c",
+  "source_budget_output_expectation_report_id": "lebudgetoutputexpect_3bc99f6dfaf3ba78",
+  "source_validation_suite_evidence_report_id": "validation_suite_evidence_15aae7dda9ec0673",
   "item_count": 10,
   "passed_item_count": 3,
   "needs_review_item_count": 5,
@@ -38,7 +38,7 @@
       "category": "review_queue",
       "priority": "p0",
       "status": "needs_review",
-      "summary": "17 synthetic QA rows are queued for review.",
+      "summary": "18 synthetic QA rows are queued for review.",
       "recommended_next_action": "Review pending rows as candidate QA decisions; do not treat them as calibration or production approval.",
       "evidence_refs": [
         "apps/legal-intake-budget/src/fixtures/demo-synthetic-qa-blocker-report.json"
@@ -119,7 +119,7 @@
       "category": "budget_output",
       "priority": "p0",
       "status": "needs_review",
-      "summary": "6 cases block amount budgets; 2 cases allow candidate ranges after review.",
+      "summary": "6 cases block amount budgets; 4 cases allow candidate ranges after review.",
       "recommended_next_action": "Only consume reviewed nonblocking slices for budget generation; keep blocked cases as follow-up queues.",
       "evidence_refs": [
         "apps/legal-intake-budget/src/fixtures/demo-labor-employment-budget-output-expectations-report.json"
@@ -228,5 +228,5 @@
   "sqlite_write_performed": false,
   "external_writes_performed": false,
   "silent_learning_performed": false,
-  "generated_at": "2026-07-03T22:29:27Z"
+  "generated_at": "2026-07-04T00:00:00Z"
 }

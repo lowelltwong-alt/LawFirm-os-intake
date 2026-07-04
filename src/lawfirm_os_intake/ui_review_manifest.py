@@ -116,6 +116,13 @@ ARTIFACT_SPECS = [
         "pending_review",
     ),
     ArtifactSpec(
+        "poc-qa-triage",
+        "POC QA Triage",
+        "poc_qa_triage_report.json",
+        "qa-reference",
+        "pending_review",
+    ),
+    ArtifactSpec(
         "matter-linking-preflight",
         "Matter-Linking Preflight",
         "matter_linking_preflight_report.json",
@@ -299,6 +306,13 @@ QUALITY_GATE_SPECS = {
         "synthetic_qa_blocker_report.json",
         "qa-reference",
         "The synthetic QA blocker queue must be emitted as deterministic local JSON before the review UI relies on it.",
+        "pending_review",
+    ),
+    "poc_qa_triage": (
+        "POC QA Triage",
+        "poc_qa_triage_report.json",
+        "qa-reference",
+        "The POC QA triage queue must reconcile validation, synthetic QA, L&E budget gates, and UI evidence before readiness is claimed.",
         "pending_review",
     ),
     "matter_linking_preflight": (

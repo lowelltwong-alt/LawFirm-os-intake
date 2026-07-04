@@ -71,10 +71,10 @@ def test_labor_employment_executable_driver_impact_maps_drivers_to_budget_effect
     )
 
     assert report.status == "labor_employment_executable_driver_impacts_ready_for_review"
-    assert persisted.case_count == 8
+    assert persisted.case_count == 10
     assert persisted.failed_case_count == 0
-    assert persisted.impact_item_count == 30
-    assert persisted.source_bound_impact_count == 30
+    assert persisted.impact_item_count == 38
+    assert persisted.source_bound_impact_count == 38
     assert persisted.block_amount_budget_impact_count == 12
     assert persisted.range_widening_impact_count > 0
     assert persisted.scenario_fork_impact_count > 0
@@ -91,6 +91,15 @@ def test_labor_employment_executable_driver_impact_maps_drivers_to_budget_effect
     assert persisted.silent_learning_performed is False
 
     cases = {case.executable_fixture_id: case for case in persisted.cases}
+    wage_clean = cases["le-wage-hour-clean.executable.v0_1"]
+    assert wage_clean.allowed_budget_output == "candidate_range_after_review_pending_human_review"
+    assert wage_clean.block_amount_budget_impact_count == 0
+    assert wage_clean.scenario_fork_impact_count >= 1
+    discrimination_clean = cases["le-discrimination-harassment-clean.executable.v0_1"]
+    assert discrimination_clean.allowed_budget_output == (
+        "candidate_range_after_review_pending_human_review"
+    )
+    assert discrimination_clean.block_amount_budget_impact_count == 0
     class_case = cases["le-class-collective-adversarial.executable.v0_1"]
     assert class_case.allowed_budget_output == "blocked_amount_budget"
     assert class_case.block_amount_budget_impact_count > 0
@@ -167,8 +176,8 @@ def test_labor_employment_executable_driver_impact_cli_writes_candidate_report(
 
     assert exit_code == 0
     assert report["status"] == "labor_employment_executable_driver_impacts_ready_for_review"
-    assert report["case_count"] == 8
-    assert report["impact_item_count"] == 30
+    assert report["case_count"] == 10
+    assert report["impact_item_count"] == 38
     assert report["missing_impact_policy_dimensions"] == []
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out

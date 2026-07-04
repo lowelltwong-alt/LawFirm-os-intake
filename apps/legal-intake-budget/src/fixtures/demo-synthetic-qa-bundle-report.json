@@ -1,9 +1,9 @@
 {
   "schema_version": "0.1",
-  "synthetic_qa_bundle_report_id": "synthetic_qa_bundle_8cd0af98a58f",
+  "synthetic_qa_bundle_report_id": "synthetic_qa_bundle_cb499e0c16e3",
   "status": "pending_review",
-  "run_root_ref": "apps/legal-intake-budget/src/fixtures",
-  "out_dir_ref": "apps/legal-intake-budget/src/fixtures",
+  "run_root_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current",
+  "out_dir_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality",
   "artifact_count": 14,
   "required_artifact_count": 14,
   "missing_required_artifact_count": 0,
@@ -19,11 +19,11 @@
       "present": true,
       "status": "passed",
       "gate_state": "passed",
-      "artifact_ref": "apps/legal-intake-budget/src/fixtures/budget_coherence_report.json",
-      "copied_to_ref": "apps/legal-intake-budget/src/fixtures/budget_coherence_report.json",
-      "source_sha256": "sha256:19fbe44be367c3fa76cb5a558463a96857aa85d05c33ea9a68e1c086247927ab",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\budget\\budget_coherence_report.json",
+      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\budget_coherence_report.json",
+      "source_sha256": "sha256:53e9a30bdfd91107d688ddef87079650451aab34d2ece786cab7b9fa4695659f",
       "notes": [
-        "Demo fixture row for Budget Coherence; bundle status=passed."
+        "Found budget_coherence_report.json; source status=passed; bundle status=passed."
       ]
     },
     {
@@ -34,11 +34,11 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "apps/legal-intake-budget/src/fixtures/synthetic_fixture_depth_audit_report.json",
-      "copied_to_ref": "apps/legal-intake-budget/src/fixtures/synthetic_fixture_depth_audit_report.json",
-      "source_sha256": "sha256:4597313501e66da7f6edffa02360b449c948d9d2ee43b2a00246608877f656bb",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\synthetic_fixture_depth_audit_report.json",
+      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\synthetic_fixture_depth_audit_report.json",
+      "source_sha256": "sha256:c21cd28d3e8957e94f4fb524d61a2cf72747d525a01cb4ed6e260a450fd91114",
       "notes": [
-        "Demo fixture row for Synthetic Fixture Depth; bundle status=pending_review."
+        "Found synthetic_fixture_depth_audit_report.json; source status=synthetic_fixture_depth_ready_for_review; bundle status=pending_review."
       ]
     },
     {
@@ -49,11 +49,11 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "apps/legal-intake-budget/src/fixtures/budget_calibration_readiness_report.json",
-      "copied_to_ref": "apps/legal-intake-budget/src/fixtures/budget_calibration_readiness_report.json",
-      "source_sha256": "sha256:b5e4d93f69cca37157c0acc5809442c40e38fc15b80cbcb072f10f752c91e744",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\budget_calibration_readiness_report.json",
+      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\budget_calibration_readiness_report.json",
+      "source_sha256": "sha256:308e3186288f808a719d92c75b7a864e5f096afde64b51263de61c2e136674a6",
       "notes": [
-        "Demo fixture row for Budget Calibration Readiness; bundle status=pending_review."
+        "Found budget_calibration_readiness_report.json; source status=ready_for_manual_fixture_update_review; bundle status=pending_review."
       ]
     },
     {
@@ -64,11 +64,11 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "apps/legal-intake-budget/src/fixtures/labor_employment_qa_matrix_report.json",
-      "copied_to_ref": "apps/legal-intake-budget/src/fixtures/labor_employment_qa_matrix_report.json",
-      "source_sha256": "sha256:9fdff78894319b2cbb57aa10baa05add40284897508c1c41bd9aad8548ead1e6",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\labor_employment_qa_matrix_report.json",
+      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\labor_employment_qa_matrix_report.json",
+      "source_sha256": "sha256:1f08b2ae554a47eaa013b007dab9ded6eb0d0bbfd32acf38b039e0b9da406790",
       "notes": [
-        "Demo fixture row for Labor/Employment QA Matrix; bundle status=pending_review."
+        "Found labor_employment_qa_matrix_report.json; source status=labor_employment_qa_matrix_ready_for_review; bundle status=pending_review."
       ]
     },
     {
@@ -79,11 +79,11 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "apps/legal-intake-budget/src/fixtures/labor_employment_fixture_family_pack_report.json",
-      "copied_to_ref": "apps/legal-intake-budget/src/fixtures/labor_employment_fixture_family_pack_report.json",
-      "source_sha256": "sha256:110d623f53dcc6a0e723b580456ee151328ab2723d6b83d9c121670509b0f4e4",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\labor_employment_fixture_family_pack_report.json",
+      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\labor_employment_fixture_family_pack_report.json",
+      "source_sha256": "sha256:74af9b5c543b368e89436d63fd65747a0f83de35172b65619eb772d3b7fbfcb4",
       "notes": [
-        "Demo fixture row for Labor/Employment Fixture Family Pack; bundle status=pending_review."
+        "Found labor_employment_fixture_family_pack_report.json; source status=labor_employment_fixture_family_pack_ready_for_review; bundle status=pending_review."
       ]
     },
     {
@@ -94,11 +94,11 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "apps/legal-intake-budget/src/fixtures/labor_employment_executable_fixtures_report.json",
-      "copied_to_ref": "apps/legal-intake-budget/src/fixtures/labor_employment_executable_fixtures_report.json",
-      "source_sha256": "sha256:934e499b21fb3d8a215fa9cdb37e76f4792569e2df43f9d35be4183a9ea00b04",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\labor_employment_executable_fixtures_report.json",
+      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\labor_employment_executable_fixtures_report.json",
+      "source_sha256": "sha256:5eae702c7173e2a59bbc06d01c48df18c2bea936118f386064ef767ceb797851",
       "notes": [
-        "Demo fixture row for Labor/Employment Executable Fixtures; bundle status=pending_review."
+        "Found labor_employment_executable_fixtures_report.json; source status=labor_employment_executable_fixtures_ready_for_review; bundle status=pending_review."
       ]
     },
     {
@@ -109,11 +109,11 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "apps/legal-intake-budget/src/fixtures/labor_employment_executable_coverage_report.json",
-      "copied_to_ref": "apps/legal-intake-budget/src/fixtures/labor_employment_executable_coverage_report.json",
-      "source_sha256": "sha256:48d0816ec4bf9a279bcd1ce9e2f088663fa97663c6b4b31ede28f9276e8f3bb7",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\labor_employment_executable_coverage_report.json",
+      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\labor_employment_executable_coverage_report.json",
+      "source_sha256": "sha256:f62ecaafc9289dd4dfbd5b9f643d725f107fe2b7afdfb31eb5bb579943b5c53b",
       "notes": [
-        "Demo fixture row for Labor/Employment Executable Coverage; bundle status=pending_review."
+        "Found labor_employment_executable_coverage_report.json; source status=labor_employment_executable_coverage_ready_for_review; bundle status=pending_review."
       ]
     },
     {
@@ -124,11 +124,11 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "apps/legal-intake-budget/src/fixtures/labor_employment_executable_fact_binding_report.json",
-      "copied_to_ref": "apps/legal-intake-budget/src/fixtures/labor_employment_executable_fact_binding_report.json",
-      "source_sha256": "sha256:6cb2c34f4575540dcf2a6b4f6e611a8ca3636c1b752cf5632fc1519a1644b5b3",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\labor_employment_executable_fact_binding_report.json",
+      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\labor_employment_executable_fact_binding_report.json",
+      "source_sha256": "sha256:42c6511eb21939e204954976758cb252deb6b3c36cf2af0449c915a8fe3362b8",
       "notes": [
-        "Demo fixture row for Labor/Employment Executable Fact Binding; bundle status=pending_review."
+        "Found labor_employment_executable_fact_binding_report.json; source status=labor_employment_executable_budget_fact_bindings_ready_for_review; bundle status=pending_review."
       ]
     },
     {
@@ -139,11 +139,11 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "apps/legal-intake-budget/src/fixtures/labor_employment_executable_driver_binding_report.json",
-      "copied_to_ref": "apps/legal-intake-budget/src/fixtures/labor_employment_executable_driver_binding_report.json",
-      "source_sha256": "sha256:d40e4b7361dc95ea80771fc187eef0e904b0cee2218e4377e61b86bcd4216dd5",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\labor_employment_executable_driver_binding_report.json",
+      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\labor_employment_executable_driver_binding_report.json",
+      "source_sha256": "sha256:bccff2c258296255fc33af30ab2ba23063594a125479ed17020f7b414d437871",
       "notes": [
-        "Demo fixture row for Labor/Employment Executable Driver Binding; bundle status=pending_review."
+        "Found labor_employment_executable_driver_binding_report.json; source status=labor_employment_executable_driver_bindings_ready_for_review; bundle status=pending_review."
       ]
     },
     {
@@ -154,11 +154,11 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "apps/legal-intake-budget/src/fixtures/labor_employment_executable_driver_impact_report.json",
-      "copied_to_ref": "apps/legal-intake-budget/src/fixtures/labor_employment_executable_driver_impact_report.json",
-      "source_sha256": "sha256:b6afed68096ddfe69831dab870615348a16a31288479b1f77e53b9011737b190",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\labor_employment_executable_driver_impact_report.json",
+      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\labor_employment_executable_driver_impact_report.json",
+      "source_sha256": "sha256:88f98e556f62a56c49125ef45098f443d5469236b557aa1e3dba8c642d31ddd2",
       "notes": [
-        "Demo fixture row for Labor/Employment Executable Driver Impact; bundle status=pending_review."
+        "Found labor_employment_executable_driver_impact_report.json; source status=labor_employment_executable_driver_impacts_ready_for_review; bundle status=pending_review."
       ]
     },
     {
@@ -169,11 +169,11 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "apps/legal-intake-budget/src/fixtures/labor_employment_driver_impact_review_report.json",
-      "copied_to_ref": "apps/legal-intake-budget/src/fixtures/labor_employment_driver_impact_review_report.json",
-      "source_sha256": "sha256:aecee2aaa1a9b869bf52f40bb61f79dbf773bafe22e8fb8b65488c4933a5cbf7",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\labor_employment_driver_impact_review_report.json",
+      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\labor_employment_driver_impact_review_report.json",
+      "source_sha256": "sha256:a53f54c7bdecca20e96d79c9ccfe75f44db94e402e40f46af3df07c43cf17dc0",
       "notes": [
-        "Demo fixture row for Labor/Employment Driver Impact Review; bundle status=pending_review."
+        "Found labor_employment_driver_impact_review_report.json; source status=labor_employment_driver_impact_review_ready_for_budget_gate_replay; bundle status=pending_review."
       ]
     },
     {
@@ -184,11 +184,11 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "apps/legal-intake-budget/src/fixtures/labor_employment_blocked_driver_impact_review_report.json",
-      "copied_to_ref": "apps/legal-intake-budget/src/fixtures/labor_employment_blocked_driver_impact_review_report.json",
-      "source_sha256": "sha256:4f3534346e8ad20031d3af90d2dbdeaf1cf3356fae64b8d81297934d142c44fc",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\labor_employment_blocked_driver_impact_review_report.json",
+      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\labor_employment_blocked_driver_impact_review_report.json",
+      "source_sha256": "sha256:571995186dc3f818f390e3e382780d08ed0d44e2526432c81c1b8198118b644f",
       "notes": [
-        "Demo fixture row for Labor/Employment Blocked Driver Impact Review; bundle status=pending_review."
+        "Found labor_employment_blocked_driver_impact_review_report.json; source status=labor_employment_blocked_driver_impacts_ready_for_review; bundle status=pending_review."
       ]
     },
     {
@@ -199,11 +199,11 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "apps/legal-intake-budget/src/fixtures/labor_employment_budget_output_expectations_report.json",
-      "copied_to_ref": "apps/legal-intake-budget/src/fixtures/labor_employment_budget_output_expectations_report.json",
-      "source_sha256": "sha256:8da11c96d1e3954019ba0545e843a4a2813d4f29abd223e6f74cdde39e689391",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\labor_employment_budget_output_expectations_report.json",
+      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\labor_employment_budget_output_expectations_report.json",
+      "source_sha256": "sha256:22656b4a373c43e58e5082244ae704148f2325006a13add91002b22310f37168",
       "notes": [
-        "Demo fixture row for Labor/Employment Budget Output Expectations; bundle status=pending_review."
+        "Found labor_employment_budget_output_expectations_report.json; source status=labor_employment_budget_output_expectations_ready_for_review; bundle status=pending_review."
       ]
     },
     {
@@ -214,16 +214,16 @@
       "present": true,
       "status": "passed",
       "gate_state": "passed",
-      "artifact_ref": "apps/legal-intake-budget/src/fixtures/labor_employment_budget_fact_gold_report.json",
-      "copied_to_ref": "apps/legal-intake-budget/src/fixtures/labor_employment_budget_fact_gold_report.json",
-      "source_sha256": "sha256:f3b7283d25c7bd12a474546aeb733d9338a7fb306d5c030281018815288c87ad",
+      "artifact_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\labor_employment_budget_fact_gold_report.json",
+      "copied_to_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\labor_employment_budget_fact_gold_report.json",
+      "source_sha256": "sha256:228ab28071ba166681592db8cc8aefaaa1464fd144c2125d27878e605eff4793",
       "notes": [
-        "Demo fixture row for Labor/Employment Budget Fact Gold; bundle status=passed."
+        "Found labor_employment_budget_fact_gold_report.json; source status=passed; bundle status=passed."
       ]
     }
   ],
-  "ui_manifest_ref": "apps/legal-intake-budget/src/fixtures/demo-run-manifest.json",
-  "ui_data_bundle_ref": "apps/legal-intake-budget/src/fixtures/demo-ui-review-data-bundle.json",
+  "ui_manifest_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\ui_review_manifest.json",
+  "ui_data_bundle_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\ui_review_data_bundle.json",
   "required_next_actions": [
     "Route pending QA artifacts for human/owner review; do not treat review-ready as calibrated."
   ],
@@ -243,5 +243,5 @@
   "budget_submission_performed": false,
   "matter_opening_performed": false,
   "silent_learning_performed": false,
-  "generated_at": "2026-07-03T22:29:27Z"
+  "generated_at": "2026-07-02T00:00:00Z"
 }

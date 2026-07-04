@@ -5,8 +5,42 @@
   "review_scope": "nonblocking_driver_impact_budget_gate_replay",
   "description": "Synthetic reviewed slice spec for replaying all currently nonblocking L&E driver impact paths through the budget gate without hand-filtering test data.",
   "source_driver_impact_report_expected_status": "labor_employment_executable_driver_impacts_ready_for_review",
-  "required_selected_case_count": 2,
+  "required_selected_case_count": 4,
   "cases": [
+    {
+      "executable_fixture_id": "le-discrimination-harassment-clean.executable.v0_1",
+      "review_outcome": "approved_for_nonblocking_budget_gate_replay",
+      "expected_allowed_budget_output": "candidate_range_after_review_pending_human_review",
+      "expected_block_amount_budget_impact_count": 0,
+      "minimum_range_widening_impact_count": 1,
+      "minimum_scenario_fork_impact_count": 1,
+      "minimum_rate_guideline_review_impact_count": 0,
+      "review_notes": [
+        "Clean discrimination and harassment source coverage should support range-only budget-driver replay, not approved budget amounts.",
+        "Right-to-sue and policy evidence remains candidate-only and deadline candidates must not be docketed."
+      ],
+      "evidence_refs": [
+        "examples/synthetic/labor-employment/labor-employment-executable-fixtures-manifest.json#le-discrimination-harassment-clean.executable.v0_1",
+        "examples/synthetic/labor-employment/labor-employment-executable-budget-fact-bindings.json#le-discrimination-harassment-clean.executable.v0_1"
+      ]
+    },
+    {
+      "executable_fixture_id": "le-wage-hour-clean.executable.v0_1",
+      "review_outcome": "approved_for_nonblocking_budget_gate_replay",
+      "expected_allowed_budget_output": "candidate_range_after_review_pending_human_review",
+      "expected_block_amount_budget_impact_count": 0,
+      "minimum_range_widening_impact_count": 1,
+      "minimum_scenario_fork_impact_count": 1,
+      "minimum_rate_guideline_review_impact_count": 0,
+      "review_notes": [
+        "Payroll and timekeeping summaries should widen and fork wage/hour assumptions without calibrating a dollar amount.",
+        "The replay remains candidate-only and pending human budget-driver review."
+      ],
+      "evidence_refs": [
+        "examples/synthetic/labor-employment/labor-employment-executable-fixtures-manifest.json#le-wage-hour-clean.executable.v0_1",
+        "examples/synthetic/labor-employment/labor-employment-executable-budget-fact-bindings.json#le-wage-hour-clean.executable.v0_1"
+      ]
+    },
     {
       "executable_fixture_id": "le-retaliation-wrongful-termination-messy-thread.executable.v0_1",
       "review_outcome": "approved_for_nonblocking_budget_gate_replay",
