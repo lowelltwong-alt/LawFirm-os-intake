@@ -31,14 +31,14 @@ def test_labor_employment_executable_coverage_reports_partial_pack_coverage(
     assert report.status == "labor_employment_executable_coverage_ready_for_review"
     assert persisted.coverage_state == "partial_executable_coverage"
     assert persisted.pack_case_count == 32
-    assert persisted.executable_fixture_count == 20
-    assert persisted.executable_pack_case_link_count == 21
-    assert persisted.covered_pack_case_count == 21
-    assert persisted.missing_executable_pack_case_count == 11
+    assert persisted.executable_fixture_count == 21
+    assert persisted.executable_pack_case_link_count == 22
+    assert persisted.covered_pack_case_count == 22
+    assert persisted.missing_executable_pack_case_count == 10
     assert persisted.covered_family_count == 8
     assert persisted.missing_family_count == 0
-    assert persisted.covered_family_variant_count == 21
-    assert persisted.missing_family_variant_count == 11
+    assert persisted.covered_family_variant_count == 22
+    assert persisted.missing_family_variant_count == 10
     assert set(persisted.covered_pack_case_ids) == {
         "le-discrimination-harassment-clean.v0_1",
         "le-discrimination-harassment-missing-attachment.v0_1",
@@ -47,6 +47,7 @@ def test_labor_employment_executable_coverage_reports_partial_pack_coverage(
         "le-retaliation-wrongful-termination-missing-attachment.v0_1",
         "le-restrictive-covenant-missing-attachment.v0_1",
         "le-admin-exhaustion-clean.v0_1",
+        "le-admin-exhaustion-missing-attachment.v0_1",
         "le-wage-hour-clean.v0_1",
         "le-wage-hour-missing-attachment.v0_1",
         "le-ada-fmla-clean.v0_1",
@@ -70,6 +71,9 @@ def test_labor_employment_executable_coverage_reports_partial_pack_coverage(
         persisted.missing_executable_pack_case_ids
     )
     assert "le-retaliation-wrongful-termination-missing-attachment.v0_1" not in (
+        persisted.missing_executable_pack_case_ids
+    )
+    assert "le-admin-exhaustion-missing-attachment.v0_1" not in (
         persisted.missing_executable_pack_case_ids
     )
     assert "le-ada-fmla-clean.v0_1" not in persisted.missing_executable_pack_case_ids
@@ -97,13 +101,13 @@ def test_labor_employment_executable_coverage_reports_partial_pack_coverage(
     assert family["retaliation_wrongful_termination"].missing_case_count == 1
     assert family["restrictive_covenant_trade_secret"].covered_case_count == 1
     assert family["restrictive_covenant_trade_secret"].missing_case_count == 3
-    assert family["administrative_exhaustion_agency_record"].covered_case_count == 1
-    assert family["administrative_exhaustion_agency_record"].missing_case_count == 3
+    assert family["administrative_exhaustion_agency_record"].covered_case_count == 2
+    assert family["administrative_exhaustion_agency_record"].missing_case_count == 2
     assert family["class_collective_paga_representative"].covered_case_count == 4
     assert family["class_collective_paga_representative"].missing_variants == []
     assert all(item.covered_case_count > 0 for item in persisted.family_coverage)
     notes = (run_dir / "labor_employment_executable_coverage_report.md").read_text(encoding="utf-8")
-    assert "Missing executable pack cases: 11" in notes
+    assert "Missing executable pack cases: 10" in notes
     assert "does not generate fixtures" in notes
     assert not list(run_dir.rglob("*.sqlite"))
     assert not list(run_dir.rglob("*.db"))
@@ -171,6 +175,6 @@ def test_labor_employment_executable_coverage_cli_writes_candidate_report(
     assert exit_code == 0
     assert report["status"] == "labor_employment_executable_coverage_ready_for_review"
     assert report["coverage_state"] == "partial_executable_coverage"
-    assert report["missing_executable_pack_case_count"] == 11
+    assert report["missing_executable_pack_case_count"] == 10
     assert '"fixture_generation_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out

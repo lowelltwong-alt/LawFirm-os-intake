@@ -87,11 +87,11 @@ def test_labor_employment_blocked_driver_impact_review_explains_blockers(
     cases = {case.executable_fixture_id: case for case in persisted.case_reviews}
 
     assert report.status == "labor_employment_blocked_driver_impacts_ready_for_review"
-    assert persisted.case_count == 20
-    assert persisted.blocked_case_count == 10
+    assert persisted.case_count == 21
+    assert persisted.blocked_case_count == 11
     assert persisted.nonblocking_case_count == 10
-    assert persisted.blocker_fact_count == 16
-    assert persisted.block_amount_budget_impact_count == 18
+    assert persisted.blocker_fact_count == 17
+    assert persisted.block_amount_budget_impact_count == 19
     assert "source_missing" in persisted.candidate_exception_lake_labels
     assert "prompt_injection_source_content" in persisted.candidate_exception_lake_labels
     assert "labor_employment_missing_critical_budget_fact" in (
@@ -140,6 +140,20 @@ def test_labor_employment_blocked_driver_impact_review_explains_blockers(
     assert any(
         action.startswith("collect_or_confirm_unavailable_source:")
         for action in retaliation_missing.unblock_actions
+    )
+    admin_missing = cases["le-admin-exhaustion-missing-attachment.executable.v0_1"]
+    assert "source_missing" in admin_missing.candidate_exception_lake_labels
+    assert admin_missing.critical_driver_dimensions == ["employment_timeline"]
+    assert admin_missing.block_amount_budget_impact_count == 1
+    assert [fact.fact_id for fact in admin_missing.blocker_facts] == [
+        "relevant_employment_timeline"
+    ]
+    assert admin_missing.blocker_facts[0].matched_source_ids == [
+        "syn-le-admin-exhaustion-timeline-missing-001"
+    ]
+    assert any(
+        action.startswith("collect_or_confirm_unavailable_source:")
+        for action in admin_missing.unblock_actions
     )
     class_case = cases["le-class-collective-adversarial.executable.v0_1"]
     assert "prompt_injection_source_content" in class_case.candidate_exception_lake_labels
@@ -232,9 +246,9 @@ def test_labor_employment_blocked_driver_impact_review_cli_writes_packet(
 
     assert exit_code == 0
     assert report["status"] == "labor_employment_blocked_driver_impacts_ready_for_review"
-    assert report["blocked_case_count"] == 10
+    assert report["blocked_case_count"] == 11
     assert report["nonblocking_case_count"] == 10
-    assert report["blocker_fact_count"] == 16
-    assert report["block_amount_budget_impact_count"] == 18
+    assert report["blocker_fact_count"] == 17
+    assert report["block_amount_budget_impact_count"] == 19
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out

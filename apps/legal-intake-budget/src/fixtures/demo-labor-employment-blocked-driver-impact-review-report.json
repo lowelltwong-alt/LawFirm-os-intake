@@ -1,16 +1,16 @@
 {
   "schema_version": "0.1",
-  "blocked_driver_impact_review_report_id": "leblockeddriverimpactreview_9cbfc58d4f7989d6",
+  "blocked_driver_impact_review_report_id": "leblockeddriverimpactreview_0d3ed84391349982",
   "status": "labor_employment_blocked_driver_impacts_ready_for_review",
-  "source_fact_binding_report_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-missing\\full-run\\quality\\le-executable-fact-binding\\labor_employment_executable_fact_binding_report.json",
-  "source_driver_binding_report_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-missing\\full-run\\quality\\le-executable-driver-binding\\labor_employment_executable_driver_binding_report.json",
-  "source_driver_impact_report_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-missing\\full-run\\quality\\le-executable-driver-impact\\labor_employment_executable_driver_impact_report.json",
-  "source_driver_impact_report_id": "leexecdriverimpact_39550697238526f6d7a1",
-  "case_count": 20,
-  "blocked_case_count": 10,
+  "source_fact_binding_report_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-admin-missing\\full-run\\quality\\le-executable-fact-binding\\labor_employment_executable_fact_binding_report.json",
+  "source_driver_binding_report_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-admin-missing\\full-run\\quality\\le-executable-driver-binding\\labor_employment_executable_driver_binding_report.json",
+  "source_driver_impact_report_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-admin-missing\\full-run\\quality\\le-executable-driver-impact\\labor_employment_executable_driver_impact_report.json",
+  "source_driver_impact_report_id": "leexecdriverimpact_28f781e3aea47f1edf45",
+  "case_count": 21,
+  "blocked_case_count": 11,
   "nonblocking_case_count": 10,
-  "blocker_fact_count": 16,
-  "block_amount_budget_impact_count": 18,
+  "blocker_fact_count": 17,
+  "block_amount_budget_impact_count": 19,
   "candidate_exception_lake_labels": [
     "budget_amount_blocked_pending_labor_employment_driver_review",
     "labor_employment_budget_driver_requires_human_confirmation",
@@ -913,6 +913,99 @@
       "external_writes_performed": false
     },
     {
+      "executable_fixture_id": "le-admin-exhaustion-missing-attachment.executable.v0_1",
+      "family": "administrative_exhaustion_agency_record",
+      "variant": "missing_attachment",
+      "allowed_budget_output": "blocked_amount_budget",
+      "block_reason": "Amount-budget output is blocked because one or more critical L&E budget facts remain unresolved or exception-bound.",
+      "block_amount_budget_impact_count": 1,
+      "range_widening_impact_count": 3,
+      "scenario_fork_impact_count": 2,
+      "rate_guideline_review_impact_count": 0,
+      "critical_driver_dimensions": [
+        "employment_timeline"
+      ],
+      "blocker_fact_count": 1,
+      "blocker_facts": [
+        {
+          "fact_id": "relevant_employment_timeline",
+          "required_level": "critical",
+          "binding_state": "source_and_exception_bound_gap_candidate",
+          "fact_resolution_state": "missing_critical_fact",
+          "blocks_precise_budget": true,
+          "reason": "The filing date, right-to-sue receipt date, and complaint-deadline basis are missing, so budget timing and deadline posture remain blocked.",
+          "budget_effects": [
+            "fact_investigation",
+            "damages_period",
+            "limitations_review",
+            "witness_count"
+          ],
+          "evidence_ref_count": 2,
+          "source_inventory_ref_count": 1,
+          "matched_source_signal_terms": [
+            "filing date",
+            "receipt date",
+            "complaint deadline"
+          ],
+          "missing_source_signal_terms": [],
+          "matched_exception_labels": [
+            "source_missing"
+          ],
+          "missing_exception_labels": [],
+          "matched_source_ids": [
+            "syn-le-admin-exhaustion-timeline-missing-001"
+          ],
+          "missing_source_ids": [],
+          "unblock_actions": [
+            "collect_or_confirm_unavailable_source:syn-le-admin-exhaustion-timeline-missing-001",
+            "human_confirm_labor_employment_budget_fact:relevant_employment_timeline",
+            "human_review_source_bound_fact:relevant_employment_timeline",
+            "resolve_exception_label:source_missing"
+          ],
+          "candidate_exception_lake_labels": [
+            "budget_amount_blocked_pending_labor_employment_driver_review",
+            "labor_employment_budget_driver_requires_human_confirmation",
+            "labor_employment_critical_budget_fact_block",
+            "labor_employment_driver_impacts_blocked",
+            "labor_employment_missing_critical_budget_fact",
+            "missing_budget_driver_source_requires_follow_up",
+            "source_missing"
+          ],
+          "candidate_only": true,
+          "synthetic_only": true
+        }
+      ],
+      "candidate_exception_lake_labels": [
+        "budget_amount_blocked_pending_labor_employment_driver_review",
+        "labor_employment_budget_driver_requires_human_confirmation",
+        "labor_employment_critical_budget_fact_block",
+        "labor_employment_driver_impacts_blocked",
+        "labor_employment_missing_critical_budget_fact",
+        "missing_budget_driver_source_requires_follow_up",
+        "source_missing"
+      ],
+      "unblock_actions": [
+        "collect_or_confirm_unavailable_source:syn-le-admin-exhaustion-timeline-missing-001",
+        "human_confirm_labor_employment_budget_fact:relevant_employment_timeline",
+        "human_review_source_bound_fact:relevant_employment_timeline",
+        "rerun_labor_employment_driver_impact_review_after_corrections",
+        "resolve_exception_label:source_missing"
+      ],
+      "next_review_gates": [
+        "human_labor_employment_budget_driver_review",
+        "append_or_supersede_missing_source_corrections",
+        "rerun_budget_precondition_after_review"
+      ],
+      "candidate_only": true,
+      "synthetic_only": true,
+      "amount_budget_blocked": true,
+      "budget_amount_output_authorized": false,
+      "budget_submission_authorized": false,
+      "lake_write_performed": false,
+      "sqlite_write_performed": false,
+      "external_writes_performed": false
+    },
+    {
       "executable_fixture_id": "le-ada-fmla-missing-thread.executable.v0_1",
       "family": "ada_fmla_accommodation_leave",
       "variant": "missing_attachment",
@@ -1169,9 +1262,9 @@
       "status": "passed",
       "message": "Fact, driver-binding, and driver-impact reports are ready for blocked review.",
       "evidence_refs": [
-        "leexecfactbinding_9dc0aa4345109e3d4a07",
-        "leexecdriverbinding_63f9af760d715875f9e6",
-        "leexecdriverimpact_39550697238526f6d7a1"
+        "leexecfactbinding_2f3cbca5e9f53ad6bc86",
+        "leexecdriverbinding_40c66140f2e825f85c27",
+        "leexecdriverimpact_28f781e3aea47f1edf45"
       ],
       "blocking_refs": []
     },
@@ -1188,6 +1281,7 @@
         "le-class-collective-adversarial.executable.v0_1",
         "le-retaliation-wrongful-termination-missing-attachment.executable.v0_1",
         "le-restrictive-covenant-missing-attachment.executable.v0_1",
+        "le-admin-exhaustion-missing-attachment.executable.v0_1",
         "le-ada-fmla-missing-thread.executable.v0_1",
         "le-ada-fmla-adversarial.executable.v0_1"
       ],
@@ -1206,6 +1300,7 @@
         "le-class-collective-adversarial.executable.v0_1",
         "le-retaliation-wrongful-termination-missing-attachment.executable.v0_1",
         "le-restrictive-covenant-missing-attachment.executable.v0_1",
+        "le-admin-exhaustion-missing-attachment.executable.v0_1",
         "le-ada-fmla-missing-thread.executable.v0_1",
         "le-ada-fmla-adversarial.executable.v0_1"
       ],
@@ -1224,6 +1319,7 @@
         "le-class-collective-adversarial.executable.v0_1",
         "le-retaliation-wrongful-termination-missing-attachment.executable.v0_1",
         "le-restrictive-covenant-missing-attachment.executable.v0_1",
+        "le-admin-exhaustion-missing-attachment.executable.v0_1",
         "le-ada-fmla-missing-thread.executable.v0_1",
         "le-ada-fmla-adversarial.executable.v0_1"
       ],
@@ -1242,6 +1338,7 @@
         "le-class-collective-adversarial.executable.v0_1",
         "le-retaliation-wrongful-termination-missing-attachment.executable.v0_1",
         "le-restrictive-covenant-missing-attachment.executable.v0_1",
+        "le-admin-exhaustion-missing-attachment.executable.v0_1",
         "le-ada-fmla-missing-thread.executable.v0_1",
         "le-ada-fmla-adversarial.executable.v0_1"
       ],
@@ -1252,9 +1349,9 @@
       "status": "passed",
       "message": "Blocked review did not authorize budget, matter, Lake, SQLite, external, or learning actions.",
       "evidence_refs": [
-        "leexecfactbinding_9dc0aa4345109e3d4a07",
-        "leexecdriverbinding_63f9af760d715875f9e6",
-        "leexecdriverimpact_39550697238526f6d7a1"
+        "leexecfactbinding_2f3cbca5e9f53ad6bc86",
+        "leexecdriverbinding_40c66140f2e825f85c27",
+        "leexecdriverimpact_28f781e3aea47f1edf45"
       ],
       "blocking_refs": []
     }
@@ -1285,5 +1382,5 @@
   "sqlite_write_performed": false,
   "external_writes_performed": false,
   "silent_learning_performed": false,
-  "generated_at": "2026-07-04T10:33:36.904364Z"
+  "generated_at": "2026-07-04T11:00:58.910450Z"
 }

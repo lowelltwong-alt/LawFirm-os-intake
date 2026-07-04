@@ -10,7 +10,7 @@
       "label": "Critical L&E Fact Gaps Block Amount Budget",
       "status": "passed",
       "manifest_ref": "examples/synthetic/courtlistener-derived/labor-employment-dataset-manifest.json",
-      "fact_report_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-missing\\full-run\\quality\\le-qa-matrix\\cases\\critical_fact_gaps_block_amount_budget\\labor_employment_budget_fact_audit_report.json",
+      "fact_report_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-admin-missing\\full-run\\quality\\le-qa-matrix\\cases\\critical_fact_gaps_block_amount_budget\\labor_employment_budget_fact_audit_report.json",
       "expected_budget_readiness_state": "blocked_missing_critical_facts",
       "actual_budget_readiness_state": "blocked_missing_critical_facts",
       "expected_budget_gate_effect": "block_amount_budget_before_proposal",
@@ -37,7 +37,7 @@
       "label": "Ready Critical L&E Facts Still Require Range Review",
       "status": "passed",
       "manifest_ref": "examples/synthetic/courtlistener-derived/labor-employment-ready-critical-facts-manifest.json",
-      "fact_report_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-retaliation-missing\\full-run\\quality\\le-qa-matrix\\cases\\ready_critical_facts_still_range_only\\labor_employment_budget_fact_audit_report.json",
+      "fact_report_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-admin-missing\\full-run\\quality\\le-qa-matrix\\cases\\ready_critical_facts_still_range_only\\labor_employment_budget_fact_audit_report.json",
       "expected_budget_readiness_state": "range_only_pending_human_review",
       "actual_budget_readiness_state": "range_only_pending_human_review",
       "expected_budget_gate_effect": "allow_range_or_hours_only_pending_review",
@@ -83,5 +83,5 @@
   "sqlite_write_performed": false,
   "external_writes_performed": false,
   "silent_learning_performed": false,
-  "generated_at": "2026-07-04T10:33:33.000136Z"
+  "generated_at": "2026-07-04T11:00:54.330832Z"
 }

@@ -61,12 +61,12 @@ def test_labor_employment_executable_driver_binding_maps_fact_gaps_to_budget_dri
     )
 
     assert report.status == "labor_employment_executable_driver_bindings_ready_for_review"
-    assert persisted.case_count == 20
+    assert persisted.case_count == 21
     assert persisted.failed_case_count == 0
-    assert persisted.driver_binding_count == 95
-    assert persisted.source_bound_driver_count == 95
+    assert persisted.driver_binding_count == 98
+    assert persisted.source_bound_driver_count == 98
     assert persisted.unbound_driver_count == 0
-    assert persisted.critical_driver_block_count == 18
+    assert persisted.critical_driver_block_count == 19
     assert persisted.critical_driver_review_only_count == 27
     assert persisted.missing_driver_dimensions == []
     assert set(persisted.covered_driver_dimensions) == set(persisted.required_driver_dimensions)
@@ -113,6 +113,24 @@ def test_labor_employment_executable_driver_binding_maps_fact_gaps_to_budget_dri
         "administrative_exhaustion_and_agency_record"
     ]
     assert cases["le-admin-exhaustion-clean.executable.v0_1"].critical_driver_block_count == 0
+    admin_missing = {
+        binding.driver_dimension: binding
+        for binding in cases[
+            "le-admin-exhaustion-missing-attachment.executable.v0_1"
+        ].driver_bindings
+    }
+    assert set(admin_missing) == {
+        "administrative_exhaustion",
+        "forum_arbitration",
+        "employment_timeline",
+    }
+    assert admin_missing["employment_timeline"].critical_driver_block is True
+    assert admin_missing["administrative_exhaustion"].critical_driver_block is False
+    assert admin_missing["forum_arbitration"].critical_driver_block is False
+    assert (
+        cases["le-admin-exhaustion-missing-attachment.executable.v0_1"].critical_driver_block_count
+        == 1
+    )
     retaliation_clean = {
         binding.driver_dimension: binding
         for binding in cases[
@@ -352,7 +370,7 @@ def test_labor_employment_executable_driver_binding_cli_writes_candidate_report(
 
     assert exit_code == 0
     assert report["status"] == "labor_employment_executable_driver_bindings_ready_for_review"
-    assert report["case_count"] == 20
+    assert report["case_count"] == 21
     assert report["missing_driver_dimensions"] == []
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out

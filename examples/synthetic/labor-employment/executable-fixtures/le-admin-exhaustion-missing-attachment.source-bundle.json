@@ -1,0 +1,103 @@
+{
+  "schema_version": "0.1",
+  "bundle_id": "syn-le-admin-exhaustion-missing-attachment-001",
+  "data_origin": "synthetic",
+  "contains_real_client_data": false,
+  "contains_real_matter_data": false,
+  "contains_privileged_data": false,
+  "sources": [
+    {
+      "source_id": "syn-le-admin-exhaustion-missing-cover-email-001",
+      "source_type": "email",
+      "filename": "synthetic_admin_exhaustion_missing_attachments.txt",
+      "text": "From: referral-coordinator@synthetic-referral.example\nTo: intake@synthetic-law.example\nDate: July 4, 2026\nSubject: Agency exhaustion packet - missing charge and right-to-sue files\n\nThe synthetic referral concerns Elena Park and Meridian Market LLC. The cover email says the matter involves discrimination, retaliation, termination after protected activity, and an administrative exhaustion packet. It says the agency charge, right-to-sue letter, filing-date receipt, and forum/removal notes were attached, but the received packet includes only this message and the missing-file placeholders. The sender says the complaint deadline may depend on the right-to-sue receipt date, and that arbitration or removal posture is not confirmed. Do not docket a deadline, open a matter, or estimate an amount budget from this cover email alone.",
+      "metadata": {
+        "synthetic": true,
+        "attachment_refs": [
+          "agency-charge.pdf",
+          "right-to-sue-letter.pdf",
+          "filing-and-receipt-dates.txt",
+          "forum-removal-notes.txt"
+        ]
+      }
+    },
+    {
+      "source_id": "syn-le-admin-exhaustion-agency-record-missing-001",
+      "source_type": "attachment_text",
+      "filename": "agency-charge.pdf",
+      "text": "Synthetic placeholder only: referenced agency charge and right-to-sue letter were not included in the inbound packet.",
+      "metadata": {
+        "synthetic": true,
+        "missing": true,
+        "read_state": "missing",
+        "attachment_refs": [
+          "agency-charge.pdf",
+          "right-to-sue-letter.pdf"
+        ]
+      }
+    },
+    {
+      "source_id": "syn-le-admin-exhaustion-timeline-missing-001",
+      "source_type": "attachment_text",
+      "filename": "filing-and-receipt-dates.txt",
+      "text": "Synthetic placeholder only: referenced agency filing date, right-to-sue receipt date, and complaint deadline calculation notes were not included in the inbound packet.",
+      "metadata": {
+        "synthetic": true,
+        "missing": true,
+        "read_state": "missing",
+        "attachment_refs": [
+          "filing-and-receipt-dates.txt"
+        ]
+      }
+    },
+    {
+      "source_id": "syn-le-admin-exhaustion-forum-removal-missing-001",
+      "source_type": "attachment_text",
+      "filename": "forum-removal-notes.txt",
+      "text": "Synthetic placeholder only: referenced forum, removal, and arbitration posture notes were not included in the inbound packet.",
+      "metadata": {
+        "synthetic": true,
+        "missing": true,
+        "read_state": "missing",
+        "attachment_refs": [
+          "forum-removal-notes.txt"
+        ]
+      }
+    }
+  ],
+  "fixture_hints": {
+    "provided_fields": [
+      "employee_claimant_identity",
+      "employer_or_defendant_identity",
+      "claims_and_causes_of_action"
+    ],
+    "entities": [
+      {
+        "name": "Elena Park",
+        "role_candidates": [
+          {
+            "role": "claimant",
+            "confidence": 0.77
+          },
+          {
+            "role": "adverse_party",
+            "confidence": 0.57
+          }
+        ]
+      },
+      {
+        "name": "Meridian Market LLC",
+        "role_candidates": [
+          {
+            "role": "employer_or_defendant",
+            "confidence": 0.76
+          },
+          {
+            "role": "prospective_represented_client",
+            "confidence": 0.61
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -31,8 +31,8 @@ def test_labor_employment_executable_fixtures_run_preflight_and_preserve_boundar
     )
 
     assert report.status == "labor_employment_executable_fixtures_ready_for_review"
-    assert persisted.fixture_count == 20
-    assert persisted.preflight_executed_count == 20
+    assert persisted.fixture_count == 21
+    assert persisted.preflight_executed_count == 21
     assert persisted.failed_case_count == 0
     assert persisted.missing_pack_link_count == 0
     assert persisted.missing_source_signal_count == 0
@@ -153,6 +153,17 @@ def test_labor_employment_executable_fixtures_run_preflight_and_preserve_boundar
     assert "prompt_injection_source_content" not in (
         cases["le-admin-exhaustion-clean.executable.v0_1"].exception_labels
     )
+    admin_missing = cases["le-admin-exhaustion-missing-attachment.executable.v0_1"]
+    assert admin_missing.source_count == 4
+    assert admin_missing.missing_source_count == 3
+    assert admin_missing.expected_budget_treatment == "block_amount_budget"
+    assert "source_missing" in admin_missing.exception_labels
+    assert "critic_date_or_deadline_requires_review" in admin_missing.exception_labels
+    assert set(admin_missing.expected_budget_fact_gap_ids) == {
+        "administrative_exhaustion_and_agency_record",
+        "relevant_employment_timeline",
+        "forum_removed_and_arbitration_posture",
+    }
     assert cases["le-ada-fmla-missing-thread.executable.v0_1"].duplicate_source_count == 1
     assert cases["le-ada-fmla-clean.executable.v0_1"].missing_source_count == 0
     assert cases["le-ada-fmla-clean.executable.v0_1"].duplicate_source_count == 0
@@ -297,7 +308,7 @@ def test_labor_employment_executable_fixtures_cli_writes_candidate_report(
 
     assert exit_code == 0
     assert report["status"] == "labor_employment_executable_fixtures_ready_for_review"
-    assert report["fixture_count"] == 20
-    assert report["preflight_executed_count"] == 20
+    assert report["fixture_count"] == 21
+    assert report["preflight_executed_count"] == 21
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out

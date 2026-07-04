@@ -71,11 +71,11 @@ def test_labor_employment_executable_driver_impact_maps_drivers_to_budget_effect
     )
 
     assert report.status == "labor_employment_executable_driver_impacts_ready_for_review"
-    assert persisted.case_count == 20
+    assert persisted.case_count == 21
     assert persisted.failed_case_count == 0
-    assert persisted.impact_item_count == 95
-    assert persisted.source_bound_impact_count == 95
-    assert persisted.block_amount_budget_impact_count == 18
+    assert persisted.impact_item_count == 98
+    assert persisted.source_bound_impact_count == 98
+    assert persisted.block_amount_budget_impact_count == 19
     assert persisted.critical_review_only_impact_count == 27
     assert persisted.range_widening_impact_count > 0
     assert persisted.scenario_fork_impact_count > 0
@@ -113,6 +113,18 @@ def test_labor_employment_executable_driver_impact_maps_drivers_to_budget_effect
     assert admin_case.block_amount_budget_impact_count == 0
     admin_impacts = {item.driver_dimension: item for item in admin_case.impact_items}
     assert "add_scenario_fork" in admin_impacts["administrative_exhaustion"].impact_actions
+    admin_missing = cases["le-admin-exhaustion-missing-attachment.executable.v0_1"]
+    assert admin_missing.allowed_budget_output == "blocked_amount_budget"
+    assert admin_missing.impact_item_count == 3
+    assert admin_missing.block_amount_budget_impact_count == 1
+    assert admin_missing.range_widening_impact_count == 3
+    assert admin_missing.scenario_fork_impact_count == 2
+    admin_missing_impacts = {item.driver_dimension: item for item in admin_missing.impact_items}
+    assert "block_amount_budget" in admin_missing_impacts["employment_timeline"].impact_actions
+    assert "block_amount_budget" not in (
+        admin_missing_impacts["administrative_exhaustion"].impact_actions
+    )
+    assert "block_amount_budget" not in admin_missing_impacts["forum_arbitration"].impact_actions
     retaliation_clean = cases["le-retaliation-wrongful-termination-clean.executable.v0_1"]
     assert (
         retaliation_clean.allowed_budget_output
@@ -265,8 +277,8 @@ def test_labor_employment_executable_driver_impact_cli_writes_candidate_report(
 
     assert exit_code == 0
     assert report["status"] == "labor_employment_executable_driver_impacts_ready_for_review"
-    assert report["case_count"] == 20
-    assert report["impact_item_count"] == 95
+    assert report["case_count"] == 21
+    assert report["impact_item_count"] == 98
     assert report["critical_review_only_impact_count"] == 27
     assert report["missing_impact_policy_dimensions"] == []
     assert '"budget_amount_output_authorized": false' in captured.out
