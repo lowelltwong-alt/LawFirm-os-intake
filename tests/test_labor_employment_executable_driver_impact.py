@@ -71,15 +71,15 @@ def test_labor_employment_executable_driver_impact_maps_drivers_to_budget_effect
     )
 
     assert report.status == "labor_employment_executable_driver_impacts_ready_for_review"
-    assert persisted.case_count == 28
+    assert persisted.case_count == 31
     assert persisted.failed_case_count == 0
-    assert persisted.impact_item_count == 141
-    assert persisted.source_bound_impact_count == 141
-    assert persisted.block_amount_budget_impact_count == 25
-    assert persisted.critical_review_only_impact_count == 46
-    assert persisted.range_widening_impact_count > 0
-    assert persisted.scenario_fork_impact_count > 0
-    assert persisted.rate_guideline_review_impact_count > 0
+    assert persisted.impact_item_count == 159
+    assert persisted.source_bound_impact_count == 159
+    assert persisted.block_amount_budget_impact_count == 33
+    assert persisted.critical_review_only_impact_count == 50
+    assert persisted.range_widening_impact_count == 138
+    assert persisted.scenario_fork_impact_count == 54
+    assert persisted.rate_guideline_review_impact_count == 21
     assert persisted.human_review_impact_count == persisted.impact_item_count
     assert persisted.max_range_widening_factor >= 2.0
     assert persisted.missing_impact_policy_dimensions == []
@@ -203,6 +203,35 @@ def test_labor_employment_executable_driver_impact_maps_drivers_to_budget_effect
         admin_missing_impacts["administrative_exhaustion"].impact_actions
     )
     assert "block_amount_budget" not in admin_missing_impacts["forum_arbitration"].impact_actions
+    admin_messy = cases["le-admin-exhaustion-messy-thread.executable.v0_1"]
+    assert admin_messy.allowed_budget_output == (
+        "candidate_range_after_review_pending_human_review"
+    )
+    assert admin_messy.impact_item_count == 5
+    assert admin_messy.block_amount_budget_impact_count == 0
+    assert admin_messy.critical_review_only_impact_count == 1
+    assert admin_messy.range_widening_impact_count == 5
+    assert admin_messy.scenario_fork_impact_count == 2
+    assert admin_messy.rate_guideline_review_impact_count == 0
+    admin_messy_impacts = {item.driver_dimension: item for item in admin_messy.impact_items}
+    assert "add_scenario_fork" in admin_messy_impacts["administrative_exhaustion"].impact_actions
+    assert "add_scenario_fork" in admin_messy_impacts["forum_arbitration"].impact_actions
+    assert "block_amount_budget" not in admin_messy_impacts["employment_timeline"].impact_actions
+    admin_adversarial = cases["le-admin-exhaustion-adversarial.executable.v0_1"]
+    assert admin_adversarial.allowed_budget_output == "blocked_amount_budget"
+    assert admin_adversarial.impact_item_count == 7
+    assert admin_adversarial.block_amount_budget_impact_count == 4
+    assert admin_adversarial.critical_review_only_impact_count == 1
+    assert admin_adversarial.range_widening_impact_count == 5
+    assert admin_adversarial.scenario_fork_impact_count == 3
+    assert admin_adversarial.rate_guideline_review_impact_count == 2
+    admin_adversarial_impacts = {
+        item.driver_dimension: item for item in admin_adversarial.impact_items
+    }
+    assert "block_amount_budget" in admin_adversarial_impacts["party_topology"].impact_actions
+    assert "block_amount_budget" in (
+        admin_adversarial_impacts["carrier_guideline_rate_context"].impact_actions
+    )
     retaliation_clean = cases["le-retaliation-wrongful-termination-clean.executable.v0_1"]
     assert (
         retaliation_clean.allowed_budget_output
@@ -281,6 +310,26 @@ def test_labor_employment_executable_driver_impact_maps_drivers_to_budget_effect
     )
     assert "block_amount_budget" in (
         retaliation_missing_impacts["carrier_guideline_rate_context"].impact_actions
+    )
+    retaliation_adversarial = cases[
+        "le-retaliation-wrongful-termination-adversarial.executable.v0_1"
+    ]
+    assert retaliation_adversarial.allowed_budget_output == "blocked_amount_budget"
+    assert retaliation_adversarial.impact_item_count == 6
+    assert retaliation_adversarial.block_amount_budget_impact_count == 4
+    assert retaliation_adversarial.critical_review_only_impact_count == 2
+    assert retaliation_adversarial.range_widening_impact_count == 4
+    assert retaliation_adversarial.scenario_fork_impact_count == 1
+    assert retaliation_adversarial.rate_guideline_review_impact_count == 2
+    retaliation_adversarial_impacts = {
+        item.driver_dimension: item for item in retaliation_adversarial.impact_items
+    }
+    assert "block_amount_budget" in retaliation_adversarial_impacts["party_topology"].impact_actions
+    assert "block_amount_budget" in (
+        retaliation_adversarial_impacts["employment_timeline"].impact_actions
+    )
+    assert "require_rate_guideline_review" in (
+        retaliation_adversarial_impacts["carrier_guideline_rate_context"].impact_actions
     )
     ada_clean = cases["le-ada-fmla-clean.executable.v0_1"]
     assert ada_clean.allowed_budget_output == "candidate_range_after_review_pending_human_review"
@@ -405,9 +454,9 @@ def test_labor_employment_executable_driver_impact_cli_writes_candidate_report(
 
     assert exit_code == 0
     assert report["status"] == "labor_employment_executable_driver_impacts_ready_for_review"
-    assert report["case_count"] == 28
-    assert report["impact_item_count"] == 141
-    assert report["critical_review_only_impact_count"] == 46
+    assert report["case_count"] == 31
+    assert report["impact_item_count"] == 159
+    assert report["critical_review_only_impact_count"] == 50
     assert report["missing_impact_policy_dimensions"] == []
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out

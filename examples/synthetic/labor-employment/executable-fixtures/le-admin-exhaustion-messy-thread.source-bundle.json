@@ -1,0 +1,69 @@
+{
+  "schema_version": "0.1",
+  "bundle_id": "syn-le-admin-exhaustion-messy-thread-001",
+  "data_origin": "synthetic",
+  "contains_real_client_data": false,
+  "contains_real_matter_data": false,
+  "contains_privileged_data": false,
+  "sources": [
+    {
+      "source_id": "syn-le-admin-exhaustion-correspondence-001",
+      "source_type": "correspondence_dump",
+      "filename": "synthetic_admin_exhaustion_messy_thread.txt",
+      "text": "From: referral-coordinator@synthetic-referral.example\nTo: intake@synthetic-law.example\nDate: July 2, 2026\nSubject: Agency charge and right-to-sue correspondence dump\n\nThe synthetic correspondence dump concerns Elena Park and Meridian Market LLC. The current sender says the agency charge alleges discrimination, retaliation, and termination after protected activity. The thread references a state agency filing date of May 4, 2026, a right-to-sue receipt date of June 20, 2026, and an August 19, 2026 complaint deadline candidate, all for human deadline review only. Forum, removal posture, and arbitration posture are uncertain. The employee handbook, arbitration agreement, and policy file are not provided. Current sender assertions and quoted history need separate source treatment, and deadline candidates remain review-only.\n\n-----Original Message-----\nFrom: legal-ops@meridianmarket.example\nTo: referral-coordinator@synthetic-referral.example\nSubject: RE: agency charge file\n\nThe agency charge packet includes the right-to-sue letter and notes possible federal court filing, but the removal and arbitration posture still need counsel review. The policy file is still being collected.\n\n-----Original Message-----\nFrom: elena.park@example.invalid\nTo: legal-ops@meridianmarket.example\nSubject: administrative charge follow-up\n\nI filed a discrimination and retaliation charge and received the right-to-sue letter. I believe the termination followed protected activity.",
+      "metadata": {
+        "synthetic": true,
+        "thread_state": "messy_quoted_history"
+      }
+    },
+    {
+      "source_id": "syn-le-admin-exhaustion-correspondence-duplicate-001",
+      "source_type": "correspondence_dump",
+      "filename": "synthetic_admin_exhaustion_messy_thread_duplicate.txt",
+      "text": "From: referral-coordinator@synthetic-referral.example\nTo: intake@synthetic-law.example\nDate: July 2, 2026\nSubject: Agency charge and right-to-sue correspondence dump\n\nThe synthetic correspondence dump concerns Elena Park and Meridian Market LLC. The current sender says the agency charge alleges discrimination, retaliation, and termination after protected activity. The thread references a state agency filing date of May 4, 2026, a right-to-sue receipt date of June 20, 2026, and an August 19, 2026 complaint deadline candidate, all for human deadline review only. Forum, removal posture, and arbitration posture are uncertain. The employee handbook, arbitration agreement, and policy file are not provided. Current sender assertions and quoted history need separate source treatment, and deadline candidates remain review-only.\n\n-----Original Message-----\nFrom: legal-ops@meridianmarket.example\nTo: referral-coordinator@synthetic-referral.example\nSubject: RE: agency charge file\n\nThe agency charge packet includes the right-to-sue letter and notes possible federal court filing, but the removal and arbitration posture still need counsel review. The policy file is still being collected.\n\n-----Original Message-----\nFrom: elena.park@example.invalid\nTo: legal-ops@meridianmarket.example\nSubject: administrative charge follow-up\n\nI filed a discrimination and retaliation charge and received the right-to-sue letter. I believe the termination followed protected activity.",
+      "metadata": {
+        "synthetic": true,
+        "thread_state": "duplicate_messy_quoted_history"
+      }
+    }
+  ],
+  "fixture_hints": {
+    "provided_fields": [
+      "employee_claimant_identity",
+      "employer_or_defendant_identity",
+      "claims_and_causes_of_action",
+      "administrative_exhaustion_and_agency_record",
+      "forum_removed_and_arbitration_posture",
+      "relevant_employment_timeline",
+      "policy_handbook_contract_documents"
+    ],
+    "entities": [
+      {
+        "name": "Elena Park",
+        "role_candidates": [
+          {
+            "role": "claimant",
+            "confidence": 0.86
+          },
+          {
+            "role": "adverse_party",
+            "confidence": 0.5
+          }
+        ]
+      },
+      {
+        "name": "Meridian Market LLC",
+        "role_candidates": [
+          {
+            "role": "employer_or_defendant",
+            "confidence": 0.86
+          },
+          {
+            "role": "prospective_represented_client",
+            "confidence": 0.55
+          }
+        ]
+      }
+    ]
+  }
+}

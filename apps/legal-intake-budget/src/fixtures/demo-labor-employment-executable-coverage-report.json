@@ -1,21 +1,21 @@
 {
   "schema_version": "0.1",
-  "executable_coverage_report_id": "leexeccoverage_4dc1827b171faf1d02da",
+  "executable_coverage_report_id": "leexeccoverage_434f174c43c0d9e9be88",
   "status": "labor_employment_executable_coverage_ready_for_review",
-  "coverage_state": "partial_executable_coverage",
+  "coverage_state": "complete_executable_coverage",
   "pack_id": "le-budget-fixture-family-pack.v0_1",
-  "pack_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\examples\\synthetic\\labor-employment\\labor-employment-budget-fixture-family-pack.json",
+  "pack_ref": "<repo-root>\\examples\\synthetic\\labor-employment\\labor-employment-budget-fixture-family-pack.json",
   "executable_manifest_id": "le-executable-fixtures-manifest.v0_1",
-  "executable_manifest_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\examples\\synthetic\\labor-employment\\labor-employment-executable-fixtures-manifest.json",
+  "executable_manifest_ref": "<repo-root>\\examples\\synthetic\\labor-employment\\labor-employment-executable-fixtures-manifest.json",
   "pack_case_count": 32,
-  "executable_fixture_count": 28,
-  "executable_pack_case_link_count": 29,
-  "covered_pack_case_count": 29,
-  "missing_executable_pack_case_count": 3,
+  "executable_fixture_count": 31,
+  "executable_pack_case_link_count": 32,
+  "covered_pack_case_count": 32,
+  "missing_executable_pack_case_count": 0,
   "covered_family_count": 8,
   "missing_family_count": 0,
-  "covered_family_variant_count": 29,
-  "missing_family_variant_count": 3,
+  "covered_family_variant_count": 32,
+  "missing_family_variant_count": 0,
   "covered_pack_case_ids": [
     "le-discrimination-harassment-clean.v0_1",
     "le-discrimination-harassment-messy-thread.v0_1",
@@ -24,6 +24,7 @@
     "le-retaliation-wrongful-termination-clean.v0_1",
     "le-retaliation-wrongful-termination-messy-thread.v0_1",
     "le-retaliation-wrongful-termination-missing-attachment.v0_1",
+    "le-retaliation-wrongful-termination-adversarial.v0_1",
     "le-wage-hour-clean.v0_1",
     "le-wage-hour-messy-thread.v0_1",
     "le-wage-hour-missing-attachment.v0_1",
@@ -45,18 +46,12 @@
     "le-class-collective-missing-attachment.v0_1",
     "le-class-collective-adversarial.v0_1",
     "le-admin-exhaustion-clean.v0_1",
-    "le-admin-exhaustion-missing-attachment.v0_1"
-  ],
-  "missing_executable_pack_case_ids": [
-    "le-retaliation-wrongful-termination-adversarial.v0_1",
     "le-admin-exhaustion-messy-thread.v0_1",
+    "le-admin-exhaustion-missing-attachment.v0_1",
     "le-admin-exhaustion-adversarial.v0_1"
   ],
-  "missing_family_variant_refs": [
-    "retaliation_wrongful_termination:adversarial",
-    "administrative_exhaustion_agency_record:messy_thread",
-    "administrative_exhaustion_agency_record:adversarial"
-  ],
+  "missing_executable_pack_case_ids": [],
+  "missing_family_variant_refs": [],
   "family_coverage": [
     {
       "family": "discrimination_harassment",
@@ -80,17 +75,17 @@
     {
       "family": "retaliation_wrongful_termination",
       "pack_case_count": 4,
-      "covered_case_count": 3,
-      "missing_case_count": 1,
+      "covered_case_count": 4,
+      "missing_case_count": 0,
       "covered_variants": [
         "clean",
         "messy_thread",
-        "missing_attachment"
-      ],
-      "missing_variants": [
+        "missing_attachment",
         "adversarial"
       ],
+      "missing_variants": [],
       "executable_fixture_ids": [
+        "le-retaliation-wrongful-termination-adversarial.executable.v0_1",
         "le-retaliation-wrongful-termination-clean.executable.v0_1",
         "le-retaliation-wrongful-termination-messy-thread.executable.v0_1",
         "le-retaliation-wrongful-termination-missing-attachment.executable.v0_1"
@@ -193,18 +188,19 @@
     {
       "family": "administrative_exhaustion_agency_record",
       "pack_case_count": 4,
-      "covered_case_count": 2,
-      "missing_case_count": 2,
+      "covered_case_count": 4,
+      "missing_case_count": 0,
       "covered_variants": [
         "clean",
-        "missing_attachment"
-      ],
-      "missing_variants": [
         "messy_thread",
+        "missing_attachment",
         "adversarial"
       ],
+      "missing_variants": [],
       "executable_fixture_ids": [
+        "le-admin-exhaustion-adversarial.executable.v0_1",
         "le-admin-exhaustion-clean.executable.v0_1",
+        "le-admin-exhaustion-messy-thread.executable.v0_1",
         "le-admin-exhaustion-missing-attachment.executable.v0_1"
       ]
     }
@@ -342,8 +338,10 @@
       "pack_case_id": "le-retaliation-wrongful-termination-adversarial.v0_1",
       "family": "retaliation_wrongful_termination",
       "variant": "adversarial",
-      "coverage_state": "missing_executable",
-      "executable_fixture_ids": [],
+      "coverage_state": "covered_executable",
+      "executable_fixture_ids": [
+        "le-retaliation-wrongful-termination-adversarial.executable.v0_1"
+      ],
       "expected_budget_readiness_state": "blocked_missing_critical_facts",
       "expected_budget_treatment": "block_amount_budget",
       "missing_critical_fact_ids": [
@@ -739,8 +737,10 @@
       "pack_case_id": "le-admin-exhaustion-messy-thread.v0_1",
       "family": "administrative_exhaustion_agency_record",
       "variant": "messy_thread",
-      "coverage_state": "missing_executable",
-      "executable_fixture_ids": [],
+      "coverage_state": "covered_executable",
+      "executable_fixture_ids": [
+        "le-admin-exhaustion-messy-thread.executable.v0_1"
+      ],
       "expected_budget_readiness_state": "range_only_pending_human_review",
       "expected_budget_treatment": "candidate_range_budget_after_review",
       "missing_critical_fact_ids": [],
@@ -774,8 +774,10 @@
       "pack_case_id": "le-admin-exhaustion-adversarial.v0_1",
       "family": "administrative_exhaustion_agency_record",
       "variant": "adversarial",
-      "coverage_state": "missing_executable",
-      "executable_fixture_ids": [],
+      "coverage_state": "covered_executable",
+      "executable_fixture_ids": [
+        "le-admin-exhaustion-adversarial.executable.v0_1"
+      ],
       "expected_budget_readiness_state": "blocked_missing_critical_facts",
       "expected_budget_treatment": "block_amount_budget",
       "missing_critical_fact_ids": [
@@ -850,5 +852,5 @@
   "sqlite_write_performed": false,
   "external_writes_performed": false,
   "silent_learning_performed": false,
-  "generated_at": "2026-07-04T15:24:20.286600Z"
+  "generated_at": "2026-07-04T16:14:06.824218Z"
 }

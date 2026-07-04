@@ -1,22 +1,22 @@
 {
   "schema_version": "0.1",
-  "synthetic_qa_blocker_report_id": "synthetic_qa_blocker_report_512a5874133ffe29",
+  "synthetic_qa_blocker_report_id": "synthetic_qa_blocker_report_fe85dfae1b0e1d15",
   "status": "synthetic_qa_blocker_report_ready_for_review",
-  "source_ui_manifest_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-discrimination-adversarial\\full-run-final\\ui_review_manifest.json",
-  "source_ui_manifest_id": "ui_review_manifest_4be8a45c15bb",
+  "source_ui_manifest_ref": ".lawfirm-os-intake\\tmp\\complete-le-fixture-gaps\\full-run-final\\ui_review_manifest.json",
+  "source_ui_manifest_id": "ui_review_manifest_1efdc431adfd",
   "source_ui_manifest_overall_status": "blocked",
-  "source_synthetic_confidence_summary_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-discrimination-adversarial\\full-run-final\\quality\\synthetic_confidence_summary_report.json",
-  "source_synthetic_confidence_summary_report_id": "synthetic_confidence_summary_c2df892eb11efd1b",
+  "source_synthetic_confidence_summary_ref": ".lawfirm-os-intake\\tmp\\complete-le-fixture-gaps\\full-run-final\\quality\\synthetic-confidence-summary\\synthetic_confidence_summary_report.json",
+  "source_synthetic_confidence_summary_report_id": "synthetic_confidence_summary_f17e23e8e7c999e3",
   "source_synthetic_confidence_summary_status": "synthetic_confidence_summary_ready_for_review",
-  "source_synthetic_qa_review_run_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-discrimination-adversarial\\full-run-final\\synthetic_qa_review_run_report.json",
-  "source_synthetic_qa_review_run_report_id": "syntheticqareviewrun_d06f7880fb3d4160",
+  "source_synthetic_qa_review_run_ref": ".lawfirm-os-intake\\tmp\\complete-le-fixture-gaps\\full-run-final\\synthetic_qa_review_run_report.json",
+  "source_synthetic_qa_review_run_report_id": "syntheticqareviewrun_164d20f514d5bcfb",
   "source_synthetic_qa_review_run_status": "synthetic_qa_review_run_ready",
-  "row_count": 24,
+  "row_count": 21,
   "failed_row_count": 0,
   "blocked_row_count": 0,
-  "pending_review_row_count": 24,
+  "pending_review_row_count": 21,
   "blocked_action_count": 0,
-  "needs_review_action_count": 24,
+  "needs_review_action_count": 21,
   "fixed_action_count": 0,
   "ready_action_count": 0,
   "review_queue_state": "needs_review",
@@ -81,7 +81,7 @@
         "synthetic_qa_blocker_requires_review"
       ],
       "notes": [
-        "poc_qa_triage_report.json is missing; The POC QA triage queue must reconcile validation, synthetic QA, L&E budget gates, and UI evidence before readiness is claimed."
+        "The POC QA triage queue must reconcile validation, synthetic QA, L&E budget gates, and UI evidence before readiness is claimed."
       ]
     },
     {
@@ -421,69 +421,6 @@
       ]
     },
     {
-      "row_id": "quality_gate:validation_suite_evidence",
-      "source": "quality_gate",
-      "label": "Validation Suite Evidence",
-      "state": "pending_review",
-      "action_state": "needs_review",
-      "owner": "qa-reference",
-      "evidence_refs": [
-        "validation_suite_evidence_report.json"
-      ],
-      "recommended_next_action": "Review quality gate evidence and record an outcome: Validation Suite Evidence.",
-      "candidate_exception_lake_labels": [
-        "synthetic_qa_blocker_queue_candidate",
-        "quality_gate_pending_review_candidate",
-        "quality_gate_validation_suite_evidence_candidate",
-        "synthetic_qa_blocker_requires_review"
-      ],
-      "notes": [
-        "validation_suite_evidence_report.json is missing; Wrapper-based validation suite evidence must prove the current QA checks before the frontend treats the run as POC QA-ready."
-      ]
-    },
-    {
-      "row_id": "quality_gate:full_pytest",
-      "source": "quality_gate",
-      "label": "Full Pytest",
-      "state": "pending_review",
-      "action_state": "needs_review",
-      "owner": "qa-reference",
-      "evidence_refs": [
-        "validation_suite_evidence_report.json"
-      ],
-      "recommended_next_action": "Review quality gate evidence and record an outcome: Full Pytest.",
-      "candidate_exception_lake_labels": [
-        "synthetic_qa_blocker_queue_candidate",
-        "quality_gate_pending_review_candidate",
-        "quality_gate_full_pytest_candidate",
-        "synthetic_qa_blocker_requires_review"
-      ],
-      "notes": [
-        "validation_suite_evidence_report.json is missing; Validation evidence must include a passed full_pytest step from scripts/run_full_pytest.py."
-      ]
-    },
-    {
-      "row_id": "quality_gate:smoke_demo",
-      "source": "quality_gate",
-      "label": "North-Star Smoke",
-      "state": "pending_review",
-      "action_state": "needs_review",
-      "owner": "qa-reference",
-      "evidence_refs": [
-        "validation_suite_evidence_report.json"
-      ],
-      "recommended_next_action": "Review quality gate evidence and record an outcome: North-Star Smoke.",
-      "candidate_exception_lake_labels": [
-        "synthetic_qa_blocker_queue_candidate",
-        "quality_gate_pending_review_candidate",
-        "quality_gate_smoke_demo_candidate",
-        "synthetic_qa_blocker_requires_review"
-      ],
-      "notes": [
-        "validation_suite_evidence_report.json is missing; Validation evidence must include a passed smoke_demo step from scripts/smoke_demo.sh."
-      ]
-    },
-    {
       "row_id": "readiness_item:required_qa_artifacts",
       "source": "readiness_item",
       "label": "Required QA Artifacts",
@@ -491,7 +428,7 @@
       "action_state": "needs_review",
       "owner": "qa-reference",
       "evidence_refs": [
-        "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-discrimination-adversarial\\full-run-final\\quality\\synthetic_qa_bundle_report.json"
+        ".lawfirm-os-intake\\tmp\\complete-le-fixture-gaps\\full-run-final\\quality\\synthetic_qa_bundle_report.json"
       ],
       "recommended_next_action": "Review readiness item evidence and record an outcome: Required QA Artifacts.",
       "candidate_exception_lake_labels": [
@@ -512,7 +449,7 @@
       "action_state": "needs_review",
       "owner": "human-or-owner-review",
       "evidence_refs": [
-        "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-discrimination-adversarial\\full-run-final\\ui_review_manifest.json"
+        ".lawfirm-os-intake\\tmp\\complete-le-fixture-gaps\\full-run-final\\ui_review_manifest.json"
       ],
       "recommended_next_action": "Review readiness item evidence and record an outcome: Owner Review Backlog.",
       "candidate_exception_lake_labels": [
@@ -522,7 +459,7 @@
         "synthetic_qa_blocker_requires_review"
       ],
       "notes": [
-        "23 pending gates remain; pending is expected until human/owner review accepts candidate QA evidence."
+        "20 pending gates remain; pending is expected until human/owner review accepts candidate QA evidence."
       ]
     }
   ],

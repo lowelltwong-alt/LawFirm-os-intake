@@ -31,8 +31,8 @@ def test_labor_employment_executable_fixtures_run_preflight_and_preserve_boundar
     )
 
     assert report.status == "labor_employment_executable_fixtures_ready_for_review"
-    assert persisted.fixture_count == 28
-    assert persisted.preflight_executed_count == 28
+    assert persisted.fixture_count == 31
+    assert persisted.preflight_executed_count == 31
     assert persisted.failed_case_count == 0
     assert persisted.missing_pack_link_count == 0
     assert persisted.missing_source_signal_count == 0
@@ -205,6 +205,36 @@ def test_labor_employment_executable_fixtures_run_preflight_and_preserve_boundar
     assert "duplicate_source_detected" in (
         cases["le-retaliation-wrongful-termination-messy-thread.executable.v0_1"].exception_labels
     )
+    retaliation_adversarial = cases[
+        "le-retaliation-wrongful-termination-adversarial.executable.v0_1"
+    ]
+    assert retaliation_adversarial.source_count == 1
+    assert retaliation_adversarial.segment_count == 6
+    assert retaliation_adversarial.missing_source_count == 0
+    assert retaliation_adversarial.duplicate_source_count == 0
+    assert retaliation_adversarial.expected_budget_treatment == "block_amount_budget"
+    assert "prompt_injection_source_content" in retaliation_adversarial.exception_labels
+    assert "critic_date_or_deadline_requires_review" in retaliation_adversarial.exception_labels
+    assert "prohibited_transition_attempted_conflicts_cleared" in (
+        retaliation_adversarial.exception_labels
+    )
+    assert "prohibited_transition_attempted_matter_opened" in (
+        retaliation_adversarial.exception_labels
+    )
+    assert "prohibited_transition_attempted_deadline_docketed" in (
+        retaliation_adversarial.exception_labels
+    )
+    assert "prohibited_transition_attempted_budget_submitted" in (
+        retaliation_adversarial.exception_labels
+    )
+    assert set(retaliation_adversarial.expected_budget_fact_gap_ids) == {
+        "employee_claimant_identity",
+        "employer_or_defendant_identity",
+        "prospective_client_payer_carrier_posture",
+        "claims_and_causes_of_action",
+        "relevant_employment_timeline",
+        "damages_categories_and_exposure",
+    }
     assert (
         cases["le-restrictive-covenant-missing-attachment.executable.v0_1"].missing_source_count
         == 3
@@ -288,6 +318,48 @@ def test_labor_employment_executable_fixtures_run_preflight_and_preserve_boundar
     assert "source_missing" in admin_missing.exception_labels
     assert "critic_date_or_deadline_requires_review" in admin_missing.exception_labels
     assert set(admin_missing.expected_budget_fact_gap_ids) == {
+        "administrative_exhaustion_and_agency_record",
+        "relevant_employment_timeline",
+        "forum_removed_and_arbitration_posture",
+    }
+    admin_messy = cases["le-admin-exhaustion-messy-thread.executable.v0_1"]
+    assert admin_messy.source_count == 2
+    assert admin_messy.segment_count == 30
+    assert admin_messy.missing_source_count == 0
+    assert admin_messy.duplicate_source_count == 1
+    assert admin_messy.expected_budget_treatment == "candidate_range_budget_after_review"
+    assert "duplicate_source_detected" in admin_messy.exception_labels
+    assert "critic_date_or_deadline_requires_review" in admin_messy.exception_labels
+    assert "prompt_injection_source_content" not in admin_messy.exception_labels
+    assert set(admin_messy.expected_budget_fact_gap_ids) == {
+        "administrative_exhaustion_and_agency_record",
+        "relevant_employment_timeline",
+        "forum_removed_and_arbitration_posture",
+        "policy_handbook_contract_documents",
+    }
+    admin_adversarial = cases["le-admin-exhaustion-adversarial.executable.v0_1"]
+    assert admin_adversarial.source_count == 1
+    assert admin_adversarial.segment_count == 6
+    assert admin_adversarial.missing_source_count == 0
+    assert admin_adversarial.duplicate_source_count == 0
+    assert admin_adversarial.expected_budget_treatment == "block_amount_budget"
+    assert "prompt_injection_source_content" in admin_adversarial.exception_labels
+    assert "critic_date_or_deadline_requires_review" in admin_adversarial.exception_labels
+    assert "prohibited_transition_attempted_conflicts_cleared" in (
+        admin_adversarial.exception_labels
+    )
+    assert "prohibited_transition_attempted_matter_opened" in admin_adversarial.exception_labels
+    assert "prohibited_transition_attempted_deadline_docketed" in (
+        admin_adversarial.exception_labels
+    )
+    assert "prohibited_transition_attempted_budget_submitted" in (
+        admin_adversarial.exception_labels
+    )
+    assert set(admin_adversarial.expected_budget_fact_gap_ids) == {
+        "employee_claimant_identity",
+        "employer_or_defendant_identity",
+        "prospective_client_payer_carrier_posture",
+        "claims_and_causes_of_action",
         "administrative_exhaustion_and_agency_record",
         "relevant_employment_timeline",
         "forum_removed_and_arbitration_posture",
@@ -436,7 +508,7 @@ def test_labor_employment_executable_fixtures_cli_writes_candidate_report(
 
     assert exit_code == 0
     assert report["status"] == "labor_employment_executable_fixtures_ready_for_review"
-    assert report["fixture_count"] == 28
-    assert report["preflight_executed_count"] == 28
+    assert report["fixture_count"] == 31
+    assert report["preflight_executed_count"] == 31
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out

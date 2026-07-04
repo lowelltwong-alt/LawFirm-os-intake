@@ -1,26 +1,26 @@
 {
   "schema_version": "0.1",
-  "budget_qa_gate_report_id": "lebudgetqagate_2f9d273081d199c7",
+  "budget_qa_gate_report_id": "lebudgetqagate_95b9cf0f79c59d74",
   "status": "labor_employment_budget_qa_gate_ready_for_review",
-  "source_budget_output_expectations_report_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-discrimination-adversarial\\full-run-final\\quality\\le-budget-output-expectations\\labor_employment_budget_output_expectations_report.json",
-  "source_budget_output_expectations_report_id": "lebudgetoutputexpect_ee139cf7639951df",
+  "source_budget_output_expectations_report_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\complete-le-fixture-gaps\\full-run-final\\quality\\le-budget-output-expectations\\labor_employment_budget_output_expectations_report.json",
+  "source_budget_output_expectations_report_id": "lebudgetoutputexpect_b24f8eb68d80168c",
   "source_budget_output_expectations_report_status": "labor_employment_budget_output_expectations_ready_for_review",
-  "source_blocked_driver_impact_review_report_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-discrimination-adversarial\\full-run-final\\quality\\le-blocked-driver-impact-review\\labor_employment_blocked_driver_impact_review_report.json",
-  "source_blocked_driver_impact_review_report_id": "leblockeddriverimpactreview_5ab3c4944a169889",
+  "source_blocked_driver_impact_review_report_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\complete-le-fixture-gaps\\full-run-final\\quality\\le-blocked-driver-impact-review\\labor_employment_blocked_driver_impact_review_report.json",
+  "source_blocked_driver_impact_review_report_id": "leblockeddriverimpactreview_ca3b425abc278fa4",
   "source_blocked_driver_impact_review_report_status": "labor_employment_blocked_driver_impacts_ready_for_review",
-  "source_executable_coverage_report_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-discrimination-adversarial\\full-run-final\\quality\\le-executable-coverage\\labor_employment_executable_coverage_report.json",
-  "source_executable_coverage_report_id": "leexeccoverage_4dc1827b171faf1d02da",
+  "source_executable_coverage_report_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\complete-le-fixture-gaps\\full-run-final\\quality\\le-executable-coverage\\labor_employment_executable_coverage_report.json",
+  "source_executable_coverage_report_id": "leexeccoverage_434f174c43c0d9e9be88",
   "source_executable_coverage_report_status": "labor_employment_executable_coverage_ready_for_review",
-  "source_executable_coverage_state": "partial_executable_coverage",
-  "case_count": 28,
-  "executable_fixture_count": 28,
-  "covered_pack_case_count": 29,
-  "missing_executable_pack_case_count": 3,
-  "blocked_amount_budget_case_count": 14,
+  "source_executable_coverage_state": "complete_executable_coverage",
+  "case_count": 31,
+  "executable_fixture_count": 31,
+  "covered_pack_case_count": 32,
+  "missing_executable_pack_case_count": 0,
+  "blocked_amount_budget_case_count": 16,
   "range_or_hours_only_case_count": 5,
-  "candidate_range_after_review_case_count": 9,
-  "reviewed_nonblocking_case_count": 14,
-  "blocked_review_case_count": 14,
+  "candidate_range_after_review_case_count": 10,
+  "reviewed_nonblocking_case_count": 15,
+  "blocked_review_case_count": 16,
   "required_family_count": 8,
   "covered_required_family_count": 8,
   "blocked_case_ids": [
@@ -33,9 +33,11 @@
     "le-class-collective-missing-attachment.executable.v0_1",
     "le-class-collective-adversarial.executable.v0_1",
     "le-retaliation-wrongful-termination-missing-attachment.executable.v0_1",
+    "le-retaliation-wrongful-termination-adversarial.executable.v0_1",
     "le-restrictive-covenant-missing-attachment.executable.v0_1",
     "le-restrictive-covenant-adversarial.executable.v0_1",
     "le-admin-exhaustion-missing-attachment.executable.v0_1",
+    "le-admin-exhaustion-adversarial.executable.v0_1",
     "le-ada-fmla-missing-thread.executable.v0_1",
     "le-ada-fmla-adversarial.executable.v0_1"
   ],
@@ -55,6 +57,7 @@
     "le-retaliation-wrongful-termination-messy-thread.executable.v0_1",
     "le-restrictive-covenant-clean.executable.v0_1",
     "le-admin-exhaustion-clean.executable.v0_1",
+    "le-admin-exhaustion-messy-thread.executable.v0_1",
     "le-ada-fmla-clean.executable.v0_1"
   ],
   "reviewed_nonblocking_case_ids": [
@@ -71,6 +74,7 @@
     "le-restrictive-covenant-clean.executable.v0_1",
     "le-restrictive-covenant-messy-thread.executable.v0_1",
     "le-admin-exhaustion-clean.executable.v0_1",
+    "le-admin-exhaustion-messy-thread.executable.v0_1",
     "le-ada-fmla-clean.executable.v0_1"
   ],
   "missing_blocked_review_case_ids": [],
@@ -89,7 +93,7 @@
   "output_state_buckets": [
     {
       "output_state": "blocked_amount_budget",
-      "case_count": 14,
+      "case_count": 16,
       "executable_fixture_ids": [
         "le-wage-hour-missing-attachment.executable.v0_1",
         "le-wage-hour-adversarial.executable.v0_1",
@@ -100,9 +104,11 @@
         "le-class-collective-missing-attachment.executable.v0_1",
         "le-class-collective-adversarial.executable.v0_1",
         "le-retaliation-wrongful-termination-missing-attachment.executable.v0_1",
+        "le-retaliation-wrongful-termination-adversarial.executable.v0_1",
         "le-restrictive-covenant-missing-attachment.executable.v0_1",
         "le-restrictive-covenant-adversarial.executable.v0_1",
         "le-admin-exhaustion-missing-attachment.executable.v0_1",
+        "le-admin-exhaustion-adversarial.executable.v0_1",
         "le-ada-fmla-missing-thread.executable.v0_1",
         "le-ada-fmla-adversarial.executable.v0_1"
       ]
@@ -120,7 +126,7 @@
     },
     {
       "output_state": "candidate_range_after_review_pending_human_review",
-      "case_count": 9,
+      "case_count": 10,
       "executable_fixture_ids": [
         "le-discrimination-harassment-clean.executable.v0_1",
         "le-discrimination-harassment-messy-thread.executable.v0_1",
@@ -130,6 +136,7 @@
         "le-retaliation-wrongful-termination-messy-thread.executable.v0_1",
         "le-restrictive-covenant-clean.executable.v0_1",
         "le-admin-exhaustion-clean.executable.v0_1",
+        "le-admin-exhaustion-messy-thread.executable.v0_1",
         "le-ada-fmla-clean.executable.v0_1"
       ]
     }
@@ -140,9 +147,9 @@
       "status": "passed",
       "message": "Source L&E budget QA reports are ready for review.",
       "evidence_refs": [
-        "lebudgetoutputexpect_ee139cf7639951df",
-        "leblockeddriverimpactreview_5ab3c4944a169889",
-        "leexeccoverage_4dc1827b171faf1d02da"
+        "lebudgetoutputexpect_b24f8eb68d80168c",
+        "leblockeddriverimpactreview_ca3b425abc278fa4",
+        "leexeccoverage_434f174c43c0d9e9be88"
       ],
       "blocking_refs": []
     },
@@ -151,10 +158,10 @@
       "status": "passed",
       "message": "Source reports belong to the same L&E driver-impact and blocked-review lineage.",
       "evidence_refs": [
-        "leexecdriverimpact_4b0efbe577ce1f61759c",
-        "leblockeddriverimpactreview_5ab3c4944a169889",
-        "leexecdriverimpact_4b0efbe577ce1f61759c",
-        "leblockeddriverimpactreview_5ab3c4944a169889"
+        "leexecdriverimpact_a0798195563758151aed",
+        "leblockeddriverimpactreview_ca3b425abc278fa4",
+        "leexecdriverimpact_a0798195563758151aed",
+        "leblockeddriverimpactreview_ca3b425abc278fa4"
       ],
       "blocking_refs": []
     },
@@ -166,7 +173,9 @@
         "le-ada-fmla-adversarial.executable.v0_1",
         "le-ada-fmla-clean.executable.v0_1",
         "le-ada-fmla-missing-thread.executable.v0_1",
+        "le-admin-exhaustion-adversarial.executable.v0_1",
         "le-admin-exhaustion-clean.executable.v0_1",
+        "le-admin-exhaustion-messy-thread.executable.v0_1",
         "le-admin-exhaustion-missing-attachment.executable.v0_1",
         "le-class-collective-adversarial.executable.v0_1",
         "le-class-collective-clean.executable.v0_1",
@@ -184,6 +193,7 @@
         "le-restrictive-covenant-clean.executable.v0_1",
         "le-restrictive-covenant-messy-thread.executable.v0_1",
         "le-restrictive-covenant-missing-attachment.executable.v0_1",
+        "le-retaliation-wrongful-termination-adversarial.executable.v0_1",
         "le-retaliation-wrongful-termination-clean.executable.v0_1",
         "le-retaliation-wrongful-termination-messy-thread.executable.v0_1",
         "le-retaliation-wrongful-termination-missing-attachment.executable.v0_1",
@@ -218,12 +228,15 @@
         "le-retaliation-wrongful-termination-clean.executable.v0_1",
         "le-retaliation-wrongful-termination-missing-attachment.executable.v0_1",
         "le-retaliation-wrongful-termination-messy-thread.executable.v0_1",
+        "le-retaliation-wrongful-termination-adversarial.executable.v0_1",
         "le-restrictive-covenant-clean.executable.v0_1",
         "le-restrictive-covenant-messy-thread.executable.v0_1",
         "le-restrictive-covenant-missing-attachment.executable.v0_1",
         "le-restrictive-covenant-adversarial.executable.v0_1",
         "le-admin-exhaustion-clean.executable.v0_1",
+        "le-admin-exhaustion-messy-thread.executable.v0_1",
         "le-admin-exhaustion-missing-attachment.executable.v0_1",
+        "le-admin-exhaustion-adversarial.executable.v0_1",
         "le-ada-fmla-clean.executable.v0_1",
         "le-ada-fmla-missing-thread.executable.v0_1",
         "le-ada-fmla-adversarial.executable.v0_1"
@@ -244,9 +257,11 @@
         "le-class-collective-missing-attachment.executable.v0_1",
         "le-class-collective-adversarial.executable.v0_1",
         "le-retaliation-wrongful-termination-missing-attachment.executable.v0_1",
+        "le-retaliation-wrongful-termination-adversarial.executable.v0_1",
         "le-restrictive-covenant-missing-attachment.executable.v0_1",
         "le-restrictive-covenant-adversarial.executable.v0_1",
         "le-admin-exhaustion-missing-attachment.executable.v0_1",
+        "le-admin-exhaustion-adversarial.executable.v0_1",
         "le-ada-fmla-missing-thread.executable.v0_1",
         "le-ada-fmla-adversarial.executable.v0_1"
       ],
@@ -270,6 +285,7 @@
         "le-retaliation-wrongful-termination-messy-thread.executable.v0_1",
         "le-restrictive-covenant-clean.executable.v0_1",
         "le-admin-exhaustion-clean.executable.v0_1",
+        "le-admin-exhaustion-messy-thread.executable.v0_1",
         "le-ada-fmla-clean.executable.v0_1"
       ],
       "blocking_refs": []
@@ -295,9 +311,9 @@
       "status": "passed",
       "message": "No source report performed external, Lake, or SQLite writes.",
       "evidence_refs": [
-        "lebudgetoutputexpect_ee139cf7639951df",
-        "leblockeddriverimpactreview_5ab3c4944a169889",
-        "leexeccoverage_4dc1827b171faf1d02da"
+        "lebudgetoutputexpect_b24f8eb68d80168c",
+        "leblockeddriverimpactreview_ca3b425abc278fa4",
+        "leexeccoverage_434f174c43c0d9e9be88"
       ],
       "blocking_refs": []
     }

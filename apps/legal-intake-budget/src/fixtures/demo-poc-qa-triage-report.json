@@ -2,15 +2,15 @@
   "schema_version": "0.1",
   "poc_qa_triage_report_id": "poc_qa_triage_6776af4e1b8a410d",
   "status": "poc_qa_ready_for_review",
-  "source_ui_manifest_id": "ui_review_manifest_669537311d44",
-  "source_synthetic_confidence_summary_report_id": "synthetic_confidence_summary_be683ad17dc8c21d",
-  "source_synthetic_qa_review_run_report_id": "syntheticqareviewrun_d06f7880fb3d4160",
-  "source_synthetic_qa_blocker_report_id": "synthetic_qa_blocker_report_512a5874133ffe29",
+  "source_ui_manifest_id": "ui_review_manifest_1efdc431adfd",
+  "source_synthetic_confidence_summary_report_id": "synthetic_confidence_summary_f17e23e8e7c999e3",
+  "source_synthetic_qa_review_run_report_id": "syntheticqareviewrun_164d20f514d5bcfb",
+  "source_synthetic_qa_blocker_report_id": "synthetic_qa_blocker_report_fe85dfae1b0e1d15",
   "source_matter_linking_preflight_report_id": "matterlinkpreflight_b6256d36c7d774ea7124",
   "source_labor_employment_qa_matrix_report_id": "leqamat_dc66065a353db4503c28",
-  "source_blocked_driver_impact_review_report_id": "leblockeddriverimpactreview_5ab3c4944a169889",
-  "source_budget_output_expectation_report_id": "lebudgetoutputexpect_ee139cf7639951df",
-  "source_budget_qa_gate_report_id": "lebudgetqagate_2f9d273081d199c7",
+  "source_blocked_driver_impact_review_report_id": "leblockeddriverimpactreview_ca3b425abc278fa4",
+  "source_budget_output_expectation_report_id": "lebudgetoutputexpect_b24f8eb68d80168c",
+  "source_budget_qa_gate_report_id": "lebudgetqagate_95b9cf0f79c59d74",
   "source_validation_suite_evidence_report_id": "validation_suite_evidence_15aae7dda9ec0673",
   "item_count": 11,
   "passed_item_count": 3,
@@ -27,8 +27,8 @@
       "summary": "Synthetic QA review run and confidence summary are green.",
       "recommended_next_action": "Use the read-only dashboard as the synthetic QA starting point.",
       "evidence_refs": [
-        "apps/legal-intake-budget/src/fixtures/demo-synthetic-confidence-summary-report.json",
-        "apps/legal-intake-budget/src/fixtures/demo-synthetic-qa-review-run-report.json"
+        ".lawfirm-os-intake/tmp/complete-le-fixture-gaps/full-run-final/quality/synthetic-confidence-summary/synthetic_confidence_summary_report.json",
+        ".lawfirm-os-intake/tmp/complete-le-fixture-gaps/full-run-final/synthetic_qa_review_run_report.json"
       ],
       "candidate_exception_lake_labels": [
         "synthetic_qa_recipe_blocked"
@@ -39,10 +39,10 @@
       "category": "review_queue",
       "priority": "p0",
       "status": "needs_review",
-      "summary": "24 synthetic QA rows are queued for review.",
+      "summary": "21 synthetic QA rows are queued for review.",
       "recommended_next_action": "Review pending rows as candidate QA decisions; do not treat them as calibration or production approval.",
       "evidence_refs": [
-        "apps/legal-intake-budget/src/fixtures/demo-synthetic-qa-blocker-report.json"
+        ".lawfirm-os-intake/tmp/complete-le-fixture-gaps/full-run-final/quality/synthetic-qa-blocker-report/synthetic_qa_blocker_report.json"
       ],
       "candidate_exception_lake_labels": [
         "synthetic_qa_pending_human_review",
@@ -57,7 +57,7 @@
       "summary": "Read-only UI review bundle has required detail reports and no external-write reports.",
       "recommended_next_action": "Keep UI inputs local JSON only and regenerate the bundle after any report changes.",
       "evidence_refs": [
-        "apps/legal-intake-budget/src/fixtures/demo-ui-review-data-bundle.json"
+        ".lawfirm-os-intake/tmp/complete-le-fixture-gaps/full-run-final/ui_review_data_bundle.json"
       ],
       "candidate_exception_lake_labels": [
         "ui_review_bundle_gap"
@@ -71,7 +71,7 @@
       "summary": "Upfront-like matter linking produces split candidate clusters and requires human confirmation.",
       "recommended_next_action": "Use this as the no-matter-number follow-up queue before budget or matter-opening work.",
       "evidence_refs": [
-        "apps/legal-intake-budget/src/fixtures/demo-matter-linking-preflight-report.json"
+        ".lawfirm-os-intake/tmp/complete-le-fixture-gaps/full-run-final/quality/matter-linking-preflight/matter_linking_preflight_report.json"
       ],
       "candidate_exception_lake_labels": [
         "document_cluster_split_resolved_candidate",
@@ -88,7 +88,7 @@
       "summary": "L&E fact QA shows both amount-blocking critical gaps and range-only review states.",
       "recommended_next_action": "Expand from this matrix into broader L&E synthetic fixtures before real-document pilots.",
       "evidence_refs": [
-        "apps/legal-intake-budget/src/fixtures/demo-labor-employment-qa-matrix-report.json"
+        ".lawfirm-os-intake/tmp/complete-le-fixture-gaps/full-run-final/quality/le-qa-matrix/labor_employment_qa_matrix_report.json"
       ],
       "candidate_exception_lake_labels": [
         "labor_employment_budget_fact_review_required",
@@ -100,10 +100,10 @@
       "category": "labor_employment_budget_facts",
       "priority": "p0",
       "status": "needs_review",
-      "summary": "14 L&E cases block amount budgets until driver facts are resolved.",
+      "summary": "16 L&E cases block amount budgets until driver facts are resolved.",
       "recommended_next_action": "Treat these as the first budget-driver review queue and follow-up action seeds.",
       "evidence_refs": [
-        "apps/legal-intake-budget/src/fixtures/demo-labor-employment-blocked-driver-impact-review-report.json"
+        ".lawfirm-os-intake/tmp/complete-le-fixture-gaps/full-run-final/quality/le-blocked-driver-impact-review/labor_employment_blocked_driver_impact_review_report.json"
       ],
       "candidate_exception_lake_labels": [
         "budget_amount_blocked_pending_labor_employment_driver_review",
@@ -122,10 +122,10 @@
       "category": "budget_output",
       "priority": "p0",
       "status": "needs_review",
-      "summary": "14 cases block amount budgets; 9 cases allow candidate ranges after review.",
+      "summary": "16 cases block amount budgets; 10 cases allow candidate ranges after review.",
       "recommended_next_action": "Only consume reviewed nonblocking slices for budget generation; keep blocked cases as follow-up queues.",
       "evidence_refs": [
-        "apps/legal-intake-budget/src/fixtures/demo-labor-employment-budget-output-expectations-report.json"
+        ".lawfirm-os-intake/tmp/complete-le-fixture-gaps/full-run-final/quality/le-budget-output-expectations/labor_employment_budget_output_expectations_report.json"
       ],
       "candidate_exception_lake_labels": [
         "budget_amount_blocked_pending_labor_employment_driver_review",
@@ -156,7 +156,7 @@
       "summary": "Aggregate L&E budget QA gate is ready and directly ties output, blocked-driver, and coverage evidence.",
       "recommended_next_action": "Use this aggregate gate as the top-level budget QA checkpoint before fixture expansion, benchmark replay, or UI review.",
       "evidence_refs": [
-        "apps/legal-intake-budget/src/fixtures/demo-labor-employment-budget-qa-gate-report.json"
+        ".lawfirm-os-intake/tmp/complete-le-fixture-gaps/full-run-final/quality/le-budget-qa-gate/labor_employment_budget_qa_gate_report.json"
       ],
       "candidate_exception_lake_labels": [
         "budget_amount_blocked_pending_labor_employment_driver_review",
@@ -189,7 +189,7 @@
       "summary": "Public-data cache evidence is still a pending methodology gate and public records are not runtime intake.",
       "recommended_next_action": "Keep public datasets in ignored caches and convert only reviewed structures into synthetic fixtures.",
       "evidence_refs": [
-        "apps/legal-intake-budget/src/fixtures/demo-run-manifest.json"
+        ".lawfirm-os-intake/tmp/complete-le-fixture-gaps/full-run-final/ui_review_manifest.json"
       ],
       "candidate_exception_lake_labels": [
         "public_data_cache_review_pending"
@@ -203,8 +203,8 @@
       "summary": "Fresh wrapper-based validation evidence is attached to the UI manifest.",
       "recommended_next_action": "Keep regenerating validation_suite_evidence_report.json after substantial QA, schema, or UI changes.",
       "evidence_refs": [
-        "apps/legal-intake-budget/src/fixtures/demo-run-manifest.json",
-        "apps/legal-intake-budget/src/fixtures/demo-validation-suite-evidence-report.json",
+        ".lawfirm-os-intake/tmp/complete-le-fixture-gaps/full-run-final/ui_review_manifest.json",
+        ".lawfirm-os-intake/tmp/complete-le-fixture-gaps/full-run-final/quality/validation_suite_evidence_report.json",
         "scripts/run_full_pytest.py",
         "scripts/smoke_demo.sh"
       ],
@@ -218,8 +218,8 @@
       "summary": "Production actions remain blocked: no Lake write, budget submission, matter opening, or public runtime ingestion.",
       "recommended_next_action": "Promote contracts through owner repos before adding connectors or production authority.",
       "evidence_refs": [
-        "apps/legal-intake-budget/src/fixtures/demo-run-manifest.json",
-        "apps/legal-intake-budget/src/fixtures/demo-synthetic-confidence-summary-report.json"
+        ".lawfirm-os-intake/tmp/complete-le-fixture-gaps/full-run-final/ui_review_manifest.json",
+        ".lawfirm-os-intake/tmp/complete-le-fixture-gaps/full-run-final/quality/synthetic-confidence-summary/synthetic_confidence_summary_report.json"
       ],
       "candidate_exception_lake_labels": [
         "real_data_pilot_not_authorized",

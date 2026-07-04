@@ -49,15 +49,15 @@ def test_labor_employment_executable_fact_binding_binds_gaps_without_side_effect
     )
 
     assert report.status == "labor_employment_executable_budget_fact_bindings_ready_for_review"
-    assert persisted.case_count == 28
+    assert persisted.case_count == 31
     assert persisted.failed_case_count == 0
-    assert persisted.fact_binding_count == 110
-    assert persisted.critical_fact_binding_count == 61
-    assert persisted.missing_critical_fact_count == 23
-    assert persisted.source_present_confirmation_fact_count == 68
+    assert persisted.fact_binding_count == 127
+    assert persisted.critical_fact_binding_count == 73
+    assert persisted.missing_critical_fact_count == 31
+    assert persisted.source_present_confirmation_fact_count == 76
     assert persisted.source_present_unresolved_critical_driver_count == 2
-    assert persisted.evidence_bound_fact_count == 110
-    assert persisted.exception_bound_fact_count == 29
+    assert persisted.evidence_bound_fact_count == 127
+    assert persisted.exception_bound_fact_count == 36
     assert persisted.missing_policy_fact_count == 0
     assert persisted.missing_source_signal_count == 0
     assert persisted.missing_exception_label_count == 0
@@ -448,6 +448,60 @@ def test_labor_employment_executable_fact_binding_binds_gaps_without_side_effect
     assert retaliation_messy_bindings["forum_removed_and_arbitration_posture"].required_level == (
         "important"
     )
+    retaliation_adversarial_bindings = {
+        binding.fact_id: binding
+        for binding in cases[
+            "le-retaliation-wrongful-termination-adversarial.executable.v0_1"
+        ].fact_bindings
+    }
+    assert set(retaliation_adversarial_bindings) == {
+        "employee_claimant_identity",
+        "employer_or_defendant_identity",
+        "prospective_client_payer_carrier_posture",
+        "claims_and_causes_of_action",
+        "relevant_employment_timeline",
+        "damages_categories_and_exposure",
+    }
+    assert (
+        retaliation_adversarial_bindings["employee_claimant_identity"].fact_resolution_state
+        == "missing_critical_fact"
+    )
+    assert (
+        retaliation_adversarial_bindings["employer_or_defendant_identity"].fact_resolution_state
+        == "missing_critical_fact"
+    )
+    assert (
+        retaliation_adversarial_bindings[
+            "prospective_client_payer_carrier_posture"
+        ].fact_resolution_state
+        == "missing_critical_fact"
+    )
+    assert (
+        retaliation_adversarial_bindings["relevant_employment_timeline"].fact_resolution_state
+        == "missing_critical_fact"
+    )
+    assert (
+        retaliation_adversarial_bindings["claims_and_causes_of_action"].fact_resolution_state
+        == "source_present_needs_confirmation"
+    )
+    assert (
+        retaliation_adversarial_bindings["damages_categories_and_exposure"].fact_resolution_state
+        == "source_present_needs_confirmation"
+    )
+    assert retaliation_adversarial_bindings[
+        "employee_claimant_identity"
+    ].matched_exception_labels == ["prompt_injection_source_content"]
+    assert retaliation_adversarial_bindings[
+        "prospective_client_payer_carrier_posture"
+    ].matched_exception_labels == ["prompt_injection_source_content"]
+    assert (
+        sum(
+            1
+            for binding in retaliation_adversarial_bindings.values()
+            if binding.blocks_precise_budget
+        )
+        == 4
+    )
     restrictive_bindings = {
         binding.fact_id: binding
         for binding in cases[
@@ -599,6 +653,75 @@ def test_labor_employment_executable_fact_binding_binds_gaps_without_side_effect
         "source_missing" in binding.matched_exception_labels
         for binding in admin_missing_bindings.values()
     )
+    admin_messy_bindings = {
+        binding.fact_id: binding
+        for binding in cases["le-admin-exhaustion-messy-thread.executable.v0_1"].fact_bindings
+    }
+    assert set(admin_messy_bindings) == {
+        "administrative_exhaustion_and_agency_record",
+        "relevant_employment_timeline",
+        "forum_removed_and_arbitration_posture",
+        "policy_handbook_contract_documents",
+    }
+    assert all(
+        binding.binding_state == "source_bound_gap_candidate"
+        for binding in admin_messy_bindings.values()
+    )
+    assert all(
+        binding.fact_resolution_state == "source_present_needs_confirmation"
+        for binding in admin_messy_bindings.values()
+    )
+    assert admin_messy_bindings["relevant_employment_timeline"].required_level == "critical"
+    assert all(binding.blocks_precise_budget is False for binding in admin_messy_bindings.values())
+    admin_adversarial_bindings = {
+        binding.fact_id: binding
+        for binding in cases["le-admin-exhaustion-adversarial.executable.v0_1"].fact_bindings
+    }
+    assert set(admin_adversarial_bindings) == {
+        "employee_claimant_identity",
+        "employer_or_defendant_identity",
+        "prospective_client_payer_carrier_posture",
+        "claims_and_causes_of_action",
+        "administrative_exhaustion_and_agency_record",
+        "relevant_employment_timeline",
+        "forum_removed_and_arbitration_posture",
+    }
+    assert (
+        admin_adversarial_bindings["employee_claimant_identity"].fact_resolution_state
+        == "missing_critical_fact"
+    )
+    assert (
+        admin_adversarial_bindings["employer_or_defendant_identity"].fact_resolution_state
+        == "missing_critical_fact"
+    )
+    assert (
+        admin_adversarial_bindings["prospective_client_payer_carrier_posture"].fact_resolution_state
+        == "missing_critical_fact"
+    )
+    assert (
+        admin_adversarial_bindings["relevant_employment_timeline"].fact_resolution_state
+        == "missing_critical_fact"
+    )
+    assert (
+        admin_adversarial_bindings[
+            "administrative_exhaustion_and_agency_record"
+        ].fact_resolution_state
+        == "missing_noncritical_fact"
+    )
+    assert (
+        admin_adversarial_bindings["claims_and_causes_of_action"].fact_resolution_state
+        == "source_present_needs_confirmation"
+    )
+    assert admin_adversarial_bindings["employee_claimant_identity"].matched_exception_labels == [
+        "prompt_injection_source_content"
+    ]
+    assert admin_adversarial_bindings["relevant_employment_timeline"].matched_exception_labels == [
+        "prompt_injection_source_content"
+    ]
+    assert (
+        sum(1 for binding in admin_adversarial_bindings.values() if binding.blocks_precise_budget)
+        == 4
+    )
     ada_clean_bindings = {
         binding.fact_id: binding
         for binding in cases["le-ada-fmla-clean.executable.v0_1"].fact_bindings
@@ -715,7 +838,7 @@ def test_labor_employment_executable_fact_binding_manifest_is_candidate_only(rep
     assert manifest.lake_write_performed is False
     assert manifest.sqlite_write_performed is False
     assert manifest.external_writes_performed is False
-    assert len(manifest.bindings) == 28
+    assert len(manifest.bindings) == 31
 
 
 def test_labor_employment_executable_fact_binding_blocks_missing_policy_fact(
@@ -802,9 +925,9 @@ def test_labor_employment_executable_fact_binding_cli_writes_report(
 
     assert exit_code == 0
     assert report["status"] == ("labor_employment_executable_budget_fact_bindings_ready_for_review")
-    assert report["case_count"] == 28
-    assert report["fact_binding_count"] == 110
-    assert report["missing_critical_fact_count"] == 23
-    assert report["source_present_confirmation_fact_count"] == 68
+    assert report["case_count"] == 31
+    assert report["fact_binding_count"] == 127
+    assert report["missing_critical_fact_count"] == 31
+    assert report["source_present_confirmation_fact_count"] == 76
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out

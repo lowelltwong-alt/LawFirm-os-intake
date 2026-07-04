@@ -37,18 +37,18 @@ def test_labor_employment_budget_qa_gate_aggregates_output_states(repo_root, tmp
     buckets = {bucket.output_state: bucket for bucket in persisted.output_state_buckets}
 
     assert report.status == "labor_employment_budget_qa_gate_ready_for_review"
-    assert persisted.case_count == 28
-    assert persisted.blocked_amount_budget_case_count == 14
+    assert persisted.case_count == 31
+    assert persisted.blocked_amount_budget_case_count == 16
     assert persisted.range_or_hours_only_case_count == 5
-    assert persisted.candidate_range_after_review_case_count == 9
-    assert persisted.reviewed_nonblocking_case_count == 14
+    assert persisted.candidate_range_after_review_case_count == 10
+    assert persisted.reviewed_nonblocking_case_count == 15
     assert persisted.covered_required_family_count == persisted.required_family_count == 8
     assert persisted.required_families_missing == []
     assert persisted.missing_blocked_review_case_ids == []
     assert persisted.missing_nonblocking_review_case_ids == []
-    assert buckets["blocked_amount_budget"].case_count == 14
+    assert buckets["blocked_amount_budget"].case_count == 16
     assert buckets["range_or_hours_only_pending_review"].case_count == 5
-    assert buckets["candidate_range_after_review_pending_human_review"].case_count == 9
+    assert buckets["candidate_range_after_review_pending_human_review"].case_count == 10
     assert all(check.status == "passed" for check in persisted.checks)
     assert "labor_employment_budget_qa_gate_candidate" in (
         persisted.candidate_exception_lake_labels
@@ -168,6 +168,7 @@ def test_labor_employment_budget_qa_gate_fails_closed_on_coverage_mismatch(
     coverage["missing_executable_pack_case_count"] = len(missing_cases)
     coverage["covered_pack_case_ids"] = [case["pack_case_id"] for case in covered_cases]
     coverage["missing_executable_pack_case_ids"] = [case["pack_case_id"] for case in missing_cases]
+    coverage["coverage_state"] = "partial_executable_coverage"
     coverage_path = write_json(tmp_path / "coverage-missing-budget-case.json", coverage)
 
     report, _ = run_labor_employment_budget_qa_gate(
@@ -219,7 +220,7 @@ def test_labor_employment_budget_qa_gate_cli_writes_report(repo_root, tmp_path, 
 
     assert code == 0
     assert '"status": "labor_employment_budget_qa_gate_ready_for_review"' in captured.out
-    assert '"case_count": 28' in captured.out
+    assert '"case_count": 31' in captured.out
     assert '"budget_submission_authorized": false' in captured.out
     assert '"lake_write_performed": false' in captured.out
     assert (tmp_path / LABOR_EMPLOYMENT_BUDGET_QA_GATE_REPORT_FILENAME).is_file()

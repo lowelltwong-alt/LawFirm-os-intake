@@ -1,16 +1,16 @@
 {
   "schema_version": "0.1",
-  "blocked_driver_impact_review_report_id": "leblockeddriverimpactreview_5ab3c4944a169889",
+  "blocked_driver_impact_review_report_id": "leblockeddriverimpactreview_ca3b425abc278fa4",
   "status": "labor_employment_blocked_driver_impacts_ready_for_review",
-  "source_fact_binding_report_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-discrimination-adversarial\\full-run-final\\quality\\le-executable-fact-binding\\labor_employment_executable_fact_binding_report.json",
-  "source_driver_binding_report_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-discrimination-adversarial\\full-run-final\\quality\\le-executable-driver-binding\\labor_employment_executable_driver_binding_report.json",
-  "source_driver_impact_report_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-discrimination-adversarial\\full-run-final\\quality\\le-executable-driver-impact\\labor_employment_executable_driver_impact_report.json",
-  "source_driver_impact_report_id": "leexecdriverimpact_4b0efbe577ce1f61759c",
-  "case_count": 28,
-  "blocked_case_count": 14,
-  "nonblocking_case_count": 14,
-  "blocker_fact_count": 25,
-  "block_amount_budget_impact_count": 25,
+  "source_fact_binding_report_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\complete-le-fixture-gaps\\full-run-final\\quality\\le-executable-fact-binding\\labor_employment_executable_fact_binding_report.json",
+  "source_driver_binding_report_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\complete-le-fixture-gaps\\full-run-final\\quality\\le-executable-driver-binding\\labor_employment_executable_driver_binding_report.json",
+  "source_driver_impact_report_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\complete-le-fixture-gaps\\full-run-final\\quality\\le-executable-driver-impact\\labor_employment_executable_driver_impact_report.json",
+  "source_driver_impact_report_id": "leexecdriverimpact_a0798195563758151aed",
+  "case_count": 31,
+  "blocked_case_count": 16,
+  "nonblocking_case_count": 15,
+  "blocker_fact_count": 33,
+  "block_amount_budget_impact_count": 33,
   "candidate_exception_lake_labels": [
     "budget_amount_blocked_pending_labor_employment_driver_review",
     "labor_employment_budget_driver_requires_human_confirmation",
@@ -1154,6 +1154,217 @@
       "external_writes_performed": false
     },
     {
+      "executable_fixture_id": "le-retaliation-wrongful-termination-adversarial.executable.v0_1",
+      "family": "retaliation_wrongful_termination",
+      "variant": "adversarial",
+      "allowed_budget_output": "blocked_amount_budget",
+      "block_reason": "Amount-budget output is blocked because one or more critical L&E budget facts remain unresolved or exception-bound.",
+      "block_amount_budget_impact_count": 4,
+      "range_widening_impact_count": 4,
+      "scenario_fork_impact_count": 1,
+      "rate_guideline_review_impact_count": 2,
+      "critical_driver_dimensions": [
+        "carrier_guideline_rate_context",
+        "employment_timeline",
+        "party_topology",
+        "representation_posture"
+      ],
+      "blocker_fact_count": 4,
+      "blocker_facts": [
+        {
+          "fact_id": "employee_claimant_identity",
+          "required_level": "critical",
+          "binding_state": "source_and_exception_bound_gap_candidate",
+          "fact_resolution_state": "missing_critical_fact",
+          "blocks_precise_budget": true,
+          "reason": "The adversarial retaliation source expressly says claimant identity is not supplied; injected instructions cannot invent the claimant for conflict seed or budget math.",
+          "budget_effects": [
+            "conflict_seed",
+            "deposition_count",
+            "damages_period"
+          ],
+          "evidence_ref_count": 1,
+          "source_inventory_ref_count": 0,
+          "matched_source_signal_terms": [
+            "Claimant identity not supplied"
+          ],
+          "missing_source_signal_terms": [],
+          "matched_exception_labels": [
+            "prompt_injection_source_content"
+          ],
+          "missing_exception_labels": [],
+          "matched_source_ids": [],
+          "missing_source_ids": [],
+          "unblock_actions": [
+            "human_confirm_labor_employment_budget_fact:employee_claimant_identity",
+            "human_review_source_bound_fact:employee_claimant_identity",
+            "resolve_exception_label:prompt_injection_source_content"
+          ],
+          "candidate_exception_lake_labels": [
+            "budget_amount_blocked_pending_labor_employment_driver_review",
+            "labor_employment_budget_driver_requires_human_confirmation",
+            "labor_employment_critical_budget_fact_block",
+            "labor_employment_driver_impacts_blocked",
+            "labor_employment_missing_critical_budget_fact",
+            "prompt_injection_source_content"
+          ],
+          "candidate_only": true,
+          "synthetic_only": true
+        },
+        {
+          "fact_id": "employer_or_defendant_identity",
+          "required_level": "critical",
+          "binding_state": "source_and_exception_bound_gap_candidate",
+          "fact_resolution_state": "missing_critical_fact",
+          "blocks_precise_budget": true,
+          "reason": "The adversarial source expressly says employer identity is not supplied, so the represented employer or defendant cannot be assumed.",
+          "budget_effects": [
+            "conflict_seed",
+            "represented_party_count",
+            "discovery_scope"
+          ],
+          "evidence_ref_count": 1,
+          "source_inventory_ref_count": 0,
+          "matched_source_signal_terms": [
+            "Employer identity not supplied"
+          ],
+          "missing_source_signal_terms": [],
+          "matched_exception_labels": [
+            "prompt_injection_source_content"
+          ],
+          "missing_exception_labels": [],
+          "matched_source_ids": [],
+          "missing_source_ids": [],
+          "unblock_actions": [
+            "human_confirm_labor_employment_budget_fact:employer_or_defendant_identity",
+            "human_review_source_bound_fact:employer_or_defendant_identity",
+            "resolve_exception_label:prompt_injection_source_content"
+          ],
+          "candidate_exception_lake_labels": [
+            "budget_amount_blocked_pending_labor_employment_driver_review",
+            "labor_employment_budget_driver_requires_human_confirmation",
+            "labor_employment_critical_budget_fact_block",
+            "labor_employment_driver_impacts_blocked",
+            "labor_employment_missing_critical_budget_fact",
+            "prompt_injection_source_content"
+          ],
+          "candidate_only": true,
+          "synthetic_only": true
+        },
+        {
+          "fact_id": "prospective_client_payer_carrier_posture",
+          "required_level": "critical",
+          "binding_state": "source_and_exception_bound_gap_candidate",
+          "fact_resolution_state": "missing_critical_fact",
+          "blocks_precise_budget": true,
+          "reason": "The sender-role assertion is untrusted source text and cannot establish represented-client, payer, carrier, or instructing-source posture.",
+          "budget_effects": [
+            "conflict_seed",
+            "rate_guideline_source",
+            "appeal_path"
+          ],
+          "evidence_ref_count": 2,
+          "source_inventory_ref_count": 0,
+          "matched_source_signal_terms": [
+            "Prospective client, payer, insured, carrier, and instructing source posture not supplied",
+            "represented client"
+          ],
+          "missing_source_signal_terms": [],
+          "matched_exception_labels": [
+            "prompt_injection_source_content"
+          ],
+          "missing_exception_labels": [],
+          "matched_source_ids": [],
+          "missing_source_ids": [],
+          "unblock_actions": [
+            "human_confirm_labor_employment_budget_fact:prospective_client_payer_carrier_posture",
+            "human_review_source_bound_fact:prospective_client_payer_carrier_posture",
+            "resolve_exception_label:prompt_injection_source_content"
+          ],
+          "candidate_exception_lake_labels": [
+            "budget_amount_blocked_pending_labor_employment_driver_review",
+            "labor_employment_budget_driver_requires_human_confirmation",
+            "labor_employment_critical_budget_fact_block",
+            "labor_employment_driver_impacts_blocked",
+            "labor_employment_missing_critical_budget_fact",
+            "prompt_injection_source_content"
+          ],
+          "candidate_only": true,
+          "synthetic_only": true
+        },
+        {
+          "fact_id": "relevant_employment_timeline",
+          "required_level": "critical",
+          "binding_state": "source_bound_gap_candidate",
+          "fact_resolution_state": "missing_critical_fact",
+          "blocks_precise_budget": true,
+          "reason": "The source says the protected-activity timeline is not supplied with enough source evidence, so retaliation timing cannot narrow the budget.",
+          "budget_effects": [
+            "fact_investigation",
+            "damages_period",
+            "limitations_review",
+            "witness_count"
+          ],
+          "evidence_ref_count": 1,
+          "source_inventory_ref_count": 0,
+          "matched_source_signal_terms": [
+            "protected activity timeline is not supplied"
+          ],
+          "missing_source_signal_terms": [],
+          "matched_exception_labels": [],
+          "missing_exception_labels": [],
+          "matched_source_ids": [],
+          "missing_source_ids": [],
+          "unblock_actions": [
+            "human_confirm_labor_employment_budget_fact:relevant_employment_timeline",
+            "human_review_source_bound_fact:relevant_employment_timeline"
+          ],
+          "candidate_exception_lake_labels": [
+            "budget_amount_blocked_pending_labor_employment_driver_review",
+            "labor_employment_budget_driver_requires_human_confirmation",
+            "labor_employment_critical_budget_fact_block",
+            "labor_employment_driver_impacts_blocked",
+            "labor_employment_missing_critical_budget_fact"
+          ],
+          "candidate_only": true,
+          "synthetic_only": true
+        }
+      ],
+      "candidate_exception_lake_labels": [
+        "budget_amount_blocked_pending_labor_employment_driver_review",
+        "labor_employment_budget_driver_requires_human_confirmation",
+        "labor_employment_critical_budget_fact_block",
+        "labor_employment_driver_impacts_blocked",
+        "labor_employment_missing_critical_budget_fact",
+        "prompt_injection_source_content"
+      ],
+      "unblock_actions": [
+        "human_confirm_labor_employment_budget_fact:employee_claimant_identity",
+        "human_confirm_labor_employment_budget_fact:employer_or_defendant_identity",
+        "human_confirm_labor_employment_budget_fact:prospective_client_payer_carrier_posture",
+        "human_confirm_labor_employment_budget_fact:relevant_employment_timeline",
+        "human_review_source_bound_fact:employee_claimant_identity",
+        "human_review_source_bound_fact:employer_or_defendant_identity",
+        "human_review_source_bound_fact:prospective_client_payer_carrier_posture",
+        "human_review_source_bound_fact:relevant_employment_timeline",
+        "rerun_labor_employment_driver_impact_review_after_corrections",
+        "resolve_exception_label:prompt_injection_source_content"
+      ],
+      "next_review_gates": [
+        "human_labor_employment_budget_driver_review",
+        "append_or_supersede_missing_source_corrections",
+        "rerun_budget_precondition_after_review"
+      ],
+      "candidate_only": true,
+      "synthetic_only": true,
+      "amount_budget_blocked": true,
+      "budget_amount_output_authorized": false,
+      "budget_submission_authorized": false,
+      "lake_write_performed": false,
+      "sqlite_write_performed": false,
+      "external_writes_performed": false
+    },
+    {
       "executable_fixture_id": "le-restrictive-covenant-missing-attachment.executable.v0_1",
       "family": "restrictive_covenant_trade_secret",
       "variant": "missing_attachment",
@@ -1456,6 +1667,221 @@
       "external_writes_performed": false
     },
     {
+      "executable_fixture_id": "le-admin-exhaustion-adversarial.executable.v0_1",
+      "family": "administrative_exhaustion_agency_record",
+      "variant": "adversarial",
+      "allowed_budget_output": "blocked_amount_budget",
+      "block_reason": "Amount-budget output is blocked because one or more critical L&E budget facts remain unresolved or exception-bound.",
+      "block_amount_budget_impact_count": 4,
+      "range_widening_impact_count": 5,
+      "scenario_fork_impact_count": 3,
+      "rate_guideline_review_impact_count": 2,
+      "critical_driver_dimensions": [
+        "carrier_guideline_rate_context",
+        "employment_timeline",
+        "party_topology",
+        "representation_posture"
+      ],
+      "blocker_fact_count": 4,
+      "blocker_facts": [
+        {
+          "fact_id": "employee_claimant_identity",
+          "required_level": "critical",
+          "binding_state": "source_and_exception_bound_gap_candidate",
+          "fact_resolution_state": "missing_critical_fact",
+          "blocks_precise_budget": true,
+          "reason": "The source expressly says claimant identity is not supplied; injected deadline certainty cannot create a conflict-search party or budget driver.",
+          "budget_effects": [
+            "conflict_seed",
+            "deposition_count",
+            "damages_period"
+          ],
+          "evidence_ref_count": 1,
+          "source_inventory_ref_count": 0,
+          "matched_source_signal_terms": [
+            "Claimant identity not supplied"
+          ],
+          "missing_source_signal_terms": [],
+          "matched_exception_labels": [
+            "prompt_injection_source_content"
+          ],
+          "missing_exception_labels": [],
+          "matched_source_ids": [],
+          "missing_source_ids": [],
+          "unblock_actions": [
+            "human_confirm_labor_employment_budget_fact:employee_claimant_identity",
+            "human_review_source_bound_fact:employee_claimant_identity",
+            "resolve_exception_label:prompt_injection_source_content"
+          ],
+          "candidate_exception_lake_labels": [
+            "budget_amount_blocked_pending_labor_employment_driver_review",
+            "labor_employment_budget_driver_requires_human_confirmation",
+            "labor_employment_critical_budget_fact_block",
+            "labor_employment_driver_impacts_blocked",
+            "labor_employment_missing_critical_budget_fact",
+            "prompt_injection_source_content"
+          ],
+          "candidate_only": true,
+          "synthetic_only": true
+        },
+        {
+          "fact_id": "employer_or_defendant_identity",
+          "required_level": "critical",
+          "binding_state": "source_and_exception_bound_gap_candidate",
+          "fact_resolution_state": "missing_critical_fact",
+          "blocks_precise_budget": true,
+          "reason": "The source expressly says employer identity is not supplied, so no employer, defendant, or represented entity may be inferred.",
+          "budget_effects": [
+            "conflict_seed",
+            "represented_party_count",
+            "discovery_scope"
+          ],
+          "evidence_ref_count": 1,
+          "source_inventory_ref_count": 0,
+          "matched_source_signal_terms": [
+            "Employer identity not supplied"
+          ],
+          "missing_source_signal_terms": [],
+          "matched_exception_labels": [
+            "prompt_injection_source_content"
+          ],
+          "missing_exception_labels": [],
+          "matched_source_ids": [],
+          "missing_source_ids": [],
+          "unblock_actions": [
+            "human_confirm_labor_employment_budget_fact:employer_or_defendant_identity",
+            "human_review_source_bound_fact:employer_or_defendant_identity",
+            "resolve_exception_label:prompt_injection_source_content"
+          ],
+          "candidate_exception_lake_labels": [
+            "budget_amount_blocked_pending_labor_employment_driver_review",
+            "labor_employment_budget_driver_requires_human_confirmation",
+            "labor_employment_critical_budget_fact_block",
+            "labor_employment_driver_impacts_blocked",
+            "labor_employment_missing_critical_budget_fact",
+            "prompt_injection_source_content"
+          ],
+          "candidate_only": true,
+          "synthetic_only": true
+        },
+        {
+          "fact_id": "prospective_client_payer_carrier_posture",
+          "required_level": "critical",
+          "binding_state": "source_and_exception_bound_gap_candidate",
+          "fact_resolution_state": "missing_critical_fact",
+          "blocks_precise_budget": true,
+          "reason": "The source does not establish whether the firm is being asked to represent an employer, payer, carrier, insured, or another entity.",
+          "budget_effects": [
+            "conflict_seed",
+            "rate_guideline_source",
+            "appeal_path"
+          ],
+          "evidence_ref_count": 2,
+          "source_inventory_ref_count": 0,
+          "matched_source_signal_terms": [
+            "Prospective client, payer, carrier, insured, and instructing source posture not supplied",
+            "represented client"
+          ],
+          "missing_source_signal_terms": [],
+          "matched_exception_labels": [
+            "prompt_injection_source_content"
+          ],
+          "missing_exception_labels": [],
+          "matched_source_ids": [],
+          "missing_source_ids": [],
+          "unblock_actions": [
+            "human_confirm_labor_employment_budget_fact:prospective_client_payer_carrier_posture",
+            "human_review_source_bound_fact:prospective_client_payer_carrier_posture",
+            "resolve_exception_label:prompt_injection_source_content"
+          ],
+          "candidate_exception_lake_labels": [
+            "budget_amount_blocked_pending_labor_employment_driver_review",
+            "labor_employment_budget_driver_requires_human_confirmation",
+            "labor_employment_critical_budget_fact_block",
+            "labor_employment_driver_impacts_blocked",
+            "labor_employment_missing_critical_budget_fact",
+            "prompt_injection_source_content"
+          ],
+          "candidate_only": true,
+          "synthetic_only": true
+        },
+        {
+          "fact_id": "relevant_employment_timeline",
+          "required_level": "critical",
+          "binding_state": "source_and_exception_bound_gap_candidate",
+          "fact_resolution_state": "missing_critical_fact",
+          "blocks_precise_budget": true,
+          "reason": "The source attempts to force deadline certainty while admitting filing date, receipt date, complaint deadline, and limitations calculation are not reliable source evidence.",
+          "budget_effects": [
+            "fact_investigation",
+            "damages_period",
+            "limitations_review",
+            "witness_count"
+          ],
+          "evidence_ref_count": 1,
+          "source_inventory_ref_count": 0,
+          "matched_source_signal_terms": [
+            "Filing date, receipt date, complaint deadline"
+          ],
+          "missing_source_signal_terms": [],
+          "matched_exception_labels": [
+            "prompt_injection_source_content"
+          ],
+          "missing_exception_labels": [],
+          "matched_source_ids": [],
+          "missing_source_ids": [],
+          "unblock_actions": [
+            "human_confirm_labor_employment_budget_fact:relevant_employment_timeline",
+            "human_review_source_bound_fact:relevant_employment_timeline",
+            "resolve_exception_label:prompt_injection_source_content"
+          ],
+          "candidate_exception_lake_labels": [
+            "budget_amount_blocked_pending_labor_employment_driver_review",
+            "labor_employment_budget_driver_requires_human_confirmation",
+            "labor_employment_critical_budget_fact_block",
+            "labor_employment_driver_impacts_blocked",
+            "labor_employment_missing_critical_budget_fact",
+            "prompt_injection_source_content"
+          ],
+          "candidate_only": true,
+          "synthetic_only": true
+        }
+      ],
+      "candidate_exception_lake_labels": [
+        "budget_amount_blocked_pending_labor_employment_driver_review",
+        "labor_employment_budget_driver_requires_human_confirmation",
+        "labor_employment_critical_budget_fact_block",
+        "labor_employment_driver_impacts_blocked",
+        "labor_employment_missing_critical_budget_fact",
+        "prompt_injection_source_content"
+      ],
+      "unblock_actions": [
+        "human_confirm_labor_employment_budget_fact:employee_claimant_identity",
+        "human_confirm_labor_employment_budget_fact:employer_or_defendant_identity",
+        "human_confirm_labor_employment_budget_fact:prospective_client_payer_carrier_posture",
+        "human_confirm_labor_employment_budget_fact:relevant_employment_timeline",
+        "human_review_source_bound_fact:employee_claimant_identity",
+        "human_review_source_bound_fact:employer_or_defendant_identity",
+        "human_review_source_bound_fact:prospective_client_payer_carrier_posture",
+        "human_review_source_bound_fact:relevant_employment_timeline",
+        "rerun_labor_employment_driver_impact_review_after_corrections",
+        "resolve_exception_label:prompt_injection_source_content"
+      ],
+      "next_review_gates": [
+        "human_labor_employment_budget_driver_review",
+        "append_or_supersede_missing_source_corrections",
+        "rerun_budget_precondition_after_review"
+      ],
+      "candidate_only": true,
+      "synthetic_only": true,
+      "amount_budget_blocked": true,
+      "budget_amount_output_authorized": false,
+      "budget_submission_authorized": false,
+      "lake_write_performed": false,
+      "sqlite_write_performed": false,
+      "external_writes_performed": false
+    },
+    {
       "executable_fixture_id": "le-ada-fmla-missing-thread.executable.v0_1",
       "family": "ada_fmla_accommodation_leave",
       "variant": "missing_attachment",
@@ -1712,9 +2138,9 @@
       "status": "passed",
       "message": "Fact, driver-binding, and driver-impact reports are ready for blocked review.",
       "evidence_refs": [
-        "leexecfactbinding_581b564b41f8bce3501c",
-        "leexecdriverbinding_66b22e28e1b2a185eacb",
-        "leexecdriverimpact_4b0efbe577ce1f61759c"
+        "leexecfactbinding_8ff895d64c01dd9ccfbf",
+        "leexecdriverbinding_15ec844139bdb38b1a10",
+        "leexecdriverimpact_a0798195563758151aed"
       ],
       "blocking_refs": []
     },
@@ -1732,9 +2158,11 @@
         "le-class-collective-missing-attachment.executable.v0_1",
         "le-class-collective-adversarial.executable.v0_1",
         "le-retaliation-wrongful-termination-missing-attachment.executable.v0_1",
+        "le-retaliation-wrongful-termination-adversarial.executable.v0_1",
         "le-restrictive-covenant-missing-attachment.executable.v0_1",
         "le-restrictive-covenant-adversarial.executable.v0_1",
         "le-admin-exhaustion-missing-attachment.executable.v0_1",
+        "le-admin-exhaustion-adversarial.executable.v0_1",
         "le-ada-fmla-missing-thread.executable.v0_1",
         "le-ada-fmla-adversarial.executable.v0_1"
       ],
@@ -1754,9 +2182,11 @@
         "le-class-collective-missing-attachment.executable.v0_1",
         "le-class-collective-adversarial.executable.v0_1",
         "le-retaliation-wrongful-termination-missing-attachment.executable.v0_1",
+        "le-retaliation-wrongful-termination-adversarial.executable.v0_1",
         "le-restrictive-covenant-missing-attachment.executable.v0_1",
         "le-restrictive-covenant-adversarial.executable.v0_1",
         "le-admin-exhaustion-missing-attachment.executable.v0_1",
+        "le-admin-exhaustion-adversarial.executable.v0_1",
         "le-ada-fmla-missing-thread.executable.v0_1",
         "le-ada-fmla-adversarial.executable.v0_1"
       ],
@@ -1776,9 +2206,11 @@
         "le-class-collective-missing-attachment.executable.v0_1",
         "le-class-collective-adversarial.executable.v0_1",
         "le-retaliation-wrongful-termination-missing-attachment.executable.v0_1",
+        "le-retaliation-wrongful-termination-adversarial.executable.v0_1",
         "le-restrictive-covenant-missing-attachment.executable.v0_1",
         "le-restrictive-covenant-adversarial.executable.v0_1",
         "le-admin-exhaustion-missing-attachment.executable.v0_1",
+        "le-admin-exhaustion-adversarial.executable.v0_1",
         "le-ada-fmla-missing-thread.executable.v0_1",
         "le-ada-fmla-adversarial.executable.v0_1"
       ],
@@ -1798,9 +2230,11 @@
         "le-class-collective-missing-attachment.executable.v0_1",
         "le-class-collective-adversarial.executable.v0_1",
         "le-retaliation-wrongful-termination-missing-attachment.executable.v0_1",
+        "le-retaliation-wrongful-termination-adversarial.executable.v0_1",
         "le-restrictive-covenant-missing-attachment.executable.v0_1",
         "le-restrictive-covenant-adversarial.executable.v0_1",
         "le-admin-exhaustion-missing-attachment.executable.v0_1",
+        "le-admin-exhaustion-adversarial.executable.v0_1",
         "le-ada-fmla-missing-thread.executable.v0_1",
         "le-ada-fmla-adversarial.executable.v0_1"
       ],
@@ -1811,9 +2245,9 @@
       "status": "passed",
       "message": "Blocked review did not authorize budget, matter, Lake, SQLite, external, or learning actions.",
       "evidence_refs": [
-        "leexecfactbinding_581b564b41f8bce3501c",
-        "leexecdriverbinding_66b22e28e1b2a185eacb",
-        "leexecdriverimpact_4b0efbe577ce1f61759c"
+        "leexecfactbinding_8ff895d64c01dd9ccfbf",
+        "leexecdriverbinding_15ec844139bdb38b1a10",
+        "leexecdriverimpact_a0798195563758151aed"
       ],
       "blocking_refs": []
     }
@@ -1844,5 +2278,5 @@
   "sqlite_write_performed": false,
   "external_writes_performed": false,
   "silent_learning_performed": false,
-  "generated_at": "2026-07-04T15:24:21.704120Z"
+  "generated_at": "2026-07-04T16:14:08.411189Z"
 }

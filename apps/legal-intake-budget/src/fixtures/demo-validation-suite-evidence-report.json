@@ -5,8 +5,8 @@
   "policy_id": "intake-validation-runtime-policy",
   "policy_version": "0.1",
   "policy_ref": "config/validation-runtime-policy.yaml",
-  "repo_root_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync",
-  "git_commit": "b4f143ace303033bdb90ffc94f095e2feaaef7a3",
+  "repo_root_ref": "<repo-root>",
+  "git_commit": "3f67c0ce69fec03dc7ff9d1931ea0db4d0fba6bd",
   "working_tree_dirty": true,
   "step_count": 7,
   "passed_step_count": 7,
@@ -17,16 +17,16 @@
       "step_id": "validate_repo",
       "command_key": "validate_repo",
       "command": [
-        "C:\\Users\\lowel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "<python>",
         "scripts/validate_repo.py"
       ],
-      "command_display": "C:\\Users\\lowel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe scripts/validate_repo.py",
+      "command_display": "<python> scripts/validate_repo.py",
       "status": "passed",
       "return_code": 0,
       "timeout_seconds": 180,
-      "duration_seconds": 1.328,
-      "started_at": "2026-07-04T15:15:56.900363Z",
-      "completed_at": "2026-07-04T15:15:58.228151Z",
+      "duration_seconds": 1.547,
+      "started_at": "2026-07-04T16:21:20.667350Z",
+      "completed_at": "2026-07-04T16:21:22.214419Z",
       "evidence_refs": [
         "scripts/validate_repo.py"
       ]
@@ -35,16 +35,16 @@
       "step_id": "export_schemas",
       "command_key": "export_schemas",
       "command": [
-        "C:\\Users\\lowel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "<python>",
         "scripts/export_schemas.py"
       ],
-      "command_display": "C:\\Users\\lowel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe scripts/export_schemas.py",
+      "command_display": "<python> scripts/export_schemas.py",
       "status": "passed",
       "return_code": 0,
       "timeout_seconds": 180,
-      "duration_seconds": 2.883,
-      "started_at": "2026-07-04T15:15:58.229158Z",
-      "completed_at": "2026-07-04T15:16:01.111500Z",
+      "duration_seconds": 3.729,
+      "started_at": "2026-07-04T16:21:22.215432Z",
+      "completed_at": "2026-07-04T16:21:25.944199Z",
       "evidence_refs": [
         "scripts/export_schemas.py",
         "schemas/"
@@ -54,7 +54,7 @@
       "step_id": "ruff_check",
       "command_key": "ruff_check",
       "command": [
-        "C:\\Users\\lowel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "<python>",
         "-m",
         "ruff",
         "check",
@@ -63,13 +63,13 @@
         "tests",
         "scripts"
       ],
-      "command_display": "C:\\Users\\lowel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe -m ruff check --no-cache src tests scripts",
+      "command_display": "<python> -m ruff check --no-cache src tests scripts",
       "status": "passed",
       "return_code": 0,
       "timeout_seconds": 180,
-      "duration_seconds": 0.233,
-      "started_at": "2026-07-04T15:16:01.111500Z",
-      "completed_at": "2026-07-04T15:16:01.345765Z",
+      "duration_seconds": 0.239,
+      "started_at": "2026-07-04T16:21:25.944199Z",
+      "completed_at": "2026-07-04T16:21:26.184330Z",
       "evidence_refs": [
         "src/",
         "tests/",
@@ -80,7 +80,7 @@
       "step_id": "ruff_format_check",
       "command_key": "ruff_format_check",
       "command": [
-        "C:\\Users\\lowel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "<python>",
         "-m",
         "ruff",
         "format",
@@ -90,13 +90,13 @@
         "tests",
         "scripts"
       ],
-      "command_display": "C:\\Users\\lowel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe -m ruff format --check --no-cache src tests scripts",
+      "command_display": "<python> -m ruff format --check --no-cache src tests scripts",
       "status": "passed",
       "return_code": 0,
       "timeout_seconds": 180,
-      "duration_seconds": 0.244,
-      "started_at": "2026-07-04T15:16:01.345765Z",
-      "completed_at": "2026-07-04T15:16:01.589023Z",
+      "duration_seconds": 0.231,
+      "started_at": "2026-07-04T16:21:26.184330Z",
+      "completed_at": "2026-07-04T16:21:26.414805Z",
       "evidence_refs": [
         "src/",
         "tests/",
@@ -107,16 +107,16 @@
       "step_id": "full_pytest",
       "command_key": "full_pytest",
       "command": [
-        "C:\\Users\\lowel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "<python>",
         "scripts/run_full_pytest.py"
       ],
-      "command_display": "C:\\Users\\lowel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe scripts/run_full_pytest.py",
+      "command_display": "<python> scripts/run_full_pytest.py",
       "status": "passed",
       "return_code": 0,
       "timeout_seconds": 3600,
-      "duration_seconds": 361.847,
-      "started_at": "2026-07-04T15:16:01.589023Z",
-      "completed_at": "2026-07-04T15:22:03.442454Z",
+      "duration_seconds": 397.993,
+      "started_at": "2026-07-04T16:21:26.414805Z",
+      "completed_at": "2026-07-04T16:28:04.415507Z",
       "evidence_refs": [
         "scripts/run_full_pytest.py",
         "tests/"
@@ -133,9 +133,9 @@
       "status": "passed",
       "return_code": 0,
       "timeout_seconds": 3600,
-      "duration_seconds": 61.862,
-      "started_at": "2026-07-04T15:22:03.442454Z",
-      "completed_at": "2026-07-04T15:23:05.305347Z",
+      "duration_seconds": 66.501,
+      "started_at": "2026-07-04T16:28:04.415507Z",
+      "completed_at": "2026-07-04T16:29:10.917177Z",
       "evidence_refs": [
         "scripts/smoke_demo.sh"
       ]
@@ -144,16 +144,16 @@
       "step_id": "validate_repo_final",
       "command_key": "validate_repo",
       "command": [
-        "C:\\Users\\lowel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "<python>",
         "scripts/validate_repo.py"
       ],
-      "command_display": "C:\\Users\\lowel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe scripts/validate_repo.py",
+      "command_display": "<python> scripts/validate_repo.py",
       "status": "passed",
       "return_code": 0,
       "timeout_seconds": 180,
-      "duration_seconds": 24.223,
-      "started_at": "2026-07-04T15:23:05.305347Z",
-      "completed_at": "2026-07-04T15:23:29.528585Z",
+      "duration_seconds": 37.336,
+      "started_at": "2026-07-04T16:29:10.918171Z",
+      "completed_at": "2026-07-04T16:29:48.254465Z",
       "evidence_refs": [
         "scripts/validate_repo.py",
         "scripts/run_validation_suite.py"
