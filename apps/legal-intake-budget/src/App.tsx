@@ -890,12 +890,20 @@ function MatterLinkingPreflightPanel({ report }: { report: MatterLinkingPrefligh
           <strong>{report.high_evidence_candidate_count}</strong>
         </div>
         <div>
+          <span>Weak Only</span>
+          <strong>{report.weak_only_candidate_count}</strong>
+        </div>
+        <div>
           <span>Weak Signals</span>
           <strong>{report.weak_signal_count}</strong>
         </div>
         <div>
           <span>Split Evidence</span>
           <strong>{report.strong_negative_signal_count}</strong>
+        </div>
+        <div>
+          <span>Split Required</span>
+          <strong>{report.negative_split_evidence_required ? "Yes" : "No"}</strong>
         </div>
       </div>
 
@@ -905,6 +913,7 @@ function MatterLinkingPreflightPanel({ report }: { report: MatterLinkingPrefligh
             <tr>
               <th>Candidate Cluster</th>
               <th>Support</th>
+              <th>Strong Source Support</th>
               <th>Negative Evidence</th>
               <th>Sources</th>
             </tr>
@@ -918,6 +927,17 @@ function MatterLinkingPreflightPanel({ report }: { report: MatterLinkingPrefligh
                 </td>
                 <td>
                   <TokenList items={cluster.supporting_signal_types} limit={4} />
+                </td>
+                <td>
+                  <span
+                    className={
+                      cluster.source_bound_strong_support_present
+                        ? "state state-passed"
+                        : "state state-blocked"
+                    }
+                  >
+                    {cluster.weak_only_candidate ? "weak only" : "source-bound"}
+                  </span>
                 </td>
                 <td>
                   <TokenList items={cluster.negative_signal_types} limit={4} />

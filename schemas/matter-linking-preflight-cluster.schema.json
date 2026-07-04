@@ -73,6 +73,18 @@
       "title": "Negative Signal Types",
       "type": "array"
     },
+    "source_bound_strong_support_present": {
+      "title": "Source Bound Strong Support Present",
+      "type": "boolean"
+    },
+    "weak_only_candidate": {
+      "title": "Weak Only Candidate",
+      "type": "boolean"
+    },
+    "negative_split_evidence_required": {
+      "title": "Negative Split Evidence Required",
+      "type": "boolean"
+    },
     "requires_human_confirmation": {
       "const": true,
       "default": true,
@@ -97,7 +109,10 @@
     "negative_signal_count",
     "strong_negative_signal_count",
     "supporting_signal_types",
-    "negative_signal_types"
+    "negative_signal_types",
+    "source_bound_strong_support_present",
+    "weak_only_candidate",
+    "negative_split_evidence_required"
   ],
   "title": "MatterLinkingPreflightCluster",
   "type": "object"

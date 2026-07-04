@@ -17,6 +17,8 @@
   "requires_sender_followup": false,
   "cluster_count": 2,
   "high_evidence_candidate_count": 2,
+  "weak_only_candidate_count": 0,
+  "negative_split_evidence_required": true,
   "weak_signal_count": 2,
   "strong_negative_signal_count": 2,
   "source_count": 6,
@@ -67,6 +69,9 @@
       "negative_signal_types": [
         "different_claim_number_in_same_email"
       ],
+      "source_bound_strong_support_present": true,
+      "weak_only_candidate": false,
+      "negative_split_evidence_required": true,
       "requires_human_confirmation": true,
       "matter_link_finalized": false
     },
@@ -98,6 +103,9 @@
       "negative_signal_types": [
         "different_claim_number_in_same_email"
       ],
+      "source_bound_strong_support_present": true,
+      "weak_only_candidate": false,
+      "negative_split_evidence_required": true,
       "requires_human_confirmation": true,
       "matter_link_finalized": false
     }
@@ -158,6 +166,16 @@
       "blocking_refs": []
     },
     {
+      "check_id": "weak_only_candidates_block_matter_linking",
+      "status": "passed",
+      "message": "A candidate matter link needs source-bound matter-specific strong support; same sender, same carrier, or sender references alone are not enough.",
+      "evidence_refs": [
+        "cluster.case-a",
+        "cluster.case-b"
+      ],
+      "blocking_refs": []
+    },
+    {
       "check_id": "clusters_have_source_bound_strong_support",
       "status": "passed",
       "message": "Every cluster has source-bound strong support mapped to known source hashes.",
@@ -180,7 +198,7 @@
     {
       "check_id": "clusters_have_negative_split_evidence",
       "status": "passed",
-      "message": "Every cluster has strong negative split evidence against the other candidate matter.",
+      "message": "Competing clusters have strong negative split evidence against the other candidate matter.",
       "evidence_refs": [
         "cluster.case-a",
         "cluster.case-b"

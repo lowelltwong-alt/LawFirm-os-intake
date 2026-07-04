@@ -679,6 +679,27 @@ export function assertMatterLinkingPreflightReport(
   if (report.cluster_count !== report.clusters.length) {
     failures.push("matter_linking_cluster_count_mismatch");
   }
+  if (
+    report.high_evidence_candidate_count !==
+    report.clusters.filter((cluster) => cluster.match_strength.includes("high_evidence")).length
+  ) {
+    failures.push("matter_linking_high_evidence_count_mismatch");
+  }
+  if (
+    report.weak_only_candidate_count !==
+    report.clusters.filter((cluster) => cluster.weak_only_candidate).length
+  ) {
+    failures.push("matter_linking_weak_only_count_mismatch");
+  }
+  if (
+    report.strong_negative_signal_count !==
+    report.clusters.reduce((total, cluster) => total + cluster.strong_negative_signal_count, 0)
+  ) {
+    failures.push("matter_linking_negative_split_count_mismatch");
+  }
+  if (report.source_count !== Object.keys(report.source_hashes_by_id).length) {
+    failures.push("matter_linking_source_count_mismatch");
+  }
   if (!report.required_next_gates.includes("human_matter_linking_review")) {
     failures.push("matter_linking_missing_human_gate");
   }
@@ -694,6 +715,14 @@ export function assertMatterLinkingPreflightReport(
     }
     if (cluster.source_hashes.length === 0 || cluster.supporting_signal_types.length === 0) {
       failures.push(`matter_linking_cluster_missing_evidence:${cluster.cluster_id}`);
+    }
+    if (
+      cluster.negative_split_evidence_required !== report.negative_split_evidence_required
+    ) {
+      failures.push(`matter_linking_split_requirement_mismatch:${cluster.cluster_id}`);
+    }
+    if (cluster.weak_only_candidate && cluster.source_bound_strong_support_present) {
+      failures.push(`matter_linking_weak_only_has_strong_support:${cluster.cluster_id}`);
     }
   }
   return failures;

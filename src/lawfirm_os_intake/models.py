@@ -3628,6 +3628,9 @@ class MatterLinkingPreflightCluster(StrictModel):
     strong_negative_signal_count: int = Field(ge=0)
     supporting_signal_types: list[str]
     negative_signal_types: list[str]
+    source_bound_strong_support_present: bool
+    weak_only_candidate: bool
+    negative_split_evidence_required: bool
     requires_human_confirmation: Literal[True] = True
     matter_link_finalized: Literal[False] = False
 
@@ -3637,6 +3640,10 @@ class MatterLinkingPreflightCluster(StrictModel):
             raise ValueError("strong supporting signal count cannot exceed supporting signals")
         if self.negative_signal_count < self.strong_negative_signal_count:
             raise ValueError("strong negative signal count cannot exceed negative signals")
+        if self.weak_only_candidate and self.source_bound_strong_support_present:
+            raise ValueError("weak-only matter-linking candidate cannot have strong support")
+        if not self.negative_split_evidence_required and self.strong_negative_signal_count:
+            raise ValueError("single-candidate matter link cannot carry split evidence count")
         return self
 
 
@@ -3663,6 +3670,8 @@ class MatterLinkingPreflightReport(StrictModel):
     requires_sender_followup: bool
     cluster_count: int = Field(ge=0)
     high_evidence_candidate_count: int = Field(ge=0)
+    weak_only_candidate_count: int = Field(ge=0)
+    negative_split_evidence_required: bool
     weak_signal_count: int = Field(ge=0)
     strong_negative_signal_count: int = Field(ge=0)
     source_count: int = Field(ge=0)
@@ -3702,10 +3711,21 @@ class MatterLinkingPreflightReport(StrictModel):
             1 for cluster in self.clusters if "high_evidence" in cluster.match_strength
         ):
             raise ValueError("matter-linking high-evidence count does not match clusters")
+        if self.weak_only_candidate_count != sum(
+            1 for cluster in self.clusters if cluster.weak_only_candidate
+        ):
+            raise ValueError("matter-linking weak-only candidate count mismatch")
         if self.strong_negative_signal_count != sum(
             cluster.strong_negative_signal_count for cluster in self.clusters
         ):
             raise ValueError("matter-linking strong negative signal count mismatch")
+        if any(
+            cluster.negative_split_evidence_required != self.negative_split_evidence_required
+            for cluster in self.clusters
+        ):
+            raise ValueError("matter-linking split-evidence requirement mismatch")
+        if not self.negative_split_evidence_required and self.strong_negative_signal_count:
+            raise ValueError("single-candidate matter link cannot require split evidence")
         if self.source_count != len(self.source_hashes_by_id):
             raise ValueError("matter-linking source count must match source hashes")
         if (

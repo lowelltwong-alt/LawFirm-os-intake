@@ -95,6 +95,9 @@ LE_BUDGET_FACT_GOLD_REF = "examples/synthetic/gold/labor-employment-budget-fact-
 UPFRONT_RESOLVED_FOLLOWUP_REF = (
     "examples/synthetic/upfront/upfront-like-intake-output.resolved-followup.example.json"
 )
+UPFRONT_WEAK_SINGLE_CANDIDATE_REF = (
+    "examples/synthetic/upfront/upfront-like-intake-output.weak-single-candidate.example.json"
+)
 
 
 def run_synthetic_qa_review_run(
@@ -143,6 +146,25 @@ def run_synthetic_qa_review_run(
             matter_linking_ref,
             matter_linking.status == "matter_linking_preflight_resolved_candidate_requires_review",
             "Resolved Upfront-like document clusters remain human-gated and no-write.",
+        )
+    )
+
+    weak_matter_linking, weak_matter_linking_dir = run_matter_linking_preflight(
+        input_path=root / UPFRONT_WEAK_SINGLE_CANDIDATE_REF,
+        out_dir=quality_dir / "matter-linking-weak-only-holdout",
+        generated_at=generated_at,
+    )
+    weak_matter_linking_ref = weak_matter_linking_dir / MATTER_LINKING_PREFLIGHT_REPORT_FILENAME
+    steps.append(
+        _step(
+            "matter_linking_weak_only_holdout",
+            "Matter-Linking Weak-Only Holdout",
+            weak_matter_linking.status,
+            weak_matter_linking_ref,
+            weak_matter_linking.status == "blocked_matter_linking_preflight"
+            and weak_matter_linking.weak_only_candidate_count > 0
+            and weak_matter_linking.negative_split_evidence_required is False,
+            "Weak sender/carrier/reference-only candidates must block rather than merge or budget.",
         )
     )
 

@@ -1,0 +1,189 @@
+{
+  "schema_version": "0.1",
+  "artifact_id": "upfront_like_intake_output.synthetic.weak_single_candidate.v0_1",
+  "artifact_type": "upfront_like_intake_output_candidate",
+  "status": "weak_candidate_requires_sender_followup",
+  "data_origin": "synthetic",
+  "candidate_only": true,
+  "non_authoritative": true,
+  "synthetic_only": true,
+  "source_system": {
+    "system_name": "Upfront-like intake output",
+    "vendor": "Fulcrum GT Upfront public-research proxy",
+    "real_upfront_export": false,
+    "api_contract_verified": false,
+    "public_research_ref": "docs/integrations/upfront-intake-integration-research.md",
+    "notes": [
+      "This fixture is synthetic and models a weak-only matter-linking candidate.",
+      "No vendor endpoint names, tenant field names, credentials, or production object IDs are represented."
+    ]
+  },
+  "intake_request": {
+    "intake_request_id": "synthetic-upfront-request-20260704-weak-001",
+    "request_type": "new_matter_intake",
+    "request_status": "draft_pre_clearance",
+    "practice_area_candidate": "labor_and_employment",
+    "matter_family_candidate": "employment_litigation_defense",
+    "request_channel": "email_forwarded_to_intake",
+    "requester": {
+      "person_id": "synthetic-person-requester-weak-001",
+      "display_name": "Morgan Lee",
+      "role_candidate": "insurance_adjuster",
+      "organization": "Northstar Mutual Synthetic Claims",
+      "email": "morgan.lee@example.invalid"
+    }
+  },
+  "external_references": [
+    {
+      "reference_type": "sender_internal_reference",
+      "reference_value": "NSM-LAB-4421",
+      "source_ref": "source.email.001:body:120-132",
+      "strength": "medium",
+      "notes": [
+        "Sender reference may be internal to the carrier and is not known to be unique."
+      ]
+    },
+    {
+      "reference_type": "official_firm_matter_number",
+      "reference_value": null,
+      "source_ref": "source.inventory.synthetic:missing",
+      "strength": "missing",
+      "notes": [
+        "No official firm matter number exists at intake time."
+      ]
+    }
+  ],
+  "source_inventory": [
+    {
+      "source_id": "source.email.001",
+      "source_kind": "email",
+      "sender": "morgan.lee@example.invalid",
+      "subject": "Possible new employment assignment",
+      "received_at": "2026-07-04T13:10:00Z",
+      "source_hash": "sha256:synthetic-weak-email-001",
+      "coverage_state": "read",
+      "document_cluster_candidate_ids": [
+        "cluster.weak-a"
+      ],
+      "notes": [
+        "Email has the same sender and carrier as other synthetic assignments but does not contain a claim number or party pair."
+      ]
+    },
+    {
+      "source_id": "source.attachment.001",
+      "source_kind": "email_attachment_stub",
+      "file_name": "possible-new-assignment.txt",
+      "source_hash": "sha256:synthetic-weak-attachment-001",
+      "coverage_state": "read",
+      "document_cluster_candidate_ids": [
+        "cluster.weak-a"
+      ],
+      "notes": [
+        "Attachment says only that documents will follow and gives no matter-specific parties or claim number."
+      ]
+    }
+  ],
+  "matter_linking": {
+    "official_matter_number_status": "not_available",
+    "overall_link_state": "weak_single_candidate_requires_followup",
+    "requires_human_confirmation": true,
+    "requires_sender_followup": true,
+    "candidate_clusters": [
+      {
+        "cluster_id": "cluster.weak-a",
+        "link_state": "weak_candidate_needs_sender_reference",
+        "match_strength": "weak_evidence_candidate_blocked",
+        "proposed_short_label": "Unresolved Northstar employment assignment",
+        "supporting_signals": [
+          {
+            "signal_type": "sender_internal_reference",
+            "signal_value": "NSM-LAB-4421",
+            "source_refs": [
+              "source.email.001:body:120-132"
+            ],
+            "weight_class": "medium"
+          },
+          {
+            "signal_type": "same_sender",
+            "signal_value": "morgan.lee@example.invalid",
+            "source_refs": [
+              "source.email.001:headers"
+            ],
+            "weight_class": "weak"
+          },
+          {
+            "signal_type": "same_carrier",
+            "signal_value": "Northstar Mutual Synthetic Claims",
+            "source_refs": [
+              "source.email.001:signature"
+            ],
+            "weight_class": "weak"
+          }
+        ],
+        "negative_signals": [],
+        "source_ids": [
+          "source.email.001",
+          "source.attachment.001"
+        ]
+      }
+    ],
+    "weak_signals_not_sufficient_for_merge": [
+      {
+        "signal_type": "same_sender",
+        "signal_value": "morgan.lee@example.invalid",
+        "source_refs": [
+          "source.email.001:headers"
+        ],
+        "reason": "One adjuster can send multiple unrelated assignments."
+      },
+      {
+        "signal_type": "same_carrier",
+        "signal_value": "Northstar Mutual Synthetic Claims",
+        "source_refs": [
+          "source.email.001:signature"
+        ],
+        "reason": "Carrier identity does not identify a specific matter."
+      },
+      {
+        "signal_type": "sender_internal_reference",
+        "signal_value": "NSM-LAB-4421",
+        "source_refs": [
+          "source.email.001:body:120-132"
+        ],
+        "reason": "A sender internal reference is not proven to be unique or matter-specific."
+      }
+    ],
+    "required_review_actions": [
+      "request a claim number, party pair, Upfront-like request ID, or other matter-specific source from sender",
+      "do not merge this packet with any existing prospective matter based only on sender or carrier",
+      "confirm prospective represented client, insured, payer, and carrier roles only after source-specific evidence exists"
+    ]
+  },
+  "candidate_exception_lake_labels": [
+    "source_matter_link_weak_only_candidate",
+    "missing_official_matter_number",
+    "sender_reference_followup_required",
+    "human_matter_linking_confirmation_required"
+  ],
+  "output_boundaries": {
+    "upfront_connector_implemented": false,
+    "vendor_api_called": false,
+    "external_write_performed": false,
+    "lake_write_performed": false,
+    "sqlite_write_performed": false,
+    "matter_opening_authorized": false,
+    "budget_amount_output_authorized": false,
+    "budget_submission_authorized": false,
+    "conflict_conclusion_emitted": false,
+    "screen_created": false,
+    "silent_learning_performed": false
+  },
+  "required_next_gates": [
+    "human_matter_linking_review",
+    "sender_reference_followup",
+    "conflict_seed_review",
+    "no_budget_amount_until_cluster_and_roles_confirmed",
+    "no_matter_opening_without_official_authority",
+    "no_lake_or_sqlite_write_from_matter_linking_preflight"
+  ]
+}

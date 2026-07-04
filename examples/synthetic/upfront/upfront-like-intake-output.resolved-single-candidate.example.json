@@ -1,0 +1,222 @@
+{
+  "schema_version": "0.1",
+  "artifact_id": "upfront_like_intake_output.synthetic.resolved_single_candidate.v0_1",
+  "artifact_type": "upfront_like_intake_output_candidate",
+  "status": "resolved_single_candidate_requires_human_confirmation",
+  "data_origin": "synthetic",
+  "candidate_only": true,
+  "non_authoritative": true,
+  "synthetic_only": true,
+  "source_system": {
+    "system_name": "Upfront-like intake output",
+    "vendor": "Fulcrum GT Upfront public-research proxy",
+    "real_upfront_export": false,
+    "api_contract_verified": false,
+    "public_research_ref": "docs/integrations/upfront-intake-integration-research.md",
+    "notes": [
+      "This fixture is synthetic and models a single source-supported candidate cluster.",
+      "No vendor endpoint names, tenant field names, credentials, or production object IDs are represented."
+    ]
+  },
+  "intake_request": {
+    "intake_request_id": "synthetic-upfront-request-20260704-single-001",
+    "request_type": "new_matter_intake",
+    "request_status": "draft_pre_clearance",
+    "practice_area_candidate": "labor_and_employment",
+    "matter_family_candidate": "employment_litigation_defense",
+    "request_channel": "email_forwarded_to_intake",
+    "requester": {
+      "person_id": "synthetic-person-requester-single-001",
+      "display_name": "Morgan Lee",
+      "role_candidate": "insurance_adjuster",
+      "organization": "Northstar Mutual Synthetic Claims",
+      "email": "morgan.lee@example.invalid"
+    }
+  },
+  "external_references": [
+    {
+      "reference_type": "upfront_like_request_id",
+      "reference_value": "UPF-SYN-2001",
+      "source_ref": "source.email.002:body:42-54",
+      "strength": "strong",
+      "notes": [
+        "Synthetic follow-up maps the documents to one candidate request."
+      ]
+    },
+    {
+      "reference_type": "carrier_claim_number",
+      "reference_value": "CLM-88100-C",
+      "source_ref": "source.attachment.001:page1:40-51",
+      "strength": "strong",
+      "notes": [
+        "Claim number appears in the assignment letter."
+      ]
+    },
+    {
+      "reference_type": "official_firm_matter_number",
+      "reference_value": null,
+      "source_ref": "source.inventory.synthetic:missing",
+      "strength": "missing",
+      "notes": [
+        "No official firm matter number exists at intake time."
+      ]
+    }
+  ],
+  "source_inventory": [
+    {
+      "source_id": "source.email.001",
+      "source_kind": "email",
+      "sender": "morgan.lee@example.invalid",
+      "subject": "One new employment assignment",
+      "received_at": "2026-07-04T14:10:00Z",
+      "source_hash": "sha256:synthetic-single-email-001",
+      "coverage_state": "read",
+      "document_cluster_candidate_ids": [
+        "cluster.single-a"
+      ],
+      "notes": [
+        "Email says one assignment is attached but does not itself authorize a matter link."
+      ]
+    },
+    {
+      "source_id": "source.email.002",
+      "source_kind": "email",
+      "sender": "morgan.lee@example.invalid",
+      "subject": "Re: One new employment assignment - request ID",
+      "received_at": "2026-07-04T14:40:00Z",
+      "source_hash": "sha256:synthetic-single-email-002-resolution",
+      "coverage_state": "read",
+      "document_cluster_candidate_ids": [
+        "cluster.single-a"
+      ],
+      "notes": [
+        "Follow-up email gives an Upfront-like request ID for this one candidate cluster."
+      ]
+    },
+    {
+      "source_id": "source.attachment.001",
+      "source_kind": "pdf_assignment_letter",
+      "file_name": "Northstar_Assignment_CLM-88100-C.pdf",
+      "source_hash": "sha256:synthetic-single-attachment-001",
+      "coverage_state": "read",
+      "document_cluster_candidate_ids": [
+        "cluster.single-a"
+      ]
+    },
+    {
+      "source_id": "source.attachment.002",
+      "source_kind": "pdf_eeoc_charge",
+      "file_name": "Charge_Lena_Morales.pdf",
+      "source_hash": "sha256:synthetic-single-attachment-002",
+      "coverage_state": "read",
+      "document_cluster_candidate_ids": [
+        "cluster.single-a"
+      ]
+    }
+  ],
+  "matter_linking": {
+    "official_matter_number_status": "not_available",
+    "overall_link_state": "resolved_single_candidate_pending_human_confirmation",
+    "requires_human_confirmation": true,
+    "requires_sender_followup": false,
+    "candidate_clusters": [
+      {
+        "cluster_id": "cluster.single-a",
+        "link_state": "resolved_candidate_pending_human_confirmation",
+        "match_strength": "resolved_high_evidence_candidate_not_authorized",
+        "proposed_short_label": "Morales v. Synthetic Studio Foods",
+        "supporting_signals": [
+          {
+            "signal_type": "carrier_claim_number",
+            "signal_value": "CLM-88100-C",
+            "source_refs": [
+              "source.attachment.001:page1:40-51"
+            ],
+            "weight_class": "strong"
+          },
+          {
+            "signal_type": "party_pair",
+            "signal_value": "Lena Morales / Synthetic Studio Foods",
+            "source_refs": [
+              "source.attachment.001:page1:80-121",
+              "source.attachment.002:page1:12-48"
+            ],
+            "weight_class": "strong"
+          },
+          {
+            "signal_type": "sender_followup_claim_cluster_confirmation",
+            "signal_value": "CLM-88100-C maps to this one employment assignment",
+            "source_refs": [
+              "source.email.002:body:42-96"
+            ],
+            "weight_class": "strong"
+          },
+          {
+            "signal_type": "upfront_like_request_id",
+            "signal_value": "UPF-SYN-2001",
+            "source_refs": [
+              "source.email.002:body:42-54"
+            ],
+            "weight_class": "strong"
+          }
+        ],
+        "negative_signals": [],
+        "source_ids": [
+          "source.attachment.001",
+          "source.attachment.002",
+          "source.email.002"
+        ]
+      }
+    ],
+    "weak_signals_not_sufficient_for_merge": [
+      {
+        "signal_type": "same_sender",
+        "signal_value": "morgan.lee@example.invalid",
+        "source_refs": [
+          "source.email.001:headers",
+          "source.email.002:headers"
+        ],
+        "reason": "One adjuster can send multiple unrelated assignments."
+      },
+      {
+        "signal_type": "same_carrier",
+        "signal_value": "Northstar Mutual Synthetic Claims",
+        "source_refs": [
+          "source.email.001:signature",
+          "source.email.002:signature"
+        ],
+        "reason": "Carrier identity does not identify a specific matter."
+      }
+    ],
+    "required_review_actions": [
+      "confirm that cluster.single-a should become one prospective matter candidate",
+      "confirm prospective represented client, insured, payer, and carrier roles separately",
+      "obtain official firm matter authority before matter opening or budget output"
+    ]
+  },
+  "candidate_exception_lake_labels": [
+    "source_matter_link_resolved_candidate",
+    "missing_official_matter_number",
+    "human_matter_linking_confirmation_required"
+  ],
+  "output_boundaries": {
+    "upfront_connector_implemented": false,
+    "vendor_api_called": false,
+    "external_write_performed": false,
+    "lake_write_performed": false,
+    "sqlite_write_performed": false,
+    "matter_opening_authorized": false,
+    "budget_amount_output_authorized": false,
+    "budget_submission_authorized": false,
+    "conflict_conclusion_emitted": false,
+    "screen_created": false,
+    "silent_learning_performed": false
+  },
+  "required_next_gates": [
+    "human_matter_linking_review",
+    "conflict_seed_review",
+    "no_budget_amount_until_cluster_and_roles_confirmed",
+    "no_matter_opening_without_official_authority",
+    "no_lake_or_sqlite_write_from_matter_linking_preflight"
+  ]
+}
