@@ -77,6 +77,13 @@ DETAIL_REPORT_SPECS = [
         renderer="LaborEmploymentMatrixPanel",
     ),
     UIReviewDetailSpec(
+        detail_report_id="labor-employment-executable-coverage",
+        label="L&E Executable Coverage",
+        report_kind="labor_employment_executable_coverage",
+        file_name="labor_employment_executable_coverage_report.json",
+        renderer="LaborEmploymentExecutableCoveragePanel",
+    ),
+    UIReviewDetailSpec(
         detail_report_id="labor-employment-blocked-driver-impact-review",
         label="L&E Blocked Driver Review",
         report_kind="labor_employment_blocked_driver_impact_review",

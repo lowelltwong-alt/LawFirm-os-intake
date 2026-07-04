@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 
 import demoLaborEmploymentBlockedDriverReview from "./fixtures/demo-labor-employment-blocked-driver-impact-review-report.json";
 import demoLaborEmploymentBudgetOutputExpectations from "./fixtures/demo-labor-employment-budget-output-expectations-report.json";
+import demoLaborEmploymentExecutableCoverage from "./fixtures/demo-labor-employment-executable-coverage-report.json";
 import demoLaborEmploymentQAMatrix from "./fixtures/demo-labor-employment-qa-matrix-report.json";
 import demoManifest from "./fixtures/demo-run-manifest.json";
 import demoMatterLinkingPreflight from "./fixtures/demo-matter-linking-preflight-report.json";
@@ -17,6 +18,7 @@ import {
   assertMatterLinkingPreflightReport,
   assertLaborEmploymentBudgetOutputExpectationReport,
   assertLaborEmploymentBlockedDriverImpactReviewReport,
+  assertLaborEmploymentExecutableCoverageReport,
   assertLaborEmploymentQAMatrixReport,
   assertPOCQATriageReport,
   assertReadOnlyManifest,
@@ -36,6 +38,8 @@ import type {
   LaborEmploymentBudgetOutputExpectationReport,
   LaborEmploymentBlockedDriverImpactCaseReview,
   LaborEmploymentBlockedDriverImpactReviewReport,
+  LaborEmploymentExecutableCoverageReport,
+  LaborEmploymentExecutableCoverageState,
   LaborEmploymentBudgetGateEffect,
   LaborEmploymentBudgetReadinessState,
   LaborEmploymentQAMatrixReport,
@@ -73,6 +77,8 @@ const validationSuiteEvidence =
   demoValidationSuiteEvidence as ValidationSuiteEvidenceReport;
 const matterLinkingPreflight = demoMatterLinkingPreflight as MatterLinkingPreflightReport;
 const laborEmploymentQAMatrix = demoLaborEmploymentQAMatrix as LaborEmploymentQAMatrixReport;
+const laborEmploymentExecutableCoverage =
+  demoLaborEmploymentExecutableCoverage as LaborEmploymentExecutableCoverageReport;
 const laborEmploymentBlockedDriverReview =
   demoLaborEmploymentBlockedDriverReview as LaborEmploymentBlockedDriverImpactReviewReport;
 const laborEmploymentBudgetOutputExpectations =
@@ -90,6 +96,8 @@ const validationSuiteEvidenceFailures =
   assertValidationSuiteEvidenceReport(validationSuiteEvidence);
 const matterLinkingFailures = assertMatterLinkingPreflightReport(matterLinkingPreflight);
 const matrixContractFailures = assertLaborEmploymentQAMatrixReport(laborEmploymentQAMatrix);
+const executableCoverageFailures =
+  assertLaborEmploymentExecutableCoverageReport(laborEmploymentExecutableCoverage);
 const blockedDriverContractFailures =
   assertLaborEmploymentBlockedDriverImpactReviewReport(laborEmploymentBlockedDriverReview);
 const budgetOutputExpectationFailures = assertLaborEmploymentBudgetOutputExpectationReport(
@@ -106,6 +114,7 @@ const contractFailures = [
   ...validationSuiteEvidenceFailures,
   ...matterLinkingFailures,
   ...matrixContractFailures,
+  ...executableCoverageFailures,
   ...blockedDriverContractFailures,
   ...budgetOutputExpectationFailures,
 ];
@@ -175,6 +184,10 @@ function summaryItemClass(state: SyntheticConfidenceSummaryItemState) {
 
 function allowedBudgetOutputClass(output: LaborEmploymentAllowedBudgetOutput) {
   return output === "blocked_amount_budget" ? "state state-blocked" : "state state-pending";
+}
+
+function executableCoverageClass(state: LaborEmploymentExecutableCoverageState) {
+  return state === "complete_executable_coverage" ? "state state-passed" : "state state-pending";
 }
 
 type FixtureDrilldownRow = {
@@ -1033,6 +1046,136 @@ function LaborEmploymentMatrixPanel({ report }: { report: LaborEmploymentQAMatri
   );
 }
 
+function LaborEmploymentExecutableCoveragePanel({
+  report,
+}: {
+  report: LaborEmploymentExecutableCoverageReport;
+}) {
+  const coveragePercent =
+    report.pack_case_count === 0
+      ? 0
+      : Math.round((report.covered_pack_case_count / report.pack_case_count) * 100);
+  const missingPreview = report.case_coverage
+    .filter((testCase) => testCase.coverage_state === "missing_executable")
+    .slice(0, 8);
+
+  return (
+    <section
+      className="panel executable-coverage-panel"
+      aria-labelledby="executable-coverage-title"
+    >
+      <div className="panel-heading">
+        <div>
+          <p className="eyebrow">Synthetic fixture readiness</p>
+          <h2 id="executable-coverage-title">L&amp;E Executable Coverage</h2>
+          <code>{report.executable_coverage_report_id}</code>
+        </div>
+        <span
+          className={
+            executableCoverageFailures.length === 0
+              ? executableCoverageClass(report.coverage_state)
+              : "state state-failed"
+          }
+        >
+          {report.coverage_state}
+        </span>
+      </div>
+
+      <div className="coverage-meter" aria-label="L&E executable coverage meter">
+        <div>
+          <strong>{coveragePercent}%</strong>
+          <span>
+            {report.covered_pack_case_count}/{report.pack_case_count} pack cases executable
+          </span>
+        </div>
+        <div className="coverage-bar" aria-hidden="true">
+          <span style={{ width: `${coveragePercent}%` }} />
+        </div>
+      </div>
+
+      <div className="matrix-summary" aria-label="L&E executable coverage summary">
+        <div>
+          <span>Executable Fixtures</span>
+          <strong>{report.executable_fixture_count}</strong>
+        </div>
+        <div>
+          <span>Covered Cases</span>
+          <strong>{report.covered_pack_case_count}</strong>
+        </div>
+        <div>
+          <span>Missing Cases</span>
+          <strong>{report.missing_executable_pack_case_count}</strong>
+        </div>
+        <div>
+          <span>Families Touched</span>
+          <strong>
+            {report.covered_family_count}/{report.family_coverage.length}
+          </strong>
+        </div>
+      </div>
+
+      <div className="coverage-family-grid" aria-label="L&E executable family coverage">
+        {report.family_coverage.map((family) => (
+          <article className="coverage-family-item" key={family.family}>
+            <strong>{family.family}</strong>
+            <span>
+              {family.covered_case_count}/{family.pack_case_count} executable
+            </span>
+            <TokenList items={family.missing_variants} limit={4} />
+          </article>
+        ))}
+      </div>
+
+      <div className="table-wrap">
+        <table className="executable-coverage-table">
+          <thead>
+            <tr>
+              <th>Missing Pack Case</th>
+              <th>Expected Budget Treatment</th>
+              <th>Critical Gaps</th>
+              <th>Important Gaps</th>
+            </tr>
+          </thead>
+          <tbody>
+            {missingPreview.map((testCase) => (
+              <tr key={testCase.pack_case_id}>
+                <td>
+                  <div className="artifact-title">{testCase.family}</div>
+                  <code>{testCase.pack_case_id}</code>
+                  <div className="impact-counts">
+                    <span>{testCase.variant}</span>
+                    <span>{testCase.expected_budget_readiness_state}</span>
+                  </div>
+                </td>
+                <td>
+                  <span className={readinessClass(testCase.expected_budget_readiness_state)}>
+                    {testCase.expected_budget_treatment}
+                  </span>
+                </td>
+                <td>
+                  <TokenList items={testCase.missing_critical_fact_ids} limit={4} />
+                </td>
+                <td>
+                  <TokenList items={testCase.missing_important_fact_ids} limit={4} />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="next-gates">
+        <h3>Coverage Next Gates</h3>
+        <div>
+          {report.required_next_gates.map((gate) => (
+            <code key={gate}>{gate}</code>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function TokenList({ items, limit }: { items: string[]; limit?: number }) {
   const visibleItems = typeof limit === "number" ? items.slice(0, limit) : items;
   const hiddenCount = Math.max(items.length - visibleItems.length, 0);
@@ -1485,6 +1628,7 @@ function App() {
       <QualityGatePanel gates={manifest.qualityGates} />
       <MatterLinkingPreflightPanel report={matterLinkingPreflight} />
       <LaborEmploymentMatrixPanel report={laborEmploymentQAMatrix} />
+      <LaborEmploymentExecutableCoveragePanel report={laborEmploymentExecutableCoverage} />
       <LaborEmploymentBlockedDriverPanel report={laborEmploymentBlockedDriverReview} />
       <LaborEmploymentBudgetOutputExpectationsPanel
         report={laborEmploymentBudgetOutputExpectations}

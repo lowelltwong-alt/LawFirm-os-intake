@@ -29,7 +29,10 @@ The expected local artifact list and matrix guardrails live in
 `src/fixtures/demo-synthetic-qa-review-outcome-report.json`,
 `src/fixtures/demo-synthetic-qa-review-run-report.json`,
 `src/fixtures/demo-labor-employment-qa-matrix-report.json`, and
-`src/fixtures/demo-labor-employment-blocked-driver-impact-review-report.json`.
+`src/fixtures/demo-labor-employment-executable-coverage-report.json`,
+`src/fixtures/demo-labor-employment-blocked-driver-impact-review-report.json`,
+and
+`src/fixtures/demo-labor-employment-budget-output-expectations-report.json`.
 
 Generate a complete synthetic QA review run with:
 
@@ -53,6 +56,12 @@ review evidence. The blocker report remains the authority for row-level
 counts; the frontend must display those fields rather than re-deriving review
 outcomes or treating outcome evidence as calibration, learning, Lake admission,
 budget approval, or production readiness.
+
+The L&E executable coverage report shows which synthetic family-pack cases have
+runnable source bundles. Partial coverage is expected during the POC: the panel
+must show covered versus missing pack cases, family/variant gaps, and required
+next gates without authorizing fixture generation, budget amounts, calibration,
+Lake/SQLite writes, or production testing claims.
 
 Regenerate only the synthetic QA bundle and UI wrappers with:
 

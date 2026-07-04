@@ -2,6 +2,7 @@ import type {
   BoundaryFlags,
   LaborEmploymentBudgetOutputExpectationReport,
   LaborEmploymentBlockedDriverImpactReviewReport,
+  LaborEmploymentExecutableCoverageReport,
   LaborEmploymentQAMatrixReport,
   MatterLinkingPreflightReport,
   POCQATriageReport,
@@ -71,6 +72,7 @@ export const REQUIRED_DETAIL_REPORT_FILES = [
   "matter_linking_preflight_report.json",
   "synthetic_confidence_summary_report.json",
   "labor_employment_qa_matrix_report.json",
+  "labor_employment_executable_coverage_report.json",
   "labor_employment_blocked_driver_impact_review_report.json",
   "labor_employment_budget_output_expectations_report.json",
 ] as const;
@@ -737,6 +739,102 @@ export function assertLaborEmploymentQAMatrixReport(
         testCase.expected_budget_gate_effect !== testCase.actual_budget_gate_effect)
     ) {
       failures.push(`le_matrix_case_expectation_mismatch:${testCase.case_id}`);
+    }
+  }
+  return failures;
+}
+
+export function assertLaborEmploymentExecutableCoverageReport(
+  report: LaborEmploymentExecutableCoverageReport,
+): string[] {
+  const failures: string[] = [];
+  if (!report.candidate_only || !report.non_authoritative || !report.synthetic_only) {
+    failures.push("le_executable_coverage_authority_boundary_failed");
+  }
+  if (!report.human_review_required) {
+    failures.push("le_executable_coverage_missing_human_review_gate");
+  }
+  if (
+    report.fixture_generation_authorized ||
+    report.calibration_approved ||
+    report.budget_amount_output_authorized ||
+    report.budget_submission_authorized ||
+    report.conflict_conclusion_emitted ||
+    report.matter_opening_authorized ||
+    report.training_pipeline_created ||
+    report.lake_write_performed ||
+    report.sqlite_write_performed ||
+    report.external_writes_performed ||
+    report.silent_learning_performed
+  ) {
+    failures.push("le_executable_coverage_side_effect_boundary_failed");
+  }
+  const coveredCases = report.case_coverage.filter(
+    (testCase) => testCase.coverage_state === "covered_executable",
+  );
+  const missingCases = report.case_coverage.filter(
+    (testCase) => testCase.coverage_state === "missing_executable",
+  );
+  if (report.pack_case_count !== report.case_coverage.length) {
+    failures.push("le_executable_coverage_pack_case_count_mismatch");
+  }
+  if (report.covered_pack_case_count !== coveredCases.length) {
+    failures.push("le_executable_coverage_covered_case_count_mismatch");
+  }
+  if (report.missing_executable_pack_case_count !== missingCases.length) {
+    failures.push("le_executable_coverage_missing_case_count_mismatch");
+  }
+  if (report.covered_family_variant_count !== coveredCases.length) {
+    failures.push("le_executable_coverage_covered_variant_count_mismatch");
+  }
+  if (report.missing_family_variant_count !== missingCases.length) {
+    failures.push("le_executable_coverage_missing_variant_count_mismatch");
+  }
+  if (
+    report.coverage_state === "complete_executable_coverage" &&
+    report.missing_executable_pack_case_count > 0
+  ) {
+    failures.push("le_executable_coverage_complete_with_missing_cases");
+  }
+  if (
+    report.coverage_state === "partial_executable_coverage" &&
+    report.missing_executable_pack_case_count === 0
+  ) {
+    failures.push("le_executable_coverage_partial_without_missing_cases");
+  }
+  if (
+    report.status === "labor_employment_executable_coverage_ready_for_review" &&
+    report.checks.some((check) => check.status === "failed")
+  ) {
+    failures.push("le_executable_coverage_ready_with_failed_check");
+  }
+  if (
+    !report.required_next_gates.length ||
+    (report.coverage_state === "partial_executable_coverage" &&
+      !report.missing_family_variant_refs.length)
+  ) {
+    failures.push("le_executable_coverage_not_actionable");
+  }
+  for (const testCase of report.case_coverage) {
+    if (!testCase.candidate_only || !testCase.non_authoritative) {
+      failures.push(`le_executable_coverage_case_boundary_failed:${testCase.pack_case_id}`);
+    }
+    if (
+      testCase.coverage_state === "covered_executable" &&
+      testCase.executable_fixture_ids.length === 0
+    ) {
+      failures.push(`le_executable_coverage_case_missing_fixture:${testCase.pack_case_id}`);
+    }
+    if (
+      testCase.coverage_state === "missing_executable" &&
+      testCase.executable_fixture_ids.length > 0
+    ) {
+      failures.push(`le_executable_coverage_missing_case_has_fixture:${testCase.pack_case_id}`);
+    }
+  }
+  for (const family of report.family_coverage) {
+    if (family.pack_case_count !== family.covered_case_count + family.missing_case_count) {
+      failures.push(`le_executable_coverage_family_count_mismatch:${family.family}`);
     }
   }
   return failures;

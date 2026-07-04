@@ -25,6 +25,7 @@ def test_legal_intake_budget_ui_required_files_exist(repo_root):
         "src/fixtures/demo-validation-suite-evidence-report.json",
         "src/fixtures/demo-matter-linking-preflight-report.json",
         "src/fixtures/demo-labor-employment-qa-matrix-report.json",
+        "src/fixtures/demo-labor-employment-executable-coverage-report.json",
         "src/fixtures/demo-labor-employment-blocked-driver-impact-review-report.json",
         "src/fixtures/demo-labor-employment-budget-output-expectations-report.json",
     ]
@@ -149,9 +150,9 @@ def test_legal_intake_budget_demo_ui_review_data_bundle_is_local_and_no_write(re
     detail_reports = {report["file_name"]: report for report in bundle["detail_reports"]}
 
     assert bundle["status"] == "ready_for_review"
-    assert bundle["detail_report_count"] == len(bundle["detail_reports"]) == 9
-    assert bundle["required_detail_report_count"] == 5
-    assert bundle["present_detail_report_count"] == 9
+    assert bundle["detail_report_count"] == len(bundle["detail_reports"]) == 10
+    assert bundle["required_detail_report_count"] == 6
+    assert bundle["present_detail_report_count"] == 10
     assert bundle["missing_required_detail_report_count"] == 0
     assert bundle["external_write_report_count"] == 0
     assert bundle["candidate_only"] is True
@@ -172,6 +173,7 @@ def test_legal_intake_budget_demo_ui_review_data_bundle_is_local_and_no_write(re
         "synthetic_qa_review_run_report.json",
         "matter_linking_preflight_report.json",
         "labor_employment_qa_matrix_report.json",
+        "labor_employment_executable_coverage_report.json",
         "labor_employment_blocked_driver_impact_review_report.json",
         "labor_employment_budget_output_expectations_report.json",
     } <= set(detail_reports)
@@ -245,6 +247,62 @@ def test_legal_intake_budget_demo_le_matrix_is_synthetic_and_no_write(repo_root)
     assert cases["ready_critical_facts_still_range_only"]["critical_gap_count"] == 0
 
 
+def test_legal_intake_budget_demo_executable_coverage_is_partial_and_no_write(repo_root):
+    report = json.loads(
+        (
+            repo_root
+            / UI_ROOT
+            / "src/fixtures/demo-labor-employment-executable-coverage-report.json"
+        ).read_text(encoding="utf-8")
+    )
+    families = {family["family"]: family for family in report["family_coverage"]}
+    detail_bundle = json.loads(
+        (repo_root / UI_ROOT / "src/fixtures/demo-ui-review-data-bundle.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    detail_reports = {report["report_kind"]: report for report in detail_bundle["detail_reports"]}
+
+    assert report["status"] == "labor_employment_executable_coverage_ready_for_review"
+    assert report["coverage_state"] == "partial_executable_coverage"
+    assert report["pack_case_count"] == 32
+    assert report["executable_fixture_count"] == 8
+    assert report["covered_pack_case_count"] == 9
+    assert report["missing_executable_pack_case_count"] == 23
+    assert report["covered_family_count"] == 8
+    assert report["missing_family_count"] == 0
+    assert report["covered_family_variant_count"] == len(report["covered_pack_case_ids"]) == 9
+    assert (
+        report["missing_family_variant_count"]
+        == len(report["missing_executable_pack_case_ids"])
+        == 23
+    )
+    assert "discrimination_harassment:clean" in report["missing_family_variant_refs"]
+    assert families["ada_fmla_accommodation_leave"]["covered_case_count"] == 2
+    assert families["ada_fmla_accommodation_leave"]["missing_variants"] == [
+        "clean",
+        "adversarial",
+    ]
+    assert all(check["status"] == "passed" for check in report["checks"])
+    assert report["candidate_only"] is True
+    assert report["non_authoritative"] is True
+    assert report["synthetic_only"] is True
+    assert report["human_review_required"] is True
+    assert report["fixture_generation_authorized"] is False
+    assert report["calibration_approved"] is False
+    assert report["budget_amount_output_authorized"] is False
+    assert report["budget_submission_authorized"] is False
+    assert report["lake_write_performed"] is False
+    assert report["sqlite_write_performed"] is False
+    assert report["external_writes_performed"] is False
+    assert report["silent_learning_performed"] is False
+    assert detail_reports["labor_employment_executable_coverage"]["present"] is True
+    assert detail_reports["labor_employment_executable_coverage"]["required"] is True
+    assert detail_reports["labor_employment_executable_coverage"]["renderer"] == (
+        "LaborEmploymentExecutableCoveragePanel"
+    )
+
+
 def test_legal_intake_budget_demo_blocked_driver_review_is_synthetic_and_no_write(repo_root):
     report = json.loads(
         (
@@ -315,8 +373,8 @@ def test_legal_intake_budget_demo_synthetic_confidence_summary_is_no_write(repo_
     assert report["top_blockers"] == []
     assert report["qa_failed_step_count"] == 0
     assert report["qa_missing_required_artifact_count"] == 0
-    assert report["ui_detail_report_count"] == 9
-    assert report["ui_present_detail_report_count"] == 9
+    assert report["ui_detail_report_count"] == 10
+    assert report["ui_present_detail_report_count"] == 10
     assert report["ui_missing_required_detail_report_count"] == 0
     assert report["display_banner"]["candidate_only"] is True
     assert report["display_banner"]["synthetic_only"] is True
@@ -541,6 +599,7 @@ def test_legal_intake_budget_ui_disclaims_mutating_authority(repo_root):
     assert "Matter-Linking Preflight" in app
     assert "QA Gates" in app
     assert "L&amp;E Budget Fact QA" in app
+    assert "L&amp;E Executable Coverage" in app
     assert "L&amp;E Blocked Driver Review" in app
     assert "L&amp;E Budget Output Expectations" in app
     assert "L&amp;E Fixture Drilldown" in app
@@ -554,6 +613,7 @@ def test_legal_intake_budget_ui_disclaims_mutating_authority(repo_root):
     assert "assertSyntheticQAReviewRunReport" in app
     assert "assertMatterLinkingPreflightReport" in app
     assert "assertLaborEmploymentQAMatrixReport" in app
+    assert "assertLaborEmploymentExecutableCoverageReport" in app
     assert "assertLaborEmploymentBlockedDriverImpactReviewReport" in app
     assert "assertLaborEmploymentBudgetOutputExpectationReport" in app
     assert "failingQualityGates" in app
@@ -566,6 +626,8 @@ def test_legal_intake_budget_ui_disclaims_mutating_authority(repo_root):
     assert "outcome-grid" in styles
     assert "qa-blocker-table" in styles
     assert "empty-state" in styles
+    assert "executable-coverage-panel" in styles
+    assert "coverage-family-grid" in styles
     assert "fixture-drilldown-panel" in styles
     assert "fixture-family-grid" in styles
     assert "grid-template-columns" in styles

@@ -1,19 +1,19 @@
 {
   "schema_version": "0.1",
-  "synthetic_confidence_summary_report_id": "synthetic_confidence_summary_0c32f0519aec55fe",
+  "synthetic_confidence_summary_report_id": "synthetic_confidence_summary_0f7ff78a94625807",
   "status": "synthetic_confidence_summary_ready_for_review",
   "testing_readiness_state": "synthetic_qa_ready_pending_review",
-  "source_synthetic_qa_review_run_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\apps\\legal-intake-budget\\src\\fixtures\\demo-synthetic-qa-review-run-report.json",
+  "source_synthetic_qa_review_run_ref": "apps\\legal-intake-budget\\src\\fixtures\\demo-synthetic-qa-review-run-report.json",
   "source_synthetic_qa_review_run_report_id": "syntheticqareviewrun_44a0e1d825bac1db",
   "source_synthetic_qa_review_run_status": "synthetic_qa_review_run_ready",
-  "source_synthetic_qa_bundle_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\apps\\legal-intake-budget\\src\\fixtures\\demo-synthetic-qa-bundle-report.json",
+  "source_synthetic_qa_bundle_ref": "apps\\legal-intake-budget\\src\\fixtures\\demo-synthetic-qa-bundle-report.json",
   "source_synthetic_qa_bundle_report_id": "synthetic_qa_bundle_8cd0af98a58f",
   "source_synthetic_qa_bundle_status": "pending_review",
-  "source_ui_manifest_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\apps\\legal-intake-budget\\src\\fixtures\\demo-run-manifest.json",
+  "source_ui_manifest_ref": "apps\\legal-intake-budget\\src\\fixtures\\demo-run-manifest.json",
   "source_ui_manifest_id": "ui_review_manifest_00aeff08b022",
   "source_ui_manifest_overall_status": "blocked",
-  "source_ui_review_data_bundle_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\apps\\legal-intake-budget\\src\\fixtures\\demo-ui-review-data-bundle.json",
-  "source_ui_review_data_bundle_id": "ui_review_data_bundle_with_qa_outcome_demo",
+  "source_ui_review_data_bundle_ref": "apps\\legal-intake-budget\\src\\fixtures\\demo-ui-review-data-bundle.json",
+  "source_ui_review_data_bundle_id": "ui_review_data_bundle_with_le_executable_coverage_demo",
   "source_ui_review_data_bundle_status": "ready_for_review",
   "qa_step_count": 18,
   "qa_passed_step_count": 18,
@@ -23,8 +23,8 @@
   "qa_blocked_artifact_count": 0,
   "qa_pending_artifact_count": 12,
   "qa_failed_artifact_count": 0,
-  "ui_detail_report_count": 9,
-  "ui_present_detail_report_count": 9,
+  "ui_detail_report_count": 10,
+  "ui_present_detail_report_count": 10,
   "ui_missing_required_detail_report_count": 0,
   "ui_external_write_report_count": 0,
   "quality_gate_count": 23,
@@ -40,7 +40,7 @@
       "owner": "qa-reference",
       "state": "ready_for_review",
       "evidence_refs": [
-        "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\apps\\legal-intake-budget\\src\\fixtures\\demo-synthetic-qa-review-run-report.json"
+        "apps\\legal-intake-budget\\src\\fixtures\\demo-synthetic-qa-review-run-report.json"
       ],
       "notes": [
         "0 failed steps out of 18."
@@ -53,7 +53,7 @@
       "owner": "qa-reference",
       "state": "pending_review",
       "evidence_refs": [
-        "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\apps\\legal-intake-budget\\src\\fixtures\\demo-synthetic-qa-bundle-report.json"
+        "apps\\legal-intake-budget\\src\\fixtures\\demo-synthetic-qa-bundle-report.json"
       ],
       "notes": [
         "0 missing required, 0 blocked, 12 pending review."
@@ -66,11 +66,11 @@
       "owner": "frontend-review",
       "state": "ready_for_review",
       "evidence_refs": [
-        "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\apps\\legal-intake-budget\\src\\fixtures\\demo-ui-review-data-bundle.json",
-        "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\apps\\legal-intake-budget\\src\\fixtures\\demo-run-manifest.json"
+        "apps\\legal-intake-budget\\src\\fixtures\\demo-ui-review-data-bundle.json",
+        "apps\\legal-intake-budget\\src\\fixtures\\demo-run-manifest.json"
       ],
       "notes": [
-        "9 detail reports present; 0 write-boundary failures."
+        "10 detail reports present; 0 write-boundary failures."
       ],
       "no_write_boundary_confirmed": true
     },
@@ -80,9 +80,9 @@
       "owner": "governance-review",
       "state": "ready_for_review",
       "evidence_refs": [
-        "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\apps\\legal-intake-budget\\src\\fixtures\\demo-synthetic-qa-review-run-report.json",
-        "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\apps\\legal-intake-budget\\src\\fixtures\\demo-synthetic-qa-bundle-report.json",
-        "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\apps\\legal-intake-budget\\src\\fixtures\\demo-ui-review-data-bundle.json"
+        "apps\\legal-intake-budget\\src\\fixtures\\demo-synthetic-qa-review-run-report.json",
+        "apps\\legal-intake-budget\\src\\fixtures\\demo-synthetic-qa-bundle-report.json",
+        "apps\\legal-intake-budget\\src\\fixtures\\demo-ui-review-data-bundle.json"
       ],
       "notes": [
         "No budget submission, matter opening, Lake/SQLite write, external write, or silent learning is authorized by these artifacts."
@@ -95,7 +95,7 @@
       "owner": "human-or-owner-review",
       "state": "pending_review",
       "evidence_refs": [
-        "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\apps\\legal-intake-budget\\src\\fixtures\\demo-run-manifest.json"
+        "apps\\legal-intake-budget\\src\\fixtures\\demo-run-manifest.json"
       ],
       "notes": [
         "16 pending gates remain; pending is expected until human/owner review accepts candidate QA evidence."
@@ -143,5 +143,5 @@
   "sqlite_write_performed": false,
   "external_writes_performed": false,
   "silent_learning_performed": false,
-  "generated_at": "2026-07-03T23:46:00Z"
+  "generated_at": "2026-07-02T00:00:00Z"
 }
