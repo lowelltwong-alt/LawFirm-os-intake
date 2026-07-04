@@ -49,14 +49,14 @@ def test_labor_employment_executable_fact_binding_binds_gaps_without_side_effect
     )
 
     assert report.status == "labor_employment_executable_budget_fact_bindings_ready_for_review"
-    assert persisted.case_count == 25
+    assert persisted.case_count == 26
     assert persisted.failed_case_count == 0
-    assert persisted.fact_binding_count == 92
-    assert persisted.critical_fact_binding_count == 48
-    assert persisted.missing_critical_fact_count == 18
-    assert persisted.source_present_confirmation_fact_count == 58
+    assert persisted.fact_binding_count == 98
+    assert persisted.critical_fact_binding_count == 52
+    assert persisted.missing_critical_fact_count == 20
+    assert persisted.source_present_confirmation_fact_count == 61
     assert persisted.source_present_unresolved_critical_driver_count == 2
-    assert persisted.evidence_bound_fact_count == 92
+    assert persisted.evidence_bound_fact_count == 98
     assert persisted.exception_bound_fact_count == 26
     assert persisted.missing_policy_fact_count == 0
     assert persisted.missing_source_signal_count == 0
@@ -420,6 +420,42 @@ def test_labor_employment_executable_fact_binding_binds_gaps_without_side_effect
         restrictive_messy_bindings["expert_and_vendor_needs"].recommended_budget_treatment
         == "candidate_range_budget_after_review"
     )
+    restrictive_adversarial_bindings = {
+        binding.fact_id: binding
+        for binding in cases["le-restrictive-covenant-adversarial.executable.v0_1"].fact_bindings
+    }
+    assert set(restrictive_adversarial_bindings) == {
+        "employee_claimant_identity",
+        "employer_or_defendant_identity",
+        "claims_and_causes_of_action",
+        "forum_removed_and_arbitration_posture",
+        "damages_categories_and_exposure",
+        "policy_handbook_contract_documents",
+    }
+    assert (
+        restrictive_adversarial_bindings["employee_claimant_identity"].fact_resolution_state
+        == "missing_critical_fact"
+    )
+    assert (
+        restrictive_adversarial_bindings["employer_or_defendant_identity"].fact_resolution_state
+        == "missing_critical_fact"
+    )
+    assert (
+        restrictive_adversarial_bindings["policy_handbook_contract_documents"].fact_resolution_state
+        == "missing_noncritical_fact"
+    )
+    assert (
+        restrictive_adversarial_bindings["claims_and_causes_of_action"].fact_resolution_state
+        == "source_present_needs_confirmation"
+    )
+    assert (
+        restrictive_adversarial_bindings["damages_categories_and_exposure"].fact_resolution_state
+        == "source_present_needs_confirmation"
+    )
+    assert all(
+        binding.binding_state == "source_bound_gap_candidate"
+        for binding in restrictive_adversarial_bindings.values()
+    )
     assert restrictive_clean_bindings["expert_and_vendor_needs"].binding_state == (
         "source_bound_gap_candidate"
     )
@@ -586,7 +622,7 @@ def test_labor_employment_executable_fact_binding_manifest_is_candidate_only(rep
     assert manifest.lake_write_performed is False
     assert manifest.sqlite_write_performed is False
     assert manifest.external_writes_performed is False
-    assert len(manifest.bindings) == 25
+    assert len(manifest.bindings) == 26
 
 
 def test_labor_employment_executable_fact_binding_blocks_missing_policy_fact(
@@ -673,9 +709,9 @@ def test_labor_employment_executable_fact_binding_cli_writes_report(
 
     assert exit_code == 0
     assert report["status"] == ("labor_employment_executable_budget_fact_bindings_ready_for_review")
-    assert report["case_count"] == 25
-    assert report["fact_binding_count"] == 92
-    assert report["missing_critical_fact_count"] == 18
-    assert report["source_present_confirmation_fact_count"] == 58
+    assert report["case_count"] == 26
+    assert report["fact_binding_count"] == 98
+    assert report["missing_critical_fact_count"] == 20
+    assert report["source_present_confirmation_fact_count"] == 61
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out

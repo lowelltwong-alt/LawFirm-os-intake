@@ -1,15 +1,15 @@
 {
   "schema_version": "0.1",
-  "synthetic_qa_blocker_report_id": "synthetic_qa_blocker_report_b2c5fc78839616be",
+  "synthetic_qa_blocker_report_id": "synthetic_qa_blocker_report_a528cec6393804da",
   "status": "synthetic_qa_blocker_report_ready_for_review",
-  "source_ui_manifest_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-restrictive-messy\\full-run-1\\ui_review_manifest.json",
-  "source_ui_manifest_id": "ui_review_manifest_2c8bb27f92f8",
+  "source_ui_manifest_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-restrictive-adversarial\\full-run-1\\ui_review_manifest.json",
+  "source_ui_manifest_id": "ui_review_manifest_43256eca575e",
   "source_ui_manifest_overall_status": "blocked",
-  "source_synthetic_confidence_summary_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-restrictive-messy\\full-run-1\\quality\\synthetic_confidence_summary_report.json",
-  "source_synthetic_confidence_summary_report_id": "synthetic_confidence_summary_6c158222d3066edf",
+  "source_synthetic_confidence_summary_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-restrictive-adversarial\\full-run-1\\quality\\synthetic_confidence_summary_report.json",
+  "source_synthetic_confidence_summary_report_id": "synthetic_confidence_summary_1eb55a22c1a5ea1d",
   "source_synthetic_confidence_summary_status": "synthetic_confidence_summary_ready_for_review",
-  "source_synthetic_qa_review_run_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-restrictive-messy\\full-run-1\\synthetic_qa_review_run_report.json",
-  "source_synthetic_qa_review_run_report_id": "syntheticqareviewrun_747610dab96da75f",
+  "source_synthetic_qa_review_run_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-restrictive-adversarial\\full-run-1\\synthetic_qa_review_run_report.json",
+  "source_synthetic_qa_review_run_report_id": "syntheticqareviewrun_59ce4dc6d759bd1c",
   "source_synthetic_qa_review_run_status": "synthetic_qa_review_run_ready",
   "row_count": 24,
   "failed_row_count": 0,
@@ -491,7 +491,7 @@
       "action_state": "needs_review",
       "owner": "qa-reference",
       "evidence_refs": [
-        "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-restrictive-messy\\full-run-1\\quality\\synthetic_qa_bundle_report.json"
+        "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-restrictive-adversarial\\full-run-1\\quality\\synthetic_qa_bundle_report.json"
       ],
       "recommended_next_action": "Review readiness item evidence and record an outcome: Required QA Artifacts.",
       "candidate_exception_lake_labels": [
@@ -512,7 +512,7 @@
       "action_state": "needs_review",
       "owner": "human-or-owner-review",
       "evidence_refs": [
-        "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-restrictive-messy\\full-run-1\\ui_review_manifest.json"
+        "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-restrictive-adversarial\\full-run-1\\ui_review_manifest.json"
       ],
       "recommended_next_action": "Review readiness item evidence and record an outcome: Owner Review Backlog.",
       "candidate_exception_lake_labels": [

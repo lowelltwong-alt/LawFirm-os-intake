@@ -61,13 +61,13 @@ def test_labor_employment_executable_driver_binding_maps_fact_gaps_to_budget_dri
     )
 
     assert report.status == "labor_employment_executable_driver_bindings_ready_for_review"
-    assert persisted.case_count == 25
+    assert persisted.case_count == 26
     assert persisted.failed_case_count == 0
-    assert persisted.driver_binding_count == 122
-    assert persisted.source_bound_driver_count == 122
+    assert persisted.driver_binding_count == 128
+    assert persisted.source_bound_driver_count == 128
     assert persisted.unbound_driver_count == 0
-    assert persisted.critical_driver_block_count == 21
-    assert persisted.critical_driver_review_only_count == 37
+    assert persisted.critical_driver_block_count == 22
+    assert persisted.critical_driver_review_only_count == 39
     assert persisted.missing_driver_dimensions == []
     assert set(persisted.covered_driver_dimensions) == set(persisted.required_driver_dimensions)
     assert all(check.status == "passed" for check in persisted.checks)
@@ -181,6 +181,30 @@ def test_labor_employment_executable_driver_binding_maps_fact_gaps_to_budget_dri
     assert (
         cases["le-restrictive-covenant-messy-thread.executable.v0_1"].critical_driver_block_count
         == 0
+    )
+    restrictive_adversarial = {
+        binding.driver_dimension: binding
+        for binding in cases["le-restrictive-covenant-adversarial.executable.v0_1"].driver_bindings
+    }
+    assert set(restrictive_adversarial) == {
+        "party_topology",
+        "claim_family",
+        "forum_arbitration",
+        "damages_exposure",
+        "esi_discovery",
+        "policy_contract_documents",
+    }
+    assert restrictive_adversarial["party_topology"].critical_driver_block is True
+    assert restrictive_adversarial["party_topology"].matched_fact_ids == [
+        "employee_claimant_identity",
+        "employer_or_defendant_identity",
+    ]
+    assert restrictive_adversarial["claim_family"].critical_driver_review_only is True
+    assert restrictive_adversarial["damages_exposure"].critical_driver_review_only is True
+    assert restrictive_adversarial["policy_contract_documents"].critical_driver_block is False
+    assert (
+        cases["le-restrictive-covenant-adversarial.executable.v0_1"].critical_driver_block_count
+        == 1
     )
     admin = {
         binding.driver_dimension: binding
@@ -450,7 +474,7 @@ def test_labor_employment_executable_driver_binding_cli_writes_candidate_report(
 
     assert exit_code == 0
     assert report["status"] == "labor_employment_executable_driver_bindings_ready_for_review"
-    assert report["case_count"] == 25
+    assert report["case_count"] == 26
     assert report["missing_driver_dimensions"] == []
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out

@@ -1,9 +1,9 @@
 {
   "schema_version": "0.1",
-  "synthetic_qa_review_outcome_report_id": "synthetic_qa_review_outcome_0739ce29f030bdf4",
+  "synthetic_qa_review_outcome_report_id": "synthetic_qa_review_outcome_17ae930533d746d3",
   "status": "synthetic_qa_review_outcome_recorded_pending_followup",
-  "source_synthetic_qa_blocker_report_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-restrictive-messy\\full-run-1\\quality\\synthetic_qa_blocker_report.json",
-  "source_synthetic_qa_blocker_report_id": "synthetic_qa_blocker_report_98fb6a8c05741981",
+  "source_synthetic_qa_blocker_report_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-restrictive-adversarial\\full-run-1\\quality\\synthetic_qa_blocker_report.json",
+  "source_synthetic_qa_blocker_report_id": "synthetic_qa_blocker_report_5c5e49514dbd4a55",
   "source_synthetic_qa_blocker_report_status": "synthetic_qa_blocker_report_ready_for_review",
   "synthetic_qa_review_outcome_record_id": "synthetic-qa-review-outcome-record.generated-review-run.v0_1",
   "reviewer_id": "synthetic-qa-reviewer",
@@ -65,7 +65,7 @@
     "synthetic_qa_review_outcome_recorded_candidate",
     "synthetic_qa_roadmap_deferred_candidate"
   ],
-  "append_only_history_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-restrictive-messy\\full-run-1\\quality\\synthetic-qa-review-outcome\\synthetic_qa_review_outcome_history.jsonl",
+  "append_only_history_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\.lawfirm-os-intake\\tmp\\le-restrictive-adversarial\\full-run-1\\quality\\synthetic-qa-review-outcome\\synthetic_qa_review_outcome_history.jsonl",
   "required_next_actions": [
     "Complete required synthetic QA followups before closing this review.",
     "Record superseding synthetic QA review decisions for unreviewed rows: quality_gate:budget_calibration_readiness, quality_gate:full_pytest, quality_gate:labor_employment_blocked_driver_impact_review, quality_gate:labor_employment_budget_output_expectations, quality_gate:labor_employment_budget_qa_gate, quality_gate:labor_employment_driver_impact_review, quality_gate:labor_employment_executable_coverage, quality_gate:labor_employment_executable_driver_binding, quality_gate:labor_employment_executable_driver_impact, quality_gate:labor_employment_executable_fact_binding, quality_gate:labor_employment_executable_fixtures, quality_gate:labor_employment_fixture_family_pack, quality_gate:labor_employment_qa_matrix, quality_gate:matter_linking_preflight, quality_gate:matter_linking_qa_gate, quality_gate:matter_linking_review_outcome, quality_gate:smoke_demo, quality_gate:synthetic_fixture_depth, quality_gate:validation_suite_evidence, readiness_item:owner_review_backlog, readiness_item:required_qa_artifacts",

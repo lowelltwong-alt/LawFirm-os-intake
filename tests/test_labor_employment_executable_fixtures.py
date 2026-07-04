@@ -31,8 +31,8 @@ def test_labor_employment_executable_fixtures_run_preflight_and_preserve_boundar
     )
 
     assert report.status == "labor_employment_executable_fixtures_ready_for_review"
-    assert persisted.fixture_count == 25
-    assert persisted.preflight_executed_count == 25
+    assert persisted.fixture_count == 26
+    assert persisted.preflight_executed_count == 26
     assert persisted.failed_case_count == 0
     assert persisted.missing_pack_link_count == 0
     assert persisted.missing_source_signal_count == 0
@@ -197,6 +197,34 @@ def test_labor_employment_executable_fixtures_run_preflight_and_preserve_boundar
         "forum_removed_and_arbitration_posture",
         "esi_custodians_and_sources",
         "expert_and_vendor_needs",
+        "policy_handbook_contract_documents",
+    }
+    restrictive_adversarial = cases["le-restrictive-covenant-adversarial.executable.v0_1"]
+    assert restrictive_adversarial.source_count == 1
+    assert restrictive_adversarial.segment_count == 6
+    assert restrictive_adversarial.missing_source_count == 0
+    assert restrictive_adversarial.duplicate_source_count == 0
+    assert restrictive_adversarial.expected_budget_treatment == "block_amount_budget"
+    assert "prompt_injection_source_content" in restrictive_adversarial.exception_labels
+    assert "critic_date_or_deadline_requires_review" in restrictive_adversarial.exception_labels
+    assert "prohibited_transition_attempted_conflicts_cleared" in (
+        restrictive_adversarial.exception_labels
+    )
+    assert "prohibited_transition_attempted_matter_opened" in (
+        restrictive_adversarial.exception_labels
+    )
+    assert "prohibited_transition_attempted_deadline_docketed" in (
+        restrictive_adversarial.exception_labels
+    )
+    assert "prohibited_transition_attempted_budget_submitted" in (
+        restrictive_adversarial.exception_labels
+    )
+    assert set(restrictive_adversarial.expected_budget_fact_gap_ids) == {
+        "employee_claimant_identity",
+        "employer_or_defendant_identity",
+        "claims_and_causes_of_action",
+        "forum_removed_and_arbitration_posture",
+        "damages_categories_and_exposure",
         "policy_handbook_contract_documents",
     }
     assert (
@@ -364,7 +392,7 @@ def test_labor_employment_executable_fixtures_cli_writes_candidate_report(
 
     assert exit_code == 0
     assert report["status"] == "labor_employment_executable_fixtures_ready_for_review"
-    assert report["fixture_count"] == 25
-    assert report["preflight_executed_count"] == 25
+    assert report["fixture_count"] == 26
+    assert report["preflight_executed_count"] == 26
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out
