@@ -1,0 +1,214 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "outcome_seed_id": {
+      "title": "Outcome Seed Id",
+      "type": "string"
+    },
+    "learning_fixture_id": {
+      "title": "Learning Fixture Id",
+      "type": "string"
+    },
+    "executable_fixture_id": {
+      "title": "Executable Fixture Id",
+      "type": "string"
+    },
+    "family": {
+      "enum": [
+        "discrimination_harassment",
+        "retaliation_wrongful_termination",
+        "wage_hour_flsa_state",
+        "ada_fmla_accommodation_leave",
+        "restrictive_covenant_trade_secret",
+        "epli_carrier_assignment",
+        "class_collective_paga_representative",
+        "administrative_exhaustion_agency_record"
+      ],
+      "title": "Family",
+      "type": "string"
+    },
+    "variant": {
+      "enum": [
+        "clean",
+        "messy_thread",
+        "missing_attachment",
+        "adversarial"
+      ],
+      "title": "Variant",
+      "type": "string"
+    },
+    "expected_budget_output_state": {
+      "enum": [
+        "blocked_amount_budget",
+        "range_or_hours_only_pending_review",
+        "candidate_range_after_review_pending_human_review"
+      ],
+      "title": "Expected Budget Output State",
+      "type": "string"
+    },
+    "seeded_learning_loop_types": {
+      "items": {
+        "enum": [
+          "actuals_variance",
+          "carrier_rejection_capture",
+          "appeal_outcome",
+          "reviewed_learning_gate",
+          "blocked_budget_guard"
+        ],
+        "type": "string"
+      },
+      "title": "Seeded Learning Loop Types",
+      "type": "array"
+    },
+    "replay_seed_refs_by_loop": {
+      "additionalProperties": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "propertyNames": {
+        "enum": [
+          "actuals_variance",
+          "carrier_rejection_capture",
+          "appeal_outcome",
+          "reviewed_learning_gate",
+          "blocked_budget_guard"
+        ]
+      },
+      "title": "Replay Seed Refs By Loop",
+      "type": "object"
+    },
+    "expected_replay_artifacts_by_loop": {
+      "additionalProperties": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "propertyNames": {
+        "enum": [
+          "actuals_variance",
+          "carrier_rejection_capture",
+          "appeal_outcome",
+          "reviewed_learning_gate",
+          "blocked_budget_guard"
+        ]
+      },
+      "title": "Expected Replay Artifacts By Loop",
+      "type": "object"
+    },
+    "candidate_exception_lake_labels_by_loop": {
+      "additionalProperties": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "propertyNames": {
+        "enum": [
+          "actuals_variance",
+          "carrier_rejection_capture",
+          "appeal_outcome",
+          "reviewed_learning_gate",
+          "blocked_budget_guard"
+        ]
+      },
+      "title": "Candidate Exception Lake Labels By Loop",
+      "type": "object"
+    },
+    "replay_assertions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Replay Assertions",
+      "type": "array"
+    },
+    "notes": {
+      "title": "Notes",
+      "type": "string"
+    },
+    "data_origin": {
+      "const": "synthetic",
+      "default": "synthetic",
+      "title": "Data Origin",
+      "type": "string"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "human_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Human Review Required",
+      "type": "boolean"
+    },
+    "budget_submission_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Submission Authorized",
+      "type": "boolean"
+    },
+    "matter_opening_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Matter Opening Authorized",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "outcome_seed_id",
+    "learning_fixture_id",
+    "executable_fixture_id",
+    "family",
+    "variant",
+    "expected_budget_output_state",
+    "seeded_learning_loop_types",
+    "replay_seed_refs_by_loop",
+    "expected_replay_artifacts_by_loop",
+    "candidate_exception_lake_labels_by_loop",
+    "replay_assertions",
+    "notes"
+  ],
+  "title": "LaborEmploymentBudgetOutcomeReplaySeedSpec",
+  "type": "object"
+}

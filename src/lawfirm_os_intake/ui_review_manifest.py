@@ -249,6 +249,13 @@ ARTIFACT_SPECS = [
         "blocked",
     ),
     ArtifactSpec(
+        "labor-employment-budget-outcome-replay-readiness",
+        "L&E Budget Outcome Replay Readiness",
+        "labor_employment_budget_outcome_replay_readiness_report.json",
+        "qa-reference",
+        "blocked",
+    ),
+    ArtifactSpec(
         "labor-employment-budget-fact-gold",
         "L&E Budget Fact Gold",
         "labor_employment_budget_fact_gold_report.json",
@@ -467,6 +474,13 @@ QUALITY_GATE_SPECS = {
         "labor_employment_budget_learning_fixtures_report.json",
         "qa-reference",
         "L&E actuals, carrier rejection, appeal, reviewed-learning, and blocked-budget guard fixture coverage must be visible before calibration work.",
+        "blocked",
+    ),
+    "labor_employment_budget_outcome_replay_readiness": (
+        "L&E Budget Outcome Replay Readiness",
+        "labor_employment_budget_outcome_replay_readiness_report.json",
+        "qa-reference",
+        "L&E learning fixture intents must have concrete synthetic actuals, rejection, appeal, reviewed-learning, and blocked-guard replay seeds before calibration work.",
         "blocked",
     ),
     "budget_learning_loop": (

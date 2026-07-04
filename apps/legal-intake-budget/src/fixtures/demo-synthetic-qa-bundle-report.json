@@ -1,14 +1,14 @@
 {
   "schema_version": "0.1",
-  "synthetic_qa_bundle_report_id": "synthetic_qa_bundle_5797b2f85f1f",
+  "synthetic_qa_bundle_report_id": "synthetic_qa_bundle_8956d3e0bd00",
   "status": "pending_review",
-  "run_root_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run",
-  "out_dir_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\quality",
-  "artifact_count": 18,
-  "required_artifact_count": 18,
+  "run_root_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run",
+  "out_dir_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\quality",
+  "artifact_count": 19,
+  "required_artifact_count": 19,
   "missing_required_artifact_count": 0,
   "blocked_artifact_count": 0,
-  "pending_artifact_count": 16,
+  "pending_artifact_count": 17,
   "failed_artifact_count": 0,
   "artifacts": [
     {
@@ -19,8 +19,8 @@
       "present": true,
       "status": "passed",
       "gate_state": "passed",
-      "artifact_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\budget\\budget_coherence_report.json",
-      "copied_to_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\quality\\budget_coherence_report.json",
+      "artifact_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\budget\\budget_coherence_report.json",
+      "copied_to_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\quality\\budget_coherence_report.json",
       "source_sha256": "sha256:53e9a30bdfd91107d688ddef87079650451aab34d2ece786cab7b9fa4695659f",
       "notes": [
         "Found budget_coherence_report.json; source status=passed; bundle status=passed."
@@ -34,9 +34,9 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\quality\\synthetic_fixture_depth_audit_report.json",
-      "copied_to_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\quality\\synthetic_fixture_depth_audit_report.json",
-      "source_sha256": "sha256:3323694b8d8988fecbc39285eeed36b8b3f1ccb45c1c11a8b6df65e5a2bcab73",
+      "artifact_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\quality\\synthetic_fixture_depth_audit_report.json",
+      "copied_to_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\quality\\synthetic_fixture_depth_audit_report.json",
+      "source_sha256": "sha256:b20253204d9475f4b31e31fbddf798244550652bb282cb46c967430ca331a2be",
       "notes": [
         "Found synthetic_fixture_depth_audit_report.json; source status=synthetic_fixture_depth_ready_for_review; bundle status=pending_review."
       ]
@@ -49,9 +49,9 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\quality\\budget_calibration_readiness_report.json",
-      "copied_to_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\quality\\budget_calibration_readiness_report.json",
-      "source_sha256": "sha256:ef1ad9f99fd0c00953b4ce0c52c85bd4c01dfa3106868df0a598e45b7f5de89f",
+      "artifact_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\quality\\budget_calibration_readiness_report.json",
+      "copied_to_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\quality\\budget_calibration_readiness_report.json",
+      "source_sha256": "sha256:257c05618269f10318e0d36787a1b7c98e6b2569323f7439ad3188c446f5c6d4",
       "notes": [
         "Found budget_calibration_readiness_report.json; source status=ready_for_manual_fixture_update_review; bundle status=pending_review."
       ]
@@ -64,9 +64,9 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\quality\\labor_employment_qa_matrix_report.json",
-      "copied_to_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\quality\\labor_employment_qa_matrix_report.json",
-      "source_sha256": "sha256:fbb85776144cd4765bd5995e015d711ac88d754baba074de268810ce5cae74b0",
+      "artifact_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\quality\\labor_employment_qa_matrix_report.json",
+      "copied_to_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\quality\\labor_employment_qa_matrix_report.json",
+      "source_sha256": "sha256:bb4b6b1ace1f86c3e006c0952f66a94146efffc4cb536a399d1b8e0224cef4e3",
       "notes": [
         "Found labor_employment_qa_matrix_report.json; source status=labor_employment_qa_matrix_ready_for_review; bundle status=pending_review."
       ]
@@ -79,9 +79,9 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\quality\\labor_employment_fixture_family_pack_report.json",
-      "copied_to_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\quality\\labor_employment_fixture_family_pack_report.json",
-      "source_sha256": "sha256:48a544c3d08f468990edd8d608dc073a365f7ce6bdf0948b8e5001b37e8ffe1f",
+      "artifact_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\quality\\labor_employment_fixture_family_pack_report.json",
+      "copied_to_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\quality\\labor_employment_fixture_family_pack_report.json",
+      "source_sha256": "sha256:797428c60721bb87bf8892e27d2536cb8ae31b50d400608051d8419fa627a3f1",
       "notes": [
         "Found labor_employment_fixture_family_pack_report.json; source status=labor_employment_fixture_family_pack_ready_for_review; bundle status=pending_review."
       ]
@@ -94,9 +94,9 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\quality\\labor_employment_executable_fixtures_report.json",
-      "copied_to_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\quality\\labor_employment_executable_fixtures_report.json",
-      "source_sha256": "sha256:ad3149099542d46dd64864a2fdd6561c52eb8751485e93b551e14c7e750217d5",
+      "artifact_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\quality\\labor_employment_executable_fixtures_report.json",
+      "copied_to_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\quality\\labor_employment_executable_fixtures_report.json",
+      "source_sha256": "sha256:a165bfb77de43ba69ea3728884dcd81da7db4727c4eb197b169fc82bddec1af6",
       "notes": [
         "Found labor_employment_executable_fixtures_report.json; source status=labor_employment_executable_fixtures_ready_for_review; bundle status=pending_review."
       ]
@@ -109,9 +109,9 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\quality\\labor_employment_executable_coverage_report.json",
-      "copied_to_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\quality\\labor_employment_executable_coverage_report.json",
-      "source_sha256": "sha256:ce4f593d713b870e235b4e515dbf2a3a822ce70e74267f26616a894e1517d787",
+      "artifact_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\quality\\labor_employment_executable_coverage_report.json",
+      "copied_to_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\quality\\labor_employment_executable_coverage_report.json",
+      "source_sha256": "sha256:5aab41507aa2b18e2e5ae40b5f1c3a482d6839376502463dd2be6543355f2d0a",
       "notes": [
         "Found labor_employment_executable_coverage_report.json; source status=labor_employment_executable_coverage_ready_for_review; bundle status=pending_review."
       ]
@@ -124,9 +124,9 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\quality\\labor_employment_executable_fact_binding_report.json",
-      "copied_to_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\quality\\labor_employment_executable_fact_binding_report.json",
-      "source_sha256": "sha256:38e409a19786866e92bee83b391972c7de959fb5e606380590f9d0f1b241e0ea",
+      "artifact_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\quality\\labor_employment_executable_fact_binding_report.json",
+      "copied_to_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\quality\\labor_employment_executable_fact_binding_report.json",
+      "source_sha256": "sha256:282f29eaa374cc09463c1f428e62221a65f49efff60ef8c7eea80fb79a1c14f4",
       "notes": [
         "Found labor_employment_executable_fact_binding_report.json; source status=labor_employment_executable_budget_fact_bindings_ready_for_review; bundle status=pending_review."
       ]
@@ -139,9 +139,9 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\quality\\labor_employment_executable_driver_binding_report.json",
-      "copied_to_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\quality\\labor_employment_executable_driver_binding_report.json",
-      "source_sha256": "sha256:7dd37aa0a1405c6ecdd981dcbb342f4d8471b3ef766fecbcccd963838dab00e9",
+      "artifact_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\quality\\labor_employment_executable_driver_binding_report.json",
+      "copied_to_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\quality\\labor_employment_executable_driver_binding_report.json",
+      "source_sha256": "sha256:7f42ec4d508b496134dfae5dc3c6a665479720d6d58c4cb4cad5db86e14fc4c8",
       "notes": [
         "Found labor_employment_executable_driver_binding_report.json; source status=labor_employment_executable_driver_bindings_ready_for_review; bundle status=pending_review."
       ]
@@ -154,9 +154,9 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\quality\\labor_employment_executable_driver_impact_report.json",
-      "copied_to_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\quality\\labor_employment_executable_driver_impact_report.json",
-      "source_sha256": "sha256:3cd7e590cdb2280468ad359e267ba3a1149b43c04a40973cd8360cd20fffb91c",
+      "artifact_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\quality\\labor_employment_executable_driver_impact_report.json",
+      "copied_to_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\quality\\labor_employment_executable_driver_impact_report.json",
+      "source_sha256": "sha256:55f3e3bc32fbf063d1a557b87b8f57fd1fb1f255575ed292b38d188e71bc7415",
       "notes": [
         "Found labor_employment_executable_driver_impact_report.json; source status=labor_employment_executable_driver_impacts_ready_for_review; bundle status=pending_review."
       ]
@@ -169,9 +169,9 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\quality\\labor_employment_driver_impact_review_report.json",
-      "copied_to_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\quality\\labor_employment_driver_impact_review_report.json",
-      "source_sha256": "sha256:6b663fcb145ba11d62cff7d4dd782270f0fe75afbb6925894486e4a5a5e786ea",
+      "artifact_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\quality\\labor_employment_driver_impact_review_report.json",
+      "copied_to_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\quality\\labor_employment_driver_impact_review_report.json",
+      "source_sha256": "sha256:436fca0a910d43eac43b571fb124e9e25d4739932b912be99add30454eaee137",
       "notes": [
         "Found labor_employment_driver_impact_review_report.json; source status=labor_employment_driver_impact_review_ready_for_budget_gate_replay; bundle status=pending_review."
       ]
@@ -184,9 +184,9 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\quality\\labor_employment_blocked_driver_impact_review_report.json",
-      "copied_to_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\quality\\labor_employment_blocked_driver_impact_review_report.json",
-      "source_sha256": "sha256:f4fa74b15ddeeb10cfd4c2aab0de92b32d48505f9d2c9e56ef44ddd3230491b8",
+      "artifact_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\quality\\labor_employment_blocked_driver_impact_review_report.json",
+      "copied_to_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\quality\\labor_employment_blocked_driver_impact_review_report.json",
+      "source_sha256": "sha256:260599761c7e63e2531a4eed9d180fc45ec501a6d3da7ec6930f1cf39d1fc8c0",
       "notes": [
         "Found labor_employment_blocked_driver_impact_review_report.json; source status=labor_employment_blocked_driver_impacts_ready_for_review; bundle status=pending_review."
       ]
@@ -199,9 +199,9 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\quality\\labor_employment_budget_output_expectations_report.json",
-      "copied_to_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\quality\\labor_employment_budget_output_expectations_report.json",
-      "source_sha256": "sha256:60be534260ff89a24a0d774f31fecc12bc209438a87e60865f9ea31071378307",
+      "artifact_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\quality\\labor_employment_budget_output_expectations_report.json",
+      "copied_to_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\quality\\labor_employment_budget_output_expectations_report.json",
+      "source_sha256": "sha256:d3e98f8fb920e7c3809980480e1c95cf33de1583a12127421d5de066223dd577",
       "notes": [
         "Found labor_employment_budget_output_expectations_report.json; source status=labor_employment_budget_output_expectations_ready_for_review; bundle status=pending_review."
       ]
@@ -214,9 +214,9 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\quality\\labor_employment_budget_qa_gate_report.json",
-      "copied_to_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\quality\\labor_employment_budget_qa_gate_report.json",
-      "source_sha256": "sha256:e361fdbb04af13e55acb250eaf34e3e92ab635d54ad4d86233b42928ab5c1067",
+      "artifact_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\quality\\labor_employment_budget_qa_gate_report.json",
+      "copied_to_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\quality\\labor_employment_budget_qa_gate_report.json",
+      "source_sha256": "sha256:dd09df9ee3b5f6053d68bb0fd8c601c72b5afacd6e04c565b2e4b7cad665ad6a",
       "notes": [
         "Found labor_employment_budget_qa_gate_report.json; source status=labor_employment_budget_qa_gate_ready_for_review; bundle status=pending_review."
       ]
@@ -229,11 +229,26 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\quality\\labor_employment_budget_learning_fixtures_report.json",
-      "copied_to_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\quality\\labor_employment_budget_learning_fixtures_report.json",
-      "source_sha256": "sha256:bce878a993aa596ef0d9f888aa8ac2bdae6fee265811ed905de5240354130b6b",
+      "artifact_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\quality\\labor_employment_budget_learning_fixtures_report.json",
+      "copied_to_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\quality\\labor_employment_budget_learning_fixtures_report.json",
+      "source_sha256": "sha256:642634aa9476f6eaa365f7ea6d82e3522a4fca5bf2b59853b28411d702d39122",
       "notes": [
         "Found labor_employment_budget_learning_fixtures_report.json; source status=labor_employment_budget_learning_fixtures_ready_for_review; bundle status=pending_review."
+      ]
+    },
+    {
+      "artifact_id": "labor_employment_budget_outcome_replay_readiness",
+      "label": "Labor/Employment Budget Outcome Replay Readiness",
+      "file_name": "labor_employment_budget_outcome_replay_readiness_report.json",
+      "required": true,
+      "present": true,
+      "status": "pending_review",
+      "gate_state": "pending_review",
+      "artifact_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\quality\\le-budget-outcome-replay-readiness\\labor_employment_budget_outcome_replay_readiness_report.json",
+      "copied_to_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\quality\\labor_employment_budget_outcome_replay_readiness_report.json",
+      "source_sha256": "sha256:1a44658abf3605e0b223d75d67e70ef42b5f3b439b6c8e506f22dff9d17c99e4",
+      "notes": [
+        "Found labor_employment_budget_outcome_replay_readiness_report.json; source status=labor_employment_budget_outcome_replay_ready_for_review; bundle status=pending_review."
       ]
     },
     {
@@ -244,9 +259,9 @@
       "present": true,
       "status": "passed",
       "gate_state": "passed",
-      "artifact_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\quality\\labor_employment_budget_fact_gold_report.json",
-      "copied_to_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\quality\\labor_employment_budget_fact_gold_report.json",
-      "source_sha256": "sha256:d5b1475d20b148c14bf86bd90b6c035d5c2cf112e8fef07604d99c80141e1d35",
+      "artifact_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\quality\\labor_employment_budget_fact_gold_report.json",
+      "copied_to_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\quality\\labor_employment_budget_fact_gold_report.json",
+      "source_sha256": "sha256:f968687f229add0c483958c30c07071b144fbea5d11531d06525c7beb5935307",
       "notes": [
         "Found labor_employment_budget_fact_gold_report.json; source status=passed; bundle status=passed."
       ]
@@ -259,9 +274,9 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\quality\\budget_learning_loop_report.json",
-      "copied_to_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\quality\\budget_learning_loop_report.json",
-      "source_sha256": "sha256:1e5340aa1a2d99692d6d771ceb093f75d06f276cb8eb57888ca9dd0d3d62e7ed",
+      "artifact_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\quality\\budget_learning_loop_report.json",
+      "copied_to_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\quality\\budget_learning_loop_report.json",
+      "source_sha256": "sha256:eb9a659395858403337f12a61199d5bcad5e8ef529d38fa709d826a5112088fa",
       "notes": [
         "Found budget_learning_loop_report.json; source status=budget_learning_loop_ready_for_review; bundle status=pending_review."
       ]
@@ -274,16 +289,16 @@
       "present": true,
       "status": "pending_review",
       "gate_state": "pending_review",
-      "artifact_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\quality\\matter_linking_qa_gate_report.json",
-      "copied_to_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\quality\\matter_linking_qa_gate_report.json",
-      "source_sha256": "sha256:9780666b47fcbf31077871d0ee8103bb23e6d93f8d7eb515dcb91bf4c81a3cae",
+      "artifact_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\quality\\matter_linking_qa_gate_report.json",
+      "copied_to_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\quality\\matter_linking_qa_gate_report.json",
+      "source_sha256": "sha256:90df0a8a7493453f0381b1c4f18de3c8d502aa033f43780949457217258d2b16",
       "notes": [
         "Found matter_linking_qa_gate_report.json; source status=matter_linking_qa_gate_ready_for_review; bundle status=pending_review."
       ]
     }
   ],
-  "ui_manifest_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\ui_review_manifest.json",
-  "ui_data_bundle_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\ui_review_data_bundle.json",
+  "ui_manifest_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\ui_review_manifest.json",
+  "ui_data_bundle_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\ui_review_data_bundle.json",
   "required_next_actions": [
     "Route pending QA artifacts for human/owner review; do not treat review-ready as calibrated."
   ],

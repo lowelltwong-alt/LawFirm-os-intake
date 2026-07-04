@@ -36,6 +36,10 @@ from .labor_employment_budget_learning_fixtures import (
     LABOR_EMPLOYMENT_BUDGET_LEARNING_FIXTURE_REPORT_FILENAME,
     run_labor_employment_budget_learning_fixture_audit,
 )
+from .labor_employment_budget_outcome_replay_readiness import (
+    LABOR_EMPLOYMENT_BUDGET_OUTCOME_REPLAY_READINESS_REPORT_FILENAME,
+    run_labor_employment_budget_outcome_replay_readiness_audit,
+)
 from .labor_employment_budget_qa_gate import (
     LABOR_EMPLOYMENT_BUDGET_QA_GATE_REPORT_FILENAME,
     run_labor_employment_budget_qa_gate,
@@ -138,6 +142,9 @@ LE_DRIVER_IMPACT_REVIEW_REF = "examples/synthetic/gold/labor-employment-driver-i
 LE_BUDGET_FACT_GOLD_REF = "examples/synthetic/gold/labor-employment-budget-fact-gold.json"
 LE_BUDGET_LEARNING_FIXTURES_REF = (
     "examples/synthetic/labor-employment/labor-employment-budget-learning-fixtures.json"
+)
+LE_BUDGET_OUTCOME_REPLAY_SEEDS_REF = (
+    "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json"
 )
 UPFRONT_RESOLVED_FOLLOWUP_REF = (
     "examples/synthetic/upfront/upfront-like-intake-output.resolved-followup.example.json"
@@ -505,6 +512,30 @@ def run_synthetic_qa_review_run(
             (
                 "L&E actuals, carrier rejection, appeal, reviewed-learning, and "
                 "blocked-budget guard fixture coverage is mapped for QA."
+            ),
+        )
+    )
+
+    outcome_replay, outcome_replay_dir = run_labor_employment_budget_outcome_replay_readiness_audit(
+        seed_manifest_path=root / LE_BUDGET_OUTCOME_REPLAY_SEEDS_REF,
+        learning_fixture_report_path=budget_learning_fixtures_ref,
+        repo_root=root,
+        out_dir=quality_dir / "le-budget-outcome-replay-readiness",
+        generated_at=generated_at,
+    )
+    outcome_replay_ref = (
+        outcome_replay_dir / LABOR_EMPLOYMENT_BUDGET_OUTCOME_REPLAY_READINESS_REPORT_FILENAME
+    )
+    steps.append(
+        _step(
+            "labor_employment_budget_outcome_replay_readiness",
+            "L&E Budget Outcome Replay Readiness",
+            outcome_replay.status,
+            outcome_replay_ref,
+            outcome_replay.status == "labor_employment_budget_outcome_replay_ready_for_review",
+            (
+                "L&E actuals, carrier rejection, appeal, reviewed-learning, and blocked "
+                "guard fixture intents have concrete synthetic replay seeds."
             ),
         )
     )

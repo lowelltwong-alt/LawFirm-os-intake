@@ -1,7 +1,7 @@
 {
-  "manifestId": "ui_review_manifest_68910eb51897",
+  "manifestId": "ui_review_manifest_1e1baf2a078d",
   "generatedAt": "2026-07-04T00:00:00Z",
-  "runLabel": "Local intake QA review: le-budget-learning-fixtures-review-run",
+  "runLabel": "Local intake QA review: le-budget-outcome-replay-readiness-review-run",
   "practiceArea": "synthetic_intake",
   "matterFamily": "medical_malpractice_defense",
   "overallStatus": "blocked",
@@ -27,7 +27,7 @@
       "candidateOnly": true,
       "externalWritesPerformed": false,
       "notes": [
-        "Found preflight\\run_ea139e8ac0be415bb8199951df525ba0\\intake_preflight_packet.json; status=human_intake_review_required."
+        "Found preflight\\run_bf6bb8bc38444fcf82e394838796247b\\intake_preflight_packet.json; status=human_intake_review_required."
       ]
     },
     {
@@ -434,6 +434,19 @@
       ]
     },
     {
+      "artifactId": "labor-employment-budget-outcome-replay-readiness",
+      "label": "L&E Budget Outcome Replay Readiness",
+      "fileName": "labor_employment_budget_outcome_replay_readiness_report.json",
+      "status": "pending_review",
+      "owner": "qa-reference",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": [
+        "Found quality\\labor_employment_budget_outcome_replay_readiness_report.json; status=labor_employment_budget_outcome_replay_ready_for_review."
+      ]
+    },
+    {
       "artifactId": "labor-employment-budget-fact-gold",
       "label": "L&E Budget Fact Gold",
       "fileName": "labor_employment_budget_fact_gold_report.json",
@@ -767,6 +780,16 @@
       "owner": "qa-reference",
       "notes": [
         "L&E actuals, carrier rejection, appeal, reviewed-learning, and blocked-budget guard fixture coverage must be visible before calibration work."
+      ]
+    },
+    {
+      "gateId": "labor_employment_budget_outcome_replay_readiness",
+      "label": "L&E Budget Outcome Replay Readiness",
+      "status": "pending_review",
+      "evidenceFile": "labor_employment_budget_outcome_replay_readiness_report.json",
+      "owner": "qa-reference",
+      "notes": [
+        "L&E learning fixture intents must have concrete synthetic actuals, rejection, appeal, reviewed-learning, and blocked-guard replay seeds before calibration work."
       ]
     },
     {

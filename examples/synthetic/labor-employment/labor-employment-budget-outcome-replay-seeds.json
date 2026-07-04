@@ -1,0 +1,417 @@
+{
+  "schema_version": "0.1",
+  "manifest_id": "labor-employment-budget-outcome-replay-seeds.v0_1",
+  "status": "candidate_labor_employment_budget_outcome_replay_seed_manifest",
+  "practice_area": "labor_employment",
+  "source_budget_learning_fixture_manifest_ref": "examples/synthetic/labor-employment/labor-employment-budget-learning-fixtures.json",
+  "seeds": [
+    {
+      "outcome_seed_id": "le-outcome-replay-discrimination-harassment-clean.v0_1",
+      "learning_fixture_id": "le-learning-discrimination-harassment-clean.v0_1",
+      "executable_fixture_id": "le-discrimination-harassment-clean.executable.v0_1",
+      "family": "discrimination_harassment",
+      "variant": "clean",
+      "expected_budget_output_state": "candidate_range_after_review_pending_human_review",
+      "seeded_learning_loop_types": [
+        "actuals_variance",
+        "carrier_rejection_capture",
+        "appeal_outcome",
+        "reviewed_learning_gate"
+      ],
+      "replay_seed_refs_by_loop": {
+        "actuals_variance": [
+          "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-discrimination-harassment-clean.v0_1/actuals_variance",
+          "examples/synthetic/labor-employment/executable-fixtures/le-discrimination-harassment-clean.source-bundle.json"
+        ],
+        "carrier_rejection_capture": [
+          "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-discrimination-harassment-clean.v0_1/carrier_rejection_capture",
+          "examples/synthetic/labor-employment/executable-fixtures/le-discrimination-harassment-clean.source-bundle.json"
+        ],
+        "appeal_outcome": [
+          "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-discrimination-harassment-clean.v0_1/appeal_outcome"
+        ],
+        "reviewed_learning_gate": [
+          "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-discrimination-harassment-clean.v0_1/reviewed_learning_gate"
+        ]
+      },
+      "expected_replay_artifacts_by_loop": {
+        "actuals_variance": [
+          "budget_actual_comparison_report.json",
+          "budget_actual_variance_ledger_report.json"
+        ],
+        "carrier_rejection_capture": [
+          "carrier_rejection_reconciliation_report.json",
+          "carrier_rejection_decision_ledger_report.json"
+        ],
+        "appeal_outcome": [
+          "carrier_rejection_decision_ledger_report.json",
+          "carrier_rejection_learning_report.json"
+        ],
+        "reviewed_learning_gate": [
+          "reviewed_learning_gate_report.json",
+          "budget_learning_loop_report.json"
+        ]
+      },
+      "candidate_exception_lake_labels_by_loop": {
+        "actuals_variance": [
+          "labor_employment_actual_variance_candidate"
+        ],
+        "carrier_rejection_capture": [
+          "labor_employment_carrier_rejection_capture_candidate"
+        ],
+        "appeal_outcome": [
+          "labor_employment_appeal_outcome_candidate"
+        ],
+        "reviewed_learning_gate": [
+          "reviewed_learning_gate_before_candidate_changes"
+        ]
+      },
+      "replay_assertions": [
+        "actuals variance remains candidate-only and phase/code scoped",
+        "carrier rejection capture preserves source refs and no connector writes",
+        "appeal financial outcome requires reviewed learning gate before any change"
+      ],
+      "notes": "Clean discrimination/harassment seed exercises the full nonblocking outcome loop without authorizing submission or learning."
+    },
+    {
+      "outcome_seed_id": "le-outcome-replay-wage-hour-clean.v0_1",
+      "learning_fixture_id": "le-learning-wage-hour-clean.v0_1",
+      "executable_fixture_id": "le-wage-hour-clean.executable.v0_1",
+      "family": "wage_hour_flsa_state",
+      "variant": "clean",
+      "expected_budget_output_state": "candidate_range_after_review_pending_human_review",
+      "seeded_learning_loop_types": [
+        "actuals_variance",
+        "carrier_rejection_capture",
+        "reviewed_learning_gate"
+      ],
+      "replay_seed_refs_by_loop": {
+        "actuals_variance": [
+          "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-wage-hour-clean.v0_1/actuals_variance",
+          "examples/synthetic/labor-employment/executable-fixtures/le-wage-hour-clean.source-bundle.json"
+        ],
+        "carrier_rejection_capture": [
+          "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-wage-hour-clean.v0_1/carrier_rejection_capture",
+          "examples/synthetic/labor-employment/executable-fixtures/le-wage-hour-clean.source-bundle.json"
+        ],
+        "reviewed_learning_gate": [
+          "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-wage-hour-clean.v0_1/reviewed_learning_gate"
+        ]
+      },
+      "expected_replay_artifacts_by_loop": {
+        "actuals_variance": [
+          "budget_actual_comparison_report.json",
+          "budget_actual_variance_ledger_report.json"
+        ],
+        "carrier_rejection_capture": [
+          "carrier_rejection_reconciliation_report.json",
+          "carrier_rejection_decision_ledger_report.json"
+        ],
+        "reviewed_learning_gate": [
+          "reviewed_learning_gate_report.json",
+          "budget_learning_loop_report.json"
+        ]
+      },
+      "candidate_exception_lake_labels_by_loop": {
+        "actuals_variance": [
+          "labor_employment_actual_variance_candidate"
+        ],
+        "carrier_rejection_capture": [
+          "labor_employment_carrier_code_mapping_candidate"
+        ],
+        "reviewed_learning_gate": [
+          "reviewed_learning_gate_before_candidate_changes"
+        ]
+      },
+      "replay_assertions": [
+        "wage-hour volume pressure widens variance review before calibration",
+        "code-mapping rejection stays a candidate template-mapping signal"
+      ],
+      "notes": "Wage/hour seed focuses on payroll-volume actuals and code-mapping rejection pressure."
+    },
+    {
+      "outcome_seed_id": "le-outcome-replay-epli-carrier-clean.v0_1",
+      "learning_fixture_id": "le-learning-epli-carrier-clean.v0_1",
+      "executable_fixture_id": "le-epli-carrier-clean.executable.v0_1",
+      "family": "epli_carrier_assignment",
+      "variant": "clean",
+      "expected_budget_output_state": "candidate_range_after_review_pending_human_review",
+      "seeded_learning_loop_types": [
+        "carrier_rejection_capture",
+        "appeal_outcome",
+        "reviewed_learning_gate"
+      ],
+      "replay_seed_refs_by_loop": {
+        "carrier_rejection_capture": [
+          "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-epli-carrier-clean.v0_1/carrier_rejection_capture",
+          "examples/synthetic/labor-employment/executable-fixtures/le-epli-carrier-clean.source-bundle.json"
+        ],
+        "appeal_outcome": [
+          "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-epli-carrier-clean.v0_1/appeal_outcome"
+        ],
+        "reviewed_learning_gate": [
+          "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-epli-carrier-clean.v0_1/reviewed_learning_gate"
+        ]
+      },
+      "expected_replay_artifacts_by_loop": {
+        "carrier_rejection_capture": [
+          "carrier_rejection_reconciliation_report.json",
+          "carrier_rejection_decision_ledger_report.json"
+        ],
+        "appeal_outcome": [
+          "carrier_rejection_decision_ledger_report.json",
+          "carrier_rejection_learning_report.json"
+        ],
+        "reviewed_learning_gate": [
+          "reviewed_learning_gate_report.json",
+          "budget_learning_loop_report.json"
+        ]
+      },
+      "candidate_exception_lake_labels_by_loop": {
+        "carrier_rejection_capture": [
+          "labor_employment_epli_carrier_rejection_candidate"
+        ],
+        "appeal_outcome": [
+          "labor_employment_appeal_outcome_candidate"
+        ],
+        "reviewed_learning_gate": [
+          "reviewed_learning_gate_before_candidate_changes"
+        ]
+      },
+      "replay_assertions": [
+        "carrier/client/payer ambiguity remains visible during rejection capture",
+        "appeal outcome cannot update guideline mapping without reviewed gate"
+      ],
+      "notes": "EPLI seed stresses carrier assignment and appeal-result financial outcome readiness."
+    },
+    {
+      "outcome_seed_id": "le-outcome-replay-retaliation-messy-thread.v0_1",
+      "learning_fixture_id": "le-learning-retaliation-messy-thread.v0_1",
+      "executable_fixture_id": "le-retaliation-wrongful-termination-messy-thread.executable.v0_1",
+      "family": "retaliation_wrongful_termination",
+      "variant": "messy_thread",
+      "expected_budget_output_state": "candidate_range_after_review_pending_human_review",
+      "seeded_learning_loop_types": [
+        "actuals_variance",
+        "reviewed_learning_gate"
+      ],
+      "replay_seed_refs_by_loop": {
+        "actuals_variance": [
+          "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-retaliation-messy-thread.v0_1/actuals_variance",
+          "examples/synthetic/labor-employment/executable-fixtures/le-retaliation-wrongful-termination-messy-thread.source-bundle.json"
+        ],
+        "reviewed_learning_gate": [
+          "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-retaliation-messy-thread.v0_1/reviewed_learning_gate"
+        ]
+      },
+      "expected_replay_artifacts_by_loop": {
+        "actuals_variance": [
+          "budget_actual_comparison_report.json",
+          "budget_actual_variance_ledger_report.json"
+        ],
+        "reviewed_learning_gate": [
+          "reviewed_learning_gate_report.json",
+          "budget_learning_loop_report.json"
+        ]
+      },
+      "candidate_exception_lake_labels_by_loop": {
+        "actuals_variance": [
+          "labor_employment_actual_variance_candidate",
+          "quoted_thread_separation_required"
+        ],
+        "reviewed_learning_gate": [
+          "reviewed_learning_gate_before_candidate_changes"
+        ]
+      },
+      "replay_assertions": [
+        "quoted history remains source text and cannot be treated as observed fact",
+        "actual variance review remains tied to source-capture completeness"
+      ],
+      "notes": "Retaliation messy-thread seed keeps actual variance tied to quoted-thread source hygiene."
+    },
+    {
+      "outcome_seed_id": "le-outcome-replay-class-collective-clean.v0_1",
+      "learning_fixture_id": "le-learning-class-collective-clean.v0_1",
+      "executable_fixture_id": "le-class-collective-clean.executable.v0_1",
+      "family": "class_collective_paga_representative",
+      "variant": "clean",
+      "expected_budget_output_state": "range_or_hours_only_pending_review",
+      "seeded_learning_loop_types": [
+        "actuals_variance",
+        "reviewed_learning_gate"
+      ],
+      "replay_seed_refs_by_loop": {
+        "actuals_variance": [
+          "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-class-collective-clean.v0_1/actuals_variance",
+          "examples/synthetic/labor-employment/executable-fixtures/le-class-collective-clean.source-bundle.json"
+        ],
+        "reviewed_learning_gate": [
+          "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-class-collective-clean.v0_1/reviewed_learning_gate"
+        ]
+      },
+      "expected_replay_artifacts_by_loop": {
+        "actuals_variance": [
+          "budget_actual_comparison_report.json",
+          "budget_actual_variance_ledger_report.json"
+        ],
+        "reviewed_learning_gate": [
+          "reviewed_learning_gate_report.json",
+          "budget_learning_loop_report.json"
+        ]
+      },
+      "candidate_exception_lake_labels_by_loop": {
+        "actuals_variance": [
+          "labor_employment_actual_variance_candidate",
+          "labor_employment_range_only_pending_review"
+        ],
+        "reviewed_learning_gate": [
+          "reviewed_learning_gate_before_candidate_changes"
+        ]
+      },
+      "replay_assertions": [
+        "class or collective uncertainty stays range/hours-only pending review",
+        "actuals variance may inform scenario width only after reviewed learning gate"
+      ],
+      "notes": "Class/collective seed proves variance pressure without pretending amount certainty exists."
+    },
+    {
+      "outcome_seed_id": "le-outcome-replay-restrictive-covenant-messy-thread.v0_1",
+      "learning_fixture_id": "le-learning-restrictive-covenant-messy-thread.v0_1",
+      "executable_fixture_id": "le-restrictive-covenant-messy-thread.executable.v0_1",
+      "family": "restrictive_covenant_trade_secret",
+      "variant": "messy_thread",
+      "expected_budget_output_state": "range_or_hours_only_pending_review",
+      "seeded_learning_loop_types": [
+        "carrier_rejection_capture",
+        "reviewed_learning_gate"
+      ],
+      "replay_seed_refs_by_loop": {
+        "carrier_rejection_capture": [
+          "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-restrictive-covenant-messy-thread.v0_1/carrier_rejection_capture",
+          "examples/synthetic/labor-employment/executable-fixtures/le-restrictive-covenant-messy-thread.source-bundle.json"
+        ],
+        "reviewed_learning_gate": [
+          "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-restrictive-covenant-messy-thread.v0_1/reviewed_learning_gate"
+        ]
+      },
+      "expected_replay_artifacts_by_loop": {
+        "carrier_rejection_capture": [
+          "carrier_rejection_reconciliation_report.json",
+          "carrier_rejection_decision_ledger_report.json"
+        ],
+        "reviewed_learning_gate": [
+          "reviewed_learning_gate_report.json",
+          "budget_learning_loop_report.json"
+        ]
+      },
+      "candidate_exception_lake_labels_by_loop": {
+        "carrier_rejection_capture": [
+          "labor_employment_carrier_rejection_capture_candidate"
+        ],
+        "reviewed_learning_gate": [
+          "reviewed_learning_gate_before_candidate_changes"
+        ]
+      },
+      "replay_assertions": [
+        "policy and contract document gaps remain visible in rejection routing",
+        "carrier guideline mapping changes require owner review"
+      ],
+      "notes": "Restrictive covenant seed focuses on carrier rejection capture with messy source posture."
+    },
+    {
+      "outcome_seed_id": "le-outcome-replay-admin-exhaustion-clean.v0_1",
+      "learning_fixture_id": "le-learning-admin-exhaustion-clean.v0_1",
+      "executable_fixture_id": "le-admin-exhaustion-clean.executable.v0_1",
+      "family": "administrative_exhaustion_agency_record",
+      "variant": "clean",
+      "expected_budget_output_state": "candidate_range_after_review_pending_human_review",
+      "seeded_learning_loop_types": [
+        "actuals_variance",
+        "reviewed_learning_gate"
+      ],
+      "replay_seed_refs_by_loop": {
+        "actuals_variance": [
+          "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-admin-exhaustion-clean.v0_1/actuals_variance",
+          "examples/synthetic/labor-employment/executable-fixtures/le-admin-exhaustion-clean.source-bundle.json"
+        ],
+        "reviewed_learning_gate": [
+          "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-admin-exhaustion-clean.v0_1/reviewed_learning_gate"
+        ]
+      },
+      "expected_replay_artifacts_by_loop": {
+        "actuals_variance": [
+          "budget_actual_comparison_report.json",
+          "budget_actual_variance_ledger_report.json"
+        ],
+        "reviewed_learning_gate": [
+          "reviewed_learning_gate_report.json",
+          "budget_learning_loop_report.json"
+        ]
+      },
+      "candidate_exception_lake_labels_by_loop": {
+        "actuals_variance": [
+          "labor_employment_admin_exhaustion_actual_variance_candidate"
+        ],
+        "reviewed_learning_gate": [
+          "reviewed_learning_gate_before_candidate_changes"
+        ]
+      },
+      "replay_assertions": [
+        "administrative posture and right-to-sue timing stay explicit budget-driver inputs",
+        "variance signals cannot become observed facts without source-bound review"
+      ],
+      "notes": "Administrative exhaustion seed covers agency-record variance pressure."
+    },
+    {
+      "outcome_seed_id": "le-outcome-replay-ada-fmla-adversarial.v0_1",
+      "learning_fixture_id": "le-learning-ada-fmla-adversarial.v0_1",
+      "executable_fixture_id": "le-ada-fmla-adversarial.executable.v0_1",
+      "family": "ada_fmla_accommodation_leave",
+      "variant": "adversarial",
+      "expected_budget_output_state": "blocked_amount_budget",
+      "seeded_learning_loop_types": [
+        "blocked_budget_guard"
+      ],
+      "replay_seed_refs_by_loop": {
+        "blocked_budget_guard": [
+          "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-ada-fmla-adversarial.v0_1/blocked_budget_guard",
+          "examples/synthetic/labor-employment/executable-fixtures/le-ada-fmla-adversarial.source-bundle.json"
+        ]
+      },
+      "expected_replay_artifacts_by_loop": {
+        "blocked_budget_guard": [
+          "labor_employment_budget_qa_gate_report.json",
+          "labor_employment_budget_learning_fixtures_report.json"
+        ]
+      },
+      "candidate_exception_lake_labels_by_loop": {
+        "blocked_budget_guard": [
+          "budget_amount_blocked_pending_labor_employment_driver_review",
+          "prompt_injection_as_source_text"
+        ]
+      },
+      "replay_assertions": [
+        "blocked amount-budget fixture cannot enter actuals, rejection, appeal, or submitted-budget loops",
+        "prompt injection remains source text and creates guard evidence only"
+      ],
+      "notes": "Adversarial ADA/FMLA seed proves blocked-budget guard coverage only."
+    }
+  ],
+  "candidate_only": true,
+  "non_authoritative": true,
+  "synthetic_only": true,
+  "human_review_required": true,
+  "not_authorized_for_external_write": true,
+  "not_authorized_for_lake_write": true,
+  "not_authorized_for_sqlite_write": true,
+  "not_authorized_for_budget_submission": true,
+  "not_authorized_for_matter_opening": true,
+  "not_authorized_for_calibration": true,
+  "budget_submission_authorized": false,
+  "matter_opening_authorized": false,
+  "training_pipeline_created": false,
+  "lake_write_performed": false,
+  "sqlite_write_performed": false,
+  "external_writes_performed": false,
+  "silent_learning_performed": false
+}

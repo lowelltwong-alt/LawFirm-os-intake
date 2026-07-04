@@ -4,6 +4,7 @@ import { createRoot } from "react-dom/client";
 import demoBudgetLearningLoop from "./fixtures/demo-budget-learning-loop-report.json";
 import demoLaborEmploymentBlockedDriverReview from "./fixtures/demo-labor-employment-blocked-driver-impact-review-report.json";
 import demoLaborEmploymentBudgetLearningFixtures from "./fixtures/demo-labor-employment-budget-learning-fixtures-report.json";
+import demoLaborEmploymentBudgetOutcomeReplayReadiness from "./fixtures/demo-labor-employment-budget-outcome-replay-readiness-report.json";
 import demoLaborEmploymentBudgetOutputExpectations from "./fixtures/demo-labor-employment-budget-output-expectations-report.json";
 import demoLaborEmploymentBudgetQAGate from "./fixtures/demo-labor-employment-budget-qa-gate-report.json";
 import demoLaborEmploymentExecutableCoverage from "./fixtures/demo-labor-employment-executable-coverage-report.json";
@@ -26,6 +27,7 @@ import {
   assertBudgetLearningLoopReport,
   assertLaborEmploymentBudgetOutputExpectationReport,
   assertLaborEmploymentBudgetLearningFixtureReport,
+  assertLaborEmploymentBudgetOutcomeReplayReadinessReport,
   assertLaborEmploymentBudgetQAGateReport,
   assertLaborEmploymentBlockedDriverImpactReviewReport,
   assertLaborEmploymentExecutableCoverageReport,
@@ -46,6 +48,7 @@ import type {
   GateState,
   LaborEmploymentAllowedBudgetOutput,
   LaborEmploymentBudgetLearningFixtureReport,
+  LaborEmploymentBudgetOutcomeReplayReadinessReport,
   LaborEmploymentBudgetOutputExpectationCase,
   LaborEmploymentBudgetOutputExpectationReport,
   LaborEmploymentBudgetQAGateReport,
@@ -106,6 +109,8 @@ const laborEmploymentBudgetQAGate =
   demoLaborEmploymentBudgetQAGate as LaborEmploymentBudgetQAGateReport;
 const laborEmploymentBudgetLearningFixtures =
   demoLaborEmploymentBudgetLearningFixtures as LaborEmploymentBudgetLearningFixtureReport;
+const laborEmploymentBudgetOutcomeReplayReadiness =
+  demoLaborEmploymentBudgetOutcomeReplayReadiness as LaborEmploymentBudgetOutcomeReplayReadinessReport;
 const budgetLearningLoop = demoBudgetLearningLoop as BudgetLearningLoopReport;
 const bundleContractFailures = assertUIReviewDataBundle(reviewDataBundle);
 const manifestContractFailures = assertReadOnlyManifest(manifest);
@@ -134,6 +139,9 @@ const budgetQAGateFailures = assertLaborEmploymentBudgetQAGateReport(laborEmploy
 const budgetLearningFixtureFailures = assertLaborEmploymentBudgetLearningFixtureReport(
   laborEmploymentBudgetLearningFixtures,
 );
+const budgetOutcomeReplayFailures = assertLaborEmploymentBudgetOutcomeReplayReadinessReport(
+  laborEmploymentBudgetOutcomeReplayReadiness,
+);
 const budgetLearningLoopFailures = assertBudgetLearningLoopReport(budgetLearningLoop);
 const contractFailures = [
   ...bundleContractFailures,
@@ -153,6 +161,7 @@ const contractFailures = [
   ...budgetOutputExpectationFailures,
   ...budgetQAGateFailures,
   ...budgetLearningFixtureFailures,
+  ...budgetOutcomeReplayFailures,
   ...budgetLearningLoopFailures,
 ];
 
@@ -2118,6 +2127,112 @@ function LaborEmploymentBudgetLearningFixturesPanel({
   );
 }
 
+function LaborEmploymentBudgetOutcomeReplayReadinessPanel({
+  report,
+}: {
+  report: LaborEmploymentBudgetOutcomeReplayReadinessReport;
+}) {
+  const passedChecks = report.checks.filter((check) => check.status === "passed").length;
+  const failedCases = report.cases.filter((testCase) => testCase.status === "failed");
+
+  return (
+    <section
+      className="panel budget-outcome-replay-panel"
+      aria-labelledby="le-budget-outcome-replay-title"
+    >
+      <div className="panel-heading">
+        <div>
+          <h2 id="le-budget-outcome-replay-title">
+            L&amp;E Budget Outcome Replay Readiness
+          </h2>
+          <code>{report.outcome_replay_readiness_report_id}</code>
+        </div>
+        <span
+          className={
+            budgetOutcomeReplayFailures.length === 0 ? "state state-passed" : "state state-failed"
+          }
+        >
+          {budgetOutcomeReplayFailures.length === 0 ? "seeds ready" : "seeds blocked"}
+        </span>
+      </div>
+
+      <div className="matrix-summary" aria-label="L&E budget outcome replay readiness summary">
+        <div>
+          <span>Seed Specs</span>
+          <strong>{report.seed_spec_count}</strong>
+        </div>
+        <div>
+          <span>Seeded Loops</span>
+          <strong>
+            {report.seeded_loop_requirement_count}/{report.loop_requirement_count}
+          </strong>
+        </div>
+        <div>
+          <span>Unresolved Refs</span>
+          <strong>{report.unresolved_source_ref_count}</strong>
+        </div>
+        <div>
+          <span>Checks Passed</span>
+          <strong>
+            {passedChecks}/{report.checks.length}
+          </strong>
+        </div>
+      </div>
+
+      <div className="warning-strip">
+        <strong>Readiness only.</strong>
+        <span>
+          Seeds must still be executed, reviewed, and shadow-evaluated before any
+          calibration, guideline, template, or model change.
+        </span>
+      </div>
+
+      <div className="budget-bucket-grid" aria-label="L&E outcome replay coverage">
+        <div className="budget-bucket">
+          <span>Loop Types</span>
+          <strong>{report.covered_learning_loop_types.length}</strong>
+          <TokenList items={report.covered_learning_loop_types} limit={5} />
+        </div>
+        <div className="budget-bucket">
+          <span>Replay Artifacts</span>
+          <strong>{report.expected_replay_artifact_count}</strong>
+          <TokenList
+            items={Array.from(
+              new Set(report.cases.flatMap((testCase) => testCase.expected_replay_artifacts)),
+            )}
+            limit={4}
+          />
+        </div>
+        <div className="budget-bucket">
+          <span>Failed Cases</span>
+          <strong>{failedCases.length}</strong>
+          <TokenList items={failedCases.map((testCase) => testCase.learning_fixture_id)} limit={3} />
+        </div>
+        <div className="budget-bucket">
+          <span>Lake Labels</span>
+          <strong>{report.candidate_exception_lake_labels.length}</strong>
+          <TokenList items={report.candidate_exception_lake_labels} limit={4} />
+        </div>
+      </div>
+
+      <div className="fixture-table" aria-label="L&E outcome replay readiness cases">
+        {report.cases.slice(0, 6).map((testCase) => (
+          <div className="fixture-row" key={testCase.learning_fixture_id}>
+            <div>
+              <strong>{testCase.family}</strong>
+              <span>{testCase.outcome_seed_id}</span>
+            </div>
+            <span className={testCase.status === "passed" ? "state state-passed" : "state state-failed"}>
+              {testCase.status}
+            </span>
+            <TokenList items={testCase.seeded_learning_loop_types} limit={3} />
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function LaborEmploymentFixtureDrilldownPanel({
   outputReport,
   blockedReviewReport,
@@ -2363,6 +2478,9 @@ function App() {
       />
       <LaborEmploymentBudgetQAGatePanel report={laborEmploymentBudgetQAGate} />
       <LaborEmploymentBudgetLearningFixturesPanel report={laborEmploymentBudgetLearningFixtures} />
+      <LaborEmploymentBudgetOutcomeReplayReadinessPanel
+        report={laborEmploymentBudgetOutcomeReplayReadiness}
+      />
       <LaborEmploymentFixtureDrilldownPanel
         outputReport={laborEmploymentBudgetOutputExpectations}
         blockedReviewReport={laborEmploymentBlockedDriverReview}

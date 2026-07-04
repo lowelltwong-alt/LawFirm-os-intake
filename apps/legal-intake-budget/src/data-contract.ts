@@ -3,6 +3,7 @@ import type {
   BudgetLearningLoopReport,
   LaborEmploymentBudgetLearningFixtureReport,
   LaborEmploymentBudgetLearningLoopType,
+  LaborEmploymentBudgetOutcomeReplayReadinessReport,
   LaborEmploymentBudgetOutputExpectationReport,
   LaborEmploymentBudgetQAGateReport,
   LaborEmploymentBlockedDriverImpactReviewReport,
@@ -56,6 +57,7 @@ export const REQUIRED_ARTIFACT_FILES = [
   "labor_employment_budget_output_expectations_report.json",
   "labor_employment_budget_qa_gate_report.json",
   "labor_employment_budget_learning_fixtures_report.json",
+  "labor_employment_budget_outcome_replay_readiness_report.json",
   "labor_employment_budget_fact_gold_report.json",
   "validation_suite_evidence_report.json",
   "budget_human_review_packet.json",
@@ -1524,6 +1526,127 @@ export function assertLaborEmploymentBudgetLearningFixtureReport(
     report.checks.some((check) => check.status === "failed")
   ) {
     failures.push("le_budget_learning_fixture_ready_with_failed_check");
+  }
+  return failures;
+}
+
+export function assertLaborEmploymentBudgetOutcomeReplayReadinessReport(
+  report: LaborEmploymentBudgetOutcomeReplayReadinessReport,
+): string[] {
+  const failures: string[] = [];
+  if (!report.candidate_only || !report.non_authoritative || !report.synthetic_only) {
+    failures.push("le_budget_outcome_replay_authority_boundary_failed");
+  }
+  if (!report.local_json_only || !report.human_review_required) {
+    failures.push("le_budget_outcome_replay_review_boundary_failed");
+  }
+  if (
+    !report.not_authorized_for_external_write ||
+    !report.not_authorized_for_lake_write ||
+    !report.not_authorized_for_sqlite_write ||
+    !report.not_authorized_for_budget_submission ||
+    !report.not_authorized_for_matter_opening ||
+    !report.not_authorized_for_calibration
+  ) {
+    failures.push("le_budget_outcome_replay_missing_explicit_non_authorization");
+  }
+  if (
+    report.budget_submission_authorized ||
+    report.matter_opening_authorized ||
+    report.training_pipeline_created ||
+    report.lake_write_performed ||
+    report.sqlite_write_performed ||
+    report.external_writes_performed ||
+    report.silent_learning_performed
+  ) {
+    failures.push("le_budget_outcome_replay_side_effect_boundary_failed");
+  }
+  if (report.fixture_count !== report.cases.length) {
+    failures.push("le_budget_outcome_replay_fixture_count_mismatch");
+  }
+  if (report.failed_case_count !== report.cases.filter((testCase) => testCase.status === "failed").length) {
+    failures.push("le_budget_outcome_replay_failed_case_count_mismatch");
+  }
+  const loopRequirementCount = report.cases.reduce(
+    (sum, testCase) => sum + testCase.required_learning_loop_types.length,
+    0,
+  );
+  const missingLoopRequirementCount = report.cases.reduce(
+    (sum, testCase) => sum + testCase.missing_learning_loop_types.length,
+    0,
+  );
+  if (report.loop_requirement_count !== loopRequirementCount) {
+    failures.push("le_budget_outcome_replay_loop_requirement_count_mismatch");
+  }
+  if (report.missing_loop_requirement_count !== missingLoopRequirementCount) {
+    failures.push("le_budget_outcome_replay_missing_loop_count_mismatch");
+  }
+  if (
+    report.seeded_loop_requirement_count + report.missing_loop_requirement_count !==
+    report.loop_requirement_count
+  ) {
+    failures.push("le_budget_outcome_replay_seeded_loop_count_mismatch");
+  }
+  const unresolvedRefCount = report.cases.reduce(
+    (sum, testCase) => sum + testCase.unresolved_source_refs.length,
+    0,
+  );
+  if (report.unresolved_source_ref_count !== unresolvedRefCount) {
+    failures.push("le_budget_outcome_replay_unresolved_ref_count_mismatch");
+  }
+  const requiredLoops: LaborEmploymentBudgetLearningLoopType[] = [
+    "actuals_variance",
+    "carrier_rejection_capture",
+    "appeal_outcome",
+    "reviewed_learning_gate",
+    "blocked_budget_guard",
+  ];
+  for (const loop of requiredLoops) {
+    if (!report.covered_learning_loop_types.includes(loop)) {
+      failures.push(`le_budget_outcome_replay_missing_loop:${loop}`);
+    }
+  }
+  if (report.missing_learning_loop_types.length > 0) {
+    failures.push("le_budget_outcome_replay_missing_required_loops");
+  }
+  for (const testCase of report.cases) {
+    if (testCase.missing_learning_loop_types.length > 0) {
+      failures.push(`le_budget_outcome_replay_case_missing_loop:${testCase.learning_fixture_id}`);
+    }
+    if (testCase.extra_learning_loop_types.length > 0) {
+      failures.push(`le_budget_outcome_replay_case_extra_loop:${testCase.learning_fixture_id}`);
+    }
+    if (testCase.unresolved_source_refs.length > 0) {
+      failures.push(`le_budget_outcome_replay_case_unresolved_ref:${testCase.learning_fixture_id}`);
+    }
+    if (
+      testCase.expected_budget_output_state === "blocked_amount_budget" &&
+      testCase.seeded_learning_loop_types.some((loop) => loop !== "blocked_budget_guard")
+    ) {
+      failures.push(`le_budget_outcome_replay_blocked_loop_invalid:${testCase.learning_fixture_id}`);
+    }
+    if (
+      testCase.expected_budget_output_state !== "blocked_amount_budget" &&
+      testCase.seeded_learning_loop_types.includes("blocked_budget_guard")
+    ) {
+      failures.push(`le_budget_outcome_replay_nonblocking_guard_invalid:${testCase.learning_fixture_id}`);
+    }
+    if (
+      testCase.budget_submission_authorized ||
+      testCase.matter_opening_authorized ||
+      testCase.lake_write_performed ||
+      testCase.sqlite_write_performed ||
+      testCase.external_writes_performed ||
+      testCase.silent_learning_performed
+    ) {
+      failures.push(`le_budget_outcome_replay_case_side_effect:${testCase.learning_fixture_id}`);
+    }
+  }
+  if (
+    report.status === "labor_employment_budget_outcome_replay_ready_for_review" &&
+    report.checks.some((check) => check.status === "failed")
+  ) {
+    failures.push("le_budget_outcome_replay_ready_with_failed_check");
   }
   return failures;
 }

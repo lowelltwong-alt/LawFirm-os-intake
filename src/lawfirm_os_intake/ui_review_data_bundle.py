@@ -128,6 +128,13 @@ DETAIL_REPORT_SPECS = [
         renderer="LaborEmploymentBudgetLearningFixturesPanel",
     ),
     UIReviewDetailSpec(
+        detail_report_id="labor-employment-budget-outcome-replay-readiness",
+        label="L&E Budget Outcome Replay Readiness",
+        report_kind="labor_employment_budget_outcome_replay_readiness",
+        file_name="labor_employment_budget_outcome_replay_readiness_report.json",
+        renderer="LaborEmploymentBudgetOutcomeReplayReadinessPanel",
+    ),
+    UIReviewDetailSpec(
         detail_report_id="budget-learning-loop",
         label="Budget Learning Loop",
         report_kind="budget_learning_loop",

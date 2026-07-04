@@ -710,6 +710,40 @@ from pathlib import Path
 import sys
 
 sys.path.insert(0, str(Path.cwd() / "src"))
+from lawfirm_os_intake.labor_employment_budget_outcome_replay_readiness import (
+    run_labor_employment_budget_outcome_replay_readiness_audit,
+)
+
+report, _ = run_labor_employment_budget_outcome_replay_readiness_audit(
+    seed_manifest_path=(
+        "examples/synthetic/labor-employment/"
+        "labor-employment-budget-outcome-replay-seeds.json"
+    ),
+    learning_fixture_report_path=(
+        ".lawfirm-os-intake/smoke/quality/le-budget-learning-fixtures/"
+        "labor_employment_budget_learning_fixtures_report.json"
+    ),
+    repo_root=".",
+    out_dir=".lawfirm-os-intake/smoke/quality/le-budget-outcome-replay-readiness",
+)
+raise SystemExit(
+    0
+    if report.status == "labor_employment_budget_outcome_replay_ready_for_review"
+    else 1
+)
+PY
+test -s ".lawfirm-os-intake/smoke/quality/le-budget-outcome-replay-readiness/labor_employment_budget_outcome_replay_readiness_report.json"
+grep -q '"status": "labor_employment_budget_outcome_replay_ready_for_review"' \
+  ".lawfirm-os-intake/smoke/quality/le-budget-outcome-replay-readiness/labor_employment_budget_outcome_replay_readiness_report.json"
+grep -q '"loop_requirement_count": 19' \
+  ".lawfirm-os-intake/smoke/quality/le-budget-outcome-replay-readiness/labor_employment_budget_outcome_replay_readiness_report.json"
+grep -q '"unresolved_source_ref_count": 0' \
+  ".lawfirm-os-intake/smoke/quality/le-budget-outcome-replay-readiness/labor_employment_budget_outcome_replay_readiness_report.json"
+"$PYTHON_BIN" -B - <<'PY'
+from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path.cwd() / "src"))
 from lawfirm_os_intake.labor_employment_budget_fact_gold import (
     run_labor_employment_budget_fact_gold_validation,
 )

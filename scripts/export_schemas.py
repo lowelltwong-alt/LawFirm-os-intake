@@ -238,6 +238,11 @@ from lawfirm_os_intake.models import (  # noqa: E402
     LaborEmploymentBudgetLearningFixtureManifest,
     LaborEmploymentBudgetLearningFixtureReport,
     LaborEmploymentBudgetLearningFixtureSpec,
+    LaborEmploymentBudgetOutcomeReplayReadinessCase,
+    LaborEmploymentBudgetOutcomeReplayReadinessCheck,
+    LaborEmploymentBudgetOutcomeReplayReadinessReport,
+    LaborEmploymentBudgetOutcomeReplaySeedManifest,
+    LaborEmploymentBudgetOutcomeReplaySeedSpec,
     LaborEmploymentBudgetQAGateBucket,
     LaborEmploymentBudgetQAGateCheck,
     LaborEmploymentBudgetQAGateReport,
@@ -455,6 +460,21 @@ MODELS = {
     ),
     "labor-employment-budget-learning-fixture-report.schema.json": (
         LaborEmploymentBudgetLearningFixtureReport
+    ),
+    "labor-employment-budget-outcome-replay-seed-spec.schema.json": (
+        LaborEmploymentBudgetOutcomeReplaySeedSpec
+    ),
+    "labor-employment-budget-outcome-replay-seed-manifest.schema.json": (
+        LaborEmploymentBudgetOutcomeReplaySeedManifest
+    ),
+    "labor-employment-budget-outcome-replay-readiness-case.schema.json": (
+        LaborEmploymentBudgetOutcomeReplayReadinessCase
+    ),
+    "labor-employment-budget-outcome-replay-readiness-check.schema.json": (
+        LaborEmploymentBudgetOutcomeReplayReadinessCheck
+    ),
+    "labor-employment-budget-outcome-replay-readiness-report.schema.json": (
+        LaborEmploymentBudgetOutcomeReplayReadinessReport
     ),
     "labor-employment-executable-coverage-case.schema.json": (
         LaborEmploymentExecutableCoverageCase

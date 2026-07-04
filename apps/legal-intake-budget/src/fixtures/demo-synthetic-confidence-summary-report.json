@@ -1,35 +1,35 @@
 {
   "schema_version": "0.1",
-  "synthetic_confidence_summary_report_id": "synthetic_confidence_summary_aac7a0265694de0d",
+  "synthetic_confidence_summary_report_id": "synthetic_confidence_summary_b06ff610e552e645",
   "status": "synthetic_confidence_summary_ready_for_review",
   "testing_readiness_state": "synthetic_qa_ready_pending_review",
-  "source_synthetic_qa_review_run_ref": ".lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\synthetic_qa_review_run_report.json",
-  "source_synthetic_qa_review_run_report_id": "syntheticqareviewrun_3366bc73182fa4b2",
+  "source_synthetic_qa_review_run_ref": ".lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\synthetic_qa_review_run_report.json",
+  "source_synthetic_qa_review_run_report_id": "syntheticqareviewrun_b52df4963409ad67",
   "source_synthetic_qa_review_run_status": "synthetic_qa_review_run_ready",
-  "source_synthetic_qa_bundle_ref": ".lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\quality\\synthetic_qa_bundle_report.json",
-  "source_synthetic_qa_bundle_report_id": "synthetic_qa_bundle_5797b2f85f1f",
+  "source_synthetic_qa_bundle_ref": ".lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\quality\\synthetic_qa_bundle_report.json",
+  "source_synthetic_qa_bundle_report_id": "synthetic_qa_bundle_8956d3e0bd00",
   "source_synthetic_qa_bundle_status": "pending_review",
-  "source_ui_manifest_ref": ".lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\ui_review_manifest.json",
-  "source_ui_manifest_id": "ui_review_manifest_68910eb51897",
+  "source_ui_manifest_ref": ".lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\ui_review_manifest.json",
+  "source_ui_manifest_id": "ui_review_manifest_1e1baf2a078d",
   "source_ui_manifest_overall_status": "blocked",
-  "source_ui_review_data_bundle_ref": ".lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\ui_review_data_bundle.json",
-  "source_ui_review_data_bundle_id": "ui_review_data_bundle_6bbb1157cc2e",
+  "source_ui_review_data_bundle_ref": ".lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\ui_review_data_bundle.json",
+  "source_ui_review_data_bundle_id": "ui_review_data_bundle_fdc7a573a60e",
   "source_ui_review_data_bundle_status": "ready_for_review",
-  "qa_step_count": 24,
-  "qa_passed_step_count": 24,
+  "qa_step_count": 25,
+  "qa_passed_step_count": 25,
   "qa_failed_step_count": 0,
-  "qa_artifact_count": 18,
+  "qa_artifact_count": 19,
   "qa_missing_required_artifact_count": 0,
   "qa_blocked_artifact_count": 0,
-  "qa_pending_artifact_count": 16,
+  "qa_pending_artifact_count": 17,
   "qa_failed_artifact_count": 0,
-  "ui_detail_report_count": 15,
-  "ui_present_detail_report_count": 15,
+  "ui_detail_report_count": 16,
+  "ui_present_detail_report_count": 16,
   "ui_missing_required_detail_report_count": 0,
   "ui_external_write_report_count": 0,
-  "quality_gate_count": 28,
+  "quality_gate_count": 29,
   "quality_gate_passed_count": 6,
-  "quality_gate_pending_count": 22,
+  "quality_gate_pending_count": 23,
   "quality_gate_blocked_count": 0,
   "quality_gate_failed_count": 0,
   "readiness_item_count": 5,
@@ -40,10 +40,10 @@
       "owner": "qa-reference",
       "state": "ready_for_review",
       "evidence_refs": [
-        ".lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\synthetic_qa_review_run_report.json"
+        ".lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\synthetic_qa_review_run_report.json"
       ],
       "notes": [
-        "0 failed steps out of 24."
+        "0 failed steps out of 25."
       ],
       "no_write_boundary_confirmed": true
     },
@@ -53,10 +53,10 @@
       "owner": "qa-reference",
       "state": "pending_review",
       "evidence_refs": [
-        ".lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\quality\\synthetic_qa_bundle_report.json"
+        ".lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\quality\\synthetic_qa_bundle_report.json"
       ],
       "notes": [
-        "0 missing required, 0 blocked, 16 pending review."
+        "0 missing required, 0 blocked, 17 pending review."
       ],
       "no_write_boundary_confirmed": true
     },
@@ -66,11 +66,11 @@
       "owner": "frontend-review",
       "state": "ready_for_review",
       "evidence_refs": [
-        ".lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\ui_review_data_bundle.json",
-        ".lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\ui_review_manifest.json"
+        ".lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\ui_review_data_bundle.json",
+        ".lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\ui_review_manifest.json"
       ],
       "notes": [
-        "15 detail reports present; 0 write-boundary failures."
+        "16 detail reports present; 0 write-boundary failures."
       ],
       "no_write_boundary_confirmed": true
     },
@@ -80,9 +80,9 @@
       "owner": "governance-review",
       "state": "ready_for_review",
       "evidence_refs": [
-        ".lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\synthetic_qa_review_run_report.json",
-        ".lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\quality\\synthetic_qa_bundle_report.json",
-        ".lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\ui_review_data_bundle.json"
+        ".lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\synthetic_qa_review_run_report.json",
+        ".lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\quality\\synthetic_qa_bundle_report.json",
+        ".lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\ui_review_data_bundle.json"
       ],
       "notes": [
         "No budget submission, matter opening, Lake/SQLite write, external write, or silent learning is authorized by these artifacts."
@@ -95,10 +95,10 @@
       "owner": "human-or-owner-review",
       "state": "pending_review",
       "evidence_refs": [
-        ".lawfirm-os-intake\\tmp\\le-budget-learning-fixtures-review-run\\ui_review_manifest.json"
+        ".lawfirm-os-intake\\tmp\\le-budget-outcome-replay-readiness-review-run\\ui_review_manifest.json"
       ],
       "notes": [
-        "22 pending gates remain; pending is expected until human/owner review accepts candidate QA evidence."
+        "23 pending gates remain; pending is expected until human/owner review accepts candidate QA evidence."
       ],
       "no_write_boundary_confirmed": true
     }
