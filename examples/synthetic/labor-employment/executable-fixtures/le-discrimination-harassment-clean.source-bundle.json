@@ -1,0 +1,95 @@
+{
+  "schema_version": "0.1",
+  "bundle_id": "syn-le-discrimination-harassment-clean-001",
+  "data_origin": "synthetic",
+  "contains_real_client_data": false,
+  "contains_real_matter_data": false,
+  "contains_privileged_data": false,
+  "sources": [
+    {
+      "source_id": "syn-le-discrimination-clean-cover-email-001",
+      "source_type": "email",
+      "filename": "synthetic_discrimination_harassment_clean_cover_email.txt",
+      "text": "From: intake-referral@synthetic-referral.example\nTo: intake@synthetic-law.example\nDate: July 2, 2026\nSubject: Discrimination and harassment complaint package for review\n\nThe attached synthetic complaint and right-to-sue letter concern Maya Reed and Cedar Loom Manufacturing LLC. The referral identifies sex discrimination, harassment, retaliation, back pay, front pay, emotional distress, and punitive damages. The employee handbook and anti-harassment policy are included for review. The sender notes that expert and vendor needs are not identified yet and asks for a range-only budget posture pending human confirmation.",
+      "metadata": {
+        "synthetic": true,
+        "attachment_refs": [
+          "complaint-summary.txt",
+          "right-to-sue-letter.txt",
+          "employee-handbook-excerpts.txt"
+        ]
+      }
+    },
+    {
+      "source_id": "syn-le-discrimination-clean-complaint-001",
+      "source_type": "attachment_text",
+      "filename": "complaint-summary.txt",
+      "text": "Synthetic complaint summary: Maya Reed alleges sex discrimination and harassment by a production supervisor at Cedar Loom Manufacturing LLC. The complaint also alleges retaliation after an HR complaint and termination on April 15, 2026. The pleading names Cedar Loom Manufacturing LLC as employer and defendant, identifies one supervisor and one HR business partner as key witnesses, and describes likely ESI custodians in HR, the supervisor mailbox, and production scheduling files.",
+      "metadata": {
+        "synthetic": true,
+        "document_type": "complaint_summary"
+      }
+    },
+    {
+      "source_id": "syn-le-discrimination-clean-agency-record-001",
+      "source_type": "attachment_text",
+      "filename": "right-to-sue-letter.txt",
+      "text": "Synthetic agency record summary: a state civil rights charge was filed on May 1, 2026, and a right-to-sue letter was received on June 18, 2026. The right-to-sue deadline is a deadline candidate for human review only. The agency record describes discrimination, harassment, retaliation, emotional distress damages, and back pay allegations.",
+      "metadata": {
+        "synthetic": true,
+        "document_type": "right_to_sue_summary"
+      }
+    },
+    {
+      "source_id": "syn-le-discrimination-clean-policy-001",
+      "source_type": "attachment_text",
+      "filename": "employee-handbook-excerpts.txt",
+      "text": "Synthetic employee handbook excerpts: Cedar Loom Manufacturing LLC maintains an anti-harassment policy, complaint reporting channel, supervisor conduct policy, and document-retention instruction. The employee handbook excerpts support policy-document review but do not identify expert and vendor needs.",
+      "metadata": {
+        "synthetic": true,
+        "document_type": "handbook_policy_excerpts"
+      }
+    }
+  ],
+  "fixture_hints": {
+    "provided_fields": [
+      "employee_claimant_identity",
+      "employer_or_defendant_identity",
+      "claims_and_causes_of_action",
+      "administrative_exhaustion_and_agency_record",
+      "relevant_employment_timeline",
+      "damages_categories_and_exposure",
+      "esi_custodians_and_sources",
+      "anticipated_depositions",
+      "policy_handbook_contract_documents"
+    ],
+    "entities": [
+      {
+        "name": "Maya Reed",
+        "role_candidates": [
+          {
+            "role": "claimant",
+            "confidence": 0.78
+          },
+          {
+            "role": "adverse_party",
+            "confidence": 0.58
+          }
+        ]
+      },
+      {
+        "name": "Cedar Loom Manufacturing LLC",
+        "role_candidates": [
+          {
+            "role": "employer_or_defendant",
+            "confidence": 0.78
+          },
+          {
+            "role": "prospective_represented_client",
+            "confidence": 0.62
+          }
+        ]
+      }
+    ]
+  }
+}

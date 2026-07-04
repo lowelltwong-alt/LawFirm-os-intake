@@ -13,6 +13,75 @@
   ],
   "fixtures": [
     {
+      "executable_fixture_id": "le-discrimination-harassment-clean.executable.v0_1",
+      "source_bundle_ref": "examples/synthetic/labor-employment/executable-fixtures/le-discrimination-harassment-clean.source-bundle.json",
+      "linked_pack_case_ids": [
+        "le-discrimination-harassment-clean.v0_1"
+      ],
+      "family": "discrimination_harassment",
+      "variant": "clean",
+      "expected_budget_readiness_state": "range_only_pending_human_review",
+      "expected_budget_gate_effect": "allow_range_or_hours_only_pending_review",
+      "expected_budget_treatment": "candidate_range_budget_after_review",
+      "expected_min_sources": 4,
+      "expected_min_segments": 4,
+      "expected_min_missing_sources": 0,
+      "expected_min_duplicate_sources": 0,
+      "expected_source_signal_terms": [
+        "discrimination",
+        "harassment",
+        "right-to-sue letter",
+        "employee handbook",
+        "HR complaint",
+        "ESI custodians",
+        "expert and vendor needs"
+      ],
+      "expected_preflight_exception_labels": [
+        "critic_date_or_deadline_requires_review"
+      ],
+      "expected_budget_fact_gap_ids": [
+        "administrative_exhaustion_and_agency_record",
+        "policy_handbook_contract_documents",
+        "expert_and_vendor_needs"
+      ],
+      "red_team_notes": [
+        "Clean source coverage still supports only range-only budget posture until human confirmation; deadline candidates must not be docketed."
+      ]
+    },
+    {
+      "executable_fixture_id": "le-wage-hour-clean.executable.v0_1",
+      "source_bundle_ref": "examples/synthetic/labor-employment/executable-fixtures/le-wage-hour-clean.source-bundle.json",
+      "linked_pack_case_ids": [
+        "le-wage-hour-clean.v0_1"
+      ],
+      "family": "wage_hour_flsa_state",
+      "variant": "clean",
+      "expected_budget_readiness_state": "range_only_pending_human_review",
+      "expected_budget_gate_effect": "allow_range_or_hours_only_pending_review",
+      "expected_budget_treatment": "candidate_range_budget_after_review",
+      "expected_min_sources": 4,
+      "expected_min_segments": 4,
+      "expected_min_missing_sources": 0,
+      "expected_min_duplicate_sources": 0,
+      "expected_source_signal_terms": [
+        "wage/hour",
+        "payroll export",
+        "timekeeping export",
+        "pay periods",
+        "single worksite",
+        "18 hourly employees",
+        "expert and vendor needs"
+      ],
+      "expected_preflight_exception_labels": [],
+      "expected_budget_fact_gap_ids": [
+        "wage_hour_pay_period_and_employee_volume",
+        "expert_and_vendor_needs"
+      ],
+      "red_team_notes": [
+        "Payroll and timekeeping summaries are source-bound but still candidate-only; the packet must not calibrate or submit an amount budget."
+      ]
+    },
+    {
       "executable_fixture_id": "le-wage-hour-missing-attachment.executable.v0_1",
       "source_bundle_ref": "examples/synthetic/labor-employment/executable-fixtures/le-wage-hour-missing-attachment.source-bundle.json",
       "linked_pack_case_ids": [

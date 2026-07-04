@@ -87,15 +87,17 @@ def test_labor_employment_driver_impact_review_materializes_nonblocking_slice(
     )
 
     assert report.status == "labor_employment_driver_impact_review_ready_for_budget_gate_replay"
-    assert persisted.selected_case_count == 2
+    assert persisted.selected_case_count == 4
     assert persisted.failed_case_count == 0
     assert persisted.block_amount_budget_impact_count == 0
     assert persisted.range_widening_impact_count > 0
     assert persisted.scenario_fork_impact_count > 0
     assert persisted.reviewed_slice_report_ref
-    assert slice_report.case_count == 2
+    assert slice_report.case_count == 4
     assert slice_report.block_amount_budget_impact_count == 0
     assert {case.executable_fixture_id for case in slice_report.cases} == {
+        "le-discrimination-harassment-clean.executable.v0_1",
+        "le-wage-hour-clean.executable.v0_1",
         "le-admin-exhaustion-clean.executable.v0_1",
         "le-retaliation-wrongful-termination-messy-thread.executable.v0_1",
     }
@@ -123,6 +125,8 @@ def test_labor_employment_driver_impact_review_blocks_blocking_case(
 ):
     review_spec = load_json(repo_root / REVIEW_SPEC_PATH)
     review_spec["review_spec_id"] = "le_driver_impact_blocking_case_review.v0_1"
+    review_spec["cases"] = [review_spec["cases"][0]]
+    review_spec["required_selected_case_count"] = 1
     review_spec["cases"][0]["executable_fixture_id"] = (
         "le-class-collective-adversarial.executable.v0_1"
     )
@@ -136,7 +140,7 @@ def test_labor_employment_driver_impact_review_blocks_blocking_case(
     )
 
     assert report.status == "blocked_by_labor_employment_driver_impact_review"
-    assert report.selected_case_count == 1
+    assert report.selected_case_count == 0
     assert report.failed_case_count == 1
     assert report.reviewed_slice_report_ref is None
     assert "amount_budget_block_present" in report.case_results[0].failure_ids
@@ -201,7 +205,7 @@ def test_labor_employment_driver_impact_review_cli_writes_review_and_slice(
 
     assert exit_code == 0
     assert report["status"] == "labor_employment_driver_impact_review_ready_for_budget_gate_replay"
-    assert report["selected_case_count"] == 2
+    assert report["selected_case_count"] == 4
     assert report["block_amount_budget_impact_count"] == 0
     assert (
         (tmp_path / "le-driver-impact-review-cli")

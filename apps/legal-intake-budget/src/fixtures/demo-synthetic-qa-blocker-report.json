@@ -1,22 +1,22 @@
 {
   "schema_version": "0.1",
-  "synthetic_qa_blocker_report_id": "synthetic_qa_blocker_report_e2d538a763d6c169",
+  "synthetic_qa_blocker_report_id": "synthetic_qa_blocker_report_326ebc2bb261a590",
   "status": "synthetic_qa_blocker_report_ready_for_review",
-  "source_ui_manifest_ref": "apps\\legal-intake-budget\\src\\fixtures\\demo-run-manifest.json",
-  "source_ui_manifest_id": "ui_review_manifest_00aeff08b022",
+  "source_ui_manifest_ref": ".lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\ui_review_manifest.json",
+  "source_ui_manifest_id": "ui_review_manifest_68f335189cfc",
   "source_ui_manifest_overall_status": "blocked",
-  "source_synthetic_confidence_summary_ref": "apps\\legal-intake-budget\\src\\fixtures\\demo-synthetic-confidence-summary-report.json",
-  "source_synthetic_confidence_summary_report_id": "synthetic_confidence_summary_776a97d0ece2d74d",
+  "source_synthetic_confidence_summary_ref": ".lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\synthetic_confidence_summary_report.json",
+  "source_synthetic_confidence_summary_report_id": "synthetic_confidence_summary_88298b74f0ded8ba",
   "source_synthetic_confidence_summary_status": "synthetic_confidence_summary_ready_for_review",
-  "source_synthetic_qa_review_run_ref": "apps\\legal-intake-budget\\src\\fixtures\\demo-synthetic-qa-review-run-report.json",
-  "source_synthetic_qa_review_run_report_id": "syntheticqareviewrun_44a0e1d825bac1db",
+  "source_synthetic_qa_review_run_ref": ".lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\synthetic_qa_review_run_report.json",
+  "source_synthetic_qa_review_run_report_id": "syntheticqareviewrun_994fbc495d7ea2f2",
   "source_synthetic_qa_review_run_status": "synthetic_qa_review_run_ready",
-  "row_count": 17,
+  "row_count": 18,
   "failed_row_count": 0,
   "blocked_row_count": 0,
-  "pending_review_row_count": 17,
+  "pending_review_row_count": 18,
   "blocked_action_count": 0,
-  "needs_review_action_count": 17,
+  "needs_review_action_count": 18,
   "fixed_action_count": 0,
   "ready_action_count": 0,
   "review_queue_state": "needs_review",
@@ -61,6 +61,27 @@
       ],
       "notes": [
         "The aggregate synthetic QA confidence banner must make review readiness, blockers, and no-production-authority boundaries visible."
+      ]
+    },
+    {
+      "row_id": "quality_gate:poc_qa_triage",
+      "source": "quality_gate",
+      "label": "POC QA Triage",
+      "state": "pending_review",
+      "action_state": "needs_review",
+      "owner": "qa-reference",
+      "evidence_refs": [
+        "poc_qa_triage_report.json"
+      ],
+      "recommended_next_action": "Review quality gate evidence and record an outcome: POC QA Triage.",
+      "candidate_exception_lake_labels": [
+        "synthetic_qa_blocker_queue_candidate",
+        "quality_gate_pending_review_candidate",
+        "quality_gate_poc_qa_triage_candidate",
+        "synthetic_qa_blocker_requires_review"
+      ],
+      "notes": [
+        "The POC QA triage queue must reconcile validation, synthetic QA, L&E budget gates, and UI evidence before readiness is claimed."
       ]
     },
     {
@@ -344,7 +365,7 @@
       "action_state": "needs_review",
       "owner": "qa-reference",
       "evidence_refs": [
-        "apps\\legal-intake-budget\\src\\fixtures\\demo-synthetic-qa-bundle-report.json"
+        ".lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\quality\\synthetic_qa_bundle_report.json"
       ],
       "recommended_next_action": "Review readiness item evidence and record an outcome: Required QA Artifacts.",
       "candidate_exception_lake_labels": [
@@ -365,7 +386,7 @@
       "action_state": "needs_review",
       "owner": "human-or-owner-review",
       "evidence_refs": [
-        "apps\\legal-intake-budget\\src\\fixtures\\demo-run-manifest.json"
+        ".lawfirm-os-intake\\ui-fixture-refresh-clean-baselines-current\\ui_review_manifest.json"
       ],
       "recommended_next_action": "Review readiness item evidence and record an outcome: Owner Review Backlog.",
       "candidate_exception_lake_labels": [
@@ -375,7 +396,7 @@
         "synthetic_qa_blocker_requires_review"
       ],
       "notes": [
-        "16 pending gates remain; pending is expected until human/owner review accepts candidate QA evidence."
+        "17 pending gates remain; pending is expected until human/owner review accepts candidate QA evidence."
       ]
     }
   ],
@@ -404,5 +425,5 @@
   "sqlite_write_performed": false,
   "external_writes_performed": false,
   "silent_learning_performed": false,
-  "generated_at": "2026-07-03T22:29:27Z"
+  "generated_at": "2026-07-04T00:00:00Z"
 }

@@ -7,6 +7,60 @@
   "fact_policy_ref": "config/labor-employment-budget-fact-needs.yaml",
   "bindings": [
     {
+      "binding_case_id": "le-discrimination-harassment-clean.fact-binding.v0_1",
+      "executable_fixture_id": "le-discrimination-harassment-clean.executable.v0_1",
+      "expected_budget_readiness_state": "range_only_pending_human_review",
+      "expected_budget_gate_effect": "allow_range_or_hours_only_pending_review",
+      "expected_budget_treatment": "candidate_range_budget_after_review",
+      "fact_bindings": [
+        {
+          "fact_id": "administrative_exhaustion_and_agency_record",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": ["right-to-sue letter", "state civil rights charge"],
+          "reason": "Agency and right-to-sue facts are source-bound, but remain human-review facts and deadline candidates rather than docketing authority."
+        },
+        {
+          "fact_id": "policy_handbook_contract_documents",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": ["employee handbook", "anti-harassment policy"],
+          "reason": "Policy documents are present as synthetic excerpts, but still require human confirmation before budget narrowing."
+        },
+        {
+          "fact_id": "expert_and_vendor_needs",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": ["expert and vendor needs are not identified"],
+          "reason": "The clean packet says expert and vendor needs are not identified, so expense-sensitive projections stay range-only."
+        }
+      ],
+      "red_team_notes": [
+        "The bridge must not treat clean agency and policy source coverage as approval to docket deadlines or submit an amount budget."
+      ]
+    },
+    {
+      "binding_case_id": "le-wage-hour-clean.fact-binding.v0_1",
+      "executable_fixture_id": "le-wage-hour-clean.executable.v0_1",
+      "expected_budget_readiness_state": "range_only_pending_human_review",
+      "expected_budget_gate_effect": "allow_range_or_hours_only_pending_review",
+      "expected_budget_treatment": "candidate_range_budget_after_review",
+      "fact_bindings": [
+        {
+          "fact_id": "wage_hour_pay_period_and_employee_volume",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": ["payroll export", "timekeeping export", "52 pay periods", "18 hourly employees"],
+          "reason": "Payroll and timekeeping volume facts are present as synthetic summaries, but remain human-review budget drivers before calibration."
+        },
+        {
+          "fact_id": "expert_and_vendor_needs",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": ["expert and vendor needs are not identified"],
+          "reason": "The packet does not identify payroll/statistics expert or vendor needs, so projected expenses remain range-only."
+        }
+      ],
+      "red_team_notes": [
+        "The bridge must not convert payroll export summary facts into calibrated budget amounts or approved expert expenses."
+      ]
+    },
+    {
       "binding_case_id": "le-wage-hour-missing-attachment.fact-binding.v0_1",
       "executable_fixture_id": "le-wage-hour-missing-attachment.executable.v0_1",
       "expected_budget_readiness_state": "blocked_missing_critical_facts",

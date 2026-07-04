@@ -1,0 +1,93 @@
+{
+  "schema_version": "0.1",
+  "bundle_id": "syn-le-wage-hour-clean-001",
+  "data_origin": "synthetic",
+  "contains_real_client_data": false,
+  "contains_real_matter_data": false,
+  "contains_privileged_data": false,
+  "sources": [
+    {
+      "source_id": "syn-le-wage-hour-clean-cover-email-001",
+      "source_type": "email",
+      "filename": "synthetic_wage_hour_clean_cover_email.txt",
+      "text": "From: intake-referral@synthetic-referral.example\nTo: intake@synthetic-law.example\nDate: July 2, 2026\nSubject: Wage/hour packet with payroll and timekeeping exports\n\nThe attached synthetic wage/hour packet concerns Nora Alvarez and Riverbend Packaging LLC. The referral describes one single worksite, 18 hourly employees in the line-lead and packer groups, and a two-year lookback. The payroll export and timekeeping export summaries are included. The sender says expert and vendor needs are not identified yet and asks that any budget stay range-only pending human confirmation.",
+      "metadata": {
+        "synthetic": true,
+        "attachment_refs": [
+          "payroll-export-summary.txt",
+          "timekeeping-export-summary.txt",
+          "demand-letter-summary.txt"
+        ]
+      }
+    },
+    {
+      "source_id": "syn-le-wage-hour-clean-demand-001",
+      "source_type": "attachment_text",
+      "filename": "demand-letter-summary.txt",
+      "text": "Synthetic demand summary: Nora Alvarez alleges unpaid overtime, meal-period premium issues, waiting-time penalties, and wage-statement violations against Riverbend Packaging LLC. The demand says the case is presented as an individual wage/hour claim and does not assert a class or collective action at intake, but that scope remains a human confirmation item.",
+      "metadata": {
+        "synthetic": true,
+        "document_type": "demand_summary"
+      }
+    },
+    {
+      "source_id": "syn-le-wage-hour-clean-payroll-001",
+      "source_type": "attachment_text",
+      "filename": "payroll-export-summary.txt",
+      "text": "Synthetic payroll export summary: the payroll export covers 52 pay periods for 18 hourly employees at one single worksite. It includes regular hours, overtime hours, meal-period premium flags, job codes, and wage rates for line leads and hourly packers. This is summary text only for synthetic budget-driver testing.",
+      "metadata": {
+        "synthetic": true,
+        "document_type": "payroll_export_summary"
+      }
+    },
+    {
+      "source_id": "syn-le-wage-hour-clean-timekeeping-001",
+      "source_type": "attachment_text",
+      "filename": "timekeeping-export-summary.txt",
+      "text": "Synthetic timekeeping export summary: the timekeeping export covers the same 52 pay periods and 18 hourly employees. It identifies clock-in and clock-out records, meal-period punches, edits by two payroll custodians, and exception reports for the single worksite. Expert and vendor needs are not identified in this packet.",
+      "metadata": {
+        "synthetic": true,
+        "document_type": "timekeeping_export_summary"
+      }
+    }
+  ],
+  "fixture_hints": {
+    "provided_fields": [
+      "employee_claimant_identity",
+      "employer_or_defendant_identity",
+      "claims_and_causes_of_action",
+      "class_collective_or_group_scope",
+      "wage_hour_pay_period_and_employee_volume",
+      "damages_categories_and_exposure",
+      "esi_custodians_and_sources"
+    ],
+    "entities": [
+      {
+        "name": "Nora Alvarez",
+        "role_candidates": [
+          {
+            "role": "claimant",
+            "confidence": 0.78
+          },
+          {
+            "role": "adverse_party",
+            "confidence": 0.58
+          }
+        ]
+      },
+      {
+        "name": "Riverbend Packaging LLC",
+        "role_candidates": [
+          {
+            "role": "employer_or_defendant",
+            "confidence": 0.78
+          },
+          {
+            "role": "prospective_represented_client",
+            "confidence": 0.62
+          }
+        ]
+      }
+    ]
+  }
+}

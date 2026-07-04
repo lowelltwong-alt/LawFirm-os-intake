@@ -61,10 +61,10 @@ def test_labor_employment_executable_driver_binding_maps_fact_gaps_to_budget_dri
     )
 
     assert report.status == "labor_employment_executable_driver_bindings_ready_for_review"
-    assert persisted.case_count == 8
+    assert persisted.case_count == 10
     assert persisted.failed_case_count == 0
-    assert persisted.driver_binding_count == 30
-    assert persisted.source_bound_driver_count == 30
+    assert persisted.driver_binding_count == 38
+    assert persisted.source_bound_driver_count == 38
     assert persisted.unbound_driver_count == 0
     assert persisted.critical_driver_block_count == 12
     assert persisted.missing_driver_dimensions == []
@@ -79,6 +79,20 @@ def test_labor_employment_executable_driver_binding_maps_fact_gaps_to_budget_dri
     assert persisted.silent_learning_performed is False
 
     cases = {case.executable_fixture_id: case for case in persisted.cases}
+    wage_clean = {
+        binding.driver_dimension: binding
+        for binding in cases["le-wage-hour-clean.executable.v0_1"].driver_bindings
+    }
+    assert wage_clean["wage_hour_volume"].matched_fact_ids == [
+        "wage_hour_pay_period_and_employee_volume"
+    ]
+    discrimination_clean = {
+        binding.driver_dimension: binding
+        for binding in cases["le-discrimination-harassment-clean.executable.v0_1"].driver_bindings
+    }
+    assert discrimination_clean["expert_vendor_needs"].matched_fact_ids == [
+        "expert_and_vendor_needs"
+    ]
     restrictive = {
         binding.driver_dimension: binding
         for binding in cases[
@@ -170,7 +184,7 @@ def test_labor_employment_executable_driver_binding_cli_writes_candidate_report(
 
     assert exit_code == 0
     assert report["status"] == "labor_employment_executable_driver_bindings_ready_for_review"
-    assert report["case_count"] == 8
+    assert report["case_count"] == 10
     assert report["missing_driver_dimensions"] == []
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out
