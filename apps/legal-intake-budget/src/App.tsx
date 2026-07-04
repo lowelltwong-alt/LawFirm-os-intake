@@ -218,6 +218,16 @@ type FixtureDrilldownRow = {
   blockerReview?: LaborEmploymentBlockedDriverImpactCaseReview;
 };
 
+type QAWorkbenchCard = {
+  id: string;
+  label: string;
+  state: GateState;
+  metric: string;
+  detail: string;
+  nextAction: string;
+  evidenceRefs: string[];
+};
+
 function buildFixtureDrilldownRows(
   outputReport: LaborEmploymentBudgetOutputExpectationReport,
   blockedReviewReport: LaborEmploymentBlockedDriverImpactReviewReport,
@@ -230,6 +240,78 @@ function buildFixtureDrilldownRows(
     outputCase,
     blockerReview: blockerReviewByFixture.get(outputCase.executable_fixture_id),
   }));
+}
+
+function buildQAWorkbenchCards({
+  coverageReport,
+  budgetQAGateReport,
+  blockerReport,
+  pocReport,
+  validationReport,
+}: {
+  coverageReport: LaborEmploymentExecutableCoverageReport;
+  budgetQAGateReport: LaborEmploymentBudgetQAGateReport;
+  blockerReport: SyntheticQABlockerReport;
+  pocReport: POCQATriageReport;
+  validationReport: ValidationSuiteEvidenceReport;
+}): QAWorkbenchCard[] {
+  const coverageReady =
+    coverageReport.coverage_state === "complete_executable_coverage" &&
+    coverageReport.missing_executable_pack_case_count === 0;
+  const validationReady =
+    validationReport.status === "validation_suite_passed" &&
+    validationReport.failed_step_count === 0 &&
+    validationReport.timed_out_step_count === 0;
+  const pocReady = pocReport.status === "poc_qa_ready_for_review";
+  const reviewQueueReady =
+    blockerReport.failed_row_count === 0 && blockerReport.blocked_row_count === 0;
+
+  return [
+    {
+      id: "validation-evidence",
+      label: "Validation Evidence",
+      state: validationReady && pocReady ? "passed" : "blocked",
+      metric: `${validationReport.passed_step_count}/${validationReport.step_count}`,
+      detail: "Full pytest, smoke demo, schema export, lint, and repo validation evidence is attached.",
+      nextAction: validationReady
+        ? "Use this as the baseline before adding the next fixture family."
+        : "Refresh validation evidence before expanding synthetic QA.",
+      evidenceRefs: ["demo-validation-suite-evidence-report.json", "scripts/run_validation_suite.py"],
+    },
+    {
+      id: "executable-coverage",
+      label: "Executable Coverage",
+      state: coverageReady ? "passed" : "pending",
+      metric: `${coverageReport.covered_pack_case_count}/${coverageReport.pack_case_count}`,
+      detail: "Declared L&E fixture-family variants are represented by executable local fixtures.",
+      nextAction: "Keep new scenarios tied to manifests, fact bindings, gold, and regression tests.",
+      evidenceRefs: [
+        "demo-labor-employment-executable-coverage-report.json",
+        "labor-employment-executable-fixtures-manifest.json",
+      ],
+    },
+    {
+      id: "budget-output-partition",
+      label: "Budget Output Partition",
+      state: "pending",
+      metric: `${budgetQAGateReport.blocked_amount_budget_case_count} blocked`,
+      detail: `${budgetQAGateReport.reviewed_nonblocking_case_count} cases are reviewed nonblocking; amount budgets remain guarded when facts are missing.`,
+      nextAction: "Use blocked and range-only cases to test budget-driver widening, missing facts, and follow-up prompts.",
+      evidenceRefs: [
+        "demo-labor-employment-budget-output-expectations-report.json",
+        "demo-labor-employment-budget-qa-gate-report.json",
+      ],
+    },
+    {
+      id: "review-queue",
+      label: "Review Queue",
+      state: reviewQueueReady ? "pending" : "blocked",
+      metric: `${blockerReport.needs_review_action_count} review`,
+      detail: "Synthetic QA rows are review-only and remain outside calibration, Lake writes, and learning.",
+      nextAction: "Resolve or supersede review rows before treating them as closed QA decisions.",
+      evidenceRefs: ["demo-synthetic-qa-blocker-report.json", "demo-poc-qa-triage-report.json"],
+    },
+  ];
 }
 
 function BoundaryGrid({ manifest }: { manifest: ReviewManifest }) {
@@ -288,6 +370,92 @@ function BundlePanel({ bundle }: { bundle: UIReviewDataBundle }) {
             <code>{report.source_sha256 ?? "missing hash"}</code>
           </article>
         ))}
+      </div>
+    </section>
+  );
+}
+
+function QAWorkbenchPanel({
+  cards,
+  budgetOutputReport,
+  pocReport,
+}: {
+  cards: QAWorkbenchCard[];
+  budgetOutputReport: LaborEmploymentBudgetOutputExpectationReport;
+  pocReport: POCQATriageReport;
+}) {
+  const blockedCards = cards.filter((card) => card.state === "blocked");
+  const priorityItems = pocReport.items
+    .filter((item) => item.status === "blocked" || item.status === "needs_review")
+    .slice(0, 6);
+  const stressCases = [...budgetOutputReport.cases]
+    .sort(
+      (left, right) =>
+        right.block_amount_budget_impact_count - left.block_amount_budget_impact_count ||
+        right.critical_review_only_impact_count - left.critical_review_only_impact_count ||
+        right.range_widening_impact_count - left.range_widening_impact_count,
+    )
+    .slice(0, 6);
+
+  return (
+    <section className="panel qa-workbench-panel" aria-labelledby="qa-workbench-title">
+      <div className="panel-heading">
+        <div>
+          <p className="eyebrow">Synthetic QA workbench</p>
+          <h2 id="qa-workbench-title">Testing Readiness And Next Targets</h2>
+        </div>
+        <span className={blockedCards.length === 0 ? "state state-passed" : "state state-blocked"}>
+          {blockedCards.length === 0 ? "ready for next slice" : `${blockedCards.length} blocked`}
+        </span>
+      </div>
+
+      <div className="qa-workbench-grid" aria-label="Synthetic QA workbench lanes">
+        {cards.map((card) => (
+          <article className="qa-workbench-card" key={card.id}>
+            <div>
+              <strong>{card.label}</strong>
+              <span className={gateClass(card.state)}>{card.state}</span>
+            </div>
+            <b>{card.metric}</b>
+            <p>{card.detail}</p>
+            <p>{card.nextAction}</p>
+            <TokenList items={card.evidenceRefs} limit={2} />
+          </article>
+        ))}
+      </div>
+
+      <div className="qa-workbench-columns">
+        <section aria-labelledby="qa-workbench-queue-title">
+          <h3 id="qa-workbench-queue-title">Review Queue</h3>
+          <div className="qa-workbench-list">
+            {priorityItems.map((item) => (
+              <article key={item.item_id}>
+                <strong>{item.item_id.replaceAll("_", " ")}</strong>
+                <span className={gateClass(item.status)}>{item.status}</span>
+                <p>{item.recommended_next_action}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section aria-labelledby="qa-workbench-target-title">
+          <h3 id="qa-workbench-target-title">Budget Stress Targets</h3>
+          <div className="qa-workbench-list">
+            {stressCases.map((testCase) => (
+              <article key={testCase.executable_fixture_id}>
+                <strong>{testCase.family}</strong>
+                <span className={allowedBudgetOutputClass(testCase.final_allowed_budget_output)}>
+                  {testCase.final_allowed_budget_output}
+                </span>
+                <p>
+                  {testCase.variant}: {testCase.block_amount_budget_impact_count} amount blocks,{" "}
+                  {testCase.range_widening_impact_count} range impacts,{" "}
+                  {testCase.scenario_fork_impact_count} scenario forks
+                </p>
+              </article>
+            ))}
+          </div>
+        </section>
       </div>
     </section>
   );
@@ -1913,6 +2081,13 @@ function App() {
     (artifact) => artifact.status === "pending_review" || artifact.gateState === "pending",
   ).length;
   const qualityBlockedCount = failingQualityGates(manifest.qualityGates).length;
+  const qaWorkbenchCards = buildQAWorkbenchCards({
+    coverageReport: laborEmploymentExecutableCoverage,
+    budgetQAGateReport: laborEmploymentBudgetQAGate,
+    blockerReport: syntheticQABlockerReport,
+    pocReport: pocQATriage,
+    validationReport: validationSuiteEvidence,
+  });
 
   return (
     <main className="app-shell">
@@ -1950,6 +2125,11 @@ function App() {
       </section>
 
       <BundlePanel bundle={reviewDataBundle} />
+      <QAWorkbenchPanel
+        cards={qaWorkbenchCards}
+        budgetOutputReport={laborEmploymentBudgetOutputExpectations}
+        pocReport={pocQATriage}
+      />
       <SyntheticConfidenceSummaryPanel report={syntheticConfidenceSummary} />
       <POCQATriagePanel report={pocQATriage} />
       <ValidationSuiteEvidencePanel report={validationSuiteEvidence} />

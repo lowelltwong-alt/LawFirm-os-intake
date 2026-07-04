@@ -1135,6 +1135,10 @@ def test_legal_intake_budget_ui_disclaims_mutating_authority(repo_root):
     assert "L&amp;E Budget Output Expectations" in app
     assert "L&amp;E Budget QA Gate" in app
     assert "L&amp;E Fixture Drilldown" in app
+    assert "Testing Readiness And Next Targets" in app
+    assert "Synthetic QA workbench" in app
+    assert "Budget Stress Targets" in app
+    assert "buildQAWorkbenchCards" in app
     assert "buildFixtureDrilldownRows" in app
     assert "assertUIReviewDataBundle" in app
     assert "assertSyntheticConfidenceSummaryReport" in app
@@ -1167,7 +1171,74 @@ def test_legal_intake_budget_ui_disclaims_mutating_authority(repo_root):
     assert "fixture-drilldown-panel" in styles
     assert "fixture-family-grid" in styles
     assert "budget-bucket-grid" in styles
+    assert "qa-workbench-panel" in styles
+    assert "qa-workbench-grid" in styles
+    assert "qa-workbench-list" in styles
     assert "grid-template-columns" in styles
+
+
+def test_legal_intake_budget_qa_workbench_joins_ready_state_and_budget_targets(repo_root):
+    app = (repo_root / UI_ROOT / "src/App.tsx").read_text(encoding="utf-8")
+    coverage = json.loads(
+        (
+            repo_root
+            / UI_ROOT
+            / "src/fixtures/demo-labor-employment-executable-coverage-report.json"
+        ).read_text(encoding="utf-8")
+    )
+    budget_gate = json.loads(
+        (
+            repo_root / UI_ROOT / "src/fixtures/demo-labor-employment-budget-qa-gate-report.json"
+        ).read_text(encoding="utf-8")
+    )
+    blocker = json.loads(
+        (repo_root / UI_ROOT / "src/fixtures/demo-synthetic-qa-blocker-report.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    poc = json.loads(
+        (repo_root / UI_ROOT / "src/fixtures/demo-poc-qa-triage-report.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    validation = json.loads(
+        (repo_root / UI_ROOT / "src/fixtures/demo-validation-suite-evidence-report.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    output = json.loads(
+        (
+            repo_root
+            / UI_ROOT
+            / "src/fixtures/demo-labor-employment-budget-output-expectations-report.json"
+        ).read_text(encoding="utf-8")
+    )
+
+    assert "QAWorkbenchPanel" in app
+    assert "cards={qaWorkbenchCards}" in app
+    assert "coverageReport: laborEmploymentExecutableCoverage" in app
+    assert "budgetQAGateReport: laborEmploymentBudgetQAGate" in app
+    assert "blockerReport: syntheticQABlockerReport" in app
+    assert "pocReport: pocQATriage" in app
+    assert "validationReport: validationSuiteEvidence" in app
+    assert "review-only and remain outside calibration" in app
+    assert "block_amount_budget_impact_count" in app
+    assert "range_widening_impact_count" in app
+    assert coverage["coverage_state"] == "complete_executable_coverage"
+    assert coverage["missing_executable_pack_case_count"] == 0
+    assert budget_gate["blocked_amount_budget_case_count"] == 16
+    assert budget_gate["reviewed_nonblocking_case_count"] == 15
+    assert blocker["failed_row_count"] == 0
+    assert blocker["blocked_row_count"] == 0
+    assert blocker["needs_review_action_count"] > 0
+    assert poc["status"] == "poc_qa_ready_for_review"
+    assert validation["status"] == "validation_suite_passed"
+    assert validation["failed_step_count"] == 0
+    assert any(
+        case["block_amount_budget_impact_count"] > 0
+        and case["final_allowed_budget_output"] == "blocked_amount_budget"
+        for case in output["cases"]
+    )
 
 
 def test_legal_intake_budget_qa_blocker_drilldown_tracks_review_queue(repo_root):
