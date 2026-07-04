@@ -281,16 +281,16 @@ def test_legal_intake_budget_demo_executable_coverage_is_partial_and_no_write(re
     assert report["status"] == "labor_employment_executable_coverage_ready_for_review"
     assert report["coverage_state"] == "partial_executable_coverage"
     assert report["pack_case_count"] == 32
-    assert report["executable_fixture_count"] == 23
-    assert report["covered_pack_case_count"] == 24
-    assert report["missing_executable_pack_case_count"] == 8
+    assert report["executable_fixture_count"] == 24
+    assert report["covered_pack_case_count"] == 25
+    assert report["missing_executable_pack_case_count"] == 7
     assert report["covered_family_count"] == 8
     assert report["missing_family_count"] == 0
-    assert report["covered_family_variant_count"] == len(report["covered_pack_case_ids"]) == 24
+    assert report["covered_family_variant_count"] == len(report["covered_pack_case_ids"]) == 25
     assert (
         report["missing_family_variant_count"]
         == len(report["missing_executable_pack_case_ids"])
-        == 8
+        == 7
     )
     assert "discrimination_harassment:clean" not in report["missing_family_variant_refs"]
     assert "wage_hour_flsa_state:clean" not in report["missing_family_variant_refs"]
@@ -301,6 +301,7 @@ def test_legal_intake_budget_demo_executable_coverage_is_partial_and_no_write(re
         "retaliation_wrongful_termination:missing_attachment"
         not in report["missing_family_variant_refs"]
     )
+    assert "restrictive_covenant_trade_secret:clean" not in (report["missing_family_variant_refs"])
     assert (
         "administrative_exhaustion_agency_record:missing_attachment"
         not in report["missing_family_variant_refs"]
@@ -330,6 +331,8 @@ def test_legal_intake_budget_demo_executable_coverage_is_partial_and_no_write(re
     assert families["wage_hour_flsa_state"]["missing_variants"] == []
     assert "le-wage-hour-messy-thread.v0_1" in report["covered_pack_case_ids"]
     assert "le-wage-hour-adversarial.v0_1" in report["covered_pack_case_ids"]
+    assert families["restrictive_covenant_trade_secret"]["covered_case_count"] == 2
+    assert "le-restrictive-covenant-clean.v0_1" in report["covered_pack_case_ids"]
     assert all(check["status"] == "passed" for check in report["checks"])
     assert report["candidate_only"] is True
     assert report["non_authoritative"] is True
@@ -361,9 +364,9 @@ def test_legal_intake_budget_demo_blocked_driver_review_is_synthetic_and_no_writ
     cases = {case["executable_fixture_id"]: case for case in report["case_reviews"]}
 
     assert report["status"] == "labor_employment_blocked_driver_impacts_ready_for_review"
-    assert report["case_count"] == 23
+    assert report["case_count"] == 24
     assert report["blocked_case_count"] == len(report["case_reviews"]) == 12
-    assert report["nonblocking_case_count"] == 11
+    assert report["nonblocking_case_count"] == 12
     assert report["blocker_fact_count"] == sum(
         case["blocker_fact_count"] for case in report["case_reviews"]
     )
@@ -757,12 +760,12 @@ def test_legal_intake_budget_demo_budget_output_expectations_are_no_write(repo_r
     cases = {case["executable_fixture_id"]: case for case in report["cases"]}
 
     assert report["status"] == "labor_employment_budget_output_expectations_ready_for_review"
-    assert report["case_count"] == len(report["cases"]) == 23
+    assert report["case_count"] == len(report["cases"]) == 24
     assert report["failed_case_count"] == 0
     assert report["blocked_amount_budget_case_count"] == 12
     assert report["range_or_hours_only_case_count"] == 4
-    assert report["candidate_range_after_review_case_count"] == 7
-    assert report["reviewed_nonblocking_case_count"] == 11
+    assert report["candidate_range_after_review_case_count"] == 8
+    assert report["reviewed_nonblocking_case_count"] == 12
     assert report["blocked_review_case_count"] == 12
     assert report["candidate_only"] is True
     assert report["non_authoritative"] is True
@@ -916,6 +919,16 @@ def test_legal_intake_budget_demo_budget_output_expectations_are_no_write(repo_r
         ]
         is True
     )
+    assert (
+        cases["le-restrictive-covenant-clean.executable.v0_1"]["final_allowed_budget_output"]
+        == "candidate_range_after_review_pending_human_review"
+    )
+    assert (
+        cases["le-restrictive-covenant-clean.executable.v0_1"][
+            "selected_for_reviewed_nonblocking_slice"
+        ]
+        is True
+    )
     assert all(check["status"] == "passed" for check in report["checks"])
 
 
@@ -928,18 +941,18 @@ def test_legal_intake_budget_demo_labor_employment_budget_qa_gate_is_no_write(re
     buckets = {bucket["output_state"]: bucket for bucket in report["output_state_buckets"]}
 
     assert report["status"] == "labor_employment_budget_qa_gate_ready_for_review"
-    assert report["case_count"] == 23
+    assert report["case_count"] == 24
     assert report["blocked_amount_budget_case_count"] == 12
     assert report["range_or_hours_only_case_count"] == 4
-    assert report["candidate_range_after_review_case_count"] == 7
-    assert report["reviewed_nonblocking_case_count"] == 11
+    assert report["candidate_range_after_review_case_count"] == 8
+    assert report["reviewed_nonblocking_case_count"] == 12
     assert report["covered_required_family_count"] == report["required_family_count"] == 8
     assert report["required_families_missing"] == []
     assert report["missing_blocked_review_case_ids"] == []
     assert report["missing_nonblocking_review_case_ids"] == []
     assert buckets["blocked_amount_budget"]["case_count"] == 12
     assert buckets["range_or_hours_only_pending_review"]["case_count"] == 4
-    assert buckets["candidate_range_after_review_pending_human_review"]["case_count"] == 7
+    assert buckets["candidate_range_after_review_pending_human_review"]["case_count"] == 8
     assert all(check["status"] == "passed" for check in report["checks"])
     assert report["candidate_only"] is True
     assert report["synthetic_only"] is True

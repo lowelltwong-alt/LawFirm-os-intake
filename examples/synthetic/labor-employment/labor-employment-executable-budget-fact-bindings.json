@@ -684,6 +684,81 @@
       ]
     },
     {
+      "binding_case_id": "le-restrictive-covenant-clean.fact-binding.v0_1",
+      "executable_fixture_id": "le-restrictive-covenant-clean.executable.v0_1",
+      "expected_budget_readiness_state": "range_only_pending_human_review",
+      "expected_budget_gate_effect": "allow_range_or_hours_only_pending_review",
+      "expected_budget_treatment": "candidate_range_budget_after_review",
+      "fact_bindings": [
+        {
+          "fact_id": "forum_removed_and_arbitration_posture",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": [
+            "emergency injunction",
+            "temporary restraining order",
+            "filing path"
+          ],
+          "reason": "Emergency injunction and filing-path signals are source-present, but they remain human-review procedural posture candidates and do not authorize docketing or filing."
+        },
+        {
+          "fact_id": "relevant_employment_timeline",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": [
+            "departure date of June 24, 2026",
+            "customer-contact activity involving HelioFab Robotics Inc. began on June 26, 2026",
+            "proposed emergency injunction filing review is requested by July 8, 2026"
+          ],
+          "reason": "Departure, demand, and emergency-review dates are source-bound timeline candidates only and must not become docketed deadlines."
+        },
+        {
+          "fact_id": "damages_categories_and_exposure",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": [
+            "lost customer opportunities",
+            "forensic review costs",
+            "potential unjust-enrichment theories"
+          ],
+          "reason": "Damages categories are present as candidate theories, but exposure and recovery assumptions remain review-only."
+        },
+        {
+          "fact_id": "policy_handbook_contract_documents",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": [
+            "employment agreement",
+            "customer non-solicitation covenant",
+            "confidentiality clause",
+            "trade secret protection language"
+          ],
+          "reason": "Agreement and restrictive-covenant terms are source-present synthetic excerpts, but enforceability and scope remain human-review budget inputs."
+        },
+        {
+          "fact_id": "esi_custodians_and_sources",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": [
+            "company laptop",
+            "cloud drive export",
+            "email export logs",
+            "CRM access logs",
+            "laptop logs"
+          ],
+          "reason": "Device, cloud, email, CRM, and laptop-log sources are identified, but custodian counts and review volume remain source-bound candidates."
+        },
+        {
+          "fact_id": "expert_and_vendor_needs",
+          "expected_gap_type": "human_confirmation_required",
+          "source_signal_terms": [
+            "forensic vendor may be needed",
+            "no device-forensics estimate",
+            "Expert and vendor needs are not identified or approved"
+          ],
+          "reason": "Forensic vendor need is mentioned but no estimate, preapproval, or expert budget exists, so expense-sensitive projections stay range-only."
+        }
+      ],
+      "red_team_notes": [
+        "The bridge must not convert emergency injunction urgency, agreement excerpts, ESI source lists, or forensic-vendor mentions into filing authority, approved expenses, or budget submission."
+      ]
+    },
+    {
       "binding_case_id": "le-restrictive-covenant-missing-attachment.fact-binding.v0_1",
       "executable_fixture_id": "le-restrictive-covenant-missing-attachment.executable.v0_1",
       "expected_budget_readiness_state": "blocked_missing_critical_facts",

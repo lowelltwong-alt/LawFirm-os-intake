@@ -116,12 +116,12 @@ def test_labor_employment_budget_output_expectations_classifies_every_case(
     cases = {case.executable_fixture_id: case for case in persisted.cases}
 
     assert report.status == "labor_employment_budget_output_expectations_ready_for_review"
-    assert persisted.case_count == 23
+    assert persisted.case_count == 24
     assert persisted.failed_case_count == 0
     assert persisted.blocked_amount_budget_case_count == 12
     assert persisted.range_or_hours_only_case_count == 4
-    assert persisted.candidate_range_after_review_case_count == 7
-    assert persisted.reviewed_nonblocking_case_count == 11
+    assert persisted.candidate_range_after_review_case_count == 8
+    assert persisted.reviewed_nonblocking_case_count == 12
     assert persisted.blocked_review_case_count == 12
     assert all(check.status == "passed" for check in persisted.checks)
     assert "candidate_only_budget_review_required" in persisted.candidate_exception_lake_labels
@@ -255,6 +255,17 @@ def test_labor_employment_budget_output_expectations_classifies_every_case(
         ].selected_for_reviewed_nonblocking_slice
         is True
     )
+    restrictive_clean = cases["le-restrictive-covenant-clean.executable.v0_1"]
+    assert (
+        restrictive_clean.final_allowed_budget_output
+        == "candidate_range_after_review_pending_human_review"
+    )
+    assert restrictive_clean.selected_for_reviewed_nonblocking_slice is True
+    assert restrictive_clean.block_amount_budget_impact_count == 0
+    assert restrictive_clean.critical_review_only_impact_count == 3
+    assert "labor_employment_critical_fact_review_only" in (
+        restrictive_clean.candidate_exception_lake_labels
+    )
 
     assert persisted.budget_amount_output_authorized is False
     assert persisted.budget_submission_authorized is False
@@ -308,7 +319,7 @@ def test_labor_employment_budget_output_expectations_blocks_missing_reviewed_sli
     }
 
     assert report.status == "blocked_by_labor_employment_budget_output_expectations"
-    assert report.failed_case_count == 10
+    assert report.failed_case_count == 11
     assert "source_reports_ready" in failed_checks
     assert "nonblocking_cases_are_reviewed_for_replay" in failed_checks
     assert "le-retaliation-wrongful-termination-messy-thread.executable.v0_1" in failed_cases
@@ -351,8 +362,8 @@ def test_labor_employment_budget_output_expectations_cli_writes_report(
 
     assert exit_code == 0
     assert report["status"] == "labor_employment_budget_output_expectations_ready_for_review"
-    assert report["case_count"] == 23
+    assert report["case_count"] == 24
     assert report["blocked_amount_budget_case_count"] == 12
-    assert report["candidate_range_after_review_case_count"] == 7
+    assert report["candidate_range_after_review_case_count"] == 8
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out

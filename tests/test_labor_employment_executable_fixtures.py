@@ -31,8 +31,8 @@ def test_labor_employment_executable_fixtures_run_preflight_and_preserve_boundar
     )
 
     assert report.status == "labor_employment_executable_fixtures_ready_for_review"
-    assert persisted.fixture_count == 23
-    assert persisted.preflight_executed_count == 23
+    assert persisted.fixture_count == 24
+    assert persisted.preflight_executed_count == 24
     assert persisted.failed_case_count == 0
     assert persisted.missing_pack_link_count == 0
     assert persisted.missing_source_signal_count == 0
@@ -168,6 +168,21 @@ def test_labor_employment_executable_fixtures_run_preflight_and_preserve_boundar
     assert "source_missing" in (
         cases["le-restrictive-covenant-missing-attachment.executable.v0_1"].exception_labels
     )
+    restrictive_clean = cases["le-restrictive-covenant-clean.executable.v0_1"]
+    assert restrictive_clean.source_count == 4
+    assert restrictive_clean.segment_count == 8
+    assert restrictive_clean.missing_source_count == 0
+    assert restrictive_clean.duplicate_source_count == 0
+    assert restrictive_clean.expected_budget_treatment == "candidate_range_budget_after_review"
+    assert "critic_date_or_deadline_requires_review" in restrictive_clean.exception_labels
+    assert set(restrictive_clean.expected_budget_fact_gap_ids) == {
+        "forum_removed_and_arbitration_posture",
+        "relevant_employment_timeline",
+        "damages_categories_and_exposure",
+        "policy_handbook_contract_documents",
+        "esi_custodians_and_sources",
+        "expert_and_vendor_needs",
+    }
     assert (
         cases["le-admin-exhaustion-clean.executable.v0_1"].expected_budget_treatment
         == "candidate_range_budget_after_review"
@@ -333,7 +348,7 @@ def test_labor_employment_executable_fixtures_cli_writes_candidate_report(
 
     assert exit_code == 0
     assert report["status"] == "labor_employment_executable_fixtures_ready_for_review"
-    assert report["fixture_count"] == 23
-    assert report["preflight_executed_count"] == 23
+    assert report["fixture_count"] == 24
+    assert report["preflight_executed_count"] == 24
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out

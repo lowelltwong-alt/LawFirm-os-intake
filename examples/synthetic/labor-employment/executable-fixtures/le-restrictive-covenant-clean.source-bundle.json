@@ -1,0 +1,134 @@
+{
+  "schema_version": "0.1",
+  "bundle_id": "syn-le-restrictive-covenant-clean-001",
+  "data_origin": "synthetic",
+  "contains_real_client_data": false,
+  "contains_real_matter_data": false,
+  "contains_privileged_data": false,
+  "sources": [
+    {
+      "source_id": "syn-le-restrictive-covenant-clean-cover-email-001",
+      "source_type": "email",
+      "filename": "synthetic_restrictive_covenant_clean_cover_email.txt",
+      "text": "From: general-counsel@northstar-sensorworks.example\nTo: intake@synthetic-law.example\nDate: July 1, 2026\nSubject: Restrictive covenant and trade secret matter - emergency injunction review\n\nNorthstar SensorWorks LLC asks for a synthetic budget-readiness review of a restrictive covenant and trade secret dispute involving former employee Avery Stone and new employer HelioFab Robotics Inc. The packet includes an employment agreement excerpt, a departure and demand timeline, and a device and ESI preservation summary. Northstar SensorWorks LLC is considering an emergency injunction and temporary restraining order strategy, but the requested hearing date and filing path are deadline candidates only and are not docketing instructions. The packet identifies a departure date of June 24, 2026, alleged customer-solicitation activity beginning June 26, 2026, and a proposed injunction filing review by July 8, 2026. Claimed damages include lost customer opportunities, forensic review costs, and potential unjust-enrichment theories. Expert and vendor needs are not identified or approved.",
+      "metadata": {
+        "synthetic": true,
+        "attachment_refs": [
+          "employment-agreement-excerpt.txt",
+          "departure-demand-timeline.txt",
+          "device-esi-preservation-summary.txt"
+        ]
+      }
+    },
+    {
+      "source_id": "syn-le-restrictive-covenant-clean-agreement-001",
+      "source_type": "attachment_text",
+      "filename": "employment-agreement-excerpt.txt",
+      "text": "Synthetic employment agreement excerpt: Avery Stone signed a Northstar SensorWorks LLC employment agreement containing a confidentiality clause, trade secret protection language, a twelve-month customer non-solicitation covenant, and an invention-assignment provision. The excerpt does not confirm enforceability, choice of law, or whether a non-compete covenant is enforceable. The agreement text is source-bound for review only and must not be treated as a legal conclusion or budget submission authority.",
+      "metadata": {
+        "synthetic": true,
+        "document_type": "employment_agreement_excerpt"
+      }
+    },
+    {
+      "source_id": "syn-le-restrictive-covenant-clean-timeline-001",
+      "source_type": "attachment_text",
+      "filename": "departure-demand-timeline.txt",
+      "text": "Synthetic departure and demand timeline: Avery Stone resigned from Northstar SensorWorks LLC on June 24, 2026. Northstar alleges that customer-contact activity involving HelioFab Robotics Inc. began on June 26, 2026. Northstar sent a preservation letter and demand for return of information on June 29, 2026. A proposed emergency injunction filing review is requested by July 8, 2026. These dates are timing candidates only; they do not authorize docketing, filing, matter opening, or budget submission.",
+      "metadata": {
+        "synthetic": true,
+        "document_type": "departure_demand_timeline"
+      }
+    },
+    {
+      "source_id": "syn-le-restrictive-covenant-clean-esi-001",
+      "source_type": "attachment_text",
+      "filename": "device-esi-preservation-summary.txt",
+      "text": "Synthetic device and ESI preservation summary: Northstar identifies one company laptop, one device inventory, one cloud drive export, email export logs, CRM access logs, and laptop logs as possible ESI sources. Potential custodians include Avery Stone, the sales operations manager, the IT administrator, and a customer-transition lead. The summary mentions that a forensic vendor may be needed, but no device-forensics estimate, expert budget, vendor budget, or preapproval has been supplied. Expert and vendor needs are not identified or approved.",
+      "metadata": {
+        "synthetic": true,
+        "document_type": "device_esi_preservation_summary"
+      }
+    }
+  ],
+  "fixture_hints": {
+    "provided_fields": [
+      "employee_claimant_identity",
+      "employer_or_defendant_identity",
+      "claims_and_causes_of_action",
+      "forum_removed_and_arbitration_posture",
+      "relevant_employment_timeline",
+      "damages_categories_and_exposure",
+      "policy_handbook_contract_documents",
+      "esi_custodians_and_sources",
+      "expert_and_vendor_needs"
+    ],
+    "entities": [
+      {
+        "name": "Northstar SensorWorks LLC",
+        "role_candidates": [
+          {
+            "role": "employer_or_defendant",
+            "confidence": 0.76
+          },
+          {
+            "role": "prospective_represented_client",
+            "confidence": 0.64
+          }
+        ]
+      },
+      {
+        "name": "Avery Stone",
+        "role_candidates": [
+          {
+            "role": "former_employee",
+            "confidence": 0.8
+          },
+          {
+            "role": "adverse_party",
+            "confidence": 0.61
+          }
+        ]
+      },
+      {
+        "name": "HelioFab Robotics Inc.",
+        "role_candidates": [
+          {
+            "role": "new_employer",
+            "confidence": 0.74
+          },
+          {
+            "role": "third_party",
+            "confidence": 0.53
+          }
+        ]
+      },
+      {
+        "name": "sales operations manager",
+        "role_candidates": [
+          {
+            "role": "witness",
+            "confidence": 0.55
+          },
+          {
+            "role": "custodian_candidate",
+            "confidence": 0.49
+          }
+        ]
+      },
+      {
+        "name": "IT administrator",
+        "role_candidates": [
+          {
+            "role": "custodian_candidate",
+            "confidence": 0.58
+          },
+          {
+            "role": "witness",
+            "confidence": 0.5
+          }
+        ]
+      }
+    ]
+  }
+}

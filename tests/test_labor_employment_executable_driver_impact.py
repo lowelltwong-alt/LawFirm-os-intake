@@ -71,12 +71,12 @@ def test_labor_employment_executable_driver_impact_maps_drivers_to_budget_effect
     )
 
     assert report.status == "labor_employment_executable_driver_impacts_ready_for_review"
-    assert persisted.case_count == 23
+    assert persisted.case_count == 24
     assert persisted.failed_case_count == 0
-    assert persisted.impact_item_count == 110
-    assert persisted.source_bound_impact_count == 110
+    assert persisted.impact_item_count == 116
+    assert persisted.source_bound_impact_count == 116
     assert persisted.block_amount_budget_impact_count == 21
-    assert persisted.critical_review_only_impact_count == 31
+    assert persisted.critical_review_only_impact_count == 34
     assert persisted.range_widening_impact_count > 0
     assert persisted.scenario_fork_impact_count > 0
     assert persisted.rate_guideline_review_impact_count > 0
@@ -167,6 +167,20 @@ def test_labor_employment_executable_driver_impact_maps_drivers_to_budget_effect
     assert "add_scenario_fork" in retaliation_impacts["forum_arbitration"].impact_actions
     assert "add_scenario_fork" in retaliation_impacts["expert_vendor_needs"].impact_actions
     assert "widen_budget_range" in retaliation_impacts["employment_timeline"].impact_actions
+    restrictive_clean = cases["le-restrictive-covenant-clean.executable.v0_1"]
+    assert (
+        restrictive_clean.allowed_budget_output
+        == "candidate_range_after_review_pending_human_review"
+    )
+    assert restrictive_clean.impact_item_count == 6
+    assert restrictive_clean.block_amount_budget_impact_count == 0
+    assert restrictive_clean.critical_review_only_impact_count == 3
+    assert restrictive_clean.range_widening_impact_count == 6
+    assert restrictive_clean.scenario_fork_impact_count == 2
+    restrictive_impacts = {item.driver_dimension: item for item in restrictive_clean.impact_items}
+    assert "add_scenario_fork" in restrictive_impacts["forum_arbitration"].impact_actions
+    assert "add_scenario_fork" in restrictive_impacts["expert_vendor_needs"].impact_actions
+    assert "widen_budget_range" in restrictive_impacts["esi_discovery"].impact_actions
     retaliation_missing = cases[
         "le-retaliation-wrongful-termination-missing-attachment.executable.v0_1"
     ]
@@ -306,9 +320,9 @@ def test_labor_employment_executable_driver_impact_cli_writes_candidate_report(
 
     assert exit_code == 0
     assert report["status"] == "labor_employment_executable_driver_impacts_ready_for_review"
-    assert report["case_count"] == 23
-    assert report["impact_item_count"] == 110
-    assert report["critical_review_only_impact_count"] == 31
+    assert report["case_count"] == 24
+    assert report["impact_item_count"] == 116
+    assert report["critical_review_only_impact_count"] == 34
     assert report["missing_impact_policy_dimensions"] == []
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out

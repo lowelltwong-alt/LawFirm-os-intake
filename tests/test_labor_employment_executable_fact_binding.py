@@ -49,14 +49,14 @@ def test_labor_employment_executable_fact_binding_binds_gaps_without_side_effect
     )
 
     assert report.status == "labor_employment_executable_budget_fact_bindings_ready_for_review"
-    assert persisted.case_count == 23
+    assert persisted.case_count == 24
     assert persisted.failed_case_count == 0
-    assert persisted.fact_binding_count == 81
-    assert persisted.critical_fact_binding_count == 43
+    assert persisted.fact_binding_count == 87
+    assert persisted.critical_fact_binding_count == 46
     assert persisted.missing_critical_fact_count == 18
-    assert persisted.source_present_confirmation_fact_count == 47
+    assert persisted.source_present_confirmation_fact_count == 53
     assert persisted.source_present_unresolved_critical_driver_count == 2
-    assert persisted.evidence_bound_fact_count == 81
+    assert persisted.evidence_bound_fact_count == 87
     assert persisted.exception_bound_fact_count == 26
     assert persisted.missing_policy_fact_count == 0
     assert persisted.missing_source_signal_count == 0
@@ -371,6 +371,34 @@ def test_labor_employment_executable_fact_binding_binds_gaps_without_side_effect
     assert restrictive_bindings["esi_custodians_and_sources"].matched_source_ids == [
         "syn-le-restrictive-covenant-device-scope-missing-001"
     ]
+    restrictive_clean_bindings = {
+        binding.fact_id: binding
+        for binding in cases["le-restrictive-covenant-clean.executable.v0_1"].fact_bindings
+    }
+    assert set(restrictive_clean_bindings) == {
+        "forum_removed_and_arbitration_posture",
+        "relevant_employment_timeline",
+        "damages_categories_and_exposure",
+        "policy_handbook_contract_documents",
+        "esi_custodians_and_sources",
+        "expert_and_vendor_needs",
+    }
+    assert (
+        restrictive_clean_bindings["relevant_employment_timeline"].fact_resolution_state
+        == "source_present_needs_confirmation"
+    )
+    assert restrictive_clean_bindings["relevant_employment_timeline"].required_level == "critical"
+    assert (
+        restrictive_clean_bindings["damages_categories_and_exposure"].fact_resolution_state
+        == "source_present_needs_confirmation"
+    )
+    assert restrictive_clean_bindings["esi_custodians_and_sources"].required_level == "critical"
+    assert restrictive_clean_bindings["expert_and_vendor_needs"].binding_state == (
+        "source_bound_gap_candidate"
+    )
+    assert all(
+        binding.blocks_precise_budget is False for binding in restrictive_clean_bindings.values()
+    )
     admin_bindings = {
         binding.fact_id: binding
         for binding in cases["le-admin-exhaustion-clean.executable.v0_1"].fact_bindings
@@ -531,7 +559,7 @@ def test_labor_employment_executable_fact_binding_manifest_is_candidate_only(rep
     assert manifest.lake_write_performed is False
     assert manifest.sqlite_write_performed is False
     assert manifest.external_writes_performed is False
-    assert len(manifest.bindings) == 23
+    assert len(manifest.bindings) == 24
 
 
 def test_labor_employment_executable_fact_binding_blocks_missing_policy_fact(
@@ -618,9 +646,9 @@ def test_labor_employment_executable_fact_binding_cli_writes_report(
 
     assert exit_code == 0
     assert report["status"] == ("labor_employment_executable_budget_fact_bindings_ready_for_review")
-    assert report["case_count"] == 23
-    assert report["fact_binding_count"] == 81
+    assert report["case_count"] == 24
+    assert report["fact_binding_count"] == 87
     assert report["missing_critical_fact_count"] == 18
-    assert report["source_present_confirmation_fact_count"] == 47
+    assert report["source_present_confirmation_fact_count"] == 53
     assert '"budget_amount_output_authorized": false' in captured.out
     assert '"silent_learning_performed": false' in captured.out
