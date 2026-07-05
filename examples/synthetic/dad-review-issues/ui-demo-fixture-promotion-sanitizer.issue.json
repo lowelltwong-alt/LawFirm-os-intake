@@ -1,0 +1,102 @@
+{
+  "schema_version": "0.1",
+  "issue_id": "ui-demo-fixture-promotion-sanitizer-001",
+  "issue_version": "0.1.0",
+  "observed_at": "2026-07-05T00:00:00Z",
+  "source_repo_id": "LawFirm-os-intake",
+  "source_repo_path": "LawFirm-os-intake",
+  "originating_agent": "codex",
+  "review_context": "Generated run-root to checked read-only UI demo fixture promotion for synthetic QA evidence.",
+  "finding_title": "Generated run promotion must be allowlisted and sanitized before checked UI fixture use.",
+  "severity": "P1",
+  "issue_classes": [
+    "ui_authority_risk",
+    "synthetic_data_gap",
+    "test_gap",
+    "learning_loop_gap",
+    "exception_lake_mapping_gap",
+    "performance_or_rust_candidate"
+  ],
+  "finding_summary": "A generated QA run root can contain valid review artifacts, stale wrappers, temporary outputs, nested duplicates, or local absolute paths. Checked frontend fixtures should be promoted only through a static allowlist, recursive run-root sanitizer, fail-closed side-effect checks, and Rust boundary/hash/snapshot gates.",
+  "observable_context": [
+    "The read-only UI imports checked JSON fixtures from apps/legal-intake-budget/src/fixtures.",
+    "The wrapper refresh command updates source hashes and manifest inventory, but does not decide which generated run-root artifacts should become checked fixtures.",
+    "Generated run roots can include missing, ambiguous, nested, or noisy JSON files that should not be copied into the frontend fixture set.",
+    "The new promote-ui-demo-run-fixtures command blocks without --write-fixtures, promotes only allowlisted reports, rewrites generated run-root strings to <demo-run-root>, and verifies the result with Rust boundary, source-hash, and snapshot-coherence gates."
+  ],
+  "observable_decision_logic": [
+    "Static fixture promotion prevents arbitrary generated JSON from becoming frontend truth.",
+    "Recursive JSON sanitization preserves structured fields while removing local run-root paths from checked artifacts.",
+    "Missing, ambiguous, out-of-root, leaking, or side-effecting artifacts must block before any fixture mutation.",
+    "Rust gates should verify the promoted fixture set because source-hash and snapshot drift are deterministic leaf checks.",
+    "Wrapper refresh and generated-run promotion are different exception classes and should remain separately visible to DAD."
+  ],
+  "solution_path": [
+    "Add promote-ui-demo-run-fixtures with explicit --write-fixtures guard.",
+    "Use a static allowlist for UI-imported semantic detail reports plus generated wrapper reports.",
+    "Reject missing, ambiguous, path-traversal, run-root-leaking, or prohibited side-effect artifacts before mutation.",
+    "Back up checked fixture JSON before mutation and roll back on downstream gate failure.",
+    "Regenerate the checked Rust fixture-boundary report, refresh UI wrapper hashes and manifest, then require Rust gates to pass.",
+    "Add focused tests for no-write guard, successful sanitization, missing source, ambiguous source, out-of-root source ref, side-effect rejection, and unallowlisted JSON exclusion."
+  ],
+  "fix_status": "fixed_validated",
+  "fix_refs": [
+    "src/lawfirm_os_intake/ui_demo_fixture_promotion.py",
+    "src/lawfirm_os_intake/cli.py",
+    "src/lawfirm_os_intake/models.py",
+    "scripts/export_schemas.py",
+    "apps/legal-intake-budget/README.md",
+    "docs/rust-fixture-boundary-checker.md",
+    "docs/decisions/TRACE-2026-07-05-ui-demo-fixture-promotion.md"
+  ],
+  "test_refs": [
+    "tests/test_ui_demo_fixture_promotion.py",
+    "python scripts/run_full_pytest.py tests/test_ui_demo_fixture_promotion.py tests/test_ui_demo_fixture_refresh.py tests/test_rust_ui_bundle_source_hash.py tests/test_rust_fixture_snapshot_coherence.py"
+  ],
+  "artifact_refs": [
+    "schemas/ui-demo-fixture-promotion-item.schema.json",
+    "schemas/ui-demo-fixture-promotion-report.schema.json"
+  ],
+  "candidate_exception_labels": [
+    "generated_run_promotion_requires_allowlist",
+    "ui_fixture_run_root_sanitizer_required",
+    "ui_fixture_promotion_side_effect_blocked",
+    "ui_fixture_promotion_ambiguous_source_blocked",
+    "ui_fixture_promotion_rust_gate_required",
+    "dad_learning_loop_candidate"
+  ],
+  "applies_when": [
+    "A generated local QA run root is being considered for checked frontend demo fixtures.",
+    "A frontend fixture set must display synthetic QA evidence without leaking local run-root paths.",
+    "A repo needs to distinguish wrapper freshness from semantic artifact promotion."
+  ],
+  "does_not_apply_when": [
+    "The UI wrapper hashes alone are stale but semantic detail reports are unchanged.",
+    "A production runtime artifact registry already owns fixture publication.",
+    "Real client, matter, privileged, negotiated-rate, connector, or carrier-portal data is present."
+  ],
+  "danger_if_misapplied": "If a generated run root is directory-copied into checked fixtures, stale or noisy JSON can become UI evidence, local paths can leak into committed files, and DAD may mistake wrapper freshness for semantic artifact review.",
+  "suggested_actions": [
+    "DAD should classify generated-run promotion separately from wrapper refresh and source-hash drift.",
+    "Exception Lake design should preserve missing-source, ambiguous-source, side-effect-blocked, sanitizer-leak, and Rust-gate-failed labels as distinct candidate classes.",
+    "Future agents should use a static allowlist and recursive sanitizer before turning generated outputs into checked assets."
+  ],
+  "reviewer_notes": [
+    "This record describes synthetic fixture and local artifact promotion only.",
+    "It records observable evidence, assumptions, decision logic, fix refs, and test refs without hidden chain-of-thought."
+  ],
+  "red_team_notes": [
+    "Do not treat promotion as production approval, budget approval, Lake admission, or learning.",
+    "Do not infer promotion coverage from arbitrary run-root files.",
+    "Do not promote local candidate schemas to Semantic Substrate canon from this repo."
+  ],
+  "raw_private_payload_included": false,
+  "hidden_chain_of_thought_included": false,
+  "candidate_only": true,
+  "dad_outbox_required": true,
+  "dad_review_required_before_promotion": true,
+  "lake_write_performed": false,
+  "sqlite_write_performed": false,
+  "external_writes_performed": false,
+  "silent_learning_performed": false
+}

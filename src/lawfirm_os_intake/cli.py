@@ -150,6 +150,7 @@ from .synthetic_qa_blocker_report import run_synthetic_qa_blocker_report
 from .synthetic_qa_bundle import run_synthetic_qa_bundle
 from .synthetic_qa_review_outcomes import run_synthetic_qa_review_outcome_record
 from .synthetic_qa_review_run import run_synthetic_qa_review_run
+from .ui_demo_fixture_promotion import promote_ui_demo_run_fixtures
 from .ui_demo_fixture_refresh import refresh_ui_demo_fixtures
 from .ui_review_data_bundle import build_ui_review_data_bundle
 from .ui_review_manifest import build_ui_review_manifest
@@ -507,6 +508,41 @@ def _parser() -> argparse.ArgumentParser:
         help="Optional fixed timestamp for deterministic refresh reports.",
     )
     ui_demo_fixture_refresh.add_argument(
+        "--timeout-seconds",
+        type=int,
+        default=240,
+        help="Timeout for each explicit Rust checker invocation.",
+    )
+
+    ui_demo_fixture_promotion = sub.add_parser(
+        "promote-ui-demo-run-fixtures",
+        help=(
+            "Promote an approved generated run root into checked read-only UI demo "
+            "fixtures, sanitize run-root refs, and verify with local Rust gates."
+        ),
+    )
+    ui_demo_fixture_promotion.add_argument("--run-root", required=True)
+    ui_demo_fixture_promotion.add_argument(
+        "--fixtures-root",
+        default="apps/legal-intake-budget/src/fixtures",
+        help="Checked frontend fixture root containing demo-ui-review-data-bundle.json.",
+    )
+    ui_demo_fixture_promotion.add_argument("--out-dir", required=True)
+    ui_demo_fixture_promotion.add_argument(
+        "--repo-root",
+        default=".",
+        help="Repository root containing rust/fixture-boundary-checker/Cargo.toml.",
+    )
+    ui_demo_fixture_promotion.add_argument(
+        "--write-fixtures",
+        action="store_true",
+        help="Required explicit approval to rewrite checked demo fixtures.",
+    )
+    ui_demo_fixture_promotion.add_argument(
+        "--generated-at",
+        help="Optional fixed timestamp for deterministic promotion and refresh reports.",
+    )
+    ui_demo_fixture_promotion.add_argument(
         "--timeout-seconds",
         type=int,
         default=240,
@@ -2392,6 +2428,46 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 0 if report.status == "ui_demo_fixture_refresh_verified" else 2
+
+        if args.command == "promote-ui-demo-run-fixtures":
+            report, report_path = promote_ui_demo_run_fixtures(
+                run_root=args.run_root,
+                fixtures_root=args.fixtures_root,
+                out_dir=args.out_dir,
+                repo_root=args.repo_root,
+                write_fixtures=args.write_fixtures,
+                generated_at=args.generated_at,
+                timeout_seconds=args.timeout_seconds,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "report_path": str(report_path),
+                    "run_root_ref": report.run_root_ref,
+                    "fixtures_root_ref": report.fixtures_root_ref,
+                    "promoted_item_count": report.promoted_item_count,
+                    "unchanged_item_count": report.unchanged_item_count,
+                    "generated_wrapper_count": report.generated_wrapper_count,
+                    "missing_source_count": report.missing_source_count,
+                    "ambiguous_source_count": report.ambiguous_source_count,
+                    "blocked_side_effect_count": report.blocked_side_effect_count,
+                    "sanitized_replacement_count": report.sanitized_replacement_count,
+                    "forbidden_run_root_leak_count": report.forbidden_run_root_leak_count,
+                    "rust_boundary_status": report.rust_boundary_status,
+                    "wrapper_refresh_status": report.wrapper_refresh_status,
+                    "manifest_status": report.manifest_status,
+                    "source_hash_gate_status": report.source_hash_gate_status,
+                    "snapshot_gate_status": report.snapshot_gate_status,
+                    "local_fixture_updates_performed": (report.local_fixture_updates_performed),
+                    "rollback_performed": report.rollback_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "budget_submission_authorized": report.budget_submission_authorized,
+                    "matter_opening_authorized": report.matter_opening_authorized,
+                }
+            )
+            return 0 if report.status == "ui_demo_fixture_promotion_verified" else 2
 
         if args.command == "build-budget-calibration-starter-pack":
             report, run_dir = run_budget_calibration_starter_pack(

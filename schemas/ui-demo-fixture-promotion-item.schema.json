@@ -1,0 +1,103 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "fixture_name": {
+      "title": "Fixture Name",
+      "type": "string"
+    },
+    "source_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Ref"
+    },
+    "target_ref": {
+      "title": "Target Ref",
+      "type": "string"
+    },
+    "old_target_sha256": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Old Target Sha256"
+    },
+    "new_target_sha256": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "New Target Sha256"
+    },
+    "source_sha256": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Sha256"
+    },
+    "sanitized_replacement_count": {
+      "minimum": 0,
+      "title": "Sanitized Replacement Count",
+      "type": "integer"
+    },
+    "forbidden_run_root_leak_count": {
+      "minimum": 0,
+      "title": "Forbidden Run Root Leak Count",
+      "type": "integer"
+    },
+    "blocked_side_effect_count": {
+      "minimum": 0,
+      "title": "Blocked Side Effect Count",
+      "type": "integer"
+    },
+    "status": {
+      "enum": [
+        "promoted",
+        "unchanged",
+        "generated_wrapper",
+        "missing_source",
+        "ambiguous_source",
+        "blocked_side_effect"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "message": {
+      "title": "Message",
+      "type": "string"
+    }
+  },
+  "required": [
+    "fixture_name",
+    "target_ref",
+    "sanitized_replacement_count",
+    "forbidden_run_root_leak_count",
+    "blocked_side_effect_count",
+    "status",
+    "message"
+  ],
+  "title": "UIDemoFixturePromotionItem",
+  "type": "object"
+}

@@ -1,0 +1,350 @@
+{
+  "$defs": {
+    "UIDemoFixturePromotionItem": {
+      "additionalProperties": false,
+      "properties": {
+        "fixture_name": {
+          "title": "Fixture Name",
+          "type": "string"
+        },
+        "source_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Ref"
+        },
+        "target_ref": {
+          "title": "Target Ref",
+          "type": "string"
+        },
+        "old_target_sha256": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Old Target Sha256"
+        },
+        "new_target_sha256": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "New Target Sha256"
+        },
+        "source_sha256": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Sha256"
+        },
+        "sanitized_replacement_count": {
+          "minimum": 0,
+          "title": "Sanitized Replacement Count",
+          "type": "integer"
+        },
+        "forbidden_run_root_leak_count": {
+          "minimum": 0,
+          "title": "Forbidden Run Root Leak Count",
+          "type": "integer"
+        },
+        "blocked_side_effect_count": {
+          "minimum": 0,
+          "title": "Blocked Side Effect Count",
+          "type": "integer"
+        },
+        "status": {
+          "enum": [
+            "promoted",
+            "unchanged",
+            "generated_wrapper",
+            "missing_source",
+            "ambiguous_source",
+            "blocked_side_effect"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "fixture_name",
+        "target_ref",
+        "sanitized_replacement_count",
+        "forbidden_run_root_leak_count",
+        "blocked_side_effect_count",
+        "status",
+        "message"
+      ],
+      "title": "UIDemoFixturePromotionItem",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "ui_demo_fixture_promotion_verified",
+        "ui_demo_fixture_promotion_failed",
+        "ui_demo_fixture_promotion_blocked_write_flag_required"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "run_root_ref": {
+      "title": "Run Root Ref",
+      "type": "string"
+    },
+    "sanitized_run_root_ref": {
+      "const": "<demo-run-root>",
+      "default": "<demo-run-root>",
+      "title": "Sanitized Run Root Ref",
+      "type": "string"
+    },
+    "fixtures_root_ref": {
+      "title": "Fixtures Root Ref",
+      "type": "string"
+    },
+    "promotion_item_count": {
+      "minimum": 0,
+      "title": "Promotion Item Count",
+      "type": "integer"
+    },
+    "promoted_item_count": {
+      "minimum": 0,
+      "title": "Promoted Item Count",
+      "type": "integer"
+    },
+    "unchanged_item_count": {
+      "minimum": 0,
+      "title": "Unchanged Item Count",
+      "type": "integer"
+    },
+    "generated_wrapper_count": {
+      "minimum": 0,
+      "title": "Generated Wrapper Count",
+      "type": "integer"
+    },
+    "missing_source_count": {
+      "minimum": 0,
+      "title": "Missing Source Count",
+      "type": "integer"
+    },
+    "ambiguous_source_count": {
+      "minimum": 0,
+      "title": "Ambiguous Source Count",
+      "type": "integer"
+    },
+    "blocked_side_effect_count": {
+      "minimum": 0,
+      "title": "Blocked Side Effect Count",
+      "type": "integer"
+    },
+    "sanitized_replacement_count": {
+      "minimum": 0,
+      "title": "Sanitized Replacement Count",
+      "type": "integer"
+    },
+    "forbidden_run_root_leak_count": {
+      "minimum": 0,
+      "title": "Forbidden Run Root Leak Count",
+      "type": "integer"
+    },
+    "rust_boundary_status": {
+      "title": "Rust Boundary Status",
+      "type": "string"
+    },
+    "wrapper_refresh_status": {
+      "title": "Wrapper Refresh Status",
+      "type": "string"
+    },
+    "manifest_status": {
+      "title": "Manifest Status",
+      "type": "string"
+    },
+    "source_hash_gate_status": {
+      "title": "Source Hash Gate Status",
+      "type": "string"
+    },
+    "snapshot_gate_status": {
+      "title": "Snapshot Gate Status",
+      "type": "string"
+    },
+    "wrapper_refresh_report_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Wrapper Refresh Report Ref"
+    },
+    "old_ui_review_data_bundle_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Old Ui Review Data Bundle Id"
+    },
+    "new_ui_review_data_bundle_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "New Ui Review Data Bundle Id"
+    },
+    "local_fixture_updates_performed": {
+      "default": false,
+      "title": "Local Fixture Updates Performed",
+      "type": "boolean"
+    },
+    "rollback_performed": {
+      "default": false,
+      "title": "Rollback Performed",
+      "type": "boolean"
+    },
+    "items": {
+      "items": {
+        "$ref": "#/$defs/UIDemoFixturePromotionItem"
+      },
+      "title": "Items",
+      "type": "array"
+    },
+    "required_next_actions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Actions",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "local_json_only": {
+      "const": true,
+      "default": true,
+      "title": "Local Json Only",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "budget_submission_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Submission Authorized",
+      "type": "boolean"
+    },
+    "matter_opening_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Matter Opening Authorized",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "status",
+    "run_root_ref",
+    "fixtures_root_ref",
+    "promotion_item_count",
+    "promoted_item_count",
+    "unchanged_item_count",
+    "generated_wrapper_count",
+    "missing_source_count",
+    "ambiguous_source_count",
+    "blocked_side_effect_count",
+    "sanitized_replacement_count",
+    "forbidden_run_root_leak_count",
+    "rust_boundary_status",
+    "wrapper_refresh_status",
+    "manifest_status",
+    "source_hash_gate_status",
+    "snapshot_gate_status",
+    "required_next_actions",
+    "generated_at"
+  ],
+  "title": "UIDemoFixturePromotionReport",
+  "type": "object"
+}

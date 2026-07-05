@@ -79,8 +79,31 @@ python -m lawfirm_os_intake refresh-ui-demo-fixtures `
 
 This refresh updates only `demo-ui-review-data-bundle.json` and
 `demo-rust-fixture-manifest-report.json`. It intentionally does not regenerate
-semantic QA detail reports or hide the need for a later generated-run promotion
-and sanitizer flow.
+semantic QA detail reports or copy generated run-root artifacts; use the
+promotion command below when an approved generated run root should become the
+checked UI demo fixture set.
+
+Promote an approved generated run root into the checked frontend fixtures with:
+
+```powershell
+python -m lawfirm_os_intake promote-ui-demo-run-fixtures `
+  --run-root .lawfirm-os-intake/synthetic-qa-review `
+  --fixtures-root apps/legal-intake-budget/src/fixtures `
+  --out-dir .lawfirm-os-intake/ui-demo-fixture-promotion `
+  --repo-root . `
+  --generated-at 2026-07-05T00:00:00Z `
+  --write-fixtures
+```
+
+The promotion command is the sanitizer flow. It copies only the static
+allowlist of UI-imported JSON reports, parses and rewrites JSON recursively,
+replaces generated run-root strings with `<demo-run-root>`, fails closed on
+missing, ambiguous, out-of-root, leaking, or side-effecting source artifacts,
+regenerates the checked Rust boundary and manifest wrapper reports, then runs
+the Rust boundary, UI bundle source-hash, and snapshot-coherence gates. It does
+not copy arbitrary run-root JSON, regenerate semantic reports from prompts,
+submit budgets, open matters, write SQLite/Lake records, or promote canonical
+contracts.
 
 Stage a prebuilt report into the synthetic QA review run:
 

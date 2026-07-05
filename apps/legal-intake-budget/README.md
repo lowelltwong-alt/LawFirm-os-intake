@@ -95,6 +95,27 @@ That bundle records which local JSON detail reports the frontend can render, wit
 hashes and no-write checks. It does not copy source payloads or grant mutation
 authority.
 
+Promote an approved generated run root into checked demo fixtures with:
+
+```bash
+python -m lawfirm_os_intake promote-ui-demo-run-fixtures \
+  --run-root .lawfirm-os-intake/synthetic-qa-review \
+  --fixtures-root apps/legal-intake-budget/src/fixtures \
+  --out-dir .lawfirm-os-intake/ui-demo-fixture-promotion \
+  --repo-root . \
+  --generated-at 2026-07-05T00:00:00Z \
+  --write-fixtures
+```
+
+That command uses a static allowlist of UI-imported JSON reports, recursively
+rewrites generated run-root strings to `<demo-run-root>`, blocks missing,
+ambiguous, out-of-root, leaking, or side-effecting source artifacts, regenerates
+the checked Rust boundary and manifest wrapper reports, refreshes
+`demo-ui-review-data-bundle.json`, and verifies the Rust boundary,
+source-hash, and snapshot-coherence gates. It does not copy arbitrary run-root
+JSON, promote schemas, submit budgets, open matters, write SQLite/Lake records,
+or create external connectors.
+
 Verify that the bundle's `source_sha256` fields still match the current local
 detail-report JSON files with:
 

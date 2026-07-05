@@ -13011,6 +13011,156 @@ class UIDemoFixtureRefreshReport(StrictModel):
         return self
 
 
+UIDemoFixturePromotionStatus = Literal[
+    "ui_demo_fixture_promotion_verified",
+    "ui_demo_fixture_promotion_failed",
+    "ui_demo_fixture_promotion_blocked_write_flag_required",
+]
+
+UIDemoFixturePromotionItemStatus = Literal[
+    "promoted",
+    "unchanged",
+    "generated_wrapper",
+    "missing_source",
+    "ambiguous_source",
+    "blocked_side_effect",
+]
+
+
+class UIDemoFixturePromotionItem(StrictModel):
+    fixture_name: str
+    source_ref: str | None = None
+    target_ref: str
+    old_target_sha256: str | None = None
+    new_target_sha256: str | None = None
+    source_sha256: str | None = None
+    sanitized_replacement_count: int = Field(ge=0)
+    forbidden_run_root_leak_count: int = Field(ge=0)
+    blocked_side_effect_count: int = Field(ge=0)
+    status: UIDemoFixturePromotionItemStatus
+    message: str
+
+    @model_validator(mode="after")
+    def ui_demo_fixture_promotion_item_is_coherent(
+        self,
+    ) -> "UIDemoFixturePromotionItem":
+        for hash_value in [self.old_target_sha256, self.new_target_sha256, self.source_sha256]:
+            if hash_value is not None and not _is_sha256_ref(hash_value):
+                raise ValueError("UI demo fixture promotion hashes must be sha256:<64 hex>")
+        if self.status in {"promoted", "unchanged", "generated_wrapper"}:
+            if not self.new_target_sha256:
+                raise ValueError("successful UI demo fixture promotion item requires new hash")
+            if self.forbidden_run_root_leak_count or self.blocked_side_effect_count:
+                raise ValueError("successful UI demo fixture promotion item cannot include leaks")
+        if self.status == "unchanged" and self.old_target_sha256 != self.new_target_sha256:
+            raise ValueError("unchanged UI demo fixture promotion item requires equal hashes")
+        if self.status == "promoted" and self.old_target_sha256 == self.new_target_sha256:
+            raise ValueError("promoted UI demo fixture promotion item requires changed hash")
+        if self.status == "missing_source" and self.source_ref is None:
+            raise ValueError("missing source promotion item requires source ref")
+        return self
+
+
+class UIDemoFixturePromotionReport(StrictModel):
+    schema_version: str = "0.1"
+    status: UIDemoFixturePromotionStatus
+    run_root_ref: str
+    sanitized_run_root_ref: Literal["<demo-run-root>"] = "<demo-run-root>"
+    fixtures_root_ref: str
+    promotion_item_count: int = Field(ge=0)
+    promoted_item_count: int = Field(ge=0)
+    unchanged_item_count: int = Field(ge=0)
+    generated_wrapper_count: int = Field(ge=0)
+    missing_source_count: int = Field(ge=0)
+    ambiguous_source_count: int = Field(ge=0)
+    blocked_side_effect_count: int = Field(ge=0)
+    sanitized_replacement_count: int = Field(ge=0)
+    forbidden_run_root_leak_count: int = Field(ge=0)
+    rust_boundary_status: str
+    wrapper_refresh_status: str
+    manifest_status: str
+    source_hash_gate_status: str
+    snapshot_gate_status: str
+    wrapper_refresh_report_ref: str | None = None
+    old_ui_review_data_bundle_id: str | None = None
+    new_ui_review_data_bundle_id: str | None = None
+    local_fixture_updates_performed: bool = False
+    rollback_performed: bool = False
+    items: list[UIDemoFixturePromotionItem] = Field(default_factory=list)
+    required_next_actions: list[str]
+    candidate_only: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    local_json_only: Literal[True] = True
+    external_writes_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def ui_demo_fixture_promotion_counts_and_status_match(
+        self,
+    ) -> "UIDemoFixturePromotionReport":
+        if self.promotion_item_count != len(self.items):
+            raise ValueError("UI demo fixture promotion item count mismatch")
+        status_counts = {
+            status: len([item for item in self.items if item.status == status])
+            for status in [
+                "promoted",
+                "unchanged",
+                "generated_wrapper",
+                "missing_source",
+                "ambiguous_source",
+            ]
+        }
+        if self.promoted_item_count != status_counts["promoted"]:
+            raise ValueError("UI demo fixture promotion promoted count mismatch")
+        if self.unchanged_item_count != status_counts["unchanged"]:
+            raise ValueError("UI demo fixture promotion unchanged count mismatch")
+        if self.generated_wrapper_count != status_counts["generated_wrapper"]:
+            raise ValueError("UI demo fixture promotion wrapper count mismatch")
+        if self.missing_source_count != status_counts["missing_source"]:
+            raise ValueError("UI demo fixture promotion missing-source count mismatch")
+        if self.ambiguous_source_count != status_counts["ambiguous_source"]:
+            raise ValueError("UI demo fixture promotion ambiguous-source count mismatch")
+        if self.blocked_side_effect_count != sum(
+            item.blocked_side_effect_count for item in self.items
+        ):
+            raise ValueError("UI demo fixture promotion side-effect count mismatch")
+        if self.sanitized_replacement_count != sum(
+            item.sanitized_replacement_count for item in self.items
+        ):
+            raise ValueError("UI demo fixture promotion sanitized count mismatch")
+        if self.forbidden_run_root_leak_count != sum(
+            item.forbidden_run_root_leak_count for item in self.items
+        ):
+            raise ValueError("UI demo fixture promotion leak count mismatch")
+        if self.status == "ui_demo_fixture_promotion_verified":
+            if (
+                self.missing_source_count
+                or self.ambiguous_source_count
+                or self.blocked_side_effect_count
+                or self.forbidden_run_root_leak_count
+                or self.rust_boundary_status != "passed"
+                or self.wrapper_refresh_status != "ui_demo_fixture_refresh_verified"
+                or self.manifest_status != "passed"
+                or self.source_hash_gate_status != "passed"
+                or self.snapshot_gate_status != "passed"
+                or not self.local_fixture_updates_performed
+                or self.rollback_performed
+            ):
+                raise ValueError("verified UI demo fixture promotion requires passed gates")
+        if self.status == "ui_demo_fixture_promotion_blocked_write_flag_required":
+            if self.local_fixture_updates_performed or self.items:
+                raise ValueError("blocked UI demo fixture promotion cannot mutate or include items")
+        if not self.required_next_actions:
+            raise ValueError("UI demo fixture promotion requires next actions")
+        return self
+
+
 def _is_sha256_ref(value: str) -> bool:
     if len(value) != len("sha256:") + 64 or not value.startswith("sha256:"):
         return False
