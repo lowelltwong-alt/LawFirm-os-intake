@@ -4,6 +4,7 @@ import type {
   LaborEmploymentBudgetLearningFixtureReport,
   LaborEmploymentBudgetLearningLoopType,
   LaborEmploymentBudgetOutcomeReplayBuilderBindingReport,
+  LaborEmploymentBudgetOutcomeReplayConfidenceStatusReport,
   LaborEmploymentBudgetOutcomeReplayExecutionReport,
   LaborEmploymentBudgetOutcomeReplayReadinessReport,
   LaborEmploymentBudgetOutputExpectationReport,
@@ -62,6 +63,7 @@ export const REQUIRED_ARTIFACT_FILES = [
   "labor_employment_budget_outcome_replay_readiness_report.json",
   "labor_employment_budget_outcome_replay_execution_report.json",
   "labor_employment_budget_outcome_replay_builder_binding_report.json",
+  "labor_employment_budget_outcome_replay_confidence_status_report.json",
   "labor_employment_budget_fact_gold_report.json",
   "validation_suite_evidence_report.json",
   "budget_human_review_packet.json",
@@ -99,6 +101,7 @@ export const REQUIRED_DETAIL_REPORT_FILES = [
   "labor_employment_budget_outcome_replay_readiness_report.json",
   "labor_employment_budget_outcome_replay_execution_report.json",
   "labor_employment_budget_outcome_replay_builder_binding_report.json",
+  "labor_employment_budget_outcome_replay_confidence_status_report.json",
   "budget_learning_loop_report.json",
 ] as const;
 
@@ -1894,6 +1897,114 @@ export function assertLaborEmploymentBudgetOutcomeReplayBuilderBindingReport(
     report.checks.some((check) => check.status === "failed")
   ) {
     failures.push("le_budget_replay_binding_ready_with_failed_check");
+  }
+  return failures;
+}
+
+export function assertLaborEmploymentBudgetOutcomeReplayConfidenceStatusReport(
+  report: LaborEmploymentBudgetOutcomeReplayConfidenceStatusReport,
+): string[] {
+  const failures: string[] = [];
+  const readyStages = report.stages.filter((stage) => stage.status === "ready");
+  const pendingStages = report.stages.filter((stage) => stage.status === "pending_inputs");
+  const blockedStages = report.stages.filter((stage) => stage.status === "blocked");
+  const blockers = report.stages.flatMap((stage) => stage.blockers);
+
+  if (report.stage_count !== report.stages.length) {
+    failures.push("le_budget_replay_confidence_stage_count_mismatch");
+  }
+  if (report.ready_stage_count !== readyStages.length) {
+    failures.push("le_budget_replay_confidence_ready_count_mismatch");
+  }
+  if (report.pending_stage_count !== pendingStages.length) {
+    failures.push("le_budget_replay_confidence_pending_count_mismatch");
+  }
+  if (report.blocked_stage_count !== blockedStages.length) {
+    failures.push("le_budget_replay_confidence_blocked_count_mismatch");
+  }
+  for (const [index, blocker] of report.top_blockers.entries()) {
+    if (blocker !== blockers[index]) {
+      failures.push("le_budget_replay_confidence_top_blocker_not_source_bound");
+      break;
+    }
+  }
+  if (
+    report.status === "labor_employment_budget_outcome_replay_confidence_ready_for_review" &&
+    (report.pending_stage_count > 0 || report.blocked_stage_count > 0)
+  ) {
+    failures.push("le_budget_replay_confidence_ready_with_nonready_stage");
+  }
+  if (
+    report.status === "labor_employment_budget_outcome_replay_confidence_pending_inputs" &&
+    (report.pending_stage_count === 0 || report.blocked_stage_count > 0)
+  ) {
+    failures.push("le_budget_replay_confidence_pending_without_pending_stage");
+  }
+  if (
+    report.status === "blocked_by_labor_employment_budget_outcome_replay_confidence" &&
+    report.blocked_stage_count === 0
+  ) {
+    failures.push("le_budget_replay_confidence_blocked_without_blocked_stage");
+  }
+  if (
+    !report.candidate_only ||
+    !report.synthetic_only ||
+    !report.non_authoritative ||
+    !report.local_json_only ||
+    !report.human_review_required ||
+    !report.not_authorized_for_external_write ||
+    !report.not_authorized_for_lake_write ||
+    !report.not_authorized_for_sqlite_write ||
+    !report.not_authorized_for_budget_submission ||
+    !report.not_authorized_for_matter_opening ||
+    !report.not_authorized_for_calibration ||
+    report.budget_submission_authorized ||
+    report.matter_opening_authorized ||
+    report.training_pipeline_created ||
+    report.lake_write_performed ||
+    report.sqlite_write_performed ||
+    report.external_writes_performed ||
+    report.silent_learning_performed
+  ) {
+    failures.push("le_budget_replay_confidence_boundary_flags");
+  }
+  if (
+    report.display_banner.status !== report.status ||
+    report.display_banner.candidate_only !== true ||
+    !report.display_banner.blocked_actions.includes("budget_submission") ||
+    !report.display_banner.blocked_actions.includes("matter_opening") ||
+    !report.display_banner.blocked_actions.includes("lake_or_sqlite_write") ||
+    !report.display_banner.blocked_actions.includes("silent_learning")
+  ) {
+    failures.push("le_budget_replay_confidence_display_banner_boundary");
+  }
+  if (
+    report.stage_count !== 4 ||
+    !new Set(report.stages.map((stage) => stage.stage_id)).has("input_pack")
+  ) {
+    failures.push("le_budget_replay_confidence_missing_stage");
+  }
+  for (const stage of report.stages) {
+    if (
+      stage.blocker_count !== stage.blockers.length ||
+      stage.evidence_refs.length === 0 ||
+      !stage.candidate_only ||
+      !stage.synthetic_only ||
+      !stage.non_authoritative ||
+      !stage.local_json_only ||
+      !stage.human_review_required ||
+      stage.budget_submission_authorized ||
+      stage.matter_opening_authorized ||
+      stage.lake_write_performed ||
+      stage.sqlite_write_performed ||
+      stage.external_writes_performed ||
+      stage.silent_learning_performed
+    ) {
+      failures.push(`le_budget_replay_confidence_stage_boundary:${stage.stage_id}`);
+    }
+  }
+  if (!report.rust_transition_candidates.includes("deterministic_replay_confidence_status_aggregator")) {
+    failures.push("le_budget_replay_confidence_missing_rust_candidate");
   }
   return failures;
 }

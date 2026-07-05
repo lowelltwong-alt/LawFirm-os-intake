@@ -220,6 +220,17 @@ QA_BUNDLE_ARTIFACTS = [
         ),
     ),
     QABundleArtifactSpec(
+        artifact_id="labor_employment_budget_outcome_replay_confidence_status",
+        label="Labor/Employment Budget Outcome Replay Confidence Status",
+        file_name="labor_employment_budget_outcome_replay_confidence_status_report.json",
+        required=True,
+        missing_note=(
+            "Run build-synthetic-qa-review-run so replay readiness, execution, builder "
+            "binding, and input-pack status are aggregated before replay outputs, "
+            "calibration, or learning are trusted."
+        ),
+    ),
+    QABundleArtifactSpec(
         artifact_id="labor_employment_budget_fact_gold",
         label="Labor/Employment Budget Fact Gold",
         file_name="labor_employment_budget_fact_gold_report.json",
@@ -374,6 +385,11 @@ def run_synthetic_qa_bundle(
             root=root,
             explicit_path=None,
             file_name="labor_employment_budget_outcome_replay_builder_binding_report.json",
+        ),
+        "labor_employment_budget_outcome_replay_confidence_status": _resolve_artifact_source(
+            root=root,
+            explicit_path=None,
+            file_name="labor_employment_budget_outcome_replay_confidence_status_report.json",
         ),
         "labor_employment_budget_fact_gold": _resolve_artifact_source(
             root=root,

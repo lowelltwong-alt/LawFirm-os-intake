@@ -13,23 +13,23 @@
   "source_ui_manifest_id": "ui_review_manifest_24c18961f8a3",
   "source_ui_manifest_overall_status": "blocked",
   "source_ui_review_data_bundle_ref": "<demo-run-root>\\ui_review_data_bundle.json",
-  "source_ui_review_data_bundle_id": "ui_review_data_bundle_fe594ab3c3b7",
+  "source_ui_review_data_bundle_id": "ui_review_data_bundle_29c2a0fa7a08",
   "source_ui_review_data_bundle_status": "ready_for_review",
-  "qa_step_count": 27,
-  "qa_passed_step_count": 27,
+  "qa_step_count": 28,
+  "qa_passed_step_count": 28,
   "qa_failed_step_count": 0,
-  "qa_artifact_count": 21,
+  "qa_artifact_count": 22,
   "qa_missing_required_artifact_count": 0,
   "qa_blocked_artifact_count": 0,
-  "qa_pending_artifact_count": 19,
+  "qa_pending_artifact_count": 20,
   "qa_failed_artifact_count": 0,
-  "ui_detail_report_count": 18,
-  "ui_present_detail_report_count": 18,
+  "ui_detail_report_count": 19,
+  "ui_present_detail_report_count": 19,
   "ui_missing_required_detail_report_count": 0,
   "ui_external_write_report_count": 0,
-  "quality_gate_count": 31,
+  "quality_gate_count": 32,
   "quality_gate_passed_count": 6,
-  "quality_gate_pending_count": 25,
+  "quality_gate_pending_count": 26,
   "quality_gate_blocked_count": 0,
   "quality_gate_failed_count": 0,
   "readiness_item_count": 5,
@@ -43,7 +43,7 @@
         "<demo-run-root>\\synthetic_qa_review_run_report.json"
       ],
       "notes": [
-        "0 failed steps out of 27."
+        "0 failed steps out of 28."
       ],
       "no_write_boundary_confirmed": true
     },
@@ -56,7 +56,7 @@
         "<demo-run-root>\\quality\\synthetic_qa_bundle_report.json"
       ],
       "notes": [
-        "0 missing required, 0 blocked, 19 pending review."
+        "0 missing required, 0 blocked, 20 pending review."
       ],
       "no_write_boundary_confirmed": true
     },
@@ -70,7 +70,7 @@
         "<demo-run-root>\\ui_review_manifest.json"
       ],
       "notes": [
-        "18 detail reports present; 0 write-boundary failures."
+        "19 detail reports present; 0 write-boundary failures."
       ],
       "no_write_boundary_confirmed": true
     },
@@ -98,7 +98,7 @@
         "<demo-run-root>\\ui_review_manifest.json"
       ],
       "notes": [
-        "25 pending gates remain; pending is expected until human/owner review accepts candidate QA evidence."
+        "26 pending gates remain; pending is expected until human/owner review accepts candidate QA evidence."
       ],
       "no_write_boundary_confirmed": true
     }

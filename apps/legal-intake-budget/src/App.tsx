@@ -5,6 +5,7 @@ import demoBudgetLearningLoop from "./fixtures/demo-budget-learning-loop-report.
 import demoLaborEmploymentBlockedDriverReview from "./fixtures/demo-labor-employment-blocked-driver-impact-review-report.json";
 import demoLaborEmploymentBudgetLearningFixtures from "./fixtures/demo-labor-employment-budget-learning-fixtures-report.json";
 import demoLaborEmploymentBudgetOutcomeReplayBuilderBinding from "./fixtures/demo-labor-employment-budget-outcome-replay-builder-binding-report.json";
+import demoLaborEmploymentBudgetOutcomeReplayConfidenceStatus from "./fixtures/demo-labor-employment-budget-outcome-replay-confidence-status-report.json";
 import demoLaborEmploymentBudgetOutcomeReplayExecution from "./fixtures/demo-labor-employment-budget-outcome-replay-execution-report.json";
 import demoLaborEmploymentBudgetOutcomeReplayReadiness from "./fixtures/demo-labor-employment-budget-outcome-replay-readiness-report.json";
 import demoLaborEmploymentBudgetOutputExpectations from "./fixtures/demo-labor-employment-budget-output-expectations-report.json";
@@ -30,6 +31,7 @@ import {
   assertLaborEmploymentBudgetOutputExpectationReport,
   assertLaborEmploymentBudgetLearningFixtureReport,
   assertLaborEmploymentBudgetOutcomeReplayBuilderBindingReport,
+  assertLaborEmploymentBudgetOutcomeReplayConfidenceStatusReport,
   assertLaborEmploymentBudgetOutcomeReplayExecutionReport,
   assertLaborEmploymentBudgetOutcomeReplayReadinessReport,
   assertLaborEmploymentBudgetQAGateReport,
@@ -53,6 +55,8 @@ import type {
   LaborEmploymentAllowedBudgetOutput,
   LaborEmploymentBudgetLearningFixtureReport,
   LaborEmploymentBudgetOutcomeReplayBuilderBindingReport,
+  LaborEmploymentBudgetOutcomeReplayConfidenceStageStatus,
+  LaborEmploymentBudgetOutcomeReplayConfidenceStatusReport,
   LaborEmploymentBudgetOutcomeReplayExecutionReport,
   LaborEmploymentBudgetOutcomeReplayReadinessReport,
   LaborEmploymentBudgetOutputExpectationCase,
@@ -121,6 +125,8 @@ const laborEmploymentBudgetOutcomeReplayExecution =
   demoLaborEmploymentBudgetOutcomeReplayExecution as LaborEmploymentBudgetOutcomeReplayExecutionReport;
 const laborEmploymentBudgetOutcomeReplayBuilderBinding =
   demoLaborEmploymentBudgetOutcomeReplayBuilderBinding as LaborEmploymentBudgetOutcomeReplayBuilderBindingReport;
+const laborEmploymentBudgetOutcomeReplayConfidenceStatus =
+  demoLaborEmploymentBudgetOutcomeReplayConfidenceStatus as unknown as LaborEmploymentBudgetOutcomeReplayConfidenceStatusReport;
 const budgetLearningLoop = demoBudgetLearningLoop as BudgetLearningLoopReport;
 const bundleContractFailures = assertUIReviewDataBundle(reviewDataBundle);
 const manifestContractFailures = assertReadOnlyManifest(manifest);
@@ -160,6 +166,10 @@ const budgetOutcomeReplayBuilderBindingFailures =
   assertLaborEmploymentBudgetOutcomeReplayBuilderBindingReport(
     laborEmploymentBudgetOutcomeReplayBuilderBinding,
   );
+const budgetOutcomeReplayConfidenceStatusFailures =
+  assertLaborEmploymentBudgetOutcomeReplayConfidenceStatusReport(
+    laborEmploymentBudgetOutcomeReplayConfidenceStatus,
+  );
 const budgetLearningLoopFailures = assertBudgetLearningLoopReport(budgetLearningLoop);
 const contractFailures = [
   ...bundleContractFailures,
@@ -182,6 +192,7 @@ const contractFailures = [
   ...budgetOutcomeReplayFailures,
   ...budgetOutcomeReplayExecutionFailures,
   ...budgetOutcomeReplayBuilderBindingFailures,
+  ...budgetOutcomeReplayConfidenceStatusFailures,
   ...budgetLearningLoopFailures,
 ];
 
@@ -197,6 +208,16 @@ function gateClass(
     | ValidationSuiteStepStatus,
 ) {
   return `state state-${state.replace("_", "-")}`;
+}
+
+function replayConfidenceStageClass(state: LaborEmploymentBudgetOutcomeReplayConfidenceStageStatus) {
+  if (state === "ready") {
+    return "state state-passed";
+  }
+  if (state === "pending_inputs") {
+    return "state state-pending";
+  }
+  return "state state-blocked";
 }
 
 function budgetGateClass(effect: LaborEmploymentBudgetGateEffect) {
@@ -2501,6 +2522,110 @@ function LaborEmploymentBudgetOutcomeReplayBuilderBindingPanel({
   );
 }
 
+function LaborEmploymentBudgetOutcomeReplayConfidenceStatusPanel({
+  report,
+}: {
+  report: LaborEmploymentBudgetOutcomeReplayConfidenceStatusReport;
+}) {
+  const statusClass =
+    budgetOutcomeReplayConfidenceStatusFailures.length === 0 &&
+    report.status === "labor_employment_budget_outcome_replay_confidence_ready_for_review"
+      ? "state state-passed"
+      : report.status === "blocked_by_labor_employment_budget_outcome_replay_confidence"
+        ? "state state-blocked"
+        : "state state-pending";
+
+  return (
+    <section
+      className="panel budget-outcome-replay-panel"
+      aria-labelledby="le-budget-outcome-replay-confidence-title"
+    >
+      <div className="panel-heading">
+        <div>
+          <h2 id="le-budget-outcome-replay-confidence-title">
+            L&amp;E Budget Replay Confidence Status
+          </h2>
+          <code>{report.replay_confidence_status_report_id}</code>
+        </div>
+        <span className={statusClass}>{report.status}</span>
+      </div>
+
+      <div className="warning-strip">
+        <strong>Candidate-only status.</strong>
+        <span>{report.display_banner.summary}</span>
+      </div>
+
+      <div className="matrix-summary" aria-label="L&E budget replay confidence summary">
+        <div>
+          <span>Stages Ready</span>
+          <strong>
+            {report.ready_stage_count}/{report.stage_count}
+          </strong>
+        </div>
+        <div>
+          <span>Pending Stages</span>
+          <strong>{report.pending_stage_count}</strong>
+        </div>
+        <div>
+          <span>Blocked Stages</span>
+          <strong>{report.blocked_stage_count}</strong>
+        </div>
+        <div>
+          <span>Input Gaps</span>
+          <strong>
+            {report.builder_replay_input_gap_count + report.input_pack_missing_input_count}
+          </strong>
+        </div>
+      </div>
+
+      <div className="budget-bucket-grid" aria-label="L&E replay confidence controls">
+        <div className="budget-bucket">
+          <span>Blocked Actions</span>
+          <strong>{report.display_banner.blocked_actions.length}</strong>
+          <TokenList items={report.display_banner.blocked_actions} limit={6} />
+        </div>
+        <div className="budget-bucket">
+          <span>Next Gates</span>
+          <strong>{report.required_next_gates.length}</strong>
+          <TokenList items={report.required_next_gates} limit={4} />
+        </div>
+        <div className="budget-bucket">
+          <span>Candidate Lake Labels</span>
+          <strong>{report.candidate_exception_lake_labels.length}</strong>
+          <TokenList items={report.candidate_exception_lake_labels} limit={4} />
+        </div>
+        <div className="budget-bucket">
+          <span>Rust Candidates</span>
+          <strong>{report.rust_transition_candidates.length}</strong>
+          <TokenList items={report.rust_transition_candidates} limit={3} />
+        </div>
+      </div>
+
+      <div className="fixture-table" aria-label="L&E replay confidence stages">
+        {report.stages.map((stage) => (
+          <div className="fixture-row" key={stage.stage_id}>
+            <div>
+              <strong>{stage.label}</strong>
+              <span>{stage.source_report_status}</span>
+            </div>
+            <span className={replayConfidenceStageClass(stage.status)}>
+              {stage.status}
+            </span>
+            <TokenList items={stage.blockers.length ? stage.blockers : stage.evidence_refs} limit={3} />
+          </div>
+        ))}
+      </div>
+
+      <p className="boundary">
+        Local JSON only. Budget submission:{" "}
+        {report.budget_submission_authorized ? "not blocked" : "blocked"}. Matter opening:{" "}
+        {report.matter_opening_authorized ? "not blocked" : "blocked"}. Lake writes:{" "}
+        {report.lake_write_performed || report.sqlite_write_performed ? "not blocked" : "blocked"}.
+      </p>
+    </section>
+  );
+}
+
 function LaborEmploymentFixtureDrilldownPanel({
   outputReport,
   blockedReviewReport,
@@ -2754,6 +2879,9 @@ function App() {
       />
       <LaborEmploymentBudgetOutcomeReplayBuilderBindingPanel
         report={laborEmploymentBudgetOutcomeReplayBuilderBinding}
+      />
+      <LaborEmploymentBudgetOutcomeReplayConfidenceStatusPanel
+        report={laborEmploymentBudgetOutcomeReplayConfidenceStatus}
       />
       <LaborEmploymentFixtureDrilldownPanel
         outputReport={laborEmploymentBudgetOutputExpectations}

@@ -473,6 +473,19 @@
       ]
     },
     {
+      "artifactId": "labor-employment-budget-outcome-replay-confidence-status",
+      "label": "L&E Budget Outcome Replay Confidence Status",
+      "fileName": "labor_employment_budget_outcome_replay_confidence_status_report.json",
+      "status": "pending_review",
+      "owner": "qa-reference",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": [
+        "Found quality\\labor_employment_budget_outcome_replay_confidence_status_report.json; status=labor_employment_budget_outcome_replay_confidence_pending_inputs."
+      ]
+    },
+    {
       "artifactId": "labor-employment-budget-fact-gold",
       "label": "L&E Budget Fact Gold",
       "fileName": "labor_employment_budget_fact_gold_report.json",
@@ -836,6 +849,16 @@
       "owner": "qa-reference",
       "notes": [
         "L&E replay artifact slots must bind to deterministic local builders before replay outputs, calibration, or model comparison are trusted."
+      ]
+    },
+    {
+      "gateId": "labor_employment_budget_outcome_replay_confidence_status",
+      "label": "L&E Budget Outcome Replay Confidence Status",
+      "status": "pending_review",
+      "evidenceFile": "labor_employment_budget_outcome_replay_confidence_status_report.json",
+      "owner": "qa-reference",
+      "notes": [
+        "L&E replay confidence must aggregate readiness, execution, builder binding, and input-pack status before replay outputs, calibration, or learning are trusted."
       ]
     },
     {

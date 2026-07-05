@@ -4,7 +4,7 @@
   "status": "synthetic_qa_review_run_ready",
   "run_root_ref": "<demo-run-root>",
   "quality_dir_ref": "<demo-run-root>\\quality",
-  "step_count": 27,
+  "step_count": 28,
   "failed_step_count": 0,
   "steps": [
     {
@@ -215,6 +215,16 @@
       "artifact_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-builder-binding\\labor_employment_budget_outcome_replay_builder_binding_report.json",
       "notes": [
         "L&E outcome replay slots are mapped to deterministic local builders with explicit synthetic input gaps and no runtime artifact creation."
+      ]
+    },
+    {
+      "step_id": "labor_employment_budget_outcome_replay_confidence_status",
+      "label": "L&E Budget Outcome Replay Confidence Status",
+      "status": "passed",
+      "observed_status": "labor_employment_budget_outcome_replay_confidence_pending_inputs",
+      "artifact_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-confidence-status\\labor_employment_budget_outcome_replay_confidence_status_report.json",
+      "notes": [
+        "L&E replay confidence aggregates replay readiness, execution, builder binding, and input-pack gaps without authorizing calibration, learning, Lake writes, or budget submission."
       ]
     },
     {

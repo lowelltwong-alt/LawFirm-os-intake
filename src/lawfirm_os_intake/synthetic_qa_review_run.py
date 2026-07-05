@@ -48,6 +48,14 @@ from .labor_employment_budget_outcome_replay_builder_binding import (
     LABOR_EMPLOYMENT_BUDGET_OUTCOME_REPLAY_BUILDER_BINDING_REPORT_FILENAME,
     run_labor_employment_budget_outcome_replay_builder_binding_audit,
 )
+from .labor_employment_budget_outcome_replay_confidence_status import (
+    LABOR_EMPLOYMENT_BUDGET_OUTCOME_REPLAY_CONFIDENCE_STATUS_REPORT_FILENAME,
+    run_labor_employment_budget_outcome_replay_confidence_status,
+)
+from .labor_employment_budget_outcome_replay_input_pack import (
+    LABOR_EMPLOYMENT_BUDGET_OUTCOME_REPLAY_INPUT_PACK_REPORT_FILENAME,
+    run_labor_employment_budget_outcome_replay_input_pack_audit,
+)
 from .labor_employment_budget_qa_gate import (
     LABOR_EMPLOYMENT_BUDGET_QA_GATE_REPORT_FILENAME,
     run_labor_employment_budget_qa_gate,
@@ -153,6 +161,9 @@ LE_BUDGET_LEARNING_FIXTURES_REF = (
 )
 LE_BUDGET_OUTCOME_REPLAY_SEEDS_REF = (
     "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json"
+)
+LE_BUDGET_OUTCOME_REPLAY_INPUT_PACK_REF = (
+    "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-input-pack.json"
 )
 UPFRONT_RESOLVED_FOLLOWUP_REF = (
     "examples/synthetic/upfront/upfront-like-intake-output.resolved-followup.example.json"
@@ -598,6 +609,52 @@ def run_synthetic_qa_review_run(
         )
     )
 
+    outcome_input_pack, outcome_input_pack_dir = (
+        run_labor_employment_budget_outcome_replay_input_pack_audit(
+            builder_binding_report_path=outcome_builder_binding_ref,
+            input_pack_manifest_path=root / LE_BUDGET_OUTCOME_REPLAY_INPUT_PACK_REF,
+            repo_root=root,
+            out_dir=quality_dir / "le-budget-outcome-replay-input-pack",
+            generated_at=generated_at,
+        )
+    )
+    outcome_input_pack_ref = (
+        outcome_input_pack_dir / LABOR_EMPLOYMENT_BUDGET_OUTCOME_REPLAY_INPUT_PACK_REPORT_FILENAME
+    )
+    outcome_confidence, outcome_confidence_dir = (
+        run_labor_employment_budget_outcome_replay_confidence_status(
+            readiness_report_path=outcome_replay_ref,
+            execution_report_path=outcome_execution_ref,
+            builder_binding_report_path=outcome_builder_binding_ref,
+            input_pack_report_path=outcome_input_pack_ref,
+            out_dir=quality_dir / "le-budget-outcome-replay-confidence-status",
+            generated_at=generated_at,
+        )
+    )
+    outcome_confidence_ref = (
+        outcome_confidence_dir
+        / LABOR_EMPLOYMENT_BUDGET_OUTCOME_REPLAY_CONFIDENCE_STATUS_REPORT_FILENAME
+    )
+    steps.append(
+        _step(
+            "labor_employment_budget_outcome_replay_confidence_status",
+            "L&E Budget Outcome Replay Confidence Status",
+            outcome_confidence.status,
+            outcome_confidence_ref,
+            outcome_confidence.status
+            in {
+                "labor_employment_budget_outcome_replay_confidence_ready_for_review",
+                "labor_employment_budget_outcome_replay_confidence_pending_inputs",
+            },
+            (
+                "L&E replay confidence aggregates readiness, execution, builder binding, "
+                "and input-pack gaps without authorizing calibration, learning, Lake writes, "
+                "or budget submission."
+            ),
+        )
+    )
+    _ = outcome_input_pack
+
     gold, gold_dir = run_labor_employment_budget_fact_gold_validation(
         gold_path=root / LE_BUDGET_FACT_GOLD_REF,
         repo_root=root,
@@ -654,6 +711,7 @@ def run_synthetic_qa_review_run(
         budget_learning_fixtures_ref,
         outcome_execution_ref,
         outcome_builder_binding_ref,
+        outcome_confidence_ref,
         gold_dir / LABOR_EMPLOYMENT_BUDGET_FACT_GOLD_REPORT_FILENAME,
         budget_learning_loop_ref,
     ]:

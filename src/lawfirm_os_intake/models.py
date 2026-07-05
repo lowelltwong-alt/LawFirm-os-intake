@@ -13300,6 +13300,7 @@ UIReviewDataBundleReportKind = Literal[
     "labor_employment_budget_outcome_replay_readiness",
     "labor_employment_budget_outcome_replay_execution",
     "labor_employment_budget_outcome_replay_builder_binding",
+    "labor_employment_budget_outcome_replay_confidence_status",
     "budget_learning_loop",
 ]
 

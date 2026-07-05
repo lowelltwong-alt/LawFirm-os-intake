@@ -1,11 +1,11 @@
 {
   "schema_version": "0.1",
-  "ui_review_data_bundle_id": "ui_review_data_bundle_fe594ab3c3b7",
+  "ui_review_data_bundle_id": "ui_review_data_bundle_29c2a0fa7a08",
   "status": "ready_for_review",
   "run_root_ref": "<demo-run-root>",
-  "detail_report_count": 18,
-  "required_detail_report_count": 12,
-  "present_detail_report_count": 18,
+  "detail_report_count": 19,
+  "required_detail_report_count": 13,
+  "present_detail_report_count": 19,
   "missing_required_detail_report_count": 0,
   "external_write_report_count": 0,
   "detail_reports": [
@@ -313,6 +313,24 @@
       "external_writes_performed": false,
       "notes": [
         "Found quality\\labor_employment_budget_outcome_replay_builder_binding_report.json; status=labor_employment_budget_replay_builder_binding_ready_for_review."
+      ]
+    },
+    {
+      "detail_report_id": "labor-employment-budget-outcome-replay-confidence-status",
+      "label": "L&E Budget Outcome Replay Confidence Status",
+      "report_kind": "labor_employment_budget_outcome_replay_confidence_status",
+      "file_name": "labor_employment_budget_outcome_replay_confidence_status_report.json",
+      "required": true,
+      "present": true,
+      "status": "labor_employment_budget_outcome_replay_confidence_pending_inputs",
+      "renderer": "LaborEmploymentBudgetOutcomeReplayConfidenceStatusPanel",
+      "artifact_ref": "<demo-run-root>\\quality\\labor_employment_budget_outcome_replay_confidence_status_report.json",
+      "source_sha256": "sha256:584ac38497e69d0f9468271003aa40c17c1f3697c1f88357e9e05cece8e318c8",
+      "candidate_only": true,
+      "synthetic_only": true,
+      "external_writes_performed": false,
+      "notes": [
+        "Found quality\\labor_employment_budget_outcome_replay_confidence_status_report.json; status=labor_employment_budget_outcome_replay_confidence_pending_inputs."
       ]
     },
     {

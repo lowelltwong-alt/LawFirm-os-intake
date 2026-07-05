@@ -4,11 +4,11 @@
   "status": "pending_review",
   "run_root_ref": "<demo-run-root>",
   "out_dir_ref": "<demo-run-root>\\quality",
-  "artifact_count": 21,
-  "required_artifact_count": 21,
+  "artifact_count": 22,
+  "required_artifact_count": 22,
   "missing_required_artifact_count": 0,
   "blocked_artifact_count": 0,
-  "pending_artifact_count": 19,
+  "pending_artifact_count": 20,
   "failed_artifact_count": 0,
   "artifacts": [
     {
@@ -279,6 +279,21 @@
       "source_sha256": "sha256:d448b00ff771bf6804d6d29b17f3b708728630247f9cf9bac32d969b4d83ee28",
       "notes": [
         "Found labor_employment_budget_outcome_replay_builder_binding_report.json; source status=labor_employment_budget_replay_builder_binding_ready_for_review; bundle status=pending_review."
+      ]
+    },
+    {
+      "artifact_id": "labor_employment_budget_outcome_replay_confidence_status",
+      "label": "Labor/Employment Budget Outcome Replay Confidence Status",
+      "file_name": "labor_employment_budget_outcome_replay_confidence_status_report.json",
+      "required": true,
+      "present": true,
+      "status": "pending_review",
+      "gate_state": "pending_review",
+      "artifact_ref": "<demo-run-root>\\quality\\labor_employment_budget_outcome_replay_confidence_status_report.json",
+      "copied_to_ref": "<demo-run-root>\\quality\\labor_employment_budget_outcome_replay_confidence_status_report.json",
+      "source_sha256": "sha256:584ac38497e69d0f9468271003aa40c17c1f3697c1f88357e9e05cece8e318c8",
+      "notes": [
+        "Found labor_employment_budget_outcome_replay_confidence_status_report.json; source status=labor_employment_budget_outcome_replay_confidence_pending_inputs; bundle status=pending_review."
       ]
     },
     {

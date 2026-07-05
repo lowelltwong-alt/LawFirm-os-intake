@@ -11,12 +11,12 @@
   "source_synthetic_qa_review_run_ref": "<demo-run-root>\\synthetic_qa_review_run_report.json",
   "source_synthetic_qa_review_run_report_id": "syntheticqareviewrun_bfaf9ffa36331259",
   "source_synthetic_qa_review_run_status": "synthetic_qa_review_run_ready",
-  "row_count": 26,
+  "row_count": 27,
   "failed_row_count": 0,
   "blocked_row_count": 0,
-  "pending_review_row_count": 26,
+  "pending_review_row_count": 27,
   "blocked_action_count": 0,
-  "needs_review_action_count": 26,
+  "needs_review_action_count": 27,
   "fixed_action_count": 0,
   "ready_action_count": 0,
   "review_queue_state": "needs_review",
@@ -502,6 +502,27 @@
       ],
       "notes": [
         "L&E replay artifact slots must bind to deterministic local builders before replay outputs, calibration, or model comparison are trusted."
+      ]
+    },
+    {
+      "row_id": "quality_gate:labor_employment_budget_outcome_replay_confidence_status",
+      "source": "quality_gate",
+      "label": "L&E Budget Outcome Replay Confidence Status",
+      "state": "pending_review",
+      "action_state": "needs_review",
+      "owner": "qa-reference",
+      "evidence_refs": [
+        "labor_employment_budget_outcome_replay_confidence_status_report.json"
+      ],
+      "recommended_next_action": "Review quality gate evidence and record an outcome: L&E Budget Outcome Replay Confidence Status.",
+      "candidate_exception_lake_labels": [
+        "synthetic_qa_blocker_queue_candidate",
+        "quality_gate_pending_review_candidate",
+        "quality_gate_labor_employment_budget_outcome_replay_confidence_status_candidate",
+        "synthetic_qa_blocker_requires_review"
+      ],
+      "notes": [
+        "L&E replay confidence must aggregate readiness, execution, builder binding, and input-pack status before replay outputs, calibration, or learning are trusted."
       ]
     },
     {

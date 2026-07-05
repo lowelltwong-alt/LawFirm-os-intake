@@ -149,6 +149,13 @@ DETAIL_REPORT_SPECS = [
         renderer="LaborEmploymentBudgetOutcomeReplayBuilderBindingPanel",
     ),
     UIReviewDetailSpec(
+        detail_report_id="labor-employment-budget-outcome-replay-confidence-status",
+        label="L&E Budget Outcome Replay Confidence Status",
+        report_kind="labor_employment_budget_outcome_replay_confidence_status",
+        file_name="labor_employment_budget_outcome_replay_confidence_status_report.json",
+        renderer="LaborEmploymentBudgetOutcomeReplayConfidenceStatusPanel",
+    ),
+    UIReviewDetailSpec(
         detail_report_id="budget-learning-loop",
         label="Budget Learning Loop",
         report_kind="budget_learning_loop",

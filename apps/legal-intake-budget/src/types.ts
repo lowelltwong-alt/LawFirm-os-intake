@@ -36,6 +36,7 @@ export type UIReviewDataBundleReportKind =
   | "labor_employment_budget_outcome_replay_readiness"
   | "labor_employment_budget_outcome_replay_execution"
   | "labor_employment_budget_outcome_replay_builder_binding"
+  | "labor_employment_budget_outcome_replay_confidence_status"
   | "budget_learning_loop";
 
 export type MatterLinkingPreflightCluster = {
@@ -1668,6 +1669,98 @@ export type LaborEmploymentBudgetOutcomeReplayBuilderBindingReport = {
   required_next_gates: string[];
   red_team_notes: string[];
   runtime_artifacts_created: boolean;
+  candidate_only: boolean;
+  non_authoritative: boolean;
+  synthetic_only: boolean;
+  local_json_only: boolean;
+  human_review_required: boolean;
+  not_authorized_for_external_write: boolean;
+  not_authorized_for_lake_write: boolean;
+  not_authorized_for_sqlite_write: boolean;
+  not_authorized_for_budget_submission: boolean;
+  not_authorized_for_matter_opening: boolean;
+  not_authorized_for_calibration: boolean;
+  budget_submission_authorized: boolean;
+  matter_opening_authorized: boolean;
+  training_pipeline_created: boolean;
+  lake_write_performed: boolean;
+  sqlite_write_performed: boolean;
+  external_writes_performed: boolean;
+  silent_learning_performed: boolean;
+  generated_at: string;
+};
+
+export type LaborEmploymentBudgetOutcomeReplayConfidenceStageStatus =
+  | "ready"
+  | "pending_inputs"
+  | "blocked";
+
+export type LaborEmploymentBudgetOutcomeReplayConfidenceStage = {
+  stage_id: "readiness" | "execution" | "builder_binding" | "input_pack";
+  label: string;
+  source_report_ref: string;
+  source_report_id: string;
+  source_report_status: string;
+  status: LaborEmploymentBudgetOutcomeReplayConfidenceStageStatus;
+  counts: Record<string, number>;
+  blocker_count: number;
+  blockers: string[];
+  evidence_refs: string[];
+  candidate_only: boolean;
+  non_authoritative: boolean;
+  synthetic_only: boolean;
+  local_json_only: boolean;
+  human_review_required: boolean;
+  budget_submission_authorized: boolean;
+  matter_opening_authorized: boolean;
+  lake_write_performed: boolean;
+  sqlite_write_performed: boolean;
+  external_writes_performed: boolean;
+  silent_learning_performed: boolean;
+};
+
+export type LaborEmploymentBudgetOutcomeReplayConfidenceStatusReport = {
+  schema_version: string;
+  replay_confidence_status_report_id: string;
+  status:
+    | "labor_employment_budget_outcome_replay_confidence_ready_for_review"
+    | "labor_employment_budget_outcome_replay_confidence_pending_inputs"
+    | "blocked_by_labor_employment_budget_outcome_replay_confidence";
+  source_readiness_report_ref: string;
+  source_readiness_report_id: string;
+  source_readiness_report_status: string;
+  source_execution_report_ref: string;
+  source_execution_report_id: string;
+  source_execution_report_status: string;
+  source_builder_binding_report_ref: string;
+  source_builder_binding_report_id: string;
+  source_builder_binding_report_status: string;
+  source_input_pack_report_ref: string;
+  source_input_pack_report_id: string;
+  source_input_pack_report_status: string;
+  fixture_count: number;
+  stage_count: number;
+  ready_stage_count: number;
+  pending_stage_count: number;
+  blocked_stage_count: number;
+  readiness_failed_case_count: number;
+  execution_failed_case_count: number;
+  builder_replay_input_gap_count: number;
+  builder_missing_case_prerequisite_count: number;
+  input_pack_missing_input_count: number;
+  input_pack_invalid_input_count: number;
+  stages: LaborEmploymentBudgetOutcomeReplayConfidenceStage[];
+  top_blockers: string[];
+  display_banner: {
+    status: string;
+    candidate_only: boolean;
+    blocked_actions: string[];
+    summary: string;
+  };
+  candidate_exception_lake_labels: string[];
+  required_next_gates: string[];
+  red_team_notes: string[];
+  rust_transition_candidates: string[];
   candidate_only: boolean;
   non_authoritative: boolean;
   synthetic_only: boolean;
