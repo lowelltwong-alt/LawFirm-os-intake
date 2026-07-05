@@ -1,0 +1,421 @@
+{
+  "$defs": {
+    "RustPublicDataCacheCustodyFailure": {
+      "additionalProperties": false,
+      "properties": {
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "check": {
+          "title": "Check",
+          "type": "string"
+        },
+        "expected": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected"
+        },
+        "actual": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Actual"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "path",
+        "check",
+        "message"
+      ],
+      "title": "RustPublicDataCacheCustodyFailure",
+      "type": "object"
+    },
+    "RustPublicDataCacheCustodySample": {
+      "additionalProperties": false,
+      "properties": {
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "cache_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cache Ref"
+        },
+        "resolved_path_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Resolved Path Ref"
+        },
+        "expected_sha256": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Sha256"
+        },
+        "actual_sha256": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Actual Sha256"
+        },
+        "expected_byte_count": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Byte Count"
+        },
+        "actual_byte_count": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Actual Byte Count"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed",
+            "blocked",
+            "missing",
+            "invalid"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "status"
+      ],
+      "title": "RustPublicDataCacheCustodySample",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "checker": {
+      "const": "public-data-cache-custody-checker",
+      "title": "Checker",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "passed",
+        "failed"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "repo_root": {
+      "title": "Repo Root",
+      "type": "string"
+    },
+    "cache_root": {
+      "title": "Cache Root",
+      "type": "string"
+    },
+    "manifest_ref": {
+      "title": "Manifest Ref",
+      "type": "string"
+    },
+    "manifest_sha256": {
+      "title": "Manifest Sha256",
+      "type": "string"
+    },
+    "manifest_byte_count": {
+      "minimum": 0,
+      "title": "Manifest Byte Count",
+      "type": "integer"
+    },
+    "manifest_entry_count": {
+      "minimum": 0,
+      "title": "Manifest Entry Count",
+      "type": "integer"
+    },
+    "checked_source_count": {
+      "minimum": 0,
+      "title": "Checked Source Count",
+      "type": "integer"
+    },
+    "checked_sample_count": {
+      "minimum": 0,
+      "title": "Checked Sample Count",
+      "type": "integer"
+    },
+    "total_checked_sample_bytes": {
+      "minimum": 0,
+      "title": "Total Checked Sample Bytes",
+      "type": "integer"
+    },
+    "root_violation_count": {
+      "minimum": 0,
+      "title": "Root Violation Count",
+      "type": "integer"
+    },
+    "manifest_error_count": {
+      "minimum": 0,
+      "title": "Manifest Error Count",
+      "type": "integer"
+    },
+    "invalid_manifest_entry_count": {
+      "minimum": 0,
+      "title": "Invalid Manifest Entry Count",
+      "type": "integer"
+    },
+    "blocked_path_count": {
+      "minimum": 0,
+      "title": "Blocked Path Count",
+      "type": "integer"
+    },
+    "missing_file_count": {
+      "minimum": 0,
+      "title": "Missing File Count",
+      "type": "integer"
+    },
+    "hash_mismatch_count": {
+      "minimum": 0,
+      "title": "Hash Mismatch Count",
+      "type": "integer"
+    },
+    "byte_count_mismatch_count": {
+      "minimum": 0,
+      "title": "Byte Count Mismatch Count",
+      "type": "integer"
+    },
+    "failure_count": {
+      "minimum": 0,
+      "title": "Failure Count",
+      "type": "integer"
+    },
+    "failures": {
+      "items": {
+        "$ref": "#/$defs/RustPublicDataCacheCustodyFailure"
+      },
+      "title": "Failures",
+      "type": "array"
+    },
+    "samples": {
+      "items": {
+        "$ref": "#/$defs/RustPublicDataCacheCustodySample"
+      },
+      "title": "Samples",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "planning_only": {
+      "const": true,
+      "default": true,
+      "title": "Planning Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "metadata_only_report": {
+      "const": true,
+      "default": true,
+      "title": "Metadata Only Report",
+      "type": "boolean"
+    },
+    "local_file_custody_only": {
+      "const": true,
+      "default": true,
+      "title": "Local File Custody Only",
+      "type": "boolean"
+    },
+    "public_cache_samples_may_be_present": {
+      "title": "Public Cache Samples May Be Present",
+      "type": "boolean"
+    },
+    "direct_runtime_ingestion_allowed": {
+      "const": false,
+      "default": false,
+      "title": "Direct Runtime Ingestion Allowed",
+      "type": "boolean"
+    },
+    "public_records_runtime_ingested": {
+      "const": false,
+      "default": false,
+      "title": "Public Records Runtime Ingested",
+      "type": "boolean"
+    },
+    "public_payload_committed": {
+      "const": false,
+      "default": false,
+      "title": "Public Payload Committed",
+      "type": "boolean"
+    },
+    "raw_public_payload_committed": {
+      "const": false,
+      "default": false,
+      "title": "Raw Public Payload Committed",
+      "type": "boolean"
+    },
+    "tracked_public_payload_committed": {
+      "const": false,
+      "default": false,
+      "title": "Tracked Public Payload Committed",
+      "type": "boolean"
+    },
+    "connector_implemented": {
+      "const": false,
+      "default": false,
+      "title": "Connector Implemented",
+      "type": "boolean"
+    },
+    "legal_knowledge_adapter_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Legal Knowledge Adapter Authorized",
+      "type": "boolean"
+    },
+    "synthetic_fixtures_created": {
+      "const": false,
+      "default": false,
+      "title": "Synthetic Fixtures Created",
+      "type": "boolean"
+    },
+    "fixture_files_mutated": {
+      "const": false,
+      "default": false,
+      "title": "Fixture Files Mutated",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "matter_opening_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Matter Opening Authorized",
+      "type": "boolean"
+    },
+    "budget_submission_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Submission Authorized",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "checker",
+    "status",
+    "repo_root",
+    "cache_root",
+    "manifest_ref",
+    "manifest_sha256",
+    "manifest_byte_count",
+    "manifest_entry_count",
+    "checked_source_count",
+    "checked_sample_count",
+    "total_checked_sample_bytes",
+    "root_violation_count",
+    "manifest_error_count",
+    "invalid_manifest_entry_count",
+    "blocked_path_count",
+    "missing_file_count",
+    "hash_mismatch_count",
+    "byte_count_mismatch_count",
+    "failure_count",
+    "public_cache_samples_may_be_present"
+  ],
+  "title": "RustPublicDataCacheCustodyReport",
+  "type": "object"
+}

@@ -11,6 +11,7 @@ from .models import (
     PublicDataCacheAuditCheck,
     PublicDataCacheAuditReport,
     PublicDataCacheSourceManifest,
+    RustPublicDataCacheCustodyReport,
 )
 from .public_data import (
     PUBLIC_DATA_CATALOG_REF,
@@ -18,6 +19,7 @@ from .public_data import (
     validate_public_data_boundary,
 )
 from .util import new_id, now_iso, write_json
+from .rust_public_data_cache_custody import run_rust_public_data_cache_custody_check
 
 
 PUBLIC_DATA_CACHE_MANIFEST_FILENAME = "public_data_cache_manifest.json"
@@ -114,6 +116,8 @@ def build_public_data_cache_audit_report(
     repo_root: str | Path,
     cache_root: str | Path,
     manifest_path: str | Path | None = None,
+    rust_custody_report: RustPublicDataCacheCustodyReport | None = None,
+    rust_custody_report_path: str | Path | None = None,
 ) -> PublicDataCacheAuditReport:
     root = Path(repo_root).resolve()
     cache = Path(cache_root).resolve()
@@ -125,6 +129,13 @@ def build_public_data_cache_audit_report(
     catalog_source_ids = _load_catalog_source_ids(root)
     boundary_ok, boundary_details = validate_public_data_boundary(root)
     raw_entries, manifest_error = _load_manifest_entries(manifest)
+    rust_custody_status = rust_custody_report.status if rust_custody_report else "not_run"
+    rust_custody_failure_count = rust_custody_report.failure_count if rust_custody_report else 0
+    rust_custody_report_ref = (
+        _path_ref(Path(rust_custody_report_path).resolve(), root)
+        if rust_custody_report_path
+        else None
+    )
 
     sources: list[PublicDataCacheSourceManifest] = []
     invalid_manifest_refs: list[str] = []
@@ -191,6 +202,19 @@ def build_public_data_cache_audit_report(
                 _path_ref(cache, root),
                 _path_ref(manifest, root),
             ],
+        ),
+        PublicDataCacheAuditCheck(
+            check_id="rust_public_data_cache_custody_passes",
+            status="passed" if rust_custody_status == "passed" else "failed",
+            message=(
+                "Rust public-data cache custody checker passed local path, presence, hash, and byte-count gates."
+                if rust_custody_status == "passed"
+                else (
+                    "Rust public-data cache custody checker did not pass; "
+                    f"status={rust_custody_status}, failures={rust_custody_failure_count}."
+                )
+            ),
+            path_refs=[rust_custody_report_ref] if rust_custody_report_ref else [],
         ),
         PublicDataCacheAuditCheck(
             check_id="manifest_present_and_parseable",
@@ -290,6 +314,18 @@ def build_public_data_cache_audit_report(
         failed_hash_source_ids=sorted(failed_hash_source_ids),
         missing_cache_file_source_ids=sorted(missing_cache_file_source_ids),
         blocked_path_refs=sorted(blocked_path_refs),
+        rust_custody_report_ref=rust_custody_report_ref,
+        rust_custody_status=rust_custody_status,  # type: ignore[arg-type]
+        rust_custody_failure_count=rust_custody_failure_count,
+        rust_custody_checked_source_count=(
+            rust_custody_report.checked_source_count if rust_custody_report else 0
+        ),
+        rust_custody_checked_sample_count=(
+            rust_custody_report.checked_sample_count if rust_custody_report else 0
+        ),
+        rust_custody_total_checked_sample_bytes=(
+            rust_custody_report.total_checked_sample_bytes if rust_custody_report else 0
+        ),
         sources=sources,
         checks=checks,
         required_next_gates=REQUIRED_NEXT_GATES,
@@ -308,6 +344,8 @@ def render_public_data_cache_audit_report(report: PublicDataCacheAuditReport) ->
         f"**Manifest:** `{report.manifest_ref}`",
         f"**Manifest entries:** {report.manifest_entry_count}",
         f"**Cache sample count:** {report.cache_sample_count}",
+        f"**Rust custody status:** {report.rust_custody_status}",
+        f"**Rust custody failures:** {report.rust_custody_failure_count}",
         "",
         "## Boundary",
         "",
@@ -325,6 +363,7 @@ def render_public_data_cache_audit_report(report: PublicDataCacheAuditReport) ->
         f"- Lake write performed: {report.lake_write_performed}",
         f"- SQLite write performed: {report.sqlite_write_performed}",
         f"- External writes performed: {report.external_writes_performed}",
+        f"- Rust custody report: {report.rust_custody_report_ref}",
         "",
         "## Required Next Gates",
         "",
@@ -376,13 +415,23 @@ def run_public_data_cache_audit(
     cache_root: str | Path,
     out_dir: str | Path,
     manifest_path: str | Path | None = None,
+    rust_timeout_seconds: int = 240,
 ) -> tuple[PublicDataCacheAuditReport, Path]:
     run_dir = Path(out_dir)
     run_dir.mkdir(parents=True, exist_ok=True)
+    rust_custody_report, rust_custody_report_path = run_rust_public_data_cache_custody_check(
+        repo_root=repo_root,
+        cache_root=cache_root,
+        manifest_path=manifest_path,
+        out_dir=run_dir,
+        timeout_seconds=rust_timeout_seconds,
+    )
     report = build_public_data_cache_audit_report(
         repo_root=repo_root,
         cache_root=cache_root,
         manifest_path=manifest_path,
+        rust_custody_report=rust_custody_report,
+        rust_custody_report_path=rust_custody_report_path,
     )
     report_path = run_dir / PUBLIC_DATA_CACHE_AUDIT_REPORT_FILENAME
     notes_path = run_dir / PUBLIC_DATA_CACHE_AUDIT_NOTES_FILENAME

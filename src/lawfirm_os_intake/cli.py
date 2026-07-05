@@ -142,6 +142,7 @@ from .reviewed_learning_gate import run_reviewed_learning_gate
 from .rust_fixture_boundary import run_rust_fixture_boundary_check
 from .rust_fixture_manifest import run_rust_fixture_manifest_scan
 from .rust_fixture_snapshot_coherence import run_rust_fixture_snapshot_coherence_check
+from .rust_public_data_cache_custody import run_rust_public_data_cache_custody_check
 from .rust_synthetic_identity_guard import run_rust_synthetic_identity_guard
 from .rust_ui_bundle_source_hash import run_rust_ui_bundle_source_hash_check
 from .synthetic_fixture_depth_audit import run_synthetic_fixture_depth_audit
@@ -506,6 +507,30 @@ def _parser() -> argparse.ArgumentParser:
         help="Repository root containing rust/fixture-boundary-checker/Cargo.toml.",
     )
     rust_synthetic_identity_guard.add_argument(
+        "--timeout-seconds",
+        type=int,
+        default=240,
+        help="Timeout for the explicit Rust checker invocation.",
+    )
+
+    rust_public_data_cache_custody = sub.add_parser(
+        "build-rust-public-data-cache-custody-report",
+        help=(
+            "Run the local Rust public-data cache custody checker and emit a candidate-only report."
+        ),
+    )
+    rust_public_data_cache_custody.add_argument("--cache-root", required=True)
+    rust_public_data_cache_custody.add_argument("--out-dir", required=True)
+    rust_public_data_cache_custody.add_argument(
+        "--manifest",
+        help="Optional path to public_data_cache_manifest.json; defaults under --cache-root.",
+    )
+    rust_public_data_cache_custody.add_argument(
+        "--repo-root",
+        default=".",
+        help="Repository root containing rust/fixture-boundary-checker/Cargo.toml.",
+    )
+    rust_public_data_cache_custody.add_argument(
         "--timeout-seconds",
         type=int,
         default=240,
@@ -1299,6 +1324,12 @@ def _parser() -> argparse.ArgumentParser:
         "--repo-root",
         default=".",
         help="Repository root to inspect; defaults to the current working directory.",
+    )
+    public_data_cache.add_argument(
+        "--rust-timeout-seconds",
+        type=int,
+        default=240,
+        help="Timeout for the Rust custody checker invoked by this audit.",
     )
 
     courtlistener_dataset_strategy = sub.add_parser(
@@ -2511,6 +2542,40 @@ def main(argv: list[str] | None = None) -> int:
                     "sqlite_write_performed": report.sqlite_write_performed,
                     "budget_submission_authorized": report.budget_submission_authorized,
                     "matter_opening_authorized": report.matter_opening_authorized,
+                }
+            )
+            return 0 if report.status == "passed" else 2
+
+        if args.command == "build-rust-public-data-cache-custody-report":
+            report, report_path = run_rust_public_data_cache_custody_check(
+                repo_root=args.repo_root,
+                cache_root=args.cache_root,
+                manifest_path=args.manifest,
+                out_dir=args.out_dir,
+                timeout_seconds=args.timeout_seconds,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "report_path": str(report_path),
+                    "manifest_entry_count": report.manifest_entry_count,
+                    "checked_source_count": report.checked_source_count,
+                    "checked_sample_count": report.checked_sample_count,
+                    "total_checked_sample_bytes": report.total_checked_sample_bytes,
+                    "root_violation_count": report.root_violation_count,
+                    "manifest_error_count": report.manifest_error_count,
+                    "blocked_path_count": report.blocked_path_count,
+                    "missing_file_count": report.missing_file_count,
+                    "hash_mismatch_count": report.hash_mismatch_count,
+                    "byte_count_mismatch_count": report.byte_count_mismatch_count,
+                    "failure_count": report.failure_count,
+                    "direct_runtime_ingestion_allowed": report.direct_runtime_ingestion_allowed,
+                    "public_records_runtime_ingested": report.public_records_runtime_ingested,
+                    "raw_public_payload_committed": report.raw_public_payload_committed,
+                    "tracked_public_payload_committed": report.tracked_public_payload_committed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
                 }
             )
             return 0 if report.status == "passed" else 2
@@ -3953,6 +4018,7 @@ def main(argv: list[str] | None = None) -> int:
                 cache_root=args.cache_root,
                 manifest_path=args.manifest,
                 out_dir=args.out_dir,
+                rust_timeout_seconds=args.rust_timeout_seconds,
             )
             failed_checks = [check.check_id for check in report.checks if check.status != "passed"]
             _print(
@@ -3967,6 +4033,9 @@ def main(argv: list[str] | None = None) -> int:
                     "failed_hash_source_ids": report.failed_hash_source_ids,
                     "missing_cache_file_source_ids": report.missing_cache_file_source_ids,
                     "blocked_path_refs": report.blocked_path_refs,
+                    "rust_custody_status": report.rust_custody_status,
+                    "rust_custody_failure_count": report.rust_custody_failure_count,
+                    "rust_custody_report_ref": report.rust_custody_report_ref,
                     "direct_runtime_ingestion_allowed": (report.direct_runtime_ingestion_allowed),
                     "public_records_runtime_ingested": (report.public_records_runtime_ingested),
                     "raw_public_payload_committed": report.raw_public_payload_committed,

@@ -228,6 +228,52 @@
       "title": "Blocked Path Refs",
       "type": "array"
     },
+    "rust_custody_report_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Rust Custody Report Ref"
+    },
+    "rust_custody_status": {
+      "default": "not_run",
+      "enum": [
+        "passed",
+        "failed",
+        "not_run"
+      ],
+      "title": "Rust Custody Status",
+      "type": "string"
+    },
+    "rust_custody_failure_count": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Rust Custody Failure Count",
+      "type": "integer"
+    },
+    "rust_custody_checked_source_count": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Rust Custody Checked Source Count",
+      "type": "integer"
+    },
+    "rust_custody_checked_sample_count": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Rust Custody Checked Sample Count",
+      "type": "integer"
+    },
+    "rust_custody_total_checked_sample_bytes": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Rust Custody Total Checked Sample Bytes",
+      "type": "integer"
+    },
     "sources": {
       "items": {
         "$ref": "#/$defs/PublicDataCacheSourceManifest"

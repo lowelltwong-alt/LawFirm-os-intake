@@ -5074,6 +5074,104 @@ class PublicDataCacheSourceManifest(StrictModel):
         return self
 
 
+class RustPublicDataCacheCustodyFailure(StrictModel):
+    source_id: str
+    path: str
+    check: str
+    expected: str | None = None
+    actual: str | None = None
+    message: str
+
+
+class RustPublicDataCacheCustodySample(StrictModel):
+    source_id: str
+    cache_ref: str | None = None
+    resolved_path_ref: str | None = None
+    expected_sha256: str | None = None
+    actual_sha256: str | None = None
+    expected_byte_count: int | None = Field(default=None, ge=0)
+    actual_byte_count: int | None = Field(default=None, ge=0)
+    status: Literal["passed", "failed", "blocked", "missing", "invalid"]
+
+
+class RustPublicDataCacheCustodyReport(StrictModel):
+    schema_version: str = "0.1"
+    checker: Literal["public-data-cache-custody-checker"]
+    status: Literal["passed", "failed"]
+    repo_root: str
+    cache_root: str
+    manifest_ref: str
+    manifest_sha256: str
+    manifest_byte_count: int = Field(ge=0)
+    manifest_entry_count: int = Field(ge=0)
+    checked_source_count: int = Field(ge=0)
+    checked_sample_count: int = Field(ge=0)
+    total_checked_sample_bytes: int = Field(ge=0)
+    root_violation_count: int = Field(ge=0)
+    manifest_error_count: int = Field(ge=0)
+    invalid_manifest_entry_count: int = Field(ge=0)
+    blocked_path_count: int = Field(ge=0)
+    missing_file_count: int = Field(ge=0)
+    hash_mismatch_count: int = Field(ge=0)
+    byte_count_mismatch_count: int = Field(ge=0)
+    failure_count: int = Field(ge=0)
+    failures: list[RustPublicDataCacheCustodyFailure] = Field(default_factory=list)
+    samples: list[RustPublicDataCacheCustodySample] = Field(default_factory=list)
+    candidate_only: Literal[True] = True
+    planning_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    metadata_only_report: Literal[True] = True
+    local_file_custody_only: Literal[True] = True
+    public_cache_samples_may_be_present: bool
+    direct_runtime_ingestion_allowed: Literal[False] = False
+    public_records_runtime_ingested: Literal[False] = False
+    public_payload_committed: Literal[False] = False
+    raw_public_payload_committed: Literal[False] = False
+    tracked_public_payload_committed: Literal[False] = False
+    connector_implemented: Literal[False] = False
+    legal_knowledge_adapter_authorized: Literal[False] = False
+    synthetic_fixtures_created: Literal[False] = False
+    fixture_files_mutated: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def rust_public_data_cache_custody_counts_match(
+        self,
+    ) -> "RustPublicDataCacheCustodyReport":
+        if self.failure_count != len(self.failures):
+            raise ValueError("Rust public data cache custody failure count mismatch")
+        category_total = (
+            self.root_violation_count
+            + self.manifest_error_count
+            + self.invalid_manifest_entry_count
+            + self.blocked_path_count
+            + self.missing_file_count
+            + self.hash_mismatch_count
+            + self.byte_count_mismatch_count
+        )
+        if self.failure_count != category_total:
+            raise ValueError("Rust public data cache custody category count mismatch")
+        if self.checked_sample_count > self.checked_source_count:
+            raise ValueError("Rust public data cache checked sample count exceeds sources")
+        if self.public_cache_samples_may_be_present != (self.checked_sample_count > 0):
+            raise ValueError("Rust public data cache sample presence mismatch")
+        if self.status == "passed":
+            if self.failure_count or self.failures:
+                raise ValueError("passed Rust public data cache custody report cannot fail")
+            if any(sample.status != "passed" for sample in self.samples):
+                raise ValueError(
+                    "passed Rust public data cache custody report cannot include blocked samples"
+                )
+        if self.status == "failed" and not self.failures:
+            raise ValueError("failed Rust public data cache custody report requires failures")
+        return self
+
+
 class PublicDataCacheAuditCheck(StrictModel):
     check_id: str
     status: Literal["passed", "blocked", "failed"]
@@ -5102,6 +5200,12 @@ class PublicDataCacheAuditReport(StrictModel):
     failed_hash_source_ids: list[str] = Field(default_factory=list)
     missing_cache_file_source_ids: list[str] = Field(default_factory=list)
     blocked_path_refs: list[str] = Field(default_factory=list)
+    rust_custody_report_ref: str | None = None
+    rust_custody_status: Literal["passed", "failed", "not_run"] = "not_run"
+    rust_custody_failure_count: int = Field(default=0, ge=0)
+    rust_custody_checked_source_count: int = Field(default=0, ge=0)
+    rust_custody_checked_sample_count: int = Field(default=0, ge=0)
+    rust_custody_total_checked_sample_bytes: int = Field(default=0, ge=0)
     sources: list[PublicDataCacheSourceManifest]
     checks: list[PublicDataCacheAuditCheck]
     required_next_gates: list[str]
@@ -5144,6 +5248,8 @@ class PublicDataCacheAuditReport(StrictModel):
                 or self.failed_hash_source_ids
                 or self.missing_cache_file_source_ids
                 or self.blocked_path_refs
+                or self.rust_custody_status != "passed"
+                or self.rust_custody_failure_count
             ):
                 raise ValueError("ready public data cache audit cannot include blockers")
         if self.status == "blocked_public_data_cache" and not any(

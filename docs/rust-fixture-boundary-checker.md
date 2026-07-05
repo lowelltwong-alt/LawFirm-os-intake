@@ -2,12 +2,13 @@
 
 `rust/fixture-boundary-checker` is a local QA leaf tool for read-only JSON fixtures. It is not an ingestion adapter, not a legal classifier, not a budget engine, and not an Exception Lake writer.
 
-It currently exposes four explicit Rust binaries through Python CLI wrappers:
+It currently exposes five explicit Rust binaries through Python CLI wrappers:
 
 - `fixture-boundary-checker` validates local candidate fixture/report JSON for the boundaries the UI depends on.
 - `fixture_manifest_scanner` emits a deterministic hash manifest for local JSON fixture/report files.
 - `fixture_snapshot_coherence` compares a checked fixture manifest against the current fixture tree and fails closed on drift.
 - `ui_bundle_source_hash_checker` verifies that a UI review data bundle's `source_sha256` values match the resolved local detail-report JSON files.
+- `public_data_cache_custody_checker` verifies ignored/external public-data cache custody, path containment, file presence, SHA-256 digests, and byte counts.
 
 The boundary checker validates:
 
@@ -65,6 +66,22 @@ python -m lawfirm_os_intake build-rust-ui-bundle-source-hash-report `
 The UI bundle source-hash report resolves both generated run-root paths and the
 checked frontend `demo-...` fixture naming convention. It fails closed on invalid
 `source_sha256` values, missing source files, and hash mismatches.
+
+Check a local public-data cache custody manifest directly:
+
+```powershell
+python -m lawfirm_os_intake build-rust-public-data-cache-custody-report `
+  --cache-root .lawfirm-os-intake/public-data-cache `
+  --out-dir .lawfirm-os-intake/rust-public-data-cache-custody `
+  --repo-root .
+```
+
+The public-data cache custody report is byte/path evidence only. The governed
+entry point remains `audit-public-data-cache`, which consumes the Rust report
+and still requires human cache review before any methodology or synthetic
+fixture conversion work. A passing Rust custody report does not authorize public
+record ingestion, public payload commits, adapters, Lake/SQLite writes, or
+fixture generation.
 
 Refresh the checked frontend wrapper fixtures and verify both Rust gates:
 

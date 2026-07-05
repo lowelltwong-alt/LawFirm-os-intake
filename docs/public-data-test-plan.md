@@ -21,6 +21,13 @@ resolve into tracked repo payload space. A passing report is ready for human
 cache review only; public records still cannot become runtime intake inputs or
 committed fixtures.
 
+The audit also invokes the Rust `public-data-cache-custody-checker` as a local
+leaf gate. The Rust report independently checks manifest custody, cache-root
+custody, relative cache refs, file presence, SHA-256 digests, and byte counts.
+It is a byte/path custody detector only; it does not approve public-data use,
+replace the Python audit, create fixtures, authorize adapters, or permit runtime
+ingestion.
+
 Run `plan-public-synthetic-fixture-conversion` after a ready methodology report and before any fixture work. The conversion plan records what structure may be abstracted, what identity or payload inputs are forbidden, how identities must be replaced, and which synthetic gold/red-team checks must pass. It creates no fixture files and remains blocked until human conversion review.
 
 Run `review-public-synthetic-fixture-conversion` after the conversion plan. The review packet gives a human reviewer recommendations, why-notes, required decisions, red-team notes, and append-only decision templates. A ready packet is not fixture approval; it still does not create fixtures, create PRs, authorize adapters, or ingest public records.

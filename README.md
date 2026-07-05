@@ -472,6 +472,8 @@ Preparation now means keeping that boundary narrow, schema-first, measurable, an
 
 `build-rust-synthetic-identity-guard-report` is a Rust leaf checker for synthetic QA. It scans local JSON fixture strings and provenance flags for non-reserved email/URL domains, non-synthetic origins, false synthetic markers, and real/private/public-ingestion flags. It emits candidate-only local JSON and does not ingest public data, authorize fixture release, write Lake/SQLite records, or replace human review.
 
+`build-rust-public-data-cache-custody-report` is a Rust leaf checker for ignored/external public-data cache custody. `audit-public-data-cache` invokes it to verify path containment, relative cache refs, file presence, SHA-256 digests, and byte counts before human cache review. It remains a custody detector only and does not authorize public-data ingestion, fixture creation, adapters, Lake/SQLite writes, or runtime use.
+
 ## Current boundaries
 
 - synthetic data only;

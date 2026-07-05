@@ -62,6 +62,11 @@ def test_public_data_cache_audit_ready_for_human_review(tmp_path, repo_root):
     assert persisted.unknown_source_ids == []
     assert persisted.failed_hash_source_ids == []
     assert persisted.missing_cache_file_source_ids == []
+    assert persisted.rust_custody_status == "passed"
+    assert persisted.rust_custody_failure_count == 0
+    assert persisted.rust_custody_checked_source_count == 1
+    assert persisted.rust_custody_checked_sample_count == 1
+    assert persisted.rust_custody_report_ref is not None
     assert all(check.status == "passed" for check in persisted.checks)
     assert persisted.public_cache_samples_present is True
     assert persisted.direct_runtime_ingestion_allowed is False
@@ -76,6 +81,7 @@ def test_public_data_cache_audit_ready_for_human_review(tmp_path, repo_root):
 
     notes = (run_dir / "public_data_cache_audit_report.md").read_text(encoding="utf-8")
     assert "Tracked public payload committed: False" in notes
+    assert "**Rust custody status:** passed" in notes
     assert "human_public_data_cache_review" in notes
 
 
@@ -112,8 +118,14 @@ def test_public_data_cache_blocks_hash_or_size_drift(tmp_path, repo_root):
 
     assert report.status == "blocked_public_data_cache"
     assert report.failed_hash_source_ids == ["fjc-idb"]
+    assert report.rust_custody_status == "failed"
+    assert report.rust_custody_failure_count >= 1
     assert any(
         check.check_id == "cache_hashes_and_sizes_match" and check.status == "failed"
+        for check in report.checks
+    )
+    assert any(
+        check.check_id == "rust_public_data_cache_custody_passes" and check.status == "failed"
         for check in report.checks
     )
 
@@ -131,6 +143,7 @@ def test_public_data_cache_blocks_tracked_repo_payload_path(tmp_path, repo_root)
     )
 
     assert report.status == "blocked_public_data_cache"
+    assert report.rust_custody_status == "failed"
     assert "examples/public/fjc/sample-field-shape.json" in report.blocked_path_refs
     assert any(
         check.check_id == "cache_root_is_ignored_or_external" and check.status == "blocked"
@@ -164,4 +177,5 @@ def test_public_data_cache_cli_writes_report(tmp_path, repo_root, capsys):
     assert exit_code == 0
     assert '"status": "ready_for_human_public_data_cache_review"' in captured.out
     assert '"direct_runtime_ingestion_allowed": false' in captured.out
+    assert '"rust_custody_status": "passed"' in captured.out
     assert (run_dir / "public_data_cache_audit_report.json").is_file()

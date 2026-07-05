@@ -334,6 +334,9 @@ from lawfirm_os_intake.models import (  # noqa: E402
     RustFixtureSnapshotCoherenceFailure,
     RustFixtureSnapshotCoherenceReport,
     RustFixtureSnapshotCoherenceSkippedFile,
+    RustPublicDataCacheCustodyFailure,
+    RustPublicDataCacheCustodyReport,
+    RustPublicDataCacheCustodySample,
     RustSyntheticIdentityGuardFailure,
     RustSyntheticIdentityGuardReport,
     RustIngestionReadinessReport,
@@ -447,6 +450,9 @@ MODELS = {
     "rust-fixture-snapshot-coherence-skipped-file.schema.json": (
         RustFixtureSnapshotCoherenceSkippedFile
     ),
+    "rust-public-data-cache-custody-failure.schema.json": RustPublicDataCacheCustodyFailure,
+    "rust-public-data-cache-custody-sample.schema.json": RustPublicDataCacheCustodySample,
+    "rust-public-data-cache-custody-report.schema.json": RustPublicDataCacheCustodyReport,
     "rust-synthetic-identity-guard-failure.schema.json": RustSyntheticIdentityGuardFailure,
     "rust-synthetic-identity-guard-report.schema.json": RustSyntheticIdentityGuardReport,
     "rust-ui-bundle-source-hash-detail.schema.json": RustUIBundleSourceHashDetail,
