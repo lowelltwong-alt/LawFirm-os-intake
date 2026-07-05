@@ -29,6 +29,7 @@ export type UIReviewDataBundleReportKind =
   | "rust_fixture_manifest"
   | "public_data_cache_audit"
   | "rust_public_data_cache_custody"
+  | "public_derived_synthetic_qa_gate"
   | "matter_linking_preflight"
   | "matter_linking_review_outcome"
   | "matter_linking_qa_gate"

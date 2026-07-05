@@ -1,22 +1,22 @@
 {
   "schema_version": "0.1",
-  "synthetic_qa_blocker_report_id": "synthetic_qa_blocker_report_b3bcf9a69f865e02",
+  "synthetic_qa_blocker_report_id": "synthetic_qa_blocker_report_dcd6ee4143aab972",
   "status": "synthetic_qa_blocker_report_ready_for_review",
   "source_ui_manifest_ref": "<demo-run-root>\\ui_review_manifest.json",
-  "source_ui_manifest_id": "ui_review_manifest_df04e7c092e9",
+  "source_ui_manifest_id": "ui_review_manifest_8ff67ff1eed4",
   "source_ui_manifest_overall_status": "blocked",
   "source_synthetic_confidence_summary_ref": "<demo-run-root>\\quality\\synthetic_confidence_summary_report.json",
-  "source_synthetic_confidence_summary_report_id": "synthetic_confidence_summary_4781bf9ded036274",
+  "source_synthetic_confidence_summary_report_id": "synthetic_confidence_summary_8e4e4324fc481f20",
   "source_synthetic_confidence_summary_status": "synthetic_confidence_summary_ready_for_review",
   "source_synthetic_qa_review_run_ref": "<demo-run-root>\\synthetic_qa_review_run_report.json",
-  "source_synthetic_qa_review_run_report_id": "syntheticqareviewrun_f665d9ae0d8350cd",
+  "source_synthetic_qa_review_run_report_id": "syntheticqareviewrun_ef47d6179458468e",
   "source_synthetic_qa_review_run_status": "synthetic_qa_review_run_ready",
-  "row_count": 27,
+  "row_count": 28,
   "failed_row_count": 0,
   "blocked_row_count": 0,
-  "pending_review_row_count": 27,
+  "pending_review_row_count": 28,
   "blocked_action_count": 0,
-  "needs_review_action_count": 27,
+  "needs_review_action_count": 28,
   "fixed_action_count": 0,
   "ready_action_count": 0,
   "review_queue_state": "needs_review",
@@ -547,6 +547,27 @@
       ]
     },
     {
+      "row_id": "quality_gate:public_derived_synthetic_qa_gate",
+      "source": "quality_gate",
+      "label": "Public-Derived Synthetic QA Gate",
+      "state": "pending_review",
+      "action_state": "needs_review",
+      "owner": "qa-reference",
+      "evidence_refs": [
+        "public_derived_synthetic_qa_gate_report.json"
+      ],
+      "recommended_next_action": "Review quality gate evidence and record an outcome: Public-Derived Synthetic QA Gate.",
+      "candidate_exception_lake_labels": [
+        "synthetic_qa_blocker_queue_candidate",
+        "quality_gate_pending_review_candidate",
+        "quality_gate_public_derived_synthetic_qa_gate_candidate",
+        "synthetic_qa_blocker_requires_review"
+      ],
+      "notes": [
+        "Public-source methodology, conversion planning, conversion review, and cache custody must be bound before public-derived synthetic fixtures are trusted for QA."
+      ]
+    },
+    {
       "row_id": "readiness_item:required_qa_artifacts",
       "source": "readiness_item",
       "label": "Required QA Artifacts",
@@ -564,7 +585,7 @@
         "synthetic_qa_blocker_requires_review"
       ],
       "notes": [
-        "0 missing required, 0 blocked, 20 pending review."
+        "0 missing required, 0 blocked, 21 pending review."
       ]
     },
     {
@@ -585,7 +606,7 @@
         "synthetic_qa_blocker_requires_review"
       ],
       "notes": [
-        "26 pending gates remain; pending is expected until human/owner review accepts candidate QA evidence."
+        "27 pending gates remain; pending is expected until human/owner review accepts candidate QA evidence."
       ]
     }
   ],

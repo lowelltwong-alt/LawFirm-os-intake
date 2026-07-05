@@ -1,10 +1,10 @@
 {
   "schema_version": "0.1",
-  "synthetic_qa_review_run_report_id": "syntheticqareviewrun_f665d9ae0d8350cd",
+  "synthetic_qa_review_run_report_id": "syntheticqareviewrun_ef47d6179458468e",
   "status": "synthetic_qa_review_run_ready",
   "run_root_ref": "<demo-run-root>",
   "quality_dir_ref": "<demo-run-root>\\quality",
-  "step_count": 31,
+  "step_count": 32,
   "failed_step_count": 0,
   "steps": [
     {
@@ -248,11 +248,21 @@
       ]
     },
     {
+      "step_id": "public_derived_synthetic_qa_gate",
+      "label": "Public-Derived Synthetic QA Gate",
+      "status": "passed",
+      "observed_status": "public_derived_synthetic_qa_ready_for_review",
+      "artifact_ref": "<demo-run-root>\\quality\\public-derived-synthetic-qa-gate\\public_derived_synthetic_qa_gate_report.json",
+      "notes": [
+        "Public-source methodology, conversion planning, conversion review, and cache-custody boundary checks are bound before public-derived synthetic fixtures are trusted for QA."
+      ]
+    },
+    {
       "step_id": "rust_fixture_boundary",
       "label": "Rust Fixture Boundary",
       "status": "passed",
       "observed_status": "passed",
-      "artifact_ref": "<demo-run-root>\\quality\\rust_fixture_boundary_report.json",
+      "artifact_ref": "<demo-run-root>\\quality\\demo-rust-fixture-boundary-report.json",
       "notes": [
         "Prebuilt Rust fixture-boundary evidence validates local JSON flags without making the synthetic QA run compile or execute Rust."
       ]
@@ -262,7 +272,7 @@
       "label": "Rust Fixture Manifest",
       "status": "passed",
       "observed_status": "passed",
-      "artifact_ref": "<demo-run-root>\\quality\\rust_fixture_manifest_report.json",
+      "artifact_ref": "<demo-run-root>\\quality\\demo-rust-fixture-manifest-report.json",
       "notes": [
         "Prebuilt Rust fixture-manifest evidence hash-binds local JSON fixtures without making the synthetic QA run compile or execute Rust."
       ]

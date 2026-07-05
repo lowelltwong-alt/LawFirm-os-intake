@@ -332,6 +332,13 @@ ARTIFACT_SPECS = [
         "methodology-review",
         "pending_review",
     ),
+    ArtifactSpec(
+        "public-derived-synthetic-qa-gate",
+        "Public-Derived Synthetic QA Gate",
+        "public_derived_synthetic_qa_gate_report.json",
+        "qa-reference",
+        "blocked",
+    ),
 ]
 
 
@@ -531,6 +538,13 @@ QUALITY_GATE_SPECS = {
         "pricing-review",
         "Budget actuals, carrier rejection outcomes, appeal results, and reviewed-learning candidates must be visible before QA treats budget improvement loops as covered.",
         "pending_review",
+    ),
+    "public_derived_synthetic_qa_gate": (
+        "Public-Derived Synthetic QA Gate",
+        "public_derived_synthetic_qa_gate_report.json",
+        "qa-reference",
+        "Public-source methodology, conversion planning, conversion review, and cache custody must be bound before public-derived synthetic fixtures are trusted for QA.",
+        "blocked",
     ),
     "labor_employment_budget_fact_gold": (
         "L&E Budget Fact Gold",

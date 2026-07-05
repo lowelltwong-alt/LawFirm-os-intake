@@ -1,35 +1,35 @@
 {
   "schema_version": "0.1",
-  "synthetic_confidence_summary_report_id": "synthetic_confidence_summary_e077b56bed1a4a4c",
+  "synthetic_confidence_summary_report_id": "synthetic_confidence_summary_9b021f733117be87",
   "status": "synthetic_confidence_summary_ready_for_review",
   "testing_readiness_state": "synthetic_qa_ready_pending_review",
-  "source_synthetic_qa_review_run_ref": "apps\\legal-intake-budget\\src\\fixtures\\demo-synthetic-qa-review-run-report.json",
-  "source_synthetic_qa_review_run_report_id": "syntheticqareviewrun_f665d9ae0d8350cd",
+  "source_synthetic_qa_review_run_ref": "<demo-run-root>\\synthetic_qa_review_run_report.json",
+  "source_synthetic_qa_review_run_report_id": "syntheticqareviewrun_ef47d6179458468e",
   "source_synthetic_qa_review_run_status": "synthetic_qa_review_run_ready",
-  "source_synthetic_qa_bundle_ref": "apps\\legal-intake-budget\\src\\fixtures\\demo-synthetic-qa-bundle-report.json",
-  "source_synthetic_qa_bundle_report_id": "synthetic_qa_bundle_ed7e0284eadd",
+  "source_synthetic_qa_bundle_ref": "<demo-run-root>\\quality\\synthetic_qa_bundle_report.json",
+  "source_synthetic_qa_bundle_report_id": "synthetic_qa_bundle_2af8afb57f7b",
   "source_synthetic_qa_bundle_status": "pending_review",
-  "source_ui_manifest_ref": "apps\\legal-intake-budget\\src\\fixtures\\demo-run-manifest.json",
-  "source_ui_manifest_id": "ui_review_manifest_afff80755124",
+  "source_ui_manifest_ref": "<demo-run-root>\\ui_review_manifest.json",
+  "source_ui_manifest_id": "ui_review_manifest_8ff67ff1eed4",
   "source_ui_manifest_overall_status": "blocked",
-  "source_ui_review_data_bundle_ref": "apps\\legal-intake-budget\\src\\fixtures\\demo-ui-review-data-bundle.json",
-  "source_ui_review_data_bundle_id": "ui_review_data_bundle_315de0e57405",
+  "source_ui_review_data_bundle_ref": "<demo-run-root>\\ui_review_data_bundle.json",
+  "source_ui_review_data_bundle_id": "ui_review_data_bundle_de5ed1455c09",
   "source_ui_review_data_bundle_status": "ready_for_review",
-  "qa_step_count": 31,
-  "qa_passed_step_count": 31,
+  "qa_step_count": 32,
+  "qa_passed_step_count": 32,
   "qa_failed_step_count": 0,
-  "qa_artifact_count": 22,
+  "qa_artifact_count": 23,
   "qa_missing_required_artifact_count": 0,
   "qa_blocked_artifact_count": 0,
-  "qa_pending_artifact_count": 20,
+  "qa_pending_artifact_count": 21,
   "qa_failed_artifact_count": 0,
-  "ui_detail_report_count": 24,
-  "ui_present_detail_report_count": 24,
+  "ui_detail_report_count": 25,
+  "ui_present_detail_report_count": 20,
   "ui_missing_required_detail_report_count": 0,
   "ui_external_write_report_count": 0,
-  "quality_gate_count": 32,
+  "quality_gate_count": 33,
   "quality_gate_passed_count": 6,
-  "quality_gate_pending_count": 26,
+  "quality_gate_pending_count": 27,
   "quality_gate_blocked_count": 0,
   "quality_gate_failed_count": 0,
   "readiness_item_count": 5,
@@ -40,10 +40,10 @@
       "owner": "qa-reference",
       "state": "ready_for_review",
       "evidence_refs": [
-        "apps\\legal-intake-budget\\src\\fixtures\\demo-synthetic-qa-review-run-report.json"
+        "<demo-run-root>\\synthetic_qa_review_run_report.json"
       ],
       "notes": [
-        "0 failed steps out of 31."
+        "0 failed steps out of 32."
       ],
       "no_write_boundary_confirmed": true
     },
@@ -53,10 +53,10 @@
       "owner": "qa-reference",
       "state": "pending_review",
       "evidence_refs": [
-        "apps\\legal-intake-budget\\src\\fixtures\\demo-synthetic-qa-bundle-report.json"
+        "<demo-run-root>\\quality\\synthetic_qa_bundle_report.json"
       ],
       "notes": [
-        "0 missing required, 0 blocked, 20 pending review."
+        "0 missing required, 0 blocked, 21 pending review."
       ],
       "no_write_boundary_confirmed": true
     },
@@ -66,11 +66,11 @@
       "owner": "frontend-review",
       "state": "ready_for_review",
       "evidence_refs": [
-        "apps\\legal-intake-budget\\src\\fixtures\\demo-ui-review-data-bundle.json",
-        "apps\\legal-intake-budget\\src\\fixtures\\demo-run-manifest.json"
+        "<demo-run-root>\\ui_review_data_bundle.json",
+        "<demo-run-root>\\ui_review_manifest.json"
       ],
       "notes": [
-        "24 detail reports present; 0 write-boundary failures."
+        "20 detail reports present; 0 write-boundary failures."
       ],
       "no_write_boundary_confirmed": true
     },
@@ -80,9 +80,9 @@
       "owner": "governance-review",
       "state": "ready_for_review",
       "evidence_refs": [
-        "apps\\legal-intake-budget\\src\\fixtures\\demo-synthetic-qa-review-run-report.json",
-        "apps\\legal-intake-budget\\src\\fixtures\\demo-synthetic-qa-bundle-report.json",
-        "apps\\legal-intake-budget\\src\\fixtures\\demo-ui-review-data-bundle.json"
+        "<demo-run-root>\\synthetic_qa_review_run_report.json",
+        "<demo-run-root>\\quality\\synthetic_qa_bundle_report.json",
+        "<demo-run-root>\\ui_review_data_bundle.json"
       ],
       "notes": [
         "No budget submission, matter opening, Lake/SQLite write, external write, or silent learning is authorized by these artifacts."
@@ -95,10 +95,10 @@
       "owner": "human-or-owner-review",
       "state": "pending_review",
       "evidence_refs": [
-        "apps\\legal-intake-budget\\src\\fixtures\\demo-run-manifest.json"
+        "<demo-run-root>\\ui_review_manifest.json"
       ],
       "notes": [
-        "26 pending gates remain; pending is expected until human/owner review accepts candidate QA evidence."
+        "27 pending gates remain; pending is expected until human/owner review accepts candidate QA evidence."
       ],
       "no_write_boundary_confirmed": true
     }

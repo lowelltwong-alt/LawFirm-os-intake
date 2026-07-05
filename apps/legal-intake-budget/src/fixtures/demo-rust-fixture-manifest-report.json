@@ -1,42 +1,42 @@
 {
   "budget_submission_authorized": false,
   "candidate_only": true,
-  "checked_json_file_count": 26,
+  "checked_json_file_count": 27,
   "external_writes_performed": false,
   "failure_count": 0,
   "failures": [],
   "files": [
     {
-      "byte_count": 8144,
+      "byte_count": 8324,
       "candidate_only": true,
       "external_writes_performed": false,
       "id_fields": [
         {
           "field": "budget_learning_loop_report_id",
-          "value": "budgetlearningloop_3afcb077e60da04f83af"
+          "value": "budgetlearningloop_94e731012798aee27bee"
         },
         {
           "field": "budget_proposal_id",
-          "value": "budget_a77133afc0ff42e192187036517b25a9"
+          "value": "budget_4227e8c882e74cf18f77dde0f8fd1852"
         },
         {
           "field": "preflight_packet_id",
-          "value": "intake_a1a8a56624654bc48e18fad72d5c09c9"
+          "value": "intake_1a4be502bbac45debfc0797b50ebc5f7"
         },
         {
           "field": "run_id",
-          "value": "budgetlearninglooprun_50f2af21a0bc731c543c"
+          "value": "budgetlearninglooprun_77c408f9b8902244ad2e"
         }
       ],
       "path": "demo-budget-learning-loop-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:6b781e0bbe8bcc4ea1fe68a20e9dd23ce2c19746f15662c442eb1d19b4da53cd",
+      "sha256": "sha256:d1d07c0cb29dfc764dcc6dc6e188e1be5d4cf9e735ff424cc25abcd4e1194c61",
       "status": "budget_learning_loop_ready_for_review",
       "synthetic_only": true,
       "top_level_type": "object"
     },
     {
-      "byte_count": 103919,
+      "byte_count": 106201,
       "candidate_only": true,
       "external_writes_performed": false,
       "id_fields": [
@@ -51,23 +51,23 @@
       ],
       "path": "demo-labor-employment-blocked-driver-impact-review-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:1acc625f4bdef7b7c90c38fe0962f796e08c15899278fe164af4c4a52def1952",
+      "sha256": "sha256:520743c15176de4d797b0db7c99be26ed4b1de2b0029504ab38859c68f51de15",
       "status": "labor_employment_blocked_driver_impacts_ready_for_review",
       "synthetic_only": true,
       "top_level_type": "object"
     },
     {
-      "byte_count": 21462,
+      "byte_count": 21971,
       "candidate_only": true,
       "external_writes_performed": false,
       "id_fields": [
         {
           "field": "budget_learning_fixture_report_id",
-          "value": "lebudgetlearningfixtures_cee1e5c8f8698d23"
+          "value": "lebudgetlearningfixtures_0406ef59583ee3eb"
         },
         {
           "field": "source_budget_qa_gate_report_id",
-          "value": "lebudgetqagate_04b7fc7bfe14c5ec"
+          "value": "lebudgetqagate_82b13586cb2ff133"
         },
         {
           "field": "source_manifest_id",
@@ -76,77 +76,77 @@
       ],
       "path": "demo-labor-employment-budget-learning-fixtures-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:971478b59b2ab6409ec91eac4751520d457785422a8c602dd97ec44edcc0338f",
+      "sha256": "sha256:6d3a2f79bddb2fc5ac7522bb557594823bc84e22128bb0a8fbbf6f14bf3cc6ff",
       "status": "labor_employment_budget_learning_fixtures_ready_for_review",
       "synthetic_only": true,
       "top_level_type": "object"
     },
     {
-      "byte_count": 159951,
+      "byte_count": 162826,
       "candidate_only": true,
       "external_writes_performed": false,
       "id_fields": [
         {
           "field": "builder_binding_report_id",
-          "value": "lebudgetreplaybinding_08e62ee9be5a15e4"
+          "value": "lebudgetreplaybinding_8f28916d4a5b458f"
         },
         {
           "field": "source_execution_report_id",
-          "value": "lebudgetoutcomeexecution_5368f6044f271c01"
+          "value": "lebudgetoutcomeexecution_dd3ce385af935ae9"
         }
       ],
       "path": "demo-labor-employment-budget-outcome-replay-builder-binding-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:a44b301c40c7a90922d0464a3f7e678b49a73d85cdddd340fe71c2d2131cd4c6",
+      "sha256": "sha256:93962d88db539a4a5f1a0587f5c1e2e8d7a75c36fa8db4fb77db1a79021a5862",
       "status": "labor_employment_budget_replay_builder_binding_ready_for_review",
       "synthetic_only": true,
       "top_level_type": "object"
     },
     {
-      "byte_count": 11633,
+      "byte_count": 11895,
       "candidate_only": true,
       "external_writes_performed": false,
       "id_fields": [
         {
           "field": "replay_confidence_status_report_id",
-          "value": "lereplayconfidence_200069fdf1dd937c"
+          "value": "lereplayconfidence_0267c82c48ca0aa9"
         },
         {
           "field": "source_builder_binding_report_id",
-          "value": "lebudgetreplaybinding_08e62ee9be5a15e4"
+          "value": "lebudgetreplaybinding_8f28916d4a5b458f"
         },
         {
           "field": "source_execution_report_id",
-          "value": "lebudgetoutcomeexecution_5368f6044f271c01"
+          "value": "lebudgetoutcomeexecution_dd3ce385af935ae9"
         },
         {
           "field": "source_input_pack_report_id",
-          "value": "lebudgetreplayinputpack_75e2abf96edd5837"
+          "value": "lebudgetreplayinputpack_44efb78934b38136"
         },
         {
           "field": "source_readiness_report_id",
-          "value": "lebudgetoutcomereplay_634a96d0605f2e21"
+          "value": "lebudgetoutcomereplay_d8a822255425b0ad"
         }
       ],
       "path": "demo-labor-employment-budget-outcome-replay-confidence-status-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:59a1591afb08e53d9b1404287ab6314b5eb3a95d9bcdaa198aefecf385100472",
+      "sha256": "sha256:5a982a36da928fe7d7efe94e1e49087a732d7fe0c64a2e672313bca4f85c6d82",
       "status": "labor_employment_budget_outcome_replay_confidence_pending_inputs",
       "synthetic_only": true,
       "top_level_type": "object"
     },
     {
-      "byte_count": 80779,
+      "byte_count": 82242,
       "candidate_only": true,
       "external_writes_performed": false,
       "id_fields": [
         {
           "field": "outcome_replay_execution_report_id",
-          "value": "lebudgetoutcomeexecution_5368f6044f271c01"
+          "value": "lebudgetoutcomeexecution_dd3ce385af935ae9"
         },
         {
           "field": "source_readiness_report_id",
-          "value": "lebudgetoutcomereplay_634a96d0605f2e21"
+          "value": "lebudgetoutcomereplay_d8a822255425b0ad"
         },
         {
           "field": "source_seed_manifest_id",
@@ -155,23 +155,23 @@
       ],
       "path": "demo-labor-employment-budget-outcome-replay-execution-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:24e91b805dc266b360c11f080536f22a0d71a1f70a5a311168537b1e78e7308b",
+      "sha256": "sha256:4209bcbc50269b199d956f5333a498541db3c0dfe54484f72bc471cf652fa3cf",
       "status": "labor_employment_budget_outcome_replay_execution_ready_for_review",
       "synthetic_only": true,
       "top_level_type": "object"
     },
     {
-      "byte_count": 36257,
+      "byte_count": 36927,
       "candidate_only": true,
       "external_writes_performed": false,
       "id_fields": [
         {
           "field": "outcome_replay_readiness_report_id",
-          "value": "lebudgetoutcomereplay_634a96d0605f2e21"
+          "value": "lebudgetoutcomereplay_d8a822255425b0ad"
         },
         {
           "field": "source_learning_fixture_report_id",
-          "value": "lebudgetlearningfixtures_cee1e5c8f8698d23"
+          "value": "lebudgetlearningfixtures_0406ef59583ee3eb"
         },
         {
           "field": "source_seed_manifest_id",
@@ -180,19 +180,19 @@
       ],
       "path": "demo-labor-employment-budget-outcome-replay-readiness-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:f3f25ff7848b990d94afe6424a15032dc2fd914d3b63ac00bf65cd45ed4d08be",
+      "sha256": "sha256:cfcc3e16da33084eb9a32920c4e8de862f5e4a387bba17ac94c4ab268fd8b46e",
       "status": "labor_employment_budget_outcome_replay_ready_for_review",
       "synthetic_only": true,
       "top_level_type": "object"
     },
     {
-      "byte_count": 97816,
+      "byte_count": 99859,
       "candidate_only": true,
       "external_writes_performed": false,
       "id_fields": [
         {
           "field": "budget_output_expectation_report_id",
-          "value": "lebudgetoutputexpect_4181f9e7d103f5c2"
+          "value": "lebudgetoutputexpect_f3fb379110635621"
         },
         {
           "field": "source_blocked_driver_impact_review_report_id",
@@ -204,24 +204,24 @@
         },
         {
           "field": "source_driver_impact_review_report_id",
-          "value": "ledriverimpactreview_059eb6fe72755dab"
+          "value": "ledriverimpactreview_0cefaaee6cddf864"
         }
       ],
       "path": "demo-labor-employment-budget-output-expectations-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:563c4f5abc74bb633e7bd916d3d4e6f0ff50cefcabac792c8054f8be4623f930",
+      "sha256": "sha256:e7fc511c698039a42ea0289d99df004f4ddd2c6334fc73170a0c82a1414505e9",
       "status": "labor_employment_budget_output_expectations_ready_for_review",
       "synthetic_only": true,
       "top_level_type": "object"
     },
     {
-      "byte_count": 18039,
+      "byte_count": 18410,
       "candidate_only": true,
       "external_writes_performed": false,
       "id_fields": [
         {
           "field": "budget_qa_gate_report_id",
-          "value": "lebudgetqagate_04b7fc7bfe14c5ec"
+          "value": "lebudgetqagate_82b13586cb2ff133"
         },
         {
           "field": "source_blocked_driver_impact_review_report_id",
@@ -229,7 +229,7 @@
         },
         {
           "field": "source_budget_output_expectations_report_id",
-          "value": "lebudgetoutputexpect_4181f9e7d103f5c2"
+          "value": "lebudgetoutputexpect_f3fb379110635621"
         },
         {
           "field": "source_executable_coverage_report_id",
@@ -238,13 +238,13 @@
       ],
       "path": "demo-labor-employment-budget-qa-gate-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:3405659dde718af2b520d867d59459068bb3dd17eea0a68c738b7f7eebe296f0",
+      "sha256": "sha256:6f493bdb2160114d2e4360679f02d17cc67d028247b1e9c2b79a5a2c1f65af03",
       "status": "labor_employment_budget_qa_gate_ready_for_review",
       "synthetic_only": true,
       "top_level_type": "object"
     },
     {
-      "byte_count": 31380,
+      "byte_count": 32236,
       "candidate_only": true,
       "external_writes_performed": false,
       "id_fields": [
@@ -263,13 +263,13 @@
       ],
       "path": "demo-labor-employment-executable-coverage-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:f71fa5b44baef4d19596af9cd878df01619ce3090fb7017f1ccc75011613a183",
+      "sha256": "sha256:a2f6c43db47ea3aef86a844004dfd55964254608932570d22fe6756516d931cc",
       "status": "labor_employment_executable_coverage_ready_for_review",
       "synthetic_only": true,
       "top_level_type": "object"
     },
     {
-      "byte_count": 4064,
+      "byte_count": 4151,
       "candidate_only": true,
       "external_writes_performed": false,
       "id_fields": [
@@ -280,13 +280,13 @@
       ],
       "path": "demo-labor-employment-qa-matrix-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:5a74f36e369bc45ed2ed4c883024d3a80d10465940306e2fb6aa7238901710d5",
+      "sha256": "sha256:7a72db069ca3aba903f08a0629949ea2bab07c263a6c1a03e3acfbb6ea12267b",
       "status": "labor_employment_qa_matrix_ready_for_review",
       "synthetic_only": true,
       "top_level_type": "object"
     },
     {
-      "byte_count": 10534,
+      "byte_count": 10822,
       "candidate_only": true,
       "data_origin": "synthetic",
       "id_fields": [
@@ -301,13 +301,13 @@
       ],
       "path": "demo-matter-linking-preflight-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:04a0ed250649a990916cc75075811efd5024f584eee456af742e6e79d015c2c0",
+      "sha256": "sha256:24f443019491736a109a5ace013c67ce3b9c59a83d98a54924294f1169b7f2bb",
       "status": "matter_linking_preflight_resolved_candidate_requires_review",
       "synthetic_only": true,
       "top_level_type": "object"
     },
     {
-      "byte_count": 16957,
+      "byte_count": 17361,
       "candidate_only": true,
       "external_writes_performed": false,
       "id_fields": [
@@ -318,13 +318,13 @@
       ],
       "path": "demo-matter-linking-qa-gate-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:08c0610ca0f68be05ff5f5cf005838f5abc472eb8c49f56ac990450aa8a48ff5",
+      "sha256": "sha256:c37067330dbafb10c8af57c1f05fb32c419b3552cfa7a72c77a81045fe831e4a",
       "status": "matter_linking_qa_gate_ready_for_review",
       "synthetic_only": true,
       "top_level_type": "object"
     },
     {
-      "byte_count": 5322,
+      "byte_count": 5452,
       "candidate_only": true,
       "external_writes_performed": false,
       "id_fields": [
@@ -347,13 +347,13 @@
       ],
       "path": "demo-matter-linking-review-outcome-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:34488a0bfc604b5c8cf937bf8e4f7a6dfc770d337a1b050742f92019b7146f2c",
+      "sha256": "sha256:d2929d127d2aef2c2691dc4cf63f4ba4614bf4c6464109e1242f46b402376f00",
       "status": "matter_linking_review_outcome_recorded",
       "synthetic_only": true,
       "top_level_type": "object"
     },
     {
-      "byte_count": 12286,
+      "byte_count": 12559,
       "candidate_only": true,
       "external_writes_performed": false,
       "id_fields": [
@@ -367,11 +367,11 @@
         },
         {
           "field": "source_budget_output_expectation_report_id",
-          "value": "lebudgetoutputexpect_4181f9e7d103f5c2"
+          "value": "lebudgetoutputexpect_f3fb379110635621"
         },
         {
           "field": "source_budget_qa_gate_report_id",
-          "value": "lebudgetqagate_04b7fc7bfe14c5ec"
+          "value": "lebudgetqagate_82b13586cb2ff133"
         },
         {
           "field": "source_labor_employment_qa_matrix_report_id",
@@ -383,19 +383,19 @@
         },
         {
           "field": "source_synthetic_confidence_summary_report_id",
-          "value": "synthetic_confidence_summary_82a8966c05cebc95"
+          "value": "synthetic_confidence_summary_9b021f733117be87"
         },
         {
           "field": "source_synthetic_qa_blocker_report_id",
-          "value": "synthetic_qa_blocker_report_b3bcf9a69f865e02"
+          "value": "synthetic_qa_blocker_report_dcd6ee4143aab972"
         },
         {
           "field": "source_synthetic_qa_review_run_report_id",
-          "value": "syntheticqareviewrun_f665d9ae0d8350cd"
+          "value": "syntheticqareviewrun_ef47d6179458468e"
         },
         {
           "field": "source_ui_manifest_id",
-          "value": "ui_review_manifest_afff80755124"
+          "value": "ui_review_manifest_d2da96d9627a"
         },
         {
           "field": "source_validation_suite_evidence_report_id",
@@ -404,7 +404,7 @@
       ],
       "path": "demo-poc-qa-triage-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:bdd40247eb5d3c1e4761ae3342bb307f77460a680094dc103b1c844254460ec1",
+      "sha256": "sha256:fdb4ffaab4eb62548627b2176d9e2a92ed96f92c6581ac2f64eb7380585e1f99",
       "status": "poc_qa_ready_for_review",
       "synthetic_only": true,
       "top_level_type": "object"
@@ -426,10 +426,38 @@
       "top_level_type": "object"
     },
     {
-      "byte_count": 34958,
+      "byte_count": 8437,
+      "candidate_only": true,
+      "external_writes_performed": false,
+      "id_fields": [
+        {
+          "field": "conversion_plan_id",
+          "value": "publicsyntheticfixtureplan_acf5b493506843c2be1d295e544a8bc2"
+        },
+        {
+          "field": "conversion_review_packet_id",
+          "value": "publicfixtureconvreview_036c019cc5c42a10c595"
+        },
+        {
+          "field": "public_derived_synthetic_qa_gate_report_id",
+          "value": "publicderivedsyntheticqagate_74cd493a68dc49dcaa2a18c8b91f4d71"
+        },
+        {
+          "field": "source_methodology_report_id",
+          "value": "publicsourcemethodology_d0ce9ad204ae45acbee9b523f0985e4f"
+        }
+      ],
+      "path": "demo-public-derived-synthetic-qa-gate-report.json",
+      "schema_version": "0.1",
+      "sha256": "sha256:b303ae1eadfaa0450f20874b01d59fc634da97a0afa91e24d6f61a771a02219f",
+      "status": "public_derived_synthetic_qa_ready_for_review",
+      "top_level_type": "object"
+    },
+    {
+      "byte_count": 36909,
       "id_fields": [],
       "path": "demo-run-manifest.json",
-      "sha256": "sha256:dad4080cf1123fbb7351b6be043ec1e50bc8a0c22ef442b453f79546118c657e",
+      "sha256": "sha256:91817bc7e1163d745b6dad0fd4846fe5bf9aa5ee250dce2f8c6a9cc42bc76b65",
       "top_level_type": "object"
     },
     {
@@ -440,7 +468,7 @@
       "path": "demo-rust-fixture-boundary-report.json",
       "report_kind": "fixture-boundary-checker",
       "schema_version": "0.1",
-      "sha256": "sha256:bc538c9e0f964c33c6c42570dbe982b9e4f95de7546218b027d683a1604d6d7b",
+      "sha256": "sha256:f30e2c85d8a316dcda3fd649f054c7e474541ed0cfb92de039717d8e0d685b7c",
       "status": "passed",
       "synthetic_only": true,
       "top_level_type": "object"
@@ -458,86 +486,86 @@
       "top_level_type": "object"
     },
     {
-      "byte_count": 6113,
+      "byte_count": 5801,
       "candidate_only": true,
       "external_writes_performed": false,
       "id_fields": [
         {
           "field": "source_synthetic_qa_bundle_report_id",
-          "value": "synthetic_qa_bundle_ed7e0284eadd"
+          "value": "synthetic_qa_bundle_2af8afb57f7b"
         },
         {
           "field": "source_synthetic_qa_review_run_report_id",
-          "value": "syntheticqareviewrun_f665d9ae0d8350cd"
+          "value": "syntheticqareviewrun_ef47d6179458468e"
         },
         {
           "field": "source_ui_manifest_id",
-          "value": "ui_review_manifest_afff80755124"
+          "value": "ui_review_manifest_8ff67ff1eed4"
         },
         {
           "field": "source_ui_review_data_bundle_id",
-          "value": "ui_review_data_bundle_315de0e57405"
+          "value": "ui_review_data_bundle_de5ed1455c09"
         },
         {
           "field": "synthetic_confidence_summary_report_id",
-          "value": "synthetic_confidence_summary_e077b56bed1a4a4c"
+          "value": "synthetic_confidence_summary_9b021f733117be87"
         }
       ],
       "path": "demo-synthetic-confidence-summary-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:8934a830f2a2dfbcbc112ff30e3efc7136f9da22dfc487da73b7d035064d7b0b",
+      "sha256": "sha256:e7c30cf6174ca3fcaa739174b744d9be0d0e3bb4df0875e6a07b8782fcff473f",
       "status": "synthetic_confidence_summary_ready_for_review",
       "synthetic_only": true,
       "top_level_type": "object"
     },
     {
-      "byte_count": 26420,
+      "byte_count": 27991,
       "candidate_only": true,
       "external_writes_performed": false,
       "id_fields": [
         {
           "field": "source_synthetic_confidence_summary_report_id",
-          "value": "synthetic_confidence_summary_4781bf9ded036274"
+          "value": "synthetic_confidence_summary_8e4e4324fc481f20"
         },
         {
           "field": "source_synthetic_qa_review_run_report_id",
-          "value": "syntheticqareviewrun_f665d9ae0d8350cd"
+          "value": "syntheticqareviewrun_ef47d6179458468e"
         },
         {
           "field": "source_ui_manifest_id",
-          "value": "ui_review_manifest_df04e7c092e9"
+          "value": "ui_review_manifest_8ff67ff1eed4"
         },
         {
           "field": "synthetic_qa_blocker_report_id",
-          "value": "synthetic_qa_blocker_report_b3bcf9a69f865e02"
+          "value": "synthetic_qa_blocker_report_dcd6ee4143aab972"
         }
       ],
       "path": "demo-synthetic-qa-blocker-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:dd25df60508d4558d764d60901087497d185dfff9a04278e6fddcc01375900b2",
+      "sha256": "sha256:db6f0493b582b9f5971c4bb7a97b836e4960831cbecbd0246637ddb7e6db5296",
       "status": "synthetic_qa_blocker_report_ready_for_review",
       "synthetic_only": true,
       "top_level_type": "object"
     },
     {
-      "byte_count": 19056,
+      "byte_count": 20213,
       "candidate_only": true,
       "external_writes_performed": false,
       "id_fields": [
         {
           "field": "synthetic_qa_bundle_report_id",
-          "value": "synthetic_qa_bundle_ed7e0284eadd"
+          "value": "synthetic_qa_bundle_2af8afb57f7b"
         }
       ],
       "path": "demo-synthetic-qa-bundle-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:9300087bbe8b454d988e0e6e5e696c29a3c1f6f54b4991a0fcda50d787278e35",
+      "sha256": "sha256:646d4babc5b1863b5892b5031f3bd86e823b0d83265330d76213a9654eeefef6",
       "status": "pending_review",
       "synthetic_only": true,
       "top_level_type": "object"
     },
     {
-      "byte_count": 6062,
+      "byte_count": 6265,
       "candidate_only": true,
       "external_writes_performed": false,
       "id_fields": [
@@ -547,7 +575,7 @@
         },
         {
           "field": "source_synthetic_qa_blocker_report_id",
-          "value": "synthetic_qa_blocker_report_8cb2f0d820640a9b"
+          "value": "synthetic_qa_blocker_report_13281ee2ec6af9ec"
         },
         {
           "field": "synthetic_qa_review_outcome_record_id",
@@ -555,29 +583,29 @@
         },
         {
           "field": "synthetic_qa_review_outcome_report_id",
-          "value": "synthetic_qa_review_outcome_f145ebb11e71a965"
+          "value": "synthetic_qa_review_outcome_1b30ac500d9c1a3e"
         }
       ],
       "path": "demo-synthetic-qa-review-outcome-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:0a0fcc1ada49eedf350d922fee6bfd2a1e0dd8ebf69e7b0cde42128e327b2818",
+      "sha256": "sha256:1c4a78e8dbe86da91ebdb42f13c0e6299ff942a0328e8f3f3e045818f3744676",
       "status": "synthetic_qa_review_outcome_recorded_pending_followup",
       "synthetic_only": true,
       "top_level_type": "object"
     },
     {
-      "byte_count": 15313,
+      "byte_count": 16230,
       "candidate_only": true,
       "external_writes_performed": false,
       "id_fields": [
         {
           "field": "synthetic_qa_review_run_report_id",
-          "value": "syntheticqareviewrun_f665d9ae0d8350cd"
+          "value": "syntheticqareviewrun_ef47d6179458468e"
         }
       ],
       "path": "demo-synthetic-qa-review-run-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:553527ce8898658c3b67e742eebbcf8fa36eef250a7addaf9cc54c648513b213",
+      "sha256": "sha256:0d692a48526439c0291c55164134d93799b86c9b1465d0d362677ae1cf8bf0d4",
       "status": "synthetic_qa_review_run_ready",
       "synthetic_only": true,
       "top_level_type": "object"
@@ -600,7 +628,7 @@
       "top_level_type": "object"
     },
     {
-      "byte_count": 6198,
+      "byte_count": 6384,
       "candidate_only": true,
       "external_writes_performed": false,
       "id_fields": [
@@ -615,7 +643,7 @@
       ],
       "path": "demo-validation-suite-evidence-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:5f17f76434fdd077bc645c187a5d3a35bba8d1689c4a8404089e749f698ac629",
+      "sha256": "sha256:a1293f00762be05d8fece80181f23f2b37dadeecf8211bc6790d9121b194669a",
       "status": "validation_suite_passed",
       "synthetic_only": true,
       "top_level_type": "object"
@@ -623,11 +651,11 @@
   ],
   "lake_write_performed": false,
   "local_json_only": true,
-  "manifest_sha256": "sha256:51f49f313970e3dffb98ff440a24964c7f842e1519aa2c4b266b65770ee6ec60",
+  "manifest_sha256": "sha256:a1a1224b50c161a010ad79486599d74c24fe040ac5e40e7ed5693b6606f66365",
   "matter_opening_authorized": false,
   "non_authoritative": true,
   "parse_error_count": 0,
-  "parsed_json_file_count": 26,
+  "parsed_json_file_count": 27,
   "root": "apps\\legal-intake-budget\\src\\fixtures",
   "scanner": "fixture-manifest-scanner",
   "schema_version": "0.1",
@@ -646,5 +674,5 @@
   "sqlite_write_performed": false,
   "status": "passed",
   "synthetic_only": true,
-  "total_byte_count": 744175
+  "total_byte_count": 770978
 }

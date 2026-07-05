@@ -6077,6 +6077,111 @@ class PublicSyntheticFixtureConversionReviewPacket(StrictModel):
         return self
 
 
+class PublicDerivedSyntheticQAGateCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "blocked", "failed", "warning"]
+    message: str
+    artifact_refs: list[str] = Field(default_factory=list)
+    source_ids: list[str] = Field(default_factory=list)
+    conversion_spec_ids: list[str] = Field(default_factory=list)
+    candidate_exception_lake_labels: list[str] = Field(default_factory=list)
+
+
+class PublicDerivedSyntheticQAGateReport(StrictModel):
+    schema_version: str = "0.1"
+    public_derived_synthetic_qa_gate_report_id: str
+    status: Literal[
+        "public_derived_synthetic_qa_ready_for_review",
+        "blocked_by_public_derived_synthetic_qa_gate",
+    ]
+    source_methodology_report_ref: str
+    source_methodology_report_id: str
+    source_methodology_report_status: str
+    conversion_plan_ref: str
+    conversion_plan_id: str
+    conversion_plan_status: str
+    conversion_review_packet_ref: str
+    conversion_review_packet_id: str
+    conversion_review_packet_status: str
+    public_data_cache_audit_report_ref: str | None = None
+    public_data_cache_audit_report_id: str | None = None
+    public_data_cache_audit_status: str | None = None
+    cache_audit_present: bool = False
+    cache_audit_required: bool = False
+    cache_custody_status: Literal["passed", "failed", "not_run", "not_required"] = "not_required"
+    methodology_source_count: int = Field(ge=0)
+    conversion_spec_count: int = Field(ge=0)
+    review_recommendation_count: int = Field(ge=0)
+    review_red_team_note_count: int = Field(ge=0)
+    failed_check_count: int = Field(ge=0)
+    blocked_check_count: int = Field(ge=0)
+    warning_check_count: int = Field(ge=0)
+    source_ids: list[str]
+    conversion_spec_ids: list[str]
+    target_fixture_families: list[str]
+    checks: list[PublicDerivedSyntheticQAGateCheck]
+    required_next_gates: list[str]
+    candidate_exception_lake_labels: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    planning_only: Literal[True] = True
+    metadata_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    fixture_generation_authorized: Literal[False] = False
+    fixture_files_mutated: Literal[False] = False
+    github_pr_created: Literal[False] = False
+    public_records_ingested: Literal[False] = False
+    raw_public_payload_committed: Literal[False] = False
+    tracked_public_payload_committed: Literal[False] = False
+    connector_implemented: Literal[False] = False
+    legal_knowledge_adapter_authorized: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def public_derived_synthetic_qa_gate_counts_match(
+        self,
+    ) -> "PublicDerivedSyntheticQAGateReport":
+        if self.methodology_source_count != len(self.source_ids):
+            raise ValueError("public-derived QA gate source count must match source IDs")
+        if self.conversion_spec_count != len(self.conversion_spec_ids):
+            raise ValueError("public-derived QA gate spec count must match spec IDs")
+        failed = [check for check in self.checks if check.status == "failed"]
+        blocked = [check for check in self.checks if check.status == "blocked"]
+        warnings = [check for check in self.checks if check.status == "warning"]
+        if self.failed_check_count != len(failed):
+            raise ValueError("public-derived QA gate failed check count mismatch")
+        if self.blocked_check_count != len(blocked):
+            raise ValueError("public-derived QA gate blocked check count mismatch")
+        if self.warning_check_count != len(warnings):
+            raise ValueError("public-derived QA gate warning count mismatch")
+        if self.cache_audit_required and not self.cache_audit_present:
+            raise ValueError("public-derived QA gate cannot require an absent cache audit")
+        if not self.cache_audit_required and self.cache_custody_status != "not_required":
+            raise ValueError("unrequired cache audit must use not_required custody status")
+        if not self.required_next_gates:
+            raise ValueError("public-derived QA gate requires next gates")
+        if not self.candidate_exception_lake_labels:
+            raise ValueError("public-derived QA gate requires candidate exception labels")
+        if self.status == "public_derived_synthetic_qa_ready_for_review":
+            if self.failed_check_count or self.blocked_check_count:
+                raise ValueError("ready public-derived QA gate cannot include blockers")
+            if self.methodology_source_count == 0 or self.conversion_spec_count == 0:
+                raise ValueError("ready public-derived QA gate requires sources and specs")
+        if (
+            self.status == "blocked_by_public_derived_synthetic_qa_gate"
+            and not self.failed_check_count
+            and not self.blocked_check_count
+        ):
+            raise ValueError("blocked public-derived QA gate requires failed or blocked checks")
+        return self
+
+
 class PublicSyntheticFixtureConversionReviewOutcomeCheck(StrictModel):
     check_id: str
     status: Literal["passed", "failed", "warning"]
@@ -14269,6 +14374,7 @@ UIReviewDataBundleReportKind = Literal[
     "rust_fixture_manifest",
     "public_data_cache_audit",
     "rust_public_data_cache_custody",
+    "public_derived_synthetic_qa_gate",
     "matter_linking_preflight",
     "matter_linking_review_outcome",
     "matter_linking_qa_gate",

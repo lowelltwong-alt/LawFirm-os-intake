@@ -77,6 +77,7 @@ export const REQUIRED_ARTIFACT_FILES = [
   "budget_learning_loop_report.json",
   "public_source_methodology_report.json",
   "public_data_cache_audit_report.json",
+  "public_derived_synthetic_qa_gate_report.json",
 ] as const;
 
 export const REQUIRED_BOUNDARY_FLAGS: BoundaryFlags = {
@@ -101,6 +102,7 @@ export const REQUIRED_DETAIL_REPORT_FILES = [
   "rust_fixture_manifest_report.json",
   "public_data_cache_audit_report.json",
   "rust_public_data_cache_custody_report.json",
+  "public_derived_synthetic_qa_gate_report.json",
   "labor_employment_qa_matrix_report.json",
   "labor_employment_executable_coverage_report.json",
   "labor_employment_blocked_driver_impact_review_report.json",

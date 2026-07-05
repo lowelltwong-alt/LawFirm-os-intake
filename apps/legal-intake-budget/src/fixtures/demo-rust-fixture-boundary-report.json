@@ -1,8 +1,8 @@
 {
   "budget_submission_authorized": false,
   "candidate_only": true,
-  "checked_json_file_count": 25,
-  "checked_object_count": 663,
+  "checked_json_file_count": 29,
+  "checked_object_count": 706,
   "checker": "fixture-boundary-checker",
   "external_writes_performed": false,
   "failure_count": 0,

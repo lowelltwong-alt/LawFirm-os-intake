@@ -126,6 +126,7 @@ from .pr_readiness_decision import run_pr_readiness_decision_record
 from .pr_review_checklist import run_pr_review_checklist
 from .poc_qa_triage import run_poc_qa_triage_report
 from .public_data_cache import run_public_data_cache_audit
+from .public_derived_synthetic_qa_gate import run_public_derived_synthetic_qa_gate
 from .public_source_methodology import run_public_source_methodology_audit
 from .public_synthetic_fixture_pr_package import run_public_synthetic_fixture_pr_package
 from .public_synthetic_fixture_conversion import (
@@ -1424,6 +1425,34 @@ def _parser() -> argparse.ArgumentParser:
         help="Path to public_synthetic_fixture_conversion_plan.json.",
     )
     public_synthetic_conversion_review.add_argument("--out-dir", required=True)
+
+    public_derived_synthetic_qa_gate = sub.add_parser(
+        "build-public-derived-synthetic-qa-gate",
+        help=(
+            "Gate public-derived synthetic QA evidence across methodology, conversion plan, "
+            "conversion review, and optional public-data cache custody."
+        ),
+    )
+    public_derived_synthetic_qa_gate.add_argument(
+        "--methodology-report",
+        required=True,
+        help="Path to public_source_methodology_report.json.",
+    )
+    public_derived_synthetic_qa_gate.add_argument(
+        "--conversion-plan",
+        required=True,
+        help="Path to public_synthetic_fixture_conversion_plan.json.",
+    )
+    public_derived_synthetic_qa_gate.add_argument(
+        "--conversion-review-packet",
+        required=True,
+        help="Path to public_synthetic_fixture_conversion_review_packet.json.",
+    )
+    public_derived_synthetic_qa_gate.add_argument(
+        "--public-data-cache-audit-report",
+        help="Optional path to public_data_cache_audit_report.json.",
+    )
+    public_derived_synthetic_qa_gate.add_argument("--out-dir", required=True)
 
     public_synthetic_conversion_review_outcome = sub.add_parser(
         "record-public-synthetic-fixture-conversion-review",
@@ -4255,6 +4284,55 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             if packet.status != "ready_for_human_conversion_review":
+                return 2
+            return 0
+
+        if args.command == "build-public-derived-synthetic-qa-gate":
+            report, run_dir = run_public_derived_synthetic_qa_gate(
+                methodology_report_path=args.methodology_report,
+                conversion_plan_path=args.conversion_plan,
+                conversion_review_packet_path=args.conversion_review_packet,
+                public_data_cache_audit_report_path=args.public_data_cache_audit_report,
+                out_dir=args.out_dir,
+            )
+            failed_checks = [check.check_id for check in report.checks if check.status == "failed"]
+            blocked_checks = [
+                check.check_id for check in report.checks if check.status == "blocked"
+            ]
+            _print(
+                {
+                    "status": report.status,
+                    "public_derived_synthetic_qa_gate_report_id": (
+                        report.public_derived_synthetic_qa_gate_report_id
+                    ),
+                    "source_methodology_report_id": report.source_methodology_report_id,
+                    "conversion_plan_id": report.conversion_plan_id,
+                    "conversion_review_packet_id": report.conversion_review_packet_id,
+                    "methodology_source_count": report.methodology_source_count,
+                    "conversion_spec_count": report.conversion_spec_count,
+                    "review_recommendation_count": report.review_recommendation_count,
+                    "review_red_team_note_count": report.review_red_team_note_count,
+                    "cache_audit_required": report.cache_audit_required,
+                    "cache_custody_status": report.cache_custody_status,
+                    "failed_checks": failed_checks,
+                    "blocked_checks": blocked_checks,
+                    "fixture_generation_authorized": report.fixture_generation_authorized,
+                    "fixture_files_mutated": report.fixture_files_mutated,
+                    "github_pr_created": report.github_pr_created,
+                    "public_records_ingested": report.public_records_ingested,
+                    "raw_public_payload_committed": report.raw_public_payload_committed,
+                    "connector_implemented": report.connector_implemented,
+                    "legal_knowledge_adapter_authorized": (
+                        report.legal_knowledge_adapter_authorized
+                    ),
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            if report.status == "blocked_by_public_derived_synthetic_qa_gate":
                 return 2
             return 0
 

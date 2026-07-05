@@ -1,7 +1,7 @@
 {
-  "manifestId": "ui_review_manifest_afff80755124",
+  "manifestId": "ui_review_manifest_d2da96d9627a",
   "generatedAt": "2026-07-05T00:00:00Z",
-  "runLabel": "Local intake QA review: synthetic-qa-review-final",
+  "runLabel": "Local intake QA review: final-synthetic-qa-review",
   "practiceArea": "synthetic_intake",
   "matterFamily": "medical_malpractice_defense",
   "overallStatus": "blocked",
@@ -27,7 +27,7 @@
       "candidateOnly": true,
       "externalWritesPerformed": false,
       "notes": [
-        "Found preflight\\run_bc88b7afdd4f418499f527e7b3350e41\\intake_preflight_packet.json; status=human_intake_review_required."
+        "Found preflight\\run_39924bd8620d4864a5ba8c1e8bff128b\\intake_preflight_packet.json; status=human_intake_review_required."
       ]
     },
     {
@@ -573,7 +573,7 @@
       "candidateOnly": true,
       "externalWritesPerformed": false,
       "notes": [
-        "public_source_methodology_report.json was not found under the local run root."
+        "Found quality\\public-source-methodology\\public_source_methodology_report.json; status=ready_for_human_public_source_methodology_review."
       ]
     },
     {
@@ -587,6 +587,19 @@
       "externalWritesPerformed": false,
       "notes": [
         "public_data_cache_audit_report.json was not found under the local run root."
+      ]
+    },
+    {
+      "artifactId": "public-derived-synthetic-qa-gate",
+      "label": "Public-Derived Synthetic QA Gate",
+      "fileName": "public_derived_synthetic_qa_gate_report.json",
+      "status": "pending_review",
+      "owner": "qa-reference",
+      "gateState": "pending",
+      "candidateOnly": true,
+      "externalWritesPerformed": false,
+      "notes": [
+        "Found quality\\public_derived_synthetic_qa_gate_report.json; status=public_derived_synthetic_qa_ready_for_review."
       ]
     }
   ],
@@ -869,6 +882,16 @@
       "owner": "pricing-review",
       "notes": [
         "Budget actuals, carrier rejection outcomes, appeal results, and reviewed-learning candidates must be visible before QA treats budget improvement loops as covered."
+      ]
+    },
+    {
+      "gateId": "public_derived_synthetic_qa_gate",
+      "label": "Public-Derived Synthetic QA Gate",
+      "status": "pending_review",
+      "evidenceFile": "public_derived_synthetic_qa_gate_report.json",
+      "owner": "qa-reference",
+      "notes": [
+        "Public-source methodology, conversion planning, conversion review, and cache custody must be bound before public-derived synthetic fixtures are trusted for QA."
       ]
     },
     {

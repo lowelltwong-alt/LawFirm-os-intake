@@ -127,7 +127,7 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
 
     assert code == 0
     assert report["status"] == "synthetic_qa_review_run_ready"
-    assert report["step_count"] == len(report["steps"]) == 31
+    assert report["step_count"] == len(report["steps"]) == 32
     assert report["failed_step_count"] == 0
     assert report["candidate_only"] is True
     assert report["synthetic_only"] is True
@@ -161,6 +161,7 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
         "labor_employment_budget_outcome_replay_confidence_status",
         "labor_employment_budget_fact_gold",
         "budget_learning_loop",
+        "public_derived_synthetic_qa_gate",
         "synthetic_qa_bundle",
         "ui_review_manifest",
         "ui_review_data_bundle",
@@ -203,6 +204,7 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
         "labor_employment_budget_outcome_replay_execution",
         "labor_employment_budget_outcome_replay_builder_binding",
         "labor_employment_budget_outcome_replay_confidence_status",
+        "public_derived_synthetic_qa_gate",
     } <= {gate["gateId"] for gate in ui_manifest["qualityGates"]}
     assert ui_data_bundle["status"] == "ready_for_review"
     assert poc_qa_triage["status"] == "poc_qa_ready_for_review"
@@ -213,8 +215,8 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
     ui_detail_reports = {
         report["report_kind"]: report for report in ui_data_bundle["detail_reports"]
     }
-    assert ui_data_bundle["detail_report_count"] == 24
-    assert ui_data_bundle["present_detail_report_count"] == 21
+    assert ui_data_bundle["detail_report_count"] == 25
+    assert ui_data_bundle["present_detail_report_count"] == 22
     assert ui_detail_reports["ui_demo_qa_recipe"]["present"] is False
     assert ui_detail_reports["ui_demo_qa_recipe"]["required"] is False
     assert ui_detail_reports["synthetic_qa_review_run"]["present"] is True
@@ -277,6 +279,11 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
     assert ui_detail_reports["budget_learning_loop"]["required"] is True
     assert ui_detail_reports["budget_learning_loop"]["status"] == (
         "budget_learning_loop_ready_for_review"
+    )
+    assert ui_detail_reports["public_derived_synthetic_qa_gate"]["present"] is True
+    assert ui_detail_reports["public_derived_synthetic_qa_gate"]["required"] is False
+    assert ui_detail_reports["public_derived_synthetic_qa_gate"]["status"] == (
+        "public_derived_synthetic_qa_ready_for_review"
     )
     assert ui_detail_reports["synthetic_confidence_summary"]["present"] is True
     assert ui_detail_reports["synthetic_qa_blocker_report"]["present"] is True

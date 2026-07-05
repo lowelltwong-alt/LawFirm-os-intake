@@ -164,6 +164,8 @@ from lawfirm_os_intake.models import (  # noqa: E402
     PublicDataCacheAuditCheck,
     PublicDataCacheAuditReport,
     PublicDataCacheSourceManifest,
+    PublicDerivedSyntheticQAGateCheck,
+    PublicDerivedSyntheticQAGateReport,
     PublicSourceMethodologyCheck,
     PublicSourceMethodologyReport,
     PublicSourceMethodologySource,
@@ -696,6 +698,8 @@ MODELS = {
     "public-synthetic-fixture-conversion-review-outcome-report.schema.json": (
         PublicSyntheticFixtureConversionReviewOutcomeReport
     ),
+    "public-derived-synthetic-qa-gate-check.schema.json": PublicDerivedSyntheticQAGateCheck,
+    "public-derived-synthetic-qa-gate-report.schema.json": PublicDerivedSyntheticQAGateReport,
     "public-synthetic-fixture-pr-package-check.schema.json": PublicSyntheticFixturePRPackageCheck,
     "public-synthetic-fixture-pr-package-item.schema.json": PublicSyntheticFixturePRPackageItem,
     "public-synthetic-fixture-pr-package-report.schema.json": (

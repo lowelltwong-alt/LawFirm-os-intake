@@ -1,0 +1,399 @@
+{
+  "$defs": {
+    "PublicDerivedSyntheticQAGateCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "blocked",
+            "failed",
+            "warning"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "artifact_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Artifact Refs",
+          "type": "array"
+        },
+        "source_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Source Ids",
+          "type": "array"
+        },
+        "conversion_spec_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Conversion Spec Ids",
+          "type": "array"
+        },
+        "candidate_exception_lake_labels": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Candidate Exception Lake Labels",
+          "type": "array"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "PublicDerivedSyntheticQAGateCheck",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "public_derived_synthetic_qa_gate_report_id": {
+      "title": "Public Derived Synthetic Qa Gate Report Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "public_derived_synthetic_qa_ready_for_review",
+        "blocked_by_public_derived_synthetic_qa_gate"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "source_methodology_report_ref": {
+      "title": "Source Methodology Report Ref",
+      "type": "string"
+    },
+    "source_methodology_report_id": {
+      "title": "Source Methodology Report Id",
+      "type": "string"
+    },
+    "source_methodology_report_status": {
+      "title": "Source Methodology Report Status",
+      "type": "string"
+    },
+    "conversion_plan_ref": {
+      "title": "Conversion Plan Ref",
+      "type": "string"
+    },
+    "conversion_plan_id": {
+      "title": "Conversion Plan Id",
+      "type": "string"
+    },
+    "conversion_plan_status": {
+      "title": "Conversion Plan Status",
+      "type": "string"
+    },
+    "conversion_review_packet_ref": {
+      "title": "Conversion Review Packet Ref",
+      "type": "string"
+    },
+    "conversion_review_packet_id": {
+      "title": "Conversion Review Packet Id",
+      "type": "string"
+    },
+    "conversion_review_packet_status": {
+      "title": "Conversion Review Packet Status",
+      "type": "string"
+    },
+    "public_data_cache_audit_report_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Public Data Cache Audit Report Ref"
+    },
+    "public_data_cache_audit_report_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Public Data Cache Audit Report Id"
+    },
+    "public_data_cache_audit_status": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Public Data Cache Audit Status"
+    },
+    "cache_audit_present": {
+      "default": false,
+      "title": "Cache Audit Present",
+      "type": "boolean"
+    },
+    "cache_audit_required": {
+      "default": false,
+      "title": "Cache Audit Required",
+      "type": "boolean"
+    },
+    "cache_custody_status": {
+      "default": "not_required",
+      "enum": [
+        "passed",
+        "failed",
+        "not_run",
+        "not_required"
+      ],
+      "title": "Cache Custody Status",
+      "type": "string"
+    },
+    "methodology_source_count": {
+      "minimum": 0,
+      "title": "Methodology Source Count",
+      "type": "integer"
+    },
+    "conversion_spec_count": {
+      "minimum": 0,
+      "title": "Conversion Spec Count",
+      "type": "integer"
+    },
+    "review_recommendation_count": {
+      "minimum": 0,
+      "title": "Review Recommendation Count",
+      "type": "integer"
+    },
+    "review_red_team_note_count": {
+      "minimum": 0,
+      "title": "Review Red Team Note Count",
+      "type": "integer"
+    },
+    "failed_check_count": {
+      "minimum": 0,
+      "title": "Failed Check Count",
+      "type": "integer"
+    },
+    "blocked_check_count": {
+      "minimum": 0,
+      "title": "Blocked Check Count",
+      "type": "integer"
+    },
+    "warning_check_count": {
+      "minimum": 0,
+      "title": "Warning Check Count",
+      "type": "integer"
+    },
+    "source_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Source Ids",
+      "type": "array"
+    },
+    "conversion_spec_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Conversion Spec Ids",
+      "type": "array"
+    },
+    "target_fixture_families": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Target Fixture Families",
+      "type": "array"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/PublicDerivedSyntheticQAGateCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "required_next_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Gates",
+      "type": "array"
+    },
+    "candidate_exception_lake_labels": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Candidate Exception Lake Labels",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "planning_only": {
+      "const": true,
+      "default": true,
+      "title": "Planning Only",
+      "type": "boolean"
+    },
+    "metadata_only": {
+      "const": true,
+      "default": true,
+      "title": "Metadata Only",
+      "type": "boolean"
+    },
+    "human_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Human Review Required",
+      "type": "boolean"
+    },
+    "fixture_generation_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Fixture Generation Authorized",
+      "type": "boolean"
+    },
+    "fixture_files_mutated": {
+      "const": false,
+      "default": false,
+      "title": "Fixture Files Mutated",
+      "type": "boolean"
+    },
+    "github_pr_created": {
+      "const": false,
+      "default": false,
+      "title": "Github Pr Created",
+      "type": "boolean"
+    },
+    "public_records_ingested": {
+      "const": false,
+      "default": false,
+      "title": "Public Records Ingested",
+      "type": "boolean"
+    },
+    "raw_public_payload_committed": {
+      "const": false,
+      "default": false,
+      "title": "Raw Public Payload Committed",
+      "type": "boolean"
+    },
+    "tracked_public_payload_committed": {
+      "const": false,
+      "default": false,
+      "title": "Tracked Public Payload Committed",
+      "type": "boolean"
+    },
+    "connector_implemented": {
+      "const": false,
+      "default": false,
+      "title": "Connector Implemented",
+      "type": "boolean"
+    },
+    "legal_knowledge_adapter_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Legal Knowledge Adapter Authorized",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "matter_opening_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Matter Opening Authorized",
+      "type": "boolean"
+    },
+    "budget_submission_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Submission Authorized",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "public_derived_synthetic_qa_gate_report_id",
+    "status",
+    "source_methodology_report_ref",
+    "source_methodology_report_id",
+    "source_methodology_report_status",
+    "conversion_plan_ref",
+    "conversion_plan_id",
+    "conversion_plan_status",
+    "conversion_review_packet_ref",
+    "conversion_review_packet_id",
+    "conversion_review_packet_status",
+    "methodology_source_count",
+    "conversion_spec_count",
+    "review_recommendation_count",
+    "review_red_team_note_count",
+    "failed_check_count",
+    "blocked_check_count",
+    "warning_check_count",
+    "source_ids",
+    "conversion_spec_ids",
+    "target_fixture_families",
+    "checks",
+    "required_next_gates",
+    "candidate_exception_lake_labels",
+    "generated_at"
+  ],
+  "title": "PublicDerivedSyntheticQAGateReport",
+  "type": "object"
+}

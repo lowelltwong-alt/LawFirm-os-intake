@@ -1,0 +1,186 @@
+{
+  "schema_version": "0.1",
+  "public_derived_synthetic_qa_gate_report_id": "publicderivedsyntheticqagate_74cd493a68dc49dcaa2a18c8b91f4d71",
+  "status": "public_derived_synthetic_qa_ready_for_review",
+  "source_methodology_report_ref": "<demo-run-root>\\quality\\public-source-methodology\\public_source_methodology_report.json",
+  "source_methodology_report_id": "publicsourcemethodology_d0ce9ad204ae45acbee9b523f0985e4f",
+  "source_methodology_report_status": "ready_for_human_public_source_methodology_review",
+  "conversion_plan_ref": "<demo-run-root>\\quality\\public-synthetic-conversion\\public_synthetic_fixture_conversion_plan.json",
+  "conversion_plan_id": "publicsyntheticfixtureplan_acf5b493506843c2be1d295e544a8bc2",
+  "conversion_plan_status": "ready_for_human_conversion_review",
+  "conversion_review_packet_ref": "<demo-run-root>\\quality\\public-synthetic-conversion-review\\public_synthetic_fixture_conversion_review_packet.json",
+  "conversion_review_packet_id": "publicfixtureconvreview_036c019cc5c42a10c595",
+  "conversion_review_packet_status": "ready_for_human_conversion_review",
+  "public_data_cache_audit_report_ref": null,
+  "public_data_cache_audit_report_id": null,
+  "public_data_cache_audit_status": null,
+  "cache_audit_present": false,
+  "cache_audit_required": false,
+  "cache_custody_status": "not_required",
+  "methodology_source_count": 6,
+  "conversion_spec_count": 6,
+  "review_recommendation_count": 6,
+  "review_red_team_note_count": 7,
+  "failed_check_count": 0,
+  "blocked_check_count": 0,
+  "warning_check_count": 0,
+  "source_ids": [
+    "courtlistener-recap",
+    "fjc-idb",
+    "cmu-enron-email",
+    "sec-edgar",
+    "nhtsa-public-crash-data",
+    "npdb-public-use-data"
+  ],
+  "conversion_spec_ids": [
+    "publicsyntheticfixturespec_1703622bd1274807a124cd64801b084a",
+    "publicsyntheticfixturespec_dc64637e249f45c48abd2b6c561a5a4f",
+    "publicsyntheticfixturespec_3b56dc4a96c14caeb94970454b75b67c",
+    "publicsyntheticfixturespec_9610d061bba643dc834c13df12cddd28",
+    "publicsyntheticfixturespec_13f0789e271d4c6b90dc603c16176c0e",
+    "publicsyntheticfixturespec_197ee6134c6344019178a854aee25b2a"
+  ],
+  "target_fixture_families": [
+    "docket_structure",
+    "aggregate_case_metadata",
+    "messy_email_structure",
+    "public_filing_structure",
+    "auto_liability_distribution",
+    "medical_malpractice_distribution"
+  ],
+  "checks": [
+    {
+      "check_id": "source_methodology_ready",
+      "status": "passed",
+      "message": "Public-source methodology is ready and source counts match.",
+      "artifact_refs": [
+        "<demo-run-root>\\quality\\public-source-methodology\\public_source_methodology_report.json"
+      ],
+      "source_ids": [
+        "courtlistener-recap",
+        "fjc-idb",
+        "cmu-enron-email",
+        "sec-edgar",
+        "nhtsa-public-crash-data",
+        "npdb-public-use-data"
+      ],
+      "conversion_spec_ids": [],
+      "candidate_exception_lake_labels": []
+    },
+    {
+      "check_id": "conversion_plan_matches_methodology",
+      "status": "passed",
+      "message": "Conversion plan points to the methodology report and covers every methodology source once.",
+      "artifact_refs": [
+        "<demo-run-root>\\quality\\public-source-methodology\\public_source_methodology_report.json",
+        "<demo-run-root>\\quality\\public-synthetic-conversion\\public_synthetic_fixture_conversion_plan.json"
+      ],
+      "source_ids": [],
+      "conversion_spec_ids": [
+        "publicsyntheticfixturespec_1703622bd1274807a124cd64801b084a",
+        "publicsyntheticfixturespec_dc64637e249f45c48abd2b6c561a5a4f",
+        "publicsyntheticfixturespec_3b56dc4a96c14caeb94970454b75b67c",
+        "publicsyntheticfixturespec_9610d061bba643dc834c13df12cddd28",
+        "publicsyntheticfixturespec_13f0789e271d4c6b90dc603c16176c0e",
+        "publicsyntheticfixturespec_197ee6134c6344019178a854aee25b2a"
+      ],
+      "candidate_exception_lake_labels": []
+    },
+    {
+      "check_id": "conversion_review_packet_matches_plan",
+      "status": "passed",
+      "message": "Conversion review packet matches the plan and has recommendations, decision templates, and red-team notes.",
+      "artifact_refs": [
+        "<demo-run-root>\\quality\\public-synthetic-conversion\\public_synthetic_fixture_conversion_plan.json",
+        "<demo-run-root>\\quality\\public-synthetic-conversion-review\\public_synthetic_fixture_conversion_review_packet.json"
+      ],
+      "source_ids": [],
+      "conversion_spec_ids": [],
+      "candidate_exception_lake_labels": []
+    },
+    {
+      "check_id": "cache_custody_ready_when_samples_exist",
+      "status": "passed",
+      "message": "No public-cache samples require custody validation.",
+      "artifact_refs": [],
+      "source_ids": [],
+      "conversion_spec_ids": [],
+      "candidate_exception_lake_labels": []
+    },
+    {
+      "check_id": "no_public_payload_or_side_effects",
+      "status": "passed",
+      "message": "All linked artifacts remain metadata-only/candidate-only and record no prohibited side effects.",
+      "artifact_refs": [
+        "<demo-run-root>\\quality\\public-source-methodology\\public_source_methodology_report.json",
+        "<demo-run-root>\\quality\\public-synthetic-conversion\\public_synthetic_fixture_conversion_plan.json",
+        "<demo-run-root>\\quality\\public-synthetic-conversion-review\\public_synthetic_fixture_conversion_review_packet.json"
+      ],
+      "source_ids": [],
+      "conversion_spec_ids": [],
+      "candidate_exception_lake_labels": []
+    },
+    {
+      "check_id": "human_review_still_required",
+      "status": "passed",
+      "message": "Human methodology and conversion review remain required; review outcomes must be append-only.",
+      "artifact_refs": [
+        "<demo-run-root>\\quality\\public-source-methodology\\public_source_methodology_report.json",
+        "<demo-run-root>\\quality\\public-synthetic-conversion\\public_synthetic_fixture_conversion_plan.json",
+        "<demo-run-root>\\quality\\public-synthetic-conversion-review\\public_synthetic_fixture_conversion_review_packet.json"
+      ],
+      "source_ids": [],
+      "conversion_spec_ids": [],
+      "candidate_exception_lake_labels": []
+    },
+    {
+      "check_id": "synthetic_gold_and_red_team_checks_present",
+      "status": "passed",
+      "message": "Every conversion spec has synthetic gold and red-team checks and the review packet has red-team notes.",
+      "artifact_refs": [
+        "<demo-run-root>\\quality\\public-synthetic-conversion\\public_synthetic_fixture_conversion_plan.json",
+        "<demo-run-root>\\quality\\public-synthetic-conversion-review\\public_synthetic_fixture_conversion_review_packet.json"
+      ],
+      "source_ids": [],
+      "conversion_spec_ids": [],
+      "candidate_exception_lake_labels": []
+    }
+  ],
+  "required_next_gates": [
+    "human_public_source_methodology_review",
+    "human_public_synthetic_conversion_review",
+    "append_only_conversion_review_outcome",
+    "separate_synthetic_fixture_generation_pr_if_approved",
+    "synthetic_fixture_gold_review",
+    "red_team_identity_reconstruction_review",
+    "public_cache_custody_review_when_samples_exist",
+    "legal_knowledge_runtime_owner_review_before_adapter"
+  ],
+  "candidate_exception_lake_labels": [
+    "public_derived_synthetic_qa_gate_candidate",
+    "public_source_methodology_review_pending",
+    "public_synthetic_conversion_review_pending",
+    "public_payload_ingestion_blocked",
+    "fixture_generation_requires_separate_review"
+  ],
+  "candidate_only": true,
+  "non_authoritative": true,
+  "planning_only": true,
+  "metadata_only": true,
+  "human_review_required": true,
+  "fixture_generation_authorized": false,
+  "fixture_files_mutated": false,
+  "github_pr_created": false,
+  "public_records_ingested": false,
+  "raw_public_payload_committed": false,
+  "tracked_public_payload_committed": false,
+  "connector_implemented": false,
+  "legal_knowledge_adapter_authorized": false,
+  "lake_write_performed": false,
+  "sqlite_write_performed": false,
+  "external_writes_performed": false,
+  "silent_learning_performed": false,
+  "matter_opening_authorized": false,
+  "budget_submission_authorized": false,
+  "generated_at": "2026-07-05T17:43:12.970388Z"
+}

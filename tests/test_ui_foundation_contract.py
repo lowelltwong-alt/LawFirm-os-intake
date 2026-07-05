@@ -28,6 +28,7 @@ def test_legal_intake_budget_ui_required_files_exist(repo_root):
         "src/fixtures/demo-rust-fixture-boundary-report.json",
         "src/fixtures/demo-rust-fixture-manifest-report.json",
         "src/fixtures/demo-public-data-cache-audit-report.json",
+        "src/fixtures/demo-public-derived-synthetic-qa-gate-report.json",
         "src/fixtures/demo-rust-public-data-cache-custody-report.json",
         "src/fixtures/demo-validation-suite-evidence-report.json",
         "src/fixtures/demo-matter-linking-preflight-report.json",
@@ -110,6 +111,7 @@ def test_legal_intake_budget_ui_data_contract_lists_required_artifacts(repo_root
         "budget_learning_loop_report.json",
         "public_source_methodology_report.json",
         "public_data_cache_audit_report.json",
+        "public_derived_synthetic_qa_gate_report.json",
     ]
 
     for artifact in expected_artifacts:
@@ -168,6 +170,7 @@ def test_legal_intake_budget_demo_manifest_is_read_only_and_candidate_only(repo_
         "labor_employment_budget_outcome_replay_builder_binding",
         "labor_employment_budget_outcome_replay_confidence_status",
         "budget_learning_loop",
+        "public_derived_synthetic_qa_gate",
         "labor_employment_budget_fact_gold",
         "validation_suite_evidence",
         "full_pytest",
@@ -185,9 +188,9 @@ def test_legal_intake_budget_demo_ui_review_data_bundle_is_local_and_no_write(re
     detail_reports = {report["file_name"]: report for report in bundle["detail_reports"]}
 
     assert bundle["status"] == "ready_for_review"
-    assert bundle["detail_report_count"] == len(bundle["detail_reports"]) == 24
+    assert bundle["detail_report_count"] == len(bundle["detail_reports"]) == 25
     assert bundle["required_detail_report_count"] == 13
-    assert bundle["present_detail_report_count"] == 24
+    assert bundle["present_detail_report_count"] == 25
     assert bundle["missing_required_detail_report_count"] == 0
     assert bundle["external_write_report_count"] == 0
     assert bundle["candidate_only"] is True
@@ -210,6 +213,7 @@ def test_legal_intake_budget_demo_ui_review_data_bundle_is_local_and_no_write(re
         "rust_fixture_manifest_report.json",
         "public_data_cache_audit_report.json",
         "rust_public_data_cache_custody_report.json",
+        "public_derived_synthetic_qa_gate_report.json",
         "matter_linking_preflight_report.json",
         "matter_linking_qa_gate_report.json",
         "matter_linking_review_outcome_report.json",
@@ -240,6 +244,11 @@ def test_legal_intake_budget_public_data_custody_fixtures_are_metadata_only(repo
     custody = json.loads(
         (
             repo_root / UI_ROOT / "src/fixtures/demo-rust-public-data-cache-custody-report.json"
+        ).read_text(encoding="utf-8")
+    )
+    gate = json.loads(
+        (
+            repo_root / UI_ROOT / "src/fixtures/demo-public-derived-synthetic-qa-gate-report.json"
         ).read_text(encoding="utf-8")
     )
     triage = json.loads(
@@ -280,6 +289,21 @@ def test_legal_intake_budget_public_data_custody_fixtures_are_metadata_only(repo
     assert custody["lake_write_performed"] is False
     assert custody["sqlite_write_performed"] is False
     assert custody["external_writes_performed"] is False
+
+    assert gate["status"] == "public_derived_synthetic_qa_ready_for_review"
+    assert gate["candidate_only"] is True
+    assert gate["metadata_only"] is True
+    assert gate["human_review_required"] is True
+    assert gate["fixture_generation_authorized"] is False
+    assert gate["fixture_files_mutated"] is False
+    assert gate["github_pr_created"] is False
+    assert gate["public_records_ingested"] is False
+    assert gate["raw_public_payload_committed"] is False
+    assert gate["lake_write_performed"] is False
+    assert gate["sqlite_write_performed"] is False
+    assert gate["external_writes_performed"] is False
+    assert gate["silent_learning_performed"] is False
+    assert "public_payload_ingestion_blocked" in gate["candidate_exception_lake_labels"]
 
     public_items = [item for item in triage["items"] if item["category"] == "public_data_boundary"]
     assert len(public_items) == 1
@@ -350,7 +374,7 @@ def test_legal_intake_budget_demo_synthetic_qa_review_run_is_no_write(repo_root)
     )
 
     assert report["status"] == "synthetic_qa_review_run_ready"
-    assert report["step_count"] == len(report["steps"]) == 31
+    assert report["step_count"] == len(report["steps"]) == 32
     assert report["failed_step_count"] == 0
     assert report["candidate_only"] is True
     assert report["synthetic_only"] is True
@@ -385,6 +409,7 @@ def test_legal_intake_budget_demo_synthetic_qa_review_run_is_no_write(repo_root)
         "labor_employment_budget_outcome_replay_builder_binding",
         "labor_employment_budget_outcome_replay_confidence_status",
         "budget_learning_loop",
+        "public_derived_synthetic_qa_gate",
     } <= {step["step_id"] for step in report["steps"]}
 
 
@@ -756,11 +781,11 @@ def test_legal_intake_budget_demo_synthetic_confidence_summary_is_no_write(repo_
     assert report["status"] == "synthetic_confidence_summary_ready_for_review"
     assert report["testing_readiness_state"] == "synthetic_qa_ready_pending_review"
     assert report["top_blockers"] == []
-    assert report["qa_step_count"] == 31
+    assert report["qa_step_count"] == 32
     assert report["qa_failed_step_count"] == 0
     assert report["qa_missing_required_artifact_count"] == 0
-    assert report["ui_detail_report_count"] == 24
-    assert report["ui_present_detail_report_count"] == 24
+    assert report["ui_detail_report_count"] == 25
+    assert report["ui_present_detail_report_count"] == 20
     assert report["ui_missing_required_detail_report_count"] == 0
     assert report["display_banner"]["candidate_only"] is True
     assert report["display_banner"]["synthetic_only"] is True
@@ -1042,12 +1067,12 @@ def test_legal_intake_budget_demo_synthetic_qa_blocker_report_is_no_write(repo_r
     )
 
     assert report["status"] == "synthetic_qa_blocker_report_ready_for_review"
-    assert report["row_count"] == len(report["rows"]) == 27
+    assert report["row_count"] == len(report["rows"]) == 28
     assert report["failed_row_count"] == 0
     assert report["blocked_row_count"] == 0
-    assert report["pending_review_row_count"] == 27
+    assert report["pending_review_row_count"] == 28
     assert report["blocked_action_count"] == 0
-    assert report["needs_review_action_count"] == 27
+    assert report["needs_review_action_count"] == 28
     assert report["fixed_action_count"] == 0
     assert report["ready_action_count"] == 0
     assert report["review_queue_state"] == "needs_review"
@@ -1078,9 +1103,9 @@ def test_legal_intake_budget_demo_synthetic_qa_review_outcome_is_no_write(repo_r
     )
 
     assert report["status"] == "synthetic_qa_review_outcome_recorded_pending_followup"
-    assert report["source_row_count"] == 27
+    assert report["source_row_count"] == 28
     assert report["reviewed_row_count"] == len(report["reviewed_row_ids"]) == 3
-    assert report["unreviewed_row_count"] == len(report["unreviewed_row_ids"]) == 24
+    assert report["unreviewed_row_count"] == len(report["unreviewed_row_ids"]) == 25
     assert report["decision_count"] == 3
     assert report["accepted_decision_count"] == 1
     assert report["needs_fix_decision_count"] == 1

@@ -1,9 +1,9 @@
 {
   "schema_version": "0.1",
-  "budget_learning_loop_report_id": "budgetlearningloop_3afcb077e60da04f83af",
+  "budget_learning_loop_report_id": "budgetlearningloop_94e731012798aee27bee",
   "status": "budget_learning_loop_ready_for_review",
-  "run_id": "budgetlearninglooprun_50f2af21a0bc731c543c",
-  "preflight_packet_id": "intake_a1a8a56624654bc48e18fad72d5c09c9",
+  "run_id": "budgetlearninglooprun_77c408f9b8902244ad2e",
+  "preflight_packet_id": "intake_1a4be502bbac45debfc0797b50ebc5f7",
   "source_budget_actual_comparison_report_ref": "<demo-run-root>\\quality\\budget-actuals\\budget_actual_comparison_report.json",
   "source_budget_actual_variance_ledger_report_ref": "<demo-run-root>\\quality\\budget-actuals\\budget_actual_variance_ledger_report.json",
   "source_carrier_rejection_reconciliation_report_ref": "<demo-run-root>\\quality\\carrier-rejections\\carrier_rejection_reconciliation_report.json",
@@ -11,7 +11,7 @@
   "source_carrier_rejection_review_packet_ref": "<demo-run-root>\\quality\\carrier-rejection-review\\carrier_rejection_review_packet.json",
   "source_carrier_rejection_learning_report_ref": "<demo-run-root>\\quality\\carrier-rejection-learning\\carrier_rejection_learning_report.json",
   "source_reviewed_learning_gate_report_ref": "<demo-run-root>\\quality\\reviewed-learning-gate\\reviewed_learning_gate_report.json",
-  "budget_proposal_id": "budget_a77133afc0ff42e192187036517b25a9",
+  "budget_proposal_id": "budget_4227e8c882e74cf18f77dde0f8fd1852",
   "comparison_budget_state": "human_revised_candidate",
   "actuals": {
     "status": "variance_review_required",

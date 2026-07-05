@@ -1,9 +1,9 @@
 {
   "schema_version": "0.1",
-  "builder_binding_report_id": "lebudgetreplaybinding_08e62ee9be5a15e4",
+  "builder_binding_report_id": "lebudgetreplaybinding_8f28916d4a5b458f",
   "status": "labor_employment_budget_replay_builder_binding_ready_for_review",
   "source_execution_report_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\labor_employment_budget_outcome_replay_execution_report.json",
-  "source_execution_report_id": "lebudgetoutcomeexecution_5368f6044f271c01",
+  "source_execution_report_id": "lebudgetoutcomeexecution_dd3ce385af935ae9",
   "source_execution_report_status": "labor_employment_budget_outcome_replay_execution_ready_for_review",
   "fixture_count": 8,
   "case_count": 8,
@@ -747,7 +747,7 @@
         "labor-employment-budget-learning-fixtures.v0_1",
         "le-discrimination-harassment-clean.executable.v0_1",
         "le-learning-discrimination-harassment-clean.v0_1",
-        "lebudgetqagate_04b7fc7bfe14c5ec"
+        "lebudgetqagate_82b13586cb2ff133"
       ],
       "failure_ids": [],
       "candidate_only": true,
@@ -1130,7 +1130,7 @@
         "labor-employment-budget-learning-fixtures.v0_1",
         "le-learning-wage-hour-clean.v0_1",
         "le-wage-hour-clean.executable.v0_1",
-        "lebudgetqagate_04b7fc7bfe14c5ec"
+        "lebudgetqagate_82b13586cb2ff133"
       ],
       "failure_ids": [],
       "candidate_only": true,
@@ -1512,7 +1512,7 @@
         "labor-employment-budget-learning-fixtures.v0_1",
         "le-epli-carrier-clean.executable.v0_1",
         "le-learning-epli-carrier-clean.v0_1",
-        "lebudgetqagate_04b7fc7bfe14c5ec"
+        "lebudgetqagate_82b13586cb2ff133"
       ],
       "failure_ids": [],
       "candidate_only": true,
@@ -1782,7 +1782,7 @@
         "labor-employment-budget-learning-fixtures.v0_1",
         "le-learning-retaliation-messy-thread.v0_1",
         "le-retaliation-wrongful-termination-messy-thread.executable.v0_1",
-        "lebudgetqagate_04b7fc7bfe14c5ec"
+        "lebudgetqagate_82b13586cb2ff133"
       ],
       "failure_ids": [],
       "candidate_only": true,
@@ -2052,7 +2052,7 @@
         "labor-employment-budget-learning-fixtures.v0_1",
         "le-class-collective-clean.executable.v0_1",
         "le-learning-class-collective-clean.v0_1",
-        "lebudgetqagate_04b7fc7bfe14c5ec"
+        "lebudgetqagate_82b13586cb2ff133"
       ],
       "failure_ids": [],
       "candidate_only": true,
@@ -2324,7 +2324,7 @@
         "labor-employment-budget-learning-fixtures.v0_1",
         "le-learning-restrictive-covenant-messy-thread.v0_1",
         "le-restrictive-covenant-messy-thread.executable.v0_1",
-        "lebudgetqagate_04b7fc7bfe14c5ec"
+        "lebudgetqagate_82b13586cb2ff133"
       ],
       "failure_ids": [],
       "candidate_only": true,
@@ -2594,7 +2594,7 @@
         "labor-employment-budget-learning-fixtures.v0_1",
         "le-admin-exhaustion-clean.executable.v0_1",
         "le-learning-admin-exhaustion-clean.v0_1",
-        "lebudgetqagate_04b7fc7bfe14c5ec"
+        "lebudgetqagate_82b13586cb2ff133"
       ],
       "failure_ids": [],
       "candidate_only": true,
@@ -2745,7 +2745,7 @@
         "labor-employment-budget-learning-fixtures.v0_1",
         "le-ada-fmla-adversarial.executable.v0_1",
         "le-learning-ada-fmla-adversarial.v0_1",
-        "lebudgetqagate_04b7fc7bfe14c5ec"
+        "lebudgetqagate_82b13586cb2ff133"
       ],
       "failure_ids": [],
       "candidate_only": true,
@@ -2767,7 +2767,7 @@
       "status": "passed",
       "message": "Source execution report is ready and contains materialized candidate slots.",
       "evidence_refs": [
-        "lebudgetoutcomeexecution_5368f6044f271c01"
+        "lebudgetoutcomeexecution_dd3ce385af935ae9"
       ],
       "blocking_refs": []
     },

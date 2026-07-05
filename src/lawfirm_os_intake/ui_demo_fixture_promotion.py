@@ -158,6 +158,10 @@ DEFAULT_UI_DEMO_FIXTURE_PROMOTION_SPECS: tuple[UIDemoFixturePromotionSpec, ...] 
         "quality/budget_learning_loop_report.json",
         "demo-budget-learning-loop-report.json",
     ),
+    UIDemoFixturePromotionSpec(
+        "quality/public_derived_synthetic_qa_gate_report.json",
+        "demo-public-derived-synthetic-qa-gate-report.json",
+    ),
 )
 
 

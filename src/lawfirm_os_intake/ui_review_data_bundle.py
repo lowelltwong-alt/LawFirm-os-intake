@@ -102,6 +102,14 @@ DETAIL_REPORT_SPECS = [
         required=False,
     ),
     UIReviewDetailSpec(
+        detail_report_id="public-derived-synthetic-qa-gate",
+        label="Public-Derived Synthetic QA Gate",
+        report_kind="public_derived_synthetic_qa_gate",
+        file_name="public_derived_synthetic_qa_gate_report.json",
+        renderer="PublicDerivedSyntheticQAGatePanel",
+        required=False,
+    ),
+    UIReviewDetailSpec(
         detail_report_id="matter-linking-preflight",
         label="Matter-Linking Preflight",
         report_kind="matter_linking_preflight",

@@ -47,6 +47,16 @@ from lawfirm_os_intake.labor_employment_fixture_family_pack import (
 from lawfirm_os_intake.labor_employment_qa_matrix import run_labor_employment_qa_matrix
 from lawfirm_os_intake.matter_linking_qa_gate import run_matter_linking_qa_gate
 from lawfirm_os_intake.models import BudgetCalibrationStarterPackReport
+from lawfirm_os_intake.public_derived_synthetic_qa_gate import (
+    run_public_derived_synthetic_qa_gate,
+)
+from lawfirm_os_intake.public_source_methodology import run_public_source_methodology_audit
+from lawfirm_os_intake.public_synthetic_fixture_conversion import (
+    run_public_synthetic_fixture_conversion_plan,
+)
+from lawfirm_os_intake.public_synthetic_fixture_conversion_review import (
+    run_public_synthetic_fixture_conversion_review,
+)
 from lawfirm_os_intake.synthetic_qa_bundle import run_synthetic_qa_bundle
 from lawfirm_os_intake.util import load_json, write_json
 
@@ -348,6 +358,28 @@ def test_starter_pack_allows_synthetic_qa_bundle_to_reach_pending_review(
         out_dir=run_root / "quality" / "matter-linking-qa-gate",
         generated_at="2026-07-02T00:00:00Z",
     )
+    _, public_methodology_dir = run_public_source_methodology_audit(
+        repo_root=repo_root,
+        out_dir=run_root / "quality" / "public-source-methodology",
+    )
+    public_methodology_report = public_methodology_dir / "public_source_methodology_report.json"
+    _, public_conversion_dir = run_public_synthetic_fixture_conversion_plan(
+        methodology_report_path=public_methodology_report,
+        out_dir=run_root / "quality" / "public-synthetic-conversion",
+    )
+    public_conversion_plan = public_conversion_dir / "public_synthetic_fixture_conversion_plan.json"
+    _, public_conversion_review_dir = run_public_synthetic_fixture_conversion_review(
+        conversion_plan_path=public_conversion_plan,
+        out_dir=run_root / "quality" / "public-synthetic-conversion-review",
+    )
+    run_public_derived_synthetic_qa_gate(
+        methodology_report_path=public_methodology_report,
+        conversion_plan_path=public_conversion_plan,
+        conversion_review_packet_path=(
+            public_conversion_review_dir / "public_synthetic_fixture_conversion_review_packet.json"
+        ),
+        out_dir=run_root / "quality" / "public-derived-synthetic-qa-gate",
+    )
 
     bundle, _, ui_manifest = run_synthetic_qa_bundle(
         run_root=run_root,
@@ -388,6 +420,7 @@ def test_starter_pack_allows_synthetic_qa_bundle_to_reach_pending_review(
         gates["labor_employment_budget_outcome_replay_confidence_status"]["status"]
         == "pending_review"
     )
+    assert gates["public_derived_synthetic_qa_gate"]["status"] == "pending_review"
     assert gates["labor_employment_budget_fact_gold"]["status"] == "passed"
     assert gates["budget_learning_loop"]["status"] == "pending_review"
     assert ui_manifest["overallStatus"] == "blocked"

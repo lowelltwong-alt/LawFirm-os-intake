@@ -1,18 +1,18 @@
 {
   "schema_version": "0.1",
-  "replay_confidence_status_report_id": "lereplayconfidence_200069fdf1dd937c",
+  "replay_confidence_status_report_id": "lereplayconfidence_0267c82c48ca0aa9",
   "status": "labor_employment_budget_outcome_replay_confidence_pending_inputs",
   "source_readiness_report_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-readiness\\labor_employment_budget_outcome_replay_readiness_report.json",
-  "source_readiness_report_id": "lebudgetoutcomereplay_634a96d0605f2e21",
+  "source_readiness_report_id": "lebudgetoutcomereplay_d8a822255425b0ad",
   "source_readiness_report_status": "labor_employment_budget_outcome_replay_ready_for_review",
   "source_execution_report_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\labor_employment_budget_outcome_replay_execution_report.json",
-  "source_execution_report_id": "lebudgetoutcomeexecution_5368f6044f271c01",
+  "source_execution_report_id": "lebudgetoutcomeexecution_dd3ce385af935ae9",
   "source_execution_report_status": "labor_employment_budget_outcome_replay_execution_ready_for_review",
   "source_builder_binding_report_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-builder-binding\\labor_employment_budget_outcome_replay_builder_binding_report.json",
-  "source_builder_binding_report_id": "lebudgetreplaybinding_08e62ee9be5a15e4",
+  "source_builder_binding_report_id": "lebudgetreplaybinding_8f28916d4a5b458f",
   "source_builder_binding_report_status": "labor_employment_budget_replay_builder_binding_ready_for_review",
   "source_input_pack_report_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-input-pack\\labor_employment_budget_outcome_replay_input_pack_report.json",
-  "source_input_pack_report_id": "lebudgetreplayinputpack_75e2abf96edd5837",
+  "source_input_pack_report_id": "lebudgetreplayinputpack_44efb78934b38136",
   "source_input_pack_report_status": "labor_employment_budget_replay_input_pack_partially_ready_for_review",
   "fixture_count": 8,
   "stage_count": 4,
@@ -30,7 +30,7 @@
       "stage_id": "readiness",
       "label": "Replay Readiness",
       "source_report_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-readiness\\labor_employment_budget_outcome_replay_readiness_report.json",
-      "source_report_id": "lebudgetoutcomereplay_634a96d0605f2e21",
+      "source_report_id": "lebudgetoutcomereplay_d8a822255425b0ad",
       "source_report_status": "labor_employment_budget_outcome_replay_ready_for_review",
       "status": "ready",
       "counts": {
@@ -42,7 +42,7 @@
       "blocker_count": 0,
       "blockers": [],
       "evidence_refs": [
-        "lebudgetoutcomereplay_634a96d0605f2e21"
+        "lebudgetoutcomereplay_d8a822255425b0ad"
       ],
       "candidate_only": true,
       "non_authoritative": true,
@@ -60,7 +60,7 @@
       "stage_id": "execution",
       "label": "Replay Execution Slots",
       "source_report_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\labor_employment_budget_outcome_replay_execution_report.json",
-      "source_report_id": "lebudgetoutcomeexecution_5368f6044f271c01",
+      "source_report_id": "lebudgetoutcomeexecution_dd3ce385af935ae9",
       "source_report_status": "labor_employment_budget_outcome_replay_execution_ready_for_review",
       "status": "ready",
       "counts": {
@@ -73,7 +73,7 @@
       "blocker_count": 0,
       "blockers": [],
       "evidence_refs": [
-        "lebudgetoutcomeexecution_5368f6044f271c01"
+        "lebudgetoutcomeexecution_dd3ce385af935ae9"
       ],
       "candidate_only": true,
       "non_authoritative": true,
@@ -91,7 +91,7 @@
       "stage_id": "builder_binding",
       "label": "Builder Binding",
       "source_report_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-builder-binding\\labor_employment_budget_outcome_replay_builder_binding_report.json",
-      "source_report_id": "lebudgetreplaybinding_08e62ee9be5a15e4",
+      "source_report_id": "lebudgetreplaybinding_8f28916d4a5b458f",
       "source_report_status": "labor_employment_budget_replay_builder_binding_ready_for_review",
       "status": "pending_inputs",
       "counts": {
@@ -108,7 +108,7 @@
         "missing case prerequisites=27"
       ],
       "evidence_refs": [
-        "lebudgetreplaybinding_08e62ee9be5a15e4"
+        "lebudgetreplaybinding_8f28916d4a5b458f"
       ],
       "candidate_only": true,
       "non_authoritative": true,
@@ -126,7 +126,7 @@
       "stage_id": "input_pack",
       "label": "Replay Input Pack",
       "source_report_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-input-pack\\labor_employment_budget_outcome_replay_input_pack_report.json",
-      "source_report_id": "lebudgetreplayinputpack_75e2abf96edd5837",
+      "source_report_id": "lebudgetreplayinputpack_44efb78934b38136",
       "source_report_status": "labor_employment_budget_replay_input_pack_partially_ready_for_review",
       "status": "pending_inputs",
       "counts": {
@@ -145,7 +145,7 @@
         "partial replay input cases=7"
       ],
       "evidence_refs": [
-        "lebudgetreplayinputpack_75e2abf96edd5837"
+        "lebudgetreplayinputpack_44efb78934b38136"
       ],
       "candidate_only": true,
       "non_authoritative": true,

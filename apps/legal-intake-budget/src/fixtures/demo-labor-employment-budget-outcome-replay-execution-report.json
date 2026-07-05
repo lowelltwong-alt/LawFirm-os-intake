@@ -1,11 +1,11 @@
 {
   "schema_version": "0.1",
-  "outcome_replay_execution_report_id": "lebudgetoutcomeexecution_5368f6044f271c01",
+  "outcome_replay_execution_report_id": "lebudgetoutcomeexecution_dd3ce385af935ae9",
   "status": "labor_employment_budget_outcome_replay_execution_ready_for_review",
   "source_seed_manifest_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\examples\\synthetic\\labor-employment\\labor-employment-budget-outcome-replay-seeds.json",
   "source_seed_manifest_id": "labor-employment-budget-outcome-replay-seeds.v0_1",
   "source_readiness_report_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-readiness\\labor_employment_budget_outcome_replay_readiness_report.json",
-  "source_readiness_report_id": "lebudgetoutcomereplay_634a96d0605f2e21",
+  "source_readiness_report_id": "lebudgetoutcomereplay_d8a822255425b0ad",
   "source_readiness_report_status": "labor_employment_budget_outcome_replay_ready_for_review",
   "fixture_count": 8,
   "materialized_case_count": 8,
@@ -248,7 +248,7 @@
         "labor-employment-budget-learning-fixtures.v0_1",
         "le-discrimination-harassment-clean.executable.v0_1",
         "le-learning-discrimination-harassment-clean.v0_1",
-        "lebudgetqagate_04b7fc7bfe14c5ec"
+        "lebudgetqagate_82b13586cb2ff133"
       ],
       "failure_ids": [],
       "runtime_artifacts_created": false,
@@ -442,7 +442,7 @@
         "labor-employment-budget-learning-fixtures.v0_1",
         "le-learning-wage-hour-clean.v0_1",
         "le-wage-hour-clean.executable.v0_1",
-        "lebudgetqagate_04b7fc7bfe14c5ec"
+        "lebudgetqagate_82b13586cb2ff133"
       ],
       "failure_ids": [],
       "runtime_artifacts_created": false,
@@ -634,7 +634,7 @@
         "labor-employment-budget-learning-fixtures.v0_1",
         "le-epli-carrier-clean.executable.v0_1",
         "le-learning-epli-carrier-clean.v0_1",
-        "lebudgetqagate_04b7fc7bfe14c5ec"
+        "lebudgetqagate_82b13586cb2ff133"
       ],
       "failure_ids": [],
       "runtime_artifacts_created": false,
@@ -779,7 +779,7 @@
         "labor-employment-budget-learning-fixtures.v0_1",
         "le-learning-retaliation-messy-thread.v0_1",
         "le-retaliation-wrongful-termination-messy-thread.executable.v0_1",
-        "lebudgetqagate_04b7fc7bfe14c5ec"
+        "lebudgetqagate_82b13586cb2ff133"
       ],
       "failure_ids": [],
       "runtime_artifacts_created": false,
@@ -924,7 +924,7 @@
         "labor-employment-budget-learning-fixtures.v0_1",
         "le-class-collective-clean.executable.v0_1",
         "le-learning-class-collective-clean.v0_1",
-        "lebudgetqagate_04b7fc7bfe14c5ec"
+        "lebudgetqagate_82b13586cb2ff133"
       ],
       "failure_ids": [],
       "runtime_artifacts_created": false,
@@ -1068,7 +1068,7 @@
         "labor-employment-budget-learning-fixtures.v0_1",
         "le-learning-restrictive-covenant-messy-thread.v0_1",
         "le-restrictive-covenant-messy-thread.executable.v0_1",
-        "lebudgetqagate_04b7fc7bfe14c5ec"
+        "lebudgetqagate_82b13586cb2ff133"
       ],
       "failure_ids": [],
       "runtime_artifacts_created": false,
@@ -1212,7 +1212,7 @@
         "labor-employment-budget-learning-fixtures.v0_1",
         "le-admin-exhaustion-clean.executable.v0_1",
         "le-learning-admin-exhaustion-clean.v0_1",
-        "lebudgetqagate_04b7fc7bfe14c5ec"
+        "lebudgetqagate_82b13586cb2ff133"
       ],
       "failure_ids": [],
       "runtime_artifacts_created": false,
@@ -1309,7 +1309,7 @@
         "labor-employment-budget-learning-fixtures.v0_1",
         "le-ada-fmla-adversarial.executable.v0_1",
         "le-learning-ada-fmla-adversarial.v0_1",
-        "lebudgetqagate_04b7fc7bfe14c5ec"
+        "lebudgetqagate_82b13586cb2ff133"
       ],
       "failure_ids": [],
       "runtime_artifacts_created": false,
@@ -1332,7 +1332,7 @@
       "status": "passed",
       "message": "Source readiness report is ready with no failed cases or unresolved refs.",
       "evidence_refs": [
-        "lebudgetoutcomereplay_634a96d0605f2e21"
+        "lebudgetoutcomereplay_d8a822255425b0ad"
       ],
       "blocking_refs": []
     },

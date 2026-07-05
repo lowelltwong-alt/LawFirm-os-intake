@@ -261,6 +261,17 @@ QA_BUNDLE_ARTIFACTS = [
             "prove ambiguous, resolved, weak-only, and conflicting-identifier states."
         ),
     ),
+    QABundleArtifactSpec(
+        artifact_id="public_derived_synthetic_qa_gate",
+        label="Public-Derived Synthetic QA Gate",
+        file_name="public_derived_synthetic_qa_gate_report.json",
+        required=True,
+        missing_note=(
+            "Run build-public-derived-synthetic-qa-gate so public-source methodology, "
+            "conversion specs, conversion review, and public-cache custody evidence "
+            "are bound before public-derived synthetic fixtures are trusted for QA."
+        ),
+    ),
 ]
 
 
@@ -405,6 +416,11 @@ def run_synthetic_qa_bundle(
             root=root,
             explicit_path=None,
             file_name="matter_linking_qa_gate_report.json",
+        ),
+        "public_derived_synthetic_qa_gate": _resolve_artifact_source(
+            root=root,
+            explicit_path=None,
+            file_name="public_derived_synthetic_qa_gate_report.json",
         ),
     }
     artifacts = [

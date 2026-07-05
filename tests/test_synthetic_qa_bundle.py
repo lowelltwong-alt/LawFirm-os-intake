@@ -354,6 +354,26 @@ def _write_ready_matter_linking_qa_gate(path):
     )
 
 
+def _write_ready_public_derived_synthetic_qa_gate(path):
+    write_json(
+        path,
+        {
+            "status": "public_derived_synthetic_qa_ready_for_review",
+            "candidate_only": True,
+            "synthetic_only": True,
+            "external_writes_performed": False,
+            "lake_write_performed": False,
+            "sqlite_write_performed": False,
+            "fixture_generation_authorized": False,
+            "fixture_files_mutated": False,
+            "github_pr_created": False,
+            "public_records_ingested": False,
+            "raw_public_payload_committed": False,
+            "silent_learning_performed": False,
+        },
+    )
+
+
 def test_synthetic_qa_bundle_blocks_missing_calibration_and_builds_ui(tmp_path):
     run_root = tmp_path / "demo"
     budget_dir = run_root / "budget"
@@ -424,6 +444,9 @@ def test_synthetic_qa_bundle_blocks_missing_calibration_and_builds_ui(tmp_path):
     )
     _write_ready_budget_learning_loop(quality_dir / "budget_learning_loop_report.json")
     _write_ready_matter_linking_qa_gate(quality_dir / "matter_linking_qa_gate_report.json")
+    _write_ready_public_derived_synthetic_qa_gate(
+        quality_dir / "public_derived_synthetic_qa_gate_report.json"
+    )
 
     report, run_dir, ui_manifest = run_synthetic_qa_bundle(
         run_root=run_root,
@@ -443,6 +466,8 @@ def test_synthetic_qa_bundle_blocks_missing_calibration_and_builds_ui(tmp_path):
     assert persisted["missing_required_artifact_count"] == 1
     assert artifacts["budget_learning_loop"]["present"] is True
     assert artifacts["budget_learning_loop"]["status"] == "pending_review"
+    assert artifacts["public_derived_synthetic_qa_gate"]["present"] is True
+    assert artifacts["public_derived_synthetic_qa_gate"]["status"] == "pending_review"
     assert artifacts["labor_employment_budget_learning_fixtures"]["present"] is True
     assert artifacts["labor_employment_budget_learning_fixtures"]["status"] == "pending_review"
     assert artifacts["labor_employment_budget_outcome_replay_readiness"]["present"] is True
@@ -538,6 +563,9 @@ def test_synthetic_qa_bundle_can_generate_fixture_depth_from_manifest(tmp_path, 
     )
     _write_ready_budget_learning_loop(quality_dir / "budget_learning_loop_report.json")
     _write_ready_matter_linking_qa_gate(quality_dir / "matter_linking_qa_gate_report.json")
+    _write_ready_public_derived_synthetic_qa_gate(
+        quality_dir / "public_derived_synthetic_qa_gate_report.json"
+    )
 
     report, run_dir, _ = run_synthetic_qa_bundle(
         run_root=run_root,
@@ -598,6 +626,7 @@ def test_synthetic_qa_bundle_cli_writes_bundle_and_manifest(tmp_path):
         "labor_employment_budget_fact_gold_report.json",
         "budget_learning_loop_report.json",
         "matter_linking_qa_gate_report.json",
+        "public_derived_synthetic_qa_gate_report.json",
     ]:
         write_json(
             quality_dir / file_name,
@@ -643,6 +672,8 @@ def test_synthetic_qa_bundle_cli_writes_bundle_and_manifest(tmp_path):
                     if file_name == "budget_learning_loop_report.json"
                     else "matter_linking_qa_gate_ready_for_review"
                     if file_name == "matter_linking_qa_gate_report.json"
+                    else "public_derived_synthetic_qa_ready_for_review"
+                    if file_name == "public_derived_synthetic_qa_gate_report.json"
                     else "passed"
                     if file_name != "labor_employment_executable_fact_binding_report.json"
                     else "labor_employment_executable_budget_fact_bindings_ready_for_review"
@@ -677,6 +708,7 @@ def test_synthetic_qa_bundle_cli_writes_bundle_and_manifest(tmp_path):
     assert "labor_employment_budget_outcome_replay_builder_binding" in artifact_ids
     assert "labor_employment_budget_outcome_replay_confidence_status" in artifact_ids
     assert "budget_learning_loop" in artifact_ids
+    assert "public_derived_synthetic_qa_gate" in artifact_ids
     assert report["ui_data_bundle_ref"] == str(run_root / "ui_review_data_bundle.json")
     assert manifest["overallStatus"] in {"passed", "blocked"}
     assert ui_data_bundle["status"] == "blocked_missing_required_reports"

@@ -128,6 +128,22 @@ from .synthetic_qa_review_outcomes import (
 )
 from .synthetic_qa_bundle import SYNTHETIC_QA_BUNDLE_REPORT_FILENAME, run_synthetic_qa_bundle
 from .poc_qa_triage import POC_QA_TRIAGE_REPORT_FILENAME, run_poc_qa_triage_report
+from .public_derived_synthetic_qa_gate import (
+    PUBLIC_DERIVED_SYNTHETIC_QA_GATE_REPORT_FILENAME,
+    run_public_derived_synthetic_qa_gate,
+)
+from .public_source_methodology import (
+    PUBLIC_SOURCE_METHODOLOGY_REPORT_FILENAME,
+    run_public_source_methodology_audit,
+)
+from .public_synthetic_fixture_conversion import (
+    PUBLIC_SYNTHETIC_FIXTURE_CONVERSION_PLAN_FILENAME,
+    run_public_synthetic_fixture_conversion_plan,
+)
+from .public_synthetic_fixture_conversion_review import (
+    PUBLIC_SYNTHETIC_FIXTURE_CONVERSION_REVIEW_PACKET_FILENAME,
+    run_public_synthetic_fixture_conversion_review,
+)
 from .ui_review_data_bundle import UI_REVIEW_DATA_BUNDLE_FILENAME, build_ui_review_data_bundle
 from .ui_review_manifest import build_ui_review_manifest
 from .util import digest_json, load_json, now_iso, write_json
@@ -696,6 +712,54 @@ def run_synthetic_qa_review_run(
         )
     )
 
+    public_methodology, public_methodology_dir = run_public_source_methodology_audit(
+        repo_root=root,
+        out_dir=quality_dir / "public-source-methodology",
+    )
+    public_methodology_ref = public_methodology_dir / PUBLIC_SOURCE_METHODOLOGY_REPORT_FILENAME
+    public_conversion, public_conversion_dir = run_public_synthetic_fixture_conversion_plan(
+        methodology_report_path=public_methodology_ref,
+        out_dir=quality_dir / "public-synthetic-conversion",
+    )
+    public_conversion_ref = (
+        public_conversion_dir / PUBLIC_SYNTHETIC_FIXTURE_CONVERSION_PLAN_FILENAME
+    )
+    public_conversion_review, public_conversion_review_dir = (
+        run_public_synthetic_fixture_conversion_review(
+            conversion_plan_path=public_conversion_ref,
+            out_dir=quality_dir / "public-synthetic-conversion-review",
+        )
+    )
+    public_conversion_review_ref = (
+        public_conversion_review_dir / PUBLIC_SYNTHETIC_FIXTURE_CONVERSION_REVIEW_PACKET_FILENAME
+    )
+    public_derived_gate, public_derived_gate_dir = run_public_derived_synthetic_qa_gate(
+        methodology_report_path=public_methodology_ref,
+        conversion_plan_path=public_conversion_ref,
+        conversion_review_packet_path=public_conversion_review_ref,
+        out_dir=quality_dir / "public-derived-synthetic-qa-gate",
+    )
+    public_derived_gate_ref = (
+        public_derived_gate_dir / PUBLIC_DERIVED_SYNTHETIC_QA_GATE_REPORT_FILENAME
+    )
+    steps.append(
+        _step(
+            "public_derived_synthetic_qa_gate",
+            "Public-Derived Synthetic QA Gate",
+            public_derived_gate.status,
+            public_derived_gate_ref,
+            public_methodology.status == "ready_for_human_public_source_methodology_review"
+            and public_conversion.status == "ready_for_human_conversion_review"
+            and public_conversion_review.status == "ready_for_human_conversion_review"
+            and public_derived_gate.status == "public_derived_synthetic_qa_ready_for_review",
+            (
+                "Public-source methodology, conversion planning, conversion review, "
+                "and cache-custody boundary checks are bound before public-derived "
+                "synthetic fixtures are trusted for QA."
+            ),
+        )
+    )
+
     for source_path in [
         starter_dir / "budget-calibration-readiness" / "budget_calibration_readiness_report.json",
         matter_linking_ref,
@@ -719,6 +783,7 @@ def run_synthetic_qa_review_run(
         outcome_confidence_ref,
         gold_dir / LABOR_EMPLOYMENT_BUDGET_FACT_GOLD_REPORT_FILENAME,
         budget_learning_loop_ref,
+        public_derived_gate_ref,
     ]:
         _stage_for_bundle(source_path, quality_dir)
 

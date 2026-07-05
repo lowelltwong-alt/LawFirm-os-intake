@@ -1,0 +1,58 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "check_id": {
+      "title": "Check Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "passed",
+        "blocked",
+        "failed",
+        "warning"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "message": {
+      "title": "Message",
+      "type": "string"
+    },
+    "artifact_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Artifact Refs",
+      "type": "array"
+    },
+    "source_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Source Ids",
+      "type": "array"
+    },
+    "conversion_spec_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Conversion Spec Ids",
+      "type": "array"
+    },
+    "candidate_exception_lake_labels": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Candidate Exception Lake Labels",
+      "type": "array"
+    }
+  },
+  "required": [
+    "check_id",
+    "status",
+    "message"
+  ],
+  "title": "PublicDerivedSyntheticQAGateCheck",
+  "type": "object"
+}

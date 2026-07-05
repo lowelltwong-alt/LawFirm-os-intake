@@ -53,6 +53,7 @@ def _write_quality_evidence(run_root):
         "labor_employment_budget_outcome_replay_builder_binding_report.json",
         "labor_employment_budget_fact_gold_report.json",
         "budget_learning_loop_report.json",
+        "public_derived_synthetic_qa_gate_report.json",
     ]:
         write_json(
             quality_dir / file_name, {"status": "passed", "external_writes_performed": False}
