@@ -1,0 +1,92 @@
+{
+  "schema_version": "0.1",
+  "issue_id": "ui-dirty-validation-evidence-gate-001",
+  "issue_version": "0.1.0",
+  "observed_at": "2026-07-05T00:00:00Z",
+  "source_repo_id": "LawFirm-os-intake",
+  "source_repo_path": "LawFirm-os-intake",
+  "originating_agent": "codex",
+  "review_context": "The checked legal intake budget UI displayed validation evidence from local JSON. The validation report can have all wrapper steps passed while still recording that the worktree was dirty when the evidence was captured.",
+  "finding_title": "Passed validation steps can overstate QA readiness when captured from a dirty worktree.",
+  "severity": "P1",
+  "issue_classes": [
+    "ui_authority_risk",
+    "evidence_gap",
+    "governance_drift_risk",
+    "data_flow_gap",
+    "test_gap"
+  ],
+  "finding_summary": "A validation report with passed commands but dirty worktree state is useful evidence, but it is not safe promotion evidence for checked demo fixtures or downstream QA confidence claims.",
+  "observable_context": [
+    "The validation evidence fixture records status validation_suite_passed and working_tree_dirty true.",
+    "The UI workbench previously treated passed steps, no failed steps, and no timed-out steps as validation-ready.",
+    "The UI demo QA recipe added a stricter clean-worktree gate, but the read-only UI had not exposed the same distinction.",
+    "The fix makes dirty validation evidence block the UI validation card and validation panel while preserving the report as local candidate evidence."
+  ],
+  "observable_decision_logic": [
+    "Command success and artifact freshness are separate evidence dimensions.",
+    "A dirty worktree can mean tests ran against code or fixtures different from the checked review surface.",
+    "The UI should not silently upgrade dirty validation evidence into promotion-ready QA proof.",
+    "The safest default is to display the condition and require a clean-worktree validation rerun before expanding synthetic QA or promoting fixture confidence."
+  ],
+  "solution_path": [
+    "Update the TypeScript UI contract to classify validation_suite_passed plus working_tree_dirty true as validation_suite_evidence_passed_with_dirty_worktree.",
+    "Update the QA workbench validation card so dirty validation evidence is blocked and asks for clean regeneration.",
+    "Update the validation suite panel to show clean or dirty worktree state and promotion readiness.",
+    "Add tests that bind the current checked fixture and UI code to this behavior."
+  ],
+  "fix_status": "fixed_pending_validation",
+  "fix_refs": [
+    "apps/legal-intake-budget/src/App.tsx",
+    "apps/legal-intake-budget/src/data-contract.ts",
+    "tests/test_ui_foundation_contract.py"
+  ],
+  "test_refs": [
+    "python scripts/run_full_pytest.py tests/test_ui_foundation_contract.py -q"
+  ],
+  "artifact_refs": [
+    "apps/legal-intake-budget/src/fixtures/demo-validation-suite-evidence-report.json",
+    "apps/legal-intake-budget/src/fixtures/demo-ui-review-data-bundle.json"
+  ],
+  "candidate_exception_labels": [
+    "dirty_validation_evidence",
+    "qa_evidence_freshness_gap",
+    "ui_quality_gate_overstatement",
+    "checked_fixture_promotion_guard",
+    "dad_learning_loop_candidate"
+  ],
+  "applies_when": [
+    "A repo displays validation evidence from generated JSON.",
+    "The validation report includes worktree dirty or clean state.",
+    "A checked UI or fixture promotion path relies on validation evidence."
+  ],
+  "does_not_apply_when": [
+    "The evidence is explicitly labeled exploratory and not used for readiness or promotion.",
+    "The validation report does not have access to worktree state.",
+    "A stronger immutable build artifact already binds code commit, fixture hashes, and validation results."
+  ],
+  "danger_if_misapplied": "If every dirty validation report is discarded, useful defect evidence may be lost. The intended rule is to preserve the report but block readiness and promotion claims until clean evidence exists.",
+  "suggested_actions": [
+    "DAD should classify dirty validation evidence as a freshness or provenance defect, not as a failed test result.",
+    "Exception Lake design should distinguish failed checks from stale, dirty, or unverifiable proof layers.",
+    "Other repos with UI confidence dashboards should show dirty evidence as blocked for promotion while retaining it as candidate diagnostics."
+  ],
+  "reviewer_notes": [
+    "This record contains synthetic fixture and local artifact references only.",
+    "It records observable evidence, decision logic, fix refs, and test refs without hidden chain-of-thought."
+  ],
+  "red_team_notes": [
+    "Do not hide dirty evidence just because all command steps passed.",
+    "Do not use dirty validation evidence to justify checked fixture promotion.",
+    "Do not rewrite old validation reports to appear clean; regenerate evidence from a clean tree instead."
+  ],
+  "raw_private_payload_included": false,
+  "hidden_chain_of_thought_included": false,
+  "candidate_only": true,
+  "dad_outbox_required": true,
+  "dad_review_required_before_promotion": true,
+  "lake_write_performed": false,
+  "sqlite_write_performed": false,
+  "external_writes_performed": false,
+  "silent_learning_performed": false
+}

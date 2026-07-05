@@ -349,7 +349,8 @@ function buildQAWorkbenchCards({
   const validationReady =
     validationReport.status === "validation_suite_passed" &&
     validationReport.failed_step_count === 0 &&
-    validationReport.timed_out_step_count === 0;
+    validationReport.timed_out_step_count === 0 &&
+    !validationReport.working_tree_dirty;
   const pocReady = pocReport.status === "poc_qa_ready_for_review";
   const reviewQueueReady =
     blockerReport.failed_row_count === 0 && blockerReport.blocked_row_count === 0;
@@ -360,10 +361,12 @@ function buildQAWorkbenchCards({
       label: "Validation Evidence",
       state: validationReady && pocReady ? "passed" : "blocked",
       metric: `${validationReport.passed_step_count}/${validationReport.step_count}`,
-      detail: "Full pytest, smoke demo, schema export, lint, and repo validation evidence is attached.",
+      detail: validationReport.working_tree_dirty
+        ? "Validation commands passed, but the report was captured from a dirty worktree."
+        : "Full pytest, smoke demo, schema export, lint, and repo validation evidence is attached.",
       nextAction: validationReady
         ? "Use this as the baseline before adding the next fixture family."
-        : "Refresh validation evidence before expanding synthetic QA.",
+        : "Regenerate validation evidence from a clean worktree before expanding synthetic QA.",
       evidenceRefs: ["demo-validation-suite-evidence-report.json", "scripts/run_validation_suite.py"],
     },
     {
@@ -1331,9 +1334,16 @@ function ValidationSuiteEvidencePanel({
 }) {
   const statusClass =
     report.status === "validation_suite_passed" &&
+    !report.working_tree_dirty &&
     validationSuiteEvidenceFailures.length === 0
       ? "state state-passed"
       : "state state-blocked";
+  const displayStatus =
+    report.status === "validation_suite_passed" && report.working_tree_dirty
+      ? "dirty"
+      : report.status === "validation_suite_passed"
+        ? "passed"
+        : "blocked";
 
   return (
     <section className="panel validation-panel" aria-labelledby="validation-suite-title">
@@ -1343,9 +1353,7 @@ function ValidationSuiteEvidencePanel({
           <h2 id="validation-suite-title">Validation Suite Evidence</h2>
           <code>{report.validation_suite_evidence_report_id}</code>
         </div>
-        <span className={statusClass}>
-          {report.status === "validation_suite_passed" ? "passed" : "blocked"}
-        </span>
+        <span className={statusClass}>{displayStatus}</span>
       </div>
 
       <div className="matrix-summary" aria-label="Validation suite summary">
@@ -1362,6 +1370,10 @@ function ValidationSuiteEvidencePanel({
         <div>
           <span>Timed Out</span>
           <strong>{report.timed_out_step_count}</strong>
+        </div>
+        <div>
+          <span>Worktree</span>
+          <strong>{report.working_tree_dirty ? "dirty" : "clean"}</strong>
         </div>
         <div>
           <span>Policy</span>
@@ -1387,7 +1399,8 @@ function ValidationSuiteEvidencePanel({
       </div>
 
       <p className="boundary">
-        Evidence is local JSON only. Lake writes:{" "}
+        Evidence is local JSON only. Clean worktree required for promotion:{" "}
+        {report.working_tree_dirty ? "not satisfied" : "satisfied"}. Lake writes:{" "}
         {report.lake_write_performed ? "not blocked" : "blocked"}. Budget submission:{" "}
         {report.budget_submission_authorized ? "not blocked" : "blocked"}.
       </p>

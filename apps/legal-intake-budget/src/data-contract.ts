@@ -662,6 +662,9 @@ export function assertValidationSuiteEvidenceReport(
   if (report.status === "validation_suite_passed" && (failed.length > 0 || timedOut.length > 0)) {
     failures.push("validation_suite_evidence_passed_with_failed_steps");
   }
+  if (report.status === "validation_suite_passed" && report.working_tree_dirty) {
+    failures.push("validation_suite_evidence_passed_with_dirty_worktree");
+  }
   if (report.status === "blocked_by_validation_suite" && failed.length + timedOut.length === 0) {
     failures.push("validation_suite_evidence_blocked_without_failed_steps");
   }

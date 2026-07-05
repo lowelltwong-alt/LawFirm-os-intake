@@ -876,6 +876,7 @@ def test_legal_intake_budget_demo_validation_suite_evidence_is_no_write(repo_roo
     assert report["passed_step_count"] == 7
     assert report["failed_step_count"] == 0
     assert report["timed_out_step_count"] == 0
+    assert report["working_tree_dirty"] is True
     assert report["policy_ref"] == "config/validation-runtime-policy.yaml"
     assert steps["full_pytest"]["status"] == "passed"
     assert steps["full_pytest"]["timeout_seconds"] >= 3600
@@ -893,6 +894,26 @@ def test_legal_intake_budget_demo_validation_suite_evidence_is_no_write(repo_roo
     assert report["sqlite_write_performed"] is False
     assert report["external_writes_performed"] is False
     assert report["silent_learning_performed"] is False
+
+
+def test_legal_intake_budget_ui_blocks_dirty_validation_evidence(repo_root):
+    app = (repo_root / UI_ROOT / "src/App.tsx").read_text(encoding="utf-8")
+    contract = (repo_root / UI_ROOT / "src/data-contract.ts").read_text(encoding="utf-8")
+    validation = json.loads(
+        (repo_root / UI_ROOT / "src/fixtures/demo-validation-suite-evidence-report.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    assert validation["status"] == "validation_suite_passed"
+    assert validation["working_tree_dirty"] is True
+    assert "!validationReport.working_tree_dirty" in app
+    assert "!report.working_tree_dirty" in app
+    assert "span>Worktree</span>" in app
+    assert 'report.working_tree_dirty ? "dirty" : "clean"' in app
+    assert "Regenerate validation evidence from a clean worktree" in app
+    assert "Clean worktree required for promotion" in app
+    assert "validation_suite_evidence_passed_with_dirty_worktree" in contract
 
 
 def test_legal_intake_budget_demo_synthetic_qa_blocker_report_is_no_write(repo_root):
@@ -1586,6 +1607,7 @@ def test_legal_intake_budget_qa_workbench_joins_ready_state_and_budget_targets(r
     assert "blockerReport: syntheticQABlockerReport" in app
     assert "pocReport: pocQATriage" in app
     assert "validationReport: validationSuiteEvidence" in app
+    assert "!validationReport.working_tree_dirty" in app
     assert "review-only and remain outside calibration" in app
     assert "block_amount_budget_impact_count" in app
     assert "range_widening_impact_count" in app
@@ -1599,6 +1621,7 @@ def test_legal_intake_budget_qa_workbench_joins_ready_state_and_budget_targets(r
     assert poc["status"] == "poc_qa_ready_for_review"
     assert validation["status"] == "validation_suite_passed"
     assert validation["failed_step_count"] == 0
+    assert validation["working_tree_dirty"] is True
     assert any(
         case["block_amount_budget_impact_count"] > 0
         and case["final_allowed_budget_output"] == "blocked_amount_budget"
