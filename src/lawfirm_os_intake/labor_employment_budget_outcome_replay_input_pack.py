@@ -106,6 +106,15 @@ PROHIBITED_REAL_DATA_FIELDS = {
     "contains_real_client_data",
     "contains_real_matter_data",
 }
+PROHIBITED_FALSE_AUTHORITY_FIELDS = {
+    "not_authorized_for_budget_submission",
+    "not_authorized_for_client_submission",
+    "not_authorized_for_external_submission",
+    "not_authorized_for_external_write",
+    "not_authorized_for_lake_write",
+    "not_authorized_for_matter_opening",
+    "not_authorized_for_sqlite_write",
+}
 
 
 def run_labor_employment_budget_outcome_replay_input_pack_audit(
@@ -591,9 +600,13 @@ def _resolve_local_ref(input_ref: str, repo_root: Path) -> Path | None:
     if path_part.startswith(("http://", "https://", "app://")):
         return None
     candidate = Path(path_part)
-    if not candidate.is_absolute():
-        candidate = repo_root / candidate
-    return candidate
+    if candidate.is_absolute():
+        return None
+    resolved_repo = repo_root.resolve()
+    resolved = (resolved_repo / candidate).resolve()
+    if resolved_repo not in [resolved, *resolved.parents]:
+        return None
+    return resolved
 
 
 def _boundary_errors(value: Any, path: str = "$") -> list[str]:
@@ -604,6 +617,8 @@ def _boundary_errors(value: Any, path: str = "$") -> list[str]:
             if key in PROHIBITED_TRUE_FIELDS and item is True:
                 errors.append(item_path)
             if key in PROHIBITED_REAL_DATA_FIELDS and item is True:
+                errors.append(item_path)
+            if key in PROHIBITED_FALSE_AUTHORITY_FIELDS and item is False:
                 errors.append(item_path)
             if key == "data_origin" and item not in {"synthetic", None}:
                 errors.append(item_path)

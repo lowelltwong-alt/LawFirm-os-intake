@@ -1,0 +1,96 @@
+{
+  "schema_version": "0.1",
+  "issue_id": "le-budget-replay-input-pack-boundary-001",
+  "issue_version": "0.1.0",
+  "observed_at": "2026-07-04T00:00:00Z",
+  "source_repo_id": "LawFirm-os-intake",
+  "source_repo_path": "LawFirm-os-intake",
+  "originating_agent": "codex",
+  "review_context": "First runnable L&E replay input-pack slice for actuals variance and carrier rejection capture.",
+  "finding_title": "Replay input refs need repo containment and boundary scanning before runnable status.",
+  "severity": "P1",
+  "issue_classes": [
+    "architecture_risk",
+    "authority_boundary_risk",
+    "data_flow_gap",
+    "synthetic_data_gap",
+    "test_gap",
+    "performance_or_rust_candidate"
+  ],
+  "finding_summary": "Input-pack validation can overstate readiness if it accepts absolute or escaping local paths, or if a permissive artifact schema allows inverted authorization flags such as not_authorized_for_client_submission=false.",
+  "observable_context": [
+    "The first runnable L&E replay input pack adds synthetic budget, actuals, and carrier rejection inputs for the discrimination/harassment clean fixture.",
+    "The input-pack audit initially validated each JSON artifact independently but did not require refs to stay under the repo root.",
+    "BudgetProposal allows not_authorized_for_client_submission as a boolean, so schema validation alone cannot prove the authorization boundary.",
+    "The tightened checker rejects absolute refs, refs that resolve outside the repo, real-data flags, prohibited write flags, and false not_authorized_* flags before marking inputs ready."
+  ],
+  "observable_decision_logic": [
+    "A local JSON artifact can be schema-valid while still being outside the governed synthetic fixture surface.",
+    "A candidate replay input can be schema-valid while still implying budget submission or external authority if boundary flags are inverted.",
+    "Input readiness should prove local containment and no-write/no-learning boundaries separately from builder execution.",
+    "Cross-artifact ID consistency belongs in the deterministic builders; tests should prove mismatched actuals and carrier IDs fail before output is trusted."
+  ],
+  "solution_path": [
+    "Require input-pack refs to be relative local paths that resolve under the repo root.",
+    "Extend recursive boundary scanning to reject false not_authorized_* flags as well as true write, real-data, or learning flags.",
+    "Add tests for absolute ref rejection, authorization inversion rejection, audit-only output directories, and actuals/carrier ID mismatch failures.",
+    "Keep Python/Pydantic as the contract oracle; consider Rust later only for bulk path/schema/flag scanning after these semantics are stable."
+  ],
+  "fix_status": "fixed_validated",
+  "fix_refs": [
+    "src/lawfirm_os_intake/labor_employment_budget_outcome_replay_input_pack.py",
+    "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-input-pack.json",
+    "examples/synthetic/labor-employment/replay-inputs/discrimination-harassment-clean/legal_budget_proposal.json",
+    "examples/synthetic/labor-employment/replay-inputs/discrimination-harassment-clean/budget_actuals_source.json",
+    "examples/synthetic/labor-employment/replay-inputs/discrimination-harassment-clean/carrier_rejection_capture_source_bundle.json"
+  ],
+  "test_refs": [
+    "tests/test_labor_employment_budget_outcome_replay_input_pack.py",
+    "python scripts/run_validation_suite.py"
+  ],
+  "artifact_refs": [
+    "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-input-pack.json",
+    ".lawfirm-os-intake/smoke/quality/le-budget-outcome-replay-input-pack/labor_employment_budget_outcome_replay_input_pack_report.json"
+  ],
+  "candidate_exception_labels": [
+    "budget_replay_input_ref_boundary",
+    "budget_replay_input_authorization_inversion",
+    "budget_replay_input_cross_artifact_mismatch",
+    "deterministic_replay_input_checker_rust_candidate",
+    "dad_learning_loop_candidate"
+  ],
+  "applies_when": [
+    "A replay input-pack manifest points to local candidate artifacts that downstream builders may execute.",
+    "Artifact schemas are permissive about authorization booleans or lack top-level data-scope fields.",
+    "A future bulk checker needs to scan many local refs for containment, schema validity, and no-write flags."
+  ],
+  "does_not_apply_when": [
+    "The artifact is only a roadmap note and is not a runnable builder input.",
+    "A production Orchestrator owner has already validated and persisted governed runtime inputs.",
+    "The issue concerns budget calculation arithmetic rather than local input-boundary readiness."
+  ],
+  "danger_if_misapplied": "If a manifest can point outside the repo or flip authorization flags while still passing schema validation, QA may execute or display ungoverned inputs as if they were synthetic reviewed fixtures.",
+  "suggested_actions": [
+    "DAD should track ref-containment failures separately from schema-validation failures.",
+    "DAD should consider false not_authorized_* flags a distinct authorization-boundary exception pattern.",
+    "Rust scouting should treat this as a future deterministic leaf-tool candidate only after Python tests define the exact semantics."
+  ],
+  "reviewer_notes": [
+    "This record contains synthetic artifact references only.",
+    "It records observable engineering rationale and boundaries, not hidden chain-of-thought."
+  ],
+  "red_team_notes": [
+    "Do not treat schema validity alone as proof that a replay input is authorized.",
+    "Do not allow absolute paths or repo-escaping paths in committed input-pack manifests.",
+    "Do not port replay input semantics to Rust before Python remains the tested oracle."
+  ],
+  "raw_private_payload_included": false,
+  "hidden_chain_of_thought_included": false,
+  "candidate_only": true,
+  "dad_outbox_required": true,
+  "dad_review_required_before_promotion": true,
+  "lake_write_performed": false,
+  "sqlite_write_performed": false,
+  "external_writes_performed": false,
+  "silent_learning_performed": false
+}

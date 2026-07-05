@@ -6,6 +6,42 @@
   "source_builder_binding_report_ref": "apps/legal-intake-budget/src/fixtures/demo-labor-employment-budget-outcome-replay-builder-binding-report.json",
   "entries": [
     {
+      "entry_id": "le-replay-input-discrimination-actuals-budget.v0_1",
+      "learning_fixture_id": "le-learning-discrimination-harassment-clean.v0_1",
+      "loop_type": "actuals_variance",
+      "required_input_artifact": "legal_budget_proposal.json",
+      "input_ref": "examples/synthetic/labor-employment/replay-inputs/discrimination-harassment-clean/legal_budget_proposal.json",
+      "input_role": "builder_input",
+      "notes": "Synthetic L&E discrimination/harassment budget proposal for actuals replay."
+    },
+    {
+      "entry_id": "le-replay-input-discrimination-actuals-source.v0_1",
+      "learning_fixture_id": "le-learning-discrimination-harassment-clean.v0_1",
+      "loop_type": "actuals_variance",
+      "required_input_artifact": "budget_actuals_source.json",
+      "input_ref": "examples/synthetic/labor-employment/replay-inputs/discrimination-harassment-clean/budget_actuals_source.json",
+      "input_role": "builder_input",
+      "notes": "Synthetic L&E phase/code actuals fixture for deterministic variance review."
+    },
+    {
+      "entry_id": "le-replay-input-discrimination-carrier-budget.v0_1",
+      "learning_fixture_id": "le-learning-discrimination-harassment-clean.v0_1",
+      "loop_type": "carrier_rejection_capture",
+      "required_input_artifact": "legal_budget_proposal.json",
+      "input_ref": "examples/synthetic/labor-employment/replay-inputs/discrimination-harassment-clean/legal_budget_proposal.json",
+      "input_role": "builder_input",
+      "notes": "Same synthetic L&E budget proposal is used to bind carrier rejection placeholders."
+    },
+    {
+      "entry_id": "le-replay-input-discrimination-carrier-bundle.v0_1",
+      "learning_fixture_id": "le-learning-discrimination-harassment-clean.v0_1",
+      "loop_type": "carrier_rejection_capture",
+      "required_input_artifact": "carrier_rejection_capture_source_bundle.json",
+      "input_ref": "examples/synthetic/labor-employment/replay-inputs/discrimination-harassment-clean/carrier_rejection_capture_source_bundle.json",
+      "input_role": "builder_input",
+      "notes": "Synthetic linked carrier rejection notice for deterministic dry-run capture."
+    },
+    {
       "entry_id": "le-replay-input-ada-fmla-blocked-output-expectations.v0_1",
       "learning_fixture_id": "le-learning-ada-fmla-adversarial.v0_1",
       "loop_type": "blocked_budget_guard",
