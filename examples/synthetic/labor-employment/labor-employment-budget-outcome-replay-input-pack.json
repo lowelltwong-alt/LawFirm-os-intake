@@ -42,6 +42,42 @@
       "notes": "Synthetic linked carrier rejection notice for deterministic dry-run capture."
     },
     {
+      "entry_id": "le-replay-input-wage-hour-actuals-budget.v0_1",
+      "learning_fixture_id": "le-learning-wage-hour-clean.v0_1",
+      "loop_type": "actuals_variance",
+      "required_input_artifact": "legal_budget_proposal.json",
+      "input_ref": "examples/synthetic/labor-employment/replay-inputs/wage-hour-clean/legal_budget_proposal.json",
+      "input_role": "builder_input",
+      "notes": "Synthetic L&E wage/hour budget proposal for payroll-volume actuals replay."
+    },
+    {
+      "entry_id": "le-replay-input-wage-hour-actuals-source.v0_1",
+      "learning_fixture_id": "le-learning-wage-hour-clean.v0_1",
+      "loop_type": "actuals_variance",
+      "required_input_artifact": "budget_actuals_source.json",
+      "input_ref": "examples/synthetic/labor-employment/replay-inputs/wage-hour-clean/budget_actuals_source.json",
+      "input_role": "builder_input",
+      "notes": "Synthetic L&E wage/hour phase/code actuals fixture for deterministic payroll-volume variance review."
+    },
+    {
+      "entry_id": "le-replay-input-wage-hour-carrier-budget.v0_1",
+      "learning_fixture_id": "le-learning-wage-hour-clean.v0_1",
+      "loop_type": "carrier_rejection_capture",
+      "required_input_artifact": "legal_budget_proposal.json",
+      "input_ref": "examples/synthetic/labor-employment/replay-inputs/wage-hour-clean/legal_budget_proposal.json",
+      "input_role": "builder_input",
+      "notes": "Same synthetic L&E wage/hour budget proposal is used to bind carrier rejection placeholders."
+    },
+    {
+      "entry_id": "le-replay-input-wage-hour-carrier-bundle.v0_1",
+      "learning_fixture_id": "le-learning-wage-hour-clean.v0_1",
+      "loop_type": "carrier_rejection_capture",
+      "required_input_artifact": "carrier_rejection_capture_source_bundle.json",
+      "input_ref": "examples/synthetic/labor-employment/replay-inputs/wage-hour-clean/carrier_rejection_capture_source_bundle.json",
+      "input_role": "builder_input",
+      "notes": "Synthetic linked carrier code-mapping rejection notice for deterministic dry-run capture."
+    },
+    {
       "entry_id": "le-replay-input-ada-fmla-blocked-output-expectations.v0_1",
       "learning_fixture_id": "le-learning-ada-fmla-adversarial.v0_1",
       "loop_type": "blocked_budget_guard",

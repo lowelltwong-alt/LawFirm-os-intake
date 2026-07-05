@@ -1,0 +1,236 @@
+{
+  "schema_version": "0.1",
+  "budget_proposal_id": "le-budget-wage-hour-clean.v0_1",
+  "preflight_packet_id": "le-preflight-wage-hour-clean.v0_1",
+  "confirmation_id": "le-confirmation-wage-hour-clean.v0_1",
+  "practice_profile_id": "synthetic-labor-employment-defense.v0_1",
+  "matter_family": "wage_hour_flsa_state",
+  "representation_posture": "defense",
+  "pricing_status": "priced",
+  "currency": "USD",
+  "lines": [
+    {
+      "phase_id": "L100",
+      "phase_name": "Case Assessment",
+      "task_id": "L110",
+      "task_name": "Initial wage/hour exposure assessment",
+      "staffing_role": "partner",
+      "estimated_hours": 10,
+      "hourly_rate": 450,
+      "rate_source": "synthetic_profile",
+      "rate_is_synthetic": true,
+      "estimated_fees": 4500,
+      "estimated_expenses": 0,
+      "calculation_formula": "10h * 450 synthetic partner rate",
+      "external_code_candidate": "L110",
+      "assumptions": [
+        "Synthetic individual wage/hour defense case with payroll and timekeeping summaries."
+      ],
+      "estimate_basis": "template_default",
+      "estimate_basis_refs": [
+        "examples/synthetic/labor-employment/labor-employment-budget-learning-fixtures.json#le-learning-wage-hour-clean.v0_1"
+      ]
+    },
+    {
+      "phase_id": "L100",
+      "phase_name": "Case Assessment",
+      "task_id": "L120",
+      "task_name": "Payroll and timekeeping packet triage",
+      "staffing_role": "associate",
+      "estimated_hours": 18,
+      "hourly_rate": 275,
+      "rate_source": "synthetic_profile",
+      "rate_is_synthetic": true,
+      "estimated_fees": 4950,
+      "estimated_expenses": 0,
+      "calculation_formula": "18h * 275 synthetic associate rate",
+      "external_code_candidate": "L120",
+      "assumptions": [
+        "Synthetic payroll and timekeeping summaries cover 52 pay periods and 18 hourly employees."
+      ],
+      "estimate_basis": "driver_adjusted",
+      "estimate_basis_refs": [
+        "examples/synthetic/labor-employment/executable-fixtures/le-wage-hour-clean.source-bundle.json#syn-le-wage-hour-clean-payroll-001",
+        "examples/synthetic/labor-employment/executable-fixtures/le-wage-hour-clean.source-bundle.json#syn-le-wage-hour-clean-timekeeping-001"
+      ]
+    },
+    {
+      "phase_id": "L200",
+      "phase_name": "Pleadings And Motions",
+      "task_id": "L210",
+      "task_name": "Answer, wage/hour defenses, and early motion assessment",
+      "staffing_role": "associate",
+      "estimated_hours": 32,
+      "hourly_rate": 275,
+      "rate_source": "synthetic_profile",
+      "rate_is_synthetic": true,
+      "estimated_fees": 8800,
+      "estimated_expenses": 0,
+      "calculation_formula": "32h * 275 synthetic associate rate",
+      "external_code_candidate": "L210",
+      "estimate_basis": "template_default",
+      "estimate_basis_refs": [
+        "examples/synthetic/labor-employment/replay-inputs/wage-hour-clean/legal_budget_proposal.json#line:L210"
+      ]
+    },
+    {
+      "phase_id": "L300",
+      "phase_name": "Discovery",
+      "task_id": "L310",
+      "task_name": "Written discovery and payroll/timekeeping production",
+      "staffing_role": "associate",
+      "estimated_hours": 80,
+      "hourly_rate": 275,
+      "rate_source": "synthetic_profile",
+      "rate_is_synthetic": true,
+      "estimated_fees": 22000,
+      "estimated_expenses": 0,
+      "calculation_formula": "80h * 275 synthetic associate rate",
+      "external_code_candidate": "L310",
+      "assumptions": [
+        "Synthetic single-worksite payroll and timekeeping records are summarized but not production-ready."
+      ],
+      "estimate_basis": "driver_adjusted",
+      "estimate_basis_refs": [
+        "examples/synthetic/labor-employment/executable-fixtures/le-wage-hour-clean.source-bundle.json#syn-le-wage-hour-clean-payroll-001",
+        "examples/synthetic/labor-employment/executable-fixtures/le-wage-hour-clean.source-bundle.json#syn-le-wage-hour-clean-timekeeping-001"
+      ]
+    },
+    {
+      "phase_id": "L300",
+      "phase_name": "Discovery",
+      "task_id": "L310",
+      "task_name": "Payroll/timekeeping data normalization support",
+      "staffing_role": "paralegal",
+      "estimated_hours": 55,
+      "hourly_rate": 145,
+      "rate_source": "synthetic_profile",
+      "rate_is_synthetic": true,
+      "estimated_fees": 7975,
+      "estimated_expenses": 3500,
+      "calculation_formula": "55h * 145 synthetic paralegal rate + synthetic data vendor estimate",
+      "external_code_candidate": "L310",
+      "expense_code": "E118",
+      "assumptions": [
+        "Synthetic payroll/timekeeping exports require normalization before review."
+      ],
+      "estimate_basis": "driver_adjusted",
+      "estimate_basis_refs": [
+        "examples/synthetic/labor-employment/replay-inputs/wage-hour-clean/legal_budget_proposal.json#line:L310-paralegal"
+      ]
+    },
+    {
+      "phase_id": "L300",
+      "phase_name": "Discovery",
+      "task_id": "L330",
+      "task_name": "Payroll custodian interviews and deposition preparation",
+      "staffing_role": "senior_associate",
+      "estimated_hours": 55,
+      "hourly_rate": 325,
+      "rate_source": "synthetic_profile",
+      "rate_is_synthetic": true,
+      "estimated_fees": 17875,
+      "estimated_expenses": 3000,
+      "calculation_formula": "55h * 325 synthetic senior associate rate + synthetic court reporter estimate",
+      "external_code_candidate": "L330",
+      "expense_code": "E112",
+      "assumptions": [
+        "Two payroll custodians and one operations witness are expected for synthetic wage/hour discovery."
+      ],
+      "estimate_basis": "driver_adjusted",
+      "estimate_basis_refs": [
+        "examples/synthetic/labor-employment/replay-inputs/wage-hour-clean/legal_budget_proposal.json#line:L330"
+      ]
+    },
+    {
+      "phase_id": "L400",
+      "phase_name": "Trial Preparation And Dispositive Motions",
+      "task_id": "L420",
+      "task_name": "Dispositive motion strategy and partner review",
+      "staffing_role": "partner",
+      "estimated_hours": 20,
+      "hourly_rate": 450,
+      "rate_source": "synthetic_profile",
+      "rate_is_synthetic": true,
+      "estimated_fees": 9000,
+      "estimated_expenses": 0,
+      "calculation_formula": "20h * 450 synthetic partner rate",
+      "external_code_candidate": "L420",
+      "estimate_basis": "template_default",
+      "estimate_basis_refs": [
+        "examples/synthetic/labor-employment/replay-inputs/wage-hour-clean/legal_budget_proposal.json#line:L420"
+      ]
+    },
+    {
+      "phase_id": "L400",
+      "phase_name": "Trial Preparation And Dispositive Motions",
+      "task_id": "L430",
+      "task_name": "Summary judgment and wage/hour damages record appendix",
+      "staffing_role": "associate",
+      "estimated_hours": 65,
+      "hourly_rate": 275,
+      "rate_source": "synthetic_profile",
+      "rate_is_synthetic": true,
+      "estimated_fees": 17875,
+      "estimated_expenses": 0,
+      "calculation_formula": "65h * 275 synthetic associate rate",
+      "external_code_candidate": "L430",
+      "estimate_basis": "driver_adjusted",
+      "estimate_basis_refs": [
+        "examples/synthetic/labor-employment/replay-inputs/wage-hour-clean/legal_budget_proposal.json#line:L430"
+      ]
+    },
+    {
+      "phase_id": "L500",
+      "phase_name": "Settlement And Mediation",
+      "task_id": "L510",
+      "task_name": "Mediation preparation with payroll exposure summary",
+      "staffing_role": "senior_associate",
+      "estimated_hours": 24,
+      "hourly_rate": 325,
+      "rate_source": "synthetic_profile",
+      "rate_is_synthetic": true,
+      "estimated_fees": 7800,
+      "estimated_expenses": 1500,
+      "calculation_formula": "24h * 325 synthetic senior associate rate + synthetic mediation expense estimate",
+      "external_code_candidate": "L510",
+      "expense_code": "E124",
+      "estimate_basis": "template_default",
+      "estimate_basis_refs": [
+        "examples/synthetic/labor-employment/replay-inputs/wage-hour-clean/legal_budget_proposal.json#line:L510"
+      ]
+    }
+  ],
+  "subtotal_fees": 100775,
+  "subtotal_expenses": 8000,
+  "contingency_percent": 0,
+  "contingency_amount": 0,
+  "total_proposed_budget": 108775,
+  "scenario_name": "standard",
+  "headline_subtotal_fees": 100775,
+  "headline_subtotal_expenses": 8000,
+  "headline_contingency_amount": 0,
+  "headline_total_proposed_budget": 108775,
+  "expected_value_method": "not_computed",
+  "assumptions": [
+    "Synthetic-only L&E wage/hour replay budget for deterministic QA.",
+    "Rates are synthetic placeholders and are not authorized carrier panel rates.",
+    "The matter is treated as individual wage/hour at intake, with class or collective scope still requiring human confirmation."
+  ],
+  "exclusions": [
+    "No class certification phase, trial budget, carrier submission, or matter opening authority."
+  ],
+  "unknowns": [
+    "Whether the matter later becomes class, collective, or representative remains a human-review item.",
+    "Expert and vendor needs are not identified in the source packet.",
+    "Carrier guideline code-mapping requirements are not promoted as canon from this replay fixture."
+  ],
+  "display_banner": {
+    "data_scope": "synthetic_only",
+    "candidate_only": true,
+    "not_authorized_for_client_submission": true,
+    "not_authorized_as_carrier_panel_rates": true
+  },
+  "approval_state": "proposed_for_human_review",
+  "not_authorized_for_client_submission": true
+}

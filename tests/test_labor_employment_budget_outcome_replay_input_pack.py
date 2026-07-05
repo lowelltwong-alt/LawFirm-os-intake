@@ -52,6 +52,7 @@ INPUT_PACK_MANIFEST_REF = (
 DISCRIMINATION_REPLAY_INPUT_ROOT = (
     "examples/synthetic/labor-employment/replay-inputs/discrimination-harassment-clean"
 )
+WAGE_HOUR_REPLAY_INPUT_ROOT = "examples/synthetic/labor-employment/replay-inputs/wage-hour-clean"
 
 
 def _qa_gate(repo_root):
@@ -84,6 +85,18 @@ def _discrimination_carrier_bundle(repo_root):
         / DISCRIMINATION_REPLAY_INPUT_ROOT
         / "carrier_rejection_capture_source_bundle.json"
     )
+
+
+def _wage_hour_budget(repo_root):
+    return repo_root / WAGE_HOUR_REPLAY_INPUT_ROOT / "legal_budget_proposal.json"
+
+
+def _wage_hour_actuals(repo_root):
+    return repo_root / WAGE_HOUR_REPLAY_INPUT_ROOT / "budget_actuals_source.json"
+
+
+def _wage_hour_carrier_bundle(repo_root):
+    return repo_root / WAGE_HOUR_REPLAY_INPUT_ROOT / "carrier_rejection_capture_source_bundle.json"
 
 
 def _rel(root, path):
@@ -262,7 +275,7 @@ def test_labor_employment_budget_replay_input_pack_marks_ready_and_missing_input
     assert report.ready_case_count == 1
     assert report.partial_case_count == 7
     assert report.blocked_case_count == 0
-    assert report.ready_input_count == 13
+    assert report.ready_input_count == 21
     assert report.missing_input_count > 0
     assert report.invalid_input_count == 0
     assert report.one_of_signal_missing_count > 0
@@ -307,6 +320,25 @@ def test_labor_employment_budget_replay_input_pack_marks_ready_and_missing_input
     assert any(
         item.input_role == "one_of_signal" and item.input_status == "missing"
         for item in discrimination_case.items
+    )
+    wage_case = next(
+        case
+        for case in report.cases
+        if case.learning_fixture_id == "le-learning-wage-hour-clean.v0_1"
+    )
+    assert wage_case.status == "partially_ready"
+    assert wage_case.ready_input_count == 8
+    assert wage_case.missing_input_count > 0
+    assert {
+        item.required_input_artifact for item in wage_case.items if item.input_status == "ready"
+    } >= {
+        "legal_budget_proposal.json",
+        "budget_actuals_source.json",
+        "carrier_rejection_capture_source_bundle.json",
+    }
+    assert any(
+        item.input_role == "one_of_signal" and item.input_status == "missing"
+        for item in wage_case.items
     )
     assert report.runtime_artifacts_created is False
     assert report.budget_submission_authorized is False
@@ -482,7 +514,7 @@ def test_labor_employment_budget_replay_input_pack_cli_writes_report(
         in captured.out
     )
     assert '"ready_case_count": 1' in captured.out
-    assert '"ready_input_count": 13' in captured.out
+    assert '"ready_input_count": 21' in captured.out
     assert '"invalid_input_count": 0' in captured.out
     assert '"runtime_artifacts_created": false' in captured.out
     assert (
@@ -605,6 +637,130 @@ def test_labor_employment_discrimination_carrier_rejection_rejects_mismatched_id
             bad_bundle_path,
             tmp_path / "bad-carrier-rejection-run",
         )
+
+
+def test_labor_employment_wage_hour_actuals_replay_inputs_run_builder(
+    repo_root,
+    tmp_path,
+):
+    report, run_dir = run_budget_actual_comparison(
+        budget_path=_wage_hour_budget(repo_root),
+        actuals_path=_wage_hour_actuals(repo_root),
+        out_dir=tmp_path / "le-wage-hour-actuals-replay",
+    )
+    persisted = BudgetActualComparisonReport.model_validate(
+        load_json(run_dir / "budget_actual_comparison_report.json")
+    )
+    ledger = BudgetActualVarianceLedgerReport.model_validate(
+        load_json(run_dir / "budget_actual_variance_ledger_report.json")
+    )
+    phase_statuses = {row.phase_id: row.status for row in persisted.phase_comparisons}
+    code_statuses = {row.code: row.status for row in persisted.code_comparisons}
+
+    assert persisted.budget_actual_comparison_report_id == report.budget_actual_comparison_report_id
+    assert report.budget_proposal_id == "le-budget-wage-hour-clean.v0_1"
+    assert report.preflight_packet_id == "le-preflight-wage-hour-clean.v0_1"
+    assert report.status == "variance_review_required"
+    assert report.comparison_scope == "phase_and_code"
+    assert phase_statuses["L300"] == "over_threshold"
+    assert code_statuses["L310"] == "over_threshold"
+    assert code_statuses["E118"] == "over_threshold"
+    assert "budget_driver" in report.learning_disposition_candidates
+    assert report.billing_connector_read_performed is False
+    assert report.billing_connector_write_performed is False
+    assert report.external_writes_performed is False
+    assert ledger.status == "variance_ledger_ready_for_review"
+    assert ledger.budget_proposal_id == report.budget_proposal_id
+    assert ledger.lake_write_performed is False
+    assert ledger.sqlite_write_performed is False
+    assert ledger.billing_connector_read_performed is False
+    assert ledger.billing_connector_write_performed is False
+    assert ledger.external_writes_performed is False
+    assert ledger.silent_learning_performed is False
+
+
+def test_labor_employment_wage_hour_carrier_rejection_inputs_run_builder(
+    repo_root,
+    tmp_path,
+):
+    report, run_dir = run_carrier_rejection_capture(
+        _wage_hour_budget(repo_root),
+        _wage_hour_carrier_bundle(repo_root),
+        tmp_path / "le-wage-hour-carrier-rejection-replay",
+    )
+    ledger = CarrierRejectionDecisionLedgerReport.model_validate(
+        load_json(run_dir / "carrier_rejection_decision_ledger_report.json")
+    )
+
+    assert report.status == "dry_run_ready_for_review"
+    assert report.budget_proposal_id == "le-budget-wage-hour-clean.v0_1"
+    assert report.preflight_packet_id == "le-preflight-wage-hour-clean.v0_1"
+    assert report.source_bundle_id == "le-carrier-rejection-wage-hour-clean.v0_1"
+    assert report.expected_response_count == 1
+    assert report.reconciled_response_count == 1
+    assert report.missing_response_count == 0
+    assert report.unlinked_notice_count == 0
+    assert report.parser_failure_count == 0
+    assert report.appeal_result_count == 0
+    assert {case.local_event_label for case in report.remediation_cases} == {
+        "carrier_code_mapping_rejection"
+    }
+    assert "carrier_rejection_learning_candidate" in {
+        candidate.local_event_label for candidate in report.exception_lake_candidates
+    }
+    assert report.not_authorized_for_lake_write is True
+    assert report.not_authorized_for_external_submission is True
+    assert report.external_writes_performed is False
+    assert ledger.status == "decision_ledger_ready_for_review"
+    assert ledger.reconciliation_report_id == report.reconciliation_report_id
+    assert ledger.source_bundle_id == report.source_bundle_id
+    assert ledger.pending_decision_event_count == 1
+    assert ledger.lake_write_performed is False
+    assert ledger.sqlite_write_performed is False
+    assert ledger.external_writes_performed is False
+    assert ledger.appeal_submission_performed is False
+    assert ledger.silent_learning_performed is False
+
+
+def test_labor_employment_replay_input_pack_rejects_wrong_family_budget_anchor(
+    repo_root,
+    tmp_path,
+):
+    manifest = load_json(_input_pack_manifest(repo_root))
+    for entry in manifest["entries"]:
+        if (
+            entry["learning_fixture_id"] == "le-learning-wage-hour-clean.v0_1"
+            and entry["required_input_artifact"] == "legal_budget_proposal.json"
+        ):
+            entry["input_ref"] = (
+                "examples/synthetic/labor-employment/replay-inputs/"
+                "discrimination-harassment-clean/legal_budget_proposal.json"
+            )
+    manifest_path = write_json(tmp_path / "wrong-family-input-pack-manifest.json", manifest)
+
+    report, _ = run_labor_employment_budget_outcome_replay_input_pack_audit(
+        builder_binding_report_path=_builder_binding_report(repo_root, tmp_path),
+        input_pack_manifest_path=manifest_path,
+        repo_root=repo_root,
+        out_dir=tmp_path / "le-budget-outcome-replay-input-pack-wrong-family",
+        generated_at="2026-07-04T00:00:00Z",
+    )
+    wage_case = next(
+        case
+        for case in report.cases
+        if case.learning_fixture_id == "le-learning-wage-hour-clean.v0_1"
+    )
+
+    assert report.status == "blocked_by_labor_employment_budget_replay_input_pack"
+    assert wage_case.status == "blocked"
+    assert wage_case.invalid_input_count >= 2
+    assert any(
+        item.required_input_artifact == "legal_budget_proposal.json"
+        and item.input_status == "invalid"
+        and "matter_family='discrimination_harassment' expected 'wage_hour_flsa_state'"
+        in item.validation_message
+        for item in wage_case.items
+    )
 
 
 def test_labor_employment_discrimination_reviewed_learning_signal_runs_and_validates(

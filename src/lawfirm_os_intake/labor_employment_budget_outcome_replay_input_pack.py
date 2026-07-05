@@ -102,6 +102,9 @@ CASE_BOUND_REPORT_ARTIFACTS = {
     "carrier_rejection_review_packet.json",
     "carrier_rejection_learning_report.json",
 }
+FAMILY_BOUND_ARTIFACTS = {
+    "legal_budget_proposal.json",
+}
 
 PROHIBITED_TRUE_FIELDS = {
     "billing_connector_write_performed",
@@ -324,7 +327,12 @@ def _input_pack_case(
         item
         for binding in binding_case.bindings
         if binding.binding_status == "bound_to_existing_builder"
-        for item in _items_for_binding(binding=binding, entries=entries, repo_root=repo_root)
+        for item in _items_for_binding(
+            binding=binding,
+            entries=entries,
+            repo_root=repo_root,
+            expected_family=binding_case.family,
+        )
     ]
     invalid = len([item for item in items if item.input_status == "invalid"])
     missing = len([item for item in items if item.input_status == "missing"])
@@ -377,6 +385,7 @@ def _items_for_binding(
     binding: LaborEmploymentBudgetOutcomeReplayBuilderBinding,
     entries: list[LaborEmploymentBudgetOutcomeReplayInputPackEntry],
     repo_root: Path,
+    expected_family: str,
 ) -> list[LaborEmploymentBudgetOutcomeReplayInputPackItem]:
     return [
         _input_item(
@@ -384,6 +393,7 @@ def _items_for_binding(
             required_input_artifact=artifact,
             entries=entries,
             repo_root=repo_root,
+            expected_family=expected_family,
         )
         for artifact in binding.required_input_artifacts
     ]
@@ -395,6 +405,7 @@ def _input_item(
     required_input_artifact: str,
     entries: list[LaborEmploymentBudgetOutcomeReplayInputPackEntry],
     repo_root: Path,
+    expected_family: str,
 ) -> LaborEmploymentBudgetOutcomeReplayInputPackItem:
     role = _input_role(required_input_artifact)
     if required_input_artifact.startswith("one_or_more_of:"):
@@ -403,6 +414,7 @@ def _input_item(
             required_input_artifact=required_input_artifact,
             entries=entries,
             repo_root=repo_root,
+            expected_family=expected_family,
         )
     entry = _matching_entry(
         entries=entries,
@@ -415,6 +427,7 @@ def _input_item(
         entry=entry,
         artifact_name=required_input_artifact,
         repo_root=repo_root,
+        expected_family=expected_family,
         case_identity_context=_case_identity_context(
             entries=entries,
             repo_root=repo_root,
@@ -439,6 +452,7 @@ def _one_of_input_item(
     required_input_artifact: str,
     entries: list[LaborEmploymentBudgetOutcomeReplayInputPackEntry],
     repo_root: Path,
+    expected_family: str,
 ) -> LaborEmploymentBudgetOutcomeReplayInputPackItem:
     alternatives = _one_of_alternatives(required_input_artifact)
     candidate_entries = [
@@ -455,6 +469,7 @@ def _one_of_input_item(
             entry=entry,
             artifact_name=entry.required_input_artifact,
             repo_root=repo_root,
+            expected_family=expected_family,
             case_identity_context=_case_identity_context(
                 entries=entries,
                 repo_root=repo_root,
@@ -596,6 +611,7 @@ def _validate_entry(
     entry: LaborEmploymentBudgetOutcomeReplayInputPackEntry,
     artifact_name: str,
     repo_root: Path,
+    expected_family: str,
     case_identity_context: dict[str, set[str]],
 ) -> tuple[str, str, str | None]:
     model = ARTIFACT_MODELS.get(artifact_name)
@@ -611,6 +627,18 @@ def _validate_entry(
         model.model_validate(payload)
     except (OSError, ValueError, ValidationError) as exc:
         return "invalid", f"{model.__name__} validation failed: {exc}", model.__name__
+    family_errors = _case_family_errors(
+        payload=payload,
+        artifact_name=artifact_name,
+        expected_family=expected_family,
+    )
+    if family_errors:
+        return (
+            "invalid",
+            "Input artifact does not match expected L&E replay family: "
+            + ", ".join(family_errors[:8]),
+            model.__name__,
+        )
     identity_errors = _case_identity_errors(
         payload=payload,
         artifact_name=artifact_name,
@@ -661,6 +689,22 @@ def _case_identity_context(
             if _is_concrete_case_identity_value(value):
                 values[field].add(value)
     return values
+
+
+def _case_family_errors(
+    *,
+    payload: Any,
+    artifact_name: str,
+    expected_family: str,
+) -> list[str]:
+    if artifact_name not in FAMILY_BOUND_ARTIFACTS:
+        return []
+    if not isinstance(payload, dict):
+        return ["family-bound artifact payload is not an object"]
+    actual = payload.get("matter_family")
+    if actual != expected_family:
+        return [f"matter_family={actual!r} expected {expected_family!r}"]
+    return []
 
 
 def _is_concrete_case_identity_value(value: Any) -> bool:

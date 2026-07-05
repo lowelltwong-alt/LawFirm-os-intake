@@ -1,0 +1,68 @@
+{
+  "schema_version": "0.1",
+  "bundle_id": "le-carrier-rejection-wage-hour-clean.v0_1",
+  "run_id": "le-carrier-rejection-run-wage-hour-clean.v0_1",
+  "preflight_packet_id": "filled-by-test-preflight-packet",
+  "budget_proposal_id": "filled-by-test-budget-proposal",
+  "data_origin": "synthetic",
+  "contains_real_client_data": false,
+  "contains_real_matter_data": false,
+  "contains_privileged_data": false,
+  "as_of": "2026-07-06T12:00:00Z",
+  "expected_responses": [
+    {
+      "submission_id": "LE-SUB-INV-3001",
+      "submission_type": "invoice",
+      "carrier_id": "synthetic-ember-shield",
+      "budget_proposal_id": "filled-by-test-budget-proposal",
+      "invoice_id": "LE-INV-3001",
+      "amount_submitted": 4500,
+      "expected_response_due_at": "2026-07-05T17:00:00Z",
+      "human_owner": "synthetic-carrier-billing-reviewer",
+      "source_ref": "synthetic-carrier-submission-ledger://LE-SUB-INV-3001"
+    }
+  ],
+  "notices": [
+    {
+      "notice_id": "le-notice-code-mapping-3001",
+      "carrier_id": "synthetic-ember-shield",
+      "platform": "Synthetic Carrier Budget Portal",
+      "submission_id": "LE-SUB-INV-3001",
+      "budget_proposal_id": "filled-by-test-budget-proposal",
+      "invoice_id": "LE-INV-3001",
+      "line_id": "LE-INV-3001-L310-001",
+      "phase_id": "L300",
+      "task_id": "L310",
+      "external_code_candidate": "L310",
+      "expense_code": "E118",
+      "timekeeper_id": null,
+      "status_timestamp": "2026-07-05T14:45:00Z",
+      "response_type": "partially_accepted",
+      "parse_status": "parsed",
+      "parser_version": "carrier-rejection-parser.v0_1",
+      "amount_submitted": 4500,
+      "amount_rejected": 1200,
+      "amount_allowed": 3300,
+      "amount_disputed": 1200,
+      "reason_code": "SYNTHETIC_UTBMS_CODE_MISMATCH_L310",
+      "reason_text_excerpt": "Synthetic carrier flagged UTBMS task code mismatch between payroll/timekeeping data normalization and the L310 task entry, requesting human review of template mapping before resubmission.",
+      "human_owner": "synthetic-carrier-billing-reviewer",
+      "followup_due_at": "2026-07-10T17:00:00Z",
+      "idempotency_key": "synthetic-ember-shield|LE-SUB-INV-3001|LE-INV-3001-L310-001|SYNTHETIC_UTBMS_CODE_MISMATCH_L310",
+      "source_refs": [
+        {
+          "source_channel": "portal_status",
+          "source_id": "synthetic-le-portal-export-20260705",
+          "source_record_id": "portal-status-ES-3001-L310",
+          "retrieved_at": "2026-07-05T15:05:00Z",
+          "content_sha256": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "message_id": null,
+          "portal_status_id": "portal-status-ES-3001-L310",
+          "row_ref": "portal-export.csv#row=58",
+          "attachment_id": null
+        }
+      ]
+    }
+  ],
+  "appeal_results": []
+}
