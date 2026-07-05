@@ -1,0 +1,19 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "path": {
+      "title": "Path",
+      "type": "string"
+    },
+    "reason": {
+      "title": "Reason",
+      "type": "string"
+    }
+  },
+  "required": [
+    "path",
+    "reason"
+  ],
+  "title": "RustFixtureSnapshotCoherenceSkippedFile",
+  "type": "object"
+}

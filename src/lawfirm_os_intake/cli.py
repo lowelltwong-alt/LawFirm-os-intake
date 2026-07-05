@@ -141,6 +141,7 @@ from .remaining_roadmap import run_remaining_roadmap_plan
 from .reviewed_learning_gate import run_reviewed_learning_gate
 from .rust_fixture_boundary import run_rust_fixture_boundary_check
 from .rust_fixture_manifest import run_rust_fixture_manifest_scan
+from .rust_fixture_snapshot_coherence import run_rust_fixture_snapshot_coherence_check
 from .synthetic_fixture_depth_audit import run_synthetic_fixture_depth_audit
 from .synthetic_fixture_expansion import run_synthetic_fixture_expansion_audit
 from .synthetic_confidence_summary import run_synthetic_confidence_summary
@@ -430,6 +431,28 @@ def _parser() -> argparse.ArgumentParser:
         type=int,
         default=240,
         help="Timeout for the explicit Rust scanner invocation.",
+    )
+
+    rust_fixture_snapshot_coherence = sub.add_parser(
+        "build-rust-fixture-snapshot-coherence-report",
+        help=(
+            "Run the local Rust fixture snapshot coherence checker against a checked "
+            "fixture manifest and emit a candidate-only drift report."
+        ),
+    )
+    rust_fixture_snapshot_coherence.add_argument("--root", required=True)
+    rust_fixture_snapshot_coherence.add_argument("--expected-manifest", required=True)
+    rust_fixture_snapshot_coherence.add_argument("--out-dir", required=True)
+    rust_fixture_snapshot_coherence.add_argument(
+        "--repo-root",
+        default=".",
+        help="Repository root containing rust/fixture-boundary-checker/Cargo.toml.",
+    )
+    rust_fixture_snapshot_coherence.add_argument(
+        "--timeout-seconds",
+        type=int,
+        default=240,
+        help="Timeout for the explicit Rust checker invocation.",
     )
 
     calibration_starter_pack = sub.add_parser(
@@ -2213,6 +2236,36 @@ def main(argv: list[str] | None = None) -> int:
                     "parsed_json_file_count": report.parsed_json_file_count,
                     "parse_error_count": report.parse_error_count,
                     "total_byte_count": report.total_byte_count,
+                    "failure_count": report.failure_count,
+                    "external_writes_performed": report.external_writes_performed,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "budget_submission_authorized": report.budget_submission_authorized,
+                    "matter_opening_authorized": report.matter_opening_authorized,
+                }
+            )
+            return 0 if report.status == "passed" else 2
+
+        if args.command == "build-rust-fixture-snapshot-coherence-report":
+            report, report_path = run_rust_fixture_snapshot_coherence_check(
+                root=args.root,
+                expected_manifest=args.expected_manifest,
+                out_dir=args.out_dir,
+                repo_root=args.repo_root,
+                timeout_seconds=args.timeout_seconds,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "report_path": str(report_path),
+                    "expected_manifest_sha256": report.expected_manifest_sha256,
+                    "current_manifest_sha256": report.current_manifest_sha256,
+                    "expected_file_count": report.expected_file_count,
+                    "current_file_count": report.current_file_count,
+                    "matched_file_count": report.matched_file_count,
+                    "changed_file_count": report.changed_file_count,
+                    "missing_file_count": report.missing_file_count,
+                    "unexpected_file_count": report.unexpected_file_count,
                     "failure_count": report.failure_count,
                     "external_writes_performed": report.external_writes_performed,
                     "lake_write_performed": report.lake_write_performed,

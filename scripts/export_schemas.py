@@ -331,6 +331,9 @@ from lawfirm_os_intake.models import (  # noqa: E402
     RustFixtureManifestIdField,
     RustFixtureManifestReport,
     RustFixtureManifestSkippedFile,
+    RustFixtureSnapshotCoherenceFailure,
+    RustFixtureSnapshotCoherenceReport,
+    RustFixtureSnapshotCoherenceSkippedFile,
     RustIngestionReadinessReport,
     RustTransitionPolicy,
     SafetyGateReport,
@@ -429,6 +432,11 @@ MODELS = {
     "rust-fixture-manifest-id-field.schema.json": RustFixtureManifestIdField,
     "rust-fixture-manifest-report.schema.json": RustFixtureManifestReport,
     "rust-fixture-manifest-skipped-file.schema.json": RustFixtureManifestSkippedFile,
+    "rust-fixture-snapshot-coherence-failure.schema.json": (RustFixtureSnapshotCoherenceFailure),
+    "rust-fixture-snapshot-coherence-report.schema.json": RustFixtureSnapshotCoherenceReport,
+    "rust-fixture-snapshot-coherence-skipped-file.schema.json": (
+        RustFixtureSnapshotCoherenceSkippedFile
+    ),
     "ui-review-data-bundle-detail-report.schema.json": UIReviewDataBundleDetailReport,
     "ui-review-data-bundle.schema.json": UIReviewDataBundle,
     "rust-ingestion-readiness-report.schema.json": RustIngestionReadinessReport,

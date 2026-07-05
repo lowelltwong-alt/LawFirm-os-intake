@@ -2,10 +2,11 @@
 
 `rust/fixture-boundary-checker` is a local QA leaf tool for read-only JSON fixtures. It is not an ingestion adapter, not a legal classifier, not a budget engine, and not an Exception Lake writer.
 
-It currently exposes two explicit Rust binaries through Python CLI wrappers:
+It currently exposes three explicit Rust binaries through Python CLI wrappers:
 
 - `fixture-boundary-checker` validates local candidate fixture/report JSON for the boundaries the UI depends on.
 - `fixture_manifest_scanner` emits a deterministic hash manifest for local JSON fixture/report files.
+- `fixture_snapshot_coherence` compares a checked fixture manifest against the current fixture tree and fails closed on drift.
 
 The boundary checker validates:
 
@@ -34,6 +35,21 @@ python -m lawfirm_os_intake build-rust-fixture-manifest-report `
   --repo-root .
 ```
 
+Check whether the current fixture tree still matches a checked manifest:
+
+```powershell
+python -m lawfirm_os_intake build-rust-fixture-snapshot-coherence-report `
+  --root apps/legal-intake-budget/src/fixtures `
+  --expected-manifest apps/legal-intake-budget/src/fixtures/demo-rust-fixture-manifest-report.json `
+  --out-dir .lawfirm-os-intake/rust-fixture-snapshot-coherence `
+  --repo-root .
+```
+
+The snapshot coherence report is a detector only. It does not repair or
+regenerate fixture manifests. Changed, missing, or unexpected fixture JSON files
+produce a failed candidate report so stale demo evidence cannot silently become
+roadmap truth.
+
 Stage a prebuilt report into the synthetic QA review run:
 
 ```powershell
@@ -46,8 +62,10 @@ python -m lawfirm_os_intake build-synthetic-qa-review-run `
 
 The emitted reports are candidate-only and read-only evidence. A failed boundary
 report blocks confidence claims about the UI fixture bundle. A failed manifest
-report blocks claims that the reviewed fixture set is hash-bound. Neither report
-mutates fixtures, submits budgets, opens matters, writes SQLite/Lake records, or
-promotes any canonical LawFirm OS contract.
+report blocks claims that the reviewed fixture set is hash-bound. A failed
+snapshot coherence report blocks claims that the checked manifest still matches
+the current local JSON fixture tree. None of these reports mutate fixtures,
+submit budgets, open matters, write SQLite/Lake records, or promote any
+canonical LawFirm OS contract.
 
 This tool deliberately does not change `rust_replacement_allowed=false` for ingestion. Python remains the reference oracle for intake preflight, source offsets, evidence refs, budget math, and legal workflow decisions.

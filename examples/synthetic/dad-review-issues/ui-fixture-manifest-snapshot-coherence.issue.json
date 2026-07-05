@@ -1,0 +1,102 @@
+{
+  "schema_version": "0.1",
+  "issue_id": "ui-fixture-manifest-snapshot-coherence-001",
+  "issue_version": "0.1.0",
+  "observed_at": "2026-07-05T00:00:00Z",
+  "source_repo_id": "LawFirm-os-intake",
+  "source_repo_path": "LawFirm-os-intake",
+  "originating_agent": "codex",
+  "review_context": "Rust leaf-tool slice adding deterministic snapshot coherence for checked UI fixture manifests.",
+  "finding_title": "Checked demo fixture manifests can drift from current local JSON fixtures without a deterministic gate.",
+  "severity": "P2",
+  "issue_classes": [
+    "test_gap",
+    "ui_authority_risk",
+    "synthetic_data_gap",
+    "learning_loop_gap",
+    "performance_or_rust_candidate",
+    "exception_lake_mapping_gap"
+  ],
+  "finding_summary": "The checked read-only UI demo manifest can become stale when source fixture JSON files change. This slice adds a Rust-backed, candidate-only snapshot coherence report that compares the expected manifest against the current fixture tree and fails closed on changed, missing, or unexpected JSON files.",
+  "observable_context": [
+    "The existing Rust fixture manifest scanner emits stable file hashes for local JSON fixtures.",
+    "The checked demo manifest currently reports 23 expected files.",
+    "Running the new snapshot coherence command against the checked demo fixture root produced status=failed with 21 matched files, 2 changed files, 0 missing files, and 0 unexpected files.",
+    "A read-only subagent separately observed stale UI review data bundle source hashes, which remains an adjacent next-slice gate.",
+    "Full validation after the implementation passed with 643 tests and the smoke demo ended at blocked_pending_conflicts_and_engagement."
+  ],
+  "observable_decision_logic": [
+    "Fixture generation and fixture verification are separate claims.",
+    "A drift checker must not auto-repair checked fixtures because that would collapse evidence detection into evidence mutation.",
+    "Changed, missing, and unexpected fixture files are different exception labels and should be visible to DAD for pattern analysis.",
+    "The first Rust gate should stay path/hash/count based; semantic UI bundle hash validation should remain a separate follow-up."
+  ],
+  "solution_path": [
+    "Add the fixture_snapshot_coherence Rust binary beside the existing boundary checker and manifest scanner.",
+    "Add a Python wrapper and CLI command named build-rust-fixture-snapshot-coherence-report.",
+    "Add Pydantic report models and exported JSON schemas for the new candidate-only report.",
+    "Add focused tests proving clean snapshots pass and changed, missing, and unexpected fixture drift fails closed.",
+    "Document the tool as a detector only, with no fixture regeneration, Lake write, SQLite write, budget submission, matter opening, or silent learning."
+  ],
+  "fix_status": "fixed_validated",
+  "fix_refs": [
+    "rust/fixture-boundary-checker/src/bin/fixture_snapshot_coherence.rs",
+    "src/lawfirm_os_intake/rust_fixture_snapshot_coherence.py",
+    "src/lawfirm_os_intake/cli.py",
+    "src/lawfirm_os_intake/models.py",
+    "docs/rust-fixture-boundary-checker.md"
+  ],
+  "test_refs": [
+    "tests/test_rust_fixture_snapshot_coherence.py",
+    "python scripts/run_full_pytest.py tests/test_rust_fixture_snapshot_coherence.py tests/test_rust_fixture_manifest_scanner.py tests/test_rust_fixture_boundary_checker.py",
+    "python scripts/run_validation_suite.py"
+  ],
+  "artifact_refs": [
+    "apps/legal-intake-budget/src/fixtures/demo-rust-fixture-manifest-report.json",
+    "apps/legal-intake-budget/src/fixtures/demo-ui-review-data-bundle.json",
+    "schemas/rust-fixture-snapshot-coherence-report.schema.json"
+  ],
+  "candidate_exception_labels": [
+    "ui_fixture_manifest_hash_drift",
+    "fixture_hash_changed",
+    "fixture_missing",
+    "fixture_unexpected",
+    "snapshot_coherence_gate_required",
+    "ui_bundle_source_hash_drift_next_slice",
+    "dad_learning_loop_candidate"
+  ],
+  "applies_when": [
+    "A checked read-only UI fixture manifest is used as evidence for current local JSON fixture state.",
+    "A generated demo report is copied or left stale after source fixtures change.",
+    "A review dashboard or DAD workflow needs to distinguish current fixture state from historical checked evidence."
+  ],
+  "does_not_apply_when": [
+    "The manifest is explicitly historical and is not being used as evidence of current fixture state.",
+    "The artifact being checked is non-JSON or outside the local fixture/report tree.",
+    "A stronger owner-approved runtime artifact registry already supplies the current hash-bound evidence."
+  ],
+  "danger_if_misapplied": "If this gate is treated as a fixture refresh tool, it may hide the very drift it is meant to expose. If ignored, stale demo evidence can create false readiness or inaccurate DAD learning signals.",
+  "suggested_actions": [
+    "DAD should classify manifest drift separately from UI review data bundle source-hash drift.",
+    "DAD should treat the new report as a concrete candidate Exception Lake event shape for checked-evidence drift.",
+    "Codex should add the separate UI bundle source-hash coherence gate before claiming the read-only UI demo bundle is fully current."
+  ],
+  "reviewer_notes": [
+    "This record contains synthetic fixture and local artifact references only.",
+    "It records observable evidence, decision logic, fix refs, and test refs without hidden chain-of-thought."
+  ],
+  "red_team_notes": [
+    "Do not auto-regenerate checked UI fixtures inside the drift gate.",
+    "Do not treat snapshot coherence as production readiness, calibration, budget approval, matter opening, or Lake admission.",
+    "Do not promote local candidate report schemas to Semantic Substrate canon from this repo."
+  ],
+  "raw_private_payload_included": false,
+  "hidden_chain_of_thought_included": false,
+  "candidate_only": true,
+  "dad_outbox_required": true,
+  "dad_review_required_before_promotion": true,
+  "lake_write_performed": false,
+  "sqlite_write_performed": false,
+  "external_writes_performed": false,
+  "silent_learning_performed": false
+}

@@ -12678,6 +12678,86 @@ class RustFixtureManifestReport(StrictModel):
         return self
 
 
+class RustFixtureSnapshotCoherenceFailure(StrictModel):
+    path: str
+    check: str
+    expected_sha256: str | None = None
+    actual_sha256: str | None = None
+    message: str
+
+
+class RustFixtureSnapshotCoherenceSkippedFile(StrictModel):
+    path: str
+    reason: str
+
+
+class RustFixtureSnapshotCoherenceReport(StrictModel):
+    schema_version: str = "0.1"
+    checker: Literal["fixture-snapshot-coherence-checker"]
+    status: Literal["passed", "failed"]
+    root: str
+    expected_manifest_ref: str
+    expected_manifest_sha256: str
+    current_manifest_sha256: str
+    expected_file_count: int = Field(ge=0)
+    current_file_count: int = Field(ge=0)
+    matched_file_count: int = Field(ge=0)
+    changed_file_count: int = Field(ge=0)
+    missing_file_count: int = Field(ge=0)
+    unexpected_file_count: int = Field(ge=0)
+    skipped_file_count: int = Field(ge=0)
+    skipped_files: list[RustFixtureSnapshotCoherenceSkippedFile] = Field(default_factory=list)
+    failure_count: int = Field(ge=0)
+    failures: list[RustFixtureSnapshotCoherenceFailure] = Field(default_factory=list)
+    candidate_only: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    local_json_only: Literal[True] = True
+    external_writes_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def rust_fixture_snapshot_coherence_counts_and_status_match(
+        self,
+    ) -> "RustFixtureSnapshotCoherenceReport":
+        if not _is_sha256_ref(self.expected_manifest_sha256):
+            raise ValueError("Rust fixture expected manifest hash must be sha256:<64 hex>")
+        if not _is_sha256_ref(self.current_manifest_sha256):
+            raise ValueError("Rust fixture current manifest hash must be sha256:<64 hex>")
+        for failure in self.failures:
+            if failure.expected_sha256 is not None and not _is_sha256_ref(failure.expected_sha256):
+                raise ValueError("Rust fixture expected failure hash must be sha256:<64 hex>")
+            if failure.actual_sha256 is not None and not _is_sha256_ref(failure.actual_sha256):
+                raise ValueError("Rust fixture actual failure hash must be sha256:<64 hex>")
+        if self.failure_count != len(self.failures):
+            raise ValueError("Rust fixture snapshot coherence failure count mismatch")
+        if self.skipped_file_count != len(self.skipped_files):
+            raise ValueError("Rust fixture snapshot coherence skipped file count mismatch")
+        if self.expected_file_count != (
+            self.matched_file_count + self.changed_file_count + self.missing_file_count
+        ):
+            raise ValueError("Rust fixture snapshot coherence expected file count mismatch")
+        if self.current_file_count != (
+            self.matched_file_count + self.changed_file_count + self.unexpected_file_count
+        ):
+            raise ValueError("Rust fixture snapshot coherence current file count mismatch")
+        if self.failure_count != (
+            self.changed_file_count + self.missing_file_count + self.unexpected_file_count
+        ):
+            raise ValueError("Rust fixture snapshot coherence diff count mismatch")
+        if self.status == "passed" and self.failures:
+            raise ValueError(
+                "passed Rust fixture snapshot coherence report cannot include failures"
+            )
+        if self.status == "failed" and not self.failures:
+            raise ValueError("failed Rust fixture snapshot coherence report requires failures")
+        return self
+
+
 def _is_sha256_ref(value: str) -> bool:
     if len(value) != len("sha256:") + 64 or not value.startswith("sha256:"):
         return False

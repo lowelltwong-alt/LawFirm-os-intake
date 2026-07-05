@@ -1,0 +1,48 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "path": {
+      "title": "Path",
+      "type": "string"
+    },
+    "check": {
+      "title": "Check",
+      "type": "string"
+    },
+    "expected_sha256": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Expected Sha256"
+    },
+    "actual_sha256": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Actual Sha256"
+    },
+    "message": {
+      "title": "Message",
+      "type": "string"
+    }
+  },
+  "required": [
+    "path",
+    "check",
+    "message"
+  ],
+  "title": "RustFixtureSnapshotCoherenceFailure",
+  "type": "object"
+}
