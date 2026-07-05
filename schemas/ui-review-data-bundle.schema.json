@@ -19,6 +19,7 @@
             "synthetic_qa_blocker_report",
             "synthetic_qa_review_outcome",
             "rust_fixture_boundary",
+            "rust_fixture_manifest",
             "matter_linking_preflight",
             "matter_linking_review_outcome",
             "matter_linking_qa_gate",

@@ -181,6 +181,7 @@ def run_synthetic_qa_review_run(
     run_root: str | Path,
     repo_root: str | Path = ".",
     fixture_boundary_report_path: str | Path | None = None,
+    fixture_manifest_report_path: str | Path | None = None,
     generated_at: str | None = None,
 ) -> tuple[SyntheticQAReviewRunReport, Path]:
     root = Path(repo_root).resolve()
@@ -735,6 +736,27 @@ def run_synthetic_qa_review_run(
                 (
                     "Prebuilt Rust fixture-boundary evidence validates local JSON flags "
                     "without making the synthetic QA run compile or execute Rust."
+                ),
+            )
+        )
+
+    staged_fixture_manifest_ref: Path | None = None
+    if fixture_manifest_report_path is not None:
+        staged_fixture_manifest_ref = _stage_for_bundle(
+            Path(fixture_manifest_report_path),
+            quality_dir,
+        )
+        fixture_manifest_payload = load_json(staged_fixture_manifest_ref)
+        steps.append(
+            _step(
+                "rust_fixture_manifest",
+                "Rust Fixture Manifest",
+                str(fixture_manifest_payload.get("status") or "missing"),
+                staged_fixture_manifest_ref,
+                fixture_manifest_payload.get("status") == "passed",
+                (
+                    "Prebuilt Rust fixture-manifest evidence hash-binds local JSON "
+                    "fixtures without making the synthetic QA run compile or execute Rust."
                 ),
             )
         )

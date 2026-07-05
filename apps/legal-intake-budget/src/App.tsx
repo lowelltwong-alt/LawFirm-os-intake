@@ -18,6 +18,7 @@ import demoMatterLinkingQAGate from "./fixtures/demo-matter-linking-qa-gate-repo
 import demoMatterLinkingReviewOutcome from "./fixtures/demo-matter-linking-review-outcome-report.json";
 import demoPocQATriage from "./fixtures/demo-poc-qa-triage-report.json";
 import demoRustFixtureBoundary from "./fixtures/demo-rust-fixture-boundary-report.json";
+import demoRustFixtureManifest from "./fixtures/demo-rust-fixture-manifest-report.json";
 import demoSyntheticQABlockerReport from "./fixtures/demo-synthetic-qa-blocker-report.json";
 import demoSyntheticQAReviewOutcome from "./fixtures/demo-synthetic-qa-review-outcome-report.json";
 import demoSyntheticConfidenceSummary from "./fixtures/demo-synthetic-confidence-summary-report.json";
@@ -42,6 +43,7 @@ import {
   assertPOCQATriageReport,
   assertReadOnlyManifest,
   assertRustFixtureBoundaryReport,
+  assertRustFixtureManifestReport,
   assertSyntheticQABlockerReport,
   assertSyntheticQAReviewOutcomeReport,
   assertSyntheticConfidenceSummaryReport,
@@ -82,6 +84,7 @@ import type {
   ReviewArtifact,
   ReviewManifest,
   RustFixtureBoundaryReport,
+  RustFixtureManifestReport,
   SyntheticQABlockerActionState,
   SyntheticQABlockerReport,
   SyntheticQABlockerRowState,
@@ -112,6 +115,7 @@ const matterLinkingQAGate = demoMatterLinkingQAGate as MatterLinkingQAGateReport
 const matterLinkingReviewOutcome =
   demoMatterLinkingReviewOutcome as MatterLinkingReviewOutcomeReport;
 const rustFixtureBoundary = demoRustFixtureBoundary as RustFixtureBoundaryReport;
+const rustFixtureManifest = demoRustFixtureManifest as RustFixtureManifestReport;
 const laborEmploymentQAMatrix = demoLaborEmploymentQAMatrix as LaborEmploymentQAMatrixReport;
 const laborEmploymentExecutableCoverage =
   demoLaborEmploymentExecutableCoverage as LaborEmploymentExecutableCoverageReport;
@@ -148,6 +152,7 @@ const matterLinkingQAGateFailures = assertMatterLinkingQAGateReport(matterLinkin
 const matterLinkingReviewOutcomeFailures =
   assertMatterLinkingReviewOutcomeReport(matterLinkingReviewOutcome);
 const rustFixtureBoundaryFailures = assertRustFixtureBoundaryReport(rustFixtureBoundary);
+const rustFixtureManifestFailures = assertRustFixtureManifestReport(rustFixtureManifest);
 const matrixContractFailures = assertLaborEmploymentQAMatrixReport(laborEmploymentQAMatrix);
 const executableCoverageFailures =
   assertLaborEmploymentExecutableCoverageReport(laborEmploymentExecutableCoverage);
@@ -189,6 +194,7 @@ const contractFailures = [
   ...matterLinkingQAGateFailures,
   ...matterLinkingReviewOutcomeFailures,
   ...rustFixtureBoundaryFailures,
+  ...rustFixtureManifestFailures,
   ...matrixContractFailures,
   ...executableCoverageFailures,
   ...blockedDriverContractFailures,
@@ -1049,6 +1055,107 @@ function RustFixtureBoundaryPanel({ report }: { report: RustFixtureBoundaryRepor
               <strong>{failure.check}</strong>
               <code>{failure.json_path}</code>
               <p>{failure.message}</p>
+            </article>
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
+
+function RustFixtureManifestPanel({ report }: { report: RustFixtureManifestReport }) {
+  const statusClass =
+    report.status === "passed" && rustFixtureManifestFailures.length === 0
+      ? "state state-passed"
+      : "state state-failed";
+  const sampledFiles = report.files.slice(0, 6);
+
+  return (
+    <section className="panel rust-boundary-panel" aria-labelledby="rust-manifest-title">
+      <div className="panel-heading">
+        <div>
+          <p className="eyebrow">Rust QA leaf tool</p>
+          <h2 id="rust-manifest-title">Fixture Manifest Scanner</h2>
+          <code>{report.scanner}</code>
+        </div>
+        <span className={statusClass}>{report.status}</span>
+      </div>
+
+      <div className="recipe-summary" aria-label="Rust fixture manifest summary">
+        <div>
+          <span>JSON Files</span>
+          <strong>{report.checked_json_file_count}</strong>
+        </div>
+        <div>
+          <span>Parsed</span>
+          <strong>{report.parsed_json_file_count}</strong>
+        </div>
+        <div>
+          <span>Parse Errors</span>
+          <strong>{report.parse_error_count}</strong>
+        </div>
+        <div>
+          <span>Skipped</span>
+          <strong>{report.skipped_file_count}</strong>
+        </div>
+        <div>
+          <span>Bytes</span>
+          <strong>{report.total_byte_count.toLocaleString()}</strong>
+        </div>
+      </div>
+
+      <div className="boundary-grid">
+        <div className="boundary-item">
+          <span>Root</span>
+          <code>{report.root}</code>
+        </div>
+        <div className="boundary-item">
+          <span>Manifest Hash</span>
+          <code>{report.manifest_sha256}</code>
+        </div>
+        <div className="boundary-item">
+          <span>Lake Writes</span>
+          <strong>{String(report.lake_write_performed)}</strong>
+        </div>
+        <div className="boundary-item">
+          <span>Matter Opening</span>
+          <strong>{String(report.matter_opening_authorized)}</strong>
+        </div>
+      </div>
+
+      <div className="qa-workbench-list">
+        {sampledFiles.map((file) => (
+          <article key={file.path}>
+            <strong>{file.path}</strong>
+            <code>{file.sha256}</code>
+            <p>
+              {file.top_level_type}
+              {file.status ? ` - ${file.status}` : ""}
+              {file.report_kind ? ` - ${file.report_kind}` : ""}
+            </p>
+          </article>
+        ))}
+      </div>
+
+      {report.failures.length > 0 && (
+        <div className="qa-workbench-list">
+          {report.failures.map((failure) => (
+            <article key={`${failure.path}-${failure.check}`}>
+              <strong>{failure.check}</strong>
+              <code>{failure.path}</code>
+              <p>{failure.message}</p>
+            </article>
+          ))}
+        </div>
+      )}
+
+      {report.skipped_files.length > 0 && (
+        <div className="qa-workbench-list">
+          {report.skipped_files.map((file) => (
+            <article key={`${file.path}-${file.reason}`}>
+              <strong>{file.reason}</strong>
+              <code>{file.path}</code>
+              <p>Skipped to keep the manifest hash acyclic and reproducible.</p>
             </article>
           ))}
         </div>
@@ -2925,6 +3032,7 @@ function App() {
       <BudgetLearningLoopPanel report={budgetLearningLoop} />
       <SyntheticConfidenceSummaryPanel report={syntheticConfidenceSummary} />
       <RustFixtureBoundaryPanel report={rustFixtureBoundary} />
+      <RustFixtureManifestPanel report={rustFixtureManifest} />
       <POCQATriagePanel report={pocQATriage} />
       <ValidationSuiteEvidencePanel report={validationSuiteEvidence} />
       <SyntheticQABlockerDrilldownPanel report={syntheticQABlockerReport} />

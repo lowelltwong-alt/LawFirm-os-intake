@@ -1,8 +1,13 @@
-# Rust Fixture Boundary Checker
+# Rust Fixture Boundary And Manifest Tools
 
 `rust/fixture-boundary-checker` is a local QA leaf tool for read-only JSON fixtures. It is not an ingestion adapter, not a legal classifier, not a budget engine, and not an Exception Lake writer.
 
-The checker validates local candidate fixture/report JSON for the boundaries the UI depends on:
+It currently exposes two explicit Rust binaries through Python CLI wrappers:
+
+- `fixture-boundary-checker` validates local candidate fixture/report JSON for the boundaries the UI depends on.
+- `fixture_manifest_scanner` emits a deterministic hash manifest for local JSON fixture/report files.
+
+The boundary checker validates:
 
 - candidate-only, synthetic-only, non-authoritative, and local-JSON-only flags stay true when present;
 - connector, Lake, SQLite, matter-opening, budget-submission, appeal-submission, runtime-artifact, and silent-learning flags stay false when present;
@@ -20,15 +25,29 @@ python -m lawfirm_os_intake build-rust-fixture-boundary-report `
   --repo-root .
 ```
 
+Build a deterministic fixture manifest locally:
+
+```powershell
+python -m lawfirm_os_intake build-rust-fixture-manifest-report `
+  --root apps/legal-intake-budget/src/fixtures `
+  --out-dir .lawfirm-os-intake/rust-fixture-manifest `
+  --repo-root .
+```
+
 Stage a prebuilt report into the synthetic QA review run:
 
 ```powershell
 python -m lawfirm_os_intake build-synthetic-qa-review-run `
   --run-root .lawfirm-os-intake/synthetic-qa-review `
   --repo-root . `
-  --fixture-boundary-report .lawfirm-os-intake/rust-fixture-boundary/rust_fixture_boundary_report.json
+  --fixture-boundary-report .lawfirm-os-intake/rust-fixture-boundary/rust_fixture_boundary_report.json `
+  --fixture-manifest-report .lawfirm-os-intake/rust-fixture-manifest/rust_fixture_manifest_report.json
 ```
 
-The emitted report is candidate-only and read-only evidence. A failed report blocks confidence claims about the UI fixture bundle, but it does not mutate fixtures, submit budgets, open matters, write SQLite/Lake records, or promote any canonical LawFirm OS contract.
+The emitted reports are candidate-only and read-only evidence. A failed boundary
+report blocks confidence claims about the UI fixture bundle. A failed manifest
+report blocks claims that the reviewed fixture set is hash-bound. Neither report
+mutates fixtures, submits budgets, opens matters, writes SQLite/Lake records, or
+promotes any canonical LawFirm OS contract.
 
 This tool deliberately does not change `rust_replacement_allowed=false` for ingestion. Python remains the reference oracle for intake preflight, source offsets, evidence refs, budget math, and legal workflow decisions.

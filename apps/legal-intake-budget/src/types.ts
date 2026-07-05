@@ -25,6 +25,7 @@ export type UIReviewDataBundleReportKind =
   | "synthetic_qa_blocker_report"
   | "synthetic_qa_review_outcome"
   | "rust_fixture_boundary"
+  | "rust_fixture_manifest"
   | "matter_linking_preflight"
   | "matter_linking_review_outcome"
   | "matter_linking_qa_gate"
@@ -378,6 +379,64 @@ export type RustFixtureBoundaryReport = {
   checked_object_count: number;
   failure_count: number;
   failures: RustFixtureBoundaryFailure[];
+  candidate_only: boolean;
+  synthetic_only: boolean;
+  non_authoritative: boolean;
+  local_json_only: boolean;
+  external_writes_performed: boolean;
+  lake_write_performed: boolean;
+  sqlite_write_performed: boolean;
+  budget_submission_authorized: boolean;
+  matter_opening_authorized: boolean;
+  silent_learning_performed: boolean;
+};
+
+export type RustFixtureManifestIdField = {
+  field: string;
+  value: string;
+};
+
+export type RustFixtureManifestFile = {
+  path: string;
+  sha256: string;
+  byte_count: number;
+  top_level_type: string;
+  schema_version?: string | null;
+  status?: string | null;
+  report_kind?: string | null;
+  data_origin?: string | null;
+  candidate_only?: boolean | null;
+  synthetic_only?: boolean | null;
+  external_writes_performed?: boolean | null;
+  id_fields: RustFixtureManifestIdField[];
+};
+
+export type RustFixtureManifestFailure = {
+  path: string;
+  check: string;
+  message: string;
+};
+
+export type RustFixtureManifestSkippedFile = {
+  path: string;
+  reason: string;
+};
+
+export type RustFixtureManifestReport = {
+  schema_version: string;
+  scanner: "fixture-manifest-scanner";
+  status: "passed" | "failed";
+  root: string;
+  manifest_sha256: string;
+  checked_json_file_count: number;
+  parsed_json_file_count: number;
+  parse_error_count: number;
+  skipped_file_count: number;
+  skipped_files: RustFixtureManifestSkippedFile[];
+  total_byte_count: number;
+  files: RustFixtureManifestFile[];
+  failure_count: number;
+  failures: RustFixtureManifestFailure[];
   candidate_only: boolean;
   synthetic_only: boolean;
   non_authoritative: boolean;

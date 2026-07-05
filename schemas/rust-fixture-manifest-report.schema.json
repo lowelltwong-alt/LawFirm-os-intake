@@ -1,0 +1,341 @@
+{
+  "$defs": {
+    "RustFixtureManifestFailure": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "check": {
+          "title": "Check",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "check",
+        "message"
+      ],
+      "title": "RustFixtureManifestFailure",
+      "type": "object"
+    },
+    "RustFixtureManifestFile": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "sha256": {
+          "title": "Sha256",
+          "type": "string"
+        },
+        "byte_count": {
+          "minimum": 0,
+          "title": "Byte Count",
+          "type": "integer"
+        },
+        "top_level_type": {
+          "title": "Top Level Type",
+          "type": "string"
+        },
+        "schema_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schema Version"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        },
+        "report_kind": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Report Kind"
+        },
+        "data_origin": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Data Origin"
+        },
+        "candidate_only": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Candidate Only"
+        },
+        "synthetic_only": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Synthetic Only"
+        },
+        "external_writes_performed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Writes Performed"
+        },
+        "id_fields": {
+          "items": {
+            "$ref": "#/$defs/RustFixtureManifestIdField"
+          },
+          "title": "Id Fields",
+          "type": "array"
+        }
+      },
+      "required": [
+        "path",
+        "sha256",
+        "byte_count",
+        "top_level_type"
+      ],
+      "title": "RustFixtureManifestFile",
+      "type": "object"
+    },
+    "RustFixtureManifestIdField": {
+      "additionalProperties": false,
+      "properties": {
+        "field": {
+          "title": "Field",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "field",
+        "value"
+      ],
+      "title": "RustFixtureManifestIdField",
+      "type": "object"
+    },
+    "RustFixtureManifestSkippedFile": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "reason"
+      ],
+      "title": "RustFixtureManifestSkippedFile",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "scanner": {
+      "const": "fixture-manifest-scanner",
+      "title": "Scanner",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "passed",
+        "failed"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "root": {
+      "title": "Root",
+      "type": "string"
+    },
+    "manifest_sha256": {
+      "title": "Manifest Sha256",
+      "type": "string"
+    },
+    "checked_json_file_count": {
+      "minimum": 0,
+      "title": "Checked Json File Count",
+      "type": "integer"
+    },
+    "parsed_json_file_count": {
+      "minimum": 0,
+      "title": "Parsed Json File Count",
+      "type": "integer"
+    },
+    "parse_error_count": {
+      "minimum": 0,
+      "title": "Parse Error Count",
+      "type": "integer"
+    },
+    "skipped_file_count": {
+      "minimum": 0,
+      "title": "Skipped File Count",
+      "type": "integer"
+    },
+    "skipped_files": {
+      "items": {
+        "$ref": "#/$defs/RustFixtureManifestSkippedFile"
+      },
+      "title": "Skipped Files",
+      "type": "array"
+    },
+    "total_byte_count": {
+      "minimum": 0,
+      "title": "Total Byte Count",
+      "type": "integer"
+    },
+    "files": {
+      "items": {
+        "$ref": "#/$defs/RustFixtureManifestFile"
+      },
+      "title": "Files",
+      "type": "array"
+    },
+    "failure_count": {
+      "minimum": 0,
+      "title": "Failure Count",
+      "type": "integer"
+    },
+    "failures": {
+      "items": {
+        "$ref": "#/$defs/RustFixtureManifestFailure"
+      },
+      "title": "Failures",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "local_json_only": {
+      "const": true,
+      "default": true,
+      "title": "Local Json Only",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "budget_submission_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Submission Authorized",
+      "type": "boolean"
+    },
+    "matter_opening_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Matter Opening Authorized",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "scanner",
+    "status",
+    "root",
+    "manifest_sha256",
+    "checked_json_file_count",
+    "parsed_json_file_count",
+    "parse_error_count",
+    "skipped_file_count",
+    "total_byte_count",
+    "failure_count"
+  ],
+  "title": "RustFixtureManifestReport",
+  "type": "object"
+}

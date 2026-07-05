@@ -70,6 +70,14 @@ DETAIL_REPORT_SPECS = [
         required=False,
     ),
     UIReviewDetailSpec(
+        detail_report_id="rust-fixture-manifest",
+        label="Rust Fixture Manifest",
+        report_kind="rust_fixture_manifest",
+        file_name="rust_fixture_manifest_report.json",
+        renderer="RustFixtureManifestPanel",
+        required=False,
+    ),
+    UIReviewDetailSpec(
         detail_report_id="matter-linking-preflight",
         label="Matter-Linking Preflight",
         report_kind="matter_linking_preflight",

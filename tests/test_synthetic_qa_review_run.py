@@ -39,6 +39,50 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
             "silent_learning_performed": False,
         },
     )
+    fixture_manifest_report = write_json(
+        tmp_path / "rust_fixture_manifest_report.json",
+        {
+            "schema_version": "0.1",
+            "scanner": "fixture-manifest-scanner",
+            "status": "passed",
+            "root": str(run_root),
+            "manifest_sha256": "sha256:" + "a" * 64,
+            "checked_json_file_count": 1,
+            "parsed_json_file_count": 1,
+            "parse_error_count": 0,
+            "skipped_file_count": 0,
+            "skipped_files": [],
+            "total_byte_count": 123,
+            "files": [
+                {
+                    "path": "synthetic_qa_review_run_report.json",
+                    "sha256": "sha256:" + "b" * 64,
+                    "byte_count": 123,
+                    "top_level_type": "object",
+                    "schema_version": "0.1",
+                    "status": "synthetic_qa_review_run_ready",
+                    "report_kind": None,
+                    "data_origin": None,
+                    "candidate_only": True,
+                    "synthetic_only": True,
+                    "external_writes_performed": False,
+                    "id_fields": [],
+                }
+            ],
+            "failure_count": 0,
+            "failures": [],
+            "candidate_only": True,
+            "synthetic_only": True,
+            "non_authoritative": True,
+            "local_json_only": True,
+            "external_writes_performed": False,
+            "lake_write_performed": False,
+            "sqlite_write_performed": False,
+            "budget_submission_authorized": False,
+            "matter_opening_authorized": False,
+            "silent_learning_performed": False,
+        },
+    )
     write_json(
         quality_dir / "labor_employment_qa_matrix_report.json",
         {"status": "failed", "external_writes_performed": False},
@@ -53,6 +97,8 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
             str(run_root),
             "--fixture-boundary-report",
             str(fixture_boundary_report),
+            "--fixture-manifest-report",
+            str(fixture_manifest_report),
             "--generated-at",
             "2026-07-02T00:00:00Z",
         ]
@@ -68,7 +114,7 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
 
     assert code == 0
     assert report["status"] == "synthetic_qa_review_run_ready"
-    assert report["step_count"] == len(report["steps"]) == 29
+    assert report["step_count"] == len(report["steps"]) == 30
     assert report["failed_step_count"] == 0
     assert report["candidate_only"] is True
     assert report["synthetic_only"] is True
@@ -106,6 +152,7 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
         "ui_review_manifest",
         "ui_review_data_bundle",
         "rust_fixture_boundary",
+        "rust_fixture_manifest",
         "synthetic_confidence_summary",
     } == set(steps)
     assert all(step["status"] == "passed" for step in report["steps"])
@@ -140,8 +187,8 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
     ui_detail_reports = {
         report["report_kind"]: report for report in ui_data_bundle["detail_reports"]
     }
-    assert ui_data_bundle["detail_report_count"] == 20
-    assert ui_data_bundle["present_detail_report_count"] == 20
+    assert ui_data_bundle["detail_report_count"] == 21
+    assert ui_data_bundle["present_detail_report_count"] == 21
     assert ui_detail_reports["synthetic_qa_review_run"]["present"] is True
     assert ui_detail_reports["synthetic_qa_review_run"]["artifact_ref"] == str(
         run_root / SYNTHETIC_QA_REVIEW_RUN_REPORT_FILENAME
@@ -150,6 +197,10 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
     assert ui_detail_reports["rust_fixture_boundary"]["required"] is False
     assert ui_detail_reports["rust_fixture_boundary"]["status"] == "passed"
     assert ui_detail_reports["rust_fixture_boundary"]["renderer"] == "RustFixtureBoundaryPanel"
+    assert ui_detail_reports["rust_fixture_manifest"]["present"] is True
+    assert ui_detail_reports["rust_fixture_manifest"]["required"] is False
+    assert ui_detail_reports["rust_fixture_manifest"]["status"] == "passed"
+    assert ui_detail_reports["rust_fixture_manifest"]["renderer"] == "RustFixtureManifestPanel"
     assert ui_detail_reports["matter_linking_preflight"]["present"] is True
     assert ui_detail_reports["matter_linking_review_outcome"]["present"] is True
     assert ui_detail_reports["matter_linking_qa_gate"]["present"] is True

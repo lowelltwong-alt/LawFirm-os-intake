@@ -24,6 +24,7 @@ The expected local artifact list and matrix guardrails live in
 `src/data-contract.ts`. Demo review data lives in
 `src/fixtures/demo-ui-review-data-bundle.json`,
 `src/fixtures/demo-rust-fixture-boundary-report.json`,
+`src/fixtures/demo-rust-fixture-manifest-report.json`,
 `src/fixtures/demo-run-manifest.json`,
 `src/fixtures/demo-synthetic-confidence-summary-report.json`,
 `src/fixtures/demo-synthetic-qa-blocker-report.json`,
@@ -49,10 +50,12 @@ blocked-driver review, reviewed gold, the synthetic QA bundle, the UI manifest,
 `synthetic_qa_review_run_report.json`, `synthetic_confidence_summary_report.json`,
 `synthetic_qa_blocker_report.json`, and `ui_review_data_bundle.json`. A prebuilt
 `rust_fixture_boundary_report.json` may be staged with
-`--fixture-boundary-report`; the synthetic QA command will not compile or
-execute Rust. The demo UI renders the confidence summary as the top-level
-synthetic QA posture panel, the Rust fixture-boundary report as local JSON
-boundary evidence, the blocker report as the review queue, and the review-run
+`--fixture-boundary-report`, and a prebuilt `rust_fixture_manifest_report.json`
+may be staged with `--fixture-manifest-report`; the synthetic QA command will
+not compile or execute Rust. The demo UI renders the confidence summary as the
+top-level synthetic QA posture panel, the Rust fixture-boundary report as local
+JSON boundary evidence, the Rust fixture-manifest report as hash-bound fixture
+inventory evidence, the blocker report as the review queue, and the review-run
 report as the recipe panel when they are present. A separately recorded
 `synthetic_qa_review_outcome_report.json` may be rendered as append-only QA
 review evidence. The blocker report remains the authority for row-level

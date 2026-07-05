@@ -1,10 +1,10 @@
 {
   "schema_version": "0.1",
-  "synthetic_qa_review_run_report_id": "syntheticqareviewrun_a346bbf92aaf2ffd",
+  "synthetic_qa_review_run_report_id": "syntheticqareviewrun_fa2207a034724bb7",
   "status": "synthetic_qa_review_run_ready",
   "run_root_ref": "<demo-run-root>",
   "quality_dir_ref": "<demo-run-root>\\quality",
-  "step_count": 29,
+  "step_count": 30,
   "failed_step_count": 0,
   "steps": [
     {
@@ -255,6 +255,16 @@
       "artifact_ref": "apps/legal-intake-budget/src/fixtures/demo-rust-fixture-boundary-report.json",
       "notes": [
         "Prebuilt Rust fixture-boundary evidence validates local JSON flags without making the synthetic QA run compile or execute Rust."
+      ]
+    },
+    {
+      "step_id": "rust_fixture_manifest",
+      "label": "Rust Fixture Manifest",
+      "status": "passed",
+      "observed_status": "passed",
+      "artifact_ref": "<demo-run-root>\\quality\\rust_fixture_manifest_report.json",
+      "notes": [
+        "Prebuilt Rust fixture-manifest evidence hash-binds local JSON fixtures without making the synthetic QA run compile or execute Rust."
       ]
     },
     {

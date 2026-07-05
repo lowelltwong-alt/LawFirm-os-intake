@@ -20,6 +20,7 @@ import type {
   ReviewArtifact,
   ReviewManifest,
   RustFixtureBoundaryReport,
+  RustFixtureManifestReport,
   SyntheticQABlockerReport,
   SyntheticQAReviewOutcomeReport,
   SyntheticConfidenceSummaryReport,
@@ -94,6 +95,7 @@ export const REQUIRED_DETAIL_REPORT_FILES = [
   "matter_linking_qa_gate_report.json",
   "synthetic_confidence_summary_report.json",
   "rust_fixture_boundary_report.json",
+  "rust_fixture_manifest_report.json",
   "labor_employment_qa_matrix_report.json",
   "labor_employment_executable_coverage_report.json",
   "labor_employment_blocked_driver_impact_review_report.json",
@@ -289,6 +291,54 @@ export function assertRustFixtureBoundaryReport(report: RustFixtureBoundaryRepor
   }
   if (report.checked_json_file_count <= 0 || report.checked_object_count <= 0) {
     failures.push("rust_fixture_boundary_missing_checked_scope");
+  }
+  return failures;
+}
+
+export function assertRustFixtureManifestReport(report: RustFixtureManifestReport): string[] {
+  const failures: string[] = [];
+  if (report.scanner !== "fixture-manifest-scanner") {
+    failures.push("rust_fixture_manifest_wrong_scanner");
+  }
+  if (!report.candidate_only || !report.synthetic_only || !report.non_authoritative) {
+    failures.push("rust_fixture_manifest_authority_boundary_failed");
+  }
+  if (!report.local_json_only) {
+    failures.push("rust_fixture_manifest_not_local_json_only");
+  }
+  if (
+    report.external_writes_performed ||
+    report.lake_write_performed ||
+    report.sqlite_write_performed ||
+    report.budget_submission_authorized ||
+    report.matter_opening_authorized ||
+    report.silent_learning_performed
+  ) {
+    failures.push("rust_fixture_manifest_side_effect_boundary_failed");
+  }
+  if (report.failure_count !== report.failures.length) {
+    failures.push("rust_fixture_manifest_failure_count_mismatch");
+  }
+  if (report.parse_error_count !== report.failures.length) {
+    failures.push("rust_fixture_manifest_parse_error_count_mismatch");
+  }
+  if (report.parsed_json_file_count !== report.files.length) {
+    failures.push("rust_fixture_manifest_parsed_file_count_mismatch");
+  }
+  if (report.skipped_file_count !== report.skipped_files.length) {
+    failures.push("rust_fixture_manifest_skipped_file_count_mismatch");
+  }
+  if (report.checked_json_file_count !== report.parsed_json_file_count + report.parse_error_count) {
+    failures.push("rust_fixture_manifest_checked_file_count_mismatch");
+  }
+  if (report.status === "passed" && report.failures.length > 0) {
+    failures.push("rust_fixture_manifest_passed_with_failures");
+  }
+  if (report.status === "failed" && report.failures.length === 0) {
+    failures.push("rust_fixture_manifest_failed_without_failures");
+  }
+  if (!report.manifest_sha256.startsWith("sha256:") || report.files.length <= 0) {
+    failures.push("rust_fixture_manifest_missing_hash_scope");
   }
   return failures;
 }

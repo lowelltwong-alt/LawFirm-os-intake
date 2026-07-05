@@ -1,11 +1,11 @@
 {
   "schema_version": "0.1",
-  "ui_review_data_bundle_id": "ui_review_data_bundle_7d732c1f0ad6",
+  "ui_review_data_bundle_id": "ui_review_data_bundle_c2a7116a9c69",
   "status": "ready_for_review",
   "run_root_ref": "<demo-run-root>",
-  "detail_report_count": 20,
+  "detail_report_count": 21,
   "required_detail_report_count": 13,
-  "present_detail_report_count": 20,
+  "present_detail_report_count": 21,
   "missing_required_detail_report_count": 0,
   "external_write_report_count": 0,
   "detail_reports": [
@@ -109,12 +109,30 @@
       "status": "passed",
       "renderer": "RustFixtureBoundaryPanel",
       "artifact_ref": "apps/legal-intake-budget/src/fixtures/demo-rust-fixture-boundary-report.json",
-      "source_sha256": "sha256:4508b51305565d8fb310107aa71a5f74054c9084e9d6dc701f984e1b2697bec8",
+      "source_sha256": "sha256:7d840c1b4657c08cb018dc325f5ddf62437e296e0a954a1bc3800f548ec5a4ec",
       "candidate_only": true,
       "synthetic_only": true,
       "external_writes_performed": false,
       "notes": [
         "Found demo-rust-fixture-boundary-report.json; status=passed."
+      ]
+    },
+    {
+      "detail_report_id": "rust-fixture-manifest",
+      "label": "Rust Fixture Manifest",
+      "report_kind": "rust_fixture_manifest",
+      "file_name": "rust_fixture_manifest_report.json",
+      "required": false,
+      "present": true,
+      "status": "passed",
+      "renderer": "RustFixtureManifestPanel",
+      "artifact_ref": "apps/legal-intake-budget/src/fixtures/demo-rust-fixture-manifest-report.json",
+      "source_sha256": "sha256:f57d0d3d75437f4a0f20a26e7ed828c489cf47111633392664f3e3463a323f71",
+      "candidate_only": true,
+      "synthetic_only": true,
+      "external_writes_performed": false,
+      "notes": [
+        "Found demo-rust-fixture-manifest-report.json; status=passed."
       ]
     },
     {

@@ -120,6 +120,12 @@ fn parse_args(raw_args: Vec<String>) -> Result<Args, String> {
 fn run(args: Args) -> Result<i32, String> {
     let mut failures: Vec<Value> = Vec::new();
     let mut json_files = collect_json_files(&args.root)?;
+    let out_for_compare = path_for_compare(&args.out)?;
+    json_files.retain(|path| {
+        path_for_compare(path)
+            .map(|candidate| candidate != out_for_compare)
+            .unwrap_or(true)
+    });
     json_files.sort();
 
     let mut checked_object_count = 0usize;
@@ -494,8 +500,21 @@ fn display_path(path: &Path, root: &Path) -> String {
         .unwrap_or(path)
         .display()
         .to_string()
+        .replace('\\', "/")
 }
 
 fn escape_json_path_part(value: &str) -> String {
     value.replace('\\', "\\\\").replace('.', "\\.")
+}
+
+fn path_for_compare(path: &Path) -> Result<PathBuf, String> {
+    if let Ok(canonical) = path.canonicalize() {
+        return Ok(canonical);
+    }
+    if path.is_absolute() {
+        return Ok(path.to_path_buf());
+    }
+    env::current_dir()
+        .map(|current| current.join(path))
+        .map_err(|err| format!("failed to resolve current directory: {err}"))
 }

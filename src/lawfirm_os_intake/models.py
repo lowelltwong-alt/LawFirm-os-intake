@@ -12597,6 +12597,93 @@ class RustFixtureBoundaryReport(StrictModel):
         return self
 
 
+class RustFixtureManifestIdField(StrictModel):
+    field: str
+    value: str
+
+
+class RustFixtureManifestFile(StrictModel):
+    path: str
+    sha256: str
+    byte_count: int = Field(ge=0)
+    top_level_type: str
+    schema_version: str | None = None
+    status: str | None = None
+    report_kind: str | None = None
+    data_origin: str | None = None
+    candidate_only: bool | None = None
+    synthetic_only: bool | None = None
+    external_writes_performed: bool | None = None
+    id_fields: list[RustFixtureManifestIdField] = Field(default_factory=list)
+
+
+class RustFixtureManifestFailure(StrictModel):
+    path: str
+    check: str
+    message: str
+
+
+class RustFixtureManifestSkippedFile(StrictModel):
+    path: str
+    reason: str
+
+
+class RustFixtureManifestReport(StrictModel):
+    schema_version: str = "0.1"
+    scanner: Literal["fixture-manifest-scanner"]
+    status: Literal["passed", "failed"]
+    root: str
+    manifest_sha256: str
+    checked_json_file_count: int = Field(ge=0)
+    parsed_json_file_count: int = Field(ge=0)
+    parse_error_count: int = Field(ge=0)
+    skipped_file_count: int = Field(ge=0)
+    skipped_files: list[RustFixtureManifestSkippedFile] = Field(default_factory=list)
+    total_byte_count: int = Field(ge=0)
+    files: list[RustFixtureManifestFile] = Field(default_factory=list)
+    failure_count: int = Field(ge=0)
+    failures: list[RustFixtureManifestFailure] = Field(default_factory=list)
+    candidate_only: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    local_json_only: Literal[True] = True
+    external_writes_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def rust_fixture_manifest_counts_and_status_match(self) -> "RustFixtureManifestReport":
+        if not _is_sha256_ref(self.manifest_sha256):
+            raise ValueError("Rust fixture manifest hash must be sha256:<64 hex>")
+        bad_file_hashes = [file.path for file in self.files if not _is_sha256_ref(file.sha256)]
+        if bad_file_hashes:
+            raise ValueError("Rust fixture manifest file hashes must be sha256:<64 hex>")
+        if self.parsed_json_file_count != len(self.files):
+            raise ValueError("Rust fixture manifest parsed file count mismatch")
+        if self.failure_count != len(self.failures):
+            raise ValueError("Rust fixture manifest failure count mismatch")
+        if self.parse_error_count != len(self.failures):
+            raise ValueError("Rust fixture manifest parse error count mismatch")
+        if self.skipped_file_count != len(self.skipped_files):
+            raise ValueError("Rust fixture manifest skipped file count mismatch")
+        if self.checked_json_file_count != self.parsed_json_file_count + self.parse_error_count:
+            raise ValueError("Rust fixture manifest checked file count mismatch")
+        if self.status == "passed" and self.failures:
+            raise ValueError("passed Rust fixture manifest report cannot include failures")
+        if self.status == "failed" and not self.failures:
+            raise ValueError("failed Rust fixture manifest report requires failures")
+        return self
+
+
+def _is_sha256_ref(value: str) -> bool:
+    if len(value) != len("sha256:") + 64 or not value.startswith("sha256:"):
+        return False
+    return all(character in "0123456789abcdef" for character in value[len("sha256:") :])
+
+
 SyntheticConfidenceSummaryItemState = Literal[
     "ready_for_review",
     "pending_review",
@@ -13328,6 +13415,7 @@ UIReviewDataBundleReportKind = Literal[
     "synthetic_qa_blocker_report",
     "synthetic_qa_review_outcome",
     "rust_fixture_boundary",
+    "rust_fixture_manifest",
     "matter_linking_preflight",
     "matter_linking_review_outcome",
     "matter_linking_qa_gate",
