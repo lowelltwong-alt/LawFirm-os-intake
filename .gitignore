@@ -15,6 +15,7 @@ htmlcov/
 apps/legal-intake-budget/dist/
 apps/legal-intake-budget/node_modules/
 apps/legal-intake-budget/tsconfig.tsbuildinfo
+rust/**/target/
 .digital-asset/mail/*.jsonl
 .digital-asset/mail/last_checked.json
 

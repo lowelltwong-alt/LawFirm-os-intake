@@ -29,6 +29,13 @@ in shadow mode for deterministic corpus mechanics:
 
 Rust may run only after the same `DataScopeGateReport` has passed. It must never write raw payload before the data-scope gate, relax synthetic-only checks, or become a separate data-origin authority.
 
+Standalone Rust QA leaf tools may be added before an ingestion adapter only when
+they are local, deterministic, read-only, and outside legal meaning. The first
+such tool is `rust/fixture-boundary-checker`, which validates UI fixture JSON
+boundary flags and report counts. It does not parse intake sources, replace the
+Python ingestion oracle, authorize Rust ingestion replacement, make connector or
+Lake writes, or own any legal/budget decision.
+
 Rust must not own:
 
 - legal classification;
