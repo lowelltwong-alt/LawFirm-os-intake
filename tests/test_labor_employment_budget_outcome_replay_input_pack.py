@@ -870,6 +870,100 @@ def test_labor_employment_replay_input_pack_rejects_wrong_family_budget_anchor(
     )
 
 
+def test_labor_employment_replay_input_pack_rejects_swapped_wage_hour_actuals_source(
+    repo_root,
+    tmp_path,
+):
+    manifest = load_json(_input_pack_manifest(repo_root))
+    for entry in manifest["entries"]:
+        if (
+            entry["learning_fixture_id"] == "le-learning-wage-hour-clean.v0_1"
+            and entry["loop_type"] == "actuals_variance"
+            and entry["required_input_artifact"] == "budget_actuals_source.json"
+        ):
+            entry["input_ref"] = (
+                "examples/synthetic/labor-employment/replay-inputs/"
+                "discrimination-harassment-clean/budget_actuals_source.json"
+            )
+    manifest_path = write_json(tmp_path / "swapped-actuals-input-pack-manifest.json", manifest)
+
+    report, _ = run_labor_employment_budget_outcome_replay_input_pack_audit(
+        builder_binding_report_path=_builder_binding_report(repo_root, tmp_path),
+        input_pack_manifest_path=manifest_path,
+        repo_root=repo_root,
+        out_dir=tmp_path / "le-budget-outcome-replay-input-pack-swapped-actuals",
+        generated_at="2026-07-04T00:00:00Z",
+    )
+    wage_case = next(
+        case
+        for case in report.cases
+        if case.learning_fixture_id == "le-learning-wage-hour-clean.v0_1"
+    )
+    actuals_item = next(
+        item
+        for item in wage_case.items
+        if item.loop_type == "actuals_variance"
+        and item.required_input_artifact == "budget_actuals_source.json"
+    )
+
+    assert report.status == "blocked_by_labor_employment_budget_replay_input_pack"
+    assert wage_case.status == "blocked"
+    assert actuals_item.input_status == "invalid"
+    assert actuals_item.validation_model == "BudgetActualsSource"
+    assert "source case token='wage-hour-clean'" in actuals_item.validation_message
+    assert "actuals_source_id" in actuals_item.validation_message
+    assert "source_ref" in actuals_item.validation_message
+    assert "le-actuals-discrimination-harassment-clean.v0_1" in (actuals_item.validation_message)
+
+
+def test_labor_employment_replay_input_pack_rejects_swapped_wage_hour_carrier_bundle(
+    repo_root,
+    tmp_path,
+):
+    manifest = load_json(_input_pack_manifest(repo_root))
+    for entry in manifest["entries"]:
+        if (
+            entry["learning_fixture_id"] == "le-learning-wage-hour-clean.v0_1"
+            and entry["loop_type"] == "carrier_rejection_capture"
+            and entry["required_input_artifact"] == "carrier_rejection_capture_source_bundle.json"
+        ):
+            entry["input_ref"] = (
+                "examples/synthetic/labor-employment/replay-inputs/"
+                "discrimination-harassment-clean/carrier_rejection_capture_source_bundle.json"
+            )
+    manifest_path = write_json(tmp_path / "swapped-carrier-input-pack-manifest.json", manifest)
+
+    report, _ = run_labor_employment_budget_outcome_replay_input_pack_audit(
+        builder_binding_report_path=_builder_binding_report(repo_root, tmp_path),
+        input_pack_manifest_path=manifest_path,
+        repo_root=repo_root,
+        out_dir=tmp_path / "le-budget-outcome-replay-input-pack-swapped-carrier",
+        generated_at="2026-07-04T00:00:00Z",
+    )
+    wage_case = next(
+        case
+        for case in report.cases
+        if case.learning_fixture_id == "le-learning-wage-hour-clean.v0_1"
+    )
+    carrier_item = next(
+        item
+        for item in wage_case.items
+        if item.loop_type == "carrier_rejection_capture"
+        and item.required_input_artifact == "carrier_rejection_capture_source_bundle.json"
+    )
+
+    assert report.status == "blocked_by_labor_employment_budget_replay_input_pack"
+    assert wage_case.status == "blocked"
+    assert carrier_item.input_status == "invalid"
+    assert carrier_item.validation_model == "CarrierRejectionCaptureSourceBundle"
+    assert "source case token='wage-hour-clean'" in carrier_item.validation_message
+    assert "bundle_id" in carrier_item.validation_message
+    assert "run_id" in carrier_item.validation_message
+    assert "le-carrier-rejection-discrimination-harassment-clean.v0_1" in (
+        carrier_item.validation_message
+    )
+
+
 def test_labor_employment_discrimination_reviewed_learning_signal_runs_and_validates(
     repo_root,
     tmp_path,

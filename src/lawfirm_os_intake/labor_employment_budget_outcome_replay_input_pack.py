@@ -93,6 +93,26 @@ CASE_IDENTITY_ANCHOR_ARTIFACTS = {
     "budget_actuals_source.json",
     "carrier_rejection_capture_source_bundle.json",
 }
+SOURCE_CASE_TOKEN_CONTEXT_KEY = "__source_case_tokens__"
+RAW_SOURCE_CASE_IDENTITY_FIELDS: dict[str, tuple[str, ...]] = {
+    "budget_actuals_source.json": ("budget_proposal_id",),
+    "carrier_rejection_capture_source_bundle.json": (
+        "budget_proposal_id",
+        "preflight_packet_id",
+    ),
+    "carrier_rejection_capture_source_bundle_with_appeal_results.json": (
+        "budget_proposal_id",
+        "preflight_packet_id",
+    ),
+}
+RAW_SOURCE_CASE_TOKEN_FIELDS: dict[str, tuple[str, ...]] = {
+    "budget_actuals_source.json": ("actuals_source_id", "source_ref"),
+    "carrier_rejection_capture_source_bundle.json": ("bundle_id", "run_id"),
+    "carrier_rejection_capture_source_bundle_with_appeal_results.json": (
+        "bundle_id",
+        "run_id",
+    ),
+}
 CASE_BOUND_REPORT_ARTIFACTS = {
     "budget_actual_comparison_report.json",
     "budget_actual_variance_ledger_report.json",
@@ -668,7 +688,9 @@ def _case_identity_context(
     repo_root: Path,
     learning_fixture_id: str,
 ) -> dict[str, set[str]]:
-    values: dict[str, set[str]] = {field: set() for field in CASE_IDENTITY_FIELDS}
+    values: dict[str, set[str]] = {
+        field: set() for field in (*CASE_IDENTITY_FIELDS, SOURCE_CASE_TOKEN_CONTEXT_KEY)
+    }
     for entry in entries:
         if (
             entry.learning_fixture_id != learning_fixture_id
@@ -688,6 +710,8 @@ def _case_identity_context(
             value = payload.get(field)
             if _is_concrete_case_identity_value(value):
                 values[field].add(value)
+        if entry.required_input_artifact == "legal_budget_proposal.json":
+            values[SOURCE_CASE_TOKEN_CONTEXT_KEY].update(_case_tokens_from_budget_payload(payload))
     return values
 
 
@@ -716,28 +740,87 @@ def _is_concrete_case_identity_value(value: Any) -> bool:
     )
 
 
+def _case_tokens_from_budget_payload(payload: dict[str, Any]) -> set[str]:
+    tokens: set[str] = set()
+    for field, prefix in (
+        ("budget_proposal_id", "le-budget-"),
+        ("preflight_packet_id", "le-preflight-"),
+    ):
+        value = payload.get(field)
+        if not _is_concrete_case_identity_value(value):
+            continue
+        token = value.removeprefix(prefix).split(".", 1)[0]
+        if token:
+            tokens.add(token)
+    return tokens
+
+
+def _raw_source_case_token_errors(
+    *,
+    payload: dict[str, Any],
+    artifact_name: str,
+    case_identity_context: dict[str, set[str]],
+) -> list[str]:
+    fields = RAW_SOURCE_CASE_TOKEN_FIELDS.get(artifact_name)
+    if not fields:
+        return []
+
+    expected_tokens = case_identity_context.get(SOURCE_CASE_TOKEN_CONTEXT_KEY, set())
+    if len(expected_tokens) > 1:
+        return [f"source case token anchors conflict: {sorted(expected_tokens)}"]
+    if not expected_tokens:
+        return ["source case token anchor missing"]
+
+    expected = next(iter(expected_tokens))
+    observed_values = [
+        value for field in fields if isinstance((value := payload.get(field)), str) and value
+    ]
+    if not observed_values:
+        return [f"source case token={expected!r} not found in {list(fields)}"]
+    if not any(expected in value for value in observed_values):
+        return [f"source case token={expected!r} not found in {list(fields)}: {observed_values}"]
+    return []
+
+
 def _case_identity_errors(
     *,
     payload: Any,
     artifact_name: str,
     case_identity_context: dict[str, set[str]],
 ) -> list[str]:
-    if artifact_name not in CASE_BOUND_REPORT_ARTIFACTS:
+    if (
+        artifact_name not in CASE_BOUND_REPORT_ARTIFACTS
+        and artifact_name not in RAW_SOURCE_CASE_IDENTITY_FIELDS
+        and artifact_name not in RAW_SOURCE_CASE_TOKEN_FIELDS
+    ):
         return []
     if not isinstance(payload, dict):
-        return ["case-bound report payload is not an object"]
+        return ["case-bound artifact payload is not an object"]
 
     errors: list[str] = []
-    for field in CASE_IDENTITY_FIELDS:
+    fields = RAW_SOURCE_CASE_IDENTITY_FIELDS.get(artifact_name, CASE_IDENTITY_FIELDS)
+    for field in fields:
         expected_values = case_identity_context.get(field, set())
         actual = payload.get(field)
         if len(expected_values) > 1:
             errors.append(f"{field} anchors conflict: {sorted(expected_values)}")
         elif not expected_values:
             errors.append(f"{field} anchor missing")
+        elif (
+            artifact_name in RAW_SOURCE_CASE_IDENTITY_FIELDS
+            and not _is_concrete_case_identity_value(actual)
+        ):
+            continue
         elif actual not in expected_values:
             expected = next(iter(expected_values))
             errors.append(f"{field}={actual!r} expected {expected!r}")
+    errors.extend(
+        _raw_source_case_token_errors(
+            payload=payload,
+            artifact_name=artifact_name,
+            case_identity_context=case_identity_context,
+        )
+    )
     return errors
 
 

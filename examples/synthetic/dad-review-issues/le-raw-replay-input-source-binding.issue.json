@@ -1,0 +1,99 @@
+{
+  "schema_version": "0.1",
+  "issue_id": "le-raw-replay-input-source-binding-001",
+  "issue_version": "0.1.0",
+  "observed_at": "2026-07-05T00:00:00Z",
+  "source_repo_id": "LawFirm-os-intake",
+  "source_repo_path": "LawFirm-os-intake",
+  "originating_agent": "codex",
+  "review_context": "Second runnable L&E replay family reviewed-learning coverage and raw replay input red-team.",
+  "finding_title": "Raw replay source inputs need source-token binding when case IDs are placeholders.",
+  "severity": "P1",
+  "issue_classes": [
+    "architecture_risk",
+    "authority_boundary_risk",
+    "data_flow_gap",
+    "learning_loop_gap",
+    "synthetic_data_gap",
+    "test_gap",
+    "performance_or_rust_candidate"
+  ],
+  "finding_summary": "A raw budget actuals source or carrier rejection source bundle can be schema-valid and still belong to the wrong synthetic L&E replay family because these source templates intentionally use placeholder budget and preflight IDs. The input-pack audit needs deterministic source-token binding against the concrete legal budget anchor before marking raw source inputs ready.",
+  "observable_context": [
+    "The wage/hour replay family now has committed synthetic raw budget actuals and carrier rejection source inputs.",
+    "Direct builders bind or validate concrete IDs, but the input-pack audit is the earlier QA gate that decides whether local source refs are ready for replay.",
+    "The raw actuals fixtures use __BUDGET_PROPOSAL_ID__, and carrier source bundles use filled-by-test budget and preflight placeholders, so placeholder IDs are not same-case evidence.",
+    "The scout agent identified that actuals_source_id, source_ref, bundle_id, and run_id carry stable synthetic source markers that can be compared to the legal budget anchor token."
+  ],
+  "observable_decision_logic": [
+    "Placeholder IDs must stay allowed for builder templates but must not count as proof that the raw source belongs to the selected replay case.",
+    "The legal budget proposal is the concrete local anchor because it carries budget_proposal_id, preflight_packet_id, and matter_family.",
+    "The input-pack audit should reject raw source inputs whose synthetic source markers do not contain the same case token as the legal budget anchor.",
+    "This remains a Python/Pydantic oracle because the authority-sensitive semantics are still evolving; Rust can later implement bulk scanning after these tests define the behavior."
+  ],
+  "solution_path": [
+    "Derive a local source-case token from concrete legal budget and preflight IDs in the replay slot.",
+    "Allow placeholder IDs in raw source templates but reject concrete mismatches when raw source IDs are present.",
+    "Validate budget_actuals_source.json against actuals_source_id and source_ref markers.",
+    "Validate carrier_rejection_capture_source_bundle.json against bundle_id and run_id markers.",
+    "Add negative tests that point the wage/hour replay slot to discrimination actuals and carrier source inputs and expect the audit to block."
+  ],
+  "fix_status": "fixed_validated",
+  "fix_refs": [
+    "src/lawfirm_os_intake/labor_employment_budget_outcome_replay_input_pack.py",
+    "tests/test_labor_employment_budget_outcome_replay_input_pack.py"
+  ],
+  "test_refs": [
+    "python scripts/run_full_pytest.py tests/test_labor_employment_budget_outcome_replay_input_pack.py tests/test_dad_review_issue_outbox.py",
+    "python scripts/run_validation_suite.py"
+  ],
+  "artifact_refs": [
+    "examples/synthetic/labor-employment/replay-inputs/wage-hour-clean/budget_actuals_source.json",
+    "examples/synthetic/labor-employment/replay-inputs/wage-hour-clean/carrier_rejection_capture_source_bundle.json",
+    "examples/synthetic/labor-employment/replay-inputs/discrimination-harassment-clean/budget_actuals_source.json",
+    "examples/synthetic/labor-employment/replay-inputs/discrimination-harassment-clean/carrier_rejection_capture_source_bundle.json",
+    "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-input-pack.json"
+  ],
+  "candidate_exception_labels": [
+    "schema_valid_raw_replay_input_wrong_family",
+    "placeholder_identity_not_evidence",
+    "raw_source_case_token_mismatch",
+    "deterministic_case_identity_binding",
+    "deterministic_replay_input_checker_rust_candidate",
+    "dad_learning_loop_candidate"
+  ],
+  "applies_when": [
+    "A replay input-pack manifest declares raw source templates with placeholder case IDs.",
+    "A raw source artifact has stable synthetic source identifiers such as actuals_source_id, source_ref, bundle_id, or run_id.",
+    "A concrete legal budget proposal anchor is available for the same replay slot."
+  ],
+  "does_not_apply_when": [
+    "A generated report already carries concrete budget_proposal_id and preflight_packet_id and can be checked directly.",
+    "A production Orchestrator owner supplies a stronger governed matter-linking contract.",
+    "A raw source input intentionally belongs to a documented aggregate cross-case replay contract."
+  ],
+  "danger_if_misapplied": "If raw placeholder-bearing sources are accepted without source-token binding, QA can replay or learn from the wrong synthetic family while all individual JSON schemas still pass.",
+  "suggested_actions": [
+    "DAD should classify placeholder-bound raw input mismatches separately from malformed JSON and generated-report wrong-case mismatches.",
+    "DAD should track which source markers are only local synthetic evidence and must not become canonical Semantic Substrate taxonomy.",
+    "Future Rust work should implement this only as a leaf checker after the Python tests remain the contract oracle."
+  ],
+  "reviewer_notes": [
+    "This record contains synthetic fixture references only.",
+    "It records observable evidence, assumptions, decision logic, fix refs, and test refs without hidden chain-of-thought."
+  ],
+  "red_team_notes": [
+    "Do not treat placeholder IDs as observed case identity.",
+    "Do not let source-token matching become a production matter-linking substitute.",
+    "Do not treat local synthetic family tokens as promoted canonical matter taxonomy."
+  ],
+  "raw_private_payload_included": false,
+  "hidden_chain_of_thought_included": false,
+  "candidate_only": true,
+  "dad_outbox_required": true,
+  "dad_review_required_before_promotion": true,
+  "lake_write_performed": false,
+  "sqlite_write_performed": false,
+  "external_writes_performed": false,
+  "silent_learning_performed": false
+}
