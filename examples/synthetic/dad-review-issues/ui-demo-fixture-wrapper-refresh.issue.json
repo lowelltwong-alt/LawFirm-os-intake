@@ -1,0 +1,104 @@
+{
+  "schema_version": "0.1",
+  "issue_id": "ui-demo-fixture-wrapper-refresh-001",
+  "issue_version": "0.1.0",
+  "observed_at": "2026-07-05T00:00:00Z",
+  "source_repo_id": "LawFirm-os-intake",
+  "source_repo_path": "LawFirm-os-intake",
+  "originating_agent": "codex",
+  "review_context": "Controlled refresh of checked read-only UI demo wrapper fixtures after adding Rust source-hash and snapshot-coherence gates.",
+  "finding_title": "Checked UI wrapper refresh is separate from generated-run artifact promotion.",
+  "severity": "P2",
+  "issue_classes": [
+    "ui_authority_risk",
+    "test_gap",
+    "synthetic_data_gap",
+    "learning_loop_gap",
+    "exception_lake_mapping_gap",
+    "performance_or_rust_candidate"
+  ],
+  "finding_summary": "Refreshing demo-ui-review-data-bundle.json source hashes and demo-rust-fixture-manifest-report.json inventory can make checked frontend evidence hash-current, but it does not regenerate or semantically promote the underlying QA detail reports from a run root.",
+  "observable_context": [
+    "The read-only UI bundle and fixture manifest were stale: the source-hash gate found 19 UI detail hash mismatches and the snapshot-coherence gate found 2 manifest drift entries.",
+    "The new refresh command updates only demo-ui-review-data-bundle.json and demo-rust-fixture-manifest-report.json.",
+    "The refresh reported old bundle id ui_review_data_bundle_c2a7116a9c69 and new bundle id ui_review_data_bundle_06f7b6a1952e.",
+    "The refresh updated 20 source hashes, left 1 unchanged, found 0 missing sources, and verified manifest_status=passed, source_hash_gate_status=passed, and snapshot_gate_status=passed.",
+    "A full generated-run-root promotion and sanitizer remains a separate future slice because semantic QA detail reports can carry run-root-sensitive refs and cross-report IDs."
+  ],
+  "observable_decision_logic": [
+    "Wrapper evidence bindings should be refreshed only by an explicit write command, not by a read-only checker.",
+    "A wrapper refresh can repair stale source hashes and manifest inventory without mutating semantic QA detail reports.",
+    "The UI bundle/confidence-summary relationship can create cross-report dependency loops, so semantic report regeneration should be handled by a later allowlisted run-root promotion flow.",
+    "Passing wrapper Rust gates proves current local JSON evidence binding, not budget correctness, production readiness, Lake admission, or learning."
+  ],
+  "solution_path": [
+    "Add refresh-ui-demo-fixtures with an explicit --write-fixtures guard.",
+    "Recompute UI bundle detail source hashes from resolved checked demo files.",
+    "Regenerate demo-rust-fixture-manifest-report.json by running the Rust fixture manifest scanner with the checked manifest as the output path.",
+    "Update the bundle's rust_fixture_manifest source hash after manifest regeneration.",
+    "Verify the refreshed wrappers with the Rust UI bundle source-hash gate and Rust fixture snapshot-coherence gate.",
+    "Add tests covering write-guard behavior, temp fixture refresh, and checked fixture gate verification."
+  ],
+  "fix_status": "fixed_validated",
+  "fix_refs": [
+    "src/lawfirm_os_intake/ui_demo_fixture_refresh.py",
+    "src/lawfirm_os_intake/cli.py",
+    "src/lawfirm_os_intake/models.py",
+    "apps/legal-intake-budget/src/fixtures/demo-ui-review-data-bundle.json",
+    "apps/legal-intake-budget/src/fixtures/demo-rust-fixture-manifest-report.json",
+    "apps/legal-intake-budget/README.md",
+    "docs/rust-fixture-boundary-checker.md"
+  ],
+  "test_refs": [
+    "tests/test_ui_demo_fixture_refresh.py",
+    "python scripts/run_full_pytest.py tests/test_ui_demo_fixture_refresh.py tests/test_rust_ui_bundle_source_hash.py tests/test_rust_fixture_snapshot_coherence.py tests/test_ui_foundation_contract.py",
+    "python scripts/run_validation_suite.py"
+  ],
+  "artifact_refs": [
+    ".lawfirm-os-intake/ui-demo-fixture-refresh/ui_demo_fixture_refresh_report.json",
+    "apps/legal-intake-budget/src/fixtures/demo-ui-review-data-bundle.json",
+    "apps/legal-intake-budget/src/fixtures/demo-rust-fixture-manifest-report.json"
+  ],
+  "candidate_exception_labels": [
+    "ui_wrapper_refresh_not_semantic_promotion",
+    "checked_demo_bundle_hash_refresh",
+    "checked_demo_manifest_refresh",
+    "generated_run_promotion_sanitizer_needed",
+    "ui_cross_report_dependency_loop",
+    "dad_learning_loop_candidate"
+  ],
+  "applies_when": [
+    "A checked frontend demo wrapper needs to reflect current local JSON detail files.",
+    "A source-hash or manifest snapshot gate fails because wrapper evidence is stale.",
+    "A repo needs to distinguish evidence wrapper freshness from semantic regeneration of source QA reports."
+  ],
+  "does_not_apply_when": [
+    "A workflow needs to copy and sanitize generated run-root artifacts into checked demo fixtures.",
+    "The underlying semantic QA detail reports are themselves stale or incorrect.",
+    "An owner-approved runtime artifact registry already manages the current evidence binding."
+  ],
+  "danger_if_misapplied": "If wrapper refresh is treated as full generated-run promotion, DAD or reviewers may overtrust stale semantic QA reports. If the wrapper refresh is skipped, the UI can display local JSON evidence with stale hashes.",
+  "suggested_actions": [
+    "DAD should classify wrapper freshness separately from semantic detail-report freshness.",
+    "Future work should add an allowlisted generated-run-root promotion and sanitizer command.",
+    "Exception Lake design should keep wrapper drift events distinct from budget, matter-linking, or learning-loop semantic defects."
+  ],
+  "reviewer_notes": [
+    "This record contains synthetic fixture and local artifact references only.",
+    "It records observable evidence, decision logic, fix refs, and test refs without hidden chain-of-thought."
+  ],
+  "red_team_notes": [
+    "Do not let refreshed wrapper hashes imply production readiness or budget correctness.",
+    "Do not regenerate semantic QA reports silently from a wrapper refresh.",
+    "Do not promote local candidate report schemas to Semantic Substrate canon from this repo."
+  ],
+  "raw_private_payload_included": false,
+  "hidden_chain_of_thought_included": false,
+  "candidate_only": true,
+  "dad_outbox_required": true,
+  "dad_review_required_before_promotion": true,
+  "lake_write_performed": false,
+  "sqlite_write_performed": false,
+  "external_writes_performed": false,
+  "silent_learning_performed": false
+}

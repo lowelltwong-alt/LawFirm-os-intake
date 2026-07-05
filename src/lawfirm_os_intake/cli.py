@@ -150,6 +150,7 @@ from .synthetic_qa_blocker_report import run_synthetic_qa_blocker_report
 from .synthetic_qa_bundle import run_synthetic_qa_bundle
 from .synthetic_qa_review_outcomes import run_synthetic_qa_review_outcome_record
 from .synthetic_qa_review_run import run_synthetic_qa_review_run
+from .ui_demo_fixture_refresh import refresh_ui_demo_fixtures
 from .ui_review_data_bundle import build_ui_review_data_bundle
 from .ui_review_manifest import build_ui_review_manifest
 from .util import load_json, write_json
@@ -476,6 +477,40 @@ def _parser() -> argparse.ArgumentParser:
         type=int,
         default=240,
         help="Timeout for the explicit Rust checker invocation.",
+    )
+
+    ui_demo_fixture_refresh = sub.add_parser(
+        "refresh-ui-demo-fixtures",
+        help=(
+            "Refresh checked read-only UI demo wrapper fixtures and verify them "
+            "with local Rust hash/snapshot gates."
+        ),
+    )
+    ui_demo_fixture_refresh.add_argument(
+        "--fixtures-root",
+        default="apps/legal-intake-budget/src/fixtures",
+        help="Checked frontend fixture root containing demo-ui-review-data-bundle.json.",
+    )
+    ui_demo_fixture_refresh.add_argument("--out-dir", required=True)
+    ui_demo_fixture_refresh.add_argument(
+        "--repo-root",
+        default=".",
+        help="Repository root containing rust/fixture-boundary-checker/Cargo.toml.",
+    )
+    ui_demo_fixture_refresh.add_argument(
+        "--write-fixtures",
+        action="store_true",
+        help="Required explicit approval to rewrite checked demo wrapper fixtures.",
+    )
+    ui_demo_fixture_refresh.add_argument(
+        "--generated-at",
+        help="Optional fixed timestamp for deterministic refresh reports.",
+    )
+    ui_demo_fixture_refresh.add_argument(
+        "--timeout-seconds",
+        type=int,
+        default=240,
+        help="Timeout for each explicit Rust checker invocation.",
     )
 
     calibration_starter_pack = sub.add_parser(
@@ -2327,6 +2362,36 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 0 if report.status == "passed" else 2
+
+        if args.command == "refresh-ui-demo-fixtures":
+            report, report_path = refresh_ui_demo_fixtures(
+                fixtures_root=args.fixtures_root,
+                out_dir=args.out_dir,
+                repo_root=args.repo_root,
+                write_fixtures=args.write_fixtures,
+                generated_at=args.generated_at,
+                timeout_seconds=args.timeout_seconds,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "report_path": str(report_path),
+                    "fixtures_root_ref": report.fixtures_root_ref,
+                    "source_hash_update_count": report.source_hash_update_count,
+                    "source_hash_unchanged_count": report.source_hash_unchanged_count,
+                    "missing_source_count": report.missing_source_count,
+                    "manifest_status": report.manifest_status,
+                    "source_hash_gate_status": report.source_hash_gate_status,
+                    "snapshot_gate_status": report.snapshot_gate_status,
+                    "local_fixture_updates_performed": (report.local_fixture_updates_performed),
+                    "external_writes_performed": report.external_writes_performed,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "budget_submission_authorized": report.budget_submission_authorized,
+                    "matter_opening_authorized": report.matter_opening_authorized,
+                }
+            )
+            return 0 if report.status == "ui_demo_fixture_refresh_verified" else 2
 
         if args.command == "build-budget-calibration-starter-pack":
             report, run_dir = run_budget_calibration_starter_pack(

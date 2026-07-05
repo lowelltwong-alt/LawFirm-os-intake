@@ -430,7 +430,7 @@
       "top_level_type": "object"
     },
     {
-      "byte_count": 5801,
+      "byte_count": 5654,
       "candidate_only": true,
       "external_writes_performed": false,
       "id_fields": [
@@ -448,16 +448,16 @@
         },
         {
           "field": "source_ui_review_data_bundle_id",
-          "value": "ui_review_data_bundle_6fe6e5e6ffb1"
+          "value": "ui_review_data_bundle_c2a7116a9c69"
         },
         {
           "field": "synthetic_confidence_summary_report_id",
-          "value": "synthetic_confidence_summary_e922c7fb67eef145"
+          "value": "synthetic_confidence_summary_c125c8f99ef18750"
         }
       ],
       "path": "demo-synthetic-confidence-summary-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:b872f9e5ab21ed42eb42a4d127fc8f66cc97361562e5356d53af83941aa96593",
+      "sha256": "sha256:84987ed841f62de5df58599d6cdfa6cc0a73cfd91c54dbc2ebd04156fb2d50c8",
       "status": "synthetic_confidence_summary_ready_for_review",
       "synthetic_only": true,
       "top_level_type": "object"
@@ -538,7 +538,7 @@
       "top_level_type": "object"
     },
     {
-      "byte_count": 15200,
+      "byte_count": 14866,
       "candidate_only": true,
       "external_writes_performed": false,
       "id_fields": [
@@ -549,7 +549,7 @@
       ],
       "path": "demo-synthetic-qa-review-run-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:89ff61ec83ee122b4857c251fc6b2cc0c70412fc8c9bec43424a7c95f0034046",
+      "sha256": "sha256:af960a33233e9e2e67674fe15024f8870bc61d4a07040e365cc24ae0cd8c224d",
       "status": "synthetic_qa_review_run_ready",
       "synthetic_only": true,
       "top_level_type": "object"
@@ -578,12 +578,12 @@
   ],
   "lake_write_performed": false,
   "local_json_only": true,
-  "manifest_sha256": "sha256:4360f24326faaf8509766ffd54107736902d7826226f412de4b3961c1fc7daff",
+  "manifest_sha256": "sha256:fc971ed05356ac85bb6f96ce94e31c92a42e6d7685c1449c231b03995f9c299f",
   "matter_opening_authorized": false,
   "non_authoritative": true,
   "parse_error_count": 0,
   "parsed_json_file_count": 23,
-  "root": "apps/legal-intake-budget/src/fixtures",
+  "root": "apps\\legal-intake-budget\\src\\fixtures",
   "scanner": "fixture-manifest-scanner",
   "schema_version": "0.1",
   "silent_learning_performed": false,
@@ -601,5 +601,5 @@
   "sqlite_write_performed": false,
   "status": "passed",
   "synthetic_only": true,
-  "total_byte_count": 730987
+  "total_byte_count": 730506
 }

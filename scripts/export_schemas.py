@@ -366,6 +366,8 @@ from lawfirm_os_intake.models import (  # noqa: E402
     SyntheticQABundleReport,
     SyntheticQAReviewRunReport,
     SyntheticQAReviewRunStep,
+    UIDemoFixtureRefreshDetail,
+    UIDemoFixtureRefreshReport,
     UIReviewDataBundle,
     UIReviewDataBundleDetailReport,
 )
@@ -443,6 +445,8 @@ MODELS = {
     "rust-ui-bundle-source-hash-detail.schema.json": RustUIBundleSourceHashDetail,
     "rust-ui-bundle-source-hash-failure.schema.json": RustUIBundleSourceHashFailure,
     "rust-ui-bundle-source-hash-report.schema.json": RustUIBundleSourceHashReport,
+    "ui-demo-fixture-refresh-detail.schema.json": UIDemoFixtureRefreshDetail,
+    "ui-demo-fixture-refresh-report.schema.json": UIDemoFixtureRefreshReport,
     "ui-review-data-bundle-detail-report.schema.json": UIReviewDataBundleDetailReport,
     "ui-review-data-bundle.schema.json": UIReviewDataBundle,
     "rust-ingestion-readiness-report.schema.json": RustIngestionReadinessReport,

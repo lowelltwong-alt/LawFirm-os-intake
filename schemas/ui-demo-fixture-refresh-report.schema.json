@@ -1,0 +1,327 @@
+{
+  "$defs": {
+    "UIDemoFixtureRefreshDetail": {
+      "additionalProperties": false,
+      "properties": {
+        "detail_report_id": {
+          "title": "Detail Report Id",
+          "type": "string"
+        },
+        "report_kind": {
+          "title": "Report Kind",
+          "type": "string"
+        },
+        "file_name": {
+          "title": "File Name",
+          "type": "string"
+        },
+        "old_source_sha256": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Old Source Sha256"
+        },
+        "new_source_sha256": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "New Source Sha256"
+        },
+        "resolved_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Resolved Path"
+        },
+        "resolution_strategy": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Resolution Strategy"
+        },
+        "status": {
+          "enum": [
+            "updated",
+            "unchanged",
+            "missing_source",
+            "skipped_not_present",
+            "deferred_manifest"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "detail_report_id",
+        "report_kind",
+        "file_name",
+        "status"
+      ],
+      "title": "UIDemoFixtureRefreshDetail",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "ui_demo_fixture_refresh_verified",
+        "ui_demo_fixture_refresh_failed",
+        "ui_demo_fixture_refresh_blocked_write_flag_required"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "fixtures_root_ref": {
+      "title": "Fixtures Root Ref",
+      "type": "string"
+    },
+    "ui_bundle_ref": {
+      "title": "Ui Bundle Ref",
+      "type": "string"
+    },
+    "manifest_ref": {
+      "title": "Manifest Ref",
+      "type": "string"
+    },
+    "old_ui_review_data_bundle_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Old Ui Review Data Bundle Id"
+    },
+    "new_ui_review_data_bundle_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "New Ui Review Data Bundle Id"
+    },
+    "old_ui_bundle_sha256": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Old Ui Bundle Sha256"
+    },
+    "new_ui_bundle_sha256": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "New Ui Bundle Sha256"
+    },
+    "old_manifest_sha256": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Old Manifest Sha256"
+    },
+    "new_manifest_sha256": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "New Manifest Sha256"
+    },
+    "detail_report_count": {
+      "minimum": 0,
+      "title": "Detail Report Count",
+      "type": "integer"
+    },
+    "source_hash_update_count": {
+      "minimum": 0,
+      "title": "Source Hash Update Count",
+      "type": "integer"
+    },
+    "source_hash_unchanged_count": {
+      "minimum": 0,
+      "title": "Source Hash Unchanged Count",
+      "type": "integer"
+    },
+    "missing_source_count": {
+      "minimum": 0,
+      "title": "Missing Source Count",
+      "type": "integer"
+    },
+    "invalid_existing_hash_count": {
+      "minimum": 0,
+      "title": "Invalid Existing Hash Count",
+      "type": "integer"
+    },
+    "manifest_status": {
+      "title": "Manifest Status",
+      "type": "string"
+    },
+    "source_hash_gate_status": {
+      "title": "Source Hash Gate Status",
+      "type": "string"
+    },
+    "snapshot_gate_status": {
+      "title": "Snapshot Gate Status",
+      "type": "string"
+    },
+    "local_fixture_updates_performed": {
+      "default": false,
+      "title": "Local Fixture Updates Performed",
+      "type": "boolean"
+    },
+    "details": {
+      "items": {
+        "$ref": "#/$defs/UIDemoFixtureRefreshDetail"
+      },
+      "title": "Details",
+      "type": "array"
+    },
+    "required_next_actions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Actions",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "local_json_only": {
+      "const": true,
+      "default": true,
+      "title": "Local Json Only",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "budget_submission_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Submission Authorized",
+      "type": "boolean"
+    },
+    "matter_opening_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Matter Opening Authorized",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "status",
+    "fixtures_root_ref",
+    "ui_bundle_ref",
+    "manifest_ref",
+    "detail_report_count",
+    "source_hash_update_count",
+    "source_hash_unchanged_count",
+    "missing_source_count",
+    "invalid_existing_hash_count",
+    "manifest_status",
+    "source_hash_gate_status",
+    "snapshot_gate_status",
+    "required_next_actions",
+    "generated_at"
+  ],
+  "title": "UIDemoFixtureRefreshReport",
+  "type": "object"
+}

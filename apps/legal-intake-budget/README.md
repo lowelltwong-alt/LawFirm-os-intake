@@ -110,3 +110,21 @@ This Rust checker is a read-only drift detector. It resolves generated run-root
 paths and checked `demo-...` fixture names, hashes raw file bytes, and fails
 closed on missing sources, invalid hashes, out-of-root source refs, or hash
 mismatches.
+
+Refresh the checked UI demo wrapper fixtures after detail-report JSON changes
+with:
+
+```bash
+python -m lawfirm_os_intake refresh-ui-demo-fixtures \
+  --fixtures-root apps/legal-intake-budget/src/fixtures \
+  --out-dir .lawfirm-os-intake/ui-demo-fixture-refresh \
+  --repo-root . \
+  --generated-at 2026-07-05T00:00:00Z \
+  --write-fixtures
+```
+
+That command updates `demo-ui-review-data-bundle.json` source hashes,
+regenerates `demo-rust-fixture-manifest-report.json`, and verifies both the UI
+bundle source-hash gate and fixture snapshot-coherence gate. It does not promote
+schemas, regenerate semantic QA reports, submit budgets, open matters, write
+SQLite/Lake records, or create external connectors.

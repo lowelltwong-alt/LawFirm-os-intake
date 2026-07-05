@@ -66,6 +66,22 @@ The UI bundle source-hash report resolves both generated run-root paths and the
 checked frontend `demo-...` fixture naming convention. It fails closed on invalid
 `source_sha256` values, missing source files, and hash mismatches.
 
+Refresh the checked frontend wrapper fixtures and verify both Rust gates:
+
+```powershell
+python -m lawfirm_os_intake refresh-ui-demo-fixtures `
+  --fixtures-root apps/legal-intake-budget/src/fixtures `
+  --out-dir .lawfirm-os-intake/ui-demo-fixture-refresh `
+  --repo-root . `
+  --generated-at 2026-07-05T00:00:00Z `
+  --write-fixtures
+```
+
+This refresh updates only `demo-ui-review-data-bundle.json` and
+`demo-rust-fixture-manifest-report.json`. It intentionally does not regenerate
+semantic QA detail reports or hide the need for a later generated-run promotion
+and sanitizer flow.
+
 Stage a prebuilt report into the synthetic QA review run:
 
 ```powershell

@@ -12891,6 +12891,126 @@ class RustUIBundleSourceHashReport(StrictModel):
         return self
 
 
+UIDemoFixtureRefreshStatus = Literal[
+    "ui_demo_fixture_refresh_verified",
+    "ui_demo_fixture_refresh_failed",
+    "ui_demo_fixture_refresh_blocked_write_flag_required",
+]
+
+UIDemoFixtureRefreshDetailStatus = Literal[
+    "updated",
+    "unchanged",
+    "missing_source",
+    "skipped_not_present",
+    "deferred_manifest",
+]
+
+
+class UIDemoFixtureRefreshDetail(StrictModel):
+    detail_report_id: str
+    report_kind: str
+    file_name: str
+    old_source_sha256: str | None = None
+    new_source_sha256: str | None = None
+    resolved_path: str | None = None
+    resolution_strategy: str | None = None
+    status: UIDemoFixtureRefreshDetailStatus
+
+    @model_validator(mode="after")
+    def ui_demo_fixture_refresh_detail_hashes_match_status(
+        self,
+    ) -> "UIDemoFixtureRefreshDetail":
+        if self.new_source_sha256 is not None and not _is_sha256_ref(self.new_source_sha256):
+            raise ValueError("UI demo fixture new source hash must be sha256:<64 hex>")
+        if self.status in {"updated", "unchanged"} and not (
+            self.new_source_sha256 and self.resolved_path and self.resolution_strategy
+        ):
+            raise ValueError("refreshed UI demo detail needs new hash and resolved source")
+        if self.status == "updated" and self.old_source_sha256 == self.new_source_sha256:
+            raise ValueError("updated UI demo detail requires changed hash")
+        if self.status == "unchanged" and self.old_source_sha256 != self.new_source_sha256:
+            raise ValueError("unchanged UI demo detail requires equal hashes")
+        return self
+
+
+class UIDemoFixtureRefreshReport(StrictModel):
+    schema_version: str = "0.1"
+    status: UIDemoFixtureRefreshStatus
+    fixtures_root_ref: str
+    ui_bundle_ref: str
+    manifest_ref: str
+    old_ui_review_data_bundle_id: str | None = None
+    new_ui_review_data_bundle_id: str | None = None
+    old_ui_bundle_sha256: str | None = None
+    new_ui_bundle_sha256: str | None = None
+    old_manifest_sha256: str | None = None
+    new_manifest_sha256: str | None = None
+    detail_report_count: int = Field(ge=0)
+    source_hash_update_count: int = Field(ge=0)
+    source_hash_unchanged_count: int = Field(ge=0)
+    missing_source_count: int = Field(ge=0)
+    invalid_existing_hash_count: int = Field(ge=0)
+    manifest_status: str
+    source_hash_gate_status: str
+    snapshot_gate_status: str
+    local_fixture_updates_performed: bool = False
+    details: list[UIDemoFixtureRefreshDetail] = Field(default_factory=list)
+    required_next_actions: list[str]
+    candidate_only: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    local_json_only: Literal[True] = True
+    external_writes_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def ui_demo_fixture_refresh_counts_and_status_match(
+        self,
+    ) -> "UIDemoFixtureRefreshReport":
+        if self.detail_report_count != len(self.details):
+            raise ValueError("UI demo fixture refresh detail count mismatch")
+        if self.source_hash_update_count != len(
+            [detail for detail in self.details if detail.status == "updated"]
+        ):
+            raise ValueError("UI demo fixture refresh update count mismatch")
+        if self.source_hash_unchanged_count != len(
+            [detail for detail in self.details if detail.status == "unchanged"]
+        ):
+            raise ValueError("UI demo fixture refresh unchanged count mismatch")
+        if self.missing_source_count != len(
+            [detail for detail in self.details if detail.status == "missing_source"]
+        ):
+            raise ValueError("UI demo fixture refresh missing source count mismatch")
+        for hash_value in [
+            self.old_ui_bundle_sha256,
+            self.new_ui_bundle_sha256,
+            self.old_manifest_sha256,
+            self.new_manifest_sha256,
+        ]:
+            if hash_value is not None and not _is_sha256_ref(hash_value):
+                raise ValueError("UI demo fixture refresh hashes must be sha256:<64 hex>")
+        if self.status == "ui_demo_fixture_refresh_verified":
+            if (
+                self.missing_source_count
+                or self.manifest_status != "passed"
+                or self.source_hash_gate_status != "passed"
+                or self.snapshot_gate_status != "passed"
+                or not self.local_fixture_updates_performed
+            ):
+                raise ValueError("verified UI demo fixture refresh requires passed gates")
+        if self.status == "ui_demo_fixture_refresh_blocked_write_flag_required":
+            if self.local_fixture_updates_performed or self.details:
+                raise ValueError("blocked UI demo fixture refresh cannot mutate or include details")
+        if not self.required_next_actions:
+            raise ValueError("UI demo fixture refresh requires next actions")
+        return self
+
+
 def _is_sha256_ref(value: str) -> bool:
     if len(value) != len("sha256:") + 64 or not value.startswith("sha256:"):
         return False
