@@ -13286,6 +13286,82 @@ class UIDemoQARecipeReport(StrictModel):
         return self
 
 
+UIDemoQARecipeFixtureRefreshStatus = Literal[
+    "ui_demo_qa_recipe_fixture_refresh_verified",
+    "ui_demo_qa_recipe_fixture_refresh_failed",
+    "ui_demo_qa_recipe_fixture_refresh_blocked_write_flag_required",
+]
+
+
+class UIDemoQARecipeFixtureRefreshReport(StrictModel):
+    schema_version: str = "0.1"
+    ui_demo_qa_recipe_fixture_refresh_report_id: str
+    status: UIDemoQARecipeFixtureRefreshStatus
+    source_recipe_report_ref: str
+    source_recipe_status: str
+    fixtures_root_ref: str
+    target_fixture_ref: str
+    old_target_sha256: str | None = None
+    new_target_sha256: str | None = None
+    source_sha256: str | None = None
+    sanitized_replacement_count: int = Field(ge=0)
+    forbidden_path_leak_count: int = Field(ge=0)
+    blocked_side_effect_count: int = Field(ge=0)
+    wrapper_refresh_status: str
+    wrapper_refresh_report_ref: str | None = None
+    manifest_status: str
+    source_hash_gate_status: str
+    snapshot_gate_status: str
+    local_fixture_update_performed: bool
+    rollback_performed: bool
+    required_next_actions: list[str]
+    candidate_only: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    local_json_only: Literal[True] = True
+    external_writes_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def ui_demo_qa_recipe_fixture_refresh_is_coherent(
+        self,
+    ) -> "UIDemoQARecipeFixtureRefreshReport":
+        if self.status == "ui_demo_qa_recipe_fixture_refresh_verified":
+            if (
+                self.source_recipe_status != "ui_demo_qa_recipe_verified"
+                or not self.source_sha256
+                or not self.new_target_sha256
+                or self.forbidden_path_leak_count
+                or self.blocked_side_effect_count
+                or self.wrapper_refresh_status != "ui_demo_fixture_refresh_verified"
+                or self.manifest_status != "passed"
+                or self.source_hash_gate_status != "passed"
+                or self.snapshot_gate_status != "passed"
+                or not self.local_fixture_update_performed
+                or self.rollback_performed
+            ):
+                raise ValueError("verified recipe fixture refresh requires passed gates")
+        if self.status == "ui_demo_qa_recipe_fixture_refresh_blocked_write_flag_required":
+            if self.local_fixture_update_performed or self.new_target_sha256:
+                raise ValueError("blocked recipe fixture refresh cannot update fixture")
+        if self.status == "ui_demo_qa_recipe_fixture_refresh_failed":
+            if (
+                self.forbidden_path_leak_count == 0
+                and self.blocked_side_effect_count == 0
+                and self.wrapper_refresh_status == "ui_demo_fixture_refresh_verified"
+                and not self.rollback_performed
+            ):
+                raise ValueError("failed recipe fixture refresh needs a failed gate or rollback")
+        if not self.required_next_actions:
+            raise ValueError("recipe fixture refresh requires next actions")
+        return self
+
+
 def _is_sha256_ref(value: str) -> bool:
     if len(value) != len("sha256:") + 64 or not value.startswith("sha256:"):
         return False
@@ -14022,6 +14098,7 @@ UIReviewDataBundleReportKind = Literal[
     "synthetic_confidence_summary",
     "synthetic_qa_blocker_report",
     "synthetic_qa_review_outcome",
+    "ui_demo_qa_recipe",
     "rust_fixture_boundary",
     "rust_fixture_manifest",
     "matter_linking_preflight",

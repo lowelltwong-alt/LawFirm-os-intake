@@ -297,7 +297,11 @@ def test_promote_ui_demo_run_fixtures_sanitizes_and_verifies(repo_root, tmp_path
     assert ".lawfirm-os-intake" not in json.dumps(confidence)
     assert confidence["source_ui_review_data_bundle_ref"].startswith("<demo-run-root>")
     assert bundle["ui_review_data_bundle_id"].startswith("ui_review_data_bundle_")
-    assert all(detail["source_sha256"].startswith("sha256:") for detail in bundle["detail_reports"])
+    assert all(
+        detail["source_sha256"].startswith("sha256:")
+        for detail in bundle["detail_reports"]
+        if detail["present"] is True
+    )
     assert not (fixtures / "demo-unallowlisted-extra-report.json").exists()
 
 

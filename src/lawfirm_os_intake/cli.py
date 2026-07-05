@@ -152,6 +152,7 @@ from .synthetic_qa_review_outcomes import run_synthetic_qa_review_outcome_record
 from .synthetic_qa_review_run import run_synthetic_qa_review_run
 from .ui_demo_fixture_promotion import promote_ui_demo_run_fixtures
 from .ui_demo_qa_recipe import run_ui_demo_qa_recipe
+from .ui_demo_qa_recipe_fixture_refresh import refresh_ui_demo_qa_recipe_fixture
 from .ui_demo_fixture_refresh import refresh_ui_demo_fixtures
 from .ui_review_data_bundle import build_ui_review_data_bundle
 from .ui_review_manifest import build_ui_review_manifest
@@ -2545,6 +2546,24 @@ def main(argv: list[str] | None = None) -> int:
                 timeout_seconds=args.timeout_seconds,
                 validation_timeout_seconds=args.validation_timeout_seconds,
             )
+            recipe_fixture_refresh = None
+            recipe_fixture_refresh_path = None
+            if args.write_fixtures and report.status == "ui_demo_qa_recipe_verified":
+                recipe_fixture_refresh, recipe_fixture_refresh_path = (
+                    refresh_ui_demo_qa_recipe_fixture(
+                        source_recipe_report_path=report_path,
+                        fixtures_root=args.fixtures_root,
+                        out_dir=Path(args.out_dir) / "recipe-fixture-refresh",
+                        repo_root=args.repo_root,
+                        write_fixtures=True,
+                        generated_at=args.generated_at,
+                        timeout_seconds=args.timeout_seconds,
+                    )
+                )
+            recipe_refresh_verified = (
+                recipe_fixture_refresh is None
+                or recipe_fixture_refresh.status == "ui_demo_qa_recipe_fixture_refresh_verified"
+            )
             _print(
                 {
                     "status": report.status,
@@ -2577,9 +2596,38 @@ def main(argv: list[str] | None = None) -> int:
                     "sqlite_write_performed": report.sqlite_write_performed,
                     "budget_submission_authorized": report.budget_submission_authorized,
                     "matter_opening_authorized": report.matter_opening_authorized,
+                    "recipe_fixture_refresh_status": (
+                        recipe_fixture_refresh.status
+                        if recipe_fixture_refresh is not None
+                        else "not_run"
+                    ),
+                    "recipe_fixture_refresh_report_ref": (
+                        str(recipe_fixture_refresh_path)
+                        if recipe_fixture_refresh_path is not None
+                        else None
+                    ),
+                    "recipe_fixture_local_update_performed": (
+                        recipe_fixture_refresh.local_fixture_update_performed
+                        if recipe_fixture_refresh is not None
+                        else False
+                    ),
+                    "recipe_fixture_source_hash_gate_status": (
+                        recipe_fixture_refresh.source_hash_gate_status
+                        if recipe_fixture_refresh is not None
+                        else "not_run"
+                    ),
+                    "recipe_fixture_snapshot_gate_status": (
+                        recipe_fixture_refresh.snapshot_gate_status
+                        if recipe_fixture_refresh is not None
+                        else "not_run"
+                    ),
                 }
             )
-            return 0 if report.status == "ui_demo_qa_recipe_verified" else 2
+            return (
+                0
+                if report.status == "ui_demo_qa_recipe_verified" and recipe_refresh_verified
+                else 2
+            )
 
         if args.command == "build-budget-calibration-starter-pack":
             report, run_dir = run_budget_calibration_starter_pack(

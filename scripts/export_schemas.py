@@ -370,6 +370,7 @@ from lawfirm_os_intake.models import (  # noqa: E402
     UIDemoFixturePromotionReport,
     UIDemoFixtureRefreshDetail,
     UIDemoFixtureRefreshReport,
+    UIDemoQARecipeFixtureRefreshReport,
     UIReviewDataBundle,
     UIReviewDataBundleDetailReport,
 )
@@ -451,6 +452,7 @@ MODELS = {
     "ui-demo-fixture-promotion-report.schema.json": UIDemoFixturePromotionReport,
     "ui-demo-fixture-refresh-detail.schema.json": UIDemoFixtureRefreshDetail,
     "ui-demo-fixture-refresh-report.schema.json": UIDemoFixtureRefreshReport,
+    "ui-demo-qa-recipe-fixture-refresh-report.schema.json": (UIDemoQARecipeFixtureRefreshReport),
     "ui-review-data-bundle-detail-report.schema.json": UIReviewDataBundleDetailReport,
     "ui-review-data-bundle.schema.json": UIReviewDataBundle,
     "rust-ingestion-readiness-report.schema.json": RustIngestionReadinessReport,

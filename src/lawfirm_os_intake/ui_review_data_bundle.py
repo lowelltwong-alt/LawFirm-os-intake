@@ -62,6 +62,14 @@ DETAIL_REPORT_SPECS = [
         required=False,
     ),
     UIReviewDetailSpec(
+        detail_report_id="ui-demo-qa-recipe",
+        label="UI Demo QA Recipe",
+        report_kind="ui_demo_qa_recipe",
+        file_name="ui_demo_qa_recipe_report.json",
+        renderer="UIDemoQARecipePanel",
+        required=False,
+    ),
+    UIReviewDetailSpec(
         detail_report_id="rust-fixture-boundary",
         label="Rust Fixture Boundary",
         report_kind="rust_fixture_boundary",

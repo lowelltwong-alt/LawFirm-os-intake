@@ -24,6 +24,7 @@ export type UIReviewDataBundleReportKind =
   | "synthetic_confidence_summary"
   | "synthetic_qa_blocker_report"
   | "synthetic_qa_review_outcome"
+  | "ui_demo_qa_recipe"
   | "rust_fixture_boundary"
   | "rust_fixture_manifest"
   | "matter_linking_preflight"

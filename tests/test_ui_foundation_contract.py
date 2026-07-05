@@ -183,9 +183,9 @@ def test_legal_intake_budget_demo_ui_review_data_bundle_is_local_and_no_write(re
     detail_reports = {report["file_name"]: report for report in bundle["detail_reports"]}
 
     assert bundle["status"] == "ready_for_review"
-    assert bundle["detail_report_count"] == len(bundle["detail_reports"]) == 21
+    assert bundle["detail_report_count"] == len(bundle["detail_reports"]) == 22
     assert bundle["required_detail_report_count"] == 13
-    assert bundle["present_detail_report_count"] == 21
+    assert bundle["present_detail_report_count"] == 22
     assert bundle["missing_required_detail_report_count"] == 0
     assert bundle["external_write_report_count"] == 0
     assert bundle["candidate_only"] is True
@@ -220,6 +220,7 @@ def test_legal_intake_budget_demo_ui_review_data_bundle_is_local_and_no_write(re
         "labor_employment_budget_outcome_replay_builder_binding_report.json",
         "labor_employment_budget_outcome_replay_confidence_status_report.json",
         "budget_learning_loop_report.json",
+        "ui_demo_qa_recipe_report.json",
     } <= set(detail_reports)
     assert all(report["present"] is True for report in bundle["detail_reports"])
     assert all(report["source_sha256"].startswith("sha256:") for report in bundle["detail_reports"])
@@ -696,8 +697,8 @@ def test_legal_intake_budget_demo_synthetic_confidence_summary_is_no_write(repo_
     assert report["qa_step_count"] == 31
     assert report["qa_failed_step_count"] == 0
     assert report["qa_missing_required_artifact_count"] == 0
-    assert report["ui_detail_report_count"] == 21
-    assert report["ui_present_detail_report_count"] == 21
+    assert report["ui_detail_report_count"] == 22
+    assert report["ui_present_detail_report_count"] == 22
     assert report["ui_missing_required_detail_report_count"] == 0
     assert report["display_banner"]["candidate_only"] is True
     assert report["display_banner"]["synthetic_only"] is True

@@ -1,0 +1,218 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "ui_demo_qa_recipe_fixture_refresh_report_id": {
+      "title": "Ui Demo Qa Recipe Fixture Refresh Report Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "ui_demo_qa_recipe_fixture_refresh_verified",
+        "ui_demo_qa_recipe_fixture_refresh_failed",
+        "ui_demo_qa_recipe_fixture_refresh_blocked_write_flag_required"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "source_recipe_report_ref": {
+      "title": "Source Recipe Report Ref",
+      "type": "string"
+    },
+    "source_recipe_status": {
+      "title": "Source Recipe Status",
+      "type": "string"
+    },
+    "fixtures_root_ref": {
+      "title": "Fixtures Root Ref",
+      "type": "string"
+    },
+    "target_fixture_ref": {
+      "title": "Target Fixture Ref",
+      "type": "string"
+    },
+    "old_target_sha256": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Old Target Sha256"
+    },
+    "new_target_sha256": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "New Target Sha256"
+    },
+    "source_sha256": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Sha256"
+    },
+    "sanitized_replacement_count": {
+      "minimum": 0,
+      "title": "Sanitized Replacement Count",
+      "type": "integer"
+    },
+    "forbidden_path_leak_count": {
+      "minimum": 0,
+      "title": "Forbidden Path Leak Count",
+      "type": "integer"
+    },
+    "blocked_side_effect_count": {
+      "minimum": 0,
+      "title": "Blocked Side Effect Count",
+      "type": "integer"
+    },
+    "wrapper_refresh_status": {
+      "title": "Wrapper Refresh Status",
+      "type": "string"
+    },
+    "wrapper_refresh_report_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Wrapper Refresh Report Ref"
+    },
+    "manifest_status": {
+      "title": "Manifest Status",
+      "type": "string"
+    },
+    "source_hash_gate_status": {
+      "title": "Source Hash Gate Status",
+      "type": "string"
+    },
+    "snapshot_gate_status": {
+      "title": "Snapshot Gate Status",
+      "type": "string"
+    },
+    "local_fixture_update_performed": {
+      "title": "Local Fixture Update Performed",
+      "type": "boolean"
+    },
+    "rollback_performed": {
+      "title": "Rollback Performed",
+      "type": "boolean"
+    },
+    "required_next_actions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Actions",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "local_json_only": {
+      "const": true,
+      "default": true,
+      "title": "Local Json Only",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "budget_submission_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Submission Authorized",
+      "type": "boolean"
+    },
+    "matter_opening_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Matter Opening Authorized",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "ui_demo_qa_recipe_fixture_refresh_report_id",
+    "status",
+    "source_recipe_report_ref",
+    "source_recipe_status",
+    "fixtures_root_ref",
+    "target_fixture_ref",
+    "sanitized_replacement_count",
+    "forbidden_path_leak_count",
+    "blocked_side_effect_count",
+    "wrapper_refresh_status",
+    "manifest_status",
+    "source_hash_gate_status",
+    "snapshot_gate_status",
+    "local_fixture_update_performed",
+    "rollback_performed",
+    "required_next_actions",
+    "generated_at"
+  ],
+  "title": "UIDemoQARecipeFixtureRefreshReport",
+  "type": "object"
+}

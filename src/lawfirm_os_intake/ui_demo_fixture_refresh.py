@@ -13,11 +13,13 @@ from .models import (
 )
 from .rust_fixture_snapshot_coherence import run_rust_fixture_snapshot_coherence_check
 from .rust_ui_bundle_source_hash import run_rust_ui_bundle_source_hash_check
+from .ui_review_data_bundle import DETAIL_REPORT_SPECS
 from .util import digest_json, load_json, now_iso, write_json
 
 
 DEMO_UI_REVIEW_DATA_BUNDLE_FILENAME = "demo-ui-review-data-bundle.json"
 DEMO_RUST_FIXTURE_MANIFEST_FILENAME = "demo-rust-fixture-manifest-report.json"
+DEMO_RUN_ROOT_PLACEHOLDER = "<demo-run-root>"
 RUST_FIXTURE_MANIFEST_CARGO_MANIFEST_REF = "rust/fixture-boundary-checker/Cargo.toml"
 UI_DEMO_FIXTURE_REFRESH_REPORT_FILENAME = "ui_demo_fixture_refresh_report.json"
 
@@ -61,6 +63,8 @@ def refresh_ui_demo_fixtures(
     old_bundle_id = str(bundle_payload.get("ui_review_data_bundle_id") or "")
     old_bundle_sha256 = _sha256_file(bundle_path)
     manifest_old_sha256 = _sha256_file(manifest_path) if manifest_path.is_file() else None
+    _sync_detail_specs(bundle_payload, fixtures)
+    _refresh_bundle_counts_and_status(bundle_payload)
 
     details = []
     missing_count = 0
@@ -184,6 +188,7 @@ def refresh_ui_demo_fixtures(
 
     new_bundle_id = _bundle_id(bundle_payload)
     bundle_payload["ui_review_data_bundle_id"] = new_bundle_id
+    _refresh_bundle_counts_and_status(bundle_payload)
     if generated_at is not None:
         bundle_payload["generated_at"] = generated_at
     write_json(bundle_path, bundle_payload)
@@ -288,6 +293,94 @@ def _run_manifest_scanner_to_fixture(
             f"Rust fixture manifest scanner returned {completed.returncode} but report passed."
         )
     return manifest
+
+
+def _sync_detail_specs(bundle_payload: dict, fixtures: Path) -> None:
+    detail_reports = bundle_payload.setdefault("detail_reports", [])
+    existing_ids = {
+        str(detail.get("detail_report_id") or "")
+        for detail in detail_reports
+        if isinstance(detail, dict)
+    }
+    for spec in DETAIL_REPORT_SPECS:
+        if spec.detail_report_id in existing_ids:
+            continue
+        demo_name = _demo_fixture_name(spec.file_name)
+        candidates = [
+            fixtures / spec.file_name,
+            fixtures / "quality" / spec.file_name,
+            fixtures / "qa" / spec.file_name,
+        ]
+        if demo_name:
+            candidates.append(fixtures / demo_name)
+        resolved = next((candidate for candidate in candidates if candidate.is_file()), None)
+        present = resolved is not None
+        detail_reports.append(
+            {
+                "detail_report_id": spec.detail_report_id,
+                "label": spec.label,
+                "report_kind": spec.report_kind,
+                "file_name": spec.file_name,
+                "required": spec.required,
+                "present": present,
+                "status": "present" if present else "missing",
+                "renderer": spec.renderer,
+                "artifact_ref": (
+                    f"{DEMO_RUN_ROOT_PLACEHOLDER}\\{spec.file_name}" if present else None
+                ),
+                "source_sha256": _sha256_file(resolved) if resolved is not None else None,
+                "candidate_only": True,
+                "synthetic_only": True,
+                "external_writes_performed": False,
+                "notes": [
+                    (
+                        f"Found checked demo fixture for {spec.file_name}."
+                        if present
+                        else f"{spec.file_name} was not found under the local fixture root."
+                    )
+                ],
+            }
+        )
+
+
+def _refresh_bundle_counts_and_status(bundle_payload: dict) -> None:
+    detail_reports = [
+        detail for detail in bundle_payload.get("detail_reports", []) if isinstance(detail, dict)
+    ]
+    required = [detail for detail in detail_reports if detail.get("required") is True]
+    present = [detail for detail in detail_reports if detail.get("present") is True]
+    missing_required = [detail for detail in required if detail.get("present") is not True]
+    external_write_reports = [
+        detail for detail in detail_reports if detail.get("external_writes_performed") is True
+    ]
+    bundle_payload["detail_report_count"] = len(detail_reports)
+    bundle_payload["required_detail_report_count"] = len(required)
+    bundle_payload["present_detail_report_count"] = len(present)
+    bundle_payload["missing_required_detail_report_count"] = len(missing_required)
+    bundle_payload["external_write_report_count"] = len(external_write_reports)
+    if external_write_reports:
+        bundle_payload["status"] = "failed_side_effect_boundary"
+        bundle_payload["required_next_actions"] = [
+            (
+                "Remove or quarantine UI detail report with prohibited write signal: "
+                f"{detail.get('file_name')}"
+            )
+            for detail in external_write_reports
+        ]
+    elif missing_required:
+        bundle_payload["status"] = "blocked_missing_required_reports"
+        bundle_payload["required_next_actions"] = [
+            (
+                "Generate local UI detail report before relying on the review surface: "
+                f"{detail.get('file_name')}"
+            )
+            for detail in missing_required
+        ]
+    else:
+        bundle_payload["status"] = "ready_for_review"
+        bundle_payload["required_next_actions"] = [
+            "UI review data bundle is ready for read-only local review."
+        ]
 
 
 def _resolve_detail_source(fixtures: Path, detail: dict) -> ResolvedDetail | None:

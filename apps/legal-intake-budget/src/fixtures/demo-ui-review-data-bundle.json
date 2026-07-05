@@ -1,11 +1,11 @@
 {
   "schema_version": "0.1",
-  "ui_review_data_bundle_id": "ui_review_data_bundle_dd6c1f3f2c7b",
+  "ui_review_data_bundle_id": "ui_review_data_bundle_89a58d31aef5",
   "status": "ready_for_review",
   "run_root_ref": "<demo-run-root>",
-  "detail_report_count": 21,
+  "detail_report_count": 22,
   "required_detail_report_count": 13,
-  "present_detail_report_count": 21,
+  "present_detail_report_count": 22,
   "missing_required_detail_report_count": 0,
   "external_write_report_count": 0,
   "detail_reports": [
@@ -55,7 +55,7 @@
       "status": "synthetic_confidence_summary_ready_for_review",
       "renderer": "SyntheticConfidenceSummaryPanel",
       "artifact_ref": "<demo-run-root>\\quality\\synthetic_confidence_summary_report.json",
-      "source_sha256": "sha256:5c5b6f83dd501158bc92ba9eb0dd88da2712cd644f9ae481e239681a9f249e80",
+      "source_sha256": "sha256:bf024c2165d9b2907a5ea080f93f0fa338dfedf39a62b0560e8d4329656ce4ab",
       "candidate_only": true,
       "synthetic_only": true,
       "external_writes_performed": false,
@@ -127,7 +127,7 @@
       "status": "passed",
       "renderer": "RustFixtureManifestPanel",
       "artifact_ref": "apps/legal-intake-budget/src/fixtures/demo-rust-fixture-manifest-report.json",
-      "source_sha256": "sha256:45eb958a5b3900781ea55777e7b7aa58a1e11b8dc2a69766597bec3c0fee99a7",
+      "source_sha256": "sha256:fca23bcdf1f946539decbf32be4711d06d78975eaad37f0b4f316632ef1e3adf",
       "candidate_only": true,
       "synthetic_only": true,
       "external_writes_performed": false,
@@ -385,6 +385,24 @@
       "external_writes_performed": false,
       "notes": [
         "Found quality\\budget_learning_loop_report.json; status=budget_learning_loop_ready_for_review."
+      ]
+    },
+    {
+      "detail_report_id": "ui-demo-qa-recipe",
+      "label": "UI Demo QA Recipe",
+      "report_kind": "ui_demo_qa_recipe",
+      "file_name": "ui_demo_qa_recipe_report.json",
+      "required": false,
+      "present": true,
+      "status": "present",
+      "renderer": "UIDemoQARecipePanel",
+      "artifact_ref": "<demo-run-root>\\ui_demo_qa_recipe_report.json",
+      "source_sha256": "sha256:f5152ed2310adfc36e0e5f21fc11cb8b208abfc653fc9e1a4e62eb719380981f",
+      "candidate_only": true,
+      "synthetic_only": true,
+      "external_writes_performed": false,
+      "notes": [
+        "Found checked demo fixture for ui_demo_qa_recipe_report.json."
       ]
     }
   ],
