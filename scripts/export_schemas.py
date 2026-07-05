@@ -247,6 +247,8 @@ from lawfirm_os_intake.models import (  # noqa: E402
     LaborEmploymentBudgetOutcomeReplayBuilderBindingCheck,
     LaborEmploymentBudgetOutcomeReplayBuilderBindingReport,
     LaborEmploymentBudgetOutcomeReplayBuilderContract,
+    LaborEmploymentBudgetOutcomeReplayConfidenceStage,
+    LaborEmploymentBudgetOutcomeReplayConfidenceStatusReport,
     LaborEmploymentBudgetOutcomeReplayInputPackCase,
     LaborEmploymentBudgetOutcomeReplayInputPackCheck,
     LaborEmploymentBudgetOutcomeReplayInputPackEntry,
@@ -517,6 +519,12 @@ MODELS = {
     ),
     "labor-employment-budget-outcome-replay-builder-binding-report.schema.json": (
         LaborEmploymentBudgetOutcomeReplayBuilderBindingReport
+    ),
+    "labor-employment-budget-outcome-replay-confidence-stage.schema.json": (
+        LaborEmploymentBudgetOutcomeReplayConfidenceStage
+    ),
+    "labor-employment-budget-outcome-replay-confidence-status-report.schema.json": (
+        LaborEmploymentBudgetOutcomeReplayConfidenceStatusReport
     ),
     "labor-employment-budget-outcome-replay-input-pack-entry.schema.json": (
         LaborEmploymentBudgetOutcomeReplayInputPackEntry

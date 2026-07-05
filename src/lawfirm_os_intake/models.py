@@ -4786,6 +4786,152 @@ class LaborEmploymentBudgetOutcomeReplayInputPackReport(StrictModel):
         return self
 
 
+class LaborEmploymentBudgetOutcomeReplayConfidenceStage(StrictModel):
+    stage_id: Literal["readiness", "execution", "builder_binding", "input_pack"]
+    label: str
+    source_report_ref: str
+    source_report_id: str
+    source_report_status: str
+    status: Literal["ready", "pending_inputs", "blocked"]
+    counts: dict[str, int] = Field(default_factory=dict)
+    blocker_count: int = Field(ge=0)
+    blockers: list[str] = Field(default_factory=list)
+    evidence_refs: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    local_json_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    budget_submission_authorized: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def le_budget_replay_confidence_stage_is_coherent(
+        self,
+    ) -> "LaborEmploymentBudgetOutcomeReplayConfidenceStage":
+        if not self.label:
+            raise ValueError("replay confidence stage requires a label")
+        if self.blocker_count != len(self.blockers):
+            raise ValueError("replay confidence stage blocker count mismatch")
+        if self.status == "ready" and self.blockers:
+            raise ValueError("ready replay confidence stage cannot include blockers")
+        if self.status in {"pending_inputs", "blocked"} and not self.blockers:
+            raise ValueError("non-ready replay confidence stage requires blockers")
+        if not self.evidence_refs:
+            raise ValueError("replay confidence stage requires evidence refs")
+        if any(value < 0 for value in self.counts.values()):
+            raise ValueError("replay confidence stage counts must be non-negative")
+        return self
+
+
+class LaborEmploymentBudgetOutcomeReplayConfidenceStatusReport(StrictModel):
+    schema_version: str = "0.1"
+    replay_confidence_status_report_id: str
+    status: Literal[
+        "labor_employment_budget_outcome_replay_confidence_ready_for_review",
+        "labor_employment_budget_outcome_replay_confidence_pending_inputs",
+        "blocked_by_labor_employment_budget_outcome_replay_confidence",
+    ]
+    source_readiness_report_ref: str
+    source_readiness_report_id: str
+    source_readiness_report_status: str
+    source_execution_report_ref: str
+    source_execution_report_id: str
+    source_execution_report_status: str
+    source_builder_binding_report_ref: str
+    source_builder_binding_report_id: str
+    source_builder_binding_report_status: str
+    source_input_pack_report_ref: str
+    source_input_pack_report_id: str
+    source_input_pack_report_status: str
+    fixture_count: int = Field(ge=0)
+    stage_count: int = Field(ge=0)
+    ready_stage_count: int = Field(ge=0)
+    pending_stage_count: int = Field(ge=0)
+    blocked_stage_count: int = Field(ge=0)
+    readiness_failed_case_count: int = Field(ge=0)
+    execution_failed_case_count: int = Field(ge=0)
+    builder_replay_input_gap_count: int = Field(ge=0)
+    builder_missing_case_prerequisite_count: int = Field(ge=0)
+    input_pack_missing_input_count: int = Field(ge=0)
+    input_pack_invalid_input_count: int = Field(ge=0)
+    stages: list[LaborEmploymentBudgetOutcomeReplayConfidenceStage]
+    top_blockers: list[str] = Field(default_factory=list)
+    display_banner: dict[str, Any]
+    candidate_exception_lake_labels: list[str]
+    required_next_gates: list[str]
+    red_team_notes: list[str]
+    rust_transition_candidates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    local_json_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    not_authorized_for_matter_opening: Literal[True] = True
+    not_authorized_for_calibration: Literal[True] = True
+    budget_submission_authorized: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    training_pipeline_created: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def le_budget_replay_confidence_report_is_coherent(
+        self,
+    ) -> "LaborEmploymentBudgetOutcomeReplayConfidenceStatusReport":
+        if self.stage_count != len(self.stages):
+            raise ValueError("replay confidence report stage count mismatch")
+        if self.ready_stage_count != len(
+            [stage for stage in self.stages if stage.status == "ready"]
+        ):
+            raise ValueError("replay confidence report ready stage count mismatch")
+        if self.pending_stage_count != len(
+            [stage for stage in self.stages if stage.status == "pending_inputs"]
+        ):
+            raise ValueError("replay confidence report pending stage count mismatch")
+        if self.blocked_stage_count != len(
+            [stage for stage in self.stages if stage.status == "blocked"]
+        ):
+            raise ValueError("replay confidence report blocked stage count mismatch")
+        expected_blockers = [blocker for stage in self.stages for blocker in stage.blockers]
+        if self.top_blockers != expected_blockers[: len(self.top_blockers)]:
+            raise ValueError("replay confidence report top blockers must come from stages")
+        if self.status == "labor_employment_budget_outcome_replay_confidence_ready_for_review":
+            if self.pending_stage_count or self.blocked_stage_count:
+                raise ValueError("ready replay confidence report cannot include non-ready stages")
+        if self.status == "labor_employment_budget_outcome_replay_confidence_pending_inputs":
+            if self.blocked_stage_count or not self.pending_stage_count:
+                raise ValueError("pending replay confidence report requires pending stages only")
+        if self.status == "blocked_by_labor_employment_budget_outcome_replay_confidence":
+            if not self.blocked_stage_count:
+                raise ValueError("blocked replay confidence report requires blocked stages")
+        if not self.display_banner:
+            raise ValueError("replay confidence report requires display banner")
+        for key in ("status", "candidate_only", "blocked_actions"):
+            if key not in self.display_banner:
+                raise ValueError(f"replay confidence display banner missing {key}")
+        if not self.candidate_exception_lake_labels:
+            raise ValueError("replay confidence report requires candidate labels")
+        if not self.required_next_gates:
+            raise ValueError("replay confidence report requires next gates")
+        if not self.red_team_notes:
+            raise ValueError("replay confidence report requires red team notes")
+        if not self.rust_transition_candidates:
+            raise ValueError("replay confidence report requires Rust transition candidates")
+        return self
+
+
 class PublicSourceMethodologySource(StrictModel):
     source_id: str
     url: str

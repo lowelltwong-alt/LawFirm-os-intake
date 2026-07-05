@@ -1,0 +1,467 @@
+{
+  "$defs": {
+    "LaborEmploymentBudgetOutcomeReplayConfidenceStage": {
+      "additionalProperties": false,
+      "properties": {
+        "stage_id": {
+          "enum": [
+            "readiness",
+            "execution",
+            "builder_binding",
+            "input_pack"
+          ],
+          "title": "Stage Id",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "source_report_ref": {
+          "title": "Source Report Ref",
+          "type": "string"
+        },
+        "source_report_id": {
+          "title": "Source Report Id",
+          "type": "string"
+        },
+        "source_report_status": {
+          "title": "Source Report Status",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "ready",
+            "pending_inputs",
+            "blocked"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "counts": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "title": "Counts",
+          "type": "object"
+        },
+        "blocker_count": {
+          "minimum": 0,
+          "title": "Blocker Count",
+          "type": "integer"
+        },
+        "blockers": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Blockers",
+          "type": "array"
+        },
+        "evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        },
+        "synthetic_only": {
+          "const": true,
+          "default": true,
+          "title": "Synthetic Only",
+          "type": "boolean"
+        },
+        "local_json_only": {
+          "const": true,
+          "default": true,
+          "title": "Local Json Only",
+          "type": "boolean"
+        },
+        "human_review_required": {
+          "const": true,
+          "default": true,
+          "title": "Human Review Required",
+          "type": "boolean"
+        },
+        "budget_submission_authorized": {
+          "const": false,
+          "default": false,
+          "title": "Budget Submission Authorized",
+          "type": "boolean"
+        },
+        "matter_opening_authorized": {
+          "const": false,
+          "default": false,
+          "title": "Matter Opening Authorized",
+          "type": "boolean"
+        },
+        "lake_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Lake Write Performed",
+          "type": "boolean"
+        },
+        "sqlite_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Sqlite Write Performed",
+          "type": "boolean"
+        },
+        "external_writes_performed": {
+          "const": false,
+          "default": false,
+          "title": "External Writes Performed",
+          "type": "boolean"
+        },
+        "silent_learning_performed": {
+          "const": false,
+          "default": false,
+          "title": "Silent Learning Performed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "stage_id",
+        "label",
+        "source_report_ref",
+        "source_report_id",
+        "source_report_status",
+        "status",
+        "blocker_count",
+        "evidence_refs"
+      ],
+      "title": "LaborEmploymentBudgetOutcomeReplayConfidenceStage",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "replay_confidence_status_report_id": {
+      "title": "Replay Confidence Status Report Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "labor_employment_budget_outcome_replay_confidence_ready_for_review",
+        "labor_employment_budget_outcome_replay_confidence_pending_inputs",
+        "blocked_by_labor_employment_budget_outcome_replay_confidence"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "source_readiness_report_ref": {
+      "title": "Source Readiness Report Ref",
+      "type": "string"
+    },
+    "source_readiness_report_id": {
+      "title": "Source Readiness Report Id",
+      "type": "string"
+    },
+    "source_readiness_report_status": {
+      "title": "Source Readiness Report Status",
+      "type": "string"
+    },
+    "source_execution_report_ref": {
+      "title": "Source Execution Report Ref",
+      "type": "string"
+    },
+    "source_execution_report_id": {
+      "title": "Source Execution Report Id",
+      "type": "string"
+    },
+    "source_execution_report_status": {
+      "title": "Source Execution Report Status",
+      "type": "string"
+    },
+    "source_builder_binding_report_ref": {
+      "title": "Source Builder Binding Report Ref",
+      "type": "string"
+    },
+    "source_builder_binding_report_id": {
+      "title": "Source Builder Binding Report Id",
+      "type": "string"
+    },
+    "source_builder_binding_report_status": {
+      "title": "Source Builder Binding Report Status",
+      "type": "string"
+    },
+    "source_input_pack_report_ref": {
+      "title": "Source Input Pack Report Ref",
+      "type": "string"
+    },
+    "source_input_pack_report_id": {
+      "title": "Source Input Pack Report Id",
+      "type": "string"
+    },
+    "source_input_pack_report_status": {
+      "title": "Source Input Pack Report Status",
+      "type": "string"
+    },
+    "fixture_count": {
+      "minimum": 0,
+      "title": "Fixture Count",
+      "type": "integer"
+    },
+    "stage_count": {
+      "minimum": 0,
+      "title": "Stage Count",
+      "type": "integer"
+    },
+    "ready_stage_count": {
+      "minimum": 0,
+      "title": "Ready Stage Count",
+      "type": "integer"
+    },
+    "pending_stage_count": {
+      "minimum": 0,
+      "title": "Pending Stage Count",
+      "type": "integer"
+    },
+    "blocked_stage_count": {
+      "minimum": 0,
+      "title": "Blocked Stage Count",
+      "type": "integer"
+    },
+    "readiness_failed_case_count": {
+      "minimum": 0,
+      "title": "Readiness Failed Case Count",
+      "type": "integer"
+    },
+    "execution_failed_case_count": {
+      "minimum": 0,
+      "title": "Execution Failed Case Count",
+      "type": "integer"
+    },
+    "builder_replay_input_gap_count": {
+      "minimum": 0,
+      "title": "Builder Replay Input Gap Count",
+      "type": "integer"
+    },
+    "builder_missing_case_prerequisite_count": {
+      "minimum": 0,
+      "title": "Builder Missing Case Prerequisite Count",
+      "type": "integer"
+    },
+    "input_pack_missing_input_count": {
+      "minimum": 0,
+      "title": "Input Pack Missing Input Count",
+      "type": "integer"
+    },
+    "input_pack_invalid_input_count": {
+      "minimum": 0,
+      "title": "Input Pack Invalid Input Count",
+      "type": "integer"
+    },
+    "stages": {
+      "items": {
+        "$ref": "#/$defs/LaborEmploymentBudgetOutcomeReplayConfidenceStage"
+      },
+      "title": "Stages",
+      "type": "array"
+    },
+    "top_blockers": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Top Blockers",
+      "type": "array"
+    },
+    "display_banner": {
+      "additionalProperties": true,
+      "title": "Display Banner",
+      "type": "object"
+    },
+    "candidate_exception_lake_labels": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Candidate Exception Lake Labels",
+      "type": "array"
+    },
+    "required_next_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Gates",
+      "type": "array"
+    },
+    "red_team_notes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Red Team Notes",
+      "type": "array"
+    },
+    "rust_transition_candidates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Rust Transition Candidates",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "local_json_only": {
+      "const": true,
+      "default": true,
+      "title": "Local Json Only",
+      "type": "boolean"
+    },
+    "human_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Human Review Required",
+      "type": "boolean"
+    },
+    "not_authorized_for_external_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For External Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_lake_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Lake Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_sqlite_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Sqlite Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_budget_submission": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Budget Submission",
+      "type": "boolean"
+    },
+    "not_authorized_for_matter_opening": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Matter Opening",
+      "type": "boolean"
+    },
+    "not_authorized_for_calibration": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Calibration",
+      "type": "boolean"
+    },
+    "budget_submission_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Submission Authorized",
+      "type": "boolean"
+    },
+    "matter_opening_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Matter Opening Authorized",
+      "type": "boolean"
+    },
+    "training_pipeline_created": {
+      "const": false,
+      "default": false,
+      "title": "Training Pipeline Created",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "replay_confidence_status_report_id",
+    "status",
+    "source_readiness_report_ref",
+    "source_readiness_report_id",
+    "source_readiness_report_status",
+    "source_execution_report_ref",
+    "source_execution_report_id",
+    "source_execution_report_status",
+    "source_builder_binding_report_ref",
+    "source_builder_binding_report_id",
+    "source_builder_binding_report_status",
+    "source_input_pack_report_ref",
+    "source_input_pack_report_id",
+    "source_input_pack_report_status",
+    "fixture_count",
+    "stage_count",
+    "ready_stage_count",
+    "pending_stage_count",
+    "blocked_stage_count",
+    "readiness_failed_case_count",
+    "execution_failed_case_count",
+    "builder_replay_input_gap_count",
+    "builder_missing_case_prerequisite_count",
+    "input_pack_missing_input_count",
+    "input_pack_invalid_input_count",
+    "stages",
+    "display_banner",
+    "candidate_exception_lake_labels",
+    "required_next_gates",
+    "red_team_notes",
+    "rust_transition_candidates",
+    "generated_at"
+  ],
+  "title": "LaborEmploymentBudgetOutcomeReplayConfidenceStatusReport",
+  "type": "object"
+}
