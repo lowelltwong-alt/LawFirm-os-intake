@@ -27,6 +27,8 @@ def test_legal_intake_budget_ui_required_files_exist(repo_root):
         "src/fixtures/demo-ui-review-data-bundle.json",
         "src/fixtures/demo-rust-fixture-boundary-report.json",
         "src/fixtures/demo-rust-fixture-manifest-report.json",
+        "src/fixtures/demo-public-data-cache-audit-report.json",
+        "src/fixtures/demo-rust-public-data-cache-custody-report.json",
         "src/fixtures/demo-validation-suite-evidence-report.json",
         "src/fixtures/demo-matter-linking-preflight-report.json",
         "src/fixtures/demo-matter-linking-qa-gate-report.json",
@@ -183,9 +185,9 @@ def test_legal_intake_budget_demo_ui_review_data_bundle_is_local_and_no_write(re
     detail_reports = {report["file_name"]: report for report in bundle["detail_reports"]}
 
     assert bundle["status"] == "ready_for_review"
-    assert bundle["detail_report_count"] == len(bundle["detail_reports"]) == 22
+    assert bundle["detail_report_count"] == len(bundle["detail_reports"]) == 24
     assert bundle["required_detail_report_count"] == 13
-    assert bundle["present_detail_report_count"] == 22
+    assert bundle["present_detail_report_count"] == 24
     assert bundle["missing_required_detail_report_count"] == 0
     assert bundle["external_write_report_count"] == 0
     assert bundle["candidate_only"] is True
@@ -206,6 +208,8 @@ def test_legal_intake_budget_demo_ui_review_data_bundle_is_local_and_no_write(re
         "synthetic_qa_review_run_report.json",
         "rust_fixture_boundary_report.json",
         "rust_fixture_manifest_report.json",
+        "public_data_cache_audit_report.json",
+        "rust_public_data_cache_custody_report.json",
         "matter_linking_preflight_report.json",
         "matter_linking_qa_gate_report.json",
         "matter_linking_review_outcome_report.json",
@@ -225,6 +229,64 @@ def test_legal_intake_budget_demo_ui_review_data_bundle_is_local_and_no_write(re
     assert all(report["present"] is True for report in bundle["detail_reports"])
     assert all(report["source_sha256"].startswith("sha256:") for report in bundle["detail_reports"])
     assert all(report["external_writes_performed"] is False for report in bundle["detail_reports"])
+
+
+def test_legal_intake_budget_public_data_custody_fixtures_are_metadata_only(repo_root):
+    audit = json.loads(
+        (repo_root / UI_ROOT / "src/fixtures/demo-public-data-cache-audit-report.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    custody = json.loads(
+        (
+            repo_root / UI_ROOT / "src/fixtures/demo-rust-public-data-cache-custody-report.json"
+        ).read_text(encoding="utf-8")
+    )
+    triage = json.loads(
+        (repo_root / UI_ROOT / "src/fixtures/demo-poc-qa-triage-report.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    assert audit["status"] == "blocked_public_data_cache"
+    assert audit["report_payload_metadata_only"] is True
+    assert audit["human_review_required"] is True
+    assert audit["public_cache_samples_present"] is False
+    assert audit["direct_runtime_ingestion_allowed"] is False
+    assert audit["public_records_runtime_ingested"] is False
+    assert audit["raw_public_payload_committed"] is False
+    assert audit["tracked_public_payload_committed"] is False
+    assert audit["real_party_records_committed"] is False
+    assert audit["real_matter_records_committed"] is False
+    assert audit["synthetic_fixtures_created"] is False
+    assert audit["fixture_files_mutated"] is False
+    assert audit["lake_write_performed"] is False
+    assert audit["sqlite_write_performed"] is False
+    assert audit["external_writes_performed"] is False
+    assert audit["rust_custody_status"] == "failed"
+    assert any(check["status"] == "failed" for check in audit["checks"])
+    assert "human_public_data_cache_review" in audit["required_next_gates"]
+
+    assert custody["checker"] == "public-data-cache-custody-checker"
+    assert custody["status"] == "failed"
+    assert custody["metadata_only_report"] is True
+    assert custody["public_cache_samples_may_be_present"] is False
+    assert custody["checked_sample_count"] == 0
+    assert custody["failure_count"] == len(custody["failures"]) == 1
+    assert custody["direct_runtime_ingestion_allowed"] is False
+    assert custody["public_records_runtime_ingested"] is False
+    assert custody["tracked_public_payload_committed"] is False
+    assert custody["synthetic_fixtures_created"] is False
+    assert custody["lake_write_performed"] is False
+    assert custody["sqlite_write_performed"] is False
+    assert custody["external_writes_performed"] is False
+
+    public_items = [item for item in triage["items"] if item["category"] == "public_data_boundary"]
+    assert len(public_items) == 1
+    assert public_items[0]["status"] == "watch"
+    assert (
+        "public_data_cache_review_pending" in (public_items[0]["candidate_exception_lake_labels"])
+    )
 
 
 def test_legal_intake_budget_budget_learning_loop_fixture_is_review_only(repo_root):
@@ -697,8 +759,8 @@ def test_legal_intake_budget_demo_synthetic_confidence_summary_is_no_write(repo_
     assert report["qa_step_count"] == 31
     assert report["qa_failed_step_count"] == 0
     assert report["qa_missing_required_artifact_count"] == 0
-    assert report["ui_detail_report_count"] == 22
-    assert report["ui_present_detail_report_count"] == 22
+    assert report["ui_detail_report_count"] == 24
+    assert report["ui_present_detail_report_count"] == 24
     assert report["ui_missing_required_detail_report_count"] == 0
     assert report["display_banner"]["candidate_only"] is True
     assert report["display_banner"]["synthetic_only"] is True
@@ -1558,6 +1620,15 @@ def test_legal_intake_budget_ui_disclaims_mutating_authority(repo_root):
     assert "Synthetic QA Review Run" in app
     assert "UI Demo QA Recipe" in app
     assert "End-to-end QA proof" in app
+    assert "Public Data Cache Audit" in app
+    assert "Public Data Cache Custody Checker" in app
+    assert "Public records are not runtime intake" in app
+    assert "PublicDataCacheAuditPanel" in app
+    assert "RustPublicDataCacheCustodyPanel" in app
+    assert "assertPublicDataCacheAuditReport" in app
+    assert "assertRustPublicDataCacheCustodyReport" in app
+    assert "audit-public-data-cache" in app
+    assert "build-rust-public-data-cache-custody-report" in app
     assert "Matter-Linking Preflight" in app
     assert "Matter-Linking QA Gate" in app
     assert "Matter-Linking Review Outcome" in app
@@ -1618,6 +1689,9 @@ def test_legal_intake_budget_ui_disclaims_mutating_authority(repo_root):
     assert "fixture-drilldown-panel" in styles
     assert "fixture-family-grid" in styles
     assert "budget-bucket-grid" in styles
+    assert "public-data-panel" in styles
+    assert "public-data-grid" in styles
+    assert "public-data-callout" in styles
     assert "qa-workbench-panel" in styles
     assert "qa-workbench-grid" in styles
     assert "qa-workbench-list" in styles

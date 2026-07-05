@@ -27,6 +27,8 @@ export type UIReviewDataBundleReportKind =
   | "ui_demo_qa_recipe"
   | "rust_fixture_boundary"
   | "rust_fixture_manifest"
+  | "public_data_cache_audit"
+  | "rust_public_data_cache_custody"
   | "matter_linking_preflight"
   | "matter_linking_review_outcome"
   | "matter_linking_qa_gate"
@@ -447,6 +449,147 @@ export type RustFixtureManifestReport = {
   sqlite_write_performed: boolean;
   budget_submission_authorized: boolean;
   matter_opening_authorized: boolean;
+  silent_learning_performed: boolean;
+};
+
+export type PublicDataCacheSourceManifest = {
+  schema_version: string;
+  source_id: string;
+  source_url: string;
+  source_type: string;
+  retrieved_at: string;
+  sha256: string;
+  byte_count: number;
+  cache_ref: string;
+  license_terms_note: string;
+  allowed_use: string;
+  prohibited_use: string;
+  retention_posture: string;
+  data_origin: "public_reference_cache";
+  public_payload_committed: boolean;
+  direct_runtime_ingestion_allowed: boolean;
+  runtime_intake_input: boolean;
+};
+
+export type PublicDataCacheAuditCheck = {
+  check_id: string;
+  status: "passed" | "blocked" | "failed";
+  message: string;
+  source_ids: string[];
+  path_refs: string[];
+};
+
+export type PublicDataCacheAuditReport = {
+  schema_version: string;
+  public_data_cache_audit_report_id: string;
+  status: "ready_for_human_public_data_cache_review" | "blocked_public_data_cache";
+  source_catalog_ref: string;
+  data_policy_ref: string;
+  cache_root_ref: string;
+  manifest_ref: string;
+  manifest_entry_count: number;
+  valid_manifest_entry_count: number;
+  cache_sample_count: number;
+  total_cache_sample_bytes: number;
+  approved_source_ids: string[];
+  unknown_source_ids: string[];
+  failed_hash_source_ids: string[];
+  missing_cache_file_source_ids: string[];
+  blocked_path_refs: string[];
+  rust_custody_report_ref?: string | null;
+  rust_custody_status: "passed" | "failed" | "not_run";
+  rust_custody_failure_count: number;
+  rust_custody_checked_source_count: number;
+  rust_custody_checked_sample_count: number;
+  rust_custody_total_checked_sample_bytes: number;
+  sources: PublicDataCacheSourceManifest[];
+  checks: PublicDataCacheAuditCheck[];
+  required_next_gates: string[];
+  candidate_only: boolean;
+  non_authoritative: boolean;
+  planning_only: boolean;
+  report_payload_metadata_only: boolean;
+  human_review_required: boolean;
+  public_cache_samples_present: boolean;
+  direct_runtime_ingestion_allowed: boolean;
+  public_records_runtime_ingested: boolean;
+  raw_public_payload_committed: boolean;
+  tracked_public_payload_committed: boolean;
+  real_party_records_committed: boolean;
+  real_matter_records_committed: boolean;
+  connector_implemented: boolean;
+  legal_knowledge_adapter_authorized: boolean;
+  synthetic_fixtures_created: boolean;
+  fixture_files_mutated: boolean;
+  lake_write_performed: boolean;
+  sqlite_write_performed: boolean;
+  external_writes_performed: boolean;
+  generated_at: string;
+};
+
+export type RustPublicDataCacheCustodyFailure = {
+  source_id: string;
+  path: string;
+  check: string;
+  expected?: string | null;
+  actual?: string | null;
+  message: string;
+};
+
+export type RustPublicDataCacheCustodySample = {
+  source_id: string;
+  cache_ref?: string | null;
+  resolved_path_ref?: string | null;
+  expected_sha256?: string | null;
+  actual_sha256?: string | null;
+  expected_byte_count?: number | null;
+  actual_byte_count?: number | null;
+  status: "passed" | "failed" | "blocked" | "missing" | "invalid";
+};
+
+export type RustPublicDataCacheCustodyReport = {
+  schema_version: string;
+  checker: "public-data-cache-custody-checker";
+  status: "passed" | "failed";
+  repo_root: string;
+  cache_root: string;
+  manifest_ref: string;
+  manifest_sha256: string;
+  manifest_byte_count: number;
+  manifest_entry_count: number;
+  checked_source_count: number;
+  checked_sample_count: number;
+  total_checked_sample_bytes: number;
+  root_violation_count: number;
+  manifest_error_count: number;
+  invalid_manifest_entry_count: number;
+  blocked_path_count: number;
+  missing_file_count: number;
+  hash_mismatch_count: number;
+  byte_count_mismatch_count: number;
+  failure_count: number;
+  failures: RustPublicDataCacheCustodyFailure[];
+  samples: RustPublicDataCacheCustodySample[];
+  candidate_only: boolean;
+  planning_only: boolean;
+  non_authoritative: boolean;
+  metadata_only_report: boolean;
+  local_file_custody_only: boolean;
+  public_cache_samples_may_be_present: boolean;
+  direct_runtime_ingestion_allowed: boolean;
+  public_records_runtime_ingested: boolean;
+  public_payload_committed: boolean;
+  raw_public_payload_committed: boolean;
+  tracked_public_payload_committed: boolean;
+  connector_implemented: boolean;
+  legal_knowledge_adapter_authorized: boolean;
+  synthetic_fixtures_created: boolean;
+  fixture_files_mutated: boolean;
+  lake_write_performed: boolean;
+  sqlite_write_performed: boolean;
+  external_writes_performed: boolean;
+  matter_opening_authorized: boolean;
+  budget_submission_authorized: boolean;
   silent_learning_performed: boolean;
 };
 

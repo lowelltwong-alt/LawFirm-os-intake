@@ -17,8 +17,10 @@ import demoMatterLinkingPreflight from "./fixtures/demo-matter-linking-preflight
 import demoMatterLinkingQAGate from "./fixtures/demo-matter-linking-qa-gate-report.json";
 import demoMatterLinkingReviewOutcome from "./fixtures/demo-matter-linking-review-outcome-report.json";
 import demoPocQATriage from "./fixtures/demo-poc-qa-triage-report.json";
+import demoPublicDataCacheAudit from "./fixtures/demo-public-data-cache-audit-report.json";
 import demoRustFixtureBoundary from "./fixtures/demo-rust-fixture-boundary-report.json";
 import demoRustFixtureManifest from "./fixtures/demo-rust-fixture-manifest-report.json";
+import demoRustPublicDataCacheCustody from "./fixtures/demo-rust-public-data-cache-custody-report.json";
 import demoSyntheticQABlockerReport from "./fixtures/demo-synthetic-qa-blocker-report.json";
 import demoSyntheticQAReviewOutcome from "./fixtures/demo-synthetic-qa-review-outcome-report.json";
 import demoSyntheticConfidenceSummary from "./fixtures/demo-synthetic-confidence-summary-report.json";
@@ -42,9 +44,11 @@ import {
   assertLaborEmploymentExecutableCoverageReport,
   assertLaborEmploymentQAMatrixReport,
   assertPOCQATriageReport,
+  assertPublicDataCacheAuditReport,
   assertReadOnlyManifest,
   assertRustFixtureBoundaryReport,
   assertRustFixtureManifestReport,
+  assertRustPublicDataCacheCustodyReport,
   assertSyntheticQABlockerReport,
   assertSyntheticQAReviewOutcomeReport,
   assertSyntheticConfidenceSummaryReport,
@@ -81,12 +85,14 @@ import type {
   MatterLinkingReviewOutcomeStatus,
   POCQATriageItemStatus,
   POCQATriageReport,
+  PublicDataCacheAuditReport,
   QualityGate,
   QualityGateStatus,
   ReviewArtifact,
   ReviewManifest,
   RustFixtureBoundaryReport,
   RustFixtureManifestReport,
+  RustPublicDataCacheCustodyReport,
   SyntheticQABlockerActionState,
   SyntheticQABlockerReport,
   SyntheticQABlockerRowState,
@@ -112,6 +118,7 @@ const syntheticQAReviewOutcome =
 const syntheticConfidenceSummary =
   demoSyntheticConfidenceSummary as SyntheticConfidenceSummaryReport;
 const pocQATriage = demoPocQATriage as POCQATriageReport;
+const publicDataCacheAudit = demoPublicDataCacheAudit as PublicDataCacheAuditReport;
 const validationSuiteEvidence =
   demoValidationSuiteEvidence as ValidationSuiteEvidenceReport;
 const matterLinkingPreflight = demoMatterLinkingPreflight as MatterLinkingPreflightReport;
@@ -120,6 +127,8 @@ const matterLinkingReviewOutcome =
   demoMatterLinkingReviewOutcome as MatterLinkingReviewOutcomeReport;
 const rustFixtureBoundary = demoRustFixtureBoundary as RustFixtureBoundaryReport;
 const rustFixtureManifest = demoRustFixtureManifest as RustFixtureManifestReport;
+const rustPublicDataCacheCustody =
+  demoRustPublicDataCacheCustody as RustPublicDataCacheCustodyReport;
 const laborEmploymentQAMatrix = demoLaborEmploymentQAMatrix as LaborEmploymentQAMatrixReport;
 const laborEmploymentExecutableCoverage =
   demoLaborEmploymentExecutableCoverage as LaborEmploymentExecutableCoverageReport;
@@ -158,6 +167,10 @@ const matterLinkingReviewOutcomeFailures =
   assertMatterLinkingReviewOutcomeReport(matterLinkingReviewOutcome);
 const rustFixtureBoundaryFailures = assertRustFixtureBoundaryReport(rustFixtureBoundary);
 const rustFixtureManifestFailures = assertRustFixtureManifestReport(rustFixtureManifest);
+const publicDataCacheAuditFailures =
+  assertPublicDataCacheAuditReport(publicDataCacheAudit);
+const rustPublicDataCacheCustodyFailures =
+  assertRustPublicDataCacheCustodyReport(rustPublicDataCacheCustody);
 const matrixContractFailures = assertLaborEmploymentQAMatrixReport(laborEmploymentQAMatrix);
 const executableCoverageFailures =
   assertLaborEmploymentExecutableCoverageReport(laborEmploymentExecutableCoverage);
@@ -201,6 +214,8 @@ const contractFailures = [
   ...matterLinkingReviewOutcomeFailures,
   ...rustFixtureBoundaryFailures,
   ...rustFixtureManifestFailures,
+  ...publicDataCacheAuditFailures,
+  ...rustPublicDataCacheCustodyFailures,
   ...matrixContractFailures,
   ...executableCoverageFailures,
   ...blockedDriverContractFailures,
@@ -213,6 +228,30 @@ const contractFailures = [
   ...budgetOutcomeReplayConfidenceStatusFailures,
   ...budgetLearningLoopFailures,
 ];
+
+const PUBLIC_DATA_CUSTODY_COMMANDS = [
+  "audit-public-data-cache",
+  "build-rust-public-data-cache-custody-report",
+  "audit-public-source-methodology",
+  "plan-public-synthetic-fixture-conversion",
+  "review-public-synthetic-fixture-conversion",
+  "record-public-synthetic-fixture-conversion-review",
+  "build-public-synthetic-fixture-pr-package",
+];
+
+const PUBLIC_DATA_BLOCKED_ACTIONS = [
+  "public runtime ingestion",
+  "public payload commit",
+  "fixture generation without conversion review",
+  "public-source adapters",
+  "Lake or SQLite writes",
+  "budget submission",
+  "matter opening",
+];
+
+function artifactById(manifestData: ReviewManifest, artifactId: string): ReviewArtifact | undefined {
+  return manifestData.artifacts.find((artifact) => artifact.artifactId === artifactId);
+}
 
 function gateClass(
   state:
@@ -1264,6 +1303,253 @@ function RustFixtureManifestPanel({ report }: { report: RustFixtureManifestRepor
           ))}
         </div>
       )}
+    </section>
+  );
+}
+
+function PublicDataCacheAuditPanel({
+  report,
+  manifest: manifestData,
+  triageReport,
+}: {
+  report: PublicDataCacheAuditReport;
+  manifest: ReviewManifest;
+  triageReport: POCQATriageReport;
+}) {
+  const methodologyArtifact = artifactById(manifestData, "public-methodology");
+  const cacheArtifact = artifactById(manifestData, "public-cache");
+  const triageItem = triageReport.items.find(
+    (item) =>
+      item.category === "public_data_boundary" ||
+      item.candidate_exception_lake_labels.includes("public_data_cache_review_pending"),
+  );
+  const failedChecks = report.checks.filter((check) => check.status !== "passed");
+  const statusClass =
+    report.status === "ready_for_human_public_data_cache_review" &&
+    publicDataCacheAuditFailures.length === 0
+      ? "state state-passed"
+      : "state state-blocked";
+
+  return (
+    <section className="panel public-data-panel" aria-labelledby="public-data-cache-title">
+      <div className="panel-heading">
+        <div>
+          <p className="eyebrow">Public-data boundary</p>
+          <h2 id="public-data-cache-title">Public Data Cache Audit</h2>
+          <code>{report.public_data_cache_audit_report_id}</code>
+        </div>
+        <span className={statusClass}>{report.status}</span>
+      </div>
+
+      <div className="warning-strip">
+        <strong>Public records are not runtime intake.</strong>
+        <span>
+          This lane is methodology evidence only. A passing cache audit still requires human
+          review before public structures can inform synthetic fixtures.
+        </span>
+      </div>
+
+      <div className="public-data-grid" aria-label="Public data cache audit summary">
+        <article>
+          <span>Cache Artifact</span>
+          <strong>{cacheArtifact?.status ?? "missing"}</strong>
+          <code>{cacheArtifact?.fileName ?? "public_data_cache_audit_report.json"}</code>
+        </article>
+        <article>
+          <span>Methodology Artifact</span>
+          <strong>{methodologyArtifact?.status ?? "missing"}</strong>
+          <code>{methodologyArtifact?.fileName ?? "public_source_methodology_report.json"}</code>
+        </article>
+        <article>
+          <span>Rust Custody</span>
+          <strong>{report.rust_custody_status}</strong>
+          <code>{report.rust_custody_report_ref ?? "rust custody report not linked"}</code>
+        </article>
+        <article>
+          <span>Cache Samples</span>
+          <strong>{report.cache_sample_count}</strong>
+          <code>{report.total_cache_sample_bytes.toLocaleString()} bytes checked</code>
+        </article>
+      </div>
+
+      <div className="boundary-grid">
+        <div className="boundary-item">
+          <span>Runtime Ingestion</span>
+          <strong>{String(report.direct_runtime_ingestion_allowed)}</strong>
+        </div>
+        <div className="boundary-item">
+          <span>Public Payload Committed</span>
+          <strong>{String(report.tracked_public_payload_committed)}</strong>
+        </div>
+        <div className="boundary-item">
+          <span>Lake Writes</span>
+          <strong>{String(report.lake_write_performed)}</strong>
+        </div>
+        <div className="boundary-item">
+          <span>Fixture Mutation</span>
+          <strong>{String(report.fixture_files_mutated)}</strong>
+        </div>
+      </div>
+
+      {triageItem ? (
+        <div className="public-data-callout">
+          <strong>{triageItem.summary}</strong>
+          <p>{triageItem.recommended_next_action}</p>
+          <TokenList items={triageItem.candidate_exception_lake_labels} />
+        </div>
+      ) : null}
+
+      <div className="qa-workbench-columns">
+        <section aria-labelledby="public-data-failed-checks-title">
+          <h3 id="public-data-failed-checks-title">Failed Or Pending Checks</h3>
+          <div className="qa-workbench-list">
+            {failedChecks.length > 0 ? (
+              failedChecks.map((check) => (
+                <article key={check.check_id}>
+                  <strong>{check.check_id}</strong>
+                  <span className={gateClass(check.status)}>{check.status}</span>
+                  <p>{check.message}</p>
+                  <TokenList items={[...check.source_ids, ...check.path_refs]} limit={4} />
+                </article>
+              ))
+            ) : (
+              <article>
+                <strong>No failed checks</strong>
+                <p>Human public-data cache review is still required before conversion.</p>
+              </article>
+            )}
+          </div>
+        </section>
+
+        <section aria-labelledby="public-data-commands-title">
+          <h3 id="public-data-commands-title">Commands And Blocked Actions</h3>
+          <div className="qa-workbench-list">
+            <article>
+              <strong>Custody commands</strong>
+              <TokenList items={PUBLIC_DATA_CUSTODY_COMMANDS} limit={4} />
+            </article>
+            <article>
+              <strong>Still blocked</strong>
+              <TokenList items={PUBLIC_DATA_BLOCKED_ACTIONS} limit={7} />
+            </article>
+          </div>
+        </section>
+      </div>
+
+      <div className="next-gates">
+        <h3>Required Next Gates</h3>
+        <div>
+          {report.required_next_gates.map((gate) => (
+            <code key={gate}>{gate}</code>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function RustPublicDataCacheCustodyPanel({
+  report,
+}: {
+  report: RustPublicDataCacheCustodyReport;
+}) {
+  const statusClass =
+    report.status === "passed" && rustPublicDataCacheCustodyFailures.length === 0
+      ? "state state-passed"
+      : "state state-failed";
+  const sampleRows = report.samples.slice(0, 5);
+
+  return (
+    <section
+      className="panel public-data-panel rust-public-custody-panel"
+      aria-labelledby="rust-public-data-custody-title"
+    >
+      <div className="panel-heading">
+        <div>
+          <p className="eyebrow">Rust QA leaf tool</p>
+          <h2 id="rust-public-data-custody-title">Public Data Cache Custody Checker</h2>
+          <code>{report.checker}</code>
+        </div>
+        <span className={statusClass}>{report.status}</span>
+      </div>
+
+      <div className="recipe-summary" aria-label="Rust public data custody summary">
+        <div>
+          <span>Sources</span>
+          <strong>{report.checked_source_count}</strong>
+        </div>
+        <div>
+          <span>Samples</span>
+          <strong>{report.checked_sample_count}</strong>
+        </div>
+        <div>
+          <span>Hash Drift</span>
+          <strong>{report.hash_mismatch_count}</strong>
+        </div>
+        <div>
+          <span>Failures</span>
+          <strong>{report.failure_count}</strong>
+        </div>
+      </div>
+
+      <div className="boundary-grid">
+        <div className="boundary-item">
+          <span>Metadata Only</span>
+          <strong>{String(report.metadata_only_report)}</strong>
+        </div>
+        <div className="boundary-item">
+          <span>Runtime Ingestion</span>
+          <strong>{String(report.direct_runtime_ingestion_allowed)}</strong>
+        </div>
+        <div className="boundary-item">
+          <span>Public Payload Committed</span>
+          <strong>{String(report.tracked_public_payload_committed)}</strong>
+        </div>
+        <div className="boundary-item">
+          <span>External Writes</span>
+          <strong>{String(report.external_writes_performed)}</strong>
+        </div>
+      </div>
+
+      <div className="qa-workbench-columns">
+        <section aria-labelledby="rust-public-data-failures-title">
+          <h3 id="rust-public-data-failures-title">Custody Failures</h3>
+          <div className="qa-workbench-list">
+            {report.failures.map((failure) => (
+              <article key={`${failure.source_id}-${failure.check}`}>
+                <strong>{failure.check}</strong>
+                <code>{failure.source_id}</code>
+                <p>{failure.message}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section aria-labelledby="rust-public-data-samples-title">
+          <h3 id="rust-public-data-samples-title">Sample Metadata</h3>
+          <div className="qa-workbench-list">
+            {sampleRows.length > 0 ? (
+              sampleRows.map((sample) => (
+                <article key={sample.source_id}>
+                  <strong>{sample.source_id}</strong>
+                  <span className={sample.status === "passed" ? "state state-passed" : "state state-blocked"}>
+                    {sample.status}
+                  </span>
+                  <p>
+                    {sample.expected_byte_count ?? 0} expected bytes;{" "}
+                    {sample.actual_byte_count ?? 0} observed bytes.
+                  </p>
+                </article>
+              ))
+            ) : (
+              <article>
+                <strong>No sample metadata</strong>
+                <p>No public cache sample is present in the checked demo fixture.</p>
+              </article>
+            )}
+          </div>
+        </section>
+      </div>
     </section>
   );
 }
@@ -3148,6 +3434,12 @@ function App() {
       <UIDemoQARecipePanel report={uiDemoQARecipe} />
       <RustFixtureBoundaryPanel report={rustFixtureBoundary} />
       <RustFixtureManifestPanel report={rustFixtureManifest} />
+      <PublicDataCacheAuditPanel
+        report={publicDataCacheAudit}
+        manifest={manifest}
+        triageReport={pocQATriage}
+      />
+      <RustPublicDataCacheCustodyPanel report={rustPublicDataCacheCustody} />
       <POCQATriagePanel report={pocQATriage} />
       <ValidationSuiteEvidencePanel report={validationSuiteEvidence} />
       <SyntheticQABlockerDrilldownPanel report={syntheticQABlockerReport} />

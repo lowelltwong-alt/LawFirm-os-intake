@@ -617,6 +617,58 @@ code {
   margin-bottom: 14px;
 }
 
+.public-data-panel {
+  margin-bottom: 14px;
+}
+
+.public-data-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin: 14px 0;
+}
+
+.public-data-grid article {
+  display: grid;
+  gap: 8px;
+  min-height: 112px;
+  padding: 12px;
+  border: 1px solid #dde4d8;
+  border-radius: 6px;
+  background: #fbfcfa;
+}
+
+.public-data-grid span {
+  color: #536056;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.public-data-grid strong {
+  color: #1f2a22;
+  font-size: 1.25rem;
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+
+.public-data-callout {
+  display: grid;
+  gap: 8px;
+  margin: 14px 0;
+  padding: 12px;
+  border: 1px solid #c2a04b;
+  border-radius: 6px;
+  background: #fff9df;
+}
+
+.public-data-callout p {
+  margin: 0;
+  color: #2f3932;
+  font-size: 0.9rem;
+  line-height: 1.42;
+}
+
 .validation-panel {
   margin-bottom: 14px;
 }
@@ -1226,6 +1278,10 @@ td:nth-child(4) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .public-data-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .matrix-summary {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1249,7 +1305,8 @@ td:nth-child(4) {
   .qa-workbench-columns,
   .budget-learning-summary,
   .budget-learning-grid,
-  .budget-learning-columns {
+  .budget-learning-columns,
+  .public-data-grid {
     grid-template-columns: 1fr;
   }
 

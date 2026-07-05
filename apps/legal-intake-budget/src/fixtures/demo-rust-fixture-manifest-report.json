@@ -1,7 +1,7 @@
 {
   "budget_submission_authorized": false,
   "candidate_only": true,
-  "checked_json_file_count": 24,
+  "checked_json_file_count": 26,
   "external_writes_performed": false,
   "failure_count": 0,
   "failures": [],
@@ -410,6 +410,22 @@
       "top_level_type": "object"
     },
     {
+      "byte_count": 3784,
+      "candidate_only": true,
+      "external_writes_performed": false,
+      "id_fields": [
+        {
+          "field": "public_data_cache_audit_report_id",
+          "value": "publicdatacacheaudit_demo_blocked_no_cache_manifest"
+        }
+      ],
+      "path": "demo-public-data-cache-audit-report.json",
+      "schema_version": "0.1",
+      "sha256": "sha256:3624a2814917bcedc948554f5c5a41b0e841e852313f11b34f60715179a8d036",
+      "status": "blocked_public_data_cache",
+      "top_level_type": "object"
+    },
+    {
       "byte_count": 34958,
       "id_fields": [],
       "path": "demo-run-manifest.json",
@@ -430,7 +446,19 @@
       "top_level_type": "object"
     },
     {
-      "byte_count": 6116,
+      "byte_count": 2086,
+      "candidate_only": true,
+      "external_writes_performed": false,
+      "id_fields": [],
+      "path": "demo-rust-public-data-cache-custody-report.json",
+      "report_kind": "public-data-cache-custody-checker",
+      "schema_version": "0.1",
+      "sha256": "sha256:398f3b3a375fd3c3085e008bcb8b22bb337c95cf937762163a26ce59f57466f8",
+      "status": "failed",
+      "top_level_type": "object"
+    },
+    {
+      "byte_count": 6113,
       "candidate_only": true,
       "external_writes_performed": false,
       "id_fields": [
@@ -457,7 +485,7 @@
       ],
       "path": "demo-synthetic-confidence-summary-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:bf024c2165d9b2907a5ea080f93f0fa338dfedf39a62b0560e8d4329656ce4ab",
+      "sha256": "sha256:8934a830f2a2dfbcbc112ff30e3efc7136f9da22dfc487da73b7d035064d7b0b",
       "status": "synthetic_confidence_summary_ready_for_review",
       "synthetic_only": true,
       "top_level_type": "object"
@@ -595,11 +623,11 @@
   ],
   "lake_write_performed": false,
   "local_json_only": true,
-  "manifest_sha256": "sha256:3300ee50a8db974fa375b22e941aff6cb169e016e6a21a5f726f61a6b64159fd",
+  "manifest_sha256": "sha256:51f49f313970e3dffb98ff440a24964c7f842e1519aa2c4b266b65770ee6ec60",
   "matter_opening_authorized": false,
   "non_authoritative": true,
   "parse_error_count": 0,
-  "parsed_json_file_count": 24,
+  "parsed_json_file_count": 26,
   "root": "apps\\legal-intake-budget\\src\\fixtures",
   "scanner": "fixture-manifest-scanner",
   "schema_version": "0.1",
@@ -618,5 +646,5 @@
   "sqlite_write_performed": false,
   "status": "passed",
   "synthetic_only": true,
-  "total_byte_count": 738308
+  "total_byte_count": 744175
 }

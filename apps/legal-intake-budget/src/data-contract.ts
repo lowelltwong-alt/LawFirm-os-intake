@@ -16,11 +16,13 @@ import type {
   MatterLinkingQAGateReport,
   MatterLinkingReviewOutcomeReport,
   POCQATriageReport,
+  PublicDataCacheAuditReport,
   QualityGate,
   ReviewArtifact,
   ReviewManifest,
   RustFixtureBoundaryReport,
   RustFixtureManifestReport,
+  RustPublicDataCacheCustodyReport,
   SyntheticQABlockerReport,
   SyntheticQAReviewOutcomeReport,
   SyntheticConfidenceSummaryReport,
@@ -97,6 +99,8 @@ export const REQUIRED_DETAIL_REPORT_FILES = [
   "synthetic_confidence_summary_report.json",
   "rust_fixture_boundary_report.json",
   "rust_fixture_manifest_report.json",
+  "public_data_cache_audit_report.json",
+  "rust_public_data_cache_custody_report.json",
   "labor_employment_qa_matrix_report.json",
   "labor_employment_executable_coverage_report.json",
   "labor_employment_blocked_driver_impact_review_report.json",
@@ -340,6 +344,130 @@ export function assertRustFixtureManifestReport(report: RustFixtureManifestRepor
   }
   if (!report.manifest_sha256.startsWith("sha256:") || report.files.length <= 0) {
     failures.push("rust_fixture_manifest_missing_hash_scope");
+  }
+  return failures;
+}
+
+export function assertPublicDataCacheAuditReport(
+  report: PublicDataCacheAuditReport,
+): string[] {
+  const failures: string[] = [];
+  if (!report.candidate_only || !report.non_authoritative || !report.planning_only) {
+    failures.push("public_data_cache_audit_authority_boundary_failed");
+  }
+  if (!report.report_payload_metadata_only || !report.human_review_required) {
+    failures.push("public_data_cache_audit_review_boundary_failed");
+  }
+  if (
+    report.direct_runtime_ingestion_allowed ||
+    report.public_records_runtime_ingested ||
+    report.raw_public_payload_committed ||
+    report.tracked_public_payload_committed ||
+    report.real_party_records_committed ||
+    report.real_matter_records_committed ||
+    report.connector_implemented ||
+    report.legal_knowledge_adapter_authorized ||
+    report.synthetic_fixtures_created ||
+    report.fixture_files_mutated ||
+    report.lake_write_performed ||
+    report.sqlite_write_performed ||
+    report.external_writes_performed
+  ) {
+    failures.push("public_data_cache_audit_side_effect_boundary_failed");
+  }
+  if (report.valid_manifest_entry_count !== report.sources.length) {
+    failures.push("public_data_cache_audit_valid_source_count_mismatch");
+  }
+  if (report.cache_sample_count > report.valid_manifest_entry_count) {
+    failures.push("public_data_cache_audit_sample_count_exceeds_sources");
+  }
+  if (report.public_cache_samples_present !== report.cache_sample_count > 0) {
+    failures.push("public_data_cache_audit_sample_presence_mismatch");
+  }
+  if (
+    report.status === "ready_for_human_public_data_cache_review" &&
+    (report.checks.some((check) => check.status !== "passed") ||
+      report.unknown_source_ids.length > 0 ||
+      report.failed_hash_source_ids.length > 0 ||
+      report.missing_cache_file_source_ids.length > 0 ||
+      report.blocked_path_refs.length > 0 ||
+      report.rust_custody_status !== "passed" ||
+      report.rust_custody_failure_count > 0)
+  ) {
+    failures.push("public_data_cache_audit_ready_with_blockers");
+  }
+  if (
+    report.status === "blocked_public_data_cache" &&
+    !report.checks.some((check) => check.status === "blocked" || check.status === "failed")
+  ) {
+    failures.push("public_data_cache_audit_blocked_without_failed_check");
+  }
+  if (!report.required_next_gates.length) {
+    failures.push("public_data_cache_audit_missing_next_gates");
+  }
+  return failures;
+}
+
+export function assertRustPublicDataCacheCustodyReport(
+  report: RustPublicDataCacheCustodyReport,
+): string[] {
+  const failures: string[] = [];
+  if (report.checker !== "public-data-cache-custody-checker") {
+    failures.push("rust_public_data_cache_custody_wrong_checker");
+  }
+  if (!report.candidate_only || !report.planning_only || !report.non_authoritative) {
+    failures.push("rust_public_data_cache_custody_authority_boundary_failed");
+  }
+  if (!report.metadata_only_report || !report.local_file_custody_only) {
+    failures.push("rust_public_data_cache_custody_scope_boundary_failed");
+  }
+  if (
+    report.direct_runtime_ingestion_allowed ||
+    report.public_records_runtime_ingested ||
+    report.public_payload_committed ||
+    report.raw_public_payload_committed ||
+    report.tracked_public_payload_committed ||
+    report.connector_implemented ||
+    report.legal_knowledge_adapter_authorized ||
+    report.synthetic_fixtures_created ||
+    report.fixture_files_mutated ||
+    report.lake_write_performed ||
+    report.sqlite_write_performed ||
+    report.external_writes_performed ||
+    report.matter_opening_authorized ||
+    report.budget_submission_authorized ||
+    report.silent_learning_performed
+  ) {
+    failures.push("rust_public_data_cache_custody_side_effect_boundary_failed");
+  }
+  if (report.failure_count !== report.failures.length) {
+    failures.push("rust_public_data_cache_custody_failure_count_mismatch");
+  }
+  const categoryFailureCount =
+    report.root_violation_count +
+    report.manifest_error_count +
+    report.invalid_manifest_entry_count +
+    report.blocked_path_count +
+    report.missing_file_count +
+    report.hash_mismatch_count +
+    report.byte_count_mismatch_count;
+  if (report.failure_count !== categoryFailureCount) {
+    failures.push("rust_public_data_cache_custody_category_count_mismatch");
+  }
+  if (report.checked_sample_count > report.checked_source_count) {
+    failures.push("rust_public_data_cache_custody_sample_count_exceeds_sources");
+  }
+  if (report.public_cache_samples_may_be_present !== report.checked_sample_count > 0) {
+    failures.push("rust_public_data_cache_custody_sample_presence_mismatch");
+  }
+  if (report.status === "passed" && report.failure_count > 0) {
+    failures.push("rust_public_data_cache_custody_passed_with_failures");
+  }
+  if (report.status === "failed" && report.failures.length === 0) {
+    failures.push("rust_public_data_cache_custody_failed_without_failures");
+  }
+  if (!report.manifest_sha256.startsWith("sha256:")) {
+    failures.push("rust_public_data_cache_custody_missing_manifest_hash");
   }
   return failures;
 }

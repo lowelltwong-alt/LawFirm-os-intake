@@ -377,7 +377,7 @@ def test_build_ui_review_data_bundle_tracks_renderable_local_json(tmp_path):
 
     assert out.is_file()
     assert bundle.status == "ready_for_review"
-    assert bundle.detail_report_count == 22
+    assert bundle.detail_report_count == 24
     assert bundle.required_detail_report_count == 13
     assert bundle.present_detail_report_count == 13
     assert bundle.missing_required_detail_report_count == 0
@@ -394,6 +394,8 @@ def test_build_ui_review_data_bundle_tracks_renderable_local_json(tmp_path):
         "synthetic_qa_review_outcome",
         "rust_fixture_boundary",
         "rust_fixture_manifest",
+        "public_data_cache_audit",
+        "rust_public_data_cache_custody",
         "matter_linking_preflight",
         "matter_linking_review_outcome",
         "matter_linking_qa_gate",
@@ -435,7 +437,7 @@ def test_build_ui_review_data_bundle_includes_optional_synthetic_qa_review_run(t
 
     details = {report.report_kind: report for report in bundle.detail_reports}
     assert bundle.status == "ready_for_review"
-    assert bundle.detail_report_count == 22
+    assert bundle.detail_report_count == 24
     assert bundle.present_detail_report_count == 14
     assert details["synthetic_qa_review_run"].present is True
     assert details["synthetic_qa_review_run"].required is False
@@ -467,7 +469,7 @@ def test_build_ui_review_data_bundle_includes_optional_rust_fixture_boundary(tmp
 
     details = {report.report_kind: report for report in bundle.detail_reports}
     assert bundle.status == "ready_for_review"
-    assert bundle.detail_report_count == 22
+    assert bundle.detail_report_count == 24
     assert bundle.present_detail_report_count == 15
     assert details["rust_fixture_boundary"].present is True
     assert details["rust_fixture_boundary"].required is False
@@ -490,12 +492,54 @@ def test_build_ui_review_data_bundle_includes_optional_rust_fixture_manifest(tmp
 
     details = {report.report_kind: report for report in bundle.detail_reports}
     assert bundle.status == "ready_for_review"
-    assert bundle.detail_report_count == 22
+    assert bundle.detail_report_count == 24
     assert bundle.present_detail_report_count == 15
     assert details["rust_fixture_manifest"].present is True
     assert details["rust_fixture_manifest"].required is False
     assert details["rust_fixture_manifest"].renderer == "RustFixtureManifestPanel"
     assert details["rust_fixture_manifest"].source_sha256.startswith("sha256:")
+
+
+def test_build_ui_review_data_bundle_includes_optional_public_data_custody_reports(tmp_path):
+    run_root = tmp_path / "demo"
+    run_root.mkdir()
+    _write_ui_detail_reports(run_root)
+    write_json(
+        run_root / "public_data_cache_audit_report.json",
+        {
+            "status": "blocked_public_data_cache",
+            "candidate_only": True,
+            "external_writes_performed": False,
+        },
+    )
+    write_json(
+        run_root / "rust_public_data_cache_custody_report.json",
+        {
+            "status": "failed",
+            "checker": "public-data-cache-custody-checker",
+            "candidate_only": True,
+            "external_writes_performed": False,
+        },
+    )
+
+    bundle = build_ui_review_data_bundle(
+        run_root=run_root,
+        out_path=run_root / "ui_review_data_bundle.json",
+        generated_at="2026-07-02T00:00:00Z",
+    )
+
+    details = {report.report_kind: report for report in bundle.detail_reports}
+    assert bundle.status == "ready_for_review"
+    assert bundle.detail_report_count == 24
+    assert bundle.present_detail_report_count == 15
+    assert details["public_data_cache_audit"].present is True
+    assert details["public_data_cache_audit"].required is False
+    assert details["public_data_cache_audit"].status == "blocked_public_data_cache"
+    assert details["public_data_cache_audit"].renderer == "PublicDataCacheAuditPanel"
+    assert details["rust_public_data_cache_custody"].present is True
+    assert details["rust_public_data_cache_custody"].required is False
+    assert details["rust_public_data_cache_custody"].status == "failed"
+    assert details["rust_public_data_cache_custody"].renderer == "RustPublicDataCacheCustodyPanel"
 
 
 def test_build_ui_review_data_bundle_includes_optional_synthetic_qa_blocker_report(tmp_path):
@@ -513,7 +557,7 @@ def test_build_ui_review_data_bundle_includes_optional_synthetic_qa_blocker_repo
 
     details = {report.report_kind: report for report in bundle.detail_reports}
     assert bundle.status == "ready_for_review"
-    assert bundle.detail_report_count == 22
+    assert bundle.detail_report_count == 24
     assert bundle.present_detail_report_count == 15
     assert details["synthetic_qa_blocker_report"].present is True
     assert details["synthetic_qa_blocker_report"].required is False
@@ -535,7 +579,7 @@ def test_build_ui_review_data_bundle_includes_optional_synthetic_qa_review_outco
 
     details = {report.report_kind: report for report in bundle.detail_reports}
     assert bundle.status == "ready_for_review"
-    assert bundle.detail_report_count == 22
+    assert bundle.detail_report_count == 24
     assert bundle.present_detail_report_count == 14
     assert details["synthetic_qa_review_outcome"].present is True
     assert details["synthetic_qa_review_outcome"].required is False
@@ -559,7 +603,7 @@ def test_build_ui_review_data_bundle_includes_optional_matter_linking_preflight(
 
     details = {report.report_kind: report for report in bundle.detail_reports}
     assert bundle.status == "ready_for_review"
-    assert bundle.detail_report_count == 22
+    assert bundle.detail_report_count == 24
     assert bundle.present_detail_report_count == 15
     assert details["matter_linking_preflight"].present is True
     assert details["matter_linking_preflight"].required is False
@@ -583,7 +627,7 @@ def test_build_ui_review_data_bundle_includes_optional_matter_linking_review_out
 
     details = {report.report_kind: report for report in bundle.detail_reports}
     assert bundle.status == "ready_for_review"
-    assert bundle.detail_report_count == 22
+    assert bundle.detail_report_count == 24
     assert bundle.present_detail_report_count == 16
     assert details["matter_linking_review_outcome"].present is True
     assert details["matter_linking_review_outcome"].required is False
@@ -608,7 +652,7 @@ def test_build_ui_review_data_bundle_includes_optional_matter_linking_qa_gate(tm
     details = {report.report_kind: report for report in bundle.detail_reports}
 
     assert bundle.status == "ready_for_review"
-    assert bundle.detail_report_count == 22
+    assert bundle.detail_report_count == 24
     assert bundle.present_detail_report_count == 17
     assert details["matter_linking_qa_gate"].present is True
     assert details["matter_linking_qa_gate"].required is False
@@ -629,7 +673,7 @@ def test_build_ui_review_data_bundle_requires_labor_employment_executable_covera
 
     details = {report.report_kind: report for report in bundle.detail_reports}
     assert bundle.status == "blocked_missing_required_reports"
-    assert bundle.detail_report_count == 22
+    assert bundle.detail_report_count == 24
     assert bundle.required_detail_report_count == 13
     assert bundle.present_detail_report_count == 12
     assert bundle.missing_required_detail_report_count == 1

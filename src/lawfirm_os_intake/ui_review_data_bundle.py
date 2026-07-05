@@ -86,6 +86,22 @@ DETAIL_REPORT_SPECS = [
         required=False,
     ),
     UIReviewDetailSpec(
+        detail_report_id="public-data-cache-audit",
+        label="Public Data Cache Audit",
+        report_kind="public_data_cache_audit",
+        file_name="public_data_cache_audit_report.json",
+        renderer="PublicDataCacheAuditPanel",
+        required=False,
+    ),
+    UIReviewDetailSpec(
+        detail_report_id="rust-public-data-cache-custody",
+        label="Rust Public Data Cache Custody",
+        report_kind="rust_public_data_cache_custody",
+        file_name="rust_public_data_cache_custody_report.json",
+        renderer="RustPublicDataCacheCustodyPanel",
+        required=False,
+    ),
+    UIReviewDetailSpec(
         detail_report_id="matter-linking-preflight",
         label="Matter-Linking Preflight",
         report_kind="matter_linking_preflight",

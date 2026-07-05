@@ -25,6 +25,8 @@ The expected local artifact list and matrix guardrails live in
 `src/fixtures/demo-ui-review-data-bundle.json`,
 `src/fixtures/demo-rust-fixture-boundary-report.json`,
 `src/fixtures/demo-rust-fixture-manifest-report.json`,
+`src/fixtures/demo-public-data-cache-audit-report.json`,
+`src/fixtures/demo-rust-public-data-cache-custody-report.json`,
 `src/fixtures/demo-run-manifest.json`,
 `src/fixtures/demo-synthetic-confidence-summary-report.json`,
 `src/fixtures/demo-synthetic-qa-blocker-report.json`,
@@ -66,8 +68,10 @@ not compile or execute Rust. The demo UI renders the confidence summary as the
 top-level synthetic QA posture panel, `demo-ui-demo-qa-recipe-report.json` as
 the recipe-level proof, the Rust fixture-boundary report as local JSON boundary
 evidence, the Rust fixture-manifest report as hash-bound fixture inventory
-evidence, the blocker report as the review queue, and the review-run report as
-the synthetic QA run panel when they are present. The generated POC QA triage
+evidence, the public-data cache audit and Rust public-data custody reports as
+metadata-only methodology-gate evidence, the blocker report as the review queue,
+and the review-run report as the synthetic QA run panel when they are present.
+The generated POC QA triage
 report reconciles validation, synthetic QA, L&E budget gates, and UI evidence as
 candidate-only review input; it does not authorize production actions. A
 separately recorded `synthetic_qa_review_outcome_report.json` may be rendered as
@@ -130,6 +134,13 @@ python -m lawfirm_os_intake build-ui-review-data-bundle \
 That bundle records which local JSON detail reports the frontend can render, with
 hashes and no-write checks. It does not copy source payloads or grant mutation
 authority.
+
+The public-data cache panel is intentionally review-only. It may show source IDs,
+counts, hashes, custody status, failed checks, next gates, and candidate Lake
+labels from local JSON. It must not display public payload text, real party or
+matter facts, runtime intake input, or any button/path that ingests public data,
+generates fixtures without conversion review, writes SQLite/Lake records, opens
+matters, or submits budgets.
 
 Promote an approved generated run root into checked demo fixtures with:
 

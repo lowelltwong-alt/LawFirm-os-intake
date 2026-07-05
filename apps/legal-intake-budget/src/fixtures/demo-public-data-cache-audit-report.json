@@ -1,0 +1,100 @@
+{
+  "schema_version": "0.1",
+  "public_data_cache_audit_report_id": "publicdatacacheaudit_demo_blocked_no_cache_manifest",
+  "status": "blocked_public_data_cache",
+  "source_catalog_ref": "examples/public/public-source-catalog.json",
+  "data_policy_ref": "config/data_policy.yaml",
+  "cache_root_ref": "<ignored-public-data-cache>",
+  "manifest_ref": "<ignored-public-data-cache>/public_data_cache_manifest.json",
+  "manifest_entry_count": 0,
+  "valid_manifest_entry_count": 0,
+  "cache_sample_count": 0,
+  "total_cache_sample_bytes": 0,
+  "approved_source_ids": [
+    "courtlistener-recap",
+    "fjc-idb",
+    "cmu-enron",
+    "nhtsa-fars",
+    "sec-edgar"
+  ],
+  "unknown_source_ids": [],
+  "failed_hash_source_ids": [],
+  "missing_cache_file_source_ids": [],
+  "blocked_path_refs": [],
+  "rust_custody_report_ref": "<demo-run-root>/quality/rust_public_data_cache_custody_report.json",
+  "rust_custody_status": "failed",
+  "rust_custody_failure_count": 1,
+  "rust_custody_checked_source_count": 0,
+  "rust_custody_checked_sample_count": 0,
+  "rust_custody_total_checked_sample_bytes": 0,
+  "sources": [],
+  "checks": [
+    {
+      "check_id": "public_data_boundary_passes",
+      "status": "passed",
+      "message": "Metadata-only public catalog and synthetic-only data policy are the only checked public-data evidence in this demo.",
+      "source_ids": [],
+      "path_refs": []
+    },
+    {
+      "check_id": "rust_public_data_cache_custody_passes",
+      "status": "failed",
+      "message": "Rust public-data cache custody has not passed for this checked demo fixture; no local public cache manifest or samples are present.",
+      "source_ids": [],
+      "path_refs": [
+        "<demo-run-root>/quality/rust_public_data_cache_custody_report.json"
+      ]
+    },
+    {
+      "check_id": "manifest_present_and_parseable",
+      "status": "failed",
+      "message": "No public_data_cache_manifest.json is included in checked UI demo fixtures; public source payloads must stay in ignored local cache paths.",
+      "source_ids": [],
+      "path_refs": [
+        "<ignored-public-data-cache>/public_data_cache_manifest.json"
+      ]
+    },
+    {
+      "check_id": "no_runtime_ingestion_or_external_authority",
+      "status": "passed",
+      "message": "The checked demo public-data lane authorizes no runtime ingestion, adapter, fixture creation, Lake/SQLite write, connector, or external write.",
+      "source_ids": [],
+      "path_refs": []
+    },
+    {
+      "check_id": "human_review_required_before_conversion",
+      "status": "passed",
+      "message": "Public structures require public-data cache review, methodology review, privacy review, retention decision, and conversion review before synthetic fixtures can be generated.",
+      "source_ids": [],
+      "path_refs": []
+    }
+  ],
+  "required_next_gates": [
+    "human_public_data_cache_review",
+    "source_license_review",
+    "privacy_review",
+    "retention_decision",
+    "public_source_methodology_review",
+    "synthetic_fixture_generation_review"
+  ],
+  "candidate_only": true,
+  "non_authoritative": true,
+  "planning_only": true,
+  "report_payload_metadata_only": true,
+  "human_review_required": true,
+  "public_cache_samples_present": false,
+  "direct_runtime_ingestion_allowed": false,
+  "public_records_runtime_ingested": false,
+  "raw_public_payload_committed": false,
+  "tracked_public_payload_committed": false,
+  "real_party_records_committed": false,
+  "real_matter_records_committed": false,
+  "connector_implemented": false,
+  "legal_knowledge_adapter_authorized": false,
+  "synthetic_fixtures_created": false,
+  "fixture_files_mutated": false,
+  "lake_write_performed": false,
+  "sqlite_write_performed": false,
+  "external_writes_performed": false,
+  "generated_at": "2026-07-05T00:00:00Z"
+}

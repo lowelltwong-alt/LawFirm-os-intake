@@ -23,8 +23,8 @@
   "qa_blocked_artifact_count": 0,
   "qa_pending_artifact_count": 20,
   "qa_failed_artifact_count": 0,
-  "ui_detail_report_count": 22,
-  "ui_present_detail_report_count": 22,
+  "ui_detail_report_count": 24,
+  "ui_present_detail_report_count": 24,
   "ui_missing_required_detail_report_count": 0,
   "ui_external_write_report_count": 0,
   "quality_gate_count": 32,
@@ -70,7 +70,7 @@
         "apps\\legal-intake-budget\\src\\fixtures\\demo-run-manifest.json"
       ],
       "notes": [
-        "22 detail reports present; 0 write-boundary failures."
+        "24 detail reports present; 0 write-boundary failures."
       ],
       "no_write_boundary_confirmed": true
     },

@@ -1,11 +1,11 @@
 {
   "schema_version": "0.1",
-  "ui_review_data_bundle_id": "ui_review_data_bundle_89a58d31aef5",
+  "ui_review_data_bundle_id": "ui_review_data_bundle_a79b5f4604aa",
   "status": "ready_for_review",
   "run_root_ref": "<demo-run-root>",
-  "detail_report_count": 22,
+  "detail_report_count": 24,
   "required_detail_report_count": 13,
-  "present_detail_report_count": 22,
+  "present_detail_report_count": 24,
   "missing_required_detail_report_count": 0,
   "external_write_report_count": 0,
   "detail_reports": [
@@ -55,7 +55,7 @@
       "status": "synthetic_confidence_summary_ready_for_review",
       "renderer": "SyntheticConfidenceSummaryPanel",
       "artifact_ref": "<demo-run-root>\\quality\\synthetic_confidence_summary_report.json",
-      "source_sha256": "sha256:bf024c2165d9b2907a5ea080f93f0fa338dfedf39a62b0560e8d4329656ce4ab",
+      "source_sha256": "sha256:8934a830f2a2dfbcbc112ff30e3efc7136f9da22dfc487da73b7d035064d7b0b",
       "candidate_only": true,
       "synthetic_only": true,
       "external_writes_performed": false,
@@ -127,7 +127,7 @@
       "status": "passed",
       "renderer": "RustFixtureManifestPanel",
       "artifact_ref": "apps/legal-intake-budget/src/fixtures/demo-rust-fixture-manifest-report.json",
-      "source_sha256": "sha256:fca23bcdf1f946539decbf32be4711d06d78975eaad37f0b4f316632ef1e3adf",
+      "source_sha256": "sha256:3caaa45135f77db0c7ac7e9116eb9b63cbf3bff8c6918835200d5f9ef30b6cd3",
       "candidate_only": true,
       "synthetic_only": true,
       "external_writes_performed": false,
@@ -403,6 +403,42 @@
       "external_writes_performed": false,
       "notes": [
         "Found checked demo fixture for ui_demo_qa_recipe_report.json."
+      ]
+    },
+    {
+      "detail_report_id": "public-data-cache-audit",
+      "label": "Public Data Cache Audit",
+      "report_kind": "public_data_cache_audit",
+      "file_name": "public_data_cache_audit_report.json",
+      "required": false,
+      "present": true,
+      "status": "present",
+      "renderer": "PublicDataCacheAuditPanel",
+      "artifact_ref": "<demo-run-root>\\public_data_cache_audit_report.json",
+      "source_sha256": "sha256:3624a2814917bcedc948554f5c5a41b0e841e852313f11b34f60715179a8d036",
+      "candidate_only": true,
+      "synthetic_only": true,
+      "external_writes_performed": false,
+      "notes": [
+        "Found checked demo fixture for public_data_cache_audit_report.json."
+      ]
+    },
+    {
+      "detail_report_id": "rust-public-data-cache-custody",
+      "label": "Rust Public Data Cache Custody",
+      "report_kind": "rust_public_data_cache_custody",
+      "file_name": "rust_public_data_cache_custody_report.json",
+      "required": false,
+      "present": true,
+      "status": "present",
+      "renderer": "RustPublicDataCacheCustodyPanel",
+      "artifact_ref": "<demo-run-root>\\rust_public_data_cache_custody_report.json",
+      "source_sha256": "sha256:398f3b3a375fd3c3085e008bcb8b22bb337c95cf937762163a26ce59f57466f8",
+      "candidate_only": true,
+      "synthetic_only": true,
+      "external_writes_performed": false,
+      "notes": [
+        "Found checked demo fixture for rust_public_data_cache_custody_report.json."
       ]
     }
   ],
