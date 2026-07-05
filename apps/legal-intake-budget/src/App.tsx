@@ -24,6 +24,7 @@ import demoSyntheticQAReviewOutcome from "./fixtures/demo-synthetic-qa-review-ou
 import demoSyntheticConfidenceSummary from "./fixtures/demo-synthetic-confidence-summary-report.json";
 import demoSyntheticQAReviewRun from "./fixtures/demo-synthetic-qa-review-run-report.json";
 import demoReviewDataBundle from "./fixtures/demo-ui-review-data-bundle.json";
+import demoUIDemoQARecipe from "./fixtures/demo-ui-demo-qa-recipe-report.json";
 import demoValidationSuiteEvidence from "./fixtures/demo-validation-suite-evidence-report.json";
 import {
   assertMatterLinkingPreflightReport,
@@ -48,6 +49,7 @@ import {
   assertSyntheticQAReviewOutcomeReport,
   assertSyntheticConfidenceSummaryReport,
   assertSyntheticQAReviewRunReport,
+  assertUIDemoQARecipeReport,
   assertUIReviewDataBundle,
   assertValidationSuiteEvidenceReport,
   failingQualityGates,
@@ -93,6 +95,7 @@ import type {
   SyntheticConfidenceSummaryReport,
   SyntheticConfidenceSummaryItemState,
   SyntheticQAReviewRunReport,
+  UIDemoQARecipeReport,
   UIReviewDataBundle,
   ValidationSuiteEvidenceReport,
   ValidationSuiteStepStatus,
@@ -102,6 +105,7 @@ import "./styles.css";
 const reviewDataBundle = demoReviewDataBundle as UIReviewDataBundle;
 const manifest = demoManifest as ReviewManifest;
 const syntheticQAReviewRun = demoSyntheticQAReviewRun as SyntheticQAReviewRunReport;
+const uiDemoQARecipe = demoUIDemoQARecipe as UIDemoQARecipeReport;
 const syntheticQABlockerReport = demoSyntheticQABlockerReport as SyntheticQABlockerReport;
 const syntheticQAReviewOutcome =
   demoSyntheticQAReviewOutcome as SyntheticQAReviewOutcomeReport;
@@ -147,6 +151,7 @@ const syntheticConfidenceSummaryFailures =
 const pocQATriageFailures = assertPOCQATriageReport(pocQATriage);
 const validationSuiteEvidenceFailures =
   assertValidationSuiteEvidenceReport(validationSuiteEvidence);
+const uiDemoQARecipeFailures = assertUIDemoQARecipeReport(uiDemoQARecipe);
 const matterLinkingFailures = assertMatterLinkingPreflightReport(matterLinkingPreflight);
 const matterLinkingQAGateFailures = assertMatterLinkingQAGateReport(matterLinkingQAGate);
 const matterLinkingReviewOutcomeFailures =
@@ -190,6 +195,7 @@ const contractFailures = [
   ...syntheticConfidenceSummaryFailures,
   ...pocQATriageFailures,
   ...validationSuiteEvidenceFailures,
+  ...uiDemoQARecipeFailures,
   ...matterLinkingFailures,
   ...matterLinkingQAGateFailures,
   ...matterLinkingReviewOutcomeFailures,
@@ -992,6 +998,101 @@ function SyntheticQAReviewRunPanel({ report }: { report: SyntheticQAReviewRunRep
           </article>
         ))}
       </div>
+    </section>
+  );
+}
+
+function UIDemoQARecipePanel({ report }: { report: UIDemoQARecipeReport }) {
+  const passedSteps = report.steps.filter((step) => step.status === "passed").length;
+  const verified =
+    report.status === "ui_demo_qa_recipe_verified" && uiDemoQARecipeFailures.length === 0;
+  const statusClass = verified ? "state state-passed" : "state state-blocked";
+
+  return (
+    <section className="panel recipe-panel" aria-labelledby="ui-demo-qa-recipe-title">
+      <div className="panel-heading">
+        <div>
+          <p className="eyebrow">End-to-end QA proof</p>
+          <h2 id="ui-demo-qa-recipe-title">UI Demo QA Recipe</h2>
+          <code>{report.ui_demo_qa_recipe_report_id}</code>
+        </div>
+        <span className={statusClass}>{verified ? "verified" : "blocked"}</span>
+      </div>
+
+      <div className="recipe-summary" aria-label="UI demo QA recipe summary">
+        <div>
+          <span>Steps</span>
+          <strong>
+            {passedSteps}/{report.step_count}
+          </strong>
+        </div>
+        <div>
+          <span>Validation</span>
+          <strong>
+            {report.validation_exact_step_order_confirmed &&
+            report.validation_worktree_clean_confirmed
+              ? "clean"
+              : "blocked"}
+          </strong>
+        </div>
+        <div>
+          <span>Rust Roots</span>
+          <strong>
+            {report.rust_boundary_root_matches_temp_fixtures &&
+            report.rust_manifest_root_matches_temp_fixtures
+              ? "matched"
+              : "blocked"}
+          </strong>
+        </div>
+        <div>
+          <span>Fixture Write</span>
+          <strong>{report.local_fixture_updates_performed ? "checked" : "blocked"}</strong>
+        </div>
+        <div>
+          <span>Rollback</span>
+          <strong>{report.rollback_performed ? "yes" : "no"}</strong>
+        </div>
+      </div>
+
+      <div className="boundary-grid">
+        <div className="boundary-item">
+          <span>Validation Evidence</span>
+          <code>{report.validation_suite_evidence_ref}</code>
+        </div>
+        <div className="boundary-item">
+          <span>Final Bundle</span>
+          <code>{report.final_ui_review_data_bundle_ref ?? "not supplied"}</code>
+        </div>
+        <div className="boundary-item">
+          <span>Final Promotion</span>
+          <code>{report.final_promotion_report_ref ?? "not supplied"}</code>
+        </div>
+        <div className="boundary-item">
+          <span>Budget Submission</span>
+          <strong>{String(report.budget_submission_authorized)}</strong>
+        </div>
+      </div>
+
+      <div className="recipe-step-grid">
+        {report.steps.map((step) => (
+          <article className="recipe-step" key={step.step_id}>
+            <div>
+              <strong>{step.label}</strong>
+              <code>{step.artifact_ref ?? "not supplied"}</code>
+            </div>
+            <span className={gateClass(step.status)}>{step.status}</span>
+            <p>
+              {step.observed_status} - {step.notes.join(" ")}
+            </p>
+          </article>
+        ))}
+      </div>
+
+      <p className="boundary">
+        Recipe evidence is candidate-only local JSON. Lake writes:{" "}
+        {report.lake_write_performed ? "not blocked" : "blocked"}. Matter opening:{" "}
+        {report.matter_opening_authorized ? "not blocked" : "blocked"}.
+      </p>
     </section>
   );
 }
@@ -3044,6 +3145,7 @@ function App() {
       />
       <BudgetLearningLoopPanel report={budgetLearningLoop} />
       <SyntheticConfidenceSummaryPanel report={syntheticConfidenceSummary} />
+      <UIDemoQARecipePanel report={uiDemoQARecipe} />
       <RustFixtureBoundaryPanel report={rustFixtureBoundary} />
       <RustFixtureManifestPanel report={rustFixtureManifest} />
       <POCQATriagePanel report={pocQATriage} />

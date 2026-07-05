@@ -1,5 +1,7 @@
 import json
 
+from lawfirm_os_intake.models import UIDemoQARecipeReport
+
 
 UI_ROOT = "apps/legal-intake-budget"
 
@@ -21,6 +23,7 @@ def test_legal_intake_budget_ui_required_files_exist(repo_root):
         "src/fixtures/demo-synthetic-qa-bundle-report.json",
         "src/fixtures/demo-synthetic-qa-review-outcome-report.json",
         "src/fixtures/demo-synthetic-qa-review-run-report.json",
+        "src/fixtures/demo-ui-demo-qa-recipe-report.json",
         "src/fixtures/demo-ui-review-data-bundle.json",
         "src/fixtures/demo-rust-fixture-boundary-report.json",
         "src/fixtures/demo-rust-fixture-manifest-report.json",
@@ -916,6 +919,58 @@ def test_legal_intake_budget_ui_blocks_dirty_validation_evidence(repo_root):
     assert "validation_suite_evidence_passed_with_dirty_worktree" in contract
 
 
+def test_legal_intake_budget_demo_ui_demo_qa_recipe_is_no_write(repo_root):
+    report = json.loads(
+        (repo_root / UI_ROOT / "src/fixtures/demo-ui-demo-qa-recipe-report.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    steps = {step["step_id"]: step for step in report["steps"]}
+    UIDemoQARecipeReport.model_validate(report)
+
+    assert report["status"] == "ui_demo_qa_recipe_verified"
+    assert report["step_count"] == len(report["steps"]) == 7
+    assert report["failed_step_count"] == 0
+    assert report["blocked_step_count"] == 0
+    assert report["validation_suite_status"] == "validation_suite_passed"
+    assert report["validation_exact_step_order_confirmed"] is True
+    assert report["validation_worktree_clean_confirmed"] is True
+    assert report["temp_promotion_status"] == "ui_demo_fixture_promotion_verified"
+    assert report["rust_boundary_status"] == "passed"
+    assert report["rust_manifest_status"] == "passed"
+    assert report["rust_boundary_root_matches_temp_fixtures"] is True
+    assert report["rust_manifest_root_matches_temp_fixtures"] is True
+    assert report["final_synthetic_qa_status"] == "synthetic_qa_review_run_ready"
+    assert report["final_ui_bundle_status"] == "ready_for_review"
+    assert report["final_poc_qa_triage_status"] == "poc_qa_ready_for_review"
+    assert report["final_promotion_status"] == "ui_demo_fixture_promotion_verified"
+    assert report["temp_fixture_updates_performed"] is True
+    assert report["local_fixture_updates_performed"] is True
+    assert report["rollback_performed"] is False
+    assert report["candidate_only"] is True
+    assert report["synthetic_only"] is True
+    assert report["non_authoritative"] is True
+    assert report["local_json_only"] is True
+    assert report["budget_submission_authorized"] is False
+    assert report["matter_opening_authorized"] is False
+    assert report["lake_write_performed"] is False
+    assert report["sqlite_write_performed"] is False
+    assert report["external_writes_performed"] is False
+    assert report["silent_learning_performed"] is False
+    assert {
+        "validation_suite_evidence",
+        "initial_synthetic_qa_run",
+        "temp_fixture_promotion",
+        "rust_fixture_boundary",
+        "rust_fixture_manifest",
+        "final_synthetic_qa_run",
+        "final_fixture_promotion",
+    } <= set(steps)
+    assert all(step["status"] == "passed" for step in steps.values())
+    assert all(step["artifact_ref"] for step in steps.values())
+    assert all(step["notes"] for step in steps.values())
+
+
 def test_legal_intake_budget_demo_synthetic_qa_blocker_report_is_no_write(repo_root):
     report = json.loads(
         (repo_root / UI_ROOT / "src/fixtures/demo-synthetic-qa-blocker-report.json").read_text(
@@ -1500,6 +1555,8 @@ def test_legal_intake_budget_ui_disclaims_mutating_authority(repo_root):
     assert "Synthetic QA Blocker Drilldown" in app
     assert "Synthetic QA Review Outcome" in app
     assert "Synthetic QA Review Run" in app
+    assert "UI Demo QA Recipe" in app
+    assert "End-to-end QA proof" in app
     assert "Matter-Linking Preflight" in app
     assert "Matter-Linking QA Gate" in app
     assert "Matter-Linking Review Outcome" in app
@@ -1522,6 +1579,9 @@ def test_legal_intake_budget_ui_disclaims_mutating_authority(repo_root):
     assert "Budget Stress Targets" in app
     assert "buildQAWorkbenchCards" in app
     assert "buildFixtureDrilldownRows" in app
+    assert "demoUIDemoQARecipe" in app
+    assert "assertUIDemoQARecipeReport" in app
+    assert "UIDemoQARecipePanel report={uiDemoQARecipe}" in app
     assert "assertUIReviewDataBundle" in app
     assert "assertSyntheticConfidenceSummaryReport" in app
     assert "assertPOCQATriageReport" in app

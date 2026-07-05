@@ -30,6 +30,7 @@ The expected local artifact list and matrix guardrails live in
 `src/fixtures/demo-synthetic-qa-blocker-report.json`,
 `src/fixtures/demo-synthetic-qa-review-outcome-report.json`,
 `src/fixtures/demo-synthetic-qa-review-run-report.json`,
+`src/fixtures/demo-ui-demo-qa-recipe-report.json`,
 `src/fixtures/demo-labor-employment-qa-matrix-report.json`, and
 `src/fixtures/demo-labor-employment-executable-coverage-report.json`,
 `src/fixtures/demo-labor-employment-blocked-driver-impact-review-report.json`,
@@ -62,10 +63,11 @@ prebuilt `rust_fixture_boundary_report.json` may be staged with
 `--fixture-boundary-report`, and a prebuilt `rust_fixture_manifest_report.json`
 may be staged with `--fixture-manifest-report`; the synthetic QA command will
 not compile or execute Rust. The demo UI renders the confidence summary as the
-top-level synthetic QA posture panel, the Rust fixture-boundary report as local
-JSON boundary evidence, the Rust fixture-manifest report as hash-bound fixture
-inventory evidence, the blocker report as the review queue, and the review-run
-report as the recipe panel when they are present. The generated POC QA triage
+top-level synthetic QA posture panel, `demo-ui-demo-qa-recipe-report.json` as
+the recipe-level proof, the Rust fixture-boundary report as local JSON boundary
+evidence, the Rust fixture-manifest report as hash-bound fixture inventory
+evidence, the blocker report as the review queue, and the review-run report as
+the synthetic QA run panel when they are present. The generated POC QA triage
 report reconciles validation, synthetic QA, L&E budget gates, and UI evidence as
 candidate-only review input; it does not authorize production actions. A
 separately recorded `synthetic_qa_review_outcome_report.json` may be rendered as

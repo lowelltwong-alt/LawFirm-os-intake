@@ -25,6 +25,7 @@ import type {
   SyntheticQAReviewOutcomeReport,
   SyntheticConfidenceSummaryReport,
   SyntheticQAReviewRunReport,
+  UIDemoQARecipeReport,
   UIReviewDataBundle,
   ValidationSuiteEvidenceReport,
 } from "./types";
@@ -686,6 +687,100 @@ export function assertValidationSuiteEvidenceReport(
   }
   if (!report.required_next_actions.length) {
     failures.push("validation_suite_evidence_missing_next_actions");
+  }
+  return failures;
+}
+
+export function assertUIDemoQARecipeReport(report: UIDemoQARecipeReport): string[] {
+  const failures: string[] = [];
+  if (!report.candidate_only || !report.synthetic_only || !report.non_authoritative) {
+    failures.push("ui_demo_qa_recipe_authority_boundary_failed");
+  }
+  if (!report.local_json_only) {
+    failures.push("ui_demo_qa_recipe_not_local_json_only");
+  }
+  if (
+    report.budget_submission_authorized ||
+    report.matter_opening_authorized ||
+    report.lake_write_performed ||
+    report.sqlite_write_performed ||
+    report.external_writes_performed ||
+    report.silent_learning_performed
+  ) {
+    failures.push("ui_demo_qa_recipe_side_effect_boundary_failed");
+  }
+
+  const failed = report.steps.filter((step) => step.status === "failed");
+  const blocked = report.steps.filter((step) => step.status === "blocked");
+  const passed = report.steps.filter((step) => step.status === "passed");
+  if (report.step_count !== report.steps.length) {
+    failures.push("ui_demo_qa_recipe_step_count_mismatch");
+  }
+  if (report.failed_step_count !== failed.length) {
+    failures.push("ui_demo_qa_recipe_failed_step_count_mismatch");
+  }
+  if (report.blocked_step_count !== blocked.length) {
+    failures.push("ui_demo_qa_recipe_blocked_step_count_mismatch");
+  }
+  for (const requiredStep of [
+    "validation_suite_evidence",
+    "initial_synthetic_qa_run",
+    "temp_fixture_promotion",
+    "rust_fixture_boundary",
+    "rust_fixture_manifest",
+    "final_synthetic_qa_run",
+    "final_fixture_promotion",
+  ]) {
+    if (!passed.some((step) => step.step_id === requiredStep)) {
+      failures.push(`ui_demo_qa_recipe_missing_passed_step:${requiredStep}`);
+    }
+  }
+  for (const step of report.steps) {
+    if (!step.step_id || !step.label || !step.observed_status || step.notes.length === 0) {
+      failures.push(`ui_demo_qa_recipe_step_not_actionable:${step.step_id}`);
+    }
+    if (step.status === "passed" && !step.artifact_ref) {
+      failures.push(`ui_demo_qa_recipe_passed_step_missing_artifact:${step.step_id}`);
+    }
+  }
+  if (report.status === "ui_demo_qa_recipe_verified") {
+    if (
+      failed.length > 0 ||
+      blocked.length > 0 ||
+      report.validation_suite_status !== "validation_suite_passed" ||
+      !report.validation_exact_step_order_confirmed ||
+      !report.validation_worktree_clean_confirmed ||
+      report.initial_synthetic_qa_status !== "synthetic_qa_review_run_ready" ||
+      report.temp_promotion_status !== "ui_demo_fixture_promotion_verified" ||
+      report.rust_boundary_status !== "passed" ||
+      report.rust_manifest_status !== "passed" ||
+      !report.rust_boundary_root_matches_temp_fixtures ||
+      !report.rust_manifest_root_matches_temp_fixtures ||
+      report.final_synthetic_qa_status !== "synthetic_qa_review_run_ready" ||
+      report.final_ui_bundle_status !== "ready_for_review" ||
+      report.final_poc_qa_triage_status !== "poc_qa_ready_for_review" ||
+      report.final_promotion_status !== "ui_demo_fixture_promotion_verified" ||
+      !report.final_promotion_report_ref ||
+      !report.final_ui_review_data_bundle_ref ||
+      !report.final_poc_qa_triage_ref ||
+      !report.temp_fixture_updates_performed ||
+      !report.local_fixture_updates_performed ||
+      report.rollback_performed
+    ) {
+      failures.push("ui_demo_qa_recipe_verified_with_unmet_gate");
+    }
+  }
+  if (
+    report.status === "ui_demo_qa_recipe_blocked_write_flag_required" &&
+    report.local_fixture_updates_performed
+  ) {
+    failures.push("ui_demo_qa_recipe_blocked_after_fixture_update");
+  }
+  if (report.status === "ui_demo_qa_recipe_failed" && failed.length + blocked.length === 0) {
+    failures.push("ui_demo_qa_recipe_failed_without_failed_steps");
+  }
+  if (!report.required_next_actions.length) {
+    failures.push("ui_demo_qa_recipe_missing_next_actions");
   }
   return failures;
 }

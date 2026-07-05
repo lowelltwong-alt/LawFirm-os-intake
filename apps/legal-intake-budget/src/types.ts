@@ -602,6 +602,68 @@ export type ValidationSuiteEvidenceReport = {
   generated_at: string;
 };
 
+export type UIDemoQARecipeStepStatus = "passed" | "failed" | "blocked";
+
+export type UIDemoQARecipeStep = {
+  step_id: string;
+  label: string;
+  status: UIDemoQARecipeStepStatus;
+  observed_status: string;
+  artifact_ref?: string | null;
+  notes: string[];
+};
+
+export type UIDemoQARecipeReport = {
+  schema_version: string;
+  ui_demo_qa_recipe_report_id: string;
+  status:
+    | "ui_demo_qa_recipe_verified"
+    | "ui_demo_qa_recipe_failed"
+    | "ui_demo_qa_recipe_blocked_write_flag_required";
+  out_dir_ref: string;
+  final_run_root_ref: string;
+  initial_run_root_ref: string;
+  fixtures_root_ref: string;
+  temp_fixtures_root_ref: string;
+  validation_mode: "provided" | "ran";
+  validation_suite_evidence_ref: string;
+  validation_suite_status: string;
+  validation_exact_step_order_confirmed: boolean;
+  validation_worktree_clean_confirmed: boolean;
+  initial_synthetic_qa_status: string;
+  temp_promotion_status: string;
+  rust_boundary_status: string;
+  rust_manifest_status: string;
+  rust_boundary_root_matches_temp_fixtures: boolean;
+  rust_manifest_root_matches_temp_fixtures: boolean;
+  final_synthetic_qa_status: string;
+  final_ui_bundle_status: string;
+  final_poc_qa_triage_status: string;
+  final_promotion_status: string;
+  final_promotion_report_ref?: string | null;
+  final_ui_review_data_bundle_ref?: string | null;
+  final_poc_qa_triage_ref?: string | null;
+  step_count: number;
+  failed_step_count: number;
+  blocked_step_count: number;
+  temp_fixture_updates_performed: boolean;
+  local_fixture_updates_performed: boolean;
+  rollback_performed: boolean;
+  steps: UIDemoQARecipeStep[];
+  required_next_actions: string[];
+  candidate_only: boolean;
+  synthetic_only: boolean;
+  non_authoritative: boolean;
+  local_json_only: boolean;
+  external_writes_performed: boolean;
+  lake_write_performed: boolean;
+  sqlite_write_performed: boolean;
+  budget_submission_authorized: boolean;
+  matter_opening_authorized: boolean;
+  silent_learning_performed: boolean;
+  generated_at: string;
+};
+
 export type POCQATriageStatus = "poc_qa_ready_for_review" | "blocked_by_poc_qa_triage";
 
 export type POCQATriageItemStatus = "passed" | "needs_review" | "watch" | "blocked";

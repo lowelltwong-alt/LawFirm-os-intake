@@ -1,0 +1,120 @@
+{
+  "schema_version": "0.1",
+  "ui_demo_qa_recipe_report_id": "ui_demo_qa_recipe_demo_verified_v0_1",
+  "status": "ui_demo_qa_recipe_verified",
+  "out_dir_ref": "<demo-recipe-out-dir>",
+  "final_run_root_ref": "<demo-run-root>",
+  "initial_run_root_ref": "<demo-initial-run-root>",
+  "fixtures_root_ref": "apps/legal-intake-budget/src/fixtures",
+  "temp_fixtures_root_ref": "<demo-temp-fixtures-root>",
+  "validation_mode": "ran",
+  "validation_suite_evidence_ref": "<demo-recipe-out-dir>/validation/validation_suite_evidence_report.json",
+  "validation_suite_status": "validation_suite_passed",
+  "validation_exact_step_order_confirmed": true,
+  "validation_worktree_clean_confirmed": true,
+  "initial_synthetic_qa_status": "synthetic_qa_review_run_ready",
+  "temp_promotion_status": "ui_demo_fixture_promotion_verified",
+  "rust_boundary_status": "passed",
+  "rust_manifest_status": "passed",
+  "rust_boundary_root_matches_temp_fixtures": true,
+  "rust_manifest_root_matches_temp_fixtures": true,
+  "final_synthetic_qa_status": "synthetic_qa_review_run_ready",
+  "final_ui_bundle_status": "ready_for_review",
+  "final_poc_qa_triage_status": "poc_qa_ready_for_review",
+  "final_promotion_status": "ui_demo_fixture_promotion_verified",
+  "final_promotion_report_ref": "<demo-recipe-out-dir>/final-promotion/ui_demo_fixture_promotion_report.json",
+  "final_ui_review_data_bundle_ref": "<demo-run-root>/ui_review_data_bundle.json",
+  "final_poc_qa_triage_ref": "<demo-run-root>/quality/poc_qa_triage_report.json",
+  "step_count": 7,
+  "failed_step_count": 0,
+  "blocked_step_count": 0,
+  "temp_fixture_updates_performed": true,
+  "local_fixture_updates_performed": true,
+  "rollback_performed": false,
+  "steps": [
+    {
+      "step_id": "validation_suite_evidence",
+      "label": "Validation Suite Evidence",
+      "status": "passed",
+      "observed_status": "validation_suite_passed",
+      "artifact_ref": "<demo-recipe-out-dir>/validation/validation_suite_evidence_report.json",
+      "notes": [
+        "Validation evidence must be the exact wrapper step set, all passed, with clean worktree."
+      ]
+    },
+    {
+      "step_id": "initial_synthetic_qa_run",
+      "label": "Initial Synthetic QA Run",
+      "status": "passed",
+      "observed_status": "synthetic_qa_review_run_ready",
+      "artifact_ref": "<demo-initial-run-root>/synthetic_qa_review_run_report.json",
+      "notes": [
+        "Initial run must emit every default UI demo promotion source at exact paths."
+      ]
+    },
+    {
+      "step_id": "temp_fixture_promotion",
+      "label": "Temporary Fixture Promotion",
+      "status": "passed",
+      "observed_status": "ui_demo_fixture_promotion_verified",
+      "artifact_ref": "<demo-recipe-out-dir>/temp-promotion/ui_demo_fixture_promotion_report.json",
+      "notes": [
+        "Scratch fixture promotion builds wrapper evidence before checked fixtures are touched."
+      ]
+    },
+    {
+      "step_id": "rust_fixture_boundary",
+      "label": "Rust Fixture Boundary",
+      "status": "passed",
+      "observed_status": "passed",
+      "artifact_ref": "<demo-recipe-out-dir>/temp-rust-fixture-boundary/rust_fixture_boundary_report.json",
+      "notes": [
+        "Rust boundary evidence must be generated from the scratch fixture set."
+      ]
+    },
+    {
+      "step_id": "rust_fixture_manifest",
+      "label": "Rust Fixture Manifest",
+      "status": "passed",
+      "observed_status": "passed",
+      "artifact_ref": "<demo-recipe-out-dir>/temp-rust-fixture-manifest/rust_fixture_manifest_report.json",
+      "notes": [
+        "Rust manifest evidence must be generated from the scratch fixture set."
+      ]
+    },
+    {
+      "step_id": "final_synthetic_qa_run",
+      "label": "Final Synthetic QA Run",
+      "status": "passed",
+      "observed_status": "synthetic_qa_review_run_ready",
+      "artifact_ref": "<demo-run-root>/synthetic_qa_review_run_report.json",
+      "notes": [
+        "Final run is read back from disk after all generated wrapper passes finish."
+      ]
+    },
+    {
+      "step_id": "final_fixture_promotion",
+      "label": "Final Checked Fixture Promotion",
+      "status": "passed",
+      "observed_status": "ui_demo_fixture_promotion_verified",
+      "artifact_ref": "<demo-recipe-out-dir>/final-promotion/ui_demo_fixture_promotion_report.json",
+      "notes": [
+        "Checked fixtures are updated only by this final explicit promotion step."
+      ]
+    }
+  ],
+  "required_next_actions": [
+    "UI demo QA recipe verified; use checked fixtures as read-only candidate demo evidence and keep production actions blocked."
+  ],
+  "candidate_only": true,
+  "synthetic_only": true,
+  "non_authoritative": true,
+  "local_json_only": true,
+  "external_writes_performed": false,
+  "lake_write_performed": false,
+  "sqlite_write_performed": false,
+  "budget_submission_authorized": false,
+  "matter_opening_authorized": false,
+  "silent_learning_performed": false,
+  "generated_at": "2026-07-05T00:00:00Z"
+}
