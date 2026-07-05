@@ -10174,6 +10174,15 @@ class CarrierRejectionLearningReport(StrictModel):
     silent_learning_performed: Literal[False] = False
     generated_at: str
 
+    @model_validator(mode="after")
+    def carrier_rejection_learning_counts_match(self) -> "CarrierRejectionLearningReport":
+        if self.proposal_count != len(self.proposals):
+            raise ValueError("carrier rejection learning proposal_count mismatch")
+        proposal_owners = sorted({proposal.target_owner for proposal in self.proposals})
+        if self.target_owners != proposal_owners:
+            raise ValueError("carrier rejection learning target_owners mismatch")
+        return self
+
 
 CarrierRejectionDecisionLedgerEventKind = Literal[
     "carrier_rejection_notice_captured",
@@ -10463,6 +10472,19 @@ class ReviewedLearningGateReport(StrictModel):
     external_writes_performed: Literal[False] = False
     silent_learning_performed: Literal[False] = False
     generated_at: str
+
+    @model_validator(mode="after")
+    def reviewed_learning_gate_counts_match(self) -> "ReviewedLearningGateReport":
+        if self.candidate_count != len(self.candidates):
+            raise ValueError("reviewed learning gate candidate_count mismatch")
+        typed_total = (
+            self.carrier_learning_candidate_count
+            + self.budget_revision_candidate_count
+            + self.budget_actual_variance_candidate_count
+        )
+        if self.candidate_count != typed_total:
+            raise ValueError("reviewed learning gate typed candidate count mismatch")
+        return self
 
 
 BudgetLearningLoopStatus = Literal[

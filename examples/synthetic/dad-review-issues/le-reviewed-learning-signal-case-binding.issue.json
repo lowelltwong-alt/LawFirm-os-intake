@@ -1,0 +1,97 @@
+{
+  "schema_version": "0.1",
+  "issue_id": "le-reviewed-learning-signal-case-binding-001",
+  "issue_version": "0.1.0",
+  "observed_at": "2026-07-05T00:00:00Z",
+  "source_repo_id": "LawFirm-os-intake",
+  "source_repo_path": "LawFirm-os-intake",
+  "originating_agent": "codex",
+  "review_context": "First L&E discrimination/harassment reviewed-learning signal replay from committed synthetic carrier rejection inputs.",
+  "finding_title": "Schema-valid reviewed-learning signals need same-case identity anchors.",
+  "severity": "P1",
+  "issue_classes": [
+    "architecture_risk",
+    "authority_boundary_risk",
+    "data_flow_gap",
+    "learning_loop_gap",
+    "test_gap",
+    "performance_or_rust_candidate"
+  ],
+  "finding_summary": "A carrier rejection learning report can be schema-valid and candidate-only while still belonging to the wrong budget or preflight case. Replay input-pack validation needs deterministic same-case identity checks before a generated learning signal can satisfy a reviewed-learning one-of slot.",
+  "observable_context": [
+    "The first L&E discrimination/harassment clean replay chain produces carrier rejection capture, review packet, learning report, and reviewed-learning gate reports from committed synthetic inputs.",
+    "The input-pack audit already validated local refs, Pydantic shape, and no-write boundary flags, but it did not bind reviewed-learning signal reports to the same budget_proposal_id and preflight_packet_id as the declared case anchors.",
+    "Committed source-input fixtures may use placeholder IDs such as filled-by-test values that are bound by builders at runtime, so placeholders must not become identity evidence anchors.",
+    "The validated fix uses concrete top-level case IDs from local anchor artifacts and rejects case-bound reports whose IDs do not match those anchors."
+  ],
+  "observable_decision_logic": [
+    "Schema validation proves artifact shape but not that a learning report belongs to the same replay case.",
+    "A reviewed-learning gate one-of signal is only useful for QA if it is tied to the same local synthetic budget and preflight packet as the replay slot.",
+    "Placeholder IDs in source-input bundles represent pending runtime binding and should be ignored for identity anchoring rather than treated as contradictory observed facts.",
+    "The integrated replay test should generate derived artifacts in a temp run directory, then feed the generated learning report through the input-pack validator as local candidate evidence."
+  ],
+  "solution_path": [
+    "Add case identity context for L&E replay input-pack entries using concrete budget_proposal_id and preflight_packet_id anchors.",
+    "Apply the identity check to case-bound reports, including carrier rejection review, carrier rejection learning, actuals comparison, variance ledger, and budget revision reports.",
+    "Ignore placeholder sentinel IDs when collecting anchors so source-input templates do not create false conflicts.",
+    "Add a positive integrated replay test from committed synthetic L&E inputs through carrier learning and reviewed-learning gate.",
+    "Add a negative wrong-case learning report test and fail-closed count invariants for carrier learning and reviewed gate reports."
+  ],
+  "fix_status": "fixed_validated",
+  "fix_refs": [
+    "src/lawfirm_os_intake/labor_employment_budget_outcome_replay_input_pack.py",
+    "src/lawfirm_os_intake/models.py",
+    "tests/test_labor_employment_budget_outcome_replay_input_pack.py"
+  ],
+  "test_refs": [
+    "python scripts/run_full_pytest.py tests/test_labor_employment_budget_outcome_replay_input_pack.py",
+    "python scripts/run_validation_suite.py"
+  ],
+  "artifact_refs": [
+    "examples/synthetic/labor-employment/replay-inputs/discrimination-harassment-clean/legal_budget_proposal.json",
+    "examples/synthetic/labor-employment/replay-inputs/discrimination-harassment-clean/carrier_rejection_capture_source_bundle.json",
+    "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-input-pack.json"
+  ],
+  "candidate_exception_labels": [
+    "reviewed_learning_signal_wrong_case",
+    "schema_valid_but_unbound_learning_signal",
+    "placeholder_identity_not_evidence",
+    "deterministic_case_identity_binding",
+    "deterministic_replay_input_checker_rust_candidate",
+    "dad_learning_loop_candidate"
+  ],
+  "applies_when": [
+    "A learning-loop or reviewed-gate artifact is used as a replay input signal for a specific synthetic case.",
+    "A report has its own budget_proposal_id or preflight_packet_id and can be matched against local case anchors.",
+    "Source-input templates contain placeholder IDs that are resolved by builders before generated reports are trusted."
+  ],
+  "does_not_apply_when": [
+    "The artifact is a source-input template with unresolved placeholders and is not being used as a generated case-bound report.",
+    "The report is intentionally cross-case aggregate evidence with an explicit aggregate contract.",
+    "A production Orchestrator owner has already provided a stronger governed matter-linking contract."
+  ],
+  "danger_if_misapplied": "If schema-valid learning reports from another case can satisfy reviewed-learning input slots, QA could mark the wrong synthetic case as learning-ready and later train or promote changes from unrelated evidence.",
+  "suggested_actions": [
+    "DAD should classify schema-valid-but-unbound artifacts as a separate exception pattern from malformed artifacts.",
+    "DAD should track placeholder identity values separately from observed case identity values.",
+    "Future Rust work should target stable local-ref, schema, no-write, and identity-binding checks only after Python tests remain the oracle."
+  ],
+  "reviewer_notes": [
+    "This record contains synthetic fixture references only.",
+    "It records observable evidence, assumptions, decision logic, fix refs, and test refs without hidden chain-of-thought."
+  ],
+  "red_team_notes": [
+    "Do not treat one-of signal readiness as proof of reviewed learning unless the signal is bound to the intended case.",
+    "Do not treat placeholder IDs in source-input bundles as observed facts.",
+    "Do not promote this local candidate binding rule as Semantic Substrate canon from the intake repo."
+  ],
+  "raw_private_payload_included": false,
+  "hidden_chain_of_thought_included": false,
+  "candidate_only": true,
+  "dad_outbox_required": true,
+  "dad_review_required_before_promotion": true,
+  "lake_write_performed": false,
+  "sqlite_write_performed": false,
+  "external_writes_performed": false,
+  "silent_learning_performed": false
+}

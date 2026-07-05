@@ -1,6 +1,8 @@
 import pytest
 
 from lawfirm_os_intake.budget_actuals import run_budget_actual_comparison
+from lawfirm_os_intake.carrier_rejection_learning import run_carrier_rejection_learning
+from lawfirm_os_intake.carrier_rejection_review import run_carrier_rejection_review
 from lawfirm_os_intake.carrier_rejections import run_carrier_rejection_capture
 from lawfirm_os_intake.cli import main
 from lawfirm_os_intake.labor_employment_budget_learning_fixtures import (
@@ -26,10 +28,14 @@ from lawfirm_os_intake.labor_employment_budget_outcome_replay_readiness import (
 from lawfirm_os_intake.models import (
     BudgetActualComparisonReport,
     BudgetActualVarianceLedgerReport,
+    CarrierRejectionLearningReport,
     CarrierRejectionDecisionLedgerReport,
+    CarrierRejectionReviewPacket,
     LaborEmploymentBudgetOutcomeReplayInputPackManifest,
     LaborEmploymentBudgetOutcomeReplayInputPackReport,
+    ReviewedLearningGateReport,
 )
+from lawfirm_os_intake.reviewed_learning_gate import run_reviewed_learning_gate
 from lawfirm_os_intake.util import load_json, write_json
 
 
@@ -77,6 +83,117 @@ def _discrimination_carrier_bundle(repo_root):
         repo_root
         / DISCRIMINATION_REPLAY_INPUT_ROOT
         / "carrier_rejection_capture_source_bundle.json"
+    )
+
+
+def _rel(root, path):
+    return path.relative_to(root).as_posix()
+
+
+def _stage_discrimination_case_anchors(repo_root, runtime_root):
+    anchors = runtime_root / "anchors"
+    budget_path = write_json(
+        anchors / "legal_budget_proposal.json",
+        load_json(_discrimination_budget(repo_root)),
+    )
+    actuals_path = write_json(
+        anchors / "budget_actuals_source.json",
+        load_json(_discrimination_actuals(repo_root)),
+    )
+    carrier_bundle_path = write_json(
+        anchors / "carrier_rejection_capture_source_bundle.json",
+        load_json(_discrimination_carrier_bundle(repo_root)),
+    )
+    return {
+        "budget": budget_path,
+        "actuals": actuals_path,
+        "carrier_bundle": carrier_bundle_path,
+    }
+
+
+def _run_discrimination_carrier_learning_chain(repo_root, tmp_path):
+    _, carrier_dir = run_carrier_rejection_capture(
+        _discrimination_budget(repo_root),
+        _discrimination_carrier_bundle(repo_root),
+        tmp_path / "le-discrimination-carrier-rejection-replay",
+    )
+    review_packet, review_dir = run_carrier_rejection_review(
+        carrier_dir / "carrier_rejection_reconciliation_report.json",
+        tmp_path / "le-discrimination-carrier-rejection-review",
+    )
+    learning_report, learning_dir = run_carrier_rejection_learning(
+        review_dir / "carrier_rejection_review_packet.json",
+        tmp_path / "le-discrimination-carrier-rejection-learning",
+    )
+    gate_report, gate_dir = run_reviewed_learning_gate(
+        carrier_rejection_learning_report_path=(
+            learning_dir / "carrier_rejection_learning_report.json"
+        ),
+        out_dir=tmp_path / "le-discrimination-reviewed-learning-gate",
+    )
+    return {
+        "carrier_dir": carrier_dir,
+        "review_packet": review_packet,
+        "review_dir": review_dir,
+        "learning_report": learning_report,
+        "learning_dir": learning_dir,
+        "gate_report": gate_report,
+        "gate_dir": gate_dir,
+    }
+
+
+def _reviewed_learning_signal_manifest(runtime_root, anchors, learning_report_path):
+    return write_json(
+        runtime_root / "runtime-reviewed-learning-signal-input-pack.json",
+        {
+            "schema_version": "0.1",
+            "manifest_id": "runtime-reviewed-learning-signal-input-pack.v0_1",
+            "status": "candidate_labor_employment_budget_outcome_replay_input_pack_manifest",
+            "practice_area": "labor_employment",
+            "source_builder_binding_report_ref": "synthetic-test-builder-binding-report",
+            "entries": [
+                {
+                    "entry_id": "le-discrimination-budget-anchor.v0_1",
+                    "learning_fixture_id": ("le-learning-discrimination-harassment-clean.v0_1"),
+                    "loop_type": "actuals_variance",
+                    "expected_artifact_name": "budget_actual_comparison_report.json",
+                    "required_input_artifact": "legal_budget_proposal.json",
+                    "input_ref": _rel(runtime_root, anchors["budget"]),
+                    "input_role": "builder_input",
+                    "notes": "Same-case synthetic budget anchor for reviewed learning signal validation.",
+                },
+                {
+                    "entry_id": "le-discrimination-actuals-anchor.v0_1",
+                    "learning_fixture_id": ("le-learning-discrimination-harassment-clean.v0_1"),
+                    "loop_type": "actuals_variance",
+                    "expected_artifact_name": "budget_actual_comparison_report.json",
+                    "required_input_artifact": "budget_actuals_source.json",
+                    "input_ref": _rel(runtime_root, anchors["actuals"]),
+                    "input_role": "builder_input",
+                    "notes": "Same-case synthetic actuals anchor for reviewed learning signal validation.",
+                },
+                {
+                    "entry_id": "le-discrimination-carrier-anchor.v0_1",
+                    "learning_fixture_id": ("le-learning-discrimination-harassment-clean.v0_1"),
+                    "loop_type": "carrier_rejection_capture",
+                    "expected_artifact_name": "carrier_rejection_reconciliation_report.json",
+                    "required_input_artifact": "carrier_rejection_capture_source_bundle.json",
+                    "input_ref": _rel(runtime_root, anchors["carrier_bundle"]),
+                    "input_role": "builder_input",
+                    "notes": "Same-case synthetic carrier source anchor for reviewed learning signal validation.",
+                },
+                {
+                    "entry_id": "le-discrimination-carrier-learning-signal.v0_1",
+                    "learning_fixture_id": ("le-learning-discrimination-harassment-clean.v0_1"),
+                    "loop_type": "reviewed_learning_gate",
+                    "expected_artifact_name": "reviewed_learning_gate_report.json",
+                    "required_input_artifact": "carrier_rejection_learning_report.json",
+                    "input_ref": _rel(runtime_root, learning_report_path),
+                    "input_role": "one_of_signal",
+                    "notes": "Generated synthetic carrier learning report used as one-of reviewed learning signal.",
+                },
+            ],
+        },
     )
 
 
@@ -488,3 +605,143 @@ def test_labor_employment_discrimination_carrier_rejection_rejects_mismatched_id
             bad_bundle_path,
             tmp_path / "bad-carrier-rejection-run",
         )
+
+
+def test_labor_employment_discrimination_reviewed_learning_signal_runs_and_validates(
+    repo_root,
+    tmp_path,
+):
+    chain = _run_discrimination_carrier_learning_chain(repo_root, tmp_path)
+    runtime_root = tmp_path / "runtime-reviewed-learning-input-pack"
+    anchors = _stage_discrimination_case_anchors(repo_root, runtime_root)
+    learning_report_path = write_json(
+        runtime_root / "runtime" / "carrier_rejection_learning_report.json",
+        load_json(chain["learning_dir"] / "carrier_rejection_learning_report.json"),
+    )
+    manifest_path = _reviewed_learning_signal_manifest(
+        runtime_root,
+        anchors,
+        learning_report_path,
+    )
+    review_packet = CarrierRejectionReviewPacket.model_validate(
+        load_json(chain["review_dir"] / "carrier_rejection_review_packet.json")
+    )
+    learning_report = CarrierRejectionLearningReport.model_validate(load_json(learning_report_path))
+    gate_report = ReviewedLearningGateReport.model_validate(
+        load_json(chain["gate_dir"] / "reviewed_learning_gate_report.json")
+    )
+
+    assert review_packet.status == "ready_for_human_review"
+    assert review_packet.remediation_case_count == 1
+    assert review_packet.total_financial_exposure == 1800
+    assert {note.scope for note in review_packet.red_team_notes} >= {"boundary", "learning_loop"}
+    assert {item.recommended_action for item in review_packet.recommendations} == {
+        "appeal_review_required"
+    }
+    assert {item.priority for item in review_packet.recommendations} == {"high"}
+    assert learning_report.status == "candidate_learning_ready_for_review"
+    assert learning_report.proposal_count == 2
+    assert {proposal.proposal_type for proposal in learning_report.proposals} == {
+        "guideline_profile_change_candidate",
+        "timekeeper_rate_candidate",
+    }
+    assert all(
+        proposal.status == "blocked_until_reviewed_outcome"
+        for proposal in learning_report.proposals
+    )
+    assert gate_report.status == "candidate_learning_gate_ready"
+    assert gate_report.carrier_learning_candidate_count == 2
+    assert all(
+        candidate.status == "blocked_until_reviewed_learning_gate"
+        for candidate in gate_report.candidates
+    )
+
+    report, _ = run_labor_employment_budget_outcome_replay_input_pack_audit(
+        builder_binding_report_path=_builder_binding_report(repo_root, tmp_path),
+        input_pack_manifest_path=manifest_path,
+        repo_root=runtime_root,
+        out_dir=tmp_path / "le-budget-outcome-replay-input-pack-reviewed-signal",
+        generated_at="2026-07-04T00:00:00Z",
+    )
+    discrimination_case = next(
+        case
+        for case in report.cases
+        if case.learning_fixture_id == "le-learning-discrimination-harassment-clean.v0_1"
+    )
+    reviewed_signal = next(
+        item
+        for item in discrimination_case.items
+        if item.loop_type == "reviewed_learning_gate" and item.input_role == "one_of_signal"
+    )
+
+    assert report.invalid_input_count == 0
+    assert reviewed_signal.input_status == "ready"
+    assert reviewed_signal.selected_alternative_artifacts == [
+        "carrier_rejection_learning_report.json"
+    ]
+    assert reviewed_signal.validation_model == "CarrierRejectionLearningReport"
+    assert "At least one reviewed learning signal validated" in reviewed_signal.validation_message
+    assert "reviewed_learning_signal_input_candidate" in (
+        reviewed_signal.candidate_exception_lake_labels
+    )
+
+
+def test_labor_employment_reviewed_learning_signal_rejects_wrong_case_report(
+    repo_root,
+    tmp_path,
+):
+    chain = _run_discrimination_carrier_learning_chain(repo_root, tmp_path)
+    runtime_root = tmp_path / "runtime-wrong-case-reviewed-learning-input-pack"
+    anchors = _stage_discrimination_case_anchors(repo_root, runtime_root)
+    wrong_case_learning_report = load_json(
+        chain["learning_dir"] / "carrier_rejection_learning_report.json"
+    )
+    wrong_case_learning_report["budget_proposal_id"] = "wrong-budget-proposal-id"
+    learning_report_path = write_json(
+        runtime_root / "runtime" / "wrong_case_carrier_rejection_learning_report.json",
+        wrong_case_learning_report,
+    )
+    manifest_path = _reviewed_learning_signal_manifest(
+        runtime_root,
+        anchors,
+        learning_report_path,
+    )
+
+    report, _ = run_labor_employment_budget_outcome_replay_input_pack_audit(
+        builder_binding_report_path=_builder_binding_report(repo_root, tmp_path),
+        input_pack_manifest_path=manifest_path,
+        repo_root=runtime_root,
+        out_dir=tmp_path / "le-budget-outcome-replay-input-pack-wrong-case-signal",
+        generated_at="2026-07-04T00:00:00Z",
+    )
+    discrimination_case = next(
+        case
+        for case in report.cases
+        if case.learning_fixture_id == "le-learning-discrimination-harassment-clean.v0_1"
+    )
+    reviewed_signal = next(
+        item
+        for item in discrimination_case.items
+        if item.loop_type == "reviewed_learning_gate" and item.input_role == "one_of_signal"
+    )
+
+    assert report.status == "blocked_by_labor_employment_budget_replay_input_pack"
+    assert report.invalid_input_count == 1
+    assert reviewed_signal.input_status == "invalid"
+    assert "budget_proposal_id" in reviewed_signal.validation_message
+    assert "wrong-budget-proposal-id" in reviewed_signal.validation_message
+
+
+def test_learning_report_count_invariants_fail_closed(repo_root, tmp_path):
+    chain = _run_discrimination_carrier_learning_chain(repo_root, tmp_path)
+    bad_learning_report = load_json(
+        chain["learning_dir"] / "carrier_rejection_learning_report.json"
+    )
+    bad_learning_report["proposal_count"] += 1
+    bad_gate_report = load_json(chain["gate_dir"] / "reviewed_learning_gate_report.json")
+    bad_gate_report["candidate_count"] += 1
+
+    with pytest.raises(ValueError, match="proposal_count mismatch"):
+        CarrierRejectionLearningReport.model_validate(bad_learning_report)
+    with pytest.raises(ValueError, match="candidate_count mismatch"):
+        ReviewedLearningGateReport.model_validate(bad_gate_report)

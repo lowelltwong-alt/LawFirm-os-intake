@@ -87,6 +87,22 @@ ARTIFACT_MODELS: dict[str, type[Any]] = {
     ),
 }
 
+CASE_IDENTITY_FIELDS = ("budget_proposal_id", "preflight_packet_id")
+CASE_IDENTITY_ANCHOR_ARTIFACTS = {
+    "legal_budget_proposal.json",
+    "budget_actuals_source.json",
+    "carrier_rejection_capture_source_bundle.json",
+}
+CASE_BOUND_REPORT_ARTIFACTS = {
+    "budget_actual_comparison_report.json",
+    "budget_actual_variance_ledger_report.json",
+    "budget_revision_report.json",
+    "carrier_rejection_reconciliation_report.json",
+    "carrier_rejection_decision_ledger_report.json",
+    "carrier_rejection_review_packet.json",
+    "carrier_rejection_learning_report.json",
+}
+
 PROHIBITED_TRUE_FIELDS = {
     "billing_connector_write_performed",
     "budget_submission_authorized",
@@ -399,6 +415,11 @@ def _input_item(
         entry=entry,
         artifact_name=required_input_artifact,
         repo_root=repo_root,
+        case_identity_context=_case_identity_context(
+            entries=entries,
+            repo_root=repo_root,
+            learning_fixture_id=binding.learning_fixture_id,
+        ),
     )
     return _item(
         binding=binding,
@@ -434,6 +455,11 @@ def _one_of_input_item(
             entry=entry,
             artifact_name=entry.required_input_artifact,
             repo_root=repo_root,
+            case_identity_context=_case_identity_context(
+                entries=entries,
+                repo_root=repo_root,
+                learning_fixture_id=binding.learning_fixture_id,
+            ),
         )
         if status == "ready":
             return _item(
@@ -570,6 +596,7 @@ def _validate_entry(
     entry: LaborEmploymentBudgetOutcomeReplayInputPackEntry,
     artifact_name: str,
     repo_root: Path,
+    case_identity_context: dict[str, set[str]],
 ) -> tuple[str, str, str | None]:
     model = ARTIFACT_MODELS.get(artifact_name)
     if model is None:
@@ -584,6 +611,18 @@ def _validate_entry(
         model.model_validate(payload)
     except (OSError, ValueError, ValidationError) as exc:
         return "invalid", f"{model.__name__} validation failed: {exc}", model.__name__
+    identity_errors = _case_identity_errors(
+        payload=payload,
+        artifact_name=artifact_name,
+        case_identity_context=case_identity_context,
+    )
+    if identity_errors:
+        return (
+            "invalid",
+            "Input artifact does not match same-case identity anchors: "
+            + ", ".join(identity_errors[:8]),
+            model.__name__,
+        )
     boundary_errors = _boundary_errors(payload)
     if boundary_errors:
         return (
@@ -593,6 +632,69 @@ def _validate_entry(
             model.__name__,
         )
     return "ready", f"{model.__name__} validated from local synthetic ref.", model.__name__
+
+
+def _case_identity_context(
+    *,
+    entries: list[LaborEmploymentBudgetOutcomeReplayInputPackEntry],
+    repo_root: Path,
+    learning_fixture_id: str,
+) -> dict[str, set[str]]:
+    values: dict[str, set[str]] = {field: set() for field in CASE_IDENTITY_FIELDS}
+    for entry in entries:
+        if (
+            entry.learning_fixture_id != learning_fixture_id
+            or entry.required_input_artifact not in CASE_IDENTITY_ANCHOR_ARTIFACTS
+        ):
+            continue
+        target = _resolve_local_ref(entry.input_ref, repo_root)
+        if target is None or not target.exists() or not target.is_file():
+            continue
+        try:
+            payload = load_json(target)
+        except (OSError, ValueError):
+            continue
+        if not isinstance(payload, dict):
+            continue
+        for field in CASE_IDENTITY_FIELDS:
+            value = payload.get(field)
+            if _is_concrete_case_identity_value(value):
+                values[field].add(value)
+    return values
+
+
+def _is_concrete_case_identity_value(value: Any) -> bool:
+    return (
+        isinstance(value, str)
+        and bool(value)
+        and not value.startswith("__")
+        and not value.startswith("filled-by-test-")
+    )
+
+
+def _case_identity_errors(
+    *,
+    payload: Any,
+    artifact_name: str,
+    case_identity_context: dict[str, set[str]],
+) -> list[str]:
+    if artifact_name not in CASE_BOUND_REPORT_ARTIFACTS:
+        return []
+    if not isinstance(payload, dict):
+        return ["case-bound report payload is not an object"]
+
+    errors: list[str] = []
+    for field in CASE_IDENTITY_FIELDS:
+        expected_values = case_identity_context.get(field, set())
+        actual = payload.get(field)
+        if len(expected_values) > 1:
+            errors.append(f"{field} anchors conflict: {sorted(expected_values)}")
+        elif not expected_values:
+            errors.append(f"{field} anchor missing")
+        elif actual not in expected_values:
+            expected = next(iter(expected_values))
+            errors.append(f"{field}={actual!r} expected {expected!r}")
+    return errors
 
 
 def _resolve_local_ref(input_ref: str, repo_root: Path) -> Path | None:
