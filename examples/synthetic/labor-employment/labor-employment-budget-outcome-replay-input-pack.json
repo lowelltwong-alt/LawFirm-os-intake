@@ -1,0 +1,54 @@
+{
+  "schema_version": "0.1",
+  "manifest_id": "labor-employment-budget-outcome-replay-input-pack.v0_1",
+  "status": "candidate_labor_employment_budget_outcome_replay_input_pack_manifest",
+  "practice_area": "labor_employment",
+  "source_builder_binding_report_ref": "apps/legal-intake-budget/src/fixtures/demo-labor-employment-budget-outcome-replay-builder-binding-report.json",
+  "entries": [
+    {
+      "entry_id": "le-replay-input-ada-fmla-blocked-output-expectations.v0_1",
+      "learning_fixture_id": "le-learning-ada-fmla-adversarial.v0_1",
+      "loop_type": "blocked_budget_guard",
+      "required_input_artifact": "labor_employment_budget_output_expectations_report.json",
+      "input_ref": "apps/legal-intake-budget/src/fixtures/demo-labor-employment-budget-output-expectations-report.json",
+      "input_role": "complement_report",
+      "notes": "Synthetic demo output expectations are sufficient to re-run the blocked-budget guard lane."
+    },
+    {
+      "entry_id": "le-replay-input-ada-fmla-blocked-driver-impact.v0_1",
+      "learning_fixture_id": "le-learning-ada-fmla-adversarial.v0_1",
+      "loop_type": "blocked_budget_guard",
+      "required_input_artifact": "labor_employment_blocked_driver_impact_review_report.json",
+      "input_ref": "apps/legal-intake-budget/src/fixtures/demo-labor-employment-blocked-driver-impact-review-report.json",
+      "input_role": "complement_report",
+      "notes": "Synthetic blocked-driver review keeps amount-budget blocking source-bound and review-bound."
+    },
+    {
+      "entry_id": "le-replay-input-ada-fmla-executable-coverage.v0_1",
+      "learning_fixture_id": "le-learning-ada-fmla-adversarial.v0_1",
+      "loop_type": "blocked_budget_guard",
+      "required_input_artifact": "labor_employment_executable_coverage_report.json",
+      "input_ref": "apps/legal-intake-budget/src/fixtures/demo-labor-employment-executable-coverage-report.json",
+      "input_role": "complement_report",
+      "notes": "Executable coverage is required by the QA gate builder and proves the blocked fixture is within the reviewed synthetic family set."
+    },
+    {
+      "entry_id": "le-replay-input-ada-fmla-learning-fixture-manifest.v0_1",
+      "learning_fixture_id": "le-learning-ada-fmla-adversarial.v0_1",
+      "loop_type": "blocked_budget_guard",
+      "required_input_artifact": "labor_employment_budget_learning_fixtures.json",
+      "input_ref": "examples/synthetic/labor-employment/labor-employment-budget-learning-fixtures.json",
+      "input_role": "builder_input",
+      "notes": "Synthetic learning fixture manifest is the source input for re-running the learning-fixture audit."
+    },
+    {
+      "entry_id": "le-replay-input-ada-fmla-qa-gate-report.v0_1",
+      "learning_fixture_id": "le-learning-ada-fmla-adversarial.v0_1",
+      "loop_type": "blocked_budget_guard",
+      "required_input_artifact": "labor_employment_budget_qa_gate_report.json",
+      "input_ref": "apps/legal-intake-budget/src/fixtures/demo-labor-employment-budget-qa-gate-report.json",
+      "input_role": "complement_report",
+      "notes": "Synthetic QA gate report is the required complement report for the learning-fixture audit lane."
+    }
+  ]
+}

@@ -106,6 +106,9 @@ from .labor_employment_budget_outcome_replay_execution import (
 from .labor_employment_budget_outcome_replay_builder_binding import (
     run_labor_employment_budget_outcome_replay_builder_binding_audit,
 )
+from .labor_employment_budget_outcome_replay_input_pack import (
+    run_labor_employment_budget_outcome_replay_input_pack_audit,
+)
 from .labor_employment_budget_qa_gate import run_labor_employment_budget_qa_gate
 from .labor_employment_executable_fixtures import (
     run_labor_employment_executable_fixture_audit,
@@ -748,6 +751,29 @@ def _parser() -> argparse.ArgumentParser:
     )
     le_budget_outcome_replay_builder_binding.add_argument("--out-dir", required=True)
     le_budget_outcome_replay_builder_binding.add_argument(
+        "--generated-at",
+        help="Optional fixed timestamp for deterministic tests and replayed reports.",
+    )
+
+    le_budget_outcome_replay_input_pack = sub.add_parser(
+        "audit-labor-employment-budget-outcome-replay-input-pack",
+        help=(
+            "Validate concrete local synthetic input refs for bound L&E outcome replay slots "
+            "without invoking builders or creating runtime artifacts."
+        ),
+    )
+    le_budget_outcome_replay_input_pack.add_argument(
+        "--builder-binding-report",
+        required=True,
+        help="Path to labor_employment_budget_outcome_replay_builder_binding_report.json.",
+    )
+    le_budget_outcome_replay_input_pack.add_argument(
+        "--input-pack-manifest",
+        help="Optional path to labor-employment-budget-outcome-replay-input-pack.json.",
+    )
+    le_budget_outcome_replay_input_pack.add_argument("--repo-root", default=".")
+    le_budget_outcome_replay_input_pack.add_argument("--out-dir", required=True)
+    le_budget_outcome_replay_input_pack.add_argument(
         "--generated-at",
         help="Optional fixed timestamp for deterministic tests and replayed reports.",
     )
@@ -2699,6 +2725,44 @@ def main(argv: list[str] | None = None) -> int:
                 if report.status
                 == "labor_employment_budget_replay_builder_binding_ready_for_review"
                 else 2
+            )
+
+        if args.command == "audit-labor-employment-budget-outcome-replay-input-pack":
+            report, run_dir = run_labor_employment_budget_outcome_replay_input_pack_audit(
+                builder_binding_report_path=args.builder_binding_report,
+                input_pack_manifest_path=args.input_pack_manifest,
+                repo_root=args.repo_root,
+                out_dir=args.out_dir,
+                generated_at=args.generated_at,
+            )
+            failed_checks = [check.check_id for check in report.checks if check.status == "failed"]
+            _print(
+                {
+                    "status": report.status,
+                    "input_pack_report_id": report.input_pack_report_id,
+                    "source_builder_binding_report_id": report.source_builder_binding_report_id,
+                    "source_input_pack_manifest_id": report.source_input_pack_manifest_id,
+                    "case_count": report.case_count,
+                    "ready_case_count": report.ready_case_count,
+                    "partial_case_count": report.partial_case_count,
+                    "blocked_case_count": report.blocked_case_count,
+                    "required_input_count": report.required_input_count,
+                    "ready_input_count": report.ready_input_count,
+                    "missing_input_count": report.missing_input_count,
+                    "invalid_input_count": report.invalid_input_count,
+                    "one_of_signal_missing_count": report.one_of_signal_missing_count,
+                    "failed_checks": failed_checks,
+                    "runtime_artifacts_created": report.runtime_artifacts_created,
+                    "budget_submission_authorized": report.budget_submission_authorized,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return (
+                0 if report.status != "blocked_by_labor_employment_budget_replay_input_pack" else 2
             )
 
         if args.command == "record-budget-review":

@@ -322,6 +322,7 @@ def _builder_contracts() -> dict[
             [
                 "labor_employment_budget_output_expectations_report.json",
                 "labor_employment_blocked_driver_impact_review_report.json",
+                "labor_employment_executable_coverage_report.json",
             ],
         ),
         _contract(

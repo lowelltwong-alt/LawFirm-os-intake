@@ -1,0 +1,414 @@
+{
+  "$defs": {
+    "LaborEmploymentBudgetOutcomeReplayInputPackItem": {
+      "additionalProperties": false,
+      "properties": {
+        "input_check_id": {
+          "title": "Input Check Id",
+          "type": "string"
+        },
+        "binding_id": {
+          "title": "Binding Id",
+          "type": "string"
+        },
+        "learning_fixture_id": {
+          "title": "Learning Fixture Id",
+          "type": "string"
+        },
+        "executable_fixture_id": {
+          "title": "Executable Fixture Id",
+          "type": "string"
+        },
+        "outcome_seed_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Outcome Seed Id"
+        },
+        "loop_type": {
+          "enum": [
+            "actuals_variance",
+            "carrier_rejection_capture",
+            "appeal_outcome",
+            "reviewed_learning_gate",
+            "blocked_budget_guard"
+          ],
+          "title": "Loop Type",
+          "type": "string"
+        },
+        "expected_artifact_name": {
+          "title": "Expected Artifact Name",
+          "type": "string"
+        },
+        "required_input_artifact": {
+          "title": "Required Input Artifact",
+          "type": "string"
+        },
+        "input_role": {
+          "enum": [
+            "builder_input",
+            "complement_report",
+            "one_of_signal"
+          ],
+          "title": "Input Role",
+          "type": "string"
+        },
+        "input_status": {
+          "enum": [
+            "ready",
+            "missing",
+            "invalid"
+          ],
+          "title": "Input Status",
+          "type": "string"
+        },
+        "input_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Input Ref"
+        },
+        "selected_alternative_artifacts": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Selected Alternative Artifacts",
+          "type": "array"
+        },
+        "validation_model": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Validation Model"
+        },
+        "validation_message": {
+          "title": "Validation Message",
+          "type": "string"
+        },
+        "candidate_exception_lake_labels": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Candidate Exception Lake Labels",
+          "type": "array"
+        },
+        "evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "runtime_artifact_created": {
+          "const": false,
+          "default": false,
+          "title": "Runtime Artifact Created",
+          "type": "boolean"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        },
+        "synthetic_only": {
+          "const": true,
+          "default": true,
+          "title": "Synthetic Only",
+          "type": "boolean"
+        },
+        "local_json_only": {
+          "const": true,
+          "default": true,
+          "title": "Local Json Only",
+          "type": "boolean"
+        },
+        "budget_submission_authorized": {
+          "const": false,
+          "default": false,
+          "title": "Budget Submission Authorized",
+          "type": "boolean"
+        },
+        "matter_opening_authorized": {
+          "const": false,
+          "default": false,
+          "title": "Matter Opening Authorized",
+          "type": "boolean"
+        },
+        "lake_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Lake Write Performed",
+          "type": "boolean"
+        },
+        "sqlite_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Sqlite Write Performed",
+          "type": "boolean"
+        },
+        "external_writes_performed": {
+          "const": false,
+          "default": false,
+          "title": "External Writes Performed",
+          "type": "boolean"
+        },
+        "silent_learning_performed": {
+          "const": false,
+          "default": false,
+          "title": "Silent Learning Performed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "input_check_id",
+        "binding_id",
+        "learning_fixture_id",
+        "executable_fixture_id",
+        "loop_type",
+        "expected_artifact_name",
+        "required_input_artifact",
+        "input_role",
+        "input_status",
+        "validation_message",
+        "candidate_exception_lake_labels",
+        "evidence_refs"
+      ],
+      "title": "LaborEmploymentBudgetOutcomeReplayInputPackItem",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "input_pack_case_id": {
+      "title": "Input Pack Case Id",
+      "type": "string"
+    },
+    "binding_case_id": {
+      "title": "Binding Case Id",
+      "type": "string"
+    },
+    "execution_case_id": {
+      "title": "Execution Case Id",
+      "type": "string"
+    },
+    "learning_fixture_id": {
+      "title": "Learning Fixture Id",
+      "type": "string"
+    },
+    "executable_fixture_id": {
+      "title": "Executable Fixture Id",
+      "type": "string"
+    },
+    "outcome_seed_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Outcome Seed Id"
+    },
+    "family": {
+      "enum": [
+        "discrimination_harassment",
+        "retaliation_wrongful_termination",
+        "wage_hour_flsa_state",
+        "ada_fmla_accommodation_leave",
+        "restrictive_covenant_trade_secret",
+        "epli_carrier_assignment",
+        "class_collective_paga_representative",
+        "administrative_exhaustion_agency_record"
+      ],
+      "title": "Family",
+      "type": "string"
+    },
+    "variant": {
+      "enum": [
+        "clean",
+        "messy_thread",
+        "missing_attachment",
+        "adversarial"
+      ],
+      "title": "Variant",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "ready",
+        "partially_ready",
+        "blocked"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "expected_budget_output_state": {
+      "enum": [
+        "blocked_amount_budget",
+        "range_or_hours_only_pending_review",
+        "candidate_range_after_review_pending_human_review"
+      ],
+      "title": "Expected Budget Output State",
+      "type": "string"
+    },
+    "required_input_count": {
+      "minimum": 0,
+      "title": "Required Input Count",
+      "type": "integer"
+    },
+    "ready_input_count": {
+      "minimum": 0,
+      "title": "Ready Input Count",
+      "type": "integer"
+    },
+    "missing_input_count": {
+      "minimum": 0,
+      "title": "Missing Input Count",
+      "type": "integer"
+    },
+    "invalid_input_count": {
+      "minimum": 0,
+      "title": "Invalid Input Count",
+      "type": "integer"
+    },
+    "one_of_signal_missing_count": {
+      "minimum": 0,
+      "title": "One Of Signal Missing Count",
+      "type": "integer"
+    },
+    "items": {
+      "items": {
+        "$ref": "#/$defs/LaborEmploymentBudgetOutcomeReplayInputPackItem"
+      },
+      "title": "Items",
+      "type": "array"
+    },
+    "evidence_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Evidence Refs",
+      "type": "array"
+    },
+    "failure_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Failure Ids",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "local_json_only": {
+      "const": true,
+      "default": true,
+      "title": "Local Json Only",
+      "type": "boolean"
+    },
+    "human_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Human Review Required",
+      "type": "boolean"
+    },
+    "budget_submission_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Submission Authorized",
+      "type": "boolean"
+    },
+    "matter_opening_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Matter Opening Authorized",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "input_pack_case_id",
+    "binding_case_id",
+    "execution_case_id",
+    "learning_fixture_id",
+    "executable_fixture_id",
+    "family",
+    "variant",
+    "status",
+    "expected_budget_output_state",
+    "required_input_count",
+    "ready_input_count",
+    "missing_input_count",
+    "invalid_input_count",
+    "one_of_signal_missing_count",
+    "items",
+    "evidence_refs"
+  ],
+  "title": "LaborEmploymentBudgetOutcomeReplayInputPackCase",
+  "type": "object"
+}

@@ -4468,6 +4468,324 @@ class LaborEmploymentBudgetOutcomeReplayBuilderBindingReport(StrictModel):
         return self
 
 
+class LaborEmploymentBudgetOutcomeReplayInputPackEntry(StrictModel):
+    entry_id: str
+    learning_fixture_id: str
+    loop_type: LaborEmploymentBudgetLearningLoopType
+    required_input_artifact: str
+    input_ref: str
+    expected_artifact_name: str | None = None
+    input_role: Literal["builder_input", "complement_report", "one_of_signal"]
+    notes: str
+    data_origin: Literal["synthetic"] = "synthetic"
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    local_json_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    not_authorized_for_matter_opening: Literal[True] = True
+    not_authorized_for_calibration: Literal[True] = True
+    budget_submission_authorized: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def le_budget_replay_input_pack_entry_is_coherent(
+        self,
+    ) -> "LaborEmploymentBudgetOutcomeReplayInputPackEntry":
+        if not self.required_input_artifact.endswith((".json", ".jsonl")) and not (
+            self.required_input_artifact.startswith("one_or_more_of:")
+        ):
+            raise ValueError("input-pack entry artifact must be a JSON artifact name")
+        if self.input_ref.startswith(("http://", "https://", "app://")):
+            raise ValueError("input-pack entry refs must be local file refs")
+        if not self.notes:
+            raise ValueError("input-pack entry requires notes")
+        return self
+
+
+class LaborEmploymentBudgetOutcomeReplayInputPackManifest(StrictModel):
+    schema_version: str = "0.1"
+    manifest_id: str
+    status: Literal["candidate_labor_employment_budget_outcome_replay_input_pack_manifest"]
+    practice_area: Literal["labor_employment"] = "labor_employment"
+    source_builder_binding_report_ref: str
+    entries: list[LaborEmploymentBudgetOutcomeReplayInputPackEntry]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    local_json_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    not_authorized_for_matter_opening: Literal[True] = True
+    not_authorized_for_calibration: Literal[True] = True
+    budget_submission_authorized: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    training_pipeline_created: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def le_budget_replay_input_pack_manifest_is_coherent(
+        self,
+    ) -> "LaborEmploymentBudgetOutcomeReplayInputPackManifest":
+        if not self.entries:
+            raise ValueError("L&E replay input-pack manifest requires entries")
+        keys = [
+            (
+                entry.learning_fixture_id,
+                entry.loop_type,
+                entry.expected_artifact_name or "*",
+                entry.required_input_artifact,
+            )
+            for entry in self.entries
+        ]
+        if len(set(keys)) != len(keys):
+            raise ValueError("L&E replay input-pack entries must be unique by slot/input")
+        return self
+
+
+class LaborEmploymentBudgetOutcomeReplayInputPackItem(StrictModel):
+    input_check_id: str
+    binding_id: str
+    learning_fixture_id: str
+    executable_fixture_id: str
+    outcome_seed_id: str | None = None
+    loop_type: LaborEmploymentBudgetLearningLoopType
+    expected_artifact_name: str
+    required_input_artifact: str
+    input_role: Literal["builder_input", "complement_report", "one_of_signal"]
+    input_status: Literal["ready", "missing", "invalid"]
+    input_ref: str | None = None
+    selected_alternative_artifacts: list[str] = Field(default_factory=list)
+    validation_model: str | None = None
+    validation_message: str
+    candidate_exception_lake_labels: list[str]
+    evidence_refs: list[str]
+    runtime_artifact_created: Literal[False] = False
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    local_json_only: Literal[True] = True
+    budget_submission_authorized: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def le_budget_replay_input_pack_item_is_coherent(
+        self,
+    ) -> "LaborEmploymentBudgetOutcomeReplayInputPackItem":
+        if self.input_status == "ready" and not self.input_ref:
+            raise ValueError("ready input-pack item requires input ref")
+        if self.input_status != "ready" and self.selected_alternative_artifacts:
+            raise ValueError("non-ready input-pack item cannot select alternatives")
+        if self.input_role == "one_of_signal" and self.input_status == "ready":
+            if not self.selected_alternative_artifacts:
+                raise ValueError("ready one-of input-pack item requires selected alternatives")
+        if not self.validation_message:
+            raise ValueError("input-pack item requires validation message")
+        if not self.candidate_exception_lake_labels:
+            raise ValueError("input-pack item requires candidate labels")
+        if not self.evidence_refs:
+            raise ValueError("input-pack item requires evidence refs")
+        return self
+
+
+class LaborEmploymentBudgetOutcomeReplayInputPackCase(StrictModel):
+    input_pack_case_id: str
+    binding_case_id: str
+    execution_case_id: str
+    learning_fixture_id: str
+    executable_fixture_id: str
+    outcome_seed_id: str | None = None
+    family: LaborEmploymentSyntheticFixtureFamily
+    variant: LaborEmploymentSyntheticFixtureVariant
+    status: Literal["ready", "partially_ready", "blocked"]
+    expected_budget_output_state: LaborEmploymentExecutableDriverAllowedBudgetOutput
+    required_input_count: int = Field(ge=0)
+    ready_input_count: int = Field(ge=0)
+    missing_input_count: int = Field(ge=0)
+    invalid_input_count: int = Field(ge=0)
+    one_of_signal_missing_count: int = Field(ge=0)
+    items: list[LaborEmploymentBudgetOutcomeReplayInputPackItem]
+    evidence_refs: list[str]
+    failure_ids: list[str] = Field(default_factory=list)
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    local_json_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    budget_submission_authorized: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def le_budget_replay_input_pack_case_is_coherent(
+        self,
+    ) -> "LaborEmploymentBudgetOutcomeReplayInputPackCase":
+        if self.required_input_count != len(self.items):
+            raise ValueError("input-pack case required input count mismatch")
+        if self.ready_input_count != len(
+            [item for item in self.items if item.input_status == "ready"]
+        ):
+            raise ValueError("input-pack case ready input count mismatch")
+        if self.missing_input_count != len(
+            [item for item in self.items if item.input_status == "missing"]
+        ):
+            raise ValueError("input-pack case missing input count mismatch")
+        if self.invalid_input_count != len(
+            [item for item in self.items if item.input_status == "invalid"]
+        ):
+            raise ValueError("input-pack case invalid input count mismatch")
+        if self.one_of_signal_missing_count != len(
+            [
+                item
+                for item in self.items
+                if item.input_role == "one_of_signal" and item.input_status == "missing"
+            ]
+        ):
+            raise ValueError("input-pack case one-of missing count mismatch")
+        if self.status == "ready" and (
+            self.missing_input_count or self.invalid_input_count or self.failure_ids
+        ):
+            raise ValueError("ready input-pack case cannot have failures")
+        if self.status == "blocked" and not (self.invalid_input_count or self.failure_ids):
+            raise ValueError("blocked input-pack case requires invalid inputs or failures")
+        if self.status == "partially_ready" and not self.missing_input_count:
+            raise ValueError("partially ready input-pack case requires missing inputs")
+        if not self.evidence_refs:
+            raise ValueError("input-pack case requires evidence refs")
+        return self
+
+
+class LaborEmploymentBudgetOutcomeReplayInputPackCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    evidence_refs: list[str] = Field(default_factory=list)
+    blocking_refs: list[str] = Field(default_factory=list)
+
+
+class LaborEmploymentBudgetOutcomeReplayInputPackReport(StrictModel):
+    schema_version: str = "0.1"
+    input_pack_report_id: str
+    status: Literal[
+        "labor_employment_budget_replay_input_pack_ready_for_review",
+        "labor_employment_budget_replay_input_pack_partially_ready_for_review",
+        "blocked_by_labor_employment_budget_replay_input_pack",
+    ]
+    source_builder_binding_report_ref: str
+    source_builder_binding_report_id: str
+    source_builder_binding_report_status: str
+    source_input_pack_manifest_ref: str | None = None
+    source_input_pack_manifest_id: str | None = None
+    case_count: int = Field(ge=0)
+    ready_case_count: int = Field(ge=0)
+    partial_case_count: int = Field(ge=0)
+    blocked_case_count: int = Field(ge=0)
+    required_input_count: int = Field(ge=0)
+    ready_input_count: int = Field(ge=0)
+    missing_input_count: int = Field(ge=0)
+    invalid_input_count: int = Field(ge=0)
+    one_of_signal_missing_count: int = Field(ge=0)
+    cases: list[LaborEmploymentBudgetOutcomeReplayInputPackCase]
+    checks: list[LaborEmploymentBudgetOutcomeReplayInputPackCheck]
+    candidate_exception_lake_labels: list[str]
+    required_next_gates: list[str]
+    red_team_notes: list[str]
+    rust_transition_candidates: list[str]
+    runtime_artifacts_created: Literal[False] = False
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    local_json_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    not_authorized_for_matter_opening: Literal[True] = True
+    not_authorized_for_calibration: Literal[True] = True
+    budget_submission_authorized: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    training_pipeline_created: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def le_budget_replay_input_pack_report_is_coherent(
+        self,
+    ) -> "LaborEmploymentBudgetOutcomeReplayInputPackReport":
+        failed_checks = [check for check in self.checks if check.status == "failed"]
+        if self.case_count != len(self.cases):
+            raise ValueError("input-pack report case count mismatch")
+        if self.ready_case_count != len([case for case in self.cases if case.status == "ready"]):
+            raise ValueError("input-pack report ready case count mismatch")
+        if self.partial_case_count != len(
+            [case for case in self.cases if case.status == "partially_ready"]
+        ):
+            raise ValueError("input-pack report partial case count mismatch")
+        if self.blocked_case_count != len(
+            [case for case in self.cases if case.status == "blocked"]
+        ):
+            raise ValueError("input-pack report blocked case count mismatch")
+        if self.required_input_count != sum(case.required_input_count for case in self.cases):
+            raise ValueError("input-pack report required input count mismatch")
+        if self.ready_input_count != sum(case.ready_input_count for case in self.cases):
+            raise ValueError("input-pack report ready input count mismatch")
+        if self.missing_input_count != sum(case.missing_input_count for case in self.cases):
+            raise ValueError("input-pack report missing input count mismatch")
+        if self.invalid_input_count != sum(case.invalid_input_count for case in self.cases):
+            raise ValueError("input-pack report invalid input count mismatch")
+        if self.one_of_signal_missing_count != sum(
+            case.one_of_signal_missing_count for case in self.cases
+        ):
+            raise ValueError("input-pack report one-of missing count mismatch")
+        if not self.candidate_exception_lake_labels:
+            raise ValueError("input-pack report requires candidate labels")
+        if not self.required_next_gates:
+            raise ValueError("input-pack report requires next gates")
+        if not self.red_team_notes:
+            raise ValueError("input-pack report requires red team notes")
+        if not self.rust_transition_candidates:
+            raise ValueError("input-pack report requires Rust transition candidates")
+        if self.status == "labor_employment_budget_replay_input_pack_ready_for_review" and (
+            self.missing_input_count or self.invalid_input_count or failed_checks
+        ):
+            raise ValueError("ready input-pack report cannot include missing/invalid inputs")
+        if (
+            self.status == "labor_employment_budget_replay_input_pack_partially_ready_for_review"
+            and not self.missing_input_count
+        ):
+            raise ValueError("partial input-pack report requires missing inputs")
+        if self.status == "blocked_by_labor_employment_budget_replay_input_pack" and not (
+            self.invalid_input_count or failed_checks
+        ):
+            raise ValueError("blocked input-pack report requires invalid inputs or checks")
+        return self
+
+
 class PublicSourceMethodologySource(StrictModel):
     source_id: str
     url: str

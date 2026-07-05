@@ -1,0 +1,105 @@
+{
+  "schema_version": "0.1",
+  "issue_id": "le-budget-outcome-replay-input-pack-001",
+  "issue_version": "0.1.0",
+  "observed_at": "2026-07-04T00:00:00Z",
+  "source_repo_id": "LawFirm-os-intake",
+  "source_repo_path": "LawFirm-os-intake",
+  "originating_agent": "codex",
+  "review_context": "L&E budget outcome replay QA hardening after builder-slot binding and before synthetic replay execution, calibration, or model comparison.",
+  "finding_title": "Bound replay builders still need concrete synthetic input-pack readiness.",
+  "severity": "P1",
+  "issue_classes": [
+    "architecture_risk",
+    "data_flow_gap",
+    "exception_lake_mapping_gap",
+    "learning_loop_gap",
+    "synthetic_data_gap",
+    "test_gap",
+    "performance_or_rust_candidate"
+  ],
+  "finding_summary": "A replay slot can be bound to a deterministic builder while still lacking the concrete local synthetic input artifacts needed to invoke that builder. Input readiness must be audited separately so QA, UI, and DAD do not treat builder binding as runnable replay.",
+  "observable_context": [
+    "The L&E outcome replay builder-binding audit maps materialized replay slots to local builder functions and required input artifact names.",
+    "The QA gate builder requires executable coverage in addition to budget output expectations and blocked-driver review evidence.",
+    "Actuals, carrier rejection, appeal outcome, and reviewed learning loops require case-specific synthetic budget proposals, actuals sources, carrier response bundles, review packets, and aggregate complement reports.",
+    "The new input-pack audit validates local JSON refs against existing Pydantic artifact models and classifies every required input as ready, missing, or invalid without invoking any builder."
+  ],
+  "observable_decision_logic": [
+    "Builder ownership is not the same as runnable input readiness.",
+    "Missing input refs should remain visible as candidate QA gaps rather than being filled by model guesses or placeholder runtime outputs.",
+    "Declared refs should fail closed if the file is missing, malformed, violates schema, carries real-data flags, or shows prohibited write or learning flags.",
+    "The blocked-budget guard lane can be proven ready from existing synthetic demo artifacts, while nonblocking actuals and rejection lanes remain intentionally missing until case-specific synthetic packs exist.",
+    "This checker is a Rust candidate later because it is deterministic, path-heavy, schema-heavy, and likely to run across many replay slots as the corpus grows."
+  ],
+  "solution_path": [
+    "Add candidate-only input-pack manifest, entry, item, case, check, and report contracts.",
+    "Add a local audit runner that consumes the builder-binding report plus an optional input-pack manifest.",
+    "Validate declared refs against the exact expected JSON artifact model and recursively reject prohibited real-data or write flags.",
+    "Classify missing one-of reviewed-learning signals separately from ordinary missing builder inputs.",
+    "Add a synthetic manifest that proves the blocked-budget guard lane and leaves actuals, rejection, appeal, and reviewed-learning source packs missing for later work.",
+    "Wire the audit into CLI, schema export, smoke demo, and deterministic focused tests."
+  ],
+  "fix_status": "fixed_validated",
+  "fix_refs": [
+    "src/lawfirm_os_intake/labor_employment_budget_outcome_replay_input_pack.py",
+    "src/lawfirm_os_intake/labor_employment_budget_outcome_replay_builder_binding.py",
+    "src/lawfirm_os_intake/models.py",
+    "src/lawfirm_os_intake/cli.py",
+    "scripts/export_schemas.py",
+    "scripts/smoke_demo.sh",
+    "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-input-pack.json"
+  ],
+  "test_refs": [
+    "tests/test_labor_employment_budget_outcome_replay_input_pack.py",
+    "tests/test_labor_employment_budget_outcome_replay_builder_binding.py",
+    "python scripts/run_validation_suite.py"
+  ],
+  "artifact_refs": [
+    "schemas/labor-employment-budget-outcome-replay-input-pack-report.schema.json",
+    "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-input-pack.json",
+    ".lawfirm-os-intake/smoke/quality/le-budget-outcome-replay-input-pack/labor_employment_budget_outcome_replay_input_pack_report.json"
+  ],
+  "candidate_exception_labels": [
+    "budget_replay_input_pack_gap",
+    "budget_replay_input_missing",
+    "budget_replay_input_invalid",
+    "reviewed_learning_signal_missing",
+    "deterministic_replay_input_checker_rust_candidate",
+    "dad_learning_loop_candidate"
+  ],
+  "applies_when": [
+    "A workflow has deterministic builder bindings but has not proven that each builder input artifact exists and validates.",
+    "A replay or learning-loop UI could confuse placeholder slot coverage with runnable replay readiness.",
+    "A corpus needs a high-volume local ref, schema, and no-write boundary checker before bulk replay execution."
+  ],
+  "does_not_apply_when": [
+    "A governed Orchestrator execution has already produced reviewed runtime outputs from validated inputs.",
+    "The issue is about arithmetic inside an already emitted budget proposal rather than input readiness.",
+    "The workflow is only a roadmap note and has no builder contracts or required input artifact names."
+  ],
+  "danger_if_misapplied": "If input-pack readiness is skipped, the UI or DAD may overstate QA coverage, replay non-existent actuals or rejection outcomes, or learn from missing and invalid artifacts. If this audit is mistaken for builder execution, the system may appear to have produced runtime evidence that was never generated.",
+  "suggested_actions": [
+    "DAD should classify replay input readiness separately from builder ownership and replay execution.",
+    "DAD should track missing input refs, invalid declared refs, and missing reviewed-learning signals as separate candidate exception labels.",
+    "Future Rust scouting should evaluate this audit as a leaf-tool candidate for bulk local ref and schema validation after Python remains the contract oracle."
+  ],
+  "reviewer_notes": [
+    "This record contains only synthetic fixture and local artifact references.",
+    "It records observable context, decision logic, fix path, and boundaries, not hidden chain-of-thought."
+  ],
+  "red_team_notes": [
+    "Do not treat a partially ready input-pack report as permission to run all replay slots.",
+    "Do not let a model invent missing legal budget proposals, actuals sources, carrier response bundles, or review packets.",
+    "Do not promote candidate input-pack contracts to Semantic Substrate canon from this repo."
+  ],
+  "raw_private_payload_included": false,
+  "hidden_chain_of_thought_included": false,
+  "candidate_only": true,
+  "dad_outbox_required": true,
+  "dad_review_required_before_promotion": true,
+  "lake_write_performed": false,
+  "sqlite_write_performed": false,
+  "external_writes_performed": false,
+  "silent_learning_performed": false
+}

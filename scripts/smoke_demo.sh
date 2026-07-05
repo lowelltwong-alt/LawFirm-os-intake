@@ -808,6 +808,40 @@ from pathlib import Path
 import sys
 
 sys.path.insert(0, str(Path.cwd() / "src"))
+from lawfirm_os_intake.labor_employment_budget_outcome_replay_input_pack import (
+    run_labor_employment_budget_outcome_replay_input_pack_audit,
+)
+
+report, _ = run_labor_employment_budget_outcome_replay_input_pack_audit(
+    builder_binding_report_path=(
+        ".lawfirm-os-intake/smoke/quality/le-budget-outcome-replay-builder-binding/"
+        "labor_employment_budget_outcome_replay_builder_binding_report.json"
+    ),
+    input_pack_manifest_path=(
+        "examples/synthetic/labor-employment/"
+        "labor-employment-budget-outcome-replay-input-pack.json"
+    ),
+    repo_root=".",
+    out_dir=".lawfirm-os-intake/smoke/quality/le-budget-outcome-replay-input-pack",
+)
+raise SystemExit(
+    0
+    if report.status == "labor_employment_budget_replay_input_pack_partially_ready_for_review"
+    else 1
+)
+PY
+test -s ".lawfirm-os-intake/smoke/quality/le-budget-outcome-replay-input-pack/labor_employment_budget_outcome_replay_input_pack_report.json"
+grep -q '"status": "labor_employment_budget_replay_input_pack_partially_ready_for_review"' \
+  ".lawfirm-os-intake/smoke/quality/le-budget-outcome-replay-input-pack/labor_employment_budget_outcome_replay_input_pack_report.json"
+grep -q '"ready_case_count": 1' \
+  ".lawfirm-os-intake/smoke/quality/le-budget-outcome-replay-input-pack/labor_employment_budget_outcome_replay_input_pack_report.json"
+grep -q '"invalid_input_count": 0' \
+  ".lawfirm-os-intake/smoke/quality/le-budget-outcome-replay-input-pack/labor_employment_budget_outcome_replay_input_pack_report.json"
+"$PYTHON_BIN" -B - <<'PY'
+from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path.cwd() / "src"))
 from lawfirm_os_intake.labor_employment_budget_fact_gold import (
     run_labor_employment_budget_fact_gold_validation,
 )
