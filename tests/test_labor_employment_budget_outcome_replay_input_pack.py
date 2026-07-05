@@ -124,6 +124,27 @@ def _stage_discrimination_case_anchors(repo_root, runtime_root):
     }
 
 
+def _stage_wage_hour_case_anchors(repo_root, runtime_root):
+    anchors = runtime_root / "anchors"
+    budget_path = write_json(
+        anchors / "legal_budget_proposal.json",
+        load_json(_wage_hour_budget(repo_root)),
+    )
+    actuals_path = write_json(
+        anchors / "budget_actuals_source.json",
+        load_json(_wage_hour_actuals(repo_root)),
+    )
+    carrier_bundle_path = write_json(
+        anchors / "carrier_rejection_capture_source_bundle.json",
+        load_json(_wage_hour_carrier_bundle(repo_root)),
+    )
+    return {
+        "budget": budget_path,
+        "actuals": actuals_path,
+        "carrier_bundle": carrier_bundle_path,
+    }
+
+
 def _run_discrimination_carrier_learning_chain(repo_root, tmp_path):
     _, carrier_dir = run_carrier_rejection_capture(
         _discrimination_budget(repo_root),
@@ -143,6 +164,37 @@ def _run_discrimination_carrier_learning_chain(repo_root, tmp_path):
             learning_dir / "carrier_rejection_learning_report.json"
         ),
         out_dir=tmp_path / "le-discrimination-reviewed-learning-gate",
+    )
+    return {
+        "carrier_dir": carrier_dir,
+        "review_packet": review_packet,
+        "review_dir": review_dir,
+        "learning_report": learning_report,
+        "learning_dir": learning_dir,
+        "gate_report": gate_report,
+        "gate_dir": gate_dir,
+    }
+
+
+def _run_wage_hour_carrier_learning_chain(repo_root, tmp_path):
+    _, carrier_dir = run_carrier_rejection_capture(
+        _wage_hour_budget(repo_root),
+        _wage_hour_carrier_bundle(repo_root),
+        tmp_path / "le-wage-hour-carrier-rejection-replay",
+    )
+    review_packet, review_dir = run_carrier_rejection_review(
+        carrier_dir / "carrier_rejection_reconciliation_report.json",
+        tmp_path / "le-wage-hour-carrier-rejection-review",
+    )
+    learning_report, learning_dir = run_carrier_rejection_learning(
+        review_dir / "carrier_rejection_review_packet.json",
+        tmp_path / "le-wage-hour-carrier-rejection-learning",
+    )
+    gate_report, gate_dir = run_reviewed_learning_gate(
+        carrier_rejection_learning_report_path=(
+            learning_dir / "carrier_rejection_learning_report.json"
+        ),
+        out_dir=tmp_path / "le-wage-hour-reviewed-learning-gate",
     )
     return {
         "carrier_dir": carrier_dir,
@@ -204,6 +256,61 @@ def _reviewed_learning_signal_manifest(runtime_root, anchors, learning_report_pa
                     "input_ref": _rel(runtime_root, learning_report_path),
                     "input_role": "one_of_signal",
                     "notes": "Generated synthetic carrier learning report used as one-of reviewed learning signal.",
+                },
+            ],
+        },
+    )
+
+
+def _wage_hour_reviewed_learning_signal_manifest(runtime_root, anchors, learning_report_path):
+    return write_json(
+        runtime_root / "runtime-wage-hour-reviewed-learning-signal-input-pack.json",
+        {
+            "schema_version": "0.1",
+            "manifest_id": "runtime-wage-hour-reviewed-learning-signal-input-pack.v0_1",
+            "status": "candidate_labor_employment_budget_outcome_replay_input_pack_manifest",
+            "practice_area": "labor_employment",
+            "source_builder_binding_report_ref": "synthetic-test-builder-binding-report",
+            "entries": [
+                {
+                    "entry_id": "le-wage-hour-budget-anchor.v0_1",
+                    "learning_fixture_id": "le-learning-wage-hour-clean.v0_1",
+                    "loop_type": "actuals_variance",
+                    "expected_artifact_name": "budget_actual_comparison_report.json",
+                    "required_input_artifact": "legal_budget_proposal.json",
+                    "input_ref": _rel(runtime_root, anchors["budget"]),
+                    "input_role": "builder_input",
+                    "notes": "Same-case synthetic wage/hour budget anchor for reviewed learning signal validation.",
+                },
+                {
+                    "entry_id": "le-wage-hour-actuals-anchor.v0_1",
+                    "learning_fixture_id": "le-learning-wage-hour-clean.v0_1",
+                    "loop_type": "actuals_variance",
+                    "expected_artifact_name": "budget_actual_comparison_report.json",
+                    "required_input_artifact": "budget_actuals_source.json",
+                    "input_ref": _rel(runtime_root, anchors["actuals"]),
+                    "input_role": "builder_input",
+                    "notes": "Same-case synthetic wage/hour actuals anchor for reviewed learning signal validation.",
+                },
+                {
+                    "entry_id": "le-wage-hour-carrier-anchor.v0_1",
+                    "learning_fixture_id": "le-learning-wage-hour-clean.v0_1",
+                    "loop_type": "carrier_rejection_capture",
+                    "expected_artifact_name": "carrier_rejection_reconciliation_report.json",
+                    "required_input_artifact": "carrier_rejection_capture_source_bundle.json",
+                    "input_ref": _rel(runtime_root, anchors["carrier_bundle"]),
+                    "input_role": "builder_input",
+                    "notes": "Same-case synthetic wage/hour carrier source anchor for reviewed learning signal validation.",
+                },
+                {
+                    "entry_id": "le-wage-hour-carrier-learning-signal.v0_1",
+                    "learning_fixture_id": "le-learning-wage-hour-clean.v0_1",
+                    "loop_type": "reviewed_learning_gate",
+                    "expected_artifact_name": "reviewed_learning_gate_report.json",
+                    "required_input_artifact": "carrier_rejection_learning_report.json",
+                    "input_ref": _rel(runtime_root, learning_report_path),
+                    "input_role": "one_of_signal",
+                    "notes": "Generated synthetic wage/hour carrier learning report used as one-of reviewed learning signal.",
                 },
             ],
         },
@@ -842,6 +949,96 @@ def test_labor_employment_discrimination_reviewed_learning_signal_runs_and_valid
     )
 
 
+def test_labor_employment_wage_hour_reviewed_learning_signal_runs_and_validates(
+    repo_root,
+    tmp_path,
+):
+    chain = _run_wage_hour_carrier_learning_chain(repo_root, tmp_path)
+    runtime_root = tmp_path / "runtime-wage-hour-reviewed-learning-input-pack"
+    anchors = _stage_wage_hour_case_anchors(repo_root, runtime_root)
+    learning_report_path = write_json(
+        runtime_root / "runtime" / "carrier_rejection_learning_report.json",
+        load_json(chain["learning_dir"] / "carrier_rejection_learning_report.json"),
+    )
+    manifest_path = _wage_hour_reviewed_learning_signal_manifest(
+        runtime_root,
+        anchors,
+        learning_report_path,
+    )
+    review_packet = CarrierRejectionReviewPacket.model_validate(
+        load_json(chain["review_dir"] / "carrier_rejection_review_packet.json")
+    )
+    learning_report = CarrierRejectionLearningReport.model_validate(load_json(learning_report_path))
+    gate_report = ReviewedLearningGateReport.model_validate(
+        load_json(chain["gate_dir"] / "reviewed_learning_gate_report.json")
+    )
+
+    assert review_packet.status == "ready_for_human_review"
+    assert review_packet.remediation_case_count == 1
+    assert review_packet.total_financial_exposure == 1200
+    assert {note.scope for note in review_packet.red_team_notes} >= {"boundary", "learning_loop"}
+    assert {item.recommended_action for item in review_packet.recommendations} == {
+        "appeal_review_required"
+    }
+    assert {item.priority for item in review_packet.recommendations} == {"high"}
+    assert {
+        candidate
+        for item in review_packet.recommendations
+        for candidate in item.learning_disposition_candidates
+    } == {"template_mapping_candidate", "validation_rule_candidate"}
+    assert learning_report.status == "candidate_learning_ready_for_review"
+    assert learning_report.proposal_count == 2
+    assert {proposal.proposal_type for proposal in learning_report.proposals} == {
+        "template_mapping_candidate",
+        "validation_rule_candidate",
+    }
+    assert {proposal.target_learning_loop for proposal in learning_report.proposals} == {
+        "template_mapping",
+        "validation_rule",
+    }
+    assert all(
+        proposal.status == "blocked_until_reviewed_outcome"
+        for proposal in learning_report.proposals
+    )
+    assert gate_report.status == "candidate_learning_gate_ready"
+    assert gate_report.carrier_learning_candidate_count == 2
+    assert gate_report.target_learning_loops == ["template_mapping", "validation_rule"]
+    assert gate_report.target_owners == ["LawFirm-os-intake"]
+    assert all(
+        candidate.status == "blocked_until_reviewed_learning_gate"
+        for candidate in gate_report.candidates
+    )
+
+    report, _ = run_labor_employment_budget_outcome_replay_input_pack_audit(
+        builder_binding_report_path=_builder_binding_report(repo_root, tmp_path),
+        input_pack_manifest_path=manifest_path,
+        repo_root=runtime_root,
+        out_dir=tmp_path / "le-wage-hour-input-pack-reviewed-signal",
+        generated_at="2026-07-04T00:00:00Z",
+    )
+    wage_case = next(
+        case
+        for case in report.cases
+        if case.learning_fixture_id == "le-learning-wage-hour-clean.v0_1"
+    )
+    reviewed_signal = next(
+        item
+        for item in wage_case.items
+        if item.loop_type == "reviewed_learning_gate" and item.input_role == "one_of_signal"
+    )
+
+    assert report.invalid_input_count == 0
+    assert reviewed_signal.input_status == "ready"
+    assert reviewed_signal.selected_alternative_artifacts == [
+        "carrier_rejection_learning_report.json"
+    ]
+    assert reviewed_signal.validation_model == "CarrierRejectionLearningReport"
+    assert "At least one reviewed learning signal validated" in reviewed_signal.validation_message
+    assert "reviewed_learning_signal_input_candidate" in (
+        reviewed_signal.candidate_exception_lake_labels
+    )
+
+
 def test_labor_employment_reviewed_learning_signal_rejects_wrong_case_report(
     repo_root,
     tmp_path,
@@ -886,6 +1083,49 @@ def test_labor_employment_reviewed_learning_signal_rejects_wrong_case_report(
     assert reviewed_signal.input_status == "invalid"
     assert "budget_proposal_id" in reviewed_signal.validation_message
     assert "wrong-budget-proposal-id" in reviewed_signal.validation_message
+
+
+def test_labor_employment_wage_hour_reviewed_learning_signal_rejects_wrong_family_report(
+    repo_root,
+    tmp_path,
+):
+    discrimination_chain = _run_discrimination_carrier_learning_chain(repo_root, tmp_path)
+    runtime_root = tmp_path / "runtime-wage-hour-wrong-family-reviewed-learning-input-pack"
+    anchors = _stage_wage_hour_case_anchors(repo_root, runtime_root)
+    wrong_family_learning_report_path = write_json(
+        runtime_root / "runtime" / "wrong_family_carrier_rejection_learning_report.json",
+        load_json(discrimination_chain["learning_dir"] / "carrier_rejection_learning_report.json"),
+    )
+    manifest_path = _wage_hour_reviewed_learning_signal_manifest(
+        runtime_root,
+        anchors,
+        wrong_family_learning_report_path,
+    )
+
+    report, _ = run_labor_employment_budget_outcome_replay_input_pack_audit(
+        builder_binding_report_path=_builder_binding_report(repo_root, tmp_path),
+        input_pack_manifest_path=manifest_path,
+        repo_root=runtime_root,
+        out_dir=tmp_path / "le-wage-hour-input-pack-wrong-family-signal",
+        generated_at="2026-07-04T00:00:00Z",
+    )
+    wage_case = next(
+        case
+        for case in report.cases
+        if case.learning_fixture_id == "le-learning-wage-hour-clean.v0_1"
+    )
+    reviewed_signal = next(
+        item
+        for item in wage_case.items
+        if item.loop_type == "reviewed_learning_gate" and item.input_role == "one_of_signal"
+    )
+
+    assert report.status == "blocked_by_labor_employment_budget_replay_input_pack"
+    assert report.invalid_input_count == 1
+    assert reviewed_signal.input_status == "invalid"
+    assert "budget_proposal_id" in reviewed_signal.validation_message
+    assert "le-budget-discrimination-harassment-clean.v0_1" in (reviewed_signal.validation_message)
+    assert "le-budget-wage-hour-clean.v0_1" in reviewed_signal.validation_message
 
 
 def test_learning_report_count_invariants_fail_closed(repo_root, tmp_path):
