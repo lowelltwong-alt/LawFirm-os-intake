@@ -17,6 +17,7 @@ import demoMatterLinkingPreflight from "./fixtures/demo-matter-linking-preflight
 import demoMatterLinkingQAGate from "./fixtures/demo-matter-linking-qa-gate-report.json";
 import demoMatterLinkingReviewOutcome from "./fixtures/demo-matter-linking-review-outcome-report.json";
 import demoPocQATriage from "./fixtures/demo-poc-qa-triage-report.json";
+import demoRustFixtureBoundary from "./fixtures/demo-rust-fixture-boundary-report.json";
 import demoSyntheticQABlockerReport from "./fixtures/demo-synthetic-qa-blocker-report.json";
 import demoSyntheticQAReviewOutcome from "./fixtures/demo-synthetic-qa-review-outcome-report.json";
 import demoSyntheticConfidenceSummary from "./fixtures/demo-synthetic-confidence-summary-report.json";
@@ -40,6 +41,7 @@ import {
   assertLaborEmploymentQAMatrixReport,
   assertPOCQATriageReport,
   assertReadOnlyManifest,
+  assertRustFixtureBoundaryReport,
   assertSyntheticQABlockerReport,
   assertSyntheticQAReviewOutcomeReport,
   assertSyntheticConfidenceSummaryReport,
@@ -79,6 +81,7 @@ import type {
   QualityGateStatus,
   ReviewArtifact,
   ReviewManifest,
+  RustFixtureBoundaryReport,
   SyntheticQABlockerActionState,
   SyntheticQABlockerReport,
   SyntheticQABlockerRowState,
@@ -108,6 +111,7 @@ const matterLinkingPreflight = demoMatterLinkingPreflight as MatterLinkingPrefli
 const matterLinkingQAGate = demoMatterLinkingQAGate as MatterLinkingQAGateReport;
 const matterLinkingReviewOutcome =
   demoMatterLinkingReviewOutcome as MatterLinkingReviewOutcomeReport;
+const rustFixtureBoundary = demoRustFixtureBoundary as RustFixtureBoundaryReport;
 const laborEmploymentQAMatrix = demoLaborEmploymentQAMatrix as LaborEmploymentQAMatrixReport;
 const laborEmploymentExecutableCoverage =
   demoLaborEmploymentExecutableCoverage as LaborEmploymentExecutableCoverageReport;
@@ -143,6 +147,7 @@ const matterLinkingFailures = assertMatterLinkingPreflightReport(matterLinkingPr
 const matterLinkingQAGateFailures = assertMatterLinkingQAGateReport(matterLinkingQAGate);
 const matterLinkingReviewOutcomeFailures =
   assertMatterLinkingReviewOutcomeReport(matterLinkingReviewOutcome);
+const rustFixtureBoundaryFailures = assertRustFixtureBoundaryReport(rustFixtureBoundary);
 const matrixContractFailures = assertLaborEmploymentQAMatrixReport(laborEmploymentQAMatrix);
 const executableCoverageFailures =
   assertLaborEmploymentExecutableCoverageReport(laborEmploymentExecutableCoverage);
@@ -183,6 +188,7 @@ const contractFailures = [
   ...matterLinkingFailures,
   ...matterLinkingQAGateFailures,
   ...matterLinkingReviewOutcomeFailures,
+  ...rustFixtureBoundaryFailures,
   ...matrixContractFailures,
   ...executableCoverageFailures,
   ...blockedDriverContractFailures,
@@ -977,6 +983,76 @@ function SyntheticQAReviewRunPanel({ report }: { report: SyntheticQAReviewRunRep
           </article>
         ))}
       </div>
+    </section>
+  );
+}
+
+function RustFixtureBoundaryPanel({ report }: { report: RustFixtureBoundaryReport }) {
+  const statusClass =
+    report.status === "passed" && rustFixtureBoundaryFailures.length === 0
+      ? "state state-passed"
+      : "state state-failed";
+
+  return (
+    <section className="panel rust-boundary-panel" aria-labelledby="rust-boundary-title">
+      <div className="panel-heading">
+        <div>
+          <p className="eyebrow">Rust QA leaf tool</p>
+          <h2 id="rust-boundary-title">Fixture Boundary Checker</h2>
+          <code>{report.checker}</code>
+        </div>
+        <span className={statusClass}>{report.status}</span>
+      </div>
+
+      <div className="recipe-summary" aria-label="Rust fixture boundary summary">
+        <div>
+          <span>JSON Files</span>
+          <strong>{report.checked_json_file_count}</strong>
+        </div>
+        <div>
+          <span>Objects</span>
+          <strong>{report.checked_object_count}</strong>
+        </div>
+        <div>
+          <span>Failures</span>
+          <strong>{report.failure_count}</strong>
+        </div>
+        <div>
+          <span>Local Only</span>
+          <strong>{report.local_json_only ? "yes" : "no"}</strong>
+        </div>
+      </div>
+
+      <div className="boundary-grid">
+        <div className="boundary-item">
+          <span>Root</span>
+          <code>{report.root}</code>
+        </div>
+        <div className="boundary-item">
+          <span>UI Bundle</span>
+          <code>{report.ui_bundle_ref ?? "not supplied"}</code>
+        </div>
+        <div className="boundary-item">
+          <span>Lake Writes</span>
+          <strong>{String(report.lake_write_performed)}</strong>
+        </div>
+        <div className="boundary-item">
+          <span>Budget Submission</span>
+          <strong>{String(report.budget_submission_authorized)}</strong>
+        </div>
+      </div>
+
+      {report.failures.length > 0 && (
+        <div className="qa-workbench-list">
+          {report.failures.map((failure) => (
+            <article key={`${failure.path}-${failure.json_path}-${failure.check}`}>
+              <strong>{failure.check}</strong>
+              <code>{failure.json_path}</code>
+              <p>{failure.message}</p>
+            </article>
+          ))}
+        </div>
+      )}
     </section>
   );
 }
@@ -2848,6 +2924,7 @@ function App() {
       />
       <BudgetLearningLoopPanel report={budgetLearningLoop} />
       <SyntheticConfidenceSummaryPanel report={syntheticConfidenceSummary} />
+      <RustFixtureBoundaryPanel report={rustFixtureBoundary} />
       <POCQATriagePanel report={pocQATriage} />
       <ValidationSuiteEvidencePanel report={validationSuiteEvidence} />
       <SyntheticQABlockerDrilldownPanel report={syntheticQABlockerReport} />

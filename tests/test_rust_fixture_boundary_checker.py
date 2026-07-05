@@ -1,6 +1,8 @@
 import json
 import subprocess
 
+from lawfirm_os_intake.cli import main
+
 
 def _run_checker(repo_root, *, root, out, ui_bundle=None):
     command = [
@@ -55,6 +57,34 @@ def test_rust_fixture_boundary_checker_passes_ui_fixture_bundle(repo_root, tmp_p
     assert report["external_writes_performed"] is False
     assert report["lake_write_performed"] is False
     assert report["sqlite_write_performed"] is False
+
+
+def test_rust_fixture_boundary_cli_writes_candidate_report(repo_root, tmp_path, capsys):
+    fixtures = repo_root / "apps" / "legal-intake-budget" / "src" / "fixtures"
+    out_dir = tmp_path / "rust-boundary"
+
+    code = main(
+        [
+            "build-rust-fixture-boundary-report",
+            "--root",
+            str(fixtures),
+            "--ui-bundle",
+            str(fixtures / "demo-ui-review-data-bundle.json"),
+            "--out-dir",
+            str(out_dir),
+            "--repo-root",
+            str(repo_root),
+        ]
+    )
+    captured = capsys.readouterr()
+
+    report = _load(out_dir / "rust_fixture_boundary_report.json")
+    assert code == 0
+    assert report["status"] == "passed"
+    assert report["failure_count"] == 0
+    assert report["candidate_only"] is True
+    assert report["external_writes_performed"] is False
+    assert '"lake_write_performed": false' in captured.out
 
 
 def test_rust_fixture_boundary_checker_fails_closed_on_write_flags(repo_root, tmp_path):

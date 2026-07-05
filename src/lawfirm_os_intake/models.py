@@ -12558,6 +12558,45 @@ class SyntheticQAReviewRunReport(StrictModel):
         return self
 
 
+class RustFixtureBoundaryFailure(StrictModel):
+    path: str
+    json_path: str
+    check: str
+    message: str
+
+
+class RustFixtureBoundaryReport(StrictModel):
+    schema_version: str = "0.1"
+    checker: Literal["fixture-boundary-checker"]
+    status: Literal["passed", "failed"]
+    root: str
+    ui_bundle_ref: str | None = None
+    checked_json_file_count: int = Field(ge=0)
+    checked_object_count: int = Field(ge=0)
+    failure_count: int = Field(ge=0)
+    failures: list[RustFixtureBoundaryFailure] = Field(default_factory=list)
+    candidate_only: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    local_json_only: Literal[True] = True
+    external_writes_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def rust_fixture_boundary_counts_and_status_match(self) -> "RustFixtureBoundaryReport":
+        if self.failure_count != len(self.failures):
+            raise ValueError("Rust fixture boundary failure count mismatch")
+        if self.status == "passed" and self.failures:
+            raise ValueError("passed Rust fixture boundary report cannot include failures")
+        if self.status == "failed" and not self.failures:
+            raise ValueError("failed Rust fixture boundary report requires failures")
+        return self
+
+
 SyntheticConfidenceSummaryItemState = Literal[
     "ready_for_review",
     "pending_review",
@@ -13288,6 +13327,7 @@ UIReviewDataBundleReportKind = Literal[
     "synthetic_confidence_summary",
     "synthetic_qa_blocker_report",
     "synthetic_qa_review_outcome",
+    "rust_fixture_boundary",
     "matter_linking_preflight",
     "matter_linking_review_outcome",
     "matter_linking_qa_gate",

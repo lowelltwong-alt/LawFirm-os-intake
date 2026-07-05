@@ -1,0 +1,29 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "path": {
+      "title": "Path",
+      "type": "string"
+    },
+    "json_path": {
+      "title": "Json Path",
+      "type": "string"
+    },
+    "check": {
+      "title": "Check",
+      "type": "string"
+    },
+    "message": {
+      "title": "Message",
+      "type": "string"
+    }
+  },
+  "required": [
+    "path",
+    "json_path",
+    "check",
+    "message"
+  ],
+  "title": "RustFixtureBoundaryFailure",
+  "type": "object"
+}

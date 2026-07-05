@@ -62,6 +62,14 @@ DETAIL_REPORT_SPECS = [
         required=False,
     ),
     UIReviewDetailSpec(
+        detail_report_id="rust-fixture-boundary",
+        label="Rust Fixture Boundary",
+        report_kind="rust_fixture_boundary",
+        file_name="rust_fixture_boundary_report.json",
+        renderer="RustFixtureBoundaryPanel",
+        required=False,
+    ),
+    UIReviewDetailSpec(
         detail_report_id="matter-linking-preflight",
         label="Matter-Linking Preflight",
         report_kind="matter_linking_preflight",

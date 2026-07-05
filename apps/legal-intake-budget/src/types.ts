@@ -24,6 +24,7 @@ export type UIReviewDataBundleReportKind =
   | "synthetic_confidence_summary"
   | "synthetic_qa_blocker_report"
   | "synthetic_qa_review_outcome"
+  | "rust_fixture_boundary"
   | "matter_linking_preflight"
   | "matter_linking_review_outcome"
   | "matter_linking_qa_gate"
@@ -358,6 +359,35 @@ export type SyntheticQAReviewRunReport = {
   external_writes_performed: boolean;
   silent_learning_performed: boolean;
   generated_at: string;
+};
+
+export type RustFixtureBoundaryFailure = {
+  path: string;
+  json_path: string;
+  check: string;
+  message: string;
+};
+
+export type RustFixtureBoundaryReport = {
+  schema_version: string;
+  checker: "fixture-boundary-checker";
+  status: "passed" | "failed";
+  root: string;
+  ui_bundle_ref?: string | null;
+  checked_json_file_count: number;
+  checked_object_count: number;
+  failure_count: number;
+  failures: RustFixtureBoundaryFailure[];
+  candidate_only: boolean;
+  synthetic_only: boolean;
+  non_authoritative: boolean;
+  local_json_only: boolean;
+  external_writes_performed: boolean;
+  lake_write_performed: boolean;
+  sqlite_write_performed: boolean;
+  budget_submission_authorized: boolean;
+  matter_opening_authorized: boolean;
+  silent_learning_performed: boolean;
 };
 
 export type SyntheticConfidenceSummaryItemState =

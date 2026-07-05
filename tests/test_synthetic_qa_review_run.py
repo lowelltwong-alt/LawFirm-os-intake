@@ -15,6 +15,30 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
     run_root = tmp_path / "synthetic-qa-review-run"
     quality_dir = run_root / "quality"
     quality_dir.mkdir(parents=True)
+    fixture_boundary_report = write_json(
+        tmp_path / "rust_fixture_boundary_report.json",
+        {
+            "schema_version": "0.1",
+            "checker": "fixture-boundary-checker",
+            "status": "passed",
+            "root": str(run_root),
+            "ui_bundle_ref": str(run_root / "ui_review_data_bundle.json"),
+            "checked_json_file_count": 12,
+            "checked_object_count": 120,
+            "failure_count": 0,
+            "failures": [],
+            "candidate_only": True,
+            "synthetic_only": True,
+            "non_authoritative": True,
+            "local_json_only": True,
+            "external_writes_performed": False,
+            "lake_write_performed": False,
+            "sqlite_write_performed": False,
+            "budget_submission_authorized": False,
+            "matter_opening_authorized": False,
+            "silent_learning_performed": False,
+        },
+    )
     write_json(
         quality_dir / "labor_employment_qa_matrix_report.json",
         {"status": "failed", "external_writes_performed": False},
@@ -27,6 +51,8 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
             str(repo_root),
             "--run-root",
             str(run_root),
+            "--fixture-boundary-report",
+            str(fixture_boundary_report),
             "--generated-at",
             "2026-07-02T00:00:00Z",
         ]
@@ -42,7 +68,7 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
 
     assert code == 0
     assert report["status"] == "synthetic_qa_review_run_ready"
-    assert report["step_count"] == len(report["steps"]) == 28
+    assert report["step_count"] == len(report["steps"]) == 29
     assert report["failed_step_count"] == 0
     assert report["candidate_only"] is True
     assert report["synthetic_only"] is True
@@ -79,6 +105,7 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
         "synthetic_qa_bundle",
         "ui_review_manifest",
         "ui_review_data_bundle",
+        "rust_fixture_boundary",
         "synthetic_confidence_summary",
     } == set(steps)
     assert all(step["status"] == "passed" for step in report["steps"])
@@ -113,12 +140,16 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
     ui_detail_reports = {
         report["report_kind"]: report for report in ui_data_bundle["detail_reports"]
     }
-    assert ui_data_bundle["detail_report_count"] == 19
-    assert ui_data_bundle["present_detail_report_count"] == 19
+    assert ui_data_bundle["detail_report_count"] == 20
+    assert ui_data_bundle["present_detail_report_count"] == 20
     assert ui_detail_reports["synthetic_qa_review_run"]["present"] is True
     assert ui_detail_reports["synthetic_qa_review_run"]["artifact_ref"] == str(
         run_root / SYNTHETIC_QA_REVIEW_RUN_REPORT_FILENAME
     )
+    assert ui_detail_reports["rust_fixture_boundary"]["present"] is True
+    assert ui_detail_reports["rust_fixture_boundary"]["required"] is False
+    assert ui_detail_reports["rust_fixture_boundary"]["status"] == "passed"
+    assert ui_detail_reports["rust_fixture_boundary"]["renderer"] == "RustFixtureBoundaryPanel"
     assert ui_detail_reports["matter_linking_preflight"]["present"] is True
     assert ui_detail_reports["matter_linking_review_outcome"]["present"] is True
     assert ui_detail_reports["matter_linking_qa_gate"]["present"] is True

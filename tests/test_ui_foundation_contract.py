@@ -22,6 +22,7 @@ def test_legal_intake_budget_ui_required_files_exist(repo_root):
         "src/fixtures/demo-synthetic-qa-review-outcome-report.json",
         "src/fixtures/demo-synthetic-qa-review-run-report.json",
         "src/fixtures/demo-ui-review-data-bundle.json",
+        "src/fixtures/demo-rust-fixture-boundary-report.json",
         "src/fixtures/demo-validation-suite-evidence-report.json",
         "src/fixtures/demo-matter-linking-preflight-report.json",
         "src/fixtures/demo-matter-linking-qa-gate-report.json",
@@ -66,6 +67,7 @@ def test_legal_intake_budget_ui_data_contract_lists_required_artifacts(repo_root
         "budget_coherence_report.json",
         "synthetic_qa_bundle_report.json",
         "synthetic_qa_review_run_report.json",
+        "rust_fixture_boundary_report.json",
         "synthetic_confidence_summary_report.json",
         "poc_qa_triage_report.json",
         "synthetic_qa_blocker_report.json",
@@ -174,9 +176,9 @@ def test_legal_intake_budget_demo_ui_review_data_bundle_is_local_and_no_write(re
     detail_reports = {report["file_name"]: report for report in bundle["detail_reports"]}
 
     assert bundle["status"] == "ready_for_review"
-    assert bundle["detail_report_count"] == len(bundle["detail_reports"]) == 19
+    assert bundle["detail_report_count"] == len(bundle["detail_reports"]) == 20
     assert bundle["required_detail_report_count"] == 13
-    assert bundle["present_detail_report_count"] == 19
+    assert bundle["present_detail_report_count"] == 20
     assert bundle["missing_required_detail_report_count"] == 0
     assert bundle["external_write_report_count"] == 0
     assert bundle["candidate_only"] is True
@@ -195,6 +197,7 @@ def test_legal_intake_budget_demo_ui_review_data_bundle_is_local_and_no_write(re
         "synthetic_qa_blocker_report.json",
         "synthetic_qa_review_outcome_report.json",
         "synthetic_qa_review_run_report.json",
+        "rust_fixture_boundary_report.json",
         "matter_linking_preflight_report.json",
         "matter_linking_qa_gate_report.json",
         "matter_linking_review_outcome_report.json",
@@ -276,7 +279,7 @@ def test_legal_intake_budget_demo_synthetic_qa_review_run_is_no_write(repo_root)
     )
 
     assert report["status"] == "synthetic_qa_review_run_ready"
-    assert report["step_count"] == len(report["steps"]) == 28
+    assert report["step_count"] == len(report["steps"]) == 29
     assert report["failed_step_count"] == 0
     assert report["candidate_only"] is True
     assert report["synthetic_only"] is True
@@ -298,6 +301,7 @@ def test_legal_intake_budget_demo_synthetic_qa_review_run_is_no_write(repo_root)
         "synthetic_qa_bundle",
         "ui_review_manifest",
         "ui_review_data_bundle",
+        "rust_fixture_boundary",
         "synthetic_confidence_summary",
         "labor_employment_blocked_driver_impact_review",
         "labor_employment_budget_output_expectations",
@@ -309,6 +313,29 @@ def test_legal_intake_budget_demo_synthetic_qa_review_run_is_no_write(repo_root)
         "labor_employment_budget_outcome_replay_confidence_status",
         "budget_learning_loop",
     } <= {step["step_id"] for step in report["steps"]}
+
+
+def test_legal_intake_budget_demo_rust_fixture_boundary_is_no_write(repo_root):
+    report = json.loads(
+        (repo_root / UI_ROOT / "src/fixtures/demo-rust-fixture-boundary-report.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    assert report["checker"] == "fixture-boundary-checker"
+    assert report["status"] == "passed"
+    assert report["failure_count"] == 0
+    assert report["checked_json_file_count"] >= 20
+    assert report["candidate_only"] is True
+    assert report["synthetic_only"] is True
+    assert report["non_authoritative"] is True
+    assert report["local_json_only"] is True
+    assert report["external_writes_performed"] is False
+    assert report["lake_write_performed"] is False
+    assert report["sqlite_write_performed"] is False
+    assert report["budget_submission_authorized"] is False
+    assert report["matter_opening_authorized"] is False
+    assert report["silent_learning_performed"] is False
 
 
 def test_legal_intake_budget_demo_le_matrix_is_synthetic_and_no_write(repo_root):
@@ -622,11 +649,11 @@ def test_legal_intake_budget_demo_synthetic_confidence_summary_is_no_write(repo_
     assert report["status"] == "synthetic_confidence_summary_ready_for_review"
     assert report["testing_readiness_state"] == "synthetic_qa_ready_pending_review"
     assert report["top_blockers"] == []
-    assert report["qa_step_count"] == 28
+    assert report["qa_step_count"] == 29
     assert report["qa_failed_step_count"] == 0
     assert report["qa_missing_required_artifact_count"] == 0
-    assert report["ui_detail_report_count"] == 19
-    assert report["ui_present_detail_report_count"] == 19
+    assert report["ui_detail_report_count"] == 20
+    assert report["ui_present_detail_report_count"] == 20
     assert report["ui_missing_required_detail_report_count"] == 0
     assert report["display_banner"]["candidate_only"] is True
     assert report["display_banner"]["synthetic_only"] is True

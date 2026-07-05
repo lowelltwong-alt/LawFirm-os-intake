@@ -1,10 +1,10 @@
 {
   "schema_version": "0.1",
-  "synthetic_confidence_summary_report_id": "synthetic_confidence_summary_5df8f48b41d752cc",
+  "synthetic_confidence_summary_report_id": "synthetic_confidence_summary_11ad1060639b1fe8",
   "status": "synthetic_confidence_summary_ready_for_review",
   "testing_readiness_state": "synthetic_qa_ready_pending_review",
   "source_synthetic_qa_review_run_ref": "<demo-run-root>\\synthetic_qa_review_run_report.json",
-  "source_synthetic_qa_review_run_report_id": "syntheticqareviewrun_bfaf9ffa36331259",
+  "source_synthetic_qa_review_run_report_id": "syntheticqareviewrun_a346bbf92aaf2ffd",
   "source_synthetic_qa_review_run_status": "synthetic_qa_review_run_ready",
   "source_synthetic_qa_bundle_ref": "<demo-run-root>\\quality\\synthetic_qa_bundle_report.json",
   "source_synthetic_qa_bundle_report_id": "synthetic_qa_bundle_635d894eae83",
@@ -13,18 +13,18 @@
   "source_ui_manifest_id": "ui_review_manifest_24c18961f8a3",
   "source_ui_manifest_overall_status": "blocked",
   "source_ui_review_data_bundle_ref": "<demo-run-root>\\ui_review_data_bundle.json",
-  "source_ui_review_data_bundle_id": "ui_review_data_bundle_29c2a0fa7a08",
+  "source_ui_review_data_bundle_id": "ui_review_data_bundle_7d732c1f0ad6",
   "source_ui_review_data_bundle_status": "ready_for_review",
-  "qa_step_count": 28,
-  "qa_passed_step_count": 28,
+  "qa_step_count": 29,
+  "qa_passed_step_count": 29,
   "qa_failed_step_count": 0,
   "qa_artifact_count": 22,
   "qa_missing_required_artifact_count": 0,
   "qa_blocked_artifact_count": 0,
   "qa_pending_artifact_count": 20,
   "qa_failed_artifact_count": 0,
-  "ui_detail_report_count": 19,
-  "ui_present_detail_report_count": 19,
+  "ui_detail_report_count": 20,
+  "ui_present_detail_report_count": 20,
   "ui_missing_required_detail_report_count": 0,
   "ui_external_write_report_count": 0,
   "quality_gate_count": 32,
@@ -43,7 +43,7 @@
         "<demo-run-root>\\synthetic_qa_review_run_report.json"
       ],
       "notes": [
-        "0 failed steps out of 28."
+        "0 failed steps out of 29."
       ],
       "no_write_boundary_confirmed": true
     },
@@ -70,7 +70,7 @@
         "<demo-run-root>\\ui_review_manifest.json"
       ],
       "notes": [
-        "19 detail reports present; 0 write-boundary failures."
+        "20 detail reports present; 0 write-boundary failures."
       ],
       "no_write_boundary_confirmed": true
     },

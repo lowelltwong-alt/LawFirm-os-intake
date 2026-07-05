@@ -1,11 +1,11 @@
 {
   "schema_version": "0.1",
-  "ui_review_data_bundle_id": "ui_review_data_bundle_29c2a0fa7a08",
+  "ui_review_data_bundle_id": "ui_review_data_bundle_7d732c1f0ad6",
   "status": "ready_for_review",
   "run_root_ref": "<demo-run-root>",
-  "detail_report_count": 19,
+  "detail_report_count": 20,
   "required_detail_report_count": 13,
-  "present_detail_report_count": 19,
+  "present_detail_report_count": 20,
   "missing_required_detail_report_count": 0,
   "external_write_report_count": 0,
   "detail_reports": [
@@ -97,6 +97,24 @@
       "external_writes_performed": false,
       "notes": [
         "Found quality\\synthetic_qa_review_outcome_report.json; status=synthetic_qa_review_outcome_recorded_pending_followup."
+      ]
+    },
+    {
+      "detail_report_id": "rust-fixture-boundary",
+      "label": "Rust Fixture Boundary",
+      "report_kind": "rust_fixture_boundary",
+      "file_name": "rust_fixture_boundary_report.json",
+      "required": false,
+      "present": true,
+      "status": "passed",
+      "renderer": "RustFixtureBoundaryPanel",
+      "artifact_ref": "apps/legal-intake-budget/src/fixtures/demo-rust-fixture-boundary-report.json",
+      "source_sha256": "sha256:4508b51305565d8fb310107aa71a5f74054c9084e9d6dc701f984e1b2697bec8",
+      "candidate_only": true,
+      "synthetic_only": true,
+      "external_writes_performed": false,
+      "notes": [
+        "Found demo-rust-fixture-boundary-report.json; status=passed."
       ]
     },
     {

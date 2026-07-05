@@ -19,6 +19,7 @@ import type {
   QualityGate,
   ReviewArtifact,
   ReviewManifest,
+  RustFixtureBoundaryReport,
   SyntheticQABlockerReport,
   SyntheticQAReviewOutcomeReport,
   SyntheticConfidenceSummaryReport,
@@ -92,6 +93,7 @@ export const REQUIRED_DETAIL_REPORT_FILES = [
   "matter_linking_review_outcome_report.json",
   "matter_linking_qa_gate_report.json",
   "synthetic_confidence_summary_report.json",
+  "rust_fixture_boundary_report.json",
   "labor_employment_qa_matrix_report.json",
   "labor_employment_executable_coverage_report.json",
   "labor_employment_blocked_driver_impact_review_report.json",
@@ -251,6 +253,42 @@ export function assertSyntheticQAReviewRunReport(
     if (!step.artifact_ref || step.notes.length === 0) {
       failures.push(`synthetic_qa_review_run_step_not_actionable:${step.step_id}`);
     }
+  }
+  return failures;
+}
+
+export function assertRustFixtureBoundaryReport(report: RustFixtureBoundaryReport): string[] {
+  const failures: string[] = [];
+  if (report.checker !== "fixture-boundary-checker") {
+    failures.push("rust_fixture_boundary_wrong_checker");
+  }
+  if (!report.candidate_only || !report.synthetic_only || !report.non_authoritative) {
+    failures.push("rust_fixture_boundary_authority_boundary_failed");
+  }
+  if (!report.local_json_only) {
+    failures.push("rust_fixture_boundary_not_local_json_only");
+  }
+  if (
+    report.external_writes_performed ||
+    report.lake_write_performed ||
+    report.sqlite_write_performed ||
+    report.budget_submission_authorized ||
+    report.matter_opening_authorized ||
+    report.silent_learning_performed
+  ) {
+    failures.push("rust_fixture_boundary_side_effect_boundary_failed");
+  }
+  if (report.failure_count !== report.failures.length) {
+    failures.push("rust_fixture_boundary_failure_count_mismatch");
+  }
+  if (report.status === "passed" && report.failures.length > 0) {
+    failures.push("rust_fixture_boundary_passed_with_failures");
+  }
+  if (report.status === "failed" && report.failures.length === 0) {
+    failures.push("rust_fixture_boundary_failed_without_failures");
+  }
+  if (report.checked_json_file_count <= 0 || report.checked_object_count <= 0) {
+    failures.push("rust_fixture_boundary_missing_checked_scope");
   }
   return failures;
 }

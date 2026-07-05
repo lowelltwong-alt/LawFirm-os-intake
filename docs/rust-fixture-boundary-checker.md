@@ -13,10 +13,20 @@ The checker validates local candidate fixture/report JSON for the boundaries the
 Run it locally:
 
 ```powershell
-cargo run --quiet --manifest-path rust/fixture-boundary-checker/Cargo.toml -- `
+python -m lawfirm_os_intake build-rust-fixture-boundary-report `
   --root apps/legal-intake-budget/src/fixtures `
   --ui-bundle apps/legal-intake-budget/src/fixtures/demo-ui-review-data-bundle.json `
-  --out .lawfirm-os-intake/fixture-boundary-report.json
+  --out-dir .lawfirm-os-intake/rust-fixture-boundary `
+  --repo-root .
+```
+
+Stage a prebuilt report into the synthetic QA review run:
+
+```powershell
+python -m lawfirm_os_intake build-synthetic-qa-review-run `
+  --run-root .lawfirm-os-intake/synthetic-qa-review `
+  --repo-root . `
+  --fixture-boundary-report .lawfirm-os-intake/rust-fixture-boundary/rust_fixture_boundary_report.json
 ```
 
 The emitted report is candidate-only and read-only evidence. A failed report blocks confidence claims about the UI fixture bundle, but it does not mutate fixtures, submit budgets, open matters, write SQLite/Lake records, or promote any canonical LawFirm OS contract.

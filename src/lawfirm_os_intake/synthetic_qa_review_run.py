@@ -180,6 +180,7 @@ def run_synthetic_qa_review_run(
     *,
     run_root: str | Path,
     repo_root: str | Path = ".",
+    fixture_boundary_report_path: str | Path | None = None,
     generated_at: str | None = None,
 ) -> tuple[SyntheticQAReviewRunReport, Path]:
     root = Path(repo_root).resolve()
@@ -717,6 +718,27 @@ def run_synthetic_qa_review_run(
     ]:
         _stage_for_bundle(source_path, quality_dir)
 
+    staged_fixture_boundary_ref: Path | None = None
+    if fixture_boundary_report_path is not None:
+        staged_fixture_boundary_ref = _stage_for_bundle(
+            Path(fixture_boundary_report_path),
+            quality_dir,
+        )
+        fixture_boundary_payload = load_json(staged_fixture_boundary_ref)
+        steps.append(
+            _step(
+                "rust_fixture_boundary",
+                "Rust Fixture Boundary",
+                str(fixture_boundary_payload.get("status") or "missing"),
+                staged_fixture_boundary_ref,
+                fixture_boundary_payload.get("status") == "passed",
+                (
+                    "Prebuilt Rust fixture-boundary evidence validates local JSON flags "
+                    "without making the synthetic QA run compile or execute Rust."
+                ),
+            )
+        )
+
     bundle, _bundle_dir, ui_manifest = run_synthetic_qa_bundle(
         run_root=run_dir,
         out_dir=quality_dir,
@@ -791,6 +813,7 @@ def run_synthetic_qa_review_run(
         generated_at=generated_at,
     )
     ui_data_bundle = load_json(ui_data_bundle_ref) if ui_data_bundle_ref.is_file() else {}
+    ui_data_bundle_step_index = len(steps)
     steps.append(
         _step(
             "ui_review_data_bundle",
@@ -900,7 +923,7 @@ def run_synthetic_qa_review_run(
         final_confidence_summary_dir / SYNTHETIC_CONFIDENCE_SUMMARY_REPORT_FILENAME,
         quality_dir,
     )
-    steps[-1] = _step(
+    steps[ui_data_bundle_step_index] = _step(
         "ui_review_data_bundle",
         "UI Review Data Bundle",
         "ready_for_review",

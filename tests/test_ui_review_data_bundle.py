@@ -211,6 +211,33 @@ def _write_synthetic_qa_review_run_report(run_root):
     )
 
 
+def _write_rust_fixture_boundary_report(run_root):
+    write_json(
+        run_root / "quality" / "rust_fixture_boundary_report.json",
+        {
+            "schema_version": "0.1",
+            "checker": "fixture-boundary-checker",
+            "status": "passed",
+            "root": str(run_root),
+            "ui_bundle_ref": str(run_root / "ui_review_data_bundle.json"),
+            "checked_json_file_count": 4,
+            "checked_object_count": 12,
+            "failure_count": 0,
+            "failures": [],
+            "candidate_only": True,
+            "synthetic_only": True,
+            "non_authoritative": True,
+            "local_json_only": True,
+            "external_writes_performed": False,
+            "lake_write_performed": False,
+            "sqlite_write_performed": False,
+            "budget_submission_authorized": False,
+            "matter_opening_authorized": False,
+            "silent_learning_performed": False,
+        },
+    )
+
+
 def _write_synthetic_qa_blocker_report(run_root):
     write_json(
         run_root / "quality" / "synthetic_qa_blocker_report.json",
@@ -303,7 +330,7 @@ def test_build_ui_review_data_bundle_tracks_renderable_local_json(tmp_path):
 
     assert out.is_file()
     assert bundle.status == "ready_for_review"
-    assert bundle.detail_report_count == 19
+    assert bundle.detail_report_count == 20
     assert bundle.required_detail_report_count == 13
     assert bundle.present_detail_report_count == 13
     assert bundle.missing_required_detail_report_count == 0
@@ -318,6 +345,7 @@ def test_build_ui_review_data_bundle_tracks_renderable_local_json(tmp_path):
         "synthetic_confidence_summary",
         "synthetic_qa_blocker_report",
         "synthetic_qa_review_outcome",
+        "rust_fixture_boundary",
         "matter_linking_preflight",
         "matter_linking_review_outcome",
         "matter_linking_qa_gate",
@@ -358,7 +386,7 @@ def test_build_ui_review_data_bundle_includes_optional_synthetic_qa_review_run(t
 
     details = {report.report_kind: report for report in bundle.detail_reports}
     assert bundle.status == "ready_for_review"
-    assert bundle.detail_report_count == 19
+    assert bundle.detail_report_count == 20
     assert bundle.present_detail_report_count == 14
     assert details["synthetic_qa_review_run"].present is True
     assert details["synthetic_qa_review_run"].required is False
@@ -367,6 +395,32 @@ def test_build_ui_review_data_bundle_includes_optional_synthetic_qa_review_run(t
     assert details["synthetic_confidence_summary"].present is True
     assert details["synthetic_confidence_summary"].required is True
     assert details["synthetic_confidence_summary"].renderer == "SyntheticConfidenceSummaryPanel"
+    assert details["rust_fixture_boundary"].present is False
+    assert details["rust_fixture_boundary"].required is False
+    assert details["rust_fixture_boundary"].renderer == "RustFixtureBoundaryPanel"
+
+
+def test_build_ui_review_data_bundle_includes_optional_rust_fixture_boundary(tmp_path):
+    run_root = tmp_path / "demo"
+    run_root.mkdir()
+    _write_ui_detail_reports(run_root)
+    _write_synthetic_qa_review_run_report(run_root)
+    _write_rust_fixture_boundary_report(run_root)
+
+    bundle = build_ui_review_data_bundle(
+        run_root=run_root,
+        out_path=run_root / "ui_review_data_bundle.json",
+        generated_at="2026-07-02T00:00:00Z",
+    )
+
+    details = {report.report_kind: report for report in bundle.detail_reports}
+    assert bundle.status == "ready_for_review"
+    assert bundle.detail_report_count == 20
+    assert bundle.present_detail_report_count == 15
+    assert details["rust_fixture_boundary"].present is True
+    assert details["rust_fixture_boundary"].required is False
+    assert details["rust_fixture_boundary"].renderer == "RustFixtureBoundaryPanel"
+    assert details["rust_fixture_boundary"].source_sha256.startswith("sha256:")
 
 
 def test_build_ui_review_data_bundle_includes_optional_synthetic_qa_blocker_report(tmp_path):
@@ -384,7 +438,7 @@ def test_build_ui_review_data_bundle_includes_optional_synthetic_qa_blocker_repo
 
     details = {report.report_kind: report for report in bundle.detail_reports}
     assert bundle.status == "ready_for_review"
-    assert bundle.detail_report_count == 19
+    assert bundle.detail_report_count == 20
     assert bundle.present_detail_report_count == 15
     assert details["synthetic_qa_blocker_report"].present is True
     assert details["synthetic_qa_blocker_report"].required is False
@@ -406,7 +460,7 @@ def test_build_ui_review_data_bundle_includes_optional_synthetic_qa_review_outco
 
     details = {report.report_kind: report for report in bundle.detail_reports}
     assert bundle.status == "ready_for_review"
-    assert bundle.detail_report_count == 19
+    assert bundle.detail_report_count == 20
     assert bundle.present_detail_report_count == 14
     assert details["synthetic_qa_review_outcome"].present is True
     assert details["synthetic_qa_review_outcome"].required is False
@@ -430,7 +484,7 @@ def test_build_ui_review_data_bundle_includes_optional_matter_linking_preflight(
 
     details = {report.report_kind: report for report in bundle.detail_reports}
     assert bundle.status == "ready_for_review"
-    assert bundle.detail_report_count == 19
+    assert bundle.detail_report_count == 20
     assert bundle.present_detail_report_count == 15
     assert details["matter_linking_preflight"].present is True
     assert details["matter_linking_preflight"].required is False
@@ -454,7 +508,7 @@ def test_build_ui_review_data_bundle_includes_optional_matter_linking_review_out
 
     details = {report.report_kind: report for report in bundle.detail_reports}
     assert bundle.status == "ready_for_review"
-    assert bundle.detail_report_count == 19
+    assert bundle.detail_report_count == 20
     assert bundle.present_detail_report_count == 16
     assert details["matter_linking_review_outcome"].present is True
     assert details["matter_linking_review_outcome"].required is False
@@ -479,7 +533,7 @@ def test_build_ui_review_data_bundle_includes_optional_matter_linking_qa_gate(tm
     details = {report.report_kind: report for report in bundle.detail_reports}
 
     assert bundle.status == "ready_for_review"
-    assert bundle.detail_report_count == 19
+    assert bundle.detail_report_count == 20
     assert bundle.present_detail_report_count == 17
     assert details["matter_linking_qa_gate"].present is True
     assert details["matter_linking_qa_gate"].required is False
@@ -500,7 +554,7 @@ def test_build_ui_review_data_bundle_requires_labor_employment_executable_covera
 
     details = {report.report_kind: report for report in bundle.detail_reports}
     assert bundle.status == "blocked_missing_required_reports"
-    assert bundle.detail_report_count == 19
+    assert bundle.detail_report_count == 20
     assert bundle.required_detail_report_count == 13
     assert bundle.present_detail_report_count == 12
     assert bundle.missing_required_detail_report_count == 1
