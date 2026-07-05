@@ -1,0 +1,119 @@
+{
+  "schema_version": "0.1",
+  "bundle_id": "le-carrier-rejection-epli-carrier-clean.v0_1",
+  "run_id": "le-carrier-rejection-run-epli-carrier-clean.v0_1",
+  "preflight_packet_id": "filled-by-test-preflight-packet",
+  "budget_proposal_id": "filled-by-test-budget-proposal",
+  "data_origin": "synthetic",
+  "contains_real_client_data": false,
+  "contains_real_matter_data": false,
+  "contains_privileged_data": false,
+  "as_of": "2026-07-06T12:00:00Z",
+  "expected_responses": [
+    {
+      "submission_id": "LE-SUB-EPLI-4001",
+      "submission_type": "invoice",
+      "carrier_id": "synthetic-granite-shield-epli",
+      "budget_proposal_id": "filled-by-test-budget-proposal",
+      "invoice_id": "LE-INV-EPLI-4001",
+      "amount_submitted": 6400,
+      "expected_response_due_at": "2026-07-05T17:00:00Z",
+      "human_owner": "synthetic-carrier-billing-reviewer",
+      "source_ref": "synthetic-carrier-submission-ledger://LE-SUB-EPLI-4001"
+    },
+    {
+      "submission_id": "LE-SUB-EPLI-4002",
+      "submission_type": "invoice",
+      "carrier_id": "synthetic-granite-shield-epli",
+      "budget_proposal_id": "filled-by-test-budget-proposal",
+      "invoice_id": "LE-INV-EPLI-4002",
+      "amount_submitted": 1800,
+      "expected_response_due_at": "2026-07-05T17:00:00Z",
+      "human_owner": "synthetic-carrier-billing-reviewer",
+      "source_ref": "synthetic-carrier-submission-ledger://LE-SUB-EPLI-4002"
+    }
+  ],
+  "notices": [
+    {
+      "notice_id": "le-notice-epli-staffing-4001",
+      "carrier_id": "synthetic-granite-shield-epli",
+      "platform": "Synthetic Carrier Budget Portal",
+      "submission_id": "LE-SUB-EPLI-4001",
+      "budget_proposal_id": "filled-by-test-budget-proposal",
+      "invoice_id": "LE-INV-EPLI-4001",
+      "line_id": "LE-INV-EPLI-4001-L330-001",
+      "phase_id": "L300",
+      "task_id": "L330",
+      "external_code_candidate": "L330",
+      "expense_code": "E112",
+      "timekeeper_id": null,
+      "status_timestamp": "2026-07-05T14:50:00Z",
+      "response_type": "partially_accepted",
+      "parse_status": "parsed",
+      "parser_version": "carrier-rejection-parser.v0_1",
+      "amount_submitted": 6400,
+      "amount_rejected": 2100,
+      "amount_allowed": 4300,
+      "amount_disputed": 2100,
+      "reason_code": "SYNTHETIC_EPLI_STAFFING_LEVERAGE_L330",
+      "reason_text_excerpt": "Synthetic Granite Shield EPLI reduced deposition staffing because partner/senior-associate leverage exceeded the candidate guideline narrative; human review must preserve carrier, payer, insured, and represented-client separation before any appeal decision.",
+      "human_owner": "synthetic-carrier-billing-reviewer",
+      "followup_due_at": "2026-07-10T17:00:00Z",
+      "idempotency_key": "synthetic-granite-shield-epli|LE-SUB-EPLI-4001|LE-INV-EPLI-4001-L330-001|SYNTHETIC_EPLI_STAFFING_LEVERAGE_L330",
+      "source_refs": [
+        {
+          "source_channel": "portal_status",
+          "source_id": "synthetic-epli-portal-export-20260705",
+          "source_record_id": "portal-status-GS-4001-L330",
+          "retrieved_at": "2026-07-05T15:10:00Z",
+          "content_sha256": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "message_id": null,
+          "portal_status_id": "portal-status-GS-4001-L330",
+          "row_ref": "granite-shield-portal-export.csv#row=73",
+          "attachment_id": null
+        }
+      ]
+    },
+    {
+      "notice_id": "le-notice-epli-preapproval-4002",
+      "carrier_id": "synthetic-granite-shield-epli",
+      "platform": "Synthetic Carrier Budget Portal",
+      "submission_id": "LE-SUB-EPLI-4002",
+      "budget_proposal_id": "filled-by-test-budget-proposal",
+      "invoice_id": "LE-INV-EPLI-4002",
+      "line_id": "LE-INV-EPLI-4002-L510-001",
+      "phase_id": "L500",
+      "task_id": "L510",
+      "external_code_candidate": "L510",
+      "expense_code": "E124",
+      "timekeeper_id": null,
+      "status_timestamp": "2026-07-05T15:05:00Z",
+      "response_type": "rejected",
+      "parse_status": "parsed",
+      "parser_version": "carrier-rejection-parser.v0_1",
+      "amount_submitted": 1800,
+      "amount_rejected": 1800,
+      "amount_allowed": 0,
+      "amount_disputed": 1800,
+      "reason_code": "SYNTHETIC_EPLI_PREAPPROVAL_MEDIATION",
+      "reason_text_excerpt": "Synthetic carrier rejected mediation expense pending prior approval / preapproval under the EPLI guideline; the system must classify the rejection and propose follow-up without submitting an appeal.",
+      "human_owner": "synthetic-carrier-billing-reviewer",
+      "followup_due_at": "2026-07-10T17:00:00Z",
+      "idempotency_key": "synthetic-granite-shield-epli|LE-SUB-EPLI-4002|LE-INV-EPLI-4002-L510-001|SYNTHETIC_EPLI_PREAPPROVAL_MEDIATION",
+      "source_refs": [
+        {
+          "source_channel": "email_notice",
+          "source_id": "synthetic-epli-carrier-email-20260705",
+          "source_record_id": "email-notice-GS-4002-L510",
+          "retrieved_at": "2026-07-05T15:15:00Z",
+          "content_sha256": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+          "message_id": "synthetic-epli-carrier-email-4002@example.invalid",
+          "portal_status_id": null,
+          "row_ref": null,
+          "attachment_id": "synthetic-epli-rejection-notice-4002.pdf"
+        }
+      ]
+    }
+  ],
+  "appeal_results": []
+}

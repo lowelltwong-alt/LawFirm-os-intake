@@ -1,0 +1,98 @@
+{
+  "schema_version": "0.1",
+  "issue_id": "le-replay-input-confidence-snapshot-drift-001",
+  "issue_version": "0.1.0",
+  "observed_at": "2026-07-05T00:00:00Z",
+  "source_repo_id": "LawFirm-os-intake",
+  "source_repo_path": "LawFirm-os-intake",
+  "originating_agent": "codex",
+  "review_context": "Codex implementation of synthetic EPLI carrier-assignment replay inputs and subagent review of L&E replay confidence gaps.",
+  "finding_title": "Replay input readiness can improve while aggregate confidence snapshots remain stale or pending.",
+  "severity": "P2",
+  "issue_classes": [
+    "synthetic_data_gap",
+    "learning_loop_gap",
+    "test_gap",
+    "ui_authority_risk",
+    "performance_or_rust_candidate",
+    "exception_lake_mapping_gap"
+  ],
+  "finding_summary": "Adding concrete synthetic raw replay inputs for an L&E carrier rejection/appeal lane can reduce input-pack missing counts, but the aggregate confidence report can still remain pending because builder-binding gaps, missing complement reports, reviewed-learning signals, and run-root-sensitive report IDs are separate evidence layers. UI/demo fixtures can therefore understate or misalign with the current source fixture state unless a deterministic refresh or diff gate verifies the relationship.",
+  "observable_context": [
+    "The EPLI carrier-assignment seed had carrier_rejection_capture, appeal_outcome, and reviewed_learning_gate loop intents but no concrete raw replay inputs.",
+    "This slice added synthetic EPLI legal_budget_proposal, carrier_rejection_capture_source_bundle, and carrier_rejection_capture_source_bundle_with_appeal_results files and declared them in the replay input-pack manifest.",
+    "Focused tests proved the raw EPLI carrier rejection and appeal-result builders run locally, produce candidate reports, and preserve no Lake, SQLite, external, appeal-submission, matter-opening, or silent-learning authority.",
+    "A generated confidence report showed input_pack_missing_input_count dropping from 82 to 76, while global replay confidence remained pending because builder-binding replay gaps and complement/review reports were still missing.",
+    "The generated confidence report used run-root-specific report refs and IDs, while checked UI fixtures use placeholder refs, so copying only one generated snapshot would create cross-fixture ID drift."
+  ],
+  "observable_decision_logic": [
+    "Raw input readiness, builder ownership, runtime replay execution, reviewed-learning evidence, and UI snapshot freshness must be treated as distinct QA claims.",
+    "A partially improved input pack should not be promoted as full replay confidence, because complement reports and reviewed one-of learning signals may still be absent.",
+    "A UI confidence snapshot should not be hand-refreshed in isolation when source report IDs are derived from run-root-sensitive refs.",
+    "A Rust manifest-diff or snapshot-coherence leaf tool is a good fit because it can deterministically compare checked UI fixture hashes, source report refs, and expected generated artifacts without adding workflow authority."
+  ],
+  "solution_path": [
+    "Keep the EPLI raw replay inputs as source fixtures and assert them with deterministic Python oracle tests.",
+    "Add a future deterministic UI fixture refresh or Rust manifest-diff gate that detects stale checked demo reports and cross-fixture ID drift.",
+    "Close one replay lane end-to-end in a separate slice by generating or declaring case-specific complement reports and reviewed-learning signal reports.",
+    "Preserve the distinction between pending inputs, pending builder gaps, pending reviewed-learning evidence, and stale UI snapshots in DAD exception-pattern classification."
+  ],
+  "fix_status": "observed",
+  "fix_refs": [
+    "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/legal_budget_proposal.json",
+    "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/carrier_rejection_capture_source_bundle.json",
+    "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/carrier_rejection_capture_source_bundle_with_appeal_results.json",
+    "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-input-pack.json",
+    "tests/test_labor_employment_budget_outcome_replay_input_pack.py"
+  ],
+  "test_refs": [
+    "python scripts/run_full_pytest.py tests/test_labor_employment_budget_outcome_replay_input_pack.py tests/test_labor_employment_budget_outcome_replay_confidence_status.py",
+    "python scripts/run_validation_suite.py"
+  ],
+  "artifact_refs": [
+    "apps/legal-intake-budget/src/fixtures/demo-labor-employment-budget-outcome-replay-confidence-status-report.json",
+    "apps/legal-intake-budget/src/fixtures/demo-rust-fixture-manifest-report.json",
+    "docs/rust-fixture-boundary-checker.md"
+  ],
+  "candidate_exception_labels": [
+    "replay_input_readiness_not_confidence_ready",
+    "builder_gap_independent_of_input_pack_gap",
+    "reviewed_learning_signal_missing_candidate",
+    "ui_confidence_snapshot_drift_candidate",
+    "rust_manifest_diff_gate_candidate",
+    "dad_learning_loop_candidate"
+  ],
+  "applies_when": [
+    "A repo adds raw synthetic replay inputs but aggregate confidence remains pending due to complement reports, reviewed-learning evidence, or builder-binding semantics.",
+    "A generated confidence or UI report derives IDs from local run-root refs and cannot be safely copied one file at a time.",
+    "A dashboard or DAD intake needs to classify readiness improvements without claiming replay execution or learning completion."
+  ],
+  "does_not_apply_when": [
+    "The full replay lane has all raw inputs, generated complement reports, reviewed-learning signals, and refreshed UI snapshots verified in one controlled run.",
+    "A report is intentionally historical and is not being represented as the current source fixture state.",
+    "The artifact being changed is not consumed by aggregate confidence, UI readiness, or DAD exception-pattern analysis."
+  ],
+  "danger_if_misapplied": "If raw input readiness is treated as full replay confidence, the system may overstate QA coverage and learn from incomplete carrier rejection or appeal evidence. If stale UI snapshots are refreshed piecemeal, DAD and reviewers may see mismatched report IDs or obsolete missing-input counts.",
+  "suggested_actions": [
+    "DAD should classify raw-input readiness, builder-binding gaps, reviewed-learning signal gaps, and UI snapshot drift as separate candidate exception patterns.",
+    "Codex should prioritize a deterministic snapshot-coherence or Rust manifest-diff gate before broadening UI demo claims.",
+    "Future replay slices should close one lane end-to-end before labeling aggregate replay confidence ready."
+  ],
+  "reviewer_notes": [
+    "This issue records observable artifact behavior only and avoids hidden chain-of-thought.",
+    "All examples are synthetic and candidate-only; no real client, matter, carrier, or rate data is included."
+  ],
+  "red_team_notes": [
+    "Do not let an improved input-pack count imply budget approval, carrier appeal submission, or production learning.",
+    "Do not mutate checked UI fixtures from an absolute local run root unless the refresh process sanitizes refs and verifies cross-report IDs."
+  ],
+  "raw_private_payload_included": false,
+  "hidden_chain_of_thought_included": false,
+  "candidate_only": true,
+  "dad_outbox_required": true,
+  "dad_review_required_before_promotion": true,
+  "lake_write_performed": false,
+  "sqlite_write_performed": false,
+  "external_writes_performed": false,
+  "silent_learning_performed": false
+}

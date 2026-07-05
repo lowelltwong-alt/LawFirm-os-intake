@@ -53,6 +53,9 @@ DISCRIMINATION_REPLAY_INPUT_ROOT = (
     "examples/synthetic/labor-employment/replay-inputs/discrimination-harassment-clean"
 )
 WAGE_HOUR_REPLAY_INPUT_ROOT = "examples/synthetic/labor-employment/replay-inputs/wage-hour-clean"
+EPLI_CARRIER_REPLAY_INPUT_ROOT = (
+    "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean"
+)
 
 
 def _qa_gate(repo_root):
@@ -99,6 +102,24 @@ def _wage_hour_carrier_bundle(repo_root):
     return repo_root / WAGE_HOUR_REPLAY_INPUT_ROOT / "carrier_rejection_capture_source_bundle.json"
 
 
+def _epli_carrier_budget(repo_root):
+    return repo_root / EPLI_CARRIER_REPLAY_INPUT_ROOT / "legal_budget_proposal.json"
+
+
+def _epli_carrier_bundle(repo_root):
+    return (
+        repo_root / EPLI_CARRIER_REPLAY_INPUT_ROOT / "carrier_rejection_capture_source_bundle.json"
+    )
+
+
+def _epli_carrier_appeal_bundle(repo_root):
+    return (
+        repo_root
+        / EPLI_CARRIER_REPLAY_INPUT_ROOT
+        / "carrier_rejection_capture_source_bundle_with_appeal_results.json"
+    )
+
+
 def _rel(root, path):
     return path.relative_to(root).as_posix()
 
@@ -142,6 +163,27 @@ def _stage_wage_hour_case_anchors(repo_root, runtime_root):
         "budget": budget_path,
         "actuals": actuals_path,
         "carrier_bundle": carrier_bundle_path,
+    }
+
+
+def _stage_epli_case_anchors(repo_root, runtime_root):
+    anchors = runtime_root / "anchors"
+    budget_path = write_json(
+        anchors / "legal_budget_proposal.json",
+        load_json(_epli_carrier_budget(repo_root)),
+    )
+    carrier_bundle_path = write_json(
+        anchors / "carrier_rejection_capture_source_bundle.json",
+        load_json(_epli_carrier_bundle(repo_root)),
+    )
+    appeal_bundle_path = write_json(
+        anchors / "carrier_rejection_capture_source_bundle_with_appeal_results.json",
+        load_json(_epli_carrier_appeal_bundle(repo_root)),
+    )
+    return {
+        "budget": budget_path,
+        "carrier_bundle": carrier_bundle_path,
+        "appeal_bundle": appeal_bundle_path,
     }
 
 
@@ -195,6 +237,37 @@ def _run_wage_hour_carrier_learning_chain(repo_root, tmp_path):
             learning_dir / "carrier_rejection_learning_report.json"
         ),
         out_dir=tmp_path / "le-wage-hour-reviewed-learning-gate",
+    )
+    return {
+        "carrier_dir": carrier_dir,
+        "review_packet": review_packet,
+        "review_dir": review_dir,
+        "learning_report": learning_report,
+        "learning_dir": learning_dir,
+        "gate_report": gate_report,
+        "gate_dir": gate_dir,
+    }
+
+
+def _run_epli_carrier_learning_chain(repo_root, tmp_path):
+    _, carrier_dir = run_carrier_rejection_capture(
+        _epli_carrier_budget(repo_root),
+        _epli_carrier_appeal_bundle(repo_root),
+        tmp_path / "le-epli-carrier-appeal-replay",
+    )
+    review_packet, review_dir = run_carrier_rejection_review(
+        carrier_dir / "carrier_rejection_reconciliation_report.json",
+        tmp_path / "le-epli-carrier-rejection-review",
+    )
+    learning_report, learning_dir = run_carrier_rejection_learning(
+        review_dir / "carrier_rejection_review_packet.json",
+        tmp_path / "le-epli-carrier-rejection-learning",
+    )
+    gate_report, gate_dir = run_reviewed_learning_gate(
+        carrier_rejection_learning_report_path=(
+            learning_dir / "carrier_rejection_learning_report.json"
+        ),
+        out_dir=tmp_path / "le-epli-reviewed-learning-gate",
     )
     return {
         "carrier_dir": carrier_dir,
@@ -317,6 +390,73 @@ def _wage_hour_reviewed_learning_signal_manifest(runtime_root, anchors, learning
     )
 
 
+def _epli_reviewed_learning_signal_manifest(runtime_root, anchors, learning_report_path):
+    return write_json(
+        runtime_root / "runtime-epli-reviewed-learning-signal-input-pack.json",
+        {
+            "schema_version": "0.1",
+            "manifest_id": "runtime-epli-reviewed-learning-signal-input-pack.v0_1",
+            "status": "candidate_labor_employment_budget_outcome_replay_input_pack_manifest",
+            "practice_area": "labor_employment",
+            "source_builder_binding_report_ref": "synthetic-test-builder-binding-report",
+            "entries": [
+                {
+                    "entry_id": "le-epli-budget-anchor.v0_1",
+                    "learning_fixture_id": "le-learning-epli-carrier-clean.v0_1",
+                    "loop_type": "carrier_rejection_capture",
+                    "expected_artifact_name": "carrier_rejection_reconciliation_report.json",
+                    "required_input_artifact": "legal_budget_proposal.json",
+                    "input_ref": _rel(runtime_root, anchors["budget"]),
+                    "input_role": "builder_input",
+                    "notes": "Same-case synthetic EPLI budget anchor for reviewed learning signal validation.",
+                },
+                {
+                    "entry_id": "le-epli-carrier-anchor.v0_1",
+                    "learning_fixture_id": "le-learning-epli-carrier-clean.v0_1",
+                    "loop_type": "carrier_rejection_capture",
+                    "expected_artifact_name": "carrier_rejection_reconciliation_report.json",
+                    "required_input_artifact": "carrier_rejection_capture_source_bundle.json",
+                    "input_ref": _rel(runtime_root, anchors["carrier_bundle"]),
+                    "input_role": "builder_input",
+                    "notes": "Same-case synthetic EPLI rejection source anchor for reviewed learning signal validation.",
+                },
+                {
+                    "entry_id": "le-epli-appeal-budget-anchor.v0_1",
+                    "learning_fixture_id": "le-learning-epli-carrier-clean.v0_1",
+                    "loop_type": "appeal_outcome",
+                    "expected_artifact_name": "carrier_rejection_decision_ledger_report.json",
+                    "required_input_artifact": "legal_budget_proposal.json",
+                    "input_ref": _rel(runtime_root, anchors["budget"]),
+                    "input_role": "builder_input",
+                    "notes": "Same-case synthetic EPLI budget anchor for appeal-result replay validation.",
+                },
+                {
+                    "entry_id": "le-epli-appeal-source-anchor.v0_1",
+                    "learning_fixture_id": "le-learning-epli-carrier-clean.v0_1",
+                    "loop_type": "appeal_outcome",
+                    "expected_artifact_name": "carrier_rejection_decision_ledger_report.json",
+                    "required_input_artifact": (
+                        "carrier_rejection_capture_source_bundle_with_appeal_results.json"
+                    ),
+                    "input_ref": _rel(runtime_root, anchors["appeal_bundle"]),
+                    "input_role": "builder_input",
+                    "notes": "Same-case synthetic EPLI appeal result anchor for append-only outcome validation.",
+                },
+                {
+                    "entry_id": "le-epli-carrier-learning-signal.v0_1",
+                    "learning_fixture_id": "le-learning-epli-carrier-clean.v0_1",
+                    "loop_type": "reviewed_learning_gate",
+                    "expected_artifact_name": "reviewed_learning_gate_report.json",
+                    "required_input_artifact": "carrier_rejection_learning_report.json",
+                    "input_ref": _rel(runtime_root, learning_report_path),
+                    "input_role": "one_of_signal",
+                    "notes": "Generated synthetic EPLI carrier learning report used as one-of reviewed learning signal.",
+                },
+            ],
+        },
+    )
+
+
 def _learning_report(repo_root, tmp_path):
     _, run_dir = run_labor_employment_budget_learning_fixture_audit(
         manifest_path=_learning_manifest(repo_root),
@@ -382,7 +522,7 @@ def test_labor_employment_budget_replay_input_pack_marks_ready_and_missing_input
     assert report.ready_case_count == 1
     assert report.partial_case_count == 7
     assert report.blocked_case_count == 0
-    assert report.ready_input_count == 21
+    assert report.ready_input_count == 27
     assert report.missing_input_count > 0
     assert report.invalid_input_count == 0
     assert report.one_of_signal_missing_count > 0
@@ -446,6 +586,27 @@ def test_labor_employment_budget_replay_input_pack_marks_ready_and_missing_input
     assert any(
         item.input_role == "one_of_signal" and item.input_status == "missing"
         for item in wage_case.items
+    )
+    epli_case = next(
+        case
+        for case in report.cases
+        if case.learning_fixture_id == "le-learning-epli-carrier-clean.v0_1"
+    )
+    assert epli_case.status == "partially_ready"
+    assert epli_case.ready_input_count == 6
+    assert epli_case.missing_input_count > 0
+    assert {
+        item.required_input_artifact for item in epli_case.items if item.input_status == "ready"
+    } >= {
+        "legal_budget_proposal.json",
+        "carrier_rejection_capture_source_bundle.json",
+        "carrier_rejection_capture_source_bundle_with_appeal_results.json",
+    }
+    assert any(
+        item.loop_type == "reviewed_learning_gate"
+        and item.input_role == "one_of_signal"
+        and item.input_status == "missing"
+        for item in epli_case.items
     )
     assert report.runtime_artifacts_created is False
     assert report.budget_submission_authorized is False
@@ -621,7 +782,7 @@ def test_labor_employment_budget_replay_input_pack_cli_writes_report(
         in captured.out
     )
     assert '"ready_case_count": 1' in captured.out
-    assert '"ready_input_count": 21' in captured.out
+    assert '"ready_input_count": 27' in captured.out
     assert '"invalid_input_count": 0' in captured.out
     assert '"runtime_artifacts_created": false' in captured.out
     assert (
@@ -826,6 +987,91 @@ def test_labor_employment_wage_hour_carrier_rejection_inputs_run_builder(
     assert ledger.sqlite_write_performed is False
     assert ledger.external_writes_performed is False
     assert ledger.appeal_submission_performed is False
+    assert ledger.silent_learning_performed is False
+
+
+def test_labor_employment_epli_carrier_rejection_inputs_run_builder(
+    repo_root,
+    tmp_path,
+):
+    report, run_dir = run_carrier_rejection_capture(
+        _epli_carrier_budget(repo_root),
+        _epli_carrier_bundle(repo_root),
+        tmp_path / "le-epli-carrier-rejection-replay",
+    )
+    ledger = CarrierRejectionDecisionLedgerReport.model_validate(
+        load_json(run_dir / "carrier_rejection_decision_ledger_report.json")
+    )
+
+    assert report.status == "dry_run_ready_for_review"
+    assert report.budget_proposal_id == "le-budget-epli-carrier-clean.v0_1"
+    assert report.preflight_packet_id == "le-preflight-epli-carrier-clean.v0_1"
+    assert report.source_bundle_id == "le-carrier-rejection-epli-carrier-clean.v0_1"
+    assert report.expected_response_count == 2
+    assert report.reconciled_response_count == 2
+    assert report.missing_response_count == 0
+    assert report.unlinked_notice_count == 0
+    assert report.parser_failure_count == 0
+    assert report.appeal_result_count == 0
+    assert {case.local_event_label for case in report.remediation_cases} == {
+        "carrier_preapproval_missing",
+        "carrier_staffing_or_leverage_rejection",
+    }
+    assert {candidate.local_event_label for candidate in report.exception_lake_candidates} >= {
+        "carrier_rejection_learning_candidate",
+    }
+    assert report.not_authorized_for_lake_write is True
+    assert report.not_authorized_for_external_submission is True
+    assert report.external_writes_performed is False
+    assert ledger.status == "decision_ledger_ready_for_review"
+    assert ledger.reconciliation_report_id == report.reconciliation_report_id
+    assert ledger.source_bundle_id == report.source_bundle_id
+    assert ledger.pending_decision_event_count == 2
+    assert ledger.appeal_result_event_count == 0
+    assert ledger.lake_write_performed is False
+    assert ledger.sqlite_write_performed is False
+    assert ledger.external_writes_performed is False
+    assert ledger.appeal_submission_performed is False
+    assert ledger.silent_learning_performed is False
+
+
+def test_labor_employment_epli_carrier_appeal_result_inputs_run_builder(
+    repo_root,
+    tmp_path,
+):
+    report, run_dir = run_carrier_rejection_capture(
+        _epli_carrier_budget(repo_root),
+        _epli_carrier_appeal_bundle(repo_root),
+        tmp_path / "le-epli-carrier-appeal-result-replay",
+    )
+    ledger = CarrierRejectionDecisionLedgerReport.model_validate(
+        load_json(run_dir / "carrier_rejection_decision_ledger_report.json")
+    )
+
+    assert report.status == "dry_run_ready_for_review"
+    assert report.budget_proposal_id == "le-budget-epli-carrier-clean.v0_1"
+    assert report.preflight_packet_id == "le-preflight-epli-carrier-clean.v0_1"
+    assert report.source_bundle_id == "le-carrier-rejection-epli-carrier-clean-appeal.v0_1"
+    assert report.expected_response_count == 2
+    assert report.reconciled_response_count == 2
+    assert report.appeal_result_count == 1
+    assert {case.local_event_label: case.status for case in report.remediation_cases} == {
+        "carrier_staffing_or_leverage_rejection": "appeal_result_captured",
+        "carrier_preapproval_missing": "captured_for_human_review",
+    }
+    assert "carrier_appeal_result_received" in {
+        candidate.local_event_label for candidate in report.exception_lake_candidates
+    }
+    assert report.not_authorized_for_lake_write is True
+    assert report.not_authorized_for_external_submission is True
+    assert report.external_writes_performed is False
+    assert ledger.status == "decision_ledger_ready_for_review"
+    assert ledger.appeal_result_event_count == 1
+    assert ledger.pending_decision_event_count == 1
+    assert ledger.appeal_submission_performed is False
+    assert ledger.lake_write_performed is False
+    assert ledger.sqlite_write_performed is False
+    assert ledger.external_writes_performed is False
     assert ledger.silent_learning_performed is False
 
 
@@ -1220,6 +1466,104 @@ def test_labor_employment_wage_hour_reviewed_learning_signal_runs_and_validates(
     reviewed_signal = next(
         item
         for item in wage_case.items
+        if item.loop_type == "reviewed_learning_gate" and item.input_role == "one_of_signal"
+    )
+
+    assert report.invalid_input_count == 0
+    assert reviewed_signal.input_status == "ready"
+    assert reviewed_signal.selected_alternative_artifacts == [
+        "carrier_rejection_learning_report.json"
+    ]
+    assert reviewed_signal.validation_model == "CarrierRejectionLearningReport"
+    assert "At least one reviewed learning signal validated" in reviewed_signal.validation_message
+    assert "reviewed_learning_signal_input_candidate" in (
+        reviewed_signal.candidate_exception_lake_labels
+    )
+
+
+def test_labor_employment_epli_carrier_reviewed_learning_signal_runs_and_validates(
+    repo_root,
+    tmp_path,
+):
+    chain = _run_epli_carrier_learning_chain(repo_root, tmp_path)
+    runtime_root = tmp_path / "runtime-epli-reviewed-learning-input-pack"
+    anchors = _stage_epli_case_anchors(repo_root, runtime_root)
+    learning_report_path = write_json(
+        runtime_root / "runtime" / "carrier_rejection_learning_report.json",
+        load_json(chain["learning_dir"] / "carrier_rejection_learning_report.json"),
+    )
+    manifest_path = _epli_reviewed_learning_signal_manifest(
+        runtime_root,
+        anchors,
+        learning_report_path,
+    )
+    review_packet = CarrierRejectionReviewPacket.model_validate(
+        load_json(chain["review_dir"] / "carrier_rejection_review_packet.json")
+    )
+    learning_report = CarrierRejectionLearningReport.model_validate(load_json(learning_report_path))
+    gate_report = ReviewedLearningGateReport.model_validate(
+        load_json(chain["gate_dir"] / "reviewed_learning_gate_report.json")
+    )
+
+    assert review_packet.status == "ready_for_human_review"
+    assert review_packet.remediation_case_count == 2
+    assert review_packet.appeal_result_count == 1
+    assert review_packet.total_financial_exposure == 3900
+    assert {item.recommended_action for item in review_packet.recommendations} == {
+        "appeal_review_required",
+        "record_appeal_result",
+    }
+    assert {item.priority for item in review_packet.recommendations} == {"high"}
+    assert learning_report.status == "candidate_learning_ready_for_review"
+    assert learning_report.proposal_count == 5
+    assert {proposal.proposal_type for proposal in learning_report.proposals} == {
+        "appeal_outcome_candidate",
+        "guideline_profile_change_candidate",
+        "preapproval_gate_candidate",
+        "staffing_rule_candidate",
+        "validation_rule_candidate",
+    }
+    assert {proposal.target_learning_loop for proposal in learning_report.proposals} == {
+        "appeal_success_or_failure",
+        "guideline_drift",
+        "preapproval_gate",
+        "staffing_leverage",
+        "validation_rule",
+    }
+    assert all(
+        proposal.status == "blocked_until_reviewed_outcome"
+        for proposal in learning_report.proposals
+    )
+    assert gate_report.status == "candidate_learning_gate_ready"
+    assert gate_report.carrier_learning_candidate_count == 5
+    assert gate_report.target_learning_loops == [
+        "appeal_success_or_failure",
+        "guideline_drift",
+        "preapproval_gate",
+        "staffing_leverage",
+        "validation_rule",
+    ]
+    assert set(gate_report.target_owners) == {"LawFirm-os-intake", "LawFirm-os-orchestrator"}
+    assert all(
+        candidate.status == "blocked_until_reviewed_learning_gate"
+        for candidate in gate_report.candidates
+    )
+
+    report, _ = run_labor_employment_budget_outcome_replay_input_pack_audit(
+        builder_binding_report_path=_builder_binding_report(repo_root, tmp_path),
+        input_pack_manifest_path=manifest_path,
+        repo_root=runtime_root,
+        out_dir=tmp_path / "le-epli-input-pack-reviewed-signal",
+        generated_at="2026-07-04T00:00:00Z",
+    )
+    epli_case = next(
+        case
+        for case in report.cases
+        if case.learning_fixture_id == "le-learning-epli-carrier-clean.v0_1"
+    )
+    reviewed_signal = next(
+        item
+        for item in epli_case.items
         if item.loop_type == "reviewed_learning_gate" and item.input_role == "one_of_signal"
     )
 

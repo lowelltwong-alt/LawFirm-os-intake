@@ -1,0 +1,205 @@
+{
+  "schema_version": "0.1",
+  "budget_proposal_id": "le-budget-epli-carrier-clean.v0_1",
+  "preflight_packet_id": "le-preflight-epli-carrier-clean.v0_1",
+  "confirmation_id": "le-confirmation-epli-carrier-clean.v0_1",
+  "practice_profile_id": "synthetic-labor-employment-defense.v0_1",
+  "matter_family": "epli_carrier_assignment",
+  "representation_posture": "defense",
+  "pricing_status": "priced",
+  "currency": "USD",
+  "lines": [
+    {
+      "phase_id": "L100",
+      "phase_name": "Case Assessment",
+      "task_id": "L110",
+      "task_name": "EPLI assignment, party-role, and coverage intake review",
+      "staffing_role": "partner",
+      "estimated_hours": 6,
+      "hourly_rate": 450,
+      "rate_source": "synthetic_profile",
+      "rate_is_synthetic": true,
+      "estimated_fees": 2700,
+      "estimated_expenses": 0,
+      "calculation_formula": "6h * 450 synthetic partner rate",
+      "external_code_candidate": "L110",
+      "assumptions": [
+        "Synthetic clean EPLI assignment with carrier, TPA, insured, claimant, and opposing counsel role candidates kept separate."
+      ],
+      "estimate_basis": "template_default",
+      "estimate_basis_refs": [
+        "examples/synthetic/labor-employment/labor-employment-budget-learning-fixtures.json#le-learning-epli-carrier-clean.v0_1"
+      ]
+    },
+    {
+      "phase_id": "L100",
+      "phase_name": "Case Assessment",
+      "task_id": "L120",
+      "task_name": "Carrier guideline and synthetic rate schedule review",
+      "staffing_role": "associate",
+      "estimated_hours": 10,
+      "hourly_rate": 275,
+      "rate_source": "synthetic_profile",
+      "rate_is_synthetic": true,
+      "estimated_fees": 2750,
+      "estimated_expenses": 0,
+      "calculation_formula": "10h * 275 synthetic associate rate",
+      "external_code_candidate": "L120",
+      "assumptions": [
+        "Synthetic carrier guideline and rate-schedule placeholders are present but remain not authorized as carrier panel rates."
+      ],
+      "estimate_basis": "template_default",
+      "estimate_basis_refs": [
+        "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/legal_budget_proposal.json#line:L120"
+      ]
+    },
+    {
+      "phase_id": "L200",
+      "phase_name": "Pleadings And Motions",
+      "task_id": "L210",
+      "task_name": "Initial response strategy and preservation assessment",
+      "staffing_role": "associate",
+      "estimated_hours": 24,
+      "hourly_rate": 275,
+      "rate_source": "synthetic_profile",
+      "rate_is_synthetic": true,
+      "estimated_fees": 6600,
+      "estimated_expenses": 0,
+      "calculation_formula": "24h * 275 synthetic associate rate",
+      "external_code_candidate": "L210",
+      "estimate_basis": "template_default",
+      "estimate_basis_refs": [
+        "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/legal_budget_proposal.json#line:L210"
+      ]
+    },
+    {
+      "phase_id": "L300",
+      "phase_name": "Discovery",
+      "task_id": "L310",
+      "task_name": "Written discovery, personnel file, and coverage-sensitive document review",
+      "staffing_role": "associate",
+      "estimated_hours": 42,
+      "hourly_rate": 275,
+      "rate_source": "synthetic_profile",
+      "rate_is_synthetic": true,
+      "estimated_fees": 11550,
+      "estimated_expenses": 0,
+      "calculation_formula": "42h * 275 synthetic associate rate",
+      "external_code_candidate": "L310",
+      "estimate_basis": "template_default",
+      "estimate_basis_refs": [
+        "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/legal_budget_proposal.json#line:L310"
+      ]
+    },
+    {
+      "phase_id": "L300",
+      "phase_name": "Discovery",
+      "task_id": "L330",
+      "task_name": "Depositions and witness preparation under carrier guideline",
+      "staffing_role": "senior_associate",
+      "estimated_hours": 34,
+      "hourly_rate": 325,
+      "rate_source": "synthetic_profile",
+      "rate_is_synthetic": true,
+      "estimated_fees": 11050,
+      "estimated_expenses": 2600,
+      "calculation_formula": "34h * 325 synthetic senior associate rate + synthetic court reporter estimate",
+      "external_code_candidate": "L330",
+      "expense_code": "E112",
+      "assumptions": [
+        "Synthetic claimant deposition plus insured witness preparation; expert and vendor needs remain unresolved."
+      ],
+      "estimate_basis": "template_default",
+      "estimate_basis_refs": [
+        "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/legal_budget_proposal.json#line:L330"
+      ]
+    },
+    {
+      "phase_id": "L300",
+      "phase_name": "Discovery",
+      "task_id": "L330",
+      "task_name": "Deposition exhibit and chronology support",
+      "staffing_role": "paralegal",
+      "estimated_hours": 22,
+      "hourly_rate": 145,
+      "rate_source": "synthetic_profile",
+      "rate_is_synthetic": true,
+      "estimated_fees": 3190,
+      "estimated_expenses": 0,
+      "calculation_formula": "22h * 145 synthetic paralegal rate",
+      "external_code_candidate": "L330",
+      "estimate_basis": "template_default",
+      "estimate_basis_refs": [
+        "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/legal_budget_proposal.json#line:L330-paralegal"
+      ]
+    },
+    {
+      "phase_id": "L400",
+      "phase_name": "Trial Preparation And Dispositive Motions",
+      "task_id": "L420",
+      "task_name": "Dispositive motion and carrier reporting strategy",
+      "staffing_role": "partner",
+      "estimated_hours": 14,
+      "hourly_rate": 450,
+      "rate_source": "synthetic_profile",
+      "rate_is_synthetic": true,
+      "estimated_fees": 6300,
+      "estimated_expenses": 0,
+      "calculation_formula": "14h * 450 synthetic partner rate",
+      "external_code_candidate": "L420",
+      "estimate_basis": "template_default",
+      "estimate_basis_refs": [
+        "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/legal_budget_proposal.json#line:L420"
+      ]
+    },
+    {
+      "phase_id": "L500",
+      "phase_name": "Settlement And Mediation",
+      "task_id": "L510",
+      "task_name": "Mediation preparation and EPLI reporting package",
+      "staffing_role": "senior_associate",
+      "estimated_hours": 18,
+      "hourly_rate": 325,
+      "rate_source": "synthetic_profile",
+      "rate_is_synthetic": true,
+      "estimated_fees": 5850,
+      "estimated_expenses": 1500,
+      "calculation_formula": "18h * 325 synthetic senior associate rate + synthetic mediation expense estimate",
+      "external_code_candidate": "L510",
+      "expense_code": "E124",
+      "estimate_basis": "template_default",
+      "estimate_basis_refs": [
+        "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/legal_budget_proposal.json#line:L510"
+      ]
+    }
+  ],
+  "subtotal_fees": 49990,
+  "subtotal_expenses": 4100,
+  "contingency_percent": 0,
+  "contingency_amount": 0,
+  "total_proposed_budget": 54090,
+  "scenario_name": "standard",
+  "headline_subtotal_fees": 49990,
+  "headline_subtotal_expenses": 4100,
+  "headline_contingency_amount": 0,
+  "headline_total_proposed_budget": 54090,
+  "expected_value_method": "not_computed",
+  "assumptions": [
+    "Synthetic-only L&E EPLI carrier-assignment replay budget for deterministic QA.",
+    "Rates are synthetic placeholders and are not authorized carrier panel rates."
+  ],
+  "exclusions": [
+    "No appeal submission, carrier submission, matter opening, or client budget authorization."
+  ],
+  "unknowns": [
+    "Represented-client identity, payer role, preapproval thresholds, expert/vendor needs, and carrier guideline effect remain human-review items."
+  ],
+  "display_banner": {
+    "data_scope": "synthetic_only",
+    "candidate_only": true,
+    "not_authorized_for_client_submission": true,
+    "not_authorized_as_carrier_panel_rates": true
+  },
+  "approval_state": "proposed_for_human_review",
+  "not_authorized_for_client_submission": true
+}
