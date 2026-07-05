@@ -1,0 +1,103 @@
+{
+  "schema_version": "0.1",
+  "issue_id": "ui-bundle-source-hash-coherence-001",
+  "issue_version": "0.1.0",
+  "observed_at": "2026-07-05T00:00:00Z",
+  "source_repo_id": "LawFirm-os-intake",
+  "source_repo_path": "LawFirm-os-intake",
+  "originating_agent": "codex",
+  "review_context": "Rust leaf-tool slice adding deterministic source-hash verification for the read-only UI review data bundle.",
+  "finding_title": "UI review data bundles can retain stale source hashes after detail reports change.",
+  "severity": "P2",
+  "issue_classes": [
+    "test_gap",
+    "ui_authority_risk",
+    "synthetic_data_gap",
+    "learning_loop_gap",
+    "performance_or_rust_candidate",
+    "exception_lake_mapping_gap"
+  ],
+  "finding_summary": "The UI review data bundle records the detail reports the frontend can render and their source_sha256 values. Without a raw-byte hash coherence gate, checked demo bundles can keep stale source hashes even when the detail report JSON files have changed.",
+  "observable_context": [
+    "The UI review data bundle contract records 21 present detail reports in the checked frontend fixture.",
+    "The new Rust UI bundle source-hash checker resolves both generated run-root artifact refs and checked demo fixture names.",
+    "Running the checker against apps/legal-intake-budget/src/fixtures/demo-ui-review-data-bundle.json reported 21 checked detail reports, 2 matching hashes, 19 hash mismatches, 0 missing source files, and 0 invalid source hashes.",
+    "The checker hashes raw file bytes, not canonicalized JSON, and refuses out-of-root artifact refs.",
+    "Full validation after implementation passed with 647 tests and smoke demo ended at blocked_pending_conflicts_and_engagement."
+  ],
+  "observable_decision_logic": [
+    "Bundle source hashes are evidence bindings, not display decoration.",
+    "Generated run-root artifact refs and checked demo fixture refs need different deterministic resolution rules.",
+    "A checker must report stale hashes without regenerating the bundle, because repair and detection are separate governance actions.",
+    "Out-of-root artifact refs must fail closed even if the hash would otherwise match."
+  ],
+  "solution_path": [
+    "Add the ui_bundle_source_hash_checker Rust binary beside the fixture boundary, manifest, and snapshot coherence tools.",
+    "Add a Python wrapper and CLI command named build-rust-ui-bundle-source-hash-report.",
+    "Add Pydantic report models and exported JSON schemas for checked detail rows and failures.",
+    "Add focused tests for generated run-root resolution, checked demo-name resolution, hash mismatch, missing source, invalid hash, CLI behavior, and out-of-root artifact refs.",
+    "Document the command in the Rust fixture tools doc and the frontend README."
+  ],
+  "fix_status": "fixed_validated",
+  "fix_refs": [
+    "rust/fixture-boundary-checker/src/bin/ui_bundle_source_hash_checker.rs",
+    "src/lawfirm_os_intake/rust_ui_bundle_source_hash.py",
+    "src/lawfirm_os_intake/cli.py",
+    "src/lawfirm_os_intake/models.py",
+    "docs/rust-fixture-boundary-checker.md",
+    "apps/legal-intake-budget/README.md"
+  ],
+  "test_refs": [
+    "tests/test_rust_ui_bundle_source_hash.py",
+    "python scripts/run_full_pytest.py tests/test_rust_ui_bundle_source_hash.py tests/test_rust_fixture_boundary_checker.py tests/test_ui_review_data_bundle.py",
+    "python scripts/run_validation_suite.py"
+  ],
+  "artifact_refs": [
+    "apps/legal-intake-budget/src/fixtures/demo-ui-review-data-bundle.json",
+    "schemas/rust-ui-bundle-source-hash-report.schema.json",
+    "examples/synthetic/dad-review-issues/ui-fixture-manifest-snapshot-coherence.issue.json"
+  ],
+  "candidate_exception_labels": [
+    "ui_bundle_source_hash_drift",
+    "ui_detail_source_hash_mismatch",
+    "ui_detail_source_file_missing",
+    "ui_detail_source_hash_invalid",
+    "ui_detail_artifact_ref_out_of_root",
+    "read_only_ui_evidence_binding_required",
+    "dad_learning_loop_candidate"
+  ],
+  "applies_when": [
+    "A read-only UI review data bundle lists local detail reports and source_sha256 evidence bindings.",
+    "A checked demo bundle uses placeholder run-root refs but is expected to represent current local fixture files.",
+    "A QA dashboard or DAD workflow needs to classify stale displayed evidence separately from missing source files."
+  ],
+  "does_not_apply_when": [
+    "The bundle is intentionally historical and is not being used as current display evidence.",
+    "The report source is outside the local JSON fixture/run root by design under an owner-approved runtime contract.",
+    "The issue concerns semantic correctness of a detail report rather than raw-byte source binding."
+  ],
+  "danger_if_misapplied": "If stale source hashes are ignored, the frontend can display outdated or changed evidence as if it were hash-bound. If the checker auto-repairs bundles, it can hide review-significant drift.",
+  "suggested_actions": [
+    "DAD should classify UI bundle source-hash drift separately from fixture manifest drift.",
+    "DAD should treat out-of-root artifact refs as a boundary exception candidate.",
+    "Future UI refresh tooling should call this gate before claiming checked demo bundles are current."
+  ],
+  "reviewer_notes": [
+    "This record contains synthetic fixture and local artifact references only.",
+    "It records observable evidence, decision logic, fix refs, and test refs without hidden chain-of-thought."
+  ],
+  "red_team_notes": [
+    "Do not let a passed source-hash report imply budget approval, production readiness, Lake admission, or calibration.",
+    "Do not use this checker to regenerate fixtures or mutate source reports.",
+    "Do not promote local candidate report schemas to Semantic Substrate canon from this repo."
+  ],
+  "raw_private_payload_included": false,
+  "hidden_chain_of_thought_included": false,
+  "candidate_only": true,
+  "dad_outbox_required": true,
+  "dad_review_required_before_promotion": true,
+  "lake_write_performed": false,
+  "sqlite_write_performed": false,
+  "external_writes_performed": false,
+  "silent_learning_performed": false
+}

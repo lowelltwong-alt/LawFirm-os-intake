@@ -94,3 +94,19 @@ python -m lawfirm_os_intake build-ui-review-data-bundle \
 That bundle records which local JSON detail reports the frontend can render, with
 hashes and no-write checks. It does not copy source payloads or grant mutation
 authority.
+
+Verify that the bundle's `source_sha256` fields still match the current local
+detail-report JSON files with:
+
+```bash
+python -m lawfirm_os_intake build-rust-ui-bundle-source-hash-report \
+  --root apps/legal-intake-budget/src/fixtures \
+  --bundle apps/legal-intake-budget/src/fixtures/demo-ui-review-data-bundle.json \
+  --out-dir .lawfirm-os-intake/rust-ui-bundle-source-hash \
+  --repo-root .
+```
+
+This Rust checker is a read-only drift detector. It resolves generated run-root
+paths and checked `demo-...` fixture names, hashes raw file bytes, and fails
+closed on missing sources, invalid hashes, out-of-root source refs, or hash
+mismatches.

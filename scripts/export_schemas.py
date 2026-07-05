@@ -335,6 +335,9 @@ from lawfirm_os_intake.models import (  # noqa: E402
     RustFixtureSnapshotCoherenceReport,
     RustFixtureSnapshotCoherenceSkippedFile,
     RustIngestionReadinessReport,
+    RustUIBundleSourceHashDetail,
+    RustUIBundleSourceHashFailure,
+    RustUIBundleSourceHashReport,
     RustTransitionPolicy,
     SafetyGateReport,
     Segment,
@@ -437,6 +440,9 @@ MODELS = {
     "rust-fixture-snapshot-coherence-skipped-file.schema.json": (
         RustFixtureSnapshotCoherenceSkippedFile
     ),
+    "rust-ui-bundle-source-hash-detail.schema.json": RustUIBundleSourceHashDetail,
+    "rust-ui-bundle-source-hash-failure.schema.json": RustUIBundleSourceHashFailure,
+    "rust-ui-bundle-source-hash-report.schema.json": RustUIBundleSourceHashReport,
     "ui-review-data-bundle-detail-report.schema.json": UIReviewDataBundleDetailReport,
     "ui-review-data-bundle.schema.json": UIReviewDataBundle,
     "rust-ingestion-readiness-report.schema.json": RustIngestionReadinessReport,

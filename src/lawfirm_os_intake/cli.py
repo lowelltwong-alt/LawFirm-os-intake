@@ -142,6 +142,7 @@ from .reviewed_learning_gate import run_reviewed_learning_gate
 from .rust_fixture_boundary import run_rust_fixture_boundary_check
 from .rust_fixture_manifest import run_rust_fixture_manifest_scan
 from .rust_fixture_snapshot_coherence import run_rust_fixture_snapshot_coherence_check
+from .rust_ui_bundle_source_hash import run_rust_ui_bundle_source_hash_check
 from .synthetic_fixture_depth_audit import run_synthetic_fixture_depth_audit
 from .synthetic_fixture_expansion import run_synthetic_fixture_expansion_audit
 from .synthetic_confidence_summary import run_synthetic_confidence_summary
@@ -449,6 +450,28 @@ def _parser() -> argparse.ArgumentParser:
         help="Repository root containing rust/fixture-boundary-checker/Cargo.toml.",
     )
     rust_fixture_snapshot_coherence.add_argument(
+        "--timeout-seconds",
+        type=int,
+        default=240,
+        help="Timeout for the explicit Rust checker invocation.",
+    )
+
+    rust_ui_bundle_source_hash = sub.add_parser(
+        "build-rust-ui-bundle-source-hash-report",
+        help=(
+            "Run the local Rust UI bundle source-hash checker against local JSON "
+            "detail reports and emit a candidate-only drift report."
+        ),
+    )
+    rust_ui_bundle_source_hash.add_argument("--root", required=True)
+    rust_ui_bundle_source_hash.add_argument("--bundle", required=True)
+    rust_ui_bundle_source_hash.add_argument("--out-dir", required=True)
+    rust_ui_bundle_source_hash.add_argument(
+        "--repo-root",
+        default=".",
+        help="Repository root containing rust/fixture-boundary-checker/Cargo.toml.",
+    )
+    rust_ui_bundle_source_hash.add_argument(
         "--timeout-seconds",
         type=int,
         default=240,
@@ -2266,6 +2289,35 @@ def main(argv: list[str] | None = None) -> int:
                     "changed_file_count": report.changed_file_count,
                     "missing_file_count": report.missing_file_count,
                     "unexpected_file_count": report.unexpected_file_count,
+                    "failure_count": report.failure_count,
+                    "external_writes_performed": report.external_writes_performed,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "budget_submission_authorized": report.budget_submission_authorized,
+                    "matter_opening_authorized": report.matter_opening_authorized,
+                }
+            )
+            return 0 if report.status == "passed" else 2
+
+        if args.command == "build-rust-ui-bundle-source-hash-report":
+            report, report_path = run_rust_ui_bundle_source_hash_check(
+                root=args.root,
+                bundle=args.bundle,
+                out_dir=args.out_dir,
+                repo_root=args.repo_root,
+                timeout_seconds=args.timeout_seconds,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "report_path": str(report_path),
+                    "detail_report_count": report.detail_report_count,
+                    "present_detail_report_count": report.present_detail_report_count,
+                    "checked_detail_report_count": report.checked_detail_report_count,
+                    "matched_detail_report_count": report.matched_detail_report_count,
+                    "hash_mismatch_count": report.hash_mismatch_count,
+                    "missing_source_file_count": report.missing_source_file_count,
+                    "invalid_source_hash_count": report.invalid_source_hash_count,
                     "failure_count": report.failure_count,
                     "external_writes_performed": report.external_writes_performed,
                     "lake_write_performed": report.lake_write_performed,

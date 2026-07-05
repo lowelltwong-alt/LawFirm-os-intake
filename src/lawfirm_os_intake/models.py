@@ -12758,6 +12758,139 @@ class RustFixtureSnapshotCoherenceReport(StrictModel):
         return self
 
 
+class RustUIBundleSourceHashDetail(StrictModel):
+    detail_report_id: str
+    report_kind: str
+    file_name: str
+    artifact_ref: str | None = None
+    expected_sha256: str | None = None
+    actual_sha256: str | None = None
+    resolved_path: str | None = None
+    resolution_strategy: str | None = None
+    status: Literal[
+        "matched",
+        "hash_mismatch",
+        "source_missing",
+        "invalid_source_hash",
+        "skipped_not_present",
+    ]
+
+    @model_validator(mode="after")
+    def rust_ui_bundle_detail_hashes_match_status(self) -> "RustUIBundleSourceHashDetail":
+        if self.expected_sha256 is not None and not _is_sha256_ref(self.expected_sha256):
+            raise ValueError("Rust UI bundle expected hash must be sha256:<64 hex>")
+        if self.actual_sha256 is not None and not _is_sha256_ref(self.actual_sha256):
+            raise ValueError("Rust UI bundle actual hash must be sha256:<64 hex>")
+        if self.status in {"matched", "hash_mismatch"} and not (
+            self.actual_sha256 and self.resolved_path
+        ):
+            raise ValueError("checked UI bundle detail requires actual hash and resolved path")
+        if self.status == "matched" and self.expected_sha256 != self.actual_sha256:
+            raise ValueError("matched UI bundle detail requires equal expected and actual hashes")
+        if self.status == "hash_mismatch" and self.expected_sha256 == self.actual_sha256:
+            raise ValueError("mismatched UI bundle detail requires different hashes")
+        return self
+
+
+class RustUIBundleSourceHashFailure(StrictModel):
+    detail_report_id: str | None = None
+    file_name: str
+    check: str
+    expected_sha256: str | None = None
+    actual_sha256: str | None = None
+    message: str
+
+
+class RustUIBundleSourceHashReport(StrictModel):
+    schema_version: str = "0.1"
+    checker: Literal["ui-bundle-source-hash-checker"]
+    status: Literal["passed", "failed"]
+    root: str
+    bundle_ref: str
+    detail_report_count: int = Field(ge=0)
+    present_detail_report_count: int = Field(ge=0)
+    checked_detail_report_count: int = Field(ge=0)
+    matched_detail_report_count: int = Field(ge=0)
+    hash_mismatch_count: int = Field(ge=0)
+    missing_source_file_count: int = Field(ge=0)
+    invalid_source_hash_count: int = Field(ge=0)
+    skipped_detail_report_count: int = Field(ge=0)
+    checker_error_count: int = Field(ge=0)
+    details: list[RustUIBundleSourceHashDetail] = Field(default_factory=list)
+    failure_count: int = Field(ge=0)
+    failures: list[RustUIBundleSourceHashFailure] = Field(default_factory=list)
+    candidate_only: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    local_json_only: Literal[True] = True
+    external_writes_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def rust_ui_bundle_source_hash_counts_and_status_match(
+        self,
+    ) -> "RustUIBundleSourceHashReport":
+        if self.detail_report_count != len(self.details):
+            raise ValueError("Rust UI bundle source-hash detail count mismatch")
+        if self.skipped_detail_report_count != len(
+            [detail for detail in self.details if detail.status == "skipped_not_present"]
+        ):
+            raise ValueError("Rust UI bundle source-hash skipped count mismatch")
+        if self.matched_detail_report_count != len(
+            [detail for detail in self.details if detail.status == "matched"]
+        ):
+            raise ValueError("Rust UI bundle source-hash matched count mismatch")
+        if self.hash_mismatch_count != len(
+            [detail for detail in self.details if detail.status == "hash_mismatch"]
+        ):
+            raise ValueError("Rust UI bundle source-hash mismatch count mismatch")
+        if self.missing_source_file_count != len(
+            [detail for detail in self.details if detail.status == "source_missing"]
+        ):
+            raise ValueError("Rust UI bundle source-hash missing count mismatch")
+        if self.invalid_source_hash_count != len(
+            [detail for detail in self.details if detail.status == "invalid_source_hash"]
+        ):
+            raise ValueError("Rust UI bundle source-hash invalid hash count mismatch")
+        if self.checked_detail_report_count != (
+            self.matched_detail_report_count + self.hash_mismatch_count
+        ):
+            raise ValueError("Rust UI bundle source-hash checked count mismatch")
+        if self.present_detail_report_count != (
+            self.checked_detail_report_count
+            + self.missing_source_file_count
+            + self.invalid_source_hash_count
+        ):
+            raise ValueError("Rust UI bundle source-hash present count mismatch")
+        if self.detail_report_count != self.present_detail_report_count + (
+            self.skipped_detail_report_count
+        ):
+            raise ValueError("Rust UI bundle source-hash detail/present count mismatch")
+        if self.failure_count != len(self.failures):
+            raise ValueError("Rust UI bundle source-hash failure count mismatch")
+        if self.failure_count != (
+            self.hash_mismatch_count
+            + self.missing_source_file_count
+            + self.invalid_source_hash_count
+            + self.checker_error_count
+        ):
+            raise ValueError("Rust UI bundle source-hash failure category count mismatch")
+        for failure in self.failures:
+            if failure.expected_sha256 is not None and not _is_sha256_ref(failure.expected_sha256):
+                raise ValueError("Rust UI bundle failure expected hash must be sha256:<64 hex>")
+            if failure.actual_sha256 is not None and not _is_sha256_ref(failure.actual_sha256):
+                raise ValueError("Rust UI bundle failure actual hash must be sha256:<64 hex>")
+        if self.status == "passed" and self.failures:
+            raise ValueError("passed Rust UI bundle source-hash report cannot include failures")
+        if self.status == "failed" and not self.failures:
+            raise ValueError("failed Rust UI bundle source-hash report requires failures")
+        return self
+
+
 def _is_sha256_ref(value: str) -> bool:
     if len(value) != len("sha256:") + 64 or not value.startswith("sha256:"):
         return False
