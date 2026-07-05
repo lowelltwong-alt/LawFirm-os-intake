@@ -1,9 +1,9 @@
 {
   "schema_version": "0.1",
-  "builder_binding_report_id": "lebudgetreplaybinding_8b4de54b2d154b02",
+  "builder_binding_report_id": "lebudgetreplaybinding_08e62ee9be5a15e4",
   "status": "labor_employment_budget_replay_builder_binding_ready_for_review",
   "source_execution_report_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\labor_employment_budget_outcome_replay_execution_report.json",
-  "source_execution_report_id": "lebudgetoutcomeexecution_772c2d1aad1e4aef",
+  "source_execution_report_id": "lebudgetoutcomeexecution_5368f6044f271c01",
   "source_execution_report_status": "labor_employment_budget_outcome_replay_execution_ready_for_review",
   "fixture_count": 8,
   "case_count": 8,
@@ -14,7 +14,7 @@
   "unknown_artifact_count": 0,
   "blocked_slot_count": 0,
   "replay_input_gap_count": 47,
-  "missing_case_prerequisite_count": 26,
+  "missing_case_prerequisite_count": 27,
   "builder_contracts": [
     {
       "artifact_name": "budget_actual_comparison_report.json",
@@ -230,7 +230,8 @@
       ],
       "required_input_artifacts": [
         "labor_employment_budget_output_expectations_report.json",
-        "labor_employment_blocked_driver_impact_review_report.json"
+        "labor_employment_blocked_driver_impact_review_report.json",
+        "labor_employment_executable_coverage_report.json"
       ],
       "intermediate_artifacts": [],
       "side_effect_boundary": "local_candidate_files_only",
@@ -736,7 +737,7 @@
         "le-learning-discrimination-harassment-clean.v0_1",
         "le-learning-discrimination-harassment-clean.v0_1",
         "le-discrimination-harassment-clean.executable.v0_1",
-        "<repo-root>\\examples\\synthetic\\labor-employment\\labor-employment-budget-outcome-replay-seeds.json",
+        "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\examples\\synthetic\\labor-employment\\labor-employment-budget-outcome-replay-seeds.json",
         "examples/synthetic/labor-employment/executable-fixtures/le-discrimination-harassment-clean.source-bundle.json",
         "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-discrimination-harassment-clean.v0_1/actuals_variance",
         "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-discrimination-harassment-clean.v0_1/appeal_outcome",
@@ -746,7 +747,7 @@
         "labor-employment-budget-learning-fixtures.v0_1",
         "le-discrimination-harassment-clean.executable.v0_1",
         "le-learning-discrimination-harassment-clean.v0_1",
-        "lebudgetqagate_2dc6a1a1434adde3"
+        "lebudgetqagate_04b7fc7bfe14c5ec"
       ],
       "failure_ids": [],
       "candidate_only": true,
@@ -1120,7 +1121,7 @@
         "le-learning-wage-hour-clean.v0_1",
         "le-learning-wage-hour-clean.v0_1",
         "le-wage-hour-clean.executable.v0_1",
-        "<repo-root>\\examples\\synthetic\\labor-employment\\labor-employment-budget-outcome-replay-seeds.json",
+        "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\examples\\synthetic\\labor-employment\\labor-employment-budget-outcome-replay-seeds.json",
         "examples/synthetic/labor-employment/executable-fixtures/le-wage-hour-clean.source-bundle.json",
         "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-wage-hour-clean.v0_1/actuals_variance",
         "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-wage-hour-clean.v0_1/carrier_rejection_capture",
@@ -1129,7 +1130,7 @@
         "labor-employment-budget-learning-fixtures.v0_1",
         "le-learning-wage-hour-clean.v0_1",
         "le-wage-hour-clean.executable.v0_1",
-        "lebudgetqagate_2dc6a1a1434adde3"
+        "lebudgetqagate_04b7fc7bfe14c5ec"
       ],
       "failure_ids": [],
       "candidate_only": true,
@@ -1502,7 +1503,7 @@
         "le-learning-epli-carrier-clean.v0_1",
         "le-learning-epli-carrier-clean.v0_1",
         "le-epli-carrier-clean.executable.v0_1",
-        "<repo-root>\\examples\\synthetic\\labor-employment\\labor-employment-budget-outcome-replay-seeds.json",
+        "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\examples\\synthetic\\labor-employment\\labor-employment-budget-outcome-replay-seeds.json",
         "examples/synthetic/labor-employment/executable-fixtures/le-epli-carrier-clean.source-bundle.json",
         "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-epli-carrier-clean.v0_1/appeal_outcome",
         "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-epli-carrier-clean.v0_1/carrier_rejection_capture",
@@ -1511,7 +1512,7 @@
         "labor-employment-budget-learning-fixtures.v0_1",
         "le-epli-carrier-clean.executable.v0_1",
         "le-learning-epli-carrier-clean.v0_1",
-        "lebudgetqagate_2dc6a1a1434adde3"
+        "lebudgetqagate_04b7fc7bfe14c5ec"
       ],
       "failure_ids": [],
       "candidate_only": true,
@@ -1773,7 +1774,7 @@
         "le-learning-retaliation-messy-thread.v0_1",
         "le-learning-retaliation-messy-thread.v0_1",
         "le-retaliation-wrongful-termination-messy-thread.executable.v0_1",
-        "<repo-root>\\examples\\synthetic\\labor-employment\\labor-employment-budget-outcome-replay-seeds.json",
+        "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\examples\\synthetic\\labor-employment\\labor-employment-budget-outcome-replay-seeds.json",
         "examples/synthetic/labor-employment/executable-fixtures/le-retaliation-wrongful-termination-messy-thread.source-bundle.json",
         "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-retaliation-messy-thread.v0_1/actuals_variance",
         "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-retaliation-messy-thread.v0_1/reviewed_learning_gate",
@@ -1781,7 +1782,7 @@
         "labor-employment-budget-learning-fixtures.v0_1",
         "le-learning-retaliation-messy-thread.v0_1",
         "le-retaliation-wrongful-termination-messy-thread.executable.v0_1",
-        "lebudgetqagate_2dc6a1a1434adde3"
+        "lebudgetqagate_04b7fc7bfe14c5ec"
       ],
       "failure_ids": [],
       "candidate_only": true,
@@ -2043,7 +2044,7 @@
         "le-learning-class-collective-clean.v0_1",
         "le-learning-class-collective-clean.v0_1",
         "le-class-collective-clean.executable.v0_1",
-        "<repo-root>\\examples\\synthetic\\labor-employment\\labor-employment-budget-outcome-replay-seeds.json",
+        "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\examples\\synthetic\\labor-employment\\labor-employment-budget-outcome-replay-seeds.json",
         "examples/synthetic/labor-employment/executable-fixtures/le-class-collective-clean.source-bundle.json",
         "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-class-collective-clean.v0_1/actuals_variance",
         "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-class-collective-clean.v0_1/reviewed_learning_gate",
@@ -2051,7 +2052,7 @@
         "labor-employment-budget-learning-fixtures.v0_1",
         "le-class-collective-clean.executable.v0_1",
         "le-learning-class-collective-clean.v0_1",
-        "lebudgetqagate_2dc6a1a1434adde3"
+        "lebudgetqagate_04b7fc7bfe14c5ec"
       ],
       "failure_ids": [],
       "candidate_only": true,
@@ -2315,7 +2316,7 @@
         "le-learning-restrictive-covenant-messy-thread.v0_1",
         "le-learning-restrictive-covenant-messy-thread.v0_1",
         "le-restrictive-covenant-messy-thread.executable.v0_1",
-        "<repo-root>\\examples\\synthetic\\labor-employment\\labor-employment-budget-outcome-replay-seeds.json",
+        "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\examples\\synthetic\\labor-employment\\labor-employment-budget-outcome-replay-seeds.json",
         "examples/synthetic/labor-employment/executable-fixtures/le-restrictive-covenant-messy-thread.source-bundle.json",
         "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-restrictive-covenant-messy-thread.v0_1/carrier_rejection_capture",
         "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-restrictive-covenant-messy-thread.v0_1/reviewed_learning_gate",
@@ -2323,7 +2324,7 @@
         "labor-employment-budget-learning-fixtures.v0_1",
         "le-learning-restrictive-covenant-messy-thread.v0_1",
         "le-restrictive-covenant-messy-thread.executable.v0_1",
-        "lebudgetqagate_2dc6a1a1434adde3"
+        "lebudgetqagate_04b7fc7bfe14c5ec"
       ],
       "failure_ids": [],
       "candidate_only": true,
@@ -2585,7 +2586,7 @@
         "le-learning-admin-exhaustion-clean.v0_1",
         "le-learning-admin-exhaustion-clean.v0_1",
         "le-admin-exhaustion-clean.executable.v0_1",
-        "<repo-root>\\examples\\synthetic\\labor-employment\\labor-employment-budget-outcome-replay-seeds.json",
+        "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\examples\\synthetic\\labor-employment\\labor-employment-budget-outcome-replay-seeds.json",
         "examples/synthetic/labor-employment/executable-fixtures/le-admin-exhaustion-clean.source-bundle.json",
         "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-admin-exhaustion-clean.v0_1/actuals_variance",
         "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-admin-exhaustion-clean.v0_1/reviewed_learning_gate",
@@ -2593,7 +2594,7 @@
         "labor-employment-budget-learning-fixtures.v0_1",
         "le-admin-exhaustion-clean.executable.v0_1",
         "le-learning-admin-exhaustion-clean.v0_1",
-        "lebudgetqagate_2dc6a1a1434adde3"
+        "lebudgetqagate_04b7fc7bfe14c5ec"
       ],
       "failure_ids": [],
       "candidate_only": true,
@@ -2623,7 +2624,7 @@
       "unknown_artifact_count": 0,
       "blocked_slot_count": 0,
       "replay_input_gap_count": 0,
-      "missing_case_prerequisite_count": 2,
+      "missing_case_prerequisite_count": 3,
       "bindings": [
         {
           "binding_id": "lebudgetreplaybinding_9a5520639557239c",
@@ -2694,12 +2695,14 @@
           ],
           "required_input_artifacts": [
             "labor_employment_budget_output_expectations_report.json",
-            "labor_employment_blocked_driver_impact_review_report.json"
+            "labor_employment_blocked_driver_impact_review_report.json",
+            "labor_employment_executable_coverage_report.json"
           ],
           "intermediate_artifacts": [],
           "missing_case_prerequisite_artifacts": [
             "labor_employment_budget_output_expectations_report.json",
-            "labor_employment_blocked_driver_impact_review_report.json"
+            "labor_employment_blocked_driver_impact_review_report.json",
+            "labor_employment_executable_coverage_report.json"
           ],
           "replay_input_gap_ids": [],
           "side_effect_boundary": "local_candidate_files_only",
@@ -2735,14 +2738,14 @@
         "le-learning-ada-fmla-adversarial.v0_1",
         "le-learning-ada-fmla-adversarial.v0_1",
         "le-ada-fmla-adversarial.executable.v0_1",
-        "<repo-root>\\examples\\synthetic\\labor-employment\\labor-employment-budget-outcome-replay-seeds.json",
+        "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\examples\\synthetic\\labor-employment\\labor-employment-budget-outcome-replay-seeds.json",
         "examples/synthetic/labor-employment/executable-fixtures/le-ada-fmla-adversarial.source-bundle.json",
         "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-ada-fmla-adversarial.v0_1/blocked_budget_guard",
         "examples/synthetic/labor-employment/labor-employment-executable-fixtures-manifest.json#le-ada-fmla-adversarial.executable.v0_1",
         "labor-employment-budget-learning-fixtures.v0_1",
         "le-ada-fmla-adversarial.executable.v0_1",
         "le-learning-ada-fmla-adversarial.v0_1",
-        "lebudgetqagate_2dc6a1a1434adde3"
+        "lebudgetqagate_04b7fc7bfe14c5ec"
       ],
       "failure_ids": [],
       "candidate_only": true,
@@ -2764,7 +2767,7 @@
       "status": "passed",
       "message": "Source execution report is ready and contains materialized candidate slots.",
       "evidence_refs": [
-        "lebudgetoutcomeexecution_772c2d1aad1e4aef"
+        "lebudgetoutcomeexecution_5368f6044f271c01"
       ],
       "blocking_refs": []
     },
@@ -2868,5 +2871,5 @@
   "sqlite_write_performed": false,
   "external_writes_performed": false,
   "silent_learning_performed": false,
-  "generated_at": "2026-07-04T00:00:00Z"
+  "generated_at": "2026-07-05T00:00:00Z"
 }

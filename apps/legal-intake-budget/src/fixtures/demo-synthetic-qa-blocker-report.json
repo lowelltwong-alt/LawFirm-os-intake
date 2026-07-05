@@ -1,15 +1,15 @@
 {
   "schema_version": "0.1",
-  "synthetic_qa_blocker_report_id": "synthetic_qa_blocker_report_6e20dfb02fce6d18",
+  "synthetic_qa_blocker_report_id": "synthetic_qa_blocker_report_b3bcf9a69f865e02",
   "status": "synthetic_qa_blocker_report_ready_for_review",
   "source_ui_manifest_ref": "<demo-run-root>\\ui_review_manifest.json",
-  "source_ui_manifest_id": "ui_review_manifest_24c18961f8a3",
+  "source_ui_manifest_id": "ui_review_manifest_df04e7c092e9",
   "source_ui_manifest_overall_status": "blocked",
   "source_synthetic_confidence_summary_ref": "<demo-run-root>\\quality\\synthetic_confidence_summary_report.json",
-  "source_synthetic_confidence_summary_report_id": "synthetic_confidence_summary_5df8f48b41d752cc",
+  "source_synthetic_confidence_summary_report_id": "synthetic_confidence_summary_4781bf9ded036274",
   "source_synthetic_confidence_summary_status": "synthetic_confidence_summary_ready_for_review",
   "source_synthetic_qa_review_run_ref": "<demo-run-root>\\synthetic_qa_review_run_report.json",
-  "source_synthetic_qa_review_run_report_id": "syntheticqareviewrun_bfaf9ffa36331259",
+  "source_synthetic_qa_review_run_report_id": "syntheticqareviewrun_f665d9ae0d8350cd",
   "source_synthetic_qa_review_run_status": "synthetic_qa_review_run_ready",
   "row_count": 27,
   "failed_row_count": 0,
@@ -564,7 +564,7 @@
         "synthetic_qa_blocker_requires_review"
       ],
       "notes": [
-        "0 missing required, 0 blocked, 19 pending review."
+        "0 missing required, 0 blocked, 20 pending review."
       ]
     },
     {
@@ -585,7 +585,7 @@
         "synthetic_qa_blocker_requires_review"
       ],
       "notes": [
-        "25 pending gates remain; pending is expected until human/owner review accepts candidate QA evidence."
+        "26 pending gates remain; pending is expected until human/owner review accepts candidate QA evidence."
       ]
     }
   ],
@@ -614,5 +614,5 @@
   "sqlite_write_performed": false,
   "external_writes_performed": false,
   "silent_learning_performed": false,
-  "generated_at": "2026-07-04T00:00:00Z"
+  "generated_at": "2026-07-05T00:00:00Z"
 }

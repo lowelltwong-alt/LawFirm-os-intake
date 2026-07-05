@@ -1,14 +1,14 @@
 {
   "schema_version": "0.1",
-  "budget_qa_gate_report_id": "lebudgetqagate_95b9cf0f79c59d74",
+  "budget_qa_gate_report_id": "lebudgetqagate_04b7fc7bfe14c5ec",
   "status": "labor_employment_budget_qa_gate_ready_for_review",
-  "source_budget_output_expectations_report_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\complete-le-fixture-gaps\\full-run-final\\quality\\le-budget-output-expectations\\labor_employment_budget_output_expectations_report.json",
-  "source_budget_output_expectations_report_id": "lebudgetoutputexpect_b24f8eb68d80168c",
+  "source_budget_output_expectations_report_ref": "<demo-run-root>\\quality\\le-budget-output-expectations\\labor_employment_budget_output_expectations_report.json",
+  "source_budget_output_expectations_report_id": "lebudgetoutputexpect_4181f9e7d103f5c2",
   "source_budget_output_expectations_report_status": "labor_employment_budget_output_expectations_ready_for_review",
-  "source_blocked_driver_impact_review_report_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\complete-le-fixture-gaps\\full-run-final\\quality\\le-blocked-driver-impact-review\\labor_employment_blocked_driver_impact_review_report.json",
+  "source_blocked_driver_impact_review_report_ref": "<demo-run-root>\\quality\\le-blocked-driver-impact-review\\labor_employment_blocked_driver_impact_review_report.json",
   "source_blocked_driver_impact_review_report_id": "leblockeddriverimpactreview_ca3b425abc278fa4",
   "source_blocked_driver_impact_review_report_status": "labor_employment_blocked_driver_impacts_ready_for_review",
-  "source_executable_coverage_report_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\complete-le-fixture-gaps\\full-run-final\\quality\\le-executable-coverage\\labor_employment_executable_coverage_report.json",
+  "source_executable_coverage_report_ref": "<demo-run-root>\\quality\\le-executable-coverage\\labor_employment_executable_coverage_report.json",
   "source_executable_coverage_report_id": "leexeccoverage_434f174c43c0d9e9be88",
   "source_executable_coverage_report_status": "labor_employment_executable_coverage_ready_for_review",
   "source_executable_coverage_state": "complete_executable_coverage",
@@ -147,7 +147,7 @@
       "status": "passed",
       "message": "Source L&E budget QA reports are ready for review.",
       "evidence_refs": [
-        "lebudgetoutputexpect_b24f8eb68d80168c",
+        "lebudgetoutputexpect_4181f9e7d103f5c2",
         "leblockeddriverimpactreview_ca3b425abc278fa4",
         "leexeccoverage_434f174c43c0d9e9be88"
       ],
@@ -311,7 +311,7 @@
       "status": "passed",
       "message": "No source report performed external, Lake, or SQLite writes.",
       "evidence_refs": [
-        "lebudgetoutputexpect_b24f8eb68d80168c",
+        "lebudgetoutputexpect_4181f9e7d103f5c2",
         "leblockeddriverimpactreview_ca3b425abc278fa4",
         "leexeccoverage_434f174c43c0d9e9be88"
       ],
@@ -367,5 +367,5 @@
   "sqlite_write_performed": false,
   "external_writes_performed": false,
   "silent_learning_performed": false,
-  "generated_at": "2026-07-04T00:00:00Z"
+  "generated_at": "2026-07-05T00:00:00Z"
 }

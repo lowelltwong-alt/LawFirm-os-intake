@@ -1,22 +1,22 @@
 {
   "schema_version": "0.1",
-  "synthetic_confidence_summary_report_id": "synthetic_confidence_summary_c125c8f99ef18750",
+  "synthetic_confidence_summary_report_id": "synthetic_confidence_summary_82a8966c05cebc95",
   "status": "synthetic_confidence_summary_ready_for_review",
   "testing_readiness_state": "synthetic_qa_ready_pending_review",
   "source_synthetic_qa_review_run_ref": "<demo-run-root>\\synthetic_qa_review_run_report.json",
-  "source_synthetic_qa_review_run_report_id": "syntheticqareviewrun_fa2207a034724bb7",
+  "source_synthetic_qa_review_run_report_id": "syntheticqareviewrun_f665d9ae0d8350cd",
   "source_synthetic_qa_review_run_status": "synthetic_qa_review_run_ready",
   "source_synthetic_qa_bundle_ref": "<demo-run-root>\\quality\\synthetic_qa_bundle_report.json",
-  "source_synthetic_qa_bundle_report_id": "synthetic_qa_bundle_635d894eae83",
+  "source_synthetic_qa_bundle_report_id": "synthetic_qa_bundle_ed7e0284eadd",
   "source_synthetic_qa_bundle_status": "pending_review",
   "source_ui_manifest_ref": "<demo-run-root>\\ui_review_manifest.json",
-  "source_ui_manifest_id": "ui_review_manifest_24c18961f8a3",
+  "source_ui_manifest_id": "ui_review_manifest_df04e7c092e9",
   "source_ui_manifest_overall_status": "blocked",
   "source_ui_review_data_bundle_ref": "<demo-run-root>\\ui_review_data_bundle.json",
-  "source_ui_review_data_bundle_id": "ui_review_data_bundle_c2a7116a9c69",
+  "source_ui_review_data_bundle_id": "ui_review_data_bundle_8603c933b7fd",
   "source_ui_review_data_bundle_status": "ready_for_review",
-  "qa_step_count": 30,
-  "qa_passed_step_count": 30,
+  "qa_step_count": 31,
+  "qa_passed_step_count": 31,
   "qa_failed_step_count": 0,
   "qa_artifact_count": 22,
   "qa_missing_required_artifact_count": 0,
@@ -43,7 +43,7 @@
         "<demo-run-root>\\synthetic_qa_review_run_report.json"
       ],
       "notes": [
-        "0 failed steps out of 29."
+        "0 failed steps out of 31."
       ],
       "no_write_boundary_confirmed": true
     },
@@ -70,7 +70,7 @@
         "<demo-run-root>\\ui_review_manifest.json"
       ],
       "notes": [
-        "20 detail reports present; 0 write-boundary failures."
+        "21 detail reports present; 0 write-boundary failures."
       ],
       "no_write_boundary_confirmed": true
     },
@@ -143,5 +143,5 @@
   "sqlite_write_performed": false,
   "external_writes_performed": false,
   "silent_learning_performed": false,
-  "generated_at": "2026-07-04T00:00:00Z"
+  "generated_at": "2026-07-05T00:00:00Z"
 }

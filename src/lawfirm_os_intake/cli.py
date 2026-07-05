@@ -392,6 +392,14 @@ def _parser() -> argparse.ArgumentParser:
             "This command does not compile or execute Rust."
         ),
     )
+    synthetic_qa_review_run.add_argument(
+        "--validation-suite-evidence-report",
+        help=(
+            "Optional prebuilt validation_suite_evidence_report.json from "
+            "scripts/run_validation_suite.py --report-out. This command consumes "
+            "the report but does not run full validation itself."
+        ),
+    )
 
     rust_fixture_boundary = sub.add_parser(
         "build-rust-fixture-boundary-report",
@@ -2270,6 +2278,7 @@ def main(argv: list[str] | None = None) -> int:
                 repo_root=args.repo_root,
                 fixture_boundary_report_path=args.fixture_boundary_report,
                 fixture_manifest_report_path=args.fixture_manifest_report,
+                validation_suite_evidence_report_path=args.validation_suite_evidence_report,
                 generated_at=args.generated_at,
             )
             _print(

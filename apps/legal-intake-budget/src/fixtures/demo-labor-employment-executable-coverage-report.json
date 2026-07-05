@@ -4,9 +4,9 @@
   "status": "labor_employment_executable_coverage_ready_for_review",
   "coverage_state": "complete_executable_coverage",
   "pack_id": "le-budget-fixture-family-pack.v0_1",
-  "pack_ref": "<repo-root>\\examples\\synthetic\\labor-employment\\labor-employment-budget-fixture-family-pack.json",
+  "pack_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\examples\\synthetic\\labor-employment\\labor-employment-budget-fixture-family-pack.json",
   "executable_manifest_id": "le-executable-fixtures-manifest.v0_1",
-  "executable_manifest_ref": "<repo-root>\\examples\\synthetic\\labor-employment\\labor-employment-executable-fixtures-manifest.json",
+  "executable_manifest_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\examples\\synthetic\\labor-employment\\labor-employment-executable-fixtures-manifest.json",
   "pack_case_count": 32,
   "executable_fixture_count": 31,
   "executable_pack_case_link_count": 32,
@@ -852,5 +852,5 @@
   "sqlite_write_performed": false,
   "external_writes_performed": false,
   "silent_learning_performed": false,
-  "generated_at": "2026-07-04T16:14:06.824218Z"
+  "generated_at": "2026-07-05T07:48:24.303710Z"
 }

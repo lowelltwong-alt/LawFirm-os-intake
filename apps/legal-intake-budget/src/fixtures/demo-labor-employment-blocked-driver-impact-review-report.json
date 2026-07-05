@@ -2,9 +2,9 @@
   "schema_version": "0.1",
   "blocked_driver_impact_review_report_id": "leblockeddriverimpactreview_ca3b425abc278fa4",
   "status": "labor_employment_blocked_driver_impacts_ready_for_review",
-  "source_fact_binding_report_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\complete-le-fixture-gaps\\full-run-final\\quality\\le-executable-fact-binding\\labor_employment_executable_fact_binding_report.json",
-  "source_driver_binding_report_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\complete-le-fixture-gaps\\full-run-final\\quality\\le-executable-driver-binding\\labor_employment_executable_driver_binding_report.json",
-  "source_driver_impact_report_ref": "<repo-root>\\.lawfirm-os-intake\\tmp\\complete-le-fixture-gaps\\full-run-final\\quality\\le-executable-driver-impact\\labor_employment_executable_driver_impact_report.json",
+  "source_fact_binding_report_ref": "<demo-run-root>\\quality\\le-executable-fact-binding\\labor_employment_executable_fact_binding_report.json",
+  "source_driver_binding_report_ref": "<demo-run-root>\\quality\\le-executable-driver-binding\\labor_employment_executable_driver_binding_report.json",
+  "source_driver_impact_report_ref": "<demo-run-root>\\quality\\le-executable-driver-impact\\labor_employment_executable_driver_impact_report.json",
   "source_driver_impact_report_id": "leexecdriverimpact_a0798195563758151aed",
   "case_count": 31,
   "blocked_case_count": 16,
@@ -2278,5 +2278,5 @@
   "sqlite_write_performed": false,
   "external_writes_performed": false,
   "silent_learning_performed": false,
-  "generated_at": "2026-07-04T16:14:08.411189Z"
+  "generated_at": "2026-07-05T07:48:25.410744Z"
 }

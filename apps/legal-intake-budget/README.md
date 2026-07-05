@@ -39,26 +39,37 @@ and
 Generate a complete synthetic QA review run with:
 
 ```bash
+python scripts/run_validation_suite.py \
+  --report-out .lawfirm-os-intake/synthetic-qa-review/quality/validation_suite_evidence_report.json \
+  --generated-at 2026-07-05T00:00:00Z
+
 python -m lawfirm_os_intake build-synthetic-qa-review-run \
   --run-root .lawfirm-os-intake/synthetic-qa-review \
-  --repo-root .
+  --repo-root . \
+  --validation-suite-evidence-report .lawfirm-os-intake/synthetic-qa-review/quality/validation_suite_evidence_report.json
 ```
 
 That command builds the deterministic synthetic demo budget coherence report,
 the L&E QA matrix, fixture-family reports, executable L&E driver reports,
 blocked-driver review, reviewed gold, the synthetic QA bundle, the UI manifest,
 `synthetic_qa_review_run_report.json`, `synthetic_confidence_summary_report.json`,
-`synthetic_qa_blocker_report.json`, and `ui_review_data_bundle.json`. A prebuilt
-`rust_fixture_boundary_report.json` may be staged with
+`synthetic_qa_blocker_report.json`, `poc_qa_triage_report.json`, and
+`ui_review_data_bundle.json`. The validation report is produced separately by
+the long-timeout wrapper and staged as
+`quality/validation_suite_evidence_report.json`; the synthetic QA command
+consumes it but does not execute full pytest or smoke validation itself. A
+prebuilt `rust_fixture_boundary_report.json` may be staged with
 `--fixture-boundary-report`, and a prebuilt `rust_fixture_manifest_report.json`
 may be staged with `--fixture-manifest-report`; the synthetic QA command will
 not compile or execute Rust. The demo UI renders the confidence summary as the
 top-level synthetic QA posture panel, the Rust fixture-boundary report as local
 JSON boundary evidence, the Rust fixture-manifest report as hash-bound fixture
 inventory evidence, the blocker report as the review queue, and the review-run
-report as the recipe panel when they are present. A separately recorded
-`synthetic_qa_review_outcome_report.json` may be rendered as append-only QA
-review evidence. The blocker report remains the authority for row-level
+report as the recipe panel when they are present. The generated POC QA triage
+report reconciles validation, synthetic QA, L&E budget gates, and UI evidence as
+candidate-only review input; it does not authorize production actions. A
+separately recorded `synthetic_qa_review_outcome_report.json` may be rendered as
+append-only QA review evidence. The blocker report remains the authority for row-level
 `action_state`, `recommended_next_action`, candidate Lake labels, and queue
 counts; the frontend must display those fields rather than re-deriving review
 outcomes or treating outcome evidence as calibration, learning, Lake admission,

@@ -1,22 +1,22 @@
 {
   "schema_version": "0.1",
-  "synthetic_qa_review_outcome_report_id": "synthetic_qa_review_outcome_afb2ba81029a144f",
+  "synthetic_qa_review_outcome_report_id": "synthetic_qa_review_outcome_f145ebb11e71a965",
   "status": "synthetic_qa_review_outcome_recorded_pending_followup",
-  "source_synthetic_qa_blocker_report_ref": ".lawfirm-os-intake\\tmp\\complete-le-fixture-gaps\\full-run-final\\quality\\synthetic-qa-blocker-report\\synthetic_qa_blocker_report.json",
-  "source_synthetic_qa_blocker_report_id": "synthetic_qa_blocker_report_fe85dfae1b0e1d15",
+  "source_synthetic_qa_blocker_report_ref": "<demo-run-root>\\quality\\synthetic_qa_blocker_report.json",
+  "source_synthetic_qa_blocker_report_id": "synthetic_qa_blocker_report_8cb2f0d820640a9b",
   "source_synthetic_qa_blocker_report_status": "synthetic_qa_blocker_report_ready_for_review",
   "synthetic_qa_review_outcome_record_id": "synthetic-qa-review-outcome-record.generated-review-run.v0_1",
   "reviewer_id": "synthetic-qa-reviewer",
-  "reviewed_at": "2026-07-04T00:00:00Z",
+  "reviewed_at": "2026-07-05T00:00:00Z",
   "decision_reason": "Generated partial synthetic QA review outcome for local UI evidence.",
-  "source_row_count": 22,
+  "source_row_count": 27,
   "decision_count": 3,
   "accepted_decision_count": 1,
   "needs_fix_decision_count": 1,
   "deferred_decision_count": 1,
   "not_applicable_decision_count": 0,
   "reviewed_row_count": 3,
-  "unreviewed_row_count": 19,
+  "unreviewed_row_count": 24,
   "unknown_row_count": 0,
   "unresolved_followup_count": 2,
   "reviewed_row_ids": [
@@ -26,7 +26,13 @@
   ],
   "unreviewed_row_ids": [
     "quality_gate:budget_calibration_readiness",
+    "quality_gate:budget_learning_loop",
     "quality_gate:labor_employment_blocked_driver_impact_review",
+    "quality_gate:labor_employment_budget_learning_fixtures",
+    "quality_gate:labor_employment_budget_outcome_replay_builder_binding",
+    "quality_gate:labor_employment_budget_outcome_replay_confidence_status",
+    "quality_gate:labor_employment_budget_outcome_replay_execution",
+    "quality_gate:labor_employment_budget_outcome_replay_readiness",
     "quality_gate:labor_employment_budget_output_expectations",
     "quality_gate:labor_employment_budget_qa_gate",
     "quality_gate:labor_employment_driver_impact_review",
@@ -41,7 +47,6 @@
     "quality_gate:matter_linking_qa_gate",
     "quality_gate:matter_linking_review_outcome",
     "quality_gate:synthetic_fixture_depth",
-    "quality_gate:labor_employment_budget_outcome_replay_confidence_status",
     "readiness_item:owner_review_backlog",
     "readiness_item:required_qa_artifacts"
   ],
@@ -63,10 +68,10 @@
     "synthetic_qa_review_outcome_recorded_candidate",
     "synthetic_qa_roadmap_deferred_candidate"
   ],
-  "append_only_history_ref": ".lawfirm-os-intake\\tmp\\complete-le-fixture-gaps\\full-run-final\\quality\\synthetic-qa-review-outcome\\synthetic_qa_review_outcome_history.jsonl",
+  "append_only_history_ref": "<demo-run-root>\\quality\\synthetic-qa-review-outcome\\synthetic_qa_review_outcome_history.jsonl",
   "required_next_actions": [
     "Complete required synthetic QA followups before closing this review.",
-    "Record superseding synthetic QA review decisions for unreviewed rows: quality_gate:budget_calibration_readiness, quality_gate:labor_employment_blocked_driver_impact_review, quality_gate:labor_employment_budget_output_expectations, quality_gate:labor_employment_budget_qa_gate, quality_gate:labor_employment_driver_impact_review, quality_gate:labor_employment_executable_coverage, quality_gate:labor_employment_executable_driver_binding, quality_gate:labor_employment_executable_driver_impact, quality_gate:labor_employment_executable_fact_binding, quality_gate:labor_employment_executable_fixtures, quality_gate:labor_employment_fixture_family_pack, quality_gate:labor_employment_qa_matrix, quality_gate:matter_linking_preflight, quality_gate:matter_linking_qa_gate, quality_gate:matter_linking_review_outcome, quality_gate:synthetic_fixture_depth, readiness_item:owner_review_backlog, readiness_item:required_qa_artifacts",
+    "Record superseding synthetic QA review decisions for unreviewed rows: quality_gate:budget_calibration_readiness, quality_gate:budget_learning_loop, quality_gate:labor_employment_blocked_driver_impact_review, quality_gate:labor_employment_budget_learning_fixtures, quality_gate:labor_employment_budget_outcome_replay_builder_binding, quality_gate:labor_employment_budget_outcome_replay_confidence_status, quality_gate:labor_employment_budget_outcome_replay_execution, quality_gate:labor_employment_budget_outcome_replay_readiness, quality_gate:labor_employment_budget_output_expectations, quality_gate:labor_employment_budget_qa_gate, quality_gate:labor_employment_driver_impact_review, quality_gate:labor_employment_executable_coverage, quality_gate:labor_employment_executable_driver_binding, quality_gate:labor_employment_executable_driver_impact, quality_gate:labor_employment_executable_fact_binding, quality_gate:labor_employment_executable_fixtures, quality_gate:labor_employment_fixture_family_pack, quality_gate:labor_employment_qa_matrix, quality_gate:matter_linking_preflight, quality_gate:matter_linking_qa_gate, quality_gate:matter_linking_review_outcome, quality_gate:synthetic_fixture_depth, readiness_item:owner_review_backlog, readiness_item:required_qa_artifacts",
     "Keep this synthetic QA review outcome candidate-only and local.",
     "Resolve needs-fix followups before treating affected QA rows as accepted.",
     "Route deferred rows into the remaining roadmap rather than calibration or production learning.",
@@ -93,5 +98,5 @@
   "sqlite_write_performed": false,
   "external_writes_performed": false,
   "silent_learning_performed": false,
-  "generated_at": "2026-07-04T00:00:00Z"
+  "generated_at": "2026-07-05T00:00:00Z"
 }

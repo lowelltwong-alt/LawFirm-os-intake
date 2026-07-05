@@ -34,6 +34,8 @@ def test_legal_intake_budget_ui_required_files_exist(repo_root):
         "src/fixtures/demo-labor-employment-budget-output-expectations-report.json",
         "src/fixtures/demo-labor-employment-budget-qa-gate-report.json",
         "src/fixtures/demo-labor-employment-budget-learning-fixtures-report.json",
+        "src/fixtures/demo-labor-employment-budget-outcome-replay-readiness-report.json",
+        "src/fixtures/demo-labor-employment-budget-outcome-replay-execution-report.json",
         "src/fixtures/demo-labor-employment-budget-outcome-replay-builder-binding-report.json",
         "src/fixtures/demo-labor-employment-budget-outcome-replay-confidence-status-report.json",
         "src/fixtures/demo-budget-learning-loop-report.json",
@@ -282,7 +284,7 @@ def test_legal_intake_budget_demo_synthetic_qa_review_run_is_no_write(repo_root)
     )
 
     assert report["status"] == "synthetic_qa_review_run_ready"
-    assert report["step_count"] == len(report["steps"]) == 30
+    assert report["step_count"] == len(report["steps"]) == 31
     assert report["failed_step_count"] == 0
     assert report["candidate_only"] is True
     assert report["synthetic_only"] is True
@@ -306,6 +308,7 @@ def test_legal_intake_budget_demo_synthetic_qa_review_run_is_no_write(repo_root)
         "ui_review_data_bundle",
         "rust_fixture_boundary",
         "rust_fixture_manifest",
+        "validation_suite_evidence",
         "synthetic_confidence_summary",
         "labor_employment_blocked_driver_impact_review",
         "labor_employment_budget_output_expectations",
@@ -687,7 +690,7 @@ def test_legal_intake_budget_demo_synthetic_confidence_summary_is_no_write(repo_
     assert report["status"] == "synthetic_confidence_summary_ready_for_review"
     assert report["testing_readiness_state"] == "synthetic_qa_ready_pending_review"
     assert report["top_blockers"] == []
-    assert report["qa_step_count"] == 30
+    assert report["qa_step_count"] == 31
     assert report["qa_failed_step_count"] == 0
     assert report["qa_missing_required_artifact_count"] == 0
     assert report["ui_detail_report_count"] == 21
@@ -936,9 +939,9 @@ def test_legal_intake_budget_demo_synthetic_qa_review_outcome_is_no_write(repo_r
     )
 
     assert report["status"] == "synthetic_qa_review_outcome_recorded_pending_followup"
-    assert report["source_row_count"] == 22
+    assert report["source_row_count"] == 27
     assert report["reviewed_row_count"] == len(report["reviewed_row_ids"]) == 3
-    assert report["unreviewed_row_count"] == len(report["unreviewed_row_ids"]) == 19
+    assert report["unreviewed_row_count"] == len(report["unreviewed_row_ids"]) == 24
     assert report["decision_count"] == 3
     assert report["accepted_decision_count"] == 1
     assert report["needs_fix_decision_count"] == 1

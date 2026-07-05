@@ -1,10 +1,10 @@
 {
   "schema_version": "0.1",
-  "synthetic_qa_review_run_report_id": "syntheticqareviewrun_fa2207a034724bb7",
+  "synthetic_qa_review_run_report_id": "syntheticqareviewrun_f665d9ae0d8350cd",
   "status": "synthetic_qa_review_run_ready",
   "run_root_ref": "<demo-run-root>",
   "quality_dir_ref": "<demo-run-root>\\quality",
-  "step_count": 30,
+  "step_count": 31,
   "failed_step_count": 0,
   "steps": [
     {
@@ -224,7 +224,7 @@
       "observed_status": "labor_employment_budget_outcome_replay_confidence_pending_inputs",
       "artifact_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-confidence-status\\labor_employment_budget_outcome_replay_confidence_status_report.json",
       "notes": [
-        "L&E replay confidence aggregates replay readiness, execution, builder binding, and input-pack gaps without authorizing calibration, learning, Lake writes, or budget submission."
+        "L&E replay confidence aggregates readiness, execution, builder binding, and input-pack gaps without authorizing calibration, learning, Lake writes, or budget submission."
       ]
     },
     {
@@ -252,7 +252,7 @@
       "label": "Rust Fixture Boundary",
       "status": "passed",
       "observed_status": "passed",
-      "artifact_ref": "apps/legal-intake-budget/src/fixtures/demo-rust-fixture-boundary-report.json",
+      "artifact_ref": "<demo-run-root>\\quality\\rust_fixture_boundary_report.json",
       "notes": [
         "Prebuilt Rust fixture-boundary evidence validates local JSON flags without making the synthetic QA run compile or execute Rust."
       ]
@@ -265,6 +265,16 @@
       "artifact_ref": "<demo-run-root>\\quality\\rust_fixture_manifest_report.json",
       "notes": [
         "Prebuilt Rust fixture-manifest evidence hash-binds local JSON fixtures without making the synthetic QA run compile or execute Rust."
+      ]
+    },
+    {
+      "step_id": "validation_suite_evidence",
+      "label": "Validation Suite Evidence",
+      "status": "passed",
+      "observed_status": "validation_suite_passed",
+      "artifact_ref": "<demo-run-root>\\quality\\validation_suite_evidence_report.json",
+      "notes": [
+        "Prebuilt wrapper validation evidence is staged from scripts/run_validation_suite.py output; the synthetic QA run does not execute full pytest or smoke checks itself."
       ]
     },
     {
@@ -330,5 +340,5 @@
   "sqlite_write_performed": false,
   "external_writes_performed": false,
   "silent_learning_performed": false,
-  "generated_at": "2026-07-04T00:00:00Z"
+  "generated_at": "2026-07-05T00:00:00Z"
 }

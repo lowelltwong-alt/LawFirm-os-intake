@@ -4,6 +4,7 @@ from lawfirm_os_intake.cli import main
 from lawfirm_os_intake.synthetic_qa_review_run import (
     SYNTHETIC_QA_REVIEW_RUN_REPORT_FILENAME,
 )
+from lawfirm_os_intake.ui_demo_fixture_promotion import DEFAULT_UI_DEMO_FIXTURE_PROMOTION_SPECS
 from lawfirm_os_intake.util import load_json, write_json
 
 
@@ -83,6 +84,14 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
             "silent_learning_performed": False,
         },
     )
+    validation_suite_evidence_report = (
+        repo_root
+        / "apps"
+        / "legal-intake-budget"
+        / "src"
+        / "fixtures"
+        / "demo-validation-suite-evidence-report.json"
+    )
     write_json(
         quality_dir / "labor_employment_qa_matrix_report.json",
         {"status": "failed", "external_writes_performed": False},
@@ -99,6 +108,8 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
             str(fixture_boundary_report),
             "--fixture-manifest-report",
             str(fixture_manifest_report),
+            "--validation-suite-evidence-report",
+            str(validation_suite_evidence_report),
             "--generated-at",
             "2026-07-02T00:00:00Z",
         ]
@@ -110,11 +121,13 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
     staged_matrix = load_json(run_root / "quality" / "labor_employment_qa_matrix_report.json")
     ui_manifest = load_json(run_root / "ui_review_manifest.json")
     ui_data_bundle = load_json(run_root / "ui_review_data_bundle.json")
+    poc_qa_triage = load_json(run_root / "quality" / "poc_qa_triage_report.json")
+    validation_evidence = load_json(run_root / "quality" / "validation_suite_evidence_report.json")
     steps = {step["step_id"]: step for step in report["steps"]}
 
     assert code == 0
     assert report["status"] == "synthetic_qa_review_run_ready"
-    assert report["step_count"] == len(report["steps"]) == 30
+    assert report["step_count"] == len(report["steps"]) == 31
     assert report["failed_step_count"] == 0
     assert report["candidate_only"] is True
     assert report["synthetic_only"] is True
@@ -153,10 +166,14 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
         "ui_review_data_bundle",
         "rust_fixture_boundary",
         "rust_fixture_manifest",
+        "validation_suite_evidence",
         "synthetic_confidence_summary",
     } == set(steps)
     assert all(step["status"] == "passed" for step in report["steps"])
     assert all(Path(step["artifact_ref"]).is_file() for step in report["steps"])
+    assert all(
+        (run_root / spec.source_ref).is_file() for spec in DEFAULT_UI_DEMO_FIXTURE_PROMOTION_SPECS
+    )
 
     assert bundle["status"] == "pending_review"
     assert bundle["missing_required_artifact_count"] == 0
@@ -170,7 +187,11 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
         "synthetic_qa_review_run",
         "synthetic_confidence_summary",
         "synthetic_qa_blocker_report",
+        "poc_qa_triage",
         "synthetic_qa_bundle",
+        "validation_suite_evidence",
+        "full_pytest",
+        "smoke_demo",
         "matter_linking_preflight",
         "matter_linking_review_outcome",
         "matter_linking_qa_gate",
@@ -184,6 +205,11 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
         "labor_employment_budget_outcome_replay_confidence_status",
     } <= {gate["gateId"] for gate in ui_manifest["qualityGates"]}
     assert ui_data_bundle["status"] == "ready_for_review"
+    assert poc_qa_triage["status"] == "poc_qa_ready_for_review"
+    assert poc_qa_triage["source_validation_suite_evidence_report_id"].startswith(
+        "validation_suite_evidence_"
+    )
+    assert validation_evidence["status"] == "validation_suite_passed"
     ui_detail_reports = {
         report["report_kind"]: report for report in ui_data_bundle["detail_reports"]
     }

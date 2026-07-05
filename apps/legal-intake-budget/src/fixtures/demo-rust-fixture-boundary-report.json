@@ -1,8 +1,8 @@
 {
   "budget_submission_authorized": false,
   "candidate_only": true,
-  "checked_json_file_count": 24,
-  "checked_object_count": 661,
+  "checked_json_file_count": 25,
+  "checked_object_count": 663,
   "checker": "fixture-boundary-checker",
   "external_writes_performed": false,
   "failure_count": 0,
@@ -11,11 +11,11 @@
   "local_json_only": true,
   "matter_opening_authorized": false,
   "non_authoritative": true,
-  "root": "apps/legal-intake-budget/src/fixtures",
+  "root": "apps\\legal-intake-budget\\src\\fixtures",
   "schema_version": "0.1",
   "silent_learning_performed": false,
   "sqlite_write_performed": false,
   "status": "passed",
   "synthetic_only": true,
-  "ui_bundle_ref": "apps/legal-intake-budget/src/fixtures/demo-ui-review-data-bundle.json"
+  "ui_bundle_ref": "apps\\legal-intake-budget\\src\\fixtures\\demo-ui-review-data-bundle.json"
 }

@@ -1,17 +1,17 @@
 {
   "schema_version": "0.1",
-  "budget_learning_loop_report_id": "budget_learning_loop_demo_20260704",
+  "budget_learning_loop_report_id": "budgetlearningloop_3afcb077e60da04f83af",
   "status": "budget_learning_loop_ready_for_review",
-  "run_id": "budgetlearninglooprun_demo_20260704",
-  "preflight_packet_id": "preflight_demo_20260704",
-  "source_budget_actual_comparison_report_ref": ".lawfirm-os-intake/tmp/budget-learning-loop-demo/actuals/budget_actual_comparison_report.json",
-  "source_budget_actual_variance_ledger_report_ref": ".lawfirm-os-intake/tmp/budget-learning-loop-demo/actuals/budget_actual_variance_ledger_report.json",
-  "source_carrier_rejection_reconciliation_report_ref": ".lawfirm-os-intake/tmp/budget-learning-loop-demo/carrier-rejections/carrier_rejection_reconciliation_report.json",
-  "source_carrier_rejection_decision_ledger_report_ref": ".lawfirm-os-intake/tmp/budget-learning-loop-demo/carrier-rejections/carrier_rejection_decision_ledger_report.json",
-  "source_carrier_rejection_review_packet_ref": ".lawfirm-os-intake/tmp/budget-learning-loop-demo/carrier-rejection-review/carrier_rejection_review_packet.json",
-  "source_carrier_rejection_learning_report_ref": ".lawfirm-os-intake/tmp/budget-learning-loop-demo/carrier-rejection-learning/carrier_rejection_learning_report.json",
-  "source_reviewed_learning_gate_report_ref": ".lawfirm-os-intake/tmp/budget-learning-loop-demo/learning-gate/reviewed_learning_gate_report.json",
-  "budget_proposal_id": "budget_3753049d5db642e8ba64bc22a81e7c88",
+  "run_id": "budgetlearninglooprun_50f2af21a0bc731c543c",
+  "preflight_packet_id": "intake_a1a8a56624654bc48e18fad72d5c09c9",
+  "source_budget_actual_comparison_report_ref": "<demo-run-root>\\quality\\budget-actuals\\budget_actual_comparison_report.json",
+  "source_budget_actual_variance_ledger_report_ref": "<demo-run-root>\\quality\\budget-actuals\\budget_actual_variance_ledger_report.json",
+  "source_carrier_rejection_reconciliation_report_ref": "<demo-run-root>\\quality\\carrier-rejections\\carrier_rejection_reconciliation_report.json",
+  "source_carrier_rejection_decision_ledger_report_ref": "<demo-run-root>\\quality\\carrier-rejections\\carrier_rejection_decision_ledger_report.json",
+  "source_carrier_rejection_review_packet_ref": "<demo-run-root>\\quality\\carrier-rejection-review\\carrier_rejection_review_packet.json",
+  "source_carrier_rejection_learning_report_ref": "<demo-run-root>\\quality\\carrier-rejection-learning\\carrier_rejection_learning_report.json",
+  "source_reviewed_learning_gate_report_ref": "<demo-run-root>\\quality\\reviewed-learning-gate\\reviewed_learning_gate_report.json",
+  "budget_proposal_id": "budget_a77133afc0ff42e192187036517b25a9",
   "comparison_budget_state": "human_revised_candidate",
   "actuals": {
     "status": "variance_review_required",
@@ -83,15 +83,16 @@
       "label": "Actuals Variance",
       "state": "pending",
       "metric": "5 review events",
-      "why": "Synthetic actuals are under the revised candidate budget overall, but code and phase comparisons still produce reviewable variance signals.",
-      "next_action": "Review budget-driver and template-mapping candidates before any calibration or fixture update.",
+      "why": "Synthetic actuals are compared against the selected candidate budget state; overall variance does not suppress code-level or missing-actual review signals.",
+      "next_action": "Review budget-driver and template-mapping candidates before calibration, fixture update, or budget-model changes.",
       "evidence_refs": [
         "budget_actual_comparison_report.json",
         "budget_actual_variance_ledger_report.json"
       ],
       "candidate_exception_lake_labels": [
         "budget_actual_cost_variance_requires_review",
-        "budget_actual_without_budget_recorded"
+        "budget_actual_without_budget_recorded",
+        "budget_actual_missing_actuals_recorded"
       ]
     },
     {
@@ -99,7 +100,7 @@
       "label": "Carrier Rejections",
       "state": "pending",
       "metric": "$21,950 disputed",
-      "why": "The synthetic capture chain reconciles duplicates, missing responses, unlinked notices, parser failures, and one appeal result without submitting anything.",
+      "why": "Carrier response evidence is reconciled for duplicates, missing responses, unlinked notices, parser failures, and appeal results without submitting anything.",
       "next_action": "Use the review packet to decide fix versus appeal steps and keep all outcomes append-only.",
       "evidence_refs": [
         "carrier_rejection_reconciliation_report.json",
@@ -107,11 +108,9 @@
       ],
       "candidate_exception_lake_labels": [
         "carrier_preapproval_missing",
-        "carrier_rejection_duplicate_notice",
-        "carrier_response_missing_after_sla",
-        "carrier_rejection_unlinked",
         "carrier_rejection_parse_failed",
-        "carrier_appeal_result_received"
+        "carrier_rejection_unlinked",
+        "carrier_response_missing_after_sla"
       ]
     },
     {
@@ -119,8 +118,8 @@
       "label": "Appeal Outcome",
       "state": "pending",
       "metric": "$8,000 recovered",
-      "why": "Appeal result evidence is captured as financial outcome telemetry, not as a silent guideline or rate update.",
-      "next_action": "Require reviewed outcome evidence and shadow eval before using recovered/write-down signals to change budget assumptions.",
+      "why": "Appeal result evidence is captured as financial outcome telemetry, not as a silent guideline, template, or rate update.",
+      "next_action": "Require reviewed outcome evidence and shadow eval before using recovered or write-down signals to change assumptions.",
       "evidence_refs": [
         "carrier_rejection_decision_ledger_report.json",
         "carrier_rejection_learning_report.json"
@@ -135,7 +134,7 @@
       "label": "Reviewed Learning Gate",
       "state": "pending",
       "metric": "13 candidates",
-      "why": "Budget revisions, actual variance, and carrier rejection learning pressure are aggregated but blocked from profile/template mutation.",
+      "why": "Budget revisions, actual variance, and carrier rejection learning pressure are aggregated but blocked from profile, template, guideline, or connector mutation.",
       "next_action": "Send only reviewed, shadow-evaluated proposed changes to owner repos; do not silently learn from this run.",
       "evidence_refs": [
         "reviewed_learning_gate_report.json"
@@ -147,12 +146,12 @@
     }
   ],
   "red_team_notes": [
-    "This display is a compact projection of generated synthetic artifacts; it is not a ledger, Lake write, billing connector, appeal submission, or production learning signal.",
+    "This report is a compact projection of generated synthetic artifacts; it is not a ledger, Lake write, billing connector, appeal submission, or production learning signal.",
     "Negative total variance does not mean the budget model is accepted; code-level over-threshold and actuals-without-budget events still require review.",
     "Recovered appeal amounts are outcome evidence only and cannot update rates, guidelines, templates, or profiles without reviewed outcome evidence and shadow evaluation."
   ],
   "required_next_actions": [
-    "Add L&E-specific actuals and carrier rejection fixtures after the medmal synthetic loop is visible.",
+    "Add L&E-specific actuals and carrier rejection fixtures after this medmal synthetic loop is visible.",
     "Add state/rate benchmark replay only from pinned candidate benchmark cells.",
     "Keep all learning candidates blocked until reviewed-learning and owner-adoption gates are satisfied."
   ],
@@ -177,5 +176,5 @@
   "external_writes_performed": false,
   "appeal_submission_performed": false,
   "silent_learning_performed": false,
-  "generated_at": "2026-07-04T00:00:00Z"
+  "generated_at": "2026-07-05T00:00:00Z"
 }

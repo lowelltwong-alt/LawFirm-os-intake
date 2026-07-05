@@ -127,6 +127,7 @@ from .synthetic_qa_review_outcomes import (
     run_synthetic_qa_review_outcome_record,
 )
 from .synthetic_qa_bundle import SYNTHETIC_QA_BUNDLE_REPORT_FILENAME, run_synthetic_qa_bundle
+from .poc_qa_triage import POC_QA_TRIAGE_REPORT_FILENAME, run_poc_qa_triage_report
 from .ui_review_data_bundle import UI_REVIEW_DATA_BUNDLE_FILENAME, build_ui_review_data_bundle
 from .ui_review_manifest import build_ui_review_manifest
 from .util import digest_json, load_json, now_iso, write_json
@@ -182,6 +183,7 @@ def run_synthetic_qa_review_run(
     repo_root: str | Path = ".",
     fixture_boundary_report_path: str | Path | None = None,
     fixture_manifest_report_path: str | Path | None = None,
+    validation_suite_evidence_report_path: str | Path | None = None,
     generated_at: str | None = None,
 ) -> tuple[SyntheticQAReviewRunReport, Path]:
     root = Path(repo_root).resolve()
@@ -711,6 +713,7 @@ def run_synthetic_qa_review_run(
         output_expectations_ref,
         budget_qa_gate_ref,
         budget_learning_fixtures_ref,
+        outcome_replay_ref,
         outcome_execution_ref,
         outcome_builder_binding_ref,
         outcome_confidence_ref,
@@ -757,6 +760,29 @@ def run_synthetic_qa_review_run(
                 (
                     "Prebuilt Rust fixture-manifest evidence hash-binds local JSON "
                     "fixtures without making the synthetic QA run compile or execute Rust."
+                ),
+            )
+        )
+
+    staged_validation_suite_evidence_ref: Path | None = None
+    if validation_suite_evidence_report_path is not None:
+        staged_validation_suite_evidence_ref = _stage_for_bundle_as(
+            Path(validation_suite_evidence_report_path),
+            quality_dir,
+            "validation_suite_evidence_report.json",
+        )
+        validation_suite_evidence_payload = load_json(staged_validation_suite_evidence_ref)
+        steps.append(
+            _step(
+                "validation_suite_evidence",
+                "Validation Suite Evidence",
+                str(validation_suite_evidence_payload.get("status") or "missing"),
+                staged_validation_suite_evidence_ref,
+                validation_suite_evidence_payload.get("status") == "validation_suite_passed",
+                (
+                    "Prebuilt wrapper validation evidence is staged from "
+                    "scripts/run_validation_suite.py output; the synthetic QA run "
+                    "does not execute full pytest or smoke checks itself."
                 ),
             )
         )
@@ -968,6 +994,64 @@ def run_synthetic_qa_review_run(
         out_path=ui_manifest_ref,
         generated_at=generated_at,
     )
+    if staged_validation_suite_evidence_ref is not None:
+        _poc_qa_triage, poc_qa_triage_dir = run_poc_qa_triage_report(
+            ui_manifest_path=ui_manifest_ref,
+            synthetic_confidence_summary_path=(
+                quality_dir / SYNTHETIC_CONFIDENCE_SUMMARY_REPORT_FILENAME
+            ),
+            synthetic_qa_review_run_path=run_dir / SYNTHETIC_QA_REVIEW_RUN_REPORT_FILENAME,
+            synthetic_qa_blocker_report_path=quality_dir / SYNTHETIC_QA_BLOCKER_REPORT_FILENAME,
+            ui_review_data_bundle_path=ui_data_bundle_ref,
+            matter_linking_preflight_path=quality_dir / MATTER_LINKING_PREFLIGHT_REPORT_FILENAME,
+            labor_employment_qa_matrix_path=quality_dir
+            / LABOR_EMPLOYMENT_QA_MATRIX_REPORT_FILENAME,
+            blocked_driver_impact_review_path=quality_dir
+            / LABOR_EMPLOYMENT_BLOCKED_DRIVER_IMPACT_REVIEW_REPORT_FILENAME,
+            budget_output_expectations_path=quality_dir
+            / LABOR_EMPLOYMENT_BUDGET_OUTPUT_EXPECTATION_REPORT_FILENAME,
+            budget_qa_gate_path=quality_dir / LABOR_EMPLOYMENT_BUDGET_QA_GATE_REPORT_FILENAME,
+            validation_suite_evidence_path=staged_validation_suite_evidence_ref,
+            out_dir=quality_dir / "poc-qa-triage",
+            repo_root=root,
+            generated_at=generated_at,
+        )
+        _stage_for_bundle(poc_qa_triage_dir / POC_QA_TRIAGE_REPORT_FILENAME, quality_dir)
+        build_ui_review_manifest(
+            run_root=run_dir,
+            out_path=ui_manifest_ref,
+            generated_at=generated_at,
+        )
+        run_poc_qa_triage_report(
+            ui_manifest_path=ui_manifest_ref,
+            synthetic_confidence_summary_path=(
+                quality_dir / SYNTHETIC_CONFIDENCE_SUMMARY_REPORT_FILENAME
+            ),
+            synthetic_qa_review_run_path=run_dir / SYNTHETIC_QA_REVIEW_RUN_REPORT_FILENAME,
+            synthetic_qa_blocker_report_path=quality_dir / SYNTHETIC_QA_BLOCKER_REPORT_FILENAME,
+            ui_review_data_bundle_path=ui_data_bundle_ref,
+            matter_linking_preflight_path=quality_dir / MATTER_LINKING_PREFLIGHT_REPORT_FILENAME,
+            labor_employment_qa_matrix_path=quality_dir
+            / LABOR_EMPLOYMENT_QA_MATRIX_REPORT_FILENAME,
+            blocked_driver_impact_review_path=quality_dir
+            / LABOR_EMPLOYMENT_BLOCKED_DRIVER_IMPACT_REVIEW_REPORT_FILENAME,
+            budget_output_expectations_path=quality_dir
+            / LABOR_EMPLOYMENT_BUDGET_OUTPUT_EXPECTATION_REPORT_FILENAME,
+            budget_qa_gate_path=quality_dir / LABOR_EMPLOYMENT_BUDGET_QA_GATE_REPORT_FILENAME,
+            validation_suite_evidence_path=staged_validation_suite_evidence_ref,
+            out_dir=quality_dir / "poc-qa-triage",
+            repo_root=root,
+            generated_at=generated_at,
+        )
+        _stage_for_bundle(
+            quality_dir / "poc-qa-triage" / POC_QA_TRIAGE_REPORT_FILENAME,
+            quality_dir,
+        )
+        build_ui_review_manifest(
+            run_root=run_dir,
+            out_path=ui_manifest_ref,
+            generated_at=generated_at,
+        )
     build_ui_review_data_bundle(
         run_root=run_dir,
         out_path=ui_data_bundle_ref,
@@ -1118,6 +1202,13 @@ def _build_budget_learning_loop(
 
 def _stage_for_bundle(source_path: Path, quality_dir: Path) -> Path:
     destination = quality_dir / source_path.name
+    if source_path.resolve() != destination.resolve():
+        copy2(source_path, destination)
+    return destination
+
+
+def _stage_for_bundle_as(source_path: Path, quality_dir: Path, file_name: str) -> Path:
+    destination = quality_dir / file_name
     if source_path.resolve() != destination.resolve():
         copy2(source_path, destination)
     return destination
