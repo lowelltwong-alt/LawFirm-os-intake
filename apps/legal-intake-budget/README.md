@@ -81,6 +81,29 @@ must show covered versus missing pack cases, family/variant gaps, and required
 next gates without authorizing fixture generation, budget amounts, calibration,
 Lake/SQLite writes, or production testing claims.
 
+Run the full validation-to-fixture QA recipe with:
+
+```bash
+python -m lawfirm_os_intake run-ui-demo-qa-recipe \
+  --out-dir .lawfirm-os-intake/ui-demo-qa-recipe \
+  --repo-root . \
+  --fixtures-root apps/legal-intake-budget/src/fixtures \
+  --generated-at 2026-07-05T00:00:00Z \
+  --write-fixtures
+```
+
+If `--validation-suite-evidence-report` is omitted, the recipe first runs
+`scripts/run_validation_suite.py` with the long-timeout policy and refuses to
+promote fixtures unless the validation report has the exact canonical wrapper
+step order, all steps passed, no timeouts, and a clean worktree. The recipe then
+builds an initial synthetic QA run, promotes it into a scratch fixture copy,
+generates Rust boundary and manifest evidence over that scratch fixture set,
+builds a final synthetic QA run from those proofs, and performs one final
+checked fixture promotion. Without `--write-fixtures`, it stops at the final
+promotion write gate. The report is
+`ui_demo_qa_recipe_report.json`; it is local, candidate-only QA evidence and
+does not authorize production actions.
+
 Regenerate only the synthetic QA bundle and UI wrappers with:
 
 ```bash

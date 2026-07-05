@@ -13161,6 +13161,131 @@ class UIDemoFixturePromotionReport(StrictModel):
         return self
 
 
+UIDemoQARecipeStatus = Literal[
+    "ui_demo_qa_recipe_verified",
+    "ui_demo_qa_recipe_failed",
+    "ui_demo_qa_recipe_blocked_write_flag_required",
+]
+
+UIDemoQARecipeStepStatus = Literal["passed", "failed", "blocked"]
+
+
+class UIDemoQARecipeStep(StrictModel):
+    step_id: str
+    label: str
+    status: UIDemoQARecipeStepStatus
+    observed_status: str
+    artifact_ref: str | None = None
+    notes: list[str] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def ui_demo_qa_recipe_step_is_coherent(self) -> "UIDemoQARecipeStep":
+        if not self.step_id.strip():
+            raise ValueError("UI demo QA recipe step requires step_id")
+        if not self.label.strip():
+            raise ValueError("UI demo QA recipe step requires label")
+        if not self.observed_status.strip():
+            raise ValueError("UI demo QA recipe step requires observed_status")
+        if self.status == "passed" and not self.artifact_ref:
+            raise ValueError("passed UI demo QA recipe step requires artifact_ref")
+        return self
+
+
+class UIDemoQARecipeReport(StrictModel):
+    schema_version: str = "0.1"
+    ui_demo_qa_recipe_report_id: str
+    status: UIDemoQARecipeStatus
+    out_dir_ref: str
+    final_run_root_ref: str
+    initial_run_root_ref: str
+    fixtures_root_ref: str
+    temp_fixtures_root_ref: str
+    validation_mode: Literal["provided", "ran"]
+    validation_suite_evidence_ref: str
+    validation_suite_status: str
+    validation_exact_step_order_confirmed: bool
+    validation_worktree_clean_confirmed: bool
+    initial_synthetic_qa_status: str
+    temp_promotion_status: str
+    rust_boundary_status: str
+    rust_manifest_status: str
+    rust_boundary_root_matches_temp_fixtures: bool
+    rust_manifest_root_matches_temp_fixtures: bool
+    final_synthetic_qa_status: str
+    final_ui_bundle_status: str
+    final_poc_qa_triage_status: str
+    final_promotion_status: str
+    final_promotion_report_ref: str | None = None
+    final_ui_review_data_bundle_ref: str | None = None
+    final_poc_qa_triage_ref: str | None = None
+    step_count: int = Field(ge=0)
+    failed_step_count: int = Field(ge=0)
+    blocked_step_count: int = Field(ge=0)
+    temp_fixture_updates_performed: bool = False
+    local_fixture_updates_performed: bool = False
+    rollback_performed: bool = False
+    steps: list[UIDemoQARecipeStep]
+    required_next_actions: list[str]
+    candidate_only: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    local_json_only: Literal[True] = True
+    external_writes_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def ui_demo_qa_recipe_counts_and_status_match(self) -> "UIDemoQARecipeReport":
+        failed = [step for step in self.steps if step.status == "failed"]
+        blocked = [step for step in self.steps if step.status == "blocked"]
+        if self.step_count != len(self.steps):
+            raise ValueError("UI demo QA recipe step count mismatch")
+        if self.failed_step_count != len(failed):
+            raise ValueError("UI demo QA recipe failed step count mismatch")
+        if self.blocked_step_count != len(blocked):
+            raise ValueError("UI demo QA recipe blocked step count mismatch")
+        if self.status == "ui_demo_qa_recipe_verified":
+            if (
+                failed
+                or blocked
+                or self.validation_suite_status != "validation_suite_passed"
+                or not self.validation_exact_step_order_confirmed
+                or not self.validation_worktree_clean_confirmed
+                or self.initial_synthetic_qa_status != "synthetic_qa_review_run_ready"
+                or self.temp_promotion_status != "ui_demo_fixture_promotion_verified"
+                or self.rust_boundary_status != "passed"
+                or self.rust_manifest_status != "passed"
+                or not self.rust_boundary_root_matches_temp_fixtures
+                or not self.rust_manifest_root_matches_temp_fixtures
+                or self.final_synthetic_qa_status != "synthetic_qa_review_run_ready"
+                or self.final_ui_bundle_status != "ready_for_review"
+                or self.final_poc_qa_triage_status != "poc_qa_ready_for_review"
+                or self.final_promotion_status != "ui_demo_fixture_promotion_verified"
+                or not self.temp_fixture_updates_performed
+                or not self.local_fixture_updates_performed
+                or self.rollback_performed
+            ):
+                raise ValueError("verified UI demo QA recipe requires passed gates")
+        if self.status == "ui_demo_qa_recipe_blocked_write_flag_required":
+            if (
+                self.local_fixture_updates_performed
+                or self.final_promotion_status
+                != "ui_demo_fixture_promotion_blocked_write_flag_required"
+            ):
+                raise ValueError("blocked UI demo QA recipe cannot update checked fixtures")
+        if self.status == "ui_demo_qa_recipe_failed" and not (failed or blocked):
+            raise ValueError("failed UI demo QA recipe requires failed or blocked steps")
+        if not self.steps:
+            raise ValueError("UI demo QA recipe requires steps")
+        if not self.required_next_actions:
+            raise ValueError("UI demo QA recipe requires next actions")
+        return self
+
+
 def _is_sha256_ref(value: str) -> bool:
     if len(value) != len("sha256:") + 64 or not value.startswith("sha256:"):
         return False

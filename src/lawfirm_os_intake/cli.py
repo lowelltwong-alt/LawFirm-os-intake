@@ -151,6 +151,7 @@ from .synthetic_qa_bundle import run_synthetic_qa_bundle
 from .synthetic_qa_review_outcomes import run_synthetic_qa_review_outcome_record
 from .synthetic_qa_review_run import run_synthetic_qa_review_run
 from .ui_demo_fixture_promotion import promote_ui_demo_run_fixtures
+from .ui_demo_qa_recipe import run_ui_demo_qa_recipe
 from .ui_demo_fixture_refresh import refresh_ui_demo_fixtures
 from .ui_review_data_bundle import build_ui_review_data_bundle
 from .ui_review_manifest import build_ui_review_manifest
@@ -555,6 +556,60 @@ def _parser() -> argparse.ArgumentParser:
         type=int,
         default=240,
         help="Timeout for each explicit Rust checker invocation.",
+    )
+
+    ui_demo_qa_recipe = sub.add_parser(
+        "run-ui-demo-qa-recipe",
+        help=(
+            "Run the deterministic validation, synthetic QA, Rust wrapper, and "
+            "checked UI demo fixture promotion recipe."
+        ),
+    )
+    ui_demo_qa_recipe.add_argument("--out-dir", required=True)
+    ui_demo_qa_recipe.add_argument(
+        "--run-root",
+        help=(
+            "Optional final generated synthetic QA run root. Defaults to "
+            "<out-dir>/final-synthetic-qa-review."
+        ),
+    )
+    ui_demo_qa_recipe.add_argument(
+        "--fixtures-root",
+        default="apps/legal-intake-budget/src/fixtures",
+        help="Checked frontend fixture root to promote into.",
+    )
+    ui_demo_qa_recipe.add_argument(
+        "--repo-root",
+        default=".",
+        help="Repository root containing scripts, examples, fixtures, and Rust checker.",
+    )
+    ui_demo_qa_recipe.add_argument(
+        "--validation-suite-evidence-report",
+        help=(
+            "Optional prebuilt validation_suite_evidence_report.json. If omitted, "
+            "the recipe runs scripts/run_validation_suite.py."
+        ),
+    )
+    ui_demo_qa_recipe.add_argument(
+        "--write-fixtures",
+        action="store_true",
+        help="Required explicit approval to rewrite checked UI demo fixtures.",
+    )
+    ui_demo_qa_recipe.add_argument(
+        "--generated-at",
+        help="Optional fixed timestamp for deterministic reports.",
+    )
+    ui_demo_qa_recipe.add_argument(
+        "--timeout-seconds",
+        type=int,
+        default=240,
+        help="Timeout for each explicit Rust checker/promotion invocation.",
+    )
+    ui_demo_qa_recipe.add_argument(
+        "--validation-timeout-seconds",
+        type=int,
+        default=7200,
+        help="Outer timeout when the recipe runs scripts/run_validation_suite.py.",
     )
 
     calibration_starter_pack = sub.add_parser(
@@ -2477,6 +2532,54 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 0 if report.status == "ui_demo_fixture_promotion_verified" else 2
+
+        if args.command == "run-ui-demo-qa-recipe":
+            report, report_path = run_ui_demo_qa_recipe(
+                out_dir=args.out_dir,
+                repo_root=args.repo_root,
+                fixtures_root=args.fixtures_root,
+                run_root=args.run_root,
+                validation_suite_evidence_report_path=args.validation_suite_evidence_report,
+                write_fixtures=args.write_fixtures,
+                generated_at=args.generated_at,
+                timeout_seconds=args.timeout_seconds,
+                validation_timeout_seconds=args.validation_timeout_seconds,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "report_path": str(report_path),
+                    "ui_demo_qa_recipe_report_id": report.ui_demo_qa_recipe_report_id,
+                    "validation_mode": report.validation_mode,
+                    "validation_suite_status": report.validation_suite_status,
+                    "validation_exact_step_order_confirmed": (
+                        report.validation_exact_step_order_confirmed
+                    ),
+                    "validation_worktree_clean_confirmed": (
+                        report.validation_worktree_clean_confirmed
+                    ),
+                    "initial_synthetic_qa_status": report.initial_synthetic_qa_status,
+                    "temp_promotion_status": report.temp_promotion_status,
+                    "rust_boundary_status": report.rust_boundary_status,
+                    "rust_manifest_status": report.rust_manifest_status,
+                    "final_synthetic_qa_status": report.final_synthetic_qa_status,
+                    "final_ui_bundle_status": report.final_ui_bundle_status,
+                    "final_poc_qa_triage_status": report.final_poc_qa_triage_status,
+                    "final_promotion_status": report.final_promotion_status,
+                    "step_count": report.step_count,
+                    "failed_step_count": report.failed_step_count,
+                    "blocked_step_count": report.blocked_step_count,
+                    "temp_fixture_updates_performed": report.temp_fixture_updates_performed,
+                    "local_fixture_updates_performed": report.local_fixture_updates_performed,
+                    "rollback_performed": report.rollback_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "budget_submission_authorized": report.budget_submission_authorized,
+                    "matter_opening_authorized": report.matter_opening_authorized,
+                }
+            )
+            return 0 if report.status == "ui_demo_qa_recipe_verified" else 2
 
         if args.command == "build-budget-calibration-starter-pack":
             report, run_dir = run_budget_calibration_starter_pack(
