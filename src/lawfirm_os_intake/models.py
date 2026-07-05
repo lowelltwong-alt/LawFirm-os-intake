@@ -12678,6 +12678,66 @@ class RustFixtureManifestReport(StrictModel):
         return self
 
 
+class RustSyntheticIdentityGuardFailure(StrictModel):
+    path: str
+    json_path: str
+    check: str
+    value: str
+    message: str
+
+
+class RustSyntheticIdentityGuardReport(StrictModel):
+    schema_version: str = "0.1"
+    checker: Literal["synthetic-fixture-identity-guard"]
+    status: Literal["passed", "failed"]
+    root: str
+    checked_json_file_count: int = Field(ge=0)
+    checked_string_count: int = Field(ge=0)
+    checked_email_count: int = Field(ge=0)
+    allowed_email_count: int = Field(ge=0)
+    blocked_email_count: int = Field(ge=0)
+    checked_url_count: int = Field(ge=0)
+    allowed_url_count: int = Field(ge=0)
+    blocked_url_count: int = Field(ge=0)
+    synthetic_flag_violation_count: int = Field(ge=0)
+    forbidden_provenance_count: int = Field(ge=0)
+    failure_count: int = Field(ge=0)
+    failures: list[RustSyntheticIdentityGuardFailure] = Field(default_factory=list)
+    candidate_only: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    local_json_only: Literal[True] = True
+    external_writes_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def rust_synthetic_identity_guard_counts_match(
+        self,
+    ) -> "RustSyntheticIdentityGuardReport":
+        if self.checked_email_count != self.allowed_email_count + self.blocked_email_count:
+            raise ValueError("Rust synthetic identity guard email count mismatch")
+        if self.checked_url_count != self.allowed_url_count + self.blocked_url_count:
+            raise ValueError("Rust synthetic identity guard URL count mismatch")
+        if self.failure_count != len(self.failures):
+            raise ValueError("Rust synthetic identity guard failure count mismatch")
+        if self.failure_count != (
+            self.blocked_email_count
+            + self.blocked_url_count
+            + self.synthetic_flag_violation_count
+            + self.forbidden_provenance_count
+        ):
+            raise ValueError("Rust synthetic identity guard failure category count mismatch")
+        if self.status == "passed" and self.failures:
+            raise ValueError("passed Rust synthetic identity guard report cannot include failures")
+        if self.status == "failed" and not self.failures:
+            raise ValueError("failed Rust synthetic identity guard report requires failures")
+        return self
+
+
 class RustFixtureSnapshotCoherenceFailure(StrictModel):
     path: str
     check: str

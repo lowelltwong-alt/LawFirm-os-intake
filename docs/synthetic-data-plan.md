@@ -66,6 +66,8 @@ The L&E budget fact reviewed-gold spec lives at `examples/synthetic/gold/labor-e
 - record generator version and seed;
 - inspect for accidental real-person or real-company collisions before release.
 
+Run `lawfirm-os-intake build-rust-synthetic-identity-guard-report --root examples/synthetic --out-dir <dir>` before relying on fixture changes. The Rust guard scans local JSON strings and provenance flags for non-reserved email/URL domains, non-synthetic `data_origin` values, false synthetic markers, and real/private/public-ingestion flags. It is a deterministic pre-release tripwire, not proof that a fixture is legally safe or production-ready.
+
 ## Same-input counterfactual suite
 
 Run identical source text under multiple practice profiles. The suite must assert that evidence is stable while rankings may change.

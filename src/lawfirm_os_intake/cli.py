@@ -142,6 +142,7 @@ from .reviewed_learning_gate import run_reviewed_learning_gate
 from .rust_fixture_boundary import run_rust_fixture_boundary_check
 from .rust_fixture_manifest import run_rust_fixture_manifest_scan
 from .rust_fixture_snapshot_coherence import run_rust_fixture_snapshot_coherence_check
+from .rust_synthetic_identity_guard import run_rust_synthetic_identity_guard
 from .rust_ui_bundle_source_hash import run_rust_ui_bundle_source_hash_check
 from .synthetic_fixture_depth_audit import run_synthetic_fixture_depth_audit
 from .synthetic_fixture_expansion import run_synthetic_fixture_expansion_audit
@@ -484,6 +485,27 @@ def _parser() -> argparse.ArgumentParser:
         help="Repository root containing rust/fixture-boundary-checker/Cargo.toml.",
     )
     rust_ui_bundle_source_hash.add_argument(
+        "--timeout-seconds",
+        type=int,
+        default=240,
+        help="Timeout for the explicit Rust checker invocation.",
+    )
+
+    rust_synthetic_identity_guard = sub.add_parser(
+        "build-rust-synthetic-identity-guard-report",
+        help=(
+            "Run the local Rust synthetic fixture identity/provenance guard and "
+            "emit a candidate-only report."
+        ),
+    )
+    rust_synthetic_identity_guard.add_argument("--root", required=True)
+    rust_synthetic_identity_guard.add_argument("--out-dir", required=True)
+    rust_synthetic_identity_guard.add_argument(
+        "--repo-root",
+        default=".",
+        help="Repository root containing rust/fixture-boundary-checker/Cargo.toml.",
+    )
+    rust_synthetic_identity_guard.add_argument(
         "--timeout-seconds",
         type=int,
         default=240,
@@ -2454,6 +2476,35 @@ def main(argv: list[str] | None = None) -> int:
                     "hash_mismatch_count": report.hash_mismatch_count,
                     "missing_source_file_count": report.missing_source_file_count,
                     "invalid_source_hash_count": report.invalid_source_hash_count,
+                    "failure_count": report.failure_count,
+                    "external_writes_performed": report.external_writes_performed,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "budget_submission_authorized": report.budget_submission_authorized,
+                    "matter_opening_authorized": report.matter_opening_authorized,
+                }
+            )
+            return 0 if report.status == "passed" else 2
+
+        if args.command == "build-rust-synthetic-identity-guard-report":
+            report, report_path = run_rust_synthetic_identity_guard(
+                root=args.root,
+                out_dir=args.out_dir,
+                repo_root=args.repo_root,
+                timeout_seconds=args.timeout_seconds,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "report_path": str(report_path),
+                    "checked_json_file_count": report.checked_json_file_count,
+                    "checked_string_count": report.checked_string_count,
+                    "checked_email_count": report.checked_email_count,
+                    "blocked_email_count": report.blocked_email_count,
+                    "checked_url_count": report.checked_url_count,
+                    "blocked_url_count": report.blocked_url_count,
+                    "synthetic_flag_violation_count": (report.synthetic_flag_violation_count),
+                    "forbidden_provenance_count": report.forbidden_provenance_count,
                     "failure_count": report.failure_count,
                     "external_writes_performed": report.external_writes_performed,
                     "lake_write_performed": report.lake_write_performed,
