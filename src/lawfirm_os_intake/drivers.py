@@ -17,6 +17,7 @@ See ``docs/driver-based-budget-model-design.md``.
 
 from __future__ import annotations
 
+from copy import deepcopy
 from pathlib import Path
 from typing import Any, Literal
 
@@ -74,6 +75,10 @@ class CaseDriverProfile(StrictModel):
     observed_or_confirmed_driver_ids: list[str] = Field(default_factory=list)
     default_driver_ids: list[str] = Field(default_factory=list)
     unknown_driver_ids: list[str] = Field(default_factory=list)
+    intensity_normalization_mode: Literal["raw", "baseline_relative"] = "raw"
+    intensity_baseline_by_driver: dict[str, str] = Field(default_factory=dict)
+    raw_intensity_multiplier_policy: dict[str, Any] = Field(default_factory=dict)
+    effective_intensity_multiplier_policy: dict[str, Any] = Field(default_factory=dict)
     intensity_multiplier_policy: dict[str, Any] = Field(default_factory=dict)
     coverage_posture_policy: dict[str, Any] = Field(default_factory=dict)
     synthetic_guideline_constraints: dict[str, Any] = Field(default_factory=dict)
@@ -92,6 +97,107 @@ def load_driver_policy(path: str | Path) -> dict[str, Any]:
     if policy.get("contains_real_firm_data", False):
         raise ValueError("real firm driver policies are prohibited in this starter repository")
     return policy
+
+
+def _budget_template_for_family(profile: dict[str, Any], matter_family: str) -> dict[str, Any]:
+    templates = profile.get("budget_templates", {})
+    template = templates.get(matter_family, {}) if isinstance(templates, dict) else {}
+    return template if isinstance(template, dict) else {}
+
+
+def _template_baseline_intensity(profile: dict[str, Any], matter_family: str) -> dict[str, Any]:
+    template = _budget_template_for_family(profile, matter_family)
+    baseline = template.get("baseline_intensity", {})
+    return baseline if isinstance(baseline, dict) else {}
+
+
+def _raw_multiplier_for_phase(
+    effects_by_driver: dict[str, Any],
+    driver_id: str,
+    tier: str | None,
+    phase_id: str,
+) -> float:
+    if tier is None:
+        return 1.0
+    driver_effects = effects_by_driver.get(driver_id)
+    if not isinstance(driver_effects, dict):
+        return 1.0
+    effect = driver_effects.get(str(tier))
+    if not isinstance(effect, dict):
+        return 1.0
+    phase_ids = [str(item) for item in effect.get("phase_ids", [])]
+    if phase_ids and phase_id not in phase_ids:
+        return 1.0
+    return float(effect.get("multiplier", 1.0))
+
+
+def build_effective_intensity_multiplier_policy(
+    raw_policy: dict[str, Any],
+    *,
+    matter_family: str,
+    profile: dict[str, Any],
+    family_defaults: dict[str, Any],
+) -> tuple[dict[str, Any], dict[str, str]]:
+    """Return the effective intensity policy plus the baseline tiers used.
+
+    ``normalization: raw`` is intentionally behavior-preserving. ``baseline_relative``
+    divides each tier's raw multiplier by the raw multiplier of the template baseline
+    tier for the same driver and phase.
+    """
+
+    effective_policy = deepcopy(raw_policy) if isinstance(raw_policy, dict) else {}
+    mode = str(effective_policy.get("normalization", "raw"))
+    if mode not in {"raw", "baseline_relative"}:
+        raise ValueError(f"unsupported intensity normalization mode: {mode}")
+    effective_policy["normalization"] = mode
+    effects_by_driver = effective_policy.get("effects", {})
+    if not isinstance(effects_by_driver, dict):
+        return effective_policy, {}
+
+    declared_baseline = _template_baseline_intensity(profile, matter_family)
+    baseline_by_driver = {
+        str(driver_id): str(declared_baseline.get(driver_id, family_defaults.get(driver_id)))
+        for driver_id in effects_by_driver
+        if declared_baseline.get(driver_id, family_defaults.get(driver_id)) is not None
+    }
+    if mode == "raw":
+        for driver_id, value_effects in effects_by_driver.items():
+            if not isinstance(value_effects, dict):
+                continue
+            for effect in value_effects.values():
+                if isinstance(effect, dict):
+                    raw_multiplier = float(effect.get("multiplier", 1.0))
+                    effect["raw_multiplier"] = raw_multiplier
+                    effect["effective_multiplier"] = raw_multiplier
+        return effective_policy, baseline_by_driver
+
+    for driver_id, value_effects in effects_by_driver.items():
+        if not isinstance(value_effects, dict):
+            continue
+        baseline_tier = baseline_by_driver.get(str(driver_id))
+        for effect in value_effects.values():
+            if not isinstance(effect, dict):
+                continue
+            raw_multiplier = float(effect.get("multiplier", 1.0))
+            phase_ids = [str(item) for item in effect.get("phase_ids", [])]
+            effective_by_phase = {
+                phase_id: round(
+                    raw_multiplier
+                    / _raw_multiplier_for_phase(
+                        effects_by_driver,
+                        str(driver_id),
+                        baseline_tier,
+                        phase_id,
+                    ),
+                    4,
+                )
+                for phase_id in phase_ids
+            }
+            effect["raw_multiplier"] = raw_multiplier
+            effect["effective_multipliers_by_phase"] = effective_by_phase
+            if len(set(effective_by_phase.values())) == 1:
+                effect["effective_multiplier"] = next(iter(effective_by_phase.values()))
+    return effective_policy, baseline_by_driver
 
 
 def _confirmation_ref(confirmation: HumanConfirmation) -> str:
@@ -123,6 +229,13 @@ def resolve_case_drivers(
     taxonomy: dict[str, Any] = policy.get("drivers", {})
     defaults: dict[str, Any] = policy.get("matter_family_defaults", {}).get(matter_family, {})
     policy_id = str(policy.get("policy_id", "unknown"))
+    raw_intensity_policy = policy.get("intensity_multiplier_policy", {})
+    effective_intensity_policy, baseline_by_driver = build_effective_intensity_multiplier_policy(
+        raw_intensity_policy,
+        matter_family=matter_family,
+        profile=profile,
+        family_defaults=defaults,
+    )
     has_parties = bool(confirmation.confirmed_parties)
 
     resolved: list[DriverValue] = []
@@ -187,7 +300,13 @@ def resolve_case_drivers(
         unknown_driver_ids=[
             driver.driver_id for driver in resolved if driver.provenance == "unknown"
         ],
-        intensity_multiplier_policy=policy.get("intensity_multiplier_policy", {}),
+        intensity_normalization_mode=str(effective_intensity_policy.get("normalization", "raw")),  # type: ignore[arg-type]
+        intensity_baseline_by_driver=baseline_by_driver,
+        raw_intensity_multiplier_policy=(
+            raw_intensity_policy if isinstance(raw_intensity_policy, dict) else {}
+        ),
+        effective_intensity_multiplier_policy=effective_intensity_policy,
+        intensity_multiplier_policy=effective_intensity_policy,
         coverage_posture_policy=policy.get("coverage_posture_policy", {}),
         synthetic_guideline_constraints=policy.get("synthetic_guideline_constraints", {}),
         count_driver_range_policy=policy.get("count_driver_ranges", {}),
