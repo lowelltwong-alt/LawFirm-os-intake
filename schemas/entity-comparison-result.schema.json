@@ -1,0 +1,140 @@
+{
+  "$defs": {
+    "EntityNormalizationResult": {
+      "additionalProperties": false,
+      "properties": {
+        "raw_value": {
+          "title": "Raw Value",
+          "type": "string"
+        },
+        "normalized_value": {
+          "title": "Normalized Value",
+          "type": "string"
+        },
+        "base_value": {
+          "title": "Base Value",
+          "type": "string"
+        },
+        "suffix_stripped": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Suffix Stripped"
+        },
+        "rewrites_applied": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Rewrites Applied",
+          "type": "array"
+        },
+        "residual_terms_stripped": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Residual Terms Stripped",
+          "type": "array"
+        },
+        "normalization_rule_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Normalization Rule Ids",
+          "type": "array"
+        },
+        "status": {
+          "const": "candidate",
+          "default": "candidate",
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "raw_value",
+        "normalized_value",
+        "base_value",
+        "normalization_rule_ids"
+      ],
+      "title": "EntityNormalizationResult",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "left": {
+      "$ref": "#/$defs/EntityNormalizationResult"
+    },
+    "right": {
+      "$ref": "#/$defs/EntityNormalizationResult"
+    },
+    "comparison_rung": {
+      "enum": [
+        "E1_exact",
+        "E2_normalized_exact",
+        "E5_suffix_residual",
+        "E6_no_match"
+      ],
+      "title": "Comparison Rung",
+      "type": "string"
+    },
+    "outcome": {
+      "enum": [
+        "match",
+        "hold",
+        "no_match"
+      ],
+      "title": "Outcome",
+      "type": "string"
+    },
+    "disposition": {
+      "enum": [
+        "raw_exact",
+        "normalized_exact",
+        "suffix_conflict",
+        "possible_affiliate",
+        "no_match"
+      ],
+      "title": "Disposition",
+      "type": "string"
+    },
+    "decision_rule_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Decision Rule Ids",
+      "type": "array"
+    },
+    "review_required": {
+      "title": "Review Required",
+      "type": "boolean"
+    },
+    "alias_proposal_required": {
+      "title": "Alias Proposal Required",
+      "type": "boolean"
+    },
+    "status": {
+      "const": "candidate",
+      "default": "candidate",
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "left",
+    "right",
+    "comparison_rung",
+    "outcome",
+    "disposition",
+    "decision_rule_ids",
+    "review_required",
+    "alias_proposal_required"
+  ],
+  "title": "EntityComparisonResult",
+  "type": "object"
+}

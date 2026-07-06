@@ -1,0 +1,64 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "raw_value": {
+      "title": "Raw Value",
+      "type": "string"
+    },
+    "normalized_value": {
+      "title": "Normalized Value",
+      "type": "string"
+    },
+    "base_value": {
+      "title": "Base Value",
+      "type": "string"
+    },
+    "suffix_stripped": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Suffix Stripped"
+    },
+    "rewrites_applied": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Rewrites Applied",
+      "type": "array"
+    },
+    "residual_terms_stripped": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Residual Terms Stripped",
+      "type": "array"
+    },
+    "normalization_rule_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Normalization Rule Ids",
+      "type": "array"
+    },
+    "status": {
+      "const": "candidate",
+      "default": "candidate",
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "raw_value",
+    "normalized_value",
+    "base_value",
+    "normalization_rule_ids"
+  ],
+  "title": "EntityNormalizationResult",
+  "type": "object"
+}

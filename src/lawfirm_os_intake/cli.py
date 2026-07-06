@@ -125,6 +125,10 @@ from .labor_employment_qa_matrix import run_labor_employment_qa_matrix
 from .matter_linking_preflight import run_matter_linking_preflight
 from .matter_linking_qa_gate import run_matter_linking_qa_gate
 from .matter_linking_review_outcomes import run_matter_linking_review_outcome_record
+from .matter_link_keys import (
+    DEFAULT_MATTER_LINK_POLICY_PATH,
+    run_matter_link_key_extraction,
+)
 from .models import BudgetProposal, HumanConfirmation
 from .orchestrator_owner_review_request import run_orchestrator_owner_review_request
 from .pr_merge_order_readiness import run_pr_merge_order_readiness_packet
@@ -1291,6 +1295,29 @@ def _parser() -> argparse.ArgumentParser:
         "--repo-root",
         default=".",
         help="Repository root to inspect; defaults to the current working directory.",
+    )
+
+    matter_link_keys = sub.add_parser(
+        "audit-matter-link-keys",
+        help=(
+            "Extract deterministic source-bound matter-link keys from a synthetic "
+            "source bundle without clustering, connector, Lake, or budget writes."
+        ),
+    )
+    matter_link_keys.add_argument(
+        "--input",
+        required=True,
+        help="Path to synthetic SourceBundle JSON.",
+    )
+    matter_link_keys.add_argument("--out-dir", required=True)
+    matter_link_keys.add_argument(
+        "--policy",
+        default=str(DEFAULT_MATTER_LINK_POLICY_PATH),
+        help="Path to local candidate matter-link policy YAML.",
+    )
+    matter_link_keys.add_argument(
+        "--generated-at",
+        help="Optional fixed timestamp for deterministic tests and replayed reports.",
     )
 
     matter_linking_preflight = sub.add_parser(
@@ -4059,6 +4086,42 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             if report.status == "blocked_public_source_methodology":
+                return 2
+            return 0
+
+        if args.command == "audit-matter-link-keys":
+            report, run_dir = run_matter_link_key_extraction(
+                input_path=args.input,
+                out_dir=args.out_dir,
+                policy_path=args.policy,
+                generated_at=args.generated_at,
+            )
+            failed_checks = [check.check_id for check in report.checks if check.status == "failed"]
+            _print(
+                {
+                    "status": report.status,
+                    "matter_link_key_extraction_report_id": (
+                        report.matter_link_key_extraction_report_id
+                    ),
+                    "bundle_id": report.bundle_id,
+                    "document_count": report.document_count,
+                    "key_count": report.key_count,
+                    "failed_checks": failed_checks,
+                    "required_next_gates": report.required_next_gates,
+                    "sender_identity_used_as_link_key": (report.sender_identity_used_as_link_key),
+                    "fuzzy_matching_performed": report.fuzzy_matching_performed,
+                    "acronym_inference_performed": report.acronym_inference_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "matter_opening_authorized": report.matter_opening_authorized,
+                    "budget_amount_output_authorized": (report.budget_amount_output_authorized),
+                    "conflict_conclusion_emitted": report.conflict_conclusion_emitted,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            if report.status == "blocked_matter_link_key_extraction":
                 return 2
             return 0
 

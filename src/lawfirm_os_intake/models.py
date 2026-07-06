@@ -79,6 +79,205 @@ class EvidenceRef(StrictModel):
     sha256: str
 
 
+MatterLinkKeyType = Literal[
+    "claim_number",
+    "policy_number",
+    "docket_ref",
+    "adjuster_ref",
+    "party_pair",
+    "employer_employee_pair",
+    "counsel_ref",
+    "email_thread",
+    "attachment_identity",
+    "incident_date_party",
+    "subsidiary_alias",
+]
+
+
+class MatterLinkKey(StrictModel):
+    key_id: str
+    key_type: MatterLinkKeyType
+    raw_value: str
+    normalized_value: str
+    tier: Literal["strong", "medium", "weak"]
+    evidence_refs: list[EvidenceRef]
+    extraction_rule_id: str
+    status: Literal["candidate"] = "candidate"
+
+    @model_validator(mode="after")
+    def matter_link_key_is_source_bound(self) -> "MatterLinkKey":
+        if not self.key_id.strip():
+            raise ValueError("matter-link key requires key_id")
+        if not self.raw_value.strip():
+            raise ValueError("matter-link key requires raw_value")
+        if not self.normalized_value.strip():
+            raise ValueError("matter-link key requires normalized_value")
+        if not self.extraction_rule_id.strip():
+            raise ValueError("matter-link key requires extraction_rule_id")
+        if not self.evidence_refs:
+            raise ValueError("matter-link key requires source-bound evidence refs")
+        for ref in self.evidence_refs:
+            if ref.start_offset < 0 or ref.end_offset <= ref.start_offset:
+                raise ValueError("matter-link key evidence ref has invalid offsets")
+            if not ref.sha256.startswith("sha256:"):
+                raise ValueError("matter-link key evidence ref requires sha256 hash")
+        return self
+
+
+class MatterLinkKeySet(StrictModel):
+    document_id: str
+    bundle_id: str
+    sender_identity: str
+    keys: list[MatterLinkKey] = Field(default_factory=list)
+    extraction_gaps: list[str] = Field(default_factory=list)
+    status: Literal["candidate"] = "candidate"
+
+    @model_validator(mode="after")
+    def matter_link_key_set_is_candidate_only(self) -> "MatterLinkKeySet":
+        if not self.document_id.strip():
+            raise ValueError("matter-link key set requires document_id")
+        if not self.bundle_id.strip():
+            raise ValueError("matter-link key set requires bundle_id")
+        if len({key.key_id for key in self.keys}) != len(self.keys):
+            raise ValueError("matter-link key IDs must be unique within a document")
+        return self
+
+
+class EntityNormalizationResult(StrictModel):
+    raw_value: str
+    normalized_value: str
+    base_value: str
+    suffix_stripped: str | None = None
+    rewrites_applied: list[str] = Field(default_factory=list)
+    residual_terms_stripped: list[str] = Field(default_factory=list)
+    normalization_rule_ids: list[str]
+    status: Literal["candidate"] = "candidate"
+
+    @model_validator(mode="after")
+    def entity_normalization_result_is_complete(self) -> "EntityNormalizationResult":
+        if not self.raw_value.strip():
+            raise ValueError("entity normalization requires raw_value")
+        if not self.normalized_value.strip():
+            raise ValueError("entity normalization requires normalized_value")
+        if not self.base_value.strip():
+            raise ValueError("entity normalization requires base_value")
+        if not self.normalization_rule_ids:
+            raise ValueError("entity normalization requires rule ids")
+        return self
+
+
+class EntityComparisonResult(StrictModel):
+    left: EntityNormalizationResult
+    right: EntityNormalizationResult
+    comparison_rung: Literal[
+        "E1_exact",
+        "E2_normalized_exact",
+        "E5_suffix_residual",
+        "E6_no_match",
+    ]
+    outcome: Literal["match", "hold", "no_match"]
+    disposition: Literal[
+        "raw_exact",
+        "normalized_exact",
+        "suffix_conflict",
+        "possible_affiliate",
+        "no_match",
+    ]
+    decision_rule_ids: list[str]
+    review_required: bool
+    alias_proposal_required: bool
+    status: Literal["candidate"] = "candidate"
+
+    @model_validator(mode="after")
+    def entity_comparison_result_matches_rung(self) -> "EntityComparisonResult":
+        if not self.decision_rule_ids:
+            raise ValueError("entity comparison requires decision rule ids")
+        if self.outcome == "match" and self.review_required:
+            raise ValueError("entity matches must not require review in this local result")
+        if self.outcome != "hold" and self.alias_proposal_required:
+            raise ValueError("only held entity comparisons may propose alias-table review")
+        if self.comparison_rung == "E6_no_match" and self.outcome != "no_match":
+            raise ValueError("E6 comparisons must be no_match")
+        if self.outcome == "hold" and not self.review_required:
+            raise ValueError("held entity comparisons require human review")
+        return self
+
+
+class MatterLinkKeyExtractionCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    document_ids: list[str] = Field(default_factory=list)
+    key_ids: list[str] = Field(default_factory=list)
+    blocking_refs: list[str] = Field(default_factory=list)
+
+
+class MatterLinkKeyExtractionReport(StrictModel):
+    schema_version: str = "0.1"
+    matter_link_key_extraction_report_id: str
+    status: Literal[
+        "matter_link_keys_extracted_for_review",
+        "blocked_matter_link_key_extraction",
+    ]
+    bundle_id: str
+    policy_ref: str
+    policy_sha256: str
+    document_count: int = Field(ge=0)
+    key_count: int = Field(ge=0)
+    key_sets: list[MatterLinkKeySet]
+    checks: list[MatterLinkKeyExtractionCheck]
+    required_next_gates: list[str]
+    candidate_exception_lake_labels: list[str]
+    candidate_only: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    local_json_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    no_clustering_performed: Literal[True] = True
+    matter_identity_asserted: Literal[False] = False
+    matter_link_finalized: Literal[False] = False
+    sender_identity_used_as_link_key: Literal[False] = False
+    fuzzy_matching_performed: Literal[False] = False
+    acronym_inference_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    budget_amount_output_authorized: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    conflict_conclusion_emitted: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def matter_link_key_extraction_report_is_consistent(
+        self,
+    ) -> "MatterLinkKeyExtractionReport":
+        failed = [check for check in self.checks if check.status == "failed"]
+        if self.document_count != len(self.key_sets):
+            raise ValueError("matter-link key report document count mismatch")
+        if self.key_count != sum(len(key_set.keys) for key_set in self.key_sets):
+            raise ValueError("matter-link key report key count mismatch")
+        key_ids = [key.key_id for key_set in self.key_sets for key in key_set.keys]
+        if len(set(key_ids)) != len(key_ids):
+            raise ValueError("matter-link key report key IDs must be unique")
+        if self.status == "matter_link_keys_extracted_for_review" and failed:
+            raise ValueError("ready matter-link key report cannot include failed checks")
+        if self.status == "blocked_matter_link_key_extraction" and not failed:
+            raise ValueError("blocked matter-link key report requires failed checks")
+        required_gates = {
+            "human_matter_linking_review",
+            "no_budget_amount_until_cluster_and_roles_confirmed",
+            "no_matter_opening_without_official_authority",
+            "no_lake_or_sqlite_write_from_matter_link_keys",
+        }
+        if not required_gates.issubset(set(self.required_next_gates)):
+            raise ValueError("matter-link key report is missing required next gates")
+        if not self.candidate_exception_lake_labels:
+            raise ValueError("matter-link key report requires candidate Lake labels")
+        return self
+
+
 class IngestionResult(StrictModel):
     schema_version: str = "0.1"
     ingestion_result_id: str

@@ -1,0 +1,40 @@
+{
+  "schema_version": "0.1",
+  "bundle_id": "syn-linking-thread-drift-001",
+  "data_origin": "synthetic",
+  "contains_real_client_data": false,
+  "contains_real_matter_data": false,
+  "contains_privileged_data": false,
+  "sources": [
+    {
+      "source_id": "syn-thread-drift-001",
+      "source_type": "email",
+      "filename": "thread_drift_original.eml.txt",
+      "text": "From: claims@harborpoint-insurance.example\nTo: intake@synthetic-law.example\nSubject: Acme EPLI Rivera\nReferences: <thread-drift-001@synthetic-mail.example>\n\nClaim number HP-LE-3100\nPolicy number EPLI-44-ACME\nSynthetic matter text for claimant Jordan Rivera.",
+      "metadata": {
+        "synthetic": true
+      }
+    },
+    {
+      "source_id": "syn-thread-drift-002",
+      "source_type": "email",
+      "filename": "thread_drift_followup.eml.txt",
+      "text": "From: claims@harborpoint-insurance.example\nTo: intake@synthetic-law.example\nSubject: RE: Acme EPLI Rivera\nReferences: <thread-drift-001@synthetic-mail.example>\n\nClaim No. HP-LE-3100 remains pending. The arbitration documents are still missing.",
+      "metadata": {
+        "synthetic": true
+      }
+    },
+    {
+      "source_id": "syn-thread-drift-003",
+      "source_type": "email",
+      "filename": "thread_drift_new_claim.eml.txt",
+      "text": "From: claims@harborpoint-insurance.example\nTo: intake@synthetic-law.example\nSubject: RE: Acme EPLI Rivera\nReferences: <thread-drift-001@synthetic-mail.example>\n\nNew assignment in the old thread. Claim number HP-LE-9999. This synthetic text is intentionally a future R5 drift case.",
+      "metadata": {
+        "synthetic": true
+      }
+    }
+  ],
+  "fixture_hints": {
+    "gold_intent": "Extraction only: same email thread and conflicting claim-number values; clustering drift block is deferred."
+  }
+}

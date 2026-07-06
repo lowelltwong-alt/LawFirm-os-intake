@@ -1,0 +1,35 @@
+{
+  "schema_version": "0.1",
+  "bundle_id": "syn-linking-no-keys-attachment-001",
+  "data_origin": "synthetic",
+  "contains_real_client_data": false,
+  "contains_real_matter_data": false,
+  "contains_privileged_data": false,
+  "sources": [
+    {
+      "source_id": "syn-no-key-email-001",
+      "source_type": "email",
+      "filename": "blank_attachment_notice.eml.txt",
+      "text": "From: claims@harborpoint-insurance.example\nTo: intake@synthetic-law.example\nSubject: attachment attached\n\nPlease see attached synthetic form. The message intentionally omits claim number, policy number, docket number, and adjuster reference.",
+      "metadata": {
+        "synthetic": true,
+        "attachment_refs": [
+          "blank-form.pdf"
+        ]
+      }
+    },
+    {
+      "source_id": "syn-no-key-attachment-001",
+      "source_type": "attachment_text",
+      "filename": "blank-form.pdf",
+      "text": "",
+      "metadata": {
+        "synthetic": true,
+        "read_state": "unreadable"
+      }
+    }
+  ],
+  "fixture_hints": {
+    "gold_intent": "Extraction only: source with no key remains a gap and is not attached to a matter."
+  }
+}
