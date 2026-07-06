@@ -15,7 +15,7 @@
     {
       "pr_number": 16,
       "title": "[codex] Add L&E ready critical facts holdout",
-      "pr_url": "https://github.com/lowelltwong-alt/LawFirm-os-intake/pull/16",
+      "pr_url": "https://github.example.invalid/lowelltwong-alt/LawFirm-os-intake/pull/16",
       "head_ref_name": "codex/le-critical-facts-holdout",
       "base_ref_name": "main",
       "observed_state": "open",
@@ -50,7 +50,7 @@
     {
       "pr_number": 17,
       "title": "[codex] Add ambiguous role holdout matrix",
-      "pr_url": "https://github.com/lowelltwong-alt/LawFirm-os-intake/pull/17",
+      "pr_url": "https://github.example.invalid/lowelltwong-alt/LawFirm-os-intake/pull/17",
       "head_ref_name": "codex/ambiguous-role-holdout-matrix",
       "base_ref_name": "main",
       "observed_state": "open",
@@ -82,7 +82,7 @@
     {
       "pr_number": 18,
       "title": "[codex] add carrier rejection counterfactual fixture",
-      "pr_url": "https://github.com/lowelltwong-alt/LawFirm-os-intake/pull/18",
+      "pr_url": "https://github.example.invalid/lowelltwong-alt/LawFirm-os-intake/pull/18",
       "head_ref_name": "codex/carrier-rejection-counterfactual-fixtures",
       "base_ref_name": "main",
       "observed_state": "open",
@@ -113,7 +113,7 @@
     {
       "pr_number": 19,
       "title": "[codex] add synthetic fixture depth audit",
-      "pr_url": "https://github.com/lowelltwong-alt/LawFirm-os-intake/pull/19",
+      "pr_url": "https://github.example.invalid/lowelltwong-alt/LawFirm-os-intake/pull/19",
       "head_ref_name": "codex/fixture-expansion-depth-audit",
       "base_ref_name": "main",
       "observed_state": "open",
