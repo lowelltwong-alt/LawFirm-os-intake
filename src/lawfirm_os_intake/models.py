@@ -278,6 +278,187 @@ class MatterLinkKeyExtractionReport(StrictModel):
         return self
 
 
+MatterLinkDecisionOutcome = Literal["merge", "split", "hold", "block"]
+MatterLinkAmbiguityClass = Literal[
+    "corroborated_multi_key",
+    "single_strong_key",
+    "medium_key_only",
+    "weak_key_only",
+    "conflicted",
+]
+MatterLinkClusterDisposition = Literal[
+    "proposed_link",
+    "hold_for_more_documents",
+    "human_review_required",
+    "blocked_conflict",
+]
+
+
+class MatterLinkDecisionRecord(StrictModel):
+    schema_version: str = "0.1"
+    decision_id: str
+    left_document_id: str
+    right_document_id: str
+    rule_id: str
+    outcome: MatterLinkDecisionOutcome
+    ambiguity_signal: str
+    supporting_key_ids: list[str] = Field(default_factory=list)
+    conflicting_key_ids: list[str] = Field(default_factory=list)
+    note: str
+    status: Literal["candidate"] = "candidate"
+
+    @model_validator(mode="after")
+    def matter_link_decision_record_is_complete(self) -> "MatterLinkDecisionRecord":
+        if not self.decision_id.strip():
+            raise ValueError("matter-link decision requires decision_id")
+        if not self.left_document_id.strip() or not self.right_document_id.strip():
+            raise ValueError("matter-link decision requires document ids")
+        if self.left_document_id == self.right_document_id:
+            raise ValueError("matter-link decision requires two distinct documents")
+        if not self.rule_id.strip():
+            raise ValueError("matter-link decision requires rule_id")
+        if not self.ambiguity_signal.strip():
+            raise ValueError("matter-link decision requires ambiguity_signal")
+        if not self.note.strip():
+            raise ValueError("matter-link decision requires note")
+        if self.outcome in {"merge", "hold"} and self.conflicting_key_ids:
+            raise ValueError("non-conflict matter-link decisions cannot include conflict keys")
+        if self.outcome in {"split", "block"} and not self.conflicting_key_ids:
+            raise ValueError("split/block matter-link decisions require conflict keys")
+        if self.outcome == "merge" and not self.supporting_key_ids:
+            raise ValueError("merge matter-link decisions require supporting keys")
+        return self
+
+
+class MatterClusterProposal(StrictModel):
+    schema_version: str = "0.1"
+    cluster_id: str
+    document_ids: list[str]
+    ambiguity_class: MatterLinkAmbiguityClass
+    supporting_keys: list[MatterLinkKey] = Field(default_factory=list)
+    conflicting_keys: list[MatterLinkKey] = Field(default_factory=list)
+    disposition: MatterLinkClusterDisposition
+    decision_rule_ids: list[str]
+    decision_ids: list[str]
+    blocking_decision_ids: list[str] = Field(default_factory=list)
+    requires_human_confirmation: Literal[True] = True
+    matter_identity_asserted: Literal[False] = False
+    status: Literal["candidate"] = "candidate"
+
+    @model_validator(mode="after")
+    def matter_cluster_proposal_is_review_only(self) -> "MatterClusterProposal":
+        if not self.cluster_id.strip():
+            raise ValueError("matter cluster proposal requires cluster_id")
+        if not self.document_ids:
+            raise ValueError("matter cluster proposal requires documents")
+        if len(set(self.document_ids)) != len(self.document_ids):
+            raise ValueError("matter cluster proposal document ids must be unique")
+        if not self.decision_rule_ids:
+            raise ValueError("matter cluster proposal requires decision rules")
+        if len(set(self.decision_ids)) != len(self.decision_ids):
+            raise ValueError("matter cluster proposal decision ids must be unique")
+        if self.ambiguity_class == "conflicted":
+            if self.disposition != "blocked_conflict":
+                raise ValueError("conflicted matter clusters must be blocked_conflict")
+            if not self.conflicting_keys and not self.blocking_decision_ids:
+                raise ValueError("conflicted matter clusters require conflict evidence")
+        if self.disposition == "proposed_link" and self.ambiguity_class not in {
+            "corroborated_multi_key",
+            "single_strong_key",
+        }:
+            raise ValueError("only strong-supported matter clusters may be proposed links")
+        return self
+
+
+class MatterLinkingClusterCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    document_ids: list[str] = Field(default_factory=list)
+    decision_ids: list[str] = Field(default_factory=list)
+    blocking_refs: list[str] = Field(default_factory=list)
+
+
+class MatterLinkingClusterReport(StrictModel):
+    schema_version: str = "0.1"
+    matter_linking_cluster_report_id: str
+    status: Literal[
+        "matter_linking_clusters_proposed_for_review",
+        "blocked_matter_linking_cluster_validation",
+    ]
+    source_matter_link_key_extraction_report_id: str
+    bundle_id: str
+    document_count: int = Field(ge=0)
+    decision_count: int = Field(ge=0)
+    cluster_count: int = Field(ge=0)
+    conflicted_cluster_count: int = Field(ge=0)
+    hold_cluster_count: int = Field(ge=0)
+    proposed_link_cluster_count: int = Field(ge=0)
+    decisions: list[MatterLinkDecisionRecord]
+    clusters: list[MatterClusterProposal]
+    checks: list[MatterLinkingClusterCheck]
+    required_next_gates: list[str]
+    candidate_exception_lake_labels: list[str]
+    candidate_only: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    local_json_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    matter_identity_asserted: Literal[False] = False
+    matter_link_finalized: Literal[False] = False
+    budget_generation_performed: Literal[False] = False
+    budget_amount_output_authorized: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    conflict_conclusion_emitted: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    connector_called: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    order_invariant_algorithm: Literal[True] = True
+    generated_at: str
+
+    @model_validator(mode="after")
+    def matter_linking_cluster_report_counts_match(self) -> "MatterLinkingClusterReport":
+        failed = [check for check in self.checks if check.status == "failed"]
+        if self.decision_count != len(self.decisions):
+            raise ValueError("matter-linking decision count mismatch")
+        if self.cluster_count != len(self.clusters):
+            raise ValueError("matter-linking cluster count mismatch")
+        if self.conflicted_cluster_count != sum(
+            1 for cluster in self.clusters if cluster.ambiguity_class == "conflicted"
+        ):
+            raise ValueError("matter-linking conflicted cluster count mismatch")
+        if self.hold_cluster_count != sum(
+            1 for cluster in self.clusters if cluster.disposition == "hold_for_more_documents"
+        ):
+            raise ValueError("matter-linking hold cluster count mismatch")
+        if self.proposed_link_cluster_count != sum(
+            1 for cluster in self.clusters if cluster.disposition == "proposed_link"
+        ):
+            raise ValueError("matter-linking proposed-link cluster count mismatch")
+        if len({decision.decision_id for decision in self.decisions}) != len(self.decisions):
+            raise ValueError("matter-linking decision ids must be unique")
+        if len({cluster.cluster_id for cluster in self.clusters}) != len(self.clusters):
+            raise ValueError("matter-linking cluster ids must be unique")
+        if self.status == "matter_linking_clusters_proposed_for_review" and failed:
+            raise ValueError("ready matter-linking cluster report cannot include failed checks")
+        if self.status == "blocked_matter_linking_cluster_validation" and not failed:
+            raise ValueError("blocked matter-linking cluster report requires failed checks")
+        required_gates = {
+            "human_matter_linking_review",
+            "no_budget_amount_until_cluster_and_roles_confirmed",
+            "no_matter_opening_without_official_authority",
+            "no_lake_or_sqlite_write_from_matter_linking_clusters",
+        }
+        if not required_gates.issubset(set(self.required_next_gates)):
+            raise ValueError("matter-linking cluster report is missing required next gates")
+        if not self.candidate_exception_lake_labels:
+            raise ValueError("matter-linking cluster report requires candidate labels")
+        return self
+
+
 class IngestionResult(StrictModel):
     schema_version: str = "0.1"
     ingestion_result_id: str

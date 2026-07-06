@@ -1,0 +1,75 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "decision_id": {
+      "title": "Decision Id",
+      "type": "string"
+    },
+    "left_document_id": {
+      "title": "Left Document Id",
+      "type": "string"
+    },
+    "right_document_id": {
+      "title": "Right Document Id",
+      "type": "string"
+    },
+    "rule_id": {
+      "title": "Rule Id",
+      "type": "string"
+    },
+    "outcome": {
+      "enum": [
+        "merge",
+        "split",
+        "hold",
+        "block"
+      ],
+      "title": "Outcome",
+      "type": "string"
+    },
+    "ambiguity_signal": {
+      "title": "Ambiguity Signal",
+      "type": "string"
+    },
+    "supporting_key_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Supporting Key Ids",
+      "type": "array"
+    },
+    "conflicting_key_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Conflicting Key Ids",
+      "type": "array"
+    },
+    "note": {
+      "title": "Note",
+      "type": "string"
+    },
+    "status": {
+      "const": "candidate",
+      "default": "candidate",
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "decision_id",
+    "left_document_id",
+    "right_document_id",
+    "rule_id",
+    "outcome",
+    "ambiguity_signal",
+    "note"
+  ],
+  "title": "MatterLinkDecisionRecord",
+  "type": "object"
+}

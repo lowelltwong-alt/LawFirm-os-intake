@@ -1,0 +1,212 @@
+{
+  "$defs": {
+    "EvidenceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "segment_id": {
+          "title": "Segment Id",
+          "type": "string"
+        },
+        "start_offset": {
+          "title": "Start Offset",
+          "type": "integer"
+        },
+        "end_offset": {
+          "title": "End Offset",
+          "type": "integer"
+        },
+        "sha256": {
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "segment_id",
+        "start_offset",
+        "end_offset",
+        "sha256"
+      ],
+      "title": "EvidenceRef",
+      "type": "object"
+    },
+    "MatterLinkKey": {
+      "additionalProperties": false,
+      "properties": {
+        "key_id": {
+          "title": "Key Id",
+          "type": "string"
+        },
+        "key_type": {
+          "enum": [
+            "claim_number",
+            "policy_number",
+            "docket_ref",
+            "adjuster_ref",
+            "party_pair",
+            "employer_employee_pair",
+            "counsel_ref",
+            "email_thread",
+            "attachment_identity",
+            "incident_date_party",
+            "subsidiary_alias"
+          ],
+          "title": "Key Type",
+          "type": "string"
+        },
+        "raw_value": {
+          "title": "Raw Value",
+          "type": "string"
+        },
+        "normalized_value": {
+          "title": "Normalized Value",
+          "type": "string"
+        },
+        "tier": {
+          "enum": [
+            "strong",
+            "medium",
+            "weak"
+          ],
+          "title": "Tier",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "extraction_rule_id": {
+          "title": "Extraction Rule Id",
+          "type": "string"
+        },
+        "status": {
+          "const": "candidate",
+          "default": "candidate",
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "key_id",
+        "key_type",
+        "raw_value",
+        "normalized_value",
+        "tier",
+        "evidence_refs",
+        "extraction_rule_id"
+      ],
+      "title": "MatterLinkKey",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "cluster_id": {
+      "title": "Cluster Id",
+      "type": "string"
+    },
+    "document_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Document Ids",
+      "type": "array"
+    },
+    "ambiguity_class": {
+      "enum": [
+        "corroborated_multi_key",
+        "single_strong_key",
+        "medium_key_only",
+        "weak_key_only",
+        "conflicted"
+      ],
+      "title": "Ambiguity Class",
+      "type": "string"
+    },
+    "supporting_keys": {
+      "items": {
+        "$ref": "#/$defs/MatterLinkKey"
+      },
+      "title": "Supporting Keys",
+      "type": "array"
+    },
+    "conflicting_keys": {
+      "items": {
+        "$ref": "#/$defs/MatterLinkKey"
+      },
+      "title": "Conflicting Keys",
+      "type": "array"
+    },
+    "disposition": {
+      "enum": [
+        "proposed_link",
+        "hold_for_more_documents",
+        "human_review_required",
+        "blocked_conflict"
+      ],
+      "title": "Disposition",
+      "type": "string"
+    },
+    "decision_rule_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Decision Rule Ids",
+      "type": "array"
+    },
+    "decision_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Decision Ids",
+      "type": "array"
+    },
+    "blocking_decision_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Blocking Decision Ids",
+      "type": "array"
+    },
+    "requires_human_confirmation": {
+      "const": true,
+      "default": true,
+      "title": "Requires Human Confirmation",
+      "type": "boolean"
+    },
+    "matter_identity_asserted": {
+      "const": false,
+      "default": false,
+      "title": "Matter Identity Asserted",
+      "type": "boolean"
+    },
+    "status": {
+      "const": "candidate",
+      "default": "candidate",
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "cluster_id",
+    "document_ids",
+    "ambiguity_class",
+    "disposition",
+    "decision_rule_ids",
+    "decision_ids"
+  ],
+  "title": "MatterClusterProposal",
+  "type": "object"
+}

@@ -218,6 +218,22 @@ def normalize_key_value(
         return _compact(value).casefold()
     if key_type in set(normalization.get("sender_namespaced_compact_upper", [])):
         return f"{_sender_namespace(sender_identity)}|{_compact(value).upper()}"
+    if key_type == "party_pair":
+        return _normalize_named_pair(
+            value,
+            separator=" and claimant ",
+            left_label="insured_or_employer",
+            right_label="claimant_or_employee",
+            policy=policy,
+        )
+    if key_type == "employer_employee_pair":
+        return _normalize_named_pair(
+            value,
+            separator=" and employee ",
+            left_label="insured_or_employer",
+            right_label="claimant_or_employee",
+            policy=policy,
+        )
     if key_type in set(normalization.get("entity_like", [])):
         return normalize_entity_name(value, policy).base_value
     return _compact(value).casefold()
@@ -514,6 +530,23 @@ def _sender_namespace(sender_identity: str) -> str:
 
 def _compact(value: str) -> str:
     return re.sub(r"[-. /#]", "", value.strip())
+
+
+def _normalize_named_pair(
+    raw_value: str,
+    *,
+    separator: str,
+    left_label: str,
+    right_label: str,
+    policy: dict[str, Any],
+) -> str:
+    normalized = raw_value.casefold()
+    if separator not in normalized:
+        return normalize_entity_name(raw_value, policy).base_value
+    left_raw, right_raw = re.split(re.escape(separator), raw_value, maxsplit=1, flags=re.IGNORECASE)
+    left = normalize_entity_name(left_raw, policy).base_value
+    right = normalize_entity_name(right_raw, policy).base_value
+    return f"{left_label}={left}|{right_label}={right}"
 
 
 def _normalized_suffixes(values: list[Any]) -> list[str]:

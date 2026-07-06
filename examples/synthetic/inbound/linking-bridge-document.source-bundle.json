@@ -1,0 +1,40 @@
+{
+  "schema_version": "0.1",
+  "bundle_id": "syn-linking-bridge-document-001",
+  "data_origin": "synthetic",
+  "contains_real_client_data": false,
+  "contains_real_matter_data": false,
+  "contains_privileged_data": false,
+  "sources": [
+    {
+      "source_id": "syn-bridge-matter-a",
+      "source_type": "email",
+      "filename": "bridge_matter_a.eml.txt",
+      "text": "From: claims@harborpoint-insurance.example\nTo: intake@synthetic-law.example\nSubject: bridge matter A\n\nClaim number HP-LE-9001\nPolicy number EPLI-77-BRIDGE\nSynthetic claim for Acme Retail LLC and claimant Jules Rivera.",
+      "metadata": {
+        "synthetic": true
+      }
+    },
+    {
+      "source_id": "syn-bridge-matter-b",
+      "source_type": "email",
+      "filename": "bridge_matter_b.eml.txt",
+      "text": "From: claims@harborpoint-insurance.example\nTo: intake@synthetic-law.example\nSubject: bridge matter B\n\nClaim number HP-LE-9002\nPolicy number EPLI-77-BRIDGE\nSynthetic claim for Acme Retail LLC and claimant Drew Chen.",
+      "metadata": {
+        "synthetic": true
+      }
+    },
+    {
+      "source_id": "syn-bridge-document",
+      "source_type": "correspondence_dump",
+      "filename": "bridge_dump.txt",
+      "text": "From: claims@harborpoint-insurance.example\nTo: intake@synthetic-law.example\nSubject: accidental combined synthetic packet\n\nThis synthetic correspondence dump accidentally combines two references. Claim number HP-LE-9001 appears in the first paragraph. Claim number HP-LE-9002 appears in the second paragraph. The document must not merge the two matters through itself.",
+      "metadata": {
+        "synthetic": true
+      }
+    }
+  ],
+  "fixture_hints": {
+    "gold_intent": "Bridge document shares strong keys with two clusters; pairwise split evidence must poison transitive merging."
+  }
+}

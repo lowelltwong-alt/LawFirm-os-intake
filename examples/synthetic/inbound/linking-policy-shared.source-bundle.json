@@ -10,7 +10,7 @@
       "source_id": "syn-policy-shared-001",
       "source_type": "email",
       "filename": "policy_shared_first.eml.txt",
-      "text": "From: claims@harborpoint-insurance.example\nTo: intake@synthetic-law.example\nSubject: shared policy first synthetic claim\n\nPolicy number EPLI-88-CHAIN\nClaim number HP-LE-7001\nDate of loss: May 2, 2026\nSynthetic claimant is Jamie Fox.",
+      "text": "From: claims@harborpoint-insurance.example\nTo: intake@synthetic-law.example\nSubject: shared policy first synthetic claim\n\nPolicy number EPLI-88-CHAIN\nDate of loss: May 2, 2026\nSynthetic claim for Acme Retail LLC and claimant Jamie Fox.",
       "metadata": {
         "synthetic": true
       }
@@ -19,7 +19,7 @@
       "source_id": "syn-policy-shared-002",
       "source_type": "email",
       "filename": "policy_shared_second.eml.txt",
-      "text": "From: claims@harborpoint-insurance.example\nTo: intake@synthetic-law.example\nSubject: shared policy second synthetic claim\n\nPolicy number EPLI-88-CHAIN\nClaim number HP-LE-7002\nDate of loss: May 9, 2026\nSynthetic claimant is Casey Vale.",
+      "text": "From: claims@harborpoint-insurance.example\nTo: intake@synthetic-law.example\nSubject: shared policy second synthetic claim\n\nPolicy number EPLI-88-CHAIN\nDate of loss: May 9, 2026\nSynthetic claim for Acme Retail LLC and claimant Casey Vale.",
       "metadata": {
         "synthetic": true
       }
