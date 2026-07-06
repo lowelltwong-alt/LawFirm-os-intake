@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+from hashlib import sha256
 from typing import Any, Literal
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -10156,11 +10158,103 @@ class ExceptionLakeCandidate(StrictModel):
     evidence_refs: list[EvidenceRef] = Field(default_factory=list)
     structured_refs: list[str] = Field(default_factory=list)
     blocked_state: str | None = None
+    identity_key: str | None = None
+    severity: Literal["S0", "S1", "S2", "S3"] | None = None
+    occurrence_hint: str | None = None
+    holdout_origin: bool = False
     raw_payload_included: bool = False
     canonical_promotion_required: bool = True
     target_runtime_repo: Literal["LawFirm-os-exceptions-lake-runtime"] = (
         "LawFirm-os-exceptions-lake-runtime"
     )
+
+    @model_validator(mode="after")
+    def exception_learning_metadata(self) -> "ExceptionLakeCandidate":
+        if self.identity_key is None:
+            subject_ids = sorted(
+                {
+                    *self.structured_refs,
+                    *self.source_inventory_refs,
+                    *[
+                        f"evidence:{ref.source_id}:{ref.segment_id}:{ref.sha256}"
+                        for ref in self.evidence_refs
+                    ],
+                    *([f"blocked_state:{self.blocked_state}"] if self.blocked_state else []),
+                }
+            )
+            primary_structured_ref = (
+                self.structured_refs[0]
+                if self.structured_refs
+                else (
+                    self.source_inventory_refs[0]
+                    if self.source_inventory_refs
+                    else self.local_event_label
+                )
+            )
+            payload = json.dumps(
+                {
+                    "issue_family_or_label": self.local_event_label,
+                    "canonical_lake_class": self.canonical_lake_class,
+                    "primary_structured_ref": primary_structured_ref,
+                    "normalized_subject_ids": subject_ids or [self.local_event_label],
+                },
+                sort_keys=True,
+                separators=(",", ":"),
+            )
+            self.identity_key = "sha256:" + sha256(payload.encode("utf-8")).hexdigest()
+        if self.severity is None:
+            self.severity = _exception_candidate_severity(
+                self.local_event_label,
+                self.canonical_lake_class,
+                self.structured_refs,
+                self.blocked_state,
+            )
+        if self.occurrence_hint is None:
+            self.occurrence_hint = "count_recurrence_by_identity_key"
+        return self
+
+
+def _exception_candidate_severity(
+    local_event_label: str,
+    canonical_lake_class: str,
+    structured_refs: list[str],
+    blocked_state: str | None,
+) -> Literal["S0", "S1", "S2", "S3"]:
+    if canonical_lake_class == "authority_conflict_override":
+        return "S0"
+    if local_event_label == "prompt_injection_source_content" or local_event_label.startswith(
+        "prohibited_transition_attempted_"
+    ):
+        return "S0"
+    if local_event_label == "budget_invariant_violation" and any(
+        invariant in ref for invariant in ("I1", "I4", "I6", "I14") for ref in structured_refs
+    ):
+        return "S0"
+    if local_event_label in {
+        "scenario_policy_invalid",
+        "rate_resolution_ambiguous",
+        "matter_link_conflict",
+        "source_matter_link_conflicting_identifiers",
+        "labor_employment_critical_budget_fact_block",
+    }:
+        return "S1"
+    if blocked_state in {
+        "budget_insufficient_information",
+        "budget_hours_only",
+        "budget_driver_unknown",
+        "budget_unknowns_require_human_review",
+        "carrier_preapproval_required",
+    }:
+        return "S2"
+    if local_event_label in {
+        "budget_guideline_or_cap_requires_review",
+        "carrier_preapproval_required",
+        "budget_actual_cost_variance_requires_review",
+        "source_matter_link_ambiguous",
+        "matter_link_ambiguity_requires_review",
+    }:
+        return "S2"
+    return "S3"
 
 
 class CarrierExpectedResponse(StrictModel):
@@ -15905,6 +15999,16 @@ class ExceptionLakeMappingRule(StrictModel):
         "carrier_rejection_reconciliation",
         "carrier_rejection_appeal_result",
         "carrier_rejection_learning",
+        "budget_invariant_violation",
+        "scenario_policy_invalid",
+        "rate_resolution_ambiguous",
+        "carrier_appeal_outcome",
+        "matter_link_ambiguity",
+        "matter_link_conflict",
+        "human_correction_of_machine_output",
+        "qa_gate_defect",
+        "fixture_weakness",
+        "workflow_discovery",
     ]
     local_event_label: str
     canonical_lake_class: Literal[
@@ -15925,6 +16029,12 @@ class ExceptionLakeMappingRule(StrictModel):
             "carrier_rejection_reconciliation_report",
             "carrier_rejection_remediation_case",
             "carrier_appeal_result",
+            "budget_invariant_report",
+            "matter_linking_preflight_report",
+            "human_review_outcome_record",
+            "qa_gate_report",
+            "fixture_gold_report",
+            "workflow_discovery_note",
         ]
     ]
     candidate_ids: list[str] = Field(default_factory=list)

@@ -5,7 +5,7 @@ import yaml
 
 from lawfirm_os_intake.confirmation import bind_confirmation_to_packet_evidence
 from lawfirm_os_intake.context import load_profile
-from lawfirm_os_intake.models import HumanConfirmation
+from lawfirm_os_intake.models import ExceptionLakeCandidate, HumanConfirmation
 from lawfirm_os_intake.util import load_json
 from lawfirm_os_intake.workflow import run_budget, run_preflight
 
@@ -67,6 +67,10 @@ def test_prompt_injection_becomes_workflow_escalation_candidate(tmp_path, repo_r
 
     assert injection
     assert injection[0]["canonical_lake_class"] == "workflow_escalation"
+    assert injection[0]["identity_key"].startswith("sha256:")
+    assert injection[0]["severity"] == "S0"
+    assert injection[0]["occurrence_hint"] == "count_recurrence_by_identity_key"
+    assert injection[0]["holdout_origin"] is False
     assert injection[0]["evidence_refs"]
     assert injection[0]["blocked_state"] == "human_intake_review_required"
 
@@ -107,6 +111,10 @@ def test_prohibited_transition_attempts_become_specific_exception_candidates(
         for candidate in transition_candidates
     )
     assert all(candidate["raw_payload_included"] is False for candidate in transition_candidates)
+    assert all(candidate["severity"] == "S0" for candidate in transition_candidates)
+    assert all(
+        candidate["identity_key"].startswith("sha256:") for candidate in transition_candidates
+    )
     assert all("text" not in candidate for candidate in transition_candidates)
 
 
@@ -167,6 +175,7 @@ def test_budget_blocker_emits_local_exception_candidate(tmp_path, repo_root):
     ]
     assert unknowns
     assert unknowns[0]["canonical_lake_class"] == "workflow_escalation"
+    assert unknowns[0]["severity"] == "S2"
     assert unknowns[0]["structured_refs"]
     assert unknowns[0]["raw_payload_included"] is False
 
@@ -241,3 +250,52 @@ def test_missing_budget_template_emits_budget_template_exception_candidate(tmp_p
     assert template_gaps[0]["blocked_state"] == "budget_insufficient_information"
     assert template_gaps[0]["structured_refs"]
     assert template_gaps[0]["raw_payload_included"] is False
+
+
+def test_exception_identity_key_is_stable_across_runs_and_subject_sensitive():
+    first = ExceptionLakeCandidate(
+        candidate_id="exc-first",
+        run_id="run-a",
+        preflight_packet_id="packet-a",
+        local_event_label="scenario_policy_invalid",
+        canonical_lake_class="workflow_escalation",
+        reason="first occurrence",
+        structured_refs=["budget-policy://scenario/L250"],
+        blocked_state="scenario_policy_invalid",
+    )
+    repeat = ExceptionLakeCandidate(
+        candidate_id="exc-repeat",
+        run_id="run-b",
+        preflight_packet_id="packet-b",
+        local_event_label="scenario_policy_invalid",
+        canonical_lake_class="workflow_escalation",
+        reason="same logical occurrence",
+        structured_refs=["budget-policy://scenario/L250"],
+        blocked_state="scenario_policy_invalid",
+    )
+    different_subject = ExceptionLakeCandidate(
+        candidate_id="exc-other",
+        run_id="run-c",
+        preflight_packet_id="packet-c",
+        local_event_label="scenario_policy_invalid",
+        canonical_lake_class="workflow_escalation",
+        reason="different logical occurrence",
+        structured_refs=["budget-policy://scenario/L260"],
+        blocked_state="scenario_policy_invalid",
+    )
+    authority_conflict = ExceptionLakeCandidate(
+        candidate_id="exc-authority",
+        run_id="run-d",
+        preflight_packet_id="packet-d",
+        local_event_label="rate_resolution_ambiguous",
+        canonical_lake_class="authority_conflict_override",
+        reason="ambiguous carrier authority",
+        structured_refs=["rate-card://carrier/a|carrier/b"],
+        blocked_state="rate_resolution_ambiguous",
+    )
+
+    assert first.identity_key == repeat.identity_key
+    assert first.identity_key != different_subject.identity_key
+    assert first.severity == "S1"
+    assert authority_conflict.severity == "S0"
+    assert first.occurrence_hint == "count_recurrence_by_identity_key"

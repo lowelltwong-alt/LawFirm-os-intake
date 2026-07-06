@@ -208,6 +208,156 @@ RULE_DEFINITIONS = [
         ],
         "structured_refs": ["docs/carrier-rejection-learning-loop-roadmap.md#learning-loops"],
     },
+    {
+        "mapping_id": "budget_invariant_violation.v1",
+        "issue_family": "budget_invariant_violation",
+        "local_event_label": "budget_invariant_violation",
+        "canonical_lake_class": "workflow_escalation",
+        "trigger_summary": (
+            "A budget invariant report failed deterministic arithmetic, scope, scenario, "
+            "or expected-value checks."
+        ),
+        "support_ref_kinds": ["budget_invariant_report", "budget_proposal", "structured_ref"],
+        "structured_refs": [
+            "docs/fable/budget-truth-kernel.md#3-invariant-table",
+            "docs/decisions/TRACE-2026-07-06-bk1-budget-invariants.md",
+            "docs/decisions/TRACE-2026-07-06-bk2-scenario-policy-hardening.md",
+        ],
+    },
+    {
+        "mapping_id": "scenario_policy_invalid.v1",
+        "issue_family": "scenario_policy_invalid",
+        "local_event_label": "scenario_policy_invalid",
+        "canonical_lake_class": "workflow_escalation",
+        "trigger_summary": (
+            "Budget scenario policy is invalid, including unknown resolution phases, "
+            "non-monotonic scenario totals, or invalid probability weights."
+        ),
+        "support_ref_kinds": ["budget_proposal", "budget_invariant_report", "structured_ref"],
+        "structured_refs": [
+            "docs/fable/exception-learning-taxonomy.md#2-candidate-exception-classes-superset-taxonomy",
+            "docs/decisions/TRACE-2026-07-06-bk2-scenario-policy-hardening.md",
+        ],
+    },
+    {
+        "mapping_id": "rate_resolution_ambiguous.v1",
+        "issue_family": "rate_resolution_ambiguous",
+        "local_event_label": "rate_resolution_ambiguous",
+        "canonical_lake_class": "authority_conflict_override",
+        "trigger_summary": (
+            "Carrier, payer, jurisdiction, or role-rate authority is ambiguous enough that "
+            "the budget must not silently price from defaults."
+        ),
+        "support_ref_kinds": ["budget_proposal", "structured_ref"],
+        "structured_refs": [
+            "docs/fable/budget-truth-kernel.md#2-where-the-system-must-block--widen--go-hours-only--require-confirmation",
+            "docs/fable/exception-learning-taxonomy.md#5-severity-rules-deterministic",
+        ],
+    },
+    {
+        "mapping_id": "carrier_appeal_outcome.v1",
+        "issue_family": "carrier_appeal_outcome",
+        "local_event_label": "carrier_appeal_result_received",
+        "canonical_lake_class": "workflow_escalation",
+        "trigger_summary": (
+            "A carrier appeal outcome was recorded and should be trended separately from "
+            "the initial rejection capture event."
+        ),
+        "support_ref_kinds": [
+            "carrier_rejection_reconciliation_report",
+            "carrier_appeal_result",
+        ],
+        "structured_refs": [
+            "docs/carrier-rejection-learning-loop-roadmap.md#follow-up-and-appeal-workflow",
+            "docs/fable/exception-learning-taxonomy.md#2-candidate-exception-classes-superset-taxonomy",
+        ],
+    },
+    {
+        "mapping_id": "matter_link_ambiguity.v1",
+        "issue_family": "matter_link_ambiguity",
+        "local_event_label": "source_matter_link_ambiguous",
+        "canonical_lake_class": "workflow_escalation",
+        "trigger_summary": (
+            "Inbound material cannot be confidently linked to exactly one matter bundle "
+            "and requires human matter-linking review."
+        ),
+        "support_ref_kinds": ["matter_linking_preflight_report", "structured_ref"],
+        "structured_refs": [
+            "docs/fable/matter-linking-hard-kernel.md#codex-handoff-pr-sized",
+            "docs/integrations/upfront-intake-integration-research.md#matter-linking",
+        ],
+    },
+    {
+        "mapping_id": "matter_link_conflict.v1",
+        "issue_family": "matter_link_conflict",
+        "local_event_label": "source_matter_link_conflicting_identifiers",
+        "canonical_lake_class": "authority_conflict_override",
+        "trigger_summary": (
+            "Strong matter-link identifiers conflict and block linkage until a human resolves "
+            "the authority conflict."
+        ),
+        "support_ref_kinds": ["matter_linking_preflight_report", "structured_ref"],
+        "structured_refs": [
+            "docs/fable/matter-linking-hard-kernel.md#codex-handoff-pr-sized",
+            "examples/synthetic/upfront/upfront-like-intake-output.conflicting-identifiers.example.json",
+        ],
+    },
+    {
+        "mapping_id": "human_correction_of_machine_output.v1",
+        "issue_family": "human_correction_of_machine_output",
+        "local_event_label": "human_correction_of_machine_output",
+        "canonical_lake_class": "workflow_escalation",
+        "trigger_summary": (
+            "A human correction superseded a machine-generated classification, link, or "
+            "budget candidate and should be counted as correction evidence."
+        ),
+        "support_ref_kinds": ["human_review_outcome_record", "structured_ref"],
+        "structured_refs": [
+            "docs/fable/exception-learning-taxonomy.md#4-dedupe-keys",
+            "docs/human-review.md",
+        ],
+    },
+    {
+        "mapping_id": "qa_gate_defect.v1",
+        "issue_family": "qa_gate_defect",
+        "local_event_label": "qa_gate_defect",
+        "canonical_lake_class": "workflow_escalation",
+        "trigger_summary": (
+            "A deterministic QA or replay gate failed on a path that previously claimed readiness."
+        ),
+        "support_ref_kinds": ["qa_gate_report", "structured_ref"],
+        "structured_refs": [
+            "docs/fable/exception-learning-taxonomy.md#7-anti-silent-learning-invariants"
+        ],
+    },
+    {
+        "mapping_id": "fixture_weakness.v1",
+        "issue_family": "fixture_weakness",
+        "local_event_label": "fixture_weakness",
+        "canonical_lake_class": "retrieval_miss",
+        "trigger_summary": (
+            "A fixture, gold record, or holdout review revealed missing coverage or stale "
+            "evaluation evidence."
+        ),
+        "support_ref_kinds": ["fixture_gold_report", "structured_ref"],
+        "structured_refs": [
+            "docs/fable/exception-learning-taxonomy.md#7-anti-silent-learning-invariants"
+        ],
+    },
+    {
+        "mapping_id": "workflow_discovery.v1",
+        "issue_family": "workflow_discovery",
+        "local_event_label": "workflow_discovery",
+        "canonical_lake_class": "workflow_escalation",
+        "trigger_summary": (
+            "A structured workflow discovery or missing-step finding should be reviewed as "
+            "a candidate process improvement, not silently learned."
+        ),
+        "support_ref_kinds": ["workflow_discovery_note", "structured_ref"],
+        "structured_refs": [
+            "docs/fable/exception-learning-taxonomy.md#6-routing-dad-vs-exception-lake-vs-local-intake-artifacts"
+        ],
+    },
 ]
 
 
@@ -282,6 +432,16 @@ def build_exception_lake_mapping_package(
         "carrier_rejection_reconciliation",
         "carrier_rejection_appeal_result",
         "carrier_rejection_learning",
+        "budget_invariant_violation",
+        "scenario_policy_invalid",
+        "rate_resolution_ambiguous",
+        "carrier_appeal_outcome",
+        "matter_link_ambiguity",
+        "matter_link_conflict",
+        "human_correction_of_machine_output",
+        "qa_gate_defect",
+        "fixture_weakness",
+        "workflow_discovery",
     }
     issue_families = {rule.issue_family for rule in rules}
 
