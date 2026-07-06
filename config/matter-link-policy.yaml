@@ -1,0 +1,96 @@
+schema_version: "0.1"
+policy_id: lawfirm-os-intake.matter-link-policy.v0_1
+status: local_candidate
+candidate_only: true
+synthetic_only: true
+contains_real_firm_data: false
+external_writes_authorized: false
+canonical_authority: false
+purpose: >
+  Local candidate policy for deterministic matter-link key extraction and entity
+  normalization. It emits review evidence only and does not cluster documents,
+  assert matter identity, clear conflicts, open matters, submit budgets, or
+  promote canonical identity rules.
+
+entity_normalization:
+  rule_set_id: entity-normalization.v0_1
+  legal_suffixes:
+    - llc
+    - l.l.c.
+    - inc
+    - incorporated
+    - ltd
+    - llp
+    - lp
+    - pc
+    - pllc
+    - corp
+    - corporation
+    - co
+    - company
+    - pa
+    - sc
+  token_rewrites:
+    ctr: center
+    med: medical
+    hosp: hospital
+    dept: department
+    assn: association
+    natl: national
+  residual_vocabulary:
+    - of henderson
+    - henderson
+    - department
+    - division
+    - store
+    - branch
+  alias_edges: []
+
+extraction_rules:
+  - rule_id: claim_number.label.v1
+    key_type: claim_number
+    tier: strong
+    pattern: "\\bclaim\\s*(?:number|no\\.?|#)\\s*[:#-]?\\s*(?P<value>[A-Z0-9./#-]*[0-9][A-Z0-9./#-]{1,40})"
+  - rule_id: policy_number.label.v1
+    key_type: policy_number
+    tier: medium
+    pattern: "\\bpolicy\\s*(?:number|no\\.?|#)\\s*[:#-]?\\s*(?P<value>[A-Z0-9./#-]*[0-9][A-Z0-9./#-]{1,40})"
+  - rule_id: docket_ref.label.v1
+    key_type: docket_ref
+    tier: strong
+    pattern: "\\b(?:case|docket)\\s*(?:number|no\\.?|#)\\s*[:#-]?\\s*(?P<value>[A-Z0-9][A-Z0-9:./#-]{1,40})"
+  - rule_id: adjuster_ref.label.v1
+    key_type: adjuster_ref
+    tier: medium
+    pattern: "\\b(?:adjuster\\s*ref(?:erence)?|our\\s*ref|file\\s*(?:number|no\\.?|#))\\s*[:#-]?\\s*(?P<value>[A-Z0-9./#-]*[0-9][A-Z0-9./#-]{1,40})"
+  - rule_id: email_thread.references.v1
+    key_type: email_thread
+    tier: medium
+    pattern: "^(?:References|In-Reply-To):\\s*(?P<value><[^>\\n]+>)"
+    multiline: true
+  - rule_id: counsel_ref.claimant_counsel.v1
+    key_type: counsel_ref
+    tier: weak
+    pattern: "\\b(?:claimant'?s counsel|opposing counsel)\\s*(?:is|:)?\\s*(?P<value>[A-Z][A-Za-z &'().-]{2,80})"
+  - rule_id: incident_date_party.date_of_loss.v1
+    key_type: incident_date_party
+    tier: weak
+    pattern: "\\b(?:date of loss|incident date|DOL)\\s*[:#-]?\\s*(?P<value>[A-Za-z0-9, /-]{4,30})"
+
+key_type_normalization:
+  compact_upper:
+    - claim_number
+    - policy_number
+  compact_casefold:
+    - docket_ref
+    - email_thread
+  sender_namespaced_compact_upper:
+    - adjuster_ref
+  entity_like:
+    - counsel_ref
+    - party_pair
+    - employer_employee_pair
+    - incident_date_party
+    - subsidiary_alias
+
+shared_attachment_hash_cap: 5

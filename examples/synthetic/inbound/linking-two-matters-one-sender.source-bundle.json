@@ -1,0 +1,57 @@
+{
+  "schema_version": "0.1",
+  "bundle_id": "syn-linking-two-matters-one-sender-001",
+  "data_origin": "synthetic",
+  "contains_real_client_data": false,
+  "contains_real_matter_data": false,
+  "contains_privileged_data": false,
+  "sources": [
+    {
+      "source_id": "syn-linking-email-a1",
+      "source_type": "email",
+      "filename": "matter_a_assignment_1.eml.txt",
+      "text": "From: claims@harborpoint-insurance.example\nTo: intake@synthetic-law.example\nDate: July 1, 2026\nSubject: New EPLI assignment - Rivera\nReferences: <thread-a-001@synthetic-mail.example>\n\nClaim number HP-LE-1001\nPolicy number EPLI-44-ACME\nAdjuster Ref ADJ-7701\nDate of loss: June 12, 2026\nClaimant's counsel: Bright Line Legal\n\nSynthetic assignment for Acme Retail LLC and claimant Jordan Rivera. No official firm matter number exists.",
+      "metadata": {
+        "synthetic": true
+      }
+    },
+    {
+      "source_id": "syn-linking-email-b1",
+      "source_type": "email",
+      "filename": "matter_b_assignment_1.eml.txt",
+      "text": "From: claims@harborpoint-insurance.example\nTo: intake@synthetic-law.example\nDate: July 1, 2026\nSubject: New EPLI assignment - Chen\nReferences: <thread-b-001@synthetic-mail.example>\n\nClaim number HP-LE-2002\nPolicy number EPLI-44-ACME\nAdjuster Ref ADJ-8812\nDate of loss: June 18, 2026\nClaimant's counsel: Northgate Advocates\n\nSynthetic assignment for Acme Retail LLC and claimant Morgan Chen. Same sender, same policy, different claim.",
+      "metadata": {
+        "synthetic": true
+      }
+    },
+    {
+      "source_id": "syn-linking-email-a2",
+      "source_type": "email",
+      "filename": "matter_a_followup.eml.txt",
+      "text": "From: claims@harborpoint-insurance.example\nTo: intake@synthetic-law.example\nDate: July 2, 2026\nSubject: RE: New EPLI assignment - Rivera\nReferences: <thread-a-001@synthetic-mail.example>\n\nFollow-up for Claim No. HP-LE-1001. Please include the arbitration agreement status in the initial budget assumptions.",
+      "metadata": {
+        "synthetic": true
+      }
+    },
+    {
+      "source_id": "syn-linking-email-b2",
+      "source_type": "email",
+      "filename": "matter_b_followup.eml.txt",
+      "text": "From: claims@harborpoint-insurance.example\nTo: intake@synthetic-law.example\nDate: July 2, 2026\nSubject: RE: New EPLI assignment - Chen\nReferences: <thread-b-001@synthetic-mail.example>\n\nFollow-up for Claim # HP-LE-2002. Please treat the EEOC charge as missing until the attachment is actually supplied.",
+      "metadata": {
+        "synthetic": true
+      }
+    }
+  ],
+  "fixture_hints": {
+    "expected_key_types": [
+      "claim_number",
+      "policy_number",
+      "adjuster_ref",
+      "email_thread",
+      "incident_date_party",
+      "counsel_ref"
+    ],
+    "gold_intent": "Extraction only: two strong claim-number values from one sender; clustering is deferred."
+  }
+}

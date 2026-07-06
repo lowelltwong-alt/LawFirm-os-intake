@@ -1,0 +1,49 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "check_id": {
+      "title": "Check Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "passed",
+        "failed"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "message": {
+      "title": "Message",
+      "type": "string"
+    },
+    "document_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Document Ids",
+      "type": "array"
+    },
+    "key_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Key Ids",
+      "type": "array"
+    },
+    "blocking_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Blocking Refs",
+      "type": "array"
+    }
+  },
+  "required": [
+    "check_id",
+    "status",
+    "message"
+  ],
+  "title": "MatterLinkKeyExtractionCheck",
+  "type": "object"
+}
