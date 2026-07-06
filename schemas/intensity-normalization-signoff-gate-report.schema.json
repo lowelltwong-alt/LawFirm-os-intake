@@ -1,0 +1,152 @@
+{
+  "$defs": {
+    "IntensityNormalizationSignoffGateCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "blocking_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Blocking Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "IntensityNormalizationSignoffGateCheck",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "passed",
+        "failed"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "policy_id": {
+      "title": "Policy Id",
+      "type": "string"
+    },
+    "policy_version": {
+      "title": "Policy Version",
+      "type": "string"
+    },
+    "normalization_mode": {
+      "enum": [
+        "raw",
+        "baseline_relative"
+      ],
+      "title": "Normalization Mode",
+      "type": "string"
+    },
+    "signoff_required": {
+      "title": "Signoff Required",
+      "type": "boolean"
+    },
+    "signoff_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Signoff Ref"
+    },
+    "signoff_status": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Signoff Status"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/IntensityNormalizationSignoffGateCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "no_policy_flip_without_approved_signoff": {
+      "const": true,
+      "default": true,
+      "title": "No Policy Flip Without Approved Signoff",
+      "type": "boolean"
+    },
+    "no_budget_submission_authority": {
+      "const": true,
+      "default": true,
+      "title": "No Budget Submission Authority",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "status",
+    "policy_id",
+    "policy_version",
+    "normalization_mode",
+    "signoff_required",
+    "checks"
+  ],
+  "title": "IntensityNormalizationSignoffGateReport",
+  "type": "object"
+}

@@ -1,0 +1,447 @@
+{
+  "$defs": {
+    "IntensityNormalizationDemoTotal": {
+      "additionalProperties": false,
+      "properties": {
+        "demo_case_id": {
+          "title": "Demo Case Id",
+          "type": "string"
+        },
+        "matter_family": {
+          "title": "Matter Family",
+          "type": "string"
+        },
+        "input_ref": {
+          "title": "Input Ref",
+          "type": "string"
+        },
+        "confirmation_ref": {
+          "title": "Confirmation Ref",
+          "type": "string"
+        },
+        "pricing_status_before": {
+          "title": "Pricing Status Before",
+          "type": "string"
+        },
+        "pricing_status_after": {
+          "title": "Pricing Status After",
+          "type": "string"
+        },
+        "total_proposed_budget_before": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Total Proposed Budget Before"
+        },
+        "total_proposed_budget_after": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Total Proposed Budget After"
+        },
+        "subtotal_fees_before": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subtotal Fees Before"
+        },
+        "subtotal_fees_after": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subtotal Fees After"
+        },
+        "subtotal_expenses_before": {
+          "minimum": 0,
+          "title": "Subtotal Expenses Before",
+          "type": "number"
+        },
+        "subtotal_expenses_after": {
+          "minimum": 0,
+          "title": "Subtotal Expenses After",
+          "type": "number"
+        },
+        "contingency_amount_before": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contingency Amount Before"
+        },
+        "contingency_amount_after": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contingency Amount After"
+        },
+        "delta_amount": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Delta Amount"
+        },
+        "delta_percent": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Delta Percent"
+        },
+        "before_case_driver_profile_id": {
+          "title": "Before Case Driver Profile Id",
+          "type": "string"
+        },
+        "after_case_driver_profile_id": {
+          "title": "After Case Driver Profile Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "demo_case_id",
+        "matter_family",
+        "input_ref",
+        "confirmation_ref",
+        "pricing_status_before",
+        "pricing_status_after",
+        "subtotal_expenses_before",
+        "subtotal_expenses_after",
+        "before_case_driver_profile_id",
+        "after_case_driver_profile_id"
+      ],
+      "title": "IntensityNormalizationDemoTotal",
+      "type": "object"
+    },
+    "IntensityNormalizationFamilySignoff": {
+      "additionalProperties": false,
+      "properties": {
+        "matter_family": {
+          "title": "Matter Family",
+          "type": "string"
+        },
+        "template_id": {
+          "title": "Template Id",
+          "type": "string"
+        },
+        "baseline_source": {
+          "enum": [
+            "template_declaration",
+            "family_defaults"
+          ],
+          "title": "Baseline Source",
+          "type": "string"
+        },
+        "baseline_by_driver": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Baseline By Driver",
+          "type": "object"
+        },
+        "per_phase_default_product_before": {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "title": "Per Phase Default Product Before",
+          "type": "object"
+        },
+        "per_phase_default_product_after": {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "title": "Per Phase Default Product After",
+          "type": "object"
+        },
+        "effective_multiplier_table": {
+          "items": {
+            "$ref": "#/$defs/IntensityNormalizationMultiplierRow"
+          },
+          "title": "Effective Multiplier Table",
+          "type": "array"
+        },
+        "demo_totals": {
+          "items": {
+            "$ref": "#/$defs/IntensityNormalizationDemoTotal"
+          },
+          "title": "Demo Totals",
+          "type": "array"
+        }
+      },
+      "required": [
+        "matter_family",
+        "template_id",
+        "baseline_source",
+        "baseline_by_driver",
+        "per_phase_default_product_before",
+        "per_phase_default_product_after",
+        "effective_multiplier_table"
+      ],
+      "title": "IntensityNormalizationFamilySignoff",
+      "type": "object"
+    },
+    "IntensityNormalizationMultiplierRow": {
+      "additionalProperties": false,
+      "properties": {
+        "matter_family": {
+          "title": "Matter Family",
+          "type": "string"
+        },
+        "driver_id": {
+          "title": "Driver Id",
+          "type": "string"
+        },
+        "tier": {
+          "title": "Tier",
+          "type": "string"
+        },
+        "phase_id": {
+          "title": "Phase Id",
+          "type": "string"
+        },
+        "baseline_tier": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Baseline Tier"
+        },
+        "raw_multiplier": {
+          "minimum": 0,
+          "title": "Raw Multiplier",
+          "type": "number"
+        },
+        "baseline_raw_multiplier": {
+          "minimum": 0,
+          "title": "Baseline Raw Multiplier",
+          "type": "number"
+        },
+        "effective_multiplier": {
+          "minimum": 0,
+          "title": "Effective Multiplier",
+          "type": "number"
+        }
+      },
+      "required": [
+        "matter_family",
+        "driver_id",
+        "tier",
+        "phase_id",
+        "raw_multiplier",
+        "baseline_raw_multiplier",
+        "effective_multiplier"
+      ],
+      "title": "IntensityNormalizationMultiplierRow",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "signoff_id": {
+      "title": "Signoff Id",
+      "type": "string"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "preview_requires_human_approval",
+        "approved_for_baseline_relative",
+        "rejected"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "policy_id": {
+      "title": "Policy Id",
+      "type": "string"
+    },
+    "policy_version_before": {
+      "title": "Policy Version Before",
+      "type": "string"
+    },
+    "policy_version_after": {
+      "title": "Policy Version After",
+      "type": "string"
+    },
+    "policy_sha256_before": {
+      "title": "Policy Sha256 Before",
+      "type": "string"
+    },
+    "policy_sha256_after": {
+      "title": "Policy Sha256 After",
+      "type": "string"
+    },
+    "normalization_mode_before": {
+      "const": "raw",
+      "default": "raw",
+      "title": "Normalization Mode Before",
+      "type": "string"
+    },
+    "normalization_mode_after": {
+      "const": "baseline_relative",
+      "default": "baseline_relative",
+      "title": "Normalization Mode After",
+      "type": "string"
+    },
+    "per_family": {
+      "items": {
+        "$ref": "#/$defs/IntensityNormalizationFamilySignoff"
+      },
+      "title": "Per Family",
+      "type": "array"
+    },
+    "requires_human_approval": {
+      "const": true,
+      "default": true,
+      "title": "Requires Human Approval",
+      "type": "boolean"
+    },
+    "approved_by": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Approved By"
+    },
+    "approved_at": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Approved At"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "no_real_firm_data": {
+      "const": true,
+      "default": true,
+      "title": "No Real Firm Data",
+      "type": "boolean"
+    },
+    "no_budget_submission_authority": {
+      "const": true,
+      "default": true,
+      "title": "No Budget Submission Authority",
+      "type": "boolean"
+    },
+    "no_matter_opening_authority": {
+      "const": true,
+      "default": true,
+      "title": "No Matter Opening Authority",
+      "type": "boolean"
+    },
+    "no_conflict_clearance_authority": {
+      "const": true,
+      "default": true,
+      "title": "No Conflict Clearance Authority",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "decision_required": {
+      "title": "Decision Required",
+      "type": "string"
+    }
+  },
+  "required": [
+    "signoff_id",
+    "generated_at",
+    "status",
+    "policy_id",
+    "policy_version_before",
+    "policy_version_after",
+    "policy_sha256_before",
+    "policy_sha256_after",
+    "per_family",
+    "decision_required"
+  ],
+  "title": "IntensityNormalizationSignoffReport",
+  "type": "object"
+}

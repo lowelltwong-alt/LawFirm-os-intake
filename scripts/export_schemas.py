@@ -62,6 +62,12 @@ from lawfirm_os_intake.models import (  # noqa: E402
     BudgetDriverEffect,
     BudgetDriverProfileSummary,
     BudgetGuidelineFlag,
+    IntensityNormalizationDemoTotal,
+    IntensityNormalizationFamilySignoff,
+    IntensityNormalizationMultiplierRow,
+    IntensityNormalizationSignoffGateCheck,
+    IntensityNormalizationSignoffGateReport,
+    IntensityNormalizationSignoffReport,
     BudgetHumanReviewDecisionTemplate,
     BudgetHumanReviewOutcomeCheck,
     BudgetHumanReviewOutcomeDecision,
@@ -481,6 +487,16 @@ MODELS = {
     "rust-ui-bundle-source-hash-detail.schema.json": RustUIBundleSourceHashDetail,
     "rust-ui-bundle-source-hash-failure.schema.json": RustUIBundleSourceHashFailure,
     "rust-ui-bundle-source-hash-report.schema.json": RustUIBundleSourceHashReport,
+    "intensity-normalization-demo-total.schema.json": IntensityNormalizationDemoTotal,
+    "intensity-normalization-family-signoff.schema.json": (IntensityNormalizationFamilySignoff),
+    "intensity-normalization-multiplier-row.schema.json": (IntensityNormalizationMultiplierRow),
+    "intensity-normalization-signoff-gate-check.schema.json": (
+        IntensityNormalizationSignoffGateCheck
+    ),
+    "intensity-normalization-signoff-gate-report.schema.json": (
+        IntensityNormalizationSignoffGateReport
+    ),
+    "intensity-normalization-signoff-report.schema.json": (IntensityNormalizationSignoffReport),
     "ui-demo-fixture-promotion-item.schema.json": UIDemoFixturePromotionItem,
     "ui-demo-fixture-promotion-report.schema.json": UIDemoFixturePromotionReport,
     "ui-demo-fixture-refresh-detail.schema.json": UIDemoFixtureRefreshDetail,
