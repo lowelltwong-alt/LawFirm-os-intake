@@ -85,7 +85,20 @@
                               "le_budget_qa_gate_ui_fixture":  "apps/legal-intake-budget/src/fixtures/demo-labor-employment-budget-qa-gate-report.json",
                               "le_budget_qa_gate_ui_contract":  "apps/legal-intake-budget/src/data-contract.ts",
                               "le_budget_qa_gate_test":  "tests/test_labor_employment_budget_qa_gate.py",
-                              "le_budget_qa_gate_trace":  "docs/decisions/TRACE-2026-07-04-le-budget-qa-gate.md"
+                              "le_budget_qa_gate_trace":  "docs/decisions/TRACE-2026-07-04-le-budget-qa-gate.md",
+                              "fable_budget_truth_kernel":  "docs/fable/budget-truth-kernel.md",
+                              "fable_cross_bundle_matter_linking_state":  "docs/fable/cross-bundle-matter-linking-state.md",
+                              "fable_dad_learning_process_audit":  "docs/fable/dad-learning-process-audit.md",
+                              "fable_dad_lesson_pack":  "docs/fable/dad-lesson-pack-hard-kernel-solutions-2026-07-05.json",
+                              "fable_entity_resolution_boundary":  "docs/fable/entity-resolution-boundary.md",
+                              "fable_exception_learning_taxonomy":  "docs/fable/exception-learning-taxonomy.md",
+                              "fable_intensity_normalization_kernel":  "docs/fable/intensity-normalization-hard-kernel.md",
+                              "fable_le_class_collective_budget_template_kernel":  "docs/fable/le-class-collective-budget-template-kernel.md",
+                              "fable_le_synthetic_corpus_roadmap":  "docs/fable/le-synthetic-corpus-roadmap.md",
+                              "fable_matter_linking_kernel":  "docs/fable/matter-linking-hard-kernel.md",
+                              "fable_rate_benchmark_governance_kernel":  "docs/fable/rate-benchmark-governance-kernel.md",
+                              "fable_rust_audit_to_replacement_kernel":  "docs/fable/rust-audit-to-replacement-kernel.md",
+                              "fable_rust_boundary_roadmap":  "docs/fable/rust-boundary-roadmap.md"
                           },
     "authority":  {
                       "local_repo_may_override_upstream_dependency_map":  false,
