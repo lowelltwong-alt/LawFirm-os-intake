@@ -76,6 +76,14 @@ extraction_rules:
     key_type: incident_date_party
     tier: weak
     pattern: "\\b(?:date of loss|incident date|DOL)\\s*[:#-]?\\s*(?P<value>[A-Za-z0-9, /-]{4,30})"
+  - rule_id: party_pair.assignment_for_claimant.v1
+    key_type: party_pair
+    tier: medium
+    pattern: "\\b(?:assignment|matter|claim)\\s+for\\s+(?P<value>[A-Z][A-Za-z &'().-]{2,80}?\\s+and\\s+claimant\\s+[A-Z][A-Za-z &'().-]{2,80})(?:\\.|\\n)"
+  - rule_id: employer_employee_pair.for_employee.v1
+    key_type: employer_employee_pair
+    tier: medium
+    pattern: "\\bemployer\\s+(?P<value>[A-Z][A-Za-z &'().-]{2,80}?\\s+and\\s+employee\\s+[A-Z][A-Za-z &'().-]{2,80})(?:\\.|\\n)"
 
 key_type_normalization:
   compact_upper:
@@ -94,3 +102,6 @@ key_type_normalization:
     - subsidiary_alias
 
 shared_attachment_hash_cap: 5
+
+matter_linking:
+  max_employer_employee_pairs_per_cluster: 5
