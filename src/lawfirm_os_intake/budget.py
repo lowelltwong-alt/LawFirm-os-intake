@@ -724,11 +724,11 @@ def _scenario_definitions(
     template: dict[str, Any],
     case_drivers: CaseDriverProfile | None = None,
 ) -> list[dict[str, Any]]:
-    raw = (
-        template.get("scenarios")
-        or (case_drivers.scenario_policy if case_drivers is not None else None)
-        or DEFAULT_SCENARIOS
+    raw = template.get("scenarios") or (
+        case_drivers.scenario_policy if case_drivers is not None else None
     )
+    if not raw:
+        raw = _default_scenarios_for_phase_order(_phase_order(template))
     definitions: list[dict[str, Any]] = []
     for scenario in raw:
         scenario_id = str(scenario["scenario_id"])
@@ -748,17 +748,41 @@ def _scenario_definitions(
     return definitions
 
 
+def _default_scenarios_for_phase_order(phase_order: list[str]) -> list[dict[str, Any]]:
+    if not phase_order:
+        return DEFAULT_SCENARIOS
+    if {"L200", "L300", "L400"}.issubset(set(phase_order)):
+        return DEFAULT_SCENARIOS
+    last_index = len(phase_order) - 1
+    early_phase = phase_order[min(1, last_index)]
+    standard_phase = phase_order[min(2, last_index)]
+    through_trial_phase = phase_order[last_index]
+    defaults: list[dict[str, Any]] = []
+    for scenario, resolution_phase in zip(
+        DEFAULT_SCENARIOS,
+        [early_phase, standard_phase, through_trial_phase],
+        strict=True,
+    ):
+        remapped = dict(scenario)
+        remapped["resolution_phase"] = resolution_phase
+        defaults.append(remapped)
+    return defaults
+
+
 def _included_phase_ids(phase_order: list[str], resolution_phase: str) -> list[str]:
     if not phase_order:
         return []
     if resolution_phase not in phase_order:
-        return phase_order[:]
+        raise ValueError(
+            "scenario_policy_invalid: resolution_phase "
+            f"{resolution_phase!r} is not in budget template phase order"
+        )
     return phase_order[: phase_order.index(resolution_phase) + 1]
 
 
 def _lines_for_phases(lines: list[BudgetLine], included_phase_ids: list[str]) -> list[BudgetLine]:
     if not included_phase_ids:
-        return lines[:]
+        return []
     included = set(included_phase_ids)
     return [line for line in lines if line.phase_id in included]
 
@@ -916,6 +940,36 @@ def _calculation_report(
     )
 
 
+def _scenario_phase_rank(phase_order: list[str], scenario: BudgetScenario) -> int:
+    try:
+        return phase_order.index(scenario.resolution_phase)
+    except ValueError as exc:
+        raise ValueError(
+            "scenario_policy_invalid: resolution_phase "
+            f"{scenario.resolution_phase!r} is not in budget template phase order"
+        ) from exc
+
+
+def _scenario_policy_issue_notes(
+    scenario_set: BudgetScenarioSet,
+) -> list[BudgetSupportItem]:
+    items: list[BudgetSupportItem] = []
+    for code, note in zip(
+        scenario_set.policy_issue_codes,
+        scenario_set.policy_issue_notes,
+        strict=False,
+    ):
+        items.append(
+            _support_item(
+                "unknown",
+                note,
+                "budget_driver_policy",
+                structured_ref=_policy_ref(f"scenario_policy/{code}"),
+            )
+        )
+    return items
+
+
 def _build_scenario_set(
     template: dict[str, Any],
     lines: list[BudgetLine],
@@ -958,7 +1012,11 @@ def _build_scenario_set(
             )
         )
 
-    priced_totals = [scenario.total_proposed_budget for scenario in scenarios]
+    phase_ordered_scenarios = sorted(
+        scenarios,
+        key=lambda scenario: _scenario_phase_rank(phase_order, scenario),
+    )
+    priced_totals = [scenario.total_proposed_budget for scenario in phase_ordered_scenarios]
     if all(total is not None for total in priced_totals):
         monotonic = all(
             float(priced_totals[index]) <= float(priced_totals[index + 1])
@@ -966,9 +1024,13 @@ def _build_scenario_set(
         )
         basis = "total_proposed_budget"
     else:
-        hours = [scenario.total_hours for scenario in scenarios]
+        hours = [scenario.total_hours for scenario in phase_ordered_scenarios]
         monotonic = all(hours[index] <= hours[index + 1] for index in range(len(hours) - 1))
         basis = "total_hours"
+    if not monotonic:
+        raise ValueError(
+            "scenario_policy_invalid: scenario totals are not monotonic by budget phase order"
+        )
     scenario_ids = {scenario.scenario_id for scenario in scenarios}
     standard = "standard" if "standard" in scenario_ids else scenarios[-1].scenario_id
     selected = standard
@@ -987,11 +1049,30 @@ def _build_scenario_set(
     expected_total_min = None
     expected_total_max = None
     expected_value_method = "not_computed"
-    if all(value is not None for value in probability_values):
+    probability_integrity_status = "not_configured"
+    policy_issue_codes: list[str] = []
+    policy_issue_notes: list[str] = []
+    if any(value is not None for value in probability_values) and not all(
+        value is not None for value in probability_values
+    ):
+        probability_sum = round(
+            sum(float(value) for value in probability_values if value is not None),
+            6,
+        )
+        probability_integrity_status = "partial_probability_weights"
+        policy_issue_codes.append("scenario_probability_partial")
+        policy_issue_notes.append(
+            "Budget scenario probabilities are partially configured; expected value was "
+            "not computed and the scenario policy needs human review."
+        )
+    elif all(value is not None for value in probability_values):
         probability_sum = round(sum(float(value) for value in probability_values), 6)
-        if probability_sum == 1 and all(
+        all_scenarios_priced = all(
             scenario.total_proposed_budget is not None for scenario in scenarios
-        ):
+        )
+        if not all_scenarios_priced:
+            probability_integrity_status = "hours_only_not_computed"
+        elif abs(probability_sum - 1.0) <= 0.000001:
             expected_total = round(
                 sum(
                     float(scenario.probability or 0) * float(scenario.total_proposed_budget or 0)
@@ -1002,6 +1083,7 @@ def _build_scenario_set(
             expected_total_min = expected_total
             expected_total_max = expected_total
             expected_value_method = "reviewed_probabilities"
+            probability_integrity_status = "reviewed_probabilities"
         elif 0 <= probability_sum < 1:
             unknown_probability_mass = round(1 - probability_sum, 6)
             known_min = sum(
@@ -1048,8 +1130,25 @@ def _build_scenario_set(
                     2,
                 )
                 expected_value_method = "bounded_unknown_mass"
+            probability_integrity_status = "bounded_unknown_mass"
+            policy_issue_codes.append("scenario_probability_sum_not_one")
+            policy_issue_notes.append(
+                "Budget scenario probabilities sum to "
+                f"{probability_sum}; expected value is a bounded review range, "
+                "not a reviewed weighted mean."
+            )
+        else:
+            probability_integrity_status = "probability_sum_mismatch"
+            policy_issue_codes.append("scenario_probability_sum_not_one")
+            policy_issue_notes.append(
+                "Budget scenario probabilities sum to "
+                f"{probability_sum}; expected value was not computed because "
+                "scenario weights must sum to 1.0 before review use."
+            )
+    status = "flagged_for_human_review" if policy_issue_codes else "ready_for_human_review"
     return BudgetScenarioSet(
         scenario_set_id=new_id("budgetscenarios"),
+        status=status,  # type: ignore[arg-type]
         selected_scenario_id=selected,
         standard_scenario_id=standard,
         selected_scenario_basis=selected_basis,  # type: ignore[arg-type]
@@ -1059,6 +1158,9 @@ def _build_scenario_set(
         expected_total_max=expected_total_max,
         expected_value_method=expected_value_method,  # type: ignore[arg-type]
         expected_total_probability_sum=probability_sum,
+        probability_integrity_status=probability_integrity_status,  # type: ignore[arg-type]
+        policy_issue_codes=policy_issue_codes,
+        policy_issue_notes=policy_issue_notes,
         scenarios=scenarios,
         monotonic_total_order=monotonic,
         total_order_basis=basis,  # type: ignore[arg-type]
@@ -1431,7 +1533,13 @@ def build_budget_proposal(
     ]
     driver_unknowns = [
         effect.note for effect in driver_effects if effect.effect_type == "unknown_driver"
-    ] + [flag.note for flag in guideline_flags if flag.status == "flagged_for_human_review"]
+    ]
+    scenario_policy_unknowns = list(scenario_set.policy_issue_notes)
+    driver_unknowns = (
+        driver_unknowns
+        + [flag.note for flag in guideline_flags if flag.status == "flagged_for_human_review"]
+        + scenario_policy_unknowns
+    )
 
     policy_exclusions = [
         "conflict clearance",
@@ -1471,6 +1579,7 @@ def build_budget_proposal(
         *_template_support_items(profile, confirmation.confirmed_matter_family, template),
         *rate_basis_support_items,
         *_budget_driver_support_items(driver_effects, guideline_flags),
+        *_scenario_policy_issue_notes(scenario_set),
         *_workflow_exclusion_support_items(policy_exclusions),
     ]
     if evidence_refs:

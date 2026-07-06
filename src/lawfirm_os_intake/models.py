@@ -6964,6 +6964,7 @@ class BudgetScenario(StrictModel):
 class BudgetScenarioSet(StrictModel):
     schema_version: str = "0.1"
     scenario_set_id: str
+    status: Literal["ready_for_human_review", "flagged_for_human_review"] = "ready_for_human_review"
     selected_scenario_id: str = "standard"
     standard_scenario_id: str = "standard"
     scenarios: list[BudgetScenario]
@@ -6982,6 +6983,16 @@ class BudgetScenarioSet(StrictModel):
         "not_computed",
     ] = "not_computed"
     expected_total_probability_sum: float | None = None
+    probability_integrity_status: Literal[
+        "not_configured",
+        "reviewed_probabilities",
+        "bounded_unknown_mass",
+        "probability_sum_mismatch",
+        "partial_probability_weights",
+        "hours_only_not_computed",
+    ] = "not_configured"
+    policy_issue_codes: list[str] = Field(default_factory=list)
+    policy_issue_notes: list[str] = Field(default_factory=list)
     monotonic_total_order: bool
     total_order_basis: Literal["total_proposed_budget", "total_hours"] = "total_proposed_budget"
     requires_human_budget_review: Literal[True] = True
@@ -6998,6 +7009,16 @@ class BudgetScenarioSet(StrictModel):
             raise ValueError("selected budget scenario must exist in scenario set")
         if self.scenarios and self.standard_scenario_id not in scenario_ids:
             raise ValueError("standard budget scenario must exist in scenario set")
+        if self.monotonic_total_order is False:
+            raise ValueError("budget scenario totals must be monotonic by phase order")
+        if self.status == "ready_for_human_review" and self.policy_issue_codes:
+            raise ValueError("ready budget scenario set cannot contain policy issue codes")
+        if self.status == "flagged_for_human_review" and not self.policy_issue_codes:
+            raise ValueError("flagged budget scenario set requires policy issue codes")
+        if len(self.policy_issue_codes) != len(set(self.policy_issue_codes)):
+            raise ValueError("budget scenario policy issue codes must be unique")
+        if len(self.policy_issue_notes) < len(self.policy_issue_codes):
+            raise ValueError("budget scenario policy issue notes must cover issue codes")
         return self
 
 
