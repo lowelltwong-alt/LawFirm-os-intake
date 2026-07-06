@@ -1,0 +1,666 @@
+{
+  "schema_version": "0.1",
+  "template_spec_id": "labor-employment-nonlinear-budget-templates.v0_1",
+  "data_origin": "synthetic",
+  "template_family": "labor_employment_nonlinear_budget_template_contract",
+  "methodology_ref": "docs/fable/le-class-collective-budget-template-kernel.md",
+  "required_template_ids": [
+    "le-class-collective-defense",
+    "le-paga-shaped-defense"
+  ],
+  "required_blocker_ids": [
+    "collective_scale_requires_staffing_plan",
+    "posture_template_selection_requires_human_confirmation",
+    "hybrid_paga_class_requires_primary_template_selection",
+    "missing_tier_row_blocks_template",
+    "certification_scenario_requires_human_selection",
+    "manageability_scenario_requires_human_selection",
+    "no_penalty_or_exposure_modeling_in_intake_budget",
+    "period_driver_must_be_data_scope_only"
+  ],
+  "templates": [
+    {
+      "template_id": "le-class-collective-defense",
+      "label": "L&E class/collective defense nonlinear candidate template",
+      "posture": "Rule 23 or collective defense posture confirmed by human review",
+      "math_model": "tiered_contract_v0",
+      "required_phase_ids": [
+        "C100",
+        "C200",
+        "C300",
+        "C400",
+        "C500",
+        "C600"
+      ],
+      "tiered_phase_ids": [
+        "C300",
+        "C400",
+        "C500",
+        "C600"
+      ],
+      "hybrid_template_selection_requires_human": true,
+      "phases": [
+        {
+          "phase_id": "C100",
+          "label": "Assess, forum, removal, and early preservation",
+          "phase_order": 1,
+          "tasks": [
+            {
+              "task_id": "C100-initial-class-assessment",
+              "label": "Assess allegations, forum, removal posture, preservation, and class mechanism",
+              "tags": [
+                "assessment",
+                "forum",
+                "preservation"
+              ],
+              "driver_dimensions": [
+                "claim_family",
+                "forum_arbitration",
+                "policy_contract_documents"
+              ]
+            }
+          ]
+        },
+        {
+          "phase_id": "C200",
+          "label": "Pleadings and early motions",
+          "phase_order": 2,
+          "tasks": [
+            {
+              "task_id": "C200-pleadings-early-motion-block",
+              "label": "Answer, responsive pleadings, early dispositive or compel motion analysis",
+              "tags": [
+                "pleadings",
+                "early_motions"
+              ],
+              "driver_dimensions": [
+                "claim_family",
+                "forum_arbitration",
+                "policy_contract_documents"
+              ]
+            }
+          ]
+        },
+        {
+          "phase_id": "C300",
+          "label": "Pre-certification discovery and data scoping",
+          "phase_order": 3,
+          "tier_blocks": [
+            {
+              "tier_id": "t0",
+              "tier_label": "representative group under 10",
+              "action": "use_declared_work_block"
+            },
+            {
+              "tier_id": "t1",
+              "tier_label": "representative group 10-49",
+              "action": "use_declared_work_block"
+            },
+            {
+              "tier_id": "t2",
+              "tier_label": "representative group 50-249",
+              "action": "use_declared_work_block"
+            },
+            {
+              "tier_id": "t3",
+              "tier_label": "representative group 250-999",
+              "action": "use_declared_work_block"
+            },
+            {
+              "tier_id": "t4",
+              "tier_label": "representative group 1000+",
+              "action": "block_pending_staffing_plan",
+              "blocker_id": "collective_scale_requires_staffing_plan"
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "C300-class-period-data-scope",
+              "label": "Scope class-period employment, payroll, timekeeping, policy, and ESI data sources",
+              "tags": [
+                "data_scope",
+                "class_period"
+              ],
+              "driver_dimensions": [
+                "class_collective_scope",
+                "wage_hour_volume",
+                "esi_discovery"
+              ],
+              "period_drivers": [
+                "class_period_months"
+              ],
+              "data_scope_task": true
+            },
+            {
+              "task_id": "C300-representative-discovery-plan",
+              "label": "Plan representative discovery, sampling, custodians, and witness groups",
+              "tags": [
+                "representative_discovery",
+                "sampling"
+              ],
+              "driver_dimensions": [
+                "class_collective_scope",
+                "deposition_plan",
+                "esi_discovery"
+              ],
+              "opt_in_sensitive": true
+            }
+          ],
+          "scenario_sensitive": true
+        },
+        {
+          "phase_id": "C400",
+          "label": "Certification briefing and hearing",
+          "phase_order": 4,
+          "tier_blocks": [
+            {
+              "tier_id": "t0",
+              "tier_label": "representative group under 10",
+              "action": "use_declared_work_block"
+            },
+            {
+              "tier_id": "t1",
+              "tier_label": "representative group 10-49",
+              "action": "use_declared_work_block"
+            },
+            {
+              "tier_id": "t2",
+              "tier_label": "representative group 50-249",
+              "action": "use_declared_work_block"
+            },
+            {
+              "tier_id": "t3",
+              "tier_label": "representative group 250-999",
+              "action": "use_declared_work_block"
+            },
+            {
+              "tier_id": "t4",
+              "tier_label": "representative group 1000+",
+              "action": "block_pending_staffing_plan",
+              "blocker_id": "collective_scale_requires_staffing_plan"
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "C400-certification-briefing-hearing",
+              "label": "Oppose certification or conditional certification and prepare hearing",
+              "tags": [
+                "certification",
+                "briefing",
+                "hearing"
+              ],
+              "driver_dimensions": [
+                "class_collective_scope",
+                "expert_vendor_needs",
+                "deposition_plan"
+              ]
+            }
+          ],
+          "scenario_sensitive": true
+        },
+        {
+          "phase_id": "C500",
+          "label": "Post-certification merits, decertification, and experts",
+          "phase_order": 5,
+          "tier_blocks": [
+            {
+              "tier_id": "t0",
+              "tier_label": "representative group under 10",
+              "action": "use_declared_work_block"
+            },
+            {
+              "tier_id": "t1",
+              "tier_label": "representative group 10-49",
+              "action": "use_declared_work_block"
+            },
+            {
+              "tier_id": "t2",
+              "tier_label": "representative group 50-249",
+              "action": "use_declared_work_block"
+            },
+            {
+              "tier_id": "t3",
+              "tier_label": "representative group 250-999",
+              "action": "use_declared_work_block"
+            },
+            {
+              "tier_id": "t4",
+              "tier_label": "representative group 1000+",
+              "action": "block_pending_staffing_plan",
+              "blocker_id": "collective_scale_requires_staffing_plan"
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "C500-merits-decert-expert-block",
+              "label": "Merits discovery, decertification posture, expert/vendor coordination",
+              "tags": [
+                "merits",
+                "decertification",
+                "expert"
+              ],
+              "driver_dimensions": [
+                "class_collective_scope",
+                "expert_vendor_needs",
+                "wage_hour_volume"
+              ]
+            }
+          ],
+          "scenario_sensitive": true
+        },
+        {
+          "phase_id": "C600",
+          "label": "Resolution and settlement administration",
+          "phase_order": 6,
+          "tier_blocks": [
+            {
+              "tier_id": "t0",
+              "tier_label": "representative group under 10",
+              "action": "use_declared_work_block"
+            },
+            {
+              "tier_id": "t1",
+              "tier_label": "representative group 10-49",
+              "action": "use_declared_work_block"
+            },
+            {
+              "tier_id": "t2",
+              "tier_label": "representative group 50-249",
+              "action": "use_declared_work_block"
+            },
+            {
+              "tier_id": "t3",
+              "tier_label": "representative group 250-999",
+              "action": "use_declared_work_block"
+            },
+            {
+              "tier_id": "t4",
+              "tier_label": "representative group 1000+",
+              "action": "block_pending_staffing_plan",
+              "blocker_id": "collective_scale_requires_staffing_plan"
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "C600-resolution-administration-block",
+              "label": "Mediation, settlement administration coordination, notices, and court approval support",
+              "tags": [
+                "resolution",
+                "settlement_administration",
+                "notice"
+              ],
+              "driver_dimensions": [
+                "class_collective_scope",
+                "expert_vendor_needs"
+              ],
+              "opt_in_sensitive": true
+            }
+          ],
+          "scenario_sensitive": true,
+          "settlement_administration_phase": true
+        }
+      ],
+      "scenario_gates": [
+        {
+          "gate_id": "le-class-certification-posture-human-selection",
+          "driver_id": "certification_posture",
+          "allowed_scenarios": [
+            "cert_denied",
+            "cert_granted",
+            "hybrid_partial"
+          ],
+          "default_scenario": "hybrid_partial",
+          "all_scenarios_emitted": true,
+          "blocks_auto_selection": true,
+          "blocker_ids": [
+            "certification_scenario_requires_human_selection"
+          ]
+        },
+        {
+          "gate_id": "le-class-hybrid-template-selection",
+          "driver_id": "template_selection",
+          "allowed_scenarios": [
+            "class_primary",
+            "paga_primary",
+            "separate_budgets_required"
+          ],
+          "default_scenario": "separate_budgets_required",
+          "all_scenarios_emitted": true,
+          "blocks_auto_selection": true,
+          "blocker_ids": [
+            "hybrid_paga_class_requires_primary_template_selection",
+            "posture_template_selection_requires_human_confirmation"
+          ]
+        }
+      ]
+    },
+    {
+      "template_id": "le-paga-shaped-defense",
+      "label": "L&E PAGA-shaped defense nonlinear candidate template",
+      "posture": "PAGA-shaped representative defense posture confirmed by human review",
+      "math_model": "tiered_contract_v0",
+      "required_phase_ids": [
+        "C100",
+        "C200",
+        "C300",
+        "C400",
+        "C500",
+        "C600"
+      ],
+      "tiered_phase_ids": [
+        "C300",
+        "C400",
+        "C500",
+        "C600"
+      ],
+      "hybrid_template_selection_requires_human": true,
+      "phases": [
+        {
+          "phase_id": "C100",
+          "label": "Assess PAGA notice, standing, forum, and preservation",
+          "phase_order": 1,
+          "tasks": [
+            {
+              "task_id": "C100-paga-notice-assessment",
+              "label": "Assess notice, standing, forum, preservation, and representative-action posture",
+              "tags": [
+                "assessment",
+                "notice",
+                "preservation"
+              ],
+              "driver_dimensions": [
+                "claim_family",
+                "forum_arbitration",
+                "policy_contract_documents"
+              ]
+            }
+          ]
+        },
+        {
+          "phase_id": "C200",
+          "label": "PAGA pleadings and early motions",
+          "phase_order": 2,
+          "tasks": [
+            {
+              "task_id": "C200-paga-pleading-motion-block",
+              "label": "Responsive pleading, motion to strike, compel, or early manageability analysis",
+              "tags": [
+                "pleadings",
+                "early_motions",
+                "manageability"
+              ],
+              "driver_dimensions": [
+                "claim_family",
+                "forum_arbitration",
+                "policy_contract_documents"
+              ]
+            }
+          ]
+        },
+        {
+          "phase_id": "C300",
+          "label": "PAGA data scoping and representative discovery",
+          "phase_order": 3,
+          "tier_blocks": [
+            {
+              "tier_id": "t0",
+              "tier_label": "representative scope under 10",
+              "action": "use_declared_work_block"
+            },
+            {
+              "tier_id": "t1",
+              "tier_label": "representative scope 10-49",
+              "action": "use_declared_work_block"
+            },
+            {
+              "tier_id": "t2",
+              "tier_label": "representative scope 50-249",
+              "action": "use_declared_work_block"
+            },
+            {
+              "tier_id": "t3",
+              "tier_label": "representative scope 250-999",
+              "action": "use_declared_work_block"
+            },
+            {
+              "tier_id": "t4",
+              "tier_label": "representative scope 1000+",
+              "action": "block_pending_staffing_plan",
+              "blocker_id": "collective_scale_requires_staffing_plan"
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "C300-paga-period-data-scope",
+              "label": "Scope PAGA-period payroll, timekeeping, policy, and location data sources",
+              "tags": [
+                "data_scope",
+                "paga_period"
+              ],
+              "driver_dimensions": [
+                "class_collective_scope",
+                "wage_hour_volume",
+                "esi_discovery"
+              ],
+              "period_drivers": [
+                "paga_period_months"
+              ],
+              "data_scope_task": true
+            },
+            {
+              "task_id": "C300-paga-representative-discovery-plan",
+              "label": "Plan representative discovery, custodians, sampling, and location records",
+              "tags": [
+                "representative_discovery",
+                "sampling"
+              ],
+              "driver_dimensions": [
+                "class_collective_scope",
+                "deposition_plan",
+                "esi_discovery"
+              ]
+            }
+          ],
+          "scenario_sensitive": true
+        },
+        {
+          "phase_id": "C400",
+          "label": "PAGA manageability briefing and hearing",
+          "phase_order": 4,
+          "tier_blocks": [
+            {
+              "tier_id": "t0",
+              "tier_label": "representative scope under 10",
+              "action": "use_declared_work_block"
+            },
+            {
+              "tier_id": "t1",
+              "tier_label": "representative scope 10-49",
+              "action": "use_declared_work_block"
+            },
+            {
+              "tier_id": "t2",
+              "tier_label": "representative scope 50-249",
+              "action": "use_declared_work_block"
+            },
+            {
+              "tier_id": "t3",
+              "tier_label": "representative scope 250-999",
+              "action": "use_declared_work_block"
+            },
+            {
+              "tier_id": "t4",
+              "tier_label": "representative scope 1000+",
+              "action": "block_pending_staffing_plan",
+              "blocker_id": "collective_scale_requires_staffing_plan"
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "C400-paga-manageability-motion",
+              "label": "Brief manageability, trial-plan, and representative-proof issues",
+              "tags": [
+                "manageability",
+                "briefing",
+                "hearing"
+              ],
+              "driver_dimensions": [
+                "class_collective_scope",
+                "expert_vendor_needs",
+                "deposition_plan"
+              ]
+            }
+          ],
+          "scenario_sensitive": true
+        },
+        {
+          "phase_id": "C500",
+          "label": "PAGA merits, representative proof, and exclusion tracking",
+          "phase_order": 5,
+          "tier_blocks": [
+            {
+              "tier_id": "t0",
+              "tier_label": "representative scope under 10",
+              "action": "use_declared_work_block"
+            },
+            {
+              "tier_id": "t1",
+              "tier_label": "representative scope 10-49",
+              "action": "use_declared_work_block"
+            },
+            {
+              "tier_id": "t2",
+              "tier_label": "representative scope 50-249",
+              "action": "use_declared_work_block"
+            },
+            {
+              "tier_id": "t3",
+              "tier_label": "representative scope 250-999",
+              "action": "use_declared_work_block"
+            },
+            {
+              "tier_id": "t4",
+              "tier_label": "representative scope 1000+",
+              "action": "block_pending_staffing_plan",
+              "blocker_id": "collective_scale_requires_staffing_plan"
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "C500-paga-representative-proof-block",
+              "label": "Representative-proof discovery, merits analysis, and expert/vendor coordination",
+              "tags": [
+                "merits",
+                "representative_proof",
+                "expert"
+              ],
+              "driver_dimensions": [
+                "class_collective_scope",
+                "expert_vendor_needs",
+                "wage_hour_volume"
+              ]
+            },
+            {
+              "task_id": "C500-paga-penalty-exposure-exclusion",
+              "label": "Record that PAGA penalty and exposure modeling are excluded from intake budget math",
+              "tags": [
+                "penalty",
+                "exposure_exclusion",
+                "budget_boundary"
+              ],
+              "driver_dimensions": [
+                "damages_exposure"
+              ],
+              "exposure_modeling_allowed": false,
+              "money_amount_allowed": false
+            }
+          ],
+          "scenario_sensitive": true
+        },
+        {
+          "phase_id": "C600",
+          "label": "PAGA resolution administration and court approval support",
+          "phase_order": 6,
+          "tier_blocks": [
+            {
+              "tier_id": "t0",
+              "tier_label": "representative scope under 10",
+              "action": "use_declared_work_block"
+            },
+            {
+              "tier_id": "t1",
+              "tier_label": "representative scope 10-49",
+              "action": "use_declared_work_block"
+            },
+            {
+              "tier_id": "t2",
+              "tier_label": "representative scope 50-249",
+              "action": "use_declared_work_block"
+            },
+            {
+              "tier_id": "t3",
+              "tier_label": "representative scope 250-999",
+              "action": "use_declared_work_block"
+            },
+            {
+              "tier_id": "t4",
+              "tier_label": "representative scope 1000+",
+              "action": "block_pending_staffing_plan",
+              "blocker_id": "collective_scale_requires_staffing_plan"
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "C600-paga-resolution-approval-support",
+              "label": "Mediation, settlement administration coordination, agency allocation support, and approval support",
+              "tags": [
+                "resolution",
+                "settlement_administration",
+                "approval_support"
+              ],
+              "driver_dimensions": [
+                "class_collective_scope",
+                "expert_vendor_needs"
+              ]
+            }
+          ],
+          "scenario_sensitive": true,
+          "settlement_administration_phase": true
+        }
+      ],
+      "scenario_gates": [
+        {
+          "gate_id": "le-paga-manageability-posture-human-selection",
+          "driver_id": "manageability_posture",
+          "allowed_scenarios": [
+            "manageability_denied",
+            "manageability_granted",
+            "hybrid_partial"
+          ],
+          "default_scenario": "hybrid_partial",
+          "all_scenarios_emitted": true,
+          "blocks_auto_selection": true,
+          "blocker_ids": [
+            "manageability_scenario_requires_human_selection"
+          ]
+        },
+        {
+          "gate_id": "le-paga-hybrid-template-selection",
+          "driver_id": "template_selection",
+          "allowed_scenarios": [
+            "class_primary",
+            "paga_primary",
+            "separate_budgets_required"
+          ],
+          "default_scenario": "separate_budgets_required",
+          "all_scenarios_emitted": true,
+          "blocks_auto_selection": true,
+          "blocker_ids": [
+            "hybrid_paga_class_requires_primary_template_selection",
+            "posture_template_selection_requires_human_confirmation"
+          ]
+        }
+      ]
+    }
+  ]
+}

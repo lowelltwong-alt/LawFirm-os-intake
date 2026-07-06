@@ -1,0 +1,85 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "gate_id": {
+      "title": "Gate Id",
+      "type": "string"
+    },
+    "driver_id": {
+      "enum": [
+        "certification_posture",
+        "manageability_posture",
+        "template_selection"
+      ],
+      "title": "Driver Id",
+      "type": "string"
+    },
+    "allowed_scenarios": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Allowed Scenarios",
+      "type": "array"
+    },
+    "default_scenario": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Default Scenario"
+    },
+    "all_scenarios_emitted": {
+      "title": "All Scenarios Emitted",
+      "type": "boolean"
+    },
+    "human_selection_required": {
+      "const": true,
+      "default": true,
+      "title": "Human Selection Required",
+      "type": "boolean"
+    },
+    "blocks_auto_selection": {
+      "default": true,
+      "title": "Blocks Auto Selection",
+      "type": "boolean"
+    },
+    "blocker_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Blocker Ids",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "budget_amount_output_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Amount Output Authorized",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "gate_id",
+    "driver_id",
+    "allowed_scenarios",
+    "all_scenarios_emitted"
+  ],
+  "title": "LaborEmploymentNonlinearTemplateScenarioGate",
+  "type": "object"
+}
