@@ -420,6 +420,53 @@
           "default": null,
           "title": "Blocked State"
         },
+        "identity_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Identity Key"
+        },
+        "severity": {
+          "anyOf": [
+            {
+              "enum": [
+                "S0",
+                "S1",
+                "S2",
+                "S3"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Severity"
+        },
+        "occurrence_hint": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Occurrence Hint"
+        },
+        "holdout_origin": {
+          "default": false,
+          "title": "Holdout Origin",
+          "type": "boolean"
+        },
         "raw_payload_included": {
           "default": false,
           "title": "Raw Payload Included",

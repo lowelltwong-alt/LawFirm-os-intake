@@ -17,7 +17,17 @@
         "carrier_rejection_capture",
         "carrier_rejection_reconciliation",
         "carrier_rejection_appeal_result",
-        "carrier_rejection_learning"
+        "carrier_rejection_learning",
+        "budget_invariant_violation",
+        "scenario_policy_invalid",
+        "rate_resolution_ambiguous",
+        "carrier_appeal_outcome",
+        "matter_link_ambiguity",
+        "matter_link_conflict",
+        "human_correction_of_machine_output",
+        "qa_gate_defect",
+        "fixture_weakness",
+        "workflow_discovery"
       ],
       "title": "Issue Family",
       "type": "string"
@@ -51,7 +61,13 @@
           "carrier_preapproval_report",
           "carrier_rejection_reconciliation_report",
           "carrier_rejection_remediation_case",
-          "carrier_appeal_result"
+          "carrier_appeal_result",
+          "budget_invariant_report",
+          "matter_linking_preflight_report",
+          "human_review_outcome_record",
+          "qa_gate_report",
+          "fixture_gold_report",
+          "workflow_discovery_note"
         ],
         "type": "string"
       },

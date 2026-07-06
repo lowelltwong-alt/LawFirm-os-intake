@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+from typing import Any
 
 from .models import (
     BudgetActualComparisonReport,
@@ -585,3 +586,58 @@ def build_budget_precondition_exception_candidates(
             blocked_state=label,
         )
     ]
+
+
+def build_budget_invariant_exception_candidates(
+    *,
+    run_id: str,
+    preflight_packet_id: str,
+    report: dict[str, Any],
+    report_ref: str,
+) -> list[ExceptionLakeCandidate]:
+    if report.get("status") != "failed":
+        return []
+    by_label: dict[str, list[dict[str, Any]]] = {}
+    for violation in report.get("violations") or []:
+        if not isinstance(violation, dict):
+            continue
+        invariant_id = str(violation.get("invariant_id") or "")
+        code = str(violation.get("code") or "")
+        label = (
+            "scenario_policy_invalid"
+            if invariant_id in {"I6", "I8", "I10"} or code.startswith("scenario_")
+            else "budget_invariant_violation"
+        )
+        by_label.setdefault(label, []).append(violation)
+
+    candidates: list[ExceptionLakeCandidate] = []
+    for label, violations in sorted(by_label.items()):
+        invariant_ids = sorted({str(item.get("invariant_id") or "unknown") for item in violations})
+        violation_codes = sorted({str(item.get("code") or "unknown") for item in violations})
+        candidates.append(
+            ExceptionLakeCandidate(
+                candidate_id=new_id("exc"),
+                run_id=run_id,
+                preflight_packet_id=preflight_packet_id,
+                local_event_label=label,
+                canonical_lake_class="workflow_escalation",
+                reason=(
+                    "Budget invariant report failed deterministic checks: "
+                    f"invariants {', '.join(invariant_ids)}; codes {', '.join(violation_codes)}."
+                ),
+                structured_refs=[
+                    report_ref,
+                    *[
+                        f"budget-invariant://{invariant_id}/{code}"
+                        for invariant_id in invariant_ids
+                        for code in violation_codes
+                    ],
+                ],
+                blocked_state=(
+                    "scenario_policy_invalid"
+                    if label == "scenario_policy_invalid"
+                    else "budget_invariant_report_failed"
+                ),
+            )
+        )
+    return candidates
