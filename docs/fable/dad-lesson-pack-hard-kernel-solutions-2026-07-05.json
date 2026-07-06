@@ -1,0 +1,260 @@
+{
+ "lesson_bundle_id": "lawfirm-os-intake-hard-kernel-solutions-2026-07-05",
+ "originating_agents": [
+  "fable_5"
+ ],
+ "enriches_mail_id": "dad:mail:lawfirm-os-intake-hard-kernel-lessons-2026-07-05",
+ "enrichment_semantics": "This record ENRICHES the prior decision-request bundle with 'how we solved it' design lessons. It does not retract or mutate the prior record; the prior record's owner-boundary requests remain valid.",
+ "review_context": "Fable 5 hard-kernel continuation run. Each lesson records observable reasoning, evidence refs, assumptions, decision logic, formulas, alternatives rejected, risks, implementation handoff, and what not to do. No hidden chain-of-thought.",
+ "finding_title": "Six LawFirm-os-intake hard kernels solved at design/contract level; implementation remains gated Codex work.",
+ "finding_summary": "Design-level solutions now exist for intensity normalization, cross-bundle matter-link state ownership, entity-resolution boundaries, L&E collective/PAGA template architecture, rate-benchmark governance, and the Rust audit-to-replacement path. Solutions are recorded in docs/fable/*.md plus this bundle; all are candidate-only pending owner-repo review.",
+ "candidate_only": true,
+ "raw_private_payload_included": false,
+ "hidden_chain_of_thought_included": false,
+ "lake_write_performed": false,
+ "sqlite_write_performed": false,
+ "external_writes_performed": false,
+ "silent_learning_performed": false,
+ "dad_review_required_before_promotion": true,
+ "lessons": [
+  {
+   "lesson_id": "bk5_intensity_normalization_baseline_model",
+   "title": "Intensity multipliers must be normalized to a declared baseline tier; default-profile product != 1 silently reprices the default case.",
+   "how_identified": "Cross-read config/budget-driver-policy.yaml intensity_multiplier_policy against matter_family_defaults: medmal defaults severity_tier=significant (1.08 on L300/L400) and liability_dispute=disputed (1.05 on L200/L300), so a matter with ZERO observed facts gets L300 hours x 1.134. Templates carry no declaration of which tier their hours were authored at, so the multiplier double-counts the template's embedded assumptions.",
+   "decision_logic": "Multipliers are offsets from a baseline, not absolute intensities. Therefore the product of multipliers evaluated at the family defaults must equal 1.0 per phase (invariant I7), or the template must declare baseline_intensity explicitly and the policy must be normalized against that declaration at load time (decision D11: policy-load validation error, not a runtime patch).",
+   "formulas": [
+    "normalized_multiplier(tier) = raw_multiplier(tier) / raw_multiplier(default_tier_for_family)",
+    "invariant I7: for every family f, phase p: product over drivers d of multiplier(defaults[f][d], p) in [0.999, 1.001]",
+    "worked renormalization (medmal): severity significant 1.08->1.00, soft_tissue 0.95->0.8796, catastrophic_or_death 1.22->1.1296; liability disputed 1.05->1.00, clear 0.90->0.8571, hotly_contested 1.18->1.1238; venue neutral stays 1.00"
+   ],
+   "before_after_example": "Before: default medmal L300 task of 100 template hours -> 113.4 budgeted hours with no supporting fact. After: 100.0 hours; only observed/confirmed tier deviations move hours.",
+   "assumptions": [
+    "Template hours were authored to represent the family-default matter; if a template owner asserts otherwise, the baseline_intensity declaration path applies instead of renormalization."
+   ],
+   "alternatives_rejected": [
+    "Re-author template hours downward and keep raw multipliers: hides the correction inside opaque hour numbers and breaks the audit trail.",
+    "Runtime auto-renormalization without a policy diff: prohibited silent learning; calibration must be a reviewed, versioned config change."
+   ],
+   "risks": [
+    "This changes headline demo totals; PR-BK5 must be isolated, carry a before/after decision trace, and get explicit human sign-off before merge."
+   ],
+   "implementation_handoff": "PR-BK5 in docs/fable/budget-truth-kernel.md section 7: load-time validation in drivers.py::load_driver_policy + renormalized config/budget-driver-policy.yaml + counterexample CE3 test.",
+   "dad_classification_labels": [
+    "budget-policy-calibration",
+    "declared-baseline-pattern",
+    "human-signoff-required"
+   ],
+   "what_not_to_do": "Do not bundle BK5 with arithmetic fixes BK1/BK2; do not merge any headline-total change without the recorded before/after artifact.",
+   "applies_when": "A multiplier policy is layered on templates whose numbers already embed the default case.",
+   "does_not_apply_when": "Templates explicitly declare a baseline_intensity different from the family defaults, or multipliers encode facts with no template counterpart.",
+   "danger_if_misapplied": "Renormalizing a policy whose template was NOT authored at the default tier would deflate correct budgets; always confirm the template's authoring baseline with a human first."
+  },
+  {
+   "lesson_id": "cross_bundle_matter_link_state_contract",
+   "title": "Persistent matter-link cluster memory is Orchestrator-owned; intake emits candidates and consumes prior context read-only.",
+   "how_identified": "Intake's hard boundary (no Lake/SQLite writes, immutable per-run artifacts) is incompatible with remembering clusters across bundles over time, yet forgetting them permits silent re-merge of human-split matters when the same sender writes again.",
+   "decision_logic": "State authority follows runtime authority. Intake emits per-run candidates only: MatterLinkKeySets, MatterClusterProposals, MatterLinkDecisionRecords (all candidate, evidence-bound). Orchestrator owns a MatterClusterStateStore: an append-only decision ledger keyed by normalized link keys, holding human-confirmed clusters, human SPLIT/MERGE decisions, and burned/reopened decisions. On a new run, Orchestrator hands intake a read-only PriorClusterContext (confirmed clusters + human split decisions + key index) with provenance 'orchestrator_context'; intake re-derives clusters deterministically and treats prior human SPLITs as overriding rules: a human SPLIT between documents A and B forces SPLIT regardless of new key agreement, unless a NEW strong key appears, which triggers a fresh human review (rule B3) - never a silent re-merge.",
+   "replay_property": "All decisions replay because clustering is a pure function of (extracted key sets, prior human decisions); permutation invariance over document order remains mandatory; the prior-context input is itself versioned and hashed so replays pin the exact context consumed.",
+   "assumptions": [
+    "Orchestrator can host an append-only store; until it exists, cross-bundle linking stays out of scope and intake runs remain bundle-local."
+   ],
+   "alternatives_rejected": [
+    "Intake-local SQLite/JSON cache across runs: violates the no-persistent-writes boundary and creates a shadow authority.",
+    "Re-clustering per run with no prior context: loses split memory, guaranteeing eventual silent re-merge of a human-split pair."
+   ],
+   "risks": [
+    "Context staleness: a PriorClusterContext hash mismatch must block linking rather than proceed on stale memory."
+   ],
+   "implementation_handoff": "PR-ML1/ML2 (bundle-local oracle) first per docs/fable/matter-linking-hard-kernel.md; cross-bundle contract doc goes to LawFirm-os-orchestrator as a candidate design request before any ML5 work.",
+   "dad_classification_labels": [
+    "state-ownership-boundary",
+    "workflow-memory-pattern",
+    "cross-repo-contract"
+   ],
+   "what_not_to_do": "Do not implement any persistent store inside intake; do not let read-only prior context assert matter identity - it is evidence, and human confirmation remains the only identity authority.",
+   "applies_when": "A candidate-only vertical repo needs memory across runs while prohibited from persistent writes.",
+   "does_not_apply_when": "Repos that legitimately own runtime state (Orchestrator, Lake) or purely stateless single-run tools.",
+   "danger_if_misapplied": "Copied into a state-owning repo, 'emit candidates only' becomes an excuse to avoid durable ledgers; the pattern is about WHERE state lives, not against state."
+  },
+  {
+   "lesson_id": "entity_resolution_deterministic_boundary",
+   "title": "Entity resolution: deterministic normalizers plus declared tables only; every fuzzy step is an identity leap that must HOLD instead.",
+   "how_identified": "Matter-link feature matrix work showed every linking tier ultimately rests on entity identity; a wrong merge poisons conflict seeds, budgets, and carrier/client separation simultaneously - the blast radius is the whole product.",
+   "decision_logic": "Allowed deterministic normalizers: Unicode NFC, casefold, punctuation strip, whitespace collapse, legal-suffix strip (LLC/Inc/Ltd/LLP/Corp), and lookups in reviewed, versioned alias/subsidiary tables. Prohibited identity leaps: edit distance, token-overlap scores, embeddings, phonetic codes, acronym expansion without a table entry, d/b/a inference from prose. When two names are normalized-equal except extra tokens or suffix differences, HOLD with label possible_affiliate and route the alias-table question itself to human review (rule R12); the reviewed table entry, not the string similarity, is what later permits the merge.",
+   "assumptions": [
+    "Alias/subsidiary tables are synthetic in this repo; canonical entity identity authority belongs to the Semantic Substrate, and intake only proposes candidate table entries via DAD mail."
+   ],
+   "alternatives_rejected": [
+    "Threshold-tuned fuzzy matcher with human sampling: converts identity into a score, and scores drift; ambiguity classes must stay ordinal and rule-derived."
+   ],
+   "risks": [
+    "Under-merging inflates review load; that is the intended failure direction (hold is recoverable, wrong merge is not)."
+   ],
+   "fixture_needs": "linking-subsidiary-alias (merge with table, hold without), near-name distinct entities (Valley Medical Center vs Valley Medical Clinic), franchise/staffing-agency L&E variants per docs/fable/le-synthetic-corpus-roadmap.md.",
+   "implementation_handoff": "Normalizers land in PR-ML1 (matter_link_keys.py + config/matter-link-policy.yaml); alias-table review flow after ML3.",
+   "dad_classification_labels": [
+    "identity-vs-normalization-boundary",
+    "hold-over-guess-pattern",
+    "semantic-substrate-authority"
+   ],
+   "what_not_to_do": "Do not add any learned or similarity-scored matcher before the deterministic oracle has reviewed fixture history and Semantic Substrate approves the identity contract.",
+   "applies_when": "Entity identity feeds legal decisions (conflicts, budgets, matter identity) and wrong merges are irreversible downstream.",
+   "does_not_apply_when": "Low-stakes display-side grouping where a wrong merge is cosmetic and reversible.",
+   "danger_if_misapplied": "Applied to search/recall problems, hold-over-guess starves retrieval; the boundary is for identity assertions, not for finding candidates."
+  },
+  {
+   "lesson_id": "le_collective_paga_template_architecture",
+   "title": "Class/collective/PAGA budgets are phase-structural: new phases and stepwise scenario sets, never scalar multipliers over individual templates.",
+   "how_identified": "Costing analysis showed the dominant cost objects (certification briefing, opt-in administration, representative-sampling discovery, penalty-period data pulls, settlement administration) do not exist in individual L&E templates at any multiplier value, so claimant-count scaling of an individual template is a category error.",
+   "decision_logic": "Separate template family with stage-gated phases: pre-certification, certification, merits, resolution/settlement-administration. Scenario set mirrors resolution_path but keys on certification outcome (cert_denied / cert_granted / hybrid_partial) because cost is stepwise in that outcome. Drivers: num_opt_ins resolved through a declared TIER TABLE (e.g. <10, 10-49, 50-249, 250+) with per-tier hour blocks - sublinear and reviewable, not a continuous multiplier; num_locations; esi_volume_tier; penalty_period_months (scopes discovery volume ONLY); agency_stage. Block/widen/hours-only rules: unknown opt-in tier -> hours_only for certification and later phases; tier above the declared cap -> block for a human staffing plan; penalty EXPOSURE modeling is always excluded from budgets (boundary honesty - fixture le-paga-shaped-penalty-exposure pins the exclusion).",
+   "formulas": [
+    "phase_hours(certification) = tier_block_hours[opt_in_tier] + per_location_hours * num_locations; each tier block carries its own min/likely/max band; no cross-tier interpolation."
+   ],
+   "assumptions": [
+    "Tier boundaries are synthetic policy, reviewed like any driver policy; BK5 normalization rules apply to any intensity effects layered on top."
+   ],
+   "alternatives_rejected": [
+    "Continuous per-claimant multiplier: implies false precision, breaks at tier boundaries, and hides certification-outcome nonlinearity from the reviewer."
+   ],
+   "risks": [
+    "Tier tables can be gamed by boundary cases; holdout fixtures must shift a count across a tier boundary and assert the band, not just the point value."
+   ],
+   "implementation_handoff": "PR-LE2 per docs/fable/le-synthetic-corpus-roadmap.md, only after PR-BK5 lands; fixtures le-wage-hour-collective-cap and le-paga-shaped-penalty-exposure first.",
+   "dad_classification_labels": [
+    "nonlinear-budget-architecture",
+    "tiered-driver-pattern",
+    "boundary-honesty"
+   ],
+   "what_not_to_do": "Do not model penalty or exposure amounts in any budget artifact; do not fan out per-plaintiff lines above the cap (rule R13 routes to possible_class_or_collective review).",
+   "applies_when": "Cost is stepwise in a procedural outcome (certification) and dominant cost objects are absent from the base template.",
+   "does_not_apply_when": "Matter families whose cost genuinely scales smoothly with a count; there, per-unit drivers with bands are correct and tier tables add noise.",
+   "danger_if_misapplied": "Tier tables misapplied to smooth-scaling work create artificial cliffs reviewers will game or distrust."
+  },
+  {
+   "lesson_id": "rate_benchmark_cell_governance",
+   "title": "Rate calibration: Legal Knowledge Runtime owns graded benchmark cells; intake consumes pinned snapshots or goes hours-only.",
+   "how_identified": "Rate-resolution red-team (findings F7/D2-D4) showed intake silently pricing at default carrier/state when resolution fails; the same failure shape applies one level up - inventing plausible panel rates from public proxies would be unauthorized pricing authority plus proxy contamination of any future learning.",
+   "decision_logic": "Contract: BenchmarkCell = (state, market_tier, role, year) -> {low, median, high, source_grade, provenance_refs, retrieved_at, method}. Source grading rubric: A = in-state court-adjudicated fee award, recent; B = in-state reviewed survey or fee-award aggregate; C = adjacent-state or national survey; D = stale (>24 months) or method-unknown. LKR owns retrieval, grading, and snapshot pinning; intake validates the pinned snapshot hash and consumes read-only. Consumption rules: grade C/D can annotate a review packet but can NEVER price a budget line; missing, stale (>12 months), unmapped, or below-threshold cells -> hours_only plus flag; two conflicting cells for the same key -> block for human selection. Benchmark cells are context; the synthetic carrier rate card remains the only authorized pricing schedule, and the two must never be blended silently.",
+   "assumptions": [
+    "No real negotiated firm or carrier panel rates ever enter this repo; public proxies are labeled proxy/floor/context, never panel pricing."
+   ],
+   "alternatives_rejected": [
+    "Intake-side ad hoc web lookups or committed bulk rate payloads: production-connector and real-data boundary violations, and they would launder ungraded numbers into budget math."
+   ],
+   "risks": [
+    "Grade inflation over time; the grading rubric itself needs a review clock in LKR."
+   ],
+   "implementation_handoff": "Contract doc goes to LawFirm-os-legal-knowledge-runtime as a candidate design request; intake-side snapshot validation implements only after LKR accepts the cell contract.",
+   "dad_classification_labels": [
+    "source-grading-pattern",
+    "pricing-authority-boundary",
+    "hours-only-fallback"
+   ],
+   "what_not_to_do": "Do not let intake download, scrape, or commit rate evidence; do not present any proxy number as a carrier panel rate; do not blend benchmark context into the authorized rate card.",
+   "applies_when": "A candidate repo needs market context it is not authorized to source; a governed retrieval repo exists.",
+   "does_not_apply_when": "Fully synthetic demos with no market-context claim, or repos that ARE the authorized rate source.",
+   "danger_if_misapplied": "Treating graded benchmark context as pricing authority anywhere reintroduces the exact laundering this contract prevents."
+  },
+  {
+   "lesson_id": "rust_audit_to_replacement_governance",
+   "title": "Rust runs in audit mode against the Python oracle until parity history plus one adjudicated divergence justify replacement; Rust never owns semantic authority.",
+   "how_identified": "Ranking Rust candidates by correctness payoff vs contract stability showed the governance-critical leaf tools (custody/boundary scanning, hashing, inventory) are exactly where Rust's byte-exact strictness pays, while every semantic layer still churns with human review cadence.",
+   "decision_logic": "Audit-first: Rust computes alongside Python, divergence fails CI as an audit finding, never as authority. Replacement gate: >=4 weeks green parity in CI, interface pinned in contracts.lock, Python oracle retained in-tree as parity-fixture generator, and at least ONE real divergence caught and human-adjudicated (the adjudication decision becomes a frozen fixture). Parity corpus: canonical-JSON goldens (sorted keys, fixed formatting, no floats in leaf-tool land) generated by Python, reviewed once, frozen. Hostile encoding set is mandatory: UTF-8 BOM, NFC/NFD names, CRLF/LF mixes, zero-byte files, >2MB documents.",
+   "observable_evidence": "Live proof from this very run: the intake repo's own .digital-asset/mail/outbox.jsonl begins with a UTF-8 BOM and its first read with a naive utf-8 JSON parser failed until utf-8-sig was used. Encoding divergence is not hypothetical - it occurred inside the governance mailbox itself.",
+   "assumptions": [
+    "One rule source shared by both engines (versioned config); code may diverge, rules may not."
+   ],
+   "alternatives_rejected": [
+    "Direct Rust replacement of ingestion hot paths first: highest performance payoff but contract churn makes parity a moving target; audit mode buys divergence data for free."
+   ],
+   "risks": [
+    "Audit fatigue - recurring benign divergences must be adjudicated into fixtures or the gate loses meaning."
+   ],
+   "implementation_handoff": "PR-RS1 custody-audit binary per docs/fable/rust-boundary-roadmap.md, after PR-EX1; then RS2 inventory/hashing, RS3 schema validator, RS4 segmentation offset auditor.",
+   "dad_classification_labels": [
+    "audit-before-replace-pattern",
+    "parity-corpus-governance",
+    "mixed-language-boundary"
+   ],
+   "what_not_to_do": "Rust must never own legal classification, party-role assignment, matter routing, conflict clearance, budget decisioning, learning promotion, human gates, or external writes (config/rust-ingestion-transition-policy.json forbidden_rust_scope stays authoritative).",
+   "applies_when": "A deterministic leaf tool has a stable contract and a working Python oracle.",
+   "does_not_apply_when": "Greenfield tools with no oracle to audit against, or semantic/policy layers that change with human review cadence.",
+   "danger_if_misapplied": "Audit-mode forever is also a failure: without the adjudicated-divergence gate and a replacement decision, parity work decays into ignored noise."
+  }
+ ],
+ "reusable_prior_run_lessons": [
+  {
+   "lesson_id": "unknown_enum_must_block_not_widen",
+   "lesson": "Unknown scenario resolution_phase must block, never include all phases; verified live in budget.py _included_phase_ids where a typo silently made early_resolution cost equal through_trial.",
+   "label": "fallback-to-everything-hazard",
+   "applies_when": "A lookup failure would silently ENLARGE scope or authority.",
+   "does_not_apply_when": "Failures that shrink scope to a safe subset (fail-closed defaults).",
+   "danger_if_misapplied": "Blindly blocking on every unknown key in exploratory tooling makes iteration impossible; the rule targets scope-enlarging fallbacks."
+  },
+  {
+   "lesson_id": "falsy_zero_numeric_fallback_hazard",
+   "lesson": "Pattern 'x_min or x' treats a legitimate 0.0 as missing; verified live: a 0-motion driver minimum produced total_min 4500.0 instead of 0.0. Lint for '_min or' / '_max or' patterns repo-wide; use 'if x is not None'.",
+   "label": "falsy-zero-coercion-hazard",
+   "applies_when": "Optional numeric fields where 0 is a legitimate value.",
+   "does_not_apply_when": "Fields where 0 is genuinely invalid and equivalent to missing.",
+   "danger_if_misapplied": "Mechanical 'is not None' rewrites of truthiness checks on strings/collections can change intended empty-handling; scope to numerics."
+  },
+  {
+   "lesson_id": "sender_is_never_matter_identity",
+   "lesson": "One claims inbox sends many matters; sender identity may namespace medium-tier keys but is never itself a matter-linking key.",
+   "label": "matter-linking-doctrine",
+   "applies_when": "Multi-matter senders (carrier inboxes, TPAs, firm inboxes).",
+   "does_not_apply_when": "Channels contractually scoped to exactly one matter, where sender+channel may be a declared medium key.",
+   "danger_if_misapplied": "Inverted ('sender is meaningless'), it discards a valid namespacing signal for medium-tier keys."
+  },
+  {
+   "lesson_id": "lake_gets_events_dad_gets_lessons",
+   "lesson": "Exception Lake receives countable operational events; DAD receives distilled reusable lessons and decision requests citing those events. An event stream with one identity_key becomes ONE lesson with an occurrence count.",
+   "label": "learning-routing-doctrine",
+   "applies_when": "Both an event store and a lesson/decision hub exist with distinct owners.",
+   "does_not_apply_when": "Single-repo projects with one learning surface.",
+   "danger_if_misapplied": "Over-splitting in small systems creates two half-empty stores and doubles review load."
+  },
+  {
+   "lesson_id": "rust_audits_before_replacing",
+   "lesson": "Rust tools ship in audit mode against the Python oracle; replacement requires parity history, contract lock, and an adjudicated divergence.",
+   "label": "mixed-language-doctrine",
+   "applies_when": "Porting an existing tool with a trusted oracle.",
+   "does_not_apply_when": "New capabilities with no Python counterpart.",
+   "danger_if_misapplied": "Demanding an oracle for greenfield Rust blocks legitimate new leaf tools."
+  },
+  {
+   "lesson_id": "budget_bands_are_envelopes_not_probabilities",
+   "lesson": "total_min/total_max are arithmetic envelopes under stated ranges (invariant I17); never present them as confidence intervals or percentiles; scenario probabilities are review weights from policy, not measured likelihoods.",
+   "label": "uncertainty-honesty-doctrine",
+   "applies_when": "Bands are computed by min/max arithmetic over stated ranges.",
+   "does_not_apply_when": "A future genuinely calibrated statistical model with validated intervals, reviewed and promoted as such.",
+   "danger_if_misapplied": "Reading this as 'never quantify uncertainty' would block legitimate reviewed statistical work; it bans mislabeling, not statistics."
+  }
+ ],
+ "evidence_refs": [
+  "repos/LawFirm-os-intake-seed-clean-20260623/docs/fable/budget-truth-kernel.md",
+  "repos/LawFirm-os-intake-seed-clean-20260623/docs/fable/matter-linking-hard-kernel.md",
+  "repos/LawFirm-os-intake-seed-clean-20260623/docs/fable/exception-learning-taxonomy.md",
+  "repos/LawFirm-os-intake-seed-clean-20260623/docs/fable/le-synthetic-corpus-roadmap.md",
+  "repos/LawFirm-os-intake-seed-clean-20260623/docs/fable/rust-boundary-roadmap.md",
+  "repos/LawFirm-os-intake-seed-clean-20260623/src/lawfirm_os_intake/budget.py#_included_phase_ids,_budget_totals,_intensity_adjustment,_guideline_flags",
+  "repos/LawFirm-os-intake-seed-clean-20260623/src/lawfirm_os_intake/rates.py#_match_carrier,_match_state",
+  "repos/LawFirm-os-intake-seed-clean-20260623/src/lawfirm_os_intake/guidelines.py#_delta,_project_line",
+  "repos/LawFirm-os-intake-seed-clean-20260623/config/budget-driver-policy.yaml#intensity_multiplier_policy,matter_family_defaults",
+  "repos/LawFirm-os-intake-seed-clean-20260623/config/rust-ingestion-transition-policy.json#forbidden_rust_scope",
+  "04_Digital_Assett_Directory/AI_FRONT_DOOR.md",
+  "04_Digital_Assett_Directory/AGENTS.md",
+  "04_Digital_Assett_Directory/docs/MAIL_CENTER.md",
+  "04_Digital_Assett_Directory/schemas/mail-message.schema.json",
+  "prior-mail:dad:mail:lawfirm-os-intake-hard-kernel-lessons-2026-07-05 (enriched, not superseded)"
+ ],
+ "dad_requested_actions": [
+  "Classify each lesson_id separately for pattern tracking; link this bundle to the prior decision-request bundle in the same thread.",
+  "Route the cross-bundle state contract lesson to LawFirm-os-orchestrator and the benchmark-cell contract lesson to LawFirm-os-legal-knowledge-runtime as candidate design requests.",
+  "Hold all lessons at candidate status; no promotion without owner-repo review."
+ ],
+ "learning_rule_acknowledgements": [
+  "learning-rule:context-bound-lessons-need-non-applicability"
+ ]
+}
