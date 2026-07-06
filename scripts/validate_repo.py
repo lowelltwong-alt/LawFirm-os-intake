@@ -42,6 +42,7 @@ FRONT_DOOR_REF_SECTIONS = {
 }
 FENCED_BLOCK_RE = re.compile(r"```.*?```", re.DOTALL)
 INLINE_CODE_RE = re.compile(r"`([^`\n]+)`")
+DEFAULT_INTENSITY_SIGNOFF_PATH = Path("docs/governance/intensity_normalization_signoff.json")
 
 
 def _looks_like_local_ref(value: str) -> bool:
@@ -97,6 +98,51 @@ def public_data_boundary_failures(root: Path = ROOT) -> list[str]:
     return [] if ok else list(details.get("failures", []))
 
 
+def _digest_json(value: object) -> str:
+    payload = json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+    return "sha256:" + hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
+def intensity_signoff_gate_failures(root: Path = ROOT) -> list[str]:
+    policy_path = root / "config" / "budget-driver-policy.yaml"
+    policy = yaml.safe_load(policy_path.read_text(encoding="utf-8"))
+    if not isinstance(policy, dict):
+        return ["budget-driver-policy.yaml must be a mapping"]
+    intensity_policy = policy.get("intensity_multiplier_policy", {})
+    mode = (
+        str(intensity_policy.get("normalization", "raw"))
+        if isinstance(intensity_policy, dict)
+        else "raw"
+    )
+    if mode == "raw":
+        return []
+    if mode != "baseline_relative":
+        return [f"unsupported intensity normalization mode: {mode}"]
+
+    signoff_path = root / DEFAULT_INTENSITY_SIGNOFF_PATH
+    if not signoff_path.is_file():
+        return [
+            "baseline_relative intensity normalization requires approved signoff at "
+            f"{DEFAULT_INTENSITY_SIGNOFF_PATH.as_posix()}"
+        ]
+    signoff = json.loads(signoff_path.read_text(encoding="utf-8"))
+    if not isinstance(signoff, dict):
+        return ["intensity normalization signoff must be a JSON object"]
+
+    failures: list[str] = []
+    if signoff.get("status") != "approved_for_baseline_relative":
+        failures.append("intensity normalization signoff is not approved_for_baseline_relative")
+    if not signoff.get("approved_by") or not signoff.get("approved_at"):
+        failures.append("approved intensity normalization signoff requires approved_by/approved_at")
+    if signoff.get("policy_id") != policy.get("policy_id", "unknown"):
+        failures.append("intensity normalization signoff policy_id does not match active policy")
+    if signoff.get("policy_sha256_after") != _digest_json(policy):
+        failures.append(
+            "intensity normalization signoff policy_sha256_after does not match active policy"
+        )
+    return failures
+
+
 def fail(message: str) -> None:
     raise SystemExit(f"repository validation failed: {message}")
 
@@ -113,6 +159,10 @@ def main() -> int:
     public_data_failures = public_data_boundary_failures(ROOT)
     if public_data_failures:
         fail("public data boundary failures: " + ", ".join(public_data_failures))
+
+    intensity_failures = intensity_signoff_gate_failures(ROOT)
+    if intensity_failures:
+        fail("intensity normalization signoff gate failed: " + "; ".join(intensity_failures))
 
     for path in ROOT.rglob("*.json"):
         try:

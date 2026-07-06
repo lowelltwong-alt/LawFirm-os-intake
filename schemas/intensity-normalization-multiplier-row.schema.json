@@ -1,0 +1,59 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "matter_family": {
+      "title": "Matter Family",
+      "type": "string"
+    },
+    "driver_id": {
+      "title": "Driver Id",
+      "type": "string"
+    },
+    "tier": {
+      "title": "Tier",
+      "type": "string"
+    },
+    "phase_id": {
+      "title": "Phase Id",
+      "type": "string"
+    },
+    "baseline_tier": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Baseline Tier"
+    },
+    "raw_multiplier": {
+      "minimum": 0,
+      "title": "Raw Multiplier",
+      "type": "number"
+    },
+    "baseline_raw_multiplier": {
+      "minimum": 0,
+      "title": "Baseline Raw Multiplier",
+      "type": "number"
+    },
+    "effective_multiplier": {
+      "minimum": 0,
+      "title": "Effective Multiplier",
+      "type": "number"
+    }
+  },
+  "required": [
+    "matter_family",
+    "driver_id",
+    "tier",
+    "phase_id",
+    "raw_multiplier",
+    "baseline_raw_multiplier",
+    "effective_multiplier"
+  ],
+  "title": "IntensityNormalizationMultiplierRow",
+  "type": "object"
+}

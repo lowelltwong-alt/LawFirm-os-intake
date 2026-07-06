@@ -61,6 +61,11 @@ from .cross_repo_owner_issue_drafts import run_cross_repo_owner_issue_drafts
 from .dad_review_issue_outbox import record_dad_review_issue_to_outbox
 from .intake_local_closeout import run_intake_local_closeout
 from .intake_vertical_readiness_audit import run_intake_vertical_readiness_audit
+from .intensity_signoff import (
+    parse_demo_case,
+    validate_intensity_normalization_signoff_gate,
+    write_intensity_normalization_signoff_report,
+)
 from .learning_promotion_readiness import run_learning_promotion_readiness
 from .learning_owner_handoffs import run_learning_owner_handoffs
 from .learning_proposed_changes import run_learning_proposed_changes
@@ -246,6 +251,40 @@ def _parser() -> argparse.ArgumentParser:
     validate_budget_artifact.add_argument("--budget-proposal", required=True)
     validate_budget_artifact.add_argument("--carrier-projection")
     validate_budget_artifact.add_argument("--report-out")
+
+    intensity_signoff = sub.add_parser(
+        "intensity-signoff",
+        help=(
+            "Build a candidate-only before/after signoff packet for flipping "
+            "intensity normalization to baseline_relative."
+        ),
+    )
+    intensity_signoff.add_argument("--policy", required=True)
+    intensity_signoff.add_argument(
+        "--practice-profile",
+        action="append",
+        required=True,
+        help="Synthetic practice profile path. Repeat to include more profiles.",
+    )
+    intensity_signoff.add_argument("--out", required=True)
+    intensity_signoff.add_argument("--markdown-out")
+    intensity_signoff.add_argument(
+        "--demo-case",
+        action="append",
+        help="Optional case_id,input_path,confirmation_path. Defaults to canonical demos.",
+    )
+    intensity_signoff.add_argument(
+        "--generated-at",
+        help="Optional fixed timestamp for deterministic preview artifacts.",
+    )
+
+    validate_intensity_signoff = sub.add_parser(
+        "validate-intensity-signoff",
+        help="Validate that baseline_relative intensity normalization has approved signoff.",
+    )
+    validate_intensity_signoff.add_argument("--policy", required=True)
+    validate_intensity_signoff.add_argument("--signoff")
+    validate_intensity_signoff.add_argument("--report-out")
 
     ui_review_manifest = sub.add_parser(
         "build-ui-review-manifest",
@@ -2253,6 +2292,44 @@ def main(argv: list[str] | None = None) -> int:
             )
             _print(report)
             return 0 if report["status"] == "passed" else 1
+
+        if args.command == "intensity-signoff":
+            demo_cases = (
+                [parse_demo_case(value) for value in args.demo_case] if args.demo_case else None
+            )
+            report = write_intensity_normalization_signoff_report(
+                policy_path=args.policy,
+                practice_profile_paths=args.practice_profile,
+                out_path=args.out,
+                markdown_out_path=args.markdown_out,
+                demo_cases=demo_cases,
+                generated_at=args.generated_at,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "signoff_id": report.signoff_id,
+                    "out": args.out,
+                    "markdown_out": args.markdown_out,
+                    "policy_id": report.policy_id,
+                    "normalization_mode_before": report.normalization_mode_before,
+                    "normalization_mode_after": report.normalization_mode_after,
+                    "requires_human_approval": report.requires_human_approval,
+                    "approved_by": report.approved_by,
+                    "external_writes_performed": report.external_writes_performed,
+                    "lake_write_performed": report.lake_write_performed,
+                }
+            )
+            return 0
+
+        if args.command == "validate-intensity-signoff":
+            report = validate_intensity_normalization_signoff_gate(
+                policy_path=args.policy,
+                signoff_path=args.signoff,
+                report_out=args.report_out,
+            )
+            _print(report.model_dump(mode="json"))
+            return 0 if report.status == "passed" else 2
 
         if args.command == "build-ui-review-manifest":
             manifest = build_ui_review_manifest(

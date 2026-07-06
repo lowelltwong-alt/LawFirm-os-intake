@@ -7299,6 +7299,131 @@ class BudgetGuidelineFlag(StrictModel):
     requires_human_review: Literal[True] = True
 
 
+class IntensityNormalizationMultiplierRow(StrictModel):
+    matter_family: str
+    driver_id: str
+    tier: str
+    phase_id: str
+    baseline_tier: str | None = None
+    raw_multiplier: float = Field(ge=0)
+    baseline_raw_multiplier: float = Field(ge=0)
+    effective_multiplier: float = Field(ge=0)
+
+
+class IntensityNormalizationDemoTotal(StrictModel):
+    demo_case_id: str
+    matter_family: str
+    input_ref: str
+    confirmation_ref: str
+    pricing_status_before: str
+    pricing_status_after: str
+    total_proposed_budget_before: float | None = None
+    total_proposed_budget_after: float | None = None
+    subtotal_fees_before: float | None = None
+    subtotal_fees_after: float | None = None
+    subtotal_expenses_before: float = Field(ge=0)
+    subtotal_expenses_after: float = Field(ge=0)
+    contingency_amount_before: float | None = None
+    contingency_amount_after: float | None = None
+    delta_amount: float | None = None
+    delta_percent: float | None = None
+    before_case_driver_profile_id: str
+    after_case_driver_profile_id: str
+
+
+class IntensityNormalizationFamilySignoff(StrictModel):
+    matter_family: str
+    template_id: str
+    baseline_source: Literal["template_declaration", "family_defaults"]
+    baseline_by_driver: dict[str, str]
+    per_phase_default_product_before: dict[str, float]
+    per_phase_default_product_after: dict[str, float]
+    effective_multiplier_table: list[IntensityNormalizationMultiplierRow]
+    demo_totals: list[IntensityNormalizationDemoTotal] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def baseline_and_table_required(self) -> "IntensityNormalizationFamilySignoff":
+        if not self.baseline_by_driver:
+            raise ValueError("intensity signoff family requires baseline_by_driver")
+        if not self.effective_multiplier_table:
+            raise ValueError("intensity signoff family requires effective multiplier rows")
+        return self
+
+
+class IntensityNormalizationSignoffReport(StrictModel):
+    schema_version: str = "0.1"
+    signoff_id: str
+    generated_at: str
+    status: Literal[
+        "preview_requires_human_approval",
+        "approved_for_baseline_relative",
+        "rejected",
+    ]
+    policy_id: str
+    policy_version_before: str
+    policy_version_after: str
+    policy_sha256_before: str
+    policy_sha256_after: str
+    normalization_mode_before: Literal["raw"] = "raw"
+    normalization_mode_after: Literal["baseline_relative"] = "baseline_relative"
+    per_family: list[IntensityNormalizationFamilySignoff]
+    requires_human_approval: Literal[True] = True
+    approved_by: str | None = None
+    approved_at: str | None = None
+    candidate_only: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    no_real_firm_data: Literal[True] = True
+    no_budget_submission_authority: Literal[True] = True
+    no_matter_opening_authority: Literal[True] = True
+    no_conflict_clearance_authority: Literal[True] = True
+    lake_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    decision_required: str
+
+    @model_validator(mode="after")
+    def approved_status_requires_human_fields(self) -> "IntensityNormalizationSignoffReport":
+        if self.status == "approved_for_baseline_relative":
+            if not self.approved_by or not self.approved_at:
+                raise ValueError("approved intensity signoff requires approved_by and approved_at")
+        if not self.per_family:
+            raise ValueError("intensity signoff requires at least one matter family")
+        return self
+
+
+class IntensityNormalizationSignoffGateCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    blocking_refs: list[str] = Field(default_factory=list)
+
+
+class IntensityNormalizationSignoffGateReport(StrictModel):
+    schema_version: str = "0.1"
+    status: Literal["passed", "failed"]
+    policy_id: str
+    policy_version: str
+    normalization_mode: Literal["raw", "baseline_relative"]
+    signoff_required: bool
+    signoff_ref: str | None = None
+    signoff_status: str | None = None
+    checks: list[IntensityNormalizationSignoffGateCheck]
+    candidate_only: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    no_policy_flip_without_approved_signoff: Literal[True] = True
+    no_budget_submission_authority: Literal[True] = True
+    lake_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def status_matches_checks(self) -> "IntensityNormalizationSignoffGateReport":
+        failed = [check for check in self.checks if check.status == "failed"]
+        if self.status == "passed" and failed:
+            raise ValueError("passed signoff gate cannot contain failed checks")
+        if self.status == "failed" and not failed:
+            raise ValueError("failed signoff gate requires at least one failed check")
+        return self
+
+
 class CarrierCompliantProjectionLine(StrictModel):
     phase_id: str
     task_id: str

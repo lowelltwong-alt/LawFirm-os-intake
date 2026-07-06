@@ -1,0 +1,157 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "demo_case_id": {
+      "title": "Demo Case Id",
+      "type": "string"
+    },
+    "matter_family": {
+      "title": "Matter Family",
+      "type": "string"
+    },
+    "input_ref": {
+      "title": "Input Ref",
+      "type": "string"
+    },
+    "confirmation_ref": {
+      "title": "Confirmation Ref",
+      "type": "string"
+    },
+    "pricing_status_before": {
+      "title": "Pricing Status Before",
+      "type": "string"
+    },
+    "pricing_status_after": {
+      "title": "Pricing Status After",
+      "type": "string"
+    },
+    "total_proposed_budget_before": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Total Proposed Budget Before"
+    },
+    "total_proposed_budget_after": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Total Proposed Budget After"
+    },
+    "subtotal_fees_before": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Subtotal Fees Before"
+    },
+    "subtotal_fees_after": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Subtotal Fees After"
+    },
+    "subtotal_expenses_before": {
+      "minimum": 0,
+      "title": "Subtotal Expenses Before",
+      "type": "number"
+    },
+    "subtotal_expenses_after": {
+      "minimum": 0,
+      "title": "Subtotal Expenses After",
+      "type": "number"
+    },
+    "contingency_amount_before": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Contingency Amount Before"
+    },
+    "contingency_amount_after": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Contingency Amount After"
+    },
+    "delta_amount": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Delta Amount"
+    },
+    "delta_percent": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Delta Percent"
+    },
+    "before_case_driver_profile_id": {
+      "title": "Before Case Driver Profile Id",
+      "type": "string"
+    },
+    "after_case_driver_profile_id": {
+      "title": "After Case Driver Profile Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "demo_case_id",
+    "matter_family",
+    "input_ref",
+    "confirmation_ref",
+    "pricing_status_before",
+    "pricing_status_after",
+    "subtotal_expenses_before",
+    "subtotal_expenses_after",
+    "before_case_driver_profile_id",
+    "after_case_driver_profile_id"
+  ],
+  "title": "IntensityNormalizationDemoTotal",
+  "type": "object"
+}
