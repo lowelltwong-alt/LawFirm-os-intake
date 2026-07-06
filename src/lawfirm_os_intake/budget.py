@@ -836,14 +836,24 @@ def _budget_totals(
     if all_priced:
         subtotal_fees_min = round(
             sum(
-                (line.estimated_hours_min or line.estimated_hours) * (line.hourly_rate or 0)
+                (
+                    line.estimated_hours_min
+                    if line.estimated_hours_min is not None
+                    else line.estimated_hours
+                )
+                * (line.hourly_rate or 0)
                 for line in lines
             ),
             2,
         )
         subtotal_fees_max = round(
             sum(
-                (line.estimated_hours_max or line.estimated_hours) * (line.hourly_rate or 0)
+                (
+                    line.estimated_hours_max
+                    if line.estimated_hours_max is not None
+                    else line.estimated_hours
+                )
+                * (line.hourly_rate or 0)
                 for line in lines
             ),
             2,
@@ -995,19 +1005,37 @@ def _build_scenario_set(
         elif 0 <= probability_sum < 1:
             unknown_probability_mass = round(1 - probability_sum, 6)
             known_min = sum(
-                float(scenario.probability or 0) * float(scenario.total_budget_min or 0)
+                float(scenario.probability or 0)
+                * float(scenario.total_budget_min if scenario.total_budget_min is not None else 0)
                 for scenario in scenarios
             )
             known_max = sum(
-                float(scenario.probability or 0) * float(scenario.total_budget_max or 0)
+                float(scenario.probability or 0)
+                * float(scenario.total_budget_max if scenario.total_budget_max is not None else 0)
                 for scenario in scenarios
             )
             unweighted_totals = [
-                float(scenario.total_budget_min or scenario.total_proposed_budget or 0)
+                float(
+                    scenario.total_budget_min
+                    if scenario.total_budget_min is not None
+                    else (
+                        scenario.total_proposed_budget
+                        if scenario.total_proposed_budget is not None
+                        else 0
+                    )
+                )
                 for scenario in scenarios
             ]
             unweighted_max_totals = [
-                float(scenario.total_budget_max or scenario.total_proposed_budget or 0)
+                float(
+                    scenario.total_budget_max
+                    if scenario.total_budget_max is not None
+                    else (
+                        scenario.total_proposed_budget
+                        if scenario.total_proposed_budget is not None
+                        else 0
+                    )
+                )
                 for scenario in scenarios
             ]
             if unweighted_totals and unweighted_max_totals:
