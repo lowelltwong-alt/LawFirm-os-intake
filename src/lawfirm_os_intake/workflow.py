@@ -15,6 +15,7 @@ from .budget import (
     build_budget_proposal,
 )
 from .budget_actuals import build_budget_actual_comparison_report
+from .budget_invariants import build_budget_invariant_report, enforce_budget_invariant_report
 from .budget_submission_guard import (
     build_budget_submission_guard_report,
     enforce_budget_submission_guard_report,
@@ -1038,10 +1039,18 @@ def run_budget(
         readiness,
     )
 
+    budget_proposal_path = run_dir / "legal_budget_proposal.json"
+    budget_invariant_report_path = run_dir / "budget_invariant_report.json"
+    budget_invariant_report = build_budget_invariant_report(
+        budget,
+        budget_proposal_ref=str(budget_proposal_path),
+    )
+    write_json(budget_invariant_report_path, budget_invariant_report)
+    enforce_budget_invariant_report(budget_invariant_report)
     write_json(run_dir / "human_confirmation.json", confirmation.model_dump(mode="json"))
     write_json(run_dir / "conflict_search_seed_packet.json", conflict_seed.model_dump(mode="json"))
     write_json(run_dir / "case_driver_profile.json", case_drivers.model_dump(mode="json"))
-    write_json(run_dir / "legal_budget_proposal.json", budget.model_dump(mode="json"))
+    write_json(budget_proposal_path, budget.model_dump(mode="json"))
     carrier_preapproval_report_path = run_dir / "carrier_preapproval_report.json"
     if budget.carrier_preapproval_report is not None:
         write_json(
@@ -1101,7 +1110,8 @@ def run_budget(
         "human_confirmation": str(run_dir / "human_confirmation.json"),
         "conflict_search_seed": str(run_dir / "conflict_search_seed_packet.json"),
         "case_driver_profile": str(run_dir / "case_driver_profile.json"),
-        "legal_budget_proposal": str(run_dir / "legal_budget_proposal.json"),
+        "legal_budget_proposal": str(budget_proposal_path),
+        "budget_invariant_report": str(budget_invariant_report_path),
         "carrier_preapproval_report": (
             str(carrier_preapproval_report_path)
             if budget.carrier_preapproval_report is not None
@@ -1292,7 +1302,8 @@ def run_budget(
             "completed",
             output_refs=[
                 str(run_dir / "conflict_search_seed_packet.json"),
-                str(run_dir / "legal_budget_proposal.json"),
+                str(budget_proposal_path),
+                str(budget_invariant_report_path),
                 str(run_dir / "matter_opening_readiness.json"),
                 str(human_gate_status_report_path),
                 str(budget_submission_guard_report_path),

@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
+from .budget_invariants import audit_budget_invariants
 from .util import load_json, write_json
 
 
@@ -280,6 +281,7 @@ def validate_budget_artifacts(
 ) -> dict[str, Any]:
     budget_payload = load_json(budget_proposal_path)
     violations = check_budget_coherence(budget_payload)
+    violations.extend(audit_budget_invariants(budget_payload))
     if carrier_projection_path:
         violations.extend(check_projection_coherence(load_json(carrier_projection_path)))
     report = {
