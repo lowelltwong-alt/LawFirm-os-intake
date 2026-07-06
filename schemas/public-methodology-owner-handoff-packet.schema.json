@@ -1,0 +1,356 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "handoff_packet_id": {
+      "title": "Handoff Packet Id",
+      "type": "string"
+    },
+    "target_repo": {
+      "enum": [
+        "LawFirm-os-intake",
+        "LawFirm-os-legal-knowledge-runtime",
+        "LawFirm-os-semantic-substrate",
+        "LawFirm-os-orchestrator",
+        "LawFirm-os-exceptions-lake-runtime"
+      ],
+      "title": "Target Repo",
+      "type": "string"
+    },
+    "handoff_focus": {
+      "enum": [
+        "local_intake_candidate_stewardship",
+        "legal_knowledge_public_adapter_boundary",
+        "public_data_governance_policy",
+        "runtime_public_source_gate",
+        "append_only_public_methodology_audit"
+      ],
+      "title": "Handoff Focus",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "ready_for_owner_review",
+        "blocked_by_public_methodology_chain"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "source_public_methodology_report_id": {
+      "title": "Source Public Methodology Report Id",
+      "type": "string"
+    },
+    "source_public_methodology_report_ref": {
+      "title": "Source Public Methodology Report Ref",
+      "type": "string"
+    },
+    "source_public_methodology_status": {
+      "enum": [
+        "ready_for_human_public_source_methodology_review",
+        "blocked_public_source_methodology"
+      ],
+      "title": "Source Public Methodology Status",
+      "type": "string"
+    },
+    "source_conversion_plan_id": {
+      "title": "Source Conversion Plan Id",
+      "type": "string"
+    },
+    "source_conversion_plan_ref": {
+      "title": "Source Conversion Plan Ref",
+      "type": "string"
+    },
+    "source_conversion_plan_status": {
+      "enum": [
+        "ready_for_human_conversion_review",
+        "blocked_public_methodology_not_ready"
+      ],
+      "title": "Source Conversion Plan Status",
+      "type": "string"
+    },
+    "source_conversion_review_packet_id": {
+      "title": "Source Conversion Review Packet Id",
+      "type": "string"
+    },
+    "source_conversion_review_packet_ref": {
+      "title": "Source Conversion Review Packet Ref",
+      "type": "string"
+    },
+    "source_conversion_review_packet_status": {
+      "enum": [
+        "ready_for_human_conversion_review",
+        "blocked_by_conversion_plan",
+        "no_specs_to_review"
+      ],
+      "title": "Source Conversion Review Packet Status",
+      "type": "string"
+    },
+    "source_count": {
+      "minimum": 0,
+      "title": "Source Count",
+      "type": "integer"
+    },
+    "spec_count": {
+      "minimum": 0,
+      "title": "Spec Count",
+      "type": "integer"
+    },
+    "recommendation_count": {
+      "minimum": 0,
+      "title": "Recommendation Count",
+      "type": "integer"
+    },
+    "red_team_note_count": {
+      "minimum": 0,
+      "title": "Red Team Note Count",
+      "type": "integer"
+    },
+    "source_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Source Ids",
+      "type": "array"
+    },
+    "source_artifact_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Source Artifact Refs",
+      "type": "array"
+    },
+    "candidate_contract_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Candidate Contract Refs",
+      "type": "array"
+    },
+    "required_owner_actions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Owner Actions",
+      "type": "array"
+    },
+    "acceptance_checks": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Acceptance Checks",
+      "type": "array"
+    },
+    "red_team_notes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Red Team Notes",
+      "type": "array"
+    },
+    "required_next_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Gates",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "planning_only": {
+      "const": true,
+      "default": true,
+      "title": "Planning Only",
+      "type": "boolean"
+    },
+    "metadata_only": {
+      "const": true,
+      "default": true,
+      "title": "Metadata Only",
+      "type": "boolean"
+    },
+    "human_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Human Review Required",
+      "type": "boolean"
+    },
+    "owning_repo_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Owning Repo Review Required",
+      "type": "boolean"
+    },
+    "blocked_until_owner_review": {
+      "const": true,
+      "default": true,
+      "title": "Blocked Until Owner Review",
+      "type": "boolean"
+    },
+    "direct_runtime_ingestion_allowed": {
+      "const": false,
+      "default": false,
+      "title": "Direct Runtime Ingestion Allowed",
+      "type": "boolean"
+    },
+    "direct_promotion_performed": {
+      "const": false,
+      "default": false,
+      "title": "Direct Promotion Performed",
+      "type": "boolean"
+    },
+    "promotion_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Promotion Authorized",
+      "type": "boolean"
+    },
+    "sibling_repo_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sibling Repo Write Performed",
+      "type": "boolean"
+    },
+    "github_issue_created": {
+      "const": false,
+      "default": false,
+      "title": "Github Issue Created",
+      "type": "boolean"
+    },
+    "github_pr_created": {
+      "const": false,
+      "default": false,
+      "title": "Github Pr Created",
+      "type": "boolean"
+    },
+    "github_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Github Write Performed",
+      "type": "boolean"
+    },
+    "public_records_ingested": {
+      "const": false,
+      "default": false,
+      "title": "Public Records Ingested",
+      "type": "boolean"
+    },
+    "raw_public_payload_committed": {
+      "const": false,
+      "default": false,
+      "title": "Raw Public Payload Committed",
+      "type": "boolean"
+    },
+    "real_party_records_committed": {
+      "const": false,
+      "default": false,
+      "title": "Real Party Records Committed",
+      "type": "boolean"
+    },
+    "real_matter_records_committed": {
+      "const": false,
+      "default": false,
+      "title": "Real Matter Records Committed",
+      "type": "boolean"
+    },
+    "synthetic_fixtures_created": {
+      "const": false,
+      "default": false,
+      "title": "Synthetic Fixtures Created",
+      "type": "boolean"
+    },
+    "fixture_files_mutated": {
+      "const": false,
+      "default": false,
+      "title": "Fixture Files Mutated",
+      "type": "boolean"
+    },
+    "fixture_generation_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Fixture Generation Authorized",
+      "type": "boolean"
+    },
+    "fixture_pr_created": {
+      "const": false,
+      "default": false,
+      "title": "Fixture Pr Created",
+      "type": "boolean"
+    },
+    "connector_implemented": {
+      "const": false,
+      "default": false,
+      "title": "Connector Implemented",
+      "type": "boolean"
+    },
+    "legal_knowledge_adapter_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Legal Knowledge Adapter Authorized",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "handoff_packet_id",
+    "target_repo",
+    "handoff_focus",
+    "status",
+    "source_public_methodology_report_id",
+    "source_public_methodology_report_ref",
+    "source_public_methodology_status",
+    "source_conversion_plan_id",
+    "source_conversion_plan_ref",
+    "source_conversion_plan_status",
+    "source_conversion_review_packet_id",
+    "source_conversion_review_packet_ref",
+    "source_conversion_review_packet_status",
+    "source_count",
+    "spec_count",
+    "recommendation_count",
+    "red_team_note_count",
+    "source_ids",
+    "required_owner_actions",
+    "acceptance_checks",
+    "red_team_notes",
+    "required_next_gates"
+  ],
+  "title": "PublicMethodologyOwnerHandoffPacket",
+  "type": "object"
+}

@@ -1,0 +1,139 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "order_index": {
+      "exclusiveMinimum": 0,
+      "title": "Order Index",
+      "type": "integer"
+    },
+    "pr_number": {
+      "exclusiveMinimum": 0,
+      "title": "Pr Number",
+      "type": "integer"
+    },
+    "title": {
+      "title": "Title",
+      "type": "string"
+    },
+    "head_ref_name": {
+      "title": "Head Ref Name",
+      "type": "string"
+    },
+    "recommended_sequence_role": {
+      "enum": [
+        "fixture_gap_closer",
+        "fixture_role_expander",
+        "audit_verifier",
+        "unknown"
+      ],
+      "title": "Recommended Sequence Role",
+      "type": "string"
+    },
+    "recommended_after_pr_numbers": {
+      "items": {
+        "type": "integer"
+      },
+      "title": "Recommended After Pr Numbers",
+      "type": "array"
+    },
+    "shared_surface_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Shared Surface Refs",
+      "type": "array"
+    },
+    "reason": {
+      "title": "Reason",
+      "type": "string"
+    },
+    "required_manual_actions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Manual Actions",
+      "type": "array"
+    },
+    "validation_required": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Validation Required",
+      "type": "array"
+    },
+    "red_team_notes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Red Team Notes",
+      "type": "array"
+    },
+    "merge_gate": {
+      "const": "manual_human_review_required",
+      "default": "manual_human_review_required",
+      "title": "Merge Gate",
+      "type": "string"
+    },
+    "ready_state_gate": {
+      "const": "manual_human_review_required",
+      "default": "manual_human_review_required",
+      "title": "Ready State Gate",
+      "type": "string"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "ready_for_review_marked": {
+      "const": false,
+      "default": false,
+      "title": "Ready For Review Marked",
+      "type": "boolean"
+    },
+    "merge_performed": {
+      "const": false,
+      "default": false,
+      "title": "Merge Performed",
+      "type": "boolean"
+    },
+    "github_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Github Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "order_index",
+    "pr_number",
+    "title",
+    "head_ref_name",
+    "recommended_sequence_role",
+    "reason",
+    "required_manual_actions",
+    "validation_required",
+    "red_team_notes"
+  ],
+  "title": "PRMergeOrderRecommendation",
+  "type": "object"
+}

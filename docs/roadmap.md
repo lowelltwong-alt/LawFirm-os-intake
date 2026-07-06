@@ -623,6 +623,37 @@ human-review actions from critical owner-gated work.
   `lake_write_performed=false`, `sqlite_write_performed=false`,
   `external_writes_performed=false`, and `silent_learning_performed=false`.
 
+## 11M.1. Draft PR Merge Order Readiness Packet
+
+Status: implemented for the current synthetic candidate slice; merge and
+ready-for-review actions remain manual human actions in GitHub.
+
+Turn an explicit local snapshot of open draft PR metadata into a typed manual
+merge-order queue and shared-surface warning packet.
+
+- `plan-pr-merge-order` consumes a local PR snapshot JSON, such as
+  `examples/synthetic/pr-merge-order/open-draft-prs-20260630.json`.
+- It writes `pr_merge_order_readiness_packet.json` and
+  `pr_merge_order_readiness_packet.md`.
+- The packet records observed PR state, draft state, mergeability, status-check
+  conclusion, changed files, addressed depth gaps, recommended sequence role,
+  shared surfaces, required manual actions, validation gates, and red-team notes.
+- The default strategy is `gap_first_then_depth_audit`: merge direct fixture gap
+  closers first, then adjacent role-expansion coverage, then rebase the depth
+  audit so it verifies the expanded holdout set instead of freezing stale gap
+  evidence.
+- Shared governance, roadmap, manifest, schema, CLI, model, and test surfaces
+  become high-risk rebase warnings even when GitHub reports each draft PR as
+  mergeable.
+- Failed PR evidence blocks the packet instead of turning stale or red checks
+  into a merge queue.
+- The report records `ready_for_review_marked=false`, `merge_performed=false`,
+  `github_issue_created=false`, `github_pr_created=false`,
+  `github_write_performed=false`, `sibling_repo_write_performed=false`,
+  `promotion_authorized=false`, `lake_write_performed=false`,
+  `sqlite_write_performed=false`, `external_writes_performed=false`, and
+  `silent_learning_performed=false`.
+
 ## 11N. Synthetic Fixture Expansion Audit
 
 Status: implemented for the current synthetic candidate slice; holdouts are
@@ -681,6 +712,38 @@ writes `synthetic_fixture_depth_audit_report.json` plus
   the depth audit.
 - The report records `calibration_approved=false`,
   `fixture_files_mutated_by_audit=false`, `github_issue_created=false`,
+  `github_pr_created=false`, `github_write_performed=false`,
+  `sibling_repo_write_performed=false`, `promotion_authorized=false`,
+  `lake_write_performed=false`, `sqlite_write_performed=false`,
+  `external_writes_performed=false`, and `silent_learning_performed=false`.
+
+## 11P. Skills Registry Specialist Review
+
+Status: implemented for the current synthetic candidate slice; skill promotion,
+trust records, model-provider enablement, real-data approval, and owner repo
+changes remain Skills Registry work.
+
+Execute the Skills Registry review item from the remaining roadmap by packaging
+the seven predeclared intake specialists as local candidate metadata.
+
+- `build-skills-registry-specialist-review` consumes
+  `skill-agent-manifest.json`, `agents/*.yaml`, declared `harnesses/*.yaml`,
+  `prompts/registry.yaml`, and local schema refs.
+- It writes `skills_registry_specialist_review_report.json`,
+  `skills_registry_specialist_review_report.md`,
+  `skills_registry_specialist_candidates.jsonl`, and per-worker JSON/Markdown
+  packets under `skills_registry_specialist_packets/`.
+- The review checks manifest-to-agent coverage, prompt registry entries,
+  prompt hashes, staged-candidate/no-real-data prompt status, declared harness
+  existence, explicit schema refs, no network/cross-matter/external-tool
+  authority, bounded write scopes, human gates, revocation owner, and
+  frontier-adjudicator deny-by-default posture.
+- Metadata gaps block the report and remain review debt rather than being
+  treated as promoted skill readiness.
+- The report records `skill_promoted=false`,
+  `skill_trust_record_created=false`, `dynamic_agent_created=false`,
+  `model_provider_enabled=false`, `real_data_approved=false`,
+  `external_tools_allowed=false`, `github_issue_created=false`,
   `github_pr_created=false`, `github_write_performed=false`,
   `sibling_repo_write_performed=false`, `promotion_authorized=false`,
   `lake_write_performed=false`, `sqlite_write_performed=false`,
@@ -919,6 +982,11 @@ without letting public records enter the runtime.
   outcome report plus the matching conversion plan, then writes
   `public_synthetic_fixture_pr_package_report.json`, Markdown notes, and package
   item JSONL.
+- `build-public-methodology-owner-handoff` consumes the methodology report,
+  conversion plan, and conversion review packet, then writes
+  `public_methodology_owner_handoff_report.json`, Markdown notes, owner packet
+  JSONL, and per-owner packets for Intake, Legal Knowledge Runtime, Semantic
+  Substrate, Orchestrator, and Exception Lake.
 - It checks that CourtListener/RECAP, FJC IDB, and the Enron email corpus are
   present for Phase 2 structure research, while all sources remain planning-only
   and direct ingestion remains disabled.
@@ -939,6 +1007,9 @@ without letting public records enter the runtime.
   inputs, forbidden inputs, identity replacement rules, field transformation
   rules, required synthetic gold checks, required red-team checks, and manual
   steps for the separate PR author.
+- The owner handoff checks source-to-spec coverage, spec-to-review coverage,
+  lineage IDs/refs, required red-team scopes, no-write/no-adapter flags, and
+  manual owner review gates before any owning repo can consider implementation.
 - Passing means `ready_for_human_public_source_methodology_review`, not
   adapter approval or runtime eligibility.
 - The command records `public_records_ingested=false`,

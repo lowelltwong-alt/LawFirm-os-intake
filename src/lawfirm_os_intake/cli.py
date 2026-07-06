@@ -122,12 +122,14 @@ from .matter_linking_qa_gate import run_matter_linking_qa_gate
 from .matter_linking_review_outcomes import run_matter_linking_review_outcome_record
 from .models import BudgetProposal, HumanConfirmation
 from .orchestrator_owner_review_request import run_orchestrator_owner_review_request
+from .pr_merge_order_readiness import run_pr_merge_order_readiness_packet
 from .pr_readiness_decision import run_pr_readiness_decision_record
 from .pr_review_checklist import run_pr_review_checklist
 from .poc_qa_triage import run_poc_qa_triage_report
 from .public_data_cache import run_public_data_cache_audit
 from .public_derived_synthetic_qa_gate import run_public_derived_synthetic_qa_gate
 from .public_source_methodology import run_public_source_methodology_audit
+from .public_methodology_owner_handoff import run_public_methodology_owner_handoff
 from .public_synthetic_fixture_pr_package import run_public_synthetic_fixture_pr_package
 from .public_synthetic_fixture_conversion import (
     run_public_synthetic_fixture_conversion_plan,
@@ -146,6 +148,7 @@ from .rust_fixture_snapshot_coherence import run_rust_fixture_snapshot_coherence
 from .rust_public_data_cache_custody import run_rust_public_data_cache_custody_check
 from .rust_synthetic_identity_guard import run_rust_synthetic_identity_guard
 from .rust_ui_bundle_source_hash import run_rust_ui_bundle_source_hash_check
+from .skills_registry_specialist_review import run_skills_registry_specialist_review
 from .synthetic_fixture_depth_audit import run_synthetic_fixture_depth_audit
 from .synthetic_fixture_expansion import run_synthetic_fixture_expansion_audit
 from .synthetic_confidence_summary import run_synthetic_confidence_summary
@@ -1486,6 +1489,27 @@ def _parser() -> argparse.ArgumentParser:
     )
     public_synthetic_fixture_pr_package.add_argument("--out-dir", required=True)
 
+    public_methodology_owner_handoff = sub.add_parser(
+        "build-public-methodology-owner-handoff",
+        help="Build local owner-review packets for public methodology governance handoff.",
+    )
+    public_methodology_owner_handoff.add_argument(
+        "--methodology-report",
+        required=True,
+        help="Path to public_source_methodology_report.json.",
+    )
+    public_methodology_owner_handoff.add_argument(
+        "--conversion-plan",
+        required=True,
+        help="Path to public_synthetic_fixture_conversion_plan.json.",
+    )
+    public_methodology_owner_handoff.add_argument(
+        "--conversion-review-packet",
+        required=True,
+        help="Path to public_synthetic_fixture_conversion_review_packet.json.",
+    )
+    public_methodology_owner_handoff.add_argument("--out-dir", required=True)
+
     carrier_rejections = sub.add_parser(
         "capture-carrier-rejections",
         help="Build a synthetic carrier rejection reconciliation and learning packet.",
@@ -1858,6 +1882,16 @@ def _parser() -> argparse.ArgumentParser:
         help="Optional path to pr_readiness_decision_report.json.",
     )
     remaining_roadmap.add_argument("--out-dir", required=True)
+    pr_merge_order = sub.add_parser(
+        "plan-pr-merge-order",
+        help="Build a local manual merge-order packet from observed draft PR metadata.",
+    )
+    pr_merge_order.add_argument(
+        "--pr-snapshot",
+        required=True,
+        help="Path to local PR merge-order snapshot JSON.",
+    )
+    pr_merge_order.add_argument("--out-dir", required=True)
     fixture_expansion = sub.add_parser(
         "audit-synthetic-fixture-expansion",
         help="Audit synthetic holdout fixture expansion against the remaining roadmap.",
@@ -1893,6 +1927,26 @@ def _parser() -> argparse.ArgumentParser:
         help="Repository root for relative fixture refs.",
     )
     fixture_depth.add_argument("--out-dir", required=True)
+    skills_registry_specialist_review = sub.add_parser(
+        "build-skills-registry-specialist-review",
+        help="Build a local candidate review packet for predeclared intake specialists.",
+    )
+    skills_registry_specialist_review.add_argument(
+        "--repo-root",
+        default=".",
+        help="Repository root for relative manifest, agent, prompt, and schema refs.",
+    )
+    skills_registry_specialist_review.add_argument(
+        "--manifest",
+        default="skill-agent-manifest.json",
+        help="Path to skill-agent-manifest.json.",
+    )
+    skills_registry_specialist_review.add_argument(
+        "--prompt-registry",
+        default="prompts/registry.yaml",
+        help="Path to prompts/registry.yaml.",
+    )
+    skills_registry_specialist_review.add_argument("--out-dir", required=True)
     owner_adoption = sub.add_parser(
         "build-cross-repo-owner-adoption",
         help="Build owner-specific adoption packets from the promotion package and PR review evidence.",
@@ -4418,6 +4472,63 @@ def main(argv: list[str] | None = None) -> int:
                 return 2
             return 0
 
+        if args.command == "build-public-methodology-owner-handoff":
+            report, run_dir = run_public_methodology_owner_handoff(
+                methodology_report_path=args.methodology_report,
+                conversion_plan_path=args.conversion_plan,
+                conversion_review_packet_path=args.conversion_review_packet,
+                out_dir=args.out_dir,
+            )
+            blocking_checks = [
+                check.check_id for check in report.checks if check.status != "passed"
+            ]
+            _print(
+                {
+                    "status": report.status,
+                    "owner_handoff_report_id": report.owner_handoff_report_id,
+                    "source_public_methodology_status": (report.source_public_methodology_status),
+                    "source_conversion_plan_status": report.source_conversion_plan_status,
+                    "source_conversion_review_packet_status": (
+                        report.source_conversion_review_packet_status
+                    ),
+                    "target_repo_count": report.target_repo_count,
+                    "target_repos": report.target_repos,
+                    "packet_count": report.packet_count,
+                    "ready_packet_count": report.ready_packet_count,
+                    "blocked_packet_count": report.blocked_packet_count,
+                    "blocking_checks": blocking_checks,
+                    "human_review_required": report.human_review_required,
+                    "owning_repo_review_required": report.owning_repo_review_required,
+                    "direct_runtime_ingestion_allowed": (report.direct_runtime_ingestion_allowed),
+                    "direct_promotion_performed": report.direct_promotion_performed,
+                    "promotion_authorized": report.promotion_authorized,
+                    "sibling_repo_write_performed": report.sibling_repo_write_performed,
+                    "github_issue_created": report.github_issue_created,
+                    "github_pr_created": report.github_pr_created,
+                    "github_write_performed": report.github_write_performed,
+                    "public_records_ingested": report.public_records_ingested,
+                    "raw_public_payload_committed": report.raw_public_payload_committed,
+                    "real_party_records_committed": report.real_party_records_committed,
+                    "real_matter_records_committed": report.real_matter_records_committed,
+                    "synthetic_fixtures_created": report.synthetic_fixtures_created,
+                    "fixture_files_mutated": report.fixture_files_mutated,
+                    "fixture_generation_authorized": report.fixture_generation_authorized,
+                    "fixture_pr_created": report.fixture_pr_created,
+                    "connector_implemented": report.connector_implemented,
+                    "legal_knowledge_adapter_authorized": (
+                        report.legal_knowledge_adapter_authorized
+                    ),
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            if report.status == "blocked_by_public_methodology_chain":
+                return 2
+            return 0
+
         if args.command == "capture-carrier-rejections":
             report, run_dir = run_carrier_rejection_capture(
                 args.budget,
@@ -5272,6 +5383,46 @@ def main(argv: list[str] | None = None) -> int:
             )
             return 0 if report.status == "remaining_roadmap_ready_manual_execution_required" else 2
 
+        if args.command == "plan-pr-merge-order":
+            report, run_dir = run_pr_merge_order_readiness_packet(
+                pr_snapshot_path=args.pr_snapshot,
+                out_dir=args.out_dir,
+            )
+            failed_checks = [check.check_id for check in report.checks if check.status == "failed"]
+            _print(
+                {
+                    "status": report.status,
+                    "packet_id": report.packet_id,
+                    "source_snapshot_id": report.source_snapshot_id,
+                    "repository_full_name": report.repository_full_name,
+                    "base_ref_name": report.base_ref_name,
+                    "strategy": report.strategy,
+                    "pr_count": report.pr_count,
+                    "ready_queue_count": report.ready_queue_count,
+                    "blocked_pr_count": report.blocked_pr_count,
+                    "recommended_merge_order_pr_numbers": (
+                        report.recommended_merge_order_pr_numbers
+                    ),
+                    "blocked_pr_numbers": report.blocked_pr_numbers,
+                    "shared_surface_count": report.shared_surface_count,
+                    "high_risk_shared_surface_count": (report.high_risk_shared_surface_count),
+                    "failed_checks": failed_checks,
+                    "ready_for_review_marked": report.ready_for_review_marked,
+                    "merge_performed": report.merge_performed,
+                    "github_issue_created": report.github_issue_created,
+                    "github_pr_created": report.github_pr_created,
+                    "github_write_performed": report.github_write_performed,
+                    "sibling_repo_write_performed": report.sibling_repo_write_performed,
+                    "promotion_authorized": report.promotion_authorized,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0 if report.status == "pr_merge_order_ready_manual_queue_required" else 2
+
         if args.command == "audit-synthetic-fixture-expansion":
             report, run_dir = run_synthetic_fixture_expansion_audit(
                 remaining_roadmap_report_path=args.remaining_roadmap_report,
@@ -5342,6 +5493,52 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 2 if report.status == "blocked_by_depth_audit_boundary_violation" else 0
+
+        if args.command == "build-skills-registry-specialist-review":
+            report, run_dir = run_skills_registry_specialist_review(
+                repo_root=args.repo_root,
+                manifest_path=args.manifest,
+                prompt_registry_path=args.prompt_registry,
+                out_dir=args.out_dir,
+            )
+            failed_checks = [check.check_id for check in report.checks if check.status == "failed"]
+            _print(
+                {
+                    "status": report.status,
+                    "specialist_review_report_id": report.specialist_review_report_id,
+                    "target_repo": report.target_repo,
+                    "manifest_ref": report.manifest_ref,
+                    "prompt_registry_ref": report.prompt_registry_ref,
+                    "expected_harness_count": report.expected_harness_count,
+                    "missing_harness_refs": report.missing_harness_refs,
+                    "expected_worker_count": report.expected_worker_count,
+                    "candidate_count": report.candidate_count,
+                    "ready_candidate_count": report.ready_candidate_count,
+                    "blocked_candidate_count": report.blocked_candidate_count,
+                    "missing_worker_ids": report.missing_worker_ids,
+                    "unexpected_worker_ids": report.unexpected_worker_ids,
+                    "prompt_hash_count": report.prompt_hash_count,
+                    "candidate_packet_count": len(report.candidate_packet_refs),
+                    "failed_checks": failed_checks,
+                    "skill_promoted": report.skill_promoted,
+                    "skill_trust_record_created": report.skill_trust_record_created,
+                    "dynamic_agent_created": report.dynamic_agent_created,
+                    "model_provider_enabled": report.model_provider_enabled,
+                    "real_data_approved": report.real_data_approved,
+                    "external_tools_allowed": report.external_tools_allowed,
+                    "github_issue_created": report.github_issue_created,
+                    "github_pr_created": report.github_pr_created,
+                    "github_write_performed": report.github_write_performed,
+                    "sibling_repo_write_performed": report.sibling_repo_write_performed,
+                    "promotion_authorized": report.promotion_authorized,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0 if report.status == "skills_registry_specialist_review_ready" else 2
 
         if args.command == "build-cross-repo-owner-adoption":
             report, run_dir = run_cross_repo_owner_adoption(

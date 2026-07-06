@@ -6533,6 +6533,237 @@ class PublicSyntheticFixturePRPackageReport(StrictModel):
         return self
 
 
+PublicMethodologyOwnerTargetRepo = Literal[
+    "LawFirm-os-intake",
+    "LawFirm-os-legal-knowledge-runtime",
+    "LawFirm-os-semantic-substrate",
+    "LawFirm-os-orchestrator",
+    "LawFirm-os-exceptions-lake-runtime",
+]
+
+PublicMethodologyOwnerHandoffFocus = Literal[
+    "local_intake_candidate_stewardship",
+    "legal_knowledge_public_adapter_boundary",
+    "public_data_governance_policy",
+    "runtime_public_source_gate",
+    "append_only_public_methodology_audit",
+]
+
+
+class PublicMethodologyOwnerHandoffCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "blocked", "failed"]
+    message: str
+    artifact_refs: list[str] = Field(default_factory=list)
+    blocking_refs: list[str] = Field(default_factory=list)
+
+
+class PublicMethodologyOwnerHandoffPacket(StrictModel):
+    schema_version: str = "0.1"
+    handoff_packet_id: str
+    target_repo: PublicMethodologyOwnerTargetRepo
+    handoff_focus: PublicMethodologyOwnerHandoffFocus
+    status: Literal["ready_for_owner_review", "blocked_by_public_methodology_chain"]
+    source_public_methodology_report_id: str
+    source_public_methodology_report_ref: str
+    source_public_methodology_status: Literal[
+        "ready_for_human_public_source_methodology_review",
+        "blocked_public_source_methodology",
+    ]
+    source_conversion_plan_id: str
+    source_conversion_plan_ref: str
+    source_conversion_plan_status: Literal[
+        "ready_for_human_conversion_review",
+        "blocked_public_methodology_not_ready",
+    ]
+    source_conversion_review_packet_id: str
+    source_conversion_review_packet_ref: str
+    source_conversion_review_packet_status: Literal[
+        "ready_for_human_conversion_review",
+        "blocked_by_conversion_plan",
+        "no_specs_to_review",
+    ]
+    source_count: int = Field(ge=0)
+    spec_count: int = Field(ge=0)
+    recommendation_count: int = Field(ge=0)
+    red_team_note_count: int = Field(ge=0)
+    source_ids: list[str]
+    source_artifact_refs: list[str] = Field(default_factory=list)
+    candidate_contract_refs: list[str] = Field(default_factory=list)
+    required_owner_actions: list[str]
+    acceptance_checks: list[str]
+    red_team_notes: list[str]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    planning_only: Literal[True] = True
+    metadata_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    owning_repo_review_required: Literal[True] = True
+    blocked_until_owner_review: Literal[True] = True
+    direct_runtime_ingestion_allowed: Literal[False] = False
+    direct_promotion_performed: Literal[False] = False
+    promotion_authorized: Literal[False] = False
+    sibling_repo_write_performed: Literal[False] = False
+    github_issue_created: Literal[False] = False
+    github_pr_created: Literal[False] = False
+    github_write_performed: Literal[False] = False
+    public_records_ingested: Literal[False] = False
+    raw_public_payload_committed: Literal[False] = False
+    real_party_records_committed: Literal[False] = False
+    real_matter_records_committed: Literal[False] = False
+    synthetic_fixtures_created: Literal[False] = False
+    fixture_files_mutated: Literal[False] = False
+    fixture_generation_authorized: Literal[False] = False
+    fixture_pr_created: Literal[False] = False
+    connector_implemented: Literal[False] = False
+    legal_knowledge_adapter_authorized: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def public_methodology_owner_packet_is_reviewable(
+        self,
+    ) -> "PublicMethodologyOwnerHandoffPacket":
+        if self.status == "ready_for_owner_review" and not self.source_ids:
+            raise ValueError("public methodology owner packet requires source ids")
+        if not self.source_artifact_refs:
+            raise ValueError("public methodology owner packet requires source artifact refs")
+        if not self.candidate_contract_refs:
+            raise ValueError("public methodology owner packet requires candidate contract refs")
+        if not self.required_owner_actions:
+            raise ValueError("public methodology owner packet requires owner actions")
+        if not self.acceptance_checks:
+            raise ValueError("public methodology owner packet requires acceptance checks")
+        if not self.red_team_notes:
+            raise ValueError("public methodology owner packet requires red-team notes")
+        required = {
+            "human_public_methodology_owner_review",
+            "manual_owner_issue_creation_if_desired",
+            "owning_repo_triage",
+            "owner_repo_implementation_pr_if_accepted",
+            "source_license_privacy_retention_review",
+            "legal_knowledge_runtime_owner_review_before_adapter",
+            "no_intake_public_ingestion_or_adapter_authorization",
+        }
+        if not required.issubset(set(self.required_next_gates)):
+            raise ValueError("public methodology owner packet is missing required gates")
+        return self
+
+
+class PublicMethodologyOwnerHandoffReport(StrictModel):
+    schema_version: str = "0.1"
+    owner_handoff_report_id: str
+    status: Literal[
+        "public_methodology_owner_handoff_packets_ready",
+        "blocked_by_public_methodology_chain",
+    ]
+    source_public_methodology_report_id: str
+    source_public_methodology_report_ref: str
+    source_public_methodology_status: Literal[
+        "ready_for_human_public_source_methodology_review",
+        "blocked_public_source_methodology",
+    ]
+    source_conversion_plan_id: str
+    source_conversion_plan_ref: str
+    source_conversion_plan_status: Literal[
+        "ready_for_human_conversion_review",
+        "blocked_public_methodology_not_ready",
+    ]
+    source_conversion_review_packet_id: str
+    source_conversion_review_packet_ref: str
+    source_conversion_review_packet_status: Literal[
+        "ready_for_human_conversion_review",
+        "blocked_by_conversion_plan",
+        "no_specs_to_review",
+    ]
+    target_repo_count: int = Field(ge=0)
+    packet_count: int = Field(ge=0)
+    ready_packet_count: int = Field(ge=0)
+    blocked_packet_count: int = Field(ge=0)
+    target_repos: list[PublicMethodologyOwnerTargetRepo]
+    packets: list[PublicMethodologyOwnerHandoffPacket]
+    packet_output_refs: list[str] = Field(default_factory=list)
+    checks: list[PublicMethodologyOwnerHandoffCheck]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    planning_only: Literal[True] = True
+    metadata_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    owning_repo_review_required: Literal[True] = True
+    blocked_until_owner_review: Literal[True] = True
+    direct_runtime_ingestion_allowed: Literal[False] = False
+    direct_promotion_performed: Literal[False] = False
+    promotion_authorized: Literal[False] = False
+    sibling_repo_write_performed: Literal[False] = False
+    github_issue_created: Literal[False] = False
+    github_pr_created: Literal[False] = False
+    github_write_performed: Literal[False] = False
+    public_records_ingested: Literal[False] = False
+    raw_public_payload_committed: Literal[False] = False
+    real_party_records_committed: Literal[False] = False
+    real_matter_records_committed: Literal[False] = False
+    synthetic_fixtures_created: Literal[False] = False
+    fixture_files_mutated: Literal[False] = False
+    fixture_generation_authorized: Literal[False] = False
+    fixture_pr_created: Literal[False] = False
+    connector_implemented: Literal[False] = False
+    legal_knowledge_adapter_authorized: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def public_methodology_owner_report_counts_match(
+        self,
+    ) -> "PublicMethodologyOwnerHandoffReport":
+        blocked_checks = [check for check in self.checks if check.status != "passed"]
+        if self.packet_count != len(self.packets):
+            raise ValueError("public methodology owner packet count does not match")
+        if self.packet_count != len(self.packet_output_refs):
+            raise ValueError("public methodology owner packet output ref count does not match")
+        if self.target_repo_count != len(self.target_repos):
+            raise ValueError("public methodology owner target repo count does not match")
+        packet_targets = [packet.target_repo for packet in self.packets]
+        if set(packet_targets) != set(self.target_repos) or len(packet_targets) != len(
+            self.target_repos
+        ):
+            raise ValueError("public methodology owner target repos do not match packets")
+        ready_count = sum(1 for packet in self.packets if packet.status == "ready_for_owner_review")
+        blocked_count = sum(
+            1 for packet in self.packets if packet.status == "blocked_by_public_methodology_chain"
+        )
+        if self.ready_packet_count != ready_count:
+            raise ValueError("public methodology owner ready count does not match")
+        if self.blocked_packet_count != blocked_count:
+            raise ValueError("public methodology owner blocked count does not match")
+        if self.status == "public_methodology_owner_handoff_packets_ready" and (
+            blocked_checks or blocked_count
+        ):
+            raise ValueError("ready public methodology owner handoff cannot include blockers")
+        if self.status == "blocked_by_public_methodology_chain" and not (
+            blocked_checks or blocked_count
+        ):
+            raise ValueError("blocked public methodology owner handoff requires blockers")
+        required = {
+            "human_public_methodology_owner_review",
+            "manual_owner_issue_creation_if_desired",
+            "owning_repo_triage",
+            "owner_repo_implementation_pr_if_accepted",
+            "source_license_privacy_retention_review",
+            "legal_knowledge_runtime_owner_review_before_adapter",
+            "no_intake_public_ingestion_or_adapter_authorization",
+        }
+        if not required.issubset(set(self.required_next_gates)):
+            raise ValueError("public methodology owner report is missing required gates")
+        return self
+
+
 class ContractStateDependency(StrictModel):
     repo: str
     remote: str | None = None
@@ -12464,6 +12695,288 @@ class RemainingRoadmapReport(StrictModel):
         return self
 
 
+PRMergeOrderObservedState = Literal["open", "closed", "merged", "not_supplied"]
+PRMergeOrderMergeableState = Literal[
+    "MERGEABLE",
+    "CONFLICTING",
+    "UNKNOWN",
+    "CLEAN",
+    "DIRTY",
+    "UNSTABLE",
+    "BLOCKED",
+    "BEHIND",
+    "DRAFT",
+    "HAS_HOOKS",
+    "not_supplied",
+]
+PRMergeOrderChecksConclusion = Literal[
+    "success",
+    "failure",
+    "pending",
+    "cancelled",
+    "skipped",
+    "neutral",
+    "timed_out",
+    "action_required",
+    "startup_failure",
+    "stale",
+    "not_supplied",
+]
+PRMergeOrderRole = Literal[
+    "fixture_gap_closer",
+    "fixture_role_expander",
+    "audit_verifier",
+    "unknown",
+]
+
+
+class PRMergeOrderCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed", "warning"]
+    message: str
+    artifact_refs: list[str] = Field(default_factory=list)
+    blocking_refs: list[str] = Field(default_factory=list)
+
+
+class PRMergeOrderSnapshotItem(StrictModel):
+    pr_number: int = Field(gt=0)
+    title: str
+    pr_url: str | None = None
+    head_ref_name: str
+    base_ref_name: str
+    observed_state: PRMergeOrderObservedState = "open"
+    is_draft: bool = True
+    mergeable_state: PRMergeOrderMergeableState = "not_supplied"
+    checks_conclusion: PRMergeOrderChecksConclusion = "not_supplied"
+    status_check_count: int = Field(ge=0)
+    successful_status_check_count: int = Field(ge=0)
+    changed_files: list[str]
+    depth_gap_ids_addressed: list[str] = Field(default_factory=list)
+    validation_evidence_refs: list[str] = Field(default_factory=list)
+    recommended_sequence_role: PRMergeOrderRole = "unknown"
+    notes: list[str] = Field(default_factory=list)
+    ready_for_review_marked: Literal[False] = False
+    merge_performed: Literal[False] = False
+    github_write_performed: Literal[False] = False
+    sibling_repo_write_performed: Literal[False] = False
+    promotion_authorized: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def pr_merge_order_snapshot_item_has_evidence(
+        self,
+    ) -> "PRMergeOrderSnapshotItem":
+        if not self.title.strip():
+            raise ValueError("PR merge-order snapshot item requires title")
+        if not self.head_ref_name.strip():
+            raise ValueError("PR merge-order snapshot item requires head_ref_name")
+        if not self.base_ref_name.strip():
+            raise ValueError("PR merge-order snapshot item requires base_ref_name")
+        if not self.changed_files:
+            raise ValueError("PR merge-order snapshot item requires changed files")
+        if any(not path.strip() for path in self.changed_files):
+            raise ValueError("PR merge-order changed files must be non-empty strings")
+        if self.successful_status_check_count > self.status_check_count:
+            raise ValueError("successful status check count cannot exceed status check count")
+        return self
+
+
+class PRMergeOrderSnapshot(StrictModel):
+    schema_version: str = "0.1"
+    snapshot_id: str
+    repository_full_name: str
+    base_ref_name: str
+    observed_at: str
+    source_kind: Literal["manual_github_snapshot", "synthetic_fixture"]
+    source_refs: list[str]
+    prs: list[PRMergeOrderSnapshotItem]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    human_review_required: Literal[True] = True
+    manual_github_action_required: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    ready_for_review_marked: Literal[False] = False
+    merge_performed: Literal[False] = False
+    github_issue_created: Literal[False] = False
+    github_pr_created: Literal[False] = False
+    github_write_performed: Literal[False] = False
+    sibling_repo_write_performed: Literal[False] = False
+    promotion_authorized: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def pr_merge_order_snapshot_is_complete(self) -> "PRMergeOrderSnapshot":
+        if not self.snapshot_id.strip():
+            raise ValueError("PR merge-order snapshot requires snapshot_id")
+        if not self.repository_full_name.strip():
+            raise ValueError("PR merge-order snapshot requires repository_full_name")
+        if not self.base_ref_name.strip():
+            raise ValueError("PR merge-order snapshot requires base_ref_name")
+        if not self.observed_at.strip():
+            raise ValueError("PR merge-order snapshot requires observed_at")
+        if not self.source_refs:
+            raise ValueError("PR merge-order snapshot requires source refs")
+        if not self.prs:
+            raise ValueError("PR merge-order snapshot requires PR items")
+        numbers = [pr.pr_number for pr in self.prs]
+        if len(numbers) != len(set(numbers)):
+            raise ValueError("PR merge-order snapshot contains duplicate PR numbers")
+        return self
+
+
+class PRMergeOrderSharedSurface(StrictModel):
+    surface_ref: str
+    pr_numbers: list[int]
+    risk: Literal["medium", "high"]
+    reason: str
+
+    @model_validator(mode="after")
+    def pr_merge_order_shared_surface_is_shared(self) -> "PRMergeOrderSharedSurface":
+        if not self.surface_ref.strip():
+            raise ValueError("PR merge-order shared surface requires surface_ref")
+        if len(set(self.pr_numbers)) < 2:
+            raise ValueError("PR merge-order shared surface requires at least two PRs")
+        if not self.reason.strip():
+            raise ValueError("PR merge-order shared surface requires reason")
+        return self
+
+
+class PRMergeOrderRecommendation(StrictModel):
+    order_index: int = Field(gt=0)
+    pr_number: int = Field(gt=0)
+    title: str
+    head_ref_name: str
+    recommended_sequence_role: PRMergeOrderRole
+    recommended_after_pr_numbers: list[int] = Field(default_factory=list)
+    shared_surface_refs: list[str] = Field(default_factory=list)
+    reason: str
+    required_manual_actions: list[str]
+    validation_required: list[str]
+    red_team_notes: list[str]
+    merge_gate: Literal["manual_human_review_required"] = "manual_human_review_required"
+    ready_state_gate: Literal["manual_human_review_required"] = "manual_human_review_required"
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    ready_for_review_marked: Literal[False] = False
+    merge_performed: Literal[False] = False
+    github_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def pr_merge_order_recommendation_is_actionable(
+        self,
+    ) -> "PRMergeOrderRecommendation":
+        if not self.title.strip():
+            raise ValueError("PR merge-order recommendation requires title")
+        if not self.head_ref_name.strip():
+            raise ValueError("PR merge-order recommendation requires head_ref_name")
+        if not self.reason.strip():
+            raise ValueError("PR merge-order recommendation requires reason")
+        if not self.required_manual_actions:
+            raise ValueError("PR merge-order recommendation requires manual actions")
+        if not self.validation_required:
+            raise ValueError("PR merge-order recommendation requires validation gates")
+        if not self.red_team_notes:
+            raise ValueError("PR merge-order recommendation requires red-team notes")
+        return self
+
+
+class PRMergeOrderReadinessPacket(StrictModel):
+    schema_version: str = "0.1"
+    packet_id: str
+    status: Literal[
+        "pr_merge_order_ready_manual_queue_required",
+        "blocked_by_pr_merge_order_evidence",
+    ]
+    source_snapshot_id: str
+    source_snapshot_ref: str
+    repository_full_name: str
+    base_ref_name: str
+    strategy: Literal["gap_first_then_depth_audit"]
+    pr_count: int = Field(ge=0)
+    ready_queue_count: int = Field(ge=0)
+    blocked_pr_count: int = Field(ge=0)
+    recommended_merge_order_pr_numbers: list[int]
+    blocked_pr_numbers: list[int]
+    shared_surface_count: int = Field(ge=0)
+    high_risk_shared_surface_count: int = Field(ge=0)
+    recommendations: list[PRMergeOrderRecommendation]
+    shared_surfaces: list[PRMergeOrderSharedSurface]
+    checks: list[PRMergeOrderCheck]
+    required_next_gates: list[str]
+    observed_at: str
+    generated_at: str
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    human_review_required: Literal[True] = True
+    manual_github_action_required: Literal[True] = True
+    not_authorized_for_pr_merge: Literal[True] = True
+    not_authorized_for_ready_state_change: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    ready_for_review_marked: Literal[False] = False
+    merge_performed: Literal[False] = False
+    github_issue_created: Literal[False] = False
+    github_pr_created: Literal[False] = False
+    github_write_performed: Literal[False] = False
+    sibling_repo_write_performed: Literal[False] = False
+    promotion_authorized: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def pr_merge_order_packet_counts_and_gates_match(
+        self,
+    ) -> "PRMergeOrderReadinessPacket":
+        if self.pr_count != self.ready_queue_count + self.blocked_pr_count:
+            raise ValueError("PR merge-order ready and blocked counts do not sum to PR count")
+        if self.ready_queue_count != len(self.recommendations):
+            raise ValueError("PR merge-order ready queue count does not match recommendations")
+        if self.blocked_pr_count != len(set(self.blocked_pr_numbers)):
+            raise ValueError("PR merge-order blocked count does not match blocked PRs")
+        if self.shared_surface_count != len(self.shared_surfaces):
+            raise ValueError("PR merge-order shared surface count does not match")
+        if self.high_risk_shared_surface_count != sum(
+            1 for surface in self.shared_surfaces if surface.risk == "high"
+        ):
+            raise ValueError("PR merge-order high-risk shared surface count does not match")
+        ordered = [
+            item.pr_number
+            for item in sorted(
+                self.recommendations, key=lambda recommendation: recommendation.order_index
+            )
+        ]
+        if self.recommended_merge_order_pr_numbers != ordered:
+            raise ValueError("PR merge-order recommendation numbers do not match order")
+        failed = [check for check in self.checks if check.status == "failed"]
+        if self.status == "pr_merge_order_ready_manual_queue_required" and failed:
+            raise ValueError("ready PR merge-order packet cannot have failed checks")
+        if self.status == "blocked_by_pr_merge_order_evidence" and not failed:
+            raise ValueError("blocked PR merge-order packet requires failed checks")
+        required = {
+            "manual_pr_review_before_any_merge",
+            "manual_github_merge_or_ready_state_change_if_accepted",
+            "rebase_and_rerun_ci_after_each_shared_surface_merge",
+            "run_full_long_ceiling_validation_after_each_merge",
+            "no_automated_github_write",
+        }
+        if not required.issubset(set(self.required_next_gates)):
+            raise ValueError("PR merge-order packet is missing required gates")
+        return self
+
+
 SyntheticFixtureExpansionFamily = Literal[
     "ambiguous_roles",
     "missing_actuals",
@@ -16257,6 +16770,195 @@ class CrossRepoPromotionPackage(StrictModel):
     no_sibling_repo_writes: Literal[True] = True
     no_external_writes_performed: Literal[True] = True
     non_authoritative: Literal[True] = True
+
+
+SkillsRegistrySpecialistStatus = Literal[
+    "ready_for_skills_registry_review",
+    "blocked_by_specialist_metadata_gap",
+]
+
+
+class SkillsRegistrySpecialistCandidate(StrictModel):
+    schema_version: str = "0.1"
+    specialist_candidate_id: str
+    worker_id: str
+    version: str
+    agent_ref: str
+    prompt_ref: str
+    prompt_file_ref: str
+    prompt_hash: str
+    prompt_hash_verified: bool
+    prompt_lifecycle: str
+    approved_for_real_data: Literal[False] = False
+    purpose: str
+    model_class: str
+    raw_source_access: str
+    cross_matter_access: Literal[False] = False
+    network_access: Literal[False] = False
+    write_scope: str
+    allowed_tool_refs: list[str] = Field(default_factory=list)
+    tool_denylist: list[str]
+    input_schema_ref: str
+    output_schema_ref: str
+    input_schema_exists: bool
+    output_schema_exists: bool
+    requirements: list[str]
+    prohibited_actions: list[str]
+    accepted_context_classes: list[str]
+    forbidden_context_classes: list[str]
+    evidence_requirements: list[str]
+    human_gate_required: Literal[True] = True
+    revocation_owner: Literal["LawFirm-os-skills-registry"] = "LawFirm-os-skills-registry"
+    status: SkillsRegistrySpecialistStatus
+    missing_metadata_fields: list[str] = Field(default_factory=list)
+    required_owner_actions: list[str]
+    acceptance_checks: list[str]
+    red_team_notes: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    metadata_only: Literal[True] = True
+    blocked_until_owner_review: Literal[True] = True
+    skill_promoted: Literal[False] = False
+    skill_trust_record_created: Literal[False] = False
+    dynamic_agent_created: Literal[False] = False
+    model_provider_enabled: Literal[False] = False
+    real_data_approved: Literal[False] = False
+    external_tools_allowed: Literal[False] = False
+    github_issue_created: Literal[False] = False
+    github_pr_created: Literal[False] = False
+    github_write_performed: Literal[False] = False
+    sibling_repo_write_performed: Literal[False] = False
+    promotion_authorized: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def skills_candidate_is_reviewable(self) -> "SkillsRegistrySpecialistCandidate":
+        if not self.prompt_hash.startswith("sha256:"):
+            raise ValueError("skills specialist prompt hash must be sha256")
+        if self.status == "ready_for_skills_registry_review":
+            if self.missing_metadata_fields:
+                raise ValueError("ready skills specialist cannot have metadata gaps")
+            if not self.prompt_hash_verified:
+                raise ValueError("ready skills specialist requires verified prompt hash")
+            if not self.input_schema_exists or not self.output_schema_exists:
+                raise ValueError("ready skills specialist requires existing schema refs")
+        if self.status == "blocked_by_specialist_metadata_gap" and not (
+            self.missing_metadata_fields
+        ):
+            raise ValueError("blocked skills specialist requires metadata gaps")
+        if not self.tool_denylist:
+            raise ValueError("skills specialist requires a tool denylist")
+        if not self.required_owner_actions:
+            raise ValueError("skills specialist requires owner actions")
+        if not self.acceptance_checks:
+            raise ValueError("skills specialist requires acceptance checks")
+        if not self.red_team_notes:
+            raise ValueError("skills specialist requires red-team notes")
+        return self
+
+
+class SkillsRegistrySpecialistReviewCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    artifact_refs: list[str] = Field(default_factory=list)
+    worker_ids: list[str] = Field(default_factory=list)
+    blocking_refs: list[str] = Field(default_factory=list)
+
+
+class SkillsRegistrySpecialistReviewReport(StrictModel):
+    schema_version: str = "0.1"
+    specialist_review_report_id: str
+    status: Literal[
+        "skills_registry_specialist_review_ready",
+        "blocked_by_specialist_metadata_gaps",
+    ]
+    target_repo: Literal["LawFirm-os-skills-registry"] = "LawFirm-os-skills-registry"
+    manifest_ref: str
+    prompt_registry_ref: str
+    expected_harness_count: int = Field(ge=0)
+    missing_harness_refs: list[str] = Field(default_factory=list)
+    expected_worker_count: int = Field(ge=0)
+    candidate_count: int = Field(ge=0)
+    ready_candidate_count: int = Field(ge=0)
+    blocked_candidate_count: int = Field(ge=0)
+    missing_worker_ids: list[str] = Field(default_factory=list)
+    unexpected_worker_ids: list[str] = Field(default_factory=list)
+    prompt_hash_count: int = Field(ge=0)
+    candidates: list[SkillsRegistrySpecialistCandidate]
+    candidate_packet_refs: list[str] = Field(default_factory=list)
+    checks: list[SkillsRegistrySpecialistReviewCheck]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    metadata_only: Literal[True] = True
+    blocked_until_owner_review: Literal[True] = True
+    skill_promoted: Literal[False] = False
+    skill_trust_record_created: Literal[False] = False
+    dynamic_agent_created: Literal[False] = False
+    model_provider_enabled: Literal[False] = False
+    real_data_approved: Literal[False] = False
+    external_tools_allowed: Literal[False] = False
+    github_issue_created: Literal[False] = False
+    github_pr_created: Literal[False] = False
+    github_write_performed: Literal[False] = False
+    sibling_repo_write_performed: Literal[False] = False
+    promotion_authorized: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def skills_report_counts_match(self) -> "SkillsRegistrySpecialistReviewReport":
+        failed = [check for check in self.checks if check.status == "failed"]
+        if self.candidate_count != len(self.candidates):
+            raise ValueError("skills specialist candidate count does not match")
+        ready_count = sum(
+            1
+            for candidate in self.candidates
+            if candidate.status == "ready_for_skills_registry_review"
+        )
+        blocked_count = self.candidate_count - ready_count
+        if self.ready_candidate_count != ready_count:
+            raise ValueError("skills specialist ready count does not match")
+        if self.blocked_candidate_count != blocked_count:
+            raise ValueError("skills specialist blocked count does not match")
+        if self.status == "skills_registry_specialist_review_ready" and (
+            failed
+            or blocked_count
+            or self.missing_worker_ids
+            or self.unexpected_worker_ids
+            or self.missing_harness_refs
+        ):
+            raise ValueError("ready skills specialist report cannot include blockers")
+        if self.status == "blocked_by_specialist_metadata_gaps" and not (
+            failed
+            or blocked_count
+            or self.missing_worker_ids
+            or self.unexpected_worker_ids
+            or self.missing_harness_refs
+        ):
+            raise ValueError("blocked skills specialist report requires blockers")
+        if len(self.candidate_packet_refs) != self.candidate_count * 2:
+            raise ValueError(
+                "skills specialist packet refs must include JSON and Markdown per candidate"
+            )
+        required = {
+            "skills_registry_owner_review",
+            "prompt_hash_review",
+            "tool_authority_review",
+            "eval_suite_review_before_promotion",
+            "revocation_path_review",
+            "no_skill_promotion_from_intake",
+        }
+        if not required.issubset(set(self.required_next_gates)):
+            raise ValueError("skills specialist report is missing required gates")
+        return self
 
 
 CrossRepoAdoptionTargetRepo = Literal[

@@ -1,0 +1,15 @@
+version: 0.1.0
+hub_path: C:\Users\lowel\OneDrive\Desktop\Git Projects\04_Digital_Assett_Directory
+lessons_required: true
+handoff_required: true
+enforcement: pre_push
+source_repo_authority_preserved: true
+load_bearing_decision_review:
+  enabled: true
+  high_risk_requires_human_gate: true
+  fresh_eyes_review_template: templates/load-bearing-decision-review.template.md
+mail:
+  enabled: true
+  mailbox_path: .digital-asset/mail
+  digest_stale_after_hours: 24
+  candidate_only: true

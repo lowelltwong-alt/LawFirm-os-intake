@@ -2,10 +2,16 @@ worker_id: evidence-critic
 version: "0.1"
 purpose: Detect contradictions, unsupported fields, weak evidence, incomplete coverage, and unsafe next steps.
 model_class: independent_small_critic
+prompt_ref: evidence-critic
 raw_source_access: false
 cross_matter_access: false
 network_access: false
 write_scope: none
+allowed_tools: []
+input_schema_ref: schemas/intake-preflight-packet.schema.json
+output_schema_ref: schemas/evidence-completeness-report.schema.json
+human_gate_required: true
+revocation_owner: LawFirm-os-skills-registry
 requirements:
   - review structured worker outputs independently
   - identify disagreement and missing evidence

@@ -544,6 +544,25 @@ replacement rules, synthetic gold checks, red-team checks, and manual steps. It
 does not edit fixtures, create a GitHub PR, ingest public records, authorize
 adapters, write Lake/SQLite records, or apply learning.
 
+### Build public methodology owner handoff
+
+```bash
+python -m lawfirm_os_intake build-public-methodology-owner-handoff \
+  --methodology-report .lawfirm-os-intake/public-source-methodology/public_source_methodology_report.json \
+  --conversion-plan .lawfirm-os-intake/public-synthetic-fixture-conversion/public_synthetic_fixture_conversion_plan.json \
+  --conversion-review-packet .lawfirm-os-intake/public-synthetic-fixture-conversion-review/public_synthetic_fixture_conversion_review_packet.json \
+  --out-dir .lawfirm-os-intake/public-methodology-owner-handoff
+```
+
+This writes `public_methodology_owner_handoff_report.json`,
+`public_methodology_owner_handoff_report.md`,
+`public_methodology_owner_handoff_packets.jsonl`, and one JSON/Markdown packet
+per owner under `public_methodology_owner_packets/`. It routes the
+public-methodology chain to Intake, Legal Knowledge Runtime, Semantic Substrate,
+Orchestrator, and Exception Lake for manual review. It does not create issues,
+open PRs, write sibling repos, promote canon, create fixtures, ingest public
+records, authorize adapters, write Lake/SQLite records, or apply learning.
+
 ### Build learning owner handoffs
 
 ```bash
@@ -845,6 +864,25 @@ work. It does not mark a PR ready, create issues, open PRs, write sibling repos,
 promote canon, admit Lake records, write SQLite, apply learning, or authorize
 production use.
 
+### Plan PR merge order
+
+```bash
+python -m lawfirm_os_intake plan-pr-merge-order \
+  --pr-snapshot examples/synthetic/pr-merge-order/open-draft-prs-20260630.json \
+  --out-dir .lawfirm-os-intake/pr-merge-order-readiness
+```
+
+This writes `pr_merge_order_readiness_packet.json` and
+`pr_merge_order_readiness_packet.md`. The packet consumes an explicit local PR
+snapshot as observed evidence, recommends a manual draft-PR merge queue, and
+identifies shared changed-file surfaces that need rebase attention after each
+accepted merge. The default strategy is `gap_first_then_depth_audit`: land
+direct fixture gap closers first, then adjacent role-expansion coverage, then
+the depth audit after it is rebased onto the expanded holdout set. It does not
+mark a PR ready, merge a PR, call GitHub write APIs, create issues, open PRs,
+write sibling repos, promote canon, admit Lake records, write SQLite, apply
+learning, or authorize production use.
+
 ### Audit synthetic fixture expansion
 
 ```bash
@@ -864,6 +902,28 @@ holdouts candidate-only and not calibration-approved. It does not mutate
 fixtures during audit, create issues, open PRs, write sibling repos, promote
 canon, admit Lake records, write SQLite, apply learning, or authorize production
 use.
+
+### Build Skills Registry specialist review
+
+```bash
+python -m lawfirm_os_intake build-skills-registry-specialist-review \
+  --repo-root . \
+  --manifest skill-agent-manifest.json \
+  --prompt-registry prompts/registry.yaml \
+  --out-dir .lawfirm-os-intake/skills-registry-specialist-review
+```
+
+This writes `skills_registry_specialist_review_report.json`,
+`skills_registry_specialist_review_report.md`,
+`skills_registry_specialist_candidates.jsonl`, and per-worker JSON/Markdown
+packets under `skills_registry_specialist_packets/`. The report packages the
+seven predeclared intake specialists for Skills Registry owner review, verifies
+prompt hashes against `prompts/registry.yaml`, checks schema and declared
+harness refs, keeps tools empty and denied by default, and surfaces metadata
+gaps as blockers. It does not promote skills, create skill trust records, add
+dynamic agents, enable model providers, approve real data, create issues, open
+PRs, write sibling repos, promote canon, admit Lake records, write SQLite, apply
+learning, or authorize production use.
 
 ### Draft carrier rejection Orchestrator interface
 

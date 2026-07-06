@@ -324,6 +324,13 @@ when `observed_pr_state=merged`, distinguishes easy local work from critical
 owner-gated work, and performs no GitHub, sibling repo, Lake, SQLite, promotion,
 real-data, or learning side effects.
 
+`plan-pr-merge-order` consumes an explicit local PR snapshot and writes a
+candidate-only merge-order packet. Eval coverage must prove the default
+`gap_first_then_depth_audit` order, detect shared changed-file surfaces,
+fail closed when draft PR evidence is stale or checks are not green, and
+perform no ready-state, merge, GitHub, sibling repo, Lake, SQLite, promotion,
+external-write, or learning side effects.
+
 `audit-synthetic-fixture-expansion` consumes the remaining-roadmap report and
 the synthetic holdout manifest. Eval coverage must prove all required holdout
 families are present, fixture and test refs stay under the repo root, scoped JSON
@@ -397,6 +404,8 @@ Measure review time, correction count, unknown selection, evidence-navigation bu
 - keep `public_synthetic_fixture_conversion_review_packet.json` local and non-authoritative; it helps humans decide whether conversion specs may proceed to a separate fixture PR but must not approve fixture generation by itself, create PRs, mutate fixtures, ingest public records, authorize adapters, write Lake/SQLite records, or apply learning.
 - keep `public_synthetic_fixture_conversion_review_outcome_report.json` local and non-authoritative; it records a human decision append-only but must not create fixtures, create PRs, ingest public records, authorize adapters, write Lake/SQLite records, or apply learning.
 - keep `public_synthetic_fixture_pr_package_report.json` local and non-authoritative; it packages manual instructions for a separate fixture PR but must not edit fixtures, create PRs, ingest public records, authorize adapters, write Lake/SQLite records, or apply learning.
+- keep `public_methodology_owner_handoff_report.json` local and non-authoritative; it routes the public methodology, conversion plan, and conversion review packet to Intake, Legal Knowledge Runtime, Semantic Substrate, Orchestrator, and Exception Lake for manual owner review, but must not create issues, open PRs, write sibling repos, promote canon, create fixtures, ingest public records, authorize adapters, write Lake/SQLite records, or apply learning.
+- keep `skills_registry_specialist_review_report.json`, `skills_registry_specialist_candidates.jsonl`, and per-worker `skills_registry_specialist_packets/` files local and non-authoritative; they package predeclared intake specialist metadata, prompt hashes, schema refs, and declared harness refs for Skills Registry owner review but must not promote skills, create trust records, add dynamic agents, enable model providers, approve real data, create issues, open PRs, write sibling repos, promote canon, admit Lake/SQLite records, or apply learning.
 
 ## Graduation gates
 

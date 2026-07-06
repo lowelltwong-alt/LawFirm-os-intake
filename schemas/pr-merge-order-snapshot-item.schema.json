@@ -1,0 +1,200 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "pr_number": {
+      "exclusiveMinimum": 0,
+      "title": "Pr Number",
+      "type": "integer"
+    },
+    "title": {
+      "title": "Title",
+      "type": "string"
+    },
+    "pr_url": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Pr Url"
+    },
+    "head_ref_name": {
+      "title": "Head Ref Name",
+      "type": "string"
+    },
+    "base_ref_name": {
+      "title": "Base Ref Name",
+      "type": "string"
+    },
+    "observed_state": {
+      "default": "open",
+      "enum": [
+        "open",
+        "closed",
+        "merged",
+        "not_supplied"
+      ],
+      "title": "Observed State",
+      "type": "string"
+    },
+    "is_draft": {
+      "default": true,
+      "title": "Is Draft",
+      "type": "boolean"
+    },
+    "mergeable_state": {
+      "default": "not_supplied",
+      "enum": [
+        "MERGEABLE",
+        "CONFLICTING",
+        "UNKNOWN",
+        "CLEAN",
+        "DIRTY",
+        "UNSTABLE",
+        "BLOCKED",
+        "BEHIND",
+        "DRAFT",
+        "HAS_HOOKS",
+        "not_supplied"
+      ],
+      "title": "Mergeable State",
+      "type": "string"
+    },
+    "checks_conclusion": {
+      "default": "not_supplied",
+      "enum": [
+        "success",
+        "failure",
+        "pending",
+        "cancelled",
+        "skipped",
+        "neutral",
+        "timed_out",
+        "action_required",
+        "startup_failure",
+        "stale",
+        "not_supplied"
+      ],
+      "title": "Checks Conclusion",
+      "type": "string"
+    },
+    "status_check_count": {
+      "minimum": 0,
+      "title": "Status Check Count",
+      "type": "integer"
+    },
+    "successful_status_check_count": {
+      "minimum": 0,
+      "title": "Successful Status Check Count",
+      "type": "integer"
+    },
+    "changed_files": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Changed Files",
+      "type": "array"
+    },
+    "depth_gap_ids_addressed": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Depth Gap Ids Addressed",
+      "type": "array"
+    },
+    "validation_evidence_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Validation Evidence Refs",
+      "type": "array"
+    },
+    "recommended_sequence_role": {
+      "default": "unknown",
+      "enum": [
+        "fixture_gap_closer",
+        "fixture_role_expander",
+        "audit_verifier",
+        "unknown"
+      ],
+      "title": "Recommended Sequence Role",
+      "type": "string"
+    },
+    "notes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Notes",
+      "type": "array"
+    },
+    "ready_for_review_marked": {
+      "const": false,
+      "default": false,
+      "title": "Ready For Review Marked",
+      "type": "boolean"
+    },
+    "merge_performed": {
+      "const": false,
+      "default": false,
+      "title": "Merge Performed",
+      "type": "boolean"
+    },
+    "github_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Github Write Performed",
+      "type": "boolean"
+    },
+    "sibling_repo_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sibling Repo Write Performed",
+      "type": "boolean"
+    },
+    "promotion_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Promotion Authorized",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "pr_number",
+    "title",
+    "head_ref_name",
+    "base_ref_name",
+    "status_check_count",
+    "successful_status_check_count",
+    "changed_files"
+  ],
+  "title": "PRMergeOrderSnapshotItem",
+  "type": "object"
+}

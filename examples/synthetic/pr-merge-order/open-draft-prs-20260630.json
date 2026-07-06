@@ -1,0 +1,153 @@
+{
+  "schema_version": "0.1",
+  "snapshot_id": "open-draft-prs-20260630",
+  "repository_full_name": "lowelltwong-alt/LawFirm-os-intake",
+  "base_ref_name": "main",
+  "observed_at": "2026-06-30T23:15:00Z",
+  "source_kind": "manual_github_snapshot",
+  "source_refs": [
+    "gh pr view 16 --repo lowelltwong-alt/LawFirm-os-intake --json number,title,url,headRefName,baseRefName,state,isDraft,mergeable,files,statusCheckRollup",
+    "gh pr view 17 --repo lowelltwong-alt/LawFirm-os-intake --json number,title,url,headRefName,baseRefName,state,isDraft,mergeable,files,statusCheckRollup",
+    "gh pr view 18 --repo lowelltwong-alt/LawFirm-os-intake --json number,title,url,headRefName,baseRefName,state,isDraft,mergeable,files,statusCheckRollup",
+    "gh pr view 19 --repo lowelltwong-alt/LawFirm-os-intake --json number,title,url,headRefName,baseRefName,state,isDraft,mergeable,files,statusCheckRollup"
+  ],
+  "prs": [
+    {
+      "pr_number": 16,
+      "title": "[codex] Add L&E ready critical facts holdout",
+      "pr_url": "https://github.example.invalid/lowelltwong-alt/LawFirm-os-intake/pull/16",
+      "head_ref_name": "codex/le-critical-facts-holdout",
+      "base_ref_name": "main",
+      "observed_state": "open",
+      "is_draft": true,
+      "mergeable_state": "MERGEABLE",
+      "checks_conclusion": "success",
+      "status_check_count": 4,
+      "successful_status_check_count": 4,
+      "changed_files": [
+        ".ai/control/governance-dependency-map-mirror.json",
+        "README.md",
+        "docs/data/courtlistener-early-case-dataset-strategy.md",
+        "docs/decisions/TRACE-2026-06-30-le-ready-critical-facts-holdout.md",
+        "docs/roadmap.md",
+        "examples/synthetic/courtlistener-derived/labor-employment-ready-critical-facts-manifest.json",
+        "examples/synthetic/fixture-expansion/remaining-roadmap-holdouts.json",
+        "tests/test_courtlistener_fixture_audit.py",
+        "tests/test_labor_employment_budget_facts.py",
+        "tests/test_synthetic_fixture_expansion.py"
+      ],
+      "depth_gap_ids_addressed": [
+        "labor_employment_budget_fact_gap_holdout"
+      ],
+      "validation_evidence_refs": [
+        "GitHub checks observed success on PR #16"
+      ],
+      "recommended_sequence_role": "fixture_gap_closer",
+      "notes": [
+        "Closes the L&E critical fact gap that the depth audit currently treats as missing on main."
+      ]
+    },
+    {
+      "pr_number": 17,
+      "title": "[codex] Add ambiguous role holdout matrix",
+      "pr_url": "https://github.example.invalid/lowelltwong-alt/LawFirm-os-intake/pull/17",
+      "head_ref_name": "codex/ambiguous-role-holdout-matrix",
+      "base_ref_name": "main",
+      "observed_state": "open",
+      "is_draft": true,
+      "mergeable_state": "MERGEABLE",
+      "checks_conclusion": "success",
+      "status_check_count": 4,
+      "successful_status_check_count": 4,
+      "changed_files": [
+        ".ai/control/governance-dependency-map-mirror.json",
+        "docs/decisions/TRACE-2026-06-30-ambiguous-role-holdout-matrix.md",
+        "docs/roadmap.md",
+        "examples/synthetic/fixture-expansion/remaining-roadmap-holdouts.json",
+        "examples/synthetic/inbound/holdout-carrier-client-role-matrix.json",
+        "tests/test_source_inventory_and_review.py",
+        "tests/test_synthetic_fixture_expansion.py"
+      ],
+      "depth_gap_ids_addressed": [
+        "carrier_client_role_ambiguity"
+      ],
+      "validation_evidence_refs": [
+        "GitHub checks observed success on PR #17"
+      ],
+      "recommended_sequence_role": "fixture_role_expander",
+      "notes": [
+        "Adds adjacent ambiguous-role coverage after direct depth-gap closers."
+      ]
+    },
+    {
+      "pr_number": 18,
+      "title": "[codex] add carrier rejection counterfactual fixture",
+      "pr_url": "https://github.example.invalid/lowelltwong-alt/LawFirm-os-intake/pull/18",
+      "head_ref_name": "codex/carrier-rejection-counterfactual-fixtures",
+      "base_ref_name": "main",
+      "observed_state": "open",
+      "is_draft": true,
+      "mergeable_state": "MERGEABLE",
+      "checks_conclusion": "success",
+      "status_check_count": 4,
+      "successful_status_check_count": 4,
+      "changed_files": [
+        ".ai/control/governance-dependency-map-mirror.json",
+        "docs/decisions/TRACE-2026-06-30-carrier-rejection-counterfactual-fixture.md",
+        "examples/synthetic/carrier-rejections/partial-allowance-guideline-drift-stale-appeal.json",
+        "examples/synthetic/fixture-expansion/remaining-roadmap-holdouts.json",
+        "tests/test_carrier_rejection_capture.py",
+        "tests/test_synthetic_fixture_expansion.py"
+      ],
+      "depth_gap_ids_addressed": [
+        "carrier_partial_allowance_and_appeal_outcome_variety"
+      ],
+      "validation_evidence_refs": [
+        "GitHub checks observed success on PR #18"
+      ],
+      "recommended_sequence_role": "fixture_gap_closer",
+      "notes": [
+        "Closes the carrier partial allowance and appeal-result variety gap."
+      ]
+    },
+    {
+      "pr_number": 19,
+      "title": "[codex] add synthetic fixture depth audit",
+      "pr_url": "https://github.example.invalid/lowelltwong-alt/LawFirm-os-intake/pull/19",
+      "head_ref_name": "codex/fixture-expansion-depth-audit",
+      "base_ref_name": "main",
+      "observed_state": "open",
+      "is_draft": true,
+      "mergeable_state": "MERGEABLE",
+      "checks_conclusion": "success",
+      "status_check_count": 4,
+      "successful_status_check_count": 4,
+      "changed_files": [
+        ".ai/control/governance-dependency-map-mirror.json",
+        "docs/decisions/TRACE-2026-06-30-synthetic-fixture-depth-audit.md",
+        "docs/evaluation-plan.md",
+        "docs/roadmap.md",
+        "examples/synthetic/fixture-expansion/remaining-roadmap-holdouts.json",
+        "schemas/synthetic-fixture-depth-audit-report.schema.json",
+        "schemas/synthetic-fixture-depth-dimension.schema.json",
+        "schemas/synthetic-fixture-depth-family-summary.schema.json",
+        "scripts/export_schemas.py",
+        "src/lawfirm_os_intake/cli.py",
+        "src/lawfirm_os_intake/models.py",
+        "src/lawfirm_os_intake/synthetic_fixture_depth_audit.py",
+        "tests/test_synthetic_fixture_depth_audit.py",
+        "tests/test_synthetic_fixture_expansion.py"
+      ],
+      "depth_gap_ids_addressed": [
+        "depth_audit"
+      ],
+      "validation_evidence_refs": [
+        "GitHub checks observed success on PR #19"
+      ],
+      "recommended_sequence_role": "audit_verifier",
+      "notes": [
+        "Should land after gap-closing fixtures so its report can be rebased onto the expanded holdout set."
+      ]
+    }
+  ]
+}
