@@ -986,6 +986,7 @@ def run_budget(
             guideline=guideline[0],
             guideline_ref=guideline[1],
             carrier_id=carrier_id,
+            rate_resolution=rate_resolution,
         )
     budget = apply_labor_employment_budget_fact_constraints(
         budget,

@@ -24,6 +24,11 @@ from .models import HumanConfirmation, NamedTimekeeperRate, StrictModel
 
 # Confirmed party roles that identify the paying/instructing carrier for rate selection.
 CARRIER_ROLES = ("insurance_carrier", "instructing_source", "payer")
+CARRIER_ROLE_PRECEDENCE = {
+    "insurance_carrier": 0,
+    "instructing_source": 1,
+    "payer": 2,
+}
 
 
 class RoleRateResolution(StrictModel):
@@ -39,6 +44,10 @@ class RoleRateResolution(StrictModel):
     role_rate_precedence: str = "unknown"
     named_timekeeper_overrides: dict[str, NamedTimekeeperRate] = Field(default_factory=dict)
     source: str  # carrier_rate_card | practice_profile_flat
+    pricing_status: str = "priced"
+    review_required: bool = False
+    review_issue_codes: list[str] = Field(default_factory=list)
+    review_notes: list[str] = Field(default_factory=list)
     note: str | None = None
 
 
@@ -65,25 +74,97 @@ def _carrier_party_names(confirmation: HumanConfirmation) -> list[str]:
     ]
 
 
-def _match_carrier(card: dict[str, Any], confirmation: HumanConfirmation) -> tuple[str, str]:
-    names = {name.casefold() for name in _carrier_party_names(confirmation)}
+def _carrier_party_refs(confirmation: HumanConfirmation) -> list[tuple[str, str]]:
+    return [
+        (party.name, party.confirmed_role)
+        for party in confirmation.confirmed_parties
+        if party.confirmed_role in CARRIER_ROLES
+    ]
+
+
+def _match_carrier(
+    card: dict[str, Any],
+    confirmation: HumanConfirmation,
+) -> tuple[str, str, list[str], list[str]]:
+    party_refs = _carrier_party_refs(confirmation)
     carriers = card.get("carriers", {})
+    matches: list[tuple[int, str, str, str]] = []
     if isinstance(carriers, dict):
         for carrier_id, spec in carriers.items():
             if not isinstance(spec, dict):
                 continue
             aliases = {str(alias).casefold() for alias in spec.get("aliases", [])}
-            if names & aliases:
-                return str(carrier_id), "carrier_alias"
-    return str(card.get("default_carrier_id", "")), "default_carrier"
+            for name, role in party_refs:
+                if name.casefold() in aliases:
+                    matches.append(
+                        (
+                            CARRIER_ROLE_PRECEDENCE.get(role, 99),
+                            str(carrier_id),
+                            role,
+                            name,
+                        )
+                    )
+    if not matches:
+        carrier_id = str(card.get("default_carrier_id", ""))
+        if party_refs:
+            names = ", ".join(sorted(name for name, _role in party_refs))
+            return (
+                carrier_id,
+                "default_carrier",
+                ["carrier_role_party_unmatched_for_rates"],
+                [
+                    "Carrier-role parties were confirmed but none matched the synthetic "
+                    f"rate-card aliases ({names}); budget must remain hours-only pending "
+                    "human rate review."
+                ],
+            )
+        return carrier_id, "default_carrier", [], []
+
+    best_precedence = min(match[0] for match in matches)
+    best_matches = [match for match in matches if match[0] == best_precedence]
+    best_carriers = sorted({match[1] for match in best_matches})
+    if len(best_carriers) > 1:
+        matched = "; ".join(
+            f"{carrier_id}:{role}:{name}"
+            for _precedence, carrier_id, role, name in sorted(best_matches)
+        )
+        return (
+            "ambiguous",
+            "ambiguous_carrier_alias",
+            ["ambiguous_carrier_for_rates"],
+            [
+                "Multiple carrier aliases matched at the same role precedence "
+                f"({matched}); budget must remain hours-only pending human rate review."
+            ],
+        )
+
+    carrier_id = best_carriers[0]
+    distinct_carriers = {match[1] for match in matches}
+    matched_by = "carrier_alias_role_precedence" if len(distinct_carriers) > 1 else "carrier_alias"
+    return carrier_id, matched_by, [], []
 
 
-def _match_state(card: dict[str, Any], confirmation: HumanConfirmation) -> tuple[str, str]:
+def _match_state(
+    card: dict[str, Any],
+    confirmation: HumanConfirmation,
+) -> tuple[str, str, list[str], list[str]]:
     jurisdiction = confirmation.confirmed_jurisdiction
     aliases = card.get("jurisdiction_aliases", {})
     if jurisdiction and isinstance(aliases, dict) and jurisdiction in aliases:
-        return str(aliases[jurisdiction]), "jurisdiction_alias"
-    return str(card.get("default_state", "")), "default_state"
+        return str(aliases[jurisdiction]), "jurisdiction_alias", [], []
+    state = str(card.get("default_state", ""))
+    if jurisdiction:
+        return (
+            state,
+            "default_state",
+            ["confirmed_jurisdiction_unmapped_for_rates"],
+            [
+                f"Confirmed jurisdiction {jurisdiction!r} did not match the synthetic "
+                "rate-card jurisdiction aliases; budget must remain hours-only pending "
+                "human rate review."
+            ],
+        )
+    return state, "default_state", [], []
 
 
 def _flat_resolution(profile: dict[str, Any], note: str) -> RoleRateResolution:
@@ -97,6 +178,38 @@ def _flat_resolution(profile: dict[str, Any], note: str) -> RoleRateResolution:
         role_rate_precedence="firm_default",
         source="practice_profile_flat",
         note=note,
+    )
+
+
+def _hours_only_review_resolution(
+    *,
+    rate_card: dict[str, Any],
+    carrier_id: str,
+    carrier_matched_by: str,
+    state: str,
+    state_matched_by: str,
+    issue_codes: list[str],
+    review_notes: list[str],
+) -> RoleRateResolution:
+    return RoleRateResolution(
+        rate_card_id=str(rate_card.get("rate_card_id", "unknown")),
+        carrier_id=carrier_id,
+        carrier_matched_by=carrier_matched_by,
+        state=state,
+        state_matched_by=state_matched_by,
+        role_rates={},
+        role_rate_precedence="hours_only_pending_rate_review",
+        named_timekeeper_overrides={},
+        source="carrier_rate_card",
+        pricing_status="hours_only_review_required",
+        review_required=True,
+        review_issue_codes=sorted(set(issue_codes)),
+        review_notes=review_notes,
+        note=(
+            "Synthetic carrier rate resolution requires human review; pricing is "
+            "hours-only because one or more carrier/state dimensions were defaulted "
+            "or ambiguous. " + " ".join(review_notes)
+        ),
     )
 
 
@@ -152,8 +265,25 @@ def resolve_role_rates(
             profile, "No carrier rate card referenced; using practice-profile flat rates."
         )
 
-    carrier_id, carrier_matched_by = _match_carrier(rate_card, confirmation)
-    state, state_matched_by = _match_state(rate_card, confirmation)
+    carrier_id, carrier_matched_by, carrier_issue_codes, carrier_review_notes = _match_carrier(
+        rate_card, confirmation
+    )
+    state, state_matched_by, state_issue_codes, state_review_notes = _match_state(
+        rate_card, confirmation
+    )
+    issue_codes = carrier_issue_codes + state_issue_codes
+    review_notes = carrier_review_notes + state_review_notes
+    if issue_codes:
+        return _hours_only_review_resolution(
+            rate_card=rate_card,
+            carrier_id=carrier_id,
+            carrier_matched_by=carrier_matched_by,
+            state=state,
+            state_matched_by=state_matched_by,
+            issue_codes=issue_codes,
+            review_notes=review_notes,
+        )
+
     carrier_spec = rate_card.get("carriers", {}).get(carrier_id, {})
     schedule = carrier_spec.get("schedule", {}) if isinstance(carrier_spec, dict) else {}
     state_rates = schedule.get(state, {}) if isinstance(schedule, dict) else {}

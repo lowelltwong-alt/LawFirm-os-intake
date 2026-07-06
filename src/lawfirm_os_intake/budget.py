@@ -970,6 +970,47 @@ def _scenario_policy_issue_notes(
     return items
 
 
+def _rate_review_support_items(
+    rate_resolution: RoleRateResolution | None,
+    rate_issue_codes: set[str],
+    rate_issue_notes: list[str],
+) -> list[BudgetSupportItem]:
+    items: list[BudgetSupportItem] = []
+    if rate_resolution is not None and rate_resolution.review_required:
+        for code, note in zip(
+            rate_resolution.review_issue_codes,
+            rate_resolution.review_notes,
+            strict=False,
+        ):
+            items.append(
+                _support_item(
+                    "unknown",
+                    note,
+                    "carrier_rate_card",
+                    structured_ref=(
+                        f"carrier-rate-card://{rate_resolution.rate_card_id}"
+                        f"/{rate_resolution.carrier_id}/{rate_resolution.state}/review/{code}"
+                    ),
+                )
+            )
+    for note in rate_issue_notes:
+        structured_code = next(iter(sorted(rate_issue_codes)), "rate_review_required")
+        card_id = rate_resolution.rate_card_id if rate_resolution is not None else "unknown"
+        carrier_id = rate_resolution.carrier_id if rate_resolution is not None else "unknown"
+        state = rate_resolution.state if rate_resolution is not None else "unknown"
+        items.append(
+            _support_item(
+                "unknown",
+                note,
+                "carrier_rate_card",
+                structured_ref=(
+                    f"carrier-rate-card://{card_id}/{carrier_id}/{state}/review/{structured_code}"
+                ),
+            )
+        )
+    return items
+
+
 def _build_scenario_set(
     template: dict[str, Any],
     lines: list[BudgetLine],
@@ -1187,7 +1228,7 @@ def _task_rate(
     role: str,
     rates: dict[str, float],
     rate_resolution: RoleRateResolution | None,
-) -> tuple[float | None, str, str | None, str | None]:
+) -> tuple[float | None, str, str | None, str | None, str | None]:
     timekeeper_id = task.get("timekeeper_id")
     if timekeeper_id is not None and rate_resolution is not None:
         override = rate_resolution.named_timekeeper_overrides.get(str(timekeeper_id))
@@ -1202,14 +1243,35 @@ def _task_rate(
                 "synthetic_named_timekeeper_override",
                 override.timekeeper_id,
                 note,
+                None,
+            )
+        if override is not None:
+            note = (
+                f"Named synthetic timekeeper {override.timekeeper_id} is approved as "
+                f"{override.title}, but task {task.get('task_id')} is staffed as {role}; "
+                "budget line remains hours-only pending human rate review."
+            )
+            return (
+                None,
+                "absent",
+                override.timekeeper_id,
+                note,
+                "named_timekeeper_title_mismatch_for_rates",
             )
     rate = rates.get(role)
     if rate is None:
-        return None, "absent", str(timekeeper_id) if timekeeper_id is not None else None, None
+        return (
+            None,
+            "absent",
+            str(timekeeper_id) if timekeeper_id is not None else None,
+            None,
+            None,
+        )
     return (
         rate,
         "synthetic_profile",
         str(timekeeper_id) if timekeeper_id is not None else None,
+        None,
         None,
     )
 
@@ -1279,16 +1341,22 @@ def build_budget_proposal(
             ],
         )
 
-    if rate_resolution is not None:
+    if rate_resolution is not None and not rate_resolution.review_required:
         rates = dict(rate_resolution.role_rates)
     else:
-        rates = {str(k): float(v) for k, v in profile.get("synthetic_hourly_rates", {}).items()}
+        rates = (
+            {}
+            if rate_resolution is not None and rate_resolution.review_required
+            else {str(k): float(v) for k, v in profile.get("synthetic_hourly_rates", {}).items()}
+        )
     driver_values = _numeric_driver_values(case_drivers)
     driver_lookup = _drivers_by_id(case_drivers)
     driver_effects_by_key: dict[
         tuple[str, str | None, str, tuple[str, ...], tuple[str, ...]], BudgetDriverEffect
     ] = {}
     lines: list[BudgetLine] = []
+    rate_issue_notes: list[str] = []
+    rate_issue_codes: set[str] = set()
     evidence_refs = _confirmed_matter_observed_refs(packet, confirmation)
 
     for phase in template.get("phases", []):
@@ -1451,7 +1519,7 @@ def build_budget_proposal(
             for effect in intensity_effects:
                 driver_effects_by_key[_driver_effect_key(effect)] = effect
 
-            rate, rate_source, timekeeper_id, timekeeper_note = _task_rate(
+            rate, rate_source, timekeeper_id, timekeeper_note, rate_issue_code = _task_rate(
                 task=task,
                 role=role,
                 rates=rates,
@@ -1459,6 +1527,10 @@ def build_budget_proposal(
             )
             if timekeeper_note is not None:
                 assumptions = assumptions + [timekeeper_note]
+            if rate_issue_code is not None:
+                rate_issue_codes.add(rate_issue_code)
+                if timekeeper_note is not None:
+                    rate_issue_notes.append(timekeeper_note)
             fees = round(hours * rate, 2) if rate is not None else None
             if rate is not None and rate_source == "synthetic_named_timekeeper_override":
                 rate_formula = (
@@ -1535,10 +1607,17 @@ def build_budget_proposal(
         effect.note for effect in driver_effects if effect.effect_type == "unknown_driver"
     ]
     scenario_policy_unknowns = list(scenario_set.policy_issue_notes)
+    rate_resolution_unknowns = (
+        list(rate_resolution.review_notes)
+        if rate_resolution is not None and rate_resolution.review_required
+        else []
+    )
     driver_unknowns = (
         driver_unknowns
         + [flag.note for flag in guideline_flags if flag.status == "flagged_for_human_review"]
         + scenario_policy_unknowns
+        + rate_resolution_unknowns
+        + rate_issue_notes
     )
 
     policy_exclusions = [
@@ -1561,7 +1640,7 @@ def build_budget_proposal(
         _support_item(
             "assumption",
             text,
-            "synthetic_practice_profile",
+            "carrier_rate_card",
             structured_ref=(
                 f"carrier-rate-card://{rate_resolution.rate_card_id}"
                 f"/{rate_resolution.carrier_id}/{rate_resolution.state}"
@@ -1580,6 +1659,7 @@ def build_budget_proposal(
         *rate_basis_support_items,
         *_budget_driver_support_items(driver_effects, guideline_flags),
         *_scenario_policy_issue_notes(scenario_set),
+        *_rate_review_support_items(rate_resolution, rate_issue_codes, rate_issue_notes),
         *_workflow_exclusion_support_items(policy_exclusions),
     ]
     if evidence_refs:
@@ -1630,6 +1710,14 @@ def build_budget_proposal(
             "candidate_only": True,
             "synthetic_only": True,
             "pricing_status": mode,
+            "rate_review_required": bool(
+                (rate_resolution is not None and rate_resolution.review_required)
+                or rate_issue_codes
+            ),
+            "rate_review_issue_codes": sorted(
+                set(rate_resolution.review_issue_codes if rate_resolution is not None else [])
+                | rate_issue_codes
+            ),
             "not_authorized_for_client_submission": True,
             "blocked_actions": [
                 "client_submission",

@@ -343,6 +343,8 @@ def _carrier_compliant_projection_lines(budget: BudgetProposal) -> list[str]:
                 f"{line.phase_id}/{line.task_id}: proposed={_money(line.proposed_line_total, budget.currency)}, "
                 f"compliant={_money(line.compliant_line_total, budget.currency)}, "
                 f"delta={_money(line.over_cap_amount, budget.currency)}, "
+                f"signed_delta={_money(line.line_delta_signed, budget.currency)}, "
+                f"review_required={line.requires_human_review}, "
                 f"role={line.staffing_role}->{line.compliant_staffing_role or line.staffing_role}, "
                 f"capped={line.capped}, disallowed={line.disallowed}, note={line.note}"
             )
@@ -359,16 +361,22 @@ def _carrier_compliant_projection_lines(budget: BudgetProposal) -> list[str]:
         f"- Proposed total: {_money(projection.proposed_total, budget.currency)}",
         f"- Carrier-compliant total: {_money(projection.compliant_total, budget.currency)}",
         f"- Over-cap delta: {_money(projection.over_cap_amount, budget.currency)}",
+        f"- Signed net delta: {_money(projection.total_delta_signed, budget.currency)}",
+        f"- Compliant increase amount: {_money(projection.compliant_increase_amount, budget.currency)}",
         f"- Rate cap delta: {_money(projection.rate_cap_delta, budget.currency)}",
         f"- Expense cap delta: {_money(projection.expense_cap_delta, budget.currency)}",
         f"- Staffing-rule delta: {_money(projection.staffing_rule_delta, budget.currency)}",
+        f"- Signed staffing-rule delta: {_money(projection.staffing_rule_delta_signed, budget.currency)}",
         f"- Contingency delta: {_money(projection.contingency_delta, budget.currency)}",
         f"- Proposed blended rate: {_money(projection.proposed_blended_rate, budget.currency)}",
         f"- Carrier-compliant blended rate: {_money(projection.compliant_blended_rate, budget.currency)}",
         f"- Blended-rate delta: {_money(projection.blended_rate_delta, budget.currency)}",
+        f"- Signed blended-rate delta: {_money(projection.blended_rate_delta_signed, budget.currency)}",
         f"- Capped lines: {projection.capped_line_count}/{projection.line_count}",
         f"- Disallowed lines: {projection.disallowed_line_count}/{projection.line_count}",
         f"- Staffing-adjusted lines: {projection.staffing_rule_adjusted_line_count}/{projection.line_count}",
+        f"- Review-required projection lines: {projection.review_required_line_count}/{projection.line_count}",
+        f"- Projection review issue codes: {', '.join(projection.review_issue_codes) if projection.review_issue_codes else 'none'}",
         f"- Projection rewrites budget: {projection.rewrites_budget}",
         f"- Proposal lines unchanged: {projection.basis.proposal_lines_unchanged}",
         f"- Client/carrier submission authorized: {not projection.not_authorized_for_client_submission}",

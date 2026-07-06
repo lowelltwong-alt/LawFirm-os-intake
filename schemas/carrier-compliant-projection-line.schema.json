@@ -213,6 +213,49 @@
       "title": "Staffing Rule Delta",
       "type": "number"
     },
+    "line_delta_signed": {
+      "default": 0,
+      "title": "Line Delta Signed",
+      "type": "number"
+    },
+    "rate_cap_delta_signed": {
+      "default": 0,
+      "title": "Rate Cap Delta Signed",
+      "type": "number"
+    },
+    "expense_cap_delta_signed": {
+      "default": 0,
+      "title": "Expense Cap Delta Signed",
+      "type": "number"
+    },
+    "disallowed_delta_signed": {
+      "default": 0,
+      "title": "Disallowed Delta Signed",
+      "type": "number"
+    },
+    "staffing_rule_delta_signed": {
+      "default": 0,
+      "title": "Staffing Rule Delta Signed",
+      "type": "number"
+    },
+    "compliant_increase_amount": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Compliant Increase Amount",
+      "type": "number"
+    },
+    "requires_human_review": {
+      "default": false,
+      "title": "Requires Human Review",
+      "type": "boolean"
+    },
+    "review_issue_codes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Review Issue Codes",
+      "type": "array"
+    },
     "delta_breakdown": {
       "additionalProperties": {
         "type": "number"
