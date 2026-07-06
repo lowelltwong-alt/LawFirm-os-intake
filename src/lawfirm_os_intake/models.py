@@ -7149,6 +7149,7 @@ class BudgetSupportItem(StrictModel):
         "budget_driver_policy",
         "workflow_policy",
         "missing_template",
+        "carrier_rate_card",
         "labor_employment_budget_fact_report",
         "labor_employment_driver_impact_report",
     ]
@@ -7326,6 +7327,14 @@ class CarrierCompliantProjectionLine(StrictModel):
     expense_cap_delta: float = Field(default=0, ge=0)
     disallowed_delta: float = Field(default=0, ge=0)
     staffing_rule_delta: float = Field(default=0, ge=0)
+    line_delta_signed: float = 0
+    rate_cap_delta_signed: float = 0
+    expense_cap_delta_signed: float = 0
+    disallowed_delta_signed: float = 0
+    staffing_rule_delta_signed: float = 0
+    compliant_increase_amount: float = Field(default=0, ge=0)
+    requires_human_review: bool = False
+    review_issue_codes: list[str] = Field(default_factory=list)
     delta_breakdown: dict[str, float] = Field(default_factory=dict)
     guideline_refs: list[str] = Field(default_factory=list)
     note: str
@@ -7395,13 +7404,23 @@ class CarrierCompliantProjection(StrictModel):
     disallowed_delta: float = Field(default=0, ge=0)
     staffing_rule_delta: float = Field(ge=0)
     contingency_delta: float = Field(ge=0)
+    total_delta_signed: float = 0
+    rate_cap_delta_signed: float = 0
+    expense_cap_delta_signed: float = 0
+    disallowed_delta_signed: float = 0
+    staffing_rule_delta_signed: float = 0
+    contingency_delta_signed: float = 0
+    compliant_increase_amount: float = Field(default=0, ge=0)
     proposed_blended_rate: float | None = None
     compliant_blended_rate: float | None = None
     blended_rate_delta: float = Field(default=0, ge=0)
+    blended_rate_delta_signed: float = 0
     line_count: int = Field(ge=0)
     capped_line_count: int = Field(ge=0)
     disallowed_line_count: int = Field(ge=0)
     staffing_rule_adjusted_line_count: int = Field(ge=0)
+    review_required_line_count: int = Field(default=0, ge=0)
+    review_issue_codes: list[str] = Field(default_factory=list)
     leverage_summary: list[CarrierCompliantLeverageSummary] = Field(default_factory=list)
     lines: list[CarrierCompliantProjectionLine]
     rewrites_budget: Literal[False] = False

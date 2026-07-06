@@ -368,6 +368,49 @@
           "title": "Staffing Rule Delta",
           "type": "number"
         },
+        "line_delta_signed": {
+          "default": 0,
+          "title": "Line Delta Signed",
+          "type": "number"
+        },
+        "rate_cap_delta_signed": {
+          "default": 0,
+          "title": "Rate Cap Delta Signed",
+          "type": "number"
+        },
+        "expense_cap_delta_signed": {
+          "default": 0,
+          "title": "Expense Cap Delta Signed",
+          "type": "number"
+        },
+        "disallowed_delta_signed": {
+          "default": 0,
+          "title": "Disallowed Delta Signed",
+          "type": "number"
+        },
+        "staffing_rule_delta_signed": {
+          "default": 0,
+          "title": "Staffing Rule Delta Signed",
+          "type": "number"
+        },
+        "compliant_increase_amount": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Compliant Increase Amount",
+          "type": "number"
+        },
+        "requires_human_review": {
+          "default": false,
+          "title": "Requires Human Review",
+          "type": "boolean"
+        },
+        "review_issue_codes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Review Issue Codes",
+          "type": "array"
+        },
         "delta_breakdown": {
           "additionalProperties": {
             "type": "number"
@@ -553,6 +596,42 @@
       "title": "Contingency Delta",
       "type": "number"
     },
+    "total_delta_signed": {
+      "default": 0,
+      "title": "Total Delta Signed",
+      "type": "number"
+    },
+    "rate_cap_delta_signed": {
+      "default": 0,
+      "title": "Rate Cap Delta Signed",
+      "type": "number"
+    },
+    "expense_cap_delta_signed": {
+      "default": 0,
+      "title": "Expense Cap Delta Signed",
+      "type": "number"
+    },
+    "disallowed_delta_signed": {
+      "default": 0,
+      "title": "Disallowed Delta Signed",
+      "type": "number"
+    },
+    "staffing_rule_delta_signed": {
+      "default": 0,
+      "title": "Staffing Rule Delta Signed",
+      "type": "number"
+    },
+    "contingency_delta_signed": {
+      "default": 0,
+      "title": "Contingency Delta Signed",
+      "type": "number"
+    },
+    "compliant_increase_amount": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Compliant Increase Amount",
+      "type": "number"
+    },
     "proposed_blended_rate": {
       "anyOf": [
         {
@@ -583,6 +662,11 @@
       "title": "Blended Rate Delta",
       "type": "number"
     },
+    "blended_rate_delta_signed": {
+      "default": 0,
+      "title": "Blended Rate Delta Signed",
+      "type": "number"
+    },
     "line_count": {
       "minimum": 0,
       "title": "Line Count",
@@ -602,6 +686,19 @@
       "minimum": 0,
       "title": "Staffing Rule Adjusted Line Count",
       "type": "integer"
+    },
+    "review_required_line_count": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Review Required Line Count",
+      "type": "integer"
+    },
+    "review_issue_codes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Review Issue Codes",
+      "type": "array"
     },
     "leverage_summary": {
       "items": {

@@ -15,6 +15,7 @@ from .models import (
     CarrierCompliantProjectionBasis,
     CarrierCompliantProjectionLine,
 )
+from .rates import RoleRateResolution
 from .util import new_id, now_iso
 
 
@@ -37,6 +38,7 @@ def attach_carrier_compliant_projection(
     guideline: dict[str, Any] | None,
     guideline_ref: str,
     carrier_id: str | None,
+    rate_resolution: RoleRateResolution | None = None,
 ) -> BudgetProposal:
     if guideline is None:
         return budget
@@ -45,6 +47,7 @@ def attach_carrier_compliant_projection(
         guideline=guideline,
         guideline_ref=guideline_ref,
         carrier_id=carrier_id,
+        rate_resolution=rate_resolution,
     )
     if projection is None:
         return budget
@@ -150,6 +153,7 @@ def build_carrier_compliant_projection(
     guideline: dict[str, Any],
     guideline_ref: str,
     carrier_id: str | None,
+    rate_resolution: RoleRateResolution | None = None,
 ) -> CarrierCompliantProjection | None:
     resolved_carrier_id = carrier_id or str(guideline.get("default_carrier_id", ""))
     carrier_rules = _carrier_rules(guideline, resolved_carrier_id)
@@ -170,7 +174,7 @@ def build_carrier_compliant_projection(
         str(code): str(role)
         for code, role in (staffing_rules.get("task_role_overrides") or {}).items()
     }
-    role_rates = _role_rates_from_budget_lines(budget.lines)
+    role_rates = _projection_role_rates(budget.lines, rate_resolution)
     projection_lines = [
         _project_line(
             line,
@@ -186,7 +190,12 @@ def build_carrier_compliant_projection(
     ]
     projection_pricing_status = (
         "hours_only_partial"
-        if any(line.rate_unknown_for_reshaped_role for line in projection_lines)
+        if any(
+            line.rate_unknown_for_reshaped_role
+            or line.proposed_rate is None
+            or line.compliant_fees is None
+            for line in projection_lines
+        )
         else "priced"
     )
 
@@ -227,6 +236,32 @@ def build_carrier_compliant_projection(
     disallowed_delta = round(sum(line.disallowed_delta for line in projection_lines), 2)
     staffing_rule_delta = round(sum(line.staffing_rule_delta for line in projection_lines), 2)
     contingency_delta = _delta(proposed_contingency, compliant_contingency)
+    rate_cap_delta_signed = round(
+        sum(line.rate_cap_delta_signed for line in projection_lines),
+        2,
+    )
+    expense_cap_delta_signed = round(
+        sum(line.expense_cap_delta_signed for line in projection_lines),
+        2,
+    )
+    disallowed_delta_signed = round(
+        sum(line.disallowed_delta_signed for line in projection_lines),
+        2,
+    )
+    staffing_rule_delta_signed = round(
+        sum(line.staffing_rule_delta_signed for line in projection_lines),
+        2,
+    )
+    contingency_delta_signed = _signed_delta(proposed_contingency, compliant_contingency)
+    total_delta_signed = _signed_delta(budget.total_proposed_budget, compliant_total)
+    compliant_increase_amount = round(
+        sum(line.compliant_increase_amount for line in projection_lines)
+        + _increase_amount(proposed_contingency, compliant_contingency),
+        2,
+    )
+    review_issue_codes = sorted(
+        {issue_code for line in projection_lines for issue_code in line.review_issue_codes}
+    )
     over_cap_amount = round(rate_cap_delta + expense_cap_delta, 2)
     total_delta = round(
         rate_cap_delta
@@ -277,15 +312,27 @@ def build_carrier_compliant_projection(
         disallowed_delta=disallowed_delta,
         staffing_rule_delta=staffing_rule_delta,
         contingency_delta=contingency_delta,
+        total_delta_signed=total_delta_signed,
+        rate_cap_delta_signed=rate_cap_delta_signed,
+        expense_cap_delta_signed=expense_cap_delta_signed,
+        disallowed_delta_signed=disallowed_delta_signed,
+        staffing_rule_delta_signed=staffing_rule_delta_signed,
+        contingency_delta_signed=contingency_delta_signed,
+        compliant_increase_amount=compliant_increase_amount,
         proposed_blended_rate=proposed_blended_rate,
         compliant_blended_rate=compliant_blended_rate,
         blended_rate_delta=_delta(proposed_blended_rate, compliant_blended_rate),
+        blended_rate_delta_signed=_signed_delta(proposed_blended_rate, compliant_blended_rate),
         line_count=len(projection_lines),
         capped_line_count=sum(1 for line in projection_lines if line.capped),
         disallowed_line_count=sum(1 for line in projection_lines if line.disallowed),
         staffing_rule_adjusted_line_count=sum(
             1 for line in projection_lines if line.staffing_rule_applied
         ),
+        review_required_line_count=sum(
+            1 for line in projection_lines if line.requires_human_review
+        ),
+        review_issue_codes=review_issue_codes,
         leverage_summary=_leverage_summary(projection_lines),
         lines=projection_lines,
     )
@@ -377,19 +424,38 @@ def _project_line(
         if compliant_fees is not None
         else None
     )
+    line_delta_signed = _signed_delta(proposed_line_total, compliant_line_total)
+    compliant_increase_amount = _increase_amount(proposed_line_total, compliant_line_total)
     over_cap_amount = _delta(proposed_line_total, compliant_line_total)
+    staffing_rule_delta_signed = (
+        _signed_delta(proposed_fees, staffing_rule_fees) if staffing_rule_applied else 0.0
+    )
     staffing_rule_delta = (
         _delta(proposed_fees, staffing_rule_fees) if staffing_rule_applied else 0.0
+    )
+    rate_cap_delta_signed = (
+        _signed_delta(
+            staffing_rule_fees if staffing_rule_applied else proposed_fees, compliant_fees
+        )
+        if rate_cap_applied
+        else 0.0
     )
     rate_cap_delta = (
         _delta(staffing_rule_fees if staffing_rule_applied else proposed_fees, compliant_fees)
         if rate_cap_applied
         else 0.0
     )
+    expense_cap_delta_signed = (
+        0.0 if disallowed else _signed_delta(proposed_expenses, compliant_expenses)
+    )
+    disallowed_delta_signed = (
+        _signed_delta(proposed_expenses, compliant_expenses) if disallowed else 0.0
+    )
     expense_cap_delta = (
         0.0 if disallowed else max(0.0, round(proposed_expenses - compliant_expenses, 2))
     )
     capped = rate_cap_applied or expense_cap_applied
+    review_issue_codes: list[str] = []
     note_parts = []
     if staffing_rule_applied:
         if staffing_rule_rate is None:
@@ -406,6 +472,11 @@ def _project_line(
         note_parts.append(f"expense capped from {proposed_expenses} to {compliant_expenses}")
     if disallowed:
         note_parts.append("expense disallowed in projection")
+    if compliant_increase_amount > 0:
+        review_issue_codes.append("compliant_projection_increases_line_total")
+        note_parts.append("carrier-compliant projection increases this line; human review required")
+    if rate_unknown_for_reshaped_role:
+        review_issue_codes.append("rate_unknown_for_reshaped_role")
     note = "; ".join(note_parts) if note_parts else "no guideline adjustment"
 
     return CarrierCompliantProjectionLine(
@@ -436,11 +507,25 @@ def _project_line(
         expense_cap_delta=expense_cap_delta,
         disallowed_delta=disallowed_delta,
         staffing_rule_delta=staffing_rule_delta,
+        line_delta_signed=line_delta_signed,
+        rate_cap_delta_signed=rate_cap_delta_signed,
+        expense_cap_delta_signed=expense_cap_delta_signed,
+        disallowed_delta_signed=disallowed_delta_signed,
+        staffing_rule_delta_signed=staffing_rule_delta_signed,
+        compliant_increase_amount=compliant_increase_amount,
+        requires_human_review=bool(review_issue_codes),
+        review_issue_codes=review_issue_codes,
         delta_breakdown={
             "rate_cap_delta": rate_cap_delta,
             "expense_cap_delta": expense_cap_delta,
             "disallowed_delta": disallowed_delta,
             "staffing_delta": staffing_rule_delta,
+            "line_delta_signed": line_delta_signed,
+            "rate_cap_delta_signed": rate_cap_delta_signed,
+            "expense_cap_delta_signed": expense_cap_delta_signed,
+            "disallowed_delta_signed": disallowed_delta_signed,
+            "staffing_delta_signed": staffing_rule_delta_signed,
+            "compliant_increase_amount": compliant_increase_amount,
         },
         guideline_refs=guideline_refs,
         note=note,
@@ -455,6 +540,16 @@ def _delta(proposed: float | None, compliant: float | None) -> float:
     if proposed is None or compliant is None:
         return 0.0
     return round(max(0.0, proposed - compliant), 2)
+
+
+def _signed_delta(proposed: float | None, compliant: float | None) -> float:
+    if proposed is None or compliant is None:
+        return 0.0
+    return round(proposed - compliant, 2)
+
+
+def _increase_amount(proposed: float | None, compliant: float | None) -> float:
+    return round(max(0.0, -_signed_delta(proposed, compliant)), 2)
 
 
 def _status_for_threshold(current_value: float | None, threshold_value: float) -> str:
@@ -636,6 +731,20 @@ def _role_rates_from_budget_lines(lines: list[BudgetLine]) -> dict[str, float]:
             raise ValueError(f"conflicting role rates for staffing role {line.staffing_role}")
         rates[line.staffing_role] = line.hourly_rate
     return rates
+
+
+def _projection_role_rates(
+    lines: list[BudgetLine],
+    rate_resolution: RoleRateResolution | None,
+) -> dict[str, float]:
+    if (
+        rate_resolution is not None
+        and rate_resolution.source == "carrier_rate_card"
+        and not rate_resolution.review_required
+        and rate_resolution.role_rates
+    ):
+        return dict(rate_resolution.role_rates)
+    return _role_rates_from_budget_lines(lines)
 
 
 def _staffing_rule_match_key(

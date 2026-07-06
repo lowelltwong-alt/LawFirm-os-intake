@@ -64,3 +64,42 @@ def test_named_timekeeper_override_takes_precedence_for_tagged_task(tmp_path, re
     assert budget.calculation_report is not None
     assert "synthetic_named_timekeeper_override" in budget.calculation_report.rate_sources
     assert budget.not_authorized_for_client_submission is True
+
+
+def test_named_timekeeper_title_mismatch_forces_review_and_hours_only(
+    tmp_path,
+    repo_root,
+):
+    packet, confirmation = _packet_and_confirmation(tmp_path, repo_root)
+    profile = deepcopy(
+        load_profile(repo_root / "context/synthetic-profiles/insurance-defense.yaml")
+    )
+    task = profile["budget_templates"]["medical_malpractice_defense"]["phases"][0]["tasks"][0]
+    assert task["task_id"] == "L110"
+    assert task["staffing_role"] == "associate"
+    task["timekeeper_id"] = "synthetic-tk-harbor-partner-nv"
+    rate_resolution = resolve_role_rates(
+        profile=profile,
+        confirmation=confirmation,
+        rate_card=load_rate_card(repo_root / "config/synthetic-carrier-rate-card.yaml"),
+    )
+
+    budget = build_budget_proposal(
+        packet,
+        confirmation,
+        profile,
+        rate_resolution=rate_resolution,
+    )
+
+    mismatched_line = next(line for line in budget.lines if line.task_id == "L110")
+    assert mismatched_line.timekeeper_id == "synthetic-tk-harbor-partner-nv"
+    assert mismatched_line.hourly_rate is None
+    assert mismatched_line.rate_source == "absent"
+    assert budget.pricing_status == "hours_only"
+    assert budget.subtotal_fees is None
+    assert budget.total_proposed_budget is None
+    assert (
+        "named_timekeeper_title_mismatch_for_rates"
+        in budget.display_banner["rate_review_issue_codes"]
+    )
+    assert any("approved as partner" in unknown for unknown in budget.unknowns)

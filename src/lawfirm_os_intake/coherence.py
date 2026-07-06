@@ -258,6 +258,24 @@ def check_projection_coherence(payload: dict[str, Any]) -> list[dict[str, Any]]:
                 payload.get("disallowed_amount"),
             )
         )
+    proposed_total = _amount(payload.get("proposed_total"))
+    compliant_total = _amount(payload.get("compliant_total"))
+    total_delta_signed = _amount(payload.get("total_delta_signed"))
+    if (
+        proposed_total is not None
+        and compliant_total is not None
+        and total_delta_signed is not None
+        and not _close(round(proposed_total - compliant_total, 2), total_delta_signed)
+    ):
+        violations.append(
+            _violation(
+                "projection_signed_delta_mismatch",
+                "signed carrier projection delta must equal proposed_total minus compliant_total",
+                "$.total_delta_signed",
+                round(proposed_total - compliant_total, 2),
+                payload.get("total_delta_signed"),
+            )
+        )
     unknown_rate = any(
         line.get("rate_unknown_for_reshaped_role") for line in payload.get("lines") or []
     )

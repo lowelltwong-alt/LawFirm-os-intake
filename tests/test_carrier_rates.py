@@ -1,5 +1,7 @@
 """Slice A: carrier x state x title rate resolution from a synthetic rate card."""
 
+from copy import deepcopy
+
 from lawfirm_os_intake.context import load_profile
 from lawfirm_os_intake.models import HumanConfirmation
 from lawfirm_os_intake.rates import load_rate_card, resolve_role_rates
@@ -16,6 +18,16 @@ def _card(repo_root):
 
 
 def _confirmation(carrier_name: str, jurisdiction: str) -> HumanConfirmation:
+    return _confirmation_with_parties(
+        [{"name": carrier_name, "confirmed_role": "insurance_carrier"}],
+        jurisdiction,
+    )
+
+
+def _confirmation_with_parties(
+    parties: list[dict[str, str]],
+    jurisdiction: str,
+) -> HumanConfirmation:
     return HumanConfirmation.model_validate(
         {
             "confirmation_id": "hc-test",
@@ -24,7 +36,7 @@ def _confirmation(carrier_name: str, jurisdiction: str) -> HumanConfirmation:
             "confirmed_matter_family": "medical_malpractice_defense",
             "confirmed_representation_posture": "defense_of_insured",
             "confirmed_parties": [
-                {"name": carrier_name, "confirmed_role": "insurance_carrier"},
+                *parties,
                 {"name": "Dr. Maya Chen", "confirmed_role": "prospective_represented_client"},
             ],
             "confirmed_jurisdiction": jurisdiction,
@@ -107,7 +119,7 @@ def test_rate_varies_by_carrier(tmp_path, repo_root):
     assert carrier_b.role_rates["partner"] != carrier_a.role_rates["partner"]
 
 
-def test_unknown_carrier_falls_back_to_default(tmp_path, repo_root):
+def test_unknown_carrier_role_party_requires_hours_only_review(tmp_path, repo_root):
     resolution = resolve_role_rates(
         profile=_profile(repo_root),
         confirmation=_confirmation("Unrecognized Mutual", "Synthetic State Court"),
@@ -115,6 +127,64 @@ def test_unknown_carrier_falls_back_to_default(tmp_path, repo_root):
     )
     assert resolution.carrier_id == "synthetic-carrier-a"
     assert resolution.carrier_matched_by == "default_carrier"
+    assert resolution.review_required is True
+    assert resolution.pricing_status == "hours_only_review_required"
+    assert resolution.role_rates == {}
+    assert resolution.named_timekeeper_overrides == {}
+    assert "carrier_role_party_unmatched_for_rates" in resolution.review_issue_codes
+
+
+def test_unmapped_confirmed_jurisdiction_requires_hours_only_review(tmp_path, repo_root):
+    resolution = resolve_role_rates(
+        profile=_profile(repo_root),
+        confirmation=_confirmation("Harbor Point Insurance", "Arizona"),
+        rate_card=_card(repo_root),
+    )
+
+    assert resolution.carrier_id == "synthetic-carrier-a"
+    assert resolution.carrier_matched_by == "carrier_alias"
+    assert resolution.state == "NV"
+    assert resolution.state_matched_by == "default_state"
+    assert resolution.review_required is True
+    assert resolution.role_rates == {}
+    assert "confirmed_jurisdiction_unmapped_for_rates" in resolution.review_issue_codes
+
+
+def test_same_role_multiple_carrier_matches_block_rate_pricing(tmp_path, repo_root):
+    card = deepcopy(_card(repo_root))
+    card["carriers"]["synthetic-carrier-a"]["aliases"].append("Dual Carrier")
+    card["carriers"]["synthetic-carrier-b"]["aliases"].append("Dual Carrier")
+
+    resolution = resolve_role_rates(
+        profile=_profile(repo_root),
+        confirmation=_confirmation("Dual Carrier", "Synthetic State Court"),
+        rate_card=card,
+    )
+
+    assert resolution.carrier_id == "ambiguous"
+    assert resolution.carrier_matched_by == "ambiguous_carrier_alias"
+    assert resolution.review_required is True
+    assert resolution.role_rates == {}
+    assert "ambiguous_carrier_for_rates" in resolution.review_issue_codes
+
+
+def test_carrier_role_precedence_breaks_different_role_matches(tmp_path, repo_root):
+    resolution = resolve_role_rates(
+        profile=_profile(repo_root),
+        confirmation=_confirmation_with_parties(
+            [
+                {"name": "Cascade Mutual", "confirmed_role": "insurance_carrier"},
+                {"name": "Harbor Point Insurance", "confirmed_role": "payer"},
+            ],
+            "Synthetic State Court",
+        ),
+        rate_card=_card(repo_root),
+    )
+
+    assert resolution.carrier_id == "synthetic-carrier-b"
+    assert resolution.carrier_matched_by == "carrier_alias_role_precedence"
+    assert resolution.review_required is False
+    assert resolution.role_rates["partner"] == 395.0
 
 
 def test_no_card_uses_profile_flat_rates(tmp_path, repo_root):

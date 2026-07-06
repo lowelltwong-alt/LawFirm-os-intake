@@ -1,6 +1,14 @@
+from copy import deepcopy
+
+from lawfirm_os_intake.budget import build_budget_proposal
 from lawfirm_os_intake.confirmation import bind_confirmation_to_packet_evidence
-from lawfirm_os_intake.guidelines import load_carrier_guideline
+from lawfirm_os_intake.context import load_profile
+from lawfirm_os_intake.guidelines import (
+    build_carrier_compliant_projection,
+    load_carrier_guideline,
+)
 from lawfirm_os_intake.models import ExceptionLakeMappingPackage, HumanConfirmation
+from lawfirm_os_intake.rates import load_rate_card, resolve_role_rates
 from lawfirm_os_intake.util import load_json, load_jsonl
 from lawfirm_os_intake.workflow import run_budget, run_preflight
 
@@ -120,6 +128,67 @@ def test_carrier_guideline_projection_applies_staffing_rules_and_leverage(
     assert projection.rewrites_budget is False
     assert projection.not_authorized_for_client_submission is True
     assert projection.external_writes_performed is False
+
+
+def test_carrier_projection_signed_delta_flags_compliant_increase(tmp_path, repo_root):
+    packet, _preflight_dir = run_preflight(
+        repo_root / "examples/synthetic/inbound/carrier-assignment-medmal.json",
+        repo_root / "context/synthetic-profiles/insurance-defense.yaml",
+        tmp_path / "preflight-cascade",
+    )
+    raw = load_json(
+        repo_root
+        / "examples/synthetic/confirmations/carrier-assignment-medmal.confirmation-template.json"
+    )
+    raw["preflight_packet_id"] = packet.packet_id
+    for party in raw["confirmed_parties"]:
+        if party["confirmed_role"] in {"insurance_carrier", "payer"}:
+            party["name"] = "Cascade Mutual"
+            party["aliases"] = ["Cascade"]
+    confirmation = HumanConfirmation.model_validate(raw)
+    profile = deepcopy(
+        load_profile(repo_root / "context/synthetic-profiles/insurance-defense.yaml")
+    )
+    l340_task = profile["budget_templates"]["medical_malpractice_defense"]["phases"][2]["tasks"][3]
+    assert l340_task["task_id"] == "L340"
+    l340_task["staffing_role"] = "associate"
+    rate_resolution = resolve_role_rates(
+        profile=profile,
+        confirmation=confirmation,
+        rate_card=load_rate_card(repo_root / "config/synthetic-carrier-rate-card.yaml"),
+    )
+    budget = build_budget_proposal(
+        packet,
+        confirmation,
+        profile,
+        rate_resolution=rate_resolution,
+    )
+    projection = build_carrier_compliant_projection(
+        budget,
+        guideline=load_carrier_guideline(repo_root / "config/synthetic-carrier-guideline.yaml"),
+        guideline_ref="config/synthetic-carrier-guideline.yaml",
+        carrier_id="synthetic-carrier-b",
+        rate_resolution=rate_resolution,
+    )
+
+    assert projection is not None
+    projected_line = next(
+        line for line in projection.lines if line.external_code_candidate == "L340"
+    )
+    assert projected_line.staffing_role == "associate"
+    assert projected_line.proposed_rate == 225.0
+    assert projected_line.compliant_staffing_role == "senior_associate"
+    assert projected_line.staffing_rule_rate == 295.0
+    assert projected_line.compliant_line_total > projected_line.proposed_line_total
+    assert projected_line.staffing_rule_delta == 0
+    assert projected_line.staffing_rule_delta_signed < 0
+    assert projected_line.line_delta_signed < 0
+    assert projected_line.compliant_increase_amount > 0
+    assert projected_line.requires_human_review is True
+    assert "compliant_projection_increases_line_total" in projected_line.review_issue_codes
+    assert projection.compliant_increase_amount >= projected_line.compliant_increase_amount
+    assert projection.review_required_line_count >= 1
+    assert "compliant_projection_increases_line_total" in projection.review_issue_codes
 
 
 def test_carrier_guideline_projection_renders_in_review_forms(tmp_path, repo_root):
