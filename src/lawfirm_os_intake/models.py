@@ -8524,9 +8524,11 @@ class RateBenchmarkCell(StrictModel):
     ]
     source_url: str
     retrieved_at: str
+    observation_period_end: str | None = None
     page_sha256: str
     quote_span: str
     license_note: str
+    proxy_bias_note: str = ""
     grade: Literal["A", "B", "C", "proxy_only", "ungraded"]
     human_grading_status: Literal["pending", "reviewed", "rejected"]
     candidate_only: Literal[True] = True
@@ -8538,6 +8540,9 @@ class BenchmarkSnapshotManifest(StrictModel):
     benchmark_snapshot_id: str
     created_at: str
     source_owner: Literal["legal_knowledge_runtime", "local_candidate_fixture"]
+    method_version: str = "benchmark_snapshot_manifest.v0_1"
+    rubric_version: str = "benchmark_effective_grade.v0_1"
+    contains_real_negotiated_rates: Literal[False] = False
     cells: list[RateBenchmarkCell]
     pinned_hash: str
     candidate_only: Literal[True] = True
@@ -8548,6 +8553,167 @@ class BenchmarkSnapshotManifest(StrictModel):
         cell_ids = [cell.benchmark_cell_id for cell in self.cells]
         if len(cell_ids) != len(set(cell_ids)):
             raise ValueError("benchmark snapshot cell ids must be unique")
+        return self
+
+
+BenchmarkEffectiveGrade = Literal["A", "B", "C", "proxy_only", "ungraded", "rejected"]
+
+
+class BenchmarkReplayCellCheck(StrictModel):
+    benchmark_cell_id: str
+    status: Literal["passed", "failed", "ignored"]
+    original_grade: Literal["A", "B", "C", "proxy_only", "ungraded"]
+    effective_grade: BenchmarkEffectiveGrade
+    human_grading_status: Literal["pending", "reviewed", "rejected"]
+    effective_grade_method: Literal["benchmark_effective_grade.v0_1"] = (
+        "benchmark_effective_grade.v0_1"
+    )
+    staleness_months: int = Field(ge=0)
+    band_flag_authorized: bool
+    issue_codes: list[str] = Field(default_factory=list)
+    message: str
+    candidate_only: Literal[True] = True
+    not_authorized_as_carrier_rate: Literal[True] = True
+
+    @model_validator(mode="after")
+    def benchmark_cell_check_is_coherent(self) -> "BenchmarkReplayCellCheck":
+        if self.status == "passed" and self.issue_codes:
+            raise ValueError("passed benchmark cell check cannot include issue codes")
+        if self.status in {"failed", "ignored"} and not self.issue_codes:
+            raise ValueError("failed/ignored benchmark cell check requires issue codes")
+        if self.band_flag_authorized and self.effective_grade not in {"A", "B"}:
+            raise ValueError("benchmark band flags require effective grade A or B")
+        if self.band_flag_authorized and self.human_grading_status != "reviewed":
+            raise ValueError("benchmark band flags require reviewed human grading")
+        return self
+
+
+class BenchmarkReplayBudgetLineCheck(StrictModel):
+    line_ref: str
+    status: Literal["passed", "failed"]
+    pricing_status: Literal["priced", "hours_only", "insufficient_information", "unknown"]
+    rate_source: str | None = None
+    rate_trace_status: Literal[
+        "authorized_rate_source",
+        "hours_only_no_rate",
+        "benchmark_context_ref_valid",
+        "benchmark_context_missing",
+        "benchmark_launder_attempt",
+        "unknown_or_invalid_rate_source",
+    ]
+    benchmark_refs: list[str] = Field(default_factory=list)
+    missing_benchmark_refs: list[str] = Field(default_factory=list)
+    issue_codes: list[str] = Field(default_factory=list)
+    message: str
+    candidate_only: Literal[True] = True
+    budget_submission_authorized: Literal[False] = False
+    not_authorized_as_carrier_rate: Literal[True] = True
+
+    @model_validator(mode="after")
+    def benchmark_line_check_is_coherent(self) -> "BenchmarkReplayBudgetLineCheck":
+        if self.status == "passed" and (self.issue_codes or self.missing_benchmark_refs):
+            raise ValueError("passed benchmark line check cannot include issues")
+        if self.status == "failed" and not (self.issue_codes or self.missing_benchmark_refs):
+            raise ValueError("failed benchmark line check requires issue detail")
+        if (
+            self.rate_trace_status == "benchmark_context_missing"
+            and not self.missing_benchmark_refs
+        ):
+            raise ValueError("missing benchmark context requires missing refs")
+        return self
+
+
+class BenchmarkReplayCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    evidence_refs: list[str] = Field(default_factory=list)
+    blocking_refs: list[str] = Field(default_factory=list)
+
+
+class BenchmarkReplayReport(StrictModel):
+    schema_version: str = "0.1"
+    benchmark_replay_report_id: str
+    status: Literal["benchmark_replay_ready_for_review", "blocked_by_benchmark_replay"]
+    budget_proposal_ref: str
+    budget_proposal_id: str | None = None
+    benchmark_snapshot_ref: str
+    benchmark_snapshot_id: str | None = None
+    benchmark_snapshot_hash: str | None = None
+    expected_benchmark_snapshot_hash: str | None = None
+    as_of_date: str
+    grade_methodology_version: Literal["benchmark_effective_grade.v0_1"] = (
+        "benchmark_effective_grade.v0_1"
+    )
+    snapshot_cell_count: int = Field(ge=0)
+    cell_check_count: int = Field(ge=0)
+    failed_cell_check_count: int = Field(ge=0)
+    ignored_cell_check_count: int = Field(ge=0)
+    budget_line_check_count: int = Field(ge=0)
+    failed_budget_line_check_count: int = Field(ge=0)
+    missing_benchmark_ref_count: int = Field(ge=0)
+    rate_laundering_attempt_count: int = Field(ge=0)
+    benchmark_cells_used_as_rate_authority: Literal[False] = False
+    cells: list[BenchmarkReplayCellCheck]
+    budget_lines: list[BenchmarkReplayBudgetLineCheck]
+    checks: list[BenchmarkReplayCheck]
+    candidate_exception_lake_labels: list[str]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    not_authorized_for_matter_opening: Literal[True] = True
+    not_authorized_for_calibration: Literal[True] = True
+    budget_submission_authorized: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def benchmark_replay_report_counts_match(self) -> "BenchmarkReplayReport":
+        failed_cells = [cell for cell in self.cells if cell.status == "failed"]
+        ignored_cells = [cell for cell in self.cells if cell.status == "ignored"]
+        failed_lines = [line for line in self.budget_lines if line.status == "failed"]
+        failed_checks = [check for check in self.checks if check.status == "failed"]
+        if self.cell_check_count != len(self.cells):
+            raise ValueError("benchmark replay cell check count mismatch")
+        if self.failed_cell_check_count != len(failed_cells):
+            raise ValueError("benchmark replay failed cell count mismatch")
+        if self.ignored_cell_check_count != len(ignored_cells):
+            raise ValueError("benchmark replay ignored cell count mismatch")
+        if self.budget_line_check_count != len(self.budget_lines):
+            raise ValueError("benchmark replay budget line count mismatch")
+        if self.failed_budget_line_check_count != len(failed_lines):
+            raise ValueError("benchmark replay failed line count mismatch")
+        if self.missing_benchmark_ref_count != sum(
+            len(line.missing_benchmark_refs) for line in self.budget_lines
+        ):
+            raise ValueError("benchmark replay missing ref count mismatch")
+        if self.rate_laundering_attempt_count != sum(
+            1 for line in self.budget_lines if line.rate_trace_status == "benchmark_launder_attempt"
+        ):
+            raise ValueError("benchmark replay laundering count mismatch")
+        blocked = bool(failed_cells or failed_lines or failed_checks)
+        if self.status == "benchmark_replay_ready_for_review" and blocked:
+            raise ValueError("ready benchmark replay report cannot include failed checks")
+        if self.status == "blocked_by_benchmark_replay" and not blocked:
+            raise ValueError("blocked benchmark replay report requires failed checks")
+        required = {
+            "human_budget_benchmark_context_review",
+            "no_benchmark_cell_as_rate_authority",
+            "legal_knowledge_runtime_owns_public_retrieval",
+            "no_lake_or_sqlite_write_from_benchmark_replay",
+        }
+        if not required.issubset(set(self.required_next_gates)):
+            raise ValueError("benchmark replay report missing required next gates")
         return self
 
 

@@ -61,7 +61,7 @@ def test_skills_registry_specialist_review_ready(tmp_path, repo_root):
     assert persisted.specialist_review_report_id == report.specialist_review_report_id
     assert persisted.status == "skills_registry_specialist_review_ready"
     assert persisted.target_repo == "LawFirm-os-skills-registry"
-    assert persisted.expected_harness_count == 3
+    assert persisted.expected_harness_count == 4
     assert persisted.missing_harness_refs == []
     assert persisted.expected_worker_count == 7
     assert persisted.candidate_count == 7
@@ -99,7 +99,7 @@ def test_skills_registry_specialist_review_ready(tmp_path, repo_root):
         / "source-reader.skills_registry_specialist_candidate.md"
     ).read_text(encoding="utf-8")
     assert "Frontier adjudicator remains bounded-packet-only" in notes
-    assert "**Expected harnesses:** 3" in notes
+    assert "**Expected harnesses:** 4" in notes
     assert "Skill promoted: False" in notes
     assert "This report is local candidate metadata for Skills Registry review only." in notes
     assert "This packet is candidate-only Skills Registry owner-review evidence." in (
@@ -213,7 +213,7 @@ def test_skills_registry_specialist_review_cli(tmp_path, repo_root, capsys):
     assert exit_code == 0
     assert '"status": "skills_registry_specialist_review_ready"' in captured.out
     assert '"candidate_count": 7' in captured.out
-    assert '"expected_harness_count": 3' in captured.out
+    assert '"expected_harness_count": 4' in captured.out
     assert '"candidate_packet_count": 14' in captured.out
     assert '"skill_promoted": false' in captured.out
     assert '"github_issue_created": false' in captured.out
