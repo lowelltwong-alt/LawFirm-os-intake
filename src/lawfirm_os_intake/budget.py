@@ -455,11 +455,14 @@ def _intensity_adjustment(
         phase_ids = [str(item) for item in effect.get("phase_ids", [])]
         if phase_ids and phase_id not in phase_ids:
             continue
-        driver_multiplier = float(effect.get("multiplier", 1.0))
+        raw_multiplier = float(effect.get("raw_multiplier", effect.get("multiplier", 1.0)))
+        driver_multiplier = _effective_intensity_multiplier(effect, phase_id)
         multiplier *= driver_multiplier
         note = (
             f"Driver {driver.driver_id}={driver.value} ({driver.provenance}) "
-            f"applies {driver_multiplier}x intensity to {phase_id}; "
+            f"applies {driver_multiplier}x effective intensity to {phase_id} "
+            f"(raw {raw_multiplier}x; normalization "
+            f"{case_drivers.intensity_normalization_mode}); "
             f"{effect.get('note', 'synthetic candidate policy effect')}"
         )
         if driver.provenance == "profile_default":
@@ -511,6 +514,15 @@ def _intensity_adjustment(
         )
         multiplier = cap
     return round(multiplier, 4), notes, effects
+
+
+def _effective_intensity_multiplier(effect: dict[str, Any], phase_id: str) -> float:
+    by_phase = effect.get("effective_multipliers_by_phase", {})
+    if isinstance(by_phase, dict) and phase_id in by_phase:
+        return float(by_phase[phase_id])
+    if "effective_multiplier" in effect:
+        return float(effect["effective_multiplier"])
+    return float(effect.get("multiplier", 1.0))
 
 
 def _driver_boundary_effects(

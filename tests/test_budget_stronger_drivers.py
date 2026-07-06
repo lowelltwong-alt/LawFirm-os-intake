@@ -1,9 +1,12 @@
+from copy import deepcopy
+
 from lawfirm_os_intake.budget import build_budget_proposal
 from lawfirm_os_intake.confirmation import bind_confirmation_to_packet_evidence
 from lawfirm_os_intake.context import load_profile
 from lawfirm_os_intake.drivers import (
     CaseDriverProfile,
     DriverValue,
+    build_effective_intensity_multiplier_policy,
     load_driver_policy,
     resolve_case_drivers,
 )
@@ -96,6 +99,8 @@ def test_profile_default_intensity_effects_are_visible_not_observed(tmp_path, re
         assert effect.provenance == "profile_default"
         assert effect.applied is True
         assert effect.default_used_as_observed_fact is False
+        assert "effective intensity" in effect.note
+        assert "normalization raw" in effect.note
         assert "not observed source evidence" in effect.note
 
     coverage_effect = effects_by_driver["coverage_posture"]
@@ -149,3 +154,104 @@ def test_guideline_flags_do_not_rewrite_budget_rates(tmp_path, repo_root):
     assert partner_cap.threshold_value == 425.0
     assert partner_cap.rewrites_budget is False
     assert any(partner_cap.note in unknown for unknown in budget.unknowns)
+
+
+def test_raw_intensity_normalization_preserves_current_multipliers(tmp_path, repo_root):
+    packet, _run_dir, confirmation, profile, policy = _packet_confirmation_profile_policy(
+        tmp_path,
+        repo_root,
+    )
+    resolved = resolve_case_drivers(packet, confirmation, profile, policy)
+
+    assert resolved.intensity_normalization_mode == "raw"
+    assert resolved.intensity_baseline_by_driver == {
+        "liability_dispute": "disputed",
+        "severity_tier": "significant",
+        "venue_difficulty": "neutral",
+    }
+    severity = resolved.effective_intensity_multiplier_policy["effects"]["severity_tier"]
+    liability = resolved.effective_intensity_multiplier_policy["effects"]["liability_dispute"]
+    assert severity["significant"]["effective_multiplier"] == 1.08
+    assert liability["disputed"]["effective_multiplier"] == 1.05
+
+
+def test_baseline_relative_intensity_default_tiers_are_neutral(tmp_path, repo_root):
+    packet, _run_dir, confirmation, profile, policy = _packet_confirmation_profile_policy(
+        tmp_path,
+        repo_root,
+    )
+    policy = deepcopy(policy)
+    policy["intensity_multiplier_policy"]["normalization"] = "baseline_relative"
+    resolved = resolve_case_drivers(packet, confirmation, profile, policy)
+    effects = resolved.effective_intensity_multiplier_policy["effects"]
+
+    assert resolved.intensity_normalization_mode == "baseline_relative"
+    assert effects["severity_tier"]["significant"]["effective_multipliers_by_phase"] == {
+        "L300": 1.0,
+        "L400": 1.0,
+    }
+    assert effects["liability_dispute"]["disputed"]["effective_multipliers_by_phase"] == {
+        "L200": 1.0,
+        "L300": 1.0,
+    }
+    assert effects["venue_difficulty"]["neutral"]["effective_multipliers_by_phase"] == {
+        "L200": 1.0,
+        "L300": 1.0,
+        "L400": 1.0,
+    }
+
+
+def test_baseline_relative_intensity_uses_phase_specific_raw_ratios(repo_root):
+    profile = load_profile(repo_root / "context/synthetic-profiles/insurance-defense.yaml")
+    policy = load_driver_policy(repo_root / "config/budget-driver-policy.yaml")
+    policy["intensity_multiplier_policy"]["normalization"] = "baseline_relative"
+    effective_policy, baseline_by_driver = build_effective_intensity_multiplier_policy(
+        policy["intensity_multiplier_policy"],
+        matter_family="medical_malpractice_defense",
+        profile=profile,
+        family_defaults=policy["matter_family_defaults"]["medical_malpractice_defense"],
+    )
+    effects = effective_policy["effects"]
+
+    assert baseline_by_driver["severity_tier"] == "significant"
+    assert effects["severity_tier"]["catastrophic_or_death"]["effective_multipliers_by_phase"] == {
+        "L300": 1.1296,
+        "L400": 1.1296,
+    }
+    # Baseline disputed liability does not apply to L400, so hotly contested keeps raw 1.18 there.
+    assert effects["liability_dispute"]["hotly_contested"]["effective_multipliers_by_phase"] == {
+        "L200": 1.1238,
+        "L300": 1.1238,
+        "L400": 1.18,
+    }
+
+
+def test_template_declared_baseline_overrides_family_default(repo_root):
+    profile = deepcopy(
+        load_profile(repo_root / "context/synthetic-profiles/insurance-defense.yaml")
+    )
+    profile["budget_templates"]["medical_malpractice_defense"]["baseline_intensity"] = {
+        "severity_tier": "soft_tissue",
+        "liability_dispute": "disputed",
+        "venue_difficulty": "neutral",
+    }
+    policy = load_driver_policy(repo_root / "config/budget-driver-policy.yaml")
+    policy["intensity_multiplier_policy"]["normalization"] = "baseline_relative"
+
+    effective_policy, baseline_by_driver = build_effective_intensity_multiplier_policy(
+        policy["intensity_multiplier_policy"],
+        matter_family="medical_malpractice_defense",
+        profile=profile,
+        family_defaults=policy["matter_family_defaults"]["medical_malpractice_defense"],
+    )
+    severity = effective_policy["effects"]["severity_tier"]
+
+    assert baseline_by_driver["severity_tier"] == "soft_tissue"
+    assert severity["soft_tissue"]["effective_multipliers_by_phase"] == {
+        "L300": 1.0,
+        "L400": 1.0,
+    }
+    assert severity["significant"]["effective_multipliers_by_phase"] == {
+        "L300": 1.1368,
+        "L400": 1.1368,
+    }
