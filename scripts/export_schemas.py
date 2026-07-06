@@ -312,6 +312,10 @@ from lawfirm_os_intake.models import (  # noqa: E402
     MatterLinkDecisionRecord,
     MatterLinkingClusterCheck,
     MatterLinkingClusterReport,
+    MatterLinkingClusterReviewDecision,
+    MatterLinkingClusterReviewOutcomeCheck,
+    MatterLinkingClusterReviewOutcomeRecord,
+    MatterLinkingClusterReviewOutcomeReport,
     MatterLinkingQAGateCase,
     MatterLinkingQAGateCheck,
     MatterLinkingQAGateReport,
@@ -717,6 +721,16 @@ MODELS = {
     "matter-cluster-proposal.schema.json": MatterClusterProposal,
     "matter-linking-cluster-check.schema.json": MatterLinkingClusterCheck,
     "matter-linking-cluster-report.schema.json": MatterLinkingClusterReport,
+    "matter-linking-cluster-review-decision.schema.json": (MatterLinkingClusterReviewDecision),
+    "matter-linking-cluster-review-outcome-check.schema.json": (
+        MatterLinkingClusterReviewOutcomeCheck
+    ),
+    "matter-linking-cluster-review-outcome-record.schema.json": (
+        MatterLinkingClusterReviewOutcomeRecord
+    ),
+    "matter-linking-cluster-review-outcome-report.schema.json": (
+        MatterLinkingClusterReviewOutcomeReport
+    ),
     "entity-normalization-result.schema.json": EntityNormalizationResult,
     "entity-comparison-result.schema.json": EntityComparisonResult,
     "matter-linking-qa-gate-case.schema.json": MatterLinkingQAGateCase,

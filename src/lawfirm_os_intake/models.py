@@ -459,6 +459,231 @@ class MatterLinkingClusterReport(StrictModel):
         return self
 
 
+MatterLinkingClusterReviewOutcome = Literal[
+    "confirm_budget_scope_cluster",
+    "confirm_split",
+    "unknown",
+    "request_more_info",
+    "declined_or_referred",
+]
+
+
+class MatterLinkingClusterReviewDecision(StrictModel):
+    schema_version: str = "0.1"
+    decision_id: str
+    outcome: MatterLinkingClusterReviewOutcome
+    selected_cluster_ids: list[str]
+    decision_reason: str
+    evidence_refs: list[str]
+    required_followups: list[str] = Field(default_factory=list)
+    followup_owner: str | None = None
+    followup_due_at: str | None = None
+    red_team_notes: list[str]
+    candidate_exception_lake_labels: list[str]
+
+    @model_validator(mode="after")
+    def matter_linking_cluster_review_decision_is_complete(
+        self,
+    ) -> "MatterLinkingClusterReviewDecision":
+        if not self.decision_id.strip():
+            raise ValueError("matter-linking cluster review decision requires decision_id")
+        if not self.selected_cluster_ids:
+            raise ValueError("matter-linking cluster review decision requires selected clusters")
+        if len(set(self.selected_cluster_ids)) != len(self.selected_cluster_ids):
+            raise ValueError("matter-linking cluster review selected cluster IDs must be unique")
+        if not self.decision_reason.strip():
+            raise ValueError("matter-linking cluster review decision requires reason")
+        if not self.evidence_refs or any(not ref.strip() for ref in self.evidence_refs):
+            raise ValueError("matter-linking cluster review decision requires evidence refs")
+        if not self.red_team_notes or any(not note.strip() for note in self.red_team_notes):
+            raise ValueError("matter-linking cluster review decision requires red-team notes")
+        if not self.candidate_exception_lake_labels or any(
+            not label.strip() for label in self.candidate_exception_lake_labels
+        ):
+            raise ValueError("matter-linking cluster review decision requires candidate labels")
+        if self.outcome == "confirm_budget_scope_cluster" and len(self.selected_cluster_ids) != 1:
+            raise ValueError("budget-scope confirmation requires exactly one cluster")
+        if self.outcome == "confirm_split" and len(self.selected_cluster_ids) < 2:
+            raise ValueError("split confirmation requires at least two clusters")
+        if self.outcome in {"unknown", "request_more_info", "declined_or_referred"}:
+            if not (self.followup_owner and self.followup_owner.strip()):
+                raise ValueError(f"{self.outcome} decisions require followup_owner")
+            if not (self.followup_due_at and self.followup_due_at.strip()):
+                raise ValueError(f"{self.outcome} decisions require followup_due_at")
+            if not self.required_followups:
+                raise ValueError(f"{self.outcome} decisions require required_followups")
+        return self
+
+
+class MatterLinkingClusterReviewOutcomeRecord(StrictModel):
+    schema_version: str = "0.1"
+    matter_linking_cluster_review_outcome_record_id: str
+    matter_linking_cluster_report_id: str
+    source_matter_linking_cluster_report_ref: str | None = None
+    reviewer_id: str
+    reviewer_role: str | None = None
+    reviewed_at: str
+    overall_outcome: MatterLinkingClusterReviewOutcome
+    decision_reason: str
+    decisions: list[MatterLinkingClusterReviewDecision]
+    supersedes_matter_linking_cluster_review_outcome_record_id: str | None = None
+    append_only: Literal[True] = True
+    mutation_policy: Literal["append_only_supersession"] = "append_only_supersession"
+    candidate_only: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    local_json_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    not_authorized_for_matter_opening: Literal[True] = True
+    not_authorized_for_conflict_conclusion: Literal[True] = True
+    no_connector_implemented: Literal[True] = True
+    no_lake_admission_performed: Literal[True] = True
+    no_sibling_repo_writes: Literal[True] = True
+    no_canonical_mutation: Literal[True] = True
+    budget_amount_output_authorized: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    conflict_conclusion_emitted: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def matter_linking_cluster_review_outcome_record_is_complete(
+        self,
+    ) -> "MatterLinkingClusterReviewOutcomeRecord":
+        if not self.matter_linking_cluster_review_outcome_record_id.strip():
+            raise ValueError("matter-linking cluster review outcome record requires id")
+        if not self.matter_linking_cluster_report_id.strip():
+            raise ValueError("matter-linking cluster review outcome record requires report id")
+        if not self.reviewer_id.strip():
+            raise ValueError("matter-linking cluster review outcome record requires reviewer")
+        if not self.reviewed_at.strip():
+            raise ValueError("matter-linking cluster review outcome record requires timestamp")
+        if not self.decision_reason.strip():
+            raise ValueError("matter-linking cluster review outcome record requires reason")
+        if not self.decisions:
+            raise ValueError("matter-linking cluster review outcome record requires decisions")
+        decision_ids = [decision.decision_id for decision in self.decisions]
+        if len(set(decision_ids)) != len(decision_ids):
+            raise ValueError("matter-linking cluster review decision IDs must be unique")
+        if self.overall_outcome not in {decision.outcome for decision in self.decisions}:
+            raise ValueError("matter-linking cluster review overall outcome must match a decision")
+        return self
+
+
+class MatterLinkingClusterReviewOutcomeCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    artifact_refs: list[str] = Field(default_factory=list)
+    decision_ids: list[str] = Field(default_factory=list)
+    cluster_ids: list[str] = Field(default_factory=list)
+    blocking_refs: list[str] = Field(default_factory=list)
+
+
+class MatterLinkingClusterReviewOutcomeReport(StrictModel):
+    schema_version: str = "0.1"
+    matter_linking_cluster_review_outcome_report_id: str
+    status: Literal[
+        "matter_linking_cluster_review_confirmed_for_budget_scope",
+        "matter_linking_cluster_review_recorded_pending_followup",
+        "blocked_by_matter_linking_cluster_review",
+    ]
+    source_matter_linking_cluster_report_ref: str
+    matter_linking_cluster_report_id: str
+    source_matter_linking_cluster_status: str
+    matter_linking_cluster_review_outcome_record_id: str
+    reviewer_id: str
+    reviewed_at: str
+    overall_outcome: MatterLinkingClusterReviewOutcome
+    decision_reason: str
+    source_cluster_count: int = Field(ge=0)
+    decision_count: int = Field(ge=0)
+    budget_scope_cluster_count: int = Field(ge=0)
+    reviewed_cluster_count: int = Field(ge=0)
+    unreviewed_cluster_count: int = Field(ge=0)
+    unknown_cluster_count: int = Field(ge=0)
+    budget_blocking_cluster_count: int = Field(ge=0)
+    budget_scope_cluster_ids: list[str]
+    reviewed_cluster_ids: list[str]
+    unreviewed_cluster_ids: list[str]
+    unknown_cluster_ids: list[str]
+    budget_blocking_cluster_ids: list[str]
+    required_followups: list[str]
+    candidate_lake_event_labels: list[str]
+    append_only_history_ref: str
+    checks: list[MatterLinkingClusterReviewOutcomeCheck]
+    required_next_gates: list[str]
+    append_only: Literal[True] = True
+    mutation_policy: Literal["append_only_supersession"] = "append_only_supersession"
+    candidate_only: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    local_json_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    matter_identity_asserted: Literal[False] = False
+    matter_link_finalized: Literal[False] = False
+    budget_amount_output_authorized: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    conflict_conclusion_emitted: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def matter_linking_cluster_review_outcome_report_counts_match(
+        self,
+    ) -> "MatterLinkingClusterReviewOutcomeReport":
+        failed = [check for check in self.checks if check.status == "failed"]
+        if self.decision_count < 1:
+            raise ValueError("matter-linking cluster review report requires decisions")
+        if self.budget_scope_cluster_count != len(self.budget_scope_cluster_ids):
+            raise ValueError("matter-linking cluster review budget-scope count mismatch")
+        if self.reviewed_cluster_count != len(self.reviewed_cluster_ids):
+            raise ValueError("matter-linking cluster review reviewed count mismatch")
+        if self.unreviewed_cluster_count != len(self.unreviewed_cluster_ids):
+            raise ValueError("matter-linking cluster review unreviewed count mismatch")
+        if self.unknown_cluster_count != len(self.unknown_cluster_ids):
+            raise ValueError("matter-linking cluster review unknown count mismatch")
+        if self.budget_blocking_cluster_count != len(self.budget_blocking_cluster_ids):
+            raise ValueError("matter-linking cluster review blocking count mismatch")
+        if self.status == "matter_linking_cluster_review_confirmed_for_budget_scope":
+            if (
+                failed
+                or self.budget_scope_cluster_count != 1
+                or self.budget_blocking_cluster_count
+                or self.unreviewed_cluster_count
+                or self.unknown_cluster_count
+            ):
+                raise ValueError("confirmed budget-scope cluster review cannot have blockers")
+        if self.status == "matter_linking_cluster_review_recorded_pending_followup" and failed:
+            raise ValueError("pending matter-linking cluster review cannot include failed checks")
+        if self.status == "blocked_by_matter_linking_cluster_review" and not failed:
+            raise ValueError("blocked matter-linking cluster review requires failed checks")
+        required_gates = {
+            "append_only_matter_linking_cluster_review_outcome",
+            "exception_lake_owner_review_before_admission",
+            "no_budget_amount_until_cluster_and_roles_confirmed",
+            "no_matter_opening_without_official_authority",
+            "no_lake_or_sqlite_write_from_intake",
+            "no_silent_learning_from_matter_linking_cluster_review",
+        }
+        if not required_gates.issubset(set(self.required_next_gates)):
+            raise ValueError("matter-linking cluster review is missing required gates")
+        if not self.candidate_lake_event_labels:
+            raise ValueError("matter-linking cluster review requires candidate labels")
+        return self
+
+
 class IngestionResult(StrictModel):
     schema_version: str = "0.1"
     ingestion_result_id: str
@@ -10610,6 +10835,18 @@ class BudgetPreconditionReport(StrictModel):
     labor_employment_driver_scenario_fork_impact_count: int = Field(default=0, ge=0)
     labor_employment_driver_rate_guideline_review_impact_count: int = Field(default=0, ge=0)
     labor_employment_driver_max_range_widening_factor: float = Field(default=1.0, ge=1.0)
+    matter_linking_cluster_report_ref: str | None = None
+    matter_linking_cluster_review_outcome_report_ref: str | None = None
+    matter_linking_cluster_review_status: (
+        Literal[
+            "matter_linking_cluster_review_confirmed_for_budget_scope",
+            "matter_linking_cluster_review_recorded_pending_followup",
+            "blocked_by_matter_linking_cluster_review",
+        ]
+        | None
+    ) = None
+    matter_linking_budget_scope_cluster_ids: list[str] = Field(default_factory=list)
+    matter_linking_budget_blocking_cluster_count: int = Field(default=0, ge=0)
     prohibited_outputs: list[str]
     external_writes_performed: Literal[False] = False
     generated_at: str
@@ -10658,6 +10895,30 @@ class BudgetPreconditionReport(StrictModel):
                 raise ValueError("L&E driver blocked state requires a driver impact report ref")
             if self.labor_employment_driver_block_amount_budget_impact_count == 0:
                 raise ValueError("L&E driver blocked state requires at least one block impact")
+        if self.matter_linking_cluster_review_status and (
+            not self.matter_linking_cluster_report_ref
+            or not self.matter_linking_cluster_review_outcome_report_ref
+        ):
+            raise ValueError("matter-linking review status requires cluster and review refs")
+        if self.matter_linking_budget_blocking_cluster_count > 0:
+            if self.status != "failed":
+                raise ValueError(
+                    "matter-linking budget blockers must fail the budget precondition gate"
+                )
+            if self.blocked_state != "matter_linking_confirmation_blocked":
+                raise ValueError("matter-linking blockers require matter-linking blocked state")
+        if self.blocked_state == "matter_linking_confirmation_blocked":
+            if not self.matter_linking_cluster_report_ref:
+                raise ValueError("matter-linking blocked state requires cluster report ref")
+            if self.matter_linking_cluster_review_status != (
+                "matter_linking_cluster_review_confirmed_for_budget_scope"
+            ):
+                return self
+            if (
+                self.matter_linking_budget_blocking_cluster_count == 0
+                and len(self.matter_linking_budget_scope_cluster_ids) == 1
+            ):
+                raise ValueError("confirmed matter-linking budget scope cannot be blocked")
         return self
 
 
