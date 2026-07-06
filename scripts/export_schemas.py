@@ -427,12 +427,8 @@ MODELS = {
     "pr-merge-order-snapshot.schema.json": PRMergeOrderSnapshot,
     "pr-merge-order-snapshot-item.schema.json": PRMergeOrderSnapshotItem,
     "skills-registry-specialist-candidate.schema.json": SkillsRegistrySpecialistCandidate,
-    "skills-registry-specialist-review-check.schema.json": (
-        SkillsRegistrySpecialistReviewCheck
-    ),
-    "skills-registry-specialist-review-report.schema.json": (
-        SkillsRegistrySpecialistReviewReport
-    ),
+    "skills-registry-specialist-review-check.schema.json": (SkillsRegistrySpecialistReviewCheck),
+    "skills-registry-specialist-review-report.schema.json": (SkillsRegistrySpecialistReviewReport),
     "pr-readiness-decision-check.schema.json": PRReadinessDecisionCheck,
     "pr-readiness-decision-record.schema.json": PRReadinessDecisionRecord,
     "pr-readiness-decision-report.schema.json": PRReadinessDecisionReport,
