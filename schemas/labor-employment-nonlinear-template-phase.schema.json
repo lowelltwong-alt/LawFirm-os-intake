@@ -1,0 +1,250 @@
+{
+  "$defs": {
+    "LaborEmploymentNonlinearTemplateTask": {
+      "additionalProperties": false,
+      "properties": {
+        "task_id": {
+          "title": "Task Id",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Tags",
+          "type": "array"
+        },
+        "driver_dimensions": {
+          "items": {
+            "enum": [
+              "party_topology",
+              "representation_posture",
+              "claim_family",
+              "administrative_exhaustion",
+              "class_collective_scope",
+              "forum_arbitration",
+              "employment_timeline",
+              "damages_exposure",
+              "wage_hour_volume",
+              "esi_discovery",
+              "deposition_plan",
+              "expert_vendor_needs",
+              "policy_contract_documents",
+              "carrier_guideline_rate_context"
+            ],
+            "type": "string"
+          },
+          "title": "Driver Dimensions",
+          "type": "array"
+        },
+        "period_drivers": {
+          "items": {
+            "enum": [
+              "class_period_months",
+              "paga_period_months"
+            ],
+            "type": "string"
+          },
+          "title": "Period Drivers",
+          "type": "array"
+        },
+        "data_scope_task": {
+          "default": false,
+          "title": "Data Scope Task",
+          "type": "boolean"
+        },
+        "opt_in_sensitive": {
+          "default": false,
+          "title": "Opt In Sensitive",
+          "type": "boolean"
+        },
+        "exposure_modeling_allowed": {
+          "default": false,
+          "title": "Exposure Modeling Allowed",
+          "type": "boolean"
+        },
+        "money_amount_allowed": {
+          "default": false,
+          "title": "Money Amount Allowed",
+          "type": "boolean"
+        },
+        "requires_human_review": {
+          "const": true,
+          "default": true,
+          "title": "Requires Human Review",
+          "type": "boolean"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        },
+        "budget_amount_output_authorized": {
+          "const": false,
+          "default": false,
+          "title": "Budget Amount Output Authorized",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "task_id",
+        "label"
+      ],
+      "title": "LaborEmploymentNonlinearTemplateTask",
+      "type": "object"
+    },
+    "LaborEmploymentNonlinearTemplateTierBlock": {
+      "additionalProperties": false,
+      "properties": {
+        "tier_id": {
+          "enum": [
+            "t0",
+            "t1",
+            "t2",
+            "t3",
+            "t4"
+          ],
+          "title": "Tier Id",
+          "type": "string"
+        },
+        "tier_label": {
+          "title": "Tier Label",
+          "type": "string"
+        },
+        "action": {
+          "enum": [
+            "use_declared_work_block",
+            "block_pending_staffing_plan"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "blocker_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Blocker Id"
+        },
+        "interpolation_allowed": {
+          "default": false,
+          "title": "Interpolation Allowed",
+          "type": "boolean"
+        },
+        "human_review_required": {
+          "const": true,
+          "default": true,
+          "title": "Human Review Required",
+          "type": "boolean"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        },
+        "budget_amount_output_authorized": {
+          "const": false,
+          "default": false,
+          "title": "Budget Amount Output Authorized",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "tier_id",
+        "tier_label",
+        "action"
+      ],
+      "title": "LaborEmploymentNonlinearTemplateTierBlock",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "phase_id": {
+      "title": "Phase Id",
+      "type": "string"
+    },
+    "label": {
+      "title": "Label",
+      "type": "string"
+    },
+    "phase_order": {
+      "minimum": 1,
+      "title": "Phase Order",
+      "type": "integer"
+    },
+    "tier_blocks": {
+      "items": {
+        "$ref": "#/$defs/LaborEmploymentNonlinearTemplateTierBlock"
+      },
+      "title": "Tier Blocks",
+      "type": "array"
+    },
+    "tasks": {
+      "items": {
+        "$ref": "#/$defs/LaborEmploymentNonlinearTemplateTask"
+      },
+      "title": "Tasks",
+      "type": "array"
+    },
+    "scenario_sensitive": {
+      "default": false,
+      "title": "Scenario Sensitive",
+      "type": "boolean"
+    },
+    "settlement_administration_phase": {
+      "default": false,
+      "title": "Settlement Administration Phase",
+      "type": "boolean"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "budget_amount_output_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Amount Output Authorized",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "phase_id",
+    "label",
+    "phase_order",
+    "tasks"
+  ],
+  "title": "LaborEmploymentNonlinearTemplatePhase",
+  "type": "object"
+}

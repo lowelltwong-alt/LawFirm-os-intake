@@ -277,6 +277,14 @@ from lawfirm_os_intake.models import (  # noqa: E402
     LaborEmploymentBudgetQAGateBucket,
     LaborEmploymentBudgetQAGateCheck,
     LaborEmploymentBudgetQAGateReport,
+    LaborEmploymentNonlinearTemplateAuditCheck,
+    LaborEmploymentNonlinearTemplateAuditReport,
+    LaborEmploymentNonlinearTemplatePhase,
+    LaborEmploymentNonlinearTemplateScenarioGate,
+    LaborEmploymentNonlinearTemplateSpec,
+    LaborEmploymentNonlinearTemplateSpecItem,
+    LaborEmploymentNonlinearTemplateTask,
+    LaborEmploymentNonlinearTemplateTierBlock,
     LaborEmploymentExecutableCoverageCase,
     LaborEmploymentExecutableCoverageCheck,
     LaborEmploymentExecutableCoverageFamily,
@@ -564,6 +572,26 @@ MODELS = {
     "labor-employment-budget-qa-gate-bucket.schema.json": LaborEmploymentBudgetQAGateBucket,
     "labor-employment-budget-qa-gate-check.schema.json": LaborEmploymentBudgetQAGateCheck,
     "labor-employment-budget-qa-gate-report.schema.json": LaborEmploymentBudgetQAGateReport,
+    "labor-employment-nonlinear-template-tier-block.schema.json": (
+        LaborEmploymentNonlinearTemplateTierBlock
+    ),
+    "labor-employment-nonlinear-template-task.schema.json": (LaborEmploymentNonlinearTemplateTask),
+    "labor-employment-nonlinear-template-phase.schema.json": (
+        LaborEmploymentNonlinearTemplatePhase
+    ),
+    "labor-employment-nonlinear-template-scenario-gate.schema.json": (
+        LaborEmploymentNonlinearTemplateScenarioGate
+    ),
+    "labor-employment-nonlinear-template-spec-item.schema.json": (
+        LaborEmploymentNonlinearTemplateSpecItem
+    ),
+    "labor-employment-nonlinear-template-spec.schema.json": (LaborEmploymentNonlinearTemplateSpec),
+    "labor-employment-nonlinear-template-audit-check.schema.json": (
+        LaborEmploymentNonlinearTemplateAuditCheck
+    ),
+    "labor-employment-nonlinear-template-audit-report.schema.json": (
+        LaborEmploymentNonlinearTemplateAuditReport
+    ),
     "labor-employment-budget-learning-fixture-spec.schema.json": (
         LaborEmploymentBudgetLearningFixtureSpec
     ),

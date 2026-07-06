@@ -1,0 +1,288 @@
+{
+  "$defs": {
+    "LaborEmploymentNonlinearTemplateAuditCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "template_id": {
+          "anyOf": [
+            {
+              "enum": [
+                "le-class-collective-defense",
+                "le-paga-shaped-defense"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Template Id"
+        },
+        "evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "blocking_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Blocking Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "LaborEmploymentNonlinearTemplateAuditCheck",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "nonlinear_template_audit_report_id": {
+      "title": "Nonlinear Template Audit Report Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "labor_employment_nonlinear_templates_ready_for_review",
+        "blocked_by_labor_employment_nonlinear_template_contract"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "template_spec_ref": {
+      "title": "Template Spec Ref",
+      "type": "string"
+    },
+    "template_spec_id": {
+      "title": "Template Spec Id",
+      "type": "string"
+    },
+    "template_spec_hash": {
+      "title": "Template Spec Hash",
+      "type": "string"
+    },
+    "template_count": {
+      "minimum": 0,
+      "title": "Template Count",
+      "type": "integer"
+    },
+    "phase_count": {
+      "minimum": 0,
+      "title": "Phase Count",
+      "type": "integer"
+    },
+    "task_count": {
+      "minimum": 0,
+      "title": "Task Count",
+      "type": "integer"
+    },
+    "tier_block_count": {
+      "minimum": 0,
+      "title": "Tier Block Count",
+      "type": "integer"
+    },
+    "period_driver_task_count": {
+      "minimum": 0,
+      "title": "Period Driver Task Count",
+      "type": "integer"
+    },
+    "t4_staffing_block_count": {
+      "minimum": 0,
+      "title": "T4 Staffing Block Count",
+      "type": "integer"
+    },
+    "failed_check_count": {
+      "minimum": 0,
+      "title": "Failed Check Count",
+      "type": "integer"
+    },
+    "candidate_exception_lake_labels": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Candidate Exception Lake Labels",
+      "type": "array"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/LaborEmploymentNonlinearTemplateAuditCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "required_next_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Gates",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "human_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Human Review Required",
+      "type": "boolean"
+    },
+    "not_authorized_for_external_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For External Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_lake_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Lake Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_sqlite_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Sqlite Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_budget_submission": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Budget Submission",
+      "type": "boolean"
+    },
+    "not_authorized_for_matter_opening": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Matter Opening",
+      "type": "boolean"
+    },
+    "not_authorized_for_calibration": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Calibration",
+      "type": "boolean"
+    },
+    "budget_amount_output_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Amount Output Authorized",
+      "type": "boolean"
+    },
+    "budget_submission_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Submission Authorized",
+      "type": "boolean"
+    },
+    "conflict_conclusion_emitted": {
+      "const": false,
+      "default": false,
+      "title": "Conflict Conclusion Emitted",
+      "type": "boolean"
+    },
+    "matter_opening_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Matter Opening Authorized",
+      "type": "boolean"
+    },
+    "training_pipeline_created": {
+      "const": false,
+      "default": false,
+      "title": "Training Pipeline Created",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "nonlinear_template_audit_report_id",
+    "status",
+    "template_spec_ref",
+    "template_spec_id",
+    "template_spec_hash",
+    "template_count",
+    "phase_count",
+    "task_count",
+    "tier_block_count",
+    "period_driver_task_count",
+    "t4_staffing_block_count",
+    "failed_check_count",
+    "candidate_exception_lake_labels",
+    "checks",
+    "required_next_gates",
+    "generated_at"
+  ],
+  "title": "LaborEmploymentNonlinearTemplateAuditReport",
+  "type": "object"
+}

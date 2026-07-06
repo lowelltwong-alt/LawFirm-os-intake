@@ -1,0 +1,76 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "tier_id": {
+      "enum": [
+        "t0",
+        "t1",
+        "t2",
+        "t3",
+        "t4"
+      ],
+      "title": "Tier Id",
+      "type": "string"
+    },
+    "tier_label": {
+      "title": "Tier Label",
+      "type": "string"
+    },
+    "action": {
+      "enum": [
+        "use_declared_work_block",
+        "block_pending_staffing_plan"
+      ],
+      "title": "Action",
+      "type": "string"
+    },
+    "blocker_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Blocker Id"
+    },
+    "interpolation_allowed": {
+      "default": false,
+      "title": "Interpolation Allowed",
+      "type": "boolean"
+    },
+    "human_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Human Review Required",
+      "type": "boolean"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "budget_amount_output_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Amount Output Authorized",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "tier_id",
+    "tier_label",
+    "action"
+  ],
+  "title": "LaborEmploymentNonlinearTemplateTierBlock",
+  "type": "object"
+}

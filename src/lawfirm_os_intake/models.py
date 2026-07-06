@@ -3457,6 +3457,229 @@ class LaborEmploymentExecutableDriverImpactReport(StrictModel):
         return self
 
 
+LaborEmploymentNonlinearTemplateId = Literal[
+    "le-class-collective-defense",
+    "le-paga-shaped-defense",
+]
+
+LaborEmploymentNonlinearTemplatePeriodDriver = Literal[
+    "class_period_months",
+    "paga_period_months",
+]
+
+LaborEmploymentNonlinearTemplateTierId = Literal["t0", "t1", "t2", "t3", "t4"]
+
+
+class LaborEmploymentNonlinearTemplateTierBlock(StrictModel):
+    tier_id: LaborEmploymentNonlinearTemplateTierId
+    tier_label: str
+    action: Literal["use_declared_work_block", "block_pending_staffing_plan"]
+    blocker_id: str | None = None
+    interpolation_allowed: bool = False
+    human_review_required: Literal[True] = True
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    budget_amount_output_authorized: Literal[False] = False
+
+
+class LaborEmploymentNonlinearTemplateTask(StrictModel):
+    task_id: str
+    label: str
+    tags: list[str] = Field(default_factory=list)
+    driver_dimensions: list[LaborEmploymentBudgetDriverDimension] = Field(default_factory=list)
+    period_drivers: list[LaborEmploymentNonlinearTemplatePeriodDriver] = Field(default_factory=list)
+    data_scope_task: bool = False
+    opt_in_sensitive: bool = False
+    exposure_modeling_allowed: bool = False
+    money_amount_allowed: bool = False
+    requires_human_review: Literal[True] = True
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    budget_amount_output_authorized: Literal[False] = False
+
+
+class LaborEmploymentNonlinearTemplatePhase(StrictModel):
+    phase_id: str
+    label: str
+    phase_order: int = Field(ge=1)
+    tier_blocks: list[LaborEmploymentNonlinearTemplateTierBlock] = Field(default_factory=list)
+    tasks: list[LaborEmploymentNonlinearTemplateTask]
+    scenario_sensitive: bool = False
+    settlement_administration_phase: bool = False
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    budget_amount_output_authorized: Literal[False] = False
+
+    @model_validator(mode="after")
+    def le_nonlinear_phase_has_unique_rows(self) -> "LaborEmploymentNonlinearTemplatePhase":
+        if len({task.task_id for task in self.tasks}) != len(self.tasks):
+            raise ValueError("L&E nonlinear template phase task ids must be unique")
+        if len({block.tier_id for block in self.tier_blocks}) != len(self.tier_blocks):
+            raise ValueError("L&E nonlinear template phase tier rows must be unique")
+        return self
+
+
+class LaborEmploymentNonlinearTemplateScenarioGate(StrictModel):
+    gate_id: str
+    driver_id: Literal[
+        "certification_posture",
+        "manageability_posture",
+        "template_selection",
+    ]
+    allowed_scenarios: list[str]
+    default_scenario: str | None = None
+    all_scenarios_emitted: bool
+    human_selection_required: Literal[True] = True
+    blocks_auto_selection: bool = True
+    blocker_ids: list[str] = Field(default_factory=list)
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    budget_amount_output_authorized: Literal[False] = False
+
+    @model_validator(mode="after")
+    def le_nonlinear_scenario_gate_is_coherent(
+        self,
+    ) -> "LaborEmploymentNonlinearTemplateScenarioGate":
+        if not self.allowed_scenarios:
+            raise ValueError("L&E nonlinear scenario gate requires scenarios")
+        if self.default_scenario and self.default_scenario not in self.allowed_scenarios:
+            raise ValueError("L&E nonlinear scenario default must be an allowed scenario")
+        return self
+
+
+class LaborEmploymentNonlinearTemplateSpecItem(StrictModel):
+    template_id: LaborEmploymentNonlinearTemplateId
+    label: str
+    posture: str
+    math_model: Literal["tiered_contract_v0"]
+    required_phase_ids: list[str]
+    tiered_phase_ids: list[str]
+    phases: list[LaborEmploymentNonlinearTemplatePhase]
+    scenario_gates: list[LaborEmploymentNonlinearTemplateScenarioGate]
+    hybrid_template_selection_requires_human: bool = False
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    budget_amount_output_authorized: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    conflict_conclusion_emitted: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+
+    @model_validator(mode="after")
+    def le_nonlinear_template_rows_are_unique(
+        self,
+    ) -> "LaborEmploymentNonlinearTemplateSpecItem":
+        if len({phase.phase_id for phase in self.phases}) != len(self.phases):
+            raise ValueError("L&E nonlinear template phases must be unique")
+        if len({gate.gate_id for gate in self.scenario_gates}) != len(self.scenario_gates):
+            raise ValueError("L&E nonlinear template scenario gates must be unique")
+        return self
+
+
+class LaborEmploymentNonlinearTemplateSpec(StrictModel):
+    schema_version: str = "0.1"
+    template_spec_id: str
+    data_origin: Literal["synthetic"]
+    template_family: Literal["labor_employment_nonlinear_budget_template_contract"]
+    methodology_ref: str
+    required_template_ids: list[LaborEmploymentNonlinearTemplateId]
+    required_blocker_ids: list[str]
+    templates: list[LaborEmploymentNonlinearTemplateSpecItem]
+    no_budget_amounts_declared: Literal[True] = True
+    no_real_rates_declared: Literal[True] = True
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    no_external_writes_allowed: Literal[True] = True
+    no_lake_or_sqlite_writes_allowed: Literal[True] = True
+    no_budget_submission_allowed: Literal[True] = True
+    no_matter_opening_allowed: Literal[True] = True
+    calibration_authorized: Literal[False] = False
+
+    @model_validator(mode="after")
+    def le_nonlinear_template_spec_rows_are_unique(
+        self,
+    ) -> "LaborEmploymentNonlinearTemplateSpec":
+        if len({template.template_id for template in self.templates}) != len(self.templates):
+            raise ValueError("L&E nonlinear template ids must be unique")
+        return self
+
+
+class LaborEmploymentNonlinearTemplateAuditCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    template_id: LaborEmploymentNonlinearTemplateId | None = None
+    evidence_refs: list[str] = Field(default_factory=list)
+    blocking_refs: list[str] = Field(default_factory=list)
+
+
+class LaborEmploymentNonlinearTemplateAuditReport(StrictModel):
+    schema_version: str = "0.1"
+    nonlinear_template_audit_report_id: str
+    status: Literal[
+        "labor_employment_nonlinear_templates_ready_for_review",
+        "blocked_by_labor_employment_nonlinear_template_contract",
+    ]
+    template_spec_ref: str
+    template_spec_id: str
+    template_spec_hash: str
+    template_count: int = Field(ge=0)
+    phase_count: int = Field(ge=0)
+    task_count: int = Field(ge=0)
+    tier_block_count: int = Field(ge=0)
+    period_driver_task_count: int = Field(ge=0)
+    t4_staffing_block_count: int = Field(ge=0)
+    failed_check_count: int = Field(ge=0)
+    candidate_exception_lake_labels: list[str]
+    checks: list[LaborEmploymentNonlinearTemplateAuditCheck]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    human_review_required: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    not_authorized_for_matter_opening: Literal[True] = True
+    not_authorized_for_calibration: Literal[True] = True
+    budget_amount_output_authorized: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    conflict_conclusion_emitted: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    training_pipeline_created: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def le_nonlinear_template_audit_counts_match(
+        self,
+    ) -> "LaborEmploymentNonlinearTemplateAuditReport":
+        failed_checks = [check for check in self.checks if check.status == "failed"]
+        if self.failed_check_count != len(failed_checks):
+            raise ValueError("L&E nonlinear template failed check count mismatch")
+        if self.status == "labor_employment_nonlinear_templates_ready_for_review" and failed_checks:
+            raise ValueError("ready L&E nonlinear template report cannot include failed checks")
+        if (
+            self.status == "blocked_by_labor_employment_nonlinear_template_contract"
+            and not failed_checks
+        ):
+            raise ValueError("blocked L&E nonlinear template report requires failed checks")
+        required = {
+            "human_labor_employment_template_selection_review",
+            "no_amount_budget_from_nonlinear_template_contract",
+            "budget_generator_must_consume_reviewed_template_contract_before_pricing",
+            "no_lake_or_sqlite_write_from_nonlinear_template_audit",
+        }
+        if not required.issubset(set(self.required_next_gates)):
+            raise ValueError("L&E nonlinear template report missing required next gates")
+        return self
+
+
 class LaborEmploymentDriverImpactReviewCaseSpec(StrictModel):
     executable_fixture_id: str
     review_outcome: Literal["approved_for_nonblocking_budget_gate_replay"]

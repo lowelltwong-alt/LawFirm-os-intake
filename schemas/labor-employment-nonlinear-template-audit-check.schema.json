@@ -1,0 +1,58 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "check_id": {
+      "title": "Check Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "passed",
+        "failed"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "message": {
+      "title": "Message",
+      "type": "string"
+    },
+    "template_id": {
+      "anyOf": [
+        {
+          "enum": [
+            "le-class-collective-defense",
+            "le-paga-shaped-defense"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Template Id"
+    },
+    "evidence_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Evidence Refs",
+      "type": "array"
+    },
+    "blocking_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Blocking Refs",
+      "type": "array"
+    }
+  },
+  "required": [
+    "check_id",
+    "status",
+    "message"
+  ],
+  "title": "LaborEmploymentNonlinearTemplateAuditCheck",
+  "type": "object"
+}

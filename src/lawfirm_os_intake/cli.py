@@ -89,6 +89,10 @@ from .labor_employment_executable_driver_binding import (
 from .labor_employment_executable_driver_impact import (
     run_labor_employment_executable_driver_impact_audit,
 )
+from .labor_employment_nonlinear_templates import (
+    DEFAULT_LABOR_EMPLOYMENT_NONLINEAR_TEMPLATE_SPEC,
+    run_labor_employment_nonlinear_template_audit,
+)
 from .labor_employment_driver_impact_review import (
     DEFAULT_LABOR_EMPLOYMENT_DRIVER_IMPACT_REVIEW_SPEC,
     run_labor_employment_driver_impact_review,
@@ -917,6 +921,20 @@ def _parser() -> argparse.ArgumentParser:
         help="Path to labor_employment_executable_driver_binding_report.json.",
     )
     le_executable_driver_impact.add_argument("--out-dir", required=True)
+
+    le_nonlinear_template_audit = sub.add_parser(
+        "audit-labor-employment-nonlinear-budget-template-candidates",
+        help=(
+            "Audit candidate-only nonlinear L&E class/collective/PAGA template "
+            "contracts before any priced budget path can consume them."
+        ),
+    )
+    le_nonlinear_template_audit.add_argument(
+        "--template-spec",
+        default=DEFAULT_LABOR_EMPLOYMENT_NONLINEAR_TEMPLATE_SPEC,
+        help="Path to labor-employment-nonlinear-budget-templates.json.",
+    )
+    le_nonlinear_template_audit.add_argument("--out-dir", required=True)
 
     le_driver_impact_review = sub.add_parser(
         "review-labor-employment-driver-impact-slice",
@@ -3283,6 +3301,40 @@ def main(argv: list[str] | None = None) -> int:
                 0
                 if report.status == "labor_employment_executable_driver_impacts_ready_for_review"
                 else 2
+            )
+
+        if args.command == "audit-labor-employment-nonlinear-budget-template-candidates":
+            report, run_dir = run_labor_employment_nonlinear_template_audit(
+                template_spec_path=args.template_spec,
+                out_dir=args.out_dir,
+            )
+            failed_checks = [check.check_id for check in report.checks if check.status == "failed"]
+            _print(
+                {
+                    "status": report.status,
+                    "nonlinear_template_audit_report_id": (
+                        report.nonlinear_template_audit_report_id
+                    ),
+                    "template_spec_id": report.template_spec_id,
+                    "template_count": report.template_count,
+                    "phase_count": report.phase_count,
+                    "task_count": report.task_count,
+                    "tier_block_count": report.tier_block_count,
+                    "period_driver_task_count": report.period_driver_task_count,
+                    "t4_staffing_block_count": report.t4_staffing_block_count,
+                    "failed_checks": failed_checks,
+                    "candidate_exception_lake_labels": (report.candidate_exception_lake_labels),
+                    "budget_amount_output_authorized": report.budget_amount_output_authorized,
+                    "budget_submission_authorized": report.budget_submission_authorized,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return (
+                0 if report.status == "labor_employment_nonlinear_templates_ready_for_review" else 2
             )
 
         if args.command == "review-labor-employment-driver-impact-slice":

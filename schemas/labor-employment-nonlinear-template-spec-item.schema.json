@@ -1,0 +1,448 @@
+{
+  "$defs": {
+    "LaborEmploymentNonlinearTemplatePhase": {
+      "additionalProperties": false,
+      "properties": {
+        "phase_id": {
+          "title": "Phase Id",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "phase_order": {
+          "minimum": 1,
+          "title": "Phase Order",
+          "type": "integer"
+        },
+        "tier_blocks": {
+          "items": {
+            "$ref": "#/$defs/LaborEmploymentNonlinearTemplateTierBlock"
+          },
+          "title": "Tier Blocks",
+          "type": "array"
+        },
+        "tasks": {
+          "items": {
+            "$ref": "#/$defs/LaborEmploymentNonlinearTemplateTask"
+          },
+          "title": "Tasks",
+          "type": "array"
+        },
+        "scenario_sensitive": {
+          "default": false,
+          "title": "Scenario Sensitive",
+          "type": "boolean"
+        },
+        "settlement_administration_phase": {
+          "default": false,
+          "title": "Settlement Administration Phase",
+          "type": "boolean"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        },
+        "budget_amount_output_authorized": {
+          "const": false,
+          "default": false,
+          "title": "Budget Amount Output Authorized",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "phase_id",
+        "label",
+        "phase_order",
+        "tasks"
+      ],
+      "title": "LaborEmploymentNonlinearTemplatePhase",
+      "type": "object"
+    },
+    "LaborEmploymentNonlinearTemplateScenarioGate": {
+      "additionalProperties": false,
+      "properties": {
+        "gate_id": {
+          "title": "Gate Id",
+          "type": "string"
+        },
+        "driver_id": {
+          "enum": [
+            "certification_posture",
+            "manageability_posture",
+            "template_selection"
+          ],
+          "title": "Driver Id",
+          "type": "string"
+        },
+        "allowed_scenarios": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Allowed Scenarios",
+          "type": "array"
+        },
+        "default_scenario": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Default Scenario"
+        },
+        "all_scenarios_emitted": {
+          "title": "All Scenarios Emitted",
+          "type": "boolean"
+        },
+        "human_selection_required": {
+          "const": true,
+          "default": true,
+          "title": "Human Selection Required",
+          "type": "boolean"
+        },
+        "blocks_auto_selection": {
+          "default": true,
+          "title": "Blocks Auto Selection",
+          "type": "boolean"
+        },
+        "blocker_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Blocker Ids",
+          "type": "array"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        },
+        "budget_amount_output_authorized": {
+          "const": false,
+          "default": false,
+          "title": "Budget Amount Output Authorized",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "gate_id",
+        "driver_id",
+        "allowed_scenarios",
+        "all_scenarios_emitted"
+      ],
+      "title": "LaborEmploymentNonlinearTemplateScenarioGate",
+      "type": "object"
+    },
+    "LaborEmploymentNonlinearTemplateTask": {
+      "additionalProperties": false,
+      "properties": {
+        "task_id": {
+          "title": "Task Id",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Tags",
+          "type": "array"
+        },
+        "driver_dimensions": {
+          "items": {
+            "enum": [
+              "party_topology",
+              "representation_posture",
+              "claim_family",
+              "administrative_exhaustion",
+              "class_collective_scope",
+              "forum_arbitration",
+              "employment_timeline",
+              "damages_exposure",
+              "wage_hour_volume",
+              "esi_discovery",
+              "deposition_plan",
+              "expert_vendor_needs",
+              "policy_contract_documents",
+              "carrier_guideline_rate_context"
+            ],
+            "type": "string"
+          },
+          "title": "Driver Dimensions",
+          "type": "array"
+        },
+        "period_drivers": {
+          "items": {
+            "enum": [
+              "class_period_months",
+              "paga_period_months"
+            ],
+            "type": "string"
+          },
+          "title": "Period Drivers",
+          "type": "array"
+        },
+        "data_scope_task": {
+          "default": false,
+          "title": "Data Scope Task",
+          "type": "boolean"
+        },
+        "opt_in_sensitive": {
+          "default": false,
+          "title": "Opt In Sensitive",
+          "type": "boolean"
+        },
+        "exposure_modeling_allowed": {
+          "default": false,
+          "title": "Exposure Modeling Allowed",
+          "type": "boolean"
+        },
+        "money_amount_allowed": {
+          "default": false,
+          "title": "Money Amount Allowed",
+          "type": "boolean"
+        },
+        "requires_human_review": {
+          "const": true,
+          "default": true,
+          "title": "Requires Human Review",
+          "type": "boolean"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        },
+        "budget_amount_output_authorized": {
+          "const": false,
+          "default": false,
+          "title": "Budget Amount Output Authorized",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "task_id",
+        "label"
+      ],
+      "title": "LaborEmploymentNonlinearTemplateTask",
+      "type": "object"
+    },
+    "LaborEmploymentNonlinearTemplateTierBlock": {
+      "additionalProperties": false,
+      "properties": {
+        "tier_id": {
+          "enum": [
+            "t0",
+            "t1",
+            "t2",
+            "t3",
+            "t4"
+          ],
+          "title": "Tier Id",
+          "type": "string"
+        },
+        "tier_label": {
+          "title": "Tier Label",
+          "type": "string"
+        },
+        "action": {
+          "enum": [
+            "use_declared_work_block",
+            "block_pending_staffing_plan"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "blocker_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Blocker Id"
+        },
+        "interpolation_allowed": {
+          "default": false,
+          "title": "Interpolation Allowed",
+          "type": "boolean"
+        },
+        "human_review_required": {
+          "const": true,
+          "default": true,
+          "title": "Human Review Required",
+          "type": "boolean"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        },
+        "budget_amount_output_authorized": {
+          "const": false,
+          "default": false,
+          "title": "Budget Amount Output Authorized",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "tier_id",
+        "tier_label",
+        "action"
+      ],
+      "title": "LaborEmploymentNonlinearTemplateTierBlock",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "template_id": {
+      "enum": [
+        "le-class-collective-defense",
+        "le-paga-shaped-defense"
+      ],
+      "title": "Template Id",
+      "type": "string"
+    },
+    "label": {
+      "title": "Label",
+      "type": "string"
+    },
+    "posture": {
+      "title": "Posture",
+      "type": "string"
+    },
+    "math_model": {
+      "const": "tiered_contract_v0",
+      "title": "Math Model",
+      "type": "string"
+    },
+    "required_phase_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Phase Ids",
+      "type": "array"
+    },
+    "tiered_phase_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Tiered Phase Ids",
+      "type": "array"
+    },
+    "phases": {
+      "items": {
+        "$ref": "#/$defs/LaborEmploymentNonlinearTemplatePhase"
+      },
+      "title": "Phases",
+      "type": "array"
+    },
+    "scenario_gates": {
+      "items": {
+        "$ref": "#/$defs/LaborEmploymentNonlinearTemplateScenarioGate"
+      },
+      "title": "Scenario Gates",
+      "type": "array"
+    },
+    "hybrid_template_selection_requires_human": {
+      "default": false,
+      "title": "Hybrid Template Selection Requires Human",
+      "type": "boolean"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "budget_amount_output_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Amount Output Authorized",
+      "type": "boolean"
+    },
+    "budget_submission_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Submission Authorized",
+      "type": "boolean"
+    },
+    "conflict_conclusion_emitted": {
+      "const": false,
+      "default": false,
+      "title": "Conflict Conclusion Emitted",
+      "type": "boolean"
+    },
+    "matter_opening_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Matter Opening Authorized",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "template_id",
+    "label",
+    "posture",
+    "math_model",
+    "required_phase_ids",
+    "tiered_phase_ids",
+    "phases",
+    "scenario_gates"
+  ],
+  "title": "LaborEmploymentNonlinearTemplateSpecItem",
+  "type": "object"
+}
