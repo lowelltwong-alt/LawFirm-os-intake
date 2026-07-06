@@ -932,6 +932,15 @@
           "title": "Scenario Set Id",
           "type": "string"
         },
+        "status": {
+          "default": "ready_for_human_review",
+          "enum": [
+            "ready_for_human_review",
+            "flagged_for_human_review"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
         "selected_scenario_id": {
           "default": "standard",
           "title": "Selected Scenario Id",
@@ -1030,6 +1039,33 @@
           ],
           "default": null,
           "title": "Expected Total Probability Sum"
+        },
+        "probability_integrity_status": {
+          "default": "not_configured",
+          "enum": [
+            "not_configured",
+            "reviewed_probabilities",
+            "bounded_unknown_mass",
+            "probability_sum_mismatch",
+            "partial_probability_weights",
+            "hours_only_not_computed"
+          ],
+          "title": "Probability Integrity Status",
+          "type": "string"
+        },
+        "policy_issue_codes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Policy Issue Codes",
+          "type": "array"
+        },
+        "policy_issue_notes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Policy Issue Notes",
+          "type": "array"
         },
         "monotonic_total_order": {
           "title": "Monotonic Total Order",

@@ -1,4 +1,9 @@
-from lawfirm_os_intake.budget import build_budget_proposal
+from copy import deepcopy
+
+import pytest
+
+from lawfirm_os_intake.budget import DEFAULT_SCENARIOS, build_budget_proposal
+from lawfirm_os_intake.budget_invariants import audit_budget_invariants
 from lawfirm_os_intake.confirmation import bind_confirmation_to_packet_evidence
 from lawfirm_os_intake.context import load_profile
 from lawfirm_os_intake.drivers import (
@@ -200,3 +205,73 @@ def test_policy_scenario_cutoffs_match_utbms_profile(repo_root):
         "L300",
         "L400",
     ]
+
+
+def test_invalid_scenario_resolution_phase_blocks_budget(tmp_path, repo_root):
+    packet, _run_dir, confirmation_path = _confirmed_packet(tmp_path, repo_root)
+    confirmation = HumanConfirmation.model_validate(load_json(confirmation_path))
+    profile = deepcopy(
+        load_profile(repo_root / "context/synthetic-profiles/insurance-defense.yaml")
+    )
+    template = profile["budget_templates"][confirmation.confirmed_matter_family]
+    template["scenarios"] = deepcopy(DEFAULT_SCENARIOS)
+    template["scenarios"][0]["resolution_phase"] = "L250"
+
+    with pytest.raises(ValueError, match="scenario_policy_invalid"):
+        build_budget_proposal(packet, confirmation, profile)
+
+
+def test_probability_sum_mismatch_is_review_visible(tmp_path, repo_root):
+    packet, _run_dir, confirmation_path = _confirmed_packet(tmp_path, repo_root)
+    confirmation = HumanConfirmation.model_validate(load_json(confirmation_path))
+    profile = deepcopy(
+        load_profile(repo_root / "context/synthetic-profiles/insurance-defense.yaml")
+    )
+    template = profile["budget_templates"][confirmation.confirmed_matter_family]
+    template["scenarios"] = deepcopy(DEFAULT_SCENARIOS)
+    for scenario, probability in zip(
+        template["scenarios"],
+        [0.25, 0.5, 0.24],
+        strict=True,
+    ):
+        scenario["probability"] = probability
+
+    budget = build_budget_proposal(packet, confirmation, profile)
+
+    assert budget.scenario_set is not None
+    assert budget.scenario_set.status == "flagged_for_human_review"
+    assert budget.scenario_set.expected_total_probability_sum == 0.99
+    assert budget.scenario_set.expected_total is None
+    assert budget.scenario_set.expected_value_method == "bounded_unknown_mass"
+    assert budget.scenario_set.probability_integrity_status == "bounded_unknown_mass"
+    assert "scenario_probability_sum_not_one" in budget.scenario_set.policy_issue_codes
+    assert any("probabilities sum to 0.99" in unknown for unknown in budget.unknowns)
+    assert any(
+        item.structured_ref
+        == "workflow-policy://budget-boundary/scenario_policy/scenario_probability_sum_not_one"
+        for item in budget.budget_support_items
+    )
+    assert audit_budget_invariants(budget) == []
+
+
+def test_phase_order_monotonic_check_preserves_policy_display_order(tmp_path, repo_root):
+    packet, _run_dir, confirmation_path = _confirmed_packet(tmp_path, repo_root)
+    confirmation = HumanConfirmation.model_validate(load_json(confirmation_path))
+    profile = deepcopy(
+        load_profile(repo_root / "context/synthetic-profiles/insurance-defense.yaml")
+    )
+    template = profile["budget_templates"][confirmation.confirmed_matter_family]
+    template["scenarios"] = deepcopy(DEFAULT_SCENARIOS)
+    template["scenarios"] = list(reversed(template["scenarios"]))
+
+    budget = build_budget_proposal(packet, confirmation, profile)
+
+    assert budget.scenario_set is not None
+    assert [scenario.scenario_id for scenario in budget.scenario_set.scenarios] == [
+        "through_trial",
+        "standard",
+        "early_resolution",
+    ]
+    assert budget.scenario_set.monotonic_total_order is True
+    assert budget.scenario_set.total_order_basis == "total_proposed_budget"
+    assert audit_budget_invariants(budget) == []

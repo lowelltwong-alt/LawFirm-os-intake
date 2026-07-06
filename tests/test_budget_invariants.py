@@ -73,7 +73,17 @@ def test_budget_invariant_report_accepts_current_budget_and_is_written(tmp_path,
 
     assert report["status"] == "passed"
     assert written_report["status"] == "passed"
-    assert written_report["checked_invariants"] == ["I1", "I2", "I4", "I5", "I13", "I15"]
+    assert written_report["checked_invariants"] == [
+        "I1",
+        "I2",
+        "I4",
+        "I5",
+        "I6",
+        "I8",
+        "I10",
+        "I13",
+        "I15",
+    ]
     assert manifest["artifact_refs"]["budget_invariant_report"].endswith(
         "budget_invariant_report.json"
     )

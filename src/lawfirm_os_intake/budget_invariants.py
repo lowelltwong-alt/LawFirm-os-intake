@@ -3,8 +3,8 @@ from __future__ import annotations
 from typing import Any
 
 
-CHECKED_INVARIANTS = ["I1", "I2", "I4", "I5", "I13", "I15"]
-INVARIANT_SET_VERSION = "fable-bk1-2026-07-05"
+CHECKED_INVARIANTS = ["I1", "I2", "I4", "I5", "I6", "I8", "I10", "I13", "I15"]
+INVARIANT_SET_VERSION = "fable-bk2-2026-07-06"
 
 
 def _payload(value: Any) -> dict[str, Any]:
@@ -158,6 +158,15 @@ def _scenario_for_id(payload: dict[str, Any], scenario_id: str | None) -> dict[s
         if scenario.get("scenario_id") == scenario_id:
             return scenario
     return None
+
+
+def _scenario_phase_set(scenario: dict[str, Any]) -> list[str]:
+    raw = scenario.get("included_phase_ids") or []
+    return [str(item) for item in raw if item is not None]
+
+
+def _scenario_order_key(scenario: dict[str, Any]) -> tuple[int, str]:
+    return (len(_scenario_phase_set(scenario)), str(scenario.get("scenario_id") or ""))
 
 
 def _check_total_additivity(
@@ -362,8 +371,55 @@ def audit_budget_invariants(proposal: Any) -> list[dict[str, Any]]:
                 )
             )
 
-    for scenario_index, scenario in enumerate(_scenario_payloads(payload)):
+    scenarios = _scenario_payloads(payload)
+    for scenario_index, scenario in enumerate(scenarios):
         scenario_path = f"$.scenario_set.scenarios[{scenario_index}]"
+        included_phase_ids = _scenario_phase_set(scenario)
+        resolution_phase = scenario.get("resolution_phase")
+        if not included_phase_ids:
+            violations.append(
+                _violation(
+                    "I6",
+                    "scenario_without_included_phases",
+                    "budget scenario must declare the included phase prefix",
+                    f"{scenario_path}.included_phase_ids",
+                    expected="non-empty phase prefix",
+                    actual=scenario.get("included_phase_ids"),
+                )
+            )
+        elif resolution_phase not in included_phase_ids:
+            violations.append(
+                _violation(
+                    "I6",
+                    "scenario_resolution_phase_not_included",
+                    "scenario resolution_phase must be included in its phase prefix",
+                    f"{scenario_path}.resolution_phase",
+                    expected=included_phase_ids,
+                    actual=resolution_phase,
+                )
+            )
+        elif included_phase_ids[-1] != resolution_phase:
+            violations.append(
+                _violation(
+                    "I6",
+                    "scenario_resolution_phase_not_prefix_cutoff",
+                    "scenario included phases must end at resolution_phase",
+                    f"{scenario_path}.included_phase_ids",
+                    expected=f"last phase == {resolution_phase}",
+                    actual=included_phase_ids,
+                )
+            )
+        if len(included_phase_ids) != len(set(included_phase_ids)):
+            violations.append(
+                _violation(
+                    "I6",
+                    "scenario_duplicate_included_phase",
+                    "scenario included phase prefix must not contain duplicates",
+                    f"{scenario_path}.included_phase_ids",
+                    expected="unique phases",
+                    actual=included_phase_ids,
+                )
+            )
         _check_total_additivity(
             violations,
             invariant_id="I5",
@@ -406,6 +462,145 @@ def audit_budget_invariants(proposal: Any) -> list[dict[str, Any]]:
             contingency_amount=scenario.get("contingency_amount_max"),
             field_name="contingency_amount_max",
         )
+
+    phase_ordered_scenarios = sorted(scenarios, key=_scenario_order_key)
+    for previous, current in zip(
+        phase_ordered_scenarios,
+        phase_ordered_scenarios[1:],
+        strict=False,
+    ):
+        previous_phases = _scenario_phase_set(previous)
+        current_phases = _scenario_phase_set(current)
+        if previous_phases != current_phases[: len(previous_phases)]:
+            violations.append(
+                _violation(
+                    "I6",
+                    "scenario_phase_prefix_not_nested",
+                    "later budget scenarios must include all phases from earlier scenarios",
+                    "$.scenario_set.scenarios",
+                    expected=previous_phases,
+                    actual=current_phases,
+                )
+            )
+
+    scenario_set = payload.get("scenario_set")
+    if isinstance(scenario_set, dict) and scenarios:
+        if scenario_set.get("monotonic_total_order") is not True:
+            violations.append(
+                _violation(
+                    "I8",
+                    "scenario_monotonic_order_not_verified",
+                    "budget scenarios must be monotonic when sorted by phase cutoff",
+                    "$.scenario_set.monotonic_total_order",
+                    expected=True,
+                    actual=scenario_set.get("monotonic_total_order"),
+                )
+            )
+        order_basis = scenario_set.get("total_order_basis")
+        if order_basis == "total_hours":
+            ordered_values = [
+                _amount(scenario.get("total_hours")) for scenario in phase_ordered_scenarios
+            ]
+        else:
+            ordered_values = [
+                _amount(scenario.get("total_proposed_budget"))
+                for scenario in phase_ordered_scenarios
+            ]
+        comparable_values = [value for value in ordered_values if value is not None]
+        if len(comparable_values) == len(ordered_values) and any(
+            comparable_values[index] > comparable_values[index + 1] + 0.01
+            for index in range(len(comparable_values) - 1)
+        ):
+            violations.append(
+                _violation(
+                    "I8",
+                    "scenario_monotonic_value_mismatch",
+                    "budget scenario values must be non-decreasing by phase cutoff",
+                    "$.scenario_set.scenarios",
+                    expected="non-decreasing phase-ordered values",
+                    actual=comparable_values,
+                )
+            )
+
+        probabilities = [scenario.get("probability") for scenario in scenarios]
+        all_probabilities_present = all(_amount(value) is not None for value in probabilities)
+        any_probability_present = any(_amount(value) is not None for value in probabilities)
+        all_priced = all(
+            _amount(scenario.get("total_proposed_budget")) is not None for scenario in scenarios
+        )
+        expected_total = _amount(scenario_set.get("expected_total"))
+        if all_probabilities_present:
+            probability_sum = round(
+                sum(_amount(value) or 0.0 for value in probabilities),
+                6,
+            )
+            probability_sum_close = abs(probability_sum - 1.0) <= 0.000001
+            if probability_sum_close and all_priced:
+                if expected_total is None:
+                    violations.append(
+                        _violation(
+                            "I10",
+                            "scenario_expected_value_missing",
+                            "expected_total must be present when probabilities sum to 1 and all scenarios are priced",
+                            "$.scenario_set.expected_total",
+                            expected="weighted scenario total",
+                            actual=None,
+                        )
+                    )
+                else:
+                    priced_totals = [
+                        _amount(scenario.get("total_proposed_budget")) or 0.0
+                        for scenario in scenarios
+                    ]
+                    if (
+                        expected_total < min(priced_totals) - 0.01
+                        or expected_total > max(priced_totals) + 0.01
+                    ):
+                        violations.append(
+                            _violation(
+                                "I10",
+                                "scenario_expected_value_out_of_bounds",
+                                "expected_total must fall within scenario point totals",
+                                "$.scenario_set.expected_total",
+                                expected={"min": min(priced_totals), "max": max(priced_totals)},
+                                actual=expected_total,
+                            )
+                        )
+            elif expected_total is not None:
+                violations.append(
+                    _violation(
+                        "I10",
+                        "scenario_expected_value_not_allowed",
+                        "expected_total must be absent unless probabilities sum to 1 and all scenarios are priced",
+                        "$.scenario_set.expected_total",
+                        expected=None,
+                        actual=expected_total,
+                    )
+                )
+            if not probability_sum_close:
+                issue_codes = set(scenario_set.get("policy_issue_codes") or [])
+                if "scenario_probability_sum_not_one" not in issue_codes:
+                    violations.append(
+                        _violation(
+                            "I10",
+                            "scenario_probability_sum_unflagged",
+                            "scenario probability sums other than 1 require a human-review policy issue",
+                            "$.scenario_set.policy_issue_codes",
+                            expected="scenario_probability_sum_not_one",
+                            actual=sorted(issue_codes),
+                        )
+                    )
+        elif any_probability_present and expected_total is not None:
+            violations.append(
+                _violation(
+                    "I10",
+                    "scenario_partial_probability_expected_value",
+                    "partial scenario probabilities cannot produce expected_total",
+                    "$.scenario_set.expected_total",
+                    expected=None,
+                    actual=expected_total,
+                )
+            )
 
     projection = payload.get("carrier_compliant_projection")
     if isinstance(projection, dict):
