@@ -52,6 +52,18 @@
       "title": "Retrieved At",
       "type": "string"
     },
+    "observation_period_end": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Observation Period End"
+    },
     "page_sha256": {
       "title": "Page Sha256",
       "type": "string"
@@ -62,6 +74,11 @@
     },
     "license_note": {
       "title": "License Note",
+      "type": "string"
+    },
+    "proxy_bias_note": {
+      "default": "",
+      "title": "Proxy Bias Note",
       "type": "string"
     },
     "grade": {

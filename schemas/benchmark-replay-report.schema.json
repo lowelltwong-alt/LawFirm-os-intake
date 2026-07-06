@@ -1,0 +1,539 @@
+{
+  "$defs": {
+    "BenchmarkReplayBudgetLineCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "line_ref": {
+          "title": "Line Ref",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "pricing_status": {
+          "enum": [
+            "priced",
+            "hours_only",
+            "insufficient_information",
+            "unknown"
+          ],
+          "title": "Pricing Status",
+          "type": "string"
+        },
+        "rate_source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rate Source"
+        },
+        "rate_trace_status": {
+          "enum": [
+            "authorized_rate_source",
+            "hours_only_no_rate",
+            "benchmark_context_ref_valid",
+            "benchmark_context_missing",
+            "benchmark_launder_attempt",
+            "unknown_or_invalid_rate_source"
+          ],
+          "title": "Rate Trace Status",
+          "type": "string"
+        },
+        "benchmark_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Benchmark Refs",
+          "type": "array"
+        },
+        "missing_benchmark_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Missing Benchmark Refs",
+          "type": "array"
+        },
+        "issue_codes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Issue Codes",
+          "type": "array"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "budget_submission_authorized": {
+          "const": false,
+          "default": false,
+          "title": "Budget Submission Authorized",
+          "type": "boolean"
+        },
+        "not_authorized_as_carrier_rate": {
+          "const": true,
+          "default": true,
+          "title": "Not Authorized As Carrier Rate",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "line_ref",
+        "status",
+        "pricing_status",
+        "rate_trace_status",
+        "message"
+      ],
+      "title": "BenchmarkReplayBudgetLineCheck",
+      "type": "object"
+    },
+    "BenchmarkReplayCellCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "benchmark_cell_id": {
+          "title": "Benchmark Cell Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed",
+            "ignored"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "original_grade": {
+          "enum": [
+            "A",
+            "B",
+            "C",
+            "proxy_only",
+            "ungraded"
+          ],
+          "title": "Original Grade",
+          "type": "string"
+        },
+        "effective_grade": {
+          "enum": [
+            "A",
+            "B",
+            "C",
+            "proxy_only",
+            "ungraded",
+            "rejected"
+          ],
+          "title": "Effective Grade",
+          "type": "string"
+        },
+        "human_grading_status": {
+          "enum": [
+            "pending",
+            "reviewed",
+            "rejected"
+          ],
+          "title": "Human Grading Status",
+          "type": "string"
+        },
+        "effective_grade_method": {
+          "const": "benchmark_effective_grade.v0_1",
+          "default": "benchmark_effective_grade.v0_1",
+          "title": "Effective Grade Method",
+          "type": "string"
+        },
+        "staleness_months": {
+          "minimum": 0,
+          "title": "Staleness Months",
+          "type": "integer"
+        },
+        "band_flag_authorized": {
+          "title": "Band Flag Authorized",
+          "type": "boolean"
+        },
+        "issue_codes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Issue Codes",
+          "type": "array"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "not_authorized_as_carrier_rate": {
+          "const": true,
+          "default": true,
+          "title": "Not Authorized As Carrier Rate",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "benchmark_cell_id",
+        "status",
+        "original_grade",
+        "effective_grade",
+        "human_grading_status",
+        "staleness_months",
+        "band_flag_authorized",
+        "message"
+      ],
+      "title": "BenchmarkReplayCellCheck",
+      "type": "object"
+    },
+    "BenchmarkReplayCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "blocking_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Blocking Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "BenchmarkReplayCheck",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "benchmark_replay_report_id": {
+      "title": "Benchmark Replay Report Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "benchmark_replay_ready_for_review",
+        "blocked_by_benchmark_replay"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "budget_proposal_ref": {
+      "title": "Budget Proposal Ref",
+      "type": "string"
+    },
+    "budget_proposal_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Budget Proposal Id"
+    },
+    "benchmark_snapshot_ref": {
+      "title": "Benchmark Snapshot Ref",
+      "type": "string"
+    },
+    "benchmark_snapshot_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Benchmark Snapshot Id"
+    },
+    "benchmark_snapshot_hash": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Benchmark Snapshot Hash"
+    },
+    "expected_benchmark_snapshot_hash": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Expected Benchmark Snapshot Hash"
+    },
+    "as_of_date": {
+      "title": "As Of Date",
+      "type": "string"
+    },
+    "grade_methodology_version": {
+      "const": "benchmark_effective_grade.v0_1",
+      "default": "benchmark_effective_grade.v0_1",
+      "title": "Grade Methodology Version",
+      "type": "string"
+    },
+    "snapshot_cell_count": {
+      "minimum": 0,
+      "title": "Snapshot Cell Count",
+      "type": "integer"
+    },
+    "cell_check_count": {
+      "minimum": 0,
+      "title": "Cell Check Count",
+      "type": "integer"
+    },
+    "failed_cell_check_count": {
+      "minimum": 0,
+      "title": "Failed Cell Check Count",
+      "type": "integer"
+    },
+    "ignored_cell_check_count": {
+      "minimum": 0,
+      "title": "Ignored Cell Check Count",
+      "type": "integer"
+    },
+    "budget_line_check_count": {
+      "minimum": 0,
+      "title": "Budget Line Check Count",
+      "type": "integer"
+    },
+    "failed_budget_line_check_count": {
+      "minimum": 0,
+      "title": "Failed Budget Line Check Count",
+      "type": "integer"
+    },
+    "missing_benchmark_ref_count": {
+      "minimum": 0,
+      "title": "Missing Benchmark Ref Count",
+      "type": "integer"
+    },
+    "rate_laundering_attempt_count": {
+      "minimum": 0,
+      "title": "Rate Laundering Attempt Count",
+      "type": "integer"
+    },
+    "benchmark_cells_used_as_rate_authority": {
+      "const": false,
+      "default": false,
+      "title": "Benchmark Cells Used As Rate Authority",
+      "type": "boolean"
+    },
+    "cells": {
+      "items": {
+        "$ref": "#/$defs/BenchmarkReplayCellCheck"
+      },
+      "title": "Cells",
+      "type": "array"
+    },
+    "budget_lines": {
+      "items": {
+        "$ref": "#/$defs/BenchmarkReplayBudgetLineCheck"
+      },
+      "title": "Budget Lines",
+      "type": "array"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/BenchmarkReplayCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "candidate_exception_lake_labels": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Candidate Exception Lake Labels",
+      "type": "array"
+    },
+    "required_next_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Gates",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "human_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Human Review Required",
+      "type": "boolean"
+    },
+    "not_authorized_for_external_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For External Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_lake_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Lake Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_sqlite_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Sqlite Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_budget_submission": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Budget Submission",
+      "type": "boolean"
+    },
+    "not_authorized_for_matter_opening": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Matter Opening",
+      "type": "boolean"
+    },
+    "not_authorized_for_calibration": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Calibration",
+      "type": "boolean"
+    },
+    "budget_submission_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Submission Authorized",
+      "type": "boolean"
+    },
+    "matter_opening_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Matter Opening Authorized",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "benchmark_replay_report_id",
+    "status",
+    "budget_proposal_ref",
+    "benchmark_snapshot_ref",
+    "as_of_date",
+    "snapshot_cell_count",
+    "cell_check_count",
+    "failed_cell_check_count",
+    "ignored_cell_check_count",
+    "budget_line_check_count",
+    "failed_budget_line_check_count",
+    "missing_benchmark_ref_count",
+    "rate_laundering_attempt_count",
+    "cells",
+    "budget_lines",
+    "checks",
+    "candidate_exception_lake_labels",
+    "required_next_gates",
+    "generated_at"
+  ],
+  "title": "BenchmarkReplayReport",
+  "type": "object"
+}

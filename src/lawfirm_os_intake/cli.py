@@ -27,6 +27,7 @@ from .budget_fixture_binding_handoff import run_budget_fixture_binding_handoff
 from .budget_fixture_bindings import run_budget_fixture_binding_candidates
 from .budget_fixture_update_pr_package import run_budget_fixture_update_pr_package
 from .budget_fixture_update_review import run_budget_fixture_update_review_record
+from .benchmarks import run_benchmark_replay_audit
 from .budget_form import build_budget_form_template_audit_report, render_budget_form
 from .budget_human_review_outcome_owner_adoption import (
     run_budget_human_review_outcome_owner_adoption,
@@ -277,6 +278,21 @@ def _parser() -> argparse.ArgumentParser:
     validate_budget_artifact.add_argument("--budget-proposal", required=True)
     validate_budget_artifact.add_argument("--carrier-projection")
     validate_budget_artifact.add_argument("--report-out")
+
+    benchmark_replay = sub.add_parser(
+        "audit-benchmark-replay",
+        help=(
+            "Validate a pinned candidate benchmark snapshot against a local "
+            "budget proposal without using benchmark cells as rate authority."
+        ),
+    )
+    benchmark_replay.add_argument("--budget-proposal", required=True)
+    benchmark_replay.add_argument("--benchmark-snapshot", required=True)
+    benchmark_replay.add_argument("--out-dir", required=True)
+    benchmark_replay.add_argument(
+        "--as-of-date",
+        help="Optional YYYY-MM-DD/ISO date for deterministic effective-grade staleness.",
+    )
 
     intensity_signoff = sub.add_parser(
         "intensity-signoff",
@@ -2404,6 +2420,37 @@ def main(argv: list[str] | None = None) -> int:
             )
             _print(report)
             return 0 if report["status"] == "passed" else 1
+
+        if args.command == "audit-benchmark-replay":
+            report, run_dir = run_benchmark_replay_audit(
+                budget_proposal_path=args.budget_proposal,
+                benchmark_snapshot_path=args.benchmark_snapshot,
+                out_dir=args.out_dir,
+                as_of_date=args.as_of_date,
+            )
+            failed_checks = [check.check_id for check in report.checks if check.status == "failed"]
+            _print(
+                {
+                    "status": report.status,
+                    "benchmark_replay_report_id": report.benchmark_replay_report_id,
+                    "budget_proposal_id": report.budget_proposal_id,
+                    "benchmark_snapshot_id": report.benchmark_snapshot_id,
+                    "snapshot_cell_count": report.snapshot_cell_count,
+                    "failed_cell_check_count": report.failed_cell_check_count,
+                    "failed_budget_line_check_count": report.failed_budget_line_check_count,
+                    "missing_benchmark_ref_count": report.missing_benchmark_ref_count,
+                    "rate_laundering_attempt_count": report.rate_laundering_attempt_count,
+                    "failed_checks": failed_checks,
+                    "candidate_exception_lake_labels": report.candidate_exception_lake_labels,
+                    "budget_submission_authorized": report.budget_submission_authorized,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0 if report.status == "benchmark_replay_ready_for_review" else 2
 
         if args.command == "intensity-signoff":
             demo_cases = (

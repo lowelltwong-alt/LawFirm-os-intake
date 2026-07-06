@@ -1,0 +1,26 @@
+schema_version: "0.1"
+harness_id: benchmark-replay.local.v0_1
+owner_repo: LawFirm-os-intake
+authority: local_candidate
+mode: synthetic_only_local
+purpose: Validate that budget artifacts trace priced rates to authorized synthetic or approved profile sources while treating benchmark cells as reviewed context only.
+command:
+  - python
+  - -m
+  - lawfirm_os_intake
+  - audit-benchmark-replay
+required_inputs:
+  - legal_budget_proposal.json
+  - benchmark_snapshot_manifest.json
+expected_outputs:
+  - benchmark_replay_report.json
+  - benchmark_replay_report.md
+forbidden:
+  - real_negotiated_rates
+  - benchmark_cell_as_rate_authority
+  - public_rate_retrieval
+  - lake_write
+  - sqlite_write
+  - budget_submission
+  - matter_opening
+failure_policy: fail_closed

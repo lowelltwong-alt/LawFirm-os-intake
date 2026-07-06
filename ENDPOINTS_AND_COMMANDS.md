@@ -125,6 +125,26 @@ adversarial holdout exclusion, and no-write/no-calibration boundaries. It does
 not generate runtime fixtures, ingest public records, mutate fixture files,
 write Lake/SQLite records, submit budgets, open matters, or authorize learning.
 
+### Audit budget benchmark replay
+
+```bash
+python -m lawfirm_os_intake audit-benchmark-replay \
+  --budget-proposal PATH/TO/legal_budget_proposal.json \
+  --benchmark-snapshot examples/synthetic/benchmarks/synthetic-rate-benchmark-snapshot.json \
+  --out-dir .lawfirm-os-intake/benchmark-replay \
+  --as-of-date 2026-07-06
+```
+
+This writes `benchmark_replay_report.json` and
+`benchmark_replay_report.md`. The audit validates a pinned candidate benchmark
+snapshot and a serialized budget proposal, proves priced budget lines trace to
+authorized synthetic/profile rate sources, and treats benchmark cells as
+reviewed context only. Missing, rejected, malformed, stale low-grade, or
+carrier-panel-like cells cannot authorize rates; hours-only budgets stay
+hours-only. It does not retrieve public rate data, ingest real negotiated
+rates, submit budgets, open matters, write Lake/SQLite records, perform
+external writes, or authorize calibration.
+
 ### Validation runtime policy
 
 ```bash

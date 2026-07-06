@@ -1,0 +1,103 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "line_ref": {
+      "title": "Line Ref",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "passed",
+        "failed"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "pricing_status": {
+      "enum": [
+        "priced",
+        "hours_only",
+        "insufficient_information",
+        "unknown"
+      ],
+      "title": "Pricing Status",
+      "type": "string"
+    },
+    "rate_source": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Rate Source"
+    },
+    "rate_trace_status": {
+      "enum": [
+        "authorized_rate_source",
+        "hours_only_no_rate",
+        "benchmark_context_ref_valid",
+        "benchmark_context_missing",
+        "benchmark_launder_attempt",
+        "unknown_or_invalid_rate_source"
+      ],
+      "title": "Rate Trace Status",
+      "type": "string"
+    },
+    "benchmark_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Benchmark Refs",
+      "type": "array"
+    },
+    "missing_benchmark_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Missing Benchmark Refs",
+      "type": "array"
+    },
+    "issue_codes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Issue Codes",
+      "type": "array"
+    },
+    "message": {
+      "title": "Message",
+      "type": "string"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "budget_submission_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Submission Authorized",
+      "type": "boolean"
+    },
+    "not_authorized_as_carrier_rate": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized As Carrier Rate",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "line_ref",
+    "status",
+    "pricing_status",
+    "rate_trace_status",
+    "message"
+  ],
+  "title": "BenchmarkReplayBudgetLineCheck",
+  "type": "object"
+}
