@@ -73,6 +73,8 @@ from .models import (
     IntakePreflightPacket,
     LaborEmploymentBudgetFactAuditReport,
     LaborEmploymentExecutableDriverImpactReport,
+    MatterLinkingClusterReport,
+    MatterLinkingClusterReviewOutcomeReport,
     MatterOpeningBlocker,
     MatterOpeningReadiness,
     ModelAdapterReport,
@@ -784,6 +786,8 @@ def run_budget(
     fixture_gold: str | Path | None = None,
     labor_employment_budget_fact_report: str | Path | None = None,
     labor_employment_driver_impact_report: str | Path | None = None,
+    matter_linking_cluster_report: str | Path | None = None,
+    matter_linking_cluster_review_outcome_report: str | Path | None = None,
 ) -> tuple[Any, Path]:
     preflight_packet_path = Path(preflight_packet_path)
     confirmation_path = Path(confirmation_path)
@@ -795,6 +799,14 @@ def run_budget(
     labor_employment_driver_impact_report_path = (
         Path(labor_employment_driver_impact_report)
         if labor_employment_driver_impact_report is not None
+        else None
+    )
+    matter_linking_cluster_report_path = (
+        Path(matter_linking_cluster_report) if matter_linking_cluster_report is not None else None
+    )
+    matter_linking_cluster_review_outcome_report_path = (
+        Path(matter_linking_cluster_review_outcome_report)
+        if matter_linking_cluster_review_outcome_report is not None
         else None
     )
     packet = IntakePreflightPacket.model_validate(load_json(preflight_packet_path))
@@ -811,6 +823,18 @@ def run_budget(
             load_json(labor_employment_driver_impact_report_path)
         )
         if labor_employment_driver_impact_report_path is not None
+        else None
+    )
+    loaded_matter_linking_cluster_report = (
+        MatterLinkingClusterReport.model_validate(load_json(matter_linking_cluster_report_path))
+        if matter_linking_cluster_report_path is not None
+        else None
+    )
+    loaded_matter_linking_cluster_review_outcome_report = (
+        MatterLinkingClusterReviewOutcomeReport.model_validate(
+            load_json(matter_linking_cluster_review_outcome_report_path)
+        )
+        if matter_linking_cluster_review_outcome_report_path is not None
         else None
     )
     run_dir = Path(out_dir)
@@ -833,6 +857,12 @@ def run_budget(
                     else None,
                     str(labor_employment_driver_impact_report_path)
                     if labor_employment_driver_impact_report_path is not None
+                    else None,
+                    str(matter_linking_cluster_report_path)
+                    if matter_linking_cluster_report_path is not None
+                    else None,
+                    str(matter_linking_cluster_review_outcome_report_path)
+                    if matter_linking_cluster_review_outcome_report_path is not None
                     else None,
                 ]
                 if ref
@@ -871,6 +901,10 @@ def run_budget(
         budget_input_refs.append(str(labor_employment_budget_fact_report_path))
     if labor_employment_driver_impact_report_path is not None:
         budget_input_refs.append(str(labor_employment_driver_impact_report_path))
+    if matter_linking_cluster_report_path is not None:
+        budget_input_refs.append(str(matter_linking_cluster_report_path))
+    if matter_linking_cluster_review_outcome_report_path is not None:
+        budget_input_refs.append(str(matter_linking_cluster_review_outcome_report_path))
     budget_precondition_report = build_budget_precondition_report(
         packet,
         confirmation,
@@ -883,6 +917,14 @@ def run_budget(
         loaded_labor_employment_driver_impact_report,
         str(labor_employment_driver_impact_report_path)
         if labor_employment_driver_impact_report_path is not None
+        else None,
+        loaded_matter_linking_cluster_report,
+        str(matter_linking_cluster_report_path)
+        if matter_linking_cluster_report_path is not None
+        else None,
+        loaded_matter_linking_cluster_review_outcome_report,
+        str(matter_linking_cluster_review_outcome_report_path)
+        if matter_linking_cluster_review_outcome_report_path is not None
         else None,
     )
     write_json(

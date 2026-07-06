@@ -234,6 +234,60 @@
       "title": "Labor Employment Driver Max Range Widening Factor",
       "type": "number"
     },
+    "matter_linking_cluster_report_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Matter Linking Cluster Report Ref"
+    },
+    "matter_linking_cluster_review_outcome_report_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Matter Linking Cluster Review Outcome Report Ref"
+    },
+    "matter_linking_cluster_review_status": {
+      "anyOf": [
+        {
+          "enum": [
+            "matter_linking_cluster_review_confirmed_for_budget_scope",
+            "matter_linking_cluster_review_recorded_pending_followup",
+            "blocked_by_matter_linking_cluster_review"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Matter Linking Cluster Review Status"
+    },
+    "matter_linking_budget_scope_cluster_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Matter Linking Budget Scope Cluster Ids",
+      "type": "array"
+    },
+    "matter_linking_budget_blocking_cluster_count": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Matter Linking Budget Blocking Cluster Count",
+      "type": "integer"
+    },
     "prohibited_outputs": {
       "items": {
         "type": "string"

@@ -8,6 +8,8 @@ from .models import (
     IntakePreflightPacket,
     LaborEmploymentBudgetFactAuditReport,
     LaborEmploymentExecutableDriverImpactReport,
+    MatterLinkingClusterReport,
+    MatterLinkingClusterReviewOutcomeReport,
 )
 from .util import new_id, now_iso
 
@@ -48,6 +50,12 @@ def build_budget_precondition_report(
         LaborEmploymentExecutableDriverImpactReport | None
     ) = None,
     labor_employment_driver_impact_report_ref: str | None = None,
+    matter_linking_cluster_report: MatterLinkingClusterReport | None = None,
+    matter_linking_cluster_report_ref: str | None = None,
+    matter_linking_cluster_review_outcome_report: (
+        MatterLinkingClusterReviewOutcomeReport | None
+    ) = None,
+    matter_linking_cluster_review_outcome_report_ref: str | None = None,
 ) -> BudgetPreconditionReport:
     confirmation_ref = f"human-confirmation://{confirmation.confirmation_id}"
     packet_ref = f"intake-preflight-packet://{packet.packet_id}"
@@ -159,6 +167,116 @@ def build_budget_precondition_report(
                 f"{labor_employment_driver_impact_report.executable_driver_impact_report_id}"
             )
         )
+    resolved_matter_linking_cluster_report_ref = None
+    resolved_matter_linking_cluster_review_outcome_report_ref = None
+    if (
+        matter_linking_cluster_report is not None
+        or matter_linking_cluster_review_outcome_report is not None
+    ):
+        if matter_linking_cluster_report is not None:
+            resolved_matter_linking_cluster_report_ref = matter_linking_cluster_report_ref or (
+                "matter-linking-cluster-report://"
+                f"{matter_linking_cluster_report.matter_linking_cluster_report_id}"
+            )
+        if matter_linking_cluster_review_outcome_report is not None:
+            resolved_matter_linking_cluster_review_outcome_report_ref = (
+                matter_linking_cluster_review_outcome_report_ref
+                or (
+                    "matter-linking-cluster-review-outcome-report://"
+                    f"{matter_linking_cluster_review_outcome_report.matter_linking_cluster_review_outcome_report_id}"
+                )
+            )
+        checks.extend(
+            [
+                _check(
+                    "matter_linking_cluster_report_supplied",
+                    matter_linking_cluster_report is not None,
+                    "Matter-linking cluster report must be supplied when matter-linking review is part of the budget gate.",
+                    [ref for ref in [resolved_matter_linking_cluster_report_ref] if ref],
+                ),
+                _check(
+                    "matter_linking_cluster_report_ready",
+                    matter_linking_cluster_report is not None
+                    and matter_linking_cluster_report.status
+                    == "matter_linking_clusters_proposed_for_review"
+                    and matter_linking_cluster_report.matter_identity_asserted is False
+                    and matter_linking_cluster_report.budget_generation_performed is False
+                    and matter_linking_cluster_report.external_writes_performed is False
+                    and matter_linking_cluster_report.lake_write_performed is False
+                    and matter_linking_cluster_report.sqlite_write_performed is False,
+                    "Matter-linking cluster report must be review-only, ready, no-write, and non-authoritative.",
+                    [ref for ref in [resolved_matter_linking_cluster_report_ref] if ref],
+                ),
+                _check(
+                    "matter_linking_cluster_review_outcome_supplied",
+                    matter_linking_cluster_review_outcome_report is not None,
+                    "Budget generation requires a human matter-linking cluster review outcome when clustering evidence is supplied.",
+                    [
+                        ref
+                        for ref in [resolved_matter_linking_cluster_review_outcome_report_ref]
+                        if ref
+                    ],
+                ),
+                _check(
+                    "matter_linking_cluster_review_matches_cluster_report",
+                    matter_linking_cluster_report is not None
+                    and matter_linking_cluster_review_outcome_report is not None
+                    and matter_linking_cluster_review_outcome_report.matter_linking_cluster_report_id
+                    == matter_linking_cluster_report.matter_linking_cluster_report_id,
+                    "Matter-linking cluster review outcome must bind to the supplied cluster report.",
+                    [
+                        ref
+                        for ref in [
+                            resolved_matter_linking_cluster_report_ref,
+                            resolved_matter_linking_cluster_review_outcome_report_ref,
+                        ]
+                        if ref
+                    ],
+                ),
+                _check(
+                    "matter_linking_cluster_review_confirmed_for_budget_scope",
+                    matter_linking_cluster_review_outcome_report is not None
+                    and matter_linking_cluster_review_outcome_report.status
+                    == "matter_linking_cluster_review_confirmed_for_budget_scope"
+                    and matter_linking_cluster_review_outcome_report.budget_scope_cluster_count == 1
+                    and matter_linking_cluster_review_outcome_report.budget_blocking_cluster_count
+                    == 0
+                    and matter_linking_cluster_review_outcome_report.unreviewed_cluster_count == 0
+                    and matter_linking_cluster_review_outcome_report.unknown_cluster_count == 0,
+                    "Budget generation requires exactly one human-confirmed budget-scope cluster with no held, conflicted, unknown, or unreviewed cluster blockers.",
+                    [
+                        ref
+                        for ref in [resolved_matter_linking_cluster_review_outcome_report_ref]
+                        if ref
+                    ],
+                ),
+                _check(
+                    "matter_linking_cluster_review_no_side_effects",
+                    matter_linking_cluster_review_outcome_report is not None
+                    and matter_linking_cluster_review_outcome_report.budget_amount_output_authorized
+                    is False
+                    and matter_linking_cluster_review_outcome_report.budget_submission_authorized
+                    is False
+                    and matter_linking_cluster_review_outcome_report.conflict_conclusion_emitted
+                    is False
+                    and matter_linking_cluster_review_outcome_report.matter_opening_authorized
+                    is False
+                    and matter_linking_cluster_review_outcome_report.lake_write_performed is False
+                    and matter_linking_cluster_review_outcome_report.sqlite_write_performed is False
+                    and matter_linking_cluster_review_outcome_report.external_writes_performed
+                    is False
+                    and matter_linking_cluster_review_outcome_report.silent_learning_performed
+                    is False,
+                    "Matter-linking cluster review must remain append-only and must not authorize budget, matter, conflict, Lake, SQLite, external-write, or learning side effects.",
+                    [
+                        ref
+                        for ref in [resolved_matter_linking_cluster_review_outcome_report_ref]
+                        if ref
+                    ],
+                ),
+            ]
+        )
+    if labor_employment_driver_impact_report is not None:
         checks.extend(
             [
                 _check(
@@ -190,6 +308,8 @@ def build_budget_precondition_report(
     if failed:
         if "labor_employment_driver_impact_no_amount_budget_blocks" in failed:
             blocked_state = "labor_employment_driver_impacts_blocked"
+        elif any(check_id.startswith("matter_linking_cluster") for check_id in failed):
+            blocked_state = "matter_linking_confirmation_blocked"
         elif "labor_employment_budget_fact_no_critical_gaps" in failed:
             blocked_state = "labor_employment_budget_facts_blocked"
         elif "confirmation_status_confirmed" in failed:
@@ -264,6 +384,25 @@ def build_budget_precondition_report(
             labor_employment_driver_impact_report.max_range_widening_factor
             if labor_employment_driver_impact_report is not None
             else 1.0
+        ),
+        matter_linking_cluster_report_ref=resolved_matter_linking_cluster_report_ref,
+        matter_linking_cluster_review_outcome_report_ref=(
+            resolved_matter_linking_cluster_review_outcome_report_ref
+        ),
+        matter_linking_cluster_review_status=(
+            matter_linking_cluster_review_outcome_report.status
+            if matter_linking_cluster_review_outcome_report is not None
+            else None
+        ),
+        matter_linking_budget_scope_cluster_ids=(
+            matter_linking_cluster_review_outcome_report.budget_scope_cluster_ids
+            if matter_linking_cluster_review_outcome_report is not None
+            else []
+        ),
+        matter_linking_budget_blocking_cluster_count=(
+            matter_linking_cluster_review_outcome_report.budget_blocking_cluster_count
+            if matter_linking_cluster_review_outcome_report is not None
+            else 0
         ),
         prohibited_outputs=PROHIBITED_PRECONDITION_FAILURE_OUTPUTS,
         generated_at=now_iso(),

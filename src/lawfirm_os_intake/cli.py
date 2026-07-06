@@ -126,6 +126,9 @@ from .matter_linking_preflight import run_matter_linking_preflight
 from .matter_linking_qa_gate import run_matter_linking_qa_gate
 from .matter_linking_review_outcomes import run_matter_linking_review_outcome_record
 from .matter_linking import run_matter_linking_clusters
+from .matter_linking_cluster_review import (
+    run_matter_linking_cluster_review_outcome_record,
+)
 from .matter_link_keys import (
     DEFAULT_MATTER_LINK_POLICY_PATH,
     run_matter_link_key_extraction,
@@ -214,6 +217,20 @@ def _parser() -> argparse.ArgumentParser:
         help=(
             "Optional labor_employment_executable_driver_impact_report.json used as "
             "a candidate budget-impact precondition and range/scenario review input."
+        ),
+    )
+    budget.add_argument(
+        "--matter-linking-cluster-report",
+        help=(
+            "Optional matter_linking_cluster_report.json used as a budget precondition "
+            "gate when inbound documents may span multiple matters."
+        ),
+    )
+    budget.add_argument(
+        "--matter-linking-cluster-review-outcome-report",
+        help=(
+            "Optional matter_linking_cluster_review_outcome_report.json confirming "
+            "exactly one budget-scope cluster before budget generation."
         ),
     )
 
@@ -1339,6 +1356,29 @@ def _parser() -> argparse.ArgumentParser:
         help="Optional fixed timestamp for deterministic tests and replayed reports.",
     )
 
+    matter_linking_cluster_review = sub.add_parser(
+        "record-matter-linking-cluster-review-outcome",
+        help=(
+            "Record an append-only human review outcome for matter-linking cluster "
+            "proposals and emit a budget precondition review report."
+        ),
+    )
+    matter_linking_cluster_review.add_argument(
+        "--matter-linking-cluster-report",
+        required=True,
+        help="Path to matter_linking_cluster_report.json.",
+    )
+    matter_linking_cluster_review.add_argument(
+        "--outcome",
+        required=True,
+        help="Path to matter_linking_cluster_review_outcome_record.json.",
+    )
+    matter_linking_cluster_review.add_argument("--out-dir", required=True)
+    matter_linking_cluster_review.add_argument(
+        "--generated-at",
+        help="Optional fixed timestamp for deterministic tests and replayed reports.",
+    )
+
     matter_linking_preflight = sub.add_parser(
         "audit-matter-linking-preflight",
         help=(
@@ -2182,6 +2222,10 @@ def main(argv: list[str] | None = None) -> int:
                 fixture_gold=args.fixture_gold,
                 labor_employment_budget_fact_report=args.labor_employment_budget_fact_report,
                 labor_employment_driver_impact_report=(args.labor_employment_driver_impact_report),
+                matter_linking_cluster_report=args.matter_linking_cluster_report,
+                matter_linking_cluster_review_outcome_report=(
+                    args.matter_linking_cluster_review_outcome_report
+                ),
             )
             _print(
                 {
@@ -2203,6 +2247,10 @@ def main(argv: list[str] | None = None) -> int:
                     "labor_employment_budget_fact_report": args.labor_employment_budget_fact_report,
                     "labor_employment_driver_impact_report": (
                         args.labor_employment_driver_impact_report
+                    ),
+                    "matter_linking_cluster_report": args.matter_linking_cluster_report,
+                    "matter_linking_cluster_review_outcome_report": (
+                        args.matter_linking_cluster_review_outcome_report
                     ),
                     "safety_gate_report": str(run_dir / "safety_gate_report.json"),
                     "exception_lake_handoff_manifest": str(
@@ -4180,6 +4228,43 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             if report.status == "blocked_matter_linking_cluster_validation":
+                return 2
+            return 0
+
+        if args.command == "record-matter-linking-cluster-review-outcome":
+            report, run_dir = run_matter_linking_cluster_review_outcome_record(
+                matter_linking_cluster_report_path=args.matter_linking_cluster_report,
+                outcome_path=args.outcome,
+                out_dir=args.out_dir,
+                generated_at=args.generated_at,
+            )
+            failed_checks = [check.check_id for check in report.checks if check.status == "failed"]
+            _print(
+                {
+                    "status": report.status,
+                    "matter_linking_cluster_review_outcome_report_id": (
+                        report.matter_linking_cluster_review_outcome_report_id
+                    ),
+                    "matter_linking_cluster_report_id": report.matter_linking_cluster_report_id,
+                    "budget_scope_cluster_count": report.budget_scope_cluster_count,
+                    "budget_scope_cluster_ids": report.budget_scope_cluster_ids,
+                    "unreviewed_cluster_count": report.unreviewed_cluster_count,
+                    "unknown_cluster_count": report.unknown_cluster_count,
+                    "budget_blocking_cluster_count": report.budget_blocking_cluster_count,
+                    "failed_checks": failed_checks,
+                    "required_next_gates": report.required_next_gates,
+                    "budget_amount_output_authorized": (report.budget_amount_output_authorized),
+                    "budget_submission_authorized": report.budget_submission_authorized,
+                    "matter_opening_authorized": report.matter_opening_authorized,
+                    "conflict_conclusion_emitted": report.conflict_conclusion_emitted,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            if report.status == "blocked_by_matter_linking_cluster_review":
                 return 2
             return 0
 
