@@ -14,6 +14,16 @@ from lawfirm_os_intake.util import load_json, write_json
 
 POLICY = "config/budget-driver-policy.yaml"
 PROFILE = "context/synthetic-profiles/insurance-defense.yaml"
+APPROVED_SIGNOFF = "docs/governance/intensity_normalization_signoff.json"
+
+
+def _write_raw_policy(repo_root, tmp_path):
+    policy = yaml.safe_load((repo_root / POLICY).read_text(encoding="utf-8"))
+    policy = deepcopy(policy)
+    policy["intensity_multiplier_policy"]["normalization"] = "raw"
+    policy_path = tmp_path / "budget-driver-policy.raw.yaml"
+    policy_path.write_text(yaml.safe_dump(policy, sort_keys=False), encoding="utf-8")
+    return policy_path
 
 
 def _write_baseline_relative_policy(repo_root, tmp_path):
@@ -60,13 +70,32 @@ def test_intensity_signoff_preview_contains_default_products_and_demo_deltas(rep
     assert medmal_demo.delta_amount < 0
 
 
-def test_intensity_signoff_gate_passes_raw_policy_without_signoff(repo_root):
-    report = validate_intensity_normalization_signoff_gate(policy_path=repo_root / POLICY)
+def test_intensity_signoff_gate_passes_explicit_raw_policy_without_signoff(repo_root, tmp_path):
+    policy_path = _write_raw_policy(repo_root, tmp_path)
+
+    report = validate_intensity_normalization_signoff_gate(policy_path=policy_path)
 
     assert report.status == "passed"
     assert report.normalization_mode == "raw"
     assert report.signoff_required is False
     assert {check.check_id for check in report.checks} == {"raw_mode_needs_no_signoff"}
+
+
+def test_active_baseline_relative_policy_passes_with_committed_approved_signoff(repo_root):
+    report = validate_intensity_normalization_signoff_gate(
+        policy_path=repo_root / POLICY,
+        signoff_path=repo_root / APPROVED_SIGNOFF,
+    )
+    markdown = (repo_root / "docs/governance/intensity_normalization_signoff.md").read_text(
+        encoding="utf-8"
+    )
+
+    assert report.status == "passed"
+    assert report.normalization_mode == "baseline_relative"
+    assert report.signoff_required is True
+    assert report.signoff_status == "approved_for_baseline_relative"
+    assert markdown.startswith("# Intensity Normalization Approved Signoff")
+    assert "## Decision\n" in markdown
 
 
 def test_intensity_signoff_gate_fails_baseline_relative_without_signoff(repo_root, tmp_path):
@@ -155,6 +184,8 @@ def test_intensity_signoff_cli_writes_preview_and_gate_report(repo_root, tmp_pat
             "validate-intensity-signoff",
             "--policy",
             str(repo_root / POLICY),
+            "--signoff",
+            str(repo_root / APPROVED_SIGNOFF),
             "--report-out",
             str(gate_report_path),
         ]

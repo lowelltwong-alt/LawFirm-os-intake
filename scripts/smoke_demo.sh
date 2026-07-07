@@ -972,7 +972,7 @@ PY
 test -s ".lawfirm-os-intake/smoke/quality/budget-learning-loop/budget_learning_loop_report.json"
 grep -q '"status": "budget_learning_loop_ready_for_review"' \
   ".lawfirm-os-intake/smoke/quality/budget-learning-loop/budget_learning_loop_report.json"
-grep -q '"variance_review_event_count": 5' \
+grep -q '"variance_review_event_count": 4' \
   ".lawfirm-os-intake/smoke/quality/budget-learning-loop/budget_learning_loop_report.json"
 grep -q '"silent_learning_performed": false' \
   ".lawfirm-os-intake/smoke/quality/budget-learning-loop/budget_learning_loop_report.json"

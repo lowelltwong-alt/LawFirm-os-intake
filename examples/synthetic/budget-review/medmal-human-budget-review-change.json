@@ -16,7 +16,7 @@
       "external_code_candidate": "L330",
       "staffing_role": "senior_associate",
       "field": "estimated_hours",
-      "new_value": 64,
+      "new_value": 72,
       "reason": "Synthetic reviewer expects additional deposition preparation and follow-up.",
       "structured_refs": [
         "synthetic-review://medmal-budget-review/deposition-uncertainty"

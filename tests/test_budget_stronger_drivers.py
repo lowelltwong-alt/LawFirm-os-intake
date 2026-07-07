@@ -100,7 +100,7 @@ def test_profile_default_intensity_effects_are_visible_not_observed(tmp_path, re
         assert effect.applied is True
         assert effect.default_used_as_observed_fact is False
         assert "effective intensity" in effect.note
-        assert "normalization raw" in effect.note
+        assert "normalization baseline_relative" in effect.note
         assert "not observed source evidence" in effect.note
 
     coverage_effect = effects_by_driver["coverage_posture"]
@@ -161,6 +161,8 @@ def test_raw_intensity_normalization_preserves_current_multipliers(tmp_path, rep
         tmp_path,
         repo_root,
     )
+    policy = deepcopy(policy)
+    policy["intensity_multiplier_policy"]["normalization"] = "raw"
     resolved = resolve_case_drivers(packet, confirmation, profile, policy)
 
     assert resolved.intensity_normalization_mode == "raw"

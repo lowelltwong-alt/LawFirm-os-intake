@@ -1,0 +1,559 @@
+{
+  "schema_version": "0.1",
+  "signoff_id": "intensitysignoff_a9bdeb90874951b6",
+  "generated_at": "2026-07-07T04:17:06Z",
+  "status": "approved_for_baseline_relative",
+  "policy_id": "synthetic-budget-driver-policy",
+  "policy_version_before": "0.1",
+  "policy_version_after": "0.1+baseline_relative",
+  "policy_sha256_before": "sha256:40294ab2d59d1984a5f23ea72b426f641f9e5365cc33c10e638f82f351dac17c",
+  "policy_sha256_after": "sha256:1b680c95502b434ead29a068fd71e5e432e0d8c3035d7af97739ca99220e3aa1",
+  "normalization_mode_before": "raw",
+  "normalization_mode_after": "baseline_relative",
+  "per_family": [
+    {
+      "matter_family": "auto_liability_defense",
+      "template_id": "synthetic-auto-bi-defense-utbms-v1",
+      "baseline_source": "family_defaults",
+      "baseline_by_driver": {
+        "severity_tier": "significant",
+        "liability_dispute": "disputed",
+        "venue_difficulty": "neutral"
+      },
+      "per_phase_default_product_before": {
+        "L100": 1.0,
+        "L200": 1.05,
+        "L300": 1.134,
+        "L400": 1.08
+      },
+      "per_phase_default_product_after": {
+        "L100": 1.0,
+        "L200": 1.0,
+        "L300": 1.0,
+        "L400": 1.0
+      },
+      "effective_multiplier_table": [
+        {
+          "matter_family": "auto_liability_defense",
+          "driver_id": "liability_dispute",
+          "tier": "clear",
+          "phase_id": "L200",
+          "baseline_tier": "disputed",
+          "raw_multiplier": 0.9,
+          "baseline_raw_multiplier": 1.05,
+          "effective_multiplier": 0.8571
+        },
+        {
+          "matter_family": "auto_liability_defense",
+          "driver_id": "liability_dispute",
+          "tier": "clear",
+          "phase_id": "L300",
+          "baseline_tier": "disputed",
+          "raw_multiplier": 0.9,
+          "baseline_raw_multiplier": 1.05,
+          "effective_multiplier": 0.8571
+        },
+        {
+          "matter_family": "auto_liability_defense",
+          "driver_id": "liability_dispute",
+          "tier": "disputed",
+          "phase_id": "L200",
+          "baseline_tier": "disputed",
+          "raw_multiplier": 1.05,
+          "baseline_raw_multiplier": 1.05,
+          "effective_multiplier": 1.0
+        },
+        {
+          "matter_family": "auto_liability_defense",
+          "driver_id": "liability_dispute",
+          "tier": "disputed",
+          "phase_id": "L300",
+          "baseline_tier": "disputed",
+          "raw_multiplier": 1.05,
+          "baseline_raw_multiplier": 1.05,
+          "effective_multiplier": 1.0
+        },
+        {
+          "matter_family": "auto_liability_defense",
+          "driver_id": "liability_dispute",
+          "tier": "hotly_contested",
+          "phase_id": "L200",
+          "baseline_tier": "disputed",
+          "raw_multiplier": 1.18,
+          "baseline_raw_multiplier": 1.05,
+          "effective_multiplier": 1.1238
+        },
+        {
+          "matter_family": "auto_liability_defense",
+          "driver_id": "liability_dispute",
+          "tier": "hotly_contested",
+          "phase_id": "L300",
+          "baseline_tier": "disputed",
+          "raw_multiplier": 1.18,
+          "baseline_raw_multiplier": 1.05,
+          "effective_multiplier": 1.1238
+        },
+        {
+          "matter_family": "auto_liability_defense",
+          "driver_id": "liability_dispute",
+          "tier": "hotly_contested",
+          "phase_id": "L400",
+          "baseline_tier": "disputed",
+          "raw_multiplier": 1.18,
+          "baseline_raw_multiplier": 1.0,
+          "effective_multiplier": 1.18
+        },
+        {
+          "matter_family": "auto_liability_defense",
+          "driver_id": "severity_tier",
+          "tier": "catastrophic_or_death",
+          "phase_id": "L300",
+          "baseline_tier": "significant",
+          "raw_multiplier": 1.22,
+          "baseline_raw_multiplier": 1.08,
+          "effective_multiplier": 1.1296
+        },
+        {
+          "matter_family": "auto_liability_defense",
+          "driver_id": "severity_tier",
+          "tier": "catastrophic_or_death",
+          "phase_id": "L400",
+          "baseline_tier": "significant",
+          "raw_multiplier": 1.22,
+          "baseline_raw_multiplier": 1.08,
+          "effective_multiplier": 1.1296
+        },
+        {
+          "matter_family": "auto_liability_defense",
+          "driver_id": "severity_tier",
+          "tier": "significant",
+          "phase_id": "L300",
+          "baseline_tier": "significant",
+          "raw_multiplier": 1.08,
+          "baseline_raw_multiplier": 1.08,
+          "effective_multiplier": 1.0
+        },
+        {
+          "matter_family": "auto_liability_defense",
+          "driver_id": "severity_tier",
+          "tier": "significant",
+          "phase_id": "L400",
+          "baseline_tier": "significant",
+          "raw_multiplier": 1.08,
+          "baseline_raw_multiplier": 1.08,
+          "effective_multiplier": 1.0
+        },
+        {
+          "matter_family": "auto_liability_defense",
+          "driver_id": "severity_tier",
+          "tier": "soft_tissue",
+          "phase_id": "L300",
+          "baseline_tier": "significant",
+          "raw_multiplier": 0.95,
+          "baseline_raw_multiplier": 1.08,
+          "effective_multiplier": 0.8796
+        },
+        {
+          "matter_family": "auto_liability_defense",
+          "driver_id": "severity_tier",
+          "tier": "soft_tissue",
+          "phase_id": "L400",
+          "baseline_tier": "significant",
+          "raw_multiplier": 0.95,
+          "baseline_raw_multiplier": 1.08,
+          "effective_multiplier": 0.8796
+        },
+        {
+          "matter_family": "auto_liability_defense",
+          "driver_id": "venue_difficulty",
+          "tier": "favorable",
+          "phase_id": "L200",
+          "baseline_tier": "neutral",
+          "raw_multiplier": 0.95,
+          "baseline_raw_multiplier": 1.0,
+          "effective_multiplier": 0.95
+        },
+        {
+          "matter_family": "auto_liability_defense",
+          "driver_id": "venue_difficulty",
+          "tier": "favorable",
+          "phase_id": "L300",
+          "baseline_tier": "neutral",
+          "raw_multiplier": 0.95,
+          "baseline_raw_multiplier": 1.0,
+          "effective_multiplier": 0.95
+        },
+        {
+          "matter_family": "auto_liability_defense",
+          "driver_id": "venue_difficulty",
+          "tier": "favorable",
+          "phase_id": "L400",
+          "baseline_tier": "neutral",
+          "raw_multiplier": 0.95,
+          "baseline_raw_multiplier": 1.0,
+          "effective_multiplier": 0.95
+        },
+        {
+          "matter_family": "auto_liability_defense",
+          "driver_id": "venue_difficulty",
+          "tier": "neutral",
+          "phase_id": "L200",
+          "baseline_tier": "neutral",
+          "raw_multiplier": 1.0,
+          "baseline_raw_multiplier": 1.0,
+          "effective_multiplier": 1.0
+        },
+        {
+          "matter_family": "auto_liability_defense",
+          "driver_id": "venue_difficulty",
+          "tier": "neutral",
+          "phase_id": "L300",
+          "baseline_tier": "neutral",
+          "raw_multiplier": 1.0,
+          "baseline_raw_multiplier": 1.0,
+          "effective_multiplier": 1.0
+        },
+        {
+          "matter_family": "auto_liability_defense",
+          "driver_id": "venue_difficulty",
+          "tier": "neutral",
+          "phase_id": "L400",
+          "baseline_tier": "neutral",
+          "raw_multiplier": 1.0,
+          "baseline_raw_multiplier": 1.0,
+          "effective_multiplier": 1.0
+        },
+        {
+          "matter_family": "auto_liability_defense",
+          "driver_id": "venue_difficulty",
+          "tier": "plaintiff_friendly",
+          "phase_id": "L200",
+          "baseline_tier": "neutral",
+          "raw_multiplier": 1.12,
+          "baseline_raw_multiplier": 1.0,
+          "effective_multiplier": 1.12
+        },
+        {
+          "matter_family": "auto_liability_defense",
+          "driver_id": "venue_difficulty",
+          "tier": "plaintiff_friendly",
+          "phase_id": "L300",
+          "baseline_tier": "neutral",
+          "raw_multiplier": 1.12,
+          "baseline_raw_multiplier": 1.0,
+          "effective_multiplier": 1.12
+        },
+        {
+          "matter_family": "auto_liability_defense",
+          "driver_id": "venue_difficulty",
+          "tier": "plaintiff_friendly",
+          "phase_id": "L400",
+          "baseline_tier": "neutral",
+          "raw_multiplier": 1.12,
+          "baseline_raw_multiplier": 1.0,
+          "effective_multiplier": 1.12
+        }
+      ],
+      "demo_totals": [
+        {
+          "demo_case_id": "carrier-assignment-auto-bi",
+          "matter_family": "auto_liability_defense",
+          "input_ref": "examples/synthetic/inbound/carrier-assignment-auto-bi.json",
+          "confirmation_ref": "examples/synthetic/confirmations/carrier-assignment-auto-bi.confirmation-template.json",
+          "pricing_status_before": "priced",
+          "pricing_status_after": "priced",
+          "total_proposed_budget_before": 68627.79,
+          "total_proposed_budget_after": 63227.8,
+          "subtotal_fees_before": 47528.2,
+          "subtotal_fees_after": 44130.0,
+          "subtotal_expenses_before": 18247.9,
+          "subtotal_expenses_after": 16450.0,
+          "contingency_amount_before": 2851.69,
+          "contingency_amount_after": 2647.8,
+          "delta_amount": -5399.99,
+          "delta_percent": -7.87,
+          "before_case_driver_profile_id": "casedrivers_2a8066a308ae4fe69999ae5c4b44c843",
+          "after_case_driver_profile_id": "casedrivers_c5e922416a0f404f83c25ad5c92eb43b"
+        }
+      ]
+    },
+    {
+      "matter_family": "medical_malpractice_defense",
+      "template_id": "synthetic-medmal-defense-utbms-v1",
+      "baseline_source": "family_defaults",
+      "baseline_by_driver": {
+        "severity_tier": "significant",
+        "liability_dispute": "disputed",
+        "venue_difficulty": "neutral"
+      },
+      "per_phase_default_product_before": {
+        "L100": 1.0,
+        "L200": 1.05,
+        "L300": 1.134,
+        "L400": 1.08
+      },
+      "per_phase_default_product_after": {
+        "L100": 1.0,
+        "L200": 1.0,
+        "L300": 1.0,
+        "L400": 1.0
+      },
+      "effective_multiplier_table": [
+        {
+          "matter_family": "medical_malpractice_defense",
+          "driver_id": "liability_dispute",
+          "tier": "clear",
+          "phase_id": "L200",
+          "baseline_tier": "disputed",
+          "raw_multiplier": 0.9,
+          "baseline_raw_multiplier": 1.05,
+          "effective_multiplier": 0.8571
+        },
+        {
+          "matter_family": "medical_malpractice_defense",
+          "driver_id": "liability_dispute",
+          "tier": "clear",
+          "phase_id": "L300",
+          "baseline_tier": "disputed",
+          "raw_multiplier": 0.9,
+          "baseline_raw_multiplier": 1.05,
+          "effective_multiplier": 0.8571
+        },
+        {
+          "matter_family": "medical_malpractice_defense",
+          "driver_id": "liability_dispute",
+          "tier": "disputed",
+          "phase_id": "L200",
+          "baseline_tier": "disputed",
+          "raw_multiplier": 1.05,
+          "baseline_raw_multiplier": 1.05,
+          "effective_multiplier": 1.0
+        },
+        {
+          "matter_family": "medical_malpractice_defense",
+          "driver_id": "liability_dispute",
+          "tier": "disputed",
+          "phase_id": "L300",
+          "baseline_tier": "disputed",
+          "raw_multiplier": 1.05,
+          "baseline_raw_multiplier": 1.05,
+          "effective_multiplier": 1.0
+        },
+        {
+          "matter_family": "medical_malpractice_defense",
+          "driver_id": "liability_dispute",
+          "tier": "hotly_contested",
+          "phase_id": "L200",
+          "baseline_tier": "disputed",
+          "raw_multiplier": 1.18,
+          "baseline_raw_multiplier": 1.05,
+          "effective_multiplier": 1.1238
+        },
+        {
+          "matter_family": "medical_malpractice_defense",
+          "driver_id": "liability_dispute",
+          "tier": "hotly_contested",
+          "phase_id": "L300",
+          "baseline_tier": "disputed",
+          "raw_multiplier": 1.18,
+          "baseline_raw_multiplier": 1.05,
+          "effective_multiplier": 1.1238
+        },
+        {
+          "matter_family": "medical_malpractice_defense",
+          "driver_id": "liability_dispute",
+          "tier": "hotly_contested",
+          "phase_id": "L400",
+          "baseline_tier": "disputed",
+          "raw_multiplier": 1.18,
+          "baseline_raw_multiplier": 1.0,
+          "effective_multiplier": 1.18
+        },
+        {
+          "matter_family": "medical_malpractice_defense",
+          "driver_id": "severity_tier",
+          "tier": "catastrophic_or_death",
+          "phase_id": "L300",
+          "baseline_tier": "significant",
+          "raw_multiplier": 1.22,
+          "baseline_raw_multiplier": 1.08,
+          "effective_multiplier": 1.1296
+        },
+        {
+          "matter_family": "medical_malpractice_defense",
+          "driver_id": "severity_tier",
+          "tier": "catastrophic_or_death",
+          "phase_id": "L400",
+          "baseline_tier": "significant",
+          "raw_multiplier": 1.22,
+          "baseline_raw_multiplier": 1.08,
+          "effective_multiplier": 1.1296
+        },
+        {
+          "matter_family": "medical_malpractice_defense",
+          "driver_id": "severity_tier",
+          "tier": "significant",
+          "phase_id": "L300",
+          "baseline_tier": "significant",
+          "raw_multiplier": 1.08,
+          "baseline_raw_multiplier": 1.08,
+          "effective_multiplier": 1.0
+        },
+        {
+          "matter_family": "medical_malpractice_defense",
+          "driver_id": "severity_tier",
+          "tier": "significant",
+          "phase_id": "L400",
+          "baseline_tier": "significant",
+          "raw_multiplier": 1.08,
+          "baseline_raw_multiplier": 1.08,
+          "effective_multiplier": 1.0
+        },
+        {
+          "matter_family": "medical_malpractice_defense",
+          "driver_id": "severity_tier",
+          "tier": "soft_tissue",
+          "phase_id": "L300",
+          "baseline_tier": "significant",
+          "raw_multiplier": 0.95,
+          "baseline_raw_multiplier": 1.08,
+          "effective_multiplier": 0.8796
+        },
+        {
+          "matter_family": "medical_malpractice_defense",
+          "driver_id": "severity_tier",
+          "tier": "soft_tissue",
+          "phase_id": "L400",
+          "baseline_tier": "significant",
+          "raw_multiplier": 0.95,
+          "baseline_raw_multiplier": 1.08,
+          "effective_multiplier": 0.8796
+        },
+        {
+          "matter_family": "medical_malpractice_defense",
+          "driver_id": "venue_difficulty",
+          "tier": "favorable",
+          "phase_id": "L200",
+          "baseline_tier": "neutral",
+          "raw_multiplier": 0.95,
+          "baseline_raw_multiplier": 1.0,
+          "effective_multiplier": 0.95
+        },
+        {
+          "matter_family": "medical_malpractice_defense",
+          "driver_id": "venue_difficulty",
+          "tier": "favorable",
+          "phase_id": "L300",
+          "baseline_tier": "neutral",
+          "raw_multiplier": 0.95,
+          "baseline_raw_multiplier": 1.0,
+          "effective_multiplier": 0.95
+        },
+        {
+          "matter_family": "medical_malpractice_defense",
+          "driver_id": "venue_difficulty",
+          "tier": "favorable",
+          "phase_id": "L400",
+          "baseline_tier": "neutral",
+          "raw_multiplier": 0.95,
+          "baseline_raw_multiplier": 1.0,
+          "effective_multiplier": 0.95
+        },
+        {
+          "matter_family": "medical_malpractice_defense",
+          "driver_id": "venue_difficulty",
+          "tier": "neutral",
+          "phase_id": "L200",
+          "baseline_tier": "neutral",
+          "raw_multiplier": 1.0,
+          "baseline_raw_multiplier": 1.0,
+          "effective_multiplier": 1.0
+        },
+        {
+          "matter_family": "medical_malpractice_defense",
+          "driver_id": "venue_difficulty",
+          "tier": "neutral",
+          "phase_id": "L300",
+          "baseline_tier": "neutral",
+          "raw_multiplier": 1.0,
+          "baseline_raw_multiplier": 1.0,
+          "effective_multiplier": 1.0
+        },
+        {
+          "matter_family": "medical_malpractice_defense",
+          "driver_id": "venue_difficulty",
+          "tier": "neutral",
+          "phase_id": "L400",
+          "baseline_tier": "neutral",
+          "raw_multiplier": 1.0,
+          "baseline_raw_multiplier": 1.0,
+          "effective_multiplier": 1.0
+        },
+        {
+          "matter_family": "medical_malpractice_defense",
+          "driver_id": "venue_difficulty",
+          "tier": "plaintiff_friendly",
+          "phase_id": "L200",
+          "baseline_tier": "neutral",
+          "raw_multiplier": 1.12,
+          "baseline_raw_multiplier": 1.0,
+          "effective_multiplier": 1.12
+        },
+        {
+          "matter_family": "medical_malpractice_defense",
+          "driver_id": "venue_difficulty",
+          "tier": "plaintiff_friendly",
+          "phase_id": "L300",
+          "baseline_tier": "neutral",
+          "raw_multiplier": 1.12,
+          "baseline_raw_multiplier": 1.0,
+          "effective_multiplier": 1.12
+        },
+        {
+          "matter_family": "medical_malpractice_defense",
+          "driver_id": "venue_difficulty",
+          "tier": "plaintiff_friendly",
+          "phase_id": "L400",
+          "baseline_tier": "neutral",
+          "raw_multiplier": 1.12,
+          "baseline_raw_multiplier": 1.0,
+          "effective_multiplier": 1.12
+        }
+      ],
+      "demo_totals": [
+        {
+          "demo_case_id": "carrier-assignment-medmal",
+          "matter_family": "medical_malpractice_defense",
+          "input_ref": "examples/synthetic/inbound/carrier-assignment-medmal.json",
+          "confirmation_ref": "examples/synthetic/confirmations/carrier-assignment-medmal.confirmation-template.json",
+          "pricing_status_before": "priced",
+          "pricing_status_after": "priced",
+          "total_proposed_budget_before": 162027.66,
+          "total_proposed_budget_after": 148406.0,
+          "subtotal_fees_before": 107638.2,
+          "subtotal_fees_after": 99680.0,
+          "subtotal_expenses_before": 46316.6,
+          "subtotal_expenses_after": 41250.0,
+          "contingency_amount_before": 8072.86,
+          "contingency_amount_after": 7476.0,
+          "delta_amount": -13621.66,
+          "delta_percent": -8.41,
+          "before_case_driver_profile_id": "casedrivers_793d5b4a583f438fab47da6acb081eae",
+          "after_case_driver_profile_id": "casedrivers_404dafc194ca4272a5394bdc696d7de4"
+        }
+      ]
+    }
+  ],
+  "requires_human_approval": true,
+  "approved_by": "human_owner_lowelltwong_alt_codex_thread_2026-07-07",
+  "approved_at": "2026-07-07T04:17:06Z",
+  "candidate_only": true,
+  "synthetic_only": true,
+  "no_real_firm_data": true,
+  "no_budget_submission_authority": true,
+  "no_matter_opening_authority": true,
+  "no_conflict_clearance_authority": true,
+  "lake_write_performed": false,
+  "external_writes_performed": false,
+  "decision_required": "Approved by the human owner in the Codex thread on 2026-07-07 after reviewing before/after default products and canonical demo budget totals. Candidate-only; not authorized for client submission."
+}

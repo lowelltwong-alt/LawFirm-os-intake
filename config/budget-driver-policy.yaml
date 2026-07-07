@@ -128,6 +128,7 @@ count_driver_ranges:
     max: 12
 
 intensity_multiplier_policy:
+  normalization: baseline_relative
   cumulative_multiplier_cap: 2.5
   applies_to_expense_bearing_lines: true
   effects:

@@ -454,8 +454,16 @@ def build_intensity_normalization_signoff_report(
 def render_intensity_normalization_signoff_markdown(
     report: IntensityNormalizationSignoffReport,
 ) -> str:
+    decision_heading = (
+        "Decision" if report.status == "approved_for_baseline_relative" else "Decision Required"
+    )
+    title = (
+        "# Intensity Normalization Approved Signoff"
+        if report.status == "approved_for_baseline_relative"
+        else "# Intensity Normalization Signoff Preview"
+    )
     lines = [
-        "# Intensity Normalization Signoff Preview",
+        title,
         "",
         f"- Signoff ID: `{report.signoff_id}`",
         f"- Status: `{report.status}`",
@@ -465,7 +473,7 @@ def render_intensity_normalization_signoff_markdown(
         f"- Requires human approval: `{str(report.requires_human_approval).lower()}`",
         "- Candidate-only, synthetic-only, and not authorized for client submission.",
         "",
-        "## Decision Required",
+        f"## {decision_heading}",
         "",
         report.decision_required,
         "",
