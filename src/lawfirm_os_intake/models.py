@@ -717,6 +717,160 @@ class RustTransitionPolicy(StrictModel):
     external_writes_performed: Literal[False] = False
 
 
+RustToolLadderStage = Literal[
+    "s0_candidate",
+    "s1_shadow",
+    "s2_audit",
+    "s3_cosign",
+    "s4_authoritative",
+]
+
+
+class RustToolLadderHistoryEvent(StrictModel):
+    event_id: str
+    stage: RustToolLadderStage
+    recorded_at: str
+    actor: str
+    rationale: str
+    evidence_refs: list[str] = Field(default_factory=list)
+    human_signoff_ref: str | None = None
+
+
+class RustToolLadderTool(StrictModel):
+    tool_id: str
+    purpose: str
+    stage: RustToolLadderStage
+    stage_ceiling: RustToolLadderStage
+    review_by: str
+    scope_items: list[str]
+    replacement_target: str = "none"
+    gate_evidence: dict[str, list[str]] = Field(default_factory=dict)
+    cargo_manifest_ref: str | None = None
+    cargo_binary_name: str | None = None
+    wrapper_module_ref: str | None = None
+    cli_command_ref: str | None = None
+    test_refs: list[str] = Field(default_factory=list)
+    ci_wiring_refs: list[str] = Field(default_factory=list)
+    parity_corpus_ref: str | None = None
+    python_oracle_ref: str | None = None
+    adjudication_dir_ref: str | None = None
+    contract_lock_ref: str | None = None
+    weekly_parity_job_ref: str | None = None
+    frozen_goldens_reviewed: bool = False
+    python_retained_as_oracle: bool = True
+    rust_output_consumed_downstream: bool = False
+    rust_replacement_allowed: Literal[False] = False
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    history: list[RustToolLadderHistoryEvent]
+
+    @model_validator(mode="after")
+    def rust_tool_ladder_history_matches_current_stage(self) -> "RustToolLadderTool":
+        if not self.history:
+            raise ValueError("rust tool ladder entries require append-only history")
+        if self.history[-1].stage != self.stage:
+            raise ValueError("latest rust tool ladder history event must match current stage")
+        if self.rust_output_consumed_downstream and self.stage not in {
+            "s3_cosign",
+            "s4_authoritative",
+        }:
+            raise ValueError("Rust output cannot be consumed downstream before co-sign")
+        return self
+
+
+class RustToolLadderConfig(StrictModel):
+    schema_version: str = "0.1"
+    ladder_id: str
+    status: Literal["local_candidate"]
+    authority: str
+    rust_transition_policy_ref: str
+    methodology_version: Literal["rust_tool_ladder.v0_1"] = "rust_tool_ladder.v0_1"
+    stage_order: list[RustToolLadderStage]
+    tools: list[RustToolLadderTool]
+    rust_replacement_allowed: Literal[False] = False
+    no_connector_or_external_writes: Literal[True] = True
+    no_lake_or_sqlite_writes: Literal[True] = True
+    no_budget_or_matter_authority: Literal[True] = True
+    no_canonical_authority: Literal[True] = True
+    candidate_only: Literal[True] = True
+
+    @model_validator(mode="after")
+    def rust_tool_ladder_config_is_coherent(self) -> "RustToolLadderConfig":
+        if self.stage_order != [
+            "s0_candidate",
+            "s1_shadow",
+            "s2_audit",
+            "s3_cosign",
+            "s4_authoritative",
+        ]:
+            raise ValueError("rust tool ladder stage_order must match the governed ladder")
+        tool_ids = [tool.tool_id for tool in self.tools]
+        if len(tool_ids) != len(set(tool_ids)):
+            raise ValueError("rust tool ladder tool_id values must be unique")
+        return self
+
+
+class RustToolLadderAuditCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    tool_id: str | None = None
+    evidence_refs: list[str] = Field(default_factory=list)
+    blocking_refs: list[str] = Field(default_factory=list)
+
+
+class RustToolLadderAuditReport(StrictModel):
+    schema_version: str = "0.1"
+    rust_tool_ladder_audit_report_id: str
+    status: Literal["rust_tool_ladder_ready_for_review", "blocked_by_rust_tool_ladder"]
+    ladder_ref: str
+    ladder_id: str | None = None
+    rust_transition_policy_ref: str | None = None
+    methodology_version: Literal["rust_tool_ladder.v0_1"] = "rust_tool_ladder.v0_1"
+    tool_count: int = Field(ge=0)
+    s0_candidate_count: int = Field(ge=0)
+    s1_shadow_count: int = Field(ge=0)
+    s2_audit_count: int = Field(ge=0)
+    s3_cosign_count: int = Field(ge=0)
+    s4_authoritative_count: int = Field(ge=0)
+    failed_check_count: int = Field(ge=0)
+    checks: list[RustToolLadderAuditCheck]
+    candidate_exception_lake_labels: list[str]
+    required_next_gates: list[str]
+    rust_replacement_allowed: Literal[False] = False
+    rust_authoritative_runtime_enabled: Literal[False] = False
+    connector_or_external_writes_authorized: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    canonical_promotion_authorized: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    generated_at: str
+
+    @model_validator(mode="after")
+    def rust_tool_ladder_report_counts_match(self) -> "RustToolLadderAuditReport":
+        failed = [check for check in self.checks if check.status == "failed"]
+        if self.failed_check_count != len(failed):
+            raise ValueError("rust tool ladder failed check count mismatch")
+        stage_total = (
+            self.s0_candidate_count
+            + self.s1_shadow_count
+            + self.s2_audit_count
+            + self.s3_cosign_count
+            + self.s4_authoritative_count
+        )
+        if self.tool_count != stage_total:
+            raise ValueError("rust tool ladder stage counts must equal tool count")
+        if self.status == "rust_tool_ladder_ready_for_review" and failed:
+            raise ValueError("ready rust tool ladder report cannot include failed checks")
+        if self.status == "blocked_by_rust_tool_ladder" and not failed:
+            raise ValueError("blocked rust tool ladder report requires failed checks")
+        return self
+
+
 class RustIngestionReadinessCheck(StrictModel):
     check_id: str
     status: Literal["passed", "failed"]

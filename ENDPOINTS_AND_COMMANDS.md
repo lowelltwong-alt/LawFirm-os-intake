@@ -145,6 +145,25 @@ hours-only. It does not retrieve public rate data, ingest real negotiated
 rates, submit budgets, open matters, write Lake/SQLite records, perform
 external writes, or authorize calibration.
 
+### Audit Rust tool ladder
+
+```bash
+python -m lawfirm_os_intake audit-rust-tool-ladder \
+  --ladder config/rust-tool-ladder.json \
+  --repo-root . \
+  --out-dir .lawfirm-os-intake/rust-tool-ladder
+```
+
+This writes `rust_tool_ladder_audit_report.json` and
+`rust_tool_ladder_audit_report.md`. The audit checks the local candidate Rust
+tool ladder against the Rust transition policy, records each Rust leaf tool's
+stage, stage ceiling, review date, wrapper/CLI/test refs, and fail-closed gate
+evidence, and blocks any Rust tool that tries to exceed its ceiling, enter
+forbidden semantic/budget scope, or move into audit/co-sign/authoritative stages
+without parity and adjudication evidence. It does not compile or run Rust,
+replace the Python oracle, create adapters, write Lake/SQLite records, submit
+budgets, open matters, perform external writes, or promote canon.
+
 ### Validation runtime policy
 
 ```bash

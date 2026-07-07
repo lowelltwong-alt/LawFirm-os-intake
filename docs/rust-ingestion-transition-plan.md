@@ -67,6 +67,15 @@ It names profiling thresholds, required benchmark dimensions, candidate Rust
 hot-path scope, forbidden Rust scope, parity dimensions, and transition gates.
 It is not Semantic Substrate canon and does not authorize a Rust runtime.
 
+The local candidate ladder lives at `config/rust-tool-ladder.json` and is
+audited by `audit-rust-tool-ladder`. It records each Rust leaf tool's stage,
+stage ceiling, review date, evidence refs, and promotion history. Existing Rust
+QA leaf checkers start at `s1_shadow`; planned source-inventory and artifact
+validator tools start at `s0_candidate`. The ladder blocks any movement into
+audit, co-sign, or authoritative stages without reviewed parity corpus,
+Python-oracle, CI-wiring, adjudication, and contract-lock evidence. It is a
+review control only and does not authorize Rust replacement.
+
 The CourtListener/public-derived dataset strategy lives at
 `config/courtlistener-dataset-strategy.yaml` and is audited by
 `audit-courtlistener-dataset-strategy`. That strategy keeps Rust in shadow mode

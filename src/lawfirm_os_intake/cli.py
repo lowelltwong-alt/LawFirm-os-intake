@@ -165,6 +165,7 @@ from .rust_fixture_manifest import run_rust_fixture_manifest_scan
 from .rust_fixture_snapshot_coherence import run_rust_fixture_snapshot_coherence_check
 from .rust_public_data_cache_custody import run_rust_public_data_cache_custody_check
 from .rust_synthetic_identity_guard import run_rust_synthetic_identity_guard
+from .rust_tool_ladder import RUST_TOOL_LADDER_REF, run_rust_tool_ladder_audit
 from .rust_ui_bundle_source_hash import run_rust_ui_bundle_source_hash_check
 from .skills_registry_specialist_review import run_skills_registry_specialist_review
 from .synthetic_fixture_depth_audit import run_synthetic_fixture_depth_audit
@@ -620,6 +621,25 @@ def _parser() -> argparse.ArgumentParser:
         type=int,
         default=240,
         help="Timeout for the explicit Rust checker invocation.",
+    )
+
+    rust_tool_ladder = sub.add_parser(
+        "audit-rust-tool-ladder",
+        help=(
+            "Audit the local candidate Rust tool ladder and fail closed on replacement "
+            "or semantic-scope drift."
+        ),
+    )
+    rust_tool_ladder.add_argument(
+        "--ladder",
+        default=RUST_TOOL_LADDER_REF,
+        help="Path to config/rust-tool-ladder.json.",
+    )
+    rust_tool_ladder.add_argument("--out-dir", required=True)
+    rust_tool_ladder.add_argument(
+        "--repo-root",
+        default=".",
+        help="Repository root for resolving ladder refs.",
     )
 
     ui_demo_fixture_refresh = sub.add_parser(
@@ -2898,6 +2918,34 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 0 if report.status == "passed" else 2
+
+        if args.command == "audit-rust-tool-ladder":
+            report, run_dir = run_rust_tool_ladder_audit(
+                ladder_path=args.ladder,
+                out_dir=args.out_dir,
+                repo_root=args.repo_root,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "rust_tool_ladder_audit_report_id": (report.rust_tool_ladder_audit_report_id),
+                    "run_dir": str(run_dir),
+                    "tool_count": report.tool_count,
+                    "s0_candidate_count": report.s0_candidate_count,
+                    "s1_shadow_count": report.s1_shadow_count,
+                    "s2_audit_count": report.s2_audit_count,
+                    "failed_check_count": report.failed_check_count,
+                    "rust_replacement_allowed": report.rust_replacement_allowed,
+                    "rust_authoritative_runtime_enabled": (
+                        report.rust_authoritative_runtime_enabled
+                    ),
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "budget_submission_authorized": report.budget_submission_authorized,
+                    "matter_opening_authorized": report.matter_opening_authorized,
+                }
+            )
+            return 0 if report.status == "rust_tool_ladder_ready_for_review" else 2
 
         if args.command == "refresh-ui-demo-fixtures":
             report, report_path = refresh_ui_demo_fixtures(

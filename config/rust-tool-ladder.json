@@ -1,0 +1,460 @@
+{
+  "schema_version": "0.1",
+  "ladder_id": "lawfirm-os-intake-rust-tool-ladder.v0_1",
+  "status": "local_candidate",
+  "authority": "LawFirm-os-intake local candidate; not Semantic Substrate canon and not runtime replacement authority",
+  "rust_transition_policy_ref": "config/rust-ingestion-transition-policy.json",
+  "methodology_version": "rust_tool_ladder.v0_1",
+  "stage_order": [
+    "s0_candidate",
+    "s1_shadow",
+    "s2_audit",
+    "s3_cosign",
+    "s4_authoritative"
+  ],
+  "tools": [
+    {
+      "tool_id": "rust-fixture-boundary-checker",
+      "purpose": "Read-only UI fixture boundary checker for candidate-only/no-write flags and report-count coherence.",
+      "stage": "s1_shadow",
+      "stage_ceiling": "s2_audit",
+      "review_by": "2026-08-06",
+      "scope_items": [
+        "fixture_boundary_scanning",
+        "candidate_flag_validation",
+        "local_json_report_audit"
+      ],
+      "replacement_target": "none",
+      "gate_evidence": {
+        "s1_shadow": [
+          "rust/fixture-boundary-checker/Cargo.toml",
+          "src/lawfirm_os_intake/rust_fixture_boundary.py",
+          "tests/test_rust_fixture_boundary_checker.py"
+        ]
+      },
+      "cargo_manifest_ref": "rust/fixture-boundary-checker/Cargo.toml",
+      "cargo_binary_name": "fixture-boundary-checker",
+      "wrapper_module_ref": "src/lawfirm_os_intake/rust_fixture_boundary.py",
+      "cli_command_ref": "src/lawfirm_os_intake/cli.py#build-rust-fixture-boundary-report",
+      "test_refs": [
+        "tests/test_rust_fixture_boundary_checker.py"
+      ],
+      "ci_wiring_refs": [
+        ".github/workflows/ci.yml",
+        "scripts/run_full_pytest.py"
+      ],
+      "parity_corpus_ref": null,
+      "python_oracle_ref": null,
+      "adjudication_dir_ref": null,
+      "contract_lock_ref": null,
+      "weekly_parity_job_ref": null,
+      "frozen_goldens_reviewed": false,
+      "python_retained_as_oracle": true,
+      "rust_output_consumed_downstream": false,
+      "rust_replacement_allowed": false,
+      "candidate_only": true,
+      "non_authoritative": true,
+      "history": [
+        {
+          "event_id": "rust-ladder:event:fixture-boundary:s1-shadow:2026-07-06",
+          "stage": "s1_shadow",
+          "recorded_at": "2026-07-06T00:00:00Z",
+          "actor": "codex",
+          "rationale": "Existing Rust leaf checker runs under local tests and wrapper reports, but lacks frozen Python parity corpus and adjudication history.",
+          "evidence_refs": [
+            "tests/test_rust_fixture_boundary_checker.py",
+            "src/lawfirm_os_intake/rust_fixture_boundary.py"
+          ],
+          "human_signoff_ref": null
+        }
+      ]
+    },
+    {
+      "tool_id": "rust-fixture-manifest-scanner",
+      "purpose": "Read-only fixture manifest scanner for hash-bound JSON fixture inventory evidence.",
+      "stage": "s1_shadow",
+      "stage_ceiling": "s2_audit",
+      "review_by": "2026-08-06",
+      "scope_items": [
+        "fixture_manifest_scanning",
+        "sha256_hashing",
+        "local_json_report_audit"
+      ],
+      "replacement_target": "none",
+      "gate_evidence": {
+        "s1_shadow": [
+          "rust/fixture-boundary-checker/src/bin/fixture_manifest_scanner.rs",
+          "src/lawfirm_os_intake/rust_fixture_manifest.py",
+          "tests/test_rust_fixture_manifest_scanner.py"
+        ]
+      },
+      "cargo_manifest_ref": "rust/fixture-boundary-checker/Cargo.toml",
+      "cargo_binary_name": "fixture_manifest_scanner",
+      "wrapper_module_ref": "src/lawfirm_os_intake/rust_fixture_manifest.py",
+      "cli_command_ref": "src/lawfirm_os_intake/cli.py#build-rust-fixture-manifest-report",
+      "test_refs": [
+        "tests/test_rust_fixture_manifest_scanner.py"
+      ],
+      "ci_wiring_refs": [
+        ".github/workflows/ci.yml",
+        "scripts/run_full_pytest.py"
+      ],
+      "parity_corpus_ref": null,
+      "python_oracle_ref": null,
+      "adjudication_dir_ref": null,
+      "contract_lock_ref": null,
+      "weekly_parity_job_ref": null,
+      "frozen_goldens_reviewed": false,
+      "python_retained_as_oracle": true,
+      "rust_output_consumed_downstream": false,
+      "rust_replacement_allowed": false,
+      "candidate_only": true,
+      "non_authoritative": true,
+      "history": [
+        {
+          "event_id": "rust-ladder:event:fixture-manifest:s1-shadow:2026-07-06",
+          "stage": "s1_shadow",
+          "recorded_at": "2026-07-06T00:00:00Z",
+          "actor": "codex",
+          "rationale": "Existing Rust leaf scanner supports UI fixture evidence, but is not an authoritative source inventory or schema validator.",
+          "evidence_refs": [
+            "tests/test_rust_fixture_manifest_scanner.py",
+            "src/lawfirm_os_intake/rust_fixture_manifest.py"
+          ],
+          "human_signoff_ref": null
+        }
+      ]
+    },
+    {
+      "tool_id": "rust-fixture-snapshot-coherence",
+      "purpose": "Read-only fixture snapshot drift checker comparing generated fixture manifests.",
+      "stage": "s1_shadow",
+      "stage_ceiling": "s2_audit",
+      "review_by": "2026-08-06",
+      "scope_items": [
+        "fixture_snapshot_coherence",
+        "sha256_hashing",
+        "local_json_report_audit"
+      ],
+      "replacement_target": "none",
+      "gate_evidence": {
+        "s1_shadow": [
+          "rust/fixture-boundary-checker/src/bin/fixture_snapshot_coherence.rs",
+          "src/lawfirm_os_intake/rust_fixture_snapshot_coherence.py",
+          "tests/test_rust_fixture_snapshot_coherence.py"
+        ]
+      },
+      "cargo_manifest_ref": "rust/fixture-boundary-checker/Cargo.toml",
+      "cargo_binary_name": "fixture_snapshot_coherence",
+      "wrapper_module_ref": "src/lawfirm_os_intake/rust_fixture_snapshot_coherence.py",
+      "cli_command_ref": "src/lawfirm_os_intake/cli.py#build-rust-fixture-snapshot-coherence-report",
+      "test_refs": [
+        "tests/test_rust_fixture_snapshot_coherence.py"
+      ],
+      "ci_wiring_refs": [
+        ".github/workflows/ci.yml",
+        "scripts/run_full_pytest.py"
+      ],
+      "parity_corpus_ref": null,
+      "python_oracle_ref": null,
+      "adjudication_dir_ref": null,
+      "contract_lock_ref": null,
+      "weekly_parity_job_ref": null,
+      "frozen_goldens_reviewed": false,
+      "python_retained_as_oracle": true,
+      "rust_output_consumed_downstream": false,
+      "rust_replacement_allowed": false,
+      "candidate_only": true,
+      "non_authoritative": true,
+      "history": [
+        {
+          "event_id": "rust-ladder:event:fixture-snapshot:s1-shadow:2026-07-06",
+          "stage": "s1_shadow",
+          "recorded_at": "2026-07-06T00:00:00Z",
+          "actor": "codex",
+          "rationale": "Existing Rust drift detector is useful QA evidence but has no replacement authority.",
+          "evidence_refs": [
+            "tests/test_rust_fixture_snapshot_coherence.py",
+            "src/lawfirm_os_intake/rust_fixture_snapshot_coherence.py"
+          ],
+          "human_signoff_ref": null
+        }
+      ]
+    },
+    {
+      "tool_id": "rust-ui-bundle-source-hash-checker",
+      "purpose": "Read-only UI bundle source-hash drift detector for local demo fixture promotion.",
+      "stage": "s1_shadow",
+      "stage_ceiling": "s2_audit",
+      "review_by": "2026-08-06",
+      "scope_items": [
+        "ui_bundle_source_hash_checking",
+        "sha256_hashing",
+        "local_json_report_audit"
+      ],
+      "replacement_target": "none",
+      "gate_evidence": {
+        "s1_shadow": [
+          "rust/fixture-boundary-checker/src/bin/ui_bundle_source_hash_checker.rs",
+          "src/lawfirm_os_intake/rust_ui_bundle_source_hash.py",
+          "tests/test_rust_ui_bundle_source_hash.py"
+        ]
+      },
+      "cargo_manifest_ref": "rust/fixture-boundary-checker/Cargo.toml",
+      "cargo_binary_name": "ui_bundle_source_hash_checker",
+      "wrapper_module_ref": "src/lawfirm_os_intake/rust_ui_bundle_source_hash.py",
+      "cli_command_ref": "src/lawfirm_os_intake/cli.py#build-rust-ui-bundle-source-hash-report",
+      "test_refs": [
+        "tests/test_rust_ui_bundle_source_hash.py"
+      ],
+      "ci_wiring_refs": [
+        ".github/workflows/ci.yml",
+        "scripts/run_full_pytest.py"
+      ],
+      "parity_corpus_ref": null,
+      "python_oracle_ref": null,
+      "adjudication_dir_ref": null,
+      "contract_lock_ref": null,
+      "weekly_parity_job_ref": null,
+      "frozen_goldens_reviewed": false,
+      "python_retained_as_oracle": true,
+      "rust_output_consumed_downstream": false,
+      "rust_replacement_allowed": false,
+      "candidate_only": true,
+      "non_authoritative": true,
+      "history": [
+        {
+          "event_id": "rust-ladder:event:ui-bundle-hash:s1-shadow:2026-07-06",
+          "stage": "s1_shadow",
+          "recorded_at": "2026-07-06T00:00:00Z",
+          "actor": "codex",
+          "rationale": "Existing Rust source-hash checker supports UI fixture promotion but remains local QA only.",
+          "evidence_refs": [
+            "tests/test_rust_ui_bundle_source_hash.py",
+            "src/lawfirm_os_intake/rust_ui_bundle_source_hash.py"
+          ],
+          "human_signoff_ref": null
+        }
+      ]
+    },
+    {
+      "tool_id": "rust-synthetic-identity-guard",
+      "purpose": "Read-only synthetic fixture identity/provenance guard for reserved-domain and origin flags.",
+      "stage": "s1_shadow",
+      "stage_ceiling": "s2_audit",
+      "review_by": "2026-08-06",
+      "scope_items": [
+        "synthetic_identity_guard",
+        "fixture_boundary_scanning",
+        "local_json_report_audit"
+      ],
+      "replacement_target": "none",
+      "gate_evidence": {
+        "s1_shadow": [
+          "rust/fixture-boundary-checker/src/bin/synthetic_identity_guard.rs",
+          "src/lawfirm_os_intake/rust_synthetic_identity_guard.py",
+          "tests/test_rust_synthetic_identity_guard.py"
+        ]
+      },
+      "cargo_manifest_ref": "rust/fixture-boundary-checker/Cargo.toml",
+      "cargo_binary_name": "synthetic_identity_guard",
+      "wrapper_module_ref": "src/lawfirm_os_intake/rust_synthetic_identity_guard.py",
+      "cli_command_ref": "src/lawfirm_os_intake/cli.py#build-rust-synthetic-identity-guard-report",
+      "test_refs": [
+        "tests/test_rust_synthetic_identity_guard.py"
+      ],
+      "ci_wiring_refs": [
+        ".github/workflows/ci.yml",
+        "scripts/run_full_pytest.py"
+      ],
+      "parity_corpus_ref": null,
+      "python_oracle_ref": null,
+      "adjudication_dir_ref": null,
+      "contract_lock_ref": null,
+      "weekly_parity_job_ref": null,
+      "frozen_goldens_reviewed": false,
+      "python_retained_as_oracle": true,
+      "rust_output_consumed_downstream": false,
+      "rust_replacement_allowed": false,
+      "candidate_only": true,
+      "non_authoritative": true,
+      "history": [
+        {
+          "event_id": "rust-ladder:event:synthetic-identity:s1-shadow:2026-07-06",
+          "stage": "s1_shadow",
+          "recorded_at": "2026-07-06T00:00:00Z",
+          "actor": "codex",
+          "rationale": "Existing Rust identity guard catches fixture-boundary drift but cannot decide real-data authorization.",
+          "evidence_refs": [
+            "tests/test_rust_synthetic_identity_guard.py",
+            "src/lawfirm_os_intake/rust_synthetic_identity_guard.py"
+          ],
+          "human_signoff_ref": null
+        }
+      ]
+    },
+    {
+      "tool_id": "rust-public-data-cache-custody-checker",
+      "purpose": "Read-only ignored-cache custody checker for public-data cache path, hash, and byte-count evidence.",
+      "stage": "s1_shadow",
+      "stage_ceiling": "s2_audit",
+      "review_by": "2026-08-06",
+      "scope_items": [
+        "public_data_cache_custody",
+        "sha256_hashing",
+        "local_json_report_audit"
+      ],
+      "replacement_target": "none",
+      "gate_evidence": {
+        "s1_shadow": [
+          "rust/fixture-boundary-checker/src/bin/public_data_cache_custody_checker.rs",
+          "src/lawfirm_os_intake/rust_public_data_cache_custody.py",
+          "tests/test_rust_public_data_cache_custody.py"
+        ]
+      },
+      "cargo_manifest_ref": "rust/fixture-boundary-checker/Cargo.toml",
+      "cargo_binary_name": "public_data_cache_custody_checker",
+      "wrapper_module_ref": "src/lawfirm_os_intake/rust_public_data_cache_custody.py",
+      "cli_command_ref": "src/lawfirm_os_intake/cli.py#build-rust-public-data-cache-custody-report",
+      "test_refs": [
+        "tests/test_rust_public_data_cache_custody.py"
+      ],
+      "ci_wiring_refs": [
+        ".github/workflows/ci.yml",
+        "scripts/run_full_pytest.py"
+      ],
+      "parity_corpus_ref": null,
+      "python_oracle_ref": null,
+      "adjudication_dir_ref": null,
+      "contract_lock_ref": null,
+      "weekly_parity_job_ref": null,
+      "frozen_goldens_reviewed": false,
+      "python_retained_as_oracle": true,
+      "rust_output_consumed_downstream": false,
+      "rust_replacement_allowed": false,
+      "candidate_only": true,
+      "non_authoritative": true,
+      "history": [
+        {
+          "event_id": "rust-ladder:event:public-cache-custody:s1-shadow:2026-07-06",
+          "stage": "s1_shadow",
+          "recorded_at": "2026-07-06T00:00:00Z",
+          "actor": "codex",
+          "rationale": "Existing Rust public-data custody checker audits cache mechanics only and cannot authorize public-data ingestion.",
+          "evidence_refs": [
+            "tests/test_rust_public_data_cache_custody.py",
+            "src/lawfirm_os_intake/rust_public_data_cache_custody.py"
+          ],
+          "human_signoff_ref": null
+        }
+      ]
+    },
+    {
+      "tool_id": "rust-intake-source-inventory",
+      "purpose": "Planned Rust source inventory, SHA-256 hashing, and duplicate detection leaf tool.",
+      "stage": "s0_candidate",
+      "stage_ceiling": "s1_shadow",
+      "review_by": "2026-08-06",
+      "scope_items": [
+        "source_inventory",
+        "source_coverage_summary",
+        "sha256_hashing"
+      ],
+      "replacement_target": "python_reference_ingestion_adapter.source_inventory",
+      "gate_evidence": {
+        "s0_candidate": [
+          "docs/fable/rust-audit-to-replacement-kernel.md",
+          "docs/fable/rust-boundary-roadmap.md",
+          "docs/rust-ingestion-transition-plan.md"
+        ]
+      },
+      "cargo_manifest_ref": null,
+      "cargo_binary_name": null,
+      "wrapper_module_ref": null,
+      "cli_command_ref": null,
+      "test_refs": [],
+      "ci_wiring_refs": [],
+      "parity_corpus_ref": null,
+      "python_oracle_ref": null,
+      "adjudication_dir_ref": null,
+      "contract_lock_ref": null,
+      "weekly_parity_job_ref": null,
+      "frozen_goldens_reviewed": false,
+      "python_retained_as_oracle": true,
+      "rust_output_consumed_downstream": false,
+      "rust_replacement_allowed": false,
+      "candidate_only": true,
+      "non_authoritative": true,
+      "history": [
+        {
+          "event_id": "rust-ladder:event:intake-source-inventory:s0:2026-07-06",
+          "stage": "s0_candidate",
+          "recorded_at": "2026-07-06T00:00:00Z",
+          "actor": "fable-to-codex-handoff",
+          "rationale": "Fable ranked source inventory as the next Rust candidate after custody/boundary leaf checks; no code or parity corpus exists yet.",
+          "evidence_refs": [
+            "docs/fable/rust-audit-to-replacement-kernel.md",
+            "docs/fable/rust-boundary-roadmap.md"
+          ],
+          "human_signoff_ref": null
+        }
+      ]
+    },
+    {
+      "tool_id": "rust-intake-artifact-validator",
+      "purpose": "Planned Rust bulk JSON Schema artifact validator bound to exported schemas.",
+      "stage": "s0_candidate",
+      "stage_ceiling": "s1_shadow",
+      "review_by": "2026-08-06",
+      "scope_items": [
+        "schema_compatible_json",
+        "local_json_report_audit"
+      ],
+      "replacement_target": "python_reference_schema_validation",
+      "gate_evidence": {
+        "s0_candidate": [
+          "docs/fable/rust-audit-to-replacement-kernel.md",
+          "docs/fable/rust-boundary-roadmap.md",
+          "scripts/export_schemas.py"
+        ]
+      },
+      "cargo_manifest_ref": null,
+      "cargo_binary_name": null,
+      "wrapper_module_ref": null,
+      "cli_command_ref": null,
+      "test_refs": [],
+      "ci_wiring_refs": [],
+      "parity_corpus_ref": null,
+      "python_oracle_ref": null,
+      "adjudication_dir_ref": null,
+      "contract_lock_ref": null,
+      "weekly_parity_job_ref": null,
+      "frozen_goldens_reviewed": false,
+      "python_retained_as_oracle": true,
+      "rust_output_consumed_downstream": false,
+      "rust_replacement_allowed": false,
+      "candidate_only": true,
+      "non_authoritative": true,
+      "history": [
+        {
+          "event_id": "rust-ladder:event:intake-artifact-validator:s0:2026-07-06",
+          "stage": "s0_candidate",
+          "recorded_at": "2026-07-06T00:00:00Z",
+          "actor": "fable-to-codex-handoff",
+          "rationale": "Fable ranked artifact validation as the next stable Rust candidate after source inventory; no code or parity corpus exists yet.",
+          "evidence_refs": [
+            "docs/fable/rust-audit-to-replacement-kernel.md",
+            "docs/fable/rust-boundary-roadmap.md"
+          ],
+          "human_signoff_ref": null
+        }
+      ]
+    }
+  ],
+  "rust_replacement_allowed": false,
+  "no_connector_or_external_writes": true,
+  "no_lake_or_sqlite_writes": true,
+  "no_budget_or_matter_authority": true,
+  "no_canonical_authority": true,
+  "candidate_only": true
+}

@@ -17,6 +17,6 @@
 | Understand human gates | `docs/human-review.md`, `config/human_gates.yaml` |
 | Understand testing and public data | `docs/evaluation-plan.md`, `docs/public-data-test-plan.md`, `docs/synthetic-data-plan.md`, `docs/data/courtlistener-early-case-dataset-strategy.md` |
 | Understand review UI drop-in | `apps/legal-intake-budget/README.md`, `apps/legal-intake-budget/CLAUDE_DESIGN_BRIEF.md`, `apps/legal-intake-budget/src/data-contract.ts` |
-| Understand Rust readiness | `docs/rust-ingestion-transition-plan.md`, `docs/decisions/ADR-004-rust-ready-ingestion-boundary.md` |
+| Understand Rust readiness | `docs/rust-ingestion-transition-plan.md`, `config/rust-tool-ladder.json`, `docs/decisions/ADR-004-rust-ready-ingestion-boundary.md` |
 | Understand failure risk | `PREMORTEM.md`, `THREAT_MODEL.md` |
 | Know completion criteria | `DEFINITION_OF_DONE.md`, `ROADMAP.md`, `BUILD_VERIFICATION.md` |
