@@ -1,0 +1,60 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "event_id": {
+      "title": "Event Id",
+      "type": "string"
+    },
+    "stage": {
+      "enum": [
+        "s0_candidate",
+        "s1_shadow",
+        "s2_audit",
+        "s3_cosign",
+        "s4_authoritative"
+      ],
+      "title": "Stage",
+      "type": "string"
+    },
+    "recorded_at": {
+      "title": "Recorded At",
+      "type": "string"
+    },
+    "actor": {
+      "title": "Actor",
+      "type": "string"
+    },
+    "rationale": {
+      "title": "Rationale",
+      "type": "string"
+    },
+    "evidence_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Evidence Refs",
+      "type": "array"
+    },
+    "human_signoff_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Human Signoff Ref"
+    }
+  },
+  "required": [
+    "event_id",
+    "stage",
+    "recorded_at",
+    "actor",
+    "rationale"
+  ],
+  "title": "RustToolLadderHistoryEvent",
+  "type": "object"
+}

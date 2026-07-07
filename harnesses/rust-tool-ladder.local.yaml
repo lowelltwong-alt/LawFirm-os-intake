@@ -1,0 +1,27 @@
+schema_version: "0.1"
+harness_id: rust-tool-ladder.local.v0_1
+owner_repo: LawFirm-os-intake
+authority: local_candidate
+mode: synthetic_only_local
+purpose: Audit the local candidate Rust tool ladder so Rust leaf tools cannot drift from shadow/audit evidence into replacement authority.
+command:
+  - python
+  - -m
+  - lawfirm_os_intake
+  - audit-rust-tool-ladder
+required_inputs:
+  - config/rust-tool-ladder.json
+  - config/rust-ingestion-transition-policy.json
+expected_outputs:
+  - rust_tool_ladder_audit_report.json
+  - rust_tool_ladder_audit_report.md
+forbidden:
+  - rust_replacement_authority
+  - semantic_scope_in_rust
+  - budget_decisioning
+  - connector_or_external_write
+  - lake_write
+  - sqlite_write
+  - matter_opening
+  - canonical_promotion
+failure_policy: fail_closed

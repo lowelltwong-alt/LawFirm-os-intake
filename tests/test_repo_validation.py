@@ -1,4 +1,5 @@
 import importlib.util
+import json
 import yaml
 
 
@@ -54,3 +55,33 @@ def test_repo_validation_detects_public_catalog_ingestion_drift(tmp_path, repo_r
     assert validate_repo.public_data_boundary_failures(tmp_path) == [
         "catalog_source_allows_direct_runtime_ingestion"
     ]
+
+
+def test_repo_validation_minimal_rust_ladder_gate_passes_without_runtime_imports(repo_root):
+    validate_repo = _load_validate_repo(repo_root)
+
+    assert validate_repo._minimal_rust_tool_ladder_failures(repo_root) == []
+
+
+def test_repo_validation_minimal_rust_ladder_gate_blocks_replacement_flag(tmp_path, repo_root):
+    validate_repo = _load_validate_repo(repo_root)
+    (tmp_path / "config").mkdir()
+    policy = json.loads(
+        (repo_root / "config/rust-ingestion-transition-policy.json").read_text(encoding="utf-8")
+    )
+    ladder = json.loads((repo_root / "config/rust-tool-ladder.json").read_text(encoding="utf-8"))
+    ladder["rust_replacement_allowed"] = True
+
+    (tmp_path / "config/rust-ingestion-transition-policy.json").write_text(
+        json.dumps(policy, indent=2),
+        encoding="utf-8",
+    )
+    (tmp_path / "config/rust-tool-ladder.json").write_text(
+        json.dumps(ladder, indent=2),
+        encoding="utf-8",
+    )
+
+    assert (
+        "Rust tool ladder rust_replacement_allowed must be False"
+        in validate_repo._minimal_rust_tool_ladder_failures(tmp_path)
+    )

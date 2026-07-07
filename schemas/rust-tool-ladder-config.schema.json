@@ -1,0 +1,396 @@
+{
+  "$defs": {
+    "RustToolLadderHistoryEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "event_id": {
+          "title": "Event Id",
+          "type": "string"
+        },
+        "stage": {
+          "enum": [
+            "s0_candidate",
+            "s1_shadow",
+            "s2_audit",
+            "s3_cosign",
+            "s4_authoritative"
+          ],
+          "title": "Stage",
+          "type": "string"
+        },
+        "recorded_at": {
+          "title": "Recorded At",
+          "type": "string"
+        },
+        "actor": {
+          "title": "Actor",
+          "type": "string"
+        },
+        "rationale": {
+          "title": "Rationale",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "human_signoff_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Human Signoff Ref"
+        }
+      },
+      "required": [
+        "event_id",
+        "stage",
+        "recorded_at",
+        "actor",
+        "rationale"
+      ],
+      "title": "RustToolLadderHistoryEvent",
+      "type": "object"
+    },
+    "RustToolLadderTool": {
+      "additionalProperties": false,
+      "properties": {
+        "tool_id": {
+          "title": "Tool Id",
+          "type": "string"
+        },
+        "purpose": {
+          "title": "Purpose",
+          "type": "string"
+        },
+        "stage": {
+          "enum": [
+            "s0_candidate",
+            "s1_shadow",
+            "s2_audit",
+            "s3_cosign",
+            "s4_authoritative"
+          ],
+          "title": "Stage",
+          "type": "string"
+        },
+        "stage_ceiling": {
+          "enum": [
+            "s0_candidate",
+            "s1_shadow",
+            "s2_audit",
+            "s3_cosign",
+            "s4_authoritative"
+          ],
+          "title": "Stage Ceiling",
+          "type": "string"
+        },
+        "review_by": {
+          "title": "Review By",
+          "type": "string"
+        },
+        "scope_items": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Scope Items",
+          "type": "array"
+        },
+        "replacement_target": {
+          "default": "none",
+          "title": "Replacement Target",
+          "type": "string"
+        },
+        "gate_evidence": {
+          "additionalProperties": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "title": "Gate Evidence",
+          "type": "object"
+        },
+        "cargo_manifest_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cargo Manifest Ref"
+        },
+        "cargo_binary_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cargo Binary Name"
+        },
+        "wrapper_module_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Wrapper Module Ref"
+        },
+        "cli_command_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cli Command Ref"
+        },
+        "test_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Test Refs",
+          "type": "array"
+        },
+        "ci_wiring_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Ci Wiring Refs",
+          "type": "array"
+        },
+        "parity_corpus_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parity Corpus Ref"
+        },
+        "python_oracle_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Python Oracle Ref"
+        },
+        "adjudication_dir_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Adjudication Dir Ref"
+        },
+        "contract_lock_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contract Lock Ref"
+        },
+        "weekly_parity_job_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Weekly Parity Job Ref"
+        },
+        "frozen_goldens_reviewed": {
+          "default": false,
+          "title": "Frozen Goldens Reviewed",
+          "type": "boolean"
+        },
+        "python_retained_as_oracle": {
+          "default": true,
+          "title": "Python Retained As Oracle",
+          "type": "boolean"
+        },
+        "rust_output_consumed_downstream": {
+          "default": false,
+          "title": "Rust Output Consumed Downstream",
+          "type": "boolean"
+        },
+        "rust_replacement_allowed": {
+          "const": false,
+          "default": false,
+          "title": "Rust Replacement Allowed",
+          "type": "boolean"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        },
+        "history": {
+          "items": {
+            "$ref": "#/$defs/RustToolLadderHistoryEvent"
+          },
+          "title": "History",
+          "type": "array"
+        }
+      },
+      "required": [
+        "tool_id",
+        "purpose",
+        "stage",
+        "stage_ceiling",
+        "review_by",
+        "scope_items",
+        "history"
+      ],
+      "title": "RustToolLadderTool",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "ladder_id": {
+      "title": "Ladder Id",
+      "type": "string"
+    },
+    "status": {
+      "const": "local_candidate",
+      "title": "Status",
+      "type": "string"
+    },
+    "authority": {
+      "title": "Authority",
+      "type": "string"
+    },
+    "rust_transition_policy_ref": {
+      "title": "Rust Transition Policy Ref",
+      "type": "string"
+    },
+    "methodology_version": {
+      "const": "rust_tool_ladder.v0_1",
+      "default": "rust_tool_ladder.v0_1",
+      "title": "Methodology Version",
+      "type": "string"
+    },
+    "stage_order": {
+      "items": {
+        "enum": [
+          "s0_candidate",
+          "s1_shadow",
+          "s2_audit",
+          "s3_cosign",
+          "s4_authoritative"
+        ],
+        "type": "string"
+      },
+      "title": "Stage Order",
+      "type": "array"
+    },
+    "tools": {
+      "items": {
+        "$ref": "#/$defs/RustToolLadderTool"
+      },
+      "title": "Tools",
+      "type": "array"
+    },
+    "rust_replacement_allowed": {
+      "const": false,
+      "default": false,
+      "title": "Rust Replacement Allowed",
+      "type": "boolean"
+    },
+    "no_connector_or_external_writes": {
+      "const": true,
+      "default": true,
+      "title": "No Connector Or External Writes",
+      "type": "boolean"
+    },
+    "no_lake_or_sqlite_writes": {
+      "const": true,
+      "default": true,
+      "title": "No Lake Or Sqlite Writes",
+      "type": "boolean"
+    },
+    "no_budget_or_matter_authority": {
+      "const": true,
+      "default": true,
+      "title": "No Budget Or Matter Authority",
+      "type": "boolean"
+    },
+    "no_canonical_authority": {
+      "const": true,
+      "default": true,
+      "title": "No Canonical Authority",
+      "type": "boolean"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "ladder_id",
+    "status",
+    "authority",
+    "rust_transition_policy_ref",
+    "stage_order",
+    "tools"
+  ],
+  "title": "RustToolLadderConfig",
+  "type": "object"
+}
