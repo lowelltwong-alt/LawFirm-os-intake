@@ -8,6 +8,13 @@ This repo carries `.ai/control/governance-dependency-map-mirror.json` as a local
 
 If governance-facing intake files change, check the upstream governance dependency map and update the local mirror, AI work router, AI table of contents, README, validator, and tests when affected. The mirror is downstream enforcement only; it cannot override Semantic Substrate governance or convert intake workflow convenience into platform authority.
 
+## Real-work shadow-mode gate
+
+`docs/real-work-shadow-mode-readiness.md` mirrors the Substrate real-work
+shadow-mode gate for Intake. It does not authorize a pilot. Intake remains
+synthetic-only until the owner, attorney reviewer, privacy reviewer, compliance
+reviewer, and Substrate governance record an explicit decision.
+
 ## Candidate lifecycle
 
 Local schemas, taxonomies, worker manifests, prompts, and templates are experimental candidates. They become platform-authoritative only through the owning sibling repository and its promotion process.

@@ -34,7 +34,7 @@ siblings:
       - contracts.lock.json
     consumes: [runtime_kernel, gates, model_and_tool_routing, run_ledger]
   - repo: LawFirm-os-exceptions-lake-runtime
-    canonical_machine_name_note: current front door also names exceptions-lake-runtime-main; resolve via substrate before integration
+    canonical_machine_name_note: historical local workspaces may still use exceptions-lake-runtime-main; the live GitHub repo and current substrate front door use LawFirm-os-exceptions-lake-runtime
     remote: https://github.com/lowelltwong-alt/LawFirm-os-exceptions-lake-runtime
     plane: evidence
     entry_points:

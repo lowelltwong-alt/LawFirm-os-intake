@@ -31,6 +31,26 @@ class GovernanceDependencyMapMirrorTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("mirror must be updated", result.stderr)
 
+    def test_contract_topology_lock_change_requires_mirror_update(self) -> None:
+        result = self.run_validator(
+            "--changed-file",
+            "repo_topology.lock.yaml",
+            "--mirror-updated",
+            "false",
+        )
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("mirror must be updated", result.stderr)
+
+    def test_build_verification_change_requires_mirror_update(self) -> None:
+        result = self.run_validator(
+            "--changed-file",
+            "BUILD_VERIFICATION.md",
+            "--mirror-updated",
+            "false",
+        )
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("mirror must be updated", result.stderr)
+
     def test_watched_change_passes_when_mirror_updates(self) -> None:
         result = self.run_validator(
             "--changed-file",
