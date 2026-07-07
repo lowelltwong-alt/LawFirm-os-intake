@@ -5,6 +5,7 @@
 | Understand the repo | `README.md`, `REPO_ROLE.md`, `NON_GOALS.md` |
 | Understand authority | `skill-agent-manifest.json`, `repo_topology.yaml`, `contracts.lock.json`, `docs/sibling-repo-entry-points.md`, `docs/lawfirm-os-integration.md` |
 | Understand governance-map mirror | `.ai/control/governance-dependency-map-mirror.json`, `scripts/validate_governance_dependency_map_mirror.py`, upstream governance dependency map |
+| Understand real-work shadow gate | `docs/real-work-shadow-mode-readiness.md`, upstream Substrate real-work shadow-mode gate |
 | Build code | `AGENTS.md`, `docs/ai-handoff/BUILDER_BRIEF.md`, `docs/ai-handoff/FIRST_10_PRS.md` |
 | Use Claude | `CLAUDE.md`, `docs/claude-agent-sdk-operating-contract.md`, `docs/claude-for-legal-lessons.md` |
 | Understand workflow | `docs/workflow/intake-to-budget.md`, `workflow/intake-to-budget.workflow.yaml` |

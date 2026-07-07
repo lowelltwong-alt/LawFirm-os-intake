@@ -16,6 +16,10 @@ synthetic fixture conversion. Public payloads, real party records, real matter
 records, adapters, connectors, Lake writes, and runtime ingestion remain out of
 scope.
 
+Real-work shadow mode is also out of scope until Substrate records the required
+owner, attorney, privacy, and compliance gates. See
+`docs/real-work-shadow-mode-readiness.md`.
+
 ## Target workflow
 
 ```text
@@ -531,4 +535,4 @@ A builder or AI coding agent must read in this order:
 
 ## Status
 
-Starter repository. The mock workflow is executable and testable. Canonical contract promotion into sibling repositories, live public-data ingestion, real provider calls, and production integration remain governed future work.
+Active governed vertical workflow repository. The synthetic-only reference workflow is executable and testable, and this repo remains a non-authoritative composition/evaluation layer. Canonical contract promotion into sibling repositories, live public-data ingestion, real provider calls, and production integration remain governed future work.

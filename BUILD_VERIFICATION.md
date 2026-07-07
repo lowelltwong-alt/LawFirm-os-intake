@@ -1,25 +1,26 @@
 # Build Verification
 
-Verified in the local build environment on 2026-06-29:
+Verified in a clean local GitHub `main` clone on 2026-07-06:
 
 ```text
-python scripts/export_schemas.py
-# exported 228 schemas
+python scripts/run_validation_suite.py
+# validate_repo: repository validation passed
+# export_schemas: exported 415 schemas
+# ruff_check: All checks passed
+# ruff_format_check: 316 files already formatted
+# full_pytest: 755 passed in 477.92s
+# smoke_demo: completed with final_boundary=blocked_pending_conflicts_and_engagement
+# validate_repo_final: repository validation passed
+```
 
-python scripts/validate_repo.py
-# repository validation passed
+Focused governance/lock checks also passed:
 
-python scripts/run_full_pytest.py
-# 373 passed in 294.99s
+```text
+python scripts/validate_governance_dependency_map_mirror.py --mirror-updated true
+# Governance dependency-map mirror validation passed.
 
-python -m ruff check --no-cache src tests scripts
-# All checks passed
-
-python -m ruff format --check --no-cache src tests scripts
-# 193 files already formatted
-
-bash -lc 'export PATH="/c/Users/lowel/AppData/Local/Programs/Python/Python312:$PATH"; bash scripts/smoke_demo.sh'
-# completed without error and wrote starter, blocked-budget, and context-counterfactual audit reports
+python scripts/run_full_pytest.py tests/test_contract_state_gate.py tests/test_governance_dependency_map_mirror.py
+# 7 passed in 4.43s
 ```
 
 The monetary result is a synthetic test calculation, not a fee quote or approved budget.
@@ -39,6 +40,8 @@ The smoke demo also writes `blocked_budget_attempt_audit_report.json` from a syn
 The smoke demo also writes `context_counterfactual_audit_report.json` from the same synthetic source under defense and plaintiff profiles. That report proves source inventory, segment signatures, and observed evidence refs stay stable while practice context may change rankings, and that context-only matter candidates remain graph anchors rather than observed facts.
 
 The current demo also emits local `exception_lake_candidates.jsonl` files in preflight and budget outputs. These are dry-run candidates only; they are not canonical Exception Lake admissions and include no raw legal payload.
+
+The sibling contract locks were refreshed on 2026-07-06 to live `main` SHAs for the five governing repos. This is active-repo onboarding evidence only; it does not promote intake-local schemas, routes, event labels, conflict seeds, budget proposals, or matter-opening packets to platform canon.
 
 The preflight output now includes `contract_state_report.json`, which verifies the reviewed local sibling-repo lock state before source processing. The report is carried forward into the final review manifest and safety gate.
 
