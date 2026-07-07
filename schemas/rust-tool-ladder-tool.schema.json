@@ -1,0 +1,296 @@
+{
+  "$defs": {
+    "RustToolLadderHistoryEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "event_id": {
+          "title": "Event Id",
+          "type": "string"
+        },
+        "stage": {
+          "enum": [
+            "s0_candidate",
+            "s1_shadow",
+            "s2_audit",
+            "s3_cosign",
+            "s4_authoritative"
+          ],
+          "title": "Stage",
+          "type": "string"
+        },
+        "recorded_at": {
+          "title": "Recorded At",
+          "type": "string"
+        },
+        "actor": {
+          "title": "Actor",
+          "type": "string"
+        },
+        "rationale": {
+          "title": "Rationale",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "human_signoff_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Human Signoff Ref"
+        }
+      },
+      "required": [
+        "event_id",
+        "stage",
+        "recorded_at",
+        "actor",
+        "rationale"
+      ],
+      "title": "RustToolLadderHistoryEvent",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "tool_id": {
+      "title": "Tool Id",
+      "type": "string"
+    },
+    "purpose": {
+      "title": "Purpose",
+      "type": "string"
+    },
+    "stage": {
+      "enum": [
+        "s0_candidate",
+        "s1_shadow",
+        "s2_audit",
+        "s3_cosign",
+        "s4_authoritative"
+      ],
+      "title": "Stage",
+      "type": "string"
+    },
+    "stage_ceiling": {
+      "enum": [
+        "s0_candidate",
+        "s1_shadow",
+        "s2_audit",
+        "s3_cosign",
+        "s4_authoritative"
+      ],
+      "title": "Stage Ceiling",
+      "type": "string"
+    },
+    "review_by": {
+      "title": "Review By",
+      "type": "string"
+    },
+    "scope_items": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Scope Items",
+      "type": "array"
+    },
+    "replacement_target": {
+      "default": "none",
+      "title": "Replacement Target",
+      "type": "string"
+    },
+    "gate_evidence": {
+      "additionalProperties": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "title": "Gate Evidence",
+      "type": "object"
+    },
+    "cargo_manifest_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Cargo Manifest Ref"
+    },
+    "cargo_binary_name": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Cargo Binary Name"
+    },
+    "wrapper_module_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Wrapper Module Ref"
+    },
+    "cli_command_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Cli Command Ref"
+    },
+    "test_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Test Refs",
+      "type": "array"
+    },
+    "ci_wiring_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Ci Wiring Refs",
+      "type": "array"
+    },
+    "parity_corpus_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Parity Corpus Ref"
+    },
+    "python_oracle_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Python Oracle Ref"
+    },
+    "adjudication_dir_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Adjudication Dir Ref"
+    },
+    "contract_lock_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Contract Lock Ref"
+    },
+    "weekly_parity_job_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Weekly Parity Job Ref"
+    },
+    "frozen_goldens_reviewed": {
+      "default": false,
+      "title": "Frozen Goldens Reviewed",
+      "type": "boolean"
+    },
+    "python_retained_as_oracle": {
+      "default": true,
+      "title": "Python Retained As Oracle",
+      "type": "boolean"
+    },
+    "rust_output_consumed_downstream": {
+      "default": false,
+      "title": "Rust Output Consumed Downstream",
+      "type": "boolean"
+    },
+    "rust_replacement_allowed": {
+      "const": false,
+      "default": false,
+      "title": "Rust Replacement Allowed",
+      "type": "boolean"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "history": {
+      "items": {
+        "$ref": "#/$defs/RustToolLadderHistoryEvent"
+      },
+      "title": "History",
+      "type": "array"
+    }
+  },
+  "required": [
+    "tool_id",
+    "purpose",
+    "stage",
+    "stage_ceiling",
+    "review_by",
+    "scope_items",
+    "history"
+  ],
+  "title": "RustToolLadderTool",
+  "type": "object"
+}

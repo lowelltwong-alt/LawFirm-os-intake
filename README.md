@@ -476,6 +476,16 @@ Python remains the starter reference implementation. If future document volume o
 
 Preparation now means keeping that boundary narrow, schema-first, measurable, and golden-testable. The current `data_scope_gate_report.json` proves a source bundle is authorized before any ingestion worker, Python or future Rust, stores raw input or emits derived artifacts. The current `ingestion_result.json` is the local parity oracle, and `config/rust-ingestion-transition-policy.json` governs the local candidate thresholds, benchmark dimensions, allowed hot path, forbidden scope, parity dimensions, and transition gates. `ingestion_volume_profile.json` records whether synthetic source/segment scale requires profiling before any Rust proposal, what compute pressure signals are present, which benchmark dimensions must be captured, and which deterministic hot-path functions Rust may cover. `rust_ingestion_readiness_report.json` records the checks a future adapter must satisfy before comparison even begins. A Rust adapter may not replace the Python path unless profiling justifies it, transition gates are reviewed, and it produces schema-compatible inventory, segments, coverage summary, and segment evidence refs that match the Python reference on synthetic fixtures and holdouts. See `docs/rust-ingestion-transition-plan.md` for the gate sequence. It does not mean adding a second runtime before profiling proves ingestion is the bottleneck.
 
+`config/rust-tool-ladder.json` records the local candidate promotion ladder for
+Rust leaf tools. Run `lawfirm-os-intake audit-rust-tool-ladder --out-dir <dir>`
+to write `rust_tool_ladder_audit_report.json`, proving each tool's stage, stage
+ceiling, review date, local refs, current-stage gate evidence, and
+no-replacement/no-semantic-scope posture. Existing Rust leaf checkers are
+`s1_shadow`; planned source-inventory and artifact-validator ports remain
+`s0_candidate`. The audit blocks promotion into audit/co-sign/authoritative
+stages without parity, Python-oracle where applicable, adjudication,
+contract-lock, and CI evidence, and it does not authorize a Rust runtime.
+
 `build-rust-synthetic-identity-guard-report` is a Rust leaf checker for synthetic QA. It scans local JSON fixture strings and provenance flags for non-reserved email/URL domains, non-synthetic origins, false synthetic markers, and real/private/public-ingestion flags. It emits candidate-only local JSON and does not ingest public data, authorize fixture release, write Lake/SQLite records, or replace human review.
 
 `build-rust-public-data-cache-custody-report` is a Rust leaf checker for ignored/external public-data cache custody. `audit-public-data-cache` invokes it to verify path containment, relative cache refs, file presence, SHA-256 digests, and byte counts before human cache review. It remains a custody detector only and does not authorize public-data ingestion, fixture creation, adapters, Lake/SQLite writes, or runtime use.

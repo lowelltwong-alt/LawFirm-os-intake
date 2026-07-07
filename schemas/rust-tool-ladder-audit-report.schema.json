@@ -1,0 +1,256 @@
+{
+  "$defs": {
+    "RustToolLadderAuditCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "tool_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tool Id"
+        },
+        "evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "blocking_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Blocking Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "RustToolLadderAuditCheck",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "rust_tool_ladder_audit_report_id": {
+      "title": "Rust Tool Ladder Audit Report Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "rust_tool_ladder_ready_for_review",
+        "blocked_by_rust_tool_ladder"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "ladder_ref": {
+      "title": "Ladder Ref",
+      "type": "string"
+    },
+    "ladder_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Ladder Id"
+    },
+    "rust_transition_policy_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Rust Transition Policy Ref"
+    },
+    "methodology_version": {
+      "const": "rust_tool_ladder.v0_1",
+      "default": "rust_tool_ladder.v0_1",
+      "title": "Methodology Version",
+      "type": "string"
+    },
+    "tool_count": {
+      "minimum": 0,
+      "title": "Tool Count",
+      "type": "integer"
+    },
+    "s0_candidate_count": {
+      "minimum": 0,
+      "title": "S0 Candidate Count",
+      "type": "integer"
+    },
+    "s1_shadow_count": {
+      "minimum": 0,
+      "title": "S1 Shadow Count",
+      "type": "integer"
+    },
+    "s2_audit_count": {
+      "minimum": 0,
+      "title": "S2 Audit Count",
+      "type": "integer"
+    },
+    "s3_cosign_count": {
+      "minimum": 0,
+      "title": "S3 Cosign Count",
+      "type": "integer"
+    },
+    "s4_authoritative_count": {
+      "minimum": 0,
+      "title": "S4 Authoritative Count",
+      "type": "integer"
+    },
+    "failed_check_count": {
+      "minimum": 0,
+      "title": "Failed Check Count",
+      "type": "integer"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/RustToolLadderAuditCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "candidate_exception_lake_labels": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Candidate Exception Lake Labels",
+      "type": "array"
+    },
+    "required_next_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Gates",
+      "type": "array"
+    },
+    "rust_replacement_allowed": {
+      "const": false,
+      "default": false,
+      "title": "Rust Replacement Allowed",
+      "type": "boolean"
+    },
+    "rust_authoritative_runtime_enabled": {
+      "const": false,
+      "default": false,
+      "title": "Rust Authoritative Runtime Enabled",
+      "type": "boolean"
+    },
+    "connector_or_external_writes_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Connector Or External Writes Authorized",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "budget_submission_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Submission Authorized",
+      "type": "boolean"
+    },
+    "matter_opening_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Matter Opening Authorized",
+      "type": "boolean"
+    },
+    "canonical_promotion_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Canonical Promotion Authorized",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "rust_tool_ladder_audit_report_id",
+    "status",
+    "ladder_ref",
+    "tool_count",
+    "s0_candidate_count",
+    "s1_shadow_count",
+    "s2_audit_count",
+    "s3_cosign_count",
+    "s4_authoritative_count",
+    "failed_check_count",
+    "checks",
+    "candidate_exception_lake_labels",
+    "required_next_gates",
+    "generated_at"
+  ],
+  "title": "RustToolLadderAuditReport",
+  "type": "object"
+}

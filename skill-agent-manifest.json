@@ -47,6 +47,7 @@
     "harnesses/intake-preflight.local.yaml",
     "harnesses/budget-proposal.local.yaml",
     "harnesses/benchmark-replay.local.yaml",
+    "harnesses/rust-tool-ladder.local.yaml",
     "harnesses/full-demo.local.yaml"
   ],
   "artifacts": [

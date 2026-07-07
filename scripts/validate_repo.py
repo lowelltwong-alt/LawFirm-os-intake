@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 import re
 import sys
+import tempfile
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -43,6 +44,22 @@ FRONT_DOOR_REF_SECTIONS = {
 FENCED_BLOCK_RE = re.compile(r"```.*?```", re.DOTALL)
 INLINE_CODE_RE = re.compile(r"`([^`\n]+)`")
 DEFAULT_INTENSITY_SIGNOFF_PATH = Path("docs/governance/intensity_normalization_signoff.json")
+RUST_TOOL_LADDER_REF = Path("config/rust-tool-ladder.json")
+RUST_TOOL_LADDER_STAGES = [
+    "s0_candidate",
+    "s1_shadow",
+    "s2_audit",
+    "s3_cosign",
+    "s4_authoritative",
+]
+RUST_TOOL_LADDER_AUTHORITY_FLAGS = {
+    "rust_replacement_allowed": False,
+    "no_connector_or_external_writes": True,
+    "no_lake_or_sqlite_writes": True,
+    "no_budget_or_matter_authority": True,
+    "no_canonical_authority": True,
+    "candidate_only": True,
+}
 
 
 def _looks_like_local_ref(value: str) -> bool:
@@ -143,6 +160,118 @@ def intensity_signoff_gate_failures(root: Path = ROOT) -> list[str]:
     return failures
 
 
+def _minimal_rust_tool_ladder_failures(root: Path = ROOT) -> list[str]:
+    """Dependency-light gate for CI before editable dev dependencies are installed."""
+
+    ladder_path = root / RUST_TOOL_LADDER_REF
+    if not ladder_path.is_file():
+        return [f"missing Rust tool ladder config: {RUST_TOOL_LADDER_REF.as_posix()}"]
+    ladder = json.loads(ladder_path.read_text(encoding="utf-8"))
+    if not isinstance(ladder, dict):
+        return ["Rust tool ladder config must be a JSON object"]
+
+    failures: list[str] = []
+    if ladder.get("stage_order") != RUST_TOOL_LADDER_STAGES:
+        failures.append("Rust tool ladder stage_order does not match required S0-S4 order")
+    for field, expected in RUST_TOOL_LADDER_AUTHORITY_FLAGS.items():
+        if ladder.get(field) is not expected:
+            failures.append(f"Rust tool ladder {field} must be {expected!r}")
+
+    policy_ref = ladder.get("rust_transition_policy_ref")
+    policy: dict[str, object] = {}
+    if isinstance(policy_ref, str) and policy_ref:
+        policy_path = root / policy_ref
+        if policy_path.is_file():
+            policy = json.loads(policy_path.read_text(encoding="utf-8"))
+        else:
+            failures.append(f"Rust transition policy ref is missing: {policy_ref}")
+    else:
+        failures.append("Rust tool ladder must declare rust_transition_policy_ref")
+    forbidden_scope = (
+        set(policy.get("forbidden_rust_scope", [])) if isinstance(policy, dict) else set()
+    )
+
+    tools = ladder.get("tools")
+    if not isinstance(tools, list) or not tools:
+        return failures + ["Rust tool ladder must include at least one tool"]
+
+    seen_tool_ids: set[str] = set()
+    stage_index = {stage: index for index, stage in enumerate(RUST_TOOL_LADDER_STAGES)}
+    for index, tool in enumerate(tools):
+        if not isinstance(tool, dict):
+            failures.append(f"Rust tool ladder tool[{index}] must be a JSON object")
+            continue
+        tool_id = str(tool.get("tool_id") or f"tool[{index}]")
+        if tool_id in seen_tool_ids:
+            failures.append(f"Rust tool ladder duplicate tool_id: {tool_id}")
+        seen_tool_ids.add(tool_id)
+
+        stage = str(tool.get("stage") or "")
+        ceiling = str(tool.get("stage_ceiling") or "")
+        if stage not in stage_index:
+            failures.append(f"{tool_id}: invalid stage {stage!r}")
+        if ceiling not in stage_index:
+            failures.append(f"{tool_id}: invalid stage_ceiling {ceiling!r}")
+        if (
+            stage in stage_index
+            and ceiling in stage_index
+            and stage_index[stage] > stage_index[ceiling]
+        ):
+            failures.append(f"{tool_id}: stage exceeds stage_ceiling")
+
+        scope_items = set(tool.get("scope_items", []))
+        forbidden_hits = sorted(scope_items & forbidden_scope)
+        if forbidden_hits:
+            failures.append(f"{tool_id}: forbidden Rust scope items: {', '.join(forbidden_hits)}")
+
+        gate_evidence = tool.get("gate_evidence", {})
+        if not isinstance(gate_evidence, dict) or not gate_evidence.get(stage):
+            failures.append(f"{tool_id}: missing gate_evidence for current stage {stage}")
+
+        history = tool.get("history", [])
+        if not isinstance(history, list) or not history:
+            failures.append(f"{tool_id}: missing stage history")
+        elif not isinstance(history[-1], dict) or history[-1].get("stage") != stage:
+            failures.append(f"{tool_id}: latest history stage does not match current stage")
+
+        for field in ("rust_replacement_allowed", "candidate_only", "non_authoritative"):
+            expected = False if field == "rust_replacement_allowed" else True
+            if tool.get(field) is not expected:
+                failures.append(f"{tool_id}: {field} must be {expected!r}")
+        if tool.get("rust_output_consumed_downstream") is True and stage not in {
+            "s3_cosign",
+            "s4_authoritative",
+        }:
+            failures.append(f"{tool_id}: Rust output cannot be consumed downstream before S3/S4")
+    return failures
+
+
+def rust_tool_ladder_failures(root: Path = ROOT) -> list[str]:
+    try:
+        from lawfirm_os_intake.rust_tool_ladder import (  # noqa: PLC0415
+            RUST_TOOL_LADDER_REF as runtime_ladder_ref,
+        )
+        from lawfirm_os_intake.rust_tool_ladder import run_rust_tool_ladder_audit  # noqa: PLC0415
+    except ModuleNotFoundError as exc:
+        if exc.name == "pydantic":
+            return _minimal_rust_tool_ladder_failures(root)
+        raise
+
+    with tempfile.TemporaryDirectory(prefix="intake-rust-ladder-") as temp_dir:
+        report, _ = run_rust_tool_ladder_audit(
+            ladder_path=root / runtime_ladder_ref,
+            out_dir=Path(temp_dir),
+            repo_root=root,
+        )
+    if report.status == "rust_tool_ladder_ready_for_review":
+        return []
+    return [
+        f"{check.check_id}: {check.tool_id or 'ladder'}: {check.message}"
+        for check in report.checks
+        if check.status == "failed"
+    ]
+
+
 def fail(message: str) -> None:
     raise SystemExit(f"repository validation failed: {message}")
 
@@ -163,6 +292,10 @@ def main() -> int:
     intensity_failures = intensity_signoff_gate_failures(ROOT)
     if intensity_failures:
         fail("intensity normalization signoff gate failed: " + "; ".join(intensity_failures))
+
+    ladder_failures = rust_tool_ladder_failures(ROOT)
+    if ladder_failures:
+        fail("rust tool ladder gate failed: " + "; ".join(ladder_failures))
 
     for path in ROOT.rglob("*.json"):
         try:

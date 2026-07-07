@@ -380,6 +380,11 @@ from lawfirm_os_intake.models import (  # noqa: E402
     RustFixtureSnapshotCoherenceFailure,
     RustFixtureSnapshotCoherenceReport,
     RustFixtureSnapshotCoherenceSkippedFile,
+    RustToolLadderAuditCheck,
+    RustToolLadderAuditReport,
+    RustToolLadderConfig,
+    RustToolLadderHistoryEvent,
+    RustToolLadderTool,
     RustPublicDataCacheCustodyFailure,
     RustPublicDataCacheCustodyReport,
     RustPublicDataCacheCustodySample,
@@ -505,6 +510,11 @@ MODELS = {
     "rust-fixture-snapshot-coherence-skipped-file.schema.json": (
         RustFixtureSnapshotCoherenceSkippedFile
     ),
+    "rust-tool-ladder-audit-check.schema.json": RustToolLadderAuditCheck,
+    "rust-tool-ladder-audit-report.schema.json": RustToolLadderAuditReport,
+    "rust-tool-ladder-config.schema.json": RustToolLadderConfig,
+    "rust-tool-ladder-history-event.schema.json": RustToolLadderHistoryEvent,
+    "rust-tool-ladder-tool.schema.json": RustToolLadderTool,
     "rust-public-data-cache-custody-failure.schema.json": RustPublicDataCacheCustodyFailure,
     "rust-public-data-cache-custody-sample.schema.json": RustPublicDataCacheCustodySample,
     "rust-public-data-cache-custody-report.schema.json": RustPublicDataCacheCustodyReport,

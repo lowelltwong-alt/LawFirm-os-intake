@@ -81,10 +81,11 @@ It should not receive an unbounded cross-matter corpus or authority to act.
 
 Candidate execution envelopes are under `harnesses/`:
 
-- `deterministic.yaml` for parsing, validation, hashing, calculations, and packet assembly;
-- `small-local-worker.yaml` for future bounded local extractors/routers;
-- `frontier-adjudication.yaml` for governed ambiguity escalation;
-- `human-review.yaml` for separation of duties and mandatory review surfaces.
+- `intake-preflight.local.yaml` for source inventory, segmentation, candidate extraction, and review packet assembly;
+- `budget-proposal.local.yaml` for human-confirmed conflict seed and budget proposal generation;
+- `benchmark-replay.local.yaml` for candidate benchmark-context replay without rate authority;
+- `rust-tool-ladder.local.yaml` for Rust leaf-tool stage and no-replacement audit;
+- `full-demo.local.yaml` for the end-to-end synthetic reference flow.
 
 The harness controls turns, tools, data scope, writes, validation, and escalation. The model cannot expand the harness authority.
 
