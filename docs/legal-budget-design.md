@@ -91,6 +91,12 @@ policy refs, and the `default_used_as_observed_fact=false` invariant. Profile
 defaults may drive synthetic assumptions, but the review surfaces label them as
 defaults rather than observed facts. Count-driver ranges widen hour and expense
 ranges for unknown/profile-default drivers; human-confirmed counts remain tight.
+The active synthetic policy uses approved baseline-relative intensity
+normalization, with signoff evidence in
+`docs/governance/intensity_normalization_signoff.json`, so family-default
+severity, liability, and venue tiers normalize to `1.0` rather than inflating
+template-authored baseline hours. Non-baseline observed or confirmed tiers still
+move the budget through the effective raw-ratio multipliers.
 `BudgetGuidelineFlag` records show synthetic
 rate, phase, and total cap checks. A guideline flag can require human review, but it
 does not rewrite hours, rates, expenses, or totals.

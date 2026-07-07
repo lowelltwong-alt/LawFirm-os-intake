@@ -128,7 +128,7 @@ def test_budget_learning_loop_report_summarizes_actuals_rejections_and_learning(
         + report.actuals.code_event_count
         + report.actuals.revision_context_event_count
     )
-    assert report.actuals.variance_review_event_count == 5
+    assert report.actuals.variance_review_event_count == 4
     assert report.actuals.actuals_without_budget_event_count == 2
     assert set(report.actuals.learning_disposition_candidates) >= {
         "budget_driver",
@@ -138,7 +138,7 @@ def test_budget_learning_loop_report_summarizes_actuals_rejections_and_learning(
     assert report.carrier_rejections.total_disputed_amount == 21950.0
     assert report.carrier_rejections.total_recovered_amount == 8000.0
     assert report.carrier_rejections.total_write_down_amount == 7000.0
-    assert report.reviewed_learning_gate.candidate_count == 13
+    assert report.reviewed_learning_gate.candidate_count == 12
     assert report.reviewed_learning_gate.reviewed_outcome_required is True
     assert report.reviewed_learning_gate.shadow_eval_required is True
     assert {lane.lane_id for lane in report.lifecycle_lanes} == {
@@ -188,7 +188,7 @@ def test_budget_learning_loop_cli_writes_report(tmp_path, repo_root, capsys):
 
     assert exit_code == 0
     assert '"status": "budget_learning_loop_ready_for_review"' in captured.out
-    assert '"learning_candidate_count": 13' in captured.out
+    assert '"learning_candidate_count": 12' in captured.out
     assert '"lake_write_performed": false' in captured.out
     assert (tmp_path / "budget-learning-loop-cli" / BUDGET_LEARNING_LOOP_REPORT_FILENAME).is_file()
 
