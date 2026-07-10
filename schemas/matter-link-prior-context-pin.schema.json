@@ -1,0 +1,48 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "context_id": {
+      "title": "Context Id",
+      "type": "string"
+    },
+    "context_sha256": {
+      "title": "Context Sha256",
+      "type": "string"
+    },
+    "store_version": {
+      "title": "Store Version",
+      "type": "string"
+    },
+    "source_repo": {
+      "const": "LawFirm-os-orchestrator",
+      "default": "LawFirm-os-orchestrator",
+      "title": "Source Repo",
+      "type": "string"
+    },
+    "provenance": {
+      "const": "orchestrator_context",
+      "default": "orchestrator_context",
+      "title": "Provenance",
+      "type": "string"
+    },
+    "read_only": {
+      "const": true,
+      "default": true,
+      "title": "Read Only",
+      "type": "boolean"
+    },
+    "identity_authority": {
+      "const": false,
+      "default": false,
+      "title": "Identity Authority",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "context_id",
+    "context_sha256",
+    "store_version"
+  ],
+  "title": "MatterLinkPriorContextPin",
+  "type": "object"
+}

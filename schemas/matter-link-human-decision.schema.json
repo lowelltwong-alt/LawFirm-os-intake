@@ -1,0 +1,88 @@
+{
+  "additionalProperties": false,
+  "description": "Candidate contract for the only matter-linking decision eligible for persistence.\n\nThe subject is a hash of normalized link keys rather than a run-local document or\ncluster identifier, so an Orchestrator-owned ledger can safely apply it to later\nbundles without treating an intake proposal as a durable identity assertion.",
+  "properties": {
+    "decision_id": {
+      "title": "Decision Id",
+      "type": "string"
+    },
+    "decided_at": {
+      "title": "Decided At",
+      "type": "string"
+    },
+    "reviewer_id": {
+      "title": "Reviewer Id",
+      "type": "string"
+    },
+    "decision_type": {
+      "enum": [
+        "confirm_cluster",
+        "split",
+        "merge",
+        "reopen",
+        "retire"
+      ],
+      "title": "Decision Type",
+      "type": "string"
+    },
+    "subject_key_signatures": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Subject Key Signatures",
+      "type": "array"
+    },
+    "evidence_key_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Evidence Key Ids",
+      "type": "array"
+    },
+    "observable_rationale": {
+      "title": "Observable Rationale",
+      "type": "string"
+    },
+    "supersedes_decision_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Supersedes Decision Id"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "identity_authority": {
+      "const": false,
+      "default": false,
+      "title": "Identity Authority",
+      "type": "boolean"
+    },
+    "status": {
+      "const": "candidate",
+      "default": "candidate",
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "decision_id",
+    "decided_at",
+    "reviewer_id",
+    "decision_type",
+    "subject_key_signatures",
+    "evidence_key_ids",
+    "observable_rationale"
+  ],
+  "title": "MatterLinkHumanDecision",
+  "type": "object"
+}

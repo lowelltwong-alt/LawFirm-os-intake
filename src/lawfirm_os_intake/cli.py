@@ -131,6 +131,7 @@ from .matter_linking_preflight import run_matter_linking_preflight
 from .matter_linking_qa_gate import run_matter_linking_qa_gate
 from .matter_linking_review_outcomes import run_matter_linking_review_outcome_record
 from .matter_linking import run_matter_linking_clusters
+from .matter_link_run_export import run_matter_link_run_export
 from .matter_linking_cluster_review import (
     run_matter_linking_cluster_review_outcome_record,
 )
@@ -1406,6 +1407,29 @@ def _parser() -> argparse.ArgumentParser:
     )
     matter_linking_clusters.add_argument("--out-dir", required=True)
     matter_linking_clusters.add_argument(
+        "--generated-at",
+        help="Optional fixed timestamp for deterministic tests and replayed reports.",
+    )
+
+    matter_link_run_export = sub.add_parser(
+        "export-matter-link-run",
+        help=(
+            "Export immutable per-run matter-link candidate evidence for future "
+            "Orchestrator-owned cross-bundle state review."
+        ),
+    )
+    matter_link_run_export.add_argument(
+        "--key-extraction-report",
+        required=True,
+        help="Path to matter_link_key_extraction_report.json.",
+    )
+    matter_link_run_export.add_argument(
+        "--matter-linking-cluster-report",
+        required=True,
+        help="Path to matter_linking_cluster_report.json.",
+    )
+    matter_link_run_export.add_argument("--out-dir", required=True)
+    matter_link_run_export.add_argument(
         "--generated-at",
         help="Optional fixed timestamp for deterministic tests and replayed reports.",
     )
@@ -4376,6 +4400,32 @@ def main(argv: list[str] | None = None) -> int:
             )
             if report.status == "blocked_matter_linking_cluster_validation":
                 return 2
+            return 0
+
+        if args.command == "export-matter-link-run":
+            export, run_dir = run_matter_link_run_export(
+                matter_link_key_extraction_report_path=args.key_extraction_report,
+                matter_linking_cluster_report_path=args.matter_linking_cluster_report,
+                out_dir=args.out_dir,
+                generated_at=args.generated_at,
+            )
+            _print(
+                {
+                    "status": export.status,
+                    "matter_link_run_export_id": export.matter_link_run_export_id,
+                    "bundle_id": export.bundle_id,
+                    "key_set_count": len(export.key_sets),
+                    "cluster_proposal_count": len(export.cluster_proposals),
+                    "decision_record_count": len(export.decision_records),
+                    "human_link_decision_count": len(export.human_link_decisions),
+                    "orchestrator_persistence_required": export.orchestrator_persistence_required,
+                    "matter_identity_asserted": export.matter_identity_asserted,
+                    "external_writes_performed": export.external_writes_performed,
+                    "lake_write_performed": export.lake_write_performed,
+                    "sqlite_write_performed": export.sqlite_write_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
             return 0
 
         if args.command == "record-matter-linking-cluster-review-outcome":
