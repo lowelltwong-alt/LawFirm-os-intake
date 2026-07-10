@@ -188,9 +188,9 @@ def test_legal_intake_budget_demo_ui_review_data_bundle_is_local_and_no_write(re
     detail_reports = {report["file_name"]: report for report in bundle["detail_reports"]}
 
     assert bundle["status"] == "ready_for_review"
-    assert bundle["detail_report_count"] == len(bundle["detail_reports"]) == 25
+    assert bundle["detail_report_count"] == len(bundle["detail_reports"]) == 27
     assert bundle["required_detail_report_count"] == 13
-    assert bundle["present_detail_report_count"] == 25
+    assert bundle["present_detail_report_count"] == 27
     assert bundle["missing_required_detail_report_count"] == 0
     assert bundle["external_write_report_count"] == 0
     assert bundle["candidate_only"] is True

@@ -1,0 +1,46 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "crosswalk_id": {
+      "title": "Crosswalk Id",
+      "type": "string"
+    },
+    "finding_id": {
+      "title": "Finding Id",
+      "type": "string"
+    },
+    "severity": {
+      "enum": [
+        "blocker",
+        "warning",
+        "info"
+      ],
+      "title": "Severity",
+      "type": "string"
+    },
+    "issue": {
+      "title": "Issue",
+      "type": "string"
+    },
+    "entry_local_term": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Entry Local Term"
+    }
+  },
+  "required": [
+    "crosswalk_id",
+    "finding_id",
+    "severity",
+    "issue"
+  ],
+  "title": "CrosswalkAuditFinding",
+  "type": "object"
+}

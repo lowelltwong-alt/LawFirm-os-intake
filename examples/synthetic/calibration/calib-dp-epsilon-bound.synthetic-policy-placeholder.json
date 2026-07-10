@@ -1,0 +1,37 @@
+{
+  "fixture_id": "calib-dp-epsilon-bound",
+  "status": "synthetic_only_candidate_fixture",
+  "notes": "Synthetic zCDP arithmetic fixture; no value or parameter here is approved for real-data use.",
+  "request": {
+    "request_id": "calib-dp-epsilon-bound-request",
+    "estimator_id": "synthetic_small_n_driver_mean",
+    "parameter": "synthetic_small_n_hours_mean",
+    "corpus_version_ref": "examples/synthetic/calibration/calib-dp-epsilon-bound.synthetic-policy-placeholder.json",
+    "screen_version": "synthetic-screen-v0",
+    "runtime_scope": "synthetic_candidate",
+    "candidate_only": true,
+    "publish_calibrated_value": false,
+    "policy": {
+      "policy_label": "Synthetic policy placeholder for CAL-DP tests only",
+      "protected_unit": "matter",
+      "minimum_distinct_matters": 8,
+      "dominance_threshold": 0.4,
+      "lomo_delta_limit": 2.0,
+      "adversary_model": "synthetic strong all-but-one-matter placeholder",
+      "reconstruction_chance_rate": 0.25,
+      "reconstruction_margin": 0.0,
+      "reconstruction_tolerance": 0.1,
+      "dp_route_required": true,
+      "dp_rho": 0.5,
+      "dp_report_delta": 0.000001,
+      "dp_clip_norm": 12.0,
+      "dp_rho_cap": 2.0,
+      "dp_max_noise_to_signal_ratio": 2.0
+    },
+    "matters": [
+      {"matter_id": "synthetic-matter-011", "protected_unit_id": "synthetic-matter-011", "contribution": 10.0},
+      {"matter_id": "synthetic-matter-012", "protected_unit_id": "synthetic-matter-012", "contribution": 11.0},
+      {"matter_id": "synthetic-matter-013", "protected_unit_id": "synthetic-matter-013", "contribution": 9.0}
+    ]
+  }
+}

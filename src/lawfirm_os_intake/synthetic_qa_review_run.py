@@ -704,10 +704,11 @@ def run_synthetic_qa_review_run(
             "Budget Learning Loop",
             budget_learning_loop.status,
             budget_learning_loop_ref,
-            budget_learning_loop.status == "budget_learning_loop_ready_for_review",
+            _budget_learning_loop_qa_passed(budget_learning_loop),
             (
                 "Budget actuals, carrier rejection, appeal outcome, and reviewed-learning "
-                "candidates are summarized for QA without silent learning."
+                "candidates are summarized for QA; the expected proof-gate block is a "
+                "passing fail-closed outcome without silent learning."
             ),
         )
     )
@@ -1262,6 +1263,21 @@ def _build_budget_learning_loop(
         ),
         out_dir=quality_dir / "budget-learning-loop",
         generated_at=generated_at,
+    )
+
+
+def _budget_learning_loop_qa_passed(report: BudgetLearningLoopReport) -> bool:
+    if report.status == "budget_learning_loop_ready_for_review":
+        return True
+    return (
+        report.status == "blocked_by_budget_learning_loop"
+        and report.reviewed_learning_gate.status == "failed"
+        and report.candidate_only
+        and report.synthetic_only
+        and not report.lake_write_performed
+        and not report.sqlite_write_performed
+        and not report.external_writes_performed
+        and not report.silent_learning_performed
     )
 
 

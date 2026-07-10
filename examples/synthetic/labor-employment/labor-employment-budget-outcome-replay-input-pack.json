@@ -78,6 +78,24 @@
       "notes": "Synthetic linked carrier code-mapping rejection notice for deterministic dry-run capture."
     },
     {
+      "entry_id": "le-replay-input-class-collective-actuals-budget.v0_1",
+      "learning_fixture_id": "le-learning-class-collective-clean.v0_1",
+      "loop_type": "actuals_variance",
+      "required_input_artifact": "legal_budget_proposal.json",
+      "input_ref": "examples/synthetic/labor-employment/replay-inputs/class-collective-clean/legal_budget_proposal.json",
+      "input_role": "builder_input",
+      "notes": "Synthetic class/collective/PAGA range-anchor budget proposal for actuals replay; not an approved or submitted budget."
+    },
+    {
+      "entry_id": "le-replay-input-class-collective-actuals-source.v0_1",
+      "learning_fixture_id": "le-learning-class-collective-clean.v0_1",
+      "loop_type": "actuals_variance",
+      "required_input_artifact": "budget_actuals_source.json",
+      "input_ref": "examples/synthetic/labor-employment/replay-inputs/class-collective-clean/budget_actuals_source.json",
+      "input_role": "builder_input",
+      "notes": "Synthetic class/collective/PAGA phase/code actuals fixture for deterministic variance review and reviewed learning-gate pressure."
+    },
+    {
       "entry_id": "le-replay-input-epli-carrier-budget.v0_1",
       "learning_fixture_id": "le-learning-epli-carrier-clean.v0_1",
       "loop_type": "carrier_rejection_capture",

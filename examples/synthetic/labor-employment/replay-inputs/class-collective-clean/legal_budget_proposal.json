@@ -1,0 +1,423 @@
+{
+  "schema_version": "0.1",
+  "budget_proposal_id": "le-budget-class-collective-clean.v0_1",
+  "preflight_packet_id": "le-preflight-class-collective-clean.v0_1",
+  "confirmation_id": "le-confirmation-class-collective-clean.v0_1",
+  "practice_profile_id": "synthetic-labor-employment-defense.v0_1",
+  "matter_family": "class_collective_paga_representative",
+  "representation_posture": "defense",
+  "pricing_status": "priced",
+  "currency": "USD",
+  "lines": [
+    {
+      "phase_id": "C100",
+      "phase_name": "Class/Collective Intake And Exposure Assessment",
+      "task_id": "C100-initial-assessment",
+      "task_name": "Initial class, collective, and representative exposure assessment",
+      "staffing_role": "partner",
+      "estimated_hours": 18,
+      "estimated_hours_min": 14,
+      "estimated_hours_max": 26,
+      "hourly_rate": 450,
+      "rate_source": "synthetic_profile",
+      "rate_is_synthetic": true,
+      "estimated_fees": 8100,
+      "estimated_expenses": 0,
+      "calculation_formula": "18h * 450 synthetic partner rate",
+      "external_code_candidate": "C100",
+      "assumptions": [
+        "Synthetic clean class/collective/PAGA intake with representative scope identified but still review-bound."
+      ],
+      "estimate_basis": "driver_adjusted",
+      "estimate_basis_refs": [
+        "examples/synthetic/labor-employment/executable-fixtures/le-class-collective-clean.source-bundle.json#syn-le-class-collective-clean-cover-email-001",
+        "examples/synthetic/labor-employment/labor-employment-budget-learning-fixtures.json#le-learning-class-collective-clean.v0_1"
+      ]
+    },
+    {
+      "phase_id": "C200",
+      "phase_name": "Forum, Arbitration, And Early Motion Posture",
+      "task_id": "C200-forum-arbitration-motion",
+      "task_name": "Removal, arbitration, representative-action posture, and early motion analysis",
+      "staffing_role": "associate",
+      "estimated_hours": 42,
+      "estimated_hours_min": 30,
+      "estimated_hours_max": 58,
+      "hourly_rate": 275,
+      "rate_source": "synthetic_profile",
+      "rate_is_synthetic": true,
+      "estimated_fees": 11550,
+      "estimated_expenses": 0,
+      "calculation_formula": "42h * 275 synthetic associate rate",
+      "external_code_candidate": "C200",
+      "assumptions": [
+        "Synthetic forum packet identifies removal and arbitration posture but does not authorize final strategy."
+      ],
+      "estimate_basis": "driver_adjusted",
+      "estimate_basis_refs": [
+        "examples/synthetic/labor-employment/executable-fixtures/le-class-collective-clean.source-bundle.json#syn-le-class-collective-clean-forum-001"
+      ]
+    },
+    {
+      "phase_id": "C300",
+      "phase_name": "Class-Period Data Scope And Representative Discovery",
+      "task_id": "C300-class-period-data-scope",
+      "task_name": "Scope class-period payroll, timekeeping, policy, and ESI data sources",
+      "staffing_role": "associate",
+      "estimated_hours": 120,
+      "estimated_hours_min": 85,
+      "estimated_hours_max": 165,
+      "hourly_rate": 275,
+      "rate_source": "synthetic_profile",
+      "rate_is_synthetic": true,
+      "estimated_fees": 33000,
+      "estimated_expenses": 0,
+      "calculation_formula": "120h * 275 synthetic associate rate",
+      "external_code_candidate": "C300",
+      "assumptions": [
+        "Synthetic payroll/timekeeping scope covers multiple facilities and a representative group below the T4 staffing-plan blocker."
+      ],
+      "estimate_basis": "driver_adjusted",
+      "estimate_basis_refs": [
+        "examples/synthetic/labor-employment/executable-fixtures/le-class-collective-clean.source-bundle.json#syn-le-class-collective-clean-payroll-001"
+      ]
+    },
+    {
+      "phase_id": "C300",
+      "phase_name": "Class-Period Data Scope And Representative Discovery",
+      "task_id": "C300-representative-discovery-plan",
+      "task_name": "Representative discovery, sampling, custodian, and witness group support",
+      "staffing_role": "paralegal",
+      "estimated_hours": 90,
+      "estimated_hours_min": 60,
+      "estimated_hours_max": 130,
+      "hourly_rate": 145,
+      "rate_source": "synthetic_profile",
+      "rate_is_synthetic": true,
+      "estimated_fees": 13050,
+      "estimated_expenses": 6000,
+      "estimated_expenses_min": 3500,
+      "estimated_expenses_max": 12500,
+      "calculation_formula": "90h * 145 synthetic paralegal rate + synthetic data vendor estimate",
+      "external_code_candidate": "C300",
+      "expense_code": "E118",
+      "assumptions": [
+        "Synthetic payroll exports require normalization and representative sampling support."
+      ],
+      "estimate_basis": "driver_adjusted",
+      "estimate_basis_refs": [
+        "examples/synthetic/labor-employment/replay-inputs/class-collective-clean/legal_budget_proposal.json#line:C300-paralegal"
+      ]
+    },
+    {
+      "phase_id": "C400",
+      "phase_name": "Certification Briefing And Hearing",
+      "task_id": "C400-certification-briefing-hearing",
+      "task_name": "Oppose certification or conditional certification and prepare hearing",
+      "staffing_role": "senior_associate",
+      "estimated_hours": 140,
+      "estimated_hours_min": 95,
+      "estimated_hours_max": 190,
+      "hourly_rate": 325,
+      "rate_source": "synthetic_profile",
+      "rate_is_synthetic": true,
+      "estimated_fees": 45500,
+      "estimated_expenses": 4500,
+      "estimated_expenses_min": 2500,
+      "estimated_expenses_max": 9000,
+      "calculation_formula": "140h * 325 synthetic senior associate rate + synthetic hearing/deposition expense estimate",
+      "external_code_candidate": "C400",
+      "expense_code": "E112",
+      "assumptions": [
+        "Synthetic certification opposition includes representative declarations and payroll sampling issues."
+      ],
+      "estimate_basis": "driver_adjusted",
+      "estimate_basis_refs": [
+        "examples/synthetic/labor-employment/executable-fixtures/le-class-collective-clean.source-bundle.json#syn-le-class-collective-clean-complaint-001"
+      ]
+    },
+    {
+      "phase_id": "C400",
+      "phase_name": "Certification Briefing And Hearing",
+      "task_id": "C400-certification-partner-review",
+      "task_name": "Partner strategy review for certification and representative-action posture",
+      "staffing_role": "partner",
+      "estimated_hours": 35,
+      "estimated_hours_min": 24,
+      "estimated_hours_max": 52,
+      "hourly_rate": 450,
+      "rate_source": "synthetic_profile",
+      "rate_is_synthetic": true,
+      "estimated_fees": 15750,
+      "estimated_expenses": 0,
+      "calculation_formula": "35h * 450 synthetic partner rate",
+      "external_code_candidate": "C400",
+      "estimate_basis": "driver_adjusted",
+      "estimate_basis_refs": [
+        "examples/synthetic/labor-employment/replay-inputs/class-collective-clean/legal_budget_proposal.json#line:C400-partner"
+      ]
+    },
+    {
+      "phase_id": "C500",
+      "phase_name": "Post-Certification Merits, Decertification, And Experts",
+      "task_id": "C500-merits-decert-expert-block",
+      "task_name": "Merits discovery, decertification posture, and expert/vendor coordination",
+      "staffing_role": "senior_associate",
+      "estimated_hours": 110,
+      "estimated_hours_min": 70,
+      "estimated_hours_max": 170,
+      "hourly_rate": 325,
+      "rate_source": "synthetic_profile",
+      "rate_is_synthetic": true,
+      "estimated_fees": 35750,
+      "estimated_expenses": 9000,
+      "estimated_expenses_min": 5000,
+      "estimated_expenses_max": 18000,
+      "calculation_formula": "110h * 325 synthetic senior associate rate + synthetic expert/vendor estimate",
+      "external_code_candidate": "C500",
+      "expense_code": "E119",
+      "assumptions": [
+        "Post-certification merits work remains scenario-sensitive and cannot be treated as approved."
+      ],
+      "estimate_basis": "driver_adjusted",
+      "estimate_basis_refs": [
+        "examples/synthetic/labor-employment/labor-employment-nonlinear-budget-templates.json#C500-merits-decert-expert-block"
+      ]
+    },
+    {
+      "phase_id": "C600",
+      "phase_name": "Resolution And Settlement Administration",
+      "task_id": "C600-resolution-administration-block",
+      "task_name": "Mediation, settlement administration coordination, notices, and court approval support",
+      "staffing_role": "senior_associate",
+      "estimated_hours": 45,
+      "estimated_hours_min": 28,
+      "estimated_hours_max": 75,
+      "hourly_rate": 325,
+      "rate_source": "synthetic_profile",
+      "rate_is_synthetic": true,
+      "estimated_fees": 14625,
+      "estimated_expenses": 5000,
+      "estimated_expenses_min": 2500,
+      "estimated_expenses_max": 15000,
+      "calculation_formula": "45h * 325 synthetic senior associate rate + synthetic mediation/notice expense estimate",
+      "external_code_candidate": "C600",
+      "expense_code": "E124",
+      "assumptions": [
+        "Settlement administration work is included as a scenario-sensitive range, not as an approved budget."
+      ],
+      "estimate_basis": "driver_adjusted",
+      "estimate_basis_refs": [
+        "examples/synthetic/labor-employment/labor-employment-nonlinear-budget-templates.json#C600-resolution-administration-block"
+      ]
+    },
+    {
+      "phase_id": "C600",
+      "phase_name": "Resolution And Settlement Administration",
+      "task_id": "C600-resolution-paralegal-support",
+      "task_name": "Notice list, settlement data, and administration support",
+      "staffing_role": "paralegal",
+      "estimated_hours": 60,
+      "estimated_hours_min": 35,
+      "estimated_hours_max": 95,
+      "hourly_rate": 145,
+      "rate_source": "synthetic_profile",
+      "rate_is_synthetic": true,
+      "estimated_fees": 8700,
+      "estimated_expenses": 0,
+      "calculation_formula": "60h * 145 synthetic paralegal rate",
+      "external_code_candidate": "C600",
+      "estimate_basis": "driver_adjusted",
+      "estimate_basis_refs": [
+        "examples/synthetic/labor-employment/replay-inputs/class-collective-clean/legal_budget_proposal.json#line:C600-paralegal"
+      ]
+    }
+  ],
+  "subtotal_fees": 186025,
+  "subtotal_expenses": 24500,
+  "contingency_percent": 0,
+  "contingency_amount": 0,
+  "total_proposed_budget": 210525,
+  "scenario_name": "hybrid_partial",
+  "headline_subtotal_fees": 186025,
+  "headline_subtotal_expenses": 24500,
+  "headline_contingency_amount": 0,
+  "headline_total_proposed_budget": 210525,
+  "headline_total_proposed_budget_min": 175000,
+  "headline_total_proposed_budget_max": 280000,
+  "expected_total_proposed_budget_min": 137450,
+  "expected_total_proposed_budget_max": 318000,
+  "unknown_probability_mass": 1,
+  "expected_value_method": "bounded_unknown_mass",
+  "scenario_set": {
+    "schema_version": "0.1",
+    "scenario_set_id": "le-class-collective-clean-scenarios.v0_1",
+    "status": "flagged_for_human_review",
+    "selected_scenario_id": "hybrid_partial",
+    "standard_scenario_id": "hybrid_partial",
+    "scenarios": [
+      {
+        "scenario_id": "cert_denied",
+        "scenario_name": "Certification denied or narrowed",
+        "description": "Synthetic lower path after certification or representative scope is denied or narrowed.",
+        "resolution_phase": "C400",
+        "included_phase_ids": [
+          "C100",
+          "C200",
+          "C300",
+          "C400"
+        ],
+        "included_external_codes": [
+          "C100",
+          "C200",
+          "C300",
+          "C400",
+          "E112",
+          "E118"
+        ],
+        "included_line_count": 6,
+        "total_hours": 445,
+        "total_hours_min": 308,
+        "total_hours_max": 621,
+        "subtotal_fees": 126950,
+        "subtotal_fees_min": 87500,
+        "subtotal_fees_max": 157000,
+        "subtotal_expenses": 10500,
+        "subtotal_expenses_min": 6000,
+        "subtotal_expenses_max": 21500,
+        "contingency_percent": 0,
+        "contingency_amount": 0,
+        "total_proposed_budget": 137450,
+        "total_budget_min": 93500,
+        "total_budget_max": 178500,
+        "probability": null,
+        "pricing_status": "priced"
+      },
+      {
+        "scenario_id": "hybrid_partial",
+        "scenario_name": "Hybrid or partial representative scope",
+        "description": "Synthetic default path with partial representative scope and settlement administration possible.",
+        "resolution_phase": "C600",
+        "included_phase_ids": [
+          "C100",
+          "C200",
+          "C300",
+          "C400",
+          "C500",
+          "C600"
+        ],
+        "included_external_codes": [
+          "C100",
+          "C200",
+          "C300",
+          "C400",
+          "C500",
+          "C600",
+          "E112",
+          "E118",
+          "E119",
+          "E124"
+        ],
+        "included_line_count": 9,
+        "total_hours": 620,
+        "total_hours_min": 441,
+        "total_hours_max": 961,
+        "subtotal_fees": 186025,
+        "subtotal_fees_min": 132000,
+        "subtotal_fees_max": 240000,
+        "subtotal_expenses": 24500,
+        "subtotal_expenses_min": 13500,
+        "subtotal_expenses_max": 54500,
+        "contingency_percent": 0,
+        "contingency_amount": 0,
+        "total_proposed_budget": 210525,
+        "total_budget_min": 145500,
+        "total_budget_max": 294500,
+        "probability": null,
+        "pricing_status": "priced"
+      },
+      {
+        "scenario_id": "cert_granted_scale_pressure",
+        "scenario_name": "Certification granted with scale pressure",
+        "description": "Synthetic upper path; actual staffing plan remains human-only before any approved budget.",
+        "resolution_phase": "C600",
+        "included_phase_ids": [
+          "C100",
+          "C200",
+          "C300",
+          "C400",
+          "C500",
+          "C600"
+        ],
+        "included_external_codes": [
+          "C100",
+          "C200",
+          "C300",
+          "C400",
+          "C500",
+          "C600",
+          "E112",
+          "E118",
+          "E119",
+          "E124"
+        ],
+        "included_line_count": 9,
+        "total_hours": 620,
+        "total_hours_min": 520,
+        "total_hours_max": 1180,
+        "subtotal_fees": 186025,
+        "subtotal_fees_min": 170000,
+        "subtotal_fees_max": 260000,
+        "subtotal_expenses": 24500,
+        "subtotal_expenses_min": 18000,
+        "subtotal_expenses_max": 58000,
+        "contingency_percent": 0,
+        "contingency_amount": 0,
+        "total_proposed_budget": 210525,
+        "total_budget_min": 188000,
+        "total_budget_max": 318000,
+        "probability": null,
+        "pricing_status": "priced"
+      }
+    ],
+    "selected_scenario_basis": "default_standard",
+    "expected_total": null,
+    "unknown_probability_mass": 1,
+    "expected_total_min": 137450,
+    "expected_total_max": 318000,
+    "expected_value_method": "bounded_unknown_mass",
+    "expected_total_probability_sum": null,
+    "probability_integrity_status": "bounded_unknown_mass",
+    "policy_issue_codes": [
+      "class_collective_scope_requires_human_scenario_review"
+    ],
+    "policy_issue_notes": [
+      "Scenario probabilities are intentionally absent; this fixture tests bounded ranges and reviewed learning gates."
+    ],
+    "monotonic_total_order": true,
+    "total_order_basis": "total_proposed_budget"
+  },
+  "assumptions": [
+    "Synthetic-only class/collective/PAGA replay budget for deterministic QA.",
+    "Rates are synthetic placeholders and are not authorized carrier panel rates.",
+    "Representative scope is clean enough for a range anchor but still requires human scenario selection."
+  ],
+  "exclusions": [
+    "No approved budget, carrier submission, class certification recommendation, matter opening, or staffing authorization.",
+    "No T4 1000+ representative group work is authorized without a human staffing plan."
+  ],
+  "unknowns": [
+    "Certification outcome and class/collective scope remain human-review items.",
+    "Post-certification expert, vendor, and settlement administration needs are scenario-sensitive.",
+    "Carrier guideline terms and state-specific rate data are not promoted as canon from this replay fixture."
+  ],
+  "display_banner": {
+    "data_scope": "synthetic_only",
+    "candidate_only": true,
+    "not_authorized_for_client_submission": true,
+    "not_authorized_as_carrier_panel_rates": true,
+    "range_first_display_required": true
+  },
+  "approval_state": "proposed_for_human_review",
+  "not_authorized_for_client_submission": true
+}

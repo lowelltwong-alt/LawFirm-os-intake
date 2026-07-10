@@ -1,0 +1,180 @@
+{
+  "$defs": {
+    "LessonAtom": {
+      "additionalProperties": false,
+      "properties": {
+        "dimension": {
+          "enum": [
+            "carrier",
+            "jurisdiction",
+            "matter_type",
+            "role",
+            "issue_family",
+            "threshold_band"
+          ],
+          "title": "Dimension",
+          "type": "string"
+        },
+        "value": {
+          "maxLength": 80,
+          "minLength": 1,
+          "pattern": "^[a-z0-9_:-]+$",
+          "title": "Value",
+          "type": "string"
+        },
+        "atom_class": {
+          "enum": [
+            "operational",
+            "strategy"
+          ],
+          "title": "Atom Class",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dimension",
+        "value",
+        "atom_class"
+      ],
+      "title": "LessonAtom",
+      "type": "object"
+    },
+    "LessonClaim": {
+      "additionalProperties": false,
+      "properties": {
+        "before_code": {
+          "enum": [
+            "candidate_review_default",
+            "candidate_review_escalated"
+          ],
+          "title": "Before Code",
+          "type": "string"
+        },
+        "after_code": {
+          "enum": [
+            "candidate_review_default",
+            "candidate_review_escalated"
+          ],
+          "title": "After Code",
+          "type": "string"
+        }
+      },
+      "required": [
+        "before_code",
+        "after_code"
+      ],
+      "title": "LessonClaim",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "lesson_id": {
+      "minLength": 1,
+      "pattern": "^synthetic-[a-z0-9-]+$",
+      "title": "Lesson Id",
+      "type": "string"
+    },
+    "data_class": {
+      "const": "synthetic_fixture",
+      "title": "Data Class",
+      "type": "string"
+    },
+    "runtime_scope": {
+      "const": "synthetic_candidate",
+      "title": "Runtime Scope",
+      "type": "string"
+    },
+    "candidate_only": {
+      "const": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "atoms": {
+      "items": {
+        "$ref": "#/$defs/LessonAtom"
+      },
+      "minItems": 1,
+      "title": "Atoms",
+      "type": "array"
+    },
+    "claim": {
+      "$ref": "#/$defs/LessonClaim"
+    },
+    "applies_when": {
+      "items": {
+        "enum": [
+          "applies_matching_operational_context",
+          "not_for_strategy_or_unknown_context",
+          "danger_overgeneralized_candidate_rule"
+        ],
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Applies When",
+      "type": "array"
+    },
+    "does_not_apply_when": {
+      "items": {
+        "enum": [
+          "applies_matching_operational_context",
+          "not_for_strategy_or_unknown_context",
+          "danger_overgeneralized_candidate_rule"
+        ],
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Does Not Apply When",
+      "type": "array"
+    },
+    "danger_if_misapplied": {
+      "enum": [
+        "applies_matching_operational_context",
+        "not_for_strategy_or_unknown_context",
+        "danger_overgeneralized_candidate_rule"
+      ],
+      "title": "Danger If Misapplied",
+      "type": "string"
+    },
+    "support_matter_ids": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Support Matter Ids",
+      "type": "array"
+    },
+    "support_count": {
+      "minimum": 1,
+      "title": "Support Count",
+      "type": "integer"
+    },
+    "free_text": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Free Text"
+    }
+  },
+  "required": [
+    "lesson_id",
+    "data_class",
+    "runtime_scope",
+    "candidate_only",
+    "atoms",
+    "claim",
+    "applies_when",
+    "does_not_apply_when",
+    "danger_if_misapplied",
+    "support_matter_ids",
+    "support_count",
+    "free_text"
+  ],
+  "title": "LessonIR",
+  "type": "object"
+}

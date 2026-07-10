@@ -19,6 +19,9 @@ rust/**/target/
 .digital-asset/mail/*.jsonl
 .digital-asset/mail/last_checked.json
 
+# Private AI workspace (DAD policy): messy AI handoffs, scratch, build context. Never committed.
+.ai-work/
+
 # Never commit real firm, client, matter, carrier, rate, guideline, or credential data.
 context/firm-private/
 secrets/

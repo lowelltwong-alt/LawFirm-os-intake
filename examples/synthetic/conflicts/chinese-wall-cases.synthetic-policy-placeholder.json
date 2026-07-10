@@ -1,0 +1,130 @@
+{
+  "fixture_id": "chinese-wall-cases",
+  "status": "synthetic_only_candidate_fixture",
+  "notes": "All classes and adversity edges are synthetic policy placeholders. They are not firm conflict classes and carry no legal authority.",
+  "trusted_synthetic_adversity_graph_digest": "sha256:355b0c259de100e4000211e26e4c38b9b69c0e3c4f9a6927c8d5ff5e34b762a4",
+  "trusted_synthetic_case_manifest_digest": "sha256:6777f21c501303c56568d6fc7a506335bce625dbfac2a1a7dfa8b8bb8b7adafa",
+  "adversity_graph": {
+    "graph_id": "synthetic-adversity-graph-v1",
+    "graph_version": "synthetic-policy-placeholder-v1",
+    "data_class": "synthetic_fixture",
+    "runtime_scope": "synthetic_candidate",
+    "candidate_only": true,
+    "policy_status": "synthetic_policy_placeholder",
+    "conflict_classes": [
+      {
+        "class_id": "synthetic-coi-class-alpha",
+        "definition_status": "synthetic_policy_placeholder",
+        "member_ref_count": 2,
+        "member_refs_included": false,
+        "counsel_classification_authority_verified": false
+      },
+      {
+        "class_id": "synthetic-coi-class-beta",
+        "definition_status": "synthetic_policy_placeholder",
+        "member_ref_count": 2,
+        "member_refs_included": false,
+        "counsel_classification_authority_verified": false
+      },
+      {
+        "class_id": "synthetic-coi-class-delta",
+        "definition_status": "synthetic_policy_placeholder",
+        "member_ref_count": 1,
+        "member_refs_included": false,
+        "counsel_classification_authority_verified": false
+      },
+      {
+        "class_id": "synthetic-coi-class-gamma",
+        "definition_status": "synthetic_policy_placeholder",
+        "member_ref_count": 1,
+        "member_refs_included": false,
+        "counsel_classification_authority_verified": false
+      }
+    ],
+    "adversity_edges": [
+      {
+        "edge_id": "synthetic-adversity-edge-alpha-beta",
+        "class_ids": ["synthetic-coi-class-alpha", "synthetic-coi-class-beta"],
+        "review_status": "synthetic_fixture_reviewed",
+        "source_ref": "synthetic-policy-ref:alpha-beta",
+        "counsel_adversity_authority_verified": false,
+        "inferred_from_similarity": false
+      },
+      {
+        "edge_id": "synthetic-adversity-edge-delta-gamma",
+        "class_ids": ["synthetic-coi-class-delta", "synthetic-coi-class-gamma"],
+        "review_status": "unreviewed_fixture",
+        "source_ref": "synthetic-policy-ref:delta-gamma",
+        "counsel_adversity_authority_verified": false,
+        "inferred_from_similarity": false
+      }
+    ],
+    "firm_wide_imputation_required": true,
+    "counsel_adversity_classes_authority_verified": false,
+    "adversity_inference_performed": false,
+    "contains_real_data": false,
+    "contains_private_data": false,
+    "contains_client_data": false,
+    "contains_matter_data": false,
+    "contains_real_carrier_data": false,
+    "contains_privileged_content": false,
+    "contains_work_product": false
+  },
+  "cases": [
+    {
+      "case_id": "chw-same-side-ok",
+      "expected_decision": "same_side_candidate",
+      "request": {
+        "request_id": "synthetic-chw-same-side",
+        "lesson_id": "synthetic-lesson-same-side",
+        "synthetic_firm_wide_provenance_snapshot_digest": "sha256:8d0d6b4288d25d0c998788498dd06dc67d30a220cf4e2d518b85d78a78ba909d",
+        "lesson_provenance_class_ids": ["synthetic-coi-class-alpha"],
+        "consuming_matter_class_ids": ["synthetic-coi-class-alpha"]
+      }
+    },
+    {
+      "case_id": "chw-cross-wall-block",
+      "expected_decision": "cross_wall_block",
+      "request": {
+        "request_id": "synthetic-chw-cross-wall",
+        "lesson_id": "synthetic-lesson-cross-wall",
+        "synthetic_firm_wide_provenance_snapshot_digest": "sha256:bbbba168b4de3363b1014295a2a11869071eb28d344367ebca4d1aef67b31311",
+        "lesson_provenance_class_ids": ["synthetic-coi-class-alpha"],
+        "consuming_matter_class_ids": ["synthetic-coi-class-beta"]
+      }
+    },
+    {
+      "case_id": "chw-firm-wide-imputation",
+      "expected_decision": "cross_wall_block",
+      "request": {
+        "request_id": "synthetic-chw-firm-wide-imputation",
+        "lesson_id": "synthetic-lesson-firm-wide-imputation",
+        "synthetic_firm_wide_provenance_snapshot_digest": "sha256:f45afa49c26662dbf93253db733b5ac2aa62d53d0539ab2bcb5aa47018d8f4c9",
+        "lesson_provenance_class_ids": ["synthetic-coi-class-alpha"],
+        "consuming_matter_class_ids": ["synthetic-coi-class-beta"]
+      }
+    },
+    {
+      "case_id": "chw-unreviewed-edge-holds",
+      "expected_decision": "unreviewed_edge_hold",
+      "request": {
+        "request_id": "synthetic-chw-unreviewed-edge",
+        "lesson_id": "synthetic-lesson-unreviewed-edge",
+        "synthetic_firm_wide_provenance_snapshot_digest": "sha256:4cc52f5c867d88a04f424fd83a3c46a4d28672320142fbc9f966a7abe0aeb5c5",
+        "lesson_provenance_class_ids": ["synthetic-coi-class-delta"],
+        "consuming_matter_class_ids": ["synthetic-coi-class-gamma"]
+      }
+    },
+    {
+      "case_id": "chw-unknown-relation-holds",
+      "expected_decision": "unknown_relation_hold",
+      "request": {
+        "request_id": "synthetic-chw-unknown-relation",
+        "lesson_id": "synthetic-lesson-unknown-relation",
+        "synthetic_firm_wide_provenance_snapshot_digest": "sha256:3c480ccce3d20bb2311c146b167ea25a820a277343acf854637d8421c66442c6",
+        "lesson_provenance_class_ids": ["synthetic-coi-class-alpha"],
+        "consuming_matter_class_ids": ["synthetic-coi-class-gamma"]
+      }
+    }
+  ]
+}

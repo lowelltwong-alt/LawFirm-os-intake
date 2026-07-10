@@ -6,6 +6,12 @@ from pathlib import Path
 from typing import Any
 
 from .models import UIReviewDataBundle, UIReviewDataBundleDetailReport
+from .review_ui_crosswalk_ocg_evidence import (
+    build_crosswalk_audit_summary,
+    build_ocg_rule_ir_adoption_summary,
+    load_crosswalk_audit_report,
+    load_ocg_rule_ir_adoption_report,
+)
 from .util import digest_json, load_json, now_iso, write_json
 
 
@@ -210,6 +216,22 @@ DETAIL_REPORT_SPECS = [
         file_name="budget_learning_loop_report.json",
         renderer="BudgetLearningLoopPanel",
     ),
+    UIReviewDetailSpec(
+        detail_report_id="crosswalk-audit",
+        label="Standard Crosswalk Evidence",
+        report_kind="crosswalk_audit",
+        file_name="crosswalk_audit_report.json",
+        renderer="CrosswalkAuditEvidencePanel",
+        required=False,
+    ),
+    UIReviewDetailSpec(
+        detail_report_id="ocg-rule-ir-adoption",
+        label="OCG Rule IR Adoption Evidence",
+        report_kind="ocg_rule_ir_adoption",
+        file_name="ocg_rule_ir_adoption_report.json",
+        renderer="OCGRuleIRAdoptionEvidencePanel",
+        required=False,
+    ),
 ]
 
 
@@ -218,9 +240,33 @@ def build_ui_review_data_bundle(
     run_root: str | Path,
     out_path: str | Path,
     generated_at: str | None = None,
+    crosswalk_audit_path: str | Path | None = None,
+    ocg_rule_ir_adoption_path: str | Path | None = None,
 ) -> UIReviewDataBundle:
     root = Path(run_root)
     details = [_detail_report(root, spec) for spec in DETAIL_REPORT_SPECS]
+    crosswalk_ref = str(crosswalk_audit_path) if crosswalk_audit_path else None
+    ocg_ref = str(ocg_rule_ir_adoption_path) if ocg_rule_ir_adoption_path else None
+    crosswalk_summary = None
+    ocg_summary = None
+    if crosswalk_ref:
+        crosswalk_report = load_crosswalk_audit_report(crosswalk_ref)
+        crosswalk_summary = build_crosswalk_audit_summary(crosswalk_report)
+        details = [
+            _override_detail_from_explicit_path(detail, crosswalk_ref, crosswalk_report.status)
+            if detail.detail_report_id == "crosswalk-audit"
+            else detail
+            for detail in details
+        ]
+    if ocg_ref:
+        ocg_report = load_ocg_rule_ir_adoption_report(ocg_ref)
+        ocg_summary = build_ocg_rule_ir_adoption_summary(ocg_report)
+        details = [
+            _override_detail_from_explicit_path(detail, ocg_ref, ocg_report.status)
+            if detail.detail_report_id == "ocg-rule-ir-adoption"
+            else detail
+            for detail in details
+        ]
     missing_required = [detail for detail in details if detail.required and not detail.present]
     external_write_reports = [detail for detail in details if detail.external_writes_performed]
     if external_write_reports:
@@ -257,6 +303,10 @@ def build_ui_review_data_bundle(
             missing_required=missing_required,
             external_write_reports=external_write_reports,
         ),
+        crosswalk_audit_ref=crosswalk_ref,
+        ocg_rule_ir_adoption_ref=ocg_ref,
+        crosswalk_audit_summary=crosswalk_summary,
+        ocg_rule_ir_adoption_summary=ocg_summary,
         generated_at=generated_at or now_iso(),
     )
     write_json(out_path, bundle.model_dump(mode="json"))
@@ -381,3 +431,27 @@ def _required_next_actions(
 
 def _sha256_file(path: Path) -> str:
     return "sha256:" + sha256(path.read_bytes()).hexdigest()
+
+
+def _override_detail_from_explicit_path(
+    detail: UIReviewDataBundleDetailReport,
+    path: str,
+    status: str,
+) -> UIReviewDataBundleDetailReport:
+    artifact = Path(path)
+    return UIReviewDataBundleDetailReport(
+        detail_report_id=detail.detail_report_id,
+        label=detail.label,
+        report_kind=detail.report_kind,
+        file_name=detail.file_name,
+        required=detail.required,
+        present=True,
+        status=status,
+        renderer=detail.renderer,
+        artifact_ref=str(artifact),
+        source_sha256=_sha256_file(artifact),
+        candidate_only=True,
+        synthetic_only=True,
+        external_writes_performed=False,
+        notes=[f"Explicit evidence path provided: {artifact.name}; status={status}."],
+    )

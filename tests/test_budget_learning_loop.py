@@ -120,7 +120,7 @@ def test_budget_learning_loop_report_summarizes_actuals_rejections_and_learning(
     )
 
     assert persisted.budget_learning_loop_report_id == report.budget_learning_loop_report_id
-    assert report.status == "budget_learning_loop_ready_for_review"
+    assert report.status == "blocked_by_budget_learning_loop"
     assert report.comparison_budget_state == "human_revised_candidate"
     assert report.actuals.status == "variance_review_required"
     assert report.actuals.ledger_entry_count == (
@@ -186,8 +186,8 @@ def test_budget_learning_loop_cli_writes_report(tmp_path, repo_root, capsys):
     )
     captured = capsys.readouterr()
 
-    assert exit_code == 0
-    assert '"status": "budget_learning_loop_ready_for_review"' in captured.out
+    assert exit_code == 2
+    assert '"status": "blocked_by_budget_learning_loop"' in captured.out
     assert '"learning_candidate_count": 12' in captured.out
     assert '"lake_write_performed": false' in captured.out
     assert (tmp_path / "budget-learning-loop-cli" / BUDGET_LEARNING_LOOP_REPORT_FILENAME).is_file()

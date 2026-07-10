@@ -1,0 +1,369 @@
+{
+  "$defs": {
+    "OCGRuleIRAdoptionFinding": {
+      "additionalProperties": false,
+      "properties": {
+        "finding_id": {
+          "title": "Finding Id",
+          "type": "string"
+        },
+        "severity": {
+          "enum": [
+            "blocker",
+            "warning"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "issue": {
+          "title": "Issue",
+          "type": "string"
+        },
+        "rule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rule Id"
+        }
+      },
+      "required": [
+        "finding_id",
+        "severity",
+        "issue"
+      ],
+      "title": "OCGRuleIRAdoptionFinding",
+      "type": "object"
+    },
+    "OCGRuleImpactLine": {
+      "additionalProperties": false,
+      "properties": {
+        "rule_id": {
+          "title": "Rule Id",
+          "type": "string"
+        },
+        "rule_family": {
+          "title": "Rule Family",
+          "type": "string"
+        },
+        "impact_bucket": {
+          "title": "Impact Bucket",
+          "type": "string"
+        },
+        "matched_projection_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Matched Projection Refs",
+          "type": "array"
+        },
+        "proposed_amount": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Proposed Amount"
+        },
+        "compliant_amount": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Compliant Amount"
+        },
+        "delta_amount": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Delta Amount"
+        },
+        "note": {
+          "title": "Note",
+          "type": "string"
+        },
+        "candidate_only": {
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "rule_id",
+        "rule_family",
+        "impact_bucket",
+        "note"
+      ],
+      "title": "OCGRuleImpactLine",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "report_id": {
+      "title": "Report Id",
+      "type": "string"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "accepted_as_read_only_candidate",
+        "blocked"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "acceptance_gate_status": {
+      "enum": [
+        "accepted_with_restrictions",
+        "blocked"
+      ],
+      "title": "Acceptance Gate Status",
+      "type": "string"
+    },
+    "rule_ir_id": {
+      "title": "Rule Ir Id",
+      "type": "string"
+    },
+    "source_owner": {
+      "title": "Source Owner",
+      "type": "string"
+    },
+    "source_artifact_ref": {
+      "title": "Source Artifact Ref",
+      "type": "string"
+    },
+    "budget_proposal_id": {
+      "title": "Budget Proposal Id",
+      "type": "string"
+    },
+    "carrier_projection_id": {
+      "title": "Carrier Projection Id",
+      "type": "string"
+    },
+    "carrier": {
+      "title": "Carrier",
+      "type": "string"
+    },
+    "proposed_total_before": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Proposed Total Before"
+    },
+    "proposed_total_after": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Proposed Total After"
+    },
+    "carrier_compliant_total": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Carrier Compliant Total"
+    },
+    "projection_total_delta": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Projection Total Delta"
+    },
+    "rule_count": {
+      "minimum": 0,
+      "title": "Rule Count",
+      "type": "integer"
+    },
+    "impact_line_count": {
+      "minimum": 0,
+      "title": "Impact Line Count",
+      "type": "integer"
+    },
+    "candidate_rule_id_count": {
+      "minimum": 0,
+      "title": "Candidate Rule Id Count",
+      "type": "integer"
+    },
+    "canonical_rule_id_violation_count": {
+      "minimum": 0,
+      "title": "Canonical Rule Id Violation Count",
+      "type": "integer"
+    },
+    "source_owner_violation_count": {
+      "minimum": 0,
+      "title": "Source Owner Violation Count",
+      "type": "integer"
+    },
+    "read_only_violation_count": {
+      "minimum": 0,
+      "title": "Read Only Violation Count",
+      "type": "integer"
+    },
+    "rewrite_budget_violation_count": {
+      "minimum": 0,
+      "title": "Rewrite Budget Violation Count",
+      "type": "integer"
+    },
+    "real_guideline_or_rate_violation_count": {
+      "minimum": 0,
+      "title": "Real Guideline Or Rate Violation Count",
+      "type": "integer"
+    },
+    "budget_projection_mismatch_count": {
+      "minimum": 0,
+      "title": "Budget Projection Mismatch Count",
+      "type": "integer"
+    },
+    "findings": {
+      "items": {
+        "$ref": "#/$defs/OCGRuleIRAdoptionFinding"
+      },
+      "title": "Findings",
+      "type": "array"
+    },
+    "impact_lines": {
+      "items": {
+        "$ref": "#/$defs/OCGRuleImpactLine"
+      },
+      "title": "Impact Lines",
+      "type": "array"
+    },
+    "display_banner": {
+      "additionalProperties": true,
+      "title": "Display Banner",
+      "type": "object"
+    },
+    "prohibited_actions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Prohibited Actions",
+      "type": "array"
+    },
+    "proposed_budget_preserved": {
+      "default": true,
+      "title": "Proposed Budget Preserved",
+      "type": "boolean"
+    },
+    "projection_rewrites_budget": {
+      "default": false,
+      "title": "Projection Rewrites Budget",
+      "type": "boolean"
+    },
+    "read_only_consumption": {
+      "default": true,
+      "title": "Read Only Consumption",
+      "type": "boolean"
+    },
+    "candidate_only": {
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "not_promoted_canon": {
+      "default": true,
+      "title": "Not Promoted Canon",
+      "type": "boolean"
+    },
+    "not_authorized_for_canonical_use": {
+      "default": true,
+      "title": "Not Authorized For Canonical Use",
+      "type": "boolean"
+    },
+    "not_authorized_for_budget_rewrite": {
+      "default": true,
+      "title": "Not Authorized For Budget Rewrite",
+      "type": "boolean"
+    },
+    "not_authorized_for_client_submission": {
+      "default": true,
+      "title": "Not Authorized For Client Submission",
+      "type": "boolean"
+    },
+    "not_authorized_for_external_submission": {
+      "default": true,
+      "title": "Not Authorized For External Submission",
+      "type": "boolean"
+    },
+    "not_authorized_for_lake_write": {
+      "default": true,
+      "title": "Not Authorized For Lake Write",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "report_id",
+    "generated_at",
+    "status",
+    "acceptance_gate_status",
+    "rule_ir_id",
+    "source_owner",
+    "source_artifact_ref",
+    "budget_proposal_id",
+    "carrier_projection_id",
+    "carrier",
+    "rule_count",
+    "impact_line_count",
+    "candidate_rule_id_count",
+    "canonical_rule_id_violation_count",
+    "source_owner_violation_count",
+    "read_only_violation_count",
+    "rewrite_budget_violation_count",
+    "real_guideline_or_rate_violation_count",
+    "budget_projection_mismatch_count"
+  ],
+  "title": "OCGRuleIRAdoptionReport",
+  "type": "object"
+}

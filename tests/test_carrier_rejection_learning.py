@@ -91,6 +91,10 @@ def test_carrier_rejection_learning_report_proposes_candidate_loops(
         "human-reviewed outcome evidence" in proposal.required_evaluation
         for proposal in report.proposals
     )
+    assert {
+        "lesson_disclosure_proof_before_cross_repo_review",
+        "chinese_wall_proof_before_lesson_firing",
+    }.issubset(report.required_next_gates)
 
     notes_text = (run_dir / "carrier_rejection_learning_report.md").read_text(encoding="utf-8")
     assert "Required Next Gates" in notes_text

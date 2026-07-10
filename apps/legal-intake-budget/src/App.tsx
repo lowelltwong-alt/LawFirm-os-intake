@@ -1,6 +1,8 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 
+import demoCrosswalkAudit from "./fixtures/demo-crosswalk-audit-report.json";
+import demoOCGRuleIRAdoption from "./fixtures/demo-ocg-rule-ir-adoption-report.json";
 import demoBudgetLearningLoop from "./fixtures/demo-budget-learning-loop-report.json";
 import demoLaborEmploymentBlockedDriverReview from "./fixtures/demo-labor-employment-blocked-driver-impact-review-report.json";
 import demoLaborEmploymentBudgetLearningFixtures from "./fixtures/demo-labor-employment-budget-learning-fixtures-report.json";
@@ -46,6 +48,8 @@ import {
   assertPOCQATriageReport,
   assertPublicDataCacheAuditReport,
   assertReadOnlyManifest,
+  assertCrosswalkAuditReport,
+  assertOCGRuleIRAdoptionReport,
   assertRustFixtureBoundaryReport,
   assertRustFixtureManifestReport,
   assertRustPublicDataCacheCustodyReport,
@@ -85,6 +89,8 @@ import type {
   MatterLinkingReviewOutcomeStatus,
   POCQATriageItemStatus,
   POCQATriageReport,
+  CrosswalkAuditReport,
+  OCGRuleIRAdoptionReport,
   PublicDataCacheAuditReport,
   QualityGate,
   QualityGateStatus,
@@ -165,6 +171,10 @@ const matterLinkingFailures = assertMatterLinkingPreflightReport(matterLinkingPr
 const matterLinkingQAGateFailures = assertMatterLinkingQAGateReport(matterLinkingQAGate);
 const matterLinkingReviewOutcomeFailures =
   assertMatterLinkingReviewOutcomeReport(matterLinkingReviewOutcome);
+const crosswalkAudit = demoCrosswalkAudit as CrosswalkAuditReport;
+const ocgRuleIRAdoption = demoOCGRuleIRAdoption as OCGRuleIRAdoptionReport;
+const crosswalkAuditFailures = assertCrosswalkAuditReport(crosswalkAudit);
+const ocgRuleIRAdoptionFailures = assertOCGRuleIRAdoptionReport(ocgRuleIRAdoption);
 const rustFixtureBoundaryFailures = assertRustFixtureBoundaryReport(rustFixtureBoundary);
 const rustFixtureManifestFailures = assertRustFixtureManifestReport(rustFixtureManifest);
 const publicDataCacheAuditFailures =
@@ -1132,6 +1142,124 @@ function UIDemoQARecipePanel({ report }: { report: UIDemoQARecipeReport }) {
         {report.lake_write_performed ? "not blocked" : "blocked"}. Matter opening:{" "}
         {report.matter_opening_authorized ? "not blocked" : "blocked"}.
       </p>
+    </section>
+  );
+}
+
+function CrosswalkAuditEvidencePanel({ report }: { report: CrosswalkAuditReport }) {
+  const statusClass =
+    report.status === "passed" && crosswalkAuditFailures.length === 0
+      ? "state state-passed"
+      : "state state-blocked";
+
+  return (
+    <section className="panel crosswalk-evidence-panel" aria-labelledby="crosswalk-evidence-title">
+      <div className="panel-heading">
+        <div>
+          <p className="eyebrow">Candidate standard crosswalk</p>
+          <h2 id="crosswalk-evidence-title">Standard Crosswalk Evidence</h2>
+          <code>{report.report_id}</code>
+        </div>
+        <span className={statusClass}>{report.status}</span>
+      </div>
+
+      <div className="warning-strip">
+        <strong>Candidate-only / not canon.</strong>
+        <span>
+          UTBMS-like strings in local labels (e.g. task-L310-family-*) are mnemonic candidate
+          families — not exact SALI, LEDES, or UTBMS codes (
+          <code>exact_standard_code_verified=false</code>). This evidence is read-only and must not
+          drive budget math.
+        </span>
+      </div>
+
+      <div className="recipe-summary" aria-label="Crosswalk audit summary">
+        <div>
+          <span>Acceptance Gate</span>
+          <strong>{report.acceptance_gate_status}</strong>
+        </div>
+        <div>
+          <span>Exact Standard Code Verified</span>
+          <strong>{String(report.exact_standard_code_verified)}</strong>
+        </div>
+        <div>
+          <span>UTBMS-like Family Labels</span>
+          <strong>{report.utbms_like_candidate_family_label_count}</strong>
+        </div>
+        <div>
+          <span>Crosswalks</span>
+          <strong>{report.crosswalk_count}</strong>
+        </div>
+        <div>
+          <span>Mapped / Unmapped</span>
+          <strong>
+            {report.mapped_entry_count} / {report.unmapped_entry_count}
+          </strong>
+        </div>
+        <div>
+          <span>Violations</span>
+          <strong>
+            {report.canonical_claim_count +
+              report.guessed_mapping_count +
+              report.high_confidence_dual_review_violation_count +
+              report.unverified_pinned_target_count +
+              report.workflow_dependency_violation_count}
+          </strong>
+        </div>
+      </div>
+
+      <TokenList items={report.prohibited_actions} />
+    </section>
+  );
+}
+
+function OCGRuleIRAdoptionEvidencePanel({ report }: { report: OCGRuleIRAdoptionReport }) {
+  const statusClass =
+    report.status === "accepted_as_read_only_candidate" && ocgRuleIRAdoptionFailures.length === 0
+      ? "state state-passed"
+      : "state state-blocked";
+
+  return (
+    <section className="panel ocg-evidence-panel" aria-labelledby="ocg-evidence-title">
+      <div className="panel-heading">
+        <div>
+          <p className="eyebrow">Substrate-owned OCG rule IR</p>
+          <h2 id="ocg-evidence-title">OCG Rule IR Adoption Evidence</h2>
+          <code>{report.report_id}</code>
+        </div>
+        <span className={statusClass}>{report.status}</span>
+      </div>
+
+      <div className="warning-strip">
+        <strong>Read-only candidate evidence.</strong>
+        <span>
+          Source owner {report.source_owner}. Proposed vs compliant totals are display-only and do
+          not authorize budget rewrite, carrier submission, or canon promotion.
+        </span>
+      </div>
+
+      <div className="recipe-summary" aria-label="OCG adoption summary">
+        <div>
+          <span>Source Owner</span>
+          <strong>{report.source_owner}</strong>
+        </div>
+        <div>
+          <span>Rules / Impact Lines</span>
+          <strong>
+            {report.rule_count} / {report.impact_line_count}
+          </strong>
+        </div>
+        <div>
+          <span>Proposed Total</span>
+          <strong>{report.proposed_total_before ?? "n/a"}</strong>
+        </div>
+        <div>
+          <span>Compliant Total</span>
+          <strong>{report.carrier_compliant_total ?? "n/a"}</strong>
+        </div>
+      </div>
+
+      <TokenList items={report.prohibited_actions} />
     </section>
   );
 }
@@ -3432,6 +3560,8 @@ function App() {
       <BudgetLearningLoopPanel report={budgetLearningLoop} />
       <SyntheticConfidenceSummaryPanel report={syntheticConfidenceSummary} />
       <UIDemoQARecipePanel report={uiDemoQARecipe} />
+      <CrosswalkAuditEvidencePanel report={crosswalkAudit} />
+      <OCGRuleIRAdoptionEvidencePanel report={ocgRuleIRAdoption} />
       <RustFixtureBoundaryPanel report={rustFixtureBoundary} />
       <RustFixtureManifestPanel report={rustFixtureManifest} />
       <PublicDataCacheAuditPanel

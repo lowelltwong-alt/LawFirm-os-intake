@@ -1,0 +1,325 @@
+{
+  "schema_version": "0.1",
+  "crosswalk_id": "xwalk-syn-budget-code-to-utbms-ledes-v1",
+  "kind": "budget_code_to_utbms_ledes",
+  "target_system": "utbms_ledes",
+  "source_provenance": {
+    "source_url": "https://utbms.com/",
+    "source_version_or_date": "UTBMS code sets (version not pinned; candidate reference only)",
+    "retrieved_at": "2026-07-09T00:00:00Z",
+    "content_sha256": null,
+    "license_terms_note": "UTBMS task/expense codes and LEDES billing formats are maintained by the UTBMS/LEDES committees. Verify current code sets and licensing terms before any promotion. No UTBMS/LEDES payload is committed here.",
+    "review_status": "candidate_unverified"
+  },
+  "entries": [
+    {
+      "local_term": "E100",
+      "local_term_kind": "phase_id",
+      "candidate_target": "utbms_ledes_candidate:phase-family-L1xx-case-assessment",
+      "candidate_target_system": "utbms_ledes",
+      "confidence": "low",
+      "provenance": {
+        "source_url": "https://utbms.com/",
+        "source_version_or_date": "UTBMS code sets (version not pinned; candidate reference only)",
+        "retrieved_at": "2026-07-09T00:00:00Z",
+        "content_sha256": null,
+        "license_terms_note": "UTBMS task/expense codes and LEDES billing formats are maintained by the UTBMS/LEDES committees. Verify current code sets and licensing terms before any promotion. No UTBMS/LEDES payload is committed here.",
+        "review_status": "candidate_unverified"
+      },
+      "review_status": "candidate_unverified",
+      "notes": "Local synthetic phase E100 (intake / early assessment) candidate-maps to a UTBMS L1xx case-assessment phase family. The L-prefix is local; do not treat as a pinned UTBMS code.",
+      "candidate_only": true
+    },
+    {
+      "local_term": "E200",
+      "local_term_kind": "phase_id",
+      "candidate_target": "utbms_ledes_candidate:phase-family-L2xx-pleadings-motions",
+      "candidate_target_system": "utbms_ledes",
+      "confidence": "low",
+      "provenance": {
+        "source_url": "https://utbms.com/",
+        "source_version_or_date": "UTBMS code sets (version not pinned; candidate reference only)",
+        "retrieved_at": "2026-07-09T00:00:00Z",
+        "content_sha256": null,
+        "license_terms_note": "UTBMS task/expense codes and LEDES billing formats are maintained by the UTBMS/LEDES committees. Verify current code sets and licensing terms before any promotion. No UTBMS/LEDES payload is committed here.",
+        "review_status": "candidate_unverified"
+      },
+      "review_status": "candidate_unverified",
+      "notes": "Local synthetic phase E200 (pleadings / agency response / early motions) candidate-maps to a UTBMS L2xx pleadings/motions phase family.",
+      "candidate_only": true
+    },
+    {
+      "local_term": "E300",
+      "local_term_kind": "phase_id",
+      "candidate_target": "utbms_ledes_candidate:phase-family-L3xx-discovery",
+      "candidate_target_system": "utbms_ledes",
+      "confidence": "low",
+      "provenance": {
+        "source_url": "https://utbms.com/",
+        "source_version_or_date": "UTBMS code sets (version not pinned; candidate reference only)",
+        "retrieved_at": "2026-07-09T00:00:00Z",
+        "content_sha256": null,
+        "license_terms_note": "UTBMS task/expense codes and LEDES billing formats are maintained by the UTBMS/LEDES committees. Verify current code sets and licensing terms before any promotion. No UTBMS/LEDES payload is committed here.",
+        "review_status": "candidate_unverified"
+      },
+      "review_status": "candidate_unverified",
+      "notes": "Local synthetic phase E300 (discovery / fact development) candidate-maps to a UTBMS L3xx discovery phase family.",
+      "candidate_only": true
+    },
+    {
+      "local_term": "E400",
+      "local_term_kind": "phase_id",
+      "candidate_target": "utbms_ledes_candidate:phase-family-L4xx-trial-resolution",
+      "candidate_target_system": "utbms_ledes",
+      "confidence": "low",
+      "provenance": {
+        "source_url": "https://utbms.com/",
+        "source_version_or_date": "UTBMS code sets (version not pinned; candidate reference only)",
+        "retrieved_at": "2026-07-09T00:00:00Z",
+        "content_sha256": null,
+        "license_terms_note": "UTBMS task/expense codes and LEDES billing formats are maintained by the UTBMS/LEDES committees. Verify current code sets and licensing terms before any promotion. No UTBMS/LEDES payload is committed here.",
+        "review_status": "candidate_unverified"
+      },
+      "review_status": "candidate_unverified",
+      "notes": "Local synthetic phase E400 (resolution / dispositive motions / trial readiness) candidate-maps to a UTBMS L4xx trial/resolution phase family.",
+      "candidate_only": true
+    },
+    {
+      "local_term": "E110",
+      "local_term_kind": "task_id",
+      "candidate_target": "utbms_ledes_candidate:task-L110-family-case-assessment",
+      "candidate_target_system": "utbms_ledes",
+      "confidence": "low",
+      "provenance": {
+        "source_url": "https://utbms.com/",
+        "source_version_or_date": "UTBMS code sets (version not pinned; candidate reference only)",
+        "retrieved_at": "2026-07-09T00:00:00Z",
+        "content_sha256": null,
+        "license_terms_note": "UTBMS task/expense codes and LEDES billing formats are maintained by the UTBMS/LEDES committees. Verify current code sets and licensing terms before any promotion. No UTBMS/LEDES payload is committed here.",
+        "review_status": "candidate_unverified"
+      },
+      "review_status": "candidate_unverified",
+      "notes": "Assignment review / deadline triage task candidate-maps to a UTBMS L110 case-assessment task family.",
+      "candidate_only": true
+    },
+    {
+      "local_term": "E120",
+      "local_term_kind": "task_id",
+      "candidate_target": "utbms_ledes_candidate:task-L120-family-party-exposure-mapping",
+      "candidate_target_system": "utbms_ledes",
+      "confidence": "low",
+      "provenance": {
+        "source_url": "https://utbms.com/",
+        "source_version_or_date": "UTBMS code sets (version not pinned; candidate reference only)",
+        "retrieved_at": "2026-07-09T00:00:00Z",
+        "content_sha256": null,
+        "license_terms_note": "UTBMS task/expense codes and LEDES billing formats are maintained by the UTBMS/LEDES committees. Verify current code sets and licensing terms before any promotion. No UTBMS/LEDES payload is committed here.",
+        "review_status": "candidate_unverified"
+      },
+      "review_status": "candidate_unverified",
+      "notes": "Party / claimant / class / PAGA exposure map candidate-maps to a UTBMS L120 family; exact code requires verification.",
+      "candidate_only": true
+    },
+    {
+      "local_term": "E210",
+      "local_term_kind": "task_id",
+      "candidate_target": "utbms_ledes_candidate:task-L210-family-pleadings-agency-response",
+      "candidate_target_system": "utbms_ledes",
+      "confidence": "low",
+      "provenance": {
+        "source_url": "https://utbms.com/",
+        "source_version_or_date": "UTBMS code sets (version not pinned; candidate reference only)",
+        "retrieved_at": "2026-07-09T00:00:00Z",
+        "content_sha256": null,
+        "license_terms_note": "UTBMS task/expense codes and LEDES billing formats are maintained by the UTBMS/LEDES committees. Verify current code sets and licensing terms before any promotion. No UTBMS/LEDES payload is committed here.",
+        "review_status": "candidate_unverified"
+      },
+      "review_status": "candidate_unverified",
+      "notes": "Agency position statement / answer / motion to compel arbitration candidate-maps to a UTBMS L210 pleadings/motions task family.",
+      "candidate_only": true
+    },
+    {
+      "local_term": "E310",
+      "local_term_kind": "task_id",
+      "candidate_target": "utbms_ledes_candidate:task-L310-family-document-discovery",
+      "candidate_target_system": "utbms_ledes",
+      "confidence": "low",
+      "provenance": {
+        "source_url": "https://utbms.com/",
+        "source_version_or_date": "UTBMS code sets (version not pinned; candidate reference only)",
+        "retrieved_at": "2026-07-09T00:00:00Z",
+        "content_sha256": null,
+        "license_terms_note": "UTBMS task/expense codes and LEDES billing formats are maintained by the UTBMS/LEDES committees. Verify current code sets and licensing terms before any promotion. No UTBMS/LEDES payload is committed here.",
+        "review_status": "candidate_unverified"
+      },
+      "review_status": "candidate_unverified",
+      "notes": "ESI / HR file / payroll discovery candidate-maps to a UTBMS L310 document/discovery task family.",
+      "candidate_only": true
+    },
+    {
+      "local_term": "E330",
+      "local_term_kind": "task_id",
+      "candidate_target": "utbms_ledes_candidate:task-L330-family-depositions",
+      "candidate_target_system": "utbms_ledes",
+      "confidence": "low",
+      "provenance": {
+        "source_url": "https://utbms.com/",
+        "source_version_or_date": "UTBMS code sets (version not pinned; candidate reference only)",
+        "retrieved_at": "2026-07-09T00:00:00Z",
+        "content_sha256": null,
+        "license_terms_note": "UTBMS task/expense codes and LEDES billing formats are maintained by the UTBMS/LEDES committees. Verify current code sets and licensing terms before any promotion. No UTBMS/LEDES payload is committed here.",
+        "review_status": "candidate_unverified"
+      },
+      "review_status": "candidate_unverified",
+      "notes": "Depositions and witness preparation candidate-maps to a UTBMS L330 depositions task family.",
+      "candidate_only": true
+    },
+    {
+      "local_term": "E340",
+      "local_term_kind": "task_id",
+      "candidate_target": "utbms_ledes_candidate:task-L340-family-expert-damages-discovery",
+      "candidate_target_system": "utbms_ledes",
+      "confidence": "low",
+      "provenance": {
+        "source_url": "https://utbms.com/",
+        "source_version_or_date": "UTBMS code sets (version not pinned; candidate reference only)",
+        "retrieved_at": "2026-07-09T00:00:00Z",
+        "content_sha256": null,
+        "license_terms_note": "UTBMS task/expense codes and LEDES billing formats are maintained by the UTBMS/LEDES committees. Verify current code sets and licensing terms before any promotion. No UTBMS/LEDES payload is committed here.",
+        "review_status": "candidate_unverified"
+      },
+      "review_status": "candidate_unverified",
+      "notes": "Expert and damages discovery candidate-maps to a UTBMS L340 expert/damages task family.",
+      "candidate_only": true
+    },
+    {
+      "local_term": "E410",
+      "local_term_kind": "task_id",
+      "candidate_target": "utbms_ledes_candidate:task-L410-family-mediation-trial-readiness",
+      "candidate_target_system": "utbms_ledes",
+      "confidence": "low",
+      "provenance": {
+        "source_url": "https://utbms.com/",
+        "source_version_or_date": "UTBMS code sets (version not pinned; candidate reference only)",
+        "retrieved_at": "2026-07-09T00:00:00Z",
+        "content_sha256": null,
+        "license_terms_note": "UTBMS task/expense codes and LEDES billing formats are maintained by the UTBMS/LEDES committees. Verify current code sets and licensing terms before any promotion. No UTBMS/LEDES payload is committed here.",
+        "review_status": "candidate_unverified"
+      },
+      "review_status": "candidate_unverified",
+      "notes": "Mediation / dispositive motion / trial-readiness candidate-maps to a UTBMS L410 trial/resolution task family.",
+      "candidate_only": true
+    },
+    {
+      "local_term": "expert_witness",
+      "local_term_kind": "expense_type",
+      "candidate_target": "utbms_ledes_candidate:expense-E-series-expert-witness",
+      "candidate_target_system": "utbms_ledes",
+      "confidence": "low",
+      "provenance": {
+        "source_url": "https://utbms.com/",
+        "source_version_or_date": "UTBMS code sets (version not pinned; candidate reference only)",
+        "retrieved_at": "2026-07-09T00:00:00Z",
+        "content_sha256": null,
+        "license_terms_note": "UTBMS task/expense codes and LEDES billing formats are maintained by the UTBMS/LEDES committees. Verify current code sets and licensing terms before any promotion. No UTBMS/LEDES payload is committed here.",
+        "review_status": "candidate_unverified"
+      },
+      "review_status": "candidate_unverified",
+      "notes": "Expert witness expense candidate-maps to a UTBMS E-series expense family; exact code requires verification.",
+      "candidate_only": true
+    },
+    {
+      "local_term": "deposition_costs",
+      "local_term_kind": "expense_type",
+      "candidate_target": "utbms_ledes_candidate:expense-E-series-deposition-costs",
+      "candidate_target_system": "utbms_ledes",
+      "confidence": "low",
+      "provenance": {
+        "source_url": "https://utbms.com/",
+        "source_version_or_date": "UTBMS code sets (version not pinned; candidate reference only)",
+        "retrieved_at": "2026-07-09T00:00:00Z",
+        "content_sha256": null,
+        "license_terms_note": "UTBMS task/expense codes and LEDES billing formats are maintained by the UTBMS/LEDES committees. Verify current code sets and licensing terms before any promotion. No UTBMS/LEDES payload is committed here.",
+        "review_status": "candidate_unverified"
+      },
+      "review_status": "candidate_unverified",
+      "notes": "Deposition costs (transcripts, videographer) candidate-maps to a UTBMS E-series expense family.",
+      "candidate_only": true
+    },
+    {
+      "local_term": "filing_fees",
+      "local_term_kind": "expense_type",
+      "candidate_target": "utbms_ledes_candidate:expense-E-series-court-fees",
+      "candidate_target_system": "utbms_ledes",
+      "confidence": "low",
+      "provenance": {
+        "source_url": "https://utbms.com/",
+        "source_version_or_date": "UTBMS code sets (version not pinned; candidate reference only)",
+        "retrieved_at": "2026-07-09T00:00:00Z",
+        "content_sha256": null,
+        "license_terms_note": "UTBMS task/expense codes and LEDES billing formats are maintained by the UTBMS/LEDES committees. Verify current code sets and licensing terms before any promotion. No UTBMS/LEDES payload is committed here.",
+        "review_status": "candidate_unverified"
+      },
+      "review_status": "candidate_unverified",
+      "notes": "Filing / court fees candidate-maps to a UTBMS E-series court-cost expense family.",
+      "candidate_only": true
+    },
+    {
+      "local_term": "ediscovery_vendor",
+      "local_term_kind": "expense_type",
+      "candidate_target": "utbms_ledes_candidate:expense-E-series-ediscovery-vendor",
+      "candidate_target_system": "utbms_ledes",
+      "confidence": "low",
+      "provenance": {
+        "source_url": "https://utbms.com/",
+        "source_version_or_date": "UTBMS code sets (version not pinned; candidate reference only)",
+        "retrieved_at": "2026-07-09T00:00:00Z",
+        "content_sha256": null,
+        "license_terms_note": "UTBMS task/expense codes and LEDES billing formats are maintained by the UTBMS/LEDES committees. Verify current code sets and licensing terms before any promotion. No UTBMS/LEDES payload is committed here.",
+        "review_status": "candidate_unverified"
+      },
+      "review_status": "candidate_unverified",
+      "notes": "EDiscovery vendor / hosting expense candidate-maps to a UTBMS E-series expense family.",
+      "candidate_only": true
+    },
+    {
+      "local_term": "mediation_arbitration_fees",
+      "local_term_kind": "expense_type",
+      "candidate_target": "utbms_ledes_candidate:expense-E-series-adr-fees",
+      "candidate_target_system": "utbms_ledes",
+      "confidence": "low",
+      "provenance": {
+        "source_url": "https://utbms.com/",
+        "source_version_or_date": "UTBMS code sets (version not pinned; candidate reference only)",
+        "retrieved_at": "2026-07-09T00:00:00Z",
+        "content_sha256": null,
+        "license_terms_note": "UTBMS task/expense codes and LEDES billing formats are maintained by the UTBMS/LEDES committees. Verify current code sets and licensing terms before any promotion. No UTBMS/LEDES payload is committed here.",
+        "review_status": "candidate_unverified"
+      },
+      "review_status": "candidate_unverified",
+      "notes": "Mediation / arbitration ADR fees candidate-maps to a UTBMS E-series expense family.",
+      "candidate_only": true
+    },
+    {
+      "local_term": "miscellaneous_unspecified",
+      "local_term_kind": "expense_type",
+      "candidate_target": "unmapped",
+      "candidate_target_system": "unmapped",
+      "confidence": "unknown",
+      "provenance": {
+        "source_url": "https://utbms.com/",
+        "source_version_or_date": "UTBMS code sets (version not pinned; candidate reference only)",
+        "retrieved_at": "2026-07-09T00:00:00Z",
+        "content_sha256": null,
+        "license_terms_note": "UTBMS task/expense codes and LEDES billing formats are maintained by the UTBMS/LEDES committees. Verify current code sets and licensing terms before any promotion. No UTBMS/LEDES payload is committed here.",
+        "review_status": "candidate_unverified"
+      },
+      "review_status": "candidate_unverified",
+      "notes": "Unspecified miscellaneous expense has no clear UTBMS E-series candidate; stays explicit unmapped pending reviewer classification.",
+      "candidate_only": true
+    }
+  ],
+  "candidate_only": true,
+  "not_promoted_canon": true,
+  "data_origin": "synthetic"
+}

@@ -1,11 +1,11 @@
 {
   "schema_version": "0.1",
-  "ui_review_data_bundle_id": "ui_review_data_bundle_2b6ec7e801c5",
+  "ui_review_data_bundle_id": "ui_review_data_bundle_cca407844048",
   "status": "ready_for_review",
   "run_root_ref": "<demo-run-root>",
-  "detail_report_count": 25,
+  "detail_report_count": 27,
   "required_detail_report_count": 13,
-  "present_detail_report_count": 25,
+  "present_detail_report_count": 27,
   "missing_required_detail_report_count": 0,
   "external_write_report_count": 0,
   "detail_reports": [
@@ -127,7 +127,7 @@
       "status": "passed",
       "renderer": "RustFixtureManifestPanel",
       "artifact_ref": "apps/legal-intake-budget/src/fixtures/demo-rust-fixture-manifest-report.json",
-      "source_sha256": "sha256:5a842e92a91255a2e9f8d0cfc3a5040d3952d4bd5f1b9ae5b07b2f1559e0eee0",
+      "source_sha256": "sha256:bf64979825ad4e6a67d96e75e27c3ca6206f72f0ff39c35c6d6a4c2a2852dd38",
       "candidate_only": true,
       "synthetic_only": true,
       "external_writes_performed": false,
@@ -361,7 +361,7 @@
       "status": "labor_employment_budget_outcome_replay_confidence_pending_inputs",
       "renderer": "LaborEmploymentBudgetOutcomeReplayConfidenceStatusPanel",
       "artifact_ref": "<demo-run-root>\\quality\\labor_employment_budget_outcome_replay_confidence_status_report.json",
-      "source_sha256": "sha256:4cbcbd347f76538dc66dd756f651c85f34e3220db7b5585c8cd5608add0aa8e3",
+      "source_sha256": "sha256:b45bed6ad5616826ef596d0653744f35ba4ca701f3662c085089aa59c3ac97ac",
       "candidate_only": true,
       "synthetic_only": true,
       "external_writes_performed": false,
@@ -458,6 +458,42 @@
       "notes": [
         "Found checked demo fixture for public_derived_synthetic_qa_gate_report.json."
       ]
+    },
+    {
+      "detail_report_id": "crosswalk-audit",
+      "label": "Standard Crosswalk Evidence",
+      "report_kind": "crosswalk_audit",
+      "file_name": "crosswalk_audit_report.json",
+      "required": false,
+      "present": true,
+      "status": "passed",
+      "renderer": "CrosswalkAuditEvidencePanel",
+      "artifact_ref": "<demo-run-root>/crosswalk_audit_report.json",
+      "source_sha256": "sha256:95163ce29ec8e3f4ddbefce1ff3cc5178d8893050c3825e81b2a679743d95010",
+      "candidate_only": true,
+      "synthetic_only": true,
+      "external_writes_performed": false,
+      "notes": [
+        "Found crosswalk_audit_report.json; status=passed."
+      ]
+    },
+    {
+      "detail_report_id": "ocg-rule-ir-adoption",
+      "label": "OCG Rule IR Adoption Evidence",
+      "report_kind": "ocg_rule_ir_adoption",
+      "file_name": "ocg_rule_ir_adoption_report.json",
+      "required": false,
+      "present": true,
+      "status": "accepted_as_read_only_candidate",
+      "renderer": "OCGRuleIRAdoptionEvidencePanel",
+      "artifact_ref": "<demo-run-root>/ocg_rule_ir_adoption_report.json",
+      "source_sha256": "sha256:63123854ea076f65672a148e507699376be6ac0a5b6303216bceec1a5161e3dc",
+      "candidate_only": true,
+      "synthetic_only": true,
+      "external_writes_performed": false,
+      "notes": [
+        "Found ocg_rule_ir_adoption_report.json; status=accepted_as_read_only_candidate."
+      ]
     }
   ],
   "required_next_actions": [
@@ -482,5 +518,102 @@
   "sqlite_write_performed": false,
   "external_writes_performed": false,
   "silent_learning_performed": false,
-  "generated_at": "2026-07-10T00:00:00Z"
+  "generated_at": "2026-07-10T00:00:00Z",
+  "crosswalk_audit_ref": "apps/legal-intake-budget/src/fixtures/demo-crosswalk-audit-report.json",
+  "ocg_rule_ir_adoption_ref": "apps/legal-intake-budget/src/fixtures/demo-ocg-rule-ir-adoption-report.json",
+  "crosswalk_audit_summary": {
+    "report_id": "xwalkaudit-5697089c95ae",
+    "status": "passed",
+    "acceptance_gate_status": "accepted_with_restrictions",
+    "crosswalk_count": 4,
+    "entry_count": 51,
+    "mapped_entry_count": 46,
+    "unmapped_entry_count": 5,
+    "canonical_claim_count": 0,
+    "guessed_mapping_count": 0,
+    "high_confidence_dual_review_violation_count": 0,
+    "utbms_like_candidate_family_label_count": 11,
+    "unverified_pinned_target_count": 0,
+    "candidate_target_prefix_violation_count": 0,
+    "workflow_dependency_violation_count": 0,
+    "display_banner": {
+      "warning": "These mappings are candidate/unverified and not legal, billing, SALI, LEDES, UTBMS, or substrate canon.",
+      "candidate_only": true,
+      "not_promoted_canon": true,
+      "accepted_with_restrictions": true,
+      "review_status_required_before_promotion": "human_reviewed",
+      "high_confidence_requires_dual_human_review": true,
+      "exact_standard_code_verified": false,
+      "utbms_like_candidate_family_label_count": 11,
+      "candidate_family_label_note": "UTBMS-like strings such as task-L310-family-* are mnemonic candidate families, not exact SALI/LEDES/UTBMS canon.",
+      "blocked_actions": [
+        "canonical_use",
+        "budget_logic_dependency",
+        "rejection_logic_dependency",
+        "guideline_logic_dependency",
+        "lake_write",
+        "external_submission"
+      ]
+    },
+    "prohibited_actions": [
+      "do_not_treat_local_crosswalk_as_canonical",
+      "do_not_promote_candidate_targets_to_substrate_canon",
+      "do_not_invent_sali_iris_or_utbms_ledes_codes_as_pinned",
+      "do_not_guess_mappings_for_unknown_terms",
+      "do_not_commit_public_standard_payloads",
+      "do_not_bypass_human_review_for_crosswalk_promotion",
+      "do_not_use_crosswalks_as_budget_or_rejection_business_logic"
+    ],
+    "not_authorized_for_canonical_use": true,
+    "not_authorized_for_budget_logic": true,
+    "exact_standard_code_verified": false,
+    "candidate_only": true
+  },
+  "ocg_rule_ir_adoption_summary": {
+    "report_id": "ocgiradopt-9e53b94d45fa",
+    "status": "accepted_as_read_only_candidate",
+    "acceptance_gate_status": "accepted_with_restrictions",
+    "rule_ir_id": "ocg-ir-synthetic-harbor-point-alpha-v0-1",
+    "source_owner": "LawFirm-os-semantic-substrate",
+    "source_artifact_ref": "../LawFirm-os-semantic-substrate/contracts/candidate/ocg/shared-rule-ir.synthetic-harbor-point-alpha.json",
+    "carrier_projection_id": "carrierprojection_61288e5d7b1a43deb967ab34feeb20aa",
+    "budget_proposal_id": "budget_2eca04c91323492ea7a8ab6eaa982b8a",
+    "proposed_total_before": 102378.5,
+    "carrier_compliant_total": 96347.75,
+    "projection_total_delta": 6030.75,
+    "rule_count": 6,
+    "impact_line_count": 6,
+    "canonical_rule_id_violation_count": 0,
+    "rewrite_budget_violation_count": 0,
+    "real_guideline_or_rate_violation_count": 0,
+    "budget_projection_mismatch_count": 0,
+    "display_banner": {
+      "warning": "OCG rule IR is a synthetic, candidate-only, read-only consumption proof. It is not carrier guideline canon and is not authorized for budget rewrite, client submission, matter opening, or Lake write.",
+      "source_owner_required": "LawFirm-os-semantic-substrate",
+      "candidate_only": true,
+      "accepted_with_restrictions": true,
+      "blocked_actions": [
+        "canonical_ocg_authoring",
+        "budget_rewrite",
+        "client_submission",
+        "matter_opening",
+        "lake_write",
+        "real_guideline_ingestion"
+      ]
+    },
+    "prohibited_actions": [
+      "do_not_author_canonical_ocg_rule_ids_in_intake",
+      "do_not_treat_candidate_ocg_ir_as_carrier_guideline_canon",
+      "do_not_rewrite_budget_proposal_from_ocg_ir",
+      "do_not_submit_budget_or_open_matter",
+      "do_not_ingest_real_carrier_guidelines_or_real_rates",
+      "do_not_write_exception_lake_or_dad_mail_from_this_report"
+    ],
+    "read_only_consumption": true,
+    "candidate_only": true,
+    "not_promoted_canon": true,
+    "not_authorized_for_canonical_use": true,
+    "not_authorized_for_budget_rewrite": true,
+    "not_authorized_for_external_submission": true
+  }
 }

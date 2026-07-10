@@ -1,0 +1,40 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "finding_id": {
+      "title": "Finding Id",
+      "type": "string"
+    },
+    "severity": {
+      "enum": [
+        "blocker",
+        "warning"
+      ],
+      "title": "Severity",
+      "type": "string"
+    },
+    "issue": {
+      "title": "Issue",
+      "type": "string"
+    },
+    "rule_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Rule Id"
+    }
+  },
+  "required": [
+    "finding_id",
+    "severity",
+    "issue"
+  ],
+  "title": "OCGRuleIRAdoptionFinding",
+  "type": "object"
+}

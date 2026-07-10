@@ -55,6 +55,13 @@ REQUIRED_NEXT_GATES = [
     "no_lake_or_sqlite_write_from_replay_input_pack_audit",
 ]
 
+PREFLIGHT_REQUIRED_INPUT_PRIORITY = {
+    "legal_budget_proposal.json": 0,
+    "budget_actuals_source.json": 1,
+    "carrier_rejection_capture_source_bundle.json": 2,
+    "carrier_rejection_capture_source_bundle_with_appeal_results.json": 3,
+}
+
 ARTIFACT_MODELS: dict[str, type[Any]] = {
     "legal_budget_proposal.json": BudgetProposal,
     "budget_actuals_source.json": BudgetActualsSource,
@@ -280,9 +287,20 @@ def render_labor_employment_budget_outcome_replay_input_pack_report(
         f"- Invalid inputs: {report.invalid_input_count}",
         f"- Missing one-of reviewed signals: {report.one_of_signal_missing_count}",
         "",
-        "## Cases",
+        "## Preflight Gap Matrix",
+        "",
+        "This section is preflight-only. It validates declared local JSON refs and shows the "
+        "next missing or invalid replay slots without running builders or creating runtime artifacts.",
         "",
     ]
+    lines.extend(_render_preflight_gap_matrix(report))
+    lines.extend(
+        [
+            "",
+            "## Cases",
+            "",
+        ]
+    )
     for case in report.cases:
         lines.extend(
             [
@@ -335,6 +353,89 @@ def render_labor_employment_budget_outcome_replay_input_pack_report(
         ]
     )
     return "\n".join(lines)
+
+
+def _render_preflight_gap_matrix(
+    report: LaborEmploymentBudgetOutcomeReplayInputPackReport,
+) -> list[str]:
+    not_ready_cases = [
+        case for case in report.cases if case.missing_input_count or case.invalid_input_count
+    ]
+    if not not_ready_cases:
+        return ["All replay input-pack cases are ready for reviewed replay."]
+
+    lines: list[str] = [
+        "| Case | Family | Loop | Expected artifact | Required input | Role | Status | Validator |",
+        "| --- | --- | --- | --- | --- | --- | --- | --- |",
+    ]
+    for case in sorted(
+        not_ready_cases,
+        key=lambda item: (
+            item.status != "blocked",
+            -item.invalid_input_count,
+            -item.missing_input_count,
+            item.learning_fixture_id,
+        ),
+    ):
+        for item in _not_ready_items_for_preflight(case):
+            lines.append(
+                " | ".join(
+                    [
+                        f"| `{_md_cell(case.learning_fixture_id)}`",
+                        f"`{_md_cell(case.family)}`",
+                        f"`{_md_cell(item.loop_type)}`",
+                        f"`{_md_cell(item.expected_artifact_name)}`",
+                        f"`{_md_cell(item.required_input_artifact)}`",
+                        f"`{_md_cell(item.input_role)}`",
+                        f"`{_md_cell(item.input_status)}`",
+                        f"`{_md_cell(item.validation_model or 'unregistered')}` |",
+                    ]
+                )
+            )
+
+    lines.extend(["", "### Preflight Next Actions", ""])
+    for case in not_ready_cases:
+        next_item = _first_preflight_action_item(case)
+        if next_item is None:
+            continue
+        lines.append(
+            "- "
+            f"`{case.learning_fixture_id}`: add or repair "
+            f"`{next_item.required_input_artifact}` for `{next_item.loop_type}` -> "
+            f"`{next_item.expected_artifact_name}`; "
+            f"{next_item.validation_message}"
+        )
+    return lines
+
+
+def _not_ready_items_for_preflight(
+    case: LaborEmploymentBudgetOutcomeReplayInputPackCase,
+) -> list[LaborEmploymentBudgetOutcomeReplayInputPackItem]:
+    return sorted(
+        [item for item in case.items if item.input_status != "ready"],
+        key=lambda item: (
+            item.input_status != "invalid",
+            item.loop_type,
+            item.expected_artifact_name,
+            PREFLIGHT_REQUIRED_INPUT_PRIORITY.get(item.required_input_artifact, 100),
+            item.required_input_artifact,
+        ),
+    )
+
+
+def _first_preflight_action_item(
+    case: LaborEmploymentBudgetOutcomeReplayInputPackCase,
+) -> LaborEmploymentBudgetOutcomeReplayInputPackItem | None:
+    items = _not_ready_items_for_preflight(case)
+    builder_items = [item for item in items if item.input_role == "builder_input"]
+    complement_items = [item for item in items if item.input_role == "complement_report"]
+    one_of_items = [item for item in items if item.input_role == "one_of_signal"]
+    ordered = [*builder_items, *complement_items, *one_of_items]
+    return ordered[0] if ordered else None
+
+
+def _md_cell(value: object) -> str:
+    return str(value).replace("|", "\\|").replace("\n", " ")
 
 
 def _input_pack_case(

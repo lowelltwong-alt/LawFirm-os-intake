@@ -8,6 +8,22 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.dont_write_bytecode = True
 sys.path.insert(0, str(ROOT / "src"))
 
+from lawfirm_os_intake.calibration import (  # noqa: E402
+    CalibrationLeakageProof,
+    CalibrationPreflightRequest,
+)
+from lawfirm_os_intake.conflicts import (  # noqa: E402
+    ChineseWallProof,
+    ChineseWallRequest,
+    ChineseWallViolationCandidate,
+    SyntheticAdversityGraph,
+)
+from lawfirm_os_intake.lessons import (  # noqa: E402
+    LessonDisclosureProof,
+    LessonDisclosureRequest,
+    LessonIR,
+)
+from lawfirm_os_intake.outbox import CrossingProof, CrossingRequest  # noqa: E402
 from lawfirm_os_intake.models import (  # noqa: E402
     BenchmarkSnapshotManifest,
     BlockedBudgetAttemptAuditReport,
@@ -434,9 +450,36 @@ from lawfirm_os_intake.models import (  # noqa: E402
     UIDemoQARecipeFixtureRefreshReport,
     UIReviewDataBundle,
     UIReviewDataBundleDetailReport,
+    Crosswalk,
+    CrosswalkAuditFinding,
+    CrosswalkAuditReport,
+    CrosswalkAuditSummary,
+    CrosswalkEntry,
+    CrosswalkSourceProvenance,
+    OCGRuleImpactLine,
+    OCGRuleIRAdoptionFinding,
+    OCGRuleIRAdoptionReport,
+    OCGRuleIRAdoptionSummary,
+    OCGSharedRuleIR,
+    OCGSharedRuleIRRule,
+    QAProductConfidenceGate,
+    QAProductConfidenceReport,
+    QAReadinessCheck,
+    QAReadinessReport,
 )
 
 MODELS = {
+    "calibration-leakage-proof.schema.json": CalibrationLeakageProof,
+    "calibration-preflight-request.schema.json": CalibrationPreflightRequest,
+    "lesson-disclosure-proof.schema.json": LessonDisclosureProof,
+    "lesson-disclosure-request.schema.json": LessonDisclosureRequest,
+    "lesson-ir.schema.json": LessonIR,
+    "crossing-proof.schema.json": CrossingProof,
+    "crossing-request.schema.json": CrossingRequest,
+    "synthetic-adversity-graph.schema.json": SyntheticAdversityGraph,
+    "chinese-wall-request.schema.json": ChineseWallRequest,
+    "chinese-wall-proof.schema.json": ChineseWallProof,
+    "chinese-wall-violation-candidate.schema.json": ChineseWallViolationCandidate,
     "source-bundle.schema.json": SourceBundle,
     "blocked-budget-attempt-audit-report.schema.json": BlockedBudgetAttemptAuditReport,
     "context-counterfactual-audit-report.schema.json": ContextCounterfactualAuditReport,
@@ -547,6 +590,22 @@ MODELS = {
     "ui-demo-qa-recipe-fixture-refresh-report.schema.json": (UIDemoQARecipeFixtureRefreshReport),
     "ui-review-data-bundle-detail-report.schema.json": UIReviewDataBundleDetailReport,
     "ui-review-data-bundle.schema.json": UIReviewDataBundle,
+    "crosswalk.schema.json": Crosswalk,
+    "crosswalk-entry.schema.json": CrosswalkEntry,
+    "crosswalk-source-provenance.schema.json": CrosswalkSourceProvenance,
+    "crosswalk-audit-finding.schema.json": CrosswalkAuditFinding,
+    "crosswalk-audit-report.schema.json": CrosswalkAuditReport,
+    "crosswalk-audit-summary.schema.json": CrosswalkAuditSummary,
+    "ocg-shared-rule-ir.schema.json": OCGSharedRuleIR,
+    "ocg-shared-rule-ir-rule.schema.json": OCGSharedRuleIRRule,
+    "ocg-rule-impact-line.schema.json": OCGRuleImpactLine,
+    "ocg-rule-ir-adoption-finding.schema.json": OCGRuleIRAdoptionFinding,
+    "ocg-rule-ir-adoption-report.schema.json": OCGRuleIRAdoptionReport,
+    "ocg-rule-ir-adoption-summary.schema.json": OCGRuleIRAdoptionSummary,
+    "qa-readiness-check.schema.json": QAReadinessCheck,
+    "qa-readiness-report.schema.json": QAReadinessReport,
+    "qa-product-confidence-gate.schema.json": QAProductConfidenceGate,
+    "qa-product-confidence-report.schema.json": QAProductConfidenceReport,
     "rust-ingestion-readiness-report.schema.json": RustIngestionReadinessReport,
     "rust-transition-policy.schema.json": RustTransitionPolicy,
     "segment.schema.json": Segment,

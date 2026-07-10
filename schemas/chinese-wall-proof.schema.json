@@ -1,0 +1,281 @@
+{
+  "$defs": {
+    "ChineseWallEvaluation": {
+      "additionalProperties": false,
+      "properties": {
+        "decision": {
+          "$ref": "#/$defs/WallDecision"
+        },
+        "local_wall_candidate": {
+          "title": "Local Wall Candidate",
+          "type": "boolean"
+        },
+        "same_side_pair_count": {
+          "minimum": 0,
+          "title": "Same Side Pair Count",
+          "type": "integer"
+        },
+        "reviewed_adverse_pair_count": {
+          "minimum": 0,
+          "title": "Reviewed Adverse Pair Count",
+          "type": "integer"
+        },
+        "unreviewed_pair_count": {
+          "minimum": 0,
+          "title": "Unreviewed Pair Count",
+          "type": "integer"
+        },
+        "unknown_pair_count": {
+          "minimum": 0,
+          "title": "Unknown Pair Count",
+          "type": "integer"
+        },
+        "synthetic_firm_wide_imputation_applied": {
+          "const": true,
+          "title": "Synthetic Firm Wide Imputation Applied",
+          "type": "boolean"
+        },
+        "trusted_synthetic_provenance_snapshot_pinned": {
+          "const": true,
+          "title": "Trusted Synthetic Provenance Snapshot Pinned",
+          "type": "boolean"
+        },
+        "authoritative_firm_wide_imputation_verified": {
+          "const": false,
+          "title": "Authoritative Firm Wide Imputation Verified",
+          "type": "boolean"
+        },
+        "relationship_inference_performed": {
+          "const": false,
+          "default": false,
+          "title": "Relationship Inference Performed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "decision",
+        "local_wall_candidate",
+        "same_side_pair_count",
+        "reviewed_adverse_pair_count",
+        "unreviewed_pair_count",
+        "unknown_pair_count",
+        "synthetic_firm_wide_imputation_applied",
+        "trusted_synthetic_provenance_snapshot_pinned",
+        "authoritative_firm_wide_imputation_verified"
+      ],
+      "title": "ChineseWallEvaluation",
+      "type": "object"
+    },
+    "WallBlockingReason": {
+      "enum": [
+        "cross_wall_detected",
+        "unreviewed_edge_hold",
+        "unknown_relation_hold",
+        "authoritative_firm_wide_imputation_not_verified",
+        "counsel_adversity_classes_not_authoritative",
+        "authenticated_human_conflicts_review_not_verified",
+        "owning_repo_review_not_verified"
+      ],
+      "title": "WallBlockingReason",
+      "type": "string"
+    },
+    "WallDecision": {
+      "enum": [
+        "same_side_candidate",
+        "cross_wall_block",
+        "unreviewed_edge_hold",
+        "unknown_relation_hold"
+      ],
+      "title": "WallDecision",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "proof_id": {
+      "pattern": "^chinesewallproof_[0-9a-f]{20}$",
+      "title": "Proof Id",
+      "type": "string"
+    },
+    "request_id": {
+      "pattern": "^synthetic-[a-z0-9-]+$",
+      "title": "Request Id",
+      "type": "string"
+    },
+    "lesson_id": {
+      "pattern": "^synthetic-[a-z0-9-]+$",
+      "title": "Lesson Id",
+      "type": "string"
+    },
+    "safe_output_digest": {
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "title": "Safe Output Digest",
+      "type": "string"
+    },
+    "adversity_graph_digest": {
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "title": "Adversity Graph Digest",
+      "type": "string"
+    },
+    "provenance_class_set_digest": {
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "title": "Provenance Class Set Digest",
+      "type": "string"
+    },
+    "consuming_class_set_digest": {
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "title": "Consuming Class Set Digest",
+      "type": "string"
+    },
+    "sensitive_request_digest_included": {
+      "const": false,
+      "default": false,
+      "title": "Sensitive Request Digest Included",
+      "type": "boolean"
+    },
+    "class_ids_included": {
+      "const": false,
+      "default": false,
+      "title": "Class Ids Included",
+      "type": "boolean"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "local_evaluation": {
+      "$ref": "#/$defs/ChineseWallEvaluation"
+    },
+    "blocking_reasons": {
+      "items": {
+        "$ref": "#/$defs/WallBlockingReason"
+      },
+      "minItems": 1,
+      "title": "Blocking Reasons",
+      "type": "array"
+    },
+    "guarantee": {
+      "const": "brewer_nash_synthetic_policy_check",
+      "default": "brewer_nash_synthetic_policy_check",
+      "title": "Guarantee",
+      "type": "string"
+    },
+    "formal_conflict_clearance_guarantee_claimed": {
+      "const": false,
+      "default": false,
+      "title": "Formal Conflict Clearance Guarantee Claimed",
+      "type": "boolean"
+    },
+    "overall_status": {
+      "const": "blocked",
+      "default": "blocked",
+      "title": "Overall Status",
+      "type": "string"
+    },
+    "synthetic_firm_wide_imputation_applied": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Firm Wide Imputation Applied",
+      "type": "boolean"
+    },
+    "trusted_synthetic_provenance_snapshot_pinned": {
+      "const": true,
+      "default": true,
+      "title": "Trusted Synthetic Provenance Snapshot Pinned",
+      "type": "boolean"
+    },
+    "authoritative_firm_wide_imputation_verified": {
+      "const": false,
+      "default": false,
+      "title": "Authoritative Firm Wide Imputation Verified",
+      "type": "boolean"
+    },
+    "counsel_adversity_classes_authority_verified": {
+      "const": false,
+      "default": false,
+      "title": "Counsel Adversity Classes Authority Verified",
+      "type": "boolean"
+    },
+    "authenticated_human_conflicts_review_verified": {
+      "const": false,
+      "default": false,
+      "title": "Authenticated Human Conflicts Review Verified",
+      "type": "boolean"
+    },
+    "owning_repo_review_verified": {
+      "const": false,
+      "default": false,
+      "title": "Owning Repo Review Verified",
+      "type": "boolean"
+    },
+    "actual_lesson_fire_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Actual Lesson Fire Authorized",
+      "type": "boolean"
+    },
+    "lesson_fire_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lesson Fire Performed",
+      "type": "boolean"
+    },
+    "conflict_clearance_asserted": {
+      "const": false,
+      "default": false,
+      "title": "Conflict Clearance Asserted",
+      "type": "boolean"
+    },
+    "exception_lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Exception Lake Write Performed",
+      "type": "boolean"
+    },
+    "external_action_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Action Performed",
+      "type": "boolean"
+    },
+    "auto_promotion_performed": {
+      "const": false,
+      "default": false,
+      "title": "Auto Promotion Performed",
+      "type": "boolean"
+    },
+    "legal_or_compliance_authority_exercised": {
+      "const": false,
+      "default": false,
+      "title": "Legal Or Compliance Authority Exercised",
+      "type": "boolean"
+    },
+    "support_ids_included": {
+      "const": false,
+      "default": false,
+      "title": "Support Ids Included",
+      "type": "boolean"
+    },
+    "free_text_included": {
+      "const": false,
+      "default": false,
+      "title": "Free Text Included",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "proof_id",
+    "request_id",
+    "lesson_id",
+    "safe_output_digest",
+    "adversity_graph_digest",
+    "provenance_class_set_digest",
+    "consuming_class_set_digest",
+    "local_evaluation",
+    "blocking_reasons"
+  ],
+  "title": "ChineseWallProof",
+  "type": "object"
+}

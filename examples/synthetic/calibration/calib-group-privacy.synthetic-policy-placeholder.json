@@ -1,0 +1,40 @@
+{
+  "fixture_id": "calib-group-privacy",
+  "status": "synthetic_only_candidate_fixture",
+  "notes": "Synthetic fixture pins zCDP group privacy at k^2*rho for six related matters; it does not choose a production protected unit.",
+  "request": {
+    "request_id": "calib-group-privacy-request",
+    "estimator_id": "synthetic_group_driver_mean",
+    "parameter": "synthetic_group_hours_mean",
+    "corpus_version_ref": "examples/synthetic/calibration/calib-group-privacy.synthetic-policy-placeholder.json",
+    "screen_version": "synthetic-screen-v0",
+    "runtime_scope": "synthetic_candidate",
+    "candidate_only": true,
+    "publish_calibrated_value": false,
+    "policy": {
+      "policy_label": "Synthetic policy placeholder for CAL-DP tests only",
+      "protected_unit": "client",
+      "minimum_distinct_matters": 8,
+      "dominance_threshold": 0.4,
+      "lomo_delta_limit": 2.0,
+      "adversary_model": "synthetic strong all-but-one-matter placeholder",
+      "reconstruction_chance_rate": 0.25,
+      "reconstruction_margin": 0.0,
+      "reconstruction_tolerance": 0.1,
+      "dp_route_required": true,
+      "dp_rho": 0.01,
+      "dp_report_delta": 0.000001,
+      "dp_clip_norm": 2.0,
+      "dp_rho_cap": 0.5,
+      "dp_max_noise_to_signal_ratio": 2.0
+    },
+    "matters": [
+      {"matter_id": "synthetic-group-matter-001", "protected_unit_id": "synthetic-client-group-001", "contribution": 1.0},
+      {"matter_id": "synthetic-group-matter-002", "protected_unit_id": "synthetic-client-group-001", "contribution": 1.1},
+      {"matter_id": "synthetic-group-matter-003", "protected_unit_id": "synthetic-client-group-001", "contribution": 0.9},
+      {"matter_id": "synthetic-group-matter-004", "protected_unit_id": "synthetic-client-group-001", "contribution": 1.0},
+      {"matter_id": "synthetic-group-matter-005", "protected_unit_id": "synthetic-client-group-001", "contribution": 1.2},
+      {"matter_id": "synthetic-group-matter-006", "protected_unit_id": "synthetic-client-group-001", "contribution": 0.8}
+    ]
+  }
+}

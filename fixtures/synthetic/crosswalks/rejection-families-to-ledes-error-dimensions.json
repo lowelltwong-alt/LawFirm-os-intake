@@ -1,0 +1,289 @@
+{
+  "schema_version": "0.1",
+  "crosswalk_id": "xwalk-syn-rejection-family-to-ledes-error-dimension-v1",
+  "kind": "rejection_family_to_ledes_error_dimension",
+  "target_system": "ledes_error_dimension",
+  "source_provenance": {
+    "source_url": "https://ledes.org/",
+    "source_version_or_date": "LEDES e-billing error/rejection dimensions (version not pinned; candidate reference only)",
+    "retrieved_at": "2026-07-09T00:00:00Z",
+    "content_sha256": null,
+    "license_terms_note": "LEDES e-billing rejection codes are maintained by LEDES.org. These are error-dimension candidates inspired by LEDES, not pinned LEDES codes. Verify before any promotion. No LEDES payload is committed.",
+    "review_status": "candidate_unverified"
+  },
+  "entries": [
+    {
+      "local_term": "file_or_ledes_format",
+      "local_term_kind": "rejection_family",
+      "candidate_target": "ledes_error_dimension_candidate:file_format_validation",
+      "candidate_target_system": "ledes_error_dimension",
+      "confidence": "medium",
+      "provenance": {
+        "source_url": "https://ledes.org/",
+        "source_version_or_date": "LEDES e-billing error/rejection dimensions (version not pinned; candidate reference only)",
+        "retrieved_at": "2026-07-09T00:00:00Z",
+        "content_sha256": null,
+        "license_terms_note": "LEDES e-billing rejection codes are maintained by LEDES.org. These are error-dimension candidates inspired by LEDES, not pinned LEDES codes. Verify before any promotion. No LEDES payload is committed.",
+        "review_status": "candidate_unverified"
+      },
+      "review_status": "candidate_unverified",
+      "notes": "File / LEDES format rejection candidate-maps to a LEDES file-format validation error dimension.",
+      "candidate_only": true
+    },
+    {
+      "local_term": "client_matter_mismatch",
+      "local_term_kind": "rejection_family",
+      "candidate_target": "ledes_error_dimension_candidate:matter_identifier_validation",
+      "candidate_target_system": "ledes_error_dimension",
+      "confidence": "medium",
+      "provenance": {
+        "source_url": "https://ledes.org/",
+        "source_version_or_date": "LEDES e-billing error/rejection dimensions (version not pinned; candidate reference only)",
+        "retrieved_at": "2026-07-09T00:00:00Z",
+        "content_sha256": null,
+        "license_terms_note": "LEDES e-billing rejection codes are maintained by LEDES.org. These are error-dimension candidates inspired by LEDES, not pinned LEDES codes. Verify before any promotion. No LEDES payload is committed.",
+        "review_status": "candidate_unverified"
+      },
+      "review_status": "candidate_unverified",
+      "notes": "Client / matter identifier mismatch candidate-maps to a LEDES matter-identifier validation error dimension.",
+      "candidate_only": true
+    },
+    {
+      "local_term": "missing_preapproval",
+      "local_term_kind": "rejection_family",
+      "candidate_target": "ledes_error_dimension_candidate:preauthorization_required",
+      "candidate_target_system": "ledes_error_dimension",
+      "confidence": "medium",
+      "provenance": {
+        "source_url": "https://ledes.org/",
+        "source_version_or_date": "LEDES e-billing error/rejection dimensions (version not pinned; candidate reference only)",
+        "retrieved_at": "2026-07-09T00:00:00Z",
+        "content_sha256": null,
+        "license_terms_note": "LEDES e-billing rejection codes are maintained by LEDES.org. These are error-dimension candidates inspired by LEDES, not pinned LEDES codes. Verify before any promotion. No LEDES payload is committed.",
+        "review_status": "candidate_unverified"
+      },
+      "review_status": "candidate_unverified",
+      "notes": "Missing preapproval candidate-maps to a LEDES preauthorization-required error dimension.",
+      "candidate_only": true
+    },
+    {
+      "local_term": "guideline_violation",
+      "local_term_kind": "rejection_family",
+      "candidate_target": "ledes_error_dimension_candidate:guideline_compliance",
+      "candidate_target_system": "ledes_error_dimension",
+      "confidence": "medium",
+      "provenance": {
+        "source_url": "https://ledes.org/",
+        "source_version_or_date": "LEDES e-billing error/rejection dimensions (version not pinned; candidate reference only)",
+        "retrieved_at": "2026-07-09T00:00:00Z",
+        "content_sha256": null,
+        "license_terms_note": "LEDES e-billing rejection codes are maintained by LEDES.org. These are error-dimension candidates inspired by LEDES, not pinned LEDES codes. Verify before any promotion. No LEDES payload is committed.",
+        "review_status": "candidate_unverified"
+      },
+      "review_status": "candidate_unverified",
+      "notes": "Guideline violation candidate-maps to a LEDES guideline-compliance error dimension.",
+      "candidate_only": true
+    },
+    {
+      "local_term": "rate_or_timekeeper",
+      "local_term_kind": "rejection_family",
+      "candidate_target": "ledes_error_dimension_candidate:rate_timekeeper_validation",
+      "candidate_target_system": "ledes_error_dimension",
+      "confidence": "medium",
+      "provenance": {
+        "source_url": "https://ledes.org/",
+        "source_version_or_date": "LEDES e-billing error/rejection dimensions (version not pinned; candidate reference only)",
+        "retrieved_at": "2026-07-09T00:00:00Z",
+        "content_sha256": null,
+        "license_terms_note": "LEDES e-billing rejection codes are maintained by LEDES.org. These are error-dimension candidates inspired by LEDES, not pinned LEDES codes. Verify before any promotion. No LEDES payload is committed.",
+        "review_status": "candidate_unverified"
+      },
+      "review_status": "candidate_unverified",
+      "notes": "Rate / timekeeper rejection candidate-maps to a LEDES rate/timekeeper validation error dimension.",
+      "candidate_only": true
+    },
+    {
+      "local_term": "staffing_or_leverage",
+      "local_term_kind": "rejection_family",
+      "candidate_target": "ledes_error_dimension_candidate:staffing_leverage_policy",
+      "candidate_target_system": "ledes_error_dimension",
+      "confidence": "low",
+      "provenance": {
+        "source_url": "https://ledes.org/",
+        "source_version_or_date": "LEDES e-billing error/rejection dimensions (version not pinned; candidate reference only)",
+        "retrieved_at": "2026-07-09T00:00:00Z",
+        "content_sha256": null,
+        "license_terms_note": "LEDES e-billing rejection codes are maintained by LEDES.org. These are error-dimension candidates inspired by LEDES, not pinned LEDES codes. Verify before any promotion. No LEDES payload is committed.",
+        "review_status": "candidate_unverified"
+      },
+      "review_status": "candidate_unverified",
+      "notes": "Staffing / leverage rejection may map to a LEDES policy dimension; some carriers handle this as reviewer discretion rather than a coded error.",
+      "candidate_only": true
+    },
+    {
+      "local_term": "phase_task_or_code",
+      "local_term_kind": "rejection_family",
+      "candidate_target": "ledes_error_dimension_candidate:phase_task_code_validation",
+      "candidate_target_system": "ledes_error_dimension",
+      "confidence": "medium",
+      "provenance": {
+        "source_url": "https://ledes.org/",
+        "source_version_or_date": "LEDES e-billing error/rejection dimensions (version not pinned; candidate reference only)",
+        "retrieved_at": "2026-07-09T00:00:00Z",
+        "content_sha256": null,
+        "license_terms_note": "LEDES e-billing rejection codes are maintained by LEDES.org. These are error-dimension candidates inspired by LEDES, not pinned LEDES codes. Verify before any promotion. No LEDES payload is committed.",
+        "review_status": "candidate_unverified"
+      },
+      "review_status": "candidate_unverified",
+      "notes": "Phase / task / code rejection candidate-maps to a LEDES phase/task-code validation error dimension.",
+      "candidate_only": true
+    },
+    {
+      "local_term": "expense",
+      "local_term_kind": "rejection_family",
+      "candidate_target": "ledes_error_dimension_candidate:expense_validation",
+      "candidate_target_system": "ledes_error_dimension",
+      "confidence": "medium",
+      "provenance": {
+        "source_url": "https://ledes.org/",
+        "source_version_or_date": "LEDES e-billing error/rejection dimensions (version not pinned; candidate reference only)",
+        "retrieved_at": "2026-07-09T00:00:00Z",
+        "content_sha256": null,
+        "license_terms_note": "LEDES e-billing rejection codes are maintained by LEDES.org. These are error-dimension candidates inspired by LEDES, not pinned LEDES codes. Verify before any promotion. No LEDES payload is committed.",
+        "review_status": "candidate_unverified"
+      },
+      "review_status": "candidate_unverified",
+      "notes": "Expense rejection candidate-maps to a LEDES expense-validation error dimension.",
+      "candidate_only": true
+    },
+    {
+      "local_term": "tax",
+      "local_term_kind": "rejection_family",
+      "candidate_target": "ledes_error_dimension_candidate:tax_handling_validation",
+      "candidate_target_system": "ledes_error_dimension",
+      "confidence": "low",
+      "provenance": {
+        "source_url": "https://ledes.org/",
+        "source_version_or_date": "LEDES e-billing error/rejection dimensions (version not pinned; candidate reference only)",
+        "retrieved_at": "2026-07-09T00:00:00Z",
+        "content_sha256": null,
+        "license_terms_note": "LEDES e-billing rejection codes are maintained by LEDES.org. These are error-dimension candidates inspired by LEDES, not pinned LEDES codes. Verify before any promotion. No LEDES payload is committed.",
+        "review_status": "candidate_unverified"
+      },
+      "review_status": "candidate_unverified",
+      "notes": "Tax-handling rejection candidate-maps to a LEDES tax/validation dimension; exact code varies by jurisdiction.",
+      "candidate_only": true
+    },
+    {
+      "local_term": "duplicate",
+      "local_term_kind": "rejection_family",
+      "candidate_target": "ledes_error_dimension_candidate:duplicate_detection",
+      "candidate_target_system": "ledes_error_dimension",
+      "confidence": "medium",
+      "provenance": {
+        "source_url": "https://ledes.org/",
+        "source_version_or_date": "LEDES e-billing error/rejection dimensions (version not pinned; candidate reference only)",
+        "retrieved_at": "2026-07-09T00:00:00Z",
+        "content_sha256": null,
+        "license_terms_note": "LEDES e-billing rejection codes are maintained by LEDES.org. These are error-dimension candidates inspired by LEDES, not pinned LEDES codes. Verify before any promotion. No LEDES payload is committed.",
+        "review_status": "candidate_unverified"
+      },
+      "review_status": "candidate_unverified",
+      "notes": "Duplicate line / invoice rejection candidate-maps to a LEDES duplicate-detection error dimension.",
+      "candidate_only": true
+    },
+    {
+      "local_term": "over_budget",
+      "local_term_kind": "rejection_family",
+      "candidate_target": "ledes_error_dimension_candidate:budget_threshold_exceeded",
+      "candidate_target_system": "ledes_error_dimension",
+      "confidence": "low",
+      "provenance": {
+        "source_url": "https://ledes.org/",
+        "source_version_or_date": "LEDES e-billing error/rejection dimensions (version not pinned; candidate reference only)",
+        "retrieved_at": "2026-07-09T00:00:00Z",
+        "content_sha256": null,
+        "license_terms_note": "LEDES e-billing rejection codes are maintained by LEDES.org. These are error-dimension candidates inspired by LEDES, not pinned LEDES codes. Verify before any promotion. No LEDES payload is committed.",
+        "review_status": "candidate_unverified"
+      },
+      "review_status": "candidate_unverified",
+      "notes": "Over-budget rejection is often a policy/guideline dimension rather than a standard LEDES coded error; treated as a candidate dimension.",
+      "candidate_only": true
+    },
+    {
+      "local_term": "missing_attachment",
+      "local_term_kind": "rejection_family",
+      "candidate_target": "ledes_error_dimension_candidate:required_attachment_missing",
+      "candidate_target_system": "ledes_error_dimension",
+      "confidence": "medium",
+      "provenance": {
+        "source_url": "https://ledes.org/",
+        "source_version_or_date": "LEDES e-billing error/rejection dimensions (version not pinned; candidate reference only)",
+        "retrieved_at": "2026-07-09T00:00:00Z",
+        "content_sha256": null,
+        "license_terms_note": "LEDES e-billing rejection codes are maintained by LEDES.org. These are error-dimension candidates inspired by LEDES, not pinned LEDES codes. Verify before any promotion. No LEDES payload is committed.",
+        "review_status": "candidate_unverified"
+      },
+      "review_status": "candidate_unverified",
+      "notes": "Missing attachment candidate-maps to a LEDES required-attachment-missing error dimension.",
+      "candidate_only": true
+    },
+    {
+      "local_term": "narrative_or_block_billing",
+      "local_term_kind": "rejection_family",
+      "candidate_target": "ledes_error_dimension_candidate:narrative_quality",
+      "candidate_target_system": "ledes_error_dimension",
+      "confidence": "low",
+      "provenance": {
+        "source_url": "https://ledes.org/",
+        "source_version_or_date": "LEDES e-billing error/rejection dimensions (version not pinned; candidate reference only)",
+        "retrieved_at": "2026-07-09T00:00:00Z",
+        "content_sha256": null,
+        "license_terms_note": "LEDES e-billing rejection codes are maintained by LEDES.org. These are error-dimension candidates inspired by LEDES, not pinned LEDES codes. Verify before any promotion. No LEDES payload is committed.",
+        "review_status": "candidate_unverified"
+      },
+      "review_status": "candidate_unverified",
+      "notes": "Narrative / block-billing rejection is typically a guideline/narrative-quality dimension rather than a standard coded LEDES error.",
+      "candidate_only": true
+    },
+    {
+      "local_term": "reviewer_discretion",
+      "local_term_kind": "rejection_family",
+      "candidate_target": "unmapped",
+      "candidate_target_system": "unmapped",
+      "confidence": "unknown",
+      "provenance": {
+        "source_url": "https://ledes.org/",
+        "source_version_or_date": "LEDES e-billing error/rejection dimensions (version not pinned; candidate reference only)",
+        "retrieved_at": "2026-07-09T00:00:00Z",
+        "content_sha256": null,
+        "license_terms_note": "LEDES e-billing rejection codes are maintained by LEDES.org. These are error-dimension candidates inspired by LEDES, not pinned LEDES codes. Verify before any promotion. No LEDES payload is committed.",
+        "review_status": "candidate_unverified"
+      },
+      "review_status": "candidate_unverified",
+      "notes": "Reviewer discretion is a non-coded human judgment dimension; it must not be guessed to a LEDES error code. Stays explicit unmapped.",
+      "candidate_only": true
+    },
+    {
+      "local_term": "unknown",
+      "local_term_kind": "rejection_family",
+      "candidate_target": "unmapped",
+      "candidate_target_system": "unmapped",
+      "confidence": "unknown",
+      "provenance": {
+        "source_url": "https://ledes.org/",
+        "source_version_or_date": "LEDES e-billing error/rejection dimensions (version not pinned; candidate reference only)",
+        "retrieved_at": "2026-07-09T00:00:00Z",
+        "content_sha256": null,
+        "license_terms_note": "LEDES e-billing rejection codes are maintained by LEDES.org. These are error-dimension candidates inspired by LEDES, not pinned LEDES codes. Verify before any promotion. No LEDES payload is committed.",
+        "review_status": "candidate_unverified"
+      },
+      "review_status": "candidate_unverified",
+      "notes": "Unknown rejection family must not be guessed to a LEDES dimension; stays explicit unmapped pending classification.",
+      "candidate_only": true
+    }
+  ],
+  "candidate_only": true,
+  "not_promoted_canon": true,
+  "data_origin": "synthetic"
+}

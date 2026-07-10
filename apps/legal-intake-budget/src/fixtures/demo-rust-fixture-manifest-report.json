@@ -1,7 +1,7 @@
 {
   "budget_submission_authorized": false,
   "candidate_only": true,
-  "checked_json_file_count": 27,
+  "checked_json_file_count": 29,
   "external_writes_performed": false,
   "failure_count": 0,
   "failures": [],
@@ -33,6 +33,21 @@
       "sha256": "sha256:8f0b8a5378fe2a222c3fcd50f1835d5f978f8e967e322efbf24eb5a736474867",
       "status": "budget_learning_loop_ready_for_review",
       "synthetic_only": true,
+      "top_level_type": "object"
+    },
+    {
+      "byte_count": 2433,
+      "candidate_only": true,
+      "id_fields": [
+        {
+          "field": "report_id",
+          "value": "xwalkaudit-5697089c95ae"
+        }
+      ],
+      "path": "demo-crosswalk-audit-report.json",
+      "schema_version": "0.1",
+      "sha256": "sha256:95163ce29ec8e3f4ddbefce1ff3cc5178d8893050c3825e81b2a679743d95010",
+      "status": "passed",
       "top_level_type": "object"
     },
     {
@@ -109,28 +124,28 @@
       "id_fields": [
         {
           "field": "replay_confidence_status_report_id",
-          "value": "lereplayconfidence_0267c82c48ca0aa9"
+          "value": "lereplayconfidence_2e5797b2462219a0"
         },
         {
           "field": "source_builder_binding_report_id",
-          "value": "lebudgetreplaybinding_8f28916d4a5b458f"
+          "value": "lebudgetreplaybinding_691e144cf6e193e9"
         },
         {
           "field": "source_execution_report_id",
-          "value": "lebudgetoutcomeexecution_dd3ce385af935ae9"
+          "value": "lebudgetoutcomeexecution_51fce1321609266a"
         },
         {
           "field": "source_input_pack_report_id",
-          "value": "lebudgetreplayinputpack_44efb78934b38136"
+          "value": "lebudgetreplayinputpack_c798f2c9ba5e14d0"
         },
         {
           "field": "source_readiness_report_id",
-          "value": "lebudgetoutcomereplay_d8a822255425b0ad"
+          "value": "lebudgetoutcomereplay_a9bb62245452d448"
         }
       ],
       "path": "demo-labor-employment-budget-outcome-replay-confidence-status-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:4cbcbd347f76538dc66dd756f651c85f34e3220db7b5585c8cd5608add0aa8e3",
+      "sha256": "sha256:b45bed6ad5616826ef596d0653744f35ba4ca701f3662c085089aa59c3ac97ac",
       "status": "labor_employment_budget_outcome_replay_confidence_pending_inputs",
       "synthetic_only": true,
       "top_level_type": "object"
@@ -354,6 +369,33 @@
       "sha256": "sha256:34488a0bfc604b5c8cf937bf8e4f7a6dfc770d337a1b050742f92019b7146f2c",
       "status": "matter_linking_review_outcome_recorded",
       "synthetic_only": true,
+      "top_level_type": "object"
+    },
+    {
+      "byte_count": 5244,
+      "candidate_only": true,
+      "id_fields": [
+        {
+          "field": "budget_proposal_id",
+          "value": "budget_2eca04c91323492ea7a8ab6eaa982b8a"
+        },
+        {
+          "field": "carrier_projection_id",
+          "value": "carrierprojection_61288e5d7b1a43deb967ab34feeb20aa"
+        },
+        {
+          "field": "report_id",
+          "value": "ocgiradopt-9e53b94d45fa"
+        },
+        {
+          "field": "rule_ir_id",
+          "value": "ocg-ir-synthetic-harbor-point-alpha-v0-1"
+        }
+      ],
+      "path": "demo-ocg-rule-ir-adoption-report.json",
+      "schema_version": "0.1",
+      "sha256": "sha256:63123854ea076f65672a148e507699376be6ac0a5b6303216bceec1a5161e3dc",
+      "status": "accepted_as_read_only_candidate",
       "top_level_type": "object"
     },
     {
@@ -655,11 +697,11 @@
   ],
   "lake_write_performed": false,
   "local_json_only": true,
-  "manifest_sha256": "sha256:cb4240c28b1b8dc02dd2c92a15be36fe851baa74fbf0a7e7d8f220d245c8f72c",
+  "manifest_sha256": "sha256:d6d978e81fa46daf7e23c64a01ce6ec92158a55300b55d4558d08234989fe044",
   "matter_opening_authorized": false,
   "non_authoritative": true,
   "parse_error_count": 0,
-  "parsed_json_file_count": 27,
+  "parsed_json_file_count": 29,
   "root": "apps\\legal-intake-budget\\src\\fixtures",
   "scanner": "fixture-manifest-scanner",
   "schema_version": "0.1",
@@ -678,5 +720,5 @@
   "sqlite_write_performed": false,
   "status": "passed",
   "synthetic_only": true,
-  "total_byte_count": 755531
+  "total_byte_count": 763208
 }

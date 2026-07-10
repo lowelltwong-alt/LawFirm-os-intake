@@ -1,0 +1,81 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "candidate_id": {
+      "pattern": "^chinesewallviolation_[0-9a-f]{20}$",
+      "title": "Candidate Id",
+      "type": "string"
+    },
+    "request_id": {
+      "pattern": "^synthetic-[a-z0-9-]+$",
+      "title": "Request Id",
+      "type": "string"
+    },
+    "proof_id": {
+      "pattern": "^chinesewallproof_[0-9a-f]{20}$",
+      "title": "Proof Id",
+      "type": "string"
+    },
+    "proof_safe_output_digest": {
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "title": "Proof Safe Output Digest",
+      "type": "string"
+    },
+    "reason_code": {
+      "const": "synthetic_chinese_wall_violation_candidate",
+      "title": "Reason Code",
+      "type": "string"
+    },
+    "reviewed_adverse_pair_count": {
+      "minimum": 1,
+      "title": "Reviewed Adverse Pair Count",
+      "type": "integer"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "human_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Human Review Required",
+      "type": "boolean"
+    },
+    "exception_lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Exception Lake Write Performed",
+      "type": "boolean"
+    },
+    "external_action_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Action Performed",
+      "type": "boolean"
+    },
+    "class_ids_included": {
+      "const": false,
+      "default": false,
+      "title": "Class Ids Included",
+      "type": "boolean"
+    },
+    "free_text_included": {
+      "const": false,
+      "default": false,
+      "title": "Free Text Included",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "candidate_id",
+    "request_id",
+    "proof_id",
+    "proof_safe_output_digest",
+    "reason_code",
+    "reviewed_adverse_pair_count"
+  ],
+  "title": "ChineseWallViolationCandidate",
+  "type": "object"
+}

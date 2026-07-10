@@ -1,0 +1,217 @@
+{
+  "schema_version": "0.1",
+  "crosswalk_id": "xwalk-syn-party-role-to-sali-lmss-v1",
+  "kind": "party_role_to_sali",
+  "target_system": "sali_lmss",
+  "source_provenance": {
+    "source_url": "https://github.com/sali-legal/LMSS",
+    "source_version_or_date": "LMSS.owl (version not pinned; candidate reference only)",
+    "retrieved_at": "2026-07-09T00:00:00Z",
+    "content_sha256": null,
+    "license_terms_note": "SALI LMSS is a legal matter standards vocabulary. Verify the current LMSS license and the exact IRI before any promotion. No LMSS payload is committed here.",
+    "review_status": "candidate_unverified"
+  },
+  "entries": [
+    {
+      "local_term": "insurance_carrier",
+      "local_term_kind": "party_role",
+      "candidate_target": "sali_lmss_candidate:PartyRole-Insurer",
+      "candidate_target_system": "sali_lmss",
+      "confidence": "medium",
+      "provenance": {
+        "source_url": "https://github.com/sali-legal/LMSS",
+        "source_version_or_date": "LMSS.owl (version not pinned; candidate reference only)",
+        "retrieved_at": "2026-07-09T00:00:00Z",
+        "content_sha256": null,
+        "license_terms_note": "SALI LMSS is a legal matter standards vocabulary. Verify the current LMSS license and the exact IRI before any promotion. No LMSS payload is committed here.",
+        "review_status": "candidate_unverified"
+      },
+      "review_status": "candidate_unverified",
+      "notes": "Carrier / insurer party-role candidate tag.",
+      "candidate_only": true
+    },
+    {
+      "local_term": "carrier_or_instructing_source",
+      "local_term_kind": "party_role",
+      "candidate_target": "sali_lmss_candidate:PartyRole-InstructingSource",
+      "candidate_target_system": "sali_lmss",
+      "confidence": "low",
+      "provenance": {
+        "source_url": "https://github.com/sali-legal/LMSS",
+        "source_version_or_date": "LMSS.owl (version not pinned; candidate reference only)",
+        "retrieved_at": "2026-07-09T00:00:00Z",
+        "content_sha256": null,
+        "license_terms_note": "SALI LMSS is a legal matter standards vocabulary. Verify the current LMSS license and the exact IRI before any promotion. No LMSS payload is committed here.",
+        "review_status": "candidate_unverified"
+      },
+      "review_status": "candidate_unverified",
+      "notes": "Instructing source role is a candidate tag; LMSS role taxonomy must be verified.",
+      "candidate_only": true
+    },
+    {
+      "local_term": "payer",
+      "local_term_kind": "party_role",
+      "candidate_target": "sali_lmss_candidate:PartyRole-Payer",
+      "candidate_target_system": "sali_lmss",
+      "confidence": "low",
+      "provenance": {
+        "source_url": "https://github.com/sali-legal/LMSS",
+        "source_version_or_date": "LMSS.owl (version not pinned; candidate reference only)",
+        "retrieved_at": "2026-07-09T00:00:00Z",
+        "content_sha256": null,
+        "license_terms_note": "SALI LMSS is a legal matter standards vocabulary. Verify the current LMSS license and the exact IRI before any promotion. No LMSS payload is committed here.",
+        "review_status": "candidate_unverified"
+      },
+      "review_status": "candidate_unverified",
+      "notes": "Payer role candidate tag; may overlap with insurer role in LMSS.",
+      "candidate_only": true
+    },
+    {
+      "local_term": "prospective_represented_client",
+      "local_term_kind": "party_role",
+      "candidate_target": "sali_lmss_candidate:PartyRole-Client",
+      "candidate_target_system": "sali_lmss",
+      "confidence": "medium",
+      "provenance": {
+        "source_url": "https://github.com/sali-legal/LMSS",
+        "source_version_or_date": "LMSS.owl (version not pinned; candidate reference only)",
+        "retrieved_at": "2026-07-09T00:00:00Z",
+        "content_sha256": null,
+        "license_terms_note": "SALI LMSS is a legal matter standards vocabulary. Verify the current LMSS license and the exact IRI before any promotion. No LMSS payload is committed here.",
+        "review_status": "candidate_unverified"
+      },
+      "review_status": "candidate_unverified",
+      "notes": "Prospective represented client candidate tag.",
+      "candidate_only": true
+    },
+    {
+      "local_term": "insured_or_prospective_represented_client",
+      "local_term_kind": "party_role",
+      "candidate_target": "sali_lmss_candidate:PartyRole-Insured",
+      "candidate_target_system": "sali_lmss",
+      "confidence": "low",
+      "provenance": {
+        "source_url": "https://github.com/sali-legal/LMSS",
+        "source_version_or_date": "LMSS.owl (version not pinned; candidate reference only)",
+        "retrieved_at": "2026-07-09T00:00:00Z",
+        "content_sha256": null,
+        "license_terms_note": "SALI LMSS is a legal matter standards vocabulary. Verify the current LMSS license and the exact IRI before any promotion. No LMSS payload is committed here.",
+        "review_status": "candidate_unverified"
+      },
+      "review_status": "candidate_unverified",
+      "notes": "Composite local role; LMSS may split insured vs client. Reviewer must disambiguate.",
+      "candidate_only": true
+    },
+    {
+      "local_term": "employer",
+      "local_term_kind": "party_role",
+      "candidate_target": "sali_lmss_candidate:PartyRole-Employer",
+      "candidate_target_system": "sali_lmss",
+      "confidence": "medium",
+      "provenance": {
+        "source_url": "https://github.com/sali-legal/LMSS",
+        "source_version_or_date": "LMSS.owl (version not pinned; candidate reference only)",
+        "retrieved_at": "2026-07-09T00:00:00Z",
+        "content_sha256": null,
+        "license_terms_note": "SALI LMSS is a legal matter standards vocabulary. Verify the current LMSS license and the exact IRI before any promotion. No LMSS payload is committed here.",
+        "review_status": "candidate_unverified"
+      },
+      "review_status": "candidate_unverified",
+      "notes": "Employer party-role candidate tag.",
+      "candidate_only": true
+    },
+    {
+      "local_term": "employee_or_former_employee",
+      "local_term_kind": "party_role",
+      "candidate_target": "sali_lmss_candidate:PartyRole-Employee",
+      "candidate_target_system": "sali_lmss",
+      "confidence": "medium",
+      "provenance": {
+        "source_url": "https://github.com/sali-legal/LMSS",
+        "source_version_or_date": "LMSS.owl (version not pinned; candidate reference only)",
+        "retrieved_at": "2026-07-09T00:00:00Z",
+        "content_sha256": null,
+        "license_terms_note": "SALI LMSS is a legal matter standards vocabulary. Verify the current LMSS license and the exact IRI before any promotion. No LMSS payload is committed here.",
+        "review_status": "candidate_unverified"
+      },
+      "review_status": "candidate_unverified",
+      "notes": "Employee / former-employee claimant role candidate tag.",
+      "candidate_only": true
+    },
+    {
+      "local_term": "claimant",
+      "local_term_kind": "party_role",
+      "candidate_target": "sali_lmss_candidate:PartyRole-Claimant",
+      "candidate_target_system": "sali_lmss",
+      "confidence": "medium",
+      "provenance": {
+        "source_url": "https://github.com/sali-legal/LMSS",
+        "source_version_or_date": "LMSS.owl (version not pinned; candidate reference only)",
+        "retrieved_at": "2026-07-09T00:00:00Z",
+        "content_sha256": null,
+        "license_terms_note": "SALI LMSS is a legal matter standards vocabulary. Verify the current LMSS license and the exact IRI before any promotion. No LMSS payload is committed here.",
+        "review_status": "candidate_unverified"
+      },
+      "review_status": "candidate_unverified",
+      "notes": "Claimant party-role candidate tag.",
+      "candidate_only": true
+    },
+    {
+      "local_term": "claimant_or_adverse_party",
+      "local_term_kind": "party_role",
+      "candidate_target": "sali_lmss_candidate:PartyRole-AdverseParty",
+      "candidate_target_system": "sali_lmss",
+      "confidence": "low",
+      "provenance": {
+        "source_url": "https://github.com/sali-legal/LMSS",
+        "source_version_or_date": "LMSS.owl (version not pinned; candidate reference only)",
+        "retrieved_at": "2026-07-09T00:00:00Z",
+        "content_sha256": null,
+        "license_terms_note": "SALI LMSS is a legal matter standards vocabulary. Verify the current LMSS license and the exact IRI before any promotion. No LMSS payload is committed here.",
+        "review_status": "candidate_unverified"
+      },
+      "review_status": "candidate_unverified",
+      "notes": "Composite local role; reviewer must split claimant vs adverse party.",
+      "candidate_only": true
+    },
+    {
+      "local_term": "opposing_counsel",
+      "local_term_kind": "party_role",
+      "candidate_target": "sali_lmss_candidate:PartyRole-OpposingCounsel",
+      "candidate_target_system": "sali_lmss",
+      "confidence": "medium",
+      "provenance": {
+        "source_url": "https://github.com/sali-legal/LMSS",
+        "source_version_or_date": "LMSS.owl (version not pinned; candidate reference only)",
+        "retrieved_at": "2026-07-09T00:00:00Z",
+        "content_sha256": null,
+        "license_terms_note": "SALI LMSS is a legal matter standards vocabulary. Verify the current LMSS license and the exact IRI before any promotion. No LMSS payload is committed here.",
+        "review_status": "candidate_unverified"
+      },
+      "review_status": "candidate_unverified",
+      "notes": "Opposing counsel party-role candidate tag.",
+      "candidate_only": true
+    },
+    {
+      "local_term": "unknown",
+      "local_term_kind": "party_role",
+      "candidate_target": "unmapped",
+      "candidate_target_system": "unmapped",
+      "confidence": "unknown",
+      "provenance": {
+        "source_url": "https://github.com/sali-legal/LMSS",
+        "source_version_or_date": "LMSS.owl (version not pinned; candidate reference only)",
+        "retrieved_at": "2026-07-09T00:00:00Z",
+        "content_sha256": null,
+        "license_terms_note": "SALI LMSS is a legal matter standards vocabulary. Verify the current LMSS license and the exact IRI before any promotion. No LMSS payload is committed here.",
+        "review_status": "candidate_unverified"
+      },
+      "review_status": "candidate_unverified",
+      "notes": "Unknown role must not be guessed to a SALI tag; stays explicit unmapped.",
+      "candidate_only": true
+    }
+  ],
+  "candidate_only": true,
+  "not_promoted_canon": true,
+  "data_origin": "synthetic"
+}

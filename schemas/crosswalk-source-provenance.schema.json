@@ -1,0 +1,52 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "source_url": {
+      "title": "Source Url",
+      "type": "string"
+    },
+    "source_version_or_date": {
+      "title": "Source Version Or Date",
+      "type": "string"
+    },
+    "retrieved_at": {
+      "title": "Retrieved At",
+      "type": "string"
+    },
+    "content_sha256": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Content Sha256"
+    },
+    "license_terms_note": {
+      "title": "License Terms Note",
+      "type": "string"
+    },
+    "review_status": {
+      "default": "candidate_unverified",
+      "enum": [
+        "candidate_unverified",
+        "human_reviewed",
+        "stale",
+        "unknown"
+      ],
+      "title": "Review Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "source_url",
+    "source_version_or_date",
+    "retrieved_at",
+    "license_terms_note"
+  ],
+  "title": "CrosswalkSourceProvenance",
+  "type": "object"
+}

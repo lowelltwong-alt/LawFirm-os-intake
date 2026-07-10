@@ -224,6 +224,8 @@ def build_carrier_rejection_learning_report(
             "append_only_outcome_record",
             "synthetic_fixture_update",
             "shadow_eval",
+            "lesson_disclosure_proof_before_cross_repo_review",
+            "chinese_wall_proof_before_lesson_firing",
             "owning_repo_promotion_review_if_canon_changes",
         ],
         target_owners=target_owners,

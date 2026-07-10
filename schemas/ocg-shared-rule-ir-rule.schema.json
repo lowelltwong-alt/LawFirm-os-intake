@@ -1,0 +1,109 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "rule_id": {
+      "title": "Rule Id",
+      "type": "string"
+    },
+    "rule_family": {
+      "enum": [
+        "rate_cap",
+        "expense_cap",
+        "disallowance",
+        "contingency",
+        "staffing",
+        "preapproval",
+        "budget_cadence",
+        "variance_threshold",
+        "metadata"
+      ],
+      "title": "Rule Family",
+      "type": "string"
+    },
+    "label": {
+      "title": "Label",
+      "type": "string"
+    },
+    "action_type": {
+      "enum": [
+        "cap_rate",
+        "cap_expense",
+        "disallow",
+        "deny_contingency",
+        "reshape_staffing",
+        "preapproval_gate",
+        "metadata_only"
+      ],
+      "title": "Action Type",
+      "type": "string"
+    },
+    "impact_bucket": {
+      "enum": [
+        "rate_cap_delta",
+        "expense_cap_delta",
+        "disallowed_delta",
+        "contingency_delta",
+        "staffing_delta",
+        "preapproval_dry_run",
+        "metadata_only"
+      ],
+      "title": "Impact Bucket",
+      "type": "string"
+    },
+    "applies_to": {
+      "additionalProperties": true,
+      "title": "Applies To",
+      "type": "object"
+    },
+    "impact_basis_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Impact Basis Refs",
+      "type": "array"
+    },
+    "review_status": {
+      "default": "candidate_unverified",
+      "enum": [
+        "candidate_unverified",
+        "human_reviewed"
+      ],
+      "title": "Review Status",
+      "type": "string"
+    },
+    "candidate_only": {
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "not_canonical_rule_id": {
+      "default": true,
+      "title": "Not Canonical Rule Id",
+      "type": "boolean"
+    },
+    "rewrites_budget": {
+      "default": false,
+      "title": "Rewrites Budget",
+      "type": "boolean"
+    },
+    "no_real_guideline_text": {
+      "default": true,
+      "title": "No Real Guideline Text",
+      "type": "boolean"
+    },
+    "no_real_rate_value": {
+      "default": true,
+      "title": "No Real Rate Value",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "rule_id",
+    "rule_family",
+    "label",
+    "action_type",
+    "impact_bucket"
+  ],
+  "title": "OCGSharedRuleIRRule",
+  "type": "object"
+}
