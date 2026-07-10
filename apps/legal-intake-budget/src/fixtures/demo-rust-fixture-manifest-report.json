@@ -36,7 +36,7 @@
       "top_level_type": "object"
     },
     {
-      "byte_count": 2495,
+      "byte_count": 2433,
       "candidate_only": true,
       "id_fields": [
         {
@@ -46,7 +46,7 @@
       ],
       "path": "demo-crosswalk-audit-report.json",
       "schema_version": "0.1",
-        "sha256": "sha256:95163ce29ec8e3f4ddbefce1ff3cc5178d8893050c3825e81b2a679743d95010",
+      "sha256": "sha256:95163ce29ec8e3f4ddbefce1ff3cc5178d8893050c3825e81b2a679743d95010",
       "status": "passed",
       "top_level_type": "object"
     },
@@ -118,7 +118,7 @@
       "top_level_type": "object"
     },
     {
-      "byte_count": 11895,
+      "byte_count": 11633,
       "candidate_only": true,
       "external_writes_performed": false,
       "id_fields": [
@@ -145,7 +145,7 @@
       ],
       "path": "demo-labor-employment-budget-outcome-replay-confidence-status-report.json",
       "schema_version": "0.1",
-        "sha256": "sha256:4cbcbd347f76538dc66dd756f651c85f34e3220db7b5585c8cd5608add0aa8e3",
+      "sha256": "sha256:b45bed6ad5616826ef596d0653744f35ba4ca701f3662c085089aa59c3ac97ac",
       "status": "labor_employment_budget_outcome_replay_confidence_pending_inputs",
       "synthetic_only": true,
       "top_level_type": "object"
@@ -368,7 +368,7 @@
       "top_level_type": "object"
     },
     {
-      "byte_count": 5381,
+      "byte_count": 5244,
       "candidate_only": true,
       "id_fields": [
         {
@@ -390,7 +390,7 @@
       ],
       "path": "demo-ocg-rule-ir-adoption-report.json",
       "schema_version": "0.1",
-        "sha256": "sha256:63123854ea076f65672a148e507699376be6ac0a5b6303216bceec1a5161e3dc",
+      "sha256": "sha256:63123854ea076f65672a148e507699376be6ac0a5b6303216bceec1a5161e3dc",
       "status": "accepted_as_read_only_candidate",
       "top_level_type": "object"
     },
@@ -693,7 +693,7 @@
   ],
   "lake_write_performed": false,
   "local_json_only": true,
-  "manifest_sha256": "sha256:cc354e500ae5fdb28aea69a01ef9775b5e3ebaec7773324ed9c44055625d5080",
+  "manifest_sha256": "sha256:77daf3ccc349d54b49570cfc5c96e3583f977959972f7b6eb2ae4a2463aefd76",
   "matter_opening_authorized": false,
   "non_authoritative": true,
   "parse_error_count": 0,
@@ -716,5 +716,5 @@
   "sqlite_write_performed": false,
   "status": "passed",
   "synthetic_only": true,
-  "total_byte_count": 763480
+  "total_byte_count": 763019
 }
