@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "ui_review_data_bundle_id": "ui_review_data_bundle_a9351f5e9607",
+  "ui_review_data_bundle_id": "ui_review_data_bundle_2b6ec7e801c5",
   "status": "ready_for_review",
   "run_root_ref": "<demo-run-root>",
   "detail_report_count": 25,
@@ -127,7 +127,7 @@
       "status": "passed",
       "renderer": "RustFixtureManifestPanel",
       "artifact_ref": "apps/legal-intake-budget/src/fixtures/demo-rust-fixture-manifest-report.json",
-      "source_sha256": "sha256:67ef3e4921cf0aeb2fe5203296a69694f2f966a64f5040d7ba5443a3d98b8be0",
+      "source_sha256": "sha256:5a842e92a91255a2e9f8d0cfc3a5040d3952d4bd5f1b9ae5b07b2f1559e0eee0",
       "candidate_only": true,
       "synthetic_only": true,
       "external_writes_performed": false,
@@ -145,7 +145,7 @@
       "status": "matter_linking_preflight_resolved_candidate_requires_review",
       "renderer": "MatterLinkingPreflightPanel",
       "artifact_ref": "<demo-run-root>\\quality\\matter_linking_preflight_report.json",
-      "source_sha256": "sha256:04a0ed250649a990916cc75075811efd5024f584eee456af742e6e79d015c2c0",
+      "source_sha256": "sha256:4f544cc2e9b266cca6594a0134116d65e769544e345b7530f11a113ca1d0ff69",
       "candidate_only": true,
       "synthetic_only": true,
       "external_writes_performed": false,
@@ -482,5 +482,5 @@
   "sqlite_write_performed": false,
   "external_writes_performed": false,
   "silent_learning_performed": false,
-  "generated_at": "2026-07-05T00:00:00Z"
+  "generated_at": "2026-07-10T00:00:00Z"
 }

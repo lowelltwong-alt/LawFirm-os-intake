@@ -286,10 +286,14 @@
       "top_level_type": "object"
     },
     {
-      "byte_count": 10534,
+      "byte_count": 10723,
       "candidate_only": true,
       "data_origin": "synthetic",
       "id_fields": [
+        {
+          "field": "intake_request_id",
+          "value": "synthetic-upfront-request-20260702-001"
+        },
         {
           "field": "matter_linking_preflight_report_id",
           "value": "matterlinkpreflight_b6256d36c7d774ea7124"
@@ -301,7 +305,7 @@
       ],
       "path": "demo-matter-linking-preflight-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:04a0ed250649a990916cc75075811efd5024f584eee456af742e6e79d015c2c0",
+      "sha256": "sha256:4f544cc2e9b266cca6594a0134116d65e769544e345b7530f11a113ca1d0ff69",
       "status": "matter_linking_preflight_resolved_candidate_requires_review",
       "synthetic_only": true,
       "top_level_type": "object"
@@ -651,7 +655,7 @@
   ],
   "lake_write_performed": false,
   "local_json_only": true,
-  "manifest_sha256": "sha256:2c24c93340801007b1316ef877064bd7032e09e74a5980f63f1b98e7f1c134d5",
+  "manifest_sha256": "sha256:cb4240c28b1b8dc02dd2c92a15be36fe851baa74fbf0a7e7d8f220d245c8f72c",
   "matter_opening_authorized": false,
   "non_authoritative": true,
   "parse_error_count": 0,
@@ -674,5 +678,5 @@
   "sqlite_write_performed": false,
   "status": "passed",
   "synthetic_only": true,
-  "total_byte_count": 755342
+  "total_byte_count": 755531
 }
