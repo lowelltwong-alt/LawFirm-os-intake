@@ -5,7 +5,8 @@
 >    (budget-learning-loop-*, carrier-rejection-learning-*, reviewed-learning-gate-*,
 >    learning-promotion-readiness-*, learning-shadow-eval-*, learning-owner-handoff-*).
 >    Read it for the DAD pattern and hard kernels, not as a gap analysis.
-> Orchestration home: 04_Digital_Assett_Directory/orchestration/ (ARCHITECTURE_PACKET.md).
+> Orchestration reference: use only this repo's reviewed public-safe handoff surfaces;
+> do not follow private cross-repo paths.
 
 # Hard Kernels For Fable: DAD-Style LawFirm OS Layer
 

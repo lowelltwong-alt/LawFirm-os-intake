@@ -5,7 +5,8 @@
 >    (budget-learning-loop-*, carrier-rejection-learning-*, reviewed-learning-gate-*,
 >    learning-promotion-readiness-*, learning-shadow-eval-*, learning-owner-handoff-*).
 >    Read it for the DAD pattern and hard kernels, not as a gap analysis.
-> Orchestration home: 04_Digital_Assett_Directory/orchestration/ (ARCHITECTURE_PACKET.md).
+> Orchestration reference: use only this repo's reviewed public-safe handoff surfaces;
+> do not follow private cross-repo paths.
 
 # Opus 4.8 DAD-Layer Intake Prompt
 
@@ -57,20 +58,11 @@ Read first, in order:
    - LawFirm-os-intake/docs/ai-handoff/OPEN_QUESTIONS.md
    - LawFirm-os-intake/docs/ai-handoff/LAW_FIRM_OS_DAD_LAYER_ARCHITECTURE_PLAN.md
    - LawFirm-os-intake/docs/ai-handoff/HARD_KERNELS_FOR_FABLE_DAD_LAYER.md
-4. DAD structural pattern docs, if available locally:
-   - README.md
-   - AI_FRONT_DOOR.md
-   - AGENTS.md
-   - MACHINE_NAV.md
-   - docs/ARCHITECTURE.md
-   - docs/ASSET_IDENTITY_AND_SIMILARITY_LADDER.md
-   - docs/ASSET_VALUE_MODEL.md
-   - docs/MAIL_CENTER.md
-   - docs/AI_ENTRYPOINT_AND_TOC_ROUTING_STANDARD.md
-   - docs/DETERMINISTIC_LEARNING_RULES.md
-   - docs/ASSET_USE_PAY_FORWARD_LOOP.md
-   - docs/DATA_DICTIONARY.md
-   - docs/CROSS_REPO_WORKFLOW_ASSET_PATTERNS.md
+4. Approved public-safe DAD pattern sources:
+   - Use only DAD pattern material already copied into this repo's reviewed
+     `docs/ai-handoff/` surfaces.
+   - Do not inspect private DAD source-repo paths or private internal documents.
+   - If more pattern material is needed, request a reviewed public-safe handoff.
 
 Hard boundaries:
 
