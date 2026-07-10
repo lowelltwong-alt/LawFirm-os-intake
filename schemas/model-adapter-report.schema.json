@@ -169,6 +169,19 @@
       "title": "Independent Critic Required",
       "type": "boolean"
     },
+    "independent_critic_finding_codes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Independent Critic Finding Codes",
+      "type": "array"
+    },
+    "independent_critic_evidence_ref_count": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Independent Critic Evidence Ref Count",
+      "type": "integer"
+    },
     "human_confirmation_required": {
       "const": true,
       "default": true,

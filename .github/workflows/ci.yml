@@ -8,6 +8,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: apps/legal-intake-budget/package-lock.json
+      - name: Install review UI dependencies
+        working-directory: apps/legal-intake-budget
+        run: npm ci
+      - name: Install review UI browser
+        working-directory: apps/legal-intake-budget
+        run: npx playwright install --with-deps chromium
+      - name: Build review UI
+        working-directory: apps/legal-intake-budget
+        run: npm run build
+      - name: Smoke test review UI in Chromium
+        working-directory: apps/legal-intake-budget
+        run: npm run smoke:browser
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"

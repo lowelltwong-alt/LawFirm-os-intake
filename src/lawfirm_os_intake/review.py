@@ -612,6 +612,8 @@ def _model_adapter_lines(report: ModelAdapterReport | None) -> list[str]:
         f"- Typed JSON validation status: {report.typed_json_validation_status}",
         f"- Deterministic baseline hash: {report.deterministic_baseline_hash}",
         f"- Structured candidate hash: {report.structured_candidate_hash}",
+        f"- Independent critic finding codes: {', '.join(report.independent_critic_finding_codes) or 'none'}",
+        f"- Independent critic evidence refs: {report.independent_critic_evidence_ref_count}",
         f"- Required human gates: {', '.join(report.required_human_gates)}",
         "- Adapter guard checks:",
     ]

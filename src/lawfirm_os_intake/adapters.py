@@ -193,6 +193,10 @@ def finalize_model_adapter_report(
     fixture_gold_status: Literal["not_requested", "passed", "failed"] = "not_requested"
     if fixture_gold_report is not None:
         fixture_gold_status = fixture_gold_report.status
+    critic_finding_codes = sorted({finding.code for finding in packet.critic_findings})
+    critic_evidence_ref_count = sum(
+        len(finding.evidence_refs) for finding in packet.critic_findings
+    )
 
     checks = [
         *report.checks,
@@ -207,6 +211,15 @@ def finalize_model_adapter_report(
             deterministic_baseline_hash.startswith("sha256:"),
             "Deterministic baseline projection is hash-addressed for comparison.",
             {"deterministic_baseline_hash": deterministic_baseline_hash},
+        ),
+        _check(
+            "independent_critic_output_preserved",
+            bool(critic_finding_codes) or not packet.critic_findings,
+            "The adapter report preserves the independent critic findings from the preflight packet.",
+            {
+                "finding_codes": critic_finding_codes,
+                "evidence_ref_count": critic_evidence_ref_count,
+            },
         ),
     ]
 
@@ -273,6 +286,8 @@ def finalize_model_adapter_report(
             "synthetic_gold_compared": fixture_gold_report is not None,
             "fixture_gold_report_ref": (fixture_gold_report_ref if fixture_gold_report else None),
             "fixture_gold_status": fixture_gold_status,
+            "independent_critic_finding_codes": critic_finding_codes,
+            "independent_critic_evidence_ref_count": critic_evidence_ref_count,
             "comparison_summary": {
                 "projection_fields": sorted(baseline_projection.keys()),
                 "deterministic_workers_authoritative": True,
