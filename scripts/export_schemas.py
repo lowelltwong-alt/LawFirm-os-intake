@@ -12,6 +12,11 @@ from lawfirm_os_intake.calibration import (  # noqa: E402
     CalibrationLeakageProof,
     CalibrationPreflightRequest,
 )
+from lawfirm_os_intake.lessons import (  # noqa: E402
+    LessonDisclosureProof,
+    LessonDisclosureRequest,
+    LessonIR,
+)
 from lawfirm_os_intake.models import (  # noqa: E402
     BenchmarkSnapshotManifest,
     BlockedBudgetAttemptAuditReport,
@@ -454,6 +459,9 @@ from lawfirm_os_intake.models import (  # noqa: E402
 MODELS = {
     "calibration-leakage-proof.schema.json": CalibrationLeakageProof,
     "calibration-preflight-request.schema.json": CalibrationPreflightRequest,
+    "lesson-disclosure-proof.schema.json": LessonDisclosureProof,
+    "lesson-disclosure-request.schema.json": LessonDisclosureRequest,
+    "lesson-ir.schema.json": LessonIR,
     "source-bundle.schema.json": SourceBundle,
     "blocked-budget-attempt-audit-report.schema.json": BlockedBudgetAttemptAuditReport,
     "context-counterfactual-audit-report.schema.json": ContextCounterfactualAuditReport,

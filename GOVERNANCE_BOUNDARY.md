@@ -28,6 +28,8 @@ Local schemas, taxonomies, worker manifests, prompts, and templates are experime
 | correction/defect/run event | Exception Lake Runtime |
 | reusable worker/prompt | Skills Registry |
 | legal/public evidence adapter/context bundle | Legal Knowledge Runtime |
+| qualitative lesson payload shape | DAD receiver review, then Semantic Substrate review if proposed as shared canon |
+| lesson disclosure runtime gate or publication-snapshot authority | Orchestrator |
 
 ## Prohibited governance behavior
 

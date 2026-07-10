@@ -10,6 +10,12 @@ from .calibration import (
     CalibrationPreflightRequest,
     build_calibration_leakage_proof,
 )
+from .lessons import (
+    LessonDisclosureProof,
+    LessonDisclosureRequest,
+    build_lesson_disclosure_proof,
+    lesson_disclosure_request_digest,
+)
 from .models import (
     BudgetActualComparisonReport,
     BudgetActualVarianceDriverCandidate,
@@ -45,6 +51,15 @@ CALIBRATION_LEAKAGE_PROOF_REQUIRED_GATES = [
     "approval_evidence_identifier_shape_only",
     "owning_repo_review",
     "no_calibrated_value_publication_from_intake",
+]
+
+LESSON_DISCLOSURE_PROOF_REQUIRED_GATES = [
+    "valid_lesson_disclosure_proof",
+    "external_lesson_request_digest_anchor",
+    "bounded_reident_under_declared_adversary_only",
+    "authenticated_human_disclosure_review",
+    "owning_repo_review",
+    "no_lesson_publication_or_dad_crossing_from_intake",
 ]
 
 
@@ -258,6 +273,174 @@ def _check(
         message=message,
         candidate_ids=candidate_ids or [],
     )
+
+
+def validate_lesson_disclosure_gate(
+    *,
+    lesson_id: str,
+    lesson_disclosure_proof: LessonDisclosureProof | dict[str, Any] | None,
+    lesson_disclosure_request: LessonDisclosureRequest | dict[str, Any] | None = None,
+    expected_lesson_input_digest: str | None = None,
+    approval_id: str | None = None,
+) -> ReviewedLearningGateCheck:
+    """Keep qualitative lesson review closed until proof and real human authority exist."""
+    if lesson_disclosure_proof is None:
+        return _check(
+            "lesson_disclosure_proof_required",
+            False,
+            "Qualitative lesson candidates require a LessonDisclosureProof.",
+        )
+    parsed, error = _parse_lesson_disclosure_proof(lesson_disclosure_proof)
+    if error is not None or parsed is None:
+        return _check(
+            "lesson_disclosure_proof_valid",
+            False,
+            f"LessonDisclosureProof is invalid: {error}",
+        )
+    if lesson_disclosure_request is None:
+        return _check(
+            "lesson_disclosure_request_required",
+            False,
+            "Lesson disclosure review requires the synthetic request for deterministic rebuild.",
+            [parsed.proof_id],
+        )
+    if not _is_sha256_digest(expected_lesson_input_digest):
+        return _check(
+            "lesson_disclosure_expected_digest_required",
+            False,
+            "Lesson disclosure review requires an independently supplied sha256 request digest.",
+            [parsed.proof_id],
+        )
+    rebuilt, rebuilt_request_digest, rebuild_error = _rebuild_lesson_disclosure_proof(
+        lesson_disclosure_request
+    )
+    if rebuild_error is not None or rebuilt is None:
+        return _check(
+            "lesson_disclosure_request_valid",
+            False,
+            f"Lesson disclosure request is invalid: {rebuild_error}",
+            [parsed.proof_id],
+        )
+    binding_failures = _lesson_proof_request_binding_failures(
+        parsed,
+        rebuilt,
+        rebuilt_request_digest=rebuilt_request_digest,
+        expected_lesson_input_digest=expected_lesson_input_digest,
+    )
+    if binding_failures:
+        return _check(
+            "lesson_disclosure_proof_request_binding",
+            False,
+            "Lesson disclosure proof does not match its rebuilt request: "
+            + ", ".join(binding_failures),
+            [parsed.proof_id],
+        )
+    failures = _lesson_disclosure_proof_failures(
+        parsed,
+        lesson_id=lesson_id,
+        approval_id=approval_id,
+    )
+    return _check(
+        "lesson_disclosure_proof_promotion_gate",
+        not failures,
+        (
+            "Lesson disclosure evidence is ready for authenticated human and owning-repo review; "
+            "this check performs no publication, DAD crossing, promotion, or mutation."
+            if not failures
+            else "Lesson disclosure proof blocks promotion review: " + ", ".join(failures)
+        ),
+        [parsed.proof_id],
+    )
+
+
+def _lesson_disclosure_proof_failures(
+    proof: LessonDisclosureProof,
+    *,
+    lesson_id: str,
+    approval_id: str | None,
+) -> list[str]:
+    failures: list[str] = []
+    if proof.lesson_id != lesson_id:
+        failures.append("lesson_id_mismatch")
+    if proof.status != "candidate":
+        failures.append(f"status={proof.status}")
+    if proof.refusal_reasons:
+        failures.append("refusal_reasons_present")
+    if proof.guarantee != "bounded_reident_under_declared_adversary":
+        failures.append("invalid_guarantee_label")
+    if proof.formal_privacy_guarantee_claimed:
+        failures.append("formal_privacy_guarantee_claimed")
+    if proof.privilege_screen.blocked:
+        failures.append("strategy_or_privilege_atom_present")
+    if proof.differencing_check.suppressed:
+        failures.append("cross_lesson_differencing_failed")
+    if not proof.differencing_check.authoritative_publication_snapshot_verified:
+        failures.append("authoritative_publication_snapshot_not_verified")
+    if proof.free_text_lint.signal_bearing_free_text_present:
+        failures.append("signal_bearing_free_text_present")
+    if proof.anonymity.anonymity_set < proof.anonymity.K_qual:
+        failures.append("anonymity_set_below_K_qual")
+    if proof.anonymity.support_count < proof.anonymity.K_support:
+        failures.append("support_count_below_K_support")
+    if not proof.anonymity.l_diversity_ok:
+        failures.append("sensitive_outcome_diversity_not_met")
+    if not _approval_id_has_candidate_evidence_shape(approval_id):
+        failures.append("missing_approval_id")
+    if not proof.authenticated_human_disclosure_review_verified:
+        failures.append("authenticated_human_disclosure_review_not_verified")
+    return failures
+
+
+def _parse_lesson_disclosure_proof(
+    proof: LessonDisclosureProof | dict[str, Any],
+) -> tuple[LessonDisclosureProof | None, str | None]:
+    try:
+        payload = (
+            proof.model_dump(mode="json") if isinstance(proof, LessonDisclosureProof) else proof
+        )
+        return LessonDisclosureProof.model_validate(payload), None
+    except ValidationError as exc:
+        return None, exc.errors()[0]["msg"]
+
+
+def _rebuild_lesson_disclosure_proof(
+    request: LessonDisclosureRequest | dict[str, Any],
+) -> tuple[LessonDisclosureProof | None, str | None, str | None]:
+    try:
+        payload = (
+            request.model_dump(mode="json")
+            if isinstance(request, LessonDisclosureRequest)
+            else request
+        )
+        parsed = LessonDisclosureRequest.model_validate(payload)
+        return (
+            build_lesson_disclosure_proof(parsed),
+            lesson_disclosure_request_digest(parsed),
+            None,
+        )
+    except (ValidationError, ValueError) as exc:
+        if isinstance(exc, ValidationError):
+            return None, None, exc.errors()[0]["msg"]
+        return None, None, str(exc)
+
+
+def _lesson_proof_request_binding_failures(
+    proof: LessonDisclosureProof,
+    rebuilt: LessonDisclosureProof,
+    *,
+    rebuilt_request_digest: str,
+    expected_lesson_input_digest: str,
+) -> list[str]:
+    failures: list[str] = []
+    if rebuilt_request_digest != expected_lesson_input_digest:
+        failures.append("expected_digest_does_not_match_rebuilt_request")
+    if proof.proof_id != rebuilt.proof_id:
+        failures.append("proof_id_mismatch")
+    proof_payload = proof.model_dump(mode="json", exclude={"generated_at"})
+    rebuilt_payload = rebuilt.model_dump(mode="json", exclude={"generated_at"})
+    if proof_payload != rebuilt_payload:
+        failures.append("proof_content_mismatch")
+    return failures
 
 
 def validate_calibrated_parameter_gate(
@@ -625,6 +808,41 @@ def _calibration_gate_checks(
     return checks
 
 
+def _lesson_disclosure_gate_checks(
+    requests: list[dict[str, Any]],
+) -> list[ReviewedLearningGateCheck]:
+    checks: list[ReviewedLearningGateCheck] = []
+    required = [
+        "lesson_id",
+        "lesson_disclosure_proof",
+        "lesson_disclosure_request",
+        "expected_lesson_input_digest",
+    ]
+    for index, request in enumerate(requests):
+        missing = [field for field in required if not request.get(field)]
+        if missing:
+            checks.append(
+                _check(
+                    "lesson_disclosure_gate_request_complete",
+                    False,
+                    f"Lesson disclosure gate request {index} is missing: " + ", ".join(missing),
+                )
+            )
+            continue
+        checks.append(
+            validate_lesson_disclosure_gate(
+                lesson_id=str(request["lesson_id"]),
+                lesson_disclosure_proof=request["lesson_disclosure_proof"],
+                lesson_disclosure_request=request["lesson_disclosure_request"],
+                expected_lesson_input_digest=str(request["expected_lesson_input_digest"]),
+                approval_id=(
+                    str(request["approval_id"]) if request.get("approval_id") is not None else None
+                ),
+            )
+        )
+    return checks
+
+
 def build_reviewed_learning_gate_report(
     *,
     carrier_rejection_learning_report: CarrierRejectionLearningReport | None = None,
@@ -634,8 +852,10 @@ def build_reviewed_learning_gate_report(
     budget_actual_comparison_report: BudgetActualComparisonReport | None = None,
     budget_actual_comparison_report_ref: str | None = None,
     calibrated_parameter_gate_requests: list[dict[str, Any]] | None = None,
+    lesson_disclosure_gate_requests: list[dict[str, Any]] | None = None,
 ) -> ReviewedLearningGateReport:
     calibration_gate_requests = calibrated_parameter_gate_requests or []
+    lesson_gate_requests = lesson_disclosure_gate_requests or []
     calibration_refs = [
         str(
             request.get("proof_ref")
@@ -644,6 +864,14 @@ def build_reviewed_learning_gate_report(
         )
         for index, request in enumerate(calibration_gate_requests)
     ]
+    lesson_refs = [
+        str(
+            request.get("proof_ref")
+            or request.get("lesson_id")
+            or f"lesson_disclosure_gate_request:{index}"
+        )
+        for index, request in enumerate(lesson_gate_requests)
+    ]
     source_refs = [
         ref
         for ref in [
@@ -651,6 +879,7 @@ def build_reviewed_learning_gate_report(
             budget_revision_report_ref,
             budget_actual_comparison_report_ref,
             *calibration_refs,
+            *lesson_refs,
         ]
         if ref
     ]
@@ -730,6 +959,7 @@ def build_reviewed_learning_gate_report(
         for candidate in candidates
     )
     calibration_checks = _calibration_gate_checks(calibration_gate_requests)
+    lesson_checks = _lesson_disclosure_gate_checks(lesson_gate_requests)
     calibration_proof_ids = list(
         dict.fromkeys(
             candidate_id for check in calibration_checks for candidate_id in check.candidate_ids
@@ -748,6 +978,26 @@ def build_reviewed_learning_gate_report(
             )
         ]
         if calibration_gate_requests
+        else []
+    )
+    lesson_proof_ids = list(
+        dict.fromkeys(
+            candidate_id for check in lesson_checks for candidate_id in check.candidate_ids
+        )
+    )
+    lesson_visibility_checks = (
+        [
+            _check(
+                "lesson_disclosure_gate_review_inputs_visible",
+                True,
+                (
+                    "Lesson disclosure proof is visible as candidate-only review evidence; "
+                    "it is not an ordinary learning candidate and performs no publication."
+                ),
+                lesson_proof_ids,
+            )
+        ]
+        if lesson_gate_requests
         else []
     )
     checks = [
@@ -788,11 +1038,13 @@ def build_reviewed_learning_gate_report(
         ),
         *calibration_visibility_checks,
         *calibration_checks,
+        *lesson_visibility_checks,
+        *lesson_checks,
     ]
     failed = [check for check in checks if check.status == "failed"]
     if failed:
         status = "failed"
-    elif candidates or calibration_gate_requests:
+    elif candidates or calibration_gate_requests or lesson_gate_requests:
         status = "candidate_learning_gate_ready"
     else:
         status = "no_learning_candidates"
