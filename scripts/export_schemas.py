@@ -17,6 +17,7 @@ from lawfirm_os_intake.lessons import (  # noqa: E402
     LessonDisclosureRequest,
     LessonIR,
 )
+from lawfirm_os_intake.outbox import CrossingProof, CrossingRequest  # noqa: E402
 from lawfirm_os_intake.models import (  # noqa: E402
     BenchmarkSnapshotManifest,
     BlockedBudgetAttemptAuditReport,
@@ -462,6 +463,8 @@ MODELS = {
     "lesson-disclosure-proof.schema.json": LessonDisclosureProof,
     "lesson-disclosure-request.schema.json": LessonDisclosureRequest,
     "lesson-ir.schema.json": LessonIR,
+    "crossing-proof.schema.json": CrossingProof,
+    "crossing-request.schema.json": CrossingRequest,
     "source-bundle.schema.json": SourceBundle,
     "blocked-budget-attempt-audit-report.schema.json": BlockedBudgetAttemptAuditReport,
     "context-counterfactual-audit-report.schema.json": ContextCounterfactualAuditReport,

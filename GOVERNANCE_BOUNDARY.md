@@ -30,6 +30,8 @@ Local schemas, taxonomies, worker manifests, prompts, and templates are experime
 | legal/public evidence adapter/context bundle | Legal Knowledge Runtime |
 | qualitative lesson payload shape | DAD receiver review, then Semantic Substrate review if proposed as shared canon |
 | lesson disclosure runtime gate or publication-snapshot authority | Orchestrator |
+| IFC label or crossing-proof contract | Semantic Substrate shared-contract review and DAD receiver-side mirror review |
+| outbound lesson crossing, mail write, or delivery action | DAD/Orchestrator owner review; never Intake |
 
 ## Prohibited governance behavior
 

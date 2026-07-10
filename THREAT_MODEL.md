@@ -32,6 +32,7 @@
 | Cross-matter leakage | One bundle per run; no shared matter memory |
 | Calibration leakage through fitted parameters | Synthetic-only CAL-DP candidate; clipped sufficient statistics, bounded candidate accounting, no publication, and owner authority still required |
 | Learned-rule re-identification or work-product leakage | Closed synthetic LessonIR, pinned universe/lattice/fixture manifest, strategy/free-text block, k/diversity and differencing checks, sanitized proof, no DAD crossing, and fail-closed human/owner gates |
+| Prohibited residue crossing into DAD | Closed structured crossing request, max-label join, deterministic residue classes, QRD proof binding, literal-false receiver/human authority, reviewed-learning gate rebuild, and no send/outbox capability |
 | Role hallucination | Candidate status, exact evidence refs, human confirmation |
 | Practice-context overreach | Context/evidence separation and counterfactual tests |
 | Deadline mischaracterization | Candidate only; human verification; no docket write |

@@ -1,0 +1,340 @@
+{
+  "$defs": {
+    "CrossingBlockingReason": {
+      "enum": [
+        "residue_detected",
+        "label_above_candidate",
+        "qrd_disclosure_not_candidate",
+        "qrd_publication_snapshot_not_authoritative",
+        "qrd_human_review_not_authenticated",
+        "dad_receiver_schema_not_authoritative",
+        "human_crossing_review_not_authenticated",
+        "owning_repo_review_not_verified"
+      ],
+      "title": "CrossingBlockingReason",
+      "type": "string"
+    },
+    "LatticeEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "source_labels": {
+          "items": {
+            "$ref": "#/$defs/SensitivityLabel"
+          },
+          "minItems": 1,
+          "title": "Source Labels",
+          "type": "array"
+        },
+        "effective_label": {
+          "$ref": "#/$defs/SensitivityLabel"
+        },
+        "candidate_crossing_max": {
+          "const": "candidate",
+          "default": "candidate",
+          "title": "Candidate Crossing Max",
+          "type": "string"
+        },
+        "label_within_candidate_boundary": {
+          "title": "Label Within Candidate Boundary",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "source_labels",
+        "effective_label",
+        "label_within_candidate_boundary"
+      ],
+      "title": "LatticeEvidence",
+      "type": "object"
+    },
+    "QRDBindingEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "lesson_disclosure_proof_id": {
+          "pattern": "^lessondisclosureproof_[0-9a-f]{20}$",
+          "title": "Lesson Disclosure Proof Id",
+          "type": "string"
+        },
+        "lesson_disclosure_safe_output_digest": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "title": "Lesson Disclosure Safe Output Digest",
+          "type": "string"
+        },
+        "local_mechanism_candidate": {
+          "title": "Local Mechanism Candidate",
+          "type": "boolean"
+        },
+        "disclosure_status": {
+          "enum": [
+            "blocked",
+            "suppressed",
+            "candidate"
+          ],
+          "title": "Disclosure Status",
+          "type": "string"
+        },
+        "authoritative_publication_snapshot_verified": {
+          "const": false,
+          "title": "Authoritative Publication Snapshot Verified",
+          "type": "boolean"
+        },
+        "authenticated_human_disclosure_review_verified": {
+          "const": false,
+          "title": "Authenticated Human Disclosure Review Verified",
+          "type": "boolean"
+        },
+        "actual_qrd_crossing_authorized": {
+          "const": false,
+          "default": false,
+          "title": "Actual Qrd Crossing Authorized",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "lesson_disclosure_proof_id",
+        "lesson_disclosure_safe_output_digest",
+        "local_mechanism_candidate",
+        "disclosure_status",
+        "authoritative_publication_snapshot_verified",
+        "authenticated_human_disclosure_review_verified"
+      ],
+      "title": "QRDBindingEvidence",
+      "type": "object"
+    },
+    "ResidueReasonCode": {
+      "enum": [
+        "currency_or_rate_detected",
+        "specific_carrier_identifier_detected",
+        "pii_detected",
+        "privilege_or_work_product_detected",
+        "raw_source_blob_detected",
+        "free_text_signal_present",
+        "non_ascii_signal_detected"
+      ],
+      "title": "ResidueReasonCode",
+      "type": "string"
+    },
+    "ResidueScanResult": {
+      "additionalProperties": false,
+      "properties": {
+        "scanner_version": {
+          "const": "ifc-residue-scanner-v1",
+          "default": "ifc-residue-scanner-v1",
+          "title": "Scanner Version",
+          "type": "string"
+        },
+        "clean": {
+          "title": "Clean",
+          "type": "boolean"
+        },
+        "reason_codes": {
+          "items": {
+            "$ref": "#/$defs/ResidueReasonCode"
+          },
+          "title": "Reason Codes",
+          "type": "array"
+        },
+        "scanned_signal_count": {
+          "minimum": 0,
+          "title": "Scanned Signal Count",
+          "type": "integer"
+        },
+        "raw_signal_values_included": {
+          "const": false,
+          "default": false,
+          "title": "Raw Signal Values Included",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "clean",
+        "reason_codes",
+        "scanned_signal_count"
+      ],
+      "title": "ResidueScanResult",
+      "type": "object"
+    },
+    "SensitivityLabel": {
+      "description": "The closed order is public < candidate < internal < privileged.",
+      "enum": [
+        "public",
+        "candidate",
+        "internal",
+        "privileged"
+      ],
+      "title": "SensitivityLabel",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "proof_id": {
+      "pattern": "^crossingproof_[0-9a-f]{20}$",
+      "title": "Proof Id",
+      "type": "string"
+    },
+    "request_id": {
+      "pattern": "^synthetic-[a-z0-9-]+$",
+      "title": "Request Id",
+      "type": "string"
+    },
+    "safe_output_digest": {
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "title": "Safe Output Digest",
+      "type": "string"
+    },
+    "sensitive_crossing_request_digest_included": {
+      "const": false,
+      "default": false,
+      "title": "Sensitive Crossing Request Digest Included",
+      "type": "boolean"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "local_scanner_evidence": {
+      "$ref": "#/$defs/ResidueScanResult"
+    },
+    "local_lattice_evidence": {
+      "$ref": "#/$defs/LatticeEvidence"
+    },
+    "local_scanner_and_lattice_candidate": {
+      "title": "Local Scanner And Lattice Candidate",
+      "type": "boolean"
+    },
+    "qrd_binding": {
+      "$ref": "#/$defs/QRDBindingEvidence"
+    },
+    "blocking_reasons": {
+      "items": {
+        "$ref": "#/$defs/CrossingBlockingReason"
+      },
+      "minItems": 1,
+      "title": "Blocking Reasons",
+      "type": "array"
+    },
+    "guarantee": {
+      "const": "deterministic_declared_pattern_residue_check",
+      "default": "deterministic_declared_pattern_residue_check",
+      "title": "Guarantee",
+      "type": "string"
+    },
+    "formal_noninterference_guarantee_claimed": {
+      "const": false,
+      "default": false,
+      "title": "Formal Noninterference Guarantee Claimed",
+      "type": "boolean"
+    },
+    "overall_status": {
+      "const": "blocked",
+      "default": "blocked",
+      "title": "Overall Status",
+      "type": "string"
+    },
+    "actual_crossing_asserted": {
+      "const": false,
+      "default": false,
+      "title": "Actual Crossing Asserted",
+      "type": "boolean"
+    },
+    "dad_receiver_schema_authority_verified": {
+      "const": false,
+      "default": false,
+      "title": "Dad Receiver Schema Authority Verified",
+      "type": "boolean"
+    },
+    "authenticated_human_crossing_review_verified": {
+      "const": false,
+      "default": false,
+      "title": "Authenticated Human Crossing Review Verified",
+      "type": "boolean"
+    },
+    "owning_repo_review_verified": {
+      "const": false,
+      "default": false,
+      "title": "Owning Repo Review Verified",
+      "type": "boolean"
+    },
+    "outbox_mutation_performed": {
+      "const": false,
+      "default": false,
+      "title": "Outbox Mutation Performed",
+      "type": "boolean"
+    },
+    "send_performed": {
+      "const": false,
+      "default": false,
+      "title": "Send Performed",
+      "type": "boolean"
+    },
+    "dad_contact_performed": {
+      "const": false,
+      "default": false,
+      "title": "Dad Contact Performed",
+      "type": "boolean"
+    },
+    "network_access_performed": {
+      "const": false,
+      "default": false,
+      "title": "Network Access Performed",
+      "type": "boolean"
+    },
+    "sibling_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sibling Write Performed",
+      "type": "boolean"
+    },
+    "auto_promotion_performed": {
+      "const": false,
+      "default": false,
+      "title": "Auto Promotion Performed",
+      "type": "boolean"
+    },
+    "legal_or_compliance_authority_exercised": {
+      "const": false,
+      "default": false,
+      "title": "Legal Or Compliance Authority Exercised",
+      "type": "boolean"
+    },
+    "support_ids_included": {
+      "const": false,
+      "default": false,
+      "title": "Support Ids Included",
+      "type": "boolean"
+    },
+    "original_rare_values_included": {
+      "const": false,
+      "default": false,
+      "title": "Original Rare Values Included",
+      "type": "boolean"
+    },
+    "free_text_included": {
+      "const": false,
+      "default": false,
+      "title": "Free Text Included",
+      "type": "boolean"
+    },
+    "prohibited_text_included": {
+      "const": false,
+      "default": false,
+      "title": "Prohibited Text Included",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "proof_id",
+    "request_id",
+    "safe_output_digest",
+    "local_scanner_evidence",
+    "local_lattice_evidence",
+    "local_scanner_and_lattice_candidate",
+    "qrd_binding",
+    "blocking_reasons"
+  ],
+  "title": "CrossingProof",
+  "type": "object"
+}

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 from typing import Any
 
@@ -26,6 +27,12 @@ from .models import (
     ReviewedLearningGateCandidate,
     ReviewedLearningGateCheck,
     ReviewedLearningGateReport,
+)
+from .outbox import (
+    CrossingProof,
+    CrossingRequest,
+    build_crossing_proof,
+    crossing_request_digest,
 )
 from .util import append_jsonl, digest_text, load_json, new_id, now_iso, write_json
 
@@ -60,6 +67,18 @@ LESSON_DISCLOSURE_PROOF_REQUIRED_GATES = [
     "authenticated_human_disclosure_review",
     "owning_repo_review",
     "no_lesson_publication_or_dad_crossing_from_intake",
+]
+
+CROSSING_PROOF_REQUIRED_GATES = [
+    "valid_crossing_proof",
+    "external_crossing_request_digest_anchor",
+    "valid_bound_lesson_disclosure_proof",
+    "deterministic_declared_pattern_check_not_formal_noninterference",
+    "scanner_clean_and_label_at_most_candidate",
+    "dad_receiver_schema_authority",
+    "authenticated_human_crossing_review",
+    "owning_repo_review",
+    "no_send_outbox_write_or_dad_contact_from_intake",
 ]
 
 
@@ -440,6 +459,149 @@ def _lesson_proof_request_binding_failures(
     rebuilt_payload = rebuilt.model_dump(mode="json", exclude={"generated_at"})
     if proof_payload != rebuilt_payload:
         failures.append("proof_content_mismatch")
+    return failures
+
+
+def validate_crossing_gate(
+    *,
+    request_id: str,
+    crossing_proof: CrossingProof | dict[str, Any] | None,
+    crossing_request: CrossingRequest | dict[str, Any] | None = None,
+    expected_crossing_request_digest: str | None = None,
+    approval_id: str | None = None,
+) -> ReviewedLearningGateCheck:
+    """Keep DAD crossing review closed until bound proof and owner authority exist."""
+    if crossing_proof is None:
+        return _check(
+            "crossing_proof_required",
+            False,
+            "Proposed lesson crossings require a CrossingProof.",
+        )
+    parsed, error = _parse_crossing_proof(crossing_proof)
+    if error is not None or parsed is None:
+        return _check(
+            "crossing_proof_valid",
+            False,
+            f"CrossingProof is invalid: {error}",
+        )
+    if crossing_request is None:
+        return _check(
+            "crossing_request_required",
+            False,
+            "Crossing review requires the synthetic request for deterministic rebuild.",
+            [parsed.proof_id],
+        )
+    if not _is_sha256_digest(expected_crossing_request_digest):
+        return _check(
+            "crossing_expected_digest_required",
+            False,
+            "Crossing review requires an independently supplied sha256 request digest.",
+            [parsed.proof_id],
+        )
+    rebuilt, rebuilt_request_digest, rebuild_error = _rebuild_crossing_proof(crossing_request)
+    if rebuild_error is not None or rebuilt is None or rebuilt_request_digest is None:
+        return _check(
+            "crossing_request_valid",
+            False,
+            f"Crossing request is invalid: {rebuild_error}",
+            [parsed.proof_id],
+        )
+    binding_failures: list[str] = []
+    if rebuilt_request_digest != expected_crossing_request_digest:
+        binding_failures.append("expected_digest_does_not_match_rebuilt_request")
+    if parsed.proof_id != rebuilt.proof_id:
+        binding_failures.append("proof_id_mismatch")
+    if parsed.model_dump(mode="json") != rebuilt.model_dump(mode="json"):
+        binding_failures.append("proof_content_mismatch")
+    if binding_failures:
+        return _check(
+            "crossing_proof_request_binding",
+            False,
+            "Crossing proof does not match its rebuilt request: " + ", ".join(binding_failures),
+            [parsed.proof_id],
+        )
+    failures = _crossing_proof_failures(
+        parsed,
+        request_id=request_id,
+        approval_id=approval_id,
+    )
+    return _check(
+        "crossing_proof_promotion_gate",
+        not failures,
+        (
+            "Crossing evidence is ready for DAD receiver, authenticated human, and owning-repo review; "
+            "this check performs no send, outbox write, DAD contact, promotion, or mutation."
+            if not failures
+            else "Crossing proof blocks promotion review: " + ", ".join(failures)
+        ),
+        [parsed.proof_id],
+    )
+
+
+def _parse_crossing_proof(
+    proof: CrossingProof | dict[str, Any],
+) -> tuple[CrossingProof | None, str | None]:
+    try:
+        payload = proof.model_dump(mode="json") if isinstance(proof, CrossingProof) else proof
+        return CrossingProof.model_validate_json(json.dumps(payload)), None
+    except ValidationError as exc:
+        return None, exc.errors()[0]["msg"]
+    except (TypeError, ValueError):
+        return None, "crossing proof is not valid JSON model input"
+
+
+def _rebuild_crossing_proof(
+    request: CrossingRequest | dict[str, Any],
+) -> tuple[CrossingProof | None, str | None, str | None]:
+    try:
+        payload = (
+            request.model_dump(mode="json") if isinstance(request, CrossingRequest) else request
+        )
+        parsed = CrossingRequest.model_validate_json(json.dumps(payload))
+        return build_crossing_proof(parsed), crossing_request_digest(parsed), None
+    except (ValidationError, TypeError, ValueError) as exc:
+        if isinstance(exc, ValidationError):
+            return None, None, exc.errors()[0]["msg"]
+        if isinstance(exc, TypeError):
+            return None, None, "crossing request is not valid JSON model input"
+        return None, None, str(exc)
+
+
+def _crossing_proof_failures(
+    proof: CrossingProof,
+    *,
+    request_id: str,
+    approval_id: str | None,
+) -> list[str]:
+    failures: list[str] = []
+    if proof.request_id != request_id:
+        failures.append("request_id_mismatch")
+    if proof.overall_status != "candidate":
+        failures.append(f"status={proof.overall_status}")
+    if not proof.local_scanner_evidence.clean:
+        failures.append("prohibited_residue_detected")
+    if proof.guarantee != "deterministic_declared_pattern_residue_check":
+        failures.append("invalid_crossing_guarantee_label")
+    if proof.formal_noninterference_guarantee_claimed:
+        failures.append("formal_noninterference_guarantee_claimed")
+    if not proof.local_lattice_evidence.label_within_candidate_boundary:
+        failures.append("label_above_candidate")
+    if not proof.local_scanner_and_lattice_candidate:
+        failures.append("local_ifc_mechanism_not_candidate")
+    if proof.qrd_binding.disclosure_status != "candidate":
+        failures.append("qrd_disclosure_not_candidate")
+    if not proof.qrd_binding.authoritative_publication_snapshot_verified:
+        failures.append("qrd_publication_snapshot_not_authoritative")
+    if not proof.qrd_binding.authenticated_human_disclosure_review_verified:
+        failures.append("qrd_human_review_not_authenticated")
+    if not proof.dad_receiver_schema_authority_verified:
+        failures.append("dad_receiver_schema_not_authoritative")
+    if not proof.authenticated_human_crossing_review_verified:
+        failures.append("authenticated_human_crossing_review_not_verified")
+    if not proof.owning_repo_review_verified:
+        failures.append("owning_repo_review_not_verified")
+    if not _approval_id_has_candidate_evidence_shape(approval_id):
+        failures.append("missing_approval_id")
     return failures
 
 
@@ -843,6 +1005,41 @@ def _lesson_disclosure_gate_checks(
     return checks
 
 
+def _crossing_gate_checks(
+    requests: list[dict[str, Any]],
+) -> list[ReviewedLearningGateCheck]:
+    checks: list[ReviewedLearningGateCheck] = []
+    required = [
+        "request_id",
+        "crossing_proof",
+        "crossing_request",
+        "expected_crossing_request_digest",
+    ]
+    for index, request in enumerate(requests):
+        missing = [field for field in required if not request.get(field)]
+        if missing:
+            checks.append(
+                _check(
+                    "crossing_gate_request_complete",
+                    False,
+                    f"Crossing gate request {index} is missing: " + ", ".join(missing),
+                )
+            )
+            continue
+        checks.append(
+            validate_crossing_gate(
+                request_id=str(request["request_id"]),
+                crossing_proof=request["crossing_proof"],
+                crossing_request=request["crossing_request"],
+                expected_crossing_request_digest=str(request["expected_crossing_request_digest"]),
+                approval_id=(
+                    str(request["approval_id"]) if request.get("approval_id") is not None else None
+                ),
+            )
+        )
+    return checks
+
+
 def build_reviewed_learning_gate_report(
     *,
     carrier_rejection_learning_report: CarrierRejectionLearningReport | None = None,
@@ -853,9 +1050,11 @@ def build_reviewed_learning_gate_report(
     budget_actual_comparison_report_ref: str | None = None,
     calibrated_parameter_gate_requests: list[dict[str, Any]] | None = None,
     lesson_disclosure_gate_requests: list[dict[str, Any]] | None = None,
+    crossing_gate_requests: list[dict[str, Any]] | None = None,
 ) -> ReviewedLearningGateReport:
     calibration_gate_requests = calibrated_parameter_gate_requests or []
     lesson_gate_requests = lesson_disclosure_gate_requests or []
+    crossing_requests = crossing_gate_requests or []
     calibration_refs = [
         str(
             request.get("proof_ref")
@@ -872,6 +1071,14 @@ def build_reviewed_learning_gate_report(
         )
         for index, request in enumerate(lesson_gate_requests)
     ]
+    crossing_refs = [
+        str(
+            request.get("proof_ref")
+            or request.get("request_id")
+            or f"crossing_gate_request:{index}"
+        )
+        for index, request in enumerate(crossing_requests)
+    ]
     source_refs = [
         ref
         for ref in [
@@ -880,6 +1087,7 @@ def build_reviewed_learning_gate_report(
             budget_actual_comparison_report_ref,
             *calibration_refs,
             *lesson_refs,
+            *crossing_refs,
         ]
         if ref
     ]
@@ -960,6 +1168,7 @@ def build_reviewed_learning_gate_report(
     )
     calibration_checks = _calibration_gate_checks(calibration_gate_requests)
     lesson_checks = _lesson_disclosure_gate_checks(lesson_gate_requests)
+    crossing_checks = _crossing_gate_checks(crossing_requests)
     calibration_proof_ids = list(
         dict.fromkeys(
             candidate_id for check in calibration_checks for candidate_id in check.candidate_ids
@@ -998,6 +1207,26 @@ def build_reviewed_learning_gate_report(
             )
         ]
         if lesson_gate_requests
+        else []
+    )
+    crossing_proof_ids = list(
+        dict.fromkeys(
+            candidate_id for check in crossing_checks for candidate_id in check.candidate_ids
+        )
+    )
+    crossing_visibility_checks = (
+        [
+            _check(
+                "crossing_gate_review_inputs_visible",
+                True,
+                (
+                    "Crossing proof is visible as candidate-only review evidence; it is not an "
+                    "ordinary learning candidate and performs no send, outbox write, or DAD contact."
+                ),
+                crossing_proof_ids,
+            )
+        ]
+        if crossing_requests
         else []
     )
     checks = [
@@ -1040,11 +1269,13 @@ def build_reviewed_learning_gate_report(
         *calibration_checks,
         *lesson_visibility_checks,
         *lesson_checks,
+        *crossing_visibility_checks,
+        *crossing_checks,
     ]
     failed = [check for check in checks if check.status == "failed"]
     if failed:
         status = "failed"
-    elif candidates or calibration_gate_requests or lesson_gate_requests:
+    elif candidates or calibration_gate_requests or lesson_gate_requests or crossing_requests:
         status = "candidate_learning_gate_ready"
     else:
         status = "no_learning_candidates"
