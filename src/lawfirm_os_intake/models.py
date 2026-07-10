@@ -18243,6 +18243,59 @@ class CrossRepoPromotionPackage(StrictModel):
     non_authoritative: Literal[True] = True
 
 
+class CrossRepoPromotionPackageAuditCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    proposal_ids: list[str] = Field(default_factory=list)
+    artifact_refs: list[str] = Field(default_factory=list)
+    blocking_refs: list[str] = Field(default_factory=list)
+
+
+class CrossRepoPromotionPackageAuditReport(StrictModel):
+    schema_version: str = "0.1"
+    promotion_package_audit_report_id: str
+    status: Literal["ready_for_owner_adoption", "blocked_promotion_package_audit"]
+    source_promotion_package_id: str
+    source_promotion_package_ref: str
+    target_repo_count: int = Field(ge=0)
+    proposal_count: int = Field(ge=0)
+    target_repos: list[CrossRepoAdoptionTargetRepo]
+    required_high_risk_proposal_ids: list[str]
+    observed_high_risk_proposal_ids: list[str]
+    checks: list[CrossRepoPromotionPackageAuditCheck]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    promotion_authorized: Literal[False] = False
+    sibling_repo_write_performed: Literal[False] = False
+    github_write_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def promotion_package_audit_is_complete(self) -> "CrossRepoPromotionPackageAuditReport":
+        if self.target_repo_count != len(self.target_repos):
+            raise ValueError("promotion package audit target repo count does not match")
+        if not self.checks:
+            raise ValueError("promotion package audit requires checks")
+        if self.status == "ready_for_owner_adoption" and any(
+            check.status == "failed" for check in self.checks
+        ):
+            raise ValueError("ready promotion package audit cannot include failed checks")
+        if self.status == "blocked_promotion_package_audit" and not any(
+            check.status == "failed" for check in self.checks
+        ):
+            raise ValueError("blocked promotion package audit requires a failed check")
+        if not set(self.observed_high_risk_proposal_ids).issubset(
+            set(self.required_high_risk_proposal_ids)
+        ):
+            raise ValueError("promotion package audit observed unknown high-risk proposal")
+        return self
+
+
 SkillsRegistrySpecialistStatus = Literal[
     "ready_for_skills_registry_review",
     "blocked_by_specialist_metadata_gap",
@@ -18453,9 +18506,16 @@ class CrossRepoOwnerAdoptionPacket(StrictModel):
         "legal_knowledge_runtime",
         "mixed",
     ]
-    status: Literal["ready_for_owner_review", "blocked_by_pr_readiness"]
+    status: Literal[
+        "ready_for_owner_review",
+        "blocked_by_pr_readiness",
+        "blocked_by_promotion_package_audit",
+    ]
     source_promotion_package_id: str
     source_promotion_package_ref: str
+    source_promotion_package_audit_report_id: str
+    source_promotion_package_audit_report_ref: str
+    source_promotion_package_audit_status: str
     source_readiness_audit_report_id: str
     source_readiness_audit_report_ref: str
     source_readiness_status: str
@@ -18502,9 +18562,16 @@ class CrossRepoOwnerAdoptionPacket(StrictModel):
 class CrossRepoOwnerAdoptionReport(StrictModel):
     schema_version: str = "0.1"
     owner_adoption_report_id: str
-    status: Literal["owner_adoption_packets_ready", "blocked_by_pr_readiness"]
+    status: Literal[
+        "owner_adoption_packets_ready",
+        "blocked_by_pr_readiness",
+        "blocked_by_promotion_package_audit",
+    ]
     source_promotion_package_id: str
     source_promotion_package_ref: str
+    source_promotion_package_audit_report_id: str
+    source_promotion_package_audit_report_ref: str
+    source_promotion_package_audit_status: str
     source_readiness_audit_report_id: str
     source_readiness_audit_report_ref: str
     source_readiness_status: str
@@ -18551,8 +18618,9 @@ class CrossRepoOwnerAdoptionReport(StrictModel):
             raise ValueError("owner adoption ready/blocked counts do not match")
         if self.status == "owner_adoption_packets_ready" and self.blocked_packet_count:
             raise ValueError("ready owner adoption report cannot include blocked packets")
-        if self.status == "blocked_by_pr_readiness" and not self.blocked_packet_count:
-            raise ValueError("blocked owner adoption report requires blocked packets")
+        if self.status in {"blocked_by_pr_readiness", "blocked_by_promotion_package_audit"}:
+            if not self.blocked_packet_count:
+                raise ValueError("blocked owner adoption report requires blocked packets")
         if not self.required_next_gates:
             raise ValueError("owner adoption report requires next gates")
         return self

@@ -1,9 +1,9 @@
 {
   "schema_version": "0.1",
-  "package_id": "cross-repo-promotion-package.intake-to-budget.v0_1",
+  "package_id": "cross-repo-promotion-package.intake-to-budget.v0_2",
   "status": "candidate_only",
   "origin_repo": "LawFirm-os-intake",
-  "generated_at": "2026-06-24T00:00:00Z",
+  "generated_at": "2026-07-10T00:00:00Z",
   "reviewed_lock_status": "reviewed_seed_lock",
   "target_repos": [
     "LawFirm-os-semantic-substrate",
@@ -150,6 +150,41 @@
       "external_writes_performed": false
     },
     {
+      "proposal_id": "substrate.matter-link-and-entity-candidates.v0_1",
+      "target_repo": "LawFirm-os-semantic-substrate",
+      "authority_plane": "control",
+      "proposal_type": "schema_contract",
+      "summary": "Review candidate source-bound matter-link keys, bundle-local clusters, normalized-key human decisions, and deterministic entity relationship outcomes without assigning identity, matter, or event canon from Intake.",
+      "candidate_artifact_refs": [
+        "schemas/matter-link-key-extraction-report.schema.json",
+        "schemas/matter-linking-cluster-report.schema.json",
+        "schemas/matter-link-run-export.schema.json",
+        "schemas/matter-link-human-decision.schema.json",
+        "schemas/entity-comparison-result.schema.json",
+        "config/matter-link-policy.yaml",
+        "docs/decisions/TRACE-2026-07-06-ml1-er1-matter-link-key-extraction.md",
+        "docs/decisions/TRACE-2026-07-10-mlx1-matter-link-run-export.md"
+      ],
+      "proposed_contract_refs": [
+        "semantic-substrate://candidate/contracts/matter-link-key-evidence.v0_1",
+        "semantic-substrate://candidate/contracts/matter-link-human-decision.v0_1",
+        "semantic-substrate://candidate/contracts/entity-relationship-candidate.v0_1"
+      ],
+      "required_governance_actions": [
+        "review normalized key, entity relationship, correction, and supersession terms against substrate canon",
+        "decide which fields remain intake-local candidate evidence and which can be proposed for canonical contracts",
+        "keep matter identity and party/entity identity assertions outside local candidate artifacts"
+      ],
+      "promotion_blockers": [
+        "no canonical matter or identity taxonomy assigned",
+        "cross-bundle state remains Orchestrator-owned and not implemented in Intake",
+        "human review decisions are candidate contracts only"
+      ],
+      "non_authoritative": true,
+      "direct_promotion_performed": false,
+      "external_writes_performed": false
+    },
+    {
       "proposal_id": "orchestrator.workflow-human-pauses-evidence-packet.v0_1",
       "target_repo": "LawFirm-os-orchestrator",
       "authority_plane": "execution",
@@ -180,6 +215,39 @@
         "local CLI remains reference only",
         "no Orchestrator route IDs assigned",
         "no runtime queue or connector integration approved"
+      ],
+      "non_authoritative": true,
+      "direct_promotion_performed": false,
+      "external_writes_performed": false
+    },
+    {
+      "proposal_id": "orchestrator.cross-bundle-matter-link-state.v0_1",
+      "target_repo": "LawFirm-os-orchestrator",
+      "authority_plane": "execution",
+      "proposal_type": "workflow_interface",
+      "summary": "Define Orchestrator-owned append-only human matter-link decision state, read-only hash-pinned prior context issuance, stale-context blocking, and guarded correction/reopen routing across inbound bundles.",
+      "candidate_artifact_refs": [
+        "schemas/matter-link-run-export.schema.json",
+        "schemas/matter-link-prior-context-pin.schema.json",
+        "schemas/matter-link-human-decision.schema.json",
+        "docs/fable/cross-bundle-matter-linking-state.md",
+        "docs/decisions/TRACE-2026-07-10-mlx1-matter-link-run-export.md",
+        "DATA_FLOW_MAP.md"
+      ],
+      "proposed_contract_refs": [
+        "orchestrator://candidate/interfaces/matter-link-state-ledger.v0_1",
+        "orchestrator://candidate/interfaces/prior-matter-link-context.v0_1",
+        "orchestrator://candidate/interfaces/matter-link-human-reopen.v0_1"
+      ],
+      "required_governance_actions": [
+        "define append-only storage, idempotency, retention, and replay semantics inside Orchestrator",
+        "define read-only context hashing, version pinning, and stale-context block behavior",
+        "ensure only human decisions, never machine cluster proposals, are eligible for persistent state"
+      ],
+      "promotion_blockers": [
+        "no Orchestrator-owned ledger or prior-context issuer is implemented",
+        "Intake must not consume context until the owner contract is accepted",
+        "no cross-bundle identity assertion or automatic confirmation is authorized"
       ],
       "non_authoritative": true,
       "direct_promotion_performed": false,
@@ -275,6 +343,38 @@
       "external_writes_performed": false
     },
     {
+      "proposal_id": "lake.matter-link-correction-escalation.v0_1",
+      "target_repo": "LawFirm-os-exceptions-lake-runtime",
+      "authority_plane": "evidence",
+      "proposal_type": "lake_evidence_mapping",
+      "summary": "Define candidate append-only evidence mappings for matter-link holds, conflict blocks, human split or merge corrections, reopen requests, and stale prior-context blocks.",
+      "candidate_artifact_refs": [
+        "schemas/matter-link-run-export.schema.json",
+        "schemas/matter-linking-cluster-report.schema.json",
+        "schemas/exception-lake-candidate.schema.json",
+        "docs/fable/cross-bundle-matter-linking-state.md",
+        "docs/fable/exception-learning-taxonomy.md"
+      ],
+      "proposed_contract_refs": [
+        "exception-lake://candidate/evidence/matter-link-correction.v0_1",
+        "exception-lake://candidate/evidence/matter-link-reopen-request.v0_1",
+        "exception-lake://candidate/evidence/matter-link-stale-context-block.v0_1"
+      ],
+      "required_governance_actions": [
+        "define canonical event classes and immutable admission requirements",
+        "define idempotency keys from issue family, rule, and normalized subject signatures",
+        "require Orchestrator evidence packets and correction-by-supersession semantics"
+      ],
+      "promotion_blockers": [
+        "no Lake admission schema or canonical event class assigned",
+        "no Orchestrator-owned cross-bundle state contract accepted",
+        "Intake performs no Lake admission or SQLite write"
+      ],
+      "non_authoritative": true,
+      "direct_promotion_performed": false,
+      "external_writes_performed": false
+    },
+    {
       "proposal_id": "lake.carrier-rejection-admission.v0_1",
       "target_repo": "LawFirm-os-exceptions-lake-runtime",
       "authority_plane": "evidence",
@@ -347,6 +447,38 @@
         "skills are predeclared local candidates",
         "no promoted skill trust record exists",
         "frontier adjudicator remains deny-by-default"
+      ],
+      "non_authoritative": true,
+      "direct_promotion_performed": false,
+      "external_writes_performed": false
+    },
+    {
+      "proposal_id": "lkr.rate-benchmark-snapshot.v0_1",
+      "target_repo": "LawFirm-os-legal-knowledge-runtime",
+      "authority_plane": "legal_knowledge_runtime",
+      "proposal_type": "context_bundle_interface",
+      "summary": "Define Legal Knowledge Runtime-owned retrieval and pinned benchmark snapshot contracts for candidate rate cells, source provenance, replay, review grade, and hours-only fallback.",
+      "candidate_artifact_refs": [
+        "schemas/rate-benchmark-cell.schema.json",
+        "schemas/benchmark-snapshot-manifest.schema.json",
+        "schemas/benchmark-replay-report.schema.json",
+        "examples/synthetic/benchmarks/synthetic-rate-benchmark-snapshot.json",
+        "docs/fable/rate-benchmark-governance-kernel.md",
+        "docs/decisions/TRACE-2026-07-06-benchmark-replay-contract.md"
+      ],
+      "proposed_contract_refs": [
+        "legal-knowledge-runtime://candidate/interfaces/rate-benchmark-retrieval.v0_1",
+        "legal-knowledge-runtime://candidate/contracts/rate-benchmark-snapshot.v0_1"
+      ],
+      "required_governance_actions": [
+        "define approved public-source retrieval, license, quotation, hash, and retention controls",
+        "define benchmark snapshot versioning and source-currency semantics",
+        "require Intake to consume pinned reviewed cells or fall back to hours-only output"
+      ],
+      "promotion_blockers": [
+        "no Legal Knowledge Runtime retrieval or snapshot authority is promoted",
+        "synthetic benchmark values are not real carrier rates",
+        "no direct public retrieval or rate ingestion is authorized in Intake"
       ],
       "non_authoritative": true,
       "direct_promotion_performed": false,

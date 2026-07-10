@@ -60,7 +60,11 @@ def _issue_body(*, packet: CrossRepoOwnerAdoptionPacket, packet_ref: str) -> str
     status_note = (
         "This draft is ready for a human to create manually."
         if packet.status == "ready_for_owner_review"
-        else "This draft is blocked until the intake PR readiness evidence is repaired."
+        else (
+            "This draft is blocked until the promotion-package audit is repaired."
+            if packet.status == "blocked_by_promotion_package_audit"
+            else "This draft is blocked until the intake PR readiness evidence is repaired."
+        )
     )
     lines = [
         "## Summary",
@@ -75,6 +79,7 @@ def _issue_body(*, packet: CrossRepoOwnerAdoptionPacket, packet_ref: str) -> str
         "",
         f"- Owner adoption packet: `{packet_ref}`",
         f"- Promotion package: `{packet.source_promotion_package_ref}`",
+        f"- Promotion package audit: `{packet.source_promotion_package_audit_report_ref}`",
         f"- Readiness audit: `{packet.source_readiness_audit_report_ref}`",
         f"- PR review checklist: `{packet.source_pr_review_checklist_ref}`",
         "",

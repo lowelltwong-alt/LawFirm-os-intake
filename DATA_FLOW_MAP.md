@@ -38,6 +38,15 @@ hash-pinned prior context, and coordinate a guarded Exception Lake handoff. Inta
 must block a future stale or unverifiable context rather than proceeding on memory.
 Machine cluster proposals are always re-derived and are never eligible for persistence.
 
+## Owner Adoption Gate
+
+Before a local owner-adoption packet or manual issue draft is considered ready,
+Intake audits its candidate promotion inventory. The audit is local-only and
+checks that artifact references resolve in Intake, candidate URI namespaces match
+the target owner, and the persistent matter-link, carrier-rejection, and rate
+benchmark responsibilities are explicitly routed. A passing audit is evidence for
+review, not owner acceptance or permission to write a sibling repo.
+
 ## Cross-Repo Flow
 
 ```mermaid

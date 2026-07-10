@@ -23,14 +23,18 @@ REQUIRED_PROPOSAL_TYPES = {
 
 REQUIRED_PROPOSAL_IDS = {
     "substrate.intake-source-and-evidence-refs.v0_1",
+    "substrate.matter-link-and-entity-candidates.v0_1",
     "substrate.human-confirmation-and-candidates.v0_1",
     "substrate.budget-and-event-labels.v0_1",
     "orchestrator.workflow-human-pauses-evidence-packet.v0_1",
+    "orchestrator.cross-bundle-matter-link-state.v0_1",
     "orchestrator.carrier-rejection-capture-appeal.v0_1",
     "lake.intake-budget-evidence-mapping.v0_1",
+    "lake.matter-link-correction-escalation.v0_1",
     "lake.carrier-rejection-admission.v0_1",
     "skills.intake-specialist-metadata.v0_1",
     "lkr.context-bundle-source-passage-claim-refs.v0_1",
+    "lkr.rate-benchmark-snapshot.v0_1",
 }
 
 
@@ -75,7 +79,9 @@ def test_cross_repo_promotion_package_keeps_authority_boundaries_visible(repo_ro
 def test_cross_repo_promotion_package_references_exported_schema(repo_root):
     schema_path = repo_root / "schemas/cross-repo-promotion-package.schema.json"
     proposal_schema_path = repo_root / "schemas/cross-repo-promotion-proposal.schema.json"
+    audit_schema_path = repo_root / "schemas/cross-repo-promotion-package-audit-report.schema.json"
 
     assert isinstance(repo_root, Path)
     assert schema_path.exists()
     assert proposal_schema_path.exists()
+    assert audit_schema_path.exists()
