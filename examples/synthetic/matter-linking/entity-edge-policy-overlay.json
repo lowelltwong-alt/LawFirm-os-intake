@@ -1,0 +1,29 @@
+{
+  "schema_version": "0.1",
+  "data_origin": "synthetic",
+  "candidate_only": true,
+  "contains_real_firm_data": false,
+  "alias_edges": [
+    {
+      "edge_id": "alias-harbor-staffing",
+      "left": "Harbor Staffing LLC",
+      "right": "Harbor Staffing Services",
+      "relationship_type": "alias",
+      "status": "reviewed_local_candidate"
+    },
+    {
+      "edge_id": "structure-harbor-parent",
+      "left": "Harbor Staffing LLC",
+      "right": "Harbor Holdings Inc",
+      "relationship_type": "subsidiary_of",
+      "status": "reviewed_local_candidate"
+    },
+    {
+      "edge_id": "proposed-harbor-peo",
+      "left": "Harbor Staffing LLC",
+      "right": "Harbor PEO LLC",
+      "relationship_type": "peo_of",
+      "status": "proposed"
+    }
+  ]
+}

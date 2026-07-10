@@ -77,6 +77,8 @@
       "enum": [
         "E1_exact",
         "E2_normalized_exact",
+        "E3_declared_alias",
+        "E4_declared_structure",
         "E5_suffix_residual",
         "E6_no_match"
       ],
@@ -86,6 +88,7 @@
     "outcome": {
       "enum": [
         "match",
+        "related",
         "hold",
         "no_match"
       ],
@@ -96,6 +99,9 @@
       "enum": [
         "raw_exact",
         "normalized_exact",
+        "declared_alias",
+        "related_distinct",
+        "unreviewed_structure_edge",
         "suffix_conflict",
         "possible_affiliate",
         "no_match"
