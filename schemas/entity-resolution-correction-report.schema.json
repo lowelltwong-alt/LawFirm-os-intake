@@ -1,0 +1,195 @@
+{
+  "$defs": {
+    "EntityResolutionCorrectionCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "correction_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Correction Ids",
+          "type": "array"
+        },
+        "blocking_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Blocking Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "EntityResolutionCorrectionCheck",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "entity_resolution_correction_report_id": {
+      "title": "Entity Resolution Correction Report Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "entity_resolution_corrections_ready_for_review",
+        "blocked_entity_resolution_corrections"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "source_bundle_ref": {
+      "title": "Source Bundle Ref",
+      "type": "string"
+    },
+    "entity_resolution_correction_record_id": {
+      "title": "Entity Resolution Correction Record Id",
+      "type": "string"
+    },
+    "decision_count": {
+      "minimum": 0,
+      "title": "Decision Count",
+      "type": "integer"
+    },
+    "alias_table_candidate_count": {
+      "minimum": 0,
+      "title": "Alias Table Candidate Count",
+      "type": "integer"
+    },
+    "declared_edge_correction_count": {
+      "minimum": 0,
+      "title": "Declared Edge Correction Count",
+      "type": "integer"
+    },
+    "needs_more_information_count": {
+      "minimum": 0,
+      "title": "Needs More Information Count",
+      "type": "integer"
+    },
+    "candidate_lake_event_labels": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Candidate Lake Event Labels",
+      "type": "array"
+    },
+    "candidate_dad_lesson_draft_status": {
+      "const": "not_emitted_requires_thresholded_human_review",
+      "title": "Candidate Dad Lesson Draft Status",
+      "type": "string"
+    },
+    "candidate_exception_count": {
+      "minimum": 0,
+      "title": "Candidate Exception Count",
+      "type": "integer"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/EntityResolutionCorrectionCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "required_next_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Gates",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "local_json_only": {
+      "const": true,
+      "default": true,
+      "title": "Local Json Only",
+      "type": "boolean"
+    },
+    "no_alias_table_mutation": {
+      "const": true,
+      "default": true,
+      "title": "No Alias Table Mutation",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "entity_resolution_correction_report_id",
+    "status",
+    "source_bundle_ref",
+    "entity_resolution_correction_record_id",
+    "decision_count",
+    "alias_table_candidate_count",
+    "declared_edge_correction_count",
+    "needs_more_information_count",
+    "candidate_lake_event_labels",
+    "candidate_dad_lesson_draft_status",
+    "candidate_exception_count",
+    "checks",
+    "required_next_gates",
+    "generated_at"
+  ],
+  "title": "EntityResolutionCorrectionReport",
+  "type": "object"
+}

@@ -131,6 +131,7 @@ from .labor_employment_qa_matrix import run_labor_employment_qa_matrix
 from .matter_linking_preflight import run_matter_linking_preflight
 from .matter_linking_qa_gate import run_matter_linking_qa_gate
 from .matter_linking_review_outcomes import run_matter_linking_review_outcome_record
+from .entity_resolution_corrections import run_entity_resolution_correction_audit
 from .matter_linking import run_matter_linking_clusters
 from .matter_link_run_export import run_matter_link_run_export
 from .matter_linking_cluster_review import (
@@ -1580,6 +1581,18 @@ def _parser() -> argparse.ArgumentParser:
         "--generated-at",
         help="Optional fixed timestamp for deterministic tests and replayed reports.",
     )
+
+    entity_resolution_corrections = sub.add_parser(
+        "audit-entity-resolution-corrections",
+        help=(
+            "Validate source-bound, append-only human entity corrections and emit local "
+            "candidate exception evidence without alias-table, DAD, Lake, SQLite, or identity writes."
+        ),
+    )
+    entity_resolution_corrections.add_argument("--source-bundle", required=True)
+    entity_resolution_corrections.add_argument("--correction-record", required=True)
+    entity_resolution_corrections.add_argument("--out-dir", required=True)
+    entity_resolution_corrections.add_argument("--generated-at")
 
     public_data_cache = sub.add_parser(
         "audit-public-data-cache",
@@ -4744,6 +4757,29 @@ def main(argv: list[str] | None = None) -> int:
             if report.status == "blocked_by_matter_linking_review_outcome":
                 return 2
             return 0
+
+        if args.command == "audit-entity-resolution-corrections":
+            report, run_dir = run_entity_resolution_correction_audit(
+                source_bundle_path=args.source_bundle,
+                correction_record_path=args.correction_record,
+                out_dir=args.out_dir,
+                generated_at=args.generated_at,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "entity_resolution_correction_report_id": report.entity_resolution_correction_report_id,
+                    "decision_count": report.decision_count,
+                    "candidate_lake_event_labels": report.candidate_lake_event_labels,
+                    "candidate_dad_lesson_draft_status": report.candidate_dad_lesson_draft_status,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 2 if report.status == "blocked_entity_resolution_corrections" else 0
 
         if args.command == "audit-public-data-cache":
             report, run_dir = run_public_data_cache_audit(

@@ -1,0 +1,20 @@
+{
+  "schema_version": "0.1",
+  "bundle_id": "syn-entity-resolution-correction-001",
+  "data_origin": "synthetic",
+  "contains_real_client_data": false,
+  "contains_real_matter_data": false,
+  "contains_privileged_data": false,
+  "sources": [
+    {
+      "source_id": "syn-entity-correction-001",
+      "source_type": "email",
+      "filename": "entity_correction_assignment.eml.txt",
+      "text": "Synthetic assignment names Sierra Staffing LLC as the insured. The forwarding note names Sierra Staffing Inc as the operating employer.",
+      "metadata": {"synthetic": true}
+    }
+  ],
+  "fixture_hints": {
+    "gold_intent": "Suffix conflict holds for human review; an accepted alias remains a candidate table diff, not a matcher mutation."
+  }
+}

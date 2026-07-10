@@ -303,6 +303,37 @@ RULE_DEFINITIONS = [
         ],
     },
     {
+        "mapping_id": "entity_resolution_ambiguity.v1",
+        "issue_family": "entity_resolution_ambiguity",
+        "local_event_label": "entity_resolution_ambiguity_requires_review",
+        "canonical_lake_class": "workflow_escalation",
+        "trigger_summary": "A source-bound entity comparison remains unresolved and requires a human decision.",
+        "support_ref_kinds": ["entity_resolution_correction_report", "structured_ref"],
+        "structured_refs": ["docs/fable/entity-resolution-boundary.md#4-holdreview-rules"],
+    },
+    {
+        "mapping_id": "entity_resolution_declared_edge_correction.v1",
+        "issue_family": "entity_resolution_declared_edge_correction",
+        "local_event_label": "entity_resolution_declared_edge_correction",
+        "canonical_lake_class": "authority_conflict_override",
+        "trigger_summary": "A human correction supersedes a reviewed local alias or structural edge and requires owner review before any future use.",
+        "support_ref_kinds": ["entity_resolution_correction_report", "structured_ref"],
+        "structured_refs": [
+            "docs/fable/entity-resolution-boundary.md#6-how-dad-learns-entity-resolution-mistakes-without-creating-canon"
+        ],
+    },
+    {
+        "mapping_id": "human_entity_resolution_correction.v1",
+        "issue_family": "human_entity_resolution_correction",
+        "local_event_label": "human_entity_resolution_correction",
+        "canonical_lake_class": "workflow_escalation",
+        "trigger_summary": "A human entity-resolution correction is preserved as append-only candidate evidence without mutating the matcher.",
+        "support_ref_kinds": ["entity_resolution_correction_report", "structured_ref"],
+        "structured_refs": [
+            "docs/fable/entity-resolution-boundary.md#6-how-dad-learns-entity-resolution-mistakes-without-creating-canon"
+        ],
+    },
+    {
         "mapping_id": "human_correction_of_machine_output.v1",
         "issue_family": "human_correction_of_machine_output",
         "local_event_label": "human_correction_of_machine_output",
@@ -438,6 +469,9 @@ def build_exception_lake_mapping_package(
         "carrier_appeal_outcome",
         "matter_link_ambiguity",
         "matter_link_conflict",
+        "entity_resolution_ambiguity",
+        "entity_resolution_declared_edge_correction",
+        "human_entity_resolution_correction",
         "human_correction_of_machine_output",
         "qa_gate_defect",
         "fixture_weakness",

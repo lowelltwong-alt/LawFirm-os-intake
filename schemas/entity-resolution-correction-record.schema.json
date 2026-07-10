@@ -1,0 +1,407 @@
+{
+  "$defs": {
+    "EntityComparisonResult": {
+      "additionalProperties": false,
+      "properties": {
+        "left": {
+          "$ref": "#/$defs/EntityNormalizationResult"
+        },
+        "right": {
+          "$ref": "#/$defs/EntityNormalizationResult"
+        },
+        "comparison_rung": {
+          "enum": [
+            "E1_exact",
+            "E2_normalized_exact",
+            "E3_declared_alias",
+            "E4_declared_structure",
+            "E5_suffix_residual",
+            "E6_no_match"
+          ],
+          "title": "Comparison Rung",
+          "type": "string"
+        },
+        "outcome": {
+          "enum": [
+            "match",
+            "related",
+            "hold",
+            "no_match"
+          ],
+          "title": "Outcome",
+          "type": "string"
+        },
+        "disposition": {
+          "enum": [
+            "raw_exact",
+            "normalized_exact",
+            "declared_alias",
+            "related_distinct",
+            "unreviewed_structure_edge",
+            "suffix_conflict",
+            "possible_affiliate",
+            "no_match"
+          ],
+          "title": "Disposition",
+          "type": "string"
+        },
+        "decision_rule_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Decision Rule Ids",
+          "type": "array"
+        },
+        "review_required": {
+          "title": "Review Required",
+          "type": "boolean"
+        },
+        "alias_proposal_required": {
+          "title": "Alias Proposal Required",
+          "type": "boolean"
+        },
+        "status": {
+          "const": "candidate",
+          "default": "candidate",
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "left",
+        "right",
+        "comparison_rung",
+        "outcome",
+        "disposition",
+        "decision_rule_ids",
+        "review_required",
+        "alias_proposal_required"
+      ],
+      "title": "EntityComparisonResult",
+      "type": "object"
+    },
+    "EntityNormalizationResult": {
+      "additionalProperties": false,
+      "properties": {
+        "raw_value": {
+          "title": "Raw Value",
+          "type": "string"
+        },
+        "normalized_value": {
+          "title": "Normalized Value",
+          "type": "string"
+        },
+        "base_value": {
+          "title": "Base Value",
+          "type": "string"
+        },
+        "suffix_stripped": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Suffix Stripped"
+        },
+        "rewrites_applied": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Rewrites Applied",
+          "type": "array"
+        },
+        "residual_terms_stripped": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Residual Terms Stripped",
+          "type": "array"
+        },
+        "normalization_rule_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Normalization Rule Ids",
+          "type": "array"
+        },
+        "status": {
+          "const": "candidate",
+          "default": "candidate",
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "raw_value",
+        "normalized_value",
+        "base_value",
+        "normalization_rule_ids"
+      ],
+      "title": "EntityNormalizationResult",
+      "type": "object"
+    },
+    "EntityResolutionCorrectionDecision": {
+      "additionalProperties": false,
+      "properties": {
+        "correction_id": {
+          "title": "Correction Id",
+          "type": "string"
+        },
+        "comparison": {
+          "$ref": "#/$defs/EntityComparisonResult"
+        },
+        "left_evidence_refs": {
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Left Evidence Refs",
+          "type": "array"
+        },
+        "right_evidence_refs": {
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Right Evidence Refs",
+          "type": "array"
+        },
+        "outcome": {
+          "enum": [
+            "confirm_alias_table_candidate",
+            "confirm_related_distinct",
+            "confirm_no_match",
+            "needs_more_information",
+            "correct_declared_edge"
+          ],
+          "title": "Outcome",
+          "type": "string"
+        },
+        "decision_reason": {
+          "title": "Decision Reason",
+          "type": "string"
+        },
+        "reviewer_id": {
+          "title": "Reviewer Id",
+          "type": "string"
+        },
+        "reviewed_at": {
+          "title": "Reviewed At",
+          "type": "string"
+        },
+        "proposed_local_table_change": {
+          "default": "none",
+          "enum": [
+            "none",
+            "alias_edge",
+            "structure_edge"
+          ],
+          "title": "Proposed Local Table Change",
+          "type": "string"
+        },
+        "supersedes_correction_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Supersedes Correction Id"
+        },
+        "red_team_notes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Red Team Notes",
+          "type": "array"
+        }
+      },
+      "required": [
+        "correction_id",
+        "comparison",
+        "left_evidence_refs",
+        "right_evidence_refs",
+        "outcome",
+        "decision_reason",
+        "reviewer_id",
+        "reviewed_at",
+        "red_team_notes"
+      ],
+      "title": "EntityResolutionCorrectionDecision",
+      "type": "object"
+    },
+    "EvidenceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "segment_id": {
+          "title": "Segment Id",
+          "type": "string"
+        },
+        "start_offset": {
+          "title": "Start Offset",
+          "type": "integer"
+        },
+        "end_offset": {
+          "title": "End Offset",
+          "type": "integer"
+        },
+        "sha256": {
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "segment_id",
+        "start_offset",
+        "end_offset",
+        "sha256"
+      ],
+      "title": "EvidenceRef",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "entity_resolution_correction_record_id": {
+      "title": "Entity Resolution Correction Record Id",
+      "type": "string"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "preflight_packet_id": {
+      "title": "Preflight Packet Id",
+      "type": "string"
+    },
+    "source_bundle_id": {
+      "title": "Source Bundle Id",
+      "type": "string"
+    },
+    "reviewer_id": {
+      "title": "Reviewer Id",
+      "type": "string"
+    },
+    "reviewed_at": {
+      "title": "Reviewed At",
+      "type": "string"
+    },
+    "decisions": {
+      "items": {
+        "$ref": "#/$defs/EntityResolutionCorrectionDecision"
+      },
+      "title": "Decisions",
+      "type": "array"
+    },
+    "append_only": {
+      "const": true,
+      "default": true,
+      "title": "Append Only",
+      "type": "boolean"
+    },
+    "mutation_policy": {
+      "const": "append_only_supersession",
+      "default": "append_only_supersession",
+      "title": "Mutation Policy",
+      "type": "string"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "local_json_only": {
+      "const": true,
+      "default": true,
+      "title": "Local Json Only",
+      "type": "boolean"
+    },
+    "no_alias_table_mutation": {
+      "const": true,
+      "default": true,
+      "title": "No Alias Table Mutation",
+      "type": "boolean"
+    },
+    "no_lake_admission_performed": {
+      "const": true,
+      "default": true,
+      "title": "No Lake Admission Performed",
+      "type": "boolean"
+    },
+    "no_dad_mail_emitted": {
+      "const": true,
+      "default": true,
+      "title": "No Dad Mail Emitted",
+      "type": "boolean"
+    },
+    "no_persistent_identity_assertion": {
+      "const": true,
+      "default": true,
+      "title": "No Persistent Identity Assertion",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "entity_resolution_correction_record_id",
+    "run_id",
+    "preflight_packet_id",
+    "source_bundle_id",
+    "reviewer_id",
+    "reviewed_at",
+    "decisions"
+  ],
+  "title": "EntityResolutionCorrectionRecord",
+  "type": "object"
+}

@@ -221,6 +221,134 @@ class EntityComparisonResult(StrictModel):
         return self
 
 
+EntityResolutionCorrectionOutcome = Literal[
+    "confirm_alias_table_candidate",
+    "confirm_related_distinct",
+    "confirm_no_match",
+    "needs_more_information",
+    "correct_declared_edge",
+]
+
+
+class EntityResolutionCorrectionDecision(StrictModel):
+    correction_id: str
+    comparison: EntityComparisonResult
+    left_evidence_refs: list[EvidenceRef]
+    right_evidence_refs: list[EvidenceRef]
+    outcome: EntityResolutionCorrectionOutcome
+    decision_reason: str
+    reviewer_id: str
+    reviewed_at: str
+    proposed_local_table_change: Literal["none", "alias_edge", "structure_edge"] = "none"
+    supersedes_correction_id: str | None = None
+    red_team_notes: list[str]
+
+    @model_validator(mode="after")
+    def entity_resolution_correction_is_source_bound(self) -> "EntityResolutionCorrectionDecision":
+        if not self.correction_id.strip() or not self.decision_reason.strip():
+            raise ValueError("entity correction requires id and reason")
+        if not self.reviewer_id.strip() or not self.reviewed_at.strip():
+            raise ValueError("entity correction requires reviewer and timestamp")
+        if not self.left_evidence_refs or not self.right_evidence_refs:
+            raise ValueError("entity correction requires evidence for both compared names")
+        if not self.red_team_notes or any(not note.strip() for note in self.red_team_notes):
+            raise ValueError("entity correction requires red-team notes")
+        if self.outcome == "confirm_alias_table_candidate":
+            if self.proposed_local_table_change != "alias_edge":
+                raise ValueError("confirmed alias candidates require an alias-edge proposal")
+        elif self.outcome == "correct_declared_edge":
+            if not self.supersedes_correction_id:
+                raise ValueError("declared-edge corrections require append-only supersession")
+            if self.proposed_local_table_change == "none":
+                raise ValueError("declared-edge corrections require a candidate table change")
+        elif self.proposed_local_table_change != "none":
+            raise ValueError("only alias or declared-edge corrections may propose a table change")
+        return self
+
+
+class EntityResolutionCorrectionRecord(StrictModel):
+    schema_version: str = "0.1"
+    entity_resolution_correction_record_id: str
+    run_id: str
+    preflight_packet_id: str
+    source_bundle_id: str
+    reviewer_id: str
+    reviewed_at: str
+    decisions: list[EntityResolutionCorrectionDecision]
+    append_only: Literal[True] = True
+    mutation_policy: Literal["append_only_supersession"] = "append_only_supersession"
+    candidate_only: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    local_json_only: Literal[True] = True
+    no_alias_table_mutation: Literal[True] = True
+    no_lake_admission_performed: Literal[True] = True
+    no_dad_mail_emitted: Literal[True] = True
+    no_persistent_identity_assertion: Literal[True] = True
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def entity_resolution_correction_record_is_complete(self) -> "EntityResolutionCorrectionRecord":
+        if not all(
+            value.strip()
+            for value in (
+                self.entity_resolution_correction_record_id,
+                self.run_id,
+                self.preflight_packet_id,
+                self.source_bundle_id,
+                self.reviewer_id,
+                self.reviewed_at,
+            )
+        ):
+            raise ValueError("entity correction record requires identity and review context")
+        if not self.decisions:
+            raise ValueError("entity correction record requires decisions")
+        if len({decision.correction_id for decision in self.decisions}) != len(self.decisions):
+            raise ValueError("entity correction decision ids must be unique")
+        if any(decision.reviewer_id != self.reviewer_id for decision in self.decisions):
+            raise ValueError("entity correction decisions must bind to the record reviewer")
+        return self
+
+
+class EntityResolutionCorrectionCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    correction_ids: list[str] = Field(default_factory=list)
+    blocking_refs: list[str] = Field(default_factory=list)
+
+
+class EntityResolutionCorrectionReport(StrictModel):
+    schema_version: str = "0.1"
+    entity_resolution_correction_report_id: str
+    status: Literal[
+        "entity_resolution_corrections_ready_for_review", "blocked_entity_resolution_corrections"
+    ]
+    source_bundle_ref: str
+    entity_resolution_correction_record_id: str
+    decision_count: int = Field(ge=0)
+    alias_table_candidate_count: int = Field(ge=0)
+    declared_edge_correction_count: int = Field(ge=0)
+    needs_more_information_count: int = Field(ge=0)
+    candidate_lake_event_labels: list[str]
+    candidate_dad_lesson_draft_status: Literal["not_emitted_requires_thresholded_human_review"]
+    candidate_exception_count: int = Field(ge=0)
+    checks: list[EntityResolutionCorrectionCheck]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    local_json_only: Literal[True] = True
+    no_alias_table_mutation: Literal[True] = True
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+
 class MatterLinkKeyExtractionCheck(StrictModel):
     check_id: str
     status: Literal["passed", "failed"]
@@ -11946,6 +12074,7 @@ def _exception_candidate_severity(
         "matter_link_conflict",
         "source_matter_link_conflicting_identifiers",
         "labor_employment_critical_budget_fact_block",
+        "entity_resolution_declared_edge_correction",
     }:
         return "S1"
     if blocked_state in {
@@ -11962,6 +12091,8 @@ def _exception_candidate_severity(
         "budget_actual_cost_variance_requires_review",
         "source_matter_link_ambiguous",
         "matter_link_ambiguity_requires_review",
+        "entity_resolution_ambiguity_requires_review",
+        "human_entity_resolution_correction",
     }:
         return "S2"
     return "S3"
@@ -18003,6 +18134,9 @@ class ExceptionLakeMappingRule(StrictModel):
         "carrier_appeal_outcome",
         "matter_link_ambiguity",
         "matter_link_conflict",
+        "entity_resolution_ambiguity",
+        "entity_resolution_declared_edge_correction",
+        "human_entity_resolution_correction",
         "human_correction_of_machine_output",
         "qa_gate_defect",
         "fixture_weakness",
@@ -18029,6 +18163,7 @@ class ExceptionLakeMappingRule(StrictModel):
             "carrier_appeal_result",
             "budget_invariant_report",
             "matter_linking_preflight_report",
+            "entity_resolution_correction_report",
             "human_review_outcome_record",
             "qa_gate_report",
             "fixture_gold_report",
