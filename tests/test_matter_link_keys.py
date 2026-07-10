@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from copy import deepcopy
 
+import pytest
+
 from lawfirm_os_intake.cli import main
 from lawfirm_os_intake.matter_link_keys import (
     DEFAULT_MATTER_LINK_POLICY_PATH,
@@ -148,6 +150,49 @@ def test_entity_comparison_holds_suffix_conflicts_and_affiliates(repo_root):
     assert possible_affiliate.outcome == "hold"
     assert possible_affiliate.disposition == "possible_affiliate"
     assert possible_affiliate.alias_proposal_required is True
+
+
+def test_entity_comparison_uses_only_reviewed_local_alias_and_structure_edges(repo_root):
+    policy = _policy(repo_root)
+    overlay = load_json(
+        repo_root / "examples" / "synthetic" / "matter-linking" / "entity-edge-policy-overlay.json"
+    )
+    assert overlay["data_origin"] == "synthetic"
+    policy["entity_normalization"]["alias_edges"] = overlay["alias_edges"]
+
+    alias = compare_entity_names("Harbor Staffing LLC", "Harbor Staffing Services", policy)
+    assert alias.comparison_rung == "E3_declared_alias"
+    assert alias.outcome == "match"
+    assert alias.disposition == "declared_alias"
+
+    structure = compare_entity_names("Harbor Staffing LLC", "Harbor Holdings Inc", policy)
+    assert structure.comparison_rung == "E4_declared_structure"
+    assert structure.outcome == "related"
+    assert structure.disposition == "related_distinct"
+    assert structure.review_required is False
+
+    unreviewed = compare_entity_names("Harbor Staffing LLC", "Harbor PEO LLC", policy)
+    assert unreviewed.comparison_rung == "E4_declared_structure"
+    assert unreviewed.outcome == "hold"
+    assert unreviewed.disposition == "unreviewed_structure_edge"
+    assert unreviewed.review_required is True
+
+
+def test_matter_link_policy_rejects_self_referential_or_cyclic_reviewed_structure_edges(repo_root):
+    policy = _policy(repo_root)
+    holdout = load_json(
+        repo_root / "examples" / "synthetic" / "matter-linking" / "entity-edge-cycle-holdout.json"
+    )
+    assert holdout["holdout"] is True
+    policy["entity_normalization"]["alias_edges"] = holdout["alias_edges"]
+
+    with pytest.raises(ValueError, match="cannot contain a cycle"):
+        build_matter_link_key_extraction_report(
+            bundle=_bundle(repo_root, "linking-two-matters-one-sender.source-bundle.json"),
+            policy=policy,
+            policy_ref=str(DEFAULT_MATTER_LINK_POLICY_PATH),
+            generated_at=FIXED_TIME,
+        )
 
 
 def test_matter_link_key_cli_writes_report(repo_root, tmp_path):

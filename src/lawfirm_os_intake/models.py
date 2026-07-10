@@ -172,13 +172,18 @@ class EntityComparisonResult(StrictModel):
     comparison_rung: Literal[
         "E1_exact",
         "E2_normalized_exact",
+        "E3_declared_alias",
+        "E4_declared_structure",
         "E5_suffix_residual",
         "E6_no_match",
     ]
-    outcome: Literal["match", "hold", "no_match"]
+    outcome: Literal["match", "related", "hold", "no_match"]
     disposition: Literal[
         "raw_exact",
         "normalized_exact",
+        "declared_alias",
+        "related_distinct",
+        "unreviewed_structure_edge",
         "suffix_conflict",
         "possible_affiliate",
         "no_match",
@@ -198,6 +203,19 @@ class EntityComparisonResult(StrictModel):
             raise ValueError("only held entity comparisons may propose alias-table review")
         if self.comparison_rung == "E6_no_match" and self.outcome != "no_match":
             raise ValueError("E6 comparisons must be no_match")
+        if self.comparison_rung == "E3_declared_alias" and (
+            self.outcome != "match" or self.disposition != "declared_alias"
+        ):
+            raise ValueError("E3 comparisons must be declared alias matches")
+        if self.comparison_rung == "E4_declared_structure":
+            if self.disposition not in {"related_distinct", "unreviewed_structure_edge"}:
+                raise ValueError("E4 comparisons require a structural-edge disposition")
+            if self.disposition == "related_distinct" and self.outcome != "related":
+                raise ValueError(
+                    "reviewed E4 comparisons must preserve related-but-distinct entities"
+                )
+            if self.disposition == "unreviewed_structure_edge" and self.outcome != "hold":
+                raise ValueError("unreviewed E4 comparisons must hold for review")
         if self.outcome == "hold" and not self.review_required:
             raise ValueError("held entity comparisons require human review")
         return self

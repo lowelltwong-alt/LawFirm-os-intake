@@ -1,0 +1,23 @@
+{
+  "schema_version": "0.1",
+  "data_origin": "synthetic",
+  "candidate_only": true,
+  "holdout": true,
+  "contains_real_firm_data": false,
+  "alias_edges": [
+    {
+      "edge_id": "cycle-a",
+      "left": "A Holdings LLC",
+      "right": "B Holdings LLC",
+      "relationship_type": "subsidiary_of",
+      "status": "reviewed_local_candidate"
+    },
+    {
+      "edge_id": "cycle-b",
+      "left": "B Holdings LLC",
+      "right": "A Holdings LLC",
+      "relationship_type": "subsidiary_of",
+      "status": "reviewed_local_candidate"
+    }
+  ]
+}

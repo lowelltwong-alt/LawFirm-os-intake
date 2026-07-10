@@ -82,6 +82,7 @@ def load_matter_link_policy(policy_path: str | Path) -> dict[str, Any]:
         raise ValueError("matter-link policy requires extraction_rules")
     if not isinstance(payload.get("entity_normalization"), dict):
         raise ValueError("matter-link policy requires entity_normalization")
+    _validate_entity_edges(payload["entity_normalization"])
     return payload
 
 
@@ -92,6 +93,7 @@ def build_matter_link_key_extraction_report(
     policy_ref: str,
     generated_at: str,
 ) -> MatterLinkKeyExtractionReport:
+    _validate_entity_edges(_entity_normalization_policy(policy))
     key_sets = [
         extract_matter_link_keys_for_source(
             source=source, bundle_id=bundle.bundle_id, policy=policy
@@ -302,6 +304,46 @@ def compare_entity_names(
             disposition="normalized_exact",
             decision_rule_ids=["E2_normalized_exact"],
         )
+    declared_edge = _declared_entity_edge(left=left, right=right, policy=policy)
+    if declared_edge is not None:
+        edge_id = str(declared_edge["edge_id"])
+        relationship_type = str(declared_edge["relationship_type"])
+        status = str(declared_edge["status"])
+        if relationship_type == "alias":
+            if status == "reviewed_local_candidate":
+                return _comparison(
+                    left=left,
+                    right=right,
+                    comparison_rung="E3_declared_alias",
+                    outcome="match",
+                    disposition="declared_alias",
+                    decision_rule_ids=[f"E3_declared_alias:{edge_id}"],
+                )
+            return _comparison(
+                left=left,
+                right=right,
+                comparison_rung="E4_declared_structure",
+                outcome="hold",
+                disposition="unreviewed_structure_edge",
+                decision_rule_ids=[f"H4_unreviewed_alias_edge:{edge_id}"],
+            )
+        if status == "reviewed_local_candidate":
+            return _comparison(
+                left=left,
+                right=right,
+                comparison_rung="E4_declared_structure",
+                outcome="related",
+                disposition="related_distinct",
+                decision_rule_ids=[f"E4_declared_structure:{relationship_type}:{edge_id}"],
+            )
+        return _comparison(
+            left=left,
+            right=right,
+            comparison_rung="E4_declared_structure",
+            outcome="hold",
+            disposition="unreviewed_structure_edge",
+            decision_rule_ids=[f"H4_unreviewed_structure_edge:{edge_id}"],
+        )
     if left.base_value == right.base_value:
         if (
             left.suffix_stripped
@@ -483,6 +525,94 @@ def _entity_normalization_policy(policy: dict[str, Any]) -> dict[str, Any]:
     if not isinstance(config, dict):
         raise ValueError("matter-link policy entity_normalization must be an object")
     return config
+
+
+def _validate_entity_edges(config: dict[str, Any]) -> None:
+    edges = config.get("alias_edges", [])
+    if not isinstance(edges, list):
+        raise ValueError("matter-link policy alias_edges must be a list")
+    seen_ids: set[str] = set()
+    reviewed_directed: dict[str, dict[str, set[str]]] = {}
+    allowed_relationships = {
+        "alias",
+        "subsidiary_of",
+        "staffing_agency_for",
+        "peo_of",
+        "franchise_of",
+        "insured_dba",
+    }
+    for edge in edges:
+        if not isinstance(edge, dict):
+            raise ValueError("matter-link policy alias edge must be an object")
+        edge_id = edge.get("edge_id")
+        left = edge.get("left")
+        right = edge.get("right")
+        relationship = edge.get("relationship_type")
+        status = edge.get("status")
+        if not all(isinstance(value, str) and value.strip() for value in (edge_id, left, right)):
+            raise ValueError("matter-link policy alias edge requires edge_id, left, and right")
+        if edge_id in seen_ids:
+            raise ValueError("matter-link policy alias edge IDs must be unique")
+        seen_ids.add(edge_id)
+        if relationship not in allowed_relationships:
+            raise ValueError("matter-link policy alias edge has unsupported relationship_type")
+        if status not in {"reviewed_local_candidate", "proposed"}:
+            raise ValueError(
+                "matter-link policy alias edge must be reviewed_local_candidate or proposed"
+            )
+        left_normalized = normalize_entity_name(left, {"entity_normalization": config}).base_value
+        right_normalized = normalize_entity_name(right, {"entity_normalization": config}).base_value
+        if left_normalized == right_normalized:
+            raise ValueError("matter-link policy alias edge cannot self-reference")
+        if relationship != "alias" and status == "reviewed_local_candidate":
+            reviewed_directed.setdefault(relationship, {}).setdefault(left_normalized, set()).add(
+                right_normalized
+            )
+    for relationship, graph in reviewed_directed.items():
+        if _has_directed_cycle(graph):
+            raise ValueError(
+                f"matter-link policy reviewed {relationship} edges cannot contain a cycle"
+            )
+
+
+def _has_directed_cycle(graph: dict[str, set[str]]) -> bool:
+    visiting: set[str] = set()
+    visited: set[str] = set()
+
+    def visit(node: str) -> bool:
+        if node in visiting:
+            return True
+        if node in visited:
+            return False
+        visiting.add(node)
+        for neighbor in graph.get(node, set()):
+            if visit(neighbor):
+                return True
+        visiting.remove(node)
+        visited.add(node)
+        return False
+
+    return any(visit(node) for node in graph)
+
+
+def _declared_entity_edge(
+    *,
+    left: EntityNormalizationResult,
+    right: EntityNormalizationResult,
+    policy: dict[str, Any],
+) -> dict[str, Any] | None:
+    config = _entity_normalization_policy(policy)
+    candidates: list[dict[str, Any]] = []
+    for edge in config.get("alias_edges", []):
+        if not isinstance(edge, dict):
+            continue
+        edge_left = normalize_entity_name(str(edge["left"]), policy).base_value
+        edge_right = normalize_entity_name(str(edge["right"]), policy).base_value
+        if {edge_left, edge_right} == {left.base_value, right.base_value}:
+            candidates.append(edge)
+    if not candidates:
+        return None
+    return sorted(candidates, key=lambda edge: str(edge["edge_id"]))[0]
 
 
 def _captured_value_span(match: re.Match[str], text: str) -> tuple[int, int, str] | None:
