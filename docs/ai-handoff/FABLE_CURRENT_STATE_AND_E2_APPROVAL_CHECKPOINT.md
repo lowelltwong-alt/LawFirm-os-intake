@@ -62,11 +62,11 @@ python scripts\run_validation_suite.py
 # final repository validation passed
 ```
 
-Read-only DAD prerequisite check on 2026-07-10 from
-`C:\Users\lowel\OneDrive\Desktop\Git Projects\04_Digital_Assett_Directory`:
+Read-only DAD prerequisite check on 2026-07-10 from the configured
+`<dad-repo-root>`:
 
 ```powershell
-$env:PYTHONPATH='src'
+$env:PYTHONPATH='<dad-repo-root>\src'
 python -B -m pytest -p no:cacheprovider `
   tests/test_mail_center.py::test_cli_mail_compose_payload_file_round_trips_structured_json_with_bom_and_equals `
   tests/test_mail_center.py::test_cli_mail_compose_rejects_raw_json_in_key_value_payload_mode `

@@ -7,7 +7,7 @@ Scope: LawFirm OS intake, canonical clone
 Canonical working tree:
 
 ```text
-C:\Users\lowel\OneDrive\Desktop\Git Projects\00_LawFirm_OS\repos\LawFirm-os-intake-seed-clean-20260623
+<lawfirm-os-intake-repo-root>
 ```
 
 This file is agent-agnostic. "Cursor" and "GLM" name likely implementation
