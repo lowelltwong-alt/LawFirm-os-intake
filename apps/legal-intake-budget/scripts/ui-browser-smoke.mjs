@@ -1,6 +1,6 @@
 import { createServer } from "node:http";
 import { readFile, stat } from "node:fs/promises";
-import { extname, join, normalize, resolve } from "node:path";
+import { extname, isAbsolute, join, normalize, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
 
@@ -30,7 +30,10 @@ function report(status, checks) {
 function withinDist(pathname) {
   const requested = pathname === "/" ? "index.html" : pathname.replace(/^\/+/, "");
   const target = resolve(distDirectory, normalize(requested));
-  if (target === distDirectory || target.startsWith(`${distDirectory}\\`)) return target;
+  const relativeTarget = relative(distDirectory, target);
+  if (relativeTarget && !relativeTarget.startsWith("..") && !isAbsolute(relativeTarget)) {
+    return target;
+  }
   return null;
 }
 
