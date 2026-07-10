@@ -38,7 +38,8 @@
         "status": {
           "enum": [
             "ready_for_owner_review",
-            "blocked_by_pr_readiness"
+            "blocked_by_pr_readiness",
+            "blocked_by_promotion_package_audit"
           ],
           "title": "Status",
           "type": "string"
@@ -49,6 +50,18 @@
         },
         "source_promotion_package_ref": {
           "title": "Source Promotion Package Ref",
+          "type": "string"
+        },
+        "source_promotion_package_audit_report_id": {
+          "title": "Source Promotion Package Audit Report Id",
+          "type": "string"
+        },
+        "source_promotion_package_audit_report_ref": {
+          "title": "Source Promotion Package Audit Report Ref",
+          "type": "string"
+        },
+        "source_promotion_package_audit_status": {
+          "title": "Source Promotion Package Audit Status",
           "type": "string"
         },
         "source_readiness_audit_report_id": {
@@ -201,6 +214,9 @@
         "status",
         "source_promotion_package_id",
         "source_promotion_package_ref",
+        "source_promotion_package_audit_report_id",
+        "source_promotion_package_audit_report_ref",
+        "source_promotion_package_audit_status",
         "source_readiness_audit_report_id",
         "source_readiness_audit_report_ref",
         "source_readiness_status",
@@ -334,7 +350,8 @@
     "status": {
       "enum": [
         "owner_adoption_packets_ready",
-        "blocked_by_pr_readiness"
+        "blocked_by_pr_readiness",
+        "blocked_by_promotion_package_audit"
       ],
       "title": "Status",
       "type": "string"
@@ -345,6 +362,18 @@
     },
     "source_promotion_package_ref": {
       "title": "Source Promotion Package Ref",
+      "type": "string"
+    },
+    "source_promotion_package_audit_report_id": {
+      "title": "Source Promotion Package Audit Report Id",
+      "type": "string"
+    },
+    "source_promotion_package_audit_report_ref": {
+      "title": "Source Promotion Package Audit Report Ref",
+      "type": "string"
+    },
+    "source_promotion_package_audit_status": {
+      "title": "Source Promotion Package Audit Status",
       "type": "string"
     },
     "source_readiness_audit_report_id": {
@@ -517,6 +546,9 @@
     "status",
     "source_promotion_package_id",
     "source_promotion_package_ref",
+    "source_promotion_package_audit_report_id",
+    "source_promotion_package_audit_report_ref",
+    "source_promotion_package_audit_status",
     "source_readiness_audit_report_id",
     "source_readiness_audit_report_ref",
     "source_readiness_status",

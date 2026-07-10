@@ -7,9 +7,15 @@ from .models import (
     CrossRepoOwnerAdoptionPacket,
     CrossRepoOwnerAdoptionReport,
     CrossRepoPromotionPackage,
+    CrossRepoPromotionPackageAuditReport,
     CrossRepoPromotionProposal,
     IntakeVerticalReadinessAuditReport,
     PRReviewChecklistReport,
+)
+from .cross_repo_promotion_package_audit import (
+    PROMOTION_PACKAGE_AUDIT_REPORT_FILENAME,
+    build_cross_repo_promotion_package_audit_report,
+    render_cross_repo_promotion_package_audit_report,
 )
 from .util import append_jsonl, digest_text, load_json, now_iso, write_json
 
@@ -41,9 +47,11 @@ def _owner_slug(owner: str) -> str:
 def _ready_for_owner_packets(
     readiness_report: IntakeVerticalReadinessAuditReport,
     pr_review_checklist: PRReviewChecklistReport,
+    promotion_package_audit: CrossRepoPromotionPackageAuditReport,
 ) -> bool:
     return (
-        readiness_report.status == READY_READINESS_STATUS
+        promotion_package_audit.status == "ready_for_owner_adoption"
+        and readiness_report.status == READY_READINESS_STATUS
         and pr_review_checklist.status == READY_CHECKLIST_STATUS
         and pr_review_checklist.blocking_item_count == 0
         and pr_review_checklist.github_write_performed is False
@@ -161,12 +169,27 @@ def build_cross_repo_owner_adoption_packets(
     *,
     promotion_package: CrossRepoPromotionPackage,
     promotion_package_ref: str,
+    promotion_package_audit: CrossRepoPromotionPackageAuditReport,
+    promotion_package_audit_ref: str,
     readiness_report: IntakeVerticalReadinessAuditReport,
     readiness_report_ref: str,
     pr_review_checklist: PRReviewChecklistReport,
     pr_review_checklist_ref: str,
 ) -> list[CrossRepoOwnerAdoptionPacket]:
-    ready = _ready_for_owner_packets(readiness_report, pr_review_checklist)
+    ready = _ready_for_owner_packets(
+        readiness_report,
+        pr_review_checklist,
+        promotion_package_audit,
+    )
+    packet_status = (
+        "ready_for_owner_review"
+        if ready
+        else (
+            "blocked_by_promotion_package_audit"
+            if promotion_package_audit.status != "ready_for_owner_adoption"
+            else "blocked_by_pr_readiness"
+        )
+    )
     packets: list[CrossRepoOwnerAdoptionPacket] = []
     for owner, proposals in _group_proposals(promotion_package).items():
         packets.append(
@@ -177,9 +200,14 @@ def build_cross_repo_owner_adoption_packets(
                 ),
                 target_repo=owner,  # type: ignore[arg-type]
                 authority_plane=_authority_plane(proposals),  # type: ignore[arg-type]
-                status=("ready_for_owner_review" if ready else "blocked_by_pr_readiness"),
+                status=packet_status,
                 source_promotion_package_id=promotion_package.package_id,
                 source_promotion_package_ref=promotion_package_ref,
+                source_promotion_package_audit_report_id=(
+                    promotion_package_audit.promotion_package_audit_report_id
+                ),
+                source_promotion_package_audit_report_ref=promotion_package_audit_ref,
+                source_promotion_package_audit_status=promotion_package_audit.status,
                 source_readiness_audit_report_id=readiness_report.audit_report_id,
                 source_readiness_audit_report_ref=readiness_report_ref,
                 source_readiness_status=readiness_report.status,
@@ -201,6 +229,8 @@ def build_cross_repo_owner_adoption_report(
     *,
     promotion_package: CrossRepoPromotionPackage,
     promotion_package_ref: str,
+    promotion_package_audit: CrossRepoPromotionPackageAuditReport,
+    promotion_package_audit_ref: str,
     readiness_report: IntakeVerticalReadinessAuditReport,
     readiness_report_ref: str,
     pr_review_checklist: PRReviewChecklistReport,
@@ -210,16 +240,28 @@ def build_cross_repo_owner_adoption_report(
 ) -> CrossRepoOwnerAdoptionReport:
     ready_count = sum(1 for packet in packets if packet.status == "ready_for_owner_review")
     blocked_count = len(packets) - ready_count
+    status = (
+        "owner_adoption_packets_ready"
+        if blocked_count == 0
+        else (
+            "blocked_by_promotion_package_audit"
+            if promotion_package_audit.status != "ready_for_owner_adoption"
+            else "blocked_by_pr_readiness"
+        )
+    )
     return CrossRepoOwnerAdoptionReport(
         owner_adoption_report_id=_stable_id(
             "owneradoptionreport",
             f"{promotion_package.package_id}|{readiness_report.audit_report_id}|{pr_review_checklist.checklist_report_id}",
         ),
-        status=(
-            "owner_adoption_packets_ready" if blocked_count == 0 else "blocked_by_pr_readiness"
-        ),
+        status=status,
         source_promotion_package_id=promotion_package.package_id,
         source_promotion_package_ref=promotion_package_ref,
+        source_promotion_package_audit_report_id=(
+            promotion_package_audit.promotion_package_audit_report_id
+        ),
+        source_promotion_package_audit_report_ref=promotion_package_audit_ref,
+        source_promotion_package_audit_status=promotion_package_audit.status,
         source_readiness_audit_report_id=readiness_report.audit_report_id,
         source_readiness_audit_report_ref=readiness_report_ref,
         source_readiness_status=readiness_report.status,
@@ -253,6 +295,7 @@ def render_cross_repo_owner_adoption_packet(packet: CrossRepoOwnerAdoptionPacket
         "## Source Evidence",
         "",
         f"- Promotion package: `{packet.source_promotion_package_ref}`",
+        f"- Promotion package audit: `{packet.source_promotion_package_audit_report_ref}`",
         f"- Readiness audit: `{packet.source_readiness_audit_report_ref}`",
         f"- PR review checklist: `{packet.source_pr_review_checklist_ref}`",
         "",
@@ -320,6 +363,7 @@ def render_cross_repo_owner_adoption_report(report: CrossRepoOwnerAdoptionReport
         f"**Report ID:** {report.owner_adoption_report_id}",
         f"**Status:** {report.status}",
         f"**Source promotion package:** `{report.source_promotion_package_ref}`",
+        f"**Promotion package audit:** `{report.source_promotion_package_audit_report_ref}`",
         f"**Source readiness audit:** `{report.source_readiness_audit_report_ref}`",
         f"**Source PR checklist:** `{report.source_pr_review_checklist_ref}`",
         f"**Ready packets:** {report.ready_packet_count}",
@@ -384,16 +428,29 @@ def run_cross_repo_owner_adoption(
     promotion_package = CrossRepoPromotionPackage.model_validate(load_json(promotion_path))
     readiness_report = IntakeVerticalReadinessAuditReport.model_validate(load_json(readiness_path))
     pr_review_checklist = PRReviewChecklistReport.model_validate(load_json(checklist_path))
+    run_dir = Path(out_dir)
+    promotion_package_audit = build_cross_repo_promotion_package_audit_report(
+        promotion_package=promotion_package,
+        promotion_package_ref=str(promotion_path),
+    )
+    promotion_package_audit_path = run_dir / PROMOTION_PACKAGE_AUDIT_REPORT_FILENAME
     packets = build_cross_repo_owner_adoption_packets(
         promotion_package=promotion_package,
         promotion_package_ref=str(promotion_path),
+        promotion_package_audit=promotion_package_audit,
+        promotion_package_audit_ref=str(promotion_package_audit_path),
         readiness_report=readiness_report,
         readiness_report_ref=str(readiness_path),
         pr_review_checklist=pr_review_checklist,
         pr_review_checklist_ref=str(checklist_path),
     )
 
-    run_dir = Path(out_dir)
+    run_dir.mkdir(parents=True, exist_ok=True)
+    write_json(promotion_package_audit_path, promotion_package_audit.model_dump(mode="json"))
+    (run_dir / "cross_repo_promotion_package_audit_report.md").write_text(
+        render_cross_repo_promotion_package_audit_report(promotion_package_audit),
+        encoding="utf-8",
+    )
     packet_dir = run_dir / CROSS_REPO_OWNER_ADOPTION_DIRNAME
     packet_dir.mkdir(parents=True, exist_ok=True)
     packets_jsonl_path = run_dir / CROSS_REPO_OWNER_ADOPTION_PACKETS_FILENAME
@@ -412,6 +469,8 @@ def run_cross_repo_owner_adoption(
     report = build_cross_repo_owner_adoption_report(
         promotion_package=promotion_package,
         promotion_package_ref=str(promotion_path),
+        promotion_package_audit=promotion_package_audit,
+        promotion_package_audit_ref=str(promotion_package_audit_path),
         readiness_report=readiness_report,
         readiness_report_ref=str(readiness_path),
         pr_review_checklist=pr_review_checklist,

@@ -1,0 +1,199 @@
+{
+  "$defs": {
+    "CrossRepoPromotionPackageAuditCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "proposal_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Proposal Ids",
+          "type": "array"
+        },
+        "artifact_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Artifact Refs",
+          "type": "array"
+        },
+        "blocking_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Blocking Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "CrossRepoPromotionPackageAuditCheck",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "promotion_package_audit_report_id": {
+      "title": "Promotion Package Audit Report Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "ready_for_owner_adoption",
+        "blocked_promotion_package_audit"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "source_promotion_package_id": {
+      "title": "Source Promotion Package Id",
+      "type": "string"
+    },
+    "source_promotion_package_ref": {
+      "title": "Source Promotion Package Ref",
+      "type": "string"
+    },
+    "target_repo_count": {
+      "minimum": 0,
+      "title": "Target Repo Count",
+      "type": "integer"
+    },
+    "proposal_count": {
+      "minimum": 0,
+      "title": "Proposal Count",
+      "type": "integer"
+    },
+    "target_repos": {
+      "items": {
+        "enum": [
+          "LawFirm-os-semantic-substrate",
+          "LawFirm-os-orchestrator",
+          "LawFirm-os-exceptions-lake-runtime",
+          "LawFirm-os-skills-registry",
+          "LawFirm-os-legal-knowledge-runtime"
+        ],
+        "type": "string"
+      },
+      "title": "Target Repos",
+      "type": "array"
+    },
+    "required_high_risk_proposal_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required High Risk Proposal Ids",
+      "type": "array"
+    },
+    "observed_high_risk_proposal_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Observed High Risk Proposal Ids",
+      "type": "array"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/CrossRepoPromotionPackageAuditCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "promotion_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Promotion Authorized",
+      "type": "boolean"
+    },
+    "sibling_repo_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sibling Repo Write Performed",
+      "type": "boolean"
+    },
+    "github_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Github Write Performed",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "promotion_package_audit_report_id",
+    "status",
+    "source_promotion_package_id",
+    "source_promotion_package_ref",
+    "target_repo_count",
+    "proposal_count",
+    "target_repos",
+    "required_high_risk_proposal_ids",
+    "observed_high_risk_proposal_ids",
+    "checks",
+    "generated_at"
+  ],
+  "title": "CrossRepoPromotionPackageAuditReport",
+  "type": "object"
+}

@@ -59,6 +59,7 @@ from .courtlistener_fixture_audit import run_courtlistener_fixture_audit
 from .cross_repo_owner_adoption import run_cross_repo_owner_adoption
 from .cross_repo_owner_issue_draft_quality import run_owner_issue_draft_quality_audit
 from .cross_repo_owner_issue_drafts import run_cross_repo_owner_issue_drafts
+from .cross_repo_promotion_package_audit import run_cross_repo_promotion_package_audit
 from .dad_review_issue_outbox import record_dad_review_issue_to_outbox
 from .intake_local_closeout import run_intake_local_closeout
 from .intake_vertical_readiness_audit import run_intake_vertical_readiness_audit
@@ -2170,6 +2171,21 @@ def _parser() -> argparse.ArgumentParser:
         help="Path to pr_review_checklist.json.",
     )
     owner_adoption.add_argument("--out-dir", required=True)
+    promotion_package_audit = sub.add_parser(
+        "audit-cross-repo-promotion-package",
+        help="Audit local candidate promotion inventory before owner-adoption packet generation.",
+    )
+    promotion_package_audit.add_argument(
+        "--promotion-package",
+        required=True,
+        help="Path to promotion/cross_repo_promotion_package.json.",
+    )
+    promotion_package_audit.add_argument(
+        "--repo-root",
+        default=".",
+        help="Repository root used to resolve candidate artifact refs.",
+    )
+    promotion_package_audit.add_argument("--out-dir", required=True)
     owner_issue_drafts = sub.add_parser(
         "build-cross-repo-owner-issue-drafts",
         help="Build local GitHub issue draft text from owner adoption packets without creating issues.",
@@ -6050,6 +6066,33 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 0 if report.status == "owner_adoption_packets_ready" else 2
+
+        if args.command == "audit-cross-repo-promotion-package":
+            report, run_dir = run_cross_repo_promotion_package_audit(
+                promotion_package_path=args.promotion_package,
+                repo_root=args.repo_root,
+                out_dir=args.out_dir,
+            )
+            failed_checks = [check.check_id for check in report.checks if check.status == "failed"]
+            _print(
+                {
+                    "status": report.status,
+                    "promotion_package_audit_report_id": report.promotion_package_audit_report_id,
+                    "source_promotion_package_id": report.source_promotion_package_id,
+                    "target_repo_count": report.target_repo_count,
+                    "proposal_count": report.proposal_count,
+                    "required_high_risk_proposal_ids": report.required_high_risk_proposal_ids,
+                    "observed_high_risk_proposal_ids": report.observed_high_risk_proposal_ids,
+                    "failed_checks": failed_checks,
+                    "github_write_performed": report.github_write_performed,
+                    "sibling_repo_write_performed": report.sibling_repo_write_performed,
+                    "promotion_authorized": report.promotion_authorized,
+                    "external_writes_performed": report.external_writes_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0 if report.status == "ready_for_owner_adoption" else 2
 
         if args.command == "build-cross-repo-owner-issue-drafts":
             report, run_dir = run_cross_repo_owner_issue_drafts(

@@ -8,6 +8,12 @@ The package is candidate-only. It records `no_canonical_mutation=true`,
 `no_sibling_repo_writes=true`, and `no_external_writes_performed=true`. Sibling
 repo owners must review and promote any accepted contracts inside their own repos.
 
+Before generating owner packets, run `audit-cross-repo-promotion-package`. The
+audit verifies that every candidate artifact resolves inside Intake, every
+candidate contract URI uses its target owner's namespace, proposal IDs are
+unique, and the persistent matter-link, carrier-rejection, and rate-benchmark
+contracts are explicitly routed. A failed audit blocks owner-packet generation.
+
 After a readiness audit and PR review checklist are generated, run
 `build-cross-repo-owner-adoption` to produce owner-specific adoption packets
 from this static package. Those packets are handoff evidence only: they group
@@ -55,6 +61,10 @@ repos.
 - Budget precondition report contract tying budget generation to a matching, confirmed, evidence-bound human confirmation and recording failed attempts before proposal output.
 - Safety gate report contract for deterministic prohibited-transition and evidence-completeness checks.
 - Intake event labels for later review: `intake_preflight_proposed`, `intake_classification_confirmed`, `intake_classification_corrected`, `party_role_corrected`, `practice_context_missing_or_misleading`, `conflict_seed_prepared`, `budget_proposal_created`, `budget_proposal_corrected`, `budget_human_change_recorded`, `budget_actual_cost_variance_requires_review`, and `profile_change_candidate`.
+- Matter-link and entity candidates: source-bound link keys, bundle-local cluster
+  proposals, normalized-key human decision candidates, and deterministic entity
+  relationship outcomes. They remain non-authoritative; only Semantic Substrate
+  may decide canonical vocabulary or lifecycle terms.
 
 ## Orchestrator Interface Draft
 
@@ -76,6 +86,10 @@ repos.
   remains prohibited from production connector capture, carrier portal writes,
   email sends, appeal submission, Lake admission, SQLite writes, profile
   mutation, template mutation, and route/event assignment.
+- Cross-bundle matter-link boundary: Orchestrator, not Intake, would own an
+  append-only ledger of human decisions and issue a hash-pinned, read-only prior
+  context. Machine cluster proposals must be re-derived per bundle and cannot
+  become persistent identity assertions.
 
 ## Exception Lake Mapping Draft
 
@@ -97,6 +111,9 @@ repos.
   in `LawFirm-os-exceptions-lake-runtime`. Intake performs no SQLite write, Lake
   admission, canonical event assignment, record-hash authority, or raw payload
   storage.
+- Matter-link correction candidates: Lake owner review is required for future
+  hold, conflict, correction, reopen, and stale-context evidence families.
+  Intake neither assigns a canonical event class nor admits a record.
 
 ## Skills Registry Draft
 
@@ -108,6 +125,10 @@ repos.
 - Intake may request SourceRef, PassageRef, ClaimRef, retrieval trace, and Legal Context Bundle objects.
 - Runtime should return refs, offsets, hashes, authority level, source currency, and bundle hash.
 - Runtime must not return raw legal payload fanout for Exception Lake storage.
+- Rate benchmark snapshots: Legal Knowledge Runtime would own public-source
+  retrieval, licensing, source hashes, quote spans, snapshot versioning, and
+  review grade. Intake consumes only pinned reviewed cells or falls back to an
+  hours-only proposal.
 
 ## Promotion Rule
 

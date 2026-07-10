@@ -1,7 +1,12 @@
 from lawfirm_os_intake.cli import main
 from lawfirm_os_intake.cross_repo_owner_adoption import run_cross_repo_owner_adoption
+from lawfirm_os_intake.cross_repo_promotion_package_audit import (
+    build_cross_repo_promotion_package_audit_report,
+    run_cross_repo_promotion_package_audit,
+)
 from lawfirm_os_intake.models import (
     CrossRepoOwnerAdoptionReport,
+    CrossRepoPromotionPackage,
     IntakeVerticalReadinessArtifactCheck,
     IntakeVerticalReadinessAuditReport,
     IntakeVerticalReadinessSliceStatus,
@@ -110,13 +115,15 @@ def test_cross_repo_owner_adoption_groups_all_target_repos_without_writes(
     assert persisted.status == "owner_adoption_packets_ready"
     assert persisted.packet_count == persisted.ready_packet_count == 5
     assert persisted.blocked_packet_count == 0
-    assert persisted.proposal_count == 9
+    assert persisted.proposal_count == 13
     assert set(persisted.target_repos) == REQUIRED_TARGET_REPOS
     assert set(packet.target_repo for packet in persisted.packets) == REQUIRED_TARGET_REPOS
     assert all(packet.status == "ready_for_owner_review" for packet in persisted.packets)
     assert all(packet.required_owner_actions for packet in persisted.packets)
     assert all(packet.acceptance_checks for packet in persisted.packets)
     assert all(packet.red_team_notes for packet in persisted.packets)
+    assert persisted.source_promotion_package_audit_status == "ready_for_owner_adoption"
+    assert (run_dir / "cross_repo_promotion_package_audit_report.json").is_file()
     assert all((repo_root / ref).exists() for ref in persisted.packet_output_refs)
     assert (run_dir / "cross_repo_owner_adoption_packets.jsonl").is_file()
     assert persisted.github_issue_created is False
@@ -178,6 +185,76 @@ def test_cross_repo_owner_adoption_cli(tmp_path, repo_root, capsys):
     assert exit_code == 0
     assert '"status": "owner_adoption_packets_ready"' in captured.out
     assert '"packet_count": 5' in captured.out
-    assert '"proposal_count": 9' in captured.out
+    assert '"proposal_count": 13' in captured.out
     assert '"github_write_performed": false' in captured.out
     assert (tmp_path / "owner-adoption-cli" / "cross_repo_owner_adoption_report.json").is_file()
+
+
+def test_promotion_package_audit_proves_current_artifacts_and_high_risk_routing(
+    tmp_path,
+    repo_root,
+):
+    report, run_dir = run_cross_repo_promotion_package_audit(
+        promotion_package_path=repo_root / "promotion/cross_repo_promotion_package.json",
+        repo_root=repo_root,
+        out_dir=tmp_path / "promotion-package-audit",
+    )
+
+    assert report.status == "ready_for_owner_adoption"
+    assert report.observed_high_risk_proposal_ids == report.required_high_risk_proposal_ids
+    assert all(check.status == "passed" for check in report.checks)
+    assert report.github_write_performed is False
+    assert report.sibling_repo_write_performed is False
+    assert (run_dir / "cross_repo_promotion_package_audit_report.json").is_file()
+
+
+def test_promotion_package_audit_cli(tmp_path, repo_root, capsys):
+    exit_code = main(
+        [
+            "audit-cross-repo-promotion-package",
+            "--promotion-package",
+            str(repo_root / "promotion/cross_repo_promotion_package.json"),
+            "--repo-root",
+            str(repo_root),
+            "--out-dir",
+            str(tmp_path / "promotion-package-audit-cli"),
+        ]
+    )
+    captured = capsys.readouterr()
+
+    assert exit_code == 0
+    assert '"status": "ready_for_owner_adoption"' in captured.out
+    assert '"proposal_count": 13' in captured.out
+    assert '"github_write_performed": false' in captured.out
+
+
+def test_owner_adoption_fails_closed_when_promotion_artifact_is_missing(tmp_path, repo_root):
+    package_data = load_json(repo_root / "promotion/cross_repo_promotion_package.json")
+    package_data["proposals"][0]["candidate_artifact_refs"].append(
+        "schemas/missing-owner-adoption-proof.schema.json"
+    )
+    package = CrossRepoPromotionPackage.model_validate(package_data)
+    audit = build_cross_repo_promotion_package_audit_report(
+        promotion_package=package,
+        promotion_package_ref="promotion/cross_repo_promotion_package.json",
+        repo_root=repo_root,
+        generated_at="2026-07-10T00:00:00Z",
+    )
+
+    assert audit.status == "blocked_promotion_package_audit"
+    assert any(
+        check.check_id == "promotion_artifact_refs_resolve" and check.status == "failed"
+        for check in audit.checks
+    )
+    package_path = write_json(tmp_path / "broken_promotion_package.json", package_data)
+    checklist_path, readiness_path = _checklist_path(tmp_path, ready=True)
+    report, _ = run_cross_repo_owner_adoption(
+        promotion_package_path=package_path,
+        readiness_audit_report_path=readiness_path,
+        pr_review_checklist_path=checklist_path,
+        out_dir=tmp_path / "owner-adoption-broken-package",
+    )
+
+    assert report.status == "blocked_by_promotion_package_audit"
+    assert report.ready_packet_count == 0
+    assert all(packet.status == "blocked_by_promotion_package_audit" for packet in report.packets)

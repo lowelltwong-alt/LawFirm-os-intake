@@ -804,6 +804,22 @@ perform silent learning.
 
 ### Build cross-repo owner adoption packets
 
+First audit the static candidate inventory:
+
+```bash
+python -m lawfirm_os_intake audit-cross-repo-promotion-package \
+  --promotion-package promotion/cross_repo_promotion_package.json \
+  --repo-root . \
+  --out-dir .lawfirm-os-intake/cross-repo-promotion-package-audit
+```
+
+This writes `cross_repo_promotion_package_audit_report.json` and Markdown notes.
+It fails closed when a candidate artifact is missing, a contract URI targets the
+wrong owner namespace, a proposal ID is duplicated, or high-risk persistent
+matter-link, carrier-rejection, or rate-benchmark owner routing is absent. The
+command is local and read-only with respect to sibling repos, GitHub, Lake, and
+SQLite.
+
 ```bash
 python -m lawfirm_os_intake build-cross-repo-owner-adoption \
   --promotion-package promotion/cross_repo_promotion_package.json \
@@ -812,7 +828,8 @@ python -m lawfirm_os_intake build-cross-repo-owner-adoption \
   --out-dir .lawfirm-os-intake/cross-repo-owner-adoption
 ```
 
-This writes `cross_repo_owner_adoption_report.json`,
+This writes `cross_repo_promotion_package_audit_report.json`,
+`cross_repo_owner_adoption_report.json`,
 `cross_repo_owner_adoption_report.md`,
 `cross_repo_owner_adoption_packets.jsonl`, and owner-specific packets under
 `owner_adoption_packets/`. The packets group the static promotion proposals by

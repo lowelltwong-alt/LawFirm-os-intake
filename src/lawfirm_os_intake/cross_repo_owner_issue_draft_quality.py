@@ -30,6 +30,7 @@ REQUIRED_SECTIONS = [
 SOURCE_EVIDENCE_LABELS = [
     "Owner adoption packet:",
     "Promotion package:",
+    "Promotion package audit:",
     "Readiness audit:",
     "PR review checklist:",
 ]
