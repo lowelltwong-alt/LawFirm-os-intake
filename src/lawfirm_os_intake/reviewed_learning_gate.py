@@ -5,7 +5,11 @@ from typing import Any
 
 from pydantic import ValidationError
 
-from .calibration import CalibrationLeakageProof
+from .calibration import (
+    CalibrationLeakageProof,
+    CalibrationPreflightRequest,
+    build_calibration_leakage_proof,
+)
 from .models import (
     BudgetActualComparisonReport,
     BudgetActualVarianceDriverCandidate,
@@ -34,7 +38,8 @@ REQUIRED_NEXT_GATES = [
 
 CALIBRATION_LEAKAGE_PROOF_REQUIRED_GATES = [
     "valid_calibration_leakage_proof",
-    "human_calibration_approval_id",
+    "external_request_digest_anchor",
+    "approval_evidence_identifier_shape_only",
     "owning_repo_review",
     "no_calibrated_value_publication_from_intake",
 ]
@@ -259,9 +264,11 @@ def validate_calibrated_parameter_gate(
     corpus_version_ref: str,
     screen_version: str,
     calibration_leakage_proof: CalibrationLeakageProof | dict[str, Any] | None,
-    approval_id: str | None,
+    calibration_preflight_request: CalibrationPreflightRequest | dict[str, Any] | None = None,
+    expected_aggregate_input_digest: str | None = None,
+    approval_id: str | None = None,
 ) -> ReviewedLearningGateCheck:
-    """Fail closed unless a calibrated parameter has proof and a human approval id."""
+    """Fail closed unless candidate review has proof and an unverified evidence identifier."""
     proof = calibration_leakage_proof
     if proof is None:
         return _check(
@@ -276,6 +283,49 @@ def validate_calibrated_parameter_gate(
             False,
             f"CalibrationLeakageProof is invalid: {error}",
         )
+    if calibration_preflight_request is None:
+        return _check(
+            "calibration_preflight_request_required",
+            False,
+            (
+                "Calibration proof review requires the synthetic preflight request so the "
+                "proof digest and metrics can be rebuilt instead of trusted from the proof."
+            ),
+            [parsed.proof_id],
+        )
+    if not _is_sha256_digest(expected_aggregate_input_digest):
+        return _check(
+            "calibration_expected_request_digest_required",
+            False,
+            (
+                "Calibration proof review requires a sha256 request digest supplied by the "
+                "calling evidence context, independently of the proof/request pair."
+            ),
+            [parsed.proof_id],
+        )
+    rebuilt, rebuild_error = _rebuild_calibration_leakage_proof(calibration_preflight_request)
+    if rebuild_error is not None or rebuilt is None:
+        return _check(
+            "calibration_preflight_request_valid",
+            False,
+            f"Calibration preflight request is invalid: {rebuild_error}",
+            [parsed.proof_id],
+        )
+    binding_failures = _proof_request_binding_failures(
+        parsed,
+        rebuilt,
+        expected_aggregate_input_digest=expected_aggregate_input_digest,
+    )
+    if binding_failures:
+        return _check(
+            "calibration_leakage_proof_request_binding",
+            False,
+            (
+                "Calibration leakage proof does not match the rebuilt synthetic preflight "
+                "request: " + ", ".join(binding_failures)
+            ),
+            [parsed.proof_id],
+        )
 
     failures = _calibration_proof_failures(
         parsed,
@@ -289,8 +339,12 @@ def validate_calibrated_parameter_gate(
         "calibration_leakage_proof_promotion_gate",
         not failures,
         (
-            "Calibration leakage proof and approval id are present for promotion review; "
-            "this check does not mutate profiles, budgets, guidelines, Lake records, or canon."
+            "Calibration leakage proof and a deterministic approval evidence identifier are "
+            "present for candidate promotion review. An expected request digest from the "
+            "calling context matched the rebuilt request and proof, but this gate does not "
+            "authenticate that context. Identifier shape only: no approval registry, "
+            "reviewer identity, attorney role, or reviewer role was verified. "
+            "This check does not mutate profiles, budgets, guidelines, Lake records, or canon."
             if not failures
             else "Calibration leakage proof blocks promotion review: " + ", ".join(failures)
         ),
@@ -305,6 +359,8 @@ def check_calibration_leakage_proof_for_promotion(
     parameter: str,
     corpus_version_ref: str,
     screen_version: str,
+    calibration_preflight_request: CalibrationPreflightRequest | dict[str, Any] | None = None,
+    expected_aggregate_input_digest: str | None = None,
     approval_id: str | None = None,
     proof_ref: str = "calibration_leakage_proof",
 ) -> ReviewedLearningGateCheck:
@@ -315,6 +371,8 @@ def check_calibration_leakage_proof_for_promotion(
             corpus_version_ref=corpus_version_ref,
             screen_version=screen_version,
             calibration_leakage_proof=None,
+            calibration_preflight_request=calibration_preflight_request,
+            expected_aggregate_input_digest=expected_aggregate_input_digest,
             approval_id=approval_id,
         )
     parsed, error = _parse_calibration_leakage_proof(proof)
@@ -331,6 +389,8 @@ def check_calibration_leakage_proof_for_promotion(
         corpus_version_ref=corpus_version_ref,
         screen_version=screen_version,
         calibration_leakage_proof=parsed,
+        calibration_preflight_request=calibration_preflight_request,
+        expected_aggregate_input_digest=expected_aggregate_input_digest,
         approval_id=approval_id,
     )
 
@@ -375,7 +435,7 @@ def _calibration_proof_failures(
         failures.append("not_candidate_only")
     if not proof.human_review_required:
         failures.append("human_review_not_required")
-    if not _approval_id_is_reviewed(approval_id):
+    if not _approval_id_has_candidate_evidence_shape(approval_id):
         failures.append("missing_approval_id")
     return failures
 
@@ -392,7 +452,51 @@ def _parse_calibration_leakage_proof(
         return None, exc.errors()[0]["msg"]
 
 
-def _approval_id_is_reviewed(approval_id: str | None) -> bool:
+def _rebuild_calibration_leakage_proof(
+    request: CalibrationPreflightRequest | dict[str, Any],
+) -> tuple[CalibrationLeakageProof | None, str | None]:
+    try:
+        payload = (
+            request.model_dump(mode="json")
+            if isinstance(request, CalibrationPreflightRequest)
+            else request
+        )
+        parsed = CalibrationPreflightRequest.model_validate(payload)
+        return build_calibration_leakage_proof(parsed), None
+    except ValidationError as exc:
+        return None, exc.errors()[0]["msg"]
+
+
+def _proof_request_binding_failures(
+    proof: CalibrationLeakageProof,
+    rebuilt: CalibrationLeakageProof,
+    *,
+    expected_aggregate_input_digest: str,
+) -> list[str]:
+    failures: list[str] = []
+    if rebuilt.determinism.aggregate_input_digest != expected_aggregate_input_digest:
+        failures.append("expected_digest_does_not_match_rebuilt_request")
+    if proof.determinism.aggregate_input_digest != expected_aggregate_input_digest:
+        failures.append("proof_digest_does_not_match_expected_digest")
+    if proof.determinism.aggregate_input_digest != rebuilt.determinism.aggregate_input_digest:
+        failures.append("aggregate_input_digest_mismatch")
+    if proof.proof_id != rebuilt.proof_id:
+        failures.append("proof_id_mismatch")
+    proof_payload = proof.model_dump(mode="json", exclude={"generated_at"})
+    rebuilt_payload = rebuilt.model_dump(mode="json", exclude={"generated_at"})
+    if proof_payload != rebuilt_payload:
+        failures.append("proof_content_mismatch")
+    return failures
+
+
+def _is_sha256_digest(value: str | None) -> bool:
+    if value is None or not value.startswith("sha256:"):
+        return False
+    digest = value.removeprefix("sha256:")
+    return len(digest) == 64 and all(character in "0123456789abcdef" for character in digest)
+
+
+def _approval_id_has_candidate_evidence_shape(approval_id: str | None) -> bool:
     if approval_id is None:
         return False
     cleaned = approval_id.strip()
@@ -414,6 +518,8 @@ def _calibration_gate_checks(
         "corpus_version_ref",
         "screen_version",
         "calibration_leakage_proof",
+        "calibration_preflight_request",
+        "expected_aggregate_input_digest",
     ]
     for index, request in enumerate(requests):
         missing = [field for field in required if not request.get(field)]
@@ -436,6 +542,8 @@ def _calibration_gate_checks(
                 corpus_version_ref=str(request["corpus_version_ref"]),
                 screen_version=str(request["screen_version"]),
                 calibration_leakage_proof=request["calibration_leakage_proof"],
+                calibration_preflight_request=request["calibration_preflight_request"],
+                expected_aggregate_input_digest=str(request["expected_aggregate_input_digest"]),
                 approval_id=(
                     str(request["approval_id"]) if request.get("approval_id") is not None else None
                 ),
@@ -549,6 +657,26 @@ def build_reviewed_learning_gate_report(
         for candidate in candidates
     )
     calibration_checks = _calibration_gate_checks(calibration_gate_requests)
+    calibration_proof_ids = list(
+        dict.fromkeys(
+            candidate_id for check in calibration_checks for candidate_id in check.candidate_ids
+        )
+    )
+    calibration_visibility_checks = (
+        [
+            _check(
+                "calibration_gate_review_inputs_visible",
+                True,
+                (
+                    "Calibration proof review input is visible as candidate-only gate evidence; "
+                    "it is not an ordinary learning candidate and performs no promotion."
+                ),
+                calibration_proof_ids,
+            )
+        ]
+        if calibration_gate_requests
+        else []
+    )
     checks = [
         _check(
             "source_reports_present",
@@ -585,12 +713,13 @@ def build_reviewed_learning_gate_report(
             "Every candidate carries the reviewed-learning gate sequence.",
             candidate_ids,
         ),
+        *calibration_visibility_checks,
         *calibration_checks,
     ]
     failed = [check for check in checks if check.status == "failed"]
     if failed:
         status = "failed"
-    elif candidates:
+    elif candidates or calibration_gate_requests:
         status = "candidate_learning_gate_ready"
     else:
         status = "no_learning_candidates"

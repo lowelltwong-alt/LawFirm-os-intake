@@ -25,23 +25,35 @@ def test_aggregate_lomo_scaffold_emits_candidate_proof_without_values(repo_root)
     assert proof.candidate_only is True
     assert proof.human_review_required is True
     assert proof.approval_id is None
+    assert proof.methodology.version == "calibration-aggregate-preflight-v0.2"
+    assert proof.methodology.k_count_basis == "distinct_declared_protected_units"
+    assert proof.methodology.lomo_formula == (
+        "max_abs(full_matter_mean_minus_leave_one_matter_out_mean)"
+    )
+    assert proof.methodology.thresholds == ("request_policy_labeled_synthetic_policy_placeholder")
     assert proof.kanon.distinct_matters == 4
     assert proof.kanon.distinct_protected_units == 4
     assert proof.kanon.K == 4
     assert proof.kanon.dominance_ok is True
     assert proof.lomo.dominance_ok is True
+    assert proof.lomo.unit == "matter"
+    assert proof.lomo.matter_count == 4
     assert proof.lomo.delta_lomo <= proof.lomo.delta_max
     assert proof.reconstruction.adversary_model == "synthetic strong all-but-one-matter placeholder"
     assert proof.reconstruction.recovered_rate == 0.25
     assert proof.reconstruction.chance_rate == 0.25
     assert proof.reconstruction.passed is True
     assert proof.reconstruction.scaffold_only is True
+    assert proof.reconstruction.evidence_basis == "supplied_synthetic_scaffold_metrics"
+    assert proof.reconstruction.computed_adversary_test_performed is False
+    assert proof.reconstruction.formal_privacy_guarantee_claimed is False
     assert proof.determinism.aggregate_byte_identical is True
     assert proof.group_privacy.unit == "matter"
     assert proof.group_privacy.effective_epsilon is None
 
 
 def test_client_or_affiliate_group_k_counts_protected_units(repo_root):
+    matter_level_proof = build_calibration_leakage_proof(_request(repo_root))
     raw = _request(repo_root)
     raw["policy"]["protected_unit"] = "client"
     for matter in raw["matters"]:
@@ -53,6 +65,9 @@ def test_client_or_affiliate_group_k_counts_protected_units(repo_root):
     assert proof.path == "refused"
     assert proof.kanon.distinct_matters == 4
     assert proof.kanon.distinct_protected_units == 1
+    assert proof.lomo.unit == "matter"
+    assert proof.lomo.matter_count == 4
+    assert proof.lomo.delta_lomo == pytest.approx(matter_level_proof.lomo.delta_lomo)
     assert "insufficient_distinct_protected_units_for_aggregate_only" in proof.refusal_reasons
 
 
@@ -109,6 +124,68 @@ def test_digest_binds_policy_and_protected_unit_membership(repo_root):
     )
     assert grouping_proof.proof_id != base_proof.proof_id
     assert grouping_proof.determinism.aggregate_input_digest != (
+        base_proof.determinism.aggregate_input_digest
+    )
+
+
+@pytest.mark.parametrize(
+    ("field_name", "replacement"),
+    [
+        ("request_id", "changed-request-id"),
+        ("estimator_id", "changed-estimator"),
+        ("parameter", "changed-parameter"),
+        ("corpus_version_ref", "changed-corpus-version"),
+        ("screen_version", "changed-screen-version"),
+    ],
+)
+def test_digest_binds_request_identity(repo_root, field_name, replacement):
+    base_proof = build_calibration_leakage_proof(_request(repo_root))
+    changed = _request(repo_root)
+    changed[field_name] = replacement
+
+    changed_proof = build_calibration_leakage_proof(changed)
+
+    assert changed_proof.proof_id != base_proof.proof_id
+    assert changed_proof.determinism.aggregate_input_digest != (
+        base_proof.determinism.aggregate_input_digest
+    )
+
+
+@pytest.mark.parametrize(
+    ("path", "replacement"),
+    [
+        (("matters", 0, "matter_id"), "changed-synthetic-matter"),
+        (("matters", 0, "contribution"), 10.125),
+        (("policy", "reconstruction_recovered_rate"), 0.24),
+        (("policy", "reconstruction_chance_rate"), 0.26),
+    ],
+)
+def test_digest_binds_matter_and_reconstruction_inputs(repo_root, path, replacement):
+    base_proof = build_calibration_leakage_proof(_request(repo_root))
+    changed = _request(repo_root)
+    if path[0] == "matters":
+        changed[path[0]][path[1]][path[2]] = replacement
+    else:
+        changed[path[0]][path[1]] = replacement
+
+    changed_proof = build_calibration_leakage_proof(changed)
+
+    assert changed_proof.proof_id != base_proof.proof_id
+    assert changed_proof.determinism.aggregate_input_digest != (
+        base_proof.determinism.aggregate_input_digest
+    )
+
+
+def test_digest_is_independent_of_input_order(repo_root):
+    base = _request(repo_root)
+    reordered = _request(repo_root)
+    reordered["matters"] = list(reversed(reordered["matters"]))
+
+    base_proof = build_calibration_leakage_proof(base)
+    reordered_proof = build_calibration_leakage_proof(reordered)
+
+    assert reordered_proof.proof_id == base_proof.proof_id
+    assert reordered_proof.determinism.aggregate_input_digest == (
         base_proof.determinism.aggregate_input_digest
     )
 

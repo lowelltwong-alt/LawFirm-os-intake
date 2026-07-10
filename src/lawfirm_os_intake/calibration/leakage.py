@@ -16,6 +16,7 @@ class CalibrationStrictModel(BaseModel):
 ProtectedUnit = Literal["matter", "client", "affiliate_group"]
 CalibrationPath = Literal["aggregate_only", "refused"]
 ProofStatus = Literal["candidate", "refused"]
+CALIBRATION_METHODOLOGY_VERSION = "calibration-aggregate-preflight-v0.2"
 
 
 class CalibrationInputMatter(CalibrationStrictModel):
@@ -97,8 +98,42 @@ class CalibrationKAnonRecord(CalibrationStrictModel):
     dominance_ok: bool
 
 
+class CalibrationMethodologyRecord(CalibrationStrictModel):
+    version: Literal["calibration-aggregate-preflight-v0.2"] = CALIBRATION_METHODOLOGY_VERSION
+    inputs: Literal[
+        "synthetic_request_metadata_policy_matter_ids_protected_unit_ids_data_flags_contributions"
+    ] = "synthetic_request_metadata_policy_matter_ids_protected_unit_ids_data_flags_contributions"
+    aggregation: Literal["arithmetic_mean_of_matter_contributions"] = (
+        "arithmetic_mean_of_matter_contributions"
+    )
+    lomo_formula: Literal["max_abs(full_matter_mean_minus_leave_one_matter_out_mean)"] = (
+        "max_abs(full_matter_mean_minus_leave_one_matter_out_mean)"
+    )
+    top1_leverage_formula: Literal[
+        "max_abs(protected_unit_sum)_div_sum_abs(protected_unit_sums)"
+    ] = "max_abs(protected_unit_sum)_div_sum_abs(protected_unit_sums)"
+    k_count_basis: Literal["distinct_declared_protected_units"] = (
+        "distinct_declared_protected_units"
+    )
+    thresholds: Literal["request_policy_labeled_synthetic_policy_placeholder"] = (
+        "request_policy_labeled_synthetic_policy_placeholder"
+    )
+    normalization: Literal["none"] = "none"
+    tie_breaking: Literal["canonical_json_lexicographic_order"] = (
+        "canonical_json_lexicographic_order"
+    )
+    uncertainty_handling: Literal["refuse_missing_nonfinite_or_threshold_breach"] = (
+        "refuse_missing_nonfinite_or_threshold_breach"
+    )
+    output_range: Literal["aggregate_only_or_refused_candidate_proof"] = (
+        "aggregate_only_or_refused_candidate_proof"
+    )
+
+
 class CalibrationLomoRecord(CalibrationStrictModel):
     estimator_id: str
+    unit: Literal["matter"] = "matter"
+    matter_count: int = Field(ge=0)
     delta_lomo: float | None
     delta_max: float | None
     top1_leverage: float
@@ -115,6 +150,11 @@ class CalibrationReconstructionRecord(CalibrationStrictModel):
     margin: float
     passed: bool
     scaffold_only: bool = True
+    evidence_basis: Literal["supplied_synthetic_scaffold_metrics"] = (
+        "supplied_synthetic_scaffold_metrics"
+    )
+    computed_adversary_test_performed: Literal[False] = False
+    formal_privacy_guarantee_claimed: Literal[False] = False
 
 
 class CalibrationGroupPrivacyRecord(CalibrationStrictModel):
@@ -139,6 +179,7 @@ class CalibrationLeakageProof(CalibrationStrictModel):
     path: CalibrationPath
     status: ProofStatus
     refusal_reasons: list[str] = Field(default_factory=list)
+    methodology: CalibrationMethodologyRecord
     kanon: CalibrationKAnonRecord
     lomo: CalibrationLomoRecord
     dp: None = None
@@ -159,6 +200,8 @@ class CalibrationLeakageProof(CalibrationStrictModel):
             raise ValueError("calibration leakage proof_id does not match aggregate digest")
         if self.kanon.dominance_ok != self.lomo.dominance_ok:
             raise ValueError("calibration leakage dominance flags disagree")
+        if self.lomo.unit != "matter":
+            raise ValueError("calibration LOMO must remain matter-level")
         if self.reconstruction.recovered_rate is None or self.reconstruction.chance_rate is None:
             if self.reconstruction.passed:
                 raise ValueError("reconstruction cannot pass without recovered/chance rates")
@@ -179,6 +222,14 @@ class CalibrationLeakageProof(CalibrationStrictModel):
                 raise ValueError("candidate calibration proof requires dominance screens to pass")
             if not self.reconstruction.passed:
                 raise ValueError("candidate calibration proof requires reconstruction to pass")
+            if (
+                not self.reconstruction.scaffold_only
+                or self.reconstruction.computed_adversary_test_performed
+                or self.reconstruction.formal_privacy_guarantee_claimed
+            ):
+                raise ValueError(
+                    "candidate reconstruction evidence must remain supplied synthetic scaffold evidence"
+                )
             if not self.determinism.rebuilt or not self.determinism.aggregate_byte_identical:
                 raise ValueError(
                     "candidate calibration proof requires deterministic aggregate rebuild"
@@ -196,15 +247,19 @@ def build_calibration_leakage_proof(
         if isinstance(request, CalibrationPreflightRequest)
         else CalibrationPreflightRequest.model_validate(request)
     )
-    grouped_contributions = _protected_unit_contributions(parsed)
-    grouped_values = list(grouped_contributions.values())
-    total_abs = sum(abs(value) for value in grouped_values)
+    protected_unit_contributions = _protected_unit_contributions(parsed)
+    protected_unit_values = list(protected_unit_contributions.values())
+    matter_contributions = _matter_contributions(parsed)
+    matter_values = list(matter_contributions.values())
+    total_abs = sum(abs(value) for value in protected_unit_values)
     top1_leverage = (
-        max((abs(value) / total_abs for value in grouped_values), default=0.0) if total_abs else 0.0
+        max((abs(value) / total_abs for value in protected_unit_values), default=0.0)
+        if total_abs
+        else 0.0
     )
-    lomo_delta = _max_lomo_delta(grouped_values)
-    distinct_matters = len({matter.matter_id for matter in parsed.matters})
-    distinct_protected_units = len(grouped_contributions)
+    lomo_delta = _max_lomo_delta(matter_values)
+    distinct_matters = len(matter_contributions)
+    distinct_protected_units = len(protected_unit_contributions)
     max_group_size = _max_group_size(parsed.matters)
     refusal_reasons = _refusal_reasons(
         parsed,
@@ -229,6 +284,7 @@ def build_calibration_leakage_proof(
         path=path,
         status=status,
         refusal_reasons=refusal_reasons,
+        methodology=CalibrationMethodologyRecord(),
         kanon=CalibrationKAnonRecord(
             distinct_matters=distinct_matters,
             distinct_protected_units=distinct_protected_units,
@@ -238,6 +294,7 @@ def build_calibration_leakage_proof(
         ),
         lomo=CalibrationLomoRecord(
             estimator_id=parsed.estimator_id,
+            matter_count=distinct_matters,
             delta_lomo=lomo_delta,
             delta_max=parsed.policy.lomo_delta_limit,
             top1_leverage=top1_leverage,
@@ -357,7 +414,15 @@ def _protected_unit_contributions(request: CalibrationPreflightRequest) -> dict[
     return grouped
 
 
+def _matter_contributions(request: CalibrationPreflightRequest) -> dict[str, float]:
+    grouped: dict[str, float] = {}
+    for matter in request.matters:
+        grouped[matter.matter_id] = grouped.get(matter.matter_id, 0.0) + matter.contribution
+    return grouped
+
+
 def _aggregate_digest(request: CalibrationPreflightRequest) -> str:
+    matter_payloads = [matter.model_dump(mode="json") for matter in request.matters]
     payload = {
         "request_id": request.request_id,
         "estimator_id": request.estimator_id,
@@ -367,15 +432,13 @@ def _aggregate_digest(request: CalibrationPreflightRequest) -> str:
         "runtime_scope": request.runtime_scope,
         "candidate_only": request.candidate_only,
         "publish_calibrated_value": request.publish_calibrated_value,
+        "methodology": CalibrationMethodologyRecord().model_dump(mode="json"),
         "policy": request.policy.model_dump(mode="json"),
         "matters": sorted(
-            [matter.model_dump(mode="json") for matter in request.matters],
-            key=lambda item: (
-                str(item["matter_id"]),
-                str(item["protected_unit_id"]),
-                str(item["contribution"]),
-            ),
+            matter_payloads,
+            key=lambda item: json.dumps(item, sort_keys=True, separators=(",", ":")),
         ),
+        "matter_contributions": _matter_contributions(request),
         "protected_unit_contributions": _protected_unit_contributions(request),
     }
     encoded = json.dumps(

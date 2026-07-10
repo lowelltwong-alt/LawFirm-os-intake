@@ -1,6 +1,8 @@
+from hashlib import sha256
+
 import pytest
 
-from lawfirm_os_intake.calibration import build_calibration_leakage_proof
+from lawfirm_os_intake.calibration import CalibrationLeakageProof, build_calibration_leakage_proof
 from lawfirm_os_intake.reviewed_learning_gate import (
     CALIBRATION_LEAKAGE_PROOF_REQUIRED_GATES,
     build_reviewed_learning_gate_report,
@@ -16,6 +18,10 @@ def _request(repo_root):
         / "examples/synthetic/calibration/calib-aggregate-clean.synthetic-policy-placeholder.json"
     )
     return raw["request"]
+
+
+def _expected_digest(proof):
+    return proof.determinism.aggregate_input_digest
 
 
 def test_calibration_gate_refuses_missing_proof():
@@ -44,12 +50,50 @@ def test_calibration_gate_refuses_valid_proof_without_approval(repo_root):
         parameter=proof.parameter,
         corpus_version_ref=proof.corpus_version_ref,
         screen_version=proof.screen_version,
+        calibration_preflight_request=_request(repo_root),
+        expected_aggregate_input_digest=_expected_digest(proof),
     )
 
     assert check.status == "failed"
     assert check.check_id == "calibration_leakage_proof_promotion_gate"
     assert "missing_approval_id" in check.message
     assert check.candidate_ids == [proof.proof_id]
+
+
+def test_calibration_gate_refuses_valid_proof_without_preflight_request(repo_root):
+    proof = build_calibration_leakage_proof(_request(repo_root))
+
+    check = validate_calibrated_parameter_gate(
+        estimator_id=proof.estimator_id,
+        parameter=proof.parameter,
+        corpus_version_ref=proof.corpus_version_ref,
+        screen_version=proof.screen_version,
+        calibration_leakage_proof=proof,
+        expected_aggregate_input_digest=_expected_digest(proof),
+        approval_id="approval:human-review-record-0001",
+    )
+
+    assert check.status == "failed"
+    assert check.check_id == "calibration_preflight_request_required"
+    assert "rebuilt instead of trusted from the proof" in check.message
+
+
+def test_calibration_gate_refuses_valid_proof_without_expected_digest(repo_root):
+    proof = build_calibration_leakage_proof(_request(repo_root))
+
+    check = validate_calibrated_parameter_gate(
+        estimator_id=proof.estimator_id,
+        parameter=proof.parameter,
+        corpus_version_ref=proof.corpus_version_ref,
+        screen_version=proof.screen_version,
+        calibration_leakage_proof=proof,
+        calibration_preflight_request=_request(repo_root),
+        approval_id="approval:human-review-record-0001",
+    )
+
+    assert check.status == "failed"
+    assert check.check_id == "calibration_expected_request_digest_required"
+    assert "independently of the proof/request pair" in check.message
 
 
 def test_calibration_gate_refuses_refused_proof_even_with_approval(repo_root):
@@ -63,6 +107,8 @@ def test_calibration_gate_refuses_refused_proof_even_with_approval(repo_root):
         parameter=proof.parameter,
         corpus_version_ref=proof.corpus_version_ref,
         screen_version=proof.screen_version,
+        calibration_preflight_request=raw,
+        expected_aggregate_input_digest=_expected_digest(proof),
         approval_id="approval:human-review-record-0001",
     )
 
@@ -72,7 +118,7 @@ def test_calibration_gate_refuses_refused_proof_even_with_approval(repo_root):
     assert "refusal_reasons_present" in check.message
 
 
-def test_calibration_gate_accepts_valid_proof_plus_explicit_approval_id(repo_root):
+def test_calibration_gate_accepts_valid_proof_plus_unverified_evidence_id(repo_root):
     proof = build_calibration_leakage_proof(_request(repo_root))
 
     check = validate_calibrated_parameter_gate(
@@ -81,15 +127,21 @@ def test_calibration_gate_accepts_valid_proof_plus_explicit_approval_id(repo_roo
         corpus_version_ref=proof.corpus_version_ref,
         screen_version=proof.screen_version,
         calibration_leakage_proof=proof.model_dump(mode="json"),
+        calibration_preflight_request=_request(repo_root),
+        expected_aggregate_input_digest=_expected_digest(proof),
         approval_id="approval:human-review-record-0001",
     )
 
     assert check.status == "passed"
     assert check.candidate_ids == [proof.proof_id]
     assert "does not mutate" in check.message
+    assert "Identifier shape only" in check.message
+    assert "no approval registry" in check.message
+    assert "attorney role" in check.message
     assert CALIBRATION_LEAKAGE_PROOF_REQUIRED_GATES == [
         "valid_calibration_leakage_proof",
-        "human_calibration_approval_id",
+        "external_request_digest_anchor",
+        "approval_evidence_identifier_shape_only",
         "owning_repo_review",
         "no_calibrated_value_publication_from_intake",
     ]
@@ -104,6 +156,8 @@ def test_calibration_gate_refuses_identity_mismatch(repo_root):
         corpus_version_ref=proof.corpus_version_ref,
         screen_version=proof.screen_version,
         calibration_leakage_proof=proof,
+        calibration_preflight_request=_request(repo_root),
+        expected_aggregate_input_digest=_expected_digest(proof),
         approval_id="approval:human-review-record-0001",
     )
 
@@ -120,6 +174,8 @@ def test_calibration_gate_wrapper_refuses_identity_mismatch(repo_root):
         parameter=proof.parameter,
         corpus_version_ref=proof.corpus_version_ref,
         screen_version=proof.screen_version,
+        calibration_preflight_request=_request(repo_root),
+        expected_aggregate_input_digest=_expected_digest(proof),
         approval_id="approval:human-review-record-0001",
     )
 
@@ -137,6 +193,8 @@ def test_calibration_gate_refuses_unreviewed_approval_ids(repo_root, approval_id
         corpus_version_ref=proof.corpus_version_ref,
         screen_version=proof.screen_version,
         calibration_leakage_proof=proof,
+        calibration_preflight_request=_request(repo_root),
+        expected_aggregate_input_digest=_expected_digest(proof),
         approval_id=approval_id,
     )
 
@@ -146,6 +204,7 @@ def test_calibration_gate_refuses_unreviewed_approval_ids(repo_root, approval_id
 
 def test_calibration_gate_refuses_malformed_proof_dict(repo_root):
     proof = build_calibration_leakage_proof(_request(repo_root)).model_dump(mode="json")
+    expected_digest = proof["determinism"]["aggregate_input_digest"]
     proof.pop("proof_id")
 
     check = validate_calibrated_parameter_gate(
@@ -156,6 +215,8 @@ def test_calibration_gate_refuses_malformed_proof_dict(repo_root):
         ),
         screen_version="synthetic-screen-v0",
         calibration_leakage_proof=proof,
+        calibration_preflight_request=_request(repo_root),
+        expected_aggregate_input_digest=expected_digest,
         approval_id="approval:human-review-record-0001",
     )
 
@@ -175,6 +236,8 @@ def test_calibration_gate_refuses_non_validating_constructed_proof(repo_root):
         corpus_version_ref=proof.corpus_version_ref,
         screen_version=proof.screen_version,
         calibration_leakage_proof=forged,
+        calibration_preflight_request=_request(repo_root),
+        expected_aggregate_input_digest=_expected_digest(proof),
         approval_id="approval:human-review-record-0001",
     )
 
@@ -184,6 +247,7 @@ def test_calibration_gate_refuses_non_validating_constructed_proof(repo_root):
 
 def test_calibration_gate_refuses_forged_proof_id(repo_root):
     proof = build_calibration_leakage_proof(_request(repo_root)).model_dump(mode="json")
+    expected_digest = proof["determinism"]["aggregate_input_digest"]
     proof["proof_id"] = "calibrationleakageproof_forged"
 
     check = validate_calibrated_parameter_gate(
@@ -192,11 +256,66 @@ def test_calibration_gate_refuses_forged_proof_id(repo_root):
         corpus_version_ref=proof["corpus_version_ref"],
         screen_version=proof["screen_version"],
         calibration_leakage_proof=proof,
+        calibration_preflight_request=_request(repo_root),
+        expected_aggregate_input_digest=expected_digest,
         approval_id="approval:human-review-record-0001",
     )
 
     assert check.status == "failed"
     assert "proof_id does not match" in check.message
+
+
+def test_calibration_gate_refuses_self_consistent_forged_proof(repo_root):
+    request = _request(repo_root)
+    original_proof = build_calibration_leakage_proof(request)
+    forged = original_proof.model_dump(mode="json")
+    forged_digest = "sha256:" + ("0" * 64)
+    forged["determinism"]["aggregate_input_digest"] = forged_digest
+    forged["proof_id"] = (
+        "calibrationleakageproof_" + sha256(forged_digest.encode("utf-8")).hexdigest()[:20]
+    )
+    forged["lomo"]["delta_lomo"] = 0.0
+
+    CalibrationLeakageProof.model_validate(forged)
+    check = validate_calibrated_parameter_gate(
+        estimator_id=forged["estimator_id"],
+        parameter=forged["parameter"],
+        corpus_version_ref=forged["corpus_version_ref"],
+        screen_version=forged["screen_version"],
+        calibration_leakage_proof=forged,
+        calibration_preflight_request=request,
+        expected_aggregate_input_digest=_expected_digest(original_proof),
+        approval_id="approval:human-review-record-0001",
+    )
+
+    assert check.status == "failed"
+    assert check.check_id == "calibration_leakage_proof_request_binding"
+    assert "aggregate_input_digest_mismatch" in check.message
+    assert "proof_id_mismatch" in check.message
+    assert "proof_content_mismatch" in check.message
+
+
+def test_calibration_gate_refuses_matching_forged_request_and_proof(repo_root):
+    original_proof = build_calibration_leakage_proof(_request(repo_root))
+    forged_request = _request(repo_root)
+    forged_request["matters"][0]["contribution"] = 999.0
+    forged_proof = build_calibration_leakage_proof(forged_request)
+
+    check = validate_calibrated_parameter_gate(
+        estimator_id=forged_proof.estimator_id,
+        parameter=forged_proof.parameter,
+        corpus_version_ref=forged_proof.corpus_version_ref,
+        screen_version=forged_proof.screen_version,
+        calibration_leakage_proof=forged_proof,
+        calibration_preflight_request=forged_request,
+        expected_aggregate_input_digest=_expected_digest(original_proof),
+        approval_id="approval:human-review-record-0001",
+    )
+
+    assert check.status == "failed"
+    assert check.check_id == "calibration_leakage_proof_request_binding"
+    assert "expected_digest_does_not_match_rebuilt_request" in check.message
+    assert "proof_digest_does_not_match_expected_digest" in check.message
 
 
 def test_reviewed_learning_report_includes_calibration_gate_failure(repo_root):
@@ -210,6 +329,8 @@ def test_reviewed_learning_report_includes_calibration_gate_failure(repo_root):
                 "corpus_version_ref": proof.corpus_version_ref,
                 "screen_version": proof.screen_version,
                 "calibration_leakage_proof": proof.model_dump(mode="json"),
+                "calibration_preflight_request": _request(repo_root),
+                "expected_aggregate_input_digest": _expected_digest(proof),
                 "proof_ref": proof.corpus_version_ref,
             }
         ]
@@ -235,13 +356,25 @@ def test_reviewed_learning_report_accepts_calibration_gate_review_inputs(repo_ro
                 "corpus_version_ref": proof.corpus_version_ref,
                 "screen_version": proof.screen_version,
                 "calibration_leakage_proof": proof.model_dump(mode="json"),
+                "calibration_preflight_request": _request(repo_root),
+                "expected_aggregate_input_digest": _expected_digest(proof),
                 "approval_id": "approval:human-review-record-0001",
                 "proof_ref": proof.corpus_version_ref,
             }
         ]
     )
 
-    assert report.status == "no_learning_candidates"
+    assert report.status == "candidate_learning_gate_ready"
+    assert report.candidate_count == 0
+    assert report.candidates == []
+    assert proof.corpus_version_ref in report.source_report_refs
+    assert any(
+        check.check_id == "calibration_gate_review_inputs_visible"
+        and check.status == "passed"
+        and check.candidate_ids == [proof.proof_id]
+        and "not an ordinary learning candidate" in check.message
+        for check in report.checks
+    )
     assert any(
         check.check_id == "calibration_leakage_proof_promotion_gate" and check.status == "passed"
         for check in report.checks
