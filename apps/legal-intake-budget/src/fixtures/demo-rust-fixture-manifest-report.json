@@ -46,7 +46,7 @@
       ],
       "path": "demo-crosswalk-audit-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:1093a93237874562aff38c22f159e327f129e02d70b5d5101516385749d83ec9",
+        "sha256": "sha256:95163ce29ec8e3f4ddbefce1ff3cc5178d8893050c3825e81b2a679743d95010",
       "status": "passed",
       "top_level_type": "object"
     },
@@ -145,7 +145,7 @@
       ],
       "path": "demo-labor-employment-budget-outcome-replay-confidence-status-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:ccc4cc2d789b06acd44e3e3841f673a9ddc26abd31fe389b8c755468aabf8352",
+        "sha256": "sha256:4cbcbd347f76538dc66dd756f651c85f34e3220db7b5585c8cd5608add0aa8e3",
       "status": "labor_employment_budget_outcome_replay_confidence_pending_inputs",
       "synthetic_only": true,
       "top_level_type": "object"
@@ -390,7 +390,7 @@
       ],
       "path": "demo-ocg-rule-ir-adoption-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:6c796006caebad6de16340032b300b955ff96780b6da24b0d0c307675e5a1b8d",
+        "sha256": "sha256:63123854ea076f65672a148e507699376be6ac0a5b6303216bceec1a5161e3dc",
       "status": "accepted_as_read_only_candidate",
       "top_level_type": "object"
     },
