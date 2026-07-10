@@ -90,9 +90,19 @@ async function main() {
     const uiState = await page.locator("#root").evaluate((root) => ({
       textLength: root.textContent?.trim().length ?? 0,
       horizontalOverflow: document.documentElement.scrollWidth > window.innerWidth,
+      overflowNodes: Array.from(document.querySelectorAll("body *"))
+        .filter((element) => element.getBoundingClientRect().right > window.innerWidth + 1)
+        .slice(0, 5)
+        .map((element) => ({
+          tag: element.tagName.toLowerCase(),
+          className: element.className,
+          right: Math.round(element.getBoundingClientRect().right),
+        })),
     }));
     if (uiState.textLength < 80) failures.push("rendered_ui_text_too_short");
-    if (uiState.horizontalOverflow) failures.push("rendered_ui_has_horizontal_overflow");
+    if (uiState.horizontalOverflow) {
+      failures.push(`rendered_ui_has_horizontal_overflow:${JSON.stringify(uiState.overflowNodes)}`);
+    }
 
     const checks = [
       { check_id: "local_only_render", status: "passed", detail: "The UI rendered from a loopback-only static server." },
