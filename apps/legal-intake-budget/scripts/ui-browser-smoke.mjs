@@ -87,23 +87,26 @@ async function main() {
 
     await page.goto(`${baseUrl}/`, { waitUntil: "networkidle" });
     await page.locator("#root").waitFor({ state: "attached" });
-    const uiState = await page.locator("#root").evaluate((root) => ({
-      textLength: root.textContent?.trim().length ?? 0,
-      viewportWidth: document.documentElement.clientWidth,
-      scrollWidth: document.documentElement.scrollWidth,
-      horizontalOverflow:
-        document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
-      overflowNodes: Array.from(document.querySelectorAll("body *"))
+    const uiState = await page.locator("#root").evaluate((root) => {
+      const viewportWidth = document.documentElement.clientWidth;
+      const overflowNodes = Array.from(document.querySelectorAll("body *"))
         .filter(
-          (element) => element.getBoundingClientRect().right > document.documentElement.clientWidth + 1,
+          (element) => element.getBoundingClientRect().right > viewportWidth + 1,
         )
         .slice(0, 5)
         .map((element) => ({
           tag: element.tagName.toLowerCase(),
           className: element.className,
           right: Math.round(element.getBoundingClientRect().right),
-        })),
-    }));
+        }));
+      return {
+        textLength: root.textContent?.trim().length ?? 0,
+        viewportWidth,
+        scrollWidth: document.documentElement.scrollWidth,
+        horizontalOverflow: overflowNodes.length > 0,
+        overflowNodes,
+      };
+    });
     if (uiState.textLength < 80) failures.push("rendered_ui_text_too_short");
     if (uiState.horizontalOverflow) {
       failures.push(`rendered_ui_has_horizontal_overflow:${JSON.stringify(uiState.overflowNodes)}`);
@@ -112,7 +115,7 @@ async function main() {
     const checks = [
       { check_id: "local_only_render", status: "passed", detail: "The UI rendered from a loopback-only static server." },
       { check_id: "review_surface_nonempty", status: uiState.textLength >= 80 ? "passed" : "failed", detail: `Rendered text length: ${uiState.textLength}.` },
-      { check_id: "desktop_layout_no_horizontal_overflow", status: uiState.horizontalOverflow ? "failed" : "passed", detail: `Checked at 1440x960 (viewport ${uiState.viewportWidth}px, scroll ${uiState.scrollWidth}px).` },
+      { check_id: "desktop_layout_no_horizontal_overflow", status: uiState.horizontalOverflow ? "failed" : "passed", detail: `Checked rendered elements at 1440x960 (viewport ${uiState.viewportWidth}px, document scroll ${uiState.scrollWidth}px).` },
       { check_id: "no_external_runtime_requests", status: failures.some((failure) => failure.startsWith("external_request:")) ? "failed" : "passed", detail: "External requests are prohibited for the read-only review UI." },
       { check_id: "no_browser_runtime_errors", status: failures.some((failure) => !failure.startsWith("external_request:")) ? "failed" : "passed", detail: "Console errors, page errors, and failed requests fail the smoke test." },
     ];
