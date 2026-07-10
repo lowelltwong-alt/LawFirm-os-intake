@@ -8,6 +8,10 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.dont_write_bytecode = True
 sys.path.insert(0, str(ROOT / "src"))
 
+from lawfirm_os_intake.calibration import (  # noqa: E402
+    CalibrationLeakageProof,
+    CalibrationPreflightRequest,
+)
 from lawfirm_os_intake.models import (  # noqa: E402
     BenchmarkSnapshotManifest,
     BlockedBudgetAttemptAuditReport,
@@ -448,6 +452,8 @@ from lawfirm_os_intake.models import (  # noqa: E402
 )
 
 MODELS = {
+    "calibration-leakage-proof.schema.json": CalibrationLeakageProof,
+    "calibration-preflight-request.schema.json": CalibrationPreflightRequest,
     "source-bundle.schema.json": SourceBundle,
     "blocked-budget-attempt-audit-report.schema.json": BlockedBudgetAttemptAuditReport,
     "context-counterfactual-audit-report.schema.json": ContextCounterfactualAuditReport,

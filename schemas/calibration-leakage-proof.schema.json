@@ -1,0 +1,757 @@
+{
+  "$defs": {
+    "CalibrationDeterminismRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "aggregate_byte_identical": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Aggregate Byte Identical"
+        },
+        "rebuilt": {
+          "title": "Rebuilt",
+          "type": "boolean"
+        },
+        "aggregate_input_digest": {
+          "title": "Aggregate Input Digest",
+          "type": "string"
+        },
+        "dp_seed_hash": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dp Seed Hash"
+        }
+      },
+      "required": [
+        "aggregate_byte_identical",
+        "rebuilt",
+        "aggregate_input_digest"
+      ],
+      "title": "CalibrationDeterminismRecord",
+      "type": "object"
+    },
+    "CalibrationDpRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "mechanism": {
+          "const": "gaussian_zcdp_homegrown",
+          "default": "gaussian_zcdp_homegrown",
+          "title": "Mechanism",
+          "type": "string"
+        },
+        "accounting": {
+          "const": "zCDP",
+          "default": "zCDP",
+          "title": "Accounting",
+          "type": "string"
+        },
+        "base_rho": {
+          "exclusiveMinimum": 0,
+          "title": "Base Rho",
+          "type": "number"
+        },
+        "effective_rho": {
+          "exclusiveMinimum": 0,
+          "title": "Effective Rho",
+          "type": "number"
+        },
+        "rho_cap": {
+          "exclusiveMinimum": 0,
+          "title": "Rho Cap",
+          "type": "number"
+        },
+        "cumulative_effective_rho_after": {
+          "exclusiveMinimum": 0,
+          "title": "Cumulative Effective Rho After",
+          "type": "number"
+        },
+        "report_delta": {
+          "exclusiveMaximum": 1,
+          "exclusiveMinimum": 0,
+          "title": "Report Delta",
+          "type": "number"
+        },
+        "epsilon_at_delta_after": {
+          "exclusiveMinimum": 0,
+          "title": "Epsilon At Delta After",
+          "type": "number"
+        },
+        "sensitivity": {
+          "exclusiveMinimum": 0,
+          "title": "Sensitivity",
+          "type": "number"
+        },
+        "clip_norm": {
+          "exclusiveMinimum": 0,
+          "title": "Clip Norm",
+          "type": "number"
+        },
+        "noise_standard_deviation": {
+          "exclusiveMinimum": 0,
+          "title": "Noise Standard Deviation",
+          "type": "number"
+        },
+        "pre_clip_max_norm": {
+          "minimum": 0,
+          "title": "Pre Clip Max Norm",
+          "type": "number"
+        },
+        "clipped_matter_count": {
+          "minimum": 0,
+          "title": "Clipped Matter Count",
+          "type": "integer"
+        },
+        "group_size": {
+          "minimum": 1,
+          "title": "Group Size",
+          "type": "integer"
+        },
+        "release_id": {
+          "title": "Release Id",
+          "type": "string"
+        },
+        "seed_hash": {
+          "title": "Seed Hash",
+          "type": "string"
+        },
+        "ledger_id": {
+          "title": "Ledger Id",
+          "type": "string"
+        },
+        "ledger_policy_digest": {
+          "title": "Ledger Policy Digest",
+          "type": "string"
+        },
+        "ledger_entry_hash": {
+          "title": "Ledger Entry Hash",
+          "type": "string"
+        },
+        "clipped_sufficient_stats_digest": {
+          "title": "Clipped Sufficient Stats Digest",
+          "type": "string"
+        },
+        "noised_sufficient_stats_digest": {
+          "title": "Noised Sufficient Stats Digest",
+          "type": "string"
+        },
+        "local_jsonl_fsync_readback_confirmed": {
+          "const": true,
+          "default": true,
+          "title": "Local Jsonl Fsync Readback Confirmed",
+          "type": "boolean"
+        },
+        "authoritative_ledger_receipt_verified": {
+          "const": false,
+          "default": false,
+          "title": "Authoritative Ledger Receipt Verified",
+          "type": "boolean"
+        },
+        "release_digest": {
+          "title": "Release Digest",
+          "type": "string"
+        },
+        "parameters_are_synthetic_policy_placeholders": {
+          "const": true,
+          "default": true,
+          "title": "Parameters Are Synthetic Policy Placeholders",
+          "type": "boolean"
+        },
+        "seed_is_synthetic_replay_only": {
+          "const": true,
+          "default": true,
+          "title": "Seed Is Synthetic Replay Only",
+          "type": "boolean"
+        },
+        "secret_seed_authority_verified": {
+          "const": false,
+          "default": false,
+          "title": "Secret Seed Authority Verified",
+          "type": "boolean"
+        },
+        "production_privacy_guarantee_claimed": {
+          "const": false,
+          "default": false,
+          "title": "Production Privacy Guarantee Claimed",
+          "type": "boolean"
+        },
+        "calibrated_value_included": {
+          "const": false,
+          "default": false,
+          "title": "Calibrated Value Included",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "base_rho",
+        "effective_rho",
+        "rho_cap",
+        "cumulative_effective_rho_after",
+        "report_delta",
+        "epsilon_at_delta_after",
+        "sensitivity",
+        "clip_norm",
+        "noise_standard_deviation",
+        "pre_clip_max_norm",
+        "clipped_matter_count",
+        "group_size",
+        "release_id",
+        "seed_hash",
+        "ledger_id",
+        "ledger_policy_digest",
+        "ledger_entry_hash",
+        "clipped_sufficient_stats_digest",
+        "noised_sufficient_stats_digest",
+        "release_digest"
+      ],
+      "title": "CalibrationDpRecord",
+      "type": "object"
+    },
+    "CalibrationGroupPrivacyRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "unit": {
+          "anyOf": [
+            {
+              "enum": [
+                "matter",
+                "client",
+                "affiliate_group"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Unit"
+        },
+        "max_group_size": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Max Group Size"
+        },
+        "effective_rho": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Effective Rho"
+        },
+        "effective_epsilon": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Effective Epsilon"
+        },
+        "accounting_rule": {
+          "anyOf": [
+            {
+              "const": "zcdp_group_privacy_k_squared_rho",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Accounting Rule"
+        }
+      },
+      "required": [
+        "unit",
+        "max_group_size"
+      ],
+      "title": "CalibrationGroupPrivacyRecord",
+      "type": "object"
+    },
+    "CalibrationKAnonRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "distinct_matters": {
+          "title": "Distinct Matters",
+          "type": "integer"
+        },
+        "distinct_protected_units": {
+          "title": "Distinct Protected Units",
+          "type": "integer"
+        },
+        "top1_leverage": {
+          "title": "Top1 Leverage",
+          "type": "number"
+        },
+        "K": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "K"
+        },
+        "dominance_ok": {
+          "title": "Dominance Ok",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "distinct_matters",
+        "distinct_protected_units",
+        "top1_leverage",
+        "K",
+        "dominance_ok"
+      ],
+      "title": "CalibrationKAnonRecord",
+      "type": "object"
+    },
+    "CalibrationLomoRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "estimator_id": {
+          "title": "Estimator Id",
+          "type": "string"
+        },
+        "unit": {
+          "const": "matter",
+          "default": "matter",
+          "title": "Unit",
+          "type": "string"
+        },
+        "matter_count": {
+          "minimum": 0,
+          "title": "Matter Count",
+          "type": "integer"
+        },
+        "delta_lomo": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Delta Lomo"
+        },
+        "delta_max": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Delta Max"
+        },
+        "top1_leverage": {
+          "title": "Top1 Leverage",
+          "type": "number"
+        },
+        "p_dominance": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "P Dominance"
+        },
+        "dominance_ok": {
+          "title": "Dominance Ok",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "estimator_id",
+        "matter_count",
+        "delta_lomo",
+        "delta_max",
+        "top1_leverage",
+        "p_dominance",
+        "dominance_ok"
+      ],
+      "title": "CalibrationLomoRecord",
+      "type": "object"
+    },
+    "CalibrationMethodologyRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "version": {
+          "const": "calibration-aggregate-preflight-v0.2",
+          "default": "calibration-aggregate-preflight-v0.2",
+          "title": "Version",
+          "type": "string"
+        },
+        "inputs": {
+          "const": "synthetic_request_metadata_policy_matter_ids_protected_unit_ids_data_flags_contributions",
+          "default": "synthetic_request_metadata_policy_matter_ids_protected_unit_ids_data_flags_contributions",
+          "title": "Inputs",
+          "type": "string"
+        },
+        "aggregation": {
+          "const": "arithmetic_mean_of_matter_contributions",
+          "default": "arithmetic_mean_of_matter_contributions",
+          "title": "Aggregation",
+          "type": "string"
+        },
+        "lomo_formula": {
+          "const": "max_abs(full_matter_mean_minus_leave_one_matter_out_mean)",
+          "default": "max_abs(full_matter_mean_minus_leave_one_matter_out_mean)",
+          "title": "Lomo Formula",
+          "type": "string"
+        },
+        "top1_leverage_formula": {
+          "const": "max_abs(protected_unit_sum)_div_sum_abs(protected_unit_sums)",
+          "default": "max_abs(protected_unit_sum)_div_sum_abs(protected_unit_sums)",
+          "title": "Top1 Leverage Formula",
+          "type": "string"
+        },
+        "k_count_basis": {
+          "const": "distinct_declared_protected_units",
+          "default": "distinct_declared_protected_units",
+          "title": "K Count Basis",
+          "type": "string"
+        },
+        "thresholds": {
+          "const": "request_policy_labeled_synthetic_policy_placeholder",
+          "default": "request_policy_labeled_synthetic_policy_placeholder",
+          "title": "Thresholds",
+          "type": "string"
+        },
+        "normalization": {
+          "const": "none",
+          "default": "none",
+          "title": "Normalization",
+          "type": "string"
+        },
+        "tie_breaking": {
+          "const": "canonical_json_lexicographic_order",
+          "default": "canonical_json_lexicographic_order",
+          "title": "Tie Breaking",
+          "type": "string"
+        },
+        "uncertainty_handling": {
+          "const": "refuse_missing_nonfinite_or_threshold_breach",
+          "default": "refuse_missing_nonfinite_or_threshold_breach",
+          "title": "Uncertainty Handling",
+          "type": "string"
+        },
+        "output_range": {
+          "const": "aggregate_only_dp_or_refused_candidate_proof",
+          "default": "aggregate_only_dp_or_refused_candidate_proof",
+          "title": "Output Range",
+          "type": "string"
+        }
+      },
+      "title": "CalibrationMethodologyRecord",
+      "type": "object"
+    },
+    "CalibrationReconstructionRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "adversary_model": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Adversary Model"
+        },
+        "aux": {
+          "const": "all-but-one-matter",
+          "default": "all-but-one-matter",
+          "title": "Aux",
+          "type": "string"
+        },
+        "target_metric": {
+          "default": "aggregate_mean_membership_proxy",
+          "enum": [
+            "aggregate_mean_membership_proxy",
+            "synthetic_all_but_one_sum_smoke_check"
+          ],
+          "title": "Target Metric",
+          "type": "string"
+        },
+        "recovered_rate": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Recovered Rate"
+        },
+        "chance_rate": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Chance Rate"
+        },
+        "margin": {
+          "title": "Margin",
+          "type": "number"
+        },
+        "tolerance": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tolerance"
+        },
+        "target_count": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Count"
+        },
+        "passed": {
+          "title": "Passed",
+          "type": "boolean"
+        },
+        "scaffold_only": {
+          "default": true,
+          "title": "Scaffold Only",
+          "type": "boolean"
+        },
+        "evidence_basis": {
+          "default": "supplied_synthetic_scaffold_metrics",
+          "enum": [
+            "supplied_synthetic_scaffold_metrics",
+            "computed_synthetic_all_but_one_sum_smoke_check"
+          ],
+          "title": "Evidence Basis",
+          "type": "string"
+        },
+        "computed_adversary_test_performed": {
+          "default": false,
+          "title": "Computed Adversary Test Performed",
+          "type": "boolean"
+        },
+        "formal_privacy_guarantee_claimed": {
+          "const": false,
+          "default": false,
+          "title": "Formal Privacy Guarantee Claimed",
+          "type": "boolean"
+        },
+        "security_or_privacy_evidence_claimed": {
+          "const": false,
+          "default": false,
+          "title": "Security Or Privacy Evidence Claimed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "adversary_model",
+        "margin",
+        "passed"
+      ],
+      "title": "CalibrationReconstructionRecord",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "proof_id": {
+      "title": "Proof Id",
+      "type": "string"
+    },
+    "request_id": {
+      "title": "Request Id",
+      "type": "string"
+    },
+    "estimator_id": {
+      "title": "Estimator Id",
+      "type": "string"
+    },
+    "parameter": {
+      "title": "Parameter",
+      "type": "string"
+    },
+    "corpus_version_ref": {
+      "title": "Corpus Version Ref",
+      "type": "string"
+    },
+    "screen_version": {
+      "title": "Screen Version",
+      "type": "string"
+    },
+    "path": {
+      "enum": [
+        "aggregate_only",
+        "dp",
+        "refused"
+      ],
+      "title": "Path",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "candidate",
+        "refused"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "refusal_reasons": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Refusal Reasons",
+      "type": "array"
+    },
+    "methodology": {
+      "$ref": "#/$defs/CalibrationMethodologyRecord"
+    },
+    "kanon": {
+      "$ref": "#/$defs/CalibrationKAnonRecord"
+    },
+    "lomo": {
+      "$ref": "#/$defs/CalibrationLomoRecord"
+    },
+    "dp": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CalibrationDpRecord"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "reconstruction": {
+      "$ref": "#/$defs/CalibrationReconstructionRecord"
+    },
+    "utility": {
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "title": "Utility",
+      "type": "object"
+    },
+    "determinism": {
+      "$ref": "#/$defs/CalibrationDeterminismRecord"
+    },
+    "group_privacy": {
+      "$ref": "#/$defs/CalibrationGroupPrivacyRecord"
+    },
+    "calibrated_value_published": {
+      "const": false,
+      "default": false,
+      "title": "Calibrated Value Published",
+      "type": "boolean"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "human_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Human Review Required",
+      "type": "boolean"
+    },
+    "approval_id": {
+      "default": null,
+      "title": "Approval Id",
+      "type": "null"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "proof_id",
+    "request_id",
+    "estimator_id",
+    "parameter",
+    "corpus_version_ref",
+    "screen_version",
+    "path",
+    "status",
+    "methodology",
+    "kanon",
+    "lomo",
+    "reconstruction",
+    "utility",
+    "determinism",
+    "group_privacy",
+    "generated_at"
+  ],
+  "title": "CalibrationLeakageProof",
+  "type": "object"
+}

@@ -2,7 +2,11 @@ from hashlib import sha256
 
 import pytest
 
-from lawfirm_os_intake.calibration import CalibrationLeakageProof, build_calibration_leakage_proof
+from lawfirm_os_intake.calibration import (
+    CalibrationLeakageProof,
+    build_calibration_leakage_proof,
+    build_dp_calibration_leakage_proof,
+)
 from lawfirm_os_intake.reviewed_learning_gate import (
     CALIBRATION_LEAKAGE_PROOF_REQUIRED_GATES,
     build_reviewed_learning_gate_report,
@@ -22,6 +26,14 @@ def _request(repo_root):
 
 def _expected_digest(proof):
     return proof.determinism.aggregate_input_digest
+
+
+def _dp_request(repo_root):
+    raw = load_json(
+        repo_root
+        / "examples/synthetic/calibration/calib-dp-epsilon-bound.synthetic-policy-placeholder.json"
+    )
+    return raw["request"]
 
 
 def test_calibration_gate_refuses_missing_proof():
@@ -141,6 +153,9 @@ def test_calibration_gate_accepts_valid_proof_plus_unverified_evidence_id(repo_r
     assert CALIBRATION_LEAKAGE_PROOF_REQUIRED_GATES == [
         "valid_calibration_leakage_proof",
         "external_request_digest_anchor",
+        "external_dp_release_digest_anchor_for_dp_path",
+        "authoritative_zcdp_ledger_receipt_for_dp_path",
+        "governed_secret_seed_authority_for_dp_path",
         "approval_evidence_identifier_shape_only",
         "owning_repo_review",
         "no_calibrated_value_publication_from_intake",
@@ -377,5 +392,152 @@ def test_reviewed_learning_report_accepts_calibration_gate_review_inputs(repo_ro
     )
     assert any(
         check.check_id == "calibration_leakage_proof_promotion_gate" and check.status == "passed"
+        for check in report.checks
+    )
+
+
+def test_dp_calibration_gate_requires_independent_release_digest(repo_root, tmp_path):
+    request = _dp_request(repo_root)
+    proof = build_dp_calibration_leakage_proof(
+        request,
+        ledger_path=tmp_path / "gate.synthetic-zcdp-ledger.jsonl",
+        synthetic_replay_seed=b"synthetic-cal-dp-gate-seed-0001",
+        generated_at="2026-07-10T00:00:00+00:00",
+    )
+
+    check = validate_calibrated_parameter_gate(
+        estimator_id=proof.estimator_id,
+        parameter=proof.parameter,
+        corpus_version_ref=proof.corpus_version_ref,
+        screen_version=proof.screen_version,
+        calibration_leakage_proof=proof,
+        calibration_preflight_request=request,
+        expected_aggregate_input_digest=_expected_digest(proof),
+        approval_id="approval:human-review-record-0001",
+    )
+
+    assert check.status == "failed"
+    assert check.check_id == "calibration_expected_dp_release_digest_required"
+
+
+def test_dp_calibration_gate_stays_blocked_without_authoritative_ledger_and_seed(
+    repo_root, tmp_path
+):
+    request = _dp_request(repo_root)
+    proof = build_dp_calibration_leakage_proof(
+        request,
+        ledger_path=tmp_path / "gate-pass.synthetic-zcdp-ledger.jsonl",
+        synthetic_replay_seed=b"synthetic-cal-dp-gate-seed-0002",
+        generated_at="2026-07-10T00:00:00+00:00",
+    )
+    assert proof.dp is not None
+
+    check = validate_calibrated_parameter_gate(
+        estimator_id=proof.estimator_id,
+        parameter=proof.parameter,
+        corpus_version_ref=proof.corpus_version_ref,
+        screen_version=proof.screen_version,
+        calibration_leakage_proof=proof,
+        calibration_preflight_request=request,
+        expected_aggregate_input_digest=_expected_digest(proof),
+        expected_dp_release_digest=proof.dp.release_digest,
+        approval_id="approval:human-review-record-0001",
+    )
+
+    assert check.status == "failed"
+    assert check.check_id == "calibration_leakage_proof_promotion_gate"
+    assert "authoritative_dp_ledger_receipt_not_verified" in check.message
+    assert "governed_secret_seed_authority_not_verified" in check.message
+
+
+def test_dp_gate_rejects_forged_authority_booleans(repo_root, tmp_path):
+    request = _dp_request(repo_root)
+    proof = build_dp_calibration_leakage_proof(
+        request,
+        ledger_path=tmp_path / "gate-forged-authority.synthetic-zcdp-ledger.jsonl",
+        synthetic_replay_seed=b"synthetic-cal-dp-gate-seed-0004",
+        generated_at="2026-07-10T00:00:00+00:00",
+    )
+    assert proof.dp is not None
+    forged = proof.model_dump(mode="json")
+    forged["dp"]["authoritative_ledger_receipt_verified"] = True
+    forged["dp"]["secret_seed_authority_verified"] = True
+
+    check = validate_calibrated_parameter_gate(
+        estimator_id=proof.estimator_id,
+        parameter=proof.parameter,
+        corpus_version_ref=proof.corpus_version_ref,
+        screen_version=proof.screen_version,
+        calibration_leakage_proof=forged,
+        calibration_preflight_request=request,
+        expected_aggregate_input_digest=_expected_digest(proof),
+        expected_dp_release_digest=proof.dp.release_digest,
+        approval_id="approval:human-review-record-0001",
+    )
+
+    assert check.status == "failed"
+    assert check.check_id == "calibration_leakage_proof_valid"
+
+
+def test_dp_calibration_gate_refuses_wrong_external_release_digest(repo_root, tmp_path):
+    request = _dp_request(repo_root)
+    proof = build_dp_calibration_leakage_proof(
+        request,
+        ledger_path=tmp_path / "gate-wrong-anchor.synthetic-zcdp-ledger.jsonl",
+        synthetic_replay_seed=b"synthetic-cal-dp-gate-seed-0003",
+        generated_at="2026-07-10T00:00:00+00:00",
+    )
+
+    check = validate_calibrated_parameter_gate(
+        estimator_id=proof.estimator_id,
+        parameter=proof.parameter,
+        corpus_version_ref=proof.corpus_version_ref,
+        screen_version=proof.screen_version,
+        calibration_leakage_proof=proof,
+        calibration_preflight_request=request,
+        expected_aggregate_input_digest=_expected_digest(proof),
+        expected_dp_release_digest="sha256:" + ("0" * 64),
+        approval_id="approval:human-review-record-0001",
+    )
+
+    assert check.status == "failed"
+    assert "dp_release_digest_does_not_match_expected_digest" in check.message
+
+
+def test_reviewed_learning_report_carries_dp_gate_without_ordinary_candidate(repo_root, tmp_path):
+    request = _dp_request(repo_root)
+    proof = build_dp_calibration_leakage_proof(
+        request,
+        ledger_path=tmp_path / "report.synthetic-zcdp-ledger.jsonl",
+        synthetic_replay_seed=b"synthetic-cal-dp-report-seed-001",
+        generated_at="2026-07-10T00:00:00+00:00",
+    )
+    assert proof.dp is not None
+
+    report = build_reviewed_learning_gate_report(
+        calibrated_parameter_gate_requests=[
+            {
+                "estimator_id": proof.estimator_id,
+                "parameter": proof.parameter,
+                "corpus_version_ref": proof.corpus_version_ref,
+                "screen_version": proof.screen_version,
+                "calibration_leakage_proof": proof.model_dump(mode="json"),
+                "calibration_preflight_request": request,
+                "expected_aggregate_input_digest": _expected_digest(proof),
+                "expected_dp_release_digest": proof.dp.release_digest,
+                "approval_id": "approval:human-review-record-0001",
+                "proof_ref": proof.corpus_version_ref,
+            }
+        ]
+    )
+
+    assert report.status == "failed"
+    assert report.candidate_count == 0
+    assert report.candidates == []
+    assert any(
+        check.check_id == "calibration_leakage_proof_promotion_gate"
+        and check.status == "failed"
+        and check.candidate_ids == [proof.proof_id]
+        and "authoritative_dp_ledger_receipt_not_verified" in check.message
         for check in report.checks
     )

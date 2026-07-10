@@ -39,6 +39,9 @@ REQUIRED_NEXT_GATES = [
 CALIBRATION_LEAKAGE_PROOF_REQUIRED_GATES = [
     "valid_calibration_leakage_proof",
     "external_request_digest_anchor",
+    "external_dp_release_digest_anchor_for_dp_path",
+    "authoritative_zcdp_ledger_receipt_for_dp_path",
+    "governed_secret_seed_authority_for_dp_path",
     "approval_evidence_identifier_shape_only",
     "owning_repo_review",
     "no_calibrated_value_publication_from_intake",
@@ -266,6 +269,7 @@ def validate_calibrated_parameter_gate(
     calibration_leakage_proof: CalibrationLeakageProof | dict[str, Any] | None,
     calibration_preflight_request: CalibrationPreflightRequest | dict[str, Any] | None = None,
     expected_aggregate_input_digest: str | None = None,
+    expected_dp_release_digest: str | None = None,
     approval_id: str | None = None,
 ) -> ReviewedLearningGateCheck:
     """Fail closed unless candidate review has proof and an unverified evidence identifier."""
@@ -303,6 +307,16 @@ def validate_calibrated_parameter_gate(
             ),
             [parsed.proof_id],
         )
+    if parsed.path == "dp" and not _is_sha256_digest(expected_dp_release_digest):
+        return _check(
+            "calibration_expected_dp_release_digest_required",
+            False,
+            (
+                "DP calibration proof review requires a sha256 release digest supplied by "
+                "the calling evidence context independently of the proof/request pair."
+            ),
+            [parsed.proof_id],
+        )
     rebuilt, rebuild_error = _rebuild_calibration_leakage_proof(calibration_preflight_request)
     if rebuild_error is not None or rebuilt is None:
         return _check(
@@ -315,6 +329,7 @@ def validate_calibrated_parameter_gate(
         parsed,
         rebuilt,
         expected_aggregate_input_digest=expected_aggregate_input_digest,
+        expected_dp_release_digest=expected_dp_release_digest,
     )
     if binding_failures:
         return _check(
@@ -342,7 +357,8 @@ def validate_calibrated_parameter_gate(
             "Calibration leakage proof and a deterministic approval evidence identifier are "
             "present for candidate promotion review. An expected request digest from the "
             "calling context matched the rebuilt request and proof, but this gate does not "
-            "authenticate that context. Identifier shape only: no approval registry, "
+            "authenticate that context. DP releases additionally require a matching release "
+            "digest and an authority-owned ledger receipt. Identifier shape only: no approval registry, "
             "reviewer identity, attorney role, or reviewer role was verified. "
             "This check does not mutate profiles, budgets, guidelines, Lake records, or canon."
             if not failures
@@ -361,6 +377,7 @@ def check_calibration_leakage_proof_for_promotion(
     screen_version: str,
     calibration_preflight_request: CalibrationPreflightRequest | dict[str, Any] | None = None,
     expected_aggregate_input_digest: str | None = None,
+    expected_dp_release_digest: str | None = None,
     approval_id: str | None = None,
     proof_ref: str = "calibration_leakage_proof",
 ) -> ReviewedLearningGateCheck:
@@ -373,6 +390,7 @@ def check_calibration_leakage_proof_for_promotion(
             calibration_leakage_proof=None,
             calibration_preflight_request=calibration_preflight_request,
             expected_aggregate_input_digest=expected_aggregate_input_digest,
+            expected_dp_release_digest=expected_dp_release_digest,
             approval_id=approval_id,
         )
     parsed, error = _parse_calibration_leakage_proof(proof)
@@ -391,6 +409,7 @@ def check_calibration_leakage_proof_for_promotion(
         calibration_leakage_proof=parsed,
         calibration_preflight_request=calibration_preflight_request,
         expected_aggregate_input_digest=expected_aggregate_input_digest,
+        expected_dp_release_digest=expected_dp_release_digest,
         approval_id=approval_id,
     )
 
@@ -415,20 +434,43 @@ def _calibration_proof_failures(
         failures.append("screen_version_mismatch")
     if proof.status != "candidate":
         failures.append(f"status={proof.status}")
-    if proof.path != "aggregate_only":
+    if proof.path not in {"aggregate_only", "dp"}:
         failures.append(f"path={proof.path}")
     if proof.refusal_reasons:
         failures.append("refusal_reasons_present")
-    if not proof.kanon.dominance_ok:
-        failures.append("kanon_dominance_not_ok")
-    if not proof.lomo.dominance_ok:
-        failures.append("lomo_dominance_not_ok")
+    if proof.path == "aggregate_only":
+        if not proof.kanon.dominance_ok:
+            failures.append("kanon_dominance_not_ok")
+        if not proof.lomo.dominance_ok:
+            failures.append("lomo_dominance_not_ok")
+    if proof.path == "dp":
+        if proof.dp is None:
+            failures.append("dp_release_evidence_missing")
+        else:
+            if not proof.dp.local_jsonl_fsync_readback_confirmed:
+                failures.append("dp_local_ledger_readback_not_confirmed")
+            if not proof.dp.authoritative_ledger_receipt_verified:
+                failures.append("authoritative_dp_ledger_receipt_not_verified")
+            if not proof.dp.seed_is_synthetic_replay_only:
+                failures.append("dp_seed_scope_not_synthetic_replay")
+            if not proof.dp.secret_seed_authority_verified:
+                failures.append("governed_secret_seed_authority_not_verified")
+            if proof.dp.production_privacy_guarantee_claimed:
+                failures.append("production_privacy_guarantee_claimed")
+            if proof.dp.calibrated_value_included:
+                failures.append("dp_calibrated_value_included")
+        if proof.utility.get("utility_floor_ok") is not True:
+            failures.append("dp_utility_floor_not_met")
+        if not proof.reconstruction.computed_adversary_test_performed:
+            failures.append("dp_reconstruction_smoke_check_not_computed")
     if not proof.reconstruction.passed:
         failures.append("reconstruction_not_passed")
     if not proof.determinism.rebuilt:
         failures.append("determinism_not_rebuilt")
-    if not proof.determinism.aggregate_byte_identical:
+    if proof.path == "aggregate_only" and not proof.determinism.aggregate_byte_identical:
         failures.append("aggregate_rebuild_not_byte_identical")
+    if proof.path == "dp" and not proof.determinism.dp_seed_hash:
+        failures.append("dp_seed_hash_missing")
     if proof.calibrated_value_published:
         failures.append("calibrated_value_published")
     if not proof.candidate_only:
@@ -472,6 +514,7 @@ def _proof_request_binding_failures(
     rebuilt: CalibrationLeakageProof,
     *,
     expected_aggregate_input_digest: str,
+    expected_dp_release_digest: str | None,
 ) -> list[str]:
     failures: list[str] = []
     if rebuilt.determinism.aggregate_input_digest != expected_aggregate_input_digest:
@@ -480,12 +523,37 @@ def _proof_request_binding_failures(
         failures.append("proof_digest_does_not_match_expected_digest")
     if proof.determinism.aggregate_input_digest != rebuilt.determinism.aggregate_input_digest:
         failures.append("aggregate_input_digest_mismatch")
-    if proof.proof_id != rebuilt.proof_id:
-        failures.append("proof_id_mismatch")
-    proof_payload = proof.model_dump(mode="json", exclude={"generated_at"})
-    rebuilt_payload = rebuilt.model_dump(mode="json", exclude={"generated_at"})
-    if proof_payload != rebuilt_payload:
-        failures.append("proof_content_mismatch")
+    if proof.path == "aggregate_only":
+        if proof.proof_id != rebuilt.proof_id:
+            failures.append("proof_id_mismatch")
+        proof_payload = proof.model_dump(mode="json", exclude={"generated_at"})
+        rebuilt_payload = rebuilt.model_dump(mode="json", exclude={"generated_at"})
+        if proof_payload != rebuilt_payload:
+            failures.append("proof_content_mismatch")
+    elif proof.path == "dp":
+        if proof.dp is None:
+            failures.append("dp_release_evidence_missing")
+        elif proof.dp.release_digest != expected_dp_release_digest:
+            failures.append("dp_release_digest_does_not_match_expected_digest")
+        for field in [
+            "request_id",
+            "estimator_id",
+            "parameter",
+            "corpus_version_ref",
+            "screen_version",
+        ]:
+            if getattr(proof, field) != getattr(rebuilt, field):
+                failures.append(f"{field}_request_binding_mismatch")
+        if proof.methodology != rebuilt.methodology:
+            failures.append("methodology_request_binding_mismatch")
+        if proof.kanon != rebuilt.kanon:
+            failures.append("kanon_request_binding_mismatch")
+        if proof.lomo != rebuilt.lomo:
+            failures.append("lomo_request_binding_mismatch")
+        if proof.group_privacy.unit != rebuilt.group_privacy.unit:
+            failures.append("group_privacy_unit_request_binding_mismatch")
+        if proof.group_privacy.max_group_size != rebuilt.group_privacy.max_group_size:
+            failures.append("group_size_request_binding_mismatch")
     return failures
 
 
@@ -544,6 +612,11 @@ def _calibration_gate_checks(
                 calibration_leakage_proof=request["calibration_leakage_proof"],
                 calibration_preflight_request=request["calibration_preflight_request"],
                 expected_aggregate_input_digest=str(request["expected_aggregate_input_digest"]),
+                expected_dp_release_digest=(
+                    str(request["expected_dp_release_digest"])
+                    if request.get("expected_dp_release_digest") is not None
+                    else None
+                ),
                 approval_id=(
                     str(request["approval_id"]) if request.get("approval_id") is not None else None
                 ),

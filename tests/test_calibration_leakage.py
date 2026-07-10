@@ -1,8 +1,10 @@
 import pytest
 
 from lawfirm_os_intake.calibration import (
+    CalibrationLeakageProof,
     CalibrationPreflightRequest,
     build_calibration_leakage_proof,
+    build_dp_calibration_leakage_proof,
 )
 from lawfirm_os_intake.util import load_json
 
@@ -13,6 +15,19 @@ def _request(repo_root):
         / "examples/synthetic/calibration/calib-aggregate-clean.synthetic-policy-placeholder.json"
     )
     return raw["request"]
+
+
+def _dp_request(repo_root, fixture_id):
+    raw = load_json(
+        repo_root
+        / "examples/synthetic/calibration"
+        / f"{fixture_id}.synthetic-policy-placeholder.json"
+    )
+    return raw["request"]
+
+
+def _synthetic_seed():
+    return b"synthetic-cal-dp-test-seed-0001"
 
 
 def test_aggregate_lomo_scaffold_emits_candidate_proof_without_values(repo_root):
@@ -229,6 +244,14 @@ def test_empty_protected_unit_identifiers_fail_closed(repo_root, field_name):
         CalibrationPreflightRequest.model_validate(raw)
 
 
+def test_duplicate_matter_ids_fail_before_sensitivity_accounting(repo_root):
+    raw = _request(repo_root)
+    raw["matters"][1]["matter_id"] = raw["matters"][0]["matter_id"]
+
+    with pytest.raises(ValueError, match="one aggregated contribution per unique matter_id"):
+        CalibrationPreflightRequest.model_validate(raw)
+
+
 def test_non_candidate_or_publishing_path_fails_closed(repo_root):
     raw = _request(repo_root)
     raw["publish_calibrated_value"] = True
@@ -243,3 +266,127 @@ def test_policy_values_must_be_labeled_synthetic_placeholders(repo_root):
 
     with pytest.raises(ValueError, match="synthetic policy placeholders"):
         CalibrationPreflightRequest.model_validate(raw)
+
+
+def test_dominance_routes_to_synthetic_dp_candidate_with_local_ledger_evidence(repo_root, tmp_path):
+    ledger_path = tmp_path / "dominance.synthetic-zcdp-ledger.jsonl"
+    proof = build_dp_calibration_leakage_proof(
+        _dp_request(repo_root, "calib-dominance-route-dp"),
+        ledger_path=ledger_path,
+        synthetic_replay_seed=_synthetic_seed(),
+        generated_at="2026-07-10T00:00:00+00:00",
+    )
+
+    assert proof.status == "candidate"
+    assert proof.path == "dp"
+    assert proof.dp is not None
+    assert proof.dp.accounting == "zCDP"
+    assert proof.dp.clipped_matter_count == 1
+    assert proof.dp.calibrated_value_included is False
+    assert proof.dp.production_privacy_guarantee_claimed is False
+    assert proof.dp.local_jsonl_fsync_readback_confirmed is True
+    assert proof.dp.authoritative_ledger_receipt_verified is False
+    assert proof.dp.seed_is_synthetic_replay_only is True
+    assert proof.dp.secret_seed_authority_verified is False
+    assert proof.reconstruction.computed_adversary_test_performed is True
+    assert proof.reconstruction.formal_privacy_guarantee_claimed is False
+    assert proof.reconstruction.security_or_privacy_evidence_claimed is False
+    assert proof.utility["utility_floor_ok"] is True
+    assert proof.determinism.aggregate_byte_identical is None
+    assert proof.determinism.dp_seed_hash == proof.dp.seed_hash
+    assert ledger_path.read_text(encoding="utf-8").count("\n") == 1
+
+
+def test_dp_release_replays_deterministically_from_synthetic_seed(repo_root, tmp_path):
+    request = _dp_request(repo_root, "calib-dp-epsilon-bound")
+    first = build_dp_calibration_leakage_proof(
+        request,
+        ledger_path=tmp_path / "first.synthetic-zcdp-ledger.jsonl",
+        synthetic_replay_seed=_synthetic_seed(),
+        generated_at="2026-07-10T00:00:00+00:00",
+    )
+    second = build_dp_calibration_leakage_proof(
+        request,
+        ledger_path=tmp_path / "second.synthetic-zcdp-ledger.jsonl",
+        synthetic_replay_seed=_synthetic_seed(),
+        generated_at="2026-07-10T00:00:00+00:00",
+    )
+
+    assert first.dp is not None and second.dp is not None
+    assert first.dp.release_digest == second.dp.release_digest
+    assert first.dp.noised_sufficient_stats_digest == second.dp.noised_sufficient_stats_digest
+    assert first.proof_id == second.proof_id
+
+
+def test_group_privacy_uses_k_squared_rho_not_linear_rho(repo_root, tmp_path):
+    proof = build_dp_calibration_leakage_proof(
+        _dp_request(repo_root, "calib-group-privacy"),
+        ledger_path=tmp_path / "group.synthetic-zcdp-ledger.jsonl",
+        synthetic_replay_seed=_synthetic_seed(),
+        generated_at="2026-07-10T00:00:00+00:00",
+    )
+
+    assert proof.status == "candidate"
+    assert proof.dp is not None
+    assert proof.dp.group_size == 6
+    assert proof.dp.base_rho == pytest.approx(0.01)
+    assert proof.dp.effective_rho == pytest.approx(0.36)
+    assert proof.dp.effective_rho != pytest.approx(0.06)
+    assert proof.group_privacy.accounting_rule == "zcdp_group_privacy_k_squared_rho"
+    assert proof.group_privacy.effective_rho == pytest.approx(0.36)
+
+
+def test_dp_proof_rejects_linearized_group_accounting(repo_root, tmp_path):
+    proof = build_dp_calibration_leakage_proof(
+        _dp_request(repo_root, "calib-group-privacy"),
+        ledger_path=tmp_path / "tamper-group.synthetic-zcdp-ledger.jsonl",
+        synthetic_replay_seed=_synthetic_seed(),
+        generated_at="2026-07-10T00:00:00+00:00",
+    ).model_dump(mode="json")
+    proof["dp"]["effective_rho"] = proof["dp"]["base_rho"] * proof["dp"]["group_size"]
+    proof["group_privacy"]["effective_rho"] = proof["dp"]["effective_rho"]
+
+    with pytest.raises(ValueError, match="k-squared group accounting"):
+        CalibrationLeakageProof.model_validate(proof)
+
+
+@pytest.mark.parametrize(
+    ("fixture_id", "reason"),
+    [
+        ("calib-utility-floor", "noise_exceeds_signal_stay_synthetic"),
+        ("calib-budget-exhausted", "privacy_budget_exhausted_before_sampling"),
+    ],
+)
+def test_dp_utility_or_budget_failure_stays_synthetic_without_ledger_write(
+    repo_root, tmp_path, fixture_id, reason
+):
+    ledger_path = tmp_path / f"{fixture_id}.synthetic-zcdp-ledger.jsonl"
+    proof = build_dp_calibration_leakage_proof(
+        _dp_request(repo_root, fixture_id),
+        ledger_path=ledger_path,
+        synthetic_replay_seed=_synthetic_seed(),
+        generated_at="2026-07-10T00:00:00+00:00",
+    )
+
+    assert proof.status == "refused"
+    assert proof.path == "refused"
+    assert reason in proof.refusal_reasons
+    assert proof.dp is None
+    assert proof.calibrated_value_published is False
+    assert not ledger_path.exists()
+
+
+def test_dp_builder_refuses_missing_human_policy_fields_before_write(repo_root, tmp_path):
+    request = _dp_request(repo_root, "calib-dp-epsilon-bound")
+    request["policy"].pop("dp_rho")
+    ledger_path = tmp_path / "missing-policy.synthetic-zcdp-ledger.jsonl"
+
+    proof = build_dp_calibration_leakage_proof(
+        request,
+        ledger_path=ledger_path,
+        synthetic_replay_seed=_synthetic_seed(),
+    )
+
+    assert proof.status == "refused"
+    assert "missing_dp_rho" in proof.refusal_reasons
+    assert not ledger_path.exists()

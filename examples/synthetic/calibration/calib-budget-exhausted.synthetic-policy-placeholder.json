@@ -1,0 +1,36 @@
+{
+  "fixture_id": "calib-budget-exhausted",
+  "status": "synthetic_only_candidate_fixture",
+  "notes": "Synthetic holdout requires refusal before sampling or writing when group-adjusted rho exceeds the candidate ledger cap.",
+  "request": {
+    "request_id": "calib-budget-exhausted-request",
+    "estimator_id": "synthetic_exhausted_driver_mean",
+    "parameter": "synthetic_exhausted_hours_mean",
+    "corpus_version_ref": "examples/synthetic/calibration/calib-budget-exhausted.synthetic-policy-placeholder.json",
+    "screen_version": "synthetic-screen-v0",
+    "runtime_scope": "synthetic_candidate",
+    "candidate_only": true,
+    "publish_calibrated_value": false,
+    "policy": {
+      "policy_label": "Synthetic policy placeholder for CAL-DP tests only",
+      "protected_unit": "client",
+      "minimum_distinct_matters": 8,
+      "dominance_threshold": 0.4,
+      "lomo_delta_limit": 2.0,
+      "adversary_model": "synthetic strong all-but-one-matter placeholder",
+      "reconstruction_chance_rate": 0.25,
+      "reconstruction_margin": 0.0,
+      "reconstruction_tolerance": 0.1,
+      "dp_route_required": true,
+      "dp_rho": 0.1,
+      "dp_report_delta": 0.000001,
+      "dp_clip_norm": 2.0,
+      "dp_rho_cap": 0.2,
+      "dp_max_noise_to_signal_ratio": 2.0
+    },
+    "matters": [
+      {"matter_id": "synthetic-exhausted-001", "protected_unit_id": "synthetic-client-group-002", "contribution": 1.0},
+      {"matter_id": "synthetic-exhausted-002", "protected_unit_id": "synthetic-client-group-002", "contribution": 1.1}
+    ]
+  }
+}
