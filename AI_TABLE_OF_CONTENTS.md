@@ -7,6 +7,7 @@
 | Understand governance-map mirror | `.ai/control/governance-dependency-map-mirror.json`, `scripts/validate_governance_dependency_map_mirror.py`, upstream governance dependency map |
 | Understand real-work shadow gate | `docs/real-work-shadow-mode-readiness.md`, upstream Substrate real-work shadow-mode gate |
 | Build code | `AGENTS.md`, `docs/ai-handoff/BUILDER_BRIEF.md`, `docs/ai-handoff/FIRST_10_PRS.md` |
+| Understand DAD-style asset & learning layer (ported) | `docs/ai-handoff/LAW_FIRM_OS_DAD_LAYER_ARCHITECTURE_PLAN.md`, `docs/ai-handoff/HARD_KERNELS_FOR_FABLE_DAD_LAYER.md`, `docs/ai-handoff/OPUS_4_8_DAD_LAYER_INTAKE_PROMPT.md`, `docs/ai-handoff/FABLE_MASTER_ARCHITECT_DAD_LAYER_PROMPT.md` |
 | Review Stage 6 crosswalk/OCG UI evidence | `docs/ai-handoff/STAGE_6_HANDOFF_REVIEW_UI_QA_CROSSWALK_OCG_EVIDENCE.md`, `src/lawfirm_os_intake/review_ui_crosswalk_ocg_evidence.py`, `apps/legal-intake-budget/src/App.tsx` |
 | Use Claude | `CLAUDE.md`, `docs/claude-agent-sdk-operating-contract.md`, `docs/claude-for-legal-lessons.md` |
 | Understand workflow | `docs/workflow/intake-to-budget.md`, `workflow/intake-to-budget.workflow.yaml` |
