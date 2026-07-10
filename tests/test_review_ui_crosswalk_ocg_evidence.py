@@ -124,6 +124,9 @@ def test_qa_readiness_passes_with_crosswalk_and_ocg_reports(repo_root, tmp_path)
     )
     assert report.status == "ready_for_review"
     assert report.blocker_count == 0
+    check_ids = {check.check_id for check in report.checks}
+    assert "crosswalk_exact_standard_code_unverified" in check_ids
+    assert "crosswalk_zero_high_confidence_dual_review_violations" in check_ids
 
 
 def test_qa_product_confidence_includes_crosswalk_and_ocg_gates(repo_root, tmp_path):
@@ -165,6 +168,8 @@ def test_review_ui_source_contains_crosswalk_and_ocg_sections(repo_root):
     assert "OCG Rule IR Adoption Evidence" in app_source
     assert "CrosswalkAuditEvidencePanel" in app_source
     assert "OCGRuleIRAdoptionEvidencePanel" in app_source
+    assert "exact_standard_code_verified" in app_source
+    assert "UTBMS-like Family Labels" in app_source
 
 
 def test_blocked_actions_preserved_in_crosswalk_report(repo_root, tmp_path):

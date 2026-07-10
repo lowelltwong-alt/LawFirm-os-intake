@@ -19001,6 +19001,9 @@ class CrosswalkAuditReport(StrictModel):
     entries_missing_provenance_count: int = Field(ge=0)
     entries_missing_review_status_count: int = Field(ge=0)
     guessed_mapping_count: int = Field(ge=0)
+    high_confidence_dual_review_violation_count: int = Field(default=0, ge=0)
+    utbms_like_candidate_family_label_count: int = Field(default=0, ge=0)
+    exact_standard_code_verified: bool = False
     unverified_pinned_target_count: int = Field(default=0, ge=0)
     candidate_target_prefix_violation_count: int = Field(default=0, ge=0)
     workflow_dependency_violation_count: int = Field(default=0, ge=0)
@@ -19025,6 +19028,8 @@ class CrosswalkAuditSummary(StrictModel):
     unmapped_entry_count: int = Field(ge=0)
     canonical_claim_count: int = Field(ge=0)
     guessed_mapping_count: int = Field(ge=0)
+    high_confidence_dual_review_violation_count: int = Field(default=0, ge=0)
+    utbms_like_candidate_family_label_count: int = Field(default=0, ge=0)
     unverified_pinned_target_count: int = Field(ge=0)
     candidate_target_prefix_violation_count: int = Field(ge=0)
     workflow_dependency_violation_count: int = Field(ge=0)

@@ -1166,9 +1166,10 @@ function CrosswalkAuditEvidencePanel({ report }: { report: CrosswalkAuditReport 
       <div className="warning-strip">
         <strong>Candidate-only / not canon.</strong>
         <span>
-          UTBMS-like strings in local labels remain unverified candidate families (
-          exact_standard_code_verified=false). This evidence is read-only and must not drive budget
-          math.
+          UTBMS-like strings in local labels (e.g. task-L310-family-*) are mnemonic candidate
+          families — not exact SALI, LEDES, or UTBMS codes (
+          <code>exact_standard_code_verified=false</code>). This evidence is read-only and must not
+          drive budget math.
         </span>
       </div>
 
@@ -1176,6 +1177,14 @@ function CrosswalkAuditEvidencePanel({ report }: { report: CrosswalkAuditReport 
         <div>
           <span>Acceptance Gate</span>
           <strong>{report.acceptance_gate_status}</strong>
+        </div>
+        <div>
+          <span>Exact Standard Code Verified</span>
+          <strong>{String(report.exact_standard_code_verified)}</strong>
+        </div>
+        <div>
+          <span>UTBMS-like Family Labels</span>
+          <strong>{report.utbms_like_candidate_family_label_count}</strong>
         </div>
         <div>
           <span>Crosswalks</span>
@@ -1192,6 +1201,7 @@ function CrosswalkAuditEvidencePanel({ report }: { report: CrosswalkAuditReport 
           <strong>
             {report.canonical_claim_count +
               report.guessed_mapping_count +
+              report.high_confidence_dual_review_violation_count +
               report.unverified_pinned_target_count +
               report.workflow_dependency_violation_count}
           </strong>

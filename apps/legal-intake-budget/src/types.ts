@@ -2128,6 +2128,9 @@ export type CrosswalkAuditReport = {
   unmapped_entry_count: number;
   canonical_claim_count: number;
   guessed_mapping_count: number;
+  high_confidence_dual_review_violation_count: number;
+  utbms_like_candidate_family_label_count: number;
+  exact_standard_code_verified: boolean;
   unverified_pinned_target_count: number;
   candidate_target_prefix_violation_count: number;
   workflow_dependency_violation_count: number;

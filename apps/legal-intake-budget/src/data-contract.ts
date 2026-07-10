@@ -2341,6 +2341,9 @@ export function assertCrosswalkAuditReport(report: CrosswalkAuditReport): string
   if (report.status !== "passed" && report.status !== "blocked") {
     failures.push("crosswalk_audit_unknown_status");
   }
+  if (report.exact_standard_code_verified !== false) {
+    failures.push("crosswalk_audit_exact_standard_code_must_remain_unverified");
+  }
   return failures;
 }
 

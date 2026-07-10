@@ -31,6 +31,8 @@ def build_crosswalk_audit_summary(report: CrosswalkAuditReport) -> CrosswalkAudi
         unmapped_entry_count=report.unmapped_entry_count,
         canonical_claim_count=report.canonical_claim_count,
         guessed_mapping_count=report.guessed_mapping_count,
+        high_confidence_dual_review_violation_count=report.high_confidence_dual_review_violation_count,
+        utbms_like_candidate_family_label_count=report.utbms_like_candidate_family_label_count,
         unverified_pinned_target_count=report.unverified_pinned_target_count,
         candidate_target_prefix_violation_count=report.candidate_target_prefix_violation_count,
         workflow_dependency_violation_count=report.workflow_dependency_violation_count,
@@ -38,7 +40,7 @@ def build_crosswalk_audit_summary(report: CrosswalkAuditReport) -> CrosswalkAudi
         prohibited_actions=list(report.prohibited_actions),
         not_authorized_for_canonical_use=report.not_authorized_for_canonical_use,
         not_authorized_for_budget_logic=report.not_authorized_for_budget_logic,
-        exact_standard_code_verified=False,
+        exact_standard_code_verified=report.exact_standard_code_verified,
         candidate_only=report.candidate_only,
     )
 
@@ -177,6 +179,27 @@ def crosswalk_readiness_checks(
             and report.not_promoted_canon
             else "blocked",
             "Crosswalk report must remain candidate-only with explicit no-authority flags.",
+            evidence_refs=refs,
+        ),
+        _check(
+            "crosswalk_exact_standard_code_unverified",
+            "Crosswalk UTBMS-like labels remain unverified (exact_standard_code_verified=false)",
+            "passed" if report.exact_standard_code_verified is False else "blocked",
+            (
+                f"exact_standard_code_verified={report.exact_standard_code_verified}; "
+                f"utbms_like_candidate_family_label_count="
+                f"{report.utbms_like_candidate_family_label_count}."
+            ),
+            evidence_refs=refs,
+        ),
+        _check(
+            "crosswalk_zero_high_confidence_dual_review_violations",
+            "Crosswalk has zero high-confidence dual-review violations",
+            "passed" if report.high_confidence_dual_review_violation_count == 0 else "blocked",
+            (
+                "high_confidence_dual_review_violation_count="
+                f"{report.high_confidence_dual_review_violation_count}."
+            ),
             evidence_refs=refs,
         ),
     ]

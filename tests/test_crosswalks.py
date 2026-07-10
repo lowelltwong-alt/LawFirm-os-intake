@@ -114,6 +114,9 @@ def test_audit_passes_for_all_synthetic_crosswalks(repo_root):
     assert report.entries_missing_provenance_count == 0
     assert report.entries_missing_review_status_count == 0
     assert report.guessed_mapping_count == 0
+    assert report.high_confidence_dual_review_violation_count == 0
+    assert report.exact_standard_code_verified is False
+    assert report.utbms_like_candidate_family_label_count > 0
     assert report.crosswalk_count == 4
     assert report.entry_count > 0
     assert report.mapped_entry_count > 0
@@ -247,8 +250,9 @@ def test_high_confidence_unverified_mapped_entry_is_a_guessed_mapping():
     report = audit_crosswalks([cw])
     assert report.status == "blocked"
     assert report.guessed_mapping_count == 1
+    assert report.high_confidence_dual_review_violation_count == 1
     ids = {f.finding_id for f in report.findings}
-    assert "guessed_mapping_high_confidence_unverified" in ids
+    assert "high_confidence_requires_dual_human_review" in ids
 
 
 def test_unverified_mapped_entry_must_keep_candidate_target_prefix():
@@ -379,8 +383,31 @@ def test_crosswalks_cannot_be_used_as_budget_or_rejection_business_logic(tmp_pat
     }
 
 
-def test_human_reviewed_high_confidence_entry_is_allowed():
+def test_high_confidence_entry_only_human_reviewed_blocks_when_provenance_unverified():
     prov = _provenance("sali_lmss")
+    entry = _entry(
+        "employment_litigation_defense",
+        "matter_family",
+        "sali_lmss_candidate:EmploymentLitigation",
+        "sali_lmss",
+        "high",
+        prov,
+    ).model_copy(update={"review_status": "human_reviewed"})
+    cw = Crosswalk(
+        crosswalk_id="xwalk-entry-only-reviewed",
+        kind="matter_family_to_sali",
+        target_system="sali_lmss",
+        source_provenance=prov,
+        entries=[entry],
+    )
+    report = audit_crosswalks([cw])
+    assert report.status == "blocked"
+    assert report.high_confidence_dual_review_violation_count == 1
+    assert "high_confidence_requires_dual_human_review" in {f.finding_id for f in report.findings}
+
+
+def test_human_reviewed_high_confidence_entry_is_allowed():
+    prov = _provenance("sali_lmss").model_copy(update={"review_status": "human_reviewed"})
     entry = _entry(
         "employment_litigation_defense",
         "matter_family",
@@ -399,6 +426,17 @@ def test_human_reviewed_high_confidence_entry_is_allowed():
     )
     report = audit_crosswalks([cw])
     assert report.status == "passed", report.findings
+    assert report.high_confidence_dual_review_violation_count == 0
+
+
+def test_utbms_like_family_labels_counted_with_exact_standard_code_unverified(repo_root):
+    crosswalks = _all_crosswalks(repo_root)
+    report = audit_crosswalks(crosswalks)
+    assert report.exact_standard_code_verified is False
+    assert report.utbms_like_candidate_family_label_count >= 10
+    assert report.display_banner["exact_standard_code_verified"] is False
+    assert report.display_banner["utbms_like_candidate_family_label_count"] >= 10
+    assert "task-L310-family" in report.display_banner["candidate_family_label_note"]
 
 
 def test_data_origin_non_synthetic_blocks():

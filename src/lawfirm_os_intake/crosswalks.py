@@ -31,6 +31,11 @@ CANDIDATE_TARGET_PREFIX_BY_SYSTEM = {
     "ledes_error_dimension": "ledes_error_dimension_candidate:",
 }
 
+UTBMS_LIKE_FAMILY_LABEL_PATTERN = re.compile(
+    r"^utbms_ledes_candidate:.*(?:phase-family-|task-|expense-)[LAED]\d",
+    re.IGNORECASE,
+)
+
 PINNED_TARGET_PATTERNS_BY_SYSTEM = {
     "sali_lmss": [
         re.compile(r"^https?://.*(?:sali|lmss)", re.IGNORECASE),
@@ -102,6 +107,23 @@ PROVENANCE_BY_SYSTEM = {
 
 def _stable_id(prefix: str, seed: str) -> str:
     return f"{prefix}-{sha256(seed.encode('utf-8')).hexdigest()[:12]}"
+
+
+def _is_dual_human_reviewed(entry) -> bool:
+    return (
+        entry.review_status == "human_reviewed"
+        and entry.provenance.review_status == "human_reviewed"
+    )
+
+
+def _is_utbms_like_candidate_family_label(target: str) -> bool:
+    """UTBMS-like mnemonic tokens inside candidate family labels are not exact codes."""
+    normalized = target.strip()
+    if not normalized.startswith("utbms_ledes_candidate:"):
+        return False
+    if UTBMS_LIKE_FAMILY_LABEL_PATTERN.search(normalized):
+        return True
+    return "-family-" in normalized.lower()
 
 
 def load_crosswalk(path: str | Path) -> Crosswalk:
@@ -203,25 +225,22 @@ def _entry_findings(cw: Crosswalk) -> list[CrosswalkAuditFinding]:
                     )
                 )
         else:
-            # Mapped entries must not claim high confidence while unverified.
-            if entry.confidence == "high" and entry.review_status == "candidate_unverified":
+            human_reviewed = _is_dual_human_reviewed(entry)
+            # High-confidence mapped entries require dual human review on entry + provenance.
+            if entry.confidence == "high" and not human_reviewed:
                 findings.append(
                     CrosswalkAuditFinding(
                         crosswalk_id=cw.crosswalk_id,
-                        finding_id="guessed_mapping_high_confidence_unverified",
+                        finding_id="high_confidence_requires_dual_human_review",
                         severity="blocker",
                         issue=(
-                            "mapped entry claims high confidence while "
-                            "candidate_unverified; cannot guess mappings"
+                            "mapped entry claims high confidence but entry.review_status and "
+                            "provenance.review_status are not both human_reviewed"
                         ),
                         entry_local_term=entry.local_term,
                     )
                 )
             expected_prefix = CANDIDATE_TARGET_PREFIX_BY_SYSTEM.get(entry.candidate_target_system)
-            human_reviewed = (
-                entry.review_status == "human_reviewed"
-                and entry.provenance.review_status == "human_reviewed"
-            )
             if (
                 expected_prefix
                 and not human_reviewed
@@ -310,6 +329,8 @@ def audit_crosswalks(
     entries_missing_provenance_count = 0
     entries_missing_review_status_count = 0
     guessed_mapping_count = 0
+    high_confidence_dual_review_violation_count = 0
+    utbms_like_candidate_family_label_count = 0
     unverified_pinned_target_count = 0
     candidate_target_prefix_violation_count = 0
     workflow_dependency_violation_count = 0
@@ -333,15 +354,19 @@ def audit_crosswalks(
                 if f.finding_id in {
                     "unmapped_entry_has_guessed_target",
                     "unmapped_entry_confidence_not_unknown",
-                    "guessed_mapping_high_confidence_unverified",
+                    "high_confidence_requires_dual_human_review",
                 }:
                     guessed_mapping_count += 1
+                if f.finding_id == "high_confidence_requires_dual_human_review":
+                    high_confidence_dual_review_violation_count += 1
                 if f.finding_id == "unverified_pinned_standard_target":
                     unverified_pinned_target_count += 1
                 if f.finding_id == "unverified_candidate_target_prefix_violation":
                     candidate_target_prefix_violation_count += 1
         for entry in cw.entries:
             entry_count += 1
+            if _is_utbms_like_candidate_family_label(entry.candidate_target):
+                utbms_like_candidate_family_label_count += 1
             if entry.candidate_target_system == "unmapped":
                 unmapped_count += 1
             else:
@@ -364,6 +389,8 @@ def audit_crosswalks(
             str(unmapped_count),
             str(canonical_claim_count),
             str(guessed_mapping_count),
+            str(high_confidence_dual_review_violation_count),
+            str(utbms_like_candidate_family_label_count),
             str(unverified_pinned_target_count),
             str(candidate_target_prefix_violation_count),
             str(workflow_dependency_violation_count),
@@ -383,6 +410,9 @@ def audit_crosswalks(
         entries_missing_provenance_count=entries_missing_provenance_count,
         entries_missing_review_status_count=entries_missing_review_status_count,
         guessed_mapping_count=guessed_mapping_count,
+        high_confidence_dual_review_violation_count=high_confidence_dual_review_violation_count,
+        utbms_like_candidate_family_label_count=utbms_like_candidate_family_label_count,
+        exact_standard_code_verified=False,
         unverified_pinned_target_count=unverified_pinned_target_count,
         candidate_target_prefix_violation_count=candidate_target_prefix_violation_count,
         workflow_dependency_violation_count=workflow_dependency_violation_count,
@@ -400,6 +430,13 @@ def audit_crosswalks(
             "not_promoted_canon": True,
             "accepted_with_restrictions": not has_blocker,
             "review_status_required_before_promotion": "human_reviewed",
+            "high_confidence_requires_dual_human_review": True,
+            "exact_standard_code_verified": False,
+            "utbms_like_candidate_family_label_count": utbms_like_candidate_family_label_count,
+            "candidate_family_label_note": (
+                "UTBMS-like strings such as task-L310-family-* are mnemonic candidate "
+                "families, not exact SALI/LEDES/UTBMS canon."
+            ),
             "blocked_actions": [
                 "canonical_use",
                 "budget_logic_dependency",

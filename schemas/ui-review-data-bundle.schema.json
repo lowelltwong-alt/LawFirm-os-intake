@@ -45,6 +45,18 @@
           "title": "Guessed Mapping Count",
           "type": "integer"
         },
+        "high_confidence_dual_review_violation_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "High Confidence Dual Review Violation Count",
+          "type": "integer"
+        },
+        "utbms_like_candidate_family_label_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Utbms Like Candidate Family Label Count",
+          "type": "integer"
+        },
         "unverified_pinned_target_count": {
           "minimum": 0,
           "title": "Unverified Pinned Target Count",

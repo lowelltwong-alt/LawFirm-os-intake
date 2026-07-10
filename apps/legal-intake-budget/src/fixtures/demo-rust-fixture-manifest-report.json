@@ -36,17 +36,17 @@
       "top_level_type": "object"
     },
     {
-      "byte_count": 2045,
+      "byte_count": 2495,
       "candidate_only": true,
       "id_fields": [
         {
           "field": "report_id",
-          "value": "xwalkaudit-189ef990717c"
+          "value": "xwalkaudit-5697089c95ae"
         }
       ],
       "path": "demo-crosswalk-audit-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:0e16222f2fef8fd648707135992a9461458b7c37db1f9bb498eefadeef0ef155",
+      "sha256": "sha256:1093a93237874562aff38c22f159e327f129e02d70b5d5101516385749d83ec9",
       "status": "passed",
       "top_level_type": "object"
     },
@@ -693,7 +693,7 @@
   ],
   "lake_write_performed": false,
   "local_json_only": true,
-  "manifest_sha256": "sha256:9e1636bbbeb718551ee5bedfe11525236a686cb674ba1fda503a5d5b8821fc6c",
+  "manifest_sha256": "sha256:cc354e500ae5fdb28aea69a01ef9775b5e3ebaec7773324ed9c44055625d5080",
   "matter_opening_authorized": false,
   "non_authoritative": true,
   "parse_error_count": 0,
@@ -716,5 +716,5 @@
   "sqlite_write_performed": false,
   "status": "passed",
   "synthetic_only": true,
-  "total_byte_count": 763030
+  "total_byte_count": 763480
 }
