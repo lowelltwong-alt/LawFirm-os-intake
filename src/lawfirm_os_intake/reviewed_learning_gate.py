@@ -1,7 +1,11 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Any
 
+from pydantic import ValidationError
+
+from .calibration import CalibrationLeakageProof
 from .models import (
     BudgetActualComparisonReport,
     BudgetActualVarianceDriverCandidate,
@@ -26,6 +30,13 @@ REQUIRED_NEXT_GATES = [
     "synthetic_fixture_update",
     "shadow_eval",
     "owning_repo_review",
+]
+
+CALIBRATION_LEAKAGE_PROOF_REQUIRED_GATES = [
+    "valid_calibration_leakage_proof",
+    "human_calibration_approval_id",
+    "owning_repo_review",
+    "no_calibrated_value_publication_from_intake",
 ]
 
 
@@ -241,6 +252,198 @@ def _check(
     )
 
 
+def validate_calibrated_parameter_gate(
+    *,
+    estimator_id: str,
+    parameter: str,
+    corpus_version_ref: str,
+    screen_version: str,
+    calibration_leakage_proof: CalibrationLeakageProof | dict[str, Any] | None,
+    approval_id: str | None,
+) -> ReviewedLearningGateCheck:
+    """Fail closed unless a calibrated parameter has proof and a human approval id."""
+    proof = calibration_leakage_proof
+    if proof is None:
+        return _check(
+            "calibration_leakage_proof_required",
+            False,
+            "Calibrated parameters require a CalibrationLeakageProof before promotion review.",
+        )
+    parsed, error = _parse_calibration_leakage_proof(proof)
+    if error is not None or parsed is None:
+        return _check(
+            "calibration_leakage_proof_valid",
+            False,
+            f"CalibrationLeakageProof is invalid: {error}",
+        )
+
+    failures = _calibration_proof_failures(
+        parsed,
+        estimator_id=estimator_id,
+        parameter=parameter,
+        corpus_version_ref=corpus_version_ref,
+        screen_version=screen_version,
+        approval_id=approval_id,
+    )
+    return _check(
+        "calibration_leakage_proof_promotion_gate",
+        not failures,
+        (
+            "Calibration leakage proof and approval id are present for promotion review; "
+            "this check does not mutate profiles, budgets, guidelines, Lake records, or canon."
+            if not failures
+            else "Calibration leakage proof blocks promotion review: " + ", ".join(failures)
+        ),
+        [parsed.proof_id],
+    )
+
+
+def check_calibration_leakage_proof_for_promotion(
+    proof: CalibrationLeakageProof | dict[str, Any] | None,
+    *,
+    estimator_id: str,
+    parameter: str,
+    corpus_version_ref: str,
+    screen_version: str,
+    approval_id: str | None = None,
+    proof_ref: str = "calibration_leakage_proof",
+) -> ReviewedLearningGateCheck:
+    if proof is None:
+        return validate_calibrated_parameter_gate(
+            estimator_id=estimator_id,
+            parameter=parameter,
+            corpus_version_ref=corpus_version_ref,
+            screen_version=screen_version,
+            calibration_leakage_proof=None,
+            approval_id=approval_id,
+        )
+    parsed, error = _parse_calibration_leakage_proof(proof)
+    if error is not None or parsed is None:
+        return _check(
+            "calibration_leakage_proof_valid",
+            False,
+            f"CalibrationLeakageProof is invalid for {proof_ref}: {error}",
+        )
+
+    return validate_calibrated_parameter_gate(
+        estimator_id=estimator_id,
+        parameter=parameter,
+        corpus_version_ref=corpus_version_ref,
+        screen_version=screen_version,
+        calibration_leakage_proof=parsed,
+        approval_id=approval_id,
+    )
+
+
+def _calibration_proof_failures(
+    proof: CalibrationLeakageProof,
+    *,
+    estimator_id: str,
+    parameter: str,
+    corpus_version_ref: str,
+    screen_version: str,
+    approval_id: str | None,
+) -> list[str]:
+    failures: list[str] = []
+    if proof.estimator_id != estimator_id:
+        failures.append("estimator_id_mismatch")
+    if proof.parameter != parameter:
+        failures.append("parameter_mismatch")
+    if proof.corpus_version_ref != corpus_version_ref:
+        failures.append("corpus_version_ref_mismatch")
+    if proof.screen_version != screen_version:
+        failures.append("screen_version_mismatch")
+    if proof.status != "candidate":
+        failures.append(f"status={proof.status}")
+    if proof.path != "aggregate_only":
+        failures.append(f"path={proof.path}")
+    if proof.refusal_reasons:
+        failures.append("refusal_reasons_present")
+    if not proof.kanon.dominance_ok:
+        failures.append("kanon_dominance_not_ok")
+    if not proof.lomo.dominance_ok:
+        failures.append("lomo_dominance_not_ok")
+    if not proof.reconstruction.passed:
+        failures.append("reconstruction_not_passed")
+    if not proof.determinism.rebuilt:
+        failures.append("determinism_not_rebuilt")
+    if not proof.determinism.aggregate_byte_identical:
+        failures.append("aggregate_rebuild_not_byte_identical")
+    if proof.calibrated_value_published:
+        failures.append("calibrated_value_published")
+    if not proof.candidate_only:
+        failures.append("not_candidate_only")
+    if not proof.human_review_required:
+        failures.append("human_review_not_required")
+    if not _approval_id_is_reviewed(approval_id):
+        failures.append("missing_approval_id")
+    return failures
+
+
+def _parse_calibration_leakage_proof(
+    proof: CalibrationLeakageProof | dict[str, Any],
+) -> tuple[CalibrationLeakageProof | None, str | None]:
+    try:
+        payload = (
+            proof.model_dump(mode="json") if isinstance(proof, CalibrationLeakageProof) else proof
+        )
+        return CalibrationLeakageProof.model_validate(payload), None
+    except ValidationError as exc:
+        return None, exc.errors()[0]["msg"]
+
+
+def _approval_id_is_reviewed(approval_id: str | None) -> bool:
+    if approval_id is None:
+        return False
+    cleaned = approval_id.strip()
+    if cleaned != approval_id or not cleaned:
+        return False
+    lowered = cleaned.lower()
+    if "synthetic" in lowered or "placeholder" in lowered:
+        return False
+    return cleaned.startswith("approval:")
+
+
+def _calibration_gate_checks(
+    requests: list[dict[str, Any]],
+) -> list[ReviewedLearningGateCheck]:
+    checks: list[ReviewedLearningGateCheck] = []
+    required = [
+        "estimator_id",
+        "parameter",
+        "corpus_version_ref",
+        "screen_version",
+        "calibration_leakage_proof",
+    ]
+    for index, request in enumerate(requests):
+        missing = [field for field in required if not request.get(field)]
+        if missing:
+            checks.append(
+                _check(
+                    "calibration_leakage_gate_request_complete",
+                    False,
+                    (
+                        f"Calibration gate request {index} is missing required fields: "
+                        + ", ".join(missing)
+                    ),
+                )
+            )
+            continue
+        checks.append(
+            validate_calibrated_parameter_gate(
+                estimator_id=str(request["estimator_id"]),
+                parameter=str(request["parameter"]),
+                corpus_version_ref=str(request["corpus_version_ref"]),
+                screen_version=str(request["screen_version"]),
+                calibration_leakage_proof=request["calibration_leakage_proof"],
+                approval_id=(
+                    str(request["approval_id"]) if request.get("approval_id") is not None else None
+                ),
+            )
+        )
+    return checks
+
+
 def build_reviewed_learning_gate_report(
     *,
     carrier_rejection_learning_report: CarrierRejectionLearningReport | None = None,
@@ -249,13 +452,24 @@ def build_reviewed_learning_gate_report(
     budget_revision_report_ref: str | None = None,
     budget_actual_comparison_report: BudgetActualComparisonReport | None = None,
     budget_actual_comparison_report_ref: str | None = None,
+    calibrated_parameter_gate_requests: list[dict[str, Any]] | None = None,
 ) -> ReviewedLearningGateReport:
+    calibration_gate_requests = calibrated_parameter_gate_requests or []
+    calibration_refs = [
+        str(
+            request.get("proof_ref")
+            or request.get("corpus_version_ref")
+            or f"calibrated_parameter_gate_request:{index}"
+        )
+        for index, request in enumerate(calibration_gate_requests)
+    ]
     source_refs = [
         ref
         for ref in [
             carrier_rejection_learning_report_ref,
             budget_revision_report_ref,
             budget_actual_comparison_report_ref,
+            *calibration_refs,
         ]
         if ref
     ]
@@ -334,6 +548,7 @@ def build_reviewed_learning_gate_report(
         set(REQUIRED_NEXT_GATES).issubset(set(candidate.required_next_gates))
         for candidate in candidates
     )
+    calibration_checks = _calibration_gate_checks(calibration_gate_requests)
     checks = [
         _check(
             "source_reports_present",
@@ -370,6 +585,7 @@ def build_reviewed_learning_gate_report(
             "Every candidate carries the reviewed-learning gate sequence.",
             candidate_ids,
         ),
+        *calibration_checks,
     ]
     failed = [check for check in checks if check.status == "failed"]
     if failed:
