@@ -7812,6 +7812,8 @@ class ModelAdapterReport(StrictModel):
     tool_denylist: list[str]
     required_human_gates: list[str]
     independent_critic_required: Literal[True] = True
+    independent_critic_finding_codes: list[str] = Field(default_factory=list)
+    independent_critic_evidence_ref_count: int = Field(default=0, ge=0)
     human_confirmation_required: Literal[True] = True
     deterministic_baseline_required: Literal[True] = True
     deterministic_workers_authoritative: Literal[True] = True

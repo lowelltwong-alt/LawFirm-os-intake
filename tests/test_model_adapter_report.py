@@ -40,6 +40,16 @@ def test_structured_model_adapter_writes_dry_run_guard_report(tmp_path, repo_roo
     assert report["deterministic_baseline_hash"].startswith("sha256:")
     assert report["structured_candidate_hash"] == report["deterministic_baseline_hash"]
     assert "reviewed_synthetic_gold_gate" in report["comparison_basis"]
+    assert report["independent_critic_finding_codes"] == sorted(
+        finding.code for finding in packet.critic_findings
+    )
+    assert report["independent_critic_evidence_ref_count"] == sum(
+        len(finding.evidence_refs) for finding in packet.critic_findings
+    )
+    assert any(
+        check["check_id"] == "independent_critic_output_preserved" and check["status"] == "passed"
+        for check in report["checks"]
+    )
     assert "matter-router" in report["prompt_hashes"]
     assert report["prompt_hashes"]["matter-router"].startswith("sha256:")
     assert "network" in report["tool_denylist"]

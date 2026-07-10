@@ -1,31 +1,31 @@
 lock_version: "0.1"
 status: reviewed_seed_lock
 generated_by: LawFirm-os-intake
-generated_at: "2026-07-06T21:47:00Z"
-status_note: "Pins refreshed from live main branches on 2026-07-06 during active governed vertical onboarding. The lock remains candidate/non-authoritative and does not promote intake contracts to platform canon."
+generated_at: "2026-07-09T00:00:00Z"
+status_note: "Pins refreshed from live main branches on 2026-07-09 for candidate release owner review. The lock remains candidate/non-authoritative and does not promote intake contracts to platform canon."
 repos:
   LawFirm-os-semantic-substrate:
     remote: https://github.com/lowelltwong-alt/LawFirm-os-semantic-substrate
     branch: main
-    sha: 38935a70558287c6138792ba638d94c7705b5c62
+    sha: 54bdb2ac5261d5626e3fa946a2c18ff2b677ea08
     authority_plane: control
   LawFirm-os-orchestrator:
     remote: https://github.com/lowelltwong-alt/LawFirm-os-orchestrator
     branch: main
-    sha: 7ecff3ce7210e094c9485b51f6c8540a8116a778
+    sha: 5bf9ec7ffa71de702cca9cc6c764003713c17f15
     authority_plane: execution
   LawFirm-os-exceptions-lake-runtime:
     remote: https://github.com/lowelltwong-alt/LawFirm-os-exceptions-lake-runtime
     branch: main
-    sha: 694f17a5404edfd08ce9ba1b510b1975ff813940
+    sha: bf5e29411d119d3ca4041b31f24a978f3715aae7
     authority_plane: evidence
   LawFirm-os-skills-registry:
     remote: https://github.com/lowelltwong-alt/LawFirm-os-skills-registry
     branch: main
-    sha: 3a0de14d10bd77609f3e67a6b2ab9e59f8158368
+    sha: 1fe195ef39af0064e1066cae8890c8a944d06949
     authority_plane: skills_registry
   LawFirm-os-legal-knowledge-runtime:
     remote: https://github.com/lowelltwong-alt/LawFirm-os-legal-knowledge-runtime
     branch: main
-    sha: e526255fad514e3b3489498fe62f148db4a237ca
+    sha: 7b2714080c33c0af2bd4ed9b6d8381deb2d35814
     authority_plane: legal_knowledge_runtime
