@@ -6441,6 +6441,10 @@ class MatterLinkingPreflightReport(StrictModel):
     source_system_name: str
     real_upfront_export: bool
     api_contract_verified: bool
+    intake_request_id: str
+    request_channel: str
+    external_reference_count: int = Field(ge=0)
+    unknown_external_reference_count: int = Field(ge=0)
     official_matter_number_status: str
     overall_link_state: str
     requires_human_confirmation: bool
@@ -6505,6 +6509,10 @@ class MatterLinkingPreflightReport(StrictModel):
             raise ValueError("single-candidate matter link cannot require split evidence")
         if self.source_count != len(self.source_hashes_by_id):
             raise ValueError("matter-linking source count must match source hashes")
+        if not self.intake_request_id.strip() or not self.request_channel.strip():
+            raise ValueError("matter-linking preflight requires request identity and channel")
+        if self.unknown_external_reference_count > self.external_reference_count:
+            raise ValueError("unknown external reference count exceeds total")
         if (
             self.status
             in {

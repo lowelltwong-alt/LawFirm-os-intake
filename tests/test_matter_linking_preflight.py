@@ -60,6 +60,10 @@ def test_matter_linking_preflight_reports_ambiguous_same_sender_clusters(repo_ro
         report.source_artifact_id == "upfront_like_intake_output.synthetic.multi_case_adjuster.v0_1"
     )
     assert report.official_matter_number_status == "not_available"
+    assert report.intake_request_id == "synthetic-upfront-request-20260702-001"
+    assert report.request_channel == "email_forwarded_to_intake"
+    assert report.external_reference_count == 4
+    assert report.unknown_external_reference_count == 1
     assert report.overall_link_state == "ambiguous_multiple_candidates"
     assert report.cluster_count == 2
     assert report.high_evidence_candidate_count == 2
@@ -293,6 +297,21 @@ def test_matter_linking_preflight_blocks_missing_source_hash_without_raising(rep
 
     assert report.status == "blocked_matter_linking_preflight"
     assert "clusters_have_source_bound_strong_support" in failed
+
+
+def test_matter_linking_preflight_blocks_unbound_observed_external_reference(repo_root):
+    payload = deepcopy(_fixture(repo_root))
+    payload["external_references"][1]["source_ref"] = "source.unknown.999:page1:1-5"
+
+    report = build_matter_linking_preflight_report(
+        payload=payload,
+        source_artifact_ref="fixture.json",
+        generated_at=FIXED_TIME,
+    )
+    failed = {check.check_id for check in report.checks if check.status == "failed"}
+
+    assert report.status == "blocked_matter_linking_preflight"
+    assert "external_references_are_typed_and_source_bound" in failed
 
 
 def test_matter_linking_preflight_blocks_negative_split_signal_without_known_source_ref(
