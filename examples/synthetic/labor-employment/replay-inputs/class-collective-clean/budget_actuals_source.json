@@ -1,0 +1,95 @@
+{
+  "schema_version": "0.1",
+  "actuals_source_id": "le-actuals-class-collective-clean.v0_1",
+  "budget_proposal_id": "__BUDGET_PROPOSAL_ID__",
+  "data_origin": "synthetic",
+  "contains_real_client_data": false,
+  "contains_real_matter_data": false,
+  "contains_privileged_data": false,
+  "actual_resolution_scenario_id": "hybrid_partial",
+  "actuals_by_phase": {
+    "C100": {
+      "fees": 9000,
+      "expenses": 0,
+      "hours": 20
+    },
+    "C200": {
+      "fees": 14500,
+      "expenses": 0,
+      "hours": 50
+    },
+    "C300": {
+      "fees": 52500,
+      "expenses": 9500,
+      "hours": 236
+    },
+    "C400": {
+      "fees": 72000,
+      "expenses": 7200,
+      "hours": 229
+    },
+    "C500": {
+      "fees": 52000,
+      "expenses": 12500,
+      "hours": 160
+    },
+    "C600": {
+      "fees": 28500,
+      "expenses": 6500,
+      "hours": 105
+    }
+  },
+  "actuals_by_code": {
+    "C100": {
+      "fees": 9000,
+      "expenses": 0,
+      "hours": 20
+    },
+    "C200": {
+      "fees": 14500,
+      "expenses": 0,
+      "hours": 50
+    },
+    "C300": {
+      "fees": 52500,
+      "expenses": 0,
+      "hours": 236
+    },
+    "E118": {
+      "fees": 0,
+      "expenses": 9500
+    },
+    "C400": {
+      "fees": 72000,
+      "expenses": 0,
+      "hours": 229
+    },
+    "E112": {
+      "fees": 0,
+      "expenses": 7200
+    },
+    "C500": {
+      "fees": 52000,
+      "expenses": 0,
+      "hours": 160
+    },
+    "E119": {
+      "fees": 0,
+      "expenses": 12500
+    },
+    "C600": {
+      "fees": 28500,
+      "expenses": 0,
+      "hours": 105
+    },
+    "E124": {
+      "fees": 0,
+      "expenses": 6500
+    }
+  },
+  "source_ref": "synthetic-actuals://labor-employment/class-collective-clean/v0_1",
+  "billing_connector_read_performed": false,
+  "billing_connector_write_performed": false,
+  "external_writes_performed": false,
+  "non_authoritative": true
+}

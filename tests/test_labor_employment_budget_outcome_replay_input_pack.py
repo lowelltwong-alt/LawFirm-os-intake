@@ -522,7 +522,7 @@ def test_labor_employment_budget_replay_input_pack_marks_ready_and_missing_input
     assert report.ready_case_count == 1
     assert report.partial_case_count == 7
     assert report.blocked_case_count == 0
-    assert report.ready_input_count == 27
+    assert report.ready_input_count == 31
     assert report.missing_input_count > 0
     assert report.invalid_input_count == 0
     assert report.one_of_signal_missing_count > 0
@@ -608,6 +608,48 @@ def test_labor_employment_budget_replay_input_pack_marks_ready_and_missing_input
         and item.input_status == "missing"
         for item in epli_case.items
     )
+    class_collective_case = next(
+        case
+        for case in report.cases
+        if case.learning_fixture_id == "le-learning-class-collective-clean.v0_1"
+    )
+    assert class_collective_case.status == "partially_ready"
+    assert class_collective_case.ready_input_count == 4
+    assert class_collective_case.missing_input_count == 8
+    assert any(
+        item.loop_type == "actuals_variance"
+        and item.expected_artifact_name == "budget_actual_comparison_report.json"
+        and item.required_input_artifact == "legal_budget_proposal.json"
+        and item.input_role == "builder_input"
+        and item.input_status == "ready"
+        and item.input_ref
+        == (
+            "examples/synthetic/labor-employment/replay-inputs/class-collective-clean/"
+            "legal_budget_proposal.json"
+        )
+        for item in class_collective_case.items
+    )
+    assert any(
+        item.loop_type == "actuals_variance"
+        and item.expected_artifact_name == "budget_actual_variance_ledger_report.json"
+        and item.required_input_artifact == "budget_actuals_source.json"
+        and item.input_role == "builder_input"
+        and item.input_status == "ready"
+        and item.input_ref
+        == (
+            "examples/synthetic/labor-employment/replay-inputs/class-collective-clean/"
+            "budget_actuals_source.json"
+        )
+        for item in class_collective_case.items
+    )
+    assert any(
+        item.loop_type == "reviewed_learning_gate"
+        and item.expected_artifact_name == "budget_learning_loop_report.json"
+        and item.required_input_artifact == "budget_actual_comparison_report.json"
+        and item.input_role == "complement_report"
+        and item.input_status == "missing"
+        for item in class_collective_case.items
+    )
     assert report.runtime_artifacts_created is False
     assert report.budget_submission_authorized is False
     assert report.lake_write_performed is False
@@ -618,6 +660,20 @@ def test_labor_employment_budget_replay_input_pack_marks_ready_and_missing_input
         encoding="utf-8"
     )
     assert "does not run builders" in notes
+    assert "## Preflight Gap Matrix" in notes
+    assert "### Preflight Next Actions" in notes
+    assert "`le-learning-class-collective-clean.v0_1`" in notes
+    assert "`class_collective_paga_representative`" in notes
+    assert (
+        "`reviewed_learning_gate` | `budget_learning_loop_report.json` | "
+        "`budget_actual_comparison_report.json` | `complement_report` | `missing` | "
+        "`BudgetActualComparisonReport`" in notes
+    )
+    assert (
+        "`le-learning-class-collective-clean.v0_1`: add or repair "
+        "`budget_actual_comparison_report.json` for `reviewed_learning_gate` -> "
+        "`budget_learning_loop_report.json`" in notes
+    )
     assert "Rust Transition Candidates" in notes
     assert {path.name for path in run_dir.iterdir()} == {
         "labor_employment_budget_outcome_replay_input_pack_report.json",
@@ -782,7 +838,7 @@ def test_labor_employment_budget_replay_input_pack_cli_writes_report(
         in captured.out
     )
     assert '"ready_case_count": 1' in captured.out
-    assert '"ready_input_count": 27' in captured.out
+    assert '"ready_input_count": 31' in captured.out
     assert '"invalid_input_count": 0' in captured.out
     assert '"runtime_artifacts_created": false' in captured.out
     assert (
