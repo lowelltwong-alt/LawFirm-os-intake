@@ -12,6 +12,12 @@ from lawfirm_os_intake.calibration import (  # noqa: E402
     CalibrationLeakageProof,
     CalibrationPreflightRequest,
 )
+from lawfirm_os_intake.conflicts import (  # noqa: E402
+    ChineseWallProof,
+    ChineseWallRequest,
+    ChineseWallViolationCandidate,
+    SyntheticAdversityGraph,
+)
 from lawfirm_os_intake.lessons import (  # noqa: E402
     LessonDisclosureProof,
     LessonDisclosureRequest,
@@ -465,6 +471,10 @@ MODELS = {
     "lesson-ir.schema.json": LessonIR,
     "crossing-proof.schema.json": CrossingProof,
     "crossing-request.schema.json": CrossingRequest,
+    "synthetic-adversity-graph.schema.json": SyntheticAdversityGraph,
+    "chinese-wall-request.schema.json": ChineseWallRequest,
+    "chinese-wall-proof.schema.json": ChineseWallProof,
+    "chinese-wall-violation-candidate.schema.json": ChineseWallViolationCandidate,
     "source-bundle.schema.json": SourceBundle,
     "blocked-budget-attempt-audit-report.schema.json": BlockedBudgetAttemptAuditReport,
     "context-counterfactual-audit-report.schema.json": ContextCounterfactualAuditReport,

@@ -11,6 +11,13 @@ from .calibration import (
     CalibrationPreflightRequest,
     build_calibration_leakage_proof,
 )
+from .conflicts import (
+    ChineseWallProof,
+    ChineseWallRequest,
+    WallDecision,
+    build_chinese_wall_proof,
+    chinese_wall_request_digest,
+)
 from .lessons import (
     LessonDisclosureProof,
     LessonDisclosureRequest,
@@ -49,6 +56,12 @@ REQUIRED_NEXT_GATES = [
     "owning_repo_review",
 ]
 
+CARRIER_LESSON_REQUIRED_NEXT_GATES = [
+    *REQUIRED_NEXT_GATES,
+    "lesson_disclosure_proof_before_cross_repo_review",
+    "chinese_wall_proof_before_lesson_firing",
+]
+
 CALIBRATION_LEAKAGE_PROOF_REQUIRED_GATES = [
     "valid_calibration_leakage_proof",
     "external_request_digest_anchor",
@@ -79,6 +92,18 @@ CROSSING_PROOF_REQUIRED_GATES = [
     "authenticated_human_crossing_review",
     "owning_repo_review",
     "no_send_outbox_write_or_dad_contact_from_intake",
+]
+
+CHINESE_WALL_PROOF_REQUIRED_GATES = [
+    "valid_chinese_wall_proof",
+    "external_chinese_wall_request_digest_anchor",
+    "reviewed_adversity_edges_only_no_inference",
+    "pinned_synthetic_firm_wide_provenance_snapshot",
+    "authoritative_firm_wide_imputation",
+    "counsel_adversity_class_authority",
+    "authenticated_human_conflicts_review",
+    "owning_repo_review",
+    "no_lesson_fire_conflict_clearance_or_lake_write_from_intake",
 ]
 
 
@@ -127,7 +152,7 @@ def _carrier_candidate(
                 ]
             )
         ),
-        required_next_gates=REQUIRED_NEXT_GATES,
+        required_next_gates=CARRIER_LESSON_REQUIRED_NEXT_GATES,
     )
 
 
@@ -605,6 +630,156 @@ def _crossing_proof_failures(
     return failures
 
 
+def validate_chinese_wall_gate(
+    *,
+    lesson_id: str,
+    chinese_wall_proof: ChineseWallProof | dict[str, Any] | None,
+    chinese_wall_request: ChineseWallRequest | dict[str, Any] | None = None,
+    expected_chinese_wall_request_digest: str | None = None,
+    approval_id: str | None = None,
+) -> ReviewedLearningGateCheck:
+    """Keep lesson firing closed until wall evidence and counsel-owned policy exist."""
+    if chinese_wall_proof is None:
+        return _check(
+            "chinese_wall_proof_required",
+            False,
+            "Proposed lesson firing requires a ChineseWallProof.",
+        )
+    parsed, error = _parse_chinese_wall_proof(chinese_wall_proof)
+    if error is not None or parsed is None:
+        return _check(
+            "chinese_wall_proof_valid",
+            False,
+            f"ChineseWallProof is invalid: {error}",
+        )
+    if chinese_wall_request is None:
+        return _check(
+            "chinese_wall_request_required",
+            False,
+            "Chinese-wall review requires the synthetic request for deterministic rebuild.",
+            [parsed.proof_id],
+        )
+    if not _is_sha256_digest(expected_chinese_wall_request_digest):
+        return _check(
+            "chinese_wall_expected_digest_required",
+            False,
+            "Chinese-wall review requires an independently supplied sha256 request digest.",
+            [parsed.proof_id],
+        )
+    rebuilt, rebuilt_request_digest, rebuild_error = _rebuild_chinese_wall_proof(
+        chinese_wall_request
+    )
+    if rebuild_error is not None or rebuilt is None or rebuilt_request_digest is None:
+        return _check(
+            "chinese_wall_request_valid",
+            False,
+            f"Chinese-wall request is invalid: {rebuild_error}",
+            [parsed.proof_id],
+        )
+    binding_failures: list[str] = []
+    if rebuilt_request_digest != expected_chinese_wall_request_digest:
+        binding_failures.append("expected_digest_does_not_match_rebuilt_request")
+    if parsed.proof_id != rebuilt.proof_id:
+        binding_failures.append("proof_id_mismatch")
+    if parsed.model_dump(mode="json") != rebuilt.model_dump(mode="json"):
+        binding_failures.append("proof_content_mismatch")
+    if binding_failures:
+        return _check(
+            "chinese_wall_proof_request_binding",
+            False,
+            "Chinese-wall proof does not match its rebuilt request: " + ", ".join(binding_failures),
+            [parsed.proof_id],
+        )
+    failures = _chinese_wall_proof_failures(
+        parsed,
+        lesson_id=lesson_id,
+        approval_id=approval_id,
+    )
+    return _check(
+        "chinese_wall_proof_promotion_gate",
+        not failures,
+        (
+            "Chinese-wall evidence is ready for counsel-owned policy, authenticated human, "
+            "and owning-repo review; this check performs no lesson fire, conflict clearance, "
+            "Exception Lake write, promotion, or external action."
+            if not failures
+            else "Chinese-wall proof blocks lesson firing review: " + ", ".join(failures)
+        ),
+        [parsed.proof_id],
+    )
+
+
+def _parse_chinese_wall_proof(
+    proof: ChineseWallProof | dict[str, Any],
+) -> tuple[ChineseWallProof | None, str | None]:
+    try:
+        payload = proof.model_dump(mode="json") if isinstance(proof, ChineseWallProof) else proof
+        return ChineseWallProof.model_validate_json(json.dumps(payload)), None
+    except ValidationError as exc:
+        return None, exc.errors()[0]["msg"]
+    except (TypeError, ValueError):
+        return None, "Chinese-wall proof is not valid JSON model input"
+
+
+def _rebuild_chinese_wall_proof(
+    request: ChineseWallRequest | dict[str, Any],
+) -> tuple[ChineseWallProof | None, str | None, str | None]:
+    try:
+        payload = (
+            request.model_dump(mode="json") if isinstance(request, ChineseWallRequest) else request
+        )
+        parsed = ChineseWallRequest.model_validate_json(json.dumps(payload))
+        return build_chinese_wall_proof(parsed), chinese_wall_request_digest(parsed), None
+    except (ValidationError, TypeError, ValueError) as exc:
+        if isinstance(exc, ValidationError):
+            return None, None, exc.errors()[0]["msg"]
+        if isinstance(exc, TypeError):
+            return None, None, "Chinese-wall request is not valid JSON model input"
+        return None, None, str(exc)
+
+
+def _chinese_wall_proof_failures(
+    proof: ChineseWallProof,
+    *,
+    lesson_id: str,
+    approval_id: str | None,
+) -> list[str]:
+    failures: list[str] = []
+    if proof.lesson_id != lesson_id:
+        failures.append("lesson_id_mismatch")
+    if proof.overall_status != "candidate":
+        failures.append(f"status={proof.overall_status}")
+    if proof.local_evaluation.decision is WallDecision.cross_wall_block:
+        failures.append("cross_wall_detected")
+    elif proof.local_evaluation.decision is WallDecision.unreviewed_edge_hold:
+        failures.append("unreviewed_edge_hold")
+    elif proof.local_evaluation.decision is WallDecision.unknown_relation_hold:
+        failures.append("unknown_relation_hold")
+    if not proof.local_evaluation.local_wall_candidate:
+        failures.append("local_chinese_wall_mechanism_not_candidate")
+    if proof.local_evaluation.relationship_inference_performed:
+        failures.append("adversity_relationship_inference_performed")
+    if proof.guarantee != "brewer_nash_synthetic_policy_check":
+        failures.append("invalid_chinese_wall_guarantee_label")
+    if proof.formal_conflict_clearance_guarantee_claimed:
+        failures.append("formal_conflict_clearance_guarantee_claimed")
+    if not proof.synthetic_firm_wide_imputation_applied:
+        failures.append("synthetic_firm_wide_imputation_not_applied")
+    if not proof.trusted_synthetic_provenance_snapshot_pinned:
+        failures.append("synthetic_firm_wide_provenance_snapshot_not_pinned")
+    if not proof.authoritative_firm_wide_imputation_verified:
+        failures.append("authoritative_firm_wide_imputation_not_verified")
+    if not proof.counsel_adversity_classes_authority_verified:
+        failures.append("counsel_adversity_classes_not_authoritative")
+    if not proof.authenticated_human_conflicts_review_verified:
+        failures.append("authenticated_human_conflicts_review_not_verified")
+    if not proof.owning_repo_review_verified:
+        failures.append("owning_repo_review_not_verified")
+    if not _approval_id_has_candidate_evidence_shape(approval_id):
+        failures.append("missing_approval_id")
+    return failures
+
+
 def validate_calibrated_parameter_gate(
     *,
     estimator_id: str,
@@ -1040,6 +1215,95 @@ def _crossing_gate_checks(
     return checks
 
 
+def _chinese_wall_gate_checks(
+    requests: list[dict[str, Any]],
+) -> list[ReviewedLearningGateCheck]:
+    checks: list[ReviewedLearningGateCheck] = []
+    required = [
+        "lesson_id",
+        "chinese_wall_proof",
+        "chinese_wall_request",
+        "expected_chinese_wall_request_digest",
+    ]
+    for index, request in enumerate(requests):
+        missing = [field for field in required if not request.get(field)]
+        if missing:
+            checks.append(
+                _check(
+                    "chinese_wall_gate_request_complete",
+                    False,
+                    f"Chinese-wall gate request {index} is missing: " + ", ".join(missing),
+                )
+            )
+            continue
+        checks.append(
+            validate_chinese_wall_gate(
+                lesson_id=str(request["lesson_id"]),
+                chinese_wall_proof=request["chinese_wall_proof"],
+                chinese_wall_request=request["chinese_wall_request"],
+                expected_chinese_wall_request_digest=str(
+                    request["expected_chinese_wall_request_digest"]
+                ),
+                approval_id=(
+                    str(request["approval_id"]) if request.get("approval_id") is not None else None
+                ),
+            )
+        )
+    return checks
+
+
+def _carrier_lesson_boundary_coverage_checks(
+    candidates: list[ReviewedLearningGateCandidate],
+    lesson_requests: list[dict[str, Any]],
+    wall_requests: list[dict[str, Any]],
+) -> list[ReviewedLearningGateCheck]:
+    carrier_ids = {
+        candidate.source_record_id
+        for candidate in candidates
+        if candidate.source_kind == "carrier_rejection_learning_proposal"
+    }
+    if not carrier_ids:
+        return []
+    lesson_covered = {
+        str(request["source_record_id"])
+        for request in lesson_requests
+        if request.get("source_record_id")
+    }
+    wall_covered = {
+        str(request["source_record_id"])
+        for request in wall_requests
+        if request.get("source_record_id")
+    }
+    missing_lesson = sorted(carrier_ids - lesson_covered)
+    missing_wall = sorted(carrier_ids - wall_covered)
+    return [
+        _check(
+            "carrier_lesson_disclosure_gate_coverage",
+            not missing_lesson,
+            (
+                "Every carrier learning proposal has a source-record-bound lesson disclosure "
+                "gate request."
+                if not missing_lesson
+                else "Carrier learning proposals missing lesson disclosure gate requests: "
+                + ", ".join(missing_lesson)
+            ),
+            sorted(carrier_ids),
+        ),
+        _check(
+            "carrier_chinese_wall_gate_coverage",
+            not missing_wall,
+            (
+                "Every carrier learning proposal has a source-record-bound Chinese-wall gate "
+                "request."
+                if not missing_wall
+                else "Carrier learning proposals missing Chinese-wall gate requests: "
+                + ", ".join(missing_wall)
+            ),
+            sorted(carrier_ids),
+        ),
+    ]
+
+
 def build_reviewed_learning_gate_report(
     *,
     carrier_rejection_learning_report: CarrierRejectionLearningReport | None = None,
@@ -1051,10 +1315,12 @@ def build_reviewed_learning_gate_report(
     calibrated_parameter_gate_requests: list[dict[str, Any]] | None = None,
     lesson_disclosure_gate_requests: list[dict[str, Any]] | None = None,
     crossing_gate_requests: list[dict[str, Any]] | None = None,
+    chinese_wall_gate_requests: list[dict[str, Any]] | None = None,
 ) -> ReviewedLearningGateReport:
     calibration_gate_requests = calibrated_parameter_gate_requests or []
     lesson_gate_requests = lesson_disclosure_gate_requests or []
     crossing_requests = crossing_gate_requests or []
+    wall_requests = chinese_wall_gate_requests or []
     calibration_refs = [
         str(
             request.get("proof_ref")
@@ -1079,6 +1345,14 @@ def build_reviewed_learning_gate_report(
         )
         for index, request in enumerate(crossing_requests)
     ]
+    wall_refs = [
+        str(
+            request.get("proof_ref")
+            or request.get("lesson_id")
+            or f"chinese_wall_gate_request:{index}"
+        )
+        for index, request in enumerate(wall_requests)
+    ]
     source_refs = [
         ref
         for ref in [
@@ -1088,6 +1362,7 @@ def build_reviewed_learning_gate_report(
             *calibration_refs,
             *lesson_refs,
             *crossing_refs,
+            *wall_refs,
         ]
         if ref
     ]
@@ -1169,6 +1444,12 @@ def build_reviewed_learning_gate_report(
     calibration_checks = _calibration_gate_checks(calibration_gate_requests)
     lesson_checks = _lesson_disclosure_gate_checks(lesson_gate_requests)
     crossing_checks = _crossing_gate_checks(crossing_requests)
+    wall_checks = _chinese_wall_gate_checks(wall_requests)
+    carrier_boundary_coverage_checks = _carrier_lesson_boundary_coverage_checks(
+        candidates,
+        lesson_gate_requests,
+        wall_requests,
+    )
     calibration_proof_ids = list(
         dict.fromkeys(
             candidate_id for check in calibration_checks for candidate_id in check.candidate_ids
@@ -1229,6 +1510,25 @@ def build_reviewed_learning_gate_report(
         if crossing_requests
         else []
     )
+    wall_proof_ids = list(
+        dict.fromkeys(candidate_id for check in wall_checks for candidate_id in check.candidate_ids)
+    )
+    wall_visibility_checks = (
+        [
+            _check(
+                "chinese_wall_gate_review_inputs_visible",
+                True,
+                (
+                    "Chinese-wall proof is visible as candidate-only review evidence; it is "
+                    "not an ordinary learning candidate and performs no lesson fire, conflict "
+                    "clearance, Exception Lake write, or external action."
+                ),
+                wall_proof_ids,
+            )
+        ]
+        if wall_requests
+        else []
+    )
     checks = [
         _check(
             "source_reports_present",
@@ -1271,11 +1571,20 @@ def build_reviewed_learning_gate_report(
         *lesson_checks,
         *crossing_visibility_checks,
         *crossing_checks,
+        *wall_visibility_checks,
+        *wall_checks,
+        *carrier_boundary_coverage_checks,
     ]
     failed = [check for check in checks if check.status == "failed"]
     if failed:
         status = "failed"
-    elif candidates or calibration_gate_requests or lesson_gate_requests or crossing_requests:
+    elif (
+        candidates
+        or calibration_gate_requests
+        or lesson_gate_requests
+        or crossing_requests
+        or wall_requests
+    ):
         status = "candidate_learning_gate_ready"
     else:
         status = "no_learning_candidates"
@@ -1382,12 +1691,33 @@ def render_reviewed_learning_gate_report(report: ReviewedLearningGateReport) -> 
     return "\n".join(lines)
 
 
+def _load_gate_request_paths(
+    paths: list[str | Path] | None,
+    *,
+    label: str,
+) -> list[dict[str, Any]]:
+    requests: list[dict[str, Any]] = []
+    for raw_path in paths or []:
+        path = Path(raw_path)
+        payload = load_json(path)
+        items = payload if isinstance(payload, list) else [payload]
+        if not items or not all(isinstance(item, dict) for item in items):
+            raise ValueError(f"{label} gate request file must contain an object or object list")
+        for item in items:
+            request = dict(item)
+            request.setdefault("proof_ref", str(path))
+            requests.append(request)
+    return requests
+
+
 def run_reviewed_learning_gate(
     *,
     out_dir: str | Path,
     carrier_rejection_learning_report_path: str | Path | None = None,
     budget_revision_report_path: str | Path | None = None,
     budget_actual_comparison_report_path: str | Path | None = None,
+    lesson_disclosure_gate_request_paths: list[str | Path] | None = None,
+    chinese_wall_gate_request_paths: list[str | Path] | None = None,
 ) -> tuple[ReviewedLearningGateReport, Path]:
     carrier_report = None
     carrier_ref = None
@@ -1410,6 +1740,15 @@ def run_reviewed_learning_gate(
         actuals_report = BudgetActualComparisonReport.model_validate(load_json(actuals_path))
         actuals_ref = str(actuals_path)
 
+    lesson_gate_requests = _load_gate_request_paths(
+        lesson_disclosure_gate_request_paths,
+        label="lesson disclosure",
+    )
+    wall_gate_requests = _load_gate_request_paths(
+        chinese_wall_gate_request_paths,
+        label="Chinese-wall",
+    )
+
     report = build_reviewed_learning_gate_report(
         carrier_rejection_learning_report=carrier_report,
         carrier_rejection_learning_report_ref=carrier_ref,
@@ -1417,6 +1756,8 @@ def run_reviewed_learning_gate(
         budget_revision_report_ref=revision_ref,
         budget_actual_comparison_report=actuals_report,
         budget_actual_comparison_report_ref=actuals_ref,
+        lesson_disclosure_gate_requests=lesson_gate_requests,
+        chinese_wall_gate_requests=wall_gate_requests,
     )
 
     run_dir = Path(out_dir)

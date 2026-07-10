@@ -11,6 +11,7 @@
 | Review bounded-leakage calibration candidates | `docs/fable/bounded-leakage-calibration-kernel.opus-draft.md`, `docs/fable/codex-learning-leakage-build-packet.opus-draft.md`, `docs/decisions/TRACE-2026-07-10-cal-dp-candidate-mechanism.md` |
 | Review qualitative-rule disclosure candidates | `docs/fable/learning-vs-leakage-hard-kernels.opus-draft.md`, `src/lawfirm_os_intake/lessons/`, `examples/synthetic/lessons/`, `docs/decisions/TRACE-2026-07-10-qrd-disclosure-control.md` |
 | Review cross-boundary IFC candidates | `docs/fable/codex-learning-leakage-build-packet.opus-draft.md`, `src/lawfirm_os_intake/outbox/`, `examples/synthetic/outbox/`, `docs/decisions/TRACE-2026-07-10-ifc-crossing-proof.md` |
+| Review Chinese-wall conflict candidates | `docs/fable/codex-learning-leakage-build-packet.opus-draft.md`, `src/lawfirm_os_intake/conflicts/`, `examples/synthetic/conflicts/`, `docs/decisions/TRACE-2026-07-10-chinese-wall-candidate.md` |
 | Review Stage 6 crosswalk/OCG UI evidence | `docs/ai-handoff/STAGE_6_HANDOFF_REVIEW_UI_QA_CROSSWALK_OCG_EVIDENCE.md`, `src/lawfirm_os_intake/review_ui_crosswalk_ocg_evidence.py`, `apps/legal-intake-budget/src/App.tsx` |
 | Use Claude | `CLAUDE.md`, `docs/claude-agent-sdk-operating-contract.md`, `docs/claude-for-legal-lessons.md` |
 | Understand workflow | `docs/workflow/intake-to-budget.md`, `workflow/intake-to-budget.workflow.yaml` |

@@ -560,7 +560,11 @@ def _artifact_entry(
             notes=[spec.missing_note],
         )
     payload = _safe_load_json(source_path)
-    status = _status_from_payload(payload)
+    status = (
+        "pending_review"
+        if _is_expected_fail_closed_artifact(spec, payload)
+        else _status_from_payload(payload)
+    )
     copied_to = _copy_to_bundle_dir(source_path=source_path, output_dir=output_dir, spec=spec)
     return SyntheticQABundleArtifact(
         artifact_id=spec.artifact_id,
@@ -616,6 +620,23 @@ def _status_from_payload(payload: dict[str, Any]) -> str:
     if status == "passed" or "passed" in status:
         return "passed"
     return "pending_review"
+
+
+def _is_expected_fail_closed_artifact(
+    spec: QABundleArtifactSpec,
+    payload: dict[str, Any],
+) -> bool:
+    return (
+        spec.artifact_id == "budget_learning_loop"
+        and payload.get("status") == "blocked_by_budget_learning_loop"
+        and payload.get("candidate_only") is True
+        and payload.get("synthetic_only") is True
+        and payload.get("reviewed_learning_gate", {}).get("status") == "failed"
+        and payload.get("lake_write_performed") is False
+        and payload.get("sqlite_write_performed") is False
+        and payload.get("external_writes_performed") is False
+        and payload.get("silent_learning_performed") is False
+    )
 
 
 def _note_for_payload(path: Path, payload: dict[str, Any], status: str) -> str:

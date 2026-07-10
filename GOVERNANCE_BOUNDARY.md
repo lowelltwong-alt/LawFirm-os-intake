@@ -32,6 +32,9 @@ Local schemas, taxonomies, worker manifests, prompts, and templates are experime
 | lesson disclosure runtime gate or publication-snapshot authority | Orchestrator |
 | IFC label or crossing-proof contract | Semantic Substrate shared-contract review and DAD receiver-side mirror review |
 | outbound lesson crossing, mail write, or delivery action | DAD/Orchestrator owner review; never Intake |
+| adversity/CoI class vocabulary or imputation policy | Semantic Substrate candidate review with counsel-owned HD-4 decision; never Intake canon |
+| lesson-firing Chinese-wall runtime gate | Orchestrator owner review under Substrate conflict-policy contracts |
+| Chinese-wall violation event admission | Exception Lake owner review; Intake may build a local candidate but never write the Lake |
 
 ## Prohibited governance behavior
 

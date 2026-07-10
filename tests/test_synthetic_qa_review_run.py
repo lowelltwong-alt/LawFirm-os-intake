@@ -278,8 +278,11 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
     assert ui_detail_reports["budget_learning_loop"]["present"] is True
     assert ui_detail_reports["budget_learning_loop"]["required"] is True
     assert ui_detail_reports["budget_learning_loop"]["status"] == (
-        "budget_learning_loop_ready_for_review"
+        "blocked_by_budget_learning_loop"
     )
+    assert steps["budget_learning_loop"]["observed_status"] == ("blocked_by_budget_learning_loop")
+    quality_gates = {gate["gateId"]: gate for gate in ui_manifest["qualityGates"]}
+    assert quality_gates["budget_learning_loop"]["status"] == "pending_review"
     assert ui_detail_reports["public_derived_synthetic_qa_gate"]["present"] is True
     assert ui_detail_reports["public_derived_synthetic_qa_gate"]["required"] is False
     assert ui_detail_reports["public_derived_synthetic_qa_gate"]["status"] == (

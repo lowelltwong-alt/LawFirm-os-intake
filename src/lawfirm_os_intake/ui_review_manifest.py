@@ -626,7 +626,7 @@ def _artifact_entry(root: Path, spec: ArtifactSpec) -> dict[str, Any]:
             "notes": [f"{spec.file_name} was not found under the local run root."],
         }
     payload = _safe_load_json(found)
-    gate_state = _gate_state_from_payload(payload)
+    gate_state = _gate_state_from_payload(payload, evidence_id=spec.artifact_id)
     return {
         "artifactId": spec.artifact_id,
         "label": spec.label,
@@ -645,7 +645,7 @@ def _quality_gate_entry(root: Path, gate_id: str) -> dict[str, Any]:
     found = _find_artifact(root, file_name)
     status = missing_status
     if found is not None:
-        status = _quality_status_from_payload(_safe_load_json(found))
+        status = _quality_status_from_payload(_safe_load_json(found), evidence_id=gate_id)
     return {
         "gateId": gate_id,
         "label": label,
@@ -682,7 +682,13 @@ def _safe_load_json(path: Path | None) -> dict[str, Any]:
     return payload if isinstance(payload, dict) else {}
 
 
-def _gate_state_from_payload(payload: dict[str, Any]) -> str:
+def _gate_state_from_payload(
+    payload: dict[str, Any],
+    *,
+    evidence_id: str | None = None,
+) -> str:
+    if _is_expected_fail_closed_evidence(payload, evidence_id=evidence_id):
+        return "pending"
     status = str(payload.get("status") or payload.get("overallStatus") or "").casefold()
     if "failed" in status:
         return "failed"
@@ -709,8 +715,12 @@ def _artifact_status_from_gate(gate_state: str) -> str:
     return "present"
 
 
-def _quality_status_from_payload(payload: dict[str, Any]) -> str:
-    gate_state = _gate_state_from_payload(payload)
+def _quality_status_from_payload(
+    payload: dict[str, Any],
+    *,
+    evidence_id: str | None = None,
+) -> str:
+    gate_state = _gate_state_from_payload(payload, evidence_id=evidence_id)
     if gate_state == "passed":
         return "passed"
     if gate_state == "failed":
@@ -718,6 +728,24 @@ def _quality_status_from_payload(payload: dict[str, Any]) -> str:
     if gate_state == "blocked":
         return "blocked"
     return "pending_review"
+
+
+def _is_expected_fail_closed_evidence(
+    payload: dict[str, Any],
+    *,
+    evidence_id: str | None,
+) -> bool:
+    return (
+        evidence_id in {"budget-learning-loop", "budget_learning_loop"}
+        and payload.get("status") == "blocked_by_budget_learning_loop"
+        and payload.get("candidate_only") is True
+        and payload.get("synthetic_only") is True
+        and payload.get("reviewed_learning_gate", {}).get("status") == "failed"
+        and payload.get("lake_write_performed") is False
+        and payload.get("sqlite_write_performed") is False
+        and payload.get("external_writes_performed") is False
+        and payload.get("silent_learning_performed") is False
+    )
 
 
 def _missing_gate_state(status: str) -> str:

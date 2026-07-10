@@ -966,11 +966,22 @@ report, _ = run_budget_learning_loop_report(
     generated_at="2026-07-04T00:00:00Z",
 )
 raise SystemExit(
-    0 if report.status == "budget_learning_loop_ready_for_review" else 1
+    0
+    if (
+        report.status == "blocked_by_budget_learning_loop"
+        and report.reviewed_learning_gate.status == "failed"
+        and report.candidate_only
+        and report.synthetic_only
+        and not report.lake_write_performed
+        and not report.sqlite_write_performed
+        and not report.external_writes_performed
+        and not report.silent_learning_performed
+    )
+    else 1
 )
 PY
 test -s ".lawfirm-os-intake/smoke/quality/budget-learning-loop/budget_learning_loop_report.json"
-grep -q '"status": "budget_learning_loop_ready_for_review"' \
+grep -q '"status": "blocked_by_budget_learning_loop"' \
   ".lawfirm-os-intake/smoke/quality/budget-learning-loop/budget_learning_loop_report.json"
 grep -q '"variance_review_event_count": 4' \
   ".lawfirm-os-intake/smoke/quality/budget-learning-loop/budget_learning_loop_report.json"

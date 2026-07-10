@@ -1791,6 +1791,18 @@ def _parser() -> argparse.ArgumentParser:
         "--budget-actual-comparison-report",
         help="Optional budget_actual_comparison_report.json from compare-budget-actuals.",
     )
+    reviewed_learning_gate.add_argument(
+        "--lesson-disclosure-gate-request",
+        action="append",
+        default=[],
+        help="Repeatable JSON object/list carrying source-record-bound QRD gate requests.",
+    )
+    reviewed_learning_gate.add_argument(
+        "--chinese-wall-gate-request",
+        action="append",
+        default=[],
+        help="Repeatable JSON object/list carrying source-record-bound CHW gate requests.",
+    )
 
     budget_learning_loop = sub.add_parser(
         "build-budget-learning-loop-report",
@@ -5189,6 +5201,8 @@ def main(argv: list[str] | None = None) -> int:
                 carrier_rejection_learning_report_path=args.carrier_learning_report,
                 budget_revision_report_path=args.budget_revision_report,
                 budget_actual_comparison_report_path=args.budget_actual_comparison_report,
+                lesson_disclosure_gate_request_paths=args.lesson_disclosure_gate_request,
+                chinese_wall_gate_request_paths=args.chinese_wall_gate_request,
             )
             _print(
                 {
@@ -5209,7 +5223,7 @@ def main(argv: list[str] | None = None) -> int:
                     "run_dir": str(run_dir),
                 }
             )
-            return 0
+            return 2 if report.status == "failed" else 0
 
         if args.command == "build-budget-learning-loop-report":
             report, run_dir = run_budget_learning_loop_report(

@@ -1410,7 +1410,7 @@ def test_labor_employment_discrimination_reviewed_learning_signal_runs_and_valid
         proposal.status == "blocked_until_reviewed_outcome"
         for proposal in learning_report.proposals
     )
-    assert gate_report.status == "candidate_learning_gate_ready"
+    assert gate_report.status == "failed"
     assert gate_report.carrier_learning_candidate_count == 2
     assert all(
         candidate.status == "blocked_until_reviewed_learning_gate"
@@ -1498,7 +1498,7 @@ def test_labor_employment_wage_hour_reviewed_learning_signal_runs_and_validates(
         proposal.status == "blocked_until_reviewed_outcome"
         for proposal in learning_report.proposals
     )
-    assert gate_report.status == "candidate_learning_gate_ready"
+    assert gate_report.status == "failed"
     assert gate_report.carrier_learning_candidate_count == 2
     assert gate_report.target_learning_loops == ["template_mapping", "validation_rule"]
     assert gate_report.target_owners == ["LawFirm-os-intake"]
@@ -1590,7 +1590,7 @@ def test_labor_employment_epli_carrier_reviewed_learning_signal_runs_and_validat
         proposal.status == "blocked_until_reviewed_outcome"
         for proposal in learning_report.proposals
     )
-    assert gate_report.status == "candidate_learning_gate_ready"
+    assert gate_report.status == "failed"
     assert gate_report.carrier_learning_candidate_count == 5
     assert gate_report.target_learning_loops == [
         "appeal_success_or_failure",
