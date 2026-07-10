@@ -30,6 +30,10 @@
 | Prompt injection in email/document | Treat source as data; no source-directed tools; typed worker outputs |
 | Data exfiltration | No network and no external connector |
 | Cross-matter leakage | One bundle per run; no shared matter memory |
+| Calibration leakage through fitted parameters | Synthetic-only CAL-DP candidate; clipped sufficient statistics, bounded candidate accounting, no publication, and owner authority still required |
+| Learned-rule re-identification or work-product leakage | Closed synthetic LessonIR, pinned universe/lattice/fixture manifest, strategy/free-text block, k/diversity and differencing checks, sanitized proof, no DAD crossing, and fail-closed human/owner gates |
+| Prohibited residue crossing into DAD | Closed structured crossing request, max-label join, deterministic residue classes, QRD proof binding, literal-false receiver/human authority, reviewed-learning gate rebuild, and no send/outbox capability |
+| Positional or issue-conflict laundering through learned lessons | Pinned synthetic adversity graph and case/provenance snapshots, exact declared-edge checks only, source-record-bound QRD/CHW gate coverage for carrier lessons, unreviewed/unknown holds, synthetic-only imputation with authoritative firm-wide imputation false, digest-only proof, literal-false counsel/human/owner authority, no lesson-fire capability, and HD-4/HD-7 real-use block |
 | Role hallucination | Candidate status, exact evidence refs, human confirmation |
 | Practice-context overreach | Context/evidence separation and counterfactual tests |
 | Deadline mischaracterization | Candidate only; human verification; no docket write |

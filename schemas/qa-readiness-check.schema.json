@@ -1,0 +1,48 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "check_id": {
+      "title": "Check Id",
+      "type": "string"
+    },
+    "label": {
+      "title": "Label",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "passed",
+        "warning",
+        "blocked"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "summary": {
+      "title": "Summary",
+      "type": "string"
+    },
+    "evidence_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Evidence Refs",
+      "type": "array"
+    },
+    "candidate_exception_labels": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Candidate Exception Labels",
+      "type": "array"
+    }
+  },
+  "required": [
+    "check_id",
+    "label",
+    "status",
+    "summary"
+  ],
+  "title": "QAReadinessCheck",
+  "type": "object"
+}

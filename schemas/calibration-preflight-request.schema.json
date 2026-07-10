@@ -1,0 +1,323 @@
+{
+  "$defs": {
+    "CalibrationInputMatter": {
+      "additionalProperties": false,
+      "properties": {
+        "matter_id": {
+          "minLength": 1,
+          "title": "Matter Id",
+          "type": "string"
+        },
+        "data_origin": {
+          "const": "synthetic",
+          "default": "synthetic",
+          "title": "Data Origin",
+          "type": "string"
+        },
+        "data_class": {
+          "const": "synthetic_fixture",
+          "default": "synthetic_fixture",
+          "title": "Data Class",
+          "type": "string"
+        },
+        "protected_unit_id": {
+          "minLength": 1,
+          "title": "Protected Unit Id",
+          "type": "string"
+        },
+        "contribution": {
+          "title": "Contribution",
+          "type": "number"
+        },
+        "contains_real_client_data": {
+          "default": false,
+          "title": "Contains Real Client Data",
+          "type": "boolean"
+        },
+        "contains_real_matter_data": {
+          "default": false,
+          "title": "Contains Real Matter Data",
+          "type": "boolean"
+        },
+        "contains_carrier_private_data": {
+          "default": false,
+          "title": "Contains Carrier Private Data",
+          "type": "boolean"
+        },
+        "contains_privileged_data": {
+          "default": false,
+          "title": "Contains Privileged Data",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "matter_id",
+        "protected_unit_id",
+        "contribution"
+      ],
+      "title": "CalibrationInputMatter",
+      "type": "object"
+    },
+    "CalibrationPreflightPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "policy_label": {
+          "title": "Policy Label",
+          "type": "string"
+        },
+        "protected_unit": {
+          "anyOf": [
+            {
+              "enum": [
+                "matter",
+                "client",
+                "affiliate_group"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Protected Unit"
+        },
+        "minimum_distinct_matters": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Minimum Distinct Matters"
+        },
+        "dominance_threshold": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "maximum": 1,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dominance Threshold"
+        },
+        "lomo_delta_limit": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lomo Delta Limit"
+        },
+        "adversary_model": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Adversary Model"
+        },
+        "reconstruction_recovered_rate": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reconstruction Recovered Rate"
+        },
+        "reconstruction_chance_rate": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reconstruction Chance Rate"
+        },
+        "reconstruction_margin": {
+          "default": 0.0,
+          "minimum": 0,
+          "title": "Reconstruction Margin",
+          "type": "number"
+        },
+        "reconstruction_tolerance": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reconstruction Tolerance"
+        },
+        "dp_route_required": {
+          "default": false,
+          "title": "Dp Route Required",
+          "type": "boolean"
+        },
+        "dp_rho": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dp Rho"
+        },
+        "dp_report_delta": {
+          "anyOf": [
+            {
+              "exclusiveMaximum": 1,
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dp Report Delta"
+        },
+        "dp_clip_norm": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dp Clip Norm"
+        },
+        "dp_rho_cap": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dp Rho Cap"
+        },
+        "dp_max_noise_to_signal_ratio": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dp Max Noise To Signal Ratio"
+        }
+      },
+      "required": [
+        "policy_label"
+      ],
+      "title": "CalibrationPreflightPolicy",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "request_id": {
+      "title": "Request Id",
+      "type": "string"
+    },
+    "estimator_id": {
+      "title": "Estimator Id",
+      "type": "string"
+    },
+    "parameter": {
+      "title": "Parameter",
+      "type": "string"
+    },
+    "corpus_version_ref": {
+      "title": "Corpus Version Ref",
+      "type": "string"
+    },
+    "screen_version": {
+      "title": "Screen Version",
+      "type": "string"
+    },
+    "runtime_scope": {
+      "const": "synthetic_candidate",
+      "default": "synthetic_candidate",
+      "title": "Runtime Scope",
+      "type": "string"
+    },
+    "candidate_only": {
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "publish_calibrated_value": {
+      "default": false,
+      "title": "Publish Calibrated Value",
+      "type": "boolean"
+    },
+    "policy": {
+      "$ref": "#/$defs/CalibrationPreflightPolicy"
+    },
+    "matters": {
+      "items": {
+        "$ref": "#/$defs/CalibrationInputMatter"
+      },
+      "title": "Matters",
+      "type": "array"
+    }
+  },
+  "required": [
+    "request_id",
+    "estimator_id",
+    "parameter",
+    "corpus_version_ref",
+    "screen_version",
+    "policy",
+    "matters"
+  ],
+  "title": "CalibrationPreflightRequest",
+  "type": "object"
+}

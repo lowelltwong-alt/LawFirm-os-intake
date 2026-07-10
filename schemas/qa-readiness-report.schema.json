@@ -1,0 +1,179 @@
+{
+  "$defs": {
+    "QAReadinessCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "warning",
+            "blocked"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "summary": {
+          "title": "Summary",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "candidate_exception_labels": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Candidate Exception Labels",
+          "type": "array"
+        }
+      },
+      "required": [
+        "check_id",
+        "label",
+        "status",
+        "summary"
+      ],
+      "title": "QAReadinessCheck",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "report_id": {
+      "title": "Report Id",
+      "type": "string"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "ready_for_review",
+        "ready_with_warnings",
+        "blocked"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "data_origin": {
+      "const": "synthetic",
+      "default": "synthetic",
+      "title": "Data Origin",
+      "type": "string"
+    },
+    "candidate_only": {
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "ui_review_data_bundle_id": {
+      "title": "Ui Review Data Bundle Id",
+      "type": "string"
+    },
+    "crosswalk_audit_report_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Crosswalk Audit Report Id"
+    },
+    "ocg_rule_ir_adoption_report_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Ocg Rule Ir Adoption Report Id"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/QAReadinessCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "passed_check_count": {
+      "minimum": 0,
+      "title": "Passed Check Count",
+      "type": "integer"
+    },
+    "warning_count": {
+      "minimum": 0,
+      "title": "Warning Count",
+      "type": "integer"
+    },
+    "blocker_count": {
+      "minimum": 0,
+      "title": "Blocker Count",
+      "type": "integer"
+    },
+    "recommended_next_actions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Recommended Next Actions",
+      "type": "array"
+    },
+    "display_banner": {
+      "additionalProperties": true,
+      "title": "Display Banner",
+      "type": "object"
+    },
+    "not_authorized_for_lake_write": {
+      "default": true,
+      "title": "Not Authorized For Lake Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_external_submission": {
+      "default": true,
+      "title": "Not Authorized For External Submission",
+      "type": "boolean"
+    },
+    "not_authorized_for_model_training": {
+      "default": true,
+      "title": "Not Authorized For Model Training",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "report_id",
+    "generated_at",
+    "status",
+    "ui_review_data_bundle_id",
+    "checks",
+    "passed_check_count",
+    "warning_count",
+    "blocker_count",
+    "recommended_next_actions",
+    "display_banner"
+  ],
+  "title": "QAReadinessReport",
+  "type": "object"
+}

@@ -239,6 +239,10 @@ candidate gate. It requires human-reviewed outcome evidence, append-only evidenc
 recording, synthetic fixture updates, shadow evals, and owning-repo review before
 any learning candidate can move toward a profile, template, guideline, budget
 driver, validation rule, or promoted contract change.
+Carrier proposals also require source-record-bound QRD and Chinese-wall proof
+requests; missing coverage fails the executable gate rather than leaving CHW as
+metadata. Synthetic proof review does not authorize a conflict conclusion or
+lesson fire.
 
 The local `build-budget-event-lake-bundle` command is the run-specific bridge
 from append-only intake evidence to future Lake owner review. It can bundle the

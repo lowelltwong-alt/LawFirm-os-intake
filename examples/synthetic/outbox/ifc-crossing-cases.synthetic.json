@@ -1,0 +1,19 @@
+{
+  "fixture_id": "ifc-crossing-cases",
+  "status": "synthetic_only_candidate_fixture",
+  "request": {
+    "request_id": "synthetic-ifc-clean-crossing",
+    "data_class": "synthetic_fixture",
+    "runtime_scope": "synthetic_candidate",
+    "candidate_only": true,
+    "content_labels": ["public", "candidate"],
+    "contains_real_data": false,
+    "contains_private_data": false,
+    "contains_client_data": false,
+    "contains_matter_data": false,
+    "contains_real_carrier_data": false,
+    "contains_privileged_content": false,
+    "contains_work_product": false,
+    "scope_known": true
+  }
+}

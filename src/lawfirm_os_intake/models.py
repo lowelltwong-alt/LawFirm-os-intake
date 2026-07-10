@@ -16496,6 +16496,8 @@ UIReviewDataBundleReportKind = Literal[
     "labor_employment_budget_outcome_replay_builder_binding",
     "labor_employment_budget_outcome_replay_confidence_status",
     "budget_learning_loop",
+    "crosswalk_audit",
+    "ocg_rule_ir_adoption",
 ]
 
 
@@ -16562,6 +16564,10 @@ class UIReviewDataBundle(StrictModel):
     external_writes_performed: Literal[False] = False
     silent_learning_performed: Literal[False] = False
     generated_at: str
+    crosswalk_audit_ref: str | None = None
+    ocg_rule_ir_adoption_ref: str | None = None
+    crosswalk_audit_summary: "CrosswalkAuditSummary | None" = None
+    ocg_rule_ir_adoption_summary: "OCGRuleIRAdoptionSummary | None" = None
 
     @model_validator(mode="after")
     def ui_review_data_bundle_counts_and_status_match(self) -> "UIReviewDataBundle":
@@ -19008,3 +19014,338 @@ class SafetyGateReport(StrictModel):
     final_boundary: Literal["blocked_pending_conflicts_and_engagement"]
     external_writes_performed: Literal[False] = False
     generated_at: str
+
+
+# --- Stage 4/5/6: crosswalk + OCG rule IR evidence (candidate-only, read-only) ---
+
+
+class OCGSharedRuleIRRule(StrictModel):
+    rule_id: str
+    rule_family: Literal[
+        "rate_cap",
+        "expense_cap",
+        "disallowance",
+        "contingency",
+        "staffing",
+        "preapproval",
+        "budget_cadence",
+        "variance_threshold",
+        "metadata",
+    ]
+    label: str
+    action_type: Literal[
+        "cap_rate",
+        "cap_expense",
+        "disallow",
+        "deny_contingency",
+        "reshape_staffing",
+        "preapproval_gate",
+        "metadata_only",
+    ]
+    impact_bucket: Literal[
+        "rate_cap_delta",
+        "expense_cap_delta",
+        "disallowed_delta",
+        "contingency_delta",
+        "staffing_delta",
+        "preapproval_dry_run",
+        "metadata_only",
+    ]
+    applies_to: dict[str, Any] = Field(default_factory=dict)
+    impact_basis_refs: list[str] = Field(default_factory=list)
+    review_status: Literal["candidate_unverified", "human_reviewed"] = "candidate_unverified"
+    candidate_only: bool = True
+    not_canonical_rule_id: bool = True
+    rewrites_budget: bool = False
+    no_real_guideline_text: bool = True
+    no_real_rate_value: bool = True
+
+
+class OCGSharedRuleIR(StrictModel):
+    schema_version: str = "0.1"
+    rule_ir_id: str
+    source_owner: str
+    source_artifact_ref: str
+    source_version_or_date: str
+    retrieved_at: str
+    source_hash: str | None = None
+    data_origin: str = "synthetic"
+    candidate_only: bool = True
+    not_promoted_canon: bool = True
+    read_only_consumption: bool = True
+    no_real_guidelines: bool = True
+    no_real_rates: bool = True
+    contains_real_firm_data: bool = False
+    contains_real_carrier_data: bool = False
+    rules: list[OCGSharedRuleIRRule]
+    prohibited_actions: list[str] = Field(default_factory=list)
+
+
+class OCGRuleImpactLine(StrictModel):
+    rule_id: str
+    rule_family: str
+    impact_bucket: str
+    matched_projection_refs: list[str] = Field(default_factory=list)
+    proposed_amount: float | None = None
+    compliant_amount: float | None = None
+    delta_amount: float | None = None
+    note: str
+    candidate_only: bool = True
+
+
+class OCGRuleIRAdoptionFinding(StrictModel):
+    finding_id: str
+    severity: Literal["blocker", "warning"]
+    issue: str
+    rule_id: str | None = None
+
+
+class OCGRuleIRAdoptionReport(StrictModel):
+    schema_version: str = "0.1"
+    report_id: str
+    generated_at: str
+    status: Literal["accepted_as_read_only_candidate", "blocked"]
+    acceptance_gate_status: Literal["accepted_with_restrictions", "blocked"]
+    rule_ir_id: str
+    source_owner: str
+    source_artifact_ref: str
+    budget_proposal_id: str
+    carrier_projection_id: str
+    carrier: str
+    proposed_total_before: float | None = None
+    proposed_total_after: float | None = None
+    carrier_compliant_total: float | None = None
+    projection_total_delta: float | None = None
+    rule_count: int = Field(ge=0)
+    impact_line_count: int = Field(ge=0)
+    candidate_rule_id_count: int = Field(ge=0)
+    canonical_rule_id_violation_count: int = Field(ge=0)
+    source_owner_violation_count: int = Field(ge=0)
+    read_only_violation_count: int = Field(ge=0)
+    rewrite_budget_violation_count: int = Field(ge=0)
+    real_guideline_or_rate_violation_count: int = Field(ge=0)
+    budget_projection_mismatch_count: int = Field(ge=0)
+    findings: list[OCGRuleIRAdoptionFinding] = Field(default_factory=list)
+    impact_lines: list[OCGRuleImpactLine] = Field(default_factory=list)
+    display_banner: dict[str, Any] = Field(default_factory=dict)
+    prohibited_actions: list[str] = Field(default_factory=list)
+    proposed_budget_preserved: bool = True
+    projection_rewrites_budget: bool = False
+    read_only_consumption: bool = True
+    candidate_only: bool = True
+    not_promoted_canon: bool = True
+    not_authorized_for_canonical_use: bool = True
+    not_authorized_for_budget_rewrite: bool = True
+    not_authorized_for_client_submission: bool = True
+    not_authorized_for_external_submission: bool = True
+    not_authorized_for_lake_write: bool = True
+
+
+class CrosswalkSourceProvenance(StrictModel):
+    source_url: str
+    source_version_or_date: str
+    retrieved_at: str
+    content_sha256: str | None = None
+    license_terms_note: str
+    review_status: Literal["candidate_unverified", "human_reviewed", "stale", "unknown"] = (
+        "candidate_unverified"
+    )
+
+
+class CrosswalkEntry(StrictModel):
+    local_term: str
+    local_term_kind: Literal[
+        "matter_family",
+        "representation_posture",
+        "party_role",
+        "phase_id",
+        "task_id",
+        "expense_type",
+        "external_code",
+        "rejection_family",
+    ]
+    candidate_target: str
+    candidate_target_system: Literal[
+        "sali_lmss",
+        "utbms_ledes",
+        "ledes_error_dimension",
+        "unmapped",
+    ]
+    confidence: Literal["high", "medium", "low", "unknown"]
+    provenance: CrosswalkSourceProvenance
+    review_status: Literal["candidate_unverified", "human_reviewed", "stale", "unknown"] = (
+        "candidate_unverified"
+    )
+    notes: str = ""
+    candidate_only: bool = True
+
+
+class Crosswalk(StrictModel):
+    schema_version: str = "0.1"
+    crosswalk_id: str
+    kind: Literal[
+        "matter_family_to_sali",
+        "party_role_to_sali",
+        "budget_code_to_utbms_ledes",
+        "rejection_family_to_ledes_error_dimension",
+    ]
+    target_system: Literal["sali_lmss", "utbms_ledes", "ledes_error_dimension"]
+    source_provenance: CrosswalkSourceProvenance
+    entries: list[CrosswalkEntry]
+    candidate_only: bool = True
+    not_promoted_canon: bool = True
+    data_origin: Literal["synthetic"] = "synthetic"
+
+
+class CrosswalkAuditFinding(StrictModel):
+    crosswalk_id: str
+    finding_id: str
+    severity: Literal["blocker", "warning", "info"]
+    issue: str
+    entry_local_term: str | None = None
+
+
+class CrosswalkAuditReport(StrictModel):
+    schema_version: str = "0.1"
+    report_id: str
+    generated_at: str
+    status: Literal["passed", "blocked"]
+    acceptance_gate_status: Literal["accepted_with_restrictions", "blocked"]
+    crosswalk_count: int = Field(ge=0)
+    entry_count: int = Field(ge=0)
+    mapped_entry_count: int = Field(ge=0)
+    unmapped_entry_count: int = Field(ge=0)
+    canonical_claim_count: int = Field(ge=0)
+    candidate_only_violation_count: int = Field(ge=0)
+    entries_missing_provenance_count: int = Field(ge=0)
+    entries_missing_review_status_count: int = Field(ge=0)
+    guessed_mapping_count: int = Field(ge=0)
+    high_confidence_dual_review_violation_count: int = Field(default=0, ge=0)
+    utbms_like_candidate_family_label_count: int = Field(default=0, ge=0)
+    exact_standard_code_verified: bool = False
+    unverified_pinned_target_count: int = Field(default=0, ge=0)
+    candidate_target_prefix_violation_count: int = Field(default=0, ge=0)
+    workflow_dependency_violation_count: int = Field(default=0, ge=0)
+    findings: list[CrosswalkAuditFinding] = Field(default_factory=list)
+    crosswalk_refs: list[str] = Field(default_factory=list)
+    candidate_only: bool = True
+    not_promoted_canon: bool = True
+    prohibited_actions: list[str]
+    display_banner: dict[str, Any] = Field(default_factory=dict)
+    not_authorized_for_canonical_use: bool = True
+    not_authorized_for_budget_logic: bool = True
+    not_authorized_for_rejection_logic: bool = True
+
+
+class CrosswalkAuditSummary(StrictModel):
+    report_id: str
+    status: str
+    acceptance_gate_status: str
+    crosswalk_count: int = Field(ge=0)
+    entry_count: int = Field(ge=0)
+    mapped_entry_count: int = Field(ge=0)
+    unmapped_entry_count: int = Field(ge=0)
+    canonical_claim_count: int = Field(ge=0)
+    guessed_mapping_count: int = Field(ge=0)
+    high_confidence_dual_review_violation_count: int = Field(default=0, ge=0)
+    utbms_like_candidate_family_label_count: int = Field(default=0, ge=0)
+    unverified_pinned_target_count: int = Field(ge=0)
+    candidate_target_prefix_violation_count: int = Field(ge=0)
+    workflow_dependency_violation_count: int = Field(ge=0)
+    display_banner: dict[str, Any] = Field(default_factory=dict)
+    prohibited_actions: list[str] = Field(default_factory=list)
+    not_authorized_for_canonical_use: bool = True
+    not_authorized_for_budget_logic: bool = True
+    exact_standard_code_verified: bool = False
+    candidate_only: bool = True
+
+
+class OCGRuleIRAdoptionSummary(StrictModel):
+    report_id: str
+    status: str
+    acceptance_gate_status: str
+    rule_ir_id: str
+    source_owner: str
+    source_artifact_ref: str
+    carrier_projection_id: str
+    budget_proposal_id: str
+    proposed_total_before: float | None = None
+    carrier_compliant_total: float | None = None
+    projection_total_delta: float | None = None
+    rule_count: int = Field(ge=0)
+    impact_line_count: int = Field(ge=0)
+    canonical_rule_id_violation_count: int = Field(ge=0)
+    rewrite_budget_violation_count: int = Field(ge=0)
+    real_guideline_or_rate_violation_count: int = Field(ge=0)
+    budget_projection_mismatch_count: int = Field(ge=0)
+    display_banner: dict[str, Any] = Field(default_factory=dict)
+    prohibited_actions: list[str] = Field(default_factory=list)
+    read_only_consumption: bool = True
+    candidate_only: bool = True
+    not_promoted_canon: bool = True
+    not_authorized_for_canonical_use: bool = True
+    not_authorized_for_budget_rewrite: bool = True
+    not_authorized_for_external_submission: bool = True
+
+
+class QAReadinessCheck(StrictModel):
+    check_id: str
+    label: str
+    status: Literal["passed", "warning", "blocked"]
+    summary: str
+    evidence_refs: list[str] = Field(default_factory=list)
+    candidate_exception_labels: list[str] = Field(default_factory=list)
+
+
+class QAReadinessReport(StrictModel):
+    schema_version: str = "0.1"
+    report_id: str
+    generated_at: str
+    status: Literal["ready_for_review", "ready_with_warnings", "blocked"]
+    data_origin: Literal["synthetic"] = "synthetic"
+    candidate_only: bool = True
+    ui_review_data_bundle_id: str
+    crosswalk_audit_report_id: str | None = None
+    ocg_rule_ir_adoption_report_id: str | None = None
+    checks: list[QAReadinessCheck]
+    passed_check_count: int = Field(ge=0)
+    warning_count: int = Field(ge=0)
+    blocker_count: int = Field(ge=0)
+    recommended_next_actions: list[str]
+    display_banner: dict[str, Any]
+    not_authorized_for_lake_write: bool = True
+    not_authorized_for_external_submission: bool = True
+    not_authorized_for_model_training: bool = True
+
+
+class QAProductConfidenceGate(StrictModel):
+    gate_id: str
+    label: str
+    status: Literal["passed", "blocked"]
+    summary: str
+    evidence_refs: list[str] = Field(default_factory=list)
+    candidate_exception_labels: list[str] = Field(default_factory=list)
+
+
+class QAProductConfidenceReport(StrictModel):
+    schema_version: str = "0.1"
+    report_id: str
+    generated_at: str
+    status: Literal["ready_for_poc_review", "blocked"]
+    data_origin: Literal["synthetic"] = "synthetic"
+    candidate_only: bool = True
+    ui_review_data_bundle_id: str
+    qa_readiness_report_id: str | None = None
+    crosswalk_audit_report_id: str | None = None
+    ocg_rule_ir_adoption_report_id: str | None = None
+    gates: list[QAProductConfidenceGate]
+    passed_gate_count: int = Field(ge=0)
+    blocker_count: int = Field(ge=0)
+    recommended_next_actions: list[str]
+    display_banner: dict[str, Any]
+    not_authorized_for_lake_write: bool = True
+    not_authorized_for_external_submission: bool = True
+    not_authorized_for_model_training: bool = True
+
+
+UIReviewDataBundle.model_rebuild()

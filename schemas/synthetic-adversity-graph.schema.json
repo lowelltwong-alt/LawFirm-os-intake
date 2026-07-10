@@ -1,0 +1,223 @@
+{
+  "$defs": {
+    "EdgeReviewStatus": {
+      "enum": [
+        "synthetic_fixture_reviewed",
+        "unreviewed_fixture"
+      ],
+      "title": "EdgeReviewStatus",
+      "type": "string"
+    },
+    "SyntheticAdversityEdge": {
+      "additionalProperties": false,
+      "properties": {
+        "edge_id": {
+          "pattern": "^synthetic-adversity-edge-[a-z0-9-]+$",
+          "title": "Edge Id",
+          "type": "string"
+        },
+        "class_ids": {
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "title": "Class Ids",
+          "type": "array"
+        },
+        "review_status": {
+          "$ref": "#/$defs/EdgeReviewStatus"
+        },
+        "source_ref": {
+          "pattern": "^synthetic-policy-ref:[a-z0-9-]+$",
+          "title": "Source Ref",
+          "type": "string"
+        },
+        "counsel_adversity_authority_verified": {
+          "const": false,
+          "default": false,
+          "title": "Counsel Adversity Authority Verified",
+          "type": "boolean"
+        },
+        "inferred_from_similarity": {
+          "const": false,
+          "default": false,
+          "title": "Inferred From Similarity",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "edge_id",
+        "class_ids",
+        "review_status",
+        "source_ref"
+      ],
+      "title": "SyntheticAdversityEdge",
+      "type": "object"
+    },
+    "SyntheticConflictClass": {
+      "additionalProperties": false,
+      "properties": {
+        "class_id": {
+          "pattern": "^synthetic-coi-class-[a-z0-9-]+$",
+          "title": "Class Id",
+          "type": "string"
+        },
+        "definition_status": {
+          "const": "synthetic_policy_placeholder",
+          "title": "Definition Status",
+          "type": "string"
+        },
+        "member_ref_count": {
+          "minimum": 1,
+          "title": "Member Ref Count",
+          "type": "integer"
+        },
+        "member_refs_included": {
+          "const": false,
+          "default": false,
+          "title": "Member Refs Included",
+          "type": "boolean"
+        },
+        "counsel_classification_authority_verified": {
+          "const": false,
+          "default": false,
+          "title": "Counsel Classification Authority Verified",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "class_id",
+        "definition_status",
+        "member_ref_count"
+      ],
+      "title": "SyntheticConflictClass",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "graph_id": {
+      "pattern": "^synthetic-adversity-graph-[a-z0-9-]+$",
+      "title": "Graph Id",
+      "type": "string"
+    },
+    "graph_version": {
+      "const": "synthetic-policy-placeholder-v1",
+      "title": "Graph Version",
+      "type": "string"
+    },
+    "data_class": {
+      "const": "synthetic_fixture",
+      "title": "Data Class",
+      "type": "string"
+    },
+    "runtime_scope": {
+      "const": "synthetic_candidate",
+      "title": "Runtime Scope",
+      "type": "string"
+    },
+    "candidate_only": {
+      "const": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "policy_status": {
+      "const": "synthetic_policy_placeholder",
+      "title": "Policy Status",
+      "type": "string"
+    },
+    "conflict_classes": {
+      "items": {
+        "$ref": "#/$defs/SyntheticConflictClass"
+      },
+      "minItems": 2,
+      "title": "Conflict Classes",
+      "type": "array"
+    },
+    "adversity_edges": {
+      "items": {
+        "$ref": "#/$defs/SyntheticAdversityEdge"
+      },
+      "title": "Adversity Edges",
+      "type": "array"
+    },
+    "firm_wide_imputation_required": {
+      "const": true,
+      "title": "Firm Wide Imputation Required",
+      "type": "boolean"
+    },
+    "counsel_adversity_classes_authority_verified": {
+      "const": false,
+      "title": "Counsel Adversity Classes Authority Verified",
+      "type": "boolean"
+    },
+    "adversity_inference_performed": {
+      "const": false,
+      "title": "Adversity Inference Performed",
+      "type": "boolean"
+    },
+    "contains_real_data": {
+      "const": false,
+      "title": "Contains Real Data",
+      "type": "boolean"
+    },
+    "contains_private_data": {
+      "const": false,
+      "title": "Contains Private Data",
+      "type": "boolean"
+    },
+    "contains_client_data": {
+      "const": false,
+      "title": "Contains Client Data",
+      "type": "boolean"
+    },
+    "contains_matter_data": {
+      "const": false,
+      "title": "Contains Matter Data",
+      "type": "boolean"
+    },
+    "contains_real_carrier_data": {
+      "const": false,
+      "title": "Contains Real Carrier Data",
+      "type": "boolean"
+    },
+    "contains_privileged_content": {
+      "const": false,
+      "title": "Contains Privileged Content",
+      "type": "boolean"
+    },
+    "contains_work_product": {
+      "const": false,
+      "title": "Contains Work Product",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "graph_id",
+    "graph_version",
+    "data_class",
+    "runtime_scope",
+    "candidate_only",
+    "policy_status",
+    "conflict_classes",
+    "adversity_edges",
+    "firm_wide_imputation_required",
+    "counsel_adversity_classes_authority_verified",
+    "adversity_inference_performed",
+    "contains_real_data",
+    "contains_private_data",
+    "contains_client_data",
+    "contains_matter_data",
+    "contains_real_carrier_data",
+    "contains_privileged_content",
+    "contains_work_product"
+  ],
+  "title": "SyntheticAdversityGraph",
+  "type": "object"
+}

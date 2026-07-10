@@ -1,0 +1,203 @@
+{
+  "$defs": {
+    "CrosswalkEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "local_term": {
+          "title": "Local Term",
+          "type": "string"
+        },
+        "local_term_kind": {
+          "enum": [
+            "matter_family",
+            "representation_posture",
+            "party_role",
+            "phase_id",
+            "task_id",
+            "expense_type",
+            "external_code",
+            "rejection_family"
+          ],
+          "title": "Local Term Kind",
+          "type": "string"
+        },
+        "candidate_target": {
+          "title": "Candidate Target",
+          "type": "string"
+        },
+        "candidate_target_system": {
+          "enum": [
+            "sali_lmss",
+            "utbms_ledes",
+            "ledes_error_dimension",
+            "unmapped"
+          ],
+          "title": "Candidate Target System",
+          "type": "string"
+        },
+        "confidence": {
+          "enum": [
+            "high",
+            "medium",
+            "low",
+            "unknown"
+          ],
+          "title": "Confidence",
+          "type": "string"
+        },
+        "provenance": {
+          "$ref": "#/$defs/CrosswalkSourceProvenance"
+        },
+        "review_status": {
+          "default": "candidate_unverified",
+          "enum": [
+            "candidate_unverified",
+            "human_reviewed",
+            "stale",
+            "unknown"
+          ],
+          "title": "Review Status",
+          "type": "string"
+        },
+        "notes": {
+          "default": "",
+          "title": "Notes",
+          "type": "string"
+        },
+        "candidate_only": {
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "local_term",
+        "local_term_kind",
+        "candidate_target",
+        "candidate_target_system",
+        "confidence",
+        "provenance"
+      ],
+      "title": "CrosswalkEntry",
+      "type": "object"
+    },
+    "CrosswalkSourceProvenance": {
+      "additionalProperties": false,
+      "properties": {
+        "source_url": {
+          "title": "Source Url",
+          "type": "string"
+        },
+        "source_version_or_date": {
+          "title": "Source Version Or Date",
+          "type": "string"
+        },
+        "retrieved_at": {
+          "title": "Retrieved At",
+          "type": "string"
+        },
+        "content_sha256": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Content Sha256"
+        },
+        "license_terms_note": {
+          "title": "License Terms Note",
+          "type": "string"
+        },
+        "review_status": {
+          "default": "candidate_unverified",
+          "enum": [
+            "candidate_unverified",
+            "human_reviewed",
+            "stale",
+            "unknown"
+          ],
+          "title": "Review Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_url",
+        "source_version_or_date",
+        "retrieved_at",
+        "license_terms_note"
+      ],
+      "title": "CrosswalkSourceProvenance",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "crosswalk_id": {
+      "title": "Crosswalk Id",
+      "type": "string"
+    },
+    "kind": {
+      "enum": [
+        "matter_family_to_sali",
+        "party_role_to_sali",
+        "budget_code_to_utbms_ledes",
+        "rejection_family_to_ledes_error_dimension"
+      ],
+      "title": "Kind",
+      "type": "string"
+    },
+    "target_system": {
+      "enum": [
+        "sali_lmss",
+        "utbms_ledes",
+        "ledes_error_dimension"
+      ],
+      "title": "Target System",
+      "type": "string"
+    },
+    "source_provenance": {
+      "$ref": "#/$defs/CrosswalkSourceProvenance"
+    },
+    "entries": {
+      "items": {
+        "$ref": "#/$defs/CrosswalkEntry"
+      },
+      "title": "Entries",
+      "type": "array"
+    },
+    "candidate_only": {
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "not_promoted_canon": {
+      "default": true,
+      "title": "Not Promoted Canon",
+      "type": "boolean"
+    },
+    "data_origin": {
+      "const": "synthetic",
+      "default": "synthetic",
+      "title": "Data Origin",
+      "type": "string"
+    }
+  },
+  "required": [
+    "crosswalk_id",
+    "kind",
+    "target_system",
+    "source_provenance",
+    "entries"
+  ],
+  "title": "Crosswalk",
+  "type": "object"
+}

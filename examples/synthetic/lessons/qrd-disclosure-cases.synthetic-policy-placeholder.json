@@ -1,0 +1,202 @@
+{
+  "fixture_id": "qrd-disclosure-cases",
+  "status": "synthetic_only_candidate_fixture",
+  "notes": "All thresholds, vocabularies, strategy labels, and adversary text are synthetic policy placeholders; no real legal or firm taxonomy is asserted.",
+  "policy": {
+    "policy_label": "Synthetic policy placeholder for QRD tests only",
+    "k_qual": 3,
+    "k_support": 1,
+    "minimum_sensitive_outcome_diversity": 2,
+    "adversary_model": "synthetic_auxiliary_knowledge_adversary_placeholder",
+    "adversary_capabilities": [
+      "knows_reviewed_universe",
+      "knows_all_but_target_support",
+      "combines_published_lessons"
+    ],
+    "allowed_claim_codes": [
+      "candidate_review_default",
+      "candidate_review_escalated"
+    ],
+    "allowed_context_codes": [
+      "applies_matching_operational_context",
+      "not_for_strategy_or_unknown_context",
+      "danger_overgeneralized_candidate_rule"
+    ],
+    "strategy_atom_keys": [
+      "issue_family:synthetic_strategy_issue"
+    ]
+  },
+  "lattice": {
+    "policy_label": "Synthetic policy placeholder reviewed lattice for QRD tests only",
+    "parents": {
+      "carrier": {
+        "carrier_alpha": "carrier_tier_regional",
+        "carrier_delta": "carrier_tier_regional",
+        "carrier_epsilon": "carrier_tier_regional",
+        "carrier_beta": "carrier_tier_national",
+        "carrier_gamma": "carrier_tier_national",
+        "carrier_zeta": "carrier_tier_national",
+        "carrier_tier_regional": "any_carrier",
+        "carrier_tier_national": "any_carrier",
+        "any_carrier": null
+      },
+      "jurisdiction": {
+        "nv": "mountain_west",
+        "ut": "mountain_west",
+        "ca": "pacific",
+        "ny": "northeast",
+        "mountain_west": "us",
+        "pacific": "us",
+        "northeast": "us",
+        "us": null
+      },
+      "matter_type": {
+        "wage_hour_candidate": "employment_candidate",
+        "tort_candidate": "dispute_candidate",
+        "employment_candidate": "any_matter_type",
+        "dispute_candidate": "any_matter_type",
+        "any_matter_type": null
+      },
+      "role": {
+        "analyst_candidate": "review_team",
+        "associate_candidate": "review_team",
+        "partner_candidate": "review_team",
+        "review_team": "any_role",
+        "any_role": null
+      },
+      "issue_family": {
+        "wage_issue_candidate": "operational_issue",
+        "liability_issue_candidate": "operational_issue",
+        "discovery_issue_candidate": "operational_issue",
+        "synthetic_strategy_issue": "strategy_issue",
+        "operational_issue": "any_issue",
+        "strategy_issue": "any_issue",
+        "any_issue": null
+      },
+      "threshold_band": {
+        "low_candidate": "bounded_threshold",
+        "mid_candidate": "bounded_threshold",
+        "high_candidate": "bounded_threshold",
+        "bounded_threshold": "any_threshold",
+        "any_threshold": null
+      }
+    }
+  },
+  "universe": {
+    "universe_id": "synthetic-qrd-universe-v1",
+    "data_class": "synthetic_fixture",
+    "runtime_scope": "synthetic_candidate",
+    "candidate_only": true,
+    "matters": [
+      {
+        "matter_id": "synthetic-qrd-matter-001",
+        "attributes": {"carrier": "carrier_alpha", "jurisdiction": "nv", "matter_type": "wage_hour_candidate", "role": "analyst_candidate", "issue_family": "wage_issue_candidate", "threshold_band": "high_candidate"},
+        "sensitive_outcome_code": "synthetic_outcome_a"
+      },
+      {
+        "matter_id": "synthetic-qrd-matter-002",
+        "attributes": {"carrier": "carrier_beta", "jurisdiction": "ut", "matter_type": "wage_hour_candidate", "role": "partner_candidate", "issue_family": "wage_issue_candidate", "threshold_band": "mid_candidate"},
+        "sensitive_outcome_code": "synthetic_outcome_b"
+      },
+      {
+        "matter_id": "synthetic-qrd-matter-003",
+        "attributes": {"carrier": "carrier_gamma", "jurisdiction": "nv", "matter_type": "tort_candidate", "role": "associate_candidate", "issue_family": "liability_issue_candidate", "threshold_band": "low_candidate"},
+        "sensitive_outcome_code": "synthetic_outcome_a"
+      },
+      {
+        "matter_id": "synthetic-qrd-matter-004",
+        "attributes": {"carrier": "carrier_delta", "jurisdiction": "ca", "matter_type": "wage_hour_candidate", "role": "analyst_candidate", "issue_family": "discovery_issue_candidate", "threshold_band": "high_candidate"},
+        "sensitive_outcome_code": "synthetic_outcome_b"
+      },
+      {
+        "matter_id": "synthetic-qrd-matter-005",
+        "attributes": {"carrier": "carrier_epsilon", "jurisdiction": "ca", "matter_type": "tort_candidate", "role": "partner_candidate", "issue_family": "liability_issue_candidate", "threshold_band": "mid_candidate"},
+        "sensitive_outcome_code": "synthetic_outcome_c"
+      },
+      {
+        "matter_id": "synthetic-qrd-matter-006",
+        "attributes": {"carrier": "carrier_zeta", "jurisdiction": "ny", "matter_type": "tort_candidate", "role": "associate_candidate", "issue_family": "discovery_issue_candidate", "threshold_band": "low_candidate"},
+        "sensitive_outcome_code": "synthetic_outcome_d"
+      }
+    ]
+  },
+  "cases": [
+    {
+      "case_id": "lesson-kanon-generalize",
+      "lesson": {
+        "lesson_id": "synthetic-lesson-generalize",
+        "data_class": "synthetic_fixture",
+        "runtime_scope": "synthetic_candidate",
+        "candidate_only": true,
+        "atoms": [{"dimension": "carrier", "value": "carrier_alpha", "atom_class": "operational"}],
+        "claim": {"before_code": "candidate_review_default", "after_code": "candidate_review_escalated"},
+        "applies_when": ["applies_matching_operational_context"],
+        "does_not_apply_when": ["not_for_strategy_or_unknown_context"],
+        "danger_if_misapplied": "danger_overgeneralized_candidate_rule",
+        "support_matter_ids": ["synthetic-qrd-matter-001"],
+        "support_count": 1,
+        "free_text": null
+      },
+      "published_lessons": []
+    },
+    {
+      "case_id": "lesson-privilege-block",
+      "lesson": {
+        "lesson_id": "synthetic-lesson-strategy-block",
+        "data_class": "synthetic_fixture",
+        "runtime_scope": "synthetic_candidate",
+        "candidate_only": true,
+        "atoms": [{"dimension": "issue_family", "value": "synthetic_strategy_issue", "atom_class": "strategy"}],
+        "claim": {"before_code": "candidate_review_default", "after_code": "candidate_review_escalated"},
+        "applies_when": ["applies_matching_operational_context"],
+        "does_not_apply_when": ["not_for_strategy_or_unknown_context"],
+        "danger_if_misapplied": "danger_overgeneralized_candidate_rule",
+        "support_matter_ids": ["synthetic-qrd-matter-001"],
+        "support_count": 1,
+        "free_text": null
+      },
+      "published_lessons": []
+    },
+    {
+      "case_id": "lesson-freetext-block",
+      "lesson": {
+        "lesson_id": "synthetic-lesson-freetext-block",
+        "data_class": "synthetic_fixture",
+        "runtime_scope": "synthetic_candidate",
+        "candidate_only": true,
+        "atoms": [{"dimension": "carrier", "value": "carrier_alpha", "atom_class": "operational"}],
+        "claim": {"before_code": "candidate_review_default", "after_code": "candidate_review_escalated"},
+        "applies_when": ["applies_matching_operational_context"],
+        "does_not_apply_when": ["not_for_strategy_or_unknown_context"],
+        "danger_if_misapplied": "danger_overgeneralized_candidate_rule",
+        "support_matter_ids": ["synthetic-qrd-matter-001"],
+        "support_count": 1,
+        "free_text": "synthetic advisory text is still rejected from disclosure candidates"
+      },
+      "published_lessons": []
+    },
+    {
+      "case_id": "lesson-differencing",
+      "lesson": {
+        "lesson_id": "synthetic-lesson-differencing",
+        "data_class": "synthetic_fixture",
+        "runtime_scope": "synthetic_candidate",
+        "candidate_only": true,
+        "atoms": [{"dimension": "jurisdiction", "value": "mountain_west", "atom_class": "operational"}],
+        "claim": {"before_code": "candidate_review_default", "after_code": "candidate_review_escalated"},
+        "applies_when": ["applies_matching_operational_context"],
+        "does_not_apply_when": ["not_for_strategy_or_unknown_context"],
+        "danger_if_misapplied": "danger_overgeneralized_candidate_rule",
+        "support_matter_ids": ["synthetic-qrd-matter-001"],
+        "support_count": 1,
+        "free_text": null
+      },
+      "published_lessons": [
+        {
+          "lesson_id": "synthetic-published-regional-carrier",
+          "atoms": [{"dimension": "carrier", "value": "carrier_tier_regional", "atom_class": "operational"}]
+        }
+      ]
+    }
+  ]
+}

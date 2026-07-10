@@ -1,0 +1,497 @@
+{
+  "$defs": {
+    "GeneralizationLattice": {
+      "additionalProperties": false,
+      "properties": {
+        "policy_label": {
+          "minLength": 1,
+          "title": "Policy Label",
+          "type": "string"
+        },
+        "parents": {
+          "additionalProperties": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "type": "object"
+          },
+          "propertyNames": {
+            "enum": [
+              "carrier",
+              "jurisdiction",
+              "matter_type",
+              "role",
+              "issue_family",
+              "threshold_band"
+            ]
+          },
+          "title": "Parents",
+          "type": "object"
+        }
+      },
+      "required": [
+        "policy_label",
+        "parents"
+      ],
+      "title": "GeneralizationLattice",
+      "type": "object"
+    },
+    "LessonAtom": {
+      "additionalProperties": false,
+      "properties": {
+        "dimension": {
+          "enum": [
+            "carrier",
+            "jurisdiction",
+            "matter_type",
+            "role",
+            "issue_family",
+            "threshold_band"
+          ],
+          "title": "Dimension",
+          "type": "string"
+        },
+        "value": {
+          "maxLength": 80,
+          "minLength": 1,
+          "pattern": "^[a-z0-9_:-]+$",
+          "title": "Value",
+          "type": "string"
+        },
+        "atom_class": {
+          "enum": [
+            "operational",
+            "strategy"
+          ],
+          "title": "Atom Class",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dimension",
+        "value",
+        "atom_class"
+      ],
+      "title": "LessonAtom",
+      "type": "object"
+    },
+    "LessonClaim": {
+      "additionalProperties": false,
+      "properties": {
+        "before_code": {
+          "enum": [
+            "candidate_review_default",
+            "candidate_review_escalated"
+          ],
+          "title": "Before Code",
+          "type": "string"
+        },
+        "after_code": {
+          "enum": [
+            "candidate_review_default",
+            "candidate_review_escalated"
+          ],
+          "title": "After Code",
+          "type": "string"
+        }
+      },
+      "required": [
+        "before_code",
+        "after_code"
+      ],
+      "title": "LessonClaim",
+      "type": "object"
+    },
+    "LessonIR": {
+      "additionalProperties": false,
+      "properties": {
+        "lesson_id": {
+          "minLength": 1,
+          "pattern": "^synthetic-[a-z0-9-]+$",
+          "title": "Lesson Id",
+          "type": "string"
+        },
+        "data_class": {
+          "const": "synthetic_fixture",
+          "title": "Data Class",
+          "type": "string"
+        },
+        "runtime_scope": {
+          "const": "synthetic_candidate",
+          "title": "Runtime Scope",
+          "type": "string"
+        },
+        "candidate_only": {
+          "const": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "atoms": {
+          "items": {
+            "$ref": "#/$defs/LessonAtom"
+          },
+          "minItems": 1,
+          "title": "Atoms",
+          "type": "array"
+        },
+        "claim": {
+          "$ref": "#/$defs/LessonClaim"
+        },
+        "applies_when": {
+          "items": {
+            "enum": [
+              "applies_matching_operational_context",
+              "not_for_strategy_or_unknown_context",
+              "danger_overgeneralized_candidate_rule"
+            ],
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Applies When",
+          "type": "array"
+        },
+        "does_not_apply_when": {
+          "items": {
+            "enum": [
+              "applies_matching_operational_context",
+              "not_for_strategy_or_unknown_context",
+              "danger_overgeneralized_candidate_rule"
+            ],
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Does Not Apply When",
+          "type": "array"
+        },
+        "danger_if_misapplied": {
+          "enum": [
+            "applies_matching_operational_context",
+            "not_for_strategy_or_unknown_context",
+            "danger_overgeneralized_candidate_rule"
+          ],
+          "title": "Danger If Misapplied",
+          "type": "string"
+        },
+        "support_matter_ids": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Support Matter Ids",
+          "type": "array"
+        },
+        "support_count": {
+          "minimum": 1,
+          "title": "Support Count",
+          "type": "integer"
+        },
+        "free_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Free Text"
+        }
+      },
+      "required": [
+        "lesson_id",
+        "data_class",
+        "runtime_scope",
+        "candidate_only",
+        "atoms",
+        "claim",
+        "applies_when",
+        "does_not_apply_when",
+        "danger_if_misapplied",
+        "support_matter_ids",
+        "support_count",
+        "free_text"
+      ],
+      "title": "LessonIR",
+      "type": "object"
+    },
+    "PublishedLessonProjection": {
+      "additionalProperties": false,
+      "properties": {
+        "lesson_id": {
+          "minLength": 1,
+          "pattern": "^synthetic-[a-z0-9-]+$",
+          "title": "Lesson Id",
+          "type": "string"
+        },
+        "atoms": {
+          "items": {
+            "$ref": "#/$defs/LessonAtom"
+          },
+          "minItems": 1,
+          "title": "Atoms",
+          "type": "array"
+        }
+      },
+      "required": [
+        "lesson_id",
+        "atoms"
+      ],
+      "title": "PublishedLessonProjection",
+      "type": "object"
+    },
+    "ReviewedSyntheticUniverse": {
+      "additionalProperties": false,
+      "properties": {
+        "universe_id": {
+          "minLength": 1,
+          "pattern": "^synthetic-[a-z0-9-]+$",
+          "title": "Universe Id",
+          "type": "string"
+        },
+        "data_class": {
+          "const": "synthetic_fixture",
+          "title": "Data Class",
+          "type": "string"
+        },
+        "runtime_scope": {
+          "const": "synthetic_candidate",
+          "title": "Runtime Scope",
+          "type": "string"
+        },
+        "candidate_only": {
+          "const": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "matters": {
+          "items": {
+            "$ref": "#/$defs/SyntheticMatter"
+          },
+          "minItems": 1,
+          "title": "Matters",
+          "type": "array"
+        }
+      },
+      "required": [
+        "universe_id",
+        "data_class",
+        "runtime_scope",
+        "candidate_only",
+        "matters"
+      ],
+      "title": "ReviewedSyntheticUniverse",
+      "type": "object"
+    },
+    "SyntheticMatter": {
+      "additionalProperties": false,
+      "properties": {
+        "matter_id": {
+          "minLength": 1,
+          "pattern": "^synthetic-[a-z0-9-]+$",
+          "title": "Matter Id",
+          "type": "string"
+        },
+        "attributes": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "propertyNames": {
+            "enum": [
+              "carrier",
+              "jurisdiction",
+              "matter_type",
+              "role",
+              "issue_family",
+              "threshold_band"
+            ]
+          },
+          "title": "Attributes",
+          "type": "object"
+        },
+        "sensitive_outcome_code": {
+          "enum": [
+            "synthetic_outcome_a",
+            "synthetic_outcome_b",
+            "synthetic_outcome_c",
+            "synthetic_outcome_d"
+          ],
+          "title": "Sensitive Outcome Code",
+          "type": "string"
+        }
+      },
+      "required": [
+        "matter_id",
+        "attributes",
+        "sensitive_outcome_code"
+      ],
+      "title": "SyntheticMatter",
+      "type": "object"
+    },
+    "SyntheticPolicyPlaceholders": {
+      "additionalProperties": false,
+      "description": "Human-set inputs for synthetic fixtures, never production policy defaults.",
+      "properties": {
+        "policy_label": {
+          "minLength": 1,
+          "title": "Policy Label",
+          "type": "string"
+        },
+        "k_qual": {
+          "minimum": 1,
+          "title": "K Qual",
+          "type": "integer"
+        },
+        "k_support": {
+          "minimum": 1,
+          "title": "K Support",
+          "type": "integer"
+        },
+        "minimum_sensitive_outcome_diversity": {
+          "minimum": 1,
+          "title": "Minimum Sensitive Outcome Diversity",
+          "type": "integer"
+        },
+        "adversary_model": {
+          "minLength": 1,
+          "pattern": "^[a-z0-9_:-]+$",
+          "title": "Adversary Model",
+          "type": "string"
+        },
+        "adversary_capabilities": {
+          "items": {
+            "enum": [
+              "knows_reviewed_universe",
+              "knows_all_but_target_support",
+              "combines_published_lessons"
+            ],
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Adversary Capabilities",
+          "type": "array"
+        },
+        "allowed_claim_codes": {
+          "items": {
+            "enum": [
+              "candidate_review_default",
+              "candidate_review_escalated"
+            ],
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Allowed Claim Codes",
+          "type": "array"
+        },
+        "allowed_context_codes": {
+          "items": {
+            "enum": [
+              "applies_matching_operational_context",
+              "not_for_strategy_or_unknown_context",
+              "danger_overgeneralized_candidate_rule"
+            ],
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Allowed Context Codes",
+          "type": "array"
+        },
+        "strategy_atom_keys": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Strategy Atom Keys",
+          "type": "array"
+        }
+      },
+      "required": [
+        "policy_label",
+        "k_qual",
+        "k_support",
+        "minimum_sensitive_outcome_diversity",
+        "adversary_model",
+        "adversary_capabilities",
+        "allowed_claim_codes",
+        "allowed_context_codes",
+        "strategy_atom_keys"
+      ],
+      "title": "SyntheticPolicyPlaceholders",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "request_id": {
+      "minLength": 1,
+      "pattern": "^synthetic-[a-z0-9-]+$",
+      "title": "Request Id",
+      "type": "string"
+    },
+    "lesson": {
+      "$ref": "#/$defs/LessonIR"
+    },
+    "policy": {
+      "$ref": "#/$defs/SyntheticPolicyPlaceholders"
+    },
+    "lattice": {
+      "$ref": "#/$defs/GeneralizationLattice"
+    },
+    "universe": {
+      "$ref": "#/$defs/ReviewedSyntheticUniverse"
+    },
+    "synthetic_lesson_fixture_digest": {
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "title": "Synthetic Lesson Fixture Digest",
+      "type": "string"
+    },
+    "synthetic_context_digest": {
+      "const": "sha256:c6b440e60be46ad0982ffd25de45e43fbc21638d7042aa040c681fff6c731da7",
+      "title": "Synthetic Context Digest",
+      "type": "string"
+    },
+    "publication_snapshot_id": {
+      "minLength": 1,
+      "pattern": "^synthetic-[a-z0-9-]+$",
+      "title": "Publication Snapshot Id",
+      "type": "string"
+    },
+    "publication_snapshot_digest": {
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "title": "Publication Snapshot Digest",
+      "type": "string"
+    },
+    "authoritative_publication_snapshot_verified": {
+      "const": false,
+      "title": "Authoritative Publication Snapshot Verified",
+      "type": "boolean"
+    },
+    "published_lessons": {
+      "items": {
+        "$ref": "#/$defs/PublishedLessonProjection"
+      },
+      "title": "Published Lessons",
+      "type": "array"
+    }
+  },
+  "required": [
+    "request_id",
+    "lesson",
+    "policy",
+    "lattice",
+    "universe",
+    "synthetic_lesson_fixture_digest",
+    "synthetic_context_digest",
+    "publication_snapshot_id",
+    "publication_snapshot_digest",
+    "authoritative_publication_snapshot_verified",
+    "published_lessons"
+  ],
+  "title": "LessonDisclosureRequest",
+  "type": "object"
+}

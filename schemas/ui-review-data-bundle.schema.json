@@ -1,5 +1,290 @@
 {
   "$defs": {
+    "CrosswalkAuditSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "report_id": {
+          "title": "Report Id",
+          "type": "string"
+        },
+        "status": {
+          "title": "Status",
+          "type": "string"
+        },
+        "acceptance_gate_status": {
+          "title": "Acceptance Gate Status",
+          "type": "string"
+        },
+        "crosswalk_count": {
+          "minimum": 0,
+          "title": "Crosswalk Count",
+          "type": "integer"
+        },
+        "entry_count": {
+          "minimum": 0,
+          "title": "Entry Count",
+          "type": "integer"
+        },
+        "mapped_entry_count": {
+          "minimum": 0,
+          "title": "Mapped Entry Count",
+          "type": "integer"
+        },
+        "unmapped_entry_count": {
+          "minimum": 0,
+          "title": "Unmapped Entry Count",
+          "type": "integer"
+        },
+        "canonical_claim_count": {
+          "minimum": 0,
+          "title": "Canonical Claim Count",
+          "type": "integer"
+        },
+        "guessed_mapping_count": {
+          "minimum": 0,
+          "title": "Guessed Mapping Count",
+          "type": "integer"
+        },
+        "high_confidence_dual_review_violation_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "High Confidence Dual Review Violation Count",
+          "type": "integer"
+        },
+        "utbms_like_candidate_family_label_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Utbms Like Candidate Family Label Count",
+          "type": "integer"
+        },
+        "unverified_pinned_target_count": {
+          "minimum": 0,
+          "title": "Unverified Pinned Target Count",
+          "type": "integer"
+        },
+        "candidate_target_prefix_violation_count": {
+          "minimum": 0,
+          "title": "Candidate Target Prefix Violation Count",
+          "type": "integer"
+        },
+        "workflow_dependency_violation_count": {
+          "minimum": 0,
+          "title": "Workflow Dependency Violation Count",
+          "type": "integer"
+        },
+        "display_banner": {
+          "additionalProperties": true,
+          "title": "Display Banner",
+          "type": "object"
+        },
+        "prohibited_actions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Prohibited Actions",
+          "type": "array"
+        },
+        "not_authorized_for_canonical_use": {
+          "default": true,
+          "title": "Not Authorized For Canonical Use",
+          "type": "boolean"
+        },
+        "not_authorized_for_budget_logic": {
+          "default": true,
+          "title": "Not Authorized For Budget Logic",
+          "type": "boolean"
+        },
+        "exact_standard_code_verified": {
+          "default": false,
+          "title": "Exact Standard Code Verified",
+          "type": "boolean"
+        },
+        "candidate_only": {
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "report_id",
+        "status",
+        "acceptance_gate_status",
+        "crosswalk_count",
+        "entry_count",
+        "mapped_entry_count",
+        "unmapped_entry_count",
+        "canonical_claim_count",
+        "guessed_mapping_count",
+        "unverified_pinned_target_count",
+        "candidate_target_prefix_violation_count",
+        "workflow_dependency_violation_count"
+      ],
+      "title": "CrosswalkAuditSummary",
+      "type": "object"
+    },
+    "OCGRuleIRAdoptionSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "report_id": {
+          "title": "Report Id",
+          "type": "string"
+        },
+        "status": {
+          "title": "Status",
+          "type": "string"
+        },
+        "acceptance_gate_status": {
+          "title": "Acceptance Gate Status",
+          "type": "string"
+        },
+        "rule_ir_id": {
+          "title": "Rule Ir Id",
+          "type": "string"
+        },
+        "source_owner": {
+          "title": "Source Owner",
+          "type": "string"
+        },
+        "source_artifact_ref": {
+          "title": "Source Artifact Ref",
+          "type": "string"
+        },
+        "carrier_projection_id": {
+          "title": "Carrier Projection Id",
+          "type": "string"
+        },
+        "budget_proposal_id": {
+          "title": "Budget Proposal Id",
+          "type": "string"
+        },
+        "proposed_total_before": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Proposed Total Before"
+        },
+        "carrier_compliant_total": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Carrier Compliant Total"
+        },
+        "projection_total_delta": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Projection Total Delta"
+        },
+        "rule_count": {
+          "minimum": 0,
+          "title": "Rule Count",
+          "type": "integer"
+        },
+        "impact_line_count": {
+          "minimum": 0,
+          "title": "Impact Line Count",
+          "type": "integer"
+        },
+        "canonical_rule_id_violation_count": {
+          "minimum": 0,
+          "title": "Canonical Rule Id Violation Count",
+          "type": "integer"
+        },
+        "rewrite_budget_violation_count": {
+          "minimum": 0,
+          "title": "Rewrite Budget Violation Count",
+          "type": "integer"
+        },
+        "real_guideline_or_rate_violation_count": {
+          "minimum": 0,
+          "title": "Real Guideline Or Rate Violation Count",
+          "type": "integer"
+        },
+        "budget_projection_mismatch_count": {
+          "minimum": 0,
+          "title": "Budget Projection Mismatch Count",
+          "type": "integer"
+        },
+        "display_banner": {
+          "additionalProperties": true,
+          "title": "Display Banner",
+          "type": "object"
+        },
+        "prohibited_actions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Prohibited Actions",
+          "type": "array"
+        },
+        "read_only_consumption": {
+          "default": true,
+          "title": "Read Only Consumption",
+          "type": "boolean"
+        },
+        "candidate_only": {
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "not_promoted_canon": {
+          "default": true,
+          "title": "Not Promoted Canon",
+          "type": "boolean"
+        },
+        "not_authorized_for_canonical_use": {
+          "default": true,
+          "title": "Not Authorized For Canonical Use",
+          "type": "boolean"
+        },
+        "not_authorized_for_budget_rewrite": {
+          "default": true,
+          "title": "Not Authorized For Budget Rewrite",
+          "type": "boolean"
+        },
+        "not_authorized_for_external_submission": {
+          "default": true,
+          "title": "Not Authorized For External Submission",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "report_id",
+        "status",
+        "acceptance_gate_status",
+        "rule_ir_id",
+        "source_owner",
+        "source_artifact_ref",
+        "carrier_projection_id",
+        "budget_proposal_id",
+        "rule_count",
+        "impact_line_count",
+        "canonical_rule_id_violation_count",
+        "rewrite_budget_violation_count",
+        "real_guideline_or_rate_violation_count",
+        "budget_projection_mismatch_count"
+      ],
+      "title": "OCGRuleIRAdoptionSummary",
+      "type": "object"
+    },
     "UIReviewDataBundleDetailReport": {
       "additionalProperties": false,
       "properties": {
@@ -37,7 +322,9 @@
             "labor_employment_budget_outcome_replay_execution",
             "labor_employment_budget_outcome_replay_builder_binding",
             "labor_employment_budget_outcome_replay_confidence_status",
-            "budget_learning_loop"
+            "budget_learning_loop",
+            "crosswalk_audit",
+            "ocg_rule_ir_adoption"
           ],
           "title": "Report Kind",
           "type": "string"
@@ -303,6 +590,52 @@
     "generated_at": {
       "title": "Generated At",
       "type": "string"
+    },
+    "crosswalk_audit_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Crosswalk Audit Ref"
+    },
+    "ocg_rule_ir_adoption_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Ocg Rule Ir Adoption Ref"
+    },
+    "crosswalk_audit_summary": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CrosswalkAuditSummary"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "ocg_rule_ir_adoption_summary": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/OCGRuleIRAdoptionSummary"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
     }
   },
   "required": [

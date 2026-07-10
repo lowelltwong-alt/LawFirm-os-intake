@@ -184,7 +184,7 @@ def test_reviewed_learning_gate_aggregates_carrier_learning(
         out_dir=tmp_path / "reviewed-learning-gate",
     )
 
-    assert report.status == "candidate_learning_gate_ready"
+    assert report.status == "failed"
     assert report.carrier_learning_candidate_count >= 5
     assert "LawFirm-os-orchestrator" in report.target_owners
     assert "capture_completeness" in report.target_learning_loops
@@ -193,6 +193,43 @@ def test_reviewed_learning_gate_aggregates_carrier_learning(
     }
     assert all(candidate.owning_repo_review_required for candidate in report.candidates)
     assert all(candidate.silent_learning_performed is False for candidate in report.candidates)
+    assert all(
+        {
+            "lesson_disclosure_proof_before_cross_repo_review",
+            "chinese_wall_proof_before_lesson_firing",
+        }.issubset(candidate.required_next_gates)
+        for candidate in report.candidates
+    )
+    assert any(
+        check.check_id == "carrier_lesson_disclosure_gate_coverage" and check.status == "failed"
+        for check in report.checks
+    )
+    assert any(
+        check.check_id == "carrier_chinese_wall_gate_coverage" and check.status == "failed"
+        for check in report.checks
+    )
+
+
+def test_reviewed_learning_gate_cli_fails_carrier_without_boundary_proofs(
+    tmp_path,
+    repo_root,
+    capsys,
+):
+    carrier_learning_report_path = _carrier_learning_report_path(tmp_path, repo_root)
+
+    exit_code = main(
+        [
+            "review-learning-gate",
+            "--carrier-learning-report",
+            str(carrier_learning_report_path),
+            "--out-dir",
+            str(tmp_path / "carrier-learning-gate-cli"),
+        ]
+    )
+    captured = capsys.readouterr()
+
+    assert exit_code == 2
+    assert '"status": "failed"' in captured.out
 
 
 def test_reviewed_learning_gate_cli_and_missing_input(tmp_path, repo_root, capsys):

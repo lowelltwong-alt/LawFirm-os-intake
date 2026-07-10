@@ -116,6 +116,47 @@ def test_build_ui_review_manifest_blocks_missing_calibration_evidence(tmp_path):
     assert "Calibration Readiness" in " ".join(manifest["blockerSummary"])
 
 
+def test_build_ui_review_manifest_only_normalizes_safe_fail_closed_learning(tmp_path):
+    run_root = tmp_path / "demo"
+    _write_required_artifacts(run_root)
+    _write_quality_evidence(run_root)
+    learning_reports = [
+        run_root / "budget" / "budget_learning_loop_report.json",
+        run_root / "quality" / "budget_learning_loop_report.json",
+    ]
+    safe_payload = {
+        "status": "blocked_by_budget_learning_loop",
+        "candidate_only": True,
+        "synthetic_only": True,
+        "reviewed_learning_gate": {"status": "failed"},
+        "lake_write_performed": False,
+        "sqlite_write_performed": False,
+        "external_writes_performed": False,
+        "silent_learning_performed": False,
+    }
+    for learning_report in learning_reports:
+        write_json(learning_report, safe_payload)
+
+    safe = build_ui_review_manifest(
+        run_root=run_root,
+        out_path=tmp_path / "safe.json",
+        generated_at="2026-07-02T00:00:00Z",
+    )
+    safe_gates = {gate["gateId"]: gate for gate in safe["qualityGates"]}
+    assert safe_gates["budget_learning_loop"]["status"] == "pending_review"
+
+    for learning_report in learning_reports:
+        write_json(learning_report, {**safe_payload, "external_writes_performed": True})
+    unsafe = build_ui_review_manifest(
+        run_root=run_root,
+        out_path=tmp_path / "unsafe.json",
+        generated_at="2026-07-02T00:00:00Z",
+    )
+    unsafe_gates = {gate["gateId"]: gate for gate in unsafe["qualityGates"]}
+    assert unsafe_gates["budget_learning_loop"]["status"] == "blocked"
+    assert unsafe["overallStatus"] == "failed"
+
+
 def test_build_ui_review_manifest_cli_writes_local_json(tmp_path):
     run_root = tmp_path / "demo"
     _write_required_artifacts(run_root)

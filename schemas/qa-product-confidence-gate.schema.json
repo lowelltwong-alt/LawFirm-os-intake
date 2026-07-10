@@ -1,0 +1,47 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "gate_id": {
+      "title": "Gate Id",
+      "type": "string"
+    },
+    "label": {
+      "title": "Label",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "passed",
+        "blocked"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "summary": {
+      "title": "Summary",
+      "type": "string"
+    },
+    "evidence_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Evidence Refs",
+      "type": "array"
+    },
+    "candidate_exception_labels": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Candidate Exception Labels",
+      "type": "array"
+    }
+  },
+  "required": [
+    "gate_id",
+    "label",
+    "status",
+    "summary"
+  ],
+  "title": "QAProductConfidenceGate",
+  "type": "object"
+}

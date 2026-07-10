@@ -329,8 +329,16 @@ python -m lawfirm_os_intake review-learning-gate \
   --carrier-learning-report .lawfirm-os-intake/carrier-rejection-learning/carrier_rejection_learning_report.json \
   --budget-revision-report .lawfirm-os-intake/budget-review/budget_revision_report.json \
   --budget-actual-comparison-report .lawfirm-os-intake/budget-actuals/budget_actual_comparison_report.json \
+  --lesson-disclosure-gate-request PATH/source-record-bound-qrd-gate-request.json \
+  --chinese-wall-gate-request PATH/source-record-bound-chw-gate-request.json \
   --out-dir .lawfirm-os-intake/reviewed-learning-gate
 ```
+
+The two proof-request options are repeatable and may contain one JSON object or
+an object list. Carrier learning remains failed unless every proposal is
+covered by both request classes, and every individual proof still passes its
+own deterministic rebuild. Proof files and approval-shaped identifiers do not
+grant lesson-firing, conflicts, publication, or promotion authority.
 
 This writes `reviewed_learning_gate_report.json`,
 `reviewed_learning_gate_report.md`, and

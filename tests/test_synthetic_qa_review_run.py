@@ -215,7 +215,7 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
     ui_detail_reports = {
         report["report_kind"]: report for report in ui_data_bundle["detail_reports"]
     }
-    assert ui_data_bundle["detail_report_count"] == 25
+    assert ui_data_bundle["detail_report_count"] == 27
     assert ui_data_bundle["present_detail_report_count"] == 22
     assert ui_detail_reports["ui_demo_qa_recipe"]["present"] is False
     assert ui_detail_reports["ui_demo_qa_recipe"]["required"] is False
@@ -278,8 +278,11 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
     assert ui_detail_reports["budget_learning_loop"]["present"] is True
     assert ui_detail_reports["budget_learning_loop"]["required"] is True
     assert ui_detail_reports["budget_learning_loop"]["status"] == (
-        "budget_learning_loop_ready_for_review"
+        "blocked_by_budget_learning_loop"
     )
+    assert steps["budget_learning_loop"]["observed_status"] == ("blocked_by_budget_learning_loop")
+    quality_gates = {gate["gateId"]: gate for gate in ui_manifest["qualityGates"]}
+    assert quality_gates["budget_learning_loop"]["status"] == "pending_review"
     assert ui_detail_reports["public_derived_synthetic_qa_gate"]["present"] is True
     assert ui_detail_reports["public_derived_synthetic_qa_gate"]["required"] is False
     assert ui_detail_reports["public_derived_synthetic_qa_gate"]["status"] == (
