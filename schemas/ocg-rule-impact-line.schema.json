@@ -1,0 +1,77 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "rule_id": {
+      "title": "Rule Id",
+      "type": "string"
+    },
+    "rule_family": {
+      "title": "Rule Family",
+      "type": "string"
+    },
+    "impact_bucket": {
+      "title": "Impact Bucket",
+      "type": "string"
+    },
+    "matched_projection_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Matched Projection Refs",
+      "type": "array"
+    },
+    "proposed_amount": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Proposed Amount"
+    },
+    "compliant_amount": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Compliant Amount"
+    },
+    "delta_amount": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Delta Amount"
+    },
+    "note": {
+      "title": "Note",
+      "type": "string"
+    },
+    "candidate_only": {
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "rule_id",
+    "rule_family",
+    "impact_bucket",
+    "note"
+  ],
+  "title": "OCGRuleImpactLine",
+  "type": "object"
+}

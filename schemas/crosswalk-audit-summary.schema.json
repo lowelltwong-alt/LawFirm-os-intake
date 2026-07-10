@@ -1,0 +1,110 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "report_id": {
+      "title": "Report Id",
+      "type": "string"
+    },
+    "status": {
+      "title": "Status",
+      "type": "string"
+    },
+    "acceptance_gate_status": {
+      "title": "Acceptance Gate Status",
+      "type": "string"
+    },
+    "crosswalk_count": {
+      "minimum": 0,
+      "title": "Crosswalk Count",
+      "type": "integer"
+    },
+    "entry_count": {
+      "minimum": 0,
+      "title": "Entry Count",
+      "type": "integer"
+    },
+    "mapped_entry_count": {
+      "minimum": 0,
+      "title": "Mapped Entry Count",
+      "type": "integer"
+    },
+    "unmapped_entry_count": {
+      "minimum": 0,
+      "title": "Unmapped Entry Count",
+      "type": "integer"
+    },
+    "canonical_claim_count": {
+      "minimum": 0,
+      "title": "Canonical Claim Count",
+      "type": "integer"
+    },
+    "guessed_mapping_count": {
+      "minimum": 0,
+      "title": "Guessed Mapping Count",
+      "type": "integer"
+    },
+    "unverified_pinned_target_count": {
+      "minimum": 0,
+      "title": "Unverified Pinned Target Count",
+      "type": "integer"
+    },
+    "candidate_target_prefix_violation_count": {
+      "minimum": 0,
+      "title": "Candidate Target Prefix Violation Count",
+      "type": "integer"
+    },
+    "workflow_dependency_violation_count": {
+      "minimum": 0,
+      "title": "Workflow Dependency Violation Count",
+      "type": "integer"
+    },
+    "display_banner": {
+      "additionalProperties": true,
+      "title": "Display Banner",
+      "type": "object"
+    },
+    "prohibited_actions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Prohibited Actions",
+      "type": "array"
+    },
+    "not_authorized_for_canonical_use": {
+      "default": true,
+      "title": "Not Authorized For Canonical Use",
+      "type": "boolean"
+    },
+    "not_authorized_for_budget_logic": {
+      "default": true,
+      "title": "Not Authorized For Budget Logic",
+      "type": "boolean"
+    },
+    "exact_standard_code_verified": {
+      "default": false,
+      "title": "Exact Standard Code Verified",
+      "type": "boolean"
+    },
+    "candidate_only": {
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "report_id",
+    "status",
+    "acceptance_gate_status",
+    "crosswalk_count",
+    "entry_count",
+    "mapped_entry_count",
+    "unmapped_entry_count",
+    "canonical_claim_count",
+    "guessed_mapping_count",
+    "unverified_pinned_target_count",
+    "candidate_target_prefix_violation_count",
+    "workflow_dependency_violation_count"
+  ],
+  "title": "CrosswalkAuditSummary",
+  "type": "object"
+}

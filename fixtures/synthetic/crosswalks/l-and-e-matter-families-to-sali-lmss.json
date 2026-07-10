@@ -1,0 +1,163 @@
+{
+  "schema_version": "0.1",
+  "crosswalk_id": "xwalk-syn-matter-family-to-sali-lmss-v1",
+  "kind": "matter_family_to_sali",
+  "target_system": "sali_lmss",
+  "source_provenance": {
+    "source_url": "https://github.com/sali-legal/LMSS",
+    "source_version_or_date": "LMSS.owl (version not pinned; candidate reference only)",
+    "retrieved_at": "2026-07-09T00:00:00Z",
+    "content_sha256": null,
+    "license_terms_note": "SALI LMSS is a legal matter standards vocabulary. Verify the current LMSS license and the exact IRI before any promotion. No LMSS payload is committed here.",
+    "review_status": "candidate_unverified"
+  },
+  "entries": [
+    {
+      "local_term": "employment_litigation_defense",
+      "local_term_kind": "matter_family",
+      "candidate_target": "sali_lmss_candidate:EmploymentLitigation",
+      "candidate_target_system": "sali_lmss",
+      "confidence": "medium",
+      "provenance": {
+        "source_url": "https://github.com/sali-legal/LMSS",
+        "source_version_or_date": "LMSS.owl (version not pinned; candidate reference only)",
+        "retrieved_at": "2026-07-09T00:00:00Z",
+        "content_sha256": null,
+        "license_terms_note": "SALI LMSS is a legal matter standards vocabulary. Verify the current LMSS license and the exact IRI before any promotion. No LMSS payload is committed here.",
+        "review_status": "candidate_unverified"
+      },
+      "review_status": "candidate_unverified",
+      "notes": "Candidate SALI LMSS matter-type tag; IRI not pinned. Requires human review before any substrate promotion.",
+      "candidate_only": true
+    },
+    {
+      "local_term": "wage_hour_class_collective",
+      "local_term_kind": "matter_family",
+      "candidate_target": "sali_lmss_candidate:WageAndHourClassCollectiveAction",
+      "candidate_target_system": "sali_lmss",
+      "confidence": "medium",
+      "provenance": {
+        "source_url": "https://github.com/sali-legal/LMSS",
+        "source_version_or_date": "LMSS.owl (version not pinned; candidate reference only)",
+        "retrieved_at": "2026-07-09T00:00:00Z",
+        "content_sha256": null,
+        "license_terms_note": "SALI LMSS is a legal matter standards vocabulary. Verify the current LMSS license and the exact IRI before any promotion. No LMSS payload is committed here.",
+        "review_status": "candidate_unverified"
+      },
+      "review_status": "candidate_unverified",
+      "notes": "FLSA collective / PAGA representative posture is a candidate SALI tag; do not infer a canonical IRI.",
+      "candidate_only": true
+    },
+    {
+      "local_term": "plaintiff_personal_injury",
+      "local_term_kind": "matter_family",
+      "candidate_target": "sali_lmss_candidate:PersonalInjuryPlaintiff",
+      "candidate_target_system": "sali_lmss",
+      "confidence": "medium",
+      "provenance": {
+        "source_url": "https://github.com/sali-legal/LMSS",
+        "source_version_or_date": "LMSS.owl (version not pinned; candidate reference only)",
+        "retrieved_at": "2026-07-09T00:00:00Z",
+        "content_sha256": null,
+        "license_terms_note": "SALI LMSS is a legal matter standards vocabulary. Verify the current LMSS license and the exact IRI before any promotion. No LMSS payload is committed here.",
+        "review_status": "candidate_unverified"
+      },
+      "review_status": "candidate_unverified",
+      "notes": "Plaintiff-side PI matter family candidate tag; IRI not pinned.",
+      "candidate_only": true
+    },
+    {
+      "local_term": "medical_malpractice_defense",
+      "local_term_kind": "matter_family",
+      "candidate_target": "sali_lmss_candidate:MedicalMalpracticeDefense",
+      "candidate_target_system": "sali_lmss",
+      "confidence": "medium",
+      "provenance": {
+        "source_url": "https://github.com/sali-legal/LMSS",
+        "source_version_or_date": "LMSS.owl (version not pinned; candidate reference only)",
+        "retrieved_at": "2026-07-09T00:00:00Z",
+        "content_sha256": null,
+        "license_terms_note": "SALI LMSS is a legal matter standards vocabulary. Verify the current LMSS license and the exact IRI before any promotion. No LMSS payload is committed here.",
+        "review_status": "candidate_unverified"
+      },
+      "review_status": "candidate_unverified",
+      "notes": "Medmal defense candidate tag; specialty/subtype requires reviewer confirmation.",
+      "candidate_only": true
+    },
+    {
+      "local_term": "general_liability_defense",
+      "local_term_kind": "matter_family",
+      "candidate_target": "sali_lmss_candidate:PremisesAndGeneralLiabilityDefense",
+      "candidate_target_system": "sali_lmss",
+      "confidence": "medium",
+      "provenance": {
+        "source_url": "https://github.com/sali-legal/LMSS",
+        "source_version_or_date": "LMSS.owl (version not pinned; candidate reference only)",
+        "retrieved_at": "2026-07-09T00:00:00Z",
+        "content_sha256": null,
+        "license_terms_note": "SALI LMSS is a legal matter standards vocabulary. Verify the current LMSS license and the exact IRI before any promotion. No LMSS payload is committed here.",
+        "review_status": "candidate_unverified"
+      },
+      "review_status": "candidate_unverified",
+      "notes": "Premises/GL defense candidate tag.",
+      "candidate_only": true
+    },
+    {
+      "local_term": "auto_liability_defense",
+      "local_term_kind": "matter_family",
+      "candidate_target": "sali_lmss_candidate:AutomobileLiabilityDefense",
+      "candidate_target_system": "sali_lmss",
+      "confidence": "medium",
+      "provenance": {
+        "source_url": "https://github.com/sali-legal/LMSS",
+        "source_version_or_date": "LMSS.owl (version not pinned; candidate reference only)",
+        "retrieved_at": "2026-07-09T00:00:00Z",
+        "content_sha256": null,
+        "license_terms_note": "SALI LMSS is a legal matter standards vocabulary. Verify the current LMSS license and the exact IRI before any promotion. No LMSS payload is committed here.",
+        "review_status": "candidate_unverified"
+      },
+      "review_status": "candidate_unverified",
+      "notes": "Auto liability defense candidate tag.",
+      "candidate_only": true
+    },
+    {
+      "local_term": "insurance_coverage",
+      "local_term_kind": "matter_family",
+      "candidate_target": "sali_lmss_candidate:InsuranceCoverage",
+      "candidate_target_system": "sali_lmss",
+      "confidence": "medium",
+      "provenance": {
+        "source_url": "https://github.com/sali-legal/LMSS",
+        "source_version_or_date": "LMSS.owl (version not pinned; candidate reference only)",
+        "retrieved_at": "2026-07-09T00:00:00Z",
+        "content_sha256": null,
+        "license_terms_note": "SALI LMSS is a legal matter standards vocabulary. Verify the current LMSS license and the exact IRI before any promotion. No LMSS payload is committed here.",
+        "review_status": "candidate_unverified"
+      },
+      "review_status": "candidate_unverified",
+      "notes": "Coverage opinion / litigation matter family candidate tag.",
+      "candidate_only": true
+    },
+    {
+      "local_term": "commercial_litigation",
+      "local_term_kind": "matter_family",
+      "candidate_target": "unmapped",
+      "candidate_target_system": "unmapped",
+      "confidence": "unknown",
+      "provenance": {
+        "source_url": "https://github.com/sali-legal/LMSS",
+        "source_version_or_date": "LMSS.owl (version not pinned; candidate reference only)",
+        "retrieved_at": "2026-07-09T00:00:00Z",
+        "content_sha256": null,
+        "license_terms_note": "SALI LMSS is a legal matter standards vocabulary. Verify the current LMSS license and the exact IRI before any promotion. No LMSS payload is committed here.",
+        "review_status": "candidate_unverified"
+      },
+      "review_status": "candidate_unverified",
+      "notes": "Commercial litigation is too broad to map to a single SALI LMSS matter type without reviewer confirmation of the underlying dispute subtype; left as an explicit unknown.",
+      "candidate_only": true
+    }
+  ],
+  "candidate_only": true,
+  "not_promoted_canon": true,
+  "data_origin": "synthetic"
+}

@@ -1,0 +1,55 @@
+{
+  "schema_version": "0.1",
+  "report_id": "xwalkaudit-189ef990717c",
+  "generated_at": "2026-07-10T00:15:44.469802Z",
+  "status": "passed",
+  "acceptance_gate_status": "accepted_with_restrictions",
+  "crosswalk_count": 4,
+  "entry_count": 51,
+  "mapped_entry_count": 46,
+  "unmapped_entry_count": 5,
+  "canonical_claim_count": 0,
+  "candidate_only_violation_count": 0,
+  "entries_missing_provenance_count": 0,
+  "entries_missing_review_status_count": 0,
+  "guessed_mapping_count": 0,
+  "unverified_pinned_target_count": 0,
+  "candidate_target_prefix_violation_count": 0,
+  "workflow_dependency_violation_count": 0,
+  "findings": [],
+  "crosswalk_refs": [
+    "xwalk-syn-matter-family-to-sali-lmss-v1",
+    "xwalk-syn-party-role-to-sali-lmss-v1",
+    "xwalk-syn-budget-code-to-utbms-ledes-v1",
+    "xwalk-syn-rejection-family-to-ledes-error-dimension-v1"
+  ],
+  "candidate_only": true,
+  "not_promoted_canon": true,
+  "prohibited_actions": [
+    "do_not_treat_local_crosswalk_as_canonical",
+    "do_not_promote_candidate_targets_to_substrate_canon",
+    "do_not_invent_sali_iris_or_utbms_ledes_codes_as_pinned",
+    "do_not_guess_mappings_for_unknown_terms",
+    "do_not_commit_public_standard_payloads",
+    "do_not_bypass_human_review_for_crosswalk_promotion",
+    "do_not_use_crosswalks_as_budget_or_rejection_business_logic"
+  ],
+  "display_banner": {
+    "warning": "These mappings are candidate/unverified and not legal, billing, SALI, LEDES, UTBMS, or substrate canon.",
+    "candidate_only": true,
+    "not_promoted_canon": true,
+    "accepted_with_restrictions": true,
+    "review_status_required_before_promotion": "human_reviewed",
+    "blocked_actions": [
+      "canonical_use",
+      "budget_logic_dependency",
+      "rejection_logic_dependency",
+      "guideline_logic_dependency",
+      "lake_write",
+      "external_submission"
+    ]
+  },
+  "not_authorized_for_canonical_use": true,
+  "not_authorized_for_budget_logic": true,
+  "not_authorized_for_rejection_logic": true
+}

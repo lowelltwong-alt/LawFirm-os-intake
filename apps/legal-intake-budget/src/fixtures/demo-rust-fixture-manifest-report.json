@@ -1,7 +1,7 @@
 {
   "budget_submission_authorized": false,
   "candidate_only": true,
-  "checked_json_file_count": 27,
+  "checked_json_file_count": 29,
   "external_writes_performed": false,
   "failure_count": 0,
   "failures": [],
@@ -33,6 +33,21 @@
       "sha256": "sha256:8f0b8a5378fe2a222c3fcd50f1835d5f978f8e967e322efbf24eb5a736474867",
       "status": "budget_learning_loop_ready_for_review",
       "synthetic_only": true,
+      "top_level_type": "object"
+    },
+    {
+      "byte_count": 2045,
+      "candidate_only": true,
+      "id_fields": [
+        {
+          "field": "report_id",
+          "value": "xwalkaudit-189ef990717c"
+        }
+      ],
+      "path": "demo-crosswalk-audit-report.json",
+      "schema_version": "0.1",
+      "sha256": "sha256:0e16222f2fef8fd648707135992a9461458b7c37db1f9bb498eefadeef0ef155",
+      "status": "passed",
       "top_level_type": "object"
     },
     {
@@ -103,34 +118,34 @@
       "top_level_type": "object"
     },
     {
-      "byte_count": 11633,
+      "byte_count": 11895,
       "candidate_only": true,
       "external_writes_performed": false,
       "id_fields": [
         {
           "field": "replay_confidence_status_report_id",
-          "value": "lereplayconfidence_0267c82c48ca0aa9"
+          "value": "lereplayconfidence_2e5797b2462219a0"
         },
         {
           "field": "source_builder_binding_report_id",
-          "value": "lebudgetreplaybinding_8f28916d4a5b458f"
+          "value": "lebudgetreplaybinding_691e144cf6e193e9"
         },
         {
           "field": "source_execution_report_id",
-          "value": "lebudgetoutcomeexecution_dd3ce385af935ae9"
+          "value": "lebudgetoutcomeexecution_51fce1321609266a"
         },
         {
           "field": "source_input_pack_report_id",
-          "value": "lebudgetreplayinputpack_44efb78934b38136"
+          "value": "lebudgetreplayinputpack_c798f2c9ba5e14d0"
         },
         {
           "field": "source_readiness_report_id",
-          "value": "lebudgetoutcomereplay_d8a822255425b0ad"
+          "value": "lebudgetoutcomereplay_a9bb62245452d448"
         }
       ],
       "path": "demo-labor-employment-budget-outcome-replay-confidence-status-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:4cbcbd347f76538dc66dd756f651c85f34e3220db7b5585c8cd5608add0aa8e3",
+      "sha256": "sha256:ccc4cc2d789b06acd44e3e3841f673a9ddc26abd31fe389b8c755468aabf8352",
       "status": "labor_employment_budget_outcome_replay_confidence_pending_inputs",
       "synthetic_only": true,
       "top_level_type": "object"
@@ -350,6 +365,33 @@
       "sha256": "sha256:34488a0bfc604b5c8cf937bf8e4f7a6dfc770d337a1b050742f92019b7146f2c",
       "status": "matter_linking_review_outcome_recorded",
       "synthetic_only": true,
+      "top_level_type": "object"
+    },
+    {
+      "byte_count": 5381,
+      "candidate_only": true,
+      "id_fields": [
+        {
+          "field": "budget_proposal_id",
+          "value": "budget_2eca04c91323492ea7a8ab6eaa982b8a"
+        },
+        {
+          "field": "carrier_projection_id",
+          "value": "carrierprojection_61288e5d7b1a43deb967ab34feeb20aa"
+        },
+        {
+          "field": "report_id",
+          "value": "ocgiradopt-9e53b94d45fa"
+        },
+        {
+          "field": "rule_ir_id",
+          "value": "ocg-ir-synthetic-harbor-point-alpha-v0-1"
+        }
+      ],
+      "path": "demo-ocg-rule-ir-adoption-report.json",
+      "schema_version": "0.1",
+      "sha256": "sha256:6c796006caebad6de16340032b300b955ff96780b6da24b0d0c307675e5a1b8d",
+      "status": "accepted_as_read_only_candidate",
       "top_level_type": "object"
     },
     {
@@ -651,11 +693,11 @@
   ],
   "lake_write_performed": false,
   "local_json_only": true,
-  "manifest_sha256": "sha256:2c24c93340801007b1316ef877064bd7032e09e74a5980f63f1b98e7f1c134d5",
+  "manifest_sha256": "sha256:9e1636bbbeb718551ee5bedfe11525236a686cb674ba1fda503a5d5b8821fc6c",
   "matter_opening_authorized": false,
   "non_authoritative": true,
   "parse_error_count": 0,
-  "parsed_json_file_count": 27,
+  "parsed_json_file_count": 29,
   "root": "apps\\legal-intake-budget\\src\\fixtures",
   "scanner": "fixture-manifest-scanner",
   "schema_version": "0.1",
@@ -674,5 +716,5 @@
   "sqlite_write_performed": false,
   "status": "passed",
   "synthetic_only": true,
-  "total_byte_count": 755342
+  "total_byte_count": 763030
 }

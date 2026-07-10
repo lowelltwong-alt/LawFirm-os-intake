@@ -28,6 +28,8 @@ import type {
   SyntheticConfidenceSummaryReport,
   SyntheticQAReviewRunReport,
   UIDemoQARecipeReport,
+  CrosswalkAuditReport,
+  OCGRuleIRAdoptionReport,
   UIReviewDataBundle,
   ValidationSuiteEvidenceReport,
 } from "./types";
@@ -2321,6 +2323,50 @@ export function assertLaborEmploymentBudgetOutcomeReplayConfidenceStatusReport(
   }
   if (!report.rust_transition_candidates.includes("deterministic_replay_confidence_status_aggregator")) {
     failures.push("le_budget_replay_confidence_missing_rust_candidate");
+  }
+  return failures;
+}
+
+export function assertCrosswalkAuditReport(report: CrosswalkAuditReport): string[] {
+  const failures: string[] = [];
+  if (!report.candidate_only || !report.not_promoted_canon) {
+    failures.push("crosswalk_audit_not_candidate_only");
+  }
+  if (!report.not_authorized_for_canonical_use || !report.not_authorized_for_budget_logic) {
+    failures.push("crosswalk_audit_authority_boundary_failed");
+  }
+  if (!report.prohibited_actions.length) {
+    failures.push("crosswalk_audit_missing_prohibited_actions");
+  }
+  if (report.status !== "passed" && report.status !== "blocked") {
+    failures.push("crosswalk_audit_unknown_status");
+  }
+  return failures;
+}
+
+export function assertOCGRuleIRAdoptionReport(report: OCGRuleIRAdoptionReport): string[] {
+  const failures: string[] = [];
+  if (!report.candidate_only || !report.not_promoted_canon) {
+    failures.push("ocg_adoption_not_candidate_only");
+  }
+  if (!report.read_only_consumption) {
+    failures.push("ocg_adoption_not_read_only");
+  }
+  if (
+    !report.not_authorized_for_canonical_use ||
+    !report.not_authorized_for_budget_rewrite ||
+    !report.not_authorized_for_external_submission
+  ) {
+    failures.push("ocg_adoption_authority_boundary_failed");
+  }
+  if (!report.prohibited_actions.length) {
+    failures.push("ocg_adoption_missing_prohibited_actions");
+  }
+  if (
+    report.status !== "accepted_as_read_only_candidate" &&
+    report.status !== "blocked"
+  ) {
+    failures.push("ocg_adoption_unknown_status");
   }
   return failures;
 }

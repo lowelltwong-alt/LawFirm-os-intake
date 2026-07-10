@@ -179,6 +179,12 @@ from .ui_demo_fixture_promotion import promote_ui_demo_run_fixtures
 from .ui_demo_qa_recipe import run_ui_demo_qa_recipe
 from .ui_demo_qa_recipe_fixture_refresh import refresh_ui_demo_qa_recipe_fixture
 from .ui_demo_fixture_refresh import refresh_ui_demo_fixtures
+from .crosswalks import run_crosswalk_audit_report
+from .ocg_rule_ir import run_ocg_rule_ir_adoption_report
+from .review_ui_crosswalk_ocg_evidence import (
+    run_qa_product_confidence_report,
+    run_qa_readiness_report,
+)
 from .ui_review_data_bundle import build_ui_review_data_bundle
 from .ui_review_manifest import build_ui_review_manifest
 from .util import load_json, write_json
@@ -350,6 +356,63 @@ def _parser() -> argparse.ArgumentParser:
         "--generated-at",
         help="Optional fixed timestamp for deterministic tests and replayed bundles.",
     )
+    ui_review_data_bundle.add_argument(
+        "--crosswalk-audit",
+        help="Optional explicit path to crosswalk_audit_report.json for UI/QA evidence.",
+    )
+    ui_review_data_bundle.add_argument(
+        "--ocg-rule-ir-adoption",
+        help="Optional explicit path to ocg_rule_ir_adoption_report.json for UI/QA evidence.",
+    )
+
+    crosswalk_audit = sub.add_parser(
+        "crosswalk-audit",
+        help="Audit synthetic SALI/LEDES/UTBMS candidate crosswalks (read-only evidence).",
+    )
+    crosswalk_audit.add_argument(
+        "--crosswalk",
+        action="append",
+        required=True,
+        dest="crosswalks",
+        help="Path to a crosswalk JSON fixture (repeatable).",
+    )
+    crosswalk_audit.add_argument("--out-dir", required=True)
+    crosswalk_audit.add_argument("--repo-root")
+
+    adopt_ocg_rule_ir = sub.add_parser(
+        "adopt-ocg-rule-ir",
+        help="Audit substrate-owned synthetic OCG shared-rule IR as read-only candidate evidence.",
+    )
+    adopt_ocg_rule_ir.add_argument("--budget-proposal", required=True)
+    adopt_ocg_rule_ir.add_argument("--carrier-projection", required=True)
+    adopt_ocg_rule_ir.add_argument("--ocg-rule-ir", required=True)
+    adopt_ocg_rule_ir.add_argument("--out-dir", required=True)
+
+    qa_readiness_report = sub.add_parser(
+        "build-qa-readiness-report",
+        help="Build QA readiness over UI bundle plus optional crosswalk/OCG evidence.",
+    )
+    qa_readiness_report.add_argument("--ui-review-data-bundle", required=True)
+    qa_readiness_report.add_argument("--out-dir", required=True)
+    qa_readiness_report.add_argument("--crosswalk-audit")
+    qa_readiness_report.add_argument("--ocg-rule-ir-adoption")
+    qa_readiness_report.add_argument(
+        "--require-crosswalk-ocg",
+        action="store_true",
+        help="Fail closed when crosswalk or OCG adoption evidence is missing.",
+    )
+    qa_readiness_report.add_argument("--generated-at")
+
+    qa_product_confidence_report = sub.add_parser(
+        "build-qa-product-confidence-report",
+        help="Build product-confidence gates including crosswalk/OCG evidence status.",
+    )
+    qa_product_confidence_report.add_argument("--ui-review-data-bundle", required=True)
+    qa_product_confidence_report.add_argument("--qa-readiness-report", required=True)
+    qa_product_confidence_report.add_argument("--out-dir", required=True)
+    qa_product_confidence_report.add_argument("--crosswalk-audit")
+    qa_product_confidence_report.add_argument("--ocg-rule-ir-adoption")
+    qa_product_confidence_report.add_argument("--generated-at")
 
     synthetic_confidence_summary = sub.add_parser(
         "build-synthetic-confidence-summary",
@@ -2533,6 +2596,8 @@ def main(argv: list[str] | None = None) -> int:
                 run_root=args.run_root,
                 out_path=args.out,
                 generated_at=args.generated_at,
+                crosswalk_audit_path=args.crosswalk_audit,
+                ocg_rule_ir_adoption_path=args.ocg_rule_ir_adoption,
             )
             _print(
                 {
@@ -2550,6 +2615,83 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 0 if bundle.status == "ready_for_review" else 2
+
+        if args.command == "crosswalk-audit":
+            _crosswalks, audit, run_dir = run_crosswalk_audit_report(
+                args.crosswalks,
+                args.out_dir,
+                repo_root=args.repo_root,
+            )
+            _print(
+                {
+                    "status": audit.status,
+                    "acceptance_gate_status": audit.acceptance_gate_status,
+                    "report_id": audit.report_id,
+                    "crosswalk_count": audit.crosswalk_count,
+                    "entry_count": audit.entry_count,
+                    "mapped_entry_count": audit.mapped_entry_count,
+                    "unmapped_entry_count": audit.unmapped_entry_count,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0 if audit.status == "passed" else 2
+
+        if args.command == "adopt-ocg-rule-ir":
+            _rule_ir, report, run_dir = run_ocg_rule_ir_adoption_report(
+                args.budget_proposal,
+                args.carrier_projection,
+                args.ocg_rule_ir,
+                args.out_dir,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "acceptance_gate_status": report.acceptance_gate_status,
+                    "report_id": report.report_id,
+                    "rule_count": report.rule_count,
+                    "impact_line_count": report.impact_line_count,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0 if report.status == "accepted_as_read_only_candidate" else 2
+
+        if args.command == "build-qa-readiness-report":
+            report, out_path = run_qa_readiness_report(
+                ui_review_data_bundle_path=args.ui_review_data_bundle,
+                out_dir=args.out_dir,
+                crosswalk_audit_path=args.crosswalk_audit,
+                ocg_rule_ir_adoption_path=args.ocg_rule_ir_adoption,
+                require_crosswalk_ocg=args.require_crosswalk_ocg,
+                generated_at=args.generated_at,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "report_id": report.report_id,
+                    "out": str(out_path),
+                    "blocker_count": report.blocker_count,
+                }
+            )
+            return 0 if report.status != "blocked" else 2
+
+        if args.command == "build-qa-product-confidence-report":
+            report, out_path = run_qa_product_confidence_report(
+                ui_review_data_bundle_path=args.ui_review_data_bundle,
+                qa_readiness_report_path=args.qa_readiness_report,
+                out_dir=args.out_dir,
+                crosswalk_audit_path=args.crosswalk_audit,
+                ocg_rule_ir_adoption_path=args.ocg_rule_ir_adoption,
+                generated_at=args.generated_at,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "report_id": report.report_id,
+                    "out": str(out_path),
+                    "blocker_count": report.blocker_count,
+                }
+            )
+            return 0 if report.status != "blocked" else 2
 
         if args.command == "build-synthetic-confidence-summary":
             report, run_dir = run_synthetic_confidence_summary(

@@ -215,7 +215,7 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
     ui_detail_reports = {
         report["report_kind"]: report for report in ui_data_bundle["detail_reports"]
     }
-    assert ui_data_bundle["detail_report_count"] == 25
+    assert ui_data_bundle["detail_report_count"] == 27
     assert ui_data_bundle["present_detail_report_count"] == 22
     assert ui_detail_reports["ui_demo_qa_recipe"]["present"] is False
     assert ui_detail_reports["ui_demo_qa_recipe"]["required"] is False

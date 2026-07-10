@@ -43,7 +43,9 @@ export type UIReviewDataBundleReportKind =
   | "labor_employment_budget_outcome_replay_execution"
   | "labor_employment_budget_outcome_replay_builder_binding"
   | "labor_employment_budget_outcome_replay_confidence_status"
-  | "budget_learning_loop";
+  | "budget_learning_loop"
+  | "crosswalk_audit"
+  | "ocg_rule_ir_adoption";
 
 export type MatterLinkingPreflightCluster = {
   cluster_id: string;
@@ -2114,4 +2116,54 @@ export type ReviewManifest = {
   qualityGates: QualityGate[];
   blockerSummary: string[];
   redTeamNotes: string[];
+};
+
+export type CrosswalkAuditReport = {
+  report_id: string;
+  status: string;
+  acceptance_gate_status: string;
+  crosswalk_count: number;
+  entry_count: number;
+  mapped_entry_count: number;
+  unmapped_entry_count: number;
+  canonical_claim_count: number;
+  guessed_mapping_count: number;
+  unverified_pinned_target_count: number;
+  candidate_target_prefix_violation_count: number;
+  workflow_dependency_violation_count: number;
+  display_banner: Record<string, unknown>;
+  prohibited_actions: string[];
+  candidate_only: boolean;
+  not_promoted_canon: boolean;
+  not_authorized_for_canonical_use: boolean;
+  not_authorized_for_budget_logic: boolean;
+};
+
+export type OCGRuleIRAdoptionReport = {
+  report_id: string;
+  status: string;
+  acceptance_gate_status: string;
+  rule_ir_id: string;
+  source_owner: string;
+  source_artifact_ref: string;
+  budget_proposal_id: string;
+  carrier_projection_id: string;
+  carrier: string;
+  proposed_total_before: number | null;
+  carrier_compliant_total: number | null;
+  projection_total_delta: number | null;
+  rule_count: number;
+  impact_line_count: number;
+  canonical_rule_id_violation_count: number;
+  rewrite_budget_violation_count: number;
+  real_guideline_or_rate_violation_count: number;
+  budget_projection_mismatch_count: number;
+  display_banner: Record<string, unknown>;
+  prohibited_actions: string[];
+  read_only_consumption: boolean;
+  candidate_only: boolean;
+  not_promoted_canon: boolean;
+  not_authorized_for_canonical_use: boolean;
+  not_authorized_for_budget_rewrite: boolean;
+  not_authorized_for_external_submission: boolean;
 };
