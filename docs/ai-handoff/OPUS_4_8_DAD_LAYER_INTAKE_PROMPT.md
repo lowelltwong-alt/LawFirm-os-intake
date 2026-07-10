@@ -140,4 +140,3 @@ Use this confidence marking:
 Return a concise but complete architecture intake brief for Fable. Do not write
 implementation code.
 ```
-
