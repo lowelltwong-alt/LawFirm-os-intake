@@ -1,0 +1,642 @@
+{
+  "$defs": {
+    "EvidenceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "segment_id": {
+          "title": "Segment Id",
+          "type": "string"
+        },
+        "start_offset": {
+          "title": "Start Offset",
+          "type": "integer"
+        },
+        "end_offset": {
+          "title": "End Offset",
+          "type": "integer"
+        },
+        "sha256": {
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "segment_id",
+        "start_offset",
+        "end_offset",
+        "sha256"
+      ],
+      "title": "EvidenceRef",
+      "type": "object"
+    },
+    "MatterClusterProposal": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "default": "0.1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "cluster_id": {
+          "title": "Cluster Id",
+          "type": "string"
+        },
+        "document_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Document Ids",
+          "type": "array"
+        },
+        "ambiguity_class": {
+          "enum": [
+            "corroborated_multi_key",
+            "single_strong_key",
+            "medium_key_only",
+            "weak_key_only",
+            "conflicted"
+          ],
+          "title": "Ambiguity Class",
+          "type": "string"
+        },
+        "supporting_keys": {
+          "items": {
+            "$ref": "#/$defs/MatterLinkKey"
+          },
+          "title": "Supporting Keys",
+          "type": "array"
+        },
+        "conflicting_keys": {
+          "items": {
+            "$ref": "#/$defs/MatterLinkKey"
+          },
+          "title": "Conflicting Keys",
+          "type": "array"
+        },
+        "disposition": {
+          "enum": [
+            "proposed_link",
+            "hold_for_more_documents",
+            "human_review_required",
+            "blocked_conflict"
+          ],
+          "title": "Disposition",
+          "type": "string"
+        },
+        "decision_rule_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Decision Rule Ids",
+          "type": "array"
+        },
+        "decision_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Decision Ids",
+          "type": "array"
+        },
+        "blocking_decision_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Blocking Decision Ids",
+          "type": "array"
+        },
+        "requires_human_confirmation": {
+          "const": true,
+          "default": true,
+          "title": "Requires Human Confirmation",
+          "type": "boolean"
+        },
+        "matter_identity_asserted": {
+          "const": false,
+          "default": false,
+          "title": "Matter Identity Asserted",
+          "type": "boolean"
+        },
+        "status": {
+          "const": "candidate",
+          "default": "candidate",
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "cluster_id",
+        "document_ids",
+        "ambiguity_class",
+        "disposition",
+        "decision_rule_ids",
+        "decision_ids"
+      ],
+      "title": "MatterClusterProposal",
+      "type": "object"
+    },
+    "MatterLinkDecisionRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "default": "0.1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "decision_id": {
+          "title": "Decision Id",
+          "type": "string"
+        },
+        "left_document_id": {
+          "title": "Left Document Id",
+          "type": "string"
+        },
+        "right_document_id": {
+          "title": "Right Document Id",
+          "type": "string"
+        },
+        "rule_id": {
+          "title": "Rule Id",
+          "type": "string"
+        },
+        "outcome": {
+          "enum": [
+            "merge",
+            "split",
+            "hold",
+            "block"
+          ],
+          "title": "Outcome",
+          "type": "string"
+        },
+        "ambiguity_signal": {
+          "title": "Ambiguity Signal",
+          "type": "string"
+        },
+        "supporting_key_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Supporting Key Ids",
+          "type": "array"
+        },
+        "conflicting_key_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Conflicting Key Ids",
+          "type": "array"
+        },
+        "note": {
+          "title": "Note",
+          "type": "string"
+        },
+        "status": {
+          "const": "candidate",
+          "default": "candidate",
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "decision_id",
+        "left_document_id",
+        "right_document_id",
+        "rule_id",
+        "outcome",
+        "ambiguity_signal",
+        "note"
+      ],
+      "title": "MatterLinkDecisionRecord",
+      "type": "object"
+    },
+    "MatterLinkHumanDecision": {
+      "additionalProperties": false,
+      "description": "Candidate contract for the only matter-linking decision eligible for persistence.\n\nThe subject is a hash of normalized link keys rather than a run-local document or\ncluster identifier, so an Orchestrator-owned ledger can safely apply it to later\nbundles without treating an intake proposal as a durable identity assertion.",
+      "properties": {
+        "decision_id": {
+          "title": "Decision Id",
+          "type": "string"
+        },
+        "decided_at": {
+          "title": "Decided At",
+          "type": "string"
+        },
+        "reviewer_id": {
+          "title": "Reviewer Id",
+          "type": "string"
+        },
+        "decision_type": {
+          "enum": [
+            "confirm_cluster",
+            "split",
+            "merge",
+            "reopen",
+            "retire"
+          ],
+          "title": "Decision Type",
+          "type": "string"
+        },
+        "subject_key_signatures": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Subject Key Signatures",
+          "type": "array"
+        },
+        "evidence_key_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Key Ids",
+          "type": "array"
+        },
+        "observable_rationale": {
+          "title": "Observable Rationale",
+          "type": "string"
+        },
+        "supersedes_decision_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Supersedes Decision Id"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "identity_authority": {
+          "const": false,
+          "default": false,
+          "title": "Identity Authority",
+          "type": "boolean"
+        },
+        "status": {
+          "const": "candidate",
+          "default": "candidate",
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "decision_id",
+        "decided_at",
+        "reviewer_id",
+        "decision_type",
+        "subject_key_signatures",
+        "evidence_key_ids",
+        "observable_rationale"
+      ],
+      "title": "MatterLinkHumanDecision",
+      "type": "object"
+    },
+    "MatterLinkKey": {
+      "additionalProperties": false,
+      "properties": {
+        "key_id": {
+          "title": "Key Id",
+          "type": "string"
+        },
+        "key_type": {
+          "enum": [
+            "claim_number",
+            "policy_number",
+            "docket_ref",
+            "adjuster_ref",
+            "party_pair",
+            "employer_employee_pair",
+            "counsel_ref",
+            "email_thread",
+            "attachment_identity",
+            "incident_date_party",
+            "subsidiary_alias"
+          ],
+          "title": "Key Type",
+          "type": "string"
+        },
+        "raw_value": {
+          "title": "Raw Value",
+          "type": "string"
+        },
+        "normalized_value": {
+          "title": "Normalized Value",
+          "type": "string"
+        },
+        "tier": {
+          "enum": [
+            "strong",
+            "medium",
+            "weak"
+          ],
+          "title": "Tier",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "extraction_rule_id": {
+          "title": "Extraction Rule Id",
+          "type": "string"
+        },
+        "status": {
+          "const": "candidate",
+          "default": "candidate",
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "key_id",
+        "key_type",
+        "raw_value",
+        "normalized_value",
+        "tier",
+        "evidence_refs",
+        "extraction_rule_id"
+      ],
+      "title": "MatterLinkKey",
+      "type": "object"
+    },
+    "MatterLinkKeySet": {
+      "additionalProperties": false,
+      "properties": {
+        "document_id": {
+          "title": "Document Id",
+          "type": "string"
+        },
+        "bundle_id": {
+          "title": "Bundle Id",
+          "type": "string"
+        },
+        "sender_identity": {
+          "title": "Sender Identity",
+          "type": "string"
+        },
+        "keys": {
+          "items": {
+            "$ref": "#/$defs/MatterLinkKey"
+          },
+          "title": "Keys",
+          "type": "array"
+        },
+        "extraction_gaps": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Extraction Gaps",
+          "type": "array"
+        },
+        "status": {
+          "const": "candidate",
+          "default": "candidate",
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "document_id",
+        "bundle_id",
+        "sender_identity"
+      ],
+      "title": "MatterLinkKeySet",
+      "type": "object"
+    },
+    "MatterLinkPriorContextPin": {
+      "additionalProperties": false,
+      "properties": {
+        "context_id": {
+          "title": "Context Id",
+          "type": "string"
+        },
+        "context_sha256": {
+          "title": "Context Sha256",
+          "type": "string"
+        },
+        "store_version": {
+          "title": "Store Version",
+          "type": "string"
+        },
+        "source_repo": {
+          "const": "LawFirm-os-orchestrator",
+          "default": "LawFirm-os-orchestrator",
+          "title": "Source Repo",
+          "type": "string"
+        },
+        "provenance": {
+          "const": "orchestrator_context",
+          "default": "orchestrator_context",
+          "title": "Provenance",
+          "type": "string"
+        },
+        "read_only": {
+          "const": true,
+          "default": true,
+          "title": "Read Only",
+          "type": "boolean"
+        },
+        "identity_authority": {
+          "const": false,
+          "default": false,
+          "title": "Identity Authority",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "context_id",
+        "context_sha256",
+        "store_version"
+      ],
+      "title": "MatterLinkPriorContextPin",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "matter_link_run_export_id": {
+      "title": "Matter Link Run Export Id",
+      "type": "string"
+    },
+    "status": {
+      "const": "ready_for_orchestrator_candidate_review",
+      "title": "Status",
+      "type": "string"
+    },
+    "bundle_id": {
+      "title": "Bundle Id",
+      "type": "string"
+    },
+    "source_matter_link_key_extraction_report_id": {
+      "title": "Source Matter Link Key Extraction Report Id",
+      "type": "string"
+    },
+    "source_matter_linking_cluster_report_id": {
+      "title": "Source Matter Linking Cluster Report Id",
+      "type": "string"
+    },
+    "key_sets": {
+      "items": {
+        "$ref": "#/$defs/MatterLinkKeySet"
+      },
+      "title": "Key Sets",
+      "type": "array"
+    },
+    "cluster_proposals": {
+      "items": {
+        "$ref": "#/$defs/MatterClusterProposal"
+      },
+      "title": "Cluster Proposals",
+      "type": "array"
+    },
+    "decision_records": {
+      "items": {
+        "$ref": "#/$defs/MatterLinkDecisionRecord"
+      },
+      "title": "Decision Records",
+      "type": "array"
+    },
+    "human_link_decisions": {
+      "items": {
+        "$ref": "#/$defs/MatterLinkHumanDecision"
+      },
+      "title": "Human Link Decisions",
+      "type": "array"
+    },
+    "prior_context_consumed": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/MatterLinkPriorContextPin"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "candidate_exception_lake_labels": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Candidate Exception Lake Labels",
+      "type": "array"
+    },
+    "required_next_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Gates",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "local_json_only": {
+      "const": true,
+      "default": true,
+      "title": "Local Json Only",
+      "type": "boolean"
+    },
+    "orchestrator_persistence_required": {
+      "const": true,
+      "default": true,
+      "title": "Orchestrator Persistence Required",
+      "type": "boolean"
+    },
+    "matter_identity_asserted": {
+      "const": false,
+      "default": false,
+      "title": "Matter Identity Asserted",
+      "type": "boolean"
+    },
+    "matter_link_finalized": {
+      "const": false,
+      "default": false,
+      "title": "Matter Link Finalized",
+      "type": "boolean"
+    },
+    "connector_called": {
+      "const": false,
+      "default": false,
+      "title": "Connector Called",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "matter_link_run_export_id",
+    "status",
+    "bundle_id",
+    "source_matter_link_key_extraction_report_id",
+    "source_matter_linking_cluster_report_id",
+    "key_sets",
+    "cluster_proposals",
+    "decision_records",
+    "candidate_exception_lake_labels",
+    "required_next_gates",
+    "generated_at"
+  ],
+  "title": "MatterLinkRunExport",
+  "type": "object"
+}

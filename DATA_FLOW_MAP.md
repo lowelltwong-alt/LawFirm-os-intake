@@ -1,6 +1,6 @@
 # Data Flow Map
 
-Last reviewed: 2026-07-07.
+Last reviewed: 2026-07-10.
 
 `LawFirm-os-intake` is the private vertical composition and evaluation repo for the intake-to-budget workflow. It is subordinate to the five public LawFirm OS platform repos and owns no canonical authority.
 
@@ -24,6 +24,19 @@ Current GitHub posture:
 | Vertical | `LawFirm-os-intake` | Intake-to-budget workflow specification, synthetic fixtures, local candidate schemas, reference demo, vertical evals | Compose and evaluate; never define platform canon |
 
 When these disagree, Semantic Substrate wins unless a human-approved governance change says otherwise.
+
+## Cross-Bundle Matter-Linking Boundary
+
+For each inbound bundle, Intake may deterministically extract evidence-bound linking
+keys and create review-only cluster proposals. It emits one immutable
+`MatterLinkRunExport` under its local run directory for future Orchestrator review.
+The export can contain a candidate human-decision contract only in normalized-key
+hash space; it cannot assert identity or retain state.
+
+`LawFirm-os-orchestrator` alone may persist human decisions, issue a read-only
+hash-pinned prior context, and coordinate a guarded Exception Lake handoff. Intake
+must block a future stale or unverifiable context rather than proceeding on memory.
+Machine cluster proposals are always re-derived and are never eligible for persistence.
 
 ## Cross-Repo Flow
 

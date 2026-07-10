@@ -477,6 +477,129 @@ class MatterLinkingClusterReport(StrictModel):
         return self
 
 
+class MatterLinkPriorContextPin(StrictModel):
+    context_id: str
+    context_sha256: str
+    store_version: str
+    source_repo: Literal["LawFirm-os-orchestrator"] = "LawFirm-os-orchestrator"
+    provenance: Literal["orchestrator_context"] = "orchestrator_context"
+    read_only: Literal[True] = True
+    identity_authority: Literal[False] = False
+
+    @model_validator(mode="after")
+    def prior_context_pin_is_read_only_and_hashed(self) -> "MatterLinkPriorContextPin":
+        if not self.context_id.strip() or not self.store_version.strip():
+            raise ValueError("prior context pin requires context_id and store_version")
+        if not self.context_sha256.startswith("sha256:"):
+            raise ValueError("prior context pin requires sha256 hash")
+        return self
+
+
+MatterLinkHumanDecisionType = Literal[
+    "confirm_cluster",
+    "split",
+    "merge",
+    "reopen",
+    "retire",
+]
+
+
+class MatterLinkHumanDecision(StrictModel):
+    """Candidate contract for the only matter-linking decision eligible for persistence.
+
+    The subject is a hash of normalized link keys rather than a run-local document or
+    cluster identifier, so an Orchestrator-owned ledger can safely apply it to later
+    bundles without treating an intake proposal as a durable identity assertion.
+    """
+
+    decision_id: str
+    decided_at: str
+    reviewer_id: str
+    decision_type: MatterLinkHumanDecisionType
+    subject_key_signatures: list[str]
+    evidence_key_ids: list[str]
+    observable_rationale: str
+    supersedes_decision_id: str | None = None
+    candidate_only: Literal[True] = True
+    identity_authority: Literal[False] = False
+    status: Literal["candidate"] = "candidate"
+
+    @model_validator(mode="after")
+    def human_matter_link_decision_uses_normalized_key_space(
+        self,
+    ) -> "MatterLinkHumanDecision":
+        if not self.decision_id.strip() or not self.reviewer_id.strip():
+            raise ValueError("human matter-link decision requires decision and reviewer IDs")
+        if not self.subject_key_signatures:
+            raise ValueError("human matter-link decision requires normalized key signatures")
+        if len(set(self.subject_key_signatures)) != len(self.subject_key_signatures):
+            raise ValueError("human matter-link decision signatures must be unique")
+        if any(not signature.startswith("sha256:") for signature in self.subject_key_signatures):
+            raise ValueError("human matter-link decision signatures must be sha256 hashes")
+        if not self.evidence_key_ids or any(not key_id.strip() for key_id in self.evidence_key_ids):
+            raise ValueError("human matter-link decision requires evidence key IDs")
+        if not self.observable_rationale.strip():
+            raise ValueError("human matter-link decision requires observable rationale")
+        if self.decision_type in {"split", "merge"} and len(self.subject_key_signatures) < 2:
+            raise ValueError("human split or merge decisions require two normalized key subjects")
+        if self.decision_type in {"reopen", "retire"} and not self.supersedes_decision_id:
+            raise ValueError("human reopen or retire decisions require a superseded decision")
+        return self
+
+
+class MatterLinkRunExport(StrictModel):
+    schema_version: str = "0.1"
+    matter_link_run_export_id: str
+    status: Literal["ready_for_orchestrator_candidate_review"]
+    bundle_id: str
+    source_matter_link_key_extraction_report_id: str
+    source_matter_linking_cluster_report_id: str
+    key_sets: list[MatterLinkKeySet]
+    cluster_proposals: list[MatterClusterProposal]
+    decision_records: list[MatterLinkDecisionRecord]
+    human_link_decisions: list[MatterLinkHumanDecision] = Field(default_factory=list)
+    prior_context_consumed: MatterLinkPriorContextPin | None = None
+    candidate_exception_lake_labels: list[str]
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    local_json_only: Literal[True] = True
+    orchestrator_persistence_required: Literal[True] = True
+    matter_identity_asserted: Literal[False] = False
+    matter_link_finalized: Literal[False] = False
+    connector_called: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def matter_link_run_export_is_replayable_candidate_only(self) -> "MatterLinkRunExport":
+        if not self.matter_link_run_export_id.strip() or not self.bundle_id.strip():
+            raise ValueError("matter link run export requires IDs")
+        if not self.key_sets or not self.cluster_proposals:
+            raise ValueError("matter link run export requires keys and cluster proposals")
+        if len({key_set.document_id for key_set in self.key_sets}) != len(self.key_sets):
+            raise ValueError("matter link run export document IDs must be unique")
+        if len({proposal.cluster_id for proposal in self.cluster_proposals}) != len(
+            self.cluster_proposals
+        ):
+            raise ValueError("matter link run export cluster IDs must be unique")
+        if len({record.decision_id for record in self.decision_records}) != len(
+            self.decision_records
+        ):
+            raise ValueError("matter link run export decision IDs must be unique")
+        if len({decision.decision_id for decision in self.human_link_decisions}) != len(
+            self.human_link_decisions
+        ):
+            raise ValueError("matter link run export human decision IDs must be unique")
+        if not self.candidate_exception_lake_labels or not self.required_next_gates:
+            raise ValueError("matter link run export requires review labels and next gates")
+        return self
+
+
 MatterLinkingClusterReviewOutcome = Literal[
     "confirm_budget_scope_cluster",
     "confirm_split",
