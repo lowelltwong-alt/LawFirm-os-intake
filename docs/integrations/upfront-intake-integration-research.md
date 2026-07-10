@@ -128,6 +128,11 @@ real Upfront export:
 
 See `examples/synthetic/upfront/upfront-like-intake-output.example.json`.
 
+The local compatibility report currently exposes only a candidate request ID,
+request channel, typed external-reference counts, and unknown-reference counts.
+It validates observed external references against the source inventory; these are
+not vendor field names, real object IDs, or an API guarantee.
+
 ## Document-To-Matter Matching Problem
 
 The user's specific risk is real: the same adjuster or carrier contact may send

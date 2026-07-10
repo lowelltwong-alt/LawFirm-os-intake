@@ -218,6 +218,24 @@
       "title": "Api Contract Verified",
       "type": "boolean"
     },
+    "intake_request_id": {
+      "title": "Intake Request Id",
+      "type": "string"
+    },
+    "request_channel": {
+      "title": "Request Channel",
+      "type": "string"
+    },
+    "external_reference_count": {
+      "minimum": 0,
+      "title": "External Reference Count",
+      "type": "integer"
+    },
+    "unknown_external_reference_count": {
+      "minimum": 0,
+      "title": "Unknown External Reference Count",
+      "type": "integer"
+    },
     "official_matter_number_status": {
       "title": "Official Matter Number Status",
       "type": "string"
@@ -416,6 +434,10 @@
     "source_system_name",
     "real_upfront_export",
     "api_contract_verified",
+    "intake_request_id",
+    "request_channel",
+    "external_reference_count",
+    "unknown_external_reference_count",
     "official_matter_number_status",
     "overall_link_state",
     "requires_human_confirmation",

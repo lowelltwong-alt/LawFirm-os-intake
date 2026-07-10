@@ -137,9 +137,11 @@ def build_matter_linking_preflight_report(
         raise ValueError("matter-linking preflight input must be a JSON object")
 
     source_system = _mapping(payload.get("source_system"))
+    intake_request = _mapping(payload.get("intake_request"))
     linking = _mapping(payload.get("matter_linking"))
     boundaries = _mapping(payload.get("output_boundaries"))
     source_hashes_by_id = _source_hashes_by_id(payload)
+    external_references = _list_of_mappings(payload.get("external_references"))
     clusters = _clusters(linking, source_hashes_by_id)
     negative_split_required = _negative_split_evidence_required(
         linking=linking,
@@ -159,6 +161,8 @@ def build_matter_linking_preflight_report(
     checks = _checks(
         payload=payload,
         source_system=source_system,
+        intake_request=intake_request,
+        external_references=external_references,
         linking=linking,
         boundaries=boundaries,
         clusters=clusters,
@@ -195,6 +199,15 @@ def build_matter_linking_preflight_report(
         source_system_name=str(source_system.get("system_name", "unknown")),
         real_upfront_export=bool(source_system.get("real_upfront_export")),
         api_contract_verified=bool(source_system.get("api_contract_verified")),
+        intake_request_id=str(intake_request.get("intake_request_id", "")),
+        request_channel=str(intake_request.get("request_channel", "")),
+        external_reference_count=len(external_references),
+        unknown_external_reference_count=sum(
+            1
+            for reference in external_references
+            if reference.get("reference_value") in {None, ""}
+            or reference.get("strength") in {"missing", "unknown"}
+        ),
         official_matter_number_status=str(linking.get("official_matter_number_status", "unknown")),
         overall_link_state=str(linking.get("overall_link_state", "unknown")),
         requires_human_confirmation=bool(linking.get("requires_human_confirmation")),
@@ -367,6 +380,8 @@ def _checks(
     *,
     payload: dict[str, Any],
     source_system: dict[str, Any],
+    intake_request: dict[str, Any],
+    external_references: list[dict[str, Any]],
     linking: dict[str, Any],
     boundaries: dict[str, Any],
     clusters: list[MatterLinkingPreflightCluster],
@@ -416,6 +431,37 @@ def _checks(
             and source_system.get("api_contract_verified") is False,
             "The fixture is an Upfront-like public-research proxy, not a verified export/API contract.",
             evidence_refs=[str(source_system.get("system_name", "unknown"))],
+        ),
+        _check(
+            "upfront_like_request_identity_and_channel_present",
+            isinstance(intake_request.get("intake_request_id"), str)
+            and bool(str(intake_request.get("intake_request_id")).strip())
+            and isinstance(intake_request.get("request_channel"), str)
+            and bool(str(intake_request.get("request_channel")).strip()),
+            "The synthetic Upfront-like request identity and intake channel are explicit.",
+            evidence_refs=["intake_request.intake_request_id", "intake_request.request_channel"],
+        ),
+        _check(
+            "external_references_are_typed_and_source_bound",
+            bool(external_references)
+            and all(
+                isinstance(reference.get("reference_type"), str)
+                and bool(str(reference.get("reference_type")).strip())
+                and isinstance(reference.get("strength"), str)
+                and bool(str(reference.get("strength")).strip())
+                and isinstance(reference.get("source_ref"), str)
+                and bool(str(reference.get("source_ref")).strip())
+                and (
+                    reference.get("reference_value") in {None, ""}
+                    or str(reference.get("source_ref")).split(":", maxsplit=1)[0]
+                    in source_hashes_by_id
+                )
+                for reference in external_references
+            ),
+            "External references remain typed and observed values are bound to inventoried sources.",
+            evidence_refs=[
+                str(reference.get("source_ref", "unknown")) for reference in external_references
+            ],
         ),
         _check(
             "no_connector_or_external_write",
