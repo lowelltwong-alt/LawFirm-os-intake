@@ -85,6 +85,11 @@ h3 {
   text-transform: uppercase;
 }
 
+li {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
 code {
   color: #455e6d;
   font-size: 0.82rem;
