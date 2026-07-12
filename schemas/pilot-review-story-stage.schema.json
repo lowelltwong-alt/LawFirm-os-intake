@@ -1,0 +1,60 @@
+{
+  "additionalProperties": false,
+  "description": "One explicitly bounded step in the synthetic pilot-review narrative.",
+  "properties": {
+    "stage_id": {
+      "title": "Stage Id",
+      "type": "string"
+    },
+    "label": {
+      "title": "Label",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "passed",
+        "ready_for_human_review",
+        "blocked",
+        "not_available"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "summary": {
+      "title": "Summary",
+      "type": "string"
+    },
+    "artifact_ref": {
+      "title": "Artifact Ref",
+      "type": "string"
+    },
+    "evidence_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Evidence Refs",
+      "type": "array"
+    },
+    "required_next_gate": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Required Next Gate"
+    }
+  },
+  "required": [
+    "stage_id",
+    "label",
+    "status",
+    "summary",
+    "artifact_ref"
+  ],
+  "title": "PilotReviewStoryStage",
+  "type": "object"
+}

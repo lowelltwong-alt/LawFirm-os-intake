@@ -148,6 +148,7 @@ from .pr_merge_order_readiness import run_pr_merge_order_readiness_packet
 from .pr_readiness_decision import run_pr_readiness_decision_record
 from .pr_review_checklist import run_pr_review_checklist
 from .poc_qa_triage import run_poc_qa_triage_report
+from .pilot_review_story import run_pilot_review_story
 from .public_data_cache import run_public_data_cache_audit
 from .public_derived_synthetic_qa_gate import run_public_derived_synthetic_qa_gate
 from .public_source_methodology import run_public_source_methodology_audit
@@ -367,6 +368,20 @@ def _parser() -> argparse.ArgumentParser:
     ui_review_data_bundle.add_argument(
         "--ocg-rule-ir-adoption",
         help="Optional explicit path to ocg_rule_ir_adoption_report.json for UI/QA evidence.",
+    )
+
+    pilot_review_story = sub.add_parser(
+        "build-pilot-review-story",
+        help=(
+            "Assemble one source-bound synthetic L&E pilot dossier with explicit "
+            "human and owner gates."
+        ),
+    )
+    pilot_review_story.add_argument("--story", required=True)
+    pilot_review_story.add_argument("--out-dir", required=True)
+    pilot_review_story.add_argument(
+        "--generated-at",
+        help="Optional fixed timestamp for deterministic pilot-review artifacts.",
     )
 
     crosswalk_audit = sub.add_parser(
@@ -2706,6 +2721,28 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 0 if bundle.status == "ready_for_review" else 2
+
+        if args.command == "build-pilot-review-story":
+            report, run_dir = run_pilot_review_story(
+                story_path=args.story,
+                out_dir=args.out_dir,
+                generated_at=args.generated_at,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "pilot_review_story_id": report.pilot_review_story_id,
+                    "matter_linking_state": report.matter_linking_state,
+                    "budget_display_state": report.budget_display_state,
+                    "carrier_projection_state": report.carrier_projection_state,
+                    "carrier_rejected_amount": report.carrier_rejected_amount,
+                    "out_dir": str(run_dir),
+                    "external_writes_performed": report.external_writes_performed,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                }
+            )
+            return 0
 
         if args.command == "crosswalk-audit":
             _crosswalks, audit, run_dir = run_crosswalk_audit_report(

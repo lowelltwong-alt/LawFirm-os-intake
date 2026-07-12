@@ -222,6 +222,97 @@ code {
   margin-bottom: 14px;
 }
 
+.pilot-story-panel {
+  margin-bottom: 14px;
+}
+
+.pilot-story-metrics,
+.pilot-story-flow,
+.pilot-story-columns {
+  display: grid;
+  gap: 10px;
+}
+
+.pilot-story-metrics {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-bottom: 14px;
+}
+
+.pilot-story-metrics article,
+.pilot-story-flow article,
+.pilot-story-columns section,
+.pilot-story-red-team {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid #dde4d8;
+  border-radius: 6px;
+  background: #fbfcfa;
+}
+
+.pilot-story-metrics span,
+.pilot-story-metrics p,
+.pilot-story-flow p,
+.pilot-story-red-team li {
+  color: #536056;
+  font-size: 0.84rem;
+  line-height: 1.42;
+}
+
+.pilot-story-metrics strong {
+  display: block;
+  margin: 8px 0 4px;
+  color: #1f2a22;
+  font-size: 1.35rem;
+}
+
+.pilot-story-metrics p,
+.pilot-story-flow p {
+  margin: 0;
+}
+
+.pilot-story-flow {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-bottom: 14px;
+}
+
+.pilot-story-flow article > div {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.pilot-story-flow p {
+  min-height: 70px;
+  margin: 10px 0;
+}
+
+.pilot-story-flow code {
+  display: block;
+  color: #234157;
+  font-size: 0.74rem;
+  overflow-wrap: anywhere;
+}
+
+.pilot-story-columns {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-bottom: 10px;
+}
+
+.pilot-story-columns h3,
+.pilot-story-red-team strong {
+  margin-top: 0;
+  color: #1f2a22;
+  font-size: 0.92rem;
+}
+
+.pilot-story-red-team ul {
+  display: grid;
+  gap: 8px;
+  margin: 10px 0 0;
+  padding-left: 18px;
+}
+
 .contract-proof-owners,
 .contract-proof-flow,
 .contract-proof-boundaries {
@@ -1388,6 +1479,9 @@ td:nth-child(4) {
   .contract-proof-owners,
   .contract-proof-flow,
   .contract-proof-boundaries,
+  .pilot-story-metrics,
+  .pilot-story-flow,
+  .pilot-story-columns,
   .budget-learning-grid,
   .budget-learning-columns {
     grid-template-columns: 1fr;
@@ -1457,6 +1551,9 @@ td:nth-child(4) {
   .contract-proof-owners,
   .contract-proof-flow,
   .contract-proof-boundaries,
+  .pilot-story-metrics,
+  .pilot-story-flow,
+  .pilot-story-columns,
   .budget-learning-summary,
   .budget-learning-grid,
   .budget-learning-columns,

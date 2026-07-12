@@ -5,6 +5,7 @@ import demoCrosswalkAudit from "./fixtures/demo-crosswalk-audit-report.json";
 import demoOCGRuleIRAdoption from "./fixtures/demo-ocg-rule-ir-adoption-report.json";
 import demoBudgetLearningLoop from "./fixtures/demo-budget-learning-loop-report.json";
 import demoCrossRepoContractProof from "./fixtures/demo-cross-repo-contract-proof-report.json";
+import demoPilotReviewStory from "./fixtures/demo-pilot-review-story-report.json";
 import demoLaborEmploymentBlockedDriverReview from "./fixtures/demo-labor-employment-blocked-driver-impact-review-report.json";
 import demoLaborEmploymentBudgetLearningFixtures from "./fixtures/demo-labor-employment-budget-learning-fixtures-report.json";
 import demoLaborEmploymentBudgetOutcomeReplayBuilderBinding from "./fixtures/demo-labor-employment-budget-outcome-replay-builder-binding-report.json";
@@ -37,6 +38,7 @@ import {
   assertMatterLinkingReviewOutcomeReport,
   assertBudgetLearningLoopReport,
   assertCrossRepoContractProofReport,
+  assertPilotReviewStoryReport,
   assertLaborEmploymentBudgetOutputExpectationReport,
   assertLaborEmploymentBudgetLearningFixtureReport,
   assertLaborEmploymentBudgetOutcomeReplayBuilderBindingReport,
@@ -68,6 +70,7 @@ import type {
   ArtifactStatus,
   BudgetLearningLoopReport,
   CrossRepoContractProofReport,
+  PilotReviewStoryReport,
   GateState,
   LaborEmploymentAllowedBudgetOutput,
   LaborEmploymentBudgetLearningFixtureReport,
@@ -159,6 +162,7 @@ const laborEmploymentBudgetOutcomeReplayConfidenceStatus =
   demoLaborEmploymentBudgetOutcomeReplayConfidenceStatus as unknown as LaborEmploymentBudgetOutcomeReplayConfidenceStatusReport;
 const budgetLearningLoop = demoBudgetLearningLoop as BudgetLearningLoopReport;
 const crossRepoContractProof = demoCrossRepoContractProof as CrossRepoContractProofReport;
+const pilotReviewStory = demoPilotReviewStory as PilotReviewStoryReport;
 const bundleContractFailures = assertUIReviewDataBundle(reviewDataBundle);
 const manifestContractFailures = assertReadOnlyManifest(manifest);
 const syntheticQAReviewRunFailures = assertSyntheticQAReviewRunReport(syntheticQAReviewRun);
@@ -214,6 +218,7 @@ const budgetOutcomeReplayConfidenceStatusFailures =
   );
 const budgetLearningLoopFailures = assertBudgetLearningLoopReport(budgetLearningLoop);
 const crossRepoContractProofFailures = assertCrossRepoContractProofReport(crossRepoContractProof);
+const pilotReviewStoryFailures = assertPilotReviewStoryReport(pilotReviewStory);
 const contractFailures = [
   ...bundleContractFailures,
   ...manifestContractFailures,
@@ -243,6 +248,7 @@ const contractFailures = [
   ...budgetOutcomeReplayConfidenceStatusFailures,
   ...budgetLearningLoopFailures,
   ...crossRepoContractProofFailures,
+  ...pilotReviewStoryFailures,
 ];
 
 const PUBLIC_DATA_CUSTODY_COMMANDS = [
@@ -360,6 +366,19 @@ function formatMoney(amount: number | null) {
     currency: "USD",
     maximumFractionDigits: 0,
   }).format(amount);
+}
+
+function pilotStoryStageClass(status: PilotReviewStoryReport["stages"][number]["status"]) {
+  if (status === "passed") {
+    return "state state-passed";
+  }
+  if (status === "ready_for_human_review") {
+    return "state state-pending";
+  }
+  if (status === "not_available") {
+    return "state state-pending";
+  }
+  return "state state-blocked";
 }
 
 type FixtureDrilldownRow = {
@@ -793,6 +812,83 @@ function CrossRepoContractProofPanel({
         This proves a pinned synthetic handoff only. It does not accept work, approve a budget,
         open a matter, admit Lake evidence, or convert candidate artifacts into authority.
       </p>
+    </section>
+  );
+}
+
+function PilotReviewStoryPanel({ report }: { report: PilotReviewStoryReport }) {
+  const hasFailures = pilotReviewStoryFailures.length > 0;
+
+  return (
+    <section className="panel pilot-story-panel" aria-labelledby="pilot-story-title">
+      <div className="panel-heading">
+        <div>
+          <p className="eyebrow">Flagship synthetic L&E pilot</p>
+          <h2 id="pilot-story-title">Brightline EPLI Review Dossier</h2>
+          <p>{report.selected_candidate_matter_label}</p>
+        </div>
+        <span className={hasFailures ? "state state-failed" : "state state-pending"}>
+          {hasFailures ? "contract failed" : "review required"}
+        </span>
+      </div>
+
+      <div className="pilot-story-metrics" aria-label="Pilot review metrics">
+        <article>
+          <span>Sources</span>
+          <strong>{report.source_count}</strong>
+          <p>hashed synthetic records</p>
+        </article>
+        <article>
+          <span>Candidate Budget</span>
+          <strong>{formatMoney(report.budget_proposal_total)}</strong>
+          <p>withheld pending link and role review</p>
+        </article>
+        <article>
+          <span>Rejections</span>
+          <strong>{formatMoney(report.carrier_rejected_amount)}</strong>
+          <p>{report.carrier_rejection_notice_count} synthetic notices</p>
+        </article>
+        <article>
+          <span>Appeal Result</span>
+          <strong>{formatMoney(report.carrier_recovered_amount)}</strong>
+          <p>{formatMoney(report.carrier_write_down_amount)} write-down observed</p>
+        </article>
+      </div>
+
+      <div className="pilot-story-flow" aria-label="Pilot review sequence">
+        {report.stages.map((stage) => (
+          <article key={stage.stage_id}>
+            <div>
+              <strong>{stage.label}</strong>
+              <span className={pilotStoryStageClass(stage.status)}>
+                {stage.status.replaceAll("_", " ")}
+              </span>
+            </div>
+            <p>{stage.summary}</p>
+            {stage.required_next_gate ? <code>{stage.required_next_gate}</code> : null}
+          </article>
+        ))}
+      </div>
+
+      <div className="pilot-story-columns">
+        <section aria-labelledby="pilot-story-gates-title">
+          <h3 id="pilot-story-gates-title">Gates Before Any Action</h3>
+          <TokenList items={report.required_next_gates} limit={6} />
+        </section>
+        <section aria-labelledby="pilot-story-exceptions-title">
+          <h3 id="pilot-story-exceptions-title">Candidate Exception Labels</h3>
+          <TokenList items={report.candidate_exception_lake_labels} limit={8} />
+        </section>
+      </div>
+
+      <div className="pilot-story-red-team">
+        <strong>Red Team</strong>
+        <ul>
+          {report.red_team_notes.map((note) => (
+            <li key={note}>{note}</li>
+          ))}
+        </ul>
+      </div>
     </section>
   );
 }
@@ -3666,6 +3762,7 @@ function App() {
         budgetOutputReport={laborEmploymentBudgetOutputExpectations}
         pocReport={pocQATriage}
       />
+      <PilotReviewStoryPanel report={pilotReviewStory} />
       <BudgetLearningLoopPanel report={budgetLearningLoop} />
       <CrossRepoContractProofPanel report={crossRepoContractProof} />
       <SyntheticConfidenceSummaryPanel report={syntheticConfidenceSummary} />
