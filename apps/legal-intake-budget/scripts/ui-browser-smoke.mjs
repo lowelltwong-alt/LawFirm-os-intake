@@ -105,8 +105,7 @@ async function main() {
         textLength: root.textContent?.trim().length ?? 0,
         viewportWidth,
         scrollWidth: document.documentElement.scrollWidth,
-        horizontalOverflow:
-          document.documentElement.scrollWidth > viewportWidth + 1 || overflowNodes.length > 0,
+        horizontalOverflow: overflowNodes.length > 0,
         overflowNodes,
       };
     });

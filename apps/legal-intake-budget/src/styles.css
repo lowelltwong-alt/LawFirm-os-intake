@@ -565,6 +565,7 @@ code {
 }
 
 .coverage-family-item {
+  min-width: 0;
   min-height: 104px;
   padding: 10px;
   border: 1px solid #dde4d8;
@@ -573,8 +574,14 @@ code {
 }
 
 .coverage-family-item strong,
-.coverage-family-item span {
+.coverage-family-item span,
+.coverage-family-item li {
   display: block;
+  overflow-wrap: anywhere;
+}
+
+.coverage-family-item .token-list {
+  min-width: 0;
 }
 
 .coverage-family-item span {
