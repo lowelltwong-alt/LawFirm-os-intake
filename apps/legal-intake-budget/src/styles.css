@@ -604,6 +604,7 @@ code {
 }
 
 .fixture-family-item {
+  min-width: 0;
   min-height: 74px;
   padding: 10px;
   border: 1px solid #dde4d8;
@@ -612,8 +613,14 @@ code {
 }
 
 .fixture-family-item strong,
-.fixture-family-item span {
+.fixture-family-item span,
+.fixture-family-item li {
   display: block;
+  overflow-wrap: anywhere;
+}
+
+.fixture-family-item .token-list {
+  min-width: 0;
 }
 
 .fixture-family-item span {
