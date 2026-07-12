@@ -1,6 +1,7 @@
 import type {
   BoundaryFlags,
   BudgetLearningLoopReport,
+  CrossRepoContractProofReport,
   LaborEmploymentBudgetLearningFixtureReport,
   LaborEmploymentBudgetLearningLoopType,
   LaborEmploymentBudgetOutcomeReplayBuilderBindingReport,
@@ -732,6 +733,62 @@ export function assertBudgetLearningLoopReport(report: BudgetLearningLoopReport)
   }
   if (!report.red_team_notes.length || !report.required_next_actions.length) {
     failures.push("budget_learning_loop_missing_review_guidance");
+  }
+  return failures;
+}
+
+export function assertCrossRepoContractProofReport(
+  report: CrossRepoContractProofReport,
+): string[] {
+  const failures: string[] = [];
+  if (report.status !== "passed_candidate_contract_proof") {
+    failures.push(`cross_repo_contract_proof_not_passed:${report.status}`);
+  }
+  if (
+    report.owner_packet_status !== "blocked_pending_owner_review" ||
+    report.lake_review_packet_status !== "blocked_pending_exception_lake_owner_review" ||
+    report.lake_validation_status !== "passed_candidate_packet_validation"
+  ) {
+    failures.push("cross_repo_contract_proof_unexpected_handoff_state");
+  }
+  if (
+    !report.synthetic_only ||
+    !report.candidate_only ||
+    !report.non_authoritative ||
+    !report.owner_worktrees_clean ||
+    report.real_data_accepted ||
+    report.connector_called ||
+    report.lake_write_performed ||
+    report.sqlite_write_performed ||
+    report.external_writes_performed ||
+    report.budget_submission_authorized ||
+    report.matter_opening_authorized ||
+    report.conflict_clearance_authorized
+  ) {
+    failures.push("cross_repo_contract_proof_boundary_failed");
+  }
+  if (
+    report.target_repos[0] !== "LawFirm-os-orchestrator" ||
+    report.target_repos[1] !== "LawFirm-os-exceptions-lake-runtime"
+  ) {
+    failures.push("cross_repo_contract_proof_target_owner_order_invalid");
+  }
+  const hashes = [
+    report.request_sha256,
+    report.owner_packet_sha256,
+    report.lake_review_packet_sha256,
+    report.lake_validation_report_sha256,
+  ];
+  if (hashes.some((hash) => !/^[a-f0-9]{64}$/.test(hash))) {
+    failures.push("cross_repo_contract_proof_hash_invalid");
+  }
+  if (
+    !report.contract_proof_id ||
+    !report.request_id ||
+    !report.orchestrator_commit ||
+    !report.exception_lake_commit
+  ) {
+    failures.push("cross_repo_contract_proof_identity_missing");
   }
   return failures;
 }

@@ -994,6 +994,41 @@ export type BudgetLearningLoopReport = {
   generated_at: string;
 };
 
+export type CrossRepoContractProofReport = {
+  schema_version: string;
+  contract_proof_id: string;
+  status: "passed_candidate_contract_proof";
+  request_id: string;
+  request_ref: string;
+  request_sha256: string;
+  orchestrator_commit: string;
+  exception_lake_commit: string;
+  owner_packet_ref: string;
+  owner_packet_sha256: string;
+  owner_packet_status: "blocked_pending_owner_review";
+  lake_review_packet_ref: string;
+  lake_review_packet_sha256: string;
+  lake_review_packet_status: "blocked_pending_exception_lake_owner_review";
+  lake_validation_report_ref: string;
+  lake_validation_report_sha256: string;
+  lake_validation_status: "passed_candidate_packet_validation";
+  source_repo: "LawFirm-os-intake";
+  target_repos: ["LawFirm-os-orchestrator", "LawFirm-os-exceptions-lake-runtime"];
+  synthetic_only: true;
+  candidate_only: true;
+  non_authoritative: true;
+  owner_worktrees_clean: true;
+  real_data_accepted: false;
+  connector_called: false;
+  lake_write_performed: false;
+  sqlite_write_performed: false;
+  external_writes_performed: false;
+  budget_submission_authorized: false;
+  matter_opening_authorized: false;
+  conflict_clearance_authorized: false;
+  generated_at: string;
+};
+
 export type SyntheticQABlockerRowState = "failed" | "blocked" | "pending_review";
 
 export type SyntheticQABlockerActionState = "blocked" | "needs_review" | "fixed" | "ready";

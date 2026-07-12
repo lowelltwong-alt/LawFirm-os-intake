@@ -45,6 +45,7 @@ def test_legal_intake_budget_ui_required_files_exist(repo_root):
         "src/fixtures/demo-labor-employment-budget-outcome-replay-builder-binding-report.json",
         "src/fixtures/demo-labor-employment-budget-outcome-replay-confidence-status-report.json",
         "src/fixtures/demo-budget-learning-loop-report.json",
+        "src/fixtures/demo-cross-repo-contract-proof-report.json",
     ]
 
     for relative_path in required:
@@ -1721,6 +1722,36 @@ def test_legal_intake_budget_ui_disclaims_mutating_authority(repo_root):
     assert "qa-workbench-grid" in styles
     assert "qa-workbench-list" in styles
     assert "grid-template-columns" in styles
+
+
+def test_legal_intake_budget_cross_repo_contract_proof_is_visible_and_no_write(repo_root):
+    app = (repo_root / UI_ROOT / "src/App.tsx").read_text(encoding="utf-8")
+    report = json.loads(
+        (repo_root / UI_ROOT / "src/fixtures/demo-cross-repo-contract-proof-report.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    assert "demoCrossRepoContractProof" in app
+    assert "assertCrossRepoContractProofReport" in app
+    assert "CrossRepoContractProofPanel report={crossRepoContractProof}" in app
+    assert "Intake Handoff Contract" in app
+    assert "This proves a pinned synthetic handoff only" in app
+    assert report["status"] == "passed_candidate_contract_proof"
+    assert report["owner_packet_status"] == "blocked_pending_owner_review"
+    assert report["lake_review_packet_status"] == "blocked_pending_exception_lake_owner_review"
+    assert report["lake_validation_status"] == "passed_candidate_packet_validation"
+    assert report["synthetic_only"] is True
+    assert report["candidate_only"] is True
+    assert report["owner_worktrees_clean"] is True
+    assert report["real_data_accepted"] is False
+    assert report["connector_called"] is False
+    assert report["lake_write_performed"] is False
+    assert report["sqlite_write_performed"] is False
+    assert report["external_writes_performed"] is False
+    assert report["budget_submission_authorized"] is False
+    assert report["matter_opening_authorized"] is False
+    assert report["conflict_clearance_authorized"] is False
 
 
 def test_legal_intake_budget_qa_workbench_joins_ready_state_and_budget_targets(repo_root):
