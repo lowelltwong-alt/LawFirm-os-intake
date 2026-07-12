@@ -57,6 +57,7 @@ from .confirmation import bind_confirmation_to_packet_evidence
 from .courtlistener_dataset_strategy import run_courtlistener_dataset_strategy_audit
 from .courtlistener_fixture_audit import run_courtlistener_fixture_audit
 from .cross_repo_owner_adoption import run_cross_repo_owner_adoption
+from .cross_repo_contract_proof import run_cross_repo_contract_proof
 from .cross_repo_owner_issue_draft_quality import run_owner_issue_draft_quality_audit
 from .cross_repo_owner_issue_drafts import run_cross_repo_owner_issue_drafts
 from .cross_repo_promotion_package_audit import run_cross_repo_promotion_package_audit
@@ -2077,6 +2078,31 @@ def _parser() -> argparse.ArgumentParser:
         "--lake-handoff-mode",
         choices=["disabled", "validate_only"],
         default="disabled",
+    )
+
+    cross_repo_contract_proof = sub.add_parser(
+        "prove-cross-repo-contract",
+        help="Run the synthetic no-write Intake-to-Orchestrator-to-Lake contract proof.",
+    )
+    cross_repo_contract_proof.add_argument(
+        "--request",
+        required=True,
+        help="Path to a synthetic intake_owner_review_request.v0_1 artifact.",
+    )
+    cross_repo_contract_proof.add_argument(
+        "--orchestrator-root",
+        required=True,
+        help="Clean local LawFirm-os-orchestrator worktree to validate against.",
+    )
+    cross_repo_contract_proof.add_argument(
+        "--exception-lake-root",
+        required=True,
+        help="Clean local LawFirm-os-exceptions-lake-runtime worktree to validate against.",
+    )
+    cross_repo_contract_proof.add_argument(
+        "--out-dir",
+        required=True,
+        help="Local output directory outside both owner worktrees.",
     )
 
     carrier_rejection_audit = sub.add_parser(
@@ -5883,6 +5909,31 @@ def main(argv: list[str] | None = None) -> int:
                     "contains_real_client_data": request.contains_real_client_data,
                     "contains_real_matter_data": request.contains_real_matter_data,
                     "contains_privileged_data": request.contains_privileged_data,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0
+
+        if args.command == "prove-cross-repo-contract":
+            report, run_dir = run_cross_repo_contract_proof(
+                request_path=args.request,
+                orchestrator_root=args.orchestrator_root,
+                exception_lake_root=args.exception_lake_root,
+                out_dir=args.out_dir,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "contract_proof_id": report.contract_proof_id,
+                    "request_id": report.request_id,
+                    "orchestrator_commit": report.orchestrator_commit,
+                    "exception_lake_commit": report.exception_lake_commit,
+                    "owner_packet_status": report.owner_packet_status,
+                    "lake_review_packet_status": report.lake_review_packet_status,
+                    "lake_validation_status": report.lake_validation_status,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "external_writes_performed": report.external_writes_performed,
                     "run_dir": str(run_dir),
                 }
             )

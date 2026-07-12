@@ -18775,6 +18775,67 @@ class CrossRepoOwnerAdoptionReport(StrictModel):
         return self
 
 
+class CrossRepoContractProofReport(StrictModel):
+    """Evidence that the current synthetic handoff crosses owner validators unchanged."""
+
+    schema_version: str = "0.1"
+    contract_proof_id: str
+    status: Literal["passed_candidate_contract_proof"]
+    request_id: str
+    request_ref: str
+    request_sha256: str
+    orchestrator_commit: str
+    exception_lake_commit: str
+    owner_packet_ref: str
+    owner_packet_sha256: str
+    owner_packet_status: Literal["blocked_pending_owner_review"]
+    lake_review_packet_ref: str
+    lake_review_packet_sha256: str
+    lake_review_packet_status: Literal["blocked_pending_exception_lake_owner_review"]
+    lake_validation_report_ref: str
+    lake_validation_report_sha256: str
+    lake_validation_status: Literal["passed_candidate_packet_validation"]
+    source_repo: Literal["LawFirm-os-intake"] = "LawFirm-os-intake"
+    target_repos: list[Literal["LawFirm-os-orchestrator", "LawFirm-os-exceptions-lake-runtime"]] = [
+        "LawFirm-os-orchestrator",
+        "LawFirm-os-exceptions-lake-runtime",
+    ]
+    synthetic_only: Literal[True] = True
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    owner_worktrees_clean: Literal[True] = True
+    real_data_accepted: Literal[False] = False
+    connector_called: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    conflict_clearance_authorized: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def contract_proof_boundaries_match(self) -> "CrossRepoContractProofReport":
+        if self.target_repos != [
+            "LawFirm-os-orchestrator",
+            "LawFirm-os-exceptions-lake-runtime",
+        ]:
+            raise ValueError("contract proof target repos must remain ordered and explicit")
+        if not all(
+            len(value) == 64 and all(char in "0123456789abcdef" for char in value)
+            for value in (
+                self.request_sha256,
+                self.owner_packet_sha256,
+                self.lake_review_packet_sha256,
+                self.lake_validation_report_sha256,
+            )
+        ):
+            raise ValueError("contract proof artifact hashes must be bare sha256 values")
+        if not self.orchestrator_commit or not self.exception_lake_commit:
+            raise ValueError("contract proof requires owner commit identifiers")
+        return self
+
+
 class CrossRepoOwnerIssueDraft(StrictModel):
     schema_version: str = "0.1"
     issue_draft_id: str

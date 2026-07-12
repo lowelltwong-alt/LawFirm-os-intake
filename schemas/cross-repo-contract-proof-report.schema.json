@@ -1,0 +1,197 @@
+{
+  "additionalProperties": false,
+  "description": "Evidence that the current synthetic handoff crosses owner validators unchanged.",
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "contract_proof_id": {
+      "title": "Contract Proof Id",
+      "type": "string"
+    },
+    "status": {
+      "const": "passed_candidate_contract_proof",
+      "title": "Status",
+      "type": "string"
+    },
+    "request_id": {
+      "title": "Request Id",
+      "type": "string"
+    },
+    "request_ref": {
+      "title": "Request Ref",
+      "type": "string"
+    },
+    "request_sha256": {
+      "title": "Request Sha256",
+      "type": "string"
+    },
+    "orchestrator_commit": {
+      "title": "Orchestrator Commit",
+      "type": "string"
+    },
+    "exception_lake_commit": {
+      "title": "Exception Lake Commit",
+      "type": "string"
+    },
+    "owner_packet_ref": {
+      "title": "Owner Packet Ref",
+      "type": "string"
+    },
+    "owner_packet_sha256": {
+      "title": "Owner Packet Sha256",
+      "type": "string"
+    },
+    "owner_packet_status": {
+      "const": "blocked_pending_owner_review",
+      "title": "Owner Packet Status",
+      "type": "string"
+    },
+    "lake_review_packet_ref": {
+      "title": "Lake Review Packet Ref",
+      "type": "string"
+    },
+    "lake_review_packet_sha256": {
+      "title": "Lake Review Packet Sha256",
+      "type": "string"
+    },
+    "lake_review_packet_status": {
+      "const": "blocked_pending_exception_lake_owner_review",
+      "title": "Lake Review Packet Status",
+      "type": "string"
+    },
+    "lake_validation_report_ref": {
+      "title": "Lake Validation Report Ref",
+      "type": "string"
+    },
+    "lake_validation_report_sha256": {
+      "title": "Lake Validation Report Sha256",
+      "type": "string"
+    },
+    "lake_validation_status": {
+      "const": "passed_candidate_packet_validation",
+      "title": "Lake Validation Status",
+      "type": "string"
+    },
+    "source_repo": {
+      "const": "LawFirm-os-intake",
+      "default": "LawFirm-os-intake",
+      "title": "Source Repo",
+      "type": "string"
+    },
+    "target_repos": {
+      "default": [
+        "LawFirm-os-orchestrator",
+        "LawFirm-os-exceptions-lake-runtime"
+      ],
+      "items": {
+        "enum": [
+          "LawFirm-os-orchestrator",
+          "LawFirm-os-exceptions-lake-runtime"
+        ],
+        "type": "string"
+      },
+      "title": "Target Repos",
+      "type": "array"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "owner_worktrees_clean": {
+      "const": true,
+      "default": true,
+      "title": "Owner Worktrees Clean",
+      "type": "boolean"
+    },
+    "real_data_accepted": {
+      "const": false,
+      "default": false,
+      "title": "Real Data Accepted",
+      "type": "boolean"
+    },
+    "connector_called": {
+      "const": false,
+      "default": false,
+      "title": "Connector Called",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "budget_submission_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Submission Authorized",
+      "type": "boolean"
+    },
+    "matter_opening_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Matter Opening Authorized",
+      "type": "boolean"
+    },
+    "conflict_clearance_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Conflict Clearance Authorized",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "contract_proof_id",
+    "status",
+    "request_id",
+    "request_ref",
+    "request_sha256",
+    "orchestrator_commit",
+    "exception_lake_commit",
+    "owner_packet_ref",
+    "owner_packet_sha256",
+    "owner_packet_status",
+    "lake_review_packet_ref",
+    "lake_review_packet_sha256",
+    "lake_review_packet_status",
+    "lake_validation_report_ref",
+    "lake_validation_report_sha256",
+    "lake_validation_status",
+    "generated_at"
+  ],
+  "title": "CrossRepoContractProofReport",
+  "type": "object"
+}

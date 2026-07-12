@@ -747,6 +747,22 @@ Orchestrator, write sibling repos, submit budgets or appeals, admit
 Lake/SQLite records, create route IDs, create event classes, or authorize
 production connector use.
 
+### Prove current cross-repo handoff
+
+```bash
+python -m lawfirm_os_intake prove-cross-repo-contract \
+  --request PATH/TO/orchestrator_owner_review_request.json \
+  --orchestrator-root PATH/TO/LawFirm-os-orchestrator \
+  --exception-lake-root PATH/TO/LawFirm-os-exceptions-lake-runtime \
+  --out-dir LOCAL/PROOF/OUTPUT
+```
+
+This requires clean owner worktrees and writes only below `--out-dir`. It runs
+the merged Orchestrator owner-packet and Lake-review commands followed by the
+Exception Lake candidate-packet validator. A successful report is still blocked
+for owner review and proves no Lake/SQLite admission, connector call, external
+submission, matter opening, or conflict clearance.
+
 ### Audit intake vertical readiness
 
 ```bash
