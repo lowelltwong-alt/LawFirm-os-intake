@@ -101,6 +101,7 @@ code {
 .state {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   min-height: 28px;
   padding: 4px 10px;
   border: 1px solid #a9b5aa;
@@ -109,8 +110,10 @@ code {
   background: #eef1eb;
   font-size: 0.78rem;
   font-weight: 700;
+  text-align: center;
   text-transform: uppercase;
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 .state-passed,
@@ -208,6 +211,84 @@ code {
 
 .budget-learning-panel {
   margin-bottom: 14px;
+}
+
+.contract-proof-panel {
+  margin-bottom: 14px;
+}
+
+.contract-proof-owners,
+.contract-proof-flow,
+.contract-proof-boundaries {
+  display: grid;
+  gap: 10px;
+}
+
+.contract-proof-owners {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-bottom: 14px;
+}
+
+.contract-proof-owners article,
+.contract-proof-flow article {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid #dde4d8;
+  border-radius: 6px;
+  background: #fbfcfa;
+}
+
+.contract-proof-owners span,
+.contract-proof-flow p,
+.contract-proof-boundaries span {
+  color: #536056;
+  font-size: 0.82rem;
+}
+
+.contract-proof-owners span,
+.contract-proof-owners code,
+.contract-proof-owners strong {
+  display: block;
+}
+
+.contract-proof-owners code,
+.contract-proof-owners strong {
+  margin-top: 8px;
+}
+
+.contract-proof-flow {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-bottom: 14px;
+}
+
+.contract-proof-flow article > div,
+.contract-proof-boundaries > div {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.contract-proof-flow strong {
+  overflow-wrap: anywhere;
+}
+
+.contract-proof-flow p {
+  min-height: 38px;
+  margin: 10px 0 8px;
+  line-height: 1.35;
+}
+
+.contract-proof-boundaries {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.contract-proof-boundaries > div {
+  min-height: 48px;
+  padding: 9px 10px;
+  border: 1px solid #dde4d8;
+  border-radius: 6px;
+  background: #fafbf8;
 }
 
 .qa-workbench-grid {
@@ -555,6 +636,39 @@ code {
   color: #1f2a22;
   font-size: 1.8rem;
   line-height: 1;
+}
+
+.fixture-table {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.fixture-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) auto minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+  padding: 10px;
+  border: 1px solid #dde4d8;
+  border-radius: 6px;
+  background: #fbfcfa;
+}
+
+.fixture-row > div {
+  min-width: 0;
+}
+
+.fixture-row > div strong,
+.fixture-row > div span {
+  display: block;
+}
+
+.fixture-row > div span {
+  margin-top: 4px;
+  color: #536056;
+  font-size: 0.82rem;
+  overflow-wrap: anywhere;
 }
 
 .fixture-evidence-stack {
@@ -1165,6 +1279,9 @@ code {
 }
 
 .table-wrap {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
   overflow-x: auto;
 }
 
@@ -1249,6 +1366,9 @@ td:nth-child(4) {
 
   .qa-workbench-grid,
   .qa-workbench-columns,
+  .contract-proof-owners,
+  .contract-proof-flow,
+  .contract-proof-boundaries,
   .budget-learning-grid,
   .budget-learning-columns {
     grid-template-columns: 1fr;
@@ -1282,6 +1402,10 @@ td:nth-child(4) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .fixture-row {
+    grid-template-columns: 1fr;
+  }
+
   .budget-bucket-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1311,6 +1435,9 @@ td:nth-child(4) {
   .fixture-family-grid,
   .qa-workbench-grid,
   .qa-workbench-columns,
+  .contract-proof-owners,
+  .contract-proof-flow,
+  .contract-proof-boundaries,
   .budget-learning-summary,
   .budget-learning-grid,
   .budget-learning-columns,

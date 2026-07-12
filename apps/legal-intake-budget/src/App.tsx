@@ -4,6 +4,7 @@ import { createRoot } from "react-dom/client";
 import demoCrosswalkAudit from "./fixtures/demo-crosswalk-audit-report.json";
 import demoOCGRuleIRAdoption from "./fixtures/demo-ocg-rule-ir-adoption-report.json";
 import demoBudgetLearningLoop from "./fixtures/demo-budget-learning-loop-report.json";
+import demoCrossRepoContractProof from "./fixtures/demo-cross-repo-contract-proof-report.json";
 import demoLaborEmploymentBlockedDriverReview from "./fixtures/demo-labor-employment-blocked-driver-impact-review-report.json";
 import demoLaborEmploymentBudgetLearningFixtures from "./fixtures/demo-labor-employment-budget-learning-fixtures-report.json";
 import demoLaborEmploymentBudgetOutcomeReplayBuilderBinding from "./fixtures/demo-labor-employment-budget-outcome-replay-builder-binding-report.json";
@@ -35,6 +36,7 @@ import {
   assertMatterLinkingQAGateReport,
   assertMatterLinkingReviewOutcomeReport,
   assertBudgetLearningLoopReport,
+  assertCrossRepoContractProofReport,
   assertLaborEmploymentBudgetOutputExpectationReport,
   assertLaborEmploymentBudgetLearningFixtureReport,
   assertLaborEmploymentBudgetOutcomeReplayBuilderBindingReport,
@@ -65,6 +67,7 @@ import {
 import type {
   ArtifactStatus,
   BudgetLearningLoopReport,
+  CrossRepoContractProofReport,
   GateState,
   LaborEmploymentAllowedBudgetOutput,
   LaborEmploymentBudgetLearningFixtureReport,
@@ -155,6 +158,7 @@ const laborEmploymentBudgetOutcomeReplayBuilderBinding =
 const laborEmploymentBudgetOutcomeReplayConfidenceStatus =
   demoLaborEmploymentBudgetOutcomeReplayConfidenceStatus as unknown as LaborEmploymentBudgetOutcomeReplayConfidenceStatusReport;
 const budgetLearningLoop = demoBudgetLearningLoop as BudgetLearningLoopReport;
+const crossRepoContractProof = demoCrossRepoContractProof as CrossRepoContractProofReport;
 const bundleContractFailures = assertUIReviewDataBundle(reviewDataBundle);
 const manifestContractFailures = assertReadOnlyManifest(manifest);
 const syntheticQAReviewRunFailures = assertSyntheticQAReviewRunReport(syntheticQAReviewRun);
@@ -209,6 +213,7 @@ const budgetOutcomeReplayConfidenceStatusFailures =
     laborEmploymentBudgetOutcomeReplayConfidenceStatus,
   );
 const budgetLearningLoopFailures = assertBudgetLearningLoopReport(budgetLearningLoop);
+const crossRepoContractProofFailures = assertCrossRepoContractProofReport(crossRepoContractProof);
 const contractFailures = [
   ...bundleContractFailures,
   ...manifestContractFailures,
@@ -237,6 +242,7 @@ const contractFailures = [
   ...budgetOutcomeReplayBuilderBindingFailures,
   ...budgetOutcomeReplayConfidenceStatusFailures,
   ...budgetLearningLoopFailures,
+  ...crossRepoContractProofFailures,
 ];
 
 const PUBLIC_DATA_CUSTODY_COMMANDS = [
@@ -684,6 +690,109 @@ function BudgetLearningLoopPanel({ report }: { report: BudgetLearningLoopReport 
           </ul>
         </section>
       </div>
+    </section>
+  );
+}
+
+function CrossRepoContractProofPanel({
+  report,
+}: {
+  report: CrossRepoContractProofReport;
+}) {
+  const proofFailed = crossRepoContractProofFailures.length > 0;
+  const steps = [
+    {
+      label: "Intake request",
+      state: "passed" as GateState,
+      detail: report.request_id,
+      hash: report.request_sha256,
+    },
+    {
+      label: "Orchestrator owner packet",
+      state: "blocked" as GateState,
+      detail: report.owner_packet_status.replaceAll("_", " "),
+      hash: report.owner_packet_sha256,
+    },
+    {
+      label: "Lake review packet",
+      state: "blocked" as GateState,
+      detail: report.lake_review_packet_status.replaceAll("_", " "),
+      hash: report.lake_review_packet_sha256,
+    },
+    {
+      label: "Exception Lake validation",
+      state: "passed" as GateState,
+      detail: report.lake_validation_status.replaceAll("_", " "),
+      hash: report.lake_validation_report_sha256,
+    },
+  ];
+  const boundaries = [
+    ["Real data accepted", report.real_data_accepted],
+    ["Connector called", report.connector_called],
+    ["Lake write", report.lake_write_performed],
+    ["SQLite write", report.sqlite_write_performed],
+    ["External write", report.external_writes_performed],
+    ["Budget submission", report.budget_submission_authorized],
+    ["Matter opening", report.matter_opening_authorized],
+    ["Conflict clearance", report.conflict_clearance_authorized],
+  ] as const;
+
+  return (
+    <section className="panel contract-proof-panel" aria-labelledby="contract-proof-title">
+      <div className="panel-heading">
+        <div>
+          <p className="eyebrow">Pinned cross-repo proof</p>
+          <h2 id="contract-proof-title">Intake Handoff Contract</h2>
+          <code>{report.contract_proof_id}</code>
+        </div>
+        <span className={proofFailed ? "state state-failed" : "state state-passed"}>
+          {proofFailed ? "proof failed" : "proof passed"}
+        </span>
+      </div>
+
+      <div className="contract-proof-owners" aria-label="Pinned owner commits">
+        <article>
+          <span>Orchestrator</span>
+          <code>{report.orchestrator_commit.slice(0, 12)}</code>
+        </article>
+        <article>
+          <span>Exception Lake</span>
+          <code>{report.exception_lake_commit.slice(0, 12)}</code>
+        </article>
+        <article>
+          <span>Owner worktrees</span>
+          <strong>{report.owner_worktrees_clean ? "clean" : "not clean"}</strong>
+        </article>
+      </div>
+
+      <div className="contract-proof-flow" aria-label="Cross-repo handoff sequence">
+        {steps.map((step) => (
+          <article key={step.label}>
+            <div>
+              <strong>{step.label}</strong>
+              <span className={gateClass(step.state)}>{step.state}</span>
+            </div>
+            <p>{step.detail}</p>
+            <code>{step.hash.slice(0, 16)}...</code>
+          </article>
+        ))}
+      </div>
+
+      <div className="contract-proof-boundaries" aria-label="Disabled authorities">
+        {boundaries.map(([label, enabled]) => (
+          <div key={label}>
+            <span>{label}</span>
+            <strong className={enabled ? "state state-failed" : "state state-passed"}>
+              {enabled ? "enabled" : "blocked"}
+            </strong>
+          </div>
+        ))}
+      </div>
+
+      <p className="boundary">
+        This proves a pinned synthetic handoff only. It does not accept work, approve a budget,
+        open a matter, admit Lake evidence, or convert candidate artifacts into authority.
+      </p>
     </section>
   );
 }
@@ -3558,6 +3667,7 @@ function App() {
         pocReport={pocQATriage}
       />
       <BudgetLearningLoopPanel report={budgetLearningLoop} />
+      <CrossRepoContractProofPanel report={crossRepoContractProof} />
       <SyntheticConfidenceSummaryPanel report={syntheticConfidenceSummary} />
       <UIDemoQARecipePanel report={uiDemoQARecipe} />
       <CrosswalkAuditEvidencePanel report={crosswalkAudit} />

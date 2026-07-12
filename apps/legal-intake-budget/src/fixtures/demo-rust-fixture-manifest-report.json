@@ -1,7 +1,7 @@
 {
   "budget_submission_authorized": false,
   "candidate_only": true,
-  "checked_json_file_count": 29,
+  "checked_json_file_count": 30,
   "external_writes_performed": false,
   "failure_count": 0,
   "failures": [],
@@ -32,6 +32,27 @@
       "schema_version": "0.1",
       "sha256": "sha256:8f0b8a5378fe2a222c3fcd50f1835d5f978f8e967e322efbf24eb5a736474867",
       "status": "budget_learning_loop_ready_for_review",
+      "synthetic_only": true,
+      "top_level_type": "object"
+    },
+    {
+      "byte_count": 1866,
+      "candidate_only": true,
+      "external_writes_performed": false,
+      "id_fields": [
+        {
+          "field": "contract_proof_id",
+          "value": "crossrepocontractproof_e488817cbaa040033fd7"
+        },
+        {
+          "field": "request_id",
+          "value": "intake-owner-review-request-539fcc91d821fef92251"
+        }
+      ],
+      "path": "demo-cross-repo-contract-proof-report.json",
+      "schema_version": "0.1",
+      "sha256": "sha256:e12a3d522f6e7a376198bbe56e7b69e5c2335ec9f705854f3e5f70c8c8b96cad",
+      "status": "passed_candidate_contract_proof",
       "synthetic_only": true,
       "top_level_type": "object"
     },
@@ -697,11 +718,11 @@
   ],
   "lake_write_performed": false,
   "local_json_only": true,
-  "manifest_sha256": "sha256:d6d978e81fa46daf7e23c64a01ce6ec92158a55300b55d4558d08234989fe044",
+  "manifest_sha256": "sha256:fd581649d05f61cd1da96aaa24a3c4cd3257c71eabbdae9b295882b9d61fb085",
   "matter_opening_authorized": false,
   "non_authoritative": true,
   "parse_error_count": 0,
-  "parsed_json_file_count": 29,
+  "parsed_json_file_count": 30,
   "root": "apps\\legal-intake-budget\\src\\fixtures",
   "scanner": "fixture-manifest-scanner",
   "schema_version": "0.1",
@@ -720,5 +741,5 @@
   "sqlite_write_performed": false,
   "status": "passed",
   "synthetic_only": true,
-  "total_byte_count": 763208
+  "total_byte_count": 765074
 }
