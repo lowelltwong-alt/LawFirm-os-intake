@@ -1,0 +1,15 @@
+{
+  "schema_version": "0.1",
+  "data_origin": "synthetic",
+  "expected_owner_packet_status": "blocked_pending_owner_review",
+  "expected_lake_review_packet_status": "blocked_pending_exception_lake_owner_review",
+  "expected_lake_validation_status": "passed_candidate_packet_validation",
+  "required_false_flags": [
+    "lake_write_performed",
+    "sqlite_write_performed",
+    "external_writes_performed",
+    "budget_submission_authorized",
+    "matter_opening_authorized",
+    "conflict_clearance_authorized"
+  ]
+}

@@ -180,6 +180,7 @@ from lawfirm_os_intake.models import (  # noqa: E402
     CrossRepoOwnerIssueDraftReport,
     CrossRepoOwnerAdoptionPacket,
     CrossRepoOwnerAdoptionReport,
+    CrossRepoContractProofReport,
     CrossRepoPromotionPackage,
     CrossRepoPromotionPackageAuditCheck,
     CrossRepoPromotionPackageAuditReport,
@@ -1088,6 +1089,7 @@ MODELS = {
         OrchestratorOwnerReviewCarrierRejectionNotice
     ),
     "orchestrator-owner-review-request.schema.json": OrchestratorOwnerReviewRequest,
+    "cross-repo-contract-proof-report.schema.json": CrossRepoContractProofReport,
     "carrier-rejection-roadmap-slice-status.schema.json": (CarrierRejectionRoadmapSliceStatus),
     "carrier-rejection-roadmap-audit-check.schema.json": CarrierRejectionRoadmapAuditCheck,
     "carrier-rejection-roadmap-audit-report.schema.json": (CarrierRejectionRoadmapAuditReport),
