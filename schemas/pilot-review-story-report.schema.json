@@ -1,0 +1,376 @@
+{
+  "$defs": {
+    "PilotReviewStoryStage": {
+      "additionalProperties": false,
+      "description": "One explicitly bounded step in the synthetic pilot-review narrative.",
+      "properties": {
+        "stage_id": {
+          "title": "Stage Id",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "ready_for_human_review",
+            "blocked",
+            "not_available"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "summary": {
+          "title": "Summary",
+          "type": "string"
+        },
+        "artifact_ref": {
+          "title": "Artifact Ref",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "required_next_gate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Required Next Gate"
+        }
+      },
+      "required": [
+        "stage_id",
+        "label",
+        "status",
+        "summary",
+        "artifact_ref"
+      ],
+      "title": "PilotReviewStoryStage",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "A coherent, read-only review story assembled from source-bound pilot artifacts.",
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "pilot_review_story_id": {
+      "title": "Pilot Review Story Id",
+      "type": "string"
+    },
+    "status": {
+      "const": "ready_for_human_review",
+      "title": "Status",
+      "type": "string"
+    },
+    "story_fixture_ref": {
+      "title": "Story Fixture Ref",
+      "type": "string"
+    },
+    "source_bundle_id": {
+      "title": "Source Bundle Id",
+      "type": "string"
+    },
+    "source_bundle_sha256": {
+      "title": "Source Bundle Sha256",
+      "type": "string"
+    },
+    "source_count": {
+      "minimum": 1,
+      "title": "Source Count",
+      "type": "integer"
+    },
+    "source_hashes_by_id": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Source Hashes By Id",
+      "type": "object"
+    },
+    "selected_candidate_matter_label": {
+      "title": "Selected Candidate Matter Label",
+      "type": "string"
+    },
+    "matter_linking_preflight_report_id": {
+      "title": "Matter Linking Preflight Report Id",
+      "type": "string"
+    },
+    "matter_linking_state": {
+      "const": "resolved_single_candidate_pending_human_confirmation",
+      "title": "Matter Linking State",
+      "type": "string"
+    },
+    "official_matter_number_status": {
+      "const": "not_available",
+      "title": "Official Matter Number Status",
+      "type": "string"
+    },
+    "matter_link_human_confirmation_required": {
+      "const": true,
+      "default": true,
+      "title": "Matter Link Human Confirmation Required",
+      "type": "boolean"
+    },
+    "budget_proposal_id": {
+      "title": "Budget Proposal Id",
+      "type": "string"
+    },
+    "budget_proposal_total": {
+      "minimum": 0,
+      "title": "Budget Proposal Total",
+      "type": "number"
+    },
+    "budget_pricing_status": {
+      "enum": [
+        "priced",
+        "hours_only"
+      ],
+      "title": "Budget Pricing Status",
+      "type": "string"
+    },
+    "budget_display_state": {
+      "const": "withheld_pending_matter_link_and_role_review",
+      "title": "Budget Display State",
+      "type": "string"
+    },
+    "carrier_projection_state": {
+      "const": "not_available_without_pinned_candidate_guideline",
+      "title": "Carrier Projection State",
+      "type": "string"
+    },
+    "carrier_rejection_notice_count": {
+      "minimum": 0,
+      "title": "Carrier Rejection Notice Count",
+      "type": "integer"
+    },
+    "carrier_rejected_amount": {
+      "minimum": 0,
+      "title": "Carrier Rejected Amount",
+      "type": "number"
+    },
+    "carrier_appeal_result_count": {
+      "minimum": 0,
+      "title": "Carrier Appeal Result Count",
+      "type": "integer"
+    },
+    "carrier_recovered_amount": {
+      "minimum": 0,
+      "title": "Carrier Recovered Amount",
+      "type": "number"
+    },
+    "carrier_write_down_amount": {
+      "minimum": 0,
+      "title": "Carrier Write Down Amount",
+      "type": "number"
+    },
+    "actuals_learning_state": {
+      "const": "not_observed_no_learning_candidate",
+      "title": "Actuals Learning State",
+      "type": "string"
+    },
+    "cross_repo_contract_proof_status": {
+      "const": "passed_candidate_contract_proof",
+      "title": "Cross Repo Contract Proof Status",
+      "type": "string"
+    },
+    "cross_repo_contract_proof_scope": {
+      "const": "generic_synthetic_boundary_proof_not_case_evidence",
+      "title": "Cross Repo Contract Proof Scope",
+      "type": "string"
+    },
+    "stage_count": {
+      "minimum": 1,
+      "title": "Stage Count",
+      "type": "integer"
+    },
+    "stages": {
+      "items": {
+        "$ref": "#/$defs/PilotReviewStoryStage"
+      },
+      "title": "Stages",
+      "type": "array"
+    },
+    "candidate_exception_lake_labels": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Candidate Exception Lake Labels",
+      "type": "array"
+    },
+    "required_next_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Gates",
+      "type": "array"
+    },
+    "red_team_notes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Red Team Notes",
+      "type": "array"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "human_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Human Review Required",
+      "type": "boolean"
+    },
+    "not_authorized_for_external_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For External Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_lake_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Lake Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_sqlite_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Sqlite Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_budget_submission": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Budget Submission",
+      "type": "boolean"
+    },
+    "not_authorized_for_matter_opening": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Matter Opening",
+      "type": "boolean"
+    },
+    "not_authorized_for_conflict_clearance": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Conflict Clearance",
+      "type": "boolean"
+    },
+    "not_authorized_for_calibration": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Calibration",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "budget_submission_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Submission Authorized",
+      "type": "boolean"
+    },
+    "matter_opening_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Matter Opening Authorized",
+      "type": "boolean"
+    },
+    "conflict_clearance_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Conflict Clearance Authorized",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "pilot_review_story_id",
+    "status",
+    "story_fixture_ref",
+    "source_bundle_id",
+    "source_bundle_sha256",
+    "source_count",
+    "source_hashes_by_id",
+    "selected_candidate_matter_label",
+    "matter_linking_preflight_report_id",
+    "matter_linking_state",
+    "official_matter_number_status",
+    "budget_proposal_id",
+    "budget_proposal_total",
+    "budget_pricing_status",
+    "budget_display_state",
+    "carrier_projection_state",
+    "carrier_rejection_notice_count",
+    "carrier_rejected_amount",
+    "carrier_appeal_result_count",
+    "carrier_recovered_amount",
+    "carrier_write_down_amount",
+    "actuals_learning_state",
+    "cross_repo_contract_proof_status",
+    "cross_repo_contract_proof_scope",
+    "stage_count",
+    "stages",
+    "candidate_exception_lake_labels",
+    "required_next_gates",
+    "red_team_notes",
+    "generated_at"
+  ],
+  "title": "PilotReviewStoryReport",
+  "type": "object"
+}

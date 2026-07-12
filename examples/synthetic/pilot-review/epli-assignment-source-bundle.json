@@ -1,0 +1,59 @@
+{
+  "schema_version": "0.1",
+  "bundle_id": "syn-pilot-epli-assignment-001",
+  "data_origin": "synthetic",
+  "contains_real_client_data": false,
+  "contains_real_matter_data": false,
+  "contains_privileged_data": false,
+  "sources": [
+    {
+      "source_id": "syn-pilot-epli-assignment-email-001",
+      "source_type": "email",
+      "filename": "synthetic_epli_assignment_clean.txt",
+      "text": "From: claimsdesk@granite-shield-epli.example\nTo: intake@synthetic-law.example\nDate: July 1, 2026\nSubject: EPLI assignment - Brightline Foods / Nguyen\n\nGranite Shield EPLI asks the firm to evaluate a potential defense assignment for its insured Brightline Foods Inc. Carrier claim GS-EPLI-2026-1042 concerns claimant Talia Nguyen, represented by Stone & Hart. ClaimsBridge Administrators is the third-party administrator and instructing source. Granite Shield may be the payer for approved defense costs, but the email says not to assume Granite Shield is the represented client. The attached carrier guideline and approved rate schedule are synthetic placeholders for review only. The matter is a discrimination and retaliation claim, damages exposure is described only at a high level, and expert and vendor needs are not identified. Please keep carrier, payer, TPA, insured, represented client, claimant, and opposing counsel as separate role candidates before any labor and employment budget range.",
+      "metadata": {
+        "synthetic": true,
+        "attachment_refs": [
+          "granite-shield-epli-guideline-excerpt.txt",
+          "granite-shield-approved-rate-schedule.txt"
+        ]
+      }
+    },
+    {
+      "source_id": "syn-pilot-epli-followup-001",
+      "source_type": "email",
+      "filename": "synthetic_epli_assignment_followup.txt",
+      "text": "From: claimsdesk@granite-shield-epli.example\nTo: intake@synthetic-law.example\nDate: July 1, 2026\nSubject: Follow-up - GS-EPLI-2026-1042\n\nFor the Upfront-like intake request UPF-SYN-EPLI-2270, please keep the Brightline Foods Inc. / Talia Nguyen materials together under carrier claim GS-EPLI-2026-1042. This confirms only a candidate document cluster for review. It is not a firm matter number, engagement approval, conflict clearance, or permission to submit a budget.",
+      "metadata": {
+        "synthetic": true,
+        "document_type": "assignment_followup"
+      }
+    },
+    {
+      "source_id": "syn-pilot-epli-guideline-001",
+      "source_type": "attachment_text",
+      "filename": "granite-shield-epli-guideline-excerpt.txt",
+      "text": "Synthetic carrier guideline excerpt: Granite Shield EPLI guideline GS-EPLI-2026 requires panel counsel to preserve proposed versus carrier-compliant projection, flag preapproval thresholds, and label all budget ranges as not authorized for client or carrier submission. This carrier guideline excerpt is synthetic and candidate-only.",
+      "metadata": {
+        "synthetic": true,
+        "document_type": "carrier_guideline_excerpt"
+      }
+    },
+    {
+      "source_id": "syn-pilot-epli-rate-schedule-001",
+      "source_type": "attachment_text",
+      "filename": "granite-shield-approved-rate-schedule.txt",
+      "text": "Synthetic approved rate schedule: title bands for partner, senior counsel, associate, and paralegal are included as non-numeric placeholders for candidate-only intake testing. This approved rate schedule contains no real negotiated rates and cannot authorize a budget submission.",
+      "metadata": {
+        "synthetic": true,
+        "document_type": "approved_rate_schedule_placeholder",
+        "contains_real_rates": false
+      }
+    }
+  ],
+  "fixture_hints": {
+    "synthetic": true,
+    "practice_area": "labor_employment",
+    "matter_family_candidate": "epli_carrier_assignment"
+  }
+}

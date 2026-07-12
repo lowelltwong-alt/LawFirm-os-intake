@@ -18836,6 +18836,89 @@ class CrossRepoContractProofReport(StrictModel):
         return self
 
 
+class PilotReviewStoryStage(StrictModel):
+    """One explicitly bounded step in the synthetic pilot-review narrative."""
+
+    stage_id: str
+    label: str
+    status: Literal["passed", "ready_for_human_review", "blocked", "not_available"]
+    summary: str
+    artifact_ref: str
+    evidence_refs: list[str] = Field(default_factory=list)
+    required_next_gate: str | None = None
+
+
+class PilotReviewStoryReport(StrictModel):
+    """A coherent, read-only review story assembled from source-bound pilot artifacts."""
+
+    schema_version: str = "0.1"
+    pilot_review_story_id: str
+    status: Literal["ready_for_human_review"]
+    story_fixture_ref: str
+    source_bundle_id: str
+    source_bundle_sha256: str
+    source_count: int = Field(ge=1)
+    source_hashes_by_id: dict[str, str]
+    selected_candidate_matter_label: str
+    matter_linking_preflight_report_id: str
+    matter_linking_state: Literal["resolved_single_candidate_pending_human_confirmation"]
+    official_matter_number_status: Literal["not_available"]
+    matter_link_human_confirmation_required: Literal[True] = True
+    budget_proposal_id: str
+    budget_proposal_total: float = Field(ge=0)
+    budget_pricing_status: Literal["priced", "hours_only"]
+    budget_display_state: Literal["withheld_pending_matter_link_and_role_review"]
+    carrier_projection_state: Literal["not_available_without_pinned_candidate_guideline"]
+    carrier_rejection_notice_count: int = Field(ge=0)
+    carrier_rejected_amount: float = Field(ge=0)
+    carrier_appeal_result_count: int = Field(ge=0)
+    carrier_recovered_amount: float = Field(ge=0)
+    carrier_write_down_amount: float = Field(ge=0)
+    actuals_learning_state: Literal["not_observed_no_learning_candidate"]
+    cross_repo_contract_proof_status: Literal["passed_candidate_contract_proof"]
+    cross_repo_contract_proof_scope: Literal["generic_synthetic_boundary_proof_not_case_evidence"]
+    stage_count: int = Field(ge=1)
+    stages: list[PilotReviewStoryStage]
+    candidate_exception_lake_labels: list[str]
+    required_next_gates: list[str]
+    red_team_notes: list[str]
+    synthetic_only: Literal[True] = True
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    human_review_required: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    not_authorized_for_matter_opening: Literal[True] = True
+    not_authorized_for_conflict_clearance: Literal[True] = True
+    not_authorized_for_calibration: Literal[True] = True
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    conflict_clearance_authorized: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def pilot_story_is_complete_but_not_authoritative(self) -> "PilotReviewStoryReport":
+        if self.stage_count != len(self.stages):
+            raise ValueError("pilot review story stage count does not match")
+        if not self.source_hashes_by_id:
+            raise ValueError("pilot review story requires source hashes")
+        if not any(stage.stage_id == "matter_linking" for stage in self.stages):
+            raise ValueError("pilot review story requires a matter-linking stage")
+        if not any(stage.stage_id == "carrier_projection" for stage in self.stages):
+            raise ValueError("pilot review story requires a carrier-projection stage")
+        if not any(stage.stage_id == "actuals_learning" for stage in self.stages):
+            raise ValueError("pilot review story requires an actuals-learning stage")
+        if not self.required_next_gates or not self.red_team_notes:
+            raise ValueError("pilot review story requires gates and red-team notes")
+        return self
+
+
 class CrossRepoOwnerIssueDraft(StrictModel):
     schema_version: str = "0.1"
     issue_draft_id: str

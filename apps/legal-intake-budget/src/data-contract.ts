@@ -2,6 +2,7 @@ import type {
   BoundaryFlags,
   BudgetLearningLoopReport,
   CrossRepoContractProofReport,
+  PilotReviewStoryReport,
   LaborEmploymentBudgetLearningFixtureReport,
   LaborEmploymentBudgetLearningLoopType,
   LaborEmploymentBudgetOutcomeReplayBuilderBindingReport,
@@ -789,6 +790,66 @@ export function assertCrossRepoContractProofReport(
     !report.exception_lake_commit
   ) {
     failures.push("cross_repo_contract_proof_identity_missing");
+  }
+  return failures;
+}
+
+export function assertPilotReviewStoryReport(report: PilotReviewStoryReport): string[] {
+  const failures: string[] = [];
+  if (report.status !== "ready_for_human_review" || !report.pilot_review_story_id) {
+    failures.push("pilot_review_story_not_ready_for_human_review");
+  }
+  if (
+    report.matter_linking_state !== "resolved_single_candidate_pending_human_confirmation" ||
+    report.official_matter_number_status !== "not_available" ||
+    !report.matter_link_human_confirmation_required
+  ) {
+    failures.push("pilot_review_story_matter_link_boundary_failed");
+  }
+  if (
+    report.budget_display_state !== "withheld_pending_matter_link_and_role_review" ||
+    report.carrier_projection_state !== "not_available_without_pinned_candidate_guideline" ||
+    report.actuals_learning_state !== "not_observed_no_learning_candidate"
+  ) {
+    failures.push("pilot_review_story_honesty_gate_failed");
+  }
+  if (
+    report.cross_repo_contract_proof_status !== "passed_candidate_contract_proof" ||
+    report.cross_repo_contract_proof_scope !== "generic_synthetic_boundary_proof_not_case_evidence"
+  ) {
+    failures.push("pilot_review_story_contract_proof_scope_failed");
+  }
+  if (
+    report.source_count < 1 ||
+    Object.keys(report.source_hashes_by_id).length !== report.source_count ||
+    report.stage_count !== report.stages.length ||
+    !report.stages.some((stage) => stage.stage_id === "matter_linking") ||
+    !report.stages.some((stage) => stage.stage_id === "carrier_projection") ||
+    !report.stages.some((stage) => stage.stage_id === "actuals_learning")
+  ) {
+    failures.push("pilot_review_story_traceability_incomplete");
+  }
+  if (
+    !report.synthetic_only ||
+    !report.candidate_only ||
+    !report.non_authoritative ||
+    !report.human_review_required ||
+    !report.not_authorized_for_external_write ||
+    !report.not_authorized_for_lake_write ||
+    !report.not_authorized_for_sqlite_write ||
+    !report.not_authorized_for_budget_submission ||
+    !report.not_authorized_for_matter_opening ||
+    !report.not_authorized_for_conflict_clearance ||
+    !report.not_authorized_for_calibration ||
+    report.lake_write_performed ||
+    report.sqlite_write_performed ||
+    report.external_writes_performed ||
+    report.budget_submission_authorized ||
+    report.matter_opening_authorized ||
+    report.conflict_clearance_authorized ||
+    report.silent_learning_performed
+  ) {
+    failures.push("pilot_review_story_no_write_boundary_failed");
   }
   return failures;
 }

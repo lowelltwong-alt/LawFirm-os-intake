@@ -1,7 +1,7 @@
 {
   "budget_submission_authorized": false,
   "candidate_only": true,
-  "checked_json_file_count": 30,
+  "checked_json_file_count": 31,
   "external_writes_performed": false,
   "failure_count": 0,
   "failures": [],
@@ -420,6 +420,35 @@
       "top_level_type": "object"
     },
     {
+      "byte_count": 7759,
+      "candidate_only": true,
+      "external_writes_performed": false,
+      "id_fields": [
+        {
+          "field": "budget_proposal_id",
+          "value": "le-budget-epli-carrier-clean.v0_1"
+        },
+        {
+          "field": "matter_linking_preflight_report_id",
+          "value": "matterlinkpreflight_13b8f31ab18043986e18"
+        },
+        {
+          "field": "pilot_review_story_id",
+          "value": "pilotreviewstory_960af88317fa0f7a8918"
+        },
+        {
+          "field": "source_bundle_id",
+          "value": "syn-pilot-epli-assignment-001"
+        }
+      ],
+      "path": "demo-pilot-review-story-report.json",
+      "schema_version": "0.1",
+      "sha256": "sha256:39b25ddf469f584430f59c98d38866f7ba1492aeda3d4398cd4423984380b28c",
+      "status": "ready_for_human_review",
+      "synthetic_only": true,
+      "top_level_type": "object"
+    },
+    {
       "byte_count": 12286,
       "candidate_only": true,
       "external_writes_performed": false,
@@ -718,11 +747,11 @@
   ],
   "lake_write_performed": false,
   "local_json_only": true,
-  "manifest_sha256": "sha256:fd581649d05f61cd1da96aaa24a3c4cd3257c71eabbdae9b295882b9d61fb085",
+  "manifest_sha256": "sha256:5bc354a9ac730459738a4aac21d03a409bcbfa79637763be69c0a3164e3d4abd",
   "matter_opening_authorized": false,
   "non_authoritative": true,
   "parse_error_count": 0,
-  "parsed_json_file_count": 30,
+  "parsed_json_file_count": 31,
   "root": "apps\\legal-intake-budget\\src\\fixtures",
   "scanner": "fixture-manifest-scanner",
   "schema_version": "0.1",
@@ -741,5 +770,5 @@
   "sqlite_write_performed": false,
   "status": "passed",
   "synthetic_only": true,
-  "total_byte_count": 765074
+  "total_byte_count": 772833
 }

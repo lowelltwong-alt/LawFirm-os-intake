@@ -1,0 +1,151 @@
+{
+  "schema_version": "0.1",
+  "pilot_review_story_id": "pilotreviewstory_960af88317fa0f7a8918",
+  "status": "ready_for_human_review",
+  "story_fixture_ref": "synthetic://pilot-review/epli-assignment-pilot-review-story.json",
+  "source_bundle_id": "syn-pilot-epli-assignment-001",
+  "source_bundle_sha256": "sha256:1c90ab3afe71aadb0693b3c83661ddf8d252e4cc895738c25d0d8a6ac65e4663",
+  "source_count": 4,
+  "source_hashes_by_id": {
+    "syn-pilot-epli-assignment-email-001": "sha256:7b146106131ae2800c01bea0000969249ff63285fc2828ca597c9803b9d26ec4",
+    "syn-pilot-epli-followup-001": "sha256:63507f9c1bda9fea2219c97abe5d31ad3e43ce78e2ee74c443ff242017585274",
+    "syn-pilot-epli-guideline-001": "sha256:579831259d396d4e74a1d2323723801011e64cb7486f4b71a625a98f9fd041a1",
+    "syn-pilot-epli-rate-schedule-001": "sha256:089930be58f6eab5dafeb9fac491568598b37a1cfbebc2c408b7c2d658e8dcb0"
+  },
+  "selected_candidate_matter_label": "Brightline Foods Inc. / Talia Nguyen",
+  "matter_linking_preflight_report_id": "matterlinkpreflight_13b8f31ab18043986e18",
+  "matter_linking_state": "resolved_single_candidate_pending_human_confirmation",
+  "official_matter_number_status": "not_available",
+  "matter_link_human_confirmation_required": true,
+  "budget_proposal_id": "le-budget-epli-carrier-clean.v0_1",
+  "budget_proposal_total": 54090.0,
+  "budget_pricing_status": "priced",
+  "budget_display_state": "withheld_pending_matter_link_and_role_review",
+  "carrier_projection_state": "not_available_without_pinned_candidate_guideline",
+  "carrier_rejection_notice_count": 2,
+  "carrier_rejected_amount": 3900.0,
+  "carrier_appeal_result_count": 1,
+  "carrier_recovered_amount": 900.0,
+  "carrier_write_down_amount": 1200.0,
+  "actuals_learning_state": "not_observed_no_learning_candidate",
+  "cross_repo_contract_proof_status": "passed_candidate_contract_proof",
+  "cross_repo_contract_proof_scope": "generic_synthetic_boundary_proof_not_case_evidence",
+  "stage_count": 8,
+  "stages": [
+    {
+      "stage_id": "source_inventory",
+      "label": "Source Inventory",
+      "status": "passed",
+      "summary": "Four synthetic assignment sources are hashed and retained as local review evidence.",
+      "artifact_ref": "synthetic://pilot-review/epli-assignment-source-bundle.json",
+      "evidence_refs": ["syn-pilot-epli-assignment-email-001", "syn-pilot-epli-followup-001"],
+      "required_next_gate": null
+    },
+    {
+      "stage_id": "matter_linking",
+      "label": "Matter Link",
+      "status": "ready_for_human_review",
+      "summary": "A source-bound EPLI assignment candidate is resolved, but it has no official firm matter number.",
+      "artifact_ref": "synthetic://pilot-review/matter-linking-preflight-report.json",
+      "evidence_refs": ["GS-EPLI-2026-1042", "UPF-SYN-EPLI-2270"],
+      "required_next_gate": "human_matter_linking_review"
+    },
+    {
+      "stage_id": "party_roles",
+      "label": "Party Roles",
+      "status": "blocked",
+      "summary": "Carrier, payer, TPA, insured, prospective client, claimant, and opposing counsel remain separate candidate roles.",
+      "artifact_ref": "synthetic://pilot-review/epli-assignment-source-bundle.json",
+      "evidence_refs": ["syn-pilot-epli-assignment-email-001"],
+      "required_next_gate": "human_principal_party_role_confirmation"
+    },
+    {
+      "stage_id": "budget",
+      "label": "Budget Proposal",
+      "status": "blocked",
+      "summary": "Synthetic proposed math is preserved, but its display is withheld until matter linkage and principal roles are reviewed.",
+      "artifact_ref": "synthetic://labor-employment/epli-carrier-clean/legal_budget_proposal.json",
+      "evidence_refs": ["le-budget-epli-carrier-clean.v0_1"],
+      "required_next_gate": "human_budget_range_review"
+    },
+    {
+      "stage_id": "carrier_projection",
+      "label": "Carrier Projection",
+      "status": "not_available",
+      "summary": "No matching pinned candidate guideline IR exists, so the dossier does not invent a carrier-compliant total or delta.",
+      "artifact_ref": "synthetic://pilot-review/epli-assignment-source-bundle.json",
+      "evidence_refs": ["syn-pilot-epli-guideline-001"],
+      "required_next_gate": "pinned_candidate_guideline_before_carrier_projection"
+    },
+    {
+      "stage_id": "carrier_rejection",
+      "label": "Rejection And Appeal",
+      "status": "ready_for_human_review",
+      "summary": "Synthetic portal/email response evidence is classified for review; no appeal is submitted by this workflow.",
+      "artifact_ref": "synthetic://labor-employment/epli-carrier-clean/carrier-rejection.json",
+      "evidence_refs": ["le-notice-epli-staffing-4001", "le-notice-epli-preapproval-4002"],
+      "required_next_gate": "owner_review_before_exception_lake_admission"
+    },
+    {
+      "stage_id": "actuals_learning",
+      "label": "Actuals And Learning",
+      "status": "not_available",
+      "summary": "No budget-to-actuals source is present, so no learning candidate, calibration, or policy update is produced.",
+      "artifact_ref": "synthetic://labor-employment/epli-carrier-clean/carrier-rejection.json",
+      "evidence_refs": [],
+      "required_next_gate": "budget_actuals_source_before_learning_candidate"
+    },
+    {
+      "stage_id": "owner_handoff",
+      "label": "Owner Handoff Boundary",
+      "status": "passed",
+      "summary": "A separate generic synthetic proof confirms owner validators preserve a no-write, owner-gated handoff boundary.",
+      "artifact_ref": "synthetic://cross-repo/contract-proof.json",
+      "evidence_refs": ["passed_candidate_contract_proof"],
+      "required_next_gate": null
+    }
+  ],
+  "candidate_exception_lake_labels": [
+    "budget_actuals_not_observed_no_learning_candidate",
+    "budget_amount_withheld_pending_matter_link_and_role_review",
+    "carrier_appeal_result_observed_synthetic",
+    "carrier_projection_missing_pinned_candidate_guideline",
+    "carrier_rejection_observed_synthetic",
+    "human_matter_linking_confirmation_required",
+    "missing_official_matter_number",
+    "source_matter_link_resolved_candidate"
+  ],
+  "required_next_gates": [
+    "human_matter_linking_review",
+    "human_principal_party_role_confirmation",
+    "human_budget_range_review",
+    "pinned_candidate_guideline_before_carrier_projection",
+    "owner_review_before_exception_lake_admission",
+    "budget_actuals_source_before_learning_candidate"
+  ],
+  "red_team_notes": [
+    "The proposed budget is retained as synthetic candidate math, but its display is withheld until matter linkage and principal roles are confirmed.",
+    "The synthetic carrier rejection and appeal records are observed outcome fixtures, not permission to submit, appeal, or learn from a live carrier response.",
+    "No Granite Shield candidate guideline IR is pinned, so the dossier refuses to fabricate a carrier-compliant projection or a rate delta.",
+    "The cross-repo contract proof verifies a generic synthetic no-write path only; it is not evidence about this pilot matter."
+  ],
+  "synthetic_only": true,
+  "candidate_only": true,
+  "non_authoritative": true,
+  "human_review_required": true,
+  "not_authorized_for_external_write": true,
+  "not_authorized_for_lake_write": true,
+  "not_authorized_for_sqlite_write": true,
+  "not_authorized_for_budget_submission": true,
+  "not_authorized_for_matter_opening": true,
+  "not_authorized_for_conflict_clearance": true,
+  "not_authorized_for_calibration": true,
+  "lake_write_performed": false,
+  "sqlite_write_performed": false,
+  "external_writes_performed": false,
+  "budget_submission_authorized": false,
+  "matter_opening_authorized": false,
+  "conflict_clearance_authorized": false,
+  "silent_learning_performed": false,
+  "generated_at": "2026-07-12T00:00:00Z"
+}

@@ -46,6 +46,7 @@ def test_legal_intake_budget_ui_required_files_exist(repo_root):
         "src/fixtures/demo-labor-employment-budget-outcome-replay-confidence-status-report.json",
         "src/fixtures/demo-budget-learning-loop-report.json",
         "src/fixtures/demo-cross-repo-contract-proof-report.json",
+        "src/fixtures/demo-pilot-review-story-report.json",
     ]
 
     for relative_path in required:
@@ -123,6 +124,7 @@ def test_legal_intake_budget_ui_data_contract_lists_required_artifacts(repo_root
     assert "sqliteWritesAllowed: false" in contract
     assert "budgetSubmissionAllowed: false" in contract
     assert "matterOpeningAllowed: false" in contract
+    assert "pilot_review_story_honesty_gate_failed" in contract
 
 
 def test_legal_intake_budget_demo_manifest_is_read_only_and_candidate_only(repo_root):

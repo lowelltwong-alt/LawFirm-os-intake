@@ -1029,6 +1029,69 @@ export type CrossRepoContractProofReport = {
   generated_at: string;
 };
 
+export type PilotReviewStoryStage = {
+  stage_id: string;
+  label: string;
+  status: "passed" | "ready_for_human_review" | "blocked" | "not_available";
+  summary: string;
+  artifact_ref: string;
+  evidence_refs: string[];
+  required_next_gate: string | null;
+};
+
+export type PilotReviewStoryReport = {
+  schema_version: string;
+  pilot_review_story_id: string;
+  status: "ready_for_human_review";
+  story_fixture_ref: string;
+  source_bundle_id: string;
+  source_bundle_sha256: string;
+  source_count: number;
+  source_hashes_by_id: Record<string, string>;
+  selected_candidate_matter_label: string;
+  matter_linking_preflight_report_id: string;
+  matter_linking_state: "resolved_single_candidate_pending_human_confirmation";
+  official_matter_number_status: "not_available";
+  matter_link_human_confirmation_required: true;
+  budget_proposal_id: string;
+  budget_proposal_total: number;
+  budget_pricing_status: "priced" | "hours_only";
+  budget_display_state: "withheld_pending_matter_link_and_role_review";
+  carrier_projection_state: "not_available_without_pinned_candidate_guideline";
+  carrier_rejection_notice_count: number;
+  carrier_rejected_amount: number;
+  carrier_appeal_result_count: number;
+  carrier_recovered_amount: number;
+  carrier_write_down_amount: number;
+  actuals_learning_state: "not_observed_no_learning_candidate";
+  cross_repo_contract_proof_status: "passed_candidate_contract_proof";
+  cross_repo_contract_proof_scope: "generic_synthetic_boundary_proof_not_case_evidence";
+  stage_count: number;
+  stages: PilotReviewStoryStage[];
+  candidate_exception_lake_labels: string[];
+  required_next_gates: string[];
+  red_team_notes: string[];
+  synthetic_only: true;
+  candidate_only: true;
+  non_authoritative: true;
+  human_review_required: true;
+  not_authorized_for_external_write: true;
+  not_authorized_for_lake_write: true;
+  not_authorized_for_sqlite_write: true;
+  not_authorized_for_budget_submission: true;
+  not_authorized_for_matter_opening: true;
+  not_authorized_for_conflict_clearance: true;
+  not_authorized_for_calibration: true;
+  lake_write_performed: false;
+  sqlite_write_performed: false;
+  external_writes_performed: false;
+  budget_submission_authorized: false;
+  matter_opening_authorized: false;
+  conflict_clearance_authorized: false;
+  silent_learning_performed: false;
+  generated_at: string;
+};
+
 export type SyntheticQABlockerRowState = "failed" | "blocked" | "pending_review";
 
 export type SyntheticQABlockerActionState = "blocked" | "needs_review" | "fixed" | "ready";
