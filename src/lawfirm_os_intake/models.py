@@ -19641,4 +19641,98 @@ class QAProductConfidenceReport(StrictModel):
     not_authorized_for_model_training: bool = True
 
 
+class SyntheticRateCardWorkbenchRow(StrictModel):
+    carrier_id: str
+    carrier_name: str
+    effective_date: str
+    state: str
+    title: str
+    hourly_rate: float = Field(gt=0)
+
+
+class SyntheticRateCardWorkbenchStateSummary(StrictModel):
+    carrier_id: str
+    carrier_name: str
+    state: str
+    role_count: int = Field(ge=0)
+    minimum_hourly_rate: float = Field(gt=0)
+    maximum_hourly_rate: float = Field(gt=0)
+    average_hourly_rate: float = Field(gt=0)
+
+
+class SyntheticRateCardWorkbenchCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    evidence_refs: list[str] = Field(default_factory=list)
+
+
+class SyntheticRateCardWorkbenchReport(StrictModel):
+    schema_version: str = "0.1"
+    synthetic_rate_card_workbench_report_id: str
+    status: Literal[
+        "synthetic_rate_card_workbench_ready_for_review",
+        "blocked_by_synthetic_rate_card_workbench",
+    ]
+    rate_card_id: str
+    rate_card_version: str
+    rate_card_ref: str
+    rate_card_sha256: str
+    editable_source_ref: str
+    methodology_version: Literal["synthetic_rate_card_workbench.v0_1"] = (
+        "synthetic_rate_card_workbench.v0_1"
+    )
+    carrier_count: int = Field(ge=0)
+    state_count: int = Field(ge=0)
+    title_count: int = Field(ge=0)
+    row_count: int = Field(ge=0)
+    named_timekeeper_override_count: int = Field(ge=0)
+    rows: list[SyntheticRateCardWorkbenchRow]
+    state_summaries: list[SyntheticRateCardWorkbenchStateSummary]
+    checks: list[SyntheticRateCardWorkbenchCheck]
+    failed_check_count: int = Field(ge=0)
+    workbook_filename: str
+    markdown_filename: str
+    display_banner: dict[str, Any]
+    candidate_exception_lake_labels: list[str]
+    required_next_gates: list[str]
+    data_origin: Literal["synthetic"] = "synthetic"
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    local_json_only: Literal[True] = True
+    read_only_ui: Literal[True] = True
+    real_rate_import_allowed: Literal[False] = False
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    not_authorized_for_matter_opening: Literal[True] = True
+    not_authorized_for_calibration: Literal[True] = True
+    external_writes_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def workbench_report_is_complete_and_candidate_only(self) -> "SyntheticRateCardWorkbenchReport":
+        failed = [check for check in self.checks if check.status == "failed"]
+        if self.failed_check_count != len(failed):
+            raise ValueError("synthetic rate card workbench failed check count mismatch")
+        if self.row_count != len(self.rows):
+            raise ValueError("synthetic rate card workbench row count mismatch")
+        if self.status == "synthetic_rate_card_workbench_ready_for_review" and failed:
+            raise ValueError(
+                "ready synthetic rate card workbench report cannot include failed checks"
+            )
+        if self.status == "blocked_by_synthetic_rate_card_workbench" and not failed:
+            raise ValueError("blocked synthetic rate card workbench report requires failed checks")
+        if not self.rate_card_sha256.startswith("sha256:"):
+            raise ValueError("synthetic rate card workbench requires a source hash")
+        return self
+
+
 UIReviewDataBundle.model_rebuild()

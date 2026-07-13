@@ -218,6 +218,159 @@ code {
   margin-bottom: 14px;
 }
 
+.rate-card-workbench-panel {
+  margin-bottom: 14px;
+}
+
+.rate-card-banner {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 14px;
+  padding: 12px;
+  border-left: 4px solid #234157;
+  background: #eef5f1;
+  color: #1c3024;
+}
+
+.rate-card-banner span,
+.rate-card-export-note {
+  color: #44554a;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+  overflow-wrap: anywhere;
+}
+
+.rate-card-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.rate-card-metrics article {
+  display: grid;
+  gap: 4px;
+  padding: 10px;
+  border: 1px solid #dde4d8;
+  border-radius: 6px;
+  background: #fbfcfa;
+}
+
+.rate-card-metrics span,
+.rate-bar-row > span {
+  color: #526057;
+  font-size: 0.78rem;
+}
+
+.rate-card-metrics strong {
+  color: #172a1d;
+  font-size: 1.35rem;
+}
+
+.rate-card-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.rate-card-controls label {
+  display: grid;
+  gap: 4px;
+  min-width: 150px;
+  color: #334137;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.rate-card-controls select {
+  min-height: 34px;
+  border: 1px solid #aeb9ad;
+  border-radius: 5px;
+  background: #ffffff;
+  color: #1d2a20;
+}
+
+.rate-card-controls button {
+  min-height: 34px;
+  border: 1px solid #234157;
+  border-radius: 5px;
+  background: #234157;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.rate-card-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(240px, 0.8fr);
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.rate-bar-chart,
+.rate-card-checks {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid #dde4d8;
+  border-radius: 6px;
+  background: #fbfcfa;
+}
+
+.rate-bar-chart h3,
+.rate-card-checks h3 {
+  margin: 0 0 10px;
+  font-size: 0.95rem;
+}
+
+.rate-bar-row {
+  display: grid;
+  grid-template-columns: minmax(130px, 1.2fr) minmax(100px, 2fr) auto;
+  align-items: center;
+  gap: 8px;
+  min-height: 30px;
+}
+
+.rate-bar-track {
+  height: 12px;
+  overflow: hidden;
+  border-radius: 3px;
+  background: #dbe7df;
+}
+
+.rate-bar-fill {
+  height: 100%;
+  min-width: 2px;
+  background: #2f6b57;
+}
+
+.rate-bar-row strong {
+  color: #1d2a20;
+  font-size: 0.82rem;
+  text-align: right;
+}
+
+.rate-card-checks ul {
+  display: grid;
+  gap: 7px;
+  margin: 0 0 12px;
+  padding: 0;
+  list-style: none;
+}
+
+.rate-card-checks li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+  color: #2c3930;
+  font-size: 0.82rem;
+}
+
+.rate-card-table-wrap {
+  max-height: 360px;
+}
+
 .contract-proof-panel {
   margin-bottom: 14px;
 }
@@ -1483,11 +1636,16 @@ td:nth-child(4) {
   .pilot-story-flow,
   .pilot-story-columns,
   .budget-learning-grid,
-  .budget-learning-columns {
+  .budget-learning-columns,
+  .rate-card-layout {
     grid-template-columns: 1fr;
   }
 
   .budget-learning-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .rate-card-metrics {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 

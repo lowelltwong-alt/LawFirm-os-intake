@@ -34,6 +34,7 @@ import type {
   OCGRuleIRAdoptionReport,
   UIReviewDataBundle,
   ValidationSuiteEvidenceReport,
+  SyntheticRateCardWorkbenchReport,
 } from "./types";
 
 export const REQUIRED_ARTIFACT_FILES = [
@@ -220,6 +221,52 @@ export function assertUIReviewDataBundle(bundle: UIReviewDataBundle): string[] {
   }
   if (bundle.status !== "ready_for_review") {
     failures.push(`ui_review_bundle_not_ready:${bundle.status}`);
+  }
+  return failures;
+}
+
+export function assertSyntheticRateCardWorkbenchReport(
+  report: SyntheticRateCardWorkbenchReport,
+): string[] {
+  const failures: string[] = [];
+  if (
+    report.data_origin !== "synthetic" ||
+    !report.candidate_only ||
+    !report.synthetic_only ||
+    !report.non_authoritative ||
+    !report.local_json_only ||
+    !report.read_only_ui
+  ) {
+    failures.push("synthetic_rate_card_workbench_authority_boundary_failed");
+  }
+  if (
+    report.real_rate_import_allowed ||
+    report.external_writes_performed ||
+    report.lake_write_performed ||
+    report.sqlite_write_performed ||
+    report.budget_submission_authorized ||
+    report.matter_opening_authorized ||
+    report.silent_learning_performed
+  ) {
+    failures.push("synthetic_rate_card_workbench_side_effect_boundary_failed");
+  }
+  if (!report.rate_card_sha256.startsWith("sha256:")) {
+    failures.push("synthetic_rate_card_workbench_source_hash_missing");
+  }
+  if (report.row_count !== report.rows.length) {
+    failures.push("synthetic_rate_card_workbench_row_count_mismatch");
+  }
+  if (report.failed_check_count !== report.checks.filter((check) => check.status === "failed").length) {
+    failures.push("synthetic_rate_card_workbench_failed_check_count_mismatch");
+  }
+  if (
+    report.status === "synthetic_rate_card_workbench_ready_for_review" &&
+    report.failed_check_count !== 0
+  ) {
+    failures.push("synthetic_rate_card_workbench_ready_with_failed_checks");
+  }
+  if (report.rows.some((row) => row.hourly_rate <= 0)) {
+    failures.push("synthetic_rate_card_workbench_nonpositive_rate");
   }
   return failures;
 }

@@ -1,0 +1,395 @@
+{
+  "$defs": {
+    "SyntheticRateCardWorkbenchCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "SyntheticRateCardWorkbenchCheck",
+      "type": "object"
+    },
+    "SyntheticRateCardWorkbenchRow": {
+      "additionalProperties": false,
+      "properties": {
+        "carrier_id": {
+          "title": "Carrier Id",
+          "type": "string"
+        },
+        "carrier_name": {
+          "title": "Carrier Name",
+          "type": "string"
+        },
+        "effective_date": {
+          "title": "Effective Date",
+          "type": "string"
+        },
+        "state": {
+          "title": "State",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "hourly_rate": {
+          "exclusiveMinimum": 0,
+          "title": "Hourly Rate",
+          "type": "number"
+        }
+      },
+      "required": [
+        "carrier_id",
+        "carrier_name",
+        "effective_date",
+        "state",
+        "title",
+        "hourly_rate"
+      ],
+      "title": "SyntheticRateCardWorkbenchRow",
+      "type": "object"
+    },
+    "SyntheticRateCardWorkbenchStateSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "carrier_id": {
+          "title": "Carrier Id",
+          "type": "string"
+        },
+        "carrier_name": {
+          "title": "Carrier Name",
+          "type": "string"
+        },
+        "state": {
+          "title": "State",
+          "type": "string"
+        },
+        "role_count": {
+          "minimum": 0,
+          "title": "Role Count",
+          "type": "integer"
+        },
+        "minimum_hourly_rate": {
+          "exclusiveMinimum": 0,
+          "title": "Minimum Hourly Rate",
+          "type": "number"
+        },
+        "maximum_hourly_rate": {
+          "exclusiveMinimum": 0,
+          "title": "Maximum Hourly Rate",
+          "type": "number"
+        },
+        "average_hourly_rate": {
+          "exclusiveMinimum": 0,
+          "title": "Average Hourly Rate",
+          "type": "number"
+        }
+      },
+      "required": [
+        "carrier_id",
+        "carrier_name",
+        "state",
+        "role_count",
+        "minimum_hourly_rate",
+        "maximum_hourly_rate",
+        "average_hourly_rate"
+      ],
+      "title": "SyntheticRateCardWorkbenchStateSummary",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "synthetic_rate_card_workbench_report_id": {
+      "title": "Synthetic Rate Card Workbench Report Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "synthetic_rate_card_workbench_ready_for_review",
+        "blocked_by_synthetic_rate_card_workbench"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "rate_card_id": {
+      "title": "Rate Card Id",
+      "type": "string"
+    },
+    "rate_card_version": {
+      "title": "Rate Card Version",
+      "type": "string"
+    },
+    "rate_card_ref": {
+      "title": "Rate Card Ref",
+      "type": "string"
+    },
+    "rate_card_sha256": {
+      "title": "Rate Card Sha256",
+      "type": "string"
+    },
+    "editable_source_ref": {
+      "title": "Editable Source Ref",
+      "type": "string"
+    },
+    "methodology_version": {
+      "const": "synthetic_rate_card_workbench.v0_1",
+      "default": "synthetic_rate_card_workbench.v0_1",
+      "title": "Methodology Version",
+      "type": "string"
+    },
+    "carrier_count": {
+      "minimum": 0,
+      "title": "Carrier Count",
+      "type": "integer"
+    },
+    "state_count": {
+      "minimum": 0,
+      "title": "State Count",
+      "type": "integer"
+    },
+    "title_count": {
+      "minimum": 0,
+      "title": "Title Count",
+      "type": "integer"
+    },
+    "row_count": {
+      "minimum": 0,
+      "title": "Row Count",
+      "type": "integer"
+    },
+    "named_timekeeper_override_count": {
+      "minimum": 0,
+      "title": "Named Timekeeper Override Count",
+      "type": "integer"
+    },
+    "rows": {
+      "items": {
+        "$ref": "#/$defs/SyntheticRateCardWorkbenchRow"
+      },
+      "title": "Rows",
+      "type": "array"
+    },
+    "state_summaries": {
+      "items": {
+        "$ref": "#/$defs/SyntheticRateCardWorkbenchStateSummary"
+      },
+      "title": "State Summaries",
+      "type": "array"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/SyntheticRateCardWorkbenchCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "failed_check_count": {
+      "minimum": 0,
+      "title": "Failed Check Count",
+      "type": "integer"
+    },
+    "workbook_filename": {
+      "title": "Workbook Filename",
+      "type": "string"
+    },
+    "markdown_filename": {
+      "title": "Markdown Filename",
+      "type": "string"
+    },
+    "display_banner": {
+      "additionalProperties": true,
+      "title": "Display Banner",
+      "type": "object"
+    },
+    "candidate_exception_lake_labels": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Candidate Exception Lake Labels",
+      "type": "array"
+    },
+    "required_next_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Gates",
+      "type": "array"
+    },
+    "data_origin": {
+      "const": "synthetic",
+      "default": "synthetic",
+      "title": "Data Origin",
+      "type": "string"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "local_json_only": {
+      "const": true,
+      "default": true,
+      "title": "Local Json Only",
+      "type": "boolean"
+    },
+    "read_only_ui": {
+      "const": true,
+      "default": true,
+      "title": "Read Only Ui",
+      "type": "boolean"
+    },
+    "real_rate_import_allowed": {
+      "const": false,
+      "default": false,
+      "title": "Real Rate Import Allowed",
+      "type": "boolean"
+    },
+    "not_authorized_for_external_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For External Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_lake_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Lake Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_sqlite_write": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Sqlite Write",
+      "type": "boolean"
+    },
+    "not_authorized_for_budget_submission": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Budget Submission",
+      "type": "boolean"
+    },
+    "not_authorized_for_matter_opening": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Matter Opening",
+      "type": "boolean"
+    },
+    "not_authorized_for_calibration": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Calibration",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "budget_submission_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Submission Authorized",
+      "type": "boolean"
+    },
+    "matter_opening_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Matter Opening Authorized",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "synthetic_rate_card_workbench_report_id",
+    "status",
+    "rate_card_id",
+    "rate_card_version",
+    "rate_card_ref",
+    "rate_card_sha256",
+    "editable_source_ref",
+    "carrier_count",
+    "state_count",
+    "title_count",
+    "row_count",
+    "named_timekeeper_override_count",
+    "rows",
+    "state_summaries",
+    "checks",
+    "failed_check_count",
+    "workbook_filename",
+    "markdown_filename",
+    "display_banner",
+    "candidate_exception_lake_labels",
+    "required_next_gates",
+    "generated_at"
+  ],
+  "title": "SyntheticRateCardWorkbenchReport",
+  "type": "object"
+}

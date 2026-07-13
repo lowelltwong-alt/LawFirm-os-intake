@@ -1,7 +1,7 @@
 {
   "budget_submission_authorized": false,
   "candidate_only": true,
-  "checked_json_file_count": 31,
+  "checked_json_file_count": 32,
   "external_writes_performed": false,
   "failure_count": 0,
   "failures": [],
@@ -715,6 +715,28 @@
       "top_level_type": "object"
     },
     {
+      "byte_count": 12361,
+      "candidate_only": true,
+      "data_origin": "synthetic",
+      "external_writes_performed": false,
+      "id_fields": [
+        {
+          "field": "rate_card_id",
+          "value": "synthetic-carrier-rate-card"
+        },
+        {
+          "field": "synthetic_rate_card_workbench_report_id",
+          "value": "synrateworkbench-fcccc2b22312a155"
+        }
+      ],
+      "path": "demo-synthetic-rate-card-workbench-report.json",
+      "schema_version": "0.1",
+      "sha256": "sha256:34c482e4b698483ea70b482cb982cc3c92653deccd9f990f473fd0db06651b1e",
+      "status": "synthetic_rate_card_workbench_ready_for_review",
+      "synthetic_only": true,
+      "top_level_type": "object"
+    },
+    {
       "byte_count": 4964,
       "candidate_only": true,
       "external_writes_performed": false,
@@ -755,11 +777,11 @@
   ],
   "lake_write_performed": false,
   "local_json_only": true,
-  "manifest_sha256": "sha256:167c129265654638c18d138497ac80abef8da0369bc0bbc9478f22ac88d4917d",
+  "manifest_sha256": "sha256:a641c79c78430f4edbe16ca55afc0a427f7015aef970c1d1feaa5bce0408f625",
   "matter_opening_authorized": false,
   "non_authoritative": true,
   "parse_error_count": 0,
-  "parsed_json_file_count": 31,
+  "parsed_json_file_count": 32,
   "root": "apps\\legal-intake-budget\\src\\fixtures",
   "scanner": "fixture-manifest-scanner",
   "schema_version": "0.1",
@@ -778,5 +800,5 @@
   "sqlite_write_performed": false,
   "status": "passed",
   "synthetic_only": true,
-  "total_byte_count": 798273
+  "total_byte_count": 810634
 }

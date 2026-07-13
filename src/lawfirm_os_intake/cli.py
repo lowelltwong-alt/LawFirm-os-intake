@@ -180,6 +180,7 @@ from .synthetic_qa_blocker_report import run_synthetic_qa_blocker_report
 from .synthetic_qa_bundle import run_synthetic_qa_bundle
 from .synthetic_qa_review_outcomes import run_synthetic_qa_review_outcome_record
 from .synthetic_qa_review_run import run_synthetic_qa_review_run
+from .synthetic_rate_card_workbench import run_synthetic_rate_card_workbench
 from .ui_demo_fixture_promotion import promote_ui_demo_run_fixtures
 from .ui_demo_qa_recipe import run_ui_demo_qa_recipe
 from .ui_demo_qa_recipe_fixture_refresh import refresh_ui_demo_qa_recipe_fixture
@@ -282,6 +283,26 @@ def _parser() -> argparse.ArgumentParser:
     )
     budget_form_audit.add_argument("--template", required=True, help="Existing UTBMS budget form")
     budget_form_audit.add_argument("--out", required=True, help="Output audit report JSON path")
+
+    synthetic_rate_card_workbench = sub.add_parser(
+        "build-synthetic-rate-card-workbench",
+        help=(
+            "Build a local report and macro-free XLSX from the fixed checked-in "
+            "synthetic rate card. Real-rate import is intentionally unavailable."
+        ),
+    )
+    synthetic_rate_card_workbench.add_argument(
+        "--out-dir", required=True, help="Local directory for report, markdown, and XLSX."
+    )
+    synthetic_rate_card_workbench.add_argument(
+        "--repo-root",
+        default=".",
+        help="Repository root containing config/synthetic-carrier-rate-card.yaml.",
+    )
+    synthetic_rate_card_workbench.add_argument(
+        "--generated-at",
+        help="Optional fixed timestamp for deterministic tests and fixture replay.",
+    )
 
     validate_budget_artifact = sub.add_parser(
         "validate-budget-artifact",
@@ -2600,6 +2621,36 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 0 if report.status == "passed" else 2
+
+        if args.command == "build-synthetic-rate-card-workbench":
+            report, run_dir = run_synthetic_rate_card_workbench(
+                repo_root=args.repo_root,
+                out_dir=args.out_dir,
+                generated_at=args.generated_at,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "synthetic_rate_card_workbench_report_id": (
+                        report.synthetic_rate_card_workbench_report_id
+                    ),
+                    "rate_card_id": report.rate_card_id,
+                    "rate_card_sha256": report.rate_card_sha256,
+                    "row_count": report.row_count,
+                    "failed_check_count": report.failed_check_count,
+                    "workbook_written": (
+                        report.status == "synthetic_rate_card_workbench_ready_for_review"
+                    ),
+                    "real_rate_import_allowed": report.real_rate_import_allowed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "budget_submission_authorized": report.budget_submission_authorized,
+                    "matter_opening_authorized": report.matter_opening_authorized,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0 if report.status == "synthetic_rate_card_workbench_ready_for_review" else 2
 
         if args.command == "validate-budget-artifact":
             report = validate_budget_artifacts(

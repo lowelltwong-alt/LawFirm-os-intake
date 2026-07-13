@@ -898,6 +898,86 @@ export type BudgetLearningLoopLane = {
   candidate_exception_lake_labels: string[];
 };
 
+export type SyntheticRateCardWorkbenchRow = {
+  carrier_id: string;
+  carrier_name: string;
+  effective_date: string;
+  state: string;
+  title: string;
+  hourly_rate: number;
+};
+
+export type SyntheticRateCardWorkbenchStateSummary = {
+  carrier_id: string;
+  carrier_name: string;
+  state: string;
+  role_count: number;
+  minimum_hourly_rate: number;
+  maximum_hourly_rate: number;
+  average_hourly_rate: number;
+};
+
+export type SyntheticRateCardWorkbenchCheck = {
+  check_id: string;
+  status: "passed" | "failed";
+  message: string;
+  evidence_refs: string[];
+};
+
+export type SyntheticRateCardWorkbenchReport = {
+  schema_version: string;
+  synthetic_rate_card_workbench_report_id: string;
+  status:
+    | "synthetic_rate_card_workbench_ready_for_review"
+    | "blocked_by_synthetic_rate_card_workbench";
+  rate_card_id: string;
+  rate_card_version: string;
+  rate_card_ref: string;
+  rate_card_sha256: string;
+  editable_source_ref: string;
+  methodology_version: string;
+  carrier_count: number;
+  state_count: number;
+  title_count: number;
+  row_count: number;
+  named_timekeeper_override_count: number;
+  rows: SyntheticRateCardWorkbenchRow[];
+  state_summaries: SyntheticRateCardWorkbenchStateSummary[];
+  checks: SyntheticRateCardWorkbenchCheck[];
+  failed_check_count: number;
+  workbook_filename: string;
+  markdown_filename: string;
+  display_banner: {
+    summary: string;
+    candidate_only: boolean;
+    synthetic_only: boolean;
+    real_rate_import_allowed: boolean;
+    blocked_actions: string[];
+  };
+  candidate_exception_lake_labels: string[];
+  required_next_gates: string[];
+  data_origin: "synthetic";
+  candidate_only: true;
+  non_authoritative: true;
+  synthetic_only: true;
+  local_json_only: true;
+  read_only_ui: true;
+  real_rate_import_allowed: false;
+  not_authorized_for_external_write: true;
+  not_authorized_for_lake_write: true;
+  not_authorized_for_sqlite_write: true;
+  not_authorized_for_budget_submission: true;
+  not_authorized_for_matter_opening: true;
+  not_authorized_for_calibration: true;
+  external_writes_performed: false;
+  lake_write_performed: false;
+  sqlite_write_performed: false;
+  budget_submission_authorized: false;
+  matter_opening_authorized: false;
+  silent_learning_performed: false;
+  generated_at: string;
+};
+
 export type BudgetLearningLoopActualsSummary = {
   status: "variance_review_required" | "actuals_not_available" | "actuals_within_threshold";
   comparison_scope: string;

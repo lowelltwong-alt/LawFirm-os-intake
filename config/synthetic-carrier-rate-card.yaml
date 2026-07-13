@@ -1,7 +1,13 @@
 rate_card_id: synthetic-carrier-rate-card
 version: "0.1"
 status: candidate
+data_origin: synthetic
+candidate_only: true
+not_promoted_canon: true
 contains_real_firm_data: false
+contains_real_carrier_data: false
+contains_real_negotiated_rates: false
+real_rate_import_allowed: false
 
 # SYNTHETIC ONLY. Carrier x state x timekeeper-title authorized hourly rates. These are
 # invented numbers, not real firm or carrier rate cards. Rates resolve by:
