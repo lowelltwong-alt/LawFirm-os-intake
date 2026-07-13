@@ -87,6 +87,20 @@ async function main() {
 
     await page.goto(`${baseUrl}/`, { waitUntil: "networkidle" });
     await page.locator("#root").waitFor({ state: "attached" });
+    const actualsWorkbench = page.locator("#actuals-workbench-title");
+    await actualsWorkbench.waitFor({ state: "visible" });
+    const actualsPanelText = await page.locator(".actuals-workbench-panel").textContent();
+    if (!actualsPanelText?.includes("Synthetic actuals versus candidate budget only")) {
+      failures.push("actuals_workbench_missing_candidate_banner");
+    }
+    if (!actualsPanelText?.includes("$54,090") || !actualsPanelText?.includes("$60,350")) {
+      failures.push("actuals_workbench_missing_canonical_totals");
+    }
+    const codeDrilldown = page.getByRole("button", { name: /Code drilldown/ });
+    await codeDrilldown.click();
+    if (!(await page.getByText("Code drilldown is reconciled to the same aggregate and excluded from the total.").isVisible())) {
+      failures.push("actuals_workbench_code_drilldown_not_visible");
+    }
     const uiState = await page.locator("#root").evaluate((root) => {
       const viewportWidth = document.documentElement.clientWidth;
       const overflowNodes = Array.from(document.querySelectorAll("body *"))
@@ -147,6 +161,7 @@ async function main() {
     const checks = [
       { check_id: "local_only_render", status: "passed", detail: "The UI rendered from a loopback-only static server." },
       { check_id: "review_surface_nonempty", status: uiState.textLength >= 80 ? "passed" : "failed", detail: `Rendered text length: ${uiState.textLength}.` },
+      { check_id: "actuals_variance_workbench_visible", status: failures.some((failure) => failure.startsWith("actuals_workbench_")) ? "failed" : "passed", detail: "The synthetic actuals panel exposes its candidate banner, canonical totals, and code drilldown." },
       { check_id: "desktop_layout_no_horizontal_overflow", status: uiState.horizontalOverflow ? "failed" : "passed", detail: `Checked rendered elements at 1440x960 (viewport ${uiState.viewportWidth}px, document scroll ${uiState.scrollWidth}px).` },
       { check_id: "mobile_layout_no_horizontal_overflow", status: mobileState.horizontalOverflow ? "failed" : "passed", detail: `Checked rendered elements at 390x844 (viewport ${mobileState.viewportWidth}px, document scroll ${mobileState.scrollWidth}px).` },
       { check_id: "no_external_runtime_requests", status: failures.some((failure) => failure.startsWith("external_request:")) ? "failed" : "passed", detail: "External requests are prohibited for the read-only review UI." },

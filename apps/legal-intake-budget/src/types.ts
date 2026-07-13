@@ -978,6 +978,84 @@ export type SyntheticRateCardWorkbenchReport = {
   generated_at: string;
 };
 
+export type SyntheticActualsWorkbenchRow = {
+  phase_id?: string | null;
+  code?: string | null;
+  budgeted_total: number | null;
+  actual_total: number | null;
+  variance_amount: number | null;
+  variance_percent: number | null;
+  status: "actuals_not_available" | "within_threshold" | "over_threshold" | "under_threshold";
+  requires_human_review: boolean;
+};
+
+export type SyntheticActualsWorkbenchCheck = {
+  check_id: string;
+  status: "passed" | "failed";
+  message: string;
+  evidence_refs: string[];
+};
+
+export type SyntheticActualsWorkbenchReport = {
+  schema_version: string;
+  synthetic_actuals_workbench_report_id: string;
+  status:
+    | "synthetic_actuals_workbench_ready_for_review"
+    | "blocked_by_synthetic_actuals_workbench";
+  methodology_version: string;
+  budget_proposal_ref: string;
+  budget_proposal_sha256: string;
+  actuals_source_id: string;
+  actuals_source_ref: string;
+  actuals_source_sha256: string;
+  comparison: {
+    budget_actual_comparison_report_id: string;
+    status: "actuals_not_available" | "passed" | "variance_review_required";
+    comparison_scope: "phase" | "phase_and_code";
+    comparison_budget_state: "original_proposal" | "human_revised_candidate";
+    budget_revision_report_id: string | null;
+    budget_revision_report_ref: string | null;
+    total_budgeted: number | null;
+    total_actual: number | null;
+    total_variance_amount: number | null;
+    total_variance_percent: number | null;
+    phase_comparisons: SyntheticActualsWorkbenchRow[];
+    code_comparisons: SyntheticActualsWorkbenchRow[];
+  };
+  phase_budgeted_total: number;
+  phase_actual_total: number;
+  code_budgeted_total: number;
+  code_actual_total: number;
+  phase_row_count: number;
+  code_row_count: number;
+  checks: SyntheticActualsWorkbenchCheck[];
+  failed_check_count: number;
+  display_banner: { summary: string; synthetic_only: boolean; candidate_only: boolean; human_review_required: boolean; blocked_actions: string[] };
+  candidate_exception_lake_labels: string[];
+  required_next_gates: string[];
+  data_origin: "synthetic";
+  candidate_only: true;
+  non_authoritative: true;
+  synthetic_only: true;
+  local_json_only: true;
+  read_only_ui: true;
+  billing_connector_read_performed: false;
+  billing_connector_write_performed: false;
+  not_authorized_for_external_write: true;
+  not_authorized_for_lake_write: true;
+  not_authorized_for_sqlite_write: true;
+  not_authorized_for_budget_submission: true;
+  not_authorized_for_matter_opening: true;
+  not_authorized_for_calibration: true;
+  external_writes_performed: false;
+  lake_write_performed: false;
+  sqlite_write_performed: false;
+  budget_submission_authorized: false;
+  matter_opening_authorized: false;
+  silent_learning_performed: false;
+  generated_at: string;
+};
+
 export type BudgetLearningLoopActualsSummary = {
   status: "variance_review_required" | "actuals_not_available" | "actuals_within_threshold";
   comparison_scope: string;

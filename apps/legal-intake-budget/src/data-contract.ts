@@ -35,6 +35,7 @@ import type {
   UIReviewDataBundle,
   ValidationSuiteEvidenceReport,
   SyntheticRateCardWorkbenchReport,
+  SyntheticActualsWorkbenchReport,
 } from "./types";
 
 export const REQUIRED_ARTIFACT_FILES = [
@@ -267,6 +268,70 @@ export function assertSyntheticRateCardWorkbenchReport(
   }
   if (report.rows.some((row) => row.hourly_rate <= 0)) {
     failures.push("synthetic_rate_card_workbench_nonpositive_rate");
+  }
+  return failures;
+}
+
+export function assertSyntheticActualsWorkbenchReport(
+  report: SyntheticActualsWorkbenchReport,
+): string[] {
+  const failures: string[] = [];
+  if (
+    report.data_origin !== "synthetic" ||
+    !report.candidate_only ||
+    !report.synthetic_only ||
+    !report.non_authoritative ||
+    !report.local_json_only ||
+    !report.read_only_ui
+  ) {
+    failures.push("synthetic_actuals_workbench_authority_boundary_failed");
+  }
+  if (
+    report.billing_connector_read_performed ||
+    report.billing_connector_write_performed ||
+    report.external_writes_performed ||
+    report.lake_write_performed ||
+    report.sqlite_write_performed ||
+    report.budget_submission_authorized ||
+    report.matter_opening_authorized ||
+    report.silent_learning_performed
+  ) {
+    failures.push("synthetic_actuals_workbench_side_effect_boundary_failed");
+  }
+  if (
+    !report.budget_proposal_sha256.startsWith("sha256:") ||
+    !report.actuals_source_sha256.startsWith("sha256:") ||
+    !report.actuals_source_id ||
+    !report.actuals_source_ref
+  ) {
+    failures.push("synthetic_actuals_workbench_provenance_missing");
+  }
+  if (
+    report.phase_row_count !== report.comparison.phase_comparisons.length ||
+    report.code_row_count !== report.comparison.code_comparisons.length ||
+    report.failed_check_count !== report.checks.filter((check) => check.status === "failed").length
+  ) {
+    failures.push("synthetic_actuals_workbench_count_mismatch");
+  }
+  if (
+    report.phase_budgeted_total !== report.comparison.total_budgeted ||
+    report.phase_actual_total !== report.comparison.total_actual ||
+    report.code_budgeted_total !== report.comparison.total_budgeted ||
+    report.code_actual_total !== report.comparison.total_actual
+  ) {
+    failures.push("synthetic_actuals_workbench_alternate_views_not_reconciled");
+  }
+  if (
+    report.comparison.comparison_budget_state === "human_revised_candidate" &&
+    (!report.comparison.budget_revision_report_id || !report.comparison.budget_revision_report_ref)
+  ) {
+    failures.push("synthetic_actuals_workbench_revised_baseline_missing_context");
+  }
+  if (
+    report.status === "synthetic_actuals_workbench_ready_for_review" &&
+    report.failed_check_count !== 0
+  ) {
+    failures.push("synthetic_actuals_workbench_ready_with_failed_checks");
   }
   return failures;
 }

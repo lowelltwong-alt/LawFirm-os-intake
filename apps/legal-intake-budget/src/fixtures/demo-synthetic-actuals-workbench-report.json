@@ -1,0 +1,464 @@
+{
+  "schema_version": "0.1",
+  "synthetic_actuals_workbench_report_id": "synactualsworkbench-35659e9c74febf9f",
+  "status": "synthetic_actuals_workbench_ready_for_review",
+  "methodology_version": "synthetic_actuals_workbench.v0_1",
+  "budget_proposal_ref": "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/legal_budget_proposal.json",
+  "budget_proposal_sha256": "sha256:b85c715317e86f7b0822ba10f6b19da6bc209555da45ad49e18d78c000159a5c",
+  "actuals_source_id": "le-actuals-epli-carrier-clean.v0_1",
+  "actuals_source_ref": "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/budget_actuals_source.json",
+  "actuals_source_sha256": "sha256:4cbd0ce8ae0f6034249418702a0fe490493e41d3d29be43d618c2867e3daec9e",
+  "comparison": {
+    "schema_version": "0.1",
+    "budget_actual_comparison_report_id": "syntheticactualcomparison-epli-carrier-clean-v0-1",
+    "run_id": "syntheticactualsworkbench-epli-carrier-clean-v0-1",
+    "preflight_packet_id": "le-preflight-epli-carrier-clean.v0_1",
+    "budget_proposal_id": "le-budget-epli-carrier-clean.v0_1",
+    "status": "variance_review_required",
+    "comparison_scope": "phase_and_code",
+    "comparison_budget_state": "original_proposal",
+    "budget_revision_report_id": null,
+    "budget_revision_report_ref": null,
+    "actual_resolution_scenario_id": null,
+    "phase_comparisons": [
+      {
+        "phase_id": "L100",
+        "budgeted_fees": 5450.0,
+        "budgeted_expenses": 0.0,
+        "budgeted_total": 5450.0,
+        "actual_fees": 5450.0,
+        "actual_expenses": 0.0,
+        "actual_total": 5450.0,
+        "variance_amount": 0.0,
+        "variance_percent": 0.0,
+        "status": "within_threshold",
+        "external_code_candidates": [
+          "L110",
+          "L120"
+        ],
+        "variance_driver_candidates": [],
+        "requires_human_review": true
+      },
+      {
+        "phase_id": "L200",
+        "budgeted_fees": 6600.0,
+        "budgeted_expenses": 0.0,
+        "budgeted_total": 6600.0,
+        "actual_fees": 6600.0,
+        "actual_expenses": 0.0,
+        "actual_total": 6600.0,
+        "variance_amount": 0.0,
+        "variance_percent": 0.0,
+        "status": "within_threshold",
+        "external_code_candidates": [
+          "L210"
+        ],
+        "variance_driver_candidates": [],
+        "requires_human_review": true
+      },
+      {
+        "phase_id": "L300",
+        "budgeted_fees": 25790.0,
+        "budgeted_expenses": 2600.0,
+        "budgeted_total": 28390.0,
+        "actual_fees": 29950.0,
+        "actual_expenses": 3200.0,
+        "actual_total": 33150.0,
+        "variance_amount": 4760.0,
+        "variance_percent": 16.77,
+        "status": "over_threshold",
+        "external_code_candidates": [
+          "E112",
+          "L310",
+          "L330"
+        ],
+        "variance_driver_candidates": [
+          "fee_overrun"
+        ],
+        "requires_human_review": true
+      },
+      {
+        "phase_id": "L400",
+        "budgeted_fees": 6300.0,
+        "budgeted_expenses": 0.0,
+        "budgeted_total": 6300.0,
+        "actual_fees": 6300.0,
+        "actual_expenses": 0.0,
+        "actual_total": 6300.0,
+        "variance_amount": 0.0,
+        "variance_percent": 0.0,
+        "status": "within_threshold",
+        "external_code_candidates": [
+          "L420"
+        ],
+        "variance_driver_candidates": [],
+        "requires_human_review": true
+      },
+      {
+        "phase_id": "L500",
+        "budgeted_fees": 5850.0,
+        "budgeted_expenses": 1500.0,
+        "budgeted_total": 7350.0,
+        "actual_fees": 5850.0,
+        "actual_expenses": 3000.0,
+        "actual_total": 8850.0,
+        "variance_amount": 1500.0,
+        "variance_percent": 20.41,
+        "status": "over_threshold",
+        "external_code_candidates": [
+          "E124",
+          "L510"
+        ],
+        "variance_driver_candidates": [
+          "expense_overrun"
+        ],
+        "requires_human_review": true
+      }
+    ],
+    "code_comparisons": [
+      {
+        "code": "E112",
+        "phase_id": "L300",
+        "budgeted_fees": 0.0,
+        "budgeted_expenses": 2600.0,
+        "budgeted_total": 2600.0,
+        "actual_fees": 0.0,
+        "actual_expenses": 3200.0,
+        "actual_total": 3200.0,
+        "variance_amount": 600.0,
+        "variance_percent": 23.08,
+        "status": "over_threshold",
+        "variance_driver_candidates": [
+          "expense_overrun"
+        ],
+        "requires_human_review": true
+      },
+      {
+        "code": "E124",
+        "phase_id": "L500",
+        "budgeted_fees": 0.0,
+        "budgeted_expenses": 1500.0,
+        "budgeted_total": 1500.0,
+        "actual_fees": 0.0,
+        "actual_expenses": 3000.0,
+        "actual_total": 3000.0,
+        "variance_amount": 1500.0,
+        "variance_percent": 100.0,
+        "status": "over_threshold",
+        "variance_driver_candidates": [
+          "expense_overrun"
+        ],
+        "requires_human_review": true
+      },
+      {
+        "code": "L110",
+        "phase_id": "L100",
+        "budgeted_fees": 2700.0,
+        "budgeted_expenses": 0.0,
+        "budgeted_total": 2700.0,
+        "actual_fees": 2700.0,
+        "actual_expenses": 0.0,
+        "actual_total": 2700.0,
+        "variance_amount": 0.0,
+        "variance_percent": 0.0,
+        "status": "within_threshold",
+        "variance_driver_candidates": [],
+        "requires_human_review": true
+      },
+      {
+        "code": "L120",
+        "phase_id": "L100",
+        "budgeted_fees": 2750.0,
+        "budgeted_expenses": 0.0,
+        "budgeted_total": 2750.0,
+        "actual_fees": 2750.0,
+        "actual_expenses": 0.0,
+        "actual_total": 2750.0,
+        "variance_amount": 0.0,
+        "variance_percent": 0.0,
+        "status": "within_threshold",
+        "variance_driver_candidates": [],
+        "requires_human_review": true
+      },
+      {
+        "code": "L210",
+        "phase_id": "L200",
+        "budgeted_fees": 6600.0,
+        "budgeted_expenses": 0.0,
+        "budgeted_total": 6600.0,
+        "actual_fees": 6600.0,
+        "actual_expenses": 0.0,
+        "actual_total": 6600.0,
+        "variance_amount": 0.0,
+        "variance_percent": 0.0,
+        "status": "within_threshold",
+        "variance_driver_candidates": [],
+        "requires_human_review": true
+      },
+      {
+        "code": "L310",
+        "phase_id": "L300",
+        "budgeted_fees": 11550.0,
+        "budgeted_expenses": 0.0,
+        "budgeted_total": 11550.0,
+        "actual_fees": 11550.0,
+        "actual_expenses": 0.0,
+        "actual_total": 11550.0,
+        "variance_amount": 0.0,
+        "variance_percent": 0.0,
+        "status": "within_threshold",
+        "variance_driver_candidates": [],
+        "requires_human_review": true
+      },
+      {
+        "code": "L330",
+        "phase_id": "L300",
+        "budgeted_fees": 14240.0,
+        "budgeted_expenses": 0.0,
+        "budgeted_total": 14240.0,
+        "actual_fees": 18400.0,
+        "actual_expenses": 0.0,
+        "actual_total": 18400.0,
+        "variance_amount": 4160.0,
+        "variance_percent": 29.21,
+        "status": "over_threshold",
+        "variance_driver_candidates": [
+          "fee_overrun"
+        ],
+        "requires_human_review": true
+      },
+      {
+        "code": "L420",
+        "phase_id": "L400",
+        "budgeted_fees": 6300.0,
+        "budgeted_expenses": 0.0,
+        "budgeted_total": 6300.0,
+        "actual_fees": 6300.0,
+        "actual_expenses": 0.0,
+        "actual_total": 6300.0,
+        "variance_amount": 0.0,
+        "variance_percent": 0.0,
+        "status": "within_threshold",
+        "variance_driver_candidates": [],
+        "requires_human_review": true
+      },
+      {
+        "code": "L510",
+        "phase_id": "L500",
+        "budgeted_fees": 5850.0,
+        "budgeted_expenses": 0.0,
+        "budgeted_total": 5850.0,
+        "actual_fees": 5850.0,
+        "actual_expenses": 0.0,
+        "actual_total": 5850.0,
+        "variance_amount": 0.0,
+        "variance_percent": 0.0,
+        "status": "within_threshold",
+        "variance_driver_candidates": [],
+        "requires_human_review": true
+      }
+    ],
+    "variance_driver_candidates": [
+      {
+        "candidate_id": "synactualdriver-7080cf46815d11c1",
+        "driver_label": "fee_overrun",
+        "phase_id": "L300",
+        "code": null,
+        "variance_amount": 4760.0,
+        "reason": "Actual cost variance exceeded the configured threshold and requires human review before any learning or template change.",
+        "target_learning_loop": "budget_driver",
+        "requires_human_review": true,
+        "silent_learning_performed": false
+      },
+      {
+        "candidate_id": "synactualdriver-087ab477a000658c",
+        "driver_label": "expense_overrun",
+        "phase_id": "L500",
+        "code": null,
+        "variance_amount": 1500.0,
+        "reason": "Actual cost variance exceeded the configured threshold and requires human review before any learning or template change.",
+        "target_learning_loop": "budget_driver",
+        "requires_human_review": true,
+        "silent_learning_performed": false
+      },
+      {
+        "candidate_id": "synactualdriver-48605e765b25af8e",
+        "driver_label": "expense_overrun",
+        "phase_id": "L300",
+        "code": "E112",
+        "variance_amount": 600.0,
+        "reason": "Actual cost variance exceeded the configured threshold and requires human review before any learning or template change.",
+        "target_learning_loop": "budget_driver",
+        "requires_human_review": true,
+        "silent_learning_performed": false
+      },
+      {
+        "candidate_id": "synactualdriver-55eb123ca42412d5",
+        "driver_label": "expense_overrun",
+        "phase_id": "L500",
+        "code": "E124",
+        "variance_amount": 1500.0,
+        "reason": "Actual cost variance exceeded the configured threshold and requires human review before any learning or template change.",
+        "target_learning_loop": "budget_driver",
+        "requires_human_review": true,
+        "silent_learning_performed": false
+      },
+      {
+        "candidate_id": "synactualdriver-62d51607d9e32e8c",
+        "driver_label": "fee_overrun",
+        "phase_id": "L300",
+        "code": "L330",
+        "variance_amount": 4160.0,
+        "reason": "Actual cost variance exceeded the configured threshold and requires human review before any learning or template change.",
+        "target_learning_loop": "budget_driver",
+        "requires_human_review": true,
+        "silent_learning_performed": false
+      }
+    ],
+    "learning_disposition_candidates": [
+      "budget_driver"
+    ],
+    "variance_threshold_percent": 15.0,
+    "total_budgeted": 54090.0,
+    "total_actual": 60350.0,
+    "total_variance_amount": 6260.0,
+    "total_variance_percent": 11.57,
+    "actuals_source_ref": "synthetic-actuals://labor-employment/epli-carrier-clean/v0_1",
+    "actuals_are_synthetic": true,
+    "billing_connector_read_performed": false,
+    "billing_connector_write_performed": false,
+    "external_writes_performed": false,
+    "non_authoritative": true,
+    "generated_at": "2026-07-13T00:00:00Z"
+  },
+  "phase_budgeted_total": 54090.0,
+  "phase_actual_total": 60350.0,
+  "code_budgeted_total": 54090.0,
+  "code_actual_total": 60350.0,
+  "phase_row_count": 5,
+  "code_row_count": 9,
+  "checks": [
+    {
+      "check_id": "synthetic_actuals_source_boundary",
+      "status": "passed",
+      "message": "Actuals source must be synthetic, non-authoritative, and connector-free.",
+      "evidence_refs": [
+        "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/budget_actuals_source.json"
+      ]
+    },
+    {
+      "check_id": "phase_and_code_views_present",
+      "status": "passed",
+      "message": "The workbench requires non-empty alternate phase and code comparison views.",
+      "evidence_refs": [
+        "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/legal_budget_proposal.json",
+        "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/budget_actuals_source.json"
+      ]
+    },
+    {
+      "check_id": "original_budget_baseline_declared",
+      "status": "passed",
+      "message": "The fixed EPLI workbench must disclose an original-proposal baseline.",
+      "evidence_refs": [
+        "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/legal_budget_proposal.json"
+      ]
+    },
+    {
+      "check_id": "phase_budget_total_reconciles",
+      "status": "passed",
+      "message": "Phase budget totals must equal the displayed comparison budget total.",
+      "evidence_refs": []
+    },
+    {
+      "check_id": "phase_actual_total_reconciles",
+      "status": "passed",
+      "message": "Phase actual totals must equal the displayed comparison actual total.",
+      "evidence_refs": []
+    },
+    {
+      "check_id": "code_budget_total_reconciles",
+      "status": "passed",
+      "message": "Code budget totals must independently equal the comparison budget total.",
+      "evidence_refs": []
+    },
+    {
+      "check_id": "code_actual_total_reconciles",
+      "status": "passed",
+      "message": "Code actual totals must independently equal the comparison actual total.",
+      "evidence_refs": []
+    },
+    {
+      "check_id": "complete_actuals_coverage",
+      "status": "passed",
+      "message": "Every displayed phase and code row must have an actual amount; partial feeds are blocked.",
+      "evidence_refs": [
+        "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/budget_actuals_source.json"
+      ]
+    },
+    {
+      "check_id": "no_unbudgeted_actuals",
+      "status": "passed",
+      "message": "Unbudgeted actuals require a distinct human-review path and cannot appear ready.",
+      "evidence_refs": [
+        "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/budget_actuals_source.json"
+      ]
+    },
+    {
+      "check_id": "review_pending_variance",
+      "status": "passed",
+      "message": "Synthetic over-threshold variance must remain human-review pending.",
+      "evidence_refs": []
+    },
+    {
+      "check_id": "no_auto_learning_or_runtime_write",
+      "status": "passed",
+      "message": "Comparison must not read billing systems, write externally, or learn silently.",
+      "evidence_refs": []
+    }
+  ],
+  "failed_check_count": 0,
+  "display_banner": {
+    "summary": "Synthetic actuals versus candidate budget only. Phase and code totals are alternate reconciled views and must never be added together.",
+    "synthetic_only": true,
+    "candidate_only": true,
+    "human_review_required": true,
+    "blocked_actions": [
+      "production_billing_inference",
+      "automatic_budget_calibration",
+      "profile_or_template_mutation",
+      "exception_lake_write",
+      "budget_submission",
+      "matter_opening"
+    ]
+  },
+  "candidate_exception_lake_labels": [
+    "labor_employment_actual_variance_candidate",
+    "synthetic_actuals_variance_review_candidate"
+  ],
+  "required_next_gates": [
+    "human_actuals_variance_review",
+    "reviewed_learning_gate_before_candidate_changes",
+    "exception_lake_owner_review_before_admission"
+  ],
+  "data_origin": "synthetic",
+  "candidate_only": true,
+  "non_authoritative": true,
+  "synthetic_only": true,
+  "local_json_only": true,
+  "read_only_ui": true,
+  "billing_connector_read_performed": false,
+  "billing_connector_write_performed": false,
+  "not_authorized_for_external_write": true,
+  "not_authorized_for_lake_write": true,
+  "not_authorized_for_sqlite_write": true,
+  "not_authorized_for_budget_submission": true,
+  "not_authorized_for_matter_opening": true,
+  "not_authorized_for_calibration": true,
+  "external_writes_performed": false,
+  "lake_write_performed": false,
+  "sqlite_write_performed": false,
+  "budget_submission_authorized": false,
+  "matter_opening_authorized": false,
+  "silent_learning_performed": false,
+  "generated_at": "2026-07-13T00:00:00Z"
+}
