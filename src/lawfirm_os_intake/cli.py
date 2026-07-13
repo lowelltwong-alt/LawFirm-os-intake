@@ -181,6 +181,7 @@ from .synthetic_qa_bundle import run_synthetic_qa_bundle
 from .synthetic_qa_review_outcomes import run_synthetic_qa_review_outcome_record
 from .synthetic_qa_review_run import run_synthetic_qa_review_run
 from .synthetic_actuals_workbench import run_synthetic_actuals_workbench
+from .synthetic_budget_input_workbench import run_synthetic_budget_input_workbench
 from .synthetic_rate_card_workbench import run_synthetic_rate_card_workbench
 from .ui_demo_fixture_promotion import promote_ui_demo_run_fixtures
 from .ui_demo_qa_recipe import run_ui_demo_qa_recipe
@@ -321,6 +322,26 @@ def _parser() -> argparse.ArgumentParser:
         help="Repository root containing fixed synthetic EPLI budget and actuals fixtures.",
     )
     synthetic_actuals_workbench.add_argument(
+        "--generated-at",
+        help="Optional fixed timestamp for deterministic tests and fixture replay.",
+    )
+
+    synthetic_budget_input_workbench = sub.add_parser(
+        "build-synthetic-budget-input-workbench",
+        help=(
+            "Build a fixed-source synthetic budget input ledger plus macro-free XLSX. "
+            "Browser editing and runtime pricing are intentionally unavailable."
+        ),
+    )
+    synthetic_budget_input_workbench.add_argument(
+        "--out-dir", required=True, help="Local directory for report, markdown, and XLSX."
+    )
+    synthetic_budget_input_workbench.add_argument(
+        "--repo-root",
+        default=".",
+        help="Repository root containing the fixed synthetic EPLI budget proposal.",
+    )
+    synthetic_budget_input_workbench.add_argument(
         "--generated-at",
         help="Optional fixed timestamp for deterministic tests and fixture replay.",
     )
@@ -2707,6 +2728,35 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 0 if report.status == "synthetic_actuals_workbench_ready_for_review" else 2
+
+        if args.command == "build-synthetic-budget-input-workbench":
+            report, run_dir = run_synthetic_budget_input_workbench(
+                repo_root=args.repo_root,
+                out_dir=args.out_dir,
+                generated_at=args.generated_at,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "synthetic_budget_input_workbench_report_id": (
+                        report.synthetic_budget_input_workbench_report_id
+                    ),
+                    "budget_proposal_id": report.budget_proposal_id,
+                    "line_count": report.line_count,
+                    "total_proposed_budget": report.total_proposed_budget,
+                    "failed_check_count": report.failed_check_count,
+                    "workbook_written": (
+                        report.status == "synthetic_budget_input_workbench_ready_for_review"
+                    ),
+                    "external_writes_performed": report.external_writes_performed,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "budget_submission_authorized": report.budget_submission_authorized,
+                    "matter_opening_authorized": report.matter_opening_authorized,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0 if report.status == "synthetic_budget_input_workbench_ready_for_review" else 2
 
         if args.command == "validate-budget-artifact":
             report = validate_budget_artifacts(

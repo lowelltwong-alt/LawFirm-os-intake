@@ -1,0 +1,350 @@
+{
+  "schema_version": "0.1",
+  "synthetic_budget_input_workbench_report_id": "synbudgetinputworkbench-2c429f293cdad0fb",
+  "status": "synthetic_budget_input_workbench_ready_for_review",
+  "methodology_version": "synthetic_budget_input_workbench.v0_1",
+  "budget_proposal_id": "le-budget-epli-carrier-clean.v0_1",
+  "budget_proposal_ref": "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/legal_budget_proposal.json",
+  "budget_proposal_sha256": "sha256:b85c715317e86f7b0822ba10f6b19da6bc209555da45ad49e18d78c000159a5c",
+  "preflight_packet_id": "le-preflight-epli-carrier-clean.v0_1",
+  "confirmation_id": "le-confirmation-epli-carrier-clean.v0_1",
+  "practice_profile_id": "synthetic-labor-employment-defense.v0_1",
+  "matter_family": "epli_carrier_assignment",
+  "representation_posture": "defense",
+  "pricing_status": "priced",
+  "currency": "USD",
+  "lines": [
+    {
+      "line_number": 1,
+      "phase_id": "L100",
+      "phase_name": "Case Assessment",
+      "task_id": "L110",
+      "task_name": "EPLI assignment, party-role, and coverage intake review",
+      "staffing_role": "partner",
+      "estimated_hours": 6.0,
+      "hourly_rate": 450.0,
+      "rate_source": "synthetic_profile",
+      "rate_is_synthetic": true,
+      "estimated_fees": 2700.0,
+      "estimated_expenses": 0.0,
+      "line_total": 2700.0,
+      "calculation_formula": "6h * 450 synthetic partner rate",
+      "estimate_basis": "template_default",
+      "estimate_basis_refs": [
+        "examples/synthetic/labor-employment/labor-employment-budget-learning-fixtures.json#le-learning-epli-carrier-clean.v0_1"
+      ]
+    },
+    {
+      "line_number": 2,
+      "phase_id": "L100",
+      "phase_name": "Case Assessment",
+      "task_id": "L120",
+      "task_name": "Carrier guideline and synthetic rate schedule review",
+      "staffing_role": "associate",
+      "estimated_hours": 10.0,
+      "hourly_rate": 275.0,
+      "rate_source": "synthetic_profile",
+      "rate_is_synthetic": true,
+      "estimated_fees": 2750.0,
+      "estimated_expenses": 0.0,
+      "line_total": 2750.0,
+      "calculation_formula": "10h * 275 synthetic associate rate",
+      "estimate_basis": "template_default",
+      "estimate_basis_refs": [
+        "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/legal_budget_proposal.json#line:L120"
+      ]
+    },
+    {
+      "line_number": 3,
+      "phase_id": "L200",
+      "phase_name": "Pleadings And Motions",
+      "task_id": "L210",
+      "task_name": "Initial response strategy and preservation assessment",
+      "staffing_role": "associate",
+      "estimated_hours": 24.0,
+      "hourly_rate": 275.0,
+      "rate_source": "synthetic_profile",
+      "rate_is_synthetic": true,
+      "estimated_fees": 6600.0,
+      "estimated_expenses": 0.0,
+      "line_total": 6600.0,
+      "calculation_formula": "24h * 275 synthetic associate rate",
+      "estimate_basis": "template_default",
+      "estimate_basis_refs": [
+        "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/legal_budget_proposal.json#line:L210"
+      ]
+    },
+    {
+      "line_number": 4,
+      "phase_id": "L300",
+      "phase_name": "Discovery",
+      "task_id": "L310",
+      "task_name": "Written discovery, personnel file, and coverage-sensitive document review",
+      "staffing_role": "associate",
+      "estimated_hours": 42.0,
+      "hourly_rate": 275.0,
+      "rate_source": "synthetic_profile",
+      "rate_is_synthetic": true,
+      "estimated_fees": 11550.0,
+      "estimated_expenses": 0.0,
+      "line_total": 11550.0,
+      "calculation_formula": "42h * 275 synthetic associate rate",
+      "estimate_basis": "template_default",
+      "estimate_basis_refs": [
+        "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/legal_budget_proposal.json#line:L310"
+      ]
+    },
+    {
+      "line_number": 5,
+      "phase_id": "L300",
+      "phase_name": "Discovery",
+      "task_id": "L330",
+      "task_name": "Depositions and witness preparation under carrier guideline",
+      "staffing_role": "senior_associate",
+      "estimated_hours": 34.0,
+      "hourly_rate": 325.0,
+      "rate_source": "synthetic_profile",
+      "rate_is_synthetic": true,
+      "estimated_fees": 11050.0,
+      "estimated_expenses": 2600.0,
+      "line_total": 13650.0,
+      "calculation_formula": "34h * 325 synthetic senior associate rate + synthetic court reporter estimate",
+      "estimate_basis": "template_default",
+      "estimate_basis_refs": [
+        "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/legal_budget_proposal.json#line:L330"
+      ]
+    },
+    {
+      "line_number": 6,
+      "phase_id": "L300",
+      "phase_name": "Discovery",
+      "task_id": "L330",
+      "task_name": "Deposition exhibit and chronology support",
+      "staffing_role": "paralegal",
+      "estimated_hours": 22.0,
+      "hourly_rate": 145.0,
+      "rate_source": "synthetic_profile",
+      "rate_is_synthetic": true,
+      "estimated_fees": 3190.0,
+      "estimated_expenses": 0.0,
+      "line_total": 3190.0,
+      "calculation_formula": "22h * 145 synthetic paralegal rate",
+      "estimate_basis": "template_default",
+      "estimate_basis_refs": [
+        "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/legal_budget_proposal.json#line:L330-paralegal"
+      ]
+    },
+    {
+      "line_number": 7,
+      "phase_id": "L400",
+      "phase_name": "Trial Preparation And Dispositive Motions",
+      "task_id": "L420",
+      "task_name": "Dispositive motion and carrier reporting strategy",
+      "staffing_role": "partner",
+      "estimated_hours": 14.0,
+      "hourly_rate": 450.0,
+      "rate_source": "synthetic_profile",
+      "rate_is_synthetic": true,
+      "estimated_fees": 6300.0,
+      "estimated_expenses": 0.0,
+      "line_total": 6300.0,
+      "calculation_formula": "14h * 450 synthetic partner rate",
+      "estimate_basis": "template_default",
+      "estimate_basis_refs": [
+        "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/legal_budget_proposal.json#line:L420"
+      ]
+    },
+    {
+      "line_number": 8,
+      "phase_id": "L500",
+      "phase_name": "Settlement And Mediation",
+      "task_id": "L510",
+      "task_name": "Mediation preparation and EPLI reporting package",
+      "staffing_role": "senior_associate",
+      "estimated_hours": 18.0,
+      "hourly_rate": 325.0,
+      "rate_source": "synthetic_profile",
+      "rate_is_synthetic": true,
+      "estimated_fees": 5850.0,
+      "estimated_expenses": 1500.0,
+      "line_total": 7350.0,
+      "calculation_formula": "18h * 325 synthetic senior associate rate + synthetic mediation expense estimate",
+      "estimate_basis": "template_default",
+      "estimate_basis_refs": [
+        "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/legal_budget_proposal.json#line:L510"
+      ]
+    }
+  ],
+  "line_count": 8,
+  "subtotal_fees": 49990.0,
+  "subtotal_expenses": 4100.0,
+  "contingency_amount": 0.0,
+  "total_proposed_budget": 54090.0,
+  "context_lanes": [
+    {
+      "lane_id": "budget_proposal",
+      "label": "Fixed synthetic budget proposal",
+      "inclusion": "used_for_budget_math",
+      "reason": "All displayed line math comes only from the pinned synthetic proposal.",
+      "source_ref": "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/legal_budget_proposal.json",
+      "source_sha256": "sha256:b85c715317e86f7b0822ba10f6b19da6bc209555da45ad49e18d78c000159a5c"
+    },
+    {
+      "lane_id": "synthetic_rate_card",
+      "label": "Synthetic rate card",
+      "inclusion": "excluded_context_only",
+      "reason": "This fixed proposal declares synthetic_profile line rates; the separate synthetic rate card is not a pricing input.",
+      "source_ref": "config/synthetic-carrier-rate-card.yaml",
+      "source_sha256": "sha256:5743d7191f26079bca9916d3e53a7e49022b9801dfa436b324d975923e10f96b"
+    },
+    {
+      "lane_id": "synthetic_carrier_guideline",
+      "label": "Synthetic carrier guideline",
+      "inclusion": "excluded_context_only",
+      "reason": "Guidelines remain a separate candidate policy lane and are not applied to this fixed proposal.",
+      "source_ref": "config/synthetic-carrier-guideline.yaml",
+      "source_sha256": "sha256:a223a90fd311da3734cce58940f7323e1d387362ae197e058f2092dcd46a73ae"
+    },
+    {
+      "lane_id": "synthetic_actuals",
+      "label": "Synthetic actuals",
+      "inclusion": "excluded_context_only",
+      "reason": "Actuals are a post-budget variance lane and are never added to proposal inputs.",
+      "source_ref": "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/budget_actuals_source.json",
+      "source_sha256": "sha256:4cbd0ce8ae0f6034249418702a0fe490493e41d3d29be43d618c2867e3daec9e"
+    },
+    {
+      "lane_id": "synthetic_benchmark",
+      "label": "Synthetic rate benchmark",
+      "inclusion": "excluded_context_only",
+      "reason": "Benchmark evidence is candidate context only and is not a rate, multiplier, or cap for this proposal.",
+      "source_ref": "examples/synthetic/benchmarks/synthetic-rate-benchmark-snapshot.json",
+      "source_sha256": "sha256:e5ed818d3e6d70921764f49b1581aa820ca832bce94d1564eaa4fc5ef078e83c"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "synthetic_proposal_boundary",
+      "status": "passed",
+      "message": "The pinned proposal must declare synthetic candidate-only and non-submittable status.",
+      "evidence_refs": [
+        "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/legal_budget_proposal.json"
+      ]
+    },
+    {
+      "check_id": "line_fee_math_reconciles",
+      "status": "passed",
+      "message": "Each priced line must equal estimated hours multiplied by its displayed hourly rate.",
+      "evidence_refs": [
+        "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/legal_budget_proposal.json"
+      ]
+    },
+    {
+      "check_id": "line_total_math_reconciles",
+      "status": "passed",
+      "message": "Every line total must equal its displayed fees plus expenses.",
+      "evidence_refs": [
+        "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/legal_budget_proposal.json"
+      ]
+    },
+    {
+      "check_id": "proposal_totals_reconcile",
+      "status": "passed",
+      "message": "Displayed line totals must reconcile exactly to proposal subtotals and total.",
+      "evidence_refs": [
+        "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/legal_budget_proposal.json"
+      ]
+    },
+    {
+      "check_id": "all_rates_synthetic",
+      "status": "passed",
+      "message": "This fixed replay accepts only declared synthetic_profile rates.",
+      "evidence_refs": [
+        "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/legal_budget_proposal.json"
+      ]
+    },
+    {
+      "check_id": "estimate_basis_refs_present",
+      "status": "passed",
+      "message": "Every displayed budget line requires an estimate basis and at least one basis reference.",
+      "evidence_refs": [
+        "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/legal_budget_proposal.json"
+      ]
+    },
+    {
+      "check_id": "excluded_context_lanes_not_included_in_math",
+      "status": "passed",
+      "message": "Rate card, guideline, actuals, and benchmark lanes remain explicit context only.",
+      "evidence_refs": [
+        "config/synthetic-carrier-rate-card.yaml",
+        "config/synthetic-carrier-guideline.yaml",
+        "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/budget_actuals_source.json",
+        "examples/synthetic/benchmarks/synthetic-rate-benchmark-snapshot.json"
+      ]
+    },
+    {
+      "check_id": "declared_context_sources_present_and_hashed",
+      "status": "passed",
+      "message": "Every declared input or excluded context lane must resolve to a local source reference and hash.",
+      "evidence_refs": [
+        "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/legal_budget_proposal.json",
+        "config/synthetic-carrier-rate-card.yaml",
+        "config/synthetic-carrier-guideline.yaml",
+        "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/budget_actuals_source.json",
+        "examples/synthetic/benchmarks/synthetic-rate-benchmark-snapshot.json"
+      ]
+    },
+    {
+      "check_id": "no_auto_calibration_or_runtime_write",
+      "status": "passed",
+      "message": "The workbench is local candidate evidence and performs no runtime writes, submissions, or calibration.",
+      "evidence_refs": []
+    }
+  ],
+  "failed_check_count": 0,
+  "workbook_filename": "synthetic_budget_input_workbench.xlsx",
+  "markdown_filename": "synthetic_budget_input_workbench.md",
+  "display_banner": {
+    "summary": "Synthetic candidate budget input ledger only. It exposes the pinned proposal's numbers and formulas; it does not accept edits, price a matter, or authorize submission.",
+    "candidate_only": true,
+    "synthetic_only": true,
+    "read_only_ui": true,
+    "blocked_actions": [
+      "browser_input_editing",
+      "automatic_rate_resolution",
+      "carrier_guideline_application",
+      "actuals_calibration",
+      "budget_submission",
+      "exception_lake_write",
+      "sqlite_write"
+    ]
+  },
+  "candidate_exception_lake_labels": [
+    "synthetic_budget_input_lineage_review_candidate",
+    "synthetic_budget_math_reconciliation_candidate"
+  ],
+  "required_next_gates": [
+    "orchestrator_owned_edit_session_contract_before_runtime_input",
+    "human_confirmation_before_matter_specific_pricing",
+    "legal_knowledge_runtime_review_before_real_rate_or_benchmark_use"
+  ],
+  "data_origin": "synthetic",
+  "candidate_only": true,
+  "non_authoritative": true,
+  "synthetic_only": true,
+  "local_json_only": true,
+  "read_only_ui": true,
+  "not_authorized_for_external_write": true,
+  "not_authorized_for_lake_write": true,
+  "not_authorized_for_sqlite_write": true,
+  "not_authorized_for_budget_submission": true,
+  "not_authorized_for_matter_opening": true,
+  "not_authorized_for_calibration": true,
+  "external_writes_performed": false,
+  "lake_write_performed": false,
+  "sqlite_write_performed": false,
+  "budget_submission_authorized": false,
+  "matter_opening_authorized": false,
+  "silent_learning_performed": false,
+  "generated_at": "2026-07-13T00:00:00Z"
+}
