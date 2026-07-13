@@ -4,6 +4,7 @@ import pytest
 
 from lawfirm_os_intake.cli import main
 from lawfirm_os_intake.models import (
+    BudgetActualsSource,
     BudgetProposal,
     CarrierRejectionCaptureSourceBundle,
     CrossRepoContractProofReport,
@@ -43,7 +44,16 @@ def test_pilot_review_story_assembles_a_source_bound_l_and_e_dossier(tmp_path):
     assert report.carrier_rejected_amount == 3900.0
     assert report.carrier_recovered_amount == 900.0
     assert report.carrier_write_down_amount == 1200.0
-    assert report.actuals_learning_state == "not_observed_no_learning_candidate"
+    assert (
+        report.actuals_learning_state
+        == "synthetic_actuals_variance_requires_human_review_no_learning"
+    )
+    assert report.actuals_source_id == "le-actuals-epli-carrier-clean.v0_1"
+    assert report.actuals_total == 60350.0
+    assert report.actuals_variance_amount == 6260.0
+    assert report.actuals_variance_status == "variance_review_required"
+    assert "human_actuals_variance_review" in report.required_next_gates
+    assert "labor_employment_actual_variance_candidate" in report.candidate_exception_lake_labels
     assert (
         report.story_fixture_ref
         == "examples/synthetic/pilot-review/epli-assignment-pilot-review-story.json"
@@ -74,6 +84,9 @@ def test_pilot_review_story_never_turns_candidate_evidence_into_an_action(tmp_pa
     assert report.matter_opening_authorized is False
     assert report.conflict_clearance_authorized is False
     assert report.silent_learning_performed is False
+    actuals_stage = next(stage for stage in report.stages if stage.stage_id == "actuals_learning")
+    assert actuals_stage.status == "ready_for_human_review"
+    assert actuals_stage.required_next_gate == "human_actuals_variance_review"
 
 
 def test_pilot_review_story_is_deterministic_and_keeps_generic_proof_out_of_case_evidence(tmp_path):
@@ -102,6 +115,7 @@ def test_pilot_review_story_refuses_duplicate_carrier_notices_before_totaling_am
     story = load_json(STORY)
     source_bundle = SourceBundle.model_validate(load_json(story["source_bundle_ref"]))
     budget = BudgetProposal.model_validate(load_json(story["budget_proposal_ref"]))
+    actuals_source = BudgetActualsSource.model_validate(load_json(story["actuals_source_ref"]))
     carrier_bundle = CarrierRejectionCaptureSourceBundle.model_validate(
         load_json(story["carrier_rejection_ref"])
     )
@@ -117,6 +131,7 @@ def test_pilot_review_story_refuses_duplicate_carrier_notices_before_totaling_am
             payload=story,
             source_bundle=source_bundle,
             budget=budget,
+            actuals_source=actuals_source,
             carrier_bundle=duplicate_carrier_bundle,
             contract_proof=contract_proof,
         )

@@ -66,8 +66,8 @@ def test_labor_employment_budget_outcome_replay_readiness_covers_seeded_loops(
     assert report.status == "labor_employment_budget_outcome_replay_ready_for_review"
     assert report.fixture_count == 8
     assert report.seed_spec_count == 8
-    assert report.loop_requirement_count == 19
-    assert report.seeded_loop_requirement_count == 19
+    assert report.loop_requirement_count == 20
+    assert report.seeded_loop_requirement_count == 20
     assert report.missing_loop_requirement_count == 0
     assert report.unresolved_source_ref_count == 0
     assert report.expected_replay_artifact_count == 9
@@ -194,7 +194,7 @@ def test_labor_employment_budget_outcome_replay_readiness_cli_writes_report(
     assert exit_code == 0
     assert '"status": "labor_employment_budget_outcome_replay_ready_for_review"' in captured.out
     assert '"fixture_count": 8' in captured.out
-    assert '"loop_requirement_count": 19' in captured.out
+    assert '"loop_requirement_count": 20' in captured.out
     assert '"unresolved_source_ref_count": 0' in captured.out
     assert '"lake_write_performed": false' in captured.out
     assert (

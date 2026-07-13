@@ -84,8 +84,8 @@ def test_labor_employment_budget_outcome_replay_execution_materializes_slots(
     assert report.fixture_count == 8
     assert report.materialized_case_count == 8
     assert report.failed_case_count == 0
-    assert report.expected_artifact_slot_count == 38
-    assert report.materialized_artifact_slot_count == 38
+    assert report.expected_artifact_slot_count == 40
+    assert report.materialized_artifact_slot_count == 40
     assert report.runtime_artifact_count == 0
     assert set(report.covered_learning_loop_types) == {
         "actuals_variance",
@@ -97,7 +97,7 @@ def test_labor_employment_budget_outcome_replay_execution_materializes_slots(
     assert report.missing_learning_loop_types == []
     assert all(case.status == "passed" for case in report.cases)
     assert all(check.status == "passed" for check in report.checks)
-    assert len(slot_paths) == 38
+    assert len(slot_paths) == 40
     assert all(path.endswith(".slot.json") for path in slot_paths)
     assert all(load_json(path)["runtime_artifact_created"] is False for path in slot_paths)
     assert "labor_employment_budget_outcome_replay_execution_candidate" in (
@@ -179,7 +179,7 @@ def test_labor_employment_budget_outcome_replay_execution_cli_writes_report(
         in captured.out
     )
     assert '"fixture_count": 8' in captured.out
-    assert '"expected_artifact_slot_count": 38' in captured.out
+    assert '"expected_artifact_slot_count": 40' in captured.out
     assert '"runtime_artifact_count": 0' in captured.out
     assert '"lake_write_performed": false' in captured.out
     assert (

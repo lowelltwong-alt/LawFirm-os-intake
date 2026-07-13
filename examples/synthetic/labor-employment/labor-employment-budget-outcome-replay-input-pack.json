@@ -95,8 +95,26 @@
       "input_role": "builder_input",
       "notes": "Synthetic class/collective/PAGA phase/code actuals fixture for deterministic variance review and reviewed learning-gate pressure."
     },
-    {
-      "entry_id": "le-replay-input-epli-carrier-budget.v0_1",
+                    {
+                        "entry_id": "le-replay-input-epli-actuals-budget.v0_1",
+                        "learning_fixture_id": "le-learning-epli-carrier-clean.v0_1",
+                        "loop_type": "actuals_variance",
+                        "required_input_artifact": "legal_budget_proposal.json",
+                        "input_ref": "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/legal_budget_proposal.json",
+                        "input_role": "builder_input",
+                        "notes": "Synthetic EPLI carrier-assignment budget proposal for deterministic actuals variance replay."
+                    },
+                    {
+                        "entry_id": "le-replay-input-epli-actuals-source.v0_1",
+                        "learning_fixture_id": "le-learning-epli-carrier-clean.v0_1",
+                        "loop_type": "actuals_variance",
+                        "required_input_artifact": "budget_actuals_source.json",
+                        "input_ref": "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/budget_actuals_source.json",
+                        "input_role": "builder_input",
+                        "notes": "Synthetic EPLI phase/code actuals for deterministic variance review; no billing connector is read or written."
+                    },
+                    {
+                        "entry_id": "le-replay-input-epli-carrier-budget.v0_1",
       "learning_fixture_id": "le-learning-epli-carrier-clean.v0_1",
       "loop_type": "carrier_rejection_capture",
       "required_input_artifact": "legal_budget_proposal.json",

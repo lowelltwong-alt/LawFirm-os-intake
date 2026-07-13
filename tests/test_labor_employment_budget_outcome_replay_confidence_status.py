@@ -139,7 +139,7 @@ def test_labor_employment_budget_outcome_replay_confidence_status_is_pending_inp
     assert stages["execution"].status == "ready"
     assert stages["builder_binding"].status == "pending_inputs"
     assert stages["input_pack"].status == "pending_inputs"
-    assert report.builder_replay_input_gap_count == 47
+    assert report.builder_replay_input_gap_count == 51
     assert report.builder_missing_case_prerequisite_count > 0
     assert report.input_pack_missing_input_count > 0
     assert "calibration" in report.display_banner["blocked_actions"]

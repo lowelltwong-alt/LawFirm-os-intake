@@ -179,8 +179,38 @@
       "type": "number"
     },
     "actuals_learning_state": {
-      "const": "not_observed_no_learning_candidate",
+      "const": "synthetic_actuals_variance_requires_human_review_no_learning",
       "title": "Actuals Learning State",
+      "type": "string"
+    },
+    "actuals_source_id": {
+      "title": "Actuals Source Id",
+      "type": "string"
+    },
+    "actuals_source_ref": {
+      "title": "Actuals Source Ref",
+      "type": "string"
+    },
+    "budget_actual_comparison_report_id": {
+      "title": "Budget Actual Comparison Report Id",
+      "type": "string"
+    },
+    "actuals_total": {
+      "minimum": 0,
+      "title": "Actuals Total",
+      "type": "number"
+    },
+    "actuals_variance_amount": {
+      "title": "Actuals Variance Amount",
+      "type": "number"
+    },
+    "actuals_variance_percent": {
+      "title": "Actuals Variance Percent",
+      "type": "number"
+    },
+    "actuals_variance_status": {
+      "const": "variance_review_required",
+      "title": "Actuals Variance Status",
       "type": "string"
     },
     "cross_repo_contract_proof_status": {
@@ -362,6 +392,13 @@
     "carrier_recovered_amount",
     "carrier_write_down_amount",
     "actuals_learning_state",
+    "actuals_source_id",
+    "actuals_source_ref",
+    "budget_actual_comparison_report_id",
+    "actuals_total",
+    "actuals_variance_amount",
+    "actuals_variance_percent",
+    "actuals_variance_status",
     "cross_repo_contract_proof_status",
     "cross_repo_contract_proof_scope",
     "stage_count",

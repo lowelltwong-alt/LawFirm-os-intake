@@ -18874,7 +18874,14 @@ class PilotReviewStoryReport(StrictModel):
     carrier_appeal_result_count: int = Field(ge=0)
     carrier_recovered_amount: float = Field(ge=0)
     carrier_write_down_amount: float = Field(ge=0)
-    actuals_learning_state: Literal["not_observed_no_learning_candidate"]
+    actuals_learning_state: Literal["synthetic_actuals_variance_requires_human_review_no_learning"]
+    actuals_source_id: str
+    actuals_source_ref: str
+    budget_actual_comparison_report_id: str
+    actuals_total: float = Field(ge=0)
+    actuals_variance_amount: float
+    actuals_variance_percent: float
+    actuals_variance_status: Literal["variance_review_required"]
     cross_repo_contract_proof_status: Literal["passed_candidate_contract_proof"]
     cross_repo_contract_proof_scope: Literal["generic_synthetic_boundary_proof_not_case_evidence"]
     stage_count: int = Field(ge=1)
@@ -18914,6 +18921,13 @@ class PilotReviewStoryReport(StrictModel):
             raise ValueError("pilot review story requires a carrier-projection stage")
         if not any(stage.stage_id == "actuals_learning" for stage in self.stages):
             raise ValueError("pilot review story requires an actuals-learning stage")
+        if (
+            "human_actuals_variance_review" not in self.required_next_gates
+            or "reviewed_learning_gate_before_candidate_changes" not in self.required_next_gates
+        ):
+            raise ValueError("pilot review story actuals variance must remain review-gated")
+        if "labor_employment_actual_variance_candidate" not in self.candidate_exception_lake_labels:
+            raise ValueError("pilot review story actuals variance needs a candidate label")
         if not self.required_next_gates or not self.red_team_notes:
             raise ValueError("pilot review story requires gates and red-team notes")
         return self

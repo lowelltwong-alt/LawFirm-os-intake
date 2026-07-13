@@ -4,6 +4,7 @@
   "selected_candidate_matter_label": "Brightline Foods Inc. / Talia Nguyen",
   "source_bundle_ref": "examples/synthetic/pilot-review/epli-assignment-source-bundle.json",
   "budget_proposal_ref": "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/legal_budget_proposal.json",
+  "actuals_source_ref": "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/budget_actuals_source.json",
   "carrier_rejection_ref": "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/carrier_rejection_capture_source_bundle_with_appeal_results.json",
   "cross_repo_contract_proof_ref": "apps/legal-intake-budget/src/fixtures/demo-cross-repo-contract-proof-report.json",
   "data_origin": "synthetic",

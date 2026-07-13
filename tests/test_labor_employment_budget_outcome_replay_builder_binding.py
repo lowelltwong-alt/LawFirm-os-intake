@@ -87,8 +87,8 @@ def test_labor_employment_budget_outcome_replay_builder_binding_binds_all_slots(
     assert persisted.builder_binding_report_id == report.builder_binding_report_id
     assert report.status == "labor_employment_budget_replay_builder_binding_ready_for_review"
     assert report.case_count == 8
-    assert report.slot_count == 38
-    assert report.bound_slot_count == 38
+    assert report.slot_count == 40
+    assert report.bound_slot_count == 40
     assert report.unknown_artifact_count == 0
     assert report.blocked_slot_count == 0
     assert report.replay_input_gap_count > 0
@@ -168,8 +168,8 @@ def test_labor_employment_budget_outcome_replay_builder_binding_cli_writes_repor
     assert '"status": "labor_employment_budget_replay_builder_binding_ready_for_review"' in (
         captured.out
     )
-    assert '"slot_count": 38' in captured.out
-    assert '"bound_slot_count": 38' in captured.out
+    assert '"slot_count": 40' in captured.out
+    assert '"bound_slot_count": 40' in captured.out
     assert '"unknown_artifact_count": 0' in captured.out
     assert '"lake_write_performed": false' in captured.out
     assert (
