@@ -437,6 +437,10 @@ from lawfirm_os_intake.models import (  # noqa: E402
     SyntheticFixtureExpansionReport,
     SyntheticConfidenceSummaryItem,
     SyntheticConfidenceSummaryReport,
+    SyntheticRateCardWorkbenchCheck,
+    SyntheticRateCardWorkbenchReport,
+    SyntheticRateCardWorkbenchRow,
+    SyntheticRateCardWorkbenchStateSummary,
     ValidationSuiteEvidenceReport,
     ValidationSuiteStepEvidence,
     POCQATriageItem,
@@ -540,6 +544,12 @@ MODELS = {
     "synthetic-fixture-depth-audit-report.schema.json": SyntheticFixtureDepthAuditReport,
     "synthetic-confidence-summary-item.schema.json": SyntheticConfidenceSummaryItem,
     "synthetic-confidence-summary-report.schema.json": SyntheticConfidenceSummaryReport,
+    "synthetic-rate-card-workbench-check.schema.json": SyntheticRateCardWorkbenchCheck,
+    "synthetic-rate-card-workbench-report.schema.json": SyntheticRateCardWorkbenchReport,
+    "synthetic-rate-card-workbench-row.schema.json": SyntheticRateCardWorkbenchRow,
+    "synthetic-rate-card-workbench-state-summary.schema.json": (
+        SyntheticRateCardWorkbenchStateSummary
+    ),
     "validation-suite-step-evidence.schema.json": ValidationSuiteStepEvidence,
     "validation-suite-evidence-report.schema.json": ValidationSuiteEvidenceReport,
     "poc-qa-triage-item.schema.json": POCQATriageItem,

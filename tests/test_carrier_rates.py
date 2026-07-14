@@ -2,6 +2,9 @@
 
 from copy import deepcopy
 
+import pytest
+import yaml
+
 from lawfirm_os_intake.context import load_profile
 from lawfirm_os_intake.models import HumanConfirmation
 from lawfirm_os_intake.rates import load_rate_card, resolve_role_rates
@@ -134,6 +137,25 @@ def test_unknown_carrier_role_party_requires_hours_only_review(tmp_path, repo_ro
     assert "carrier_role_party_unmatched_for_rates" in resolution.review_issue_codes
 
 
+def test_missing_carrier_role_party_requires_hours_only_review(tmp_path, repo_root):
+    resolution = resolve_role_rates(
+        profile=_profile(repo_root),
+        confirmation=_confirmation_with_parties(
+            [{"name": "Dr. Maya Chen", "confirmed_role": "prospective_represented_client"}],
+            "Synthetic State Court",
+        ),
+        rate_card=_card(repo_root),
+    )
+
+    assert resolution.carrier_id == "synthetic-carrier-a"
+    assert resolution.carrier_matched_by == "default_carrier"
+    assert resolution.review_required is True
+    assert resolution.pricing_status == "hours_only_review_required"
+    assert resolution.role_rates == {}
+    assert resolution.named_timekeeper_overrides == {}
+    assert "confirmed_carrier_role_missing_for_rates" in resolution.review_issue_codes
+
+
 def test_unmapped_confirmed_jurisdiction_requires_hours_only_review(tmp_path, repo_root):
     resolution = resolve_role_rates(
         profile=_profile(repo_root),
@@ -206,3 +228,19 @@ def test_resolution_is_deterministic(tmp_path, repo_root):
         profile=_profile(repo_root), confirmation=confirmation, rate_card=_card(repo_root)
     )
     assert first.model_dump() == second.model_dump()
+
+
+def test_rate_card_loader_rejects_real_or_non_candidate_declarations(tmp_path, repo_root):
+    card = _card(repo_root)
+    card["contains_real_negotiated_rates"] = True
+    real_declared = tmp_path / "real-declared.yaml"
+    real_declared.write_text(yaml.safe_dump(card), encoding="utf-8")
+    with pytest.raises(ValueError, match="real firm/carrier"):
+        load_rate_card(real_declared)
+
+    card = _card(repo_root)
+    card["status"] = "reviewed"
+    non_candidate = tmp_path / "non-candidate.yaml"
+    non_candidate.write_text(yaml.safe_dump(card), encoding="utf-8")
+    with pytest.raises(ValueError, match="synthetic candidate-only"):
+        load_rate_card(non_candidate)

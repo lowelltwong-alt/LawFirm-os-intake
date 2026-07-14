@@ -32,6 +32,7 @@ import demoSyntheticQAReviewRun from "./fixtures/demo-synthetic-qa-review-run-re
 import demoReviewDataBundle from "./fixtures/demo-ui-review-data-bundle.json";
 import demoUIDemoQARecipe from "./fixtures/demo-ui-demo-qa-recipe-report.json";
 import demoValidationSuiteEvidence from "./fixtures/demo-validation-suite-evidence-report.json";
+import demoSyntheticRateCardWorkbench from "./fixtures/demo-synthetic-rate-card-workbench-report.json";
 import {
   assertMatterLinkingPreflightReport,
   assertMatterLinkingQAGateReport,
@@ -61,6 +62,7 @@ import {
   assertSyntheticQAReviewOutcomeReport,
   assertSyntheticConfidenceSummaryReport,
   assertSyntheticQAReviewRunReport,
+  assertSyntheticRateCardWorkbenchReport,
   assertUIDemoQARecipeReport,
   assertUIReviewDataBundle,
   assertValidationSuiteEvidenceReport,
@@ -113,6 +115,7 @@ import type {
   SyntheticConfidenceSummaryReport,
   SyntheticConfidenceSummaryItemState,
   SyntheticQAReviewRunReport,
+  SyntheticRateCardWorkbenchReport,
   UIDemoQARecipeReport,
   UIReviewDataBundle,
   ValidationSuiteEvidenceReport,
@@ -163,6 +166,8 @@ const laborEmploymentBudgetOutcomeReplayConfidenceStatus =
 const budgetLearningLoop = demoBudgetLearningLoop as BudgetLearningLoopReport;
 const crossRepoContractProof = demoCrossRepoContractProof as CrossRepoContractProofReport;
 const pilotReviewStory = demoPilotReviewStory as PilotReviewStoryReport;
+const syntheticRateCardWorkbench =
+  demoSyntheticRateCardWorkbench as SyntheticRateCardWorkbenchReport;
 const bundleContractFailures = assertUIReviewDataBundle(reviewDataBundle);
 const manifestContractFailures = assertReadOnlyManifest(manifest);
 const syntheticQAReviewRunFailures = assertSyntheticQAReviewRunReport(syntheticQAReviewRun);
@@ -219,6 +224,9 @@ const budgetOutcomeReplayConfidenceStatusFailures =
 const budgetLearningLoopFailures = assertBudgetLearningLoopReport(budgetLearningLoop);
 const crossRepoContractProofFailures = assertCrossRepoContractProofReport(crossRepoContractProof);
 const pilotReviewStoryFailures = assertPilotReviewStoryReport(pilotReviewStory);
+const syntheticRateCardWorkbenchFailures = assertSyntheticRateCardWorkbenchReport(
+  syntheticRateCardWorkbench,
+);
 const contractFailures = [
   ...bundleContractFailures,
   ...manifestContractFailures,
@@ -249,6 +257,7 @@ const contractFailures = [
   ...budgetLearningLoopFailures,
   ...crossRepoContractProofFailures,
   ...pilotReviewStoryFailures,
+  ...syntheticRateCardWorkbenchFailures,
 ];
 
 const PUBLIC_DATA_CUSTODY_COMMANDS = [
@@ -627,6 +636,140 @@ function QAWorkbenchPanel({
             ))}
           </div>
         </section>
+      </div>
+    </section>
+  );
+}
+
+function downloadSyntheticRateCardCsv(report: SyntheticRateCardWorkbenchReport) {
+  const quote = (value: string | number) => `"${String(value).replaceAll('"', '""')}"`;
+  const csv = [
+    ["Carrier ID", "Carrier", "Effective Date", "State", "Title", "Hourly Rate"],
+    ...report.rows.map((row) => [
+      row.carrier_id,
+      row.carrier_name,
+      row.effective_date,
+      row.state,
+      row.title,
+      row.hourly_rate,
+    ]),
+  ]
+    .map((row) => row.map(quote).join(","))
+    .join("\n");
+  const objectUrl = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+  const anchor = document.createElement("a");
+  anchor.href = objectUrl;
+  anchor.download = "synthetic-rate-card-workbench.csv";
+  anchor.click();
+  URL.revokeObjectURL(objectUrl);
+}
+
+function SyntheticRateCardWorkbenchPanel({ report }: { report: SyntheticRateCardWorkbenchReport }) {
+  const [carrierFilter, setCarrierFilter] = React.useState("all");
+  const [stateFilter, setStateFilter] = React.useState("all");
+  const carriers = [...new Map(report.rows.map((row) => [row.carrier_id, row.carrier_name])).entries()];
+  const states = [...new Set(report.rows.map((row) => row.state))].sort();
+  const visibleRows = report.rows.filter(
+    (row) =>
+      (carrierFilter === "all" || row.carrier_id === carrierFilter) &&
+      (stateFilter === "all" || row.state === stateFilter),
+  );
+  const maxRate = Math.max(...visibleRows.map((row) => row.hourly_rate), 1);
+  const failed = syntheticRateCardWorkbenchFailures.length > 0;
+
+  return (
+    <section className="panel rate-card-workbench-panel" aria-labelledby="rate-card-workbench-title">
+      <div className="panel-heading">
+        <div>
+          <p className="eyebrow">Synthetic pricing catalog</p>
+          <h2 id="rate-card-workbench-title">Synthetic Rate Card Workbench</h2>
+          <code>{report.synthetic_rate_card_workbench_report_id}</code>
+        </div>
+        <span className={failed ? "state state-failed" : "state state-passed"}>
+          {failed ? "contract failed" : "candidate only"}
+        </span>
+      </div>
+
+      <div className="rate-card-banner">
+        <strong>{report.display_banner.summary}</strong>
+        <span>{report.rate_card_sha256}</span>
+      </div>
+
+      <div className="rate-card-metrics" aria-label="Synthetic rate card metrics">
+        <article><span>Carriers</span><strong>{report.carrier_count}</strong></article>
+        <article><span>States</span><strong>{report.state_count}</strong></article>
+        <article><span>Roles</span><strong>{report.title_count}</strong></article>
+        <article><span>Rate Cells</span><strong>{report.row_count}</strong></article>
+      </div>
+
+      <div className="rate-card-controls" aria-label="Rate card filters">
+        <label>
+          Carrier
+          <select value={carrierFilter} onChange={(event) => setCarrierFilter(event.target.value)}>
+            <option value="all">All carriers</option>
+            {carriers.map(([id, name]) => <option key={id} value={id}>{name}</option>)}
+          </select>
+        </label>
+        <label>
+          State
+          <select value={stateFilter} onChange={(event) => setStateFilter(event.target.value)}>
+            <option value="all">All states</option>
+            {states.map((state) => <option key={state} value={state}>{state}</option>)}
+          </select>
+        </label>
+        <button type="button" onClick={() => downloadSyntheticRateCardCsv(report)}>
+          Download CSV
+        </button>
+        <span className="rate-card-export-note">XLSX: {report.workbook_filename}</span>
+      </div>
+
+      <div className="rate-card-layout">
+        <section className="rate-bar-chart" aria-label="Synthetic hourly rate comparison">
+          <h3>Hourly Rate Comparison</h3>
+          {visibleRows.map((row) => (
+            <div className="rate-bar-row" key={`${row.carrier_id}-${row.state}-${row.title}`}>
+              <span>{row.carrier_name} / {row.state} / {row.title.replaceAll("_", " ")}</span>
+              <div className="rate-bar-track" aria-label={`${row.title} ${formatMoney(row.hourly_rate)}`}>
+                <div className="rate-bar-fill" style={{ width: `${(row.hourly_rate / maxRate) * 100}%` }} />
+              </div>
+              <strong>{formatMoney(row.hourly_rate)}</strong>
+            </div>
+          ))}
+        </section>
+
+        <section className="rate-card-checks" aria-labelledby="rate-card-checks-title">
+          <h3 id="rate-card-checks-title">Catalog Checks</h3>
+          <ul>
+            {report.checks.map((check) => (
+              <li key={check.check_id}>
+                <span className={check.status === "passed" ? "state state-passed" : "state state-failed"}>
+                  {check.status}
+                </span>
+                <span>{check.check_id.replaceAll("_", " ")}</span>
+              </li>
+            ))}
+          </ul>
+          <TokenList items={report.display_banner.blocked_actions} limit={7} />
+        </section>
+      </div>
+
+      <div className="table-wrap rate-card-table-wrap">
+        <table>
+          <thead>
+            <tr><th>Carrier</th><th>State</th><th>Role</th><th>Effective</th><th>Hourly Rate</th></tr>
+          </thead>
+          <tbody>
+            {visibleRows.map((row) => (
+              <tr key={`${row.carrier_id}-${row.state}-${row.title}`}>
+                <td>{row.carrier_name}</td>
+                <td>{row.state}</td>
+                <td>{row.title.replaceAll("_", " ")}</td>
+                <td>{row.effective_date}</td>
+                <td>{formatMoney(row.hourly_rate)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </section>
   );
@@ -3767,6 +3910,7 @@ function App() {
         budgetOutputReport={laborEmploymentBudgetOutputExpectations}
         pocReport={pocQATriage}
       />
+      <SyntheticRateCardWorkbenchPanel report={syntheticRateCardWorkbench} />
       <PilotReviewStoryPanel report={pilotReviewStory} />
       <BudgetLearningLoopPanel report={budgetLearningLoop} />
       <CrossRepoContractProofPanel report={crossRepoContractProof} />

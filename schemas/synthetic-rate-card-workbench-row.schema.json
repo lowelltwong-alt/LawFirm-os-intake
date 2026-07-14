@@ -1,0 +1,40 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "carrier_id": {
+      "title": "Carrier Id",
+      "type": "string"
+    },
+    "carrier_name": {
+      "title": "Carrier Name",
+      "type": "string"
+    },
+    "effective_date": {
+      "title": "Effective Date",
+      "type": "string"
+    },
+    "state": {
+      "title": "State",
+      "type": "string"
+    },
+    "title": {
+      "title": "Title",
+      "type": "string"
+    },
+    "hourly_rate": {
+      "exclusiveMinimum": 0,
+      "title": "Hourly Rate",
+      "type": "number"
+    }
+  },
+  "required": [
+    "carrier_id",
+    "carrier_name",
+    "effective_date",
+    "state",
+    "title",
+    "hourly_rate"
+  ],
+  "title": "SyntheticRateCardWorkbenchRow",
+  "type": "object"
+}

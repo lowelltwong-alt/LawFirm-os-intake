@@ -47,6 +47,7 @@ def test_legal_intake_budget_ui_required_files_exist(repo_root):
         "src/fixtures/demo-budget-learning-loop-report.json",
         "src/fixtures/demo-cross-repo-contract-proof-report.json",
         "src/fixtures/demo-pilot-review-story-report.json",
+        "src/fixtures/demo-synthetic-rate-card-workbench-report.json",
     ]
 
     for relative_path in required:
@@ -61,6 +62,31 @@ def test_legal_intake_budget_ui_has_no_publish_or_deploy_scripts(repo_root):
     assert "deploy" not in scripts
     assert "publish" not in scripts
     assert "postinstall" not in scripts
+
+
+def test_ui_synthetic_rate_card_workbench_is_audited_local_candidate_data(repo_root):
+    fixture = json.loads(
+        (
+            repo_root / UI_ROOT / "src/fixtures/demo-synthetic-rate-card-workbench-report.json"
+        ).read_text(encoding="utf-8")
+    )
+    app = (repo_root / UI_ROOT / "src/App.tsx").read_text(encoding="utf-8")
+    contract = (repo_root / UI_ROOT / "src/data-contract.ts").read_text(encoding="utf-8")
+
+    assert fixture["status"] == "synthetic_rate_card_workbench_ready_for_review"
+    assert fixture["data_origin"] == "synthetic"
+    assert fixture["candidate_only"] is True
+    assert fixture["real_rate_import_allowed"] is False
+    assert fixture["external_writes_performed"] is False
+    assert fixture["lake_write_performed"] is False
+    assert fixture["sqlite_write_performed"] is False
+    assert fixture["row_count"] == len(fixture["rows"])
+    assert fixture["rate_card_sha256"].startswith("sha256:")
+    assert "SyntheticRateCardWorkbenchPanel" in app
+    assert "downloadSyntheticRateCardCsv" in app
+    assert "assertSyntheticRateCardWorkbenchReport" in app
+    assert "assertSyntheticRateCardWorkbenchReport" in contract
+    assert "real_rate_import_allowed" in contract
 
 
 def test_legal_intake_budget_ui_data_contract_lists_required_artifacts(repo_root):
