@@ -1,0 +1,80 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "entry_id": {
+      "title": "Entry Id",
+      "type": "string"
+    },
+    "source_id": {
+      "title": "Source Id",
+      "type": "string"
+    },
+    "source_ref": {
+      "title": "Source Ref",
+      "type": "string"
+    },
+    "config_path": {
+      "title": "Config Path",
+      "type": "string"
+    },
+    "label": {
+      "title": "Label",
+      "type": "string"
+    },
+    "value": {
+      "minimum": 0,
+      "title": "Value",
+      "type": "number"
+    },
+    "unit": {
+      "enum": [
+        "hourly_rate",
+        "hours",
+        "currency",
+        "percent",
+        "count"
+      ],
+      "title": "Unit",
+      "type": "string"
+    },
+    "math_effect": {
+      "enum": [
+        "proposal_rate_fallback",
+        "proposal_template_hours",
+        "proposal_template_expense",
+        "proposal_contingency",
+        "guideline_projection_rate_cap",
+        "guideline_projection_expense_cap",
+        "guideline_preapproval_threshold",
+        "guideline_variance_threshold",
+        "named_timekeeper_override"
+      ],
+      "title": "Math Effect",
+      "type": "string"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "entry_id",
+    "source_id",
+    "source_ref",
+    "config_path",
+    "label",
+    "value",
+    "unit",
+    "math_effect"
+  ],
+  "title": "SyntheticBudgetConfigurationEntry",
+  "type": "object"
+}

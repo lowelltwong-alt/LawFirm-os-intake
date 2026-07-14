@@ -50,6 +50,7 @@ def test_legal_intake_budget_ui_required_files_exist(repo_root):
         "src/fixtures/demo-synthetic-rate-card-workbench-report.json",
         "src/fixtures/demo-synthetic-actuals-workbench-report.json",
         "src/fixtures/demo-synthetic-budget-input-workbench-report.json",
+        "src/fixtures/demo-synthetic-budget-configuration-workbench-report.json",
         "src/fixtures/demo-synthetic-guideline-projection-workbench-report.json",
         "src/fixtures/demo-synthetic-rejection-appeal-workbench-report.json",
     ]
@@ -156,6 +157,35 @@ def test_ui_synthetic_budget_input_workbench_is_pinned_candidate_lineage(repo_ro
     assert "assertSyntheticBudgetInputWorkbenchReport" in app
     assert "assertSyntheticBudgetInputWorkbenchReport" in contract
     assert "excluded_context_only" in contract
+
+
+def test_ui_synthetic_budget_configuration_workbench_is_read_only_and_audited(repo_root):
+    fixture = json.loads(
+        (
+            repo_root
+            / UI_ROOT
+            / "src/fixtures/demo-synthetic-budget-configuration-workbench-report.json"
+        ).read_text(encoding="utf-8")
+    )
+    app = (repo_root / UI_ROOT / "src/App.tsx").read_text(encoding="utf-8")
+    contract = (repo_root / UI_ROOT / "src/data-contract.ts").read_text(encoding="utf-8")
+
+    assert fixture["status"] == "synthetic_budget_configuration_workbench_ready_for_review"
+    assert fixture["data_origin"] == "synthetic"
+    assert fixture["candidate_only"] is True
+    assert fixture["read_only_ui"] is True
+    assert fixture["source_count"] == len(fixture["sources"]) == 4
+    assert fixture["entry_count"] == len(fixture["entries"]) == 159
+    assert fixture["failed_check_count"] == 0
+    assert fixture["real_rate_import_allowed"] is False
+    assert fixture["configuration_import_performed"] is False
+    assert fixture["external_writes_performed"] is False
+    assert fixture["lake_write_performed"] is False
+    assert fixture["sqlite_write_performed"] is False
+    assert "SyntheticBudgetConfigurationWorkbenchPanel" in app
+    assert "downloadSyntheticBudgetConfigurationCsv" in app
+    assert "assertSyntheticBudgetConfigurationWorkbenchReport" in app
+    assert "assertSyntheticBudgetConfigurationWorkbenchReport" in contract
 
 
 def test_ui_synthetic_guideline_projection_workbench_is_read_only_and_reconciled(repo_root):

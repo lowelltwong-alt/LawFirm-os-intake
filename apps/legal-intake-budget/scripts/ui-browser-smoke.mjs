@@ -89,7 +89,8 @@ async function main() {
     await page.locator("#root").waitFor({ state: "attached" });
     const budgetInputWorkbench = page.locator("#budget-input-workbench-title");
     await budgetInputWorkbench.waitFor({ state: "visible" });
-    const budgetInputPanelText = await page.locator(".budget-input-workbench-panel").textContent();
+    const budgetInputPanel = page.locator('section[aria-labelledby="budget-input-workbench-title"]');
+    const budgetInputPanelText = await budgetInputPanel.textContent();
     if (!budgetInputPanelText?.includes("Synthetic candidate budget input ledger only")) {
       failures.push("budget_input_workbench_missing_candidate_banner");
     }
@@ -98,12 +99,27 @@ async function main() {
     }
     const budgetInputDownload = page.waitForEvent("download");
     await page
-      .locator(".budget-input-workbench-panel")
+      .locator('section[aria-labelledby="budget-input-workbench-title"]')
       .getByRole("button", { name: "Download CSV" })
       .click();
     const budgetInputDownloadArtifact = await budgetInputDownload;
     if (budgetInputDownloadArtifact.suggestedFilename() !== "synthetic-budget-input-ledger.csv") {
       failures.push("budget_input_workbench_csv_download_filename_unexpected");
+    }
+    const budgetConfigurationWorkbench = page.locator("#budget-configuration-workbench-title");
+    await budgetConfigurationWorkbench.waitFor({ state: "visible" });
+    const budgetConfigurationPanel = page.locator(
+      'section[aria-labelledby="budget-configuration-workbench-title"]',
+    );
+    const budgetConfigurationPanelText = await budgetConfigurationPanel.textContent();
+    if (!budgetConfigurationPanelText?.includes("Synthetic editable-input inventory only") || !budgetConfigurationPanelText?.includes("159")) {
+      failures.push("budget_configuration_workbench_missing_candidate_banner_or_entry_count");
+    }
+    const budgetConfigurationDownload = page.waitForEvent("download");
+    await budgetConfigurationPanel.getByRole("button", { name: "Download CSV" }).click();
+    const budgetConfigurationDownloadArtifact = await budgetConfigurationDownload;
+    if (budgetConfigurationDownloadArtifact.suggestedFilename() !== "synthetic-budget-configuration-values.csv") {
+      failures.push("budget_configuration_workbench_csv_download_filename_unexpected");
     }
     const guidelineWorkbench = page.locator("#guideline-projection-workbench-title");
     await guidelineWorkbench.waitFor({ state: "visible" });
@@ -203,6 +219,7 @@ async function main() {
       { check_id: "local_only_render", status: "passed", detail: "The UI rendered from a loopback-only static server." },
       { check_id: "review_surface_nonempty", status: uiState.textLength >= 80 ? "passed" : "failed", detail: `Rendered text length: ${uiState.textLength}.` },
       { check_id: "budget_input_workbench_visible", status: failures.some((failure) => failure.startsWith("budget_input_workbench_")) ? "failed" : "passed", detail: "The pinned synthetic budget input ledger exposes its candidate boundary, canonical total, excluded context lanes, and local CSV download." },
+      { check_id: "budget_configuration_workbench_visible", status: failures.some((failure) => failure.startsWith("budget_configuration_workbench_")) ? "failed" : "passed", detail: "The synthetic configuration inventory exposes source paths and local CSV evidence without importing workbook edits or pricing in the browser." },
       { check_id: "guideline_projection_workbench_visible", status: failures.some((failure) => failure.startsWith("guideline_projection_workbench_")) ? "failed" : "passed", detail: "The synthetic guideline projection keeps the proposal separate, exposes counterfactual deltas, and never grants carrier approval or submission authority." },
       { check_id: "rejection_appeal_workbench_visible", status: failures.some((failure) => failure.startsWith("rejection_appeal_workbench_")) ? "failed" : "passed", detail: "The synthetic rejection and appeal workbench exposes disputed, recovered, and write-down totals without appeal submission, Lake writes, or silent learning." },
       { check_id: "actuals_variance_workbench_visible", status: failures.some((failure) => failure.startsWith("actuals_workbench_")) ? "failed" : "passed", detail: "The synthetic actuals panel exposes its candidate banner, canonical totals, and code drilldown." },

@@ -1,7 +1,7 @@
 {
   "budget_submission_authorized": false,
   "candidate_only": true,
-  "checked_json_file_count": 36,
+  "checked_json_file_count": 37,
   "external_writes_performed": false,
   "failure_count": 0,
   "failures": [],
@@ -612,6 +612,24 @@
       "top_level_type": "object"
     },
     {
+      "byte_count": 84460,
+      "candidate_only": true,
+      "data_origin": "synthetic",
+      "external_writes_performed": false,
+      "id_fields": [
+        {
+          "field": "synthetic_budget_configuration_workbench_report_id",
+          "value": "synbudgetconfig-c6def75e14eb5bd3"
+        }
+      ],
+      "path": "demo-synthetic-budget-configuration-workbench-report.json",
+      "schema_version": "0.1",
+      "sha256": "sha256:5dd6be0f5e9a85aada9375c410fc58c6d5f13994f5ae6b86f8bec9053127adfb",
+      "status": "synthetic_budget_configuration_workbench_ready_for_review",
+      "synthetic_only": true,
+      "top_level_type": "object"
+    },
+    {
       "byte_count": 14404,
       "candidate_only": true,
       "data_origin": "synthetic",
@@ -877,11 +895,11 @@
   ],
   "lake_write_performed": false,
   "local_json_only": true,
-  "manifest_sha256": "sha256:232e461024e5e4980f8a93e407ec683bd1ac565f3d6f58e07513707850c3e12e",
+  "manifest_sha256": "sha256:9ca1d6c00a84dab5e45ce58bf07656782e3015fdb71b87442793c48a1982dadf",
   "matter_opening_authorized": false,
   "non_authoritative": true,
   "parse_error_count": 0,
-  "parsed_json_file_count": 36,
+  "parsed_json_file_count": 37,
   "root": "apps\\legal-intake-budget\\src\\fixtures",
   "scanner": "fixture-manifest-scanner",
   "schema_version": "0.1",
@@ -900,5 +918,5 @@
   "sqlite_write_performed": false,
   "status": "passed",
   "synthetic_only": true,
-  "total_byte_count": 989625
+  "total_byte_count": 1074085
 }

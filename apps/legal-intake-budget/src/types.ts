@@ -1239,6 +1239,38 @@ export type SyntheticRejectionAppealWorkbenchReport = {
   generated_at: string;
 };
 
+export type SyntheticBudgetConfigurationWorkbenchReport = {
+  schema_version: string;
+  synthetic_budget_configuration_workbench_report_id: string;
+  status: "synthetic_budget_configuration_workbench_ready_for_review" | "blocked_by_synthetic_budget_configuration_workbench";
+  methodology_version: string;
+  sources: Array<{ source_id: string; source_ref: string; source_sha256: string; source_kind: string; editable: true; data_origin: "synthetic" }>;
+  entries: Array<{ entry_id: string; source_id: string; source_ref: string; config_path: string; label: string; value: number; unit: "hourly_rate" | "hours" | "currency" | "percent" | "count"; math_effect: string; candidate_only: true; synthetic_only: true }>;
+  source_count: number;
+  entry_count: number;
+  entries_by_math_effect: Record<string, number>;
+  checks: Array<{ check_id: string; status: "passed" | "failed"; message: string; evidence_refs: string[] }>;
+  failed_check_count: number;
+  workbook_filename: string;
+  markdown_filename: string;
+  display_banner: { summary: string; candidate_only: boolean; synthetic_only: boolean; read_only_ui: boolean; blocked_actions: string[] };
+  data_origin: "synthetic";
+  candidate_only: true;
+  non_authoritative: true;
+  synthetic_only: true;
+  local_json_only: true;
+  read_only_ui: true;
+  real_rate_import_allowed: false;
+  configuration_import_performed: false;
+  external_writes_performed: false;
+  lake_write_performed: false;
+  sqlite_write_performed: false;
+  budget_submission_authorized: false;
+  matter_opening_authorized: false;
+  silent_learning_performed: false;
+  generated_at: string;
+};
+
 export type BudgetLearningLoopActualsSummary = {
   status: "variance_review_required" | "actuals_not_available" | "actuals_within_threshold";
   comparison_scope: string;
