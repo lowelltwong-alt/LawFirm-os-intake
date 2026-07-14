@@ -1,0 +1,54 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "entry_id": {
+      "title": "Entry Id",
+      "type": "string"
+    },
+    "source_id": {
+      "title": "Source Id",
+      "type": "string"
+    },
+    "config_path": {
+      "title": "Config Path",
+      "type": "string"
+    },
+    "label": {
+      "title": "Label",
+      "type": "string"
+    },
+    "unit": {
+      "title": "Unit",
+      "type": "string"
+    },
+    "math_effect": {
+      "title": "Math Effect",
+      "type": "string"
+    },
+    "baseline_value": {
+      "title": "Baseline Value",
+      "type": "number"
+    },
+    "candidate_value": {
+      "title": "Candidate Value",
+      "type": "number"
+    },
+    "delta": {
+      "title": "Delta",
+      "type": "number"
+    }
+  },
+  "required": [
+    "entry_id",
+    "source_id",
+    "config_path",
+    "label",
+    "unit",
+    "math_effect",
+    "baseline_value",
+    "candidate_value",
+    "delta"
+  ],
+  "title": "SyntheticBudgetConfigurationChange",
+  "type": "object"
+}

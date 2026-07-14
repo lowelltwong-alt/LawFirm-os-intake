@@ -185,6 +185,9 @@ from .synthetic_budget_input_workbench import run_synthetic_budget_input_workben
 from .synthetic_budget_configuration_workbench import (
     run_synthetic_budget_configuration_workbench,
 )
+from .synthetic_budget_configuration_change import (
+    run_synthetic_budget_configuration_change_package,
+)
 from .synthetic_guideline_projection_workbench import run_synthetic_guideline_projection_workbench
 from .synthetic_rejection_appeal_workbench import run_synthetic_rejection_appeal_workbench
 from .synthetic_rate_card_workbench import run_synthetic_rate_card_workbench
@@ -361,6 +364,15 @@ def _parser() -> argparse.ArgumentParser:
     synthetic_budget_configuration_workbench.add_argument("--out-dir", required=True)
     synthetic_budget_configuration_workbench.add_argument("--repo-root", default=".")
     synthetic_budget_configuration_workbench.add_argument("--generated-at")
+
+    synthetic_budget_configuration_change = sub.add_parser(
+        "compare-synthetic-budget-configuration",
+        help="Build a dry-run synthetic configuration change package; no budget recalculation or import occurs.",
+    )
+    synthetic_budget_configuration_change.add_argument("--baseline-root", required=True)
+    synthetic_budget_configuration_change.add_argument("--candidate-root", required=True)
+    synthetic_budget_configuration_change.add_argument("--out-dir", required=True)
+    synthetic_budget_configuration_change.add_argument("--generated-at")
 
     synthetic_guideline_projection_workbench = sub.add_parser(
         "build-synthetic-guideline-projection-workbench",
@@ -2828,6 +2840,34 @@ def main(argv: list[str] | None = None) -> int:
             return (
                 0
                 if report.status == "synthetic_budget_configuration_workbench_ready_for_review"
+                else 2
+            )
+
+        if args.command == "compare-synthetic-budget-configuration":
+            report, run_dir = run_synthetic_budget_configuration_change_package(
+                baseline_root=args.baseline_root,
+                candidate_root=args.candidate_root,
+                out_dir=args.out_dir,
+                generated_at=args.generated_at,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "synthetic_budget_configuration_change_package_id": report.synthetic_budget_configuration_change_package_id,
+                    "change_count": report.change_count,
+                    "changed_source_ids": report.changed_source_ids,
+                    "failed_check_count": report.failed_check_count,
+                    "budget_recalculated": report.budget_recalculated,
+                    "workbook_import_performed": report.workbook_import_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return (
+                0
+                if report.status == "synthetic_budget_configuration_change_ready_for_review"
                 else 2
             )
 
