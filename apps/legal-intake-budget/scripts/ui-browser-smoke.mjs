@@ -1,11 +1,14 @@
 import { createServer } from "node:http";
-import { readFile, stat } from "node:fs/promises";
+import { execFileSync } from "node:child_process";
+import { mkdtemp, readFile, rm, stat } from "node:fs/promises";
+import { tmpdir } from "node:os";
 import { extname, isAbsolute, join, normalize, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
 
 const appDirectory = resolve(fileURLToPath(new URL(".", import.meta.url)), "..");
 const distDirectory = resolve(appDirectory, "dist");
+const repoRoot = resolve(appDirectory, "..", "..");
 const mimeTypes = {
   ".css": "text/css; charset=utf-8",
   ".html": "text/html; charset=utf-8",
@@ -121,6 +124,107 @@ async function main() {
     if (budgetConfigurationDownloadArtifact.suggestedFilename() !== "synthetic-budget-configuration-values.csv") {
       failures.push("budget_configuration_workbench_csv_download_filename_unexpected");
     }
+    const rateCardSandbox = page.locator("#rate-card-sandbox-title");
+    await rateCardSandbox.waitFor({ state: "visible" });
+    const rateCardSandboxPanel = page.locator('section[aria-labelledby="rate-card-sandbox-title"]');
+    const initialRateCardSandboxText = await rateCardSandboxPanel.textContent();
+    if (!initialRateCardSandboxText?.includes("Every rate is a synthetic candidate cell") || !initialRateCardSandboxText.includes("$6,990")) {
+      failures.push("rate_card_sandbox_missing_candidate_banner_or_pinned_total");
+    }
+    const rateCardSandboxRateInput = rateCardSandboxPanel.getByLabel("Hourly rate for synthetic-carrier-a NV partner");
+    await rateCardSandboxRateInput.fill("0.001");
+    if (
+      !(await rateCardSandboxPanel.getByRole("alert").isVisible()) ||
+      !(await rateCardSandboxPanel.getByRole("button", { name: "Download Candidate Change Package" }).isDisabled())
+    ) {
+      failures.push("rate_card_sandbox_subcent_rate_not_blocked");
+    }
+    await rateCardSandboxRateInput.fill("1e308");
+    if (
+      !(await rateCardSandboxPanel.getByRole("alert").isVisible()) ||
+      !(await rateCardSandboxPanel.getByRole("button", { name: "Download Excel-Ready CSV" }).isDisabled())
+    ) {
+      failures.push("rate_card_sandbox_nonfinite_rate_not_blocked");
+    }
+    await rateCardSandboxRateInput.fill("455");
+    if (await rateCardSandboxPanel.getByRole("alert").count()) {
+      failures.push("rate_card_sandbox_valid_rate_did_not_clear_error");
+    }
+    const changedRateCardSandboxText = await rateCardSandboxPanel.textContent();
+    if (!changedRateCardSandboxText?.includes("$6,995") || !changedRateCardSandboxText.includes("+$5.00") || !changedRateCardSandboxText.includes("1 changed cell")) {
+      failures.push("rate_card_sandbox_counterfactual_not_recomputed");
+    }
+    const rateCardSandboxCsvDownload = page.waitForEvent("download");
+    await rateCardSandboxPanel.getByRole("button", { name: "Download Excel-Ready CSV" }).click();
+    const rateCardSandboxCsvArtifact = await rateCardSandboxCsvDownload;
+    if (rateCardSandboxCsvArtifact.suggestedFilename() !== "synthetic-rate-card-sandbox.csv") {
+      failures.push("rate_card_sandbox_csv_download_filename_unexpected");
+    }
+    const rateCardSandboxCsvPath = await rateCardSandboxCsvArtifact.path();
+    const rateCardSandboxCsv = rateCardSandboxCsvPath ? await readFile(rateCardSandboxCsvPath, "utf8") : "";
+    if (!rateCardSandboxCsv.includes("synthetic-carrier-a,Harbor Point Insurance,NV,partner,450,455,5") || !rateCardSandboxCsv.includes("Candidate rate total,,6995,5")) {
+      failures.push("rate_card_sandbox_csv_contents_not_reconciled");
+    }
+    const rateCardSandboxChangeDownload = page.waitForEvent("download");
+    await rateCardSandboxPanel.getByRole("button", { name: "Download Candidate Change Package" }).click();
+    const rateCardSandboxChangeArtifact = await rateCardSandboxChangeDownload;
+    if (rateCardSandboxChangeArtifact.suggestedFilename() !== "synthetic-rate-card-sandbox-change-package.json") {
+      failures.push("rate_card_sandbox_change_package_download_filename_unexpected");
+    }
+    const rateCardSandboxChangePath = await rateCardSandboxChangeArtifact.path();
+    const rateCardSandboxChange = rateCardSandboxChangePath ? JSON.parse(await readFile(rateCardSandboxChangePath, "utf8")) : null;
+    if (
+      rateCardSandboxChange?.candidate_only !== true ||
+      rateCardSandboxChange?.local_browser_draft !== true ||
+      rateCardSandboxChange?.draftRateTotal !== 6995 ||
+      rateCardSandboxChange?.changedCellCount !== 1 ||
+      !rateCardSandboxChange?.source_rate_card_sha256?.startsWith("sha256:") ||
+      !rateCardSandboxChange?.blocked_actions?.includes("rate_card_apply_to_budget")
+    ) {
+      failures.push("rate_card_sandbox_change_package_boundary_or_math_invalid");
+    }
+    const cliOutputDirectory = await mkdtemp(join(tmpdir(), "lawfirm-os-intake-rate-card-sandbox-"));
+    try {
+      const cliOutput = execFileSync(
+        "python",
+        [
+          "-B",
+          "-c",
+          "import sys; from lawfirm_os_intake.cli import main; raise SystemExit(main(sys.argv[1:]))",
+          "render-synthetic-rate-card-sandbox-xlsx",
+          "--package",
+          rateCardSandboxChangePath ?? "",
+          "--repo-root",
+          repoRoot,
+          "--out-dir",
+          cliOutputDirectory,
+          "--generated-at",
+          "2026-07-14T00:00:00Z",
+        ],
+        {
+          cwd: repoRoot,
+          encoding: "utf8",
+          env: { ...process.env, PYTHONPATH: "src", PYTHONDONTWRITEBYTECODE: "1" },
+        },
+      );
+      const cliReport = JSON.parse(cliOutput);
+      if (
+        cliReport.status !== "synthetic_rate_card_sandbox_xlsx_ready_for_review" ||
+        cliReport.workbook_written !== true ||
+        cliReport.rate_card_applied_to_budget !== false
+      ) {
+        failures.push("rate_card_sandbox_browser_package_cli_replay_failed");
+      }
+    } catch (error) {
+      failures.push(`rate_card_sandbox_browser_package_cli_replay_failed:${error}`);
+    } finally {
+      await rm(cliOutputDirectory, { recursive: true, force: true });
+    }
+    await rateCardSandboxPanel.getByRole("button", { name: "Reset Draft" }).click();
+    const resetRateCardSandboxText = await rateCardSandboxPanel.textContent();
+    if (!resetRateCardSandboxText?.includes("$6,990.00") || !resetRateCardSandboxText.includes("+$0.00") || !resetRateCardSandboxText.includes("0 changed cells")) {
+      failures.push("rate_card_sandbox_reset_did_not_restore_pinned_draft");
+    }
     const budgetSandbox = page.locator("#budget-sandbox-title");
     await budgetSandbox.waitFor({ state: "visible" });
     const budgetSandboxPanel = page.locator('section[aria-labelledby="budget-sandbox-title"]');
@@ -229,17 +333,25 @@ async function main() {
           className: element.className,
           right: Math.round(element.getBoundingClientRect().right),
         }));
+      const escapedTableWraps = Array.from(document.querySelectorAll(".table-wrap"))
+        .filter((element) => element.getBoundingClientRect().right > viewportWidth + 1)
+        .slice(0, 5)
+        .map((element) => ({
+          className: element.className,
+          right: Math.round(element.getBoundingClientRect().right),
+        }));
       return {
         textLength: root.textContent?.trim().length ?? 0,
         viewportWidth,
         scrollWidth: document.documentElement.scrollWidth,
-        horizontalOverflow: overflowNodes.length > 0,
+        horizontalOverflow: overflowNodes.length > 0 || escapedTableWraps.length > 0,
         overflowNodes,
+        escapedTableWraps,
       };
     });
     if (uiState.textLength < 80) failures.push("rendered_ui_text_too_short");
     if (uiState.horizontalOverflow) {
-      failures.push(`rendered_ui_has_horizontal_overflow:${JSON.stringify(uiState.overflowNodes)}`);
+      failures.push(`rendered_ui_has_horizontal_overflow:${JSON.stringify({ overflowNodes: uiState.overflowNodes, escapedTableWraps: uiState.escapedTableWraps })}`);
     }
 
     await page.setViewportSize({ width: 390, height: 844 });
@@ -257,18 +369,26 @@ async function main() {
           className: element.className,
           right: Math.round(element.getBoundingClientRect().right),
         }));
+      const escapedTableWraps = Array.from(document.querySelectorAll(".table-wrap"))
+        .filter((element) => element.getBoundingClientRect().right > viewportWidth + 1)
+        .slice(0, 5)
+        .map((element) => ({
+          className: element.className,
+          right: Math.round(element.getBoundingClientRect().right),
+        }));
       return {
         textLength: root.textContent?.trim().length ?? 0,
         viewportWidth,
         scrollWidth: document.documentElement.scrollWidth,
-        horizontalOverflow: overflowNodes.length > 0,
+        horizontalOverflow: overflowNodes.length > 0 || escapedTableWraps.length > 0,
         overflowNodes,
+        escapedTableWraps,
       };
     });
     if (mobileState.textLength < 80) failures.push("mobile_rendered_ui_text_too_short");
     if (mobileState.horizontalOverflow) {
       failures.push(
-        `mobile_rendered_ui_has_horizontal_overflow:${JSON.stringify(mobileState.overflowNodes)}`,
+        `mobile_rendered_ui_has_horizontal_overflow:${JSON.stringify({ overflowNodes: mobileState.overflowNodes, escapedTableWraps: mobileState.escapedTableWraps })}`,
       );
     }
     const sandboxMobileState = await budgetSandboxPanel.evaluate((panel) => ({
@@ -278,18 +398,26 @@ async function main() {
     if (sandboxMobileState.scrollWidth > sandboxMobileState.clientWidth + 1) {
       failures.push(`budget_sandbox_mobile_overflow:${JSON.stringify(sandboxMobileState)}`);
     }
+    const rateCardSandboxMobileState = await rateCardSandboxPanel.evaluate((panel) => ({
+      clientWidth: panel.clientWidth,
+      scrollWidth: panel.scrollWidth,
+    }));
+    if (rateCardSandboxMobileState.scrollWidth > rateCardSandboxMobileState.clientWidth + 1) {
+      failures.push(`rate_card_sandbox_mobile_overflow:${JSON.stringify(rateCardSandboxMobileState)}`);
+    }
 
     const checks = [
       { check_id: "local_only_render", status: "passed", detail: "The UI rendered from a loopback-only static server." },
       { check_id: "review_surface_nonempty", status: uiState.textLength >= 80 ? "passed" : "failed", detail: `Rendered text length: ${uiState.textLength}.` },
       { check_id: "budget_input_workbench_visible", status: failures.some((failure) => failure.startsWith("budget_input_workbench_")) ? "failed" : "passed", detail: "The pinned synthetic budget input ledger exposes its candidate boundary, canonical total, excluded context lanes, and local CSV download." },
       { check_id: "budget_configuration_workbench_visible", status: failures.some((failure) => failure.startsWith("budget_configuration_workbench_")) ? "failed" : "passed", detail: "The synthetic configuration inventory exposes source paths and local CSV evidence without importing workbook edits or pricing in the browser." },
+      { check_id: "rate_card_sandbox_counterfactual_and_exports", status: failures.some((failure) => failure.startsWith("rate_card_sandbox_")) ? "failed" : "passed", detail: "A local synthetic rate-cell counterfactual recomputes catalog totals, candidate-only exports download, and reset restores the pinned values without source, budget, or runtime writes." },
       { check_id: "budget_sandbox_counterfactual_and_exports", status: failures.some((failure) => failure.startsWith("budget_sandbox_")) ? "failed" : "passed", detail: "A local synthetic hours counterfactual recomputes the candidate total, candidate-only exports download, and reset restores the pinned values without a source or runtime write." },
       { check_id: "guideline_projection_workbench_visible", status: failures.some((failure) => failure.startsWith("guideline_projection_workbench_")) ? "failed" : "passed", detail: "The synthetic guideline projection keeps the proposal separate, exposes counterfactual deltas, and never grants carrier approval or submission authority." },
       { check_id: "rejection_appeal_workbench_visible", status: failures.some((failure) => failure.startsWith("rejection_appeal_workbench_")) ? "failed" : "passed", detail: "The synthetic rejection and appeal workbench exposes disputed, recovered, and write-down totals without appeal submission, Lake writes, or silent learning." },
       { check_id: "actuals_variance_workbench_visible", status: failures.some((failure) => failure.startsWith("actuals_workbench_")) ? "failed" : "passed", detail: "The synthetic actuals panel exposes its candidate banner, canonical totals, and code drilldown." },
-      { check_id: "desktop_layout_no_horizontal_overflow", status: uiState.horizontalOverflow ? "failed" : "passed", detail: `Checked rendered elements at 1440x960 (viewport ${uiState.viewportWidth}px, document scroll ${uiState.scrollWidth}px).` },
-      { check_id: "mobile_layout_no_horizontal_overflow", status: mobileState.horizontalOverflow ? "failed" : "passed", detail: `Checked rendered elements at 390x844 (viewport ${mobileState.viewportWidth}px, document scroll ${mobileState.scrollWidth}px).` },
+      { check_id: "desktop_layout_visible_content_contained", status: uiState.horizontalOverflow ? "failed" : "passed", detail: `Checked visible elements and table-scroll boundaries at 1440x960 (viewport ${uiState.viewportWidth}px, document scroll ${uiState.scrollWidth}px).` },
+      { check_id: "mobile_layout_visible_content_contained", status: mobileState.horizontalOverflow ? "failed" : "passed", detail: `Checked visible elements and table-scroll boundaries at 390x844 (viewport ${mobileState.viewportWidth}px, document scroll ${mobileState.scrollWidth}px).` },
       { check_id: "no_external_runtime_requests", status: failures.some((failure) => failure.startsWith("external_request:")) ? "failed" : "passed", detail: "External requests are prohibited for the read-only review UI." },
       { check_id: "no_browser_runtime_errors", status: failures.some((failure) => !failure.startsWith("external_request:")) ? "failed" : "passed", detail: "Console errors, page errors, and failed requests fail the smoke test." },
     ];

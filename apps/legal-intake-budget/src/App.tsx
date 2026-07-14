@@ -2,6 +2,7 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 
 import { BudgetSandboxPanel } from "./BudgetSandboxPanel";
+import { RateCardSandboxPanel } from "./RateCardSandboxPanel";
 
 import demoCrosswalkAudit from "./fixtures/demo-crosswalk-audit-report.json";
 import demoOCGRuleIRAdoption from "./fixtures/demo-ocg-rule-ir-adoption-report.json";
@@ -4283,6 +4284,7 @@ function App() {
         pocReport={pocQATriage}
       />
       <SyntheticRateCardWorkbenchPanel report={syntheticRateCardWorkbench} />
+      <RateCardSandboxPanel rateCard={syntheticRateCardWorkbench} />
       <SyntheticBudgetInputWorkbenchPanel report={syntheticBudgetInputWorkbench} />
       <SyntheticBudgetConfigurationWorkbenchPanel report={syntheticBudgetConfigurationWorkbench} />
       <BudgetSandboxPanel budgetInput={syntheticBudgetInputWorkbench} />

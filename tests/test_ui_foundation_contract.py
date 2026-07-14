@@ -213,6 +213,28 @@ def test_ui_budget_sandbox_is_local_draft_only_and_source_bound(repo_root):
     assert "fetch(" not in sandbox
 
 
+def test_ui_rate_card_sandbox_is_local_draft_only_and_source_bound(repo_root):
+    app = (repo_root / UI_ROOT / "src/App.tsx").read_text(encoding="utf-8")
+    sandbox = (repo_root / UI_ROOT / "src/RateCardSandboxPanel.tsx").read_text(encoding="utf-8")
+    fixture = json.loads(
+        (
+            repo_root / UI_ROOT / "src/fixtures/demo-synthetic-rate-card-workbench-report.json"
+        ).read_text(encoding="utf-8")
+    )
+
+    assert fixture["data_origin"] == "synthetic"
+    assert fixture["candidate_only"] is True
+    assert fixture["real_rate_import_allowed"] is False
+    assert "RateCardSandboxPanel" in app
+    assert "rate-card-sandbox-title" in sandbox
+    assert "local_browser_draft: true" in sandbox
+    assert "source_rate_card_sha256" in sandbox
+    assert "rate_card_apply_to_budget" in sandbox
+    assert "Download Excel-Ready CSV" in sandbox
+    assert "localStorage" not in sandbox
+    assert "fetch(" not in sandbox
+
+
 def test_ui_synthetic_guideline_projection_workbench_is_read_only_and_reconciled(repo_root):
     fixture = json.loads(
         (

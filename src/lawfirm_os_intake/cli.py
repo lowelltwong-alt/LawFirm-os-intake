@@ -195,6 +195,7 @@ from .synthetic_configuration_regeneration_binding import (
 from .synthetic_guideline_projection_workbench import run_synthetic_guideline_projection_workbench
 from .synthetic_rejection_appeal_workbench import run_synthetic_rejection_appeal_workbench
 from .synthetic_rate_card_workbench import run_synthetic_rate_card_workbench
+from .synthetic_rate_card_sandbox_xlsx import run_synthetic_rate_card_sandbox_xlsx_export
 from .ui_demo_fixture_promotion import promote_ui_demo_run_fixtures
 from .ui_demo_qa_recipe import run_ui_demo_qa_recipe
 from .ui_demo_qa_recipe_fixture_refresh import refresh_ui_demo_qa_recipe_fixture
@@ -369,6 +370,18 @@ def _parser() -> argparse.ArgumentParser:
     synthetic_budget_sandbox_xlsx.add_argument("--out-dir", required=True)
     synthetic_budget_sandbox_xlsx.add_argument("--repo-root", default=".")
     synthetic_budget_sandbox_xlsx.add_argument("--generated-at")
+
+    synthetic_rate_card_sandbox_xlsx = sub.add_parser(
+        "render-synthetic-rate-card-sandbox-xlsx",
+        help=(
+            "Validate a synthetic browser rate-card candidate package and render a local "
+            "macro-free XLSX. It never writes configuration or applies rates to a budget."
+        ),
+    )
+    synthetic_rate_card_sandbox_xlsx.add_argument("--package", required=True)
+    synthetic_rate_card_sandbox_xlsx.add_argument("--out-dir", required=True)
+    synthetic_rate_card_sandbox_xlsx.add_argument("--repo-root", default=".")
+    synthetic_rate_card_sandbox_xlsx.add_argument("--generated-at")
 
     synthetic_budget_configuration_workbench = sub.add_parser(
         "build-synthetic-budget-configuration-workbench",
@@ -2859,6 +2872,36 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 0 if report["status"] == "synthetic_budget_sandbox_xlsx_ready_for_review" else 2
+
+        if args.command == "render-synthetic-rate-card-sandbox-xlsx":
+            report, run_dir = run_synthetic_rate_card_sandbox_xlsx_export(
+                package_path=args.package,
+                repo_root=args.repo_root,
+                out_dir=args.out_dir,
+                generated_at=args.generated_at,
+            )
+            _print(
+                {
+                    "status": report["status"],
+                    "synthetic_rate_card_sandbox_xlsx_export_id": report[
+                        "synthetic_rate_card_sandbox_xlsx_export_id"
+                    ],
+                    "failed_check_count": report["failed_check_count"],
+                    "workbook_written": report["status"]
+                    == "synthetic_rate_card_sandbox_xlsx_ready_for_review",
+                    "rate_card_applied_to_budget": report["rate_card_applied_to_budget"],
+                    "source_mutation_performed": report["source_mutation_performed"],
+                    "external_writes_performed": report["external_writes_performed"],
+                    "lake_write_performed": report["lake_write_performed"],
+                    "sqlite_write_performed": report["sqlite_write_performed"],
+                    "budget_submission_authorized": report["budget_submission_authorized"],
+                    "matter_opening_authorized": report["matter_opening_authorized"],
+                    "run_dir": str(run_dir),
+                }
+            )
+            return (
+                0 if report["status"] == "synthetic_rate_card_sandbox_xlsx_ready_for_review" else 2
+            )
 
         if args.command == "build-synthetic-budget-configuration-workbench":
             report, run_dir = run_synthetic_budget_configuration_workbench(

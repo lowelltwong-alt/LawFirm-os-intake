@@ -235,6 +235,11 @@ code {
   border-color: #9bb4aa;
 }
 
+.rate-card-sandbox-panel {
+  margin-bottom: 14px;
+  border-color: #9bb4aa;
+}
+
 .sandbox-controls,
 .sandbox-export-row {
   display: flex;
@@ -282,7 +287,8 @@ code {
   padding: 7px 10px;
 }
 
-.sandbox-controls button:disabled {
+.sandbox-controls button:disabled,
+.sandbox-export-row button:disabled {
   border-color: #c3cdc6;
   color: #6c776e;
   background: #e6ebe7;
@@ -295,7 +301,8 @@ code {
   font-size: 0.8rem;
 }
 
-.budget-sandbox-table input {
+.budget-sandbox-table input,
+.rate-card-sandbox-table input {
   width: 100%;
   min-width: 92px;
   padding: 7px 8px;
@@ -316,6 +323,14 @@ code {
 .sandbox-neutral { color: #536056; }
 .sandbox-increase { color: #8b2d26; }
 .sandbox-decrease { color: #1d5a32; }
+
+.sandbox-input-error {
+  display: block;
+  margin-top: 5px;
+  color: #8b2d26;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
 
 .sandbox-phase-chart {
   display: grid;
@@ -376,12 +391,17 @@ code {
   .budget-sandbox-table,
   .budget-sandbox-table tbody,
   .budget-sandbox-table tr,
-  .budget-sandbox-table td {
+  .budget-sandbox-table td,
+  .rate-card-sandbox-table,
+  .rate-card-sandbox-table tbody,
+  .rate-card-sandbox-table tr,
+  .rate-card-sandbox-table td {
     display: block;
     width: 100%;
   }
 
-  .budget-sandbox-table thead {
+  .budget-sandbox-table thead,
+  .rate-card-sandbox-table thead {
     position: absolute;
     width: 1px;
     height: 1px;
@@ -390,12 +410,14 @@ code {
     white-space: nowrap;
   }
 
-  .budget-sandbox-table tr {
+  .budget-sandbox-table tr,
+  .rate-card-sandbox-table tr {
     padding: 8px 10px;
     border-bottom: 1px solid #d7dfc7;
   }
 
-  .budget-sandbox-table td {
+  .budget-sandbox-table td,
+  .rate-card-sandbox-table td {
     display: grid;
     grid-template-columns: minmax(94px, 0.75fr) minmax(0, 1.25fr);
     gap: 8px;
@@ -403,7 +425,8 @@ code {
     border: 0;
   }
 
-  .budget-sandbox-table td::before {
+  .budget-sandbox-table td::before,
+  .rate-card-sandbox-table td::before {
     content: attr(data-label);
     color: #536056;
     font-size: 0.75rem;
