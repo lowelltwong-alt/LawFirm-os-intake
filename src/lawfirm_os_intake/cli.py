@@ -180,6 +180,22 @@ from .synthetic_qa_blocker_report import run_synthetic_qa_blocker_report
 from .synthetic_qa_bundle import run_synthetic_qa_bundle
 from .synthetic_qa_review_outcomes import run_synthetic_qa_review_outcome_record
 from .synthetic_qa_review_run import run_synthetic_qa_review_run
+from .synthetic_actuals_workbench import run_synthetic_actuals_workbench
+from .synthetic_budget_input_workbench import run_synthetic_budget_input_workbench
+from .synthetic_budget_sandbox_xlsx import run_synthetic_budget_sandbox_xlsx_export
+from .synthetic_budget_configuration_workbench import (
+    run_synthetic_budget_configuration_workbench,
+)
+from .synthetic_budget_configuration_change import (
+    run_synthetic_budget_configuration_change_package,
+)
+from .synthetic_configuration_regeneration_binding import (
+    run_synthetic_configuration_regeneration_binding_report,
+)
+from .synthetic_guideline_projection_workbench import run_synthetic_guideline_projection_workbench
+from .synthetic_rejection_appeal_workbench import run_synthetic_rejection_appeal_workbench
+from .synthetic_rate_card_workbench import run_synthetic_rate_card_workbench
+from .synthetic_rate_card_sandbox_xlsx import run_synthetic_rate_card_sandbox_xlsx_export
 from .ui_demo_fixture_promotion import promote_ui_demo_run_fixtures
 from .ui_demo_qa_recipe import run_ui_demo_qa_recipe
 from .ui_demo_qa_recipe_fixture_refresh import refresh_ui_demo_qa_recipe_fixture
@@ -282,6 +298,141 @@ def _parser() -> argparse.ArgumentParser:
     )
     budget_form_audit.add_argument("--template", required=True, help="Existing UTBMS budget form")
     budget_form_audit.add_argument("--out", required=True, help="Output audit report JSON path")
+
+    synthetic_rate_card_workbench = sub.add_parser(
+        "build-synthetic-rate-card-workbench",
+        help=(
+            "Build a local report and macro-free XLSX from the fixed checked-in "
+            "synthetic rate card. Real-rate import is intentionally unavailable."
+        ),
+    )
+    synthetic_rate_card_workbench.add_argument(
+        "--out-dir", required=True, help="Local directory for report, markdown, and XLSX."
+    )
+    synthetic_rate_card_workbench.add_argument(
+        "--repo-root",
+        default=".",
+        help="Repository root containing config/synthetic-carrier-rate-card.yaml.",
+    )
+    synthetic_rate_card_workbench.add_argument(
+        "--generated-at",
+        help="Optional fixed timestamp for deterministic tests and fixture replay.",
+    )
+
+    synthetic_actuals_workbench = sub.add_parser(
+        "build-synthetic-actuals-workbench",
+        help=(
+            "Build the fixed-source synthetic EPLI actuals-versus-budget review artifact. "
+            "Production billing import is intentionally unavailable."
+        ),
+    )
+    synthetic_actuals_workbench.add_argument(
+        "--out-dir", required=True, help="Local directory for report and Markdown trace."
+    )
+    synthetic_actuals_workbench.add_argument(
+        "--repo-root",
+        default=".",
+        help="Repository root containing fixed synthetic EPLI budget and actuals fixtures.",
+    )
+    synthetic_actuals_workbench.add_argument(
+        "--generated-at",
+        help="Optional fixed timestamp for deterministic tests and fixture replay.",
+    )
+
+    synthetic_budget_input_workbench = sub.add_parser(
+        "build-synthetic-budget-input-workbench",
+        help=(
+            "Build a fixed-source synthetic budget input ledger plus macro-free XLSX. "
+            "Browser editing and runtime pricing are intentionally unavailable."
+        ),
+    )
+    synthetic_budget_input_workbench.add_argument(
+        "--out-dir", required=True, help="Local directory for report, markdown, and XLSX."
+    )
+    synthetic_budget_input_workbench.add_argument(
+        "--repo-root",
+        default=".",
+        help="Repository root containing the fixed synthetic EPLI budget proposal.",
+    )
+    synthetic_budget_input_workbench.add_argument(
+        "--generated-at",
+        help="Optional fixed timestamp for deterministic tests and fixture replay.",
+    )
+
+    synthetic_budget_sandbox_xlsx = sub.add_parser(
+        "render-synthetic-budget-sandbox-xlsx",
+        help=(
+            "Validate a synthetic browser candidate package against the pinned proposal and render a local macro-free XLSX. "
+            "It never writes source configuration or submits a budget."
+        ),
+    )
+    synthetic_budget_sandbox_xlsx.add_argument("--package", required=True)
+    synthetic_budget_sandbox_xlsx.add_argument("--out-dir", required=True)
+    synthetic_budget_sandbox_xlsx.add_argument("--repo-root", default=".")
+    synthetic_budget_sandbox_xlsx.add_argument("--generated-at")
+
+    synthetic_rate_card_sandbox_xlsx = sub.add_parser(
+        "render-synthetic-rate-card-sandbox-xlsx",
+        help=(
+            "Validate a synthetic browser rate-card candidate package and render a local "
+            "macro-free XLSX. It never writes configuration or applies rates to a budget."
+        ),
+    )
+    synthetic_rate_card_sandbox_xlsx.add_argument("--package", required=True)
+    synthetic_rate_card_sandbox_xlsx.add_argument("--out-dir", required=True)
+    synthetic_rate_card_sandbox_xlsx.add_argument("--repo-root", default=".")
+    synthetic_rate_card_sandbox_xlsx.add_argument("--generated-at")
+
+    synthetic_budget_configuration_workbench = sub.add_parser(
+        "build-synthetic-budget-configuration-workbench",
+        help=(
+            "Inventory editable synthetic rates, template hours/expenses, and guideline "
+            "thresholds with a macro-free worksheet. Workbook import is intentionally unavailable."
+        ),
+    )
+    synthetic_budget_configuration_workbench.add_argument("--out-dir", required=True)
+    synthetic_budget_configuration_workbench.add_argument("--repo-root", default=".")
+    synthetic_budget_configuration_workbench.add_argument("--generated-at")
+
+    synthetic_budget_configuration_change = sub.add_parser(
+        "compare-synthetic-budget-configuration",
+        help="Build a dry-run synthetic configuration change package; no budget recalculation or import occurs.",
+    )
+    synthetic_budget_configuration_change.add_argument("--baseline-root", required=True)
+    synthetic_budget_configuration_change.add_argument("--candidate-root", required=True)
+    synthetic_budget_configuration_change.add_argument("--out-dir", required=True)
+    synthetic_budget_configuration_change.add_argument("--generated-at")
+    regeneration_binding = sub.add_parser("bind-synthetic-configuration-regeneration")
+    regeneration_binding.add_argument("--baseline-root", required=True)
+    regeneration_binding.add_argument("--candidate-root", required=True)
+    regeneration_binding.add_argument("--out-dir", required=True)
+    regeneration_binding.add_argument("--generated-at")
+
+    synthetic_guideline_projection_workbench = sub.add_parser(
+        "build-synthetic-guideline-projection-workbench",
+        help=(
+            "Build a fixed-source synthetic guideline projection comparison plus macro-free XLSX. "
+            "It is not a carrier approval, submission, or calibration command."
+        ),
+    )
+    synthetic_guideline_projection_workbench.add_argument(
+        "--out-dir", required=True, help="Local directory for report, markdown, and XLSX."
+    )
+    synthetic_guideline_projection_workbench.add_argument(
+        "--repo-root", default=".", help="Repository root containing synthetic projection sources."
+    )
+    synthetic_guideline_projection_workbench.add_argument(
+        "--generated-at",
+        help="Optional fixed timestamp for deterministic tests and fixture replay.",
+    )
+
+    rejection_appeal_workbench = sub.add_parser(
+        "build-synthetic-rejection-appeal-workbench",
+        help="Build a read-only synthetic rejection, appeal, and learning review workbench.",
+    )
+    rejection_appeal_workbench.add_argument("--out-dir", required=True)
+    rejection_appeal_workbench.add_argument("--repo-root", default=".")
+    rejection_appeal_workbench.add_argument("--generated-at")
 
     validate_budget_artifact = sub.add_parser(
         "validate-budget-artifact",
@@ -2600,6 +2751,289 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 0 if report.status == "passed" else 2
+
+        if args.command == "build-synthetic-rate-card-workbench":
+            report, run_dir = run_synthetic_rate_card_workbench(
+                repo_root=args.repo_root,
+                out_dir=args.out_dir,
+                generated_at=args.generated_at,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "synthetic_rate_card_workbench_report_id": (
+                        report.synthetic_rate_card_workbench_report_id
+                    ),
+                    "rate_card_id": report.rate_card_id,
+                    "rate_card_sha256": report.rate_card_sha256,
+                    "row_count": report.row_count,
+                    "failed_check_count": report.failed_check_count,
+                    "workbook_written": (
+                        report.status == "synthetic_rate_card_workbench_ready_for_review"
+                    ),
+                    "real_rate_import_allowed": report.real_rate_import_allowed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "budget_submission_authorized": report.budget_submission_authorized,
+                    "matter_opening_authorized": report.matter_opening_authorized,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0 if report.status == "synthetic_rate_card_workbench_ready_for_review" else 2
+
+        if args.command == "build-synthetic-actuals-workbench":
+            report, run_dir = run_synthetic_actuals_workbench(
+                repo_root=args.repo_root,
+                out_dir=args.out_dir,
+                generated_at=args.generated_at,
+            )
+            comparison = report.comparison
+            _print(
+                {
+                    "status": report.status,
+                    "synthetic_actuals_workbench_report_id": (
+                        report.synthetic_actuals_workbench_report_id
+                    ),
+                    "budget_actual_comparison_report_id": (
+                        comparison.budget_actual_comparison_report_id
+                    ),
+                    "comparison_budget_state": comparison.comparison_budget_state,
+                    "phase_row_count": report.phase_row_count,
+                    "code_row_count": report.code_row_count,
+                    "total_budgeted": comparison.total_budgeted,
+                    "total_actual": comparison.total_actual,
+                    "total_variance_amount": comparison.total_variance_amount,
+                    "failed_check_count": report.failed_check_count,
+                    "billing_connector_read_performed": report.billing_connector_read_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "budget_submission_authorized": report.budget_submission_authorized,
+                    "matter_opening_authorized": report.matter_opening_authorized,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0 if report.status == "synthetic_actuals_workbench_ready_for_review" else 2
+
+        if args.command == "build-synthetic-budget-input-workbench":
+            report, run_dir = run_synthetic_budget_input_workbench(
+                repo_root=args.repo_root,
+                out_dir=args.out_dir,
+                generated_at=args.generated_at,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "synthetic_budget_input_workbench_report_id": (
+                        report.synthetic_budget_input_workbench_report_id
+                    ),
+                    "budget_proposal_id": report.budget_proposal_id,
+                    "line_count": report.line_count,
+                    "total_proposed_budget": report.total_proposed_budget,
+                    "failed_check_count": report.failed_check_count,
+                    "workbook_written": (
+                        report.status == "synthetic_budget_input_workbench_ready_for_review"
+                    ),
+                    "external_writes_performed": report.external_writes_performed,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "budget_submission_authorized": report.budget_submission_authorized,
+                    "matter_opening_authorized": report.matter_opening_authorized,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0 if report.status == "synthetic_budget_input_workbench_ready_for_review" else 2
+
+        if args.command == "render-synthetic-budget-sandbox-xlsx":
+            report, run_dir = run_synthetic_budget_sandbox_xlsx_export(
+                package_path=args.package,
+                repo_root=args.repo_root,
+                out_dir=args.out_dir,
+                generated_at=args.generated_at,
+            )
+            _print(
+                {
+                    "status": report["status"],
+                    "synthetic_budget_sandbox_xlsx_export_id": report[
+                        "synthetic_budget_sandbox_xlsx_export_id"
+                    ],
+                    "failed_check_count": report["failed_check_count"],
+                    "workbook_written": report["status"]
+                    == "synthetic_budget_sandbox_xlsx_ready_for_review",
+                    "source_mutation_performed": report["source_mutation_performed"],
+                    "external_writes_performed": report["external_writes_performed"],
+                    "lake_write_performed": report["lake_write_performed"],
+                    "sqlite_write_performed": report["sqlite_write_performed"],
+                    "budget_submission_authorized": report["budget_submission_authorized"],
+                    "matter_opening_authorized": report["matter_opening_authorized"],
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0 if report["status"] == "synthetic_budget_sandbox_xlsx_ready_for_review" else 2
+
+        if args.command == "render-synthetic-rate-card-sandbox-xlsx":
+            report, run_dir = run_synthetic_rate_card_sandbox_xlsx_export(
+                package_path=args.package,
+                repo_root=args.repo_root,
+                out_dir=args.out_dir,
+                generated_at=args.generated_at,
+            )
+            _print(
+                {
+                    "status": report["status"],
+                    "synthetic_rate_card_sandbox_xlsx_export_id": report[
+                        "synthetic_rate_card_sandbox_xlsx_export_id"
+                    ],
+                    "failed_check_count": report["failed_check_count"],
+                    "workbook_written": report["status"]
+                    == "synthetic_rate_card_sandbox_xlsx_ready_for_review",
+                    "rate_card_applied_to_budget": report["rate_card_applied_to_budget"],
+                    "source_mutation_performed": report["source_mutation_performed"],
+                    "external_writes_performed": report["external_writes_performed"],
+                    "lake_write_performed": report["lake_write_performed"],
+                    "sqlite_write_performed": report["sqlite_write_performed"],
+                    "budget_submission_authorized": report["budget_submission_authorized"],
+                    "matter_opening_authorized": report["matter_opening_authorized"],
+                    "run_dir": str(run_dir),
+                }
+            )
+            return (
+                0 if report["status"] == "synthetic_rate_card_sandbox_xlsx_ready_for_review" else 2
+            )
+
+        if args.command == "build-synthetic-budget-configuration-workbench":
+            report, run_dir = run_synthetic_budget_configuration_workbench(
+                repo_root=args.repo_root,
+                out_dir=args.out_dir,
+                generated_at=args.generated_at,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "synthetic_budget_configuration_workbench_report_id": report.synthetic_budget_configuration_workbench_report_id,
+                    "source_count": report.source_count,
+                    "entry_count": report.entry_count,
+                    "failed_check_count": report.failed_check_count,
+                    "workbook_written": report.status
+                    == "synthetic_budget_configuration_workbench_ready_for_review",
+                    "real_rate_import_allowed": report.real_rate_import_allowed,
+                    "configuration_import_performed": report.configuration_import_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "budget_submission_authorized": report.budget_submission_authorized,
+                    "matter_opening_authorized": report.matter_opening_authorized,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return (
+                0
+                if report.status == "synthetic_budget_configuration_workbench_ready_for_review"
+                else 2
+            )
+
+        if args.command == "compare-synthetic-budget-configuration":
+            report, run_dir = run_synthetic_budget_configuration_change_package(
+                baseline_root=args.baseline_root,
+                candidate_root=args.candidate_root,
+                out_dir=args.out_dir,
+                generated_at=args.generated_at,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "synthetic_budget_configuration_change_package_id": report.synthetic_budget_configuration_change_package_id,
+                    "change_count": report.change_count,
+                    "changed_source_ids": report.changed_source_ids,
+                    "failed_check_count": report.failed_check_count,
+                    "budget_recalculated": report.budget_recalculated,
+                    "workbook_import_performed": report.workbook_import_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return (
+                0
+                if report.status == "synthetic_budget_configuration_change_ready_for_review"
+                else 2
+            )
+
+        if args.command == "bind-synthetic-configuration-regeneration":
+            report, run_dir = run_synthetic_configuration_regeneration_binding_report(
+                baseline_root=args.baseline_root,
+                candidate_root=args.candidate_root,
+                out_dir=args.out_dir,
+                generated_at=args.generated_at,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "regeneration_binding_report_id": report.regeneration_binding_report_id,
+                    "changed_source_ids": report.changed_source_ids,
+                    "failed_check_count": report.failed_check_count,
+                    "budget_recalculated": report.budget_recalculated,
+                    "external_writes_performed": report.external_writes_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0 if report.status == "ready_for_review" else 2
+
+        if args.command == "build-synthetic-guideline-projection-workbench":
+            report, run_dir = run_synthetic_guideline_projection_workbench(
+                repo_root=args.repo_root,
+                out_dir=args.out_dir,
+                generated_at=args.generated_at,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "synthetic_guideline_projection_workbench_report_id": report.synthetic_guideline_projection_workbench_report_id,
+                    "budget_proposal_id": report.budget_proposal_id,
+                    "proposal_total": report.proposal_total,
+                    "carrier_count": len(report.views),
+                    "failed_check_count": report.failed_check_count,
+                    "workbook_written": report.status
+                    == "synthetic_guideline_projection_workbench_ready_for_review",
+                    "external_writes_performed": report.external_writes_performed,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "budget_submission_authorized": report.budget_submission_authorized,
+                    "matter_opening_authorized": report.matter_opening_authorized,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return (
+                0
+                if report.status == "synthetic_guideline_projection_workbench_ready_for_review"
+                else 2
+            )
+
+        if args.command == "build-synthetic-rejection-appeal-workbench":
+            report, run_dir = run_synthetic_rejection_appeal_workbench(
+                repo_root=args.repo_root, out_dir=args.out_dir, generated_at=args.generated_at
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "case_count": len(report.cases),
+                    "total_disputed_amount": report.total_disputed_amount,
+                    "total_recovered_amount": report.total_recovered_amount,
+                    "total_write_down_amount": report.total_write_down_amount,
+                    "failed_check_count": report.failed_check_count,
+                    "external_writes_performed": report.external_writes_performed,
+                    "lake_write_performed": report.lake_write_performed,
+                    "appeal_submission_performed": report.appeal_submission_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return (
+                0 if report.status == "synthetic_rejection_appeal_workbench_ready_for_review" else 2
+            )
 
         if args.command == "validate-budget-artifact":
             report = validate_budget_artifacts(

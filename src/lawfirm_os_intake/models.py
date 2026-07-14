@@ -19641,4 +19641,731 @@ class QAProductConfidenceReport(StrictModel):
     not_authorized_for_model_training: bool = True
 
 
+class SyntheticRateCardWorkbenchRow(StrictModel):
+    carrier_id: str
+    carrier_name: str
+    effective_date: str
+    state: str
+    title: str
+    hourly_rate: float = Field(gt=0)
+
+
+class SyntheticRateCardWorkbenchStateSummary(StrictModel):
+    carrier_id: str
+    carrier_name: str
+    state: str
+    role_count: int = Field(ge=0)
+    minimum_hourly_rate: float = Field(gt=0)
+    maximum_hourly_rate: float = Field(gt=0)
+    average_hourly_rate: float = Field(gt=0)
+
+
+class SyntheticRateCardWorkbenchCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    evidence_refs: list[str] = Field(default_factory=list)
+
+
+class SyntheticRateCardWorkbenchReport(StrictModel):
+    schema_version: str = "0.1"
+    synthetic_rate_card_workbench_report_id: str
+    status: Literal[
+        "synthetic_rate_card_workbench_ready_for_review",
+        "blocked_by_synthetic_rate_card_workbench",
+    ]
+    rate_card_id: str
+    rate_card_version: str
+    rate_card_ref: str
+    rate_card_sha256: str
+    editable_source_ref: str
+    methodology_version: Literal["synthetic_rate_card_workbench.v0_1"] = (
+        "synthetic_rate_card_workbench.v0_1"
+    )
+    carrier_count: int = Field(ge=0)
+    state_count: int = Field(ge=0)
+    title_count: int = Field(ge=0)
+    row_count: int = Field(ge=0)
+    named_timekeeper_override_count: int = Field(ge=0)
+    rows: list[SyntheticRateCardWorkbenchRow]
+    state_summaries: list[SyntheticRateCardWorkbenchStateSummary]
+    checks: list[SyntheticRateCardWorkbenchCheck]
+    failed_check_count: int = Field(ge=0)
+    workbook_filename: str
+    markdown_filename: str
+    display_banner: dict[str, Any]
+    candidate_exception_lake_labels: list[str]
+    required_next_gates: list[str]
+    data_origin: Literal["synthetic"] = "synthetic"
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    local_json_only: Literal[True] = True
+    read_only_ui: Literal[True] = True
+    real_rate_import_allowed: Literal[False] = False
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    not_authorized_for_matter_opening: Literal[True] = True
+    not_authorized_for_calibration: Literal[True] = True
+    external_writes_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def workbench_report_is_complete_and_candidate_only(self) -> "SyntheticRateCardWorkbenchReport":
+        failed = [check for check in self.checks if check.status == "failed"]
+        if self.failed_check_count != len(failed):
+            raise ValueError("synthetic rate card workbench failed check count mismatch")
+        if self.row_count != len(self.rows):
+            raise ValueError("synthetic rate card workbench row count mismatch")
+        if self.status == "synthetic_rate_card_workbench_ready_for_review" and failed:
+            raise ValueError(
+                "ready synthetic rate card workbench report cannot include failed checks"
+            )
+        if self.status == "blocked_by_synthetic_rate_card_workbench" and not failed:
+            raise ValueError("blocked synthetic rate card workbench report requires failed checks")
+        if not self.rate_card_sha256.startswith("sha256:"):
+            raise ValueError("synthetic rate card workbench requires a source hash")
+        return self
+
+
+class SyntheticActualsWorkbenchCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    evidence_refs: list[str] = Field(default_factory=list)
+
+
+class SyntheticActualsWorkbenchReport(StrictModel):
+    schema_version: str = "0.1"
+    synthetic_actuals_workbench_report_id: str
+    status: Literal[
+        "synthetic_actuals_workbench_ready_for_review",
+        "blocked_by_synthetic_actuals_workbench",
+    ]
+    methodology_version: Literal["synthetic_actuals_workbench.v0_1"] = (
+        "synthetic_actuals_workbench.v0_1"
+    )
+    budget_proposal_ref: str
+    budget_proposal_sha256: str
+    actuals_source_id: str
+    actuals_source_ref: str
+    actuals_source_sha256: str
+    comparison: BudgetActualComparisonReport
+    phase_budgeted_total: float = Field(ge=0)
+    phase_actual_total: float = Field(ge=0)
+    code_budgeted_total: float = Field(ge=0)
+    code_actual_total: float = Field(ge=0)
+    phase_row_count: int = Field(ge=0)
+    code_row_count: int = Field(ge=0)
+    checks: list[SyntheticActualsWorkbenchCheck]
+    failed_check_count: int = Field(ge=0)
+    display_banner: dict[str, Any]
+    candidate_exception_lake_labels: list[str]
+    required_next_gates: list[str]
+    data_origin: Literal["synthetic"] = "synthetic"
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    local_json_only: Literal[True] = True
+    read_only_ui: Literal[True] = True
+    billing_connector_read_performed: Literal[False] = False
+    billing_connector_write_performed: Literal[False] = False
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    not_authorized_for_matter_opening: Literal[True] = True
+    not_authorized_for_calibration: Literal[True] = True
+    external_writes_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def synthetic_actuals_workbench_is_reconcilable_and_review_bound(
+        self,
+    ) -> "SyntheticActualsWorkbenchReport":
+        failed = [check for check in self.checks if check.status == "failed"]
+        if self.failed_check_count != len(failed):
+            raise ValueError("synthetic actuals workbench failed check count mismatch")
+        if self.phase_row_count != len(self.comparison.phase_comparisons):
+            raise ValueError("synthetic actuals workbench phase row count mismatch")
+        if self.code_row_count != len(self.comparison.code_comparisons):
+            raise ValueError("synthetic actuals workbench code row count mismatch")
+        if self.status == "synthetic_actuals_workbench_ready_for_review" and failed:
+            raise ValueError("ready synthetic actuals workbench cannot include failed checks")
+        if self.status == "blocked_by_synthetic_actuals_workbench" and not failed:
+            raise ValueError("blocked synthetic actuals workbench requires failed checks")
+        if not (
+            self.budget_proposal_sha256.startswith("sha256:")
+            and self.actuals_source_sha256.startswith("sha256:")
+        ):
+            raise ValueError("synthetic actuals workbench requires source hashes")
+        if self.comparison.comparison_budget_state == "human_revised_candidate" and not (
+            self.comparison.budget_revision_report_id and self.comparison.budget_revision_report_ref
+        ):
+            raise ValueError(
+                "revised synthetic actuals comparison requires revision identity and ref"
+            )
+        return self
+
+
+class SyntheticBudgetInputWorkbenchLine(StrictModel):
+    line_number: int = Field(ge=1)
+    phase_id: str
+    phase_name: str
+    task_id: str
+    task_name: str
+    staffing_role: str
+    estimated_hours: float = Field(ge=0)
+    hourly_rate: float | None = Field(default=None, ge=0)
+    rate_source: str
+    rate_is_synthetic: bool
+    estimated_fees: float | None = Field(default=None, ge=0)
+    estimated_expenses: float = Field(ge=0)
+    line_total: float = Field(ge=0)
+    calculation_formula: str | None = None
+    estimate_basis: str
+    estimate_basis_refs: list[str] = Field(default_factory=list)
+
+
+class SyntheticBudgetInputWorkbenchContextLane(StrictModel):
+    lane_id: str
+    label: str
+    inclusion: Literal["used_for_budget_math", "excluded_context_only"]
+    reason: str
+    source_ref: str | None = None
+    source_sha256: str | None = None
+
+
+class SyntheticBudgetInputWorkbenchCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    evidence_refs: list[str] = Field(default_factory=list)
+
+
+class SyntheticBudgetInputWorkbenchReport(StrictModel):
+    schema_version: str = "0.1"
+    synthetic_budget_input_workbench_report_id: str
+    status: Literal[
+        "synthetic_budget_input_workbench_ready_for_review",
+        "blocked_by_synthetic_budget_input_workbench",
+    ]
+    methodology_version: Literal["synthetic_budget_input_workbench.v0_1"] = (
+        "synthetic_budget_input_workbench.v0_1"
+    )
+    budget_proposal_id: str
+    budget_proposal_ref: str
+    budget_proposal_sha256: str
+    preflight_packet_id: str
+    confirmation_id: str
+    practice_profile_id: str
+    matter_family: str
+    representation_posture: str
+    pricing_status: str
+    currency: str
+    lines: list[SyntheticBudgetInputWorkbenchLine]
+    line_count: int = Field(ge=0)
+    subtotal_fees: float | None = Field(default=None, ge=0)
+    subtotal_expenses: float = Field(ge=0)
+    contingency_amount: float | None = Field(default=None, ge=0)
+    total_proposed_budget: float | None = Field(default=None, ge=0)
+    context_lanes: list[SyntheticBudgetInputWorkbenchContextLane]
+    checks: list[SyntheticBudgetInputWorkbenchCheck]
+    failed_check_count: int = Field(ge=0)
+    workbook_filename: str
+    markdown_filename: str
+    display_banner: dict[str, Any]
+    candidate_exception_lake_labels: list[str]
+    required_next_gates: list[str]
+    data_origin: Literal["synthetic"] = "synthetic"
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    local_json_only: Literal[True] = True
+    read_only_ui: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    not_authorized_for_matter_opening: Literal[True] = True
+    not_authorized_for_calibration: Literal[True] = True
+    external_writes_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def synthetic_budget_input_workbench_is_complete_and_review_bound(
+        self,
+    ) -> "SyntheticBudgetInputWorkbenchReport":
+        failed = [check for check in self.checks if check.status == "failed"]
+        if self.failed_check_count != len(failed):
+            raise ValueError("synthetic budget input workbench failed check count mismatch")
+        if self.line_count != len(self.lines):
+            raise ValueError("synthetic budget input workbench line count mismatch")
+        if self.status == "synthetic_budget_input_workbench_ready_for_review" and failed:
+            raise ValueError("ready synthetic budget input workbench cannot include failed checks")
+        if self.status == "blocked_by_synthetic_budget_input_workbench" and not failed:
+            raise ValueError("blocked synthetic budget input workbench requires failed checks")
+        if not self.budget_proposal_sha256.startswith("sha256:"):
+            raise ValueError("synthetic budget input workbench requires a proposal hash")
+        if not any(lane.inclusion == "used_for_budget_math" for lane in self.context_lanes):
+            raise ValueError("synthetic budget input workbench requires a used input lane")
+        if self.status == "synthetic_budget_input_workbench_ready_for_review":
+            for line in self.lines:
+                expected_total = round(float(line.estimated_fees or 0) + line.estimated_expenses, 2)
+                if line.line_total != expected_total:
+                    raise ValueError("synthetic budget input workbench line total must reconcile")
+                if not line.estimate_basis or not line.estimate_basis_refs:
+                    raise ValueError(
+                        "synthetic budget input workbench line requires estimate basis provenance"
+                    )
+        return self
+
+
+class SyntheticGuidelineProjectionWorkbenchCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    evidence_refs: list[str] = Field(default_factory=list)
+
+
+class SyntheticGuidelineProjectionWorkbenchSource(StrictModel):
+    source_id: str
+    label: str
+    source_ref: str
+    source_sha256: str
+    used_for: str
+
+
+class SyntheticGuidelineProjectionWorkbenchView(StrictModel):
+    carrier_id: str
+    carrier_name: str
+    state: str
+    rate_card_effective_date: str | None = None
+    projection: CarrierCompliantProjection
+    preapproval_report: CarrierPreapprovalReport
+    rate_resolution: dict[str, Any]
+    gross_reductions: float = Field(ge=0)
+    gross_increases: float = Field(ge=0)
+    net_delta: float
+
+
+class SyntheticGuidelineProjectionWorkbenchReport(StrictModel):
+    schema_version: str = "0.1"
+    synthetic_guideline_projection_workbench_report_id: str
+    status: Literal[
+        "synthetic_guideline_projection_workbench_ready_for_review",
+        "blocked_by_synthetic_guideline_projection_workbench",
+    ]
+    methodology_version: Literal["synthetic_guideline_projection_workbench.v0_1"] = (
+        "synthetic_guideline_projection_workbench.v0_1"
+    )
+    budget_proposal_id: str
+    budget_proposal_sha256: str
+    currency: str
+    proposal_total: float | None = Field(default=None, ge=0)
+    views: list[SyntheticGuidelineProjectionWorkbenchView]
+    source_manifest: list[SyntheticGuidelineProjectionWorkbenchSource]
+    checks: list[SyntheticGuidelineProjectionWorkbenchCheck]
+    failed_check_count: int = Field(ge=0)
+    workbook_filename: str
+    markdown_filename: str
+    display_banner: dict[str, Any]
+    candidate_exception_lake_labels: list[str]
+    required_next_gates: list[str]
+    data_origin: Literal["synthetic"] = "synthetic"
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    local_json_only: Literal[True] = True
+    read_only_ui: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    not_authorized_for_matter_opening: Literal[True] = True
+    not_authorized_for_calibration: Literal[True] = True
+    external_writes_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def synthetic_guideline_projection_workbench_is_coherent(
+        self,
+    ) -> "SyntheticGuidelineProjectionWorkbenchReport":
+        failed = [check for check in self.checks if check.status == "failed"]
+        if self.failed_check_count != len(failed):
+            raise ValueError("synthetic guideline projection workbench failed count mismatch")
+        if self.status.endswith("ready_for_review") and failed:
+            raise ValueError(
+                "ready synthetic guideline projection workbench cannot include failed checks"
+            )
+        if self.status.startswith("blocked") and not failed:
+            raise ValueError(
+                "blocked synthetic guideline projection workbench requires failed checks"
+            )
+        if not self.budget_proposal_sha256.startswith("sha256:"):
+            raise ValueError("synthetic guideline projection workbench requires proposal hash")
+        if any(not source.source_sha256.startswith("sha256:") for source in self.source_manifest):
+            raise ValueError("synthetic guideline projection workbench requires source hashes")
+        for view in self.views:
+            if round(view.gross_reductions - view.gross_increases, 2) != view.net_delta:
+                raise ValueError("synthetic guideline projection view net delta does not reconcile")
+            if view.projection.proposed_total != self.proposal_total:
+                raise ValueError("synthetic guideline projection must preserve proposal total")
+        return self
+
+
+class SyntheticRejectionAppealWorkbenchCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    evidence_refs: list[str] = Field(default_factory=list)
+
+
+class SyntheticRejectionAppealWorkbenchCase(StrictModel):
+    remediation_case_id: str
+    local_event_label: str
+    status: str
+    recommended_action: str
+    priority: str
+    disputed_amount: float = Field(ge=0)
+    current_financial_exposure: float = Field(ge=0)
+    notice_ids: list[str]
+    source_ref_count: int = Field(ge=0)
+    appeal_result_ids: list[str]
+    appeal_results: list[str]
+    recovered_amount: float = Field(ge=0)
+    write_down_amount: float = Field(ge=0)
+    pending_human_decisions: list[str]
+    learning_proposal_ids: list[str]
+    candidate_exception_lake_ids: list[str]
+
+
+class SyntheticRejectionAppealWorkbenchReport(StrictModel):
+    schema_version: str = "0.1"
+    synthetic_rejection_appeal_workbench_report_id: str
+    status: Literal[
+        "synthetic_rejection_appeal_workbench_ready_for_review",
+        "blocked_by_synthetic_rejection_appeal_workbench",
+    ]
+    methodology_version: Literal["synthetic_rejection_appeal_workbench.v0_1"] = (
+        "synthetic_rejection_appeal_workbench.v0_1"
+    )
+    budget_proposal_id: str
+    budget_proposal_sha256: str
+    source_bundle_ref: str
+    source_bundle_sha256: str
+    reconciliation_report: CarrierResponseReconciliationReport
+    decision_ledger: CarrierRejectionDecisionLedgerReport
+    review_packet: CarrierRejectionReviewPacket
+    learning_report: CarrierRejectionLearningReport
+    cases: list[SyntheticRejectionAppealWorkbenchCase]
+    total_disputed_amount: float = Field(ge=0)
+    total_recovered_amount: float = Field(ge=0)
+    total_write_down_amount: float = Field(ge=0)
+    checks: list[SyntheticRejectionAppealWorkbenchCheck]
+    failed_check_count: int = Field(ge=0)
+    workbook_filename: str
+    markdown_filename: str
+    display_banner: dict[str, Any]
+    candidate_exception_lake_labels: list[str]
+    required_next_gates: list[str]
+    data_origin: Literal["synthetic"] = "synthetic"
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    local_json_only: Literal[True] = True
+    read_only_ui: Literal[True] = True
+    external_writes_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    appeal_submission_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def synthetic_rejection_appeal_workbench_is_coherent(
+        self,
+    ) -> "SyntheticRejectionAppealWorkbenchReport":
+        failed = [check for check in self.checks if check.status == "failed"]
+        if self.failed_check_count != len(failed):
+            raise ValueError("synthetic rejection appeal workbench failed check count mismatch")
+        if self.status.endswith("ready_for_review") and failed:
+            raise ValueError(
+                "ready synthetic rejection appeal workbench cannot include failed checks"
+            )
+        if self.status.startswith("blocked") and not failed:
+            raise ValueError("blocked synthetic rejection appeal workbench requires failed checks")
+        if self.total_disputed_amount != self.decision_ledger.total_disputed_amount:
+            raise ValueError("synthetic rejection appeal disputed total must match ledger")
+        if self.total_recovered_amount != self.decision_ledger.total_recovered_amount:
+            raise ValueError("synthetic rejection appeal recovered total must match ledger")
+        if self.total_write_down_amount != self.decision_ledger.total_write_down_amount:
+            raise ValueError("synthetic rejection appeal write-down total must match ledger")
+        return self
+
+
+class SyntheticBudgetConfigurationSource(StrictModel):
+    source_id: str
+    source_ref: str
+    source_sha256: str
+    source_kind: Literal["practice_profile", "rate_card", "guideline", "nonlinear_template"]
+    editable: Literal[True] = True
+    data_origin: Literal["synthetic"] = "synthetic"
+
+
+class SyntheticBudgetConfigurationEntry(StrictModel):
+    entry_id: str
+    source_id: str
+    source_ref: str
+    config_path: str
+    label: str
+    value: float = Field(ge=0)
+    unit: Literal["hourly_rate", "hours", "currency", "percent", "count"]
+    math_effect: Literal[
+        "proposal_rate_fallback",
+        "proposal_template_hours",
+        "proposal_template_expense",
+        "proposal_contingency",
+        "guideline_projection_rate_cap",
+        "guideline_projection_expense_cap",
+        "guideline_preapproval_threshold",
+        "guideline_variance_threshold",
+        "named_timekeeper_override",
+    ]
+    candidate_only: Literal[True] = True
+    synthetic_only: Literal[True] = True
+
+
+class SyntheticBudgetConfigurationWorkbenchCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    evidence_refs: list[str] = Field(default_factory=list)
+
+
+class SyntheticBudgetConfigurationWorkbenchReport(StrictModel):
+    schema_version: str = "0.1"
+    synthetic_budget_configuration_workbench_report_id: str
+    status: Literal[
+        "synthetic_budget_configuration_workbench_ready_for_review",
+        "blocked_by_synthetic_budget_configuration_workbench",
+    ]
+    methodology_version: Literal["synthetic_budget_configuration_workbench.v0_1"] = (
+        "synthetic_budget_configuration_workbench.v0_1"
+    )
+    sources: list[SyntheticBudgetConfigurationSource]
+    entries: list[SyntheticBudgetConfigurationEntry]
+    source_count: int = Field(ge=0)
+    entry_count: int = Field(ge=0)
+    entries_by_math_effect: dict[str, int]
+    checks: list[SyntheticBudgetConfigurationWorkbenchCheck]
+    failed_check_count: int = Field(ge=0)
+    workbook_filename: str
+    markdown_filename: str
+    display_banner: dict[str, Any]
+    required_next_gates: list[str]
+    data_origin: Literal["synthetic"] = "synthetic"
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    local_json_only: Literal[True] = True
+    read_only_ui: Literal[True] = True
+    real_rate_import_allowed: Literal[False] = False
+    configuration_import_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def synthetic_budget_configuration_workbench_is_coherent(
+        self,
+    ) -> "SyntheticBudgetConfigurationWorkbenchReport":
+        failed = [check for check in self.checks if check.status == "failed"]
+        if self.source_count != len(self.sources) or self.entry_count != len(self.entries):
+            raise ValueError("synthetic budget configuration workbench count mismatch")
+        if self.failed_check_count != len(failed):
+            raise ValueError("synthetic budget configuration workbench failed check count mismatch")
+        if self.status.endswith("ready_for_review") and failed:
+            raise ValueError(
+                "ready synthetic budget configuration workbench cannot include failed checks"
+            )
+        if self.status.startswith("blocked") and not failed:
+            raise ValueError(
+                "blocked synthetic budget configuration workbench requires failed checks"
+            )
+        if any(not source.source_sha256.startswith("sha256:") for source in self.sources):
+            raise ValueError("synthetic budget configuration workbench requires source hashes")
+        if len({entry.entry_id for entry in self.entries}) != len(self.entries):
+            raise ValueError("synthetic budget configuration entry IDs must be unique")
+        if sum(self.entries_by_math_effect.values()) != self.entry_count:
+            raise ValueError("synthetic budget configuration effect counts must reconcile")
+        return self
+
+
+class SyntheticBudgetConfigurationChange(StrictModel):
+    entry_id: str
+    source_id: str
+    config_path: str
+    label: str
+    unit: str
+    math_effect: str
+    baseline_value: float
+    candidate_value: float
+    delta: float
+
+    @model_validator(mode="after")
+    def configuration_change_delta_reconciles(self) -> "SyntheticBudgetConfigurationChange":
+        if round(self.candidate_value - self.baseline_value, 8) != round(self.delta, 8):
+            raise ValueError("synthetic configuration change delta mismatch")
+        return self
+
+
+class SyntheticBudgetConfigurationChangeCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    evidence_refs: list[str] = Field(default_factory=list)
+
+
+class SyntheticBudgetConfigurationChangePackage(StrictModel):
+    schema_version: str = "0.1"
+    synthetic_budget_configuration_change_package_id: str
+    status: Literal[
+        "synthetic_budget_configuration_change_ready_for_review",
+        "blocked_by_synthetic_budget_configuration_change",
+    ]
+    methodology_version: Literal["synthetic_budget_configuration_change.v0_1"] = (
+        "synthetic_budget_configuration_change.v0_1"
+    )
+    baseline_report_id: str
+    candidate_report_id: str
+    baseline_source_hashes: dict[str, str]
+    candidate_source_hashes: dict[str, str]
+    changes: list[SyntheticBudgetConfigurationChange]
+    changed_source_ids: list[str]
+    change_count: int = Field(ge=0)
+    checks: list[SyntheticBudgetConfigurationChangeCheck]
+    failed_check_count: int = Field(ge=0)
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    local_json_only: Literal[True] = True
+    budget_recalculated: Literal[False] = False
+    workbook_import_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def configuration_change_package_is_coherent(
+        self,
+    ) -> "SyntheticBudgetConfigurationChangePackage":
+        failed = [check for check in self.checks if check.status == "failed"]
+        if self.change_count != len(self.changes):
+            raise ValueError("synthetic configuration change count mismatch")
+        if self.failed_check_count != len(failed):
+            raise ValueError("synthetic configuration change failed check count mismatch")
+        if self.status.endswith("ready_for_review") and failed:
+            raise ValueError(
+                "ready synthetic configuration change package cannot include failed checks"
+            )
+        if self.status.startswith("blocked") and not failed:
+            raise ValueError(
+                "blocked synthetic configuration change package requires failed checks"
+            )
+        if any(not value.startswith("sha256:") for value in self.baseline_source_hashes.values()):
+            raise ValueError("synthetic configuration baseline hashes required")
+        if any(not value.startswith("sha256:") for value in self.candidate_source_hashes.values()):
+            raise ValueError("synthetic configuration candidate hashes required")
+        if self.changed_source_ids != sorted(set(self.changed_source_ids)):
+            raise ValueError("synthetic configuration changed source IDs must be sorted and unique")
+        return self
+
+
+class SyntheticConfigurationRegenerationCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    evidence_refs: list[str] = Field(default_factory=list)
+
+
+class SyntheticConfigurationRegenerationBindingReport(StrictModel):
+    schema_version: str = "0.1"
+    regeneration_binding_report_id: str
+    status: Literal["ready_for_review", "blocked"]
+    change_package_id: str
+    baseline_projection_report_id: str
+    candidate_projection_report_id: str
+    baseline_budget_proposal_sha256: str
+    candidate_budget_proposal_sha256: str
+    changed_source_ids: list[str]
+    candidate_projection_source_hashes: dict[str, str]
+    checks: list[SyntheticConfigurationRegenerationCheck]
+    failed_check_count: int = Field(ge=0)
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    local_json_only: Literal[True] = True
+    budget_recalculated: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def regeneration_binding_is_coherent(self) -> "SyntheticConfigurationRegenerationBindingReport":
+        failed = [check for check in self.checks if check.status == "failed"]
+        if self.failed_check_count != len(failed):
+            raise ValueError("regeneration binding failed check count mismatch")
+        if self.status == "ready_for_review" and failed:
+            raise ValueError("ready regeneration binding cannot include failed checks")
+        if self.status == "blocked" and not failed:
+            raise ValueError("blocked regeneration binding requires failed checks")
+        if self.changed_source_ids != sorted(set(self.changed_source_ids)):
+            raise ValueError("regeneration binding changed sources must be sorted and unique")
+        if any(
+            not value.startswith("sha256:")
+            for value in self.candidate_projection_source_hashes.values()
+        ):
+            raise ValueError("regeneration binding projection source hashes required")
+        return self
+
+
 UIReviewDataBundle.model_rebuild()

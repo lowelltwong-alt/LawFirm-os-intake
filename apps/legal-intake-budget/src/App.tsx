@@ -1,6 +1,9 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 
+import { BudgetSandboxPanel } from "./BudgetSandboxPanel";
+import { RateCardSandboxPanel } from "./RateCardSandboxPanel";
+
 import demoCrosswalkAudit from "./fixtures/demo-crosswalk-audit-report.json";
 import demoOCGRuleIRAdoption from "./fixtures/demo-ocg-rule-ir-adoption-report.json";
 import demoBudgetLearningLoop from "./fixtures/demo-budget-learning-loop-report.json";
@@ -32,6 +35,12 @@ import demoSyntheticQAReviewRun from "./fixtures/demo-synthetic-qa-review-run-re
 import demoReviewDataBundle from "./fixtures/demo-ui-review-data-bundle.json";
 import demoUIDemoQARecipe from "./fixtures/demo-ui-demo-qa-recipe-report.json";
 import demoValidationSuiteEvidence from "./fixtures/demo-validation-suite-evidence-report.json";
+import demoSyntheticRateCardWorkbench from "./fixtures/demo-synthetic-rate-card-workbench-report.json";
+import demoSyntheticActualsWorkbench from "./fixtures/demo-synthetic-actuals-workbench-report.json";
+import demoSyntheticBudgetInputWorkbench from "./fixtures/demo-synthetic-budget-input-workbench-report.json";
+import demoSyntheticBudgetConfigurationWorkbench from "./fixtures/demo-synthetic-budget-configuration-workbench-report.json";
+import demoSyntheticGuidelineProjectionWorkbench from "./fixtures/demo-synthetic-guideline-projection-workbench-report.json";
+import demoSyntheticRejectionAppealWorkbench from "./fixtures/demo-synthetic-rejection-appeal-workbench-report.json";
 import {
   assertMatterLinkingPreflightReport,
   assertMatterLinkingQAGateReport,
@@ -61,6 +70,12 @@ import {
   assertSyntheticQAReviewOutcomeReport,
   assertSyntheticConfidenceSummaryReport,
   assertSyntheticQAReviewRunReport,
+  assertSyntheticRateCardWorkbenchReport,
+  assertSyntheticActualsWorkbenchReport,
+  assertSyntheticBudgetInputWorkbenchReport,
+  assertSyntheticBudgetConfigurationWorkbenchReport,
+  assertSyntheticGuidelineProjectionWorkbenchReport,
+  assertSyntheticRejectionAppealWorkbenchReport,
   assertUIDemoQARecipeReport,
   assertUIReviewDataBundle,
   assertValidationSuiteEvidenceReport,
@@ -113,6 +128,12 @@ import type {
   SyntheticConfidenceSummaryReport,
   SyntheticConfidenceSummaryItemState,
   SyntheticQAReviewRunReport,
+  SyntheticRateCardWorkbenchReport,
+  SyntheticActualsWorkbenchReport,
+  SyntheticBudgetInputWorkbenchReport,
+  SyntheticBudgetConfigurationWorkbenchReport,
+  SyntheticGuidelineProjectionWorkbenchReport,
+  SyntheticRejectionAppealWorkbenchReport,
   UIDemoQARecipeReport,
   UIReviewDataBundle,
   ValidationSuiteEvidenceReport,
@@ -163,6 +184,18 @@ const laborEmploymentBudgetOutcomeReplayConfidenceStatus =
 const budgetLearningLoop = demoBudgetLearningLoop as BudgetLearningLoopReport;
 const crossRepoContractProof = demoCrossRepoContractProof as CrossRepoContractProofReport;
 const pilotReviewStory = demoPilotReviewStory as PilotReviewStoryReport;
+const syntheticRateCardWorkbench =
+  demoSyntheticRateCardWorkbench as SyntheticRateCardWorkbenchReport;
+const syntheticActualsWorkbench =
+  demoSyntheticActualsWorkbench as SyntheticActualsWorkbenchReport;
+const syntheticBudgetInputWorkbench =
+  demoSyntheticBudgetInputWorkbench as SyntheticBudgetInputWorkbenchReport;
+const syntheticBudgetConfigurationWorkbench =
+  demoSyntheticBudgetConfigurationWorkbench as SyntheticBudgetConfigurationWorkbenchReport;
+const syntheticGuidelineProjectionWorkbench =
+  demoSyntheticGuidelineProjectionWorkbench as SyntheticGuidelineProjectionWorkbenchReport;
+const syntheticRejectionAppealWorkbench =
+  demoSyntheticRejectionAppealWorkbench as SyntheticRejectionAppealWorkbenchReport;
 const bundleContractFailures = assertUIReviewDataBundle(reviewDataBundle);
 const manifestContractFailures = assertReadOnlyManifest(manifest);
 const syntheticQAReviewRunFailures = assertSyntheticQAReviewRunReport(syntheticQAReviewRun);
@@ -219,6 +252,23 @@ const budgetOutcomeReplayConfidenceStatusFailures =
 const budgetLearningLoopFailures = assertBudgetLearningLoopReport(budgetLearningLoop);
 const crossRepoContractProofFailures = assertCrossRepoContractProofReport(crossRepoContractProof);
 const pilotReviewStoryFailures = assertPilotReviewStoryReport(pilotReviewStory);
+const syntheticRateCardWorkbenchFailures = assertSyntheticRateCardWorkbenchReport(
+  syntheticRateCardWorkbench,
+);
+const syntheticActualsWorkbenchFailures = assertSyntheticActualsWorkbenchReport(
+  syntheticActualsWorkbench,
+);
+const syntheticBudgetInputWorkbenchFailures = assertSyntheticBudgetInputWorkbenchReport(
+  syntheticBudgetInputWorkbench,
+);
+const syntheticBudgetConfigurationWorkbenchFailures =
+  assertSyntheticBudgetConfigurationWorkbenchReport(syntheticBudgetConfigurationWorkbench);
+const syntheticGuidelineProjectionWorkbenchFailures = assertSyntheticGuidelineProjectionWorkbenchReport(
+  syntheticGuidelineProjectionWorkbench,
+);
+const syntheticRejectionAppealWorkbenchFailures = assertSyntheticRejectionAppealWorkbenchReport(
+  syntheticRejectionAppealWorkbench,
+);
 const contractFailures = [
   ...bundleContractFailures,
   ...manifestContractFailures,
@@ -249,6 +299,12 @@ const contractFailures = [
   ...budgetLearningLoopFailures,
   ...crossRepoContractProofFailures,
   ...pilotReviewStoryFailures,
+  ...syntheticRateCardWorkbenchFailures,
+  ...syntheticActualsWorkbenchFailures,
+  ...syntheticBudgetInputWorkbenchFailures,
+  ...syntheticBudgetConfigurationWorkbenchFailures,
+  ...syntheticGuidelineProjectionWorkbenchFailures,
+  ...syntheticRejectionAppealWorkbenchFailures,
 ];
 
 const PUBLIC_DATA_CUSTODY_COMMANDS = [
@@ -627,6 +683,466 @@ function QAWorkbenchPanel({
             ))}
           </div>
         </section>
+      </div>
+    </section>
+  );
+}
+
+function csvCell(value: string | number | null) {
+  const text = String(value ?? "");
+  const safe = /^[\s]*[=+\-@]/.test(text) ? `'${text}` : text;
+  return `"${safe.replaceAll('"', '""')}"`;
+}
+
+function downloadSyntheticRateCardCsv(report: SyntheticRateCardWorkbenchReport) {
+  const quote = csvCell;
+  const csv = [
+    ["Carrier ID", "Carrier", "Effective Date", "State", "Title", "Hourly Rate"],
+    ...report.rows.map((row) => [
+      row.carrier_id,
+      row.carrier_name,
+      row.effective_date,
+      row.state,
+      row.title,
+      row.hourly_rate,
+    ]),
+  ]
+    .map((row) => row.map(quote).join(","))
+    .join("\n");
+  const objectUrl = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+  const anchor = document.createElement("a");
+  anchor.href = objectUrl;
+  anchor.download = "synthetic-rate-card-workbench.csv";
+  anchor.click();
+  URL.revokeObjectURL(objectUrl);
+}
+
+function downloadSyntheticActualsCsv(report: SyntheticActualsWorkbenchReport) {
+  const quote = csvCell;
+  const rows = [
+    ["View", "Phase", "Code", "Budgeted", "Actual", "Variance", "Variance Percent", "Review State"],
+    ...report.comparison.phase_comparisons.map((row) => [
+      "phase", row.phase_id ?? "", "", row.budgeted_total, row.actual_total, row.variance_amount,
+      row.variance_percent, row.status,
+    ]),
+    ...report.comparison.code_comparisons.map((row) => [
+      "code", row.phase_id ?? "", row.code ?? "", row.budgeted_total, row.actual_total, row.variance_amount,
+      row.variance_percent, row.status,
+    ]),
+  ];
+  const csv = rows.map((row) => row.map(quote).join(",")).join("\n");
+  const objectUrl = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+  const anchor = document.createElement("a");
+  anchor.href = objectUrl;
+  anchor.download = "synthetic-actuals-variance-workbench.csv";
+  anchor.click();
+  URL.revokeObjectURL(objectUrl);
+}
+
+function actualsVarianceStateClass(status: SyntheticActualsWorkbenchReport["comparison"]["phase_comparisons"][number]["status"]) {
+  if (status === "within_threshold") return "state state-passed";
+  if (status === "actuals_not_available") return "state state-blocked";
+  return "state state-pending";
+}
+
+function SyntheticActualsWorkbenchPanel({ report }: { report: SyntheticActualsWorkbenchReport }) {
+  const [view, setView] = React.useState<"phase" | "code">("phase");
+  const failed = syntheticActualsWorkbenchFailures.length > 0;
+  const rows = view === "phase" ? report.comparison.phase_comparisons : report.comparison.code_comparisons;
+  const maxVariance = Math.max(...rows.map((row) => Math.abs(row.variance_amount ?? 0)), 1);
+  const viewLabel = view === "phase" ? "Phase comparison" : "Code drilldown";
+
+  return (
+    <section className="panel actuals-workbench-panel" aria-labelledby="actuals-workbench-title">
+      <div className="panel-heading">
+        <div>
+          <p className="eyebrow">Synthetic actuals review</p>
+          <h2 id="actuals-workbench-title">Actuals Variance Workbench</h2>
+          <code>{report.synthetic_actuals_workbench_report_id}</code>
+        </div>
+        <span className={failed ? "state state-failed" : "state state-pending"}>
+          {failed ? "contract failed" : "review pending"}
+        </span>
+      </div>
+
+      <div className="actuals-workbench-banner">
+        <strong>{report.display_banner.summary}</strong>
+        <span>Baseline: {report.comparison.comparison_budget_state.replaceAll("_", " ")}</span>
+        <span>Actuals: {report.actuals_source_id} / {report.actuals_source_sha256}</span>
+      </div>
+
+      <div className="actuals-workbench-metrics" aria-label="Synthetic actuals comparison totals">
+        <article><span>Candidate Budget</span><strong>{formatMoney(report.comparison.total_budgeted)}</strong></article>
+        <article><span>Synthetic Actuals</span><strong>{formatMoney(report.comparison.total_actual)}</strong></article>
+        <article><span>Variance</span><strong>{formatMoney(report.comparison.total_variance_amount)}</strong><p>{report.comparison.total_variance_percent}%</p></article>
+        <article><span>Review State</span><strong>{report.comparison.status.replaceAll("_", " ")}</strong></article>
+      </div>
+
+      <div className="actuals-workbench-controls" aria-label="Actuals variance view controls">
+        <div className="segmented-control" role="group" aria-label="Variance display view">
+          <button type="button" className={view === "phase" ? "selected" : ""} onClick={() => setView("phase")}>Phase view ({report.phase_row_count})</button>
+          <button type="button" className={view === "code" ? "selected" : ""} onClick={() => setView("code")}>Code drilldown ({report.code_row_count})</button>
+        </div>
+        <button type="button" onClick={() => downloadSyntheticActualsCsv(report)}>Download CSV</button>
+      </div>
+      <p className="actuals-workbench-note">{view === "phase" ? "Aggregate is sourced from the phase view." : "Code drilldown is reconciled to the same aggregate and excluded from the total."} Carrier outcomes remain a separate evidence lane.</p>
+
+      <div className="actuals-variance-chart" aria-label={`${viewLabel} variance bars`}>
+        {rows.map((row) => {
+          const variance = row.variance_amount ?? 0;
+          const label = row.phase_id ?? row.code ?? "unknown";
+          return <div className="actuals-variance-row" key={`${view}-${label}-${row.code ?? ""}`}>
+            <span>{view === "code" ? `${row.code ?? "unknown"} / ${row.phase_id ?? "unmapped"}` : label}</span>
+            <div className="actuals-variance-track">
+              <div className={variance >= 0 ? "actuals-variance-fill over" : "actuals-variance-fill under"} style={{ width: `${(Math.abs(variance) / maxVariance) * 100}%` }} />
+            </div>
+            <strong>{formatMoney(row.variance_amount)}</strong>
+          </div>;
+        })}
+      </div>
+
+      <div className="table-wrap actuals-workbench-table-wrap">
+        <table>
+          <thead><tr><th>{view === "phase" ? "Phase" : "Code / Phase"}</th><th>Budgeted</th><th>Actual</th><th>Variance</th><th>State</th></tr></thead>
+          <tbody>{rows.map((row) => <tr key={`${view}-table-${row.phase_id ?? ""}-${row.code ?? ""}`}>
+            <td>{view === "phase" ? row.phase_id : `${row.code ?? "unknown"} / ${row.phase_id ?? "unmapped"}`}</td><td>{formatMoney(row.budgeted_total)}</td><td>{formatMoney(row.actual_total)}</td><td>{formatMoney(row.variance_amount)}{row.variance_percent === null ? "" : ` (${row.variance_percent}%)`}</td><td><span className={actualsVarianceStateClass(row.status)}>{row.status.replaceAll("_", " ")}</span></td>
+          </tr>)}</tbody>
+        </table>
+      </div>
+      <div className="actuals-workbench-footer"><span>Proposal: {report.budget_proposal_sha256}</span><TokenList items={report.display_banner.blocked_actions} limit={6} /></div>
+    </section>
+  );
+}
+
+function downloadSyntheticBudgetInputCsv(report: SyntheticBudgetInputWorkbenchReport) {
+  const quote = csvCell;
+  const rows = [
+    ["#", "Phase", "Task", "Role", "Hours", "Hourly Rate", "Fees", "Expenses", "Line Total", "Rate Source", "Estimate Basis", "Basis References", "Formula"],
+    ...report.lines.map((line) => [
+      line.line_number, line.phase_id, line.task_id, line.staffing_role, line.estimated_hours,
+      line.hourly_rate, line.estimated_fees, line.estimated_expenses, line.line_total,
+      line.rate_source, line.estimate_basis, line.estimate_basis_refs.join(" | "),
+      line.calculation_formula,
+    ]),
+  ];
+  const csv = rows.map((row) => row.map(quote).join(",")).join("\n");
+  const objectUrl = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+  const anchor = document.createElement("a");
+  anchor.href = objectUrl;
+  anchor.download = "synthetic-budget-input-ledger.csv";
+  anchor.click();
+  URL.revokeObjectURL(objectUrl);
+}
+
+function downloadSyntheticBudgetConfigurationCsv(report: SyntheticBudgetConfigurationWorkbenchReport) {
+  const rows = [
+    ["Source", "Config Path", "Label", "Value", "Unit", "Math Effect"],
+    ...report.entries.map((entry) => [
+      entry.source_ref,
+      entry.config_path,
+      entry.label,
+      entry.value,
+      entry.unit,
+      entry.math_effect,
+    ]),
+  ];
+  const csv = rows.map((row) => row.map(csvCell).join(",")).join("\n");
+  const objectUrl = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+  const anchor = document.createElement("a");
+  anchor.href = objectUrl;
+  anchor.download = "synthetic-budget-configuration-values.csv";
+  anchor.click();
+  URL.revokeObjectURL(objectUrl);
+}
+
+function SyntheticGuidelineProjectionWorkbenchPanel({
+  report,
+}: {
+  report: SyntheticGuidelineProjectionWorkbenchReport;
+}) {
+  const [carrierId, setCarrierId] = React.useState(report.views[0]?.carrier_id ?? "");
+  const view = report.views.find((candidate) => candidate.carrier_id === carrierId) ?? report.views[0];
+  const failed = syntheticGuidelineProjectionWorkbenchFailures.length > 0;
+  if (!view) return null;
+
+  return (
+    <section className="panel guideline-projection-workbench-panel" aria-labelledby="guideline-projection-workbench-title">
+      <div className="panel-heading">
+        <div>
+          <p className="eyebrow">Pinned synthetic projection</p>
+          <h2 id="guideline-projection-workbench-title">Guideline Projection Workbench</h2>
+          <code>{report.synthetic_guideline_projection_workbench_report_id}</code>
+        </div>
+        <span className={failed ? "state state-failed" : "state state-passed"}>{failed ? "contract failed" : "candidate only"}</span>
+      </div>
+      <div className="budget-input-banner"><strong>{report.display_banner.summary}</strong><span>Proposal: {formatMoney(report.proposal_total)}</span></div>
+      <div className="rate-card-controls" aria-label="Synthetic guideline projection selector">
+        <label>Guideline scenario<select value={carrierId} onChange={(event) => setCarrierId(event.target.value)}>
+          {report.views.map((candidate) => <option key={candidate.carrier_id} value={candidate.carrier_id}>{candidate.carrier_name} / {candidate.state}</option>)}
+        </select></label>
+        <span>XLSX: {report.workbook_filename}</span><span>Rate schedule: {view.rate_card_effective_date ?? "unavailable"}</span>
+      </div>
+      <div className="budget-input-metrics" aria-label="Synthetic guideline projection totals">
+        <article><span>Proposal</span><strong>{formatMoney(view.projection.proposed_total)}</strong></article>
+        <article><span>Projection</span><strong>{formatMoney(view.projection.compliant_total)}</strong></article>
+        <article><span>Gross Reductions</span><strong>{formatMoney(view.gross_reductions)}</strong></article>
+        <article><span>Net Delta</span><strong>{formatMoney(view.net_delta)}</strong><p>{view.preapproval_report.required_count} preapproval gates</p></article>
+      </div>
+      <div className="table-wrap budget-input-table-wrap"><table><thead><tr><th>Phase / Task</th><th>Proposed Role</th><th>Projected Role</th><th>Proposed</th><th>Projection</th><th>Net Delta</th><th>Reason</th></tr></thead><tbody>
+        {view.projection.lines.filter((line) => line.line_delta_signed !== 0).map((line) => <tr key={`${line.phase_id}-${line.task_id}`}><td><strong>{line.phase_id} / {line.task_id}</strong></td><td>{line.staffing_role.replaceAll("_", " ")}</td><td>{(line.compliant_staffing_role ?? line.staffing_role).replaceAll("_", " ")}</td><td>{formatMoney(line.proposed_line_total)}</td><td>{formatMoney(line.compliant_line_total)}</td><td>{formatMoney(line.line_delta_signed)}</td><td>{line.note}</td></tr>)}
+      </tbody></table></div>
+      <div className="budget-input-context" aria-label="Synthetic guideline projection checks"><div><strong>Validation and Gate State</strong><span>Unknown thresholds, missing rate schedules, or arithmetic drift block readiness.</span></div>
+        {report.checks.map((check) => <article key={check.check_id}><strong>{check.status}</strong><code>{check.check_id}</code><p>{check.message}</p></article>)}
+      </div>
+      <div className="budget-input-footer"><span>Read-only local evidence. Not an approval, carrier decision, or submission.</span><TokenList items={report.display_banner.blocked_actions} limit={6} /></div>
+    </section>
+  );
+}
+
+function SyntheticRejectionAppealWorkbenchPanel({ report }: { report: SyntheticRejectionAppealWorkbenchReport }) {
+  const failed = syntheticRejectionAppealWorkbenchFailures.length > 0;
+  return <section className="panel rejection-appeal-workbench-panel" aria-labelledby="rejection-appeal-workbench-title">
+    <div className="panel-heading"><div><p className="eyebrow">Synthetic rejection and appeal review</p><h2 id="rejection-appeal-workbench-title">Rejection And Appeal Workbench</h2><code>{report.synthetic_rejection_appeal_workbench_report_id}</code></div><span className={failed ? "state state-failed" : "state state-passed"}>{failed ? "contract failed" : "candidate only"}</span></div>
+    <div className="budget-input-banner"><strong>{report.display_banner.summary}</strong><span>Budget: {report.budget_proposal_sha256}</span></div>
+    <div className="budget-input-metrics"><article><span>Disputed</span><strong>{formatMoney(report.total_disputed_amount)}</strong></article><article><span>Recovered</span><strong>{formatMoney(report.total_recovered_amount)}</strong></article><article><span>Write-down</span><strong>{formatMoney(report.total_write_down_amount)}</strong></article><article><span>Cases</span><strong>{report.cases.length}</strong><p>human review required</p></article></div>
+    <div className="table-wrap budget-input-table-wrap"><table><thead><tr><th>Classification</th><th>Action</th><th>Disputed</th><th>Recovered</th><th>Write-down</th><th>Appeal / Learning</th></tr></thead><tbody>{report.cases.map((item) => <tr key={item.remediation_case_id}><td><strong>{item.local_event_label.replaceAll("_", " ")}</strong><br/><span>{item.status}</span></td><td><strong>{item.recommended_action.replaceAll("_", " ")}</strong><br/><span>{item.priority} priority</span></td><td>{formatMoney(item.disputed_amount)}</td><td>{formatMoney(item.recovered_amount)}</td><td>{formatMoney(item.write_down_amount)}</td><td>{item.appeal_results.join(" / ") || "no result"}<br/><code>{item.learning_proposal_ids.length} learning candidate(s)</code></td></tr>)}</tbody></table></div>
+    <div className="budget-input-context"><div><strong>Required Human Decisions</strong><span>Evidence is review-only. Appeals and learning remain blocked.</span></div>{report.cases.map((item) => <article key={`${item.remediation_case_id}-gates`}><strong>{item.local_event_label}</strong><code>{item.pending_human_decisions.join(" | ") || "no decision recorded"}</code></article>)}</div>
+    <div className="budget-input-footer"><span>Read-only local artifact. No portal submission, budget mutation, Lake write, or silent learning.</span><TokenList items={report.display_banner.blocked_actions} limit={6}/></div>
+  </section>;
+}
+
+function SyntheticBudgetInputWorkbenchPanel({
+  report,
+}: {
+  report: SyntheticBudgetInputWorkbenchReport;
+}) {
+  const failed = syntheticBudgetInputWorkbenchFailures.length > 0;
+  const excludedLanes = report.context_lanes.filter(
+    (lane) => lane.inclusion === "excluded_context_only",
+  );
+
+  return (
+    <section className="panel budget-input-workbench-panel" aria-labelledby="budget-input-workbench-title">
+      <div className="panel-heading">
+        <div>
+          <p className="eyebrow">Pinned synthetic budget inputs</p>
+          <h2 id="budget-input-workbench-title">Budget Input Ledger</h2>
+          <code>{report.synthetic_budget_input_workbench_report_id}</code>
+        </div>
+        <span className={failed ? "state state-failed" : "state state-passed"}>
+          {failed ? "contract failed" : "candidate only"}
+        </span>
+      </div>
+
+      <div className="budget-input-banner">
+        <strong>{report.display_banner.summary}</strong>
+        <span>Proposal: {report.budget_proposal_sha256}</span>
+      </div>
+
+      <div className="budget-input-metrics" aria-label="Budget input ledger totals">
+        <article><span>Fees</span><strong>{formatMoney(report.subtotal_fees)}</strong></article>
+        <article><span>Expenses</span><strong>{formatMoney(report.subtotal_expenses)}</strong></article>
+        <article><span>Contingency</span><strong>{formatMoney(report.contingency_amount)}</strong></article>
+        <article><span>Candidate Budget</span><strong>{formatMoney(report.total_proposed_budget)}</strong><p>{report.line_count} input lines</p></article>
+      </div>
+
+      <div className="budget-input-controls">
+        <button type="button" onClick={() => downloadSyntheticBudgetInputCsv(report)}>Download CSV</button>
+        <span>CLI export: {report.workbook_filename}</span>
+      </div>
+
+      <div className="table-wrap budget-input-table-wrap">
+        <table>
+          <thead><tr><th>Phase / Task</th><th>Role</th><th>Hours</th><th>Rate</th><th>Fees</th><th>Expenses</th><th>Total</th><th>Basis</th></tr></thead>
+          <tbody>{report.lines.map((line) => <tr key={line.line_number}>
+            <td><strong>{line.phase_id} / {line.task_id}</strong><br /><span>{line.task_name}</span></td>
+            <td>{line.staffing_role.replaceAll("_", " ")}<br /><code>{line.rate_source}</code></td>
+            <td>{line.estimated_hours}</td><td>{formatMoney(line.hourly_rate)}</td>
+            <td>{formatMoney(line.estimated_fees)}</td><td>{formatMoney(line.estimated_expenses)}</td>
+            <td>{formatMoney(line.line_total)}</td>
+            <td><strong>{line.estimate_basis.replaceAll("_", " ")}</strong><br /><code>{line.estimate_basis_refs[0]}</code></td>
+          </tr>)}</tbody>
+        </table>
+      </div>
+
+      <div className="budget-input-context" aria-label="Excluded budget context lanes">
+        <div><strong>Excluded Context</strong><span>These lanes are visible for provenance only and do not affect the ledger total.</span></div>
+        {excludedLanes.map((lane) => <article key={lane.lane_id}>
+          <strong>{lane.label}</strong><code>{lane.source_sha256 ?? "not supplied"}</code><p>{lane.reason}</p>
+        </article>)}
+      </div>
+      <div className="budget-input-footer"><span>Read-only local artifact. No edits, submission, calibration, or external writes.</span><TokenList items={report.display_banner.blocked_actions} limit={6} /></div>
+    </section>
+  );
+}
+
+function SyntheticBudgetConfigurationWorkbenchPanel({
+  report,
+}: {
+  report: SyntheticBudgetConfigurationWorkbenchReport;
+}) {
+  const [sourceFilter, setSourceFilter] = React.useState("all");
+  const visibleEntries = report.entries.filter(
+    (entry) => sourceFilter === "all" || entry.source_id === sourceFilter,
+  );
+  const failed = syntheticBudgetConfigurationWorkbenchFailures.length > 0;
+  const displayValue = (value: number, unit: string) =>
+    unit === "currency" || unit === "hourly_rate"
+      ? formatMoney(value)
+      : unit === "percent"
+        ? `${value}%`
+        : String(value);
+
+  return (
+    <section className="panel budget-input-workbench-panel" aria-labelledby="budget-configuration-workbench-title">
+      <div className="panel-heading">
+        <div>
+          <p className="eyebrow">Synthetic configuration inventory</p>
+          <h2 id="budget-configuration-workbench-title">Budget Configuration Workbench</h2>
+          <code>{report.synthetic_budget_configuration_workbench_report_id}</code>
+        </div>
+        <span className={failed ? "state state-failed" : "state state-passed"}>
+          {failed ? "contract failed" : "candidate only"}
+        </span>
+      </div>
+      <div className="budget-input-banner">
+        <strong>{report.display_banner.summary}</strong>
+        <span>{report.source_count} pinned source files</span>
+      </div>
+      <div className="budget-input-metrics" aria-label="Synthetic configuration metrics">
+        <article><span>Editable values</span><strong>{report.entry_count}</strong></article>
+        <article><span>Rate inputs</span><strong>{(report.entries_by_math_effect.proposal_rate_fallback ?? 0) + (report.entries_by_math_effect.guideline_projection_rate_cap ?? 0)}</strong></article>
+        <article><span>Template inputs</span><strong>{(report.entries_by_math_effect.proposal_template_hours ?? 0) + (report.entries_by_math_effect.proposal_template_expense ?? 0)}</strong></article>
+        <article><span>Thresholds</span><strong>{(report.entries_by_math_effect.guideline_preapproval_threshold ?? 0) + (report.entries_by_math_effect.guideline_variance_threshold ?? 0)}</strong></article>
+      </div>
+      <div className="rate-card-controls" aria-label="Configuration source filter">
+        <label>
+          Source
+          <select value={sourceFilter} onChange={(event) => setSourceFilter(event.target.value)}>
+            <option value="all">All editable sources</option>
+            {report.sources.map((source) => <option key={source.source_id} value={source.source_id}>{source.source_id.replaceAll("_", " ")}</option>)}
+          </select>
+        </label>
+        <button type="button" onClick={() => downloadSyntheticBudgetConfigurationCsv(report)}>Download CSV</button>
+        <span className="rate-card-export-note">XLSX: {report.workbook_filename}</span>
+      </div>
+      <div className="table-wrap budget-input-table-wrap"><table><thead><tr><th>Source</th><th>Config Path</th><th>Value</th><th>Unit</th><th>Math Effect</th></tr></thead><tbody>
+        {visibleEntries.map((entry) => <tr key={entry.entry_id}><td><strong>{entry.source_id.replaceAll("_", " ")}</strong><br/><span>{entry.label}</span></td><td><code>{entry.config_path}</code></td><td>{displayValue(entry.value, entry.unit)}</td><td>{entry.unit.replaceAll("_", " ")}</td><td>{entry.math_effect.replaceAll("_", " ")}</td></tr>)}
+      </tbody></table></div>
+      <div className="budget-input-context"><div><strong>Source Hashes And Checks</strong><span>Copy reviewed values into the declared YAML/JSON source, then regenerate through the CLI.</span></div>
+        {report.sources.map((source) => <article key={source.source_id}><strong>{source.source_id.replaceAll("_", " ")}</strong><code>{source.source_sha256}</code></article>)}
+      </div>
+      <div className="budget-input-footer"><span>Read-only local evidence. Spreadsheet edits are never imported or priced in the browser.</span><TokenList items={report.display_banner.blocked_actions} limit={6} /></div>
+    </section>
+  );
+}
+
+function SyntheticRateCardWorkbenchPanel({ report }: { report: SyntheticRateCardWorkbenchReport }) {
+  const [carrierFilter, setCarrierFilter] = React.useState("all");
+  const [stateFilter, setStateFilter] = React.useState("all");
+  const carriers = [...new Map(report.rows.map((row) => [row.carrier_id, row.carrier_name])).entries()];
+  const states = [...new Set(report.rows.map((row) => row.state))].sort();
+  const visibleRows = report.rows.filter(
+    (row) =>
+      (carrierFilter === "all" || row.carrier_id === carrierFilter) &&
+      (stateFilter === "all" || row.state === stateFilter),
+  );
+  const maxRate = Math.max(...visibleRows.map((row) => row.hourly_rate), 1);
+  const failed = syntheticRateCardWorkbenchFailures.length > 0;
+
+  return (
+    <section className="panel rate-card-workbench-panel" aria-labelledby="rate-card-workbench-title">
+      <div className="panel-heading">
+        <div>
+          <p className="eyebrow">Synthetic pricing catalog</p>
+          <h2 id="rate-card-workbench-title">Synthetic Rate Card Workbench</h2>
+          <code>{report.synthetic_rate_card_workbench_report_id}</code>
+        </div>
+        <span className={failed ? "state state-failed" : "state state-passed"}>
+          {failed ? "contract failed" : "candidate only"}
+        </span>
+      </div>
+
+      <div className="rate-card-banner">
+        <strong>{report.display_banner.summary}</strong>
+        <span>{report.rate_card_sha256}</span>
+      </div>
+
+      <div className="rate-card-metrics" aria-label="Synthetic rate card metrics">
+        <article><span>Carriers</span><strong>{report.carrier_count}</strong></article>
+        <article><span>States</span><strong>{report.state_count}</strong></article>
+        <article><span>Roles</span><strong>{report.title_count}</strong></article>
+        <article><span>Rate Cells</span><strong>{report.row_count}</strong></article>
+      </div>
+
+      <div className="rate-card-controls" aria-label="Rate card filters">
+        <label>
+          Carrier
+          <select value={carrierFilter} onChange={(event) => setCarrierFilter(event.target.value)}>
+            <option value="all">All carriers</option>
+            {carriers.map(([id, name]) => <option key={id} value={id}>{name}</option>)}
+          </select>
+        </label>
+        <label>
+          State
+          <select value={stateFilter} onChange={(event) => setStateFilter(event.target.value)}>
+            <option value="all">All states</option>
+            {states.map((state) => <option key={state} value={state}>{state}</option>)}
+          </select>
+        </label>
+        <button type="button" onClick={() => downloadSyntheticRateCardCsv(report)}>
+          Download CSV
+        </button>
+        <span className="rate-card-export-note">XLSX: {report.workbook_filename}</span>
+      </div>
+
+      <div className="rate-card-layout">
+        <section className="rate-bar-chart" aria-label="Synthetic hourly rate comparison">
+          <h3>Hourly Rate Comparison</h3>
+          {visibleRows.map((row) => (
+            <div className="rate-bar-row" key={`${row.carrier_id}-${row.state}-${row.title}`}>
+              <span>{row.carrier_name} / {row.state} / {row.title.replaceAll("_", " ")}</span>
+              <div className="rate-bar-track" aria-label={`${row.title} ${formatMoney(row.hourly_rate)}`}>
+                <div className="rate-bar-fill" style={{ width: `${(row.hourly_rate / maxRate) * 100}%` }} />
+              </div>
+              <strong>{formatMoney(row.hourly_rate)}</strong>
+            </div>
+          ))}
+        </section>
+
+        <section className="rate-card-checks" aria-labelledby="rate-card-checks-title">
+          <h3 id="rate-card-checks-title">Catalog Checks</h3>
+          <ul>
+            {report.checks.map((check) => (
+              <li key={check.check_id}>
+                <span className={check.status === "passed" ? "state state-passed" : "state state-failed"}>
+                  {check.status}
+                </span>
+                <span>{check.check_id.replaceAll("_", " ")}</span>
+              </li>
+            ))}
+          </ul>
+          <TokenList items={report.display_banner.blocked_actions} limit={7} />
+        </section>
+      </div>
+
+      <div className="table-wrap rate-card-table-wrap">
+        <table>
+          <thead>
+            <tr><th>Carrier</th><th>State</th><th>Role</th><th>Effective</th><th>Hourly Rate</th></tr>
+          </thead>
+          <tbody>
+            {visibleRows.map((row) => (
+              <tr key={`${row.carrier_id}-${row.state}-${row.title}`}>
+                <td>{row.carrier_name}</td>
+                <td>{row.state}</td>
+                <td>{row.title.replaceAll("_", " ")}</td>
+                <td>{row.effective_date}</td>
+                <td>{formatMoney(row.hourly_rate)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </section>
   );
@@ -3767,6 +4283,14 @@ function App() {
         budgetOutputReport={laborEmploymentBudgetOutputExpectations}
         pocReport={pocQATriage}
       />
+      <SyntheticRateCardWorkbenchPanel report={syntheticRateCardWorkbench} />
+      <RateCardSandboxPanel rateCard={syntheticRateCardWorkbench} />
+      <SyntheticBudgetInputWorkbenchPanel report={syntheticBudgetInputWorkbench} />
+      <SyntheticBudgetConfigurationWorkbenchPanel report={syntheticBudgetConfigurationWorkbench} />
+      <BudgetSandboxPanel budgetInput={syntheticBudgetInputWorkbench} />
+      <SyntheticGuidelineProjectionWorkbenchPanel report={syntheticGuidelineProjectionWorkbench} />
+      <SyntheticRejectionAppealWorkbenchPanel report={syntheticRejectionAppealWorkbench} />
+      <SyntheticActualsWorkbenchPanel report={syntheticActualsWorkbench} />
       <PilotReviewStoryPanel report={pilotReviewStory} />
       <BudgetLearningLoopPanel report={budgetLearningLoop} />
       <CrossRepoContractProofPanel report={crossRepoContractProof} />

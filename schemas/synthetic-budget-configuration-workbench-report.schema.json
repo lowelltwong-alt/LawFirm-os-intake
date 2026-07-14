@@ -1,0 +1,361 @@
+{
+  "$defs": {
+    "SyntheticBudgetConfigurationEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "entry_id": {
+          "title": "Entry Id",
+          "type": "string"
+        },
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "source_ref": {
+          "title": "Source Ref",
+          "type": "string"
+        },
+        "config_path": {
+          "title": "Config Path",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "value": {
+          "minimum": 0,
+          "title": "Value",
+          "type": "number"
+        },
+        "unit": {
+          "enum": [
+            "hourly_rate",
+            "hours",
+            "currency",
+            "percent",
+            "count"
+          ],
+          "title": "Unit",
+          "type": "string"
+        },
+        "math_effect": {
+          "enum": [
+            "proposal_rate_fallback",
+            "proposal_template_hours",
+            "proposal_template_expense",
+            "proposal_contingency",
+            "guideline_projection_rate_cap",
+            "guideline_projection_expense_cap",
+            "guideline_preapproval_threshold",
+            "guideline_variance_threshold",
+            "named_timekeeper_override"
+          ],
+          "title": "Math Effect",
+          "type": "string"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "synthetic_only": {
+          "const": true,
+          "default": true,
+          "title": "Synthetic Only",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "entry_id",
+        "source_id",
+        "source_ref",
+        "config_path",
+        "label",
+        "value",
+        "unit",
+        "math_effect"
+      ],
+      "title": "SyntheticBudgetConfigurationEntry",
+      "type": "object"
+    },
+    "SyntheticBudgetConfigurationSource": {
+      "additionalProperties": false,
+      "properties": {
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "source_ref": {
+          "title": "Source Ref",
+          "type": "string"
+        },
+        "source_sha256": {
+          "title": "Source Sha256",
+          "type": "string"
+        },
+        "source_kind": {
+          "enum": [
+            "practice_profile",
+            "rate_card",
+            "guideline",
+            "nonlinear_template"
+          ],
+          "title": "Source Kind",
+          "type": "string"
+        },
+        "editable": {
+          "const": true,
+          "default": true,
+          "title": "Editable",
+          "type": "boolean"
+        },
+        "data_origin": {
+          "const": "synthetic",
+          "default": "synthetic",
+          "title": "Data Origin",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "source_ref",
+        "source_sha256",
+        "source_kind"
+      ],
+      "title": "SyntheticBudgetConfigurationSource",
+      "type": "object"
+    },
+    "SyntheticBudgetConfigurationWorkbenchCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "SyntheticBudgetConfigurationWorkbenchCheck",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "synthetic_budget_configuration_workbench_report_id": {
+      "title": "Synthetic Budget Configuration Workbench Report Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "synthetic_budget_configuration_workbench_ready_for_review",
+        "blocked_by_synthetic_budget_configuration_workbench"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "methodology_version": {
+      "const": "synthetic_budget_configuration_workbench.v0_1",
+      "default": "synthetic_budget_configuration_workbench.v0_1",
+      "title": "Methodology Version",
+      "type": "string"
+    },
+    "sources": {
+      "items": {
+        "$ref": "#/$defs/SyntheticBudgetConfigurationSource"
+      },
+      "title": "Sources",
+      "type": "array"
+    },
+    "entries": {
+      "items": {
+        "$ref": "#/$defs/SyntheticBudgetConfigurationEntry"
+      },
+      "title": "Entries",
+      "type": "array"
+    },
+    "source_count": {
+      "minimum": 0,
+      "title": "Source Count",
+      "type": "integer"
+    },
+    "entry_count": {
+      "minimum": 0,
+      "title": "Entry Count",
+      "type": "integer"
+    },
+    "entries_by_math_effect": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Entries By Math Effect",
+      "type": "object"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/SyntheticBudgetConfigurationWorkbenchCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "failed_check_count": {
+      "minimum": 0,
+      "title": "Failed Check Count",
+      "type": "integer"
+    },
+    "workbook_filename": {
+      "title": "Workbook Filename",
+      "type": "string"
+    },
+    "markdown_filename": {
+      "title": "Markdown Filename",
+      "type": "string"
+    },
+    "display_banner": {
+      "additionalProperties": true,
+      "title": "Display Banner",
+      "type": "object"
+    },
+    "required_next_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Gates",
+      "type": "array"
+    },
+    "data_origin": {
+      "const": "synthetic",
+      "default": "synthetic",
+      "title": "Data Origin",
+      "type": "string"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "local_json_only": {
+      "const": true,
+      "default": true,
+      "title": "Local Json Only",
+      "type": "boolean"
+    },
+    "read_only_ui": {
+      "const": true,
+      "default": true,
+      "title": "Read Only Ui",
+      "type": "boolean"
+    },
+    "real_rate_import_allowed": {
+      "const": false,
+      "default": false,
+      "title": "Real Rate Import Allowed",
+      "type": "boolean"
+    },
+    "configuration_import_performed": {
+      "const": false,
+      "default": false,
+      "title": "Configuration Import Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "budget_submission_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Submission Authorized",
+      "type": "boolean"
+    },
+    "matter_opening_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Matter Opening Authorized",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "synthetic_budget_configuration_workbench_report_id",
+    "status",
+    "sources",
+    "entries",
+    "source_count",
+    "entry_count",
+    "entries_by_math_effect",
+    "checks",
+    "failed_check_count",
+    "workbook_filename",
+    "markdown_filename",
+    "display_banner",
+    "required_next_gates",
+    "generated_at"
+  ],
+  "title": "SyntheticBudgetConfigurationWorkbenchReport",
+  "type": "object"
+}

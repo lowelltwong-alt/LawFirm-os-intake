@@ -47,6 +47,12 @@ def test_legal_intake_budget_ui_required_files_exist(repo_root):
         "src/fixtures/demo-budget-learning-loop-report.json",
         "src/fixtures/demo-cross-repo-contract-proof-report.json",
         "src/fixtures/demo-pilot-review-story-report.json",
+        "src/fixtures/demo-synthetic-rate-card-workbench-report.json",
+        "src/fixtures/demo-synthetic-actuals-workbench-report.json",
+        "src/fixtures/demo-synthetic-budget-input-workbench-report.json",
+        "src/fixtures/demo-synthetic-budget-configuration-workbench-report.json",
+        "src/fixtures/demo-synthetic-guideline-projection-workbench-report.json",
+        "src/fixtures/demo-synthetic-rejection-appeal-workbench-report.json",
     ]
 
     for relative_path in required:
@@ -61,6 +67,240 @@ def test_legal_intake_budget_ui_has_no_publish_or_deploy_scripts(repo_root):
     assert "deploy" not in scripts
     assert "publish" not in scripts
     assert "postinstall" not in scripts
+
+
+def test_ui_synthetic_rate_card_workbench_is_audited_local_candidate_data(repo_root):
+    fixture = json.loads(
+        (
+            repo_root / UI_ROOT / "src/fixtures/demo-synthetic-rate-card-workbench-report.json"
+        ).read_text(encoding="utf-8")
+    )
+    app = (repo_root / UI_ROOT / "src/App.tsx").read_text(encoding="utf-8")
+    contract = (repo_root / UI_ROOT / "src/data-contract.ts").read_text(encoding="utf-8")
+
+    assert fixture["status"] == "synthetic_rate_card_workbench_ready_for_review"
+    assert fixture["data_origin"] == "synthetic"
+    assert fixture["candidate_only"] is True
+    assert fixture["real_rate_import_allowed"] is False
+    assert fixture["external_writes_performed"] is False
+    assert fixture["lake_write_performed"] is False
+    assert fixture["sqlite_write_performed"] is False
+    assert fixture["row_count"] == len(fixture["rows"])
+    assert fixture["rate_card_sha256"].startswith("sha256:")
+    assert "SyntheticRateCardWorkbenchPanel" in app
+    assert "downloadSyntheticRateCardCsv" in app
+    assert "assertSyntheticRateCardWorkbenchReport" in app
+    assert "assertSyntheticRateCardWorkbenchReport" in contract
+    assert "real_rate_import_allowed" in contract
+
+
+def test_ui_synthetic_actuals_workbench_is_reconciled_local_candidate_data(repo_root):
+    fixture = json.loads(
+        (
+            repo_root / UI_ROOT / "src/fixtures/demo-synthetic-actuals-workbench-report.json"
+        ).read_text(encoding="utf-8")
+    )
+    app = (repo_root / UI_ROOT / "src/App.tsx").read_text(encoding="utf-8")
+    contract = (repo_root / UI_ROOT / "src/data-contract.ts").read_text(encoding="utf-8")
+
+    comparison = fixture["comparison"]
+    assert fixture["status"] == "synthetic_actuals_workbench_ready_for_review"
+    assert fixture["data_origin"] == "synthetic"
+    assert fixture["candidate_only"] is True
+    assert fixture["actuals_source_id"] == "le-actuals-epli-carrier-clean.v0_1"
+    assert fixture["actuals_source_sha256"].startswith("sha256:")
+    assert (
+        fixture["phase_actual_total"] == fixture["code_actual_total"] == comparison["total_actual"]
+    )
+    assert (
+        fixture["phase_budgeted_total"]
+        == fixture["code_budgeted_total"]
+        == comparison["total_budgeted"]
+    )
+    assert fixture["external_writes_performed"] is False
+    assert fixture["lake_write_performed"] is False
+    assert fixture["sqlite_write_performed"] is False
+    assert fixture["silent_learning_performed"] is False
+    assert "SyntheticActualsWorkbenchPanel" in app
+    assert "Download CSV" in app
+    assert "excluded from the total" in app
+    assert "assertSyntheticActualsWorkbenchReport" in app
+    assert "assertSyntheticActualsWorkbenchReport" in contract
+    assert "alternate_views_not_reconciled" in contract
+
+
+def test_ui_synthetic_budget_input_workbench_is_pinned_candidate_lineage(repo_root):
+    fixture = json.loads(
+        (
+            repo_root / UI_ROOT / "src/fixtures/demo-synthetic-budget-input-workbench-report.json"
+        ).read_text(encoding="utf-8")
+    )
+    app = (repo_root / UI_ROOT / "src/App.tsx").read_text(encoding="utf-8")
+    contract = (repo_root / UI_ROOT / "src/data-contract.ts").read_text(encoding="utf-8")
+
+    assert fixture["status"] == "synthetic_budget_input_workbench_ready_for_review"
+    assert fixture["data_origin"] == "synthetic"
+    assert fixture["candidate_only"] is True
+    assert fixture["read_only_ui"] is True
+    assert fixture["not_authorized_for_calibration"] is True
+    assert fixture["line_count"] == len(fixture["lines"]) == 8
+    assert fixture["total_proposed_budget"] == 54090.0
+    assert fixture["budget_proposal_sha256"].startswith("sha256:")
+    assert fixture["external_writes_performed"] is False
+    assert fixture["lake_write_performed"] is False
+    assert fixture["sqlite_write_performed"] is False
+    assert all(
+        lane["inclusion"] == "excluded_context_only" for lane in fixture["context_lanes"][1:]
+    )
+    assert "SyntheticBudgetInputWorkbenchPanel" in app
+    assert "downloadSyntheticBudgetInputCsv" in app
+    assert "assertSyntheticBudgetInputWorkbenchReport" in app
+    assert "assertSyntheticBudgetInputWorkbenchReport" in contract
+    assert "excluded_context_only" in contract
+
+
+def test_ui_synthetic_budget_configuration_workbench_is_read_only_and_audited(repo_root):
+    fixture = json.loads(
+        (
+            repo_root
+            / UI_ROOT
+            / "src/fixtures/demo-synthetic-budget-configuration-workbench-report.json"
+        ).read_text(encoding="utf-8")
+    )
+    app = (repo_root / UI_ROOT / "src/App.tsx").read_text(encoding="utf-8")
+    contract = (repo_root / UI_ROOT / "src/data-contract.ts").read_text(encoding="utf-8")
+
+    assert fixture["status"] == "synthetic_budget_configuration_workbench_ready_for_review"
+    assert fixture["data_origin"] == "synthetic"
+    assert fixture["candidate_only"] is True
+    assert fixture["read_only_ui"] is True
+    assert fixture["source_count"] == len(fixture["sources"]) == 4
+    assert fixture["entry_count"] == len(fixture["entries"]) == 159
+    assert fixture["failed_check_count"] == 0
+    assert fixture["real_rate_import_allowed"] is False
+    assert fixture["configuration_import_performed"] is False
+    assert fixture["external_writes_performed"] is False
+    assert fixture["lake_write_performed"] is False
+    assert fixture["sqlite_write_performed"] is False
+    assert "SyntheticBudgetConfigurationWorkbenchPanel" in app
+    assert "downloadSyntheticBudgetConfigurationCsv" in app
+    assert "assertSyntheticBudgetConfigurationWorkbenchReport" in app
+    assert "assertSyntheticBudgetConfigurationWorkbenchReport" in contract
+
+
+def test_ui_budget_sandbox_is_local_draft_only_and_source_bound(repo_root):
+    app = (repo_root / UI_ROOT / "src/App.tsx").read_text(encoding="utf-8")
+    sandbox = (repo_root / UI_ROOT / "src/BudgetSandboxPanel.tsx").read_text(encoding="utf-8")
+    fixture = json.loads(
+        (
+            repo_root / UI_ROOT / "src/fixtures/demo-synthetic-budget-input-workbench-report.json"
+        ).read_text(encoding="utf-8")
+    )
+
+    assert fixture["data_origin"] == "synthetic"
+    assert fixture["candidate_only"] is True
+    assert fixture["total_proposed_budget"] == 54090.0
+    assert "BudgetSandboxPanel" in app
+    assert "budget-sandbox-title" in sandbox
+    assert "local_browser_draft: true" in sandbox
+    assert "source_budget_proposal_sha256" in sandbox
+    assert "fixed_contingency_amount" in sandbox
+    assert "draftFees + draftExpenses + contingencyAmount" in sandbox
+    assert "configuration_write" in sandbox
+    assert "Download Excel-Ready CSV" in sandbox
+    assert "SyntheticRateCardWorkbenchReport" not in sandbox
+    assert "localStorage" not in sandbox
+    assert "fetch(" not in sandbox
+
+
+def test_ui_rate_card_sandbox_is_local_draft_only_and_source_bound(repo_root):
+    app = (repo_root / UI_ROOT / "src/App.tsx").read_text(encoding="utf-8")
+    sandbox = (repo_root / UI_ROOT / "src/RateCardSandboxPanel.tsx").read_text(encoding="utf-8")
+    fixture = json.loads(
+        (
+            repo_root / UI_ROOT / "src/fixtures/demo-synthetic-rate-card-workbench-report.json"
+        ).read_text(encoding="utf-8")
+    )
+
+    assert fixture["data_origin"] == "synthetic"
+    assert fixture["candidate_only"] is True
+    assert fixture["real_rate_import_allowed"] is False
+    assert "RateCardSandboxPanel" in app
+    assert "rate-card-sandbox-title" in sandbox
+    assert "local_browser_draft: true" in sandbox
+    assert "source_rate_card_sha256" in sandbox
+    assert "rate_card_apply_to_budget" in sandbox
+    assert "Download Excel-Ready CSV" in sandbox
+    assert "localStorage" not in sandbox
+    assert "fetch(" not in sandbox
+
+
+def test_ui_synthetic_guideline_projection_workbench_is_read_only_and_reconciled(repo_root):
+    fixture = json.loads(
+        (
+            repo_root
+            / UI_ROOT
+            / "src/fixtures/demo-synthetic-guideline-projection-workbench-report.json"
+        ).read_text(encoding="utf-8")
+    )
+    app = (repo_root / UI_ROOT / "src/App.tsx").read_text(encoding="utf-8")
+    contract = (repo_root / UI_ROOT / "src/data-contract.ts").read_text(encoding="utf-8")
+
+    assert fixture["status"] == "synthetic_guideline_projection_workbench_ready_for_review"
+    assert fixture["data_origin"] == "synthetic"
+    assert fixture["candidate_only"] is True
+    assert fixture["read_only_ui"] is True
+    assert fixture["failed_check_count"] == 0
+    assert len(fixture["views"]) == 2
+    assert all(
+        view["projection"]["proposed_total"] == fixture["proposal_total"]
+        for view in fixture["views"]
+    )
+    assert all(
+        view["gross_reductions"] - view["gross_increases"] == view["net_delta"]
+        for view in fixture["views"]
+    )
+    assert all(
+        requirement["status"] != "unknown"
+        for view in fixture["views"]
+        for requirement in view["preapproval_report"]["requirements"]
+    )
+    assert fixture["external_writes_performed"] is False
+    assert fixture["lake_write_performed"] is False
+    assert fixture["sqlite_write_performed"] is False
+    assert "SyntheticGuidelineProjectionWorkbenchPanel" in app
+    assert "assertSyntheticGuidelineProjectionWorkbenchReport" in app
+    assert "assertSyntheticGuidelineProjectionWorkbenchReport" in contract
+
+
+def test_ui_synthetic_rejection_appeal_workbench_is_read_only_and_reconciled(repo_root):
+    fixture = json.loads(
+        (
+            repo_root
+            / UI_ROOT
+            / "src/fixtures/demo-synthetic-rejection-appeal-workbench-report.json"
+        ).read_text(encoding="utf-8")
+    )
+    app = (repo_root / UI_ROOT / "src/App.tsx").read_text(encoding="utf-8")
+    contract = (repo_root / UI_ROOT / "src/data-contract.ts").read_text(encoding="utf-8")
+
+    assert fixture["status"] == "synthetic_rejection_appeal_workbench_ready_for_review"
+    assert fixture["data_origin"] == "synthetic"
+    assert fixture["candidate_only"] is True
+    assert fixture["read_only_ui"] is True
+    assert fixture["total_disputed_amount"] == 3900.0
+    assert fixture["total_recovered_amount"] == 900.0
+    assert fixture["total_write_down_amount"] == 1200.0
+    assert fixture["failed_check_count"] == 0
+    assert all(case["source_ref_count"] > 0 for case in fixture["cases"])
+    assert fixture["external_writes_performed"] is False
+    assert fixture["lake_write_performed"] is False
+    assert fixture["sqlite_write_performed"] is False
+    assert fixture["appeal_submission_performed"] is False
+    assert fixture["silent_learning_performed"] is False
+    assert "SyntheticRejectionAppealWorkbenchPanel" in app
+    assert "assertSyntheticRejectionAppealWorkbenchReport" in app
+    assert "assertSyntheticRejectionAppealWorkbenchReport" in contract
 
 
 def test_legal_intake_budget_ui_data_contract_lists_required_artifacts(repo_root):

@@ -1,0 +1,272 @@
+{
+  "$defs": {
+    "SyntheticBudgetConfigurationChange": {
+      "additionalProperties": false,
+      "properties": {
+        "entry_id": {
+          "title": "Entry Id",
+          "type": "string"
+        },
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "config_path": {
+          "title": "Config Path",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "unit": {
+          "title": "Unit",
+          "type": "string"
+        },
+        "math_effect": {
+          "title": "Math Effect",
+          "type": "string"
+        },
+        "baseline_value": {
+          "title": "Baseline Value",
+          "type": "number"
+        },
+        "candidate_value": {
+          "title": "Candidate Value",
+          "type": "number"
+        },
+        "delta": {
+          "title": "Delta",
+          "type": "number"
+        }
+      },
+      "required": [
+        "entry_id",
+        "source_id",
+        "config_path",
+        "label",
+        "unit",
+        "math_effect",
+        "baseline_value",
+        "candidate_value",
+        "delta"
+      ],
+      "title": "SyntheticBudgetConfigurationChange",
+      "type": "object"
+    },
+    "SyntheticBudgetConfigurationChangeCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "SyntheticBudgetConfigurationChangeCheck",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "synthetic_budget_configuration_change_package_id": {
+      "title": "Synthetic Budget Configuration Change Package Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "synthetic_budget_configuration_change_ready_for_review",
+        "blocked_by_synthetic_budget_configuration_change"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "methodology_version": {
+      "const": "synthetic_budget_configuration_change.v0_1",
+      "default": "synthetic_budget_configuration_change.v0_1",
+      "title": "Methodology Version",
+      "type": "string"
+    },
+    "baseline_report_id": {
+      "title": "Baseline Report Id",
+      "type": "string"
+    },
+    "candidate_report_id": {
+      "title": "Candidate Report Id",
+      "type": "string"
+    },
+    "baseline_source_hashes": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Baseline Source Hashes",
+      "type": "object"
+    },
+    "candidate_source_hashes": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Candidate Source Hashes",
+      "type": "object"
+    },
+    "changes": {
+      "items": {
+        "$ref": "#/$defs/SyntheticBudgetConfigurationChange"
+      },
+      "title": "Changes",
+      "type": "array"
+    },
+    "changed_source_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Changed Source Ids",
+      "type": "array"
+    },
+    "change_count": {
+      "minimum": 0,
+      "title": "Change Count",
+      "type": "integer"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/SyntheticBudgetConfigurationChangeCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "failed_check_count": {
+      "minimum": 0,
+      "title": "Failed Check Count",
+      "type": "integer"
+    },
+    "required_next_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Gates",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "local_json_only": {
+      "const": true,
+      "default": true,
+      "title": "Local Json Only",
+      "type": "boolean"
+    },
+    "budget_recalculated": {
+      "const": false,
+      "default": false,
+      "title": "Budget Recalculated",
+      "type": "boolean"
+    },
+    "workbook_import_performed": {
+      "const": false,
+      "default": false,
+      "title": "Workbook Import Performed",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    },
+    "sqlite_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Sqlite Write Performed",
+      "type": "boolean"
+    },
+    "budget_submission_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Budget Submission Authorized",
+      "type": "boolean"
+    },
+    "matter_opening_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Matter Opening Authorized",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "synthetic_budget_configuration_change_package_id",
+    "status",
+    "baseline_report_id",
+    "candidate_report_id",
+    "baseline_source_hashes",
+    "candidate_source_hashes",
+    "changes",
+    "changed_source_ids",
+    "change_count",
+    "checks",
+    "failed_check_count",
+    "required_next_gates",
+    "generated_at"
+  ],
+  "title": "SyntheticBudgetConfigurationChangePackage",
+  "type": "object"
+}

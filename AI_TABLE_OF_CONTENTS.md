@@ -19,6 +19,7 @@
 | Understand specialists | `docs/agent-architecture.md`, `agents/`, `prompts/`, `harnesses/` |
 | Understand chunking/graph | `docs/chunking-and-evidence-graph.md` |
 | Understand budgets | `docs/legal-budget-design.md`, `templates/legal-budget-review-form.md`, `docs/carrier-rejection-learning-loop-roadmap.md` |
+| Edit synthetic budget inputs | `docs/synthetic-budget-input-catalog.md`, `config/synthetic-carrier-rate-card.yaml`, `config/budget-driver-policy.yaml`, `config/synthetic-carrier-guideline.yaml`, `config/labor-employment-budget-fact-needs.yaml`, `config/budget_policy.yaml`, `fixtures/synthetic/*-sandbox/` |
 | Understand owner handoffs | `DATA_FLOW_MAP.md`, `ENDPOINTS_AND_COMMANDS.md`, `promotion/cross_repo_promotion_package.json` |
 | Understand human gates | `docs/human-review.md`, `config/human_gates.yaml` |
 | Understand testing and public data | `docs/evaluation-plan.md`, `docs/public-data-test-plan.md`, `docs/synthetic-data-plan.md`, `docs/data/courtlistener-early-case-dataset-strategy.md` |

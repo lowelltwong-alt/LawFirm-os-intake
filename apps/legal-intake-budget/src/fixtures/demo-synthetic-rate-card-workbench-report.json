@@ -1,0 +1,411 @@
+{
+  "schema_version": "0.1",
+  "synthetic_rate_card_workbench_report_id": "synrateworkbench-9bc1f3cc8d6111c9",
+  "status": "synthetic_rate_card_workbench_ready_for_review",
+  "rate_card_id": "synthetic-carrier-rate-card",
+  "rate_card_version": "0.1",
+  "rate_card_ref": "config/synthetic-carrier-rate-card.yaml",
+  "rate_card_sha256": "sha256:de6bfd91a642c3ba8d5bfaf9e61f94984658187f87019c5dfcfc2296158122da",
+  "editable_source_ref": "config/synthetic-carrier-rate-card.yaml",
+  "methodology_version": "synthetic_rate_card_workbench.v0_1",
+  "carrier_count": 2,
+  "state_count": 3,
+  "title_count": 4,
+  "row_count": 24,
+  "named_timekeeper_override_count": 3,
+  "rows": [
+    {
+      "carrier_id": "synthetic-carrier-a",
+      "carrier_name": "Harbor Point Insurance",
+      "effective_date": "2026-01-01",
+      "state": "CA",
+      "title": "associate",
+      "hourly_rate": 300.0
+    },
+    {
+      "carrier_id": "synthetic-carrier-a",
+      "carrier_name": "Harbor Point Insurance",
+      "effective_date": "2026-01-01",
+      "state": "CA",
+      "title": "paralegal",
+      "hourly_rate": 190.0
+    },
+    {
+      "carrier_id": "synthetic-carrier-a",
+      "carrier_name": "Harbor Point Insurance",
+      "effective_date": "2026-01-01",
+      "state": "CA",
+      "title": "partner",
+      "hourly_rate": 520.0
+    },
+    {
+      "carrier_id": "synthetic-carrier-a",
+      "carrier_name": "Harbor Point Insurance",
+      "effective_date": "2026-01-01",
+      "state": "CA",
+      "title": "senior_associate",
+      "hourly_rate": 380.0
+    },
+    {
+      "carrier_id": "synthetic-carrier-a",
+      "carrier_name": "Harbor Point Insurance",
+      "effective_date": "2026-01-01",
+      "state": "NV",
+      "title": "associate",
+      "hourly_rate": 250.0
+    },
+    {
+      "carrier_id": "synthetic-carrier-a",
+      "carrier_name": "Harbor Point Insurance",
+      "effective_date": "2026-01-01",
+      "state": "NV",
+      "title": "paralegal",
+      "hourly_rate": 160.0
+    },
+    {
+      "carrier_id": "synthetic-carrier-a",
+      "carrier_name": "Harbor Point Insurance",
+      "effective_date": "2026-01-01",
+      "state": "NV",
+      "title": "partner",
+      "hourly_rate": 450.0
+    },
+    {
+      "carrier_id": "synthetic-carrier-a",
+      "carrier_name": "Harbor Point Insurance",
+      "effective_date": "2026-01-01",
+      "state": "NV",
+      "title": "senior_associate",
+      "hourly_rate": 325.0
+    },
+    {
+      "carrier_id": "synthetic-carrier-a",
+      "carrier_name": "Harbor Point Insurance",
+      "effective_date": "2026-01-01",
+      "state": "TX",
+      "title": "associate",
+      "hourly_rate": 235.0
+    },
+    {
+      "carrier_id": "synthetic-carrier-a",
+      "carrier_name": "Harbor Point Insurance",
+      "effective_date": "2026-01-01",
+      "state": "TX",
+      "title": "paralegal",
+      "hourly_rate": 150.0
+    },
+    {
+      "carrier_id": "synthetic-carrier-a",
+      "carrier_name": "Harbor Point Insurance",
+      "effective_date": "2026-01-01",
+      "state": "TX",
+      "title": "partner",
+      "hourly_rate": 410.0
+    },
+    {
+      "carrier_id": "synthetic-carrier-a",
+      "carrier_name": "Harbor Point Insurance",
+      "effective_date": "2026-01-01",
+      "state": "TX",
+      "title": "senior_associate",
+      "hourly_rate": 300.0
+    },
+    {
+      "carrier_id": "synthetic-carrier-b",
+      "carrier_name": "Cascade Mutual",
+      "effective_date": "2026-01-01",
+      "state": "CA",
+      "title": "associate",
+      "hourly_rate": 270.0
+    },
+    {
+      "carrier_id": "synthetic-carrier-b",
+      "carrier_name": "Cascade Mutual",
+      "effective_date": "2026-01-01",
+      "state": "CA",
+      "title": "paralegal",
+      "hourly_rate": 175.0
+    },
+    {
+      "carrier_id": "synthetic-carrier-b",
+      "carrier_name": "Cascade Mutual",
+      "effective_date": "2026-01-01",
+      "state": "CA",
+      "title": "partner",
+      "hourly_rate": 470.0
+    },
+    {
+      "carrier_id": "synthetic-carrier-b",
+      "carrier_name": "Cascade Mutual",
+      "effective_date": "2026-01-01",
+      "state": "CA",
+      "title": "senior_associate",
+      "hourly_rate": 350.0
+    },
+    {
+      "carrier_id": "synthetic-carrier-b",
+      "carrier_name": "Cascade Mutual",
+      "effective_date": "2026-01-01",
+      "state": "NV",
+      "title": "associate",
+      "hourly_rate": 225.0
+    },
+    {
+      "carrier_id": "synthetic-carrier-b",
+      "carrier_name": "Cascade Mutual",
+      "effective_date": "2026-01-01",
+      "state": "NV",
+      "title": "paralegal",
+      "hourly_rate": 145.0
+    },
+    {
+      "carrier_id": "synthetic-carrier-b",
+      "carrier_name": "Cascade Mutual",
+      "effective_date": "2026-01-01",
+      "state": "NV",
+      "title": "partner",
+      "hourly_rate": 395.0
+    },
+    {
+      "carrier_id": "synthetic-carrier-b",
+      "carrier_name": "Cascade Mutual",
+      "effective_date": "2026-01-01",
+      "state": "NV",
+      "title": "senior_associate",
+      "hourly_rate": 295.0
+    },
+    {
+      "carrier_id": "synthetic-carrier-b",
+      "carrier_name": "Cascade Mutual",
+      "effective_date": "2026-01-01",
+      "state": "TX",
+      "title": "associate",
+      "hourly_rate": 215.0
+    },
+    {
+      "carrier_id": "synthetic-carrier-b",
+      "carrier_name": "Cascade Mutual",
+      "effective_date": "2026-01-01",
+      "state": "TX",
+      "title": "paralegal",
+      "hourly_rate": 140.0
+    },
+    {
+      "carrier_id": "synthetic-carrier-b",
+      "carrier_name": "Cascade Mutual",
+      "effective_date": "2026-01-01",
+      "state": "TX",
+      "title": "partner",
+      "hourly_rate": 365.0
+    },
+    {
+      "carrier_id": "synthetic-carrier-b",
+      "carrier_name": "Cascade Mutual",
+      "effective_date": "2026-01-01",
+      "state": "TX",
+      "title": "senior_associate",
+      "hourly_rate": 275.0
+    }
+  ],
+  "state_summaries": [
+    {
+      "carrier_id": "synthetic-carrier-a",
+      "carrier_name": "Harbor Point Insurance",
+      "state": "CA",
+      "role_count": 4,
+      "minimum_hourly_rate": 190.0,
+      "maximum_hourly_rate": 520.0,
+      "average_hourly_rate": 347.5
+    },
+    {
+      "carrier_id": "synthetic-carrier-a",
+      "carrier_name": "Harbor Point Insurance",
+      "state": "NV",
+      "role_count": 4,
+      "minimum_hourly_rate": 160.0,
+      "maximum_hourly_rate": 450.0,
+      "average_hourly_rate": 296.25
+    },
+    {
+      "carrier_id": "synthetic-carrier-a",
+      "carrier_name": "Harbor Point Insurance",
+      "state": "TX",
+      "role_count": 4,
+      "minimum_hourly_rate": 150.0,
+      "maximum_hourly_rate": 410.0,
+      "average_hourly_rate": 273.75
+    },
+    {
+      "carrier_id": "synthetic-carrier-b",
+      "carrier_name": "Cascade Mutual",
+      "state": "CA",
+      "role_count": 4,
+      "minimum_hourly_rate": 175.0,
+      "maximum_hourly_rate": 470.0,
+      "average_hourly_rate": 316.25
+    },
+    {
+      "carrier_id": "synthetic-carrier-b",
+      "carrier_name": "Cascade Mutual",
+      "state": "NV",
+      "role_count": 4,
+      "minimum_hourly_rate": 145.0,
+      "maximum_hourly_rate": 395.0,
+      "average_hourly_rate": 265.0
+    },
+    {
+      "carrier_id": "synthetic-carrier-b",
+      "carrier_name": "Cascade Mutual",
+      "state": "TX",
+      "role_count": 4,
+      "minimum_hourly_rate": 140.0,
+      "maximum_hourly_rate": 365.0,
+      "average_hourly_rate": 248.75
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "synthetic_candidate_declaration",
+      "status": "passed",
+      "message": "Rate card must declare candidate synthetic-only status and no real-data flags.",
+      "evidence_refs": [
+        "config/synthetic-carrier-rate-card.yaml"
+      ]
+    },
+    {
+      "check_id": "non_authoritative_declaration",
+      "status": "passed",
+      "message": "Rate card must remain non-canonical and block real-rate import.",
+      "evidence_refs": [
+        "config/synthetic-carrier-rate-card.yaml"
+      ]
+    },
+    {
+      "check_id": "identity_and_version_present",
+      "status": "passed",
+      "message": "Rate card must have a stable ID and version.",
+      "evidence_refs": [
+        "config/synthetic-carrier-rate-card.yaml"
+      ]
+    },
+    {
+      "check_id": "title_catalog_complete",
+      "status": "passed",
+      "message": "Titles must be a non-empty, unique list of synthetic staffing roles.",
+      "evidence_refs": [
+        "config/synthetic-carrier-rate-card.yaml"
+      ]
+    },
+    {
+      "check_id": "carrier_catalog_present",
+      "status": "passed",
+      "message": "At least one synthetic carrier schedule is required.",
+      "evidence_refs": [
+        "config/synthetic-carrier-rate-card.yaml"
+      ]
+    },
+    {
+      "check_id": "carrier_metadata_complete",
+      "status": "passed",
+      "message": "Every carrier needs a synthetic name, aliases, effective date, and schedule.",
+      "evidence_refs": [
+        "config/synthetic-carrier-rate-card.yaml"
+      ]
+    },
+    {
+      "check_id": "schedule_states_aligned",
+      "status": "passed",
+      "message": "Every carrier must provide the same state schedule coverage.",
+      "evidence_refs": [
+        "config/synthetic-carrier-rate-card.yaml"
+      ]
+    },
+    {
+      "check_id": "alias_and_default_states_covered",
+      "status": "passed",
+      "message": "Default and jurisdiction-alias states must be covered by every carrier schedule.",
+      "evidence_refs": [
+        "config/synthetic-carrier-rate-card.yaml"
+      ]
+    },
+    {
+      "check_id": "schedule_roles_complete",
+      "status": "passed",
+      "message": "Every carrier/state schedule must provide exactly the declared titles.",
+      "evidence_refs": [
+        "config/synthetic-carrier-rate-card.yaml"
+      ]
+    },
+    {
+      "check_id": "positive_numeric_rates",
+      "status": "passed",
+      "message": "Every synthetic rate must be a positive number.",
+      "evidence_refs": [
+        "config/synthetic-carrier-rate-card.yaml"
+      ]
+    },
+    {
+      "check_id": "unique_rate_cells",
+      "status": "passed",
+      "message": "Each carrier/state/title cell must be unique.",
+      "evidence_refs": [
+        "config/synthetic-carrier-rate-card.yaml"
+      ]
+    },
+    {
+      "check_id": "named_timekeeper_overrides_valid",
+      "status": "passed",
+      "message": "Named synthetic overrides must reference a scheduled state/title and positive rate.",
+      "evidence_refs": [
+        "config/synthetic-carrier-rate-card.yaml"
+      ]
+    }
+  ],
+  "failed_check_count": 0,
+  "workbook_filename": "synthetic_rate_card_workbench.xlsx",
+  "markdown_filename": "synthetic_rate_card_workbench.md",
+  "display_banner": {
+    "summary": "Synthetic candidate rate catalog only. It is not a carrier panel, firm rate card, benchmark, billing authority, or submission artifact.",
+    "candidate_only": true,
+    "synthetic_only": true,
+    "real_rate_import_allowed": false,
+    "blocked_actions": [
+      "real_rate_import",
+      "matter_specific_rate_resolution_without_confirmation",
+      "budget_submission",
+      "carrier_submission",
+      "exception_lake_write",
+      "sqlite_write",
+      "silent_learning"
+    ]
+  },
+  "candidate_exception_lake_labels": [
+    "synthetic_rate_card_workbench_review_candidate",
+    "rate_card_provenance_or_completeness_candidate"
+  ],
+  "required_next_gates": [
+    "human_review_before_synthetic_rate_card_change",
+    "legal_knowledge_runtime_reviewed_snapshot_before_real_rate_replacement",
+    "semantic_substrate_owner_review_before_canonical_promotion"
+  ],
+  "data_origin": "synthetic",
+  "candidate_only": true,
+  "non_authoritative": true,
+  "synthetic_only": true,
+  "local_json_only": true,
+  "read_only_ui": true,
+  "real_rate_import_allowed": false,
+  "not_authorized_for_external_write": true,
+  "not_authorized_for_lake_write": true,
+  "not_authorized_for_sqlite_write": true,
+  "not_authorized_for_budget_submission": true,
+  "not_authorized_for_matter_opening": true,
+  "not_authorized_for_calibration": true,
+  "external_writes_performed": false,
+  "lake_write_performed": false,
+  "sqlite_write_performed": false,
+  "budget_submission_authorized": false,
+  "matter_opening_authorized": false,
+  "silent_learning_performed": false,
+  "generated_at": "2026-07-13T00:00:00Z"
+}

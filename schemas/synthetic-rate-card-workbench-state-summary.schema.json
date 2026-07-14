@@ -1,0 +1,48 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "carrier_id": {
+      "title": "Carrier Id",
+      "type": "string"
+    },
+    "carrier_name": {
+      "title": "Carrier Name",
+      "type": "string"
+    },
+    "state": {
+      "title": "State",
+      "type": "string"
+    },
+    "role_count": {
+      "minimum": 0,
+      "title": "Role Count",
+      "type": "integer"
+    },
+    "minimum_hourly_rate": {
+      "exclusiveMinimum": 0,
+      "title": "Minimum Hourly Rate",
+      "type": "number"
+    },
+    "maximum_hourly_rate": {
+      "exclusiveMinimum": 0,
+      "title": "Maximum Hourly Rate",
+      "type": "number"
+    },
+    "average_hourly_rate": {
+      "exclusiveMinimum": 0,
+      "title": "Average Hourly Rate",
+      "type": "number"
+    }
+  },
+  "required": [
+    "carrier_id",
+    "carrier_name",
+    "state",
+    "role_count",
+    "minimum_hourly_rate",
+    "maximum_hourly_rate",
+    "average_hourly_rate"
+  ],
+  "title": "SyntheticRateCardWorkbenchStateSummary",
+  "type": "object"
+}

@@ -1,0 +1,118 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "line_number": {
+      "minimum": 1,
+      "title": "Line Number",
+      "type": "integer"
+    },
+    "phase_id": {
+      "title": "Phase Id",
+      "type": "string"
+    },
+    "phase_name": {
+      "title": "Phase Name",
+      "type": "string"
+    },
+    "task_id": {
+      "title": "Task Id",
+      "type": "string"
+    },
+    "task_name": {
+      "title": "Task Name",
+      "type": "string"
+    },
+    "staffing_role": {
+      "title": "Staffing Role",
+      "type": "string"
+    },
+    "estimated_hours": {
+      "minimum": 0,
+      "title": "Estimated Hours",
+      "type": "number"
+    },
+    "hourly_rate": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Hourly Rate"
+    },
+    "rate_source": {
+      "title": "Rate Source",
+      "type": "string"
+    },
+    "rate_is_synthetic": {
+      "title": "Rate Is Synthetic",
+      "type": "boolean"
+    },
+    "estimated_fees": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Estimated Fees"
+    },
+    "estimated_expenses": {
+      "minimum": 0,
+      "title": "Estimated Expenses",
+      "type": "number"
+    },
+    "line_total": {
+      "minimum": 0,
+      "title": "Line Total",
+      "type": "number"
+    },
+    "calculation_formula": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Calculation Formula"
+    },
+    "estimate_basis": {
+      "title": "Estimate Basis",
+      "type": "string"
+    },
+    "estimate_basis_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Estimate Basis Refs",
+      "type": "array"
+    }
+  },
+  "required": [
+    "line_number",
+    "phase_id",
+    "phase_name",
+    "task_id",
+    "task_name",
+    "staffing_role",
+    "estimated_hours",
+    "rate_source",
+    "rate_is_synthetic",
+    "estimated_expenses",
+    "line_total",
+    "estimate_basis"
+  ],
+  "title": "SyntheticBudgetInputWorkbenchLine",
+  "type": "object"
+}

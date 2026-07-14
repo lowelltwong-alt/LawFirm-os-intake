@@ -41,6 +41,12 @@ and
 `src/fixtures/demo-labor-employment-budget-output-expectations-report.json`.
 The checked cross-repo handoff fixture is
 `src/fixtures/demo-cross-repo-contract-proof-report.json`.
+The editable synthetic rate-card and actuals-variance workbench fixtures are
+`src/fixtures/demo-synthetic-rate-card-workbench-report.json` and
+`src/fixtures/demo-synthetic-actuals-workbench-report.json`. The actuals panel
+uses phase rows as its aggregate and code rows only as a reconciled drilldown;
+it must never add the two views together. Both panels remain local JSON review
+evidence with local CSV export only.
 
 Generate a complete synthetic QA review run with:
 

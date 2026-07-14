@@ -31,6 +31,18 @@ CARRIER_ROLE_PRECEDENCE = {
 }
 
 
+def _has_truthy_real_data_flag(value: Any) -> bool:
+    if isinstance(value, dict):
+        return any(
+            (str(key).startswith("contains_real_") and nested is True)
+            or _has_truthy_real_data_flag(nested)
+            for key, nested in value.items()
+        )
+    if isinstance(value, list):
+        return any(_has_truthy_real_data_flag(nested) for nested in value)
+    return False
+
+
 class RoleRateResolution(StrictModel):
     """Resolved per-title hourly rates plus where each dimension came from."""
 
@@ -57,8 +69,14 @@ def load_rate_card(path: str | Path) -> dict[str, Any]:
     card = yaml.safe_load(Path(path).read_text(encoding="utf-8"))
     if not isinstance(card, dict):
         raise ValueError("carrier rate card must be a mapping")
-    if card.get("contains_real_firm_data", False):
+    if _has_truthy_real_data_flag(card):
         raise ValueError("real firm/carrier rate cards are prohibited in this starter repository")
+    if (
+        card.get("status") != "candidate"
+        or card.get("data_origin") != "synthetic"
+        or card.get("candidate_only") is not True
+    ):
+        raise ValueError("carrier rate card must declare synthetic candidate-only status")
     return card
 
 
@@ -118,7 +136,16 @@ def _match_carrier(
                     "human rate review."
                 ],
             )
-        return carrier_id, "default_carrier", [], []
+        return (
+            carrier_id,
+            "default_carrier",
+            ["confirmed_carrier_role_missing_for_rates"],
+            [
+                "No confirmed insurance_carrier, instructing_source, or payer party was "
+                "available for synthetic rate selection; budget must remain hours-only "
+                "pending human rate review."
+            ],
+        )
 
     best_precedence = min(match[0] for match in matches)
     best_matches = [match for match in matches if match[0] == best_precedence]
