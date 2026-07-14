@@ -188,6 +188,9 @@ from .synthetic_budget_configuration_workbench import (
 from .synthetic_budget_configuration_change import (
     run_synthetic_budget_configuration_change_package,
 )
+from .synthetic_configuration_regeneration_binding import (
+    run_synthetic_configuration_regeneration_binding_report,
+)
 from .synthetic_guideline_projection_workbench import run_synthetic_guideline_projection_workbench
 from .synthetic_rejection_appeal_workbench import run_synthetic_rejection_appeal_workbench
 from .synthetic_rate_card_workbench import run_synthetic_rate_card_workbench
@@ -373,6 +376,11 @@ def _parser() -> argparse.ArgumentParser:
     synthetic_budget_configuration_change.add_argument("--candidate-root", required=True)
     synthetic_budget_configuration_change.add_argument("--out-dir", required=True)
     synthetic_budget_configuration_change.add_argument("--generated-at")
+    regeneration_binding = sub.add_parser("bind-synthetic-configuration-regeneration")
+    regeneration_binding.add_argument("--baseline-root", required=True)
+    regeneration_binding.add_argument("--candidate-root", required=True)
+    regeneration_binding.add_argument("--out-dir", required=True)
+    regeneration_binding.add_argument("--generated-at")
 
     synthetic_guideline_projection_workbench = sub.add_parser(
         "build-synthetic-guideline-projection-workbench",
@@ -2870,6 +2878,26 @@ def main(argv: list[str] | None = None) -> int:
                 if report.status == "synthetic_budget_configuration_change_ready_for_review"
                 else 2
             )
+
+        if args.command == "bind-synthetic-configuration-regeneration":
+            report, run_dir = run_synthetic_configuration_regeneration_binding_report(
+                baseline_root=args.baseline_root,
+                candidate_root=args.candidate_root,
+                out_dir=args.out_dir,
+                generated_at=args.generated_at,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "regeneration_binding_report_id": report.regeneration_binding_report_id,
+                    "changed_source_ids": report.changed_source_ids,
+                    "failed_check_count": report.failed_check_count,
+                    "budget_recalculated": report.budget_recalculated,
+                    "external_writes_performed": report.external_writes_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0 if report.status == "ready_for_review" else 2
 
         if args.command == "build-synthetic-guideline-projection-workbench":
             report, run_dir = run_synthetic_guideline_projection_workbench(
