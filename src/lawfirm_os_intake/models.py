@@ -20230,4 +20230,89 @@ class SyntheticBudgetConfigurationWorkbenchReport(StrictModel):
         return self
 
 
+class SyntheticBudgetConfigurationChange(StrictModel):
+    entry_id: str
+    source_id: str
+    config_path: str
+    label: str
+    unit: str
+    math_effect: str
+    baseline_value: float
+    candidate_value: float
+    delta: float
+
+    @model_validator(mode="after")
+    def configuration_change_delta_reconciles(self) -> "SyntheticBudgetConfigurationChange":
+        if round(self.candidate_value - self.baseline_value, 8) != round(self.delta, 8):
+            raise ValueError("synthetic configuration change delta mismatch")
+        return self
+
+
+class SyntheticBudgetConfigurationChangeCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    evidence_refs: list[str] = Field(default_factory=list)
+
+
+class SyntheticBudgetConfigurationChangePackage(StrictModel):
+    schema_version: str = "0.1"
+    synthetic_budget_configuration_change_package_id: str
+    status: Literal[
+        "synthetic_budget_configuration_change_ready_for_review",
+        "blocked_by_synthetic_budget_configuration_change",
+    ]
+    methodology_version: Literal["synthetic_budget_configuration_change.v0_1"] = (
+        "synthetic_budget_configuration_change.v0_1"
+    )
+    baseline_report_id: str
+    candidate_report_id: str
+    baseline_source_hashes: dict[str, str]
+    candidate_source_hashes: dict[str, str]
+    changes: list[SyntheticBudgetConfigurationChange]
+    changed_source_ids: list[str]
+    change_count: int = Field(ge=0)
+    checks: list[SyntheticBudgetConfigurationChangeCheck]
+    failed_check_count: int = Field(ge=0)
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    local_json_only: Literal[True] = True
+    budget_recalculated: Literal[False] = False
+    workbook_import_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def configuration_change_package_is_coherent(
+        self,
+    ) -> "SyntheticBudgetConfigurationChangePackage":
+        failed = [check for check in self.checks if check.status == "failed"]
+        if self.change_count != len(self.changes):
+            raise ValueError("synthetic configuration change count mismatch")
+        if self.failed_check_count != len(failed):
+            raise ValueError("synthetic configuration change failed check count mismatch")
+        if self.status.endswith("ready_for_review") and failed:
+            raise ValueError(
+                "ready synthetic configuration change package cannot include failed checks"
+            )
+        if self.status.startswith("blocked") and not failed:
+            raise ValueError(
+                "blocked synthetic configuration change package requires failed checks"
+            )
+        if any(not value.startswith("sha256:") for value in self.baseline_source_hashes.values()):
+            raise ValueError("synthetic configuration baseline hashes required")
+        if any(not value.startswith("sha256:") for value in self.candidate_source_hashes.values()):
+            raise ValueError("synthetic configuration candidate hashes required")
+        if self.changed_source_ids != sorted(set(self.changed_source_ids)):
+            raise ValueError("synthetic configuration changed source IDs must be sorted and unique")
+        return self
+
+
 UIReviewDataBundle.model_rebuild()
