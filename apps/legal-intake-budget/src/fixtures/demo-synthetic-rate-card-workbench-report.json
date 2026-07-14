@@ -1,11 +1,11 @@
 {
   "schema_version": "0.1",
-  "synthetic_rate_card_workbench_report_id": "synrateworkbench-fcccc2b22312a155",
+  "synthetic_rate_card_workbench_report_id": "synrateworkbench-3e2bcab64f1975c3",
   "status": "synthetic_rate_card_workbench_ready_for_review",
   "rate_card_id": "synthetic-carrier-rate-card",
   "rate_card_version": "0.1",
   "rate_card_ref": "config/synthetic-carrier-rate-card.yaml",
-  "rate_card_sha256": "sha256:5743d7191f26079bca9916d3e53a7e49022b9801dfa436b324d975923e10f96b",
+  "rate_card_sha256": "sha256:de6bfd91a642c3ba8d5bfaf9e61f94984658187f87019c5dfcfc2296158122da",
   "editable_source_ref": "config/synthetic-carrier-rate-card.yaml",
   "methodology_version": "synthetic_rate_card_workbench.v0_1",
   "carrier_count": 2,

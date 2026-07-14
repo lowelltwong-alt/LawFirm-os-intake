@@ -630,7 +630,7 @@
       "top_level_type": "object"
     },
     {
-      "byte_count": 14404,
+      "byte_count": 14754,
       "candidate_only": true,
       "data_origin": "synthetic",
       "external_writes_performed": false,
@@ -658,7 +658,7 @@
       ],
       "path": "demo-synthetic-budget-input-workbench-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:fff07a45111bfad9c9a127ed7055e2ba7a7af98c1d4cc75fc3524b521c3d8dd0",
+      "sha256": "sha256:1652167bef657b73bba32e5e9e64aeb07d6bf38ea924d80b9070a877efb1fac5",
       "status": "synthetic_budget_input_workbench_ready_for_review",
       "synthetic_only": true,
       "top_level_type": "object"
@@ -697,7 +697,7 @@
       "top_level_type": "object"
     },
     {
-      "byte_count": 93779,
+      "byte_count": 96106,
       "candidate_only": true,
       "data_origin": "synthetic",
       "external_writes_performed": false,
@@ -713,7 +713,7 @@
       ],
       "path": "demo-synthetic-guideline-projection-workbench-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:b7b93cbbc41464b49d21d410630a03dba502912b2f06f86cfe678d4339ca1787",
+      "sha256": "sha256:e1fd78a90dafbac2072b2b789640941b54345806871c4847fc26ecb7c6f98168",
       "status": "synthetic_guideline_projection_workbench_ready_for_review",
       "synthetic_only": true,
       "top_level_type": "object"
@@ -811,7 +811,7 @@
       "top_level_type": "object"
     },
     {
-      "byte_count": 11958,
+      "byte_count": 12361,
       "candidate_only": true,
       "data_origin": "synthetic",
       "external_writes_performed": false,
@@ -822,12 +822,12 @@
         },
         {
           "field": "synthetic_rate_card_workbench_report_id",
-          "value": "synrateworkbench-fcccc2b22312a155"
+          "value": "synrateworkbench-3e2bcab64f1975c3"
         }
       ],
       "path": "demo-synthetic-rate-card-workbench-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:00ec8fb39435464f3285751ee1433ffb6ec0f830332c6f8759f000c2a0c5fb21",
+      "sha256": "sha256:17a023a79a50d03de48dedce12c9d155d7a9056039a3137b5ab8554936918167",
       "status": "synthetic_rate_card_workbench_ready_for_review",
       "synthetic_only": true,
       "top_level_type": "object"
@@ -895,7 +895,7 @@
   ],
   "lake_write_performed": false,
   "local_json_only": true,
-  "manifest_sha256": "sha256:9ca1d6c00a84dab5e45ce58bf07656782e3015fdb71b87442793c48a1982dadf",
+  "manifest_sha256": "sha256:d4180fa339435623433505504c4278689433e94268b548ec59f16e4d9c632e84",
   "matter_opening_authorized": false,
   "non_authoritative": true,
   "parse_error_count": 0,
@@ -918,5 +918,5 @@
   "sqlite_write_performed": false,
   "status": "passed",
   "synthetic_only": true,
-  "total_byte_count": 1074085
+  "total_byte_count": 1077165
 }
