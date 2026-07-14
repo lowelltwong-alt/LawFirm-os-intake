@@ -1,6 +1,8 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 
+import { BudgetSandboxPanel } from "./BudgetSandboxPanel";
+
 import demoCrosswalkAudit from "./fixtures/demo-crosswalk-audit-report.json";
 import demoOCGRuleIRAdoption from "./fixtures/demo-ocg-rule-ir-adoption-report.json";
 import demoBudgetLearningLoop from "./fixtures/demo-budget-learning-loop-report.json";
@@ -4283,6 +4285,7 @@ function App() {
       <SyntheticRateCardWorkbenchPanel report={syntheticRateCardWorkbench} />
       <SyntheticBudgetInputWorkbenchPanel report={syntheticBudgetInputWorkbench} />
       <SyntheticBudgetConfigurationWorkbenchPanel report={syntheticBudgetConfigurationWorkbench} />
+      <BudgetSandboxPanel budgetInput={syntheticBudgetInputWorkbench} />
       <SyntheticGuidelineProjectionWorkbenchPanel report={syntheticGuidelineProjectionWorkbench} />
       <SyntheticRejectionAppealWorkbenchPanel report={syntheticRejectionAppealWorkbench} />
       <SyntheticActualsWorkbenchPanel report={syntheticActualsWorkbench} />

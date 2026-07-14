@@ -188,6 +188,31 @@ def test_ui_synthetic_budget_configuration_workbench_is_read_only_and_audited(re
     assert "assertSyntheticBudgetConfigurationWorkbenchReport" in contract
 
 
+def test_ui_budget_sandbox_is_local_draft_only_and_source_bound(repo_root):
+    app = (repo_root / UI_ROOT / "src/App.tsx").read_text(encoding="utf-8")
+    sandbox = (repo_root / UI_ROOT / "src/BudgetSandboxPanel.tsx").read_text(encoding="utf-8")
+    fixture = json.loads(
+        (
+            repo_root / UI_ROOT / "src/fixtures/demo-synthetic-budget-input-workbench-report.json"
+        ).read_text(encoding="utf-8")
+    )
+
+    assert fixture["data_origin"] == "synthetic"
+    assert fixture["candidate_only"] is True
+    assert fixture["total_proposed_budget"] == 54090.0
+    assert "BudgetSandboxPanel" in app
+    assert "budget-sandbox-title" in sandbox
+    assert "local_browser_draft: true" in sandbox
+    assert "source_budget_proposal_sha256" in sandbox
+    assert "fixed_contingency_amount" in sandbox
+    assert "draftFees + draftExpenses + contingencyAmount" in sandbox
+    assert "configuration_write" in sandbox
+    assert "Download Excel-Ready CSV" in sandbox
+    assert "SyntheticRateCardWorkbenchReport" not in sandbox
+    assert "localStorage" not in sandbox
+    assert "fetch(" not in sandbox
+
+
 def test_ui_synthetic_guideline_projection_workbench_is_read_only_and_reconciled(repo_root):
     fixture = json.loads(
         (
