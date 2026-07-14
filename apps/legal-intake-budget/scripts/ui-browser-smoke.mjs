@@ -121,6 +121,63 @@ async function main() {
     if (budgetConfigurationDownloadArtifact.suggestedFilename() !== "synthetic-budget-configuration-values.csv") {
       failures.push("budget_configuration_workbench_csv_download_filename_unexpected");
     }
+    const budgetSandbox = page.locator("#budget-sandbox-title");
+    await budgetSandbox.waitFor({ state: "visible" });
+    const budgetSandboxPanel = page.locator('section[aria-labelledby="budget-sandbox-title"]');
+    const initialSandboxText = await budgetSandboxPanel.textContent();
+    if (!initialSandboxText?.includes("Every displayed number is a synthetic candidate input") || !initialSandboxText.includes("$54,090")) {
+      failures.push("budget_sandbox_missing_candidate_banner_or_pinned_total");
+    }
+    await budgetSandboxPanel.getByLabel("Hours for line 1").fill("8");
+    const changedSandboxText = await budgetSandboxPanel.textContent();
+    if (!changedSandboxText?.includes("$54,990") || !changedSandboxText.includes("Delta +$900") || !changedSandboxText.includes("1 changed input")) {
+      failures.push("budget_sandbox_hours_counterfactual_not_recomputed");
+    }
+    const sandboxCsvDownload = page.waitForEvent("download");
+    await budgetSandboxPanel.getByRole("button", { name: "Download Excel-Ready CSV" }).click();
+    const sandboxCsvArtifact = await sandboxCsvDownload;
+    if (sandboxCsvArtifact.suggestedFilename() !== "synthetic-budget-sandbox.csv") {
+      failures.push("budget_sandbox_csv_download_filename_unexpected");
+    }
+    const sandboxCsvPath = await sandboxCsvArtifact.path();
+    const sandboxCsv = sandboxCsvPath ? await readFile(sandboxCsvPath, "utf8") : "";
+    if (!sandboxCsv.includes("L100,L110,partner,8,450,3600,0,3600") || !sandboxCsv.includes(",,Draft total,,,50890,4100,54990")) {
+      failures.push("budget_sandbox_csv_contents_not_reconciled");
+    }
+    const sandboxChangeDownload = page.waitForEvent("download");
+    await budgetSandboxPanel.getByRole("button", { name: "Download Candidate Change Package" }).click();
+    const sandboxChangeArtifact = await sandboxChangeDownload;
+    if (sandboxChangeArtifact.suggestedFilename() !== "synthetic-budget-sandbox-change-package.json") {
+      failures.push("budget_sandbox_change_package_download_filename_unexpected");
+    }
+    const sandboxChangePath = await sandboxChangeArtifact.path();
+    const sandboxChange = sandboxChangePath ? JSON.parse(await readFile(sandboxChangePath, "utf8")) : null;
+    if (
+      sandboxChange?.candidate_only !== true ||
+      sandboxChange?.local_browser_draft !== true ||
+      sandboxChange?.draft_total !== 54990 ||
+      !sandboxChange?.source_budget_proposal_sha256?.startsWith("sha256:") ||
+      !sandboxChange?.blocked_actions?.includes("configuration_write")
+    ) {
+      failures.push("budget_sandbox_change_package_boundary_or_math_invalid");
+    }
+    await budgetSandboxPanel.getByRole("button", { name: "Reset Draft" }).click();
+    const resetSandboxText = await budgetSandboxPanel.textContent();
+    if (!resetSandboxText?.includes("$54,090.00") || !resetSandboxText.includes("Delta +$0.00") || !resetSandboxText.includes("0 changed inputs")) {
+      failures.push("budget_sandbox_reset_did_not_restore_pinned_draft");
+    }
+    await budgetSandboxPanel.getByLabel("Hourly rate for line 2").fill("300");
+    const rateAppliedSandboxText = await budgetSandboxPanel.textContent();
+    if (!rateAppliedSandboxText?.includes("$54,340.00") || !rateAppliedSandboxText.includes("Delta +$250.00") || !rateAppliedSandboxText.includes("1 changed input")) {
+      failures.push("budget_sandbox_rate_counterfactual_not_recomputed");
+    }
+    await budgetSandboxPanel.getByRole("button", { name: "Reset Draft" }).click();
+    await budgetSandboxPanel.getByLabel("Contingency amount").fill("125.50");
+    const contingencySandboxText = await budgetSandboxPanel.textContent();
+    if (!contingencySandboxText?.includes("$54,215.50") || !contingencySandboxText.includes("Delta +$125.50")) {
+      failures.push("budget_sandbox_contingency_not_reconciled");
+    }
+    await budgetSandboxPanel.getByRole("button", { name: "Reset Draft" }).click();
     const guidelineWorkbench = page.locator("#guideline-projection-workbench-title");
     await guidelineWorkbench.waitFor({ state: "visible" });
     const guidelinePanel = page.locator(".guideline-projection-workbench-panel");
@@ -214,12 +271,20 @@ async function main() {
         `mobile_rendered_ui_has_horizontal_overflow:${JSON.stringify(mobileState.overflowNodes)}`,
       );
     }
+    const sandboxMobileState = await budgetSandboxPanel.evaluate((panel) => ({
+      clientWidth: panel.clientWidth,
+      scrollWidth: panel.scrollWidth,
+    }));
+    if (sandboxMobileState.scrollWidth > sandboxMobileState.clientWidth + 1) {
+      failures.push(`budget_sandbox_mobile_overflow:${JSON.stringify(sandboxMobileState)}`);
+    }
 
     const checks = [
       { check_id: "local_only_render", status: "passed", detail: "The UI rendered from a loopback-only static server." },
       { check_id: "review_surface_nonempty", status: uiState.textLength >= 80 ? "passed" : "failed", detail: `Rendered text length: ${uiState.textLength}.` },
       { check_id: "budget_input_workbench_visible", status: failures.some((failure) => failure.startsWith("budget_input_workbench_")) ? "failed" : "passed", detail: "The pinned synthetic budget input ledger exposes its candidate boundary, canonical total, excluded context lanes, and local CSV download." },
       { check_id: "budget_configuration_workbench_visible", status: failures.some((failure) => failure.startsWith("budget_configuration_workbench_")) ? "failed" : "passed", detail: "The synthetic configuration inventory exposes source paths and local CSV evidence without importing workbook edits or pricing in the browser." },
+      { check_id: "budget_sandbox_counterfactual_and_exports", status: failures.some((failure) => failure.startsWith("budget_sandbox_")) ? "failed" : "passed", detail: "A local synthetic hours counterfactual recomputes the candidate total, candidate-only exports download, and reset restores the pinned values without a source or runtime write." },
       { check_id: "guideline_projection_workbench_visible", status: failures.some((failure) => failure.startsWith("guideline_projection_workbench_")) ? "failed" : "passed", detail: "The synthetic guideline projection keeps the proposal separate, exposes counterfactual deltas, and never grants carrier approval or submission authority." },
       { check_id: "rejection_appeal_workbench_visible", status: failures.some((failure) => failure.startsWith("rejection_appeal_workbench_")) ? "failed" : "passed", detail: "The synthetic rejection and appeal workbench exposes disputed, recovered, and write-down totals without appeal submission, Lake writes, or silent learning." },
       { check_id: "actuals_variance_workbench_visible", status: failures.some((failure) => failure.startsWith("actuals_workbench_")) ? "failed" : "passed", detail: "The synthetic actuals panel exposes its candidate banner, canonical totals, and code drilldown." },
