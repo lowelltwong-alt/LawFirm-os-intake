@@ -1,0 +1,30 @@
+{
+  "schema_version": "0.1",
+  "artifact_type": "synthetic_budget_sandbox_change_package",
+  "data_origin": "synthetic",
+  "candidate_only": true,
+  "local_browser_draft": true,
+  "source_budget_proposal_sha256": "sha256:b85c715317e86f7b0822ba10f6b19da6bc209555da45ad49e18d78c000159a5c",
+  "pinned_total": 54090.0,
+  "fixed_contingency_amount": 0.0,
+  "draft_total": 54990.0,
+  "delta": 900.0,
+  "lines": [
+    {"lineNumber": 1, "estimatedHours": 8.0, "hourlyRate": 450.0, "estimatedFees": 3600.0, "estimatedExpenses": 0.0, "lineTotal": 3600.0},
+    {"lineNumber": 2, "estimatedHours": 10.0, "hourlyRate": 275.0, "estimatedFees": 2750.0, "estimatedExpenses": 0.0, "lineTotal": 2750.0},
+    {"lineNumber": 3, "estimatedHours": 24.0, "hourlyRate": 275.0, "estimatedFees": 6600.0, "estimatedExpenses": 0.0, "lineTotal": 6600.0},
+    {"lineNumber": 4, "estimatedHours": 42.0, "hourlyRate": 275.0, "estimatedFees": 11550.0, "estimatedExpenses": 0.0, "lineTotal": 11550.0},
+    {"lineNumber": 5, "estimatedHours": 34.0, "hourlyRate": 325.0, "estimatedFees": 11050.0, "estimatedExpenses": 2600.0, "lineTotal": 13650.0},
+    {"lineNumber": 6, "estimatedHours": 22.0, "hourlyRate": 145.0, "estimatedFees": 3190.0, "estimatedExpenses": 0.0, "lineTotal": 3190.0},
+    {"lineNumber": 7, "estimatedHours": 14.0, "hourlyRate": 450.0, "estimatedFees": 6300.0, "estimatedExpenses": 0.0, "lineTotal": 6300.0},
+    {"lineNumber": 8, "estimatedHours": 18.0, "hourlyRate": 325.0, "estimatedFees": 5850.0, "estimatedExpenses": 1500.0, "lineTotal": 7350.0}
+  ],
+  "blocked_actions": [
+    "configuration_write",
+    "real_rate_import",
+    "budget_submission",
+    "exception_lake_write",
+    "sqlite_write",
+    "silent_learning"
+  ]
+}
