@@ -522,7 +522,7 @@ def test_labor_employment_budget_replay_input_pack_marks_ready_and_missing_input
     assert report.ready_case_count == 1
     assert report.partial_case_count == 7
     assert report.blocked_case_count == 0
-    assert report.ready_input_count == 31
+    assert report.ready_input_count == 35
     assert report.missing_input_count > 0
     assert report.invalid_input_count == 0
     assert report.one_of_signal_missing_count > 0
@@ -593,7 +593,7 @@ def test_labor_employment_budget_replay_input_pack_marks_ready_and_missing_input
         if case.learning_fixture_id == "le-learning-epli-carrier-clean.v0_1"
     )
     assert epli_case.status == "partially_ready"
-    assert epli_case.ready_input_count == 6
+    assert epli_case.ready_input_count == 10
     assert epli_case.missing_input_count > 0
     assert {
         item.required_input_artifact for item in epli_case.items if item.input_status == "ready"
@@ -838,7 +838,7 @@ def test_labor_employment_budget_replay_input_pack_cli_writes_report(
         in captured.out
     )
     assert '"ready_case_count": 1' in captured.out
-    assert '"ready_input_count": 31' in captured.out
+    assert '"ready_input_count": 35' in captured.out
     assert '"invalid_input_count": 0' in captured.out
     assert '"runtime_artifacts_created": false' in captured.out
     assert (

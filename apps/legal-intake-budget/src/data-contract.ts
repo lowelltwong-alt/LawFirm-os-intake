@@ -809,7 +809,13 @@ export function assertPilotReviewStoryReport(report: PilotReviewStoryReport): st
   if (
     report.budget_display_state !== "withheld_pending_matter_link_and_role_review" ||
     report.carrier_projection_state !== "not_available_without_pinned_candidate_guideline" ||
-    report.actuals_learning_state !== "not_observed_no_learning_candidate"
+    report.actuals_learning_state !== "synthetic_actuals_variance_requires_human_review_no_learning" ||
+    report.actuals_variance_status !== "variance_review_required" ||
+    report.actuals_variance_amount <= 0 ||
+    report.actuals_total <= report.budget_proposal_total ||
+    !report.actuals_source_id ||
+    !report.actuals_source_ref ||
+    !report.budget_actual_comparison_report_id
   ) {
     failures.push("pilot_review_story_honesty_gate_failed");
   }

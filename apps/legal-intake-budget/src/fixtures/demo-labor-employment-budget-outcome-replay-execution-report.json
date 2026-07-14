@@ -1,17 +1,17 @@
 {
   "schema_version": "0.1",
-  "outcome_replay_execution_report_id": "lebudgetoutcomeexecution_dd3ce385af935ae9",
+  "outcome_replay_execution_report_id": "lebudgetoutcomeexecution_051ea2ff1221a0b8",
   "status": "labor_employment_budget_outcome_replay_execution_ready_for_review",
-  "source_seed_manifest_ref": "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\examples\\synthetic\\labor-employment\\labor-employment-budget-outcome-replay-seeds.json",
+  "source_seed_manifest_ref": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\examples\\synthetic\\labor-employment\\labor-employment-budget-outcome-replay-seeds.json",
   "source_seed_manifest_id": "labor-employment-budget-outcome-replay-seeds.v0_1",
-  "source_readiness_report_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-readiness\\labor_employment_budget_outcome_replay_readiness_report.json",
-  "source_readiness_report_id": "lebudgetoutcomereplay_d8a822255425b0ad",
+  "source_readiness_report_ref": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-readiness\\labor_employment_budget_outcome_replay_readiness_report.json",
+  "source_readiness_report_id": "lebudgetoutcomereplay_091f67616ecaade8",
   "source_readiness_report_status": "labor_employment_budget_outcome_replay_ready_for_review",
   "fixture_count": 8,
   "materialized_case_count": 8,
   "failed_case_count": 0,
-  "expected_artifact_slot_count": 38,
-  "materialized_artifact_slot_count": 38,
+  "expected_artifact_slot_count": 40,
+  "materialized_artifact_slot_count": 40,
   "runtime_artifact_count": 0,
   "covered_learning_loop_types": [
     "actuals_variance",
@@ -31,7 +31,7 @@
       "variant": "clean",
       "status": "passed",
       "expected_budget_output_state": "candidate_range_after_review_pending_human_review",
-      "replay_case_dir": "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-discrimination-harassment-clean.v0_1",
+      "replay_case_dir": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-discrimination-harassment-clean.v0_1",
       "required_learning_loop_types": [
         "actuals_variance",
         "carrier_rejection_capture",
@@ -51,7 +51,7 @@
         {
           "loop_type": "actuals_variance",
           "expected_artifact_name": "budget_actual_comparison_report.json",
-          "artifact_slot_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-discrimination-harassment-clean.v0_1\\actuals_variance\\artifact-slots\\budget_actual_comparison_report.json.slot.json",
+          "artifact_slot_ref": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-discrimination-harassment-clean.v0_1\\actuals_variance\\artifact-slots\\budget_actual_comparison_report.json.slot.json",
           "artifact_slot_status": "materialized_candidate_slot",
           "evidence_refs": [
             "le-outcome-replay-discrimination-harassment-clean.v0_1",
@@ -74,7 +74,7 @@
         {
           "loop_type": "actuals_variance",
           "expected_artifact_name": "budget_actual_variance_ledger_report.json",
-          "artifact_slot_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-discrimination-harassment-clean.v0_1\\actuals_variance\\artifact-slots\\budget_actual_variance_ledger_report.json.slot.json",
+          "artifact_slot_ref": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-discrimination-harassment-clean.v0_1\\actuals_variance\\artifact-slots\\budget_actual_variance_ledger_report.json.slot.json",
           "artifact_slot_status": "materialized_candidate_slot",
           "evidence_refs": [
             "le-outcome-replay-discrimination-harassment-clean.v0_1",
@@ -97,7 +97,7 @@
         {
           "loop_type": "carrier_rejection_capture",
           "expected_artifact_name": "carrier_rejection_decision_ledger_report.json",
-          "artifact_slot_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-discrimination-harassment-clean.v0_1\\carrier_rejection_capture\\artifact-slots\\carrier_rejection_decision_ledger_report.json.slot.json",
+          "artifact_slot_ref": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-discrimination-harassment-clean.v0_1\\carrier_rejection_capture\\artifact-slots\\carrier_rejection_decision_ledger_report.json.slot.json",
           "artifact_slot_status": "materialized_candidate_slot",
           "evidence_refs": [
             "le-outcome-replay-discrimination-harassment-clean.v0_1",
@@ -120,7 +120,7 @@
         {
           "loop_type": "carrier_rejection_capture",
           "expected_artifact_name": "carrier_rejection_reconciliation_report.json",
-          "artifact_slot_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-discrimination-harassment-clean.v0_1\\carrier_rejection_capture\\artifact-slots\\carrier_rejection_reconciliation_report.json.slot.json",
+          "artifact_slot_ref": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-discrimination-harassment-clean.v0_1\\carrier_rejection_capture\\artifact-slots\\carrier_rejection_reconciliation_report.json.slot.json",
           "artifact_slot_status": "materialized_candidate_slot",
           "evidence_refs": [
             "le-outcome-replay-discrimination-harassment-clean.v0_1",
@@ -143,7 +143,7 @@
         {
           "loop_type": "appeal_outcome",
           "expected_artifact_name": "carrier_rejection_decision_ledger_report.json",
-          "artifact_slot_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-discrimination-harassment-clean.v0_1\\appeal_outcome\\artifact-slots\\carrier_rejection_decision_ledger_report.json.slot.json",
+          "artifact_slot_ref": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-discrimination-harassment-clean.v0_1\\appeal_outcome\\artifact-slots\\carrier_rejection_decision_ledger_report.json.slot.json",
           "artifact_slot_status": "materialized_candidate_slot",
           "evidence_refs": [
             "le-outcome-replay-discrimination-harassment-clean.v0_1",
@@ -165,7 +165,7 @@
         {
           "loop_type": "appeal_outcome",
           "expected_artifact_name": "carrier_rejection_learning_report.json",
-          "artifact_slot_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-discrimination-harassment-clean.v0_1\\appeal_outcome\\artifact-slots\\carrier_rejection_learning_report.json.slot.json",
+          "artifact_slot_ref": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-discrimination-harassment-clean.v0_1\\appeal_outcome\\artifact-slots\\carrier_rejection_learning_report.json.slot.json",
           "artifact_slot_status": "materialized_candidate_slot",
           "evidence_refs": [
             "le-outcome-replay-discrimination-harassment-clean.v0_1",
@@ -187,7 +187,7 @@
         {
           "loop_type": "reviewed_learning_gate",
           "expected_artifact_name": "budget_learning_loop_report.json",
-          "artifact_slot_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-discrimination-harassment-clean.v0_1\\reviewed_learning_gate\\artifact-slots\\budget_learning_loop_report.json.slot.json",
+          "artifact_slot_ref": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-discrimination-harassment-clean.v0_1\\reviewed_learning_gate\\artifact-slots\\budget_learning_loop_report.json.slot.json",
           "artifact_slot_status": "materialized_candidate_slot",
           "evidence_refs": [
             "le-outcome-replay-discrimination-harassment-clean.v0_1",
@@ -209,7 +209,7 @@
         {
           "loop_type": "reviewed_learning_gate",
           "expected_artifact_name": "reviewed_learning_gate_report.json",
-          "artifact_slot_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-discrimination-harassment-clean.v0_1\\reviewed_learning_gate\\artifact-slots\\reviewed_learning_gate_report.json.slot.json",
+          "artifact_slot_ref": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-discrimination-harassment-clean.v0_1\\reviewed_learning_gate\\artifact-slots\\reviewed_learning_gate_report.json.slot.json",
           "artifact_slot_status": "materialized_candidate_slot",
           "evidence_refs": [
             "le-outcome-replay-discrimination-harassment-clean.v0_1",
@@ -238,7 +238,7 @@
       "evidence_refs": [
         "le-learning-discrimination-harassment-clean.v0_1",
         "le-discrimination-harassment-clean.executable.v0_1",
-        "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\examples\\synthetic\\labor-employment\\labor-employment-budget-outcome-replay-seeds.json",
+        "C:\\tmp\\lawfirm-os-intake-epli-actuals\\examples\\synthetic\\labor-employment\\labor-employment-budget-outcome-replay-seeds.json",
         "examples/synthetic/labor-employment/executable-fixtures/le-discrimination-harassment-clean.source-bundle.json",
         "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-discrimination-harassment-clean.v0_1/actuals_variance",
         "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-discrimination-harassment-clean.v0_1/appeal_outcome",
@@ -248,7 +248,7 @@
         "labor-employment-budget-learning-fixtures.v0_1",
         "le-discrimination-harassment-clean.executable.v0_1",
         "le-learning-discrimination-harassment-clean.v0_1",
-        "lebudgetqagate_82b13586cb2ff133"
+        "lebudgetqagate_825062ac1c025dd2"
       ],
       "failure_ids": [],
       "runtime_artifacts_created": false,
@@ -273,7 +273,7 @@
       "variant": "clean",
       "status": "passed",
       "expected_budget_output_state": "candidate_range_after_review_pending_human_review",
-      "replay_case_dir": "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-wage-hour-clean.v0_1",
+      "replay_case_dir": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-wage-hour-clean.v0_1",
       "required_learning_loop_types": [
         "actuals_variance",
         "carrier_rejection_capture",
@@ -291,7 +291,7 @@
         {
           "loop_type": "actuals_variance",
           "expected_artifact_name": "budget_actual_comparison_report.json",
-          "artifact_slot_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-wage-hour-clean.v0_1\\actuals_variance\\artifact-slots\\budget_actual_comparison_report.json.slot.json",
+          "artifact_slot_ref": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-wage-hour-clean.v0_1\\actuals_variance\\artifact-slots\\budget_actual_comparison_report.json.slot.json",
           "artifact_slot_status": "materialized_candidate_slot",
           "evidence_refs": [
             "le-outcome-replay-wage-hour-clean.v0_1",
@@ -314,7 +314,7 @@
         {
           "loop_type": "actuals_variance",
           "expected_artifact_name": "budget_actual_variance_ledger_report.json",
-          "artifact_slot_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-wage-hour-clean.v0_1\\actuals_variance\\artifact-slots\\budget_actual_variance_ledger_report.json.slot.json",
+          "artifact_slot_ref": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-wage-hour-clean.v0_1\\actuals_variance\\artifact-slots\\budget_actual_variance_ledger_report.json.slot.json",
           "artifact_slot_status": "materialized_candidate_slot",
           "evidence_refs": [
             "le-outcome-replay-wage-hour-clean.v0_1",
@@ -337,7 +337,7 @@
         {
           "loop_type": "carrier_rejection_capture",
           "expected_artifact_name": "carrier_rejection_decision_ledger_report.json",
-          "artifact_slot_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-wage-hour-clean.v0_1\\carrier_rejection_capture\\artifact-slots\\carrier_rejection_decision_ledger_report.json.slot.json",
+          "artifact_slot_ref": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-wage-hour-clean.v0_1\\carrier_rejection_capture\\artifact-slots\\carrier_rejection_decision_ledger_report.json.slot.json",
           "artifact_slot_status": "materialized_candidate_slot",
           "evidence_refs": [
             "le-outcome-replay-wage-hour-clean.v0_1",
@@ -360,7 +360,7 @@
         {
           "loop_type": "carrier_rejection_capture",
           "expected_artifact_name": "carrier_rejection_reconciliation_report.json",
-          "artifact_slot_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-wage-hour-clean.v0_1\\carrier_rejection_capture\\artifact-slots\\carrier_rejection_reconciliation_report.json.slot.json",
+          "artifact_slot_ref": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-wage-hour-clean.v0_1\\carrier_rejection_capture\\artifact-slots\\carrier_rejection_reconciliation_report.json.slot.json",
           "artifact_slot_status": "materialized_candidate_slot",
           "evidence_refs": [
             "le-outcome-replay-wage-hour-clean.v0_1",
@@ -383,7 +383,7 @@
         {
           "loop_type": "reviewed_learning_gate",
           "expected_artifact_name": "budget_learning_loop_report.json",
-          "artifact_slot_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-wage-hour-clean.v0_1\\reviewed_learning_gate\\artifact-slots\\budget_learning_loop_report.json.slot.json",
+          "artifact_slot_ref": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-wage-hour-clean.v0_1\\reviewed_learning_gate\\artifact-slots\\budget_learning_loop_report.json.slot.json",
           "artifact_slot_status": "materialized_candidate_slot",
           "evidence_refs": [
             "le-outcome-replay-wage-hour-clean.v0_1",
@@ -405,7 +405,7 @@
         {
           "loop_type": "reviewed_learning_gate",
           "expected_artifact_name": "reviewed_learning_gate_report.json",
-          "artifact_slot_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-wage-hour-clean.v0_1\\reviewed_learning_gate\\artifact-slots\\reviewed_learning_gate_report.json.slot.json",
+          "artifact_slot_ref": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-wage-hour-clean.v0_1\\reviewed_learning_gate\\artifact-slots\\reviewed_learning_gate_report.json.slot.json",
           "artifact_slot_status": "materialized_candidate_slot",
           "evidence_refs": [
             "le-outcome-replay-wage-hour-clean.v0_1",
@@ -433,7 +433,7 @@
       "evidence_refs": [
         "le-learning-wage-hour-clean.v0_1",
         "le-wage-hour-clean.executable.v0_1",
-        "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\examples\\synthetic\\labor-employment\\labor-employment-budget-outcome-replay-seeds.json",
+        "C:\\tmp\\lawfirm-os-intake-epli-actuals\\examples\\synthetic\\labor-employment\\labor-employment-budget-outcome-replay-seeds.json",
         "examples/synthetic/labor-employment/executable-fixtures/le-wage-hour-clean.source-bundle.json",
         "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-wage-hour-clean.v0_1/actuals_variance",
         "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-wage-hour-clean.v0_1/carrier_rejection_capture",
@@ -442,7 +442,7 @@
         "labor-employment-budget-learning-fixtures.v0_1",
         "le-learning-wage-hour-clean.v0_1",
         "le-wage-hour-clean.executable.v0_1",
-        "lebudgetqagate_82b13586cb2ff133"
+        "lebudgetqagate_825062ac1c025dd2"
       ],
       "failure_ids": [],
       "runtime_artifacts_created": false,
@@ -459,7 +459,7 @@
       "silent_learning_performed": false
     },
     {
-      "execution_case_id": "leoutcomeexecutioncase_ffa8293d6e07152e",
+      "execution_case_id": "leoutcomeexecutioncase_0b62ace304ce7362",
       "learning_fixture_id": "le-learning-epli-carrier-clean.v0_1",
       "executable_fixture_id": "le-epli-carrier-clean.executable.v0_1",
       "outcome_seed_id": "le-outcome-replay-epli-carrier-clean.v0_1",
@@ -467,25 +467,71 @@
       "variant": "clean",
       "status": "passed",
       "expected_budget_output_state": "candidate_range_after_review_pending_human_review",
-      "replay_case_dir": "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-epli-carrier-clean.v0_1",
+      "replay_case_dir": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-epli-carrier-clean.v0_1",
       "required_learning_loop_types": [
+        "actuals_variance",
         "carrier_rejection_capture",
         "appeal_outcome",
         "reviewed_learning_gate"
       ],
       "materialized_learning_loop_types": [
+        "actuals_variance",
         "carrier_rejection_capture",
         "appeal_outcome",
         "reviewed_learning_gate"
       ],
       "blocked_learning_loop_types": [],
-      "expected_artifact_slot_count": 6,
-      "materialized_artifact_slot_count": 6,
+      "expected_artifact_slot_count": 8,
+      "materialized_artifact_slot_count": 8,
       "artifact_slots": [
+        {
+          "loop_type": "actuals_variance",
+          "expected_artifact_name": "budget_actual_comparison_report.json",
+          "artifact_slot_ref": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-epli-carrier-clean.v0_1\\actuals_variance\\artifact-slots\\budget_actual_comparison_report.json.slot.json",
+          "artifact_slot_status": "materialized_candidate_slot",
+          "evidence_refs": [
+            "le-outcome-replay-epli-carrier-clean.v0_1",
+            "le-learning-epli-carrier-clean.v0_1",
+            "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-epli-carrier-clean.v0_1/actuals_variance"
+          ],
+          "runtime_artifact_created": false,
+          "candidate_only": true,
+          "non_authoritative": true,
+          "synthetic_only": true,
+          "local_json_only": true,
+          "budget_submission_authorized": false,
+          "matter_opening_authorized": false,
+          "lake_write_performed": false,
+          "sqlite_write_performed": false,
+          "external_writes_performed": false,
+          "silent_learning_performed": false
+        },
+        {
+          "loop_type": "actuals_variance",
+          "expected_artifact_name": "budget_actual_variance_ledger_report.json",
+          "artifact_slot_ref": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-epli-carrier-clean.v0_1\\actuals_variance\\artifact-slots\\budget_actual_variance_ledger_report.json.slot.json",
+          "artifact_slot_status": "materialized_candidate_slot",
+          "evidence_refs": [
+            "le-outcome-replay-epli-carrier-clean.v0_1",
+            "le-learning-epli-carrier-clean.v0_1",
+            "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-epli-carrier-clean.v0_1/actuals_variance"
+          ],
+          "runtime_artifact_created": false,
+          "candidate_only": true,
+          "non_authoritative": true,
+          "synthetic_only": true,
+          "local_json_only": true,
+          "budget_submission_authorized": false,
+          "matter_opening_authorized": false,
+          "lake_write_performed": false,
+          "sqlite_write_performed": false,
+          "external_writes_performed": false,
+          "silent_learning_performed": false
+        },
         {
           "loop_type": "carrier_rejection_capture",
           "expected_artifact_name": "carrier_rejection_decision_ledger_report.json",
-          "artifact_slot_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-epli-carrier-clean.v0_1\\carrier_rejection_capture\\artifact-slots\\carrier_rejection_decision_ledger_report.json.slot.json",
+          "artifact_slot_ref": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-epli-carrier-clean.v0_1\\carrier_rejection_capture\\artifact-slots\\carrier_rejection_decision_ledger_report.json.slot.json",
           "artifact_slot_status": "materialized_candidate_slot",
           "evidence_refs": [
             "le-outcome-replay-epli-carrier-clean.v0_1",
@@ -508,7 +554,7 @@
         {
           "loop_type": "carrier_rejection_capture",
           "expected_artifact_name": "carrier_rejection_reconciliation_report.json",
-          "artifact_slot_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-epli-carrier-clean.v0_1\\carrier_rejection_capture\\artifact-slots\\carrier_rejection_reconciliation_report.json.slot.json",
+          "artifact_slot_ref": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-epli-carrier-clean.v0_1\\carrier_rejection_capture\\artifact-slots\\carrier_rejection_reconciliation_report.json.slot.json",
           "artifact_slot_status": "materialized_candidate_slot",
           "evidence_refs": [
             "le-outcome-replay-epli-carrier-clean.v0_1",
@@ -531,7 +577,7 @@
         {
           "loop_type": "appeal_outcome",
           "expected_artifact_name": "carrier_rejection_decision_ledger_report.json",
-          "artifact_slot_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-epli-carrier-clean.v0_1\\appeal_outcome\\artifact-slots\\carrier_rejection_decision_ledger_report.json.slot.json",
+          "artifact_slot_ref": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-epli-carrier-clean.v0_1\\appeal_outcome\\artifact-slots\\carrier_rejection_decision_ledger_report.json.slot.json",
           "artifact_slot_status": "materialized_candidate_slot",
           "evidence_refs": [
             "le-outcome-replay-epli-carrier-clean.v0_1",
@@ -553,7 +599,7 @@
         {
           "loop_type": "appeal_outcome",
           "expected_artifact_name": "carrier_rejection_learning_report.json",
-          "artifact_slot_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-epli-carrier-clean.v0_1\\appeal_outcome\\artifact-slots\\carrier_rejection_learning_report.json.slot.json",
+          "artifact_slot_ref": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-epli-carrier-clean.v0_1\\appeal_outcome\\artifact-slots\\carrier_rejection_learning_report.json.slot.json",
           "artifact_slot_status": "materialized_candidate_slot",
           "evidence_refs": [
             "le-outcome-replay-epli-carrier-clean.v0_1",
@@ -575,7 +621,7 @@
         {
           "loop_type": "reviewed_learning_gate",
           "expected_artifact_name": "budget_learning_loop_report.json",
-          "artifact_slot_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-epli-carrier-clean.v0_1\\reviewed_learning_gate\\artifact-slots\\budget_learning_loop_report.json.slot.json",
+          "artifact_slot_ref": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-epli-carrier-clean.v0_1\\reviewed_learning_gate\\artifact-slots\\budget_learning_loop_report.json.slot.json",
           "artifact_slot_status": "materialized_candidate_slot",
           "evidence_refs": [
             "le-outcome-replay-epli-carrier-clean.v0_1",
@@ -597,7 +643,7 @@
         {
           "loop_type": "reviewed_learning_gate",
           "expected_artifact_name": "reviewed_learning_gate_report.json",
-          "artifact_slot_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-epli-carrier-clean.v0_1\\reviewed_learning_gate\\artifact-slots\\reviewed_learning_gate_report.json.slot.json",
+          "artifact_slot_ref": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-epli-carrier-clean.v0_1\\reviewed_learning_gate\\artifact-slots\\reviewed_learning_gate_report.json.slot.json",
           "artifact_slot_status": "materialized_candidate_slot",
           "evidence_refs": [
             "le-outcome-replay-epli-carrier-clean.v0_1",
@@ -618,6 +664,7 @@
         }
       ],
       "candidate_exception_lake_labels": [
+        "labor_employment_actual_variance_candidate",
         "labor_employment_appeal_outcome_candidate",
         "labor_employment_epli_carrier_rejection_candidate",
         "reviewed_learning_gate_before_candidate_changes"
@@ -625,8 +672,9 @@
       "evidence_refs": [
         "le-learning-epli-carrier-clean.v0_1",
         "le-epli-carrier-clean.executable.v0_1",
-        "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\examples\\synthetic\\labor-employment\\labor-employment-budget-outcome-replay-seeds.json",
+        "C:\\tmp\\lawfirm-os-intake-epli-actuals\\examples\\synthetic\\labor-employment\\labor-employment-budget-outcome-replay-seeds.json",
         "examples/synthetic/labor-employment/executable-fixtures/le-epli-carrier-clean.source-bundle.json",
+        "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-epli-carrier-clean.v0_1/actuals_variance",
         "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-epli-carrier-clean.v0_1/appeal_outcome",
         "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-epli-carrier-clean.v0_1/carrier_rejection_capture",
         "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-epli-carrier-clean.v0_1/reviewed_learning_gate",
@@ -634,7 +682,7 @@
         "labor-employment-budget-learning-fixtures.v0_1",
         "le-epli-carrier-clean.executable.v0_1",
         "le-learning-epli-carrier-clean.v0_1",
-        "lebudgetqagate_82b13586cb2ff133"
+        "lebudgetqagate_825062ac1c025dd2"
       ],
       "failure_ids": [],
       "runtime_artifacts_created": false,
@@ -659,7 +707,7 @@
       "variant": "messy_thread",
       "status": "passed",
       "expected_budget_output_state": "candidate_range_after_review_pending_human_review",
-      "replay_case_dir": "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-retaliation-messy-thread.v0_1",
+      "replay_case_dir": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-retaliation-messy-thread.v0_1",
       "required_learning_loop_types": [
         "actuals_variance",
         "reviewed_learning_gate"
@@ -675,7 +723,7 @@
         {
           "loop_type": "actuals_variance",
           "expected_artifact_name": "budget_actual_comparison_report.json",
-          "artifact_slot_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-retaliation-messy-thread.v0_1\\actuals_variance\\artifact-slots\\budget_actual_comparison_report.json.slot.json",
+          "artifact_slot_ref": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-retaliation-messy-thread.v0_1\\actuals_variance\\artifact-slots\\budget_actual_comparison_report.json.slot.json",
           "artifact_slot_status": "materialized_candidate_slot",
           "evidence_refs": [
             "le-outcome-replay-retaliation-messy-thread.v0_1",
@@ -698,7 +746,7 @@
         {
           "loop_type": "actuals_variance",
           "expected_artifact_name": "budget_actual_variance_ledger_report.json",
-          "artifact_slot_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-retaliation-messy-thread.v0_1\\actuals_variance\\artifact-slots\\budget_actual_variance_ledger_report.json.slot.json",
+          "artifact_slot_ref": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-retaliation-messy-thread.v0_1\\actuals_variance\\artifact-slots\\budget_actual_variance_ledger_report.json.slot.json",
           "artifact_slot_status": "materialized_candidate_slot",
           "evidence_refs": [
             "le-outcome-replay-retaliation-messy-thread.v0_1",
@@ -721,7 +769,7 @@
         {
           "loop_type": "reviewed_learning_gate",
           "expected_artifact_name": "budget_learning_loop_report.json",
-          "artifact_slot_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-retaliation-messy-thread.v0_1\\reviewed_learning_gate\\artifact-slots\\budget_learning_loop_report.json.slot.json",
+          "artifact_slot_ref": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-retaliation-messy-thread.v0_1\\reviewed_learning_gate\\artifact-slots\\budget_learning_loop_report.json.slot.json",
           "artifact_slot_status": "materialized_candidate_slot",
           "evidence_refs": [
             "le-outcome-replay-retaliation-messy-thread.v0_1",
@@ -743,7 +791,7 @@
         {
           "loop_type": "reviewed_learning_gate",
           "expected_artifact_name": "reviewed_learning_gate_report.json",
-          "artifact_slot_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-retaliation-messy-thread.v0_1\\reviewed_learning_gate\\artifact-slots\\reviewed_learning_gate_report.json.slot.json",
+          "artifact_slot_ref": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-retaliation-messy-thread.v0_1\\reviewed_learning_gate\\artifact-slots\\reviewed_learning_gate_report.json.slot.json",
           "artifact_slot_status": "materialized_candidate_slot",
           "evidence_refs": [
             "le-outcome-replay-retaliation-messy-thread.v0_1",
@@ -771,7 +819,7 @@
       "evidence_refs": [
         "le-learning-retaliation-messy-thread.v0_1",
         "le-retaliation-wrongful-termination-messy-thread.executable.v0_1",
-        "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\examples\\synthetic\\labor-employment\\labor-employment-budget-outcome-replay-seeds.json",
+        "C:\\tmp\\lawfirm-os-intake-epli-actuals\\examples\\synthetic\\labor-employment\\labor-employment-budget-outcome-replay-seeds.json",
         "examples/synthetic/labor-employment/executable-fixtures/le-retaliation-wrongful-termination-messy-thread.source-bundle.json",
         "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-retaliation-messy-thread.v0_1/actuals_variance",
         "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-retaliation-messy-thread.v0_1/reviewed_learning_gate",
@@ -779,7 +827,7 @@
         "labor-employment-budget-learning-fixtures.v0_1",
         "le-learning-retaliation-messy-thread.v0_1",
         "le-retaliation-wrongful-termination-messy-thread.executable.v0_1",
-        "lebudgetqagate_82b13586cb2ff133"
+        "lebudgetqagate_825062ac1c025dd2"
       ],
       "failure_ids": [],
       "runtime_artifacts_created": false,
@@ -804,7 +852,7 @@
       "variant": "clean",
       "status": "passed",
       "expected_budget_output_state": "range_or_hours_only_pending_review",
-      "replay_case_dir": "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-class-collective-clean.v0_1",
+      "replay_case_dir": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-class-collective-clean.v0_1",
       "required_learning_loop_types": [
         "actuals_variance",
         "reviewed_learning_gate"
@@ -820,7 +868,7 @@
         {
           "loop_type": "actuals_variance",
           "expected_artifact_name": "budget_actual_comparison_report.json",
-          "artifact_slot_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-class-collective-clean.v0_1\\actuals_variance\\artifact-slots\\budget_actual_comparison_report.json.slot.json",
+          "artifact_slot_ref": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-class-collective-clean.v0_1\\actuals_variance\\artifact-slots\\budget_actual_comparison_report.json.slot.json",
           "artifact_slot_status": "materialized_candidate_slot",
           "evidence_refs": [
             "le-outcome-replay-class-collective-clean.v0_1",
@@ -843,7 +891,7 @@
         {
           "loop_type": "actuals_variance",
           "expected_artifact_name": "budget_actual_variance_ledger_report.json",
-          "artifact_slot_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-class-collective-clean.v0_1\\actuals_variance\\artifact-slots\\budget_actual_variance_ledger_report.json.slot.json",
+          "artifact_slot_ref": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-class-collective-clean.v0_1\\actuals_variance\\artifact-slots\\budget_actual_variance_ledger_report.json.slot.json",
           "artifact_slot_status": "materialized_candidate_slot",
           "evidence_refs": [
             "le-outcome-replay-class-collective-clean.v0_1",
@@ -866,7 +914,7 @@
         {
           "loop_type": "reviewed_learning_gate",
           "expected_artifact_name": "budget_learning_loop_report.json",
-          "artifact_slot_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-class-collective-clean.v0_1\\reviewed_learning_gate\\artifact-slots\\budget_learning_loop_report.json.slot.json",
+          "artifact_slot_ref": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-class-collective-clean.v0_1\\reviewed_learning_gate\\artifact-slots\\budget_learning_loop_report.json.slot.json",
           "artifact_slot_status": "materialized_candidate_slot",
           "evidence_refs": [
             "le-outcome-replay-class-collective-clean.v0_1",
@@ -888,7 +936,7 @@
         {
           "loop_type": "reviewed_learning_gate",
           "expected_artifact_name": "reviewed_learning_gate_report.json",
-          "artifact_slot_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-class-collective-clean.v0_1\\reviewed_learning_gate\\artifact-slots\\reviewed_learning_gate_report.json.slot.json",
+          "artifact_slot_ref": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-class-collective-clean.v0_1\\reviewed_learning_gate\\artifact-slots\\reviewed_learning_gate_report.json.slot.json",
           "artifact_slot_status": "materialized_candidate_slot",
           "evidence_refs": [
             "le-outcome-replay-class-collective-clean.v0_1",
@@ -916,7 +964,7 @@
       "evidence_refs": [
         "le-learning-class-collective-clean.v0_1",
         "le-class-collective-clean.executable.v0_1",
-        "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\examples\\synthetic\\labor-employment\\labor-employment-budget-outcome-replay-seeds.json",
+        "C:\\tmp\\lawfirm-os-intake-epli-actuals\\examples\\synthetic\\labor-employment\\labor-employment-budget-outcome-replay-seeds.json",
         "examples/synthetic/labor-employment/executable-fixtures/le-class-collective-clean.source-bundle.json",
         "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-class-collective-clean.v0_1/actuals_variance",
         "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-class-collective-clean.v0_1/reviewed_learning_gate",
@@ -924,7 +972,7 @@
         "labor-employment-budget-learning-fixtures.v0_1",
         "le-class-collective-clean.executable.v0_1",
         "le-learning-class-collective-clean.v0_1",
-        "lebudgetqagate_82b13586cb2ff133"
+        "lebudgetqagate_825062ac1c025dd2"
       ],
       "failure_ids": [],
       "runtime_artifacts_created": false,
@@ -949,7 +997,7 @@
       "variant": "messy_thread",
       "status": "passed",
       "expected_budget_output_state": "range_or_hours_only_pending_review",
-      "replay_case_dir": "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-restrictive-covenant-messy-thread.v0_1",
+      "replay_case_dir": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-restrictive-covenant-messy-thread.v0_1",
       "required_learning_loop_types": [
         "carrier_rejection_capture",
         "reviewed_learning_gate"
@@ -965,7 +1013,7 @@
         {
           "loop_type": "carrier_rejection_capture",
           "expected_artifact_name": "carrier_rejection_decision_ledger_report.json",
-          "artifact_slot_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-restrictive-covenant-messy-thread.v0_1\\carrier_rejection_capture\\artifact-slots\\carrier_rejection_decision_ledger_report.json.slot.json",
+          "artifact_slot_ref": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-restrictive-covenant-messy-thread.v0_1\\carrier_rejection_capture\\artifact-slots\\carrier_rejection_decision_ledger_report.json.slot.json",
           "artifact_slot_status": "materialized_candidate_slot",
           "evidence_refs": [
             "le-outcome-replay-restrictive-covenant-messy-thread.v0_1",
@@ -988,7 +1036,7 @@
         {
           "loop_type": "carrier_rejection_capture",
           "expected_artifact_name": "carrier_rejection_reconciliation_report.json",
-          "artifact_slot_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-restrictive-covenant-messy-thread.v0_1\\carrier_rejection_capture\\artifact-slots\\carrier_rejection_reconciliation_report.json.slot.json",
+          "artifact_slot_ref": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-restrictive-covenant-messy-thread.v0_1\\carrier_rejection_capture\\artifact-slots\\carrier_rejection_reconciliation_report.json.slot.json",
           "artifact_slot_status": "materialized_candidate_slot",
           "evidence_refs": [
             "le-outcome-replay-restrictive-covenant-messy-thread.v0_1",
@@ -1011,7 +1059,7 @@
         {
           "loop_type": "reviewed_learning_gate",
           "expected_artifact_name": "budget_learning_loop_report.json",
-          "artifact_slot_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-restrictive-covenant-messy-thread.v0_1\\reviewed_learning_gate\\artifact-slots\\budget_learning_loop_report.json.slot.json",
+          "artifact_slot_ref": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-restrictive-covenant-messy-thread.v0_1\\reviewed_learning_gate\\artifact-slots\\budget_learning_loop_report.json.slot.json",
           "artifact_slot_status": "materialized_candidate_slot",
           "evidence_refs": [
             "le-outcome-replay-restrictive-covenant-messy-thread.v0_1",
@@ -1033,7 +1081,7 @@
         {
           "loop_type": "reviewed_learning_gate",
           "expected_artifact_name": "reviewed_learning_gate_report.json",
-          "artifact_slot_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-restrictive-covenant-messy-thread.v0_1\\reviewed_learning_gate\\artifact-slots\\reviewed_learning_gate_report.json.slot.json",
+          "artifact_slot_ref": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-restrictive-covenant-messy-thread.v0_1\\reviewed_learning_gate\\artifact-slots\\reviewed_learning_gate_report.json.slot.json",
           "artifact_slot_status": "materialized_candidate_slot",
           "evidence_refs": [
             "le-outcome-replay-restrictive-covenant-messy-thread.v0_1",
@@ -1060,7 +1108,7 @@
       "evidence_refs": [
         "le-learning-restrictive-covenant-messy-thread.v0_1",
         "le-restrictive-covenant-messy-thread.executable.v0_1",
-        "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\examples\\synthetic\\labor-employment\\labor-employment-budget-outcome-replay-seeds.json",
+        "C:\\tmp\\lawfirm-os-intake-epli-actuals\\examples\\synthetic\\labor-employment\\labor-employment-budget-outcome-replay-seeds.json",
         "examples/synthetic/labor-employment/executable-fixtures/le-restrictive-covenant-messy-thread.source-bundle.json",
         "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-restrictive-covenant-messy-thread.v0_1/carrier_rejection_capture",
         "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-restrictive-covenant-messy-thread.v0_1/reviewed_learning_gate",
@@ -1068,7 +1116,7 @@
         "labor-employment-budget-learning-fixtures.v0_1",
         "le-learning-restrictive-covenant-messy-thread.v0_1",
         "le-restrictive-covenant-messy-thread.executable.v0_1",
-        "lebudgetqagate_82b13586cb2ff133"
+        "lebudgetqagate_825062ac1c025dd2"
       ],
       "failure_ids": [],
       "runtime_artifacts_created": false,
@@ -1093,7 +1141,7 @@
       "variant": "clean",
       "status": "passed",
       "expected_budget_output_state": "candidate_range_after_review_pending_human_review",
-      "replay_case_dir": "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-admin-exhaustion-clean.v0_1",
+      "replay_case_dir": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-admin-exhaustion-clean.v0_1",
       "required_learning_loop_types": [
         "actuals_variance",
         "reviewed_learning_gate"
@@ -1109,7 +1157,7 @@
         {
           "loop_type": "actuals_variance",
           "expected_artifact_name": "budget_actual_comparison_report.json",
-          "artifact_slot_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-admin-exhaustion-clean.v0_1\\actuals_variance\\artifact-slots\\budget_actual_comparison_report.json.slot.json",
+          "artifact_slot_ref": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-admin-exhaustion-clean.v0_1\\actuals_variance\\artifact-slots\\budget_actual_comparison_report.json.slot.json",
           "artifact_slot_status": "materialized_candidate_slot",
           "evidence_refs": [
             "le-outcome-replay-admin-exhaustion-clean.v0_1",
@@ -1132,7 +1180,7 @@
         {
           "loop_type": "actuals_variance",
           "expected_artifact_name": "budget_actual_variance_ledger_report.json",
-          "artifact_slot_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-admin-exhaustion-clean.v0_1\\actuals_variance\\artifact-slots\\budget_actual_variance_ledger_report.json.slot.json",
+          "artifact_slot_ref": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-admin-exhaustion-clean.v0_1\\actuals_variance\\artifact-slots\\budget_actual_variance_ledger_report.json.slot.json",
           "artifact_slot_status": "materialized_candidate_slot",
           "evidence_refs": [
             "le-outcome-replay-admin-exhaustion-clean.v0_1",
@@ -1155,7 +1203,7 @@
         {
           "loop_type": "reviewed_learning_gate",
           "expected_artifact_name": "budget_learning_loop_report.json",
-          "artifact_slot_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-admin-exhaustion-clean.v0_1\\reviewed_learning_gate\\artifact-slots\\budget_learning_loop_report.json.slot.json",
+          "artifact_slot_ref": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-admin-exhaustion-clean.v0_1\\reviewed_learning_gate\\artifact-slots\\budget_learning_loop_report.json.slot.json",
           "artifact_slot_status": "materialized_candidate_slot",
           "evidence_refs": [
             "le-outcome-replay-admin-exhaustion-clean.v0_1",
@@ -1177,7 +1225,7 @@
         {
           "loop_type": "reviewed_learning_gate",
           "expected_artifact_name": "reviewed_learning_gate_report.json",
-          "artifact_slot_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-admin-exhaustion-clean.v0_1\\reviewed_learning_gate\\artifact-slots\\reviewed_learning_gate_report.json.slot.json",
+          "artifact_slot_ref": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-admin-exhaustion-clean.v0_1\\reviewed_learning_gate\\artifact-slots\\reviewed_learning_gate_report.json.slot.json",
           "artifact_slot_status": "materialized_candidate_slot",
           "evidence_refs": [
             "le-outcome-replay-admin-exhaustion-clean.v0_1",
@@ -1204,7 +1252,7 @@
       "evidence_refs": [
         "le-learning-admin-exhaustion-clean.v0_1",
         "le-admin-exhaustion-clean.executable.v0_1",
-        "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\examples\\synthetic\\labor-employment\\labor-employment-budget-outcome-replay-seeds.json",
+        "C:\\tmp\\lawfirm-os-intake-epli-actuals\\examples\\synthetic\\labor-employment\\labor-employment-budget-outcome-replay-seeds.json",
         "examples/synthetic/labor-employment/executable-fixtures/le-admin-exhaustion-clean.source-bundle.json",
         "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-admin-exhaustion-clean.v0_1/actuals_variance",
         "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-admin-exhaustion-clean.v0_1/reviewed_learning_gate",
@@ -1212,7 +1260,7 @@
         "labor-employment-budget-learning-fixtures.v0_1",
         "le-admin-exhaustion-clean.executable.v0_1",
         "le-learning-admin-exhaustion-clean.v0_1",
-        "lebudgetqagate_82b13586cb2ff133"
+        "lebudgetqagate_825062ac1c025dd2"
       ],
       "failure_ids": [],
       "runtime_artifacts_created": false,
@@ -1237,7 +1285,7 @@
       "variant": "adversarial",
       "status": "passed",
       "expected_budget_output_state": "blocked_amount_budget",
-      "replay_case_dir": "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-ada-fmla-adversarial.v0_1",
+      "replay_case_dir": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-ada-fmla-adversarial.v0_1",
       "required_learning_loop_types": [
         "blocked_budget_guard"
       ],
@@ -1251,7 +1299,7 @@
         {
           "loop_type": "blocked_budget_guard",
           "expected_artifact_name": "labor_employment_budget_learning_fixtures_report.json",
-          "artifact_slot_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-ada-fmla-adversarial.v0_1\\blocked_budget_guard\\artifact-slots\\labor_employment_budget_learning_fixtures_report.json.slot.json",
+          "artifact_slot_ref": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-ada-fmla-adversarial.v0_1\\blocked_budget_guard\\artifact-slots\\labor_employment_budget_learning_fixtures_report.json.slot.json",
           "artifact_slot_status": "materialized_candidate_slot",
           "evidence_refs": [
             "le-outcome-replay-ada-fmla-adversarial.v0_1",
@@ -1274,7 +1322,7 @@
         {
           "loop_type": "blocked_budget_guard",
           "expected_artifact_name": "labor_employment_budget_qa_gate_report.json",
-          "artifact_slot_ref": "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-ada-fmla-adversarial.v0_1\\blocked_budget_guard\\artifact-slots\\labor_employment_budget_qa_gate_report.json.slot.json",
+          "artifact_slot_ref": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-ada-fmla-adversarial.v0_1\\blocked_budget_guard\\artifact-slots\\labor_employment_budget_qa_gate_report.json.slot.json",
           "artifact_slot_status": "materialized_candidate_slot",
           "evidence_refs": [
             "le-outcome-replay-ada-fmla-adversarial.v0_1",
@@ -1302,14 +1350,14 @@
       "evidence_refs": [
         "le-learning-ada-fmla-adversarial.v0_1",
         "le-ada-fmla-adversarial.executable.v0_1",
-        "C:\\Users\\lowel\\AppData\\Local\\Temp\\lawfirm-intake-qa-triage-sync\\examples\\synthetic\\labor-employment\\labor-employment-budget-outcome-replay-seeds.json",
+        "C:\\tmp\\lawfirm-os-intake-epli-actuals\\examples\\synthetic\\labor-employment\\labor-employment-budget-outcome-replay-seeds.json",
         "examples/synthetic/labor-employment/executable-fixtures/le-ada-fmla-adversarial.source-bundle.json",
         "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-ada-fmla-adversarial.v0_1/blocked_budget_guard",
         "examples/synthetic/labor-employment/labor-employment-executable-fixtures-manifest.json#le-ada-fmla-adversarial.executable.v0_1",
         "labor-employment-budget-learning-fixtures.v0_1",
         "le-ada-fmla-adversarial.executable.v0_1",
         "le-learning-ada-fmla-adversarial.v0_1",
-        "lebudgetqagate_82b13586cb2ff133"
+        "lebudgetqagate_825062ac1c025dd2"
       ],
       "failure_ids": [],
       "runtime_artifacts_created": false,
@@ -1332,7 +1380,7 @@
       "status": "passed",
       "message": "Source readiness report is ready with no failed cases or unresolved refs.",
       "evidence_refs": [
-        "lebudgetoutcomereplay_d8a822255425b0ad"
+        "lebudgetoutcomereplay_091f67616ecaade8"
       ],
       "blocking_refs": []
     },
@@ -1352,7 +1400,7 @@
       "evidence_refs": [
         "leoutcomeexecutioncase_5c1334cdbefe5088",
         "leoutcomeexecutioncase_348553c44f90de9e",
-        "leoutcomeexecutioncase_ffa8293d6e07152e",
+        "leoutcomeexecutioncase_0b62ace304ce7362",
         "leoutcomeexecutioncase_1387038405a0c2f4",
         "leoutcomeexecutioncase_fcc4ba12f6ddaef4",
         "leoutcomeexecutioncase_fbdf382ed4abb8b1",
@@ -1366,16 +1414,16 @@
       "status": "passed",
       "message": "Execution creates slot manifests only, not runtime carrier/billing/Lake artifacts.",
       "evidence_refs": [
-        "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-discrimination-harassment-clean.v0_1\\actuals_variance\\artifact-slots\\budget_actual_comparison_report.json.slot.json",
-        "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-discrimination-harassment-clean.v0_1\\actuals_variance\\artifact-slots\\budget_actual_variance_ledger_report.json.slot.json",
-        "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-discrimination-harassment-clean.v0_1\\carrier_rejection_capture\\artifact-slots\\carrier_rejection_decision_ledger_report.json.slot.json",
-        "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-discrimination-harassment-clean.v0_1\\carrier_rejection_capture\\artifact-slots\\carrier_rejection_reconciliation_report.json.slot.json",
-        "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-discrimination-harassment-clean.v0_1\\appeal_outcome\\artifact-slots\\carrier_rejection_decision_ledger_report.json.slot.json",
-        "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-discrimination-harassment-clean.v0_1\\appeal_outcome\\artifact-slots\\carrier_rejection_learning_report.json.slot.json",
-        "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-discrimination-harassment-clean.v0_1\\reviewed_learning_gate\\artifact-slots\\budget_learning_loop_report.json.slot.json",
-        "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-discrimination-harassment-clean.v0_1\\reviewed_learning_gate\\artifact-slots\\reviewed_learning_gate_report.json.slot.json",
-        "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-wage-hour-clean.v0_1\\actuals_variance\\artifact-slots\\budget_actual_comparison_report.json.slot.json",
-        "<demo-run-root>\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-wage-hour-clean.v0_1\\actuals_variance\\artifact-slots\\budget_actual_variance_ledger_report.json.slot.json"
+        "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-discrimination-harassment-clean.v0_1\\actuals_variance\\artifact-slots\\budget_actual_comparison_report.json.slot.json",
+        "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-discrimination-harassment-clean.v0_1\\actuals_variance\\artifact-slots\\budget_actual_variance_ledger_report.json.slot.json",
+        "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-discrimination-harassment-clean.v0_1\\carrier_rejection_capture\\artifact-slots\\carrier_rejection_decision_ledger_report.json.slot.json",
+        "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-discrimination-harassment-clean.v0_1\\carrier_rejection_capture\\artifact-slots\\carrier_rejection_reconciliation_report.json.slot.json",
+        "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-discrimination-harassment-clean.v0_1\\appeal_outcome\\artifact-slots\\carrier_rejection_decision_ledger_report.json.slot.json",
+        "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-discrimination-harassment-clean.v0_1\\appeal_outcome\\artifact-slots\\carrier_rejection_learning_report.json.slot.json",
+        "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-discrimination-harassment-clean.v0_1\\reviewed_learning_gate\\artifact-slots\\budget_learning_loop_report.json.slot.json",
+        "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-discrimination-harassment-clean.v0_1\\reviewed_learning_gate\\artifact-slots\\reviewed_learning_gate_report.json.slot.json",
+        "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-wage-hour-clean.v0_1\\actuals_variance\\artifact-slots\\budget_actual_comparison_report.json.slot.json",
+        "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\cases\\le-learning-wage-hour-clean.v0_1\\actuals_variance\\artifact-slots\\budget_actual_variance_ledger_report.json.slot.json"
       ],
       "blocking_refs": []
     },
@@ -1402,7 +1450,7 @@
       "evidence_refs": [
         "leoutcomeexecutioncase_5c1334cdbefe5088",
         "leoutcomeexecutioncase_348553c44f90de9e",
-        "leoutcomeexecutioncase_ffa8293d6e07152e",
+        "leoutcomeexecutioncase_0b62ace304ce7362",
         "leoutcomeexecutioncase_1387038405a0c2f4",
         "leoutcomeexecutioncase_fcc4ba12f6ddaef4",
         "leoutcomeexecutioncase_fbdf382ed4abb8b1",
@@ -1459,5 +1507,5 @@
   "sqlite_write_performed": false,
   "external_writes_performed": false,
   "silent_learning_performed": false,
-  "generated_at": "2026-07-05T00:00:00Z"
+  "generated_at": "2026-07-13T00:00:00Z"
 }

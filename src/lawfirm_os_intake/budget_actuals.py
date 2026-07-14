@@ -373,6 +373,7 @@ def _code_comparison(
 def build_budget_actual_comparison_report(
     *,
     run_id: str,
+    comparison_report_id: str | None = None,
     preflight_packet_id: str,
     budget: BudgetProposal,
     actuals_by_phase: dict[str, dict[str, float] | BudgetActualAmount] | None = None,
@@ -470,7 +471,7 @@ def build_budget_actual_comparison_report(
         {driver.target_learning_loop for driver in variance_drivers}
     )
     return BudgetActualComparisonReport(
-        budget_actual_comparison_report_id=new_id("budgetactuals"),
+        budget_actual_comparison_report_id=comparison_report_id or new_id("budgetactuals"),
         run_id=run_id,
         preflight_packet_id=preflight_packet_id,
         budget_proposal_id=budget.budget_proposal_id,
@@ -592,6 +593,8 @@ def run_budget_actual_comparison(
     actuals_path: str | Path,
     out_dir: str | Path,
     budget_revision_report_path: str | Path | None = None,
+    run_id: str | None = None,
+    comparison_report_id: str | None = None,
 ) -> tuple[BudgetActualComparisonReport, Path]:
     budget_path = Path(budget_path)
     actuals_path = Path(actuals_path)
@@ -617,7 +620,8 @@ def run_budget_actual_comparison(
             )
         revision_report_ref = str(revision_report_path)
     report = build_budget_actual_comparison_report(
-        run_id=revision_report.run_id if revision_report else new_id("budgetactualrun"),
+        run_id=revision_report.run_id if revision_report else (run_id or new_id("budgetactualrun")),
+        comparison_report_id=comparison_report_id,
         preflight_packet_id=budget.preflight_packet_id,
         budget=budget,
         actuals_by_phase=actuals_source.actuals_by_phase,

@@ -1063,7 +1063,14 @@ export type PilotReviewStoryReport = {
   carrier_appeal_result_count: number;
   carrier_recovered_amount: number;
   carrier_write_down_amount: number;
-  actuals_learning_state: "not_observed_no_learning_candidate";
+  actuals_learning_state: "synthetic_actuals_variance_requires_human_review_no_learning";
+  actuals_source_id: string;
+  actuals_source_ref: string;
+  budget_actual_comparison_report_id: string;
+  actuals_total: number;
+  actuals_variance_amount: number;
+  actuals_variance_percent: number;
+  actuals_variance_status: "variance_review_required";
   cross_repo_contract_proof_status: "passed_candidate_contract_proof";
   cross_repo_contract_proof_scope: "generic_synthetic_boundary_proof_not_case_evidence";
   stage_count: number;

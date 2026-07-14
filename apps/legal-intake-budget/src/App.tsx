@@ -853,6 +853,11 @@ function PilotReviewStoryPanel({ report }: { report: PilotReviewStoryReport }) {
           <strong>{formatMoney(report.carrier_recovered_amount)}</strong>
           <p>{formatMoney(report.carrier_write_down_amount)} write-down observed</p>
         </article>
+        <article>
+          <span>Actual Variance</span>
+          <strong>{formatMoney(report.actuals_variance_amount)}</strong>
+          <p>{formatMoney(report.actuals_total)} synthetic actuals; review pending</p>
+        </article>
       </div>
 
       <div className="pilot-story-flow" aria-label="Pilot review sequence">

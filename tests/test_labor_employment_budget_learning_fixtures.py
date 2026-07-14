@@ -56,7 +56,7 @@ def test_labor_employment_budget_learning_fixture_audit_covers_l_and_e_loops(
     }
     assert report.missing_learning_loop_types == []
     assert report.blocked_budget_guard_fixture_count == 1
-    assert report.actuals_variance_fixture_count == 5
+    assert report.actuals_variance_fixture_count == 6
     assert report.carrier_rejection_fixture_count == 4
     assert report.appeal_outcome_fixture_count == 2
     assert report.reviewed_learning_gate_fixture_count == 7

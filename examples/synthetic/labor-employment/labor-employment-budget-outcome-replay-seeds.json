@@ -136,13 +136,17 @@
       "family": "epli_carrier_assignment",
       "variant": "clean",
       "expected_budget_output_state": "candidate_range_after_review_pending_human_review",
-      "seeded_learning_loop_types": [
-        "carrier_rejection_capture",
+    "seeded_learning_loop_types": [
+      "actuals_variance",
+      "carrier_rejection_capture",
         "appeal_outcome",
         "reviewed_learning_gate"
       ],
-      "replay_seed_refs_by_loop": {
-        "carrier_rejection_capture": [
+    "replay_seed_refs_by_loop": {
+      "actuals_variance": [
+        "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-epli-carrier-clean.v0_1/actuals_variance"
+      ],
+      "carrier_rejection_capture": [
           "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-epli-carrier-clean.v0_1/carrier_rejection_capture",
           "examples/synthetic/labor-employment/executable-fixtures/le-epli-carrier-clean.source-bundle.json"
         ],
@@ -153,8 +157,12 @@
           "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json#le-outcome-replay-epli-carrier-clean.v0_1/reviewed_learning_gate"
         ]
       },
-      "expected_replay_artifacts_by_loop": {
-        "carrier_rejection_capture": [
+    "expected_replay_artifacts_by_loop": {
+      "actuals_variance": [
+        "budget_actual_comparison_report.json",
+        "budget_actual_variance_ledger_report.json"
+      ],
+      "carrier_rejection_capture": [
           "carrier_rejection_reconciliation_report.json",
           "carrier_rejection_decision_ledger_report.json"
         ],
@@ -167,8 +175,11 @@
           "budget_learning_loop_report.json"
         ]
       },
-      "candidate_exception_lake_labels_by_loop": {
-        "carrier_rejection_capture": [
+    "candidate_exception_lake_labels_by_loop": {
+      "actuals_variance": [
+        "labor_employment_actual_variance_candidate"
+      ],
+      "carrier_rejection_capture": [
           "labor_employment_epli_carrier_rejection_candidate"
         ],
         "appeal_outcome": [
@@ -178,11 +189,12 @@
           "reviewed_learning_gate_before_candidate_changes"
         ]
       },
-      "replay_assertions": [
-        "carrier/client/payer ambiguity remains visible during rejection capture",
-        "appeal outcome cannot update guideline mapping without reviewed gate"
-      ],
-      "notes": "EPLI seed stresses carrier assignment and appeal-result financial outcome readiness."
+    "replay_assertions": [
+      "carrier/client/payer ambiguity remains visible during rejection capture",
+      "appeal outcome cannot update guideline mapping without reviewed gate",
+      "synthetic actuals variance cannot calibrate a budget driver without reviewed learning"
+    ],
+    "notes": "EPLI seed stresses carrier assignment, appeal-result financial outcomes, and review-bound phase/code actuals variance."
     },
     {
       "outcome_seed_id": "le-outcome-replay-retaliation-messy-thread.v0_1",

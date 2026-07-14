@@ -1,8 +1,8 @@
 {
   "schema_version": "0.1",
-  "pilot_review_story_id": "pilotreviewstory_960af88317fa0f7a8918",
+  "pilot_review_story_id": "pilotreviewstory_10f0c0042e44807c9953",
   "status": "ready_for_human_review",
-  "story_fixture_ref": "synthetic://pilot-review/epli-assignment-pilot-review-story.json",
+  "story_fixture_ref": "examples/synthetic/pilot-review/epli-assignment-pilot-review-story.json",
   "source_bundle_id": "syn-pilot-epli-assignment-001",
   "source_bundle_sha256": "sha256:1c90ab3afe71aadb0693b3c83661ddf8d252e4cc895738c25d0d8a6ac65e4663",
   "source_count": 4,
@@ -27,7 +27,14 @@
   "carrier_appeal_result_count": 1,
   "carrier_recovered_amount": 900.0,
   "carrier_write_down_amount": 1200.0,
-  "actuals_learning_state": "not_observed_no_learning_candidate",
+  "actuals_learning_state": "synthetic_actuals_variance_requires_human_review_no_learning",
+  "actuals_source_id": "le-actuals-epli-carrier-clean.v0_1",
+  "actuals_source_ref": "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/budget_actuals_source.json",
+  "budget_actual_comparison_report_id": "pilotactualcomparison_99c47a049507e2f9956c",
+  "actuals_total": 60350.0,
+  "actuals_variance_amount": 6260.0,
+  "actuals_variance_percent": 11.57,
+  "actuals_variance_status": "variance_review_required",
   "cross_repo_contract_proof_status": "passed_candidate_contract_proof",
   "cross_repo_contract_proof_scope": "generic_synthetic_boundary_proof_not_case_evidence",
   "stage_count": 8,
@@ -37,8 +44,11 @@
       "label": "Source Inventory",
       "status": "passed",
       "summary": "Four synthetic assignment sources are hashed and retained as local review evidence.",
-      "artifact_ref": "synthetic://pilot-review/epli-assignment-source-bundle.json",
-      "evidence_refs": ["syn-pilot-epli-assignment-email-001", "syn-pilot-epli-followup-001"],
+      "artifact_ref": "examples/synthetic/pilot-review/epli-assignment-source-bundle.json",
+      "evidence_refs": [
+        "syn-pilot-epli-assignment-email-001",
+        "syn-pilot-epli-followup-001"
+      ],
       "required_next_gate": null
     },
     {
@@ -46,8 +56,11 @@
       "label": "Matter Link",
       "status": "ready_for_human_review",
       "summary": "A source-bound EPLI assignment candidate is resolved, but it has no official firm matter number.",
-      "artifact_ref": "synthetic://pilot-review/matter-linking-preflight-report.json",
-      "evidence_refs": ["GS-EPLI-2026-1042", "UPF-SYN-EPLI-2270"],
+      "artifact_ref": "run://pilot-review/matter-linking-input.json",
+      "evidence_refs": [
+        "GS-EPLI-2026-1042",
+        "UPF-SYN-EPLI-2270"
+      ],
       "required_next_gate": "human_matter_linking_review"
     },
     {
@@ -55,8 +68,10 @@
       "label": "Party Roles",
       "status": "blocked",
       "summary": "Carrier, payer, TPA, insured, prospective client, claimant, and opposing counsel remain separate candidate roles.",
-      "artifact_ref": "synthetic://pilot-review/epli-assignment-source-bundle.json",
-      "evidence_refs": ["syn-pilot-epli-assignment-email-001"],
+      "artifact_ref": "examples/synthetic/pilot-review/epli-assignment-source-bundle.json",
+      "evidence_refs": [
+        "syn-pilot-epli-assignment-email-001"
+      ],
       "required_next_gate": "human_principal_party_role_confirmation"
     },
     {
@@ -64,8 +79,10 @@
       "label": "Budget Proposal",
       "status": "blocked",
       "summary": "Synthetic proposed math is preserved, but its display is withheld until matter linkage and principal roles are reviewed.",
-      "artifact_ref": "synthetic://labor-employment/epli-carrier-clean/legal_budget_proposal.json",
-      "evidence_refs": ["le-budget-epli-carrier-clean.v0_1"],
+      "artifact_ref": "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/legal_budget_proposal.json",
+      "evidence_refs": [
+        "le-budget-epli-carrier-clean.v0_1"
+      ],
       "required_next_gate": "human_budget_range_review"
     },
     {
@@ -73,8 +90,10 @@
       "label": "Carrier Projection",
       "status": "not_available",
       "summary": "No matching pinned candidate guideline IR exists, so the dossier does not invent a carrier-compliant total or delta.",
-      "artifact_ref": "synthetic://pilot-review/epli-assignment-source-bundle.json",
-      "evidence_refs": ["syn-pilot-epli-guideline-001"],
+      "artifact_ref": "examples/synthetic/pilot-review/epli-assignment-source-bundle.json",
+      "evidence_refs": [
+        "syn-pilot-epli-guideline-001"
+      ],
       "required_next_gate": "pinned_candidate_guideline_before_carrier_projection"
     },
     {
@@ -82,36 +101,45 @@
       "label": "Rejection And Appeal",
       "status": "ready_for_human_review",
       "summary": "Synthetic portal/email response evidence is classified for review; no appeal is submitted by this workflow.",
-      "artifact_ref": "synthetic://labor-employment/epli-carrier-clean/carrier-rejection.json",
-      "evidence_refs": ["le-notice-epli-staffing-4001", "le-notice-epli-preapproval-4002"],
+      "artifact_ref": "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/carrier_rejection_capture_source_bundle_with_appeal_results.json",
+      "evidence_refs": [
+        "le-notice-epli-staffing-4001",
+        "le-notice-epli-preapproval-4002"
+      ],
       "required_next_gate": "owner_review_before_exception_lake_admission"
     },
     {
       "stage_id": "actuals_learning",
       "label": "Actuals And Learning",
-      "status": "not_available",
-      "summary": "No budget-to-actuals source is present, so no learning candidate, calibration, or policy update is produced.",
-      "artifact_ref": "synthetic://labor-employment/epli-carrier-clean/carrier-rejection.json",
-      "evidence_refs": [],
-      "required_next_gate": "budget_actuals_source_before_learning_candidate"
+      "status": "ready_for_human_review",
+      "summary": "Synthetic phase and code actuals exceed review thresholds in discovery and mediation; the variance remains a no-learning candidate.",
+      "artifact_ref": "run://pilot-review/actuals/budget_actual_comparison_report.json",
+      "evidence_refs": [
+        "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/budget_actuals_source.json",
+        "pilotactualcomparison_99c47a049507e2f9956c"
+      ],
+      "required_next_gate": "human_actuals_variance_review"
     },
     {
       "stage_id": "owner_handoff",
       "label": "Owner Handoff Boundary",
       "status": "passed",
       "summary": "A separate generic synthetic proof confirms owner validators preserve a no-write, owner-gated handoff boundary.",
-      "artifact_ref": "synthetic://cross-repo/contract-proof.json",
-      "evidence_refs": ["passed_candidate_contract_proof"],
+      "artifact_ref": "apps/legal-intake-budget/src/fixtures/demo-cross-repo-contract-proof-report.json",
+      "evidence_refs": [
+        "passed_candidate_contract_proof"
+      ],
       "required_next_gate": null
     }
   ],
   "candidate_exception_lake_labels": [
-    "budget_actuals_not_observed_no_learning_candidate",
+    "budget_actual_cost_variance_requires_review",
     "budget_amount_withheld_pending_matter_link_and_role_review",
     "carrier_appeal_result_observed_synthetic",
     "carrier_projection_missing_pinned_candidate_guideline",
     "carrier_rejection_observed_synthetic",
     "human_matter_linking_confirmation_required",
+    "labor_employment_actual_variance_candidate",
     "missing_official_matter_number",
     "source_matter_link_resolved_candidate"
   ],
@@ -121,11 +149,13 @@
     "human_budget_range_review",
     "pinned_candidate_guideline_before_carrier_projection",
     "owner_review_before_exception_lake_admission",
-    "budget_actuals_source_before_learning_candidate"
+    "human_actuals_variance_review",
+    "reviewed_learning_gate_before_candidate_changes"
   ],
   "red_team_notes": [
     "The proposed budget is retained as synthetic candidate math, but its display is withheld until matter linkage and principal roles are confirmed.",
     "The synthetic carrier rejection and appeal records are observed outcome fixtures, not permission to submit, appeal, or learn from a live carrier response.",
+    "Synthetic phase and code actuals produce a variance-review candidate only; they cannot calibrate a budget, rate, guideline, or model without a reviewed learning gate.",
     "No Granite Shield candidate guideline IR is pinned, so the dossier refuses to fabricate a carrier-compliant projection or a rate delta.",
     "The cross-repo contract proof verifies a generic synthetic no-write path only; it is not evidence about this pilot matter."
   ],
@@ -147,5 +177,5 @@
   "matter_opening_authorized": false,
   "conflict_clearance_authorized": false,
   "silent_learning_performed": false,
-  "generated_at": "2026-07-12T00:00:00Z"
+  "generated_at": "2026-07-13T00:00:00Z"
 }

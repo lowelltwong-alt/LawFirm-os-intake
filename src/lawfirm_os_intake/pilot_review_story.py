@@ -4,8 +4,10 @@ from hashlib import sha256
 from pathlib import Path
 from typing import Any
 
+from .budget_actuals import run_budget_actual_comparison
 from .matter_linking_preflight import run_matter_linking_preflight
 from .models import (
+    BudgetActualsSource,
     BudgetProposal,
     CarrierRejectionCaptureSourceBundle,
     CrossRepoContractProofReport,
@@ -38,11 +40,13 @@ def run_pilot_review_story(
     root = fixture_path.parents[3]
     source_bundle_path = _resolve_fixture_ref(payload, "source_bundle_ref", root)
     budget_proposal_path = _resolve_fixture_ref(payload, "budget_proposal_ref", root)
+    actuals_source_path = _resolve_fixture_ref(payload, "actuals_source_ref", root)
     carrier_rejection_path = _resolve_fixture_ref(payload, "carrier_rejection_ref", root)
     contract_proof_path = _resolve_fixture_ref(payload, "cross_repo_contract_proof_ref", root)
 
     source_bundle = SourceBundle.model_validate(load_json(source_bundle_path))
     budget = BudgetProposal.model_validate(load_json(budget_proposal_path))
+    actuals_source = BudgetActualsSource.model_validate(load_json(actuals_source_path))
     carrier_bundle = CarrierRejectionCaptureSourceBundle.model_validate(
         load_json(carrier_rejection_path)
     )
@@ -51,6 +55,7 @@ def run_pilot_review_story(
         payload=payload,
         source_bundle=source_bundle,
         budget=budget,
+        actuals_source=actuals_source,
         carrier_bundle=carrier_bundle,
         contract_proof=contract_proof,
     )
@@ -72,6 +77,29 @@ def run_pilot_review_story(
         )
     if any(check.status == "failed" for check in matter_link_report.checks):
         raise ValueError("pilot review story matter-linking preflight contains failed checks")
+    actuals_report, actuals_dir = run_budget_actual_comparison(
+        budget_path=budget_proposal_path,
+        actuals_path=actuals_source_path,
+        out_dir=run_dir / "actuals",
+        run_id="pilotactuals_"
+        + digest_json(
+            {
+                "fixture": payload["pilot_review_story_id"],
+                "budget_proposal_id": budget.budget_proposal_id,
+                "actuals_source_id": actuals_source.actuals_source_id,
+            }
+        ).split(":", 1)[1][:20],
+        comparison_report_id="pilotactualcomparison_"
+        + digest_json(
+            {
+                "fixture": payload["pilot_review_story_id"],
+                "budget_proposal_id": budget.budget_proposal_id,
+                "actuals_source_id": actuals_source.actuals_source_id,
+            }
+        ).split(":", 1)[1][:20],
+    )
+    if actuals_report.status != "variance_review_required":
+        raise ValueError("pilot review story requires review-gated synthetic actuals variance")
 
     source_hashes = _source_hashes(source_bundle)
     rejected_amount = sum(float(notice.amount_rejected) for notice in carrier_bundle.notices)
@@ -84,6 +112,8 @@ def run_pilot_review_story(
     stages = _stages(
         source_bundle_path=source_bundle_path,
         budget_proposal_path=budget_proposal_path,
+        actuals_source_path=actuals_source_path,
+        actuals_report_id=actuals_report.budget_actual_comparison_report_id,
         carrier_rejection_path=carrier_rejection_path,
         contract_proof_path=contract_proof_path,
         repo_root=root,
@@ -95,6 +125,7 @@ def run_pilot_review_story(
                 "fixture": payload.get("pilot_review_story_id"),
                 "source_bundle": digest_json(source_bundle.model_dump(mode="json")),
                 "budget": budget.budget_proposal_id,
+                "actuals": actuals_source.actuals_source_id,
                 "carrier": carrier_bundle.bundle_id,
             }
         ).split(":", 1)[1][:20],
@@ -118,7 +149,14 @@ def run_pilot_review_story(
         carrier_appeal_result_count=len(carrier_bundle.appeal_results),
         carrier_recovered_amount=recovered_amount,
         carrier_write_down_amount=write_down_amount,
-        actuals_learning_state="not_observed_no_learning_candidate",
+        actuals_learning_state="synthetic_actuals_variance_requires_human_review_no_learning",
+        actuals_source_id=actuals_source.actuals_source_id,
+        actuals_source_ref=_repo_ref(actuals_source_path, root),
+        budget_actual_comparison_report_id=actuals_report.budget_actual_comparison_report_id,
+        actuals_total=float(actuals_report.total_actual),
+        actuals_variance_amount=float(actuals_report.total_variance_amount),
+        actuals_variance_percent=float(actuals_report.total_variance_percent),
+        actuals_variance_status=actuals_report.status,
         cross_repo_contract_proof_status=contract_proof.status,
         cross_repo_contract_proof_scope="generic_synthetic_boundary_proof_not_case_evidence",
         stage_count=len(stages),
@@ -130,7 +168,8 @@ def run_pilot_review_story(
                 "carrier_projection_missing_pinned_candidate_guideline",
                 "carrier_rejection_observed_synthetic",
                 "carrier_appeal_result_observed_synthetic",
-                "budget_actuals_not_observed_no_learning_candidate",
+                "labor_employment_actual_variance_candidate",
+                "budget_actual_cost_variance_requires_review",
             }
         ),
         required_next_gates=[
@@ -139,11 +178,13 @@ def run_pilot_review_story(
             "human_budget_range_review",
             "pinned_candidate_guideline_before_carrier_projection",
             "owner_review_before_exception_lake_admission",
-            "budget_actuals_source_before_learning_candidate",
+            "human_actuals_variance_review",
+            "reviewed_learning_gate_before_candidate_changes",
         ],
         red_team_notes=[
             "The proposed budget is retained as synthetic candidate math, but its display is withheld until matter linkage and principal roles are confirmed.",
             "The synthetic carrier rejection and appeal records are observed outcome fixtures, not permission to submit, appeal, or learn from a live carrier response.",
+            "Synthetic phase and code actuals produce a variance-review candidate only; they cannot calibrate a budget, rate, guideline, or model without a reviewed learning gate.",
             "No Granite Shield candidate guideline IR is pinned, so the dossier refuses to fabricate a carrier-compliant projection or a rate delta.",
             "The cross-repo contract proof verifies a generic synthetic no-write path only; it is not evidence about this pilot matter.",
         ],
@@ -213,6 +254,7 @@ def _validate_inputs(
     payload: dict[str, Any],
     source_bundle: SourceBundle,
     budget: BudgetProposal,
+    actuals_source: BudgetActualsSource,
     carrier_bundle: CarrierRejectionCaptureSourceBundle,
     contract_proof: CrossRepoContractProofReport,
 ) -> None:
@@ -247,6 +289,14 @@ def _validate_inputs(
         raise ValueError("pilot review story budget must remain proposed for human review")
     if not budget.not_authorized_for_client_submission:
         raise ValueError("pilot review story budget must remain non-submittable")
+    if actuals_source.budget_proposal_id not in {
+        None,
+        "__BUDGET_PROPOSAL_ID__",
+        budget.budget_proposal_id,
+    }:
+        raise ValueError("pilot review story actuals source must match the EPLI budget proposal")
+    if not actuals_source.actuals_by_phase or not actuals_source.actuals_by_code:
+        raise ValueError("pilot review story requires phase and code actuals for review")
     if not carrier_bundle.data_origin == "synthetic" or any(
         (
             carrier_bundle.contains_real_client_data,
@@ -444,6 +494,8 @@ def _stages(
     *,
     source_bundle_path: Path,
     budget_proposal_path: Path,
+    actuals_source_path: Path,
+    actuals_report_id: str,
     carrier_rejection_path: Path,
     contract_proof_path: Path,
     repo_root: Path,
@@ -505,11 +557,14 @@ def _stages(
         PilotReviewStoryStage(
             stage_id="actuals_learning",
             label="Actuals And Learning",
-            status="not_available",
-            summary="No budget-to-actuals source is present, so no learning candidate, calibration, or policy update is produced.",
-            artifact_ref=_repo_ref(carrier_rejection_path, repo_root),
-            evidence_refs=[],
-            required_next_gate="budget_actuals_source_before_learning_candidate",
+            status="ready_for_human_review",
+            summary="Synthetic phase and code actuals exceed review thresholds in discovery and mediation; the variance remains a no-learning candidate.",
+            artifact_ref="run://pilot-review/actuals/budget_actual_comparison_report.json",
+            evidence_refs=[
+                _repo_ref(actuals_source_path, repo_root),
+                actuals_report_id,
+            ],
+            required_next_gate="human_actuals_variance_review",
         ),
         PilotReviewStoryStage(
             stage_id="owner_handoff",

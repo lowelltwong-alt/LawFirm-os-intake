@@ -1476,8 +1476,8 @@ def test_legal_intake_budget_demo_labor_employment_budget_outcome_replay_readine
     assert report["fixture_count"] == 8
     assert report["seed_spec_count"] == 8
     assert report["failed_case_count"] == 0
-    assert report["loop_requirement_count"] == 19
-    assert report["seeded_loop_requirement_count"] == 19
+    assert report["loop_requirement_count"] == 20
+    assert report["seeded_loop_requirement_count"] == 20
     assert report["missing_loop_requirement_count"] == 0
     assert report["unresolved_source_ref_count"] == 0
     assert report["expected_replay_artifact_count"] == 9
@@ -1517,8 +1517,8 @@ def test_legal_intake_budget_demo_labor_employment_budget_outcome_replay_executi
     assert report["fixture_count"] == 8
     assert report["materialized_case_count"] == 8
     assert report["failed_case_count"] == 0
-    assert report["expected_artifact_slot_count"] == 38
-    assert report["materialized_artifact_slot_count"] == 38
+    assert report["expected_artifact_slot_count"] == 40
+    assert report["materialized_artifact_slot_count"] == 40
     assert report["runtime_artifact_count"] == 0
     assert set(report["covered_learning_loop_types"]) == {
         "actuals_variance",
@@ -1561,8 +1561,8 @@ def test_legal_intake_budget_demo_labor_employment_budget_outcome_replay_builder
     assert report["status"] == "labor_employment_budget_replay_builder_binding_ready_for_review"
     assert report["fixture_count"] == 8
     assert report["case_count"] == 8
-    assert report["slot_count"] == 38
-    assert report["bound_slot_count"] == 38
+    assert report["slot_count"] == 40
+    assert report["bound_slot_count"] == 40
     assert report["unknown_artifact_count"] == 0
     assert report["blocked_slot_count"] == 0
     assert report["replay_input_gap_count"] > 0

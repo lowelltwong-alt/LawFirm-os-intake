@@ -1,0 +1,32 @@
+{
+  "schema_version": "0.1",
+  "actuals_source_id": "le-actuals-epli-carrier-clean.v0_1",
+  "budget_proposal_id": "__BUDGET_PROPOSAL_ID__",
+  "data_origin": "synthetic",
+  "contains_real_client_data": false,
+  "contains_real_matter_data": false,
+  "contains_privileged_data": false,
+  "actuals_by_phase": {
+    "L100": { "fees": 5450, "expenses": 0, "hours": 16 },
+    "L200": { "fees": 6600, "expenses": 0, "hours": 24 },
+    "L300": { "fees": 29950, "expenses": 3200, "hours": 107 },
+    "L400": { "fees": 6300, "expenses": 0, "hours": 14 },
+    "L500": { "fees": 5850, "expenses": 3000, "hours": 18 }
+  },
+  "actuals_by_code": {
+    "L110": { "fees": 2700, "expenses": 0, "hours": 6 },
+    "L120": { "fees": 2750, "expenses": 0, "hours": 10 },
+    "L210": { "fees": 6600, "expenses": 0, "hours": 24 },
+    "L310": { "fees": 11550, "expenses": 0, "hours": 42 },
+    "L330": { "fees": 18400, "expenses": 0, "hours": 65 },
+    "E112": { "fees": 0, "expenses": 3200 },
+    "L420": { "fees": 6300, "expenses": 0, "hours": 14 },
+    "L510": { "fees": 5850, "expenses": 0, "hours": 18 },
+    "E124": { "fees": 0, "expenses": 3000 }
+  },
+  "source_ref": "synthetic-actuals://labor-employment/epli-carrier-clean/v0_1",
+  "billing_connector_read_performed": false,
+  "billing_connector_write_performed": false,
+  "external_writes_performed": false,
+  "non_authoritative": true
+}

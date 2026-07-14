@@ -735,7 +735,7 @@ PY
 test -s ".lawfirm-os-intake/smoke/quality/le-budget-outcome-replay-readiness/labor_employment_budget_outcome_replay_readiness_report.json"
 grep -q '"status": "labor_employment_budget_outcome_replay_ready_for_review"' \
   ".lawfirm-os-intake/smoke/quality/le-budget-outcome-replay-readiness/labor_employment_budget_outcome_replay_readiness_report.json"
-grep -q '"loop_requirement_count": 19' \
+grep -q '"loop_requirement_count": 20' \
   ".lawfirm-os-intake/smoke/quality/le-budget-outcome-replay-readiness/labor_employment_budget_outcome_replay_readiness_report.json"
 grep -q '"unresolved_source_ref_count": 0' \
   ".lawfirm-os-intake/smoke/quality/le-budget-outcome-replay-readiness/labor_employment_budget_outcome_replay_readiness_report.json"
@@ -768,7 +768,7 @@ PY
 test -s ".lawfirm-os-intake/smoke/quality/le-budget-outcome-replay-execution/labor_employment_budget_outcome_replay_execution_report.json"
 grep -q '"status": "labor_employment_budget_outcome_replay_execution_ready_for_review"' \
   ".lawfirm-os-intake/smoke/quality/le-budget-outcome-replay-execution/labor_employment_budget_outcome_replay_execution_report.json"
-grep -q '"materialized_artifact_slot_count": 38' \
+grep -q '"materialized_artifact_slot_count": 40' \
   ".lawfirm-os-intake/smoke/quality/le-budget-outcome-replay-execution/labor_employment_budget_outcome_replay_execution_report.json"
 grep -q '"runtime_artifact_count": 0' \
   ".lawfirm-os-intake/smoke/quality/le-budget-outcome-replay-execution/labor_employment_budget_outcome_replay_execution_report.json"
@@ -797,9 +797,9 @@ PY
 test -s ".lawfirm-os-intake/smoke/quality/le-budget-outcome-replay-builder-binding/labor_employment_budget_outcome_replay_builder_binding_report.json"
 grep -q '"status": "labor_employment_budget_replay_builder_binding_ready_for_review"' \
   ".lawfirm-os-intake/smoke/quality/le-budget-outcome-replay-builder-binding/labor_employment_budget_outcome_replay_builder_binding_report.json"
-grep -q '"slot_count": 38' \
+grep -q '"slot_count": 40' \
   ".lawfirm-os-intake/smoke/quality/le-budget-outcome-replay-builder-binding/labor_employment_budget_outcome_replay_builder_binding_report.json"
-grep -q '"bound_slot_count": 38' \
+grep -q '"bound_slot_count": 40' \
   ".lawfirm-os-intake/smoke/quality/le-budget-outcome-replay-builder-binding/labor_employment_budget_outcome_replay_builder_binding_report.json"
 grep -q '"unknown_artifact_count": 0' \
   ".lawfirm-os-intake/smoke/quality/le-budget-outcome-replay-builder-binding/labor_employment_budget_outcome_replay_builder_binding_report.json"
