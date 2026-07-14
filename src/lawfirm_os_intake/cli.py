@@ -180,6 +180,7 @@ from .synthetic_qa_blocker_report import run_synthetic_qa_blocker_report
 from .synthetic_qa_bundle import run_synthetic_qa_bundle
 from .synthetic_qa_review_outcomes import run_synthetic_qa_review_outcome_record
 from .synthetic_qa_review_run import run_synthetic_qa_review_run
+from .synthetic_actuals_workbench import run_synthetic_actuals_workbench
 from .synthetic_rate_card_workbench import run_synthetic_rate_card_workbench
 from .ui_demo_fixture_promotion import promote_ui_demo_run_fixtures
 from .ui_demo_qa_recipe import run_ui_demo_qa_recipe
@@ -300,6 +301,26 @@ def _parser() -> argparse.ArgumentParser:
         help="Repository root containing config/synthetic-carrier-rate-card.yaml.",
     )
     synthetic_rate_card_workbench.add_argument(
+        "--generated-at",
+        help="Optional fixed timestamp for deterministic tests and fixture replay.",
+    )
+
+    synthetic_actuals_workbench = sub.add_parser(
+        "build-synthetic-actuals-workbench",
+        help=(
+            "Build the fixed-source synthetic EPLI actuals-versus-budget review artifact. "
+            "Production billing import is intentionally unavailable."
+        ),
+    )
+    synthetic_actuals_workbench.add_argument(
+        "--out-dir", required=True, help="Local directory for report and Markdown trace."
+    )
+    synthetic_actuals_workbench.add_argument(
+        "--repo-root",
+        default=".",
+        help="Repository root containing fixed synthetic EPLI budget and actuals fixtures.",
+    )
+    synthetic_actuals_workbench.add_argument(
         "--generated-at",
         help="Optional fixed timestamp for deterministic tests and fixture replay.",
     )
@@ -2651,6 +2672,41 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 0 if report.status == "synthetic_rate_card_workbench_ready_for_review" else 2
+
+        if args.command == "build-synthetic-actuals-workbench":
+            report, run_dir = run_synthetic_actuals_workbench(
+                repo_root=args.repo_root,
+                out_dir=args.out_dir,
+                generated_at=args.generated_at,
+            )
+            comparison = report.comparison
+            _print(
+                {
+                    "status": report.status,
+                    "synthetic_actuals_workbench_report_id": (
+                        report.synthetic_actuals_workbench_report_id
+                    ),
+                    "budget_actual_comparison_report_id": (
+                        comparison.budget_actual_comparison_report_id
+                    ),
+                    "comparison_budget_state": comparison.comparison_budget_state,
+                    "phase_row_count": report.phase_row_count,
+                    "code_row_count": report.code_row_count,
+                    "total_budgeted": comparison.total_budgeted,
+                    "total_actual": comparison.total_actual,
+                    "total_variance_amount": comparison.total_variance_amount,
+                    "failed_check_count": report.failed_check_count,
+                    "billing_connector_read_performed": report.billing_connector_read_performed,
+                    "external_writes_performed": report.external_writes_performed,
+                    "lake_write_performed": report.lake_write_performed,
+                    "sqlite_write_performed": report.sqlite_write_performed,
+                    "budget_submission_authorized": report.budget_submission_authorized,
+                    "matter_opening_authorized": report.matter_opening_authorized,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0 if report.status == "synthetic_actuals_workbench_ready_for_review" else 2
 
         if args.command == "validate-budget-artifact":
             report = validate_budget_artifacts(

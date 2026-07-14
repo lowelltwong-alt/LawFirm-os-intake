@@ -1,7 +1,7 @@
 {
   "budget_submission_authorized": false,
   "candidate_only": true,
-  "checked_json_file_count": 32,
+  "checked_json_file_count": 33,
   "external_writes_performed": false,
   "failure_count": 0,
   "failures": [],
@@ -590,6 +590,28 @@
       "top_level_type": "object"
     },
     {
+      "byte_count": 16459,
+      "candidate_only": true,
+      "data_origin": "synthetic",
+      "external_writes_performed": false,
+      "id_fields": [
+        {
+          "field": "actuals_source_id",
+          "value": "le-actuals-epli-carrier-clean.v0_1"
+        },
+        {
+          "field": "synthetic_actuals_workbench_report_id",
+          "value": "synactualsworkbench-35659e9c74febf9f"
+        }
+      ],
+      "path": "demo-synthetic-actuals-workbench-report.json",
+      "schema_version": "0.1",
+      "sha256": "sha256:213dcd085994bd86ae76c1d52e41ed55fba02e0e7ba1a9523fdff2bfb986133b",
+      "status": "synthetic_actuals_workbench_ready_for_review",
+      "synthetic_only": true,
+      "top_level_type": "object"
+    },
+    {
       "byte_count": 5654,
       "candidate_only": true,
       "external_writes_performed": false,
@@ -777,11 +799,11 @@
   ],
   "lake_write_performed": false,
   "local_json_only": true,
-  "manifest_sha256": "sha256:a641c79c78430f4edbe16ca55afc0a427f7015aef970c1d1feaa5bce0408f625",
+  "manifest_sha256": "sha256:b9764cdc1cca3aacc5facc937f1d1a5364c469de24848608a71659c53d2a7ace",
   "matter_opening_authorized": false,
   "non_authoritative": true,
   "parse_error_count": 0,
-  "parsed_json_file_count": 32,
+  "parsed_json_file_count": 33,
   "root": "apps\\legal-intake-budget\\src\\fixtures",
   "scanner": "fixture-manifest-scanner",
   "schema_version": "0.1",
@@ -800,5 +822,5 @@
   "sqlite_write_performed": false,
   "status": "passed",
   "synthetic_only": true,
-  "total_byte_count": 810634
+  "total_byte_count": 827093
 }

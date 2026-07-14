@@ -19735,4 +19735,89 @@ class SyntheticRateCardWorkbenchReport(StrictModel):
         return self
 
 
+class SyntheticActualsWorkbenchCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    evidence_refs: list[str] = Field(default_factory=list)
+
+
+class SyntheticActualsWorkbenchReport(StrictModel):
+    schema_version: str = "0.1"
+    synthetic_actuals_workbench_report_id: str
+    status: Literal[
+        "synthetic_actuals_workbench_ready_for_review",
+        "blocked_by_synthetic_actuals_workbench",
+    ]
+    methodology_version: Literal["synthetic_actuals_workbench.v0_1"] = (
+        "synthetic_actuals_workbench.v0_1"
+    )
+    budget_proposal_ref: str
+    budget_proposal_sha256: str
+    actuals_source_id: str
+    actuals_source_ref: str
+    actuals_source_sha256: str
+    comparison: BudgetActualComparisonReport
+    phase_budgeted_total: float = Field(ge=0)
+    phase_actual_total: float = Field(ge=0)
+    code_budgeted_total: float = Field(ge=0)
+    code_actual_total: float = Field(ge=0)
+    phase_row_count: int = Field(ge=0)
+    code_row_count: int = Field(ge=0)
+    checks: list[SyntheticActualsWorkbenchCheck]
+    failed_check_count: int = Field(ge=0)
+    display_banner: dict[str, Any]
+    candidate_exception_lake_labels: list[str]
+    required_next_gates: list[str]
+    data_origin: Literal["synthetic"] = "synthetic"
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    local_json_only: Literal[True] = True
+    read_only_ui: Literal[True] = True
+    billing_connector_read_performed: Literal[False] = False
+    billing_connector_write_performed: Literal[False] = False
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    not_authorized_for_matter_opening: Literal[True] = True
+    not_authorized_for_calibration: Literal[True] = True
+    external_writes_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def synthetic_actuals_workbench_is_reconcilable_and_review_bound(
+        self,
+    ) -> "SyntheticActualsWorkbenchReport":
+        failed = [check for check in self.checks if check.status == "failed"]
+        if self.failed_check_count != len(failed):
+            raise ValueError("synthetic actuals workbench failed check count mismatch")
+        if self.phase_row_count != len(self.comparison.phase_comparisons):
+            raise ValueError("synthetic actuals workbench phase row count mismatch")
+        if self.code_row_count != len(self.comparison.code_comparisons):
+            raise ValueError("synthetic actuals workbench code row count mismatch")
+        if self.status == "synthetic_actuals_workbench_ready_for_review" and failed:
+            raise ValueError("ready synthetic actuals workbench cannot include failed checks")
+        if self.status == "blocked_by_synthetic_actuals_workbench" and not failed:
+            raise ValueError("blocked synthetic actuals workbench requires failed checks")
+        if not (
+            self.budget_proposal_sha256.startswith("sha256:")
+            and self.actuals_source_sha256.startswith("sha256:")
+        ):
+            raise ValueError("synthetic actuals workbench requires source hashes")
+        if self.comparison.comparison_budget_state == "human_revised_candidate" and not (
+            self.comparison.budget_revision_report_id and self.comparison.budget_revision_report_ref
+        ):
+            raise ValueError(
+                "revised synthetic actuals comparison requires revision identity and ref"
+            )
+        return self
+
+
 UIReviewDataBundle.model_rebuild()

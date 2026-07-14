@@ -33,6 +33,7 @@ import demoReviewDataBundle from "./fixtures/demo-ui-review-data-bundle.json";
 import demoUIDemoQARecipe from "./fixtures/demo-ui-demo-qa-recipe-report.json";
 import demoValidationSuiteEvidence from "./fixtures/demo-validation-suite-evidence-report.json";
 import demoSyntheticRateCardWorkbench from "./fixtures/demo-synthetic-rate-card-workbench-report.json";
+import demoSyntheticActualsWorkbench from "./fixtures/demo-synthetic-actuals-workbench-report.json";
 import {
   assertMatterLinkingPreflightReport,
   assertMatterLinkingQAGateReport,
@@ -63,6 +64,7 @@ import {
   assertSyntheticConfidenceSummaryReport,
   assertSyntheticQAReviewRunReport,
   assertSyntheticRateCardWorkbenchReport,
+  assertSyntheticActualsWorkbenchReport,
   assertUIDemoQARecipeReport,
   assertUIReviewDataBundle,
   assertValidationSuiteEvidenceReport,
@@ -116,6 +118,7 @@ import type {
   SyntheticConfidenceSummaryItemState,
   SyntheticQAReviewRunReport,
   SyntheticRateCardWorkbenchReport,
+  SyntheticActualsWorkbenchReport,
   UIDemoQARecipeReport,
   UIReviewDataBundle,
   ValidationSuiteEvidenceReport,
@@ -168,6 +171,8 @@ const crossRepoContractProof = demoCrossRepoContractProof as CrossRepoContractPr
 const pilotReviewStory = demoPilotReviewStory as PilotReviewStoryReport;
 const syntheticRateCardWorkbench =
   demoSyntheticRateCardWorkbench as SyntheticRateCardWorkbenchReport;
+const syntheticActualsWorkbench =
+  demoSyntheticActualsWorkbench as SyntheticActualsWorkbenchReport;
 const bundleContractFailures = assertUIReviewDataBundle(reviewDataBundle);
 const manifestContractFailures = assertReadOnlyManifest(manifest);
 const syntheticQAReviewRunFailures = assertSyntheticQAReviewRunReport(syntheticQAReviewRun);
@@ -227,6 +232,9 @@ const pilotReviewStoryFailures = assertPilotReviewStoryReport(pilotReviewStory);
 const syntheticRateCardWorkbenchFailures = assertSyntheticRateCardWorkbenchReport(
   syntheticRateCardWorkbench,
 );
+const syntheticActualsWorkbenchFailures = assertSyntheticActualsWorkbenchReport(
+  syntheticActualsWorkbench,
+);
 const contractFailures = [
   ...bundleContractFailures,
   ...manifestContractFailures,
@@ -258,6 +266,7 @@ const contractFailures = [
   ...crossRepoContractProofFailures,
   ...pilotReviewStoryFailures,
   ...syntheticRateCardWorkbenchFailures,
+  ...syntheticActualsWorkbenchFailures,
 ];
 
 const PUBLIC_DATA_CUSTODY_COMMANDS = [
@@ -662,6 +671,103 @@ function downloadSyntheticRateCardCsv(report: SyntheticRateCardWorkbenchReport) 
   anchor.download = "synthetic-rate-card-workbench.csv";
   anchor.click();
   URL.revokeObjectURL(objectUrl);
+}
+
+function downloadSyntheticActualsCsv(report: SyntheticActualsWorkbenchReport) {
+  const quote = (value: string | number | null) => `"${String(value ?? "").replaceAll('"', '""')}"`;
+  const rows = [
+    ["View", "Phase", "Code", "Budgeted", "Actual", "Variance", "Variance Percent", "Review State"],
+    ...report.comparison.phase_comparisons.map((row) => [
+      "phase", row.phase_id ?? "", "", row.budgeted_total, row.actual_total, row.variance_amount,
+      row.variance_percent, row.status,
+    ]),
+    ...report.comparison.code_comparisons.map((row) => [
+      "code", row.phase_id ?? "", row.code ?? "", row.budgeted_total, row.actual_total, row.variance_amount,
+      row.variance_percent, row.status,
+    ]),
+  ];
+  const csv = rows.map((row) => row.map(quote).join(",")).join("\n");
+  const objectUrl = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+  const anchor = document.createElement("a");
+  anchor.href = objectUrl;
+  anchor.download = "synthetic-actuals-variance-workbench.csv";
+  anchor.click();
+  URL.revokeObjectURL(objectUrl);
+}
+
+function actualsVarianceStateClass(status: SyntheticActualsWorkbenchReport["comparison"]["phase_comparisons"][number]["status"]) {
+  if (status === "within_threshold") return "state state-passed";
+  if (status === "actuals_not_available") return "state state-blocked";
+  return "state state-pending";
+}
+
+function SyntheticActualsWorkbenchPanel({ report }: { report: SyntheticActualsWorkbenchReport }) {
+  const [view, setView] = React.useState<"phase" | "code">("phase");
+  const failed = syntheticActualsWorkbenchFailures.length > 0;
+  const rows = view === "phase" ? report.comparison.phase_comparisons : report.comparison.code_comparisons;
+  const maxVariance = Math.max(...rows.map((row) => Math.abs(row.variance_amount ?? 0)), 1);
+  const viewLabel = view === "phase" ? "Phase comparison" : "Code drilldown";
+
+  return (
+    <section className="panel actuals-workbench-panel" aria-labelledby="actuals-workbench-title">
+      <div className="panel-heading">
+        <div>
+          <p className="eyebrow">Synthetic actuals review</p>
+          <h2 id="actuals-workbench-title">Actuals Variance Workbench</h2>
+          <code>{report.synthetic_actuals_workbench_report_id}</code>
+        </div>
+        <span className={failed ? "state state-failed" : "state state-pending"}>
+          {failed ? "contract failed" : "review pending"}
+        </span>
+      </div>
+
+      <div className="actuals-workbench-banner">
+        <strong>{report.display_banner.summary}</strong>
+        <span>Baseline: {report.comparison.comparison_budget_state.replaceAll("_", " ")}</span>
+        <span>Actuals: {report.actuals_source_id} / {report.actuals_source_sha256}</span>
+      </div>
+
+      <div className="actuals-workbench-metrics" aria-label="Synthetic actuals comparison totals">
+        <article><span>Candidate Budget</span><strong>{formatMoney(report.comparison.total_budgeted)}</strong></article>
+        <article><span>Synthetic Actuals</span><strong>{formatMoney(report.comparison.total_actual)}</strong></article>
+        <article><span>Variance</span><strong>{formatMoney(report.comparison.total_variance_amount)}</strong><p>{report.comparison.total_variance_percent}%</p></article>
+        <article><span>Review State</span><strong>{report.comparison.status.replaceAll("_", " ")}</strong></article>
+      </div>
+
+      <div className="actuals-workbench-controls" aria-label="Actuals variance view controls">
+        <div className="segmented-control" role="group" aria-label="Variance display view">
+          <button type="button" className={view === "phase" ? "selected" : ""} onClick={() => setView("phase")}>Phase view ({report.phase_row_count})</button>
+          <button type="button" className={view === "code" ? "selected" : ""} onClick={() => setView("code")}>Code drilldown ({report.code_row_count})</button>
+        </div>
+        <button type="button" onClick={() => downloadSyntheticActualsCsv(report)}>Download CSV</button>
+      </div>
+      <p className="actuals-workbench-note">{view === "phase" ? "Aggregate is sourced from the phase view." : "Code drilldown is reconciled to the same aggregate and excluded from the total."} Carrier outcomes remain a separate evidence lane.</p>
+
+      <div className="actuals-variance-chart" aria-label={`${viewLabel} variance bars`}>
+        {rows.map((row) => {
+          const variance = row.variance_amount ?? 0;
+          const label = row.phase_id ?? row.code ?? "unknown";
+          return <div className="actuals-variance-row" key={`${view}-${label}-${row.code ?? ""}`}>
+            <span>{view === "code" ? `${row.code ?? "unknown"} / ${row.phase_id ?? "unmapped"}` : label}</span>
+            <div className="actuals-variance-track">
+              <div className={variance >= 0 ? "actuals-variance-fill over" : "actuals-variance-fill under"} style={{ width: `${(Math.abs(variance) / maxVariance) * 100}%` }} />
+            </div>
+            <strong>{formatMoney(row.variance_amount)}</strong>
+          </div>;
+        })}
+      </div>
+
+      <div className="table-wrap actuals-workbench-table-wrap">
+        <table>
+          <thead><tr><th>{view === "phase" ? "Phase" : "Code / Phase"}</th><th>Budgeted</th><th>Actual</th><th>Variance</th><th>State</th></tr></thead>
+          <tbody>{rows.map((row) => <tr key={`${view}-table-${row.phase_id ?? ""}-${row.code ?? ""}`}>
+            <td>{view === "phase" ? row.phase_id : `${row.code ?? "unknown"} / ${row.phase_id ?? "unmapped"}`}</td><td>{formatMoney(row.budgeted_total)}</td><td>{formatMoney(row.actual_total)}</td><td>{formatMoney(row.variance_amount)}{row.variance_percent === null ? "" : ` (${row.variance_percent}%)`}</td><td><span className={actualsVarianceStateClass(row.status)}>{row.status.replaceAll("_", " ")}</span></td>
+          </tr>)}</tbody>
+        </table>
+      </div>
+      <div className="actuals-workbench-footer"><span>Proposal: {report.budget_proposal_sha256}</span><TokenList items={report.display_banner.blocked_actions} limit={6} /></div>
+    </section>
+  );
 }
 
 function SyntheticRateCardWorkbenchPanel({ report }: { report: SyntheticRateCardWorkbenchReport }) {
@@ -3911,6 +4017,7 @@ function App() {
         pocReport={pocQATriage}
       />
       <SyntheticRateCardWorkbenchPanel report={syntheticRateCardWorkbench} />
+      <SyntheticActualsWorkbenchPanel report={syntheticActualsWorkbench} />
       <PilotReviewStoryPanel report={pilotReviewStory} />
       <BudgetLearningLoopPanel report={budgetLearningLoop} />
       <CrossRepoContractProofPanel report={crossRepoContractProof} />

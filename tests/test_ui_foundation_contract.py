@@ -48,6 +48,7 @@ def test_legal_intake_budget_ui_required_files_exist(repo_root):
         "src/fixtures/demo-cross-repo-contract-proof-report.json",
         "src/fixtures/demo-pilot-review-story-report.json",
         "src/fixtures/demo-synthetic-rate-card-workbench-report.json",
+        "src/fixtures/demo-synthetic-actuals-workbench-report.json",
     ]
 
     for relative_path in required:
@@ -87,6 +88,41 @@ def test_ui_synthetic_rate_card_workbench_is_audited_local_candidate_data(repo_r
     assert "assertSyntheticRateCardWorkbenchReport" in app
     assert "assertSyntheticRateCardWorkbenchReport" in contract
     assert "real_rate_import_allowed" in contract
+
+
+def test_ui_synthetic_actuals_workbench_is_reconciled_local_candidate_data(repo_root):
+    fixture = json.loads(
+        (
+            repo_root / UI_ROOT / "src/fixtures/demo-synthetic-actuals-workbench-report.json"
+        ).read_text(encoding="utf-8")
+    )
+    app = (repo_root / UI_ROOT / "src/App.tsx").read_text(encoding="utf-8")
+    contract = (repo_root / UI_ROOT / "src/data-contract.ts").read_text(encoding="utf-8")
+
+    comparison = fixture["comparison"]
+    assert fixture["status"] == "synthetic_actuals_workbench_ready_for_review"
+    assert fixture["data_origin"] == "synthetic"
+    assert fixture["candidate_only"] is True
+    assert fixture["actuals_source_id"] == "le-actuals-epli-carrier-clean.v0_1"
+    assert fixture["actuals_source_sha256"].startswith("sha256:")
+    assert (
+        fixture["phase_actual_total"] == fixture["code_actual_total"] == comparison["total_actual"]
+    )
+    assert (
+        fixture["phase_budgeted_total"]
+        == fixture["code_budgeted_total"]
+        == comparison["total_budgeted"]
+    )
+    assert fixture["external_writes_performed"] is False
+    assert fixture["lake_write_performed"] is False
+    assert fixture["sqlite_write_performed"] is False
+    assert fixture["silent_learning_performed"] is False
+    assert "SyntheticActualsWorkbenchPanel" in app
+    assert "Download CSV" in app
+    assert "excluded from the total" in app
+    assert "assertSyntheticActualsWorkbenchReport" in app
+    assert "assertSyntheticActualsWorkbenchReport" in contract
+    assert "alternate_views_not_reconciled" in contract
 
 
 def test_legal_intake_budget_ui_data_contract_lists_required_artifacts(repo_root):
