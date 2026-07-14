@@ -117,6 +117,17 @@ async function main() {
     if ((await guidelineSelector.inputValue()) !== "synthetic-carrier-b") {
       failures.push("guideline_projection_workbench_scenario_switch_failed");
     }
+    const rejectionAppealWorkbench = page.locator("#rejection-appeal-workbench-title");
+    await rejectionAppealWorkbench.waitFor({ state: "visible" });
+    const rejectionAppealPanelText = await page
+      .locator(".rejection-appeal-workbench-panel")
+      .textContent();
+    if (
+      !rejectionAppealPanelText?.includes("Synthetic rejection and appeal review evidence only") ||
+      !rejectionAppealPanelText?.includes("$3,900")
+    ) {
+      failures.push("rejection_appeal_workbench_missing_candidate_banner_or_totals");
+    }
     const actualsWorkbench = page.locator("#actuals-workbench-title");
     await actualsWorkbench.waitFor({ state: "visible" });
     const actualsPanelText = await page.locator(".actuals-workbench-panel").textContent();
@@ -193,6 +204,7 @@ async function main() {
       { check_id: "review_surface_nonempty", status: uiState.textLength >= 80 ? "passed" : "failed", detail: `Rendered text length: ${uiState.textLength}.` },
       { check_id: "budget_input_workbench_visible", status: failures.some((failure) => failure.startsWith("budget_input_workbench_")) ? "failed" : "passed", detail: "The pinned synthetic budget input ledger exposes its candidate boundary, canonical total, excluded context lanes, and local CSV download." },
       { check_id: "guideline_projection_workbench_visible", status: failures.some((failure) => failure.startsWith("guideline_projection_workbench_")) ? "failed" : "passed", detail: "The synthetic guideline projection keeps the proposal separate, exposes counterfactual deltas, and never grants carrier approval or submission authority." },
+      { check_id: "rejection_appeal_workbench_visible", status: failures.some((failure) => failure.startsWith("rejection_appeal_workbench_")) ? "failed" : "passed", detail: "The synthetic rejection and appeal workbench exposes disputed, recovered, and write-down totals without appeal submission, Lake writes, or silent learning." },
       { check_id: "actuals_variance_workbench_visible", status: failures.some((failure) => failure.startsWith("actuals_workbench_")) ? "failed" : "passed", detail: "The synthetic actuals panel exposes its candidate banner, canonical totals, and code drilldown." },
       { check_id: "desktop_layout_no_horizontal_overflow", status: uiState.horizontalOverflow ? "failed" : "passed", detail: `Checked rendered elements at 1440x960 (viewport ${uiState.viewportWidth}px, document scroll ${uiState.scrollWidth}px).` },
       { check_id: "mobile_layout_no_horizontal_overflow", status: mobileState.horizontalOverflow ? "failed" : "passed", detail: `Checked rendered elements at 390x844 (viewport ${mobileState.viewportWidth}px, document scroll ${mobileState.scrollWidth}px).` },

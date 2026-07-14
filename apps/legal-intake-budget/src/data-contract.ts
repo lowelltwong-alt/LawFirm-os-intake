@@ -38,6 +38,7 @@ import type {
   SyntheticActualsWorkbenchReport,
   SyntheticBudgetInputWorkbenchReport,
   SyntheticGuidelineProjectionWorkbenchReport,
+  SyntheticRejectionAppealWorkbenchReport,
 } from "./types";
 
 export const REQUIRED_ARTIFACT_FILES = [
@@ -450,6 +451,41 @@ export function assertSyntheticGuidelineProjectionWorkbenchReport(
   }
   if (report.status === "synthetic_guideline_projection_workbench_ready_for_review" && report.failed_check_count !== 0) {
     failures.push("synthetic_guideline_projection_ready_with_failed_checks");
+  }
+  return failures;
+}
+
+export function assertSyntheticRejectionAppealWorkbenchReport(
+  report: SyntheticRejectionAppealWorkbenchReport,
+): string[] {
+  const failures: string[] = [];
+  if (
+    report.data_origin !== "synthetic" || !report.candidate_only || !report.synthetic_only ||
+    !report.non_authoritative || !report.local_json_only || !report.read_only_ui
+  ) failures.push("synthetic_rejection_appeal_workbench_authority_boundary_failed");
+  if (
+    report.external_writes_performed || report.lake_write_performed || report.sqlite_write_performed ||
+    report.budget_submission_authorized || report.matter_opening_authorized ||
+    report.appeal_submission_performed || report.silent_learning_performed
+  ) failures.push("synthetic_rejection_appeal_workbench_side_effect_boundary_failed");
+  if (!report.budget_proposal_sha256.startsWith("sha256:") || !report.source_bundle_sha256.startsWith("sha256:")) {
+    failures.push("synthetic_rejection_appeal_workbench_provenance_missing");
+  }
+  if (report.failed_check_count !== report.checks.filter((check) => check.status === "failed").length) {
+    failures.push("synthetic_rejection_appeal_workbench_failed_check_count_mismatch");
+  }
+  const rounded = (value: number) => Math.round(value * 100) / 100;
+  const recovered = rounded(report.cases.reduce((sum, item) => sum + item.recovered_amount, 0));
+  const writeDown = rounded(report.cases.reduce((sum, item) => sum + item.write_down_amount, 0));
+  if (recovered !== report.total_recovered_amount || writeDown !== report.total_write_down_amount ||
+    recovered + writeDown > report.total_disputed_amount) {
+    failures.push("synthetic_rejection_appeal_workbench_financial_partition_failed");
+  }
+  if (report.cases.some((item) => item.source_ref_count === 0)) {
+    failures.push("synthetic_rejection_appeal_workbench_missing_source_bound_case");
+  }
+  if (report.status === "synthetic_rejection_appeal_workbench_ready_for_review" && report.failed_check_count !== 0) {
+    failures.push("synthetic_rejection_appeal_workbench_ready_with_failed_checks");
   }
   return failures;
 }

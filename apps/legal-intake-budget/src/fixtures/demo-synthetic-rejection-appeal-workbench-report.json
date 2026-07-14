@@ -1,0 +1,1377 @@
+{
+  "schema_version": "0.1",
+  "synthetic_rejection_appeal_workbench_report_id": "synrejectionappeal-45aea3e3e6c72cd3",
+  "status": "synthetic_rejection_appeal_workbench_ready_for_review",
+  "methodology_version": "synthetic_rejection_appeal_workbench.v0_1",
+  "budget_proposal_id": "le-budget-epli-carrier-clean.v0_1",
+  "budget_proposal_sha256": "sha256:b85c715317e86f7b0822ba10f6b19da6bc209555da45ad49e18d78c000159a5c",
+  "source_bundle_ref": "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/carrier_rejection_capture_source_bundle_with_appeal_results.json",
+  "source_bundle_sha256": "sha256:a045bff15e1adf5646d01eadf03e2aff0827d79aa2eb57f2a491d064be9e50f7",
+  "reconciliation_report": {
+    "schema_version": "0.1",
+    "reconciliation_report_id": "carrierrecon_ba7561522ed3b97f8f73",
+    "source_bundle_id": "le-carrier-rejection-epli-carrier-clean-appeal.v0_1",
+    "run_id": "le-carrier-rejection-run-epli-carrier-clean-appeal.v0_1",
+    "preflight_packet_id": "le-preflight-epli-carrier-clean.v0_1",
+    "budget_proposal_id": "le-budget-epli-carrier-clean.v0_1",
+    "status": "dry_run_ready_for_review",
+    "expected_response_count": 2,
+    "reconciled_response_count": 2,
+    "missing_response_count": 0,
+    "unlinked_notice_count": 0,
+    "duplicate_notice_count": 0,
+    "parser_failure_count": 0,
+    "appeal_result_count": 1,
+    "remediation_cases": [
+      {
+        "remediation_case_id": "carrierrejcase_3494be1fffae8d882c76",
+        "case_key": "synthetic-granite-shield-epli|LE-SUB-EPLI-4001|LE-INV-EPLI-4001-L330-001|SYNTHETIC_EPLI_STAFFING_LEVERAGE_L330",
+        "status": "appeal_result_captured",
+        "local_event_label": "carrier_staffing_or_leverage_rejection",
+        "canonical_lake_class": "workflow_escalation",
+        "carrier_id": "synthetic-granite-shield-epli",
+        "submission_id": "LE-SUB-EPLI-4001",
+        "budget_proposal_id": "le-budget-epli-carrier-clean.v0_1",
+        "invoice_id": "LE-INV-EPLI-4001",
+        "phase_id": "L300",
+        "task_id": "L330",
+        "external_code_candidate": "L330",
+        "duplicate_notice_ids": [
+          "le-notice-epli-staffing-4001"
+        ],
+        "source_refs": [
+          {
+            "source_channel": "portal_status",
+            "source_id": "synthetic-epli-portal-export-20260705",
+            "source_record_id": "portal-status-GS-4001-L330",
+            "retrieved_at": "2026-07-05T15:10:00Z",
+            "content_sha256": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "message_id": null,
+            "portal_status_id": "portal-status-GS-4001-L330",
+            "row_ref": "granite-shield-portal-export.csv#row=73",
+            "attachment_id": null
+          }
+        ],
+        "disputed_amount": 2100.0,
+        "current_financial_exposure": 2100.0,
+        "human_owner": "synthetic-carrier-billing-reviewer",
+        "followup_due_at": "2026-07-10T17:00:00Z",
+        "required_human_decisions": [
+          "confirm_rejection_class",
+          "confirm_linked_submission",
+          "confirm_fix_or_appeal_path",
+          "confirm_financial_exposure"
+        ],
+        "linked_appeal_result_ids": [
+          "le-appeal-result-epli-staffing-4001"
+        ],
+        "learning_disposition_candidates": [
+          "guideline_profile_change_candidate",
+          "staffing_rule_candidate"
+        ],
+        "not_authorized_for_lake_write": true,
+        "not_authorized_for_external_submission": true,
+        "silent_learning_performed": false
+      },
+      {
+        "remediation_case_id": "carrierrejcase_ed9597c9c979f6c5b3e1",
+        "case_key": "synthetic-granite-shield-epli|LE-SUB-EPLI-4002|LE-INV-EPLI-4002-L510-001|SYNTHETIC_EPLI_PREAPPROVAL_MEDIATION",
+        "status": "captured_for_human_review",
+        "local_event_label": "carrier_preapproval_missing",
+        "canonical_lake_class": "workflow_escalation",
+        "carrier_id": "synthetic-granite-shield-epli",
+        "submission_id": "LE-SUB-EPLI-4002",
+        "budget_proposal_id": "le-budget-epli-carrier-clean.v0_1",
+        "invoice_id": "LE-INV-EPLI-4002",
+        "phase_id": "L500",
+        "task_id": "L510",
+        "external_code_candidate": "L510",
+        "duplicate_notice_ids": [
+          "le-notice-epli-preapproval-4002"
+        ],
+        "source_refs": [
+          {
+            "source_channel": "email_notice",
+            "source_id": "synthetic-epli-carrier-email-20260705",
+            "source_record_id": "email-notice-GS-4002-L510",
+            "retrieved_at": "2026-07-05T15:15:00Z",
+            "content_sha256": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+            "message_id": "synthetic-epli-carrier-email-4002@example.invalid",
+            "portal_status_id": null,
+            "row_ref": null,
+            "attachment_id": "synthetic-epli-rejection-notice-4002.pdf"
+          }
+        ],
+        "disputed_amount": 1800.0,
+        "current_financial_exposure": 1800.0,
+        "human_owner": "synthetic-carrier-billing-reviewer",
+        "followup_due_at": "2026-07-10T17:00:00Z",
+        "required_human_decisions": [
+          "confirm_rejection_class",
+          "confirm_linked_submission",
+          "confirm_fix_or_appeal_path",
+          "confirm_financial_exposure"
+        ],
+        "linked_appeal_result_ids": [],
+        "learning_disposition_candidates": [
+          "validation_rule_candidate",
+          "preapproval_gate_candidate"
+        ],
+        "not_authorized_for_lake_write": true,
+        "not_authorized_for_external_submission": true,
+        "silent_learning_performed": false
+      }
+    ],
+    "exception_lake_candidates": [
+      {
+        "schema_version": "0.1",
+        "candidate_id": "exc_a6ef318254682726d780",
+        "run_id": "le-carrier-rejection-run-epli-carrier-clean-appeal.v0_1",
+        "preflight_packet_id": "le-preflight-epli-carrier-clean.v0_1",
+        "local_event_label": "carrier_staffing_or_leverage_rejection",
+        "canonical_lake_class": "workflow_escalation",
+        "status": "dry_run_candidate",
+        "reason": "Carrier rejection remediation case requires human review: carrier_staffing_or_leverage_rejection",
+        "source_inventory_refs": [],
+        "evidence_refs": [],
+        "structured_refs": [
+          "carrier-rejection-case://carrierrejcase_3494be1fffae8d882c76",
+          "carrier-source://portal_status/synthetic-epli-portal-export-20260705/portal-status-GS-4001-L330",
+          "budget-proposal://le-budget-epli-carrier-clean.v0_1",
+          "carrier-submission://LE-SUB-EPLI-4001"
+        ],
+        "blocked_state": "appeal_result_captured",
+        "identity_key": "sha256:a14a082f077e658079ac2e66f9b229d636a17063433254289fdf0630a9d4b4d5",
+        "severity": "S3",
+        "occurrence_hint": "count_recurrence_by_identity_key",
+        "holdout_origin": false,
+        "raw_payload_included": false,
+        "canonical_promotion_required": true,
+        "target_runtime_repo": "LawFirm-os-exceptions-lake-runtime"
+      },
+      {
+        "schema_version": "0.1",
+        "candidate_id": "exc_eae533c2a8f17accf65a",
+        "run_id": "le-carrier-rejection-run-epli-carrier-clean-appeal.v0_1",
+        "preflight_packet_id": "le-preflight-epli-carrier-clean.v0_1",
+        "local_event_label": "carrier_rejection_learning_candidate",
+        "canonical_lake_class": "workflow_escalation",
+        "status": "dry_run_candidate",
+        "reason": "Carrier rejection outcome may support a reviewed future learning proposal; silent learning is prohibited.",
+        "source_inventory_refs": [],
+        "evidence_refs": [],
+        "structured_refs": [
+          "carrier-rejection-case://carrierrejcase_3494be1fffae8d882c76",
+          "docs/carrier-rejection-learning-loop-roadmap.md#learning-loops"
+        ],
+        "blocked_state": "learning_requires_human_review",
+        "identity_key": "sha256:453def55465e89fd548052aa54bdb1e288549cf62945b61bf12ed81ddf71ae03",
+        "severity": "S3",
+        "occurrence_hint": "count_recurrence_by_identity_key",
+        "holdout_origin": false,
+        "raw_payload_included": false,
+        "canonical_promotion_required": true,
+        "target_runtime_repo": "LawFirm-os-exceptions-lake-runtime"
+      },
+      {
+        "schema_version": "0.1",
+        "candidate_id": "exc_6cecaf624ddf4d418090",
+        "run_id": "le-carrier-rejection-run-epli-carrier-clean-appeal.v0_1",
+        "preflight_packet_id": "le-preflight-epli-carrier-clean.v0_1",
+        "local_event_label": "carrier_preapproval_missing",
+        "canonical_lake_class": "workflow_escalation",
+        "status": "dry_run_candidate",
+        "reason": "Carrier rejection remediation case requires human review: carrier_preapproval_missing",
+        "source_inventory_refs": [],
+        "evidence_refs": [],
+        "structured_refs": [
+          "carrier-rejection-case://carrierrejcase_ed9597c9c979f6c5b3e1",
+          "carrier-source://email_notice/synthetic-epli-carrier-email-20260705/email-notice-GS-4002-L510",
+          "budget-proposal://le-budget-epli-carrier-clean.v0_1",
+          "carrier-submission://LE-SUB-EPLI-4002"
+        ],
+        "blocked_state": "captured_for_human_review",
+        "identity_key": "sha256:5591a91be8664c5260aedcacfeb95f2af80cde96a0b07d29146e6c0db44af7e4",
+        "severity": "S3",
+        "occurrence_hint": "count_recurrence_by_identity_key",
+        "holdout_origin": false,
+        "raw_payload_included": false,
+        "canonical_promotion_required": true,
+        "target_runtime_repo": "LawFirm-os-exceptions-lake-runtime"
+      },
+      {
+        "schema_version": "0.1",
+        "candidate_id": "exc_d56dbf161a0146aa14e1",
+        "run_id": "le-carrier-rejection-run-epli-carrier-clean-appeal.v0_1",
+        "preflight_packet_id": "le-preflight-epli-carrier-clean.v0_1",
+        "local_event_label": "carrier_rejection_learning_candidate",
+        "canonical_lake_class": "workflow_escalation",
+        "status": "dry_run_candidate",
+        "reason": "Carrier rejection outcome may support a reviewed future learning proposal; silent learning is prohibited.",
+        "source_inventory_refs": [],
+        "evidence_refs": [],
+        "structured_refs": [
+          "carrier-rejection-case://carrierrejcase_ed9597c9c979f6c5b3e1",
+          "docs/carrier-rejection-learning-loop-roadmap.md#learning-loops"
+        ],
+        "blocked_state": "learning_requires_human_review",
+        "identity_key": "sha256:ea70e45f239a0ab1c340afa6321d988f699bd08f82df646bc0c17f257a0ca304",
+        "severity": "S3",
+        "occurrence_hint": "count_recurrence_by_identity_key",
+        "holdout_origin": false,
+        "raw_payload_included": false,
+        "canonical_promotion_required": true,
+        "target_runtime_repo": "LawFirm-os-exceptions-lake-runtime"
+      },
+      {
+        "schema_version": "0.1",
+        "candidate_id": "exc_872909271d780e452304",
+        "run_id": "le-carrier-rejection-run-epli-carrier-clean-appeal.v0_1",
+        "preflight_packet_id": "le-preflight-epli-carrier-clean.v0_1",
+        "local_event_label": "carrier_appeal_result_received",
+        "canonical_lake_class": "workflow_escalation",
+        "status": "dry_run_candidate",
+        "reason": "Carrier appeal result was captured as append-only evidence: partially_accepted.",
+        "source_inventory_refs": [],
+        "evidence_refs": [],
+        "structured_refs": [
+          "carrier-appeal-result://le-appeal-result-epli-staffing-4001",
+          "carrier-rejection-case://carrierrejcase_3494be1fffae8d882c76",
+          "carrier-source://appeal_correspondence/synthetic-epli-appeal-email-20260711/appeal-result-GS-4001-L330"
+        ],
+        "blocked_state": "appeal_result_requires_review",
+        "identity_key": "sha256:6962865d5b176a6c22c30fffac6f331ae0c44fa8c19c26427cef0f115755b75a",
+        "severity": "S3",
+        "occurrence_hint": "count_recurrence_by_identity_key",
+        "holdout_origin": false,
+        "raw_payload_included": false,
+        "canonical_promotion_required": true,
+        "target_runtime_repo": "LawFirm-os-exceptions-lake-runtime"
+      }
+    ],
+    "gap_report": [],
+    "capture_completeness_target_percent": 100,
+    "candidate_only": true,
+    "not_authorized_for_lake_write": true,
+    "not_authorized_for_external_submission": true,
+    "external_writes_performed": false,
+    "generated_at": "2026-07-14T00:00:00Z"
+  },
+  "decision_ledger": {
+    "schema_version": "0.1",
+    "decision_ledger_report_id": "carrierdecisionledgerreport_836567c560e69eb25198",
+    "decision_ledger_id": "carrierdecisionledger_02b42601247420473e1e",
+    "reconciliation_report_id": "carrierrecon_ba7561522ed3b97f8f73",
+    "source_bundle_id": "le-carrier-rejection-epli-carrier-clean-appeal.v0_1",
+    "run_id": "le-carrier-rejection-run-epli-carrier-clean-appeal.v0_1",
+    "preflight_packet_id": "le-preflight-epli-carrier-clean.v0_1",
+    "budget_proposal_id": "le-budget-epli-carrier-clean.v0_1",
+    "status": "decision_ledger_ready_for_review",
+    "entry_count": 5,
+    "remediation_case_event_count": 2,
+    "pending_decision_event_count": 1,
+    "appeal_result_event_count": 1,
+    "financial_outcome_event_count": 1,
+    "total_disputed_amount": 3900.0,
+    "total_recovered_amount": 900.0,
+    "total_write_down_amount": 1200.0,
+    "event_kind_counts": {
+      "carrier_rejection_notice_captured": 2,
+      "carrier_fix_or_appeal_decision_pending": 1,
+      "carrier_appeal_result_received": 1,
+      "carrier_financial_outcome_recorded": 1
+    },
+    "events": [
+      {
+        "schema_version": "0.1",
+        "decision_ledger_event_id": "carrierdecisionevent_8e83e48a96f61f17ce75",
+        "decision_ledger_id": "carrierdecisionledger_02b42601247420473e1e",
+        "sequence_index": 0,
+        "reconciliation_report_id": "carrierrecon_ba7561522ed3b97f8f73",
+        "source_bundle_id": "le-carrier-rejection-epli-carrier-clean-appeal.v0_1",
+        "run_id": "le-carrier-rejection-run-epli-carrier-clean-appeal.v0_1",
+        "preflight_packet_id": "le-preflight-epli-carrier-clean.v0_1",
+        "budget_proposal_id": "le-budget-epli-carrier-clean.v0_1",
+        "remediation_case_id": "carrierrejcase_3494be1fffae8d882c76",
+        "appeal_result_id": null,
+        "notice_ids": [
+          "le-notice-epli-staffing-4001"
+        ],
+        "carrier_id": "synthetic-granite-shield-epli",
+        "submission_id": "LE-SUB-EPLI-4001",
+        "invoice_id": "LE-INV-EPLI-4001",
+        "phase_id": "L300",
+        "task_id": "L330",
+        "external_code_candidate": "L330",
+        "event_kind": "carrier_rejection_notice_captured",
+        "decision_status": "appeal_result_captured_pending_review",
+        "local_event_label": "carrier_staffing_or_leverage_rejection",
+        "canonical_lake_class_candidate": "workflow_escalation",
+        "source_channels": [
+          "portal_status"
+        ],
+        "source_refs": [
+          {
+            "source_channel": "portal_status",
+            "source_id": "synthetic-epli-portal-export-20260705",
+            "source_record_id": "portal-status-GS-4001-L330",
+            "retrieved_at": "2026-07-05T15:10:00Z",
+            "content_sha256": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "message_id": null,
+            "portal_status_id": "portal-status-GS-4001-L330",
+            "row_ref": "granite-shield-portal-export.csv#row=73",
+            "attachment_id": null
+          }
+        ],
+        "response_type": "partially_accepted",
+        "appeal_result": null,
+        "disputed_amount": 2100.0,
+        "current_financial_exposure": 2100.0,
+        "appealed_amount": 0.0,
+        "recovered_amount": 0.0,
+        "write_down_amount": 0.0,
+        "remaining_write_down_amount": 0.0,
+        "proposed_next_actions": [
+          "review_appeal_result",
+          "record_financial_outcome",
+          "decide_learning_candidate_after_human_review"
+        ],
+        "required_human_decisions": [
+          "confirm_rejection_class",
+          "confirm_linked_submission",
+          "confirm_fix_or_appeal_path",
+          "confirm_financial_exposure"
+        ],
+        "exception_candidate_ids": [
+          "exc_872909271d780e452304",
+          "exc_a6ef318254682726d780",
+          "exc_eae533c2a8f17accf65a"
+        ],
+        "structured_refs": [
+          "carrier-rejection-case://carrierrejcase_3494be1fffae8d882c76",
+          "carrier-rejection-notice://le-notice-epli-staffing-4001",
+          "carrier-reconciliation-report://carrierrecon_ba7561522ed3b97f8f73"
+        ],
+        "requires_exception_lake_admission_review": true,
+        "append_only": true,
+        "candidate_only": true,
+        "non_authoritative": true,
+        "synthetic_only": true,
+        "not_authorized_for_lake_write": true,
+        "not_authorized_for_sqlite_write": true,
+        "not_authorized_for_external_submission": true,
+        "lake_write_performed": false,
+        "sqlite_write_performed": false,
+        "external_writes_performed": false,
+        "carrier_portal_write_performed": false,
+        "email_send_performed": false,
+        "appeal_submission_performed": false,
+        "budget_mutation_performed": false,
+        "profile_mutation_performed": false,
+        "template_mutation_performed": false,
+        "carrier_guideline_mutation_performed": false,
+        "silent_learning_performed": false
+      },
+      {
+        "schema_version": "0.1",
+        "decision_ledger_event_id": "carrierdecisionevent_82be4c8dc9ad7f2b1e1e",
+        "decision_ledger_id": "carrierdecisionledger_02b42601247420473e1e",
+        "sequence_index": 1,
+        "reconciliation_report_id": "carrierrecon_ba7561522ed3b97f8f73",
+        "source_bundle_id": "le-carrier-rejection-epli-carrier-clean-appeal.v0_1",
+        "run_id": "le-carrier-rejection-run-epli-carrier-clean-appeal.v0_1",
+        "preflight_packet_id": "le-preflight-epli-carrier-clean.v0_1",
+        "budget_proposal_id": "le-budget-epli-carrier-clean.v0_1",
+        "remediation_case_id": "carrierrejcase_ed9597c9c979f6c5b3e1",
+        "appeal_result_id": null,
+        "notice_ids": [
+          "le-notice-epli-preapproval-4002"
+        ],
+        "carrier_id": "synthetic-granite-shield-epli",
+        "submission_id": "LE-SUB-EPLI-4002",
+        "invoice_id": "LE-INV-EPLI-4002",
+        "phase_id": "L500",
+        "task_id": "L510",
+        "external_code_candidate": "L510",
+        "event_kind": "carrier_rejection_notice_captured",
+        "decision_status": "captured_pending_human_review",
+        "local_event_label": "carrier_preapproval_missing",
+        "canonical_lake_class_candidate": "workflow_escalation",
+        "source_channels": [
+          "email_notice"
+        ],
+        "source_refs": [
+          {
+            "source_channel": "email_notice",
+            "source_id": "synthetic-epli-carrier-email-20260705",
+            "source_record_id": "email-notice-GS-4002-L510",
+            "retrieved_at": "2026-07-05T15:15:00Z",
+            "content_sha256": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+            "message_id": "synthetic-epli-carrier-email-4002@example.invalid",
+            "portal_status_id": null,
+            "row_ref": null,
+            "attachment_id": "synthetic-epli-rejection-notice-4002.pdf"
+          }
+        ],
+        "response_type": "rejected",
+        "appeal_result": null,
+        "disputed_amount": 1800.0,
+        "current_financial_exposure": 1800.0,
+        "appealed_amount": 0.0,
+        "recovered_amount": 0.0,
+        "write_down_amount": 0.0,
+        "remaining_write_down_amount": 0.0,
+        "proposed_next_actions": [
+          "appeal",
+          "fix_and_resubmit",
+          "accept_write_down",
+          "request_more_information"
+        ],
+        "required_human_decisions": [
+          "confirm_rejection_class",
+          "confirm_linked_submission",
+          "confirm_fix_or_appeal_path",
+          "confirm_financial_exposure"
+        ],
+        "exception_candidate_ids": [
+          "exc_6cecaf624ddf4d418090",
+          "exc_d56dbf161a0146aa14e1"
+        ],
+        "structured_refs": [
+          "carrier-rejection-case://carrierrejcase_ed9597c9c979f6c5b3e1",
+          "carrier-rejection-notice://le-notice-epli-preapproval-4002",
+          "carrier-reconciliation-report://carrierrecon_ba7561522ed3b97f8f73"
+        ],
+        "requires_exception_lake_admission_review": true,
+        "append_only": true,
+        "candidate_only": true,
+        "non_authoritative": true,
+        "synthetic_only": true,
+        "not_authorized_for_lake_write": true,
+        "not_authorized_for_sqlite_write": true,
+        "not_authorized_for_external_submission": true,
+        "lake_write_performed": false,
+        "sqlite_write_performed": false,
+        "external_writes_performed": false,
+        "carrier_portal_write_performed": false,
+        "email_send_performed": false,
+        "appeal_submission_performed": false,
+        "budget_mutation_performed": false,
+        "profile_mutation_performed": false,
+        "template_mutation_performed": false,
+        "carrier_guideline_mutation_performed": false,
+        "silent_learning_performed": false
+      },
+      {
+        "schema_version": "0.1",
+        "decision_ledger_event_id": "carrierdecisionevent_cd1769126bb6fa8e4411",
+        "decision_ledger_id": "carrierdecisionledger_02b42601247420473e1e",
+        "sequence_index": 2,
+        "reconciliation_report_id": "carrierrecon_ba7561522ed3b97f8f73",
+        "source_bundle_id": "le-carrier-rejection-epli-carrier-clean-appeal.v0_1",
+        "run_id": "le-carrier-rejection-run-epli-carrier-clean-appeal.v0_1",
+        "preflight_packet_id": "le-preflight-epli-carrier-clean.v0_1",
+        "budget_proposal_id": "le-budget-epli-carrier-clean.v0_1",
+        "remediation_case_id": "carrierrejcase_ed9597c9c979f6c5b3e1",
+        "appeal_result_id": null,
+        "notice_ids": [
+          "le-notice-epli-preapproval-4002"
+        ],
+        "carrier_id": "synthetic-granite-shield-epli",
+        "submission_id": "LE-SUB-EPLI-4002",
+        "invoice_id": "LE-INV-EPLI-4002",
+        "phase_id": "L500",
+        "task_id": "L510",
+        "external_code_candidate": "L510",
+        "event_kind": "carrier_fix_or_appeal_decision_pending",
+        "decision_status": "pending_human_fix_or_appeal_decision",
+        "local_event_label": "carrier_preapproval_missing",
+        "canonical_lake_class_candidate": "workflow_escalation",
+        "source_channels": [
+          "email_notice"
+        ],
+        "source_refs": [
+          {
+            "source_channel": "email_notice",
+            "source_id": "synthetic-epli-carrier-email-20260705",
+            "source_record_id": "email-notice-GS-4002-L510",
+            "retrieved_at": "2026-07-05T15:15:00Z",
+            "content_sha256": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+            "message_id": "synthetic-epli-carrier-email-4002@example.invalid",
+            "portal_status_id": null,
+            "row_ref": null,
+            "attachment_id": "synthetic-epli-rejection-notice-4002.pdf"
+          }
+        ],
+        "response_type": null,
+        "appeal_result": null,
+        "disputed_amount": 1800.0,
+        "current_financial_exposure": 1800.0,
+        "appealed_amount": 0.0,
+        "recovered_amount": 0.0,
+        "write_down_amount": 0.0,
+        "remaining_write_down_amount": 0.0,
+        "proposed_next_actions": [
+          "appeal",
+          "fix_and_resubmit",
+          "accept_write_down",
+          "request_more_information"
+        ],
+        "required_human_decisions": [
+          "confirm_rejection_class",
+          "confirm_linked_submission",
+          "confirm_fix_or_appeal_path",
+          "confirm_financial_exposure"
+        ],
+        "exception_candidate_ids": [
+          "exc_6cecaf624ddf4d418090",
+          "exc_d56dbf161a0146aa14e1"
+        ],
+        "structured_refs": [
+          "carrier-rejection-case://carrierrejcase_ed9597c9c979f6c5b3e1",
+          "carrier-reconciliation-report://carrierrecon_ba7561522ed3b97f8f73",
+          "docs/carrier-rejection-learning-loop-roadmap.md#remediation-workflow"
+        ],
+        "requires_exception_lake_admission_review": true,
+        "append_only": true,
+        "candidate_only": true,
+        "non_authoritative": true,
+        "synthetic_only": true,
+        "not_authorized_for_lake_write": true,
+        "not_authorized_for_sqlite_write": true,
+        "not_authorized_for_external_submission": true,
+        "lake_write_performed": false,
+        "sqlite_write_performed": false,
+        "external_writes_performed": false,
+        "carrier_portal_write_performed": false,
+        "email_send_performed": false,
+        "appeal_submission_performed": false,
+        "budget_mutation_performed": false,
+        "profile_mutation_performed": false,
+        "template_mutation_performed": false,
+        "carrier_guideline_mutation_performed": false,
+        "silent_learning_performed": false
+      },
+      {
+        "schema_version": "0.1",
+        "decision_ledger_event_id": "carrierdecisionevent_9e98c64d3ceebedc76d0",
+        "decision_ledger_id": "carrierdecisionledger_02b42601247420473e1e",
+        "sequence_index": 3,
+        "reconciliation_report_id": "carrierrecon_ba7561522ed3b97f8f73",
+        "source_bundle_id": "le-carrier-rejection-epli-carrier-clean-appeal.v0_1",
+        "run_id": "le-carrier-rejection-run-epli-carrier-clean-appeal.v0_1",
+        "preflight_packet_id": "le-preflight-epli-carrier-clean.v0_1",
+        "budget_proposal_id": "le-budget-epli-carrier-clean.v0_1",
+        "remediation_case_id": "carrierrejcase_3494be1fffae8d882c76",
+        "appeal_result_id": "le-appeal-result-epli-staffing-4001",
+        "notice_ids": [
+          "le-notice-epli-staffing-4001"
+        ],
+        "carrier_id": "synthetic-granite-shield-epli",
+        "submission_id": "LE-SUB-EPLI-4001",
+        "invoice_id": "LE-INV-EPLI-4001",
+        "phase_id": "L300",
+        "task_id": "L330",
+        "external_code_candidate": "L330",
+        "event_kind": "carrier_appeal_result_received",
+        "decision_status": "appeal_result_captured_pending_review",
+        "local_event_label": "carrier_appeal_result_received",
+        "canonical_lake_class_candidate": "workflow_escalation",
+        "source_channels": [
+          "appeal_correspondence"
+        ],
+        "source_refs": [
+          {
+            "source_channel": "appeal_correspondence",
+            "source_id": "synthetic-epli-appeal-email-20260711",
+            "source_record_id": "appeal-result-GS-4001-L330",
+            "retrieved_at": "2026-07-11T17:00:00Z",
+            "content_sha256": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "message_id": "synthetic-epli-appeal-result-4001@example.invalid",
+            "portal_status_id": null,
+            "row_ref": null,
+            "attachment_id": "synthetic-epli-appeal-result-4001.pdf"
+          }
+        ],
+        "response_type": null,
+        "appeal_result": "partially_accepted",
+        "disputed_amount": 2100.0,
+        "current_financial_exposure": 2100.0,
+        "appealed_amount": 2100.0,
+        "recovered_amount": 900.0,
+        "write_down_amount": 1200.0,
+        "remaining_write_down_amount": 1200.0,
+        "proposed_next_actions": [
+          "review_appeal_result",
+          "record_financial_outcome",
+          "decide_learning_candidate_after_human_review"
+        ],
+        "required_human_decisions": [
+          "confirm_appeal_result",
+          "confirm_recovered_amount",
+          "confirm_remaining_write_down"
+        ],
+        "exception_candidate_ids": [
+          "exc_872909271d780e452304"
+        ],
+        "structured_refs": [
+          "carrier-appeal-result://le-appeal-result-epli-staffing-4001",
+          "carrier-rejection-notice://le-notice-epli-staffing-4001",
+          "carrier-reconciliation-report://carrierrecon_ba7561522ed3b97f8f73",
+          "carrier-rejection-case://carrierrejcase_3494be1fffae8d882c76"
+        ],
+        "requires_exception_lake_admission_review": true,
+        "append_only": true,
+        "candidate_only": true,
+        "non_authoritative": true,
+        "synthetic_only": true,
+        "not_authorized_for_lake_write": true,
+        "not_authorized_for_sqlite_write": true,
+        "not_authorized_for_external_submission": true,
+        "lake_write_performed": false,
+        "sqlite_write_performed": false,
+        "external_writes_performed": false,
+        "carrier_portal_write_performed": false,
+        "email_send_performed": false,
+        "appeal_submission_performed": false,
+        "budget_mutation_performed": false,
+        "profile_mutation_performed": false,
+        "template_mutation_performed": false,
+        "carrier_guideline_mutation_performed": false,
+        "silent_learning_performed": false
+      },
+      {
+        "schema_version": "0.1",
+        "decision_ledger_event_id": "carrierdecisionevent_c4bd66a4bbce67dfca41",
+        "decision_ledger_id": "carrierdecisionledger_02b42601247420473e1e",
+        "sequence_index": 4,
+        "reconciliation_report_id": "carrierrecon_ba7561522ed3b97f8f73",
+        "source_bundle_id": "le-carrier-rejection-epli-carrier-clean-appeal.v0_1",
+        "run_id": "le-carrier-rejection-run-epli-carrier-clean-appeal.v0_1",
+        "preflight_packet_id": "le-preflight-epli-carrier-clean.v0_1",
+        "budget_proposal_id": "le-budget-epli-carrier-clean.v0_1",
+        "remediation_case_id": "carrierrejcase_3494be1fffae8d882c76",
+        "appeal_result_id": "le-appeal-result-epli-staffing-4001",
+        "notice_ids": [
+          "le-notice-epli-staffing-4001"
+        ],
+        "carrier_id": "synthetic-granite-shield-epli",
+        "submission_id": "LE-SUB-EPLI-4001",
+        "invoice_id": "LE-INV-EPLI-4001",
+        "phase_id": "L300",
+        "task_id": "L330",
+        "external_code_candidate": "L330",
+        "event_kind": "carrier_financial_outcome_recorded",
+        "decision_status": "financial_outcome_captured_pending_review",
+        "local_event_label": "carrier_rejection_financial_outcome_recorded",
+        "canonical_lake_class_candidate": "workflow_escalation",
+        "source_channels": [
+          "appeal_correspondence"
+        ],
+        "source_refs": [
+          {
+            "source_channel": "appeal_correspondence",
+            "source_id": "synthetic-epli-appeal-email-20260711",
+            "source_record_id": "appeal-result-GS-4001-L330",
+            "retrieved_at": "2026-07-11T17:00:00Z",
+            "content_sha256": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "message_id": "synthetic-epli-appeal-result-4001@example.invalid",
+            "portal_status_id": null,
+            "row_ref": null,
+            "attachment_id": "synthetic-epli-appeal-result-4001.pdf"
+          }
+        ],
+        "response_type": null,
+        "appeal_result": "partially_accepted",
+        "disputed_amount": 2100.0,
+        "current_financial_exposure": 1200.0,
+        "appealed_amount": 2100.0,
+        "recovered_amount": 900.0,
+        "write_down_amount": 1200.0,
+        "remaining_write_down_amount": 1200.0,
+        "proposed_next_actions": [
+          "confirm_financial_outcome",
+          "route_write_down_or_recovery_review",
+          "block_learning_until_reviewed"
+        ],
+        "required_human_decisions": [
+          "confirm_recovered_amount",
+          "confirm_remaining_write_down",
+          "confirm_accounting_disposition"
+        ],
+        "exception_candidate_ids": [
+          "exc_872909271d780e452304"
+        ],
+        "structured_refs": [
+          "carrier-appeal-result://le-appeal-result-epli-staffing-4001",
+          "carrier-financial-outcome://le-appeal-result-epli-staffing-4001",
+          "carrier-reconciliation-report://carrierrecon_ba7561522ed3b97f8f73",
+          "carrier-rejection-case://carrierrejcase_3494be1fffae8d882c76"
+        ],
+        "requires_exception_lake_admission_review": true,
+        "append_only": true,
+        "candidate_only": true,
+        "non_authoritative": true,
+        "synthetic_only": true,
+        "not_authorized_for_lake_write": true,
+        "not_authorized_for_sqlite_write": true,
+        "not_authorized_for_external_submission": true,
+        "lake_write_performed": false,
+        "sqlite_write_performed": false,
+        "external_writes_performed": false,
+        "carrier_portal_write_performed": false,
+        "email_send_performed": false,
+        "appeal_submission_performed": false,
+        "budget_mutation_performed": false,
+        "profile_mutation_performed": false,
+        "template_mutation_performed": false,
+        "carrier_guideline_mutation_performed": false,
+        "silent_learning_performed": false
+      }
+    ],
+    "required_next_gates": [
+      "human_rejection_decision_review",
+      "append_only_rejection_review_outcome",
+      "orchestrator_evidence_packet_before_lake_admission",
+      "exception_lake_admission_by_exception_lake_runtime",
+      "appeal_submission_requires_human_authorization_and_orchestrator_connector",
+      "reviewed_learning_gate_before_candidate_changes",
+      "no_silent_profile_template_budget_or_guideline_mutation"
+    ],
+    "candidate_only": true,
+    "non_authoritative": true,
+    "synthetic_only": true,
+    "append_only": true,
+    "not_authorized_for_lake_write": true,
+    "not_authorized_for_sqlite_write": true,
+    "not_authorized_for_external_submission": true,
+    "lake_write_performed": false,
+    "sqlite_write_performed": false,
+    "external_writes_performed": false,
+    "carrier_portal_write_performed": false,
+    "email_send_performed": false,
+    "appeal_submission_performed": false,
+    "budget_mutation_performed": false,
+    "profile_mutation_performed": false,
+    "template_mutation_performed": false,
+    "carrier_guideline_mutation_performed": false,
+    "silent_learning_performed": false,
+    "generated_at": "2026-07-14T00:00:00Z"
+  },
+  "review_packet": {
+    "schema_version": "0.1",
+    "review_packet_id": "carrierrejreview_24100a723c985bace89f",
+    "reconciliation_report_id": "carrierrecon_ba7561522ed3b97f8f73",
+    "run_id": "le-carrier-rejection-run-epli-carrier-clean-appeal.v0_1",
+    "preflight_packet_id": "le-preflight-epli-carrier-clean.v0_1",
+    "budget_proposal_id": "le-budget-epli-carrier-clean.v0_1",
+    "status": "ready_for_human_review",
+    "expected_response_count": 2,
+    "reconciled_response_count": 2,
+    "missing_response_count": 0,
+    "unlinked_notice_count": 0,
+    "duplicate_notice_count": 0,
+    "parser_failure_count": 0,
+    "appeal_result_count": 1,
+    "remediation_case_count": 2,
+    "total_financial_exposure": 3900.0,
+    "dry_run_exception_candidate_count": 5,
+    "recommendations": [
+      {
+        "recommendation_id": "carrierrejrec_06741ff3fab5ceb64821",
+        "remediation_case_id": "carrierrejcase_3494be1fffae8d882c76",
+        "local_event_label": "carrier_staffing_or_leverage_rejection",
+        "recommended_action": "record_appeal_result",
+        "priority": "high",
+        "human_owner": "synthetic-carrier-billing-reviewer",
+        "followup_due_at": "2026-07-10T17:00:00Z",
+        "financial_exposure": 2100.0,
+        "source_ref_count": 1,
+        "source_channels": [
+          "portal_status"
+        ],
+        "why": [
+          "Deterministic reconciliation classified the case as `carrier_staffing_or_leverage_rejection` with status `appeal_result_captured`.",
+          "The case has 1 source ref(s) and current exposure 2100.00.",
+          "An appeal result was captured and must be reviewed as append-only outcome evidence."
+        ],
+        "required_human_decisions": [
+          "confirm_rejection_class",
+          "confirm_linked_submission",
+          "confirm_fix_or_appeal_path",
+          "confirm_financial_exposure"
+        ],
+        "learning_disposition_candidates": [
+          "guideline_profile_change_candidate",
+          "staffing_rule_candidate"
+        ],
+        "exception_candidate_ids": [
+          "exc_872909271d780e452304",
+          "exc_a6ef318254682726d780",
+          "exc_eae533c2a8f17accf65a"
+        ],
+        "not_authorized_for_external_submission": true,
+        "not_authorized_for_lake_write": true
+      },
+      {
+        "recommendation_id": "carrierrejrec_9a437930d04866fb2891",
+        "remediation_case_id": "carrierrejcase_ed9597c9c979f6c5b3e1",
+        "local_event_label": "carrier_preapproval_missing",
+        "recommended_action": "appeal_review_required",
+        "priority": "high",
+        "human_owner": "synthetic-carrier-billing-reviewer",
+        "followup_due_at": "2026-07-10T17:00:00Z",
+        "financial_exposure": 1800.0,
+        "source_ref_count": 1,
+        "source_channels": [
+          "email_notice"
+        ],
+        "why": [
+          "Deterministic reconciliation classified the case as `carrier_preapproval_missing` with status `captured_for_human_review`.",
+          "The case has 1 source ref(s) and current exposure 1800.00.",
+          "A human should decide whether to appeal, correct and resubmit, accept a write-down, or request more information."
+        ],
+        "required_human_decisions": [
+          "confirm_rejection_class",
+          "confirm_linked_submission",
+          "confirm_fix_or_appeal_path",
+          "confirm_financial_exposure"
+        ],
+        "learning_disposition_candidates": [
+          "validation_rule_candidate",
+          "preapproval_gate_candidate"
+        ],
+        "exception_candidate_ids": [
+          "exc_6cecaf624ddf4d418090",
+          "exc_d56dbf161a0146aa14e1"
+        ],
+        "not_authorized_for_external_submission": true,
+        "not_authorized_for_lake_write": true
+      }
+    ],
+    "red_team_notes": [
+      {
+        "note_id": "carrierrejrt_37d56026cb283faad0c1",
+        "severity": "critical",
+        "scope": "boundary",
+        "remediation_case_ids": [],
+        "message": "This review packet is not a Lake admission, budget approval, write-down, appeal submission, client notice, or carrier portal action.",
+        "recommended_check": "Confirm not_authorized_for_lake_write, not_authorized_for_external_submission, external_writes_performed=false, and silent_learning_performed=false."
+      },
+      {
+        "note_id": "carrierrejrt_d4a86b54754c7cbad55c",
+        "severity": "high",
+        "scope": "learning_loop",
+        "remediation_case_ids": [],
+        "message": "Reviewed outcomes may support candidate guideline or budget-driver changes, but no profile, rule, or template may mutate silently.",
+        "recommended_check": "Require before/after behavior, supporting rejection IDs, reviewer, and shadow eval before any promotion proposal."
+      }
+    ],
+    "decision_templates": [
+      {
+        "remediation_case_id": "carrierrejcase_3494be1fffae8d882c76",
+        "allowed_outcomes": [
+          "accept_write_down",
+          "appeal",
+          "confirm_classification",
+          "confirm_linkage",
+          "correct_classification",
+          "create_learning_candidate",
+          "fix_and_resubmit",
+          "human_only",
+          "needs_more_information",
+          "no_appeal",
+          "no_learning_change",
+          "record_appeal_result"
+        ],
+        "required_fields": [
+          "appeal_result_disposition",
+          "decision_reason",
+          "reviewed_at",
+          "reviewer_id",
+          "supporting_source_refs_or_structured_refs"
+        ],
+        "mutation_policy": "append_or_supersede_only",
+        "external_submission_authorized": false,
+        "silent_learning_allowed": false
+      },
+      {
+        "remediation_case_id": "carrierrejcase_ed9597c9c979f6c5b3e1",
+        "allowed_outcomes": [
+          "accept_write_down",
+          "appeal",
+          "confirm_classification",
+          "confirm_linkage",
+          "correct_classification",
+          "create_learning_candidate",
+          "fix_and_resubmit",
+          "human_only",
+          "needs_more_information",
+          "no_appeal",
+          "no_learning_change"
+        ],
+        "required_fields": [
+          "decision_reason",
+          "reviewed_at",
+          "reviewer_id",
+          "supporting_source_refs_or_structured_refs"
+        ],
+        "mutation_policy": "append_or_supersede_only",
+        "external_submission_authorized": false,
+        "silent_learning_allowed": false
+      }
+    ],
+    "dry_run_exception_candidate_ids": [
+      "exc_6cecaf624ddf4d418090",
+      "exc_872909271d780e452304",
+      "exc_a6ef318254682726d780",
+      "exc_d56dbf161a0146aa14e1",
+      "exc_eae533c2a8f17accf65a"
+    ],
+    "gap_report": [],
+    "allowed_reviewer_outcomes": [
+      "confirm_classification",
+      "correct_classification",
+      "confirm_linkage",
+      "correct_linkage",
+      "needs_more_information",
+      "appeal",
+      "no_appeal",
+      "accept_write_down",
+      "fix_and_resubmit",
+      "record_appeal_result",
+      "human_only",
+      "create_learning_candidate",
+      "no_learning_change"
+    ],
+    "required_review_sections": [
+      "reconciliation_summary",
+      "recommendations_with_why",
+      "red_team_notes",
+      "financial_exposure",
+      "decision_template",
+      "exception_lake_dry_run_refs",
+      "authority_boundaries"
+    ],
+    "human_readable_review_ref": "synthetic-rejection-appeal-workbench://review-notes",
+    "mutation_policy": "append_or_supersede_only",
+    "target_orchestrator_owner": "LawFirm-os-orchestrator",
+    "target_exception_lake_owner": "LawFirm-os-exceptions-lake-runtime",
+    "candidate_only": true,
+    "not_authorized_for_lake_write": true,
+    "not_authorized_for_external_submission": true,
+    "external_writes_performed": false,
+    "silent_learning_performed": false,
+    "generated_at": "2026-07-14T00:00:00Z"
+  },
+  "learning_report": {
+    "schema_version": "0.1",
+    "learning_report_id": "carrierrejlearning_2ad31cd76f0013d489f6",
+    "review_packet_id": "carrierrejreview_24100a723c985bace89f",
+    "reconciliation_report_id": "carrierrecon_ba7561522ed3b97f8f73",
+    "run_id": "le-carrier-rejection-run-epli-carrier-clean-appeal.v0_1",
+    "preflight_packet_id": "le-preflight-epli-carrier-clean.v0_1",
+    "budget_proposal_id": "le-budget-epli-carrier-clean.v0_1",
+    "status": "candidate_learning_ready_for_review",
+    "input_review_status": "ready_for_human_review",
+    "proposal_count": 5,
+    "proposals": [
+      {
+        "proposal_id": "carrierrejlearn_8b51cf808ec0011f0b10",
+        "proposal_type": "appeal_outcome_candidate",
+        "target_learning_loop": "appeal_success_or_failure",
+        "target_owner": "LawFirm-os-intake",
+        "source_review_packet_id": "carrierrejreview_24100a723c985bace89f",
+        "source_recommendation_ids": [
+          "carrierrejrec_06741ff3fab5ceb64821"
+        ],
+        "remediation_case_ids": [
+          "carrierrejcase_3494be1fffae8d882c76"
+        ],
+        "local_event_labels": [
+          "carrier_staffing_or_leverage_rejection"
+        ],
+        "source_structured_refs": [
+          "carrier-rejection-review-packet://carrierrejreview_24100a723c985bace89f",
+          "carrier-rejection-recommendation://carrierrejrec_06741ff3fab5ceb64821",
+          "carrier-rejection-case://carrierrejcase_3494be1fffae8d882c76",
+          "exception-lake-candidate://exc_872909271d780e452304",
+          "exception-lake-candidate://exc_a6ef318254682726d780",
+          "exception-lake-candidate://exc_eae533c2a8f17accf65a",
+          "docs/carrier-rejection-learning-loop-roadmap.md#learning-loops"
+        ],
+        "support_count": 1,
+        "before_behavior": "Appeal outcomes are captured but not yet summarized as reusable decision pressure.",
+        "proposed_candidate_behavior": "Propose an appeal outcome pattern candidate with recovered/write-down math and no automatic future appeal.",
+        "required_human_review_state": "reviewed_outcome_required",
+        "required_evaluation": [
+          "appeal result replay",
+          "synthetic fixture update",
+          "shadow eval before promotion",
+          "human-reviewed outcome evidence"
+        ],
+        "promotion_target_note": "LawFirm-os-intake may review this proposal; intake performs no direct promotion.",
+        "status": "blocked_until_reviewed_outcome",
+        "synthetic_fixture_update_required": true,
+        "shadow_eval_required": true,
+        "human_review_required": true,
+        "promotion_review_required": true,
+        "profile_mutation_performed": false,
+        "template_mutation_performed": false,
+        "connector_mutation_performed": false,
+        "silent_learning_performed": false
+      },
+      {
+        "proposal_id": "carrierrejlearn_ace26694b4b3c41b42c4",
+        "proposal_type": "guideline_profile_change_candidate",
+        "target_learning_loop": "guideline_drift",
+        "target_owner": "LawFirm-os-intake",
+        "source_review_packet_id": "carrierrejreview_24100a723c985bace89f",
+        "source_recommendation_ids": [
+          "carrierrejrec_06741ff3fab5ceb64821"
+        ],
+        "remediation_case_ids": [
+          "carrierrejcase_3494be1fffae8d882c76"
+        ],
+        "local_event_labels": [
+          "carrier_staffing_or_leverage_rejection"
+        ],
+        "source_structured_refs": [
+          "carrier-rejection-review-packet://carrierrejreview_24100a723c985bace89f",
+          "carrier-rejection-recommendation://carrierrejrec_06741ff3fab5ceb64821",
+          "carrier-rejection-case://carrierrejcase_3494be1fffae8d882c76",
+          "exception-lake-candidate://exc_872909271d780e452304",
+          "exception-lake-candidate://exc_a6ef318254682726d780",
+          "exception-lake-candidate://exc_eae533c2a8f17accf65a",
+          "docs/carrier-rejection-learning-loop-roadmap.md#learning-loops"
+        ],
+        "support_count": 1,
+        "before_behavior": "The current synthetic guideline profile may not explain the carrier rejection.",
+        "proposed_candidate_behavior": "Propose a reviewed candidate guideline-profile delta with before/after compliant projection behavior.",
+        "required_human_review_state": "reviewed_outcome_required",
+        "required_evaluation": [
+          "carrier guideline shadow projection",
+          "synthetic fixture update",
+          "shadow eval before promotion",
+          "human-reviewed outcome evidence"
+        ],
+        "promotion_target_note": "LawFirm-os-intake may review this proposal; intake performs no direct promotion.",
+        "status": "blocked_until_reviewed_outcome",
+        "synthetic_fixture_update_required": true,
+        "shadow_eval_required": true,
+        "human_review_required": true,
+        "promotion_review_required": true,
+        "profile_mutation_performed": false,
+        "template_mutation_performed": false,
+        "connector_mutation_performed": false,
+        "silent_learning_performed": false
+      },
+      {
+        "proposal_id": "carrierrejlearn_ea7b5425bd8faabbe9d1",
+        "proposal_type": "preapproval_gate_candidate",
+        "target_learning_loop": "preapproval_gate",
+        "target_owner": "LawFirm-os-orchestrator",
+        "source_review_packet_id": "carrierrejreview_24100a723c985bace89f",
+        "source_recommendation_ids": [
+          "carrierrejrec_9a437930d04866fb2891"
+        ],
+        "remediation_case_ids": [
+          "carrierrejcase_ed9597c9c979f6c5b3e1"
+        ],
+        "local_event_labels": [
+          "carrier_preapproval_missing"
+        ],
+        "source_structured_refs": [
+          "carrier-rejection-review-packet://carrierrejreview_24100a723c985bace89f",
+          "carrier-rejection-recommendation://carrierrejrec_9a437930d04866fb2891",
+          "carrier-rejection-case://carrierrejcase_ed9597c9c979f6c5b3e1",
+          "exception-lake-candidate://exc_6cecaf624ddf4d418090",
+          "exception-lake-candidate://exc_d56dbf161a0146aa14e1",
+          "docs/carrier-rejection-learning-loop-roadmap.md#learning-loops"
+        ],
+        "support_count": 1,
+        "before_behavior": "Preapproval pressure is detected after carrier rejection.",
+        "proposed_candidate_behavior": "Propose an earlier human preapproval gate before budget, vendor, expert, or deposition action.",
+        "required_human_review_state": "reviewed_outcome_required",
+        "required_evaluation": [
+          "preapproval threshold replay",
+          "synthetic fixture update",
+          "shadow eval before promotion",
+          "human-reviewed outcome evidence"
+        ],
+        "promotion_target_note": "LawFirm-os-orchestrator may review this proposal; intake performs no direct promotion.",
+        "status": "blocked_until_reviewed_outcome",
+        "synthetic_fixture_update_required": true,
+        "shadow_eval_required": true,
+        "human_review_required": true,
+        "promotion_review_required": true,
+        "profile_mutation_performed": false,
+        "template_mutation_performed": false,
+        "connector_mutation_performed": false,
+        "silent_learning_performed": false
+      },
+      {
+        "proposal_id": "carrierrejlearn_7edd16cffc4bd78d1a9f",
+        "proposal_type": "staffing_rule_candidate",
+        "target_learning_loop": "staffing_leverage",
+        "target_owner": "LawFirm-os-intake",
+        "source_review_packet_id": "carrierrejreview_24100a723c985bace89f",
+        "source_recommendation_ids": [
+          "carrierrejrec_06741ff3fab5ceb64821"
+        ],
+        "remediation_case_ids": [
+          "carrierrejcase_3494be1fffae8d882c76"
+        ],
+        "local_event_labels": [
+          "carrier_staffing_or_leverage_rejection"
+        ],
+        "source_structured_refs": [
+          "carrier-rejection-review-packet://carrierrejreview_24100a723c985bace89f",
+          "carrier-rejection-recommendation://carrierrejrec_06741ff3fab5ceb64821",
+          "carrier-rejection-case://carrierrejcase_3494be1fffae8d882c76",
+          "exception-lake-candidate://exc_872909271d780e452304",
+          "exception-lake-candidate://exc_a6ef318254682726d780",
+          "exception-lake-candidate://exc_eae533c2a8f17accf65a",
+          "docs/carrier-rejection-learning-loop-roadmap.md#learning-loops"
+        ],
+        "support_count": 1,
+        "before_behavior": "Staffing or leverage pressure is handled as a reviewer note.",
+        "proposed_candidate_behavior": "Propose a candidate staffing/leverage warning and blended-rate report expectation.",
+        "required_human_review_state": "reviewed_outcome_required",
+        "required_evaluation": [
+          "staffing counterfactual",
+          "synthetic fixture update",
+          "shadow eval before promotion",
+          "human-reviewed outcome evidence"
+        ],
+        "promotion_target_note": "LawFirm-os-intake may review this proposal; intake performs no direct promotion.",
+        "status": "blocked_until_reviewed_outcome",
+        "synthetic_fixture_update_required": true,
+        "shadow_eval_required": true,
+        "human_review_required": true,
+        "promotion_review_required": true,
+        "profile_mutation_performed": false,
+        "template_mutation_performed": false,
+        "connector_mutation_performed": false,
+        "silent_learning_performed": false
+      },
+      {
+        "proposal_id": "carrierrejlearn_ce5c25c84e6dbe978429",
+        "proposal_type": "validation_rule_candidate",
+        "target_learning_loop": "validation_rule",
+        "target_owner": "LawFirm-os-intake",
+        "source_review_packet_id": "carrierrejreview_24100a723c985bace89f",
+        "source_recommendation_ids": [
+          "carrierrejrec_9a437930d04866fb2891"
+        ],
+        "remediation_case_ids": [
+          "carrierrejcase_ed9597c9c979f6c5b3e1"
+        ],
+        "local_event_labels": [
+          "carrier_preapproval_missing"
+        ],
+        "source_structured_refs": [
+          "carrier-rejection-review-packet://carrierrejreview_24100a723c985bace89f",
+          "carrier-rejection-recommendation://carrierrejrec_9a437930d04866fb2891",
+          "carrier-rejection-case://carrierrejcase_ed9597c9c979f6c5b3e1",
+          "exception-lake-candidate://exc_6cecaf624ddf4d418090",
+          "exception-lake-candidate://exc_d56dbf161a0146aa14e1",
+          "docs/carrier-rejection-learning-loop-roadmap.md#learning-loops"
+        ],
+        "support_count": 1,
+        "before_behavior": "The current local validation layer did not surface this issue early enough.",
+        "proposed_candidate_behavior": "Propose a candidate validation warning or blocker with source-bound evidence requirements.",
+        "required_human_review_state": "reviewed_outcome_required",
+        "required_evaluation": [
+          "validation regression",
+          "synthetic fixture update",
+          "shadow eval before promotion",
+          "human-reviewed outcome evidence"
+        ],
+        "promotion_target_note": "LawFirm-os-intake may review this proposal; intake performs no direct promotion.",
+        "status": "blocked_until_reviewed_outcome",
+        "synthetic_fixture_update_required": true,
+        "shadow_eval_required": true,
+        "human_review_required": true,
+        "promotion_review_required": true,
+        "profile_mutation_performed": false,
+        "template_mutation_performed": false,
+        "connector_mutation_performed": false,
+        "silent_learning_performed": false
+      }
+    ],
+    "required_next_gates": [
+      "human_reviewed_rejection_outcome",
+      "append_only_outcome_record",
+      "synthetic_fixture_update",
+      "shadow_eval",
+      "lesson_disclosure_proof_before_cross_repo_review",
+      "chinese_wall_proof_before_lesson_firing",
+      "owning_repo_promotion_review_if_canon_changes"
+    ],
+    "target_owners": [
+      "LawFirm-os-intake",
+      "LawFirm-os-orchestrator"
+    ],
+    "reviewed_outcome_required": true,
+    "append_only_outcome_required": true,
+    "candidate_only": true,
+    "not_authorized_for_lake_write": true,
+    "not_authorized_for_external_submission": true,
+    "external_writes_performed": false,
+    "profile_mutation_performed": false,
+    "template_mutation_performed": false,
+    "connector_mutation_performed": false,
+    "silent_learning_performed": false,
+    "generated_at": "2026-07-14T00:00:00Z"
+  },
+  "cases": [
+    {
+      "remediation_case_id": "carrierrejcase_3494be1fffae8d882c76",
+      "local_event_label": "carrier_staffing_or_leverage_rejection",
+      "status": "appeal_result_captured",
+      "recommended_action": "record_appeal_result",
+      "priority": "high",
+      "disputed_amount": 2100.0,
+      "current_financial_exposure": 2100.0,
+      "notice_ids": [
+        "le-notice-epli-staffing-4001"
+      ],
+      "source_ref_count": 1,
+      "appeal_result_ids": [
+        "le-appeal-result-epli-staffing-4001"
+      ],
+      "appeal_results": [
+        "partially_accepted"
+      ],
+      "recovered_amount": 1800.0,
+      "write_down_amount": 2400.0,
+      "pending_human_decisions": [
+        "confirm_rejection_class",
+        "confirm_linked_submission",
+        "confirm_fix_or_appeal_path",
+        "confirm_financial_exposure"
+      ],
+      "learning_proposal_ids": [
+        "carrierrejlearn_8b51cf808ec0011f0b10",
+        "carrierrejlearn_ace26694b4b3c41b42c4",
+        "carrierrejlearn_7edd16cffc4bd78d1a9f"
+      ],
+      "candidate_exception_lake_ids": [
+        "exc_872909271d780e452304",
+        "exc_a6ef318254682726d780",
+        "exc_eae533c2a8f17accf65a"
+      ]
+    },
+    {
+      "remediation_case_id": "carrierrejcase_ed9597c9c979f6c5b3e1",
+      "local_event_label": "carrier_preapproval_missing",
+      "status": "captured_for_human_review",
+      "recommended_action": "appeal_review_required",
+      "priority": "high",
+      "disputed_amount": 1800.0,
+      "current_financial_exposure": 1800.0,
+      "notice_ids": [
+        "le-notice-epli-preapproval-4002"
+      ],
+      "source_ref_count": 1,
+      "appeal_result_ids": [],
+      "appeal_results": [],
+      "recovered_amount": 0.0,
+      "write_down_amount": 0.0,
+      "pending_human_decisions": [
+        "confirm_rejection_class",
+        "confirm_linked_submission",
+        "confirm_fix_or_appeal_path",
+        "confirm_financial_exposure"
+      ],
+      "learning_proposal_ids": [
+        "carrierrejlearn_ea7b5425bd8faabbe9d1",
+        "carrierrejlearn_ce5c25c84e6dbe978429"
+      ],
+      "candidate_exception_lake_ids": [
+        "exc_6cecaf624ddf4d418090",
+        "exc_d56dbf161a0146aa14e1"
+      ]
+    }
+  ],
+  "total_disputed_amount": 3900.0,
+  "total_recovered_amount": 900.0,
+  "total_write_down_amount": 1200.0,
+  "checks": [
+    {
+      "check_id": "source_hashes_present",
+      "status": "passed",
+      "message": "Pinned synthetic proposal and rejection bundle must exist.",
+      "evidence_refs": [
+        "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/legal_budget_proposal.json",
+        "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/carrier_rejection_capture_source_bundle_with_appeal_results.json"
+      ]
+    },
+    {
+      "check_id": "case_recommendation_join_complete",
+      "status": "passed",
+      "message": "Every captured case must have source-bound review evidence.",
+      "evidence_refs": []
+    },
+    {
+      "check_id": "appeal_financial_partition_reconciles",
+      "status": "passed",
+      "message": "Recovered and write-down amounts cannot exceed disputed amount.",
+      "evidence_refs": []
+    },
+    {
+      "check_id": "learning_remains_human_gated",
+      "status": "passed",
+      "message": "Learning proposals remain candidates pending human review and shadow evaluation.",
+      "evidence_refs": []
+    },
+    {
+      "check_id": "no_submission_or_lake_write",
+      "status": "passed",
+      "message": "The workbench cannot submit appeals or write to the Lake.",
+      "evidence_refs": []
+    }
+  ],
+  "failed_check_count": 0,
+  "workbook_filename": "synthetic_rejection_appeal_workbench.xlsx",
+  "markdown_filename": "synthetic_rejection_appeal_workbench.md",
+  "display_banner": {
+    "summary": "Synthetic rejection and appeal review evidence only. No appeal is submitted and no learning is applied.",
+    "candidate_only": true,
+    "synthetic_only": true,
+    "read_only_ui": true,
+    "blocked_actions": [
+      "appeal_submission",
+      "budget_mutation",
+      "exception_lake_write",
+      "sqlite_write",
+      "silent_learning"
+    ]
+  },
+  "candidate_exception_lake_labels": [
+    "carrier_rejection_review_candidate",
+    "carrier_appeal_result_review_candidate",
+    "carrier_rejection_learning_candidate"
+  ],
+  "required_next_gates": [
+    "human_rejection_decision_review",
+    "orchestrator_owned_appeal_submission_if_approved",
+    "exception_lake_admission_by_owner",
+    "reviewed_learning_gate_before_candidate_change"
+  ],
+  "data_origin": "synthetic",
+  "candidate_only": true,
+  "non_authoritative": true,
+  "synthetic_only": true,
+  "local_json_only": true,
+  "read_only_ui": true,
+  "external_writes_performed": false,
+  "lake_write_performed": false,
+  "sqlite_write_performed": false,
+  "budget_submission_authorized": false,
+  "matter_opening_authorized": false,
+  "appeal_submission_performed": false,
+  "silent_learning_performed": false,
+  "generated_at": "2026-07-14T00:00:00Z"
+}

@@ -183,6 +183,7 @@ from .synthetic_qa_review_run import run_synthetic_qa_review_run
 from .synthetic_actuals_workbench import run_synthetic_actuals_workbench
 from .synthetic_budget_input_workbench import run_synthetic_budget_input_workbench
 from .synthetic_guideline_projection_workbench import run_synthetic_guideline_projection_workbench
+from .synthetic_rejection_appeal_workbench import run_synthetic_rejection_appeal_workbench
 from .synthetic_rate_card_workbench import run_synthetic_rate_card_workbench
 from .ui_demo_fixture_promotion import promote_ui_demo_run_fixtures
 from .ui_demo_qa_recipe import run_ui_demo_qa_recipe
@@ -364,6 +365,14 @@ def _parser() -> argparse.ArgumentParser:
         "--generated-at",
         help="Optional fixed timestamp for deterministic tests and fixture replay.",
     )
+
+    rejection_appeal_workbench = sub.add_parser(
+        "build-synthetic-rejection-appeal-workbench",
+        help="Build a read-only synthetic rejection, appeal, and learning review workbench.",
+    )
+    rejection_appeal_workbench.add_argument("--out-dir", required=True)
+    rejection_appeal_workbench.add_argument("--repo-root", default=".")
+    rejection_appeal_workbench.add_argument("--generated-at")
 
     validate_budget_artifact = sub.add_parser(
         "validate-budget-artifact",
@@ -2805,6 +2814,29 @@ def main(argv: list[str] | None = None) -> int:
                 0
                 if report.status == "synthetic_guideline_projection_workbench_ready_for_review"
                 else 2
+            )
+
+        if args.command == "build-synthetic-rejection-appeal-workbench":
+            report, run_dir = run_synthetic_rejection_appeal_workbench(
+                repo_root=args.repo_root, out_dir=args.out_dir, generated_at=args.generated_at
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "case_count": len(report.cases),
+                    "total_disputed_amount": report.total_disputed_amount,
+                    "total_recovered_amount": report.total_recovered_amount,
+                    "total_write_down_amount": report.total_write_down_amount,
+                    "failed_check_count": report.failed_check_count,
+                    "external_writes_performed": report.external_writes_performed,
+                    "lake_write_performed": report.lake_write_performed,
+                    "appeal_submission_performed": report.appeal_submission_performed,
+                    "silent_learning_performed": report.silent_learning_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return (
+                0 if report.status == "synthetic_rejection_appeal_workbench_ready_for_review" else 2
             )
 
         if args.command == "validate-budget-artifact":
