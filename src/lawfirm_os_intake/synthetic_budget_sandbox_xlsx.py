@@ -424,13 +424,16 @@ def run_synthetic_budget_sandbox_xlsx_export(
     }
     run_dir = Path(out_dir)
     run_dir.mkdir(parents=True, exist_ok=True)
+    workbook_path = run_dir / SANDBOX_EXPORT_WORKBOOK_FILENAME
     write_json(run_dir / SANDBOX_EXPORT_REPORT_FILENAME, report)
     if not failed and isinstance(package, dict):
         _write_workbook(
-            run_dir / SANDBOX_EXPORT_WORKBOOK_FILENAME,
+            workbook_path,
             package=package,
             proposal=proposal,
             proposal_sha256=proposal_sha256,
             package_sha256=package_sha256,
         )
+    elif workbook_path.exists():
+        workbook_path.unlink()
     return report, run_dir

@@ -41,13 +41,17 @@ def load_jsonl(path: str | Path) -> list[Any]:
 def write_json(path: str | Path, value: Any) -> Path:
     target = Path(path)
     target.parent.mkdir(parents=True, exist_ok=True)
-    target.write_text(json.dumps(value, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    target.write_text(
+        json.dumps(value, indent=2, ensure_ascii=False) + "\n",
+        encoding="utf-8",
+        newline="\n",
+    )
     return target
 
 
 def append_jsonl(path: str | Path, value: Any) -> Path:
     target = Path(path)
     target.parent.mkdir(parents=True, exist_ok=True)
-    with target.open("a", encoding="utf-8") as handle:
+    with target.open("a", encoding="utf-8", newline="\n") as handle:
         handle.write(json.dumps(value, ensure_ascii=False, sort_keys=True) + "\n")
     return target

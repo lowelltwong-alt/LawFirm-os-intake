@@ -87,6 +87,30 @@ def test_sandbox_package_blocks_stale_lineage_without_workbook(tmp_path, repo_ro
     assert not (run_dir / SANDBOX_EXPORT_WORKBOOK_FILENAME).exists()
 
 
+def test_sandbox_removes_a_stale_workbook_when_a_repeat_validation_blocks(tmp_path, repo_root):
+    out_dir = tmp_path / "repeat"
+    ready, _ = run_synthetic_budget_sandbox_xlsx_export(
+        package_path=repo_root / PACKAGE_REF,
+        repo_root=repo_root,
+        out_dir=out_dir,
+        generated_at=FIXED_GENERATED_AT,
+    )
+    payload = deepcopy(_package(repo_root))
+    payload["source_budget_proposal_sha256"] = "sha256:stale"
+    package_path = tmp_path / "stale.json"
+    _write_package(package_path, payload)
+    blocked, run_dir = run_synthetic_budget_sandbox_xlsx_export(
+        package_path=package_path,
+        repo_root=repo_root,
+        out_dir=out_dir,
+        generated_at=FIXED_GENERATED_AT,
+    )
+
+    assert ready["status"] == "synthetic_budget_sandbox_xlsx_ready_for_review"
+    assert blocked["status"] == "blocked_by_synthetic_budget_sandbox_xlsx"
+    assert not (run_dir / SANDBOX_EXPORT_WORKBOOK_FILENAME).exists()
+
+
 def test_sandbox_package_blocks_hostile_structure_and_negative_amounts(tmp_path, repo_root):
     payload = deepcopy(_package(repo_root))
     payload["blocked_actions"] = [["budget_submission"]]
