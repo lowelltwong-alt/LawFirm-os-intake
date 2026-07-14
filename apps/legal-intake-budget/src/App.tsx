@@ -35,6 +35,7 @@ import demoValidationSuiteEvidence from "./fixtures/demo-validation-suite-eviden
 import demoSyntheticRateCardWorkbench from "./fixtures/demo-synthetic-rate-card-workbench-report.json";
 import demoSyntheticActualsWorkbench from "./fixtures/demo-synthetic-actuals-workbench-report.json";
 import demoSyntheticBudgetInputWorkbench from "./fixtures/demo-synthetic-budget-input-workbench-report.json";
+import demoSyntheticBudgetConfigurationWorkbench from "./fixtures/demo-synthetic-budget-configuration-workbench-report.json";
 import demoSyntheticGuidelineProjectionWorkbench from "./fixtures/demo-synthetic-guideline-projection-workbench-report.json";
 import demoSyntheticRejectionAppealWorkbench from "./fixtures/demo-synthetic-rejection-appeal-workbench-report.json";
 import {
@@ -69,6 +70,7 @@ import {
   assertSyntheticRateCardWorkbenchReport,
   assertSyntheticActualsWorkbenchReport,
   assertSyntheticBudgetInputWorkbenchReport,
+  assertSyntheticBudgetConfigurationWorkbenchReport,
   assertSyntheticGuidelineProjectionWorkbenchReport,
   assertSyntheticRejectionAppealWorkbenchReport,
   assertUIDemoQARecipeReport,
@@ -126,6 +128,7 @@ import type {
   SyntheticRateCardWorkbenchReport,
   SyntheticActualsWorkbenchReport,
   SyntheticBudgetInputWorkbenchReport,
+  SyntheticBudgetConfigurationWorkbenchReport,
   SyntheticGuidelineProjectionWorkbenchReport,
   SyntheticRejectionAppealWorkbenchReport,
   UIDemoQARecipeReport,
@@ -184,6 +187,8 @@ const syntheticActualsWorkbench =
   demoSyntheticActualsWorkbench as SyntheticActualsWorkbenchReport;
 const syntheticBudgetInputWorkbench =
   demoSyntheticBudgetInputWorkbench as SyntheticBudgetInputWorkbenchReport;
+const syntheticBudgetConfigurationWorkbench =
+  demoSyntheticBudgetConfigurationWorkbench as SyntheticBudgetConfigurationWorkbenchReport;
 const syntheticGuidelineProjectionWorkbench =
   demoSyntheticGuidelineProjectionWorkbench as SyntheticGuidelineProjectionWorkbenchReport;
 const syntheticRejectionAppealWorkbench =
@@ -253,6 +258,8 @@ const syntheticActualsWorkbenchFailures = assertSyntheticActualsWorkbenchReport(
 const syntheticBudgetInputWorkbenchFailures = assertSyntheticBudgetInputWorkbenchReport(
   syntheticBudgetInputWorkbench,
 );
+const syntheticBudgetConfigurationWorkbenchFailures =
+  assertSyntheticBudgetConfigurationWorkbenchReport(syntheticBudgetConfigurationWorkbench);
 const syntheticGuidelineProjectionWorkbenchFailures = assertSyntheticGuidelineProjectionWorkbenchReport(
   syntheticGuidelineProjectionWorkbench,
 );
@@ -292,6 +299,7 @@ const contractFailures = [
   ...syntheticRateCardWorkbenchFailures,
   ...syntheticActualsWorkbenchFailures,
   ...syntheticBudgetInputWorkbenchFailures,
+  ...syntheticBudgetConfigurationWorkbenchFailures,
   ...syntheticGuidelineProjectionWorkbenchFailures,
   ...syntheticRejectionAppealWorkbenchFailures,
 ];
@@ -823,6 +831,27 @@ function downloadSyntheticBudgetInputCsv(report: SyntheticBudgetInputWorkbenchRe
   URL.revokeObjectURL(objectUrl);
 }
 
+function downloadSyntheticBudgetConfigurationCsv(report: SyntheticBudgetConfigurationWorkbenchReport) {
+  const rows = [
+    ["Source", "Config Path", "Label", "Value", "Unit", "Math Effect"],
+    ...report.entries.map((entry) => [
+      entry.source_ref,
+      entry.config_path,
+      entry.label,
+      entry.value,
+      entry.unit,
+      entry.math_effect,
+    ]),
+  ];
+  const csv = rows.map((row) => row.map(csvCell).join(",")).join("\n");
+  const objectUrl = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+  const anchor = document.createElement("a");
+  anchor.href = objectUrl;
+  anchor.download = "synthetic-budget-configuration-values.csv";
+  anchor.click();
+  URL.revokeObjectURL(objectUrl);
+}
+
 function SyntheticGuidelineProjectionWorkbenchPanel({
   report,
 }: {
@@ -940,6 +969,67 @@ function SyntheticBudgetInputWorkbenchPanel({
         </article>)}
       </div>
       <div className="budget-input-footer"><span>Read-only local artifact. No edits, submission, calibration, or external writes.</span><TokenList items={report.display_banner.blocked_actions} limit={6} /></div>
+    </section>
+  );
+}
+
+function SyntheticBudgetConfigurationWorkbenchPanel({
+  report,
+}: {
+  report: SyntheticBudgetConfigurationWorkbenchReport;
+}) {
+  const [sourceFilter, setSourceFilter] = React.useState("all");
+  const visibleEntries = report.entries.filter(
+    (entry) => sourceFilter === "all" || entry.source_id === sourceFilter,
+  );
+  const failed = syntheticBudgetConfigurationWorkbenchFailures.length > 0;
+  const displayValue = (value: number, unit: string) =>
+    unit === "currency" || unit === "hourly_rate"
+      ? formatMoney(value)
+      : unit === "percent"
+        ? `${value}%`
+        : String(value);
+
+  return (
+    <section className="panel budget-input-workbench-panel" aria-labelledby="budget-configuration-workbench-title">
+      <div className="panel-heading">
+        <div>
+          <p className="eyebrow">Synthetic configuration inventory</p>
+          <h2 id="budget-configuration-workbench-title">Budget Configuration Workbench</h2>
+          <code>{report.synthetic_budget_configuration_workbench_report_id}</code>
+        </div>
+        <span className={failed ? "state state-failed" : "state state-passed"}>
+          {failed ? "contract failed" : "candidate only"}
+        </span>
+      </div>
+      <div className="budget-input-banner">
+        <strong>{report.display_banner.summary}</strong>
+        <span>{report.source_count} pinned source files</span>
+      </div>
+      <div className="budget-input-metrics" aria-label="Synthetic configuration metrics">
+        <article><span>Editable values</span><strong>{report.entry_count}</strong></article>
+        <article><span>Rate inputs</span><strong>{(report.entries_by_math_effect.proposal_rate_fallback ?? 0) + (report.entries_by_math_effect.guideline_projection_rate_cap ?? 0)}</strong></article>
+        <article><span>Template inputs</span><strong>{(report.entries_by_math_effect.proposal_template_hours ?? 0) + (report.entries_by_math_effect.proposal_template_expense ?? 0)}</strong></article>
+        <article><span>Thresholds</span><strong>{(report.entries_by_math_effect.guideline_preapproval_threshold ?? 0) + (report.entries_by_math_effect.guideline_variance_threshold ?? 0)}</strong></article>
+      </div>
+      <div className="rate-card-controls" aria-label="Configuration source filter">
+        <label>
+          Source
+          <select value={sourceFilter} onChange={(event) => setSourceFilter(event.target.value)}>
+            <option value="all">All editable sources</option>
+            {report.sources.map((source) => <option key={source.source_id} value={source.source_id}>{source.source_id.replaceAll("_", " ")}</option>)}
+          </select>
+        </label>
+        <button type="button" onClick={() => downloadSyntheticBudgetConfigurationCsv(report)}>Download CSV</button>
+        <span className="rate-card-export-note">XLSX: {report.workbook_filename}</span>
+      </div>
+      <div className="table-wrap budget-input-table-wrap"><table><thead><tr><th>Source</th><th>Config Path</th><th>Value</th><th>Unit</th><th>Math Effect</th></tr></thead><tbody>
+        {visibleEntries.map((entry) => <tr key={entry.entry_id}><td><strong>{entry.source_id.replaceAll("_", " ")}</strong><br/><span>{entry.label}</span></td><td><code>{entry.config_path}</code></td><td>{displayValue(entry.value, entry.unit)}</td><td>{entry.unit.replaceAll("_", " ")}</td><td>{entry.math_effect.replaceAll("_", " ")}</td></tr>)}
+      </tbody></table></div>
+      <div className="budget-input-context"><div><strong>Source Hashes And Checks</strong><span>Copy reviewed values into the declared YAML/JSON source, then regenerate through the CLI.</span></div>
+        {report.sources.map((source) => <article key={source.source_id}><strong>{source.source_id.replaceAll("_", " ")}</strong><code>{source.source_sha256}</code></article>)}
+      </div>
+      <div className="budget-input-footer"><span>Read-only local evidence. Spreadsheet edits are never imported or priced in the browser.</span><TokenList items={report.display_banner.blocked_actions} limit={6} /></div>
     </section>
   );
 }
@@ -4192,6 +4282,7 @@ function App() {
       />
       <SyntheticRateCardWorkbenchPanel report={syntheticRateCardWorkbench} />
       <SyntheticBudgetInputWorkbenchPanel report={syntheticBudgetInputWorkbench} />
+      <SyntheticBudgetConfigurationWorkbenchPanel report={syntheticBudgetConfigurationWorkbench} />
       <SyntheticGuidelineProjectionWorkbenchPanel report={syntheticGuidelineProjectionWorkbench} />
       <SyntheticRejectionAppealWorkbenchPanel report={syntheticRejectionAppealWorkbench} />
       <SyntheticActualsWorkbenchPanel report={syntheticActualsWorkbench} />

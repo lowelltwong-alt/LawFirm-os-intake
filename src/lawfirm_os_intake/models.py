@@ -20128,4 +20128,106 @@ class SyntheticRejectionAppealWorkbenchReport(StrictModel):
         return self
 
 
+class SyntheticBudgetConfigurationSource(StrictModel):
+    source_id: str
+    source_ref: str
+    source_sha256: str
+    source_kind: Literal["practice_profile", "rate_card", "guideline", "nonlinear_template"]
+    editable: Literal[True] = True
+    data_origin: Literal["synthetic"] = "synthetic"
+
+
+class SyntheticBudgetConfigurationEntry(StrictModel):
+    entry_id: str
+    source_id: str
+    source_ref: str
+    config_path: str
+    label: str
+    value: float = Field(ge=0)
+    unit: Literal["hourly_rate", "hours", "currency", "percent", "count"]
+    math_effect: Literal[
+        "proposal_rate_fallback",
+        "proposal_template_hours",
+        "proposal_template_expense",
+        "proposal_contingency",
+        "guideline_projection_rate_cap",
+        "guideline_projection_expense_cap",
+        "guideline_preapproval_threshold",
+        "guideline_variance_threshold",
+        "named_timekeeper_override",
+    ]
+    candidate_only: Literal[True] = True
+    synthetic_only: Literal[True] = True
+
+
+class SyntheticBudgetConfigurationWorkbenchCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    evidence_refs: list[str] = Field(default_factory=list)
+
+
+class SyntheticBudgetConfigurationWorkbenchReport(StrictModel):
+    schema_version: str = "0.1"
+    synthetic_budget_configuration_workbench_report_id: str
+    status: Literal[
+        "synthetic_budget_configuration_workbench_ready_for_review",
+        "blocked_by_synthetic_budget_configuration_workbench",
+    ]
+    methodology_version: Literal["synthetic_budget_configuration_workbench.v0_1"] = (
+        "synthetic_budget_configuration_workbench.v0_1"
+    )
+    sources: list[SyntheticBudgetConfigurationSource]
+    entries: list[SyntheticBudgetConfigurationEntry]
+    source_count: int = Field(ge=0)
+    entry_count: int = Field(ge=0)
+    entries_by_math_effect: dict[str, int]
+    checks: list[SyntheticBudgetConfigurationWorkbenchCheck]
+    failed_check_count: int = Field(ge=0)
+    workbook_filename: str
+    markdown_filename: str
+    display_banner: dict[str, Any]
+    required_next_gates: list[str]
+    data_origin: Literal["synthetic"] = "synthetic"
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    local_json_only: Literal[True] = True
+    read_only_ui: Literal[True] = True
+    real_rate_import_allowed: Literal[False] = False
+    configuration_import_performed: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def synthetic_budget_configuration_workbench_is_coherent(
+        self,
+    ) -> "SyntheticBudgetConfigurationWorkbenchReport":
+        failed = [check for check in self.checks if check.status == "failed"]
+        if self.source_count != len(self.sources) or self.entry_count != len(self.entries):
+            raise ValueError("synthetic budget configuration workbench count mismatch")
+        if self.failed_check_count != len(failed):
+            raise ValueError("synthetic budget configuration workbench failed check count mismatch")
+        if self.status.endswith("ready_for_review") and failed:
+            raise ValueError(
+                "ready synthetic budget configuration workbench cannot include failed checks"
+            )
+        if self.status.startswith("blocked") and not failed:
+            raise ValueError(
+                "blocked synthetic budget configuration workbench requires failed checks"
+            )
+        if any(not source.source_sha256.startswith("sha256:") for source in self.sources):
+            raise ValueError("synthetic budget configuration workbench requires source hashes")
+        if len({entry.entry_id for entry in self.entries}) != len(self.entries):
+            raise ValueError("synthetic budget configuration entry IDs must be unique")
+        if sum(self.entries_by_math_effect.values()) != self.entry_count:
+            raise ValueError("synthetic budget configuration effect counts must reconcile")
+        return self
+
+
 UIReviewDataBundle.model_rebuild()

@@ -1,0 +1,47 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "source_id": {
+      "title": "Source Id",
+      "type": "string"
+    },
+    "source_ref": {
+      "title": "Source Ref",
+      "type": "string"
+    },
+    "source_sha256": {
+      "title": "Source Sha256",
+      "type": "string"
+    },
+    "source_kind": {
+      "enum": [
+        "practice_profile",
+        "rate_card",
+        "guideline",
+        "nonlinear_template"
+      ],
+      "title": "Source Kind",
+      "type": "string"
+    },
+    "editable": {
+      "const": true,
+      "default": true,
+      "title": "Editable",
+      "type": "boolean"
+    },
+    "data_origin": {
+      "const": "synthetic",
+      "default": "synthetic",
+      "title": "Data Origin",
+      "type": "string"
+    }
+  },
+  "required": [
+    "source_id",
+    "source_ref",
+    "source_sha256",
+    "source_kind"
+  ],
+  "title": "SyntheticBudgetConfigurationSource",
+  "type": "object"
+}

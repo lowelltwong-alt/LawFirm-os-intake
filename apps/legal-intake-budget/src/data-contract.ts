@@ -37,6 +37,7 @@ import type {
   SyntheticRateCardWorkbenchReport,
   SyntheticActualsWorkbenchReport,
   SyntheticBudgetInputWorkbenchReport,
+  SyntheticBudgetConfigurationWorkbenchReport,
   SyntheticGuidelineProjectionWorkbenchReport,
   SyntheticRejectionAppealWorkbenchReport,
 } from "./types";
@@ -451,6 +452,40 @@ export function assertSyntheticGuidelineProjectionWorkbenchReport(
   }
   if (report.status === "synthetic_guideline_projection_workbench_ready_for_review" && report.failed_check_count !== 0) {
     failures.push("synthetic_guideline_projection_ready_with_failed_checks");
+  }
+  return failures;
+}
+
+export function assertSyntheticBudgetConfigurationWorkbenchReport(
+  report: SyntheticBudgetConfigurationWorkbenchReport,
+): string[] {
+  const failures: string[] = [];
+  if (
+    report.data_origin !== "synthetic" || !report.candidate_only || !report.synthetic_only ||
+    !report.non_authoritative || !report.local_json_only || !report.read_only_ui
+  ) failures.push("synthetic_budget_configuration_authority_boundary_failed");
+  if (
+    report.real_rate_import_allowed || report.configuration_import_performed ||
+    report.external_writes_performed || report.lake_write_performed || report.sqlite_write_performed ||
+    report.budget_submission_authorized || report.matter_opening_authorized || report.silent_learning_performed
+  ) failures.push("synthetic_budget_configuration_side_effect_boundary_failed");
+  if (report.source_count !== report.sources.length || report.entry_count !== report.entries.length) {
+    failures.push("synthetic_budget_configuration_count_mismatch");
+  }
+  if (report.sources.some((source) => !source.source_sha256.startsWith("sha256:") || !source.editable)) {
+    failures.push("synthetic_budget_configuration_source_provenance_missing");
+  }
+  if (report.entries.some((entry) => !entry.config_path || entry.value < 0 || !entry.math_effect)) {
+    failures.push("synthetic_budget_configuration_entry_invalid");
+  }
+  if (Object.values(report.entries_by_math_effect).reduce((sum, value) => sum + value, 0) !== report.entry_count) {
+    failures.push("synthetic_budget_configuration_effect_counts_mismatch");
+  }
+  if (report.failed_check_count !== report.checks.filter((check) => check.status === "failed").length) {
+    failures.push("synthetic_budget_configuration_failed_check_count_mismatch");
+  }
+  if (report.status === "synthetic_budget_configuration_workbench_ready_for_review" && report.failed_check_count !== 0) {
+    failures.push("synthetic_budget_configuration_ready_with_failed_checks");
   }
   return failures;
 }
