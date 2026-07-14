@@ -182,6 +182,7 @@ from .synthetic_qa_review_outcomes import run_synthetic_qa_review_outcome_record
 from .synthetic_qa_review_run import run_synthetic_qa_review_run
 from .synthetic_actuals_workbench import run_synthetic_actuals_workbench
 from .synthetic_budget_input_workbench import run_synthetic_budget_input_workbench
+from .synthetic_budget_sandbox_xlsx import run_synthetic_budget_sandbox_xlsx_export
 from .synthetic_budget_configuration_workbench import (
     run_synthetic_budget_configuration_workbench,
 )
@@ -356,6 +357,18 @@ def _parser() -> argparse.ArgumentParser:
         "--generated-at",
         help="Optional fixed timestamp for deterministic tests and fixture replay.",
     )
+
+    synthetic_budget_sandbox_xlsx = sub.add_parser(
+        "render-synthetic-budget-sandbox-xlsx",
+        help=(
+            "Validate a synthetic browser candidate package against the pinned proposal and render a local macro-free XLSX. "
+            "It never writes source configuration or submits a budget."
+        ),
+    )
+    synthetic_budget_sandbox_xlsx.add_argument("--package", required=True)
+    synthetic_budget_sandbox_xlsx.add_argument("--out-dir", required=True)
+    synthetic_budget_sandbox_xlsx.add_argument("--repo-root", default=".")
+    synthetic_budget_sandbox_xlsx.add_argument("--generated-at")
 
     synthetic_budget_configuration_workbench = sub.add_parser(
         "build-synthetic-budget-configuration-workbench",
@@ -2819,6 +2832,33 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             return 0 if report.status == "synthetic_budget_input_workbench_ready_for_review" else 2
+
+        if args.command == "render-synthetic-budget-sandbox-xlsx":
+            report, run_dir = run_synthetic_budget_sandbox_xlsx_export(
+                package_path=args.package,
+                repo_root=args.repo_root,
+                out_dir=args.out_dir,
+                generated_at=args.generated_at,
+            )
+            _print(
+                {
+                    "status": report["status"],
+                    "synthetic_budget_sandbox_xlsx_export_id": report[
+                        "synthetic_budget_sandbox_xlsx_export_id"
+                    ],
+                    "failed_check_count": report["failed_check_count"],
+                    "workbook_written": report["status"]
+                    == "synthetic_budget_sandbox_xlsx_ready_for_review",
+                    "source_mutation_performed": report["source_mutation_performed"],
+                    "external_writes_performed": report["external_writes_performed"],
+                    "lake_write_performed": report["lake_write_performed"],
+                    "sqlite_write_performed": report["sqlite_write_performed"],
+                    "budget_submission_authorized": report["budget_submission_authorized"],
+                    "matter_opening_authorized": report["matter_opening_authorized"],
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0 if report["status"] == "synthetic_budget_sandbox_xlsx_ready_for_review" else 2
 
         if args.command == "build-synthetic-budget-configuration-workbench":
             report, run_dir = run_synthetic_budget_configuration_workbench(
