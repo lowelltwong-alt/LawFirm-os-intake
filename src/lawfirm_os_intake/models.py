@@ -20315,4 +20315,57 @@ class SyntheticBudgetConfigurationChangePackage(StrictModel):
         return self
 
 
+class SyntheticConfigurationRegenerationCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    evidence_refs: list[str] = Field(default_factory=list)
+
+
+class SyntheticConfigurationRegenerationBindingReport(StrictModel):
+    schema_version: str = "0.1"
+    regeneration_binding_report_id: str
+    status: Literal["ready_for_review", "blocked"]
+    change_package_id: str
+    baseline_projection_report_id: str
+    candidate_projection_report_id: str
+    baseline_budget_proposal_sha256: str
+    candidate_budget_proposal_sha256: str
+    changed_source_ids: list[str]
+    candidate_projection_source_hashes: dict[str, str]
+    checks: list[SyntheticConfigurationRegenerationCheck]
+    failed_check_count: int = Field(ge=0)
+    required_next_gates: list[str]
+    candidate_only: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    local_json_only: Literal[True] = True
+    budget_recalculated: Literal[False] = False
+    external_writes_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def regeneration_binding_is_coherent(self) -> "SyntheticConfigurationRegenerationBindingReport":
+        failed = [check for check in self.checks if check.status == "failed"]
+        if self.failed_check_count != len(failed):
+            raise ValueError("regeneration binding failed check count mismatch")
+        if self.status == "ready_for_review" and failed:
+            raise ValueError("ready regeneration binding cannot include failed checks")
+        if self.status == "blocked" and not failed:
+            raise ValueError("blocked regeneration binding requires failed checks")
+        if self.changed_source_ids != sorted(set(self.changed_source_ids)):
+            raise ValueError("regeneration binding changed sources must be sorted and unique")
+        if any(
+            not value.startswith("sha256:")
+            for value in self.candidate_projection_source_hashes.values()
+        ):
+            raise ValueError("regeneration binding projection source hashes required")
+        return self
+
+
 UIReviewDataBundle.model_rebuild()
