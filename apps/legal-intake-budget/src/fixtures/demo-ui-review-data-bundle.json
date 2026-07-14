@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "ui_review_data_bundle_id": "ui_review_data_bundle_3312b8eca128",
+  "ui_review_data_bundle_id": "ui_review_data_bundle_14e9aa48bc7d",
   "status": "ready_for_review",
   "run_root_ref": "<demo-run-root>",
   "detail_report_count": 27,
@@ -127,7 +127,7 @@
       "status": "passed",
       "renderer": "RustFixtureManifestPanel",
       "artifact_ref": "apps/legal-intake-budget/src/fixtures/demo-rust-fixture-manifest-report.json",
-      "source_sha256": "sha256:05257c714050c6d7d44f696ed27ab31ccd66cf8fcfb9fde97d754a1abd81553b",
+      "source_sha256": "sha256:3333c7d13d0c595aa8da3ef6ae7eb4440e5a91cdad7fe8924bf6b30a8416571d",
       "candidate_only": true,
       "synthetic_only": true,
       "external_writes_performed": false,

@@ -1,0 +1,1091 @@
+{
+  "$defs": {
+    "CarrierCompliantLeverageSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "role": {
+          "title": "Role",
+          "type": "string"
+        },
+        "proposed_hours": {
+          "minimum": 0,
+          "title": "Proposed Hours",
+          "type": "number"
+        },
+        "compliant_hours": {
+          "minimum": 0,
+          "title": "Compliant Hours",
+          "type": "number"
+        },
+        "proposed_fees": {
+          "minimum": 0,
+          "title": "Proposed Fees",
+          "type": "number"
+        },
+        "compliant_fees": {
+          "minimum": 0,
+          "title": "Compliant Fees",
+          "type": "number"
+        },
+        "proposed_hours_percent": {
+          "minimum": 0,
+          "title": "Proposed Hours Percent",
+          "type": "number"
+        },
+        "compliant_hours_percent": {
+          "minimum": 0,
+          "title": "Compliant Hours Percent",
+          "type": "number"
+        },
+        "proposed_fee_percent": {
+          "minimum": 0,
+          "title": "Proposed Fee Percent",
+          "type": "number"
+        },
+        "compliant_fee_percent": {
+          "minimum": 0,
+          "title": "Compliant Fee Percent",
+          "type": "number"
+        }
+      },
+      "required": [
+        "role",
+        "proposed_hours",
+        "compliant_hours",
+        "proposed_fees",
+        "compliant_fees",
+        "proposed_hours_percent",
+        "compliant_hours_percent",
+        "proposed_fee_percent",
+        "compliant_fee_percent"
+      ],
+      "title": "CarrierCompliantLeverageSummary",
+      "type": "object"
+    },
+    "CarrierCompliantProjection": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "default": "0.1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "projection_id": {
+          "title": "Projection Id",
+          "type": "string"
+        },
+        "status": {
+          "const": "projected_for_human_review",
+          "title": "Status",
+          "type": "string"
+        },
+        "basis": {
+          "$ref": "#/$defs/CarrierCompliantProjectionBasis"
+        },
+        "proposed_total": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Proposed Total"
+        },
+        "compliant_total": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Compliant Total"
+        },
+        "proposed_subtotal_fees": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Proposed Subtotal Fees"
+        },
+        "compliant_subtotal_fees": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Compliant Subtotal Fees"
+        },
+        "proposed_subtotal_expenses": {
+          "minimum": 0,
+          "title": "Proposed Subtotal Expenses",
+          "type": "number"
+        },
+        "compliant_subtotal_expenses": {
+          "minimum": 0,
+          "title": "Compliant Subtotal Expenses",
+          "type": "number"
+        },
+        "proposed_contingency_amount": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Proposed Contingency Amount"
+        },
+        "compliant_contingency_amount": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Compliant Contingency Amount"
+        },
+        "projection_pricing_status": {
+          "default": "priced",
+          "enum": [
+            "priced",
+            "hours_only_partial"
+          ],
+          "title": "Projection Pricing Status",
+          "type": "string"
+        },
+        "total_delta": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Total Delta",
+          "type": "number"
+        },
+        "over_cap_amount": {
+          "minimum": 0,
+          "title": "Over Cap Amount",
+          "type": "number"
+        },
+        "disallowed_amount": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Disallowed Amount",
+          "type": "number"
+        },
+        "rate_cap_delta": {
+          "minimum": 0,
+          "title": "Rate Cap Delta",
+          "type": "number"
+        },
+        "expense_cap_delta": {
+          "minimum": 0,
+          "title": "Expense Cap Delta",
+          "type": "number"
+        },
+        "disallowed_delta": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Disallowed Delta",
+          "type": "number"
+        },
+        "staffing_rule_delta": {
+          "minimum": 0,
+          "title": "Staffing Rule Delta",
+          "type": "number"
+        },
+        "contingency_delta": {
+          "minimum": 0,
+          "title": "Contingency Delta",
+          "type": "number"
+        },
+        "total_delta_signed": {
+          "default": 0,
+          "title": "Total Delta Signed",
+          "type": "number"
+        },
+        "rate_cap_delta_signed": {
+          "default": 0,
+          "title": "Rate Cap Delta Signed",
+          "type": "number"
+        },
+        "expense_cap_delta_signed": {
+          "default": 0,
+          "title": "Expense Cap Delta Signed",
+          "type": "number"
+        },
+        "disallowed_delta_signed": {
+          "default": 0,
+          "title": "Disallowed Delta Signed",
+          "type": "number"
+        },
+        "staffing_rule_delta_signed": {
+          "default": 0,
+          "title": "Staffing Rule Delta Signed",
+          "type": "number"
+        },
+        "contingency_delta_signed": {
+          "default": 0,
+          "title": "Contingency Delta Signed",
+          "type": "number"
+        },
+        "compliant_increase_amount": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Compliant Increase Amount",
+          "type": "number"
+        },
+        "proposed_blended_rate": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Proposed Blended Rate"
+        },
+        "compliant_blended_rate": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Compliant Blended Rate"
+        },
+        "blended_rate_delta": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Blended Rate Delta",
+          "type": "number"
+        },
+        "blended_rate_delta_signed": {
+          "default": 0,
+          "title": "Blended Rate Delta Signed",
+          "type": "number"
+        },
+        "line_count": {
+          "minimum": 0,
+          "title": "Line Count",
+          "type": "integer"
+        },
+        "capped_line_count": {
+          "minimum": 0,
+          "title": "Capped Line Count",
+          "type": "integer"
+        },
+        "disallowed_line_count": {
+          "minimum": 0,
+          "title": "Disallowed Line Count",
+          "type": "integer"
+        },
+        "staffing_rule_adjusted_line_count": {
+          "minimum": 0,
+          "title": "Staffing Rule Adjusted Line Count",
+          "type": "integer"
+        },
+        "review_required_line_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Review Required Line Count",
+          "type": "integer"
+        },
+        "review_issue_codes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Review Issue Codes",
+          "type": "array"
+        },
+        "leverage_summary": {
+          "items": {
+            "$ref": "#/$defs/CarrierCompliantLeverageSummary"
+          },
+          "title": "Leverage Summary",
+          "type": "array"
+        },
+        "lines": {
+          "items": {
+            "$ref": "#/$defs/CarrierCompliantProjectionLine"
+          },
+          "title": "Lines",
+          "type": "array"
+        },
+        "rewrites_budget": {
+          "const": false,
+          "default": false,
+          "title": "Rewrites Budget",
+          "type": "boolean"
+        },
+        "not_authorized_for_client_submission": {
+          "const": true,
+          "default": true,
+          "title": "Not Authorized For Client Submission",
+          "type": "boolean"
+        },
+        "external_writes_performed": {
+          "const": false,
+          "default": false,
+          "title": "External Writes Performed",
+          "type": "boolean"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "projection_id",
+        "status",
+        "basis",
+        "proposed_subtotal_expenses",
+        "compliant_subtotal_expenses",
+        "over_cap_amount",
+        "rate_cap_delta",
+        "expense_cap_delta",
+        "staffing_rule_delta",
+        "contingency_delta",
+        "line_count",
+        "capped_line_count",
+        "disallowed_line_count",
+        "staffing_rule_adjusted_line_count",
+        "lines"
+      ],
+      "title": "CarrierCompliantProjection",
+      "type": "object"
+    },
+    "CarrierCompliantProjectionBasis": {
+      "additionalProperties": false,
+      "properties": {
+        "guideline_id": {
+          "title": "Guideline Id",
+          "type": "string"
+        },
+        "guideline_ref": {
+          "title": "Guideline Ref",
+          "type": "string"
+        },
+        "carrier_id": {
+          "title": "Carrier Id",
+          "type": "string"
+        },
+        "guideline_status": {
+          "const": "candidate",
+          "title": "Guideline Status",
+          "type": "string"
+        },
+        "data_scope": {
+          "const": "synthetic_only",
+          "default": "synthetic_only",
+          "title": "Data Scope",
+          "type": "string"
+        },
+        "rate_caps": {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "title": "Rate Caps",
+          "type": "object"
+        },
+        "expense_caps": {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "title": "Expense Caps",
+          "type": "object"
+        },
+        "staffing_task_role_overrides": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Staffing Task Role Overrides",
+          "type": "object"
+        },
+        "contingency_allowed": {
+          "title": "Contingency Allowed",
+          "type": "boolean"
+        },
+        "budget_cadence": {
+          "title": "Budget Cadence",
+          "type": "string"
+        },
+        "variance_approval_percent": {
+          "minimum": 0,
+          "title": "Variance Approval Percent",
+          "type": "number"
+        },
+        "projection_only": {
+          "const": true,
+          "default": true,
+          "title": "Projection Only",
+          "type": "boolean"
+        },
+        "proposal_lines_unchanged": {
+          "const": true,
+          "default": true,
+          "title": "Proposal Lines Unchanged",
+          "type": "boolean"
+        },
+        "no_submission_authority": {
+          "const": true,
+          "default": true,
+          "title": "No Submission Authority",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "guideline_id",
+        "guideline_ref",
+        "carrier_id",
+        "guideline_status",
+        "contingency_allowed",
+        "budget_cadence",
+        "variance_approval_percent"
+      ],
+      "title": "CarrierCompliantProjectionBasis",
+      "type": "object"
+    },
+    "CarrierCompliantProjectionLine": {
+      "additionalProperties": false,
+      "properties": {
+        "phase_id": {
+          "title": "Phase Id",
+          "type": "string"
+        },
+        "task_id": {
+          "title": "Task Id",
+          "type": "string"
+        },
+        "external_code_candidate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Code Candidate"
+        },
+        "expense_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expense Code"
+        },
+        "staffing_role": {
+          "title": "Staffing Role",
+          "type": "string"
+        },
+        "compliant_staffing_role": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Compliant Staffing Role"
+        },
+        "proposed_hours": {
+          "minimum": 0,
+          "title": "Proposed Hours",
+          "type": "number"
+        },
+        "proposed_rate": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Proposed Rate"
+        },
+        "staffing_rule_rate": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Staffing Rule Rate"
+        },
+        "compliant_rate": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Compliant Rate"
+        },
+        "proposed_fees": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Proposed Fees"
+        },
+        "compliant_fees": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Compliant Fees"
+        },
+        "proposed_expenses": {
+          "minimum": 0,
+          "title": "Proposed Expenses",
+          "type": "number"
+        },
+        "compliant_expenses": {
+          "minimum": 0,
+          "title": "Compliant Expenses",
+          "type": "number"
+        },
+        "proposed_line_total": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Proposed Line Total"
+        },
+        "compliant_line_total": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Compliant Line Total"
+        },
+        "capped": {
+          "default": false,
+          "title": "Capped",
+          "type": "boolean"
+        },
+        "disallowed": {
+          "default": false,
+          "title": "Disallowed",
+          "type": "boolean"
+        },
+        "rate_cap_applied": {
+          "default": false,
+          "title": "Rate Cap Applied",
+          "type": "boolean"
+        },
+        "expense_cap_applied": {
+          "default": false,
+          "title": "Expense Cap Applied",
+          "type": "boolean"
+        },
+        "staffing_rule_applied": {
+          "default": false,
+          "title": "Staffing Rule Applied",
+          "type": "boolean"
+        },
+        "rate_unknown_for_reshaped_role": {
+          "default": false,
+          "title": "Rate Unknown For Reshaped Role",
+          "type": "boolean"
+        },
+        "over_cap_amount": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Over Cap Amount",
+          "type": "number"
+        },
+        "rate_cap_delta": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Rate Cap Delta",
+          "type": "number"
+        },
+        "expense_cap_delta": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Expense Cap Delta",
+          "type": "number"
+        },
+        "disallowed_delta": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Disallowed Delta",
+          "type": "number"
+        },
+        "staffing_rule_delta": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Staffing Rule Delta",
+          "type": "number"
+        },
+        "line_delta_signed": {
+          "default": 0,
+          "title": "Line Delta Signed",
+          "type": "number"
+        },
+        "rate_cap_delta_signed": {
+          "default": 0,
+          "title": "Rate Cap Delta Signed",
+          "type": "number"
+        },
+        "expense_cap_delta_signed": {
+          "default": 0,
+          "title": "Expense Cap Delta Signed",
+          "type": "number"
+        },
+        "disallowed_delta_signed": {
+          "default": 0,
+          "title": "Disallowed Delta Signed",
+          "type": "number"
+        },
+        "staffing_rule_delta_signed": {
+          "default": 0,
+          "title": "Staffing Rule Delta Signed",
+          "type": "number"
+        },
+        "compliant_increase_amount": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Compliant Increase Amount",
+          "type": "number"
+        },
+        "requires_human_review": {
+          "default": false,
+          "title": "Requires Human Review",
+          "type": "boolean"
+        },
+        "review_issue_codes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Review Issue Codes",
+          "type": "array"
+        },
+        "delta_breakdown": {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "title": "Delta Breakdown",
+          "type": "object"
+        },
+        "guideline_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Guideline Refs",
+          "type": "array"
+        },
+        "note": {
+          "title": "Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "phase_id",
+        "task_id",
+        "staffing_role",
+        "proposed_hours",
+        "proposed_expenses",
+        "compliant_expenses",
+        "note"
+      ],
+      "title": "CarrierCompliantProjectionLine",
+      "type": "object"
+    },
+    "CarrierPreapprovalReport": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "default": "0.1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "report_id": {
+          "title": "Report Id",
+          "type": "string"
+        },
+        "budget_proposal_id": {
+          "title": "Budget Proposal Id",
+          "type": "string"
+        },
+        "guideline_id": {
+          "title": "Guideline Id",
+          "type": "string"
+        },
+        "guideline_ref": {
+          "title": "Guideline Ref",
+          "type": "string"
+        },
+        "carrier_id": {
+          "title": "Carrier Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "preapproval_required",
+            "no_preapproval_required",
+            "unknown"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "requirement_count": {
+          "minimum": 0,
+          "title": "Requirement Count",
+          "type": "integer"
+        },
+        "required_count": {
+          "minimum": 0,
+          "title": "Required Count",
+          "type": "integer"
+        },
+        "requirements": {
+          "items": {
+            "$ref": "#/$defs/CarrierPreapprovalRequirement"
+          },
+          "title": "Requirements",
+          "type": "array"
+        },
+        "required_human_gate": {
+          "const": "human_carrier_preapproval",
+          "default": "human_carrier_preapproval",
+          "title": "Required Human Gate",
+          "type": "string"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "preapproval_obtained": {
+          "const": false,
+          "default": false,
+          "title": "Preapproval Obtained",
+          "type": "boolean"
+        },
+        "carrier_submission_authorized": {
+          "const": false,
+          "default": false,
+          "title": "Carrier Submission Authorized",
+          "type": "boolean"
+        },
+        "budget_submission_authorized": {
+          "const": false,
+          "default": false,
+          "title": "Budget Submission Authorized",
+          "type": "boolean"
+        },
+        "lake_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Lake Write Performed",
+          "type": "boolean"
+        },
+        "sqlite_write_performed": {
+          "const": false,
+          "default": false,
+          "title": "Sqlite Write Performed",
+          "type": "boolean"
+        },
+        "external_writes_performed": {
+          "const": false,
+          "default": false,
+          "title": "External Writes Performed",
+          "type": "boolean"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        },
+        "generated_at": {
+          "title": "Generated At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "report_id",
+        "budget_proposal_id",
+        "guideline_id",
+        "guideline_ref",
+        "carrier_id",
+        "status",
+        "requirement_count",
+        "required_count",
+        "requirements",
+        "generated_at"
+      ],
+      "title": "CarrierPreapprovalReport",
+      "type": "object"
+    },
+    "CarrierPreapprovalRequirement": {
+      "additionalProperties": false,
+      "properties": {
+        "requirement_id": {
+          "title": "Requirement Id",
+          "type": "string"
+        },
+        "threshold_id": {
+          "title": "Threshold Id",
+          "type": "string"
+        },
+        "requirement_type": {
+          "enum": [
+            "experts_over_count",
+            "expert_spend_over_amount",
+            "depositions_over_count",
+            "research_hours_over",
+            "vendor_spend_over_amount"
+          ],
+          "title": "Requirement Type",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "preapproval_required",
+            "not_triggered",
+            "unknown"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "current_value": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Current Value"
+        },
+        "threshold_value": {
+          "minimum": 0,
+          "title": "Threshold Value",
+          "type": "number"
+        },
+        "unit": {
+          "title": "Unit",
+          "type": "string"
+        },
+        "required_human_gate": {
+          "const": "human_carrier_preapproval",
+          "default": "human_carrier_preapproval",
+          "title": "Required Human Gate",
+          "type": "string"
+        },
+        "source": {
+          "const": "synthetic_carrier_guideline",
+          "default": "synthetic_carrier_guideline",
+          "title": "Source",
+          "type": "string"
+        },
+        "structured_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Structured Refs",
+          "type": "array"
+        },
+        "related_phase_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Related Phase Ids",
+          "type": "array"
+        },
+        "related_task_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Related Task Ids",
+          "type": "array"
+        },
+        "related_external_codes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Related External Codes",
+          "type": "array"
+        },
+        "related_expense_codes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Related Expense Codes",
+          "type": "array"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "rewrites_budget": {
+          "const": false,
+          "default": false,
+          "title": "Rewrites Budget",
+          "type": "boolean"
+        },
+        "preapproval_obtained": {
+          "const": false,
+          "default": false,
+          "title": "Preapproval Obtained",
+          "type": "boolean"
+        },
+        "carrier_submission_authorized": {
+          "const": false,
+          "default": false,
+          "title": "Carrier Submission Authorized",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "requirement_id",
+        "threshold_id",
+        "requirement_type",
+        "status",
+        "threshold_value",
+        "unit",
+        "reason"
+      ],
+      "title": "CarrierPreapprovalRequirement",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "carrier_id": {
+      "title": "Carrier Id",
+      "type": "string"
+    },
+    "carrier_name": {
+      "title": "Carrier Name",
+      "type": "string"
+    },
+    "state": {
+      "title": "State",
+      "type": "string"
+    },
+    "rate_card_effective_date": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Rate Card Effective Date"
+    },
+    "projection": {
+      "$ref": "#/$defs/CarrierCompliantProjection"
+    },
+    "preapproval_report": {
+      "$ref": "#/$defs/CarrierPreapprovalReport"
+    },
+    "rate_resolution": {
+      "additionalProperties": true,
+      "title": "Rate Resolution",
+      "type": "object"
+    },
+    "gross_reductions": {
+      "minimum": 0,
+      "title": "Gross Reductions",
+      "type": "number"
+    },
+    "gross_increases": {
+      "minimum": 0,
+      "title": "Gross Increases",
+      "type": "number"
+    },
+    "net_delta": {
+      "title": "Net Delta",
+      "type": "number"
+    }
+  },
+  "required": [
+    "carrier_id",
+    "carrier_name",
+    "state",
+    "projection",
+    "preapproval_report",
+    "rate_resolution",
+    "gross_reductions",
+    "gross_increases",
+    "net_delta"
+  ],
+  "title": "SyntheticGuidelineProjectionWorkbenchView",
+  "type": "object"
+}

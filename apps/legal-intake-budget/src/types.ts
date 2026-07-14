@@ -1143,6 +1143,73 @@ export type SyntheticBudgetInputWorkbenchReport = {
   generated_at: string;
 };
 
+export type SyntheticGuidelineProjectionWorkbenchCheck = {
+  check_id: string;
+  status: "passed" | "failed";
+  message: string;
+  evidence_refs: string[];
+};
+
+export type SyntheticGuidelineProjectionWorkbenchReport = {
+  schema_version: string;
+  synthetic_guideline_projection_workbench_report_id: string;
+  status: "synthetic_guideline_projection_workbench_ready_for_review" | "blocked_by_synthetic_guideline_projection_workbench";
+  methodology_version: string;
+  budget_proposal_id: string;
+  budget_proposal_sha256: string;
+  currency: string;
+  proposal_total: number | null;
+  views: Array<{
+    carrier_id: string;
+    carrier_name: string;
+    state: string;
+    rate_card_effective_date: string | null;
+    gross_reductions: number;
+    gross_increases: number;
+    net_delta: number;
+    projection: {
+      proposed_total: number | null;
+      compliant_total: number | null;
+      rate_cap_delta: number;
+      expense_cap_delta: number;
+      disallowed_delta: number;
+      staffing_rule_delta: number;
+      contingency_delta: number;
+      projection_pricing_status: "priced" | "hours_only_partial";
+      lines: Array<{ phase_id: string; task_id: string; staffing_role: string; compliant_staffing_role: string | null; proposed_line_total: number | null; compliant_line_total: number | null; line_delta_signed: number; note: string }>;
+    };
+    preapproval_report: { status: string; required_count: number; requirements: Array<{ threshold_id: string; status: string; current_value: number | null; threshold_value: number; unit: string }> };
+    rate_resolution: { source: string; state: string; effective_date: string | null; review_required: boolean };
+  }>;
+  source_manifest: Array<{ source_id: string; label: string; source_ref: string; source_sha256: string; used_for: string }>;
+  checks: SyntheticGuidelineProjectionWorkbenchCheck[];
+  failed_check_count: number;
+  workbook_filename: string;
+  markdown_filename: string;
+  display_banner: { summary: string; candidate_only: boolean; synthetic_only: boolean; read_only_ui: boolean; blocked_actions: string[] };
+  candidate_exception_lake_labels: string[];
+  required_next_gates: string[];
+  data_origin: "synthetic";
+  candidate_only: true;
+  non_authoritative: true;
+  synthetic_only: true;
+  local_json_only: true;
+  read_only_ui: true;
+  not_authorized_for_external_write: true;
+  not_authorized_for_lake_write: true;
+  not_authorized_for_sqlite_write: true;
+  not_authorized_for_budget_submission: true;
+  not_authorized_for_matter_opening: true;
+  not_authorized_for_calibration: true;
+  external_writes_performed: false;
+  lake_write_performed: false;
+  sqlite_write_performed: false;
+  budget_submission_authorized: false;
+  matter_opening_authorized: false;
+  silent_learning_performed: false;
+  generated_at: string;
+};
+
 export type BudgetLearningLoopActualsSummary = {
   status: "variance_review_required" | "actuals_not_available" | "actuals_within_threshold";
   comparison_scope: string;

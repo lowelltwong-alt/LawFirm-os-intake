@@ -50,6 +50,7 @@ def test_legal_intake_budget_ui_required_files_exist(repo_root):
         "src/fixtures/demo-synthetic-rate-card-workbench-report.json",
         "src/fixtures/demo-synthetic-actuals-workbench-report.json",
         "src/fixtures/demo-synthetic-budget-input-workbench-report.json",
+        "src/fixtures/demo-synthetic-guideline-projection-workbench-report.json",
     ]
 
     for relative_path in required:
@@ -154,6 +155,44 @@ def test_ui_synthetic_budget_input_workbench_is_pinned_candidate_lineage(repo_ro
     assert "assertSyntheticBudgetInputWorkbenchReport" in app
     assert "assertSyntheticBudgetInputWorkbenchReport" in contract
     assert "excluded_context_only" in contract
+
+
+def test_ui_synthetic_guideline_projection_workbench_is_read_only_and_reconciled(repo_root):
+    fixture = json.loads(
+        (
+            repo_root
+            / UI_ROOT
+            / "src/fixtures/demo-synthetic-guideline-projection-workbench-report.json"
+        ).read_text(encoding="utf-8")
+    )
+    app = (repo_root / UI_ROOT / "src/App.tsx").read_text(encoding="utf-8")
+    contract = (repo_root / UI_ROOT / "src/data-contract.ts").read_text(encoding="utf-8")
+
+    assert fixture["status"] == "synthetic_guideline_projection_workbench_ready_for_review"
+    assert fixture["data_origin"] == "synthetic"
+    assert fixture["candidate_only"] is True
+    assert fixture["read_only_ui"] is True
+    assert fixture["failed_check_count"] == 0
+    assert len(fixture["views"]) == 2
+    assert all(
+        view["projection"]["proposed_total"] == fixture["proposal_total"]
+        for view in fixture["views"]
+    )
+    assert all(
+        view["gross_reductions"] - view["gross_increases"] == view["net_delta"]
+        for view in fixture["views"]
+    )
+    assert all(
+        requirement["status"] != "unknown"
+        for view in fixture["views"]
+        for requirement in view["preapproval_report"]["requirements"]
+    )
+    assert fixture["external_writes_performed"] is False
+    assert fixture["lake_write_performed"] is False
+    assert fixture["sqlite_write_performed"] is False
+    assert "SyntheticGuidelineProjectionWorkbenchPanel" in app
+    assert "assertSyntheticGuidelineProjectionWorkbenchReport" in app
+    assert "assertSyntheticGuidelineProjectionWorkbenchReport" in contract
 
 
 def test_legal_intake_budget_ui_data_contract_lists_required_artifacts(repo_root):

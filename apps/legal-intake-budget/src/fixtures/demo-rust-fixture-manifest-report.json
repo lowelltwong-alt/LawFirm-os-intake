@@ -1,7 +1,7 @@
 {
   "budget_submission_authorized": false,
   "candidate_only": true,
-  "checked_json_file_count": 34,
+  "checked_json_file_count": 35,
   "external_writes_performed": false,
   "failure_count": 0,
   "failures": [],
@@ -612,7 +612,7 @@
       "top_level_type": "object"
     },
     {
-      "byte_count": 14754,
+      "byte_count": 14404,
       "candidate_only": true,
       "data_origin": "synthetic",
       "external_writes_performed": false,
@@ -640,7 +640,7 @@
       ],
       "path": "demo-synthetic-budget-input-workbench-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:0d0e165e5b067efa52f29838e5e521322db23eacccce1f399fbab1e5dc24b90a",
+      "sha256": "sha256:fff07a45111bfad9c9a127ed7055e2ba7a7af98c1d4cc75fc3524b521c3d8dd0",
       "status": "synthetic_budget_input_workbench_ready_for_review",
       "synthetic_only": true,
       "top_level_type": "object"
@@ -675,6 +675,28 @@
       "schema_version": "0.1",
       "sha256": "sha256:b83ee3daf6022ec9ed1676bc72df437d4290b170c5d966d584c8937179707abb",
       "status": "synthetic_confidence_summary_ready_for_review",
+      "synthetic_only": true,
+      "top_level_type": "object"
+    },
+    {
+      "byte_count": 96106,
+      "candidate_only": true,
+      "data_origin": "synthetic",
+      "external_writes_performed": false,
+      "id_fields": [
+        {
+          "field": "budget_proposal_id",
+          "value": "synthetic-guideline-projection-medmal.v0_1"
+        },
+        {
+          "field": "synthetic_guideline_projection_workbench_report_id",
+          "value": "synguidelineprojection-ecf27d414a2bc189"
+        }
+      ],
+      "path": "demo-synthetic-guideline-projection-workbench-report.json",
+      "schema_version": "0.1",
+      "sha256": "sha256:5b3b8766aa6d4b85eaa1ff86e20575702db69e37dded7eff486d5bd925917a2f",
+      "status": "synthetic_guideline_projection_workbench_ready_for_review",
       "synthetic_only": true,
       "top_level_type": "object"
     },
@@ -833,11 +855,11 @@
   ],
   "lake_write_performed": false,
   "local_json_only": true,
-  "manifest_sha256": "sha256:adaf0891f30477ef0339a753c75d3af10dbc8f065a44b46c243c96fc080f7a83",
+  "manifest_sha256": "sha256:7efc26ba3ca7b7038ce4cbc39d3758d79ba355bb7f453a5073b68acf2db1b92a",
   "matter_opening_authorized": false,
   "non_authoritative": true,
   "parse_error_count": 0,
-  "parsed_json_file_count": 34,
+  "parsed_json_file_count": 35,
   "root": "apps\\legal-intake-budget\\src\\fixtures",
   "scanner": "fixture-manifest-scanner",
   "schema_version": "0.1",
@@ -856,5 +878,5 @@
   "sqlite_write_performed": false,
   "status": "passed",
   "synthetic_only": true,
-  "total_byte_count": 835365
+  "total_byte_count": 931121
 }

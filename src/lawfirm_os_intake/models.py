@@ -19938,4 +19938,102 @@ class SyntheticBudgetInputWorkbenchReport(StrictModel):
         return self
 
 
+class SyntheticGuidelineProjectionWorkbenchCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    evidence_refs: list[str] = Field(default_factory=list)
+
+
+class SyntheticGuidelineProjectionWorkbenchSource(StrictModel):
+    source_id: str
+    label: str
+    source_ref: str
+    source_sha256: str
+    used_for: str
+
+
+class SyntheticGuidelineProjectionWorkbenchView(StrictModel):
+    carrier_id: str
+    carrier_name: str
+    state: str
+    rate_card_effective_date: str | None = None
+    projection: CarrierCompliantProjection
+    preapproval_report: CarrierPreapprovalReport
+    rate_resolution: dict[str, Any]
+    gross_reductions: float = Field(ge=0)
+    gross_increases: float = Field(ge=0)
+    net_delta: float
+
+
+class SyntheticGuidelineProjectionWorkbenchReport(StrictModel):
+    schema_version: str = "0.1"
+    synthetic_guideline_projection_workbench_report_id: str
+    status: Literal[
+        "synthetic_guideline_projection_workbench_ready_for_review",
+        "blocked_by_synthetic_guideline_projection_workbench",
+    ]
+    methodology_version: Literal["synthetic_guideline_projection_workbench.v0_1"] = (
+        "synthetic_guideline_projection_workbench.v0_1"
+    )
+    budget_proposal_id: str
+    budget_proposal_sha256: str
+    currency: str
+    proposal_total: float | None = Field(default=None, ge=0)
+    views: list[SyntheticGuidelineProjectionWorkbenchView]
+    source_manifest: list[SyntheticGuidelineProjectionWorkbenchSource]
+    checks: list[SyntheticGuidelineProjectionWorkbenchCheck]
+    failed_check_count: int = Field(ge=0)
+    workbook_filename: str
+    markdown_filename: str
+    display_banner: dict[str, Any]
+    candidate_exception_lake_labels: list[str]
+    required_next_gates: list[str]
+    data_origin: Literal["synthetic"] = "synthetic"
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    local_json_only: Literal[True] = True
+    read_only_ui: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    not_authorized_for_matter_opening: Literal[True] = True
+    not_authorized_for_calibration: Literal[True] = True
+    external_writes_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def synthetic_guideline_projection_workbench_is_coherent(
+        self,
+    ) -> "SyntheticGuidelineProjectionWorkbenchReport":
+        failed = [check for check in self.checks if check.status == "failed"]
+        if self.failed_check_count != len(failed):
+            raise ValueError("synthetic guideline projection workbench failed count mismatch")
+        if self.status.endswith("ready_for_review") and failed:
+            raise ValueError(
+                "ready synthetic guideline projection workbench cannot include failed checks"
+            )
+        if self.status.startswith("blocked") and not failed:
+            raise ValueError(
+                "blocked synthetic guideline projection workbench requires failed checks"
+            )
+        if not self.budget_proposal_sha256.startswith("sha256:"):
+            raise ValueError("synthetic guideline projection workbench requires proposal hash")
+        if any(not source.source_sha256.startswith("sha256:") for source in self.source_manifest):
+            raise ValueError("synthetic guideline projection workbench requires source hashes")
+        for view in self.views:
+            if round(view.gross_reductions - view.gross_increases, 2) != view.net_delta:
+                raise ValueError("synthetic guideline projection view net delta does not reconcile")
+            if view.projection.proposed_total != self.proposal_total:
+                raise ValueError("synthetic guideline projection must preserve proposal total")
+        return self
+
+
 UIReviewDataBundle.model_rebuild()

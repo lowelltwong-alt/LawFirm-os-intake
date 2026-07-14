@@ -37,6 +37,7 @@ import type {
   SyntheticRateCardWorkbenchReport,
   SyntheticActualsWorkbenchReport,
   SyntheticBudgetInputWorkbenchReport,
+  SyntheticGuidelineProjectionWorkbenchReport,
 } from "./types";
 
 export const REQUIRED_ARTIFACT_FILES = [
@@ -414,6 +415,41 @@ export function assertSyntheticBudgetInputWorkbenchReport(
     report.failed_check_count !== 0
   ) {
     failures.push("synthetic_budget_input_workbench_ready_with_failed_checks");
+  }
+  return failures;
+}
+
+export function assertSyntheticGuidelineProjectionWorkbenchReport(
+  report: SyntheticGuidelineProjectionWorkbenchReport,
+): string[] {
+  const failures: string[] = [];
+  if (
+    report.data_origin !== "synthetic" || !report.candidate_only || !report.synthetic_only ||
+    !report.non_authoritative || !report.local_json_only || !report.read_only_ui
+  ) failures.push("synthetic_guideline_projection_authority_boundary_failed");
+  if (
+    report.external_writes_performed || report.lake_write_performed || report.sqlite_write_performed ||
+    report.budget_submission_authorized || report.matter_opening_authorized || report.silent_learning_performed ||
+    !report.not_authorized_for_calibration
+  ) failures.push("synthetic_guideline_projection_side_effect_boundary_failed");
+  if (!report.budget_proposal_sha256.startsWith("sha256:") || report.source_manifest.some((source) => !source.source_sha256.startsWith("sha256:"))) {
+    failures.push("synthetic_guideline_projection_provenance_missing");
+  }
+  if (report.views.length !== 2 || report.failed_check_count !== report.checks.filter((check) => check.status === "failed").length) {
+    failures.push("synthetic_guideline_projection_shape_failed");
+  }
+  for (const view of report.views) {
+    const rounded = (value: number) => Math.round(value * 100) / 100;
+    if (
+      view.projection.proposed_total !== report.proposal_total ||
+      rounded(view.gross_reductions - view.gross_increases) !== view.net_delta ||
+      rounded((view.projection.proposed_total ?? 0) - (view.projection.compliant_total ?? 0)) !== view.net_delta ||
+      view.projection.projection_pricing_status !== "priced" || view.rate_resolution.review_required ||
+      view.preapproval_report.requirements.some((requirement) => requirement.status === "unknown")
+    ) failures.push(`synthetic_guideline_projection_view_invalid:${view.carrier_id}`);
+  }
+  if (report.status === "synthetic_guideline_projection_workbench_ready_for_review" && report.failed_check_count !== 0) {
+    failures.push("synthetic_guideline_projection_ready_with_failed_checks");
   }
   return failures;
 }

@@ -35,6 +35,7 @@ import demoValidationSuiteEvidence from "./fixtures/demo-validation-suite-eviden
 import demoSyntheticRateCardWorkbench from "./fixtures/demo-synthetic-rate-card-workbench-report.json";
 import demoSyntheticActualsWorkbench from "./fixtures/demo-synthetic-actuals-workbench-report.json";
 import demoSyntheticBudgetInputWorkbench from "./fixtures/demo-synthetic-budget-input-workbench-report.json";
+import demoSyntheticGuidelineProjectionWorkbench from "./fixtures/demo-synthetic-guideline-projection-workbench-report.json";
 import {
   assertMatterLinkingPreflightReport,
   assertMatterLinkingQAGateReport,
@@ -67,6 +68,7 @@ import {
   assertSyntheticRateCardWorkbenchReport,
   assertSyntheticActualsWorkbenchReport,
   assertSyntheticBudgetInputWorkbenchReport,
+  assertSyntheticGuidelineProjectionWorkbenchReport,
   assertUIDemoQARecipeReport,
   assertUIReviewDataBundle,
   assertValidationSuiteEvidenceReport,
@@ -122,6 +124,7 @@ import type {
   SyntheticRateCardWorkbenchReport,
   SyntheticActualsWorkbenchReport,
   SyntheticBudgetInputWorkbenchReport,
+  SyntheticGuidelineProjectionWorkbenchReport,
   UIDemoQARecipeReport,
   UIReviewDataBundle,
   ValidationSuiteEvidenceReport,
@@ -178,6 +181,8 @@ const syntheticActualsWorkbench =
   demoSyntheticActualsWorkbench as SyntheticActualsWorkbenchReport;
 const syntheticBudgetInputWorkbench =
   demoSyntheticBudgetInputWorkbench as SyntheticBudgetInputWorkbenchReport;
+const syntheticGuidelineProjectionWorkbench =
+  demoSyntheticGuidelineProjectionWorkbench as SyntheticGuidelineProjectionWorkbenchReport;
 const bundleContractFailures = assertUIReviewDataBundle(reviewDataBundle);
 const manifestContractFailures = assertReadOnlyManifest(manifest);
 const syntheticQAReviewRunFailures = assertSyntheticQAReviewRunReport(syntheticQAReviewRun);
@@ -242,6 +247,9 @@ const syntheticActualsWorkbenchFailures = assertSyntheticActualsWorkbenchReport(
 );
 const syntheticBudgetInputWorkbenchFailures = assertSyntheticBudgetInputWorkbenchReport(
   syntheticBudgetInputWorkbench,
+);
+const syntheticGuidelineProjectionWorkbenchFailures = assertSyntheticGuidelineProjectionWorkbenchReport(
+  syntheticGuidelineProjectionWorkbench,
 );
 const contractFailures = [
   ...bundleContractFailures,
@@ -659,8 +667,14 @@ function QAWorkbenchPanel({
   );
 }
 
+function csvCell(value: string | number | null) {
+  const text = String(value ?? "");
+  const safe = /^[\s]*[=+\-@]/.test(text) ? `'${text}` : text;
+  return `"${safe.replaceAll('"', '""')}"`;
+}
+
 function downloadSyntheticRateCardCsv(report: SyntheticRateCardWorkbenchReport) {
-  const quote = (value: string | number) => `"${String(value).replaceAll('"', '""')}"`;
+  const quote = csvCell;
   const csv = [
     ["Carrier ID", "Carrier", "Effective Date", "State", "Title", "Hourly Rate"],
     ...report.rows.map((row) => [
@@ -683,7 +697,7 @@ function downloadSyntheticRateCardCsv(report: SyntheticRateCardWorkbenchReport) 
 }
 
 function downloadSyntheticActualsCsv(report: SyntheticActualsWorkbenchReport) {
-  const quote = (value: string | number | null) => `"${String(value ?? "").replaceAll('"', '""')}"`;
+  const quote = csvCell;
   const rows = [
     ["View", "Phase", "Code", "Budgeted", "Actual", "Variance", "Variance Percent", "Review State"],
     ...report.comparison.phase_comparisons.map((row) => [
@@ -780,7 +794,7 @@ function SyntheticActualsWorkbenchPanel({ report }: { report: SyntheticActualsWo
 }
 
 function downloadSyntheticBudgetInputCsv(report: SyntheticBudgetInputWorkbenchReport) {
-  const quote = (value: string | number | null) => `"${String(value ?? "").replaceAll('"', '""')}"`;
+  const quote = csvCell;
   const rows = [
     ["#", "Phase", "Task", "Role", "Hours", "Hourly Rate", "Fees", "Expenses", "Line Total", "Rate Source", "Estimate Basis", "Basis References", "Formula"],
     ...report.lines.map((line) => [
@@ -797,6 +811,50 @@ function downloadSyntheticBudgetInputCsv(report: SyntheticBudgetInputWorkbenchRe
   anchor.download = "synthetic-budget-input-ledger.csv";
   anchor.click();
   URL.revokeObjectURL(objectUrl);
+}
+
+function SyntheticGuidelineProjectionWorkbenchPanel({
+  report,
+}: {
+  report: SyntheticGuidelineProjectionWorkbenchReport;
+}) {
+  const [carrierId, setCarrierId] = React.useState(report.views[0]?.carrier_id ?? "");
+  const view = report.views.find((candidate) => candidate.carrier_id === carrierId) ?? report.views[0];
+  const failed = syntheticGuidelineProjectionWorkbenchFailures.length > 0;
+  if (!view) return null;
+
+  return (
+    <section className="panel guideline-projection-workbench-panel" aria-labelledby="guideline-projection-workbench-title">
+      <div className="panel-heading">
+        <div>
+          <p className="eyebrow">Pinned synthetic projection</p>
+          <h2 id="guideline-projection-workbench-title">Guideline Projection Workbench</h2>
+          <code>{report.synthetic_guideline_projection_workbench_report_id}</code>
+        </div>
+        <span className={failed ? "state state-failed" : "state state-passed"}>{failed ? "contract failed" : "candidate only"}</span>
+      </div>
+      <div className="budget-input-banner"><strong>{report.display_banner.summary}</strong><span>Proposal: {formatMoney(report.proposal_total)}</span></div>
+      <div className="rate-card-controls" aria-label="Synthetic guideline projection selector">
+        <label>Guideline scenario<select value={carrierId} onChange={(event) => setCarrierId(event.target.value)}>
+          {report.views.map((candidate) => <option key={candidate.carrier_id} value={candidate.carrier_id}>{candidate.carrier_name} / {candidate.state}</option>)}
+        </select></label>
+        <span>XLSX: {report.workbook_filename}</span><span>Rate schedule: {view.rate_card_effective_date ?? "unavailable"}</span>
+      </div>
+      <div className="budget-input-metrics" aria-label="Synthetic guideline projection totals">
+        <article><span>Proposal</span><strong>{formatMoney(view.projection.proposed_total)}</strong></article>
+        <article><span>Projection</span><strong>{formatMoney(view.projection.compliant_total)}</strong></article>
+        <article><span>Gross Reductions</span><strong>{formatMoney(view.gross_reductions)}</strong></article>
+        <article><span>Net Delta</span><strong>{formatMoney(view.net_delta)}</strong><p>{view.preapproval_report.required_count} preapproval gates</p></article>
+      </div>
+      <div className="table-wrap budget-input-table-wrap"><table><thead><tr><th>Phase / Task</th><th>Proposed Role</th><th>Projected Role</th><th>Proposed</th><th>Projection</th><th>Net Delta</th><th>Reason</th></tr></thead><tbody>
+        {view.projection.lines.filter((line) => line.line_delta_signed !== 0).map((line) => <tr key={`${line.phase_id}-${line.task_id}`}><td><strong>{line.phase_id} / {line.task_id}</strong></td><td>{line.staffing_role.replaceAll("_", " ")}</td><td>{(line.compliant_staffing_role ?? line.staffing_role).replaceAll("_", " ")}</td><td>{formatMoney(line.proposed_line_total)}</td><td>{formatMoney(line.compliant_line_total)}</td><td>{formatMoney(line.line_delta_signed)}</td><td>{line.note}</td></tr>)}
+      </tbody></table></div>
+      <div className="budget-input-context" aria-label="Synthetic guideline projection checks"><div><strong>Validation and Gate State</strong><span>Unknown thresholds, missing rate schedules, or arithmetic drift block readiness.</span></div>
+        {report.checks.map((check) => <article key={check.check_id}><strong>{check.status}</strong><code>{check.check_id}</code><p>{check.message}</p></article>)}
+      </div>
+      <div className="budget-input-footer"><span>Read-only local evidence. Not an approval, carrier decision, or submission.</span><TokenList items={report.display_banner.blocked_actions} limit={6} /></div>
+    </section>
+  );
 }
 
 function SyntheticBudgetInputWorkbenchPanel({
@@ -4112,6 +4170,7 @@ function App() {
       />
       <SyntheticRateCardWorkbenchPanel report={syntheticRateCardWorkbench} />
       <SyntheticBudgetInputWorkbenchPanel report={syntheticBudgetInputWorkbench} />
+      <SyntheticGuidelineProjectionWorkbenchPanel report={syntheticGuidelineProjectionWorkbench} />
       <SyntheticActualsWorkbenchPanel report={syntheticActualsWorkbench} />
       <PilotReviewStoryPanel report={pilotReviewStory} />
       <BudgetLearningLoopPanel report={budgetLearningLoop} />
