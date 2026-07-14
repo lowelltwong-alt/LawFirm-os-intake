@@ -36,6 +36,7 @@ import demoSyntheticRateCardWorkbench from "./fixtures/demo-synthetic-rate-card-
 import demoSyntheticActualsWorkbench from "./fixtures/demo-synthetic-actuals-workbench-report.json";
 import demoSyntheticBudgetInputWorkbench from "./fixtures/demo-synthetic-budget-input-workbench-report.json";
 import demoSyntheticGuidelineProjectionWorkbench from "./fixtures/demo-synthetic-guideline-projection-workbench-report.json";
+import demoSyntheticRejectionAppealWorkbench from "./fixtures/demo-synthetic-rejection-appeal-workbench-report.json";
 import {
   assertMatterLinkingPreflightReport,
   assertMatterLinkingQAGateReport,
@@ -69,6 +70,7 @@ import {
   assertSyntheticActualsWorkbenchReport,
   assertSyntheticBudgetInputWorkbenchReport,
   assertSyntheticGuidelineProjectionWorkbenchReport,
+  assertSyntheticRejectionAppealWorkbenchReport,
   assertUIDemoQARecipeReport,
   assertUIReviewDataBundle,
   assertValidationSuiteEvidenceReport,
@@ -125,6 +127,7 @@ import type {
   SyntheticActualsWorkbenchReport,
   SyntheticBudgetInputWorkbenchReport,
   SyntheticGuidelineProjectionWorkbenchReport,
+  SyntheticRejectionAppealWorkbenchReport,
   UIDemoQARecipeReport,
   UIReviewDataBundle,
   ValidationSuiteEvidenceReport,
@@ -183,6 +186,8 @@ const syntheticBudgetInputWorkbench =
   demoSyntheticBudgetInputWorkbench as SyntheticBudgetInputWorkbenchReport;
 const syntheticGuidelineProjectionWorkbench =
   demoSyntheticGuidelineProjectionWorkbench as SyntheticGuidelineProjectionWorkbenchReport;
+const syntheticRejectionAppealWorkbench =
+  demoSyntheticRejectionAppealWorkbench as SyntheticRejectionAppealWorkbenchReport;
 const bundleContractFailures = assertUIReviewDataBundle(reviewDataBundle);
 const manifestContractFailures = assertReadOnlyManifest(manifest);
 const syntheticQAReviewRunFailures = assertSyntheticQAReviewRunReport(syntheticQAReviewRun);
@@ -251,6 +256,9 @@ const syntheticBudgetInputWorkbenchFailures = assertSyntheticBudgetInputWorkbenc
 const syntheticGuidelineProjectionWorkbenchFailures = assertSyntheticGuidelineProjectionWorkbenchReport(
   syntheticGuidelineProjectionWorkbench,
 );
+const syntheticRejectionAppealWorkbenchFailures = assertSyntheticRejectionAppealWorkbenchReport(
+  syntheticRejectionAppealWorkbench,
+);
 const contractFailures = [
   ...bundleContractFailures,
   ...manifestContractFailures,
@@ -284,6 +292,8 @@ const contractFailures = [
   ...syntheticRateCardWorkbenchFailures,
   ...syntheticActualsWorkbenchFailures,
   ...syntheticBudgetInputWorkbenchFailures,
+  ...syntheticGuidelineProjectionWorkbenchFailures,
+  ...syntheticRejectionAppealWorkbenchFailures,
 ];
 
 const PUBLIC_DATA_CUSTODY_COMMANDS = [
@@ -855,6 +865,18 @@ function SyntheticGuidelineProjectionWorkbenchPanel({
       <div className="budget-input-footer"><span>Read-only local evidence. Not an approval, carrier decision, or submission.</span><TokenList items={report.display_banner.blocked_actions} limit={6} /></div>
     </section>
   );
+}
+
+function SyntheticRejectionAppealWorkbenchPanel({ report }: { report: SyntheticRejectionAppealWorkbenchReport }) {
+  const failed = syntheticRejectionAppealWorkbenchFailures.length > 0;
+  return <section className="panel rejection-appeal-workbench-panel" aria-labelledby="rejection-appeal-workbench-title">
+    <div className="panel-heading"><div><p className="eyebrow">Synthetic rejection and appeal review</p><h2 id="rejection-appeal-workbench-title">Rejection And Appeal Workbench</h2><code>{report.synthetic_rejection_appeal_workbench_report_id}</code></div><span className={failed ? "state state-failed" : "state state-passed"}>{failed ? "contract failed" : "candidate only"}</span></div>
+    <div className="budget-input-banner"><strong>{report.display_banner.summary}</strong><span>Budget: {report.budget_proposal_sha256}</span></div>
+    <div className="budget-input-metrics"><article><span>Disputed</span><strong>{formatMoney(report.total_disputed_amount)}</strong></article><article><span>Recovered</span><strong>{formatMoney(report.total_recovered_amount)}</strong></article><article><span>Write-down</span><strong>{formatMoney(report.total_write_down_amount)}</strong></article><article><span>Cases</span><strong>{report.cases.length}</strong><p>human review required</p></article></div>
+    <div className="table-wrap budget-input-table-wrap"><table><thead><tr><th>Classification</th><th>Action</th><th>Disputed</th><th>Recovered</th><th>Write-down</th><th>Appeal / Learning</th></tr></thead><tbody>{report.cases.map((item) => <tr key={item.remediation_case_id}><td><strong>{item.local_event_label.replaceAll("_", " ")}</strong><br/><span>{item.status}</span></td><td><strong>{item.recommended_action.replaceAll("_", " ")}</strong><br/><span>{item.priority} priority</span></td><td>{formatMoney(item.disputed_amount)}</td><td>{formatMoney(item.recovered_amount)}</td><td>{formatMoney(item.write_down_amount)}</td><td>{item.appeal_results.join(" / ") || "no result"}<br/><code>{item.learning_proposal_ids.length} learning candidate(s)</code></td></tr>)}</tbody></table></div>
+    <div className="budget-input-context"><div><strong>Required Human Decisions</strong><span>Evidence is review-only. Appeals and learning remain blocked.</span></div>{report.cases.map((item) => <article key={`${item.remediation_case_id}-gates`}><strong>{item.local_event_label}</strong><code>{item.pending_human_decisions.join(" | ") || "no decision recorded"}</code></article>)}</div>
+    <div className="budget-input-footer"><span>Read-only local artifact. No portal submission, budget mutation, Lake write, or silent learning.</span><TokenList items={report.display_banner.blocked_actions} limit={6}/></div>
+  </section>;
 }
 
 function SyntheticBudgetInputWorkbenchPanel({
@@ -4171,6 +4193,7 @@ function App() {
       <SyntheticRateCardWorkbenchPanel report={syntheticRateCardWorkbench} />
       <SyntheticBudgetInputWorkbenchPanel report={syntheticBudgetInputWorkbench} />
       <SyntheticGuidelineProjectionWorkbenchPanel report={syntheticGuidelineProjectionWorkbench} />
+      <SyntheticRejectionAppealWorkbenchPanel report={syntheticRejectionAppealWorkbench} />
       <SyntheticActualsWorkbenchPanel report={syntheticActualsWorkbench} />
       <PilotReviewStoryPanel report={pilotReviewStory} />
       <BudgetLearningLoopPanel report={budgetLearningLoop} />

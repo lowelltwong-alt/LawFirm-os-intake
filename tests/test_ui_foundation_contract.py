@@ -51,6 +51,7 @@ def test_legal_intake_budget_ui_required_files_exist(repo_root):
         "src/fixtures/demo-synthetic-actuals-workbench-report.json",
         "src/fixtures/demo-synthetic-budget-input-workbench-report.json",
         "src/fixtures/demo-synthetic-guideline-projection-workbench-report.json",
+        "src/fixtures/demo-synthetic-rejection-appeal-workbench-report.json",
     ]
 
     for relative_path in required:
@@ -193,6 +194,36 @@ def test_ui_synthetic_guideline_projection_workbench_is_read_only_and_reconciled
     assert "SyntheticGuidelineProjectionWorkbenchPanel" in app
     assert "assertSyntheticGuidelineProjectionWorkbenchReport" in app
     assert "assertSyntheticGuidelineProjectionWorkbenchReport" in contract
+
+
+def test_ui_synthetic_rejection_appeal_workbench_is_read_only_and_reconciled(repo_root):
+    fixture = json.loads(
+        (
+            repo_root
+            / UI_ROOT
+            / "src/fixtures/demo-synthetic-rejection-appeal-workbench-report.json"
+        ).read_text(encoding="utf-8")
+    )
+    app = (repo_root / UI_ROOT / "src/App.tsx").read_text(encoding="utf-8")
+    contract = (repo_root / UI_ROOT / "src/data-contract.ts").read_text(encoding="utf-8")
+
+    assert fixture["status"] == "synthetic_rejection_appeal_workbench_ready_for_review"
+    assert fixture["data_origin"] == "synthetic"
+    assert fixture["candidate_only"] is True
+    assert fixture["read_only_ui"] is True
+    assert fixture["total_disputed_amount"] == 3900.0
+    assert fixture["total_recovered_amount"] == 900.0
+    assert fixture["total_write_down_amount"] == 1200.0
+    assert fixture["failed_check_count"] == 0
+    assert all(case["source_ref_count"] > 0 for case in fixture["cases"])
+    assert fixture["external_writes_performed"] is False
+    assert fixture["lake_write_performed"] is False
+    assert fixture["sqlite_write_performed"] is False
+    assert fixture["appeal_submission_performed"] is False
+    assert fixture["silent_learning_performed"] is False
+    assert "SyntheticRejectionAppealWorkbenchPanel" in app
+    assert "assertSyntheticRejectionAppealWorkbenchReport" in app
+    assert "assertSyntheticRejectionAppealWorkbenchReport" in contract
 
 
 def test_legal_intake_budget_ui_data_contract_lists_required_artifacts(repo_root):

@@ -1210,6 +1210,35 @@ export type SyntheticGuidelineProjectionWorkbenchReport = {
   generated_at: string;
 };
 
+export type SyntheticRejectionAppealWorkbenchReport = {
+  schema_version: string;
+  synthetic_rejection_appeal_workbench_report_id: string;
+  status: "synthetic_rejection_appeal_workbench_ready_for_review" | "blocked_by_synthetic_rejection_appeal_workbench";
+  budget_proposal_sha256: string;
+  source_bundle_sha256: string;
+  total_disputed_amount: number;
+  total_recovered_amount: number;
+  total_write_down_amount: number;
+  failed_check_count: number;
+  cases: Array<{ remediation_case_id: string; local_event_label: string; status: string; recommended_action: string; priority: string; disputed_amount: number; recovered_amount: number; write_down_amount: number; appeal_results: string[]; pending_human_decisions: string[]; learning_proposal_ids: string[]; source_ref_count: number }>;
+  checks: Array<{ check_id: string; status: "passed" | "failed"; message: string; evidence_refs: string[] }>;
+  display_banner: { summary: string; candidate_only: boolean; synthetic_only: boolean; read_only_ui: boolean; blocked_actions: string[] };
+  data_origin: "synthetic";
+  candidate_only: true;
+  non_authoritative: true;
+  synthetic_only: true;
+  local_json_only: true;
+  read_only_ui: true;
+  external_writes_performed: false;
+  lake_write_performed: false;
+  sqlite_write_performed: false;
+  budget_submission_authorized: false;
+  matter_opening_authorized: false;
+  appeal_submission_performed: false;
+  silent_learning_performed: false;
+  generated_at: string;
+};
+
 export type BudgetLearningLoopActualsSummary = {
   status: "variance_review_required" | "actuals_not_available" | "actuals_within_threshold";
   comparison_scope: string;

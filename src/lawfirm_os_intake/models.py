@@ -20036,4 +20036,96 @@ class SyntheticGuidelineProjectionWorkbenchReport(StrictModel):
         return self
 
 
+class SyntheticRejectionAppealWorkbenchCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    evidence_refs: list[str] = Field(default_factory=list)
+
+
+class SyntheticRejectionAppealWorkbenchCase(StrictModel):
+    remediation_case_id: str
+    local_event_label: str
+    status: str
+    recommended_action: str
+    priority: str
+    disputed_amount: float = Field(ge=0)
+    current_financial_exposure: float = Field(ge=0)
+    notice_ids: list[str]
+    source_ref_count: int = Field(ge=0)
+    appeal_result_ids: list[str]
+    appeal_results: list[str]
+    recovered_amount: float = Field(ge=0)
+    write_down_amount: float = Field(ge=0)
+    pending_human_decisions: list[str]
+    learning_proposal_ids: list[str]
+    candidate_exception_lake_ids: list[str]
+
+
+class SyntheticRejectionAppealWorkbenchReport(StrictModel):
+    schema_version: str = "0.1"
+    synthetic_rejection_appeal_workbench_report_id: str
+    status: Literal[
+        "synthetic_rejection_appeal_workbench_ready_for_review",
+        "blocked_by_synthetic_rejection_appeal_workbench",
+    ]
+    methodology_version: Literal["synthetic_rejection_appeal_workbench.v0_1"] = (
+        "synthetic_rejection_appeal_workbench.v0_1"
+    )
+    budget_proposal_id: str
+    budget_proposal_sha256: str
+    source_bundle_ref: str
+    source_bundle_sha256: str
+    reconciliation_report: CarrierResponseReconciliationReport
+    decision_ledger: CarrierRejectionDecisionLedgerReport
+    review_packet: CarrierRejectionReviewPacket
+    learning_report: CarrierRejectionLearningReport
+    cases: list[SyntheticRejectionAppealWorkbenchCase]
+    total_disputed_amount: float = Field(ge=0)
+    total_recovered_amount: float = Field(ge=0)
+    total_write_down_amount: float = Field(ge=0)
+    checks: list[SyntheticRejectionAppealWorkbenchCheck]
+    failed_check_count: int = Field(ge=0)
+    workbook_filename: str
+    markdown_filename: str
+    display_banner: dict[str, Any]
+    candidate_exception_lake_labels: list[str]
+    required_next_gates: list[str]
+    data_origin: Literal["synthetic"] = "synthetic"
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    local_json_only: Literal[True] = True
+    read_only_ui: Literal[True] = True
+    external_writes_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    appeal_submission_performed: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def synthetic_rejection_appeal_workbench_is_coherent(
+        self,
+    ) -> "SyntheticRejectionAppealWorkbenchReport":
+        failed = [check for check in self.checks if check.status == "failed"]
+        if self.failed_check_count != len(failed):
+            raise ValueError("synthetic rejection appeal workbench failed check count mismatch")
+        if self.status.endswith("ready_for_review") and failed:
+            raise ValueError(
+                "ready synthetic rejection appeal workbench cannot include failed checks"
+            )
+        if self.status.startswith("blocked") and not failed:
+            raise ValueError("blocked synthetic rejection appeal workbench requires failed checks")
+        if self.total_disputed_amount != self.decision_ledger.total_disputed_amount:
+            raise ValueError("synthetic rejection appeal disputed total must match ledger")
+        if self.total_recovered_amount != self.decision_ledger.total_recovered_amount:
+            raise ValueError("synthetic rejection appeal recovered total must match ledger")
+        if self.total_write_down_amount != self.decision_ledger.total_write_down_amount:
+            raise ValueError("synthetic rejection appeal write-down total must match ledger")
+        return self
+
+
 UIReviewDataBundle.model_rebuild()

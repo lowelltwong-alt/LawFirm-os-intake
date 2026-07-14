@@ -1,7 +1,7 @@
 {
   "budget_submission_authorized": false,
   "candidate_only": true,
-  "checked_json_file_count": 35,
+  "checked_json_file_count": 36,
   "external_writes_performed": false,
   "failure_count": 0,
   "failures": [],
@@ -679,7 +679,7 @@
       "top_level_type": "object"
     },
     {
-      "byte_count": 96106,
+      "byte_count": 93779,
       "candidate_only": true,
       "data_origin": "synthetic",
       "external_writes_performed": false,
@@ -695,7 +695,7 @@
       ],
       "path": "demo-synthetic-guideline-projection-workbench-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:5b3b8766aa6d4b85eaa1ff86e20575702db69e37dded7eff486d5bd925917a2f",
+      "sha256": "sha256:b7b93cbbc41464b49d21d410630a03dba502912b2f06f86cfe678d4339ca1787",
       "status": "synthetic_guideline_projection_workbench_ready_for_review",
       "synthetic_only": true,
       "top_level_type": "object"
@@ -815,6 +815,28 @@
       "top_level_type": "object"
     },
     {
+      "byte_count": 60831,
+      "candidate_only": true,
+      "data_origin": "synthetic",
+      "external_writes_performed": false,
+      "id_fields": [
+        {
+          "field": "budget_proposal_id",
+          "value": "le-budget-epli-carrier-clean.v0_1"
+        },
+        {
+          "field": "synthetic_rejection_appeal_workbench_report_id",
+          "value": "synrejectionappeal-45aea3e3e6c72cd3"
+        }
+      ],
+      "path": "demo-synthetic-rejection-appeal-workbench-report.json",
+      "schema_version": "0.1",
+      "sha256": "sha256:c4ffd1c04a0ff9eca93c979c8aea3f5c8d3abc135b564972ac07789a9fbe5f16",
+      "status": "synthetic_rejection_appeal_workbench_ready_for_review",
+      "synthetic_only": true,
+      "top_level_type": "object"
+    },
+    {
       "byte_count": 4964,
       "candidate_only": true,
       "external_writes_performed": false,
@@ -855,11 +877,11 @@
   ],
   "lake_write_performed": false,
   "local_json_only": true,
-  "manifest_sha256": "sha256:7efc26ba3ca7b7038ce4cbc39d3758d79ba355bb7f453a5073b68acf2db1b92a",
+  "manifest_sha256": "sha256:232e461024e5e4980f8a93e407ec683bd1ac565f3d6f58e07513707850c3e12e",
   "matter_opening_authorized": false,
   "non_authoritative": true,
   "parse_error_count": 0,
-  "parsed_json_file_count": 35,
+  "parsed_json_file_count": 36,
   "root": "apps\\legal-intake-budget\\src\\fixtures",
   "scanner": "fixture-manifest-scanner",
   "schema_version": "0.1",
@@ -878,5 +900,5 @@
   "sqlite_write_performed": false,
   "status": "passed",
   "synthetic_only": true,
-  "total_byte_count": 931121
+  "total_byte_count": 989625
 }

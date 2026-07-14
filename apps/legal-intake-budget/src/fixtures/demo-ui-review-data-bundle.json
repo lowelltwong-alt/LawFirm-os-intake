@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "ui_review_data_bundle_id": "ui_review_data_bundle_14e9aa48bc7d",
+  "ui_review_data_bundle_id": "ui_review_data_bundle_b6d718df35c8",
   "status": "ready_for_review",
   "run_root_ref": "<demo-run-root>",
   "detail_report_count": 27,
@@ -127,7 +127,7 @@
       "status": "passed",
       "renderer": "RustFixtureManifestPanel",
       "artifact_ref": "apps/legal-intake-budget/src/fixtures/demo-rust-fixture-manifest-report.json",
-      "source_sha256": "sha256:3333c7d13d0c595aa8da3ef6ae7eb4440e5a91cdad7fe8924bf6b30a8416571d",
+      "source_sha256": "sha256:f6190deae85c92dcfeeaded15a626616237525d6045c0017df3e62a57ccd865d",
       "candidate_only": true,
       "synthetic_only": true,
       "external_writes_performed": false,
@@ -518,7 +518,7 @@
   "sqlite_write_performed": false,
   "external_writes_performed": false,
   "silent_learning_performed": false,
-  "generated_at": "2026-07-13T00:00:00Z",
+  "generated_at": "2026-07-14T00:00:00Z",
   "crosswalk_audit_ref": "apps/legal-intake-budget/src/fixtures/demo-crosswalk-audit-report.json",
   "ocg_rule_ir_adoption_ref": "apps/legal-intake-budget/src/fixtures/demo-ocg-rule-ir-adoption-report.json",
   "crosswalk_audit_summary": {

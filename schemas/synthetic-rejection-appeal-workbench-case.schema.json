@@ -1,0 +1,112 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "remediation_case_id": {
+      "title": "Remediation Case Id",
+      "type": "string"
+    },
+    "local_event_label": {
+      "title": "Local Event Label",
+      "type": "string"
+    },
+    "status": {
+      "title": "Status",
+      "type": "string"
+    },
+    "recommended_action": {
+      "title": "Recommended Action",
+      "type": "string"
+    },
+    "priority": {
+      "title": "Priority",
+      "type": "string"
+    },
+    "disputed_amount": {
+      "minimum": 0,
+      "title": "Disputed Amount",
+      "type": "number"
+    },
+    "current_financial_exposure": {
+      "minimum": 0,
+      "title": "Current Financial Exposure",
+      "type": "number"
+    },
+    "notice_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Notice Ids",
+      "type": "array"
+    },
+    "source_ref_count": {
+      "minimum": 0,
+      "title": "Source Ref Count",
+      "type": "integer"
+    },
+    "appeal_result_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Appeal Result Ids",
+      "type": "array"
+    },
+    "appeal_results": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Appeal Results",
+      "type": "array"
+    },
+    "recovered_amount": {
+      "minimum": 0,
+      "title": "Recovered Amount",
+      "type": "number"
+    },
+    "write_down_amount": {
+      "minimum": 0,
+      "title": "Write Down Amount",
+      "type": "number"
+    },
+    "pending_human_decisions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Pending Human Decisions",
+      "type": "array"
+    },
+    "learning_proposal_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Learning Proposal Ids",
+      "type": "array"
+    },
+    "candidate_exception_lake_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Candidate Exception Lake Ids",
+      "type": "array"
+    }
+  },
+  "required": [
+    "remediation_case_id",
+    "local_event_label",
+    "status",
+    "recommended_action",
+    "priority",
+    "disputed_amount",
+    "current_financial_exposure",
+    "notice_ids",
+    "source_ref_count",
+    "appeal_result_ids",
+    "appeal_results",
+    "recovered_amount",
+    "write_down_amount",
+    "pending_human_decisions",
+    "learning_proposal_ids",
+    "candidate_exception_lake_ids"
+  ],
+  "title": "SyntheticRejectionAppealWorkbenchCase",
+  "type": "object"
+}
