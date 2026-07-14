@@ -49,6 +49,13 @@ def _check(
     )
 
 
+def _safe_text(value: Any) -> str:
+    """Prevent catalog text from being interpreted as a spreadsheet formula."""
+
+    text = str(value)
+    return f"'{text}" if text.startswith(("=", "+", "-", "@")) else text
+
+
 def _truthy_real_data_flags(value: Any, prefix: str = "") -> list[str]:
     """Find any declared real-data flag that attempts to opt this catalog into real data."""
 
@@ -224,6 +231,12 @@ def _collect_rows_and_checks(
     schedules_align = bool(schedule_state_sets) and all(
         states == expected_states for states in schedule_state_sets.values()
     )
+    aliases = _as_mapping(card.get("jurisdiction_aliases"))
+    declared_states = {str(state) for state in aliases.values()}
+    default_state = card.get("default_state")
+    if isinstance(default_state, str) and default_state.strip():
+        declared_states.add(default_state)
+    declared_states_covered = bool(expected_states) and declared_states <= expected_states
     checks.extend(
         [
             _check(
@@ -236,6 +249,12 @@ def _collect_rows_and_checks(
                 "schedule_states_aligned",
                 schedules_align,
                 "Every carrier must provide the same state schedule coverage.",
+                rate_card_ref,
+            ),
+            _check(
+                "alias_and_default_states_covered",
+                declared_states_covered,
+                "Default and jurisdiction-alias states must be covered by every carrier schedule.",
                 rate_card_ref,
             ),
             _check(
@@ -399,13 +418,15 @@ def _write_workbook(
     workbook = Workbook()
     read_me = workbook.active
     read_me.title = "Read Me"
-    read_me.append(["Synthetic Rate Card Workbench"])
-    read_me.append(["Status", report.status])
-    read_me.append(["Source", report.editable_source_ref])
-    read_me.append(["Source hash", report.rate_card_sha256])
-    read_me.append(["Rate card", f"{report.rate_card_id} v{report.rate_card_version}"])
-    read_me.append(["Generated at", report.generated_at])
-    read_me.append(["Boundary", report.display_banner["summary"]])
+    read_me.append([_safe_text("Synthetic Rate Card Workbench")])
+    read_me.append([_safe_text("Status"), _safe_text(report.status)])
+    read_me.append([_safe_text("Source"), _safe_text(report.editable_source_ref)])
+    read_me.append([_safe_text("Source hash"), _safe_text(report.rate_card_sha256)])
+    read_me.append(
+        [_safe_text("Rate card"), _safe_text(f"{report.rate_card_id} v{report.rate_card_version}")]
+    )
+    read_me.append([_safe_text("Generated at"), _safe_text(report.generated_at)])
+    read_me.append([_safe_text("Boundary"), _safe_text(report.display_banner["summary"])])
     read_me.append(["Editable source", "Edit the checked-in synthetic YAML, then regenerate."])
     read_me.append(["Blocked", ", ".join(report.display_banner["blocked_actions"])])
     read_me.column_dimensions["A"].width = 20
@@ -417,11 +438,11 @@ def _write_workbook(
     for row in report.rows:
         rate_card.append(
             [
-                row.carrier_id,
-                row.carrier_name,
-                row.effective_date,
-                row.state,
-                row.title,
+                _safe_text(row.carrier_id),
+                _safe_text(row.carrier_name),
+                _safe_text(row.effective_date),
+                _safe_text(row.state),
+                _safe_text(row.title),
                 row.hourly_rate,
             ]
         )
@@ -437,9 +458,9 @@ def _write_workbook(
     for row in report.state_summaries:
         summary.append(
             [
-                row.carrier_id,
-                row.carrier_name,
-                row.state,
+                _safe_text(row.carrier_id),
+                _safe_text(row.carrier_name),
+                _safe_text(row.state),
                 row.role_count,
                 row.minimum_hourly_rate,
                 row.maximum_hourly_rate,
@@ -456,7 +477,7 @@ def _write_workbook(
     change_log = workbook.create_sheet("Change Log")
     _write_sheet_banner(change_log)
     change_log.append(["Control", "Value"])
-    change_log.append(["Data origin", report.data_origin])
+    change_log.append(["Data origin", _safe_text(report.data_origin)])
     change_log.append(["Candidate only", str(report.candidate_only).lower()])
     change_log.append(["Non-authoritative", str(report.non_authoritative).lower()])
     change_log.append(["Real rate import allowed", str(report.real_rate_import_allowed).lower()])

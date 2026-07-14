@@ -1,11 +1,11 @@
 {
   "schema_version": "0.1",
-  "synthetic_rate_card_workbench_report_id": "synrateworkbench-fcccc2b22312a155",
+  "synthetic_rate_card_workbench_report_id": "synrateworkbench-9bc1f3cc8d6111c9",
   "status": "synthetic_rate_card_workbench_ready_for_review",
   "rate_card_id": "synthetic-carrier-rate-card",
   "rate_card_version": "0.1",
   "rate_card_ref": "config/synthetic-carrier-rate-card.yaml",
-  "rate_card_sha256": "sha256:5743d7191f26079bca9916d3e53a7e49022b9801dfa436b324d975923e10f96b",
+  "rate_card_sha256": "sha256:de6bfd91a642c3ba8d5bfaf9e61f94984658187f87019c5dfcfc2296158122da",
   "editable_source_ref": "config/synthetic-carrier-rate-card.yaml",
   "methodology_version": "synthetic_rate_card_workbench.v0_1",
   "carrier_count": 2,
@@ -316,6 +316,14 @@
       "check_id": "schedule_states_aligned",
       "status": "passed",
       "message": "Every carrier must provide the same state schedule coverage.",
+      "evidence_refs": [
+        "config/synthetic-carrier-rate-card.yaml"
+      ]
+    },
+    {
+      "check_id": "alias_and_default_states_covered",
+      "status": "passed",
+      "message": "Default and jurisdiction-alias states must be covered by every carrier schedule.",
       "evidence_refs": [
         "config/synthetic-carrier-rate-card.yaml"
       ]

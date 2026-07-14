@@ -658,7 +658,7 @@
       ],
       "path": "demo-synthetic-budget-input-workbench-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:fff07a45111bfad9c9a127ed7055e2ba7a7af98c1d4cc75fc3524b521c3d8dd0",
+      "sha256": "sha256:a93a5bd25e568ff9dc5e26c47edd0accf5215b1656bcaf9963e8ab30067b7c64",
       "status": "synthetic_budget_input_workbench_ready_for_review",
       "synthetic_only": true,
       "top_level_type": "object"
@@ -713,7 +713,7 @@
       ],
       "path": "demo-synthetic-guideline-projection-workbench-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:b7b93cbbc41464b49d21d410630a03dba502912b2f06f86cfe678d4339ca1787",
+      "sha256": "sha256:15017d3aa5c2f51cb53ac63ace0716b3bb475081f982059fd650df06aea36df8",
       "status": "synthetic_guideline_projection_workbench_ready_for_review",
       "synthetic_only": true,
       "top_level_type": "object"
@@ -811,7 +811,7 @@
       "top_level_type": "object"
     },
     {
-      "byte_count": 11958,
+      "byte_count": 12235,
       "candidate_only": true,
       "data_origin": "synthetic",
       "external_writes_performed": false,
@@ -822,12 +822,12 @@
         },
         {
           "field": "synthetic_rate_card_workbench_report_id",
-          "value": "synrateworkbench-fcccc2b22312a155"
+          "value": "synrateworkbench-9bc1f3cc8d6111c9"
         }
       ],
       "path": "demo-synthetic-rate-card-workbench-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:00ec8fb39435464f3285751ee1433ffb6ec0f830332c6f8759f000c2a0c5fb21",
+      "sha256": "sha256:6c960a6bfa322bccc487ae7effea17c8de773c16dd013ed6ebd257aeb310a2ee",
       "status": "synthetic_rate_card_workbench_ready_for_review",
       "synthetic_only": true,
       "top_level_type": "object"
@@ -895,7 +895,7 @@
   ],
   "lake_write_performed": false,
   "local_json_only": true,
-  "manifest_sha256": "sha256:9ca1d6c00a84dab5e45ce58bf07656782e3015fdb71b87442793c48a1982dadf",
+  "manifest_sha256": "sha256:c243a5671504015d9fb0f49ebd50c4286074c2b2b04d83d1ec80cf67e8ea7cf8",
   "matter_opening_authorized": false,
   "non_authoritative": true,
   "parse_error_count": 0,
@@ -918,5 +918,5 @@
   "sqlite_write_performed": false,
   "status": "passed",
   "synthetic_only": true,
-  "total_byte_count": 1074085
+  "total_byte_count": 1074362
 }

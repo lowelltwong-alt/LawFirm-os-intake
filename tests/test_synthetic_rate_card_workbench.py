@@ -134,6 +134,49 @@ def test_rate_card_workbench_fails_closed_for_missing_role_and_does_not_write_xl
     assert not (run_dir / SYNTHETIC_RATE_CARD_WORKBOOK_FILENAME).exists()
 
 
+def test_rate_card_workbench_blocks_alias_or_default_state_outside_schedule(tmp_path, repo_root):
+    card = _card(repo_root)
+    card["default_state"] = "FL"
+    card["jurisdiction_aliases"]["Florida"] = "FL"
+    path = tmp_path / "alias-drift.yaml"
+    _write_card(path, card)
+
+    report = build_synthetic_rate_card_workbench_report(
+        path, repo_root=tmp_path, generated_at=FIXED_GENERATED_AT
+    )
+
+    assert report.status == "blocked_by_synthetic_rate_card_workbench"
+    assert "alias_and_default_states_covered" in {
+        check.check_id for check in report.checks if check.status == "failed"
+    }
+
+
+def test_rate_card_workbook_escapes_formula_like_catalog_text(tmp_path, repo_root):
+    card = _card(repo_root)
+    card["carriers"]["synthetic-carrier-a"]["carrier_name"] = "=formula"
+    root = tmp_path / "repo"
+    (root / "config").mkdir(parents=True)
+    _write_card(root / "config" / "synthetic-carrier-rate-card.yaml", card)
+
+    report, run_dir = run_synthetic_rate_card_workbench(
+        repo_root=root,
+        out_dir=tmp_path / "workbench",
+        generated_at=FIXED_GENERATED_AT,
+    )
+
+    from openpyxl import load_workbook
+
+    workbook = load_workbook(run_dir / SYNTHETIC_RATE_CARD_WORKBOOK_FILENAME, data_only=False)
+    assert report.status == "synthetic_rate_card_workbench_ready_for_review"
+    assert workbook["Rate Card"]["B4"].value == "'=formula"
+    assert all(
+        cell.data_type != "f"
+        for sheet in workbook.worksheets
+        for row in sheet.iter_rows()
+        for cell in row
+    )
+
+
 def test_rate_card_workbench_counterfactual_changes_only_the_target_cell_and_summary(
     tmp_path, repo_root
 ):

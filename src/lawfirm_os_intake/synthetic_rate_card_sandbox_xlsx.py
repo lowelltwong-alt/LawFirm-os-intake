@@ -479,13 +479,16 @@ def run_synthetic_rate_card_sandbox_xlsx_export(
     }
     run_dir = Path(out_dir)
     run_dir.mkdir(parents=True, exist_ok=True)
+    workbook_path = run_dir / SANDBOX_EXPORT_WORKBOOK_FILENAME
     write_json(run_dir / SANDBOX_EXPORT_REPORT_FILENAME, report)
     if not failed and isinstance(package, dict):
         _write_workbook(
-            run_dir / SANDBOX_EXPORT_WORKBOOK_FILENAME,
+            workbook_path,
             package=package,
             source_hash=source_hash,
             package_hash=package_hash,
             source_cells=source_cells,
         )
+    elif workbook_path.exists():
+        workbook_path.unlink()
     return report, run_dir

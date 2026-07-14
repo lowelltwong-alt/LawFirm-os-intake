@@ -15,8 +15,9 @@ real_rate_import_allowed: false
 #   state    -> from the confirmed jurisdiction (jurisdiction_aliases)
 #   title    -> timekeeper title / staffing role (partner, senior_associate, ...)
 # Resolution is deterministic with provenance (carrier_alias vs default_carrier, etc.).
-# This is the firm/carrier-authorized rate schedule, NOT a guideline rate cap; guideline
-# caps and the proposed-vs-compliant projection are a separate future layer.
+# This is a synthetic reference rate schedule, NOT a firm/carrier-authorized rate
+# schedule or a guideline rate cap; guideline caps and the proposed-vs-compliant
+# projection are a separate future layer.
 # Promotion to canon runs through the Semantic Substrate; until then this is a candidate.
 
 default_carrier_id: synthetic-carrier-a
