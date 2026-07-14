@@ -49,6 +49,7 @@ def test_legal_intake_budget_ui_required_files_exist(repo_root):
         "src/fixtures/demo-pilot-review-story-report.json",
         "src/fixtures/demo-synthetic-rate-card-workbench-report.json",
         "src/fixtures/demo-synthetic-actuals-workbench-report.json",
+        "src/fixtures/demo-synthetic-budget-input-workbench-report.json",
     ]
 
     for relative_path in required:
@@ -123,6 +124,36 @@ def test_ui_synthetic_actuals_workbench_is_reconciled_local_candidate_data(repo_
     assert "assertSyntheticActualsWorkbenchReport" in app
     assert "assertSyntheticActualsWorkbenchReport" in contract
     assert "alternate_views_not_reconciled" in contract
+
+
+def test_ui_synthetic_budget_input_workbench_is_pinned_candidate_lineage(repo_root):
+    fixture = json.loads(
+        (
+            repo_root / UI_ROOT / "src/fixtures/demo-synthetic-budget-input-workbench-report.json"
+        ).read_text(encoding="utf-8")
+    )
+    app = (repo_root / UI_ROOT / "src/App.tsx").read_text(encoding="utf-8")
+    contract = (repo_root / UI_ROOT / "src/data-contract.ts").read_text(encoding="utf-8")
+
+    assert fixture["status"] == "synthetic_budget_input_workbench_ready_for_review"
+    assert fixture["data_origin"] == "synthetic"
+    assert fixture["candidate_only"] is True
+    assert fixture["read_only_ui"] is True
+    assert fixture["not_authorized_for_calibration"] is True
+    assert fixture["line_count"] == len(fixture["lines"]) == 8
+    assert fixture["total_proposed_budget"] == 54090.0
+    assert fixture["budget_proposal_sha256"].startswith("sha256:")
+    assert fixture["external_writes_performed"] is False
+    assert fixture["lake_write_performed"] is False
+    assert fixture["sqlite_write_performed"] is False
+    assert all(
+        lane["inclusion"] == "excluded_context_only" for lane in fixture["context_lanes"][1:]
+    )
+    assert "SyntheticBudgetInputWorkbenchPanel" in app
+    assert "downloadSyntheticBudgetInputCsv" in app
+    assert "assertSyntheticBudgetInputWorkbenchReport" in app
+    assert "assertSyntheticBudgetInputWorkbenchReport" in contract
+    assert "excluded_context_only" in contract
 
 
 def test_legal_intake_budget_ui_data_contract_lists_required_artifacts(repo_root):

@@ -226,6 +226,140 @@ code {
   margin-bottom: 14px;
 }
 
+.budget-input-workbench-panel {
+  margin-bottom: 14px;
+}
+
+.budget-input-banner,
+.budget-input-context {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 14px;
+  padding: 12px;
+  border: 1px solid #d7dfc7;
+  border-left: 4px solid #5f7a38;
+  border-radius: 6px;
+  background: #f7faef;
+  color: #26331c;
+}
+
+.budget-input-banner span,
+.budget-input-context span,
+.budget-input-footer > span,
+.budget-input-context p {
+  color: #536245;
+  font-size: 0.8rem;
+  overflow-wrap: anywhere;
+}
+
+.budget-input-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.budget-input-metrics article {
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid #d7dfc7;
+  border-radius: 6px;
+  background: #fcfdf9;
+}
+
+.budget-input-metrics span,
+.budget-input-metrics p {
+  color: #536245;
+  font-size: 0.78rem;
+}
+
+.budget-input-metrics strong {
+  display: block;
+  margin-top: 5px;
+  color: #243019;
+  font-size: 1.18rem;
+  overflow-wrap: anywhere;
+}
+
+.budget-input-metrics p {
+  margin: 5px 0 0;
+}
+
+.budget-input-controls,
+.budget-input-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.budget-input-controls button {
+  min-height: 34px;
+  border: 1px solid #526c32;
+  border-radius: 5px;
+  background: #ffffff;
+  color: #35491f;
+  font-weight: 700;
+}
+
+.budget-input-controls > span {
+  color: #536245;
+  font-size: 0.8rem;
+}
+
+.budget-input-table-wrap td code,
+.budget-input-table-wrap td span {
+  color: #536245;
+  font-size: 0.75rem;
+  overflow-wrap: anywhere;
+}
+
+.budget-input-table-wrap th:nth-child(1),
+.budget-input-table-wrap td:nth-child(1) {
+  width: 28%;
+}
+
+.budget-input-table-wrap th:nth-child(n + 3):nth-child(-n + 7),
+.budget-input-table-wrap td:nth-child(n + 3):nth-child(-n + 7) {
+  width: 90px;
+}
+
+.budget-input-context {
+  grid-template-columns: minmax(190px, 0.9fr) repeat(4, minmax(150px, 1fr));
+  align-items: start;
+}
+
+.budget-input-context article {
+  min-width: 0;
+}
+
+.budget-input-context article strong,
+.budget-input-context article code {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.budget-input-context article code {
+  margin-top: 5px;
+  color: #536245;
+  font-size: 0.72rem;
+}
+
+@media (max-width: 960px) {
+  .budget-input-metrics,
+  .budget-input-context {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .budget-input-metrics,
+  .budget-input-context {
+    grid-template-columns: 1fr;
+  }
+}
+
 .actuals-workbench-banner {
   display: grid;
   gap: 6px;

@@ -36,6 +36,7 @@ import type {
   ValidationSuiteEvidenceReport,
   SyntheticRateCardWorkbenchReport,
   SyntheticActualsWorkbenchReport,
+  SyntheticBudgetInputWorkbenchReport,
 } from "./types";
 
 export const REQUIRED_ARTIFACT_FILES = [
@@ -242,6 +243,7 @@ export function assertSyntheticRateCardWorkbenchReport(
   }
   if (
     report.real_rate_import_allowed ||
+    !report.not_authorized_for_calibration ||
     report.external_writes_performed ||
     report.lake_write_performed ||
     report.sqlite_write_performed ||
@@ -289,6 +291,7 @@ export function assertSyntheticActualsWorkbenchReport(
   if (
     report.billing_connector_read_performed ||
     report.billing_connector_write_performed ||
+    !report.not_authorized_for_calibration ||
     report.external_writes_performed ||
     report.lake_write_performed ||
     report.sqlite_write_performed ||
@@ -332,6 +335,85 @@ export function assertSyntheticActualsWorkbenchReport(
     report.failed_check_count !== 0
   ) {
     failures.push("synthetic_actuals_workbench_ready_with_failed_checks");
+  }
+  return failures;
+}
+
+export function assertSyntheticBudgetInputWorkbenchReport(
+  report: SyntheticBudgetInputWorkbenchReport,
+): string[] {
+  const failures: string[] = [];
+  if (
+    report.data_origin !== "synthetic" ||
+    !report.candidate_only ||
+    !report.synthetic_only ||
+    !report.non_authoritative ||
+    !report.local_json_only ||
+    !report.read_only_ui
+  ) {
+    failures.push("synthetic_budget_input_workbench_authority_boundary_failed");
+  }
+  if (
+    !report.not_authorized_for_calibration ||
+    report.external_writes_performed ||
+    report.lake_write_performed ||
+    report.sqlite_write_performed ||
+    report.budget_submission_authorized ||
+    report.matter_opening_authorized ||
+    report.silent_learning_performed
+  ) {
+    failures.push("synthetic_budget_input_workbench_side_effect_boundary_failed");
+  }
+  if (!report.budget_proposal_sha256.startsWith("sha256:")) {
+    failures.push("synthetic_budget_input_workbench_provenance_missing");
+  }
+  if (report.line_count !== report.lines.length) {
+    failures.push("synthetic_budget_input_workbench_line_count_mismatch");
+  }
+  if (report.failed_check_count !== report.checks.filter((check) => check.status === "failed").length) {
+    failures.push("synthetic_budget_input_workbench_failed_check_count_mismatch");
+  }
+  const lineFeeTotal = Math.round(
+    report.lines.reduce((sum, line) => sum + (line.estimated_fees ?? 0), 0) * 100,
+  ) / 100;
+  const lineExpenseTotal = Math.round(
+    report.lines.reduce((sum, line) => sum + line.estimated_expenses, 0) * 100,
+  ) / 100;
+  if (
+    lineFeeTotal !== (report.subtotal_fees ?? 0) ||
+    lineExpenseTotal !== report.subtotal_expenses ||
+    lineFeeTotal + lineExpenseTotal + (report.contingency_amount ?? 0) !== report.total_proposed_budget
+  ) {
+    failures.push("synthetic_budget_input_workbench_totals_not_reconciled");
+  }
+  if (report.lines.some((line) => !line.rate_is_synthetic || line.rate_source !== "synthetic_profile")) {
+    failures.push("synthetic_budget_input_workbench_non_synthetic_rate");
+  }
+  if (
+    report.lines.some(
+      (line) =>
+        Math.round(((line.estimated_fees ?? 0) + line.estimated_expenses) * 100) / 100 !==
+          line.line_total ||
+        !line.estimate_basis ||
+        line.estimate_basis_refs.length === 0,
+    )
+  ) {
+    failures.push("synthetic_budget_input_workbench_line_integrity_failed");
+  }
+  if (report.context_lanes.length < 2 || report.context_lanes[0]?.inclusion !== "used_for_budget_math") {
+    failures.push("synthetic_budget_input_workbench_used_lane_missing");
+  }
+  if (report.context_lanes.slice(1).some((lane) => lane.inclusion !== "excluded_context_only")) {
+    failures.push("synthetic_budget_input_workbench_context_lane_mixed_into_math");
+  }
+  if (report.context_lanes.some((lane) => !lane.source_ref || !lane.source_sha256?.startsWith("sha256:"))) {
+    failures.push("synthetic_budget_input_workbench_context_provenance_missing");
+  }
+  if (
+    report.status === "synthetic_budget_input_workbench_ready_for_review" &&
+    report.failed_check_count !== 0
+  ) {
+    failures.push("synthetic_budget_input_workbench_ready_with_failed_checks");
   }
   return failures;
 }

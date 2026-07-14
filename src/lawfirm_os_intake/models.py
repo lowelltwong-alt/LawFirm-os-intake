@@ -19820,4 +19820,122 @@ class SyntheticActualsWorkbenchReport(StrictModel):
         return self
 
 
+class SyntheticBudgetInputWorkbenchLine(StrictModel):
+    line_number: int = Field(ge=1)
+    phase_id: str
+    phase_name: str
+    task_id: str
+    task_name: str
+    staffing_role: str
+    estimated_hours: float = Field(ge=0)
+    hourly_rate: float | None = Field(default=None, ge=0)
+    rate_source: str
+    rate_is_synthetic: bool
+    estimated_fees: float | None = Field(default=None, ge=0)
+    estimated_expenses: float = Field(ge=0)
+    line_total: float = Field(ge=0)
+    calculation_formula: str | None = None
+    estimate_basis: str
+    estimate_basis_refs: list[str] = Field(default_factory=list)
+
+
+class SyntheticBudgetInputWorkbenchContextLane(StrictModel):
+    lane_id: str
+    label: str
+    inclusion: Literal["used_for_budget_math", "excluded_context_only"]
+    reason: str
+    source_ref: str | None = None
+    source_sha256: str | None = None
+
+
+class SyntheticBudgetInputWorkbenchCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    evidence_refs: list[str] = Field(default_factory=list)
+
+
+class SyntheticBudgetInputWorkbenchReport(StrictModel):
+    schema_version: str = "0.1"
+    synthetic_budget_input_workbench_report_id: str
+    status: Literal[
+        "synthetic_budget_input_workbench_ready_for_review",
+        "blocked_by_synthetic_budget_input_workbench",
+    ]
+    methodology_version: Literal["synthetic_budget_input_workbench.v0_1"] = (
+        "synthetic_budget_input_workbench.v0_1"
+    )
+    budget_proposal_id: str
+    budget_proposal_ref: str
+    budget_proposal_sha256: str
+    preflight_packet_id: str
+    confirmation_id: str
+    practice_profile_id: str
+    matter_family: str
+    representation_posture: str
+    pricing_status: str
+    currency: str
+    lines: list[SyntheticBudgetInputWorkbenchLine]
+    line_count: int = Field(ge=0)
+    subtotal_fees: float | None = Field(default=None, ge=0)
+    subtotal_expenses: float = Field(ge=0)
+    contingency_amount: float | None = Field(default=None, ge=0)
+    total_proposed_budget: float | None = Field(default=None, ge=0)
+    context_lanes: list[SyntheticBudgetInputWorkbenchContextLane]
+    checks: list[SyntheticBudgetInputWorkbenchCheck]
+    failed_check_count: int = Field(ge=0)
+    workbook_filename: str
+    markdown_filename: str
+    display_banner: dict[str, Any]
+    candidate_exception_lake_labels: list[str]
+    required_next_gates: list[str]
+    data_origin: Literal["synthetic"] = "synthetic"
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    synthetic_only: Literal[True] = True
+    local_json_only: Literal[True] = True
+    read_only_ui: Literal[True] = True
+    not_authorized_for_external_write: Literal[True] = True
+    not_authorized_for_lake_write: Literal[True] = True
+    not_authorized_for_sqlite_write: Literal[True] = True
+    not_authorized_for_budget_submission: Literal[True] = True
+    not_authorized_for_matter_opening: Literal[True] = True
+    not_authorized_for_calibration: Literal[True] = True
+    external_writes_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+    sqlite_write_performed: Literal[False] = False
+    budget_submission_authorized: Literal[False] = False
+    matter_opening_authorized: Literal[False] = False
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def synthetic_budget_input_workbench_is_complete_and_review_bound(
+        self,
+    ) -> "SyntheticBudgetInputWorkbenchReport":
+        failed = [check for check in self.checks if check.status == "failed"]
+        if self.failed_check_count != len(failed):
+            raise ValueError("synthetic budget input workbench failed check count mismatch")
+        if self.line_count != len(self.lines):
+            raise ValueError("synthetic budget input workbench line count mismatch")
+        if self.status == "synthetic_budget_input_workbench_ready_for_review" and failed:
+            raise ValueError("ready synthetic budget input workbench cannot include failed checks")
+        if self.status == "blocked_by_synthetic_budget_input_workbench" and not failed:
+            raise ValueError("blocked synthetic budget input workbench requires failed checks")
+        if not self.budget_proposal_sha256.startswith("sha256:"):
+            raise ValueError("synthetic budget input workbench requires a proposal hash")
+        if not any(lane.inclusion == "used_for_budget_math" for lane in self.context_lanes):
+            raise ValueError("synthetic budget input workbench requires a used input lane")
+        if self.status == "synthetic_budget_input_workbench_ready_for_review":
+            for line in self.lines:
+                expected_total = round(float(line.estimated_fees or 0) + line.estimated_expenses, 2)
+                if line.line_total != expected_total:
+                    raise ValueError("synthetic budget input workbench line total must reconcile")
+                if not line.estimate_basis or not line.estimate_basis_refs:
+                    raise ValueError(
+                        "synthetic budget input workbench line requires estimate basis provenance"
+                    )
+        return self
+
+
 UIReviewDataBundle.model_rebuild()

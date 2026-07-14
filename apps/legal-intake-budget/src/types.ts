@@ -1056,6 +1056,93 @@ export type SyntheticActualsWorkbenchReport = {
   generated_at: string;
 };
 
+export type SyntheticBudgetInputWorkbenchLine = {
+  line_number: number;
+  phase_id: string;
+  phase_name: string;
+  task_id: string;
+  task_name: string;
+  staffing_role: string;
+  estimated_hours: number;
+  hourly_rate: number | null;
+  rate_source: string;
+  rate_is_synthetic: boolean;
+  estimated_fees: number | null;
+  estimated_expenses: number;
+  line_total: number;
+  calculation_formula: string | null;
+  estimate_basis: string;
+  estimate_basis_refs: string[];
+};
+
+export type SyntheticBudgetInputWorkbenchContextLane = {
+  lane_id: string;
+  label: string;
+  inclusion: "used_for_budget_math" | "excluded_context_only";
+  reason: string;
+  source_ref: string | null;
+  source_sha256: string | null;
+};
+
+export type SyntheticBudgetInputWorkbenchCheck = {
+  check_id: string;
+  status: "passed" | "failed";
+  message: string;
+  evidence_refs: string[];
+};
+
+export type SyntheticBudgetInputWorkbenchReport = {
+  schema_version: string;
+  synthetic_budget_input_workbench_report_id: string;
+  status:
+    | "synthetic_budget_input_workbench_ready_for_review"
+    | "blocked_by_synthetic_budget_input_workbench";
+  methodology_version: string;
+  budget_proposal_id: string;
+  budget_proposal_ref: string;
+  budget_proposal_sha256: string;
+  preflight_packet_id: string;
+  confirmation_id: string;
+  practice_profile_id: string;
+  matter_family: string;
+  representation_posture: string;
+  pricing_status: string;
+  currency: string;
+  lines: SyntheticBudgetInputWorkbenchLine[];
+  line_count: number;
+  subtotal_fees: number | null;
+  subtotal_expenses: number;
+  contingency_amount: number | null;
+  total_proposed_budget: number | null;
+  context_lanes: SyntheticBudgetInputWorkbenchContextLane[];
+  checks: SyntheticBudgetInputWorkbenchCheck[];
+  failed_check_count: number;
+  workbook_filename: string;
+  markdown_filename: string;
+  display_banner: { summary: string; candidate_only: boolean; synthetic_only: boolean; read_only_ui: boolean; blocked_actions: string[] };
+  candidate_exception_lake_labels: string[];
+  required_next_gates: string[];
+  data_origin: "synthetic";
+  candidate_only: true;
+  non_authoritative: true;
+  synthetic_only: true;
+  local_json_only: true;
+  read_only_ui: true;
+  not_authorized_for_external_write: true;
+  not_authorized_for_lake_write: true;
+  not_authorized_for_sqlite_write: true;
+  not_authorized_for_budget_submission: true;
+  not_authorized_for_matter_opening: true;
+  not_authorized_for_calibration: true;
+  external_writes_performed: false;
+  lake_write_performed: false;
+  sqlite_write_performed: false;
+  budget_submission_authorized: false;
+  matter_opening_authorized: false;
+  silent_learning_performed: false;
+  generated_at: string;
+};
+
 export type BudgetLearningLoopActualsSummary = {
   status: "variance_review_required" | "actuals_not_available" | "actuals_within_threshold";
   comparison_scope: string;

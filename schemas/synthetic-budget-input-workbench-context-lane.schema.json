@@ -1,0 +1,57 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "lane_id": {
+      "title": "Lane Id",
+      "type": "string"
+    },
+    "label": {
+      "title": "Label",
+      "type": "string"
+    },
+    "inclusion": {
+      "enum": [
+        "used_for_budget_math",
+        "excluded_context_only"
+      ],
+      "title": "Inclusion",
+      "type": "string"
+    },
+    "reason": {
+      "title": "Reason",
+      "type": "string"
+    },
+    "source_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Ref"
+    },
+    "source_sha256": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Sha256"
+    }
+  },
+  "required": [
+    "lane_id",
+    "label",
+    "inclusion",
+    "reason"
+  ],
+  "title": "SyntheticBudgetInputWorkbenchContextLane",
+  "type": "object"
+}

@@ -439,6 +439,10 @@ from lawfirm_os_intake.models import (  # noqa: E402
     SyntheticConfidenceSummaryReport,
     SyntheticActualsWorkbenchCheck,
     SyntheticActualsWorkbenchReport,
+    SyntheticBudgetInputWorkbenchCheck,
+    SyntheticBudgetInputWorkbenchContextLane,
+    SyntheticBudgetInputWorkbenchLine,
+    SyntheticBudgetInputWorkbenchReport,
     SyntheticRateCardWorkbenchCheck,
     SyntheticRateCardWorkbenchReport,
     SyntheticRateCardWorkbenchRow,
@@ -548,6 +552,12 @@ MODELS = {
     "synthetic-confidence-summary-report.schema.json": SyntheticConfidenceSummaryReport,
     "synthetic-actuals-workbench-check.schema.json": SyntheticActualsWorkbenchCheck,
     "synthetic-actuals-workbench-report.schema.json": SyntheticActualsWorkbenchReport,
+    "synthetic-budget-input-workbench-check.schema.json": SyntheticBudgetInputWorkbenchCheck,
+    "synthetic-budget-input-workbench-context-lane.schema.json": (
+        SyntheticBudgetInputWorkbenchContextLane
+    ),
+    "synthetic-budget-input-workbench-line.schema.json": SyntheticBudgetInputWorkbenchLine,
+    "synthetic-budget-input-workbench-report.schema.json": SyntheticBudgetInputWorkbenchReport,
     "synthetic-rate-card-workbench-check.schema.json": SyntheticRateCardWorkbenchCheck,
     "synthetic-rate-card-workbench-report.schema.json": SyntheticRateCardWorkbenchReport,
     "synthetic-rate-card-workbench-row.schema.json": SyntheticRateCardWorkbenchRow,

@@ -34,6 +34,7 @@ import demoUIDemoQARecipe from "./fixtures/demo-ui-demo-qa-recipe-report.json";
 import demoValidationSuiteEvidence from "./fixtures/demo-validation-suite-evidence-report.json";
 import demoSyntheticRateCardWorkbench from "./fixtures/demo-synthetic-rate-card-workbench-report.json";
 import demoSyntheticActualsWorkbench from "./fixtures/demo-synthetic-actuals-workbench-report.json";
+import demoSyntheticBudgetInputWorkbench from "./fixtures/demo-synthetic-budget-input-workbench-report.json";
 import {
   assertMatterLinkingPreflightReport,
   assertMatterLinkingQAGateReport,
@@ -65,6 +66,7 @@ import {
   assertSyntheticQAReviewRunReport,
   assertSyntheticRateCardWorkbenchReport,
   assertSyntheticActualsWorkbenchReport,
+  assertSyntheticBudgetInputWorkbenchReport,
   assertUIDemoQARecipeReport,
   assertUIReviewDataBundle,
   assertValidationSuiteEvidenceReport,
@@ -119,6 +121,7 @@ import type {
   SyntheticQAReviewRunReport,
   SyntheticRateCardWorkbenchReport,
   SyntheticActualsWorkbenchReport,
+  SyntheticBudgetInputWorkbenchReport,
   UIDemoQARecipeReport,
   UIReviewDataBundle,
   ValidationSuiteEvidenceReport,
@@ -173,6 +176,8 @@ const syntheticRateCardWorkbench =
   demoSyntheticRateCardWorkbench as SyntheticRateCardWorkbenchReport;
 const syntheticActualsWorkbench =
   demoSyntheticActualsWorkbench as SyntheticActualsWorkbenchReport;
+const syntheticBudgetInputWorkbench =
+  demoSyntheticBudgetInputWorkbench as SyntheticBudgetInputWorkbenchReport;
 const bundleContractFailures = assertUIReviewDataBundle(reviewDataBundle);
 const manifestContractFailures = assertReadOnlyManifest(manifest);
 const syntheticQAReviewRunFailures = assertSyntheticQAReviewRunReport(syntheticQAReviewRun);
@@ -235,6 +240,9 @@ const syntheticRateCardWorkbenchFailures = assertSyntheticRateCardWorkbenchRepor
 const syntheticActualsWorkbenchFailures = assertSyntheticActualsWorkbenchReport(
   syntheticActualsWorkbench,
 );
+const syntheticBudgetInputWorkbenchFailures = assertSyntheticBudgetInputWorkbenchReport(
+  syntheticBudgetInputWorkbench,
+);
 const contractFailures = [
   ...bundleContractFailures,
   ...manifestContractFailures,
@@ -267,6 +275,7 @@ const contractFailures = [
   ...pilotReviewStoryFailures,
   ...syntheticRateCardWorkbenchFailures,
   ...syntheticActualsWorkbenchFailures,
+  ...syntheticBudgetInputWorkbenchFailures,
 ];
 
 const PUBLIC_DATA_CUSTODY_COMMANDS = [
@@ -766,6 +775,91 @@ function SyntheticActualsWorkbenchPanel({ report }: { report: SyntheticActualsWo
         </table>
       </div>
       <div className="actuals-workbench-footer"><span>Proposal: {report.budget_proposal_sha256}</span><TokenList items={report.display_banner.blocked_actions} limit={6} /></div>
+    </section>
+  );
+}
+
+function downloadSyntheticBudgetInputCsv(report: SyntheticBudgetInputWorkbenchReport) {
+  const quote = (value: string | number | null) => `"${String(value ?? "").replaceAll('"', '""')}"`;
+  const rows = [
+    ["#", "Phase", "Task", "Role", "Hours", "Hourly Rate", "Fees", "Expenses", "Line Total", "Rate Source", "Estimate Basis", "Basis References", "Formula"],
+    ...report.lines.map((line) => [
+      line.line_number, line.phase_id, line.task_id, line.staffing_role, line.estimated_hours,
+      line.hourly_rate, line.estimated_fees, line.estimated_expenses, line.line_total,
+      line.rate_source, line.estimate_basis, line.estimate_basis_refs.join(" | "),
+      line.calculation_formula,
+    ]),
+  ];
+  const csv = rows.map((row) => row.map(quote).join(",")).join("\n");
+  const objectUrl = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+  const anchor = document.createElement("a");
+  anchor.href = objectUrl;
+  anchor.download = "synthetic-budget-input-ledger.csv";
+  anchor.click();
+  URL.revokeObjectURL(objectUrl);
+}
+
+function SyntheticBudgetInputWorkbenchPanel({
+  report,
+}: {
+  report: SyntheticBudgetInputWorkbenchReport;
+}) {
+  const failed = syntheticBudgetInputWorkbenchFailures.length > 0;
+  const excludedLanes = report.context_lanes.filter(
+    (lane) => lane.inclusion === "excluded_context_only",
+  );
+
+  return (
+    <section className="panel budget-input-workbench-panel" aria-labelledby="budget-input-workbench-title">
+      <div className="panel-heading">
+        <div>
+          <p className="eyebrow">Pinned synthetic budget inputs</p>
+          <h2 id="budget-input-workbench-title">Budget Input Ledger</h2>
+          <code>{report.synthetic_budget_input_workbench_report_id}</code>
+        </div>
+        <span className={failed ? "state state-failed" : "state state-passed"}>
+          {failed ? "contract failed" : "candidate only"}
+        </span>
+      </div>
+
+      <div className="budget-input-banner">
+        <strong>{report.display_banner.summary}</strong>
+        <span>Proposal: {report.budget_proposal_sha256}</span>
+      </div>
+
+      <div className="budget-input-metrics" aria-label="Budget input ledger totals">
+        <article><span>Fees</span><strong>{formatMoney(report.subtotal_fees)}</strong></article>
+        <article><span>Expenses</span><strong>{formatMoney(report.subtotal_expenses)}</strong></article>
+        <article><span>Contingency</span><strong>{formatMoney(report.contingency_amount)}</strong></article>
+        <article><span>Candidate Budget</span><strong>{formatMoney(report.total_proposed_budget)}</strong><p>{report.line_count} input lines</p></article>
+      </div>
+
+      <div className="budget-input-controls">
+        <button type="button" onClick={() => downloadSyntheticBudgetInputCsv(report)}>Download CSV</button>
+        <span>CLI export: {report.workbook_filename}</span>
+      </div>
+
+      <div className="table-wrap budget-input-table-wrap">
+        <table>
+          <thead><tr><th>Phase / Task</th><th>Role</th><th>Hours</th><th>Rate</th><th>Fees</th><th>Expenses</th><th>Total</th><th>Basis</th></tr></thead>
+          <tbody>{report.lines.map((line) => <tr key={line.line_number}>
+            <td><strong>{line.phase_id} / {line.task_id}</strong><br /><span>{line.task_name}</span></td>
+            <td>{line.staffing_role.replaceAll("_", " ")}<br /><code>{line.rate_source}</code></td>
+            <td>{line.estimated_hours}</td><td>{formatMoney(line.hourly_rate)}</td>
+            <td>{formatMoney(line.estimated_fees)}</td><td>{formatMoney(line.estimated_expenses)}</td>
+            <td>{formatMoney(line.line_total)}</td>
+            <td><strong>{line.estimate_basis.replaceAll("_", " ")}</strong><br /><code>{line.estimate_basis_refs[0]}</code></td>
+          </tr>)}</tbody>
+        </table>
+      </div>
+
+      <div className="budget-input-context" aria-label="Excluded budget context lanes">
+        <div><strong>Excluded Context</strong><span>These lanes are visible for provenance only and do not affect the ledger total.</span></div>
+        {excludedLanes.map((lane) => <article key={lane.lane_id}>
+          <strong>{lane.label}</strong><code>{lane.source_sha256 ?? "not supplied"}</code><p>{lane.reason}</p>
+        </article>)}
+      </div>
+      <div className="budget-input-footer"><span>Read-only local artifact. No edits, submission, calibration, or external writes.</span><TokenList items={report.display_banner.blocked_actions} limit={6} /></div>
     </section>
   );
 }
@@ -4017,6 +4111,7 @@ function App() {
         pocReport={pocQATriage}
       />
       <SyntheticRateCardWorkbenchPanel report={syntheticRateCardWorkbench} />
+      <SyntheticBudgetInputWorkbenchPanel report={syntheticBudgetInputWorkbench} />
       <SyntheticActualsWorkbenchPanel report={syntheticActualsWorkbench} />
       <PilotReviewStoryPanel report={pilotReviewStory} />
       <BudgetLearningLoopPanel report={budgetLearningLoop} />
