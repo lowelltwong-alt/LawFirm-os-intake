@@ -615,7 +615,7 @@ def test_labor_employment_budget_replay_input_pack_marks_ready_and_missing_input
     )
     assert class_collective_case.status == "partially_ready"
     assert class_collective_case.ready_input_count == 4
-    assert class_collective_case.missing_input_count == 8
+    assert class_collective_case.missing_input_count == 1
     assert any(
         item.loop_type == "actuals_variance"
         and item.expected_artifact_name == "budget_actual_comparison_report.json"
@@ -644,9 +644,9 @@ def test_labor_employment_budget_replay_input_pack_marks_ready_and_missing_input
     )
     assert any(
         item.loop_type == "reviewed_learning_gate"
-        and item.expected_artifact_name == "budget_learning_loop_report.json"
-        and item.required_input_artifact == "budget_actual_comparison_report.json"
-        and item.input_role == "complement_report"
+        and item.expected_artifact_name == "reviewed_learning_gate_report.json"
+        and item.required_input_artifact.startswith("one_or_more_of:")
+        and item.input_role == "one_of_signal"
         and item.input_status == "missing"
         for item in class_collective_case.items
     )
@@ -665,14 +665,14 @@ def test_labor_employment_budget_replay_input_pack_marks_ready_and_missing_input
     assert "`le-learning-class-collective-clean.v0_1`" in notes
     assert "`class_collective_paga_representative`" in notes
     assert (
-        "`reviewed_learning_gate` | `budget_learning_loop_report.json` | "
-        "`budget_actual_comparison_report.json` | `complement_report` | `missing` | "
-        "`BudgetActualComparisonReport`" in notes
+        "`reviewed_learning_gate` | `reviewed_learning_gate_report.json` | "
+        "`one_or_more_of:carrier_rejection_learning_report.json,budget_actual_comparison_report.json,budget_revision_report.json` | "
+        "`one_of_signal` | `missing`" in notes
     )
     assert (
         "`le-learning-class-collective-clean.v0_1`: add or repair "
-        "`budget_actual_comparison_report.json` for `reviewed_learning_gate` -> "
-        "`budget_learning_loop_report.json`" in notes
+        "`one_or_more_of:carrier_rejection_learning_report.json,budget_actual_comparison_report.json,budget_revision_report.json` "
+        "for `reviewed_learning_gate` -> `reviewed_learning_gate_report.json`" in notes
     )
     assert "Rust Transition Candidates" in notes
     assert {path.name for path in run_dir.iterdir()} == {

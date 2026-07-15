@@ -46,6 +46,15 @@
       "title": "Expected Budget Output State",
       "type": "string"
     },
+    "replay_scope": {
+      "enum": [
+        "complete_aggregate",
+        "scoped_partial",
+        "blocked_guard"
+      ],
+      "title": "Replay Scope",
+      "type": "string"
+    },
     "seeded_learning_loop_types": {
       "items": {
         "enum": [
@@ -202,6 +211,7 @@
     "family",
     "variant",
     "expected_budget_output_state",
+    "replay_scope",
     "seeded_learning_loop_types",
     "replay_seed_refs_by_loop",
     "expected_replay_artifacts_by_loop",

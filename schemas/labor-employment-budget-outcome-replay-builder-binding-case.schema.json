@@ -307,6 +307,15 @@
       "title": "Expected Budget Output State",
       "type": "string"
     },
+    "replay_scope": {
+      "enum": [
+        "complete_aggregate",
+        "scoped_partial",
+        "blocked_guard"
+      ],
+      "title": "Replay Scope",
+      "type": "string"
+    },
     "slot_count": {
       "minimum": 0,
       "title": "Slot Count",
@@ -434,6 +443,7 @@
     "variant",
     "status",
     "expected_budget_output_state",
+    "replay_scope",
     "slot_count",
     "bound_slot_count",
     "unknown_artifact_count",

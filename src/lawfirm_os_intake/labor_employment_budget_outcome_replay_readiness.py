@@ -56,6 +56,16 @@ REQUIRED_ARTIFACTS_BY_LOOP: dict[LaborEmploymentBudgetLearningLoopType, set[str]
 }
 
 
+def _required_artifacts_for_seed(
+    seed: LaborEmploymentBudgetOutcomeReplaySeedSpec,
+    loop_type: LaborEmploymentBudgetLearningLoopType,
+) -> set[str]:
+    required = set(REQUIRED_ARTIFACTS_BY_LOOP[loop_type])
+    if loop_type == "reviewed_learning_gate" and seed.replay_scope == "scoped_partial":
+        required.discard("budget_learning_loop_report.json")
+    return required
+
+
 def run_labor_employment_budget_outcome_replay_readiness_audit(
     *,
     seed_manifest_path: str | Path,
@@ -309,7 +319,7 @@ def _case(
                     missing_artifacts.append(loop_type)
                 if not loop_labels:
                     missing_labels.append(loop_type)
-                required_artifacts = REQUIRED_ARTIFACTS_BY_LOOP[loop_type]
+                required_artifacts = _required_artifacts_for_seed(seed, loop_type)
                 if not required_artifacts.issubset(set(artifacts)):
                     missing_artifacts.append(loop_type)
                 for ref in refs:
@@ -346,6 +356,7 @@ def _case(
         variant=learning_case.variant,
         status="failed" if failures else "passed",
         expected_budget_output_state=learning_case.expected_budget_output_state,
+        replay_scope=seed.replay_scope if seed else "scoped_partial",
         observed_budget_output_state=learning_case.observed_budget_output_state,
         outcome_seed_id=seed.outcome_seed_id if seed else None,
         required_learning_loop_types=required_loops,

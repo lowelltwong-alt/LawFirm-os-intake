@@ -12,6 +12,7 @@
       "family": "discrimination_harassment",
       "variant": "clean",
       "expected_budget_output_state": "candidate_range_after_review_pending_human_review",
+      "replay_scope": "complete_aggregate",
       "seeded_learning_loop_types": [
         "actuals_variance",
         "carrier_rejection_capture",
@@ -80,6 +81,7 @@
       "family": "wage_hour_flsa_state",
       "variant": "clean",
       "expected_budget_output_state": "candidate_range_after_review_pending_human_review",
+      "replay_scope": "complete_aggregate",
       "seeded_learning_loop_types": [
         "actuals_variance",
         "carrier_rejection_capture",
@@ -136,6 +138,7 @@
       "family": "epli_carrier_assignment",
       "variant": "clean",
       "expected_budget_output_state": "candidate_range_after_review_pending_human_review",
+      "replay_scope": "complete_aggregate",
     "seeded_learning_loop_types": [
       "actuals_variance",
       "carrier_rejection_capture",
@@ -203,6 +206,7 @@
       "family": "retaliation_wrongful_termination",
       "variant": "messy_thread",
       "expected_budget_output_state": "candidate_range_after_review_pending_human_review",
+      "replay_scope": "scoped_partial",
       "seeded_learning_loop_types": [
         "actuals_variance",
         "reviewed_learning_gate"
@@ -222,8 +226,7 @@
           "budget_actual_variance_ledger_report.json"
         ],
         "reviewed_learning_gate": [
-          "reviewed_learning_gate_report.json",
-          "budget_learning_loop_report.json"
+          "reviewed_learning_gate_report.json"
         ]
       },
       "candidate_exception_lake_labels_by_loop": {
@@ -248,6 +251,7 @@
       "family": "class_collective_paga_representative",
       "variant": "clean",
       "expected_budget_output_state": "range_or_hours_only_pending_review",
+      "replay_scope": "scoped_partial",
       "seeded_learning_loop_types": [
         "actuals_variance",
         "reviewed_learning_gate"
@@ -267,8 +271,7 @@
           "budget_actual_variance_ledger_report.json"
         ],
         "reviewed_learning_gate": [
-          "reviewed_learning_gate_report.json",
-          "budget_learning_loop_report.json"
+          "reviewed_learning_gate_report.json"
         ]
       },
       "candidate_exception_lake_labels_by_loop": {
@@ -293,6 +296,7 @@
       "family": "restrictive_covenant_trade_secret",
       "variant": "messy_thread",
       "expected_budget_output_state": "range_or_hours_only_pending_review",
+      "replay_scope": "scoped_partial",
       "seeded_learning_loop_types": [
         "carrier_rejection_capture",
         "reviewed_learning_gate"
@@ -312,8 +316,7 @@
           "carrier_rejection_decision_ledger_report.json"
         ],
         "reviewed_learning_gate": [
-          "reviewed_learning_gate_report.json",
-          "budget_learning_loop_report.json"
+          "reviewed_learning_gate_report.json"
         ]
       },
       "candidate_exception_lake_labels_by_loop": {
@@ -337,6 +340,7 @@
       "family": "administrative_exhaustion_agency_record",
       "variant": "clean",
       "expected_budget_output_state": "candidate_range_after_review_pending_human_review",
+      "replay_scope": "scoped_partial",
       "seeded_learning_loop_types": [
         "actuals_variance",
         "reviewed_learning_gate"
@@ -356,8 +360,7 @@
           "budget_actual_variance_ledger_report.json"
         ],
         "reviewed_learning_gate": [
-          "reviewed_learning_gate_report.json",
-          "budget_learning_loop_report.json"
+          "reviewed_learning_gate_report.json"
         ]
       },
       "candidate_exception_lake_labels_by_loop": {
@@ -381,6 +384,7 @@
       "family": "ada_fmla_accommodation_leave",
       "variant": "adversarial",
       "expected_budget_output_state": "blocked_amount_budget",
+      "replay_scope": "blocked_guard",
       "seeded_learning_loop_types": [
         "blocked_budget_guard"
       ],
