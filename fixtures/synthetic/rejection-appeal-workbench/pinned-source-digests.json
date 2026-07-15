@@ -1,0 +1,8 @@
+{
+  "data_origin": "synthetic",
+  "candidate_only": true,
+  "source_sha256": {
+    "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/legal_budget_proposal.json": "sha256:b85c715317e86f7b0822ba10f6b19da6bc209555da45ad49e18d78c000159a5c",
+    "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/carrier_rejection_capture_source_bundle_with_appeal_results.json": "sha256:a045bff15e1adf5646d01eadf03e2aff0827d79aa2eb57f2a491d064be9e50f7"
+  }
+}

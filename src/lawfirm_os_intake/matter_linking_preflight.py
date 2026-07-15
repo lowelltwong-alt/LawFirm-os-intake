@@ -233,6 +233,7 @@ def build_matter_linking_preflight_report(
         upfront_connector_implemented=bool(boundaries.get("upfront_connector_implemented")),
         vendor_api_called=bool(boundaries.get("vendor_api_called")),
         external_write_performed=bool(boundaries.get("external_write_performed")),
+        external_writes_performed=bool(boundaries.get("external_write_performed")),
         lake_write_performed=bool(boundaries.get("lake_write_performed")),
         sqlite_write_performed=bool(boundaries.get("sqlite_write_performed")),
         matter_opening_authorized=bool(boundaries.get("matter_opening_authorized")),

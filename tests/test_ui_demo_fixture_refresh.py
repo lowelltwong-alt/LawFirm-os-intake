@@ -7,6 +7,7 @@ from lawfirm_os_intake.rust_fixture_snapshot_coherence import (
 )
 from lawfirm_os_intake.rust_ui_bundle_source_hash import run_rust_ui_bundle_source_hash_check
 from lawfirm_os_intake.ui_demo_fixture_refresh import refresh_ui_demo_fixtures
+from lawfirm_os_intake.ui_review_data_bundle import DETAIL_REPORT_SPECS
 from lawfirm_os_intake.util import load_json
 
 
@@ -135,6 +136,23 @@ def _seed_refresh_fixture_root(tmp_path):
             ]
         ),
     )
+    existing_ids = {
+        "ui-review-manifest",
+        "synthetic-confidence-summary",
+        "rust-fixture-manifest",
+    }
+    for spec in DETAIL_REPORT_SPECS:
+        if not spec.required or spec.detail_report_id in existing_ids:
+            continue
+        _write_json(
+            root / ("demo-" + spec.file_name[:-5].replace("_", "-") + ".json"),
+            {
+                "status": "synthetic_fixture_ready",
+                "candidate_only": True,
+                "synthetic_only": True,
+                "external_writes_performed": False,
+            },
+        )
     return root
 
 
@@ -194,6 +212,26 @@ def test_refresh_ui_demo_fixtures_updates_bundle_and_manifest(repo_root, tmp_pat
         skipped["path"] == "demo-ui-review-data-bundle.json"
         for skipped in manifest["skipped_files"]
     )
+
+
+def test_refresh_ui_demo_fixtures_blocks_detail_without_explicit_boundary_fields(
+    repo_root, tmp_path
+):
+    root = _seed_refresh_fixture_root(tmp_path)
+    bundle_path = root / "demo-ui-review-data-bundle.json"
+    bundle = json.loads(bundle_path.read_text(encoding="utf-8"))
+    bundle["detail_reports"][0].pop("candidate_only")
+    bundle_path.write_text(json.dumps(bundle, sort_keys=True), encoding="utf-8")
+
+    report, _report_path = refresh_ui_demo_fixtures(
+        fixtures_root=root,
+        out_dir=tmp_path / "out",
+        repo_root=repo_root,
+        write_fixtures=True,
+        generated_at="2026-07-15T00:00:00Z",
+    )
+
+    assert report.status == "ui_demo_fixture_refresh_failed"
 
 
 def test_checked_ui_demo_fixture_wrappers_are_rust_verified(repo_root, tmp_path):

@@ -377,6 +377,11 @@
       "title": "External Write Performed",
       "type": "boolean"
     },
+    "external_writes_performed": {
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
     "lake_write_performed": {
       "default": false,
       "title": "Lake Write Performed",

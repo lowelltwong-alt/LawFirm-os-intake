@@ -283,6 +283,8 @@ def build_synthetic_budget_configuration_workbench_report(
     *, repo_root: str | Path, generated_at: str | None = None
 ) -> SyntheticBudgetConfigurationWorkbenchReport:
     root = Path(repo_root)
+    source_paths = [root / source_ref for _, source_ref, _ in SOURCE_SPECS]
+    source_bytes_before = {path: path.read_bytes() for path in source_paths if path.is_file()}
     loaded, sources = _read_sources(root)
     entries, invalid_paths = _entries(loaded)
     source_files_present = all((root / source.source_ref).is_file() for source in sources)
@@ -304,6 +306,10 @@ def build_synthetic_budget_configuration_workbench_report(
         and not real_flags
     )
     effect_counts = dict(sorted(Counter(entry.math_effect for entry in entries).items()))
+    source_inputs_unchanged = all(
+        path.is_file() and path.read_bytes() == content
+        for path, content in source_bytes_before.items()
+    )
     checks = [
         _check(
             "source_files_present",
@@ -342,9 +348,10 @@ def build_synthetic_budget_configuration_workbench_report(
             SOURCE_SPECS[3][1],
         ),
         _check(
-            "no_import_or_runtime_write",
-            True,
-            "The workbook is an editable worksheet only; the CLI never imports it or performs runtime writes.",
+            "source_inputs_unchanged_during_build",
+            source_inputs_unchanged,
+            "Every declared editable synthetic source must remain byte-identical while the inventory builds.",
+            *[source.source_ref for source in sources],
         ),
     ]
     failed = sum(check.status == "failed" for check in checks)

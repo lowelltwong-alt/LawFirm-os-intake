@@ -381,8 +381,17 @@
           "title": "Synthetic Only",
           "type": "boolean"
         },
+        "metadata_only": {
+          "default": false,
+          "title": "Metadata Only",
+          "type": "boolean"
+        },
         "external_writes_performed": {
           "title": "External Writes Performed",
+          "type": "boolean"
+        },
+        "boundary_evidence_complete": {
+          "title": "Boundary Evidence Complete",
           "type": "boolean"
         },
         "notes": {
@@ -404,7 +413,8 @@
         "renderer",
         "candidate_only",
         "synthetic_only",
-        "external_writes_performed"
+        "external_writes_performed",
+        "boundary_evidence_complete"
       ],
       "title": "UIReviewDataBundleDetailReport",
       "type": "object"
@@ -425,6 +435,7 @@
       "enum": [
         "ready_for_review",
         "blocked_missing_required_reports",
+        "blocked_unproven_detail_boundaries",
         "failed_side_effect_boundary"
       ],
       "title": "Status",
@@ -457,6 +468,11 @@
     "external_write_report_count": {
       "minimum": 0,
       "title": "External Write Report Count",
+      "type": "integer"
+    },
+    "unproven_detail_boundary_count": {
+      "minimum": 0,
+      "title": "Unproven Detail Boundary Count",
       "type": "integer"
     },
     "detail_reports": {
@@ -647,6 +663,7 @@
     "present_detail_report_count",
     "missing_required_detail_report_count",
     "external_write_report_count",
+    "unproven_detail_boundary_count",
     "detail_reports",
     "required_next_actions",
     "generated_at"

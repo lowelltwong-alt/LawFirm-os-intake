@@ -1,4 +1,8 @@
+import pytest
+from pydantic import ValidationError
+
 from lawfirm_os_intake.cli import main
+from lawfirm_os_intake.review_ui_crosswalk_ocg_evidence import build_qa_readiness_report
 from lawfirm_os_intake.ui_review_data_bundle import build_ui_review_data_bundle
 from lawfirm_os_intake.util import load_json, write_json
 
@@ -25,6 +29,8 @@ def _write_ui_detail_reports(
         {
             "overallStatus": "passed",
             "boundaryFlags": {"readOnly": True, "localJsonOnly": True},
+            "candidate_only": True,
+            "synthetic_only": True,
             "external_writes_performed": False,
         },
     )
@@ -382,6 +388,7 @@ def test_build_ui_review_data_bundle_tracks_renderable_local_json(tmp_path):
     assert bundle.present_detail_report_count == 13
     assert bundle.missing_required_detail_report_count == 0
     assert bundle.external_write_report_count == 0
+    assert bundle.unproven_detail_boundary_count == 0
     assert bundle.local_json_only is True
     assert bundle.lake_write_performed is False
     assert bundle.sqlite_write_performed is False
@@ -512,6 +519,7 @@ def test_build_ui_review_data_bundle_includes_optional_public_data_custody_repor
         {
             "status": "blocked_public_data_cache",
             "candidate_only": True,
+            "synthetic_only": True,
             "external_writes_performed": False,
         },
     )
@@ -521,6 +529,7 @@ def test_build_ui_review_data_bundle_includes_optional_public_data_custody_repor
             "status": "failed",
             "checker": "public-data-cache-custody-checker",
             "candidate_only": True,
+            "synthetic_only": True,
             "external_writes_performed": False,
         },
     )
@@ -529,6 +538,7 @@ def test_build_ui_review_data_bundle_includes_optional_public_data_custody_repor
         {
             "status": "public_derived_synthetic_qa_ready_for_review",
             "candidate_only": True,
+            "synthetic_only": True,
             "metadata_only": True,
             "external_writes_performed": False,
             "lake_write_performed": False,
@@ -887,6 +897,113 @@ def test_build_ui_review_data_bundle_fails_side_effect_boundary(tmp_path):
     assert bundle.external_write_report_count == 1
     assert bundle.external_writes_performed is False
     assert "prohibited write signal" in " ".join(bundle.required_next_actions)
+
+
+def test_build_ui_review_data_bundle_blocks_missing_candidate_boundary_evidence(tmp_path):
+    run_root = tmp_path / "demo"
+    run_root.mkdir()
+    _write_ui_detail_reports(run_root)
+    report_path = run_root / "quality" / "labor_employment_qa_matrix_report.json"
+    payload = load_json(report_path)
+    payload.pop("candidate_only")
+    write_json(report_path, payload)
+
+    bundle = build_ui_review_data_bundle(
+        run_root=run_root,
+        out_path=run_root / "ui_review_data_bundle.json",
+        generated_at="2026-07-15T00:00:00Z",
+    )
+
+    detail = next(
+        item
+        for item in bundle.detail_reports
+        if item.file_name == "labor_employment_qa_matrix_report.json"
+    )
+    assert bundle.status == "blocked_unproven_detail_boundaries"
+    assert bundle.unproven_detail_boundary_count == 1
+    assert detail.candidate_only is False
+    assert detail.synthetic_only is True
+    assert detail.external_writes_performed is False
+    assert detail.boundary_evidence_complete is False
+    assert "Candidate-only boundary was absent" in " ".join(detail.notes)
+
+
+def test_build_ui_review_data_bundle_blocks_missing_no_write_boundary_evidence(tmp_path):
+    run_root = tmp_path / "demo"
+    run_root.mkdir()
+    _write_ui_detail_reports(run_root)
+    report_path = run_root / "quality" / "labor_employment_qa_matrix_report.json"
+    payload = load_json(report_path)
+    payload.pop("external_writes_performed")
+    write_json(report_path, payload)
+
+    bundle = build_ui_review_data_bundle(
+        run_root=run_root,
+        out_path=run_root / "ui_review_data_bundle.json",
+        generated_at="2026-07-15T00:00:00Z",
+    )
+
+    detail = next(
+        item
+        for item in bundle.detail_reports
+        if item.file_name == "labor_employment_qa_matrix_report.json"
+    )
+    assert bundle.status == "blocked_unproven_detail_boundaries"
+    assert bundle.external_write_report_count == 0
+    assert bundle.unproven_detail_boundary_count == 1
+    assert detail.boundary_evidence_complete is False
+    assert "No-external-writes boundary was absent" in " ".join(detail.notes)
+
+
+def test_build_ui_review_data_bundle_accepts_explicit_metadata_only_detail(tmp_path):
+    run_root = tmp_path / "demo"
+    run_root.mkdir()
+    _write_ui_detail_reports(run_root)
+    report_path = run_root / "public_derived_synthetic_qa_gate_report.json"
+    write_json(
+        report_path,
+        {
+            "status": "public_derived_synthetic_qa_ready_for_review",
+            "candidate_only": True,
+            "metadata_only": True,
+            "external_writes_performed": False,
+        },
+    )
+
+    bundle = build_ui_review_data_bundle(
+        run_root=run_root,
+        out_path=run_root / "ui_review_data_bundle.json",
+        generated_at="2026-07-15T00:00:00Z",
+    )
+
+    detail = next(
+        item
+        for item in bundle.detail_reports
+        if item.file_name == "public_derived_synthetic_qa_gate_report.json"
+    )
+    assert bundle.status == "ready_for_review"
+    assert detail.candidate_only is True
+    assert detail.synthetic_only is False
+    assert detail.metadata_only is True
+    assert detail.boundary_evidence_complete is True
+
+
+def test_ui_readiness_rejects_bundle_with_omitted_top_level_boundary(tmp_path):
+    run_root = tmp_path / "demo"
+    run_root.mkdir()
+    _write_ui_detail_reports(run_root)
+    bundle_path = run_root / "ui_review_data_bundle.json"
+    build_ui_review_data_bundle(
+        run_root=run_root,
+        out_path=bundle_path,
+        generated_at="2026-07-15T00:00:00Z",
+    )
+    payload = load_json(bundle_path)
+    payload.pop("not_authorized_for_lake_write")
+    write_json(bundle_path, payload)
+
+    with pytest.raises(ValidationError, match="explicit boundary fields"):
+        build_qa_readiness_report(ui_review_data_bundle_path=bundle_path)
 
 
 def test_build_ui_review_data_bundle_cli_writes_local_json(tmp_path):

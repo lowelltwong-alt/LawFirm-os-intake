@@ -196,6 +196,9 @@ export function assertUIReviewDataBundle(bundle: UIReviewDataBundle): string[] {
   const externalWriteReports = bundle.detail_reports.filter(
     (report) => report.external_writes_performed,
   );
+  const unprovenDetailBoundaries = bundle.detail_reports.filter(
+    (report) => report.present && !report.boundary_evidence_complete,
+  );
   if (bundle.required_detail_report_count !== required.length) {
     failures.push("ui_review_bundle_required_count_mismatch");
   }
@@ -208,6 +211,9 @@ export function assertUIReviewDataBundle(bundle: UIReviewDataBundle): string[] {
   if (bundle.external_write_report_count !== externalWriteReports.length) {
     failures.push("ui_review_bundle_external_write_count_mismatch");
   }
+  if (bundle.unproven_detail_boundary_count !== unprovenDetailBoundaries.length) {
+    failures.push("ui_review_bundle_unproven_detail_boundary_count_mismatch");
+  }
   for (const requiredFile of REQUIRED_DETAIL_REPORT_FILES) {
     if (!bundle.detail_reports.some((report) => report.file_name === requiredFile)) {
       failures.push(`ui_review_bundle_missing_detail:${requiredFile}`);
@@ -217,7 +223,12 @@ export function assertUIReviewDataBundle(bundle: UIReviewDataBundle): string[] {
     if (report.required && !report.present) {
       failures.push(`ui_review_bundle_required_detail_missing:${report.file_name}`);
     }
-    if (!report.candidate_only || !report.synthetic_only || report.external_writes_performed) {
+    if (
+      !report.candidate_only ||
+      (!report.synthetic_only && !report.metadata_only) ||
+      report.external_writes_performed ||
+      (report.present && !report.boundary_evidence_complete)
+    ) {
       failures.push(`ui_review_bundle_detail_boundary_failed:${report.file_name}`);
     }
     if (report.present && !report.source_sha256?.startsWith("sha256:")) {

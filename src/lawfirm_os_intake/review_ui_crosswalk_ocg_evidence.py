@@ -300,8 +300,16 @@ def build_qa_readiness_report(
         _check(
             "ui_bundle_no_write_boundary",
             "UI review bundle has no external write signals",
-            "passed" if bundle.external_write_report_count == 0 else "blocked",
-            f"external_write_report_count={bundle.external_write_report_count}.",
+            "passed"
+            if bundle.external_write_report_count == 0
+            and bundle.unproven_detail_boundary_count == 0
+            and bundle.status == "ready_for_review"
+            else "blocked",
+            (
+                f"external_write_report_count={bundle.external_write_report_count}, "
+                "unproven_detail_boundary_count="
+                f"{bundle.unproven_detail_boundary_count}, status={bundle.status}."
+            ),
             evidence_refs=[str(ui_review_data_bundle_path)],
         ),
         *crosswalk_readiness_checks(
@@ -404,8 +412,17 @@ def build_qa_product_confidence_report(
         QAProductConfidenceGate(
             gate_id="ui_bundle_read_only_boundary",
             label="UI bundle read-only boundary",
-            status="passed" if bundle.external_write_report_count == 0 else "blocked",
-            summary="UI review bundle must not expose prohibited write signals.",
+            status=(
+                "passed"
+                if bundle.external_write_report_count == 0
+                and bundle.unproven_detail_boundary_count == 0
+                and bundle.status == "ready_for_review"
+                else "blocked"
+            ),
+            summary=(
+                "UI review bundle must have no prohibited write signals and every "
+                "present detail must prove its candidate, synthetic, and no-write boundaries."
+            ),
             evidence_refs=[str(ui_review_data_bundle_path)],
         ),
     ]

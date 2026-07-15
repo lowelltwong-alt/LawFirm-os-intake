@@ -280,6 +280,7 @@
   "upfront_connector_implemented": false,
   "vendor_api_called": false,
   "external_write_performed": false,
+  "external_writes_performed": false,
   "lake_write_performed": false,
   "sqlite_write_performed": false,
   "matter_opening_authorized": false,

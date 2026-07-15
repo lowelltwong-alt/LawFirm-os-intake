@@ -22,6 +22,10 @@ MARKDOWN_FILENAME = "synthetic_rejection_appeal_workbench.md"
 WORKBOOK_FILENAME = "synthetic_rejection_appeal_workbench.xlsx"
 BUDGET_REF = "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/legal_budget_proposal.json"
 BUNDLE_REF = "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/carrier_rejection_capture_source_bundle_with_appeal_results.json"
+FINANCIAL_OUTCOME_EVENT_KIND = "carrier_financial_outcome_recorded"
+PINNED_SOURCE_MANIFEST_REF = (
+    "fixtures/synthetic/rejection-appeal-workbench/pinned-source-digests.json"
+)
 
 
 def _check(check_id: str, passed: bool, message: str, *refs: str):
@@ -36,6 +40,55 @@ def _check(check_id: str, passed: bool, message: str, *refs: str):
 def _safe_text(value: str) -> str:
     """Prevent synthetic fixture text from being interpreted as a spreadsheet formula."""
     return f"'{value}" if value.startswith(("=", "+", "-", "@")) else value
+
+
+def _financial_outcome_events_for_case(events, appeal_result_ids: list[str]):
+    """Select one financial outcome event per declared appeal result.
+
+    The ledger deliberately records both receipt of an appeal result and its
+    financial disposition. Only the latter is a case-level money source; using
+    both would duplicate recovered and write-down amounts in the workbench.
+    """
+
+    expected_ids = sorted(set(appeal_result_ids))
+    events_by_appeal_id = {appeal_result_id: [] for appeal_result_id in expected_ids}
+    for event in events:
+        if (
+            event.event_kind == FINANCIAL_OUTCOME_EVENT_KIND
+            and event.appeal_result_id in events_by_appeal_id
+        ):
+            events_by_appeal_id[event.appeal_result_id].append(event)
+    selected_events = [
+        events_by_appeal_id[appeal_result_id][0]
+        for appeal_result_id in expected_ids
+        if len(events_by_appeal_id[appeal_result_id]) == 1
+    ]
+    return selected_events, {
+        appeal_result_id: len(events_by_appeal_id[appeal_result_id])
+        for appeal_result_id in expected_ids
+    }
+
+
+def _pinned_source_hashes_match(root: Path, budget_path: Path, bundle_path: Path) -> bool:
+    """Require the frozen synthetic replay pair to match its reviewed digest manifest."""
+
+    try:
+        expected = load_json(root / PINNED_SOURCE_MANIFEST_REF)
+    except (OSError, ValueError):
+        return False
+    if not isinstance(expected, dict):
+        return False
+    expected_hashes = expected.get("source_sha256")
+    actual_hashes = {
+        BUDGET_REF: digest_text(budget_path.read_text(encoding="utf-8")),
+        BUNDLE_REF: digest_text(bundle_path.read_text(encoding="utf-8")),
+    }
+    return (
+        expected.get("data_origin") == "synthetic"
+        and expected.get("candidate_only") is True
+        and isinstance(expected_hashes, dict)
+        and expected_hashes == actual_hashes
+    )
 
 
 def build_synthetic_rejection_appeal_workbench_report(
@@ -74,10 +127,14 @@ def build_synthetic_rejection_appeal_workbench_report(
         if event.remediation_case_id:
             events_by_case.setdefault(event.remediation_case_id, []).append(event)
     cases = []
+    financial_event_counts_by_case = {}
     for case in capture.remediation_cases:
         recommendation = recommendation_by_case[case.remediation_case_id]
         events = events_by_case.get(case.remediation_case_id, [])
-        appeal_events = [event for event in events if event.appeal_result_id]
+        financial_events, financial_event_counts = _financial_outcome_events_for_case(
+            events, case.linked_appeal_result_ids
+        )
+        financial_event_counts_by_case[case.remediation_case_id] = financial_event_counts
         learning_ids = [
             proposal.proposal_id
             for proposal in learning.proposals
@@ -96,10 +153,14 @@ def build_synthetic_rejection_appeal_workbench_report(
                 source_ref_count=len(case.source_refs),
                 appeal_result_ids=case.linked_appeal_result_ids,
                 appeal_results=sorted(
-                    {event.appeal_result or "unknown" for event in appeal_events}
+                    {event.appeal_result or "unknown" for event in financial_events}
                 ),
-                recovered_amount=round(sum(event.recovered_amount for event in appeal_events), 2),
-                write_down_amount=round(sum(event.write_down_amount for event in appeal_events), 2),
+                recovered_amount=round(
+                    sum(event.recovered_amount for event in financial_events), 2
+                ),
+                write_down_amount=round(
+                    sum(event.write_down_amount for event in financial_events), 2
+                ),
                 pending_human_decisions=recommendation.required_human_decisions,
                 learning_proposal_ids=learning_ids,
                 candidate_exception_lake_ids=recommendation.exception_candidate_ids,
@@ -107,11 +168,12 @@ def build_synthetic_rejection_appeal_workbench_report(
         )
     checks = [
         _check(
-            "source_hashes_present",
-            budget_path.is_file() and bundle_path.is_file(),
-            "Pinned synthetic proposal and rejection bundle must exist.",
+            "pinned_synthetic_source_hashes_match",
+            _pinned_source_hashes_match(root, budget_path, bundle_path),
+            "Pinned synthetic proposal and rejection bundle must match the reviewed digest manifest.",
             BUDGET_REF,
             BUNDLE_REF,
+            PINNED_SOURCE_MANIFEST_REF,
         ),
         _check(
             "case_recommendation_join_complete",
@@ -124,6 +186,23 @@ def build_synthetic_rejection_appeal_workbench_report(
             ledger.total_recovered_amount + ledger.total_write_down_amount
             <= ledger.total_disputed_amount,
             "Recovered and write-down amounts cannot exceed disputed amount.",
+        ),
+        _check(
+            "case_financial_outcome_event_selection_complete",
+            all(
+                count == 1
+                for financial_event_counts in financial_event_counts_by_case.values()
+                for count in financial_event_counts.values()
+            ),
+            "Each declared appeal result must map to exactly one financial outcome event; "
+            "receipt events are not separate financial outcomes.",
+        ),
+        _check(
+            "case_financial_totals_reconcile_ledger",
+            round(sum(case.recovered_amount for case in cases), 2) == ledger.total_recovered_amount
+            and round(sum(case.write_down_amount for case in cases), 2)
+            == ledger.total_write_down_amount,
+            "Case-level recovered and write-down totals must reconcile to the ledger exactly.",
         ),
         _check(
             "learning_remains_human_gated",

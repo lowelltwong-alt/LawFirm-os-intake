@@ -5,6 +5,8 @@ from hashlib import sha256
 from pathlib import Path
 import subprocess
 
+from pydantic import ValidationError
+
 from .models import (
     RustFixtureManifestReport,
     UIDemoFixtureRefreshDetail,
@@ -59,12 +61,42 @@ def refresh_ui_demo_fixtures(
         return report, report_path
 
     bundle_payload = load_json(bundle_path)
-    UIReviewDataBundle.model_validate(bundle_payload)
     old_bundle_id = str(bundle_payload.get("ui_review_data_bundle_id") or "")
     old_bundle_sha256 = _sha256_file(bundle_path)
     manifest_old_sha256 = _sha256_file(manifest_path) if manifest_path.is_file() else None
     _sync_detail_specs(bundle_payload, fixtures)
     _refresh_bundle_counts_and_status(bundle_payload)
+    try:
+        UIReviewDataBundle.model_validate(bundle_payload)
+    except ValidationError as error:
+        report = _refresh_report(
+            fixtures_root=fixtures,
+            bundle_path=bundle_path,
+            manifest_path=manifest_path,
+            old_bundle_id=old_bundle_id,
+            new_bundle_id=old_bundle_id,
+            old_bundle_sha256=old_bundle_sha256,
+            new_bundle_sha256=old_bundle_sha256,
+            manifest_old_sha256=manifest_old_sha256,
+            manifest_new_sha256=manifest_old_sha256,
+            details=[],
+            source_hash_update_count=0,
+            source_hash_unchanged_count=0,
+            missing_source_count=0,
+            invalid_existing_hash_count=0,
+            manifest_status="not_run",
+            source_hash_gate_status="not_run",
+            snapshot_gate_status="not_run",
+            local_fixture_updates_performed=False,
+            generated_at=generated_at,
+            status="ui_demo_fixture_refresh_failed",
+            required_next_actions=[
+                "Repair the checked UI review data bundle boundary contract before "
+                f"refreshing fixtures: {error.errors()[0]['loc']}."
+            ],
+        )
+        write_json(report_path, report.model_dump(mode="json"))
+        return report, report_path
 
     details = []
     missing_count = 0
@@ -193,6 +225,7 @@ def refresh_ui_demo_fixtures(
         bundle_payload["generated_at"] = generated_at
     write_json(bundle_path, bundle_payload)
     new_bundle_sha256 = _sha256_file(bundle_path)
+    refreshed_bundle = UIReviewDataBundle.model_validate(bundle_payload)
 
     source_hash_gate, _source_hash_gate_path = run_rust_ui_bundle_source_hash_check(
         root=fixtures,
@@ -215,6 +248,7 @@ def refresh_ui_demo_fixtures(
             manifest.status == "passed"
             and source_hash_gate.status == "passed"
             and snapshot_gate.status == "passed"
+            and refreshed_bundle.status == "ready_for_review"
         )
         else "ui_demo_fixture_refresh_failed"
     )
@@ -223,7 +257,9 @@ def refresh_ui_demo_fixtures(
             "UI demo fixture wrappers are refreshed and verified by Rust source-hash and snapshot-coherence gates."
         ]
         if status == "ui_demo_fixture_refresh_verified"
-        else ["Inspect failed Rust gate reports before relying on checked UI demo fixtures."]
+        else [
+            "Resolve failed Rust gates or unproven UI detail boundaries before relying on checked UI demo fixtures."
+        ]
     )
     report = _refresh_report(
         fixtures_root=fixtures,
@@ -315,6 +351,7 @@ def _sync_detail_specs(bundle_payload: dict, fixtures: Path) -> None:
             candidates.append(fixtures / demo_name)
         resolved = next((candidate for candidate in candidates if candidate.is_file()), None)
         present = resolved is not None
+        boundary = _fixture_boundary_evidence(resolved)
         detail_reports.append(
             {
                 "detail_report_id": spec.detail_report_id,
@@ -329,9 +366,11 @@ def _sync_detail_specs(bundle_payload: dict, fixtures: Path) -> None:
                     f"{DEMO_RUN_ROOT_PLACEHOLDER}\\{spec.file_name}" if present else None
                 ),
                 "source_sha256": _sha256_file(resolved) if resolved is not None else None,
-                "candidate_only": True,
-                "synthetic_only": True,
-                "external_writes_performed": False,
+                "candidate_only": boundary["candidate_only"],
+                "synthetic_only": boundary["synthetic_only"],
+                "metadata_only": boundary["metadata_only"],
+                "external_writes_performed": boundary["external_writes_performed"],
+                "boundary_evidence_complete": boundary["complete"],
                 "notes": [
                     (
                         f"Found checked demo fixture for {spec.file_name}."
@@ -341,6 +380,36 @@ def _sync_detail_specs(bundle_payload: dict, fixtures: Path) -> None:
                 ],
             }
         )
+
+
+def _fixture_boundary_evidence(resolved: Path | None) -> dict[str, bool]:
+    if resolved is None:
+        return {
+            "candidate_only": True,
+            "synthetic_only": True,
+            "metadata_only": False,
+            "external_writes_performed": False,
+            "complete": True,
+        }
+    try:
+        payload = load_json(resolved)
+    except (OSError, ValueError):
+        payload = {}
+    candidate_only = payload.get("candidate_only") is True
+    synthetic_only = payload.get("synthetic_only") is True
+    metadata_only = payload.get("metadata_only") is True
+    external_writes_performed = payload.get("external_writes_performed") is True
+    return {
+        "candidate_only": candidate_only,
+        "synthetic_only": synthetic_only,
+        "metadata_only": metadata_only,
+        "external_writes_performed": external_writes_performed,
+        "complete": (
+            candidate_only
+            and (synthetic_only or metadata_only)
+            and payload.get("external_writes_performed") is False
+        ),
+    }
 
 
 def _refresh_bundle_counts_and_status(bundle_payload: dict) -> None:
@@ -353,11 +422,24 @@ def _refresh_bundle_counts_and_status(bundle_payload: dict) -> None:
     external_write_reports = [
         detail for detail in detail_reports if detail.get("external_writes_performed") is True
     ]
+    for detail in detail_reports:
+        if "boundary_evidence_complete" not in detail:
+            detail["boundary_evidence_complete"] = (
+                detail.get("candidate_only") is True
+                and (detail.get("synthetic_only") is True or detail.get("metadata_only") is True)
+                and detail.get("external_writes_performed") is False
+            )
+    unproven_detail_boundaries = [
+        detail
+        for detail in detail_reports
+        if detail.get("present") is True and detail.get("boundary_evidence_complete") is not True
+    ]
     bundle_payload["detail_report_count"] = len(detail_reports)
     bundle_payload["required_detail_report_count"] = len(required)
     bundle_payload["present_detail_report_count"] = len(present)
     bundle_payload["missing_required_detail_report_count"] = len(missing_required)
     bundle_payload["external_write_report_count"] = len(external_write_reports)
+    bundle_payload["unproven_detail_boundary_count"] = len(unproven_detail_boundaries)
     if external_write_reports:
         bundle_payload["status"] = "failed_side_effect_boundary"
         bundle_payload["required_next_actions"] = [
@@ -375,6 +457,15 @@ def _refresh_bundle_counts_and_status(bundle_payload: dict) -> None:
                 f"{detail.get('file_name')}"
             )
             for detail in missing_required
+        ]
+    elif unproven_detail_boundaries:
+        bundle_payload["status"] = "blocked_unproven_detail_boundaries"
+        bundle_payload["required_next_actions"] = [
+            (
+                "Add explicit candidate-only, synthetic-only, and no-external-writes "
+                f"boundary evidence before relying on: {detail.get('file_name')}"
+            )
+            for detail in unproven_detail_boundaries
         ]
     else:
         bundle_payload["status"] = "ready_for_review"

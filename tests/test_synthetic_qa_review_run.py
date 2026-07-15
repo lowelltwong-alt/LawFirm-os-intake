@@ -94,7 +94,12 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
     )
     write_json(
         quality_dir / "labor_employment_qa_matrix_report.json",
-        {"status": "failed", "external_writes_performed": False},
+        {
+            "status": "failed",
+            "candidate_only": True,
+            "synthetic_only": True,
+            "external_writes_performed": False,
+        },
     )
 
     code = main(

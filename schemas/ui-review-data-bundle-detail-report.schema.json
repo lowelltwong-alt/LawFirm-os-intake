@@ -94,8 +94,17 @@
       "title": "Synthetic Only",
       "type": "boolean"
     },
+    "metadata_only": {
+      "default": false,
+      "title": "Metadata Only",
+      "type": "boolean"
+    },
     "external_writes_performed": {
       "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "boundary_evidence_complete": {
+      "title": "Boundary Evidence Complete",
       "type": "boolean"
     },
     "notes": {
@@ -117,7 +126,8 @@
     "renderer",
     "candidate_only",
     "synthetic_only",
-    "external_writes_performed"
+    "external_writes_performed",
+    "boundary_evidence_complete"
   ],
   "title": "UIReviewDataBundleDetailReport",
   "type": "object"

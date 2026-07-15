@@ -2227,15 +2227,16 @@
   ],
   "checks": [
     {
-      "check_id": "synthetic_sources_present_and_hashed",
+      "check_id": "pinned_synthetic_source_hashes_match",
       "status": "passed",
-      "message": "Every frozen source has a local path and SHA-256 digest.",
+      "message": "Every frozen replay source must match the reviewed synthetic digest manifest.",
       "evidence_refs": [
         "examples/synthetic/inbound/carrier-assignment-medmal.json",
         "examples/synthetic/confirmations/carrier-assignment-medmal.confirmation-template.json",
         "context/synthetic-profiles/insurance-defense.yaml",
         "config/synthetic-carrier-guideline.yaml",
-        "config/synthetic-carrier-rate-card.yaml"
+        "config/synthetic-carrier-rate-card.yaml",
+        "fixtures/synthetic/guideline-projection-workbench/pinned-source-digests.json"
       ]
     },
     {

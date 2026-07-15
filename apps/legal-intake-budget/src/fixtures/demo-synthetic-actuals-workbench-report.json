@@ -6,7 +6,7 @@
   "budget_proposal_ref": "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/legal_budget_proposal.json",
   "budget_proposal_sha256": "sha256:b85c715317e86f7b0822ba10f6b19da6bc209555da45ad49e18d78c000159a5c",
   "actuals_source_id": "le-actuals-epli-carrier-clean.v0_1",
-  "actuals_source_ref": "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/budget_actuals_source.json",
+  "actuals_source_ref": "synthetic-actuals://labor-employment/epli-carrier-clean/v0_1",
   "actuals_source_sha256": "sha256:4cbd0ce8ae0f6034249418702a0fe490493e41d3d29be43d618c2867e3daec9e",
   "comparison": {
     "schema_version": "0.1",

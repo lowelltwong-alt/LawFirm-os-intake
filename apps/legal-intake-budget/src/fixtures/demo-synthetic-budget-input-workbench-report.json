@@ -295,10 +295,16 @@
       ]
     },
     {
-      "check_id": "no_auto_calibration_or_runtime_write",
+      "check_id": "source_inputs_unchanged_during_build",
       "status": "passed",
-      "message": "The workbench is local candidate evidence and performs no runtime writes, submissions, or calibration.",
-      "evidence_refs": []
+      "message": "Pinned proposal and context inputs must remain byte-identical while the workbench builds.",
+      "evidence_refs": [
+        "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/legal_budget_proposal.json",
+        "config/synthetic-carrier-rate-card.yaml",
+        "config/synthetic-carrier-guideline.yaml",
+        "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/budget_actuals_source.json",
+        "examples/synthetic/benchmarks/synthetic-rate-benchmark-snapshot.json"
+      ]
     }
   ],
   "failed_check_count": 0,

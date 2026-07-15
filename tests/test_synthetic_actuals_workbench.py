@@ -90,6 +90,7 @@ def test_ui_actuals_fixture_is_the_exact_audited_epli_render(repo_root):
 def test_actuals_workbench_fails_closed_when_code_view_does_not_reconcile(tmp_path, repo_root):
     budget_path, _ = _paths(repo_root)
     payload = deepcopy(_actuals(repo_root))
+    payload["source_ref"] = "synthetic://hostile-fixture/mismatched-code-actuals.json"
     payload["actuals_by_code"]["L330"]["fees"] += 1
     actuals_path = tmp_path / "mismatched-code-actuals.json"
     _write_actuals(actuals_path, payload)
@@ -106,6 +107,25 @@ def test_actuals_workbench_fails_closed_when_code_view_does_not_reconcile(tmp_pa
     }
     assert report.phase_actual_total == report.comparison.total_actual
     assert report.code_actual_total != report.comparison.total_actual
+    assert report.actuals_source_ref == payload["source_ref"]
+
+
+def test_actuals_workbench_uses_custom_path_when_actuals_source_ref_is_absent(tmp_path, repo_root):
+    budget_path, _ = _paths(repo_root)
+    payload = deepcopy(_actuals(repo_root))
+    del payload["source_ref"]
+    actuals_path = tmp_path / "anonymous-actuals.json"
+    _write_actuals(actuals_path, payload)
+
+    report = _build_synthetic_actuals_workbench_report(
+        budget_path=budget_path,
+        actuals_path=actuals_path,
+        generated_at=FIXED_GENERATED_AT,
+    )
+
+    expected_ref = actuals_path.as_posix()
+    assert report.actuals_source_ref == expected_ref
+    assert report.comparison.actuals_source_ref == expected_ref
 
 
 def test_actuals_workbench_blocks_partial_or_unbudgeted_actuals(tmp_path, repo_root):

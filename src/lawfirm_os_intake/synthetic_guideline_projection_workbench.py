@@ -63,6 +63,9 @@ REQUIRED_THRESHOLDS = {
     "research_hours_over",
     "vendor_spend_over_amount",
 }
+PINNED_SOURCE_MANIFEST_REF = (
+    "fixtures/synthetic/guideline-projection-workbench/pinned-source-digests.json"
+)
 
 
 def _check(
@@ -87,6 +90,28 @@ def _source_manifest(root: Path) -> list[SyntheticGuidelineProjectionWorkbenchSo
         )
         for source_id, label, source_ref in SOURCE_REFS
     ]
+
+
+def _source_manifest_matches_pin(
+    root: Path, source_manifest: list[SyntheticGuidelineProjectionWorkbenchSource]
+) -> bool:
+    """Require frozen replay inputs to match their reviewed synthetic digest manifest."""
+
+    manifest_path = root / PINNED_SOURCE_MANIFEST_REF
+    try:
+        expected = load_json(manifest_path)
+    except (OSError, ValueError):
+        return False
+    if not isinstance(expected, dict):
+        return False
+    expected_hashes = expected.get("source_sha256")
+    actual_hashes = {item.source_ref: item.source_sha256 for item in source_manifest}
+    return (
+        expected.get("data_origin") == "synthetic"
+        and expected.get("candidate_only") is True
+        and isinstance(expected_hashes, dict)
+        and expected_hashes == actual_hashes
+    )
 
 
 def _carrier_confirmation(raw: dict, carrier_name: str, aliases: list[str]) -> dict:
@@ -260,12 +285,14 @@ def build_synthetic_guideline_projection_workbench_report(
             ],
         }
     )
+    source_manifest = _source_manifest(root)
     checks = [
         _check(
-            "synthetic_sources_present_and_hashed",
-            True,
-            "Every frozen source has a local path and SHA-256 digest.",
+            "pinned_synthetic_source_hashes_match",
+            _source_manifest_matches_pin(root, source_manifest),
+            "Every frozen replay source must match the reviewed synthetic digest manifest.",
             *[item[2] for item in SOURCE_REFS],
+            PINNED_SOURCE_MANIFEST_REF,
         ),
         _check(
             "proposal_preserved_across_counterfactuals",
@@ -354,7 +381,7 @@ def build_synthetic_guideline_projection_workbench_report(
         currency=budget.currency,
         proposal_total=budget.total_proposed_budget,
         views=views,
-        source_manifest=_source_manifest(root),
+        source_manifest=source_manifest,
         checks=checks,
         failed_check_count=failed_count,
         workbook_filename=SYNTHETIC_GUIDELINE_PROJECTION_WORKBENCH_WORKBOOK_FILENAME,

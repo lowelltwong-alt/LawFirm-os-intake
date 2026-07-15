@@ -6,6 +6,7 @@ from lawfirm_os_intake.ui_demo_fixture_promotion import (
     UIDemoFixturePromotionSpec,
     promote_ui_demo_run_fixtures,
 )
+from lawfirm_os_intake.ui_review_data_bundle import DETAIL_REPORT_SPECS
 from lawfirm_os_intake.util import load_json
 
 
@@ -178,6 +179,19 @@ def _seed_fixture_root(tmp_path):
             "generated_at": "2026-07-05T00:00:00Z",
         },
     )
+    existing_ids = {
+        "ui-review-manifest",
+        "synthetic-confidence-summary",
+        "rust-fixture-boundary",
+        "rust-fixture-manifest",
+    }
+    for spec in DETAIL_REPORT_SPECS:
+        if not spec.required or spec.detail_report_id in existing_ids:
+            continue
+        _write_json(
+            fixtures / ("demo-" + spec.file_name[:-5].replace("_", "-") + ".json"),
+            _report("synthetic_fixture_ready"),
+        )
     return fixtures
 
 

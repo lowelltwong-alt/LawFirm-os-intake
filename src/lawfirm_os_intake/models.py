@@ -6599,6 +6599,7 @@ class MatterLinkingPreflightReport(StrictModel):
     upfront_connector_implemented: bool = False
     vendor_api_called: bool = False
     external_write_performed: bool = False
+    external_writes_performed: bool = False
     lake_write_performed: bool = False
     sqlite_write_performed: bool = False
     matter_opening_authorized: bool = False
@@ -16598,6 +16599,7 @@ class SyntheticQABlockerReviewOutcomeReport(StrictModel):
 UIReviewDataBundleStatus = Literal[
     "ready_for_review",
     "blocked_missing_required_reports",
+    "blocked_unproven_detail_boundaries",
     "failed_side_effect_boundary",
 ]
 
@@ -16645,7 +16647,9 @@ class UIReviewDataBundleDetailReport(StrictModel):
     source_sha256: str | None = None
     candidate_only: bool
     synthetic_only: bool
+    metadata_only: bool = False
     external_writes_performed: bool
+    boundary_evidence_complete: bool
     notes: list[str] = Field(default_factory=list)
 
     @model_validator(mode="after")
@@ -16673,6 +16677,7 @@ class UIReviewDataBundle(StrictModel):
     present_detail_report_count: int = Field(ge=0)
     missing_required_detail_report_count: int = Field(ge=0)
     external_write_report_count: int = Field(ge=0)
+    unproven_detail_boundary_count: int = Field(ge=0)
     detail_reports: list[UIReviewDataBundleDetailReport]
     required_next_actions: list[str]
     candidate_only: Literal[True] = True
@@ -16702,11 +16707,45 @@ class UIReviewDataBundle(StrictModel):
 
     @model_validator(mode="after")
     def ui_review_data_bundle_counts_and_status_match(self) -> "UIReviewDataBundle":
+        required_explicit_boundary_fields = {
+            "candidate_only",
+            "synthetic_only",
+            "non_authoritative",
+            "local_json_only",
+            "not_authorized_for_external_write",
+            "not_authorized_for_lake_write",
+            "not_authorized_for_sqlite_write",
+            "not_authorized_for_budget_submission",
+            "not_authorized_for_matter_opening",
+            "not_authorized_for_calibration",
+            "budget_amount_output_authorized",
+            "budget_submission_authorized",
+            "conflict_conclusion_emitted",
+            "matter_opening_authorized",
+            "training_pipeline_created",
+            "lake_write_performed",
+            "sqlite_write_performed",
+            "external_writes_performed",
+            "silent_learning_performed",
+        }
+        missing_explicit_boundary_fields = sorted(
+            required_explicit_boundary_fields - self.model_fields_set
+        )
+        if missing_explicit_boundary_fields:
+            raise ValueError(
+                "UI review data bundle requires explicit boundary fields: "
+                + ", ".join(missing_explicit_boundary_fields)
+            )
         required = [report for report in self.detail_reports if report.required]
         present = [report for report in self.detail_reports if report.present]
         missing_required = [report for report in required if not report.present]
         external_write_reports = [
             report for report in self.detail_reports if report.external_writes_performed
+        ]
+        unproven_detail_boundaries = [
+            report
+            for report in self.detail_reports
+            if report.present and not report.boundary_evidence_complete
         ]
         if self.detail_report_count != len(self.detail_reports):
             raise ValueError("UI review data bundle detail count mismatch")
@@ -16718,12 +16757,20 @@ class UIReviewDataBundle(StrictModel):
             raise ValueError("UI review data bundle missing required count mismatch")
         if self.external_write_report_count != len(external_write_reports):
             raise ValueError("UI review data bundle external-write count mismatch")
-        if self.status == "ready_for_review" and (missing_required or external_write_reports):
-            raise ValueError("ready UI review data bundle cannot have missing or write reports")
+        if self.unproven_detail_boundary_count != len(unproven_detail_boundaries):
+            raise ValueError("UI review data bundle unproven-detail-boundary count mismatch")
+        if self.status == "ready_for_review" and (
+            missing_required or external_write_reports or unproven_detail_boundaries
+        ):
+            raise ValueError(
+                "ready UI review data bundle cannot have missing, write, or unproven reports"
+            )
         if self.status == "blocked_missing_required_reports" and not missing_required:
             raise ValueError("blocked UI review data bundle requires missing reports")
         if self.status == "failed_side_effect_boundary" and not external_write_reports:
             raise ValueError("failed UI review data bundle requires external-write reports")
+        if self.status == "blocked_unproven_detail_boundaries" and not unproven_detail_boundaries:
+            raise ValueError("unproven-boundary UI review data bundle requires unproven reports")
         if not self.required_next_actions:
             raise ValueError("UI review data bundle requires next actions")
         return self
@@ -19426,6 +19473,8 @@ class OCGRuleIRAdoptionReport(StrictModel):
     projection_rewrites_budget: bool = False
     read_only_consumption: bool = True
     candidate_only: bool = True
+    synthetic_only: Literal[True] = True
+    external_writes_performed: Literal[False] = False
     not_promoted_canon: bool = True
     not_authorized_for_canonical_use: bool = True
     not_authorized_for_budget_rewrite: bool = True
@@ -19522,6 +19571,8 @@ class CrosswalkAuditReport(StrictModel):
     findings: list[CrosswalkAuditFinding] = Field(default_factory=list)
     crosswalk_refs: list[str] = Field(default_factory=list)
     candidate_only: bool = True
+    synthetic_only: Literal[True] = True
+    external_writes_performed: Literal[False] = False
     not_promoted_canon: bool = True
     prohibited_actions: list[str]
     display_banner: dict[str, Any] = Field(default_factory=dict)
