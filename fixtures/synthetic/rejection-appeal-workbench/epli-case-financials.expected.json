@@ -1,0 +1,25 @@
+{
+  "data_origin": "synthetic",
+  "candidate_only": true,
+  "source_bundle_ref": "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/carrier_rejection_capture_source_bundle_with_appeal_results.json",
+  "expected_case_financials": [
+    {
+      "remediation_case_id": "carrierrejcase_3494be1fffae8d882c76",
+      "appeal_result_ids": [
+        "le-appeal-result-epli-staffing-4001"
+      ],
+      "recovered_amount": 900.0,
+      "write_down_amount": 1200.0
+    },
+    {
+      "remediation_case_id": "carrierrejcase_ed9597c9c979f6c5b3e1",
+      "appeal_result_ids": [],
+      "recovered_amount": 0.0,
+      "write_down_amount": 0.0
+    }
+  ],
+  "expected_ledger_totals": {
+    "recovered_amount": 900.0,
+    "write_down_amount": 1200.0
+  }
+}

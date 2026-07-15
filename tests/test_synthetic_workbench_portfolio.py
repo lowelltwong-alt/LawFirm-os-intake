@@ -121,13 +121,19 @@ def test_synthetic_budget_workbench_portfolio_acceptance(tmp_path, repo_root):
         generated_at=FIXED_TIME,
     )
     assert all("ready" in report.status for report in reports)
-    assert all(getattr(report, "candidate_only", True) for report in reports)
-    assert all(not getattr(report, "external_writes_performed", False) for report in reports)
-    assert all(not getattr(report, "lake_write_performed", False) for report in reports)
-    assert all(not getattr(report, "sqlite_write_performed", False) for report in reports)
-    assert all(not getattr(report, "budget_submission_authorized", False) for report in reports)
-    assert all(not getattr(report, "matter_opening_authorized", False) for report in reports)
-    assert all(not getattr(report, "silent_learning_performed", False) for report in reports)
+    required_boundary_fields = {
+        "candidate_only": True,
+        "external_writes_performed": False,
+        "lake_write_performed": False,
+        "sqlite_write_performed": False,
+        "budget_submission_authorized": False,
+        "matter_opening_authorized": False,
+        "silent_learning_performed": False,
+    }
+    for report in reports:
+        for field, expected in required_boundary_fields.items():
+            assert hasattr(report, field), f"{type(report).__name__} must declare {field}"
+            assert getattr(report, field) is expected
     assert reports[-2].changed_source_ids == ["rate_card"]
     assert reports[-1].changed_source_ids == ["rate_card"]
     assert budget_sandbox_report["status"] == "synthetic_budget_sandbox_xlsx_ready_for_review"

@@ -2,6 +2,7 @@
 
 from copy import deepcopy
 import json
+import shutil
 from zipfile import ZipFile
 
 from openpyxl import load_workbook
@@ -12,6 +13,8 @@ from lawfirm_os_intake.models import SyntheticGuidelineProjectionWorkbenchReport
 from lawfirm_os_intake.synthetic_guideline_projection_workbench import (
     SYNTHETIC_GUIDELINE_PROJECTION_WORKBENCH_REPORT_FILENAME,
     SYNTHETIC_GUIDELINE_PROJECTION_WORKBENCH_WORKBOOK_FILENAME,
+    PINNED_SOURCE_MANIFEST_REF,
+    SOURCE_REFS,
     build_synthetic_guideline_projection_workbench_report,
     run_synthetic_guideline_projection_workbench,
     _safe_text,
@@ -85,6 +88,29 @@ def test_projection_workbench_blocks_incomplete_or_unevaluable_thresholds(monkey
 
     assert report.status == "blocked_by_synthetic_guideline_projection_workbench"
     assert "thresholds_complete_and_evaluable" in {
+        check.check_id for check in report.checks if check.status == "failed"
+    }
+
+
+def test_projection_workbench_blocks_pinned_source_digest_drift(tmp_path, repo_root):
+    candidate_root = tmp_path / "candidate"
+    for _, _, source_ref in SOURCE_REFS:
+        source = repo_root / source_ref
+        target = candidate_root / source_ref
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(source, target)
+    manifest_target = candidate_root / PINNED_SOURCE_MANIFEST_REF
+    manifest_target.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(repo_root / PINNED_SOURCE_MANIFEST_REF, manifest_target)
+    rate_card_path = candidate_root / "config/synthetic-carrier-rate-card.yaml"
+    rate_card_path.write_text(rate_card_path.read_text(encoding="utf-8") + "\n", encoding="utf-8")
+
+    report = build_synthetic_guideline_projection_workbench_report(
+        repo_root=candidate_root, generated_at=FIXED_GENERATED_AT
+    )
+
+    assert report.status == "blocked_by_synthetic_guideline_projection_workbench"
+    assert "pinned_synthetic_source_hashes_match" in {
         check.check_id for check in report.checks if check.status == "failed"
     }
 

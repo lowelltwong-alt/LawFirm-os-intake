@@ -1,0 +1,11 @@
+{
+  "data_origin": "synthetic",
+  "candidate_only": true,
+  "source_sha256": {
+    "examples/synthetic/inbound/carrier-assignment-medmal.json": "sha256:c07031e88ce91efe96cb9830986b84bd686500bcea8449ff087f49831953c36e",
+    "examples/synthetic/confirmations/carrier-assignment-medmal.confirmation-template.json": "sha256:2ccaeb8e1d6be71913d7414790e3d698492264cba66c7525865fdd2b72597cae",
+    "context/synthetic-profiles/insurance-defense.yaml": "sha256:679456d375850cecbd01bcbd1f959a9fe05d24086596962f4d08b775f73a3be1",
+    "config/synthetic-carrier-guideline.yaml": "sha256:a223a90fd311da3734cce58940f7323e1d387362ae197e058f2092dcd46a73ae",
+    "config/synthetic-carrier-rate-card.yaml": "sha256:de6bfd91a642c3ba8d5bfaf9e61f94984658187f87019c5dfcfc2296158122da"
+  }
+}

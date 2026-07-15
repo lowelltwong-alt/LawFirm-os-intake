@@ -73,6 +73,7 @@ def _build_synthetic_actuals_workbench_report(
     actuals_text = actuals_path.read_text(encoding="utf-8")
     budget = BudgetProposal.model_validate(load_json(budget_path))
     actuals = BudgetActualsSource.model_validate(load_json(actuals_path))
+    actuals_source_ref = actuals.source_ref or actuals_path.as_posix()
     generated = generated_at or now_iso()
     comparison = build_budget_actual_comparison_report(
         run_id="syntheticactualsworkbench-epli-carrier-clean-v0-1",
@@ -81,7 +82,7 @@ def _build_synthetic_actuals_workbench_report(
         budget=budget,
         actuals_by_phase=actuals.actuals_by_phase,
         actuals_by_code=actuals.actuals_by_code,
-        actuals_source_ref=actuals.source_ref or ACTUALS_SOURCE_REF,
+        actuals_source_ref=actuals_source_ref,
         actual_resolution_scenario_id=actuals.actual_resolution_scenario_id,
     ).model_copy(update={"generated_at": generated})
     # The comparison builder is also used for runtime candidate packets and gives
@@ -210,7 +211,7 @@ def _build_synthetic_actuals_workbench_report(
         budget_proposal_ref=BUDGET_PROPOSAL_REF,
         budget_proposal_sha256=digest_text(budget_text),
         actuals_source_id=actuals.actuals_source_id,
-        actuals_source_ref=ACTUALS_SOURCE_REF,
+        actuals_source_ref=actuals_source_ref,
         actuals_source_sha256=digest_text(actuals_text),
         comparison=comparison,
         phase_budgeted_total=phase_budgeted_total,

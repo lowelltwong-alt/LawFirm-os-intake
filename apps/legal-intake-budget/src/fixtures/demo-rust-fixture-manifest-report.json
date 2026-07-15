@@ -590,7 +590,7 @@
       "top_level_type": "object"
     },
     {
-      "byte_count": 15995,
+      "byte_count": 15960,
       "candidate_only": true,
       "data_origin": "synthetic",
       "external_writes_performed": false,
@@ -606,13 +606,13 @@
       ],
       "path": "demo-synthetic-actuals-workbench-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:71f8ec75486bf858b0d7f28b306c3922f0e5d3337f0650877d7b4d7cd1a54a46",
+      "sha256": "sha256:de72559888da88689aa0e49b112ff66362f13092da93d87d9cb89078293c2fe1",
       "status": "synthetic_actuals_workbench_ready_for_review",
       "synthetic_only": true,
       "top_level_type": "object"
     },
     {
-      "byte_count": 84460,
+      "byte_count": 82403,
       "candidate_only": true,
       "data_origin": "synthetic",
       "external_writes_performed": false,
@@ -624,13 +624,13 @@
       ],
       "path": "demo-synthetic-budget-configuration-workbench-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:5dd6be0f5e9a85aada9375c410fc58c6d5f13994f5ae6b86f8bec9053127adfb",
+      "sha256": "sha256:9b203769a2717a555224548b9d878a636d75cf5cb84b14c65a7fd0355fcf7737",
       "status": "synthetic_budget_configuration_workbench_ready_for_review",
       "synthetic_only": true,
       "top_level_type": "object"
     },
     {
-      "byte_count": 14404,
+      "byte_count": 14793,
       "candidate_only": true,
       "data_origin": "synthetic",
       "external_writes_performed": false,
@@ -658,7 +658,7 @@
       ],
       "path": "demo-synthetic-budget-input-workbench-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:a93a5bd25e568ff9dc5e26c47edd0accf5215b1656bcaf9963e8ab30067b7c64",
+      "sha256": "sha256:1ba7ab78d0a65039af01ac83d43c6592810ffdad86acce9f619940ba94915844",
       "status": "synthetic_budget_input_workbench_ready_for_review",
       "synthetic_only": true,
       "top_level_type": "object"
@@ -697,7 +697,7 @@
       "top_level_type": "object"
     },
     {
-      "byte_count": 93779,
+      "byte_count": 93888,
       "candidate_only": true,
       "data_origin": "synthetic",
       "external_writes_performed": false,
@@ -713,7 +713,7 @@
       ],
       "path": "demo-synthetic-guideline-projection-workbench-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:15017d3aa5c2f51cb53ac63ace0716b3bb475081f982059fd650df06aea36df8",
+      "sha256": "sha256:e415aad3065a4e555a1607e7e34647b829b7ce17b3bc5ff5ed09c4f105de65b7",
       "status": "synthetic_guideline_projection_workbench_ready_for_review",
       "synthetic_only": true,
       "top_level_type": "object"
@@ -833,7 +833,7 @@
       "top_level_type": "object"
     },
     {
-      "byte_count": 60831,
+      "byte_count": 60090,
       "candidate_only": true,
       "data_origin": "synthetic",
       "external_writes_performed": false,
@@ -849,7 +849,7 @@
       ],
       "path": "demo-synthetic-rejection-appeal-workbench-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:c4ffd1c04a0ff9eca93c979c8aea3f5c8d3abc135b564972ac07789a9fbe5f16",
+      "sha256": "sha256:8348bb205733cdd441da8cd3e7294b4052db9a575c0d9d270f4a6cb8649f94c5",
       "status": "synthetic_rejection_appeal_workbench_ready_for_review",
       "synthetic_only": true,
       "top_level_type": "object"
@@ -895,7 +895,7 @@
   ],
   "lake_write_performed": false,
   "local_json_only": true,
-  "manifest_sha256": "sha256:c243a5671504015d9fb0f49ebd50c4286074c2b2b04d83d1ec80cf67e8ea7cf8",
+  "manifest_sha256": "sha256:57c28f893a0a1dd804d622e7f048c159914cd8878b13b0dad2c85d95a256d498",
   "matter_opening_authorized": false,
   "non_authoritative": true,
   "parse_error_count": 0,
@@ -918,5 +918,5 @@
   "sqlite_write_performed": false,
   "status": "passed",
   "synthetic_only": true,
-  "total_byte_count": 1074362
+  "total_byte_count": 1072027
 }

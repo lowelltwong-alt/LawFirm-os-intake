@@ -113,6 +113,11 @@ def _build_synthetic_budget_input_workbench_report(
 ) -> SyntheticBudgetInputWorkbenchReport:
     """Build from a supplied proposal path for hostile-fixture tests only."""
 
+    source_paths = [
+        budget_path,
+        *[repo_root / source_ref for _, _, source_ref, _ in CONTEXT_SOURCES],
+    ]
+    source_bytes_before = {path: path.read_bytes() for path in source_paths if path.is_file()}
     budget_text = budget_path.read_text(encoding="utf-8")
     budget = BudgetProposal.model_validate(load_json(budget_path))
     lines = [
@@ -148,6 +153,10 @@ def _build_synthetic_budget_input_workbench_report(
     line_total_math = all(
         line.line_total == _line_total(line.estimated_fees, line.estimated_expenses)
         for line in lines
+    )
+    source_inputs_unchanged = all(
+        path.is_file() and path.read_bytes() == content
+        for path, content in source_bytes_before.items()
     )
     checks = [
         _check(
@@ -211,9 +220,11 @@ def _build_synthetic_budget_input_workbench_report(
             *[source_ref for _, _, source_ref, _ in CONTEXT_SOURCES],
         ),
         _check(
-            "no_auto_calibration_or_runtime_write",
-            True,
-            "The workbench is local candidate evidence and performs no runtime writes, submissions, or calibration.",
+            "source_inputs_unchanged_during_build",
+            source_inputs_unchanged,
+            "Pinned proposal and context inputs must remain byte-identical while the workbench builds.",
+            BUDGET_PROPOSAL_REF,
+            *[source_ref for _, _, source_ref, _ in CONTEXT_SOURCES],
         ),
     ]
     failed_check_count = sum(check.status == "failed" for check in checks)

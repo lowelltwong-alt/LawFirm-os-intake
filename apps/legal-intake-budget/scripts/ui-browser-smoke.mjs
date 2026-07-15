@@ -62,6 +62,12 @@ async function serveStatic(request, response) {
 
 async function main() {
   await stat(join(distDirectory, "index.html"));
+  const rateCardFixture = JSON.parse(
+    await readFile(new URL("../src/fixtures/demo-synthetic-rate-card-workbench-report.json", import.meta.url), "utf8"),
+  );
+  const budgetInputFixture = JSON.parse(
+    await readFile(new URL("../src/fixtures/demo-synthetic-budget-input-workbench-report.json", import.meta.url), "utf8"),
+  );
   const server = createServer(serveStatic);
   const failures = [];
   let browser;
@@ -178,7 +184,7 @@ async function main() {
       rateCardSandboxChange?.local_browser_draft !== true ||
       rateCardSandboxChange?.draftRateTotal !== 6995 ||
       rateCardSandboxChange?.changedCellCount !== 1 ||
-      !rateCardSandboxChange?.source_rate_card_sha256?.startsWith("sha256:") ||
+      rateCardSandboxChange?.source_rate_card_sha256 !== rateCardFixture.rate_card_sha256 ||
       !rateCardSandboxChange?.blocked_actions?.includes("rate_card_apply_to_budget")
     ) {
       failures.push("rate_card_sandbox_change_package_boundary_or_math_invalid");
@@ -260,7 +266,7 @@ async function main() {
       sandboxChange?.candidate_only !== true ||
       sandboxChange?.local_browser_draft !== true ||
       sandboxChange?.draft_total !== 54990 ||
-      !sandboxChange?.source_budget_proposal_sha256?.startsWith("sha256:") ||
+      sandboxChange?.source_budget_proposal_sha256 !== budgetInputFixture.budget_proposal_sha256 ||
       !sandboxChange?.blocked_actions?.includes("configuration_write")
     ) {
       failures.push("budget_sandbox_change_package_boundary_or_math_invalid");

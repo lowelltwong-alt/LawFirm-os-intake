@@ -1244,8 +1244,8 @@
       "appeal_results": [
         "partially_accepted"
       ],
-      "recovered_amount": 1800.0,
-      "write_down_amount": 2400.0,
+      "recovered_amount": 900.0,
+      "write_down_amount": 1200.0,
       "pending_human_decisions": [
         "confirm_rejection_class",
         "confirm_linked_submission",
@@ -1300,12 +1300,13 @@
   "total_write_down_amount": 1200.0,
   "checks": [
     {
-      "check_id": "source_hashes_present",
+      "check_id": "pinned_synthetic_source_hashes_match",
       "status": "passed",
-      "message": "Pinned synthetic proposal and rejection bundle must exist.",
+      "message": "Pinned synthetic proposal and rejection bundle must match the reviewed digest manifest.",
       "evidence_refs": [
         "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/legal_budget_proposal.json",
-        "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/carrier_rejection_capture_source_bundle_with_appeal_results.json"
+        "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/carrier_rejection_capture_source_bundle_with_appeal_results.json",
+        "fixtures/synthetic/rejection-appeal-workbench/pinned-source-digests.json"
       ]
     },
     {
@@ -1318,6 +1319,18 @@
       "check_id": "appeal_financial_partition_reconciles",
       "status": "passed",
       "message": "Recovered and write-down amounts cannot exceed disputed amount.",
+      "evidence_refs": []
+    },
+    {
+      "check_id": "case_financial_outcome_event_selection_complete",
+      "status": "passed",
+      "message": "Each declared appeal result must map to exactly one financial outcome event; receipt events are not separate financial outcomes.",
+      "evidence_refs": []
+    },
+    {
+      "check_id": "case_financial_totals_reconcile_ledger",
+      "status": "passed",
+      "message": "Case-level recovered and write-down totals must reconcile to the ledger exactly.",
       "evidence_refs": []
     },
     {
