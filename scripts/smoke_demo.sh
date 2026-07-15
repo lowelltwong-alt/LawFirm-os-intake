@@ -768,10 +768,23 @@ PY
 test -s ".lawfirm-os-intake/smoke/quality/le-budget-outcome-replay-execution/labor_employment_budget_outcome_replay_execution_report.json"
 grep -q '"status": "labor_employment_budget_outcome_replay_execution_ready_for_review"' \
   ".lawfirm-os-intake/smoke/quality/le-budget-outcome-replay-execution/labor_employment_budget_outcome_replay_execution_report.json"
-grep -q '"materialized_artifact_slot_count": 40' \
-  ".lawfirm-os-intake/smoke/quality/le-budget-outcome-replay-execution/labor_employment_budget_outcome_replay_execution_report.json"
-grep -q '"runtime_artifact_count": 0' \
-  ".lawfirm-os-intake/smoke/quality/le-budget-outcome-replay-execution/labor_employment_budget_outcome_replay_execution_report.json"
+"$PYTHON_BIN" -B - <<'PY'
+import json
+from pathlib import Path
+
+report = json.loads(
+    Path(
+        ".lawfirm-os-intake/smoke/quality/le-budget-outcome-replay-execution/"
+        "labor_employment_budget_outcome_replay_execution_report.json"
+    ).read_text(encoding="utf-8")
+)
+assert report["expected_artifact_slot_count"] > 0
+assert (
+    report["materialized_artifact_slot_count"]
+    == report["expected_artifact_slot_count"]
+)
+assert report["runtime_artifact_count"] == 0
+PY
 "$PYTHON_BIN" -B - <<'PY'
 from pathlib import Path
 import sys
@@ -797,12 +810,26 @@ PY
 test -s ".lawfirm-os-intake/smoke/quality/le-budget-outcome-replay-builder-binding/labor_employment_budget_outcome_replay_builder_binding_report.json"
 grep -q '"status": "labor_employment_budget_replay_builder_binding_ready_for_review"' \
   ".lawfirm-os-intake/smoke/quality/le-budget-outcome-replay-builder-binding/labor_employment_budget_outcome_replay_builder_binding_report.json"
-grep -q '"slot_count": 40' \
-  ".lawfirm-os-intake/smoke/quality/le-budget-outcome-replay-builder-binding/labor_employment_budget_outcome_replay_builder_binding_report.json"
-grep -q '"bound_slot_count": 40' \
-  ".lawfirm-os-intake/smoke/quality/le-budget-outcome-replay-builder-binding/labor_employment_budget_outcome_replay_builder_binding_report.json"
-grep -q '"unknown_artifact_count": 0' \
-  ".lawfirm-os-intake/smoke/quality/le-budget-outcome-replay-builder-binding/labor_employment_budget_outcome_replay_builder_binding_report.json"
+"$PYTHON_BIN" -B - <<'PY'
+import json
+from pathlib import Path
+
+execution = json.loads(
+    Path(
+        ".lawfirm-os-intake/smoke/quality/le-budget-outcome-replay-execution/"
+        "labor_employment_budget_outcome_replay_execution_report.json"
+    ).read_text(encoding="utf-8")
+)
+binding = json.loads(
+    Path(
+        ".lawfirm-os-intake/smoke/quality/le-budget-outcome-replay-builder-binding/"
+        "labor_employment_budget_outcome_replay_builder_binding_report.json"
+    ).read_text(encoding="utf-8")
+)
+assert binding["slot_count"] == execution["expected_artifact_slot_count"]
+assert binding["bound_slot_count"] == binding["slot_count"]
+assert binding["unknown_artifact_count"] == 0
+PY
 "$PYTHON_BIN" -B - <<'PY'
 from pathlib import Path
 import sys
