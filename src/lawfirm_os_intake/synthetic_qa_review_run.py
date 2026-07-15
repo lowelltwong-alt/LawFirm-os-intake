@@ -641,11 +641,38 @@ def run_synthetic_qa_review_run(
     outcome_input_pack_ref = (
         outcome_input_pack_dir / LABOR_EMPLOYMENT_BUDGET_OUTCOME_REPLAY_INPUT_PACK_REPORT_FILENAME
     )
+    outcome_reconciled_binding, outcome_reconciled_binding_dir = (
+        run_labor_employment_budget_outcome_replay_builder_binding_audit(
+            execution_report_path=outcome_execution_ref,
+            input_pack_report_path=outcome_input_pack_ref,
+            repo_root=root,
+            out_dir=quality_dir / "le-budget-outcome-replay-builder-binding-reconciled",
+            generated_at=generated_at,
+        )
+    )
+    outcome_reconciled_binding_ref = (
+        outcome_reconciled_binding_dir
+        / LABOR_EMPLOYMENT_BUDGET_OUTCOME_REPLAY_BUILDER_BINDING_REPORT_FILENAME
+    )
+    steps.append(
+        _step(
+            "labor_employment_budget_outcome_replay_reconciled_binding",
+            "L&E Budget Outcome Replay Reconciled Binding",
+            outcome_reconciled_binding.status,
+            outcome_reconciled_binding_ref,
+            outcome_reconciled_binding.status
+            == "labor_employment_budget_replay_builder_binding_ready_for_review",
+            (
+                "Only freshly revalidated, case-bound local synthetic inputs clear replay "
+                "gaps; scoped partial loops remain incomplete without fabricated evidence."
+            ),
+        )
+    )
     outcome_confidence, outcome_confidence_dir = (
         run_labor_employment_budget_outcome_replay_confidence_status(
             readiness_report_path=outcome_replay_ref,
             execution_report_path=outcome_execution_ref,
-            builder_binding_report_path=outcome_builder_binding_ref,
+            builder_binding_report_path=outcome_reconciled_binding_ref,
             input_pack_report_path=outcome_input_pack_ref,
             out_dir=quality_dir / "le-budget-outcome-replay-confidence-status",
             generated_at=generated_at,

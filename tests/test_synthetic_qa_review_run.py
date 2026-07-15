@@ -132,7 +132,7 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
 
     assert code == 0
     assert report["status"] == "synthetic_qa_review_run_ready"
-    assert report["step_count"] == len(report["steps"]) == 32
+    assert report["step_count"] == len(report["steps"]) == 33
     assert report["failed_step_count"] == 0
     assert report["candidate_only"] is True
     assert report["synthetic_only"] is True
@@ -163,6 +163,7 @@ def test_synthetic_qa_review_run_cli_builds_review_cockpit_inputs(
         "labor_employment_budget_outcome_replay_readiness",
         "labor_employment_budget_outcome_replay_execution",
         "labor_employment_budget_outcome_replay_builder_binding",
+        "labor_employment_budget_outcome_replay_reconciled_binding",
         "labor_employment_budget_outcome_replay_confidence_status",
         "labor_employment_budget_fact_gold",
         "budget_learning_loop",
