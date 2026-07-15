@@ -1,3 +1,5 @@
+import pytest
+
 from lawfirm_os_intake.cli import main
 from lawfirm_os_intake.labor_employment_budget_learning_fixtures import (
     LABOR_EMPLOYMENT_BUDGET_LEARNING_FIXTURE_REPORT_FILENAME,
@@ -10,6 +12,10 @@ from lawfirm_os_intake.labor_employment_budget_outcome_replay_builder_binding im
 from lawfirm_os_intake.labor_employment_budget_outcome_replay_execution import (
     LABOR_EMPLOYMENT_BUDGET_OUTCOME_REPLAY_EXECUTION_REPORT_FILENAME,
     run_labor_employment_budget_outcome_replay_execution,
+)
+from lawfirm_os_intake.labor_employment_budget_outcome_replay_input_pack import (
+    LABOR_EMPLOYMENT_BUDGET_OUTCOME_REPLAY_INPUT_PACK_REPORT_FILENAME,
+    run_labor_employment_budget_outcome_replay_input_pack_audit,
 )
 from lawfirm_os_intake.labor_employment_budget_outcome_replay_readiness import (
     LABOR_EMPLOYMENT_BUDGET_OUTCOME_REPLAY_READINESS_REPORT_FILENAME,
@@ -26,6 +32,9 @@ LEARNING_MANIFEST_REF = (
 OUTCOME_SEED_MANIFEST_REF = (
     "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-seeds.json"
 )
+INPUT_PACK_MANIFEST_REF = (
+    "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-input-pack.json"
+)
 
 
 def _qa_gate(repo_root):
@@ -38,6 +47,10 @@ def _learning_manifest(repo_root):
 
 def _seed_manifest(repo_root):
     return repo_root / OUTCOME_SEED_MANIFEST_REF
+
+
+def _input_pack_manifest(repo_root):
+    return repo_root / INPUT_PACK_MANIFEST_REF
 
 
 def _learning_report(repo_root, tmp_path):
@@ -144,6 +157,75 @@ def test_labor_employment_budget_outcome_replay_builder_binding_blocks_unknown_a
     assert "all_slots_bound_to_known_builders" in failed_checks
     assert report.runtime_artifacts_created is False
     assert report.silent_learning_performed is False
+
+
+def test_builder_binding_reconciles_only_schema_validated_input_pack_entries(
+    repo_root,
+    tmp_path,
+):
+    baseline, baseline_dir = run_labor_employment_budget_outcome_replay_builder_binding_audit(
+        execution_report_path=_execution_report(repo_root, tmp_path),
+        out_dir=tmp_path / "baseline-builder-binding",
+        generated_at="2026-07-15T00:00:00Z",
+    )
+    input_pack, input_pack_dir = run_labor_employment_budget_outcome_replay_input_pack_audit(
+        builder_binding_report_path=(
+            baseline_dir / LABOR_EMPLOYMENT_BUDGET_OUTCOME_REPLAY_BUILDER_BINDING_REPORT_FILENAME
+        ),
+        input_pack_manifest_path=_input_pack_manifest(repo_root),
+        repo_root=repo_root,
+        out_dir=tmp_path / "input-pack",
+        generated_at="2026-07-15T00:00:00Z",
+    )
+    reconciled, _ = run_labor_employment_budget_outcome_replay_builder_binding_audit(
+        execution_report_path=_execution_report(repo_root, tmp_path),
+        input_pack_report_path=(
+            input_pack_dir / LABOR_EMPLOYMENT_BUDGET_OUTCOME_REPLAY_INPUT_PACK_REPORT_FILENAME
+        ),
+        out_dir=tmp_path / "reconciled-builder-binding",
+        generated_at="2026-07-15T00:00:00Z",
+    )
+
+    assert input_pack.source_builder_binding_report_id == baseline.builder_binding_report_id
+    assert reconciled.builder_binding_report_id == baseline.builder_binding_report_id
+    assert reconciled.source_input_pack_report_id == input_pack.input_pack_report_id
+    assert reconciled.replay_input_gap_count < baseline.replay_input_gap_count
+    assert reconciled.missing_case_prerequisite_count <= baseline.missing_case_prerequisite_count
+    assert reconciled.replay_input_gap_count > 0
+    assert reconciled.runtime_artifacts_created is False
+    assert reconciled.external_writes_performed is False
+
+
+def test_builder_binding_rejects_input_pack_from_another_binding_run(repo_root, tmp_path):
+    baseline, baseline_dir = run_labor_employment_budget_outcome_replay_builder_binding_audit(
+        execution_report_path=_execution_report(repo_root, tmp_path),
+        out_dir=tmp_path / "baseline-builder-binding",
+        generated_at="2026-07-15T00:00:00Z",
+    )
+    _, input_pack_dir = run_labor_employment_budget_outcome_replay_input_pack_audit(
+        builder_binding_report_path=(
+            baseline_dir / LABOR_EMPLOYMENT_BUDGET_OUTCOME_REPLAY_BUILDER_BINDING_REPORT_FILENAME
+        ),
+        input_pack_manifest_path=_input_pack_manifest(repo_root),
+        repo_root=repo_root,
+        out_dir=tmp_path / "input-pack",
+        generated_at="2026-07-15T00:00:00Z",
+    )
+    input_pack_path = (
+        input_pack_dir / LABOR_EMPLOYMENT_BUDGET_OUTCOME_REPLAY_INPUT_PACK_REPORT_FILENAME
+    )
+    stale = load_json(input_pack_path)
+    stale["source_builder_binding_report_id"] = "lebudgetreplaybinding_stale"
+    stale_path = write_json(tmp_path / "stale-input-pack.json", stale)
+
+    with pytest.raises(ValueError, match="does not belong to the current builder binding"):
+        run_labor_employment_budget_outcome_replay_builder_binding_audit(
+            execution_report_path=_execution_report(repo_root, tmp_path),
+            input_pack_report_path=stale_path,
+            out_dir=tmp_path / "stale-reconciled-builder-binding",
+            repo_root=repo_root,
+            generated_at="2026-07-15T00:00:00Z",
+        )
 
 
 def test_labor_employment_budget_outcome_replay_builder_binding_cli_writes_report(

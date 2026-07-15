@@ -12,6 +12,8 @@ from .models import (
     LaborEmploymentBudgetOutcomeReplayExecutionArtifact,
     LaborEmploymentBudgetOutcomeReplayExecutionCase,
     LaborEmploymentBudgetOutcomeReplayExecutionReport,
+    LaborEmploymentBudgetOutcomeReplayInputPackCase,
+    LaborEmploymentBudgetOutcomeReplayInputPackReport,
 )
 from .util import digest_json, load_json, now_iso, write_json
 
@@ -48,6 +50,8 @@ def run_labor_employment_budget_outcome_replay_builder_binding_audit(
     *,
     execution_report_path: str | Path,
     out_dir: str | Path,
+    input_pack_report_path: str | Path | None = None,
+    repo_root: str | Path = ".",
     generated_at: str | None = None,
 ) -> tuple[LaborEmploymentBudgetOutcomeReplayBuilderBindingReport, Path]:
     execution_ref = Path(execution_report_path)
@@ -57,8 +61,40 @@ def run_labor_employment_budget_outcome_replay_builder_binding_audit(
     execution = LaborEmploymentBudgetOutcomeReplayExecutionReport.model_validate(
         load_json(execution_ref)
     )
+    input_pack_ref = Path(input_pack_report_path) if input_pack_report_path else None
+    input_pack = (
+        LaborEmploymentBudgetOutcomeReplayInputPackReport.model_validate(load_json(input_pack_ref))
+        if input_pack_ref
+        else None
+    )
     contracts = _builder_contracts()
-    cases = [_binding_case(execution_case=case, contracts=contracts) for case in execution.cases]
+    baseline_cases = [
+        _binding_case(
+            execution_case=case,
+            contracts=contracts,
+            ready_inputs_by_binding={},
+        )
+        for case in execution.cases
+    ]
+    baseline_report_id = _builder_binding_report_id(
+        execution=execution,
+        cases=baseline_cases,
+        contracts=contracts,
+    )
+    ready_inputs_by_binding = _fresh_ready_inputs_by_binding(
+        input_pack=input_pack,
+        expected_builder_binding_report_id=baseline_report_id,
+        baseline_cases=baseline_cases,
+        repo_root=Path(repo_root),
+    )
+    cases = [
+        _binding_case(
+            execution_case=case,
+            contracts=contracts,
+            ready_inputs_by_binding=ready_inputs_by_binding,
+        )
+        for case in execution.cases
+    ]
     checks = _checks(execution=execution, cases=cases, contracts=contracts)
     failed_cases = [case for case in cases if case.status == "failed"]
     failed_checks = [check for check in checks if check.status == "failed"]
@@ -69,18 +105,8 @@ def run_labor_employment_budget_outcome_replay_builder_binding_audit(
     input_gap_count = sum(case.replay_input_gap_count for case in cases)
     prerequisite_count = sum(case.missing_case_prerequisite_count for case in cases)
     generated = generated_at or now_iso()
-    report_core = {
-        "execution_report_id": execution.outcome_replay_execution_report_id,
-        "case_count": len(cases),
-        "slot_count": slot_count,
-        "bound_count": bound_count,
-        "unknown_count": unknown_count,
-        "blocked_count": blocked_count,
-        "failed_checks": [check.check_id for check in failed_checks],
-    }
     report = LaborEmploymentBudgetOutcomeReplayBuilderBindingReport(
-        builder_binding_report_id="lebudgetreplaybinding_"
-        + digest_json(report_core)[len("sha256:") : len("sha256:") + 16],
+        builder_binding_report_id=baseline_report_id,
         status=(
             "blocked_by_labor_employment_budget_replay_builder_binding"
             if failed_cases or failed_checks
@@ -89,6 +115,9 @@ def run_labor_employment_budget_outcome_replay_builder_binding_audit(
         source_execution_report_ref=str(execution_ref),
         source_execution_report_id=execution.outcome_replay_execution_report_id,
         source_execution_report_status=execution.status,
+        source_input_pack_report_ref=str(input_pack_ref) if input_pack_ref else None,
+        source_input_pack_report_id=input_pack.input_pack_report_id if input_pack else None,
+        source_input_pack_report_status=input_pack.status if input_pack else None,
         fixture_count=len(cases),
         case_count=len(cases),
         passed_case_count=len([case for case in cases if case.status == "passed"]),
@@ -111,6 +140,7 @@ def run_labor_employment_budget_outcome_replay_builder_binding_audit(
             "This audit binds replay slots to deterministic local builders but does not invoke them.",
             "A bound slot is not evidence that synthetic actuals, carrier responses, or review outcomes exist yet.",
             "Aggregate learning-loop replay still needs complement reports when a fixture only exercises actuals or carrier rejection lanes.",
+            "When an input-pack audit is supplied, only schema-valid, case-bound ready inputs clear matching gaps; declared refs and partial loops remain insufficient.",
         ],
         generated_at=generated,
     )
@@ -133,6 +163,7 @@ def render_labor_employment_budget_replay_builder_binding_report(
         f"**Report ID:** {report.builder_binding_report_id}",
         f"**Status:** {report.status}",
         f"**Execution report:** `{report.source_execution_report_ref}`",
+        f"**Input-pack reconciliation:** `{report.source_input_pack_report_ref or 'not supplied'}`",
         "",
         "## Summary",
         "",
@@ -368,6 +399,7 @@ def _binding_case(
         tuple[LaborEmploymentBudgetLearningLoopType, str],
         LaborEmploymentBudgetOutcomeReplayBuilderContract,
     ],
+    ready_inputs_by_binding: dict[str, set[str]],
 ) -> LaborEmploymentBudgetOutcomeReplayBuilderBindingCase:
     case_artifacts = {
         slot.expected_artifact_name
@@ -380,6 +412,7 @@ def _binding_case(
             slot=slot,
             contract=contracts.get((slot.loop_type, slot.expected_artifact_name)),
             case_artifacts=case_artifacts,
+            ready_inputs_by_binding=ready_inputs_by_binding,
         )
         for slot in execution_case.artifact_slots
     ]
@@ -458,6 +491,7 @@ def _binding(
     slot: LaborEmploymentBudgetOutcomeReplayExecutionArtifact,
     contract: LaborEmploymentBudgetOutcomeReplayBuilderContract | None,
     case_artifacts: set[str],
+    ready_inputs_by_binding: dict[str, set[str]],
 ) -> LaborEmploymentBudgetOutcomeReplayBuilderBinding:
     if slot.artifact_slot_status != "materialized_candidate_slot":
         status = "blocked_slot_not_materialized"
@@ -468,12 +502,26 @@ def _binding(
         notes = ["No deterministic local builder contract is registered for this slot."]
         return _blocked_binding(execution_case, slot, status, notes)
 
+    binding_id = (
+        "lebudgetreplaybinding_"
+        + digest_json(
+            {
+                "case": execution_case.execution_case_id,
+                "loop": slot.loop_type,
+                "artifact": slot.expected_artifact_name,
+                "builder": contract.builder_function,
+            }
+        )[len("sha256:") : len("sha256:") + 16]
+    )
+    ready_inputs = ready_inputs_by_binding.get(binding_id, set())
     missing_prerequisites = [
         artifact
         for artifact in _case_prerequisites(contract)
-        if artifact not in case_artifacts and not artifact.startswith("one_or_more_of:")
+        if artifact not in case_artifacts
+        and artifact not in ready_inputs
+        and not artifact.startswith("one_or_more_of:")
     ]
-    replay_gaps = _replay_input_gaps(contract)
+    replay_gaps = _replay_input_gaps(contract, ready_inputs)
     notes = [
         "Expected artifact is bound to an existing deterministic local builder contract.",
         "Binding audit does not invoke the builder or create runtime outputs.",
@@ -486,17 +534,6 @@ def _binding(
         notes.append(
             "Synthetic input fixtures are still required before this builder can be exercised."
         )
-    binding_id = (
-        "lebudgetreplaybinding_"
-        + digest_json(
-            {
-                "case": execution_case.execution_case_id,
-                "loop": slot.loop_type,
-                "artifact": slot.expected_artifact_name,
-                "builder": contract.builder_function,
-            }
-        )[len("sha256:") : len("sha256:") + 16]
-    )
     return LaborEmploymentBudgetOutcomeReplayBuilderBinding(
         binding_id=binding_id,
         execution_case_id=execution_case.execution_case_id,
@@ -575,9 +612,93 @@ def _case_prerequisites(
     ]
 
 
-def _replay_input_gaps(contract: LaborEmploymentBudgetOutcomeReplayBuilderContract) -> list[str]:
+def _ready_inputs_from_cases(
+    cases: list[LaborEmploymentBudgetOutcomeReplayInputPackCase],
+) -> dict[str, set[str]]:
+    ready: dict[str, set[str]] = {}
+    for case in cases:
+        for item in case.items:
+            if item.input_status != "ready":
+                continue
+            values = ready.setdefault(item.binding_id, set())
+            if item.input_role == "one_of_signal":
+                values.update(item.selected_alternative_artifacts)
+            else:
+                values.add(item.required_input_artifact)
+    return ready
+
+
+def _builder_binding_report_id(
+    *,
+    execution: LaborEmploymentBudgetOutcomeReplayExecutionReport,
+    cases: list[LaborEmploymentBudgetOutcomeReplayBuilderBindingCase],
+    contracts: dict[
+        tuple[LaborEmploymentBudgetLearningLoopType, str],
+        LaborEmploymentBudgetOutcomeReplayBuilderContract,
+    ],
+) -> str:
+    checks = _checks(execution=execution, cases=cases, contracts=contracts)
+    report_core = {
+        "execution_report_id": execution.outcome_replay_execution_report_id,
+        "case_count": len(cases),
+        "slot_count": sum(case.slot_count for case in cases),
+        "bound_count": sum(case.bound_slot_count for case in cases),
+        "unknown_count": sum(case.unknown_artifact_count for case in cases),
+        "blocked_count": sum(case.blocked_slot_count for case in cases),
+        "failed_checks": [check.check_id for check in checks if check.status == "failed"],
+    }
+    return "lebudgetreplaybinding_" + digest_json(report_core)[len("sha256:") : len("sha256:") + 16]
+
+
+def _fresh_ready_inputs_by_binding(
+    *,
+    input_pack: LaborEmploymentBudgetOutcomeReplayInputPackReport | None,
+    expected_builder_binding_report_id: str,
+    baseline_cases: list[LaborEmploymentBudgetOutcomeReplayBuilderBindingCase],
+    repo_root: Path,
+) -> dict[str, set[str]]:
+    if input_pack is None:
+        return {}
+    if input_pack.source_builder_binding_report_id != expected_builder_binding_report_id:
+        raise ValueError(
+            "input-pack report does not belong to the current builder binding report: "
+            f"{input_pack.source_builder_binding_report_id} != {expected_builder_binding_report_id}"
+        )
+    if not input_pack.source_input_pack_manifest_ref:
+        raise ValueError("input-pack reconciliation requires the source input-pack manifest ref")
+
+    # Revalidate declared refs now. A prior audit result is provenance, not a durable
+    # assertion that a file still exists, has the same case identity, or remains safe.
+    from .labor_employment_budget_outcome_replay_input_pack import _input_pack_case
+
+    manifest = load_json(input_pack.source_input_pack_manifest_ref)
+    entries = manifest.get("entries") if isinstance(manifest, dict) else None
+    if not isinstance(entries, list):
+        raise ValueError("input-pack reconciliation source manifest has no entries")
+    from .models import LaborEmploymentBudgetOutcomeReplayInputPackManifest
+
+    validated_manifest = LaborEmploymentBudgetOutcomeReplayInputPackManifest.model_validate(
+        manifest
+    )
+    fresh_cases = [
+        _input_pack_case(
+            binding_case=case,
+            entries=validated_manifest.entries,
+            repo_root=repo_root,
+        )
+        for case in baseline_cases
+    ]
+    return _ready_inputs_from_cases(fresh_cases)
+
+
+def _replay_input_gaps(
+    contract: LaborEmploymentBudgetOutcomeReplayBuilderContract,
+    ready_inputs: set[str],
+) -> list[str]:
     gaps = []
     for artifact in contract.required_input_artifacts:
+        if artifact in ready_inputs:
+            continue
         if artifact in {
             "legal_budget_proposal.json",
             "budget_actuals_source.json",
