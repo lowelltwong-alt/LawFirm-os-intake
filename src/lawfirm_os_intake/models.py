@@ -5026,6 +5026,7 @@ class LaborEmploymentBudgetOutcomeReplaySeedSpec(StrictModel):
     family: LaborEmploymentSyntheticFixtureFamily
     variant: LaborEmploymentSyntheticFixtureVariant
     expected_budget_output_state: LaborEmploymentExecutableDriverAllowedBudgetOutput
+    replay_scope: Literal["complete_aggregate", "scoped_partial", "blocked_guard"]
     seeded_learning_loop_types: list[LaborEmploymentBudgetLearningLoopType]
     replay_seed_refs_by_loop: dict[LaborEmploymentBudgetLearningLoopType, list[str]]
     expected_replay_artifacts_by_loop: dict[LaborEmploymentBudgetLearningLoopType, list[str]]
@@ -5074,8 +5075,29 @@ class LaborEmploymentBudgetOutcomeReplaySeedSpec(StrictModel):
         if self.expected_budget_output_state == "blocked_amount_budget":
             if loops != {"blocked_budget_guard"}:
                 raise ValueError("blocked L&E outcome seed can only exercise blocked guard")
+            if self.replay_scope != "blocked_guard":
+                raise ValueError("blocked L&E outcome seed requires blocked_guard replay scope")
         elif "blocked_budget_guard" in loops:
             raise ValueError("nonblocking L&E outcome seed cannot exercise blocked guard")
+        elif self.replay_scope == "blocked_guard":
+            raise ValueError("nonblocking L&E outcome seed cannot use blocked_guard replay scope")
+        elif self.replay_scope == "complete_aggregate":
+            if not {"actuals_variance", "carrier_rejection_capture"}.issubset(loops):
+                raise ValueError(
+                    "complete aggregate L&E outcome seed requires actuals and carrier loops"
+                )
+            if "budget_learning_loop_report.json" not in self.expected_replay_artifacts_by_loop.get(
+                "reviewed_learning_gate", []
+            ):
+                raise ValueError(
+                    "complete aggregate L&E outcome seed requires aggregate learning-loop artifact"
+                )
+        elif "budget_learning_loop_report.json" in self.expected_replay_artifacts_by_loop.get(
+            "reviewed_learning_gate", []
+        ):
+            raise ValueError(
+                "scoped partial L&E outcome seed cannot claim aggregate learning-loop artifact"
+            )
         return self
 
 
@@ -5126,6 +5148,7 @@ class LaborEmploymentBudgetOutcomeReplayReadinessCase(StrictModel):
     variant: LaborEmploymentSyntheticFixtureVariant
     status: Literal["passed", "failed"]
     expected_budget_output_state: LaborEmploymentExecutableDriverAllowedBudgetOutput
+    replay_scope: Literal["complete_aggregate", "scoped_partial", "blocked_guard"]
     observed_budget_output_state: LaborEmploymentExecutableDriverAllowedBudgetOutput | None = None
     outcome_seed_id: str | None = None
     required_learning_loop_types: list[LaborEmploymentBudgetLearningLoopType]
@@ -5311,6 +5334,7 @@ class LaborEmploymentBudgetOutcomeReplayExecutionCase(StrictModel):
     variant: LaborEmploymentSyntheticFixtureVariant
     status: Literal["passed", "failed"]
     expected_budget_output_state: LaborEmploymentExecutableDriverAllowedBudgetOutput
+    replay_scope: Literal["complete_aggregate", "scoped_partial", "blocked_guard"]
     replay_case_dir: str
     required_learning_loop_types: list[LaborEmploymentBudgetLearningLoopType]
     materialized_learning_loop_types: list[LaborEmploymentBudgetLearningLoopType]
@@ -5556,6 +5580,7 @@ class LaborEmploymentBudgetOutcomeReplayBuilderBindingCase(StrictModel):
     variant: LaborEmploymentSyntheticFixtureVariant
     status: Literal["passed", "failed"]
     expected_budget_output_state: LaborEmploymentExecutableDriverAllowedBudgetOutput
+    replay_scope: Literal["complete_aggregate", "scoped_partial", "blocked_guard"]
     slot_count: int = Field(ge=0)
     bound_slot_count: int = Field(ge=0)
     unknown_artifact_count: int = Field(ge=0)

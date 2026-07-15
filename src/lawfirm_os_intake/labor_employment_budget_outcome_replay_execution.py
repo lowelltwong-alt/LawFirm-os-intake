@@ -312,6 +312,7 @@ def _execution_case(
         variant=readiness_case.variant,
         status="failed" if failed else "passed",
         expected_budget_output_state=readiness_case.expected_budget_output_state,
+        replay_scope=readiness_case.replay_scope,
         replay_case_dir=str(case_dir),
         required_learning_loop_types=required_loops,
         materialized_learning_loop_types=_ordered_present(required_loops, set(materialized_loops)),

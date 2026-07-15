@@ -100,8 +100,8 @@ def test_labor_employment_budget_outcome_replay_builder_binding_binds_all_slots(
     assert persisted.builder_binding_report_id == report.builder_binding_report_id
     assert report.status == "labor_employment_budget_replay_builder_binding_ready_for_review"
     assert report.case_count == 8
-    assert report.slot_count == 40
-    assert report.bound_slot_count == 40
+    assert report.slot_count == 36
+    assert report.bound_slot_count == 36
     assert report.unknown_artifact_count == 0
     assert report.blocked_slot_count == 0
     assert report.replay_input_gap_count > 0
@@ -111,6 +111,12 @@ def test_labor_employment_budget_outcome_replay_builder_binding_binds_all_slots(
     assert any(
         binding.expected_artifact_name == "budget_learning_loop_report.json"
         and "carrier_rejection_review_packet.json" in binding.missing_case_prerequisite_artifacts
+        for case in report.cases
+        for binding in case.bindings
+    )
+    assert not any(
+        case.replay_scope == "scoped_partial"
+        and binding.expected_artifact_name == "budget_learning_loop_report.json"
         for case in report.cases
         for binding in case.bindings
     )
@@ -250,8 +256,8 @@ def test_labor_employment_budget_outcome_replay_builder_binding_cli_writes_repor
     assert '"status": "labor_employment_budget_replay_builder_binding_ready_for_review"' in (
         captured.out
     )
-    assert '"slot_count": 40' in captured.out
-    assert '"bound_slot_count": 40' in captured.out
+    assert '"slot_count": 36' in captured.out
+    assert '"bound_slot_count": 36' in captured.out
     assert '"unknown_artifact_count": 0' in captured.out
     assert '"lake_write_performed": false' in captured.out
     assert (

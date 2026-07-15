@@ -1,3 +1,5 @@
+import pytest
+
 from lawfirm_os_intake.cli import main
 from lawfirm_os_intake.labor_employment_budget_learning_fixtures import (
     LABOR_EMPLOYMENT_BUDGET_LEARNING_FIXTURE_REPORT_FILENAME,
@@ -109,6 +111,17 @@ def test_labor_employment_budget_outcome_seed_manifest_is_candidate_only(repo_ro
     assert manifest.sqlite_write_performed is False
     assert manifest.external_writes_performed is False
     assert manifest.silent_learning_performed is False
+
+
+def test_scoped_partial_seed_cannot_claim_aggregate_learning_loop(repo_root):
+    manifest = load_json(_seed_manifest(repo_root))
+    partial = next(seed for seed in manifest["seeds"] if seed["replay_scope"] == "scoped_partial")
+    partial["expected_replay_artifacts_by_loop"]["reviewed_learning_gate"].append(
+        "budget_learning_loop_report.json"
+    )
+
+    with pytest.raises(ValueError, match="cannot claim aggregate learning-loop artifact"):
+        LaborEmploymentBudgetOutcomeReplaySeedManifest.model_validate(manifest)
 
 
 def test_labor_employment_budget_outcome_replay_readiness_blocks_missing_seed(

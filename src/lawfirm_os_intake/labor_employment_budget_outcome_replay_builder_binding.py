@@ -449,6 +449,7 @@ def _binding_case(
         variant=execution_case.variant,
         status="failed" if failures else "passed",
         expected_budget_output_state=execution_case.expected_budget_output_state,
+        replay_scope=execution_case.replay_scope,
         slot_count=len(bindings),
         bound_slot_count=len(
             [
