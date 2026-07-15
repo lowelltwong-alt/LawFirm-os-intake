@@ -177,6 +177,18 @@
       "title": "Candidate Only",
       "type": "boolean"
     },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
     "not_promoted_canon": {
       "default": true,
       "title": "Not Promoted Canon",

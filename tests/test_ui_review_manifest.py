@@ -84,6 +84,9 @@ def test_build_ui_review_manifest_from_local_artifacts(tmp_path):
     assert manifest["matterFamily"] == "employment_litigation_defense"
     assert manifest["boundaryFlags"]["readOnly"] is True
     assert manifest["boundaryFlags"]["networkCallsAllowed"] is False
+    assert manifest["candidate_only"] is True
+    assert manifest["synthetic_only"] is True
+    assert manifest["external_writes_performed"] is False
     assert all(not artifact["externalWritesPerformed"] for artifact in manifest["artifacts"])
     assert {gate["status"] for gate in manifest["qualityGates"]} == {"passed"}
 

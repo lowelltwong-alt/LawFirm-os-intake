@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "ui_review_data_bundle_id": "ui_review_data_bundle_93ad30f89837",
+  "ui_review_data_bundle_id": "ui_review_data_bundle_628f005a7b08",
   "status": "ready_for_review",
   "run_root_ref": "<demo-run-root>",
   "detail_report_count": 27,
@@ -25,7 +25,8 @@
       "external_writes_performed": false,
       "notes": [
         "Found ui_review_manifest.json; status=blocked."
-      ]
+      ],
+      "boundary_evidence_complete": true
     },
     {
       "detail_report_id": "synthetic-qa-review-run",
@@ -43,7 +44,8 @@
       "external_writes_performed": false,
       "notes": [
         "Found synthetic_qa_review_run_report.json; status=synthetic_qa_review_run_ready."
-      ]
+      ],
+      "boundary_evidence_complete": true
     },
     {
       "detail_report_id": "synthetic-confidence-summary",
@@ -61,7 +63,8 @@
       "external_writes_performed": false,
       "notes": [
         "Found quality\\synthetic_confidence_summary_report.json; status=synthetic_confidence_summary_ready_for_review."
-      ]
+      ],
+      "boundary_evidence_complete": true
     },
     {
       "detail_report_id": "synthetic-qa-blocker-report",
@@ -79,7 +82,8 @@
       "external_writes_performed": false,
       "notes": [
         "Found quality\\synthetic_qa_blocker_report.json; status=synthetic_qa_blocker_report_ready_for_review."
-      ]
+      ],
+      "boundary_evidence_complete": true
     },
     {
       "detail_report_id": "synthetic-qa-review-outcome",
@@ -97,7 +101,8 @@
       "external_writes_performed": false,
       "notes": [
         "Found quality\\synthetic_qa_review_outcome_report.json; status=synthetic_qa_review_outcome_recorded_pending_followup."
-      ]
+      ],
+      "boundary_evidence_complete": true
     },
     {
       "detail_report_id": "rust-fixture-boundary",
@@ -115,7 +120,8 @@
       "external_writes_performed": false,
       "notes": [
         "Found demo-rust-fixture-boundary-report.json; status=passed."
-      ]
+      ],
+      "boundary_evidence_complete": true
     },
     {
       "detail_report_id": "rust-fixture-manifest",
@@ -127,13 +133,14 @@
       "status": "passed",
       "renderer": "RustFixtureManifestPanel",
       "artifact_ref": "apps/legal-intake-budget/src/fixtures/demo-rust-fixture-manifest-report.json",
-      "source_sha256": "sha256:7b0b25df824c042b91eee01871f6279e95f9b2d5721c5e3ca85a692ed87e4157",
+      "source_sha256": "sha256:cc73335064535651008a2eade8cd98c0f7fa1a4b85214f8d7740ef8ae5d4d266",
       "candidate_only": true,
       "synthetic_only": true,
       "external_writes_performed": false,
       "notes": [
         "Found demo-rust-fixture-manifest-report.json; status=passed."
-      ]
+      ],
+      "boundary_evidence_complete": true
     },
     {
       "detail_report_id": "matter-linking-preflight",
@@ -145,13 +152,14 @@
       "status": "matter_linking_preflight_resolved_candidate_requires_review",
       "renderer": "MatterLinkingPreflightPanel",
       "artifact_ref": "<demo-run-root>\\quality\\matter_linking_preflight_report.json",
-      "source_sha256": "sha256:4f544cc2e9b266cca6594a0134116d65e769544e345b7530f11a113ca1d0ff69",
+      "source_sha256": "sha256:0f1ec2703b834314fa1d08593cc5ad6f4547f9f23d1682933b374e49a1fad38c",
       "candidate_only": true,
       "synthetic_only": true,
       "external_writes_performed": false,
       "notes": [
         "Found quality\\matter_linking_preflight_report.json; status=matter_linking_preflight_resolved_candidate_requires_review."
-      ]
+      ],
+      "boundary_evidence_complete": true
     },
     {
       "detail_report_id": "matter-linking-review-outcome",
@@ -169,7 +177,8 @@
       "external_writes_performed": false,
       "notes": [
         "Found quality\\matter_linking_review_outcome_report.json; status=matter_linking_review_outcome_recorded."
-      ]
+      ],
+      "boundary_evidence_complete": true
     },
     {
       "detail_report_id": "matter-linking-qa-gate",
@@ -187,7 +196,8 @@
       "external_writes_performed": false,
       "notes": [
         "Found quality\\matter_linking_qa_gate_report.json; status=matter_linking_qa_gate_ready_for_review."
-      ]
+      ],
+      "boundary_evidence_complete": true
     },
     {
       "detail_report_id": "labor-employment-qa-matrix",
@@ -205,7 +215,8 @@
       "external_writes_performed": false,
       "notes": [
         "Found quality\\labor_employment_qa_matrix_report.json; status=labor_employment_qa_matrix_ready_for_review."
-      ]
+      ],
+      "boundary_evidence_complete": true
     },
     {
       "detail_report_id": "labor-employment-executable-coverage",
@@ -223,7 +234,8 @@
       "external_writes_performed": false,
       "notes": [
         "Found quality\\labor_employment_executable_coverage_report.json; status=labor_employment_executable_coverage_ready_for_review."
-      ]
+      ],
+      "boundary_evidence_complete": true
     },
     {
       "detail_report_id": "labor-employment-blocked-driver-impact-review",
@@ -241,7 +253,8 @@
       "external_writes_performed": false,
       "notes": [
         "Found quality\\labor_employment_blocked_driver_impact_review_report.json; status=labor_employment_blocked_driver_impacts_ready_for_review."
-      ]
+      ],
+      "boundary_evidence_complete": true
     },
     {
       "detail_report_id": "labor-employment-budget-output-expectations",
@@ -259,7 +272,8 @@
       "external_writes_performed": false,
       "notes": [
         "Found quality\\labor_employment_budget_output_expectations_report.json; status=labor_employment_budget_output_expectations_ready_for_review."
-      ]
+      ],
+      "boundary_evidence_complete": true
     },
     {
       "detail_report_id": "labor-employment-budget-qa-gate",
@@ -277,7 +291,8 @@
       "external_writes_performed": false,
       "notes": [
         "Found quality\\labor_employment_budget_qa_gate_report.json; status=labor_employment_budget_qa_gate_ready_for_review."
-      ]
+      ],
+      "boundary_evidence_complete": true
     },
     {
       "detail_report_id": "labor-employment-budget-learning-fixtures",
@@ -295,7 +310,8 @@
       "external_writes_performed": false,
       "notes": [
         "Found quality\\labor_employment_budget_learning_fixtures_report.json; status=labor_employment_budget_learning_fixtures_ready_for_review."
-      ]
+      ],
+      "boundary_evidence_complete": true
     },
     {
       "detail_report_id": "labor-employment-budget-outcome-replay-readiness",
@@ -313,7 +329,8 @@
       "external_writes_performed": false,
       "notes": [
         "Found quality\\labor_employment_budget_outcome_replay_readiness_report.json; status=labor_employment_budget_outcome_replay_ready_for_review."
-      ]
+      ],
+      "boundary_evidence_complete": true
     },
     {
       "detail_report_id": "labor-employment-budget-outcome-replay-execution",
@@ -331,7 +348,8 @@
       "external_writes_performed": false,
       "notes": [
         "Found quality\\labor_employment_budget_outcome_replay_execution_report.json; status=labor_employment_budget_outcome_replay_execution_ready_for_review."
-      ]
+      ],
+      "boundary_evidence_complete": true
     },
     {
       "detail_report_id": "labor-employment-budget-outcome-replay-builder-binding",
@@ -349,7 +367,8 @@
       "external_writes_performed": false,
       "notes": [
         "Found quality\\labor_employment_budget_outcome_replay_builder_binding_report.json; status=labor_employment_budget_replay_builder_binding_ready_for_review."
-      ]
+      ],
+      "boundary_evidence_complete": true
     },
     {
       "detail_report_id": "labor-employment-budget-outcome-replay-confidence-status",
@@ -367,7 +386,8 @@
       "external_writes_performed": false,
       "notes": [
         "Found quality\\labor_employment_budget_outcome_replay_confidence_status_report.json; status=labor_employment_budget_outcome_replay_confidence_pending_inputs."
-      ]
+      ],
+      "boundary_evidence_complete": true
     },
     {
       "detail_report_id": "budget-learning-loop",
@@ -385,7 +405,8 @@
       "external_writes_performed": false,
       "notes": [
         "Found quality\\budget_learning_loop_report.json; status=budget_learning_loop_ready_for_review."
-      ]
+      ],
+      "boundary_evidence_complete": true
     },
     {
       "detail_report_id": "ui-demo-qa-recipe",
@@ -403,7 +424,8 @@
       "external_writes_performed": false,
       "notes": [
         "Found checked demo fixture for ui_demo_qa_recipe_report.json."
-      ]
+      ],
+      "boundary_evidence_complete": true
     },
     {
       "detail_report_id": "public-data-cache-audit",
@@ -421,7 +443,8 @@
       "external_writes_performed": false,
       "notes": [
         "Found checked demo fixture for public_data_cache_audit_report.json."
-      ]
+      ],
+      "boundary_evidence_complete": true
     },
     {
       "detail_report_id": "rust-public-data-cache-custody",
@@ -439,7 +462,8 @@
       "external_writes_performed": false,
       "notes": [
         "Found checked demo fixture for rust_public_data_cache_custody_report.json."
-      ]
+      ],
+      "boundary_evidence_complete": true
     },
     {
       "detail_report_id": "public-derived-synthetic-qa-gate",
@@ -457,7 +481,8 @@
       "external_writes_performed": false,
       "notes": [
         "Found checked demo fixture for public_derived_synthetic_qa_gate_report.json."
-      ]
+      ],
+      "boundary_evidence_complete": true
     },
     {
       "detail_report_id": "crosswalk-audit",
@@ -475,7 +500,8 @@
       "external_writes_performed": false,
       "notes": [
         "Found crosswalk_audit_report.json; status=passed."
-      ]
+      ],
+      "boundary_evidence_complete": true
     },
     {
       "detail_report_id": "ocg-rule-ir-adoption",
@@ -493,7 +519,8 @@
       "external_writes_performed": false,
       "notes": [
         "Found ocg_rule_ir_adoption_report.json; status=accepted_as_read_only_candidate."
-      ]
+      ],
+      "boundary_evidence_complete": true
     }
   ],
   "required_next_actions": [
@@ -615,5 +642,6 @@
     "not_authorized_for_canonical_use": true,
     "not_authorized_for_budget_rewrite": true,
     "not_authorized_for_external_submission": true
-  }
+  },
+  "unproven_detail_boundary_count": 0
 }

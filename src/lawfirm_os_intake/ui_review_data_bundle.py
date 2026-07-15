@@ -251,28 +251,45 @@ def build_ui_review_data_bundle(
     ocg_summary = None
     if crosswalk_ref:
         crosswalk_report = load_crosswalk_audit_report(crosswalk_ref)
+        crosswalk_payload = load_json(crosswalk_ref)
         crosswalk_summary = build_crosswalk_audit_summary(crosswalk_report)
         details = [
-            _override_detail_from_explicit_path(detail, crosswalk_ref, crosswalk_report.status)
+            _override_detail_from_explicit_path(
+                detail,
+                crosswalk_ref,
+                crosswalk_report.status,
+                crosswalk_payload,
+            )
             if detail.detail_report_id == "crosswalk-audit"
             else detail
             for detail in details
         ]
     if ocg_ref:
         ocg_report = load_ocg_rule_ir_adoption_report(ocg_ref)
+        ocg_payload = load_json(ocg_ref)
         ocg_summary = build_ocg_rule_ir_adoption_summary(ocg_report)
         details = [
-            _override_detail_from_explicit_path(detail, ocg_ref, ocg_report.status)
+            _override_detail_from_explicit_path(
+                detail,
+                ocg_ref,
+                ocg_report.status,
+                ocg_payload,
+            )
             if detail.detail_report_id == "ocg-rule-ir-adoption"
             else detail
             for detail in details
         ]
     missing_required = [detail for detail in details if detail.required and not detail.present]
     external_write_reports = [detail for detail in details if detail.external_writes_performed]
+    unproven_detail_boundaries = [
+        detail for detail in details if detail.present and not detail.boundary_evidence_complete
+    ]
     if external_write_reports:
         status = "failed_side_effect_boundary"
     elif missing_required:
         status = "blocked_missing_required_reports"
+    elif unproven_detail_boundaries:
+        status = "blocked_unproven_detail_boundaries"
     else:
         status = "ready_for_review"
     report_core = {
@@ -284,6 +301,7 @@ def build_ui_review_data_bundle(
                 "present": detail.present,
                 "source_sha256": detail.source_sha256,
                 "external_writes_performed": detail.external_writes_performed,
+                "boundary_evidence_complete": detail.boundary_evidence_complete,
             }
             for detail in details
         ],
@@ -298,15 +316,36 @@ def build_ui_review_data_bundle(
         present_detail_report_count=sum(1 for detail in details if detail.present),
         missing_required_detail_report_count=len(missing_required),
         external_write_report_count=len(external_write_reports),
+        unproven_detail_boundary_count=len(unproven_detail_boundaries),
         detail_reports=details,
         required_next_actions=_required_next_actions(
             missing_required=missing_required,
             external_write_reports=external_write_reports,
+            unproven_detail_boundaries=unproven_detail_boundaries,
         ),
         crosswalk_audit_ref=crosswalk_ref,
         ocg_rule_ir_adoption_ref=ocg_ref,
         crosswalk_audit_summary=crosswalk_summary,
         ocg_rule_ir_adoption_summary=ocg_summary,
+        candidate_only=True,
+        synthetic_only=True,
+        non_authoritative=True,
+        local_json_only=True,
+        not_authorized_for_external_write=True,
+        not_authorized_for_lake_write=True,
+        not_authorized_for_sqlite_write=True,
+        not_authorized_for_budget_submission=True,
+        not_authorized_for_matter_opening=True,
+        not_authorized_for_calibration=True,
+        budget_amount_output_authorized=False,
+        budget_submission_authorized=False,
+        conflict_conclusion_emitted=False,
+        matter_opening_authorized=False,
+        training_pipeline_created=False,
+        lake_write_performed=False,
+        sqlite_write_performed=False,
+        external_writes_performed=False,
+        silent_learning_performed=False,
         generated_at=generated_at or now_iso(),
     )
     write_json(out_path, bundle.model_dump(mode="json"))
@@ -327,10 +366,19 @@ def _detail_report(root: Path, spec: UIReviewDetailSpec) -> UIReviewDataBundleDe
             renderer=spec.renderer,
             candidate_only=True,
             synthetic_only=True,
+            metadata_only=False,
             external_writes_performed=False,
+            boundary_evidence_complete=True,
             notes=[f"{spec.file_name} was not found under the local run root."],
         )
     payload = _safe_load_json(found)
+    (
+        candidate_only,
+        synthetic_only,
+        metadata_only,
+        boundary_evidence_complete,
+        boundary_notes,
+    ) = _detail_boundary_from_payload(payload)
     return UIReviewDataBundleDetailReport(
         detail_report_id=spec.detail_report_id,
         label=spec.label,
@@ -342,10 +390,12 @@ def _detail_report(root: Path, spec: UIReviewDetailSpec) -> UIReviewDataBundleDe
         renderer=spec.renderer,
         artifact_ref=str(found),
         source_sha256=_sha256_file(found),
-        candidate_only=_candidate_only(payload),
-        synthetic_only=_synthetic_only(payload, spec.report_kind),
+        candidate_only=candidate_only,
+        synthetic_only=synthetic_only,
+        metadata_only=metadata_only,
         external_writes_performed=_external_writes_performed(payload),
-        notes=[_note(root=root, path=found, payload=payload)],
+        boundary_evidence_complete=boundary_evidence_complete,
+        notes=[_note(root=root, path=found, payload=payload), *boundary_notes],
     )
 
 
@@ -381,14 +431,37 @@ def _status_from_payload(payload: dict[str, Any]) -> str:
     return str(payload.get("status") or payload.get("overallStatus") or "present")
 
 
-def _candidate_only(payload: dict[str, Any]) -> bool:
-    return payload.get("candidate_only", payload.get("candidateOnly", True)) is not False
+def _detail_boundary_from_payload(
+    payload: dict[str, Any],
+) -> tuple[bool, bool, bool, bool, list[str]]:
+    candidate_only = _explicit_boolean(payload, "candidate_only", "candidateOnly", expected=True)
+    synthetic_only = _explicit_boolean(payload, "synthetic_only", "syntheticOnly", expected=True)
+    metadata_only = _explicit_boolean(payload, "metadata_only", "metadataOnly", expected=True)
+    no_external_writes_declared = _explicit_boolean(
+        payload,
+        "external_writes_performed",
+        "externalWritesPerformed",
+        expected=False,
+    )
+    notes: list[str] = []
+    if not candidate_only:
+        notes.append("Candidate-only boundary was absent or not explicitly true.")
+    if not synthetic_only and not metadata_only:
+        notes.append("Synthetic-only or metadata-only boundary was absent or not explicitly true.")
+    if not no_external_writes_declared:
+        notes.append("No-external-writes boundary was absent or not explicitly false.")
+    return candidate_only, synthetic_only, metadata_only, not notes, notes
 
 
-def _synthetic_only(payload: dict[str, Any], report_kind: str) -> bool:
-    if report_kind == "ui_review_manifest":
-        return True
-    return payload.get("synthetic_only", True) is not False
+def _explicit_boolean(
+    payload: dict[str, Any],
+    snake_case: str,
+    camel_case: str,
+    *,
+    expected: bool,
+) -> bool:
+    values = [payload[key] for key in (snake_case, camel_case) if key in payload]
+    return bool(values) and all(value is expected for value in values)
 
 
 def _external_writes_performed(payload: dict[str, Any]) -> bool:
@@ -415,6 +488,7 @@ def _required_next_actions(
     *,
     missing_required: list[UIReviewDataBundleDetailReport],
     external_write_reports: list[UIReviewDataBundleDetailReport],
+    unproven_detail_boundaries: list[UIReviewDataBundleDetailReport],
 ) -> list[str]:
     if external_write_reports:
         return [
@@ -425,6 +499,12 @@ def _required_next_actions(
         return [
             f"Generate local UI detail report before relying on the review surface: {report.file_name}"
             for report in missing_required
+        ]
+    if unproven_detail_boundaries:
+        return [
+            "Add explicit candidate-only, synthetic-only, and no-external-writes "
+            f"boundary evidence before relying on: {report.file_name}"
+            for report in unproven_detail_boundaries
         ]
     return ["UI review data bundle is ready for read-only local review."]
 
@@ -437,8 +517,22 @@ def _override_detail_from_explicit_path(
     detail: UIReviewDataBundleDetailReport,
     path: str,
     status: str,
+    payload: dict[str, Any],
 ) -> UIReviewDataBundleDetailReport:
     artifact = Path(path)
+    required_boundary_fields = _standard_evidence_boundary_fields(detail.report_kind)
+    missing_or_invalid_boundary_fields = [
+        field
+        for field, expected in required_boundary_fields.items()
+        if payload.get(field) is not expected
+    ]
+    boundary_evidence_complete = not missing_or_invalid_boundary_fields
+    notes = [f"Explicit evidence path provided: {artifact.name}; status={status}."]
+    if missing_or_invalid_boundary_fields:
+        notes.append(
+            "Explicit standard-evidence boundary was absent or invalid: "
+            + ", ".join(missing_or_invalid_boundary_fields)
+        )
     return UIReviewDataBundleDetailReport(
         detail_report_id=detail.detail_report_id,
         label=detail.label,
@@ -450,8 +544,36 @@ def _override_detail_from_explicit_path(
         renderer=detail.renderer,
         artifact_ref=str(artifact),
         source_sha256=_sha256_file(artifact),
-        candidate_only=True,
-        synthetic_only=True,
-        external_writes_performed=False,
-        notes=[f"Explicit evidence path provided: {artifact.name}; status={status}."],
+        candidate_only=payload.get("candidate_only") is True,
+        synthetic_only=payload.get("synthetic_only") is True,
+        metadata_only=False,
+        external_writes_performed=payload.get("external_writes_performed") is True,
+        boundary_evidence_complete=boundary_evidence_complete,
+        notes=notes,
     )
+
+
+def _standard_evidence_boundary_fields(report_kind: str) -> dict[str, bool]:
+    common = {
+        "candidate_only": True,
+        "synthetic_only": True,
+        "external_writes_performed": False,
+        "not_promoted_canon": True,
+        "not_authorized_for_canonical_use": True,
+    }
+    if report_kind == "crosswalk_audit":
+        return {
+            **common,
+            "not_authorized_for_budget_logic": True,
+            "not_authorized_for_rejection_logic": True,
+        }
+    if report_kind == "ocg_rule_ir_adoption":
+        return {
+            **common,
+            "read_only_consumption": True,
+            "not_authorized_for_budget_rewrite": True,
+            "not_authorized_for_client_submission": True,
+            "not_authorized_for_external_submission": True,
+            "not_authorized_for_lake_write": True,
+        }
+    raise ValueError(f"Unsupported explicit standard-evidence report kind: {report_kind}")

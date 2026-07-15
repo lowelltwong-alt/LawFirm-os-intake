@@ -322,9 +322,10 @@
       "top_level_type": "object"
     },
     {
-      "byte_count": 10723,
+      "byte_count": 10761,
       "candidate_only": true,
       "data_origin": "synthetic",
+      "external_writes_performed": false,
       "id_fields": [
         {
           "field": "intake_request_id",
@@ -341,7 +342,7 @@
       ],
       "path": "demo-matter-linking-preflight-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:4f544cc2e9b266cca6594a0134116d65e769544e345b7530f11a113ca1d0ff69",
+      "sha256": "sha256:0f1ec2703b834314fa1d08593cc5ad6f4547f9f23d1682933b374e49a1fad38c",
       "status": "matter_linking_preflight_resolved_candidate_requires_review",
       "synthetic_only": true,
       "top_level_type": "object"
@@ -895,7 +896,7 @@
   ],
   "lake_write_performed": false,
   "local_json_only": true,
-  "manifest_sha256": "sha256:57c28f893a0a1dd804d622e7f048c159914cd8878b13b0dad2c85d95a256d498",
+  "manifest_sha256": "sha256:3ba99169d31b1ed350664221c34cd710ce0fc1ca5079bc6592285d82c6ed6c2c",
   "matter_opening_authorized": false,
   "non_authoritative": true,
   "parse_error_count": 0,
@@ -918,5 +919,5 @@
   "sqlite_write_performed": false,
   "status": "passed",
   "synthetic_only": true,
-  "total_byte_count": 1072027
+  "total_byte_count": 1072065
 }

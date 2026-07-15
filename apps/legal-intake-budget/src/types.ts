@@ -16,6 +16,7 @@ export type QualityGate = {
 export type UIReviewDataBundleStatus =
   | "ready_for_review"
   | "blocked_missing_required_reports"
+  | "blocked_unproven_detail_boundaries"
   | "failed_side_effect_boundary";
 
 export type UIReviewDataBundleReportKind =
@@ -104,6 +105,7 @@ export type MatterLinkingPreflightReport = {
   upfront_connector_implemented: boolean;
   vendor_api_called: boolean;
   external_write_performed: boolean;
+  external_writes_performed: boolean;
   lake_write_performed: boolean;
   sqlite_write_performed: boolean;
   matter_opening_authorized: boolean;
@@ -280,7 +282,9 @@ export type UIReviewDataBundleDetailReport = {
   source_sha256?: string;
   candidate_only: boolean;
   synthetic_only: boolean;
+  metadata_only?: boolean;
   external_writes_performed: boolean;
+  boundary_evidence_complete: boolean;
   notes: string[];
 };
 
@@ -294,6 +298,7 @@ export type UIReviewDataBundle = {
   present_detail_report_count: number;
   missing_required_detail_report_count: number;
   external_write_report_count: number;
+  unproven_detail_boundary_count: number;
   detail_reports: UIReviewDataBundleDetailReport[];
   required_next_actions: string[];
   candidate_only: boolean;

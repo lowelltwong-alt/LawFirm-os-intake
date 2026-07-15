@@ -593,6 +593,11 @@ def build_ui_review_manifest(
         "matterFamily": _matter_family(root),
         "overallStatus": _overall_status(artifacts, quality_gates),
         "boundaryFlags": BOUNDARY_FLAGS,
+        "candidate_only": True,
+        "synthetic_only": True,
+        "external_writes_performed": any(
+            artifact["externalWritesPerformed"] for artifact in artifacts
+        ),
         "artifacts": artifacts,
         "qualityGates": quality_gates,
         "blockerSummary": _blocker_summary(artifacts, quality_gates),

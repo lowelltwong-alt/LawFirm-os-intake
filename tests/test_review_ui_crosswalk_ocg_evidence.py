@@ -7,7 +7,7 @@ from lawfirm_os_intake.review_ui_crosswalk_ocg_evidence import (
     build_qa_readiness_report,
 )
 from lawfirm_os_intake.ui_review_data_bundle import build_ui_review_data_bundle
-from lawfirm_os_intake.util import write_json
+from lawfirm_os_intake.util import load_json, write_json
 from tests.test_ocg_rule_ir_adoption import _budget_projection_and_rule_ir
 from tests.test_ui_review_data_bundle import _write_ui_detail_reports
 
@@ -88,6 +88,28 @@ def test_ui_bundle_backward_compatible_without_crosswalk_or_ocg(repo_root, tmp_p
     )
     assert crosswalk_detail.present is False
     assert crosswalk_detail.required is False
+
+
+def test_ui_bundle_blocks_explicit_crosswalk_without_raw_boundary_proof(repo_root, tmp_path):
+    run_root = tmp_path / "run"
+    _write_ui_detail_reports(run_root)
+    crosswalk_path, _ocg_path = _write_crosswalk_and_ocg_reports(repo_root, tmp_path)
+    payload = load_json(crosswalk_path)
+    payload.pop("not_authorized_for_budget_logic")
+    write_json(crosswalk_path, payload)
+
+    bundle = build_ui_review_data_bundle(
+        run_root=run_root,
+        out_path=tmp_path / "ui_review_data_bundle.json",
+        crosswalk_audit_path=crosswalk_path,
+    )
+
+    detail = next(
+        item for item in bundle.detail_reports if item.detail_report_id == "crosswalk-audit"
+    )
+    assert bundle.status == "blocked_unproven_detail_boundaries"
+    assert detail.boundary_evidence_complete is False
+    assert "not_authorized_for_budget_logic" in " ".join(detail.notes)
 
 
 def test_qa_readiness_blocks_missing_crosswalk_when_required(repo_root, tmp_path):
