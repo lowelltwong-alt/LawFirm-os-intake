@@ -1388,6 +1388,18 @@ def _parser() -> argparse.ArgumentParser:
         required=True,
         help="Path to labor_employment_budget_outcome_replay_execution_report.json.",
     )
+    le_budget_outcome_replay_builder_binding.add_argument(
+        "--input-pack-report",
+        help=(
+            "Optional validated input-pack report used to reconcile only ready, case-bound "
+            "synthetic replay inputs without invoking builders."
+        ),
+    )
+    le_budget_outcome_replay_builder_binding.add_argument(
+        "--repo-root",
+        default=".",
+        help="Repository root used to revalidate local synthetic input refs.",
+    )
     le_budget_outcome_replay_builder_binding.add_argument("--out-dir", required=True)
     le_budget_outcome_replay_builder_binding.add_argument(
         "--generated-at",
@@ -4434,6 +4446,8 @@ def main(argv: list[str] | None = None) -> int:
             report, run_dir = run_labor_employment_budget_outcome_replay_builder_binding_audit(
                 execution_report_path=args.execution_report,
                 out_dir=args.out_dir,
+                input_pack_report_path=args.input_pack_report,
+                repo_root=args.repo_root,
                 generated_at=args.generated_at,
             )
             failed_checks = [check.check_id for check in report.checks if check.status == "failed"]

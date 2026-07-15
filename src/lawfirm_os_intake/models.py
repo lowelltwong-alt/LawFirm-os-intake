@@ -5637,6 +5637,9 @@ class LaborEmploymentBudgetOutcomeReplayBuilderBindingReport(StrictModel):
     source_execution_report_ref: str
     source_execution_report_id: str
     source_execution_report_status: str
+    source_input_pack_report_ref: str | None = None
+    source_input_pack_report_id: str | None = None
+    source_input_pack_report_status: str | None = None
     fixture_count: int = Field(ge=0)
     case_count: int = Field(ge=0)
     passed_case_count: int = Field(ge=0)
@@ -5680,6 +5683,13 @@ class LaborEmploymentBudgetOutcomeReplayBuilderBindingReport(StrictModel):
     ) -> "LaborEmploymentBudgetOutcomeReplayBuilderBindingReport":
         failed_cases = [case for case in self.cases if case.status == "failed"]
         failed_checks = [check for check in self.checks if check.status == "failed"]
+        input_pack_fields = [
+            self.source_input_pack_report_ref,
+            self.source_input_pack_report_id,
+            self.source_input_pack_report_status,
+        ]
+        if any(input_pack_fields) and not all(input_pack_fields):
+            raise ValueError("reconciled builder binding requires complete input-pack provenance")
         if self.fixture_count != self.case_count or self.case_count != len(self.cases):
             raise ValueError("builder binding report case count mismatch")
         if self.passed_case_count != len([case for case in self.cases if case.status == "passed"]):

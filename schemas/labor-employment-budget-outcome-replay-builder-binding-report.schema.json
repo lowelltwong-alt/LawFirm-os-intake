@@ -627,6 +627,42 @@
       "title": "Source Execution Report Status",
       "type": "string"
     },
+    "source_input_pack_report_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Input Pack Report Ref"
+    },
+    "source_input_pack_report_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Input Pack Report Id"
+    },
+    "source_input_pack_report_status": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Input Pack Report Status"
+    },
     "fixture_count": {
       "minimum": 0,
       "title": "Fixture Count",
