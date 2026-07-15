@@ -27,6 +27,10 @@ COMPLETE_CASES = {
     },
 }
 
+PARTIAL_ACTUALS_CASES = {
+    "class-collective-clean": "le-learning-class-collective-clean.v0_1",
+}
+
 
 def run_labor_employment_complete_replay_generation(
     *, repo_root: str | Path, out_dir: str | Path
@@ -111,6 +115,60 @@ def run_labor_employment_complete_replay_generation(
         {
             "schema_version": "0.1",
             "status": "candidate_complete_replay_generation",
+            "cases": cases,
+            "candidate_only": True,
+            "synthetic_only": True,
+            "external_writes_performed": False,
+            "lake_write_performed": False,
+            "sqlite_write_performed": False,
+            "budget_submission_authorized": False,
+            "matter_opening_authorized": False,
+            "silent_learning_performed": False,
+        },
+    )
+
+
+def run_labor_employment_partial_actuals_replay_generation(
+    *, repo_root: str | Path, out_dir: str | Path
+) -> Path:
+    """Materialize actuals-only evidence without inventing a carrier or aggregate lane."""
+    root = Path(repo_root)
+    output = Path(out_dir)
+    cases = []
+    for slug, fixture_id in PARTIAL_ACTUALS_CASES.items():
+        source = root / "examples" / "synthetic" / "labor-employment" / "replay-inputs" / slug
+        case_dir = output / "cases" / slug
+        anchors = case_dir / "anchors"
+        anchors.mkdir(parents=True, exist_ok=True)
+        for name in ["legal_budget_proposal.json", "budget_actuals_source.json"]:
+            copy2(source / name, anchors / name)
+        _, actuals_dir = run_budget_actual_comparison(
+            budget_path=anchors / "legal_budget_proposal.json",
+            actuals_path=anchors / "budget_actuals_source.json",
+            out_dir=case_dir / "actuals",
+        )
+        cases.append(
+            {
+                "learning_fixture_id": fixture_id,
+                "replay_scope": "scoped_partial",
+                "budget_actual_comparison_report_ref": str(
+                    actuals_dir / "budget_actual_comparison_report.json"
+                ),
+                "budget_actual_variance_ledger_report_ref": str(
+                    actuals_dir / "budget_actual_variance_ledger_report.json"
+                ),
+                "carrier_rejection_generated": False,
+                "aggregate_learning_loop_generated": False,
+                "candidate_only": True,
+                "synthetic_only": True,
+                "external_writes_performed": False,
+            }
+        )
+    return write_json(
+        output / "labor_employment_partial_actuals_replay_generation_manifest.json",
+        {
+            "schema_version": "0.1",
+            "status": "candidate_partial_actuals_replay_generation",
             "cases": cases,
             "candidate_only": True,
             "synthetic_only": True,
