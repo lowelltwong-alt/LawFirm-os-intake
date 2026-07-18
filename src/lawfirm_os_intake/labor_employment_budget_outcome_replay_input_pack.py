@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 from pathlib import Path
+import re
 from typing import Any, Literal
+import unicodedata
 
 from pydantic import ValidationError
 
@@ -13,6 +15,7 @@ from .models import (
     BudgetProposal,
     BudgetRevisionReport,
     CarrierRejectionCaptureSourceBundle,
+    HumanConfirmation,
     CarrierRejectionDecisionLedgerReport,
     CarrierRejectionLearningReport,
     CarrierRejectionReviewPacket,
@@ -32,8 +35,11 @@ from .models import (
     LaborEmploymentBudgetOutputExpectationReport,
     LaborEmploymentBudgetQAGateReport,
     LaborEmploymentExecutableCoverageReport,
+    LaborEmploymentExecutableFixtureManifest,
     ReviewedLearningGateReport,
+    SourceBundle,
 )
+from .segmenter import segment_bundle
 from .util import digest_json, load_json, now_iso, write_json
 
 
@@ -163,6 +169,74 @@ PROHIBITED_FALSE_AUTHORITY_FIELDS = {
 }
 
 
+def _load_executable_fixture_source_refs(
+    *,
+    manifest: LaborEmploymentBudgetOutcomeReplayInputPackManifest | None,
+    repo_root: Path,
+    expected_manifest_ref: str | None,
+    expected_manifest_sha256: str | None,
+) -> tuple[dict[str, str], str | None, str | None, str | None, str | None]:
+    if not expected_manifest_ref or not expected_manifest_sha256:
+        return {}, None, None, None, "builder binding has no executable manifest provenance"
+    if manifest is None or not manifest.executable_fixture_manifest_ref:
+        return {}, None, None, None, "executable fixture manifest ref is missing"
+    if manifest.executable_fixture_manifest_ref != expected_manifest_ref:
+        return (
+            {},
+            manifest.executable_fixture_manifest_ref,
+            None,
+            None,
+            "executable fixture manifest ref does not match builder binding provenance",
+        )
+    manifest_path = _resolve_local_ref(manifest.executable_fixture_manifest_ref, repo_root)
+    if manifest_path is None:
+        return (
+            {},
+            manifest.executable_fixture_manifest_ref,
+            None,
+            None,
+            "executable fixture manifest ref is not a local JSON ref",
+        )
+    if not manifest_path.is_file():
+        return (
+            {},
+            manifest.executable_fixture_manifest_ref,
+            None,
+            None,
+            "executable fixture manifest ref does not exist",
+        )
+    try:
+        manifest_payload = load_json(manifest_path)
+        fixture_manifest = LaborEmploymentExecutableFixtureManifest.model_validate(manifest_payload)
+        manifest_sha256 = digest_json(manifest_payload)
+    except (OSError, ValueError, ValidationError) as exc:
+        return (
+            {},
+            manifest.executable_fixture_manifest_ref,
+            None,
+            None,
+            f"executable fixture manifest validation failed: {exc}",
+        )
+    if manifest_sha256 != expected_manifest_sha256:
+        return (
+            {},
+            manifest.executable_fixture_manifest_ref,
+            fixture_manifest.manifest_id,
+            manifest_sha256,
+            "executable fixture manifest hash does not match builder binding provenance",
+        )
+    return (
+        {
+            fixture.executable_fixture_id: fixture.source_bundle_ref
+            for fixture in fixture_manifest.fixtures
+        },
+        manifest.executable_fixture_manifest_ref,
+        fixture_manifest.manifest_id,
+        manifest_sha256,
+        None,
+    )
+
+
 def run_labor_employment_budget_outcome_replay_input_pack_audit(
     *,
     builder_binding_report_path: str | Path,
@@ -186,14 +260,33 @@ def run_labor_employment_budget_outcome_replay_input_pack_audit(
         else None
     )
     entries = manifest.entries if manifest else []
+    (
+        expected_source_bundle_refs,
+        executable_manifest_ref,
+        executable_manifest_id,
+        executable_manifest_sha256,
+        executable_manifest_error,
+    ) = _load_executable_fixture_source_refs(
+        manifest=manifest,
+        repo_root=root,
+        expected_manifest_ref=binding_report.source_executable_fixture_manifest_ref,
+        expected_manifest_sha256=(binding_report.source_executable_fixture_manifest_sha256),
+    )
     cases = [
-        _input_pack_case(binding_case=case, entries=entries, repo_root=root)
+        _input_pack_case(
+            binding_case=case,
+            entries=entries,
+            repo_root=root,
+            expected_source_bundle_refs=expected_source_bundle_refs,
+        )
         for case in binding_report.cases
     ]
     checks = _checks(
         binding_report=binding_report,
         manifest=manifest,
         cases=cases,
+        executable_manifest_error=executable_manifest_error,
+        executable_manifest_ref=executable_manifest_ref,
     )
     failed_checks = [check for check in checks if check.status == "failed"]
     invalid_count = sum(case.invalid_input_count for case in cases)
@@ -206,6 +299,7 @@ def run_labor_employment_budget_outcome_replay_input_pack_audit(
         "missing": missing_count,
         "invalid": invalid_count,
         "failed_checks": [check.check_id for check in failed_checks],
+        "executable_manifest_sha256": executable_manifest_sha256,
     }
     status = _report_status(
         missing_input_count=missing_count,
@@ -221,6 +315,9 @@ def run_labor_employment_budget_outcome_replay_input_pack_audit(
         source_builder_binding_report_status=binding_report.status,
         source_input_pack_manifest_ref=str(manifest_ref) if manifest_ref else None,
         source_input_pack_manifest_id=manifest.manifest_id if manifest else None,
+        source_executable_fixture_manifest_ref=executable_manifest_ref,
+        source_executable_fixture_manifest_id=executable_manifest_id,
+        source_executable_fixture_manifest_sha256=executable_manifest_sha256,
         case_count=len(cases),
         ready_case_count=len([case for case in cases if case.status == "ready"]),
         partial_case_count=len([case for case in cases if case.status == "partially_ready"]),
@@ -247,6 +344,7 @@ def run_labor_employment_budget_outcome_replay_input_pack_audit(
         red_team_notes=[
             "This audit validates replay input refs; it does not run builders or create runtime artifacts.",
             "Ready inputs are not proof that the resulting budget, rejection, actuals, or appeal math is correct.",
+            "Synthetic confirmation anchors validate fixture provenance only and cannot complete a runtime human gate.",
             "Missing one-of reviewed learning signals must stay blocked until a reviewed candidate report exists.",
             "The deterministic input/path/schema checker is a future Rust leaf-tool candidate once Python remains the oracle.",
         ],
@@ -443,6 +541,7 @@ def _input_pack_case(
     binding_case: LaborEmploymentBudgetOutcomeReplayBuilderBindingCase,
     entries: list[LaborEmploymentBudgetOutcomeReplayInputPackEntry],
     repo_root: Path,
+    expected_source_bundle_refs: dict[str, str],
 ) -> LaborEmploymentBudgetOutcomeReplayInputPackCase:
     items = [
         item
@@ -453,6 +552,7 @@ def _input_pack_case(
             entries=entries,
             repo_root=repo_root,
             expected_family=binding_case.family,
+            expected_source_bundle_refs=expected_source_bundle_refs,
         )
     ]
     invalid = len([item for item in items if item.input_status == "invalid"])
@@ -507,6 +607,7 @@ def _items_for_binding(
     entries: list[LaborEmploymentBudgetOutcomeReplayInputPackEntry],
     repo_root: Path,
     expected_family: str,
+    expected_source_bundle_refs: dict[str, str],
 ) -> list[LaborEmploymentBudgetOutcomeReplayInputPackItem]:
     return [
         _input_item(
@@ -515,6 +616,9 @@ def _items_for_binding(
             entries=entries,
             repo_root=repo_root,
             expected_family=expected_family,
+            expected_source_bundle_ref=expected_source_bundle_refs.get(
+                binding.executable_fixture_id
+            ),
         )
         for artifact in binding.required_input_artifacts
     ]
@@ -527,6 +631,7 @@ def _input_item(
     entries: list[LaborEmploymentBudgetOutcomeReplayInputPackEntry],
     repo_root: Path,
     expected_family: str,
+    expected_source_bundle_ref: str | None,
 ) -> LaborEmploymentBudgetOutcomeReplayInputPackItem:
     role = _input_role(required_input_artifact)
     if required_input_artifact.startswith("one_or_more_of:"):
@@ -554,6 +659,12 @@ def _input_item(
             repo_root=repo_root,
             learning_fixture_id=binding.learning_fixture_id,
         ),
+        expected_source_bundle_ref=expected_source_bundle_ref,
+    )
+    anchor_source_hash = (
+        _source_bundle_hash(entry, repo_root)
+        if status == "ready" and required_input_artifact == "legal_budget_proposal.json"
+        else None
     )
     return _item(
         binding=binding,
@@ -564,6 +675,10 @@ def _input_item(
         selected_alternative_artifacts=[],
         validation_model=model_name,
         validation_message=message,
+        anchor_refs=[ref for ref in [entry.confirmation_ref, entry.source_bundle_ref] if ref],
+        confirmation_ref=entry.confirmation_ref if anchor_source_hash else None,
+        source_bundle_ref=entry.source_bundle_ref if anchor_source_hash else None,
+        source_bundle_sha256=anchor_source_hash,
     )
 
 
@@ -651,6 +766,10 @@ def _item(
     selected_alternative_artifacts: list[str],
     validation_model: str | None,
     validation_message: str,
+    anchor_refs: list[str] | None = None,
+    confirmation_ref: str | None = None,
+    source_bundle_ref: str | None = None,
+    source_bundle_sha256: str | None = None,
 ) -> LaborEmploymentBudgetOutcomeReplayInputPackItem:
     input_check_id = (
         "lebudgetreplayinput_"
@@ -687,9 +806,34 @@ def _item(
         selected_alternative_artifacts=selected_alternative_artifacts,
         validation_model=validation_model,
         validation_message=validation_message,
+        confirmation_scope="synthetic_fixture_only" if source_bundle_sha256 else None,
+        confirmation_ref=confirmation_ref,
+        source_bundle_ref=source_bundle_ref,
+        source_bundle_sha256=source_bundle_sha256,
+        offset_encoding="unicode_codepoint_v1" if source_bundle_sha256 else None,
         candidate_exception_lake_labels=labels,
-        evidence_refs=[binding.binding_id, binding.artifact_slot_ref, *binding.evidence_refs],
+        evidence_refs=[
+            binding.binding_id,
+            binding.artifact_slot_ref,
+            *binding.evidence_refs,
+            *(anchor_refs or []),
+        ],
     )
+
+
+def _source_bundle_hash(
+    entry: LaborEmploymentBudgetOutcomeReplayInputPackEntry,
+    repo_root: Path,
+) -> str | None:
+    if not entry.source_bundle_ref:
+        return None
+    source_path = _resolve_local_ref(entry.source_bundle_ref, repo_root)
+    if source_path is None or not source_path.is_file():
+        return None
+    try:
+        return digest_json(load_json(source_path))
+    except (OSError, ValueError):
+        return None
 
 
 def _matching_entry(
@@ -734,6 +878,7 @@ def _validate_entry(
     repo_root: Path,
     expected_family: str,
     case_identity_context: dict[str, set[str]],
+    expected_source_bundle_ref: str | None = None,
 ) -> tuple[str, str, str | None]:
     model = ARTIFACT_MODELS.get(artifact_name)
     if model is None:
@@ -760,6 +905,19 @@ def _validate_entry(
             + ", ".join(family_errors[:8]),
             model.__name__,
         )
+    confirmation_errors = _budget_confirmation_anchor_errors(
+        entry=entry,
+        payload=payload,
+        repo_root=repo_root,
+        expected_family=expected_family,
+        expected_source_bundle_ref=expected_source_bundle_ref,
+    )
+    if confirmation_errors:
+        return (
+            "invalid",
+            "Budget proposal confirmation anchor failed: " + ", ".join(confirmation_errors[:8]),
+            model.__name__,
+        )
     identity_errors = _case_identity_errors(
         payload=payload,
         artifact_name=artifact_name,
@@ -781,6 +939,111 @@ def _validate_entry(
             model.__name__,
         )
     return "ready", f"{model.__name__} validated from local synthetic ref.", model.__name__
+
+
+def _party_name_matches_segment_text(name: str, text: str) -> bool:
+    normalized_name = unicodedata.normalize("NFC", name).strip().casefold()
+    if not normalized_name:
+        return False
+    normalized_text = unicodedata.normalize("NFC", text).casefold()
+    return re.search(rf"(?<!\w){re.escape(normalized_name)}(?!\w)", normalized_text) is not None
+
+
+def _budget_confirmation_anchor_errors(
+    *,
+    entry: LaborEmploymentBudgetOutcomeReplayInputPackEntry,
+    payload: Any,
+    repo_root: Path,
+    expected_family: str,
+    expected_source_bundle_ref: str | None,
+) -> list[str]:
+    if entry.required_input_artifact != "legal_budget_proposal.json":
+        return []
+    if not isinstance(payload, dict):
+        return ["budget proposal payload is not an object"]
+    if not entry.confirmation_ref or not entry.source_bundle_ref:
+        return ["confirmation or source-bundle ref missing"]
+    if not expected_source_bundle_ref:
+        return ["executable fixture has no governed source-bundle mapping"]
+
+    confirmation_path = _resolve_local_ref(entry.confirmation_ref, repo_root)
+    source_path = _resolve_local_ref(entry.source_bundle_ref, repo_root)
+    expected_source_path = _resolve_local_ref(expected_source_bundle_ref, repo_root)
+    if confirmation_path is None or source_path is None or expected_source_path is None:
+        return ["confirmation and source-bundle refs must be local JSON refs"]
+    if source_path != expected_source_path:
+        return ["source_bundle_ref does not match executable fixture manifest"]
+    if not confirmation_path.is_file() or not source_path.is_file():
+        return ["confirmation or source-bundle ref does not exist"]
+
+    try:
+        confirmation_payload = load_json(confirmation_path)
+        source_payload = load_json(source_path)
+        confirmation = HumanConfirmation.model_validate(confirmation_payload)
+        bundle = SourceBundle.model_validate(source_payload)
+    except (OSError, ValueError, ValidationError) as exc:
+        return [f"anchor validation failed: {exc}"]
+
+    errors: list[str] = []
+    if confirmation.status != "confirmed":
+        errors.append(f"confirmation status={confirmation.status!r} is not confirmed")
+    if confirmation.confirmation_id != payload.get("confirmation_id"):
+        errors.append("confirmation_id does not match budget proposal")
+    if confirmation.preflight_packet_id != payload.get("preflight_packet_id"):
+        errors.append("preflight_packet_id does not match budget proposal")
+    if confirmation.confirmed_matter_family != expected_family:
+        errors.append("confirmed matter family does not match replay family")
+    if confirmation.confirmed_matter_family != payload.get("matter_family"):
+        errors.append("confirmed matter family does not match budget proposal")
+    if confirmation.confirmed_representation_posture != payload.get("representation_posture"):
+        errors.append("confirmed representation posture does not match budget proposal")
+    if not confirmation.reviewer_id.startswith("synthetic-"):
+        errors.append("POC confirmation reviewer must be explicitly synthetic")
+    if not confirmation.decision_evidence_refs:
+        errors.append("confirmation has no decision evidence refs")
+    if not confirmation.confirmed_parties:
+        errors.append("confirmation has no confirmed principal parties")
+    if any(not party.evidence_refs for party in confirmation.confirmed_parties):
+        errors.append("confirmed party is missing evidence refs")
+
+    segments = segment_bundle(bundle)
+    segments_by_signature = {
+        (
+            segment.source_id,
+            segment.start_offset,
+            segment.end_offset,
+            segment.sha256,
+        ): segment
+        for segment in segments
+    }
+    all_refs = [
+        *confirmation.decision_evidence_refs,
+        *[ref for party in confirmation.confirmed_parties for ref in party.evidence_refs],
+    ]
+    for ref in all_refs:
+        signature = (ref.source_id, ref.start_offset, ref.end_offset, ref.sha256)
+        if signature not in segments_by_signature:
+            errors.append(
+                "evidence ref does not match source ID, Unicode-codepoint offsets, and hash"
+            )
+
+    for party in confirmation.confirmed_parties:
+        if not party.name.strip():
+            errors.append("confirmed party name is empty")
+            continue
+        supporting_segments = [
+            segments_by_signature.get((ref.source_id, ref.start_offset, ref.end_offset, ref.sha256))
+            for ref in party.evidence_refs
+        ]
+        if not any(
+            segment and _party_name_matches_segment_text(party.name, segment.text)
+            for segment in supporting_segments
+        ):
+            errors.append(f"party {party.name!r} is not named in its evidence segment")
+
+    errors.extend(_boundary_errors(source_payload, "$.source_bundle"))
+    errors.extend(_boundary_errors(confirmation_payload, "$.confirmation"))
+    return errors
 
 
 def _case_identity_context(
@@ -856,6 +1119,20 @@ def _case_tokens_from_budget_payload(payload: dict[str, Any]) -> set[str]:
     return tokens
 
 
+def _extract_source_case_token(field: str, value: str) -> str | None:
+    patterns = {
+        "actuals_source_id": r"^le-actuals-(?P<token>.+?)\.v\d+_\d+$",
+        "source_ref": r"^synthetic-actuals://labor-employment/(?P<token>[^/]+)/v\d+_\d+$",
+        "bundle_id": r"^le-carrier-rejection-(?P<token>.+?)(?:-appeal)?\.v\d+_\d+$",
+        "run_id": r"^le-carrier-rejection-run-(?P<token>.+?)(?:-appeal)?\.v\d+_\d+$",
+    }
+    pattern = patterns.get(field)
+    if pattern is None:
+        return None
+    match = re.match(pattern, value)
+    return match.group("token") if match else None
+
+
 def _raw_source_case_token_errors(
     *,
     payload: dict[str, Any],
@@ -874,12 +1151,20 @@ def _raw_source_case_token_errors(
 
     expected = next(iter(expected_tokens))
     observed_values = [
-        value for field in fields if isinstance((value := payload.get(field)), str) and value
+        (field, value)
+        for field in fields
+        if isinstance((value := payload.get(field)), str) and value
     ]
     if not observed_values:
         return [f"source case token={expected!r} not found in {list(fields)}"]
-    if not any(expected in value for value in observed_values):
-        return [f"source case token={expected!r} not found in {list(fields)}: {observed_values}"]
+    observed_tokens = [
+        (field, _extract_source_case_token(field, value)) for field, value in observed_values
+    ]
+    if any(token != expected for _, token in observed_tokens):
+        return [
+            f"source case token={expected!r} does not exactly match "
+            f"observed tokens={observed_tokens!r} in {list(fields)}"
+        ]
     return []
 
 
@@ -994,6 +1279,8 @@ def _checks(
     binding_report: LaborEmploymentBudgetOutcomeReplayBuilderBindingReport,
     manifest: LaborEmploymentBudgetOutcomeReplayInputPackManifest | None,
     cases: list[LaborEmploymentBudgetOutcomeReplayInputPackCase],
+    executable_manifest_error: str | None,
+    executable_manifest_ref: str | None,
 ) -> list[LaborEmploymentBudgetOutcomeReplayInputPackCheck]:
     invalid_items = [
         item for case in cases for item in case.items if item.input_status == "invalid"
@@ -1020,6 +1307,17 @@ def _checks(
             blocking_refs=[]
             if binding_report.status.endswith("ready_for_review")
             else [binding_report.builder_binding_report_id],
+        ),
+        LaborEmploymentBudgetOutcomeReplayInputPackCheck(
+            check_id="executable_fixture_source_map_is_governed",
+            status="passed" if executable_manifest_error is None else "failed",
+            message=(
+                "Executable fixture manifest resolves exact source-bundle refs for replay cases."
+                if executable_manifest_error is None
+                else executable_manifest_error
+            ),
+            evidence_refs=[executable_manifest_ref] if executable_manifest_ref else [],
+            blocking_refs=[executable_manifest_error] if executable_manifest_error else [],
         ),
         LaborEmploymentBudgetOutcomeReplayInputPackCheck(
             check_id="declared_input_refs_are_schema_valid",

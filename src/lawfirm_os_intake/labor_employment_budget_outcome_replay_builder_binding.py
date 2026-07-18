@@ -14,6 +14,7 @@ from .models import (
     LaborEmploymentBudgetOutcomeReplayExecutionReport,
     LaborEmploymentBudgetOutcomeReplayInputPackCase,
     LaborEmploymentBudgetOutcomeReplayInputPackReport,
+    LaborEmploymentExecutableFixtureManifest,
 )
 from .util import digest_json, load_json, now_iso, write_json
 
@@ -34,6 +35,10 @@ REQUIRED_NEXT_GATES = [
     "no_budget_submission_from_builder_binding_audit",
     "no_lake_or_sqlite_write_from_builder_binding_audit",
 ]
+
+EXECUTABLE_FIXTURE_MANIFEST_REF = (
+    "examples/synthetic/labor-employment/labor-employment-executable-fixtures-manifest.json"
+)
 
 AGGREGATE_LEARNING_LOOP_INPUTS = [
     "budget_actual_comparison_report.json",
@@ -56,7 +61,15 @@ def run_labor_employment_budget_outcome_replay_builder_binding_audit(
 ) -> tuple[LaborEmploymentBudgetOutcomeReplayBuilderBindingReport, Path]:
     execution_ref = Path(execution_report_path)
     output_dir = Path(out_dir)
+    root = Path(repo_root)
     output_dir.mkdir(parents=True, exist_ok=True)
+
+    executable_manifest_ref = EXECUTABLE_FIXTURE_MANIFEST_REF
+    executable_manifest_payload = load_json(root / executable_manifest_ref)
+    executable_manifest = LaborEmploymentExecutableFixtureManifest.model_validate(
+        executable_manifest_payload
+    )
+    executable_manifest_sha256 = digest_json(executable_manifest_payload)
 
     execution = LaborEmploymentBudgetOutcomeReplayExecutionReport.model_validate(
         load_json(execution_ref)
@@ -80,12 +93,15 @@ def run_labor_employment_budget_outcome_replay_builder_binding_audit(
         execution=execution,
         cases=baseline_cases,
         contracts=contracts,
+        executable_manifest_sha256=executable_manifest_sha256,
     )
     ready_inputs_by_binding = _fresh_ready_inputs_by_binding(
         input_pack=input_pack,
         expected_builder_binding_report_id=baseline_report_id,
         baseline_cases=baseline_cases,
-        repo_root=Path(repo_root),
+        repo_root=root,
+        expected_executable_manifest_ref=executable_manifest_ref,
+        expected_executable_manifest_sha256=executable_manifest_sha256,
     )
     cases = [
         _binding_case(
@@ -115,6 +131,9 @@ def run_labor_employment_budget_outcome_replay_builder_binding_audit(
         source_execution_report_ref=str(execution_ref),
         source_execution_report_id=execution.outcome_replay_execution_report_id,
         source_execution_report_status=execution.status,
+        source_executable_fixture_manifest_ref=executable_manifest_ref,
+        source_executable_fixture_manifest_id=executable_manifest.manifest_id,
+        source_executable_fixture_manifest_sha256=executable_manifest_sha256,
         source_input_pack_report_ref=str(input_pack_ref) if input_pack_ref else None,
         source_input_pack_report_id=input_pack.input_pack_report_id if input_pack else None,
         source_input_pack_report_status=input_pack.status if input_pack else None,
@@ -637,10 +656,12 @@ def _builder_binding_report_id(
         tuple[LaborEmploymentBudgetLearningLoopType, str],
         LaborEmploymentBudgetOutcomeReplayBuilderContract,
     ],
+    executable_manifest_sha256: str,
 ) -> str:
     checks = _checks(execution=execution, cases=cases, contracts=contracts)
     report_core = {
         "execution_report_id": execution.outcome_replay_execution_report_id,
+        "executable_manifest_sha256": executable_manifest_sha256,
         "case_count": len(cases),
         "slot_count": sum(case.slot_count for case in cases),
         "bound_count": sum(case.bound_slot_count for case in cases),
@@ -657,6 +678,8 @@ def _fresh_ready_inputs_by_binding(
     expected_builder_binding_report_id: str,
     baseline_cases: list[LaborEmploymentBudgetOutcomeReplayBuilderBindingCase],
     repo_root: Path,
+    expected_executable_manifest_ref: str,
+    expected_executable_manifest_sha256: str,
 ) -> dict[str, set[str]]:
     if input_pack is None:
         return {}
@@ -681,11 +704,24 @@ def _fresh_ready_inputs_by_binding(
     validated_manifest = LaborEmploymentBudgetOutcomeReplayInputPackManifest.model_validate(
         manifest
     )
+    from .labor_employment_budget_outcome_replay_input_pack import (
+        _load_executable_fixture_source_refs,
+    )
+
+    expected_refs, _, _, _, manifest_error = _load_executable_fixture_source_refs(
+        manifest=validated_manifest,
+        repo_root=repo_root,
+        expected_manifest_ref=expected_executable_manifest_ref,
+        expected_manifest_sha256=expected_executable_manifest_sha256,
+    )
+    if manifest_error:
+        raise ValueError(f"input-pack executable manifest provenance failed: {manifest_error}")
     fresh_cases = [
         _input_pack_case(
             binding_case=case,
             entries=validated_manifest.entries,
             repo_root=repo_root,
+            expected_source_bundle_refs=expected_refs,
         )
         for case in baseline_cases
     ]

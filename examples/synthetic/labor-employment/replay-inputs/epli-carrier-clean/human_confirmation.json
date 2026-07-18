@@ -1,0 +1,110 @@
+{
+  "schema_version": "0.1",
+  "confirmation_id": "le-confirmation-epli-carrier-clean.v0_1",
+  "preflight_packet_id": "le-preflight-epli-carrier-clean.v0_1",
+  "status": "confirmed",
+  "supersedes_confirmation_id": null,
+  "confirmed_inbound_event": "prospective_matter_intake",
+  "confirmed_matter_family": "epli_carrier_assignment",
+  "confirmed_representation_posture": "defense",
+  "confirmed_parties": [
+    {
+      "name": "Granite Shield EPLI",
+      "confirmed_role": "insurance_carrier",
+      "aliases": [],
+      "evidence_refs": [
+        {
+          "source_id": "syn-le-epli-clean-assignment-email-001",
+          "segment_id": "segment_anchor_d175e4f1d6486d87",
+          "start_offset": 151,
+          "end_offset": 978,
+          "sha256": "sha256:2475a337266c5e5ce217fb71530ecf6e1faf6665efd17bcda61e23ca5b738619"
+        }
+      ]
+    },
+    {
+      "name": "Granite Shield EPLI",
+      "confirmed_role": "payer",
+      "aliases": [],
+      "evidence_refs": [
+        {
+          "source_id": "syn-le-epli-clean-assignment-email-001",
+          "segment_id": "segment_anchor_d175e4f1d6486d87",
+          "start_offset": 151,
+          "end_offset": 978,
+          "sha256": "sha256:2475a337266c5e5ce217fb71530ecf6e1faf6665efd17bcda61e23ca5b738619"
+        }
+      ]
+    },
+    {
+      "name": "ClaimsBridge Administrators",
+      "confirmed_role": "third_party_administrator",
+      "aliases": [],
+      "evidence_refs": [
+        {
+          "source_id": "syn-le-epli-clean-assignment-email-001",
+          "segment_id": "segment_anchor_d175e4f1d6486d87",
+          "start_offset": 151,
+          "end_offset": 978,
+          "sha256": "sha256:2475a337266c5e5ce217fb71530ecf6e1faf6665efd17bcda61e23ca5b738619"
+        }
+      ]
+    },
+    {
+      "name": "Brightline Foods Inc.",
+      "confirmed_role": "prospective_represented_client",
+      "aliases": [],
+      "evidence_refs": [
+        {
+          "source_id": "syn-le-epli-clean-assignment-email-001",
+          "segment_id": "segment_anchor_d175e4f1d6486d87",
+          "start_offset": 151,
+          "end_offset": 978,
+          "sha256": "sha256:2475a337266c5e5ce217fb71530ecf6e1faf6665efd17bcda61e23ca5b738619"
+        }
+      ]
+    },
+    {
+      "name": "Talia Nguyen",
+      "confirmed_role": "adverse_party",
+      "aliases": [],
+      "evidence_refs": [
+        {
+          "source_id": "syn-le-epli-clean-assignment-email-001",
+          "segment_id": "segment_anchor_d175e4f1d6486d87",
+          "start_offset": 151,
+          "end_offset": 978,
+          "sha256": "sha256:2475a337266c5e5ce217fb71530ecf6e1faf6665efd17bcda61e23ca5b738619"
+        }
+      ]
+    },
+    {
+      "name": "Stone & Hart",
+      "confirmed_role": "opposing_counsel",
+      "aliases": [],
+      "evidence_refs": [
+        {
+          "source_id": "syn-le-epli-clean-assignment-email-001",
+          "segment_id": "segment_anchor_d175e4f1d6486d87",
+          "start_offset": 151,
+          "end_offset": 978,
+          "sha256": "sha256:2475a337266c5e5ce217fb71530ecf6e1faf6665efd17bcda61e23ca5b738619"
+        }
+      ]
+    }
+  ],
+  "confirmed_jurisdiction": null,
+  "confirmed_deadlines": [],
+  "reviewer_id": "synthetic-human-review-fixture",
+  "reviewed_at": "2026-07-18T12:00:00Z",
+  "notes": "Synthetic POC confirmation fixture only. This is not a real human review, conflict clearance, engagement decision, matter opening, or budget approval.",
+  "decision_evidence_refs": [
+    {
+      "source_id": "syn-le-epli-clean-assignment-email-001",
+      "segment_id": "segment_anchor_699c1c0a7b2c254d",
+      "start_offset": 0,
+      "end_offset": 45,
+      "sha256": "sha256:791622c8f458e1ded1413206cd59eace4827dd94ffe2e38887007a740fcde1dd"
+    }
+  ]
+}

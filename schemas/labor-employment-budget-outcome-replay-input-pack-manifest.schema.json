@@ -30,6 +30,30 @@
           "title": "Input Ref",
           "type": "string"
         },
+        "confirmation_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confirmation Ref"
+        },
+        "source_bundle_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Bundle Ref"
+        },
         "expected_artifact_name": {
           "anyOf": [
             {
@@ -202,6 +226,18 @@
     "source_builder_binding_report_ref": {
       "title": "Source Builder Binding Report Ref",
       "type": "string"
+    },
+    "executable_fixture_manifest_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Executable Fixture Manifest Ref"
     },
     "entries": {
       "items": {

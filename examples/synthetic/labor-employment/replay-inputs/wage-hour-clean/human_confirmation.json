@@ -1,0 +1,54 @@
+{
+  "schema_version": "0.1",
+  "confirmation_id": "le-confirmation-wage-hour-clean.v0_1",
+  "preflight_packet_id": "le-preflight-wage-hour-clean.v0_1",
+  "status": "confirmed",
+  "supersedes_confirmation_id": null,
+  "confirmed_inbound_event": "prospective_matter_intake",
+  "confirmed_matter_family": "wage_hour_flsa_state",
+  "confirmed_representation_posture": "defense",
+  "confirmed_parties": [
+    {
+      "name": "Nora Alvarez",
+      "confirmed_role": "adverse_party",
+      "aliases": [],
+      "evidence_refs": [
+        {
+          "source_id": "syn-le-wage-hour-clean-cover-email-001",
+          "segment_id": "segment_anchor_eaeda943a9eb029d",
+          "start_offset": 165,
+          "end_offset": 578,
+          "sha256": "sha256:d90f713dce8b940b4c08c4005f63b39226deddd6aaf3072e17928cdeb5def5b9"
+        }
+      ]
+    },
+    {
+      "name": "Riverbend Packaging LLC",
+      "confirmed_role": "prospective_represented_client",
+      "aliases": [],
+      "evidence_refs": [
+        {
+          "source_id": "syn-le-wage-hour-clean-cover-email-001",
+          "segment_id": "segment_anchor_eaeda943a9eb029d",
+          "start_offset": 165,
+          "end_offset": 578,
+          "sha256": "sha256:d90f713dce8b940b4c08c4005f63b39226deddd6aaf3072e17928cdeb5def5b9"
+        }
+      ]
+    }
+  ],
+  "confirmed_jurisdiction": null,
+  "confirmed_deadlines": [],
+  "reviewer_id": "synthetic-human-review-fixture",
+  "reviewed_at": "2026-07-18T12:00:00Z",
+  "notes": "Synthetic POC confirmation fixture only. This is not a real human review, conflict clearance, engagement decision, matter opening, or budget approval.",
+  "decision_evidence_refs": [
+    {
+      "source_id": "syn-le-wage-hour-clean-cover-email-001",
+      "segment_id": "segment_anchor_274bc5da2fe5d262",
+      "start_offset": 101,
+      "end_offset": 164,
+      "sha256": "sha256:bfce3e4580b8e3f6020d9e9638ffc13fb306e65d0c8762585cad1a94ad6911b5"
+    }
+  ]
+}

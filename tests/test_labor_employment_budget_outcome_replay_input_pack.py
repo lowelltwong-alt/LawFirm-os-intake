@@ -1,3 +1,5 @@
+import runpy
+
 import pytest
 
 from lawfirm_os_intake.budget_actuals import run_budget_actual_comparison
@@ -19,6 +21,9 @@ from lawfirm_os_intake.labor_employment_budget_outcome_replay_execution import (
 )
 from lawfirm_os_intake.labor_employment_budget_outcome_replay_input_pack import (
     LABOR_EMPLOYMENT_BUDGET_OUTCOME_REPLAY_INPUT_PACK_REPORT_FILENAME,
+    _budget_confirmation_anchor_errors,
+    _party_name_matches_segment_text,
+    _raw_source_case_token_errors,
     run_labor_employment_budget_outcome_replay_input_pack_audit,
 )
 from lawfirm_os_intake.labor_employment_budget_outcome_replay_readiness import (
@@ -36,7 +41,7 @@ from lawfirm_os_intake.models import (
     ReviewedLearningGateReport,
 )
 from lawfirm_os_intake.reviewed_learning_gate import run_reviewed_learning_gate
-from lawfirm_os_intake.util import load_json, write_json
+from lawfirm_os_intake.util import digest_json, load_json, write_json
 
 
 FIXTURE_ROOT = "apps/legal-intake-budget/src/fixtures"
@@ -48,6 +53,9 @@ OUTCOME_SEED_MANIFEST_REF = (
 )
 INPUT_PACK_MANIFEST_REF = (
     "examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-input-pack.json"
+)
+EXECUTABLE_MANIFEST_REF = (
+    "examples/synthetic/labor-employment/labor-employment-executable-fixtures-manifest.json"
 )
 DISCRIMINATION_REPLAY_INPUT_ROOT = (
     "examples/synthetic/labor-employment/replay-inputs/discrimination-harassment-clean"
@@ -124,6 +132,41 @@ def _rel(root, path):
     return path.relative_to(root).as_posix()
 
 
+def _confirmation_anchor_entry_fields(runtime_root, anchors):
+    return {
+        "confirmation_ref": _rel(runtime_root, anchors["confirmation"]),
+        "source_bundle_ref": _rel(runtime_root, anchors["source_bundle"]),
+    }
+
+
+def _stage_confirmation_source(
+    repo_root,
+    runtime_root,
+    case_id,
+):
+    source_ref = (
+        f"examples/synthetic/labor-employment/executable-fixtures/le-{case_id}.source-bundle.json"
+    )
+    source_path = write_json(
+        runtime_root / source_ref,
+        load_json(repo_root / source_ref),
+    )
+    confirmation_path = write_json(
+        runtime_root / "anchors" / f"{case_id}.human_confirmation.json",
+        load_json(
+            repo_root
+            / "examples/synthetic/labor-employment/replay-inputs"
+            / case_id
+            / "human_confirmation.json"
+        ),
+    )
+    write_json(
+        runtime_root / EXECUTABLE_MANIFEST_REF,
+        load_json(repo_root / EXECUTABLE_MANIFEST_REF),
+    )
+    return confirmation_path, source_path
+
+
 def _stage_discrimination_case_anchors(repo_root, runtime_root):
     anchors = runtime_root / "anchors"
     budget_path = write_json(
@@ -138,8 +181,13 @@ def _stage_discrimination_case_anchors(repo_root, runtime_root):
         anchors / "carrier_rejection_capture_source_bundle.json",
         load_json(_discrimination_carrier_bundle(repo_root)),
     )
+    confirmation_path, source_bundle_path = _stage_confirmation_source(
+        repo_root, runtime_root, "discrimination-harassment-clean"
+    )
     return {
         "budget": budget_path,
+        "confirmation": confirmation_path,
+        "source_bundle": source_bundle_path,
         "actuals": actuals_path,
         "carrier_bundle": carrier_bundle_path,
     }
@@ -159,8 +207,13 @@ def _stage_wage_hour_case_anchors(repo_root, runtime_root):
         anchors / "carrier_rejection_capture_source_bundle.json",
         load_json(_wage_hour_carrier_bundle(repo_root)),
     )
+    confirmation_path, source_bundle_path = _stage_confirmation_source(
+        repo_root, runtime_root, "wage-hour-clean"
+    )
     return {
         "budget": budget_path,
+        "confirmation": confirmation_path,
+        "source_bundle": source_bundle_path,
         "actuals": actuals_path,
         "carrier_bundle": carrier_bundle_path,
     }
@@ -180,8 +233,13 @@ def _stage_epli_case_anchors(repo_root, runtime_root):
         anchors / "carrier_rejection_capture_source_bundle_with_appeal_results.json",
         load_json(_epli_carrier_appeal_bundle(repo_root)),
     )
+    confirmation_path, source_bundle_path = _stage_confirmation_source(
+        repo_root, runtime_root, "epli-carrier-clean"
+    )
     return {
         "budget": budget_path,
+        "confirmation": confirmation_path,
+        "source_bundle": source_bundle_path,
         "carrier_bundle": carrier_bundle_path,
         "appeal_bundle": appeal_bundle_path,
     }
@@ -289,6 +347,7 @@ def _reviewed_learning_signal_manifest(runtime_root, anchors, learning_report_pa
             "status": "candidate_labor_employment_budget_outcome_replay_input_pack_manifest",
             "practice_area": "labor_employment",
             "source_builder_binding_report_ref": "synthetic-test-builder-binding-report",
+            "executable_fixture_manifest_ref": EXECUTABLE_MANIFEST_REF,
             "entries": [
                 {
                     "entry_id": "le-discrimination-budget-anchor.v0_1",
@@ -297,6 +356,7 @@ def _reviewed_learning_signal_manifest(runtime_root, anchors, learning_report_pa
                     "expected_artifact_name": "budget_actual_comparison_report.json",
                     "required_input_artifact": "legal_budget_proposal.json",
                     "input_ref": _rel(runtime_root, anchors["budget"]),
+                    **_confirmation_anchor_entry_fields(runtime_root, anchors),
                     "input_role": "builder_input",
                     "notes": "Same-case synthetic budget anchor for reviewed learning signal validation.",
                 },
@@ -344,6 +404,7 @@ def _wage_hour_reviewed_learning_signal_manifest(runtime_root, anchors, learning
             "status": "candidate_labor_employment_budget_outcome_replay_input_pack_manifest",
             "practice_area": "labor_employment",
             "source_builder_binding_report_ref": "synthetic-test-builder-binding-report",
+            "executable_fixture_manifest_ref": EXECUTABLE_MANIFEST_REF,
             "entries": [
                 {
                     "entry_id": "le-wage-hour-budget-anchor.v0_1",
@@ -352,6 +413,7 @@ def _wage_hour_reviewed_learning_signal_manifest(runtime_root, anchors, learning
                     "expected_artifact_name": "budget_actual_comparison_report.json",
                     "required_input_artifact": "legal_budget_proposal.json",
                     "input_ref": _rel(runtime_root, anchors["budget"]),
+                    **_confirmation_anchor_entry_fields(runtime_root, anchors),
                     "input_role": "builder_input",
                     "notes": "Same-case synthetic wage/hour budget anchor for reviewed learning signal validation.",
                 },
@@ -399,6 +461,7 @@ def _epli_reviewed_learning_signal_manifest(runtime_root, anchors, learning_repo
             "status": "candidate_labor_employment_budget_outcome_replay_input_pack_manifest",
             "practice_area": "labor_employment",
             "source_builder_binding_report_ref": "synthetic-test-builder-binding-report",
+            "executable_fixture_manifest_ref": EXECUTABLE_MANIFEST_REF,
             "entries": [
                 {
                     "entry_id": "le-epli-budget-anchor.v0_1",
@@ -407,6 +470,7 @@ def _epli_reviewed_learning_signal_manifest(runtime_root, anchors, learning_repo
                     "expected_artifact_name": "carrier_rejection_reconciliation_report.json",
                     "required_input_artifact": "legal_budget_proposal.json",
                     "input_ref": _rel(runtime_root, anchors["budget"]),
+                    **_confirmation_anchor_entry_fields(runtime_root, anchors),
                     "input_role": "builder_input",
                     "notes": "Same-case synthetic EPLI budget anchor for reviewed learning signal validation.",
                 },
@@ -427,6 +491,7 @@ def _epli_reviewed_learning_signal_manifest(runtime_root, anchors, learning_repo
                     "expected_artifact_name": "carrier_rejection_decision_ledger_report.json",
                     "required_input_artifact": "legal_budget_proposal.json",
                     "input_ref": _rel(runtime_root, anchors["budget"]),
+                    **_confirmation_anchor_entry_fields(runtime_root, anchors),
                     "input_role": "builder_input",
                     "notes": "Same-case synthetic EPLI budget anchor for appeal-result replay validation.",
                 },
@@ -516,8 +581,17 @@ def test_labor_employment_budget_replay_input_pack_marks_ready_and_missing_input
     )
 
     assert manifest.manifest_id == "labor-employment-budget-outcome-replay-input-pack.v0_1"
+    assert manifest.executable_fixture_manifest_ref == EXECUTABLE_MANIFEST_REF
     assert persisted.input_pack_report_id == report.input_pack_report_id
     assert report.status == "labor_employment_budget_replay_input_pack_partially_ready_for_review"
+    assert report.confirmation_scope == "synthetic_fixture_only"
+    assert report.confirmation_offset_encoding == "unicode_codepoint_v1"
+    assert report.runtime_human_gate_completed is False
+    assert report.source_executable_fixture_manifest_ref == EXECUTABLE_MANIFEST_REF
+    assert report.source_executable_fixture_manifest_id == ("le-executable-fixtures-manifest.v0_1")
+    assert report.source_executable_fixture_manifest_sha256 == digest_json(
+        load_json(repo_root / EXECUTABLE_MANIFEST_REF)
+    )
     assert report.case_count == 8
     assert report.ready_case_count == 1
     assert report.partial_case_count == 7
@@ -527,6 +601,25 @@ def test_labor_employment_budget_replay_input_pack_marks_ready_and_missing_input
     assert report.invalid_input_count == 0
     assert report.one_of_signal_missing_count > 0
     assert all(check.status == "passed" for check in report.checks)
+    anchored_budget_items = [
+        item
+        for case in report.cases
+        for item in case.items
+        if item.required_input_artifact == "legal_budget_proposal.json"
+        and item.input_status == "ready"
+    ]
+    assert anchored_budget_items
+    assert all(
+        item.confirmation_scope == "synthetic_fixture_only" for item in anchored_budget_items
+    )
+    assert all(item.confirmation_ref for item in anchored_budget_items)
+    assert all(item.source_bundle_ref for item in anchored_budget_items)
+    assert all(
+        item.source_bundle_sha256 and item.source_bundle_sha256.startswith("sha256:")
+        for item in anchored_budget_items
+    )
+    assert all(item.offset_encoding == "unicode_codepoint_v1" for item in anchored_budget_items)
+    assert all(item.runtime_human_gate_completed is False for item in anchored_budget_items)
     blocked_case = next(
         case
         for case in report.cases
@@ -767,6 +860,7 @@ def test_labor_employment_budget_replay_input_pack_rejects_authorization_inversi
     repo_root,
     tmp_path,
 ):
+    anchors = _stage_discrimination_case_anchors(repo_root, tmp_path)
     bad_budget = load_json(_discrimination_budget(repo_root))
     bad_budget["not_authorized_for_client_submission"] = False
     write_json(tmp_path / "bad-budget.json", bad_budget)
@@ -778,6 +872,7 @@ def test_labor_employment_budget_replay_input_pack_rejects_authorization_inversi
             "status": "candidate_labor_employment_budget_outcome_replay_input_pack_manifest",
             "practice_area": "labor_employment",
             "source_builder_binding_report_ref": "synthetic-test-builder-binding-report",
+            "executable_fixture_manifest_ref": EXECUTABLE_MANIFEST_REF,
             "entries": [
                 {
                     "entry_id": "bad-boundary-budget-entry.v0_1",
@@ -785,6 +880,7 @@ def test_labor_employment_budget_replay_input_pack_rejects_authorization_inversi
                     "loop_type": "actuals_variance",
                     "required_input_artifact": "legal_budget_proposal.json",
                     "input_ref": "bad-budget.json",
+                    **_confirmation_anchor_entry_fields(tmp_path, anchors),
                     "input_role": "builder_input",
                     "notes": "Negative test fixture with inverted submission authorization flag.",
                 }
@@ -1737,3 +1833,291 @@ def test_learning_report_count_invariants_fail_closed(repo_root, tmp_path):
         CarrierRejectionLearningReport.model_validate(bad_learning_report)
     with pytest.raises(ValueError, match="candidate_count mismatch"):
         ReviewedLearningGateReport.model_validate(bad_gate_report)
+
+
+def _stage_wage_hour_confirmation_anchor(repo_root, tmp_path):
+    staged_root = tmp_path / "confirmation-anchor-root"
+    entry = next(
+        item
+        for item in LaborEmploymentBudgetOutcomeReplayInputPackManifest.model_validate(
+            load_json(_input_pack_manifest(repo_root))
+        ).entries
+        if item.entry_id == "le-replay-input-wage-hour-actuals-budget.v0_1"
+    )
+    budget_payload = load_json(repo_root / entry.input_ref)
+    confirmation_payload = load_json(repo_root / entry.confirmation_ref)
+    source_payload = load_json(repo_root / entry.source_bundle_ref)
+    write_json(staged_root / "inputs" / "legal_budget_proposal.json", budget_payload)
+    write_json(staged_root / "inputs" / "human_confirmation.json", confirmation_payload)
+    write_json(staged_root / "sources" / "source_bundle.json", source_payload)
+    staged_entry = entry.model_copy(
+        update={
+            "input_ref": "inputs/legal_budget_proposal.json",
+            "confirmation_ref": "inputs/human_confirmation.json",
+            "source_bundle_ref": "sources/source_bundle.json",
+        }
+    )
+    return staged_root, staged_entry, budget_payload, confirmation_payload, source_payload
+
+
+def _confirmation_anchor_errors(staged_root, entry, budget_payload):
+    return _budget_confirmation_anchor_errors(
+        entry=entry,
+        payload=budget_payload,
+        repo_root=staged_root,
+        expected_family="wage_hour_flsa_state",
+        expected_source_bundle_ref="sources/source_bundle.json",
+    )
+
+
+def test_replay_confirmation_anchor_uses_stable_offsets_and_hash_not_runtime_segment_id(
+    repo_root,
+    tmp_path,
+):
+    staged_root, entry, budget_payload, confirmation_payload, _ = (
+        _stage_wage_hour_confirmation_anchor(repo_root, tmp_path)
+    )
+    for index, ref in enumerate(confirmation_payload["decision_evidence_refs"]):
+        ref["segment_id"] = f"regenerated-decision-{index}"
+    for party_index, party in enumerate(confirmation_payload["confirmed_parties"]):
+        for ref_index, ref in enumerate(party["evidence_refs"]):
+            ref["segment_id"] = f"regenerated-party-{party_index}-{ref_index}"
+    write_json(staged_root / entry.confirmation_ref, confirmation_payload)
+
+    assert _confirmation_anchor_errors(staged_root, entry, budget_payload) == []
+
+
+@pytest.mark.parametrize(
+    ("mutation", "expected_text"),
+    [
+        ("confirmation_id", "confirmation_id does not match"),
+        ("preflight_packet_id", "preflight_packet_id does not match"),
+        ("matter_family", "confirmed matter family does not match"),
+        ("representation_posture", "confirmed representation posture does not match"),
+        ("evidence_hash", "Unicode-codepoint offsets, and hash"),
+        ("evidence_offset", "Unicode-codepoint offsets, and hash"),
+        ("party_name", "is not named in its evidence segment"),
+        ("reviewer_scope", "reviewer must be explicitly synthetic"),
+        ("missing_decision_evidence", "confirmation has no decision evidence refs"),
+        ("missing_party_evidence", "confirmed party is missing evidence refs"),
+    ],
+)
+def test_replay_confirmation_anchor_fails_closed_on_drift(
+    repo_root,
+    tmp_path,
+    mutation,
+    expected_text,
+):
+    staged_root, entry, budget_payload, confirmation_payload, _ = (
+        _stage_wage_hour_confirmation_anchor(repo_root, tmp_path)
+    )
+    if mutation == "confirmation_id":
+        confirmation_payload["confirmation_id"] = "different-confirmation"
+    elif mutation == "preflight_packet_id":
+        confirmation_payload["preflight_packet_id"] = "different-preflight"
+    elif mutation == "matter_family":
+        confirmation_payload["confirmed_matter_family"] = "retaliation_wrongful_termination"
+    elif mutation == "representation_posture":
+        confirmation_payload["confirmed_representation_posture"] = "plaintiff"
+    elif mutation == "evidence_hash":
+        confirmation_payload["decision_evidence_refs"][0]["sha256"] = "sha256:" + ("0" * 64)
+    elif mutation == "evidence_offset":
+        confirmation_payload["decision_evidence_refs"][0]["start_offset"] += 1
+    elif mutation == "party_name":
+        confirmation_payload["confirmed_parties"][0]["name"] = "Ann"
+    elif mutation == "reviewer_scope":
+        confirmation_payload["reviewer_id"] = "operational-human-reviewer"
+    elif mutation == "missing_decision_evidence":
+        confirmation_payload["decision_evidence_refs"] = []
+    elif mutation == "missing_party_evidence":
+        confirmation_payload["confirmed_parties"][0]["evidence_refs"] = []
+    write_json(staged_root / entry.confirmation_ref, confirmation_payload)
+
+    errors = _confirmation_anchor_errors(staged_root, entry, budget_payload)
+
+    assert any(expected_text in error for error in errors)
+
+
+def test_replay_confirmation_anchor_rejects_swapped_source_bundle(repo_root, tmp_path):
+    staged_root, entry, budget_payload, _, source_payload = _stage_wage_hour_confirmation_anchor(
+        repo_root, tmp_path
+    )
+    write_json(staged_root / "sources" / "swapped-source-bundle.json", source_payload)
+    entry = entry.model_copy(update={"source_bundle_ref": "sources/swapped-source-bundle.json"})
+
+    errors = _confirmation_anchor_errors(staged_root, entry, budget_payload)
+
+    assert "source_bundle_ref does not match executable fixture manifest" in errors
+
+
+def test_replay_confirmation_anchor_missing_refs_are_audited_not_schema_rejected(
+    repo_root,
+    tmp_path,
+):
+    staged_root, entry, budget_payload, _, _ = _stage_wage_hour_confirmation_anchor(
+        repo_root, tmp_path
+    )
+    entry = entry.model_copy(update={"confirmation_ref": None})
+
+    errors = _confirmation_anchor_errors(staged_root, entry, budget_payload)
+
+    assert errors == ["confirmation or source-bundle ref missing"]
+
+
+@pytest.mark.parametrize(
+    ("name", "text", "expected"),
+    [
+        ("Ann", "The source names Annette Lee.", False),
+        ("Maya Chen", "The source names Maya Chen.", True),
+        ("José Álvarez", "The source names José Álvarez.", True),
+        ("", "The source names nobody.", False),
+    ],
+)
+def test_replay_confirmation_party_name_matching_is_boundary_and_unicode_aware(
+    name,
+    text,
+    expected,
+):
+    assert _party_name_matches_segment_text(name, text) is expected
+
+
+def test_raw_source_case_token_requires_exact_match():
+    exact_context = {"__source_case_tokens__": {"case-a"}}
+    exact_payload = {
+        "actuals_source_id": "le-actuals-case-a.v0_1",
+        "source_ref": "synthetic-actuals://labor-employment/case-a/v0_1",
+    }
+    collision_payload = {
+        "actuals_source_id": "le-actuals-case-a-2.v0_1",
+        "source_ref": "synthetic-actuals://labor-employment/case-a-2/v0_1",
+    }
+
+    assert (
+        _raw_source_case_token_errors(
+            payload=exact_payload,
+            artifact_name="budget_actuals_source.json",
+            case_identity_context=exact_context,
+        )
+        == []
+    )
+    errors = _raw_source_case_token_errors(
+        payload=collision_payload,
+        artifact_name="budget_actuals_source.json",
+        case_identity_context=exact_context,
+    )
+    assert len(errors) == 1
+    assert "case-a-2" in errors[0]
+
+
+def test_replay_confirmation_generator_matches_committed_fixtures_without_writes(repo_root):
+    module = runpy.run_path(
+        str(repo_root / "scripts/generate_labor_employment_replay_confirmations.py")
+    )
+    generated = module["build_confirmations"]()
+
+    assert set(generated) == {
+        "discrimination-harassment-clean",
+        "wage-hour-clean",
+        "class-collective-clean",
+        "epli-carrier-clean",
+    }
+    for case_id, confirmation in generated.items():
+        committed = load_json(
+            repo_root
+            / "examples/synthetic/labor-employment/replay-inputs"
+            / case_id
+            / "human_confirmation.json"
+        )
+        assert digest_json(confirmation.model_dump(mode="json")) == digest_json(committed)
+
+
+def test_replay_input_pack_rejects_self_declared_alternate_executable_manifest(
+    repo_root,
+    tmp_path,
+):
+    anchors = _stage_discrimination_case_anchors(repo_root, tmp_path)
+    alternate_manifest = load_json(repo_root / EXECUTABLE_MANIFEST_REF)
+    alternate_manifest["manifest_id"] = "alternate-executable-fixtures-manifest.v0_1"
+    alternate_manifest_path = write_json(
+        tmp_path / "alternate-executable-fixtures-manifest.json",
+        alternate_manifest,
+    )
+    manifest_path = write_json(
+        tmp_path / "alternate-source-input-pack-manifest.json",
+        {
+            "schema_version": "0.1",
+            "manifest_id": "alternate-source-input-pack.v0_1",
+            "status": "candidate_labor_employment_budget_outcome_replay_input_pack_manifest",
+            "practice_area": "labor_employment",
+            "source_builder_binding_report_ref": "synthetic-test-builder-binding-report",
+            "executable_fixture_manifest_ref": alternate_manifest_path.name,
+            "entries": [
+                {
+                    "entry_id": "alternate-source-budget-entry.v0_1",
+                    "learning_fixture_id": ("le-learning-discrimination-harassment-clean.v0_1"),
+                    "loop_type": "actuals_variance",
+                    "required_input_artifact": "legal_budget_proposal.json",
+                    "input_ref": _rel(tmp_path, anchors["budget"]),
+                    **_confirmation_anchor_entry_fields(tmp_path, anchors),
+                    "input_role": "builder_input",
+                    "notes": "Negative fixture for self-declared executable manifest substitution.",
+                }
+            ],
+        },
+    )
+
+    report, _ = run_labor_employment_budget_outcome_replay_input_pack_audit(
+        builder_binding_report_path=_builder_binding_report(repo_root, tmp_path),
+        input_pack_manifest_path=manifest_path,
+        repo_root=tmp_path,
+        out_dir=tmp_path / "alternate-source-input-pack-report",
+        generated_at="2026-07-18T12:00:00Z",
+    )
+
+    check = next(
+        item
+        for item in report.checks
+        if item.check_id == "executable_fixture_source_map_is_governed"
+    )
+    assert report.status == "blocked_by_labor_employment_budget_replay_input_pack"
+    assert check.status == "failed"
+    assert "does not match builder binding provenance" in check.message
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("actuals_source_id", "le-actuals-case-a.v0_1-forged"),
+        (
+            "source_ref",
+            "synthetic-actuals://labor-employment/case-a/v0_1/forged",
+        ),
+        ("bundle_id", "le-carrier-rejection-case-a.v0_1-forged"),
+        ("run_id", "le-carrier-rejection-run-case-a.v0_1-forged"),
+    ],
+)
+def test_raw_source_case_token_rejects_trailing_suffixes(field, value):
+    artifact_name = (
+        "budget_actuals_source.json"
+        if field in {"actuals_source_id", "source_ref"}
+        else "carrier_rejection_capture_source_bundle.json"
+    )
+    partner_values = {
+        "actuals_source_id": "le-actuals-case-a.v0_1",
+        "source_ref": "synthetic-actuals://labor-employment/case-a/v0_1",
+        "bundle_id": "le-carrier-rejection-case-a.v0_1",
+        "run_id": "le-carrier-rejection-run-case-a.v0_1",
+    }
+    fields = (
+        ("actuals_source_id", "source_ref")
+        if artifact_name == "budget_actuals_source.json"
+        else ("bundle_id", "run_id")
+    )
+    payload = {item: partner_values[item] for item in fields}
+    payload[field] = value
+
+    assert _raw_source_case_token_errors(
+        payload=payload,
+        artifact_name=artifact_name,
+        case_identity_context={"__source_case_tokens__": {"case-a"}},
+    )
