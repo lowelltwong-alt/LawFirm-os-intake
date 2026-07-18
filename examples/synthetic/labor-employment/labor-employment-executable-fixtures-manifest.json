@@ -2,9 +2,11 @@
   "schema_version": "0.1",
   "manifest_id": "le-executable-fixtures-manifest.v0_1",
   "status": "candidate_executable_fixture_manifest",
+  "candidate_only": true,
+  "not_promoted_canon": true,
   "practice_area": "labor_employment",
   "pack_ref": "examples/synthetic/labor-employment/labor-employment-budget-fixture-family-pack.json",
-  "practice_profile_ref": "context/synthetic-profiles/insurance-defense.yaml",
+  "practice_profile_ref": "context/synthetic-profiles/labor-employment-candidate.yaml",
   "source_methodology_refs": [
     "docs/data/courtlistener-early-case-dataset-strategy.md",
     "config/labor-employment-budget-fact-needs.yaml",

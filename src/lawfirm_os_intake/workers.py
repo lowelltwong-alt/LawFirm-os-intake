@@ -52,6 +52,51 @@ MATTER_SIGNALS: dict[str, list[str]] = {
     "auto_liability_defense": ["vehicle", "collision", "automobile", "auto claim", "motorist"],
     "commercial_litigation": ["breach of contract", "commercial dispute", "business dispute"],
     "plaintiff_personal_injury": ["injured", "compensation", "my injuries", "help me sue"],
+    # These are local candidate labels already used by the synthetic L&E fixture pack.
+    # They are not Semantic Substrate taxonomy or a basis for human confirmation.
+    "discrimination_harassment": [
+        "discrimination",
+        "harassment",
+        "hostile work environment",
+        "right-to-sue",
+    ],
+    "retaliation_wrongful_termination": [
+        "retaliation",
+        "wrongful termination",
+        "protected activity",
+        "fired",
+    ],
+    "wage_hour_flsa_state": [
+        "wage/hour",
+        "wage and hour",
+        "payroll",
+        "timekeeping",
+        "pay periods",
+    ],
+    "class_collective_paga_representative": [
+        "class or collective",
+        "collective action",
+        "paga",
+        "representative action",
+    ],
+    "ada_fmla_accommodation_leave": ["ada", "fmla", "accommodation", "medical leave"],
+    "restrictive_covenant_trade_secret": [
+        "restrictive covenant",
+        "trade secret",
+        "non-solicitation",
+        "temporary restraining order",
+    ],
+    "epli_carrier_assignment": [
+        "epli",
+        "employment practices liability",
+        "carrier assignment",
+    ],
+    "administrative_exhaustion_agency_record": [
+        "agency charge",
+        "right-to-sue",
+        "administrative exhaustion",
+        "agency filing",
+    ],
 }
 
 INBOUND_SIGNALS: dict[str, list[str]] = {
@@ -97,9 +142,12 @@ ROLE_SIGNAL_TERMS: dict[str, list[str]] = {
 }
 
 
+def _contains_lexical_term(text: str, term: str) -> bool:
+    return re.search(rf"(?<!\w){re.escape(term)}(?!\w)", text, flags=re.IGNORECASE) is not None
+
+
 def evidence_for_text(segments: list[Segment], needle: str) -> list[EvidenceRef]:
-    lowered = needle.lower()
-    matches = [s for s in segments if lowered in s.text.lower()]
+    matches = [s for s in segments if _contains_lexical_term(s.text, needle)]
     if not matches and segments:
         matches = [segments[0]]
     return [_evidence_ref(s) for s in matches[:3]]
@@ -276,7 +324,7 @@ def _score_family(
     context: EffectiveContext,
     segments: list[Segment],
 ) -> ScoredCandidate:
-    observed = [term for term in terms if term in text]
+    observed = [term for term in terms if _contains_lexical_term(text, term)]
     base = min(0.72, 0.12 + 0.11 * len(observed)) if observed else 0.05
     prior = float(context.matter_family_priors.get(label, 0.0))
     score = min(0.98, base + (0.22 * prior))
@@ -313,7 +361,7 @@ def _score_signal_set(
 ) -> list[ScoredCandidate]:
     candidates: list[ScoredCandidate] = []
     for label, terms in signals.items():
-        observed = [term for term in terms if term in text]
+        observed = [term for term in terms if _contains_lexical_term(text, term)]
         score = min(0.96, 0.15 + 0.18 * len(observed)) if observed else 0.03
         refs: list[EvidenceRef] = []
         for term in observed[:4]:
