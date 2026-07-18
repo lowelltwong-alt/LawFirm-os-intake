@@ -2583,6 +2583,7 @@ class LaborEmploymentExecutableFixtureManifest(StrictModel):
     fixtures: list[LaborEmploymentExecutableFixtureSpec]
     human_review_required: Literal[True] = True
     candidate_only: Literal[True] = True
+    not_promoted_canon: Literal[True] = True
     non_authoritative: Literal[True] = True
     synthetic_only: Literal[True] = True
     not_authorized_for_external_write: Literal[True] = True

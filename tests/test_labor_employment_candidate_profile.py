@@ -4,6 +4,7 @@ import pytest
 
 from lawfirm_os_intake.context import load_profile
 from lawfirm_os_intake.models import ContextBoundaryReport
+from lawfirm_os_intake.models import LaborEmploymentExecutableFixtureManifest
 from lawfirm_os_intake.util import load_json
 from lawfirm_os_intake.workflow import run_preflight
 from lawfirm_os_intake.workers import _contains_lexical_term
@@ -158,6 +159,8 @@ def test_labor_employment_candidate_profile_has_no_pricing_or_budget_authority(r
 
     assert manifest["candidate_only"] is True
     assert manifest["not_promoted_canon"] is True
+    parsed_manifest = LaborEmploymentExecutableFixtureManifest.model_validate(manifest)
+    assert parsed_manifest.not_promoted_canon is True
     assert profile["candidate_only"] is True
     assert profile["not_promoted_canon"] is True
     assert profile["contains_real_firm_data"] is False

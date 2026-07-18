@@ -58,3 +58,8 @@ smoke, exposes local source through `PYTHONPATH`, validates repository
 cleanliness, and then performs the editable development install. Direct spans in
 the rate-card controls may shrink and wrap. The existing browser smoke remains
 the acceptance gate; table wrappers retain intentional horizontal scrolling.
+
+The complete CI replay also caught that the executable-fixture manifest's new
+`not_promoted_canon` declaration was not accepted by its strict typed model. The
+model now requires that field to remain true, and a parsed-model regression
+assertion keeps the manifest and contract synchronized.

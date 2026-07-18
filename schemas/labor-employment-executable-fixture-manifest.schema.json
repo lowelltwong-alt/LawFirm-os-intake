@@ -266,6 +266,12 @@
       "title": "Candidate Only",
       "type": "boolean"
     },
+    "not_promoted_canon": {
+      "const": true,
+      "default": true,
+      "title": "Not Promoted Canon",
+      "type": "boolean"
+    },
     "non_authoritative": {
       "const": true,
       "default": true,
