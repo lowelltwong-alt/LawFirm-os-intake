@@ -1897,6 +1897,7 @@ def test_replay_confirmation_anchor_uses_stable_offsets_and_hash_not_runtime_seg
         ("evidence_hash", "Unicode-codepoint offsets, and hash"),
         ("evidence_offset", "Unicode-codepoint offsets, and hash"),
         ("party_name", "is not named in its evidence segment"),
+        ("party_role", "is not in synthetic fixture role candidates"),
         ("reviewer_scope", "reviewer must be explicitly synthetic"),
         ("missing_decision_evidence", "confirmation has no decision evidence refs"),
         ("missing_party_evidence", "confirmed party is missing evidence refs"),
@@ -1925,6 +1926,10 @@ def test_replay_confirmation_anchor_fails_closed_on_drift(
         confirmation_payload["decision_evidence_refs"][0]["start_offset"] += 1
     elif mutation == "party_name":
         confirmation_payload["confirmed_parties"][0]["name"] = "Ann"
+    elif mutation == "party_role":
+        confirmation_payload["confirmed_parties"][0]["confirmed_role"] = (
+            "prospective_represented_client"
+        )
     elif mutation == "reviewer_scope":
         confirmation_payload["reviewer_id"] = "operational-human-reviewer"
     elif mutation == "missing_decision_evidence":
@@ -2120,4 +2125,20 @@ def test_raw_source_case_token_rejects_trailing_suffixes(field, value):
         payload=payload,
         artifact_name=artifact_name,
         case_identity_context={"__source_case_tokens__": {"case-a"}},
+    )
+
+
+def test_replay_confirmation_anchor_rejects_unknown_party_role(repo_root, tmp_path):
+    staged_root, entry, budget_payload, confirmation_payload, _ = (
+        _stage_wage_hour_confirmation_anchor(repo_root, tmp_path)
+    )
+    confirmation_payload["confirmed_parties"][0]["confirmed_role"] = "invented_noncanonical_role"
+    write_json(staged_root / entry.confirmation_ref, confirmation_payload)
+
+    errors = _confirmation_anchor_errors(staged_root, entry, budget_payload)
+
+    assert any(
+        "invented_noncanonical_role" in error
+        and "is not in synthetic fixture role candidates" in error
+        for error in errors
     )

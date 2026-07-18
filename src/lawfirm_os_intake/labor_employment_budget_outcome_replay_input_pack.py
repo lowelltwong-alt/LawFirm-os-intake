@@ -943,12 +943,53 @@ def _validate_entry(
     return "ready", f"{model.__name__} validated from local synthetic ref.", model.__name__
 
 
+def _normalized_party_name(name: str) -> str:
+    return unicodedata.normalize("NFC", name).strip().casefold()
+
+
 def _party_name_matches_segment_text(name: str, text: str) -> bool:
-    normalized_name = unicodedata.normalize("NFC", name).strip().casefold()
+    normalized_name = _normalized_party_name(name)
     if not normalized_name:
         return False
     normalized_text = unicodedata.normalize("NFC", text).casefold()
     return re.search(rf"(?<!\w){re.escape(normalized_name)}(?!\w)", normalized_text) is not None
+
+
+def _fixture_entity_role_errors(
+    confirmation: HumanConfirmation,
+    bundle: SourceBundle,
+) -> list[str]:
+    entities = bundle.fixture_hints.get("entities")
+    if not isinstance(entities, list):
+        return ["source bundle has no synthetic entity-role fixture hints"]
+
+    roles_by_name: dict[str, set[str]] = {}
+    for entity in entities:
+        if not isinstance(entity, dict) or not isinstance(entity.get("name"), str):
+            continue
+        role_candidates = entity.get("role_candidates")
+        if not isinstance(role_candidates, list):
+            continue
+        roles = {
+            role
+            for candidate in role_candidates
+            if isinstance(candidate, dict)
+            and isinstance((role := candidate.get("role")), str)
+            and role
+        }
+        roles_by_name.setdefault(_normalized_party_name(entity["name"]), set()).update(roles)
+
+    errors: list[str] = []
+    for party in confirmation.confirmed_parties:
+        candidate_roles = roles_by_name.get(_normalized_party_name(party.name))
+        if not candidate_roles:
+            errors.append(f"party {party.name!r} has no synthetic fixture role candidates")
+        elif party.confirmed_role not in candidate_roles:
+            errors.append(
+                f"party {party.name!r} confirmed role {party.confirmed_role!r} "
+                f"is not in synthetic fixture role candidates {sorted(candidate_roles)!r}"
+            )
+    return errors
 
 
 def _budget_confirmation_anchor_errors(
@@ -1043,6 +1084,7 @@ def _budget_confirmation_anchor_errors(
         ):
             errors.append(f"party {party.name!r} is not named in its evidence segment")
 
+    errors.extend(_fixture_entity_role_errors(confirmation, bundle))
     errors.extend(_boundary_errors(source_payload, "$.source_bundle"))
     errors.extend(_boundary_errors(confirmation_payload, "$.confirmation"))
     return errors

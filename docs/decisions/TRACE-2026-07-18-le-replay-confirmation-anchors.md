@@ -15,6 +15,7 @@ The prior input pack could prove that a budget artifact existed, but not that it
 - The confirmation must be `confirmed` and identify the exact proposal, preflight, matter family, and posture.
 - Decision evidence and each confirmed party must have valid source-bound evidence.
 - Party names use Unicode NFC normalization, case folding, and word boundaries; `Ann` does not match `Annette`.
+- Each confirmed role must be one of the bound synthetic source bundle's candidate role alternatives; fixture hints are synthetic gold only, not canonical roles or runtime authority.
 - Evidence offsets and hashes must reproduce the cited source text exactly.
 - The input-pack manifest must match the executable-manifest reference and SHA-256 pinned by the builder-binding report.
 - The entry's `source_bundle_ref` must equal that pinned manifest's mapping for its `executable_fixture_id`.
@@ -34,7 +35,7 @@ Independent review found that random UUID segment IDs were unsuitable persisted 
 - In-memory confirmation generation matches all four committed fixture digests without writing files.
 - Confirmation generation is deterministic for unchanged fixture inputs.
 - Manual drift checks cover swapped IDs, family, posture, evidence hash/offset, party names, reviewer scope, source bundles, and missing references.
-- Unicode normalization and `Ann`/`Annette` boundary cases pass.
+- Unicode normalization, `Ann`/`Annette` boundaries, swapped roles, and invented-role cases pass.
 - A full in-memory input-pack replay remains `partially_ready` only for seven genuinely absent downstream inputs; all 15 budget items carry confirmation/source provenance and all governed checks pass.
 
 Linux CI remains the authoritative full-suite environment because the local restricted Windows token cannot create pytest's private temporary directories. Rust parity must preserve `unicode_codepoint_v1` semantics before this validator can move across the language boundary.
