@@ -8,6 +8,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install -e ".[dev]"
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
@@ -25,15 +29,10 @@ jobs:
       - name: Smoke test review UI in Chromium
         working-directory: apps/legal-intake-budget
         run: npm run smoke:browser
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-      - run: python -m pip install PyYAML
       - run: python scripts/validate_repo.py
         timeout-minutes: 3
       - run: python scripts/validate_governance_dependency_map_mirror.py --mirror-updated true
         timeout-minutes: 3
-      - run: python -m pip install -e ".[dev]"
       - run: python scripts/export_schemas.py
         timeout-minutes: 3
       - run: python -m ruff check --no-cache src tests scripts
