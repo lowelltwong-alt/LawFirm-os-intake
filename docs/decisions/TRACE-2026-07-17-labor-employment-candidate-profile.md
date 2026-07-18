@@ -53,6 +53,8 @@ requires another independent replay before publication.
 GitHub CI exposed two pre-existing integration defects before the Python suite:
 the browser smoke invoked the Python CLI before package installation, and a
 long synthetic workbook filename escaped its wrapping flex row at a 390px
-viewport. CI now installs the package before browser smoke, and direct spans in
+viewport. CI now installs only declared runtime dependencies before browser
+smoke, exposes local source through `PYTHONPATH`, validates repository
+cleanliness, and then performs the editable development install. Direct spans in
 the rate-card controls may shrink and wrap. The existing browser smoke remains
 the acceptance gate; table wrappers retain intentional horizontal scrolling.
