@@ -5663,6 +5663,9 @@ class LaborEmploymentBudgetOutcomeReplayBuilderBindingReport(StrictModel):
     source_execution_report_ref: str
     source_execution_report_id: str
     source_execution_report_status: str
+    source_executable_fixture_manifest_ref: str | None = None
+    source_executable_fixture_manifest_id: str | None = None
+    source_executable_fixture_manifest_sha256: str | None = None
     source_input_pack_report_ref: str | None = None
     source_input_pack_report_id: str | None = None
     source_input_pack_report_status: str | None = None
@@ -5709,6 +5712,18 @@ class LaborEmploymentBudgetOutcomeReplayBuilderBindingReport(StrictModel):
     ) -> "LaborEmploymentBudgetOutcomeReplayBuilderBindingReport":
         failed_cases = [case for case in self.cases if case.status == "failed"]
         failed_checks = [check for check in self.checks if check.status == "failed"]
+        executable_manifest_fields = [
+            self.source_executable_fixture_manifest_ref,
+            self.source_executable_fixture_manifest_id,
+            self.source_executable_fixture_manifest_sha256,
+        ]
+        if any(executable_manifest_fields) and not all(executable_manifest_fields):
+            raise ValueError("builder binding executable manifest provenance must be complete")
+        if (
+            self.source_executable_fixture_manifest_sha256
+            and not self.source_executable_fixture_manifest_sha256.startswith("sha256:")
+        ):
+            raise ValueError("builder binding executable manifest hash must be sha256")
         input_pack_fields = [
             self.source_input_pack_report_ref,
             self.source_input_pack_report_id,
@@ -5763,6 +5778,8 @@ class LaborEmploymentBudgetOutcomeReplayInputPackEntry(StrictModel):
     loop_type: LaborEmploymentBudgetLearningLoopType
     required_input_artifact: str
     input_ref: str
+    confirmation_ref: str | None = None
+    source_bundle_ref: str | None = None
     expected_artifact_name: str | None = None
     input_role: Literal["builder_input", "complement_report", "one_of_signal"]
     notes: str
@@ -5793,8 +5810,15 @@ class LaborEmploymentBudgetOutcomeReplayInputPackEntry(StrictModel):
             self.required_input_artifact.startswith("one_or_more_of:")
         ):
             raise ValueError("input-pack entry artifact must be a JSON artifact name")
-        if self.input_ref.startswith(("http://", "https://", "app://")):
+        local_refs = [self.input_ref, self.confirmation_ref, self.source_bundle_ref]
+        if any(ref and ref.startswith(("http://", "https://", "app://")) for ref in local_refs):
             raise ValueError("input-pack entry refs must be local file refs")
+        if self.required_input_artifact != "legal_budget_proposal.json" and (
+            self.confirmation_ref or self.source_bundle_ref
+        ):
+            raise ValueError(
+                "confirmation and source-bundle refs are valid only for budget proposal inputs"
+            )
         if not self.notes:
             raise ValueError("input-pack entry requires notes")
         return self
@@ -5806,6 +5830,7 @@ class LaborEmploymentBudgetOutcomeReplayInputPackManifest(StrictModel):
     status: Literal["candidate_labor_employment_budget_outcome_replay_input_pack_manifest"]
     practice_area: Literal["labor_employment"] = "labor_employment"
     source_builder_binding_report_ref: str
+    executable_fixture_manifest_ref: str | None = None
     entries: list[LaborEmploymentBudgetOutcomeReplayInputPackEntry]
     candidate_only: Literal[True] = True
     non_authoritative: Literal[True] = True
@@ -5861,6 +5886,12 @@ class LaborEmploymentBudgetOutcomeReplayInputPackItem(StrictModel):
     selected_alternative_artifacts: list[str] = Field(default_factory=list)
     validation_model: str | None = None
     validation_message: str
+    confirmation_scope: Literal["synthetic_fixture_only"] | None = None
+    confirmation_ref: str | None = None
+    source_bundle_ref: str | None = None
+    source_bundle_sha256: str | None = None
+    offset_encoding: Literal["unicode_codepoint_v1"] | None = None
+    runtime_human_gate_completed: Literal[False] = False
     candidate_exception_lake_labels: list[str]
     evidence_refs: list[str]
     runtime_artifact_created: Literal[False] = False
@@ -5888,6 +5919,18 @@ class LaborEmploymentBudgetOutcomeReplayInputPackItem(StrictModel):
                 raise ValueError("ready one-of input-pack item requires selected alternatives")
         if not self.validation_message:
             raise ValueError("input-pack item requires validation message")
+        anchor_fields = [
+            self.confirmation_ref,
+            self.source_bundle_ref,
+            self.source_bundle_sha256,
+            self.offset_encoding,
+        ]
+        if self.confirmation_scope and not all(anchor_fields):
+            raise ValueError("confirmation anchor result requires complete provenance")
+        if not self.confirmation_scope and any(anchor_fields):
+            raise ValueError("confirmation anchor provenance requires explicit fixture scope")
+        if self.source_bundle_sha256 and not self.source_bundle_sha256.startswith("sha256:"):
+            raise ValueError("confirmation anchor source hash must be sha256")
         if not self.candidate_exception_lake_labels:
             raise ValueError("input-pack item requires candidate labels")
         if not self.evidence_refs:
@@ -5986,6 +6029,12 @@ class LaborEmploymentBudgetOutcomeReplayInputPackReport(StrictModel):
     source_builder_binding_report_status: str
     source_input_pack_manifest_ref: str | None = None
     source_input_pack_manifest_id: str | None = None
+    source_executable_fixture_manifest_ref: str | None = None
+    source_executable_fixture_manifest_id: str | None = None
+    source_executable_fixture_manifest_sha256: str | None = None
+    confirmation_scope: Literal["synthetic_fixture_only"] = "synthetic_fixture_only"
+    confirmation_offset_encoding: Literal["unicode_codepoint_v1"] = "unicode_codepoint_v1"
+    runtime_human_gate_completed: Literal[False] = False
     case_count: int = Field(ge=0)
     ready_case_count: int = Field(ge=0)
     partial_case_count: int = Field(ge=0)
@@ -6027,6 +6076,18 @@ class LaborEmploymentBudgetOutcomeReplayInputPackReport(StrictModel):
         self,
     ) -> "LaborEmploymentBudgetOutcomeReplayInputPackReport":
         failed_checks = [check for check in self.checks if check.status == "failed"]
+        executable_manifest_fields = [
+            self.source_executable_fixture_manifest_ref,
+            self.source_executable_fixture_manifest_id,
+            self.source_executable_fixture_manifest_sha256,
+        ]
+        if any(executable_manifest_fields[1:]) and not all(executable_manifest_fields):
+            raise ValueError("input-pack executable manifest provenance must be complete")
+        if (
+            self.source_executable_fixture_manifest_sha256
+            and not self.source_executable_fixture_manifest_sha256.startswith("sha256:")
+        ):
+            raise ValueError("input-pack executable manifest hash must be sha256")
         if self.case_count != len(self.cases):
             raise ValueError("input-pack report case count mismatch")
         if self.ready_case_count != len([case for case in self.cases if case.status == "ready"]):

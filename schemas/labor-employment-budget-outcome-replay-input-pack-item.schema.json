@@ -101,6 +101,74 @@
       "title": "Validation Message",
       "type": "string"
     },
+    "confirmation_scope": {
+      "anyOf": [
+        {
+          "const": "synthetic_fixture_only",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Confirmation Scope"
+    },
+    "confirmation_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Confirmation Ref"
+    },
+    "source_bundle_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Bundle Ref"
+    },
+    "source_bundle_sha256": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Bundle Sha256"
+    },
+    "offset_encoding": {
+      "anyOf": [
+        {
+          "const": "unicode_codepoint_v1",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Offset Encoding"
+    },
+    "runtime_human_gate_completed": {
+      "const": false,
+      "default": false,
+      "title": "Runtime Human Gate Completed",
+      "type": "boolean"
+    },
     "candidate_exception_lake_labels": {
       "items": {
         "type": "string"

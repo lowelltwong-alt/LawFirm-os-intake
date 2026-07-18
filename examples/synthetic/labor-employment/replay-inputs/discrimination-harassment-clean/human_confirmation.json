@@ -1,0 +1,54 @@
+{
+  "schema_version": "0.1",
+  "confirmation_id": "le-confirmation-discrimination-harassment-clean.v0_1",
+  "preflight_packet_id": "le-preflight-discrimination-harassment-clean.v0_1",
+  "status": "confirmed",
+  "supersedes_confirmation_id": null,
+  "confirmed_inbound_event": "prospective_matter_intake",
+  "confirmed_matter_family": "discrimination_harassment",
+  "confirmed_representation_posture": "defense",
+  "confirmed_parties": [
+    {
+      "name": "Maya Reed",
+      "confirmed_role": "adverse_party",
+      "aliases": [],
+      "evidence_refs": [
+        {
+          "source_id": "syn-le-discrimination-clean-cover-email-001",
+          "segment_id": "segment_anchor_d62f1b95d55a71f5",
+          "start_offset": 170,
+          "end_offset": 622,
+          "sha256": "sha256:6f5825f93acfa94b56f3174e87c2f0fc25df5d5a0fc292e0169bc44cf2e43da0"
+        }
+      ]
+    },
+    {
+      "name": "Cedar Loom Manufacturing LLC",
+      "confirmed_role": "prospective_represented_client",
+      "aliases": [],
+      "evidence_refs": [
+        {
+          "source_id": "syn-le-discrimination-clean-cover-email-001",
+          "segment_id": "segment_anchor_d62f1b95d55a71f5",
+          "start_offset": 170,
+          "end_offset": 622,
+          "sha256": "sha256:6f5825f93acfa94b56f3174e87c2f0fc25df5d5a0fc292e0169bc44cf2e43da0"
+        }
+      ]
+    }
+  ],
+  "confirmed_jurisdiction": null,
+  "confirmed_deadlines": [],
+  "reviewer_id": "synthetic-human-review-fixture",
+  "reviewed_at": "2026-07-18T12:00:00Z",
+  "notes": "Synthetic POC confirmation fixture only. This is not a real human review, conflict clearance, engagement decision, matter opening, or budget approval.",
+  "decision_evidence_refs": [
+    {
+      "source_id": "syn-le-discrimination-clean-cover-email-001",
+      "segment_id": "segment_anchor_8d8ae9b2162a02da",
+      "start_offset": 101,
+      "end_offset": 169,
+      "sha256": "sha256:7de93c7817030ceda6e1f0203d029ed47e1da29dc4db5e1da3e17e106ce588d1"
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "schema_version": "0.1",
+  "confirmation_id": "le-confirmation-class-collective-clean.v0_1",
+  "preflight_packet_id": "le-preflight-class-collective-clean.v0_1",
+  "status": "confirmed",
+  "supersedes_confirmation_id": null,
+  "confirmed_inbound_event": "prospective_matter_intake",
+  "confirmed_matter_family": "class_collective_paga_representative",
+  "confirmed_representation_posture": "defense",
+  "confirmed_parties": [
+    {
+      "name": "Maya Chen",
+      "confirmed_role": "adverse_party",
+      "aliases": [],
+      "evidence_refs": [
+        {
+          "source_id": "syn-le-class-collective-clean-cover-email-001",
+          "segment_id": "segment_anchor_02062761ee8bd39e",
+          "start_offset": 175,
+          "end_offset": 726,
+          "sha256": "sha256:7ddd876c8f2484432e57f08e072db880729c3fcd12d8bd1bc991207b75142bc3"
+        }
+      ]
+    },
+    {
+      "name": "Atlas Retail Services LLC",
+      "confirmed_role": "prospective_represented_client",
+      "aliases": [],
+      "evidence_refs": [
+        {
+          "source_id": "syn-le-class-collective-clean-cover-email-001",
+          "segment_id": "segment_anchor_02062761ee8bd39e",
+          "start_offset": 175,
+          "end_offset": 726,
+          "sha256": "sha256:7ddd876c8f2484432e57f08e072db880729c3fcd12d8bd1bc991207b75142bc3"
+        }
+      ]
+    }
+  ],
+  "confirmed_jurisdiction": null,
+  "confirmed_deadlines": [],
+  "reviewer_id": "synthetic-human-review-fixture",
+  "reviewed_at": "2026-07-18T12:00:00Z",
+  "notes": "Synthetic POC confirmation fixture only. This is not a real human review, conflict clearance, engagement decision, matter opening, or budget approval.",
+  "decision_evidence_refs": [
+    {
+      "source_id": "syn-le-class-collective-clean-cover-email-001",
+      "segment_id": "segment_anchor_3fb8409daf28b757",
+      "start_offset": 101,
+      "end_offset": 174,
+      "sha256": "sha256:8d3a2af03347ba2abbd1ad372d9246e85dcac91291ad415285e51d25e7dcbf34"
+    }
+  ]
+}

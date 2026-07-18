@@ -637,6 +637,42 @@
       "title": "Source Execution Report Status",
       "type": "string"
     },
+    "source_executable_fixture_manifest_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Executable Fixture Manifest Ref"
+    },
+    "source_executable_fixture_manifest_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Executable Fixture Manifest Id"
+    },
+    "source_executable_fixture_manifest_sha256": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Executable Fixture Manifest Sha256"
+    },
     "source_input_pack_report_ref": {
       "anyOf": [
         {

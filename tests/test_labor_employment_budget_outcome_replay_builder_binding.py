@@ -22,7 +22,7 @@ from lawfirm_os_intake.labor_employment_budget_outcome_replay_readiness import (
     run_labor_employment_budget_outcome_replay_readiness_audit,
 )
 from lawfirm_os_intake.models import LaborEmploymentBudgetOutcomeReplayBuilderBindingReport
-from lawfirm_os_intake.util import load_json, write_json
+from lawfirm_os_intake.util import digest_json, load_json, write_json
 
 
 FIXTURE_ROOT = "apps/legal-intake-budget/src/fixtures"
@@ -229,6 +229,65 @@ def test_builder_binding_rejects_input_pack_from_another_binding_run(repo_root, 
             execution_report_path=_execution_report(repo_root, tmp_path),
             input_pack_report_path=stale_path,
             out_dir=tmp_path / "stale-reconciled-builder-binding",
+            repo_root=repo_root,
+            generated_at="2026-07-15T00:00:00Z",
+        )
+
+
+def test_builder_binding_reconciliation_rejects_alternate_executable_manifest(
+    repo_root,
+    tmp_path,
+):
+    baseline, baseline_dir = run_labor_employment_budget_outcome_replay_builder_binding_audit(
+        execution_report_path=_execution_report(repo_root, tmp_path),
+        out_dir=tmp_path / "baseline-builder-binding",
+        repo_root=repo_root,
+        generated_at="2026-07-15T00:00:00Z",
+    )
+    _, input_pack_dir = run_labor_employment_budget_outcome_replay_input_pack_audit(
+        builder_binding_report_path=(
+            baseline_dir / LABOR_EMPLOYMENT_BUDGET_OUTCOME_REPLAY_BUILDER_BINDING_REPORT_FILENAME
+        ),
+        input_pack_manifest_path=_input_pack_manifest(repo_root),
+        repo_root=repo_root,
+        out_dir=tmp_path / "input-pack",
+        generated_at="2026-07-15T00:00:00Z",
+    )
+    input_pack_path = (
+        input_pack_dir / LABOR_EMPLOYMENT_BUDGET_OUTCOME_REPLAY_INPUT_PACK_REPORT_FILENAME
+    )
+    alternate_executable_manifest = load_json(
+        repo_root / "examples/synthetic/labor-employment/"
+        "labor-employment-executable-fixtures-manifest.json"
+    )
+    alternate_executable_manifest["manifest_id"] = "alternate-executable-manifest.v0_1"
+    alternate_executable_path = write_json(
+        tmp_path / "alternate-executable-manifest.json",
+        alternate_executable_manifest,
+    )
+    alternate_input_manifest = load_json(_input_pack_manifest(repo_root))
+    alternate_input_manifest["executable_fixture_manifest_ref"] = str(alternate_executable_path)
+    alternate_input_manifest_path = write_json(
+        tmp_path / "alternate-input-pack-manifest.json",
+        alternate_input_manifest,
+    )
+    crafted = load_json(input_pack_path)
+    crafted["source_input_pack_manifest_ref"] = str(alternate_input_manifest_path)
+    crafted["source_executable_fixture_manifest_ref"] = str(alternate_executable_path)
+    crafted["source_executable_fixture_manifest_id"] = alternate_executable_manifest["manifest_id"]
+    crafted["source_executable_fixture_manifest_sha256"] = digest_json(
+        alternate_executable_manifest
+    )
+    crafted_path = write_json(tmp_path / "crafted-input-pack-report.json", crafted)
+
+    with pytest.raises(
+        ValueError,
+        match="does not match builder binding provenance",
+    ):
+        run_labor_employment_budget_outcome_replay_builder_binding_audit(
+            execution_report_path=_execution_report(repo_root, tmp_path),
+            input_pack_report_path=crafted_path,
+            out_dir=tmp_path / "crafted-reconciled-builder-binding",
             repo_root=repo_root,
             generated_at="2026-07-15T00:00:00Z",
         )

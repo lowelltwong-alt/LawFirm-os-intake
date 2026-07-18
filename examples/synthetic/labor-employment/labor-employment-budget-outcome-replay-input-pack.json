@@ -12,7 +12,9 @@
       "required_input_artifact": "legal_budget_proposal.json",
       "input_ref": "examples/synthetic/labor-employment/replay-inputs/discrimination-harassment-clean/legal_budget_proposal.json",
       "input_role": "builder_input",
-      "notes": "Synthetic L&E discrimination/harassment budget proposal for actuals replay."
+      "notes": "Synthetic L&E discrimination/harassment budget proposal for actuals replay.",
+      "confirmation_ref": "examples/synthetic/labor-employment/replay-inputs/discrimination-harassment-clean/human_confirmation.json",
+      "source_bundle_ref": "examples/synthetic/labor-employment/executable-fixtures/le-discrimination-harassment-clean.source-bundle.json"
     },
     {
       "entry_id": "le-replay-input-discrimination-actuals-source.v0_1",
@@ -30,7 +32,9 @@
       "required_input_artifact": "legal_budget_proposal.json",
       "input_ref": "examples/synthetic/labor-employment/replay-inputs/discrimination-harassment-clean/legal_budget_proposal.json",
       "input_role": "builder_input",
-      "notes": "Same synthetic L&E budget proposal is used to bind carrier rejection placeholders."
+      "notes": "Same synthetic L&E budget proposal is used to bind carrier rejection placeholders.",
+      "confirmation_ref": "examples/synthetic/labor-employment/replay-inputs/discrimination-harassment-clean/human_confirmation.json",
+      "source_bundle_ref": "examples/synthetic/labor-employment/executable-fixtures/le-discrimination-harassment-clean.source-bundle.json"
     },
     {
       "entry_id": "le-replay-input-discrimination-carrier-bundle.v0_1",
@@ -48,7 +52,9 @@
       "required_input_artifact": "legal_budget_proposal.json",
       "input_ref": "examples/synthetic/labor-employment/replay-inputs/wage-hour-clean/legal_budget_proposal.json",
       "input_role": "builder_input",
-      "notes": "Synthetic L&E wage/hour budget proposal for payroll-volume actuals replay."
+      "notes": "Synthetic L&E wage/hour budget proposal for payroll-volume actuals replay.",
+      "confirmation_ref": "examples/synthetic/labor-employment/replay-inputs/wage-hour-clean/human_confirmation.json",
+      "source_bundle_ref": "examples/synthetic/labor-employment/executable-fixtures/le-wage-hour-clean.source-bundle.json"
     },
     {
       "entry_id": "le-replay-input-wage-hour-actuals-source.v0_1",
@@ -66,7 +72,9 @@
       "required_input_artifact": "legal_budget_proposal.json",
       "input_ref": "examples/synthetic/labor-employment/replay-inputs/wage-hour-clean/legal_budget_proposal.json",
       "input_role": "builder_input",
-      "notes": "Same synthetic L&E wage/hour budget proposal is used to bind carrier rejection placeholders."
+      "notes": "Same synthetic L&E wage/hour budget proposal is used to bind carrier rejection placeholders.",
+      "confirmation_ref": "examples/synthetic/labor-employment/replay-inputs/wage-hour-clean/human_confirmation.json",
+      "source_bundle_ref": "examples/synthetic/labor-employment/executable-fixtures/le-wage-hour-clean.source-bundle.json"
     },
     {
       "entry_id": "le-replay-input-wage-hour-carrier-bundle.v0_1",
@@ -84,7 +92,9 @@
       "required_input_artifact": "legal_budget_proposal.json",
       "input_ref": "examples/synthetic/labor-employment/replay-inputs/class-collective-clean/legal_budget_proposal.json",
       "input_role": "builder_input",
-      "notes": "Synthetic class/collective/PAGA range-anchor budget proposal for actuals replay; not an approved or submitted budget."
+      "notes": "Synthetic class/collective/PAGA range-anchor budget proposal for actuals replay; not an approved or submitted budget.",
+      "confirmation_ref": "examples/synthetic/labor-employment/replay-inputs/class-collective-clean/human_confirmation.json",
+      "source_bundle_ref": "examples/synthetic/labor-employment/executable-fixtures/le-class-collective-clean.source-bundle.json"
     },
     {
       "entry_id": "le-replay-input-class-collective-actuals-source.v0_1",
@@ -95,32 +105,36 @@
       "input_role": "builder_input",
       "notes": "Synthetic class/collective/PAGA phase/code actuals fixture for deterministic variance review and reviewed learning-gate pressure."
     },
-                    {
-                        "entry_id": "le-replay-input-epli-actuals-budget.v0_1",
-                        "learning_fixture_id": "le-learning-epli-carrier-clean.v0_1",
-                        "loop_type": "actuals_variance",
-                        "required_input_artifact": "legal_budget_proposal.json",
-                        "input_ref": "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/legal_budget_proposal.json",
-                        "input_role": "builder_input",
-                        "notes": "Synthetic EPLI carrier-assignment budget proposal for deterministic actuals variance replay."
-                    },
-                    {
-                        "entry_id": "le-replay-input-epli-actuals-source.v0_1",
-                        "learning_fixture_id": "le-learning-epli-carrier-clean.v0_1",
-                        "loop_type": "actuals_variance",
-                        "required_input_artifact": "budget_actuals_source.json",
-                        "input_ref": "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/budget_actuals_source.json",
-                        "input_role": "builder_input",
-                        "notes": "Synthetic EPLI phase/code actuals for deterministic variance review; no billing connector is read or written."
-                    },
-                    {
-                        "entry_id": "le-replay-input-epli-carrier-budget.v0_1",
+    {
+      "entry_id": "le-replay-input-epli-actuals-budget.v0_1",
+      "learning_fixture_id": "le-learning-epli-carrier-clean.v0_1",
+      "loop_type": "actuals_variance",
+      "required_input_artifact": "legal_budget_proposal.json",
+      "input_ref": "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/legal_budget_proposal.json",
+      "input_role": "builder_input",
+      "notes": "Synthetic EPLI carrier-assignment budget proposal for deterministic actuals variance replay.",
+      "confirmation_ref": "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/human_confirmation.json",
+      "source_bundle_ref": "examples/synthetic/labor-employment/executable-fixtures/le-epli-carrier-clean.source-bundle.json"
+    },
+    {
+      "entry_id": "le-replay-input-epli-actuals-source.v0_1",
+      "learning_fixture_id": "le-learning-epli-carrier-clean.v0_1",
+      "loop_type": "actuals_variance",
+      "required_input_artifact": "budget_actuals_source.json",
+      "input_ref": "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/budget_actuals_source.json",
+      "input_role": "builder_input",
+      "notes": "Synthetic EPLI phase/code actuals for deterministic variance review; no billing connector is read or written."
+    },
+    {
+      "entry_id": "le-replay-input-epli-carrier-budget.v0_1",
       "learning_fixture_id": "le-learning-epli-carrier-clean.v0_1",
       "loop_type": "carrier_rejection_capture",
       "required_input_artifact": "legal_budget_proposal.json",
       "input_ref": "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/legal_budget_proposal.json",
       "input_role": "builder_input",
-      "notes": "Synthetic EPLI carrier-assignment budget proposal for carrier rejection replay."
+      "notes": "Synthetic EPLI carrier-assignment budget proposal for carrier rejection replay.",
+      "confirmation_ref": "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/human_confirmation.json",
+      "source_bundle_ref": "examples/synthetic/labor-employment/executable-fixtures/le-epli-carrier-clean.source-bundle.json"
     },
     {
       "entry_id": "le-replay-input-epli-carrier-bundle.v0_1",
@@ -139,7 +153,9 @@
       "required_input_artifact": "legal_budget_proposal.json",
       "input_ref": "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/legal_budget_proposal.json",
       "input_role": "builder_input",
-      "notes": "Same synthetic EPLI budget proposal anchors appeal-result replay to the same case identity."
+      "notes": "Same synthetic EPLI budget proposal anchors appeal-result replay to the same case identity.",
+      "confirmation_ref": "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/human_confirmation.json",
+      "source_bundle_ref": "examples/synthetic/labor-employment/executable-fixtures/le-epli-carrier-clean.source-bundle.json"
     },
     {
       "entry_id": "le-replay-input-epli-appeal-bundle.v0_1",
@@ -196,5 +212,6 @@
       "input_role": "complement_report",
       "notes": "Synthetic QA gate report is the required complement report for the learning-fixture audit lane."
     }
-  ]
+  ],
+  "executable_fixture_manifest_ref": "examples/synthetic/labor-employment/labor-employment-executable-fixtures-manifest.json"
 }

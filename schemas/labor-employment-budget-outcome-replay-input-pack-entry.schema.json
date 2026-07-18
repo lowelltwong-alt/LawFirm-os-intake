@@ -28,6 +28,30 @@
       "title": "Input Ref",
       "type": "string"
     },
+    "confirmation_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Confirmation Ref"
+    },
+    "source_bundle_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Bundle Ref"
+    },
     "expected_artifact_name": {
       "anyOf": [
         {
