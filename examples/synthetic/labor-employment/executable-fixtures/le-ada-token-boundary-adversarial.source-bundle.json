@@ -1,0 +1,23 @@
+{
+  "schema_version": "0.1",
+  "bundle_id": "syn-le-ada-token-boundary-adversarial-001",
+  "data_origin": "synthetic",
+  "contains_real_client_data": false,
+  "contains_real_matter_data": false,
+  "contains_privileged_data": false,
+  "sources": [
+    {
+      "source_id": "syn-le-ada-token-boundary-note-001",
+      "source_type": "email",
+      "filename": "synthetic_token_boundary_note.txt",
+      "text": "Synthetic metadata note: the Canada office index contains neutral administrative labels and file-routing information only.",
+      "metadata": {
+        "synthetic": true,
+        "test_purpose": "lexical_token_boundary"
+      }
+    }
+  ],
+  "fixture_hints": {
+    "provided_fields": []
+  }
+}

@@ -1,0 +1,41 @@
+profile_id: synthetic-labor-employment-candidate.v0_1
+version: "0.1"
+candidate_only: true
+not_promoted_canon: true
+contains_real_firm_data: false
+applied_layers: [synthetic_firm, labor_employment_candidate]
+active_practices:
+  - labor_employment_candidate
+default_side: varies
+typical_inbound_sources:
+  direct_corporate: 0.35
+  insurance_carrier: 0.2
+  referral_source: 0.2
+matter_family_priors:
+  discrimination_harassment: 0.55
+  retaliation_wrongful_termination: 0.6
+  wage_hour_flsa_state: 0.55
+  class_collective_paga_representative: 0.4
+  ada_fmla_accommodation_leave: 0.5
+  restrictive_covenant_trade_secret: 0.45
+  epli_carrier_assignment: 0.35
+  administrative_exhaustion_agency_record: 0.5
+required_intake_fields:
+  - employee_claimant_identity
+  - employer_or_defendant_identity
+  - claims_and_causes_of_action
+  - representation_posture
+  - relevant_employment_timeline
+  - administrative_exhaustion_and_agency_record
+  - forum_removed_and_arbitration_posture
+  - policy_handbook_contract_documents
+  - esi_custodians_and_sources
+  - expert_and_vendor_needs
+  - damages_categories_and_exposure
+budget_template_ids: []
+context_precedence:
+  - observed_source_evidence
+  - human_confirmed_matter_facts
+  - client_or_referral_source_profile
+  - practice_group_profile
+  - firm_defaults
