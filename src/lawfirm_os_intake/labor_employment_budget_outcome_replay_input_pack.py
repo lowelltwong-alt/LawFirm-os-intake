@@ -176,6 +176,8 @@ def _load_executable_fixture_source_refs(
     expected_manifest_ref: str | None,
     expected_manifest_sha256: str | None,
 ) -> tuple[dict[str, str], str | None, str | None, str | None, str | None]:
+    if manifest is None:
+        return {}, None, None, None, None
     if not expected_manifest_ref or not expected_manifest_sha256:
         return {}, None, None, None, "builder binding has no executable manifest provenance"
     if manifest is None or not manifest.executable_fixture_manifest_ref:
@@ -1163,7 +1165,8 @@ def _raw_source_case_token_errors(
     if any(token != expected for _, token in observed_tokens):
         return [
             f"source case token={expected!r} does not exactly match "
-            f"observed tokens={observed_tokens!r} in {list(fields)}"
+            f"observed tokens={observed_tokens!r}; raw values={observed_values!r} "
+            f"in {list(fields)}"
         ]
     return []
 
@@ -1312,9 +1315,13 @@ def _checks(
             check_id="executable_fixture_source_map_is_governed",
             status="passed" if executable_manifest_error is None else "failed",
             message=(
-                "Executable fixture manifest resolves exact source-bundle refs for replay cases."
-                if executable_manifest_error is None
-                else executable_manifest_error
+                "No input-pack manifest supplied; executable provenance is not applicable."
+                if manifest is None
+                else (
+                    "Executable fixture manifest resolves exact source-bundle refs for replay cases."
+                    if executable_manifest_error is None
+                    else executable_manifest_error
+                )
             ),
             evidence_refs=[executable_manifest_ref] if executable_manifest_ref else [],
             blocking_refs=[executable_manifest_error] if executable_manifest_error else [],
