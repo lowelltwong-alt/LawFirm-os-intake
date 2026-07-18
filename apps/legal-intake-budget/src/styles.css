@@ -769,6 +769,11 @@ code {
   margin-bottom: 14px;
 }
 
+.rate-card-controls > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
 .rate-card-controls label {
   display: grid;
   gap: 4px;

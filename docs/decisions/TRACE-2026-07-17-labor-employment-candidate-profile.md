@@ -47,3 +47,12 @@ The first independent review requested changes for short-token substring
 matching, untested shared-term collisions, incomplete evidence invariance, and
 coverage of only three L&E families. This slice addresses all four findings and
 requires another independent replay before publication.
+
+## Merge-Gate Repairs
+
+GitHub CI exposed two pre-existing integration defects before the Python suite:
+the browser smoke invoked the Python CLI before package installation, and a
+long synthetic workbook filename escaped its wrapping flex row at a 390px
+viewport. CI now installs the package before browser smoke, and direct spans in
+the rate-card controls may shrink and wrap. The existing browser smoke remains
+the acceptance gate; table wrappers retain intentional horizontal scrolling.
