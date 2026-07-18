@@ -709,6 +709,30 @@
       "default": null,
       "title": "Source Input Pack Report Status"
     },
+    "source_input_pack_report_sha256": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Input Pack Report Sha256"
+    },
+    "source_input_pack_manifest_sha256": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Input Pack Manifest Sha256"
+    },
     "fixture_count": {
       "minimum": 0,
       "title": "Fixture Count",

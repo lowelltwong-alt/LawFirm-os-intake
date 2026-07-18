@@ -1,19 +1,21 @@
 {
   "schema_version": "0.1",
-  "replay_confidence_status_report_id": "lereplayconfidence_58adee52bc85cd45",
+  "replay_confidence_status_report_id": "lereplayconfidence_7c6cfd07d67bd7d4",
   "status": "labor_employment_budget_outcome_replay_confidence_pending_inputs",
-  "source_readiness_report_ref": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-readiness\\labor_employment_budget_outcome_replay_readiness_report.json",
-  "source_readiness_report_id": "lebudgetoutcomereplay_091f67616ecaade8",
+  "source_readiness_report_ref": "apps\\legal-intake-budget\\src\\fixtures\\demo-labor-employment-budget-outcome-replay-readiness-report.json",
+  "source_readiness_report_id": "lebudgetoutcomereplay_d8a822255425b0ad",
   "source_readiness_report_status": "labor_employment_budget_outcome_replay_ready_for_review",
-  "source_execution_report_ref": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\labor_employment_budget_outcome_replay_execution_report.json",
-  "source_execution_report_id": "lebudgetoutcomeexecution_051ea2ff1221a0b8",
+  "source_execution_report_ref": "apps\\legal-intake-budget\\src\\fixtures\\demo-labor-employment-budget-outcome-replay-execution-report.json",
+  "source_execution_report_id": "lebudgetoutcomeexecution_c1b109b49f8191d8",
   "source_execution_report_status": "labor_employment_budget_outcome_replay_execution_ready_for_review",
-  "source_builder_binding_report_ref": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-builder-binding\\labor_employment_budget_outcome_replay_builder_binding_report.json",
-  "source_builder_binding_report_id": "lebudgetreplaybinding_676edc2a32d3c266",
+  "source_builder_binding_report_ref": "apps\\legal-intake-budget\\src\\fixtures\\demo-labor-employment-budget-outcome-replay-builder-binding-report.json",
+  "source_builder_binding_report_id": "lebudgetreplaybinding_499100c9fee9e1fe",
   "source_builder_binding_report_status": "labor_employment_budget_replay_builder_binding_ready_for_review",
-  "source_input_pack_report_ref": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-input-pack\\labor_employment_budget_outcome_replay_input_pack_report.json",
-  "source_input_pack_report_id": "lebudgetreplayinputpack_a9f4fb2d1938cc13",
+  "source_input_pack_report_ref": "apps\\legal-intake-budget\\src\\fixtures\\demo-labor-employment-budget-outcome-replay-input-pack-report.json",
+  "source_input_pack_report_id": "lebudgetreplayinputpack_f083c95c74aacf8d",
   "source_input_pack_report_status": "labor_employment_budget_replay_input_pack_partially_ready_for_review",
+  "source_input_pack_report_sha256": "sha256:7890942512025ea957209bc28ab3f8b1ed3d8578b5dcc0b97b422a1d26e6660c",
+  "source_input_pack_manifest_sha256": "sha256:f9333de12abc7ea4213123d1ec77c7fa00e2d932faf6d1b6068ca71c376386f3",
   "fixture_count": 8,
   "stage_count": 4,
   "ready_stage_count": 2,
@@ -21,16 +23,16 @@
   "blocked_stage_count": 0,
   "readiness_failed_case_count": 0,
   "execution_failed_case_count": 0,
-  "builder_replay_input_gap_count": 51,
-  "builder_missing_case_prerequisite_count": 25,
-  "input_pack_missing_input_count": 72,
+  "builder_replay_input_gap_count": 21,
+  "builder_missing_case_prerequisite_count": 6,
+  "input_pack_missing_input_count": 44,
   "input_pack_invalid_input_count": 0,
   "stages": [
     {
       "stage_id": "readiness",
       "label": "Replay Readiness",
-      "source_report_ref": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-readiness\\labor_employment_budget_outcome_replay_readiness_report.json",
-      "source_report_id": "lebudgetoutcomereplay_091f67616ecaade8",
+      "source_report_ref": "apps\\legal-intake-budget\\src\\fixtures\\demo-labor-employment-budget-outcome-replay-readiness-report.json",
+      "source_report_id": "lebudgetoutcomereplay_d8a822255425b0ad",
       "source_report_status": "labor_employment_budget_outcome_replay_ready_for_review",
       "status": "ready",
       "counts": {
@@ -42,7 +44,7 @@
       "blocker_count": 0,
       "blockers": [],
       "evidence_refs": [
-        "lebudgetoutcomereplay_091f67616ecaade8"
+        "lebudgetoutcomereplay_d8a822255425b0ad"
       ],
       "candidate_only": true,
       "non_authoritative": true,
@@ -59,21 +61,21 @@
     {
       "stage_id": "execution",
       "label": "Replay Execution Slots",
-      "source_report_ref": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-execution\\labor_employment_budget_outcome_replay_execution_report.json",
-      "source_report_id": "lebudgetoutcomeexecution_051ea2ff1221a0b8",
+      "source_report_ref": "apps\\legal-intake-budget\\src\\fixtures\\demo-labor-employment-budget-outcome-replay-execution-report.json",
+      "source_report_id": "lebudgetoutcomeexecution_c1b109b49f8191d8",
       "source_report_status": "labor_employment_budget_outcome_replay_execution_ready_for_review",
       "status": "ready",
       "counts": {
         "fixture_count": 8,
         "failed_case_count": 0,
-        "expected_artifact_slot_count": 40,
-        "materialized_artifact_slot_count": 40,
+        "expected_artifact_slot_count": 36,
+        "materialized_artifact_slot_count": 36,
         "runtime_artifact_count": 0
       },
       "blocker_count": 0,
       "blockers": [],
       "evidence_refs": [
-        "lebudgetoutcomeexecution_051ea2ff1221a0b8"
+        "lebudgetoutcomeexecution_c1b109b49f8191d8"
       ],
       "candidate_only": true,
       "non_authoritative": true,
@@ -90,25 +92,25 @@
     {
       "stage_id": "builder_binding",
       "label": "Builder Binding",
-      "source_report_ref": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-builder-binding\\labor_employment_budget_outcome_replay_builder_binding_report.json",
-      "source_report_id": "lebudgetreplaybinding_676edc2a32d3c266",
+      "source_report_ref": "apps\\legal-intake-budget\\src\\fixtures\\demo-labor-employment-budget-outcome-replay-builder-binding-report.json",
+      "source_report_id": "lebudgetreplaybinding_499100c9fee9e1fe",
       "source_report_status": "labor_employment_budget_replay_builder_binding_ready_for_review",
       "status": "pending_inputs",
       "counts": {
-        "slot_count": 40,
-        "bound_slot_count": 40,
+        "slot_count": 36,
+        "bound_slot_count": 36,
         "unknown_artifact_count": 0,
         "blocked_slot_count": 0,
-        "replay_input_gap_count": 51,
-        "missing_case_prerequisite_count": 25
+        "replay_input_gap_count": 21,
+        "missing_case_prerequisite_count": 6
       },
       "blocker_count": 2,
       "blockers": [
-        "replay input gaps=51",
-        "missing case prerequisites=25"
+        "replay input gaps=21",
+        "missing case prerequisites=6"
       ],
       "evidence_refs": [
-        "lebudgetreplaybinding_676edc2a32d3c266"
+        "lebudgetreplaybinding_499100c9fee9e1fe"
       ],
       "candidate_only": true,
       "non_authoritative": true,
@@ -125,8 +127,8 @@
     {
       "stage_id": "input_pack",
       "label": "Replay Input Pack",
-      "source_report_ref": "C:\\tmp\\lawfirm-os-intake-epli-actuals\\.lawfirm-os-intake\\epli-actuals-qa-review\\quality\\le-budget-outcome-replay-input-pack\\labor_employment_budget_outcome_replay_input_pack_report.json",
-      "source_report_id": "lebudgetreplayinputpack_a9f4fb2d1938cc13",
+      "source_report_ref": "apps\\legal-intake-budget\\src\\fixtures\\demo-labor-employment-budget-outcome-replay-input-pack-report.json",
+      "source_report_id": "lebudgetreplayinputpack_f083c95c74aacf8d",
       "source_report_status": "labor_employment_budget_replay_input_pack_partially_ready_for_review",
       "status": "pending_inputs",
       "counts": {
@@ -134,18 +136,18 @@
         "ready_case_count": 1,
         "partial_case_count": 7,
         "blocked_case_count": 0,
-        "missing_input_count": 72,
+        "missing_input_count": 44,
         "invalid_input_count": 0,
         "one_of_signal_missing_count": 7
       },
       "blocker_count": 3,
       "blockers": [
-        "missing replay inputs=72",
+        "missing replay inputs=44",
         "missing one-of reviewed learning signals=7",
         "partial replay input cases=7"
       ],
       "evidence_refs": [
-        "lebudgetreplayinputpack_a9f4fb2d1938cc13"
+        "lebudgetreplayinputpack_f083c95c74aacf8d"
       ],
       "candidate_only": true,
       "non_authoritative": true,
@@ -161,9 +163,9 @@
     }
   ],
   "top_blockers": [
-    "replay input gaps=51",
-    "missing case prerequisites=25",
-    "missing replay inputs=72",
+    "replay input gaps=21",
+    "missing case prerequisites=6",
+    "missing replay inputs=44",
     "missing one-of reviewed learning signals=7",
     "partial replay input cases=7"
   ],
@@ -258,5 +260,5 @@
   "sqlite_write_performed": false,
   "external_writes_performed": false,
   "silent_learning_performed": false,
-  "generated_at": "2026-07-13T00:00:00Z"
+  "generated_at": "2026-07-18T16:00:00Z"
 }

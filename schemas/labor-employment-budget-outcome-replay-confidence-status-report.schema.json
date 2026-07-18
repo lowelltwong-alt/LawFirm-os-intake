@@ -213,6 +213,14 @@
       "title": "Source Input Pack Report Status",
       "type": "string"
     },
+    "source_input_pack_report_sha256": {
+      "title": "Source Input Pack Report Sha256",
+      "type": "string"
+    },
+    "source_input_pack_manifest_sha256": {
+      "title": "Source Input Pack Manifest Sha256",
+      "type": "string"
+    },
     "fixture_count": {
       "minimum": 0,
       "title": "Fixture Count",
@@ -443,6 +451,8 @@
     "source_input_pack_report_ref",
     "source_input_pack_report_id",
     "source_input_pack_report_status",
+    "source_input_pack_report_sha256",
+    "source_input_pack_manifest_sha256",
     "fixture_count",
     "stage_count",
     "ready_stage_count",

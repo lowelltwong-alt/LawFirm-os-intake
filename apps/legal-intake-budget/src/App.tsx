@@ -13,6 +13,7 @@ import demoLaborEmploymentBlockedDriverReview from "./fixtures/demo-labor-employ
 import demoLaborEmploymentBudgetLearningFixtures from "./fixtures/demo-labor-employment-budget-learning-fixtures-report.json";
 import demoLaborEmploymentBudgetOutcomeReplayBuilderBinding from "./fixtures/demo-labor-employment-budget-outcome-replay-builder-binding-report.json";
 import demoLaborEmploymentBudgetOutcomeReplayConfidenceStatus from "./fixtures/demo-labor-employment-budget-outcome-replay-confidence-status-report.json";
+import demoLaborEmploymentBudgetOutcomeReplayInputPack from "./fixtures/demo-labor-employment-budget-outcome-replay-input-pack-report.json";
 import demoLaborEmploymentBudgetOutcomeReplayExecution from "./fixtures/demo-labor-employment-budget-outcome-replay-execution-report.json";
 import demoLaborEmploymentBudgetOutcomeReplayReadiness from "./fixtures/demo-labor-employment-budget-outcome-replay-readiness-report.json";
 import demoLaborEmploymentBudgetOutputExpectations from "./fixtures/demo-labor-employment-budget-output-expectations-report.json";
@@ -141,6 +142,86 @@ import type {
 } from "./types";
 import "./styles.css";
 
+type LaborEmploymentBudgetOutcomeReplayInputPackReport =
+  typeof demoLaborEmploymentBudgetOutcomeReplayInputPack;
+
+function assertReplayInputPackReport(
+  report: LaborEmploymentBudgetOutcomeReplayInputPackReport,
+): string[] {
+  const failures: string[] = [];
+  const readyCases = report.cases.filter((testCase) => testCase.status === "ready");
+  const partialCases = report.cases.filter((testCase) => testCase.status === "partially_ready");
+  const blockedCases = report.cases.filter((testCase) => testCase.status === "blocked");
+  const items = report.cases.flatMap((testCase) => testCase.items);
+  const readyItems = items.filter((item) => item.input_status === "ready");
+  const missingItems = items.filter((item) => item.input_status === "missing");
+  const invalidItems = items.filter((item) => item.input_status === "invalid");
+  const anchoredItems = items.filter((item) => item.confirmation_scope === "synthetic_fixture_only");
+
+  if (
+    report.case_count !== report.cases.length ||
+    report.ready_case_count !== readyCases.length ||
+    report.partial_case_count !== partialCases.length ||
+    report.blocked_case_count !== blockedCases.length
+  ) {
+    failures.push("le_replay_input_pack_case_count_mismatch");
+  }
+  if (
+    report.required_input_count !== items.length ||
+    report.ready_input_count !== readyItems.length ||
+    report.missing_input_count !== missingItems.length ||
+    report.invalid_input_count !== invalidItems.length
+  ) {
+    failures.push("le_replay_input_pack_item_count_mismatch");
+  }
+  if (
+    report.confirmation_scope !== "synthetic_fixture_only" ||
+    report.confirmation_offset_encoding !== "unicode_codepoint_v1" ||
+    report.runtime_human_gate_completed
+  ) {
+    failures.push("le_replay_input_pack_confirmation_boundary");
+  }
+  if (
+    !report.source_input_pack_manifest_ref ||
+    !report.source_input_pack_manifest_sha256?.startsWith("sha256:") ||
+    !report.source_executable_fixture_manifest_ref ||
+    !report.source_executable_fixture_manifest_id ||
+    !report.source_executable_fixture_manifest_sha256.startsWith("sha256:")
+  ) {
+    failures.push("le_replay_input_pack_manifest_provenance");
+  }
+  if (
+    anchoredItems.length === 0 ||
+    anchoredItems.some(
+      (item) =>
+        item.input_status !== "ready" ||
+        !item.confirmation_ref ||
+        !item.source_bundle_ref ||
+        !item.source_bundle_sha256?.startsWith("sha256:") ||
+        item.offset_encoding !== "unicode_codepoint_v1" ||
+        item.runtime_human_gate_completed,
+    )
+  ) {
+    failures.push("le_replay_input_pack_anchor_incomplete");
+  }
+  if (
+    !report.candidate_only ||
+    !report.synthetic_only ||
+    !report.non_authoritative ||
+    !report.local_json_only ||
+    !report.human_review_required ||
+    report.budget_submission_authorized ||
+    report.matter_opening_authorized ||
+    report.lake_write_performed ||
+    report.sqlite_write_performed ||
+    report.external_writes_performed ||
+    report.silent_learning_performed
+  ) {
+    failures.push("le_replay_input_pack_boundary_flags");
+  }
+  return failures;
+}
+
 const reviewDataBundle = demoReviewDataBundle as UIReviewDataBundle;
 const manifest = demoManifest as ReviewManifest;
 const syntheticQAReviewRun = demoSyntheticQAReviewRun as SyntheticQAReviewRunReport;
@@ -181,6 +262,7 @@ const laborEmploymentBudgetOutcomeReplayBuilderBinding =
   demoLaborEmploymentBudgetOutcomeReplayBuilderBinding as LaborEmploymentBudgetOutcomeReplayBuilderBindingReport;
 const laborEmploymentBudgetOutcomeReplayConfidenceStatus =
   demoLaborEmploymentBudgetOutcomeReplayConfidenceStatus as unknown as LaborEmploymentBudgetOutcomeReplayConfidenceStatusReport;
+const laborEmploymentBudgetOutcomeReplayInputPack = demoLaborEmploymentBudgetOutcomeReplayInputPack;
 const budgetLearningLoop = demoBudgetLearningLoop as BudgetLearningLoopReport;
 const crossRepoContractProof = demoCrossRepoContractProof as CrossRepoContractProofReport;
 const pilotReviewStory = demoPilotReviewStory as PilotReviewStoryReport;
@@ -249,6 +331,9 @@ const budgetOutcomeReplayConfidenceStatusFailures =
   assertLaborEmploymentBudgetOutcomeReplayConfidenceStatusReport(
     laborEmploymentBudgetOutcomeReplayConfidenceStatus,
   );
+const budgetOutcomeReplayInputPackFailures = assertReplayInputPackReport(
+  laborEmploymentBudgetOutcomeReplayInputPack,
+);
 const budgetLearningLoopFailures = assertBudgetLearningLoopReport(budgetLearningLoop);
 const crossRepoContractProofFailures = assertCrossRepoContractProofReport(crossRepoContractProof);
 const pilotReviewStoryFailures = assertPilotReviewStoryReport(pilotReviewStory);
@@ -296,6 +381,7 @@ const contractFailures = [
   ...budgetOutcomeReplayExecutionFailures,
   ...budgetOutcomeReplayBuilderBindingFailures,
   ...budgetOutcomeReplayConfidenceStatusFailures,
+  ...budgetOutcomeReplayInputPackFailures,
   ...budgetLearningLoopFailures,
   ...crossRepoContractProofFailures,
   ...pilotReviewStoryFailures,
@@ -3959,6 +4045,138 @@ function LaborEmploymentBudgetOutcomeReplayBuilderBindingPanel({
   );
 }
 
+function LaborEmploymentBudgetOutcomeReplayInputPackPanel({
+  report,
+}: {
+  report: LaborEmploymentBudgetOutcomeReplayInputPackReport;
+}) {
+  const anchoredItems = report.cases.flatMap((testCase) =>
+    testCase.items.filter((item) => item.confirmation_scope === "synthetic_fixture_only"),
+  );
+  const anchoredCases = new Set(anchoredItems.map((item) => item.learning_fixture_id)).size;
+
+  return (
+    <section
+      className="panel budget-outcome-replay-panel"
+      aria-labelledby="le-budget-outcome-replay-input-pack-title"
+    >
+      <div className="panel-heading">
+        <div>
+          <h2 id="le-budget-outcome-replay-input-pack-title">
+            L&amp;E Replay Confirmation &amp; Source Evidence
+          </h2>
+          <code>{report.input_pack_report_id}</code>
+        </div>
+        <span
+          className={
+            report.invalid_input_count > 0
+              ? "state state-blocked"
+              : report.missing_input_count > 0
+                ? "state state-pending"
+                : "state state-passed"
+          }
+        >
+          {report.status}
+        </span>
+      </div>
+
+      <div className="warning-strip">
+        <strong>Synthetic fixture confirmation only.</strong>
+        <span>
+          Source-bound roles and alternatives passed fixture validation; the runtime human gate is
+          still incomplete.
+        </span>
+      </div>
+
+      <div className="matrix-summary" aria-label="L&E replay input-pack evidence summary">
+        <div>
+          <span>Ready Inputs</span>
+          <strong>
+            {report.ready_input_count}/{report.required_input_count}
+          </strong>
+        </div>
+        <div>
+          <span>Anchored Cases</span>
+          <strong>
+            {anchoredCases}/{report.case_count}
+          </strong>
+        </div>
+        <div>
+          <span>Source Anchors</span>
+          <strong>{anchoredItems.length}</strong>
+        </div>
+        <div>
+          <span>Invalid Inputs</span>
+          <strong>{report.invalid_input_count}</strong>
+        </div>
+      </div>
+
+      <div className="outcome-source">
+        <span>Input-pack manifest</span>
+        <code>{report.source_input_pack_manifest_id}</code>
+        <code>{report.source_input_pack_manifest_sha256.slice(0, 28)}...</code>
+        <span>Executable manifest</span>
+        <code>{report.source_executable_fixture_manifest_id}</code>
+        <code>{report.source_executable_fixture_manifest_sha256.slice(0, 28)}...</code>
+      </div>
+
+      <div className="fixture-table" aria-label="L&E replay case confirmation and source evidence">
+        {report.cases.map((testCase) => {
+          const anchor = testCase.items.find(
+            (item) => item.confirmation_scope === "synthetic_fixture_only",
+          );
+          const blockers = testCase.items
+            .filter((item) => item.input_status !== "ready")
+            .map((item) => `${item.loop_type}:${item.required_input_artifact}`);
+          return (
+            <div className="fixture-row" key={testCase.input_pack_case_id}>
+              <div>
+                <strong>{testCase.family.replaceAll("_", " ")}</strong>
+                <span>{testCase.learning_fixture_id}</span>
+                {anchor ? (
+                  <span>
+                    {anchor.confirmation_ref} | {anchor.source_bundle_ref}
+                  </span>
+                ) : (
+                  <span>No case-bound confirmation required for this replay guard.</span>
+                )}
+              </div>
+              <span
+                className={
+                  testCase.status === "ready"
+                    ? "state state-passed"
+                    : testCase.status === "blocked"
+                      ? "state state-blocked"
+                      : "state state-pending"
+                }
+              >
+                {testCase.ready_input_count}/{testCase.required_input_count} ready
+              </span>
+              <TokenList
+                items={
+                  anchor
+                    ? [
+                        anchor.offset_encoding ?? "offset encoding missing",
+                        anchor.source_bundle_sha256 ?? "source hash missing",
+                        ...blockers,
+                      ]
+                    : blockers
+                }
+                limit={4}
+              />
+            </div>
+          );
+        })}
+      </div>
+
+      <p className="boundary">
+        Runtime human confirmation: blocked. Budget submission: blocked. Matter opening: blocked.
+        Lake or SQLite writes: blocked. Missing inputs remain visible and no learning is performed.
+      </p>
+    </section>
+  );
+}
+
 function LaborEmploymentBudgetOutcomeReplayConfidenceStatusPanel({
   report,
 }: {
@@ -4340,6 +4558,9 @@ function App() {
       />
       <LaborEmploymentBudgetOutcomeReplayConfidenceStatusPanel
         report={laborEmploymentBudgetOutcomeReplayConfidenceStatus}
+      />
+      <LaborEmploymentBudgetOutcomeReplayInputPackPanel
+        report={laborEmploymentBudgetOutcomeReplayInputPack}
       />
       <LaborEmploymentFixtureDrilldownPanel
         outputReport={laborEmploymentBudgetOutputExpectations}

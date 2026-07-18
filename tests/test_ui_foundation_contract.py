@@ -44,6 +44,7 @@ def test_legal_intake_budget_ui_required_files_exist(repo_root):
         "src/fixtures/demo-labor-employment-budget-outcome-replay-execution-report.json",
         "src/fixtures/demo-labor-employment-budget-outcome-replay-builder-binding-report.json",
         "src/fixtures/demo-labor-employment-budget-outcome-replay-confidence-status-report.json",
+        "src/fixtures/demo-labor-employment-budget-outcome-replay-input-pack-report.json",
         "src/fixtures/demo-budget-learning-loop-report.json",
         "src/fixtures/demo-cross-repo-contract-proof-report.json",
         "src/fixtures/demo-pilot-review-story-report.json",
@@ -1757,8 +1758,8 @@ def test_legal_intake_budget_demo_labor_employment_budget_outcome_replay_executi
     assert report["fixture_count"] == 8
     assert report["materialized_case_count"] == 8
     assert report["failed_case_count"] == 0
-    assert report["expected_artifact_slot_count"] == 40
-    assert report["materialized_artifact_slot_count"] == 40
+    assert report["expected_artifact_slot_count"] == 36
+    assert report["materialized_artifact_slot_count"] == 36
     assert report["runtime_artifact_count"] == 0
     assert set(report["covered_learning_loop_types"]) == {
         "actuals_variance",
@@ -1801,8 +1802,8 @@ def test_legal_intake_budget_demo_labor_employment_budget_outcome_replay_builder
     assert report["status"] == "labor_employment_budget_replay_builder_binding_ready_for_review"
     assert report["fixture_count"] == 8
     assert report["case_count"] == 8
-    assert report["slot_count"] == 40
-    assert report["bound_slot_count"] == 40
+    assert report["slot_count"] == 36
+    assert report["bound_slot_count"] == 36
     assert report["unknown_artifact_count"] == 0
     assert report["blocked_slot_count"] == 0
     assert report["replay_input_gap_count"] > 0
@@ -1818,6 +1819,55 @@ def test_legal_intake_budget_demo_labor_employment_budget_outcome_replay_builder
     assert report["candidate_only"] is True
     assert report["synthetic_only"] is True
     assert report["local_json_only"] is True
+    assert report["budget_submission_authorized"] is False
+    assert report["matter_opening_authorized"] is False
+    assert report["lake_write_performed"] is False
+    assert report["sqlite_write_performed"] is False
+    assert report["external_writes_performed"] is False
+    assert report["silent_learning_performed"] is False
+
+
+def test_legal_intake_budget_demo_labor_employment_replay_input_pack_is_source_bound(
+    repo_root,
+):
+    report = json.loads(
+        (
+            repo_root
+            / UI_ROOT
+            / "src/fixtures/demo-labor-employment-budget-outcome-replay-input-pack-report.json"
+        ).read_text(encoding="utf-8")
+    )
+    items = [item for case in report["cases"] for item in case["items"]]
+    anchors = [item for item in items if item["confirmation_scope"] == "synthetic_fixture_only"]
+
+    assert report["status"] == (
+        "labor_employment_budget_replay_input_pack_partially_ready_for_review"
+    )
+    assert report["case_count"] == len(report["cases"]) == 8
+    assert report["ready_case_count"] == 1
+    assert report["partial_case_count"] == 7
+    assert report["blocked_case_count"] == 0
+    assert report["required_input_count"] == len(items) == 79
+    assert report["ready_input_count"] == 35
+    assert report["missing_input_count"] == 44
+    assert report["invalid_input_count"] == 0
+    assert len(anchors) == 15
+    assert report["confirmation_scope"] == "synthetic_fixture_only"
+    assert report["confirmation_offset_encoding"] == "unicode_codepoint_v1"
+    assert report["runtime_human_gate_completed"] is False
+    assert report["source_input_pack_manifest_sha256"].startswith("sha256:")
+    assert report["source_executable_fixture_manifest_sha256"].startswith("sha256:")
+    assert all(
+        not ref.replace("\\", "/").startswith(".lawfirm-os-intake/")
+        for item in items
+        for ref in item["evidence_refs"]
+    )
+    assert all(item["input_status"] == "ready" for item in anchors)
+    assert all(item["confirmation_ref"] for item in anchors)
+    assert all(item["source_bundle_ref"] for item in anchors)
+    assert all(item["source_bundle_sha256"].startswith("sha256:") for item in anchors)
+    assert all(item["offset_encoding"] == "unicode_codepoint_v1" for item in anchors)
+    assert all(item["runtime_human_gate_completed"] is False for item in anchors)
     assert report["budget_submission_authorized"] is False
     assert report["matter_opening_authorized"] is False
     assert report["lake_write_performed"] is False
@@ -1909,6 +1959,7 @@ def test_legal_intake_budget_ui_disclaims_mutating_authority(repo_root):
     assert "L&amp;E Budget Outcome Replay Execution" in app
     assert "L&amp;E Budget Replay Builder Binding" in app
     assert "L&amp;E Budget Replay Confidence Status" in app
+    assert "L&amp;E Replay Confirmation &amp; Source Evidence" in app
     assert "L&amp;E Executable Coverage" in app
     assert "L&amp;E Blocked Driver Review" in app
     assert "L&amp;E Budget Output Expectations" in app

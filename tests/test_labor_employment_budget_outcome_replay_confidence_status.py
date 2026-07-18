@@ -1,3 +1,5 @@
+import pytest
+
 from lawfirm_os_intake.labor_employment_budget_learning_fixtures import (
     LABOR_EMPLOYMENT_BUDGET_LEARNING_FIXTURE_REPORT_FILENAME,
     run_labor_employment_budget_learning_fixture_audit,
@@ -22,8 +24,11 @@ from lawfirm_os_intake.labor_employment_budget_outcome_replay_readiness import (
     LABOR_EMPLOYMENT_BUDGET_OUTCOME_REPLAY_READINESS_REPORT_FILENAME,
     run_labor_employment_budget_outcome_replay_readiness_audit,
 )
-from lawfirm_os_intake.models import LaborEmploymentBudgetOutcomeReplayConfidenceStatusReport
-from lawfirm_os_intake.util import load_json, write_json
+from lawfirm_os_intake.models import (
+    LaborEmploymentBudgetOutcomeReplayConfidenceStatusReport,
+    LaborEmploymentBudgetOutcomeReplayInputPackReport,
+)
+from lawfirm_os_intake.util import digest_json, load_json, write_json
 
 
 FIXTURE_ROOT = "apps/legal-intake-budget/src/fixtures"
@@ -85,24 +90,37 @@ def _execution_report(repo_root, tmp_path):
     return run_dir / LABOR_EMPLOYMENT_BUDGET_OUTCOME_REPLAY_EXECUTION_REPORT_FILENAME
 
 
-def _builder_binding_report(repo_root, tmp_path):
-    _, run_dir = run_labor_employment_budget_outcome_replay_builder_binding_audit(
-        execution_report_path=_execution_report(repo_root, tmp_path),
-        out_dir=tmp_path / "le-budget-outcome-replay-builder-binding",
+def _reconciled_reports(repo_root, tmp_path, manifest_path=None):
+    execution_path = _execution_report(repo_root, tmp_path)
+    baseline, baseline_dir = run_labor_employment_budget_outcome_replay_builder_binding_audit(
+        execution_report_path=execution_path,
+        out_dir=tmp_path / "confidence-baseline-builder-binding",
         generated_at="2026-07-05T00:00:00Z",
     )
-    return run_dir / LABOR_EMPLOYMENT_BUDGET_OUTCOME_REPLAY_BUILDER_BINDING_REPORT_FILENAME
-
-
-def _input_pack_report(repo_root, tmp_path, manifest_path=None):
-    _, run_dir = run_labor_employment_budget_outcome_replay_input_pack_audit(
-        builder_binding_report_path=_builder_binding_report(repo_root, tmp_path),
+    _, input_pack_dir = run_labor_employment_budget_outcome_replay_input_pack_audit(
+        builder_binding_report_path=(
+            baseline_dir / LABOR_EMPLOYMENT_BUDGET_OUTCOME_REPLAY_BUILDER_BINDING_REPORT_FILENAME
+        ),
         input_pack_manifest_path=manifest_path or _input_pack_manifest(repo_root),
         repo_root=repo_root,
-        out_dir=tmp_path / "le-budget-outcome-replay-input-pack",
+        out_dir=tmp_path / "confidence-input-pack",
         generated_at="2026-07-05T00:00:00Z",
     )
-    return run_dir / LABOR_EMPLOYMENT_BUDGET_OUTCOME_REPLAY_INPUT_PACK_REPORT_FILENAME
+    input_pack_path = (
+        input_pack_dir / LABOR_EMPLOYMENT_BUDGET_OUTCOME_REPLAY_INPUT_PACK_REPORT_FILENAME
+    )
+    _, binding_dir = run_labor_employment_budget_outcome_replay_builder_binding_audit(
+        execution_report_path=execution_path,
+        input_pack_report_path=input_pack_path,
+        repo_root=repo_root,
+        out_dir=tmp_path / "confidence-reconciled-builder-binding",
+        generated_at="2026-07-05T00:00:00Z",
+    )
+    assert baseline.builder_binding_report_id
+    return (
+        binding_dir / LABOR_EMPLOYMENT_BUDGET_OUTCOME_REPLAY_BUILDER_BINDING_REPORT_FILENAME,
+        input_pack_path,
+    )
 
 
 def test_labor_employment_budget_outcome_replay_confidence_status_is_pending_inputs(
@@ -111,8 +129,7 @@ def test_labor_employment_budget_outcome_replay_confidence_status_is_pending_inp
 ):
     readiness_path = _readiness_report(repo_root, tmp_path)
     execution_path = _execution_report(repo_root, tmp_path)
-    binding_path = _builder_binding_report(repo_root, tmp_path)
-    input_pack_path = _input_pack_report(repo_root, tmp_path)
+    binding_path, input_pack_path = _reconciled_reports(repo_root, tmp_path)
 
     report, run_dir = run_labor_employment_budget_outcome_replay_confidence_status(
         readiness_report_path=readiness_path,
@@ -142,6 +159,14 @@ def test_labor_employment_budget_outcome_replay_confidence_status_is_pending_inp
     assert report.builder_replay_input_gap_count == 51
     assert report.builder_missing_case_prerequisite_count > 0
     assert report.input_pack_missing_input_count > 0
+    assert report.source_input_pack_report_sha256 == digest_json(load_json(input_pack_path))
+    source_input_pack = LaborEmploymentBudgetOutcomeReplayInputPackReport.model_validate(
+        load_json(input_pack_path)
+    )
+    assert (
+        report.source_input_pack_manifest_sha256
+        == source_input_pack.source_input_pack_manifest_sha256
+    )
     assert "calibration" in report.display_banner["blocked_actions"]
     assert "deterministic_replay_confidence_status_aggregator" in (
         report.rust_transition_candidates
@@ -161,6 +186,26 @@ def test_labor_employment_budget_outcome_replay_confidence_status_is_pending_inp
     ).is_file()
 
 
+def test_labor_employment_budget_outcome_replay_confidence_status_rejects_mixed_input_pack(
+    repo_root,
+    tmp_path,
+):
+    binding_path, input_pack_path = _reconciled_reports(repo_root, tmp_path)
+    stale_binding = load_json(binding_path)
+    stale_binding["source_input_pack_report_sha256"] = "sha256:" + ("0" * 64)
+    stale_binding_path = write_json(tmp_path / "stale-binding.json", stale_binding)
+
+    with pytest.raises(ValueError, match="report hash does not match builder binding"):
+        run_labor_employment_budget_outcome_replay_confidence_status(
+            readiness_report_path=_readiness_report(repo_root, tmp_path),
+            execution_report_path=_execution_report(repo_root, tmp_path),
+            builder_binding_report_path=stale_binding_path,
+            input_pack_report_path=input_pack_path,
+            out_dir=tmp_path / "stale-confidence-status",
+            generated_at="2026-07-05T00:00:00Z",
+        )
+
+
 def test_labor_employment_budget_outcome_replay_confidence_status_blocks_invalid_input_pack(
     repo_root,
     tmp_path,
@@ -178,11 +223,12 @@ def test_labor_employment_budget_outcome_replay_confidence_status_blocks_invalid
             )
     manifest_path = write_json(tmp_path / "bad-input-pack-manifest.json", manifest)
 
+    binding_path, input_pack_path = _reconciled_reports(repo_root, tmp_path, manifest_path)
     report, _ = run_labor_employment_budget_outcome_replay_confidence_status(
         readiness_report_path=_readiness_report(repo_root, tmp_path),
         execution_report_path=_execution_report(repo_root, tmp_path),
-        builder_binding_report_path=_builder_binding_report(repo_root, tmp_path),
-        input_pack_report_path=_input_pack_report(repo_root, tmp_path, manifest_path),
+        builder_binding_report_path=binding_path,
+        input_pack_report_path=input_pack_path,
         out_dir=tmp_path / "le-budget-outcome-replay-confidence-status-blocked",
         generated_at="2026-07-05T00:00:00Z",
     )
