@@ -73,6 +73,16 @@ placeholders, not as portable input-pack source evidence.
   audit, then the Windows sandbox denied its temporary-directory write; GitHub Linux
   CI is required for that environment-sensitive check.
 - TypeScript build and JavaScript syntax checks: passed.
+- The first exact-head Linux CI run completed 1,109 tests and identified two stale
+  generated-fixture expectations rather than runtime defects: the reconciled replay
+  gap count remained asserted as 51 instead of 21, and the Rust fixture manifest did
+  not yet pin the refreshed UI bundle sources. The expectation was corrected and the
+  UI bundle plus Rust manifest were regenerated with the deterministic fixture-refresh
+  command; the refreshed manifest verifies 38 source files.
+- The focused local rerun passed all 50 tests that do not request `tmp_path`. Seven
+  `tmp_path` tests could not enter setup because the Windows sandbox denied traversal
+  of both global and explicitly created base-temp directories after pytest assumed
+  ownership. Exact-head Linux CI remains the merge gate for those seven tests.
 - The browser trust assertion permits only the existing
   `validation_suite_evidence_passed_with_dirty_worktree` blocker and fails on any
   additional contract failure; a clean validation receipt remains a later gate.

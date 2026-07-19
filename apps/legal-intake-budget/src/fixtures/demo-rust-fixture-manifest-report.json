@@ -1,7 +1,7 @@
 {
   "budget_submission_authorized": false,
   "candidate_only": true,
-  "checked_json_file_count": 37,
+  "checked_json_file_count": 38,
   "external_writes_performed": false,
   "failure_count": 0,
   "failures": [],
@@ -118,71 +118,79 @@
       "top_level_type": "object"
     },
     {
-      "byte_count": 171390,
+      "byte_count": 148978,
       "candidate_only": true,
       "external_writes_performed": false,
       "id_fields": [
         {
           "field": "builder_binding_report_id",
-          "value": "lebudgetreplaybinding_676edc2a32d3c266"
+          "value": "lebudgetreplaybinding_499100c9fee9e1fe"
+        },
+        {
+          "field": "source_executable_fixture_manifest_id",
+          "value": "le-executable-fixtures-manifest.v0_1"
         },
         {
           "field": "source_execution_report_id",
-          "value": "lebudgetoutcomeexecution_051ea2ff1221a0b8"
+          "value": "lebudgetoutcomeexecution_c1b109b49f8191d8"
+        },
+        {
+          "field": "source_input_pack_report_id",
+          "value": "lebudgetreplayinputpack_f083c95c74aacf8d"
         }
       ],
       "path": "demo-labor-employment-budget-outcome-replay-builder-binding-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:6d14f0012602e71b039ddb6298ca155906f15bd0e503dad534917f335d8d08a3",
+      "sha256": "sha256:c1d9ba2375c9b9e34afd580cd5d26c887f33e16e3c030923450688254bb3a2c9",
       "status": "labor_employment_budget_replay_builder_binding_ready_for_review",
       "synthetic_only": true,
       "top_level_type": "object"
     },
     {
-      "byte_count": 12177,
+      "byte_count": 11721,
       "candidate_only": true,
       "external_writes_performed": false,
       "id_fields": [
         {
           "field": "replay_confidence_status_report_id",
-          "value": "lereplayconfidence_58adee52bc85cd45"
+          "value": "lereplayconfidence_7c6cfd07d67bd7d4"
         },
         {
           "field": "source_builder_binding_report_id",
-          "value": "lebudgetreplaybinding_676edc2a32d3c266"
+          "value": "lebudgetreplaybinding_499100c9fee9e1fe"
         },
         {
           "field": "source_execution_report_id",
-          "value": "lebudgetoutcomeexecution_051ea2ff1221a0b8"
+          "value": "lebudgetoutcomeexecution_c1b109b49f8191d8"
         },
         {
           "field": "source_input_pack_report_id",
-          "value": "lebudgetreplayinputpack_a9f4fb2d1938cc13"
+          "value": "lebudgetreplayinputpack_f083c95c74aacf8d"
         },
         {
           "field": "source_readiness_report_id",
-          "value": "lebudgetoutcomereplay_091f67616ecaade8"
+          "value": "lebudgetoutcomereplay_d8a822255425b0ad"
         }
       ],
       "path": "demo-labor-employment-budget-outcome-replay-confidence-status-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:8230e35372327f6ca50b574f7493540c1826612dcc52a38c99dd249d00ce456c",
+      "sha256": "sha256:9ae4ba7b5c34771adf49a3f98e8da49c2d32807b377a8ebd32132cab4dcbc41e",
       "status": "labor_employment_budget_outcome_replay_confidence_pending_inputs",
       "synthetic_only": true,
       "top_level_type": "object"
     },
     {
-      "byte_count": 87177,
+      "byte_count": 77922,
       "candidate_only": true,
       "external_writes_performed": false,
       "id_fields": [
         {
           "field": "outcome_replay_execution_report_id",
-          "value": "lebudgetoutcomeexecution_051ea2ff1221a0b8"
+          "value": "lebudgetoutcomeexecution_c1b109b49f8191d8"
         },
         {
           "field": "source_readiness_report_id",
-          "value": "lebudgetoutcomereplay_091f67616ecaade8"
+          "value": "lebudgetoutcomereplay_d8a822255425b0ad"
         },
         {
           "field": "source_seed_manifest_id",
@@ -191,23 +199,52 @@
       ],
       "path": "demo-labor-employment-budget-outcome-replay-execution-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:7d52707493e0673d3fd57362168c1bc5f27c5938dd23886ea15328ec32805e1e",
+      "sha256": "sha256:5b5cd090d7e784ccc20caadb61290373c0d273476077ac99aeb99ef8f10be552",
       "status": "labor_employment_budget_outcome_replay_execution_ready_for_review",
       "synthetic_only": true,
       "top_level_type": "object"
     },
     {
-      "byte_count": 36548,
+      "byte_count": 222507,
+      "candidate_only": true,
+      "external_writes_performed": false,
+      "id_fields": [
+        {
+          "field": "input_pack_report_id",
+          "value": "lebudgetreplayinputpack_f083c95c74aacf8d"
+        },
+        {
+          "field": "source_builder_binding_report_id",
+          "value": "lebudgetreplaybinding_499100c9fee9e1fe"
+        },
+        {
+          "field": "source_executable_fixture_manifest_id",
+          "value": "le-executable-fixtures-manifest.v0_1"
+        },
+        {
+          "field": "source_input_pack_manifest_id",
+          "value": "labor-employment-budget-outcome-replay-input-pack.v0_1"
+        }
+      ],
+      "path": "demo-labor-employment-budget-outcome-replay-input-pack-report.json",
+      "schema_version": "0.1",
+      "sha256": "sha256:2f4d43717b0adec7c980378c68d050453f3d09d8734273a88b60ef46f6be988f",
+      "status": "labor_employment_budget_replay_input_pack_partially_ready_for_review",
+      "synthetic_only": true,
+      "top_level_type": "object"
+    },
+    {
+      "byte_count": 36213,
       "candidate_only": true,
       "external_writes_performed": false,
       "id_fields": [
         {
           "field": "outcome_replay_readiness_report_id",
-          "value": "lebudgetoutcomereplay_091f67616ecaade8"
+          "value": "lebudgetoutcomereplay_d8a822255425b0ad"
         },
         {
           "field": "source_learning_fixture_report_id",
-          "value": "lebudgetlearningfixtures_24aed6f714192026"
+          "value": "lebudgetlearningfixtures_0406ef59583ee3eb"
         },
         {
           "field": "source_seed_manifest_id",
@@ -216,7 +253,7 @@
       ],
       "path": "demo-labor-employment-budget-outcome-replay-readiness-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:ca5d9044a446b3655fef267ae515816da339410d3c7ff017d57bb83c35fa6685",
+      "sha256": "sha256:ccd5ca4f384e80b30bfab58efc5a87f2de5a02475d5e8547287e8b27d63fff86",
       "status": "labor_employment_budget_outcome_replay_ready_for_review",
       "synthetic_only": true,
       "top_level_type": "object"
@@ -896,11 +933,11 @@
   ],
   "lake_write_performed": false,
   "local_json_only": true,
-  "manifest_sha256": "sha256:3ba99169d31b1ed350664221c34cd710ce0fc1ca5079bc6592285d82c6ed6c2c",
+  "manifest_sha256": "sha256:b223133ec3f43388f4b80dd3312a1a50a0335d9a4497c3dade99d4012d599d02",
   "matter_opening_authorized": false,
   "non_authoritative": true,
   "parse_error_count": 0,
-  "parsed_json_file_count": 37,
+  "parsed_json_file_count": 38,
   "root": "apps\\legal-intake-budget\\src\\fixtures",
   "scanner": "fixture-manifest-scanner",
   "schema_version": "0.1",
@@ -919,5 +956,5 @@
   "sqlite_write_performed": false,
   "status": "passed",
   "synthetic_only": true,
-  "total_byte_count": 1072065
+  "total_byte_count": 1262114
 }
