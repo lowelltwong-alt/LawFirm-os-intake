@@ -579,6 +579,18 @@
       "default": null,
       "title": "Source Input Pack Manifest Id"
     },
+    "source_input_pack_manifest_sha256": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Input Pack Manifest Sha256"
+    },
     "source_executable_fixture_manifest_ref": {
       "anyOf": [
         {

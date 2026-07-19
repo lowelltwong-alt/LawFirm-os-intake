@@ -256,11 +256,13 @@ def run_labor_employment_budget_outcome_replay_input_pack_audit(
         load_json(binding_ref)
     )
     manifest_ref = Path(input_pack_manifest_path) if input_pack_manifest_path else None
+    manifest_payload = load_json(manifest_ref) if manifest_ref else None
     manifest = (
-        LaborEmploymentBudgetOutcomeReplayInputPackManifest.model_validate(load_json(manifest_ref))
+        LaborEmploymentBudgetOutcomeReplayInputPackManifest.model_validate(manifest_payload)
         if manifest_ref
         else None
     )
+    manifest_sha256 = digest_json(manifest_payload) if manifest_payload is not None else None
     entries = manifest.entries if manifest else []
     (
         expected_source_bundle_refs,
@@ -297,6 +299,7 @@ def run_labor_employment_budget_outcome_replay_input_pack_audit(
     report_core = {
         "binding_report_id": binding_report.builder_binding_report_id,
         "manifest_id": manifest.manifest_id if manifest else None,
+        "manifest_sha256": manifest_sha256,
         "case_statuses": [(case.learning_fixture_id, case.status) for case in cases],
         "missing": missing_count,
         "invalid": invalid_count,
@@ -317,6 +320,7 @@ def run_labor_employment_budget_outcome_replay_input_pack_audit(
         source_builder_binding_report_status=binding_report.status,
         source_input_pack_manifest_ref=str(manifest_ref) if manifest_ref else None,
         source_input_pack_manifest_id=manifest.manifest_id if manifest else None,
+        source_input_pack_manifest_sha256=manifest_sha256,
         source_executable_fixture_manifest_ref=executable_manifest_ref,
         source_executable_fixture_manifest_id=executable_manifest_id,
         source_executable_fixture_manifest_sha256=executable_manifest_sha256,
@@ -378,6 +382,7 @@ def render_labor_employment_budget_outcome_replay_input_pack_report(
         f"**Status:** {report.status}",
         f"**Builder binding report:** `{report.source_builder_binding_report_ref}`",
         f"**Input-pack manifest:** `{report.source_input_pack_manifest_ref or 'not supplied'}`",
+        f"**Input-pack manifest hash:** `{report.source_input_pack_manifest_sha256 or 'not supplied'}`",
         "",
         "## Summary",
         "",
@@ -814,12 +819,20 @@ def _item(
         source_bundle_sha256=source_bundle_sha256,
         offset_encoding="unicode_codepoint_v1" if source_bundle_sha256 else None,
         candidate_exception_lake_labels=labels,
-        evidence_refs=[
-            binding.binding_id,
-            binding.artifact_slot_ref,
-            *binding.evidence_refs,
-            *(anchor_refs or []),
-        ],
+        evidence_refs=list(
+            dict.fromkeys(
+                [
+                    binding.binding_id,
+                    *[
+                        ref
+                        for ref in binding.evidence_refs
+                        if not ref.replace("\\", "/").startswith(".lawfirm-os-intake/")
+                    ],
+                    *([input_ref] if input_ref else []),
+                    *(anchor_refs or []),
+                ]
+            )
+        ),
     )
 
 

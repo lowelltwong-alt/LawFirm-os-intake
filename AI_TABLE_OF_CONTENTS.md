@@ -20,6 +20,7 @@
 | Understand chunking/graph | `docs/chunking-and-evidence-graph.md` |
 | Understand budgets | `docs/legal-budget-design.md`, `templates/legal-budget-review-form.md`, `docs/carrier-rejection-learning-loop-roadmap.md` |
 | Review L&E replay confirmation anchors | `docs/decisions/TRACE-2026-07-18-le-replay-confirmation-anchors.md`, `examples/synthetic/labor-employment/labor-employment-budget-outcome-replay-input-pack.json`, `src/lawfirm_os_intake/labor_employment_budget_outcome_replay_input_pack.py` |
+| Review replay-aware L&E workbench evidence | `docs/decisions/TRACE-2026-07-18-le-replay-aware-workbench.md`, `apps/legal-intake-budget/src/fixtures/demo-labor-employment-budget-outcome-replay-input-pack-report.json`, `apps/legal-intake-budget/src/App.tsx` |
 | Edit synthetic budget inputs | `docs/synthetic-budget-input-catalog.md`, `config/synthetic-carrier-rate-card.yaml`, `config/budget-driver-policy.yaml`, `config/synthetic-carrier-guideline.yaml`, `config/labor-employment-budget-fact-needs.yaml`, `config/budget_policy.yaml`, `fixtures/synthetic/*-sandbox/` |
 | Understand owner handoffs | `DATA_FLOW_MAP.md`, `ENDPOINTS_AND_COMMANDS.md`, `promotion/cross_repo_promotion_package.json` |
 | Understand human gates | `docs/human-review.md`, `config/human_gates.yaml` |

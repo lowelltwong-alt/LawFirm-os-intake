@@ -75,10 +75,14 @@ def run_labor_employment_budget_outcome_replay_builder_binding_audit(
         load_json(execution_ref)
     )
     input_pack_ref = Path(input_pack_report_path) if input_pack_report_path else None
+    input_pack_payload = load_json(input_pack_ref) if input_pack_ref else None
     input_pack = (
-        LaborEmploymentBudgetOutcomeReplayInputPackReport.model_validate(load_json(input_pack_ref))
+        LaborEmploymentBudgetOutcomeReplayInputPackReport.model_validate(input_pack_payload)
         if input_pack_ref
         else None
+    )
+    input_pack_report_sha256 = (
+        digest_json(input_pack_payload) if input_pack_payload is not None else None
     )
     contracts = _builder_contracts()
     baseline_cases = [
@@ -137,6 +141,10 @@ def run_labor_employment_budget_outcome_replay_builder_binding_audit(
         source_input_pack_report_ref=str(input_pack_ref) if input_pack_ref else None,
         source_input_pack_report_id=input_pack.input_pack_report_id if input_pack else None,
         source_input_pack_report_status=input_pack.status if input_pack else None,
+        source_input_pack_report_sha256=input_pack_report_sha256,
+        source_input_pack_manifest_sha256=(
+            input_pack.source_input_pack_manifest_sha256 if input_pack else None
+        ),
         fixture_count=len(cases),
         case_count=len(cases),
         passed_case_count=len([case for case in cases if case.status == "passed"]),
@@ -704,6 +712,11 @@ def _fresh_ready_inputs_by_binding(
     validated_manifest = LaborEmploymentBudgetOutcomeReplayInputPackManifest.model_validate(
         manifest
     )
+    current_manifest_sha256 = digest_json(manifest)
+    if input_pack.source_input_pack_manifest_sha256 != current_manifest_sha256:
+        raise ValueError("input-pack manifest hash changed since the input-pack audit")
+    if input_pack.source_input_pack_manifest_id != validated_manifest.manifest_id:
+        raise ValueError("input-pack manifest identity changed since the input-pack audit")
     from .labor_employment_budget_outcome_replay_input_pack import (
         _load_executable_fixture_source_refs,
     )

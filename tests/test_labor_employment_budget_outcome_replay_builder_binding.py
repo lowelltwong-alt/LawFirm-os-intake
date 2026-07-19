@@ -195,6 +195,14 @@ def test_builder_binding_reconciles_only_schema_validated_input_pack_entries(
     assert input_pack.source_builder_binding_report_id == baseline.builder_binding_report_id
     assert reconciled.builder_binding_report_id == baseline.builder_binding_report_id
     assert reconciled.source_input_pack_report_id == input_pack.input_pack_report_id
+    assert reconciled.source_input_pack_report_sha256 == digest_json(
+        load_json(
+            input_pack_dir / LABOR_EMPLOYMENT_BUDGET_OUTCOME_REPLAY_INPUT_PACK_REPORT_FILENAME
+        )
+    )
+    assert (
+        reconciled.source_input_pack_manifest_sha256 == input_pack.source_input_pack_manifest_sha256
+    )
     assert reconciled.replay_input_gap_count < baseline.replay_input_gap_count
     assert reconciled.missing_case_prerequisite_count <= baseline.missing_case_prerequisite_count
     assert reconciled.replay_input_gap_count > 0
@@ -229,6 +237,42 @@ def test_builder_binding_rejects_input_pack_from_another_binding_run(repo_root, 
             execution_report_path=_execution_report(repo_root, tmp_path),
             input_pack_report_path=stale_path,
             out_dir=tmp_path / "stale-reconciled-builder-binding",
+            repo_root=repo_root,
+            generated_at="2026-07-15T00:00:00Z",
+        )
+
+
+def test_builder_binding_reconciliation_rejects_stale_input_pack_manifest_hash(
+    repo_root,
+    tmp_path,
+):
+    baseline, baseline_dir = run_labor_employment_budget_outcome_replay_builder_binding_audit(
+        execution_report_path=_execution_report(repo_root, tmp_path),
+        out_dir=tmp_path / "baseline-builder-binding",
+        repo_root=repo_root,
+        generated_at="2026-07-15T00:00:00Z",
+    )
+    _, input_pack_dir = run_labor_employment_budget_outcome_replay_input_pack_audit(
+        builder_binding_report_path=(
+            baseline_dir / LABOR_EMPLOYMENT_BUDGET_OUTCOME_REPLAY_BUILDER_BINDING_REPORT_FILENAME
+        ),
+        input_pack_manifest_path=_input_pack_manifest(repo_root),
+        repo_root=repo_root,
+        out_dir=tmp_path / "input-pack",
+        generated_at="2026-07-15T00:00:00Z",
+    )
+    input_pack_path = (
+        input_pack_dir / LABOR_EMPLOYMENT_BUDGET_OUTCOME_REPLAY_INPUT_PACK_REPORT_FILENAME
+    )
+    stale = load_json(input_pack_path)
+    stale["source_input_pack_manifest_sha256"] = "sha256:" + ("0" * 64)
+    stale_path = write_json(tmp_path / "stale-manifest-hash-input-pack.json", stale)
+
+    with pytest.raises(ValueError, match="manifest hash changed since"):
+        run_labor_employment_budget_outcome_replay_builder_binding_audit(
+            execution_report_path=_execution_report(repo_root, tmp_path),
+            input_pack_report_path=stale_path,
+            out_dir=tmp_path / "stale-manifest-reconciled-builder-binding",
             repo_root=repo_root,
             generated_at="2026-07-15T00:00:00Z",
         )
@@ -273,6 +317,7 @@ def test_builder_binding_reconciliation_rejects_alternate_executable_manifest(
     )
     crafted = load_json(input_pack_path)
     crafted["source_input_pack_manifest_ref"] = str(alternate_input_manifest_path)
+    crafted["source_input_pack_manifest_sha256"] = digest_json(alternate_input_manifest)
     crafted["source_executable_fixture_manifest_ref"] = str(alternate_executable_path)
     crafted["source_executable_fixture_manifest_id"] = alternate_executable_manifest["manifest_id"]
     crafted["source_executable_fixture_manifest_sha256"] = digest_json(

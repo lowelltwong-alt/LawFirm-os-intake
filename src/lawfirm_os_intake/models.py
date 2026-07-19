@@ -5669,6 +5669,8 @@ class LaborEmploymentBudgetOutcomeReplayBuilderBindingReport(StrictModel):
     source_input_pack_report_ref: str | None = None
     source_input_pack_report_id: str | None = None
     source_input_pack_report_status: str | None = None
+    source_input_pack_report_sha256: str | None = None
+    source_input_pack_manifest_sha256: str | None = None
     fixture_count: int = Field(ge=0)
     case_count: int = Field(ge=0)
     passed_case_count: int = Field(ge=0)
@@ -5728,9 +5730,13 @@ class LaborEmploymentBudgetOutcomeReplayBuilderBindingReport(StrictModel):
             self.source_input_pack_report_ref,
             self.source_input_pack_report_id,
             self.source_input_pack_report_status,
+            self.source_input_pack_report_sha256,
+            self.source_input_pack_manifest_sha256,
         ]
         if any(input_pack_fields) and not all(input_pack_fields):
             raise ValueError("reconciled builder binding requires complete input-pack provenance")
+        if any(value and not value.startswith("sha256:") for value in input_pack_fields[3:]):
+            raise ValueError("builder binding input-pack hashes must be sha256")
         if self.fixture_count != self.case_count or self.case_count != len(self.cases):
             raise ValueError("builder binding report case count mismatch")
         if self.passed_case_count != len([case for case in self.cases if case.status == "passed"]):
@@ -6029,6 +6035,7 @@ class LaborEmploymentBudgetOutcomeReplayInputPackReport(StrictModel):
     source_builder_binding_report_status: str
     source_input_pack_manifest_ref: str | None = None
     source_input_pack_manifest_id: str | None = None
+    source_input_pack_manifest_sha256: str | None = None
     source_executable_fixture_manifest_ref: str | None = None
     source_executable_fixture_manifest_id: str | None = None
     source_executable_fixture_manifest_sha256: str | None = None
@@ -6076,6 +6083,18 @@ class LaborEmploymentBudgetOutcomeReplayInputPackReport(StrictModel):
         self,
     ) -> "LaborEmploymentBudgetOutcomeReplayInputPackReport":
         failed_checks = [check for check in self.checks if check.status == "failed"]
+        input_pack_manifest_fields = [
+            self.source_input_pack_manifest_ref,
+            self.source_input_pack_manifest_id,
+            self.source_input_pack_manifest_sha256,
+        ]
+        if any(input_pack_manifest_fields) and not all(input_pack_manifest_fields):
+            raise ValueError("input-pack manifest provenance must be complete")
+        if (
+            self.source_input_pack_manifest_sha256
+            and not self.source_input_pack_manifest_sha256.startswith("sha256:")
+        ):
+            raise ValueError("input-pack manifest hash must be sha256")
         executable_manifest_fields = [
             self.source_executable_fixture_manifest_ref,
             self.source_executable_fixture_manifest_id,
@@ -6198,6 +6217,8 @@ class LaborEmploymentBudgetOutcomeReplayConfidenceStatusReport(StrictModel):
     source_input_pack_report_ref: str
     source_input_pack_report_id: str
     source_input_pack_report_status: str
+    source_input_pack_report_sha256: str
+    source_input_pack_manifest_sha256: str
     fixture_count: int = Field(ge=0)
     stage_count: int = Field(ge=0)
     ready_stage_count: int = Field(ge=0)
@@ -6240,6 +6261,10 @@ class LaborEmploymentBudgetOutcomeReplayConfidenceStatusReport(StrictModel):
     def le_budget_replay_confidence_report_is_coherent(
         self,
     ) -> "LaborEmploymentBudgetOutcomeReplayConfidenceStatusReport":
+        if not self.source_input_pack_report_sha256.startswith("sha256:"):
+            raise ValueError("confidence input-pack report hash must be sha256")
+        if not self.source_input_pack_manifest_sha256.startswith("sha256:"):
+            raise ValueError("confidence input-pack manifest hash must be sha256")
         if self.stage_count != len(self.stages):
             raise ValueError("replay confidence report stage count mismatch")
         if self.ready_stage_count != len(

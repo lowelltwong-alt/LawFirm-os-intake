@@ -587,6 +587,9 @@ def test_labor_employment_budget_replay_input_pack_marks_ready_and_missing_input
     assert report.confirmation_scope == "synthetic_fixture_only"
     assert report.confirmation_offset_encoding == "unicode_codepoint_v1"
     assert report.runtime_human_gate_completed is False
+    assert report.source_input_pack_manifest_sha256 == digest_json(
+        load_json(_input_pack_manifest(repo_root))
+    )
     assert report.source_executable_fixture_manifest_ref == EXECUTABLE_MANIFEST_REF
     assert report.source_executable_fixture_manifest_id == ("le-executable-fixtures-manifest.v0_1")
     assert report.source_executable_fixture_manifest_sha256 == digest_json(
@@ -601,6 +604,12 @@ def test_labor_employment_budget_replay_input_pack_marks_ready_and_missing_input
     assert report.invalid_input_count == 0
     assert report.one_of_signal_missing_count > 0
     assert all(check.status == "passed" for check in report.checks)
+    assert all(
+        not ref.replace("\\", "/").startswith(".lawfirm-os-intake/")
+        for case in report.cases
+        for item in case.items
+        for ref in item.evidence_refs
+    )
     anchored_budget_items = [
         item
         for case in report.cases

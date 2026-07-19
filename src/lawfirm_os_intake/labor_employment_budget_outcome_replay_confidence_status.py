@@ -46,9 +46,19 @@ def run_labor_employment_budget_outcome_replay_confidence_status(
     binding = LaborEmploymentBudgetOutcomeReplayBuilderBindingReport.model_validate(
         load_json(binding_ref)
     )
+    input_pack_payload = load_json(input_pack_ref)
     input_pack = LaborEmploymentBudgetOutcomeReplayInputPackReport.model_validate(
-        load_json(input_pack_ref)
+        input_pack_payload
     )
+    input_pack_report_sha256 = digest_json(input_pack_payload)
+    if binding.source_input_pack_report_id != input_pack.input_pack_report_id:
+        raise ValueError("confidence input-pack report ID does not match builder binding")
+    if binding.source_input_pack_report_status != input_pack.status:
+        raise ValueError("confidence input-pack report status does not match builder binding")
+    if binding.source_input_pack_report_sha256 != input_pack_report_sha256:
+        raise ValueError("confidence input-pack report hash does not match builder binding")
+    if binding.source_input_pack_manifest_sha256 != input_pack.source_input_pack_manifest_sha256:
+        raise ValueError("confidence input-pack manifest hash does not match builder binding")
 
     stages = [
         _readiness_stage(readiness, readiness_ref),
@@ -90,6 +100,8 @@ def run_labor_employment_budget_outcome_replay_confidence_status(
         source_input_pack_report_ref=str(input_pack_ref),
         source_input_pack_report_id=input_pack.input_pack_report_id,
         source_input_pack_report_status=input_pack.status,
+        source_input_pack_report_sha256=input_pack_report_sha256,
+        source_input_pack_manifest_sha256=input_pack.source_input_pack_manifest_sha256,
         fixture_count=readiness.fixture_count,
         stage_count=len(stages),
         ready_stage_count=len([stage for stage in stages if stage.status == "ready"]),

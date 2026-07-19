@@ -205,3 +205,5 @@ regenerates `demo-rust-fixture-manifest-report.json`, and verifies both the UI
 bundle source-hash gate and fixture snapshot-coherence gate. It does not promote
 schemas, regenerate semantic QA reports, submit budgets, open matters, write
 SQLite/Lake records, or create external connectors.
+
+The replay confirmation and source-evidence panel reads `src/fixtures/demo-labor-employment-budget-outcome-replay-input-pack-report.json`. It shows synthetic fixture anchors and partial-loop blockers only; it cannot complete a runtime human gate or authorize any write or legal transition.

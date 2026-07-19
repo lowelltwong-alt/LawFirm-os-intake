@@ -68,9 +68,65 @@ async function main() {
   const budgetInputFixture = JSON.parse(
     await readFile(new URL("../src/fixtures/demo-synthetic-budget-input-workbench-report.json", import.meta.url), "utf8"),
   );
+  const replayInputPackFixture = JSON.parse(
+    await readFile(
+      new URL(
+        "../src/fixtures/demo-labor-employment-budget-outcome-replay-input-pack-report.json",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  );
+  const replayItems = replayInputPackFixture.cases.flatMap((testCase) => testCase.items);
+  const replayAnchors = replayItems.filter(
+    (item) => item.confirmation_scope === "synthetic_fixture_only",
+  );
+  const replayPathRefs = new Set([
+    replayInputPackFixture.source_builder_binding_report_ref,
+    replayInputPackFixture.source_input_pack_manifest_ref,
+    replayInputPackFixture.source_executable_fixture_manifest_ref,
+    ...replayItems.flatMap((item) => [
+      item.input_ref,
+      item.confirmation_ref,
+      item.source_bundle_ref,
+      ...item.evidence_refs,
+    ]),
+  ]);
   const server = createServer(serveStatic);
   const failures = [];
+  const trackedFiles = new Set(
+    execFileSync("git", ["ls-files", "-z"], { cwd: repoRoot, encoding: "utf8" })
+      .split("\0")
+      .filter(Boolean)
+      .map((path) => path.replaceAll("\\", "/")),
+  );
   let browser;
+
+  for (const sourceRef of replayPathRefs) {
+    if (typeof sourceRef !== "string") continue;
+    const normalizedRef = sourceRef.replaceAll("\\", "/");
+    if (!normalizedRef.includes("/")) continue;
+    const cleanRef = normalizedRef.split("#", 1)[0];
+    const sourcePath = resolve(repoRoot, cleanRef);
+    const relativeSource = relative(repoRoot, sourcePath);
+    if (
+      relativeSource.startsWith("..") ||
+      isAbsolute(relativeSource) ||
+      cleanRef.startsWith(".lawfirm-os-intake/") ||
+      !trackedFiles.has(cleanRef)
+    ) {
+      failures.push(`le_replay_input_pack_nonportable_source_ref:${sourceRef}`);
+      continue;
+    }
+    try {
+      const sourceDetails = await stat(sourcePath);
+      if (!sourceDetails.isFile()) {
+        failures.push(`le_replay_input_pack_source_ref_not_file:${sourceRef}`);
+      }
+    } catch {
+      failures.push(`le_replay_input_pack_source_ref_missing:${sourceRef}`);
+    }
+  }
 
   try {
     await new Promise((resolveListen, rejectListen) => {
@@ -96,6 +152,37 @@ async function main() {
 
     await page.goto(`${baseUrl}/`, { waitUntil: "networkidle" });
     await page.locator("#root").waitFor({ state: "attached" });
+    const replayInputPackPanel = page.locator(
+      'section[aria-labelledby="le-budget-outcome-replay-input-pack-title"]',
+    );
+    await replayInputPackPanel.waitFor({ state: "visible" });
+    const replayInputPackText = await replayInputPackPanel.textContent();
+    const expectedReadyCount =
+      `${replayInputPackFixture.ready_input_count}/${replayInputPackFixture.required_input_count}`;
+    const expectedManifestHash = replayInputPackFixture.source_input_pack_manifest_sha256.slice(0, 28);
+    if (
+      !replayInputPackText?.includes(expectedReadyCount) ||
+      !replayInputPackText.includes(String(replayAnchors.length)) ||
+      !replayInputPackText.includes(expectedManifestHash) ||
+      !replayInputPackText.includes("Synthetic fixture confirmation only") ||
+      !replayInputPackText.includes("Runtime human confirmation: blocked") ||
+      !replayInputPackText.includes(replayInputPackFixture.confirmation_offset_encoding)
+    ) {
+      failures.push("le_replay_input_pack_evidence_panel_incomplete");
+    }
+    const authorityBoundary = page.locator('section[aria-labelledby="boundary-title"]');
+    const authorityBoundaryText = await authorityBoundary.textContent();
+    const authorityFailureCount = await authorityBoundary.getAttribute(
+      "data-contract-failure-count",
+    );
+    const authorityFailures = await authorityBoundary.getAttribute("data-contract-failures");
+    if (
+      !authorityBoundaryText?.includes("contract failed") ||
+      authorityFailureCount !== "1" ||
+      authorityFailures !== "validation_suite_evidence_passed_with_dirty_worktree"
+    ) {
+      failures.push("authority_boundary_unexpected_contract_state");
+    }
     const budgetInputWorkbench = page.locator("#budget-input-workbench-title");
     await budgetInputWorkbench.waitFor({ state: "visible" });
     const budgetInputPanel = page.locator('section[aria-labelledby="budget-input-workbench-title"]');
