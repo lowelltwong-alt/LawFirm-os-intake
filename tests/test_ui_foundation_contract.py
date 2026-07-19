@@ -1249,6 +1249,8 @@ def test_legal_intake_budget_ui_blocks_dirty_validation_evidence(repo_root):
     assert "Regenerate validation evidence from a clean worktree" in app
     assert "Clean worktree required for promotion" in app
     assert "validation_suite_evidence_passed_with_dirty_worktree" in contract
+    assert "data-contract-failure-count={contractFailures.length}" in app
+    assert 'data-contract-failures={contractFailures.join(",")}' in app
 
 
 def test_legal_intake_budget_demo_ui_demo_qa_recipe_is_no_write(repo_root):

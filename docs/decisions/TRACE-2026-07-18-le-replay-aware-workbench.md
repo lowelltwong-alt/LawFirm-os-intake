@@ -73,6 +73,9 @@ placeholders, not as portable input-pack source evidence.
   audit, then the Windows sandbox denied its temporary-directory write; GitHub Linux
   CI is required for that environment-sensitive check.
 - TypeScript build and JavaScript syntax checks: passed.
+- The browser trust assertion permits only the existing
+  `validation_suite_evidence_passed_with_dirty_worktree` blocker and fails on any
+  additional contract failure; a clean validation receipt remains a later gate.
 - Local Vite bundling: environment-blocked after TypeScript by Windows child-process
   `spawn EPERM`; GitHub Linux browser CI is required on the final head.
 - DAD preflight was attempted and failed because the central DAD decision-trace ledger

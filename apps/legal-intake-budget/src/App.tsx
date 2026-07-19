@@ -630,7 +630,12 @@ function buildQAWorkbenchCards({
 function BoundaryGrid({ manifest }: { manifest: ReviewManifest }) {
   const rows = Object.entries(manifest.boundaryFlags);
   return (
-    <section className="panel boundary-panel" aria-labelledby="boundary-title">
+    <section
+      className="panel boundary-panel"
+      aria-labelledby="boundary-title"
+      data-contract-failure-count={contractFailures.length}
+      data-contract-failures={contractFailures.join(",")}
+    >
       <div className="panel-heading">
         <h2 id="boundary-title">Authority Boundary</h2>
         <span className={contractFailures.length === 0 ? "state state-passed" : "state state-failed"}>

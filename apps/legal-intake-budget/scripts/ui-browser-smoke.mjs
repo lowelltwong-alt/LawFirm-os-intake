@@ -172,8 +172,16 @@ async function main() {
     }
     const authorityBoundary = page.locator('section[aria-labelledby="boundary-title"]');
     const authorityBoundaryText = await authorityBoundary.textContent();
-    if (!authorityBoundaryText?.includes("contract held")) {
-      failures.push("authority_boundary_contract_not_held");
+    const authorityFailureCount = await authorityBoundary.getAttribute(
+      "data-contract-failure-count",
+    );
+    const authorityFailures = await authorityBoundary.getAttribute("data-contract-failures");
+    if (
+      !authorityBoundaryText?.includes("contract failed") ||
+      authorityFailureCount !== "1" ||
+      authorityFailures !== "validation_suite_evidence_passed_with_dirty_worktree"
+    ) {
+      failures.push("authority_boundary_unexpected_contract_state");
     }
     const budgetInputWorkbench = page.locator("#budget-input-workbench-title");
     await budgetInputWorkbench.waitFor({ state: "visible" });
