@@ -153,6 +153,57 @@ This phase requires a separate governance decision. Preconditions include confid
 
 Initial real-data mode should be read-only, narrow, and shadow-mode. No external writes.
 
+## Phase 8 — Governed predictive budget challenger
+
+**Bottleneck:** deterministic templates remain reproducible but may not capture
+empirical cost, duration, variance, and carrier-response patterns present in
+reviewed historical outcomes.
+
+XGBoost is a candidate challenger model for phase/task hours and cost ranges,
+budget-overrun risk, and carrier rejection or appeal-outcome risk. It does not
+own budget arithmetic, invent rates or facts, approve a budget, or silently
+change a profile or template.
+
+Do not begin model training until Phase 7 governance approves the exact data use
+and a sufficiently representative set of reviewed budget, actual, rejection,
+appeal, jurisdiction, and matter-outcome records exists. Synthetic fixtures may
+validate feature shapes, pipeline behavior, safety gates, and evaluation code;
+they may not establish predictive accuracy or calibration.
+
+Required activation evidence:
+
+- a versioned feature/target contract with provenance and post-outcome leakage
+  exclusions;
+- immutable training/evaluation snapshot manifests, hashes, retention terms,
+  and authorized-use records;
+- matter-grouped temporal splits and untouched holdouts;
+- comparison against the deterministic budget baseline and simple statistical
+  baselines using predeclared error, interval-coverage, calibration, subgroup,
+  and stability thresholds;
+- model card, hyperparameter and seed record, feature-importance/SHAP review,
+  drift plan, reproducible build, and rollback artifact;
+- human approval for shadow use, followed by a separately approved advisory
+  pilot with the deterministic engine retained as fallback.
+
+Intake may own candidate feature contracts, offline evaluation fixtures, and
+comparison reports. Orchestrator owns runtime invocation and human pauses;
+Exception Lake owns reviewed outcome evidence; Legal Knowledge Runtime owns
+governed external benchmark evidence; Semantic Substrate and Skills Registry
+own promoted meaning and model/skill trust state.
+
+Exit criteria:
+
+- the challenger materially improves predeclared holdout metrics without
+  unacceptable subgroup or temporal degradation;
+- every prediction records model/data versions, feature provenance, range or
+  risk calibration, limitations, and deterministic-baseline comparison;
+- incomplete or out-of-distribution matters widen, abstain, or fall back rather
+  than receive false precision;
+- no model output can rewrite deterministic line math, clear conflicts, open a
+  matter, submit a budget, or trigger external writes;
+- continued use is conditional on monitored drift and periodic reviewed
+  revalidation.
+
 ## Deferred enterprise capabilities
 
 - durable multi-day workflow runtime;

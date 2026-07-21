@@ -1212,3 +1212,95 @@ families, a missing-attachment case, and a non-ADA adversarial case; then replay
 budget input and actuals against a materially different proposal. Keep every
 fixture synthetic, source-bound, candidate-only, and excluded from silent
 learning.
+
+## 21. XGBoost Budget Challenger And Calibration Gate
+
+Status: roadmap-only and blocked. Synthetic pipeline scaffolding may be proposed
+after the L&E replay expansion, but training, tuning, accuracy claims, and
+runtime use remain blocked until an approved real-data pilot produces enough
+governed reviewed historical outcomes.
+
+Use XGBoost later as an empirical challenger to the deterministic budget engine,
+not as the legal-budget authority. Candidate tasks include predicting phase/task
+hours and costs, total-cost ranges, budget-overrun risk, carrier rejection risk,
+and appeal-outcome risk. The deterministic engine remains responsible for rate
+times hours, expenses, contingency, guideline projection, workbook mapping, and
+all reproducible accounting invariants.
+
+### Activation order
+
+1. Complete the synthetic replay and serialized-coherence work. Synthetic data
+   may validate schemas, feature extraction, missing-value behavior, pipeline
+   determinism, abstention, and evaluation harnesses only.
+2. Approve a separate governed historical-data pilot. Define permitted data,
+   confidentiality, retention, access, purpose limitation, and owner roles.
+3. Build immutable reviewed outcome snapshots linking intake-time facts to
+   budget versions, actuals, rejection/appeal results, jurisdiction, matter
+   family, and observation timestamps. Never expose facts that became known only
+   after the prediction time.
+4. Approve a versioned feature/target contract. Features must be reproducible
+   from the as-of evidence packet; unknowns remain explicit. Targets must define
+   phase cost/hours, variance, rejection, or appeal outcomes without mixing
+   incomparable postures.
+5. Establish data sufficiency before training: representative time periods and
+   relevant matter/jurisdiction groups, reviewed label quality, missingness and
+   censoring reports, duplicate/related-matter controls, and enough untouched
+   outcomes for meaningful holdout evaluation.
+6. Train offline with seeded, pinned builds and matter-grouped temporal splits.
+   Keep an untouched final holdout and compare with the deterministic budget,
+   historical medians, and another simple baseline.
+7. Pass predeclared gates for MAE/WAPE or other cost error, interval coverage and
+   width, Brier/calibration measures for risks, temporal stability, subgroup
+   performance, abstention, and out-of-distribution handling. R-squared or AUC
+   alone is not acceptance evidence.
+8. Review feature importance and SHAP output for leakage, proxies, unstable
+   shortcuts, and legally or operationally inappropriate drivers. Explanations
+   are diagnostics, not proof of causation.
+9. Run in read-only shadow mode. Record model/data hashes, predictions,
+   deterministic-baseline comparisons, human dispositions, and later outcomes
+   without changing the displayed proposal or workflow state.
+10. Permit human-advisory use only after separate approval. Continue to show the
+    deterministic proposal and the challenger estimate side by side; require an
+    explicit reason for any human adoption of a suggested change.
+
+### Fail-closed boundaries
+
+- Do not train on the synthetic corpus and describe the result as calibrated.
+- Do not let XGBoost invent rates, parties, claims, facts, deadlines, or missing
+  budget drivers.
+- Do not let predictions overwrite line math, scenario totals, carrier rules,
+  reviewed actuals, or source evidence.
+- Do not silently retrain from reviewer corrections, rejections, appeals, or
+  actuals. Each candidate dataset/model revision requires a new versioned review.
+- Do not use random row splits when records from the same matter, client,
+  carrier, timekeeper, or later time period can leak across partitions.
+- Do not activate pricing when required rates are unknown; retain hours-only or
+  blocked posture.
+- Do not submit budgets, clear conflicts, open matters, write to portals, or
+  admit Exception Lake records from a model output.
+
+### Ownership and artifacts
+
+- Intake owns candidate feature/target contracts, synthetic pipeline tests,
+  offline comparison reports, and the read-only review surface.
+- Orchestrator owns runtime invocation, as-of packet assembly, human pauses,
+  effect authorization, and deterministic fallback.
+- Exception Lake owns append-only reviewed prediction/error/outcome evidence,
+  not automatic retraining.
+- Legal Knowledge Runtime owns governed benchmark evidence; Semantic Substrate
+  owns promoted shared meaning; Skills Registry owns promoted model/skill trust
+  state and revocation.
+- Required artifacts include dataset snapshot manifest, feature/target contract,
+  leakage audit, training manifest, model card, model binary hash, evaluation
+  report, subgroup report, calibration report, drift baseline, shadow-run ledger,
+  human decision record, and rollback record.
+
+### Promotion and retirement criteria
+
+Promote only when the challenger materially improves predeclared untouched
+holdout measures without unacceptable subgroup or temporal degradation, remains
+reproducible from pinned artifacts, abstains on unsupported inputs, and passes
+human review. Retain deterministic fallback at all times. Pause or retire the
+model on provenance failure, feature drift, calibration failure, unexplained
+performance loss, authority expansion, or a material change in carrier rules,
+rates, practice mix, or data-generating process until revalidated.
