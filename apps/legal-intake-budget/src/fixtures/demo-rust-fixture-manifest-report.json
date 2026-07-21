@@ -628,7 +628,7 @@
       "top_level_type": "object"
     },
     {
-      "byte_count": 15960,
+      "byte_count": 16407,
       "candidate_only": true,
       "data_origin": "synthetic",
       "external_writes_performed": false,
@@ -644,7 +644,7 @@
       ],
       "path": "demo-synthetic-actuals-workbench-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:de72559888da88689aa0e49b112ff66362f13092da93d87d9cb89078293c2fe1",
+      "sha256": "sha256:18c020ef55cefcb405f4aea6245e79d7392ad987b7cac023e413aabb006bff3c",
       "status": "synthetic_actuals_workbench_ready_for_review",
       "synthetic_only": true,
       "top_level_type": "object"
@@ -933,7 +933,7 @@
   ],
   "lake_write_performed": false,
   "local_json_only": true,
-  "manifest_sha256": "sha256:b223133ec3f43388f4b80dd3312a1a50a0335d9a4497c3dade99d4012d599d02",
+  "manifest_sha256": "sha256:1e23f770a48e2fe9d21d5c019693316723ac796df9f07d9e76d0a6d09007088a",
   "matter_opening_authorized": false,
   "non_authoritative": true,
   "parse_error_count": 0,
@@ -956,5 +956,5 @@
   "sqlite_write_performed": false,
   "status": "passed",
   "synthetic_only": true,
-  "total_byte_count": 1262114
+  "total_byte_count": 1262561
 }

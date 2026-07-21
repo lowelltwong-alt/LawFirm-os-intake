@@ -1201,8 +1201,14 @@ Upfront-like intake preparation work itself.
   matter opening, no screen creation, no Lake/SQLite write, no budget
   submission, and no silent learning.
 
-Next PR-sized slice: add a deterministic `matter-linking-preflight` audit for
-synthetic source bundles with shared senders, conflicting references, missing
-official matter numbers, duplicate attachments, and later reference-resolution
-follow-ups. The audit should emit a review packet and UI panel before any
-budget amount can rely on the cluster.
+Implemented follow-on: the deterministic matter-linking preflight, QA review,
+and read-only workbench panel now cover shared senders, conflicting references,
+missing official matter numbers, duplicate attachments, and later-reference
+resolution evidence. Runtime identity persistence, real Upfront connectivity,
+and cross-bundle state remain Orchestrator-owned future work.
+
+Next PR-sized slice: expand the L&E replay corpus to cover the three omitted
+families, a missing-attachment case, and a non-ADA adversarial case; then replay
+budget input and actuals against a materially different proposal. Keep every
+fixture synthetic, source-bound, candidate-only, and excluded from silent
+learning.

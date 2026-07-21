@@ -3,9 +3,11 @@
 from copy import deepcopy
 import json
 
+import pytest
 import yaml
 
 from lawfirm_os_intake.cli import main
+from lawfirm_os_intake.models import SyntheticRateCardWorkbenchReport
 from lawfirm_os_intake.synthetic_rate_card_workbench import (
     SYNTHETIC_RATE_CARD_WORKBENCH_REPORT_FILENAME,
     SYNTHETIC_RATE_CARD_WORKBOOK_FILENAME,
@@ -175,6 +177,17 @@ def test_rate_card_workbook_escapes_formula_like_catalog_text(tmp_path, repo_roo
         for row in sheet.iter_rows()
         for cell in row
     )
+
+
+def test_rate_card_workbench_model_rejects_tampered_state_summary(repo_root):
+    payload = load_json(
+        repo_root
+        / "apps/legal-intake-budget/src/fixtures/demo-synthetic-rate-card-workbench-report.json"
+    )
+    payload["state_summaries"][0]["average_hourly_rate"] += 1
+
+    with pytest.raises(ValueError, match="state summary mismatch"):
+        SyntheticRateCardWorkbenchReport.model_validate(payload)
 
 
 def test_rate_card_workbench_counterfactual_changes_only_the_target_cell_and_summary(

@@ -1,7 +1,9 @@
 """Independent source-mutation checks for the fixed synthetic workbenches."""
 
+import json
 import shutil
 
+import lawfirm_os_intake.synthetic_actuals_workbench as actuals_workbench
 import lawfirm_os_intake.synthetic_budget_configuration_workbench as configuration_workbench
 import lawfirm_os_intake.synthetic_budget_input_workbench as input_workbench
 from lawfirm_os_intake.synthetic_actuals_workbench import (
@@ -22,6 +24,7 @@ from lawfirm_os_intake.synthetic_guideline_projection_workbench import (
     SOURCE_REFS,
     build_synthetic_guideline_projection_workbench_report,
 )
+from lawfirm_os_intake.util import digest_text
 from lawfirm_os_intake.synthetic_rate_card_workbench import (
     build_synthetic_rate_card_workbench_report,
 )
@@ -84,6 +87,38 @@ def test_fixed_synthetic_workbenches_do_not_mutate_declared_source_bytes(repo_ro
     assert all(report.external_writes_performed is False for report in reports)
     assert all(report.lake_write_performed is False for report in reports)
     assert all(report.sqlite_write_performed is False for report in reports)
+
+
+def test_actuals_workbench_binds_hash_and_math_to_one_immutable_snapshot(
+    tmp_path, repo_root, monkeypatch
+):
+    candidate_root = tmp_path / "actuals-candidate"
+    _copy_sources(repo_root, candidate_root, [ACTUALS_BUDGET_REF, ACTUALS_SOURCE_REF])
+    actuals_path = candidate_root / ACTUALS_SOURCE_REF
+    captured_text = actuals_path.read_text(encoding="utf-8")
+    original_comparison = actuals_workbench.build_budget_actual_comparison_report
+
+    def compare_then_mutate(*args, **kwargs):
+        comparison = original_comparison(*args, **kwargs)
+        payload = json.loads(captured_text)
+        payload["actuals_by_code"]["L110"]["fees"] += 100
+        actuals_path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+        return comparison
+
+    monkeypatch.setattr(
+        actuals_workbench, "build_budget_actual_comparison_report", compare_then_mutate
+    )
+    report = actuals_workbench.build_synthetic_actuals_workbench_report(
+        repo_root=candidate_root, generated_at=FIXED_TIME
+    )
+
+    assert report.status == "blocked_by_synthetic_actuals_workbench"
+    assert report.comparison.total_actual == 60350.0
+    assert report.actuals_source_sha256 == digest_text(captured_text)
+    assert report.actuals_source_sha256 != digest_text(actuals_path.read_text(encoding="utf-8"))
+    assert "source_inputs_unchanged_during_build" in {
+        check.check_id for check in report.checks if check.status == "failed"
+    }
 
 
 def test_budget_input_workbench_blocks_source_mutation_during_build(

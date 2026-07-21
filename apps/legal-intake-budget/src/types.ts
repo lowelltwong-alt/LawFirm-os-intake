@@ -986,7 +986,11 @@ export type SyntheticRateCardWorkbenchReport = {
 export type SyntheticActualsWorkbenchRow = {
   phase_id?: string | null;
   code?: string | null;
+  budgeted_fees: number | null;
+  budgeted_expenses: number | null;
   budgeted_total: number | null;
+  actual_fees: number | null;
+  actual_expenses: number | null;
   actual_total: number | null;
   variance_amount: number | null;
   variance_percent: number | null;
@@ -1181,7 +1185,27 @@ export type SyntheticGuidelineProjectionWorkbenchReport = {
       staffing_rule_delta: number;
       contingency_delta: number;
       projection_pricing_status: "priced" | "hours_only_partial";
-      lines: Array<{ phase_id: string; task_id: string; staffing_role: string; compliant_staffing_role: string | null; proposed_line_total: number | null; compliant_line_total: number | null; line_delta_signed: number; note: string }>;
+proposed_subtotal_fees: number | null;
+      compliant_subtotal_fees: number | null;
+      proposed_subtotal_expenses: number;
+      compliant_subtotal_expenses: number;
+      proposed_contingency_amount: number | null;
+      compliant_contingency_amount: number | null;
+      line_count: number;
+      lines: Array<{
+        phase_id: string;
+        task_id: string;
+        staffing_role: string;
+        compliant_staffing_role: string | null;
+        proposed_fees: number | null;
+        compliant_fees: number | null;
+        proposed_expenses: number;
+        compliant_expenses: number;
+        proposed_line_total: number | null;
+        compliant_line_total: number | null;
+        line_delta_signed: number;
+        note: string;
+      }>;
     };
     preapproval_report: { status: string; required_count: number; requirements: Array<{ threshold_id: string; status: string; current_value: number | null; threshold_value: number; unit: string }> };
     rate_resolution: { source: string; state: string; effective_date: string | null; review_required: boolean };

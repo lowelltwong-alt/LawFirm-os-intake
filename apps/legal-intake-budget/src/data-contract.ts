@@ -241,6 +241,28 @@ export function assertUIReviewDataBundle(bundle: UIReviewDataBundle): string[] {
   return failures;
 }
 
+const SHA256_REF_PATTERN = /^sha256:[0-9a-f]{64}$/;
+
+export function roundMoney(value: number): number {
+  const sign = value < 0 ? -1 : 1;
+  const shifted = Number(`${Math.abs(value)}e2`);
+  return sign * Number(`${Math.round(shifted)}e-2`);
+}
+
+function isSha256Ref(value: string | null | undefined): value is string {
+  return typeof value === "string" && SHA256_REF_PATTERN.test(value);
+}
+
+function hasMalformedSha256Field(value: unknown): boolean {
+  if (Array.isArray(value)) return value.some(hasMalformedSha256Field);
+  if (value === null || typeof value !== "object") return false;
+  return Object.entries(value).some(
+    ([key, child]) =>
+      (key.endsWith("_sha256") &&
+        (typeof child !== "string" || !isSha256Ref(child))) ||
+      hasMalformedSha256Field(child),
+  );
+}
 export function assertSyntheticRateCardWorkbenchReport(
   report: SyntheticRateCardWorkbenchReport,
 ): string[] {
@@ -267,11 +289,48 @@ export function assertSyntheticRateCardWorkbenchReport(
   ) {
     failures.push("synthetic_rate_card_workbench_side_effect_boundary_failed");
   }
-  if (!report.rate_card_sha256.startsWith("sha256:")) {
+  if (!isSha256Ref(report.rate_card_sha256)) {
     failures.push("synthetic_rate_card_workbench_source_hash_missing");
   }
   if (report.row_count !== report.rows.length) {
     failures.push("synthetic_rate_card_workbench_row_count_mismatch");
+  }
+  if (
+    report.carrier_count !== new Set(report.rows.map((row) => row.carrier_id)).size ||
+    report.state_count !== new Set(report.rows.map((row) => row.state)).size ||
+    report.title_count !== new Set(report.rows.map((row) => row.title)).size
+  ) {
+    failures.push("synthetic_rate_card_workbench_dimension_count_mismatch");
+  }
+  const rateGroups = new Map<string, typeof report.rows>();
+  for (const row of report.rows) {
+    const key = `${row.carrier_id}\u0000${row.state}`;
+    rateGroups.set(key, [...(rateGroups.get(key) ?? []), row]);
+  }
+  const rateSummaries = new Map(
+    report.state_summaries.map((summary) => [
+      `${summary.carrier_id}\u0000${summary.state}`,
+      summary,
+    ]),
+  );
+  if (
+    rateSummaries.size !== report.state_summaries.length ||
+    rateSummaries.size !== rateGroups.size ||
+    [...rateGroups].some(([key, rows]) => {
+      const summary = rateSummaries.get(key);
+      const rates = rows.map((row) => row.hourly_rate);
+      return (
+        !summary ||
+        summary.carrier_name !== rows[0]?.carrier_name ||
+        rows.some((row) => row.carrier_name !== summary.carrier_name) ||
+        summary.role_count !== rows.length ||
+        summary.minimum_hourly_rate !== Math.min(...rates) ||
+        summary.maximum_hourly_rate !== Math.max(...rates) ||
+        Math.abs(summary.average_hourly_rate - rates.reduce((sum, rate) => sum + rate, 0) / rates.length) > 1e-8
+      );
+    })
+  ) {
+    failures.push("synthetic_rate_card_workbench_state_summary_mismatch");
   }
   if (report.failed_check_count !== report.checks.filter((check) => check.status === "failed").length) {
     failures.push("synthetic_rate_card_workbench_failed_check_count_mismatch");
@@ -316,8 +375,8 @@ export function assertSyntheticActualsWorkbenchReport(
     failures.push("synthetic_actuals_workbench_side_effect_boundary_failed");
   }
   if (
-    !report.budget_proposal_sha256.startsWith("sha256:") ||
-    !report.actuals_source_sha256.startsWith("sha256:") ||
+    !isSha256Ref(report.budget_proposal_sha256) ||
+    !isSha256Ref(report.actuals_source_sha256) ||
     !report.actuals_source_id ||
     !report.actuals_source_ref
   ) {
@@ -330,11 +389,47 @@ export function assertSyntheticActualsWorkbenchReport(
   ) {
     failures.push("synthetic_actuals_workbench_count_mismatch");
   }
+    const componentTotal = (
+    fees: number | null,
+    expenses: number | null,
+  ): number | null =>
+    fees === null && expenses === null ? null : roundMoney((fees ?? 0) + (expenses ?? 0));
+  const rowComponentsInvalid = [
+    ...report.comparison.phase_comparisons,
+    ...report.comparison.code_comparisons,
+  ].some(
+    (row) =>
+      row.budgeted_total !== componentTotal(row.budgeted_fees, row.budgeted_expenses) ||
+      row.actual_total !== componentTotal(row.actual_fees, row.actual_expenses),
+  );
+  if (rowComponentsInvalid) {
+    failures.push("synthetic_actuals_workbench_row_components_not_reconciled");
+  }
+  const phaseBudgeted = roundMoney(
+    report.comparison.phase_comparisons.reduce(
+      (sum, row) => sum + (row.budgeted_total ?? 0),
+      0,
+    ),
+  );
+  const phaseActual = roundMoney(
+    report.comparison.phase_comparisons.reduce((sum, row) => sum + (row.actual_total ?? 0), 0),
+  );
+  const codeBudgeted = roundMoney(
+    report.comparison.code_comparisons.reduce((sum, row) => sum + (row.budgeted_total ?? 0), 0),
+  );
+  const codeActual = roundMoney(
+    report.comparison.code_comparisons.reduce((sum, row) => sum + (row.actual_total ?? 0), 0),
+  );
   if (
-    report.phase_budgeted_total !== report.comparison.total_budgeted ||
+    report.status === "synthetic_actuals_workbench_ready_for_review" &&
+    (report.phase_budgeted_total !== report.comparison.total_budgeted ||
     report.phase_actual_total !== report.comparison.total_actual ||
     report.code_budgeted_total !== report.comparison.total_budgeted ||
-    report.code_actual_total !== report.comparison.total_actual
+    report.code_actual_total !== report.comparison.total_actual ||
+    phaseBudgeted !== report.phase_budgeted_total ||
+    phaseActual !== report.phase_actual_total ||
+    codeBudgeted !== report.code_budgeted_total ||
+    codeActual !== report.code_actual_total)
   ) {
     failures.push("synthetic_actuals_workbench_alternate_views_not_reconciled");
   }
@@ -378,7 +473,7 @@ export function assertSyntheticBudgetInputWorkbenchReport(
   ) {
     failures.push("synthetic_budget_input_workbench_side_effect_boundary_failed");
   }
-  if (!report.budget_proposal_sha256.startsWith("sha256:")) {
+  if (!isSha256Ref(report.budget_proposal_sha256)) {
     failures.push("synthetic_budget_input_workbench_provenance_missing");
   }
   if (report.line_count !== report.lines.length) {
@@ -406,7 +501,7 @@ export function assertSyntheticBudgetInputWorkbenchReport(
   if (
     report.lines.some(
       (line) =>
-        Math.round(((line.estimated_fees ?? 0) + line.estimated_expenses) * 100) / 100 !==
+        roundMoney((line.estimated_fees ?? 0) + line.estimated_expenses) !==
           line.line_total ||
         !line.estimate_basis ||
         line.estimate_basis_refs.length === 0,
@@ -420,7 +515,10 @@ export function assertSyntheticBudgetInputWorkbenchReport(
   if (report.context_lanes.slice(1).some((lane) => lane.inclusion !== "excluded_context_only")) {
     failures.push("synthetic_budget_input_workbench_context_lane_mixed_into_math");
   }
-  if (report.context_lanes.some((lane) => !lane.source_ref || !lane.source_sha256?.startsWith("sha256:"))) {
+  if (
+    report.status === "synthetic_budget_input_workbench_ready_for_review" &&
+    report.context_lanes.some((lane) => !lane.source_ref || !isSha256Ref(lane.source_sha256))
+  ) {
     failures.push("synthetic_budget_input_workbench_context_provenance_missing");
   }
   if (
@@ -445,19 +543,72 @@ export function assertSyntheticGuidelineProjectionWorkbenchReport(
     report.budget_submission_authorized || report.matter_opening_authorized || report.silent_learning_performed ||
     !report.not_authorized_for_calibration
   ) failures.push("synthetic_guideline_projection_side_effect_boundary_failed");
-  if (!report.budget_proposal_sha256.startsWith("sha256:") || report.source_manifest.some((source) => !source.source_sha256.startsWith("sha256:"))) {
+  if (!isSha256Ref(report.budget_proposal_sha256) || report.source_manifest.some((source) => !isSha256Ref(source.source_sha256))) {
     failures.push("synthetic_guideline_projection_provenance_missing");
   }
   if (report.views.length !== 2 || report.failed_check_count !== report.checks.filter((check) => check.status === "failed").length) {
     failures.push("synthetic_guideline_projection_shape_failed");
   }
   for (const view of report.views) {
-    const rounded = (value: number) => Math.round(value * 100) / 100;
+        const projection = view.projection;
+    const proposedFees = roundMoney(
+      projection.lines.reduce((sum, line) => sum + (line.proposed_fees ?? 0), 0),
+    );
+    const compliantFees = roundMoney(
+      projection.lines.reduce((sum, line) => sum + (line.compliant_fees ?? 0), 0),
+    );
+    const proposedExpenses = roundMoney(
+      projection.lines.reduce((sum, line) => sum + line.proposed_expenses, 0),
+    );
+    const compliantExpenses = roundMoney(
+      projection.lines.reduce((sum, line) => sum + line.compliant_expenses, 0),
+    );
+    const lineArithmeticInvalid = projection.lines.some(
+      (line) =>
+        line.proposed_line_total !==
+          (line.proposed_fees === null
+            ? null
+            : roundMoney(line.proposed_fees + line.proposed_expenses)) ||
+        line.compliant_line_total !==
+          (line.compliant_fees === null
+            ? null
+            : roundMoney(line.compliant_fees + line.compliant_expenses)),
+    );
+    const pricedValuesIncomplete =
+      projection.projection_pricing_status === "priced" &&
+      [
+        projection.proposed_total,
+        projection.compliant_total,
+        projection.proposed_subtotal_fees,
+        projection.compliant_subtotal_fees,
+        projection.proposed_contingency_amount,
+        projection.compliant_contingency_amount,
+        ...projection.lines.flatMap((line) => [
+          line.proposed_fees,
+          line.compliant_fees,
+          line.proposed_line_total,
+          line.compliant_line_total,
+        ]),
+      ].some((value) => value === null);
+    const pricedTotalsInvalid =
+      projection.projection_pricing_status === "priced" &&
+      (pricedValuesIncomplete ||
+        projection.proposed_subtotal_fees !== proposedFees ||
+        projection.compliant_subtotal_fees !== compliantFees ||
+        projection.proposed_subtotal_expenses !== proposedExpenses ||
+        projection.compliant_subtotal_expenses !== compliantExpenses ||
+        projection.proposed_total !==
+          roundMoney(proposedFees + proposedExpenses + (projection.proposed_contingency_amount ?? 0)) ||
+        projection.compliant_total !==
+          roundMoney(compliantFees + compliantExpenses + (projection.compliant_contingency_amount ?? 0)));
     if (
-      view.projection.proposed_total !== report.proposal_total ||
-      rounded(view.gross_reductions - view.gross_increases) !== view.net_delta ||
-      rounded((view.projection.proposed_total ?? 0) - (view.projection.compliant_total ?? 0)) !== view.net_delta ||
-      view.projection.projection_pricing_status !== "priced" || view.rate_resolution.review_required ||
+      projection.proposed_total !== report.proposal_total ||
+      projection.line_count !== projection.lines.length ||
+      lineArithmeticInvalid ||
+      pricedTotalsInvalid ||
+      roundMoney(view.gross_reductions - view.gross_increases) !== view.net_delta ||
+      roundMoney((projection.proposed_total ?? 0) - (projection.compliant_total ?? 0)) !== view.net_delta ||
+      projection.projection_pricing_status !== "priced" || view.rate_resolution.review_required ||
       view.preapproval_report.requirements.some((requirement) => requirement.status === "unknown")
     ) failures.push(`synthetic_guideline_projection_view_invalid:${view.carrier_id}`);
   }
@@ -483,13 +634,24 @@ export function assertSyntheticBudgetConfigurationWorkbenchReport(
   if (report.source_count !== report.sources.length || report.entry_count !== report.entries.length) {
     failures.push("synthetic_budget_configuration_count_mismatch");
   }
-  if (report.sources.some((source) => !source.source_sha256.startsWith("sha256:") || !source.editable)) {
+  if (report.sources.some((source) => !isSha256Ref(source.source_sha256) || !source.editable)) {
     failures.push("synthetic_budget_configuration_source_provenance_missing");
   }
   if (report.entries.some((entry) => !entry.config_path || entry.value < 0 || !entry.math_effect)) {
     failures.push("synthetic_budget_configuration_entry_invalid");
   }
-  if (Object.values(report.entries_by_math_effect).reduce((sum, value) => sum + value, 0) !== report.entry_count) {
+  const expectedEffectCounts = report.entries.reduce<Record<string, number>>((counts, entry) => {
+    counts[entry.math_effect] = (counts[entry.math_effect] ?? 0) + 1;
+    return counts;
+  }, {});
+  const reportedEffectKeys = Object.keys(report.entries_by_math_effect).sort();
+  const expectedEffectKeys = Object.keys(expectedEffectCounts).sort();
+  if (
+    JSON.stringify(reportedEffectKeys) !== JSON.stringify(expectedEffectKeys) ||
+    expectedEffectKeys.some(
+      (effect) => report.entries_by_math_effect[effect] !== expectedEffectCounts[effect],
+    )
+  ) {
     failures.push("synthetic_budget_configuration_effect_counts_mismatch");
   }
   if (report.failed_check_count !== report.checks.filter((check) => check.status === "failed").length) {
@@ -514,17 +676,28 @@ export function assertSyntheticRejectionAppealWorkbenchReport(
     report.budget_submission_authorized || report.matter_opening_authorized ||
     report.appeal_submission_performed || report.silent_learning_performed
   ) failures.push("synthetic_rejection_appeal_workbench_side_effect_boundary_failed");
-  if (!report.budget_proposal_sha256.startsWith("sha256:") || !report.source_bundle_sha256.startsWith("sha256:")) {
+  if (
+    !isSha256Ref(report.budget_proposal_sha256) ||
+    !isSha256Ref(report.source_bundle_sha256) ||
+    hasMalformedSha256Field(report)
+  ) {
     failures.push("synthetic_rejection_appeal_workbench_provenance_missing");
   }
   if (report.failed_check_count !== report.checks.filter((check) => check.status === "failed").length) {
     failures.push("synthetic_rejection_appeal_workbench_failed_check_count_mismatch");
   }
-  const rounded = (value: number) => Math.round(value * 100) / 100;
-  const recovered = rounded(report.cases.reduce((sum, item) => sum + item.recovered_amount, 0));
-  const writeDown = rounded(report.cases.reduce((sum, item) => sum + item.write_down_amount, 0));
-  if (recovered !== report.total_recovered_amount || writeDown !== report.total_write_down_amount ||
-    recovered + writeDown > report.total_disputed_amount) {
+  const disputed = roundMoney(report.cases.reduce((sum, item) => sum + item.disputed_amount, 0));
+  const recovered = roundMoney(report.cases.reduce((sum, item) => sum + item.recovered_amount, 0));
+  const writeDown = roundMoney(report.cases.reduce((sum, item) => sum + item.write_down_amount, 0));
+  if (
+    disputed !== report.total_disputed_amount ||
+    recovered !== report.total_recovered_amount ||
+    writeDown !== report.total_write_down_amount ||
+    recovered + writeDown > report.total_disputed_amount ||
+    report.cases.some(
+      (item) => roundMoney(item.recovered_amount + item.write_down_amount) > item.disputed_amount,
+    )
+  ) {
     failures.push("synthetic_rejection_appeal_workbench_financial_partition_failed");
   }
   if (report.cases.some((item) => item.source_ref_count === 0)) {
