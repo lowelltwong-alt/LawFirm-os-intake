@@ -20041,6 +20041,49 @@ class SyntheticActualsWorkbenchReport(StrictModel):
             )
             if row.budgeted_total != expected_budgeted or row.actual_total != expected_actual:
                 raise ValueError("synthetic actuals workbench row components do not reconcile")
+            # Displayed per-row variance must be recomputed from the row's own money,
+            # not trusted from the serialization. Mirror the builder's round()/zero rules.
+            if row.variance_amount is None:
+                if row.variance_percent is not None:
+                    raise ValueError("synthetic actuals workbench row variance does not reconcile")
+            else:
+                if row.actual_total is None:
+                    raise ValueError("synthetic actuals workbench row variance does not reconcile")
+                row_budgeted = row.budgeted_total if row.budgeted_total is not None else 0.0
+                expected_variance = round(row.actual_total - row_budgeted, 2)
+                if row_budgeted == 0 and row.actual_total > 0:
+                    expected_variance_percent = None
+                else:
+                    expected_variance_percent = (
+                        round((expected_variance / row_budgeted) * 100, 2) if row_budgeted else None
+                    )
+                if (
+                    row.variance_amount != expected_variance
+                    or row.variance_percent != expected_variance_percent
+                ):
+                    raise ValueError("synthetic actuals workbench row variance does not reconcile")
+        # The displayed headline variance is the primary review signal; recompute it from
+        # the reconciled totals rather than trusting the serialized comparison fields.
+        comparison = self.comparison
+        if comparison.total_actual is None:
+            if (
+                comparison.total_variance_amount is not None
+                or comparison.total_variance_percent is not None
+            ):
+                raise ValueError("synthetic actuals workbench total variance does not reconcile")
+        else:
+            expected_total_variance = round(
+                comparison.total_actual - float(comparison.total_budgeted or 0), 2
+            )
+            if comparison.total_variance_amount != expected_total_variance:
+                raise ValueError("synthetic actuals workbench total variance does not reconcile")
+            expected_total_variance_percent = (
+                round((expected_total_variance / comparison.total_budgeted) * 100, 2)
+                if comparison.total_budgeted
+                else None
+            )
+            if comparison.total_variance_percent != expected_total_variance_percent:
+                raise ValueError("synthetic actuals workbench total variance does not reconcile")
         if self.status == "synthetic_actuals_workbench_ready_for_review":
             phase_budgeted = _round_money(
                 sum(float(row.budgeted_total or 0) for row in self.comparison.phase_comparisons)
@@ -20194,6 +20237,20 @@ class SyntheticBudgetInputWorkbenchReport(StrictModel):
                     raise ValueError(
                         "synthetic budget input workbench line requires estimate basis provenance"
                     )
+            # Recompute the displayed headline subtotals/total from the serialized lines so a
+            # hostile serialization cannot inflate total_proposed_budget while the rows stay valid
+            # (parity with the TypeScript data contract's totals reconciliation).
+            line_fee_total = round(sum(float(line.estimated_fees or 0) for line in self.lines), 2)
+            line_expense_total = round(sum(line.estimated_expenses for line in self.lines), 2)
+            if self.total_proposed_budget is not None and (
+                float(self.subtotal_fees or 0) != line_fee_total
+                or self.subtotal_expenses != line_expense_total
+                or round(
+                    line_fee_total + line_expense_total + float(self.contingency_amount or 0), 2
+                )
+                != self.total_proposed_budget
+            ):
+                raise ValueError("synthetic budget input workbench totals do not reconcile")
         return self
 
 

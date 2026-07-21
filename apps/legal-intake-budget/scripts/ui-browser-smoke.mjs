@@ -143,6 +143,10 @@ async function main() {
   const rejectionNestedHashMutation = structuredClone(rejectionAppealFixture);
   rejectionNestedHashMutation.reconciliation_report.remediation_cases[0].source_refs[0].content_sha256 =
     "sha256:not-a-hash";
+  const actualsTotalVarianceMutation = structuredClone(actualsFixture);
+  actualsTotalVarianceMutation.comparison.total_variance_amount = 1;
+  const budgetInputTotalsMutation = structuredClone(budgetInputFixture);
+  budgetInputTotalsMutation.total_proposed_budget += 45909;
   const mutationChecks = [
     [
       "rate_summary",
@@ -188,6 +192,16 @@ async function main() {
       "rejection_case_financial",
       dataContract.assertSyntheticRejectionAppealWorkbenchReport(rejectionCaseMutation),
       "synthetic_rejection_appeal_workbench_financial_partition_failed",
+    ],
+    [
+      "actuals_total_variance",
+      dataContract.assertSyntheticActualsWorkbenchReport(actualsTotalVarianceMutation),
+      "synthetic_actuals_workbench_total_variance_not_reconciled",
+    ],
+    [
+      "budget_input_totals",
+      dataContract.assertSyntheticBudgetInputWorkbenchReport(budgetInputTotalsMutation),
+      "synthetic_budget_input_workbench_totals_not_reconciled",
     ],
   ];
   for (const [mutationId, observedFailures, expectedFailure] of mutationChecks) {
