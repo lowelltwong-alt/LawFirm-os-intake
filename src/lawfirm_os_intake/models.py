@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from decimal import Decimal, ROUND_HALF_UP
 from hashlib import sha256
 from typing import Any, Literal
 from pydantic import BaseModel, ConfigDict, Field, model_validator
@@ -12252,6 +12253,12 @@ class CarrierRejectionSourceRef(StrictModel):
     row_ref: str | None = None
     attachment_id: str | None = None
 
+    @model_validator(mode="after")
+    def content_digest_is_exact_sha256(self) -> "CarrierRejectionSourceRef":
+        if not _is_sha256_ref(self.content_sha256):
+            raise ValueError("carrier rejection source ref requires an exact SHA-256 hash")
+        return self
+
 
 class CarrierRejectionNotice(StrictModel):
     notice_id: str
@@ -15992,6 +15999,10 @@ class UIDemoQARecipeFixtureRefreshReport(StrictModel):
         if not self.required_next_actions:
             raise ValueError("recipe fixture refresh requires next actions")
         return self
+
+
+def _round_money(value: float) -> float:
+    return float(Decimal(str(value)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP))
 
 
 def _is_sha256_ref(value: str) -> bool:
@@ -19903,8 +19914,37 @@ class SyntheticRateCardWorkbenchReport(StrictModel):
             )
         if self.status == "blocked_by_synthetic_rate_card_workbench" and not failed:
             raise ValueError("blocked synthetic rate card workbench report requires failed checks")
-        if not self.rate_card_sha256.startswith("sha256:"):
+        if not _is_sha256_ref(self.rate_card_sha256):
             raise ValueError("synthetic rate card workbench requires a source hash")
+        if self.carrier_count != len({row.carrier_id for row in self.rows}):
+            raise ValueError("synthetic rate card workbench carrier count mismatch")
+        if self.state_count != len({row.state for row in self.rows}):
+            raise ValueError("synthetic rate card workbench state count mismatch")
+        if self.title_count != len({row.title for row in self.rows}):
+            raise ValueError("synthetic rate card workbench title count mismatch")
+        grouped_rows: dict[tuple[str, str], list[SyntheticRateCardWorkbenchRow]] = {}
+        for row in self.rows:
+            grouped_rows.setdefault((row.carrier_id, row.state), []).append(row)
+        summary_by_key = {
+            (summary.carrier_id, summary.state): summary for summary in self.state_summaries
+        }
+        if len(summary_by_key) != len(self.state_summaries):
+            raise ValueError("synthetic rate card workbench state summaries must be unique")
+        if set(summary_by_key) != set(grouped_rows):
+            raise ValueError("synthetic rate card workbench state summary coverage mismatch")
+        for key, rows in grouped_rows.items():
+            summary = summary_by_key[key]
+            rates = [row.hourly_rate for row in rows]
+            carrier_names = {row.carrier_name for row in rows}
+            if len(carrier_names) != 1 or summary.carrier_name not in carrier_names:
+                raise ValueError("synthetic rate card workbench carrier name mismatch")
+            if (
+                summary.role_count != len(rows)
+                or summary.minimum_hourly_rate != min(rates)
+                or summary.maximum_hourly_rate != max(rates)
+                or round(summary.average_hourly_rate, 8) != round(sum(rates) / len(rates), 8)
+            ):
+                raise ValueError("synthetic rate card workbench state summary mismatch")
         return self
 
 
@@ -19980,10 +20020,51 @@ class SyntheticActualsWorkbenchReport(StrictModel):
         if self.status == "blocked_by_synthetic_actuals_workbench" and not failed:
             raise ValueError("blocked synthetic actuals workbench requires failed checks")
         if not (
-            self.budget_proposal_sha256.startswith("sha256:")
-            and self.actuals_source_sha256.startswith("sha256:")
+            _is_sha256_ref(self.budget_proposal_sha256)
+            and _is_sha256_ref(self.actuals_source_sha256)
         ):
             raise ValueError("synthetic actuals workbench requires source hashes")
+        rows = [
+            *self.comparison.phase_comparisons,
+            *self.comparison.code_comparisons,
+        ]
+        for row in rows:
+            expected_budgeted = (
+                None
+                if row.budgeted_fees is None and row.budgeted_expenses is None
+                else _round_money(float(row.budgeted_fees or 0) + float(row.budgeted_expenses or 0))
+            )
+            expected_actual = (
+                None
+                if row.actual_fees is None and row.actual_expenses is None
+                else _round_money(float(row.actual_fees or 0) + float(row.actual_expenses or 0))
+            )
+            if row.budgeted_total != expected_budgeted or row.actual_total != expected_actual:
+                raise ValueError("synthetic actuals workbench row components do not reconcile")
+        if self.status == "synthetic_actuals_workbench_ready_for_review":
+            phase_budgeted = _round_money(
+                sum(float(row.budgeted_total or 0) for row in self.comparison.phase_comparisons)
+            )
+            phase_actual = _round_money(
+                sum(float(row.actual_total or 0) for row in self.comparison.phase_comparisons)
+            )
+            code_budgeted = _round_money(
+                sum(float(row.budgeted_total or 0) for row in self.comparison.code_comparisons)
+            )
+            code_actual = _round_money(
+                sum(float(row.actual_total or 0) for row in self.comparison.code_comparisons)
+            )
+            if (
+                phase_budgeted != self.phase_budgeted_total
+                or phase_actual != self.phase_actual_total
+                or code_budgeted != self.code_budgeted_total
+                or code_actual != self.code_actual_total
+                or phase_budgeted != self.comparison.total_budgeted
+                or phase_actual != self.comparison.total_actual
+                or code_budgeted != self.comparison.total_budgeted
+                or code_actual != self.comparison.total_actual
+            ):
+                raise ValueError("synthetic actuals workbench displayed rows do not reconcile")
         if self.comparison.comparison_budget_state == "human_revised_candidate" and not (
             self.comparison.budget_revision_report_id and self.comparison.budget_revision_report_ref
         ):
@@ -20095,8 +20176,13 @@ class SyntheticBudgetInputWorkbenchReport(StrictModel):
             raise ValueError("ready synthetic budget input workbench cannot include failed checks")
         if self.status == "blocked_by_synthetic_budget_input_workbench" and not failed:
             raise ValueError("blocked synthetic budget input workbench requires failed checks")
-        if not self.budget_proposal_sha256.startswith("sha256:"):
+        if not _is_sha256_ref(self.budget_proposal_sha256):
             raise ValueError("synthetic budget input workbench requires a proposal hash")
+        if self.status == "synthetic_budget_input_workbench_ready_for_review" and any(
+            not lane.source_ref or not _is_sha256_ref(lane.source_sha256 or "")
+            for lane in self.context_lanes
+        ):
+            raise ValueError("synthetic budget input workbench context provenance missing")
         if not any(lane.inclusion == "used_for_budget_math" for lane in self.context_lanes):
             raise ValueError("synthetic budget input workbench requires a used input lane")
         if self.status == "synthetic_budget_input_workbench_ready_for_review":
@@ -20197,15 +20283,88 @@ class SyntheticGuidelineProjectionWorkbenchReport(StrictModel):
             raise ValueError(
                 "blocked synthetic guideline projection workbench requires failed checks"
             )
-        if not self.budget_proposal_sha256.startswith("sha256:"):
+        if not _is_sha256_ref(self.budget_proposal_sha256):
             raise ValueError("synthetic guideline projection workbench requires proposal hash")
-        if any(not source.source_sha256.startswith("sha256:") for source in self.source_manifest):
+        if any(not _is_sha256_ref(source.source_sha256) for source in self.source_manifest):
             raise ValueError("synthetic guideline projection workbench requires source hashes")
         for view in self.views:
-            if round(view.gross_reductions - view.gross_increases, 2) != view.net_delta:
+            if _round_money(view.gross_reductions - view.gross_increases) != view.net_delta:
                 raise ValueError("synthetic guideline projection view net delta does not reconcile")
-            if view.projection.proposed_total != self.proposal_total:
+            projection = view.projection
+            if projection.proposed_total != self.proposal_total:
                 raise ValueError("synthetic guideline projection must preserve proposal total")
+            if projection.line_count != len(projection.lines):
+                raise ValueError("synthetic guideline projection line count mismatch")
+            for line in projection.lines:
+                proposed_line_total = (
+                    None
+                    if line.proposed_fees is None
+                    else _round_money(line.proposed_fees + line.proposed_expenses)
+                )
+                compliant_line_total = (
+                    None
+                    if line.compliant_fees is None
+                    else _round_money(line.compliant_fees + line.compliant_expenses)
+                )
+                if line.proposed_line_total != proposed_line_total:
+                    raise ValueError("synthetic guideline proposed line total mismatch")
+                if line.compliant_line_total != compliant_line_total:
+                    raise ValueError("synthetic guideline compliant line total mismatch")
+            if (
+                projection.proposed_total is not None
+                and projection.compliant_total is not None
+                and _round_money(projection.proposed_total - projection.compliant_total)
+                != view.net_delta
+            ):
+                raise ValueError("synthetic guideline projection delta does not match totals")
+            if projection.projection_pricing_status == "priced":
+                required_priced_values = [
+                    projection.proposed_total,
+                    projection.compliant_total,
+                    projection.proposed_subtotal_fees,
+                    projection.compliant_subtotal_fees,
+                    projection.proposed_contingency_amount,
+                    projection.compliant_contingency_amount,
+                    *[line.proposed_fees for line in projection.lines],
+                    *[line.compliant_fees for line in projection.lines],
+                    *[line.proposed_line_total for line in projection.lines],
+                    *[line.compliant_line_total for line in projection.lines],
+                ]
+                if any(value is None for value in required_priced_values):
+                    raise ValueError(
+                        "priced synthetic guideline projection requires complete pricing"
+                    )
+                proposed_fees = _round_money(
+                    sum(float(line.proposed_fees or 0) for line in projection.lines)
+                )
+                compliant_fees = _round_money(
+                    sum(float(line.compliant_fees or 0) for line in projection.lines)
+                )
+                proposed_expenses = _round_money(
+                    sum(line.proposed_expenses for line in projection.lines)
+                )
+                compliant_expenses = _round_money(
+                    sum(line.compliant_expenses for line in projection.lines)
+                )
+                proposed_total = _round_money(
+                    proposed_fees
+                    + proposed_expenses
+                    + float(projection.proposed_contingency_amount or 0)
+                )
+                compliant_total = _round_money(
+                    compliant_fees
+                    + compliant_expenses
+                    + float(projection.compliant_contingency_amount or 0)
+                )
+                if (
+                    projection.proposed_subtotal_fees != proposed_fees
+                    or projection.compliant_subtotal_fees != compliant_fees
+                    or projection.proposed_subtotal_expenses != proposed_expenses
+                    or projection.compliant_subtotal_expenses != compliant_expenses
+                    or projection.proposed_total != proposed_total
+                    or projection.compliant_total != compliant_total
+                ):
+                    raise ValueError("synthetic guideline displayed lines do not reconcile")
         return self
 
 
@@ -20292,12 +20451,37 @@ class SyntheticRejectionAppealWorkbenchReport(StrictModel):
             )
         if self.status.startswith("blocked") and not failed:
             raise ValueError("blocked synthetic rejection appeal workbench requires failed checks")
+        if not (
+            _is_sha256_ref(self.budget_proposal_sha256)
+            and _is_sha256_ref(self.source_bundle_sha256)
+        ):
+            raise ValueError("synthetic rejection appeal workbench requires source hashes")
         if self.total_disputed_amount != self.decision_ledger.total_disputed_amount:
             raise ValueError("synthetic rejection appeal disputed total must match ledger")
         if self.total_recovered_amount != self.decision_ledger.total_recovered_amount:
             raise ValueError("synthetic rejection appeal recovered total must match ledger")
         if self.total_write_down_amount != self.decision_ledger.total_write_down_amount:
             raise ValueError("synthetic rejection appeal write-down total must match ledger")
+        if len({case.remediation_case_id for case in self.cases}) != len(self.cases):
+            raise ValueError("synthetic rejection appeal case IDs must be unique")
+        case_disputed = round(sum(case.disputed_amount for case in self.cases), 2)
+        case_recovered = round(sum(case.recovered_amount for case in self.cases), 2)
+        case_write_down = round(sum(case.write_down_amount for case in self.cases), 2)
+        if case_disputed != self.total_disputed_amount:
+            raise ValueError("synthetic rejection appeal case disputed total mismatch")
+        if case_recovered != self.total_recovered_amount:
+            raise ValueError("synthetic rejection appeal case recovered total mismatch")
+        if case_write_down != self.total_write_down_amount:
+            raise ValueError("synthetic rejection appeal case write-down total mismatch")
+        if any(
+            round(case.recovered_amount + case.write_down_amount, 2) > case.disputed_amount
+            for case in self.cases
+        ):
+            raise ValueError("synthetic rejection appeal case financial partition exceeds dispute")
+        if self.status.endswith("ready_for_review") and any(
+            case.source_ref_count == 0 for case in self.cases
+        ):
+            raise ValueError("ready synthetic rejection appeal case requires source refs")
         return self
 
 
@@ -20394,12 +20578,19 @@ class SyntheticBudgetConfigurationWorkbenchReport(StrictModel):
             raise ValueError(
                 "blocked synthetic budget configuration workbench requires failed checks"
             )
-        if any(not source.source_sha256.startswith("sha256:") for source in self.sources):
+        if any(not _is_sha256_ref(source.source_sha256) for source in self.sources):
             raise ValueError("synthetic budget configuration workbench requires source hashes")
         if len({entry.entry_id for entry in self.entries}) != len(self.entries):
             raise ValueError("synthetic budget configuration entry IDs must be unique")
         if sum(self.entries_by_math_effect.values()) != self.entry_count:
             raise ValueError("synthetic budget configuration effect counts must reconcile")
+        expected_effect_counts: dict[str, int] = {}
+        for entry in self.entries:
+            expected_effect_counts[entry.math_effect] = (
+                expected_effect_counts.get(entry.math_effect, 0) + 1
+            )
+        if self.entries_by_math_effect != expected_effect_counts:
+            raise ValueError("synthetic budget configuration effect buckets mismatch")
         return self
 
 

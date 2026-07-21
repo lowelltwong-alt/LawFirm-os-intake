@@ -5,6 +5,7 @@ import { tmpdir } from "node:os";
 import { extname, isAbsolute, join, normalize, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
+import ts from "typescript";
 
 const appDirectory = resolve(fileURLToPath(new URL(".", import.meta.url)), "..");
 const distDirectory = resolve(appDirectory, "dist");
@@ -60,6 +61,14 @@ async function serveStatic(request, response) {
   }
 }
 
+async function loadDataContractAssertions() {
+  const source = await readFile(new URL("../src/data-contract.ts", import.meta.url), "utf8");
+  const transpiled = ts.transpileModule(source, {
+    compilerOptions: { module: ts.ModuleKind.ES2022, target: ts.ScriptTarget.ES2022 },
+  }).outputText;
+  return import(`data:text/javascript;base64,${Buffer.from(transpiled).toString("base64")}`);
+}
+
 async function main() {
   await stat(join(distDirectory, "index.html"));
   const rateCardFixture = JSON.parse(
@@ -67,6 +76,18 @@ async function main() {
   );
   const budgetInputFixture = JSON.parse(
     await readFile(new URL("../src/fixtures/demo-synthetic-budget-input-workbench-report.json", import.meta.url), "utf8"),
+  );
+  const actualsFixture = JSON.parse(
+    await readFile(new URL("../src/fixtures/demo-synthetic-actuals-workbench-report.json", import.meta.url), "utf8"),
+  );
+  const guidelineFixture = JSON.parse(
+    await readFile(new URL("../src/fixtures/demo-synthetic-guideline-projection-workbench-report.json", import.meta.url), "utf8"),
+  );
+  const configurationFixture = JSON.parse(
+    await readFile(new URL("../src/fixtures/demo-synthetic-budget-configuration-workbench-report.json", import.meta.url), "utf8"),
+  );
+  const rejectionAppealFixture = JSON.parse(
+    await readFile(new URL("../src/fixtures/demo-synthetic-rejection-appeal-workbench-report.json", import.meta.url), "utf8"),
   );
   const replayInputPackFixture = JSON.parse(
     await readFile(
@@ -94,6 +115,86 @@ async function main() {
   ]);
   const server = createServer(serveStatic);
   const failures = [];
+  const dataContract = await loadDataContractAssertions();
+  if (
+    dataContract.roundMoney(2.675) !== 2.68 ||
+    dataContract.roundMoney(-2.675) !== -2.68
+  ) {
+    failures.push("ui_data_contract_money_rounding_not_half_up");
+  }
+  const rateSummaryMutation = structuredClone(rateCardFixture);
+  rateSummaryMutation.state_summaries[0].average_hourly_rate += 1;
+  const malformedHashMutation = structuredClone(rateCardFixture);
+  malformedHashMutation.rate_card_sha256 = "sha256:not-a-hash";
+  const actualsRowMutation = structuredClone(actualsFixture);
+  actualsRowMutation.comparison.phase_comparisons[0].actual_fees += 1;
+  const budgetContextHashMutation = structuredClone(budgetInputFixture);
+  budgetContextHashMutation.context_lanes[0].source_sha256 = "sha256:not-a-hash";
+  const guidelineLineMutation = structuredClone(guidelineFixture);
+  guidelineLineMutation.views[0].projection.lines[0].compliant_line_total += 1;
+  const guidelineNullPricingMutation = structuredClone(guidelineFixture);
+  guidelineNullPricingMutation.views[0].projection.lines[0].proposed_fees = null;
+  guidelineNullPricingMutation.views[0].projection.lines[0].proposed_line_total = null;
+  const configurationCountMutation = structuredClone(configurationFixture);
+  configurationCountMutation.entries_by_math_effect.proposal_rate_fallback -= 1;
+  configurationCountMutation.entries_by_math_effect.proposal_contingency += 1;
+  const rejectionCaseMutation = structuredClone(rejectionAppealFixture);
+  rejectionCaseMutation.cases[0].recovered_amount += 1;
+  const rejectionNestedHashMutation = structuredClone(rejectionAppealFixture);
+  rejectionNestedHashMutation.reconciliation_report.remediation_cases[0].source_refs[0].content_sha256 =
+    "sha256:not-a-hash";
+  const mutationChecks = [
+    [
+      "rate_summary",
+      dataContract.assertSyntheticRateCardWorkbenchReport(rateSummaryMutation),
+      "synthetic_rate_card_workbench_state_summary_mismatch",
+    ],
+    [
+      "malformed_hash",
+      dataContract.assertSyntheticRateCardWorkbenchReport(malformedHashMutation),
+      "synthetic_rate_card_workbench_source_hash_missing",
+    ],
+    [
+      "actuals_displayed_row",
+      dataContract.assertSyntheticActualsWorkbenchReport(actualsRowMutation),
+      "synthetic_actuals_workbench_row_components_not_reconciled",
+    ],
+    [
+      "budget_context_hash",
+      dataContract.assertSyntheticBudgetInputWorkbenchReport(budgetContextHashMutation),
+      "synthetic_budget_input_workbench_context_provenance_missing",
+    ],
+    [
+      "guideline_displayed_line",
+      dataContract.assertSyntheticGuidelineProjectionWorkbenchReport(guidelineLineMutation),
+      "synthetic_guideline_projection_view_invalid:synthetic-carrier-a",
+    ],
+    [
+      "guideline_null_pricing",
+      dataContract.assertSyntheticGuidelineProjectionWorkbenchReport(guidelineNullPricingMutation),
+      "synthetic_guideline_projection_view_invalid:synthetic-carrier-a",
+    ],
+    [
+      "configuration_effect_count",
+      dataContract.assertSyntheticBudgetConfigurationWorkbenchReport(configurationCountMutation),
+      "synthetic_budget_configuration_effect_counts_mismatch",
+    ],
+    [
+      "rejection_nested_hash",
+      dataContract.assertSyntheticRejectionAppealWorkbenchReport(rejectionNestedHashMutation),
+      "synthetic_rejection_appeal_workbench_provenance_missing",
+    ],
+    [
+      "rejection_case_financial",
+      dataContract.assertSyntheticRejectionAppealWorkbenchReport(rejectionCaseMutation),
+      "synthetic_rejection_appeal_workbench_financial_partition_failed",
+    ],
+  ];
+  for (const [mutationId, observedFailures, expectedFailure] of mutationChecks) {
+    if (!observedFailures.includes(expectedFailure)) {
+      failures.push(`ui_data_contract_mutation_not_rejected:${mutationId}`);
+    }
+  }
   const trackedFiles = new Set(
     execFileSync("git", ["ls-files", "-z"], { cwd: repoRoot, encoding: "utf8" })
       .split("\0")

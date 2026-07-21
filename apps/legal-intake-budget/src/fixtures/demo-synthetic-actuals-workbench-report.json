@@ -339,6 +339,15 @@
   "code_row_count": 9,
   "checks": [
     {
+      "check_id": "source_inputs_unchanged_during_build",
+      "status": "passed",
+      "message": "The displayed actuals must remain bound to the exact source bytes that were hashed.",
+      "evidence_refs": [
+        "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/legal_budget_proposal.json",
+        "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/budget_actuals_source.json"
+      ]
+    },
+    {
       "check_id": "synthetic_actuals_source_boundary",
       "status": "passed",
       "message": "Actuals source must be synthetic, non-authoritative, and connector-free.",

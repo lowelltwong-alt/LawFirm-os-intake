@@ -3,9 +3,11 @@
 import json
 import shutil
 
+import pytest
 import yaml
 
 from lawfirm_os_intake.cli import main
+from lawfirm_os_intake.models import SyntheticBudgetConfigurationWorkbenchReport
 from lawfirm_os_intake.synthetic_budget_configuration_workbench import (
     REPORT_FILENAME,
     WORKBOOK_FILENAME,
@@ -52,6 +54,18 @@ def test_configuration_workbench_inventories_editable_synthetic_inputs(tmp_path,
     assert workbook.sheetnames == ["Read Me", "Editable Values", "Source Manifest"]
     assert len(list(workbook["Editable Values"].iter_rows(min_row=4, values_only=True))) == 159
     assert all(cell.data_type != "f" for sheet in workbook for row in sheet for cell in row)
+
+
+def test_configuration_workbench_model_rejects_swapped_effect_buckets(repo_root):
+    payload = load_json(
+        repo_root / "apps/legal-intake-budget/src/fixtures/"
+        "demo-synthetic-budget-configuration-workbench-report.json"
+    )
+    payload["entries_by_math_effect"]["proposal_rate_fallback"] -= 1
+    payload["entries_by_math_effect"]["proposal_contingency"] += 1
+
+    with pytest.raises(ValueError, match="effect buckets mismatch"):
+        SyntheticBudgetConfigurationWorkbenchReport.model_validate(payload)
 
 
 def test_configuration_workbench_is_deterministic_for_fixed_sources(repo_root):

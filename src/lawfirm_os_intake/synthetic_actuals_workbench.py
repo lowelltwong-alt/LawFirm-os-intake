@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 from .budget_actuals import build_budget_actual_comparison_report
@@ -11,7 +12,7 @@ from .models import (
     SyntheticActualsWorkbenchCheck,
     SyntheticActualsWorkbenchReport,
 )
-from .util import digest_json, digest_text, load_json, now_iso, write_json
+from .util import digest_json, digest_text, now_iso, write_json
 
 SYNTHETIC_ACTUALS_WORKBENCH_REPORT_FILENAME = "synthetic_actuals_workbench_report.json"
 SYNTHETIC_ACTUALS_WORKBENCH_MARKDOWN_FILENAME = "synthetic_actuals_workbench.md"
@@ -37,6 +38,13 @@ def _check(check_id: str, passed: bool, message: str, *refs: str) -> SyntheticAc
 
 def _total(rows: list[object], field: str) -> float:
     return round(sum(float(getattr(row, field) or 0) for row in rows), 2)
+
+
+def _source_text_unchanged(path: Path, expected: str) -> bool:
+    try:
+        return path.read_text(encoding="utf-8") == expected
+    except OSError:
+        return False
 
 
 def build_synthetic_actuals_workbench_report(
@@ -71,8 +79,8 @@ def _build_synthetic_actuals_workbench_report(
 
     budget_text = budget_path.read_text(encoding="utf-8")
     actuals_text = actuals_path.read_text(encoding="utf-8")
-    budget = BudgetProposal.model_validate(load_json(budget_path))
-    actuals = BudgetActualsSource.model_validate(load_json(actuals_path))
+    budget = BudgetProposal.model_validate(json.loads(budget_text))
+    actuals = BudgetActualsSource.model_validate(json.loads(actuals_text))
     actuals_source_ref = actuals.source_ref or actuals_path.as_posix()
     generated = generated_at or now_iso()
     comparison = build_budget_actual_comparison_report(
@@ -108,6 +116,14 @@ def _build_synthetic_actuals_workbench_report(
     code_budgeted_total = _total(codes, "budgeted_total")
     code_actual_total = _total(codes, "actual_total")
     checks = [
+        _check(
+            "source_inputs_unchanged_during_build",
+            _source_text_unchanged(budget_path, budget_text)
+            and _source_text_unchanged(actuals_path, actuals_text),
+            "The displayed actuals must remain bound to the exact source bytes that were hashed.",
+            BUDGET_PROPOSAL_REF,
+            ACTUALS_SOURCE_REF,
+        ),
         _check(
             "synthetic_actuals_source_boundary",
             actuals.data_origin == "synthetic"

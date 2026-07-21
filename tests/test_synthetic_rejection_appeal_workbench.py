@@ -105,6 +105,17 @@ def test_rejection_appeal_workbench_model_rejects_tampered_financial_total(repo_
         SyntheticRejectionAppealWorkbenchReport.model_validate(payload)
 
 
+def test_rejection_appeal_workbench_model_rejects_tampered_case_financials(repo_root):
+    payload = load_json(
+        repo_root / "apps/legal-intake-budget/src/fixtures/"
+        "demo-synthetic-rejection-appeal-workbench-report.json"
+    )
+    payload["cases"][0]["recovered_amount"] += 1
+
+    with pytest.raises(ValueError, match="case recovered total mismatch"):
+        SyntheticRejectionAppealWorkbenchReport.model_validate(payload)
+
+
 def test_rejection_appeal_workbench_is_deterministic_for_pinned_synthetic_inputs(repo_root):
     first = build_synthetic_rejection_appeal_workbench_report(
         repo_root=repo_root, generated_at=FIXED_TIME
