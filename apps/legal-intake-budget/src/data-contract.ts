@@ -296,6 +296,12 @@ export function assertSyntheticRateCardWorkbenchReport(
     failures.push("synthetic_rate_card_workbench_row_count_mismatch");
   }
   if (
+    report.named_timekeeper_override_count !==
+    report.rows.filter((row) => row.named_timekeeper_override).length
+  ) {
+    failures.push("synthetic_rate_card_workbench_override_count_mismatch");
+  }
+  if (
     report.carrier_count !== new Set(report.rows.map((row) => row.carrier_id)).size ||
     report.state_count !== new Set(report.rows.map((row) => row.state)).size ||
     report.title_count !== new Set(report.rows.map((row) => row.title)).size

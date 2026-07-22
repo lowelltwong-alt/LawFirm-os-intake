@@ -735,7 +735,7 @@
       "top_level_type": "object"
     },
     {
-      "byte_count": 93888,
+      "byte_count": 94451,
       "candidate_only": true,
       "data_origin": "synthetic",
       "external_writes_performed": false,
@@ -751,7 +751,7 @@
       ],
       "path": "demo-synthetic-guideline-projection-workbench-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:e415aad3065a4e555a1607e7e34647b829b7ce17b3bc5ff5ed09c4f105de65b7",
+      "sha256": "sha256:2a0085e51789955b6f019bd63eba192066cc885712d8b42a2c8321f75f998a37",
       "status": "synthetic_guideline_projection_workbench_ready_for_review",
       "synthetic_only": true,
       "top_level_type": "object"
@@ -849,7 +849,7 @@
       "top_level_type": "object"
     },
     {
-      "byte_count": 12235,
+      "byte_count": 13240,
       "candidate_only": true,
       "data_origin": "synthetic",
       "external_writes_performed": false,
@@ -860,18 +860,18 @@
         },
         {
           "field": "synthetic_rate_card_workbench_report_id",
-          "value": "synrateworkbench-9bc1f3cc8d6111c9"
+          "value": "synrateworkbench-b52a260200cf966d"
         }
       ],
       "path": "demo-synthetic-rate-card-workbench-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:6c960a6bfa322bccc487ae7effea17c8de773c16dd013ed6ebd257aeb310a2ee",
+      "sha256": "sha256:c561d01d868be78edad145b9d38bec03a7b7b9e29d167123bb471783cc674545",
       "status": "synthetic_rate_card_workbench_ready_for_review",
       "synthetic_only": true,
       "top_level_type": "object"
     },
     {
-      "byte_count": 60090,
+      "byte_count": 60597,
       "candidate_only": true,
       "data_origin": "synthetic",
       "external_writes_performed": false,
@@ -887,7 +887,7 @@
       ],
       "path": "demo-synthetic-rejection-appeal-workbench-report.json",
       "schema_version": "0.1",
-      "sha256": "sha256:8348bb205733cdd441da8cd3e7294b4052db9a575c0d9d270f4a6cb8649f94c5",
+      "sha256": "sha256:67657bcae8697ed3557a92efc49fd4b3af3dde83c579c85547c0db7132e531ff",
       "status": "synthetic_rejection_appeal_workbench_ready_for_review",
       "synthetic_only": true,
       "top_level_type": "object"
@@ -933,7 +933,7 @@
   ],
   "lake_write_performed": false,
   "local_json_only": true,
-  "manifest_sha256": "sha256:1e23f770a48e2fe9d21d5c019693316723ac796df9f07d9e76d0a6d09007088a",
+  "manifest_sha256": "sha256:40c88ea40fecb40deb72a36adf0609c1ac30521d231eb541353323b3e2f1cce0",
   "matter_opening_authorized": false,
   "non_authoritative": true,
   "parse_error_count": 0,
@@ -956,5 +956,5 @@
   "sqlite_write_performed": false,
   "status": "passed",
   "synthetic_only": true,
-  "total_byte_count": 1262561
+  "total_byte_count": 1264636
 }

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "synthetic_rate_card_workbench_report_id": "synrateworkbench-9bc1f3cc8d6111c9",
+  "synthetic_rate_card_workbench_report_id": "synrateworkbench-b52a260200cf966d",
   "status": "synthetic_rate_card_workbench_ready_for_review",
   "rate_card_id": "synthetic-carrier-rate-card",
   "rate_card_version": "0.1",
@@ -20,7 +20,8 @@
       "effective_date": "2026-01-01",
       "state": "CA",
       "title": "associate",
-      "hourly_rate": 300.0
+      "hourly_rate": 300.0,
+      "named_timekeeper_override": false
     },
     {
       "carrier_id": "synthetic-carrier-a",
@@ -28,7 +29,8 @@
       "effective_date": "2026-01-01",
       "state": "CA",
       "title": "paralegal",
-      "hourly_rate": 190.0
+      "hourly_rate": 190.0,
+      "named_timekeeper_override": false
     },
     {
       "carrier_id": "synthetic-carrier-a",
@@ -36,7 +38,8 @@
       "effective_date": "2026-01-01",
       "state": "CA",
       "title": "partner",
-      "hourly_rate": 520.0
+      "hourly_rate": 520.0,
+      "named_timekeeper_override": false
     },
     {
       "carrier_id": "synthetic-carrier-a",
@@ -44,7 +47,8 @@
       "effective_date": "2026-01-01",
       "state": "CA",
       "title": "senior_associate",
-      "hourly_rate": 380.0
+      "hourly_rate": 380.0,
+      "named_timekeeper_override": false
     },
     {
       "carrier_id": "synthetic-carrier-a",
@@ -52,7 +56,8 @@
       "effective_date": "2026-01-01",
       "state": "NV",
       "title": "associate",
-      "hourly_rate": 250.0
+      "hourly_rate": 250.0,
+      "named_timekeeper_override": true
     },
     {
       "carrier_id": "synthetic-carrier-a",
@@ -60,7 +65,8 @@
       "effective_date": "2026-01-01",
       "state": "NV",
       "title": "paralegal",
-      "hourly_rate": 160.0
+      "hourly_rate": 160.0,
+      "named_timekeeper_override": false
     },
     {
       "carrier_id": "synthetic-carrier-a",
@@ -68,7 +74,8 @@
       "effective_date": "2026-01-01",
       "state": "NV",
       "title": "partner",
-      "hourly_rate": 450.0
+      "hourly_rate": 450.0,
+      "named_timekeeper_override": true
     },
     {
       "carrier_id": "synthetic-carrier-a",
@@ -76,7 +83,8 @@
       "effective_date": "2026-01-01",
       "state": "NV",
       "title": "senior_associate",
-      "hourly_rate": 325.0
+      "hourly_rate": 325.0,
+      "named_timekeeper_override": false
     },
     {
       "carrier_id": "synthetic-carrier-a",
@@ -84,7 +92,8 @@
       "effective_date": "2026-01-01",
       "state": "TX",
       "title": "associate",
-      "hourly_rate": 235.0
+      "hourly_rate": 235.0,
+      "named_timekeeper_override": false
     },
     {
       "carrier_id": "synthetic-carrier-a",
@@ -92,7 +101,8 @@
       "effective_date": "2026-01-01",
       "state": "TX",
       "title": "paralegal",
-      "hourly_rate": 150.0
+      "hourly_rate": 150.0,
+      "named_timekeeper_override": false
     },
     {
       "carrier_id": "synthetic-carrier-a",
@@ -100,7 +110,8 @@
       "effective_date": "2026-01-01",
       "state": "TX",
       "title": "partner",
-      "hourly_rate": 410.0
+      "hourly_rate": 410.0,
+      "named_timekeeper_override": false
     },
     {
       "carrier_id": "synthetic-carrier-a",
@@ -108,7 +119,8 @@
       "effective_date": "2026-01-01",
       "state": "TX",
       "title": "senior_associate",
-      "hourly_rate": 300.0
+      "hourly_rate": 300.0,
+      "named_timekeeper_override": false
     },
     {
       "carrier_id": "synthetic-carrier-b",
@@ -116,7 +128,8 @@
       "effective_date": "2026-01-01",
       "state": "CA",
       "title": "associate",
-      "hourly_rate": 270.0
+      "hourly_rate": 270.0,
+      "named_timekeeper_override": false
     },
     {
       "carrier_id": "synthetic-carrier-b",
@@ -124,7 +137,8 @@
       "effective_date": "2026-01-01",
       "state": "CA",
       "title": "paralegal",
-      "hourly_rate": 175.0
+      "hourly_rate": 175.0,
+      "named_timekeeper_override": false
     },
     {
       "carrier_id": "synthetic-carrier-b",
@@ -132,7 +146,8 @@
       "effective_date": "2026-01-01",
       "state": "CA",
       "title": "partner",
-      "hourly_rate": 470.0
+      "hourly_rate": 470.0,
+      "named_timekeeper_override": false
     },
     {
       "carrier_id": "synthetic-carrier-b",
@@ -140,7 +155,8 @@
       "effective_date": "2026-01-01",
       "state": "CA",
       "title": "senior_associate",
-      "hourly_rate": 350.0
+      "hourly_rate": 350.0,
+      "named_timekeeper_override": false
     },
     {
       "carrier_id": "synthetic-carrier-b",
@@ -148,7 +164,8 @@
       "effective_date": "2026-01-01",
       "state": "NV",
       "title": "associate",
-      "hourly_rate": 225.0
+      "hourly_rate": 225.0,
+      "named_timekeeper_override": false
     },
     {
       "carrier_id": "synthetic-carrier-b",
@@ -156,7 +173,8 @@
       "effective_date": "2026-01-01",
       "state": "NV",
       "title": "paralegal",
-      "hourly_rate": 145.0
+      "hourly_rate": 145.0,
+      "named_timekeeper_override": false
     },
     {
       "carrier_id": "synthetic-carrier-b",
@@ -164,7 +182,8 @@
       "effective_date": "2026-01-01",
       "state": "NV",
       "title": "partner",
-      "hourly_rate": 395.0
+      "hourly_rate": 395.0,
+      "named_timekeeper_override": true
     },
     {
       "carrier_id": "synthetic-carrier-b",
@@ -172,7 +191,8 @@
       "effective_date": "2026-01-01",
       "state": "NV",
       "title": "senior_associate",
-      "hourly_rate": 295.0
+      "hourly_rate": 295.0,
+      "named_timekeeper_override": false
     },
     {
       "carrier_id": "synthetic-carrier-b",
@@ -180,7 +200,8 @@
       "effective_date": "2026-01-01",
       "state": "TX",
       "title": "associate",
-      "hourly_rate": 215.0
+      "hourly_rate": 215.0,
+      "named_timekeeper_override": false
     },
     {
       "carrier_id": "synthetic-carrier-b",
@@ -188,7 +209,8 @@
       "effective_date": "2026-01-01",
       "state": "TX",
       "title": "paralegal",
-      "hourly_rate": 140.0
+      "hourly_rate": 140.0,
+      "named_timekeeper_override": false
     },
     {
       "carrier_id": "synthetic-carrier-b",
@@ -196,7 +218,8 @@
       "effective_date": "2026-01-01",
       "state": "TX",
       "title": "partner",
-      "hourly_rate": 365.0
+      "hourly_rate": 365.0,
+      "named_timekeeper_override": false
     },
     {
       "carrier_id": "synthetic-carrier-b",
@@ -204,7 +227,8 @@
       "effective_date": "2026-01-01",
       "state": "TX",
       "title": "senior_associate",
-      "hourly_rate": 275.0
+      "hourly_rate": 275.0,
+      "named_timekeeper_override": false
     }
   ],
   "state_summaries": [

@@ -19832,6 +19832,7 @@ class SyntheticRateCardWorkbenchRow(StrictModel):
     state: str
     title: str
     hourly_rate: float = Field(gt=0)
+    named_timekeeper_override: bool = False
 
 
 class SyntheticRateCardWorkbenchStateSummary(StrictModel):
@@ -19922,6 +19923,12 @@ class SyntheticRateCardWorkbenchReport(StrictModel):
             raise ValueError("synthetic rate card workbench state count mismatch")
         if self.title_count != len({row.title for row in self.rows}):
             raise ValueError("synthetic rate card workbench title count mismatch")
+        if self.named_timekeeper_override_count != sum(
+            1 for row in self.rows if row.named_timekeeper_override
+        ):
+            raise ValueError(
+                "synthetic rate card workbench named timekeeper override count mismatch"
+            )
         grouped_rows: dict[tuple[str, str], list[SyntheticRateCardWorkbenchRow]] = {}
         for row in self.rows:
             grouped_rows.setdefault((row.carrier_id, row.state), []).append(row)

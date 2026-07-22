@@ -217,6 +217,68 @@ def test_rate_card_workbench_counterfactual_changes_only_the_target_cell_and_sum
     assert baseline.real_rate_import_allowed is changed.real_rate_import_allowed is False
 
 
+def test_rate_card_workbench_flags_named_timekeeper_override_rows(repo_root):
+    report = build_synthetic_rate_card_workbench_report(
+        _card_path(repo_root), repo_root=repo_root, generated_at=FIXED_GENERATED_AT
+    )
+
+    flagged = {
+        (row.carrier_id, row.state, row.title)
+        for row in report.rows
+        if row.named_timekeeper_override
+    }
+    assert flagged == {
+        ("synthetic-carrier-a", "NV", "partner"),
+        ("synthetic-carrier-a", "NV", "associate"),
+        ("synthetic-carrier-b", "NV", "partner"),
+    }
+    # The declared count reconciles to exactly the flagged catalog rows.
+    assert report.named_timekeeper_override_count == 3
+    assert report.named_timekeeper_override_count == sum(
+        1 for row in report.rows if row.named_timekeeper_override
+    )
+    # Every other catalog row is explicitly un-flagged (no silent default drift).
+    assert all(
+        row.named_timekeeper_override is False
+        for row in report.rows
+        if (row.carrier_id, row.state, row.title) not in flagged
+    )
+
+
+def test_rate_card_workbench_model_rejects_tampered_override_count(repo_root):
+    payload = load_json(
+        repo_root
+        / "apps/legal-intake-budget/src/fixtures/demo-synthetic-rate-card-workbench-report.json"
+    )
+    payload["named_timekeeper_override_count"] += 1
+
+    with pytest.raises(ValueError, match="named timekeeper override"):
+        SyntheticRateCardWorkbenchReport.model_validate(payload)
+
+
+def test_rate_card_workbench_blocks_duplicate_named_timekeeper_override_cell(tmp_path, repo_root):
+    card = _card(repo_root)
+    overrides = card["carriers"]["synthetic-carrier-a"]["named_timekeeper_overrides"]
+    # A second override colliding on the same (state, title) catalog cell must fail closed,
+    # not silently reduce the reconciled flag count.
+    overrides["synthetic-tk-harbor-partner-nv-duplicate"] = {
+        "title": "partner",
+        "state": "NV",
+        "approved_rate": 425,
+    }
+    path = tmp_path / "duplicate-override.yaml"
+    _write_card(path, card)
+
+    report = build_synthetic_rate_card_workbench_report(
+        path, repo_root=tmp_path, generated_at=FIXED_GENERATED_AT
+    )
+
+    assert report.status == "blocked_by_synthetic_rate_card_workbench"
+    assert "named_timekeeper_overrides_valid" in {
+        check.check_id for check in report.checks if check.status == "failed"
+    }
+
+
 def test_rate_card_workbench_cli_uses_fixed_repo_source_and_returns_boundary_flags(
     tmp_path, repo_root, capsys
 ):

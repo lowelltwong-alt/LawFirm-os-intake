@@ -62,6 +62,11 @@
           "exclusiveMinimum": 0,
           "title": "Hourly Rate",
           "type": "number"
+        },
+        "named_timekeeper_override": {
+          "default": false,
+          "title": "Named Timekeeper Override",
+          "type": "boolean"
         }
       },
       "required": [

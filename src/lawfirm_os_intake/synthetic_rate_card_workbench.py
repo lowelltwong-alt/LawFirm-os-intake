@@ -152,7 +152,6 @@ def _collect_rows_and_checks(
     )
 
     rows: list[SyntheticRateCardWorkbenchRow] = []
-    override_count = 0
     schedule_state_sets: dict[str, set[str]] = {}
     carrier_shape_valid = True
     schedule_complete = True
@@ -160,6 +159,7 @@ def _collect_rows_and_checks(
     override_valid = True
     duplicate_cells = False
     seen_cells: set[tuple[str, str, str]] = set()
+    override_cells: set[tuple[str, str, str]] = set()
 
     for carrier_id in sorted(carriers):
         spec = _as_mapping(carriers[carrier_id])
@@ -211,7 +211,6 @@ def _collect_rows_and_checks(
 
         overrides = _as_mapping(spec.get("named_timekeeper_overrides"))
         for _timekeeper_id, override in overrides.items():
-            override_count += 1
             override_spec = _as_mapping(override)
             override_state = override_spec.get("state")
             override_title = override_spec.get("title")
@@ -226,6 +225,19 @@ def _collect_rows_and_checks(
                 or numeric_override <= 0
             ):
                 override_valid = False
+                continue
+            override_cell = (str(carrier_id), str(override_state), str(override_title))
+            # Each named-timekeeper override must map to one unique catalog cell so the
+            # row-level flag reconciles exactly to the declared override count.
+            if override_cell in override_cells:
+                override_valid = False
+                continue
+            override_cells.add(override_cell)
+
+    for row in rows:
+        if (row.carrier_id, row.state, row.title) in override_cells:
+            row.named_timekeeper_override = True
+    override_count = sum(1 for row in rows if row.named_timekeeper_override)
 
     expected_states = set.union(*schedule_state_sets.values()) if schedule_state_sets else set()
     schedules_align = bool(schedule_state_sets) and all(
@@ -434,7 +446,17 @@ def _write_workbook(
 
     rate_card = workbook.create_sheet("Rate Card")
     _write_sheet_banner(rate_card)
-    rate_card.append(["Carrier ID", "Carrier", "Effective Date", "State", "Title", "Hourly Rate"])
+    rate_card.append(
+        [
+            "Carrier ID",
+            "Carrier",
+            "Effective Date",
+            "State",
+            "Title",
+            "Hourly Rate",
+            "Named Override",
+        ]
+    )
     for row in report.rows:
         rate_card.append(
             [
@@ -444,10 +466,11 @@ def _write_workbook(
                 _safe_text(row.state),
                 _safe_text(row.title),
                 row.hourly_rate,
+                "yes" if row.named_timekeeper_override else "no",
             ]
         )
     _style_sheet(rate_card, header_row=3)
-    for column, width in {"A": 25, "B": 28, "C": 16, "D": 10, "E": 22, "F": 16}.items():
+    for column, width in {"A": 25, "B": 28, "C": 16, "D": 10, "E": 22, "F": 16, "G": 16}.items():
         rate_card.column_dimensions[column].width = width
     for cell in rate_card["F"][1:]:
         cell.number_format = "$#,##0.00"

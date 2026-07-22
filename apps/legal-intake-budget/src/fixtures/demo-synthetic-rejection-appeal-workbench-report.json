@@ -1344,6 +1344,15 @@
       "status": "passed",
       "message": "The workbench cannot submit appeals or write to the Lake.",
       "evidence_refs": []
+    },
+    {
+      "check_id": "source_inputs_unchanged_during_build",
+      "status": "passed",
+      "message": "The frozen synthetic proposal and rejection bundle must remain byte-identical while the workbench builds.",
+      "evidence_refs": [
+        "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/legal_budget_proposal.json",
+        "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/carrier_rejection_capture_source_bundle_with_appeal_results.json"
+      ]
     }
   ],
   "failed_check_count": 0,
