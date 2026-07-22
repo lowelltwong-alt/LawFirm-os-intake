@@ -37,20 +37,27 @@ READ FOR GROUNDING (do not treat as the plan; restructure freely):
 
 REQUIRED PHASE-0 DECISIONS (blocking — resolve each through a human gate before
 any factory build; every downstream milestone depends on these):
-A. **World Builder adapter binding.** DAD holds `adapter:world-builder` as
-   `target_unresolved` ("Confirm the World Builder target repository identity and
-   bind adapter:world-builder or retire it"). Phase 0 must confirm which repo is
-   the World Builder and bind or retire that adapter before Phase 1 generates
-   anything.
-B. **Gold anchor + untouched holdout.** No gold exists yet, so stand up a small
-   human-adjudicated gold anchor plus an untouched holdout (excluded from prompts,
-   examples, tuning, threshold selection, and training). Until it exists every
-   silver milestone is capped at S1; the plan must say so, name the human
-   adjudicator, and say where the anchor/holdout live.
-C. **Factory location.** Decide whether the intake→budget silver factory lives in
-   the LawFirm Sim / litigation world (per `adapter:law-firm-sim` /
-   `adapter:litigation-corpus-factory`, proposal-only JobManifest/JobResult
-   workers), in intake, or as a new binding — before designing the factory.
+A. **World Builder adapter binding — DIRECTION SET (owner decision 2026-07-21).**
+   The World Builder is a **new, separate, modular repo**
+   (`lawfirm-synthetic-world-builder`), not a fold-in to intake or Law Firm Sim.
+   It works *with* Law Firm Sim as proposal-only JobManifest/JobResult producers
+   on top of that deterministic kernel, builds *multiple* law-firm-document
+   "worlds", emits the DAD provenance-record/release-manifest, and feeds intake.
+   Plan the repo scope, the world-definition interface, its DAD enrollment (own
+   wave), and the sequencing to bind `adapter:world-builder`. Details +
+   candidate adapter entry: `docs/ai-handoff/WORLD_BUILDER_BINDING_RECOMMENDATION.md`.
+B. **Gold anchor + untouched holdout — DELEGATED TO FABLE (owner deferred).**
+   No gold exists yet, so the program is capped at S1 until a small human-
+   adjudicated gold anchor + untouched holdout exist (excluded from prompts,
+   examples, tuning, threshold selection, training). **Fable: recommend the first
+   gold-anchor task** — options are (i) litigation-corpus foundation (1 case,
+   ~80–150 artifacts, Law Firm Sim), (ii) intake→budget output states, (iii)
+   document chunking (DAD's recommended deterministic first pilot), or (iv) defer
+   and run S0/S1 only — with rationale, the human adjudicator, and where it lives.
+C. **Factory location** — mostly resolved by A: the World Builder repo is the
+   corpus factory; intake is a consumer and its own silver factory for budget
+   outputs. Confirm this split and whether the litigation-corpus lane
+   (`adapter:litigation-corpus-factory`) is in scope for the first increment.
 
 PRODUCE A PLAN OF RECORD WITH:
 1. **Definition of "done" for the whole project** — the observable end state that
