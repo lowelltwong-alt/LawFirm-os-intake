@@ -1,8 +1,14 @@
 # PLAN: Public-Data → Synthetic-Silver Intake-to-Budget Loop with Governed Self-Improvement
 
-Status: DRAFT for Fable review. Candidate-only, synthetic-only, human-gated.
-Author: Claude (Opus 4.8). Date: 2026-07-21.
-Target executor: Opus 4.8 (medium) marathon (goal prompt at the end).
+Status: GROUNDING SCAFFOLD (not the plan of record). Candidate-only,
+synthetic-only, human-gated. Author: Claude (Opus 4.8). Date: 2026-07-21.
+Target executor: Opus 4.8 (medium) marathon.
+
+> This document is **input** for Fable's full-project plan of record. Fable is
+> asked to plan Phase 0 **through project completion** — see
+> `FABLE_PLANNING_BRIEF_public_synthetic_silver.md`. The phases and the "thin
+> first slice" here are a starting structure and a *first increment*
+> suggestion, not a scope cap. Fable may restructure freely.
 
 ## 0. One-paragraph objective
 
