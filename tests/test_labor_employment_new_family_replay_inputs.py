@@ -15,8 +15,17 @@ from lawfirm_os_intake.carrier_rejections import run_carrier_rejection_capture
 from lawfirm_os_intake.models import (
     BudgetActualComparisonReport,
     CarrierRejectionDecisionLedgerReport,
+    SyntheticBudgetInputWorkbenchReport,
 )
-from lawfirm_os_intake.util import load_json, write_json
+from lawfirm_os_intake.synthetic_budget_input_workbench import (
+    BUDGET_PROPOSAL_REF as BUDGET_INPUT_DEFAULT_REF,
+    build_synthetic_budget_input_workbench_report,
+)
+from lawfirm_os_intake.util import digest_text, load_json, write_json
+
+WAGE_HOUR_BUDGET_REF = (
+    "examples/synthetic/labor-employment/replay-inputs/wage-hour-clean/legal_budget_proposal.json"
+)
 
 REPLAY_INPUTS = "examples/synthetic/labor-employment/replay-inputs"
 ACTUALS_FAMILIES = {
@@ -64,9 +73,7 @@ def test_new_family_actuals_replay_inputs_run_builder(repo_root, tmp_path, famil
     assert report.total_variance_amount == round(
         (report.total_actual or 0) - (report.total_budgeted or 0), 2
     )
-    phase_actual = round(
-        sum(row.actual_total or 0 for row in persisted.phase_comparisons), 2
-    )
+    phase_actual = round(sum(row.actual_total or 0 for row in persisted.phase_comparisons), 2)
     assert phase_actual == report.total_actual
 
     # Prohibited-transition: replay never reads/writes billing, Lake, or learns.
@@ -121,9 +128,7 @@ def test_restrictive_covenant_carrier_rejection_inputs_run_builder(repo_root, tm
     bad_bundle["budget_proposal_id"] = "le-budget-restrictive-covenant-messy-thread.v0_1"
     bad_bundle_path = write_json(tmp_path / "rc-bad-bundle.json", bad_bundle)
     with pytest.raises(ValueError, match="preflight_packet_id does not match"):
-        run_carrier_rejection_capture(
-            budget_path, bad_bundle_path, tmp_path / "rc-bad-carrier-run"
-        )
+        run_carrier_rejection_capture(budget_path, bad_bundle_path, tmp_path / "rc-bad-carrier-run")
 
     # Prohibited-transition: no appeal submission, Lake/SQLite, or external write.
     assert report.not_authorized_for_lake_write is True
@@ -133,3 +138,53 @@ def test_restrictive_covenant_carrier_rejection_inputs_run_builder(repo_root, tm
     assert ledger.lake_write_performed is False
     assert ledger.sqlite_write_performed is False
     assert ledger.silent_learning_performed is False
+
+
+@pytest.mark.parametrize(
+    ("budget_ref", "expected_family"),
+    [
+        (BUDGET_INPUT_DEFAULT_REF, "epli_carrier_assignment"),
+        (WAGE_HOUR_BUDGET_REF, "wage_hour_flsa_state"),
+    ],
+)
+def test_budget_input_workbench_covers_materially_different_families(
+    repo_root, budget_ref, expected_family
+):
+    # Budget input is exercised against two materially different proposal
+    # families through the same governed, read-only workbench surface.
+    report = build_synthetic_budget_input_workbench_report(
+        repo_root=repo_root, generated_at="2026-07-21T00:00:00Z", budget_ref=budget_ref
+    )
+    SyntheticBudgetInputWorkbenchReport.model_validate(report.model_dump(mode="json"))
+
+    assert report.status == "synthetic_budget_input_workbench_ready_for_review"
+    assert report.matter_family == expected_family
+    # Coherent provenance: the report's ref and hash match the selected family.
+    assert report.budget_proposal_ref == budget_ref
+    assert report.budget_proposal_sha256 == digest_text(
+        (repo_root / budget_ref).read_text(encoding="utf-8")
+    )
+    # Read-only / candidate-only boundary holds for the second family too.
+    assert report.read_only_ui is True
+    assert report.external_writes_performed is False
+    assert report.budget_submission_authorized is False
+    # Totals reconcile to lines (the hardened boundary) for this family.
+    line_fee_total = round(sum(float(line.estimated_fees or 0) for line in report.lines), 2)
+    line_expense_total = round(sum(line.estimated_expenses for line in report.lines), 2)
+    assert report.subtotal_fees == line_fee_total
+    assert report.subtotal_expenses == line_expense_total
+    assert report.total_proposed_budget == round(
+        line_fee_total + line_expense_total + float(report.contingency_amount or 0), 2
+    )
+
+
+def test_budget_input_workbench_two_families_are_materially_different(repo_root):
+    epli = build_synthetic_budget_input_workbench_report(
+        repo_root=repo_root, generated_at="2026-07-21T00:00:00Z"
+    )
+    wage_hour = build_synthetic_budget_input_workbench_report(
+        repo_root=repo_root, generated_at="2026-07-21T00:00:00Z", budget_ref=WAGE_HOUR_BUDGET_REF
+    )
+    assert epli.matter_family != wage_hour.matter_family
+    assert epli.total_proposed_budget != wage_hour.total_proposed_budget
+    assert epli.budget_proposal_sha256 != wage_hour.budget_proposal_sha256
