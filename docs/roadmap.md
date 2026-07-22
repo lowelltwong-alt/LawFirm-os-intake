@@ -1304,3 +1304,63 @@ human review. Retain deterministic fallback at all times. Pause or retire the
 model on provenance failure, feature drift, calibration failure, unexplained
 performance loss, authority expansion, or a material change in carrier rules,
 rates, practice mix, or data-generating process until revalidated.
+
+## 22. Carrier Guideline Engine v2 And Firm Rate Adaptation
+
+Status: planned. The v1 layer exists (`guidelines.py` +
+`config/synthetic-carrier-guideline.yaml`: per-carrier rate caps by role,
+expense caps, task-role overrides, max-timekeepers rules, preapproval
+thresholds, variance thresholds, for two synthetic carriers) and stays the
+foundation. v2 scales it to dozens of carriers and adds the missing rule
+dimensions.
+
+- **Guideline Contract Schema v2**: versioned, effective-dated, per-carrier and
+  per-program-line packs. New rule dimensions: task-hour allowances (UTBMS task
+  x role -> maximum hours, occurrence caps, frequency rules), activity rules
+  (block-billing bans, conference caps, travel percentages, research-hour
+  caps), staffing ratios, and experience-banded state x role rate caps. Every
+  rule carries a rule_id, parameters, severity (hard cap vs review trigger),
+  and source-span provenance.
+- **Overlay compiler**: firm rate card x guideline pack x matter context ->
+  compliant projection with per-rule delta attribution (every reduced dollar
+  names the rule that reduced it) and an ambiguity register that routes
+  non-deterministic rules to human review instead of guessing.
+- **Overlay algebra**: deterministic precedence (state-law overlay > client
+  addendum > carrier program pack > carrier base pack > firm defaults);
+  conflicts are surfaced, never silently resolved.
+- **Pack registry**: 8-12 synthetic packs spanning realistic variation, with
+  golden tests per pack, differential one-budget-across-all-packs tests, and
+  metamorphic monotonicity tests (tightening any cap never increases the
+  compliant total). `contains_real_carrier_guidelines` stays false throughout.
+- **Firm Adaptation Layer**: a versioned firm rate-card contract
+  (firm/office/state/role/named-timekeeper, effective-dated) with a governed
+  import pipeline. `real_rate_import_allowed` remains false behind an explicit
+  production human gate; until then only synthetic/sandbox rate cards resolve.
+  A deterministic resolution preview shows any rate card under any pack with
+  the binding rule identified, plus a cross-carrier comparison matrix.
+- **ML assists, humans decide**: guideline-intake extraction (unstructured
+  guideline text -> candidate v2 pack with span provenance and per-rule
+  confidence; no pack activates without full rule-level human sign-off) and
+  per-line rejection/reduction-risk prediction calibrated against the public
+  adjudicated reference class — all proposal-only behind the reviewed-learning
+  gates and the section 21 boundaries.
+- UI surfaces (read-only, candidate-only): pack explorer with provenance and
+  version switching, overlay diff with per-rule attribution, firm rate sandbox,
+  cross-carrier matrix, training-evaluation dashboard.
+
+## 23. Marathon Program And Public-Gold Training Lane
+
+Status: program documents committed; execution pending human gates.
+
+- `docs/ai-handoff/MARATHON_PROGRAM_waves_and_prompts.md` is the master
+  multi-wave execution program (W0 close-out through W9 delivery), with
+  per-wave executor prompts, sequencing, and human gates.
+- `docs/ai-handoff/PUBLIC_GOLD_STRATEGY_legal_budgets.md` records the
+  web-verified public-gold lane: court-adjudicated fee outcomes (large Chapter
+  11 budgets and fee-examiner reports under the UST Appendix B guidelines,
+  fee-shifting awards, independent-counsel rate adjudications, risk-pool
+  defense standards, Schedule P aggregates) as reference-class dollar gold for
+  silver calibration and interval-model evaluation. Ingestion runs only
+  through the section 18 gate chain; the frozen holdout satisfies the
+  untouched-outcome requirement of section 21 for the reference class, and
+  firm-specific claims remain blocked until a firm-data pilot recalibrates.
