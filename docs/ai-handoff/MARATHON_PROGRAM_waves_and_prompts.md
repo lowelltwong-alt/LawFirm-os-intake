@@ -1,3 +1,9 @@
+> **SUPERSEDED for v1 (2026-07-21)** by `CONVERGED_PLAN_OF_RECORD.md` after
+> independent Codex review. Do not execute this as written: it builds a new Intake
+> GCS (violates the Substrate-owned OCG IR authority), a new World Builder repo,
+> and v1 predictive ML — all cut. Retained as history and as a source of deferred
+> ideas. The converged plan is a single thin deterministic vertical, WIP=1.
+
 # Marathon Program — Waves And Prompts To 100%, Training, And The Carrier Guideline Engine
 
 Status: master multi-day/multi-week marathon program. Candidate-only,

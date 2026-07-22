@@ -36,8 +36,11 @@ Grounding read of `src/lawfirm_os_intake/` and `docs/roadmap.md`:
   review → public-synthetic conversion review → append-only conversion outcome →
   separate synthetic-fixture-generation PR → synthetic-fixture gold review →
   red-team identity-reconstruction review → public-cache custody review.
-- Synthetic world builder pieces: `synthetic_factory.py`, `synthetic_research.py`,
-  `synthetic_campaign.py`, `synthetic_qa.py`.
+- ~~Synthetic world builder pieces: `synthetic_factory.py`, `synthetic_research.py`,
+  `synthetic_campaign.py`, `synthetic_qa.py`.~~ **CORRECTION (2026-07-21, Codex
+  review):** these modules do NOT exist in the real repo — they were read from the
+  stale top-level folder. World Builder is greenfield. See
+  `CONVERGED_PLAN_OF_RECORD.md`.
 - Evaluation standard: `gold.py` (`FixtureGoldReport`/`FixtureGoldSpec`) and
   `labor_employment_budget_fact_gold.py` — the mechanism exists but there is no
   gold data.
