@@ -8487,7 +8487,34 @@ class ConflictSearchTerm(StrictModel):
     evidence_refs: list[EvidenceRef]
 
 
+def stable_budget_line_id(
+    phase_id: str,
+    task_id: str,
+    staffing_role: str,
+    timekeeper_id: str | None,
+    *,
+    occurrence: int = 0,
+) -> str:
+    """Deterministic, stable identity for a budget line.
+
+    Derived from the line's own identity so it is reproducible across rebuilds of
+    the same input; ``occurrence`` disambiguates otherwise-identical lines.
+    """
+
+    from .util import digest_json
+
+    basis = [
+        str(phase_id),
+        str(task_id),
+        str(staffing_role),
+        str(timekeeper_id or ""),
+        int(occurrence),
+    ]
+    return "bl-" + digest_json(basis).removeprefix("sha256:")[:16]
+
+
 class BudgetLine(StrictModel):
+    line_id: str = ""
     phase_id: str
     phase_name: str
     task_id: str
@@ -8522,6 +8549,16 @@ class BudgetLine(StrictModel):
         "unknown",
     ] = "template_default"
     estimate_basis_refs: list[str] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def line_id_recomputed_never_silent_empty(self) -> "BudgetLine":
+        # A stable line identity is always present, recomputed from the line's own
+        # identity when absent — never a silent empty string.
+        if not self.line_id:
+            self.line_id = stable_budget_line_id(
+                self.phase_id, self.task_id, self.staffing_role, self.timekeeper_id
+            )
+        return self
 
 
 class BudgetSupportItem(StrictModel):
@@ -8810,6 +8847,7 @@ class IntensityNormalizationSignoffGateReport(StrictModel):
 
 
 class CarrierCompliantProjectionLine(StrictModel):
+    line_id: str = ""
     phase_id: str
     task_id: str
     external_code_candidate: str | None = None

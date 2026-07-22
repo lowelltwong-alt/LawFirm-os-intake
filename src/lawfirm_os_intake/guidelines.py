@@ -562,6 +562,7 @@ def _project_line(
     note = "; ".join(note_parts) if note_parts else "no guideline adjustment"
 
     return CarrierCompliantProjectionLine(
+        line_id=line.line_id,
         phase_id=line.phase_id,
         task_id=line.task_id,
         external_code_candidate=line.external_code_candidate,

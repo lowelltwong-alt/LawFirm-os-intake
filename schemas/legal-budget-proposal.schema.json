@@ -428,6 +428,11 @@
     "BudgetLine": {
       "additionalProperties": false,
       "properties": {
+        "line_id": {
+          "default": "",
+          "title": "Line Id",
+          "type": "string"
+        },
         "phase_id": {
           "title": "Phase Id",
           "type": "string"
@@ -1661,6 +1666,11 @@
     "CarrierCompliantProjectionLine": {
       "additionalProperties": false,
       "properties": {
+        "line_id": {
+          "default": "",
+          "title": "Line Id",
+          "type": "string"
+        },
         "phase_id": {
           "title": "Phase Id",
           "type": "string"
