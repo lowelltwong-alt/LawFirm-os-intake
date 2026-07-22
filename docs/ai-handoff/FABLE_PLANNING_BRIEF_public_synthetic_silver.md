@@ -47,13 +47,24 @@ A. **World Builder adapter binding — DIRECTION SET (owner decision 2026-07-21)
    wave), and the sequencing to bind `adapter:world-builder`. Details +
    candidate adapter entry: `docs/ai-handoff/WORLD_BUILDER_BINDING_RECOMMENDATION.md`.
 B. **Gold anchor + untouched holdout — DELEGATED TO FABLE (owner deferred).**
-   No gold exists yet, so the program is capped at S1 until a small human-
-   adjudicated gold anchor + untouched holdout exist (excluded from prompts,
-   examples, tuning, threshold selection, training). **Fable: recommend the first
-   gold-anchor task** — options are (i) litigation-corpus foundation (1 case,
-   ~80–150 artifacts, Law Firm Sim), (ii) intake→budget output states, (iii)
-   document chunking (DAD's recommended deterministic first pilot), or (iv) defer
-   and run S0/S1 only — with rationale, the human adjudicator, and where it lives.
+   No *internal* gold exists (the firm will not release budgets until delivery),
+   so the program is capped at S1 until a small human-adjudicated gold anchor +
+   untouched holdout exist (excluded from prompts, examples, tuning, threshold
+   selection, training). **Fable: recommend the first gold-anchor task** —
+   options are (i) litigation-corpus foundation (1 case, ~80–150 artifacts, Law
+   Firm Sim), (ii) intake→budget output states, (iii) document chunking (DAD's
+   recommended deterministic first pilot), (iv) defer and run S0/S1 only, or
+   **(v) the public-adjudicated fee corpus** — court-adjudicated real budgets and
+   fee outcomes from the public record (large Chapter 11 budgets/staffing plans
+   under the UST Appendix B guidelines with fee-examiner budget-vs-actual
+   reports; fee-shifting award opinions; independent-counsel rate adjudications
+   and public risk-pool rate standards for insurance defense) used as
+   *reference-class dollar gold*, per
+   `docs/ai-handoff/PUBLIC_GOLD_STRATEGY_legal_budgets.md` (web-verified,
+   routed to DAD). Note the two-layer gold split in that doc: process gold
+   (output states, synthetic) vs reference-class dollar gold (public,
+   adjudicated) — (ii) and (v) are complementary, not competing. Ingestion of
+   (v) must ride the roadmap §18 public-source gate chain.
 C. **Factory location** — mostly resolved by A: the World Builder repo is the
    corpus factory; intake is a consumer and its own silver factory for budget
    outputs. Confirm this split and whether the litigation-corpus lane
