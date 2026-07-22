@@ -45,6 +45,23 @@ Constraint carried into code (see M2): the anchor is human-adjudicated, versione
 5. Hard boundaries (STOP + report if a packet needs one): no real data; **no predictive-model training/tuning (XGBoost waits for governed real outcomes)**; no profile/template/guideline mutation, budget submission, matter opening, conflict conclusion, Lake/SQLite/external write, silent learning; no canonical Substrate/Orchestrator change; no push to protected branches; no DAD direct edits (candidate artifacts only); no hidden chain-of-thought.
 6. One packet per PR-sized commit with a decision trace. Stop at each milestone's human gate.
 
+## Part 3b — Branch / PR / CI strategy (close I8 before running for days)
+
+- Base off the **real** repo `.codex-worktrees/workbench-completion-v2` (origin
+  `lowelltwong-alt/LawFirm-os-intake`), branch from its `main`. The top-level
+  `LawFirm-os-intake` folder is a stale snapshot — never work there.
+- One `codex/<milestone>` branch per milestone; one PR-sized commit per packet.
+  At each milestone's human gate, **push the branch and open a PR to `main`** —
+  do not merge it yourself and never push to `main` directly or force-push.
+- **Linux CI on a clean checkout is the authoritative publication gate.** The
+  Windows worktree hits the filename-too-long limit on the eval suite, so local
+  green is necessary-not-sufficient: push so CI runs and **wait for CI green
+  before the human gate.** Never weaken a test to pass locally.
+- Other agents run concurrently: rebase onto latest `origin/main` at the start of
+  each milestone and re-run the gate.
+- Accumulate no more than one milestone of unpushed work; a days-long run that has
+  only ever been validated on the Windows checkout is the failure mode to avoid.
+
 ## Task-packet template
 ```
 ### <packet-id> — <title>
@@ -61,12 +78,36 @@ Exit artifact: <what the packet leaves behind>
 
 ### Track A — intake-side (no external-repo dependency)
 
-**M0 — Trust parity (close residual Stage A gaps).** Momentum, low risk, matches the merged F1/F2 pattern.
-- A0.1 F3: recompute actuals row `actual_fees`/`actual_expenses` against source, not just the row total (Python model + TS `data-contract.ts` + a browser-smoke case). Failing mutation first.
-- A0.2 F4: tie guideline `gross_reductions`/`gross_increases` to line-level deltas (not just their difference).
-- A0.3 F5: reconcile or remove rate-card `named_timekeeper_override_count` (needs a row-level override flag to reconcile against, else drop the field).
-- A0.4 F6: give guideline + rejection builders the single-captured-snapshot + end-of-build unchanged-source check that actuals/input/config already have.
-- Human gate: trust-parity review.
+**M0 — Trust parity (close residual Stage A gaps).** CAUTION (reviewer finding):
+unlike F1/F2, these are **not** all pure "recompute a derived value from the same
+JSON." Read the builder before hardening — a naive recompute false-rejects the
+real fixture (verified for F4 below). Failing-mutation test first, then the fix.
+- A0.1 F3 (actuals fee↔expense split). Not model-recomputable from the JSON
+  alone: `actual_fees`/`actual_expenses` are independent leaves whose only derived
+  value (the row total) is already checked, so a swap preserving the total is
+  internally consistent. Defense: (a) the BUILDER already binds to the immutable
+  source snapshot; (b) add a report-level integrity check that recomputes
+  `synthetic_actuals_workbench_report_id` from the report's own fields
+  (`budget_proposal_sha256`, `actuals_source_sha256`, `comparison` dump,
+  `methodology_version`) and rejects a mismatch. Document the residual: an editor
+  who also recomputes the id needs the source to be caught — that is the builder's
+  job, not the model's. Do not claim a full model-level fix.
+- A0.2 F4 (guideline gross). **Read `synthetic_guideline_projection_workbench.py`'s
+  exact gross computation first.** Verified: a naive per-line
+  `compliant_line_total - proposed_line_total` sum does NOT match the fixture
+  (stored 11899.5 vs recompute 11460.0 — the basis differs, fees/contingency).
+  Tie gross to the builder's actual basis or the validator false-rejects the real
+  report.
+- A0.3 F5 (rate-card override count). Rows carry no override data → schema change,
+  not a recompute: either have the builder populate a row-level
+  `named_timekeeper_override` flag and reconcile the count to it (preferred —
+  restores the summary→rows invariant), or remove the unvalidated field (model +
+  TS types + fixtures + exported schema). Both ripple beyond the model.
+- A0.4 F6 (builder TOCTOU parity). Builder-level, not model-level: give the
+  guideline + rejection builders the single-captured-source-snapshot +
+  end-of-build unchanged-source check that actuals/input/config already have, plus
+  a source-integrity test mirroring the existing ones.
+- Human gate: trust-parity review. Expect ~4 focused PRs; F5/F6 are the larger.
 
 **M1 — Silver contract adoption in intake.** Depends: M0.
 - A1.1 Vendor the three DAD schemas (`synthetic-silver-{program-registry,provenance-record,release-manifest}.schema.json`) into `schemas/` + a conformance test against the hub copies (drift-detector).
