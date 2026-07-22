@@ -236,6 +236,47 @@ def _adjustment_order_index(rule_kind: str) -> int:
     return ADJUSTMENT_LEDGER_ORDER.index(rule_kind)
 
 
+def _task_role_hour_caps(staffing_rules: dict[str, Any]) -> dict[tuple[str, str], float]:
+    """Aggregate task x role hour caps: {(task_id, role): cap_hours}."""
+
+    raw = staffing_rules.get("task_role_hour_caps") or {}
+    caps: dict[tuple[str, str], float] = {}
+    if isinstance(raw, dict):
+        for task_id, role_caps in raw.items():
+            if not isinstance(role_caps, dict):
+                continue
+            for role, cap in role_caps.items():
+                try:
+                    caps[(str(task_id), str(role))] = float(cap)
+                except (TypeError, ValueError):
+                    continue
+    return caps
+
+
+def _compliant_hours_by_line(
+    lines: list[BudgetLine], task_role_hour_caps: dict[tuple[str, str], float]
+) -> dict[str, float]:
+    """Distribute each exceeded aggregate task x role hour cap proportionally across its lines."""
+
+    if not task_role_hour_caps:
+        return {}
+    aggregate: dict[tuple[str, str], float] = {}
+    for line in lines:
+        key = (line.task_id, line.staffing_role)
+        if key in task_role_hour_caps:
+            aggregate[key] = aggregate.get(key, 0.0) + line.estimated_hours
+    compliant: dict[str, float] = {}
+    for line in lines:
+        key = (line.task_id, line.staffing_role)
+        cap = task_role_hour_caps.get(key)
+        if cap is None:
+            continue
+        total = aggregate.get(key, 0.0)
+        if total > cap and total > 0:
+            compliant[line.line_id] = round(line.estimated_hours * (cap / total), 4)
+    return compliant
+
+
 def _build_adjustment_ledger(
     projection_lines: list[CarrierCompliantProjectionLine],
     *,
@@ -260,8 +301,9 @@ def _build_adjustment_ledger(
         )
     )
 
-    # 2..5: per-line rule effects, grouped by rule kind to preserve attribution order.
+    # 1..5: per-line rule effects, grouped by rule kind to preserve attribution order.
     line_kinds: list[tuple[str, str]] = [
+        ("task_hour_cap", "task_hour_cap_delta_signed"),
         ("staffing_rule", "staffing_rule_delta_signed"),
         ("rate_cap", "rate_cap_delta_signed"),
         ("expense_cap", "expense_cap_delta_signed"),
@@ -364,6 +406,8 @@ def build_carrier_compliant_projection(
         str(code): str(role)
         for code, role in (staffing_rules.get("task_role_overrides") or {}).items()
     }
+    task_role_hour_caps = _task_role_hour_caps(staffing_rules)
+    compliant_hours_by_line = _compliant_hours_by_line(budget.lines, task_role_hour_caps)
     role_rates = _projection_role_rates(budget.lines, rate_resolution)
     projection_lines = [
         _project_line(
@@ -375,6 +419,7 @@ def build_carrier_compliant_projection(
             disallowed_expense_codes=disallowed_expense_codes,
             task_role_overrides=task_role_overrides,
             role_rates=role_rates,
+            compliant_hours=compliant_hours_by_line.get(line.line_id),
         )
         for line in budget.lines
     ]
@@ -418,6 +463,10 @@ def build_carrier_compliant_projection(
         if budget.total_proposed_budget is not None and projection_pricing_status == "priced"
         else None
     )
+    task_hour_cap_delta = round(sum(line.task_hour_cap_delta for line in projection_lines), 2)
+    task_hour_cap_delta_signed = round(
+        sum(line.task_hour_cap_delta_signed for line in projection_lines), 2
+    )
     rate_cap_delta = round(
         sum(line.rate_cap_delta for line in projection_lines),
         2,
@@ -454,7 +503,8 @@ def build_carrier_compliant_projection(
     )
     over_cap_amount = round(rate_cap_delta + expense_cap_delta, 2)
     total_delta = round(
-        rate_cap_delta
+        task_hour_cap_delta
+        + rate_cap_delta
         + expense_cap_delta
         + disallowed_delta
         + staffing_rule_delta
@@ -506,6 +556,8 @@ def build_carrier_compliant_projection(
         total_delta=total_delta,
         over_cap_amount=over_cap_amount,
         disallowed_amount=disallowed_delta,
+        task_hour_cap_delta=task_hour_cap_delta,
+        task_hour_cap_delta_signed=task_hour_cap_delta_signed,
         rate_cap_delta=rate_cap_delta,
         expense_cap_delta=expense_cap_delta,
         disallowed_delta=disallowed_delta,
@@ -555,6 +607,7 @@ def _project_line(
     disallowed_expense_codes: set[str],
     task_role_overrides: dict[str, str],
     role_rates: dict[str, float],
+    compliant_hours: float | None = None,
 ) -> CarrierCompliantProjectionLine:
     guideline_refs: list[str] = []
     compliant_staffing_role = _compliant_staffing_role(line, task_role_overrides)
@@ -589,9 +642,32 @@ def _project_line(
         if staffing_rule_rate is not None
         else None
     )
-    compliant_fees = (
+    compliant_fees_full = (
         round(line.estimated_hours * compliant_rate, 2) if compliant_rate is not None else None
     )
+    # Task-hour cap is attributed before rate caps: scale the rate-shaped compliant
+    # fees down to the capped compliant hours. The reduction is a distinct,
+    # additive attribution and never overlaps the rate/staffing deltas below.
+    effective_compliant_hours = (
+        line.estimated_hours if compliant_hours is None else compliant_hours
+    )
+    task_hour_cap_applied = (
+        line.estimated_hours > 0 and effective_compliant_hours < line.estimated_hours
+    )
+    compliant_fees = compliant_fees_full
+    task_hour_cap_delta_signed = 0.0
+    if task_hour_cap_applied and compliant_fees_full is not None:
+        ratio = effective_compliant_hours / line.estimated_hours
+        compliant_fees = round(compliant_fees_full * ratio, 2)
+        task_hour_cap_delta_signed = round(compliant_fees_full - compliant_fees, 2)
+        guideline_refs.append(
+            _guideline_ref(
+                guideline_id,
+                carrier_id,
+                f"task_role_hour_caps/{line.task_id}/{line.staffing_role}",
+            )
+        )
+    task_hour_cap_delta = max(0.0, task_hour_cap_delta_signed)
     proposed_expenses = line.estimated_expenses
     compliant_expenses = proposed_expenses
     expense_cap_applied = False
@@ -634,13 +710,13 @@ def _project_line(
     )
     rate_cap_delta_signed = (
         _signed_delta(
-            staffing_rule_fees if staffing_rule_applied else proposed_fees, compliant_fees
+            staffing_rule_fees if staffing_rule_applied else proposed_fees, compliant_fees_full
         )
         if rate_cap_applied
         else 0.0
     )
     rate_cap_delta = (
-        _delta(staffing_rule_fees if staffing_rule_applied else proposed_fees, compliant_fees)
+        _delta(staffing_rule_fees if staffing_rule_applied else proposed_fees, compliant_fees_full)
         if rate_cap_applied
         else 0.0
     )
@@ -653,9 +729,13 @@ def _project_line(
     expense_cap_delta = (
         0.0 if disallowed else max(0.0, round(proposed_expenses - compliant_expenses, 2))
     )
-    capped = rate_cap_applied or expense_cap_applied
+    capped = rate_cap_applied or expense_cap_applied or task_hour_cap_applied
     review_issue_codes: list[str] = []
     note_parts = []
+    if task_hour_cap_applied:
+        note_parts.append(
+            f"task-hour capped from {line.estimated_hours} to {effective_compliant_hours} hours"
+        )
     if staffing_rule_applied:
         if staffing_rule_rate is None:
             note_parts.append(
@@ -687,6 +767,10 @@ def _project_line(
         staffing_role=line.staffing_role,
         compliant_staffing_role=compliant_staffing_role,
         proposed_hours=line.estimated_hours,
+        compliant_hours=effective_compliant_hours,
+        task_hour_cap_applied=task_hour_cap_applied,
+        task_hour_cap_delta=task_hour_cap_delta,
+        task_hour_cap_delta_signed=task_hour_cap_delta_signed,
         proposed_rate=proposed_rate,
         staffing_rule_rate=staffing_rule_rate,
         compliant_rate=compliant_rate,

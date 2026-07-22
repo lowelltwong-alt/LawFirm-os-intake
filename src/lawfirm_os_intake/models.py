@@ -8855,6 +8855,10 @@ class CarrierCompliantProjectionLine(StrictModel):
     staffing_role: str
     compliant_staffing_role: str | None = None
     proposed_hours: float = Field(ge=0)
+    compliant_hours: float | None = Field(default=None, ge=0)
+    task_hour_cap_applied: bool = False
+    task_hour_cap_delta: float = Field(default=0, ge=0)
+    task_hour_cap_delta_signed: float = 0
     proposed_rate: float | None = Field(default=None, ge=0)
     staffing_rule_rate: float | None = Field(default=None, ge=0)
     compliant_rate: float | None = Field(default=None, ge=0)
@@ -9090,6 +9094,8 @@ class CarrierCompliantProjection(StrictModel):
     total_delta: float = Field(default=0, ge=0)
     over_cap_amount: float = Field(ge=0)
     disallowed_amount: float = Field(default=0, ge=0)
+    task_hour_cap_delta: float = Field(default=0, ge=0)
+    task_hour_cap_delta_signed: float = 0
     rate_cap_delta: float = Field(ge=0)
     expense_cap_delta: float = Field(ge=0)
     disallowed_delta: float = Field(default=0, ge=0)

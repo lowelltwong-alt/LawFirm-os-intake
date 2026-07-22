@@ -59,6 +59,35 @@
       "title": "Proposed Hours",
       "type": "number"
     },
+    "compliant_hours": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Compliant Hours"
+    },
+    "task_hour_cap_applied": {
+      "default": false,
+      "title": "Task Hour Cap Applied",
+      "type": "boolean"
+    },
+    "task_hour_cap_delta": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Task Hour Cap Delta",
+      "type": "number"
+    },
+    "task_hour_cap_delta_signed": {
+      "default": 0,
+      "title": "Task Hour Cap Delta Signed",
+      "type": "number"
+    },
     "proposed_rate": {
       "anyOf": [
         {
