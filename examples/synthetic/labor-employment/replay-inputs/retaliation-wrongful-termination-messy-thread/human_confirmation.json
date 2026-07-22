@@ -1,0 +1,54 @@
+{
+  "schema_version": "0.1",
+  "confirmation_id": "le-confirmation-retaliation-wrongful-termination-messy-thread.v0_1",
+  "preflight_packet_id": "le-preflight-retaliation-wrongful-termination-messy-thread.v0_1",
+  "status": "confirmed",
+  "supersedes_confirmation_id": null,
+  "confirmed_inbound_event": "prospective_matter_intake",
+  "confirmed_matter_family": "retaliation_wrongful_termination",
+  "confirmed_representation_posture": "defense",
+  "confirmed_parties": [
+    {
+      "name": "Jordan Lee",
+      "confirmed_role": "adverse_party",
+      "aliases": [],
+      "evidence_refs": [
+        {
+          "source_id": "syn-le-retaliation-correspondence-001",
+          "segment_id": "seg_b64a4ec30f7e4dfbbcd1bf1013c25e77",
+          "start_offset": 156,
+          "end_offset": 658,
+          "sha256": "sha256:9d490ca07ce7ccf08cbfb2314537efa2ed74310bf635eeaae13723b5b2c06a47"
+        }
+      ]
+    },
+    {
+      "name": "Maple Forge Logistics",
+      "confirmed_role": "prospective_represented_client",
+      "aliases": [],
+      "evidence_refs": [
+        {
+          "source_id": "syn-le-retaliation-correspondence-001",
+          "segment_id": "seg_b64a4ec30f7e4dfbbcd1bf1013c25e77",
+          "start_offset": 156,
+          "end_offset": 658,
+          "sha256": "sha256:9d490ca07ce7ccf08cbfb2314537efa2ed74310bf635eeaae13723b5b2c06a47"
+        }
+      ]
+    }
+  ],
+  "confirmed_jurisdiction": null,
+  "confirmed_deadlines": [],
+  "reviewer_id": "synthetic-human-review-fixture",
+  "reviewed_at": "2026-07-20T12:00:00Z",
+  "notes": "Synthetic POC confirmation fixture only (le-replay-input-generator.v0_1); single-plaintiff retaliation / wrongful-termination defense. Not a real human review, conflict clearance, engagement decision, matter opening, or budget approval.",
+  "decision_evidence_refs": [
+    {
+      "source_id": "syn-le-retaliation-correspondence-001",
+      "segment_id": "seg_14b296e18e264e049cf1be72342807a6",
+      "start_offset": 0,
+      "end_offset": 37,
+      "sha256": "sha256:b226942bee5f0761c9321f74e07a8616abe4b7c77d3fddb62f126c2ddebc0535"
+    }
+  ]
+}

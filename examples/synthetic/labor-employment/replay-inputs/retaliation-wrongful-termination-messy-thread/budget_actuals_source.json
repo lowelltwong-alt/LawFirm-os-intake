@@ -1,0 +1,77 @@
+{
+  "schema_version": "0.1",
+  "actuals_source_id": "le-actuals-retaliation-wrongful-termination-messy-thread.v0_1",
+  "budget_proposal_id": "__BUDGET_PROPOSAL_ID__",
+  "data_origin": "synthetic",
+  "contains_real_client_data": false,
+  "contains_real_matter_data": false,
+  "contains_privileged_data": false,
+  "actuals_by_phase": {
+    "L100": {
+      "fees": 7300,
+      "expenses": 0,
+      "hours": 21
+    },
+    "L200": {
+      "fees": 12500,
+      "expenses": 0,
+      "hours": 43
+    },
+    "L300": {
+      "fees": 41000,
+      "expenses": 8500,
+      "hours": 142
+    },
+    "L400": {
+      "fees": 21000,
+      "expenses": 0,
+      "hours": 68
+    },
+    "L500": {
+      "fees": 6900,
+      "expenses": 1300,
+      "hours": 21
+    }
+  },
+  "actuals_by_code": {
+    "L210": {
+      "fees": 12500,
+      "expenses": 0,
+      "hours": 43
+    },
+    "L310": {
+      "fees": 18200,
+      "expenses": 0,
+      "hours": 66
+    },
+    "L330": {
+      "fees": 22800,
+      "expenses": 6000,
+      "hours": 76
+    },
+    "E112": {
+      "fees": 0,
+      "expenses": 2500
+    },
+    "L420": {
+      "fees": 6500,
+      "expenses": 0,
+      "hours": 14
+    },
+    "L430": {
+      "fees": 14500,
+      "expenses": 0,
+      "hours": 54
+    },
+    "L510": {
+      "fees": 6900,
+      "expenses": 1300,
+      "hours": 21
+    }
+  },
+  "source_ref": "synthetic-actuals://labor-employment/retaliation-wrongful-termination-messy-thread/v0_1",
+  "billing_connector_read_performed": false,
+  "billing_connector_write_performed": false,
+  "external_writes_performed": false,
+  "non_authoritative": true
+}
