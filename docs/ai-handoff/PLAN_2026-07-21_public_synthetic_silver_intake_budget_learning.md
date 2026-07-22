@@ -57,25 +57,67 @@ Grounding read of `src/lawfirm_os_intake/` and `docs/roadmap.md`:
 Implication: this plan is mostly **wiring + one new evaluation tier (silver) +
 loop governance design**, not greenfield.
 
-## 2. The synthetic-silver idea (define, then reconcile with DAD)
+## 2. The synthetic-silver idea — RECONCILED with the DAD program (2026-07-21)
 
-Working definition (to be reconciled against the DAD repo's canonical "synthetic
-silver" note and its company research in Phase 0 — do NOT ship on my definition):
+Canonical source (now in the DAD hub, merged via PR #72):
+`04_Digital_Assett_Directory/docs/SYNTHETIC_SILVER_PROGRAM.md`; program id
+`synthetic-silver`; registry `registry/synthetic-silver-program-registry.json`;
+schemas `synthetic-silver-{program-registry,provenance-record,release-manifest}.schema.json`.
+This section is reconciled to that contract. Where my earlier draft differed, the
+DAD contract wins.
 
-- **Gold** = reviewed *real* historical outcome (ground truth). Unavailable here.
-- **Silver** = reviewed *synthetic* expected-output label: a human-reviewed,
-  versioned, provenance-bound expectation for a synthetic case, explicitly weaker
-  than gold. Usable for pipeline/behavior evaluation and loop-governance
-  rehearsal, **not** for predictive-calibration claims.
-- **Bronze** = unreviewed generated output. Never self-certifies; never an eval
-  label.
+DAD definition: *"Use synthetic silver to move a corpus; use human gold to
+measure the silver; use immutable primary sources to correct both."* A versioned
+synthetic-silver corpus is a large, automatically produced approximation of a
+desired corpus state, with explicit provenance, hard deterministic validators,
+calibrated model judging, stratified human audit, and versioned releases measured
+against an **untouched human-gold holdout**.
 
-Real-world basis (general, not a DAD citation): silver-standard corpora and
-weak/distant supervision — automatically or synthetically generated labels used
-as a proxy when gold is scarce. Phase 0 must pull the DAD repo's specific
-definition, guarantees, and the named companies/research it cites, and reconcile
-any differences before Phase 2 builds on it. If the DAD note conflicts with this
-working definition, the DAD note wins.
+Tier ladder (maps onto DAD candidate → reviewed → promoted):
+
+| Tier | Name | Lifecycle | Required control |
+|---|---|---|---|
+| S0 | raw_synthetic | candidate | provenance record |
+| S1 | machine_filtered | candidate | hard validators passed |
+| S2 | calibrated_silver | candidate | **gold-anchor calibration** + active audit |
+| S3 | human_sampled_silver | reviewed | stratified human audit |
+| G1 | human_adjudicated | reviewed | qualified human review |
+| G2 | authoritative | promoted | explicit human promotion via DAD gates |
+
+Movement above S3 always requires a human decision; no metric, judge score, or
+agreement rate promotes an artifact on its own.
+
+CORRECTIONS TO MY EARLIER DRAFT (each changes the plan):
+1. **Gold is not "gone"; it is the measuring holdout.** With no gold anchor yet,
+   this program is **capped at S0/S1** (candidate; deterministic validators only).
+   S2 "calibrated_silver" *requires* a gold anchor + untouched holdout. So the
+   first human task is to stand up a *small* human-gold anchor/holdout — not to
+   skip gold. "No gold" caps the tier; it does not delete the requirement.
+2. **Contract plane vs factory plane.** DAD owns only the contract (doc,
+   registry, the two record schemas, tier policy, adapters). The **factory**
+   (generators, validators, judges, corpora, gold sets, releases, thresholds)
+   lives in the domain repo and emits the DAD-registered
+   `synthetic-silver-provenance-record` (per item) and
+   `synthetic-silver-release-manifest` (per release) shapes. DAD never stores
+   corpus content.
+3. **The law-firm silver factory is pointed at the LawFirm Sim / litigation
+   world** via `adapter:law-firm-sim` + `adapter:litigation-corpus-factory`
+   (sovereignty_child_pointers): the deterministic kernel owns world truth and
+   generative workers are **proposal-only (JobManifest/JobResult)**. OPEN: does
+   the intake→budget silver factory live in the litigation world, in intake, or
+   as a new binding? Confirm before building.
+4. **Your "synthetic world builder" = `adapter:world-builder`, currently
+   `target_unresolved` / proposed.** DAD's backlog says verbatim: "Confirm the
+   World Builder target repository identity and bind adapter:world-builder or
+   retire it." That confirmation is a Phase-0 human action and a hard dependency.
+5. **14 non-negotiable controls apply verbatim** (canonical source never
+   overwritten; gold holdout excluded from prompts/examples/tuning/threshold-
+   selection/training; no model both generates and solely certifies; prompt
+   variants of one model family are correlated, not independent votes;
+   deterministic validators before any model judging; critical errors are binary
+   gates that rubric scores cannot compensate; synthetic-only never establishes
+   real-world readiness). These supersede any looser wording elsewhere here.
+6. Drop "bronze" — not a DAD term. Use S0/S1 for unreviewed / machine-filtered.
 
 ## 3. Phases
 
@@ -156,14 +198,21 @@ silent learning. No canonical Semantic Substrate / Orchestrator persistence
 changes. DAD via the governed front door only.
 
 ## 5. Open questions for Fable
-1. The canonical DAD "synthetic silver" definition + which company research it
-   cites — does §2 match it?
-2. Which public sources are actually available and cleared (Phase 0 go/no-go)?
-3. Silver as a new tier on `gold.py` vs a separate `silver.py` module?
-4. Loop scope for the first marathon: all six learning targets or a single
-   thin-slice (recommend one: budget-driver drift) to prove the governance first?
-5. Where do silver labels and loop candidate packages live relative to the
-   existing calibration-corpus artifacts?
+1. RESOLVED — the canonical DAD "synthetic silver" definition is now in the hub
+   (PR #72) and reconciled into §2. Remaining bindings below.
+2. **Gold anchor:** stand up a small human-gold anchor + untouched holdout so the
+   program can pass S1 (without it, silver is capped at S0/S1). Who adjudicates it?
+3. **World Builder binding:** confirm the repo identity for `adapter:world-builder`
+   (currently `target_unresolved`) and bind it — or retire it. Hard dependency.
+4. **Factory location:** does the intake→budget silver factory live in the
+   LawFirm Sim / litigation world (per `adapter:law-firm-sim` /
+   `adapter:litigation-corpus-factory`), in intake, or as a new binding?
+5. Which public sources are actually available and cleared (Phase 0 go/no-go)?
+6. Silver factory must emit the two DAD schemas (`provenance-record`,
+   `release-manifest`) — where do those artifacts live vs. the calibration-corpus
+   artifacts, and does silver reuse `gold.py`/shadow-eval or a new `silver.py`?
+7. First-loop scope: one thin slice (recommend budget-driver drift) to prove the
+   governance before breadth.
 
 ## 6. Recommended first marathon slice (thin, provable)
 Phase 0 fully + Phase 1 for one family + Phase 2 silver for that family's budget
