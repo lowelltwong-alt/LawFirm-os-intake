@@ -6,6 +6,9 @@ from typing import Any
 import yaml
 
 from .models import (
+    ADJUSTMENT_LEDGER_ORDER,
+    AdjustmentLedger,
+    AdjustmentLedgerEntry,
     BudgetLine,
     BudgetProposal,
     CarrierCompliantLeverageSummary,
@@ -223,6 +226,112 @@ def build_carrier_preapproval_report(
     )
 
 
+def _minor(amount: float | None) -> int:
+    """Exact integer minor units (cents) for candidate synthetic money."""
+
+    return int(round((amount or 0.0) * 100))
+
+
+def _adjustment_order_index(rule_kind: str) -> int:
+    return ADJUSTMENT_LEDGER_ORDER.index(rule_kind)
+
+
+def _build_adjustment_ledger(
+    projection_lines: list[CarrierCompliantProjectionLine],
+    *,
+    selection: PackSelectionDecision,
+    carrier_id: str,
+    proposed_contingency: float | None,
+    compliant_contingency: float | None,
+) -> AdjustmentLedger:
+    """Ordered, rule-attributed ledger of every projection adjustment (exact minor units)."""
+
+    entries: list[AdjustmentLedgerEntry] = []
+    # 0: pack/effective selection — records the selected pack; no money delta itself.
+    entries.append(
+        AdjustmentLedgerEntry(
+            order_index=0,
+            rule_kind="pack_effective_selection",
+            rule_id=f"pack::{selection.selected_pack_id}@{selection.selected_revision}",
+            before_minor_units=0,
+            after_minor_units=0,
+            delta_minor_units=0,
+            note="Selected candidate guideline pack for the confirmed carrier.",
+        )
+    )
+
+    # 2..5: per-line rule effects, grouped by rule kind to preserve attribution order.
+    line_kinds: list[tuple[str, str]] = [
+        ("staffing_rule", "staffing_rule_delta_signed"),
+        ("rate_cap", "rate_cap_delta_signed"),
+        ("expense_cap", "expense_cap_delta_signed"),
+        ("disallowance", "disallowed_delta_signed"),
+    ]
+    for rule_kind, delta_attr in line_kinds:
+        order_index = _adjustment_order_index(rule_kind)
+        for line in projection_lines:
+            delta = _minor(getattr(line, delta_attr))
+            if delta == 0:
+                continue
+            before = _minor(line.proposed_line_total)
+            entries.append(
+                AdjustmentLedgerEntry(
+                    order_index=order_index,
+                    rule_kind=rule_kind,  # type: ignore[arg-type]
+                    rule_id=f"{rule_kind}::{carrier_id}::{line.line_id}",
+                    line_id=line.line_id or None,
+                    phase_id=line.phase_id,
+                    task_id=line.task_id,
+                    before_minor_units=before,
+                    after_minor_units=before - delta,
+                    delta_minor_units=delta,
+                )
+            )
+
+    # 6: contingency.
+    contingency_delta = _minor(proposed_contingency) - _minor(compliant_contingency)
+    if contingency_delta != 0:
+        before = _minor(proposed_contingency)
+        entries.append(
+            AdjustmentLedgerEntry(
+                order_index=_adjustment_order_index("contingency"),
+                rule_kind="contingency",
+                rule_id=f"contingency::{carrier_id}",
+                before_minor_units=before,
+                after_minor_units=before - contingency_delta,
+                delta_minor_units=contingency_delta,
+                note="Contingency recomputed from the compliant fee base.",
+            )
+        )
+
+    # 7: unsupported findings — reshaped roles with no synthetic rate (no money delta).
+    for line in projection_lines:
+        if line.rate_unknown_for_reshaped_role:
+            entries.append(
+                AdjustmentLedgerEntry(
+                    order_index=_adjustment_order_index("preapproval_unsupported"),
+                    rule_kind="preapproval_unsupported",
+                    rule_id=f"unsupported::{carrier_id}::{line.line_id}",
+                    line_id=line.line_id or None,
+                    phase_id=line.phase_id,
+                    task_id=line.task_id,
+                    before_minor_units=0,
+                    after_minor_units=0,
+                    delta_minor_units=0,
+                    note="Reshaped role has no synthetic rate; effect is unsupported and hours-only.",
+                )
+            )
+
+    category: dict[str, int] = {}
+    for entry in entries:
+        category[entry.rule_kind] = category.get(entry.rule_kind, 0) + entry.delta_minor_units
+    return AdjustmentLedger(
+        entries=entries,
+        category_delta_minor_units=category,
+        total_delta_minor_units=sum(entry.delta_minor_units for entry in entries),
+    )
+
+
 def build_carrier_compliant_projection(
     budget: BudgetProposal,
     *,
@@ -361,10 +470,18 @@ def build_carrier_compliant_projection(
         total_hours=sum(line.proposed_hours for line in projection_lines),
     )
 
+    adjustment_ledger = _build_adjustment_ledger(
+        projection_lines,
+        selection=selection,
+        carrier_id=resolved_carrier_id,
+        proposed_contingency=proposed_contingency,
+        compliant_contingency=compliant_contingency,
+    )
     return CarrierCompliantProjection(
         projection_id=new_id("carrierprojection"),
         status="projected_for_human_review",
         pack_selection=selection,
+        adjustment_ledger=adjustment_ledger,
         basis=CarrierCompliantProjectionBasis(
             guideline_id=str(guideline.get("guideline_id", "unknown")),
             guideline_ref=guideline_ref,

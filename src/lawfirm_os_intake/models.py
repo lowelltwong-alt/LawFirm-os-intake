@@ -8973,6 +8973,87 @@ class PackSelectionDecision(StrictModel):
         return self
 
 
+ADJUSTMENT_LEDGER_ORDER = (
+    "pack_effective_selection",
+    "task_hour_cap",
+    "staffing_rule",
+    "rate_cap",
+    "expense_cap",
+    "disallowance",
+    "contingency",
+    "preapproval_unsupported",
+)
+_ADJUSTMENT_LEDGER_ORDER_INDEX = {kind: index for index, kind in enumerate(ADJUSTMENT_LEDGER_ORDER)}
+
+
+class AdjustmentLedgerEntry(StrictModel):
+    """One ordered, rule-attributed adjustment effect, in exact integer minor units.
+
+    ``delta_minor_units`` is the signed reduction (positive reduces the proposal);
+    ``after_minor_units == before_minor_units - delta_minor_units`` exactly.
+    """
+
+    order_index: int = Field(ge=0)
+    rule_kind: Literal[
+        "pack_effective_selection",
+        "task_hour_cap",
+        "staffing_rule",
+        "rate_cap",
+        "expense_cap",
+        "disallowance",
+        "contingency",
+        "preapproval_unsupported",
+    ]
+    rule_id: str
+    line_id: str | None = None
+    phase_id: str | None = None
+    task_id: str | None = None
+    before_minor_units: int
+    after_minor_units: int
+    delta_minor_units: int
+    note: str = ""
+
+    @model_validator(mode="after")
+    def _entry_arithmetic_is_exact(self) -> "AdjustmentLedgerEntry":
+        if self.after_minor_units != self.before_minor_units - self.delta_minor_units:
+            raise ValueError("adjustment ledger entry after != before - delta")
+        if self.order_index != _ADJUSTMENT_LEDGER_ORDER_INDEX[self.rule_kind]:
+            raise ValueError("adjustment ledger entry order_index does not match rule_kind order")
+        return self
+
+
+class AdjustmentLedger(StrictModel):
+    """Ordered, non-commutative-safe attribution of every projection adjustment.
+
+    Per-rule deltas are recomputed from the entries and must sum to the category
+    deltas and the total delta (fail-closed). Candidate-only review evidence.
+    """
+
+    schema_version: str = "0.1"
+    currency: str = "USD"
+    attribution_order: list[str] = Field(default_factory=lambda: list(ADJUSTMENT_LEDGER_ORDER))
+    entries: list[AdjustmentLedgerEntry] = Field(default_factory=list)
+    category_delta_minor_units: dict[str, int] = Field(default_factory=dict)
+    total_delta_minor_units: int = 0
+    non_authoritative: Literal[True] = True
+
+    @model_validator(mode="after")
+    def _ledger_reconciles_fail_closed(self) -> "AdjustmentLedger":
+        order_positions = [entry.order_index for entry in self.entries]
+        if order_positions != sorted(order_positions):
+            raise ValueError("adjustment ledger entries must be in declared attribution order")
+        recomputed: dict[str, int] = {}
+        for entry in self.entries:
+            recomputed[entry.rule_kind] = recomputed.get(entry.rule_kind, 0) + entry.delta_minor_units
+        if recomputed != {kind: total for kind, total in self.category_delta_minor_units.items()}:
+            raise ValueError("adjustment ledger category deltas do not equal the sum of entries")
+        if self.total_delta_minor_units != sum(entry.delta_minor_units for entry in self.entries):
+            raise ValueError("adjustment ledger total delta does not equal the sum of entries")
+        if self.total_delta_minor_units != sum(self.category_delta_minor_units.values()):
+            raise ValueError("adjustment ledger total delta does not equal the category deltas")
+        return self
+
+
 class CarrierCompliantProjectionBasis(StrictModel):
     guideline_id: str
     guideline_ref: str
@@ -8996,6 +9077,7 @@ class CarrierCompliantProjection(StrictModel):
     status: Literal["projected_for_human_review"]
     basis: CarrierCompliantProjectionBasis
     pack_selection: PackSelectionDecision | None = None
+    adjustment_ledger: AdjustmentLedger | None = None
     proposed_total: float | None = None
     compliant_total: float | None = None
     proposed_subtotal_fees: float | None = None
