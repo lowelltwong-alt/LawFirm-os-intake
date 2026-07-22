@@ -39,6 +39,7 @@ approach is misguided, say so and give the alternative.
 - `docs/ai-handoff/CONVERGENCE_REVIEW_redteam_premortem.md` (the first AI's
   self-critique — attack this too)
 - `docs/ai-handoff/WORLD_BUILDER_BINDING_RECOMMENDATION.md`
+- `docs/ai-handoff/MODULAR_ARCHITECTURE.md` (the contract-first module decomposition)
 - `docs/roadmap.md` §18, §19, §21, §22, §23
 - Ground the guideline claims in the real code: `src/lawfirm_os_intake/guidelines.py`
   and `config/synthetic-carrier-guideline.yaml` (what the v1 engine already does),
@@ -63,6 +64,12 @@ approach is misguided, say so and give the alternative.
    firm feedback loop. Is that the right risk posture, or a trap?
 5. **World Builder** as a new repo vs. generalizing the existing litigation-world
    kernel — which, given a solo owner and WIP=1?
+6. **Modular decomposition.** `MODULAR_ARCHITECTURE.md` proposes contract-first
+   modules (guideline_contract → rule_evaluators → overlay_compiler → …) so each
+   is built/tested separately behind versioned contracts. Are the module
+   boundaries and dependency direction right? Where would you draw the seams
+   differently, and does this decomposition actually make the "dozens of
+   carriers / dozens of rule kinds" axis scale?
 
 ## Deliverable
 1. An independent verdict: is convergence necessary before executing, and where
