@@ -14,9 +14,82 @@ from .models import (
     CarrierCompliantProjection,
     CarrierCompliantProjectionBasis,
     CarrierCompliantProjectionLine,
+    ConsideredPack,
+    PackSelectionDecision,
 )
 from .rates import RoleRateResolution
-from .util import new_id, now_iso
+from .util import digest_json, new_id, now_iso
+
+
+def select_pack(
+    guideline: dict[str, Any],
+    *,
+    carrier_id: str | None,
+    jurisdiction: str | None = None,
+    program: str | None = None,
+    as_of: str | None = None,
+) -> PackSelectionDecision:
+    """Resolve the applicable carrier guideline pack, fail-closed.
+
+    A missing or wrong confirmed carrier returns ``blocked_missing_context`` and
+    never falls back to ``default_carrier_id`` — the caller must surface the
+    typed blocked state instead of pricing against a default pack.
+    """
+
+    carriers = guideline.get("carriers", {})
+    carriers = carriers if isinstance(carriers, dict) else {}
+    confirmed = (carrier_id or "").strip() or None
+
+    def _considered(included_id: str | None, exclusion_reason: str) -> list[ConsideredPack]:
+        packs: list[ConsideredPack] = []
+        for pack_id in sorted(carriers):
+            spec = carriers[pack_id] if isinstance(carriers[pack_id], dict) else {}
+            included = pack_id == included_id
+            carrier_name = spec.get("carrier_name")
+            packs.append(
+                ConsideredPack(
+                    pack_id=str(pack_id),
+                    carrier_name=str(carrier_name) if carrier_name else None,
+                    included=included,
+                    exclusion_reason=None if included else exclusion_reason,
+                )
+            )
+        return packs
+
+    if confirmed is None:
+        return PackSelectionDecision(
+            status="blocked_missing_context",
+            confirmed_carrier_id=None,
+            confirmed_jurisdiction=jurisdiction,
+            confirmed_program=program,
+            as_of=as_of,
+            considered_packs=_considered(None, "no_confirmed_carrier_to_match"),
+            blocked_reason="missing_confirmed_carrier",
+        )
+    if confirmed not in carriers:
+        return PackSelectionDecision(
+            status="blocked_missing_context",
+            confirmed_carrier_id=confirmed,
+            confirmed_jurisdiction=jurisdiction,
+            confirmed_program=program,
+            as_of=as_of,
+            considered_packs=_considered(None, "confirmed_carrier_id_mismatch"),
+            blocked_reason="confirmed_carrier_not_in_guideline",
+        )
+
+    spec = carriers[confirmed] if isinstance(carriers[confirmed], dict) else {}
+    revision = str(spec.get("revision") or guideline.get("version") or "unknown")
+    return PackSelectionDecision(
+        status="selected",
+        confirmed_carrier_id=confirmed,
+        confirmed_jurisdiction=jurisdiction,
+        confirmed_program=program,
+        as_of=as_of,
+        considered_packs=_considered(confirmed, "confirmed_carrier_id_mismatch"),
+        selected_pack_id=confirmed,
+        selected_revision=revision,
+        selected_content_hash=digest_json(spec),
+    )
 
 
 def load_carrier_guideline(path: str | Path) -> dict[str, Any]:
@@ -70,7 +143,10 @@ def build_carrier_preapproval_report(
     guideline_ref: str,
     carrier_id: str | None,
 ) -> CarrierPreapprovalReport | None:
-    resolved_carrier_id = carrier_id or str(guideline.get("default_carrier_id", ""))
+    selection = select_pack(guideline, carrier_id=carrier_id)
+    if selection.status != "selected":
+        return None
+    resolved_carrier_id = selection.selected_pack_id or ""
     carrier_rules = _carrier_rules(guideline, resolved_carrier_id)
     if carrier_rules is None:
         return None
@@ -155,7 +231,12 @@ def build_carrier_compliant_projection(
     carrier_id: str | None,
     rate_resolution: RoleRateResolution | None = None,
 ) -> CarrierCompliantProjection | None:
-    resolved_carrier_id = carrier_id or str(guideline.get("default_carrier_id", ""))
+    selection = select_pack(guideline, carrier_id=carrier_id)
+    if selection.status != "selected":
+        # Missing/wrong carrier is a typed blocked selection, never a silent
+        # projection priced against the guideline's default carrier.
+        return None
+    resolved_carrier_id = selection.selected_pack_id or ""
     carrier_rules = _carrier_rules(guideline, resolved_carrier_id)
     if carrier_rules is None:
         return None
@@ -283,6 +364,7 @@ def build_carrier_compliant_projection(
     return CarrierCompliantProjection(
         projection_id=new_id("carrierprojection"),
         status="projected_for_human_review",
+        pack_selection=selection,
         basis=CarrierCompliantProjectionBasis(
             guideline_id=str(guideline.get("guideline_id", "unknown")),
             guideline_ref=guideline_ref,

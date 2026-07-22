@@ -8875,6 +8875,66 @@ class CarrierCompliantLeverageSummary(StrictModel):
     compliant_fee_percent: float = Field(ge=0)
 
 
+class ConsideredPack(StrictModel):
+    pack_id: str
+    carrier_name: str | None = None
+    included: bool
+    exclusion_reason: str | None = None
+
+
+class PackSelectionDecision(StrictModel):
+    """Typed, fail-closed carrier guideline pack selection.
+
+    A missing or wrong confirmed carrier yields ``blocked_missing_context`` and
+    never silently falls back to a default carrier pack. Candidate-only review
+    evidence; it authorizes no submission and asserts no canonical authority.
+    """
+
+    schema_version: str = "0.1"
+    status: Literal[
+        "selected",
+        "blocked_missing_context",
+        "blocked_overlap",
+        "no_applicable_pack",
+    ]
+    confirmed_carrier_id: str | None = None
+    confirmed_program: str | None = None
+    confirmed_jurisdiction: str | None = None
+    as_of: str | None = None
+    considered_packs: list[ConsideredPack] = Field(default_factory=list)
+    selected_pack_id: str | None = None
+    selected_revision: str | None = None
+    selected_content_hash: str | None = None
+    blocked_reason: str | None = None
+    data_scope: Literal["synthetic_only"] = "synthetic_only"
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    not_authorized_for_client_submission: Literal[True] = True
+
+    @model_validator(mode="after")
+    def _selection_is_consistent(self) -> "PackSelectionDecision":
+        included = [pack.pack_id for pack in self.considered_packs if pack.included]
+        if self.status == "selected":
+            if not self.selected_pack_id:
+                raise ValueError("selected pack selection requires selected_pack_id")
+            if not (self.selected_content_hash and _is_sha256_ref(self.selected_content_hash)):
+                raise ValueError("selected pack selection requires a sha256 content hash")
+            if not self.selected_revision:
+                raise ValueError("selected pack selection requires a revision")
+            if self.blocked_reason is not None:
+                raise ValueError("selected pack selection must not carry a blocked_reason")
+            if included != [self.selected_pack_id]:
+                raise ValueError("selected pack must be the single included considered pack")
+        else:
+            if self.selected_pack_id is not None or self.selected_content_hash is not None:
+                raise ValueError("blocked pack selection must not carry a selected pack")
+            if not self.blocked_reason:
+                raise ValueError("blocked pack selection requires a blocked_reason")
+            if included:
+                raise ValueError("blocked pack selection must not include any considered pack")
+        return self
+
+
 class CarrierCompliantProjectionBasis(StrictModel):
     guideline_id: str
     guideline_ref: str
@@ -8897,6 +8957,7 @@ class CarrierCompliantProjection(StrictModel):
     projection_id: str
     status: Literal["projected_for_human_review"]
     basis: CarrierCompliantProjectionBasis
+    pack_selection: PackSelectionDecision | None = None
     proposed_total: float | None = None
     compliant_total: float | None = None
     proposed_subtotal_fees: float | None = None
