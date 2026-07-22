@@ -14,9 +14,12 @@ shape, validated for a firm checkpoint — then contract reconciliation, regime
 seam, and hardening. Serialized waves, WIP=1, one PR per wave, stop at every gate.
 
 OPERATING RULES (every wave):
-- Work in the REAL repo: `.codex-worktrees/workbench-completion-v2` (top-level
-  `LawFirm-os-intake` folder is a stale snapshot — never read or edit it). Fresh
-  branch per wave off latest `main`; rebase at wave start.
+- Working directory: `C:/Users/lowel/lfw-le` — the `claude/le-replay-expansion`
+  branch. It holds all planning docs AND the committed F1–F4 trust fixes, and it
+  is a worktree of the REAL repo (`.codex-worktrees/workbench-completion-v2`), so
+  it shares git/origin. The top-level `LawFirm-os-intake` folder is a stale
+  snapshot — never read or edit it. CW0 pushes THIS branch and opens the PR;
+  after it merges, later waves branch off the new `main` and rebase at wave start.
 - Read first: `docs/ai-handoff/CONVERGED_PLAN_OF_RECORD.md`,
   `CASE_SIZING_AND_TRAINING_DESIGN.md`, `MODULAR_ARCHITECTURE.md`, `AGENTS.md`,
   `CLAUDE.md`. The superseded docs (MARATHON_PROGRAM…, PUBLIC_GOLD_STRATEGY…) are
