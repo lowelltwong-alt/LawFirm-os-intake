@@ -27,6 +27,30 @@ READ FOR GROUNDING (do not treat as the plan; restructure freely):
    `src/lawfirm_os_intake/public_derived_synthetic_qa_gate.py`, `gold.py`,
    `reviewed_learning_gate.py`, `learning_shadow_eval_results.py`,
    `budget_learning_loop.py`, `learning_promotion_readiness.py`.
+4. **The canonical DAD synthetic-silver program (now in the hub, PR #72):**
+   `04_Digital_Assett_Directory/docs/SYNTHETIC_SILVER_PROGRAM.md`, its registry,
+   and the three schemas. Plan §2 is already reconciled to it: adopt the
+   S0-S3/G1-G2 tier ladder, the contract-plane (DAD) vs factory-plane (this repo)
+   split, the `provenance-record` + `release-manifest` record schemas, and the 14
+   non-negotiable controls. Key constraint: **with no human-gold anchor yet the
+   program is capped at tier S1** — S2 "calibrated_silver" requires a gold anchor.
+
+REQUIRED PHASE-0 DECISIONS (blocking — resolve each through a human gate before
+any factory build; every downstream milestone depends on these):
+A. **World Builder adapter binding.** DAD holds `adapter:world-builder` as
+   `target_unresolved` ("Confirm the World Builder target repository identity and
+   bind adapter:world-builder or retire it"). Phase 0 must confirm which repo is
+   the World Builder and bind or retire that adapter before Phase 1 generates
+   anything.
+B. **Gold anchor + untouched holdout.** No gold exists yet, so stand up a small
+   human-adjudicated gold anchor plus an untouched holdout (excluded from prompts,
+   examples, tuning, threshold selection, and training). Until it exists every
+   silver milestone is capped at S1; the plan must say so, name the human
+   adjudicator, and say where the anchor/holdout live.
+C. **Factory location.** Decide whether the intake→budget silver factory lives in
+   the LawFirm Sim / litigation world (per `adapter:law-firm-sim` /
+   `adapter:litigation-corpus-factory`, proposal-only JobManifest/JobResult
+   workers), in intake, or as a new binding — before designing the factory.
 
 PRODUCE A PLAN OF RECORD WITH:
 1. **Definition of "done" for the whole project** — the observable end state that
