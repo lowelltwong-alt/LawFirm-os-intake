@@ -813,6 +813,79 @@
       ],
       "title": "PackSelectionDecision",
       "type": "object"
+    },
+    "ProjectionReport": {
+      "additionalProperties": false,
+      "description": "The three distinct output quantities, kept semantically separate.\n\n``work_plan_total`` is the firm's immutable work-plan baseline and is NEVER\noverwritten by reimbursement math; ``guideline_adjusted_reimbursement`` is\nwhat the carrier guideline would reimburse; ``unreimbursed_exposure`` is the\ngap the firm/client bears (work_plan_total - reimbursement), recomputed\nfail-closed. Candidate-only review evidence.",
+      "properties": {
+        "schema_version": {
+          "default": "0.1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "currency": {
+          "default": "USD",
+          "title": "Currency",
+          "type": "string"
+        },
+        "work_plan_total": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Work Plan Total"
+        },
+        "guideline_adjusted_reimbursement": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Guideline Adjusted Reimbursement"
+        },
+        "unreimbursed_exposure": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unreimbursed Exposure"
+        },
+        "reimbursement_priced": {
+          "title": "Reimbursement Priced",
+          "type": "boolean"
+        },
+        "work_plan_is_immutable_baseline": {
+          "const": true,
+          "default": true,
+          "title": "Work Plan Is Immutable Baseline",
+          "type": "boolean"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "reimbursement_priced"
+      ],
+      "title": "ProjectionReport",
+      "type": "object"
     }
   },
   "additionalProperties": false,
@@ -849,6 +922,17 @@
       "anyOf": [
         {
           "$ref": "#/$defs/AdjustmentLedger"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "projection_report": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ProjectionReport"
         },
         {
           "type": "null"

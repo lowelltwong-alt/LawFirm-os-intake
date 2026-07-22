@@ -9058,6 +9058,46 @@ class AdjustmentLedger(StrictModel):
         return self
 
 
+class ProjectionReport(StrictModel):
+    """The three distinct output quantities, kept semantically separate.
+
+    ``work_plan_total`` is the firm's immutable work-plan baseline and is NEVER
+    overwritten by reimbursement math; ``guideline_adjusted_reimbursement`` is
+    what the carrier guideline would reimburse; ``unreimbursed_exposure`` is the
+    gap the firm/client bears (work_plan_total - reimbursement), recomputed
+    fail-closed. Candidate-only review evidence.
+    """
+
+    schema_version: str = "0.1"
+    currency: str = "USD"
+    work_plan_total: float | None = None
+    guideline_adjusted_reimbursement: float | None = None
+    unreimbursed_exposure: float | None = None
+    reimbursement_priced: bool
+    work_plan_is_immutable_baseline: Literal[True] = True
+    non_authoritative: Literal[True] = True
+
+    @model_validator(mode="after")
+    def _exposure_reconciles_and_work_plan_preserved(self) -> "ProjectionReport":
+        if not self.reimbursement_priced:
+            if (
+                self.guideline_adjusted_reimbursement is not None
+                or self.unreimbursed_exposure is not None
+            ):
+                raise ValueError(
+                    "unpriced projection report must not carry reimbursement or exposure"
+                )
+            return self
+        if self.work_plan_total is None or self.guideline_adjusted_reimbursement is None:
+            raise ValueError("priced projection report requires work plan and reimbursement totals")
+        expected = round(self.work_plan_total - self.guideline_adjusted_reimbursement, 2)
+        if self.unreimbursed_exposure != expected:
+            raise ValueError(
+                "unreimbursed_exposure must equal work_plan_total - guideline_adjusted_reimbursement"
+            )
+        return self
+
+
 class CarrierCompliantProjectionBasis(StrictModel):
     guideline_id: str
     guideline_ref: str
@@ -9082,6 +9122,7 @@ class CarrierCompliantProjection(StrictModel):
     basis: CarrierCompliantProjectionBasis
     pack_selection: PackSelectionDecision | None = None
     adjustment_ledger: AdjustmentLedger | None = None
+    projection_report: ProjectionReport | None = None
     proposed_total: float | None = None
     compliant_total: float | None = None
     proposed_subtotal_fees: float | None = None

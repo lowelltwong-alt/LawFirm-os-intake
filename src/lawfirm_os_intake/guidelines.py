@@ -19,6 +19,7 @@ from .models import (
     CarrierCompliantProjectionLine,
     ConsideredPack,
     PackSelectionDecision,
+    ProjectionReport,
 )
 from .rates import RoleRateResolution
 from .util import digest_json, new_id, now_iso
@@ -527,11 +528,30 @@ def build_carrier_compliant_projection(
         proposed_contingency=proposed_contingency,
         compliant_contingency=compliant_contingency,
     )
+    # Output-language split: the work-plan total is the immutable proposal baseline
+    # (never overwritten by reimbursement math); reimbursement and exposure are the
+    # guideline-adjusted view composed on top.
+    reimbursement_priced = (
+        projection_pricing_status == "priced"
+        and compliant_total is not None
+        and budget.total_proposed_budget is not None
+    )
+    projection_report = ProjectionReport(
+        work_plan_total=budget.total_proposed_budget,
+        guideline_adjusted_reimbursement=compliant_total if reimbursement_priced else None,
+        unreimbursed_exposure=(
+            round(budget.total_proposed_budget - compliant_total, 2)
+            if reimbursement_priced
+            else None
+        ),
+        reimbursement_priced=reimbursement_priced,
+    )
     return CarrierCompliantProjection(
         projection_id=new_id("carrierprojection"),
         status="projected_for_human_review",
         pack_selection=selection,
         adjustment_ledger=adjustment_ledger,
+        projection_report=projection_report,
         basis=CarrierCompliantProjectionBasis(
             guideline_id=str(guideline.get("guideline_id", "unknown")),
             guideline_ref=guideline_ref,

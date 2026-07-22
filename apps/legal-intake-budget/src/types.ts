@@ -1191,6 +1191,12 @@ export type SyntheticGuidelineProjectionWorkbenchReport = {
         selected_content_hash: string | null;
         blocked_reason: string | null;
       } | null;
+      projection_report: {
+        work_plan_total: number | null;
+        guideline_adjusted_reimbursement: number | null;
+        unreimbursed_exposure: number | null;
+        reimbursement_priced: boolean;
+      } | null;
       rate_cap_delta: number;
       expense_cap_delta: number;
       disallowed_delta: number;
